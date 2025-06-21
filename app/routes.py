@@ -1,6 +1,7 @@
 # app/routes.py
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError # Import specific exceptions
 from app import db
 from app.models import User, Kana, Kanji, Vocabulary, Grammar
 from app.forms import RegistrationForm, LoginForm
@@ -178,9 +179,19 @@ def create_kana():
         stroke_order_info=data.get('stroke_order_info'),
         example_sound_url=data.get('example_sound_url')
     )
-    db.session.add(new_item)
-    db.session.commit()
-    return jsonify(model_to_dict(new_item)), 201
+    try:
+        db.session.add(new_item)
+        db.session.commit()
+        return jsonify(model_to_dict(new_item)), 201
+    except IntegrityError: # Handles unique constraint violations
+        db.session.rollback()
+        # This specific error for character uniqueness is already checked above,
+        # but this handles it at the DB level just in case or for other integrity issues.
+        return jsonify({"error": "Database integrity error. This item might already exist or violate other constraints."}), 409
+    except SQLAlchemyError as e: # Handles other SQLAlchemy errors
+        db.session.rollback()
+        # Log the error e for debugging: app.logger.error(f"Database error: {e}")
+        return jsonify({"error": "Database error occurred."}), 500
 
 @bp.route('/api/admin/kana/<int:item_id>', methods=['GET'])
 @login_required
@@ -246,9 +257,16 @@ def create_kanji():
         radical=data.get('radical'),
         stroke_count=data.get('stroke_count')
     )
-    db.session.add(new_item)
-    db.session.commit()
-    return jsonify(model_to_dict(new_item)), 201
+    try:
+        db.session.add(new_item)
+        db.session.commit()
+        return jsonify(model_to_dict(new_item)), 201
+    except IntegrityError:
+        db.session.rollback()
+        return jsonify({"error": "Database integrity error. This item might already exist or violate other constraints."}), 409
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        return jsonify({"error": "Database error occurred."}), 500
 
 @bp.route('/api/admin/kanji/<int:item_id>', methods=['GET'])
 @login_required
@@ -316,9 +334,16 @@ def create_vocabulary():
         example_sentence_english=data.get('example_sentence_english'),
         audio_url=data.get('audio_url')
     )
-    db.session.add(new_item)
-    db.session.commit()
-    return jsonify(model_to_dict(new_item)), 201
+    try:
+        db.session.add(new_item)
+        db.session.commit()
+        return jsonify(model_to_dict(new_item)), 201
+    except IntegrityError:
+        db.session.rollback()
+        return jsonify({"error": "Database integrity error. This item might already exist or violate other constraints."}), 409
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        return jsonify({"error": "Database error occurred."}), 500
 
 @bp.route('/api/admin/vocabulary/<int:item_id>', methods=['GET'])
 @login_required
@@ -383,9 +408,16 @@ def create_grammar():
         jlpt_level=data.get('jlpt_level'),
         example_sentences=data.get('example_sentences')
     )
-    db.session.add(new_item)
-    db.session.commit()
-    return jsonify(model_to_dict(new_item)), 201
+    try:
+        db.session.add(new_item)
+        db.session.commit()
+        return jsonify(model_to_dict(new_item)), 201
+    except IntegrityError:
+        db.session.rollback()
+        return jsonify({"error": "Database integrity error. This item might already exist or violate other constraints."}), 409
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        return jsonify({"error": "Database error occurred."}), 500
 
 @bp.route('/api/admin/grammar/<int:item_id>', methods=['GET'])
 @login_required
