@@ -656,6 +656,28 @@ def delete_lesson(item_id):
     db.session.commit()
     return jsonify({"message": "Lesson deleted successfully"}), 200
 
+# == CONTENT OPTIONS API ==
+@bp.route('/api/admin/content-options/<content_type>', methods=['GET'])
+@login_required
+@admin_required
+def get_content_options(content_type):
+    """Get available content items for selection in lesson builder"""
+    try:
+        if content_type == 'kana':
+            items = Kana.query.all()
+        elif content_type == 'kanji':
+            items = Kanji.query.all()
+        elif content_type == 'vocabulary':
+            items = Vocabulary.query.all()
+        elif content_type == 'grammar':
+            items = Grammar.query.all()
+        else:
+            return jsonify({"error": "Invalid content type"}), 400
+        
+        return jsonify([model_to_dict(item) for item in items])
+    except Exception as e:
+        return jsonify({"error": "Failed to load content options"}), 500
+
 # == LESSON CONTENT API ==
 @bp.route('/api/admin/lessons/<int:lesson_id>/content', methods=['GET'])
 @login_required
@@ -674,6 +696,11 @@ def add_lesson_content(lesson_id):
     if not data or not data.get('content_type'):
         return jsonify({"error": "Missing required field: content_type"}), 400
 
+    # Convert string 'false'/'true' to boolean for is_optional
+    is_optional = data.get('is_optional', False)
+    if isinstance(is_optional, str):
+        is_optional = is_optional.lower() == 'true'
+
     new_content = LessonContent(
         lesson_id=lesson_id,
         content_type=data['content_type'],
@@ -681,16 +708,16 @@ def add_lesson_content(lesson_id):
         title=data.get('title'),
         content_text=data.get('content_text'),
         media_url=data.get('media_url'),
-        order_index=data.get('order_index', 0),
-        is_optional=data.get('is_optional', False)
+        order_index=int(data.get('order_index', 0)),
+        is_optional=is_optional
     )
     try:
         db.session.add(new_content)
         db.session.commit()
         return jsonify(model_to_dict(new_content)), 201
-    except SQLAlchemyError:
+    except SQLAlchemyError as e:
         db.session.rollback()
-        return jsonify({"error": "Database error occurred."}), 500
+        return jsonify({"error": f"Database error occurred: {str(e)}"}), 500
 
 @bp.route('/api/admin/lessons/<int:lesson_id>/content/<int:content_id>/delete', methods=['DELETE'])
 @login_required

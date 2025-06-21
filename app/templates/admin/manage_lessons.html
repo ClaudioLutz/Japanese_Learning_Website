@@ -258,9 +258,232 @@
     </div>
 </div>
 
+<!-- Enhanced Add Content Wizard Modal -->
+<div id="addContentModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 900px;">
+        <div class="modal-header">
+            <h4 id="addContentModalTitle">Add Content to Lesson</h4>
+            <span class="close" onclick="closeModal('addContentModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <!-- Step 1: Content Type Selection -->
+            <div id="contentTypeStep" class="content-step">
+                <h5 class="mb-4">Choose Content Type:</h5>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="content-type-card" onclick="selectContentType('kana')">
+                            <div class="card h-100 text-center">
+                                <div class="card-body">
+                                    <div class="content-type-icon">📝</div>
+                                    <h6 class="card-title">Kana</h6>
+                                    <p class="card-text small">Hiragana & Katakana characters</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="content-type-card" onclick="selectContentType('kanji')">
+                            <div class="card h-100 text-center">
+                                <div class="card-body">
+                                    <div class="content-type-icon">🔤</div>
+                                    <h6 class="card-title">Kanji</h6>
+                                    <p class="card-text small">Chinese characters</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="content-type-card" onclick="selectContentType('vocabulary')">
+                            <div class="card h-100 text-center">
+                                <div class="card-body">
+                                    <div class="content-type-icon">📚</div>
+                                    <h6 class="card-title">Vocabulary</h6>
+                                    <p class="card-text small">Words & phrases</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="content-type-card" onclick="selectContentType('grammar')">
+                            <div class="card h-100 text-center">
+                                <div class="card-body">
+                                    <div class="content-type-icon">📖</div>
+                                    <h6 class="card-title">Grammar</h6>
+                                    <p class="card-text small">Grammar rules & patterns</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="content-type-card" onclick="selectContentType('text')">
+                            <div class="card h-100 text-center">
+                                <div class="card-body">
+                                    <div class="content-type-icon">📄</div>
+                                    <h6 class="card-title">Text</h6>
+                                    <p class="card-text small">Custom text content</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="content-type-card" onclick="selectContentType('video')">
+                            <div class="card h-100 text-center">
+                                <div class="card-body">
+                                    <div class="content-type-icon">🎥</div>
+                                    <h6 class="card-title">Video</h6>
+                                    <p class="card-text small">Video content (URL)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="content-type-card" onclick="selectContentType('audio')">
+                            <div class="card h-100 text-center">
+                                <div class="card-body">
+                                    <div class="content-type-icon">🎵</div>
+                                    <h6 class="card-title">Audio</h6>
+                                    <p class="card-text small">Audio content (URL)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="content-type-card" onclick="selectContentType('image')">
+                            <div class="card h-100 text-center">
+                                <div class="card-body">
+                                    <div class="content-type-icon">🖼️</div>
+                                    <h6 class="card-title">Image</h6>
+                                    <p class="card-text small">Image content (URL)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Content Configuration -->
+            <div id="contentConfigStep" class="content-step" style="display: none;">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 id="configStepTitle">Configure Content</h5>
+                    <button type="button" class="btn btn-sm btn-secondary" onclick="showContentTypeStep()">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                </div>
+                
+                <form id="contentConfigForm">
+                    <div id="contentConfigFields">
+                        <!-- Dynamic form fields will be inserted here -->
+                    </div>
+                    
+                    <!-- Common fields for all content types -->
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="contentOrder">Order Index</label>
+                                <input type="number" id="contentOrder" name="order_index" class="form-control" min="0" value="0">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <div class="form-check mt-4">
+                                    <input type="checkbox" id="contentOptional" name="is_optional" class="form-check-input">
+                                    <label for="contentOptional" class="form-check-label">Optional Content</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Step 3: Preview & Confirm -->
+            <div id="contentPreviewStep" class="content-step" style="display: none;">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5>Preview & Confirm</h5>
+                    <button type="button" class="btn btn-sm btn-secondary" onclick="showContentConfigStep()">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">Content Preview</h6>
+                    </div>
+                    <div class="card-body" id="contentPreviewArea">
+                        <!-- Preview content will be displayed here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeModal('addContentModal')">Cancel</button>
+            <button type="button" id="nextStepBtn" class="btn btn-primary" onclick="nextStep()" style="display: none;">Next</button>
+            <button type="button" id="previewBtn" class="btn btn-primary" onclick="previewContent()" style="display: none;">Preview</button>
+            <button type="button" id="saveContentBtn" class="btn btn-success" onclick="saveContentToLesson()" style="display: none;">Add to Lesson</button>
+        </div>
+    </div>
+</div>
+
+<style>
+.content-step {
+    min-height: 400px;
+}
+
+.content-type-card {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.content-type-card:hover {
+    transform: translateY(-2px);
+}
+
+.content-type-card .card {
+    border: 2px solid #e9ecef;
+    transition: border-color 0.2s;
+}
+
+.content-type-card:hover .card {
+    border-color: #007bff;
+}
+
+.content-type-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+#contentPreviewArea {
+    max-height: 300px;
+    overflow-y: auto;
+}
+</style>
+
 <script>
 let currentLessonId = null;
 let categories = [];
+
+// Get CSRF token from meta tag or cookie
+function getCSRFToken() {
+    // Try to get from meta tag first
+    const metaToken = document.querySelector('meta[name=csrf-token]');
+    if (metaToken) {
+        return metaToken.getAttribute('content');
+    }
+    
+    // Try to get from cookie
+    const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+        const [name, value] = cookie.trim().split('=');
+        if (name === 'csrf_token') {
+            return decodeURIComponent(value);
+        }
+    }
+    
+    return null;
+}
 
 // Load lessons and categories on page load
 document.addEventListener('DOMContentLoaded', function() {
@@ -510,6 +733,364 @@ async function removeContent(lessonId, contentId) {
     } catch (error) {
         console.error('Error removing content:', error);
         alert('Error removing content');
+    }
+}
+
+// Enhanced Content Builder Variables
+let selectedContentType = null;
+let contentOptions = {};
+let currentContentData = {};
+
+// Open enhanced add content modal
+function openAddContentModal() {
+    if (!currentLessonId) {
+        alert('Please select a lesson first');
+        return;
+    }
+    
+    // Reset wizard state
+    selectedContentType = null;
+    currentContentData = {};
+    
+    // Show content type selection step
+    showContentTypeStep();
+    openModal('addContentModal');
+}
+
+// Content wizard step management
+function showContentTypeStep() {
+    document.getElementById('contentTypeStep').style.display = 'block';
+    document.getElementById('contentConfigStep').style.display = 'none';
+    document.getElementById('contentPreviewStep').style.display = 'none';
+    
+    // Update buttons
+    document.getElementById('nextStepBtn').style.display = 'none';
+    document.getElementById('previewBtn').style.display = 'none';
+    document.getElementById('saveContentBtn').style.display = 'none';
+}
+
+function showContentConfigStep() {
+    document.getElementById('contentTypeStep').style.display = 'none';
+    document.getElementById('contentConfigStep').style.display = 'block';
+    document.getElementById('contentPreviewStep').style.display = 'none';
+    
+    // Update buttons
+    document.getElementById('nextStepBtn').style.display = 'none';
+    document.getElementById('previewBtn').style.display = 'inline-block';
+    document.getElementById('saveContentBtn').style.display = 'none';
+}
+
+function showContentPreviewStep() {
+    document.getElementById('contentTypeStep').style.display = 'none';
+    document.getElementById('contentConfigStep').style.display = 'none';
+    document.getElementById('contentPreviewStep').style.display = 'block';
+    
+    // Update buttons
+    document.getElementById('nextStepBtn').style.display = 'none';
+    document.getElementById('previewBtn').style.display = 'none';
+    document.getElementById('saveContentBtn').style.display = 'inline-block';
+}
+
+// Content type selection
+async function selectContentType(contentType) {
+    selectedContentType = contentType;
+    
+    // Update step title
+    const titles = {
+        'kana': 'Configure Kana Content',
+        'kanji': 'Configure Kanji Content',
+        'vocabulary': 'Configure Vocabulary Content',
+        'grammar': 'Configure Grammar Content',
+        'text': 'Configure Text Content',
+        'video': 'Configure Video Content',
+        'audio': 'Configure Audio Content',
+        'image': 'Configure Image Content'
+    };
+    
+    document.getElementById('configStepTitle').textContent = titles[contentType] || 'Configure Content';
+    
+    // Load content options for existing content types
+    if (['kana', 'kanji', 'vocabulary', 'grammar'].includes(contentType)) {
+        await loadContentOptions(contentType);
+    }
+    
+    // Generate form fields
+    generateContentConfigForm(contentType);
+    
+    // Show configuration step
+    showContentConfigStep();
+}
+
+// Load available content options
+async function loadContentOptions(contentType) {
+    try {
+        const response = await fetch(`/api/admin/content-options/${contentType}`);
+        if (response.ok) {
+            contentOptions[contentType] = await response.json();
+        } else {
+            contentOptions[contentType] = [];
+        }
+    } catch (error) {
+        console.error(`Error loading ${contentType} options:`, error);
+        contentOptions[contentType] = [];
+    }
+}
+
+// Generate dynamic form fields based on content type
+function generateContentConfigForm(contentType) {
+    const fieldsContainer = document.getElementById('contentConfigFields');
+    fieldsContainer.innerHTML = '';
+    
+    if (['kana', 'kanji', 'vocabulary', 'grammar'].includes(contentType)) {
+        // Existing content selection
+        const options = contentOptions[contentType] || [];
+        
+        fieldsContainer.innerHTML = `
+            <div class="form-group">
+                <label for="existingContentSelect">Select ${contentType.charAt(0).toUpperCase() + contentType.slice(1)} *</label>
+                <select id="existingContentSelect" name="content_id" class="form-control" required>
+                    <option value="">Choose ${contentType}...</option>
+                    ${options.map(item => {
+                        let displayText = '';
+                        if (contentType === 'kana') displayText = `${item.character} (${item.romanization})`;
+                        else if (contentType === 'kanji') displayText = `${item.character} - ${item.meaning}`;
+                        else if (contentType === 'vocabulary') displayText = `${item.word} (${item.reading}) - ${item.meaning}`;
+                        else if (contentType === 'grammar') displayText = item.title;
+                        
+                        return `<option value="${item.id}">${displayText}</option>`;
+                    }).join('')}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="customTitle">Custom Title (optional)</label>
+                <input type="text" id="customTitle" name="title" class="form-control" placeholder="Override default title">
+            </div>
+        `;
+    } else if (contentType === 'text') {
+        // Custom text content
+        fieldsContainer.innerHTML = `
+            <div class="form-group">
+                <label for="textTitle">Title *</label>
+                <input type="text" id="textTitle" name="title" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="textContent">Content *</label>
+                <textarea id="textContent" name="content_text" class="form-control" rows="6" required placeholder="Enter your text content here..."></textarea>
+            </div>
+        `;
+    } else if (['video', 'audio', 'image'].includes(contentType)) {
+        // URL-based media content
+        const placeholders = {
+            'video': 'https://www.youtube.com/watch?v=... or https://vimeo.com/...',
+            'audio': 'https://example.com/audio.mp3',
+            'image': 'https://example.com/image.jpg'
+        };
+        
+        fieldsContainer.innerHTML = `
+            <div class="form-group">
+                <label for="mediaTitle">Title *</label>
+                <input type="text" id="mediaTitle" name="title" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="mediaUrl">${contentType.charAt(0).toUpperCase() + contentType.slice(1)} URL *</label>
+                <input type="url" id="mediaUrl" name="media_url" class="form-control" required placeholder="${placeholders[contentType]}">
+            </div>
+            <div class="form-group">
+                <label for="mediaDescription">Description (optional)</label>
+                <textarea id="mediaDescription" name="content_text" class="form-control" rows="3" placeholder="Optional description or notes about this ${contentType}"></textarea>
+            </div>
+        `;
+    }
+}
+
+// Preview content before saving
+async function previewContent() {
+    // Collect form data
+    const formData = new FormData(document.getElementById('contentConfigForm'));
+    currentContentData = Object.fromEntries(formData.entries());
+    currentContentData.content_type = selectedContentType;
+    
+    // Validate required fields
+    if (!validateContentData(currentContentData)) {
+        return;
+    }
+    
+    // Generate preview
+    await generateContentPreview(currentContentData);
+    
+    // Show preview step
+    showContentPreviewStep();
+}
+
+// Validate content data
+function validateContentData(data) {
+    if (['kana', 'kanji', 'vocabulary', 'grammar'].includes(data.content_type)) {
+        if (!data.content_id) {
+            alert(`Please select a ${data.content_type} item`);
+            return false;
+        }
+    } else if (data.content_type === 'text') {
+        if (!data.title || !data.content_text) {
+            alert('Please provide both title and content for text content');
+            return false;
+        }
+    } else if (['video', 'audio', 'image'].includes(data.content_type)) {
+        if (!data.title || !data.media_url) {
+            alert(`Please provide both title and URL for ${data.content_type} content`);
+            return false;
+        }
+    }
+    return true;
+}
+
+// Generate content preview
+async function generateContentPreview(data) {
+    const previewArea = document.getElementById('contentPreviewArea');
+    let previewHTML = '';
+    
+    if (['kana', 'kanji', 'vocabulary', 'grammar'].includes(data.content_type)) {
+        // Find the selected content item
+        const options = contentOptions[data.content_type] || [];
+        const selectedItem = options.find(item => item.id == data.content_id);
+        
+        if (selectedItem) {
+            if (data.content_type === 'kana') {
+                previewHTML = `
+                    <h6>${data.title || `Kana: ${selectedItem.character}`}</h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong>Character:</strong> ${selectedItem.character}<br>
+                            <strong>Romanization:</strong> ${selectedItem.romanization}<br>
+                            <strong>Type:</strong> ${selectedItem.type}
+                        </div>
+                    </div>
+                `;
+            } else if (data.content_type === 'kanji') {
+                previewHTML = `
+                    <h6>${data.title || `Kanji: ${selectedItem.character}`}</h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong>Character:</strong> ${selectedItem.character}<br>
+                            <strong>Meaning:</strong> ${selectedItem.meaning}<br>
+                            <strong>Onyomi:</strong> ${selectedItem.onyomi || 'N/A'}<br>
+                            <strong>Kunyomi:</strong> ${selectedItem.kunyomi || 'N/A'}
+                        </div>
+                        <div class="col-md-6">
+                            <strong>JLPT Level:</strong> ${selectedItem.jlpt_level || 'N/A'}<br>
+                            <strong>Stroke Count:</strong> ${selectedItem.stroke_count || 'N/A'}
+                        </div>
+                    </div>
+                `;
+            } else if (data.content_type === 'vocabulary') {
+                previewHTML = `
+                    <h6>${data.title || `Vocabulary: ${selectedItem.word}`}</h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong>Word:</strong> ${selectedItem.word}<br>
+                            <strong>Reading:</strong> ${selectedItem.reading}<br>
+                            <strong>Meaning:</strong> ${selectedItem.meaning}
+                        </div>
+                        <div class="col-md-6">
+                            <strong>JLPT Level:</strong> ${selectedItem.jlpt_level || 'N/A'}<br>
+                            ${selectedItem.example_sentence_japanese ? `<strong>Example:</strong> ${selectedItem.example_sentence_japanese}` : ''}
+                        </div>
+                    </div>
+                `;
+            } else if (data.content_type === 'grammar') {
+                previewHTML = `
+                    <h6>${data.title || selectedItem.title}</h6>
+                    <div class="row">
+                        <div class="col-12">
+                            <strong>Structure:</strong> ${selectedItem.structure || 'N/A'}<br>
+                            <strong>JLPT Level:</strong> ${selectedItem.jlpt_level || 'N/A'}<br>
+                            <strong>Explanation:</strong> ${selectedItem.explanation.substring(0, 200)}${selectedItem.explanation.length > 200 ? '...' : ''}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+    } else if (data.content_type === 'text') {
+        previewHTML = `
+            <h6>${data.title}</h6>
+            <div class="mt-2">
+                ${data.content_text.replace(/\n/g, '<br>')}
+            </div>
+        `;
+    } else if (['video', 'audio', 'image'].includes(data.content_type)) {
+        previewHTML = `
+            <h6>${data.title}</h6>
+            <div class="mt-2">
+                <strong>URL:</strong> <a href="${data.media_url}" target="_blank">${data.media_url}</a><br>
+                ${data.content_text ? `<strong>Description:</strong> ${data.content_text}` : ''}
+            </div>
+        `;
+    }
+    
+    previewHTML += `
+        <hr>
+        <div class="row">
+            <div class="col-md-6">
+                <strong>Order Index:</strong> ${data.order_index || 0}
+            </div>
+            <div class="col-md-6">
+                <strong>Optional:</strong> ${data.is_optional ? 'Yes' : 'No'}
+            </div>
+        </div>
+    `;
+    
+    previewArea.innerHTML = previewHTML;
+}
+
+// Save content to lesson
+async function saveContentToLesson() {
+    if (!currentLessonId || !currentContentData) {
+        alert('Missing lesson or content data');
+        return;
+    }
+    
+    try {
+        console.log('Saving content data:', currentContentData);
+        console.log('To lesson ID:', currentLessonId);
+        
+        const headers = { 
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        };
+        
+        // Add CSRF token if available
+        const csrfToken = getCSRFToken();
+        if (csrfToken) {
+            headers['X-CSRFToken'] = csrfToken;
+        }
+        
+        const response = await fetch(`/api/admin/lessons/${currentLessonId}/content/new`, {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify(currentContentData)
+        });
+        
+        console.log('Response status:', response.status);
+        
+        if (response.ok) {
+            const result = await response.json();
+            console.log('Success result:', result);
+            closeModal('addContentModal');
+            loadLessonContent(currentLessonId);
+            loadLessons(); // Refresh main table to update content count
+            alert('Content added to lesson successfully!');
+        } else {
+            const errorText = await response.text();
+            console.error('Error response:', errorText);
+            try {
+                const error = JSON.parse(errorText);
+                alert('Error: ' + (error.error || 'Unknown error'));
+            } catch (e) {
+                alert('Error: ' + errorText);
+            }
+        }
+    } catch (error) {
+        console.error('Error saving content:', error);
+        alert('Error saving content to lesson: ' + error.message);
     }
 }
 
