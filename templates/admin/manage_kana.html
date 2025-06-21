@@ -1,0 +1,198 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Manage Kana{% endblock %}
+
+{% block content %}
+<h2>Manage Kana</h2>
+
+<button onclick="openModal('addKanaModal')">Add New Kana</button>
+
+<!-- Add Kana Modal -->
+<div id="addKanaModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeModal('addKanaModal')">&times;</span>
+        <h3>Add New Kana</h3>
+        <form id="addKanaForm">
+            <label for="add-character">Character:</label>
+            <input type="text" id="add-character" name="character" required maxlength="1">
+
+            <label for="add-romanization">Romanization:</label>
+            <input type="text" id="add-romanization" name="romanization" required>
+
+            <label for="add-type">Type:</label>
+            <select id="add-type" name="type" required>
+                <option value="hiragana">Hiragana</option>
+                <option value="katakana">Katakana</option>
+            </select>
+
+            <label for="add-stroke_order_info">Stroke Order Info (URL/Data):</label>
+            <input type="text" id="add-stroke_order_info" name="stroke_order_info">
+
+            <label for="add-example_sound_url">Example Sound URL:</label>
+            <input type="text" id="add-example_sound_url" name="example_sound_url">
+
+            <button type="submit">Add Kana</button>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Kana Modal -->
+<div id="editKanaModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeModal('editKanaModal')">&times;</span>
+        <h3>Edit Kana</h3>
+        <form id="editKanaForm" class="form-edit">
+            <input type="hidden" id="edit-id" name="id">
+            <label for="edit-character">Character:</label>
+            <input type="text" id="edit-character" name="character" required maxlength="1">
+
+            <label for="edit-romanization">Romanization:</label>
+            <input type="text" id="edit-romanization" name="romanization" required>
+
+            <label for="edit-type">Type:</label>
+            <select id="edit-type" name="type" required>
+                <option value="hiragana">Hiragana</option>
+                <option value="katakana">Katakana</option>
+            </select>
+
+            <label for="edit-stroke_order_info">Stroke Order Info (URL/Data):</label>
+            <input type="text" id="edit-stroke_order_info" name="stroke_order_info">
+
+            <label for="edit-example_sound_url">Example Sound URL:</label>
+            <input type="text" id="edit-example_sound_url" name="example_sound_url">
+
+            <button type="submit">Save Changes</button>
+        </form>
+    </div>
+</div>
+
+<h3>Existing Kana</h3>
+<table id="kanaTable">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Character</th>
+            <th>Romanization</th>
+            <th>Type</th>
+            <th>Stroke Order Info</th>
+            <th>Sound URL</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Kana items will be loaded here by JavaScript -->
+    </tbody>
+</table>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const addKanaForm = document.getElementById('addKanaForm');
+    const editKanaForm = document.getElementById('editKanaForm');
+    const kanaTableBody = document.querySelector('#kanaTable tbody');
+
+    async function fetchKana() {
+        const response = await fetch('{{ url_for("list_kana") }}');
+        const kanaList = await response.json();
+        kanaTableBody.innerHTML = ''; // Clear existing rows
+        kanaList.forEach(kana => {
+            const row = kanaTableBody.insertRow();
+            row.innerHTML = `
+                <td>${kana.id}</td>
+                <td>${kana.character}</td>
+                <td>${kana.romanization}</td>
+                <td>${kana.type}</td>
+                <td>${kana.stroke_order_info || ''}</td>
+                <td>${kana.example_sound_url || ''}</td>
+                <td class="actions">
+                    <a href="#" class="edit" onclick="openEditModal(${kana.id})">Edit</a>
+                    <a href="#" class="delete" onclick="deleteKana(${kana.id}, '${kana.character}')">Delete</a>
+                </td>
+            `;
+        });
+    }
+
+    addKanaForm.addEventListener('submit', async function(event) {
+        event.preventDefault();
+        const formData = new FormData(addKanaForm);
+        const data = Object.fromEntries(formData.entries());
+
+        const response = await fetch('{{ url_for("create_kana") }}', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            addKanaForm.reset();
+            closeModal('addKanaModal');
+            fetchKana(); // Refresh table
+            // Consider adding a flash message system via JS if not reloading page
+            alert('Kana added successfully!');
+        } else {
+            const errorData = await response.json();
+            alert('Error adding Kana: ' + (errorData.error || response.statusText));
+        }
+    });
+
+    async function openEditModal(id) {
+        const response = await fetch(`{{ url_for("get_kana", item_id=0) }}${id}`); // base_url + id
+        if (!response.ok) {
+            alert('Error fetching Kana details.');
+            return;
+        }
+        const kana = await response.json();
+
+        document.getElementById('edit-id').value = kana.id;
+        document.getElementById('edit-character').value = kana.character;
+        document.getElementById('edit-romanization').value = kana.romanization;
+        document.getElementById('edit-type').value = kana.type;
+        document.getElementById('edit-stroke_order_info').value = kana.stroke_order_info || '';
+        document.getElementById('edit-example_sound_url').value = kana.example_sound_url || '';
+        openModal('editKanaModal');
+    }
+
+    editKanaForm.addEventListener('submit', async function(event) {
+        event.preventDefault();
+        const id = document.getElementById('edit-id').value;
+        const formData = new FormData(editKanaForm);
+        const data = Object.fromEntries(formData.entries());
+        delete data.id; // Not needed in body for update
+
+        const response = await fetch(`{{ url_for("update_kana", item_id=0) }}${id}/edit`, { // base_url + id + /edit
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            closeModal('editKanaModal');
+            fetchKana(); // Refresh table
+            alert('Kana updated successfully!');
+        } else {
+            const errorData = await response.json();
+            alert('Error updating Kana: ' + (errorData.error || response.statusText));
+        }
+    });
+
+    async function deleteKana(id, character) {
+        if (!confirm(`Are you sure you want to delete Kana: ${character}?`)) {
+            return;
+        }
+        const response = await fetch(`{{ url_for("delete_kana", item_id=0) }}${id}/delete`, { // base_url + id + /delete
+            method: 'DELETE'
+        });
+
+        if (response.ok) {
+            fetchKana(); // Refresh table
+            alert('Kana deleted successfully!');
+        } else {
+            const errorData = await response.json();
+            alert('Error deleting Kana: ' + (errorData.error || response.statusText));
+        }
+    }
+
+    // Initial fetch
+    fetchKana();
+</script>
+{% endblock %}
