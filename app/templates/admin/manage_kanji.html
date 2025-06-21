@@ -1,0 +1,216 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Manage Kanji{% endblock %}
+
+{% block content %}
+<h2>Manage Kanji</h2>
+
+<button onclick="openModal('addKanjiModal')">Add New Kanji</button>
+
+<!-- Add Kanji Modal -->
+<div id="addKanjiModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeModal('addKanjiModal')">&times;</span>
+        <h3>Add New Kanji</h3>
+        <form id="addKanjiForm">
+            <label for="add-character">Character:</label>
+            <input type="text" id="add-character" name="character" required maxlength="1">
+
+            <label for="add-meaning">Meaning (comma-separated):</label>
+            <textarea id="add-meaning" name="meaning" required></textarea>
+
+            <label for="add-onyomi">On'yomi (comma-separated):</label>
+            <input type="text" id="add-onyomi" name="onyomi">
+
+            <label for="add-kunyomi">Kun'yomi (comma-separated):</label>
+            <input type="text" id="add-kunyomi" name="kunyomi">
+
+            <label for="add-jlpt_level">JLPT Level (N1-N5 as 1-5):</label>
+            <input type="number" id="add-jlpt_level" name="jlpt_level" min="1" max="5">
+
+            <label for="add-stroke_order_info">Stroke Order Info (URL/Data):</label>
+            <input type="text" id="add-stroke_order_info" name="stroke_order_info">
+
+            <label for="add-radical">Radical:</label>
+            <input type="text" id="add-radical" name="radical">
+
+            <label for="add-stroke_count">Stroke Count:</label>
+            <input type="number" id="add-stroke_count" name="stroke_count">
+
+            <button type="submit">Add Kanji</button>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Kanji Modal -->
+<div id="editKanjiModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeModal('editKanjiModal')">&times;</span>
+        <h3>Edit Kanji</h3>
+        <form id="editKanjiForm" class="form-edit">
+            <input type="hidden" id="edit-id" name="id">
+            <label for="edit-character">Character:</label>
+            <input type="text" id="edit-character" name="character" required maxlength="1">
+
+            <label for="edit-meaning">Meaning (comma-separated):</label>
+            <textarea id="edit-meaning" name="meaning" required></textarea>
+
+            <label for="edit-onyomi">On'yomi (comma-separated):</label>
+            <input type="text" id="edit-onyomi" name="onyomi">
+
+            <label for="edit-kunyomi">Kun'yomi (comma-separated):</label>
+            <input type="text" id="edit-kunyomi" name="kunyomi">
+
+            <label for="edit-jlpt_level">JLPT Level (N1-N5 as 1-5):</label>
+            <input type="number" id="edit-jlpt_level" name="jlpt_level" min="1" max="5">
+
+            <label for="edit-stroke_order_info">Stroke Order Info (URL/Data):</label>
+            <input type="text" id="edit-stroke_order_info" name="stroke_order_info">
+
+            <label for="edit-radical">Radical:</label>
+            <input type="text" id="edit-radical" name="radical">
+
+            <label for="edit-stroke_count">Stroke Count:</label>
+            <input type="number" id="edit-stroke_count" name="stroke_count">
+
+            <button type="submit">Save Changes</button>
+        </form>
+    </div>
+</div>
+
+<h3>Existing Kanji</h3>
+<table id="kanjiTable">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Character</th>
+            <th>Meaning</th>
+            <th>On'yomi</th>
+            <th>Kun'yomi</th>
+            <th>JLPT</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Kanji items will be loaded here by JavaScript -->
+    </tbody>
+</table>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const addKanjiForm = document.getElementById('addKanjiForm');
+    const editKanjiForm = document.getElementById('editKanjiForm');
+    const kanjiTableBody = document.querySelector('#kanjiTable tbody');
+
+    async function fetchKanji() {
+        const response = await fetch('{{ url_for("routes.list_kanji") }}');
+        const kanjiList = await response.json();
+        kanjiTableBody.innerHTML = ''; // Clear existing rows
+        kanjiList.forEach(kanji => {
+            const row = kanjiTableBody.insertRow();
+            row.innerHTML = `
+                <td>${kanji.id}</td>
+                <td>${kanji.character}</td>
+                <td>${kanji.meaning}</td>
+                <td>${kanji.onyomi || ''}</td>
+                <td>${kanji.kunyomi || ''}</td>
+                <td>${kanji.jlpt_level || ''}</td>
+                <td class="actions">
+                    <a href="#" class="edit" onclick="openEditModal(${kanji.id})">Edit</a>
+                    <a href="#" class="delete" onclick="deleteKanji(${kanji.id}, '${kanji.character}')">Delete</a>
+                </td>
+            `;
+        });
+    }
+
+    addKanjiForm.addEventListener('submit', async function(event) {
+        event.preventDefault();
+        const formData = new FormData(addKanjiForm);
+        const data = Object.fromEntries(formData.entries());
+        if (data.jlpt_level === '') data.jlpt_level = null; // Handle empty number input
+        if (data.stroke_count === '') data.stroke_count = null;
+
+        const response = await fetch('{{ url_for("routes.create_kanji") }}', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            addKanjiForm.reset();
+            closeModal('addKanjiModal');
+            fetchKanji();
+            alert('Kanji added successfully!');
+        } else {
+            const errorData = await response.json();
+            alert('Error adding Kanji: ' + (errorData.error || response.statusText));
+        }
+    });
+
+    async function openEditModal(id) {
+        const response = await fetch(`/api/admin/kanji/${id}`);
+        if (!response.ok) {
+            alert('Error fetching Kanji details.');
+            return;
+        }
+        const kanji = await response.json();
+
+        document.getElementById('edit-id').value = kanji.id;
+        document.getElementById('edit-character').value = kanji.character;
+        document.getElementById('edit-meaning').value = kanji.meaning;
+        document.getElementById('edit-onyomi').value = kanji.onyomi || '';
+        document.getElementById('edit-kunyomi').value = kanji.kunyomi || '';
+        document.getElementById('edit-jlpt_level').value = kanji.jlpt_level || '';
+        document.getElementById('edit-stroke_order_info').value = kanji.stroke_order_info || '';
+        document.getElementById('edit-radical').value = kanji.radical || '';
+        document.getElementById('edit-stroke_count').value = kanji.stroke_count || '';
+        openModal('editKanjiModal');
+    }
+
+    editKanjiForm.addEventListener('submit', async function(event) {
+        event.preventDefault();
+        const id = document.getElementById('edit-id').value;
+        const formData = new FormData(editKanjiForm);
+        const data = Object.fromEntries(formData.entries());
+        delete data.id;
+        if (data.jlpt_level === '') data.jlpt_level = null;
+        if (data.stroke_count === '') data.stroke_count = null;
+
+        const response = await fetch(`/api/admin/kanji/${id}/edit`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            closeModal('editKanjiModal');
+            fetchKanji();
+            alert('Kanji updated successfully!');
+        } else {
+            const errorData = await response.json();
+            alert('Error updating Kanji: ' + (errorData.error || response.statusText));
+        }
+    });
+
+    async function deleteKanji(id, character) {
+        if (!confirm(`Are you sure you want to delete Kanji: ${character}?`)) {
+            return;
+        }
+        const response = await fetch(`/api/admin/kanji/${id}/delete`, {
+            method: 'DELETE'
+        });
+
+        if (response.ok) {
+            fetchKanji();
+            alert('Kanji deleted successfully!');
+        } else {
+            const errorData = await response.json();
+            alert('Error deleting Kanji: ' + (errorData.error || response.statusText));
+        }
+    }
+
+    // Initial fetch
+    fetchKanji();
+</script>
+{% endblock %}

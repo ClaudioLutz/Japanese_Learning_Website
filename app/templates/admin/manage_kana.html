@@ -92,7 +92,7 @@
     const kanaTableBody = document.querySelector('#kanaTable tbody');
 
     async function fetchKana() {
-        const response = await fetch('{{ url_for("list_kana") }}');
+        const response = await fetch('{{ url_for("routes.list_kana") }}');
         const kanaList = await response.json();
         kanaTableBody.innerHTML = ''; // Clear existing rows
         kanaList.forEach(kana => {
@@ -117,7 +117,7 @@
         const formData = new FormData(addKanaForm);
         const data = Object.fromEntries(formData.entries());
 
-        const response = await fetch('{{ url_for("create_kana") }}', {
+        const response = await fetch('{{ url_for("routes.create_kana") }}', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
@@ -136,7 +136,7 @@
     });
 
     async function openEditModal(id) {
-        const response = await fetch(`{{ url_for("get_kana", item_id=0) }}${id}`); // base_url + id
+        const response = await fetch(`/api/admin/kana/${id}`);
         if (!response.ok) {
             alert('Error fetching Kana details.');
             return;
@@ -159,7 +159,7 @@
         const data = Object.fromEntries(formData.entries());
         delete data.id; // Not needed in body for update
 
-        const response = await fetch(`{{ url_for("update_kana", item_id=0) }}${id}/edit`, { // base_url + id + /edit
+        const response = await fetch(`/api/admin/kana/${id}/edit`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
@@ -179,7 +179,7 @@
         if (!confirm(`Are you sure you want to delete Kana: ${character}?`)) {
             return;
         }
-        const response = await fetch(`{{ url_for("delete_kana", item_id=0) }}${id}/delete`, { // base_url + id + /delete
+        const response = await fetch(`/api/admin/kana/${id}/delete`, {
             method: 'DELETE'
         });
 

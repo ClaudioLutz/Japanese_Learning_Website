@@ -1,0 +1,203 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Manage Vocabulary{% endblock %}
+
+{% block content %}
+<h2>Manage Vocabulary</h2>
+
+<button onclick="openModal('addVocabModal')">Add New Vocabulary</button>
+
+<!-- Add Vocabulary Modal -->
+<div id="addVocabModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeModal('addVocabModal')">&times;</span>
+        <h3>Add New Vocabulary</h3>
+        <form id="addVocabForm">
+            <label for="add-word">Word (Japanese):</label>
+            <input type="text" id="add-word" name="word" required>
+
+            <label for="add-reading">Reading (Hiragana/Katakana):</label>
+            <input type="text" id="add-reading" name="reading" required>
+
+            <label for="add-meaning">Meaning (English, comma-separated):</label>
+            <textarea id="add-meaning" name="meaning" required></textarea>
+
+            <label for="add-jlpt_level">JLPT Level (N1-N5 as 1-5):</label>
+            <input type="number" id="add-jlpt_level" name="jlpt_level" min="1" max="5">
+
+            <label for="add-example_sentence_japanese">Example Sentence (Japanese):</label>
+            <textarea id="add-example_sentence_japanese" name="example_sentence_japanese"></textarea>
+
+            <label for="add-example_sentence_english">Example Sentence (English):</label>
+            <textarea id="add-example_sentence_english" name="example_sentence_english"></textarea>
+
+            <label for="add-audio_url">Audio URL:</label>
+            <input type="text" id="add-audio_url" name="audio_url">
+
+            <button type="submit">Add Vocabulary</button>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Vocabulary Modal -->
+<div id="editVocabModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeModal('editVocabModal')">&times;</span>
+        <h3>Edit Vocabulary</h3>
+        <form id="editVocabForm" class="form-edit">
+            <input type="hidden" id="edit-id" name="id">
+            <label for="edit-word">Word (Japanese):</label>
+            <input type="text" id="edit-word" name="word" required>
+
+            <label for="edit-reading">Reading (Hiragana/Katakana):</label>
+            <input type="text" id="edit-reading" name="reading" required>
+
+            <label for="edit-meaning">Meaning (English, comma-separated):</label>
+            <textarea id="edit-meaning" name="meaning" required></textarea>
+
+            <label for="edit-jlpt_level">JLPT Level (N1-N5 as 1-5):</label>
+            <input type="number" id="edit-jlpt_level" name="jlpt_level" min="1" max="5">
+
+            <label for="edit-example_sentence_japanese">Example Sentence (Japanese):</label>
+            <textarea id="edit-example_sentence_japanese" name="example_sentence_japanese"></textarea>
+
+            <label for="edit-example_sentence_english">Example Sentence (English):</label>
+            <textarea id="edit-example_sentence_english" name="example_sentence_english"></textarea>
+
+            <label for="edit-audio_url">Audio URL:</label>
+            <input type="text" id="edit-audio_url" name="audio_url">
+            <button type="submit">Save Changes</button>
+        </form>
+    </div>
+</div>
+
+<h3>Existing Vocabulary</h3>
+<table id="vocabTable">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Word</th>
+            <th>Reading</th>
+            <th>Meaning</th>
+            <th>JLPT</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Vocab items will be loaded here by JavaScript -->
+    </tbody>
+</table>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const addVocabForm = document.getElementById('addVocabForm');
+    const editVocabForm = document.getElementById('editVocabForm');
+    const vocabTableBody = document.querySelector('#vocabTable tbody');
+
+    async function fetchVocab() {
+        const response = await fetch('{{ url_for("routes.list_vocabulary") }}');
+        const vocabList = await response.json();
+        vocabTableBody.innerHTML = '';
+        vocabList.forEach(vocab => {
+            const row = vocabTableBody.insertRow();
+            row.innerHTML = `
+                <td>${vocab.id}</td>
+                <td>${vocab.word}</td>
+                <td>${vocab.reading}</td>
+                <td>${vocab.meaning}</td>
+                <td>${vocab.jlpt_level || ''}</td>
+                <td class="actions">
+                    <a href="#" class="edit" onclick="openEditModal(${vocab.id})">Edit</a>
+                    <a href="#" class="delete" onclick="deleteVocab(${vocab.id}, '${vocab.word}')">Delete</a>
+                </td>
+            `;
+        });
+    }
+
+    addVocabForm.addEventListener('submit', async function(event) {
+        event.preventDefault();
+        const formData = new FormData(addVocabForm);
+        const data = Object.fromEntries(formData.entries());
+        if (data.jlpt_level === '') data.jlpt_level = null;
+
+        const response = await fetch('{{ url_for("routes.create_vocabulary") }}', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            addVocabForm.reset();
+            closeModal('addVocabModal');
+            fetchVocab();
+            alert('Vocabulary item added successfully!');
+        } else {
+            const errorData = await response.json();
+            alert('Error adding vocabulary: ' + (errorData.error || response.statusText));
+        }
+    });
+
+    async function openEditModal(id) {
+        const response = await fetch(`/api/admin/vocabulary/${id}`);
+        if (!response.ok) {
+            alert('Error fetching vocabulary details.');
+            return;
+        }
+        const vocab = await response.json();
+
+        document.getElementById('edit-id').value = vocab.id;
+        document.getElementById('edit-word').value = vocab.word;
+        document.getElementById('edit-reading').value = vocab.reading;
+        document.getElementById('edit-meaning').value = vocab.meaning;
+        document.getElementById('edit-jlpt_level').value = vocab.jlpt_level || '';
+        document.getElementById('edit-example_sentence_japanese').value = vocab.example_sentence_japanese || '';
+        document.getElementById('edit-example_sentence_english').value = vocab.example_sentence_english || '';
+        document.getElementById('edit-audio_url').value = vocab.audio_url || '';
+        openModal('editVocabModal');
+    }
+
+    editVocabForm.addEventListener('submit', async function(event) {
+        event.preventDefault();
+        const id = document.getElementById('edit-id').value;
+        const formData = new FormData(editVocabForm);
+        const data = Object.fromEntries(formData.entries());
+        delete data.id;
+        if (data.jlpt_level === '') data.jlpt_level = null;
+
+        const response = await fetch(`/api/admin/vocabulary/${id}/edit`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            closeModal('editVocabModal');
+            fetchVocab();
+            alert('Vocabulary item updated successfully!');
+        } else {
+            const errorData = await response.json();
+            alert('Error updating vocabulary: ' + (errorData.error || response.statusText));
+        }
+    });
+
+    async function deleteVocab(id, word) {
+        if (!confirm(`Are you sure you want to delete vocabulary: ${word}?`)) {
+            return;
+        }
+        const response = await fetch(`/api/admin/vocabulary/${id}/delete`, {
+            method: 'DELETE'
+        });
+
+        if (response.ok) {
+            fetchVocab();
+            alert('Vocabulary item deleted successfully!');
+        } else {
+            const errorData = await response.json();
+            alert('Error deleting vocabulary: ' + (errorData.error || response.statusText));
+        }
+    }
+
+    fetchVocab();
+</script>
+{% endblock %}

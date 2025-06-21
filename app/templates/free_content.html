@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Free Lessons{% endblock %}
+{% block content %}
+    <h1>Free Japanese Lessons</h1>
+    <p>This content is available to all registered users.</p>
+    <ul>
+        <li>Lesson 1: Hiragana Basics</li>
+        <li>Lesson 2: Common Greetings</li>
+        <li>Lesson 3: Self-Introduction</li>
+    </ul>
+    <p>Want more advanced lessons? <a href="{{ url_for('routes.premium_content') }}">Check out our Premium content!</a></p>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+    <h1>Welcome to Your Japanese Learning Website!</h1>
+    <p>This is the prototype homepage. Explore our free and premium content.</p>
+    {% if not current_user.is_authenticated %}
+    <p>Please <a href="{{ url_for('routes.register') }}">register</a> or <a href="{{ url_for('routes.login') }}">login</a> to access lessons.</p>
+    {% endif %}
+{% endblock %}

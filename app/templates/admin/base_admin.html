@@ -59,13 +59,13 @@
     </header>
     <nav>
         <ul>
-            <li><a href="{{ url_for('admin_index') }}">Home</a></li>
-            <li><a href="{{ url_for('admin_manage_kana') }}">Manage Kana</a></li>
-            <li><a href="{{ url_for('admin_manage_kanji') }}">Manage Kanji</a></li>
-            <li><a href="{{ url_for('admin_manage_vocabulary') }}">Manage Vocabulary</a></li>
-            <li><a href="{{ url_for('admin_manage_grammar') }}">Manage Grammar</a></li>
-            {% if session.admin_logged_in %}
-                <li><a href="{{ url_for('admin_logout') }}" style="color: #ffc107;">Logout ({{ session.admin_username }})</a></li>
+            <li><a href="{{ url_for('routes.admin_index') }}">Home</a></li>
+            <li><a href="{{ url_for('routes.admin_manage_kana') }}">Manage Kana</a></li>
+            <li><a href="{{ url_for('routes.admin_manage_kanji') }}">Manage Kanji</a></li>
+            <li><a href="{{ url_for('routes.admin_manage_vocabulary') }}">Manage Vocabulary</a></li>
+            <li><a href="{{ url_for('routes.admin_manage_grammar') }}">Manage Grammar</a></li>
+            {% if current_user.is_authenticated %}
+                <li><a href="{{ url_for('routes.logout') }}" style="color: #ffc107;">Logout ({{ current_user.username }})</a></li>
             {% endif %}
         </ul>
     </nav>

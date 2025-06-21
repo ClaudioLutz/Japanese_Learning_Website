@@ -1,0 +1,219 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Manage Grammar{% endblock %}
+
+{% block content %}
+<h2>Manage Grammar</h2>
+
+<button onclick="openModal('addGrammarModal')">Add New Grammar Rule</button>
+
+<!-- Add Grammar Modal -->
+<div id="addGrammarModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeModal('addGrammarModal')">&times;</span>
+        <h3>Add New Grammar Rule</h3>
+        <form id="addGrammarForm">
+            <label for="add-title">Title:</label>
+            <input type="text" id="add-title" name="title" required>
+
+            <label for="add-explanation">Explanation:</label>
+            <textarea id="add-explanation" name="explanation" rows="5" required></textarea>
+
+            <label for="add-structure">Structure (e.g., Verb (dict) + こと):</label>
+            <input type="text" id="add-structure" name="structure">
+
+            <label for="add-jlpt_level">JLPT Level (N1-N5 as 1-5):</label>
+            <input type="number" id="add-jlpt_level" name="jlpt_level" min="1" max="5">
+
+            <label for="add-example_sentences">Example Sentences (JSON format):</label>
+            <textarea id="add-example_sentences" name="example_sentences" rows="3" placeholder='[{"ja": "Sentence 1 JP", "en": "Sentence 1 EN"}, {"ja": "Sentence 2 JP", "en": "Sentence 2 EN"}]'></textarea>
+            <small>Use JSON: [{"ja": "日本語の文", "en": "English sentence"}, ...]</small>
+
+
+            <button type="submit">Add Grammar Rule</button>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Grammar Modal -->
+<div id="editGrammarModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeModal('editGrammarModal')">&times;</span>
+        <h3>Edit Grammar Rule</h3>
+        <form id="editGrammarForm" class="form-edit">
+            <input type="hidden" id="edit-id" name="id">
+            <label for="edit-title">Title:</label>
+            <input type="text" id="edit-title" name="title" required>
+
+            <label for="edit-explanation">Explanation:</label>
+            <textarea id="edit-explanation" name="explanation" rows="5" required></textarea>
+
+            <label for="edit-structure">Structure:</label>
+            <input type="text" id="edit-structure" name="structure">
+
+            <label for="edit-jlpt_level">JLPT Level (N1-N5 as 1-5):</label>
+            <input type="number" id="edit-jlpt_level" name="jlpt_level" min="1" max="5">
+
+            <label for="edit-example_sentences">Example Sentences (JSON format):</label>
+            <textarea id="edit-example_sentences" name="example_sentences" rows="3"></textarea>
+            <small>Use JSON: [{"ja": "日本語の文", "en": "English sentence"}, ...]</small>
+
+            <button type="submit">Save Changes</button>
+        </form>
+    </div>
+</div>
+
+<h3>Existing Grammar Rules</h3>
+<table id="grammarTable">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>JLPT</th>
+            <th>Structure</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Grammar items will be loaded here by JavaScript -->
+    </tbody>
+</table>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const addGrammarForm = document.getElementById('addGrammarForm');
+    const editGrammarForm = document.getElementById('editGrammarForm');
+    const grammarTableBody = document.querySelector('#grammarTable tbody');
+
+    // Helper to validate JSON
+    function isValidJson(str) {
+        if (!str || str.trim() === '') return true; // Allow empty for optional
+        try {
+            JSON.parse(str);
+        } catch (e) {
+            return false;
+        }
+        return true;
+    }
+
+    async function fetchGrammar() {
+        const response = await fetch('{{ url_for("routes.list_grammar") }}');
+        const grammarList = await response.json();
+        grammarTableBody.innerHTML = '';
+        grammarList.forEach(grammar => {
+            const row = grammarTableBody.insertRow();
+            row.innerHTML = `
+                <td>${grammar.id}</td>
+                <td>${grammar.title}</td>
+                <td>${grammar.jlpt_level || ''}</td>
+                <td>${grammar.structure || ''}</td>
+                <td class="actions">
+                    <a href="#" class="edit" onclick="openEditModal(${grammar.id})">Edit</a>
+                    <a href="#" class="delete" onclick="deleteGrammar(${grammar.id}, '${grammar.title}')">Delete</a>
+                </td>
+            `;
+        });
+    }
+
+    addGrammarForm.addEventListener('submit', async function(event) {
+        event.preventDefault();
+        const examplesJson = document.getElementById('add-example_sentences').value;
+        if (examplesJson.trim() !== "" && !isValidJson(examplesJson)) {
+            alert('Invalid JSON format for Example Sentences.');
+            return;
+        }
+
+        const formData = new FormData(addGrammarForm);
+        const data = Object.fromEntries(formData.entries());
+        if (data.jlpt_level === '') data.jlpt_level = null;
+        if (data.example_sentences.trim() === "") data.example_sentences = null;
+
+
+        const response = await fetch('{{ url_for("routes.create_grammar") }}', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            addGrammarForm.reset();
+            closeModal('addGrammarModal');
+            fetchGrammar();
+            alert('Grammar rule added successfully!');
+        } else {
+            const errorData = await response.json();
+            alert('Error adding grammar rule: ' + (errorData.error || response.statusText));
+        }
+    });
+
+    async function openEditModal(id) {
+        const response = await fetch(`/api/admin/grammar/${id}`);
+        if (!response.ok) {
+            alert('Error fetching grammar details.');
+            return;
+        }
+        const grammar = await response.json();
+
+        document.getElementById('edit-id').value = grammar.id;
+        document.getElementById('edit-title').value = grammar.title;
+        document.getElementById('edit-explanation').value = grammar.explanation;
+        document.getElementById('edit-structure').value = grammar.structure || '';
+        document.getElementById('edit-jlpt_level').value = grammar.jlpt_level || '';
+        document.getElementById('edit-example_sentences').value = grammar.example_sentences || '';
+        openModal('editGrammarModal');
+    }
+
+    editGrammarForm.addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        const examplesJson = document.getElementById('edit-example_sentences').value;
+        if (examplesJson.trim() !== "" && !isValidJson(examplesJson)) {
+            alert('Invalid JSON format for Example Sentences.');
+            return;
+        }
+
+        const id = document.getElementById('edit-id').value;
+        const formData = new FormData(editGrammarForm);
+        const data = Object.fromEntries(formData.entries());
+        delete data.id;
+        if (data.jlpt_level === '') data.jlpt_level = null;
+        if (data.example_sentences.trim() === "") data.example_sentences = null;
+
+
+        const response = await fetch(`/api/admin/grammar/${id}/edit`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            closeModal('editGrammarModal');
+            fetchGrammar();
+            alert('Grammar rule updated successfully!');
+        } else {
+            const errorData = await response.json();
+            alert('Error updating grammar rule: ' + (errorData.error || response.statusText));
+        }
+    });
+
+    async function deleteGrammar(id, title) {
+        if (!confirm(`Are you sure you want to delete grammar rule: ${title}?`)) {
+            return;
+        }
+        const response = await fetch(`/api/admin/grammar/${id}/delete`, {
+            method: 'DELETE'
+        });
+
+        if (response.ok) {
+            fetchGrammar();
+            alert('Grammar rule deleted successfully!');
+        } else {
+            const errorData = await response.json();
+            alert('Error deleting grammar: ' + (errorData.error || response.statusText));
+        }
+    }
+
+    fetchGrammar();
+</script>
+{% endblock %}
