@@ -87,6 +87,11 @@
 
 {% block extra_js %}
 <script>
+    // Function to get CSRF token from meta tag
+    function getCsrfToken() {
+        return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    }
+
     const addKanaForm = document.getElementById('addKanaForm');
     const editKanaForm = document.getElementById('editKanaForm');
     const kanaTableBody = document.querySelector('#kanaTable tbody');
@@ -119,7 +124,10 @@
 
         const response = await fetch('{{ url_for("routes.create_kana") }}', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken() // Add CSRF token header
+            },
             body: JSON.stringify(data)
         });
 
@@ -161,7 +169,10 @@
 
         const response = await fetch(`/api/admin/kana/${id}/edit`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken() // Add CSRF token header
+            },
             body: JSON.stringify(data)
         });
 
@@ -180,7 +191,10 @@
             return;
         }
         const response = await fetch(`/api/admin/kana/${id}/delete`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': getCsrfToken() // Add CSRF token header
+            }
         });
 
         if (response.ok) {
