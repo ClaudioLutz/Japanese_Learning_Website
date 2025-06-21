@@ -55,9 +55,8 @@ A comprehensive web-based Japanese learning platform that provides structured le
 
 ### Database
 - **SQLite** - Development database (easily replaceable with PostgreSQL/MySQL)
-- **Database Files**:
-  - `instance/site.db` - Main application database
-  - `japanese_learning.db` - Legacy database (maintained for compatibility)
+- **Database File**:
+  - `instance/site.db` - Main application database. (Note: `japanese_learning.db` is a legacy database file found in the `deprecated/` directory and is not used by the current application.)
 
 ### Development Tools
 - **Python 3.8+** - Programming language
@@ -396,19 +395,24 @@ DELETE /api/admin/grammar/{id}/delete # Delete grammar
 ### Template Structure
 ```
 app/templates/
-├── base.html                 # Main layout template
-├── index.html               # Homepage
-├── login.html               # Login form
-├── register.html            # Registration form
-├── free_content.html        # Free learning materials
-├── premium_content.html     # Premium learning materials
-└── admin/                   # Admin panel templates
-    ├── base_admin.html      # Admin layout template
-    ├── admin_index.html     # Admin dashboard
-    ├── manage_kana.html     # Kana management interface
-    ├── manage_kanji.html    # Kanji management interface
-    ├── manage_vocabulary.html # Vocabulary management interface
-    └── manage_grammar.html  # Grammar management interface
+├── base.html                 # Main layout template for user-facing pages
+├── index.html                # Homepage
+├── login.html                # User login form
+├── register.html             # User registration form
+├── free_content.html         # Page for free learning materials
+├── premium_content.html      # Page for premium learning materials (requires subscription)
+├── lessons.html              # Page to browse available lessons
+├── lesson_view.html          # Page to view a single lesson's content
+└── admin/                    # Admin panel templates
+    ├── base_admin.html       # Main layout template for admin pages
+    ├── admin_index.html      # Admin dashboard/homepage
+    ├── login.html            # Admin login form (may be unified with user login)
+    ├── manage_kana.html      # Interface for managing Kana content
+    ├── manage_kanji.html     # Interface for managing Kanji content
+    ├── manage_vocabulary.html # Interface for managing Vocabulary content
+    ├── manage_grammar.html   # Interface for managing Grammar content
+    ├── manage_lessons.html   # Interface for managing Lessons
+    └── manage_categories.html # Interface for managing Lesson Categories
 ```
 
 ### JavaScript Functionality
@@ -458,35 +462,54 @@ async function submitForm(data) {
 
 ```
 Japanese_Learning_Website/
-├── app/                     # Main application package
-│   ├── __init__.py         # Flask app factory
-│   ├── models.py           # Database models
-│   ├── routes.py           # URL routes and view functions
-│   ├── forms.py            # WTForms form classes
-│   └── templates/          # Jinja2 templates
-│       ├── base.html
-│       ├── index.html
-│       ├── login.html
-│       ├── register.html
+├── app/                    # Main Flask application package
+│   ├── __init__.py         # Application factory, initializes Flask app and extensions
+│   ├── forms.py            # WTForms definitions for login, registration, content management
+│   ├── models.py           # SQLAlchemy database models for users, content, lessons
+│   ├── routes.py           # Flask routes and view functions for user and admin interfaces
+│   └── templates/          # Jinja2 templates for rendering HTML pages
+│       ├── admin/          # Templates specific to the admin panel (detailed above)
+│       │   ├── admin_index.html
+│       │   ├── base_admin.html
+│       │   ├── login.html
+│       │   ├── manage_categories.html
+│       │   ├── manage_grammar.html
+│       │   ├── manage_kana.html
+│       │   ├── manage_kanji.html
+│       │   ├── manage_lessons.html
+│       │   └── manage_vocabulary.html
+│       ├── base.html       # Base template for user-facing pages
 │       ├── free_content.html
+│       ├── index.html      # Homepage
+│       ├── lesson_view.html
+│       ├── lessons.html
+│       ├── login.html      # User login page
 │       ├── premium_content.html
-│       └── admin/          # Admin panel templates
-├── instance/               # Instance-specific files
-│   ├── config.py          # Configuration settings
-│   └── site.db            # SQLite database
-├── templates/              # Legacy template directory
-│   └── admin/             # Legacy admin templates
-├── .env                   # Environment variables
-├── requirements.txt       # Python dependencies
-├── run.py                # Application entry point
-├── create_admin.py       # Admin user creation script
-├── setup_unified_auth.py # Database setup script
-├── migrate_database.py   # Database migration script
-├── redirect_old_admin.py # Legacy admin redirect
-├── UNIFIED_AUTH_README.md # Authentication system docs
-├── ADMIN_CONTENT_CREATION_GUIDE.md # Admin guide
-└── Documentation.md      # This file
+│       └── register.html   # User registration page
+├── instance/               # Instance folder (contains database, potentially config files if not using .env)
+│   └── site.db             # SQLite database file (primary database)
+├── deprecated/             # Older or unused files
+│   ├── AGENTS.md           # Deprecated agent instructions
+│   ├── README.md           # Deprecated README
+│   ├── app_old_backup.py   # Old backup of application logic
+│   ├── brainstorming.md    # Deprecated brainstorming document
+│   ├── legacy_templates/   # Deprecated templates
+│   └── redirect_old_admin.py # Script for redirecting from old admin paths
+├── .env                    # Environment variables (recommended for secrets like SECRET_KEY, DATABASE_URL)
+├── .gitignore              # Specifies intentionally untracked files that Git should ignore
+├── ADMIN_CONTENT_CREATION_GUIDE.md # Guide for admins on creating content
+├── Documentation.md        # This detailed project documentation
+├── README.md               # Project overview, setup, and quick start guide
+├── UNIFIED_AUTH_README.md  # Documentation specific to the authentication system
+├── create_admin.py         # Script to create an initial admin user
+├── lesson_models.py        # Contains SQLAlchemy models for the lesson system (Note: may have been merged into app/models.py)
+├── migrate_database.py     # Script for generic database migrations or setup tasks
+├── migrate_lesson_system.py # Script to set up or migrate the lesson system database tables
+├── requirements.txt        # Python package dependencies
+├── run.py                  # Main script to run the Flask application
+└── setup_unified_auth.py   # Script to set up the initial database schema for unified authentication
 ```
+*Note: A `static/` directory for custom CSS/JS is not present. Styling is primarily handled by Bootstrap (likely via CDN) and inline styles or script tags within templates.*
 
 ---
 
@@ -593,11 +616,11 @@ python-dotenv==1.0.0
    ```
 
 ### Code Organization
-- **Models** - Database schema in `app/models.py`
-- **Views** - Route handlers in `app/routes.py`
-- **Forms** - WTForms classes in `app/forms.py`
-- **Templates** - Jinja2 templates in `app/templates/`
-- **Static Files** - CSS/JS in `app/static/` (if needed)
+- **Models** - Database schema in `app/models.py` (and potentially `lesson_models.py`, though this might be merged into `app/models.py`).
+- **Views** - Route handlers in `app/routes.py`.
+- **Forms** - WTForms classes in `app/forms.py`.
+- **Templates** - Jinja2 templates in `app/templates/`.
+- **Static Files** - Currently, no dedicated `app/static/` or `static/` directory is observed. Static assets like CSS and JavaScript are primarily managed via Bootstrap CDN and potentially inline/internal styles/scripts in templates. If custom static files are added, they would typically reside in `app/static/`.
 
 ### Database Management
 ```bash
@@ -659,9 +682,9 @@ python setup_unified_auth.py
 python create_admin.py
 ```
 
-#### 5. Static Files Not Loading
-**Problem**: CSS/JS files return 404
-**Solution**: Check Flask static file configuration and file paths
+#### 5. Static Files Not Loading (If Applicable)
+**Problem**: Custom CSS/JS files return 404 (Note: currently, the project doesn't seem to use a local `static` folder; assets are likely CDN-based).
+**Solution**: If local static files are added (e.g., in `app/static/`), ensure Flask static file configuration is correct (`static_folder='static'` in Flask app setup or blueprint, and `url_for('static', filename='path/to/file')` in templates). Verify file paths.
 
 ### Debug Mode
 Enable debug mode for detailed error messages:

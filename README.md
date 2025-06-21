@@ -99,38 +99,63 @@ A comprehensive web-based Japanese learning platform featuring structured lesson
 ## Project Structure
 
 ```
-├── app.py                  # Main Flask application, includes models, routes, and API logic
-├── requirements.txt        # Python dependencies
-├── README.md               # This file
-├── AGENTS.md               # Instructions for AI agents working on this project
-├── brainstorming.md        # Initial ideas for the full learning platform
-├── japanese_learning.db    # SQLite database file (created on first run)
-├── static/                 # Static assets (CSS, JS - currently minimal)
-│   ├── css/
-│   └── js/
-└── templates/              # HTML templates (Jinja2)
-    └── admin/
-        ├── base_admin.html         # Base template for admin pages
-        ├── admin_index.html        # Admin dashboard home
-        ├── login.html              # Admin login page
-        ├── manage_kana.html        # Page for managing Kana
-        ├── manage_kanji.html       # Page for managing Kanji
-        ├── manage_vocabulary.html  # Page for managing Vocabulary
-        └── manage_grammar.html     # Page for managing Grammar
+├── app/                    # Main Flask application package
+│   ├── __init__.py         # Application factory, initializes Flask app and extensions
+│   ├── forms.py            # WTForms definitions for login, registration, content management
+│   ├── models.py           # SQLAlchemy database models for users, content, lessons
+│   ├── routes.py           # Flask routes and view functions for user and admin interfaces
+│   └── templates/          # Jinja2 templates for rendering HTML pages
+│       ├── admin/          # Templates specific to the admin panel
+│       │   ├── admin_index.html
+│       │   ├── base_admin.html
+│       │   ├── login.html (Note: admin login might be unified or separate)
+│       │   ├── manage_categories.html
+│       │   ├── manage_grammar.html
+│       │   ├── manage_kana.html
+│       │   ├── manage_kanji.html
+│       │   ├── manage_lessons.html
+│       │   └── manage_vocabulary.html
+│       ├── base.html       # Base template for user-facing pages
+│       ├── free_content.html
+│       ├── index.html      # Homepage
+│       ├── lesson_view.html
+│       ├── lessons.html
+│       ├── login.html      # User login page
+│       ├── premium_content.html
+│       └── register.html   # User registration page
+├── instance/               # Instance folder (typically contains database, config files)
+│   └── site.db             # SQLite database file (primary database)
+├── deprecated/             # Older or unused files
+│   ├── AGENTS.md           # Deprecated agent instructions
+│   ├── README.md           # Deprecated README
+│   └── ...                 # Other deprecated files and templates
+├── .gitignore              # Specifies intentionally untracked files that Git should ignore
+├── ADMIN_CONTENT_CREATION_GUIDE.md # Guide for admins on creating content
+├── Documentation.md        # Detailed project documentation
+├── README.md               # This file - overview, setup, and quick start
+├── UNIFIED_AUTH_README.md  # Documentation specific to the authentication system
+├── create_admin.py         # Script to create an initial admin user
+├── lesson_models.py        # Contains SQLAlchemy models for the lesson system (may be merged into app/models.py)
+├── migrate_database.py     # Script for database migrations (generic)
+├── migrate_lesson_system.py # Script to set up or migrate the lesson system database tables
+├── requirements.txt        # Python package dependencies
+├── run.py                  # Main script to run the Flask application
+└── setup_unified_auth.py   # Script to set up the initial database schema for unified authentication
 ```
+*Note: The `static/` directory for CSS/JS files is not present in the current root or `app/` directory. Styling is primarily handled by Bootstrap, potentially via CDN links in templates.*
 
 ## For AI Agents
 
-Please refer to `AGENTS.md` for specific instructions and conventions when working on this codebase.
+Please refer to `AGENTS.md` (if a current one exists at the root level) or general best practices for AI agent collaboration. The `deprecated/AGENTS.md` may contain outdated information.
 
 ## Future Development (Post-MVP)
 
 This MVP lays the groundwork. Future development could include:
 *   Developing the student-facing frontend.
 *   Implementing more sophisticated content features (e.g., audio uploads, stroke order diagrams).
-*   Adding user accounts for students.
+*   Adding user accounts for students with enhanced progress tracking.
 *   Implementing learning features like SRS (Spaced Repetition System).
 *   Migrating to a more robust database like PostgreSQL.
 *   Enhancing security and authentication.
 
-Refer to `brainstorming.md` for a broader list of potential features.
+Refer to `deprecated/brainstorming.md` for a broader list of potential features from earlier project phases.
