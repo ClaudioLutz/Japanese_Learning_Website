@@ -1,62 +1,100 @@
-# Japanese Learning Website - Admin Dashboard MVP
+# Japanese Learning Website - Complete Learning Platform
 
-This project is the Minimum Viable Product (MVP) for an admin dashboard designed to allow a non-technical person to add and manage content for a Japanese learning website.
+A comprehensive web-based Japanese learning platform featuring structured lessons, content management, user authentication, and progress tracking. The platform supports both free and premium content with a complete lesson system.
 
-The ideas for the full website are detailed in `brainstorming.md`. This MVP focuses solely on the backend and a simple admin interface for content management.
+## 🌟 Key Features
 
-## Current Features
+### 📚 **Comprehensive Lesson System**
+- **Structured Lessons** - Create lessons combining Kana, Kanji, Vocabulary, Grammar, and multimedia content
+- **Categories & Organization** - Organize lessons into color-coded categories
+- **Prerequisites** - Set lesson dependencies for progressive learning
+- **Free & Premium Content** - Subscription-based access control
+- **Progress Tracking** - Detailed user progress with completion percentages
 
-*   **Content Management for:**
-    *   Kana (Hiragana, Katakana)
-    *   Kanji
-    *   Vocabulary
-    *   Grammar Rules
-*   **CRUD Operations:** Admins can Create, Read, Update, and Delete entries for each content type.
-*   **Admin Dashboard:** A web interface for managing content.
-*   **Basic Authentication:** The admin dashboard is protected by a simple username/password login.
+### 👥 **User Management**
+- **User Registration & Authentication** - Secure user accounts with Flask-Login
+- **Subscription Tiers** - Free and Premium user levels
+- **Admin Panel** - Complete administrative interface for content management
+- **Role-Based Access** - Different permissions for users and administrators
 
-## Technology Stack
+### 📖 **Content Management**
+- **Kana (Hiragana & Katakana)** - Character learning with romanization
+- **Kanji** - Chinese characters with readings, meanings, and JLPT levels
+- **Vocabulary** - Words with readings, meanings, and example sentences
+- **Grammar** - Grammar rules with explanations and examples
+- **Multimedia Support** - Text, images, videos, and audio content
 
-*   **Backend:** Python (Flask)
-*   **Database:** SQLite (file-based, `japanese_learning.db` will be created in the root directory)
-*   **Frontend (Admin Interface):** HTML, CSS, JavaScript (served by Flask templates)
-*   **ORM:** Flask-SQLAlchemy
+### 📊 **Learning Features**
+- **Interactive Lessons** - Step-by-step lesson progression
+- **Progress Tracking** - Individual content completion tracking
+- **Time Monitoring** - Track time spent on lessons
+- **Completion Certificates** - Visual completion indicators
+- **Filtering & Search** - Find lessons by category, difficulty, and type
 
-## Setup and Running the Application
+## 🛠️ Technology Stack
 
-1.  **Clone the repository (if you haven't already):**
-    ```bash
-    git clone <repository-url>
-    cd <repository-directory>
-    ```
+- **Backend:** Python (Flask)
+- **Database:** SQLite (easily upgradeable to PostgreSQL/MySQL)
+- **Frontend:** HTML5, CSS3, JavaScript (ES6+), Bootstrap 5.3.3
+- **Authentication:** Flask-Login with secure session management
+- **ORM:** SQLAlchemy with Flask-SQLAlchemy
+- **Forms:** Flask-WTF with CSRF protection
 
-2.  **Create and activate a virtual environment (recommended):**
-    ```bash
-    python -m venv venv
-    ```
-    *   On macOS/Linux: `source venv/bin/activate`
-    *   On Windows: `venv\Scripts\activate`
+## 🚀 Quick Start
 
-3.  **Install dependencies:**
-    ```bash
-    pip install -r requirements.txt
-    ```
+### Prerequisites
+- Python 3.8 or higher
+- pip (Python package installer)
+- Git
 
-4.  **Run the Flask development server:**
-    ```bash
-    python app.py
-    ```
-    The application will start, and the database file (`japanese_learning.db`) will be created if it doesn't exist.
+### Installation
 
-5.  **Access the Admin Dashboard:**
-    Open your web browser and go to `http://127.0.0.1:5000/` (it will redirect to `/admin/login`).
+1. **Clone the repository:**
+   ```bash
+   git clone <repository-url>
+   cd Japanese_Learning_Website
+   ```
 
-6.  **Admin Login:**
-    *   **Username:** `admin`
-    *   **Password:** `password123`
-    (These are hardcoded in `app.py` for this MVP).
+2. **Create and activate virtual environment:**
+   ```bash
+   python -m venv venv
+   
+   # Windows
+   venv\Scripts\activate
+   
+   # macOS/Linux
+   source venv/bin/activate
+   ```
 
-    Upon successful login, you will be redirected to the admin dashboard home page (`http://127.0.0.1:5000/admin/`). From there, you can navigate to manage Kana, Kanji, Vocabulary, and Grammar.
+3. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Set up the database:**
+   ```bash
+   # Initialize the main database
+   python setup_unified_auth.py
+   
+   # Set up the lesson system
+   python migrate_lesson_system.py
+   
+   # Create admin user
+   python create_admin.py
+   ```
+
+5. **Run the application:**
+   ```bash
+   python run.py
+   ```
+
+6. **Access the application:**
+   - **Main Site:** http://localhost:5000
+   - **Admin Panel:** http://localhost:5000/admin
+
+### Default Credentials
+- **Admin:** admin@example.com / admin123
+- **Test User:** user@example.com / password123
 
 ## Project Structure
 

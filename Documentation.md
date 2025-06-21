@@ -679,21 +679,205 @@ logging.basicConfig(level=logging.DEBUG)
 
 ---
 
+## Lesson System
+
+### Overview
+The lesson system provides a comprehensive way for administrators to create structured learning experiences that combine existing content (Kana, Kanji, Vocabulary, Grammar) with custom multimedia content. Users can browse, access, and track their progress through lessons based on their subscription level and completed prerequisites.
+
+### Key Features
+
+#### 1. Lesson Categories
+- **Category Management** - Create and organize lessons into categories
+- **Color Coding** - Visual categorization with custom colors
+- **Category Filtering** - Users can filter lessons by category
+
+#### 2. Lesson Types
+- **Free Lessons** - Available to all logged-in users
+- **Premium Lessons** - Restricted to premium subscribers
+- **Access Control** - Automatic enforcement based on subscription level
+
+#### 3. Prerequisites System
+- **Lesson Dependencies** - Lessons can require completion of other lessons
+- **Progressive Learning** - Ensures users follow a structured learning path
+- **Access Validation** - Automatic checking of prerequisite completion
+
+#### 4. Content Management
+- **Mixed Content Types** - Combine existing content with custom multimedia
+- **Content Ordering** - Specify the sequence of content within lessons
+- **Optional Content** - Mark content items as optional
+- **Rich Media Support** - Text, images, videos, and audio content
+
+#### 5. Progress Tracking
+- **Individual Progress** - Track completion of each content item
+- **Overall Progress** - Calculate lesson completion percentage
+- **Time Tracking** - Monitor time spent on lessons
+- **Completion Status** - Mark lessons as completed
+
+### Database Schema
+
+#### Lesson Category Table
+```sql
+CREATE TABLE lesson_category (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR(100) UNIQUE NOT NULL,
+    description TEXT,
+    color_code VARCHAR(7) DEFAULT '#007bff',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+#### Lesson Table
+```sql
+CREATE TABLE lesson (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title VARCHAR(200) NOT NULL,
+    description TEXT,
+    lesson_type VARCHAR(20) NOT NULL, -- 'free' or 'premium'
+    category_id INTEGER,
+    difficulty_level INTEGER, -- 1-5
+    estimated_duration INTEGER, -- minutes
+    order_index INTEGER DEFAULT 0,
+    is_published BOOLEAN DEFAULT FALSE,
+    thumbnail_url VARCHAR(255),
+    video_intro_url VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (category_id) REFERENCES lesson_category (id)
+);
+```
+
+#### Lesson Prerequisites Table
+```sql
+CREATE TABLE lesson_prerequisite (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    lesson_id INTEGER NOT NULL,
+    prerequisite_lesson_id INTEGER NOT NULL,
+    FOREIGN KEY (lesson_id) REFERENCES lesson (id) ON DELETE CASCADE,
+    FOREIGN KEY (prerequisite_lesson_id) REFERENCES lesson (id) ON DELETE CASCADE,
+    UNIQUE(lesson_id, prerequisite_lesson_id)
+);
+```
+
+#### Lesson Content Table
+```sql
+CREATE TABLE lesson_content (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    lesson_id INTEGER NOT NULL,
+    content_type VARCHAR(20) NOT NULL, -- 'kana', 'kanji', 'vocabulary', 'grammar', 'text', 'image', 'video', 'audio'
+    content_id INTEGER, -- NULL for multimedia content
+    title VARCHAR(200),
+    content_text TEXT,
+    media_url VARCHAR(255),
+    order_index INTEGER DEFAULT 0,
+    is_optional BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (lesson_id) REFERENCES lesson (id) ON DELETE CASCADE
+);
+```
+
+#### User Lesson Progress Table
+```sql
+CREATE TABLE user_lesson_progress (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    lesson_id INTEGER NOT NULL,
+    started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    completed_at TIMESTAMP,
+    is_completed BOOLEAN DEFAULT FALSE,
+    progress_percentage INTEGER DEFAULT 0, -- 0-100
+    time_spent INTEGER DEFAULT 0, -- minutes
+    last_accessed TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    content_progress TEXT, -- JSON string of content item completion
+    FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
+    FOREIGN KEY (lesson_id) REFERENCES lesson (id) ON DELETE CASCADE,
+    UNIQUE(user_id, lesson_id)
+);
+```
+
+### API Endpoints
+
+#### Lesson Management (Admin)
+```
+GET    /api/admin/lessons              # List all lessons
+POST   /api/admin/lessons/new          # Create new lesson
+GET    /api/admin/lessons/{id}         # Get specific lesson
+PUT    /api/admin/lessons/{id}/edit    # Update lesson
+DELETE /api/admin/lessons/{id}/delete  # Delete lesson
+```
+
+#### Category Management (Admin)
+```
+GET    /api/admin/categories           # List all categories
+POST   /api/admin/categories/new       # Create new category
+GET    /api/admin/categories/{id}      # Get specific category
+PUT    /api/admin/categories/{id}/edit # Update category
+DELETE /api/admin/categories/{id}/delete # Delete category
+```
+
+#### Lesson Content Management (Admin)
+```
+GET    /api/admin/lessons/{id}/content        # List lesson content
+POST   /api/admin/lessons/{id}/content/new    # Add content to lesson
+DELETE /api/admin/lessons/{id}/content/{content_id}/delete # Remove content
+```
+
+#### User Lesson Access
+```
+GET    /api/lessons                    # Get accessible lessons for user
+POST   /api/lessons/{id}/progress      # Update lesson progress
+```
+
+### User Interface
+
+#### Admin Interface
+- **Lesson Management** (`/admin/manage/lessons`) - Create, edit, and manage lessons
+- **Category Management** (`/admin/manage/categories`) - Organize lesson categories
+- **Content Builder** - Add and organize content within lessons
+- **Publishing Controls** - Publish/unpublish lessons
+
+#### User Interface
+- **Lesson Browser** (`/lessons`) - Browse and filter available lessons
+- **Lesson Viewer** (`/lessons/{id}`) - View lesson content and track progress
+- **Progress Tracking** - Visual progress indicators and completion status
+
+### Migration and Setup
+
+#### Database Migration
+Run the lesson system migration script:
+```bash
+python migrate_lesson_system.py
+```
+
+This script will:
+- Create all lesson-related database tables
+- Add default lesson categories
+- Create sample lessons for testing
+
+#### Default Categories
+The migration creates these default categories:
+- Hiragana Basics
+- Katakana Basics
+- Essential Kanji
+- Basic Vocabulary
+- Grammar Fundamentals
+- JLPT N5
+- JLPT N4
+
 ## Future Enhancements
 
 ### Planned Features
 
 #### 1. Enhanced Learning Tools
-- **Progress Tracking** - User learning progress analytics
 - **Spaced Repetition** - Intelligent review scheduling
 - **Quiz System** - Interactive learning assessments
 - **Audio Integration** - Native pronunciation support
+- **Lesson Analytics** - Detailed learning analytics
 
 #### 2. Content Improvements
-- **Rich Media Support** - Images, videos, audio files
 - **Content Versioning** - Track content changes over time
 - **Bulk Import/Export** - CSV/JSON content management
-- **Content Categories** - Organized learning paths
+- **Advanced Prerequisites** - Complex prerequisite logic
+- **Lesson Templates** - Reusable lesson structures
 
 #### 3. User Experience
 - **Mobile App** - Native iOS/Android applications

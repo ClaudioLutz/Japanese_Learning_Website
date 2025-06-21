@@ -1,0 +1,304 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Manage Categories - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Manage Lesson Categories</h2>
+                <button type="button" class="btn btn-primary" onclick="openModal('addCategoryModal')">
+                    <i class="fas fa-plus"></i> Add New Category
+                </button>
+            </div>
+
+            <!-- Categories Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">All Categories</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="categoriesTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Color</th>
+                                    <th>Lessons Count</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Content will be loaded via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Category Modal -->
+<div id="addCategoryModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header">
+            <h4>Add New Category</h4>
+            <span class="close" onclick="closeModal('addCategoryModal')">&times;</span>
+        </div>
+        <form id="addCategoryForm">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="categoryName">Name *</label>
+                    <input type="text" id="categoryName" name="name" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="categoryDescription">Description</label>
+                    <textarea id="categoryDescription" name="description" class="form-control" rows="3"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="categoryColor">Color</label>
+                    <div class="input-group">
+                        <input type="color" id="categoryColor" name="color_code" class="form-control" value="#007bff" style="height: 38px;">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="colorPreview" style="background-color: #007bff; color: white;">Preview</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('addCategoryModal')">Cancel</button>
+                <button type="submit" class="btn btn-primary">Add Category</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Category Modal -->
+<div id="editCategoryModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header">
+            <h4>Edit Category</h4>
+            <span class="close" onclick="closeModal('editCategoryModal')">&times;</span>
+        </div>
+        <form id="editCategoryForm">
+            <input type="hidden" id="editCategoryId" name="id">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="editCategoryName">Name *</label>
+                    <input type="text" id="editCategoryName" name="name" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editCategoryDescription">Description</label>
+                    <textarea id="editCategoryDescription" name="description" class="form-control" rows="3"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editCategoryColor">Color</label>
+                    <div class="input-group">
+                        <input type="color" id="editCategoryColor" name="color_code" class="form-control" style="height: 38px;">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="editColorPreview" style="color: white;">Preview</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('editCategoryModal')">Cancel</button>
+                <button type="submit" class="btn btn-primary">Update Category</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Load categories on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadCategories();
+    
+    // Color picker event listeners
+    document.getElementById('categoryColor').addEventListener('change', function() {
+        document.getElementById('colorPreview').style.backgroundColor = this.value;
+    });
+    
+    document.getElementById('editCategoryColor').addEventListener('change', function() {
+        document.getElementById('editColorPreview').style.backgroundColor = this.value;
+    });
+});
+
+// Load all categories
+async function loadCategories() {
+    try {
+        const response = await fetch('/api/admin/categories');
+        const categories = await response.json();
+        
+        const tbody = document.querySelector('#categoriesTable tbody');
+        tbody.innerHTML = '';
+        
+        for (const category of categories) {
+            // Get lesson count for this category
+            const lessonsResponse = await fetch('/api/admin/lessons');
+            const lessons = await lessonsResponse.json();
+            const lessonCount = lessons.filter(lesson => lesson.category_id === category.id).length;
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${category.id}</td>
+                <td>${category.name}</td>
+                <td>${category.description || 'No description'}</td>
+                <td>
+                    <span class="badge" style="background-color: ${category.color_code}; color: white;">
+                        ${category.color_code}
+                    </span>
+                </td>
+                <td>${lessonCount}</td>
+                <td>${new Date(category.created_at).toLocaleDateString()}</td>
+                <td>
+                    <button class="btn btn-sm btn-warning" onclick="editCategory(${category.id})">Edit</button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteCategory(${category.id})" ${lessonCount > 0 ? 'disabled title="Cannot delete category with lessons"' : ''}>Delete</button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        }
+    } catch (error) {
+        console.error('Error loading categories:', error);
+        alert('Error loading categories');
+    }
+}
+
+// Add new category
+document.getElementById('addCategoryForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData.entries());
+    
+    // Convert empty description to null
+    if (data.description === '') data.description = null;
+    
+    try {
+        const response = await fetch('/api/admin/categories/new', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        
+        if (response.ok) {
+            closeModal('addCategoryModal');
+            this.reset();
+            document.getElementById('colorPreview').style.backgroundColor = '#007bff';
+            loadCategories();
+            alert('Category added successfully!');
+        } else {
+            const error = await response.json();
+            alert('Error: ' + error.error);
+        }
+    } catch (error) {
+        console.error('Error adding category:', error);
+        alert('Error adding category');
+    }
+});
+
+// Edit category
+async function editCategory(id) {
+    try {
+        const response = await fetch(`/api/admin/categories/${id}`);
+        const category = await response.json();
+        
+        document.getElementById('editCategoryId').value = category.id;
+        document.getElementById('editCategoryName').value = category.name;
+        document.getElementById('editCategoryDescription').value = category.description || '';
+        document.getElementById('editCategoryColor').value = category.color_code;
+        document.getElementById('editColorPreview').style.backgroundColor = category.color_code;
+        
+        openModal('editCategoryModal');
+    } catch (error) {
+        console.error('Error loading category:', error);
+        alert('Error loading category');
+    }
+}
+
+// Update category
+document.getElementById('editCategoryForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData.entries());
+    const id = data.id;
+    delete data.id;
+    
+    // Convert empty description to null
+    if (data.description === '') data.description = null;
+    
+    try {
+        const response = await fetch(`/api/admin/categories/${id}/edit`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        
+        if (response.ok) {
+            closeModal('editCategoryModal');
+            loadCategories();
+            alert('Category updated successfully!');
+        } else {
+            const error = await response.json();
+            alert('Error: ' + error.error);
+        }
+    } catch (error) {
+        console.error('Error updating category:', error);
+        alert('Error updating category');
+    }
+});
+
+// Delete category
+async function deleteCategory(id) {
+    if (!confirm('Are you sure you want to delete this category? This action cannot be undone.')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/admin/categories/${id}/delete`, {
+            method: 'DELETE'
+        });
+        
+        if (response.ok) {
+            loadCategories();
+            alert('Category deleted successfully!');
+        } else {
+            const error = await response.json();
+            alert('Error: ' + error.error);
+        }
+    } catch (error) {
+        console.error('Error deleting category:', error);
+        alert('Error deleting category');
+    }
+}
+
+// Modal functions
+function openModal(modalId) {
+    document.getElementById(modalId).style.display = "block";
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = "none";
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    });
+}
+</script>
+{% endblock %}

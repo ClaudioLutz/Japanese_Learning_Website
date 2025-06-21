@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+
+{% block title %}Lessons - Japanese Learning{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">Japanese Learning Lessons</h1>
+            
+            <!-- Filter Controls -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="categoryFilter" class="form-label">Category</label>
+                            <select id="categoryFilter" class="form-select">
+                                <option value="">All Categories</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="typeFilter" class="form-label">Type</label>
+                            <select id="typeFilter" class="form-select">
+                                <option value="">All Types</option>
+                                <option value="free">Free</option>
+                                <option value="premium">Premium</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="difficultyFilter" class="form-label">Difficulty</label>
+                            <select id="difficultyFilter" class="form-select">
+                                <option value="">All Levels</option>
+                                <option value="1">Beginner (1)</option>
+                                <option value="2">Elementary (2)</option>
+                                <option value="3">Intermediate (3)</option>
+                                <option value="4">Advanced (4)</option>
+                                <option value="5">Expert (5)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button type="button" class="btn btn-primary" onclick="applyFilters()">Apply Filters</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lessons Grid -->
+            <div id="lessonsContainer" class="row">
+                <!-- Lessons will be loaded here -->
+            </div>
+            
+            <!-- Loading Spinner -->
+            <div id="loadingSpinner" class="text-center my-5" style="display: none;">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+            
+            <!-- No Lessons Message -->
+            <div id="noLessonsMessage" class="text-center my-5" style="display: none;">
+                <h4>No lessons found</h4>
+                <p class="text-muted">Try adjusting your filters or check back later for new content.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let allLessons = [];
+let categories = [];
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadLessons();
+    loadCategories();
+});
+
+async function loadLessons() {
+    showLoading(true);
+    try {
+        const response = await fetch('/api/lessons');
+        allLessons = await response.json();
+        displayLessons(allLessons);
+    } catch (error) {
+        console.error('Error loading lessons:', error);
+        showError('Failed to load lessons. Please try again later.');
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function loadCategories() {
+    try {
+        const response = await fetch('/api/admin/categories');
+        categories = await response.json();
+        
+        const categoryFilter = document.getElementById('categoryFilter');
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category.id;
+            option.textContent = category.name;
+            categoryFilter.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Error loading categories:', error);
+    }
+}
+
+function displayLessons(lessons) {
+    const container = document.getElementById('lessonsContainer');
+    const noLessonsMessage = document.getElementById('noLessonsMessage');
+    
+    container.innerHTML = '';
+    
+    if (lessons.length === 0) {
+        noLessonsMessage.style.display = 'block';
+        return;
+    }
+    
+    noLessonsMessage.style.display = 'none';
+    
+    lessons.forEach(lesson => {
+        const lessonCard = createLessonCard(lesson);
+        container.appendChild(lessonCard);
+    });
+}
+
+function createLessonCard(lesson) {
+    const col = document.createElement('div');
+    col.className = 'col-md-6 col-lg-4 mb-4';
+    
+    const accessible = lesson.accessible;
+    const progress = lesson.progress;
+    const progressPercentage = progress ? progress.progress_percentage : 0;
+    
+    col.innerHTML = `
+        <div class="card h-100 ${!accessible ? 'border-warning' : ''}">
+            ${lesson.thumbnail_url ? `<img src="${lesson.thumbnail_url}" class="card-img-top" alt="${lesson.title}" style="height: 200px; object-fit: cover;">` : ''}
+            <div class="card-body d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 class="card-title">${lesson.title}</h5>
+                    <span class="badge ${lesson.lesson_type === 'free' ? 'bg-success' : 'bg-warning'}">${lesson.lesson_type}</span>
+                </div>
+                
+                ${lesson.category_name ? `<span class="badge bg-info mb-2">${lesson.category_name}</span>` : ''}
+                
+                <p class="card-text">${lesson.description || 'No description available.'}</p>
+                
+                <div class="mt-auto">
+                    <div class="row text-center mb-3">
+                        ${lesson.difficulty_level ? `<div class="col"><small class="text-muted">Difficulty: ${lesson.difficulty_level}/5</small></div>` : ''}
+                        ${lesson.estimated_duration ? `<div class="col"><small class="text-muted">Duration: ${lesson.estimated_duration} min</small></div>` : ''}
+                    </div>
+                    
+                    ${progress ? `
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <small class="text-muted">Progress</small>
+                                <small class="text-muted">${progressPercentage}%</small>
+                            </div>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar" role="progressbar" style="width: ${progressPercentage}%" aria-valuenow="${progressPercentage}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    ${accessible ? `
+                        <a href="/lessons/${lesson.id}" class="btn btn-primary w-100">
+                            ${progress ? (progress.is_completed ? 'Review Lesson' : 'Continue Lesson') : 'Start Lesson'}
+                        </a>
+                    ` : `
+                        <button class="btn btn-outline-warning w-100" disabled title="${lesson.access_message}">
+                            ${lesson.access_message}
+                        </button>
+                    `}
+                </div>
+            </div>
+        </div>
+    `;
+    
+    return col;
+}
+
+function applyFilters() {
+    const categoryFilter = document.getElementById('categoryFilter').value;
+    const typeFilter = document.getElementById('typeFilter').value;
+    const difficultyFilter = document.getElementById('difficultyFilter').value;
+    
+    let filteredLessons = allLessons.filter(lesson => {
+        if (categoryFilter && lesson.category_id != categoryFilter) return false;
+        if (typeFilter && lesson.lesson_type !== typeFilter) return false;
+        if (difficultyFilter && lesson.difficulty_level != difficultyFilter) return false;
+        return true;
+    });
+    
+    displayLessons(filteredLessons);
+}
+
+function showLoading(show) {
+    document.getElementById('loadingSpinner').style.display = show ? 'block' : 'none';
+}
+
+function showError(message) {
+    const container = document.getElementById('lessonsContainer');
+    container.innerHTML = `
+        <div class="col-12">
+            <div class="alert alert-danger" role="alert">
+                ${message}
+            </div>
+        </div>
+    `;
+}
+</script>
+{% endblock %}

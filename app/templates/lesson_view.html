@@ -1,0 +1,298 @@
+{% extends "base.html" %}
+
+{% block title %}{{ lesson.title }} - Japanese Learning{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Lesson Header -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h1 class="card-title">{{ lesson.title }}</h1>
+                            <p class="card-text">{{ lesson.description or 'No description available.' }}</p>
+                            
+                            <div class="d-flex flex-wrap gap-2 mb-3">
+                                <span class="badge {{ 'bg-success' if lesson.lesson_type == 'free' else 'bg-warning' }}">
+                                    {{ lesson.lesson_type | title }}
+                                </span>
+                                {% if lesson.category %}
+                                <span class="badge bg-info">{{ lesson.category.name }}</span>
+                                {% endif %}
+                                {% if lesson.difficulty_level %}
+                                <span class="badge bg-secondary">Difficulty: {{ lesson.difficulty_level }}/5</span>
+                                {% endif %}
+                                {% if lesson.estimated_duration %}
+                                <span class="badge bg-dark">{{ lesson.estimated_duration }} minutes</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            {% if lesson.thumbnail_url %}
+                            <img src="{{ lesson.thumbnail_url }}" class="img-fluid rounded" alt="{{ lesson.title }}">
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Progress Bar -->
+                    {% if progress %}
+                    <div class="mt-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h6 class="mb-0">Your Progress</h6>
+                            <span class="text-muted">{{ progress.progress_percentage }}%</span>
+                        </div>
+                        <div class="progress mb-2">
+                            <div class="progress-bar" role="progressbar" 
+                                 style="width: {{ progress.progress_percentage }}%" 
+                                 aria-valuenow="{{ progress.progress_percentage }}" 
+                                 aria-valuemin="0" aria-valuemax="100">
+                            </div>
+                        </div>
+                        <div class="row text-center">
+                            {% if progress.time_spent %}
+                            <div class="col">
+                                <small class="text-muted">Time Spent: {{ progress.time_spent }} minutes</small>
+                            </div>
+                            {% endif %}
+                            {% if progress.started_at %}
+                            <div class="col">
+                                <small class="text-muted">Started: {{ progress.started_at.strftime('%Y-%m-%d') }}</small>
+                            </div>
+                            {% endif %}
+                            {% if progress.completed_at %}
+                            <div class="col">
+                                <small class="text-success">Completed: {{ progress.completed_at.strftime('%Y-%m-%d') }}</small>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Video Introduction -->
+            {% if lesson.video_intro_url %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Introduction Video</h5>
+                </div>
+                <div class="card-body">
+                    <div class="ratio ratio-16x9">
+                        <iframe src="{{ lesson.video_intro_url }}" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Lesson Content -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Lesson Content</h5>
+                </div>
+                <div class="card-body">
+                    {% if lesson.content_items %}
+                        <div id="lessonContent">
+                            {% for content in lesson.content_items | sort(attribute='order_index') %}
+                            <div class="content-item mb-4 p-3 border rounded" data-content-id="{{ content.id }}">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="mb-0">
+                                        {{ content.title or (content.content_type | title + ' #' + (content.content_id | string if content.content_id else 'Custom')) }}
+                                        {% if content.is_optional %}
+                                        <span class="badge bg-warning ms-2">Optional</span>
+                                        {% endif %}
+                                    </h6>
+                                    <button class="btn btn-sm btn-outline-success mark-complete-btn" 
+                                            onclick="markContentComplete({{ content.id }})"
+                                            {% if progress and progress.get_content_progress().get(content.id | string) %}
+                                            style="display: none;"
+                                            {% endif %}>
+                                        Mark Complete
+                                    </button>
+                                    <span class="badge bg-success completed-badge" 
+                                          {% if not (progress and progress.get_content_progress().get(content.id | string)) %}
+                                          style="display: none;"
+                                          {% endif %}>
+                                        ✓ Completed
+                                    </span>
+                                </div>
+                                
+                                <div class="content-body">
+                                    {% if content.content_type in ['kana', 'kanji', 'vocabulary', 'grammar'] %}
+                                        {% set content_data = content.get_content_data() %}
+                                        {% if content_data %}
+                                            {% if content.content_type == 'kana' %}
+                                                <div class="row">
+                                                    <div class="col-md-2 text-center">
+                                                        <h2 class="text-primary">{{ content_data.character }}</h2>
+                                                    </div>
+                                                    <div class="col-md-10">
+                                                        <p><strong>Romanization:</strong> {{ content_data.romanization }}</p>
+                                                        <p><strong>Type:</strong> {{ content_data.type | title }}</p>
+                                                        {% if content_data.stroke_order_info %}
+                                                        <p><strong>Stroke Order:</strong> {{ content_data.stroke_order_info }}</p>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            {% elif content.content_type == 'kanji' %}
+                                                <div class="row">
+                                                    <div class="col-md-2 text-center">
+                                                        <h2 class="text-primary">{{ content_data.character }}</h2>
+                                                    </div>
+                                                    <div class="col-md-10">
+                                                        <p><strong>Meaning:</strong> {{ content_data.meaning }}</p>
+                                                        {% if content_data.onyomi %}
+                                                        <p><strong>On'yomi:</strong> {{ content_data.onyomi }}</p>
+                                                        {% endif %}
+                                                        {% if content_data.kunyomi %}
+                                                        <p><strong>Kun'yomi:</strong> {{ content_data.kunyomi }}</p>
+                                                        {% endif %}
+                                                        {% if content_data.jlpt_level %}
+                                                        <p><strong>JLPT Level:</strong> N{{ content_data.jlpt_level }}</p>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            {% elif content.content_type == 'vocabulary' %}
+                                                <div class="row">
+                                                    <div class="col-md-3">
+                                                        <h4 class="text-primary">{{ content_data.word }}</h4>
+                                                        <p class="text-muted">{{ content_data.reading }}</p>
+                                                    </div>
+                                                    <div class="col-md-9">
+                                                        <p><strong>Meaning:</strong> {{ content_data.meaning }}</p>
+                                                        {% if content_data.example_sentence_japanese %}
+                                                        <p><strong>Example:</strong> {{ content_data.example_sentence_japanese }}</p>
+                                                        {% if content_data.example_sentence_english %}
+                                                        <p><strong>Translation:</strong> {{ content_data.example_sentence_english }}</p>
+                                                        {% endif %}
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            {% elif content.content_type == 'grammar' %}
+                                                <h5>{{ content_data.title }}</h5>
+                                                <p>{{ content_data.explanation }}</p>
+                                                {% if content_data.structure %}
+                                                <p><strong>Structure:</strong> <code>{{ content_data.structure }}</code></p>
+                                                {% endif %}
+                                                {% if content_data.example_sentences %}
+                                                <p><strong>Examples:</strong> {{ content_data.example_sentences }}</p>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% else %}
+                                            <p class="text-muted">Content not found.</p>
+                                        {% endif %}
+                                    {% else %}
+                                        <!-- Custom content (text, image, video, audio) -->
+                                        {% if content.content_text %}
+                                        <div class="mb-3">{{ content.content_text | safe }}</div>
+                                        {% endif %}
+                                        
+                                        {% if content.media_url %}
+                                            {% if content.content_type == 'image' %}
+                                            <img src="{{ content.media_url }}" class="img-fluid rounded" alt="{{ content.title }}">
+                                            {% elif content.content_type == 'video' %}
+                                            <div class="ratio ratio-16x9">
+                                                <iframe src="{{ content.media_url }}" allowfullscreen></iframe>
+                                            </div>
+                                            {% elif content.content_type == 'audio' %}
+                                            <audio controls class="w-100">
+                                                <source src="{{ content.media_url }}" type="audio/mpeg">
+                                                Your browser does not support the audio element.
+                                            </audio>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <h5 class="text-muted">No content available yet</h5>
+                            <p class="text-muted">This lesson is still being prepared. Please check back later.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="mt-4 d-flex justify-content-between">
+                <a href="{{ url_for('routes.lessons') }}" class="btn btn-outline-secondary">
+                    ← Back to Lessons
+                </a>
+                {% if progress and progress.progress_percentage == 100 %}
+                <div class="text-success">
+                    <i class="fas fa-check-circle"></i> Lesson Completed!
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let startTime = Date.now();
+
+async function markContentComplete(contentId) {
+    try {
+        const response = await fetch(`/api/lessons/{{ lesson.id }}/progress`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                content_id: contentId,
+                time_spent: Math.floor((Date.now() - startTime) / 60000) // minutes
+            })
+        });
+        
+        if (response.ok) {
+            const progress = await response.json();
+            
+            // Update UI
+            const contentItem = document.querySelector(`[data-content-id="${contentId}"]`);
+            const markBtn = contentItem.querySelector('.mark-complete-btn');
+            const completedBadge = contentItem.querySelector('.completed-badge');
+            
+            markBtn.style.display = 'none';
+            completedBadge.style.display = 'inline';
+            
+            // Update progress bar
+            const progressBar = document.querySelector('.progress-bar');
+            if (progressBar) {
+                progressBar.style.width = progress.progress_percentage + '%';
+                progressBar.setAttribute('aria-valuenow', progress.progress_percentage);
+                
+                // Update percentage text
+                const percentageText = document.querySelector('.progress').previousElementSibling.querySelector('.text-muted');
+                if (percentageText) {
+                    percentageText.textContent = progress.progress_percentage + '%';
+                }
+            }
+            
+            // Show completion message if 100%
+            if (progress.progress_percentage === 100) {
+                const completionMessage = document.createElement('div');
+                completionMessage.className = 'alert alert-success mt-3';
+                completionMessage.innerHTML = '<i class="fas fa-trophy"></i> Congratulations! You have completed this lesson!';
+                document.querySelector('.card-body').appendChild(completionMessage);
+            }
+            
+        } else {
+            alert('Error updating progress. Please try again.');
+        }
+    } catch (error) {
+        console.error('Error marking content complete:', error);
+        alert('Error updating progress. Please try again.');
+    }
+}
+
+// Track time spent on page
+window.addEventListener('beforeunload', function() {
+    const timeSpent = Math.floor((Date.now() - startTime) / 60000);
+    if (timeSpent > 0) {
+        navigator.sendBeacon(`/api/lessons/{{ lesson.id }}/progress`, 
+            JSON.stringify({ time_spent: timeSpent }));
+    }
+});
+</script>
+{% endblock %}

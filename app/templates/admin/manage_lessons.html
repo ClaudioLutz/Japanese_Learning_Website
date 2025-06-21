@@ -1,0 +1,535 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Manage Lessons - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Manage Lessons</h2>
+                <button type="button" class="btn btn-primary" onclick="openModal('addLessonModal')">
+                    <i class="fas fa-plus"></i> Add New Lesson
+                </button>
+            </div>
+
+            <!-- Lessons Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">All Lessons</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="lessonsTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Title</th>
+                                    <th>Category</th>
+                                    <th>Type</th>
+                                    <th>Difficulty</th>
+                                    <th>Duration</th>
+                                    <th>Content Items</th>
+                                    <th>Published</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Content will be loaded via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Lesson Modal -->
+<div id="addLessonModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-header">
+            <h4>Add New Lesson</h4>
+            <span class="close" onclick="closeModal('addLessonModal')">&times;</span>
+        </div>
+        <form id="addLessonForm">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="lessonTitle">Title *</label>
+                    <input type="text" id="lessonTitle" name="title" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="lessonDescription">Description</label>
+                    <textarea id="lessonDescription" name="description" class="form-control" rows="3"></textarea>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="lessonType">Type *</label>
+                            <select id="lessonType" name="lesson_type" class="form-control" required>
+                                <option value="">Select Type</option>
+                                <option value="free">Free</option>
+                                <option value="premium">Premium</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="lessonCategory">Category</label>
+                            <select id="lessonCategory" name="category_id" class="form-control">
+                                <option value="">Select Category</option>
+                                <!-- Categories will be loaded via JavaScript -->
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="lessonDifficulty">Difficulty (1-5)</label>
+                            <input type="number" id="lessonDifficulty" name="difficulty_level" class="form-control" min="1" max="5">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="lessonDuration">Duration (minutes)</label>
+                            <input type="number" id="lessonDuration" name="estimated_duration" class="form-control" min="1">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="lessonOrder">Order Index</label>
+                            <input type="number" id="lessonOrder" name="order_index" class="form-control" min="0" value="0">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="lessonThumbnail">Thumbnail URL</label>
+                    <input type="url" id="lessonThumbnail" name="thumbnail_url" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <label for="lessonVideo">Video Intro URL</label>
+                    <input type="url" id="lessonVideo" name="video_intro_url" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <div class="form-check">
+                        <input type="checkbox" id="lessonPublished" name="is_published" class="form-check-input">
+                        <label for="lessonPublished" class="form-check-label">Published</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('addLessonModal')">Cancel</button>
+                <button type="submit" class="btn btn-primary">Add Lesson</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Lesson Modal -->
+<div id="editLessonModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-header">
+            <h4>Edit Lesson</h4>
+            <span class="close" onclick="closeModal('editLessonModal')">&times;</span>
+        </div>
+        <form id="editLessonForm">
+            <input type="hidden" id="editLessonId" name="id">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="editLessonTitle">Title *</label>
+                    <input type="text" id="editLessonTitle" name="title" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editLessonDescription">Description</label>
+                    <textarea id="editLessonDescription" name="description" class="form-control" rows="3"></textarea>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="editLessonType">Type *</label>
+                            <select id="editLessonType" name="lesson_type" class="form-control" required>
+                                <option value="">Select Type</option>
+                                <option value="free">Free</option>
+                                <option value="premium">Premium</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="editLessonCategory">Category</label>
+                            <select id="editLessonCategory" name="category_id" class="form-control">
+                                <option value="">Select Category</option>
+                                <!-- Categories will be loaded via JavaScript -->
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="editLessonDifficulty">Difficulty (1-5)</label>
+                            <input type="number" id="editLessonDifficulty" name="difficulty_level" class="form-control" min="1" max="5">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="editLessonDuration">Duration (minutes)</label>
+                            <input type="number" id="editLessonDuration" name="estimated_duration" class="form-control" min="1">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="editLessonOrder">Order Index</label>
+                            <input type="number" id="editLessonOrder" name="order_index" class="form-control" min="0">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editLessonThumbnail">Thumbnail URL</label>
+                    <input type="url" id="editLessonThumbnail" name="thumbnail_url" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <label for="editLessonVideo">Video Intro URL</label>
+                    <input type="url" id="editLessonVideo" name="video_intro_url" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <div class="form-check">
+                        <input type="checkbox" id="editLessonPublished" name="is_published" class="form-check-input">
+                        <label for="editLessonPublished" class="form-check-label">Published</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('editLessonModal')">Cancel</button>
+                <button type="submit" class="btn btn-primary">Update Lesson</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Lesson Content Modal -->
+<div id="lessonContentModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 800px;">
+        <div class="modal-header">
+            <h4>Manage Lesson Content</h4>
+            <span class="close" onclick="closeModal('lessonContentModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 id="contentLessonTitle">Lesson Content</h5>
+                <button type="button" class="btn btn-sm btn-primary" onclick="openAddContentModal()">
+                    <i class="fas fa-plus"></i> Add Content
+                </button>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-sm" id="lessonContentTable">
+                    <thead>
+                        <tr>
+                            <th>Order</th>
+                            <th>Type</th>
+                            <th>Title</th>
+                            <th>Optional</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Content will be loaded via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeModal('lessonContentModal')">Close</button>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentLessonId = null;
+let categories = [];
+
+// Load lessons and categories on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadLessons();
+    loadCategories();
+});
+
+// Load all lessons
+async function loadLessons() {
+    try {
+        const response = await fetch('/api/admin/lessons');
+        const lessons = await response.json();
+        
+        const tbody = document.querySelector('#lessonsTable tbody');
+        tbody.innerHTML = '';
+        
+        lessons.forEach(lesson => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${lesson.id}</td>
+                <td>${lesson.title}</td>
+                <td><span class="badge badge-info">${lesson.category_name || 'No Category'}</span></td>
+                <td><span class="badge ${lesson.lesson_type === 'free' ? 'badge-success' : 'badge-warning'}">${lesson.lesson_type}</span></td>
+                <td>${lesson.difficulty_level || 'N/A'}</td>
+                <td>${lesson.estimated_duration || 'N/A'} min</td>
+                <td>${lesson.content_count}</td>
+                <td><span class="badge ${lesson.is_published ? 'badge-success' : 'badge-secondary'}">${lesson.is_published ? 'Yes' : 'No'}</span></td>
+                <td>
+                    <button class="btn btn-sm btn-info" onclick="manageContent(${lesson.id}, '${lesson.title}')">Content</button>
+                    <button class="btn btn-sm btn-warning" onclick="editLesson(${lesson.id})">Edit</button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteLesson(${lesson.id})">Delete</button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    } catch (error) {
+        console.error('Error loading lessons:', error);
+        alert('Error loading lessons');
+    }
+}
+
+// Load categories for dropdowns
+async function loadCategories() {
+    try {
+        const response = await fetch('/api/admin/categories');
+        categories = await response.json();
+        
+        const selects = ['lessonCategory', 'editLessonCategory'];
+        selects.forEach(selectId => {
+            const select = document.getElementById(selectId);
+            // Clear existing options except the first one
+            while (select.children.length > 1) {
+                select.removeChild(select.lastChild);
+            }
+            
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category.id;
+                option.textContent = category.name;
+                select.appendChild(option);
+            });
+        });
+    } catch (error) {
+        console.error('Error loading categories:', error);
+    }
+}
+
+// Add new lesson
+document.getElementById('addLessonForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData.entries());
+    
+    // Convert checkbox to boolean
+    data.is_published = document.getElementById('lessonPublished').checked;
+    
+    // Convert empty strings to null for optional fields
+    ['category_id', 'difficulty_level', 'estimated_duration', 'thumbnail_url', 'video_intro_url'].forEach(field => {
+        if (data[field] === '') data[field] = null;
+    });
+    
+    try {
+        const response = await fetch('/api/admin/lessons/new', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        
+        if (response.ok) {
+            closeModal('addLessonModal');
+            this.reset();
+            loadLessons();
+            alert('Lesson added successfully!');
+        } else {
+            const error = await response.json();
+            alert('Error: ' + error.error);
+        }
+    } catch (error) {
+        console.error('Error adding lesson:', error);
+        alert('Error adding lesson');
+    }
+});
+
+// Edit lesson
+async function editLesson(id) {
+    try {
+        const response = await fetch(`/api/admin/lessons/${id}`);
+        const lesson = await response.json();
+        
+        document.getElementById('editLessonId').value = lesson.id;
+        document.getElementById('editLessonTitle').value = lesson.title;
+        document.getElementById('editLessonDescription').value = lesson.description || '';
+        document.getElementById('editLessonType').value = lesson.lesson_type;
+        document.getElementById('editLessonCategory').value = lesson.category_id || '';
+        document.getElementById('editLessonDifficulty').value = lesson.difficulty_level || '';
+        document.getElementById('editLessonDuration').value = lesson.estimated_duration || '';
+        document.getElementById('editLessonOrder').value = lesson.order_index || 0;
+        document.getElementById('editLessonThumbnail').value = lesson.thumbnail_url || '';
+        document.getElementById('editLessonVideo').value = lesson.video_intro_url || '';
+        document.getElementById('editLessonPublished').checked = lesson.is_published;
+        
+        openModal('editLessonModal');
+    } catch (error) {
+        console.error('Error loading lesson:', error);
+        alert('Error loading lesson');
+    }
+}
+
+// Update lesson
+document.getElementById('editLessonForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData.entries());
+    const id = data.id;
+    delete data.id;
+    
+    // Convert checkbox to boolean
+    data.is_published = document.getElementById('editLessonPublished').checked;
+    
+    // Convert empty strings to null for optional fields
+    ['category_id', 'difficulty_level', 'estimated_duration', 'thumbnail_url', 'video_intro_url'].forEach(field => {
+        if (data[field] === '') data[field] = null;
+    });
+    
+    try {
+        const response = await fetch(`/api/admin/lessons/${id}/edit`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        
+        if (response.ok) {
+            closeModal('editLessonModal');
+            loadLessons();
+            alert('Lesson updated successfully!');
+        } else {
+            const error = await response.json();
+            alert('Error: ' + error.error);
+        }
+    } catch (error) {
+        console.error('Error updating lesson:', error);
+        alert('Error updating lesson');
+    }
+});
+
+// Delete lesson
+async function deleteLesson(id) {
+    if (!confirm('Are you sure you want to delete this lesson? This action cannot be undone.')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/admin/lessons/${id}/delete`, {
+            method: 'DELETE'
+        });
+        
+        if (response.ok) {
+            loadLessons();
+            alert('Lesson deleted successfully!');
+        } else {
+            const error = await response.json();
+            alert('Error: ' + error.error);
+        }
+    } catch (error) {
+        console.error('Error deleting lesson:', error);
+        alert('Error deleting lesson');
+    }
+}
+
+// Manage lesson content
+function manageContent(lessonId, lessonTitle) {
+    currentLessonId = lessonId;
+    document.getElementById('contentLessonTitle').textContent = `Content for: ${lessonTitle}`;
+    loadLessonContent(lessonId);
+    openModal('lessonContentModal');
+}
+
+// Load lesson content
+async function loadLessonContent(lessonId) {
+    try {
+        const response = await fetch(`/api/admin/lessons/${lessonId}/content`);
+        const content = await response.json();
+        
+        const tbody = document.querySelector('#lessonContentTable tbody');
+        tbody.innerHTML = '';
+        
+        content.forEach(item => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${item.order_index}</td>
+                <td><span class="badge badge-primary">${item.content_type}</span></td>
+                <td>${item.title || `${item.content_type} #${item.content_id || 'Custom'}`}</td>
+                <td><span class="badge ${item.is_optional ? 'badge-warning' : 'badge-success'}">${item.is_optional ? 'Yes' : 'No'}</span></td>
+                <td>
+                    <button class="btn btn-sm btn-danger" onclick="removeContent(${lessonId}, ${item.id})">Remove</button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    } catch (error) {
+        console.error('Error loading lesson content:', error);
+        alert('Error loading lesson content');
+    }
+}
+
+// Remove content from lesson
+async function removeContent(lessonId, contentId) {
+    if (!confirm('Are you sure you want to remove this content from the lesson?')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/admin/lessons/${lessonId}/content/${contentId}/delete`, {
+            method: 'DELETE'
+        });
+        
+        if (response.ok) {
+            loadLessonContent(lessonId);
+            loadLessons(); // Refresh main table to update content count
+            alert('Content removed successfully!');
+        } else {
+            const error = await response.json();
+            alert('Error: ' + error.error);
+        }
+    } catch (error) {
+        console.error('Error removing content:', error);
+        alert('Error removing content');
+    }
+}
+
+// Modal functions
+function openModal(modalId) {
+    document.getElementById(modalId).style.display = "block";
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = "none";
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    });
+}
+</script>
+{% endblock %}

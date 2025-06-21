@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request,
 from flask_login import login_user, logout_user, login_required, current_user
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError # Import specific exceptions
 from app import db
-from app.models import User, Kana, Kanji, Vocabulary, Grammar
+from app.models import User, Kana, Kanji, Vocabulary, Grammar, LessonCategory, Lesson, LessonContent, LessonPrerequisite, UserLessonProgress
 from app.forms import RegistrationForm, LoginForm
 from functools import wraps # For custom decorators
 
@@ -149,6 +149,49 @@ def admin_manage_vocabulary():
 @admin_required
 def admin_manage_grammar():
     return render_template('admin/manage_grammar.html')
+
+@bp.route('/admin/manage/lessons')
+@login_required
+@admin_required
+def admin_manage_lessons():
+    return render_template('admin/manage_lessons.html')
+
+@bp.route('/admin/manage/categories')
+@login_required
+@admin_required
+def admin_manage_categories():
+    return render_template('admin/manage_categories.html')
+
+# --- Lesson Routes for Users ---
+@bp.route('/lessons')
+@login_required
+def lessons():
+    """Browse available lessons"""
+    return render_template('lessons.html')
+
+@bp.route('/lessons/<int:lesson_id>')
+@login_required
+def view_lesson(lesson_id):
+    """View a specific lesson"""
+    lesson = Lesson.query.get_or_404(lesson_id)
+    
+    # Check if user can access this lesson
+    accessible, message = lesson.is_accessible_to_user(current_user)
+    if not accessible:
+        flash(message, 'warning')
+        return redirect(url_for('routes.lessons'))
+    
+    # Get or create user progress
+    progress = UserLessonProgress.query.filter_by(
+        user_id=current_user.id, lesson_id=lesson_id
+    ).first()
+    
+    if not progress:
+        progress = UserLessonProgress(user_id=current_user.id, lesson_id=lesson_id)
+        db.session.add(progress)
+        db.session.commit()
+    
+    return render_template('lesson_view.html', lesson=lesson, progress=progress)
 
 # --- API Routes for Content Management ---
 
@@ -452,3 +495,265 @@ def delete_grammar(item_id):
     db.session.delete(item)
     db.session.commit()
     return jsonify({"message": "Grammar point deleted successfully"}), 200
+
+# == LESSON CATEGORY CRUD API ==
+@bp.route('/api/admin/categories', methods=['GET'])
+@login_required
+@admin_required
+def list_categories():
+    items = LessonCategory.query.all()
+    return jsonify([model_to_dict(item) for item in items])
+
+@bp.route('/api/admin/categories/new', methods=['POST'])
+@login_required
+@admin_required
+def create_category():
+    data = request.json
+    if not data or not data.get('name'):
+        return jsonify({"error": "Missing required field: name"}), 400
+
+    existing_category = LessonCategory.query.filter_by(name=data['name']).first()
+    if existing_category:
+        return jsonify({"error": "Category name already exists"}), 400
+
+    new_item = LessonCategory(
+        name=data['name'],
+        description=data.get('description'),
+        color_code=data.get('color_code', '#007bff')
+    )
+    try:
+        db.session.add(new_item)
+        db.session.commit()
+        return jsonify(model_to_dict(new_item)), 201
+    except IntegrityError:
+        db.session.rollback()
+        return jsonify({"error": "Database integrity error."}), 409
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({"error": "Database error occurred."}), 500
+
+@bp.route('/api/admin/categories/<int:item_id>', methods=['GET'])
+@login_required
+@admin_required
+def get_category(item_id):
+    item = LessonCategory.query.get_or_404(item_id)
+    return jsonify(model_to_dict(item))
+
+@bp.route('/api/admin/categories/<int:item_id>/edit', methods=['PUT', 'PATCH'])
+@login_required
+@admin_required
+def update_category(item_id):
+    item = LessonCategory.query.get_or_404(item_id)
+    data = request.json
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+
+    item.name = data.get('name', item.name)
+    item.description = data.get('description', item.description)
+    item.color_code = data.get('color_code', item.color_code)
+
+    db.session.commit()
+    return jsonify(model_to_dict(item))
+
+@bp.route('/api/admin/categories/<int:item_id>/delete', methods=['DELETE'])
+@login_required
+@admin_required
+def delete_category(item_id):
+    item = LessonCategory.query.get_or_404(item_id)
+    db.session.delete(item)
+    db.session.commit()
+    return jsonify({"message": "Category deleted successfully"}), 200
+
+# == LESSON CRUD API ==
+@bp.route('/api/admin/lessons', methods=['GET'])
+@login_required
+@admin_required
+def list_lessons():
+    items = Lesson.query.all()
+    lessons_data = []
+    for item in items:
+        lesson_dict = model_to_dict(item)
+        lesson_dict['category_name'] = item.category.name if item.category else None
+        lesson_dict['content_count'] = len(item.content_items)
+        lessons_data.append(lesson_dict)
+    return jsonify(lessons_data)
+
+@bp.route('/api/admin/lessons/new', methods=['POST'])
+@login_required
+@admin_required
+def create_lesson():
+    data = request.json
+    if not data or not data.get('title') or not data.get('lesson_type'):
+        return jsonify({"error": "Missing required fields: title, lesson_type"}), 400
+
+    existing_lesson = Lesson.query.filter_by(title=data['title']).first()
+    if existing_lesson:
+        return jsonify({"error": "Lesson title already exists"}), 400
+
+    new_item = Lesson(
+        title=data['title'],
+        description=data.get('description'),
+        lesson_type=data['lesson_type'],
+        category_id=data.get('category_id'),
+        difficulty_level=data.get('difficulty_level'),
+        estimated_duration=data.get('estimated_duration'),
+        order_index=data.get('order_index', 0),
+        is_published=data.get('is_published', False),
+        thumbnail_url=data.get('thumbnail_url'),
+        video_intro_url=data.get('video_intro_url')
+    )
+    try:
+        db.session.add(new_item)
+        db.session.commit()
+        return jsonify(model_to_dict(new_item)), 201
+    except IntegrityError:
+        db.session.rollback()
+        return jsonify({"error": "Database integrity error."}), 409
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({"error": "Database error occurred."}), 500
+
+@bp.route('/api/admin/lessons/<int:item_id>', methods=['GET'])
+@login_required
+@admin_required
+def get_lesson(item_id):
+    item = Lesson.query.get_or_404(item_id)
+    lesson_dict = model_to_dict(item)
+    lesson_dict['category_name'] = item.category.name if item.category else None
+    lesson_dict['content_items'] = [model_to_dict(content) for content in item.content_items]
+    lesson_dict['prerequisites'] = [model_to_dict(prereq.prerequisite_lesson) for prereq in item.prerequisites]
+    return jsonify(lesson_dict)
+
+@bp.route('/api/admin/lessons/<int:item_id>/edit', methods=['PUT', 'PATCH'])
+@login_required
+@admin_required
+def update_lesson(item_id):
+    item = Lesson.query.get_or_404(item_id)
+    data = request.json
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+
+    item.title = data.get('title', item.title)
+    item.description = data.get('description', item.description)
+    item.lesson_type = data.get('lesson_type', item.lesson_type)
+    item.category_id = data.get('category_id', item.category_id)
+    item.difficulty_level = data.get('difficulty_level', item.difficulty_level)
+    item.estimated_duration = data.get('estimated_duration', item.estimated_duration)
+    item.order_index = data.get('order_index', item.order_index)
+    item.is_published = data.get('is_published', item.is_published)
+    item.thumbnail_url = data.get('thumbnail_url', item.thumbnail_url)
+    item.video_intro_url = data.get('video_intro_url', item.video_intro_url)
+
+    db.session.commit()
+    return jsonify(model_to_dict(item))
+
+@bp.route('/api/admin/lessons/<int:item_id>/delete', methods=['DELETE'])
+@login_required
+@admin_required
+def delete_lesson(item_id):
+    item = Lesson.query.get_or_404(item_id)
+    db.session.delete(item)
+    db.session.commit()
+    return jsonify({"message": "Lesson deleted successfully"}), 200
+
+# == LESSON CONTENT API ==
+@bp.route('/api/admin/lessons/<int:lesson_id>/content', methods=['GET'])
+@login_required
+@admin_required
+def list_lesson_content(lesson_id):
+    lesson = Lesson.query.get_or_404(lesson_id)
+    content_items = LessonContent.query.filter_by(lesson_id=lesson_id).order_by(LessonContent.order_index).all()
+    return jsonify([model_to_dict(item) for item in content_items])
+
+@bp.route('/api/admin/lessons/<int:lesson_id>/content/new', methods=['POST'])
+@login_required
+@admin_required
+def add_lesson_content(lesson_id):
+    lesson = Lesson.query.get_or_404(lesson_id)
+    data = request.json
+    if not data or not data.get('content_type'):
+        return jsonify({"error": "Missing required field: content_type"}), 400
+
+    new_content = LessonContent(
+        lesson_id=lesson_id,
+        content_type=data['content_type'],
+        content_id=data.get('content_id'),
+        title=data.get('title'),
+        content_text=data.get('content_text'),
+        media_url=data.get('media_url'),
+        order_index=data.get('order_index', 0),
+        is_optional=data.get('is_optional', False)
+    )
+    try:
+        db.session.add(new_content)
+        db.session.commit()
+        return jsonify(model_to_dict(new_content)), 201
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({"error": "Database error occurred."}), 500
+
+@bp.route('/api/admin/lessons/<int:lesson_id>/content/<int:content_id>/delete', methods=['DELETE'])
+@login_required
+@admin_required
+def remove_lesson_content(lesson_id, content_id):
+    content = LessonContent.query.filter_by(lesson_id=lesson_id, id=content_id).first_or_404()
+    db.session.delete(content)
+    db.session.commit()
+    return jsonify({"message": "Content removed from lesson successfully"}), 200
+
+# == USER LESSON API ==
+@bp.route('/api/lessons', methods=['GET'])
+@login_required
+def get_user_lessons():
+    """Get lessons accessible to the current user"""
+    lessons = Lesson.query.filter_by(is_published=True).all()
+    accessible_lessons = []
+    
+    for lesson in lessons:
+        accessible, message = lesson.is_accessible_to_user(current_user)
+        lesson_dict = model_to_dict(lesson)
+        lesson_dict['accessible'] = accessible
+        lesson_dict['access_message'] = message
+        lesson_dict['category_name'] = lesson.category.name if lesson.category else None
+        
+        # Get user progress if exists
+        progress = UserLessonProgress.query.filter_by(
+            user_id=current_user.id, lesson_id=lesson.id
+        ).first()
+        lesson_dict['progress'] = model_to_dict(progress) if progress else None
+        
+        accessible_lessons.append(lesson_dict)
+    
+    return jsonify(accessible_lessons)
+
+@bp.route('/api/lessons/<int:lesson_id>/progress', methods=['POST'])
+@login_required
+def update_lesson_progress(lesson_id):
+    """Update user progress for a lesson"""
+    lesson = Lesson.query.get_or_404(lesson_id)
+    
+    # Check access
+    accessible, message = lesson.is_accessible_to_user(current_user)
+    if not accessible:
+        return jsonify({"error": message}), 403
+    
+    data = request.json
+    progress = UserLessonProgress.query.filter_by(
+        user_id=current_user.id, lesson_id=lesson_id
+    ).first()
+    
+    if not progress:
+        progress = UserLessonProgress(user_id=current_user.id, lesson_id=lesson_id)
+        db.session.add(progress)
+    
+    # Update progress fields
+    if 'content_id' in data:
+        progress.mark_content_completed(data['content_id'])
+    
+    if 'time_spent' in data:
+        progress.time_spent += data['time_spent']
+    
+    progress.last_accessed = db.func.now()
+    
+    db.session.commit()
+    return jsonify(model_to_dict(progress))

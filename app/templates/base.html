@@ -12,11 +12,16 @@
             <a class="navbar-brand" href="{{ url_for('routes.index') }}">Japanese Learning</a>
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    {% if current_user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('routes.free_content') }}">Free Lessons</a>
+                        <a class="nav-link" href="{{ url_for('routes.lessons') }}">Lessons</a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('routes.free_content') }}">Free Content</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('routes.premium_content') }}">Premium Lessons</a>
+                        <a class="nav-link" href="{{ url_for('routes.premium_content') }}">Premium Content</a>
                     </li>
                     {% if current_user.is_authenticated and current_user.is_admin %}
                     <li class="nav-item">
