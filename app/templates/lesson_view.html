@@ -183,23 +183,41 @@
                                             <p class="text-muted">Content not found.</p>
                                         {% endif %}
                                     {% else %}
-                                        <!-- Custom content (text, image, video, audio) -->
-                                        {% if content.content_text %}
-                                        <div class="mb-3">{{ content.content_text | safe }}</div>
-                                        {% endif %}
-                                        
-                                        {% if content.media_url %}
-                                            {% if content.content_type == 'image' %}
-                                            <img src="{{ content.media_url }}" class="img-fluid rounded" alt="{{ content.title }}">
-                                            {% elif content.content_type == 'video' %}
-                                            <div class="ratio ratio-16x9">
-                                                <iframe src="{{ content.media_url | to_embed_url }}" allowfullscreen></iframe>
+                                        <!-- Enhanced Text Content Display -->
+                                        {% if content.content_type == 'text' %}
+                                        <div class="text-content-container">
+                                            {% if content.title %}
+                                            <div class="content-header mb-3">
+                                                <h4 class="content-title">{{ content.title }}</h4>
+                                                {% if content.content_text and 'information_slide' in content.content_text %}
+                                                <span class="badge bg-info">Information Slide</span>
+                                                {% endif %}
                                             </div>
-                                            {% elif content.content_type == 'audio' %}
-                                            <audio controls class="w-100">
-                                                <source src="{{ content.media_url }}" type="audio/mpeg">
-                                                Your browser does not support the audio element.
-                                            </audio>
+                                            {% endif %}
+                                            
+                                            <div class="rich-text-content">
+                                                {{ content.content_text | safe }}
+                                            </div>
+                                        </div>
+                                        {% else %}
+                                            <!-- Custom content (image, video, audio) -->
+                                            {% if content.content_text %}
+                                            <div class="mb-3">{{ content.content_text | safe }}</div>
+                                            {% endif %}
+                                            
+                                            {% if content.media_url %}
+                                                {% if content.content_type == 'image' %}
+                                                <img src="{{ content.media_url }}" class="img-fluid rounded" alt="{{ content.title }}">
+                                                {% elif content.content_type == 'video' %}
+                                                <div class="ratio ratio-16x9">
+                                                    <iframe src="{{ content.media_url | to_embed_url }}" allowfullscreen></iframe>
+                                                </div>
+                                                {% elif content.content_type == 'audio' %}
+                                                <audio controls class="w-100">
+                                                    <source src="{{ content.media_url }}" type="audio/mpeg">
+                                                    Your browser does not support the audio element.
+                                                </audio>
+                                                {% endif %}
                                             {% endif %}
                                         {% endif %}
                                     {% endif %}

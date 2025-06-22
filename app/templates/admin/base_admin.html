@@ -5,7 +5,85 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}"> {# Add CSRF token meta tag #}
     <title>{% block title %}Admin Dashboard{% endblock %}</title>
+    <!-- TinyMCE CDN -->
+    <script src="https://cdn.tiny.cloud/1/0zy0mudtkt8811ll5m8kja6adp3ro871x715seh0c5vqzehu/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
     <style>
+        /* Rich Text Editor Styling */
+        .rich-text-editor {
+            min-height: 300px;
+        }
+
+        .rich-text-preview {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        /* Content Template Buttons */
+        .template-buttons .btn {
+            margin: 2px;
+        }
+
+        /* Rich Text Content Display */
+        .rich-text-content {
+            line-height: 1.6;
+            font-size: 16px;
+        }
+
+        .rich-text-content h1,
+        .rich-text-content h2,
+        .rich-text-content h3 {
+            color: #2c3e50;
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+        }
+
+        .rich-text-content h1 { font-size: 1.8em; }
+        .rich-text-content h2 { font-size: 1.5em; }
+        .rich-text-content h3 { font-size: 1.3em; }
+
+        .rich-text-content ul,
+        .rich-text-content ol {
+            margin: 1em 0;
+            padding-left: 2em;
+        }
+
+        .rich-text-content blockquote {
+            border-left: 4px solid #3498db;
+            padding-left: 1em;
+            margin: 1em 0;
+            font-style: italic;
+            background-color: #f8f9fa;
+            padding: 1em;
+        }
+
+        .rich-text-content code {
+            background-color: #f1f2f6;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .rich-text-content pre {
+            background-color: #f1f2f6;
+            padding: 1em;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+
+        /* Information Slide Specific Styling */
+        .content-type-information_slide {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2em;
+            border-radius: 10px;
+            margin: 1em 0;
+        }
+
+        .content-type-information_slide h1,
+        .content-type-information_slide h2,
+        .content-type-information_slide h3 {
+            color: white;
+        }
         body { font-family: sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333; }
         header { background-color: #333; color: #fff; padding: 1rem; text-align: center; }
         nav { background-color: #444; padding: 0.5rem; }

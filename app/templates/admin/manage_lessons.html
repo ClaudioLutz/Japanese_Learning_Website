@@ -377,6 +377,47 @@
                     <div id="contentConfigFields">
                         <!-- Dynamic form fields will be inserted here -->
                     </div>
+
+                    <!-- Rich Text Content Section -->
+                    <div id="richTextSection" style="display: none;">
+                        <div class="form-group">
+                            <label for="textContentTitle">Title *</label>
+                            <input type="text" id="textContentTitle" name="title" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="textContentType">Content Type</label>
+                            <select id="textContentType" name="text_content_type" class="form-control">
+                                <option value="information_slide">Information Slide</option>
+                                <option value="text_block">Text Block</option>
+                                <option value="instructions">Instructions</option>
+                                <option value="explanation">Explanation</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="richTextContent">Content *</label>
+                            <textarea id="richTextContent" name="content_text" class="form-control rich-text-editor"></textarea>
+                        </div>
+                        
+                        <!-- Content Template Selector -->
+                        <div class="form-group">
+                            <label>Quick Templates:</label>
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="applyTemplate('basic_slide')">Basic Slide</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="applyTemplate('instruction_slide')">Instructions</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="applyTemplate('explanation_slide')">Explanation</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Content Preview -->
+                        <div class="form-group">
+                            <label>Preview:</label>
+                            <div id="richTextPreview" class="border p-3 bg-light" style="min-height: 100px;">
+                                <em class="text-muted">Content preview will appear here...</em>
+                            </div>
+                        </div>
+                    </div>
                     
                     <!-- Common fields for all content types -->
                     <div class="row mt-3">
@@ -419,7 +460,6 @@
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" onclick="closeModal('addContentModal')">Cancel</button>
-            <button type="button" id="nextStepBtn" class="btn btn-primary" onclick="nextStep()" style="display: none;">Next</button>
             <button type="button" id="previewBtn" class="btn btn-primary" onclick="previewContent()" style="display: none;">Preview</button>
             <button type="button" id="saveContentBtn" class="btn btn-success" onclick="saveContentToLesson()" style="display: none;">Add to Lesson</button>
         </div>
@@ -512,6 +552,99 @@
 </style>
 
 <script>
+const contentTemplates = {
+    basic_slide: `
+        <h2>Slide Title</h2>
+        <p>Your content goes here. You can use <strong>bold text</strong>, <em>italic text</em>, and other formatting.</p>
+        <ul>
+            <li>Bullet point 1</li>
+            <li>Bullet point 2</li>
+        </ul>
+    `,
+    
+    instruction_slide: `
+        <h2>📋 Instructions</h2>
+        <p>Follow these steps:</p>
+        <ol>
+            <li><strong>Step 1:</strong> Description of first step</li>
+            <li><strong>Step 2:</strong> Description of second step</li>
+            <li><strong>Step 3:</strong> Description of third step</li>
+        </ol>
+        <div style="background-color: #e7f3ff; padding: 10px; border-left: 4px solid #2196F3; margin: 10px 0;">
+            <strong>💡 Tip:</strong> Add helpful tips here
+        </div>
+    `,
+    
+    explanation_slide: `
+        <h2>📚 Explanation</h2>
+        <p>This section explains an important concept:</p>
+        
+        <h3>Key Points:</h3>
+        <ul>
+            <li><strong>Point 1:</strong> Explanation</li>
+            <li><strong>Point 2:</strong> Explanation</li>
+        </ul>
+        
+        <h3>Example:</h3>
+        <div style="background-color: #f0f8f0; padding: 15px; border-radius: 5px; margin: 10px 0;">
+            <p>Example content goes here...</p>
+        </div>
+        
+        <h3>Remember:</h3>
+        <div style="background-color: #fff3cd; padding: 10px; border-left: 4px solid #ffc107; margin: 10px 0;">
+            <strong>⚠️ Important:</strong> Key takeaway message
+        </div>
+    `
+};
+
+function applyTemplate(templateName) {
+    if (contentTemplates[templateName]) {
+        tinymce.get('richTextContent').setContent(contentTemplates[templateName]);
+        updateRichTextPreview();
+    }
+}
+
+// Rich text editor management
+function initializeRichTextEditor() {
+    const tinymceConfig = {
+        selector: '.rich-text-editor',
+        height: 400,
+        menubar: false,
+        plugins: [
+            'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+            'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+            'insertdatetime', 'media', 'table', 'help', 'wordcount'
+        ],
+        toolbar: 'undo redo | blocks | ' +
+            'bold italic forecolor | alignleft aligncenter ' +
+            'alignright alignjustify | bullist numlist outdent indent | ' +
+            'removeformat | help',
+        content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif; font-size: 14px; }',
+        branding: false,
+        promotion: false,
+        setup: function(editor) {
+            editor.on('keyup', updateRichTextPreview);
+            editor.on('change', updateRichTextPreview);
+        }
+    };
+    tinymce.init(tinymceConfig);
+}
+
+function destroyRichTextEditor() {
+    const editor = tinymce.get('richTextContent');
+    if (editor) {
+        editor.destroy();
+    }
+}
+
+function updateRichTextPreview() {
+    const editor = tinymce.get('richTextContent');
+    if (editor) {
+        const content = editor.getContent();
+        document.getElementById('richTextPreview').innerHTML = content;
+    }
+}
+
 let currentLessonId = null;
 let categories = [];
 
@@ -816,7 +949,6 @@ function showContentTypeStep() {
     document.getElementById('contentPreviewStep').style.display = 'none';
     
     // Update buttons
-    document.getElementById('nextStepBtn').style.display = 'none';
     document.getElementById('previewBtn').style.display = 'none';
     document.getElementById('saveContentBtn').style.display = 'none';
 }
@@ -827,7 +959,6 @@ function showContentConfigStep() {
     document.getElementById('contentPreviewStep').style.display = 'none';
     
     // Update buttons
-    document.getElementById('nextStepBtn').style.display = 'none';
     document.getElementById('previewBtn').style.display = 'inline-block';
     document.getElementById('saveContentBtn').style.display = 'none';
 }
@@ -838,7 +969,6 @@ function showContentPreviewStep() {
     document.getElementById('contentPreviewStep').style.display = 'block';
     
     // Update buttons
-    document.getElementById('nextStepBtn').style.display = 'none';
     document.getElementById('previewBtn').style.display = 'none';
     document.getElementById('saveContentBtn').style.display = 'inline-block';
 }
@@ -919,18 +1049,15 @@ function generateContentConfigForm(contentType) {
             </div>
         `;
     } else if (contentType === 'text') {
-        // Custom text content
-        fieldsContainer.innerHTML = `
-            <div class="form-group">
-                <label for="textTitle">Title *</label>
-                <input type="text" id="textTitle" name="title" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label for="textContent">Content *</label>
-                <textarea id="textContent" name="content_text" class="form-control" rows="6" required placeholder="Enter your text content here..."></textarea>
-            </div>
-        `;
+        // Show rich text editor section
+        document.getElementById('richTextSection').style.display = 'block';
+        // Hide other dynamic fields
+        fieldsContainer.innerHTML = '';
+        initializeRichTextEditor();
     } else if (['video', 'audio', 'image'].includes(contentType)) {
+        // Hide rich text editor section
+        document.getElementById('richTextSection').style.display = 'none';
+        destroyRichTextEditor();
         // URL-based media content
         const placeholders = {
             'video': 'https://www.youtube.com/watch?v=... or https://vimeo.com/...',
@@ -1010,15 +1137,25 @@ function generateContentConfigForm(contentType) {
 
 // Preview content before saving
 async function previewContent() {
+    const formData = new FormData(document.getElementById('contentConfigForm'));
+    currentContentData = Object.fromEntries(formData.entries());
+    currentContentData.content_type = selectedContentType;
+
+    if (!validateContentData(currentContentData)) {
+        return;
+    }
+
+    if (selectedContentType === 'text') {
+        await generateContentPreview(currentContentData);
+        showContentPreviewStep();
+        return;
+    }
+
     const contentSource = document.querySelector('input[name="contentSource"]:checked')?.value;
 
     // If the source is URL, we don't need to handle file upload.
     // We can proceed with the old validation and preview logic.
     if (contentSource === 'url') {
-        const formData = new FormData(document.getElementById('contentConfigForm'));
-        currentContentData = Object.fromEntries(formData.entries());
-        currentContentData.content_type = selectedContentType;
-        
         if (!validateContentData(currentContentData)) {
             return;
         }
@@ -1087,10 +1224,12 @@ function validateContentData(data) {
             return false;
         }
     } else if (data.content_type === 'text') {
-        if (!data.title || !data.content_text) {
+        const editor = tinymce.get('richTextContent');
+        if (!data.title || !editor || !editor.getContent()) {
             alert('Please provide both title and content for text content');
             return false;
         }
+        data.content_text = editor.getContent();
     } else if (['video', 'audio', 'image'].includes(data.content_type)) {
         if (!data.title) {
             alert(`Please provide a title for ${data.content_type} content`);
@@ -1187,8 +1326,8 @@ async function generateContentPreview(data) {
     } else if (data.content_type === 'text') {
         previewHTML = `
             <h6>${data.title}</h6>
-            <div class="mt-2">
-                ${data.content_text.replace(/\n/g, '<br>')}
+            <div class="mt-2 rich-text-content">
+                ${data.content_text}
             </div>
         `;
     } else if (['video', 'audio', 'image'].includes(data.content_type)) {
