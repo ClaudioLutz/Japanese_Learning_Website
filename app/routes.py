@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request,
 from flask_login import login_user, logout_user, login_required, current_user
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError # Import specific exceptions
 from app import db
-from app.models import User, Kana, Kanji, Vocabulary, Grammar, LessonCategory, Lesson, LessonContent, LessonPrerequisite, UserLessonProgress
+from app.models import User, Kana, Kanji, Vocabulary, Grammar, LessonCategory, Lesson, LessonContent, LessonPrerequisite, UserLessonProgress, QuizQuestion, QuizOption, UserQuizAnswer
 from app.forms import RegistrationForm, LoginForm, CSRFTokenForm
 from functools import wraps # For custom decorators
 
@@ -785,6 +785,168 @@ def update_lesson_progress(lesson_id):
     
     db.session.commit()
     return jsonify(model_to_dict(progress))
+
+@bp.route('/api/admin/lessons/<int:lesson_id>/content/interactive', methods=['POST'])
+@login_required
+@admin_required
+def add_interactive_content(lesson_id):
+    """Add interactive content (quiz questions) to lesson"""
+    lesson = Lesson.query.get_or_404(lesson_id)
+    data = request.json
+
+    if not data or not data.get('interactive_type'):
+        return jsonify({"error": "Missing interactive type"}), 400
+
+    # Create lesson content
+    content = LessonContent(
+        lesson_id=lesson_id,
+        content_type='interactive',
+        title=data.get('title'),
+        is_interactive=True,
+        max_attempts=data.get('max_attempts', 3),
+        passing_score=data.get('passing_score', 70),
+        order_index=data.get('order_index', 0)
+    )
+
+    db.session.add(content)
+    db.session.flush()  # Get the content ID
+
+    # Create quiz question
+    question = QuizQuestion(
+        lesson_content_id=content.id,
+        question_type=data['interactive_type'],
+        question_text=data.get('question_text'),
+        explanation=data.get('explanation'),
+        points=data.get('points', 1)
+    )
+
+    db.session.add(question)
+    db.session.flush()  # Get the question ID
+
+    # Add options for multiple choice and true/false
+    if data['interactive_type'] in ['multiple_choice', 'true_false']:
+        options_data = data.get('options', [])
+        if data['interactive_type'] == 'true_false':
+            options_data = [
+                {'text': 'True', 'is_correct': data.get('correct_answer') is True},
+                {'text': 'False', 'is_correct': data.get('correct_answer') is False}
+            ]
+
+        for i, option_data in enumerate(options_data):
+            option = QuizOption(
+                question_id=question.id,
+                option_text=option_data['text'],
+                is_correct=option_data.get('is_correct', False),
+                order_index=i,
+                feedback=option_data.get('feedback', '')
+            )
+            db.session.add(option)
+
+    db.session.commit()
+    return jsonify(model_to_dict(content)), 201
+
+@bp.route('/api/lessons/<int:lesson_id>/quiz/<int:question_id>/answer', methods=['POST'])
+@login_required
+def submit_quiz_answer(lesson_id, question_id):
+    """Submit answer to quiz question"""
+    try:
+        lesson = Lesson.query.get_or_404(lesson_id)
+        question = QuizQuestion.query.get_or_404(question_id)
+
+        # Check lesson access
+        accessible, message = lesson.is_accessible_to_user(current_user)
+        if not accessible:
+            current_app.logger.warning(f"User {current_user.id} access denied for lesson {lesson_id}: {message}")
+            return jsonify({"error": message}), 403
+
+        data = request.json
+        if not data:
+            return jsonify({"error": "Invalid request. Must be JSON."}), 400
+        current_app.logger.info(f"Received answer for question {question_id} from user {current_user.id}: {data}")
+
+        # Check if user has already answered or exceeded attempts
+        existing_answers_count = UserQuizAnswer.query.filter_by(
+            user_id=current_user.id, question_id=question_id
+        ).count()
+
+        if existing_answers_count >= question.content.max_attempts:
+            current_app.logger.warning(f"User {current_user.id} exceeded max attempts for question {question_id}")
+            return jsonify({"error": "Maximum attempts exceeded"}), 400
+
+        # Process answer based on question type
+        is_correct = False
+        selected_option = None
+        answer = None
+
+        if question.question_type == 'multiple_choice':
+            selected_option_id = data.get('selected_option_id')
+            current_app.logger.info(f"Selected option ID from request: {selected_option_id}")
+            if not selected_option_id:
+                return jsonify({"error": "selected_option_id is required"}), 400
+
+            selected_option = QuizOption.query.get(int(selected_option_id))
+            current_app.logger.info(f"Selected option from DB: {selected_option}")
+
+            is_correct = selected_option and selected_option.is_correct
+            current_app.logger.info(f"Is correct: {is_correct}")
+
+            answer = UserQuizAnswer(
+                user_id=current_user.id,
+                question_id=question_id,
+                selected_option_id=selected_option_id,
+                is_correct=is_correct
+            )
+
+        elif question.question_type == 'fill_blank':
+            text_answer = data.get('text_answer', '').strip().lower()
+            # Get correct answers from question data (stored in explanation field for this type)
+            correct_answers = [ans.strip().lower() for ans in (question.explanation or "").split(',')]
+            is_correct = text_answer in correct_answers
+
+            answer = UserQuizAnswer(
+                user_id=current_user.id,
+                question_id=question_id,
+                text_answer=data.get('text_answer'),
+                is_correct=is_correct
+            )
+
+        elif question.question_type == 'true_false':
+            selected_option_id = data.get('selected_option_id')
+            if not selected_option_id:
+                return jsonify({"error": "selected_option_id is required"}), 400
+            selected_option = QuizOption.query.get(int(selected_option_id))
+            is_correct = selected_option and selected_option.is_correct
+
+            answer = UserQuizAnswer(
+                user_id=current_user.id,
+                question_id=question_id,
+                selected_option_id=selected_option_id,
+                is_correct=is_correct
+            )
+
+        else:
+            return jsonify({"error": "Unsupported question type"}), 400
+
+        if answer:
+            db.session.add(answer)
+
+        db.session.commit()
+
+        # Return result with feedback
+        result = {
+            'is_correct': is_correct,
+            'explanation': question.explanation,
+            'attempts_remaining': question.content.max_attempts - (existing_answers_count + 1)
+        }
+
+        if selected_option:
+            result['option_feedback'] = selected_option.feedback
+
+        current_app.logger.info(f"Answer for question {question_id} processed. Result: {result}")
+        return jsonify(result)
+    except Exception as e:
+        current_app.logger.error(f"Error submitting quiz answer for question {question_id}: {e}", exc_info=True)
+        return jsonify({"error": "An internal error occurred"}), 500
 
 # == FILE UPLOAD API ==
 @bp.route('/api/admin/upload-file', methods=['POST'])

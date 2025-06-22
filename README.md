@@ -143,7 +143,7 @@ A comprehensive web-based Japanese learning platform featuring structured lesson
 ├── run.py                  # Main script to run the Flask application
 └── setup_unified_auth.py   # Script to set up the initial database schema for unified authentication
 ```
-*Note: The `static/` directory for CSS/JS files is not present in the current root or `app/` directory. Styling is primarily handled by Bootstrap, potentially via CDN links in templates.*
+*Note: While a general `app/static/` directory for project-wide CSS/JS might not be the primary focus (styling is largely handled by Bootstrap CDN), the application utilizes an `UPLOAD_FOLDER` (defaulting to `app/static/uploads/`) for storing and serving user-uploaded files (e.g., images, audio for lessons). These uploaded files are accessible via application routes.*
 
 ## For AI Agents
 

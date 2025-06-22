@@ -221,6 +221,68 @@
                                             {% endif %}
                                         {% endif %}
                                     {% endif %}
+                                    <!-- Interactive Content Display -->
+                                    {% if content.is_interactive %}
+                                    <div class="interactive-content-container" data-content-id="{{ content.id }}">
+                                        {% for question in content.quiz_questions %}
+                                        <div class="quiz-question mb-4" data-question-id="{{ question.id }}" data-question-type="{{ question.question_type }}">
+                                            <div class="question-header mb-3">
+                                                <h5>{{ question.question_text | safe }}</h5>
+                                                {% if question.points > 1 %}
+                                                <span class="badge bg-primary">{{ question.points }} points</span>
+                                                {% endif %}
+                                            </div>
+
+                                            {% if question.question_type == 'multiple_choice' %}
+                                            <div class="multiple-choice-options">
+                                                {% for option in question.options | sort(attribute='order_index') %}
+                                                <div class="form-check mb-2">
+                                                    <input class="form-check-input" type="radio" name="question_{{ question.id }}"
+                                                           id="option_{{ option.id }}" value="{{ option.id }}">
+                                                    <label class="form-check-label" for="option_{{ option.id }}">
+                                                        {{ option.option_text }}
+                                                    </label>
+                                                </div>
+                                                {% endfor %}
+                                            </div>
+
+                                            {% elif question.question_type == 'fill_blank' %}
+                                            <div class="fill-blank-input">
+                                                <div class="question-text mb-3">
+                                                    {{ question.question_text | replace('[BLANK]', '<input type="text" class="form-control d-inline-block" style="width: 200px;" id="blank_' + question.id|string + '">') | safe }}
+                                                </div>
+                                            </div>
+
+                                            {% elif question.question_type == 'true_false' %}
+                                            <div class="true-false-options">
+                                                {% for option in question.options | sort(attribute='order_index') %}
+                                                <div class="form-check mb-2">
+                                                    <input class="form-check-input" type="radio" name="question_{{ question.id }}"
+                                                           id="option_{{ option.id }}" value="{{ option.id }}">
+                                                    <label class="form-check-label" for="option_{{ option.id }}">
+                                                        {{ option.option_text }}
+                                                    </label>
+                                                </div>
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+
+                                            <div class="question-actions mt-3">
+                                                <button class="btn btn-primary" onclick="submitQuizAnswer('{{ lesson.id }}', '{{ question.id }}')">
+                                                    Submit Answer
+                                                </button>
+                                                <div class="quiz-feedback mt-2" id="feedback_{{ question.id }}" style="display: none;"></div>
+                                            </div>
+
+                                            <div class="quiz-attempts mt-2">
+                                                <small class="text-muted">
+                                                    Attempts remaining: <span id="attempts_{{ question.id }}">{{ content.max_attempts }}</span>
+                                                </small>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
                                 </div>
                             </div>
                             {% endfor %}
@@ -252,11 +314,106 @@
 <script>
 let startTime = Date.now();
 
+async function submitQuizAnswer(lessonId, questionId) {
+    const questionElement = document.querySelector(`[data-question-id="${questionId}"]`);
+    const questionType = questionElement.dataset.questionType;
+
+    let answerData = {};
+
+    if (questionType === 'multiple_choice' || questionType === 'true_false') {
+        const selectedOption = questionElement.querySelector(`input[name="question_${questionId}"]:checked`);
+        if (!selectedOption) {
+            alert('Please select an answer');
+            return;
+        }
+        answerData.selected_option_id = selectedOption.value;
+        console.log('Selected option ID:', answerData.selected_option_id);
+    } else if (questionType === 'fill_blank') {
+        const textInput = questionElement.querySelector(`#blank_${questionId}`);
+        if (!textInput || !textInput.value.trim()) {
+            alert('Please provide an answer');
+            return;
+        }
+        answerData.text_answer = textInput.value.trim();
+    }
+
+    try {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const response = await fetch(`/api/lessons/${lessonId}/quiz/${questionId}/answer`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify(answerData)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            showQuizFeedback(questionId, result);
+            updateAttempts(questionId, result.attempts_remaining);
+
+            if (result.is_correct) {
+                markContentComplete(questionElement.closest('[data-content-id]').dataset.contentId);
+            }
+        } else {
+            alert('Error: ' + result.error);
+        }
+    } catch (error) {
+        console.error('Error submitting answer:', error);
+        alert('Error submitting answer');
+    }
+}
+
+function showQuizFeedback(questionId, result) {
+    const feedbackElement = document.getElementById(`feedback_${questionId}`);
+
+    let feedbackHtml = '';
+    if (result.is_correct) {
+        feedbackHtml = '<div class="alert alert-success">✓ Correct!</div>';
+    } else {
+        feedbackHtml = '<div class="alert alert-danger">✗ Incorrect</div>';
+    }
+
+    if (result.explanation) {
+        feedbackHtml += `<div class="alert alert-info">${result.explanation}</div>`;
+    }
+
+    if (result.option_feedback) {
+        feedbackHtml += `<div class="alert alert-warning">${result.option_feedback}</div>`;
+    }
+
+    feedbackElement.innerHTML = feedbackHtml;
+    feedbackElement.style.display = 'block';
+
+    // Disable question if correct or no attempts remaining
+    if (result.is_correct || result.attempts_remaining === 0) {
+        const questionElement = document.querySelector(`[data-question-id="${questionId}"]`);
+        const inputs = questionElement.querySelectorAll('input');
+        const button = questionElement.querySelector('button');
+
+        inputs.forEach(input => input.disabled = true);
+        if(button) button.disabled = true;
+    }
+}
+
+function updateAttempts(questionId, attemptsRemaining) {
+    const attemptsElement = document.getElementById(`attempts_${questionId}`);
+    if (attemptsElement) {
+        attemptsElement.textContent = attemptsRemaining;
+    }
+}
+
 async function markContentComplete(contentId) {
     try {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const response = await fetch(`/api/lessons/{{ lesson.id }}/progress`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
             body: JSON.stringify({ 
                 content_id: contentId,
                 time_spent: Math.floor((Date.now() - startTime) / 60000) // minutes
