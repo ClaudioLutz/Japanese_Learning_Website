@@ -469,7 +469,7 @@ Japanese_Learning_Website/
 │   ├── forms.py            # WTForms definitions for login, registration, content management
 │   ├── models.py           # SQLAlchemy database models for users, content, lessons
 │   ├── routes.py           # Flask routes and view functions for user and admin interfaces
-│   ├── utils.py            # Utility functions, e.g., FileUploadHandler (if used)
+│   ├── utils.py            # Utility functions (e.g., FileUploadHandler)
 │   └── templates/          # Jinja2 templates for rendering HTML pages
 │       ├── admin/          # Templates specific to the admin panel (detailed above)
 │       │   ├── admin_index.html
@@ -532,7 +532,7 @@ FLASK_ENV=development
 FLASK_DEBUG=True
 
 # File Uploads
-UPLOAD_FOLDER=app/static/uploads  # Example path for storing uploaded files
+UPLOAD_FOLDER=app/static/uploads  # Default path for storing uploaded files. The application will use 'app/static/uploads' if this is not set.
 
 # Optional: External Services
 MAIL_SERVER=smtp.gmail.com
@@ -1048,5 +1048,5 @@ This project is licensed under the MIT License. See LICENSE file for details.
 
 ---
 
-*Last Updated: October 26, 2023*
+*Last Updated: November 17, 2023*
 *Version: 1.1.0*
