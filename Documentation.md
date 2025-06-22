@@ -261,10 +261,12 @@ CREATE TABLE user (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username VARCHAR(80) UNIQUE NOT NULL,
     email VARCHAR(120) UNIQUE NOT NULL,
-    password_hash VARCHAR(128) NOT NULL,
+    password_hash VARCHAR(256) NOT NULL, -- Increased from 128 to 256 in models.py
     subscription_level VARCHAR(20) DEFAULT 'free',
     is_admin BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    -- Note: `lesson_progress` is a SQLAlchemy relationship to `UserLessonProgress`
+    -- (One-to-Many: User -> UserLessonProgress)
 );
 ```
 
@@ -272,10 +274,10 @@ CREATE TABLE user (
 ```sql
 CREATE TABLE kana (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    character VARCHAR(1) UNIQUE NOT NULL,
+    character VARCHAR(5) UNIQUE NOT NULL, -- Max length 5 based on models.py
     romanization VARCHAR(10) NOT NULL,
     type VARCHAR(10) NOT NULL,
-    stroke_order_info TEXT,
+    stroke_order_info TEXT, -- Kept as TEXT, consistent with models.py String(255)
     example_sound_url VARCHAR(255)
 );
 ```
@@ -284,12 +286,12 @@ CREATE TABLE kana (
 ```sql
 CREATE TABLE kanji (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    character VARCHAR(1) UNIQUE NOT NULL,
+    character VARCHAR(5) UNIQUE NOT NULL, -- Max length 5 based on models.py
     meaning TEXT NOT NULL,
     onyomi VARCHAR(100),
     kunyomi VARCHAR(100),
     jlpt_level INTEGER,
-    stroke_order_info TEXT,
+    stroke_order_info TEXT, -- Kept as TEXT, consistent with models.py String(255)
     radical VARCHAR(10),
     stroke_count INTEGER
 );
@@ -299,7 +301,7 @@ CREATE TABLE kanji (
 ```sql
 CREATE TABLE vocabulary (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    word VARCHAR(100) NOT NULL,
+    word VARCHAR(100) UNIQUE NOT NULL, -- Added UNIQUE constraint
     reading VARCHAR(100) NOT NULL,
     meaning TEXT NOT NULL,
     jlpt_level INTEGER,
@@ -313,11 +315,11 @@ CREATE TABLE vocabulary (
 ```sql
 CREATE TABLE grammar (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title VARCHAR(200) NOT NULL,
+    title VARCHAR(200) UNIQUE NOT NULL, -- Added UNIQUE constraint
     explanation TEXT NOT NULL,
-    structure VARCHAR(200),
+    structure VARCHAR(255), -- Max length 255 based on models.py
     jlpt_level INTEGER,
-    example_sentences TEXT
+    example_sentences TEXT -- Stored as JSON string
 );
 ```
 
@@ -467,6 +469,7 @@ Japanese_Learning_Website/
 │   ├── forms.py            # WTForms definitions for login, registration, content management
 │   ├── models.py           # SQLAlchemy database models for users, content, lessons
 │   ├── routes.py           # Flask routes and view functions for user and admin interfaces
+│   ├── utils.py            # Utility functions, e.g., FileUploadHandler (if used)
 │   └── templates/          # Jinja2 templates for rendering HTML pages
 │       ├── admin/          # Templates specific to the admin panel (detailed above)
 │       │   ├── admin_index.html
@@ -487,6 +490,7 @@ Japanese_Learning_Website/
 │       ├── premium_content.html
 │       └── register.html   # User registration page
 ├── instance/               # Instance folder (contains database, potentially config files if not using .env)
+│   ├── config.py           # Optional: Instance-specific configuration (e.g. `instance/config.py`). Current setup primarily uses .env.
 │   └── site.db             # SQLite database file (primary database)
 ├── deprecated/             # Older or unused files
 │   ├── AGENTS.md           # Deprecated agent instructions
@@ -509,7 +513,7 @@ Japanese_Learning_Website/
 ├── run.py                  # Main script to run the Flask application
 └── setup_unified_auth.py   # Script to set up the initial database schema for unified authentication
 ```
-*Note: A `static/` directory for custom CSS/JS is not present. Styling is primarily handled by Bootstrap (likely via CDN) and inline styles or script tags within templates.*
+*Note: An `app/static/` directory is utilized, primarily for user-uploaded content (managed via the `UPLOAD_FOLDER` configuration, e.g., `app/static/uploads/`). Any custom project-specific CSS or JavaScript files would also typically be placed here. Styling for the main UI components is currently provided by Bootstrap (likely via CDN), with additional inline or internal styles in templates.*
 
 ---
 
@@ -526,6 +530,9 @@ DATABASE_URL=sqlite:///instance/site.db
 # Flask Settings
 FLASK_ENV=development
 FLASK_DEBUG=True
+
+# File Uploads
+UPLOAD_FOLDER=app/static/uploads  # Example path for storing uploaded files
 
 # Optional: External Services
 MAIL_SERVER=smtp.gmail.com
@@ -732,13 +739,17 @@ The lesson system provides a comprehensive way for administrators to create stru
 - **Mixed Content Types** - Combine existing content with custom multimedia
 - **Content Ordering** - Specify the sequence of content within lessons
 - **Optional Content** - Mark content items as optional
-- **Rich Media Support** - Text, images, videos, and audio content. Supports both URL-based media and direct file uploads for images, audio, and other supplementary materials. Uploaded files are stored on the server and managed through the lesson builder.
+- **Rich Media Support** - Text, images, videos, and audio content. Supports URL-based media. For direct file uploads (images, audio, documents): files are first uploaded via a dedicated mechanism (see `/api/admin/upload-file`), and then the returned file path is associated with a lesson content item. Uploaded files are stored on the server (typically in a subdirectory of `UPLOAD_FOLDER` like `app/static/uploads/lessons/images/`) and managed through the lesson builder.
 
 ##### Content Types Supported:
 - **Existing Content**: Kana, Kanji, Vocabulary, Grammar (dropdown selection from database)
 - **Custom Text**: Title and rich text content creation
 - **URL-based Media**: Video (YouTube/Vimeo), Audio, and Image content via URLs.
-- **File Uploads**: Direct upload for images, audio files, PDFs, or other documents to be associated with `LessonContent`. Admins can upload files during lesson creation/editing. These files are served by the application and can be deleted if no longer needed.
+- **File Uploads**: Upload of images, audio files, PDFs, or other documents. The process involves:
+    1. Admin uploads a file using the file upload API endpoint.
+    2. The system returns a `file_path` for the stored file.
+    3. Admin then creates/edits a `LessonContent` item, associating it with this `file_path`.
+    These files are served by the application and can be deleted (which also removes the physical file).
 
 #### 5. Progress Tracking
 - **Individual Progress** - Track completion of each content item
@@ -776,6 +787,15 @@ CREATE TABLE lesson (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (category_id) REFERENCES lesson_category (id)
+    -- Note: SQLAlchemy relationships exist for:
+    -- `content_items` (One-to-Many: Lesson -> LessonContent)
+    -- `prerequisites` (One-to-Many: Lesson -> LessonPrerequisite, current lesson's prereqs)
+    -- `required_by` (One-to-Many: Lesson -> LessonPrerequisite, lessons that require current lesson)
+    -- `user_progress` (One-to-Many: Lesson -> UserLessonProgress)
+    --
+    -- Helper methods:
+    -- `get_prerequisites()`: Returns a list of prerequisite Lesson objects.
+    -- `is_accessible_to_user(user)`: Checks if the user can access the lesson based on subscription and prerequisites.
 );
 ```
 
@@ -783,8 +803,8 @@ CREATE TABLE lesson (
 ```sql
 CREATE TABLE lesson_prerequisite (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    lesson_id INTEGER NOT NULL,
-    prerequisite_lesson_id INTEGER NOT NULL,
+    lesson_id INTEGER NOT NULL,          -- The lesson that has prerequisites
+    prerequisite_lesson_id INTEGER NOT NULL, -- The lesson that must be completed first
     FOREIGN KEY (lesson_id) REFERENCES lesson (id) ON DELETE CASCADE,
     FOREIGN KEY (prerequisite_lesson_id) REFERENCES lesson (id) ON DELETE CASCADE,
     UNIQUE(lesson_id, prerequisite_lesson_id)
@@ -797,19 +817,23 @@ CREATE TABLE lesson_content (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     lesson_id INTEGER NOT NULL,
     content_type VARCHAR(20) NOT NULL, -- 'kana', 'kanji', 'vocabulary', 'grammar', 'text', 'image', 'video', 'audio'
-    content_id INTEGER, -- NULL for multimedia content
-    title VARCHAR(200),
-    content_text TEXT,
-    media_url VARCHAR(255),
+    content_id INTEGER, -- ID of existing content (e.g., Kana.id), NULL for custom/multimedia
+    title VARCHAR(200), -- For custom text, media titles
+    content_text TEXT,  -- For custom text content
+    media_url VARCHAR(255), -- URL for external media (YouTube, etc.)
     order_index INTEGER DEFAULT 0,
     is_optional BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     -- File-related fields for uploaded content
-    file_path VARCHAR(500),      -- Relative path to the uploaded file in the UPLOAD_FOLDER
+    file_path VARCHAR(500),      -- Relative path to the uploaded file (e.g., within UPLOAD_FOLDER)
     file_size INTEGER,           -- File size in bytes
     file_type VARCHAR(50),       -- MIME type of the file
     original_filename VARCHAR(255), -- Original name of the uploaded file
     FOREIGN KEY (lesson_id) REFERENCES lesson (id) ON DELETE CASCADE
+    -- Note: SQLAlchemy helper methods:
+    -- `get_file_url()`: Returns a serveable URL for the uploaded file or the media_url.
+    -- `delete_file()`: Deletes the associated physical file if one exists.
+    -- `get_content_data()`: Fetches the related content (e.g., Kana object) or a dict for custom content.
 );
 ```
 
@@ -825,10 +849,15 @@ CREATE TABLE user_lesson_progress (
     progress_percentage INTEGER DEFAULT 0, -- 0-100
     time_spent INTEGER DEFAULT 0, -- minutes
     last_accessed TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    content_progress TEXT, -- JSON string of content item completion
+    content_progress TEXT, -- JSON string mapping content_item_id to completion status (e.g., {"1": true, "2": false})
     FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
     FOREIGN KEY (lesson_id) REFERENCES lesson (id) ON DELETE CASCADE,
     UNIQUE(user_id, lesson_id)
+    -- Note: SQLAlchemy helper methods:
+    -- `get_content_progress()`: Parses `content_progress` JSON into a Python dict.
+    -- `set_content_progress(dict)`: Serializes a Python dict to `content_progress` JSON.
+    -- `mark_content_completed(content_id)`: Marks a specific content item as complete and updates overall progress.
+    -- `update_progress_percentage()`: Recalculates `progress_percentage` based on completed content items.
 );
 ```
 
@@ -873,19 +902,26 @@ POST   /api/lessons/{id}/progress      # Update lesson progress
 
 #### File Management API (Admin)
 ```
-POST   /api/admin/upload-file                 # Upload a file, returns file path and info.
-                                              # Used by lesson builder for image/audio/document uploads.
-DELETE /api/admin/delete-file                 # Delete an uploaded file from the server.
+POST   /api/admin/upload-file                 # Upload a file. Saves to a path like 'lessons/images/' under UPLOAD_FOLDER.
+                                              # Returns file path and info. Used by lesson builder.
+                                              # Example UPLOAD_FOLDER: app/static/uploads
+                                              # Resulting file_url might be: /static/uploads/lessons/images/filename.jpg
+DELETE /api/admin/delete-file                 # Delete an uploaded file from the server and potentially its LessonContent DB record.
                                               # Expects JSON body with 'file_path'.
+                                              # If 'content_id' is also provided and matches, the LessonContent record is deleted.
 POST   /api/admin/lessons/<int:lesson_id>/content/file   # Add file-based content to a lesson.
-                                              # Associates an uploaded file (via file_path) with a lesson content item.
+                                              # Associates an *already uploaded file* (referenced by 'file_path' from upload-file)
+                                              # with a lesson content item. Takes details like title, description, file_path, etc.
 ```
 
 ### Static File Serving
 ```
 GET    /uploads/<path:filename>               # Serves uploaded files.
                                               # <path:filename> is the path relative to the UPLOAD_FOLDER.
+                                              # e.g. /uploads/lessons/images/my_image.png if UPLOAD_FOLDER is 'app/static/uploads'
+                                              # and file was saved in 'lessons/images' subdirectory.
 ```
+*Note on API Error Handling: Common HTTP status codes are used: 200 (OK), 201 (Created), 400 (Bad Request), 401 (Unauthorized), 403 (Forbidden), 404 (Not Found), 409 (Conflict), 500 (Internal Server Error).*
 
 ### User Interface
 
