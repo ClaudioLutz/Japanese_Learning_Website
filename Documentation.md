@@ -109,8 +109,8 @@ FLASK_ENV=development
 
 5. **Database Setup**
 ```bash
-# Run setup script to create unified authentication
-python setup_unified_auth.py
+# Initialize the database
+flask db_init
 
 # Create admin user
 python create_admin.py
@@ -244,6 +244,9 @@ python run.py
 2. Modal form pre-populated with existing data
 3. Modify fields as needed
 4. Submit → Database updated, table refreshed
+
+**Publishing Lessons**
+For a lesson to be visible to users on the main lessons page, it must be marked as "Published". You can do this by editing the lesson and setting the "Published" status to "Yes".
 
 **Delete Content**
 1. Click "Delete" link next to any item
@@ -886,9 +889,11 @@ CREATE TABLE user_quiz_answer (
     text_answer TEXT, -- For fill-in-the-blank questions
     is_correct BOOLEAN DEFAULT FALSE,
     answered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    attempts INTEGER NOT NULL DEFAULT 0,
     FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
     FOREIGN KEY (question_id) REFERENCES quiz_question (id) ON DELETE CASCADE,
-    FOREIGN KEY (selected_option_id) REFERENCES quiz_option (id)
+    FOREIGN KEY (selected_option_id) REFERENCES quiz_option (id),
+    UNIQUE (user_id, question_id)
 );
 ```
 

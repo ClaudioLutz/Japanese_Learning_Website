@@ -241,21 +241,77 @@
                 <table class="table table-sm" id="lessonContentTable">
                     <thead>
                         <tr>
-                            <th>Order</th>
+                            <th width="50">Order</th>
                             <th>Type</th>
                             <th>Title</th>
+                            <th>Status</th>
                             <th>Optional</th>
-                            <th>Actions</th>
+                            <th width="50">Select</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <!-- Content will be loaded via JavaScript -->
+                    <tbody id="sortableContentList">
+                        <!-- Content will be loaded via JavaScript with drag handles -->
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Bulk Operations Panel -->
+            <div class="bulk-operations-panel mt-3" style="display: none;" id="bulkOperationsPanel">
+                <div class="card">
+                    <div class="card-body">
+                        <h6>Bulk Operations</h6>
+                        <div class="d-flex justify-content-between">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="bulkSetOptional(true)">
+                                    Mark as Optional
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="bulkSetOptional(false)">
+                                    Mark as Required
+                                </button>
+                            </div>
+                            <div class="bulk-actions-buttons">
+                                <button type="button" class="btn btn-sm btn-info" onclick="bulkPreview()">
+                                    <i class="fas fa-eye"></i> Preview
+                                </button>
+                                <button type="button" class="btn btn-sm btn-warning" onclick="bulkEdit()">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button type="button" class="btn btn-sm btn-secondary" onclick="bulkDuplicate()">
+                                    <i class="fas fa-copy"></i> Duplicate
+                                </button>
+                                <button type="button" class="btn btn-sm btn-danger" onclick="bulkDelete()">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-secondary" onclick="hideBulkOperations()">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" onclick="closeModal('lessonContentModal')">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- Content Preview Modal -->
+<div id="contentPreviewModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 900px;">
+        <div class="modal-header">
+            <h4>Content Preview</h4>
+            <span class="close" onclick="closeModal('contentPreviewModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div id="contentPreviewContainer">
+                <!-- Preview content will be loaded here -->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeModal('contentPreviewModal')">Close</button>
+            <button type="button" class="btn btn-primary" onclick="editContentFromPreview()">Edit Content</button>
         </div>
     </div>
 </div>
@@ -385,6 +441,7 @@
                 
                 <form id="contentConfigForm">
                     {{ form.csrf_token }}
+                    <input type="hidden" id="editingContentId" name="editing_content_id">
                     <div id="contentConfigFields">
                         <!-- Dynamic form fields will be inserted here -->
                     </div>
@@ -393,7 +450,7 @@
                     <div id="richTextSection" style="display: none;">
                         <div class="form-group">
                             <label for="textContentTitle">Title *</label>
-                            <input type="text" id="textContentTitle" name="title" class="form-control" required>
+                            <input type="text" id="textContentTitle" name="text_title" class="form-control" required>
                         </div>
                         
                         <div class="form-group">
@@ -434,7 +491,7 @@
                     <div id="interactiveSection" style="display: none;">
                         <div class="form-group">
                             <label for="interactiveTitle">Title *</label>
-                            <input type="text" id="interactiveTitle" name="title" class="form-control" required>
+                            <input type="text" id="interactiveTitle" name="interactive_title" class="form-control" required>
                         </div>
                         
                         <div class="form-group">
@@ -675,6 +732,10 @@
 .btn-group-toggle .btn:last-child {
     margin-right: 0;
 }
+
+.bulk-actions-buttons .btn {
+    margin-left: 0.5rem;
+}
 </style>
 
 <script>
@@ -796,7 +857,7 @@ function removeOption(optionIndex) {
     }
 }
 
-function initializeRichTextEditor() {
+function initializeRichTextEditor(initialContent = '') {
     const tinymceConfig = {
         selector: '.rich-text-editor',
         height: 400,
@@ -814,10 +875,19 @@ function initializeRichTextEditor() {
         branding: false,
         promotion: false,
         setup: function(editor) {
+            editor.on('init', function() {
+                this.setContent(initialContent || '');
+            });
             editor.on('keyup', updateRichTextPreview);
             editor.on('change', updateRichTextPreview);
         }
     };
+
+    const existingEditor = tinymce.get('richTextContent');
+    if (existingEditor) {
+        existingEditor.destroy();
+    }
+
     tinymce.init(tinymceConfig);
 }
 
@@ -840,11 +910,12 @@ let currentLessonId = null;
 let categories = [];
 
 // Get CSRF token from the form
-function getCSRFToken(formId) {
-    const form = document.getElementById(formId);
+function getCSRFToken() {
+    const form = document.getElementById('addLessonForm');
     if (form && form.csrf_token) {
         return form.csrf_token.value;
     }
+    console.error('CSRF token not found');
     return null;
 }
 
@@ -934,7 +1005,7 @@ document.getElementById('addLessonForm').addEventListener('submit', async functi
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
-                'X-CSRFToken': getCSRFToken('addLessonForm')
+                'X-CSRFToken': getCSRFToken()
             },
             body: JSON.stringify(data)
         });
@@ -1001,7 +1072,7 @@ document.getElementById('editLessonForm').addEventListener('submit', async funct
             method: 'PUT',
             headers: { 
                 'Content-Type': 'application/json',
-                'X-CSRFToken': getCSRFToken('editLessonForm')
+                'X-CSRFToken': getCSRFToken()
             },
             body: JSON.stringify(data)
         });
@@ -1030,7 +1101,7 @@ async function deleteLesson(id) {
         const response = await fetch(`/api/admin/lessons/${id}/delete`, {
             method: 'DELETE',
             headers: {
-                'X-CSRFToken': getCSRFToken('addLessonForm') // Can use any form's token
+                'X-CSRFToken': getCSRFToken()
             }
         });
         
@@ -1064,19 +1135,48 @@ async function loadLessonContent(lessonId) {
         const tbody = document.querySelector('#lessonContentTable tbody');
         tbody.innerHTML = '';
         
-        content.forEach(item => {
+        content.forEach((item, index) => {
             const row = document.createElement('tr');
+            row.setAttribute('data-content-id', item.id);
             row.innerHTML = `
-                <td>${item.order_index}</td>
-                <td><span class="badge badge-primary">${item.content_type}</span></td>
-                <td>${item.title || `${item.content_type} #${item.content_id || 'Custom'}`}</td>
-                <td><span class="badge ${item.is_optional ? 'badge-warning' : 'badge-success'}">${item.is_optional ? 'Yes' : 'No'}</span></td>
                 <td>
-                    <button class="btn btn-sm btn-danger" onclick="removeContent(${lessonId}, ${item.id})">Remove</button>
+                    <div class="d-flex align-items-center">
+                        <span class="drag-handle me-2" style="cursor: move;">⋮⋮</span>
+                        <span class="order-number">${item.order_index}</span>
+                    </div>
+                </td>
+                <td>
+                    <span class="badge ${getContentTypeBadgeClass(item.content_type)}">${item.content_type}</span>
+                    ${item.is_interactive ? '<span class="badge bg-info ms-1">Interactive</span>' : ''}
+                </td>
+                <td>
+                    <div class="content-title">
+                        ${item.title || `${item.content_type} #${item.content_id || 'Custom'}`}
+                    </div>
+                    ${item.content_text ? `<small class="text-muted">${truncateText(item.content_text, 50)}</small>` : ''}
+                </td>
+                <td>
+                    <span class="badge ${item.is_published ? 'bg-success' : 'bg-secondary'}">
+                        ${item.is_published ? 'Published' : 'Draft'}
+                    </span>
+                </td>
+                <td>
+                    <span class="badge ${item.is_optional ? 'bg-warning' : 'bg-success'}">
+                        ${item.is_optional ? 'Optional' : 'Required'}
+                    </span>
+                </td>
+                <td>
+                    <input type="checkbox" class="content-checkbox" value="${item.id}" onchange="toggleBulkOperations()">
                 </td>
             `;
             tbody.appendChild(row);
         });
+        
+        // Initialize drag-and-drop after content is loaded
+        if (typeof Sortable !== 'undefined') {
+            initializeDragAndDrop();
+        }
+        
     } catch (error) {
         console.error('Error loading lesson content:', error);
         alert('Error loading lesson content');
@@ -1093,7 +1193,7 @@ async function removeContent(lessonId, contentId) {
         const response = await fetch(`/api/admin/lessons/${lessonId}/content/${contentId}/delete`, {
             method: 'DELETE',
             headers: {
-                'X-CSRFToken': getCSRFToken('addLessonForm') // Can use any form's token
+                'X-CSRFToken': getCSRFToken()
             }
         });
         
@@ -1111,6 +1211,370 @@ async function removeContent(lessonId, contentId) {
     }
 }
 
+// Initialize drag-and-drop functionality
+function initializeDragAndDrop() {
+    setTimeout(() => {
+        const sortableList = document.getElementById('sortableContentList');
+        
+        new Sortable(sortableList, {
+            animation: 150,
+            handle: '.drag-handle',
+            onEnd: function(evt) {
+                updateContentOrder();
+            }
+        });
+    }, 100);
+}
+
+// Update content order after drag-and-drop
+async function updateContentOrder() {
+    const rows = document.querySelectorAll('#lessonContentTable tbody tr');
+    const orderUpdates = [];
+    
+    rows.forEach((row, index) => {
+        const contentId = row.getAttribute('data-content-id');
+        const orderNumber = row.querySelector('.order-number');
+        orderNumber.textContent = index;
+        
+        orderUpdates.push({
+            content_id: parseInt(contentId),
+            order_index: index
+        });
+    });
+    
+    try {
+        const response = await fetch(`/api/admin/lessons/${currentLessonId}/content/reorder`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ order_updates: orderUpdates })
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to update content order');
+        }
+    } catch (error) {
+        console.error('Error updating content order:', error);
+        alert('Error updating content order');
+        // Reload content to restore original order
+        loadLessonContent(currentLessonId);
+    }
+}
+
+// Content preview functionality
+async function previewContent(contentId) {
+    try {
+        const response = await fetch(`/api/admin/content/${contentId}/preview`);
+        const previewData = await response.json();
+        
+        const previewContainer = document.getElementById('contentPreviewContainer');
+        previewContainer.innerHTML = generateContentPreview(previewData);
+        
+        openModal('contentPreviewModal');
+    } catch (error) {
+        console.error('Error loading content preview:', error);
+        alert('Error loading content preview');
+    }
+}
+
+function generateContentPreview(content) {
+    let previewHtml = `<h5>${content.title || 'Untitled Content'}</h5>`;
+    
+    switch (content.content_type) {
+        case 'text':
+            previewHtml += `<div class="rich-text-content">${content.content_text || ''}</div>`;
+            break;
+            
+        case 'image':
+            if (content.media_url || content.file_path) {
+                previewHtml += `<img src="${content.media_url || content.file_path}" class="img-fluid" alt="${content.title}">`;
+            }
+            if (content.content_text) {
+                previewHtml += `<p class="mt-2">${content.content_text}</p>`;
+            }
+            break;
+            
+        case 'video':
+            if (content.media_url || content.file_path) {
+                previewHtml += `
+                    <div class="ratio ratio-16x9">
+                        <video controls>
+                            <source src="${content.media_url || content.file_path}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                `;
+            }
+            break;
+            
+        case 'audio':
+            if (content.media_url || content.file_path) {
+                previewHtml += `
+                    <audio controls class="w-100">
+                        <source src="${content.media_url || content.file_path}" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                `;
+            }
+            break;
+            
+        case 'interactive':
+            previewHtml += '<div class="alert alert-info">Interactive content preview not available in admin panel. View in lesson to test functionality.</div>';
+            if (content.quiz_questions && content.quiz_questions.length > 0) {
+                previewHtml += '<h6>Questions:</h6><ul>';
+                content.quiz_questions.forEach(q => {
+                    previewHtml += `<li>${q.question_text}</li>`;
+                });
+                previewHtml += '</ul>';
+            }
+            break;
+            
+        default:
+            if (content.content_data) {
+                previewHtml += `<div class="alert alert-secondary">Content Type: ${content.content_type}</div>`;
+                previewHtml += `<pre>${JSON.stringify(content.content_data, null, 2)}</pre>`;
+            }
+    }
+    
+    return previewHtml;
+}
+
+// Bulk operations functionality
+function toggleBulkOperations() {
+    const checkboxes = document.querySelectorAll('.content-checkbox:checked');
+    const bulkPanel = document.getElementById('bulkOperationsPanel');
+    
+    if (checkboxes.length > 0) {
+        bulkPanel.style.display = 'block';
+    } else {
+        bulkPanel.style.display = 'none';
+    }
+}
+
+function hideBulkOperations() {
+    document.getElementById('bulkOperationsPanel').style.display = 'none';
+    document.querySelectorAll('.content-checkbox').forEach(cb => cb.checked = false);
+}
+
+async function bulkSetOptional(isOptional) {
+    const selectedIds = getSelectedContentIds();
+    if (selectedIds.length === 0) return;
+    
+    try {
+        const response = await fetch(`/api/admin/lessons/${currentLessonId}/content/bulk-update`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            },
+            body: JSON.stringify({
+                content_ids: selectedIds,
+                updates: { is_optional: isOptional }
+            })
+        });
+        
+        if (response.ok) {
+            loadLessonContent(currentLessonId);
+            hideBulkOperations();
+            alert(`Content marked as ${isOptional ? 'optional' : 'required'} successfully!`);
+        } else {
+            throw new Error('Failed to update content');
+        }
+    } catch (error) {
+        console.error('Error updating content:', error);
+        alert('Error updating content');
+    }
+}
+
+async function bulkDuplicate() {
+    const selectedIds = getSelectedContentIds();
+    if (selectedIds.length === 0) return;
+    
+    if (!confirm(`Duplicate ${selectedIds.length} content item(s)?`)) return;
+    
+    try {
+        const response = await fetch(`/api/admin/lessons/${currentLessonId}/content/bulk-duplicate`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            },
+            body: JSON.stringify({ content_ids: selectedIds })
+        });
+        
+        if (response.ok) {
+            loadLessonContent(currentLessonId);
+            loadLessons(); // Update content count in main table
+            hideBulkOperations();
+            alert('Content duplicated successfully!');
+        } else {
+            throw new Error('Failed to duplicate content');
+        }
+    } catch (error) {
+        console.error('Error duplicating content:', error);
+        alert('Error duplicating content');
+    }
+}
+
+async function bulkDelete() {
+    const selectedIds = getSelectedContentIds();
+    if (selectedIds.length === 0) return;
+    
+    if (!confirm(`Delete ${selectedIds.length} content item(s)? This action cannot be undone.`)) return;
+    
+    try {
+        const response = await fetch(`/api/admin/lessons/${currentLessonId}/content/bulk-delete`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            },
+            body: JSON.stringify({ content_ids: selectedIds })
+        });
+        
+        if (response.ok) {
+            loadLessonContent(currentLessonId);
+            loadLessons(); // Update content count in main table
+            hideBulkOperations();
+            alert('Content deleted successfully!');
+        } else {
+            throw new Error('Failed to delete content');
+        }
+    } catch (error) {
+        console.error('Error deleting content:', error);
+        alert('Error deleting content');
+    }
+}
+
+function getSelectedContentIds() {
+    const checkboxes = document.querySelectorAll('.content-checkbox:checked');
+    return Array.from(checkboxes).map(cb => parseInt(cb.value));
+}
+
+function bulkPreview() {
+    const selectedIds = getSelectedContentIds();
+    if (selectedIds.length === 0) {
+        alert('Please select at least one item to preview.');
+        return;
+    }
+    if (selectedIds.length > 1) {
+        alert('Please select only one item to preview.');
+        return;
+    }
+    previewContent(selectedIds[0]);
+}
+
+function bulkEdit() {
+    const selectedIds = getSelectedContentIds();
+    if (selectedIds.length === 0) {
+        alert('Please select at least one item to edit.');
+        return;
+    }
+    if (selectedIds.length > 1) {
+        alert('Please select only one item to edit.');
+        return;
+    }
+    editContent(selectedIds[0]);
+}
+
+async function editContent(contentId) {
+    try {
+        const response = await fetch(`/api/admin/content/${contentId}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch content details.');
+        }
+        const content = await response.json();
+
+        // Prepare the modal for editing
+        openAddContentModal(true); // Open in edit mode
+        document.getElementById('editingContentId').value = content.id;
+        
+        // Set modal title and button text for editing
+        document.getElementById('addContentModalTitle').textContent = 'Edit Content';
+        const saveBtn = document.getElementById('saveContentBtn');
+        saveBtn.textContent = 'Update Content';
+        saveBtn.onclick = () => saveContentToLesson(true); // Pass edit flag
+
+        // Populate the form
+        await populateContentForm(content);
+
+    } catch (error) {
+        console.error('Error preparing content for editing:', error);
+        alert('Error: ' + error.message);
+    }
+}
+
+async function populateContentForm(content) {
+    // This function populates the 'Add Content' modal with existing data for editing.
+    selectedContentType = content.content_type;
+
+    // Ensure content options are loaded before generating the form
+    if (['kana', 'kanji', 'vocabulary', 'grammar'].includes(selectedContentType)) {
+        await loadContentOptions(selectedContentType);
+    }
+
+    // Show the config step directly, bypassing the type selection
+    document.getElementById('configStepTitle').textContent = `Edit ${selectedContentType.charAt(0).toUpperCase() + selectedContentType.slice(1)} Content`;
+    generateContentConfigForm(selectedContentType, content); // Pass content to set initial values
+    showContentConfigStep();
+    
+    // Disable content type selection step
+    document.getElementById('contentTypeStep').style.display = 'none';
+
+    // Populate common fields
+    document.getElementById('contentOrder').value = content.order_index || 0;
+    document.getElementById('contentOptional').checked = content.is_optional;
+
+    // Populate type-specific fields
+    if (['kana', 'kanji', 'vocabulary', 'grammar'].includes(content.content_type)) {
+        document.getElementById('existingContentSelect').value = content.content_id;
+        document.getElementById('customTitle').value = content.title || '';
+    } else if (content.content_type === 'text') {
+        document.getElementById('textContentTitle').value = content.title || '';
+        // Rich text content is now set during editor initialization
+    } else if (['video', 'audio', 'image'].includes(content.content_type)) {
+        document.getElementById('mediaTitle').value = content.title || '';
+        document.getElementById('mediaDescription').value = content.content_text || '';
+        
+        if (content.file_path) {
+            toggleContentSource('upload');
+            // Simulate a successful upload for the UI
+            uploadedFileData = {
+                filePath: content.file_path,
+                original_filename: content.original_filename || content.file_path.split('/').pop(),
+                file_size: content.file_size,
+                file_type: content.file_type
+            };
+            showUploadSuccess(uploadedFileData);
+        } else if (content.media_url) {
+            toggleContentSource('url');
+            document.getElementById('mediaUrl').value = content.media_url;
+        }
+    }
+    // Note: Interactive content editing is not fully implemented in this pass.
+}
+
+
+// Utility functions
+function getContentTypeBadgeClass(contentType) {
+    const badgeClasses = {
+        'kana': 'bg-primary',
+        'kanji': 'bg-success',
+        'vocabulary': 'bg-info',
+        'grammar': 'bg-warning',
+        'text': 'bg-secondary',
+        'image': 'bg-purple',
+        'video': 'bg-danger',
+        'audio': 'bg-dark',
+        'interactive': 'bg-orange'
+    };
+    return badgeClasses[contentType] || 'bg-light';
+}
+
+function truncateText(text, maxLength) {
+    if (!text) return '';
+    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+}
+
 // Enhanced Content Builder Variables
 let selectedContentType = null;
 let contentOptions = {};
@@ -1118,7 +1582,7 @@ let currentContentData = {};
 let isFileUploading = false;
 
 // Open enhanced add content modal
-function openAddContentModal() {
+function openAddContentModal(isEditing = false) {
     if (!currentLessonId) {
         alert('Please select a lesson first');
         return;
@@ -1127,9 +1591,21 @@ function openAddContentModal() {
     // Reset wizard state
     selectedContentType = null;
     currentContentData = {};
+    uploadedFileData = null;
+    document.getElementById('contentConfigForm').reset();
+    document.getElementById('editingContentId').value = '';
+
+    // Reset modal title and button for adding
+    document.getElementById('addContentModalTitle').textContent = 'Add Content to Lesson';
+    const saveBtn = document.getElementById('saveContentBtn');
+    saveBtn.textContent = 'Add to Lesson';
+    saveBtn.onclick = () => saveContentToLesson(false);
+
+    if (!isEditing) {
+        // Show content type selection step for new content
+        showContentTypeStep();
+    }
     
-    // Show content type selection step
-    showContentTypeStep();
     openModal('addContentModal');
 }
 
@@ -1211,7 +1687,7 @@ async function loadContentOptions(contentType) {
 }
 
 // Generate dynamic form fields based on content type
-function generateContentConfigForm(contentType) {
+function generateContentConfigForm(contentType, content = null) {
     const fieldsContainer = document.getElementById('contentConfigFields');
     fieldsContainer.innerHTML = '';
     
@@ -1242,13 +1718,13 @@ function generateContentConfigForm(contentType) {
             </div>
             <div class="form-group">
                 <label for="customTitle">Custom Title (optional)</label>
-                <input type="text" id="customTitle" name="title" class="form-control" placeholder="Override default title">
+                <input type="text" id="customTitle" name="custom_title" class="form-control" placeholder="Override default title">
             </div>
         `;
     } else if (contentType === 'text') {
         // Show rich text editor section
         document.getElementById('richTextSection').style.display = 'block';
-        initializeRichTextEditor();
+        initializeRichTextEditor(content ? content.content_text : '');
     } else if (contentType === 'interactive') {
         // Show interactive content section
         document.getElementById('interactiveSection').style.display = 'block';
@@ -1263,7 +1739,7 @@ function generateContentConfigForm(contentType) {
         fieldsContainer.innerHTML = `
             <div class="form-group">
                 <label for="mediaTitle">Title *</label>
-                <input type="text" id="mediaTitle" name="title" class="form-control" required>
+                <input type="text" id="mediaTitle" name="media_title" class="form-control" required>
             </div>
             
             <!-- File Upload or URL Selection -->
@@ -1335,6 +1811,17 @@ async function previewContent() {
     const formData = new FormData(document.getElementById('contentConfigForm'));
     currentContentData = Object.fromEntries(formData.entries());
     currentContentData.content_type = selectedContentType;
+
+    // Consolidate title from different sections
+    if (currentContentData.text_title) {
+        currentContentData.title = currentContentData.text_title;
+    } else if (currentContentData.interactive_title) {
+        currentContentData.title = currentContentData.interactive_title;
+    } else if (currentContentData.media_title) {
+        currentContentData.title = currentContentData.media_title;
+    } else if (currentContentData.custom_title) {
+        currentContentData.title = currentContentData.custom_title;
+    }
 
     if (!validateContentData(currentContentData)) {
         return;
@@ -1586,114 +2073,156 @@ async function generateContentPreview(data) {
 }
 
 // Save content to lesson
-async function saveContentToLesson() {
-    if (!currentLessonId || !currentContentData) {
-        alert('Missing lesson or content data');
+async function saveContentToLesson(isEditing = false) {
+    if (!currentLessonId) {
+        alert('Missing lesson data');
         return;
     }
-    
+
+    // Re-gather data from form right before saving
+    const formData = new FormData(document.getElementById('contentConfigForm'));
+    currentContentData = Object.fromEntries(formData.entries());
+    currentContentData.content_type = selectedContentType;
+
+    // Consolidate title from different sections
+    if (currentContentData.text_title) {
+        currentContentData.title = currentContentData.text_title;
+    } else if (currentContentData.interactive_title) {
+        currentContentData.title = currentContentData.interactive_title;
+    } else if (currentContentData.media_title) {
+        currentContentData.title = currentContentData.media_title;
+    } else if (currentContentData.custom_title) {
+        currentContentData.title = currentContentData.custom_title;
+    }
+
+    if (!validateContentData(currentContentData)) {
+        return;
+    }
+
     try {
         console.log('Saving content data:', currentContentData);
         console.log('To lesson ID:', currentLessonId);
         console.log('Uploaded file data:', uploadedFileData);
-        
-        let endpoint = `/api/admin/lessons/${currentLessonId}/content/new`;
-        let saveData = { ...currentContentData };
-        
-        if (selectedContentType === 'interactive') {
-            endpoint = `/api/admin/lessons/${currentLessonId}/content/interactive`;
-            const interactiveType = document.getElementById('interactiveType').value;
-            saveData.interactive_type = interactiveType;
-            saveData.is_interactive = true;
 
-            if (interactiveType === 'multiple_choice') {
-                const question = document.getElementById('mcQuestion').value;
-                const explanation = document.getElementById('mcExplanation').value;
-                const correctOption = document.querySelector('input[name="correct_option"]:checked')?.value;
-                
-                const options = [];
-                const optionElements = document.querySelectorAll('.option-item');
-                
-                optionElements.forEach((element, index) => {
-                    const optionInput = element.querySelector(`input[name^="option_"]`);
-                    const feedbackInput = element.querySelector(`input[name^="feedback_"]`);
-                    
-                    if (optionInput && optionInput.value.trim()) {
-                        options.push({
-                            text: optionInput.value.trim(),
-                            is_correct: correctOption === optionInput.name.split('_')[1],
-                            feedback: feedbackInput ? feedbackInput.value.trim() : ''
-                        });
-                    }
-                });
-                
-                saveData.question_text = question;
-                saveData.explanation = explanation;
-                saveData.options = options;
-            } else if (interactiveType === 'fill_blank') {
-                saveData.question_text = document.getElementById('fbQuestion').value;
-                saveData.correct_answers = document.getElementById('fbAnswers').value;
-                saveData.explanation = document.getElementById('fbExplanation').value;
-            } else if (interactiveType === 'true_false') {
-                const correctAnswer = document.querySelector('input[name="tf_answer"]:checked')?.value;
-                saveData.question_text = document.getElementById('tfQuestion').value;
-                saveData.correct_answer = correctAnswer === 'true';
-                saveData.explanation = document.getElementById('tfExplanation').value;
+        let endpoint;
+        const method = isEditing ? 'PUT' : 'POST';
+        let saveData = { ...currentContentData };
+
+        const editingContentId = document.getElementById('editingContentId').value;
+
+        if (isEditing && editingContentId) {
+            endpoint = `/api/admin/content/${editingContentId}/edit`;
+            if (selectedContentType === 'text') {
+                saveData.content_text = tinymce.get('richTextContent').getContent();
+            } else if (['video', 'audio', 'image'].includes(selectedContentType)) {
+                const contentSource = document.querySelector('input[name="contentSource"]:checked')?.value;
+                if (contentSource === 'upload' && uploadedFileData) {
+                    saveData.file_path = uploadedFileData.filePath;
+                    saveData.media_url = null;
+                } else {
+                    saveData.file_path = null;
+                }
             }
-        } else if (['video', 'audio', 'image'].includes(selectedContentType)) {
-            const contentSource = document.querySelector('input[name="contentSource"]:checked')?.value;
-            
-            if (contentSource === 'upload' && uploadedFileData) {
-                // Use file upload endpoint
-                endpoint = `/api/admin/lessons/${currentLessonId}/content/file`;
-                saveData = {
-                    content_type: selectedContentType,
-                    title: currentContentData.title,
-                    description: currentContentData.content_text || '',
-                file_path: uploadedFileData.filePath,
-                    file_size: uploadedFileData.file_size,
-                    file_type: uploadedFileData.file_type,
-                    original_filename: uploadedFileData.original_filename,
-                    order_index: currentContentData.order_index || 0,
-                    is_optional: currentContentData.is_optional || false
-                };
-            } else if (contentSource === 'url') {
-                // Use regular content endpoint with URL
-                if (!currentContentData.media_url) {
-                    alert('Please provide a URL for the content');
-                    return;
+        } else {
+            // Logic for creating new content
+            if (selectedContentType === 'interactive') {
+                endpoint = `/api/admin/lessons/${currentLessonId}/content/interactive`;
+                const interactiveType = document.getElementById('interactiveType').value;
+                saveData.interactive_type = interactiveType;
+                saveData.is_interactive = true;
+
+                if (interactiveType === 'multiple_choice') {
+                    const question = document.getElementById('mcQuestion').value;
+                    const explanation = document.getElementById('mcExplanation').value;
+                    const correctOption = document.querySelector('input[name="correct_option"]:checked')?.value;
+                    
+                    const options = [];
+                    const optionElements = document.querySelectorAll('.option-item');
+                    
+                    optionElements.forEach((element, index) => {
+                        const optionInput = element.querySelector(`input[name^="option_"]`);
+                        const feedbackInput = element.querySelector(`input[name^="feedback_"]`);
+                        
+                        if (optionInput && optionInput.value.trim()) {
+                            options.push({
+                                text: optionInput.value.trim(),
+                                is_correct: correctOption === optionInput.name.split('_')[1],
+                                feedback: feedbackInput ? feedbackInput.value.trim() : ''
+                            });
+                        }
+                    });
+                    
+                    saveData.question_text = question;
+                    saveData.explanation = explanation;
+                    saveData.options = options;
+                } else if (interactiveType === 'fill_blank') {
+                    saveData.question_text = document.getElementById('fbQuestion').value;
+                    saveData.correct_answers = document.getElementById('fbAnswers').value;
+                    saveData.explanation = document.getElementById('fbExplanation').value;
+                } else if (interactiveType === 'true_false') {
+                    const correctAnswer = document.querySelector('input[name="tf_answer"]:checked')?.value;
+                    saveData.question_text = document.getElementById('tfQuestion').value;
+                    saveData.correct_answer = correctAnswer === 'true';
+                    saveData.explanation = document.getElementById('tfExplanation').value;
+                }
+            } else if (['video', 'audio', 'image'].includes(selectedContentType)) {
+                const contentSource = document.querySelector('input[name="contentSource"]:checked')?.value;
+                
+                if (contentSource === 'upload' && uploadedFileData) {
+                    endpoint = `/api/admin/lessons/${currentLessonId}/content/file`;
+                    saveData = {
+                        content_type: selectedContentType,
+                        title: currentContentData.title,
+                        description: currentContentData.content_text || '',
+                        file_path: uploadedFileData.filePath,
+                        file_size: uploadedFileData.file_size,
+                        file_type: uploadedFileData.file_type,
+                        original_filename: uploadedFileData.original_filename,
+                        order_index: currentContentData.order_index || 0,
+                        is_optional: currentContentData.is_optional === 'on'
+                    };
+                } else {
+                    endpoint = `/api/admin/lessons/${currentLessonId}/content/new`;
+                    if (!currentContentData.media_url) {
+                        alert('Please provide a URL for the content');
+                        return;
+                    }
+                    saveData.media_url = currentContentData.media_url;
                 }
             } else {
-                alert('Please either upload a file or provide a URL');
-                return;
+                endpoint = `/api/admin/lessons/${currentLessonId}/content/new`;
+                if (selectedContentType === 'text') {
+                    saveData.content_text = tinymce.get('richTextContent').getContent();
+                }
             }
         }
-        
-        const headers = { 
+
+        const headers = {
             'Content-Type': 'application/json',
             'X-Requested-With': 'XMLHttpRequest',
-            'X-CSRFToken': getCSRFToken('contentConfigForm')
+            'X-CSRFToken': getCSRFToken()
         };
-        
+
         console.log('Using endpoint:', endpoint);
+        console.log('Using method:', method);
         console.log('Sending data:', saveData);
-        
+
         const response = await fetch(endpoint, {
-            method: 'POST',
+            method: method,
             headers: headers,
             body: JSON.stringify(saveData)
         });
-        
+
         console.log('Response status:', response.status);
-        
+
         if (response.ok) {
             const result = await response.json();
             console.log('Success result:', result);
             closeModal('addContentModal');
             loadLessonContent(currentLessonId);
             loadLessons(); // Refresh main table to update content count
-            alert('Content added to lesson successfully!');
-            
+            alert(`Content ${isEditing ? 'updated' : 'added'} successfully!`);
+
             // Clear uploaded file data
             uploadedFileData = null;
         } else {

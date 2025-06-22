@@ -1,5 +1,18 @@
 {% extends "base.html" %}
 {% block title %}Home{% endblock %}
+
+{% block styles %}
+<style>
+    body {
+        background-image: url("{{ url_for('static', filename='images/japan_welcome_page.jpg') }}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
     <h1>Welcome to Your Japanese Learning Website!</h1>
     <p>This is the prototype homepage. Explore our free and premium content.</p>

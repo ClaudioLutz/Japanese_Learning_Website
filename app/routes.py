@@ -729,6 +729,296 @@ def remove_lesson_content(lesson_id, content_id):
     db.session.commit()
     return jsonify({"message": "Content removed from lesson successfully"}), 200
 
+@bp.route('/api/admin/lessons/<int:lesson_id>/content/reorder', methods=['PUT'])
+@login_required
+@admin_required
+def reorder_lesson_content(lesson_id):
+    """Reorder lesson content items"""
+    lesson = Lesson.query.get_or_404(lesson_id)
+    data = request.json
+    
+    if not data or 'order_updates' not in data:
+        return jsonify({"error": "Missing order updates"}), 400
+    
+    try:
+        for update in data['order_updates']:
+            content = LessonContent.query.filter_by(
+                lesson_id=lesson_id, 
+                id=update['content_id']
+            ).first()
+            if content:
+                content.order_index = update['order_index']
+        
+        db.session.commit()
+        return jsonify({"message": "Content order updated successfully"}), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Failed to update content order"}), 500
+
+@bp.route('/api/admin/content/<int:content_id>/preview', methods=['GET'])
+@login_required
+@admin_required
+def preview_content(content_id):
+    """Get content preview data"""
+    content = LessonContent.query.get_or_404(content_id)
+    
+    preview_data = model_to_dict(content)
+    
+    # Add related data based on content type
+    if content.content_type in ['kana', 'kanji', 'vocabulary', 'grammar']:
+        content_data = content.get_content_data()
+        if content_data:
+            preview_data['content_data'] = model_to_dict(content_data)
+    
+    # Add quiz questions for interactive content
+    if content.is_interactive:
+        preview_data['quiz_questions'] = [
+            model_to_dict(q) for q in content.quiz_questions
+        ]
+    
+    return jsonify(preview_data)
+
+@bp.route('/api/admin/content/<int:content_id>', methods=['GET'])
+@login_required
+@admin_required
+def get_content_details(content_id):
+    """Get full details for a single content item for editing."""
+    content = LessonContent.query.get_or_404(content_id)
+    return jsonify(model_to_dict(content))
+
+@bp.route('/api/admin/content/<int:content_id>/edit', methods=['PUT'])
+@login_required
+@admin_required
+def update_lesson_content(content_id):
+    """Update an existing lesson content item."""
+    content = LessonContent.query.get_or_404(content_id)
+    data = request.json
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+
+    try:
+        # Common fields
+        content.title = data.get('title', content.title)
+        content.order_index = int(data.get('order_index', content.order_index))
+        is_optional = data.get('is_optional', content.is_optional)
+        if isinstance(is_optional, str):
+            content.is_optional = is_optional.lower() == 'true'
+        else:
+            content.is_optional = is_optional
+
+        # Type-specific fields
+        content.content_type = data.get('content_type', content.content_type)
+        if content.content_type in ['kana', 'kanji', 'vocabulary', 'grammar']:
+            content.content_id = data.get('content_id', content.content_id)
+        elif content.content_type == 'text':
+            content.content_text = data.get('content_text', content.content_text)
+        elif content.content_type in ['video', 'audio', 'image']:
+            content.media_url = data.get('media_url', content.media_url)
+            content.file_path = data.get('file_path', content.file_path)
+            content.content_text = data.get('description', content.content_text)
+
+        db.session.commit()
+        return jsonify(model_to_dict(content)), 200
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        return jsonify({"error": f"Database error occurred: {str(e)}"}), 500
+    except Exception as e:
+        return jsonify({"error": f"An unexpected error occurred: {str(e)}"}), 500
+
+@bp.route('/api/admin/lessons/<int:lesson_id>/content/bulk-update', methods=['PUT'])
+@login_required
+@admin_required
+def bulk_update_content(lesson_id):
+    """Bulk update content properties"""
+    lesson = Lesson.query.get_or_404(lesson_id)
+    data = request.json
+    
+    if not data or 'content_ids' not in data or 'updates' not in data:
+        return jsonify({"error": "Missing required data"}), 400
+    
+    try:
+        content_items = LessonContent.query.filter(
+            LessonContent.lesson_id == lesson_id,
+            LessonContent.id.in_(data['content_ids'])
+        ).all()
+        
+        for content in content_items:
+            for key, value in data['updates'].items():
+                if hasattr(content, key):
+                    setattr(content, key, value)
+        
+        db.session.commit()
+        return jsonify({"message": f"Updated {len(content_items)} content items"}), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Failed to update content"}), 500
+
+@bp.route('/api/admin/lessons/<int:lesson_id>/content/bulk-duplicate', methods=['POST'])
+@login_required
+@admin_required
+def bulk_duplicate_content(lesson_id):
+    """Bulk duplicate content items"""
+    lesson = Lesson.query.get_or_404(lesson_id)
+    data = request.json
+    
+    if not data or 'content_ids' not in data:
+        return jsonify({"error": "Missing content IDs"}), 400
+    
+    try:
+        duplicated_count = 0
+        
+        for content_id in data['content_ids']:
+            original = LessonContent.query.filter_by(
+                lesson_id=lesson_id, 
+                id=content_id
+            ).first()
+            
+            if original:
+                # Create duplicate
+                duplicate = LessonContent(
+                    lesson_id=lesson_id,
+                    content_type=original.content_type,
+                    content_id=original.content_id,
+                    title=f"{original.title} (Copy)" if original.title else None,
+                    content_text=original.content_text,
+                    media_url=original.media_url,
+                    file_path=original.file_path,
+                    order_index=original.order_index + 1000,  # Place at end
+                    is_optional=original.is_optional,
+                    is_interactive=original.is_interactive,
+                    max_attempts=original.max_attempts,
+                    passing_score=original.passing_score
+                )
+                
+                db.session.add(duplicate)
+                db.session.flush()  # Get the new ID
+                
+                # Duplicate quiz questions if interactive
+                if original.is_interactive:
+                    for question in original.quiz_questions:
+                        new_question = QuizQuestion(
+                            lesson_content_id=duplicate.id,
+                            question_type=question.question_type,
+                            question_text=question.question_text,
+                            explanation=question.explanation,
+                            points=question.points,
+                            order_index=question.order_index
+                        )
+                        db.session.add(new_question)
+                        db.session.flush()
+                        
+                        # Duplicate options
+                        for option in question.options:
+                            new_option = QuizOption(
+                                question_id=new_question.id,
+                                option_text=option.option_text,
+                                is_correct=option.is_correct,
+                                order_index=option.order_index,
+                                feedback=option.feedback
+                            )
+                            db.session.add(new_option)
+                
+                duplicated_count += 1
+        
+        db.session.commit()
+        return jsonify({"message": f"Duplicated {duplicated_count} content items"}), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Failed to duplicate content"}), 500
+
+@bp.route('/api/admin/lessons/<int:lesson_id>/content/bulk-delete', methods=['DELETE'])
+@login_required
+@admin_required
+def bulk_delete_content(lesson_id):
+    """Bulk delete content items"""
+    lesson = Lesson.query.get_or_404(lesson_id)
+    data = request.json
+    
+    if not data or 'content_ids' not in data:
+        return jsonify({"error": "Missing content IDs"}), 400
+    
+    try:
+        content_items = LessonContent.query.filter(
+            LessonContent.lesson_id == lesson_id,
+            LessonContent.id.in_(data['content_ids'])
+        ).all()
+        
+        deleted_count = len(content_items)
+        
+        for content in content_items:
+            # Delete associated files if any
+            if hasattr(content, 'delete_file'):
+                content.delete_file()
+            db.session.delete(content)
+        
+        db.session.commit()
+        return jsonify({"message": f"Deleted {deleted_count} content items"}), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Failed to delete content"}), 500
+
+@bp.route('/api/admin/content/<int:content_id>/duplicate', methods=['POST'])
+@login_required
+@admin_required
+def duplicate_single_content(content_id):
+    """Duplicate a single content item"""
+    original = LessonContent.query.get_or_404(content_id)
+    
+    try:
+        # Create duplicate (same logic as bulk duplicate)
+        duplicate = LessonContent(
+            lesson_id=original.lesson_id,
+            content_type=original.content_type,
+            content_id=original.content_id,
+            title=f"{original.title} (Copy)" if original.title else None,
+            content_text=original.content_text,
+            media_url=original.media_url,
+            file_path=original.file_path,
+            order_index=original.order_index + 1,
+            is_optional=original.is_optional,
+            is_interactive=original.is_interactive,
+            max_attempts=original.max_attempts,
+            passing_score=original.passing_score
+        )
+        
+        db.session.add(duplicate)
+        db.session.flush()
+        
+        # Duplicate quiz questions if interactive
+        if original.is_interactive:
+            for question in original.quiz_questions:
+                new_question = QuizQuestion(
+                    lesson_content_id=duplicate.id,
+                    question_type=question.question_type,
+                    question_text=question.question_text,
+                    explanation=question.explanation,
+                    points=question.points,
+                    order_index=question.order_index
+                )
+                db.session.add(new_question)
+                db.session.flush()
+                
+                for option in question.options:
+                    new_option = QuizOption(
+                        question_id=new_question.id,
+                        option_text=option.option_text,
+                        is_correct=option.is_correct,
+                        order_index=option.order_index,
+                        feedback=option.feedback
+                    )
+                    db.session.add(new_option)
+        
+        db.session.commit()
+        return jsonify(model_to_dict(duplicate)), 201
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Failed to duplicate content"}), 500
+
 # == USER LESSON API ==
 @bp.route('/api/lessons', methods=['GET'])
 @login_required
@@ -864,19 +1154,29 @@ def submit_quiz_answer(lesson_id, question_id):
             return jsonify({"error": "Invalid request. Must be JSON."}), 400
         current_app.logger.info(f"Received answer for question {question_id} from user {current_user.id}: {data}")
         
-        # Check if user has already answered or exceeded attempts
-        existing_answers_count = UserQuizAnswer.query.filter_by(
+        # Find existing answer or create a new one
+        answer = UserQuizAnswer.query.filter_by(
             user_id=current_user.id, question_id=question_id
-        ).count()
-        
-        if existing_answers_count >= question.content.max_attempts:
-            current_app.logger.warning(f"User {current_user.id} exceeded max attempts for question {question_id}")
-            return jsonify({"error": "Maximum attempts exceeded"}), 400
-    
+        ).first()
+
+        # If an answer exists, check attempts
+        if answer:
+            if answer.attempts >= question.content.max_attempts:
+                current_app.logger.warning(f"User {current_user.id} exceeded max attempts for question {question_id}")
+                return jsonify({"error": "Maximum attempts exceeded"}), 400
+            answer.attempts += 1
+        else:
+            # No existing answer, create a new one
+            answer = UserQuizAnswer(
+                user_id=current_user.id,
+                question_id=question_id,
+                attempts=1
+            )
+            db.session.add(answer)
+
         # Process answer based on question type
         is_correct = False
         selected_option = None
-        answer = None
 
         if question.question_type == 'multiple_choice':
             selected_option_id = data.get('selected_option_id')
@@ -889,27 +1189,20 @@ def submit_quiz_answer(lesson_id, question_id):
             
             is_correct = selected_option and selected_option.is_correct
             current_app.logger.info(f"Is correct: {is_correct}")
-            
-            answer = UserQuizAnswer(
-                user_id=current_user.id,
-                question_id=question_id,
-                selected_option_id=selected_option_id,
-                is_correct=is_correct
-            )
+
+            answer.selected_option_id = selected_option_id
+            answer.is_correct = is_correct
+            answer.text_answer = None
         
         elif question.question_type == 'fill_blank':
-            text_answer = data.get('text_answer', '').strip().lower()
-            # Get correct answers from question data (stored in explanation field for this type)
+            text_answer = data.get('text_answer', '').strip()
             correct_answers = [ans.strip().lower() for ans in (question.explanation or "").split(',')]
-            is_correct = text_answer in correct_answers
+            is_correct = text_answer.lower() in correct_answers
             
-            answer = UserQuizAnswer(
-                user_id=current_user.id,
-                question_id=question_id,
-                text_answer=data.get('text_answer'),
-                is_correct=is_correct
-            )
-        
+            answer.text_answer = text_answer
+            answer.is_correct = is_correct
+            answer.selected_option_id = None
+
         elif question.question_type == 'true_false':
             selected_option_id = data.get('selected_option_id')
             if not selected_option_id:
@@ -917,18 +1210,14 @@ def submit_quiz_answer(lesson_id, question_id):
             selected_option = QuizOption.query.get(int(selected_option_id))
             is_correct = selected_option and selected_option.is_correct
 
-            answer = UserQuizAnswer(
-                user_id=current_user.id,
-                question_id=question_id,
-                selected_option_id=selected_option_id,
-                is_correct=is_correct
-            )
+            answer.selected_option_id = selected_option_id
+            answer.is_correct = is_correct
+            answer.text_answer = None
 
         else:
             return jsonify({"error": "Unsupported question type"}), 400
 
-        if answer:
-            db.session.add(answer)
+        answer.answered_at = db.func.now()
         
         db.session.commit()
         
@@ -936,7 +1225,7 @@ def submit_quiz_answer(lesson_id, question_id):
         result = {
             'is_correct': is_correct,
             'explanation': question.explanation,
-            'attempts_remaining': question.content.max_attempts - (existing_answers_count + 1)
+            'attempts_remaining': question.content.max_attempts - answer.attempts
         }
         
         if selected_option:

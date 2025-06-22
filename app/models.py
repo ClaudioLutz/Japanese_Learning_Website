@@ -271,7 +271,10 @@ class UserQuizAnswer(db.Model):
     selected_option_id = db.Column(db.Integer, db.ForeignKey('quiz_option.id'))
     text_answer = db.Column(db.Text)  # For fill-in-the-blank questions
     is_correct = db.Column(db.Boolean, default=False)
-    answered_at = db.Column(db.DateTime, default=datetime.utcnow)
+    answered_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    attempts = db.Column(db.Integer, default=0, nullable=False)
+
+    __table_args__ = (db.UniqueConstraint('user_id', 'question_id'),)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
