@@ -53,6 +53,7 @@
             <span class="close" onclick="closeModal('addLessonModal')">&times;</span>
         </div>
         <form id="addLessonForm">
+            {{ form.csrf_token }}
             <div class="modal-body">
                 <div class="form-group">
                     <label for="lessonTitle">Title *</label>
@@ -140,6 +141,7 @@
             <span class="close" onclick="closeModal('editLessonModal')">&times;</span>
         </div>
         <form id="editLessonForm">
+            {{ form.csrf_token }}
             <input type="hidden" id="editLessonId" name="id">
             <div class="modal-body">
                 <div class="form-group">
@@ -371,6 +373,7 @@
                 </div>
                 
                 <form id="contentConfigForm">
+                    {{ form.csrf_token }}
                     <div id="contentConfigFields">
                         <!-- Dynamic form fields will be inserted here -->
                     </div>
@@ -459,29 +462,65 @@
     max-height: 300px;
     overflow-y: auto;
 }
+
+/* File Upload Styles */
+.file-upload-area {
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: #f8f9fa;
+}
+
+.file-upload-area:hover {
+    border-color: #007bff;
+    background-color: #e3f2fd;
+}
+
+.file-upload-area.drag-over {
+    border-color: #007bff;
+    background-color: #e3f2fd;
+    transform: scale(1.02);
+}
+
+.upload-placeholder {
+    color: #6c757d;
+}
+
+.upload-placeholder i {
+    margin-bottom: 1rem;
+}
+
+.upload-progress .progress {
+    height: 8px;
+    border-radius: 4px;
+}
+
+.upload-success {
+    color: #28a745;
+}
+
+.btn-group-toggle .btn {
+    margin-right: 0.5rem;
+}
+
+.btn-group-toggle .btn:last-child {
+    margin-right: 0;
+}
 </style>
 
 <script>
 let currentLessonId = null;
 let categories = [];
 
-// Get CSRF token from meta tag or cookie
-function getCSRFToken() {
-    // Try to get from meta tag first
-    const metaToken = document.querySelector('meta[name=csrf-token]');
-    if (metaToken) {
-        return metaToken.getAttribute('content');
+// Get CSRF token from the form
+function getCSRFToken(formId) {
+    const form = document.getElementById(formId);
+    if (form && form.csrf_token) {
+        return form.csrf_token.value;
     }
-    
-    // Try to get from cookie
-    const cookies = document.cookie.split(';');
-    for (let cookie of cookies) {
-        const [name, value] = cookie.trim().split('=');
-        if (name === 'csrf_token') {
-            return decodeURIComponent(value);
-        }
-    }
-    
     return null;
 }
 
@@ -569,7 +608,10 @@ document.getElementById('addLessonForm').addEventListener('submit', async functi
     try {
         const response = await fetch('/api/admin/lessons/new', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken('addLessonForm')
+            },
             body: JSON.stringify(data)
         });
         
@@ -633,7 +675,10 @@ document.getElementById('editLessonForm').addEventListener('submit', async funct
     try {
         const response = await fetch(`/api/admin/lessons/${id}/edit`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken('editLessonForm')
+            },
             body: JSON.stringify(data)
         });
         
@@ -659,7 +704,10 @@ async function deleteLesson(id) {
     
     try {
         const response = await fetch(`/api/admin/lessons/${id}/delete`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': getCSRFToken('addLessonForm') // Can use any form's token
+            }
         });
         
         if (response.ok) {
@@ -719,7 +767,10 @@ async function removeContent(lessonId, contentId) {
     
     try {
         const response = await fetch(`/api/admin/lessons/${lessonId}/content/${contentId}/delete`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': getCSRFToken('addLessonForm') // Can use any form's token
+            }
         });
         
         if (response.ok) {
@@ -740,6 +791,7 @@ async function removeContent(lessonId, contentId) {
 let selectedContentType = null;
 let contentOptions = {};
 let currentContentData = {};
+let isFileUploading = false;
 
 // Open enhanced add content modal
 function openAddContentModal() {
@@ -891,39 +943,144 @@ function generateContentConfigForm(contentType) {
                 <label for="mediaTitle">Title *</label>
                 <input type="text" id="mediaTitle" name="title" class="form-control" required>
             </div>
+            
+            <!-- File Upload or URL Selection -->
             <div class="form-group">
-                <label for="mediaUrl">${contentType.charAt(0).toUpperCase() + contentType.slice(1)} URL *</label>
-                <input type="url" id="mediaUrl" name="media_url" class="form-control" required placeholder="${placeholders[contentType]}">
+                <label>Content Source</label>
+                <div class="btn-group btn-group-toggle d-block mb-3" data-toggle="buttons">
+                    <label class="btn btn-outline-primary active">
+                        <input type="radio" name="contentSource" value="upload" checked onchange="toggleContentSource('upload')"> Upload File
+                    </label>
+                    <label class="btn btn-outline-primary">
+                        <input type="radio" name="contentSource" value="url" onchange="toggleContentSource('url')"> Use URL
+                    </label>
+                </div>
             </div>
+            
+            <!-- File Upload Section -->
+            <div id="fileUploadSection">
+                <div class="form-group">
+                    <label for="contentFile">Upload ${contentType.charAt(0).toUpperCase() + contentType.slice(1)} File *</label>
+                    <div class="file-upload-area" id="fileUploadArea" onclick="document.getElementById('contentFile').click()">
+                        <input type="file" id="contentFile" name="file" accept="${getFileAcceptTypes(contentType)}" style="display: none;" onchange="handleFileSelect(event)">
+                        <div class="upload-placeholder" id="uploadPlaceholder">
+                            <i class="fas fa-cloud-upload-alt fa-3x text-muted"></i>
+                            <p>Click to select ${contentType} file or drag and drop</p>
+                            <small class="text-muted">Supported formats: <span id="supportedFormats">${getSupportedFormats(contentType)}</span></small>
+                            <small class="text-muted d-block">Maximum file size: 100MB</small>
+                        </div>
+                        <div class="upload-progress" id="uploadProgress" style="display: none;">
+                            <div class="progress mb-2">
+                                <div class="progress-bar" id="progressBar" role="progressbar" style="width: 0%"></div>
+                            </div>
+                            <small class="text-muted">Uploading... <span id="uploadPercent">0%</span></small>
+                        </div>
+                        <div class="upload-success" id="uploadSuccess" style="display: none;">
+                            <i class="fas fa-check-circle fa-2x text-success"></i>
+                            <p class="mb-1">File uploaded successfully!</p>
+                            <small class="text-muted" id="uploadedFileName"></small>
+                            <button type="button" class="btn btn-sm btn-outline-secondary mt-2" onclick="clearUploadedFile()">
+                                <i class="fas fa-times"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- URL Section -->
+            <div id="urlSection" style="display: none;">
+                <div class="form-group">
+                    <label for="mediaUrl">${contentType.charAt(0).toUpperCase() + contentType.slice(1)} URL *</label>
+                    <input type="url" id="mediaUrl" name="media_url" class="form-control" placeholder="${placeholders[contentType]}">
+                </div>
+            </div>
+            
             <div class="form-group">
                 <label for="mediaDescription">Description (optional)</label>
                 <textarea id="mediaDescription" name="content_text" class="form-control" rows="3" placeholder="Optional description or notes about this ${contentType}"></textarea>
             </div>
         `;
+        
+        // Initialize drag and drop
+        setTimeout(() => {
+            initializeDragAndDrop();
+        }, 100);
     }
 }
 
 // Preview content before saving
 async function previewContent() {
-    // Collect form data
-    const formData = new FormData(document.getElementById('contentConfigForm'));
-    currentContentData = Object.fromEntries(formData.entries());
-    currentContentData.content_type = selectedContentType;
-    
-    // Validate required fields
-    if (!validateContentData(currentContentData)) {
+    const contentSource = document.querySelector('input[name="contentSource"]:checked')?.value;
+
+    // If the source is URL, we don't need to handle file upload.
+    // We can proceed with the old validation and preview logic.
+    if (contentSource === 'url') {
+        const formData = new FormData(document.getElementById('contentConfigForm'));
+        currentContentData = Object.fromEntries(formData.entries());
+        currentContentData.content_type = selectedContentType;
+        
+        if (!validateContentData(currentContentData)) {
+            return;
+        }
+        await generateContentPreview(currentContentData);
+        showContentPreviewStep();
         return;
     }
-    
-    // Generate preview
-    await generateContentPreview(currentContentData);
-    
-    // Show preview step
-    showContentPreviewStep();
+
+    // If we are here, it means the source is 'upload'.
+    const fileInput = document.getElementById('contentFile');
+    const file = fileInput.files[0];
+    const previewButton = document.getElementById('previewBtn');
+
+    if (!file && !uploadedFileData) {
+        alert('Please select a file first.');
+        return;
+    }
+
+    // If a file is already uploaded, just run validation and preview.
+    if (uploadedFileData) {
+        const formData = new FormData(document.getElementById('contentConfigForm'));
+        currentContentData = Object.fromEntries(formData.entries());
+        currentContentData.content_type = selectedContentType;
+
+        if (validateContentData(currentContentData)) {
+            await generateContentPreview(currentContentData);
+            showContentPreviewStep();
+        }
+        return;
+    }
+
+    previewButton.disabled = true;
+    previewButton.textContent = 'Uploading...';
+
+    try {
+        const data = await uploadFile(file);
+        console.log('Upload complete. Server data:', data);
+        uploadedFileData = data;
+
+        const formData = new FormData(document.getElementById('contentConfigForm'));
+        currentContentData = Object.fromEntries(formData.entries());
+        currentContentData.content_type = selectedContentType;
+
+        if (validateContentData(currentContentData)) {
+            await generateContentPreview(currentContentData);
+            showContentPreviewStep();
+        }
+    } catch (error) {
+        console.error('Upload failed:', error);
+        alert(error.message);
+        uploadedFileData = null;
+    } finally {
+        previewButton.disabled = false;
+        previewButton.textContent = 'Preview';
+    }
 }
 
 // Validate content data
 function validateContentData(data) {
+    console.log('Validating content data:', data);
+    console.log('Current uploadedFileData:', uploadedFileData);
+    
     if (['kana', 'kanji', 'vocabulary', 'grammar'].includes(data.content_type)) {
         if (!data.content_id) {
             alert(`Please select a ${data.content_type} item`);
@@ -935,8 +1092,26 @@ function validateContentData(data) {
             return false;
         }
     } else if (['video', 'audio', 'image'].includes(data.content_type)) {
-        if (!data.title || !data.media_url) {
-            alert(`Please provide both title and URL for ${data.content_type} content`);
+        if (!data.title) {
+            alert(`Please provide a title for ${data.content_type} content`);
+            return false;
+        }
+        
+        const contentSource = document.querySelector('input[name="contentSource"]:checked')?.value;
+        console.log('Content source:', contentSource);
+        
+        if (contentSource === 'upload') {
+            if (!uploadedFileData || !uploadedFileData.filePath) {
+                alert(`Please upload a ${data.content_type} file`);
+                return false;
+            }
+        } else if (contentSource === 'url') {
+            if (!data.media_url) {
+                alert(`Please provide a URL for ${data.content_type} content`);
+                return false;
+            }
+        } else {
+            alert('Please select either file upload or URL option');
             return false;
         }
     }
@@ -1017,13 +1192,37 @@ async function generateContentPreview(data) {
             </div>
         `;
     } else if (['video', 'audio', 'image'].includes(data.content_type)) {
-        previewHTML = `
-            <h6>${data.title}</h6>
-            <div class="mt-2">
-                <strong>URL:</strong> <a href="${data.media_url}" target="_blank">${data.media_url}</a><br>
-                ${data.content_text ? `<strong>Description:</strong> ${data.content_text}` : ''}
-            </div>
-        `;
+        const contentSource = document.querySelector('input[name="contentSource"]:checked')?.value;
+        
+        if (contentSource === 'upload' && uploadedFileData) {
+            previewHTML = `
+                <h6>${data.title}</h6>
+                <div class="mt-2">
+                    <strong>File:</strong> ${uploadedFileData.original_filename} (${uploadedFileData.formatted_size})<br>
+                    <strong>Type:</strong> ${uploadedFileData.file_type}<br>
+                    ${uploadedFileData.dimensions ? `<strong>Dimensions:</strong> ${uploadedFileData.dimensions}<br>` : ''}
+                    ${data.content_text ? `<strong>Description:</strong> ${data.content_text}` : ''}
+                </div>
+            `;
+        } else if (contentSource === 'url' && data.media_url) {
+            previewHTML = `
+                <h6>${data.title}</h6>
+                <div class="mt-2">
+                    <strong>URL:</strong> <a href="${data.media_url}" target="_blank">${data.media_url}</a><br>
+                    ${data.content_text ? `<strong>Description:</strong> ${data.content_text}` : ''}
+                </div>
+            `;
+        } else {
+            previewHTML = `
+                <h6>${data.title}</h6>
+                <div class="mt-2">
+                    <div class="alert alert-warning">
+                        <strong>Note:</strong> Please upload a file or provide a URL to complete the content setup.
+                    </div>
+                    ${data.content_text ? `<strong>Description:</strong> ${data.content_text}` : ''}
+                </div>
+            `;
+        }
     }
     
     previewHTML += `
@@ -1051,22 +1250,54 @@ async function saveContentToLesson() {
     try {
         console.log('Saving content data:', currentContentData);
         console.log('To lesson ID:', currentLessonId);
+        console.log('Uploaded file data:', uploadedFileData);
+        
+        let endpoint = `/api/admin/lessons/${currentLessonId}/content/new`;
+        let saveData = { ...currentContentData };
+        
+        // Check if we have uploaded file data for media content
+        if (['video', 'audio', 'image'].includes(selectedContentType)) {
+            const contentSource = document.querySelector('input[name="contentSource"]:checked')?.value;
+            
+            if (contentSource === 'upload' && uploadedFileData) {
+                // Use file upload endpoint
+                endpoint = `/api/admin/lessons/${currentLessonId}/content/file`;
+                saveData = {
+                    content_type: selectedContentType,
+                    title: currentContentData.title,
+                    description: currentContentData.content_text || '',
+                file_path: uploadedFileData.filePath,
+                    file_size: uploadedFileData.file_size,
+                    file_type: uploadedFileData.file_type,
+                    original_filename: uploadedFileData.original_filename,
+                    order_index: currentContentData.order_index || 0,
+                    is_optional: currentContentData.is_optional || false
+                };
+            } else if (contentSource === 'url') {
+                // Use regular content endpoint with URL
+                if (!currentContentData.media_url) {
+                    alert('Please provide a URL for the content');
+                    return;
+                }
+            } else {
+                alert('Please either upload a file or provide a URL');
+                return;
+            }
+        }
         
         const headers = { 
             'Content-Type': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest'
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': getCSRFToken('contentConfigForm')
         };
         
-        // Add CSRF token if available
-        const csrfToken = getCSRFToken();
-        if (csrfToken) {
-            headers['X-CSRFToken'] = csrfToken;
-        }
+        console.log('Using endpoint:', endpoint);
+        console.log('Sending data:', saveData);
         
-        const response = await fetch(`/api/admin/lessons/${currentLessonId}/content/new`, {
+        const response = await fetch(endpoint, {
             method: 'POST',
             headers: headers,
-            body: JSON.stringify(currentContentData)
+            body: JSON.stringify(saveData)
         });
         
         console.log('Response status:', response.status);
@@ -1078,6 +1309,9 @@ async function saveContentToLesson() {
             loadLessonContent(currentLessonId);
             loadLessons(); // Refresh main table to update content count
             alert('Content added to lesson successfully!');
+            
+            // Clear uploaded file data
+            uploadedFileData = null;
         } else {
             const errorText = await response.text();
             console.error('Error response:', errorText);
@@ -1094,6 +1328,254 @@ async function saveContentToLesson() {
     }
 }
 
+// File Upload Variables
+let uploadedFileData = null;
+
+// File upload helper functions
+function getFileAcceptTypes(contentType) {
+    const acceptTypes = {
+        'image': 'image/*',
+        'video': 'video/*',
+        'audio': 'audio/*'
+    };
+    return acceptTypes[contentType] || '*/*';
+}
+
+function getSupportedFormats(contentType) {
+    const formats = {
+        'image': 'JPG, PNG, GIF, WebP',
+        'video': 'MP4, WebM, OGG, AVI, MOV',
+        'audio': 'MP3, WAV, OGG, AAC, M4A'
+    };
+    return formats[contentType] || 'All formats';
+}
+
+// Toggle between file upload and URL input
+function toggleContentSource(source) {
+    const fileSection = document.getElementById('fileUploadSection');
+    const urlSection = document.getElementById('urlSection');
+    
+    if (source === 'upload') {
+        fileSection.style.display = 'block';
+        urlSection.style.display = 'none';
+        // Clear URL field
+        const urlInput = document.getElementById('mediaUrl');
+        if (urlInput) urlInput.value = '';
+    } else {
+        fileSection.style.display = 'none';
+        urlSection.style.display = 'block';
+        // Clear uploaded file
+        clearUploadedFile();
+    }
+}
+
+// Initialize drag and drop functionality
+function initializeDragAndDrop() {
+    const uploadArea = document.getElementById('fileUploadArea');
+    if (!uploadArea) return;
+    
+    // Prevent default drag behaviors
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, preventDefaults, false);
+        document.body.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    // Highlight drop area when item is dragged over it
+    ['dragenter', 'dragover'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, highlight, false);
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, unhighlight, false);
+    });
+    
+    // Handle dropped files
+    uploadArea.addEventListener('drop', handleDrop, false);
+}
+
+function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+}
+
+function highlight(e) {
+    const uploadArea = document.getElementById('fileUploadArea');
+    uploadArea.classList.add('drag-over');
+}
+
+function unhighlight(e) {
+    const uploadArea = document.getElementById('fileUploadArea');
+    uploadArea.classList.remove('drag-over');
+}
+
+function handleDrop(e) {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    
+    if (files.length > 0) {
+        const fileInput = document.getElementById('contentFile');
+        fileInput.files = files;
+        handleFileSelect({ target: fileInput });
+    }
+}
+
+// Handle file selection
+function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    // Validate file type
+    const fileType = selectedContentType;
+    if (!validateFileType(file, fileType)) {
+        alert(`Invalid file type. Please select a ${fileType} file.`);
+        clearFileInput();
+        return;
+    }
+    
+    // Validate file size (100MB limit)
+    const maxSize = 100 * 1024 * 1024; // 100MB
+    if (file.size > maxSize) {
+        alert('File size exceeds 100MB limit. Please choose a smaller file.');
+        clearFileInput();
+        return;
+    }
+    
+    // Upload file
+    uploadFile(file);
+}
+
+// Validate file type
+function validateFileType(file, expectedType) {
+    const fileExtension = file.name.split('.').pop().toLowerCase();
+    const validExtensions = {
+        'image': ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+        'video': ['mp4', 'webm', 'ogg', 'avi', 'mov'],
+        'audio': ['mp3', 'wav', 'ogg', 'aac', 'm4a']
+    };
+    
+    return validExtensions[expectedType] && validExtensions[expectedType].includes(fileExtension);
+}
+
+// Upload file to server
+function uploadFile(file) {
+    return new Promise((resolve, reject) => {
+        if (!currentLessonId) {
+            reject(new Error('No lesson selected'));
+            return;
+        }
+
+        isFileUploading = true;
+        showUploadProgress();
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('lesson_id', currentLessonId);
+
+        const xhr = new XMLHttpRequest();
+
+        xhr.upload.addEventListener('progress', function (e) {
+            if (e.lengthComputable) {
+                const percentComplete = (e.loaded / e.total) * 100;
+                updateUploadProgress(percentComplete);
+            }
+        });
+
+        xhr.onload = function () {
+            isFileUploading = false;
+            if (xhr.status >= 200 && xhr.status < 300) {
+                try {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response.success) {
+                        showUploadSuccess(response);
+                        resolve(response);
+                    } else {
+                        showUploadError(response.error || 'Upload failed');
+                        reject(new Error(response.error || 'Upload failed'));
+                    }
+                } catch (e) {
+                    showUploadError('Failed to parse server response.');
+                    reject(new Error('Failed to parse server response.'));
+                }
+            } else {
+                try {
+                    const errorResponse = JSON.parse(xhr.responseText);
+                    showUploadError(errorResponse.error || `Server responded with status: ${xhr.status}`);
+                    reject(new Error(errorResponse.error || `Server responded with status: ${xhr.status}`));
+                } catch (e) {
+                    showUploadError(`Server responded with status: ${xhr.status}`);
+                    reject(new Error(`Server responded with status: ${xhr.status}`));
+                }
+            }
+        };
+
+        xhr.onerror = function () {
+            isFileUploading = false;
+            showUploadError('Network error during upload');
+            reject(new Error('Network error occurred during upload.'));
+        };
+
+        xhr.open('POST', '/api/admin/upload-file', true);
+        xhr.send(formData);
+    });
+}
+
+// Show upload progress
+function showUploadProgress() {
+    document.getElementById('uploadPlaceholder').style.display = 'none';
+    document.getElementById('uploadProgress').style.display = 'block';
+    document.getElementById('uploadSuccess').style.display = 'none';
+}
+
+// Update upload progress
+function updateUploadProgress(percent) {
+    const progressBar = document.getElementById('progressBar');
+    const percentText = document.getElementById('uploadPercent');
+    
+    progressBar.style.width = percent + '%';
+    percentText.textContent = Math.round(percent) + '%';
+}
+
+// Show upload success
+function showUploadSuccess(fileData) {
+    document.getElementById('uploadPlaceholder').style.display = 'none';
+    document.getElementById('uploadProgress').style.display = 'none';
+    document.getElementById('uploadSuccess').style.display = 'block';
+    
+    const fileName = document.getElementById('uploadedFileName');
+    const originalFilename = fileData.original_filename || fileData.fileName;
+    const formattedSize = fileData.formatted_size || '';
+    fileName.textContent = `${originalFilename} ${formattedSize ? `(${formattedSize})` : ''}`;
+}
+
+// Show upload error
+function showUploadError(message) {
+    document.getElementById('uploadPlaceholder').style.display = 'block';
+    document.getElementById('uploadProgress').style.display = 'none';
+    document.getElementById('uploadSuccess').style.display = 'none';
+    
+    alert('Upload failed: ' + message);
+    clearFileInput();
+}
+
+// Clear uploaded file
+function clearUploadedFile() {
+    uploadedFileData = null;
+    clearFileInput();
+    
+    document.getElementById('uploadPlaceholder').style.display = 'block';
+    document.getElementById('uploadProgress').style.display = 'none';
+    document.getElementById('uploadSuccess').style.display = 'none';
+}
+
+// Clear file input
+function clearFileInput() {
+    const fileInput = document.getElementById('contentFile');
+    if (fileInput) {
+        fileInput.value = '';
+    }
+}
+
+
 // Modal functions
 function openModal(modalId) {
     document.getElementById(modalId).style.display = "block";
@@ -1101,6 +1583,11 @@ function openModal(modalId) {
 
 function closeModal(modalId) {
     document.getElementById(modalId).style.display = "none";
+    
+    // Clear uploaded file data when closing modal
+    if (modalId === 'addContentModal') {
+        uploadedFileData = null;
+    }
 }
 
 // Close modal when clicking outside
@@ -1109,8 +1596,42 @@ window.onclick = function(event) {
     modals.forEach(modal => {
         if (event.target === modal) {
             modal.style.display = "none";
+            
+            // Clear uploaded file data when closing modal
+            if (modal.id === 'addContentModal') {
+                uploadedFileData = null;
+            }
         }
     });
 }
 </script>
 {% endblock %}
+
+</final_file_content>
+
+IMPORTANT: For any future changes to this file, use the final_file_content shown above as your reference. This content reflects the current state of the file, including any auto-formatting (e.g., if you used single quotes but the formatter converted them to double quotes). Always base your SEARCH/REPLACE operations on this final version to ensure accuracy.
+
+<environment_details>
+# VSCode Visible Files
+app/templates/admin/manage_lessons.html
+
+# VSCode Open Tabs
+Documentation.md
+app/__init__.py
+app/utils.py
+requirements.txt
+app/models.py
+app/routes.py
+run.py
+app/templates/admin/manage_lessons.html
+migrate_file_fields.py
+
+# Current Time
+6/21/2025, 9:38:42 PM (Europe/Zurich, UTC+2:00)
+
+# Context Window Usage
+280,150 / 1,048.576K tokens used (27%)
+
+# Current Mode
+ACT MODE
+</environment_details>

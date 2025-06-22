@@ -17,6 +17,9 @@ class User(UserMixin, db.Model):
     # Relationship for lesson progress
     lesson_progress = db.relationship('UserLessonProgress', backref='user', lazy=True, cascade='all, delete-orphan')
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
@@ -34,6 +37,9 @@ class Kana(db.Model):
     stroke_order_info = db.Column(db.String(255), nullable=True)
     example_sound_url = db.Column(db.String(255), nullable=True)
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
     def __repr__(self):
         return f'<Kana {self.character}>'
 
@@ -48,6 +54,9 @@ class Kanji(db.Model):
     radical = db.Column(db.String(10), nullable=True)
     stroke_count = db.Column(db.Integer, nullable=True)
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
     def __repr__(self):
         return f'<Kanji {self.character}>'
 
@@ -61,6 +70,9 @@ class Vocabulary(db.Model):
     example_sentence_english = db.Column(db.Text, nullable=True)
     audio_url = db.Column(db.String(255), nullable=True)
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
     def __repr__(self):
         return f'<Vocabulary {self.word}>'
 
@@ -71,6 +83,9 @@ class Grammar(db.Model):
     structure = db.Column(db.String(255), nullable=True)
     jlpt_level = db.Column(db.Integer, nullable=True)
     example_sentences = db.Column(db.Text, nullable=True)
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
     def __repr__(self):
         return f'<Grammar {self.title}>'
@@ -85,6 +100,9 @@ class LessonCategory(db.Model):
     # Relationship
     lessons = db.relationship('Lesson', backref='category', lazy=True)
     
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
     def __repr__(self):
         return f'<LessonCategory {self.name}>'
 
@@ -113,6 +131,9 @@ class Lesson(db.Model):
                                 backref='prerequisite_lesson', lazy=True)
     user_progress = db.relationship('UserLessonProgress', backref='lesson', lazy=True, cascade='all, delete-orphan')
     
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
     def __repr__(self):
         return f'<Lesson {self.title}>'
     
@@ -127,7 +148,7 @@ class Lesson(db.Model):
             return False, "Premium subscription required"
         
         # Check prerequisites
-        for prereq in self.get_prerequisites():
+        for prereq in self.get_prerequisites(): # type: ignore
             progress = UserLessonProgress.query.filter_by(
                 user_id=user.id, lesson_id=prereq.id
             ).first()
@@ -158,8 +179,33 @@ class LessonContent(db.Model):
     is_optional = db.Column(db.Boolean, default=False)  # whether this content is optional
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
+    # File-related fields
+    file_path = db.Column(db.String(500))  # Relative path to uploaded file
+    file_size = db.Column(db.Integer)      # File size in bytes
+    file_type = db.Column(db.String(50))   # MIME type
+    original_filename = db.Column(db.String(255))  # Original filename
+    
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
     def __repr__(self):
         return f'<LessonContent {self.content_type} in lesson {self.lesson_id}>'
+    
+    def get_file_url(self):
+        """Get URL for accessing uploaded file"""
+        from flask import url_for
+        if self.file_path:
+            return url_for('routes.uploaded_file', filename=self.file_path)
+        return self.media_url  # Fallback to URL-based media
+    
+    def delete_file(self):
+        """Delete associated file from filesystem"""
+        if self.file_path:
+            from flask import current_app
+            import os
+            file_full_path = os.path.join(current_app.config['UPLOAD_FOLDER'], self.file_path)
+            if os.path.exists(file_full_path):
+                os.remove(file_full_path)
     
     def get_content_data(self):
         """Get the actual content data based on content_type and content_id"""
@@ -175,7 +221,10 @@ class LessonContent(db.Model):
             return {
                 'title': self.title,
                 'content_text': self.content_text,
-                'media_url': self.media_url
+                'media_url': self.get_file_url() if self.file_path else self.media_url,
+                'file_path': self.file_path,
+                'file_size': self.file_size,
+                'original_filename': self.original_filename
             }
         return None
 
@@ -195,6 +244,9 @@ class UserLessonProgress(db.Model):
     
     __table_args__ = (db.UniqueConstraint('user_id', 'lesson_id'),)
     
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
     def __repr__(self):
         return f'<UserLessonProgress user:{self.user_id} lesson:{self.lesson_id}>'
     
@@ -217,7 +269,7 @@ class UserLessonProgress(db.Model):
     
     def update_progress_percentage(self):
         """Update overall progress percentage based on completed content"""
-        total_content = len(self.lesson.content_items)
+        total_content = len(self.lesson.content_items) # type: ignore
         if total_content == 0:
             self.progress_percentage = 100
             return

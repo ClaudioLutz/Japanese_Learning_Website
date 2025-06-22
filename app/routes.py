@@ -1,10 +1,10 @@
 # app/routes.py
-from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
+from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError # Import specific exceptions
 from app import db
 from app.models import User, Kana, Kanji, Vocabulary, Grammar, LessonCategory, Lesson, LessonContent, LessonPrerequisite, UserLessonProgress
-from app.forms import RegistrationForm, LoginForm
+from app.forms import RegistrationForm, LoginForm, CSRFTokenForm
 from functools import wraps # For custom decorators
 
 # Helper function for JSON serialization
@@ -154,7 +154,8 @@ def admin_manage_grammar():
 @login_required
 @admin_required
 def admin_manage_lessons():
-    return render_template('admin/manage_lessons.html')
+    form = CSRFTokenForm()
+    return render_template('admin/manage_lessons.html', form=form)
 
 @bp.route('/admin/manage/categories')
 @login_required
@@ -774,13 +775,151 @@ def update_lesson_progress(lesson_id):
         db.session.add(progress)
     
     # Update progress fields
-    if 'content_id' in data:
+    if data and 'content_id' in data:
         progress.mark_content_completed(data['content_id'])
     
-    if 'time_spent' in data:
+    if data and 'time_spent' in data:
         progress.time_spent += data['time_spent']
     
     progress.last_accessed = db.func.now()
     
     db.session.commit()
     return jsonify(model_to_dict(progress))
+
+# == FILE UPLOAD API ==
+@bp.route('/api/admin/upload-file', methods=['POST'])
+@login_required
+@admin_required
+def upload_file():
+    """Handle file upload and return file information"""
+    import os
+    from werkzeug.utils import secure_filename
+
+    if 'file' not in request.files:
+        return jsonify({'success': False, 'error': 'No file part in the request'}), 400
+
+    file = request.files['file']
+
+    if not file or not file.filename:
+        return jsonify({'success': False, 'error': 'No file selected'}), 400
+
+    if file and file.filename:
+        # Ensure the filename is safe to use
+        filename = secure_filename(file.filename)
+        
+        # This assumes you have an 'UPLOAD_FOLDER' configured in your app
+        upload_folder = current_app.config.get('UPLOAD_FOLDER', 'app/static/uploads')
+        
+        # You might want to create subdirectories for lessons or file types
+        # For simplicity, we save directly to a general uploads folder here.
+        # Example: target_folder = os.path.join(upload_folder, 'lessons', 'images')
+        target_folder = os.path.join(upload_folder, 'lessons', 'images') # Saving to a specific folder for images
+        os.makedirs(target_folder, exist_ok=True)
+
+        filepath = os.path.join(target_folder, filename)
+        file.save(filepath)
+
+        # Return a success response with the file's path
+        # The URL path should correspond to how you serve static files
+        # Example: /static/uploads/lessons/images/my_image.png
+        file_url = os.path.join('uploads', 'lessons', 'images', filename).replace('\\', '/')
+
+        return jsonify({
+            'success': True,
+            'filePath': url_for('static', filename=file_url, _external=False),
+            'fileName': filename
+        })
+
+    return jsonify({'success': False, 'error': 'An unknown error occurred'}), 500
+
+@bp.route('/api/admin/lessons/<int:lesson_id>/content/file', methods=['POST'])
+@login_required
+@admin_required
+def add_file_content(lesson_id):
+    """Add file-based content to lesson"""
+    lesson = Lesson.query.get_or_404(lesson_id)
+    data = request.json
+    
+    if not data or not data.get('content_type') or not data.get('file_path'):
+        return jsonify({"error": "Missing required fields: content_type, file_path"}), 400
+    
+    # Convert string 'false'/'true' to boolean for is_optional
+    is_optional = data.get('is_optional', False)
+    if isinstance(is_optional, str):
+        is_optional = is_optional.lower() == 'true'
+    
+    new_content = LessonContent(
+        lesson_id=lesson_id,
+        content_type=data['content_type'],
+        title=data.get('title'),
+        content_text=data.get('description'),
+        file_path=data['file_path'],
+        file_size=data.get('file_size'),
+        file_type=data.get('file_type'),
+        original_filename=data.get('original_filename'),
+        order_index=int(data.get('order_index', 0)),
+        is_optional=is_optional
+    )
+    
+    try:
+        db.session.add(new_content)
+        db.session.commit()
+        return jsonify(model_to_dict(new_content)), 201
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        return jsonify({"error": f"Database error occurred: {str(e)}"}), 500
+
+@bp.route('/uploads/<path:filename>')
+def uploaded_file(filename):
+    """Serve uploaded files"""
+    import os
+    from flask import send_from_directory
+    
+    upload_folder = current_app.config['UPLOAD_FOLDER']
+    file_path = os.path.join(upload_folder, filename)
+    
+    # Security check - ensure file is within upload folder
+    if not os.path.abspath(file_path).startswith(os.path.abspath(upload_folder)):
+        return jsonify({"error": "Access denied"}), 403
+    
+    if not os.path.exists(file_path):
+        return jsonify({"error": "File not found"}), 404
+    
+    directory = os.path.dirname(file_path)
+    basename = os.path.basename(file_path)
+    
+    return send_from_directory(directory, basename)
+
+@bp.route('/api/admin/delete-file', methods=['DELETE'])
+@login_required
+@admin_required
+def delete_file():
+    """Delete uploaded file"""
+    from app.utils import FileUploadHandler
+    import os
+    
+    data = request.json
+    if not data or not data.get('file_path'):
+        return jsonify({"error": "File path required"}), 400
+    
+    file_path = data['file_path']
+    full_path = os.path.join(current_app.config['UPLOAD_FOLDER'], file_path)
+    
+    # Security check
+    if not os.path.abspath(full_path).startswith(os.path.abspath(current_app.config['UPLOAD_FOLDER'])):
+        return jsonify({"error": "Access denied"}), 403
+    
+    # Delete from filesystem
+    if FileUploadHandler.delete_file(full_path):
+        # Also delete from database if it's associated with content
+        content_id = data.get('content_id')
+        if content_id:
+            content = LessonContent.query.get(content_id)
+            if content and content.file_path == file_path:
+                content.delete_file()  # This also deletes the file, but we already did that
+                db.session.delete(content)
+                db.session.commit()
+        
+        return jsonify({"message": "File deleted successfully"}), 200
+    else:
+        return jsonify({"error": "Failed to delete file"}), 500

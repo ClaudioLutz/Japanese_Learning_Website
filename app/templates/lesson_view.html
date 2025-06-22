@@ -80,7 +80,7 @@
                 </div>
                 <div class="card-body">
                     <div class="ratio ratio-16x9">
-                        <iframe src="{{ lesson.video_intro_url }}" allowfullscreen></iframe>
+                        <iframe src="{{ lesson.video_intro_url | to_embed_url }}" allowfullscreen></iframe>
                     </div>
                 </div>
             </div>
@@ -193,7 +193,7 @@
                                             <img src="{{ content.media_url }}" class="img-fluid rounded" alt="{{ content.title }}">
                                             {% elif content.content_type == 'video' %}
                                             <div class="ratio ratio-16x9">
-                                                <iframe src="{{ content.media_url }}" allowfullscreen></iframe>
+                                                <iframe src="{{ content.media_url | to_embed_url }}" allowfullscreen></iframe>
                                             </div>
                                             {% elif content.content_type == 'audio' %}
                                             <audio controls class="w-100">

@@ -724,11 +724,20 @@ The lesson system provides a comprehensive way for administrators to create stru
 - **Progressive Learning** - Ensures users follow a structured learning path
 - **Access Validation** - Automatic checking of prerequisite completion
 
-#### 4. Content Management
+#### 4. Enhanced Content Builder (Phase 1)
+- **Visual Content Type Selector** - Intuitive card-based interface with 8 content types
+- **Multi-step Wizard** - Step-by-step content creation process (Type Selection → Configuration → Preview → Save)
+- **Dynamic Form Generation** - Forms adapt based on selected content type
+- **Content Preview System** - Preview content before saving to lessons
 - **Mixed Content Types** - Combine existing content with custom multimedia
 - **Content Ordering** - Specify the sequence of content within lessons
 - **Optional Content** - Mark content items as optional
-- **Rich Media Support** - Text, images, videos, and audio content
+- **Rich Media Support** - Text, images, videos, and audio content via URLs
+
+##### Content Types Supported:
+- **Existing Content**: Kana, Kanji, Vocabulary, Grammar (dropdown selection from database)
+- **Custom Text**: Title and rich text content creation
+- **URL-based Media**: Video (YouTube/Vimeo), Audio, and Image content via URLs
 
 #### 5. Progress Tracking
 - **Individual Progress** - Track completion of each content item
@@ -835,6 +844,12 @@ POST   /api/admin/categories/new       # Create new category
 GET    /api/admin/categories/{id}      # Get specific category
 PUT    /api/admin/categories/{id}/edit # Update category
 DELETE /api/admin/categories/{id}/delete # Delete category
+```
+
+#### Content Options API (Admin)
+```
+GET    /api/admin/content-options/{type}     # Get available content for lesson builder
+                                             # Types: kana, kanji, vocabulary, grammar
 ```
 
 #### Lesson Content Management (Admin)
