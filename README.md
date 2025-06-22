@@ -22,7 +22,7 @@ A comprehensive web-based Japanese learning platform featuring structured lesson
 - **Kanji** - Chinese characters with readings, meanings, and JLPT levels
 - **Vocabulary** - Words with readings, meanings, and example sentences
 - **Grammar** - Grammar rules with explanations and examples
-- **Multimedia Support** - Text, images, videos, and audio content
+- **Multimedia Support** - Text, images, videos, and audio content (URL-based and direct file uploads)
 
 ### 📊 **Learning Features**
 - **Interactive Lessons** - Step-by-step lesson progression
@@ -135,7 +135,7 @@ A comprehensive web-based Japanese learning platform featuring structured lesson
 ├── README.md               # This file - overview, setup, and quick start
 ├── UNIFIED_AUTH_README.md  # Documentation specific to the authentication system
 ├── create_admin.py         # Script to create an initial admin user
-├── lesson_models.py        # Contains SQLAlchemy models for the lesson system (may be merged into app/models.py)
+├── lesson_models.py        # DEPRECATED: All models are consolidated in app/models.py
 ├── migrate_database.py     # Script for database migrations (generic)
 ├── migrate_lesson_system.py # Script to set up or migrate the lesson system database tables
 ├── requirements.txt        # Python package dependencies
@@ -150,12 +150,13 @@ Please refer to `AGENTS.md` (if a current one exists at the root level) or gener
 
 ## Future Development (Post-MVP)
 
-This MVP lays the groundwork. Future development could include:
-*   Developing the student-facing frontend.
-*   Implementing more sophisticated content features (e.g., audio uploads, stroke order diagrams).
-*   Adding user accounts for students with enhanced progress tracking.
-*   Implementing learning features like SRS (Spaced Repetition System).
-*   Migrating to a more robust database like PostgreSQL.
-*   Enhancing security and authentication.
+This version includes foundational content management, a lesson system with file uploads, and user progress tracking. Future development could include:
+*   Further developing the student-facing frontend and user experience.
+*   Implementing more sophisticated content features (e.g., interactive quizzes, stroke order diagrams).
+*   Enhancing the existing student progress tracking with more detailed analytics and reporting.
+*   Implementing advanced learning features like Spaced Repetition Systems (SRS).
+*   Migrating to a more robust database (e.g., PostgreSQL) for production environments.
+*   Continuously enhancing security and authentication mechanisms.
+*   Expanding API capabilities for potential third-party integrations or mobile applications.
 
 Refer to `deprecated/brainstorming.md` for a broader list of potential features from earlier project phases.

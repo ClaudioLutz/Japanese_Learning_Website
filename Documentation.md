@@ -354,38 +354,38 @@ GET    /admin/manage/grammar  # Grammar management page
 
 #### Kana API
 ```
-GET    /api/admin/kana        # List all kana
-POST   /api/admin/kana/new    # Create new kana
-GET    /api/admin/kana/{id}   # Get specific kana
-PUT    /api/admin/kana/{id}/edit # Update kana
-DELETE /api/admin/kana/{id}/delete # Delete kana
+GET    /api/admin/kana                     # List all kana
+POST   /api/admin/kana/new                 # Create new kana
+GET    /api/admin/kana/<int:item_id>       # Get specific kana
+PUT    /api/admin/kana/<int:item_id>/edit  # Update kana (accepts PUT or PATCH)
+DELETE /api/admin/kana/<int:item_id>/delete# Delete kana
 ```
 
 #### Kanji API
 ```
-GET    /api/admin/kanji       # List all kanji
-POST   /api/admin/kanji/new   # Create new kanji
-GET    /api/admin/kanji/{id}  # Get specific kanji
-PUT    /api/admin/kanji/{id}/edit # Update kanji
-DELETE /api/admin/kanji/{id}/delete # Delete kanji
+GET    /api/admin/kanji                     # List all kanji
+POST   /api/admin/kanji/new                 # Create new kanji
+GET    /api/admin/kanji/<int:item_id>       # Get specific kanji
+PUT    /api/admin/kanji/<int:item_id>/edit  # Update kanji (accepts PUT or PATCH)
+DELETE /api/admin/kanji/<int:item_id>/delete# Delete kanji
 ```
 
 #### Vocabulary API
 ```
-GET    /api/admin/vocabulary  # List all vocabulary
-POST   /api/admin/vocabulary/new # Create new vocabulary
-GET    /api/admin/vocabulary/{id} # Get specific vocabulary
-PUT    /api/admin/vocabulary/{id}/edit # Update vocabulary
-DELETE /api/admin/vocabulary/{id}/delete # Delete vocabulary
+GET    /api/admin/vocabulary                     # List all vocabulary
+POST   /api/admin/vocabulary/new                 # Create new vocabulary
+GET    /api/admin/vocabulary/<int:item_id>       # Get specific vocabulary
+PUT    /api/admin/vocabulary/<int:item_id>/edit  # Update vocabulary (accepts PUT or PATCH)
+DELETE /api/admin/vocabulary/<int:item_id>/delete# Delete vocabulary
 ```
 
 #### Grammar API
 ```
-GET    /api/admin/grammar     # List all grammar
-POST   /api/admin/grammar/new # Create new grammar
-GET    /api/admin/grammar/{id} # Get specific grammar
-PUT    /api/admin/grammar/{id}/edit # Update grammar
-DELETE /api/admin/grammar/{id}/delete # Delete grammar
+GET    /api/admin/grammar                     # List all grammar
+POST   /api/admin/grammar/new                 # Create new grammar
+GET    /api/admin/grammar/<int:item_id>       # Get specific grammar
+PUT    /api/admin/grammar/<int:item_id>/edit  # Update grammar (accepts PUT or PATCH)
+DELETE /api/admin/grammar/<int:item_id>/delete# Delete grammar
 ```
 
 ---
@@ -502,7 +502,7 @@ Japanese_Learning_Website/
 ├── README.md               # Project overview, setup, and quick start guide
 ├── UNIFIED_AUTH_README.md  # Documentation specific to the authentication system
 ├── create_admin.py         # Script to create an initial admin user
-├── lesson_models.py        # Contains SQLAlchemy models for the lesson system (Note: may have been merged into app/models.py)
+├── lesson_models.py        # DEPRECATED: All models are consolidated in app/models.py
 ├── migrate_database.py     # Script for generic database migrations or setup tasks
 ├── migrate_lesson_system.py # Script to set up or migrate the lesson system database tables
 ├── requirements.txt        # Python package dependencies
@@ -616,7 +616,7 @@ python-dotenv==1.0.0
    ```
 
 ### Code Organization
-- **Models** - Database schema in `app/models.py` (and potentially `lesson_models.py`, though this might be merged into `app/models.py`).
+- **Models** - Database schema in `app/models.py` (all models, including lesson system, are consolidated here).
 - **Views** - Route handlers in `app/routes.py`.
 - **Forms** - WTForms classes in `app/forms.py`.
 - **Templates** - Jinja2 templates in `app/templates/`.
@@ -732,12 +732,13 @@ The lesson system provides a comprehensive way for administrators to create stru
 - **Mixed Content Types** - Combine existing content with custom multimedia
 - **Content Ordering** - Specify the sequence of content within lessons
 - **Optional Content** - Mark content items as optional
-- **Rich Media Support** - Text, images, videos, and audio content via URLs
+- **Rich Media Support** - Text, images, videos, and audio content. Supports both URL-based media and direct file uploads for images, audio, and other supplementary materials. Uploaded files are stored on the server and managed through the lesson builder.
 
 ##### Content Types Supported:
 - **Existing Content**: Kana, Kanji, Vocabulary, Grammar (dropdown selection from database)
 - **Custom Text**: Title and rich text content creation
-- **URL-based Media**: Video (YouTube/Vimeo), Audio, and Image content via URLs
+- **URL-based Media**: Video (YouTube/Vimeo), Audio, and Image content via URLs.
+- **File Uploads**: Direct upload for images, audio files, PDFs, or other documents to be associated with `LessonContent`. Admins can upload files during lesson creation/editing. These files are served by the application and can be deleted if no longer needed.
 
 #### 5. Progress Tracking
 - **Individual Progress** - Track completion of each content item
@@ -803,6 +804,11 @@ CREATE TABLE lesson_content (
     order_index INTEGER DEFAULT 0,
     is_optional BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    -- File-related fields for uploaded content
+    file_path VARCHAR(500),      -- Relative path to the uploaded file in the UPLOAD_FOLDER
+    file_size INTEGER,           -- File size in bytes
+    file_type VARCHAR(50),       -- MIME type of the file
+    original_filename VARCHAR(255), -- Original name of the uploaded file
     FOREIGN KEY (lesson_id) REFERENCES lesson (id) ON DELETE CASCADE
 );
 ```
@@ -830,39 +836,55 @@ CREATE TABLE user_lesson_progress (
 
 #### Lesson Management (Admin)
 ```
-GET    /api/admin/lessons              # List all lessons
-POST   /api/admin/lessons/new          # Create new lesson
-GET    /api/admin/lessons/{id}         # Get specific lesson
-PUT    /api/admin/lessons/{id}/edit    # Update lesson
-DELETE /api/admin/lessons/{id}/delete  # Delete lesson
+GET    /api/admin/lessons                          # List all lessons
+POST   /api/admin/lessons/new                      # Create new lesson
+GET    /api/admin/lessons/<int:item_id>            # Get specific lesson
+PUT    /api/admin/lessons/<int:item_id>/edit       # Update lesson (accepts PUT or PATCH)
+DELETE /api/admin/lessons/<int:item_id>/delete     # Delete lesson
 ```
 
 #### Category Management (Admin)
 ```
-GET    /api/admin/categories           # List all categories
-POST   /api/admin/categories/new       # Create new category
-GET    /api/admin/categories/{id}      # Get specific category
-PUT    /api/admin/categories/{id}/edit # Update category
-DELETE /api/admin/categories/{id}/delete # Delete category
+GET    /api/admin/categories                       # List all categories
+POST   /api/admin/categories/new                   # Create new category
+GET    /api/admin/categories/<int:item_id>         # Get specific category
+PUT    /api/admin/categories/<int:item_id>/edit    # Update category (accepts PUT or PATCH)
+DELETE /api/admin/categories/<int:item_id>/delete  # Delete category
 ```
 
 #### Content Options API (Admin)
 ```
-GET    /api/admin/content-options/{type}     # Get available content for lesson builder
-                                             # Types: kana, kanji, vocabulary, grammar
+GET    /api/admin/content-options/<content_type>   # Get available content for lesson builder
+                                                 # <content_type>: kana, kanji, vocabulary, grammar
 ```
 
 #### Lesson Content Management (Admin)
 ```
-GET    /api/admin/lessons/{id}/content        # List lesson content
-POST   /api/admin/lessons/{id}/content/new    # Add content to lesson
-DELETE /api/admin/lessons/{id}/content/{content_id}/delete # Remove content
+GET    /api/admin/lessons/<int:lesson_id>/content                     # List lesson content
+POST   /api/admin/lessons/<int:lesson_id>/content/new                 # Add content to lesson
+DELETE /api/admin/lessons/<int:lesson_id>/content/<int:content_id>/delete # Remove content
 ```
 
 #### User Lesson Access
 ```
 GET    /api/lessons                    # Get accessible lessons for user
 POST   /api/lessons/{id}/progress      # Update lesson progress
+```
+
+#### File Management API (Admin)
+```
+POST   /api/admin/upload-file                 # Upload a file, returns file path and info.
+                                              # Used by lesson builder for image/audio/document uploads.
+DELETE /api/admin/delete-file                 # Delete an uploaded file from the server.
+                                              # Expects JSON body with 'file_path'.
+POST   /api/admin/lessons/<int:lesson_id>/content/file   # Add file-based content to a lesson.
+                                              # Associates an uploaded file (via file_path) with a lesson content item.
+```
+
+### Static File Serving
+```
+GET    /uploads/<path:filename>               # Serves uploaded files.
+                                              # <path:filename> is the path relative to the UPLOAD_FOLDER.
 ```
 
 ### User Interface
@@ -990,5 +1012,5 @@ This project is licensed under the MIT License. See LICENSE file for details.
 
 ---
 
-*Last Updated: June 21, 2025*
-*Version: 1.0.0*
+*Last Updated: October 26, 2023*
+*Version: 1.1.0*
