@@ -104,6 +104,7 @@ A comprehensive web-based Japanese learning platform featuring structured lesson
 │   ├── forms.py            # WTForms definitions for login, registration, content management
 │   ├── models.py           # SQLAlchemy database models for users, content, lessons
 │   ├── routes.py           # Flask routes and view functions for user and admin interfaces
+│   ├── utils.py            # Utility functions
 │   └── templates/          # Jinja2 templates for rendering HTML pages
 │       ├── admin/          # Templates specific to the admin panel
 │       │   ├── admin_index.html
