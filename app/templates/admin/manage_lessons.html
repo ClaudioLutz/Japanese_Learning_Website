@@ -360,6 +360,17 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="content-type-card" onclick="selectContentType('interactive')">
+                            <div class="card h-100 text-center">
+                                <div class="card-body">
+                                    <div class="content-type-icon">🎮</div>
+                                    <h6 class="card-title">Interactive</h6>
+                                    <p class="card-text small">Quizzes, questions, etc.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -415,6 +426,121 @@
                             <label>Preview:</label>
                             <div id="richTextPreview" class="border p-3 bg-light" style="min-height: 100px;">
                                 <em class="text-muted">Content preview will appear here...</em>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Content Section -->
+                    <div id="interactiveSection" style="display: none;">
+                        <div class="form-group">
+                            <label for="interactiveTitle">Title *</label>
+                            <input type="text" id="interactiveTitle" name="title" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="interactiveType">Interactive Type</label>
+                            <select id="interactiveType" name="interactive_type" class="form-control" onchange="showInteractiveForm(this.value)">
+                                <option value="">Select Type</option>
+                                <option value="multiple_choice">Multiple Choice Question</option>
+                                <option value="fill_blank">Fill in the Blank</option>
+                                <option value="true_false">True/False</option>
+                                <option value="matching">Matching Exercise</option>
+                                <option value="quiz">Mini Quiz (Multiple Questions)</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Multiple Choice Form -->
+                        <div id="multipleChoiceForm" style="display: none;">
+                            <div class="form-group">
+                                <label for="mcQuestion">Question *</label>
+                                <textarea id="mcQuestion" name="question_text" class="form-control rich-text-editor-simple" rows="3"></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Answer Options:</label>
+                                <div id="mcOptions">
+                                    <div class="option-item mb-2">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text">
+                                                    <input type="radio" name="correct_option" value="0">
+                                                </div>
+                                            </div>
+                                            <input type="text" class="form-control" name="option_0" placeholder="Option A">
+                                            <div class="input-group-append">
+                                                <button type="button" class="btn btn-outline-danger" onclick="removeOption(0)">×</button>
+                                            </div>
+                                        </div>
+                                        <small class="form-text text-muted">
+                                            <input type="text" class="form-control form-control-sm mt-1" name="feedback_0" placeholder="Feedback for this option (optional)">
+                                        </small>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="addOption()">+ Add Option</button>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="mcExplanation">Explanation (optional)</label>
+                                <textarea id="mcExplanation" name="explanation" class="form-control" rows="2" placeholder="Explain why this is the correct answer"></textarea>
+                            </div>
+                        </div>
+                        
+                        <!-- Fill in the Blank Form -->
+                        <div id="fillBlankForm" style="display: none;">
+                            <div class="form-group">
+                                <label for="fbQuestion">Question Text *</label>
+                                <textarea id="fbQuestion" name="question_text" class="form-control" rows="3" placeholder="Use [BLANK] to indicate where students should fill in answers"></textarea>
+                                <small class="form-text text-muted">Example: "The capital of Japan is [BLANK]."</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="fbAnswers">Correct Answers *</label>
+                                <input type="text" id="fbAnswers" name="correct_answers" class="form-control" placeholder="Tokyo, tokyo, TOKYO (separate multiple acceptable answers with commas)">
+                                <small class="form-text text-muted">List all acceptable answers, separated by commas. Case-insensitive.</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="fbExplanation">Explanation (optional)</label>
+                                <textarea id="fbExplanation" name="explanation" class="form-control" rows="2"></textarea>
+                            </div>
+                        </div>
+                        
+                        <!-- True/False Form -->
+                        <div id="trueFalseForm" style="display: none;">
+                            <div class="form-group">
+                                <label for="tfQuestion">Statement *</label>
+                                <textarea id="tfQuestion" name="question_text" class="form-control" rows="3"></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Correct Answer</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="tf_answer" id="tfTrue" value="true">
+                                    <label class="form-check-label" for="tfTrue">True</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="tf_answer" id="tfFalse" value="false">
+                                    <label class="form-check-label" for="tfFalse">False</label>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="tfExplanation">Explanation *</label>
+                                <textarea id="tfExplanation" name="explanation" class="form-control" rows="2" placeholder="Explain why this statement is true or false"></textarea>
+                            </div>
+                        </div>
+                        
+                        <!-- Quiz Settings -->
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="maxAttempts">Max Attempts</label>
+                                    <input type="number" id="maxAttempts" name="max_attempts" class="form-control" value="3" min="1" max="10">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="passingScore">Passing Score (%)</label>
+                                    <input type="number" id="passingScore" name="passing_score" class="form-control" value="70" min="0" max="100">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -605,6 +731,71 @@ function applyTemplate(templateName) {
 }
 
 // Rich text editor management
+let optionCount = 2; // Start with 2 options (A, B)
+
+// Interactive content management
+function showInteractiveForm(type) {
+    // Hide all forms
+    document.getElementById('multipleChoiceForm').style.display = 'none';
+    document.getElementById('fillBlankForm').style.display = 'none';
+    document.getElementById('trueFalseForm').style.display = 'none';
+    
+    // Show selected form
+    if (type === 'multiple_choice') {
+        document.getElementById('multipleChoiceForm').style.display = 'block';
+        initializeMultipleChoice();
+    } else if (type === 'fill_blank') {
+        document.getElementById('fillBlankForm').style.display = 'block';
+    } else if (type === 'true_false') {
+        document.getElementById('trueFalseForm').style.display = 'block';
+    }
+}
+
+function initializeMultipleChoice() {
+    // Initialize with 2 default options
+    const optionsContainer = document.getElementById('mcOptions');
+    optionsContainer.innerHTML = '';
+    optionCount = 0;
+    
+    for (let i = 0; i < 2; i++) {
+        addOption();
+    }
+}
+
+function addOption() {
+    const optionsContainer = document.getElementById('mcOptions');
+    const optionIndex = optionCount++;
+    const optionLetter = String.fromCharCode(65 + optionIndex); // A, B, C, D...
+    
+    const optionHtml = `
+        <div class="option-item mb-2" data-option="${optionIndex}">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        <input type="radio" name="correct_option" value="${optionIndex}">
+                    </div>
+                </div>
+                <input type="text" class="form-control" name="option_${optionIndex}" placeholder="Option ${optionLetter}">
+                <div class="input-group-append">
+                    <button type="button" class="btn btn-outline-danger" onclick="removeOption(${optionIndex})">×</button>
+                </div>
+            </div>
+            <small class="form-text text-muted">
+                <input type="text" class="form-control form-control-sm mt-1" name="feedback_${optionIndex}" placeholder="Feedback for this option (optional)">
+            </small>
+        </div>
+    `;
+    
+    optionsContainer.insertAdjacentHTML('beforeend', optionHtml);
+}
+
+function removeOption(optionIndex) {
+    const optionElement = document.querySelector(`[data-option="${optionIndex}"]`);
+    if (optionElement) {
+        optionElement.remove();
+    }
+}
+
 function initializeRichTextEditor() {
     const tinymceConfig = {
         selector: '.rich-text-editor',
@@ -986,7 +1177,8 @@ async function selectContentType(contentType) {
         'text': 'Configure Text Content',
         'video': 'Configure Video Content',
         'audio': 'Configure Audio Content',
-        'image': 'Configure Image Content'
+        'image': 'Configure Image Content',
+        'interactive': 'Configure Interactive Content'
     };
     
     document.getElementById('configStepTitle').textContent = titles[contentType] || 'Configure Content';
@@ -1023,6 +1215,11 @@ function generateContentConfigForm(contentType) {
     const fieldsContainer = document.getElementById('contentConfigFields');
     fieldsContainer.innerHTML = '';
     
+    // Hide all special sections by default
+    document.getElementById('richTextSection').style.display = 'none';
+    document.getElementById('interactiveSection').style.display = 'none';
+    destroyRichTextEditor();
+
     if (['kana', 'kanji', 'vocabulary', 'grammar'].includes(contentType)) {
         // Existing content selection
         const options = contentOptions[contentType] || [];
@@ -1051,13 +1248,11 @@ function generateContentConfigForm(contentType) {
     } else if (contentType === 'text') {
         // Show rich text editor section
         document.getElementById('richTextSection').style.display = 'block';
-        // Hide other dynamic fields
-        fieldsContainer.innerHTML = '';
         initializeRichTextEditor();
+    } else if (contentType === 'interactive') {
+        // Show interactive content section
+        document.getElementById('interactiveSection').style.display = 'block';
     } else if (['video', 'audio', 'image'].includes(contentType)) {
-        // Hide rich text editor section
-        document.getElementById('richTextSection').style.display = 'none';
-        destroyRichTextEditor();
         // URL-based media content
         const placeholders = {
             'video': 'https://www.youtube.com/watch?v=... or https://vimeo.com/...',
@@ -1145,9 +1340,11 @@ async function previewContent() {
         return;
     }
 
-    if (selectedContentType === 'text') {
-        await generateContentPreview(currentContentData);
-        showContentPreviewStep();
+    if (selectedContentType === 'text' || selectedContentType === 'interactive') {
+        if (validateContentData(currentContentData)) {
+            await generateContentPreview(currentContentData);
+            showContentPreviewStep();
+        }
         return;
     }
 
@@ -1230,6 +1427,13 @@ function validateContentData(data) {
             return false;
         }
         data.content_text = editor.getContent();
+    } else if (data.content_type === 'interactive') {
+        // Validation for interactive content
+        if (!data.title || !data.interactive_type) {
+            alert('Please provide a title and select an interactive type.');
+            return false;
+        }
+        // Add more specific validation for each interactive type here
     } else if (['video', 'audio', 'image'].includes(data.content_type)) {
         if (!data.title) {
             alert(`Please provide a title for ${data.content_type} content`);
@@ -1330,6 +1534,8 @@ async function generateContentPreview(data) {
                 ${data.content_text}
             </div>
         `;
+    } else if (data.content_type === 'interactive') {
+        previewHTML = `<h6>${data.title}</h6><p>Interactive Content: ${data.interactive_type}</p>`;
     } else if (['video', 'audio', 'image'].includes(data.content_type)) {
         const contentSource = document.querySelector('input[name="contentSource"]:checked')?.value;
         
@@ -1394,8 +1600,47 @@ async function saveContentToLesson() {
         let endpoint = `/api/admin/lessons/${currentLessonId}/content/new`;
         let saveData = { ...currentContentData };
         
-        // Check if we have uploaded file data for media content
-        if (['video', 'audio', 'image'].includes(selectedContentType)) {
+        if (selectedContentType === 'interactive') {
+            endpoint = `/api/admin/lessons/${currentLessonId}/content/interactive`;
+            const interactiveType = document.getElementById('interactiveType').value;
+            saveData.interactive_type = interactiveType;
+            saveData.is_interactive = true;
+
+            if (interactiveType === 'multiple_choice') {
+                const question = document.getElementById('mcQuestion').value;
+                const explanation = document.getElementById('mcExplanation').value;
+                const correctOption = document.querySelector('input[name="correct_option"]:checked')?.value;
+                
+                const options = [];
+                const optionElements = document.querySelectorAll('.option-item');
+                
+                optionElements.forEach((element, index) => {
+                    const optionInput = element.querySelector(`input[name^="option_"]`);
+                    const feedbackInput = element.querySelector(`input[name^="feedback_"]`);
+                    
+                    if (optionInput && optionInput.value.trim()) {
+                        options.push({
+                            text: optionInput.value.trim(),
+                            is_correct: correctOption === optionInput.name.split('_')[1],
+                            feedback: feedbackInput ? feedbackInput.value.trim() : ''
+                        });
+                    }
+                });
+                
+                saveData.question_text = question;
+                saveData.explanation = explanation;
+                saveData.options = options;
+            } else if (interactiveType === 'fill_blank') {
+                saveData.question_text = document.getElementById('fbQuestion').value;
+                saveData.correct_answers = document.getElementById('fbAnswers').value;
+                saveData.explanation = document.getElementById('fbExplanation').value;
+            } else if (interactiveType === 'true_false') {
+                const correctAnswer = document.querySelector('input[name="tf_answer"]:checked')?.value;
+                saveData.question_text = document.getElementById('tfQuestion').value;
+                saveData.correct_answer = correctAnswer === 'true';
+                saveData.explanation = document.getElementById('tfExplanation').value;
+            }
+        } else if (['video', 'audio', 'image'].includes(selectedContentType)) {
             const contentSource = document.querySelector('input[name="contentSource"]:checked')?.value;
             
             if (contentSource === 'upload' && uploadedFileData) {

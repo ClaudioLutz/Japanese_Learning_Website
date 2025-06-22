@@ -184,6 +184,14 @@ class LessonContent(db.Model):
     file_size = db.Column(db.Integer)      # File size in bytes
     file_type = db.Column(db.String(50))   # MIME type
     original_filename = db.Column(db.String(255))  # Original filename
+
+    # Interactive content fields
+    is_interactive = db.Column(db.Boolean, default=False)
+    max_attempts = db.Column(db.Integer, default=3)
+    passing_score = db.Column(db.Integer, default=70)  # Percentage
+    
+    # Relationships
+    quiz_questions = db.relationship('QuizQuestion', backref='content', lazy=True, cascade='all, delete-orphan')
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -227,6 +235,46 @@ class LessonContent(db.Model):
                 'original_filename': self.original_filename
             }
         return None
+
+class QuizQuestion(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    lesson_content_id = db.Column(db.Integer, db.ForeignKey('lesson_content.id'), nullable=False)
+    question_type = db.Column(db.String(50), nullable=False)  # 'multiple_choice', 'fill_blank', 'true_false', 'matching'
+    question_text = db.Column(db.Text, nullable=False)
+    explanation = db.Column(db.Text)  # Explanation for the answer
+    points = db.Column(db.Integer, default=1)
+    order_index = db.Column(db.Integer, default=0)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relationships
+    options = db.relationship('QuizOption', backref='question', lazy=True, cascade='all, delete-orphan')
+    user_answers = db.relationship('UserQuizAnswer', backref='question', lazy=True, cascade='all, delete-orphan')
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+class QuizOption(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    question_id = db.Column(db.Integer, db.ForeignKey('quiz_question.id'), nullable=False)
+    option_text = db.Column(db.Text, nullable=False)
+    is_correct = db.Column(db.Boolean, default=False)
+    order_index = db.Column(db.Integer, default=0)
+    feedback = db.Column(db.Text)  # Specific feedback for this option
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+class UserQuizAnswer(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    question_id = db.Column(db.Integer, db.ForeignKey('quiz_question.id'), nullable=False)
+    selected_option_id = db.Column(db.Integer, db.ForeignKey('quiz_option.id'))
+    text_answer = db.Column(db.Text)  # For fill-in-the-blank questions
+    is_correct = db.Column(db.Boolean, default=False)
+    answered_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
 class UserLessonProgress(db.Model):
     id = db.Column(db.Integer, primary_key=True)
