@@ -134,3 +134,9 @@ All API endpoints require admin authentication and accept/return JSON data.
 - Check browser console for JavaScript errors
 - Verify admin user exists with `is_admin = True`
 - Ensure all dependencies are installed (`pip install -r requirements.txt`)
+
+---
+
+## Creating Lessons with Multimedia Content
+
+This guide focuses on creating the foundational content items (Kana, Kanji, Vocabulary, Grammar). To learn how to assemble these into structured lessons, add custom text, incorporate URL-based media, or **upload and manage files (images, audio, documents)** for lessons, please refer to the "Lesson System" and "Admin Content Management" sections in the main `Documentation.md` file.
