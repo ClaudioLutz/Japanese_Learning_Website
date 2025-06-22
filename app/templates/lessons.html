@@ -2,6 +2,10 @@
 
 {% block title %}Lessons - Japanese Learning{% endblock %}
 
+{% block body_attributes %}
+    style="background-image: url('{{ url_for('static', filename='images/Lesson_Background.png') }}'); background-size: cover; background-repeat: no-repeat; background-attachment: fixed;"
+{% endblock %}
+
 {% block content %}
 <div class="container mt-4">
     <div class="row">
