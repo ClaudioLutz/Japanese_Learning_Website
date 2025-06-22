@@ -19,12 +19,6 @@
                         <a class="nav-link" href="{{ url_for('routes.lessons') }}">Lessons</a>
                     </li>
                     {% endif %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('routes.free_content') }}">Free Content</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('routes.premium_content') }}">Premium Content</a>
-                    </li>
                     {% if current_user.is_authenticated and current_user.is_admin %}
                     <li class="nav-item">
                         <a class="nav-link btn btn-sm btn-outline-primary" href="{{ url_for('routes.admin_index') }}">Admin Panel</a>

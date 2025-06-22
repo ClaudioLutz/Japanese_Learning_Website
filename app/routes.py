@@ -89,17 +89,7 @@ def logout():
     flash('You have been logged out.', 'info')
     return redirect(url_for('routes.index'))
 
-@bp.route('/free_content')
-@login_required # Anyone logged in can see this
-def free_content():
-    return render_template('free_content.html')
-
 # --- Member Routes (Simulated Premium) ---
-@bp.route('/premium_content')
-@login_required
-@premium_required # Requires 'premium' subscription_level
-def premium_content():
-    return render_template('premium_content.html')
 
 @bp.route('/upgrade_to_premium')
 @login_required
