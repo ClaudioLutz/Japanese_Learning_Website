@@ -958,6 +958,7 @@ DELETE /api/admin/lessons/<int:lesson_id>/content/<int:content_id>/delete # Remo
 ```
 GET    /api/lessons                    # Get accessible lessons for user
 POST   /api/lessons/{id}/progress      # Update lesson progress
+POST   /lessons/{id}/reset             # Reset lesson progress
 ```
 
 #### File Management API (Admin)
@@ -1012,6 +1013,7 @@ GET    /uploads/<path:filename>               # Serves uploaded files stored wit
 - **Lesson Browser** (`/lessons`) - Browse and filter available lessons
 - **Lesson Viewer** (`/lessons/{id}`) - View lesson content and track progress
 - **Progress Tracking** - Visual progress indicators and completion status
+- **Reset Progress** - Users can reset their progress for a lesson.
 
 ### Migration and Setup
 

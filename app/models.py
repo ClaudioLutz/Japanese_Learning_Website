@@ -332,6 +332,24 @@ class UserLessonProgress(db.Model):
             self.is_completed = True
             self.completed_at = datetime.utcnow()
 
+    def reset(self):
+        """Reset the progress for this lesson."""
+        self.completed_at = None
+        self.is_completed = False
+        self.progress_percentage = 0
+        self.time_spent = 0
+        self.content_progress = json.dumps({})
+        
+        # Delete all quiz answers for this lesson for the user
+        content_ids = [content.id for content in self.lesson.content_items if content.is_interactive]
+        if content_ids:
+            question_ids = [q.id for q in QuizQuestion.query.filter(QuizQuestion.lesson_content_id.in_(content_ids)).all()]
+            if question_ids:
+                UserQuizAnswer.query.filter(
+                    UserQuizAnswer.user_id == self.user_id,
+                    UserQuizAnswer.question_id.in_(question_ids)
+                ).delete(synchronize_session=False)
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))

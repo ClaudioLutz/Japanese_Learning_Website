@@ -192,7 +192,8 @@ def view_lesson(lesson_id):
         db.session.add(progress)
         db.session.commit()
     
-    return render_template('lesson_view.html', lesson=lesson, progress=progress)
+    form = CSRFTokenForm()
+    return render_template('lesson_view.html', lesson=lesson, progress=progress, form=form)
 
 # --- API Routes for Content Management ---
 
@@ -1075,6 +1076,23 @@ def update_lesson_progress(lesson_id):
     
     db.session.commit()
     return jsonify(model_to_dict(progress))
+
+@bp.route('/lessons/<int:lesson_id>/reset', methods=['POST'])
+@login_required
+def reset_lesson_progress(lesson_id):
+    """Reset user progress for a specific lesson."""
+    progress = UserLessonProgress.query.filter_by(
+        user_id=current_user.id, lesson_id=lesson_id
+    ).first()
+
+    if progress:
+        progress.reset()  # Assuming a reset method in the model
+        db.session.commit()
+        flash('Your progress for this lesson has been reset.', 'success')
+    else:
+        flash('No progress found for this lesson.', 'info')
+
+    return redirect(url_for('routes.view_lesson', lesson_id=lesson_id))
 
 @bp.route('/api/admin/lessons/<int:lesson_id>/content/interactive', methods=['POST'])
 @login_required
