@@ -161,7 +161,7 @@ python run.py
 ### Session Management
 - **Secure Sessions** - Flask-Login with secure session cookies
 - **Remember Me** - Optional persistent login
-- **Auto-Logout** - Configurable session timeout
+- **Auto-Logout** - Configurable session timeout (Note: This is a general capability of Flask sessions; specific auto-logout duration is not actively configured in the current application setup beyond standard session expiration).
 - **CSRF Protection** - Form-based CSRF tokens
 
 ---
@@ -513,7 +513,7 @@ Japanese_Learning_Website/
 ├── run.py                  # Main script to run the Flask application
 └── setup_unified_auth.py   # Script to set up the initial database schema for unified authentication
 ```
-*Note: An `app/static/` directory is utilized, primarily for user-uploaded content (managed via the `UPLOAD_FOLDER` configuration, e.g., `app/static/uploads/`). Any custom project-specific CSS or JavaScript files would also typically be placed here. Styling for the main UI components is currently provided by Bootstrap (likely via CDN), with additional inline or internal styles in templates.*
+*Note: The application primarily uses Bootstrap CDN for styling, so a dedicated `app/static/` directory for general project CSS/JS may not be extensively populated with project-specific assets. However, the application critically relies on an `UPLOAD_FOLDER` (defaulting to `app/static/uploads/` or configurable via an environment variable like `UPLOAD_FOLDER=app/static/uploads`) for storing and serving user-uploaded files such as images, audio, and documents for lessons. These uploaded files are managed and served through specific application routes (e.g., `/uploads/<path:filename>`).*
 
 ---
 
@@ -627,7 +627,7 @@ python-dotenv==1.0.0
 - **Views** - Route handlers in `app/routes.py`.
 - **Forms** - WTForms classes in `app/forms.py`.
 - **Templates** - Jinja2 templates in `app/templates/`.
-- **Static Files** - Currently, no dedicated `app/static/` or `static/` directory is observed. Static assets like CSS and JavaScript are primarily managed via Bootstrap CDN and potentially inline/internal styles/scripts in templates. If custom static files are added, they would typically reside in `app/static/`.
+- **Static Files** - General project static assets (CSS, JavaScript) are primarily handled via Bootstrap CDN. The application uses an `UPLOAD_FOLDER` (defaulting to `app/static/uploads/`) for user-uploaded content, which is served via specific application routes. If custom non-uploaded static files are added, they would typically reside in a conventional `app/static/` directory and be configured accordingly.
 
 ### Database Management
 ```bash
@@ -690,8 +690,10 @@ python create_admin.py
 ```
 
 #### 5. Static Files Not Loading (If Applicable)
-**Problem**: Custom CSS/JS files return 404 (Note: currently, the project doesn't seem to use a local `static` folder; assets are likely CDN-based).
-**Solution**: If local static files are added (e.g., in `app/static/`), ensure Flask static file configuration is correct (`static_folder='static'` in Flask app setup or blueprint, and `url_for('static', filename='path/to/file')` in templates). Verify file paths.
+**Problem**: Custom CSS/JS files return 404.
+**Solution**: 
+    - For general site assets, ensure Bootstrap CDN links are correct if used. If using local custom CSS/JS (e.g., in a project `app/static/css` folder), ensure Flask static file configuration is correct (`static_folder='static'` in Flask app setup or blueprint, and `url_for('static', filename='path/to/file')` in templates). Verify file paths.
+    - For user-uploaded files (e.g., images in lessons), ensure the `UPLOAD_FOLDER` is correctly configured and files are being served through the `/uploads/<path:filename>` route. Check that `LessonContent.file_path` stores the correct relative path to the file within `UPLOAD_FOLDER`.
 
 ### Debug Mode
 Enable debug mode for detailed error messages:
@@ -829,11 +831,64 @@ CREATE TABLE lesson_content (
     file_size INTEGER,           -- File size in bytes
     file_type VARCHAR(50),       -- MIME type of the file
     original_filename VARCHAR(255), -- Original name of the uploaded file
+    -- Interactive content fields
+    is_interactive BOOLEAN DEFAULT FALSE,
+    max_attempts INTEGER DEFAULT 3,
+    passing_score INTEGER DEFAULT 70, -- Percentage
     FOREIGN KEY (lesson_id) REFERENCES lesson (id) ON DELETE CASCADE
+    -- Note: SQLAlchemy relationships exist for:
+    -- `quiz_questions` (One-to-Many: LessonContent -> QuizQuestion)
     -- Note: SQLAlchemy helper methods:
     -- `get_file_url()`: Returns a serveable URL for the uploaded file or the media_url.
     -- `delete_file()`: Deletes the associated physical file if one exists.
     -- `get_content_data()`: Fetches the related content (e.g., Kana object) or a dict for custom content.
+);
+```
+
+#### Quiz Question Table
+```sql
+CREATE TABLE quiz_question (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    lesson_content_id INTEGER NOT NULL,
+    question_type VARCHAR(50) NOT NULL, -- 'multiple_choice', 'fill_blank', 'true_false', 'matching'
+    question_text TEXT NOT NULL,
+    explanation TEXT, -- Explanation for the answer
+    points INTEGER DEFAULT 1,
+    order_index INTEGER DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (lesson_content_id) REFERENCES lesson_content (id) ON DELETE CASCADE
+    -- Note: SQLAlchemy relationships exist for:
+    -- `options` (One-to-Many: QuizQuestion -> QuizOption)
+    -- `user_answers` (One-to-Many: QuizQuestion -> UserQuizAnswer)
+);
+```
+
+#### Quiz Option Table
+```sql
+CREATE TABLE quiz_option (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    question_id INTEGER NOT NULL,
+    option_text TEXT NOT NULL,
+    is_correct BOOLEAN DEFAULT FALSE,
+    order_index INTEGER DEFAULT 0,
+    feedback TEXT, -- Specific feedback for this option
+    FOREIGN KEY (question_id) REFERENCES quiz_question (id) ON DELETE CASCADE
+);
+```
+
+#### User Quiz Answer Table
+```sql
+CREATE TABLE user_quiz_answer (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    question_id INTEGER NOT NULL,
+    selected_option_id INTEGER,
+    text_answer TEXT, -- For fill-in-the-blank questions
+    is_correct BOOLEAN DEFAULT FALSE,
+    answered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
+    FOREIGN KEY (question_id) REFERENCES quiz_question (id) ON DELETE CASCADE,
+    FOREIGN KEY (selected_option_id) REFERENCES quiz_option (id)
 );
 ```
 
@@ -902,24 +957,41 @@ POST   /api/lessons/{id}/progress      # Update lesson progress
 
 #### File Management API (Admin)
 ```
-POST   /api/admin/upload-file                 # Upload a file. Saves to a path like 'lessons/images/' under UPLOAD_FOLDER.
-                                              # Returns file path and info. Used by lesson builder.
-                                              # Example UPLOAD_FOLDER: app/static/uploads
-                                              # Resulting file_url might be: /static/uploads/lessons/images/filename.jpg
+POST   /api/admin/upload-file                 # Uploads a file to a subdirectory within the `UPLOAD_FOLDER` (e.g., `app/static/uploads/lessons/images/`).
+                                              # Current Implementation Returns: JSON object including `filePath`.
+                                              # The `filePath` returned is a URL generated by `url_for('static', filename=RELATIVE_PATH_WITHIN_STATIC)`,
+                                              # e.g., `/static/uploads/lessons/images/filename.jpg` if `UPLOAD_FOLDER` is `app/static/uploads/`.
+                                              # Note on Usage: For the `uploaded_file` serving route to function correctly, the path stored
+                                              # in `LessonContent.file_path` should be relative to `UPLOAD_FOLDER` (e.g., `lessons/images/filename.jpg`).
+                                              # The client-side JavaScript that calls `/api/admin/lessons/<id>/content/file` is responsible for
+                                              # transforming the `filePath` from this endpoint into the correct relative path before submission.
 DELETE /api/admin/delete-file                 # Delete an uploaded file from the server and potentially its LessonContent DB record.
-                                              # Expects JSON body with 'file_path'.
+                                              # Expects JSON body with 'file_path'. The 'file_path' should be the path relative to UPLOAD_FOLDER.
                                               # If 'content_id' is also provided and matches, the LessonContent record is deleted.
 POST   /api/admin/lessons/<int:lesson_id>/content/file   # Add file-based content to a lesson.
-                                              # Associates an *already uploaded file* (referenced by 'file_path' from upload-file)
-                                              # with a lesson content item. Takes details like title, description, file_path, etc.
+                                              # Associates an *already uploaded file* with a lesson content item.
+                                              # Expects 'file_path' in the JSON body to be the path relative to UPLOAD_FOLDER
+                                              # (e.g., 'lessons/images/filename.jpg'). Takes other details like title, description.
+```
+
+#### Interactive Content (Quiz) API (Admin & User)
+```
+POST   /api/admin/lessons/<int:lesson_id>/content/interactive # Add interactive content (quiz question) to a lesson content item.
+                                              # Creates a LessonContent of type 'interactive' and associated QuizQuestion/QuizOption records.
+POST   /api/lessons/<int:lesson_id>/quiz/<int:question_id>/answer # User submits an answer to a quiz question.
+                                              # Records the answer and returns correctness and feedback.
 ```
 
 ### Static File Serving
 ```
-GET    /uploads/<path:filename>               # Serves uploaded files.
-                                              # <path:filename> is the path relative to the UPLOAD_FOLDER.
-                                              # e.g. /uploads/lessons/images/my_image.png if UPLOAD_FOLDER is 'app/static/uploads'
-                                              # and file was saved in 'lessons/images' subdirectory.
+GET    /uploads/<path:filename>               # Serves uploaded files stored within the application's `UPLOAD_FOLDER`.
+                                              # The `<path:filename>` part of the URL should be the path of the file
+                                              # relative to the `UPLOAD_FOLDER`.
+                                              # For example, if `UPLOAD_FOLDER` is 'app/static/uploads' and a file is stored as
+                                              # 'app/static/uploads/lessons/images/my_image.png', then the URL would be
+                                              # `/uploads/lessons/images/my_image.png`.
+                                              # This route is used by `LessonContent.get_file_url()` to generate accessible URLs
+                                              # for files whose relative paths are stored in `LessonContent.file_path`.
 ```
 *Note on API Error Handling: Common HTTP status codes are used: 200 (OK), 201 (Created), 400 (Bad Request), 401 (Unauthorized), 403 (Forbidden), 404 (Not Found), 409 (Conflict), 500 (Internal Server Error).*
 
@@ -1047,6 +1119,3 @@ This project is licensed under the MIT License. See LICENSE file for details.
 - All contributors and testers
 
 ---
-
-*Last Updated: November 17, 2023*
-*Version: 1.1.0*
