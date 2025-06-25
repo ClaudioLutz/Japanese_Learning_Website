@@ -1549,8 +1549,46 @@ async function populateContentForm(content) {
             toggleContentSource('url');
             document.getElementById('mediaUrl').value = content.media_url;
         }
+    } else if (content.content_type === 'interactive') {
+        document.getElementById('interactiveTitle').value = content.title || '';
+        const interactiveType = content.interactive_type;
+        document.getElementById('interactiveType').value = interactiveType;
+        
+        showInteractiveForm(interactiveType);
+        
+        if (interactiveType === 'multiple_choice') {
+            document.getElementById('mcQuestion').value = content.question_text || '';
+            document.getElementById('mcExplanation').value = content.explanation || '';
+            
+            const optionsContainer = document.getElementById('mcOptions');
+            optionsContainer.innerHTML = '';
+            optionCount = 0;
+            
+            if (content.options && content.options.length > 0) {
+                content.options.forEach(option => {
+                    addOption();
+                    const optionIndex = optionCount - 1;
+                    document.querySelector(`input[name="option_${optionIndex}"]`).value = option.text;
+                    document.querySelector(`input[name="feedback_${optionIndex}"]`).value = option.feedback || '';
+                    if (option.is_correct) {
+                        document.querySelector(`input[name="correct_option"][value="${optionIndex}"]`).checked = true;
+                    }
+                });
+            }
+        } else if (interactiveType === 'fill_blank') {
+            document.getElementById('fbQuestion').value = content.question_text || '';
+            document.getElementById('fbAnswers').value = content.correct_answers || '';
+            document.getElementById('fbExplanation').value = content.explanation || '';
+        } else if (interactiveType === 'true_false') {
+            document.getElementById('tfQuestion').value = content.question_text || '';
+            document.getElementById('tfExplanation').value = content.explanation || '';
+            if (content.correct_answer === true) {
+                document.getElementById('tfTrue').checked = true;
+            } else if (content.correct_answer === false) {
+                document.getElementById('tfFalse').checked = true;
+            }
+        }
     }
-    // Note: Interactive content editing is not fully implemented in this pass.
 }
 
 
@@ -2112,6 +2150,9 @@ async function saveContentToLesson(isEditing = false) {
 
         if (isEditing && editingContentId) {
             endpoint = `/api/admin/content/${editingContentId}/edit`;
+            saveData = { ...currentContentData };
+            saveData.title = currentContentData.title;
+
             if (selectedContentType === 'text') {
                 saveData.content_text = tinymce.get('richTextContent').getContent();
             } else if (['video', 'audio', 'image'].includes(selectedContentType)) {
@@ -2121,6 +2162,45 @@ async function saveContentToLesson(isEditing = false) {
                     saveData.media_url = null;
                 } else {
                     saveData.file_path = null;
+                }
+            } else if (selectedContentType === 'interactive') {
+                const interactiveType = document.getElementById('interactiveType').value;
+                saveData.interactive_type = interactiveType;
+                saveData.is_interactive = true;
+
+                if (interactiveType === 'multiple_choice') {
+                    const question = document.getElementById('mcQuestion').value;
+                    const explanation = document.getElementById('mcExplanation').value;
+                    const correctOption = document.querySelector('input[name="correct_option"]:checked')?.value;
+                    
+                    const options = [];
+                    const optionElements = document.querySelectorAll('.option-item');
+                    
+                    optionElements.forEach((element) => {
+                        const optionInput = element.querySelector(`input[name^="option_"]`);
+                        const feedbackInput = element.querySelector(`input[name^="feedback_"]`);
+                        
+                        if (optionInput && optionInput.value.trim()) {
+                            options.push({
+                                text: optionInput.value.trim(),
+                                is_correct: correctOption === element.dataset.option,
+                                feedback: feedbackInput ? feedbackInput.value.trim() : ''
+                            });
+                        }
+                    });
+                    
+                    saveData.question_text = question;
+                    saveData.explanation = explanation;
+                    saveData.options = options;
+                } else if (interactiveType === 'fill_blank') {
+                    saveData.question_text = document.getElementById('fbQuestion').value;
+                    saveData.correct_answers = document.getElementById('fbAnswers').value;
+                    saveData.explanation = document.getElementById('fbExplanation').value;
+                } else if (interactiveType === 'true_false') {
+                    const correctAnswer = document.querySelector('input[name="tf_answer"]:checked')?.value;
+                    saveData.question_text = document.getElementById('tfQuestion').value;
+                    saveData.correct_answer = correctAnswer === 'true';
+                    saveData.explanation = document.getElementById('tfExplanation').value;
                 }
             }
         } else {

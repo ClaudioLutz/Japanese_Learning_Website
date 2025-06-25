@@ -786,7 +786,27 @@ def preview_content(content_id):
 def get_content_details(content_id):
     """Get full details for a single content item for editing."""
     content = LessonContent.query.get_or_404(content_id)
-    return jsonify(model_to_dict(content))
+    content_dict = model_to_dict(content)
+
+    if content.is_interactive:
+        question = QuizQuestion.query.filter_by(lesson_content_id=content.id).first()
+        if question:
+            content_dict['interactive_type'] = question.question_type
+            content_dict['question_text'] = question.question_text
+            content_dict['explanation'] = question.explanation
+            
+            if question.question_type == 'multiple_choice':
+                options = QuizOption.query.filter_by(question_id=question.id).all()
+                content_dict['options'] = [model_to_dict(opt) for opt in options]
+            elif question.question_type == 'fill_blank':
+                # The correct answers are stored in the explanation field for fill_blank
+                content_dict['correct_answers'] = question.explanation
+            elif question.question_type == 'true_false':
+                true_option = QuizOption.query.filter_by(question_id=question.id, option_text='True').first()
+                if true_option:
+                    content_dict['correct_answer'] = true_option.is_correct
+
+    return jsonify(content_dict)
 
 @bp.route('/api/admin/content/<int:content_id>/edit', methods=['PUT'])
 @login_required
@@ -818,6 +838,52 @@ def update_lesson_content(content_id):
             content.media_url = data.get('media_url', content.media_url)
             content.file_path = data.get('file_path', content.file_path)
             content.content_text = data.get('description', content.content_text)
+        elif content.content_type == 'interactive':
+            content.is_interactive = True
+            content.interactive_type = data.get('interactive_type', content.interactive_type)
+            
+            # Use a query to get the question, which is more explicit for static analysis
+            question = QuizQuestion.query.filter_by(lesson_content_id=content.id).first()
+            if not question:
+                question = QuizQuestion(lesson_content_id=content.id)
+                db.session.add(question)
+
+            question.question_type = content.interactive_type
+            question.question_text = data.get('question_text', question.question_text)
+            question.explanation = data.get('explanation', question.explanation)
+
+            # Use a bulk delete for efficiency and to resolve Pylance errors
+            QuizOption.query.filter_by(question_id=question.id).delete()
+
+            if content.interactive_type == 'multiple_choice':
+                options_data = data.get('options', [])
+                for i, option_data in enumerate(options_data):
+                    new_option = QuizOption(
+                        question_id=question.id,
+                        option_text=option_data['text'],
+                        is_correct=option_data.get('is_correct', False),
+                        order_index=i,
+                        feedback=option_data.get('feedback', '')
+                    )
+                    db.session.add(new_option)
+            
+            elif content.interactive_type == 'fill_blank':
+                question.explanation = data.get('correct_answers', question.explanation)
+
+            elif content.interactive_type == 'true_false':
+                correct_answer = data.get('correct_answer')
+                options_data = [
+                    {'text': 'True', 'is_correct': correct_answer is True},
+                    {'text': 'False', 'is_correct': correct_answer is False}
+                ]
+                for i, option_data in enumerate(options_data):
+                    new_option = QuizOption(
+                        question_id=question.id,
+                        option_text=option_data['text'],
+                        is_correct=option_data.get('is_correct', False),
+                        order_index=i
+                    )
+                    db.session.add(new_option)
 
         db.session.commit()
         return jsonify(model_to_dict(content)), 200
