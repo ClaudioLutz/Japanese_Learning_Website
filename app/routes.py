@@ -693,6 +693,10 @@ def add_lesson_content(lesson_id):
     if isinstance(is_optional, str):
         is_optional = is_optional.lower() == 'true'
 
+    # Determine the next order index
+    last_content = LessonContent.query.filter_by(lesson_id=lesson_id).order_by(LessonContent.order_index.desc()).first()
+    next_order_index = (last_content.order_index + 1) if last_content else 0
+
     new_content = LessonContent(
         lesson_id=lesson_id,
         content_type=data['content_type'],
@@ -700,7 +704,7 @@ def add_lesson_content(lesson_id):
         title=data.get('title'),
         content_text=data.get('content_text'),
         media_url=data.get('media_url'),
-        order_index=int(data.get('order_index', 0)),
+        order_index=next_order_index,
         is_optional=is_optional
     )
     try:
@@ -730,32 +734,47 @@ def remove_lesson_content(lesson_id, content_id):
         current_app.logger.error(f"Error removing lesson content {content_id} from lesson {lesson_id}: {e}", exc_info=True)
         return jsonify({"error": "Failed to remove lesson content"}), 500
 
-@bp.route('/api/admin/lessons/<int:lesson_id>/content/reorder', methods=['PUT'])
+@bp.route('/api/admin/lessons/<int:lesson_id>/content/<int:content_id>/move', methods=['POST'])
 @login_required
 @admin_required
-def reorder_lesson_content(lesson_id):
-    """Reorder lesson content items"""
-    lesson = Lesson.query.get_or_404(lesson_id)
+def move_lesson_content(lesson_id, content_id):
+    """Move a lesson content item up or down in order."""
     data = request.json
+    direction = data.get('direction')
+    if direction not in ['up', 'down']:
+        return jsonify({"error": "Invalid direction specified"}), 400
+
+    content_to_move = LessonContent.query.filter_by(id=content_id, lesson_id=lesson_id).first_or_404()
     
-    if not data or 'order_updates' not in data:
-        return jsonify({"error": "Missing order updates"}), 400
+    current_order = content_to_move.order_index
     
+    if direction == 'up':
+        # Find the item directly above
+        item_to_swap_with = LessonContent.query.filter_by(lesson_id=lesson_id, order_index=current_order - 1).first()
+        if not item_to_swap_with:
+            return jsonify({"error": "Cannot move item further up"}), 400
+        
+        # Swap order indices
+        content_to_move.order_index -= 1
+        item_to_swap_with.order_index += 1
+
+    elif direction == 'down':
+        # Find the item directly below
+        item_to_swap_with = LessonContent.query.filter_by(lesson_id=lesson_id, order_index=current_order + 1).first()
+        if not item_to_swap_with:
+            return jsonify({"error": "Cannot move item further down"}), 400
+            
+        # Swap order indices
+        content_to_move.order_index += 1
+        item_to_swap_with.order_index -= 1
+
     try:
-        for update in data['order_updates']:
-            content = LessonContent.query.filter_by(
-                lesson_id=lesson_id, 
-                id=update['content_id']
-            ).first()
-            if content:
-                content.order_index = update['order_index']
-        
         db.session.commit()
-        return jsonify({"message": "Content order updated successfully"}), 200
-        
-    except Exception as e:
+        return jsonify({"message": "Content moved successfully"}), 200
+    except SQLAlchemyError as e:
         db.session.rollback()
-        return jsonify({"error": "Failed to update content order"}), 500
+        current_app.logger.error(f"Error moving content: {e}")
+        return jsonify({"error": "Database error occurred"}), 500
 
 @bp.route('/api/admin/content/<int:content_id>/preview', methods=['GET'])
 @login_required
@@ -1173,6 +1192,10 @@ def add_interactive_content(lesson_id):
         return jsonify({"error": "Missing interactive type"}), 400
     
     # Create lesson content
+    # Determine the next order index
+    last_content = LessonContent.query.filter_by(lesson_id=lesson_id).order_by(LessonContent.order_index.desc()).first()
+    next_order_index = (last_content.order_index + 1) if last_content else 0
+
     content = LessonContent(
         lesson_id=lesson_id,
         content_type='interactive',
@@ -1180,7 +1203,7 @@ def add_interactive_content(lesson_id):
         is_interactive=True,
         max_attempts=data.get('max_attempts', 3),
         passing_score=data.get('passing_score', 70),
-        order_index=data.get('order_index', 0)
+        order_index=next_order_index
     )
     
     db.session.add(content)
@@ -1220,13 +1243,20 @@ def add_interactive_content(lesson_id):
     db.session.commit()
     return jsonify(model_to_dict(content)), 201
 
+from sqlalchemy.orm import joinedload
+
 @bp.route('/api/lessons/<int:lesson_id>/quiz/<int:question_id>/answer', methods=['POST'])
 @login_required
 def submit_quiz_answer(lesson_id, question_id):
     """Submit answer to quiz question"""
     try:
         lesson = Lesson.query.get_or_404(lesson_id)
-        question = QuizQuestion.query.get_or_404(question_id)
+        question = db.session.query(QuizQuestion).options(
+            joinedload(QuizQuestion.content)
+        ).filter(QuizQuestion.id == question_id).first()
+
+        if not question or question.content.lesson_id != lesson_id:
+            return jsonify({"error": "Question not found in this lesson"}), 404
         
         # Check lesson access
         accessible, message = lesson.is_accessible_to_user(current_user)
@@ -1246,7 +1276,12 @@ def submit_quiz_answer(lesson_id, question_id):
 
         # If an answer exists, check attempts
         if answer:
-            if answer.attempts >= question.content.max_attempts:
+            if not question.content:
+                return jsonify({"error": "Associated content for this question not found."}), 500
+            
+            max_attempts = question.content.max_attempts or float('inf')
+
+            if answer.attempts >= max_attempts:
                 current_app.logger.warning(f"User {current_user.id} exceeded max attempts for question {question_id}")
                 return jsonify({"error": "Maximum attempts exceeded"}), 400
             answer.attempts += 1
@@ -1307,10 +1342,15 @@ def submit_quiz_answer(lesson_id, question_id):
         db.session.commit()
         
         # Return result with feedback
+        # Calculate remaining attempts safely
+        attempts_remaining = 'Unlimited'
+        if question.content and question.content.max_attempts:
+            attempts_remaining = question.content.max_attempts - answer.attempts
+
         result = {
             'is_correct': is_correct,
             'explanation': question.explanation,
-            'attempts_remaining': question.content.max_attempts - answer.attempts
+            'attempts_remaining': attempts_remaining
         }
         
         if selected_option:
@@ -1436,6 +1476,10 @@ def add_file_content(lesson_id):
     if isinstance(is_optional, str):
         is_optional = is_optional.lower() == 'true'
     
+    # Determine the next order index
+    last_content = LessonContent.query.filter_by(lesson_id=lesson_id).order_by(LessonContent.order_index.desc()).first()
+    next_order_index = (last_content.order_index + 1) if last_content else 0
+
     new_content = LessonContent(
         lesson_id=lesson_id,
         content_type=data['content_type'],
@@ -1445,7 +1489,7 @@ def add_file_content(lesson_id):
         file_size=data.get('file_size'),
         file_type=data.get('file_type'),
         original_filename=data.get('original_filename'),
-        order_index=int(data.get('order_index', 0)),
+        order_index=next_order_index,
         is_optional=is_optional
     )
     

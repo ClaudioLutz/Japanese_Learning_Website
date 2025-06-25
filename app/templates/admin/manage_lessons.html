@@ -736,6 +736,18 @@
 .bulk-actions-buttons .btn {
     margin-left: 0.5rem;
 }
+
+.reorder-btn {
+    min-width: 35px;
+    border: 1px solid #ced4da !important;
+    background-color: #f8f9fa !important;
+    transition: all 0.2s ease-in-out;
+}
+
+.reorder-btn:hover {
+    background-color: #e9ecef !important;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.15) !important;
+}
 </style>
 
 <script>
@@ -1140,9 +1152,10 @@ async function loadLessonContent(lessonId) {
             row.setAttribute('data-content-id', item.id);
             row.innerHTML = `
                 <td>
-                    <div class="d-flex align-items-center">
-                        <span class="drag-handle me-2" style="cursor: move;">⋮⋮</span>
-                        <span class="order-number">${item.order_index}</span>
+                    <div class="d-flex flex-column align-items-center">
+                        <button class="btn btn-sm reorder-btn" onclick="moveContent(${item.id}, 'up')" ${index === 0 ? 'disabled' : ''}>▲</button>
+                        <span class="order-number my-1">${item.order_index}</span>
+                        <button class="btn btn-sm reorder-btn" onclick="moveContent(${item.id}, 'down')" ${index === content.length - 1 ? 'disabled' : ''}>▼</button>
                     </div>
                 </td>
                 <td>
@@ -1172,11 +1185,7 @@ async function loadLessonContent(lessonId) {
             tbody.appendChild(row);
         });
         
-        // Initialize drag-and-drop after content is loaded
-        if (typeof Sortable !== 'undefined') {
-            initializeDragAndDrop();
-        }
-        
+        // No more drag and drop
     } catch (error) {
         console.error('Error loading lesson content:', error);
         alert('Error loading lesson content');
@@ -1211,52 +1220,27 @@ async function removeContent(lessonId, contentId) {
     }
 }
 
-// Initialize drag-and-drop functionality
-function initializeDragAndDrop() {
-    setTimeout(() => {
-        const sortableList = document.getElementById('sortableContentList');
-        
-        new Sortable(sortableList, {
-            animation: 150,
-            handle: '.drag-handle',
-            onEnd: function(evt) {
-                updateContentOrder();
-            }
-        });
-    }, 100);
-}
-
-// Update content order after drag-and-drop
-async function updateContentOrder() {
-    const rows = document.querySelectorAll('#lessonContentTable tbody tr');
-    const orderUpdates = [];
-    
-    rows.forEach((row, index) => {
-        const contentId = row.getAttribute('data-content-id');
-        const orderNumber = row.querySelector('.order-number');
-        orderNumber.textContent = index;
-        
-        orderUpdates.push({
-            content_id: parseInt(contentId),
-            order_index: index
-        });
-    });
-    
+// Move lesson content up or down
+async function moveContent(contentId, direction) {
     try {
-        const response = await fetch(`/api/admin/lessons/${currentLessonId}/content/reorder`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ order_updates: orderUpdates })
+        const response = await fetch(`/api/admin/lessons/${currentLessonId}/content/${contentId}/move`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            },
+            body: JSON.stringify({ direction: direction })
         });
-        
-        if (!response.ok) {
-            throw new Error('Failed to update content order');
+
+        if (response.ok) {
+            loadLessonContent(currentLessonId); // Reload the content to show the new order
+        } else {
+            const error = await response.json();
+            alert('Error: ' + error.error);
         }
     } catch (error) {
-        console.error('Error updating content order:', error);
-        alert('Error updating content order');
-        // Reload content to restore original order
-        loadLessonContent(currentLessonId);
+        console.error('Error moving content:', error);
+        alert('Error moving content');
     }
 }
 
