@@ -716,9 +716,19 @@ def add_lesson_content(lesson_id):
 @admin_required
 def remove_lesson_content(lesson_id, content_id):
     content = LessonContent.query.filter_by(lesson_id=lesson_id, id=content_id).first_or_404()
-    db.session.delete(content)
-    db.session.commit()
-    return jsonify({"message": "Content removed from lesson successfully"}), 200
+
+    try:
+        # C1: Ensure file is deleted from disk if it exists
+        if content.file_path:
+            content.delete_file() # Calls app.models.LessonContent.delete_file()
+
+        db.session.delete(content)
+        db.session.commit()
+        return jsonify({"message": "Content removed from lesson successfully"}), 200
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error removing lesson content {content_id} from lesson {lesson_id}: {e}", exc_info=True)
+        return jsonify({"error": "Failed to remove lesson content"}), 500
 
 @bp.route('/api/admin/lessons/<int:lesson_id>/content/reorder', methods=['PUT'])
 @login_required
@@ -1246,50 +1256,102 @@ def submit_quiz_answer(lesson_id, question_id):
         return jsonify({"error": "An internal error occurred"}), 500
 
 # == FILE UPLOAD API ==
+from app.utils import FileUploadHandler # Import FileUploadHandler
+
+# ... (other imports and code) ...
+
+# == FILE UPLOAD API ==
 @bp.route('/api/admin/upload-file', methods=['POST'])
 @login_required
 @admin_required
 def upload_file():
-    """Handle file upload and return file information"""
+    """Handle file upload, validate, process, and return file information"""
     import os
-    from werkzeug.utils import secure_filename
 
     if 'file' not in request.files:
         return jsonify({'success': False, 'error': 'No file part in the request'}), 400
 
-    file = request.files['file']
+    file_storage = request.files['file']
+    lesson_id_str = request.form.get('lesson_id') # Optional: for organizing files by lesson
 
-    if not file or not file.filename:
+    if not file_storage or not file_storage.filename:
         return jsonify({'success': False, 'error': 'No file selected'}), 400
 
-    if file and file.filename:
-        # Ensure the filename is safe to use
-        filename = secure_filename(file.filename)
-        
-        # This assumes you have an 'UPLOAD_FOLDER' configured in your app
-        upload_folder = current_app.config.get('UPLOAD_FOLDER', 'app/static/uploads')
-        
-        # You might want to create subdirectories for lessons or file types
-        # For simplicity, we save directly to a general uploads folder here.
-        # Example: target_folder = os.path.join(upload_folder, 'lessons', 'images')
-        target_folder = os.path.join(upload_folder, 'lessons', 'images') # Saving to a specific folder for images
-        os.makedirs(target_folder, exist_ok=True)
+    original_filename = file_storage.filename
 
-        filepath = os.path.join(target_folder, filename)
-        file.save(filepath)
+    # A2: Check allowed extensions (basic check)
+    file_type_from_ext = FileUploadHandler.get_file_type(original_filename)
+    if not file_type_from_ext:
+        return jsonify({'success': False, 'error': 'File type not allowed by extension.'}), 415
 
-        # Return a success response with the file's path
-        # The URL path should correspond to how you serve static files
-        # Example: /static/uploads/lessons/images/my_image.png
-        file_url = os.path.join('uploads', 'lessons', 'images', filename).replace('\\', '/')
+    if not FileUploadHandler.allowed_file(original_filename, file_type_from_ext):
+        return jsonify({'success': False, 'error': f"File extension for '{file_type_from_ext}' not allowed."}), 415
+
+    # A3: Generate unique filename
+    # We use secure_filename within generate_unique_filename
+    unique_filename = FileUploadHandler.generate_unique_filename(original_filename)
+
+    # Determine target directory (more dynamic based on file type and optional lesson_id)
+    # For now, let's keep it simpler and categorize by file_type. Lesson-specific folders can be a future enhancement.
+    # A5: Modified target directory logic
+    upload_folder = current_app.config['UPLOAD_FOLDER']
+
+    # Create a temporary path first for validation
+    temp_dir = os.path.join(upload_folder, 'temp') # Defined in __init__.py
+    os.makedirs(temp_dir, exist_ok=True)
+    temp_filepath = os.path.join(temp_dir, unique_filename)
+
+    try:
+        file_storage.save(temp_filepath)
+
+        # A1: Validate file content (MIME type)
+        if not FileUploadHandler.validate_file_content(temp_filepath, file_type_from_ext):
+            FileUploadHandler.delete_file(temp_filepath) # Clean up temp file
+            return jsonify({'success': False, 'error': 'File content does not match extension or is not allowed.'}), 415
+
+        # A4: Process image if it's an image file
+        if file_type_from_ext == 'image':
+            if not FileUploadHandler.process_image(temp_filepath):
+                FileUploadHandler.delete_file(temp_filepath) # Clean up temp file
+                return jsonify({'success': False, 'error': 'Image processing failed.'}), 500
+        
+        # Determine final directory based on file type
+        # This is a simplified version. A more robust system might use lesson_id if provided.
+        final_type_dir = os.path.join(upload_folder, 'lessons', file_type_from_ext)
+        os.makedirs(final_type_dir, exist_ok=True)
+        final_filepath = os.path.join(final_type_dir, unique_filename)
+        
+        # Move validated and processed file to its final destination
+        os.rename(temp_filepath, final_filepath)
+
+        # Get file info for the response
+        file_info = FileUploadHandler.get_file_info(final_filepath)
+
+        # Relative path for URL generation and storing in DB
+        relative_file_path = os.path.join('lessons', file_type_from_ext, unique_filename).replace('\\', '/')
 
         return jsonify({
             'success': True,
-            'filePath': url_for('static', filename=file_url, _external=False),
-            'fileName': filename
-        })
+            'filePath': url_for('static', filename=os.path.join('uploads', relative_file_path).replace('\\', '/'), _external=False), # Path for url_for
+            'dbPath': relative_file_path, # Path to store in DB
+            'fileName': unique_filename,
+            'originalFilename': original_filename,
+            'fileType': file_type_from_ext,
+            'fileSize': file_info.get('size'),
+            'mimeType': file_info.get('mime_type'),
+            'dimensions': file_info.get('dimensions')
+        }), 200
 
-    return jsonify({'success': False, 'error': 'An unknown error occurred'}), 500
+    except Exception as e:
+        current_app.logger.error(f"File upload failed: {e}", exc_info=True)
+        if os.path.exists(temp_filepath): # Ensure cleanup on any other exception
+            FileUploadHandler.delete_file(temp_filepath)
+        return jsonify({'success': False, 'error': 'An server error occurred during file upload.'}), 500
+    finally:
+        # Double check temp file is removed if it still exists (e.g. if os.rename failed)
+        if os.path.exists(temp_filepath):
+             FileUploadHandler.delete_file(temp_filepath)
+
 
 @bp.route('/api/admin/lessons/<int:lesson_id>/content/file', methods=['POST'])
 @login_required
@@ -1368,17 +1430,59 @@ def delete_file():
     if not os.path.abspath(full_path).startswith(os.path.abspath(current_app.config['UPLOAD_FOLDER'])):
         return jsonify({"error": "Access denied"}), 403
     
-    # Delete from filesystem
-    if FileUploadHandler.delete_file(full_path):
-        # Also delete from database if it's associated with content
-        content_id = data.get('content_id')
-        if content_id:
-            content = LessonContent.query.get(content_id)
-            if content and content.file_path == file_path:
-                content.delete_file()  # This also deletes the file, but we already did that
+    content_id = data.get('content_id')
+    file_deleted_from_fs = False
+    associated_content_deleted = False
+
+    # If content_id is provided, prioritize deleting the LessonContent record,
+    # which should trigger its own file deletion via content.delete_file() if properly linked.
+    if content_id:
+        content = LessonContent.query.get(content_id)
+        if content:
+            if content.file_path == file_path: # Ensure the content item actually refers to this file
+                # C2: Call content.delete_file() which handles file system deletion.
+                # This is app.models.LessonContent.delete_file()
+                content.delete_file()
+                # We trust content.delete_file() to have attempted deletion.
+                # For robustness, we can check os.path.exists(full_path) here if needed,
+                # but FileUploadHandler.delete_file below will also handle it.
+
                 db.session.delete(content)
                 db.session.commit()
-        
-        return jsonify({"message": "File deleted successfully"}), 200
+                associated_content_deleted = True
+                # If content.delete_file() worked, the file should be gone.
+                # To be certain, especially if content.delete_file() might fail silently or not exist:
+                if not os.path.exists(full_path):
+                    file_deleted_from_fs = True
+            else:
+                # content_id provided, but its file_path doesn't match the one in request.
+                # This is an ambiguous situation. For safety, we might only delete the file from FS
+                # if it's not associated with this *specific* content_id.
+                # Or, return an error. Let's opt for only deleting the file if no content was deleted.
+                pass # Will fall through to general file deletion if no content record was handled.
+        else:
+            # content_id provided but no such content found.
+            # Proceed to delete the file from filesystem if it exists.
+            pass
+
+    # General file deletion from filesystem if not handled by content deletion
+    # or if no content_id was provided.
+    if not file_deleted_from_fs: # C2: Avoid deleting twice
+        if FileUploadHandler.delete_file(full_path): # This is app.utils.FileUploadHandler.delete_file
+            file_deleted_from_fs = True
+        else:
+            # If content was associated and deleted, but file system deletion failed here,
+            # it's a partial success.
+            if associated_content_deleted:
+                 return jsonify({"message": "Associated content deleted, but filesystem file deletion failed or file was already gone."}), 207 # Multi-Status
+            return jsonify({"error": "Failed to delete file from filesystem"}), 500
+
+    if associated_content_deleted and file_deleted_from_fs:
+        return jsonify({"message": "File and associated content deleted successfully"}), 200
+    elif file_deleted_from_fs:
+        return jsonify({"message": "File deleted successfully from filesystem"}), 200
+    elif associated_content_deleted: # File was not on FS, but content deleted
+        return jsonify({"message": "Associated content deleted; file was not found on filesystem initially or already removed."}), 200
     else:
-        return jsonify({"error": "Failed to delete file"}), 500
+        # This case should ideally be caught by FileUploadHandler.delete_file failing
+        return jsonify({"error": "File not found or could not be deleted, and no associated content processed"}), 404

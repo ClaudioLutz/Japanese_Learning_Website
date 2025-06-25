@@ -212,8 +212,12 @@ class LessonContent(db.Model):
             from flask import current_app
             import os
             file_full_path = os.path.join(current_app.config['UPLOAD_FOLDER'], self.file_path)
-            if os.path.exists(file_full_path):
-                os.remove(file_full_path)
+            try:
+                if os.path.exists(file_full_path):
+                    os.remove(file_full_path)
+                    current_app.logger.info(f"Successfully deleted file: {file_full_path}")
+            except OSError as e: # D1
+                current_app.logger.error(f"Error deleting file {file_full_path} for LessonContent {self.id}: {e}")
     
     def get_content_data(self):
         """Get the actual content data based on content_type and content_id"""
