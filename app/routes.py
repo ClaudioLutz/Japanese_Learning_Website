@@ -840,22 +840,23 @@ def update_lesson_content(content_id):
             content.content_text = data.get('description', content.content_text)
         elif content.content_type == 'interactive':
             content.is_interactive = True
-            content.interactive_type = data.get('interactive_type', content.interactive_type)
-            
+            interactive_type = data.get('interactive_type')
+
             # Use a query to get the question, which is more explicit for static analysis
             question = QuizQuestion.query.filter_by(lesson_content_id=content.id).first()
             if not question:
                 question = QuizQuestion(lesson_content_id=content.id)
                 db.session.add(question)
 
-            question.question_type = content.interactive_type
+            if interactive_type:
+                question.question_type = interactive_type
             question.question_text = data.get('question_text', question.question_text)
             question.explanation = data.get('explanation', question.explanation)
 
             # Use a bulk delete for efficiency and to resolve Pylance errors
             QuizOption.query.filter_by(question_id=question.id).delete()
 
-            if content.interactive_type == 'multiple_choice':
+            if question.question_type == 'multiple_choice':
                 options_data = data.get('options', [])
                 for i, option_data in enumerate(options_data):
                     new_option = QuizOption(
@@ -867,10 +868,10 @@ def update_lesson_content(content_id):
                     )
                     db.session.add(new_option)
             
-            elif content.interactive_type == 'fill_blank':
+            elif question.question_type == 'fill_blank':
                 question.explanation = data.get('correct_answers', question.explanation)
 
-            elif content.interactive_type == 'true_false':
+            elif question.question_type == 'true_false':
                 correct_answer = data.get('correct_answer')
                 options_data = [
                     {'text': 'True', 'is_correct': correct_answer is True},
