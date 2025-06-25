@@ -113,34 +113,53 @@ class FileUploadHandler:
                 return mime_type.startswith('audio/')
             
             return True
-        except Exception:
-            # Fallback to extension-based validation if magic fails
-            return FileUploadHandler.allowed_file(os.path.basename(file_path), expected_type)
+        except Exception as e:
+            current_app.logger.error(f"File content validation (magic) failed for {file_path}: {e}")
+            # Fallback to extension-based validation if magic fails, but log the failure of primary method
+            return FileUploadHandler.allowed_file(os.path.basename(file_path), expected_type) # B1, B2
     
     @staticmethod
     def process_image(file_path, max_width=1920, max_height=1080):
-        """Resize and optimize images"""
+        """Resize and optimize images. Returns True on success, False on failure."""
         try:
             with Image.open(file_path) as img:
-                # Convert to RGB if necessary (for PNG with transparency)
+                original_format = img.format
+                # Convert to RGB if necessary (for PNG with transparency to avoid issues with JPEG)
                 if img.mode in ('RGBA', 'LA', 'P'):
+                    # Create a white background image
                     background = Image.new('RGB', img.size, (255, 255, 255))
-                    if img.mode == 'P':
+                    # Paste the image onto the background, using alpha channel as mask if available
+                    if img.mode == 'P': # Palette mode, convert to RGBA first
                         img = img.convert('RGBA')
-                    background.paste(img, mask=img.split()[-1] if img.mode == 'RGBA' else None)
+
+                    mask = None
+                    if img.mode == 'RGBA':
+                        mask = img.split()[-1] # Get alpha channel
+                    elif img.mode == 'LA': # Luminance + Alpha
+                        mask = img.split()[-1]
+                        img = img.convert('RGB') # Convert LA to RGB before paste, as background is RGB
+
+                    if mask:
+                         background.paste(img, (0,0), mask)
+                    else: # If no mask (e.g. L mode from P without alpha)
+                         background.paste(img.convert('RGB'), (0,0))
                     img = background
-                
+                elif img.mode != 'RGB': # Ensure it's RGB for JPEG saving if not already handled
+                    img = img.convert('RGB')
+
                 # Resize if necessary
                 if img.width > max_width or img.height > max_height:
                     img.thumbnail((max_width, max_height), Image.Resampling.LANCZOS)
                 
-                # Save optimized image
+                # Save optimized image, try to preserve original format if sensible, else JPEG
+                # For simplicity in this example, we'll stick to JPEG for processed images
+                # but one could add logic to save as PNG if original was PNG and transparency was key.
                 img.save(file_path, 'JPEG', quality=85, optimize=True)
                 
                 return True
         except Exception as e:
-            print(f"Error processing image {file_path}: {e}")
-            return False
+            current_app.logger.error(f"Error processing image {file_path}: {e}") # B2
+            return False # B3
     
     @staticmethod
     def get_file_info(file_path):
@@ -172,7 +191,7 @@ class FileUploadHandler:
             # This would require additional libraries like ffprobe
             
         except Exception as e:
-            print(f"Error getting file info for {file_path}: {e}")
+            current_app.logger.error(f"Error getting file info for {file_path}: {e}") # B2
         
         return info
     
@@ -197,8 +216,9 @@ class FileUploadHandler:
             if os.path.exists(file_path):
                 os.remove(file_path)
                 return True
+            return True # Return true if file doesn't exist (idempotent)
         except Exception as e:
-            print(f"Error deleting file {file_path}: {e}")
+            current_app.logger.error(f"Error deleting file {file_path}: {e}") # B2
         
         return False
     
