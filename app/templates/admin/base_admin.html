@@ -84,14 +84,23 @@
         .content-type-information_slide h3 {
             color: white;
         }
-        body { font-family: sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333; }
+        body { 
+            font-family: sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            background-image: url("{{ url_for('static', filename='images/Admin_Page.png') }}");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #333; 
+        }
         header { background-color: #333; color: #fff; padding: 1rem; text-align: center; }
         nav { background-color: #444; padding: 0.5rem; }
         nav ul { list-style-type: none; padding: 0; margin: 0; text-align: center; }
         nav ul li { display: inline; margin-right: 20px; }
         nav ul li a { color: #fff; text-decoration: none; font-weight: bold; }
         nav ul li a:hover { text-decoration: underline; }
-        .container { width: 90%; margin: 2rem auto; background-color: #fff; padding: 2rem; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .container { width: 90%; margin: 2rem auto; background-color: rgba(255, 255, 255, 1); padding: 2rem; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
         h1, h2 { color: #333; }
         table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
         th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
