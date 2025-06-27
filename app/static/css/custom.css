@@ -228,6 +228,227 @@ audio {
     border-radius: 8px;
 }
 
+/* Admin Modal Improvements */
+#pageEditorModal .modal-content {
+    max-width: 1400px !important;
+    width: 95% !important;
+}
+
+#lessonContentModal .modal-content {
+    max-width: 1200px !important;
+    width: 90% !important;
+}
+
+#addContentModal .modal-content {
+    max-width: 900px !important;
+    width: 85% !important;
+}
+
+/* Modal Header Improvements */
+.modal-header h4 {
+    font-size: 1.5rem !important;
+    font-weight: 600 !important;
+    margin: 0 !important;
+    color: var(--text-color) !important;
+}
+
+.modal-header {
+    padding: 1.5rem 2rem !important;
+    border-bottom: 2px solid var(--border-color) !important;
+}
+
+/* Page Editor Modal Specific Improvements */
+#pageEditorModal .modal-body {
+    padding: 2rem !important;
+}
+
+#pageEditorModal h5 {
+    font-size: 1.25rem !important;
+    font-weight: 600 !important;
+    color: var(--primary-color) !important;
+    margin-bottom: 1.5rem !important;
+}
+
+/* Reorder Button Improvements - FORCE BLACK WITH HOVER EFFECTS */
+button.reorder-btn,
+.btn.reorder-btn,
+#pageEditorModal .reorder-btn,
+#pageEditorModal button.reorder-btn,
+#pageEditorModal .btn.reorder-btn {
+    min-width: 40px !important;
+    height: 35px !important;
+    border: 2px solid #000000 !important;
+    background-color: #000000 !important;
+    background: #000000 !important;
+    color: #ffffff !important;
+    font-size: 14px !important;
+    font-weight: bold !important;
+    border-radius: 6px !important;
+    transition: all 0.3s ease-in-out !important;
+    margin: 2px 0 !important;
+    cursor: pointer !important;
+}
+
+button.reorder-btn:hover,
+.btn.reorder-btn:hover,
+#pageEditorModal .reorder-btn:hover,
+#pageEditorModal button.reorder-btn:hover,
+#pageEditorModal .btn.reorder-btn:hover {
+    background-color: #4a90e2 !important;
+    background: #4a90e2 !important;
+    border-color: #4a90e2 !important;
+    color: #ffffff !important;
+    transform: scale(1.1) translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4) !important;
+}
+
+button.reorder-btn:active,
+.btn.reorder-btn:active,
+#pageEditorModal .reorder-btn:active,
+#pageEditorModal button.reorder-btn:active,
+#pageEditorModal .btn.reorder-btn:active {
+    transform: scale(1.05) translateY(0px) !important;
+    box-shadow: 0 2px 6px rgba(74, 144, 226, 0.3) !important;
+}
+
+button.reorder-btn:disabled,
+.btn.reorder-btn:disabled,
+#pageEditorModal .reorder-btn:disabled,
+#pageEditorModal button.reorder-btn:disabled,
+#pageEditorModal .btn.reorder-btn:disabled {
+    background-color: #f8f9fa !important;
+    background: #f8f9fa !important;
+    border-color: #e9ecef !important;
+    color: #6c757d !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+    opacity: 0.6 !important;
+}
+
+/* Additional force for any button with onclick containing moveContentInPage */
+button[onclick*="moveContentInPage"] {
+    background-color: #000000 !important;
+    background: #000000 !important;
+    border: 2px solid #000000 !important;
+    color: #ffffff !important;
+    transition: all 0.3s ease-in-out !important;
+}
+
+button[onclick*="moveContentInPage"]:hover {
+    background-color: #4a90e2 !important;
+    background: #4a90e2 !important;
+    border-color: #4a90e2 !important;
+    color: #ffffff !important;
+    transform: scale(1.1) translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4) !important;
+}
+
+button[onclick*="moveContentInPage"]:active {
+    transform: scale(1.05) translateY(0px) !important;
+    box-shadow: 0 2px 6px rgba(74, 144, 226, 0.3) !important;
+}
+
+.order-number {
+    font-weight: 600 !important;
+    font-size: 16px !important;
+    color: var(--text-color) !important;
+    padding: 4px 0 !important;
+}
+
+/* Action Buttons Improvements */
+.btn-sm {
+    padding: 0.4rem 0.8rem !important;
+    font-size: 0.85rem !important;
+    margin-right: 0.25rem !important;
+    border-radius: 5px !important;
+}
+
+.btn-sm:last-child {
+    margin-right: 0 !important;
+}
+
+/* Table Improvements for Page Editor */
+#pageEditorModal table th {
+    background-color: var(--background-color) !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    padding: 1rem !important;
+    border-bottom: 2px solid var(--border-color) !important;
+}
+
+#pageEditorModal table td {
+    padding: 1rem !important;
+    vertical-align: middle !important;
+}
+
+#pageEditorModal table tbody tr:hover {
+    background-color: #f8f9fa !important;
+}
+
+/* Column Width Adjustments for Page Editor */
+#pageEditorModal table th:nth-child(1), /* ORDER */
+#pageEditorModal table td:nth-child(1) {
+    width: 80px !important;
+    min-width: 80px !important;
+}
+
+#pageEditorModal table th:nth-child(2), /* TYPE */
+#pageEditorModal table td:nth-child(2) {
+    width: 120px !important;
+    min-width: 120px !important;
+}
+
+#pageEditorModal table th:nth-child(3), /* TITLE */
+#pageEditorModal table td:nth-child(3) {
+    width: auto !important;
+    min-width: 200px !important;
+}
+
+#pageEditorModal table th:nth-child(4), /* OPTIONAL */
+#pageEditorModal table td:nth-child(4) {
+    width: 100px !important;
+    min-width: 100px !important;
+}
+
+#pageEditorModal table th:nth-child(5), /* ACTIONS */
+#pageEditorModal table td:nth-child(5) {
+    width: 280px !important;
+    min-width: 280px !important;
+}
+
+/* Action Buttons Container */
+#pageEditorModal table td:nth-child(5) {
+    white-space: nowrap !important;
+}
+
+#pageEditorModal table td:nth-child(5) .btn {
+    display: inline-block !important;
+    margin-right: 0.5rem !important;
+}
+
+#pageEditorModal table td:nth-child(5) .btn:last-child {
+    margin-right: 0 !important;
+}
+
+/* Content Title Styling */
+.content-title {
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+    color: var(--text-color) !important;
+    margin-bottom: 0.25rem !important;
+}
+
+/* Badge Improvements */
+.badge {
+    font-size: 0.75rem !important;
+    padding: 0.4rem 0.8rem !important;
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+}
+
 /* Responsive improvements */
 @media (max-width: 768px) {
     .welcome-card {
@@ -237,5 +458,13 @@ audio {
     
     .content-item {
         padding: 1rem !important;
+    }
+    
+    /* Make admin modals responsive on mobile */
+    #pageEditorModal .modal-content,
+    #lessonContentModal .modal-content,
+    #addContentModal .modal-content {
+        width: 95% !important;
+        max-width: none !important;
     }
 }

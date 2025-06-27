@@ -2896,11 +2896,11 @@ async function loadPageContent(pageNumber) {
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th width="60">Order</th>
+                            <th>Order</th>
                             <th>Type</th>
                             <th>Title</th>
                             <th>Optional</th>
-                            <th width="200">Actions</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -2911,9 +2911,9 @@ async function loadPageContent(pageNumber) {
                 <tr data-content-id="${item.id}">
                     <td>
                         <div class="d-flex flex-column align-items-center">
-                            <button class="btn btn-sm reorder-btn" onclick="moveContentInPage(${item.id}, 'up')" ${index === 0 ? 'disabled' : ''}>▲</button>
+                            <button class="btn btn-sm reorder-btn" style="background-color: #000000 !important; border: 2px solid #000000 !important; color: #ffffff !important;" onclick="moveContentInPage(${item.id}, 'up')" ${index === 0 ? 'disabled' : ''}>▲</button>
                             <span class="order-number my-1">${item.order_index}</span>
-                            <button class="btn btn-sm reorder-btn" onclick="moveContentInPage(${item.id}, 'down')" ${index === pageContent.length - 1 ? 'disabled' : ''}>▼</button>
+                            <button class="btn btn-sm reorder-btn" style="background-color: #000000 !important; border: 2px solid #000000 !important; color: #ffffff !important;" onclick="moveContentInPage(${item.id}, 'down')" ${index === pageContent.length - 1 ? 'disabled' : ''}>▼</button>
                         </div>
                     </td>
                     <td>
