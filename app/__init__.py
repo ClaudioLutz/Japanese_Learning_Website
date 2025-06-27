@@ -1,4 +1,6 @@
 # app/__init__.py
+import logging
+logging.basicConfig(level=logging.INFO)
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
@@ -14,7 +16,7 @@ db = SQLAlchemy()
 login_manager = LoginManager()
 csrf = CSRFProtect() # Initialize CSRFProtect
 
-login_manager.login_view = 'routes.login'
+login_manager.login_view = 'routes.login' # type: ignore
 login_manager.login_message = 'Please log in to access this page.'
 login_manager.login_message_category = 'info'
 

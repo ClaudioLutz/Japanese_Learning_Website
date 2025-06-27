@@ -1,0 +1,241 @@
+/* --- 1. Import a Modern Font --- */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
+
+/* --- 2. Define a Modern Color Palette & Root Variables --- */
+:root {
+    --primary-color: #4a90e2; /* A softer, modern blue */
+    --secondary-color: #50e3c2; /* A minty green for accents */
+    --text-color: #333;
+    --text-light: #555;
+    --background-color: #f8f9fa; /* Off-white for less harshness */
+    --card-background: #ffffff;
+    --border-color: #e9ecef;
+    --premium-color: #f5a623; /* A vibrant orange for premium tags */
+    --free-color: #28a745; /* Bootstrap's success green is fine */
+}
+
+/* --- 3. Apply Global Styles --- */
+body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 500;
+}
+
+/* --- 4. Style Common Elements (Buttons & Badges) --- */
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.badge.bg-warning {
+    background-color: var(--premium-color) !important;
+    color: white;
+}
+
+/* Homepage Styles */
+.welcome-card {
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(8px); /* Creates the frosted glass effect */
+    border-radius: 1rem;
+    padding: 3rem;
+    max-width: 650px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.welcome-card h1 {
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+/* Lesson Card Styles */
+.lesson-card {
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+}
+
+.lesson-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+}
+
+.lesson-card.locked {
+    opacity: 0.8;
+}
+
+.lesson-card .progress-bar {
+    background-color: var(--secondary-color);
+}
+
+/* Individual Lesson Page Styles */
+.lesson-header-card {
+    background-color: var(--card-background);
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.content-item {
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--primary-color); /* Adds a nice accent */
+    border-radius: 8px;
+    padding: 1.5rem !important;
+    transition: box-shadow 0.2s ease;
+}
+
+.content-item:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.content-item .mark-complete-btn {
+    border-radius: 20px; /* Pill-shaped button */
+}
+
+/* Make the main lesson card distinct */
+.lesson-content-card {
+    background-color: transparent;
+    border: none;
+}
+
+/* Filter card styling */
+.filter-card {
+    background-color: var(--card-background);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Navbar improvements */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+    font-weight: 600;
+    color: var(--primary-color) !important;
+}
+
+/* Form improvements */
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+}
+
+.form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+}
+
+/* Alert improvements */
+.alert {
+    border-radius: 8px;
+    border: none;
+}
+
+/* Progress bar improvements */
+.progress {
+    border-radius: 10px;
+    background-color: #e9ecef;
+}
+
+.progress-bar {
+    border-radius: 10px;
+}
+
+/* Badge improvements */
+.badge {
+    font-weight: 500;
+    padding: 0.5em 0.75em;
+}
+
+/* Card improvements */
+.card {
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.card-header {
+    background-color: var(--background-color);
+    border-bottom: 1px solid var(--border-color);
+    border-radius: 12px 12px 0 0 !important;
+}
+
+/* Button improvements */
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+/* Text improvements */
+.text-muted {
+    color: var(--text-light) !important;
+}
+
+/* Interactive content styling */
+.quiz-question {
+    background-color: var(--background-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+}
+
+.quiz-question .question-header h5 {
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.form-check-input:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+/* Content type specific styling */
+.text-content-container {
+    background-color: var(--background-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.content-title {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+/* Media content styling */
+.ratio iframe {
+    border-radius: 8px;
+}
+
+audio {
+    border-radius: 8px;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .welcome-card {
+        padding: 2rem;
+        margin: 1rem;
+    }
+
+    .content-item {
+        padding: 1rem !important;
+    }
+}

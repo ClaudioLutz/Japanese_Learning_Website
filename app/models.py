@@ -157,6 +157,23 @@ class Lesson(db.Model):
         
         return True, "Accessible"
 
+    @property
+    def pages(self):
+        """Groups content items by page number for rendering."""
+        from collections import defaultdict
+        if not self.content_items:
+            return []
+
+        pages_dict = defaultdict(list)
+        # Sort all content items first by page, then by their order within the page
+        sorted_content = sorted(self.content_items, key=lambda c: (c.page_number, c.order_index))
+
+        for item in sorted_content:
+            pages_dict[item.page_number].append(item)
+
+        # Return a list of pages (which are lists of content items), sorted by page number
+        return [pages_dict[p_num] for p_num in sorted(pages_dict.keys())]
+
 class LessonPrerequisite(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     lesson_id = db.Column(db.Integer, db.ForeignKey('lesson.id'), nullable=False)
@@ -176,6 +193,7 @@ class LessonContent(db.Model):
     content_text = db.Column(db.Text)  # for text content
     media_url = db.Column(db.String(255))  # for multimedia content
     order_index = db.Column(db.Integer, default=0)  # order within the lesson
+    page_number = db.Column(db.Integer, default=1, nullable=False)  # Add page number
     is_optional = db.Column(db.Boolean, default=False)  # whether this content is optional
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
@@ -184,6 +202,14 @@ class LessonContent(db.Model):
     file_size = db.Column(db.Integer)      # File size in bytes
     file_type = db.Column(db.String(50))   # MIME type
     original_filename = db.Column(db.String(255))  # Original filename
+
+    # Interactive content fields
+    is_interactive = db.Column(db.Boolean, default=False)
+    max_attempts = db.Column(db.Integer, default=3)
+    passing_score = db.Column(db.Integer, default=70)  # Percentage
+
+    # Relationships
+    quiz_questions = db.relationship('QuizQuestion', backref='content', lazy=True, cascade='all, delete-orphan')
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -204,8 +230,12 @@ class LessonContent(db.Model):
             from flask import current_app
             import os
             file_full_path = os.path.join(current_app.config['UPLOAD_FOLDER'], self.file_path)
-            if os.path.exists(file_full_path):
-                os.remove(file_full_path)
+            try:
+                if os.path.exists(file_full_path):
+                    os.remove(file_full_path)
+                    current_app.logger.info(f"Successfully deleted file: {file_full_path}")
+            except OSError as e: # D1
+                current_app.logger.error(f"Error deleting file {file_full_path} for LessonContent {self.id}: {e}")
     
     def get_content_data(self):
         """Get the actual content data based on content_type and content_id"""
@@ -227,6 +257,49 @@ class LessonContent(db.Model):
                 'original_filename': self.original_filename
             }
         return None
+
+class QuizQuestion(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    lesson_content_id = db.Column(db.Integer, db.ForeignKey('lesson_content.id'), nullable=False)
+    question_type = db.Column(db.String(50), nullable=False)  # 'multiple_choice', 'fill_blank', 'true_false', 'matching'
+    question_text = db.Column(db.Text, nullable=False)
+    explanation = db.Column(db.Text)  # Explanation for the answer
+    points = db.Column(db.Integer, default=1)
+    order_index = db.Column(db.Integer, default=0)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Relationships
+    options = db.relationship('QuizOption', backref='question', lazy=True, cascade='all, delete-orphan')
+    user_answers = db.relationship('UserQuizAnswer', backref='question', lazy=True, cascade='all, delete-orphan')
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+class QuizOption(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    question_id = db.Column(db.Integer, db.ForeignKey('quiz_question.id'), nullable=False)
+    option_text = db.Column(db.Text, nullable=False)
+    is_correct = db.Column(db.Boolean, default=False)
+    order_index = db.Column(db.Integer, default=0)
+    feedback = db.Column(db.Text)  # Specific feedback for this option
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+class UserQuizAnswer(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    question_id = db.Column(db.Integer, db.ForeignKey('quiz_question.id'), nullable=False)
+    selected_option_id = db.Column(db.Integer, db.ForeignKey('quiz_option.id'))
+    text_answer = db.Column(db.Text)  # For fill-in-the-blank questions
+    is_correct = db.Column(db.Boolean, default=False)
+    answered_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    attempts = db.Column(db.Integer, default=0, nullable=False)
+
+    __table_args__ = (db.UniqueConstraint('user_id', 'question_id'),)
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
 class UserLessonProgress(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -280,6 +353,24 @@ class UserLessonProgress(db.Model):
         if self.progress_percentage == 100 and not self.is_completed:
             self.is_completed = True
             self.completed_at = datetime.utcnow()
+
+    def reset(self):
+        """Reset the progress for this lesson."""
+        self.completed_at = None
+        self.is_completed = False
+        self.progress_percentage = 0
+        self.time_spent = 0
+        self.content_progress = json.dumps({})
+
+        # Delete all quiz answers for this lesson for the user
+        content_ids = [content.id for content in self.lesson.content_items if content.is_interactive]
+        if content_ids:
+            question_ids = [q.id for q in QuizQuestion.query.filter(QuizQuestion.lesson_content_id.in_(content_ids)).all()]
+            if question_ids:
+                UserQuizAnswer.query.filter(
+                    UserQuizAnswer.user_id == self.user_id,
+                    UserQuizAnswer.question_id.in_(question_ids)
+                ).delete(synchronize_session=False)
 
 @login_manager.user_loader
 def load_user(user_id):

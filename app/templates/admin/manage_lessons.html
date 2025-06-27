@@ -46,7 +46,7 @@
 </div>
 
 <!-- Add Lesson Modal -->
-<div id="addLessonModal" class="modal" style="display: none;">
+<div id="addLessonModal" class="modal">
     <div class="modal-content" style="max-width: 600px;">
         <div class="modal-header">
             <h4>Add New Lesson</h4>
@@ -134,7 +134,7 @@
 </div>
 
 <!-- Edit Lesson Modal -->
-<div id="editLessonModal" class="modal" style="display: none;">
+<div id="editLessonModal" class="modal">
     <div class="modal-content" style="max-width: 600px;">
         <div class="modal-header">
             <h4>Edit Lesson</h4>
@@ -223,8 +223,8 @@
 </div>
 
 <!-- Lesson Content Modal -->
-<div id="lessonContentModal" class="modal" style="display: none;">
-    <div class="modal-content" style="max-width: 800px;">
+<div id="lessonContentModal" class="modal">
+    <div class="modal-content" style="max-width: 1200px;">
         <div class="modal-header">
             <h4>Manage Lesson Content</h4>
             <span class="close" onclick="closeModal('lessonContentModal')">&times;</span>
@@ -232,26 +232,88 @@
         <div class="modal-body">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h5 id="contentLessonTitle">Lesson Content</h5>
-                <button type="button" class="btn btn-sm btn-primary" onclick="openAddContentModal()">
-                    <i class="fas fa-plus"></i> Add Content
-                </button>
+                <div>
+                    <button type="button" class="btn btn-sm btn-secondary" onclick="addNewPage()">
+                        <i class="fas fa-plus"></i> Add New Page
+                    </button>
+                    <button type="button" class="btn btn-sm btn-primary" onclick="openAddContentModal()">
+                        <i class="fas fa-plus"></i> Add Content
+                    </button>
+                </div>
+            </div>
+
+            <div id="pagesContainer" class="mt-3">
+                <!-- Pages will be loaded here -->
+            </div>
+
+            <!-- Individual Actions Panel -->
+            <div class="individual-actions-panel mb-3" style="display: none;" id="individualActionsPanel">
+                <div class="card">
+                    <div class="card-body">
+                        <h6>Selected Item Actions</h6>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="individual-actions-buttons">
+                                <button type="button" class="btn btn-sm btn-info" onclick="individualPreview()">
+                                    <i class="fas fa-eye"></i> Preview
+                                </button>
+                                <button type="button" class="btn btn-sm btn-warning" onclick="individualEdit()">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button type="button" class="btn btn-sm btn-secondary" onclick="individualDuplicate()">
+                                    <i class="fas fa-copy"></i> Duplicate
+                                </button>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-secondary" onclick="hideIndividualActions()">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <div class="table-responsive">
                 <table class="table table-sm" id="lessonContentTable">
                     <thead>
                         <tr>
-                            <th>Order</th>
+                            <th width="50">Order</th>
                             <th>Type</th>
                             <th>Title</th>
+                            <th>Status</th>
                             <th>Optional</th>
-                            <th>Actions</th>
+                            <th width="50">Select</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <!-- Content will be loaded via JavaScript -->
+                    <tbody id="sortableContentList">
+                        <!-- Content will be loaded via JavaScript with drag handles -->
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Bulk Operations Panel -->
+            <div class="bulk-operations-panel mt-3" style="display: none;" id="bulkOperationsPanel">
+                <div class="card">
+                    <div class="card-body">
+                        <h6>Bulk Operations</h6>
+                        <div class="d-flex justify-content-between">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="bulkSetOptional(true)">
+                                    Mark as Optional
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="bulkSetOptional(false)">
+                                    Mark as Required
+                                </button>
+                            </div>
+                            <div class="bulk-actions-buttons">
+                                <button type="button" class="btn btn-sm btn-danger" onclick="bulkDelete()">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-secondary" onclick="hideBulkOperations()">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="modal-footer">
@@ -260,8 +322,52 @@
     </div>
 </div>
 
+<!-- Content Preview Modal -->
+<div id="contentPreviewModal" class="modal">
+    <div class="modal-content" style="max-width: 900px;">
+        <div class="modal-header">
+            <h4>Content Preview</h4>
+            <span class="close" onclick="closeModal('contentPreviewModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div id="contentPreviewContainer">
+                <!-- Preview content will be loaded here -->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeModal('contentPreviewModal')">Close</button>
+            <button type="button" class="btn btn-primary" onclick="editContentFromPreview()">Edit Content</button>
+        </div>
+    </div>
+</div>
+
+<!-- Page Editor Modal -->
+<div id="pageEditorModal" class="modal">
+    <div class="modal-content" style="max-width: 1400px;">
+        <div class="modal-header">
+            <h4 id="pageEditorTitle">Edit Page</h4>
+            <span class="close" onclick="closeModal('pageEditorModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 id="pageEditorSubtitle">Page Content</h5>
+                <button type="button" class="btn btn-sm btn-primary" onclick="openAddContentToPageModal()">
+                    <i class="fas fa-plus"></i> Add Content to This Page
+                </button>
+            </div>
+
+            <div id="pageContentContainer">
+                <!-- Page content will be loaded here -->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeModal('pageEditorModal')">Close</button>
+        </div>
+    </div>
+</div>
+
 <!-- Enhanced Add Content Wizard Modal -->
-<div id="addContentModal" class="modal" style="display: none;">
+<div id="addContentModal" class="modal">
     <div class="modal-content" style="max-width: 900px;">
         <div class="modal-header">
             <h4 id="addContentModalTitle">Add Content to Lesson</h4>
@@ -360,6 +466,17 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="content-type-card" onclick="selectContentType('interactive')">
+                            <div class="card h-100 text-center">
+                                <div class="card-body">
+                                    <div class="content-type-icon">🎮</div>
+                                    <h6 class="card-title">Interactive</h6>
+                                    <p class="card-text small">Quizzes, questions, etc.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -374,6 +491,7 @@
                 
                 <form id="contentConfigForm">
                     {{ form.csrf_token }}
+                    <input type="hidden" id="editingContentId" name="editing_content_id">
                     <div id="contentConfigFields">
                         <!-- Dynamic form fields will be inserted here -->
                     </div>
@@ -382,7 +500,7 @@
                     <div id="richTextSection" style="display: none;">
                         <div class="form-group">
                             <label for="textContentTitle">Title *</label>
-                            <input type="text" id="textContentTitle" name="title" class="form-control" required>
+                            <input type="text" id="textContentTitle" name="text_title" class="form-control" required>
                         </div>
                         
                         <div class="form-group">
@@ -418,16 +536,137 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Interactive Content Section -->
+                    <div id="interactiveSection" style="display: none;">
+                        <div class="form-group">
+                            <label for="interactiveTitle">Title *</label>
+                            <input type="text" id="interactiveTitle" name="interactive_title" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="interactiveType">Interactive Type</label>
+                            <select id="interactiveType" name="interactive_type" class="form-control" onchange="showInteractiveForm(this.value)">
+                                <option value="">Select Type</option>
+                                <option value="multiple_choice">Multiple Choice Question</option>
+                                <option value="fill_blank">Fill in the Blank</option>
+                                <option value="true_false">True/False</option>
+                                <option value="matching">Matching Exercise</option>
+                                <option value="quiz">Mini Quiz (Multiple Questions)</option>
+                            </select>
+                        </div>
+
+                        <!-- Multiple Choice Form -->
+                        <div id="multipleChoiceForm" style="display: none;">
+                            <div class="form-group">
+                                <label for="mcQuestion">Question *</label>
+                                <textarea id="mcQuestion" name="question_text" class="form-control rich-text-editor-simple" rows="3"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Answer Options:</label>
+                                <div id="mcOptions">
+                                    <div class="option-item mb-2">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text">
+                                                    <input type="radio" name="correct_option" value="0">
+                                                </div>
+                                            </div>
+                                            <input type="text" class="form-control" name="option_0" placeholder="Option A">
+                                            <div class="input-group-append">
+                                                <button type="button" class="btn btn-outline-danger" onclick="removeOption(0)">×</button>
+                                            </div>
+                                        </div>
+                                        <small class="form-text text-muted">
+                                            <input type="text" class="form-control form-control-sm mt-1" name="feedback_0" placeholder="Feedback for this option (optional)">
+                                        </small>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="addOption()">+ Add Option</button>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="mcExplanation">Explanation (optional)</label>
+                                <textarea id="mcExplanation" name="explanation" class="form-control" rows="2" placeholder="Explain why this is the correct answer"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Fill in the Blank Form -->
+                        <div id="fillBlankForm" style="display: none;">
+                            <div class="form-group">
+                                <label for="fbQuestion">Question Text *</label>
+                                <textarea id="fbQuestion" name="question_text" class="form-control" rows="3" placeholder="Use [BLANK] to indicate where students should fill in answers"></textarea>
+                                <small class="form-text text-muted">Example: "The capital of Japan is [BLANK]."</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="fbAnswers">Correct Answers *</label>
+                                <input type="text" id="fbAnswers" name="correct_answers" class="form-control" placeholder="Tokyo, tokyo, TOKYO (separate multiple acceptable answers with commas)">
+                                <small class="form-text text-muted">List all acceptable answers, separated by commas. Case-insensitive.</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="fbExplanation">Explanation (optional)</label>
+                                <textarea id="fbExplanation" name="explanation" class="form-control" rows="2"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- True/False Form -->
+                        <div id="trueFalseForm" style="display: none;">
+                            <div class="form-group">
+                                <label for="tfQuestion">Statement *</label>
+                                <textarea id="tfQuestion" name="question_text" class="form-control" rows="3"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Correct Answer</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="tf_answer" id="tfTrue" value="true">
+                                    <label class="form-check-label" for="tfTrue">True</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="tf_answer" id="tfFalse" value="false">
+                                    <label class="form-check-label" for="tfFalse">False</label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="tfExplanation">Explanation *</label>
+                                <textarea id="tfExplanation" name="explanation" class="form-control" rows="2" placeholder="Explain why this statement is true or false"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Quiz Settings -->
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="maxAttempts">Max Attempts</label>
+                                    <input type="number" id="maxAttempts" name="max_attempts" class="form-control" value="3" min="1" max="10">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="passingScore">Passing Score (%)</label>
+                                    <input type="number" id="passingScore" name="passing_score" class="form-control" value="70" min="0" max="100">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     
                     <!-- Common fields for all content types -->
                     <div class="row mt-3">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="contentOrder">Order Index</label>
                                 <input type="number" id="contentOrder" name="order_index" class="form-control" min="0" value="0">
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="contentPageNumber">Page Number *</label>
+                                <input type="number" id="contentPageNumber" name="page_number" class="form-control" min="1" value="1" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <div class="form-check mt-4">
                                     <input type="checkbox" id="contentOptional" name="is_optional" class="form-check-input">
@@ -549,6 +788,22 @@
 .btn-group-toggle .btn:last-child {
     margin-right: 0;
 }
+
+.bulk-actions-buttons .btn {
+    margin-left: 0.5rem;
+}
+
+.reorder-btn {
+    min-width: 35px;
+    border: 1px solid #ced4da !important;
+    background-color: #f8f9fa !important;
+    transition: all 0.2s ease-in-out;
+}
+
+.reorder-btn:hover {
+    background-color: #e9ecef !important;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.15) !important;
+}
 </style>
 
 <script>
@@ -605,7 +860,72 @@ function applyTemplate(templateName) {
 }
 
 // Rich text editor management
-function initializeRichTextEditor() {
+let optionCount = 2; // Start with 2 options (A, B)
+
+// Interactive content management
+function showInteractiveForm(type) {
+    // Hide all forms
+    document.getElementById('multipleChoiceForm').style.display = 'none';
+    document.getElementById('fillBlankForm').style.display = 'none';
+    document.getElementById('trueFalseForm').style.display = 'none';
+
+    // Show selected form
+    if (type === 'multiple_choice') {
+        document.getElementById('multipleChoiceForm').style.display = 'block';
+        initializeMultipleChoice();
+    } else if (type === 'fill_blank') {
+        document.getElementById('fillBlankForm').style.display = 'block';
+    } else if (type === 'true_false') {
+        document.getElementById('trueFalseForm').style.display = 'block';
+    }
+}
+
+function initializeMultipleChoice() {
+    // Initialize with 2 default options
+    const optionsContainer = document.getElementById('mcOptions');
+    optionsContainer.innerHTML = '';
+    optionCount = 0;
+
+    for (let i = 0; i < 2; i++) {
+        addOption();
+    }
+}
+
+function addOption() {
+    const optionsContainer = document.getElementById('mcOptions');
+    const optionIndex = optionCount++;
+    const optionLetter = String.fromCharCode(65 + optionIndex); // A, B, C, D...
+
+    const optionHtml = `
+        <div class="option-item mb-2" data-option="${optionIndex}">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        <input type="radio" name="correct_option" value="${optionIndex}">
+                    </div>
+                </div>
+                <input type="text" class="form-control" name="option_${optionIndex}" placeholder="Option ${optionLetter}">
+                <div class="input-group-append">
+                    <button type="button" class="btn btn-outline-danger" onclick="removeOption(${optionIndex})">×</button>
+                </div>
+            </div>
+            <small class="form-text text-muted">
+                <input type="text" class="form-control form-control-sm mt-1" name="feedback_${optionIndex}" placeholder="Feedback for this option (optional)">
+            </small>
+        </div>
+    `;
+
+    optionsContainer.insertAdjacentHTML('beforeend', optionHtml);
+}
+
+function removeOption(optionIndex) {
+    const optionElement = document.querySelector(`[data-option="${optionIndex}"]`);
+    if (optionElement) {
+        optionElement.remove();
+    }
+}
+
+function initializeRichTextEditor(initialContent = '') {
     const tinymceConfig = {
         selector: '.rich-text-editor',
         height: 400,
@@ -623,10 +943,19 @@ function initializeRichTextEditor() {
         branding: false,
         promotion: false,
         setup: function(editor) {
+            editor.on('init', function() {
+                this.setContent(initialContent || '');
+            });
             editor.on('keyup', updateRichTextPreview);
             editor.on('change', updateRichTextPreview);
         }
     };
+
+    const existingEditor = tinymce.get('richTextContent');
+    if (existingEditor) {
+        existingEditor.destroy();
+    }
+
     tinymce.init(tinymceConfig);
 }
 
@@ -649,11 +978,12 @@ let currentLessonId = null;
 let categories = [];
 
 // Get CSRF token from the form
-function getCSRFToken(formId) {
-    const form = document.getElementById(formId);
+function getCSRFToken() {
+    const form = document.getElementById('addLessonForm');
     if (form && form.csrf_token) {
         return form.csrf_token.value;
     }
+    console.error('CSRF token not found');
     return null;
 }
 
@@ -743,7 +1073,7 @@ document.getElementById('addLessonForm').addEventListener('submit', async functi
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
-                'X-CSRFToken': getCSRFToken('addLessonForm')
+                'X-CSRFToken': getCSRFToken()
             },
             body: JSON.stringify(data)
         });
@@ -810,7 +1140,7 @@ document.getElementById('editLessonForm').addEventListener('submit', async funct
             method: 'PUT',
             headers: { 
                 'Content-Type': 'application/json',
-                'X-CSRFToken': getCSRFToken('editLessonForm')
+                'X-CSRFToken': getCSRFToken()
             },
             body: JSON.stringify(data)
         });
@@ -839,7 +1169,7 @@ async function deleteLesson(id) {
         const response = await fetch(`/api/admin/lessons/${id}/delete`, {
             method: 'DELETE',
             headers: {
-                'X-CSRFToken': getCSRFToken('addLessonForm') // Can use any form's token
+                'X-CSRFToken': getCSRFToken()
             }
         });
         
@@ -864,32 +1194,134 @@ function manageContent(lessonId, lessonTitle) {
     openModal('lessonContentModal');
 }
 
-// Load lesson content
+// Load lesson content with simplified page overview
 async function loadLessonContent(lessonId) {
     try {
         const response = await fetch(`/api/admin/lessons/${lessonId}/content`);
         const content = await response.json();
         
-        const tbody = document.querySelector('#lessonContentTable tbody');
-        tbody.innerHTML = '';
+        const pagesContainer = document.getElementById('pagesContainer');
+        if (!pagesContainer) {
+            // Fallback to old table structure if pagesContainer doesn't exist
+            loadLessonContentOld(content);
+            return;
+        }
+
+        pagesContainer.innerHTML = '';
         
+        const pages = {};
         content.forEach(item => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${item.order_index}</td>
-                <td><span class="badge badge-primary">${item.content_type}</span></td>
-                <td>${item.title || `${item.content_type} #${item.content_id || 'Custom'}`}</td>
-                <td><span class="badge ${item.is_optional ? 'badge-warning' : 'badge-success'}">${item.is_optional ? 'Yes' : 'No'}</span></td>
-                <td>
-                    <button class="btn btn-sm btn-danger" onclick="removeContent(${lessonId}, ${item.id})">Remove</button>
-                </td>
-            `;
-            tbody.appendChild(row);
+            const pageNum = item.page_number || 1;
+            if (!pages[pageNum]) {
+                pages[pageNum] = {
+                    number: pageNum,
+                    content: [],
+                    title: `Page ${pageNum}`,
+                    description: ''
+                };
+            }
+            pages[pageNum].content.push(item);
         });
+
+        const sortedPageNumbers = Object.keys(pages).map(Number).sort((a, b) => a - b);
+
+        if (sortedPageNumbers.length === 0) {
+            sortedPageNumbers.push(1); // Ensure at least one page is displayed
+        }
+
+        for (const pageNum of sortedPageNumbers) {
+            const page = pages[pageNum] || { number: pageNum, content: [], title: `Page ${pageNum}`, description: '' };
+            const contentCount = page.content.length;
+
+            // Generate a brief description based on content
+            let description = '';
+            if (contentCount === 0) {
+                description = 'No content added yet';
+            } else {
+                const contentTypes = [...new Set(page.content.map(item => item.content_type))];
+                description = `${contentCount} item${contentCount !== 1 ? 's' : ''} (${contentTypes.join(', ')})`;
+            }
+
+            const pageHtml = `
+                <div class="card mb-3 page-overview-card" data-page-number="${pageNum}">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h6 class="card-title mb-1">Page ${pageNum}</h6>
+                                <p class="card-text text-muted mb-0">${description}</p>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <button class="btn btn-sm btn-primary me-2" onclick="editPage(${pageNum})">
+                                    <i class="fas fa-edit"></i> Edit Page
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="deletePage(${pageNum})">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            pagesContainer.insertAdjacentHTML('beforeend', pageHtml);
+        }
+
+        // If no pages exist, show a message
+        if (sortedPageNumbers.length === 0) {
+            pagesContainer.innerHTML = `
+                <div class="text-center py-4">
+                    <h6 class="text-muted">No pages created yet</h6>
+                    <p class="text-muted">Click "Add New Page" to create your first page</p>
+                </div>
+            `;
+        }
     } catch (error) {
         console.error('Error loading lesson content:', error);
         alert('Error loading lesson content');
     }
+}
+
+// Fallback function for old table structure
+function loadLessonContentOld(content) {
+    const tbody = document.querySelector('#lessonContentTable tbody');
+    tbody.innerHTML = '';
+
+    content.forEach((item, index) => {
+        const row = document.createElement('tr');
+        row.setAttribute('data-content-id', item.id);
+        row.innerHTML = `
+            <td>
+                <div class="d-flex flex-column align-items-center">
+                    <button class="btn btn-sm reorder-btn" onclick="moveContent(${item.id}, 'up')" ${index === 0 ? 'disabled' : ''}>▲</button>
+                    <span class="order-number my-1">${item.order_index}</span>
+                    <button class="btn btn-sm reorder-btn" onclick="moveContent(${item.id}, 'down')" ${index === content.length - 1 ? 'disabled' : ''}>▼</button>
+                </div>
+            </td>
+            <td>
+                <span class="badge ${getContentTypeBadgeClass(item.content_type)}">${item.content_type}</span>
+                ${item.is_interactive ? '<span class="badge bg-info ms-1">Interactive</span>' : ''}
+            </td>
+            <td>
+                <div class="content-title">
+                    ${item.title || `${item.content_type} #${item.content_id || 'Custom'}`}
+                </div>
+                ${item.content_text ? `<small class="text-muted">${truncateText(item.content_text, 50)}</small>` : ''}
+            </td>
+            <td>
+                <span class="badge ${item.is_published ? 'bg-success' : 'bg-secondary'}">
+                    ${item.is_published ? 'Published' : 'Draft'}
+                </span>
+            </td>
+            <td>
+                <span class="badge ${item.is_optional ? 'bg-warning' : 'bg-success'}">
+                    ${item.is_optional ? 'Optional' : 'Required'}
+                </span>
+            </td>
+            <td>
+                <input type="checkbox" class="content-checkbox" value="${item.id}" onchange="toggleBulkOperations()">
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
 }
 
 // Remove content from lesson
@@ -902,10 +1334,10 @@ async function removeContent(lessonId, contentId) {
         const response = await fetch(`/api/admin/lessons/${lessonId}/content/${contentId}/delete`, {
             method: 'DELETE',
             headers: {
-                'X-CSRFToken': getCSRFToken('addLessonForm') // Can use any form's token
+                'X-CSRFToken': getCSRFToken()
             }
         });
-        
+
         if (response.ok) {
             loadLessonContent(lessonId);
             loadLessons(); // Refresh main table to update content count
@@ -920,6 +1352,394 @@ async function removeContent(lessonId, contentId) {
     }
 }
 
+// Move lesson content up or down
+async function moveContent(contentId, direction) {
+    try {
+        const response = await fetch(`/api/admin/lessons/${currentLessonId}/content/${contentId}/move`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            },
+            body: JSON.stringify({ direction: direction })
+        });
+
+        if (response.ok) {
+            loadLessonContent(currentLessonId); // Reload the content to show the new order
+        } else {
+            const error = await response.json();
+            alert('Error: ' + error.error);
+        }
+    } catch (error) {
+        console.error('Error moving content:', error);
+        alert('Error moving content');
+    }
+}
+
+// Content preview functionality
+async function previewContent(contentId) {
+    try {
+        const response = await fetch(`/api/admin/content/${contentId}/preview`);
+        const previewData = await response.json();
+
+        const previewContainer = document.getElementById('contentPreviewContainer');
+        previewContainer.innerHTML = generateContentPreview(previewData);
+
+        openModal('contentPreviewModal');
+    } catch (error) {
+        console.error('Error loading content preview:', error);
+        alert('Error loading content preview');
+    }
+}
+
+function generateContentPreview(content) {
+    let previewHtml = `<h5>${content.title || 'Untitled Content'}</h5>`;
+
+    switch (content.content_type) {
+        case 'text':
+            previewHtml += `<div class="rich-text-content">${content.content_text || ''}</div>`;
+            break;
+
+        case 'image':
+            if (content.media_url || content.file_path) {
+                previewHtml += `<img src="${content.media_url || content.file_path}" class="img-fluid" alt="${content.title}">`;
+            }
+            if (content.content_text) {
+                previewHtml += `<p class="mt-2">${content.content_text}</p>`;
+            }
+            break;
+
+        case 'video':
+            if (content.media_url || content.file_path) {
+                previewHtml += `
+                    <div class="ratio ratio-16x9">
+                        <video controls>
+                            <source src="${content.media_url || content.file_path}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                `;
+            }
+            break;
+
+        case 'audio':
+            if (content.media_url || content.file_path) {
+                previewHtml += `
+                    <audio controls class="w-100">
+                        <source src="${content.media_url || content.file_path}" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                `;
+            }
+            break;
+
+        case 'interactive':
+            previewHtml += '<div class="alert alert-info">Interactive content preview not available in admin panel. View in lesson to test functionality.</div>';
+            if (content.quiz_questions && content.quiz_questions.length > 0) {
+                previewHtml += '<h6>Questions:</h6><ul>';
+                content.quiz_questions.forEach(q => {
+                    previewHtml += `<li>${q.question_text}</li>`;
+                });
+                previewHtml += '</ul>';
+            }
+            break;
+
+        default:
+            if (content.content_data) {
+                previewHtml += `<div class="alert alert-secondary">Content Type: ${content.content_type}</div>`;
+                previewHtml += `<pre>${JSON.stringify(content.content_data, null, 2)}</pre>`;
+            }
+    }
+
+    return previewHtml;
+}
+
+// Operations functionality
+function toggleBulkOperations() {
+    const checkboxes = document.querySelectorAll('.content-checkbox:checked');
+    const bulkPanel = document.getElementById('bulkOperationsPanel');
+    const individualPanel = document.getElementById('individualActionsPanel');
+
+    if (checkboxes.length === 1) {
+        // Show individual actions for single selection
+        individualPanel.style.display = 'block';
+        bulkPanel.style.display = 'none';
+    } else if (checkboxes.length > 1) {
+        // Show bulk operations for multiple selections
+        bulkPanel.style.display = 'block';
+        individualPanel.style.display = 'none';
+    } else {
+        // Hide both panels when nothing is selected
+        bulkPanel.style.display = 'none';
+        individualPanel.style.display = 'none';
+    }
+}
+
+function hideBulkOperations() {
+    document.getElementById('bulkOperationsPanel').style.display = 'none';
+    document.querySelectorAll('.content-checkbox').forEach(cb => cb.checked = false);
+}
+
+function hideIndividualActions() {
+    document.getElementById('individualActionsPanel').style.display = 'none';
+    document.querySelectorAll('.content-checkbox').forEach(cb => cb.checked = false);
+}
+
+// Individual action functions
+function individualPreview() {
+    const selectedIds = getSelectedContentIds();
+    if (selectedIds.length === 1) {
+        previewContent(selectedIds[0]);
+    }
+}
+
+function individualEdit() {
+    const selectedIds = getSelectedContentIds();
+    if (selectedIds.length === 1) {
+        editContent(selectedIds[0]);
+    }
+}
+
+function individualDuplicate() {
+    const selectedIds = getSelectedContentIds();
+    if (selectedIds.length === 1) {
+        bulkDuplicate(); // Reuse the existing duplicate function
+    }
+}
+
+async function bulkSetOptional(isOptional) {
+    const selectedIds = getSelectedContentIds();
+    if (selectedIds.length === 0) return;
+
+    try {
+        const response = await fetch(`/api/admin/lessons/${currentLessonId}/content/bulk-update`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            },
+            body: JSON.stringify({
+                content_ids: selectedIds,
+                updates: { is_optional: isOptional }
+            })
+        });
+
+        if (response.ok) {
+            loadLessonContent(currentLessonId);
+            hideBulkOperations();
+            alert(`Content marked as ${isOptional ? 'optional' : 'required'} successfully!`);
+        } else {
+            throw new Error('Failed to update content');
+        }
+    } catch (error) {
+        console.error('Error updating content:', error);
+        alert('Error updating content');
+    }
+}
+
+async function bulkDuplicate() {
+    const selectedIds = getSelectedContentIds();
+    if (selectedIds.length === 0) return;
+
+    if (!confirm(`Duplicate ${selectedIds.length} content item(s)?`)) return;
+
+    try {
+        const response = await fetch(`/api/admin/lessons/${currentLessonId}/content/bulk-duplicate`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            },
+            body: JSON.stringify({ content_ids: selectedIds })
+        });
+
+        if (response.ok) {
+            loadLessonContent(currentLessonId);
+            loadLessons(); // Update content count in main table
+            hideBulkOperations();
+            alert('Content duplicated successfully!');
+        } else {
+            throw new Error('Failed to duplicate content');
+        }
+    } catch (error) {
+        console.error('Error duplicating content:', error);
+        alert('Error duplicating content');
+    }
+}
+
+async function bulkDelete() {
+    const selectedIds = getSelectedContentIds();
+    if (selectedIds.length === 0) return;
+
+    if (!confirm(`Delete ${selectedIds.length} content item(s)? This action cannot be undone.`)) return;
+
+    try {
+        const response = await fetch(`/api/admin/lessons/${currentLessonId}/content/bulk-delete`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            },
+            body: JSON.stringify({ content_ids: selectedIds })
+        });
+        
+        if (response.ok) {
+            loadLessonContent(currentLessonId);
+            loadLessons(); // Update content count in main table
+            hideBulkOperations();
+            alert('Content deleted successfully!');
+        } else {
+            throw new Error('Failed to delete content');
+        }
+    } catch (error) {
+        console.error('Error deleting content:', error);
+        alert('Error deleting content');
+    }
+}
+
+function getSelectedContentIds() {
+    const checkboxes = document.querySelectorAll('.content-checkbox:checked');
+    return Array.from(checkboxes).map(cb => parseInt(cb.value));
+}
+
+
+async function editContent(contentId) {
+    try {
+        const response = await fetch(`/api/admin/content/${contentId}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch content details.');
+        }
+        const content = await response.json();
+
+        // Prepare the modal for editing
+        openAddContentModal(true); // Open in edit mode
+        document.getElementById('editingContentId').value = content.id;
+
+        // Set modal title and button text for editing
+        document.getElementById('addContentModalTitle').textContent = 'Edit Content';
+        const saveBtn = document.getElementById('saveContentBtn');
+        saveBtn.textContent = 'Update Content';
+        saveBtn.onclick = () => saveContentToLesson(true); // Pass edit flag
+
+        // Populate the form
+        await populateContentForm(content);
+
+    } catch (error) {
+        console.error('Error preparing content for editing:', error);
+        alert('Error: ' + error.message);
+    }
+}
+
+async function populateContentForm(content) {
+    // This function populates the 'Add Content' modal with existing data for editing.
+    selectedContentType = content.content_type;
+
+    // Ensure content options are loaded before generating the form
+    if (['kana', 'kanji', 'vocabulary', 'grammar'].includes(selectedContentType)) {
+        await loadContentOptions(selectedContentType);
+    }
+
+    // Show the config step directly, bypassing the type selection
+    document.getElementById('configStepTitle').textContent = `Edit ${selectedContentType.charAt(0).toUpperCase() + selectedContentType.slice(1)} Content`;
+    generateContentConfigForm(selectedContentType, content); // Pass content to set initial values
+    showContentConfigStep();
+
+    // Disable content type selection step
+    document.getElementById('contentTypeStep').style.display = 'none';
+
+    // Populate common fields
+    document.getElementById('contentOrder').value = content.order_index || 0;
+    document.getElementById('contentOptional').checked = content.is_optional;
+
+    // Populate type-specific fields
+    if (['kana', 'kanji', 'vocabulary', 'grammar'].includes(content.content_type)) {
+        document.getElementById('existingContentSelect').value = content.content_id;
+        document.getElementById('customTitle').value = content.title || '';
+    } else if (content.content_type === 'text') {
+        document.getElementById('textContentTitle').value = content.title || '';
+        // Rich text content is now set during editor initialization
+    } else if (['video', 'audio', 'image'].includes(content.content_type)) {
+        document.getElementById('mediaTitle').value = content.title || '';
+        document.getElementById('mediaDescription').value = content.content_text || '';
+
+        if (content.file_path) {
+            toggleContentSource('upload');
+            // Simulate a successful upload for the UI
+            uploadedFileData = {
+                filePath: content.file_path,
+                original_filename: content.original_filename || content.file_path.split('/').pop(),
+                file_size: content.file_size,
+                file_type: content.file_type
+            };
+            showUploadSuccess(uploadedFileData);
+        } else if (content.media_url) {
+            toggleContentSource('url');
+            document.getElementById('mediaUrl').value = content.media_url;
+        }
+    } else if (content.content_type === 'interactive') {
+        document.getElementById('interactiveTitle').value = content.title || '';
+        const interactiveType = content.interactive_type;
+        document.getElementById('interactiveType').value = interactiveType;
+
+        showInteractiveForm(interactiveType);
+
+        if (interactiveType === 'multiple_choice') {
+            document.getElementById('mcQuestion').value = content.question_text || '';
+            document.getElementById('mcExplanation').value = content.explanation || '';
+
+            const optionsContainer = document.getElementById('mcOptions');
+            optionsContainer.innerHTML = '';
+            optionCount = 0;
+
+            if (content.options && content.options.length > 0) {
+                content.options.forEach(option => {
+                    addOption();
+                    const optionIndex = optionCount - 1;
+                    document.querySelector(`input[name="option_${optionIndex}"]`).value = option.text;
+                    document.querySelector(`input[name="feedback_${optionIndex}"]`).value = option.feedback || '';
+                    if (option.is_correct) {
+                        document.querySelector(`input[name="correct_option"][value="${optionIndex}"]`).checked = true;
+                    }
+                });
+            }
+        } else if (interactiveType === 'fill_blank') {
+            document.getElementById('fbQuestion').value = content.question_text || '';
+            document.getElementById('fbAnswers').value = content.correct_answers || '';
+            document.getElementById('fbExplanation').value = content.explanation || '';
+        } else if (interactiveType === 'true_false') {
+            document.getElementById('tfQuestion').value = content.question_text || '';
+            document.getElementById('tfExplanation').value = content.explanation || '';
+            if (content.correct_answer === true) {
+                document.getElementById('tfTrue').checked = true;
+            } else if (content.correct_answer === false) {
+                document.getElementById('tfFalse').checked = true;
+            }
+        }
+    }
+}
+
+
+// Utility functions
+function getContentTypeBadgeClass(contentType) {
+    const badgeClasses = {
+        'kana': 'bg-primary',
+        'kanji': 'bg-success',
+        'vocabulary': 'bg-info',
+        'grammar': 'bg-warning',
+        'text': 'bg-secondary',
+        'image': 'bg-purple',
+        'video': 'bg-danger',
+        'audio': 'bg-dark',
+        'interactive': 'bg-orange'
+    };
+    return badgeClasses[contentType] || 'bg-light';
+}
+
+function truncateText(text, maxLength) {
+    if (!text) return '';
+    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+}
+
 // Enhanced Content Builder Variables
 let selectedContentType = null;
 let contentOptions = {};
@@ -927,7 +1747,7 @@ let currentContentData = {};
 let isFileUploading = false;
 
 // Open enhanced add content modal
-function openAddContentModal() {
+function openAddContentModal(isEditing = false) {
     if (!currentLessonId) {
         alert('Please select a lesson first');
         return;
@@ -936,9 +1756,21 @@ function openAddContentModal() {
     // Reset wizard state
     selectedContentType = null;
     currentContentData = {};
+    uploadedFileData = null;
+    document.getElementById('contentConfigForm').reset();
+    document.getElementById('editingContentId').value = '';
+
+    // Reset modal title and button for adding
+    document.getElementById('addContentModalTitle').textContent = 'Add Content to Lesson';
+    const saveBtn = document.getElementById('saveContentBtn');
+    saveBtn.textContent = 'Add to Lesson';
+    saveBtn.onclick = () => saveContentToLesson(false);
+
+    if (!isEditing) {
+        // Show content type selection step for new content
+        showContentTypeStep();
+    }
     
-    // Show content type selection step
-    showContentTypeStep();
     openModal('addContentModal');
 }
 
@@ -986,7 +1818,8 @@ async function selectContentType(contentType) {
         'text': 'Configure Text Content',
         'video': 'Configure Video Content',
         'audio': 'Configure Audio Content',
-        'image': 'Configure Image Content'
+        'image': 'Configure Image Content',
+        'interactive': 'Configure Interactive Content'
     };
     
     document.getElementById('configStepTitle').textContent = titles[contentType] || 'Configure Content';
@@ -1019,10 +1852,15 @@ async function loadContentOptions(contentType) {
 }
 
 // Generate dynamic form fields based on content type
-function generateContentConfigForm(contentType) {
+function generateContentConfigForm(contentType, content = null) {
     const fieldsContainer = document.getElementById('contentConfigFields');
     fieldsContainer.innerHTML = '';
     
+    // Hide all special sections by default
+    document.getElementById('richTextSection').style.display = 'none';
+    document.getElementById('interactiveSection').style.display = 'none';
+    destroyRichTextEditor();
+
     if (['kana', 'kanji', 'vocabulary', 'grammar'].includes(contentType)) {
         // Existing content selection
         const options = contentOptions[contentType] || [];
@@ -1045,19 +1883,17 @@ function generateContentConfigForm(contentType) {
             </div>
             <div class="form-group">
                 <label for="customTitle">Custom Title (optional)</label>
-                <input type="text" id="customTitle" name="title" class="form-control" placeholder="Override default title">
+                <input type="text" id="customTitle" name="custom_title" class="form-control" placeholder="Override default title">
             </div>
         `;
     } else if (contentType === 'text') {
         // Show rich text editor section
         document.getElementById('richTextSection').style.display = 'block';
-        // Hide other dynamic fields
-        fieldsContainer.innerHTML = '';
-        initializeRichTextEditor();
+        initializeRichTextEditor(content ? content.content_text : '');
+    } else if (contentType === 'interactive') {
+        // Show interactive content section
+        document.getElementById('interactiveSection').style.display = 'block';
     } else if (['video', 'audio', 'image'].includes(contentType)) {
-        // Hide rich text editor section
-        document.getElementById('richTextSection').style.display = 'none';
-        destroyRichTextEditor();
         // URL-based media content
         const placeholders = {
             'video': 'https://www.youtube.com/watch?v=... or https://vimeo.com/...',
@@ -1068,7 +1904,7 @@ function generateContentConfigForm(contentType) {
         fieldsContainer.innerHTML = `
             <div class="form-group">
                 <label for="mediaTitle">Title *</label>
-                <input type="text" id="mediaTitle" name="title" class="form-control" required>
+                <input type="text" id="mediaTitle" name="media_title" class="form-control" required>
             </div>
             
             <!-- File Upload or URL Selection -->
@@ -1141,13 +1977,26 @@ async function previewContent() {
     currentContentData = Object.fromEntries(formData.entries());
     currentContentData.content_type = selectedContentType;
 
+    // Consolidate title from different sections
+    if (currentContentData.text_title) {
+        currentContentData.title = currentContentData.text_title;
+    } else if (currentContentData.interactive_title) {
+        currentContentData.title = currentContentData.interactive_title;
+    } else if (currentContentData.media_title) {
+        currentContentData.title = currentContentData.media_title;
+    } else if (currentContentData.custom_title) {
+        currentContentData.title = currentContentData.custom_title;
+    }
+
     if (!validateContentData(currentContentData)) {
         return;
     }
 
-    if (selectedContentType === 'text') {
-        await generateContentPreview(currentContentData);
-        showContentPreviewStep();
+    if (selectedContentType === 'text' || selectedContentType === 'interactive') {
+        if (validateContentData(currentContentData)) {
+            await generateContentPreview(currentContentData);
+            showContentPreviewStep();
+        }
         return;
     }
 
@@ -1230,6 +2079,13 @@ function validateContentData(data) {
             return false;
         }
         data.content_text = editor.getContent();
+    } else if (data.content_type === 'interactive') {
+        // Validation for interactive content
+        if (!data.title || !data.interactive_type) {
+            alert('Please provide a title and select an interactive type.');
+            return false;
+        }
+        // Add more specific validation for each interactive type here
     } else if (['video', 'audio', 'image'].includes(data.content_type)) {
         if (!data.title) {
             alert(`Please provide a title for ${data.content_type} content`);
@@ -1330,6 +2186,8 @@ async function generateContentPreview(data) {
                 ${data.content_text}
             </div>
         `;
+    } else if (data.content_type === 'interactive') {
+        previewHTML = `<h6>${data.title}</h6><p>Interactive Content: ${data.interactive_type}</p>`;
     } else if (['video', 'audio', 'image'].includes(data.content_type)) {
         const contentSource = document.querySelector('input[name="contentSource"]:checked')?.value;
         
@@ -1380,75 +2238,211 @@ async function generateContentPreview(data) {
 }
 
 // Save content to lesson
-async function saveContentToLesson() {
-    if (!currentLessonId || !currentContentData) {
-        alert('Missing lesson or content data');
+async function saveContentToLesson(isEditing = false) {
+    if (!currentLessonId) {
+        alert('Missing lesson data');
         return;
     }
+
+    // Re-gather data from form right before saving
+    const formData = new FormData(document.getElementById('contentConfigForm'));
+    currentContentData = Object.fromEntries(formData.entries());
+    currentContentData.content_type = selectedContentType;
     
+    // Debug: Check if page number is being captured
+    const pageNumberField = document.getElementById('contentPageNumber');
+    console.log('Page number field value:', pageNumberField ? pageNumberField.value : 'Field not found');
+    console.log('Current page number variable:', currentPageNumber);
+    console.log('Form data page_number:', currentContentData.page_number);
+
+    // Ensure page number is set correctly - prioritize currentPageNumber if we're in page editor mode
+    if (currentPageNumber && !isEditing) {
+        currentContentData.page_number = currentPageNumber;
+        console.log('Overriding page number with currentPageNumber:', currentPageNumber);
+    }
+
+    // Consolidate title from different sections
+    if (currentContentData.text_title) {
+        currentContentData.title = currentContentData.text_title;
+    } else if (currentContentData.interactive_title) {
+        currentContentData.title = currentContentData.interactive_title;
+    } else if (currentContentData.media_title) {
+        currentContentData.title = currentContentData.media_title;
+    } else if (currentContentData.custom_title) {
+        currentContentData.title = currentContentData.custom_title;
+    }
+
+    if (!validateContentData(currentContentData)) {
+        return;
+    }
+
     try {
         console.log('Saving content data:', currentContentData);
         console.log('To lesson ID:', currentLessonId);
         console.log('Uploaded file data:', uploadedFileData);
-        
-        let endpoint = `/api/admin/lessons/${currentLessonId}/content/new`;
+
+        let endpoint;
+        const method = isEditing ? 'PUT' : 'POST';
         let saveData = { ...currentContentData };
-        
-        // Check if we have uploaded file data for media content
-        if (['video', 'audio', 'image'].includes(selectedContentType)) {
-            const contentSource = document.querySelector('input[name="contentSource"]:checked')?.value;
-            
-            if (contentSource === 'upload' && uploadedFileData) {
-                // Use file upload endpoint
-                endpoint = `/api/admin/lessons/${currentLessonId}/content/file`;
-                saveData = {
-                    content_type: selectedContentType,
-                    title: currentContentData.title,
-                    description: currentContentData.content_text || '',
-                file_path: uploadedFileData.filePath,
-                    file_size: uploadedFileData.file_size,
-                    file_type: uploadedFileData.file_type,
-                    original_filename: uploadedFileData.original_filename,
-                    order_index: currentContentData.order_index || 0,
-                    is_optional: currentContentData.is_optional || false
-                };
-            } else if (contentSource === 'url') {
-                // Use regular content endpoint with URL
-                if (!currentContentData.media_url) {
-                    alert('Please provide a URL for the content');
-                    return;
+
+        const editingContentId = document.getElementById('editingContentId').value;
+
+        if (isEditing && editingContentId) {
+            endpoint = `/api/admin/content/${editingContentId}/edit`;
+            saveData = { ...currentContentData };
+            saveData.title = currentContentData.title;
+
+            if (selectedContentType === 'text') {
+                saveData.content_text = tinymce.get('richTextContent').getContent();
+            } else if (['video', 'audio', 'image'].includes(selectedContentType)) {
+                const contentSource = document.querySelector('input[name="contentSource"]:checked')?.value;
+                if (contentSource === 'upload' && uploadedFileData) {
+                    saveData.file_path = uploadedFileData.filePath;
+                    saveData.media_url = null;
+                } else {
+                    saveData.file_path = null;
+                }
+            } else if (selectedContentType === 'interactive') {
+                const interactiveType = document.getElementById('interactiveType').value;
+                saveData.interactive_type = interactiveType;
+                saveData.is_interactive = true;
+
+                if (interactiveType === 'multiple_choice') {
+                    const question = document.getElementById('mcQuestion').value;
+                    const explanation = document.getElementById('mcExplanation').value;
+                    const correctOption = document.querySelector('input[name="correct_option"]:checked')?.value;
+
+                    const options = [];
+                    const optionElements = document.querySelectorAll('.option-item');
+
+                    optionElements.forEach((element) => {
+                        const optionInput = element.querySelector(`input[name^="option_"]`);
+                        const feedbackInput = element.querySelector(`input[name^="feedback_"]`);
+
+                        if (optionInput && optionInput.value.trim()) {
+                            options.push({
+                                text: optionInput.value.trim(),
+                                is_correct: correctOption === element.dataset.option,
+                                feedback: feedbackInput ? feedbackInput.value.trim() : ''
+                            });
+                        }
+                    });
+
+                    saveData.question_text = question;
+                    saveData.explanation = explanation;
+                    saveData.options = options;
+                } else if (interactiveType === 'fill_blank') {
+                    saveData.question_text = document.getElementById('fbQuestion').value;
+                    saveData.correct_answers = document.getElementById('fbAnswers').value;
+                    saveData.explanation = document.getElementById('fbExplanation').value;
+                } else if (interactiveType === 'true_false') {
+                    const correctAnswer = document.querySelector('input[name="tf_answer"]:checked')?.value;
+                    saveData.question_text = document.getElementById('tfQuestion').value;
+                    saveData.correct_answer = correctAnswer === 'true';
+                    saveData.explanation = document.getElementById('tfExplanation').value;
+                }
+            }
+        } else {
+            // Logic for creating new content
+            if (selectedContentType === 'interactive') {
+                endpoint = `/api/admin/lessons/${currentLessonId}/content/interactive`;
+                const interactiveType = document.getElementById('interactiveType').value;
+                saveData.interactive_type = interactiveType;
+                saveData.is_interactive = true;
+
+                if (interactiveType === 'multiple_choice') {
+                    const question = document.getElementById('mcQuestion').value;
+                    const explanation = document.getElementById('mcExplanation').value;
+                    const correctOption = document.querySelector('input[name="correct_option"]:checked')?.value;
+
+                    const options = [];
+                    const optionElements = document.querySelectorAll('.option-item');
+
+                    optionElements.forEach((element, index) => {
+                        const optionInput = element.querySelector(`input[name^="option_"]`);
+                        const feedbackInput = element.querySelector(`input[name^="feedback_"]`);
+
+                        if (optionInput && optionInput.value.trim()) {
+                            options.push({
+                                text: optionInput.value.trim(),
+                                is_correct: correctOption === optionInput.name.split('_')[1],
+                                feedback: feedbackInput ? feedbackInput.value.trim() : ''
+                            });
+                        }
+                    });
+
+                    saveData.question_text = question;
+                    saveData.explanation = explanation;
+                    saveData.options = options;
+                } else if (interactiveType === 'fill_blank') {
+                    saveData.question_text = document.getElementById('fbQuestion').value;
+                    saveData.correct_answers = document.getElementById('fbAnswers').value;
+                    saveData.explanation = document.getElementById('fbExplanation').value;
+                } else if (interactiveType === 'true_false') {
+                    const correctAnswer = document.querySelector('input[name="tf_answer"]:checked')?.value;
+                    saveData.question_text = document.getElementById('tfQuestion').value;
+                    saveData.correct_answer = correctAnswer === 'true';
+                    saveData.explanation = document.getElementById('tfExplanation').value;
+                }
+            } else if (['video', 'audio', 'image'].includes(selectedContentType)) {
+                const contentSource = document.querySelector('input[name="contentSource"]:checked')?.value;
+
+                if (contentSource === 'upload' && uploadedFileData) {
+                    endpoint = `/api/admin/lessons/${currentLessonId}/content/file`;
+                    saveData = {
+                        content_type: selectedContentType,
+                        title: currentContentData.title,
+                        description: currentContentData.content_text || '',
+                        file_path: uploadedFileData.filePath,
+                        file_size: uploadedFileData.file_size,
+                        file_type: uploadedFileData.file_type,
+                        original_filename: uploadedFileData.original_filename,
+                        order_index: currentContentData.order_index || 0,
+                        page_number: currentContentData.page_number || 1,
+                        is_optional: currentContentData.is_optional === 'on'
+                    };
+                } else {
+                    endpoint = `/api/admin/lessons/${currentLessonId}/content/new`;
+                    if (!currentContentData.media_url) {
+                        alert('Please provide a URL for the content');
+                        return;
+                    }
+                    saveData.media_url = currentContentData.media_url;
                 }
             } else {
-                alert('Please either upload a file or provide a URL');
-                return;
+                endpoint = `/api/admin/lessons/${currentLessonId}/content/new`;
+                if (selectedContentType === 'text') {
+                    saveData.content_text = tinymce.get('richTextContent').getContent();
+                }
             }
         }
-        
-        const headers = { 
+
+        const headers = {
             'Content-Type': 'application/json',
             'X-Requested-With': 'XMLHttpRequest',
-            'X-CSRFToken': getCSRFToken('contentConfigForm')
+            'X-CSRFToken': getCSRFToken()
         };
-        
+
         console.log('Using endpoint:', endpoint);
+        console.log('Using method:', method);
         console.log('Sending data:', saveData);
-        
+
         const response = await fetch(endpoint, {
-            method: 'POST',
+            method: method,
             headers: headers,
             body: JSON.stringify(saveData)
         });
-        
+
         console.log('Response status:', response.status);
-        
+
         if (response.ok) {
             const result = await response.json();
             console.log('Success result:', result);
             closeModal('addContentModal');
             loadLessonContent(currentLessonId);
             loadLessons(); // Refresh main table to update content count
-            alert('Content added to lesson successfully!');
-            
+            alert(`Content ${isEditing ? 'updated' : 'added'} successfully!`);
+
             // Clear uploaded file data
             uploadedFileData = null;
         } else {
@@ -1715,33 +2709,372 @@ function clearFileInput() {
 }
 
 
-// Modal functions
-function openModal(modalId) {
-    document.getElementById(modalId).style.display = "block";
+// Add new JavaScript functions for page management
+function addNewPage() {
+    const pagesContainer = document.getElementById('pagesContainer');
+    const existingPages = pagesContainer.querySelectorAll('[data-page-number]');
+    const lastPage = existingPages.length > 0 ? Math.max(...Array.from(existingPages).map(p => parseInt(p.dataset.pageNumber))) : 0;
+    const newPageNum = lastPage + 1;
+
+    const newPageHtml = `
+        <div class="card mb-3 page-overview-card" data-page-number="${newPageNum}">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h6 class="card-title mb-1">Page ${newPageNum}</h6>
+                        <p class="card-text text-muted mb-0">No content added yet</p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <button class="btn btn-sm btn-primary me-2" onclick="editPage(${newPageNum})">
+                            <i class="fas fa-edit"></i> Edit Page
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deletePage(${newPageNum})">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    pagesContainer.insertAdjacentHTML('beforeend', newPageHtml);
 }
 
-function closeModal(modalId) {
-    document.getElementById(modalId).style.display = "none";
-    
-    // Clear uploaded file data when closing modal
-    if (modalId === 'addContentModal') {
-        uploadedFileData = null;
+async function deletePage(pageNum) {
+    if (!confirm(`Are you sure you want to delete Page ${pageNum} and all its content? This cannot be undone.`)) {
+        return;
+    }
+    try {
+        const response = await fetch(`/api/admin/lessons/${currentLessonId}/pages/${pageNum}/delete`, {
+            method: 'DELETE',
+            headers: { 'X-CSRFToken': getCSRFToken() }
+        });
+        if (response.ok) {
+            alert('Page deleted successfully');
+            loadLessonContent(currentLessonId);
+        } else {
+            const error = await response.json();
+            alert('Error: ' + error.error);
+        }
+    } catch (error) {
+        console.error('Error deleting page:', error);
+        alert('An error occurred while deleting the page.');
     }
 }
 
-// Close modal when clicking outside
-window.onclick = function(event) {
-    const modals = document.querySelectorAll('.modal');
-    modals.forEach(modal => {
-        if (event.target === modal) {
-            modal.style.display = "none";
-            
-            // Clear uploaded file data when closing modal
-            if (modal.id === 'addContentModal') {
-                uploadedFileData = null;
+// Update populateContentForm to handle page number
+async function populateContentForm(content) {
+    // This function populates the 'Add Content' modal with existing data for editing.
+    selectedContentType = content.content_type;
+
+    // Ensure content options are loaded before generating the form
+    if (['kana', 'kanji', 'vocabulary', 'grammar'].includes(selectedContentType)) {
+        await loadContentOptions(selectedContentType);
+    }
+
+    // Show the config step directly, bypassing the type selection
+    document.getElementById('configStepTitle').textContent = `Edit ${selectedContentType.charAt(0).toUpperCase() + selectedContentType.slice(1)} Content`;
+    generateContentConfigForm(selectedContentType, content); // Pass content to set initial values
+    showContentConfigStep();
+    
+    // Disable content type selection step
+    document.getElementById('contentTypeStep').style.display = 'none';
+
+    // Populate common fields
+    document.getElementById('contentOrder').value = content.order_index || 0;
+    document.getElementById('contentPageNumber').value = content.page_number || 1; // Add this
+    document.getElementById('contentOptional').checked = content.is_optional;
+
+    // Populate type-specific fields
+    if (['kana', 'kanji', 'vocabulary', 'grammar'].includes(content.content_type)) {
+        document.getElementById('existingContentSelect').value = content.content_id;
+        document.getElementById('customTitle').value = content.title || '';
+    } else if (content.content_type === 'text') {
+        document.getElementById('textContentTitle').value = content.title || '';
+        // Rich text content is now set during editor initialization
+    } else if (['video', 'audio', 'image'].includes(content.content_type)) {
+        document.getElementById('mediaTitle').value = content.title || '';
+        document.getElementById('mediaDescription').value = content.content_text || '';
+
+        if (content.file_path) {
+            toggleContentSource('upload');
+            // Simulate a successful upload for the UI
+            uploadedFileData = {
+                filePath: content.file_path,
+                original_filename: content.original_filename || content.file_path.split('/').pop(),
+                file_size: content.file_size,
+                file_type: content.file_type
+            };
+            showUploadSuccess(uploadedFileData);
+        } else if (content.media_url) {
+            toggleContentSource('url');
+            document.getElementById('mediaUrl').value = content.media_url;
+        }
+    } else if (content.content_type === 'interactive') {
+        document.getElementById('interactiveTitle').value = content.title || '';
+        const interactiveType = content.interactive_type;
+        document.getElementById('interactiveType').value = interactiveType;
+
+        showInteractiveForm(interactiveType);
+
+        if (interactiveType === 'multiple_choice') {
+            document.getElementById('mcQuestion').value = content.question_text || '';
+            document.getElementById('mcExplanation').value = content.explanation || '';
+
+            const optionsContainer = document.getElementById('mcOptions');
+            optionsContainer.innerHTML = '';
+            optionCount = 0;
+
+            if (content.options && content.options.length > 0) {
+                content.options.forEach(option => {
+                    addOption();
+                    const optionIndex = optionCount - 1;
+                    document.querySelector(`input[name="option_${optionIndex}"]`).value = option.text;
+                    document.querySelector(`input[name="feedback_${optionIndex}"]`).value = option.feedback || '';
+                    if (option.is_correct) {
+                        document.querySelector(`input[name="correct_option"][value="${optionIndex}"]`).checked = true;
+                    }
+                });
+            }
+        } else if (interactiveType === 'fill_blank') {
+            document.getElementById('fbQuestion').value = content.question_text || '';
+            document.getElementById('fbAnswers').value = content.correct_answers || '';
+            document.getElementById('fbExplanation').value = content.explanation || '';
+        } else if (interactiveType === 'true_false') {
+            document.getElementById('tfQuestion').value = content.question_text || '';
+            document.getElementById('tfExplanation').value = content.explanation || '';
+            if (content.correct_answer === true) {
+                document.getElementById('tfTrue').checked = true;
+            } else if (content.correct_answer === false) {
+                document.getElementById('tfFalse').checked = true;
             }
         }
-    });
+    }
+}
+
+// Page editor functionality
+let currentPageNumber = null;
+
+async function editPage(pageNumber) {
+    currentPageNumber = pageNumber;
+
+    // Update modal titles
+    document.getElementById('pageEditorTitle').textContent = `Edit Page ${pageNumber}`;
+    document.getElementById('pageEditorSubtitle').textContent = `Page ${pageNumber} Content`;
+
+    // Load page content
+    await loadPageContent(pageNumber);
+
+    // Open the page editor modal
+    openModal('pageEditorModal');
+}
+
+async function loadPageContent(pageNumber) {
+    try {
+        const response = await fetch(`/api/admin/lessons/${currentLessonId}/content`);
+        const allContent = await response.json();
+
+        // Filter content for this specific page
+        const pageContent = allContent.filter(item => item.page_number === pageNumber);
+
+        const container = document.getElementById('pageContentContainer');
+
+        if (pageContent.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-4">
+                    <h6 class="text-muted">No content on this page yet</h6>
+                    <p class="text-muted">Click "Add Content to This Page" to get started</p>
+                </div>
+            `;
+            return;
+        }
+
+        // Sort content by order index
+        pageContent.sort((a, b) => a.order_index - b.order_index);
+
+        let contentHtml = `
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th width="60">Order</th>
+                            <th>Type</th>
+                            <th>Title</th>
+                            <th>Optional</th>
+                            <th width="200">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+
+        pageContent.forEach((item, index) => {
+            contentHtml += `
+                <tr data-content-id="${item.id}">
+                    <td>
+                        <div class="d-flex flex-column align-items-center">
+                            <button class="btn btn-sm reorder-btn" onclick="moveContentInPage(${item.id}, 'up')" ${index === 0 ? 'disabled' : ''}>▲</button>
+                            <span class="order-number my-1">${item.order_index}</span>
+                            <button class="btn btn-sm reorder-btn" onclick="moveContentInPage(${item.id}, 'down')" ${index === pageContent.length - 1 ? 'disabled' : ''}>▼</button>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge ${getContentTypeBadgeClass(item.content_type)}">${item.content_type}</span>
+                        ${item.is_interactive ? '<span class="badge bg-info ms-1">Interactive</span>' : ''}
+                    </td>
+                    <td>
+                        <div class="content-title">
+                            ${item.title || `${item.content_type} #${item.content_id || 'Custom'}`}
+                        </div>
+                        ${item.content_text ? `<small class="text-muted">${truncateText(item.content_text, 50)}</small>` : ''}
+                    </td>
+                    <td>
+                        <span class="badge ${item.is_optional ? 'bg-warning' : 'bg-success'}">
+                            ${item.is_optional ? 'Optional' : 'Required'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-info me-1" onclick="previewContent(${item.id})">
+                            <i class="fas fa-eye"></i> Preview
+                        </button>
+                        <button class="btn btn-sm btn-warning me-1" onclick="editContent(${item.id})">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="removeContentFromPage(${item.id})">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        contentHtml += `
+                    </tbody>
+                </table>
+            </div>
+        `;
+
+        container.innerHTML = contentHtml;
+
+    } catch (error) {
+        console.error('Error loading page content:', error);
+        document.getElementById('pageContentContainer').innerHTML = `
+            <div class="alert alert-danger">
+                Error loading page content. Please try again.
+            </div>
+        `;
+    }
+}
+
+function openAddContentToPageModal() {
+    if (!currentPageNumber) {
+        alert('No page selected');
+        return;
+    }
+
+    // Close the page editor modal first
+    closeModal('pageEditorModal');
+
+    // Open the add content modal with the page number pre-filled
+    openAddContentModal(false);
+
+    // Set the page number in the form - use multiple attempts to ensure it's set
+    const setPageNumber = () => {
+        const pageNumberField = document.getElementById('contentPageNumber');
+        if (pageNumberField) {
+            pageNumberField.value = currentPageNumber;
+            pageNumberField.readOnly = true; // Make it read-only so user can't change it
+            
+            // Also store it as a data attribute for backup
+            pageNumberField.setAttribute('data-locked-page', currentPageNumber);
+
+            console.log(`Page number set to: ${currentPageNumber}`);
+        } else {
+            console.log('Page number field not found, retrying...');
+            setTimeout(setPageNumber, 50);
+        }
+    };
+
+    // Try immediately and also with delays
+    setPageNumber();
+    setTimeout(setPageNumber, 100);
+    setTimeout(setPageNumber, 200);
+}
+
+async function moveContentInPage(contentId, direction) {
+    try {
+        const response = await fetch(`/api/admin/lessons/${currentLessonId}/content/${contentId}/move`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            },
+            body: JSON.stringify({ direction: direction })
+        });
+
+        if (response.ok) {
+            // Reload both the page content and the main lesson content view
+            await loadPageContent(currentPageNumber);
+            loadLessonContent(currentLessonId);
+        } else {
+            const error = await response.json();
+            alert('Error: ' + error.error);
+        }
+    } catch (error) {
+        console.error('Error moving content:', error);
+        alert('Error moving content');
+    }
+}
+
+async function removeContentFromPage(contentId) {
+    if (!confirm('Are you sure you want to remove this content from the page?')) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/admin/lessons/${currentLessonId}/content/${contentId}/delete`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': getCSRFToken()
+            }
+        });
+
+        if (response.ok) {
+            // Reload both the page content and the main lesson content view
+            await loadPageContent(currentPageNumber);
+            loadLessonContent(currentLessonId);
+            loadLessons(); // Refresh main table to update content count
+            alert('Content removed successfully!');
+        } else {
+            const error = await response.json();
+            alert('Error: ' + error.error);
+        }
+    } catch (error) {
+        console.error('Error removing content:', error);
+        alert('Error removing content');
+    }
+}
+
+// Modal functions are now handled by base_admin.html
+// Custom cleanup for content modal
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.classList.remove('is-open');
+
+        // Clear uploaded file data when closing modal
+        if (modalId === 'addContentModal') {
+            uploadedFileData = null;
+            // Reset page number field if it was made read-only
+            const pageNumberField = document.getElementById('contentPageNumber');
+            if (pageNumberField) {
+                pageNumberField.readOnly = false;
+            }
+        }
+
+        // Reset current page number when closing page editor
+        if (modalId === 'pageEditorModal') {
+            currentPageNumber = null;
+        }
+    }
 }
 </script>
 {% endblock %}

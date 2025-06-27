@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request,
 from flask_login import login_user, logout_user, login_required, current_user
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError # Import specific exceptions
 from app import db
-from app.models import User, Kana, Kanji, Vocabulary, Grammar, LessonCategory, Lesson, LessonContent, LessonPrerequisite, UserLessonProgress
+from app.models import User, Kana, Kanji, Vocabulary, Grammar, LessonCategory, Lesson, LessonContent, LessonPrerequisite, UserLessonProgress, QuizQuestion, QuizOption, UserQuizAnswer
 from app.forms import RegistrationForm, LoginForm, CSRFTokenForm
 from functools import wraps # For custom decorators
 
@@ -89,17 +89,7 @@ def logout():
     flash('You have been logged out.', 'info')
     return redirect(url_for('routes.index'))
 
-@bp.route('/free_content')
-@login_required # Anyone logged in can see this
-def free_content():
-    return render_template('free_content.html')
-
 # --- Member Routes (Simulated Premium) ---
-@bp.route('/premium_content')
-@login_required
-@premium_required # Requires 'premium' subscription_level
-def premium_content():
-    return render_template('premium_content.html')
 
 @bp.route('/upgrade_to_premium')
 @login_required
@@ -192,7 +182,8 @@ def view_lesson(lesson_id):
         db.session.add(progress)
         db.session.commit()
     
-    return render_template('lesson_view.html', lesson=lesson, progress=progress)
+    form = CSRFTokenForm()
+    return render_template('lesson_view.html', lesson=lesson, progress=progress, form=form)
 
 # --- API Routes for Content Management ---
 
@@ -702,6 +693,10 @@ def add_lesson_content(lesson_id):
     if isinstance(is_optional, str):
         is_optional = is_optional.lower() == 'true'
 
+    # Determine the next order index
+    last_content = LessonContent.query.filter_by(lesson_id=lesson_id).order_by(LessonContent.order_index.desc()).first()
+    next_order_index = (last_content.order_index + 1) if last_content else 0
+
     new_content = LessonContent(
         lesson_id=lesson_id,
         content_type=data['content_type'],
@@ -709,7 +704,8 @@ def add_lesson_content(lesson_id):
         title=data.get('title'),
         content_text=data.get('content_text'),
         media_url=data.get('media_url'),
-        order_index=int(data.get('order_index', 0)),
+        order_index=next_order_index,
+        page_number=data.get('page_number', 1),  # Handle page number
         is_optional=is_optional
     )
     try:
@@ -725,9 +721,416 @@ def add_lesson_content(lesson_id):
 @admin_required
 def remove_lesson_content(lesson_id, content_id):
     content = LessonContent.query.filter_by(lesson_id=lesson_id, id=content_id).first_or_404()
-    db.session.delete(content)
-    db.session.commit()
-    return jsonify({"message": "Content removed from lesson successfully"}), 200
+
+    try:
+        # C1: Ensure file is deleted from disk if it exists
+        if content.file_path:
+            content.delete_file() # Calls app.models.LessonContent.delete_file()
+
+        db.session.delete(content)
+        db.session.commit()
+        return jsonify({"message": "Content removed from lesson successfully"}), 200
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error removing lesson content {content_id} from lesson {lesson_id}: {e}", exc_info=True)
+        return jsonify({"error": "Failed to remove lesson content"}), 500
+
+@bp.route('/api/admin/lessons/<int:lesson_id>/content/<int:content_id>/move', methods=['POST'])
+@login_required
+@admin_required
+def move_lesson_content(lesson_id, content_id):
+    """Move a lesson content item up or down in order."""
+    data = request.json
+    direction = data.get('direction')
+    if direction not in ['up', 'down']:
+        return jsonify({"error": "Invalid direction specified"}), 400
+
+    content_to_move = LessonContent.query.filter_by(id=content_id, lesson_id=lesson_id).first_or_404()
+
+    current_order = content_to_move.order_index
+
+    if direction == 'up':
+        # Find the item directly above
+        item_to_swap_with = LessonContent.query.filter_by(lesson_id=lesson_id, order_index=current_order - 1).first()
+        if not item_to_swap_with:
+            return jsonify({"error": "Cannot move item further up"}), 400
+
+        # Swap order indices
+        content_to_move.order_index -= 1
+        item_to_swap_with.order_index += 1
+
+    elif direction == 'down':
+        # Find the item directly below
+        item_to_swap_with = LessonContent.query.filter_by(lesson_id=lesson_id, order_index=current_order + 1).first()
+        if not item_to_swap_with:
+            return jsonify({"error": "Cannot move item further down"}), 400
+
+        # Swap order indices
+        content_to_move.order_index += 1
+        item_to_swap_with.order_index -= 1
+
+    try:
+        db.session.commit()
+        return jsonify({"message": "Content moved successfully"}), 200
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error moving content: {e}")
+        return jsonify({"error": "Database error occurred"}), 500
+
+@bp.route('/api/admin/content/<int:content_id>/preview', methods=['GET'])
+@login_required
+@admin_required
+def preview_content(content_id):
+    """Get content preview data"""
+    content = LessonContent.query.get_or_404(content_id)
+
+    preview_data = model_to_dict(content)
+
+    # Add related data based on content type
+    if content.content_type in ['kana', 'kanji', 'vocabulary', 'grammar']:
+        content_data = content.get_content_data()
+        if content_data:
+            preview_data['content_data'] = model_to_dict(content_data)
+
+    # Add quiz questions for interactive content
+    if content.is_interactive:
+        preview_data['quiz_questions'] = [
+            model_to_dict(q) for q in content.quiz_questions
+        ]
+
+    return jsonify(preview_data)
+
+@bp.route('/api/admin/content/<int:content_id>', methods=['GET'])
+@login_required
+@admin_required
+def get_content_details(content_id):
+    """Get full details for a single content item for editing."""
+    content = LessonContent.query.get_or_404(content_id)
+    content_dict = model_to_dict(content)
+
+    if content.is_interactive:
+        question = QuizQuestion.query.filter_by(lesson_content_id=content.id).first()
+        if question:
+            content_dict['interactive_type'] = question.question_type
+            content_dict['question_text'] = question.question_text
+            content_dict['explanation'] = question.explanation
+
+            if question.question_type == 'multiple_choice':
+                options = QuizOption.query.filter_by(question_id=question.id).all()
+                content_dict['options'] = [model_to_dict(opt) for opt in options]
+            elif question.question_type == 'fill_blank':
+                # The correct answers are stored in the explanation field for fill_blank
+                content_dict['correct_answers'] = question.explanation
+            elif question.question_type == 'true_false':
+                true_option = QuizOption.query.filter_by(question_id=question.id, option_text='True').first()
+                if true_option:
+                    content_dict['correct_answer'] = true_option.is_correct
+
+    return jsonify(content_dict)
+
+@bp.route('/api/admin/content/<int:content_id>/edit', methods=['PUT'])
+@login_required
+@admin_required
+def update_lesson_content(content_id):
+    """Update an existing lesson content item."""
+    content = LessonContent.query.get_or_404(content_id)
+    data = request.json
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+
+    try:
+        # Common fields
+        content.title = data.get('title', content.title)
+        content.order_index = int(data.get('order_index', content.order_index))
+        content.page_number = int(data.get('page_number', content.page_number))  # Handle page number
+        is_optional = data.get('is_optional', content.is_optional)
+        if isinstance(is_optional, str):
+            content.is_optional = is_optional.lower() == 'true'
+        else:
+            content.is_optional = is_optional
+
+        # Type-specific fields
+        content.content_type = data.get('content_type', content.content_type)
+        if content.content_type in ['kana', 'kanji', 'vocabulary', 'grammar']:
+            content.content_id = data.get('content_id', content.content_id)
+        elif content.content_type == 'text':
+            content.content_text = data.get('content_text', content.content_text)
+        elif content.content_type in ['video', 'audio', 'image']:
+            content.media_url = data.get('media_url', content.media_url)
+            content.file_path = data.get('file_path', content.file_path)
+            content.content_text = data.get('description', content.content_text)
+        elif content.content_type == 'interactive':
+            content.is_interactive = True
+            interactive_type = data.get('interactive_type')
+
+            # Use a query to get the question, which is more explicit for static analysis
+            question = QuizQuestion.query.filter_by(lesson_content_id=content.id).first()
+            if not question:
+                question = QuizQuestion(lesson_content_id=content.id)
+                db.session.add(question)
+
+            if interactive_type:
+                question.question_type = interactive_type
+            question.question_text = data.get('question_text', question.question_text)
+            question.explanation = data.get('explanation', question.explanation)
+
+            # Use a bulk delete for efficiency and to resolve Pylance errors
+            QuizOption.query.filter_by(question_id=question.id).delete()
+
+            if question.question_type == 'multiple_choice':
+                options_data = data.get('options', [])
+                for i, option_data in enumerate(options_data):
+                    new_option = QuizOption(
+                        question_id=question.id,
+                        option_text=option_data['text'],
+                        is_correct=option_data.get('is_correct', False),
+                        order_index=i,
+                        feedback=option_data.get('feedback', '')
+                    )
+                    db.session.add(new_option)
+
+            elif question.question_type == 'fill_blank':
+                question.explanation = data.get('correct_answers', question.explanation)
+
+            elif question.question_type == 'true_false':
+                correct_answer = data.get('correct_answer')
+                options_data = [
+                    {'text': 'True', 'is_correct': correct_answer is True},
+                    {'text': 'False', 'is_correct': correct_answer is False}
+                ]
+                for i, option_data in enumerate(options_data):
+                    new_option = QuizOption(
+                        question_id=question.id,
+                        option_text=option_data['text'],
+                        is_correct=option_data.get('is_correct', False),
+                        order_index=i
+                    )
+                    db.session.add(new_option)
+
+        db.session.commit()
+        return jsonify(model_to_dict(content)), 200
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        return jsonify({"error": f"Database error occurred: {str(e)}"}), 500
+    except Exception as e:
+        return jsonify({"error": f"An unexpected error occurred: {str(e)}"}), 500
+
+@bp.route('/api/admin/lessons/<int:lesson_id>/content/bulk-update', methods=['PUT'])
+@login_required
+@admin_required
+def bulk_update_content(lesson_id):
+    """Bulk update content properties"""
+    lesson = Lesson.query.get_or_404(lesson_id)
+    data = request.json
+
+    if not data or 'content_ids' not in data or 'updates' not in data:
+        return jsonify({"error": "Missing required data"}), 400
+
+    try:
+        content_items = LessonContent.query.filter(
+            LessonContent.lesson_id == lesson_id,
+            LessonContent.id.in_(data['content_ids'])
+        ).all()
+
+        for content in content_items:
+            for key, value in data['updates'].items():
+                if hasattr(content, key):
+                    setattr(content, key, value)
+
+        db.session.commit()
+        return jsonify({"message": f"Updated {len(content_items)} content items"}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Failed to update content"}), 500
+
+@bp.route('/api/admin/lessons/<int:lesson_id>/content/bulk-duplicate', methods=['POST'])
+@login_required
+@admin_required
+def bulk_duplicate_content(lesson_id):
+    """Bulk duplicate content items"""
+    lesson = Lesson.query.get_or_404(lesson_id)
+    data = request.json
+
+    if not data or 'content_ids' not in data:
+        return jsonify({"error": "Missing content IDs"}), 400
+
+    try:
+        duplicated_count = 0
+
+        for content_id in data['content_ids']:
+            original = LessonContent.query.filter_by(
+                lesson_id=lesson_id,
+                id=content_id
+            ).first()
+
+            if original:
+                # Create duplicate
+                duplicate = LessonContent(
+                    lesson_id=lesson_id,
+                    content_type=original.content_type,
+                    content_id=original.content_id,
+                    title=f"{original.title} (Copy)" if original.title else None,
+                    content_text=original.content_text,
+                    media_url=original.media_url,
+                    file_path=original.file_path,
+                    order_index=original.order_index + 1000,  # Place at end
+                    is_optional=original.is_optional,
+                    is_interactive=original.is_interactive,
+                    max_attempts=original.max_attempts,
+                    passing_score=original.passing_score
+                )
+
+                db.session.add(duplicate)
+                db.session.flush()  # Get the new ID
+
+                # Duplicate quiz questions if interactive
+                if original.is_interactive:
+                    for question in original.quiz_questions:
+                        new_question = QuizQuestion(
+                            lesson_content_id=duplicate.id,
+                            question_type=question.question_type,
+                            question_text=question.question_text,
+                            explanation=question.explanation,
+                            points=question.points,
+                            order_index=question.order_index
+                        )
+                        db.session.add(new_question)
+                        db.session.flush()
+
+                        # Duplicate options
+                        for option in question.options:
+                            new_option = QuizOption(
+                                question_id=new_question.id,
+                                option_text=option.option_text,
+                                is_correct=option.is_correct,
+                                order_index=option.order_index,
+                                feedback=option.feedback
+                            )
+                            db.session.add(new_option)
+
+                duplicated_count += 1
+
+        db.session.commit()
+        return jsonify({"message": f"Duplicated {duplicated_count} content items"}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Failed to duplicate content"}), 500
+
+@bp.route('/api/admin/lessons/<int:lesson_id>/content/bulk-delete', methods=['DELETE'])
+@login_required
+@admin_required
+def bulk_delete_content(lesson_id):
+    """Bulk delete content items"""
+    lesson = Lesson.query.get_or_404(lesson_id)
+    data = request.json
+
+    if not data or 'content_ids' not in data:
+        return jsonify({"error": "Missing content IDs"}), 400
+
+    try:
+        content_items = LessonContent.query.filter(
+            LessonContent.lesson_id == lesson_id,
+            LessonContent.id.in_(data['content_ids'])
+        ).all()
+
+        deleted_count = len(content_items)
+
+        for content in content_items:
+            # Delete associated files if any
+            if hasattr(content, 'delete_file'):
+                content.delete_file()
+            db.session.delete(content)
+
+        db.session.commit()
+        return jsonify({"message": f"Deleted {deleted_count} content items"}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Failed to delete content"}), 500
+
+@bp.route('/api/admin/content/<int:content_id>/duplicate', methods=['POST'])
+@login_required
+@admin_required
+def duplicate_single_content(content_id):
+    """Duplicate a single content item"""
+    original = LessonContent.query.get_or_404(content_id)
+
+    try:
+        # Create duplicate (same logic as bulk duplicate)
+        duplicate = LessonContent(
+            lesson_id=original.lesson_id,
+            content_type=original.content_type,
+            content_id=original.content_id,
+            title=f"{original.title} (Copy)" if original.title else None,
+            content_text=original.content_text,
+            media_url=original.media_url,
+            file_path=original.file_path,
+            order_index=original.order_index + 1,
+            is_optional=original.is_optional,
+            is_interactive=original.is_interactive,
+            max_attempts=original.max_attempts,
+            passing_score=original.passing_score
+        )
+
+        db.session.add(duplicate)
+        db.session.flush()
+
+        # Duplicate quiz questions if interactive
+        if original.is_interactive:
+            for question in original.quiz_questions:
+                new_question = QuizQuestion(
+                    lesson_content_id=duplicate.id,
+                    question_type=question.question_type,
+                    question_text=question.question_text,
+                    explanation=question.explanation,
+                    points=question.points,
+                    order_index=question.order_index
+                )
+                db.session.add(new_question)
+                db.session.flush()
+
+                for option in question.options:
+                    new_option = QuizOption(
+                        question_id=new_question.id,
+                        option_text=option.option_text,
+                        is_correct=option.is_correct,
+                        order_index=option.order_index,
+                        feedback=option.feedback
+                    )
+                    db.session.add(new_option)
+
+        db.session.commit()
+        return jsonify(model_to_dict(duplicate)), 201
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Failed to duplicate content"}), 500
+
+# Add new route for deleting a page
+@bp.route('/api/admin/lessons/<int:lesson_id>/pages/<int:page_num>/delete', methods=['DELETE'])
+@login_required
+@admin_required
+def delete_lesson_page(lesson_id, page_num):
+    """Deletes a page and all its content items from a lesson."""
+    content_to_delete = LessonContent.query.filter_by(lesson_id=lesson_id, page_number=page_num).all()
+
+    if not content_to_delete:
+        return jsonify({"error": "Page not found or is empty"}), 404
+
+    try:
+        for content in content_to_delete:
+            if content.file_path:
+                content.delete_file()
+            db.session.delete(content)
+
+        db.session.commit()
+        return jsonify({"message": f"Page {page_num} and its {len(content_to_delete)} content items deleted successfully"}), 200
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error deleting page {page_num} from lesson {lesson_id}: {e}")
+        return jsonify({"error": "Failed to delete page"}), 500
 
 # == USER LESSON API ==
 @bp.route('/api/lessons', methods=['GET'])
@@ -786,51 +1189,303 @@ def update_lesson_progress(lesson_id):
     db.session.commit()
     return jsonify(model_to_dict(progress))
 
+@bp.route('/lessons/<int:lesson_id>/reset', methods=['POST'])
+@login_required
+def reset_lesson_progress(lesson_id):
+    """Reset user progress for a specific lesson."""
+    progress = UserLessonProgress.query.filter_by(
+        user_id=current_user.id, lesson_id=lesson_id
+    ).first()
+
+    if progress:
+        progress.reset()  # Assuming a reset method in the model
+        db.session.commit()
+        flash('Your progress for this lesson has been reset.', 'success')
+    else:
+        flash('No progress found for this lesson.', 'info')
+
+    return redirect(url_for('routes.view_lesson', lesson_id=lesson_id))
+
+@bp.route('/api/admin/lessons/<int:lesson_id>/content/interactive', methods=['POST'])
+@login_required
+@admin_required
+def add_interactive_content(lesson_id):
+    """Add interactive content (quiz questions) to lesson"""
+    lesson = Lesson.query.get_or_404(lesson_id)
+    data = request.json
+
+    if not data or not data.get('interactive_type'):
+        return jsonify({"error": "Missing interactive type"}), 400
+
+    # Create lesson content
+    # Determine the next order index
+    last_content = LessonContent.query.filter_by(lesson_id=lesson_id).order_by(LessonContent.order_index.desc()).first()
+    next_order_index = (last_content.order_index + 1) if last_content else 0
+
+    content = LessonContent(
+        lesson_id=lesson_id,
+        content_type='interactive',
+        title=data.get('title'),
+        is_interactive=True,
+        max_attempts=data.get('max_attempts', 3),
+        passing_score=data.get('passing_score', 70),
+        order_index=next_order_index,
+        page_number=data.get('page_number', 1)  # Add page number handling
+    )
+
+    db.session.add(content)
+    db.session.flush()  # Get the content ID
+
+    # Create quiz question
+    question = QuizQuestion(
+        lesson_content_id=content.id,
+        question_type=data['interactive_type'],
+        question_text=data.get('question_text'),
+        explanation=data.get('explanation'),
+        points=data.get('points', 1)
+    )
+
+    db.session.add(question)
+    db.session.flush()  # Get the question ID
+
+    # Add options for multiple choice and true/false
+    if data['interactive_type'] in ['multiple_choice', 'true_false']:
+        options_data = data.get('options', [])
+        if data['interactive_type'] == 'true_false':
+            options_data = [
+                {'text': 'True', 'is_correct': data.get('correct_answer') is True},
+                {'text': 'False', 'is_correct': data.get('correct_answer') is False}
+            ]
+
+        for i, option_data in enumerate(options_data):
+            option = QuizOption(
+                question_id=question.id,
+                option_text=option_data['text'],
+                is_correct=option_data.get('is_correct', False),
+                order_index=i,
+                feedback=option_data.get('feedback', '')
+            )
+            db.session.add(option)
+
+    db.session.commit()
+    return jsonify(model_to_dict(content)), 201
+
+from sqlalchemy.orm import joinedload
+
+@bp.route('/api/lessons/<int:lesson_id>/quiz/<int:question_id>/answer', methods=['POST'])
+@login_required
+def submit_quiz_answer(lesson_id, question_id):
+    """Submit answer to quiz question"""
+    try:
+        lesson = Lesson.query.get_or_404(lesson_id)
+        question = db.session.query(QuizQuestion).options(
+            joinedload(QuizQuestion.content)
+        ).filter(QuizQuestion.id == question_id).first()
+
+        if not question or question.content.lesson_id != lesson_id:
+            return jsonify({"error": "Question not found in this lesson"}), 404
+
+        # Check lesson access
+        accessible, message = lesson.is_accessible_to_user(current_user)
+        if not accessible:
+            current_app.logger.warning(f"User {current_user.id} access denied for lesson {lesson_id}: {message}")
+            return jsonify({"error": message}), 403
+
+        data = request.json
+        if not data:
+            return jsonify({"error": "Invalid request. Must be JSON."}), 400
+        current_app.logger.info(f"Received answer for question {question_id} from user {current_user.id}: {data}")
+
+        # Find existing answer or create a new one
+        answer = UserQuizAnswer.query.filter_by(
+            user_id=current_user.id, question_id=question_id
+        ).first()
+
+        # If an answer exists, check attempts
+        if answer:
+            if not question.content:
+                return jsonify({"error": "Associated content for this question not found."}), 500
+
+            max_attempts = question.content.max_attempts or float('inf')
+
+            if answer.attempts >= max_attempts:
+                current_app.logger.warning(f"User {current_user.id} exceeded max attempts for question {question_id}")
+                return jsonify({"error": "Maximum attempts exceeded"}), 400
+            answer.attempts += 1
+        else:
+            # No existing answer, create a new one
+            answer = UserQuizAnswer(
+                user_id=current_user.id,
+                question_id=question_id,
+                attempts=1
+            )
+            db.session.add(answer)
+
+        # Process answer based on question type
+        is_correct = False
+        selected_option = None
+
+        if question.question_type == 'multiple_choice':
+            selected_option_id = data.get('selected_option_id')
+            current_app.logger.info(f"Selected option ID from request: {selected_option_id}")
+            if not selected_option_id:
+                return jsonify({"error": "selected_option_id is required"}), 400
+
+            selected_option = QuizOption.query.get(int(selected_option_id))
+            current_app.logger.info(f"Selected option from DB: {selected_option}")
+
+            is_correct = selected_option and selected_option.is_correct
+            current_app.logger.info(f"Is correct: {is_correct}")
+
+            answer.selected_option_id = selected_option_id
+            answer.is_correct = is_correct
+            answer.text_answer = None
+
+        elif question.question_type == 'fill_blank':
+            text_answer = data.get('text_answer', '').strip()
+            correct_answers = [ans.strip().lower() for ans in (question.explanation or "").split(',')]
+            is_correct = text_answer.lower() in correct_answers
+
+            answer.text_answer = text_answer
+            answer.is_correct = is_correct
+            answer.selected_option_id = None
+
+        elif question.question_type == 'true_false':
+            selected_option_id = data.get('selected_option_id')
+            if not selected_option_id:
+                return jsonify({"error": "selected_option_id is required"}), 400
+            selected_option = QuizOption.query.get(int(selected_option_id))
+            is_correct = selected_option and selected_option.is_correct
+
+            answer.selected_option_id = selected_option_id
+            answer.is_correct = is_correct
+            answer.text_answer = None
+
+        else:
+            return jsonify({"error": "Unsupported question type"}), 400
+
+        answer.answered_at = db.func.now()
+
+        db.session.commit()
+
+        # Return result with feedback
+        # Calculate remaining attempts safely
+        attempts_remaining = 'Unlimited'
+        if question.content and question.content.max_attempts:
+            attempts_remaining = question.content.max_attempts - answer.attempts
+
+        result = {
+            'is_correct': is_correct,
+            'explanation': question.explanation,
+            'attempts_remaining': attempts_remaining
+        }
+
+        if selected_option:
+            result['option_feedback'] = selected_option.feedback
+
+        current_app.logger.info(f"Answer for question {question_id} processed. Result: {result}")
+        return jsonify(result)
+    except Exception as e:
+        current_app.logger.error(f"Error submitting quiz answer for question {question_id}: {e}", exc_info=True)
+        return jsonify({"error": "An internal error occurred"}), 500
+
+# == FILE UPLOAD API ==
+from app.utils import FileUploadHandler # Import FileUploadHandler
+
+# ... (other imports and code) ...
+
 # == FILE UPLOAD API ==
 @bp.route('/api/admin/upload-file', methods=['POST'])
 @login_required
 @admin_required
 def upload_file():
-    """Handle file upload and return file information"""
+    """Handle file upload, validate, process, and return file information"""
     import os
-    from werkzeug.utils import secure_filename
 
     if 'file' not in request.files:
         return jsonify({'success': False, 'error': 'No file part in the request'}), 400
 
-    file = request.files['file']
+    file_storage = request.files['file']
+    lesson_id_str = request.form.get('lesson_id') # Optional: for organizing files by lesson
 
-    if not file or not file.filename:
+    if not file_storage or not file_storage.filename:
         return jsonify({'success': False, 'error': 'No file selected'}), 400
 
-    if file and file.filename:
-        # Ensure the filename is safe to use
-        filename = secure_filename(file.filename)
-        
-        # This assumes you have an 'UPLOAD_FOLDER' configured in your app
-        upload_folder = current_app.config.get('UPLOAD_FOLDER', 'app/static/uploads')
-        
-        # You might want to create subdirectories for lessons or file types
-        # For simplicity, we save directly to a general uploads folder here.
-        # Example: target_folder = os.path.join(upload_folder, 'lessons', 'images')
-        target_folder = os.path.join(upload_folder, 'lessons', 'images') # Saving to a specific folder for images
-        os.makedirs(target_folder, exist_ok=True)
+    original_filename = file_storage.filename
 
-        filepath = os.path.join(target_folder, filename)
-        file.save(filepath)
+    # A2: Check allowed extensions (basic check)
+    file_type_from_ext = FileUploadHandler.get_file_type(original_filename)
+    if not file_type_from_ext:
+        return jsonify({'success': False, 'error': 'File type not allowed by extension.'}), 415
 
-        # Return a success response with the file's path
-        # The URL path should correspond to how you serve static files
-        # Example: /static/uploads/lessons/images/my_image.png
-        file_url = os.path.join('uploads', 'lessons', 'images', filename).replace('\\', '/')
+    if not FileUploadHandler.allowed_file(original_filename, file_type_from_ext):
+        return jsonify({'success': False, 'error': f"File extension for '{file_type_from_ext}' not allowed."}), 415
+
+    # A3: Generate unique filename
+    # We use secure_filename within generate_unique_filename
+    unique_filename = FileUploadHandler.generate_unique_filename(original_filename)
+
+    # Determine target directory (more dynamic based on file type and optional lesson_id)
+    # For now, let's keep it simpler and categorize by file_type. Lesson-specific folders can be a future enhancement.
+    # A5: Modified target directory logic
+    upload_folder = current_app.config['UPLOAD_FOLDER']
+
+    # Create a temporary path first for validation
+    temp_dir = os.path.join(upload_folder, 'temp') # Defined in __init__.py
+    os.makedirs(temp_dir, exist_ok=True)
+    temp_filepath = os.path.join(temp_dir, unique_filename)
+
+    try:
+        file_storage.save(temp_filepath)
+
+        # A1: Validate file content (MIME type)
+        if not FileUploadHandler.validate_file_content(temp_filepath, file_type_from_ext):
+            FileUploadHandler.delete_file(temp_filepath) # Clean up temp file
+            return jsonify({'success': False, 'error': 'File content does not match extension or is not allowed.'}), 415
+
+        # A4: Process image if it's an image file
+        if file_type_from_ext == 'image':
+            if not FileUploadHandler.process_image(temp_filepath):
+                FileUploadHandler.delete_file(temp_filepath) # Clean up temp file
+                return jsonify({'success': False, 'error': 'Image processing failed.'}), 500
+        
+        # Determine final directory based on file type
+        # This is a simplified version. A more robust system might use lesson_id if provided.
+        final_type_dir = os.path.join(upload_folder, 'lessons', file_type_from_ext)
+        os.makedirs(final_type_dir, exist_ok=True)
+        final_filepath = os.path.join(final_type_dir, unique_filename)
+        
+        # Move validated and processed file to its final destination
+        os.rename(temp_filepath, final_filepath)
+
+        # Get file info for the response
+        file_info = FileUploadHandler.get_file_info(final_filepath)
+
+        # Relative path for URL generation and storing in DB
+        relative_file_path = os.path.join('lessons', file_type_from_ext, unique_filename).replace('\\', '/')
 
         return jsonify({
             'success': True,
-            'filePath': url_for('static', filename=file_url, _external=False),
-            'fileName': filename
-        })
+            'filePath': url_for('static', filename=os.path.join('uploads', relative_file_path).replace('\\', '/'), _external=False), # Path for url_for
+            'dbPath': relative_file_path, # Path to store in DB
+            'fileName': unique_filename,
+            'originalFilename': original_filename,
+            'fileType': file_type_from_ext,
+            'fileSize': file_info.get('size'),
+            'mimeType': file_info.get('mime_type'),
+            'dimensions': file_info.get('dimensions')
+        }), 200
 
-    return jsonify({'success': False, 'error': 'An unknown error occurred'}), 500
+    except Exception as e:
+        current_app.logger.error(f"File upload failed: {e}", exc_info=True)
+        if os.path.exists(temp_filepath): # Ensure cleanup on any other exception
+            FileUploadHandler.delete_file(temp_filepath)
+        return jsonify({'success': False, 'error': 'An server error occurred during file upload.'}), 500
+    finally:
+        # Double check temp file is removed if it still exists (e.g. if os.rename failed)
+        if os.path.exists(temp_filepath):
+             FileUploadHandler.delete_file(temp_filepath)
+
 
 @bp.route('/api/admin/lessons/<int:lesson_id>/content/file', methods=['POST'])
 @login_required
@@ -848,6 +1503,10 @@ def add_file_content(lesson_id):
     if isinstance(is_optional, str):
         is_optional = is_optional.lower() == 'true'
     
+    # Determine the next order index
+    last_content = LessonContent.query.filter_by(lesson_id=lesson_id).order_by(LessonContent.order_index.desc()).first()
+    next_order_index = (last_content.order_index + 1) if last_content else 0
+
     new_content = LessonContent(
         lesson_id=lesson_id,
         content_type=data['content_type'],
@@ -857,7 +1516,7 @@ def add_file_content(lesson_id):
         file_size=data.get('file_size'),
         file_type=data.get('file_type'),
         original_filename=data.get('original_filename'),
-        order_index=int(data.get('order_index', 0)),
+        order_index=next_order_index,
         is_optional=is_optional
     )
     
@@ -909,17 +1568,59 @@ def delete_file():
     if not os.path.abspath(full_path).startswith(os.path.abspath(current_app.config['UPLOAD_FOLDER'])):
         return jsonify({"error": "Access denied"}), 403
     
-    # Delete from filesystem
-    if FileUploadHandler.delete_file(full_path):
-        # Also delete from database if it's associated with content
-        content_id = data.get('content_id')
-        if content_id:
-            content = LessonContent.query.get(content_id)
-            if content and content.file_path == file_path:
-                content.delete_file()  # This also deletes the file, but we already did that
+    content_id = data.get('content_id')
+    file_deleted_from_fs = False
+    associated_content_deleted = False
+
+    # If content_id is provided, prioritize deleting the LessonContent record,
+    # which should trigger its own file deletion via content.delete_file() if properly linked.
+    if content_id:
+        content = LessonContent.query.get(content_id)
+        if content:
+            if content.file_path == file_path: # Ensure the content item actually refers to this file
+                # C2: Call content.delete_file() which handles file system deletion.
+                # This is app.models.LessonContent.delete_file()
+                content.delete_file()
+                # We trust content.delete_file() to have attempted deletion.
+                # For robustness, we can check os.path.exists(full_path) here if needed,
+                # but FileUploadHandler.delete_file below will also handle it.
+
                 db.session.delete(content)
                 db.session.commit()
-        
-        return jsonify({"message": "File deleted successfully"}), 200
+                associated_content_deleted = True
+                # If content.delete_file() worked, the file should be gone.
+                # To be certain, especially if content.delete_file() might fail silently or not exist:
+                if not os.path.exists(full_path):
+                    file_deleted_from_fs = True
+            else:
+                # content_id provided, but its file_path doesn't match the one in request.
+                # This is an ambiguous situation. For safety, we might only delete the file from FS
+                # if it's not associated with this *specific* content_id.
+                # Or, return an error. Let's opt for only deleting the file if no content was deleted.
+                pass # Will fall through to general file deletion if no content record was handled.
+        else:
+            # content_id provided but no such content found.
+            # Proceed to delete the file from filesystem if it exists.
+            pass
+
+    # General file deletion from filesystem if not handled by content deletion
+    # or if no content_id was provided.
+    if not file_deleted_from_fs: # C2: Avoid deleting twice
+        if FileUploadHandler.delete_file(full_path): # This is app.utils.FileUploadHandler.delete_file
+            file_deleted_from_fs = True
+        else:
+            # If content was associated and deleted, but file system deletion failed here,
+            # it's a partial success.
+            if associated_content_deleted:
+                 return jsonify({"message": "Associated content deleted, but filesystem file deletion failed or file was already gone."}), 207 # Multi-Status
+            return jsonify({"error": "Failed to delete file from filesystem"}), 500
+
+    if associated_content_deleted and file_deleted_from_fs:
+        return jsonify({"message": "File and associated content deleted successfully"}), 200
+    elif file_deleted_from_fs:
+        return jsonify({"message": "File deleted successfully from filesystem"}), 200
+    elif associated_content_deleted: # File was not on FS, but content deleted
+        return jsonify({"message": "Associated content deleted; file was not found on filesystem initially or already removed."}), 200
     else:
-        return jsonify({"error": "Failed to delete file"}), 500
+        # This case should ideally be caught by FileUploadHandler.delete_file failing
+        return jsonify({"error": "File not found or could not be deleted, and no associated content processed"}), 404

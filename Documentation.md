@@ -108,13 +108,18 @@ FLASK_ENV=development
 ```
 
 5. **Database Setup**
-```bash
-# Run setup script to create unified authentication
-python setup_unified_auth.py
+   For initial setup, the application uses specific scripts to create the necessary tables and initial data.
+   ```bash
+   # Initialize the main database (users, basic structure)
+   python setup_unified_auth.py
 
-# Create admin user
-python create_admin.py
-```
+   # Set up the lesson system tables and default categories/lessons
+   python migrate_lesson_system.py
+
+   # Create an initial admin user
+   python create_admin.py
+   ```
+   *Note: The project also includes Flask-Migrate, configured in `run.py`. Flask-Migrate (`flask db migrate`, `flask db upgrade`) can be used for managing database schema changes *after* the initial setup by these scripts.*
 
 6. **Start the Application**
 ```bash
@@ -161,7 +166,7 @@ python run.py
 ### Session Management
 - **Secure Sessions** - Flask-Login with secure session cookies
 - **Remember Me** - Optional persistent login
-- **Auto-Logout** - Configurable session timeout
+- **Auto-Logout** - Configurable session timeout (Note: This is a general capability of Flask sessions; specific auto-logout duration is not actively configured in the current application setup beyond standard session expiration).
 - **CSRF Protection** - Form-based CSRF tokens
 
 ---
@@ -244,6 +249,9 @@ python run.py
 2. Modal form pre-populated with existing data
 3. Modify fields as needed
 4. Submit → Database updated, table refreshed
+
+**Publishing Lessons**
+For a lesson to be visible to users on the main lessons page, it must be marked as "Published". You can do this by editing the lesson and setting the "Published" status to "Yes".
 
 **Delete Content**
 1. Click "Delete" link next to any item
@@ -469,7 +477,7 @@ Japanese_Learning_Website/
 │   ├── forms.py            # WTForms definitions for login, registration, content management
 │   ├── models.py           # SQLAlchemy database models for users, content, lessons
 │   ├── routes.py           # Flask routes and view functions for user and admin interfaces
-│   ├── utils.py            # Utility functions, e.g., FileUploadHandler (if used)
+│   ├── utils.py            # Utility functions (e.g., FileUploadHandler)
 │   └── templates/          # Jinja2 templates for rendering HTML pages
 │       ├── admin/          # Templates specific to the admin panel (detailed above)
 │       │   ├── admin_index.html
@@ -513,7 +521,7 @@ Japanese_Learning_Website/
 ├── run.py                  # Main script to run the Flask application
 └── setup_unified_auth.py   # Script to set up the initial database schema for unified authentication
 ```
-*Note: An `app/static/` directory is utilized, primarily for user-uploaded content (managed via the `UPLOAD_FOLDER` configuration, e.g., `app/static/uploads/`). Any custom project-specific CSS or JavaScript files would also typically be placed here. Styling for the main UI components is currently provided by Bootstrap (likely via CDN), with additional inline or internal styles in templates.*
+*Note: The application primarily uses Bootstrap CDN for styling, so a dedicated `app/static/` directory for general project CSS/JS may not be extensively populated with project-specific assets. However, the application critically relies on an `UPLOAD_FOLDER` (defaulting to `app/static/uploads/` or configurable via an environment variable like `UPLOAD_FOLDER=app/static/uploads`) for storing and serving user-uploaded files such as images, audio, and documents for lessons. These uploaded files are managed and served through specific application routes (e.g., `/uploads/<path:filename>`).*
 
 ---
 
@@ -532,7 +540,7 @@ FLASK_ENV=development
 FLASK_DEBUG=True
 
 # File Uploads
-UPLOAD_FOLDER=app/static/uploads  # Example path for storing uploaded files
+UPLOAD_FOLDER=app/static/uploads  # Default path for storing uploaded files. The application will use 'app/static/uploads' if this is not set.
 
 # Optional: External Services
 MAIL_SERVER=smtp.gmail.com
@@ -605,42 +613,107 @@ python-dotenv==1.0.0
 ### Local Development Setup
 1. **Environment Preparation**
    ```bash
+   # Clone the repository (if not already done)
+   # git clone <repository-url>
+   # cd Japanese_Learning_Website
+
+   # Create and activate virtual environment
    python -m venv venv
    source venv/bin/activate  # or venv\Scripts\activate on Windows
+
+   # Install dependencies
    pip install -r requirements.txt
+
+   # Create .env file (copy from .env.example if provided, or create manually)
+   # Ensure SECRET_KEY and DATABASE_URL are set. Example:
+   # SECRET_KEY=your-super-secret-key
+   # DATABASE_URL=sqlite:///instance/site.db
+   # FLASK_ENV=development
+   # UPLOAD_FOLDER=app/static/uploads
    ```
 
-2. **Database Initialization**
+2. **Initial Database Setup**
+   These scripts create the database tables and populate essential initial data.
    ```bash
+   # Creates user tables and other core structures
    python setup_unified_auth.py
+
+   # Creates lesson-related tables, default categories, and sample lessons
+   python migrate_lesson_system.py
+
+   # Creates an initial admin user (credentials in README.md or as per script output)
    python create_admin.py
    ```
 
 3. **Development Server**
    ```bash
    python run.py
-   # Server runs on http://localhost:5000
+   # Server typically runs on http://localhost:5000
    ```
 
 ### Code Organization
-- **Models** - Database schema in `app/models.py` (all models, including lesson system, are consolidated here).
-- **Views** - Route handlers in `app/routes.py`.
-- **Forms** - WTForms classes in `app/forms.py`.
-- **Templates** - Jinja2 templates in `app/templates/`.
-- **Static Files** - Currently, no dedicated `app/static/` or `static/` directory is observed. Static assets like CSS and JavaScript are primarily managed via Bootstrap CDN and potentially inline/internal styles/scripts in templates. If custom static files are added, they would typically reside in `app/static/`.
+- **Models**: Database schema definitions in `app/models.py`. All application models, including the user system and the comprehensive lesson system, are consolidated here.
+- **Views/Routes**: Route handlers and view functions are located in `app/routes.py`. This file defines all user-facing pages, admin panel interfaces, and API endpoints.
+- **Forms**: WTForms classes for handling user input, validation, and CSRF protection are in `app/forms.py`.
+- **Templates**: Jinja2 templates for rendering HTML pages are organized within `app/templates/`. This includes base layouts, user pages, and admin-specific pages in `app/templates/admin/`.
+- **Static Files & Uploads**:
+    - General static assets (CSS, JavaScript) are primarily delivered via Bootstrap CDN.
+    - Custom static files, if any, would typically be placed in `app/static/` and served by Flask's default static file handling.
+    - User-uploaded files (images, audio, documents for lessons) are managed via the `UPLOAD_FOLDER` setting (defaults to `app/static/uploads/`). These files are stored on the server and made accessible through the `/uploads/<path:filename>` route defined in `app/routes.py`. The `FileUploadHandler` in `app/utils.py` provides logic for handling these uploads.
 
-### Database Management
+### Database Management and Migrations
+
+**Initial Setup:**
+As described in "Local Development Setup", the initial database schema and essential data are created by running:
 ```bash
-# Create new migration
-python migrate_database.py
-
-# Reset database (development only)
-rm instance/site.db
 python setup_unified_auth.py
-
-# Create admin user
-python create_admin.py
+python migrate_lesson_system.py
 ```
+
+**Resetting the Database (Development Only):**
+To completely reset the database to its initial state:
+```bash
+# Ensure the application is not running
+rm instance/site.db  # Or delete the file manually
+python setup_unified_auth.py
+python migrate_lesson_system.py
+python create_admin.py # To recreate the admin user
+```
+
+**Schema Migrations (Post-Initial Setup with Flask-Migrate):**
+The project is equipped with Flask-Migrate for managing changes to the database schema *after* the initial setup. The necessary commands are available via `run.py`:
+
+- **Initialize Migrations (One-time setup per environment if not already done):**
+  If the `migrations` folder doesn't exist or is not initialized for Flask-Migrate:
+  ```bash
+  # flask db init  # This is the standard command, but run.py provides wrappers.
+  # Note: The project structure already includes a migrations folder.
+  # If starting from scratch without that folder, you might need `flask db init` first.
+  ```
+  The `run.py` script provides convenient wrappers for Flask-Migrate commands:
+
+- **Generate a new migration script after model changes:**
+  When you modify your SQLAlchemy models in `app/models.py` (e.g., add a new table or column), you need to generate a migration script:
+  ```bash
+  python run.py db_migrate -m "Your descriptive migration message"
+  # Example: python run.py db_migrate -m "Add bio field to User model"
+  ```
+  This will create a new script in the `migrations/versions/` directory. Review this script before applying it.
+
+- **Apply migrations to the database:**
+  To apply pending migrations (i.e., update the database schema to match the models and migration scripts):
+  ```bash
+  python run.py db_upgrade
+  ```
+
+- **Downgrade migrations (revert to a previous version):**
+  To revert the last applied migration:
+  ```bash
+  python run.py db_downgrade
+  ```
+
+**Note on `migrate_database.py`:**
+The script `migrate_database.py` appears to be a generic or older migration script. For ongoing schema changes after initial setup, prefer using the Flask-Migrate commands wrapped in `run.py` as described above. The initial setup is handled by `setup_unified_auth.py` and `migrate_lesson_system.py`.
 
 ### Testing Procedures
 1. **Manual Testing**
@@ -690,8 +763,10 @@ python create_admin.py
 ```
 
 #### 5. Static Files Not Loading (If Applicable)
-**Problem**: Custom CSS/JS files return 404 (Note: currently, the project doesn't seem to use a local `static` folder; assets are likely CDN-based).
-**Solution**: If local static files are added (e.g., in `app/static/`), ensure Flask static file configuration is correct (`static_folder='static'` in Flask app setup or blueprint, and `url_for('static', filename='path/to/file')` in templates). Verify file paths.
+**Problem**: Custom CSS/JS files return 404.
+**Solution**:
+    - For general site assets, ensure Bootstrap CDN links are correct if used. If using local custom CSS/JS (e.g., in a project `app/static/css` folder), ensure Flask static file configuration is correct (`static_folder='static'` in Flask app setup or blueprint, and `url_for('static', filename='path/to/file')` in templates). Verify file paths.
+    - For user-uploaded files (e.g., images in lessons), ensure the `UPLOAD_FOLDER` is correctly configured and files are being served through the `/uploads/<path:filename>` route. Check that `LessonContent.file_path` stores the correct relative path to the file within `UPLOAD_FOLDER`.
 
 ### Debug Mode
 Enable debug mode for detailed error messages:
@@ -816,24 +891,80 @@ CREATE TABLE lesson_prerequisite (
 CREATE TABLE lesson_content (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     lesson_id INTEGER NOT NULL,
-    content_type VARCHAR(20) NOT NULL, -- 'kana', 'kanji', 'vocabulary', 'grammar', 'text', 'image', 'video', 'audio'
-    content_id INTEGER, -- ID of existing content (e.g., Kana.id), NULL for custom/multimedia
-    title VARCHAR(200), -- For custom text, media titles
-    content_text TEXT,  -- For custom text content
+    content_type VARCHAR(20) NOT NULL, -- 'kana', 'kanji', 'vocabulary', 'grammar', 'text', 'image', 'video', 'audio', 'interactive'
+    content_id INTEGER, -- ID of existing content (e.g., Kana.id), NULL for custom/multimedia/interactive
+    title VARCHAR(200), -- For custom text, media titles, or interactive content titles
+    content_text TEXT,  -- For custom text content or descriptions for media/interactive
     media_url VARCHAR(255), -- URL for external media (YouTube, etc.)
     order_index INTEGER DEFAULT 0,
+    page_number INTEGER NOT NULL DEFAULT 1, -- Page number within the lesson
     is_optional BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    -- File-related fields for uploaded content
-    file_path VARCHAR(500),      -- Relative path to the uploaded file (e.g., within UPLOAD_FOLDER)
+    -- File-related fields for uploaded content (image, audio, document)
+    file_path VARCHAR(500),      -- Relative path to the uploaded file (e.g., 'lessons/images/filename.jpg' within UPLOAD_FOLDER)
     file_size INTEGER,           -- File size in bytes
-    file_type VARCHAR(50),       -- MIME type of the file
+    file_type VARCHAR(50),       -- MIME type of the file (e.g., 'image/jpeg', 'audio/mpeg')
     original_filename VARCHAR(255), -- Original name of the uploaded file
+    -- Interactive content fields
+    is_interactive BOOLEAN DEFAULT FALSE, -- True if content_type is 'interactive'
+    max_attempts INTEGER DEFAULT 3,       -- Max attempts for interactive content
+    passing_score INTEGER DEFAULT 70,     -- Passing score (percentage) for interactive content
     FOREIGN KEY (lesson_id) REFERENCES lesson (id) ON DELETE CASCADE
+    -- Note: SQLAlchemy relationships exist for:
+    -- `quiz_questions` (One-to-Many: LessonContent -> QuizQuestion) if is_interactive is True
     -- Note: SQLAlchemy helper methods:
-    -- `get_file_url()`: Returns a serveable URL for the uploaded file or the media_url.
-    -- `delete_file()`: Deletes the associated physical file if one exists.
-    -- `get_content_data()`: Fetches the related content (e.g., Kana object) or a dict for custom content.
+    -- `get_file_url()`: Returns a serveable URL for the uploaded file (using `routes.uploaded_file`) or the `media_url`.
+    -- `delete_file()`: Deletes the associated physical file from the server if `file_path` is set.
+    -- `get_content_data()`: Fetches the related content (e.g., Kana object) or a dict for custom/media content.
+);
+```
+
+#### Quiz Question Table
+```sql
+CREATE TABLE quiz_question (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    lesson_content_id INTEGER NOT NULL,
+    question_type VARCHAR(50) NOT NULL, -- 'multiple_choice', 'fill_blank', 'true_false', 'matching'
+    question_text TEXT NOT NULL,
+    explanation TEXT, -- Explanation for the answer
+    points INTEGER DEFAULT 1,
+    order_index INTEGER DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (lesson_content_id) REFERENCES lesson_content (id) ON DELETE CASCADE
+    -- Note: SQLAlchemy relationships exist for:
+    -- `options` (One-to-Many: QuizQuestion -> QuizOption)
+    -- `user_answers` (One-to-Many: QuizQuestion -> UserQuizAnswer)
+);
+```
+
+#### Quiz Option Table
+```sql
+CREATE TABLE quiz_option (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    question_id INTEGER NOT NULL,
+    option_text TEXT NOT NULL,
+    is_correct BOOLEAN DEFAULT FALSE,
+    order_index INTEGER DEFAULT 0,
+    feedback TEXT, -- Specific feedback for this option
+    FOREIGN KEY (question_id) REFERENCES quiz_question (id) ON DELETE CASCADE
+);
+```
+
+#### User Quiz Answer Table
+```sql
+CREATE TABLE user_quiz_answer (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    question_id INTEGER NOT NULL,
+    selected_option_id INTEGER,
+    text_answer TEXT, -- For fill-in-the-blank questions
+    is_correct BOOLEAN DEFAULT FALSE,
+    answered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    attempts INTEGER NOT NULL DEFAULT 0,
+    FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
+    FOREIGN KEY (question_id) REFERENCES quiz_question (id) ON DELETE CASCADE,
+    FOREIGN KEY (selected_option_id) REFERENCES quiz_option (id),
+    UNIQUE (user_id, question_id)
 );
 ```
 
@@ -898,30 +1029,74 @@ DELETE /api/admin/lessons/<int:lesson_id>/content/<int:content_id>/delete # Remo
 ```
 GET    /api/lessons                    # Get accessible lessons for user
 POST   /api/lessons/{id}/progress      # Update lesson progress
+POST   /lessons/{id}/reset             # Reset lesson progress
 ```
 
 #### File Management API (Admin)
 ```
-POST   /api/admin/upload-file                 # Upload a file. Saves to a path like 'lessons/images/' under UPLOAD_FOLDER.
-                                              # Returns file path and info. Used by lesson builder.
-                                              # Example UPLOAD_FOLDER: app/static/uploads
-                                              # Resulting file_url might be: /static/uploads/lessons/images/filename.jpg
-DELETE /api/admin/delete-file                 # Delete an uploaded file from the server and potentially its LessonContent DB record.
-                                              # Expects JSON body with 'file_path'.
-                                              # If 'content_id' is also provided and matches, the LessonContent record is deleted.
-POST   /api/admin/lessons/<int:lesson_id>/content/file   # Add file-based content to a lesson.
-                                              # Associates an *already uploaded file* (referenced by 'file_path' from upload-file)
-                                              # with a lesson content item. Takes details like title, description, file_path, etc.
+POST   /api/admin/upload-file
+                                              # Uploads a file. The file is validated, processed (e.g., images might be optimized),
+                                              # and stored in a subdirectory of `UPLOAD_FOLDER` based on its type (e.g., `app/static/uploads/lessons/images/`).
+                                              # Request: FormData with 'file' (the file) and optional 'lesson_id'.
+                                              # Returns: JSON object with:
+                                              #   - `success`: true/false
+                                              #   - `filePath`: URL for client-side preview/use, e.g., `/static/uploads/lessons/images/unique_filename.jpg`.
+                                              #                 (This is generated by `url_for('static', ...)` assuming UPLOAD_FOLDER is under 'static').
+                                              #   - `dbPath`: Relative path to be stored in `LessonContent.file_path`, e.g., `lessons/images/unique_filename.jpg`.
+                                              #   - `fileName`: The unique filename generated on the server.
+                                              #   - `originalFilename`: The original name of the uploaded file.
+                                              #   - `fileType`: Detected file type (e.g., 'image', 'audio', 'document').
+                                              #   - `fileSize`: File size in bytes.
+                                              #   - `mimeType`: Actual MIME type of the file.
+                                              #   - `dimensions`: (For images) e.g., {'width': 100, 'height': 100}.
+                                              #   - `error`: Error message if `success` is false.
+
+DELETE /api/admin/delete-file
+                                              # Deletes an uploaded file from the server and, if a matching `content_id` is provided,
+                                              # also deletes the associated `LessonContent` database record.
+                                              # Request: JSON body with:
+                                              #   - `file_path`: The path of the file relative to `UPLOAD_FOLDER` (this is the `dbPath` from the upload response).
+                                              #   - `content_id`: (Optional) The ID of the `LessonContent` item associated with this file.
+                                              #                  If provided, and `LessonContent.file_path` matches the request's `file_path`,
+                                              #                  the `LessonContent` record is deleted (which also triggers physical file deletion via model logic).
+                                              #                  If not provided, or if `content_id` doesn't match, only the physical file is targeted for deletion.
+                                              # Returns: JSON message indicating success or failure. Can return 207 Multi-Status if DB record deleted but file system deletion failed.
+
+POST   /api/admin/lessons/<int:lesson_id>/content/file
+                                              # Associates an *already uploaded file* (using its `dbPath`) with a new `LessonContent` item.
+                                              # This is used to create a lesson component that refers to a file uploaded via `/api/admin/upload-file`.
+                                              # Request: JSON body with:
+                                              #   - `content_type`: e.g., 'image', 'audio', 'document'.
+                                              #   - `file_path`: The relative path of the file within `UPLOAD_FOLDER` (this is the `dbPath` from upload response, e.g., 'lessons/images/filename.jpg').
+                                              #   - `title`: (Optional) Title for the lesson content.
+                                              #   - `description`: (Optional) Description for the lesson content (stored in `content_text`).
+                                              #   - `file_size`, `file_type`, `original_filename`: (Optional but recommended) Details about the file.
+                                              #   - `is_optional`: (Optional) boolean.
+                                              # Returns: JSON object of the created `LessonContent` item.
+```
+
+#### Interactive Content (Quiz) API (Admin & User)
+```
+POST   /api/admin/lessons/<int:lesson_id>/content/interactive # Add interactive content (quiz question) to a lesson content item.
+                                              # Creates a LessonContent of type 'interactive' and associated QuizQuestion/QuizOption records.
+POST   /api/lessons/<int:lesson_id>/quiz/<int:question_id>/answer # User submits an answer to a quiz question.
+                                              # Records the answer and returns correctness and feedback.
 ```
 
 ### Static File Serving
 ```
-GET    /uploads/<path:filename>               # Serves uploaded files.
-                                              # <path:filename> is the path relative to the UPLOAD_FOLDER.
-                                              # e.g. /uploads/lessons/images/my_image.png if UPLOAD_FOLDER is 'app/static/uploads'
-                                              # and file was saved in 'lessons/images' subdirectory.
+GET    /uploads/<path:filename>
+                                              # Serves uploaded files that are stored within the application's `UPLOAD_FOLDER`.
+                                              # The `<path:filename>` part of the URL must be the path of the file *relative* to the `UPLOAD_FOLDER`.
+                                              # Example:
+                                              # If `UPLOAD_FOLDER` is configured as `app/static/uploads` (either by default or via .env),
+                                              # and a file was uploaded and stored as `app/static/uploads/lessons/images/my_image.png`,
+                                              # then `LessonContent.file_path` would store 'lessons/images/my_image.png'.
+                                              # The URL to access this file would then be `/uploads/lessons/images/my_image.png`.
+                                              # This route is internally used by `LessonContent.get_file_url()` to generate accessible URLs
+                                              # for files whose relative paths (from `UPLOAD_FOLDER`) are stored in `LessonContent.file_path`.
 ```
-*Note on API Error Handling: Common HTTP status codes are used: 200 (OK), 201 (Created), 400 (Bad Request), 401 (Unauthorized), 403 (Forbidden), 404 (Not Found), 409 (Conflict), 500 (Internal Server Error).*
+*Note on API Error Handling: Common HTTP status codes are used: 200 (OK), 201 (Created), 400 (Bad Request), 401 (Unauthorized), 403 (Forbidden), 404 (Not Found), 409 (Conflict), 207 (Multi-Status), 500 (Internal Server Error).*
 
 ### User Interface
 
@@ -935,6 +1110,7 @@ GET    /uploads/<path:filename>               # Serves uploaded files.
 - **Lesson Browser** (`/lessons`) - Browse and filter available lessons
 - **Lesson Viewer** (`/lessons/{id}`) - View lesson content and track progress
 - **Progress Tracking** - Visual progress indicators and completion status
+- **Reset Progress** - Users can reset their progress for a lesson.
 
 ### Migration and Setup
 
@@ -1047,6 +1223,3 @@ This project is licensed under the MIT License. See LICENSE file for details.
 - All contributors and testers
 
 ---
-
-*Last Updated: October 26, 2023*
-*Version: 1.1.0*

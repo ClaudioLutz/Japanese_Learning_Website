@@ -44,13 +44,14 @@
 </div>
 
 <!-- Add Category Modal -->
-<div id="addCategoryModal" class="modal" style="display: none;">
+<div id="addCategoryModal" class="modal">
     <div class="modal-content" style="max-width: 500px;">
         <div class="modal-header">
             <h4>Add New Category</h4>
             <span class="close" onclick="closeModal('addCategoryModal')">&times;</span>
         </div>
         <form id="addCategoryForm">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="modal-body">
                 <div class="form-group">
                     <label for="categoryName">Name *</label>
@@ -81,13 +82,14 @@
 </div>
 
 <!-- Edit Category Modal -->
-<div id="editCategoryModal" class="modal" style="display: none;">
+<div id="editCategoryModal" class="modal">
     <div class="modal-content" style="max-width: 500px;">
         <div class="modal-header">
             <h4>Edit Category</h4>
             <span class="close" onclick="closeModal('editCategoryModal')">&times;</span>
         </div>
         <form id="editCategoryForm">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <input type="hidden" id="editCategoryId" name="id">
             <div class="modal-body">
                 <div class="form-group">
@@ -179,6 +181,8 @@ document.getElementById('addCategoryForm').addEventListener('submit', async func
     
     const formData = new FormData(this);
     const data = Object.fromEntries(formData.entries());
+    const csrfToken = data.csrf_token;
+    delete data.csrf_token;
     
     // Convert empty description to null
     if (data.description === '') data.description = null;
@@ -186,7 +190,10 @@ document.getElementById('addCategoryForm').addEventListener('submit', async func
     try {
         const response = await fetch('/api/admin/categories/new', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
             body: JSON.stringify(data)
         });
         
@@ -232,7 +239,9 @@ document.getElementById('editCategoryForm').addEventListener('submit', async fun
     const formData = new FormData(this);
     const data = Object.fromEntries(formData.entries());
     const id = data.id;
+    const csrfToken = data.csrf_token;
     delete data.id;
+    delete data.csrf_token;
     
     // Convert empty description to null
     if (data.description === '') data.description = null;
@@ -240,7 +249,10 @@ document.getElementById('editCategoryForm').addEventListener('submit', async fun
     try {
         const response = await fetch(`/api/admin/categories/${id}/edit`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
             body: JSON.stringify(data)
         });
         
@@ -265,8 +277,12 @@ async function deleteCategory(id) {
     }
     
     try {
+        const csrfToken = document.querySelector('#addCategoryForm [name="csrf_token"]').value;
         const response = await fetch(`/api/admin/categories/${id}/delete`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': csrfToken
+            }
         });
         
         if (response.ok) {
@@ -282,23 +298,6 @@ async function deleteCategory(id) {
     }
 }
 
-// Modal functions
-function openModal(modalId) {
-    document.getElementById(modalId).style.display = "block";
-}
-
-function closeModal(modalId) {
-    document.getElementById(modalId).style.display = "none";
-}
-
-// Close modal when clicking outside
-window.onclick = function(event) {
-    const modals = document.querySelectorAll('.modal');
-    modals.forEach(modal => {
-        if (event.target === modal) {
-            modal.style.display = "none";
-        }
-    });
-}
+// Modal functions are now handled by base_admin.html
 </script>
 {% endblock %}
