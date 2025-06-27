@@ -44,7 +44,7 @@
 </div>
 
 <!-- Add Category Modal -->
-<div id="addCategoryModal" class="modal" style="display: none;">
+<div id="addCategoryModal" class="modal">
     <div class="modal-content" style="max-width: 500px;">
         <div class="modal-header">
             <h4>Add New Category</h4>
@@ -82,7 +82,7 @@
 </div>
 
 <!-- Edit Category Modal -->
-<div id="editCategoryModal" class="modal" style="display: none;">
+<div id="editCategoryModal" class="modal">
     <div class="modal-content" style="max-width: 500px;">
         <div class="modal-header">
             <h4>Edit Category</h4>
@@ -298,23 +298,6 @@ async function deleteCategory(id) {
     }
 }
 
-// Modal functions
-function openModal(modalId) {
-    document.getElementById(modalId).style.display = "block";
-}
-
-function closeModal(modalId) {
-    document.getElementById(modalId).style.display = "none";
-}
-
-// Close modal when clicking outside
-window.onclick = function(event) {
-    const modals = document.querySelectorAll('.modal');
-    modals.forEach(modal => {
-        if (event.target === modal) {
-            modal.style.display = "none";
-        }
-    });
-}
+// Modal functions are now handled by base_admin.html
 </script>
 {% endblock %}

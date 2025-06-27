@@ -46,7 +46,7 @@
 </div>
 
 <!-- Add Lesson Modal -->
-<div id="addLessonModal" class="modal" style="display: none;">
+<div id="addLessonModal" class="modal">
     <div class="modal-content" style="max-width: 600px;">
         <div class="modal-header">
             <h4>Add New Lesson</h4>
@@ -134,7 +134,7 @@
 </div>
 
 <!-- Edit Lesson Modal -->
-<div id="editLessonModal" class="modal" style="display: none;">
+<div id="editLessonModal" class="modal">
     <div class="modal-content" style="max-width: 600px;">
         <div class="modal-header">
             <h4>Edit Lesson</h4>
@@ -223,8 +223,8 @@
 </div>
 
 <!-- Lesson Content Modal -->
-<div id="lessonContentModal" class="modal" style="display: none;">
-    <div class="modal-content" style="max-width: 800px;">
+<div id="lessonContentModal" class="modal">
+    <div class="modal-content" style="max-width: 1200px;">
         <div class="modal-header">
             <h4>Manage Lesson Content</h4>
             <span class="close" onclick="closeModal('lessonContentModal')">&times;</span>
@@ -235,6 +235,31 @@
                 <button type="button" class="btn btn-sm btn-primary" onclick="openAddContentModal()">
                     <i class="fas fa-plus"></i> Add Content
                 </button>
+            </div>
+            
+            <!-- Individual Actions Panel -->
+            <div class="individual-actions-panel mb-3" style="display: none;" id="individualActionsPanel">
+                <div class="card">
+                    <div class="card-body">
+                        <h6>Selected Item Actions</h6>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="individual-actions-buttons">
+                                <button type="button" class="btn btn-sm btn-info" onclick="individualPreview()">
+                                    <i class="fas fa-eye"></i> Preview
+                                </button>
+                                <button type="button" class="btn btn-sm btn-warning" onclick="individualEdit()">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button type="button" class="btn btn-sm btn-secondary" onclick="individualDuplicate()">
+                                    <i class="fas fa-copy"></i> Duplicate
+                                </button>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-secondary" onclick="hideIndividualActions()">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <div class="table-responsive">
@@ -270,15 +295,6 @@
                                 </button>
                             </div>
                             <div class="bulk-actions-buttons">
-                                <button type="button" class="btn btn-sm btn-info" onclick="bulkPreview()">
-                                    <i class="fas fa-eye"></i> Preview
-                                </button>
-                                <button type="button" class="btn btn-sm btn-warning" onclick="bulkEdit()">
-                                    <i class="fas fa-edit"></i> Edit
-                                </button>
-                                <button type="button" class="btn btn-sm btn-secondary" onclick="bulkDuplicate()">
-                                    <i class="fas fa-copy"></i> Duplicate
-                                </button>
                                 <button type="button" class="btn btn-sm btn-danger" onclick="bulkDelete()">
                                     <i class="fas fa-trash"></i> Delete
                                 </button>
@@ -298,7 +314,7 @@
 </div>
 
 <!-- Content Preview Modal -->
-<div id="contentPreviewModal" class="modal" style="display: none;">
+<div id="contentPreviewModal" class="modal">
     <div class="modal-content" style="max-width: 900px;">
         <div class="modal-header">
             <h4>Content Preview</h4>
@@ -317,7 +333,7 @@
 </div>
 
 <!-- Enhanced Add Content Wizard Modal -->
-<div id="addContentModal" class="modal" style="display: none;">
+<div id="addContentModal" class="modal">
     <div class="modal-content" style="max-width: 900px;">
         <div class="modal-header">
             <h4 id="addContentModalTitle">Add Content to Lesson</h4>
@@ -1322,21 +1338,57 @@ function generateContentPreview(content) {
     return previewHtml;
 }
 
-// Bulk operations functionality
+// Operations functionality
 function toggleBulkOperations() {
     const checkboxes = document.querySelectorAll('.content-checkbox:checked');
     const bulkPanel = document.getElementById('bulkOperationsPanel');
+    const individualPanel = document.getElementById('individualActionsPanel');
     
-    if (checkboxes.length > 0) {
-        bulkPanel.style.display = 'block';
-    } else {
+    if (checkboxes.length === 1) {
+        // Show individual actions for single selection
+        individualPanel.style.display = 'block';
         bulkPanel.style.display = 'none';
+    } else if (checkboxes.length > 1) {
+        // Show bulk operations for multiple selections
+        bulkPanel.style.display = 'block';
+        individualPanel.style.display = 'none';
+    } else {
+        // Hide both panels when nothing is selected
+        bulkPanel.style.display = 'none';
+        individualPanel.style.display = 'none';
     }
 }
 
 function hideBulkOperations() {
     document.getElementById('bulkOperationsPanel').style.display = 'none';
     document.querySelectorAll('.content-checkbox').forEach(cb => cb.checked = false);
+}
+
+function hideIndividualActions() {
+    document.getElementById('individualActionsPanel').style.display = 'none';
+    document.querySelectorAll('.content-checkbox').forEach(cb => cb.checked = false);
+}
+
+// Individual action functions
+function individualPreview() {
+    const selectedIds = getSelectedContentIds();
+    if (selectedIds.length === 1) {
+        previewContent(selectedIds[0]);
+    }
+}
+
+function individualEdit() {
+    const selectedIds = getSelectedContentIds();
+    if (selectedIds.length === 1) {
+        editContent(selectedIds[0]);
+    }
+}
+
+function individualDuplicate() {
+    const selectedIds = getSelectedContentIds();
+    if (selectedIds.length === 1) {
+        bulkDuplicate(); // Reuse the existing duplicate function
+    }
 }
 
 async function bulkSetOptional(isOptional) {
@@ -1434,31 +1486,6 @@ function getSelectedContentIds() {
     return Array.from(checkboxes).map(cb => parseInt(cb.value));
 }
 
-function bulkPreview() {
-    const selectedIds = getSelectedContentIds();
-    if (selectedIds.length === 0) {
-        alert('Please select at least one item to preview.');
-        return;
-    }
-    if (selectedIds.length > 1) {
-        alert('Please select only one item to preview.');
-        return;
-    }
-    previewContent(selectedIds[0]);
-}
-
-function bulkEdit() {
-    const selectedIds = getSelectedContentIds();
-    if (selectedIds.length === 0) {
-        alert('Please select at least one item to edit.');
-        return;
-    }
-    if (selectedIds.length > 1) {
-        alert('Please select only one item to edit.');
-        return;
-    }
-    editContent(selectedIds[0]);
-}
 
 async function editContent(contentId) {
     try {
@@ -2553,33 +2580,18 @@ function clearFileInput() {
 }
 
 
-// Modal functions
-function openModal(modalId) {
-    document.getElementById(modalId).style.display = "block";
-}
-
+// Modal functions are now handled by base_admin.html
+// Custom cleanup for content modal
 function closeModal(modalId) {
-    document.getElementById(modalId).style.display = "none";
-    
-    // Clear uploaded file data when closing modal
-    if (modalId === 'addContentModal') {
-        uploadedFileData = null;
-    }
-}
-
-// Close modal when clicking outside
-window.onclick = function(event) {
-    const modals = document.querySelectorAll('.modal');
-    modals.forEach(modal => {
-        if (event.target === modal) {
-            modal.style.display = "none";
-            
-            // Clear uploaded file data when closing modal
-            if (modal.id === 'addContentModal') {
-                uploadedFileData = null;
-            }
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.classList.remove('is-open');
+        
+        // Clear uploaded file data when closing modal
+        if (modalId === 'addContentModal') {
+            uploadedFileData = null;
         }
-    });
+    }
 }
 </script>
 {% endblock %}

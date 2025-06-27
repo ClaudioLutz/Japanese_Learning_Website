@@ -3,39 +3,51 @@
 {% block title %}Admin Login{% endblock %}
 
 {% block content %}
-<h2>Admin Login</h2>
 
-{% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        <ul class="flash-messages">
-        {% for category, message in messages %}
-            <li class="{{ category }}">{{ message }}</li>
-        {% endfor %}
-        </ul>
-    {% endif %}
-{% endwith %}
+<div class="login-container">
+    <div class="login-card">
+        <h2>Admin Login</h2>
 
-<form method="POST" action="{{ url_for('admin_login') }}">
-    <div>
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flash-messages">
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('admin_login') }}">
+            <div>
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div>
+                <button type="submit" style="width: 100%; justify-content: center;">Login</button>
+            </div>
+        </form>
     </div>
-    <div>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-    </div>
-    <div>
-        <button type="submit">Login</button>
-    </div>
-</form>
+</div>
 {% endblock %}
 
 {% block extra_js %}
+
 <script>
-    // Remove nav for login page
-    const nav = document.querySelector('nav');
-    if (nav) {
-        nav.style.display = 'none';
-    }
+// Hide the main navigation and container padding for the login page
+const nav = document.querySelector('nav');
+const mainContainer = document.querySelector('main.container');
+if (nav) {
+    nav.style.display = 'none';
+}
+if(mainContainer){
+    mainContainer.style.padding = '0';
+    mainContainer.style.maxWidth = '100vw';
+}
 </script>
+
 {% endblock %}

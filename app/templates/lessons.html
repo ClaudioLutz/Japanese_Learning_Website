@@ -13,7 +13,7 @@
             <h1 class="mb-4">Japanese Learning Lessons</h1>
             
             <!-- Filter Controls -->
-            <div class="card mb-4">
+            <div class="card filter-card mb-4">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-3">
@@ -136,43 +136,35 @@ function createLessonCard(lesson) {
     const progress = lesson.progress;
     const progressPercentage = progress ? progress.progress_percentage : 0;
     
+    // MODIFIED HTML STRUCTURE
     col.innerHTML = `
-        <div class="card h-100 ${!accessible ? 'border-warning' : ''}">
-            ${lesson.thumbnail_url ? `<img src="${lesson.thumbnail_url}" class="card-img-top" alt="${lesson.title}" style="height: 200px; object-fit: cover;">` : ''}
+        <div class="card lesson-card h-100 ${!accessible ? 'locked' : ''}">
             <div class="card-body d-flex flex-column">
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                    <h5 class="card-title">${lesson.title}</h5>
+                <div class="mb-2">
                     <span class="badge ${lesson.lesson_type === 'free' ? 'bg-success' : 'bg-warning'}">${lesson.lesson_type}</span>
+                    ${lesson.category_name ? `<span class="badge bg-info text-dark">${lesson.category_name}</span>` : ''}
                 </div>
-                
-                ${lesson.category_name ? `<span class="badge bg-info mb-2">${lesson.category_name}</span>` : ''}
-                
-                <p class="card-text">${lesson.description || 'No description available.'}</p>
+                <h5 class="card-title mt-1">${lesson.title}</h5>
+                <p class="card-text small text-muted flex-grow-1">${lesson.description || 'No description available.'}</p>
                 
                 <div class="mt-auto">
-                    <div class="row text-center mb-3">
-                        ${lesson.difficulty_level ? `<div class="col"><small class="text-muted">Difficulty: ${lesson.difficulty_level}/5</small></div>` : ''}
-                        ${lesson.estimated_duration ? `<div class="col"><small class="text-muted">Duration: ${lesson.estimated_duration} min</small></div>` : ''}
+                    <div class="d-flex justify-content-between small text-muted mb-3">
+                        <span>📊 Difficulty: ${lesson.difficulty_level || 'N/A'}/5</span>
+                        <span>⏱️ ${lesson.estimated_duration || 'N/A'} min</span>
                     </div>
                     
                     ${progress ? `
-                        <div class="mb-3">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <small class="text-muted">Progress</small>
-                                <small class="text-muted">${progressPercentage}%</small>
-                            </div>
-                            <div class="progress" style="height: 6px;">
-                                <div class="progress-bar" role="progressbar" style="width: ${progressPercentage}%" aria-valuenow="${progressPercentage}" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
+                        <div class="progress mb-3" style="height: 6px;">
+                            <div class="progress-bar" role="progressbar" style="width: ${progressPercentage}%" aria-valuenow="${progressPercentage}" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
-                    ` : ''}
+                    ` : '<div class="mb-3" style="height: 6px;"></div>'}
                     
                     ${accessible ? `
                         <a href="/lessons/${lesson.id}" class="btn btn-primary w-100">
-                            ${progress ? (progress.is_completed ? 'Review Lesson' : 'Continue Lesson') : 'Start Lesson'}
+                            ${progress ? (progressPercentage === 100 ? 'Review Lesson' : 'Continue Lesson') : 'Start Lesson'}
                         </a>
                     ` : `
-                        <button class="btn btn-outline-warning w-100" disabled title="${lesson.access_message}">
+                        <button class="btn btn-secondary w-100" disabled>
                             ${lesson.access_message}
                         </button>
                     `}

@@ -4,10 +4,350 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Admin Dashboard{% endblock %}</title>
-    <!-- TinyMCE CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tiny.cloud/1/0zy0mudtkt8811ll5m8kja6adp3ro871x715seh0c5vqzehu/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
+        :root {
+            --primary-color: #4f46e5;
+            --secondary-color: #6b7280;
+            --background-color: #f8f9fa;
+            --surface-color: #ffffff;
+            --text-color: #1f2937;
+            --border-color: #e5e7eb;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+        }
+
+        /* Base Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Layout */
+        nav {
+            background-color: var(--surface-color);
+            width: 250px;
+            padding: 1.5rem;
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .container {
+            flex-grow: 1;
+            padding: 2rem 3rem;
+            overflow-y: auto;
+        }
+
+        /* Navigation */
+        .nav-header {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        nav ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        nav ul li a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        nav ul li a i {
+            margin-right: 1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        nav ul li a:hover,
+        nav ul li a.active {
+            background-color: #eef2ff;
+            color: var(--primary-color);
+        }
+
+        .nav-footer {
+            margin-top: auto;
+        }
+
+        .nav-footer a {
+            font-size: 0.9rem;
+        }
+
+        /* Page Header */
+        h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 2rem;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+            background-color: var(--surface-color);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: #f9fafb;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background-color: #f9fafb;
+        }
+
+        /* Forms & Buttons */
+        button, .btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.65rem 1.25rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: background-color 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        button:hover, .btn:hover {
+            background-color: #4338ca;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+        }
+
+        button.btn-secondary, .btn.btn-secondary {
+            background-color: var(--secondary-color);
+        }
+        button.btn-secondary:hover, .btn.btn-secondary:hover {
+            background-color: #5a626b;
+            box-shadow: 0 4px 12px rgba(107, 114, 128, 0.2);
+        }
+
+        button.btn-danger, .btn.btn-danger {
+            background-color: var(--danger-color);
+        }
+        button.btn-danger:hover, .btn.btn-danger:hover {
+            background-color: #d63232;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+        }
+
+        button.btn-warning, .btn.btn-warning {
+            background-color: var(--warning-color);
+            color: var(--text-color);
+        }
+        button.btn-warning:hover, .btn.btn-warning:hover {
+            background-color: #e8910a;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+        }
+
+        button i, .btn i {
+            margin-right: 0.5rem;
+        }
+
+        .actions a {
+            margin-right: 5px;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+        }
+
+        .actions .edit, .actions .btn-warning { color: white; background-color: var(--warning-color); }
+        .actions .delete, .actions .btn-danger { color: white; background-color: var(--danger-color); }
+        .actions .btn-info { color: white; background-color: #3b82f6; }
+
+        form label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        form input[type="text"],
+        form input[type="password"],
+        form input[type="number"],
+        form input[type="url"],
+        form input[type="color"],
+        form textarea,
+        form select {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-sizing: border-box;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        form input:focus, form textarea:focus, form select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        /* Card */
+        .card {
+            background-color: var(--surface-color);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+        }
+        .card-header, .card-body, .card-footer {
+            padding: 1.5rem;
+        }
+        .card-header {
+            border-bottom: 1px solid var(--border-color);
+        }
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        /* Modals */
+        .modal {
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0;
+            width: 100%; height: 100%; overflow: auto; 
+            background-color: rgba(31, 41, 55, 0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.is-open {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: var(--surface-color);
+            padding: 0;
+            border: none;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h4 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+
+        .close, .close-button {
+            color: var(--secondary-color);
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .close:hover, .close-button:hover {
+            color: var(--text-color);
+        }
+
+        /* Flash Messages */
+        .flash-messages { list-style-type: none; padding: 0; margin-bottom: 1.5rem; }
+        .flash-messages li {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        .flash-messages .success { background-color: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+        .flash-messages .error { background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+
+        /* Login Page Specific */
+        .login-container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--background-color);
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            padding: 2.5rem;
+            background-color: var(--surface-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .login-card h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
         /* Rich Text Editor Styling */
         .rich-text-editor {
             min-height: 300px;
@@ -84,62 +424,7 @@
         .content-type-information_slide h3 {
             color: white;
         }
-        body { 
-            font-family: sans-serif; 
-            margin: 0; 
-            padding: 0; 
-            background-image: url("{{ url_for('static', filename='images/Admin_Page.png') }}");
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            color: #333; 
-        }
-        header { background-color: #333; color: #fff; padding: 1rem; text-align: center; }
-        nav { background-color: #444; padding: 0.5rem; }
-        nav ul { list-style-type: none; padding: 0; margin: 0; text-align: center; }
-        nav ul li { display: inline; margin-right: 20px; }
-        nav ul li a { color: #fff; text-decoration: none; font-weight: bold; }
-        nav ul li a:hover { text-decoration: underline; }
-        .container { width: 90%; margin: 2rem auto; background-color: rgba(255, 255, 255, 1); padding: 2rem; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        h1, h2 { color: #333; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f0f0f0; }
-        .actions a { margin-right: 10px; text-decoration: none; }
-        .actions .edit { color: #007bff; }
-        .actions .delete { color: #dc3545; }
-        form { margin-bottom: 2rem; padding: 1rem; border: 1px solid #eee; background-color: #f9f9f9; }
-        form label { display: block; margin-bottom: 0.5rem; font-weight: bold; }
-        form input[type="text"], form input[type="number"], form textarea, form select {
-            width: calc(100% - 22px);
-            padding: 10px;
-            margin-bottom: 1rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        form button {
-            background-color: #28a745; color: white; padding: 10px 15px;
-            border: none; border-radius: 4px; cursor: pointer;
-        }
-        form button:hover { background-color: #218838; }
-        .form-edit button { background-color: #007bff; }
-        .form-edit button:hover { background-color: #0056b3; }
-        .flash-messages { list-style-type: none; padding: 0; margin-bottom: 1rem; }
-        .flash-messages .success { background-color: #d4edda; color: #155724; padding: 0.75rem; border: 1px solid #c3e6cb; border-radius: 0.25rem; }
-        .flash-messages .error { background-color: #f8d7da; color: #721c24; padding: 0.75rem; border: 1px solid #f5c6cb; border-radius: 0.25rem; }
-        .modal {
-            display: none; position: fixed; z-index: 1000; left: 0; top: 0;
-            width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4);
-        }
-        .modal-content {
-            background-color: #fefefe; margin: 10% auto; padding: 20px;
-            border: 1px solid #888; width: 60%; max-width: 600px;
-            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-            border-radius: 5px;
-        }
-        .close-button { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
-        .close-button:hover, .close-button:focus { color: black; text-decoration: none; cursor: pointer; }
-        
+
         /* Drag and Drop Styling */
         .drag-handle {
             color: #6c757d;
@@ -256,6 +541,28 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* Utility */
+        .d-flex { display: flex; }
+        .justify-content-between { justify-content: space-between; }
+        .align-items-center { align-items: center; }
+        .mb-4 { margin-bottom: 2rem; }
+        .badge {
+            display: inline-block;
+            padding: .35em .65em;
+            font-size: .75em;
+            font-weight: 700;
+            line-height: 1;
+            color: #fff;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: .25rem;
+        }
+        .badge-info { background-color: #3b82f6; }
+        .badge-success { background-color: var(--success-color); }
+        .badge-warning { background-color: var(--warning-color); color: var(--text-color); }
+        .badge-secondary { background-color: var(--secondary-color); }
+
         /* Responsive Adjustments */
         @media (max-width: 768px) {
             .btn-group-sm .btn {
@@ -274,57 +581,66 @@
     </style>
 </head>
 <body>
-    <header>
-        <h1>Admin Dashboard</h1>
-    </header>
-    <nav>
-        <ul>
-            <li><a href="{{ url_for('routes.index') }}" class="btn btn-sm btn-outline-light">Go Back to Site</a></li>
-            <li><a href="{{ url_for('routes.admin_index') }}">Home</a></li>
-            <li><a href="{{ url_for('routes.admin_manage_lessons') }}">Manage Lessons</a></li>
-            <li><a href="{{ url_for('routes.admin_manage_categories') }}">Manage Categories</a></li>
-            <li><a href="{{ url_for('routes.admin_manage_kana') }}">Manage Kana</a></li>
-            <li><a href="{{ url_for('routes.admin_manage_kanji') }}">Manage Kanji</a></li>
-            <li><a href="{{ url_for('routes.admin_manage_vocabulary') }}">Manage Vocabulary</a></li>
-            <li><a href="{{ url_for('routes.admin_manage_grammar') }}">Manage Grammar</a></li>
-            {% if current_user.is_authenticated %}
-                <li><a href="{{ url_for('routes.logout') }}" style="color: #ffc107;">Logout ({{ current_user.username }})</a></li>
-            {% endif %}
-        </ul>
-    </nav>
-    <div class="container">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <ul class="flash-messages">
-                {% for category, message in messages %}
-                    <li class="{{ category }}">{{ message }}</li>
-                {% endfor %}
-                </ul>
-            {% endif %}
-        {% endwith %}
-        {% block content %}{% endblock %}
-    </div>
+<nav>
+<div>
+<div class="nav-header">Admin</div>
+<ul>
+<li><a href="{{ url_for('routes.admin_index') }}"><i class="fas fa-home"></i>Home</a></li>
+<li><a href="{{ url_for('routes.admin_manage_lessons') }}"><i class="fas fa-book-open"></i>Manage Lessons</a></li>
+<li><a href="{{ url_for('routes.admin_manage_categories') }}"><i class="fas fa-tags"></i>Manage Categories</a></li>
+<li><a href="{{ url_for('routes.admin_manage_kana') }}"><i class="fas fa-pen-nib"></i>Manage Kana</a></li>
+<li><a href="{{ url_for('routes.admin_manage_kanji') }}"><i class="fas fa-font"></i>Manage Kanji</a></li>
+<li><a href="{{ url_for('routes.admin_manage_vocabulary') }}"><i class="fas fa-spell-check"></i>Manage Vocabulary</a></li>
+<li><a href="{{ url_for('routes.admin_manage_grammar') }}"><i class="fas fa-list-alt"></i>Manage Grammar</a></li>
+</ul>
+</div>
+<div class="nav-footer">
+<ul>
+<li><a href="{{ url_for('routes.index') }}"><i class="fas fa-arrow-left"></i>Go Back to Site</a></li>
+{% if current_user.is_authenticated %}
+<li><a href="{{ url_for('routes.logout') }}"><i class="fas fa-sign-out-alt"></i>Logout ({{ current_user.username }})</a></li>
+{% endif %}
+</ul>
+</div>
+</nav>
 
-    <script>
-        // Basic modal script
-        function openModal(modalId) {
-            document.getElementById(modalId).style.display = "block";
+<main class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul class="flash-messages">
+            {% for category, message in messages %}
+                <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+</main>
+
+<script>
+    function openModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.add('is-open');
         }
+    }
 
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = "none";
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.remove('is-open');
         }
+    }
 
-        // Close modal if user clicks outside of it
-        window.onclick = function(event) {
-            const modals = document.getElementsByClassName('modal');
-            for (let i = 0; i < modals.length; i++) {
-                if (event.target == modals[i]) {
-                    modals[i].style.display = "none";
-                }
+    window.onclick = function(event) {
+        const modals = document.querySelectorAll('.modal.is-open');
+        modals.forEach(modal => {
+            if (event.target === modal) {
+                closeModal(modal.id);
             }
-        }
-    </script>
-    {% block extra_js %}{% endblock %}
+        });
+    }
+</script>
+{% block extra_js %}{% endblock %}
 </body>
 </html>
