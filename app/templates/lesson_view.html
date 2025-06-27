@@ -5,8 +5,20 @@
 {% block content %}
 <style>
     body {
-        /* Use the global background color instead of the distracting pattern */
         background-color: #f8f9fa !important; 
+    }
+    #lessonCarousel .carousel-control-prev,
+    #lessonCarousel .carousel-control-next {
+        width: 5%;
+    }
+    #lessonCarousel .carousel-control-prev-icon,
+    #lessonCarousel .carousel-control-next-icon {
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 50%;
+        padding: 20px;
+    }
+    #lessonCarousel .carousel-item .page-container {
+        min-height: 400px;
     }
 </style>
 <div class="container mt-4">
@@ -98,200 +110,217 @@
                     <h5 class="mb-0">Lesson Content</h5>
                 </div>
                 <div class="card-body">
-                    {% if lesson.content_items %}
-                        <div id="lessonContent">
-                            {% for content in lesson.content_items | sort(attribute='order_index') %}
-                            <div class="content-item mb-4 p-3 border rounded" data-content-id="{{ content.id }}">
-                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <h6 class="mb-0">
-                                        {{ content.title or (content.content_type | title + ' #' + (content.content_id | string if content.content_id else 'Custom')) }}
-                                        {% if content.is_optional %}
-                                        <span class="badge bg-warning ms-2">Optional</span>
-                                        {% endif %}
-                                    </h6>
-                                    <button class="btn btn-sm btn-outline-success mark-complete-btn" 
-                                            onclick="markContentComplete({{ content.id }})"
-                                            {% if progress and progress.get_content_progress().get(content.id | string) %}
-                                            style="display: none;"
-                                            {% endif %}>
-                                        Mark Complete
-                                    </button>
-                                    <span class="badge bg-success completed-badge" 
-                                          {% if not (progress and progress.get_content_progress().get(content.id | string)) %}
-                                          style="display: none;"
-                                          {% endif %}>
-                                        ✓ Completed
-                                    </span>
-                                </div>
-                                
-                                <div class="content-body">
-                                    {% if content.content_type in ['kana', 'kanji', 'vocabulary', 'grammar'] %}
-                                        {% set content_data = content.get_content_data() %}
-                                        {% if content_data %}
-                                            {% if content.content_type == 'kana' %}
-                                                <div class="row">
-                                                    <div class="col-md-2 text-center">
-                                                        <h2 class="text-primary">{{ content_data.character }}</h2>
-                                                    </div>
-                                                    <div class="col-md-10">
-                                                        <p><strong>Romanization:</strong> {{ content_data.romanization }}</p>
-                                                        <p><strong>Type:</strong> {{ content_data.type | title }}</p>
-                                                        {% if content_data.stroke_order_info %}
-                                                        <p><strong>Stroke Order:</strong> {{ content_data.stroke_order_info }}</p>
-                                                        {% endif %}
-                                                    </div>
-                                                </div>
-                                            {% elif content.content_type == 'kanji' %}
-                                                <div class="row">
-                                                    <div class="col-md-2 text-center">
-                                                        <h2 class="text-primary">{{ content_data.character }}</h2>
-                                                    </div>
-                                                    <div class="col-md-10">
-                                                        <p><strong>Meaning:</strong> {{ content_data.meaning }}</p>
-                                                        {% if content_data.onyomi %}
-                                                        <p><strong>On'yomi:</strong> {{ content_data.onyomi }}</p>
-                                                        {% endif %}
-                                                        {% if content_data.kunyomi %}
-                                                        <p><strong>Kun'yomi:</strong> {{ content_data.kunyomi }}</p>
-                                                        {% endif %}
-                                                        {% if content_data.jlpt_level %}
-                                                        <p><strong>JLPT Level:</strong> N{{ content_data.jlpt_level }}</p>
-                                                        {% endif %}
-                                                    </div>
-                                                </div>
-                                            {% elif content.content_type == 'vocabulary' %}
-                                                <div class="row">
-                                                    <div class="col-md-3">
-                                                        <h4 class="text-primary">{{ content_data.word }}</h4>
-                                                        <p class="text-muted">{{ content_data.reading }}</p>
-                                                    </div>
-                                                    <div class="col-md-9">
-                                                        <p><strong>Meaning:</strong> {{ content_data.meaning }}</p>
-                                                        {% if content_data.example_sentence_japanese %}
-                                                        <p><strong>Example:</strong> {{ content_data.example_sentence_japanese }}</p>
-                                                        {% if content_data.example_sentence_english %}
-                                                        <p><strong>Translation:</strong> {{ content_data.example_sentence_english }}</p>
-                                                        {% endif %}
-                                                        {% endif %}
-                                                    </div>
-                                                </div>
-                                            {% elif content.content_type == 'grammar' %}
-                                                <h5>{{ content_data.title }}</h5>
-                                                <p>{{ content_data.explanation }}</p>
-                                                {% if content_data.structure %}
-                                                <p><strong>Structure:</strong> <code>{{ content_data.structure }}</code></p>
-                                                {% endif %}
-                                                {% if content_data.example_sentences %}
-                                                <p><strong>Examples:</strong> {{ content_data.example_sentences }}</p>
-                                                {% endif %}
-                                            {% endif %}
-                                        {% else %}
-                                            <p class="text-muted">Content not found.</p>
-                                        {% endif %}
-                                    {% else %}
-                                        <!-- Enhanced Text Content Display -->
-                                        {% if content.content_type == 'text' %}
-                                        <div class="text-content-container">
-                                            {% if content.title %}
-                                            <div class="content-header mb-3">
-                                                <h4 class="content-title">{{ content.title }}</h4>
-                                                {% if content.content_text and 'information_slide' in content.content_text %}
-                                                <span class="badge bg-info">Information Slide</span>
-                                                {% endif %}
-                                            </div>
-                                            {% endif %}
-                                            
-                                            <div class="rich-text-content">
-                                                {{ content.content_text | safe }}
-                                            </div>
-                                        </div>
-                                        {% else %}
-                                            <!-- Custom content (image, video, audio) -->
-                                            {% if content.content_text %}
-                                            <div class="mb-3">{{ content.content_text | safe }}</div>
-                                            {% endif %}
-                                            
-                                            {% if content.media_url %}
-                                                {% if content.content_type == 'image' %}
-                                                <img src="{{ content.media_url }}" class="img-fluid rounded" alt="{{ content.title }}">
-                                                {% elif content.content_type == 'video' %}
-                                                <div class="ratio ratio-16x9">
-                                                    <iframe src="{{ content.media_url | to_embed_url }}" allowfullscreen></iframe>
-                                                </div>
-                                                {% elif content.content_type == 'audio' %}
-                                                <audio controls class="w-100">
-                                                    <source src="{{ content.media_url }}" type="audio/mpeg">
-                                                    Your browser does not support the audio element.
-                                                </audio>
-                                                {% endif %}
-                                            {% endif %}
-                                        {% endif %}
-                                    {% endif %}
-                                    <!-- Interactive Content Display -->
-                                    {% if content.is_interactive %}
-                                    <div class="interactive-content-container" data-content-id="{{ content.id }}">
-                                        {% for question in content.quiz_questions %}
-                                        <div class="quiz-question mb-4" data-question-id="{{ question.id }}" data-question-type="{{ question.question_type }}">
-                                            <div class="question-header mb-3">
-                                                <h5>{{ question.question_text | safe }}</h5>
-                                                {% if question.points > 1 %}
-                                                <span class="badge bg-primary">{{ question.points }} points</span>
-                                                {% endif %}
-                                            </div>
-                                            
-                                            {% if question.question_type == 'multiple_choice' %}
-                                            <div class="multiple-choice-options">
-                                                {% for option in question.options | sort(attribute='order_index') %}
-                                                <div class="form-check mb-2">
-                                                    <input class="form-check-input" type="radio" name="question_{{ question.id }}" 
-                                                           id="option_{{ option.id }}" value="{{ option.id }}">
-                                                    <label class="form-check-label" for="option_{{ option.id }}">
-                                                        {{ option.option_text }}
-                                                    </label>
-                                                </div>
-                                                {% endfor %}
-                                            </div>
-                                            
-                                            {% elif question.question_type == 'fill_blank' %}
-                                            <div class="fill-blank-input">
-                                                <div class="question-text mb-3">
-                                                    {{ question.question_text | replace('[BLANK]', '<input type="text" class="form-control d-inline-block" style="width: 200px;" id="blank_' + question.id|string + '">') | safe }}
-                                                </div>
-                                            </div>
-                                            
-                                            {% elif question.question_type == 'true_false' %}
-                                            <div class="true-false-options">
-                                                {% for option in question.options | sort(attribute='order_index') %}
-                                                <div class="form-check mb-2">
-                                                    <input class="form-check-input" type="radio" name="question_{{ question.id }}" 
-                                                           id="option_{{ option.id }}" value="{{ option.id }}">
-                                                    <label class="form-check-label" for="option_{{ option.id }}">
-                                                        {{ option.option_text }}
-                                                    </label>
-                                                </div>
-                                                {% endfor %}
-                                            </div>
-                                            {% endif %}
-                                            
-                                            <div class="question-actions mt-3">
-                                                <button class="btn btn-primary" onclick="submitQuizAnswer('{{ lesson.id }}', '{{ question.id }}')">
-                                                    Submit Answer
+                    {% if lesson.pages %}
+                        <div id="lessonCarousel" class="carousel slide" data-bs-interval="false">
+                            <div class="carousel-inner">
+                                {% for page_content in lesson.pages %}
+                                <div class="carousel-item {% if loop.first %}active{% endif %}">
+                                    <div class="page-container p-3">
+                                        <h4 class="page-title mb-4 text-center text-muted">Page {{ loop.index }} / {{ lesson.pages|length }}</h4>
+                                        {% for content in page_content %}
+                                        <div class="content-item mb-4 p-3 border rounded bg-white shadow-sm" data-content-id="{{ content.id }}">
+                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <h6 class="mb-0">
+                                                    {{ content.title or (content.content_type | title + ' #' + (content.content_id | string if content.content_id else 'Custom')) }}
+                                                    {% if content.is_optional %}
+                                                    <span class="badge bg-warning ms-2">Optional</span>
+                                                    {% endif %}
+                                                </h6>
+                                                <button class="btn btn-sm btn-outline-success mark-complete-btn" 
+                                                        onclick="markContentComplete({{ content.id }})"
+                                                        {% if progress and progress.get_content_progress().get(content.id | string) %}
+                                                        style="display: none;"
+                                                        {% endif %}>
+                                                    Mark Complete
                                                 </button>
-                                                <div class="quiz-feedback mt-2" id="feedback_{{ question.id }}" style="display: none;"></div>
+                                                <span class="badge bg-success completed-badge" 
+                                                      {% if not (progress and progress.get_content_progress().get(content.id | string)) %}
+                                                      style="display: none;"
+                                                      {% endif %}>
+                                                    ✓ Completed
+                                                </span>
                                             </div>
                                             
-                                            <div class="quiz-attempts mt-2">
-                                                <small class="text-muted">
-                                                    Attempts remaining: <span id="attempts_{{ question.id }}">{{ content.max_attempts }}</span>
-                                                </small>
+                                            <div class="content-body">
+                                                {% if content.content_type in ['kana', 'kanji', 'vocabulary', 'grammar'] %}
+                                                    {% set content_data = content.get_content_data() %}
+                                                    {% if content_data %}
+                                                        {% if content.content_type == 'kana' %}
+                                                            <div class="row">
+                                                                <div class="col-md-2 text-center">
+                                                                    <h2 class="text-primary">{{ content_data.character }}</h2>
+                                                                </div>
+                                                                <div class="col-md-10">
+                                                                    <p><strong>Romanization:</strong> {{ content_data.romanization }}</p>
+                                                                    <p><strong>Type:</strong> {{ content_data.type | title }}</p>
+                                                                    {% if content_data.stroke_order_info %}
+                                                                    <p><strong>Stroke Order:</strong> {{ content_data.stroke_order_info }}</p>
+                                                                    {% endif %}
+                                                                </div>
+                                                            </div>
+                                                        {% elif content.content_type == 'kanji' %}
+                                                            <div class="row">
+                                                                <div class="col-md-2 text-center">
+                                                                    <h2 class="text-primary">{{ content_data.character }}</h2>
+                                                                </div>
+                                                                <div class="col-md-10">
+                                                                    <p><strong>Meaning:</strong> {{ content_data.meaning }}</p>
+                                                                    {% if content_data.onyomi %}
+                                                                    <p><strong>On'yomi:</strong> {{ content_data.onyomi }}</p>
+                                                                    {% endif %}
+                                                                    {% if content_data.kunyomi %}
+                                                                    <p><strong>Kun'yomi:</strong> {{ content_data.kunyomi }}</p>
+                                                                    {% endif %}
+                                                                    {% if content_data.jlpt_level %}
+                                                                    <p><strong>JLPT Level:</strong> N{{ content_data.jlpt_level }}</p>
+                                                                    {% endif %}
+                                                                </div>
+                                                            </div>
+                                                        {% elif content.content_type == 'vocabulary' %}
+                                                            <div class="row">
+                                                                <div class="col-md-3">
+                                                                    <h4 class="text-primary">{{ content_data.word }}</h4>
+                                                                    <p class="text-muted">{{ content_data.reading }}</p>
+                                                                </div>
+                                                                <div class="col-md-9">
+                                                                    <p><strong>Meaning:</strong> {{ content_data.meaning }}</p>
+                                                                    {% if content_data.example_sentence_japanese %}
+                                                                    <p><strong>Example:</strong> {{ content_data.example_sentence_japanese }}</p>
+                                                                    {% if content_data.example_sentence_english %}
+                                                                    <p><strong>Translation:</strong> {{ content_data.example_sentence_english }}</p>
+                                                                    {% endif %}
+                                                                    {% endif %}
+                                                                </div>
+                                                            </div>
+                                                        {% elif content.content_type == 'grammar' %}
+                                                            <h5>{{ content_data.title }}</h5>
+                                                            <p>{{ content_data.explanation }}</p>
+                                                            {% if content_data.structure %}
+                                                            <p><strong>Structure:</strong> <code>{{ content_data.structure }}</code></p>
+                                                            {% endif %}
+                                                            {% if content_data.example_sentences %}
+                                                            <p><strong>Examples:</strong> {{ content_data.example_sentences }}</p>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    {% else %}
+                                                        <p class="text-muted">Content not found.</p>
+                                                    {% endif %}
+                                                {% else %}
+                                                    <!-- Enhanced Text Content Display -->
+                                                    {% if content.content_type == 'text' %}
+                                                    <div class="text-content-container">
+                                                        {% if content.title %}
+                                                        <div class="content-header mb-3">
+                                                            <h4 class="content-title">{{ content.title }}</h4>
+                                                            {% if content.content_text and 'information_slide' in content.content_text %}
+                                                            <span class="badge bg-info">Information Slide</span>
+                                                            {% endif %}
+                                                        </div>
+                                                        {% endif %}
+                                                        
+                                                        <div class="rich-text-content">
+                                                            {{ content.content_text | safe }}
+                                                        </div>
+                                                    </div>
+                                                    {% else %}
+                                                        <!-- Custom content (image, video, audio) -->
+                                                        {% if content.content_text %}
+                                                        <div class="mb-3">{{ content.content_text | safe }}</div>
+                                                        {% endif %}
+                                                        
+                                                        {% if content.media_url %}
+                                                            {% if content.content_type == 'image' %}
+                                                            <img src="{{ content.media_url }}" class="img-fluid rounded" alt="{{ content.title }}">
+                                                            {% elif content.content_type == 'video' %}
+                                                            <div class="ratio ratio-16x9">
+                                                                <iframe src="{{ content.media_url | to_embed_url }}" allowfullscreen></iframe>
+                                                            </div>
+                                                            {% elif content.content_type == 'audio' %}
+                                                            <audio controls class="w-100">
+                                                                <source src="{{ content.media_url }}" type="audio/mpeg">
+                                                                Your browser does not support the audio element.
+                                                            </audio>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    {% endif %}
+                                                {% endif %}
+                                                <!-- Interactive Content Display -->
+                                                {% if content.is_interactive %}
+                                                <div class="interactive-content-container" data-content-id="{{ content.id }}">
+                                                    {% for question in content.quiz_questions %}
+                                                    <div class="quiz-question mb-4" data-question-id="{{ question.id }}" data-question-type="{{ question.question_type }}">
+                                                        <div class="question-header mb-3">
+                                                            <h5>{{ question.question_text | safe }}</h5>
+                                                            {% if question.points > 1 %}
+                                                            <span class="badge bg-primary">{{ question.points }} points</span>
+                                                            {% endif %}
+                                                        </div>
+                                                        
+                                                        {% if question.question_type == 'multiple_choice' %}
+                                                        <div class="multiple-choice-options">
+                                                            {% for option in question.options | sort(attribute='order_index') %}
+                                                            <div class="form-check mb-2">
+                                                                <input class="form-check-input" type="radio" name="question_{{ question.id }}" 
+                                                                       id="option_{{ option.id }}" value="{{ option.id }}">
+                                                                <label class="form-check-label" for="option_{{ option.id }}">
+                                                                    {{ option.option_text }}
+                                                                </label>
+                                                            </div>
+                                                            {% endfor %}
+                                                        </div>
+                                                        
+                                                        {% elif question.question_type == 'fill_blank' %}
+                                                        <div class="fill-blank-input">
+                                                            <div class="question-text mb-3">
+                                                                {{ question.question_text | replace('[BLANK]', '<input type="text" class="form-control d-inline-block" style="width: 200px;" id="blank_' + question.id|string + '">') | safe }}
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        {% elif question.question_type == 'true_false' %}
+                                                        <div class="true-false-options">
+                                                            {% for option in question.options | sort(attribute='order_index') %}
+                                                            <div class="form-check mb-2">
+                                                                <input class="form-check-input" type="radio" name="question_{{ question.id }}" 
+                                                                       id="option_{{ option.id }}" value="{{ option.id }}">
+                                                                <label class="form-check-label" for="option_{{ option.id }}">
+                                                                    {{ option.option_text }}
+                                                                </label>
+                                                            </div>
+                                                            {% endfor %}
+                                                        </div>
+                                                        {% endif %}
+                                                        
+                                                        <div class="question-actions mt-3">
+                                                            <button class="btn btn-primary" onclick="submitQuizAnswer('{{ lesson.id }}', '{{ question.id }}')">
+                                                                Submit Answer
+                                                            </button>
+                                                            <div class="quiz-feedback mt-2" id="feedback_{{ question.id }}" style="display: none;"></div>
+                                                        </div>
+                                                        
+                                                        <div class="quiz-attempts mt-2">
+                                                            <small class="text-muted">
+                                                                Attempts remaining: <span id="attempts_{{ question.id }}">{{ content.max_attempts }}</span>
+                                                            </small>
+                                                        </div>
+                                                    </div>
+                                                    {% endfor %}
+                                                </div>
+                                                {% endif %}
                                             </div>
                                         </div>
                                         {% endfor %}
                                     </div>
-                                    {% endif %}
                                 </div>
+                                {% endfor %}
                             </div>
-                            {% endfor %}
+                            <button class="carousel-control-prev" type="button" data-bs-target="#lessonCarousel" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#lessonCarousel" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
                         </div>
                     {% else %}
                         <div class="text-center py-5">

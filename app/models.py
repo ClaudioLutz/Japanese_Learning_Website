@@ -157,6 +157,23 @@ class Lesson(db.Model):
         
         return True, "Accessible"
 
+    @property
+    def pages(self):
+        """Groups content items by page number for rendering."""
+        from collections import defaultdict
+        if not self.content_items:
+            return []
+        
+        pages_dict = defaultdict(list)
+        # Sort all content items first by page, then by their order within the page
+        sorted_content = sorted(self.content_items, key=lambda c: (c.page_number, c.order_index))
+        
+        for item in sorted_content:
+            pages_dict[item.page_number].append(item)
+            
+        # Return a list of pages (which are lists of content items), sorted by page number
+        return [pages_dict[p_num] for p_num in sorted(pages_dict.keys())]
+
 class LessonPrerequisite(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     lesson_id = db.Column(db.Integer, db.ForeignKey('lesson.id'), nullable=False)
@@ -176,6 +193,7 @@ class LessonContent(db.Model):
     content_text = db.Column(db.Text)  # for text content
     media_url = db.Column(db.String(255))  # for multimedia content
     order_index = db.Column(db.Integer, default=0)  # order within the lesson
+    page_number = db.Column(db.Integer, default=1, nullable=False)  # Add page number
     is_optional = db.Column(db.Boolean, default=False)  # whether this content is optional
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     

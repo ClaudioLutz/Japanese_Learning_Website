@@ -232,9 +232,18 @@
         <div class="modal-body">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h5 id="contentLessonTitle">Lesson Content</h5>
-                <button type="button" class="btn btn-sm btn-primary" onclick="openAddContentModal()">
-                    <i class="fas fa-plus"></i> Add Content
-                </button>
+                <div>
+                    <button type="button" class="btn btn-sm btn-secondary" onclick="addNewPage()">
+                        <i class="fas fa-plus"></i> Add New Page
+                    </button>
+                    <button type="button" class="btn btn-sm btn-primary" onclick="openAddContentModal()">
+                        <i class="fas fa-plus"></i> Add Content
+                    </button>
+                </div>
+            </div>
+            
+            <div id="pagesContainer" class="mt-3">
+                <!-- Pages will be loaded here -->
             </div>
             
             <!-- Individual Actions Panel -->
@@ -328,6 +337,31 @@
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" onclick="closeModal('contentPreviewModal')">Close</button>
             <button type="button" class="btn btn-primary" onclick="editContentFromPreview()">Edit Content</button>
+        </div>
+    </div>
+</div>
+
+<!-- Page Editor Modal -->
+<div id="pageEditorModal" class="modal">
+    <div class="modal-content" style="max-width: 1400px;">
+        <div class="modal-header">
+            <h4 id="pageEditorTitle">Edit Page</h4>
+            <span class="close" onclick="closeModal('pageEditorModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 id="pageEditorSubtitle">Page Content</h5>
+                <button type="button" class="btn btn-sm btn-primary" onclick="openAddContentToPageModal()">
+                    <i class="fas fa-plus"></i> Add Content to This Page
+                </button>
+            </div>
+            
+            <div id="pageContentContainer">
+                <!-- Page content will be loaded here -->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeModal('pageEditorModal')">Close</button>
         </div>
     </div>
 </div>
@@ -620,13 +654,19 @@
                     
                     <!-- Common fields for all content types -->
                     <div class="row mt-3">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="contentOrder">Order Index</label>
                                 <input type="number" id="contentOrder" name="order_index" class="form-control" min="0" value="0">
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="contentPageNumber">Page Number *</label>
+                                <input type="number" id="contentPageNumber" name="page_number" class="form-control" min="1" value="1" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <div class="form-check mt-4">
                                     <input type="checkbox" id="contentOptional" name="is_optional" class="form-check-input">
@@ -1154,58 +1194,134 @@ function manageContent(lessonId, lessonTitle) {
     openModal('lessonContentModal');
 }
 
-// Load lesson content
+// Load lesson content with simplified page overview
 async function loadLessonContent(lessonId) {
     try {
         const response = await fetch(`/api/admin/lessons/${lessonId}/content`);
         const content = await response.json();
         
-        const tbody = document.querySelector('#lessonContentTable tbody');
-        tbody.innerHTML = '';
+        const pagesContainer = document.getElementById('pagesContainer');
+        if (!pagesContainer) {
+            // Fallback to old table structure if pagesContainer doesn't exist
+            loadLessonContentOld(content);
+            return;
+        }
         
-        content.forEach((item, index) => {
-            const row = document.createElement('tr');
-            row.setAttribute('data-content-id', item.id);
-            row.innerHTML = `
-                <td>
-                    <div class="d-flex flex-column align-items-center">
-                        <button class="btn btn-sm reorder-btn" onclick="moveContent(${item.id}, 'up')" ${index === 0 ? 'disabled' : ''}>▲</button>
-                        <span class="order-number my-1">${item.order_index}</span>
-                        <button class="btn btn-sm reorder-btn" onclick="moveContent(${item.id}, 'down')" ${index === content.length - 1 ? 'disabled' : ''}>▼</button>
-                    </div>
-                </td>
-                <td>
-                    <span class="badge ${getContentTypeBadgeClass(item.content_type)}">${item.content_type}</span>
-                    ${item.is_interactive ? '<span class="badge bg-info ms-1">Interactive</span>' : ''}
-                </td>
-                <td>
-                    <div class="content-title">
-                        ${item.title || `${item.content_type} #${item.content_id || 'Custom'}`}
-                    </div>
-                    ${item.content_text ? `<small class="text-muted">${truncateText(item.content_text, 50)}</small>` : ''}
-                </td>
-                <td>
-                    <span class="badge ${item.is_published ? 'bg-success' : 'bg-secondary'}">
-                        ${item.is_published ? 'Published' : 'Draft'}
-                    </span>
-                </td>
-                <td>
-                    <span class="badge ${item.is_optional ? 'bg-warning' : 'bg-success'}">
-                        ${item.is_optional ? 'Optional' : 'Required'}
-                    </span>
-                </td>
-                <td>
-                    <input type="checkbox" class="content-checkbox" value="${item.id}" onchange="toggleBulkOperations()">
-                </td>
-            `;
-            tbody.appendChild(row);
+        pagesContainer.innerHTML = '';
+        
+        const pages = {};
+        content.forEach(item => {
+            const pageNum = item.page_number || 1;
+            if (!pages[pageNum]) {
+                pages[pageNum] = {
+                    number: pageNum,
+                    content: [],
+                    title: `Page ${pageNum}`,
+                    description: ''
+                };
+            }
+            pages[pageNum].content.push(item);
         });
+
+        const sortedPageNumbers = Object.keys(pages).map(Number).sort((a, b) => a - b);
         
-        // No more drag and drop
+        if (sortedPageNumbers.length === 0) {
+            sortedPageNumbers.push(1); // Ensure at least one page is displayed
+        }
+
+        for (const pageNum of sortedPageNumbers) {
+            const page = pages[pageNum] || { number: pageNum, content: [], title: `Page ${pageNum}`, description: '' };
+            const contentCount = page.content.length;
+            
+            // Generate a brief description based on content
+            let description = '';
+            if (contentCount === 0) {
+                description = 'No content added yet';
+            } else {
+                const contentTypes = [...new Set(page.content.map(item => item.content_type))];
+                description = `${contentCount} item${contentCount !== 1 ? 's' : ''} (${contentTypes.join(', ')})`;
+            }
+
+            const pageHtml = `
+                <div class="card mb-3 page-overview-card" data-page-number="${pageNum}">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h6 class="card-title mb-1">Page ${pageNum}</h6>
+                                <p class="card-text text-muted mb-0">${description}</p>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <button class="btn btn-sm btn-primary me-2" onclick="editPage(${pageNum})">
+                                    <i class="fas fa-edit"></i> Edit Page
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="deletePage(${pageNum})">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            pagesContainer.insertAdjacentHTML('beforeend', pageHtml);
+        }
+        
+        // If no pages exist, show a message
+        if (sortedPageNumbers.length === 0) {
+            pagesContainer.innerHTML = `
+                <div class="text-center py-4">
+                    <h6 class="text-muted">No pages created yet</h6>
+                    <p class="text-muted">Click "Add New Page" to create your first page</p>
+                </div>
+            `;
+        }
     } catch (error) {
         console.error('Error loading lesson content:', error);
         alert('Error loading lesson content');
     }
+}
+
+// Fallback function for old table structure
+function loadLessonContentOld(content) {
+    const tbody = document.querySelector('#lessonContentTable tbody');
+    tbody.innerHTML = '';
+    
+    content.forEach((item, index) => {
+        const row = document.createElement('tr');
+        row.setAttribute('data-content-id', item.id);
+        row.innerHTML = `
+            <td>
+                <div class="d-flex flex-column align-items-center">
+                    <button class="btn btn-sm reorder-btn" onclick="moveContent(${item.id}, 'up')" ${index === 0 ? 'disabled' : ''}>▲</button>
+                    <span class="order-number my-1">${item.order_index}</span>
+                    <button class="btn btn-sm reorder-btn" onclick="moveContent(${item.id}, 'down')" ${index === content.length - 1 ? 'disabled' : ''}>▼</button>
+                </div>
+            </td>
+            <td>
+                <span class="badge ${getContentTypeBadgeClass(item.content_type)}">${item.content_type}</span>
+                ${item.is_interactive ? '<span class="badge bg-info ms-1">Interactive</span>' : ''}
+            </td>
+            <td>
+                <div class="content-title">
+                    ${item.title || `${item.content_type} #${item.content_id || 'Custom'}`}
+                </div>
+                ${item.content_text ? `<small class="text-muted">${truncateText(item.content_text, 50)}</small>` : ''}
+            </td>
+            <td>
+                <span class="badge ${item.is_published ? 'bg-success' : 'bg-secondary'}">
+                    ${item.is_published ? 'Published' : 'Draft'}
+                </span>
+            </td>
+            <td>
+                <span class="badge ${item.is_optional ? 'bg-warning' : 'bg-success'}">
+                    ${item.is_optional ? 'Optional' : 'Required'}
+                </span>
+            </td>
+            <td>
+                <input type="checkbox" class="content-checkbox" value="${item.id}" onchange="toggleBulkOperations()">
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
 }
 
 // Remove content from lesson
@@ -2132,6 +2248,18 @@ async function saveContentToLesson(isEditing = false) {
     const formData = new FormData(document.getElementById('contentConfigForm'));
     currentContentData = Object.fromEntries(formData.entries());
     currentContentData.content_type = selectedContentType;
+    
+    // Debug: Check if page number is being captured
+    const pageNumberField = document.getElementById('contentPageNumber');
+    console.log('Page number field value:', pageNumberField ? pageNumberField.value : 'Field not found');
+    console.log('Current page number variable:', currentPageNumber);
+    console.log('Form data page_number:', currentContentData.page_number);
+    
+    // Ensure page number is set correctly - prioritize currentPageNumber if we're in page editor mode
+    if (currentPageNumber && !isEditing) {
+        currentContentData.page_number = currentPageNumber;
+        console.log('Overriding page number with currentPageNumber:', currentPageNumber);
+    }
 
     // Consolidate title from different sections
     if (currentContentData.text_title) {
@@ -2270,6 +2398,7 @@ async function saveContentToLesson(isEditing = false) {
                         file_type: uploadedFileData.file_type,
                         original_filename: uploadedFileData.original_filename,
                         order_index: currentContentData.order_index || 0,
+                        page_number: currentContentData.page_number || 1,
                         is_optional: currentContentData.is_optional === 'on'
                     };
                 } else {
@@ -2580,6 +2709,350 @@ function clearFileInput() {
 }
 
 
+// Add new JavaScript functions for page management
+function addNewPage() {
+    const pagesContainer = document.getElementById('pagesContainer');
+    const existingPages = pagesContainer.querySelectorAll('[data-page-number]');
+    const lastPage = existingPages.length > 0 ? Math.max(...Array.from(existingPages).map(p => parseInt(p.dataset.pageNumber))) : 0;
+    const newPageNum = lastPage + 1;
+
+    const newPageHtml = `
+        <div class="card mb-3 page-overview-card" data-page-number="${newPageNum}">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h6 class="card-title mb-1">Page ${newPageNum}</h6>
+                        <p class="card-text text-muted mb-0">No content added yet</p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <button class="btn btn-sm btn-primary me-2" onclick="editPage(${newPageNum})">
+                            <i class="fas fa-edit"></i> Edit Page
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deletePage(${newPageNum})">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    pagesContainer.insertAdjacentHTML('beforeend', newPageHtml);
+}
+
+async function deletePage(pageNum) {
+    if (!confirm(`Are you sure you want to delete Page ${pageNum} and all its content? This cannot be undone.`)) {
+        return;
+    }
+    try {
+        const response = await fetch(`/api/admin/lessons/${currentLessonId}/pages/${pageNum}/delete`, {
+            method: 'DELETE',
+            headers: { 'X-CSRFToken': getCSRFToken() }
+        });
+        if (response.ok) {
+            alert('Page deleted successfully');
+            loadLessonContent(currentLessonId);
+        } else {
+            const error = await response.json();
+            alert('Error: ' + error.error);
+        }
+    } catch (error) {
+        console.error('Error deleting page:', error);
+        alert('An error occurred while deleting the page.');
+    }
+}
+
+// Update populateContentForm to handle page number
+async function populateContentForm(content) {
+    // This function populates the 'Add Content' modal with existing data for editing.
+    selectedContentType = content.content_type;
+
+    // Ensure content options are loaded before generating the form
+    if (['kana', 'kanji', 'vocabulary', 'grammar'].includes(selectedContentType)) {
+        await loadContentOptions(selectedContentType);
+    }
+
+    // Show the config step directly, bypassing the type selection
+    document.getElementById('configStepTitle').textContent = `Edit ${selectedContentType.charAt(0).toUpperCase() + selectedContentType.slice(1)} Content`;
+    generateContentConfigForm(selectedContentType, content); // Pass content to set initial values
+    showContentConfigStep();
+    
+    // Disable content type selection step
+    document.getElementById('contentTypeStep').style.display = 'none';
+
+    // Populate common fields
+    document.getElementById('contentOrder').value = content.order_index || 0;
+    document.getElementById('contentPageNumber').value = content.page_number || 1; // Add this
+    document.getElementById('contentOptional').checked = content.is_optional;
+
+    // Populate type-specific fields
+    if (['kana', 'kanji', 'vocabulary', 'grammar'].includes(content.content_type)) {
+        document.getElementById('existingContentSelect').value = content.content_id;
+        document.getElementById('customTitle').value = content.title || '';
+    } else if (content.content_type === 'text') {
+        document.getElementById('textContentTitle').value = content.title || '';
+        // Rich text content is now set during editor initialization
+    } else if (['video', 'audio', 'image'].includes(content.content_type)) {
+        document.getElementById('mediaTitle').value = content.title || '';
+        document.getElementById('mediaDescription').value = content.content_text || '';
+        
+        if (content.file_path) {
+            toggleContentSource('upload');
+            // Simulate a successful upload for the UI
+            uploadedFileData = {
+                filePath: content.file_path,
+                original_filename: content.original_filename || content.file_path.split('/').pop(),
+                file_size: content.file_size,
+                file_type: content.file_type
+            };
+            showUploadSuccess(uploadedFileData);
+        } else if (content.media_url) {
+            toggleContentSource('url');
+            document.getElementById('mediaUrl').value = content.media_url;
+        }
+    } else if (content.content_type === 'interactive') {
+        document.getElementById('interactiveTitle').value = content.title || '';
+        const interactiveType = content.interactive_type;
+        document.getElementById('interactiveType').value = interactiveType;
+        
+        showInteractiveForm(interactiveType);
+        
+        if (interactiveType === 'multiple_choice') {
+            document.getElementById('mcQuestion').value = content.question_text || '';
+            document.getElementById('mcExplanation').value = content.explanation || '';
+            
+            const optionsContainer = document.getElementById('mcOptions');
+            optionsContainer.innerHTML = '';
+            optionCount = 0;
+            
+            if (content.options && content.options.length > 0) {
+                content.options.forEach(option => {
+                    addOption();
+                    const optionIndex = optionCount - 1;
+                    document.querySelector(`input[name="option_${optionIndex}"]`).value = option.text;
+                    document.querySelector(`input[name="feedback_${optionIndex}"]`).value = option.feedback || '';
+                    if (option.is_correct) {
+                        document.querySelector(`input[name="correct_option"][value="${optionIndex}"]`).checked = true;
+                    }
+                });
+            }
+        } else if (interactiveType === 'fill_blank') {
+            document.getElementById('fbQuestion').value = content.question_text || '';
+            document.getElementById('fbAnswers').value = content.correct_answers || '';
+            document.getElementById('fbExplanation').value = content.explanation || '';
+        } else if (interactiveType === 'true_false') {
+            document.getElementById('tfQuestion').value = content.question_text || '';
+            document.getElementById('tfExplanation').value = content.explanation || '';
+            if (content.correct_answer === true) {
+                document.getElementById('tfTrue').checked = true;
+            } else if (content.correct_answer === false) {
+                document.getElementById('tfFalse').checked = true;
+            }
+        }
+    }
+}
+
+// Page editor functionality
+let currentPageNumber = null;
+
+async function editPage(pageNumber) {
+    currentPageNumber = pageNumber;
+    
+    // Update modal titles
+    document.getElementById('pageEditorTitle').textContent = `Edit Page ${pageNumber}`;
+    document.getElementById('pageEditorSubtitle').textContent = `Page ${pageNumber} Content`;
+    
+    // Load page content
+    await loadPageContent(pageNumber);
+    
+    // Open the page editor modal
+    openModal('pageEditorModal');
+}
+
+async function loadPageContent(pageNumber) {
+    try {
+        const response = await fetch(`/api/admin/lessons/${currentLessonId}/content`);
+        const allContent = await response.json();
+        
+        // Filter content for this specific page
+        const pageContent = allContent.filter(item => item.page_number === pageNumber);
+        
+        const container = document.getElementById('pageContentContainer');
+        
+        if (pageContent.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-4">
+                    <h6 class="text-muted">No content on this page yet</h6>
+                    <p class="text-muted">Click "Add Content to This Page" to get started</p>
+                </div>
+            `;
+            return;
+        }
+        
+        // Sort content by order index
+        pageContent.sort((a, b) => a.order_index - b.order_index);
+        
+        let contentHtml = `
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th width="60">Order</th>
+                            <th>Type</th>
+                            <th>Title</th>
+                            <th>Optional</th>
+                            <th width="200">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+        
+        pageContent.forEach((item, index) => {
+            contentHtml += `
+                <tr data-content-id="${item.id}">
+                    <td>
+                        <div class="d-flex flex-column align-items-center">
+                            <button class="btn btn-sm reorder-btn" onclick="moveContentInPage(${item.id}, 'up')" ${index === 0 ? 'disabled' : ''}>▲</button>
+                            <span class="order-number my-1">${item.order_index}</span>
+                            <button class="btn btn-sm reorder-btn" onclick="moveContentInPage(${item.id}, 'down')" ${index === pageContent.length - 1 ? 'disabled' : ''}>▼</button>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge ${getContentTypeBadgeClass(item.content_type)}">${item.content_type}</span>
+                        ${item.is_interactive ? '<span class="badge bg-info ms-1">Interactive</span>' : ''}
+                    </td>
+                    <td>
+                        <div class="content-title">
+                            ${item.title || `${item.content_type} #${item.content_id || 'Custom'}`}
+                        </div>
+                        ${item.content_text ? `<small class="text-muted">${truncateText(item.content_text, 50)}</small>` : ''}
+                    </td>
+                    <td>
+                        <span class="badge ${item.is_optional ? 'bg-warning' : 'bg-success'}">
+                            ${item.is_optional ? 'Optional' : 'Required'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-info me-1" onclick="previewContent(${item.id})">
+                            <i class="fas fa-eye"></i> Preview
+                        </button>
+                        <button class="btn btn-sm btn-warning me-1" onclick="editContent(${item.id})">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="removeContentFromPage(${item.id})">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+        
+        contentHtml += `
+                    </tbody>
+                </table>
+            </div>
+        `;
+        
+        container.innerHTML = contentHtml;
+        
+    } catch (error) {
+        console.error('Error loading page content:', error);
+        document.getElementById('pageContentContainer').innerHTML = `
+            <div class="alert alert-danger">
+                Error loading page content. Please try again.
+            </div>
+        `;
+    }
+}
+
+function openAddContentToPageModal() {
+    if (!currentPageNumber) {
+        alert('No page selected');
+        return;
+    }
+    
+    // Close the page editor modal first
+    closeModal('pageEditorModal');
+    
+    // Open the add content modal with the page number pre-filled
+    openAddContentModal(false);
+    
+    // Set the page number in the form - use multiple attempts to ensure it's set
+    const setPageNumber = () => {
+        const pageNumberField = document.getElementById('contentPageNumber');
+        if (pageNumberField) {
+            pageNumberField.value = currentPageNumber;
+            pageNumberField.readOnly = true; // Make it read-only so user can't change it
+            
+            // Also store it as a data attribute for backup
+            pageNumberField.setAttribute('data-locked-page', currentPageNumber);
+            
+            console.log(`Page number set to: ${currentPageNumber}`);
+        } else {
+            console.log('Page number field not found, retrying...');
+            setTimeout(setPageNumber, 50);
+        }
+    };
+    
+    // Try immediately and also with delays
+    setPageNumber();
+    setTimeout(setPageNumber, 100);
+    setTimeout(setPageNumber, 200);
+}
+
+async function moveContentInPage(contentId, direction) {
+    try {
+        const response = await fetch(`/api/admin/lessons/${currentLessonId}/content/${contentId}/move`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            },
+            body: JSON.stringify({ direction: direction })
+        });
+
+        if (response.ok) {
+            // Reload both the page content and the main lesson content view
+            await loadPageContent(currentPageNumber);
+            loadLessonContent(currentLessonId);
+        } else {
+            const error = await response.json();
+            alert('Error: ' + error.error);
+        }
+    } catch (error) {
+        console.error('Error moving content:', error);
+        alert('Error moving content');
+    }
+}
+
+async function removeContentFromPage(contentId) {
+    if (!confirm('Are you sure you want to remove this content from the page?')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/admin/lessons/${currentLessonId}/content/${contentId}/delete`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': getCSRFToken()
+            }
+        });
+        
+        if (response.ok) {
+            // Reload both the page content and the main lesson content view
+            await loadPageContent(currentPageNumber);
+            loadLessonContent(currentLessonId);
+            loadLessons(); // Refresh main table to update content count
+            alert('Content removed successfully!');
+        } else {
+            const error = await response.json();
+            alert('Error: ' + error.error);
+        }
+    } catch (error) {
+        console.error('Error removing content:', error);
+        alert('Error removing content');
+    }
+}
+
 // Modal functions are now handled by base_admin.html
 // Custom cleanup for content modal
 function closeModal(modalId) {
@@ -2590,6 +3063,16 @@ function closeModal(modalId) {
         // Clear uploaded file data when closing modal
         if (modalId === 'addContentModal') {
             uploadedFileData = null;
+            // Reset page number field if it was made read-only
+            const pageNumberField = document.getElementById('contentPageNumber');
+            if (pageNumberField) {
+                pageNumberField.readOnly = false;
+            }
+        }
+        
+        // Reset current page number when closing page editor
+        if (modalId === 'pageEditorModal') {
+            currentPageNumber = null;
         }
     }
 }

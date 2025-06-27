@@ -705,6 +705,7 @@ def add_lesson_content(lesson_id):
         content_text=data.get('content_text'),
         media_url=data.get('media_url'),
         order_index=next_order_index,
+        page_number=data.get('page_number', 1),  # Handle page number
         is_optional=is_optional
     )
     try:
@@ -841,6 +842,7 @@ def update_lesson_content(content_id):
         # Common fields
         content.title = data.get('title', content.title)
         content.order_index = int(data.get('order_index', content.order_index))
+        content.page_number = int(data.get('page_number', content.page_number))  # Handle page number
         is_optional = data.get('is_optional', content.is_optional)
         if isinstance(is_optional, str):
             content.is_optional = is_optional.lower() == 'true'
@@ -1106,6 +1108,30 @@ def duplicate_single_content(content_id):
         db.session.rollback()
         return jsonify({"error": "Failed to duplicate content"}), 500
 
+# Add new route for deleting a page
+@bp.route('/api/admin/lessons/<int:lesson_id>/pages/<int:page_num>/delete', methods=['DELETE'])
+@login_required
+@admin_required
+def delete_lesson_page(lesson_id, page_num):
+    """Deletes a page and all its content items from a lesson."""
+    content_to_delete = LessonContent.query.filter_by(lesson_id=lesson_id, page_number=page_num).all()
+    
+    if not content_to_delete:
+        return jsonify({"error": "Page not found or is empty"}), 404
+    
+    try:
+        for content in content_to_delete:
+            if content.file_path:
+                content.delete_file()
+            db.session.delete(content)
+        
+        db.session.commit()
+        return jsonify({"message": f"Page {page_num} and its {len(content_to_delete)} content items deleted successfully"}), 200
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error deleting page {page_num} from lesson {lesson_id}: {e}")
+        return jsonify({"error": "Failed to delete page"}), 500
+
 # == USER LESSON API ==
 @bp.route('/api/lessons', methods=['GET'])
 @login_required
@@ -1203,7 +1229,8 @@ def add_interactive_content(lesson_id):
         is_interactive=True,
         max_attempts=data.get('max_attempts', 3),
         passing_score=data.get('passing_score', 70),
-        order_index=next_order_index
+        order_index=next_order_index,
+        page_number=data.get('page_number', 1)  # Add page number handling
     )
     
     db.session.add(content)
