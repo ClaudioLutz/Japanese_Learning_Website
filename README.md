@@ -6,10 +6,13 @@ A comprehensive web-based Japanese learning platform featuring structured lesson
 
 ### 📚 **Comprehensive Lesson System**
 - **Structured Lessons** - Create lessons combining Kana, Kanji, Vocabulary, Grammar, and multimedia content
+- **Paginated Content** - Organize lesson content into multiple pages for better learning flow
+- **Carousel Navigation** - Swipe-friendly page navigation with manual controls (no auto-scrolling)
 - **Categories & Organization** - Organize lessons into color-coded categories
 - **Prerequisites** - Set lesson dependencies for progressive learning
 - **Free & Premium Content** - Subscription-based access control
 - **Progress Tracking** - Detailed user progress with completion percentages
+- **Interactive Content** - Quiz questions with multiple choice, fill-in-the-blank, and true/false formats
 
 ### 👥 **User Management**
 - **User Registration & Authentication** - Secure user accounts with Flask-Login
@@ -25,11 +28,14 @@ A comprehensive web-based Japanese learning platform featuring structured lesson
 - **Multimedia Support** - Text, images, videos, and audio content (URL-based and direct file uploads)
 
 ### 📊 **Learning Features**
-- **Interactive Lessons** - Step-by-step lesson progression
-- **Progress Tracking** - Individual content completion tracking
+- **Interactive Lessons** - Step-by-step lesson progression with paginated content
+- **Carousel Interface** - Swipe through lesson pages with intuitive navigation controls
+- **Page Management** - Organize content into logical pages for better learning flow
+- **Progress Tracking** - Individual content completion tracking across all pages
 - **Time Monitoring** - Track time spent on lessons
 - **Completion Certificates** - Visual completion indicators
 - **Filtering & Search** - Find lessons by category, difficulty, and type
+- **Manual Navigation** - User-controlled page transitions (no auto-scrolling)
 
 ## 🛠️ Technology Stack
 

@@ -736,15 +736,18 @@ The lesson system provides a comprehensive way for administrators to create stru
 - **Progressive Learning** - Ensures users follow a structured learning path
 - **Access Validation** - Automatic checking of prerequisite completion
 
-#### 4. Enhanced Content Builder (Phase 1)
-- **Visual Content Type Selector** - Intuitive card-based interface with 8 content types
+#### 4. Enhanced Content Builder with Paginated Structure
+- **Visual Content Type Selector** - Intuitive card-based interface with 9 content types including interactive quizzes
 - **Multi-step Wizard** - Step-by-step content creation process (Type Selection → Configuration → Preview → Save)
 - **Dynamic Form Generation** - Forms adapt based on selected content type
 - **Content Preview System** - Preview content before saving to lessons
-- **Mixed Content Types** - Combine existing content with custom multimedia
-- **Content Ordering** - Specify the sequence of content within lessons
+- **Mixed Content Types** - Combine existing content with custom multimedia and interactive elements
+- **Paginated Lesson Structure** - Organize lesson content into multiple pages for better learning flow
+- **Page Management** - Create, edit, and delete individual pages within lessons
+- **Content Ordering** - Specify the sequence of content within lessons and pages
 - **Optional Content** - Mark content items as optional
 - **Rich Media Support** - Text, images, videos, and audio content. Supports URL-based media. For direct file uploads (images, audio, documents): files are first uploaded via a dedicated mechanism (see `/api/admin/upload-file`), and then the returned file path is associated with a lesson content item. Uploaded files are stored on the server (typically in a subdirectory of `UPLOAD_FOLDER` like `app/static/uploads/lessons/images/`) and managed through the lesson builder.
+- **Interactive Content** - Quiz questions with multiple choice, fill-in-the-blank, and true/false formats
 
 ##### Content Types Supported:
 - **Existing Content**: Kana, Kanji, Vocabulary, Grammar (dropdown selection from database)
@@ -1011,9 +1014,12 @@ GET    /uploads/<path:filename>               # Serves uploaded files stored wit
 
 #### User Interface
 - **Lesson Browser** (`/lessons`) - Browse and filter available lessons
-- **Lesson Viewer** (`/lessons/{id}`) - View lesson content and track progress
+- **Lesson Viewer** (`/lessons/{id}`) - View lesson content in a paginated carousel format
+- **Carousel Navigation** - Swipe-friendly page navigation with previous/next controls
+- **Page Indicators** - Clear indication of current page and total pages
 - **Progress Tracking** - Visual progress indicators and completion status
-- **Reset Progress** - Users can reset their progress for a lesson.
+- **Reset Progress** - Users can reset their progress for a lesson
+- **Non-Auto-Scrolling** - Manual navigation only, no automatic page transitions
 
 ### Migration and Setup
 
