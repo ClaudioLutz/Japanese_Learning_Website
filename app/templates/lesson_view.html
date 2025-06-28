@@ -113,15 +113,21 @@
                     {% if lesson.pages %}
                         <div id="lessonCarousel" class="carousel slide" data-bs-interval="false">
                             <div class="carousel-inner">
-                                {% for page_content in lesson.pages %}
+                                {% for page in lesson.pages %}
                                 <div class="carousel-item {% if loop.first %}active{% endif %}">
                                     <div class="page-container p-3">
-                                        <h4 class="page-title mb-4 text-center text-muted">Page {{ loop.index }} / {{ lesson.pages|length }}</h4>
-                                        {% for content in page_content %}
+                                        <h4 class="page-title mb-2 text-center">
+                                            {{ page.metadata.title or 'Page ' ~ loop.index }}
+                                        </h4>
+                                        {% if page.metadata.description %}
+                                        <p class="page-description text-center text-muted mb-4">{{ page.metadata.description }}</p>
+                                        {% endif %}
+                                        
+                                        {% for content in page.content %}
                                         <div class="content-item mb-4 p-3 border rounded bg-white shadow-sm" data-content-id="{{ content.id }}">
                                             <div class="d-flex justify-content-between align-items-start mb-2">
                                                 <h6 class="mb-0">
-                                                    {{ content.title or (content.content_type | title + ' #' + (content.content_id | string if content.content_id else 'Custom')) }}
+                                                    {{ content.title or (content.content_type + ' #' + (content.content_id | string if content.content_id else 'Custom')) }}
                                                     {% if content.is_optional %}
                                                     <span class="badge bg-warning ms-2">Optional</span>
                                                     {% endif %}

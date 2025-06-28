@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request,
 from flask_login import login_user, logout_user, login_required, current_user
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError # Import specific exceptions
 from app import db
-from app.models import User, Kana, Kanji, Vocabulary, Grammar, LessonCategory, Lesson, LessonContent, LessonPrerequisite, UserLessonProgress, QuizQuestion, QuizOption, UserQuizAnswer
+from app.models import User, Kana, Kanji, Vocabulary, Grammar, LessonCategory, Lesson, LessonContent, LessonPrerequisite, UserLessonProgress, QuizQuestion, QuizOption, UserQuizAnswer, LessonPage
 from app.forms import RegistrationForm, LoginForm, CSRFTokenForm
 from functools import wraps # For custom decorators
 
@@ -612,8 +612,24 @@ def get_lesson(item_id):
     item = Lesson.query.get_or_404(item_id)
     lesson_dict = model_to_dict(item)
     lesson_dict['category_name'] = item.category.name if item.category else None
-    lesson_dict['content_items'] = [model_to_dict(content) for content in item.content_items]
+    
+    # Use the updated `pages` property from the model
+    pages_data = []
+    for page in item.pages:
+        page_info = {
+            'page_number': page['content'][0].page_number if page['content'] else None,
+            'content': [model_to_dict(c) for c in page['content']],
+            'metadata': model_to_dict(page['metadata']) if page['metadata'] else None
+        }
+        if page_info['page_number'] is not None:
+            pages_data.append(page_info)
+    
+    lesson_dict['pages'] = sorted(pages_data, key=lambda p: p['page_number'])
     lesson_dict['prerequisites'] = [model_to_dict(prereq.prerequisite_lesson) for prereq in item.prerequisites]
+    
+    # For backward compatibility or other uses, you might still want a flat list of content_items
+    lesson_dict['content_items'] = [model_to_dict(content) for content in item.content_items]
+
     return jsonify(lesson_dict)
 
 @bp.route('/api/admin/lessons/<int:item_id>/edit', methods=['PUT', 'PATCH'])
@@ -688,14 +704,26 @@ def add_lesson_content(lesson_id):
     if not data or not data.get('content_type'):
         return jsonify({"error": "Missing required field: content_type"}), 400
 
+    page_number = data.get('page_number', 1)
+
+    # Ensure a LessonPage entry exists for this page
+    lesson_page = LessonPage.query.filter_by(lesson_id=lesson_id, page_number=page_number).first()
+    if not lesson_page:
+        lesson_page = LessonPage(
+            lesson_id=lesson_id, 
+            page_number=page_number,
+            title=f"Page {page_number}" # Default title
+        )
+        db.session.add(lesson_page)
+
     # Convert string 'false'/'true' to boolean for is_optional
     is_optional = data.get('is_optional', False)
     if isinstance(is_optional, str):
         is_optional = is_optional.lower() == 'true'
 
-    # Determine the next order index
-    last_content = LessonContent.query.filter_by(lesson_id=lesson_id).order_by(LessonContent.order_index.desc()).first()
-    next_order_index = (last_content.order_index + 1) if last_content else 0
+    # Determine the next order index for the given page
+    last_content_on_page = LessonContent.query.filter_by(lesson_id=lesson_id, page_number=page_number).order_by(LessonContent.order_index.desc()).first()
+    next_order_index = (last_content_on_page.order_index + 1) if last_content_on_page else 0
 
     new_content = LessonContent(
         lesson_id=lesson_id,
@@ -705,7 +733,7 @@ def add_lesson_content(lesson_id):
         content_text=data.get('content_text'),
         media_url=data.get('media_url'),
         order_index=next_order_index,
-        page_number=data.get('page_number', 1),  # Handle page number
+        page_number=page_number,
         is_optional=is_optional
     )
     try:
@@ -1113,11 +1141,16 @@ def duplicate_single_content(content_id):
 @login_required
 @admin_required
 def delete_lesson_page(lesson_id, page_num):
-    """Deletes a page and all its content items from a lesson."""
+    """Deletes a page, its metadata, and all its content items from a lesson."""
+    # Also delete the page metadata
+    page_metadata = LessonPage.query.filter_by(lesson_id=lesson_id, page_number=page_num).first()
+    if page_metadata:
+        db.session.delete(page_metadata)
+
     content_to_delete = LessonContent.query.filter_by(lesson_id=lesson_id, page_number=page_num).all()
     
-    if not content_to_delete:
-        return jsonify({"error": "Page not found or is empty"}), 404
+    if not content_to_delete and not page_metadata:
+        return jsonify({"error": "Page not found"}), 404
     
     try:
         for content in content_to_delete:
@@ -1126,11 +1159,49 @@ def delete_lesson_page(lesson_id, page_num):
             db.session.delete(content)
         
         db.session.commit()
-        return jsonify({"message": f"Page {page_num} and its {len(content_to_delete)} content items deleted successfully"}), 200
+        return jsonify({"message": f"Page {page_num} and its content deleted successfully"}), 200
     except Exception as e:
         db.session.rollback()
         current_app.logger.error(f"Error deleting page {page_num} from lesson {lesson_id}: {e}")
         return jsonify({"error": "Failed to delete page"}), 500
+
+@bp.route('/api/admin/lessons/<int:lesson_id>/pages/<int:page_num>', methods=['PUT'])
+@login_required
+@admin_required
+def update_lesson_page(lesson_id, page_num):
+    """Update page title and description."""
+    data = request.json
+    current_app.logger.info(f"Updating page {page_num} for lesson {lesson_id} with data: {data}")
+    
+    page = LessonPage.query.filter_by(lesson_id=lesson_id, page_number=page_num).first()
+    
+    if not page:
+        current_app.logger.error(f"Page {page_num} not found for lesson {lesson_id}")
+        # If page doesn't exist, create it
+        page = LessonPage(
+            lesson_id=lesson_id,
+            page_number=page_num,
+            title=data.get('title', f'Page {page_num}'),
+            description=data.get('description', '')
+        )
+        db.session.add(page)
+        current_app.logger.info(f"Created new page {page_num} for lesson {lesson_id}")
+    else:
+        page.title = data.get('title', page.title)
+        page.description = data.get('description', page.description)
+        current_app.logger.info(f"Updating existing page {page_num} for lesson {lesson_id}")
+
+    try:
+        db.session.commit()
+        current_app.logger.info(f"Successfully committed changes for page {page_num}")
+        return jsonify(model_to_dict(page)), 200
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        current_app.logger.error(f"Database error occurred while updating page {page_num}: {str(e)}", exc_info=True)
+        return jsonify({"error": f"Database error occurred: {str(e)}"}), 500
+    except Exception as e:
+        current_app.logger.error(f"An unexpected error occurred: {str(e)}", exc_info=True)
+        return jsonify({"error": "An unexpected error occurred"}), 500
 
 # == USER LESSON API ==
 @bp.route('/api/lessons', methods=['GET'])

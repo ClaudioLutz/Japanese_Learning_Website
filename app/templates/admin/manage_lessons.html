@@ -349,6 +349,18 @@
             <span class="close" onclick="closeModal('pageEditorModal')">&times;</span>
         </div>
         <div class="modal-body">
+            <form id="pageDetailsForm">
+                <div class="form-group">
+                    <label for="pageTitle">Page Title</label>
+                    <input type="text" id="pageTitle" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="pageDescription">Page Description</label>
+                    <textarea id="pageDescription" class="form-control" rows="3"></textarea>
+                </div>
+                <button type="button" class="btn btn-success" onclick="savePageDetails()">Save Details</button>
+            </form>
+            <hr>
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h5 id="pageEditorSubtitle">Page Content</h5>
                 <button type="button" class="btn btn-sm btn-primary" onclick="openAddContentToPageModal()">
@@ -804,6 +816,12 @@
     background-color: #e9ecef !important;
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.15) !important;
 }
+
+#lessonContentModal .modal-body,
+#pageEditorModal .modal-body {
+    max-height: 75vh;
+    overflow-y: auto;
+}
 </style>
 
 <script>
@@ -1197,49 +1215,36 @@ function manageContent(lessonId, lessonTitle) {
 // Load lesson content with simplified page overview
 async function loadLessonContent(lessonId) {
     try {
-        const response = await fetch(`/api/admin/lessons/${lessonId}/content`);
-        const content = await response.json();
+        const response = await fetch(`/api/admin/lessons/${lessonId}`);
+        const lesson = await response.json();
         
         const pagesContainer = document.getElementById('pagesContainer');
-        if (!pagesContainer) {
-            // Fallback to old table structure if pagesContainer doesn't exist
-            loadLessonContentOld(content);
-            return;
-        }
-        
         pagesContainer.innerHTML = '';
         
-        const pages = {};
-        content.forEach(item => {
-            const pageNum = item.page_number || 1;
-            if (!pages[pageNum]) {
-                pages[pageNum] = {
-                    number: pageNum,
-                    content: [],
-                    title: `Page ${pageNum}`,
-                    description: ''
-                };
-            }
-            pages[pageNum].content.push(item);
-        });
-
-        const sortedPageNumbers = Object.keys(pages).map(Number).sort((a, b) => a - b);
-        
-        if (sortedPageNumbers.length === 0) {
-            sortedPageNumbers.push(1); // Ensure at least one page is displayed
+        if (lesson.pages.length === 0) {
+            pagesContainer.innerHTML = `
+                <div class="text-center py-4">
+                    <h6 class="text-muted">No pages created yet</h6>
+                    <p class="text-muted">Click "Add New Page" to create your first page</p>
+                </div>
+            `;
+            return;
         }
 
-        for (const pageNum of sortedPageNumbers) {
-            const page = pages[pageNum] || { number: pageNum, content: [], title: `Page ${pageNum}`, description: '' };
+        for (const page of lesson.pages) {
+            const pageNum = page.page_number;
             const contentCount = page.content.length;
+            const metadata = page.metadata;
             
-            // Generate a brief description based on content
-            let description = '';
-            if (contentCount === 0) {
-                description = 'No content added yet';
-            } else {
-                const contentTypes = [...new Set(page.content.map(item => item.content_type))];
-                description = `${contentCount} item${contentCount !== 1 ? 's' : ''} (${contentTypes.join(', ')})`;
+            const title = metadata ? metadata.title : `Page ${pageNum}`;
+            let description = metadata ? metadata.description : '';
+            if (!description) {
+                if (contentCount === 0) {
+                    description = 'No content added yet';
+                } else {
+                    const contentTypes = [...new Set(page.content.map(item => item.content_type))];
+                    description = `${contentCount} item${contentCount !== 1 ? 's' : ''} (${contentTypes.join(', ')})`;
+                }
             }
 
             const pageHtml = `
@@ -1247,8 +1252,8 @@ async function loadLessonContent(lessonId) {
                     <div class="card-body">
                         <div class="row align-items-center">
                             <div class="col-md-8">
-                                <h6 class="card-title mb-1">Page ${pageNum}</h6>
-                                <p class="card-text text-muted mb-0">${description}</p>
+                                <h6 class="card-title mb-1">${title}</h6>
+                                <p class="card-text text-muted mb-0">${truncateText(description, 100)}</p>
                             </div>
                             <div class="col-md-4 text-end">
                                 <button class="btn btn-sm btn-primary me-2" onclick="editPage(${pageNum})">
@@ -1263,16 +1268,6 @@ async function loadLessonContent(lessonId) {
                 </div>
             `;
             pagesContainer.insertAdjacentHTML('beforeend', pageHtml);
-        }
-        
-        // If no pages exist, show a message
-        if (sortedPageNumbers.length === 0) {
-            pagesContainer.innerHTML = `
-                <div class="text-center py-4">
-                    <h6 class="text-muted">No pages created yet</h6>
-                    <p class="text-muted">Click "Add New Page" to create your first page</p>
-                </div>
-            `;
         }
     } catch (error) {
         console.error('Error loading lesson content:', error);
@@ -2861,24 +2856,63 @@ async function editPage(pageNumber) {
     document.getElementById('pageEditorTitle').textContent = `Edit Page ${pageNumber}`;
     document.getElementById('pageEditorSubtitle').textContent = `Page ${pageNumber} Content`;
     
+    // Fetch lesson data to get page metadata
+    const response = await fetch(`/api/admin/lessons/${currentLessonId}`);
+    const lesson = await response.json();
+    const pageData = lesson.pages.find(p => p.page_number === pageNumber);
+    
+    if (pageData && pageData.metadata) {
+        document.getElementById('pageTitle').value = pageData.metadata.title || '';
+        document.getElementById('pageDescription').value = pageData.metadata.description || '';
+    } else {
+        document.getElementById('pageTitle').value = `Page ${pageNumber}`;
+        document.getElementById('pageDescription').value = '';
+    }
+    
     // Load page content
-    await loadPageContent(pageNumber);
+    await loadPageContentForEditor(pageNumber);
     
     // Open the page editor modal
     openModal('pageEditorModal');
 }
 
-async function loadPageContent(pageNumber) {
+async function savePageDetails() {
+    const title = document.getElementById('pageTitle').value;
+    const description = document.getElementById('pageDescription').value;
+    
     try {
-        const response = await fetch(`/api/admin/lessons/${currentLessonId}/content`);
-        const allContent = await response.json();
+        const response = await fetch(`/api/admin/lessons/${currentLessonId}/pages/${currentPageNumber}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            },
+            body: JSON.stringify({ title, description })
+        });
         
-        // Filter content for this specific page
-        const pageContent = allContent.filter(item => item.page_number === pageNumber);
+        if (response.ok) {
+            alert('Page details saved successfully!');
+            loadLessonContent(currentLessonId); // Refresh the main content view
+        } else {
+            const error = await response.json();
+            alert('Error: ' + error.error);
+        }
+    } catch (error) {
+        console.error('Error saving page details:', error);
+        alert('An error occurred while saving page details.');
+    }
+}
+
+async function loadPageContentForEditor(pageNumber) {
+    // This function is similar to loadPageContent but for the editor modal
+    try {
+        const response = await fetch(`/api/admin/lessons/${currentLessonId}`);
+        const lesson = await response.json();
+        const page = lesson.pages.find(p => p.page_number === pageNumber);
         
         const container = document.getElementById('pageContentContainer');
         
-        if (pageContent.length === 0) {
+        if (!page || page.content.length === 0) {
             container.innerHTML = `
                 <div class="text-center py-4">
                     <h6 class="text-muted">No content on this page yet</h6>
@@ -2888,8 +2922,7 @@ async function loadPageContent(pageNumber) {
             return;
         }
         
-        // Sort content by order index
-        pageContent.sort((a, b) => a.order_index - b.order_index);
+        const pageContent = page.content.sort((a, b) => a.order_index - b.order_index);
         
         let contentHtml = `
             <div class="table-responsive">
@@ -2963,6 +2996,8 @@ async function loadPageContent(pageNumber) {
         `;
     }
 }
+
+/* This function is now replaced by loadPageContentForEditor */
 
 function openAddContentToPageModal() {
     if (!currentPageNumber) {

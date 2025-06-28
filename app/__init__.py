@@ -65,7 +65,4 @@ def create_app():
 
     app.register_blueprint(routes.bp) # Register the blueprint
 
-    with app.app_context():
-        db.create_all() # Create database tables for our models
-
     return app

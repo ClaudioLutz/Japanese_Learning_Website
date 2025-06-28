@@ -130,6 +130,7 @@ class Lesson(db.Model):
                                 foreign_keys='LessonPrerequisite.prerequisite_lesson_id',
                                 backref='prerequisite_lesson', lazy=True)
     user_progress = db.relationship('UserLessonProgress', backref='lesson', lazy=True, cascade='all, delete-orphan')
+    pages_metadata = db.relationship('LessonPage', backref='lesson', lazy=True, cascade='all, delete-orphan')
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -159,19 +160,27 @@ class Lesson(db.Model):
 
     @property
     def pages(self):
-        """Groups content items by page number for rendering."""
+        """Groups content items by page number for rendering and includes page metadata."""
         from collections import defaultdict
         if not self.content_items:
             return []
+
+        pages_dict = defaultdict(lambda: {'content': [], 'metadata': None})
         
-        pages_dict = defaultdict(list)
+        # Create a lookup for page metadata
+        metadata_lookup = {pm.page_number: pm for pm in self.pages_metadata}
+
         # Sort all content items first by page, then by their order within the page
         sorted_content = sorted(self.content_items, key=lambda c: (c.page_number, c.order_index))
         
         for item in sorted_content:
-            pages_dict[item.page_number].append(item)
-            
-        # Return a list of pages (which are lists of content items), sorted by page number
+            pages_dict[item.page_number]['content'].append(item)
+        
+        # Add metadata to each page
+        for p_num, page_data in pages_dict.items():
+            page_data['metadata'] = metadata_lookup.get(p_num)
+
+        # Return a list of page objects, sorted by page number
         return [pages_dict[p_num] for p_num in sorted(pages_dict.keys())]
 
 class LessonPrerequisite(db.Model):
@@ -183,6 +192,18 @@ class LessonPrerequisite(db.Model):
     
     def __repr__(self):
         return f'<LessonPrerequisite {self.lesson_id} requires {self.prerequisite_lesson_id}>'
+
+class LessonPage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    lesson_id = db.Column(db.Integer, db.ForeignKey('lesson.id'), nullable=False)
+    page_number = db.Column(db.Integer, nullable=False)
+    title = db.Column(db.String(200), nullable=True)
+    description = db.Column(db.Text, nullable=True)
+
+    __table_args__ = (db.UniqueConstraint('lesson_id', 'page_number'),)
+
+    def __repr__(self):
+        return f'<LessonPage {self.title} for lesson {self.lesson_id}>'
 
 class LessonContent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
