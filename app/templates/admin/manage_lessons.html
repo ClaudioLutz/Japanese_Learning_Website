@@ -233,6 +233,9 @@
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h5 id="contentLessonTitle">Lesson Content</h5>
                 <div>
+                    <button type="button" class="btn btn-sm btn-warning" onclick="fixContentOrder()" title="Fix content ordering issues">
+                        <i class="fas fa-sort-numeric-down"></i> Fix Order
+                    </button>
                     <button type="button" class="btn btn-sm btn-secondary" onclick="addNewPage()">
                         <i class="fas fa-plus"></i> Add New Page
                     </button>
@@ -527,7 +530,7 @@
                         
                         <div class="form-group">
                             <label for="richTextContent">Content *</label>
-                            <textarea id="richTextContent" name="content_text" class="form-control rich-text-editor"></textarea>
+                            <div id="quillEditor" style="height: 300px;"></div>
                         </div>
                         
                         <!-- Content Template Selector -->
@@ -824,7 +827,10 @@
 }
 </style>
 
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.0/dist/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.0/dist/quill.js"></script>
 <script>
+let quillEditor;
 const contentTemplates = {
     basic_slide: `
         <h2>Slide Title</h2>
@@ -871,8 +877,8 @@ const contentTemplates = {
 };
 
 function applyTemplate(templateName) {
-    if (contentTemplates[templateName]) {
-        tinymce.get('richTextContent').setContent(contentTemplates[templateName]);
+    if (contentTemplates[templateName] && quillEditor) {
+        quillEditor.root.innerHTML = contentTemplates[templateName];
         updateRichTextPreview();
     }
 }
@@ -944,50 +950,48 @@ function removeOption(optionIndex) {
 }
 
 function initializeRichTextEditor(initialContent = '') {
-    const tinymceConfig = {
-        selector: '.rich-text-editor',
-        height: 400,
-        menubar: false,
-        plugins: [
-            'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-            'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-            'insertdatetime', 'media', 'table', 'help', 'wordcount'
-        ],
-        toolbar: 'undo redo | blocks | ' +
-            'bold italic forecolor | alignleft aligncenter ' +
-            'alignright alignjustify | bullist numlist outdent indent | ' +
-            'removeformat | help',
-        content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif; font-size: 14px; }',
-        branding: false,
-        promotion: false,
-        setup: function(editor) {
-            editor.on('init', function() {
-                this.setContent(initialContent || '');
-            });
-            editor.on('keyup', updateRichTextPreview);
-            editor.on('change', updateRichTextPreview);
-        }
-    };
+    const editorContainer = document.getElementById('quillEditor');
+    if (!editorContainer) return;
 
-    const existingEditor = tinymce.get('richTextContent');
-    if (existingEditor) {
-        existingEditor.destroy();
+    // Prevent multiple initializations by clearing the container
+    if (editorContainer.innerHTML) {
+        editorContainer.innerHTML = '';
+    }
+    
+    quillEditor = new Quill(editorContainer, {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                [{ 'header': [1, 2, 3, false] }],
+                ['bold', 'italic', 'underline'],
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                ['link'],
+                ['clean']
+            ]
+        },
+        placeholder: 'Compose your content...',
+    });
+
+    if (initialContent) {
+        quillEditor.root.innerHTML = initialContent;
     }
 
-    tinymce.init(tinymceConfig);
+    quillEditor.on('text-change', updateRichTextPreview);
 }
 
 function destroyRichTextEditor() {
-    const editor = tinymce.get('richTextContent');
-    if (editor) {
-        editor.destroy();
+    if (quillEditor) {
+        const editorContainer = document.getElementById('quillEditor');
+        if (editorContainer) {
+            editorContainer.innerHTML = '';
+        }
+        quillEditor = null;
     }
 }
 
 function updateRichTextPreview() {
-    const editor = tinymce.get('richTextContent');
-    if (editor) {
-        const content = editor.getContent();
+    if (quillEditor) {
+        const content = quillEditor.root.innerHTML;
         document.getElementById('richTextPreview').innerHTML = content;
     }
 }
@@ -1334,16 +1338,25 @@ async function removeContent(lessonId, contentId) {
         });
         
         if (response.ok) {
+            const result = await response.json();
             loadLessonContent(lessonId);
             loadLessons(); // Refresh main table to update content count
-            alert('Content removed successfully!');
+            alert(result.message || 'Content removed successfully!');
         } else {
-            const error = await response.json();
-            alert('Error: ' + error.error);
+            const errorText = await response.text();
+            let errorMessage = 'Failed to remove content';
+            try {
+                const error = JSON.parse(errorText);
+                errorMessage = error.error || errorMessage;
+            } catch (e) {
+                errorMessage = errorText || errorMessage;
+            }
+            console.error('Server error:', errorText);
+            alert('Error: ' + errorMessage);
         }
     } catch (error) {
-        console.error('Error removing content:', error);
-        alert('Error removing content');
+        console.error('Network error removing content:', error);
+        alert('Network error: Unable to remove content. Please check your connection and try again.');
     }
 }
 
@@ -1595,6 +1608,40 @@ async function bulkDelete() {
 function getSelectedContentIds() {
     const checkboxes = document.querySelectorAll('.content-checkbox:checked');
     return Array.from(checkboxes).map(cb => parseInt(cb.value));
+}
+
+// Fix content order function
+async function fixContentOrder() {
+    if (!currentLessonId) {
+        alert('No lesson selected');
+        return;
+    }
+    
+    if (!confirm('This will reorder all content in this lesson to fix any gaps in order indices. Continue?')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/admin/lessons/${currentLessonId}/content/force-reorder`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            }
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            loadLessonContent(currentLessonId); // Reload content to show fixed order
+            alert(result.message || 'Content order fixed successfully!');
+        } else {
+            const error = await response.json();
+            alert('Error: ' + error.error);
+        }
+    } catch (error) {
+        console.error('Error fixing content order:', error);
+        alert('Error fixing content order');
+    }
 }
 
 
@@ -2068,12 +2115,18 @@ function validateContentData(data) {
             return false;
         }
     } else if (data.content_type === 'text') {
-        const editor = tinymce.get('richTextContent');
-        if (!data.title || !editor || !editor.getContent()) {
-            alert('Please provide both title and content for text content');
+        if (quillEditor) {
+            const content = quillEditor.root.innerHTML;
+            // Quill's default empty state is '<p><br></p>'
+            if (!data.title || !content || content.trim() === '<p><br></p>') {
+                alert('Please provide both title and content for text content');
+                return false;
+            }
+            data.content_text = content;
+        } else {
+            alert('Editor not initialized');
             return false;
         }
-        data.content_text = editor.getContent();
     } else if (data.content_type === 'interactive') {
         // Validation for interactive content
         if (!data.title || !data.interactive_type) {
@@ -2288,7 +2341,9 @@ async function saveContentToLesson(isEditing = false) {
             saveData.title = currentContentData.title;
 
             if (selectedContentType === 'text') {
-                saveData.content_text = tinymce.get('richTextContent').getContent();
+                if (quillEditor) {
+                    saveData.content_text = quillEditor.root.innerHTML;
+                }
             } else if (['video', 'audio', 'image'].includes(selectedContentType)) {
                 const contentSource = document.querySelector('input[name="contentSource"]:checked')?.value;
                 if (contentSource === 'upload' && uploadedFileData) {
@@ -2407,7 +2462,9 @@ async function saveContentToLesson(isEditing = false) {
             } else {
                 endpoint = `/api/admin/lessons/${currentLessonId}/content/new`;
                 if (selectedContentType === 'text') {
-                    saveData.content_text = tinymce.get('richTextContent').getContent();
+                    if (quillEditor) {
+                        saveData.content_text = quillEditor.root.innerHTML;
+                    }
                 }
             }
         }
@@ -3047,7 +3104,7 @@ async function moveContentInPage(contentId, direction) {
 
         if (response.ok) {
             // Reload both the page content and the main lesson content view
-            await loadPageContent(currentPageNumber);
+            await loadPageContentForEditor(currentPageNumber);
             loadLessonContent(currentLessonId);
         } else {
             const error = await response.json();
@@ -3073,18 +3130,27 @@ async function removeContentFromPage(contentId) {
         });
         
         if (response.ok) {
+            const result = await response.json();
             // Reload both the page content and the main lesson content view
-            await loadPageContent(currentPageNumber);
+            await loadPageContentForEditor(currentPageNumber);
             loadLessonContent(currentLessonId);
             loadLessons(); // Refresh main table to update content count
-            alert('Content removed successfully!');
+            alert(result.message || 'Content removed successfully!');
         } else {
-            const error = await response.json();
-            alert('Error: ' + error.error);
+            const errorText = await response.text();
+            let errorMessage = 'Failed to remove content';
+            try {
+                const error = JSON.parse(errorText);
+                errorMessage = error.error || errorMessage;
+            } catch (e) {
+                errorMessage = errorText || errorMessage;
+            }
+            console.error('Server error:', errorText);
+            alert('Error: ' + errorMessage);
         }
     } catch (error) {
-        console.error('Error removing content:', error);
-        alert('Error removing content');
+        console.error('Network error removing content:', error);
+        alert('Network error: Unable to remove content. Please check your connection and try again.');
     }
 }
 

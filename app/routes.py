@@ -744,24 +744,89 @@ def add_lesson_content(lesson_id):
         db.session.rollback()
         return jsonify({"error": f"Database error occurred: {str(e)}"}), 500
 
+def reorder_page_content(lesson_id, page_number):
+    """Reorder all content items on a specific page to maintain sequential order indices"""
+    try:
+        # Get all content items on the page, ordered by current order_index
+        content_items = LessonContent.query.filter(
+            LessonContent.lesson_id == lesson_id,
+            LessonContent.page_number == page_number
+        ).order_by(LessonContent.order_index, LessonContent.id).all()
+        
+        # Reassign order indices starting from 0
+        for index, content_item in enumerate(content_items):
+            old_order = content_item.order_index
+            content_item.order_index = index
+            current_app.logger.debug(f"Content {content_item.id}: {old_order} -> {index}")
+        
+        db.session.commit()
+        current_app.logger.info(f"Reordered {len(content_items)} content items on page {page_number} to sequential indices 0-{len(content_items)-1}")
+        
+    except Exception as e:
+        current_app.logger.error(f"Error reordering content on page {page_number}: {e}")
+        db.session.rollback()
+        raise e
+
+def force_reorder_all_lesson_content(lesson_id):
+    """Force reorder all content in a lesson to fix any gaps in order indices"""
+    try:
+        # Get all pages with content
+        pages_with_content = db.session.query(LessonContent.page_number).filter(
+            LessonContent.lesson_id == lesson_id
+        ).distinct().all()
+        
+        for (page_number,) in pages_with_content:
+            reorder_page_content(lesson_id, page_number)
+        
+        current_app.logger.info(f"Force reordered all content for lesson {lesson_id}")
+        
+    except Exception as e:
+        current_app.logger.error(f"Error force reordering lesson {lesson_id}: {e}")
+
 @bp.route('/api/admin/lessons/<int:lesson_id>/content/<int:content_id>/delete', methods=['DELETE'])
 @login_required
 @admin_required
 def remove_lesson_content(lesson_id, content_id):
     content = LessonContent.query.filter_by(lesson_id=lesson_id, id=content_id).first_or_404()
 
-    try:
-        # C1: Ensure file is deleted from disk if it exists
-        if content.file_path:
-            content.delete_file() # Calls app.models.LessonContent.delete_file()
+    # Store content info for reordering before deletion
+    content_page = content.page_number
+    content_order = content.order_index
 
+    try:
+        # Delete file from disk if it exists
+        file_deletion_success = True
+        if content.file_path:
+            try:
+                content.delete_file()
+                current_app.logger.info(f"File deleted successfully for content {content_id}")
+            except Exception as file_error:
+                current_app.logger.error(f"Failed to delete file for content {content_id}: {file_error}")
+                file_deletion_success = False
+
+        # Delete the content record from database
         db.session.delete(content)
         db.session.commit()
-        return jsonify({"message": "Content removed from lesson successfully"}), 200
+        
+        current_app.logger.info(f"Content {content_id} deleted from lesson {lesson_id}, page {content_page}, order {content_order}")
+        
+        # Force complete reordering of the page to ensure sequential indices
+        try:
+            reorder_page_content(lesson_id, content_page)
+            current_app.logger.info(f"Page {content_page} reordered after deletion")
+        except Exception as reorder_error:
+            current_app.logger.error(f"Error reordering page {content_page} after deletion: {reorder_error}")
+            # Don't fail the whole operation if reordering fails
+        
+        if file_deletion_success:
+            return jsonify({"message": "Content removed from lesson successfully"}), 200
+        else:
+            return jsonify({"message": "Content removed from lesson, but file deletion failed"}), 200
+            
     except Exception as e:
         db.session.rollback()
         current_app.logger.error(f"Error removing lesson content {content_id} from lesson {lesson_id}: {e}", exc_info=True)
-        return jsonify({"error": "Failed to remove lesson content"}), 500
+        return jsonify({"error": f"Failed to remove lesson content: {str(e)}"}), 500
 
 @bp.route('/api/admin/lessons/<int:lesson_id>/content/<int:content_id>/move', methods=['POST'])
 @login_required
@@ -774,35 +839,89 @@ def move_lesson_content(lesson_id, content_id):
         return jsonify({"error": "Invalid direction specified"}), 400
 
     content_to_move = LessonContent.query.filter_by(id=content_id, lesson_id=lesson_id).first_or_404()
+    page_number = content_to_move.page_number
     
-    current_order = content_to_move.order_index
+    # Get all content items on the same page, ordered by current order_index
+    content_items = LessonContent.query.filter(
+        LessonContent.lesson_id == lesson_id,
+        LessonContent.page_number == page_number
+    ).order_by(LessonContent.order_index, LessonContent.id).all()
     
+    # Find the current position of the item to move
+    current_position = None
+    for i, item in enumerate(content_items):
+        if item.id == content_id:
+            current_position = i
+            break
+    
+    if current_position is None:
+        return jsonify({"error": "Content item not found"}), 404
+    
+    # Calculate new position
     if direction == 'up':
-        # Find the item directly above
-        item_to_swap_with = LessonContent.query.filter_by(lesson_id=lesson_id, order_index=current_order - 1).first()
-        if not item_to_swap_with:
+        if current_position == 0:
             return jsonify({"error": "Cannot move item further up"}), 400
-        
-        # Swap order indices
-        content_to_move.order_index -= 1
-        item_to_swap_with.order_index += 1
-
-    elif direction == 'down':
-        # Find the item directly below
-        item_to_swap_with = LessonContent.query.filter_by(lesson_id=lesson_id, order_index=current_order + 1).first()
-        if not item_to_swap_with:
+        new_position = current_position - 1
+    else:  # direction == 'down'
+        if current_position == len(content_items) - 1:
             return jsonify({"error": "Cannot move item further down"}), 400
-            
-        # Swap order indices
-        content_to_move.order_index += 1
-        item_to_swap_with.order_index -= 1
-
+        new_position = current_position + 1
+    
+    # Reorder the list
+    item_to_move = content_items.pop(current_position)
+    content_items.insert(new_position, item_to_move)
+    
+    # Update order indices for all items
     try:
+        for index, item in enumerate(content_items):
+            item.order_index = index
+        
         db.session.commit()
+        current_app.logger.info(f"Content {content_id} moved {direction} on page {page_number}")
         return jsonify({"message": "Content moved successfully"}), 200
+        
     except SQLAlchemyError as e:
         db.session.rollback()
         current_app.logger.error(f"Error moving content: {e}")
+        return jsonify({"error": "Database error occurred"}), 500
+
+@bp.route('/api/admin/lessons/<int:lesson_id>/pages/<int:page_number>/reorder', methods=['POST'])
+@login_required
+@admin_required
+def reorder_page_content_api(lesson_id, page_number):
+    """Reorder content items on a page based on provided order."""
+    data = request.json
+    content_ids = data.get('content_ids', [])
+    
+    if not content_ids:
+        return jsonify({"error": "No content IDs provided"}), 400
+    
+    try:
+        # Get all content items for this page
+        content_items = LessonContent.query.filter(
+            LessonContent.lesson_id == lesson_id,
+            LessonContent.page_number == page_number,
+            LessonContent.id.in_(content_ids)
+        ).all()
+        
+        # Create a mapping of ID to content item
+        content_map = {item.id: item for item in content_items}
+        
+        # Verify all provided IDs exist
+        if len(content_map) != len(content_ids):
+            return jsonify({"error": "Some content IDs not found"}), 404
+        
+        # Update order indices based on the provided order
+        for index, content_id in enumerate(content_ids):
+            content_map[content_id].order_index = index
+        
+        db.session.commit()
+        current_app.logger.info(f"Reordered {len(content_ids)} items on page {page_number} of lesson {lesson_id}")
+        return jsonify({"message": "Content reordered successfully"}), 200
+        
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error reordering content: {e}")
         return jsonify({"error": "Database error occurred"}), 500
 
 @bp.route('/api/admin/content/<int:content_id>/preview', methods=['GET'])
@@ -1065,18 +1184,42 @@ def bulk_delete_content(lesson_id):
         
         deleted_count = len(content_items)
         
+        # Group content by page for reordering
+        pages_to_reorder = set()
+        
         for content in content_items:
+            pages_to_reorder.add(content.page_number)
             # Delete associated files if any
             if hasattr(content, 'delete_file'):
                 content.delete_file()
             db.session.delete(content)
         
         db.session.commit()
+        
+        # Reorder content on affected pages
+        for page_number in pages_to_reorder:
+            reorder_page_content(lesson_id, page_number)
+        
         return jsonify({"message": f"Deleted {deleted_count} content items"}), 200
         
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Failed to delete content"}), 500
+
+@bp.route('/api/admin/lessons/<int:lesson_id>/content/force-reorder', methods=['POST'])
+@login_required
+@admin_required
+def force_reorder_lesson_content(lesson_id):
+    """Force reorder all content in a lesson to fix gaps in order indices"""
+    lesson = Lesson.query.get_or_404(lesson_id)
+    
+    try:
+        force_reorder_all_lesson_content(lesson_id)
+        return jsonify({"message": "All content reordered successfully"}), 200
+        
+    except Exception as e:
+        current_app.logger.error(f"Error force reordering lesson {lesson_id}: {e}")
+        return jsonify({"error": "Failed to reorder content"}), 500
 
 @bp.route('/api/admin/content/<int:content_id>/duplicate', methods=['POST'])
 @login_required
