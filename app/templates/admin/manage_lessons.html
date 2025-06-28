@@ -233,9 +233,6 @@
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h5 id="contentLessonTitle">Lesson Content</h5>
                 <div>
-                    <button type="button" class="btn btn-sm btn-warning" onclick="fixContentOrder()" title="Fix content ordering issues">
-                        <i class="fas fa-sort-numeric-down"></i> Fix Order
-                    </button>
                     <button type="button" class="btn btn-sm btn-secondary" onclick="addNewPage()">
                         <i class="fas fa-plus"></i> Add New Page
                     </button>
@@ -1610,39 +1607,6 @@ function getSelectedContentIds() {
     return Array.from(checkboxes).map(cb => parseInt(cb.value));
 }
 
-// Fix content order function
-async function fixContentOrder() {
-    if (!currentLessonId) {
-        alert('No lesson selected');
-        return;
-    }
-    
-    if (!confirm('This will reorder all content in this lesson to fix any gaps in order indices. Continue?')) {
-        return;
-    }
-    
-    try {
-        const response = await fetch(`/api/admin/lessons/${currentLessonId}/content/force-reorder`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCSRFToken()
-            }
-        });
-        
-        if (response.ok) {
-            const result = await response.json();
-            loadLessonContent(currentLessonId); // Reload content to show fixed order
-            alert(result.message || 'Content order fixed successfully!');
-        } else {
-            const error = await response.json();
-            alert('Error: ' + error.error);
-        }
-    } catch (error) {
-        console.error('Error fixing content order:', error);
-        alert('Error fixing content order');
-    }
-}
 
 
 async function editContent(contentId) {
@@ -3028,7 +2992,7 @@ async function loadPageContentForEditor(pageNumber) {
                         <button class="btn btn-sm btn-warning me-1" onclick="editContent(${item.id})">
                             <i class="fas fa-edit"></i> Edit
                         </button>
-                        <button class="btn btn-sm btn-danger" onclick="removeContentFromPage(${item.id})">
+                        <button class="btn btn-sm btn-danger" onclick="deleteContentFromPage(${item.id})">
                             <i class="fas fa-trash"></i> Delete
                         </button>
                     </td>
@@ -3117,41 +3081,64 @@ async function moveContentInPage(contentId, direction) {
 }
 
 async function removeContentFromPage(contentId) {
-    if (!confirm('Are you sure you want to remove this content from the page?')) {
+    console.log(`Attempting to delete content ID: ${contentId}`);
+    
+    const lessonId = currentLessonId;
+    const pageNum = currentPageNumber;
+
+    if (!lessonId || !pageNum) {
+        alert('Error: Could not determine the current lesson or page. Please refresh and try again.');
+        console.error(`Missing critical data: lessonId=${lessonId}, pageNum=${pageNum}`);
         return;
     }
-    
+
+    if (!confirm(`Are you sure you want to remove content item #${contentId} from this page?`)) {
+        return;
+    }
+
+    const deleteButton = document.querySelector(`tr[data-content-id="${contentId}"] button.btn-danger`);
+    if (deleteButton) {
+        deleteButton.disabled = true;
+        deleteButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    }
+
     try {
-        const response = await fetch(`/api/admin/lessons/${currentLessonId}/content/${contentId}/delete`, {
+        const response = await fetch(`/api/admin/lessons/${lessonId}/content/${contentId}/delete`, {
             method: 'DELETE',
             headers: {
-                'X-CSRFToken': getCSRFToken()
+                'X-CSRFToken': getCSRFToken(),
+                'Content-Type': 'application/json'
             }
         });
-        
+
+        const responseData = await response.json();
+
         if (response.ok) {
-            const result = await response.json();
-            // Reload both the page content and the main lesson content view
-            await loadPageContentForEditor(currentPageNumber);
-            loadLessonContent(currentLessonId);
-            loadLessons(); // Refresh main table to update content count
-            alert(result.message || 'Content removed successfully!');
+            console.log('Delete successful:', responseData);
+            alert(responseData.message || 'Content removed successfully!');
+            
+            // Reload content for the current page editor and the main lesson view
+            await loadPageContentForEditor(pageNum);
+            loadLessonContent(lessonId);
+            loadLessons(); // Refresh main lessons table for content count
         } else {
-            const errorText = await response.text();
-            let errorMessage = 'Failed to remove content';
-            try {
-                const error = JSON.parse(errorText);
-                errorMessage = error.error || errorMessage;
-            } catch (e) {
-                errorMessage = errorText || errorMessage;
-            }
-            console.error('Server error:', errorText);
-            alert('Error: ' + errorMessage);
+            console.error('Delete failed:', responseData);
+            alert(`Error: ${responseData.error || 'An unknown error occurred.'}`);
         }
     } catch (error) {
-        console.error('Network error removing content:', error);
-        alert('Network error: Unable to remove content. Please check your connection and try again.');
+        console.error('A network or unexpected error occurred:', error);
+        alert('A network error occurred. Please check your connection and try again.');
+    } finally {
+        if (deleteButton) {
+            deleteButton.disabled = false;
+            deleteButton.innerHTML = '<i class="fas fa-trash"></i> Delete';
+        }
     }
+}
+
+// Alias function for the button that calls deleteContentFromPage
+async function deleteContentFromPage(contentId) {
+    return await removeContentFromPage(contentId);
 }
 
 // Modal functions are now handled by base_admin.html

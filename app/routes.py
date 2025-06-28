@@ -816,7 +816,8 @@ def remove_lesson_content(lesson_id, content_id):
             current_app.logger.info(f"Page {content_page} reordered after deletion")
         except Exception as reorder_error:
             current_app.logger.error(f"Error reordering page {content_page} after deletion: {reorder_error}")
-            # Don't fail the whole operation if reordering fails
+            # Return an error to the client so the UI can show a proper message
+            return jsonify({"error": f"Content was deleted, but reordering the page failed: {reorder_error}. Please refresh."}), 500
         
         if file_deletion_success:
             return jsonify({"message": "Content removed from lesson successfully"}), 200
