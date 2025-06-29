@@ -1,20 +1,56 @@
 # Japanese Learning Website - Complete Project Documentation
 
 ## Table of Contents
-1. [Project Overview](#project-overview)
-2. [Architecture & Technology Stack](#architecture--technology-stack)
-3. [Installation & Setup](#installation--setup)
-4. [User Authentication System](#user-authentication-system)
-5. [Admin Content Management](#admin-content-management)
-6. [Database Schema](#database-schema)
-7. [API Endpoints](#api-endpoints)
-8. [Frontend Components](#frontend-components)
-9. [File Structure](#file-structure)
-10. [Configuration](#configuration)
-11. [Security Features](#security-features)
-12. [Development Workflow](#development-workflow)
-13. [Troubleshooting](#troubleshooting)
-14. [Future Enhancements](#future-enhancements)
+1. [Executive Summary](#executive-summary)
+2. [Project Overview](#project-overview)
+3. [System Architecture](#system-architecture)
+4. [Technology Stack & Design Decisions](#technology-stack--design-decisions)
+5. [Installation & Setup](#installation--setup)
+6. [User Authentication System](#user-authentication-system)
+7. [Admin Content Management](#admin-content-management)
+8. [Lesson System Architecture](#lesson-system-architecture)
+9. [Database Schema](#database-schema)
+10. [API Design & Endpoints](#api-design--endpoints)
+11. [Frontend Architecture](#frontend-architecture)
+12. [File Structure & Organization](#file-structure--organization)
+13. [Configuration Management](#configuration-management)
+14. [Security Implementation](#security-implementation)
+15. [Development Workflow & Best Practices](#development-workflow--best-practices)
+16. [Performance Considerations](#performance-considerations)
+17. [Deployment Strategy](#deployment-strategy)
+18. [Monitoring & Analytics](#monitoring--analytics)
+19. [Troubleshooting Guide](#troubleshooting-guide)
+20. [Future Roadmap](#future-roadmap)
+21. [Technical Debt & Refactoring Opportunities](#technical-debt--refactoring-opportunities)
+
+---
+
+## Executive Summary
+
+### Project Vision
+The Japanese Learning Website represents a sophisticated, full-stack educational platform designed to democratize Japanese language learning through technology. Built with modern web technologies and pedagogical best practices, it serves as both a learning management system and a comprehensive content delivery platform.
+
+### Business Value Proposition
+- **Scalable Education Platform**: Supports unlimited users with tiered subscription model
+- **Content Management Excellence**: Comprehensive admin tools for educators and content creators
+- **Progressive Learning Path**: Structured curriculum with prerequisite-based advancement
+- **Multi-Modal Learning**: Combines traditional content with interactive multimedia experiences
+- **Data-Driven Insights**: Built-in progress tracking and analytics capabilities
+
+### Technical Excellence
+- **Modern Architecture**: Flask-based microservice-ready design with clear separation of concerns
+- **Security-First Approach**: Comprehensive authentication, authorization, and data protection
+- **Performance Optimized**: Efficient database design with relationship optimization
+- **Maintainable Codebase**: Clean architecture with extensive documentation and migration tools
+- **Deployment Ready**: Environment-agnostic configuration with production considerations
+
+### Key Metrics & Capabilities
+- **Content Types**: 4 core Japanese learning content categories (Kana, Kanji, Vocabulary, Grammar)
+- **User Management**: Role-based access control with subscription tiers
+- **Lesson System**: Paginated, interactive lessons with progress tracking
+- **File Management**: Comprehensive upload system with validation and security
+- **API Coverage**: 40+ RESTful endpoints for complete system control
+- **Database Efficiency**: 12 optimized tables with proper indexing and relationships
 
 ---
 
@@ -35,6 +71,315 @@ A comprehensive web-based Japanese learning platform that provides structured le
 - **Students** - Individuals learning Japanese language
 - **Educators** - Teachers managing Japanese learning content
 - **Administrators** - System managers overseeing platform operations
+
+---
+
+## System Architecture
+
+### High-Level Architecture Overview
+The Japanese Learning Website follows a **layered monolithic architecture** with clear separation of concerns, designed for maintainability and future scalability. The system is built using the **Model-View-Controller (MVC)** pattern with additional service layers for complex business logic.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Presentation Layer                       │
+├─────────────────────────────────────────────────────────────┤
+│  Web Browser  │  Mobile Browser  │  API Clients (Future)   │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                     Web Server Layer                       │
+├─────────────────────────────────────────────────────────────┤
+│              Flask Application (WSGI)                      │
+│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐          │
+│  │   Routes    │ │  Templates  │ │   Static    │          │
+│  │ (Views/API) │ │  (Jinja2)   │ │   Assets    │          │
+│  └─────────────┘ └─────────────┘ └─────────────┘          │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                   Application Layer                        │
+├─────────────────────────────────────────────────────────────┤
+│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐          │
+│  │ Auth System │ │ Content Mgmt│ │ Lesson Mgmt │          │
+│  │ (Flask-Login│ │   System    │ │   System    │          │
+│  │ + RBAC)     │ │             │ │             │          │
+│  └─────────────┘ └─────────────┘ └─────────────┘          │
+│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐          │
+│  │ File Upload │ │ Progress    │ │ Quiz System │          │
+│  │   Handler   │ │  Tracking   │ │             │          │
+│  └─────────────┘ └─────────────┘ └─────────────┘          │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    Business Logic Layer                    │
+├─────────────────────────────────────────────────────────────┤
+│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐          │
+│  │   Models    │ │ Validators  │ │ Utilities   │          │
+│  │ (SQLAlchemy)│ │ (WTForms)   │ │ (Custom)    │          │
+│  └─────────────┘ └─────────────┘ └─────────────┘          │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                     Data Access Layer                      │
+├─────────────────────────────────────────────────────────────┤
+│              SQLAlchemy ORM + Database                     │
+│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐          │
+│  │   SQLite    │ │ Migrations  │ │ File System │          │
+│  │ (Dev/Prod)  │ │ (Alembic)   │ │ (Uploads)   │          │
+│  └─────────────┘ └─────────────┘ └─────────────┘          │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Core Design Principles
+
+#### 1. **Separation of Concerns**
+- **Models**: Pure data representation and business logic
+- **Views**: Presentation logic and user interface
+- **Controllers**: Request handling and flow control
+- **Services**: Complex business operations and integrations
+
+#### 2. **Single Responsibility Principle**
+- Each module has a clearly defined purpose
+- Database models focus solely on data representation
+- Route handlers manage HTTP request/response cycles
+- Utility classes handle specific technical concerns
+
+#### 3. **Dependency Injection & Inversion**
+- Flask's application factory pattern enables flexible configuration
+- Database connections managed through SQLAlchemy sessions
+- Authentication handled through Flask-Login's user loader pattern
+
+#### 4. **Security by Design**
+- Authentication required for all sensitive operations
+- Role-based access control implemented at multiple layers
+- Input validation at both client and server levels
+- CSRF protection on all state-changing operations
+
+### Data Flow Architecture
+
+#### User Request Flow
+```
+User Action → Route Handler → Authentication Check → Authorization Check 
+    → Business Logic → Data Access → Database → Response Generation 
+    → Template Rendering → HTTP Response
+```
+
+#### Admin Content Management Flow
+```
+Admin Action → CSRF Validation → Admin Authorization → Content Validation 
+    → Database Transaction → File System Operations (if applicable) 
+    → Success Response → UI Update
+```
+
+#### Lesson Progress Tracking Flow
+```
+User Progress Update → Authentication → Lesson Access Validation 
+    → Progress Calculation → Database Update → Real-time UI Update
+```
+
+---
+
+## Technology Stack & Design Decisions
+---
+
+## System Architecture
+
+### High-Level Architecture Overview
+The Japanese Learning Website follows a **layered monolithic architecture** with clear separation of concerns, designed for maintainability and future scalability. The system is built using the **Model-View-Controller (MVC)** pattern with additional service layers for complex business logic.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Presentation Layer                       │
+├─────────────────────────────────────────────────────────────┤
+│  Web Browser  │  Mobile Browser  │  API Clients (Future)   │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                     Web Server Layer                       │
+├─────────────────────────────────────────────────────────────┤
+│              Flask Application (WSGI)                      │
+│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐          │
+│  │   Routes    │ │  Templates  │ │   Static    │          │
+│  │ (Views/API) │ │  (Jinja2)   │ │   Assets    │          │
+│  └─────────────┘ └─────────────┘ └─────────────┘          │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                   Application Layer                        │
+├─────────────────────────────────────────────────────────────┤
+│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐          │
+│  │ Auth System │ │ Content Mgmt│ │ Lesson Mgmt │          │
+│  │ (Flask-Login│ │   System    │ │   System    │          │
+│  │ + RBAC)     │ │             │ │             │          │
+│  └─────────────┘ └─────────────┘ └─────────────┘          │
+│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐          │
+│  │ File Upload │ │ Progress    │ │ Quiz System │          │
+│  │   Handler   │ │  Tracking   │ │             │          │
+│  └─────────────┘ └─────────────┘ └─────────────┘          │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    Business Logic Layer                    │
+├─────────────────────────────────────────────────────────────┤
+│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐          │
+│  │   Models    │ │ Validators  │ │ Utilities   │          │
+│  │ (SQLAlchemy)│ │ (WTForms)   │ │ (Custom)    │          │
+│  └─────────────┘ └─────────────┘ └─────────────┘          │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                     Data Access Layer                      │
+├─────────────────────────────────────────────────────────────┤
+│              SQLAlchemy ORM + Database                     │
+│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐          │
+│  │   SQLite    │ │ Migrations  │ │ File System │          │
+│  │ (Dev/Prod)  │ │ (Alembic)   │ │ (Uploads)   │          │
+│  └─────────────┘ └─────────────┘ └─────────────┘          │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Core Design Principles
+
+#### 1. **Separation of Concerns**
+- **Models**: Pure data representation and business logic
+- **Views**: Presentation logic and user interface
+- **Controllers**: Request handling and flow control
+- **Services**: Complex business operations and integrations
+
+#### 2. **Single Responsibility Principle**
+- Each module has a clearly defined purpose
+- Database models focus solely on data representation
+- Route handlers manage HTTP request/response cycles
+- Utility classes handle specific technical concerns
+
+#### 3. **Dependency Injection & Inversion**
+- Flask's application factory pattern enables flexible configuration
+- Database connections managed through SQLAlchemy sessions
+- Authentication handled through Flask-Login's user loader pattern
+
+#### 4. **Security by Design**
+- Authentication required for all sensitive operations
+- Role-based access control implemented at multiple layers
+- Input validation at both client and server levels
+- CSRF protection on all state-changing operations
+
+### Data Flow Architecture
+
+#### User Request Flow
+```
+User Action → Route Handler → Authentication Check → Authorization Check 
+    → Business Logic → Data Access → Database → Response Generation 
+    → Template Rendering → HTTP Response
+```
+
+#### Admin Content Management Flow
+```
+Admin Action → CSRF Validation → Admin Authorization → Content Validation 
+    → Database Transaction → File System Operations (if applicable) 
+    → Success Response → UI Update
+```
+
+#### Lesson Progress Tracking Flow
+```
+User Progress Update → Authentication → Lesson Access Validation 
+    → Progress Calculation → Database Update → Real-time UI Update
+```
+
+---
+
+## Technology Stack & Design Decisions
+
+### Backend Technology Choices
+
+#### **Flask Framework** - *Why Chosen*
+- **Lightweight & Flexible**: Minimal overhead with maximum customization
+- **Microframework Philosophy**: Build only what you need
+- **Extensive Ecosystem**: Rich plugin ecosystem (Flask-Login, Flask-WTF, etc.)
+- **Python Integration**: Seamless integration with Python data science libraries
+- **Rapid Prototyping**: Quick development and iteration cycles
+
+#### **SQLAlchemy ORM** - *Why Chosen*
+- **Database Agnostic**: Easy migration between SQLite, PostgreSQL, MySQL
+- **Relationship Management**: Sophisticated handling of complex relationships
+- **Query Optimization**: Lazy loading and query optimization capabilities
+- **Migration Support**: Alembic integration for schema versioning
+- **Type Safety**: Python type hints and validation
+
+#### **Flask-Login** - *Why Chosen*
+- **Session Management**: Secure session handling with minimal configuration
+- **Remember Me**: Persistent login functionality
+- **User Loader Pattern**: Clean separation of authentication logic
+- **Integration**: Seamless Flask integration with decorators
+
+#### **WTForms + Flask-WTF** - *Why Chosen*
+- **CSRF Protection**: Built-in CSRF token generation and validation
+- **Server-Side Validation**: Comprehensive form validation
+- **Field Types**: Rich set of field types for different data inputs
+- **Error Handling**: Elegant error message handling and display
+
+### Frontend Technology Choices
+
+#### **Bootstrap 5.3.3** - *Why Chosen*
+- **Rapid Development**: Pre-built components and utilities
+- **Responsive Design**: Mobile-first responsive grid system
+- **Consistency**: Uniform design language across the application
+- **Accessibility**: Built-in accessibility features and ARIA support
+- **Customization**: Extensive customization through CSS variables
+
+#### **Vanilla JavaScript (ES6+)** - *Why Chosen*
+- **Performance**: No framework overhead for simple interactions
+- **Simplicity**: Easier debugging and maintenance
+- **Progressive Enhancement**: Works without JavaScript enabled
+- **Future-Proof**: No framework lock-in or version dependencies
+
+#### **Jinja2 Templating** - *Why Chosen*
+- **Security**: Automatic XSS protection through auto-escaping
+- **Inheritance**: Template inheritance for DRY principles
+- **Filters**: Rich set of built-in filters for data transformation
+- **Flask Integration**: Native Flask template engine
+
+### Database Design Decisions
+
+#### **SQLite for Development** - *Why Chosen*
+- **Zero Configuration**: No server setup required
+- **File-Based**: Easy backup and migration
+- **ACID Compliance**: Full transaction support
+- **Production Ready**: Suitable for small to medium applications
+- **Migration Path**: Easy upgrade to PostgreSQL when needed
+
+#### **Normalized Schema Design**
+- **Third Normal Form**: Eliminates data redundancy
+- **Foreign Key Constraints**: Maintains referential integrity
+- **Indexed Relationships**: Optimized query performance
+- **Soft Deletes**: Preserves data integrity for audit trails
+
+### Security Architecture Decisions
+
+#### **Role-Based Access Control (RBAC)**
+- **Principle of Least Privilege**: Users get minimum required permissions
+- **Hierarchical Roles**: Admin inherits all user permissions
+- **Route-Level Protection**: Decorators enforce access control
+- **API Security**: Consistent security across web and API endpoints
+
+#### **Password Security**
+- **PBKDF2 Hashing**: Industry-standard password hashing
+- **Salt Generation**: Unique salt per password
+- **Configurable Iterations**: Adjustable computational cost
+- **Secure Comparison**: Timing-attack resistant comparisons
+
+#### **File Upload Security**
+- **MIME Type Validation**: Server-side file type verification
+- **File Size Limits**: Prevents DoS attacks through large uploads
+- **Secure File Names**: Prevents directory traversal attacks
+- **Virus Scanning Ready**: Architecture supports future AV integration
 
 ---
 
@@ -326,6 +671,19 @@ CREATE TABLE grammar (
 );
 ```
 
+### Lesson Page Table
+```sql
+CREATE TABLE lesson_page (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    lesson_id INTEGER NOT NULL,
+    page_number INTEGER NOT NULL,
+    title VARCHAR(200),
+    description TEXT,
+    FOREIGN KEY (lesson_id) REFERENCES lesson (id) ON DELETE CASCADE,
+    UNIQUE(lesson_id, page_number)
+);
+```
+
 ---
 
 ## API Endpoints
@@ -342,8 +700,8 @@ POST   /downgrade_from_premium # Downgrade subscription
 ### Content Display Endpoints
 ```
 GET    /                      # Homepage
-GET    /free_content          # Free learning materials
-GET    /premium_content       # Premium learning materials (auth required)
+GET    /lessons               # Browse available lessons (auth required)
+GET    /lessons/<int:id>      # View specific lesson (auth required)
 ```
 
 ### Admin Panel Endpoints
@@ -353,6 +711,8 @@ GET    /admin/manage/kana     # Kana management page
 GET    /admin/manage/kanji    # Kanji management page
 GET    /admin/manage/vocabulary # Vocabulary management page
 GET    /admin/manage/grammar  # Grammar management page
+GET    /admin/manage/lessons  # Lesson management page
+GET    /admin/manage/categories # Category management page
 ```
 
 ### Admin API Endpoints
@@ -404,14 +764,12 @@ app/templates/
 ├── index.html                # Homepage
 ├── login.html                # User login form
 ├── register.html             # User registration form
-├── free_content.html         # Page for free learning materials
-├── premium_content.html      # Page for premium learning materials (requires subscription)
 ├── lessons.html              # Page to browse available lessons
 ├── lesson_view.html          # Page to view a single lesson's content
 └── admin/                    # Admin panel templates
     ├── base_admin.html       # Main layout template for admin pages
     ├── admin_index.html      # Admin dashboard/homepage
-    ├── login.html            # Admin login form (may be unified with user login)
+    ├── login.html            # Admin login form (unified with user login)
     ├── manage_kana.html      # Interface for managing Kana content
     ├── manage_kanji.html     # Interface for managing Kanji content
     ├── manage_vocabulary.html # Interface for managing Vocabulary content
@@ -485,12 +843,10 @@ Japanese_Learning_Website/
 │       │   ├── manage_lessons.html
 │       │   └── manage_vocabulary.html
 │       ├── base.html       # Base template for user-facing pages
-│       ├── free_content.html
 │       ├── index.html      # Homepage
 │       ├── lesson_view.html
 │       ├── lessons.html
 │       ├── login.html      # User login page
-│       ├── premium_content.html
 │       └── register.html   # User registration page
 ├── instance/               # Instance folder (contains database, potentially config files if not using .env)
 │   ├── config.py           # Optional: Instance-specific configuration (e.g. `instance/config.py`). Current setup primarily uses .env.
@@ -564,13 +920,18 @@ class ProductionConfig(Config):
 
 ### Dependencies (requirements.txt)
 ```
-Flask==2.3.3
-Flask-Login==0.6.3
-Flask-WTF==1.1.1
-Flask-SQLAlchemy==3.0.5
-WTForms==3.0.1
-Werkzeug==2.3.7
-python-dotenv==1.0.0
+Flask>=2.0
+Flask-SQLAlchemy>=2.5
+Flask-Login>=0.6.0
+Flask-WTF>=1.0.0
+Flask-Migrate>=3.1.0
+WTForms>=3.0.0
+email-validator>=2.0.0
+python-dotenv>=0.19.0
+Werkzeug>=2.0.0
+Pillow>=9.0.0
+python-magic>=0.4.24
+python-magic-bin>=0.4.14
 ```
 
 ---
