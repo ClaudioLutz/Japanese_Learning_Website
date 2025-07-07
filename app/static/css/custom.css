@@ -449,6 +449,160 @@ button[onclick*="moveContentInPage"]:active {
     font-weight: 600 !important;
 }
 
+/* --- 3D Flip Card Styles --- */
+
+/* 1. The Scene: Establishes the 3D space and perspective. */
+.card-scene {
+    width: 100%;
+    height: 200px;
+    perspective: 1000px; /* Defines the "distance" for the 3D effect. */
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    margin-bottom: 1rem;
+}
+
+/* 2. The Flipper: The 3D object that rotates. */
+.card-flipper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transition: transform 0.8s; /* Smooth animation for the flip. */
+    transform-style: preserve-3d; /* Crucial for making children exist in 3D space. */
+}
+
+/* 3. The Flipped State: Apply this class with JS to flip the card. */
+.card-flipper.is-flipped {
+    transform: rotateY(180deg);
+}
+
+/* 4. The Faces: Common styles for both front and back. */
+.card-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden; /* Safari */
+    backface-visibility: hidden; /* Hides the face when it's turned away. */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-color);
+    transition: box-shadow 0.3s ease;
+}
+
+/* 5. The Front Face: Specific styling. */
+.card-face--front {
+    background-color: var(--card-background);
+    border-left: 4px solid var(--primary-color);
+}
+
+/* 6. The Back Face: Specific styling and initial rotation. */
+.card-face--back {
+    background-color: var(--background-color);
+    transform: rotateY(180deg); /* Pre-rotates the back face. */
+    border-left: 4px solid var(--secondary-color);
+}
+
+/* Hover effects for flip cards */
+.card-scene:hover .card-face {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Focus styles for accessibility */
+.card-scene:focus {
+    outline: 3px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Style for the large Japanese character on the front. */
+.flip-card .kana-char {
+    font-size: 80px; /* Large, clear character */
+    color: var(--primary-color);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 500;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Style for the details on the back. */
+.flip-card .details {
+    text-align: center;
+    padding: 20px;
+    color: var(--text-color);
+    font-size: 16px;
+    width: 100%;
+}
+
+.flip-card .details p {
+    margin: 0 0 8px 0;
+    font-weight: 500;
+}
+
+.flip-card .details strong {
+    color: var(--primary-color);
+}
+
+/* Vocabulary specific styling */
+.flip-card .vocab-front {
+    flex-direction: column;
+    text-align: center;
+}
+
+.flip-card .vocab-word {
+    font-size: 48px;
+    color: var(--primary-color);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.flip-card .vocab-reading {
+    font-size: 20px;
+    color: var(--text-light);
+    font-family: 'Noto Sans JP', sans-serif;
+}
+
+/* Grammar specific styling */
+.flip-card .grammar-front {
+    flex-direction: column;
+    text-align: center;
+    padding: 20px;
+}
+
+.flip-card .grammar-title {
+    font-size: 24px;
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.flip-card .grammar-structure {
+    font-size: 18px;
+    color: var(--text-color);
+    font-family: 'Courier New', monospace;
+    background-color: rgba(74, 144, 226, 0.1);
+    padding: 8px 12px;
+    border-radius: 6px;
+}
+
+/* Flip instruction hint */
+.flip-hint {
+    position: absolute;
+    bottom: 10px;
+    right: 15px;
+    font-size: 12px;
+    color: var(--text-light);
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* Animation for flip hint */
+.card-scene:hover .flip-hint {
+    opacity: 1;
+}
+
 /* Responsive improvements */
 @media (max-width: 768px) {
     .welcome-card {
@@ -466,5 +620,35 @@ button[onclick*="moveContentInPage"]:active {
     #addContentModal .modal-content {
         width: 95% !important;
         max-width: none !important;
+    }
+    
+    /* Responsive flip cards */
+    .card-scene {
+        height: 160px;
+    }
+    
+    .flip-card .kana-char {
+        font-size: 60px;
+    }
+    
+    .flip-card .vocab-word {
+        font-size: 36px;
+    }
+    
+    .flip-card .vocab-reading {
+        font-size: 16px;
+    }
+    
+    .flip-card .grammar-title {
+        font-size: 20px;
+    }
+    
+    .flip-card .grammar-structure {
+        font-size: 16px;
+    }
+    
+    .flip-card .details {
+        font-size: 14px;
+        padding: 15px;
     }
 }

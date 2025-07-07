@@ -151,63 +151,73 @@
                                                 {% if content.content_type in ['kana', 'kanji', 'vocabulary', 'grammar'] %}
                                                     {% set content_data = content.get_content_data() %}
                                                     {% if content_data %}
-                                                        {% if content.content_type == 'kana' %}
-                                                            <div class="row">
-                                                                <div class="col-md-2 text-center">
-                                                                    <h2 class="text-primary">{{ content_data.character }}</h2>
+                                                        <!-- 3D Flip Card Implementation -->
+                                                        <div class="flip-card">
+                                                            <button class="card-scene" 
+                                                                    aria-label="Flip card for {% if content.content_type in ['kana', 'kanji'] %}{{ content_data.character }}{% elif content.content_type == 'vocabulary' %}{{ content_data.word }}{% else %}{{ content_data.title }}{% endif %} to see details"
+                                                                    tabindex="0">
+                                                                <div class="card-flipper">
+                                                                    <!-- Front Face -->
+                                                                    <div class="card-face card-face--front">
+                                                                        {% if content.content_type == 'kana' %}
+                                                                            <span class="kana-char">{{ content_data.character }}</span>
+                                                                        {% elif content.content_type == 'kanji' %}
+                                                                            <span class="kana-char">{{ content_data.character }}</span>
+                                                                        {% elif content.content_type == 'vocabulary' %}
+                                                                            <div class="vocab-front">
+                                                                                <div class="vocab-word">{{ content_data.word }}</div>
+                                                                                <div class="vocab-reading">{{ content_data.reading }}</div>
+                                                                            </div>
+                                                                        {% elif content.content_type == 'grammar' %}
+                                                                            <div class="grammar-front">
+                                                                                <div class="grammar-title">{{ content_data.title }}</div>
+                                                                                {% if content_data.structure %}
+                                                                                <div class="grammar-structure">{{ content_data.structure }}</div>
+                                                                                {% endif %}
+                                                                            </div>
+                                                                        {% endif %}
+                                                                        <div class="flip-hint">Click to flip</div>
+                                                                    </div>
+                                                                    
+                                                                    <!-- Back Face -->
+                                                                    <div class="card-face card-face--back">
+                                                                        <div class="details">
+                                                                            {% if content.content_type == 'kana' %}
+                                                                                <p><strong>Romanization:</strong> {{ content_data.romanization }}</p>
+                                                                                <p><strong>Type:</strong> {{ content_data.type | title }}</p>
+                                                                                {% if content_data.stroke_order_info %}
+                                                                                <p><strong>Stroke Order:</strong> {{ content_data.stroke_order_info }}</p>
+                                                                                {% endif %}
+                                                                            {% elif content.content_type == 'kanji' %}
+                                                                                <p><strong>Meaning:</strong> {{ content_data.meaning }}</p>
+                                                                                {% if content_data.onyomi %}
+                                                                                <p><strong>On'yomi:</strong> {{ content_data.onyomi }}</p>
+                                                                                {% endif %}
+                                                                                {% if content_data.kunyomi %}
+                                                                                <p><strong>Kun'yomi:</strong> {{ content_data.kunyomi }}</p>
+                                                                                {% endif %}
+                                                                                {% if content_data.jlpt_level %}
+                                                                                <p><strong>JLPT Level:</strong> N{{ content_data.jlpt_level }}</p>
+                                                                                {% endif %}
+                                                                            {% elif content.content_type == 'vocabulary' %}
+                                                                                <p><strong>Meaning:</strong> {{ content_data.meaning }}</p>
+                                                                                {% if content_data.example_sentence_japanese %}
+                                                                                <p><strong>Example:</strong><br>{{ content_data.example_sentence_japanese }}</p>
+                                                                                {% if content_data.example_sentence_english %}
+                                                                                <p><strong>Translation:</strong><br>{{ content_data.example_sentence_english }}</p>
+                                                                                {% endif %}
+                                                                                {% endif %}
+                                                                            {% elif content.content_type == 'grammar' %}
+                                                                                <p><strong>Explanation:</strong><br>{{ content_data.explanation }}</p>
+                                                                                {% if content_data.example_sentences %}
+                                                                                <p><strong>Examples:</strong><br>{{ content_data.example_sentences }}</p>
+                                                                                {% endif %}
+                                                                            {% endif %}
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
-                                                                <div class="col-md-10">
-                                                                    <p><strong>Romanization:</strong> {{ content_data.romanization }}</p>
-                                                                    <p><strong>Type:</strong> {{ content_data.type | title }}</p>
-                                                                    {% if content_data.stroke_order_info %}
-                                                                    <p><strong>Stroke Order:</strong> {{ content_data.stroke_order_info }}</p>
-                                                                    {% endif %}
-                                                                </div>
-                                                            </div>
-                                                        {% elif content.content_type == 'kanji' %}
-                                                            <div class="row">
-                                                                <div class="col-md-2 text-center">
-                                                                    <h2 class="text-primary">{{ content_data.character }}</h2>
-                                                                </div>
-                                                                <div class="col-md-10">
-                                                                    <p><strong>Meaning:</strong> {{ content_data.meaning }}</p>
-                                                                    {% if content_data.onyomi %}
-                                                                    <p><strong>On'yomi:</strong> {{ content_data.onyomi }}</p>
-                                                                    {% endif %}
-                                                                    {% if content_data.kunyomi %}
-                                                                    <p><strong>Kun'yomi:</strong> {{ content_data.kunyomi }}</p>
-                                                                    {% endif %}
-                                                                    {% if content_data.jlpt_level %}
-                                                                    <p><strong>JLPT Level:</strong> N{{ content_data.jlpt_level }}</p>
-                                                                    {% endif %}
-                                                                </div>
-                                                            </div>
-                                                        {% elif content.content_type == 'vocabulary' %}
-                                                            <div class="row">
-                                                                <div class="col-md-3">
-                                                                    <h4 class="text-primary">{{ content_data.word }}</h4>
-                                                                    <p class="text-muted">{{ content_data.reading }}</p>
-                                                                </div>
-                                                                <div class="col-md-9">
-                                                                    <p><strong>Meaning:</strong> {{ content_data.meaning }}</p>
-                                                                    {% if content_data.example_sentence_japanese %}
-                                                                    <p><strong>Example:</strong> {{ content_data.example_sentence_japanese }}</p>
-                                                                    {% if content_data.example_sentence_english %}
-                                                                    <p><strong>Translation:</strong> {{ content_data.example_sentence_english }}</p>
-                                                                    {% endif %}
-                                                                    {% endif %}
-                                                                </div>
-                                                            </div>
-                                                        {% elif content.content_type == 'grammar' %}
-                                                            <h5>{{ content_data.title }}</h5>
-                                                            <p>{{ content_data.explanation }}</p>
-                                                            {% if content_data.structure %}
-                                                            <p><strong>Structure:</strong> <code>{{ content_data.structure }}</code></p>
-                                                            {% endif %}
-                                                            {% if content_data.example_sentences %}
-                                                            <p><strong>Examples:</strong> {{ content_data.example_sentences }}</p>
-                                                            {% endif %}
-                                                        {% endif %}
+                                                            </button>
+                                                        </div>
                                                     {% else %}
                                                         <p class="text-muted">Content not found.</p>
                                                     {% endif %}
@@ -366,6 +376,40 @@
 
 <script>
 let startTime = Date.now();
+
+// 3D Flip Card JavaScript - Scalable Implementation
+document.addEventListener('DOMContentLoaded', () => {
+    // Select all card components on the page
+    const cards = document.querySelectorAll('.card-scene');
+
+    cards.forEach(card => {
+        // Set the initial accessibility state for screen readers
+        card.setAttribute('aria-pressed', 'false');
+
+        // Find the flipper element within this specific card
+        const flipper = card.querySelector('.card-flipper');
+
+        // Add click event listener to the card (the button)
+        card.addEventListener('click', () => {
+            // Check if the card is currently flipped
+            const isFlipped = flipper.classList.contains('is-flipped');
+
+            // Toggle the flip state
+            flipper.classList.toggle('is-flipped');
+
+            // Update the ARIA attribute to match the new state
+            card.setAttribute('aria-pressed', !isFlipped);
+        });
+
+        // Add keyboard support (Enter and Space keys)
+        card.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault(); // Prevent page scroll on Space
+                card.click(); // Trigger the click event
+            }
+        });
+    });
+});
 
 async function submitQuizAnswer(lessonId, questionId) {
     const questionElement = document.querySelector(`[data-question-id="${questionId}"]`);
