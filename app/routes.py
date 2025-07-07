@@ -91,23 +91,33 @@ def logout():
 
 # --- Member Routes (Simulated Premium) ---
 
-@bp.route('/upgrade_to_premium')
+@bp.route('/upgrade_to_premium', methods=['POST']) # Changed to POST
 @login_required
 def upgrade_to_premium():
-    # **PROTOTYPE ONLY**: Manually change subscription for testing
-    current_user.subscription_level = 'premium'
-    db.session.commit()
-    flash('Congratulations! Your account has been upgraded to Premium.', 'success')
-    return redirect(url_for('routes.premium_content'))
+    form = CSRFTokenForm()
+    if form.validate_on_submit(): # Added CSRF validation
+        # **PROTOTYPE ONLY**: Manually change subscription for testing
+        current_user.subscription_level = 'premium'
+        db.session.commit()
+        flash('Congratulations! Your account has been upgraded to Premium.', 'success')
+        return redirect(url_for('routes.index')) # Changed to a valid route
+    else:
+        flash('Invalid request for upgrade.', 'danger')
+        return redirect(url_for('routes.index')) # Or a relevant page
 
-@bp.route('/downgrade_from_premium')
+@bp.route('/downgrade_from_premium', methods=['POST']) # Changed to POST
 @login_required
 def downgrade_from_premium():
-    # **PROTOTYPE ONLY**: Manually change subscription for testing
-    current_user.subscription_level = 'free'
-    db.session.commit()
-    flash('Your account has been downgraded to Free.', 'info')
-    return redirect(url_for('routes.free_content'))
+    form = CSRFTokenForm()
+    if form.validate_on_submit(): # Added CSRF validation
+        # **PROTOTYPE ONLY**: Manually change subscription for testing
+        current_user.subscription_level = 'free'
+        db.session.commit()
+        flash('Your account has been downgraded to Free.', 'info')
+        return redirect(url_for('routes.index')) # Changed to a valid route
+    else:
+        flash('Invalid request for downgrade.', 'danger')
+        return redirect(url_for('routes.index')) # Or a relevant page
 
 # --- Admin Routes ---
 @bp.route('/admin')
@@ -1408,16 +1418,21 @@ def update_lesson_progress(lesson_id):
 @login_required
 def reset_lesson_progress(lesson_id):
     """Reset user progress for a specific lesson."""
-    progress = UserLessonProgress.query.filter_by(
-        user_id=current_user.id, lesson_id=lesson_id
-    ).first()
+    form = CSRFTokenForm() # Instantiate the form
+    if form.validate_on_submit(): # Validate CSRF token
+        progress = UserLessonProgress.query.filter_by(
+            user_id=current_user.id, lesson_id=lesson_id
+        ).first()
 
-    if progress:
-        progress.reset()  # Assuming a reset method in the model
-        db.session.commit()
-        flash('Your progress for this lesson has been reset.', 'success')
+        if progress:
+            progress.reset()  # Assuming a reset method in the model
+            db.session.commit()
+            flash('Your progress for this lesson has been reset.', 'success')
+        else:
+            flash('No progress found for this lesson.', 'info')
     else:
-        flash('No progress found for this lesson.', 'info')
+        # This case implies a CSRF validation failure or other form error
+        flash('Invalid request to reset progress.', 'danger')
 
     return redirect(url_for('routes.view_lesson', lesson_id=lesson_id))
 
@@ -1776,66 +1791,77 @@ def delete_file():
     if not data or not data.get('file_path'):
         return jsonify({"error": "File path required"}), 400
     
-    file_path = data['file_path']
-    full_path = os.path.join(current_app.config['UPLOAD_FOLDER'], file_path)
-    
-    # Security check
-    if not os.path.abspath(full_path).startswith(os.path.abspath(current_app.config['UPLOAD_FOLDER'])):
-        return jsonify({"error": "Access denied"}), 403
-    
+    file_path_from_request = data['file_path'] # Renamed for clarity
     content_id = data.get('content_id')
-    file_deleted_from_fs = False
-    associated_content_deleted = False
 
-    # If content_id is provided, prioritize deleting the LessonContent record,
-    # which should trigger its own file deletion via content.delete_file() if properly linked.
+    # Path validation against UPLOAD_FOLDER
+    full_request_path = os.path.join(current_app.config['UPLOAD_FOLDER'], file_path_from_request)
+    if not os.path.abspath(full_request_path).startswith(os.path.abspath(current_app.config['UPLOAD_FOLDER'])):
+        return jsonify({"error": "Access denied: Invalid file path."}), 403
+
+    file_system_deleted = False
+    database_record_deleted = False
+    message = ""
+
     if content_id:
         content = LessonContent.query.get(content_id)
-        if content:
-            if content.file_path == file_path: # Ensure the content item actually refers to this file
-                # C2: Call content.delete_file() which handles file system deletion.
-                # This is app.models.LessonContent.delete_file()
-                content.delete_file()
-                # We trust content.delete_file() to have attempted deletion.
-                # For robustness, we can check os.path.exists(full_path) here if needed,
-                # but FileUploadHandler.delete_file below will also handle it.
+        if not content:
+            return jsonify({"error": f"Content with ID {content_id} not found."}), 404
 
-                db.session.delete(content)
-                db.session.commit()
-                associated_content_deleted = True
-                # If content.delete_file() worked, the file should be gone.
-                # To be certain, especially if content.delete_file() might fail silently or not exist:
-                if not os.path.exists(full_path):
-                    file_deleted_from_fs = True
+        # If content_id is given, we primarily care about its associated file.
+        if content.file_path:
+            # Validate that the file_path from request (if provided) matches the content's file_path
+            # This is an important security/consistency check.
+            if file_path_from_request != content.file_path:
+                return jsonify({"error": "File path mismatch. The provided file_path does not match the file associated with the content ID."}), 400
+
+            # Attempt to delete the file associated with the content record
+            if content.delete_file(): # This now returns True/False
+                file_system_deleted = True
+                current_app.logger.info(f"File {content.file_path} for content ID {content_id} deleted from filesystem by content.delete_file().")
             else:
-                # content_id provided, but its file_path doesn't match the one in request.
-                # This is an ambiguous situation. For safety, we might only delete the file from FS
-                # if it's not associated with this *specific* content_id.
-                # Or, return an error. Let's opt for only deleting the file if no content was deleted.
-                pass # Will fall through to general file deletion if no content record was handled.
+                # content.delete_file() failed (e.g., os.remove error)
+                # Check if the file still exists; it might have been deleted by another process or never existed
+                content_file_full_path = os.path.join(current_app.config['UPLOAD_FOLDER'], content.file_path)
+                if not os.path.exists(content_file_full_path):
+                    file_system_deleted = True # File is gone, treat as success for this part
+                    current_app.logger.info(f"File {content.file_path} for content ID {content_id} was already absent from filesystem.")
+                else:
+                    current_app.logger.error(f"Failed to delete file {content.file_path} for content ID {content_id} from filesystem.")
         else:
-            # content_id provided but no such content found.
-            # Proceed to delete the file from filesystem if it exists.
-            pass
+            # Content exists but has no associated file_path in DB.
+            # This means there's nothing to delete from the filesystem for this content.
+            # If file_path_from_request was provided, it's an orphaned file or incorrect request.
+            # We will not delete file_path_from_request in this case to avoid accidental deletion.
+            current_app.logger.info(f"Content ID {content_id} has no associated file_path in DB. No file system deletion attempted for this content object.")
+            # Consider file_system_deleted as true in the sense that there's no file to delete for this content.
+            file_system_deleted = True # Or specific message indicating no file was associated.
 
-    # General file deletion from filesystem if not handled by content deletion
-    # or if no content_id was provided.
-    if not file_deleted_from_fs: # C2: Avoid deleting twice
-        if FileUploadHandler.delete_file(full_path): # This is app.utils.FileUploadHandler.delete_file
-            file_deleted_from_fs = True
+        # Delete the content database record
+        db.session.delete(content)
+        db.session.commit()
+        database_record_deleted = True
+        message = f"Content ID {content_id} and its associations deleted from database. "
+
+        if file_system_deleted:
+            message += "Associated file handled successfully."
+            return jsonify({"message": message}), 200
         else:
-            # If content was associated and deleted, but file system deletion failed here,
-            # it's a partial success.
-            if associated_content_deleted:
-                 return jsonify({"message": "Associated content deleted, but filesystem file deletion failed or file was already gone."}), 207 # Multi-Status
-            return jsonify({"error": "Failed to delete file from filesystem"}), 500
+            message += "Associated file could not be deleted from filesystem or was not found."
+            return jsonify({"message": message}), 207 # Multi-Status: DB deleted, file system issue
 
-    if associated_content_deleted and file_deleted_from_fs:
-        return jsonify({"message": "File and associated content deleted successfully"}), 200
-    elif file_deleted_from_fs:
-        return jsonify({"message": "File deleted successfully from filesystem"}), 200
-    elif associated_content_deleted: # File was not on FS, but content deleted
-        return jsonify({"message": "Associated content deleted; file was not found on filesystem initially or already removed."}), 200
     else:
-        # This case should ideally be caught by FileUploadHandler.delete_file failing
-        return jsonify({"error": "File not found or could not be deleted, and no associated content processed"}), 404
+        # No content_id provided, this is a request to delete a file directly by its path.
+        # This case should be used cautiously. Ensure the file is not still referenced by any LessonContent.
+        # For now, we will proceed with deleting the file if it exists.
+        # A more robust system might check if this file_path_from_request is referenced in any LessonContent.file_path.
+        if not os.path.exists(full_request_path):
+            return jsonify({"error": "File not found at the specified path."}), 404
+
+        if FileUploadHandler.delete_file(full_request_path): # This is app.utils.FileUploadHandler.delete_file
+            file_system_deleted = True
+            message = f"File {file_path_from_request} deleted successfully from filesystem."
+            return jsonify({"message": message}), 200
+        else:
+            message = f"Failed to delete file {file_path_from_request} from filesystem."
+            return jsonify({"error": message}), 500
