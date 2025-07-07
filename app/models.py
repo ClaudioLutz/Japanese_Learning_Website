@@ -255,8 +255,10 @@ class LessonContent(db.Model):
                 if os.path.exists(file_full_path):
                     os.remove(file_full_path)
                     current_app.logger.info(f"Successfully deleted file: {file_full_path}")
+                return True # File deleted or did not exist
             except OSError as e: # D1
                 current_app.logger.error(f"Error deleting file {file_full_path} for LessonContent {self.id}: {e}")
+                return False # Deletion failed
     
     def get_content_data(self):
         """Get the actual content data based on content_type and content_id"""
