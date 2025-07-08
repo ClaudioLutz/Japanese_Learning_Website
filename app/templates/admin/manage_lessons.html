@@ -23,6 +23,7 @@
                         <table class="table table-striped" id="lessonsTable">
                             <thead>
                                 <tr>
+                                    <th>Order</th>
                                     <th>ID</th>
                                     <th>Title</th>
                                     <th>Category</th>
@@ -1021,9 +1022,16 @@ async function loadLessons() {
         const tbody = document.querySelector('#lessonsTable tbody');
         tbody.innerHTML = '';
         
-        lessons.forEach(lesson => {
+        lessons.forEach((lesson, index) => {
             const row = document.createElement('tr');
             row.innerHTML = `
+                <td>
+                    <div class="d-flex flex-column align-items-center">
+                        <button class="btn btn-sm reorder-btn" onclick="moveLesson(${lesson.id}, 'up')" ${index === 0 ? 'disabled' : ''}>▲</button>
+                        <span class="order-number my-1">${lesson.order_index}</span>
+                        <button class="btn btn-sm reorder-btn" onclick="moveLesson(${lesson.id}, 'down')" ${index === lessons.length - 1 ? 'disabled' : ''}>▼</button>
+                    </div>
+                </td>
                 <td>${lesson.id}</td>
                 <td>${lesson.title}</td>
                 <td><span class="badge badge-info">${lesson.category_name || 'No Category'}</span></td>
@@ -1202,6 +1210,32 @@ async function deleteLesson(id) {
     } catch (error) {
         console.error('Error deleting lesson:', error);
         alert('Error deleting lesson');
+    }
+}
+
+// Move lesson up or down
+async function moveLesson(lessonId, direction) {
+    try {
+        const response = await fetch(`/api/admin/lessons/${lessonId}/move`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            },
+            body: JSON.stringify({ direction: direction })
+        });
+
+        if (response.ok) {
+            loadLessons(); // Reload the lessons to show the new order
+            const result = await response.json();
+            console.log(result.message);
+        } else {
+            const error = await response.json();
+            alert('Error: ' + error.error);
+        }
+    } catch (error) {
+        console.error('Error moving lesson:', error);
+        alert('Error moving lesson');
     }
 }
 

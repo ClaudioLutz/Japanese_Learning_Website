@@ -572,7 +572,7 @@ def delete_category(item_id):
 @login_required
 @admin_required
 def list_lessons():
-    items = Lesson.query.all()
+    items = Lesson.query.order_by(Lesson.order_index.asc(), Lesson.id.asc()).all()
     lessons_data = []
     for item in items:
         lesson_dict = model_to_dict(item)
@@ -674,6 +674,101 @@ def delete_lesson(item_id):
     db.session.delete(item)
     db.session.commit()
     return jsonify({"message": "Lesson deleted successfully"}), 200
+
+@bp.route('/api/admin/lessons/<int:lesson_id>/move', methods=['POST'])
+@login_required
+@admin_required
+def move_lesson(lesson_id):
+    """Move a lesson up or down in order globally across all categories."""
+    data = request.json
+    direction = data.get('direction')
+    if direction not in ['up', 'down']:
+        return jsonify({"error": "Invalid direction specified"}), 400
+
+    lesson_to_move = Lesson.query.get_or_404(lesson_id)
+    
+    # Get all lessons ordered by order_index globally (not by category)
+    lessons = Lesson.query.order_by(Lesson.order_index, Lesson.id).all()
+    
+    # Find the current position of the lesson to move
+    current_position = None
+    for i, lesson in enumerate(lessons):
+        if lesson.id == lesson_id:
+            current_position = i
+            break
+    
+    if current_position is None:
+        return jsonify({"error": "Lesson not found"}), 404
+    
+    # Calculate new position
+    if direction == 'up':
+        if current_position == 0:
+            return jsonify({"error": "Cannot move lesson further up"}), 400
+        new_position = current_position - 1
+    else:  # direction == 'down'
+        if current_position == len(lessons) - 1:
+            return jsonify({"error": "Cannot move lesson further down"}), 400
+        new_position = current_position + 1
+    
+    # Reorder the list
+    lesson_to_move_obj = lessons.pop(current_position)
+    lessons.insert(new_position, lesson_to_move_obj)
+    
+    # Update order indices for all lessons globally
+    try:
+        for index, lesson in enumerate(lessons):
+            lesson.order_index = index
+        
+        db.session.commit()
+        current_app.logger.info(f"Lesson {lesson_id} moved {direction} globally")
+        return jsonify({"message": "Lesson moved successfully"}), 200
+        
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error moving lesson: {e}")
+        return jsonify({"error": "Database error occurred"}), 500
+
+@bp.route('/api/admin/lessons/reorder', methods=['POST'])
+@login_required
+@admin_required
+def reorder_lessons():
+    """Reorder lessons based on provided order."""
+    data = request.json
+    lesson_ids = data.get('lesson_ids', [])
+    category_id = data.get('category_id')  # Optional: reorder within specific category
+    
+    if not lesson_ids:
+        return jsonify({"error": "No lesson IDs provided"}), 400
+    
+    try:
+        # Get all lessons to reorder
+        if category_id:
+            lessons = Lesson.query.filter(
+                Lesson.category_id == category_id,
+                Lesson.id.in_(lesson_ids)
+            ).all()
+        else:
+            lessons = Lesson.query.filter(Lesson.id.in_(lesson_ids)).all()
+        
+        # Create a mapping of ID to lesson
+        lesson_map = {lesson.id: lesson for lesson in lessons}
+        
+        # Verify all provided IDs exist
+        if len(lesson_map) != len(lesson_ids):
+            return jsonify({"error": "Some lesson IDs not found"}), 404
+        
+        # Update order indices based on the provided order
+        for index, lesson_id in enumerate(lesson_ids):
+            lesson_map[lesson_id].order_index = index
+        
+        db.session.commit()
+        current_app.logger.info(f"Reordered {len(lesson_ids)} lessons in category {category_id or 'All'}")
+        return jsonify({"message": "Lessons reordered successfully"}), 200
+        
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error reordering lessons: {e}")
+        return jsonify({"error": "Database error occurred"}), 500
 
 # == CONTENT OPTIONS API ==
 @bp.route('/api/admin/content-options/<content_type>', methods=['GET'])
@@ -1362,8 +1457,8 @@ def update_lesson_page(lesson_id, page_num):
 @bp.route('/api/lessons', methods=['GET'])
 @login_required
 def get_user_lessons():
-    """Get lessons accessible to the current user"""
-    lessons = Lesson.query.filter_by(is_published=True).all()
+    """Get lessons accessible to the current user in the same order as admin panel"""
+    lessons = Lesson.query.filter_by(is_published=True).order_by(Lesson.order_index.asc(), Lesson.id.asc()).all()
     accessible_lessons = []
     
     for lesson in lessons:
