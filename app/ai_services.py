@@ -32,7 +32,7 @@ class AILessonContentGenerator:
             response_format = {"type": "json_object"} if is_json else {"type": "text"}
             
             completion = self.client.chat.completions.create(
-                model="gpt-4o", # Or "gpt-3.5-turbo"
+                model="gpt-4.1", # Or "gpt-3.5-turbo"
                 messages=messages,
                 response_format=response_format
             )
