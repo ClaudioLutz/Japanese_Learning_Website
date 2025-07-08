@@ -31,6 +31,8 @@ This documentation provides comprehensive information about the Japanese Learnin
 - [**15-Development-Workflow.md**](15-Development-Workflow.md) - Development processes and best practices
 - [**16-Troubleshooting.md**](16-Troubleshooting.md) - Common issues and solutions
 - [**17-Future-Roadmap.md**](17-Future-Roadmap.md) - Planned features and enhancements
+- [**18-AI-Lesson-Creation.md**](18-AI-Lesson-Creation.md) - How the AI lesson creation feature works
+- [**19-Lesson-Creation-Scripts.md**](19-Lesson-Creation-Scripts.md) - How to use the lesson creation scripts
 
 ## Quick Start
 1. Read the [Project Overview](02-Project-Overview.md) to understand the system
