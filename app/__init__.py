@@ -4,6 +4,7 @@ logging.basicConfig(level=logging.INFO)
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect # Import CSRFProtect
 import os
 from werkzeug.utils import secure_filename
@@ -13,6 +14,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 db = SQLAlchemy()
+migrate = Migrate()
 login_manager = LoginManager()
 csrf = CSRFProtect() # Initialize CSRFProtect
 
@@ -52,6 +54,7 @@ def create_app():
         os.makedirs(directory, exist_ok=True)
 
     db.init_app(app)
+    migrate.init_app(app, db)
     login_manager.init_app(app)
     csrf.init_app(app) # Initialize CSRFProtect with the app
 

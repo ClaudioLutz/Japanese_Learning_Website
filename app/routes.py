@@ -5,6 +5,7 @@ from sqlalchemy.exc import IntegrityError, SQLAlchemyError # Import specific exc
 from app import db
 from app.models import User, Kana, Kanji, Vocabulary, Grammar, LessonCategory, Lesson, LessonContent, LessonPrerequisite, UserLessonProgress, QuizQuestion, QuizOption, UserQuizAnswer, LessonPage
 from app.forms import RegistrationForm, LoginForm, CSRFTokenForm
+from app.ai_services import AILessonContentGenerator
 from functools import wraps # For custom decorators
 
 # Helper function for JSON serialization
@@ -1618,6 +1619,38 @@ def submit_quiz_answer(lesson_id, question_id):
     except Exception as e:
         current_app.logger.error(f"Error submitting quiz answer for question {question_id}: {e}", exc_info=True)
         return jsonify({"error": "An internal error occurred"}), 500
+
+# == AI CONTENT GENERATION API ==
+@bp.route('/api/admin/generate-ai-content', methods=['POST'])
+@login_required
+@admin_required
+def generate_ai_content():
+    """
+    Handles requests for AI-generated lesson content.
+    This is a proxy to the AILessonContentGenerator service.
+    """
+    data = request.json
+    if not data or 'content_type' not in data:
+        return jsonify({"error": "Missing 'content_type' in request"}), 400
+
+    generator = AILessonContentGenerator()
+    content_type = data.get('content_type')
+    topic = data.get('topic', 'General Japanese')
+    difficulty = data.get('difficulty', 'Beginner')
+    keywords = data.get('keywords', 'N/A')
+
+    result = None
+    if content_type == "explanation":
+        result = generator.generate_explanation(topic, difficulty, keywords)
+    elif content_type == "multiple_choice_question":
+        result = generator.generate_multiple_choice_question(topic, difficulty, keywords)
+    else:
+        return jsonify({"error": "Unsupported content type"}), 400
+
+    if "error" in result:
+        return jsonify(result), 500
+
+    return jsonify(result)
 
 # == FILE UPLOAD API ==
 from app.utils import FileUploadHandler # Import FileUploadHandler

@@ -229,6 +229,10 @@ class LessonContent(db.Model):
     max_attempts = db.Column(db.Integer, default=3)
     passing_score = db.Column(db.Integer, default=70)  # Percentage
     
+    # AI generation tracking fields
+    generated_by_ai = db.Column(db.Boolean, default=False, nullable=False)
+    ai_generation_details = db.Column(db.JSON, nullable=True)
+    
     # Relationships
     quiz_questions = db.relationship('QuizQuestion', backref='content', lazy=True, cascade='all, delete-orphan')
     
