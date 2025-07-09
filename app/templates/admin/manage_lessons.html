@@ -8,9 +8,17 @@
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2>Manage Lessons</h2>
-                <button type="button" class="btn btn-primary" onclick="openModal('addLessonModal')">
-                    <i class="fas fa-plus"></i> Add New Lesson
-                </button>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-success" onclick="openModal('importLessonModal')">
+                        <i class="fas fa-upload"></i> Import Lesson
+                    </button>
+                    <button type="button" class="btn btn-info" onclick="openModal('exportLessonModal')">
+                        <i class="fas fa-download"></i> Export Lessons
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="openModal('addLessonModal')">
+                        <i class="fas fa-plus"></i> Add New Lesson
+                    </button>
+                </div>
             </div>
 
             <!-- Lessons Table -->
@@ -375,6 +383,149 @@
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" onclick="closeModal('pageEditorModal')">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- Export Lesson Modal -->
+<div id="exportLessonModal" class="modal">
+    <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-header">
+            <h4>Export Lessons</h4>
+            <span class="close" onclick="closeModal('exportLessonModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Export Options</label>
+                <div class="form-check">
+                    <input type="radio" id="exportSingle" name="exportType" value="single" class="form-check-input" checked onchange="toggleExportOptions()">
+                    <label for="exportSingle" class="form-check-label">Export Single Lesson</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" id="exportMultiple" name="exportType" value="multiple" class="form-check-input" onchange="toggleExportOptions()">
+                    <label for="exportMultiple" class="form-check-label">Export Multiple Lessons</label>
+                </div>
+            </div>
+            
+            <!-- Single Lesson Export -->
+            <div id="singleExportOptions">
+                <div class="form-group">
+                    <label for="exportLessonSelect">Select Lesson</label>
+                    <select id="exportLessonSelect" class="form-control">
+                        <option value="">Choose a lesson...</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Multiple Lesson Export -->
+            <div id="multipleExportOptions" style="display: none;">
+                <div class="form-group">
+                    <label>Select Lessons</label>
+                    <div id="exportLessonsList" class="border p-3" style="max-height: 200px; overflow-y: auto;">
+                        <!-- Lesson checkboxes will be populated here -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Export Format</label>
+                <div class="form-check">
+                    <input type="radio" id="exportJSON" name="exportFormat" value="json" class="form-check-input" checked>
+                    <label for="exportJSON" class="form-check-label">JSON (Data Only)</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" id="exportZIP" name="exportFormat" value="zip" class="form-check-input">
+                    <label for="exportZIP" class="form-check-label">ZIP Package (Data + Files)</label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <div class="form-check">
+                    <input type="checkbox" id="includeFiles" class="form-check-input" checked>
+                    <label for="includeFiles" class="form-check-label">Include Media Files</label>
+                </div>
+                <small class="form-text text-muted">Include uploaded images, audio, and video files</small>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeModal('exportLessonModal')">Cancel</button>
+            <button type="button" class="btn btn-primary" onclick="startExport()">
+                <i class="fas fa-download"></i> Export
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Import Lesson Modal -->
+<div id="importLessonModal" class="modal">
+    <div class="modal-content" style="max-width: 700px;">
+        <div class="modal-header">
+            <h4>Import Lesson</h4>
+            <span class="close" onclick="closeModal('importLessonModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Import Method</label>
+                <div class="form-check">
+                    <input type="radio" id="importFile" name="importMethod" value="file" class="form-check-input" checked onchange="toggleImportMethod()">
+                    <label for="importFile" class="form-check-label">Upload File</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" id="importJSON" name="importMethod" value="json" class="form-check-input" onchange="toggleImportMethod()">
+                    <label for="importJSON" class="form-check-label">Paste JSON Data</label>
+                </div>
+            </div>
+            
+            <!-- File Upload Method -->
+            <div id="fileImportSection">
+                <div class="form-group">
+                    <label for="importFileInput">Select File</label>
+                    <input type="file" id="importFileInput" class="form-control-file" accept=".json,.zip" onchange="analyzeImportFile()">
+                    <small class="form-text text-muted">Supported formats: JSON files or ZIP packages</small>
+                </div>
+            </div>
+            
+            <!-- JSON Paste Method -->
+            <div id="jsonImportSection" style="display: none;">
+                <div class="form-group">
+                    <label for="importJSONText">Paste JSON Data</label>
+                    <textarea id="importJSONText" class="form-control" rows="8" placeholder="Paste your lesson JSON data here..."></textarea>
+                    <button type="button" class="btn btn-sm btn-secondary mt-2" onclick="analyzeJSONData()">Analyze Data</button>
+                </div>
+            </div>
+            
+            <!-- Import Analysis Results -->
+            <div id="importAnalysis" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">Import Preview</h6>
+                    </div>
+                    <div class="card-body">
+                        <div id="importAnalysisContent">
+                            <!-- Analysis results will be shown here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Import Options -->
+            <div id="importOptions" style="display: none;">
+                <div class="form-group">
+                    <label>Handle Duplicate Lessons</label>
+                    <select id="duplicateHandling" class="form-control">
+                        <option value="rename">Rename (add suffix)</option>
+                        <option value="replace">Replace existing</option>
+                        <option value="skip">Skip import</option>
+                    </select>
+                    <small class="form-text text-muted">What to do if a lesson with the same title already exists</small>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeModal('importLessonModal')">Cancel</button>
+            <button type="button" id="importBtn" class="btn btn-success" onclick="startImport()" style="display: none;">
+                <i class="fas fa-upload"></i> Import Lesson
+            </button>
         </div>
     </div>
 </div>
@@ -1019,6 +1170,9 @@ async function loadLessons() {
         const response = await fetch('/api/admin/lessons');
         const lessons = await response.json();
         
+        // Store lessons globally for export functionality
+        window.availableLessons = lessons;
+        
         const tbody = document.querySelector('#lessonsTable tbody');
         tbody.innerHTML = '';
         
@@ -1048,6 +1202,9 @@ async function loadLessons() {
             `;
             tbody.appendChild(row);
         });
+        
+        // Update export modal options
+        populateExportOptions();
     } catch (error) {
         console.error('Error loading lessons:', error);
         alert('Error loading lessons');
@@ -3199,6 +3356,532 @@ function closeModal(modalId) {
     }
 }
 </script>
+<!-- Export Modal -->
+<div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exportModalLabel">Export Lessons</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="exportForm">
+                    <div class="form-group">
+                        <label>Export Type:</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="exportType" id="exportSingle" value="single" checked>
+                            <label class="form-check-label" for="exportSingle">
+                                Single Lesson
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="exportType" id="exportMultiple" value="multiple">
+                            <label class="form-check-label" for="exportMultiple">
+                                Multiple Lessons
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" id="singleLessonSelect">
+                        <label for="lessonSelect">Select Lesson:</label>
+                        <select class="form-control" id="lessonSelect">
+                            <option value="">Choose a lesson...</option>
+                            {% for lesson in lessons %}
+                            <option value="{{ lesson.id }}">{{ lesson.title }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" id="multipleLessonSelect" style="display: none;">
+                        <label>Select Lessons:</label>
+                        <div style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 10px;">
+                            {% for lesson in lessons %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="selectedLessons" value="{{ lesson.id }}" id="lesson_{{ lesson.id }}">
+                                <label class="form-check-label" for="lesson_{{ lesson.id }}">
+                                    {{ lesson.title }}
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="includeFiles" checked>
+                            <label class="form-check-label" for="includeFiles">
+                                Include media files (images, audio, video)
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="exportLessons()">Export</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Import Modal -->
+<div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="importModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="importModalLabel">Import Lessons</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="importForm" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="importFile">Select File:</label>
+                        <input type="file" class="form-control-file" id="importFile" accept=".json,.zip" required>
+                        <small class="form-text text-muted">
+                            Upload a JSON file (single lesson) or ZIP package (lesson with files)
+                        </small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="handleDuplicates">Handle Duplicates:</label>
+                        <select class="form-control" id="handleDuplicates">
+                            <option value="rename">Rename (add suffix to duplicate lessons)</option>
+                            <option value="replace">Replace existing lessons</option>
+                            <option value="skip">Skip duplicate lessons</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="previewImport">
+                            <label class="form-check-label" for="previewImport">
+                                Preview import (analyze file without importing)
+                            </label>
+                        </div>
+                    </div>
+                </form>
+                
+                <div id="importPreview" style="display: none;">
+                    <h6>Import Preview:</h6>
+                    <div id="previewContent"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-info" onclick="previewImport()" id="previewBtn">Preview</button>
+                <button type="button" class="btn btn-primary" onclick="importLessons()" id="importBtn">Import</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Populate export modal with available lessons
+function populateExportOptions() {
+    if (!window.availableLessons) return;
+    
+    // Populate the correct export lesson select (exportLessonSelect)
+    const exportSelect = document.getElementById('exportLessonSelect');
+    if (exportSelect) {
+        // Clear existing options except the first one
+        while (exportSelect.children.length > 1) {
+            exportSelect.removeChild(exportSelect.lastChild);
+        }
+        
+        window.availableLessons.forEach(lesson => {
+            const option = document.createElement('option');
+            option.value = lesson.id;
+            option.textContent = lesson.title;
+            exportSelect.appendChild(option);
+        });
+    }
+    
+    // Populate the export lessons list for multiple selection
+    const exportListContainer = document.getElementById('exportLessonsList');
+    if (exportListContainer) {
+        exportListContainer.innerHTML = '';
+        
+        window.availableLessons.forEach(lesson => {
+            const checkboxHtml = `
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="selectedLessons" value="${lesson.id}" id="export_lesson_${lesson.id}">
+                    <label class="form-check-label" for="export_lesson_${lesson.id}">
+                        ${lesson.title}
+                    </label>
+                </div>
+            `;
+            exportListContainer.insertAdjacentHTML('beforeend', checkboxHtml);
+        });
+    }
+    
+    // Also populate the old modal selects for backward compatibility
+    const singleSelect = document.getElementById('lessonSelect');
+    if (singleSelect) {
+        while (singleSelect.children.length > 1) {
+            singleSelect.removeChild(singleSelect.lastChild);
+        }
+        
+        window.availableLessons.forEach(lesson => {
+            const option = document.createElement('option');
+            option.value = lesson.id;
+            option.textContent = lesson.title;
+            singleSelect.appendChild(option);
+        });
+    }
+}
+
+// Toggle export options based on radio selection
+function toggleExportOptions() {
+    const exportType = document.querySelector('input[name="exportType"]:checked').value;
+    const singleOptions = document.getElementById('singleExportOptions');
+    const multipleOptions = document.getElementById('multipleExportOptions');
+    
+    if (exportType === 'single') {
+        singleOptions.style.display = 'block';
+        multipleOptions.style.display = 'none';
+    } else {
+        singleOptions.style.display = 'none';
+        multipleOptions.style.display = 'block';
+    }
+}
+
+// Start export process
+async function startExport() {
+    const exportType = document.querySelector('input[name="exportType"]:checked').value;
+    const exportFormat = document.querySelector('input[name="exportFormat"]:checked').value;
+    const includeFiles = document.getElementById('includeFiles').checked;
+    
+    try {
+        if (exportType === 'single') {
+            const lessonId = document.getElementById('exportLessonSelect').value;
+            if (!lessonId) {
+                alert('Please select a lesson to export.');
+                return;
+            }
+            
+            if (exportFormat === 'zip' || includeFiles) {
+                // Export as ZIP package
+                const response = await fetch(`/api/admin/lessons/${lessonId}/export-package`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                    body: JSON.stringify({
+                        include_files: includeFiles
+                    })
+                });
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    downloadBlob(blob, `lesson_${lessonId}_package.zip`);
+                    closeModal('exportLessonModal');
+                } else {
+                    const error = await response.json();
+                    alert('Export failed: ' + (error.error || 'Unknown error'));
+                }
+            } else {
+                // Export as JSON
+                const response = await fetch(`/api/admin/lessons/${lessonId}/export?include_files=${includeFiles}`, {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRFToken': getCSRFToken()
+                    }
+                });
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    downloadBlob(blob, `lesson_${lessonId}.json`);
+                    closeModal('exportLessonModal');
+                } else {
+                    const error = await response.json();
+                    alert('Export failed: ' + (error.error || 'Unknown error'));
+                }
+            }
+        } else {
+            // Multiple lessons export
+            const selectedLessons = [];
+            const checkboxes = document.querySelectorAll('#exportLessonsList input[type="checkbox"]:checked');
+            checkboxes.forEach(cb => selectedLessons.push(parseInt(cb.value)));
+            
+            if (selectedLessons.length === 0) {
+                alert('Please select at least one lesson to export.');
+                return;
+            }
+            
+            const response = await fetch('/api/admin/lessons/export-multiple', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: JSON.stringify({
+                    lesson_ids: selectedLessons,
+                    include_files: includeFiles
+                })
+            });
+            
+            if (response.ok) {
+                const blob = await response.blob();
+                const date = new Date().toISOString().split('T')[0];
+                downloadBlob(blob, `lessons_export_${date}.zip`);
+                closeModal('exportLessonModal');
+            } else {
+                const error = await response.json();
+                alert('Export failed: ' + (error.error || 'Unknown error'));
+            }
+        }
+    } catch (error) {
+        console.error('Export error:', error);
+        alert('Export failed. Please try again.');
+    }
+}
+
+// Helper function to download blob as file
+function downloadBlob(blob, filename) {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+}
+
+// Export/Import functionality
+$(document).ready(function() {
+    // Toggle export type
+    $('input[name="exportType"]').change(function() {
+        if ($(this).val() === 'single') {
+            $('#singleLessonSelect').show();
+            $('#multipleLessonSelect').hide();
+        } else {
+            $('#singleLessonSelect').hide();
+            $('#multipleLessonSelect').show();
+        }
+    });
+    
+    // Toggle preview mode
+    $('#previewImport').change(function() {
+        if ($(this).is(':checked')) {
+            $('#importBtn').hide();
+            $('#previewBtn').show();
+        } else {
+            $('#importBtn').show();
+            $('#previewBtn').hide();
+        }
+    });
+});
+
+function exportLessons() {
+    const exportType = $('input[name="exportType"]:checked').val();
+    const includeFiles = $('#includeFiles').is(':checked');
+    
+    if (exportType === 'single') {
+        const lessonId = $('#lessonSelect').val();
+        if (!lessonId) {
+            alert('Please select a lesson to export.');
+            return;
+        }
+        
+        if (includeFiles) {
+            // Export as ZIP package
+            fetch(`/api/admin/lessons/${lessonId}/export-package`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    include_files: true
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.blob();
+                }
+                throw new Error('Export failed');
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = `lesson_${lessonId}_package.zip`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                $('#exportModal').modal('hide');
+            })
+            .catch(error => {
+                console.error('Export error:', error);
+                alert('Export failed. Please try again.');
+            });
+        } else {
+            // Export as JSON
+            window.location.href = `/api/admin/lessons/${lessonId}/export?include_files=false`;
+            $('#exportModal').modal('hide');
+        }
+    } else {
+        // Multiple lessons export
+        const selectedLessons = [];
+        $('input[name="selectedLessons"]:checked').each(function() {
+            selectedLessons.push(parseInt($(this).val()));
+        });
+        
+        if (selectedLessons.length === 0) {
+            alert('Please select at least one lesson to export.');
+            return;
+        }
+        
+        fetch('/api/admin/lessons/export-multiple', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                lesson_ids: selectedLessons,
+                include_files: includeFiles
+            })
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.blob();
+            }
+            throw new Error('Export failed');
+        })
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = `lessons_export_${new Date().toISOString().split('T')[0]}.zip`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            $('#exportModal').modal('hide');
+        })
+        .catch(error => {
+            console.error('Export error:', error);
+            alert('Export failed. Please try again.');
+        });
+    }
+}
+
+function previewImport() {
+    const fileInput = document.getElementById('importFile');
+    const file = fileInput.files[0];
+    
+    if (!file) {
+        alert('Please select a file to preview.');
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    fetch('/api/admin/lessons/import-info', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            displayImportPreview(data.info);
+        } else {
+            alert('Preview failed: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Preview error:', error);
+        alert('Preview failed. Please try again.');
+    });
+}
+
+function displayImportPreview(info) {
+    let html = '<div class="alert alert-info">';
+    html += `<strong>File Type:</strong> ${info.file_type}<br>`;
+    html += `<strong>Lessons Found:</strong> ${info.lesson_count}<br>`;
+    
+    if (info.lessons && info.lessons.length > 0) {
+        html += '<strong>Lesson Details:</strong><ul>';
+        info.lessons.forEach(lesson => {
+            html += `<li><strong>${lesson.title}</strong> - ${lesson.difficulty} level`;
+            if (lesson.pages) {
+                html += ` (${lesson.pages} pages)`;
+            }
+            if (lesson.files && lesson.files.length > 0) {
+                html += ` - ${lesson.files.length} files`;
+            }
+            html += '</li>';
+        });
+        html += '</ul>';
+    }
+    
+    if (info.warnings && info.warnings.length > 0) {
+        html += '<div class="alert alert-warning mt-2"><strong>Warnings:</strong><ul>';
+        info.warnings.forEach(warning => {
+            html += `<li>${warning}</li>`;
+        });
+        html += '</ul></div>';
+    }
+    
+    html += '</div>';
+    
+    $('#previewContent').html(html);
+    $('#importPreview').show();
+}
+
+function importLessons() {
+    const fileInput = document.getElementById('importFile');
+    const file = fileInput.files[0];
+    const handleDuplicates = $('#handleDuplicates').val();
+    
+    if (!file) {
+        alert('Please select a file to import.');
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('handle_duplicates', handleDuplicates);
+    
+    // Show loading state
+    $('#importBtn').prop('disabled', true).text('Importing...');
+    
+    const endpoint = file.name.endsWith('.zip') ? 
+        '/api/admin/lessons/import-package' : 
+        '/api/admin/lessons/import';
+    
+    fetch(endpoint, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(`Import successful! Imported ${data.imported_count} lesson(s).`);
+            $('#importModal').modal('hide');
+            location.reload(); // Refresh the page to show new lessons
+        } else {
+            alert('Import failed: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Import error:', error);
+        alert('Import failed. Please try again.');
+    })
+    .finally(() => {
+        $('#importBtn').prop('disabled', false).text('Import');
+    });
+}
+</script>
+
 {% endblock %}
 
 </final_file_content>

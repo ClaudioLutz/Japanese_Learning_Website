@@ -7,6 +7,10 @@ from app import db
 from app.models import User, Kana, Kanji, Vocabulary, Grammar, LessonCategory, Lesson, LessonContent, LessonPrerequisite, UserLessonProgress, QuizQuestion, QuizOption, UserQuizAnswer, LessonPage
 from app.forms import RegistrationForm, LoginForm, CSRFTokenForm
 from app.ai_services import AILessonContentGenerator
+from app.lesson_export_import import (
+    export_lesson_to_json, import_lesson_from_json, 
+    create_lesson_export_package, import_lesson_from_zip
+)
 from functools import wraps # For custom decorators
 
 # Helper function for JSON serialization
@@ -2012,3 +2016,340 @@ def delete_file():
         else:
             message = f"Failed to delete file {file_path_from_request} from filesystem."
             return jsonify({"error": message}), 500
+
+# == LESSON EXPORT/IMPORT API ==
+@bp.route('/api/admin/lessons/<int:lesson_id>/export', methods=['GET'])
+@login_required
+@admin_required
+def export_lesson(lesson_id):
+    """Export a lesson to JSON format"""
+    try:
+        include_files = request.args.get('include_files', 'true').lower() == 'true'
+        lesson_data = export_lesson_to_json(lesson_id, include_files)
+        
+        # Set appropriate headers for download
+        from flask import make_response
+        response = make_response(jsonify(lesson_data))
+        response.headers['Content-Disposition'] = f'attachment; filename=lesson_{lesson_id}_export.json'
+        response.headers['Content-Type'] = 'application/json'
+        
+        return response
+        
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
+    except Exception as e:
+        current_app.logger.error(f"Error exporting lesson {lesson_id}: {e}")
+        return jsonify({"error": "Failed to export lesson"}), 500
+
+@bp.route('/api/admin/lessons/<int:lesson_id>/export-package', methods=['POST'])
+@login_required
+@admin_required
+def export_lesson_package(lesson_id):
+    """Create a complete export package as ZIP file"""
+    try:
+        data = request.json or {}
+        include_files = data.get('include_files', True)
+        
+        # Create temporary export directory
+        import tempfile
+        import os
+        
+        with tempfile.TemporaryDirectory() as temp_dir:
+            zip_path = create_lesson_export_package(lesson_id, temp_dir, include_files)
+            
+            # Read the ZIP file and return it
+            with open(zip_path, 'rb') as f:
+                zip_data = f.read()
+            
+            from flask import make_response
+            response = make_response(zip_data)
+            response.headers['Content-Type'] = 'application/zip'
+            response.headers['Content-Disposition'] = f'attachment; filename={os.path.basename(zip_path)}'
+            
+            return response
+            
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
+    except Exception as e:
+        current_app.logger.error(f"Error creating export package for lesson {lesson_id}: {e}")
+        return jsonify({"error": "Failed to create export package"}), 500
+
+@bp.route('/api/admin/lessons/import', methods=['POST'])
+@login_required
+@admin_required
+def import_lesson():
+    """Import a lesson from JSON data"""
+    try:
+        data = request.json
+        if not data:
+            return jsonify({"error": "No lesson data provided"}), 400
+        
+        # Get import options
+        handle_duplicates = request.args.get('handle_duplicates', 'rename')
+        if handle_duplicates not in ['rename', 'replace', 'skip']:
+            return jsonify({"error": "Invalid handle_duplicates option"}), 400
+        
+        # Import the lesson
+        imported_lesson = import_lesson_from_json(
+            data, 
+            handle_duplicates=handle_duplicates,
+            import_files=False  # JSON import doesn't include files
+        )
+        
+        return jsonify({
+            "message": "Lesson imported successfully",
+            "lesson_id": imported_lesson.id,
+            "lesson_title": imported_lesson.title
+        }), 201
+        
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        current_app.logger.error(f"Error importing lesson: {e}")
+        return jsonify({"error": "Failed to import lesson"}), 500
+
+@bp.route('/api/admin/lessons/import-package', methods=['POST'])
+@login_required
+@admin_required
+def import_lesson_package():
+    """Import a lesson from ZIP package"""
+    try:
+        if 'file' not in request.files:
+            return jsonify({"error": "No file provided"}), 400
+        
+        file = request.files['file']
+        if not file.filename or not file.filename.endswith('.zip'):
+            return jsonify({"error": "Please provide a ZIP file"}), 400
+        
+        # Get import options
+        handle_duplicates = request.form.get('handle_duplicates', 'rename')
+        if handle_duplicates not in ['rename', 'replace', 'skip']:
+            return jsonify({"error": "Invalid handle_duplicates option"}), 400
+        
+        # Save uploaded file temporarily
+        import tempfile
+        import os
+        
+        with tempfile.NamedTemporaryFile(suffix='.zip', delete=False) as temp_file:
+            file.save(temp_file.name)
+            temp_zip_path = temp_file.name
+        
+        try:
+            # Import the lesson
+            imported_lesson = import_lesson_from_zip(temp_zip_path, handle_duplicates)
+            
+            return jsonify({
+                "message": "Lesson package imported successfully",
+                "lesson_id": imported_lesson.id,
+                "lesson_title": imported_lesson.title
+            }), 201
+            
+        finally:
+            # Clean up temporary file
+            if os.path.exists(temp_zip_path):
+                os.unlink(temp_zip_path)
+        
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        current_app.logger.error(f"Error importing lesson package: {e}")
+        return jsonify({"error": "Failed to import lesson package"}), 500
+
+@bp.route('/api/admin/lessons/export-multiple', methods=['POST'])
+@login_required
+@admin_required
+def export_multiple_lessons():
+    """Export multiple lessons as a single ZIP package"""
+    try:
+        data = request.json
+        if not data or 'lesson_ids' not in data:
+            return jsonify({"error": "No lesson IDs provided"}), 400
+        
+        lesson_ids = data['lesson_ids']
+        include_files = data.get('include_files', True)
+        
+        if not lesson_ids:
+            return jsonify({"error": "Empty lesson IDs list"}), 400
+        
+        # Create temporary directory for export
+        import tempfile
+        import os
+        import zipfile
+        from datetime import datetime
+        
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # Create main ZIP file
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            main_zip_path = os.path.join(temp_dir, f"lessons_export_{timestamp}.zip")
+            
+            with zipfile.ZipFile(main_zip_path, 'w', zipfile.ZIP_DEFLATED) as main_zipf:
+                exported_lessons = []
+                
+                for lesson_id in lesson_ids:
+                    try:
+                        # Export individual lesson
+                        lesson_zip_path = create_lesson_export_package(
+                            lesson_id, temp_dir, include_files
+                        )
+                        
+                        # Add to main ZIP
+                        lesson_zip_name = os.path.basename(lesson_zip_path)
+                        main_zipf.write(lesson_zip_path, lesson_zip_name)
+                        
+                        # Track successful exports
+                        lesson = Lesson.query.get(lesson_id)
+                        if lesson:
+                            exported_lessons.append({
+                                'id': lesson_id,
+                                'title': lesson.title,
+                                'filename': lesson_zip_name
+                            })
+                        
+                        # Clean up individual ZIP
+                        os.unlink(lesson_zip_path)
+                        
+                    except Exception as e:
+                        current_app.logger.error(f"Error exporting lesson {lesson_id}: {e}")
+                        continue
+                
+                # Add manifest file
+                manifest = {
+                    'export_info': {
+                        'version': '1.0',
+                        'exported_at': datetime.utcnow().isoformat(),
+                        'total_lessons': len(exported_lessons),
+                        'includes_files': include_files
+                    },
+                    'lessons': exported_lessons
+                }
+                
+                manifest_json = json.dumps(manifest, indent=2, ensure_ascii=False)
+                main_zipf.writestr('export_manifest.json', manifest_json)
+            
+            # Return the ZIP file
+            with open(main_zip_path, 'rb') as f:
+                zip_data = f.read()
+            
+            from flask import make_response
+            response = make_response(zip_data)
+            response.headers['Content-Type'] = 'application/zip'
+            response.headers['Content-Disposition'] = f'attachment; filename={os.path.basename(main_zip_path)}'
+            
+            return response
+            
+    except Exception as e:
+        current_app.logger.error(f"Error exporting multiple lessons: {e}")
+        return jsonify({"error": "Failed to export lessons"}), 500
+
+@bp.route('/api/admin/lessons/import-info', methods=['POST'])
+@login_required
+@admin_required
+def get_import_info():
+    """Get information about a lesson import file without importing"""
+    try:
+        if 'file' not in request.files:
+            # Try JSON data
+            data = request.json
+            if not data:
+                return jsonify({"error": "No file or data provided"}), 400
+            
+            # Validate JSON structure
+            required_fields = ['title', 'lesson_type']
+            missing_fields = [field for field in required_fields if field not in data]
+            if missing_fields:
+                return jsonify({"error": f"Missing required fields: {', '.join(missing_fields)}"}), 400
+            
+            # Check for duplicates
+            existing_lesson = Lesson.query.filter_by(title=data['title']).first()
+            
+            return jsonify({
+                "type": "json",
+                "lesson_info": {
+                    "title": data['title'],
+                    "description": data.get('description', ''),
+                    "lesson_type": data['lesson_type'],
+                    "difficulty_level": data.get('difficulty_level'),
+                    "content_count": len(data.get('content', [])),
+                    "pages_count": len(data.get('pages', [])),
+                    "has_files": any(item.get('file_info') for item in data.get('content', [])),
+                    "export_version": data.get('export_metadata', {}).get('version', 'Unknown')
+                },
+                "duplicate_exists": existing_lesson is not None,
+                "duplicate_id": existing_lesson.id if existing_lesson else None
+            })
+        
+        file = request.files['file']
+        if not file.filename:
+            return jsonify({"error": "No file selected"}), 400
+        
+        if file.filename.endswith('.zip'):
+            # Handle ZIP file
+            import tempfile
+            import zipfile
+            
+            with tempfile.NamedTemporaryFile(suffix='.zip', delete=False) as temp_file:
+                file.save(temp_file.name)
+                temp_zip_path = temp_file.name
+            
+            try:
+                with zipfile.ZipFile(temp_zip_path, 'r') as zipf:
+                    # Check if it's a single lesson or multiple lessons
+                    if 'lesson_data.json' in zipf.namelist():
+                        # Single lesson package
+                        lesson_json = zipf.read('lesson_data.json').decode('utf-8')
+                        lesson_data = json.loads(lesson_json)
+                        
+                        existing_lesson = Lesson.query.filter_by(title=lesson_data['title']).first()
+                        
+                        return jsonify({
+                            "type": "single_lesson_zip",
+                            "lesson_info": {
+                                "title": lesson_data['title'],
+                                "description": lesson_data.get('description', ''),
+                                "lesson_type": lesson_data['lesson_type'],
+                                "difficulty_level": lesson_data.get('difficulty_level'),
+                                "content_count": len(lesson_data.get('content', [])),
+                                "pages_count": len(lesson_data.get('pages', [])),
+                                "has_files": lesson_data.get('export_metadata', {}).get('includes_files', False),
+                                "export_version": lesson_data.get('export_metadata', {}).get('version', 'Unknown')
+                            },
+                            "duplicate_exists": existing_lesson is not None,
+                            "duplicate_id": existing_lesson.id if existing_lesson else None
+                        })
+                    
+                    elif 'export_manifest.json' in zipf.namelist():
+                        # Multiple lessons package
+                        manifest_json = zipf.read('export_manifest.json').decode('utf-8')
+                        manifest = json.loads(manifest_json)
+                        
+                        lessons_info = []
+                        for lesson_info in manifest.get('lessons', []):
+                            existing_lesson = Lesson.query.filter_by(title=lesson_info['title']).first()
+                            lessons_info.append({
+                                **lesson_info,
+                                "duplicate_exists": existing_lesson is not None,
+                                "duplicate_id": existing_lesson.id if existing_lesson else None
+                            })
+                        
+                        return jsonify({
+                            "type": "multiple_lessons_zip",
+                            "export_info": manifest.get('export_info', {}),
+                            "lessons": lessons_info
+                        })
+                    
+                    else:
+                        return jsonify({"error": "Invalid ZIP package format"}), 400
+            
+            finally:
+                import os
+                if os.path.exists(temp_zip_path):
+                    os.unlink(temp_zip_path)
+        
+        else:
+            return jsonify({"error": "Unsupported file format"}), 400
+            
+    except json.JSONDecodeError:
+        return jsonify({"error": "Invalid JSON format"}), 400
+    except Exception as e:
+        current_app.logger.error(f"Error getting import info: {e}")
+        return jsonify({"error": "Failed to analyze import file"}), 500
