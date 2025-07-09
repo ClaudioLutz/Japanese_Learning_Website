@@ -4,27 +4,258 @@
 
 {% block content %}
 <style>
-    body {
-        background-color: #f8f9fa !important; 
+    /* Enhanced Navigation Styles */
+    .lesson-navigation-top {
+        background: linear-gradient(135deg, #4a90e2 0%, #50e3c2 100%);
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
     }
+    
+    .lesson-navigation-bottom {
+        background-color: #ffffff;
+        border: 1px solid #e9ecef;
+        border-radius: 12px;
+        padding: 1rem 1.5rem;
+        margin-top: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .page-counter {
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+    
+    .nav-progress-bar {
+        height: 8px;
+        background-color: rgba(255, 255, 255, 0.3);
+        border-radius: 4px;
+        overflow: hidden;
+        margin: 0.5rem 0;
+    }
+    
+    .nav-progress-fill {
+        height: 100%;
+        background-color: white;
+        border-radius: 4px;
+        transition: width 0.3s ease;
+    }
+    
+    .nav-btn {
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        border: none;
+        min-width: 120px;
+    }
+    
+    .nav-btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .nav-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    
+    .nav-btn-primary {
+        background-color: #4a90e2;
+        color: white;
+    }
+    
+    .nav-btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+    
+    /* Page Overview Menu */
+    .page-overview {
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+    }
+    
+    .page-overview-header {
+        padding: 1rem 1.5rem;
+        background-color: white;
+        border-bottom: 1px solid #e9ecef;
+        border-radius: 12px 12px 0 0;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+    
+    .page-overview-header:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .page-overview-content {
+        padding: 1rem;
+        display: none;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+    
+    .page-overview-content.show {
+        display: block;
+    }
+    
+    .page-menu-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        margin-bottom: 0.5rem;
+        background-color: white;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        color: inherit;
+    }
+    
+    .page-menu-item:hover {
+        background-color: #4a90e2;
+        color: white;
+        transform: translateX(5px);
+        text-decoration: none;
+    }
+    
+    .page-menu-item.active {
+        background-color: #50e3c2;
+        color: white;
+        border-color: #50e3c2;
+    }
+    
+    .page-menu-number {
+        background-color: #4a90e2;
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        margin-right: 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .page-menu-item.active .page-menu-number {
+        background-color: white;
+        color: #50e3c2;
+    }
+    
+    .page-menu-item:hover .page-menu-number {
+        background-color: white;
+        color: #4a90e2;
+    }
+    
+    /* Enhanced Carousel Controls */
     #lessonCarousel .carousel-control-prev,
     #lessonCarousel .carousel-control-next {
-        width: 5%;
+        width: 8%;
+        top: 20%;
+        height: 60%;
     }
+    
     #lessonCarousel .carousel-control-prev-icon,
     #lessonCarousel .carousel-control-next-icon {
-        background-color: rgba(0, 0, 0, 0.5);
+        background-color: rgba(74, 144, 226, 0.8);
         border-radius: 50%;
-        padding: 20px;
+        padding: 25px;
+        transition: all 0.3s ease;
     }
+    
+    #lessonCarousel .carousel-control-prev:hover .carousel-control-prev-icon,
+    #lessonCarousel .carousel-control-next:hover .carousel-control-next-icon {
+        background-color: #4a90e2;
+        transform: scale(1.1);
+        box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
+    }
+    
     #lessonCarousel .carousel-item .page-container {
         min-height: 400px;
+    }
+    
+    /* Enhanced indicators */
+    #lessonCarousel .carousel-indicators {
+        position: static;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    #lessonCarousel .carousel-indicators [data-bs-target] {
+        background-color: #a0a0a0;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin: 0 5px;
+        transition: all 0.3s ease;
+    }
+    
+    #lessonCarousel .carousel-indicators .active {
+        background-color: #4a90e2;
+        transform: scale(1.2);
+    }
+    
+    #lessonCarousel .carousel-indicators [data-bs-target]:hover {
+        background-color: #50e3c2;
+        transform: scale(1.1);
+    }
+    
+    /* Keyboard navigation indicator */
+    .keyboard-hint {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        z-index: 1000;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .keyboard-hint.show {
+        opacity: 1;
+    }
+    
+    /* Mobile responsive */
+    @media (max-width: 768px) {
+        .lesson-navigation-top,
+        .lesson-navigation-bottom {
+            padding: 0.75rem 1rem;
+        }
+        
+        .nav-btn {
+            min-width: 100px;
+            padding: 0.5rem 1rem;
+        }
+        
+        .page-counter {
+            font-size: 1rem;
+        }
+        
+        #lessonCarousel .carousel-control-prev,
+        #lessonCarousel .carousel-control-next {
+            width: 12%;
+        }
+        
+        .keyboard-hint {
+            display: none;
+        }
     }
 </style>
 <div class="container mt-4">
     <div class="row">
         <div class="col-12">
-            <!-- Lesson Header -->
             <div class="card lesson-header-card mb-4">
                 <div class="card-body">
                     <div class="row">
@@ -54,7 +285,6 @@
                         </div>
                     </div>
                     
-                    <!-- Progress Bar -->
                     {% if progress %}
                     <div class="mt-3">
                         <div class="d-flex justify-content-between align-items-center mb-2">
@@ -90,7 +320,6 @@
                 </div>
             </div>
 
-            <!-- Video Introduction -->
             {% if lesson.video_intro_url %}
             <div class="card mb-4">
                 <div class="card-header">
@@ -104,7 +333,53 @@
             </div>
             {% endif %}
 
-            <!-- Lesson Content -->
+            <!-- Enhanced Top Navigation -->
+            {% if lesson.pages and lesson.pages|length > 1 %}
+            <div class="lesson-navigation-top">
+                <div class="row align-items-center">
+                    <div class="col-md-4">
+                        <button class="nav-btn nav-btn-secondary" id="prevPageTop" onclick="previousPage()" disabled>
+                            <i class="fas fa-chevron-left"></i> Previous
+                        </button>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <div class="page-counter" id="pageCounter">Page 1 of {{ lesson.pages|length }}</div>
+                        <div class="nav-progress-bar">
+                            <div class="nav-progress-fill" id="navProgressFill" style="width: {{ (100 / lesson.pages|length)|round(1) }}%"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <button class="nav-btn nav-btn-primary" id="nextPageTop" onclick="nextPage()">
+                            Next <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Page Overview Menu -->
+            <div class="page-overview">
+                <div class="page-overview-header" onclick="togglePageOverview()">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0"><i class="fas fa-list"></i> Page Overview</h6>
+                        <i class="fas fa-chevron-down" id="overviewToggleIcon"></i>
+                    </div>
+                </div>
+                <div class="page-overview-content" id="pageOverviewContent">
+                    {% for page in lesson.pages %}
+                    <div class="page-menu-item" onclick="goToPage({{ loop.index0 }})" data-page="{{ loop.index0 }}">
+                        <div class="page-menu-number">{{ loop.index }}</div>
+                        <div>
+                            <div class="fw-bold">{{ page.metadata.title or 'Page ' ~ loop.index }}</div>
+                            {% if page.metadata.description %}
+                            <small class="text-muted">{{ page.metadata.description }}</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
             <div class="card lesson-content-card">
                 <div class="card-header">
                     <h5 class="mb-0">Lesson Content</h5>
@@ -151,13 +426,11 @@
                                                 {% if content.content_type in ['kana', 'kanji', 'vocabulary', 'grammar'] %}
                                                     {% set content_data = content.get_content_data() %}
                                                     {% if content_data %}
-                                                        <!-- 3D Flip Card Implementation -->
                                                         <div class="flip-card">
                                                             <button class="card-scene" 
                                                                     aria-label="Flip card for {% if content.content_type in ['kana', 'kanji'] %}{{ content_data.character }}{% elif content.content_type == 'vocabulary' %}{{ content_data.word }}{% else %}{{ content_data.title }}{% endif %} to see details"
                                                                     tabindex="0">
                                                                 <div class="card-flipper">
-                                                                    <!-- Front Face -->
                                                                     <div class="card-face card-face--front">
                                                                         {% if content.content_type == 'kana' %}
                                                                             <span class="kana-char">{{ content_data.character }}</span>
@@ -179,7 +452,6 @@
                                                                         <div class="flip-hint">Click to flip</div>
                                                                     </div>
                                                                     
-                                                                    <!-- Back Face -->
                                                                     <div class="card-face card-face--back">
                                                                         <div class="details">
                                                                             {% if content.content_type == 'kana' %}
@@ -222,7 +494,6 @@
                                                         <p class="text-muted">Content not found.</p>
                                                     {% endif %}
                                                 {% else %}
-                                                    <!-- Enhanced Text Content Display -->
                                                     {% if content.content_type == 'text' %}
                                                     <div class="text-content-container">
                                                         {% if content.title %}
@@ -239,7 +510,6 @@
                                                         </div>
                                                     </div>
                                                     {% else %}
-                                                        <!-- Custom content (image, video, audio) -->
                                                         {% if content.content_text %}
                                                         <div class="mb-3">{{ content.content_text | safe }}</div>
                                                         {% endif %}
@@ -260,7 +530,6 @@
                                                         {% endif %}
                                                     {% endif %}
                                                 {% endif %}
-                                                <!-- Interactive Content Display -->
                                                 {% if content.is_interactive %}
                                                 <div class="interactive-content-container" data-content-id="{{ content.id }}">
                                                     {% for question in content.quiz_questions %}
@@ -352,14 +621,6 @@
                                 </div>
                                 {% endfor %}
                             </div>
-                            <button class="carousel-control-prev" type="button" data-bs-target="#lessonCarousel" data-bs-slide="prev">
-                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Previous</span>
-                            </button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#lessonCarousel" data-bs-slide="next">
-                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Next</span>
-                            </button>
                         </div>
                     {% else %}
                         <div class="text-center py-5">
@@ -370,7 +631,27 @@
                 </div>
             </div>
 
-            <!-- Navigation -->
+            <!-- Enhanced Bottom Navigation -->
+            {% if lesson.pages and lesson.pages|length > 1 %}
+            <div class="lesson-navigation-bottom">
+                <div class="row align-items-center">
+                    <div class="col-md-4">
+                        <button class="nav-btn nav-btn-secondary" id="prevPageBottom" onclick="previousPage()" disabled>
+                            <i class="fas fa-chevron-left"></i> Previous
+                        </button>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <div class="page-counter" id="pageCounterBottom">Page 1 of {{ lesson.pages|length }}</div>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <button class="nav-btn nav-btn-primary" id="nextPageBottom" onclick="nextPage()">
+                            Next <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
             <div class="mt-4 d-flex justify-content-between">
                 <a href="{{ url_for('routes.lessons') }}" class="btn btn-outline-secondary">
                     ← Back to Lessons
@@ -573,7 +854,8 @@ function updateAttempts(questionId, attemptsRemaining) {
 async function markContentComplete(contentId) {
     try {
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        const response = await fetch(`/api/lessons/{{ lesson.id }}/progress`, {
+        const lessonId = '{{ lesson.id }}';
+        const response = await fetch(`/api/lessons/${lessonId}/progress`, {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
@@ -626,11 +908,201 @@ async function markContentComplete(contentId) {
     }
 }
 
+// Enhanced Navigation Functions
+let currentPage = 0;
+const totalPages = {{ lesson.pages|length if lesson.pages else 0 }};
+
+// Initialize navigation on page load
+document.addEventListener('DOMContentLoaded', function() {
+    if (totalPages > 1) {
+        initializeNavigation();
+        setupKeyboardNavigation();
+        showKeyboardHint();
+    }
+});
+
+function initializeNavigation() {
+    // Listen for carousel slide events
+    const carousel = document.getElementById('lessonCarousel');
+    if (carousel) {
+        carousel.addEventListener('slide.bs.carousel', function(event) {
+            currentPage = event.to;
+            updateNavigationUI();
+        });
+    }
+    
+    // Update initial state
+    updateNavigationUI();
+}
+
+function updateNavigationUI() {
+    // Update page counters
+    const pageText = `Page ${currentPage + 1} of ${totalPages}`;
+    document.getElementById('pageCounter').textContent = pageText;
+    document.getElementById('pageCounterBottom').textContent = pageText;
+    
+    // Update progress bar
+    const progressPercentage = ((currentPage + 1) / totalPages) * 100;
+    document.getElementById('navProgressFill').style.width = progressPercentage + '%';
+    
+    // Update button states
+    const prevButtons = ['prevPageTop', 'prevPageBottom'];
+    const nextButtons = ['nextPageTop', 'nextPageBottom'];
+    
+    prevButtons.forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) {
+            btn.disabled = currentPage === 0;
+        }
+    });
+    
+    nextButtons.forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) {
+            btn.disabled = currentPage === totalPages - 1;
+        }
+    });
+    
+    // Update page overview menu
+    updatePageOverviewMenu();
+}
+
+function updatePageOverviewMenu() {
+    const menuItems = document.querySelectorAll('.page-menu-item');
+    menuItems.forEach((item, index) => {
+        if (index === currentPage) {
+            item.classList.add('active');
+        } else {
+            item.classList.remove('active');
+        }
+    });
+}
+
+function previousPage() {
+    if (currentPage > 0) {
+        const carousel = new bootstrap.Carousel(document.getElementById('lessonCarousel'));
+        carousel.prev();
+    }
+}
+
+function nextPage() {
+    if (currentPage < totalPages - 1) {
+        const carousel = new bootstrap.Carousel(document.getElementById('lessonCarousel'));
+        carousel.next();
+    }
+}
+
+function goToPage(pageIndex) {
+    if (pageIndex >= 0 && pageIndex < totalPages) {
+        const carousel = new bootstrap.Carousel(document.getElementById('lessonCarousel'));
+        carousel.to(pageIndex);
+    }
+}
+
+function togglePageOverview() {
+    const content = document.getElementById('pageOverviewContent');
+    const icon = document.getElementById('overviewToggleIcon');
+    
+    if (content.classList.contains('show')) {
+        content.classList.remove('show');
+        icon.classList.remove('fa-chevron-up');
+        icon.classList.add('fa-chevron-down');
+    } else {
+        content.classList.add('show');
+        icon.classList.remove('fa-chevron-down');
+        icon.classList.add('fa-chevron-up');
+    }
+}
+
+function setupKeyboardNavigation() {
+    document.addEventListener('keydown', function(event) {
+        // Only handle keyboard navigation if not typing in an input
+        if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA' || event.target.tagName === 'SELECT') {
+            return;
+        }
+        
+        switch(event.key) {
+            case 'ArrowLeft':
+                event.preventDefault();
+                previousPage();
+                showKeyboardHint();
+                break;
+            case 'ArrowRight':
+            case ' ':
+                event.preventDefault();
+                nextPage();
+                showKeyboardHint();
+                break;
+            case 'Home':
+                event.preventDefault();
+                goToPage(0);
+                showKeyboardHint();
+                break;
+            case 'End':
+                event.preventDefault();
+                goToPage(totalPages - 1);
+                showKeyboardHint();
+                break;
+            case 'o':
+            case 'O':
+                event.preventDefault();
+                togglePageOverview();
+                break;
+        }
+    });
+}
+
+function showKeyboardHint() {
+    // Create keyboard hint if it doesn't exist
+    let hint = document.querySelector('.keyboard-hint');
+    if (!hint) {
+        hint = document.createElement('div');
+        hint.className = 'keyboard-hint';
+        hint.innerHTML = '← → Space: Navigate | O: Overview | Home/End: First/Last';
+        document.body.appendChild(hint);
+    }
+    
+    // Show hint briefly
+    hint.classList.add('show');
+    setTimeout(() => {
+        hint.classList.remove('show');
+    }, 3000);
+}
+
+// Touch/Swipe support for mobile
+let touchStartX = 0;
+let touchEndX = 0;
+
+document.addEventListener('touchstart', function(event) {
+    touchStartX = event.changedTouches[0].screenX;
+});
+
+document.addEventListener('touchend', function(event) {
+    touchEndX = event.changedTouches[0].screenX;
+    handleSwipe();
+});
+
+function handleSwipe() {
+    const swipeThreshold = 50;
+    const swipeDistance = touchEndX - touchStartX;
+    
+    if (Math.abs(swipeDistance) > swipeThreshold) {
+        if (swipeDistance > 0) {
+            // Swipe right - go to previous page
+            previousPage();
+        } else {
+            // Swipe left - go to next page
+            nextPage();
+        }
+    }
+}
+
 // Track time spent on page
 window.addEventListener('beforeunload', function() {
     const timeSpent = Math.floor((Date.now() - startTime) / 60000);
     if (timeSpent > 0) {
-        navigator.sendBeacon(`/api/lessons/{{ lesson.id }}/progress`, 
+        const lessonId = '{{ lesson.id }}';
+        navigator.sendBeacon(`/api/lessons/${lessonId}/progress`, 
             JSON.stringify({ time_spent: timeSpent }));
     }
 });
