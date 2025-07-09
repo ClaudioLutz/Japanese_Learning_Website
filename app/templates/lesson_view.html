@@ -288,7 +288,7 @@
                                                         {% elif question.question_type == 'fill_blank' %}
                                                         <div class="fill-blank-input">
                                                             <div class="question-text mb-3">
-                                                                {{ question.question_text | replace('[BLANK]', '<input type="text" class="form-control d-inline-block" style="width: 200px;" id="blank_' + question.id|string + '">') | safe }}
+                                                                {{ question.question_text | replace('___', '<input type="text" class="form-control d-inline-block" style="width: 200px;" id="blank_' + question.id|string + '">') | safe }}
                                                             </div>
                                                         </div>
                                                         
@@ -304,6 +304,29 @@
                                                             </div>
                                                             {% endfor %}
                                                         </div>
+                                                        
+                                        {% elif question.question_type == 'matching' %}
+                                        <div class="matching-quiz">
+                                            {% set prompts = question.options | map(attribute='option_text') | list %}
+                                            {% set answers = question.options | map(attribute='feedback') | list %}
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <ul class="list-group">
+                                                        {% for prompt in prompts %}
+                                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                            <span>{{ prompt }}</span>
+                                                            <select class="form-select matching-select" style="width: 60%;" data-prompt="{{ prompt }}" data-question-id="{{ question.id }}">
+                                                                <option selected disabled>Choose...</option>
+                                                                {% for answer in answers %}
+                                                                <option value="{{ answer }}">{{ answer }}</option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
                                                         {% endif %}
                                                         
                                                         <div class="question-actions mt-3">
@@ -409,7 +432,34 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // Shuffle matching quiz options
+    const matchingSelects = document.querySelectorAll('.matching-select');
+    matchingSelects.forEach(select => {
+        const options = Array.from(select.querySelectorAll('option')).slice(1); // Skip the first "Choose..." option
+        const shuffled = shuffleArray(options);
+        
+        // Remove existing options (except first)
+        while (select.children.length > 1) {
+            select.removeChild(select.lastChild);
+        }
+        
+        // Add shuffled options back
+        shuffled.forEach(option => {
+            select.appendChild(option);
+        });
+    });
 });
+
+// Helper function to shuffle array
+function shuffleArray(array) {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}
 
 async function submitQuizAnswer(lessonId, questionId) {
     const questionElement = document.querySelector(`[data-question-id="${questionId}"]`);
@@ -432,6 +482,24 @@ async function submitQuizAnswer(lessonId, questionId) {
             return;
         }
         answerData.text_answer = textInput.value.trim();
+    } else if (questionType === 'matching') {
+        const selects = questionElement.querySelectorAll('select');
+        let allSelected = true;
+        answerData.pairs = [];
+        selects.forEach(select => {
+            if (select.value === 'Choose...') {
+                allSelected = false;
+            }
+            answerData.pairs.push({
+                prompt: select.dataset.prompt,
+                answer: select.value
+            });
+        });
+
+        if (!allSelected) {
+            alert('Please match all items.');
+            return;
+        }
     }
     
     try {

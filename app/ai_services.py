@@ -53,6 +53,131 @@ class AILessonContentGenerator:
             return {"error": error}
         return {"generated_text": content}
 
+    def generate_formatted_explanation(self, topic, difficulty, keywords):
+        """Generates a well-formatted explanation using HTML."""
+        system_prompt = (
+            "You are an expert Japanese language teacher. Your tone is clear, encouraging, and accurate. "
+            "Generate a well-structured and formatted explanation using HTML. "
+            "Use tags like <h2> for headings, <p> for paragraphs, <strong> for bold text, and <ul>/<li> for lists. "
+            "Do not include <html>, <head>, or <body> tags, only the inner content."
+        )
+        user_prompt = f"""
+        Lesson Topic: {topic}
+        Target Difficulty: {difficulty}
+        Keywords to include: {keywords}
+
+        Please generate a comprehensive, well-formatted explanation using HTML tags.
+        """
+        
+        content, error = self._generate_content(system_prompt, user_prompt)
+        if error:
+            return {"error": error}
+        return {"generated_text": content}
+
+    def generate_true_false_question(self, topic, difficulty, keywords):
+        """Generates a true/false question in a structured JSON format."""
+        system_prompt = (
+            "You are a Japanese quiz designer. Generate a true/false question. "
+            "The question should be a clear statement. Provide a detailed explanation. "
+            "Format the output as a single, valid JSON object."
+        )
+        user_prompt = f"""
+        Lesson Topic: {topic}
+        Target Difficulty: {difficulty}
+        Keywords to test: {keywords}
+
+        Generate a JSON object with the following structure:
+        {{
+          "question_text": "The true/false statement...",
+          "is_true": true,
+          "explanation": "A detailed explanation of why the statement is true or false."
+        }}
+        """
+        
+        content, error = self._generate_content(system_prompt, user_prompt, is_json=True)
+        if error:
+            return {"error": error}
+        
+        try:
+            if content:
+                return json.loads(content)
+            else:
+                return {"error": "Empty response from AI"}
+        except json.JSONDecodeError as e:
+            current_app.logger.error(f"Failed to parse JSON from AI response: {e}\\nResponse: {content}")
+            return {"error": "Failed to parse AI response as JSON."}
+
+    def generate_fill_in_the_blank_question(self, topic, difficulty, keywords):
+        """Generates a fill-in-the-blank question in a structured JSON format."""
+        system_prompt = (
+            "You are a Japanese quiz designer. Create a fill-in-the-blank question. "
+            "The question text should use '___' to indicate the blank. Provide the correct answer and an explanation. "
+            "Format the output as a single, valid JSON object."
+        )
+        user_prompt = f"""
+        Lesson Topic: {topic}
+        Target Difficulty: {difficulty}
+        Keywords to test: {keywords}
+
+        Generate a JSON object with the following structure:
+        {{
+          "question_text": "Sentence with a ___ to fill in.",
+          "correct_answer": "The word that fills the blank",
+          "explanation": "Explanation of the correct answer and grammar."
+        }}
+        """
+        
+        content, error = self._generate_content(system_prompt, user_prompt, is_json=True)
+        if error:
+            return {"error": error}
+        
+        try:
+            if content:
+                return json.loads(content)
+            else:
+                return {"error": "Empty response from AI"}
+        except json.JSONDecodeError as e:
+            current_app.logger.error(f"Failed to parse JSON from AI response: {e}\\nResponse: {content}")
+            return {"error": "Failed to parse AI response as JSON."}
+
+    def generate_matching_question(self, topic, difficulty, keywords):
+        """Generates a matching question in a structured JSON format."""
+        system_prompt = (
+            "You are a Japanese quiz designer. Create a matching question. "
+            "Provide two lists of items to match (e.g., words and meanings). "
+            "Format the output as a single, valid JSON object."
+        )
+        user_prompt = f"""
+        Lesson Topic: {topic}
+        Target Difficulty: {difficulty}
+        Keywords to test: {keywords}
+
+        Generate a JSON object with the following structure:
+        {{
+          "question_text": "Match the Japanese words to their English meanings.",
+          "pairs": [
+            {{"prompt": "Word A", "answer": "Meaning A"}},
+            {{"prompt": "Word B", "answer": "Meaning B"}},
+            {{"prompt": "Word C", "answer": "Meaning C"}},
+            {{"prompt": "Word D", "answer": "Meaning D"}}
+          ],
+          "explanation": "General explanation for the set of pairs."
+        }}
+        """
+        
+        content, error = self._generate_content(system_prompt, user_prompt, is_json=True)
+        if error:
+            return {"error": error}
+        
+        try:
+            if content:
+                return json.loads(content)
+            else:
+                return {"error": "Empty response from AI"}
+        except json.JSONDecodeError as e:
+            current_app.logger.error(f"Failed to parse JSON from AI response: {e}\\nResponse: {content}")
+            return {"error": "Failed to parse AI response as JSON."}
+
     def generate_multiple_choice_question(self, topic, difficulty, keywords):
         """Generates a multiple-choice question in a structured JSON format."""
         system_prompt = (

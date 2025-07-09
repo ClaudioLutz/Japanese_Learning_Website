@@ -1,4 +1,5 @@
 # app/routes.py
+import json
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError # Import specific exceptions
@@ -1686,6 +1687,24 @@ def submit_quiz_answer(lesson_id, question_id):
             answer.selected_option_id = selected_option_id
             answer.is_correct = is_correct
             answer.text_answer = None
+
+        elif question.question_type == 'matching':
+            submitted_pairs = data.get('pairs', [])
+            if not submitted_pairs:
+                return jsonify({"error": "No pairs submitted for matching question"}), 400
+
+            correct_options = {opt.option_text: opt.feedback for opt in question.options}
+            
+            correct_matches = 0
+            for pair in submitted_pairs:
+                prompt = pair.get('prompt')
+                user_answer = pair.get('answer')
+                if correct_options.get(prompt) == user_answer:
+                    correct_matches += 1
+            
+            is_correct = correct_matches == len(correct_options)
+            answer.is_correct = is_correct
+            answer.text_answer = json.dumps(submitted_pairs) # Store user's answer
 
         else:
             return jsonify({"error": "Unsupported question type"}), 400

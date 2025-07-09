@@ -28,8 +28,9 @@ def create_app():
     # This is typically loaded from config.py or environment variables.
     # Example: app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or 'a_default_secret_key'
     # Example: app.config['WTF_CSRF_SECRET_KEY'] = os.environ.get('WTF_CSRF_SECRET_KEY') or 'a_csrf_secret_key'
-    app.config.from_pyfile('config.py') # Load config from instance folder
-
+    app.config.from_pyfile('config.py', silent=True) # Load config from instance folder
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') or \
+        'sqlite:///' + os.path.join(app.instance_path, 'site.db')
     # File upload configuration
     UPLOAD_FOLDER = os.path.join('app', 'static', 'uploads')
     MAX_CONTENT_LENGTH = 100 * 1024 * 1024  # 100MB max file size
