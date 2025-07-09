@@ -60,42 +60,28 @@ MAX_CONTENT_LENGTH=16777216 # Optional: Max file size for uploads (e.g., 16MB)
 - The `instance` folder (for `site.db`) will be created automatically by Flask if it doesn't exist when the database is first accessed or initialized.
 - Ensure `UPLOAD_FOLDER` (`app/static/uploads`) exists or is created. The application attempts to create subdirectories within this folder.
 
-### 5. Database Initialization and Migration
-The project uses Flask-Migrate (with Alembic) for managing database schema changes.
+### 5. Database Initialization and Seeding
+For a fresh setup, the project uses a sequence of Python scripts to initialize the database, create an admin user, and seed initial data.
 
-#### a. Initialize the Database (First time setup for a new database)
-If you are setting up the project with a brand new database (e.g., `instance/site.db` does not exist or is empty and you are not using existing migrations from another source):
+#### a. Initial Database Setup and Admin Creation
+This script prepares the database, creates all necessary tables based on the models defined in `app/models.py` (including tables for users, lessons, content, and AI features), and creates a default administrator account.
 ```bash
-# Create all tables based on models (alternative to migrations for a fresh start)
-# flask db_init 
-# ^ This command from run.py actually calls db.create_all().
-# For a typical Flask-Migrate workflow, you'd initialize migrations first if starting a project from scratch.
-# However, given the existing setup, the primary way to set up the DB is via migrations.
-
-# If the 'migrations' folder doesn't exist or you need to set up Flask-Migrate:
-# flask db init  (This creates the migrations directory - only needed once per project)
-
-# Stamp the database with the latest migration version (if migrations already exist and you're setting up a new DB)
-# flask db stamp head
-
-# Apply all migrations to create the schema:
-flask db upgrade
+python setup_unified_auth.py
 ```
-*Initial Setup Note:* The project includes several standalone scripts like `setup_unified_auth.py` and `migrate_lesson_system.py`. The most robust way to initialize the database according to current best practices with Flask-Migrate is to ensure all schema definitions in `app/models.py` are comprehensive and then use `flask db upgrade`. If these scripts perform essential seeding or setup not covered by migrations, they should be run *after* `flask db upgrade` or their logic incorporated into migrations. For simplicity, `flask db upgrade` should be the primary command to set up the schema.
+This will output the default admin credentials (typically `admin@example.com` / `admin123`).
 
-#### b. Applying Migrations (If migrations exist)
-If the `migrations` folder with version history exists, apply them:
+#### b. Seed Initial Lesson Data
+This script populates the database with default lesson categories (e.g., Hiragana Basics, Essential Kanji) and some sample lessons. This is crucial for having initial content to work with.
 ```bash
-flask db upgrade
+python migrate_lesson_system.py
 ```
-This command applies any pending database migrations to create or update the database schema according to `app/models.py` and the migration history.
 
-#### c. Creating an Initial Admin User
-After the database schema is set up, create an initial admin user:
+#### c. (Optional) Create Additional Admin Users
+The `setup_unified_auth.py` script already creates a default admin user. If you need to create more admin users, or if you prefer a separate step for admin creation with specific credentials, you can use:
 ```bash
 python create_admin.py
 ```
-Follow the prompts to set the admin's username, email, and password.
+Follow the prompts to set the username, email, and password.
 
 ### 6. Run the Development Server
 ```bash
@@ -107,16 +93,21 @@ The application will typically be available at `http://127.0.0.1:5000/` or `http
 
 ### 7. Access the Application
 -   **Main Site:** `http://localhost:5000/`
--   **Admin Panel:** `http://localhost:5000/admin` (Login with the admin credentials created in step 5c).
+-   **Admin Panel:** `http://localhost:5000/admin` (Login with the admin credentials created by `setup_unified_auth.py` or `create_admin.py`).
 
-## Default Credentials (after running `create_admin.py`)
--   **Admin Username:** (As provided during `create_admin.py` execution, e.g., `admin`)
--   **Admin Email:** (As provided, e.g., `admin@example.com`)
--   **Admin Password:** (As provided, e.g., `admin123`)
+## Default Admin Credentials
+The `setup_unified_auth.py` script creates an admin user with the following default credentials:
+-   **Email:** `admin@example.com`
+-   **Password:** `admin123`
+-   **Username:** `admin`
 
-*Note: The `create_admin.py` script sets default values if you press Enter without typing input, which are `admin`, `admin@example.com`, and `admin123`.*
+If you use `create_admin.py`, it will prompt you for credentials, defaulting to the same if you press Enter.
 
-## Managing Database Migrations
+## Managing Database Migrations (for Future Schema Changes)
+While the initial setup is handled by the scripts above, future changes to the database schema (e.g., after modifying `app/models.py`) should be managed using Flask-Migrate. The `migrations/` directory is set up for this purpose.
+
+**Note:** The `migrations/versions/` directory will be empty after initial setup using the scripts. The following commands are for managing schema changes *after* the database has been initially created and populated.
+
 When you change your database models (`app/models.py`):
 
 ### 1. Generate a new migration script
@@ -147,14 +138,15 @@ pip install -r requirements.txt
 ```
 
 ### Issue: Database connection errors
-**Problem**: Database file doesn't exist or permissions issue
-**Solution**: 
-```bash
-# Ensure instance directory exists
-mkdir -p instance
-# Run database setup
-flask db upgrade
-```
+**Problem**: Database file doesn't exist, tables not created, or permissions issue.
+**Solution**:
+1.  Ensure the `instance` directory exists in the project root. If not, create it: `mkdir instance`.
+2.  Run the database setup scripts in order:
+    ```bash
+    python setup_unified_auth.py
+    python migrate_lesson_system.py
+    ```
+3.  Ensure you have write permissions to the `instance` directory and the `site.db` file within it.
 
 ### Issue: `SECRET_KEY` not set
 **Problem**: Missing or invalid secret key
@@ -203,10 +195,12 @@ After setup, verify your installation by:
 ## Next Steps
 
 After successful installation:
-1. Review the [System Architecture](03-System-Architecture.md) to understand the codebase
-2. Check the [API Design](11-API-Design.md) for available endpoints
-3. Explore the [Admin Content Management](08-Admin-Content-Management.md) features
-4. Read the [Development Workflow](15-Development-Workflow.md) for best practices
+1. Review the [System Architecture](03-System-Architecture.md) to understand the codebase.
+2. Consult the [User Authentication](07-User-Authentication.md) document for details on auth flows and relevant API endpoints.
+3. Explore existing documentation in the `Documentation/` directory for other components as they become available.
+  <!--- Check the [API Design](11-API-Design.md) for available endpoints -->
+  <!--- Explore the [Admin Content Management](08-Admin-Content-Management.md) features -->
+  <!--- Read the [Development Workflow](15-Development-Workflow.md) for best practices -->
 
 ## Production Deployment Notes
 

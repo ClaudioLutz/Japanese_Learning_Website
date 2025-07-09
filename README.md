@@ -77,17 +77,15 @@ A comprehensive web-based Japanese learning platform featuring structured lesson
    pip install -r requirements.txt
    ```
 
-4. **Set up the database:**
+4. **Set up the database and initial content:**
    ```bash
-   # Initialize the main database
+   # Initialize database, create tables, and set up default admin user
    python setup_unified_auth.py
    
-   # Set up the lesson system
+   # Seed database with initial lesson categories and sample lessons
    python migrate_lesson_system.py
-   
-   # Create admin user
-   python create_admin.py
    ```
+   *The `setup_unified_auth.py` script will create a default admin user (admin@example.com / admin123). You can use `python create_admin.py` if you need to create additional admin users.*
 
 5. **Run the application:**
    ```bash
@@ -96,11 +94,13 @@ A comprehensive web-based Japanese learning platform featuring structured lesson
 
 6. **Access the application:**
    - **Main Site:** http://localhost:5000
-   - **Admin Panel:** http://localhost:5000/admin
+   - **Admin Panel:** http://localhost:5000/admin (Login with default admin credentials)
 
-### Default Credentials
-- **Admin:** admin@example.com / admin123
-- **Test User:** user@example.com / password123
+### Default Admin Credentials
+- **Email:** admin@example.com
+- **Password:** admin123
+- **Username:** admin
+   *(A test user `user@example.com` / `password123` can be registered through the website's registration page.)*
 
 ## Project Structure
 
@@ -138,18 +138,20 @@ A comprehensive web-based Japanese learning platform featuring structured lesson
 │   └── ...                 # Other deprecated files and templates
 ├── .gitignore              # Specifies intentionally untracked files that Git should ignore
 ├── ADMIN_CONTENT_CREATION_GUIDE.md # Guide for admins on creating content
-├── Documentation.md        # Detailed project documentation
+├── Documentation.md        # Brief pointer to the Documentation/ directory (see below)
 ├── README.md               # This file - overview, setup, and quick start
-├── UNIFIED_AUTH_README.md  # Documentation specific to the authentication system
-├── create_admin.py         # Script to create an initial admin user
+├── create_admin.py         # Script to create additional admin users
 ├── lesson_models.py        # DEPRECATED: All models are consolidated in app/models.py
-├── migrate_database.py     # Script for database migrations (generic)
-├── migrate_lesson_system.py # Script to set up or migrate the lesson system database tables
+├── migrate_lesson_system.py # Script to seed initial lesson categories and sample lessons
 ├── requirements.txt        # Python package dependencies
 ├── run.py                  # Main script to run the Flask application
-└── setup_unified_auth.py   # Script to set up the initial database schema for unified authentication
+└── setup_unified_auth.py   # Script to set up the initial database schema and default admin user
 ```
 *Note: While a general `app/static/` directory for project-wide CSS/JS might not be the primary focus (styling is largely handled by Bootstrap CDN), the application utilizes an `UPLOAD_FOLDER` (defaulting to `app/static/uploads/`) for storing and serving user-uploaded files (e.g., images, audio for lessons). These uploaded files are accessible via application routes.*
+
+## Documentation
+
+For comprehensive information about the project, including detailed setup, architecture, and component guides, please see the [**Full Project Documentation in the Documentation/ directory**](Documentation/README.md).
 
 ## For AI Agents
 

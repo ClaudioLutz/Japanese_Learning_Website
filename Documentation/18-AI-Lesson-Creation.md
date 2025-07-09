@@ -165,14 +165,11 @@ ai_generation_details = db.Column(db.JSON, nullable=True)
   }
   ```
 
-#### Migration Details
+#### Database Schema Integration
 
-**Migration File**: `6a0198a5b907_add_ai_tracking_fields_to_lessoncontent.py`
+The `LessonContent` model in `app/models.py` includes the `generated_by_ai` (Boolean) and `ai_generation_details` (JSON) fields. These fields are created as part of the initial database setup when `python setup_unified_auth.py` (which calls `db.create_all()`) is executed.
 
-**Changes Applied**:
-- Added `generated_by_ai` column with default value `FALSE`
-- Added `ai_generation_details` column as nullable JSON field
-- Maintains backward compatibility with existing content
+No separate database migration is needed for these fields if you are setting up the project for the first time using the recommended scripts. If you had an older version of the database without these fields and were managing changes with Flask-Migrate, a migration would have been necessary.
 
 ## API Reference
 
@@ -271,10 +268,9 @@ def create_app():
    pip install -r requirements.txt
    ```
 
-3. **Run Database Migration**:
-   ```bash
-   flask db upgrade
-   ```
+3. **Ensure Database is Initialized**:
+   - If you've followed the main project installation steps (`python setup_unified_auth.py` and `python migrate_lesson_system.py`), the database tables, including the necessary fields in `LessonContent` for AI tracking, will already be created.
+   - No separate `flask db upgrade` is needed for these fields during initial setup.
 
 #### Generating Content
 
