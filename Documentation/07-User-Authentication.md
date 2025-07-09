@@ -205,18 +205,59 @@ app.config.update(
 - Subscription status tracking
 - Access level enforcement
 
+## Unified Login Flow
+The system utilizes a single login point for all users (standard users and administrators) via the `/login` route. After successful authentication, users are redirected based on their role:
+- Administrators (`user.is_admin == True`) are directed to the admin dashboard (`/admin`).
+- Regular users are directed to the main homepage (`/`) or their originally intended page.
+
 ## Authentication API Endpoints
 
-### Public Endpoints
-- `GET /login` - Display login form
-- `POST /login` - Process login credentials
-- `GET /register` - Display registration form
-- `POST /register` - Process user registration
-- `GET /logout` - Log out current user
+### User-Facing Authentication Endpoints
+These endpoints are primarily for user session management:
+- `GET /login` - Display login form.
+- `POST /login` - Process login credentials.
+- `GET /register` - Display registration form.
+- `POST /register` - Process user registration.
+- `GET /logout` - Log out current user.
 
-### Protected Endpoints
-- `POST /upgrade_to_premium` - Upgrade user subscription
-- `POST /downgrade_from_premium` - Downgrade user subscription
+### User Subscription Endpoints (Protected)
+These endpoints require user login:
+- `POST /upgrade_to_premium` - Allows a logged-in user to upgrade their subscription to 'premium'.
+- `POST /downgrade_from_premium` - Allows a logged-in user to downgrade their subscription to 'free'.
+
+### Admin API Endpoints (Admin Only)
+These RESTful API endpoints are for content management and require administrator privileges (`@admin_required`). They are typically accessed by the admin frontend or other administrative tools.
+
+#### Kana Management (`/api/admin/kana`)
+- `GET /api/admin/kana` - List all Kana characters.
+- `POST /api/admin/kana/new` - Create a new Kana character.
+- `GET /api/admin/kana/<id>` - Retrieve a specific Kana character by ID.
+- `PUT /api/admin/kana/<id>/edit` - Update a specific Kana character.
+- `DELETE /api/admin/kana/<id>/delete` - Delete a specific Kana character.
+
+#### Kanji Management (`/api/admin/kanji`)
+- `GET /api/admin/kanji` - List all Kanji characters.
+- `POST /api/admin/kanji/new` - Create a new Kanji character.
+- `GET /api/admin/kanji/<id>` - Retrieve a specific Kanji character by ID.
+- `PUT /api/admin/kanji/<id>/edit` - Update a specific Kanji character.
+- `DELETE /api/admin/kanji/<id>/delete` - Delete a specific Kanji character.
+
+#### Vocabulary Management (`/api/admin/vocabulary`)
+- `GET /api/admin/vocabulary` - List all vocabulary items.
+- `POST /api/admin/vocabulary/new` - Create a new vocabulary item.
+- `GET /api/admin/vocabulary/<id>` - Retrieve a specific vocabulary item by ID.
+- `PUT /api/admin/vocabulary/<id>/edit` - Update a specific vocabulary item.
+- `DELETE /api/admin/vocabulary/<id>/delete` - Delete a specific vocabulary item.
+
+#### Grammar Management (`/api/admin/grammar`)
+- `GET /api/admin/grammar` - List all grammar points.
+- `POST /api/admin/grammar/new` - Create a new grammar point.
+- `GET /api/admin/grammar/<id>` - Retrieve a specific grammar point by ID.
+- `PUT /api/admin/grammar/<id>/edit` - Update a specific grammar point.
+- `DELETE /api/admin/grammar/<id>/delete` - Delete a specific grammar point.
+
+## Historical Context: Migration from Dual System
+Previously, the platform had separate authentication mechanisms for users and administrators. This has been consolidated into the current single, role-based system where all authentication is managed by Flask-Login, and access control is determined by user roles (specifically the `is_admin` flag and `subscription_level`). This unified approach simplifies user management and enhances security by eliminating hardcoded admin credentials.
 
 ## Security Best Practices
 

@@ -16,19 +16,22 @@ This documentation provides comprehensive information about the Japanese Learnin
 - [**06-Configuration-Management.md**](06-Configuration-Management.md) - Environment variables and configuration
 
 ### System Components
-- [**07-User-Authentication.md**](07-User-Authentication.md) - Authentication system and user roles
-- [**08-Admin-Content-Management.md**](08-Admin-Content-Management.md) - Admin panel and content management
-- [**09-Lesson-System.md**](09-Lesson-System.md) - Comprehensive lesson system architecture
-- [**10-Database-Schema.md**](10-Database-Schema.md) - Complete database structure
+- [**07-User-Authentication.md**](07-User-Authentication.md) - Authentication system, user roles, and API endpoints.
+_The following documents are planned but not yet created:_
+  <!--- [**08-Admin-Content-Management.md**](08-Admin-Content-Management.md) - Admin panel and content management -->
+  <!--- [**09-Lesson-System.md**](09-Lesson-System.md) - Comprehensive lesson system architecture -->
+  <!--- [**10-Database-Schema.md**](10-Database-Schema.md) - Complete database structure -->
 
 ### Development & Deployment
-- [**11-API-Design.md**](11-API-Design.md) - API endpoints and design patterns
-- [**12-Frontend-Architecture.md**](12-Frontend-Architecture.md) - Frontend structure and technologies
-- [**13-File-Structure.md**](13-File-Structure.md) - Project organization and file structure
-- [**14-Security-Implementation.md**](14-Security-Implementation.md) - Security measures and best practices
+_The following documents are planned but not yet created:_
+  <!--- [**11-API-Design.md**](11-API-Design.md) - API endpoints and design patterns -->
+  <!--- [**12-Frontend-Architecture.md**](12-Frontend-Architecture.md) - Frontend structure and technologies -->
+  <!--- [**13-File-Structure.md**](13-File-Structure.md) - Project organization and file structure -->
+  <!--- [**14-Security-Implementation.md**](14-Security-Implementation.md) - Security measures and best practices -->
 
 ### Operations & Maintenance
-- [**15-Development-Workflow.md**](15-Development-Workflow.md) - Development processes and best practices
+_The following document is planned but not yet created:_
+  <!--- [**15-Development-Workflow.md**](15-Development-Workflow.md) - Development processes and best practices -->
 - [**16-Troubleshooting.md**](16-Troubleshooting.md) - Common issues and solutions
 - [**17-Future-Roadmap.md**](17-Future-Roadmap.md) - Planned features and enhancements
 - [**18-AI-Lesson-Creation.md**](18-AI-Lesson-Creation.md) - How the AI lesson creation feature works
