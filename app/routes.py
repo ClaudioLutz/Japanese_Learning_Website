@@ -1492,6 +1492,16 @@ def get_user_lessons():
     
     return jsonify(accessible_lessons)
 
+@bp.route('/api/categories', methods=['GET'])
+def get_public_categories():
+    """Get categories for public use (no admin required)"""
+    try:
+        categories = LessonCategory.query.all()
+        return jsonify([model_to_dict(category) for category in categories])
+    except Exception as e:
+        current_app.logger.error(f"Error fetching public categories: {e}")
+        return jsonify([]), 200  # Return empty array on error
+
 @bp.route('/api/lessons/<int:lesson_id>/progress', methods=['POST'])
 @login_required
 def update_lesson_progress(lesson_id):

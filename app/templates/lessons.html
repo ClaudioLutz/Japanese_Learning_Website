@@ -71,8 +71,14 @@
             
             <!-- No Lessons Message -->
             <div id="noLessonsMessage" class="text-center my-5" style="display: none;">
-                <h4>No lessons found</h4>
-                <p class="text-muted">Try adjusting your filters or check back later for new content.</p>
+                <div class="card">
+                    <div class="card-body">
+                        <h4>No lessons available yet</h4>
+                        <p class="text-muted">It looks like there are no lessons in the database yet.</p>
+                        <p class="text-muted">If you're an admin, you can create lessons using the Admin Panel or by running the lesson creation scripts.</p>
+                        <p class="text-muted">Otherwise, please check back later for new content!</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -92,10 +98,22 @@ async function loadLessons(language = 'all') {
     try {
         const url = `/api/lessons?instruction_language=${language}`;
         const response = await fetch(url);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
         allLessons = await response.json();
+        
+        // Handle empty lessons array gracefully
+        if (!Array.isArray(allLessons)) {
+            allLessons = [];
+        }
+        
         applyFilters(); // Apply all filters after loading
     } catch (error) {
         console.error('Error loading lessons:', error);
+        allLessons = []; // Ensure we have an empty array
         showError('Failed to load lessons. Please try again later.');
     } finally {
         showLoading(false);
@@ -104,18 +122,29 @@ async function loadLessons(language = 'all') {
 
 async function loadCategories() {
     try {
-        const response = await fetch('/api/admin/categories');
-        categories = await response.json();
-        
-        const categoryFilter = document.getElementById('categoryFilter');
-        categories.forEach(category => {
-            const option = document.createElement('option');
-            option.value = category.id;
-            option.textContent = category.name;
-            categoryFilter.appendChild(option);
-        });
+        const response = await fetch('/api/categories');
+        if (response.ok) {
+            categories = await response.json();
+            
+            const categoryFilter = document.getElementById('categoryFilter');
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category.id;
+                option.textContent = category.name;
+                categoryFilter.appendChild(option);
+            });
+        } else {
+            console.log('Categories not available');
+            const categoryFilter = document.getElementById('categoryFilter');
+            categoryFilter.disabled = true;
+            categoryFilter.innerHTML = '<option value="">Categories (Unavailable)</option>';
+        }
     } catch (error) {
         console.error('Error loading categories:', error);
+        // Disable category filter on error
+        const categoryFilter = document.getElementById('categoryFilter');
+        categoryFilter.disabled = true;
+        categoryFilter.innerHTML = '<option value="">Categories (Unavailable)</option>';
     }
 }
 
