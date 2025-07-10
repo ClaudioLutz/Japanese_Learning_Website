@@ -33,6 +33,10 @@ This documentation provides comprehensive information about the Japanese Learnin
 - [**17-Future-Roadmap.md**](17-Future-Roadmap.md) - Planned features and enhancements.
 - [**18-AI-Lesson-Creation.md**](18-AI-Lesson-Creation.md) - How the AI lesson creation feature works
 - [**19-Lesson-Creation-Scripts.md**](19-Lesson-Creation-Scripts.md) - How to use the lesson creation scripts
+- [**20-File-Upload-System.md**](20-File-Upload-System.md) - Comprehensive file upload system documentation
+- [**21-Lesson-Export-Import-System.md**](21-Lesson-Export-Import-System.md) - Lesson backup and migration system
+- [**22-Forms-and-CSRF-Protection.md**](22-Forms-and-CSRF-Protection.md) - Form handling and security implementation
+- [**23-User-Progress-and-Quiz-System.md**](23-User-Progress-and-Quiz-System.md) - Progress tracking and interactive quiz system
 
 ## Quick Start
 1. Read the [Project Overview](02-Project-Overview.md) to understand the system.
