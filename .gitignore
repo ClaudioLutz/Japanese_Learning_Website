@@ -58,11 +58,11 @@ coverage.xml
 # Django stuff:
 *.log
 local_settings.py
-db.sqlite3
-db.sqlite3-journal
+# db.sqlite3
+# db.sqlite3-journal
 
 # Flask stuff:
-instance/
+# instance/
 .webassets-cache
 
 # Scrapy stuff:
@@ -128,13 +128,13 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Flask-specific
-*.db
-*.sqlite
-*.sqlite3
+# Flask-specific (commented out to allow database tracking for development)
+# *.db
+# *.sqlite
+# *.sqlite3
 
-# Instance folder (contains sensitive config and database)
-instance/
+# Instance folder (allow for development - contains database)
+# instance/
 
 # IDE and Editor files
 .vscode/
@@ -180,10 +180,10 @@ secret_key.txt
 *.pem
 *.crt
 
-# Development database files
-*.db-journal
-site.db
-japanese_learning.db
+# Development database files (commented out to allow database tracking)
+# *.db-journal
+# site.db
+# japanese_learning.db
 
 # Test files
 test_*.py
