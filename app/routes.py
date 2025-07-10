@@ -198,8 +198,26 @@ def view_lesson(lesson_id):
         db.session.add(progress)
         db.session.commit()
     
+    # Get all quiz questions for this lesson
+    quiz_questions = []
+    for content in lesson.content_items:
+        if content.is_interactive:
+            quiz_questions.extend(content.quiz_questions)
+    
+    # Get user's existing quiz answers
+    user_quiz_answers = {}
+    if quiz_questions:
+        question_ids = [q.id for q in quiz_questions]
+        answers = UserQuizAnswer.query.filter(
+            UserQuizAnswer.user_id == current_user.id,
+            UserQuizAnswer.question_id.in_(question_ids)
+        ).all()
+        
+        # Create a lookup dictionary: question_id -> UserQuizAnswer
+        user_quiz_answers = {answer.question_id: answer for answer in answers}
+    
     form = CSRFTokenForm()
-    return render_template('lesson_view.html', lesson=lesson, progress=progress, form=form)
+    return render_template('lesson_view.html', lesson=lesson, progress=progress, form=form, user_quiz_answers=user_quiz_answers)
 
 # --- API Routes for Content Management ---
 
