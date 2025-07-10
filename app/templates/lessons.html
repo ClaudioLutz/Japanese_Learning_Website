@@ -221,21 +221,15 @@ function applyFilters() {
     const difficultyFilter = document.getElementById('difficultyFilter').value;
     const languageFilter = document.getElementById('languageFilter').value;
 
-    // The language filter is now applied on the backend.
-    // We just need to reload the lessons with the new language parameter.
-    if (languageFilter) {
-        loadLessons(languageFilter);
-    } else {
-        let filteredLessons = allLessons.filter(lesson => {
-            if (categoryFilter && lesson.category_id != categoryFilter) return false;
-            if (typeFilter && lesson.lesson_type !== typeFilter) return false;
-            if (difficultyFilter && lesson.difficulty_level != difficultyFilter) return false;
-            // Language filter is applied on backend, but we can still filter the currently loaded data
-            if (languageFilter && languageFilter !== 'all' && lesson.instruction_language !== languageFilter) return false;
-            return true;
-        });
-        displayLessons(filteredLessons);
-    }
+    // Filter the already loaded lessons
+    let filteredLessons = allLessons.filter(lesson => {
+        if (categoryFilter && lesson.category_id != categoryFilter) return false;
+        if (typeFilter && lesson.lesson_type !== typeFilter) return false;
+        if (difficultyFilter && lesson.difficulty_level != difficultyFilter) return false;
+        if (languageFilter && languageFilter !== 'all' && lesson.instruction_language !== languageFilter) return false;
+        return true;
+    });
+    displayLessons(filteredLessons);
 }
 
 function showLoading(show) {
