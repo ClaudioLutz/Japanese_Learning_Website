@@ -14,18 +14,21 @@ The following scripts are available to create lessons:
 
 Before running the scripts, ensure you have the following:
 
-1.  **Valid OpenAI API Key**: Your OpenAI API key must be set as an environment variable named `OPENAI_API_KEY`. You can set this in a `.env` file in the root of the project, or directly in your terminal.
+1.  **Project Setup**: Ensure the main project is fully set up:
+    *   Virtual environment activated.
+    *   Dependencies installed (`pip install -r requirements.txt`).
+    *   Database initialized (`python setup_unified_auth.py`).
+    *   Initial data and migrations applied (`python migrate_lesson_system.py`). This ensures necessary categories and the admin user exist.
 
-2.  **Admin Account**: The scripts assume you have an admin account with the email `admin@example.com` and password `your_password`. If your credentials are different, you will need to update the `test_ai_generation.py` script accordingly.
+2.  **Valid OpenAI API Key**: Your OpenAI API key must be set as an environment variable named `OPENAI_API_KEY`. You can set this in a `.env` file in the project root. Example: `OPENAI_API_KEY="sk-YourActualOpenAIKeyHere"`.
+
+3.  **Admin User**: The scripts typically assign lesson authorship or require an admin user context. They are designed to work with the default admin user created by `setup_unified_auth.py` (email: `admin@example.com`). Ensure this user exists in your database. The scripts themselves generally do not require you to pass password credentials as arguments, as they operate within the application context. The reference to `test_ai_generation.py` concerning passwords might be specific to that test script and not these lesson creation utilities.
 
 ## How to Run the Scripts
 
-To create a lesson, follow these steps:
+To create a lesson, follow these steps from the project's root directory:
 
-1.  **Navigate to the project directory**:
-    ```bash
-    cd Japanese_Learning_Website
-    ```
+1.  **Ensure your virtual environment is activated.**
 
 2.  **Run the desired script**:
     *   To create the technology lesson:
@@ -41,7 +44,7 @@ To create a lesson, follow these steps:
         python create_hiragana_lesson.py
         ```
 
-The script will then connect to the database, create the lesson and its pages, and use the AI service to generate and populate the content.
+The script will connect to the database (using the `DATABASE_URL` from your `.env` file), create the lesson structure, and use the AI service (via `app.ai_services` and your `OPENAI_API_KEY`) to generate and populate the content.
 
 ## Important Notes
 

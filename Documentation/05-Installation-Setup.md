@@ -70,8 +70,8 @@ python setup_unified_auth.py
 ```
 This will output the default admin credentials (typically `admin@example.com` / `admin123`).
 
-#### b. Seed Initial Lesson Data
-This script populates the database with default lesson categories (e.g., Hiragana Basics, Essential Kanji) and some sample lessons. This is crucial for having initial content to work with.
+#### b. Seed Initial Lesson Data & Apply Core Migrations
+This script populates the database with default lesson categories (e.g., Hiragana Basics, Essential Kanji) and some sample lessons. It also includes necessary data migrations for features like content ordering, page numbers, and the interactive quiz system. This is crucial for having initial content and a correctly structured database.
 ```bash
 python migrate_lesson_system.py
 ```
@@ -103,30 +103,53 @@ The `setup_unified_auth.py` script creates an admin user with the following defa
 
 If you use `create_admin.py`, it will prompt you for credentials, defaulting to the same if you press Enter.
 
-## Managing Database Migrations (for Future Schema Changes)
-While the initial setup is handled by the scripts above, future changes to the database schema (e.g., after modifying `app/models.py`) should be managed using Flask-Migrate. The `migrations/` directory is set up for this purpose.
+## Managing Database Migrations with Alembic (for Future Schema Changes)
+The initial database schema is created by `setup_unified_auth.py` (`db.create_all()`). Subsequent changes to your database models in `app/models.py` require creating and applying migration scripts using Alembic. The `migrations/` directory and `run_migrations.py` script are configured for this.
 
-**Note:** The `migrations/versions/` directory will be empty after initial setup using the scripts. The following commands are for managing schema changes *after* the database has been initially created and populated.
+**Important:**
+- The `setup_unified_auth.py` script should ideally only be run once for a new database to create the initial tables.
+- After the initial setup, all schema changes must be managed through Alembic migrations to avoid conflicts and ensure version control of your database structure. Do not run `db.create_all()` again on an existing database that is managed by Alembic.
 
-When you change your database models (`app/models.py`):
+When you modify your database models (e.g., add a new table, change a column in `app/models.py`):
 
 ### 1. Generate a new migration script
+Use Alembic to automatically generate a revision script based on the changes detected in your models compared to the current database state (as tracked by Alembic).
 ```bash
-flask db migrate -m "Descriptive message for your changes"
+alembic revision -m "Your descriptive message about the changes"
+```
+For example:
+```bash
+alembic revision -m "Add last_login_ip to User model"
 ```
 
-### 2. Review the generated script
-Check the generated script in the `migrations/versions/` directory to ensure it captures your intended changes correctly.
+### 2. Review and Edit the generated script
+Alembic will create a new file in the `migrations/versions/` directory (e.g., `migrations/versions/xxxx_add_last_login_ip_to_user_model.py`).
+- **Crucially, open this script and review it.** Alembic's autogenerate feature is powerful but may not always capture every nuance perfectly, especially for complex changes like constraints, data type changes on certain databases, or custom SQL.
+- You might need to manually edit the `upgrade()` and `downgrade()` functions in the script to ensure they accurately reflect the desired schema changes. For example, you might need to add `op.create_index()`, handle data migrations if columns are being dropped or transformed, or specify server defaults.
 
 ### 3. Apply the migration to your database
+This command applies all pending migrations (those in `migrations/versions/` that haven't been applied yet) to your database.
 ```bash
-flask db upgrade
+python run_migrations.py
 ```
+This script executes `alembic upgrade head`.
 
-### 4. Revert the last migration (if needed)
+### 4. Downgrade a migration (if needed)
+To revert the last applied migration:
 ```bash
-flask db downgrade
+alembic downgrade -1
 ```
+To downgrade to a specific migration version:
+```bash
+alembic downgrade <revision_hash_prefix>
+```
+**Caution:** Downgrading can be complex, especially if data loss is possible or if subsequent migrations depend on the one being reverted. Always back up your database before performing complex downgrade operations.
+
+### Other useful Alembic commands
+- **Show current revision:** `alembic current`
+- **Show migration history:** `alembic history`
+- **Show details of a revision:** `alembic show <revision>`
+- **Stamp the database with a revision (without running migrations):** `alembic stamp head` (useful if migrations were applied manually or out-of-band)
 
 ## Troubleshooting Common Setup Issues
 

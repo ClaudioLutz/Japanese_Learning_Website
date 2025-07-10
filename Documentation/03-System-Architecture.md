@@ -21,12 +21,15 @@ The Japanese Learning Website follows a **layered monolithic architecture** with
 │ │  - Controller   │   │  - Validation  │ │  - FileUpload  │ │
 │ │  - API Endpoints│   └────────────────┘ │  - Helpers     │ │
 │ └───────┬───────┘                        └────────────────┘ │
-│         │                                                   │
+│         │                                ┌────────────────┐ │
+│         │                                │ AI Services    │ │
+│         │                                │(app/ai_services.py)│
+│         │                                └────────────────┘ │
 │         ▼ (Interacts with Models, Renders Templates)        │
-│ ┌───────────────┐     ┌────────────────┐                    │
-│ │ Models        │◀─▶ │ Database       │                    │
-│ │ (app/models.py) │   │ (SQLAlchemy ORM) │                  │
-│ │  - Data Logic   │   │  - SQLite      │                    │
+│ ┌───────────────┐     ┌────────────────┐ ┌────────────────┐ │
+│ │ Models        │◀─▶ │ Database       │ │ Lesson Exp/Imp │ │
+│ │ (app/models.py) │   │ (SQLAlchemy ORM) │ │(app/lesson_export_import.py)│
+│ │  - Data Logic   │   │  - SQLite      │ └────────────────┘ │
 │ │  - Business Rules│  └────────────────┘                    │
 │ └───────────────┘                                           │
 │         │                                                   │
@@ -44,7 +47,7 @@ The Japanese Learning Website follows a **layered monolithic architecture** with
 ├─────────────────────────────────────────────────────────────┤
 │  ┌─────────────┐   ┌─────────────┐   ┌───────────────────┐  │
 │  │   SQLite    │   │ Migrations  │   │ File System       │  │
-│  │ (site.db)   │   │ (Flask-Migrate)│   │ (UPLOAD_FOLDER)│  │
+│  │ (site.db)   │   │ (Alembic)   │   │ (UPLOAD_FOLDER)   │  │
 │  └─────────────┘   └─────────────┘   └───────────────────┘  │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -57,9 +60,11 @@ The Japanese Learning Website follows a **layered monolithic architecture** with
 - **Controllers (Routes - `app/routes.py`)**: Manage the application flow. They handle incoming HTTP requests, interact with models to fetch or modify data, process input (often with the help of forms), and select appropriate templates to render or return JSON responses for API calls.
 - **Forms (`app/forms.py`)**: Manage form data submission, validation (using WTForms and Flask-WTF), and CSRF protection.
 - **Utilities (`app/utils.py`)**: Contain helper functions and classes that provide reusable logic across different parts of the application, such as `FileUploadHandler` for managing file uploads and `convert_to_embed_url` for YouTube URLs.
+- **AI Services (`app/ai_services.py`)**: Encapsulate logic for interacting with external AI APIs (e.g., OpenAI) for features like content generation.
+- **Lesson Export/Import (`app/lesson_export_import.py`)**: Handles the serialization and deserialization of lesson data for backup, transfer, or bulk creation purposes.
 
 ### 2. Single Responsibility Principle
-- Each Python module (e.g., `models.py`, `routes.py`, `forms.py`, `utils.py`) has a distinct area of responsibility.
+- Each Python module (e.g., `models.py`, `routes.py`, `forms.py`, `utils.py`, `ai_services.py`, `lesson_export_import.py`) has a distinct area of responsibility.
 - Database models are focused on data representation and data-related operations.
 - Route handlers in `app/routes.py` are responsible for the request-response cycle of specific URLs.
 - `FileUploadHandler` in `app/utils.py` centralizes all file upload processing and validation logic.
