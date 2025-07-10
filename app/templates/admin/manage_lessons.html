@@ -523,6 +523,9 @@
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" onclick="closeModal('importLessonModal')">Cancel</button>
+            <button type="button" id="previewImportBtn" class="btn btn-info" onclick="previewImportData()" style="display: none;">
+                <i class="fas fa-eye"></i> Preview Import
+            </button>
             <button type="button" id="importBtn" class="btn btn-success" onclick="startImport()" style="display: none;">
                 <i class="fas fa-upload"></i> Import Lesson
             </button>
@@ -3678,6 +3681,224 @@ $(document).ready(function() {
         }
     });
 });
+
+// Import functionality
+function toggleImportMethod() {
+    const method = document.querySelector('input[name="importMethod"]:checked').value;
+    const fileSection = document.getElementById('fileImportSection');
+    const jsonSection = document.getElementById('jsonImportSection');
+    
+    if (method === 'file') {
+        fileSection.style.display = 'block';
+        jsonSection.style.display = 'none';
+    } else {
+        fileSection.style.display = 'none';
+        jsonSection.style.display = 'block';
+    }
+    
+    // Reset analysis and options
+    document.getElementById('importAnalysis').style.display = 'none';
+    document.getElementById('importOptions').style.display = 'none';
+    document.getElementById('importBtn').style.display = 'none';
+    document.getElementById('previewImportBtn').style.display = 'none';
+}
+
+async function analyzeImportFile() {
+    const fileInput = document.getElementById('importFileInput');
+    const file = fileInput.files[0];
+    
+    if (!file) {
+        return;
+    }
+    
+    // Show preview button
+    document.getElementById('previewImportBtn').style.display = 'inline-block';
+    
+    // Auto-analyze the file
+    await previewImportData();
+}
+
+async function analyzeJSONData() {
+    const jsonText = document.getElementById('importJSONText').value.trim();
+    
+    if (!jsonText) {
+        alert('Please paste JSON data first.');
+        return;
+    }
+    
+    try {
+        // Validate JSON
+        JSON.parse(jsonText);
+        
+        // Show preview button
+        document.getElementById('previewImportBtn').style.display = 'inline-block';
+        
+        // Auto-analyze the data
+        await previewImportData();
+    } catch (error) {
+        alert('Invalid JSON data. Please check your input.');
+    }
+}
+
+async function previewImportData() {
+    const method = document.querySelector('input[name="importMethod"]:checked').value;
+    let formData = new FormData();
+    
+    if (method === 'file') {
+        const fileInput = document.getElementById('importFileInput');
+        const file = fileInput.files[0];
+        
+        if (!file) {
+            alert('Please select a file first.');
+            return;
+        }
+        
+        formData.append('file', file);
+    } else {
+        const jsonText = document.getElementById('importJSONText').value.trim();
+        
+        if (!jsonText) {
+            alert('Please paste JSON data first.');
+            return;
+        }
+        
+        // Create a blob from the JSON text and append as file
+        const blob = new Blob([jsonText], { type: 'application/json' });
+        formData.append('file', blob, 'lesson.json');
+    }
+    
+    try {
+        const response = await fetch('/api/admin/lessons/import-info', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCSRFToken()
+            },
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            displayImportAnalysis(data.info);
+            document.getElementById('importOptions').style.display = 'block';
+            document.getElementById('importBtn').style.display = 'inline-block';
+        } else {
+            alert('Analysis failed: ' + (data.error || 'Unknown error'));
+        }
+    } catch (error) {
+        console.error('Analysis error:', error);
+        alert('Analysis failed. Please try again.');
+    }
+}
+
+function displayImportAnalysis(info) {
+    let html = '<div class="alert alert-info">';
+    html += `<strong>File Type:</strong> ${info.file_type || 'JSON'}<br>`;
+    html += `<strong>Lessons Found:</strong> ${info.lesson_count || 1}<br>`;
+    
+    if (info.lessons && info.lessons.length > 0) {
+        html += '<strong>Lesson Details:</strong><ul>';
+        info.lessons.forEach(lesson => {
+            html += `<li><strong>${lesson.title}</strong>`;
+            if (lesson.difficulty) {
+                html += ` - ${lesson.difficulty} level`;
+            }
+            if (lesson.pages) {
+                html += ` (${lesson.pages} pages)`;
+            }
+            if (lesson.content_count) {
+                html += ` - ${lesson.content_count} content items`;
+            }
+            if (lesson.files && lesson.files.length > 0) {
+                html += ` - ${lesson.files.length} files`;
+            }
+            html += '</li>';
+        });
+        html += '</ul>';
+    }
+    
+    if (info.warnings && info.warnings.length > 0) {
+        html += '<div class="alert alert-warning mt-2"><strong>Warnings:</strong><ul>';
+        info.warnings.forEach(warning => {
+            html += `<li>${warning}</li>`;
+        });
+        html += '</ul></div>';
+    }
+    
+    html += '</div>';
+    
+    document.getElementById('importAnalysisContent').innerHTML = html;
+    document.getElementById('importAnalysis').style.display = 'block';
+}
+
+async function startImport() {
+    const method = document.querySelector('input[name="importMethod"]:checked').value;
+    const handleDuplicates = document.getElementById('duplicateHandling').value;
+    
+    let formData = new FormData();
+    formData.append('handle_duplicates', handleDuplicates);
+    
+    if (method === 'file') {
+        const fileInput = document.getElementById('importFileInput');
+        const file = fileInput.files[0];
+        
+        if (!file) {
+            alert('Please select a file first.');
+            return;
+        }
+        
+        formData.append('file', file);
+    } else {
+        const jsonText = document.getElementById('importJSONText').value.trim();
+        
+        if (!jsonText) {
+            alert('Please paste JSON data first.');
+            return;
+        }
+        
+        // Create a blob from the JSON text and append as file
+        const blob = new Blob([jsonText], { type: 'application/json' });
+        formData.append('file', blob, 'lesson.json');
+    }
+    
+    // Show loading state
+    const importBtn = document.getElementById('importBtn');
+    const originalText = importBtn.textContent;
+    importBtn.disabled = true;
+    importBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Importing...';
+    
+    try {
+        // Determine endpoint based on file type
+        const file = formData.get('file');
+        const endpoint = (file.name && file.name.endsWith('.zip')) ? 
+            '/api/admin/lessons/import-package' : 
+            '/api/admin/lessons/import';
+        
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCSRFToken()
+            },
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            alert(`Import successful! Imported ${data.imported_count || 1} lesson(s).`);
+            closeModal('importLessonModal');
+            loadLessons(); // Refresh the lessons list
+        } else {
+            alert('Import failed: ' + (data.error || 'Unknown error'));
+        }
+    } catch (error) {
+        console.error('Import error:', error);
+        alert('Import failed. Please try again.');
+    } finally {
+        importBtn.disabled = false;
+        importBtn.innerHTML = originalText;
+    }
+}
 
 function exportLessons() {
     const exportType = $('input[name="exportType"]:checked').val();
