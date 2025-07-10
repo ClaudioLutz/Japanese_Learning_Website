@@ -607,6 +607,7 @@ def create_lesson():
         estimated_duration=data.get('estimated_duration'),
         order_index=data.get('order_index', 0),
         is_published=data.get('is_published', False),
+        instruction_language=data.get('instruction_language', 'english'),
         thumbnail_url=data.get('thumbnail_url'),
         video_intro_url=data.get('video_intro_url')
     )
@@ -665,6 +666,7 @@ def update_lesson(item_id):
     item.estimated_duration = data.get('estimated_duration', item.estimated_duration)
     item.order_index = data.get('order_index', item.order_index)
     item.is_published = data.get('is_published', item.is_published)
+    item.instruction_language = data.get('instruction_language', item.instruction_language)
     item.thumbnail_url = data.get('thumbnail_url', item.thumbnail_url)
     item.video_intro_url = data.get('video_intro_url', item.video_intro_url)
 
@@ -1462,10 +1464,17 @@ def update_lesson_page(lesson_id, page_num):
 @bp.route('/api/lessons', methods=['GET'])
 @login_required
 def get_user_lessons():
-    """Get lessons accessible to the current user in the same order as admin panel"""
-    lessons = Lesson.query.filter_by(is_published=True).order_by(Lesson.order_index.asc(), Lesson.id.asc()).all()
-    accessible_lessons = []
+    """Get lessons accessible to the current user, with optional filtering."""
+    instruction_language = request.args.get('instruction_language')
     
+    query = Lesson.query.filter_by(is_published=True)
+    
+    if instruction_language and instruction_language.lower() != 'all':
+        query = query.filter(Lesson.instruction_language == instruction_language)
+        
+    lessons = query.order_by(Lesson.order_index.asc(), Lesson.id.asc()).all()
+    
+    accessible_lessons = []
     for lesson in lessons:
         accessible, message = lesson.is_accessible_to_user(current_user)
         lesson_dict = model_to_dict(lesson)

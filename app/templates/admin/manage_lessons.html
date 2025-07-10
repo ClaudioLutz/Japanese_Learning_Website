@@ -38,6 +38,7 @@
                                     <th>Type</th>
                                     <th>Difficulty</th>
                                     <th>Duration</th>
+                                    <th>Instruction Language</th>
                                     <th>Content Items</th>
                                     <th>Published</th>
                                     <th>Actions</th>
@@ -125,6 +126,16 @@
                 <div class="form-group">
                     <label for="lessonVideo">Video Intro URL</label>
                     <input type="url" id="lessonVideo" name="video_intro_url" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <label for="lessonLanguage">Instruction Language</label>
+                    <select id="lessonLanguage" name="instruction_language" class="form-control">
+                        <option value="english">English</option>
+                        <option value="spanish">Spanish</option>
+                        <option value="french">French</option>
+                        <!-- Add other languages as needed -->
+                    </select>
                 </div>
                 
                 <div class="form-group">
@@ -216,6 +227,16 @@
                     <input type="url" id="editLessonVideo" name="video_intro_url" class="form-control">
                 </div>
                 
+                <div class="form-group">
+                    <label for="editLessonLanguage">Instruction Language</label>
+                    <select id="editLessonLanguage" name="instruction_language" class="form-control">
+                        <option value="english">English</option>
+                        <option value="spanish">Spanish</option>
+                        <option value="french">French</option>
+                        <!-- Add other languages as needed -->
+                    </select>
+                </div>
+
                 <div class="form-group">
                     <div class="form-check">
                         <input type="checkbox" id="editLessonPublished" name="is_published" class="form-check-input">
@@ -1195,6 +1216,7 @@ async function loadLessons() {
                 <td><span class="badge ${lesson.lesson_type === 'free' ? 'badge-success' : 'badge-warning'}">${lesson.lesson_type}</span></td>
                 <td>${lesson.difficulty_level || 'N/A'}</td>
                 <td>${lesson.estimated_duration || 'N/A'} min</td>
+                <td>${lesson.instruction_language || 'N/A'}</td>
                 <td>${lesson.content_count}</td>
                 <td><span class="badge ${lesson.is_published ? 'badge-success' : 'badge-secondary'}">${lesson.is_published ? 'Yes' : 'No'}</span></td>
                 <td>
@@ -1296,6 +1318,7 @@ async function editLesson(id) {
         document.getElementById('editLessonOrder').value = lesson.order_index || 0;
         document.getElementById('editLessonThumbnail').value = lesson.thumbnail_url || '';
         document.getElementById('editLessonVideo').value = lesson.video_intro_url || '';
+        document.getElementById('editLessonLanguage').value = lesson.instruction_language || 'english';
         document.getElementById('editLessonPublished').checked = lesson.is_published;
         
         openModal('editLessonModal');

@@ -116,6 +116,7 @@ class Lesson(db.Model):
     estimated_duration = db.Column(db.Integer)  # minutes
     order_index = db.Column(db.Integer, default=0)  # for lesson ordering within category
     is_published = db.Column(db.Boolean, default=False)
+    instruction_language = db.Column(db.String(10), default='english', nullable=False)  # language used for explanations/instructions
     thumbnail_url = db.Column(db.String(255))  # lesson cover image
     video_intro_url = db.Column(db.String(255))  # optional intro video
     created_at = db.Column(db.DateTime, default=datetime.utcnow)

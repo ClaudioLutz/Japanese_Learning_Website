@@ -41,6 +41,15 @@
                                 <option value="5">Expert (5)</option>
                             </select>
                         </div>
+                        <div class="col-md-3">
+                            <label for="languageFilter" class="form-label">Instruction Language</label>
+                            <select id="languageFilter" class="form-select">
+                                <option value="all">All Languages</option>
+                                <option value="english">English</option>
+                                <option value="german">German</option>
+                                <!-- Add other languages as needed -->
+                            </select>
+                        </div>
                         <div class="col-md-3 d-flex align-items-end">
                             <button type="button" class="btn btn-primary" onclick="applyFilters()">Apply Filters</button>
                         </div>
@@ -78,12 +87,13 @@ document.addEventListener('DOMContentLoaded', function() {
     loadCategories();
 });
 
-async function loadLessons() {
+async function loadLessons(language = 'all') {
     showLoading(true);
     try {
-        const response = await fetch('/api/lessons');
+        const url = `/api/lessons?instruction_language=${language}`;
+        const response = await fetch(url);
         allLessons = await response.json();
-        displayLessons(allLessons);
+        applyFilters(); // Apply all filters after loading
     } catch (error) {
         console.error('Error loading lessons:', error);
         showError('Failed to load lessons. Please try again later.');
@@ -180,15 +190,23 @@ function applyFilters() {
     const categoryFilter = document.getElementById('categoryFilter').value;
     const typeFilter = document.getElementById('typeFilter').value;
     const difficultyFilter = document.getElementById('difficultyFilter').value;
-    
-    let filteredLessons = allLessons.filter(lesson => {
-        if (categoryFilter && lesson.category_id != categoryFilter) return false;
-        if (typeFilter && lesson.lesson_type !== typeFilter) return false;
-        if (difficultyFilter && lesson.difficulty_level != difficultyFilter) return false;
-        return true;
-    });
-    
-    displayLessons(filteredLessons);
+    const languageFilter = document.getElementById('languageFilter').value;
+
+    // The language filter is now applied on the backend.
+    // We just need to reload the lessons with the new language parameter.
+    if (languageFilter) {
+        loadLessons(languageFilter);
+    } else {
+        let filteredLessons = allLessons.filter(lesson => {
+            if (categoryFilter && lesson.category_id != categoryFilter) return false;
+            if (typeFilter && lesson.lesson_type !== typeFilter) return false;
+            if (difficultyFilter && lesson.difficulty_level != difficultyFilter) return false;
+            // Language filter is applied on backend, but we can still filter the currently loaded data
+            if (languageFilter && languageFilter !== 'all' && lesson.instruction_language !== languageFilter) return false;
+            return true;
+        });
+        displayLessons(filteredLessons);
+    }
 }
 
 function showLoading(show) {
