@@ -87,28 +87,33 @@ The Japanese Learning Website employs a unified authentication system for both r
 ## Authentication Implementation Details
 
 ### User Model (`app/models.py`)
+The `User` model includes fields for authentication and role management.
 ```python
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(256), nullable=False)
+    password_hash = db.Column(db.String(256), nullable=False) # Increased length for stronger hash algorithms
     subscription_level = db.Column(db.String(50), default='free', nullable=False)
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
+    # ... other fields like progress, etc. ...
     
     def set_password(self, password):
-        """Hash and set the user's password"""
+        """Hash and set the user's password."""
         self.password_hash = generate_password_hash(password)
     
     def check_password(self, password):
-        """Check if provided password matches the hash"""
+        """Check if provided password matches the hash."""
         return check_password_hash(self.password_hash, password)
-    
-    @staticmethod
-    def load_user(user_id):
-        """User loader function for Flask-Login"""
-        return User.query.get(int(user_id))
+
+# User Loader for Flask-Login (typically in app/models.py or app/__init__.py)
+# This function is registered with the LoginManager instance.
+# from . import login_manager # Assuming login_manager is initialized in app/__init__.py
+# @login_manager.user_loader
+# def load_user(user_id):
+#     return User.query.get(int(user_id))
 ```
+**Note on `load_user`**: The `load_user` function is essential for Flask-Login. It's typically defined at the module level (e.g., in `app/models.py` or where your `LoginManager` is initialized) and decorated with `@login_manager.user_loader`. It should not be a static method of the `User` class itself if it's to be registered directly with Flask-Login this way. The snippet above shows the typical structure.
 
 ### Access Control Decorators
 ```python

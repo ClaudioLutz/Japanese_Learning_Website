@@ -239,18 +239,9 @@ openai>=1.0.0
 
 ### Flask Application Setup
 
-Ensure Flask-Migrate is properly configured in `app/__init__.py`:
+The application uses Alembic for database migrations, configured via the `migrations/` directory and scripts like `run_migrations.py`. The `app/__init__.py` initializes SQLAlchemy and other extensions. No specific Flask-Migrate setup is used.
 
-```python
-from flask_migrate import Migrate
-
-migrate = Migrate()
-
-def create_app():
-    # ... existing setup ...
-    migrate.init_app(app, db)
-    # ... rest of setup ...
-```
+The `LessonContent` model, which includes `generated_by_ai` and `ai_generation_details` fields, is created as part of the initial database schema when `db.create_all()` is called (typically by `python setup_unified_auth.py`).
 
 ## Usage Guide
 
@@ -546,16 +537,16 @@ def generate_batch_content(content_requests):
 pip install openai>=1.0.0
 ```
 
-#### Issue: "Flask db command not found"
-**Solution**: Ensure Flask-Migrate is properly initialized
-```python
-from flask_migrate import Migrate
-migrate = Migrate()
-migrate.init_app(app, db)
-```
+#### Issue: "Flask command not found" or Alembic commands not working
+**Solution**:
+- Ensure your virtual environment is activated.
+- Ensure Flask and Alembic are correctly installed (`pip install -r requirements.txt`).
+- For Flask CLI commands (like `flask routes`, `flask run`), ensure `FLASK_APP` environment variable is set (e.g., in `.env` file as `FLASK_APP=run.py`).
+- Alembic commands (`alembic ...`) should be run from the project root directory where `alembic.ini` is located.
 
-#### Issue: "Cannot add NOT NULL column"
-**Solution**: Migration includes proper default values
+#### Issue: "Cannot add NOT NULL column" during an Alembic migration
+**Solution**: When adding a new non-nullable column to an existing table with data, Alembic needs a `server_default` or you need to handle it manually in the migration script.
+Example for a boolean in an Alembic migration script:
 ```python
 batch_op.add_column(sa.Column('generated_by_ai', sa.Boolean(), 
                              nullable=False, server_default='0'))

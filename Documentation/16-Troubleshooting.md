@@ -44,21 +44,25 @@ return redirect(url_for('routes.admin_index'))
 ```
 sqlite3.OperationalError: no such table: user
 ```
-**Cause**: Database not initialized or migration not applied.
+**Cause**: Database not initialized, tables not created, or migrations not applied.
 
-**Solution**: 
-```bash
-# Initialize database
-flask db upgrade
-
-# If migrations don't exist, create them
-flask db init
-flask db migrate -m "Initial migration"
-flask db upgrade
-
-# Alternative: Run setup script
-python setup_unified_auth.py
-```
+**Solution**:
+1.  Ensure `instance/site.db` (or your configured DB) exists. If not, the setup script should create it.
+2.  Run initial setup scripts if this is a fresh installation:
+    ```bash
+    python setup_unified_auth.py  # Creates initial tables and admin user
+    python migrate_lesson_system.py # Seeds data and runs essential data migrations
+    ```
+3.  If you have made changes to models and have pending Alembic migrations:
+    ```bash
+    python run_migrations.py      # Applies pending Alembic migrations
+    ```
+    If you need to generate a new migration because you changed `app/models.py`:
+    ```bash
+    alembic revision -m "Your migration message"
+    # Then review the generated script and run:
+    python run_migrations.py
+    ```
 
 ### 4. Admin Access Denied
 **Problem**: Can't access admin panel after login.
@@ -178,24 +182,51 @@ python -c "import sys; print(sys.path)"
 ```
 Target database is not up to date
 ```
-**Cause**: Migration conflicts or database state issues.
+**Cause**: Migration conflicts or database state issues. Alembic may detect that the actual database schema doesn't match the migration history.
 
 **Solution**:
-```bash
-# Check migration status
-flask db current
-flask db history
-
-# Force migration to head
-flask db stamp head
-flask db upgrade
-
-# If migrations are corrupted, reset
-rm -rf migrations/
-flask db init
-flask db migrate -m "Initial migration"
-flask db upgrade
-```
+1.  **Check current migration status**:
+    ```bash
+    alembic current
+    alembic history
+    ```
+2.  **Ensure all migrations are applied**:
+    ```bash
+    python run_migrations.py
+    ```
+3.  **If the database is truly out of sync with Alembic's history (e.g., manual changes were made, or history is corrupted):**
+    - **Option A: Stamp to current head (if DB schema matches models and latest migration)**
+      If you are certain your database schema correctly reflects the state after all migrations, you can tell Alembic to consider the database as up-to-date:
+      ```bash
+      alembic stamp head
+      ```
+      *Use with caution. This doesn't change the schema; it just updates Alembic's version table.*
+    - **Option B: More complex recovery (potentially requires manual intervention)**
+      If migrations are genuinely corrupted or the DB is in an unknown state relative to migrations, recovery can be complex. This might involve:
+        - Backing up your data.
+        - Inspecting the `alembic_version` table in your database.
+        - Potentially dropping tables and re-creating from scratch using `setup_unified_auth.py` and `python run_migrations.py` (losing data unless restored).
+        - Or, carefully generating new migration scripts and manually adjusting them.
+    - **Drastic Reset (Last Resort - Deletes Migration History and Data if not careful):**
+      If you intend to start migrations from scratch and your database can be rebuilt (e.g., in development):
+      ```bash
+      # Warning: This path can lead to data loss if not handled carefully.
+      # 1. Ensure your models in app/models.py are correct.
+      # 2. Backup your database if it contains valuable data.
+      # 3. Delete the migrations/versions/ directory's contents: rm -rf migrations/versions/*
+      # 4. Drop all tables from your database (e.g., using a DB browser or `db.drop_all()` temporarily in a script).
+      # 5. Run initial setup:
+      python setup_unified_auth.py # Recreates tables based on models (like db.create_all())
+      # 6. Stamp the database with an initial Alembic state (if `setup_unified_auth.py` doesn't do this):
+      #    This might involve creating an initial migration for an empty DB or stamping a base.
+      #    Often, the first 'real' migration is generated against the tables created by setup_unified_auth.py.
+      # 7. Generate a new "initial" migration if needed, or proceed to generate migrations for model changes.
+      #    If `setup_unified_auth.py` creates tables, your first Alembic revision might be empty or reflect those tables.
+      #    `alembic revision -m "establish baseline from existing tables"`
+      #    You might need to edit this script to reflect the current state if autogenerate doesn't capture it.
+      #    Then `python run_migrations.py`
+      ```
+      *This "drastic reset" is complex and error-prone. It's usually better to fix specific migration issues.*
 
 ### 10. Permission Errors
 **Problem**: Access denied errors when accessing files or directories.
@@ -398,12 +429,13 @@ pip list
 flask --version
 
 # Application status
-flask routes
+flask routes  # Still useful for showing Flask routes
 flask shell
 
-# Database information
-flask db current
-flask db show
+# Database information (Alembic)
+alembic current
+alembic history
+# alembic show <revision_id> # To show details of a specific revision
 ```
 
 ### Debug Commands

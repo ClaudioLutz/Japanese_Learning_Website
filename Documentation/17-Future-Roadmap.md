@@ -7,26 +7,29 @@ This document outlines planned features, enhancements, and technical improvement
 ### 1. Enhanced Learning Tools
 
 #### Spaced Repetition System (SRS)
-- **Intelligent Review Scheduling**: Implement algorithms to optimize review timing based on user performance
-- **Forgetting Curve Integration**: Use Ebbinghaus forgetting curve principles for optimal retention
-- **Adaptive Difficulty**: Adjust review frequency based on individual learning patterns
-- **Progress Analytics**: Track long-term retention and learning efficiency
+- **Intelligent Review Scheduling**: Implement algorithms to optimize review timing based on user performance.
+- **Forgetting Curve Integration**: Use Ebbinghaus forgetting curve principles for optimal retention.
+- **Adaptive Difficulty**: Adjust review frequency based on individual learning patterns.
+- **Progress Analytics**: Track long-term retention and learning efficiency.
 
-#### Advanced Quiz System
-- **Multiple Question Types**: 
-  - Drag and drop exercises
-  - Audio recognition quizzes
-  - Handwriting practice (stroke order)
-  - Matching exercises
-- **Adaptive Testing**: Questions adjust difficulty based on performance
-- **Detailed Analytics**: Performance tracking across different question types
-- **Timed Challenges**: Speed-based learning exercises
+#### Advanced Quiz System & Interactive Content
+- **Current Implementation**: The platform already supports interactive quiz questions within lessons, including:
+    - Multiple Choice
+    - Fill-in-the-Blank
+    - True/False
+- **Future Enhancements**:
+    - Additional Question Types: Drag and drop exercises, audio recognition quizzes, handwriting practice (stroke order), matching exercises.
+    - Adaptive Testing: Questions adjust difficulty based on performance.
+    - Detailed Analytics: Performance tracking across different question types.
+    - Timed Challenges: Speed-based learning exercises.
 
 #### Audio Integration
-- **Native Pronunciation Support**: High-quality audio for all content
-- **Speech Recognition**: User pronunciation assessment
-- **Audio Lessons**: Listening comprehension exercises
-- **Pronunciation Scoring**: AI-powered pronunciation feedback
+- **Current Implementation**: Supports uploading and embedding audio files in lessons.
+- **Future Enhancements**:
+    - Native Pronunciation Support: Library of high-quality audio for core content.
+    - Speech Recognition: User pronunciation assessment.
+    - Audio Lessons: Dedicated listening comprehension exercises.
+    - Pronunciation Scoring: AI-powered pronunciation feedback.
 
 #### Lesson Analytics
 - **Detailed Learning Analytics**: Comprehensive progress tracking
@@ -37,19 +40,23 @@ This document outlines planned features, enhancements, and technical improvement
 ### 2. Content Improvements
 
 #### Content Versioning
-- **Version Control**: Track content changes over time
-- **Rollback Capability**: Revert to previous content versions
-- **Change History**: Audit trail for all content modifications
-- **Collaborative Editing**: Multiple admin content creation
+- **Version Control**: Track content changes over time.
+- **Rollback Capability**: Revert to previous content versions.
+- **Change History**: Audit trail for all content modifications.
+- **Collaborative Editing**: Features to support multiple administrators creating and editing content.
 
 #### Bulk Import/Export
-- **CSV/JSON Support**: Mass content management
-- **Content Templates**: Standardized content formats
-- **Batch Operations**: Efficient bulk content updates
-- **Data Migration Tools**: Easy content transfer between systems
+- **Current Status**: Functionality for lesson export and import (likely JSON-based) is available via `app/lesson_export_import.py`.
+- **Future Enhancements**:
+    - Broader CSV/JSON support for various content types beyond full lessons.
+    - Content templates for standardized bulk creation.
+    - Batch operations for efficient bulk updates across multiple content items.
+    - Robust data migration tools for transferring content between different system instances or versions.
 
 #### Advanced Prerequisites
-- **Complex Logic**: AND/OR prerequisite combinations
+- **Current Implementation**: Basic lesson prerequisites are supported (one lesson depending on another).
+- **Future Enhancements**:
+    - Complex Logic: AND/OR prerequisite combinations.
 - **Skill-Based Prerequisites**: Requirements based on demonstrated skills
 - **Adaptive Pathways**: Dynamic learning path adjustments
 - **Prerequisite Recommendations**: AI-suggested learning sequences
@@ -116,62 +123,64 @@ This document outlines planned features, enhancements, and technical improvement
 ### 5. Technical Improvements
 
 #### API Documentation
-- **Swagger/OpenAPI Integration**: Interactive API documentation
-- **Code Examples**: Comprehensive usage examples
-- **SDK Development**: Client libraries for common languages
-- **API Versioning**: Backward-compatible API evolution
+- **Swagger/OpenAPI Integration**: Implement interactive API documentation using tools like Swagger or OpenAPI.
+- **Code Examples**: Provide comprehensive usage examples for all API endpoints.
+- **SDK Development**: Consider developing client libraries for common languages to facilitate API integration.
+- **API Versioning**: Establish a strategy for backward-compatible API evolution.
 
 #### Automated Testing
-- **Unit Test Suite**: Comprehensive code coverage
-- **Integration Tests**: End-to-end functionality testing
-- **Performance Tests**: Load and stress testing
-- **Automated QA**: Continuous quality assurance
+- **Unit Test Suite**: Develop a comprehensive suite of unit tests to ensure code correctness and maintainability. Aim for high code coverage.
+- **Integration Tests**: Implement integration tests to verify end-to-end functionality of key application flows.
+- **Performance Tests**: Conduct load and stress testing to identify and address performance bottlenecks.
+- **Automated QA**: Integrate automated quality assurance checks into the development lifecycle.
 
 #### CI/CD Pipeline
-- **Automated Deployment**: Streamlined release process
-- **Environment Management**: Consistent deployment environments
-- **Rollback Capabilities**: Quick reversion for issues
-- **Quality Gates**: Automated quality checks before deployment
+- **Automated Deployment**: Establish a CI/CD pipeline for streamlined and automated releases to various environments (staging, production).
+- **Environment Management**: Ensure consistent and reproducible deployment environments.
+- **Rollback Capabilities**: Implement mechanisms for quick reversion of deployments in case of issues.
+- **Quality Gates**: Incorporate automated quality checks (e.g., running tests, linters) into the pipeline before deployment.
 
 #### Performance Optimization
-- **Caching Layer**: Redis for session and content caching
-- **Database Optimization**: Query optimization and indexing
-- **CDN Integration**: Global content delivery
-- **Load Balancing**: Horizontal scaling capabilities
+- **Caching Layer**: Explore and implement caching strategies (e.g., using Redis) for frequently accessed data, sessions, and content.
+- **Database Optimization**: Continuously monitor and optimize database queries, ensure proper indexing, and consider connection pooling.
+- **CDN Integration**: Utilize a Content Delivery Network (CDN) for serving static assets (CSS, JS, images) to improve load times for global users.
+- **Load Balancing**: Design the application to support horizontal scaling with load balancers for high availability and performance.
 
 ## Scalability Considerations
 
-### Database Migration
-- **PostgreSQL Transition**: Move from SQLite to PostgreSQL for production
-- **Database Clustering**: High-availability database setup
-- **Read Replicas**: Improved read performance
-- **Sharding Strategy**: Horizontal database scaling
+### Database Migration & Scaling
+- **PostgreSQL/MySQL Transition**: Plan and execute migration from SQLite to a more robust relational database like PostgreSQL or MySQL for production environments. Alembic is already in use, facilitating this.
+- **Database Clustering**: For very high availability, explore database clustering solutions.
+- **Read Replicas**: Implement read replicas to offload read-heavy queries and improve performance.
+- **Sharding Strategy**: For extreme scale, investigate database sharding strategies.
 
 ### Caching Layer
-- **Redis Implementation**: Session and content caching
-- **Cache Strategies**: Intelligent caching policies
-- **Cache Invalidation**: Efficient cache management
-- **Distributed Caching**: Multi-server cache coordination
+- **Redis Implementation**: Implement Redis for session management and application-level caching.
+- **Cache Strategies**: Define intelligent caching policies (e.g., cache-aside, write-through) based on data access patterns.
+- **Cache Invalidation**: Develop robust mechanisms for cache invalidation to ensure data consistency.
+- **Distributed Caching**: For multi-server deployments, use a distributed caching solution.
 
 ### CDN Integration
-- **Static Asset Delivery**: Global content distribution
-- **Image Optimization**: Automatic image processing
-- **Video Streaming**: Efficient video content delivery
-- **Edge Computing**: Reduced latency through edge servers
+- **Static Asset Delivery**: Serve all static assets (CSS, JavaScript, images, non-dynamic uploaded files) via a CDN.
+- **Image Optimization**: Leverage CDN features for automatic image optimization and format conversion.
+- **Video Streaming**: If video content is significant, use CDN capabilities for efficient video streaming.
+- **Edge Computing**: Explore using edge servers for computations closer to the user to reduce latency.
 
 ### Load Balancing
-- **Multiple Server Instances**: Horizontal scaling
-- **Health Monitoring**: Automatic failover capabilities
-- **Session Affinity**: Consistent user experience
-- **Auto-scaling**: Dynamic resource allocation
+- **Multiple Server Instances**: Deploy the application across multiple server instances.
+- **Health Monitoring**: Implement health checks for application instances to enable automatic failover.
+- **Session Affinity**: Configure session affinity (sticky sessions) if necessary, though stateless design is preferred.
+- **Auto-scaling**: Implement auto-scaling based on traffic load to dynamically adjust resource allocation.
 
 ## Integration Opportunities
 
 ### External APIs
-- **Dictionary Services**: Integration with Japanese dictionaries
-- **Translation APIs**: Automatic translation capabilities
-- **Speech APIs**: Advanced speech recognition and synthesis
-- **AI Services**: Machine learning enhancements
+- **Dictionary Services**: Integrate with established Japanese dictionary APIs (e.g., Jisho.org API if available, or other services).
+- **Translation APIs**: Incorporate machine translation services for helper text or content localization.
+- **Speech APIs**: Utilize advanced third-party speech recognition and synthesis APIs.
+- **AI Services for Content Enhancement**:
+    - **Current Implementation**: The platform uses `app/ai_services.py` to integrate with OpenAI for AI-assisted lesson content generation (e.g., example sentences, explanations).
+    - **Future Enhancements**: Expand AI integration for more sophisticated features like automated question generation, personalized feedback, or adaptive learning path suggestions.
 
 ### Social Features
 - **User Communities**: Learning groups and forums

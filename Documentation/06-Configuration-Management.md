@@ -18,6 +18,8 @@ A `.env` file in the project root is used to store sensitive and environment-spe
     - Example for PostgreSQL: `DATABASE_URL=postgresql://user:password@host:port/dbname`
 - **`UPLOAD_FOLDER=app/static/uploads`**: The absolute or relative path to the directory where user-uploaded files (for lessons, etc.) will be stored. The application will attempt to create subdirectories within this folder (e.g., `lessons/image`, `lessons/audio`).
 - **`MAX_CONTENT_LENGTH=16777216`**: (Optional) Maximum allowed size for file uploads, in bytes (e.g., 16MB). This is a standard Flask configuration.
+- **`OPENAI_API_KEY`**: (Required if using AI features) Your API key for OpenAI services, used by `app/ai_services.py` for generating lesson content.
+    - Example: `OPENAI_API_KEY=sk-YourActualOpenAIKeyHere`
 
 ### Example `.env` file
 ```env
@@ -28,6 +30,7 @@ SECRET_KEY=your-chosen-secret-key-should-be-long-and-random
 DATABASE_URL=sqlite:///instance/site.db
 UPLOAD_FOLDER=app/static/uploads
 # MAX_CONTENT_LENGTH=16777216 # Optional: 16MB
+# OPENAI_API_KEY=sk-YourActualOpenAIKeyHere # Required for AI features
 ```
 
 ## 2. Application Configuration (`app/__init__.py` and `instance/config.py`)

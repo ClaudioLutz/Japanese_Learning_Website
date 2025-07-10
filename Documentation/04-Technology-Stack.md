@@ -14,8 +14,9 @@ This section outlines the key technologies used in the project and the rationale
 | **Flask-WTF**     | >=1.0.0                           | Form handling, CSRF protection                | Integrates WTForms with Flask, providing easy form creation, validation, and crucial CSRF protection.                                          |
 | **WTForms**       | >=3.0.0                           | Form creation and validation library          | Flexible library for defining form fields and validation rules.                                                                                |
 | **Werkzeug**      | >=2.0.0                           | WSGI utility library (Flask dependency)       | Provides password hashing (`generate_password_hash`, `check_password_hash`), routing, and other WSGI utilities used by Flask.                    |
-| **Flask-Migrate** | >=3.1.0                           | SQLAlchemy database migrations (Alembic)      | Manages database schema changes over time, allowing for versioning and incremental updates to the database structure.                            |
+| **Alembic**       | >=1.7.0 (Typical)                 | SQLAlchemy database migrations                | Manages database schema changes over time, allowing for versioning and incremental updates to the database structure. Direct usage.        |
 | **python-dotenv** | >=0.19.0                          | Environment variable management               | Loads environment variables from a `.env` file for configuration (e.g., `SECRET_KEY`, `DATABASE_URL`).                                       |
+| **OpenAI**        | >=0.27.0 (Example, check reqs)    | AI API Interaction                            | Used by `app/ai_services.py` to connect to OpenAI's API for features like AI-assisted lesson content generation.                             |
 
 ## Core Frontend Technologies
 
@@ -40,7 +41,7 @@ This section outlines the key technologies used in the project and the rationale
 | Technology        | Version         | Purpose                                     | Design Rationale                                                                                                                            |
 |-------------------|-----------------|---------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
 | **SQLite**        | (Python default)| Development and default production database | Simple, file-based database, zero-configuration, suitable for development and small to medium-scale applications. Easy to set up and manage. |
-| **Alembic**       | (via Flask-Migrate) | Database schema migration tool              | Used by Flask-Migrate to handle versioning of the database schema, allowing for controlled evolution of table structures.                   |
+| **Alembic**       | Direct Usage    | Database schema migration tool              | Handles versioning of the database schema, allowing for controlled evolution of table structures. Integrated via `migrations/` directory.   |
 
 ## Design Choices & Justifications
 
@@ -59,7 +60,7 @@ This section outlines the key technologies used in the project and the rationale
 ### Database Design
 - **Normalized Relational Schema**: Designed to reduce data redundancy and improve data integrity using foreign keys and relationships (primarily aiming for Third Normal Form - 3NF).
 - **SQLite as Default**: Chosen for ease of setup and development. The use of SQLAlchemy allows for a straightforward migration to more robust databases like PostgreSQL or MySQL for production scaling.
-- **Flask-Migrate with Alembic**: Ensures that database schema changes are version-controlled and can be applied systematically across different environments.
+- **Alembic for Migrations**: Ensures that database schema changes are version-controlled (via `migrations/` directory) and can be applied systematically across different environments using `run_migrations.py`.
 
 ### Security
 - **Defense in Depth**: Multiple layers of security are employed:
