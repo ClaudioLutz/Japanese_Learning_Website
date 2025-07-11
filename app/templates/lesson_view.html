@@ -514,10 +514,14 @@
                                                         <div class="mb-3">{{ content.content_text | safe }}</div>
                                                         {% endif %}
                                                         
-                                                        {% if content.media_url %}
-                                                            {% if content.content_type == 'image' %}
-                                                            <img src="{{ content.media_url }}" class="img-fluid rounded" alt="{{ content.title }}">
-                                                            {% elif content.content_type == 'video' %}
+                                                        {% if content.content_type == 'image' %}
+                                                            {% if content.file_path %}
+                                                            <img src="{{ url_for('static', filename='uploads/' + content.file_path) }}" class="img-fluid rounded" alt="{{ content.title }}" style="max-width: 100%; height: auto;">
+                                                            {% elif content.media_url %}
+                                                            <img src="{{ content.media_url }}" class="img-fluid rounded" alt="{{ content.title }}" style="max-width: 100%; height: auto;">
+                                                            {% endif %}
+                                                        {% elif content.media_url %}
+                                                            {% if content.content_type == 'video' %}
                                                             <div class="ratio ratio-16x9">
                                                                 <iframe src="{{ content.media_url | to_embed_url }}" allowfullscreen></iframe>
                                                             </div>
@@ -564,9 +568,11 @@
                                                         <div class="fill-blank-input">
                                                             <div class="question-text mb-3">
                                                                 {% if user_answer and user_answer.text_answer %}
-                                                                {{ question.question_text | replace('___', '<input type="text" class="form-control d-inline-block" style="width: 200px;" id="blank_' + question.id|string + '" value="' + user_answer.text_answer + '"' + (' disabled' if user_answer.is_correct else '') + '>') | safe }}
+                                                                {% set input_html = '<input type="text" class="form-control d-inline-block" style="width: 200px;" id="blank_' ~ question.id ~ '" value="' ~ user_answer.text_answer ~ '"' ~ (' disabled' if user_answer.is_correct else '') ~ '>' %}
+                                                                {{ question.question_text | replace('___', input_html) | safe }}
                                                                 {% else %}
-                                                                {{ question.question_text | replace('___', '<input type="text" class="form-control d-inline-block" style="width: 200px;" id="blank_' + question.id|string + '">') | safe }}
+                                                                {% set input_html = '<input type="text" class="form-control d-inline-block" style="width: 200px;" id="blank_' ~ question.id ~ '">' %}
+                                                                {{ question.question_text | replace('___', input_html) | safe }}
                                                                 {% endif %}
                                                             </div>
                                                         </div>
@@ -819,7 +825,7 @@ async function submitQuizAnswer(lessonId, questionId) {
     
     try {
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        const response = await fetch(`/api/lessons/${lessonId}/quiz/${questionId}/answer`, {
+        const response = await fetch('/api/lessons/' + lessonId + '/quiz/' + questionId + '/answer', {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
@@ -889,7 +895,7 @@ async function markContentComplete(contentId) {
     try {
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const lessonId = '{{ lesson.id }}';
-        const response = await fetch(`/api/lessons/${lessonId}/progress`, {
+        const response = await fetch('/api/lessons/' + lessonId + '/progress', {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
@@ -1136,7 +1142,7 @@ window.addEventListener('beforeunload', function() {
     const timeSpent = Math.floor((Date.now() - startTime) / 60000);
     if (timeSpent > 0) {
         const lessonId = '{{ lesson.id }}';
-        navigator.sendBeacon(`/api/lessons/${lessonId}/progress`, 
+        navigator.sendBeacon('/api/lessons/' + lessonId + '/progress', 
             JSON.stringify({ time_spent: timeSpent }));
     }
 });

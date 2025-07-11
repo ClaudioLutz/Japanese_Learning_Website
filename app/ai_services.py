@@ -107,6 +107,144 @@ class AILessonContentGenerator:
             current_app.logger.error(f"Failed to parse JSON from AI response: {e}\\nResponse: {content}")
             return {"error": "Failed to parse AI response as JSON."}
 
+    def generate_image_prompt(self, content_text, lesson_topic, difficulty):
+        """Generate an optimized prompt for AI image generation based on lesson content."""
+        system_prompt = (
+            "You are an expert at creating image prompts for educational content. "
+            "Generate a detailed, specific prompt for AI image generation that will create "
+            "educational illustrations for Japanese language learning. Focus on clear, "
+            "culturally appropriate, and pedagogically useful imagery."
+        )
+        user_prompt = f"""
+        Lesson Topic: {lesson_topic}
+        Difficulty Level: {difficulty}
+        Content Text: {content_text}
+
+        Create a detailed image generation prompt that would produce an educational illustration 
+        for this Japanese lesson content. The image should be:
+        - Culturally accurate and appropriate
+        - Clear and educational
+        - Suitable for {difficulty} level learners
+        - Professional and clean in style
+        
+        Return only the image prompt, no additional text.
+        """
+        
+        content, error = self._generate_content(system_prompt, user_prompt)
+        if error:
+            return {"error": error}
+        return {"image_prompt": content.strip()}
+
+    def generate_lesson_images(self, lesson_content_list, lesson_topic, difficulty):
+        """Generate multiple images for lesson content using DALL-E."""
+        if not self.client:
+            return {"error": "OpenAI client is not initialized"}
+        
+        generated_images = []
+        
+        for content_item in lesson_content_list:
+            try:
+                # Generate optimized prompt
+                prompt_result = self.generate_image_prompt(
+                    content_item.get('text', ''), 
+                    lesson_topic, 
+                    difficulty
+                )
+                
+                if 'error' in prompt_result:
+                    current_app.logger.error(f"Failed to generate image prompt: {prompt_result['error']}")
+                    continue
+                
+                # Generate image using DALL-E
+                response = self.client.images.generate(
+                    model="dall-e-3",
+                    prompt=prompt_result['image_prompt'],
+                    size="1024x1024",
+                    quality="standard",
+                    n=1
+                )
+                
+                image_url = response.data[0].url
+                generated_images.append({
+                    'content_id': content_item.get('id'),
+                    'image_url': image_url,
+                    'prompt': prompt_result['image_prompt'],
+                    'content_text': content_item.get('text', '')
+                })
+                
+            except Exception as e:
+                current_app.logger.error(f"Failed to generate image for content: {e}")
+                continue
+        
+        return {"generated_images": generated_images}
+
+    def generate_single_image(self, prompt, size="1024x1024", quality="standard"):
+        """Generate a single image using DALL-E."""
+        if not self.client:
+            return {"error": "OpenAI client is not initialized"}
+        
+        try:
+            response = self.client.images.generate(
+                model="dall-e-3",
+                prompt=prompt,
+                size=size,
+                quality=quality,
+                n=1
+            )
+            
+            return {
+                "image_url": response.data[0].url,
+                "prompt": prompt,
+                "size": size,
+                "quality": quality
+            }
+            
+        except Exception as e:
+            current_app.logger.error(f"Failed to generate image: {e}")
+            return {"error": str(e)}
+
+    def analyze_content_for_multimedia_needs(self, content_text, lesson_topic):
+        """Analyze lesson content to suggest multimedia enhancements."""
+        system_prompt = (
+            "You are an educational content analyst. Analyze the provided lesson content "
+            "and suggest specific multimedia enhancements that would improve learning. "
+            "Format your response as JSON."
+        )
+        user_prompt = f"""
+        Lesson Topic: {lesson_topic}
+        Content: {content_text}
+
+        Analyze this content and suggest multimedia enhancements. Return a JSON object with:
+        {{
+          "image_suggestions": [
+            {{"type": "illustration", "description": "What image would help", "priority": "high/medium/low"}},
+            {{"type": "diagram", "description": "What diagram would help", "priority": "high/medium/low"}}
+          ],
+          "audio_suggestions": [
+            {{"type": "pronunciation", "description": "What audio would help", "priority": "high/medium/low"}}
+          ],
+          "video_suggestions": [
+            {{"type": "demonstration", "description": "What video would help", "priority": "high/medium/low"}}
+          ],
+          "interactive_suggestions": [
+            {{"type": "quiz", "description": "What interaction would help", "priority": "high/medium/low"}}
+          ]
+        }}
+        """
+        
+        content, error = self._generate_content(system_prompt, user_prompt, is_json=True)
+        if error:
+            return {"error": error}
+        
+        try:
+            if content:
+                return json.loads(content)
+            else:
+                return {"error": "Empty response from AI"}
+        except json.JSONDecodeError as e:
+            current_app.logger.error(f"Failed to parse JSON from AI response: {e}\nResponse: {content}")
+            return {"error": "Failed to parse AI response as JSON."}
+
     def generate_fill_in_the_blank_question(self, topic, difficulty, keywords):
         """Generates a fill-in-the-blank question in a structured JSON format."""
         system_prompt = (

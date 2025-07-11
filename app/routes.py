@@ -1836,10 +1836,108 @@ def generate_ai_content():
     result = None
     if content_type == "explanation":
         result = generator.generate_explanation(topic, difficulty, keywords)
+    elif content_type == "formatted_explanation":
+        result = generator.generate_formatted_explanation(topic, difficulty, keywords)
     elif content_type == "multiple_choice_question":
         result = generator.generate_multiple_choice_question(topic, difficulty, keywords)
+    elif content_type == "true_false_question":
+        result = generator.generate_true_false_question(topic, difficulty, keywords)
+    elif content_type == "fill_blank_question":
+        result = generator.generate_fill_in_the_blank_question(topic, difficulty, keywords)
+    elif content_type == "matching_question":
+        result = generator.generate_matching_question(topic, difficulty, keywords)
     else:
         return jsonify({"error": "Unsupported content type"}), 400
+
+    if "error" in result:
+        return jsonify(result), 500
+
+    return jsonify(result)
+
+@bp.route('/api/admin/generate-ai-image', methods=['POST'])
+@login_required
+@admin_required
+def generate_ai_image():
+    """Generate AI images for lesson content using DALL-E."""
+    data = request.json
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+
+    generator = AILessonContentGenerator()
+    
+    # Handle different types of image generation requests
+    if 'prompt' in data:
+        # Direct prompt generation
+        result = generator.generate_single_image(
+            prompt=data['prompt'],
+            size=data.get('size', '1024x1024'),
+            quality=data.get('quality', 'standard')
+        )
+    elif 'content_text' in data:
+        # Generate prompt from content, then generate image
+        lesson_topic = data.get('lesson_topic', 'Japanese Language Learning')
+        difficulty = data.get('difficulty', 'Beginner')
+        
+        # First generate optimized prompt
+        prompt_result = generator.generate_image_prompt(
+            data['content_text'], lesson_topic, difficulty
+        )
+        
+        if 'error' in prompt_result:
+            return jsonify(prompt_result), 500
+        
+        # Then generate image
+        result = generator.generate_single_image(
+            prompt=prompt_result['image_prompt'],
+            size=data.get('size', '1024x1024'),
+            quality=data.get('quality', 'standard')
+        )
+        result['generated_prompt'] = prompt_result['image_prompt']
+    else:
+        return jsonify({"error": "Either 'prompt' or 'content_text' must be provided"}), 400
+
+    if "error" in result:
+        return jsonify(result), 500
+
+    return jsonify(result)
+
+@bp.route('/api/admin/analyze-multimedia-needs', methods=['POST'])
+@login_required
+@admin_required
+def analyze_multimedia_needs():
+    """Analyze lesson content and suggest multimedia enhancements."""
+    data = request.json
+    if not data or 'content_text' not in data:
+        return jsonify({"error": "Missing 'content_text' in request"}), 400
+
+    generator = AILessonContentGenerator()
+    lesson_topic = data.get('lesson_topic', 'Japanese Language Learning')
+    
+    result = generator.analyze_content_for_multimedia_needs(
+        data['content_text'], lesson_topic
+    )
+
+    if "error" in result:
+        return jsonify(result), 500
+
+    return jsonify(result)
+
+@bp.route('/api/admin/generate-lesson-images', methods=['POST'])
+@login_required
+@admin_required
+def generate_lesson_images():
+    """Generate multiple images for lesson content."""
+    data = request.json
+    if not data or 'lesson_content' not in data:
+        return jsonify({"error": "Missing 'lesson_content' in request"}), 400
+
+    generator = AILessonContentGenerator()
+    lesson_topic = data.get('lesson_topic', 'Japanese Language Learning')
+    difficulty = data.get('difficulty', 'Beginner')
+    
+    result = generator.generate_lesson_images(
+        data['lesson_content'], lesson_topic, difficulty
+    )
 
     if "error" in result:
         return jsonify(result), 500
