@@ -343,499 +343,127 @@ def create_lesson_script(title, difficulty, pages_config, **kwargs):
     return creator.create_lesson()
 ```
 
-## 2. Content Pattern Library
+## 2. Database-Aware Content Script
 
-### lesson_patterns.py
-```python
-"""
-Reusable content patterns for lesson creation.
-"""
-
-PATTERNS = {
-    "character_introduction": {
-        "description": "Introduces a character or set of characters with explanation and practice",
-        "pages": [
-            {
-                "title": "Introduction to {character_name}",
-                "content": [
-                    {
-                        "type": "formatted_explanation",
-                        "topic": "Detailed introduction to {character_name} including pronunciation, stroke order, usage examples, and cultural context",
-                        "keywords": "{character_name}, pronunciation, stroke order, usage, examples"
-                    }
-                ]
-            },
-            {
-                "title": "{character_name} Practice",
-                "content": [
-                    {
-                        "type": "multiple_choice",
-                        "topic": "Reading recognition quiz for {character_name}",
-                        "keywords": "{character_name}, reading, recognition"
-                    },
-                    {
-                        "type": "matching",
-                        "topic": "Match {character_name} to its pronunciation",
-                        "keywords": "{character_name}, pronunciation, matching"
-                    }
-                ]
-            }
-        ]
-    },
-    
-    "vocabulary_set": {
-        "description": "Teaches a set of vocabulary words with explanations and practice",
-        "pages": [
-            {
-                "title": "Vocabulary: {topic_name}",
-                "content": [
-                    {
-                        "type": "formatted_explanation",
-                        "topic": "Learn these {word_count} vocabulary words related to {topic_name}: {word_list}",
-                        "keywords": "{topic_name}, vocabulary, {word_list}"
-                    }
-                ]
-            },
-            {
-                "title": "{topic_name} Vocabulary Practice",
-                "content": [
-                    {
-                        "type": "multiple_choice",
-                        "topic": "Vocabulary quiz for {topic_name} words",
-                        "keywords": "{topic_name}, vocabulary, quiz"
-                    },
-                    {
-                        "type": "fill_in_the_blank",
-                        "topic": "Complete sentences using {topic_name} vocabulary",
-                        "keywords": "{topic_name}, vocabulary, sentences"
-                    }
-                ]
-            }
-        ]
-    },
-    
-    "grammar_point": {
-        "description": "Explains a grammar point with examples and practice",
-        "pages": [
-            {
-                "title": "Grammar: {grammar_name}",
-                "content": [
-                    {
-                        "type": "formatted_explanation",
-                        "topic": "Comprehensive explanation of {grammar_name} grammar point including structure, usage rules, and examples",
-                        "keywords": "{grammar_name}, grammar, structure, usage, examples"
-                    }
-                ]
-            },
-            {
-                "title": "{grammar_name} Practice",
-                "content": [
-                    {
-                        "type": "fill_in_the_blank",
-                        "topic": "Practice using {grammar_name} in sentences",
-                        "keywords": "{grammar_name}, grammar, practice, sentences"
-                    },
-                    {
-                        "type": "true_false",
-                        "topic": "True or false questions about {grammar_name} usage",
-                        "keywords": "{grammar_name}, grammar, true false"
-                    }
-                ]
-            }
-        ]
-    },
-    
-    "comprehensive_review": {
-        "description": "Reviews multiple topics with mixed practice",
-        "pages": [
-            {
-                "title": "Review: {topic_list}",
-                "content": [
-                    {
-                        "type": "formatted_explanation",
-                        "topic": "Comprehensive review of {topic_list} covering key points and connections",
-                        "keywords": "{topic_list}, review, summary"
-                    }
-                ]
-            },
-            {
-                "title": "Mixed Practice",
-                "content": [
-                    {
-                        "type": "multiple_choice",
-                        "topic": "Mixed quiz covering {topic_list}",
-                        "keywords": "{topic_list}, mixed, comprehensive"
-                    },
-                    {
-                        "type": "matching",
-                        "topic": "Match concepts from {topic_list}",
-                        "keywords": "{topic_list}, matching, concepts"
-                    }
-                ]
-            }
-        ]
-    }
-}
-
-class PatternApplicator:
-    """Applies patterns to create lesson structures."""
-    
-    def __init__(self, pattern_name):
-        if pattern_name not in PATTERNS:
-            raise ValueError(f"Pattern '{pattern_name}' not found")
-        self.pattern = PATTERNS[pattern_name]
-    
-    def apply_pattern(self, substitutions):
-        """Apply pattern with given substitutions."""
-        pages = []
-        
-        for page_template in self.pattern['pages']:
-            page = {
-                'title': self._substitute_placeholders(page_template['title'], substitutions),
-                'content': []
-            }
-            
-            for content_template in page_template['content']:
-                content = {
-                    'type': content_template['type'],
-                    'topic': self._substitute_placeholders(content_template['topic'], substitutions),
-                    'keywords': self._substitute_placeholders(content_template['keywords'], substitutions)
-                }
-                page['content'].append(content)
-            
-            pages.append(page)
-        
-        return pages
-    
-    def _substitute_placeholders(self, text, substitutions):
-        """Replace placeholders in text with actual values."""
-        for key, value in substitutions.items():
-            placeholder = "{" + key + "}"
-            text = text.replace(placeholder, str(value))
-        return text
-
-# Usage example
-def create_hiragana_lesson_with_pattern():
-    """Example of using patterns to create a lesson."""
-    pattern = PatternApplicator("character_introduction")
-    
-    hiragana_groups = [
-        {"character_name": "あ (a)", "description": "The first vowel sound"},
-        {"character_name": "か (ka)", "description": "K-consonant with 'a' vowel"},
-        {"character_name": "さ (sa)", "description": "S-consonant with 'a' vowel"}
-    ]
-    
-    creator = BaseLessonCreator(
-        title="Hiragana Basics with Patterns",
-        difficulty="beginner"
-    )
-    
-    # Add introduction page
-    creator.add_page("Introduction", [
-        {
-            "type": "formatted_explanation",
-            "topic": "Introduction to basic Hiragana characters",
-            "keywords": "hiragana, introduction, basics"
-        }
-    ])
-    
-    # Apply pattern for each character
-    for char_info in hiragana_groups:
-        pages = pattern.apply_pattern(char_info)
-        for page in pages:
-            creator.add_page(page['title'], page['content'])
-    
-    return creator.create_lesson()
-```
-
-## 3. Configuration-Driven Script Example
-
-### create_lesson_from_config.py
+### create_jlpt_lesson_database_aware.py
 ```python
 #!/usr/bin/env python3
 """
-Configuration-driven lesson creation script.
+Creates a JLPT N5 lesson by referencing existing vocabulary, kanji, and grammar
+from the database, and then generates new quiz content.
 """
-import json
-import yaml
-from lesson_creator_base import BaseLessonCreator
-from lesson_patterns import PatternApplicator
+from lesson_creator_base import DatabaseAwareLessonCreator
 
-class ConfigLessonCreator:
-    """Creates lessons from configuration files."""
+class JLPTExtendedLessonCreator(DatabaseAwareLessonCreator):
+    """
+    Creates a comprehensive JLPT lesson by finding existing content
+    and generating new explanations and quizzes.
+    """
     
-    def __init__(self, config_path):
-        self.config = self.load_config(config_path)
-        self.validate_config()
-    
-    def load_config(self, config_path):
-        """Load configuration from JSON or YAML file."""
-        with open(config_path, 'r', encoding='utf-8') as f:
-            if config_path.endswith('.json'):
-                return json.load(f)
-            elif config_path.endswith(('.yml', '.yaml')):
-                return yaml.safe_load(f)
-            else:
-                raise ValueError("Config file must be JSON or YAML")
-    
-    def validate_config(self):
-        """Validate configuration structure."""
-        required_fields = ['title', 'difficulty']
-        for field in required_fields:
-            if field not in self.config:
-                raise ValueError(f"Missing required field: {field}")
-    
-    def create_lesson(self):
-        """Create lesson from configuration."""
-        creator = BaseLessonCreator(
-            title=self.config['title'],
-            difficulty=self.config['difficulty'],
-            lesson_type=self.config.get('lesson_type', 'free'),
-            language=self.config.get('language', 'english'),
-            category_name=self.config.get('category')
-        )
+    def create_lesson_from_db(self, jlpt_level, topic, content_limit=5):
+        """
+        Creates a full lesson from existing DB content.
+        """
+        # Find existing content
+        vocabulary = self.find_vocabulary_by_topic(jlpt_level, topic, limit=content_limit)
+        kanji = self.find_kanji_by_topic(jlpt_level, topic, limit=content_limit)
+        grammar = self.find_grammar_by_topic(jlpt_level, topic, limit=content_limit)
         
-        # Handle different configuration styles
-        if 'pattern' in self.config:
-            self.apply_pattern_config(creator)
-        elif 'pages' in self.config:
-            self.apply_pages_config(creator)
-        else:
-            raise ValueError("Config must specify either 'pattern' or 'pages'")
-        
-        return creator.create_lesson()
-    
-    def apply_pattern_config(self, creator):
-        """Apply pattern-based configuration."""
-        pattern_name = self.config['pattern']
-        pattern = PatternApplicator(pattern_name)
-        
-        # Apply pattern for each item
-        for item in self.config.get('items', []):
-            pages = pattern.apply_pattern(item)
-            for page in pages:
-                creator.add_page(page['title'], page['content'])
-    
-    def apply_pages_config(self, creator):
-        """Apply direct page configuration."""
-        for page_config in self.config['pages']:
-            creator.add_page(
-                page_config['title'],
-                page_config['content'],
-                page_config.get('description')
+        if not any([vocabulary, kanji, grammar]):
+            print(f"No content found for JLPT N{jlpt_level} on topic '{topic}'.")
+            return
+
+        # 1. Introduction Page
+        self.add_page("Lesson Introduction", [
+            self.generate_ai_explanation(
+                f"Introduction to JLPT N{jlpt_level} {topic.title()}",
+                f"Overview of vocabulary, kanji, and grammar for {topic} at the JLPT N{jlpt_level} level."
             )
-
-# Example configuration files
-
-# hiragana_vowels.json
-HIRAGANA_VOWELS_CONFIG = {
-    "title": "Hiragana Vowels Mastery",
-    "difficulty": "beginner",
-    "language": "english",
-    "category": "Hiragana",
-    "pattern": "character_introduction",
-    "items": [
-        {
-            "character_name": "あ (a)",
-            "description": "The first vowel sound in Japanese"
-        },
-        {
-            "character_name": "い (i)", 
-            "description": "The second vowel sound"
-        },
-        {
-            "character_name": "う (u)",
-            "description": "The third vowel sound"
-        },
-        {
-            "character_name": "え (e)",
-            "description": "The fourth vowel sound"
-        },
-        {
-            "character_name": "お (o)",
-            "description": "The fifth vowel sound"
-        }
-    ]
-}
-
-# jlpt_n5_vocab.json
-JLPT_N5_VOCAB_CONFIG = {
-    "title": "JLPT N5 Daily Life Vocabulary",
-    "difficulty": "beginner",
-    "language": "english",
-    "category": "JLPT N5",
-    "pages": [
-        {
-            "title": "Introduction to Daily Life Vocabulary",
-            "content": [
-                {
-                    "type": "formatted_explanation",
-                    "topic": "Essential daily life vocabulary for JLPT N5 level",
-                    "keywords": "JLPT N5, daily life, vocabulary, essential"
-                }
-            ]
-        },
-        {
-            "title": "Family Members",
-            "content": [
-                {
-                    "type": "formatted_explanation",
-                    "topic": "Japanese family member vocabulary: 家族 (kazoku), お父さん (otousan), お母さん (okaasan)",
-                    "keywords": "family, kazoku, otousan, okaasan, vocabulary"
-                },
-                {
-                    "type": "multiple_choice",
-                    "topic": "Quiz on family member vocabulary",
-                    "keywords": "family, vocabulary, quiz"
-                }
-            ]
-        },
-        {
-            "title": "Daily Activities",
-            "content": [
-                {
-                    "type": "formatted_explanation",
-                    "topic": "Common daily activity verbs: 食べる (taberu), 飲む (nomu), 寝る (neru)",
-                    "keywords": "daily activities, taberu, nomu, neru, verbs"
-                },
-                {
-                    "type": "fill_in_the_blank",
-                    "topic": "Complete sentences with daily activity verbs",
-                    "keywords": "daily activities, verbs, sentences"
-                }
-            ]
-        }
-    ]
-}
-
-if __name__ == "__main__":
-    # Save example configs
-    with open('hiragana_vowels.json', 'w', encoding='utf-8') as f:
-        json.dump(HIRAGANA_VOWELS_CONFIG, f, indent=2, ensure_ascii=False)
-    
-    with open('jlpt_n5_vocab.json', 'w', encoding='utf-8') as f:
-        json.dump(JLPT_N5_VOCAB_CONFIG, f, indent=2, ensure_ascii=False)
-    
-    # Create lessons from configs
-    print("Creating lesson from hiragana_vowels.json...")
-    creator1 = ConfigLessonCreator('hiragana_vowels.json')
-    lesson1 = creator1.create_lesson()
-    
-    print("Creating lesson from jlpt_n5_vocab.json...")
-    creator2 = ConfigLessonCreator('jlpt_n5_vocab.json')
-    lesson2 = creator2.create_lesson()
-    
-    print("✅ Both lessons created successfully!")
-```
-
-## 4. Database-Aware Content Script
-
-### create_vocabulary_lesson_from_db.py
-```python
-#!/usr/bin/env python3
-"""
-Database-aware lesson creation that leverages existing content.
-"""
-from lesson_creator_base import BaseLessonCreator
-from app.models import Vocabulary, Kanji, Grammar
-
-class DatabaseAwareLessonCreator(BaseLessonCreator):
-    """Lesson creator that integrates with existing database content."""
-    
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.existing_content = {}
-    
-    def find_vocabulary_by_jlpt(self, jlpt_level):
-        """Find vocabulary entries by JLPT level."""
-        return Vocabulary.query.filter_by(jlpt_level=jlpt_level).all()
-    
-    def find_kanji_by_jlpt(self, jlpt_level):
-        """Find kanji entries by JLPT level."""
-        return Kanji.query.filter_by(jlpt_level=jlpt_level).all()
-    
-    def find_grammar_by_jlpt(self, jlpt_level):
-        """Find grammar entries by JLPT level."""
-        return Grammar.query.filter_by(jlpt_level=jlpt_level).all()
-    
-    def add_vocabulary_reference_page(self, vocab_item):
-        """Add a page that references existing vocabulary."""
-        self.add_page(f"Vocabulary: {vocab_item.word}", [
-            {
-                "type": "vocabulary",
-                "content_id": vocab_item.id,
-                "title": f"Learn: {vocab_item.word}"
-            },
-            {
-                "type": "multiple_choice",
-                "topic": f"Quiz about the vocabulary word {vocab_item.word} ({vocab_item.meaning})",
-                "keywords": f"{vocab_item.word}, {vocab_item.meaning}, vocabulary"
-            }
-        ])
-    
-    def add_kanji_reference_page(self, kanji_item):
-        """Add a page that references existing kanji."""
-        self.add_page(f"Kanji: {kanji_item.character}", [
-            {
-                "type": "kanji",
-                "content_id": kanji_item.id,
-                "title": f"Learn: {kanji_item.character}"
-            },
-            {
-                "type": "multiple_choice",
-                "topic": f"Quiz about the kanji {kanji_item.character} meaning {kanji_item.meaning}",
-                "keywords": f"{kanji_item.character}, {kanji_item.meaning}, kanji"
-            }
-        ])
-    
-    def create_jlpt_vocabulary_lesson(self, jlpt_level, topic_filter=None):
-        """Create a lesson using existing JLPT vocabulary."""
-        vocab_items = self.find_vocabulary_by_jlpt(jlpt_level)
-        
-        if not vocab_items:
-            print(f"No vocabulary found for JLPT N{jlpt_level}")
-            return None
-        
-        # Filter by topic if specified
-        if topic_filter:
-            vocab_items = [v for v in vocab_items if topic_filter.lower() in v.meaning.lower()]
-        
-        # Update lesson title
-        self.title = f"JLPT N{jlpt_level} Vocabulary" + (f" - {topic_filter}" if topic_filter else "")
-        
-        # Add introduction
-        self.add_page("Introduction", [
-            {
-                "type": "formatted_explanation",
-                "topic": f"Introduction to JLPT N{jlpt_level} vocabulary with {len(vocab_items)} essential words",
-                "keywords": f"JLPT N{jlpt_level}, vocabulary, essential words"
-            }
         ])
         
-        # Add page for each vocabulary item
-        for vocab in vocab_items[:10]:  # Limit to first 10 for demo
-            self.add_vocabulary_reference_page(vocab)
+        # 2. Add content pages
+        if vocabulary:
+            self.add_content_reference_page("Vocabulary", vocabulary)
+        if kanji:
+            self.add_content_reference_page("Kanji", kanji)
+        if grammar:
+            self.add_content_reference_page("Grammar", grammar)
+            
+        # 3. Add practice quizzes
+        self.add_practice_page("Practice", vocabulary, kanji, grammar)
         
-        # Add review page
-        word_list = ", ".join([v.word for v in vocab_items[:10]])
-        self.add_page("Vocabulary Review", [
-            {
-                "type": "formatted_explanation",
-                "topic": f"Review of JLPT N{jlpt_level} vocabulary: {word_list}",
-                "keywords": f"JLPT N{jlpt_level}, vocabulary, review, {word_list}"
-            },
-            {
-                "type": "matching",
-                "topic": f"Match JLPT N{jlpt_level} vocabulary words to their meanings",
-                "keywords": f"JLPT N{jlpt_level}, vocabulary, matching"
-            }
-        ])
-        
+        # 4. Create the lesson
         return self.create_lesson()
 
-def create_jlpt_n5_family_lesson():
-    """Example: Create JLPT N5 family vocabulary lesson."""
-    creator = DatabaseAwareLessonCreator(
-        title="JLPT N5 Family Vocabulary",
-        difficulty="beginner",
-        category_name="JLPT N
+def main():
+    """Main function to create the lesson."""
+    creator = JLPTExtendedLessonCreator(
+        title="JLPT N5 Essentials: Daily Life",
+        difficulty="Beginner",
+        category_name="JLPT N5",
+        language="English"
+    )
+    creator.create_lesson_from_db(jlpt_level=5, topic="daily life", content_limit=5)
+
+if __name__ == "__main__":
+    main()
+```
+
+## 3. Multimedia Lesson Creation
+
+### create_comprehensive_multimedia_lesson.py
+```python
+#!/usr/bin/env python3
+"""
+Creates a comprehensive, multimedia-rich lesson on a specified topic
+using the MultimediaLessonCreator.
+"""
+from multimedia_lesson_creator import MultimediaLessonCreator
+
+def create_multimedia_lesson():
+    """
+    Defines and creates a multimedia lesson on 'Japanese Greetings'.
+    """
+    creator = MultimediaLessonCreator(
+        title="Japanese Greetings for Beginners",
+        difficulty="Beginner",
+        category_name="Conversational Japanese",
+        language="English"
+    )
+
+    # Page 1: Introduction to Greetings
+    creator.add_page("Introduction to Greetings", [
+        creator.generate_ai_explanation(
+            "Why Greetings are Important in Japan",
+            "Cultural significance of greetings, bowing, and politeness levels."
+        ),
+        creator.generate_ai_image(
+            "A friendly meeting in Japan with people bowing respectfully.",
+            "Visual representation of Japanese greeting culture."
+        )
+    ])
+
+    # Page 2: Common Morning Greetings
+    creator.add_page("Morning Greetings", [
+        creator.generate_ai_explanation(
+            "Common Japanese Morning Greetings",
+            "おはようございます (Ohayō gozaimasu), おはよう (Ohayō)"
+        ),
+        creator.generate_ai_audio(
+            "おはようございます",
+            "Pronunciation of 'Ohayō gozaimasu'."
+        ),
+        creator.generate_ai_quiz('multiple_choice', 
+            "What is the formal morning greeting in Japanese?",
+            "Ohayō gozaimasu, Konnichiwa, Sayōnara"
+        )
+    ])
+    
+    # ... (additional pages for afternoon, evening, etc.)
+
+    # Create the full lesson
+    creator.create_lesson()
+
+if __name__ == "__main__":
+    create_multimedia_lesson()
+```
