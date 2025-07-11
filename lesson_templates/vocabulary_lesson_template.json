@@ -1,0 +1,38 @@
+{
+    "lesson": {
+        "title": "Vocabulary: {topic}",
+        "description": "A lesson on {topic} vocabulary.",
+        "lesson_type": "free",
+        "difficulty_level": 2,
+        "category_id": 1
+    },
+    "pages": [
+        {
+            "title": "Introduction to {topic}",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "This lesson introduces key vocabulary related to {topic}."
+                }
+            ]
+        },
+        {
+            "title": "Core Vocabulary",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "Here are the core vocabulary words for {topic}:\n\n- {vocab1}\n- {vocab2}\n- {vocab3}"
+                }
+            ]
+        },
+        {
+            "title": "Quiz",
+            "content": [
+                {
+                    "type": "quiz",
+                    "text": "Test your knowledge of {topic} vocabulary."
+                }
+            ]
+        }
+    ]
+}

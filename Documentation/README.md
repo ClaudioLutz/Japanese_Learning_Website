@@ -37,7 +37,9 @@ This documentation provides comprehensive information about the Japanese Learnin
 - [**21-Lesson-Export-Import-System.md**](21-Lesson-Export-Import-System.md) - Lesson backup and migration system
 - [**22-Forms-and-CSRF-Protection.md**](22-Forms-and-CSRF-Protection.md) - Form handling and security implementation
 - [**23-User-Progress-and-Quiz-System.md**](23-User-Progress-and-Quiz-System.md) - Progress tracking and interactive quiz system
-- [**25-Phase5-Intelligence-and-Adaptation.md**](25-Phase5-Intelligence-and-Adaptation.md) - AI-powered adaptive learning system
+- [**25-Intelligence-and-Adaptation.md**](25-Intelligence-and-Adaptation.md) - AI-powered adaptive learning system
+- [**26-Lesson-Template-System.md**](26-Lesson-Template-System.md) - System for creating lessons from templates
+- [**27-Multi-Modal-Content-Generation.md**](27-Multi-Modal-Content-Generation.md) - System for generating visual and auditory content
 
 ### Enhanced Lesson Creation System
 - [**Enhanced-Lesson-Creation-Scripts/**](Enhanced-Lesson-Creation-Scripts/) - Comprehensive analysis and enhancement documentation for the lesson creation system

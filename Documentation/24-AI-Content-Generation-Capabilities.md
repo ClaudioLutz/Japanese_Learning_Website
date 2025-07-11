@@ -41,6 +41,8 @@ The system can enhance lessons with AI-generated multimedia content.
 -   **`generate_image_prompt(content_text, lesson_topic, difficulty)`**: An internal helper that analyzes lesson text and creates an optimized, detailed prompt for an AI image generation service (like DALL-E).
 -   **`generate_single_image(prompt, size, quality)`**: Generates a single image based on a given prompt.
 -   **`generate_lesson_images(lesson_content_list, lesson_topic, difficulty)`**: A higher-level function that iterates through lesson content, generates optimized prompts for each piece of text, and creates a set of images for the lesson.
+-   **`create_visual_content(topic)`**: Generates visual learning materials for a given topic.
+-   **`create_auditory_content(topic)`**: Generates audio learning materials for a given topic.
 
 ### 3.2. Multimedia Analysis
 

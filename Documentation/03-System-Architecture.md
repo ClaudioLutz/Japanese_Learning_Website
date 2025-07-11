@@ -64,6 +64,8 @@ The Japanese Learning Website follows a **layered monolithic architecture** with
 - **User Performance Analyzer (`app/user_performance_analyzer.py`)**: Analyzes user performance data to identify weaknesses and suggest remediation.
 - **Content Validator (`app/content_validator.py`)**: Validates content accuracy, cultural context, and educational effectiveness.
 - **Personalized Lesson Generator (`app/personalized_lesson_generator.py`)**: Generates adaptive lessons based on user performance analysis.
+- **Lesson Template (`lesson_template.py`)**: Creates lessons from predefined JSON templates.
+- **Multi-Modal Generator (`multi_modal_generator.py`)**: Generates visual and auditory content for lessons.
 - **Lesson Export/Import (`app/lesson_export_import.py`)**: Handles the serialization and deserialization of lesson data for backup, transfer, or bulk creation purposes.
 
 ### 2. Single Responsibility Principle

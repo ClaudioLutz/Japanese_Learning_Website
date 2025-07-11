@@ -34,6 +34,9 @@ Japanese_Learning_Website/
 ├── instance/                       # Instance folder (e.g., for SQLite DB, instance-specific config)
 ├── inspect_db.py                   # Utility to inspect database contents
 ├── lesson_creator_base.py          # Base class for lesson creation scripts
+├── lesson_template.py              # Class for creating lessons from templates
+├── lesson_templates/               # Directory for lesson templates
+├── multi_modal_generator.py        # Class for generating multi-modal content
 ├── manual_migration.py             # Script for manual data migration tasks
 ├── migrate_database.py             # General purpose database migration script
 ├── migrate_file_fields.py          # Data migration script

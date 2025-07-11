@@ -63,6 +63,8 @@ The service provides a comprehensive suite of methods for generating various typ
 | `generate_lesson_images(...)`              | Generates multiple images for a list of lesson content items.                                               | `dict`      |
 | `analyze_content_for_multimedia_needs(...)`| Analyzes a block of text and suggests potential multimedia enhancements (images, audio, video, etc.).         | `JSON`      |
 | `create_adaptive_quiz(...)`                | Generates an adaptive quiz with questions at multiple difficulty levels.                                    | `JSON`      |
+| `create_visual_content(...)`               | Generates visual learning materials for a given topic.                                                      | `dict`      |
+| `create_auditory_content(...)`             | Generates audio learning materials for a given topic.                                                       | `dict`      |
 
 ### 3.3. Prompt Engineering and JSON Mode
 
