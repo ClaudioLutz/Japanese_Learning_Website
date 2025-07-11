@@ -1,0 +1,168 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Manage Content Approval{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <h1 class="mb-4">Content Approval Queue</h1>
+
+    <!-- Pending Kanji -->
+    <div class="card shadow mb-4">
+        <div class="card-header">
+            <h2 class="h5 mb-0">Pending Kanji ({{ pending_kanji|length }})</h2>
+        </div>
+        <div class="card-body">
+            {% if pending_kanji %}
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Character</th>
+                            <th>Meaning</th>
+                            <th>Onyomi</th>
+                            <th>Kunyomi</th>
+                            <th>JLPT Level</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in pending_kanji %}
+                        <tr id="kanji-{{ item.id }}">
+                            <td>{{ item.character }}</td>
+                            <td>{{ item.meaning }}</td>
+                            <td>{{ item.onyomi }}</td>
+                            <td>{{ item.kunyomi }}</td>
+                            <td>N{{ item.jlpt_level }}</td>
+                            <td>
+                                <button class="btn btn-success btn-sm" onclick="handleApproval('kanji', {{ item.id }}, 'approve')">Approve</button>
+                                <button class="btn btn-danger btn-sm" onclick="handleApproval('kanji', {{ item.id }}, 'reject')">Reject</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-muted">No pending Kanji to approve.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Pending Vocabulary -->
+    <div class="card shadow mb-4">
+        <div class="card-header">
+            <h2 class="h5 mb-0">Pending Vocabulary ({{ pending_vocabulary|length }})</h2>
+        </div>
+        <div class="card-body">
+            {% if pending_vocabulary %}
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Word</th>
+                            <th>Reading</th>
+                            <th>Meaning</th>
+                            <th>JLPT Level</th>
+                            <th>Example</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in pending_vocabulary %}
+                        <tr id="vocabulary-{{ item.id }}">
+                            <td>{{ item.word }}</td>
+                            <td>{{ item.reading }}</td>
+                            <td>{{ item.meaning }}</td>
+                            <td>N{{ item.jlpt_level }}</td>
+                            <td>{{ item.example_sentence_japanese }}</td>
+                            <td>
+                                <button class="btn btn-success btn-sm" onclick="handleApproval('vocabulary', {{ item.id }}, 'approve')">Approve</button>
+                                <button class="btn btn-danger btn-sm" onclick="handleApproval('vocabulary', {{ item.id }}, 'reject')">Reject</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-muted">No pending vocabulary to approve.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Pending Grammar -->
+    <div class="card shadow mb-4">
+        <div class="card-header">
+            <h2 class="h5 mb-0">Pending Grammar ({{ pending_grammar|length }})</h2>
+        </div>
+        <div class="card-body">
+            {% if pending_grammar %}
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Title</th>
+                            <th>Explanation</th>
+                            <th>JLPT Level</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in pending_grammar %}
+                        <tr id="grammar-{{ item.id }}">
+                            <td>{{ item.title }}</td>
+                            <td>{{ item.explanation|truncate(100) }}</td>
+                            <td>N{{ item.jlpt_level }}</td>
+                            <td>
+                                <button class="btn btn-success btn-sm" onclick="handleApproval('grammar', {{ item.id }}, 'approve')">Approve</button>
+                                <button class="btn btn-danger btn-sm" onclick="handleApproval('grammar', {{ item.id }}, 'reject')">Reject</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-muted">No pending grammar to approve.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+async function handleApproval(contentType, itemId, action) {
+    const url = `/api/admin/content/${contentType}/${itemId}/${action}`;
+    const csrfToken = "{{ csrf_token() }}";
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            }
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            // Remove the row from the table
+            const row = document.getElementById(`${contentType}-${itemId}`);
+            if (row) {
+                row.remove();
+            }
+            // Show success message (optional)
+            alert(result.message);
+        } else {
+            // Show error message
+            alert(`Error: ${result.error}`);
+        }
+    } catch (error) {
+        console.error('Approval action failed:', error);
+        alert('An unexpected error occurred. Please check the console.');
+    }
+}
+</script>
+{% endblock %}

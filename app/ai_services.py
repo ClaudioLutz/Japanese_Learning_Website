@@ -216,3 +216,106 @@ class AILessonContentGenerator:
         except json.JSONDecodeError as e:
             current_app.logger.error(f"Failed to parse JSON from AI response: {e}\nResponse: {content}")
             return {"error": "Failed to parse AI response as JSON."}
+
+    def generate_kanji_data(self, kanji_character, jlpt_level):
+        """Generates structured data for a single Kanji character."""
+        system_prompt = (
+            "You are a Japanese language data specialist. Generate detailed information for a single Kanji character. "
+            "Format the output as a single, valid JSON object."
+        )
+        user_prompt = f"""
+        Kanji Character: {kanji_character}
+        JLPT Level: N{jlpt_level}
+
+        Generate a JSON object with the following structure:
+        {{
+          "character": "{kanji_character}",
+          "meaning": "Primary English meaning",
+          "onyomi": "Onyomi reading in Katakana",
+          "kunyomi": "Kunyomi reading in Hiragana",
+          "jlpt_level": {jlpt_level},
+          "stroke_count": 10,
+          "radical": "Radical character"
+        }}
+        """
+        content, error = self._generate_content(system_prompt, user_prompt, is_json=True)
+        if error:
+            return {"error": error}
+        try:
+            if content:
+                return json.loads(content)
+            else:
+                return {"error": "Empty response from AI"}
+        except json.JSONDecodeError as e:
+            current_app.logger.error(f"Failed to parse JSON from AI response: {e}\\nResponse: {content}")
+            return {"error": "Failed to parse AI response as JSON."}
+
+    def generate_vocabulary_data(self, word, jlpt_level):
+        """Generates structured data for a single vocabulary word."""
+        system_prompt = (
+            "You are a Japanese language data specialist. Generate detailed information for a single vocabulary word. "
+            "Format the output as a single, valid JSON object."
+        )
+        user_prompt = f"""
+        Vocabulary Word: {word}
+        JLPT Level: N{jlpt_level}
+
+        Generate a JSON object with the following structure:
+        {{
+          "word": "{word}",
+          "reading": "Reading of the word in Hiragana",
+          "meaning": "Primary English meaning",
+          "jlpt_level": {jlpt_level},
+          "example_sentence_japanese": "Example sentence in Japanese using the word.",
+          "example_sentence_english": "English translation of the example sentence."
+        }}
+        """
+        content, error = self._generate_content(system_prompt, user_prompt, is_json=True)
+        if error:
+            return {"error": error}
+        try:
+            if content:
+                return json.loads(content)
+            else:
+                return {"error": "Empty response from AI"}
+        except json.JSONDecodeError as e:
+            current_app.logger.error(f"Failed to parse JSON from AI response: {e}\\nResponse: {content}")
+            return {"error": "Failed to parse AI response as JSON."}
+
+    def generate_grammar_data(self, grammar_point, jlpt_level):
+        """Generates structured data for a single grammar point."""
+        system_prompt = (
+            "You are a Japanese language data specialist. Generate detailed information for a single grammar point. "
+            "Format the output as a single, valid JSON object."
+        )
+        user_prompt = f"""
+        Grammar Point: {grammar_point}
+        JLPT Level: N{jlpt_level}
+
+        Generate a JSON object with the following structure:
+        {{
+          "title": "{grammar_point}",
+          "explanation": "Detailed explanation of the grammar point, its usage, and nuances.",
+          "structure": "Common structure, e.g., 'Verb (dictionary form) + ように'",
+          "jlpt_level": {jlpt_level},
+          "example_sentences": [
+            {{"japanese": "Sentence 1 in Japanese.", "english": "Translation 1 in English."}},
+            {{"japanese": "Sentence 2 in Japanese.", "english": "Translation 2 in English."}}
+          ]
+        }}
+        """
+        content, error = self._generate_content(system_prompt, user_prompt, is_json=True)
+        if error:
+            return {"error": error}
+        try:
+            if content:
+                data = json.loads(content)
+                # The model might return a list of dicts for example_sentences, but the model expects a JSON string.
+                if 'example_sentences' in data and isinstance(data['example_sentences'], list):
+                    data['example_sentences'] = json.dumps(data['example_sentences'], ensure_ascii=False)
+                return data
+            else:
+                return {"error": "Empty response from AI"}
+        except json.JSONDecodeError as e:
+            current_app.logger.error(f"Failed to parse JSON from AI response: {e}\\nResponse: {content}")
+            return {"error": "Failed to parse AI response as JSON."}

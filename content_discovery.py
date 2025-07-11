@@ -13,9 +13,10 @@ from typing import List, Dict, Any, Optional, Tuple
 from sqlalchemy import and_, or_, func
 from app import create_app
 from app.models import (
-    Kana, Kanji, Vocabulary, Grammar, LessonCategory, 
+    Kana, Kanji, Vocabulary, Grammar, LessonCategory,
     Lesson, LessonContent, db
 )
+from app.ai_services import AILessonContentGenerator
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -386,6 +387,66 @@ class ContentDiscovery:
                 }
         
         return opportunities
+
+    def find_or_create_content(self, content_type: str, identifier: str, jlpt_level: int) -> Optional[Any]:
+        """
+        Finds content by a unique identifier or creates it using AI if it doesn't exist.
+        The created content is marked as 'pending_approval'.
+        """
+        if content_type not in self.content_types:
+            logger.error(f"Unknown content type: {content_type}")
+            return None
+
+        model = self.content_types[content_type]
+        
+        # Define unique identifier column for each model
+        identifier_column_map = {
+            'kanji': 'character',
+            'vocabulary': 'word',
+            'grammar': 'title'
+        }
+        identifier_column = identifier_column_map.get(content_type)
+        if not identifier_column:
+            logger.error(f"No unique identifier column defined for content type: {content_type}")
+            return None
+
+        # 1. Find existing content (approved or pending)
+        existing_content = model.query.filter(getattr(model, identifier_column) == identifier).first()
+        if existing_content:
+            logger.info(f"Found existing {content_type}: '{identifier}' with status '{existing_content.status}'")
+            return existing_content
+
+        # 2. If not found, trigger AI creation
+        logger.info(f"No existing {content_type} found for '{identifier}'. Triggering AI content generation.")
+        ai_generator = AILessonContentGenerator()
+        
+        data = None
+        if content_type == 'kanji':
+            data = ai_generator.generate_kanji_data(identifier, jlpt_level)
+        elif content_type == 'vocabulary':
+            data = ai_generator.generate_vocabulary_data(identifier, jlpt_level)
+        elif content_type == 'grammar':
+            data = ai_generator.generate_grammar_data(identifier, jlpt_level)
+
+        if not data or "error" in data:
+            logger.error(f"AI generation failed for {content_type} '{identifier}': {data.get('error', 'No data returned')}")
+            return None
+
+        # 3. Save the new content as 'pending_approval'
+        try:
+            new_content = model(
+                **data,
+                status='pending_approval',
+                created_by_ai=True
+            )
+            db.session.add(new_content)
+            db.session.commit()
+            logger.info(f"Successfully created and saved new {content_type} '{identifier}' with status 'pending_approval'.")
+            return new_content
+        except Exception as e:
+            db.session.rollback()
+            logger.error(f"Failed to save new AI-generated {content_type} '{identifier}': {e}")
+            return None
 
 
 class ContentGapAnalyzer:

@@ -169,6 +169,18 @@ def admin_manage_lessons():
 def admin_manage_categories():
     return render_template('admin/manage_categories.html')
 
+@bp.route('/admin/manage/approval')
+@login_required
+@admin_required
+def admin_manage_approval():
+    pending_kanji = Kanji.query.filter_by(status='pending_approval').all()
+    pending_vocabulary = Vocabulary.query.filter_by(status='pending_approval').all()
+    pending_grammar = Grammar.query.filter_by(status='pending_approval').all()
+    return render_template('admin/manage_approval.html',
+                           pending_kanji=pending_kanji,
+                           pending_vocabulary=pending_vocabulary,
+                           pending_grammar=pending_grammar)
+
 # --- Lesson Routes for Users ---
 @bp.route('/lessons')
 @login_required
@@ -521,6 +533,33 @@ def delete_grammar(item_id):
     db.session.delete(item)
     db.session.commit()
     return jsonify({"message": "Grammar point deleted successfully"}), 200
+
+# == CONTENT APPROVAL API ==
+@bp.route('/api/admin/content/<content_type>/<int:item_id>/approve', methods=['POST'])
+@login_required
+@admin_required
+def approve_content(content_type, item_id):
+    model = {'kanji': Kanji, 'vocabulary': Vocabulary, 'grammar': Grammar}.get(content_type)
+    if not model:
+        return jsonify({"error": "Invalid content type"}), 400
+    
+    item = model.query.get_or_404(item_id)
+    item.status = 'approved'
+    db.session.commit()
+    return jsonify({"message": f"{content_type.capitalize()} item approved successfully"}), 200
+
+@bp.route('/api/admin/content/<content_type>/<int:item_id>/reject', methods=['POST'])
+@login_required
+@admin_required
+def reject_content(content_type, item_id):
+    model = {'kanji': Kanji, 'vocabulary': Vocabulary, 'grammar': Grammar}.get(content_type)
+    if not model:
+        return jsonify({"error": "Invalid content type"}), 400
+    
+    item = model.query.get_or_404(item_id)
+    db.session.delete(item)
+    db.session.commit()
+    return jsonify({"message": f"{content_type.capitalize()} item rejected and deleted successfully"}), 200
 
 # == LESSON CATEGORY CRUD API ==
 @bp.route('/api/admin/categories', methods=['GET'])
