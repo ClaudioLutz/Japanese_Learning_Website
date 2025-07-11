@@ -1,0 +1,65 @@
+{
+  "series_title": "JLPT N5 Prep Series",
+  "category": "JLPT N5",
+  "category_description": "A complete series to prepare for the JLPT N5 exam.",
+  "lessons": [
+    {
+      "id": "n5_1_hiragana",
+      "title": "N5 Hiragana Mastery",
+      "description": "Learn all the Hiragana characters.",
+      "difficulty_level": 1,
+      "pages": [
+        {
+          "title": "Introduction",
+          "content": [
+            {
+              "type": "text",
+              "text": "Let's learn Hiragana!"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "n5_2_katakana",
+      "title": "N5 Katakana Mastery",
+      "description": "Learn all the Katakana characters.",
+      "difficulty_level": 1,
+      "prerequisites": [
+        "n5_1_hiragana"
+      ],
+      "pages": [
+        {
+          "title": "Introduction",
+          "content": [
+            {
+              "type": "text",
+              "text": "Let's learn Katakana!"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "n5_3_basic_grammar",
+      "title": "N5 Basic Grammar",
+      "description": "Introduction to fundamental Japanese grammar.",
+      "difficulty_level": 2,
+      "prerequisites": [
+        "n5_1_hiragana",
+        "n5_2_katakana"
+      ],
+      "pages": [
+        {
+          "title": "Particles",
+          "content": [
+            {
+              "type": "text",
+              "text": "Grammar about particles..."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -56,7 +56,16 @@ The system is designed to support multiple question types, identified by the `qu
 -   `fill_blank`
 -   `matching`
 
-### 3.3. Storing and Evaluating Answers
+### 3.4. Advanced Quiz Features
+
+The quiz system has been enhanced with features to support more dynamic and personalized learning experiences.
+
+-   **Adaptive Quizzes**: A `LessonContent` item can be designated as an `adaptive` quiz via the `quiz_type` field. This allows the system to present questions of varying difficulty based on user performance (a feature for future implementation). The AI service can generate a full set of questions for an adaptive quiz using the `create_adaptive_quiz` function.
+-   **Difficulty Levels**: Each `QuizQuestion` now has a `difficulty_level` (1-5), allowing for more granular control over quiz content.
+-   **Hints**: Each `QuizQuestion` can have a `hint` to provide users with a little help if they are stuck.
+-   **Rich Feedback**: The `explanation` field in `QuizQuestion` and the `feedback` field in `QuizOption` are used to provide detailed, context-aware feedback to the user after they answer a question.
+
+### 3.5. Storing and Evaluating Answers
 
 -   When a user submits a quiz, the application logic checks their answers against the `is_correct` flag on the `QuizOption`s.
 -   A `UserQuizAnswer` record is created or updated for each question.

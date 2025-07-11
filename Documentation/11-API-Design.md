@@ -116,6 +116,26 @@ _(`type` can be `kana`, `kanji`, `vocabulary`, or `grammar`)_
 | `POST` | `/api/admin/lessons/import-package`        | Imports a lesson from an uploaded ZIP package.                           |
 | `POST` | `/api/admin/lessons/import-info`           | Analyzes an import file without importing to provide a preview.          |
 
+#### 3.4.6. AI Content Generation Services
+While not traditional REST endpoints, the following functions in `AILessonContentGenerator` act as a service layer for AI content creation. They are called from scripts and other services.
+
+| Service Function                       | Description                                                              |
+| :------------------------------------- | :----------------------------------------------------------------------- |
+| `generate_explanation`                 | Generates a simple, plain-text paragraph explanation.                    |
+| `generate_formatted_explanation`       | Creates a detailed explanation using HTML tags.                          |
+| `generate_kanji_data`                  | Generates a complete data structure for a single Kanji character.        |
+| `generate_vocabulary_data`             | Creates a detailed entry for a vocabulary word.                          |
+| `generate_grammar_data`                | Generates a comprehensive explanation for a grammar point.               |
+| `generate_true_false_question`         | Creates a true/false question with a detailed explanation.               |
+| `generate_fill_in_the_blank_question`  | Generates a sentence with a blank, the correct answer, and an explanation. |
+| `generate_matching_question`           | Creates a set of pairs for a matching exercise.                          |
+| `generate_multiple_choice_question`    | Generates a multiple-choice question with hints and difficulty levels.   |
+| `create_adaptive_quiz`                 | Generates a complete quiz with questions of varying difficulty.          |
+| `generate_image_prompt`                | Creates an optimized prompt for an AI image generation service.          |
+| `generate_single_image`                | Generates a single image based on a given prompt.                        |
+| `generate_lesson_images`               | Generates a set of images for a lesson.                                  |
+| `analyze_content_for_multimedia_needs` | Analyzes text and suggests multimedia enhancements.                      |
+
 ### 3.5. User Data and Quiz APIs
 
 | Method | Endpoint                                           | Authentication | Description                                                              |

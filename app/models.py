@@ -169,10 +169,12 @@ class Lesson(db.Model):
     def pages(self):
         """Groups content items by page number for rendering and includes page metadata."""
         from collections import defaultdict
+        from typing import DefaultDict, List, Dict, Any, Optional
+
         if not self.content_items:
             return []
 
-        pages_dict = defaultdict(lambda: {'content': [], 'metadata': None})
+        pages_dict: DefaultDict[int, Dict[str, Any]] = defaultdict(lambda: {'content': [], 'metadata': None})
         
         # Create a lookup for page metadata
         metadata_lookup = {pm.page_number: pm for pm in self.pages_metadata}
@@ -233,6 +235,7 @@ class LessonContent(db.Model):
 
     # Interactive content fields
     is_interactive = db.Column(db.Boolean, default=False)
+    quiz_type = db.Column(db.String(50), default='standard') # 'standard', 'adaptive'
     max_attempts = db.Column(db.Integer, default=3)
     passing_score = db.Column(db.Integer, default=70)  # Percentage
     
@@ -298,6 +301,8 @@ class QuizQuestion(db.Model):
     question_type = db.Column(db.String(50), nullable=False)  # 'multiple_choice', 'fill_blank', 'true_false', 'matching'
     question_text = db.Column(db.Text, nullable=False)
     explanation = db.Column(db.Text)  # Explanation for the answer
+    hint = db.Column(db.Text) # Progressive hint
+    difficulty_level = db.Column(db.Integer, default=1) # 1-5 for adaptive quizzes
     points = db.Column(db.Integer, default=1)
     order_index = db.Column(db.Integer, default=0)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)

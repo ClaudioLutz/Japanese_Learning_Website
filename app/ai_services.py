@@ -3,6 +3,9 @@ import os
 import json
 from openai import OpenAI
 from flask import current_app
+from openai.types.chat import ChatCompletionMessageParam
+from openai.types.chat.completion_create_params import ResponseFormat
+from typing import Literal
 
 class AILessonContentGenerator:
     """
@@ -24,12 +27,12 @@ class AILessonContentGenerator:
             return None, "OpenAI client is not initialized. Check API key."
 
         try:
-            messages = [
+            messages: list[ChatCompletionMessageParam] = [
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
             ]
             
-            response_format = {"type": "json_object"} if is_json else {"type": "text"}
+            response_format: ResponseFormat = {"type": "json_object"} if is_json else {"type": "text"}
             
             completion = self.client.chat.completions.create(
                 model="gpt-4.1", # Or "gpt-3.5-turbo"
@@ -133,7 +136,7 @@ class AILessonContentGenerator:
         content, error = self._generate_content(system_prompt, user_prompt)
         if error:
             return {"error": error}
-        return {"image_prompt": content.strip()}
+        return {"image_prompt": content.strip() if content else None}
 
     def generate_lesson_images(self, lesson_content_list, lesson_topic, difficulty):
         """Generate multiple images for lesson content using DALL-E."""
@@ -156,21 +159,27 @@ class AILessonContentGenerator:
                     continue
                 
                 # Generate image using DALL-E
+                image_prompt = prompt_result.get('image_prompt')
+                if not image_prompt:
+                    current_app.logger.error("Generated image prompt is empty.")
+                    continue
+
                 response = self.client.images.generate(
                     model="dall-e-3",
-                    prompt=prompt_result['image_prompt'],
+                    prompt=image_prompt,
                     size="1024x1024",
                     quality="standard",
                     n=1
                 )
                 
-                image_url = response.data[0].url
-                generated_images.append({
-                    'content_id': content_item.get('id'),
-                    'image_url': image_url,
-                    'prompt': prompt_result['image_prompt'],
-                    'content_text': content_item.get('text', '')
-                })
+                if response.data:
+                    image_url = response.data[0].url
+                    generated_images.append({
+                        'content_id': content_item.get('id'),
+                        'image_url': image_url,
+                        'prompt': prompt_result.get('image_prompt'),
+                        'content_text': content_item.get('text', '')
+                    })
                 
             except Exception as e:
                 current_app.logger.error(f"Failed to generate image for content: {e}")
@@ -178,7 +187,7 @@ class AILessonContentGenerator:
         
         return {"generated_images": generated_images}
 
-    def generate_single_image(self, prompt, size="1024x1024", quality="standard"):
+    def generate_single_image(self, prompt: str, size: Literal["1024x1024", "1792x1024", "1024x1792"] = "1024x1024", quality: Literal["standard", "hd"] = "standard"):
         """Generate a single image using DALL-E."""
         if not self.client:
             return {"error": "OpenAI client is not initialized"}
@@ -192,12 +201,14 @@ class AILessonContentGenerator:
                 n=1
             )
             
-            return {
-                "image_url": response.data[0].url,
-                "prompt": prompt,
-                "size": size,
-                "quality": quality
-            }
+            if response.data:
+                return {
+                    "image_url": response.data[0].url,
+                    "prompt": prompt,
+                    "size": size,
+                    "quality": quality
+                }
+            return {"error": "No image data in response"}
             
         except Exception as e:
             current_app.logger.error(f"Failed to generate image: {e}")
@@ -321,6 +332,7 @@ class AILessonContentGenerator:
         system_prompt = (
             "You are an expert Japanese quiz designer. Generate a multiple-choice question. "
             "Ensure distractors are plausible but incorrect. Provide brief feedback for each option. "
+            "Include a hint and a difficulty level. "
             "Format the output as a single, valid JSON object."
         )
         user_prompt = f"""
@@ -331,6 +343,8 @@ class AILessonContentGenerator:
         Generate a JSON object with the following structure:
         {{
           "question_text": "The question...",
+          "difficulty_level": {difficulty},
+          "hint": "A subtle hint to help the user.",
           "options": [
             {{"text": "Option A...", "is_correct": false, "feedback": "Feedback for A..."}},
             {{"text": "Option B...", "is_correct": true, "feedback": "Feedback for B..."}},
@@ -352,7 +366,53 @@ class AILessonContentGenerator:
             else:
                 return {"error": "Empty response from AI"}
         except json.JSONDecodeError as e:
-            current_app.logger.error(f"Failed to parse JSON from AI response: {e}\nResponse: {content}")
+            current_app.logger.error(f"Failed to parse JSON from AI response: {e}\\nResponse: {content}")
+            return {"error": "Failed to parse AI response as JSON."}
+
+    def create_adaptive_quiz(self, topic, difficulty_levels, num_questions_per_level=2):
+        """Generates an adaptive quiz with questions at multiple difficulty levels."""
+        system_prompt = (
+            "You are a Japanese quiz designer. Generate a set of multiple-choice questions "
+            "for a specified topic across a range of difficulty levels. "
+            "Format the output as a single, valid JSON object containing a list of questions."
+        )
+        user_prompt = f"""
+        Lesson Topic: {topic}
+        Difficulty Levels: {difficulty_levels}
+        Number of Questions per Level: {num_questions_per_level}
+
+        Generate a JSON object with a single key "questions" that contains a list of quiz questions.
+        For each question, provide the following fields:
+        - question_text
+        - difficulty_level (from the provided list)
+        - hint
+        - options (list of dicts with text, is_correct, feedback)
+        - overall_explanation
+        
+        Example for a single question in the list:
+        {{
+          "question_text": "...",
+          "difficulty_level": 1,
+          "hint": "...",
+          "options": [
+            {{"text": "...", "is_correct": false, "feedback": "..."}},
+            {{"text": "...", "is_correct": true, "feedback": "..."}}
+          ],
+          "overall_explanation": "..."
+        }}
+        """
+        
+        content, error = self._generate_content(system_prompt, user_prompt, is_json=True)
+        if error:
+            return {"error": error}
+        
+        try:
+            if content:
+                return json.loads(content)
+            else:
+                return {"error": "Empty response from AI"}
+        except json.JSONDecodeError as e:
+            current_app.logger.error(f"Failed to parse JSON from AI response: {e}\\nResponse: {content}")
             return {"error": "Failed to parse AI response as JSON."}
 
     def generate_kanji_data(self, kanji_character, jlpt_level):
