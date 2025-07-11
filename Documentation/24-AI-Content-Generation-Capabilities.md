@@ -52,5 +52,14 @@ While not directly part of the `AILessonContentGenerator`, the following scripts
 
 -   **`create_adaptive_quiz_lesson.py`**: A script that demonstrates how to use `create_adaptive_quiz` to build a complete, interactive, and adaptive quiz lesson.
 -   **`lesson_series_generator.py`**: A script that can take a configuration file to generate an entire series of lessons, including setting up prerequisites between them. This allows for the rapid creation of structured learning paths, such as a full JLPT level preparation course.
+-   **`personalized_lesson_generator.py`**: A script that generates personalized lessons based on user performance analysis.
+
+## 5. Intelligence and Adaptation
+
+The system now includes advanced AI capabilities for intelligence and adaptation:
+
+-   **User Performance Analysis**: The `UserPerformanceAnalyzer` class analyzes user performance data to identify weaknesses and suggest remediation.
+-   **Content Validation**: The `ContentValidator` class validates content accuracy, cultural context, and educational effectiveness.
+-   **Personalized Lesson Generation**: The `PersonalizedLessonGenerator` class generates adaptive lessons based on user performance analysis.
 
 This suite of AI tools provides a powerful and flexible system for creating rich, interactive, and pedagogically sound Japanese language lessons with a high degree of automation.

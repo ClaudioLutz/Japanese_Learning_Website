@@ -11,6 +11,8 @@ A comprehensive web-based Japanese learning platform that provides structured le
 - **Interactive Lesson System:** Paginated lessons with multimedia, interactive quizzes (multiple choice, fill-in-the-blank, true/false), and content ordering.
 - **User Progress Tracking:** Monitors completion of lessons and individual content items/pages.
 - **AI-Powered Lesson Creation:** Tools to assist administrators in generating lesson content.
+- **Personalized Learning Paths**: AI-generated remedial and advancement lessons based on user performance.
+- **Automated Content Validation**: AI-powered validation of content for accuracy and quality.
 - **Scripted Lesson Creation:** Utilities for bulk creation of specific lesson types.
 - **Lesson Prerequisites & Categories:** Structured learning paths and organized content discovery.
 - **Responsive Design:** Accessible on desktop and mobile devices.
@@ -79,6 +81,8 @@ A comprehensive web-based Japanese learning platform that provides structured le
 - **File Upload System:** Secure handling, storage, and serving of uploaded media files.
 - **Content Validation:** Basic validation for uploaded content.
 - **AI-Assisted Content Generation:** Tools to help admins create lesson materials.
+- **Adaptive Learning System**: AI-powered analysis of user performance to generate personalized lessons and study plans.
+- **Content Validation Framework**: Automated validation of content for linguistic accuracy, cultural context, and educational effectiveness.
 - **Scripted Content Creation:** Utilities for bulk-generating certain lesson types.
 
 ### Lesson System

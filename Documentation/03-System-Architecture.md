@@ -61,6 +61,9 @@ The Japanese Learning Website follows a **layered monolithic architecture** with
 - **Forms (`app/forms.py`)**: Manage form data submission, validation (using WTForms and Flask-WTF), and CSRF protection.
 - **Utilities (`app/utils.py`)**: Contain helper functions and classes that provide reusable logic across different parts of the application, such as `FileUploadHandler` for managing file uploads and `convert_to_embed_url` for YouTube URLs.
 - **AI Services (`app/ai_services.py`)**: Encapsulate logic for interacting with external AI APIs (e.g., OpenAI) for features like content generation.
+- **User Performance Analyzer (`app/user_performance_analyzer.py`)**: Analyzes user performance data to identify weaknesses and suggest remediation.
+- **Content Validator (`app/content_validator.py`)**: Validates content accuracy, cultural context, and educational effectiveness.
+- **Personalized Lesson Generator (`app/personalized_lesson_generator.py`)**: Generates adaptive lessons based on user performance analysis.
 - **Lesson Export/Import (`app/lesson_export_import.py`)**: Handles the serialization and deserialization of lesson data for backup, transfer, or bulk creation purposes.
 
 ### 2. Single Responsibility Principle

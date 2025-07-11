@@ -62,6 +62,7 @@ The service provides a comprehensive suite of methods for generating various typ
 | `generate_single_image(...)`               | Generates a single image using DALL-E 3 from a given prompt.                                                | `dict`      |
 | `generate_lesson_images(...)`              | Generates multiple images for a list of lesson content items.                                               | `dict`      |
 | `analyze_content_for_multimedia_needs(...)`| Analyzes a block of text and suggests potential multimedia enhancements (images, audio, video, etc.).         | `JSON`      |
+| `create_adaptive_quiz(...)`                | Generates an adaptive quiz with questions at multiple difficulty levels.                                    | `JSON`      |
 
 ### 3.3. Prompt Engineering and JSON Mode
 
@@ -83,6 +84,7 @@ The service can generate a variety of question types, all in a structured JSON f
 -   **True/False**: Simple and effective for checking knowledge.
 -   **Fill-in-the-Blank**: Ideal for vocabulary and grammar practice.
 -   **Matching**: Good for connecting concepts (e.g., Kanji to meanings).
+-   **Adaptive Quizzes**: Generates quizzes with questions of varying difficulty levels to adapt to user performance.
 
 ### 4.3. Database Content Population
 
