@@ -11,51 +11,188 @@
     {% block styles %}{% endblock %}
 </head>
 <body {% block body_attributes %}{% endblock %}>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container">
-            <a class="navbar-brand" href="{{ url_for('routes.index') }}">Japanese Learning</a>
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+    <nav class="enhanced-navbar">
+        <div class="navbar-container">
+            <!-- Brand Section -->
+            <div class="navbar-brand-section">
+                <a class="enhanced-navbar-brand" href="{{ url_for('routes.index') }}">
+                    <div class="brand-icon">
+                        <i class="fas fa-torii-gate"></i>
+                    </div>
+                    <div class="brand-text">
+                        <span class="brand-name">Japanese Learning</span>
+                        <span class="brand-tagline">Master the Language</span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-menu-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+
+            <!-- Navigation Content -->
+            <div class="navbar-content-wrapper">
+                <!-- Main Navigation -->
+                <div class="navbar-nav-section">
                     {% if current_user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('routes.lessons') }}">Lessons</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('routes.courses') }}">Courses</a>
-                    </li>
+                    <div class="nav-links">
+                        <a class="enhanced-nav-link" href="{{ url_for('routes.lessons') }}">
+                            <i class="fas fa-book-open"></i>
+                            <span>Lessons</span>
+                        </a>
+                        <a class="enhanced-nav-link" href="{{ url_for('routes.courses') }}">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>Courses</span>
+                        </a>
+                    </div>
                     {% endif %}
-                    {% if current_user.is_authenticated and current_user.is_admin %}
-                    <li class="nav-item">
-                        <a class="nav-link btn btn-sm btn-outline-primary" href="{{ url_for('routes.admin_index') }}">Admin Panel</a>
-                    </li>
-                    {% endif %}
-                </ul>
-                <ul class="navbar-nav ms-auto">
+                </div>
+
+                <!-- User Section -->
+                <div class="navbar-user-section">
                     {% if current_user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Hello, {{ current_user.username }} ({{ current_user.subscription_level | capitalize }})</a>
-                        </li>
-                        {% if current_user.subscription_level == 'free' %}
-                        <li class="nav-item">
-                            <a class="nav-link btn btn-sm btn-outline-success" href="{{ url_for('routes.upgrade_to_premium') }}">Upgrade</a>
-                        </li>
-                        {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link btn btn-sm btn-outline-warning" href="{{ url_for('routes.downgrade_from_premium') }}">Downgrade</a>
-                        </li>
-                        {% endif %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('routes.logout') }}">Logout</a>
-                        </li>
+                        <!-- User Info -->
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="user-details">
+                                <span class="user-name">{{ current_user.username }}</span>
+                                <span class="user-subscription {{ current_user.subscription_level }}">
+                                    {% if current_user.subscription_level == 'premium' %}
+                                        <i class="fas fa-crown"></i>
+                                    {% else %}
+                                        <i class="fas fa-user"></i>
+                                    {% endif %}
+                                    {{ current_user.subscription_level | capitalize }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="nav-actions">
+                            {% if current_user.is_authenticated and current_user.is_admin %}
+                            <a class="nav-action-btn admin-btn" href="{{ url_for('routes.admin_index') }}">
+                                <i class="fas fa-cog"></i>
+                                <span>Admin</span>
+                            </a>
+                            {% endif %}
+                            
+                            {% if current_user.subscription_level == 'free' %}
+                            <a class="nav-action-btn upgrade-btn" href="{{ url_for('routes.upgrade_to_premium') }}">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>Upgrade</span>
+                            </a>
+                            {% else %}
+                            <a class="nav-action-btn downgrade-btn" href="{{ url_for('routes.downgrade_from_premium') }}">
+                                <i class="fas fa-arrow-down"></i>
+                                <span>Downgrade</span>
+                            </a>
+                            {% endif %}
+                            
+                            <a class="nav-action-btn logout-btn" href="{{ url_for('routes.logout') }}">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Logout</span>
+                            </a>
+                        </div>
                     {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('routes.login') }}">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('routes.register') }}">Register</a>
-                        </li>
+                        <!-- Guest Actions -->
+                        <div class="nav-actions">
+                            <a class="nav-action-btn login-btn" href="{{ url_for('routes.login') }}">
+                                <i class="fas fa-sign-in-alt"></i>
+                                <span>Login</span>
+                            </a>
+                            <a class="nav-action-btn register-btn" href="{{ url_for('routes.register') }}">
+                                <i class="fas fa-user-plus"></i>
+                                <span>Register</span>
+                            </a>
+                        </div>
                     {% endif %}
-                </ul>
+                </div>
+            </div>
+
+            <!-- Mobile Navigation Menu -->
+            <div class="collapse navbar-collapse mobile-nav-menu" id="navbarContent">
+                <!-- Mobile Main Navigation -->
+                <div class="mobile-nav-section">
+                    {% if current_user.is_authenticated %}
+                    <div class="mobile-nav-links">
+                        <a class="mobile-nav-link" href="{{ url_for('routes.lessons') }}">
+                            <i class="fas fa-book-open"></i>
+                            <span>Lessons</span>
+                        </a>
+                        <a class="mobile-nav-link" href="{{ url_for('routes.courses') }}">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>Courses</span>
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Mobile User Section -->
+                <div class="mobile-user-section">
+                    {% if current_user.is_authenticated %}
+                        <!-- Mobile User Info -->
+                        <div class="mobile-user-info">
+                            <div class="user-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="user-details">
+                                <span class="user-name">{{ current_user.username }}</span>
+                                <span class="user-subscription {{ current_user.subscription_level }}">
+                                    {% if current_user.subscription_level == 'premium' %}
+                                        <i class="fas fa-crown"></i>
+                                    {% else %}
+                                        <i class="fas fa-user"></i>
+                                    {% endif %}
+                                    {{ current_user.subscription_level | capitalize }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Mobile Action Buttons -->
+                        <div class="mobile-nav-actions">
+                            {% if current_user.is_authenticated and current_user.is_admin %}
+                            <a class="mobile-nav-action-btn admin-btn" href="{{ url_for('routes.admin_index') }}">
+                                <i class="fas fa-cog"></i>
+                                <span>Admin Panel</span>
+                            </a>
+                            {% endif %}
+                            
+                            {% if current_user.subscription_level == 'free' %}
+                            <a class="mobile-nav-action-btn upgrade-btn" href="{{ url_for('routes.upgrade_to_premium') }}">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>Upgrade</span>
+                            </a>
+                            {% else %}
+                            <a class="mobile-nav-action-btn downgrade-btn" href="{{ url_for('routes.downgrade_from_premium') }}">
+                                <i class="fas fa-arrow-down"></i>
+                                <span>Downgrade</span>
+                            </a>
+                            {% endif %}
+                            
+                            <a class="mobile-nav-action-btn logout-btn" href="{{ url_for('routes.logout') }}">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Logout</span>
+                            </a>
+                        </div>
+                    {% else %}
+                        <!-- Mobile Guest Actions -->
+                        <div class="mobile-nav-actions">
+                            <a class="mobile-nav-action-btn login-btn" href="{{ url_for('routes.login') }}">
+                                <i class="fas fa-sign-in-alt"></i>
+                                <span>Login</span>
+                            </a>
+                            <a class="mobile-nav-action-btn register-btn" href="{{ url_for('routes.register') }}">
+                                <i class="fas fa-user-plus"></i>
+                                <span>Register</span>
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </nav>

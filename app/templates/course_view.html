@@ -3,34 +3,111 @@
 {% block title %}{{ course.title }}{% endblock %}
 
 {% block content %}
-<!-- Course Header Banner -->
-<div class="course-header-banner" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('{{ course.background_image_url or "https://via.placeholder.com/1200x400" }}');">
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <div class="course-header-content text-white">
-                    <h1 class="display-4 mb-3">{{ course.title }}</h1>
-                    <p class="lead mb-4">{{ course.description or 'Enhance your Japanese language skills with this comprehensive course.' }}</p>
+<!-- Enhanced Course Header Banner -->
+<div class="enhanced-course-hero">
+    <div class="course-hero-background" style="background-image: url('{{ course.background_image_url or "https://via.placeholder.com/1920x600?text=Japanese+Course" }}');"></div>
+    <div class="course-hero-overlay"></div>
+    <div class="course-hero-content">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10 text-center">
+                    <!-- Course Badge -->
+                    <div class="course-category-badge">
+                        <i class="fas fa-graduation-cap me-2"></i>
+                        Japanese Learning Course
+                    </div>
                     
-                    <!-- Progress Bar -->
-                    <div class="progress mb-3" style="height: 8px;">
-                        <div class="progress-bar bg-success" role="progressbar" 
-                             style="width: {{ course_progress_percentage }}%;" 
-                             aria-valuenow="{{ course_progress_percentage }}" 
-                             aria-valuemin="0" aria-valuemax="100">
+                    <!-- Course Title -->
+                    <h1 class="course-hero-title">{{ course.title }}</h1>
+                    
+                    <!-- Course Description -->
+                    <p class="course-hero-description">
+                        {{ course.description or 'Master Japanese through structured lessons and interactive content designed for comprehensive learning.' }}
+                    </p>
+                    
+                    <!-- Course Stats Row -->
+                    <div class="course-stats-row">
+                        <div class="course-stat-item">
+                            <div class="stat-icon">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <div class="stat-content">
+                                <span class="stat-number">{{ total_lessons }}</span>
+                                <span class="stat-label">Lessons</span>
+                            </div>
+                        </div>
+                        
+                        <div class="course-stat-item">
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-content">
+                                <span class="stat-number">{{ total_duration or (total_lessons * 15) }}</span>
+                                <span class="stat-label">Minutes</span>
+                            </div>
+                        </div>
+                        
+                        <div class="course-stat-item">
+                            <div class="stat-icon">
+                                <i class="fas fa-signal"></i>
+                            </div>
+                            <div class="stat-content">
+                                <span class="stat-number">
+                                    {% if average_difficulty <= 1.5 %}Beginner
+                                    {% elif average_difficulty <= 2.5 %}Elementary
+                                    {% elif average_difficulty <= 3.5 %}Intermediate
+                                    {% elif average_difficulty <= 4.5 %}Advanced
+                                    {% else %}Expert
+                                    {% endif %}
+                                </span>
+                                <span class="stat-label">Level</span>
+                            </div>
+                        </div>
+                        
+                        <div class="course-stat-item">
+                            <div class="stat-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="stat-content">
+                                <span class="stat-number">{{ course_progress_percentage }}%</span>
+                                <span class="stat-label">Complete</span>
+                            </div>
                         </div>
                     </div>
-                    <small class="text-light">{{ course_progress_percentage }}% Complete</small>
                     
-                    <!-- Action Button -->
-                    <div class="mt-4">
+                    <!-- Enhanced Progress Bar -->
+                    <div class="course-progress-section">
+                        <div class="progress-container">
+                            <div class="progress-track">
+                                <div class="progress-fill" style="width: {{ course_progress_percentage }}%;"></div>
+                                <div class="progress-glow" style="left: {{ course_progress_percentage }}%;"></div>
+                            </div>
+                            <div class="progress-labels">
+                                <span class="progress-start">Start</span>
+                                <span class="progress-end">Complete</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="course-action-buttons">
                         {% if has_started %}
-                            <a href="#lessons" class="btn btn-primary btn-lg">
-                                <i class="fas fa-play-circle me-2"></i>Continue Course
+                            <a href="#lessons" class="course-primary-btn">
+                                <i class="fas fa-play me-2"></i>
+                                Continue Learning
+                            </a>
+                            <a href="#lessons" class="course-secondary-btn">
+                                <i class="fas fa-list me-2"></i>
+                                View Lessons
                             </a>
                         {% else %}
-                            <a href="#lessons" class="btn btn-success btn-lg">
-                                <i class="fas fa-rocket me-2"></i>Start Course
+                            <a href="#lessons" class="course-primary-btn">
+                                <i class="fas fa-rocket me-2"></i>
+                                Start Course
+                            </a>
+                            <a href="#lessons" class="course-secondary-btn">
+                                <i class="fas fa-eye me-2"></i>
+                                Preview Lessons
                             </a>
                         {% endif %}
                     </div>
@@ -221,125 +298,4 @@
         </div>
     </div>
 </div>
-{% endblock %}
-
-{% block styles %}
-<style>
-.course-header-banner {
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    padding: 80px 0;
-    margin-top: -20px;
-}
-
-.course-header-content {
-    text-align: center;
-}
-
-.lesson-card {
-    transition: transform 0.2s ease-in-out;
-}
-
-.lesson-card:hover {
-    transform: translateY(-2px);
-}
-
-.lesson-card-link {
-    display: block;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-}
-
-.lesson-card-link:hover {
-    text-decoration: none !important;
-}
-
-.lesson-card-link:hover .card {
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-    border-color: #007bff !important;
-}
-
-.lesson-card-link:hover .lesson-title {
-    color: #0d6efd !important;
-}
-
-.lesson-card-link:focus {
-    outline: 2px solid #007bff;
-    outline-offset: 2px;
-    border-radius: 0.375rem;
-}
-
-.lesson-number {
-    width: 50px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.lesson-status {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-}
-
-.lesson-status.completed {
-    background-color: #d4edda;
-}
-
-.lesson-status.in-progress {
-    background-color: #fff3cd;
-}
-
-.lesson-status.not-started {
-    background-color: #f8f9fa;
-    border: 2px solid #dee2e6;
-    color: #6c757d;
-    font-weight: bold;
-}
-
-.lesson-num {
-    font-size: 0.9rem;
-    font-weight: bold;
-}
-
-
-.course-sidebar {
-    position: sticky;
-    top: 20px;
-}
-
-.stat-item {
-    padding: 8px 0;
-    border-bottom: 1px solid #f0f0f0;
-}
-
-.stat-item:last-child {
-    border-bottom: none;
-}
-
-.bg-gradient {
-    background: linear-gradient(45deg, #007bff, #0056b3);
-}
-
-@media (max-width: 768px) {
-    .course-header-banner {
-        padding: 40px 0;
-    }
-    
-    .course-header-content h1 {
-        font-size: 2rem;
-    }
-    
-    .course-sidebar {
-        position: static;
-        margin-top: 2rem;
-    }
-}
-</style>
 {% endblock %}

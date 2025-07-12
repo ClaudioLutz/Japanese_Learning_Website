@@ -3,52 +3,230 @@
 {% block title %}Courses{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h1>Courses</h1>
-    <div class="row">
+<!-- Hero Section -->
+<div class="courses-hero-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h1 class="courses-hero-title">
+                    <i class="fas fa-graduation-cap me-3"></i>
+                    Japanese Learning Courses
+                </h1>
+                <p class="courses-hero-subtitle">
+                    Master Japanese through structured, comprehensive courses designed for all skill levels
+                </p>
+                <div class="courses-stats-bar">
+                    <div class="stat-item">
+                        <span class="stat-number" id="totalCourses">-</span>
+                        <span class="stat-label">Courses</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="totalLessons">-</span>
+                        <span class="stat-label">Lessons</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <span class="stat-number">∞</span>
+                        <span class="stat-label">Possibilities</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="container courses-main-content">
+    <!-- Loading State -->
+    <div id="coursesLoading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading courses...</span>
+        </div>
+        <p class="mt-3 text-muted">Loading courses...</p>
+    </div>
+    
+    <!-- Courses Grid -->
+    <div id="coursesContainer" class="row" style="display: none;">
         <!-- Courses will be populated by JavaScript -->
+    </div>
+    
+    <!-- Empty State -->
+    <div id="emptyState" class="text-center py-5" style="display: none;">
+        <div class="empty-state-icon">
+            <i class="fas fa-book-open"></i>
+        </div>
+        <h3 class="empty-state-title">No Courses Available</h3>
+        <p class="empty-state-text">
+            We're working on adding new courses. Check back soon for exciting learning opportunities!
+        </p>
+    </div>
+    
+    <!-- Error State -->
+    <div id="errorState" class="text-center py-5" style="display: none;">
+        <div class="error-state-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h3 class="error-state-title">Unable to Load Courses</h3>
+        <p class="error-state-text">
+            There was an error loading the courses. Please refresh the page or try again later.
+        </p>
+        <button class="btn btn-primary" onclick="loadCourses()">
+            <i class="fas fa-redo me-2"></i>Try Again
+        </button>
     </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script>
+let coursesData = [];
+
 $(document).ready(function() {
+    loadCourses();
+});
+
+function loadCourses() {
+    // Show loading state
+    $('#coursesLoading').show();
+    $('#coursesContainer').hide();
+    $('#emptyState').hide();
+    $('#errorState').hide();
+    
     $.get('/api/courses')
         .done(function(data) {
             console.log('API response:', data);
-            let coursesRow = $('.row');
-            coursesRow.empty();
+            coursesData = data || [];
             
-            if (data && data.length > 0) {
-                data.forEach(function(course) {
-                    if (course.is_published) {
-                        let courseCard = `
-                            <div class="col-md-6 mb-4">
-                                <div class="card h-100">
-                                    <img src="${course.background_image_url || 'https://via.placeholder.com/600x400'}" class="card-img-top" alt="${course.title}">
-                                    <div class="card-body">
-                                        <h5 class="card-title">${course.title}</h5>
-                                        <p class="card-text">${course.description}</p>
-                                        <a href="/course/${course.id}" class="btn btn-primary">View Course</a>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                        coursesRow.append(courseCard);
-                    }
-                });
+            // Update statistics
+            updateStatistics();
+            
+            // Hide loading state
+            $('#coursesLoading').hide();
+            
+            if (coursesData.length > 0) {
+                renderCourses();
+                $('#coursesContainer').show();
             } else {
-                coursesRow.append('<div class="col-12"><p class="text-center">No courses available.</p></div>');
+                $('#emptyState').show();
             }
         })
         .fail(function(xhr, status, error) {
             console.error('API request failed:', status, error);
             console.error('Response:', xhr.responseText);
-            let coursesRow = $('.row');
-            coursesRow.empty();
-            coursesRow.append('<div class="col-12"><p class="text-center text-danger">Error loading courses. Please refresh the page.</p></div>');
+            
+            // Hide loading state and show error
+            $('#coursesLoading').hide();
+            $('#errorState').show();
         });
-});
+}
+
+function updateStatistics() {
+    const publishedCourses = coursesData.filter(course => course.is_published);
+    const totalLessons = publishedCourses.reduce((sum, course) => {
+        return sum + (course.lessons ? course.lessons.length : 0);
+    }, 0);
+    
+    // Animate the numbers
+    animateNumber('totalCourses', publishedCourses.length);
+    animateNumber('totalLessons', totalLessons);
+}
+
+function animateNumber(elementId, targetNumber) {
+    const element = document.getElementById(elementId);
+    const duration = 1000; // 1 second
+    const steps = 30;
+    const increment = targetNumber / steps;
+    let current = 0;
+    
+    const timer = setInterval(() => {
+        current += increment;
+        if (current >= targetNumber) {
+            current = targetNumber;
+            clearInterval(timer);
+        }
+        element.textContent = Math.floor(current);
+    }, duration / steps);
+}
+
+function renderCourses() {
+    const container = $('#coursesContainer');
+    container.empty();
+    
+    coursesData.forEach(function(course, index) {
+        if (course.is_published) {
+            const lessonCount = course.lessons ? course.lessons.length : 0;
+            const estimatedDuration = lessonCount * 15; // Estimate 15 minutes per lesson
+            
+            const courseCard = `
+                <div class="col-lg-6 col-xl-4 mb-4">
+                    <div class="enhanced-course-card" data-course-id="${course.id}">
+                        <div class="course-card-image-container">
+                            <img src="${course.background_image_url || 'https://via.placeholder.com/600x400?text=Japanese+Course'}" 
+                                 class="course-card-image" 
+                                 alt="${course.title}"
+                                 onerror="this.src='https://via.placeholder.com/600x400?text=Japanese+Course'">
+                            <div class="course-card-overlay">
+                                <div class="course-level-badge">
+                                    <i class="fas fa-star me-1"></i>
+                                    ${getCourseLevel(lessonCount)}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="course-card-content">
+                            <div class="course-card-header">
+                                <h3 class="course-card-title">${course.title}</h3>
+                                <div class="course-card-meta">
+                                    <span class="course-meta-item">
+                                        <i class="fas fa-book me-1"></i>
+                                        ${lessonCount} lesson${lessonCount !== 1 ? 's' : ''}
+                                    </span>
+                                    <span class="course-meta-item">
+                                        <i class="fas fa-clock me-1"></i>
+                                        ~${estimatedDuration} min
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <p class="course-card-description">
+                                ${course.description || 'Comprehensive Japanese learning course with interactive lessons and practical exercises.'}
+                            </p>
+                            
+                            <div class="course-card-footer">
+                                <div class="course-progress-info">
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar-bg">
+                                            <div class="progress-bar-fill" style="width: 0%"></div>
+                                        </div>
+                                        <span class="progress-text">Ready to start</span>
+                                    </div>
+                                </div>
+                                
+                                <a href="/course/${course.id}" class="course-action-btn">
+                                    <span class="btn-text">Start Course</span>
+                                    <i class="fas fa-arrow-right btn-icon"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.append(courseCard);
+            
+            // Add staggered animation
+            setTimeout(() => {
+                $(`.enhanced-course-card[data-course-id="${course.id}"]`).addClass('animate-in');
+            }, index * 100);
+        }
+    });
+}
+
+function getCourseLevel(lessonCount) {
+    if (lessonCount <= 5) return 'Beginner';
+    if (lessonCount <= 10) return 'Intermediate';
+    return 'Advanced';
+}
 </script>
 {% endblock %}
