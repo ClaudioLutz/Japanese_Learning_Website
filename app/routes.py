@@ -213,7 +213,52 @@ def courses():
 def view_course(course_id):
     """View a specific course"""
     course = Course.query.get_or_404(course_id)
-    return render_template('course_view.html', course=course)
+    
+    # Get user progress for all lessons in this course
+    lesson_progress = {}
+    total_lessons = len(course.lessons)
+    completed_lessons = 0
+    total_duration = 0
+    
+    for lesson in course.lessons:
+        # Get user progress for this lesson
+        progress = UserLessonProgress.query.filter_by(
+            user_id=current_user.id, lesson_id=lesson.id
+        ).first()
+        
+        lesson_progress[lesson.id] = progress
+        
+        # Count completed lessons for course progress
+        if progress and progress.is_completed:
+            completed_lessons += 1
+            
+        # Add to total duration
+        if lesson.estimated_duration:
+            total_duration += lesson.estimated_duration
+    
+    # Calculate overall course progress percentage
+    course_progress_percentage = 0
+    if total_lessons > 0:
+        course_progress_percentage = int((completed_lessons / total_lessons) * 100)
+    
+    # Calculate average difficulty level
+    difficulty_levels = [lesson.difficulty_level for lesson in course.lessons if lesson.difficulty_level]
+    average_difficulty = 0
+    if difficulty_levels:
+        average_difficulty = sum(difficulty_levels) / len(difficulty_levels)
+    
+    # Determine if user has started the course
+    has_started = any(progress for progress in lesson_progress.values())
+    
+    return render_template('course_view.html', 
+                         course=course,
+                         lesson_progress=lesson_progress,
+                         course_progress_percentage=course_progress_percentage,
+                         total_lessons=total_lessons,
+                         completed_lessons=completed_lessons,
+                         total_duration=total_duration,
+                         average_difficulty=average_difficulty,
+                         has_started=has_started)
 
 @bp.route('/lessons/<int:lesson_id>')
 @login_required
