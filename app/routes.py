@@ -1868,9 +1868,13 @@ def submit_quiz_answer(lesson_id, question_id):
     """Submit answer to quiz question"""
     try:
         lesson = Lesson.query.get_or_404(lesson_id)
-        question = db.session.query(QuizQuestion).filter(QuizQuestion.id == question_id).first()
+        question = QuizQuestion.query.filter_by(id=question_id).first()
 
-        if not question or not hasattr(question, 'content') or question.content.lesson_id != lesson_id:
+        if not question:
+            return jsonify({"error": "Question not found"}), 404
+        
+        # Check if question belongs to lesson through its content
+        if not question.content or question.content.lesson_id != lesson_id:
             return jsonify({"error": "Question not found in this lesson"}), 404
         
         # Check lesson access

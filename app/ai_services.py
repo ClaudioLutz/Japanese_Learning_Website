@@ -107,7 +107,7 @@ class AILessonContentGenerator:
             else:
                 return {"error": "Empty response from AI"}
         except json.JSONDecodeError as e:
-            current_app.logger.error(f"Failed to parse JSON from AI response: {e}\\nResponse: {content}")
+            current_app.logger.error(f"Failed to parse JSON from AI response: {e}\nResponse: {content}")
             return {"error": "Failed to parse AI response as JSON."}
 
     def generate_image_prompt(self, content_text, lesson_topic, difficulty):
@@ -286,7 +286,7 @@ class AILessonContentGenerator:
             else:
                 return {"error": "Empty response from AI"}
         except json.JSONDecodeError as e:
-            current_app.logger.error(f"Failed to parse JSON from AI response: {e}\\nResponse: {content}")
+            current_app.logger.error(f"Failed to parse JSON from AI response: {e}\nResponse: {content}")
             return {"error": "Failed to parse AI response as JSON."}
 
     def generate_matching_question(self, topic, difficulty, keywords):
@@ -324,7 +324,7 @@ class AILessonContentGenerator:
             else:
                 return {"error": "Empty response from AI"}
         except json.JSONDecodeError as e:
-            current_app.logger.error(f"Failed to parse JSON from AI response: {e}\\nResponse: {content}")
+            current_app.logger.error(f"Failed to parse JSON from AI response: {e}\nResponse: {content}")
             return {"error": "Failed to parse AI response as JSON."}
 
     def generate_multiple_choice_question(self, topic, difficulty, keywords):
@@ -366,7 +366,7 @@ class AILessonContentGenerator:
             else:
                 return {"error": "Empty response from AI"}
         except json.JSONDecodeError as e:
-            current_app.logger.error(f"Failed to parse JSON from AI response: {e}\\nResponse: {content}")
+            current_app.logger.error(f"Failed to parse JSON from AI response: {e}\nResponse: {content}")
             return {"error": "Failed to parse AI response as JSON."}
 
     def create_adaptive_quiz(self, topic, difficulty_levels, num_questions_per_level=2):
@@ -412,7 +412,7 @@ class AILessonContentGenerator:
             else:
                 return {"error": "Empty response from AI"}
         except json.JSONDecodeError as e:
-            current_app.logger.error(f"Failed to parse JSON from AI response: {e}\\nResponse: {content}")
+            current_app.logger.error(f"Failed to parse JSON from AI response: {e}\nResponse: {content}")
             return {"error": "Failed to parse AI response as JSON."}
 
     def generate_kanji_data(self, kanji_character, jlpt_level):
@@ -445,7 +445,7 @@ class AILessonContentGenerator:
             else:
                 return {"error": "Empty response from AI"}
         except json.JSONDecodeError as e:
-            current_app.logger.error(f"Failed to parse JSON from AI response: {e}\\nResponse: {content}")
+            current_app.logger.error(f"Failed to parse JSON from AI response: {e}\nResponse: {content}")
             return {"error": "Failed to parse AI response as JSON."}
 
     def generate_vocabulary_data(self, word, jlpt_level):
@@ -477,7 +477,7 @@ class AILessonContentGenerator:
             else:
                 return {"error": "Empty response from AI"}
         except json.JSONDecodeError as e:
-            current_app.logger.error(f"Failed to parse JSON from AI response: {e}\\nResponse: {content}")
+            current_app.logger.error(f"Failed to parse JSON from AI response: {e}\nResponse: {content}")
             return {"error": "Failed to parse AI response as JSON."}
 
     def generate_grammar_data(self, grammar_point, jlpt_level):
@@ -515,5 +515,5 @@ class AILessonContentGenerator:
             else:
                 return {"error": "Empty response from AI"}
         except json.JSONDecodeError as e:
-            current_app.logger.error(f"Failed to parse JSON from AI response: {e}\\nResponse: {content}")
+            current_app.logger.error(f"Failed to parse JSON from AI response: {e}\nResponse: {content}")
             return {"error": "Failed to parse AI response as JSON."}

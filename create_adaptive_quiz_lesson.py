@@ -50,7 +50,7 @@ def create_adaptive_quiz_lesson():
         # 4. Create the Interactive Content Item (the quiz container)
         quiz_content = LessonContent(
             lesson_id=lesson.id,
-            content_type='quiz',
+            content_type='interactive',
             title='Adaptive Particle Quiz',
             order_index=1,
             page_number=1,

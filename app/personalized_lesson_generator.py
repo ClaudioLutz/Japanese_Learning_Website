@@ -439,7 +439,7 @@ class PersonalizedLessonGenerator:
             if not category:
                 category = LessonCategory(
                     name=lesson_data['category_name'],
-                    description=f"Personalized lessons for {self.user.username}",
+                    description=f"Personalized lessons for {self.user.username if self.user else 'user'}",
                     color_code='#28a745'  # Green for personalized content
                 )
                 db.session.add(category)
