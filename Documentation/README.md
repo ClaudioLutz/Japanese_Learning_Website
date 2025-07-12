@@ -40,6 +40,7 @@ This documentation provides comprehensive information about the Japanese Learnin
 - [**25-Intelligence-and-Adaptation.md**](25-Intelligence-and-Adaptation.md) - AI-powered adaptive learning system
 - [**26-Lesson-Template-System.md**](26-Lesson-Template-System.md) - System for creating lessons from templates
 - [**27-Multi-Modal-Content-Generation.md**](27-Multi-Modal-Content-Generation.md) - System for generating visual and auditory content
+- [**28-Courses-Panel-System.md**](28-Courses-Panel-System.md) - Comprehensive course management and organization system
 
 ### Enhanced Lesson Creation System
 - [**Enhanced-Lesson-Creation-Scripts/**](Enhanced-Lesson-Creation-Scripts/) - Comprehensive analysis and enhancement documentation for the lesson creation system

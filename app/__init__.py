@@ -61,6 +61,7 @@ def create_app():
 
     # Import models and routes here to avoid circular imports
     from app import models
+    from app.models import Course
     from app import routes
     from app.utils import convert_to_embed_url
 

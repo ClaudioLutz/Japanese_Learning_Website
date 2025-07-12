@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Courses{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Courses</h1>
+    <div class="row">
+        <!-- Courses will be populated by JavaScript -->
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    $.get('/api/courses')
+        .done(function(data) {
+            console.log('API response:', data);
+            let coursesRow = $('.row');
+            coursesRow.empty();
+            
+            if (data && data.length > 0) {
+                data.forEach(function(course) {
+                    if (course.is_published) {
+                        let courseCard = `
+                            <div class="col-md-6 mb-4">
+                                <div class="card h-100">
+                                    <img src="${course.background_image_url || 'https://via.placeholder.com/600x400'}" class="card-img-top" alt="${course.title}">
+                                    <div class="card-body">
+                                        <h5 class="card-title">${course.title}</h5>
+                                        <p class="card-text">${course.description}</p>
+                                        <a href="/course/${course.id}" class="btn btn-primary">View Course</a>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        coursesRow.append(courseCard);
+                    }
+                });
+            } else {
+                coursesRow.append('<div class="col-12"><p class="text-center">No courses available.</p></div>');
+            }
+        })
+        .fail(function(xhr, status, error) {
+            console.error('API request failed:', status, error);
+            console.error('Response:', xhr.responseText);
+            let coursesRow = $('.row');
+            coursesRow.empty();
+            coursesRow.append('<div class="col-12"><p class="text-center text-danger">Error loading courses. Please refresh the page.</p></div>');
+        });
+});
+</script>
+{% endblock %}

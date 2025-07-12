@@ -1,10 +1,11 @@
 # app/routes.py
 import json
+from datetime import datetime
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError # Import specific exceptions
 from app import db
-from app.models import User, Kana, Kanji, Vocabulary, Grammar, LessonCategory, Lesson, LessonContent, LessonPrerequisite, UserLessonProgress, QuizQuestion, QuizOption, UserQuizAnswer, LessonPage
+from app.models import User, Kana, Kanji, Vocabulary, Grammar, LessonCategory, Lesson, LessonContent, LessonPrerequisite, UserLessonProgress, QuizQuestion, QuizOption, UserQuizAnswer, LessonPage, Course
 from app.forms import RegistrationForm, LoginForm, CSRFTokenForm
 from app.ai_services import AILessonContentGenerator
 from app.lesson_export_import import (
@@ -18,7 +19,12 @@ def model_to_dict(model_instance):
     """Converts a SQLAlchemy model instance to a dictionary."""
     d = {}
     for column in model_instance.__table__.columns:
-        d[column.name] = getattr(model_instance, column.name)
+        value = getattr(model_instance, column.name)
+        # Handle datetime objects for JSON serialization
+        if isinstance(value, datetime):
+            d[column.name] = value.isoformat()
+        else:
+            d[column.name] = value
     return d
 
 bp = Blueprint('routes', __name__)
@@ -169,6 +175,13 @@ def admin_manage_lessons():
 def admin_manage_categories():
     return render_template('admin/manage_categories.html')
 
+@bp.route('/admin/manage/courses')
+@login_required
+@admin_required
+def admin_manage_courses():
+    form = CSRFTokenForm()
+    return render_template('admin/manage_courses.html', form=form)
+
 @bp.route('/admin/manage/approval')
 @login_required
 @admin_required
@@ -187,6 +200,20 @@ def admin_manage_approval():
 def lessons():
     """Browse available lessons"""
     return render_template('lessons.html')
+
+@bp.route('/courses')
+@login_required
+def courses():
+    """Browse available courses"""
+    courses = Course.query.filter_by(is_published=True).all()
+    return render_template('courses.html', courses=courses)
+
+@bp.route('/course/<int:course_id>')
+@login_required
+def view_course(course_id):
+    """View a specific course"""
+    course = Course.query.get_or_404(course_id)
+    return render_template('course_view.html', course=course)
 
 @bp.route('/lessons/<int:lesson_id>')
 @login_required
@@ -629,6 +656,100 @@ def delete_category(item_id):
     db.session.commit()
     return jsonify({"message": "Category deleted successfully"}), 200
 
+# == COURSE CRUD API ==
+@bp.route('/api/admin/courses', methods=['GET'])
+@login_required
+@admin_required
+def list_courses():
+    items = Course.query.all()
+    return jsonify([model_to_dict(item) for item in items])
+
+@bp.route('/api/admin/courses/new', methods=['POST'])
+@login_required
+@admin_required
+def create_course():
+    # Validate CSRF token from header
+    from flask_wtf.csrf import validate_csrf
+    try:
+        csrf_token = request.headers.get('X-CSRFToken')
+        if not csrf_token:
+            return jsonify({"error": "CSRF token missing"}), 400
+        validate_csrf(csrf_token)
+    except Exception as e:
+        return jsonify({"error": "CSRF token invalid"}), 400
+    
+    data = request.json
+    if not data or not data.get('title'):
+        return jsonify({"error": "Missing required field: title"}), 400
+
+    new_item = Course(
+        title=data.get('title'),
+        description=data.get('description'),
+        background_image_url=data.get('background_image_url'),
+        is_published=data.get('is_published', False)
+    )
+    
+    # Handle lesson assignments
+    if 'lessons' in data:
+        lesson_ids = data['lessons']
+        for lesson_id in lesson_ids:
+            lesson = Lesson.query.get(lesson_id)
+            if lesson:
+                new_item.lessons.append(lesson)
+    
+    try:
+        db.session.add(new_item)
+        db.session.commit()
+        return jsonify(model_to_dict(new_item)), 201
+    except IntegrityError:
+        db.session.rollback()
+        return jsonify({"error": "Database integrity error."}), 409
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({"error": "Database error occurred."}), 500
+
+@bp.route('/api/admin/courses/<int:item_id>', methods=['GET'])
+@login_required
+@admin_required
+def get_course(item_id):
+    item = Course.query.get_or_404(item_id)
+    course_dict = model_to_dict(item)
+    course_dict['lessons'] = [model_to_dict(lesson) for lesson in item.lessons]
+    return jsonify(course_dict)
+
+@bp.route('/api/admin/courses/<int:item_id>/edit', methods=['PUT', 'PATCH'])
+@login_required
+@admin_required
+def update_course(item_id):
+    item = Course.query.get_or_404(item_id)
+    data = request.json
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+
+    item.title = data.get('title', item.title)
+    item.description = data.get('description', item.description)
+    item.background_image_url = data.get('background_image_url', item.background_image_url)
+    item.is_published = data.get('is_published', item.is_published)
+
+    if 'lessons' in data:
+        item.lessons = []
+        for lesson_id in data['lessons']:
+            lesson = Lesson.query.get(lesson_id)
+            if lesson:
+                item.lessons.append(lesson)
+
+    db.session.commit()
+    return jsonify(model_to_dict(item))
+
+@bp.route('/api/admin/courses/<int:item_id>/delete', methods=['DELETE'])
+@login_required
+@admin_required
+def delete_course(item_id):
+    item = Course.query.get_or_404(item_id)
+    db.session.delete(item)
+    db.session.commit()
+    return jsonify({"message": "Course deleted successfully"}), 200
+
 # == LESSON CRUD API ==
 @bp.route('/api/admin/lessons', methods=['GET'])
 @login_required
@@ -726,6 +847,16 @@ def update_lesson(item_id):
     item.instruction_language = data.get('instruction_language', item.instruction_language)
     item.thumbnail_url = data.get('thumbnail_url', item.thumbnail_url)
     item.video_intro_url = data.get('video_intro_url', item.video_intro_url)
+
+    # Handle course assignment
+    if 'course_ids' in data:
+        # Clear existing course relationships
+        item.courses = []
+        # Add new course relationships
+        for course_id in data['course_ids']:
+            course = Course.query.get(course_id)
+            if course:
+                item.courses.append(course)
 
     db.session.commit()
     return jsonify(model_to_dict(item))
@@ -1501,9 +1632,10 @@ def update_lesson_page(lesson_id, page_num):
         db.session.add(page)
         current_app.logger.info(f"Created new page {page_num} for lesson {lesson_id}")
     else:
-        page.title = data.get('title', page.title)
-        page.description = data.get('description', page.description)
-        current_app.logger.info(f"Updating existing page {page_num} for lesson {lesson_id}")
+        if data:
+            page.title = data.get('title', page.title)
+            page.description = data.get('description', page.description)
+            current_app.logger.info(f"Updating existing page {page_num} for lesson {lesson_id}")
 
     try:
         db.session.commit()
@@ -1548,6 +1680,12 @@ def get_user_lessons():
         accessible_lessons.append(lesson_dict)
     
     return jsonify(accessible_lessons)
+
+@bp.route('/api/courses', methods=['GET'])
+def get_courses():
+    """Get all courses"""
+    courses = Course.query.filter_by(is_published=True).all()
+    return jsonify([model_to_dict(course) for course in courses])
 
 @bp.route('/api/categories', methods=['GET'])
 def get_public_categories():
@@ -1685,11 +1823,9 @@ def submit_quiz_answer(lesson_id, question_id):
     """Submit answer to quiz question"""
     try:
         lesson = Lesson.query.get_or_404(lesson_id)
-        question = db.session.query(QuizQuestion).options(
-            joinedload(QuizQuestion.content)
-        ).filter(QuizQuestion.id == question_id).first()
+        question = db.session.query(QuizQuestion).filter(QuizQuestion.id == question_id).first()
 
-        if not question or question.content.lesson_id != lesson_id:
+        if not question or not hasattr(question, 'content') or question.content.lesson_id != lesson_id:
             return jsonify({"error": "Question not found in this lesson"}), 404
         
         # Check lesson access

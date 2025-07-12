@@ -4,18 +4,19 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import json
+from typing import List
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import ForeignKey, Table, Column, Integer, String, Text, Boolean, DateTime, JSON
 
 class User(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(256), nullable=False)
-    # For prototype, a simple string. Can be more complex later.
-    subscription_level = db.Column(db.String(50), default='free') # 'free', 'premium'
-    is_admin = db.Column(db.Boolean, default=False, nullable=False)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    username: Mapped[str] = mapped_column(String(80), unique=True, nullable=False)
+    email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
+    password_hash: Mapped[str] = mapped_column(String(256), nullable=False)
+    subscription_level: Mapped[str] = mapped_column(String(50), default='free')
+    is_admin: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 
-    # Relationship for lesson progress
-    lesson_progress = db.relationship('UserLessonProgress', backref='user', lazy=True, cascade='all, delete-orphan')
+    lesson_progress: Mapped[List['UserLessonProgress']] = relationship('UserLessonProgress', backref='user', lazy=True, cascade='all, delete-orphan')
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -30,6 +31,7 @@ class User(UserMixin, db.Model):
         return f'<User {self.username}>'
 
 class Kana(db.Model):
+    __allow_unmapped__ = True
     id = db.Column(db.Integer, primary_key=True)
     character = db.Column(db.String(5), nullable=False, unique=True)
     romanization = db.Column(db.String(10), nullable=False)
@@ -44,6 +46,7 @@ class Kana(db.Model):
         return f'<Kana {self.character}>'
 
 class Kanji(db.Model):
+    __allow_unmapped__ = True
     id = db.Column(db.Integer, primary_key=True)
     character = db.Column(db.String(5), nullable=False, unique=True)
     meaning = db.Column(db.Text, nullable=False)
@@ -63,6 +66,7 @@ class Kanji(db.Model):
         return f'<Kanji {self.character}>'
 
 class Vocabulary(db.Model):
+    __allow_unmapped__ = True
     id = db.Column(db.Integer, primary_key=True)
     word = db.Column(db.String(100), nullable=False, unique=True)
     reading = db.Column(db.String(100), nullable=False)
@@ -81,6 +85,7 @@ class Vocabulary(db.Model):
         return f'<Vocabulary {self.word}>'
 
 class Grammar(db.Model):
+    __allow_unmapped__ = True
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False, unique=True)
     explanation = db.Column(db.Text, nullable=False)
@@ -97,6 +102,7 @@ class Grammar(db.Model):
         return f'<Grammar {self.title}>'
 
 class LessonCategory(db.Model):
+    __allow_unmapped__ = True
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True, nullable=False)
     description = db.Column(db.Text)
@@ -113,31 +119,32 @@ class LessonCategory(db.Model):
         return f'<LessonCategory {self.name}>'
 
 class Lesson(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(200), nullable=False)
-    description = db.Column(db.Text)
-    lesson_type = db.Column(db.String(20), nullable=False)  # 'free' or 'premium'
-    category_id = db.Column(db.Integer, db.ForeignKey('lesson_category.id'))
-    difficulty_level = db.Column(db.Integer)  # 1-5 (beginner to advanced)
-    estimated_duration = db.Column(db.Integer)  # minutes
-    order_index = db.Column(db.Integer, default=0)  # for lesson ordering within category
-    is_published = db.Column(db.Boolean, default=False)
-    instruction_language = db.Column(db.String(10), default='english', nullable=False)  # language used for explanations/instructions
-    thumbnail_url = db.Column(db.String(255))  # lesson cover image
-    video_intro_url = db.Column(db.String(255))  # optional intro video
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    title: Mapped[str] = mapped_column(String(200), nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=True)
+    lesson_type: Mapped[str] = mapped_column(String(20), nullable=False)
+    category_id: Mapped[int] = mapped_column(Integer, ForeignKey('lesson_category.id'), nullable=True)
+    difficulty_level: Mapped[int] = mapped_column(Integer, nullable=True)
+    estimated_duration: Mapped[int] = mapped_column(Integer, nullable=True)
+    order_index: Mapped[int] = mapped_column(Integer, default=0)
+    is_published: Mapped[bool] = mapped_column(Boolean, default=False)
+    instruction_language: Mapped[str] = mapped_column(String(10), default='english', nullable=False)
+    thumbnail_url: Mapped[str] = mapped_column(String(255), nullable=True)
+    video_intro_url: Mapped[str] = mapped_column(String(255), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     # Relationships
-    content_items = db.relationship('LessonContent', backref='lesson', lazy=True, cascade='all, delete-orphan')
-    prerequisites = db.relationship('LessonPrerequisite', 
+    content_items: Mapped[List['LessonContent']] = relationship('LessonContent', backref='lesson', lazy=True, cascade='all, delete-orphan')
+    prerequisites: Mapped[List['LessonPrerequisite']] = relationship('LessonPrerequisite', 
                                   foreign_keys='LessonPrerequisite.lesson_id',
                                   backref='lesson', lazy=True, cascade='all, delete-orphan')
-    required_by = db.relationship('LessonPrerequisite',
+    required_by: Mapped[List['LessonPrerequisite']] = relationship('LessonPrerequisite',
                                 foreign_keys='LessonPrerequisite.prerequisite_lesson_id',
-                                backref='prerequisite_lesson', lazy=True)
-    user_progress = db.relationship('UserLessonProgress', backref='lesson', lazy=True, cascade='all, delete-orphan')
-    pages_metadata = db.relationship('LessonPage', backref='lesson', lazy=True, cascade='all, delete-orphan')
+                                lazy=True)
+    user_progress: Mapped[List['UserLessonProgress']] = relationship('UserLessonProgress', lazy=True, cascade='all, delete-orphan')
+    pages_metadata: Mapped[List['LessonPage']] = relationship('LessonPage', backref='lesson', lazy=True, cascade='all, delete-orphan')
+    courses: Mapped[List['Course']] = relationship('Course', secondary='course_lessons', back_populates='lessons')
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -145,7 +152,7 @@ class Lesson(db.Model):
     def __repr__(self):
         return f'<Lesson {self.title}>'
     
-    def get_prerequisites(self):
+    def get_prerequisites(self) -> List['Lesson']:
         """Get list of prerequisite lessons"""
         return [prereq.prerequisite_lesson for prereq in self.prerequisites]
     
@@ -193,9 +200,11 @@ class Lesson(db.Model):
         return [pages_dict[p_num] for p_num in sorted(pages_dict.keys())]
 
 class LessonPrerequisite(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    lesson_id = db.Column(db.Integer, db.ForeignKey('lesson.id'), nullable=False)
-    prerequisite_lesson_id = db.Column(db.Integer, db.ForeignKey('lesson.id'), nullable=False)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    lesson_id: Mapped[int] = mapped_column(Integer, ForeignKey('lesson.id'), nullable=False)
+    prerequisite_lesson_id: Mapped[int] = mapped_column(Integer, ForeignKey('lesson.id'), nullable=False)
+    
+    prerequisite_lesson: Mapped["Lesson"] = relationship(foreign_keys=[prerequisite_lesson_id])
     
     __table_args__ = (db.UniqueConstraint('lesson_id', 'prerequisite_lesson_id'),)
     
@@ -203,6 +212,7 @@ class LessonPrerequisite(db.Model):
         return f'<LessonPrerequisite {self.lesson_id} requires {self.prerequisite_lesson_id}>'
 
 class LessonPage(db.Model):
+    __allow_unmapped__ = True
     id = db.Column(db.Integer, primary_key=True)
     lesson_id = db.Column(db.Integer, db.ForeignKey('lesson.id'), nullable=False)
     page_number = db.Column(db.Integer, nullable=False)
@@ -215,6 +225,7 @@ class LessonPage(db.Model):
         return f'<LessonPage {self.title} for lesson {self.lesson_id}>'
 
 class LessonContent(db.Model):
+    __allow_unmapped__ = True
     id = db.Column(db.Integer, primary_key=True)
     lesson_id = db.Column(db.Integer, db.ForeignKey('lesson.id'), nullable=False)
     content_type = db.Column(db.String(20), nullable=False)  # 'kana', 'kanji', 'vocabulary', 'grammar', 'text', 'image', 'video', 'audio'
@@ -296,6 +307,7 @@ class LessonContent(db.Model):
         return None
 
 class QuizQuestion(db.Model):
+    __allow_unmapped__ = True
     id = db.Column(db.Integer, primary_key=True)
     lesson_content_id = db.Column(db.Integer, db.ForeignKey('lesson_content.id'), nullable=False)
     question_type = db.Column(db.String(50), nullable=False)  # 'multiple_choice', 'fill_blank', 'true_false', 'matching'
@@ -315,6 +327,7 @@ class QuizQuestion(db.Model):
         super().__init__(**kwargs)
 
 class QuizOption(db.Model):
+    __allow_unmapped__ = True
     id = db.Column(db.Integer, primary_key=True)
     question_id = db.Column(db.Integer, db.ForeignKey('quiz_question.id'), nullable=False)
     option_text = db.Column(db.Text, nullable=False)
@@ -326,6 +339,7 @@ class QuizOption(db.Model):
         super().__init__(**kwargs)
 
 class UserQuizAnswer(db.Model):
+    __allow_unmapped__ = True
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     question_id = db.Column(db.Integer, db.ForeignKey('quiz_question.id'), nullable=False)
@@ -341,19 +355,20 @@ class UserQuizAnswer(db.Model):
         super().__init__(**kwargs)
 
 class UserLessonProgress(db.Model):
+    __allow_unmapped__ = True
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     lesson_id = db.Column(db.Integer, db.ForeignKey('lesson.id'), nullable=False)
     started_at = db.Column(db.DateTime, default=datetime.utcnow)
     completed_at = db.Column(db.DateTime)
     is_completed = db.Column(db.Boolean, default=False)
-    progress_percentage = db.Column(db.Integer, default=0)  # 0-100
-    time_spent = db.Column(db.Integer, default=0)  # minutes
+    progress_percentage = db.Column(db.Integer, default=0)
+    time_spent = db.Column(db.Integer, default=0)
     last_accessed = db.Column(db.DateTime, default=datetime.utcnow)
+    content_progress = db.Column(db.Text)
     
-    # Track progress on individual content items
-    content_progress = db.Column(db.Text)  # JSON string of content item completion
-    
+    lesson: Mapped['Lesson'] = relationship(foreign_keys=[lesson_id])
+
     __table_args__ = (db.UniqueConstraint('user_id', 'lesson_id'),)
     
     def __init__(self, **kwargs):
@@ -414,3 +429,23 @@ class UserLessonProgress(db.Model):
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+course_lessons = Table('course_lessons', db.metadata,
+    Column('course_id', Integer, ForeignKey('course.id'), primary_key=True),
+    Column('lesson_id', Integer, ForeignKey('lesson.id'), primary_key=True)
+)
+
+class Course(db.Model):
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    title: Mapped[str] = mapped_column(String(200), nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=True)
+    background_image_url: Mapped[str] = mapped_column(String(255), nullable=True)
+    is_published: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    lessons: Mapped[List['Lesson']] = relationship('Lesson', secondary=course_lessons, lazy='subquery',
+                              back_populates='courses')
+
+    def __repr__(self):
+        return f'<Course {self.title}>'
