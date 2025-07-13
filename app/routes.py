@@ -196,20 +196,17 @@ def admin_manage_approval():
 
 # --- Lesson Routes for Users ---
 @bp.route('/lessons')
-@login_required
 def lessons():
     """Browse available lessons"""
     return render_template('lessons.html')
 
 @bp.route('/courses')
-@login_required
 def courses():
     """Browse available courses"""
     courses = Course.query.filter_by(is_published=True).all()
     return render_template('courses.html', courses=courses)
 
 @bp.route('/course/<int:course_id>')
-@login_required
 def view_course(course_id):
     """View a specific course"""
     course = Course.query.get_or_404(course_id)
@@ -261,26 +258,30 @@ def view_course(course_id):
                          has_started=has_started)
 
 @bp.route('/lessons/<int:lesson_id>')
-@login_required
 def view_lesson(lesson_id):
     """View a specific lesson"""
     lesson = Lesson.query.get_or_404(lesson_id)
     
-    # Check if user can access this lesson
-    accessible, message = lesson.is_accessible_to_user(current_user)
+    # Check if user can access this lesson (supports both authenticated and guest users)
+    user = current_user if current_user.is_authenticated else None
+    accessible, message = lesson.is_accessible_to_user(user)
     if not accessible:
         flash(message, 'warning')
+        if not current_user.is_authenticated and 'Login required' in message:
+            return redirect(url_for('routes.login', next=request.url))
         return redirect(url_for('routes.lessons'))
     
-    # Get or create user progress
-    progress = UserLessonProgress.query.filter_by(
-        user_id=current_user.id, lesson_id=lesson_id
-    ).first()
-    
-    if not progress:
-        progress = UserLessonProgress(user_id=current_user.id, lesson_id=lesson_id)
-        db.session.add(progress)
-        db.session.commit()
+    # Get or create user progress (only for authenticated users)
+    progress = None
+    if current_user.is_authenticated:
+        progress = UserLessonProgress.query.filter_by(
+            user_id=current_user.id, lesson_id=lesson_id
+        ).first()
+        
+        if not progress:
+            progress = UserLessonProgress(user_id=current_user.id, lesson_id=lesson_id)
+            db.session.add(progress)
+            db.session.commit()
     
     # Get all quiz questions for this lesson
     quiz_questions = []
@@ -288,9 +289,9 @@ def view_lesson(lesson_id):
         if content.is_interactive:
             quiz_questions.extend(content.quiz_questions)
     
-    # Get user's existing quiz answers
+    # Get user's existing quiz answers (only for authenticated users)
     user_quiz_answers = {}
-    if quiz_questions:
+    if current_user.is_authenticated and quiz_questions:
         question_ids = [q.id for q in quiz_questions]
         answers = UserQuizAnswer.query.filter(
             UserQuizAnswer.user_id == current_user.id,
@@ -830,6 +831,7 @@ def create_lesson():
         estimated_duration=data.get('estimated_duration'),
         order_index=data.get('order_index', 0),
         is_published=data.get('is_published', False),
+        allow_guest_access=data.get('allow_guest_access', False),
         instruction_language=data.get('instruction_language', 'english'),
         thumbnail_url=data.get('thumbnail_url'),
         video_intro_url=data.get('video_intro_url')
@@ -889,6 +891,7 @@ def update_lesson(item_id):
     item.estimated_duration = data.get('estimated_duration', item.estimated_duration)
     item.order_index = data.get('order_index', item.order_index)
     item.is_published = data.get('is_published', item.is_published)
+    item.allow_guest_access = data.get('allow_guest_access', item.allow_guest_access)
     item.instruction_language = data.get('instruction_language', item.instruction_language)
     item.thumbnail_url = data.get('thumbnail_url', item.thumbnail_url)
     item.video_intro_url = data.get('video_intro_url', item.video_intro_url)
@@ -1696,9 +1699,8 @@ def update_lesson_page(lesson_id, page_num):
 
 # == USER LESSON API ==
 @bp.route('/api/lessons', methods=['GET'])
-@login_required
 def get_user_lessons():
-    """Get lessons accessible to the current user, with optional filtering."""
+    """Get lessons accessible to the current user or guest, with optional filtering."""
     instruction_language = request.args.get('instruction_language')
     
     query = Lesson.query.filter_by(is_published=True)
@@ -1709,17 +1711,21 @@ def get_user_lessons():
     lessons = query.order_by(Lesson.order_index.asc(), Lesson.id.asc()).all()
     
     accessible_lessons = []
+    user = current_user if current_user.is_authenticated else None
+    
     for lesson in lessons:
-        accessible, message = lesson.is_accessible_to_user(current_user)
+        accessible, message = lesson.is_accessible_to_user(user)
         lesson_dict = model_to_dict(lesson)
         lesson_dict['accessible'] = accessible
         lesson_dict['access_message'] = message
         lesson_dict['category_name'] = lesson.category.name if lesson.category else None
         
-        # Get user progress if exists
-        progress = UserLessonProgress.query.filter_by(
-            user_id=current_user.id, lesson_id=lesson.id
-        ).first()
+        # Get user progress if exists (only for authenticated users)
+        progress = None
+        if current_user.is_authenticated:
+            progress = UserLessonProgress.query.filter_by(
+                user_id=current_user.id, lesson_id=lesson.id
+            ).first()
         lesson_dict['progress'] = model_to_dict(progress) if progress else None
         
         accessible_lessons.append(lesson_dict)

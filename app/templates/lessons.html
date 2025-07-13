@@ -174,6 +174,7 @@ function createLessonCard(lesson) {
     const accessible = lesson.accessible;
     const progress = lesson.progress;
     const progressPercentage = progress ? progress.progress_percentage : 0;
+    const isGuest = !window.currentUser; // Check if user is logged in
     
     // MODIFIED HTML STRUCTURE
     col.innerHTML = `
@@ -182,6 +183,7 @@ function createLessonCard(lesson) {
                 <div class="mb-2">
                     <span class="badge ${lesson.lesson_type === 'free' ? 'bg-success' : 'bg-warning'}">${lesson.lesson_type}</span>
                     ${lesson.category_name ? `<span class="badge bg-info text-dark">${lesson.category_name}</span>` : ''}
+                    ${lesson.allow_guest_access ? '<span class="badge bg-light text-dark">👤 Guest Friendly</span>' : ''}
                 </div>
                 <h5 class="card-title mt-1">${lesson.title}</h5>
                 <p class="card-text small text-muted flex-grow-1">${lesson.description || 'No description available.'}</p>
@@ -201,11 +203,18 @@ function createLessonCard(lesson) {
                     ${accessible ? `
                         <a href="/lessons/${lesson.id}" class="btn btn-primary w-100">
                             ${progress ? (progressPercentage === 100 ? 'Review Lesson' : 'Continue Lesson') : 'Start Lesson'}
+                            ${isGuest && lesson.allow_guest_access ? ' (Guest Mode)' : ''}
                         </a>
                     ` : `
                         <button class="btn btn-secondary w-100" disabled>
                             ${lesson.access_message}
                         </button>
+                        ${isGuest && !lesson.allow_guest_access ? `
+                            <small class="text-muted mt-2 d-block">
+                                <a href="/login" class="text-decoration-none">Login</a> or 
+                                <a href="/register" class="text-decoration-none">Register</a> to access this lesson
+                            </small>
+                        ` : ''}
                     `}
                 </div>
             </div>

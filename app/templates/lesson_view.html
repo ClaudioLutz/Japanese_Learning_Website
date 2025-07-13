@@ -285,37 +285,49 @@
                         </div>
                     </div>
                     
-                    {% if progress %}
-                    <div class="mt-3">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h6 class="mb-0">Your Progress</h6>
-                            <span class="text-muted">{{ progress.progress_percentage }}%</span>
-                        </div>
-                        <div class="progress mb-2">
-                            <div class="progress-bar" role="progressbar" 
-                                 style="width: {{ progress.progress_percentage }}%" 
-                                 aria-valuenow="{{ progress.progress_percentage }}" 
-                                 aria-valuemin="0" aria-valuemax="100">
+                    {% if current_user.is_authenticated %}
+                        {% if progress %}
+                        <div class="mt-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="mb-0">Your Progress</h6>
+                                <span class="text-muted">{{ progress.progress_percentage }}%</span>
+                            </div>
+                            <div class="progress mb-2">
+                                <div class="progress-bar" role="progressbar" 
+                                     style="width: {{ progress.progress_percentage }}%" 
+                                     aria-valuenow="{{ progress.progress_percentage }}" 
+                                     aria-valuemin="0" aria-valuemax="100">
+                                </div>
+                            </div>
+                            <div class="row text-center">
+                                {% if progress.time_spent %}
+                                <div class="col">
+                                    <small class="text-muted">Time Spent: {{ progress.time_spent }} minutes</small>
+                                </div>
+                                {% endif %}
+                                {% if progress.started_at %}
+                                <div class="col">
+                                    <small class="text-muted">Started: {{ progress.started_at.strftime('%Y-%m-%d') }}</small>
+                                </div>
+                                {% endif %}
+                                {% if progress.completed_at %}
+                                <div class="col">
+                                    <small class="text-success">Completed: {{ progress.completed_at.strftime('%Y-%m-%d') }}</small>
+                                </div>
+                                {% endif %}
                             </div>
                         </div>
-                        <div class="row text-center">
-                            {% if progress.time_spent %}
-                            <div class="col">
-                                <small class="text-muted">Time Spent: {{ progress.time_spent }} minutes</small>
+                        {% endif %}
+                    {% else %}
+                        <div class="mt-3">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle"></i> 
+                                <strong>Guest Access:</strong> You're viewing this lesson as a guest. 
+                                <a href="{{ url_for('routes.register') }}" class="alert-link">Create an account</a> 
+                                or <a href="{{ url_for('routes.login') }}" class="alert-link">login</a> 
+                                to track your progress and access quizzes.
                             </div>
-                            {% endif %}
-                            {% if progress.started_at %}
-                            <div class="col">
-                                <small class="text-muted">Started: {{ progress.started_at.strftime('%Y-%m-%d') }}</small>
-                            </div>
-                            {% endif %}
-                            {% if progress.completed_at %}
-                            <div class="col">
-                                <small class="text-success">Completed: {{ progress.completed_at.strftime('%Y-%m-%d') }}</small>
-                            </div>
-                            {% endif %}
                         </div>
-                    </div>
                     {% endif %}
                 </div>
             </div>
@@ -407,6 +419,7 @@
                                                     <span class="badge bg-warning ms-2">Optional</span>
                                                     {% endif %}
                                                 </h6>
+                                                {% if current_user.is_authenticated %}
                                                 <button class="btn btn-sm btn-outline-success mark-complete-btn" 
                                                         onclick="markContentComplete({{ content.id }})"
                                                         {% if progress and progress.get_content_progress().get(content.id | string) %}
@@ -420,6 +433,7 @@
                                                       {% endif %}>
                                                     ✓ Completed
                                                 </span>
+                                                {% endif %}
                                             </div>
                                             
                                             <div class="content-body">
@@ -535,6 +549,7 @@
                                                     {% endif %}
                                                 {% endif %}
                                                 {% if content.is_interactive %}
+                                                {% if current_user.is_authenticated %}
                                                 <div class="interactive-content-container" data-content-id="{{ content.id }}">
                                                     {% for question in content.quiz_questions %}
                                                     {% set user_answer = user_quiz_answers.get(question.id) %}
@@ -667,6 +682,14 @@
                                                     </div>
                                                     {% endfor %}
                                                 </div>
+                                                {% else %}
+                                                <div class="alert alert-warning">
+                                                    <i class="fas fa-lock"></i> 
+                                                    <strong>Quiz Available:</strong> This lesson contains interactive quizzes. 
+                                                    <a href="{{ url_for('routes.login') }}" class="alert-link">Login</a> 
+                                                    to access the quiz features.
+                                                </div>
+                                                {% endif %}
                                                 {% endif %}
                                             </div>
                                         </div>

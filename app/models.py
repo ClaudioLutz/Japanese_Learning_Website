@@ -128,6 +128,7 @@ class Lesson(db.Model):
     estimated_duration: Mapped[int] = mapped_column(Integer, nullable=True)
     order_index: Mapped[int] = mapped_column(Integer, default=0)
     is_published: Mapped[bool] = mapped_column(Boolean, default=False)
+    allow_guest_access: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     instruction_language: Mapped[str] = mapped_column(String(10), default='english', nullable=False)
     thumbnail_url: Mapped[str] = mapped_column(String(255), nullable=True)
     video_intro_url: Mapped[str] = mapped_column(String(255), nullable=True)
@@ -158,11 +159,18 @@ class Lesson(db.Model):
     
     def is_accessible_to_user(self, user):
         """Check if user can access this lesson based on subscription and prerequisites"""
-        # Check subscription level
+        # Handle guest users (not authenticated)
+        if user is None or not hasattr(user, 'is_authenticated') or not user.is_authenticated:
+            if self.allow_guest_access and self.lesson_type == 'free':
+                return True, "Accessible as guest"
+            else:
+                return False, "Login required to access this lesson"
+        
+        # Check subscription level for authenticated users
         if self.lesson_type == 'premium' and user.subscription_level != 'premium':
             return False, "Premium subscription required"
         
-        # Check prerequisites
+        # Check prerequisites for authenticated users
         for prereq in self.get_prerequisites(): # type: ignore
             progress = UserLessonProgress.query.filter_by(
                 user_id=user.id, lesson_id=prereq.id

@@ -8,10 +8,27 @@
     <div class="welcome-card text-center">
         <h1>Begin Your Japanese Journey</h1>
         <p class="lead text-muted">Explore interactive lessons, from basic Kana to complex Kanji, designed to make learning intuitive and fun.</p>
+        
+        {% if current_user.is_authenticated %}
         <div class="mt-4">
-            <a href="{{ url_for('routes.lessons') }}" class="btn btn-primary btn-lg">Explore Lessons</a>
+            <a href="{{ url_for('routes.lessons') }}" class="btn btn-primary btn-lg">Continue Learning</a>
         </div>
-        {% if not current_user.is_authenticated %}
+        {% else %}
+        <div class="mt-4">
+            <a href="{{ url_for('routes.lessons') }}" class="btn btn-primary btn-lg me-3">
+                <i class="fas fa-book-open"></i> Try Lessons as Guest
+            </a>
+            <a href="{{ url_for('routes.register') }}" class="btn btn-success btn-lg">
+                <i class="fas fa-user-plus"></i> Create Account
+            </a>
+        </div>
+        <div class="mt-3">
+            <div class="alert alert-info d-inline-block">
+                <i class="fas fa-info-circle"></i>
+                <strong>Guest Access:</strong> Try selected lessons without creating an account!<br>
+                <small>Create an account to track progress and access all premium content.</small>
+            </div>
+        </div>
         <p class="mt-3">
             <small>Already have an account? <a href="{{ url_for('routes.login') }}">Login here</a>.</small>
         </p>
