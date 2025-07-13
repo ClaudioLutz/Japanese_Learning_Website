@@ -1060,6 +1060,57 @@ button[onclick*="moveContentInPage"]:active {
     line-height: 1.6 !important;
 }
 
+/* Center-align only content items that contain images */
+.content-item:has(img) {
+    text-align: center !important;
+}
+
+.content-item:has(img) img {
+    display: block !important;
+    margin: 0 auto !important;
+}
+
+.content-item:has(img) .text-content-container {
+    text-align: center !important;
+}
+
+.content-item:has(img) .rich-text-content {
+    text-align: center !important;
+}
+
+.content-item:has(img) .content-title {
+    text-align: center !important;
+}
+
+.content-item:has(img) .mb-3 {
+    text-align: center !important;
+}
+
+/* Fallback for browsers that don't support :has() selector */
+.content-item img {
+    display: block !important;
+    margin: 0 auto !important;
+}
+
+/* Only center content items with image content type */
+.content-item[data-content-id] {
+    /* Reset text alignment to default */
+    text-align: left !important;
+}
+
+/* Specifically target image content items */
+.content-item .content-body:has(img),
+.content-item:has([src*="uploads"]),
+.content-item:has([src*="static"]) {
+    text-align: center !important;
+}
+
+.content-item .content-body:has(img) .mb-3,
+.content-item:has([src*="uploads"]) .mb-3,
+.content-item:has([src*="static"]) .mb-3 {
+    text-align: center !important;
+}
+
 /* Enhanced Courses Page Styles */
 
 /* Hero Section */

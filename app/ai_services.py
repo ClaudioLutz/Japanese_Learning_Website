@@ -35,7 +35,7 @@ class AILessonContentGenerator:
             response_format: ResponseFormat = {"type": "json_object"} if is_json else {"type": "text"}
             
             completion = self.client.chat.completions.create(
-                model="gpt-4.1", # Or "gpt-3.5-turbo"
+                model="gpt-4.5-preview", # Or "gpt-3.5-turbo"
                 messages=messages,
                 response_format=response_format
             )
@@ -91,6 +91,7 @@ class AILessonContentGenerator:
         system_prompt = (
             "You are a Japanese quiz designer. Generate a true/false question. "
             "The question should be a clear statement. Provide a detailed explanation. "
+            "Always include romanization for Japanese terms. "
             "Format the output as a single, valid JSON object."
         )
         user_prompt = f"""
@@ -101,9 +102,15 @@ class AILessonContentGenerator:
         Generate a JSON object with the following structure:
         {{
           "question_text": "The true/false statement...",
-          "is_true": true,
+          "correct_answer": true,
           "explanation": "A detailed explanation of why the statement is true or false."
         }}
+        
+        ROMANIZATION REQUIREMENTS:
+        - Include romanized pronunciation for ALL Japanese characters
+        - Use strategic romanization in questions to avoid giving away answers
+        - Always include full romanization in explanations
+        - Example: "Sushi (寿司, sushi) is always served with wasabi (わさび, wasabi)"
         """
         
         content, error = self._generate_content(system_prompt, user_prompt, is_json=True)
@@ -302,7 +309,8 @@ class AILessonContentGenerator:
         """Generates a matching question in a structured JSON format."""
         system_prompt = (
             "You are a Japanese quiz designer. Create a matching question. "
-            "Provide two lists of items to match (e.g., words and meanings). "
+            "Provide pairs of items to match (e.g., Japanese words and their English meanings). "
+            "Always include romanization for Japanese terms. "
             "Format the output as a single, valid JSON object."
         )
         user_prompt = f"""
@@ -314,13 +322,22 @@ class AILessonContentGenerator:
         {{
           "question_text": "Match the Japanese words to their English meanings.",
           "pairs": [
-            {{"prompt": "Word A", "answer": "Meaning A"}},
-            {{"prompt": "Word B", "answer": "Meaning B"}},
-            {{"prompt": "Word C", "answer": "Meaning C"}},
-            {{"prompt": "Word D", "answer": "Meaning D"}}
+            {{"prompt": "Japanese Word A (romanization)", "answer": "English Meaning A"}},
+            {{"prompt": "Japanese Word B (romanization)", "answer": "English Meaning B"}},
+            {{"prompt": "Japanese Word C (romanization)", "answer": "English Meaning C"}},
+            {{"prompt": "Japanese Word D (romanization)", "answer": "English Meaning D"}}
           ],
-          "explanation": "General explanation for the set of pairs."
+          "explanation": "General explanation for the set of pairs with full romanization."
         }}
+        
+        CRITICAL REQUIREMENTS:
+        - Generate 4-6 pairs for a good matching exercise
+        - Include romanized pronunciation for ALL Japanese characters
+        - In prompts: Include both Japanese characters and romanization, e.g., "寿司 (sushi)"
+        - In answers: Provide clear, concise English meanings
+        - In explanations: Include full romanization for all Japanese terms mentioned
+        - Ensure all pairs are related to the lesson topic and keywords
+        - Make the matching challenging but fair for the difficulty level
         """
         
         content, error = self._generate_content(system_prompt, user_prompt, is_json=True)
@@ -329,7 +346,21 @@ class AILessonContentGenerator:
         
         try:
             if content:
-                return json.loads(content)
+                result = json.loads(content)
+                # Validate the structure
+                if 'pairs' not in result or not isinstance(result['pairs'], list):
+                    return {"error": "Invalid matching question structure: missing or invalid pairs"}
+                
+                # Ensure we have at least 3 pairs for a meaningful matching exercise
+                if len(result['pairs']) < 3:
+                    return {"error": "Insufficient pairs for matching question (minimum 3 required)"}
+                
+                # Validate each pair has both prompt and answer
+                for i, pair in enumerate(result['pairs']):
+                    if not isinstance(pair, dict) or 'prompt' not in pair or 'answer' not in pair:
+                        return {"error": f"Invalid pair structure at index {i}"}
+                
+                return result
             else:
                 return {"error": "Empty response from AI"}
         except json.JSONDecodeError as e:
@@ -342,9 +373,9 @@ class AILessonContentGenerator:
             "You are an expert Japanese quiz designer. Generate a multiple-choice question. "
             "Ensure distractors are plausible but incorrect. Provide brief feedback for each option. "
             "Include a hint and a difficulty level. "
-            "IMPORTANT: When including Japanese text in questions or options, always provide romanized pronunciation in parentheses. "
-            "For example: 'レストラン (resutoran)' or '美味しい (oishii)'. "
             "CRITICAL: Create UNIQUE and VARIED questions. Avoid repetition. Use different question formats and approaches. "
+            "IMPORTANT: Do NOT include the answer or hints about the correct answer in the question text itself. "
+            "Keep the question challenging but fair. Save Japanese terms with pronunciations for the answer choices, not the question. "
             "Format the output as a single, valid JSON object."
         )
         
@@ -381,13 +412,27 @@ class AILessonContentGenerator:
           "overall_explanation": "A general explanation for the correct answer."
         }}
         
-        CRITICAL REQUIREMENTS:
-        - Include romanized pronunciation for ALL Japanese text in parentheses
-        - Example: レストラン (resutoran), 水 (mizu), 美味しい (oishii)
-        - This applies to questions, options, and explanations
-        - Make content beginner-friendly with phonetic guidance
+        CRITICAL REQUIREMENTS FOR ROMANIZATION:
+        - ALWAYS include romanized pronunciation for ALL Japanese characters throughout the quiz
+        - In QUESTION TEXT: Use romanization strategically - include it for context words but NOT for the term being tested
+        - In ANSWER OPTIONS: Always include full romanization for all Japanese terms
+        - In EXPLANATIONS: Always include romanization for all Japanese terms
+        
+        EXAMPLE APPROACH:
+        - Question: "In a typical izakaya (izakaya), which yakitori item would most likely be described as 'momo' on the menu?"
+        - Options: "Chicken thigh skewers (もも, momo)", "Chicken breast skewers (むね, mune)", etc.
+        
+        STRATEGIC ROMANIZATION RULES:
+        - Context words in questions: Include romanization (e.g., "izakaya (izakaya)")
+        - Terms being tested in questions: Use only romanization without Japanese characters
+        - All answer options: Include both Japanese characters and romanization
+        - All explanations and feedback: Include full romanization
+        
+        ADDITIONAL REQUIREMENTS:
         - CREATE UNIQUE QUESTIONS - avoid repetition and use varied question styles
         - Use different approaches: translation, usage, context, pronunciation, etc.
+        - Focus on testing understanding rather than recognition
+        - Make questions challenging but fair for learners
         """
         
         content, error = self._generate_content(system_prompt, user_prompt, is_json=True)

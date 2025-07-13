@@ -1958,18 +1958,30 @@ def submit_quiz_answer(lesson_id, question_id):
             if not submitted_pairs:
                 return jsonify({"error": "No pairs submitted for matching question"}), 400
 
+            # Build correct answers mapping from question options
+            # option_text contains the prompt, feedback contains the correct answer
             correct_options = {opt.option_text: opt.feedback for opt in question.options}
             
             correct_matches = 0
+            total_pairs = len(correct_options)
+            
+            # Check each submitted pair against correct answers
             for pair in submitted_pairs:
                 prompt = pair.get('prompt')
                 user_answer = pair.get('answer')
-                if correct_options.get(prompt) == user_answer:
+                correct_answer = correct_options.get(prompt)
+                
+                current_app.logger.info(f"Checking pair - Prompt: '{prompt}', User Answer: '{user_answer}', Correct Answer: '{correct_answer}'")
+                
+                if correct_answer and user_answer == correct_answer:
                     correct_matches += 1
             
-            is_correct = correct_matches == len(correct_options)
+            # All pairs must be correct for the answer to be marked as correct
+            is_correct = correct_matches == total_pairs
             answer.is_correct = is_correct
-            answer.text_answer = json.dumps(submitted_pairs) # Store user's answer
+            answer.text_answer = json.dumps(submitted_pairs)  # Store user's answer
+            
+            current_app.logger.info(f"Matching question result - Correct matches: {correct_matches}/{total_pairs}, Is correct: {is_correct}")
 
         else:
             return jsonify({"error": "Unsupported question type"}), 400

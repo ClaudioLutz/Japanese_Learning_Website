@@ -597,20 +597,34 @@
                                             {% set prompts = question.options | map(attribute='option_text') | list %}
                                             {% set answers = question.options | map(attribute='feedback') | list %}
                                             <div class="row">
-                                                <div class="col-md-6">
-                                                    <ul class="list-group">
-                                                        {% for prompt in prompts %}
-                                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                            <span>{{ prompt }}</span>
-                                                            <select class="form-select matching-select" style="width: 60%;" data-prompt="{{ prompt }}" data-question-id="{{ question.id }}">
-                                                                <option selected disabled>Choose...</option>
-                                                                {% for answer in answers %}
-                                                                <option value="{{ answer }}">{{ answer }}</option>
-                                                                {% endfor %}
-                                                            </select>
-                                                        </li>
+                                                <div class="col-md-12">
+                                                    <div class="matching-instructions mb-3">
+                                                        <p class="text-muted">Match each Japanese term with its correct English meaning:</p>
+                                                    </div>
+                                                    <div class="matching-pairs">
+                                                        {% for option in question.options | sort(attribute='order_index') %}
+                                                        <div class="matching-pair mb-3 p-3 border rounded">
+                                                            <div class="row align-items-center">
+                                                                <div class="col-md-6">
+                                                                    <div class="matching-prompt">
+                                                                        <strong>{{ option.option_text }}</strong>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <select class="form-select matching-select" 
+                                                                            data-prompt="{{ option.option_text }}" 
+                                                                            data-correct-answer="{{ option.feedback }}"
+                                                                            data-question-id="{{ question.id }}">
+                                                                        <option value="" selected disabled>Choose...</option>
+                                                                        {% for answer_option in question.options | sort(attribute='order_index') %}
+                                                                        <option value="{{ answer_option.feedback }}">{{ answer_option.feedback }}</option>
+                                                                        {% endfor %}
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                         {% endfor %}
-                                                    </ul>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -804,17 +818,20 @@ async function submitQuizAnswer(lessonId, questionId) {
         }
         answerData.text_answer = textInput.value.trim();
     } else if (questionType === 'matching') {
-        const selects = questionElement.querySelectorAll('select');
+        const selects = questionElement.querySelectorAll('.matching-select');
         let allSelected = true;
         answerData.pairs = [];
+        
         selects.forEach(select => {
-            if (select.value === 'Choose...') {
+            if (!select.value || select.value === '') {
                 allSelected = false;
+            } else {
+                answerData.pairs.push({
+                    prompt: select.dataset.prompt,
+                    answer: select.value,
+                    correct_answer: select.dataset.correctAnswer
+                });
             }
-            answerData.pairs.push({
-                prompt: select.dataset.prompt,
-                answer: select.value
-            });
         });
 
         if (!allSelected) {
