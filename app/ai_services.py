@@ -62,7 +62,10 @@ class AILessonContentGenerator:
             "You are an expert Japanese language teacher. Your tone is clear, encouraging, and accurate. "
             "Generate a well-structured and formatted explanation using HTML. "
             "Use tags like <h2> for headings, <p> for paragraphs, <strong> for bold text, and <ul>/<li> for lists. "
-            "Do not include <html>, <head>, or <body> tags, only the inner content."
+            "Do not include <html>, <head>, or <body> tags, only the inner content. "
+            "IMPORTANT: Always include both Japanese characters AND their romanized pronunciation (romaji) in parentheses. "
+            "For example: 'レストラン (resutoran)' or '美味しい (oishii)'. "
+            "This helps beginners learn proper pronunciation alongside the written form."
         )
         user_prompt = f"""
         Lesson Topic: {topic}
@@ -70,6 +73,12 @@ class AILessonContentGenerator:
         Keywords to include: {keywords}
 
         Please generate a comprehensive, well-formatted explanation using HTML tags.
+        
+        CRITICAL REQUIREMENTS:
+        - Always show Japanese words with their romanized pronunciation in parentheses
+        - Example format: レストラン (resutoran) means "restaurant"
+        - Include pronunciation for ALL Japanese terms mentioned
+        - Make the content beginner-friendly by providing phonetic guidance
         """
         
         content, error = self._generate_content(system_prompt, user_prompt)
@@ -327,18 +336,36 @@ class AILessonContentGenerator:
             current_app.logger.error(f"Failed to parse JSON from AI response: {e}\nResponse: {content}")
             return {"error": "Failed to parse AI response as JSON."}
 
-    def generate_multiple_choice_question(self, topic, difficulty, keywords):
+    def generate_multiple_choice_question(self, topic, difficulty, keywords, question_number=None):
         """Generates a multiple-choice question in a structured JSON format."""
         system_prompt = (
             "You are an expert Japanese quiz designer. Generate a multiple-choice question. "
             "Ensure distractors are plausible but incorrect. Provide brief feedback for each option. "
             "Include a hint and a difficulty level. "
+            "IMPORTANT: When including Japanese text in questions or options, always provide romanized pronunciation in parentheses. "
+            "For example: 'レストラン (resutoran)' or '美味しい (oishii)'. "
+            "CRITICAL: Create UNIQUE and VARIED questions. Avoid repetition. Use different question formats and approaches. "
             "Format the output as a single, valid JSON object."
         )
+        
+        # Add variety prompts based on question number
+        variety_prompts = [
+            "Focus on meaning/translation questions (What does X mean?)",
+            "Focus on usage/context questions (When would you use X?)",
+            "Focus on pronunciation/reading questions (How do you read X?)",
+            "Focus on situational questions (What would you say when...?)",
+            "Focus on comparison questions (What's the difference between X and Y?)"
+        ]
+        
+        variety_instruction = ""
+        if question_number is not None and question_number < len(variety_prompts):
+            variety_instruction = f"\nVARIETY INSTRUCTION: {variety_prompts[question_number]}"
+        
         user_prompt = f"""
         Lesson Topic: {topic}
         Target Difficulty: {difficulty}
         Keywords to test: {keywords}
+        {variety_instruction}
 
         Generate a JSON object with the following structure:
         {{
@@ -353,6 +380,14 @@ class AILessonContentGenerator:
           ],
           "overall_explanation": "A general explanation for the correct answer."
         }}
+        
+        CRITICAL REQUIREMENTS:
+        - Include romanized pronunciation for ALL Japanese text in parentheses
+        - Example: レストラン (resutoran), 水 (mizu), 美味しい (oishii)
+        - This applies to questions, options, and explanations
+        - Make content beginner-friendly with phonetic guidance
+        - CREATE UNIQUE QUESTIONS - avoid repetition and use varied question styles
+        - Use different approaches: translation, usage, context, pronunciation, etc.
         """
         
         content, error = self._generate_content(system_prompt, user_prompt, is_json=True)
