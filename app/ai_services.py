@@ -35,7 +35,7 @@ class AILessonContentGenerator:
             response_format: ResponseFormat = {"type": "json_object"} if is_json else {"type": "text"}
             
             completion = self.client.chat.completions.create(
-                model="gpt-4.5-preview", # Or "gpt-3.5-turbo"
+                model="gpt-4.1", # Or "gpt-3.5-turbo"
                 messages=messages,
                 response_format=response_format
             )
@@ -229,6 +229,54 @@ class AILessonContentGenerator:
         except Exception as e:
             current_app.logger.error(f"Failed to generate image: {e}")
             return {"error": str(e)}
+
+    def generate_lesson_tile_background(self, lesson_title: str, lesson_description: str, difficulty_level: int = 1):
+        """Generate a background image specifically optimized for lesson tiles."""
+        system_prompt = (
+            "You are an expert at creating subtle, educational background images for lesson tiles. "
+            "Generate a prompt for a background image that will be used behind text on a lesson card. "
+            "The image should be subtle, not overwhelming, and enhance readability while being "
+            "culturally appropriate for Japanese language learning."
+        )
+        
+        user_prompt = f"""
+        Lesson Title: {lesson_title}
+        Lesson Description: {lesson_description}
+        Difficulty Level: {difficulty_level}/5
+
+        Create a background image prompt for a lesson tile that:
+        - Is subtle and doesn't interfere with text readability
+        - Uses soft, muted colors that work well with white/dark text overlay
+        - Incorporates Japanese cultural elements appropriate to the lesson topic
+        - Has a gentle gradient or pattern that enhances the card design
+        - Is educational and professional in appearance
+        - Avoids busy patterns or high contrast elements
+        - Creates visual interest without being distracting
+
+        Style requirements:
+        - Soft, watercolor-like or minimalist aesthetic
+        - Gentle gradients from light to slightly darker tones
+        - Cultural authenticity without stereotypes
+        - Professional educational design
+        - Optimized for text overlay readability
+
+        Return only the image generation prompt, no additional text.
+        """
+        
+        content, error = self._generate_content(system_prompt, user_prompt)
+        if error:
+            return {"error": error}
+        
+        if not content:
+            return {"error": "Empty response from AI"}
+            
+        # Generate the actual background image
+        background_prompt = content.strip()
+        
+        # Add technical specifications for tile backgrounds
+        enhanced_prompt = f"{background_prompt}. Soft lighting, subtle texture, optimized for text overlay, professional educational design, high quality, clean composition."
+        
+        return self.generate_single_image(enhanced_prompt, "1024x1024", "standard")
 
     def analyze_content_for_multimedia_needs(self, content_text, lesson_topic):
         """Analyze lesson content to suggest multimedia enhancements."""

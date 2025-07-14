@@ -31,8 +31,11 @@ def create_app():
     app.config.from_pyfile('config.py', silent=True) # Load config from instance folder
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') or \
         'sqlite:///' + os.path.join(app.instance_path, 'site.db')
-    # File upload configuration
-    UPLOAD_FOLDER = os.path.join('app', 'static', 'uploads')
+    
+    # Get absolute path for the upload folder
+    project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    UPLOAD_FOLDER = os.path.join(project_root, 'app', 'static', 'uploads')
+    
     MAX_CONTENT_LENGTH = 100 * 1024 * 1024  # 100MB max file size
     ALLOWED_EXTENSIONS = {
         'image': {'png', 'jpg', 'jpeg', 'gif', 'webp'},

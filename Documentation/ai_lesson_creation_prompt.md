@@ -25,7 +25,7 @@ LESSON_PAGES = [
         "page_number": 1,
         "title": "Sub-topic 1 Title",
         "keywords": "keyword1, keyword2, keyword3, related terms",
-        "image_concept": "Detailed description for AI image generation. Style: cute manga/anime art style, vibrant colors, clean lines, and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image."
+        "image_concept": "Detailed description for AI image generation. Style: cute manga/anime art style clean lines, and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image."
     },
     {
         "page_number": 2,

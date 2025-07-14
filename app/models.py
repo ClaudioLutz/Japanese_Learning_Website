@@ -131,6 +131,8 @@ class Lesson(db.Model):
     allow_guest_access: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     instruction_language: Mapped[str] = mapped_column(String(10), default='english', nullable=False)
     thumbnail_url: Mapped[str] = mapped_column(String(255), nullable=True)
+    background_image_url: Mapped[str] = mapped_column(String(255), nullable=True)
+    background_image_path: Mapped[str] = mapped_column(String(500), nullable=True)
     video_intro_url: Mapped[str] = mapped_column(String(255), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

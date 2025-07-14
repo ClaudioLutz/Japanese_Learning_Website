@@ -176,9 +176,23 @@ function createLessonCard(lesson) {
     const progressPercentage = progress ? progress.progress_percentage : 0;
     const isGuest = !window.currentUser; // Check if user is logged in
     
-    // MODIFIED HTML STRUCTURE
+    // Check if lesson has background image, prioritizing the local path
+    const hasLocalBackground = lesson.background_image_path;
+    // Construct the URL using the standard static path, as uploads are inside the static folder.
+    const backgroundUrl = hasLocalBackground ? 
+        `/static/uploads/${lesson.background_image_path}` : 
+        lesson.background_image_url; // Fallback to the remote URL if no local path
+
+    const hasBackground = backgroundUrl;
+    const backgroundStyle = hasBackground ?
+        `style="background-image: url('${backgroundUrl}');"` :
+        '';
+    
+    const cardClass = hasBackground ? 'lesson-card-with-bg' : 'lesson-card-default';
+    
+    // MODIFIED HTML STRUCTURE WITH BACKGROUND SUPPORT
     col.innerHTML = `
-        <div class="card lesson-card h-100 ${!accessible ? 'locked' : ''}">
+        <div class="card lesson-card h-100 ${cardClass} ${!accessible ? 'locked' : ''}" ${backgroundStyle}>
             <div class="card-body d-flex flex-column">
                 <div class="mb-2">
                     <span class="badge ${lesson.lesson_type === 'free' ? 'bg-success' : 'bg-warning'}">${lesson.lesson_type}</span>

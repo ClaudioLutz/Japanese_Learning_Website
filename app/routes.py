@@ -729,7 +729,7 @@ def create_course():
         return jsonify({"error": "Missing required field: title"}), 400
 
     new_item = Course(
-        title=data.get('title'),
+        title=data['title'],
         description=data.get('description'),
         background_image_url=data.get('background_image_url'),
         is_published=data.get('is_published', False)
@@ -1720,6 +1720,10 @@ def get_user_lessons():
         lesson_dict['access_message'] = message
         lesson_dict['category_name'] = lesson.category.name if lesson.category else None
         
+        # Add background image information
+        lesson_dict['background_image_url'] = lesson.background_image_url
+        lesson_dict['background_image_path'] = lesson.background_image_path
+        
         # Get user progress if exists (only for authenticated users)
         progress = None
         if current_user.is_authenticated:
@@ -2286,26 +2290,6 @@ def add_file_content(lesson_id):
         db.session.rollback()
         return jsonify({"error": f"Database error occurred: {str(e)}"}), 500
 
-@bp.route('/uploads/<path:filename>')
-def uploaded_file(filename):
-    """Serve uploaded files"""
-    import os
-    from flask import send_from_directory
-    
-    upload_folder = current_app.config['UPLOAD_FOLDER']
-    file_path = os.path.join(upload_folder, filename)
-    
-    # Security check - ensure file is within upload folder
-    if not os.path.abspath(file_path).startswith(os.path.abspath(upload_folder)):
-        return jsonify({"error": "Access denied"}), 403
-    
-    if not os.path.exists(file_path):
-        return jsonify({"error": "File not found"}), 404
-    
-    directory = os.path.dirname(file_path)
-    basename = os.path.basename(file_path)
-    
-    return send_from_directory(directory, basename)
 
 @bp.route('/api/admin/delete-file', methods=['DELETE'])
 @login_required
