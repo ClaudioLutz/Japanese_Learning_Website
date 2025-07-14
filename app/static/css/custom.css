@@ -1045,6 +1045,50 @@ button[onclick*="moveContentInPage"]:active {
     margin-right: auto !important;
 }
 
+/* Desktop content title improvements - make content headings smaller */
+.content-item h1,
+.content-item h2,
+.content-item h3,
+.content-item h4 {
+    font-size: 1.3rem !important;
+    line-height: 1.4 !important;
+    margin-bottom: 1rem !important;
+    font-weight: 600 !important;
+}
+
+/* Target rich text content headings on desktop */
+.rich-text-content h1,
+.rich-text-content h2,
+.rich-text-content h3,
+.rich-text-content h4 {
+    font-size: 1.3rem !important;
+    line-height: 1.4 !important;
+    margin-bottom: 1rem !important;
+    font-weight: 600 !important;
+}
+
+/* Target text content container headings on desktop */
+.text-content-container h1,
+.text-content-container h2,
+.text-content-container h3,
+.text-content-container h4 {
+    font-size: 1.3rem !important;
+    line-height: 1.4 !important;
+    margin-bottom: 1rem !important;
+    font-weight: 600 !important;
+}
+
+/* Target any remaining large headings in content on desktop */
+.content-body h1,
+.content-body h2,
+.content-body h3,
+.content-body h4 {
+    font-size: 1.3rem !important;
+    line-height: 1.4 !important;
+    margin-bottom: 1rem !important;
+    font-weight: 600 !important;
+}
+
 /* Content areas should use more width */
 .text-content-container {
     background-color: var(--background-color);
@@ -1402,15 +1446,108 @@ button[onclick*="moveContentInPage"]:active {
     margin: 0 auto 2rem auto;
 }
 
-/* Responsive improvements */
+/* Mobile-first responsive improvements */
 @media (max-width: 768px) {
-    .welcome-card {
-        padding: 2rem;
-        margin: 1rem;
+    /* Reduce container padding to minimize white space */
+    .container {
+        max-width: 100% !important;
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
     }
     
-    .content-item {
+    /* Reduce column padding */
+    .col-12 {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+    
+    /* Make lesson cards use full width */
+    .lesson-header-card,
+    .lesson-content-card,
+    .lesson-navigation-top,
+    .lesson-navigation-bottom,
+    .page-overview {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+    
+    /* Reduce card padding on mobile */
+    .card-body {
         padding: 1rem !important;
+    }
+    
+    /* Make lesson title much smaller on mobile */
+    .lesson-header-card .card-title,
+    .lesson-header-card h1 {
+        font-size: 1.5rem !important;
+        line-height: 1.3 !important;
+        margin-bottom: 0.75rem !important;
+    }
+    
+    /* Make page titles much smaller */
+    .page-title {
+        font-size: 1rem !important;
+        line-height: 1.3 !important;
+        margin-bottom: 0.75rem !important;
+    }
+    
+    .page-description {
+        font-size: 0.85rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    /* Reduce content item padding */
+    .content-item {
+        padding: 0.75rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    /* Make content titles smaller */
+    .content-item h6,
+    .content-title {
+        font-size: 0.95rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    /* Reduce navigation padding */
+    .lesson-navigation-top,
+    .lesson-navigation-bottom {
+        padding: 0.75rem !important;
+        margin-left: -0.5rem !important;
+        margin-right: -0.5rem !important;
+    }
+    
+    /* Make page overview more compact */
+    .page-overview {
+        margin-left: -0.5rem !important;
+        margin-right: -0.5rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    .page-overview-header {
+        padding: 0.75rem 1rem !important;
+    }
+    
+    .page-overview-content {
+        padding: 0.5rem !important;
+    }
+    
+    .page-menu-item {
+        padding: 0.5rem 0.75rem !important;
+        margin-bottom: 0.25rem !important;
+    }
+    
+    .page-menu-number {
+        width: 25px !important;
+        height: 25px !important;
+        font-size: 0.8rem !important;
+        margin-right: 0.75rem !important;
+    }
+    
+    /* Welcome card adjustments */
+    .welcome-card {
+        padding: 1.5rem;
+        margin: 0.75rem;
     }
     
     /* Make admin modals responsive on mobile */
@@ -1449,16 +1586,6 @@ button[onclick*="moveContentInPage"]:active {
     .flip-card .details {
         font-size: 14px;
         padding: 15px;
-    }
-    
-    /* Mobile page title adjustments */
-    .page-title {
-        font-size: 1.1rem !important;
-        line-height: 1.3 !important;
-    }
-    
-    .page-description {
-        font-size: 0.9rem !important;
     }
     
     /* Courses page mobile adjustments */
@@ -1515,6 +1642,77 @@ button[onclick*="moveContentInPage"]:active {
 }
 
 @media (max-width: 576px) {
+    /* Ultra-compact mobile layout */
+    .container {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+    
+    .col-12 {
+        padding-left: 0.25rem !important;
+        padding-right: 0.25rem !important;
+    }
+    
+    /* Make lesson titles even smaller on very small screens */
+    .lesson-header-card .card-title,
+    .lesson-header-card h1 {
+        font-size: 1.25rem !important;
+        line-height: 1.2 !important;
+    }
+    
+    .page-title {
+        font-size: 0.95rem !important;
+        line-height: 1.2 !important;
+    }
+    
+    .page-description {
+        font-size: 0.8rem !important;
+    }
+    
+    /* Ultra-compact content items */
+    .content-item {
+        padding: 0.5rem !important;
+        margin-bottom: 0.75rem !important;
+    }
+    
+    .content-item h6,
+    .content-title {
+        font-size: 0.9rem !important;
+    }
+    
+    /* Compact navigation */
+    .lesson-navigation-top,
+    .lesson-navigation-bottom {
+        padding: 0.5rem !important;
+        margin-left: -0.25rem !important;
+        margin-right: -0.25rem !important;
+    }
+    
+    .nav-btn {
+        min-width: 80px !important;
+        padding: 0.4rem 0.75rem !important;
+        font-size: 0.85rem !important;
+    }
+    
+    .page-counter {
+        font-size: 0.9rem !important;
+    }
+    
+    /* Compact page overview */
+    .page-overview {
+        margin-left: -0.25rem !important;
+        margin-right: -0.25rem !important;
+    }
+    
+    .page-overview-header {
+        padding: 0.5rem 0.75rem !important;
+    }
+    
+    .page-overview-header h6 {
+        font-size: 0.9rem !important;
+    }
+    
+    /* Courses page mobile adjustments */
     .courses-hero-title {
         font-size: 1.75rem;
     }

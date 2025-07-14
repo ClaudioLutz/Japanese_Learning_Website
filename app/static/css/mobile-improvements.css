@@ -1,0 +1,403 @@
+/* Mobile-specific improvements for lesson pages */
+
+/* Global mobile overrides to eliminate all white space */
+@media (max-width: 768px) {
+    /* Force body and html to use full width */
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+    }
+    
+    html {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+    }
+    
+    /* Override any Bootstrap spacing utilities */
+    .mt-4 {
+        margin-top: 0 !important;
+    }
+    
+    .mb-4 {
+        margin-bottom: 1rem !important;
+    }
+    
+    /* Force all direct children of container to use full width */
+    .container > * {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+    
+    /* Override any remaining Bootstrap spacing */
+    .px-0, .px-1, .px-2, .px-3, .px-4, .px-5 {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+    
+    .mx-0, .mx-1, .mx-2, .mx-3, .mx-4, .mx-5, .mx-auto {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+    
+    /* Force viewport width usage */
+    * {
+        box-sizing: border-box !important;
+    }
+
+/* Mobile responsive improvements for better space utilization */
+    /* Eliminate container padding completely and use full width */
+    .container {
+        max-width: 100% !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        width: 100% !important;
+    }
+    
+    /* Remove all column padding */
+    .col-12 {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        width: 100% !important;
+    }
+    
+    /* Force full width on all Bootstrap containers */
+    .container-fluid {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    
+    /* Remove margins from rows */
+    .row {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        width: 100% !important;
+    }
+    
+    /* Make lesson cards use absolute full width */
+    .lesson-header-card,
+    .lesson-content-card,
+    .lesson-navigation-top,
+    .lesson-navigation-bottom,
+    .page-overview {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        border-radius: 0 !important;
+    }
+    
+    /* Force cards to use full width */
+    .card {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        border-radius: 0 !important;
+        border-left: none !important;
+        border-right: none !important;
+    }
+    
+    /* Reduce card padding on mobile and ensure full width */
+    .card-body {
+        padding: 0.25rem !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        width: 100% !important;
+    }
+    
+    /* Make lesson title much smaller on mobile */
+    .lesson-header-card .card-title,
+    .lesson-header-card h1 {
+        font-size: 1.5rem !important;
+        line-height: 1.3 !important;
+        margin-bottom: 0.75rem !important;
+    }
+    
+    /* Make page titles much smaller */
+    .page-title {
+        font-size: 1rem !important;
+        line-height: 1.3 !important;
+        margin-bottom: 0.75rem !important;
+    }
+    
+    .page-description {
+        font-size: 0.85rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    /* Reduce content item padding and ensure full width */
+    .content-item {
+        padding: 0.25rem !important;
+        margin-bottom: 0.5rem !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        border-radius: 0 !important;
+        border-left: none !important;
+        border-right: none !important;
+        border: none !important;
+    }
+    
+    /* Make content titles much smaller */
+    .content-item h6,
+    .content-title {
+        font-size: 0.85rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    /* Target the large content headings specifically - make much smaller */
+    .content-item h1,
+    .content-item h2,
+    .content-item h3,
+    .content-item h4 {
+        font-size: 0.95rem !important;
+        line-height: 1.3 !important;
+        margin-bottom: 0.5rem !important;
+        font-weight: 600 !important;
+    }
+    
+    /* Target rich text content headings - make much smaller */
+    .rich-text-content h1,
+    .rich-text-content h2,
+    .rich-text-content h3,
+    .rich-text-content h4 {
+        font-size: 0.95rem !important;
+        line-height: 1.3 !important;
+        margin-bottom: 0.5rem !important;
+        font-weight: 600 !important;
+    }
+    
+    /* Target text content container headings - make much smaller */
+    .text-content-container h1,
+    .text-content-container h2,
+    .text-content-container h3,
+    .text-content-container h4 {
+        font-size: 0.95rem !important;
+        line-height: 1.3 !important;
+        margin-bottom: 0.5rem !important;
+        font-weight: 600 !important;
+    }
+    
+    /* Target any remaining large headings in content */
+    .content-body h1,
+    .content-body h2,
+    .content-body h3,
+    .content-body h4 {
+        font-size: 0.95rem !important;
+        line-height: 1.3 !important;
+        margin-bottom: 0.5rem !important;
+        font-weight: 600 !important;
+    }
+    
+    /* Make normal text smaller for better information density */
+    .content-item p,
+    .content-body p,
+    .rich-text-content p,
+    .text-content-container p {
+        font-size: 0.8rem !important;
+        line-height: 1.4 !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    /* Make list items smaller too */
+    .content-item li,
+    .content-body li,
+    .rich-text-content li,
+    .text-content-container li {
+        font-size: 0.8rem !important;
+        line-height: 1.4 !important;
+        margin-bottom: 0.25rem !important;
+    }
+    
+    /* Make general text content smaller */
+    .content-item,
+    .content-body,
+    .rich-text-content,
+    .text-content-container {
+        font-size: 0.8rem !important;
+        line-height: 1.4 !important;
+    }
+    
+    /* Reduce navigation padding and use full width */
+    .lesson-navigation-top,
+    .lesson-navigation-bottom {
+        padding: 0.75rem !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        border-radius: 0 !important;
+    }
+    
+    /* Make page overview more compact and full width */
+    .page-overview {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        margin-bottom: 1rem !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        border-radius: 0 !important;
+        border-left: none !important;
+        border-right: none !important;
+    }
+    
+    .page-overview-header {
+        padding: 0.75rem 1rem !important;
+    }
+    
+    .page-overview-content {
+        padding: 0.5rem !important;
+    }
+    
+    .page-menu-item {
+        padding: 0.5rem 0.75rem !important;
+        margin-bottom: 0.25rem !important;
+    }
+    
+    .page-menu-number {
+        width: 25px !important;
+        height: 25px !important;
+        font-size: 0.8rem !important;
+        margin-right: 0.75rem !important;
+    }
+    
+    /* Navigation button improvements */
+    .nav-btn {
+        min-width: 100px !important;
+        padding: 0.5rem 1rem !important;
+        font-size: 0.9rem !important;
+    }
+    
+    .page-counter {
+        font-size: 1rem !important;
+    }
+    
+    /* Carousel controls */
+    #lessonCarousel .carousel-control-prev,
+    #lessonCarousel .carousel-control-next {
+        width: 12% !important;
+    }
+    
+    /* Hide keyboard hint on mobile */
+    .keyboard-hint {
+        display: none !important;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Ultra-compact mobile layout - maintain zero padding */
+    .container {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        width: 100% !important;
+    }
+    
+    .col-12 {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        width: 100% !important;
+    }
+    
+    /* Make lesson titles even smaller on very small screens */
+    .lesson-header-card .card-title,
+    .lesson-header-card h1 {
+        font-size: 1.25rem !important;
+        line-height: 1.2 !important;
+    }
+    
+    .page-title {
+        font-size: 0.95rem !important;
+        line-height: 1.2 !important;
+    }
+    
+    .page-description {
+        font-size: 0.8rem !important;
+    }
+    
+    /* Ultra-compact content items */
+    .content-item {
+        padding: 0.25rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    /* Make text even smaller on very small screens */
+    .content-item p,
+    .content-body p,
+    .rich-text-content p,
+    .text-content-container p {
+        font-size: 0.75rem !important;
+        line-height: 1.3 !important;
+    }
+    
+    .content-item li,
+    .content-body li,
+    .rich-text-content li,
+    .text-content-container li {
+        font-size: 0.75rem !important;
+        line-height: 1.3 !important;
+    }
+    
+    .content-item h6,
+    .content-title {
+        font-size: 0.9rem !important;
+    }
+    
+    /* Compact navigation - maintain full width */
+    .lesson-navigation-top,
+    .lesson-navigation-bottom {
+        padding: 0.5rem !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    
+    .nav-btn {
+        min-width: 80px !important;
+        padding: 0.4rem 0.75rem !important;
+        font-size: 0.85rem !important;
+    }
+    
+    .page-counter {
+        font-size: 0.9rem !important;
+    }
+    
+    /* Compact page overview - maintain full width */
+    .page-overview {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    
+    .page-overview-header {
+        padding: 0.5rem 0.75rem !important;
+    }
+    
+    .page-overview-header h6 {
+        font-size: 0.9rem !important;
+    }
+}
