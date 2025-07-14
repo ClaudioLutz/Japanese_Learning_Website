@@ -126,12 +126,13 @@ Represents a single lesson, containing various content items and metadata.
 | `title`              | String(200) | Not Nullable                                    | Title of the lesson.                                                      |
 | `description`        | Text        | Nullable                                        | A brief description of the lesson.                                        |
 | `lesson_type`        | String(20)  | Not Nullable                                    | Type of lesson: 'free' or 'premium'.                                      |
-| `category_id`        | Integer     | Foreign Key (`lesson_category.id`)              | ID of the `LessonCategory` this lesson belongs to.                        |
+| `category_id`        | Integer     | Foreign Key (`lesson_category.id`), Nullable   | ID of the `LessonCategory` this lesson belongs to.                        |
 | `difficulty_level`   | Integer     | Nullable                                        | Difficulty rating (e.g., 1-5).                                            |
-| `instruction_language`| String(10)  | Not Nullable, Default: 'english'              | Language for explanations/instructions (e.g., 'english', 'german').       |
 | `estimated_duration` | Integer     | Nullable                                        | Estimated time to complete the lesson in minutes.                         |
 | `order_index`        | Integer     | Default: 0                                      | Order of the lesson within its category or overall list.                  |
 | `is_published`       | Boolean     | Default: False                                  | Flag indicating if the lesson is visible to users.                        |
+| `allow_guest_access` | Boolean     | Not Nullable, Default: False                    | Flag indicating if guests can access this lesson without authentication.  |
+| `instruction_language`| String(10)  | Not Nullable, Default: 'english'              | Language for explanations/instructions (e.g., 'english', 'german').       |
 | `thumbnail_url`      | String(255) | Nullable                                        | URL for a lesson cover image.                                             |
 | `video_intro_url`    | String(255) | Nullable                                        | URL for an optional introductory video for the lesson.                    |
 | `created_at`         | DateTime    | Default: `datetime.utcnow`                      | Timestamp of when the lesson was created.                                 |
@@ -144,6 +145,7 @@ Represents a single lesson, containing various content items and metadata.
 - `required_by`: One-to-Many with `LessonPrerequisite` (identifies lessons that have this lesson as a prerequisite).
 - `user_progress`: One-to-Many with `UserLessonProgress`. Tracks progress for multiple users on this lesson.
 - `pages_metadata`: One-to-Many with `LessonPage`. Stores metadata for each page within the lesson.
+- `courses`: Many-to-Many with `Course` through `course_lessons` association table.
 
 ---
 
@@ -307,7 +309,43 @@ Tracks a user's progress through a specific lesson.
 - `user`: Many-to-One with `User`.
 - `lesson`: Many-to-One with `Lesson`.
 
-## 6. Database Migrations
+---
+
+## 6. Course System Models
+
+### 6.1. `Course`
+
+Represents a collection of lessons organized into a structured learning path.
+
+| Column                | Type        | Constraints                                     | Description                                                               |
+|-----------------------|-------------|-------------------------------------------------|---------------------------------------------------------------------------|
+| `id`                  | Integer     | Primary Key                                     | Unique identifier for the course.                                         |
+| `title`               | String(200) | Not Nullable                                    | Title of the course.                                                      |
+| `description`         | Text        | Nullable                                        | A detailed description of the course.                                     |
+| `background_image_url`| String(255) | Nullable                                        | URL for a course background/cover image.                                 |
+| `is_published`        | Boolean     | Default: False                                  | Flag indicating if the course is visible to users.                       |
+| `created_at`          | DateTime    | Default: `datetime.utcnow`                      | Timestamp of when the course was created.                                |
+| `updated_at`          | DateTime    | Default: `datetime.utcnow`, OnUpdate: `datetime.utcnow` | Timestamp of the last update.                           |
+
+**Relationships:**
+- `lessons`: Many-to-Many with `Lesson` through `course_lessons` association table.
+
+---
+
+### 6.2. `course_lessons` (Association Table)
+
+Association table for the many-to-many relationship between `Course` and `Lesson`.
+
+| Column      | Type    | Constraints                                    | Description                                      |
+|-------------|---------|------------------------------------------------|--------------------------------------------------|
+| `course_id` | Integer | Foreign Key (`course.id`), Primary Key        | ID of the `Course`.                              |
+| `lesson_id` | Integer | Foreign Key (`lesson.id`), Primary Key        | ID of the `Lesson`.                              |
+
+This table enables courses to contain multiple lessons and lessons to belong to multiple courses.
+
+---
+
+## 7. Database Migrations
 
 Database schema changes are managed using Alembic. Migration scripts are located in the `migrations/versions/` directory.
 - To generate a new migration after model changes: `alembic revision -m "description_of_changes"`

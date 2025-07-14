@@ -31,15 +31,17 @@ These routes handle user registration, login, and basic page navigation. They pr
 | `POST` | `/upgrade_to_premium`| User           | (Prototype) Upgrades the current user's subscription level to 'premium'.    |
 | `POST` | `/downgrade_from_premium`| User         | (Prototype) Downgrades the current user's subscription level to 'free'.     |
 
-### 3.2. User-Facing Lesson Routes
+### 3.2. User-Facing Lesson and Course Routes
 
-These routes are for users to view and interact with lesson content.
+These routes are for users to view and interact with lesson content and courses.
 
 | Method | Endpoint             | Authentication | Description                                                                 |
 | :----- | :------------------- | :------------- | :-------------------------------------------------------------------------- |
-| `GET`  | `/lessons`           | User           | Renders the main page for browsing all available lessons.                   |
-| `GET`  | `/lessons/<int:id>`  | User           | Renders the detailed view for a single lesson, including all its content.   |
+| `GET`  | `/lessons`           | None           | Renders the main page for browsing all available lessons.                   |
+| `GET`  | `/lessons/<int:id>`  | None/User      | Renders the detailed view for a single lesson. Access depends on lesson settings and user authentication. |
 | `POST` | `/lessons/<int:id>/reset`| User         | Resets the current user's progress for the specified lesson.                |
+| `GET`  | `/courses`           | None           | Renders the main page for browsing all available courses.                   |
+| `GET`  | `/course/<int:id>`   | None/User      | Renders the detailed view for a single course with progress tracking.       |
 
 ### 3.3. Admin Panel Routes
 
@@ -54,6 +56,7 @@ These routes serve the HTML pages for the admin content management system. The a
 | `GET`  | `/admin/manage/grammar`    | Admin          | Renders the management page for Grammar.         |
 | `GET`  | `/admin/manage/lessons`    | Admin          | Renders the management page for Lessons.         |
 | `GET`  | `/admin/manage/categories` | Admin          | Renders the management page for Categories.      |
+| `GET`  | `/admin/manage/courses`    | Admin          | Renders the management page for Courses.         |
 | `GET`  | `/admin/manage/approval`   | Admin          | Renders the page for approving AI content.       |
 
 ### 3.4. Admin REST API
@@ -72,51 +75,109 @@ These follow a standard RESTful pattern for each content type.
 | `DELETE`| `/api/admin/<type>/<int:id>/delete`| Deletes an item by its ID.                |
 _(`type` can be `kana`, `kanji`, `vocabulary`, or `grammar`)_
 
-#### 3.4.2. Lesson and Category APIs
+#### 3.4.2. Lesson, Category, and Course APIs
 
+**Categories:**
 | Method | Endpoint                               | Description                                      |
 | :----- | :------------------------------------- | :----------------------------------------------- |
 | `GET`  | `/api/admin/categories`                | Lists all lesson categories.                     |
 | `POST` | `/api/admin/categories/new`            | Creates a new lesson category.                   |
-| `...`  | `...`                                  | (Standard GET, PUT, DELETE for categories)       |
-| `GET`  | `/api/admin/lessons`                   | Lists all lessons.                               |
+| `GET`  | `/api/admin/categories/<int:id>`       | Retrieves a single category by ID.              |
+| `PUT/PATCH`| `/api/admin/categories/<int:id>/edit`| Updates an existing category.                   |
+| `DELETE`| `/api/admin/categories/<int:id>/delete`| Deletes a category.                             |
+
+**Lessons:**
+| Method | Endpoint                               | Description                                      |
+| :----- | :------------------------------------- | :----------------------------------------------- |
+| `GET`  | `/api/admin/lessons`                   | Lists all lessons with metadata.                 |
 | `POST` | `/api/admin/lessons/new`               | Creates a new lesson.                            |
 | `GET`  | `/api/admin/lessons/<int:id>`          | Retrieves a single lesson with all its content.  |
 | `PUT/PATCH`| `/api/admin/lessons/<int:id>/edit` | Updates a lesson's metadata.                     |
 | `DELETE`| `/api/admin/lessons/<int:id>/delete` | Deletes a lesson and all its content.            |
-| `POST` | `/api/admin/lessons/reorder`           | Reorders a list of lessons based on an array of IDs. |
+| `POST` | `/api/admin/lessons/<int:id>/move`     | Moves a lesson up or down in global order.       |
+| `POST` | `/api/admin/lessons/reorder`           | Reorders lessons based on provided order.        |
 
-#### 3.4.3. Lesson Structure APIs
+**Courses:**
+| Method | Endpoint                               | Description                                      |
+| :----- | :------------------------------------- | :----------------------------------------------- |
+| `GET`  | `/api/admin/courses`                   | Lists all courses.                               |
+| `POST` | `/api/admin/courses/new`               | Creates a new course.                            |
+| `GET`  | `/api/admin/courses/<int:id>`          | Retrieves a single course with lessons.          |
+| `PUT/PATCH`| `/api/admin/courses/<int:id>/edit`  | Updates a course's metadata.                     |
+| `DELETE`| `/api/admin/courses/<int:id>/delete` | Deletes a course.                                |
 
+#### 3.4.3. Lesson Content Management APIs
+
+**Content Items:**
 | Method | Endpoint                                               | Description                                                              |
 | :----- | :----------------------------------------------------- | :----------------------------------------------------------------------- |
+| `GET`  | `/api/admin/lessons/<int:id>/content`                  | Lists all content items for a lesson.                                   |
 | `POST` | `/api/admin/lessons/<int:id>/content/new`              | Adds a new content item to a lesson.                                     |
+| `POST` | `/api/admin/lessons/<int:id>/content/file`             | Adds file-based content to a lesson.                                     |
+| `POST` | `/api/admin/lessons/<int:id>/content/interactive`      | Adds interactive content (quiz) to a lesson.                             |
+| `GET`  | `/api/admin/content/<int:id>`                          | Gets full details for a single content item.                             |
+| `GET`  | `/api/admin/content/<int:id>/preview`                  | Gets content preview data.                                               |
+| `PUT`  | `/api/admin/content/<int:id>/edit`                     | Updates an existing content item.                                        |
+| `POST` | `/api/admin/content/<int:id>/duplicate`                | Duplicates a single content item.                                        |
 | `DELETE`| `/api/admin/lessons/<int:id>/content/<int:cid>/delete` | Removes a content item from a lesson.                                    |
-| `PUT`  | `/api/admin/lessons/<int:id>/content/<int:cid>/edit`   | Updates an existing content item.                                        |
 | `POST` | `/api/admin/lessons/<int:id>/content/<int:cid>/move`   | Moves a content item up or down within its page.                         |
-| `DELETE`| `/api/admin/lessons/<int:id>/pages/<int:pnum>/delete`  | Deletes an entire page and all its content from a lesson.                |
-| `PUT`  | `/api/admin/lessons/<int:id>/pages/<int:pnum>`         | Updates a page's metadata (title, description).                          |
 
-#### 3.4.4. AI and File Management APIs
+**Bulk Operations:**
+| Method | Endpoint                                               | Description                                                              |
+| :----- | :----------------------------------------------------- | :----------------------------------------------------------------------- |
+| `PUT`  | `/api/admin/lessons/<int:id>/content/bulk-update`      | Bulk update content properties.                                          |
+| `POST` | `/api/admin/lessons/<int:id>/content/bulk-duplicate`   | Bulk duplicate content items.                                            |
+| `DELETE`| `/api/admin/lessons/<int:id>/content/bulk-delete`     | Bulk delete content items.                                               |
+| `POST` | `/api/admin/lessons/<int:id>/content/force-reorder`    | Force reorder all content to fix gaps.                                   |
+
+**Page Management:**
+| Method | Endpoint                                               | Description                                                              |
+| :----- | :----------------------------------------------------- | :----------------------------------------------------------------------- |
+| `PUT`  | `/api/admin/lessons/<int:id>/pages/<int:pnum>`         | Updates a page's metadata (title, description).                          |
+| `DELETE`| `/api/admin/lessons/<int:id>/pages/<int:pnum>/delete`  | Deletes an entire page and all its content from a lesson.                |
+| `POST` | `/api/admin/lessons/<int:id>/pages/<int:pnum>/reorder` | Reorders content items on a specific page.                               |
+
+**Content Options:**
+| Method | Endpoint                                               | Description                                                              |
+| :----- | :----------------------------------------------------- | :----------------------------------------------------------------------- |
+| `GET`  | `/api/admin/content-options/<type>`                    | Gets available content items for selection (kana, kanji, vocabulary, grammar). |
+
+#### 3.4.4. AI Content Generation APIs
 
 | Method | Endpoint                             | Description                                                              |
 | :----- | :----------------------------------- | :----------------------------------------------------------------------- |
-| `POST` | `/api/admin/generate-ai-content`     | The main endpoint for generating text and quiz content via AI.           |
-| `POST` | `/api/admin/generate-ai-image`       | Generates an image using DALL-E from a prompt.                           |
-| `POST` | `/api/admin/upload-file`             | Handles file uploads, returning a secure path and file metadata.         |
-| `DELETE`| `/api/admin/delete-file`             | Deletes a file from the filesystem.                                      |
+| `POST` | `/api/admin/generate-ai-content`     | Generates text explanations and quiz content via AI.                     |
+| `POST` | `/api/admin/generate-ai-image`       | Generates images using DALL-E from prompts or content.                   |
+| `POST` | `/api/admin/analyze-multimedia-needs`| Analyzes lesson content and suggests multimedia enhancements.            |
+| `POST` | `/api/admin/generate-lesson-images`  | Generates multiple images for lesson content.                            |
 
-#### 3.4.5. Export/Import APIs
+#### 3.4.5. File Management APIs
+
+| Method | Endpoint                             | Description                                                              |
+| :----- | :----------------------------------- | :----------------------------------------------------------------------- |
+| `POST` | `/api/admin/upload-file`             | Handles file uploads with validation and processing.                     |
+| `DELETE`| `/api/admin/delete-file`             | Deletes a file from the filesystem.                                      |
+| `GET`  | `/uploads/<path:filename>`           | Serves uploaded files securely.                                          |
+
+#### 3.4.6. Content Approval APIs
+
+| Method | Endpoint                                               | Description                                                              |
+| :----- | :----------------------------------------------------- | :----------------------------------------------------------------------- |
+| `POST` | `/api/admin/content/<type>/<int:id>/approve`           | Approves AI-generated content (kanji, vocabulary, grammar).              |
+| `POST` | `/api/admin/content/<type>/<int:id>/reject`            | Rejects and deletes AI-generated content.                                |
+
+#### 3.4.7. Export/Import APIs
 
 | Method | Endpoint                                   | Description                                                              |
 | :----- | :----------------------------------------- | :----------------------------------------------------------------------- |
 | `GET`  | `/api/admin/lessons/<int:id>/export`       | Exports a lesson's data as a JSON file.                                  |
 | `POST` | `/api/admin/lessons/<int:id>/export-package`| Exports a lesson and its media files as a single ZIP package.            |
+| `POST` | `/api/admin/lessons/export-multiple`       | Exports multiple lessons as a single ZIP package.                        |
 | `POST` | `/api/admin/lessons/import`                | Imports a lesson from an uploaded JSON file.                             |
 | `POST` | `/api/admin/lessons/import-package`        | Imports a lesson from an uploaded ZIP package.                           |
 | `POST` | `/api/admin/lessons/import-info`           | Analyzes an import file without importing to provide a preview.          |
 
-#### 3.4.6. AI Content Generation Services
+#### 3.4.8. AI Content Generation Services
 While not traditional REST endpoints, the following functions in `AILessonContentGenerator` act as a service layer for AI content creation. They are called from scripts and other services.
 
 | Service Function                       | Description                                                              |
@@ -140,7 +201,9 @@ While not traditional REST endpoints, the following functions in `AILessonConten
 
 | Method | Endpoint                                           | Authentication | Description                                                              |
 | :----- | :------------------------------------------------- | :------------- | :----------------------------------------------------------------------- |
-| `GET`  | `/api/lessons`                                     | User           | Gets all lessons accessible to the current user, including their progress. |
+| `GET`  | `/api/lessons`                                     | None/User      | Gets all lessons accessible to the current user or guest, with optional filtering. |
+| `GET`  | `/api/courses`                                     | None           | Gets all published courses.                                              |
+| `GET`  | `/api/categories`                                  | None           | Gets all lesson categories for public use.                               |
 | `POST` | `/api/lessons/<int:id>/progress`                   | User           | Updates the user's progress for a specific content item in a lesson.     |
 | `POST` | `/api/lessons/<int:lid>/quiz/<int:qid>/answer`     | User           | Submits a user's answer to a quiz question and returns the result.       |
 
