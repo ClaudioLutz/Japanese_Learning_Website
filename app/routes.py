@@ -891,7 +891,12 @@ def update_lesson(item_id):
     item.estimated_duration = data.get('estimated_duration', item.estimated_duration)
     item.order_index = data.get('order_index', item.order_index)
     item.is_published = data.get('is_published', item.is_published)
-    item.allow_guest_access = data.get('allow_guest_access', item.allow_guest_access)
+    # Convert string 'on' to boolean for allow_guest_access
+    allow_guest_access = data.get('allow_guest_access', item.allow_guest_access)
+    if isinstance(allow_guest_access, str):
+        item.allow_guest_access = allow_guest_access.lower() in ['true', 'on', '1', 'yes']
+    else:
+        item.allow_guest_access = bool(allow_guest_access) if allow_guest_access is not None else item.allow_guest_access
     item.instruction_language = data.get('instruction_language', item.instruction_language)
     item.thumbnail_url = data.get('thumbnail_url', item.thumbnail_url)
     item.video_intro_url = data.get('video_intro_url', item.video_intro_url)

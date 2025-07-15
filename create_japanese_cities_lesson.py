@@ -426,27 +426,21 @@ def create_lesson(app):
                                 print(f"❌ Error parsing matching pairs for page {page_number}")
                                 continue
                         
-                        # For matching questions, we create options from the pairs
-                        # Each pair becomes two options - one prompt and one answer
+                        # For matching questions, we create options where:
+                        # - option_text contains the prompt (Japanese term)
+                        # - feedback contains the correct answer (English meaning)
+                        # - is_correct is always True for matching (since each has its correct pair)
                         for i, pair in enumerate(pairs):
                             if isinstance(pair, dict) and 'prompt' in pair and 'answer' in pair:
-                                # Create prompt option (not correct by itself)
-                                prompt_option = QuizOption(
+                                # Create one option per pair with prompt as option_text and answer as feedback
+                                matching_option = QuizOption(
                                     question_id=question.id,
-                                    option_text=f"PROMPT_{i}: {pair['prompt']}",
-                                    is_correct=False,
-                                    feedback=f"This matches with: {pair['answer']}"
+                                    option_text=pair['prompt'],  # Japanese term with romanization
+                                    is_correct=True,  # All matching options are "correct" in their pairing
+                                    feedback=pair['answer'],  # English meaning
+                                    order_index=i
                                 )
-                                db.session.add(prompt_option)
-                                
-                                # Create answer option (correct match)
-                                answer_option = QuizOption(
-                                    question_id=question.id,
-                                    option_text=f"ANSWER_{i}: {pair['answer']}",
-                                    is_correct=True,
-                                    feedback=f"This matches with: {pair['prompt']}"
-                                )
-                                db.session.add(answer_option)
+                                db.session.add(matching_option)
                     
                     print(f"✅ {quiz_name} quiz #{quiz_num + 1} added to page {page_number}.")
                     content_order_index += 1

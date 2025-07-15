@@ -190,50 +190,106 @@ function createLessonCard(lesson) {
     
     const cardClass = hasBackground ? 'lesson-card-with-bg' : 'lesson-card-default';
     
-    // MODIFIED HTML STRUCTURE WITH BACKGROUND SUPPORT
-    col.innerHTML = `
-        <div class="card lesson-card h-100 ${cardClass} ${!accessible ? 'locked' : ''}" ${backgroundStyle}>
-            <div class="card-body d-flex flex-column">
-                <div class="mb-2">
-                    <span class="badge ${lesson.lesson_type === 'free' ? 'bg-success' : 'bg-warning'}">${lesson.lesson_type}</span>
-                    ${lesson.category_name ? `<span class="badge bg-info text-dark">${lesson.category_name}</span>` : ''}
-                    ${lesson.allow_guest_access ? '<span class="badge bg-light text-dark">👤 Guest Friendly</span>' : ''}
+    // SPLIT LAYOUT STRUCTURE WITH BACKGROUND SUPPORT
+    if (hasBackground) {
+        col.innerHTML = `
+            <div class="card lesson-card h-100 lesson-card-split ${!accessible ? 'locked' : ''}">
+                <!-- Image Section -->
+                <div class="lesson-card-image-section" style="background-image: url('${backgroundUrl}');">
+                    <div class="lesson-card-image-overlay">
+                        <div class="lesson-badges">
+                            <span class="badge ${lesson.lesson_type === 'free' ? 'bg-success' : 'bg-warning'}">${lesson.lesson_type}</span>
+                            ${lesson.category_name ? `<span class="badge bg-info text-dark">${lesson.category_name}</span>` : ''}
+                            ${lesson.allow_guest_access ? '<span class="badge bg-light text-dark">👤 Guest Friendly</span>' : ''}
+                        </div>
+                    </div>
                 </div>
-                <h5 class="card-title mt-1">${lesson.title}</h5>
-                <p class="card-text small text-muted flex-grow-1">${lesson.description || 'No description available.'}</p>
                 
-                <div class="mt-auto">
-                    <div class="d-flex justify-content-between small text-muted mb-3">
-                        <span>📊 Difficulty: ${lesson.difficulty_level || 'N/A'}/5</span>
-                        <span>⏱️ ${lesson.estimated_duration || 'N/A'} min</span>
+                <!-- Content Section -->
+                <div class="lesson-card-content-section">
+                    <div class="lesson-card-header">
+                        <h5 class="lesson-card-title">${lesson.title}</h5>
+                        <p class="lesson-card-description">${lesson.description || 'No description available.'}</p>
                     </div>
                     
-                    ${progress ? `
-                        <div class="progress mb-3" style="height: 6px;">
-                            <div class="progress-bar" role="progressbar" style="width: ${progressPercentage}%" aria-valuenow="${progressPercentage}" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div class="lesson-card-footer">
+                        <div class="lesson-meta-row">
+                            <span class="meta-item">📊 ${lesson.difficulty_level || 'N/A'}/5</span>
+                            <span class="meta-item">⏱️ ${lesson.estimated_duration || 'N/A'} min</span>
                         </div>
-                    ` : '<div class="mb-3" style="height: 6px;"></div>'}
-                    
-                    ${accessible ? `
-                        <a href="/lessons/${lesson.id}" class="btn btn-primary w-100">
-                            ${progress ? (progressPercentage === 100 ? 'Review Lesson' : 'Continue Lesson') : 'Start Lesson'}
-                            ${isGuest && lesson.allow_guest_access ? ' (Guest Mode)' : ''}
-                        </a>
-                    ` : `
-                        <button class="btn btn-secondary w-100" disabled>
-                            ${lesson.access_message}
-                        </button>
-                        ${isGuest && !lesson.allow_guest_access ? `
-                            <small class="text-muted mt-2 d-block">
-                                <a href="/login" class="text-decoration-none">Login</a> or 
-                                <a href="/register" class="text-decoration-none">Register</a> to access this lesson
-                            </small>
+                        
+                        ${progress ? `
+                            <div class="lesson-progress-bar">
+                                <div class="progress-fill" style="width: ${progressPercentage}%"></div>
+                            </div>
                         ` : ''}
-                    `}
+                        
+                        ${accessible ? `
+                            <a href="/lessons/${lesson.id}" class="lesson-action-btn">
+                                ${progress ? (progressPercentage === 100 ? 'Review Lesson' : 'Continue Lesson') : 'Start Lesson'}
+                                ${isGuest && lesson.allow_guest_access ? ' (Guest Mode)' : ''}
+                            </a>
+                        ` : `
+                            <button class="lesson-action-btn lesson-action-btn-disabled" disabled>
+                                ${lesson.access_message}
+                            </button>
+                            ${isGuest && !lesson.allow_guest_access ? `
+                                <small class="lesson-login-hint">
+                                    <a href="/login">Login</a> or 
+                                    <a href="/register">Register</a> to access this lesson
+                                </small>
+                            ` : ''}
+                        `}
+                    </div>
                 </div>
             </div>
-        </div>
-    `;
+        `;
+    } else {
+        // Fallback for lessons without background images
+        col.innerHTML = `
+            <div class="card lesson-card h-100 lesson-card-default ${!accessible ? 'locked' : ''}">
+                <div class="card-body d-flex flex-column">
+                    <div class="mb-2">
+                        <span class="badge ${lesson.lesson_type === 'free' ? 'bg-success' : 'bg-warning'}">${lesson.lesson_type}</span>
+                        ${lesson.category_name ? `<span class="badge bg-info text-dark">${lesson.category_name}</span>` : ''}
+                        ${lesson.allow_guest_access ? '<span class="badge bg-light text-dark">👤 Guest Friendly</span>' : ''}
+                    </div>
+                    <h5 class="card-title mt-1">${lesson.title}</h5>
+                    <p class="card-text small text-muted flex-grow-1">${lesson.description || 'No description available.'}</p>
+                    
+                    <div class="mt-auto">
+                        <div class="d-flex justify-content-between small text-muted mb-3">
+                            <span>📊 Difficulty: ${lesson.difficulty_level || 'N/A'}/5</span>
+                            <span>⏱️ ${lesson.estimated_duration || 'N/A'} min</span>
+                        </div>
+                        
+                        ${progress ? `
+                            <div class="progress mb-3" style="height: 6px;">
+                                <div class="progress-bar" role="progressbar" style="width: ${progressPercentage}%" aria-valuenow="${progressPercentage}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        ` : '<div class="mb-3" style="height: 6px;"></div>'}
+                        
+                        ${accessible ? `
+                            <a href="/lessons/${lesson.id}" class="btn btn-primary w-100">
+                                ${progress ? (progressPercentage === 100 ? 'Review Lesson' : 'Continue Lesson') : 'Start Lesson'}
+                                ${isGuest && lesson.allow_guest_access ? ' (Guest Mode)' : ''}
+                            </a>
+                        ` : `
+                            <button class="btn btn-secondary w-100" disabled>
+                                ${lesson.access_message}
+                            </button>
+                            ${isGuest && !lesson.allow_guest_access ? `
+                                <small class="text-muted mt-2 d-block">
+                                    <a href="/login" class="text-decoration-none">Login</a> or 
+                                    <a href="/register" class="text-decoration-none">Register</a> to access this lesson
+                                </small>
+                            ` : ''}
+                        `}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
     
     return col;
 }

@@ -609,8 +609,6 @@
                                                         
                                         {% elif question.question_type == 'matching' %}
                                         <div class="matching-quiz">
-                                            {% set prompts = question.options | map(attribute='option_text') | list %}
-                                            {% set answers = question.options | map(attribute='feedback') | list %}
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="matching-instructions mb-3">
@@ -629,8 +627,9 @@
                                                                     <select class="form-select matching-select" 
                                                                             data-prompt="{{ option.option_text }}" 
                                                                             data-correct-answer="{{ option.feedback }}"
-                                                                            data-question-id="{{ question.id }}">
-                                                                        <option value="" selected disabled>Choose...</option>
+                                                                            data-question-id="{{ question.id }}"
+                                                                            {% if user_answer and user_answer.is_correct %}disabled{% endif %}>
+                                                                        <option value="">Choose...</option>
                                                                         {% for answer_option in question.options | sort(attribute='order_index') %}
                                                                         <option value="{{ answer_option.feedback }}">{{ answer_option.feedback }}</option>
                                                                         {% endfor %}

@@ -6,4 +6,3 @@ handlers:
   static_dir: app/static
 - url: /uploads
   static_dir: app/static/uploads
-  static_dir: app/static/uploads
