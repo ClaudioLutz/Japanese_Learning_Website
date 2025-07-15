@@ -52,7 +52,21 @@ def admin_required(f):
 @bp.route('/')
 @bp.route('/home')
 def index():
-    return render_template('index.html')
+    # Get counts for the welcome page
+    total_lessons = Lesson.query.filter_by(is_published=True).count()
+    total_courses = Course.query.filter_by(is_published=True).count()
+    
+    # Get accessible lessons for guest users
+    guest_accessible_lessons = Lesson.query.filter_by(
+        is_published=True, 
+        allow_guest_access=True, 
+        lesson_type='free'
+    ).count()
+    
+    return render_template('index.html', 
+                         total_lessons=total_lessons,
+                         total_courses=total_courses,
+                         guest_accessible_lessons=guest_accessible_lessons)
 
 @bp.route('/register', methods=['GET', 'POST'])
 def register():

@@ -5,33 +5,65 @@
 
 {% block content %}
 <div class="d-flex align-items-center justify-content-center" style="min-height: 80vh;">
-    <div class="welcome-card text-center">
-        <h1>Begin Your Japanese Journey</h1>
-        <p class="lead text-muted">Explore interactive lessons, from basic Kana to complex Kanji, designed to make learning intuitive and fun.</p>
-        
-        {% if current_user.is_authenticated %}
-        <div class="mt-4">
-            <a href="{{ url_for('routes.lessons') }}" class="btn btn-primary btn-lg">Continue Learning</a>
+    <div class="modern-welcome-card text-center">
+        <!-- Header Section -->
+        <div class="welcome-header mb-4">
+            <div class="welcome-icon mb-3">
+                <i class="fas fa-torii-gate"></i>
+            </div>
+            <h1 class="welcome-title">Begin Your Japanese Journey</h1>
+            <p class="welcome-subtitle">Master the language through interactive lessons, from basic Kana to complex Kanji</p>
         </div>
-        {% else %}
-        <div class="mt-4">
-            <a href="{{ url_for('routes.lessons') }}" class="btn btn-primary btn-lg me-3">
-                <i class="fas fa-book-open"></i> Try Lessons as Guest
-            </a>
-            <a href="{{ url_for('routes.register') }}" class="btn btn-success btn-lg">
-                <i class="fas fa-user-plus"></i> Create Account
-            </a>
-        </div>
-        <div class="mt-3">
-            <div class="alert alert-info d-inline-block">
-                <i class="fas fa-info-circle"></i>
-                <strong>Guest Access:</strong> Try selected lessons without creating an account!<br>
-                <small>Create an account to track progress and access all premium content.</small>
+
+        <!-- Stats Section -->
+        <div class="welcome-stats mb-4">
+            <div class="stats-container">
+                <div class="stat-item">
+                    <div class="stat-number">{{ total_lessons }}</div>
+                    <div class="stat-label">Interactive Lessons</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="stat-number">{{ total_courses }}</div>
+                    <div class="stat-label">Learning Courses</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="stat-number">{{ guest_accessible_lessons }}</div>
+                    <div class="stat-label">Free to Try</div>
+                </div>
             </div>
         </div>
-        <p class="mt-3">
-            <small>Already have an account? <a href="{{ url_for('routes.login') }}">Login here</a>.</small>
-        </p>
+
+        <!-- Action Buttons Section -->
+        {% if current_user.is_authenticated %}
+        <div class="welcome-actions">
+            <a href="{{ url_for('routes.lessons') }}" class="welcome-btn welcome-btn-primary">
+                <i class="fas fa-play-circle"></i>
+                <span>Continue Learning</span>
+            </a>
+            <a href="{{ url_for('routes.courses') }}" class="welcome-btn welcome-btn-secondary">
+                <i class="fas fa-graduation-cap"></i>
+                <span>Browse Courses</span>
+            </a>
+        </div>
+        {% else %}
+        <div class="welcome-actions">
+            <a href="{{ url_for('routes.lessons') }}" class="welcome-btn welcome-btn-primary">
+                <i class="fas fa-book-open"></i>
+                <span>Try Lessons as Guest</span>
+            </a>
+            <a href="{{ url_for('routes.register') }}" class="welcome-btn welcome-btn-success">
+                <i class="fas fa-user-plus"></i>
+                <span>Create Account</span>
+            </a>
+        </div>
+
+        <!-- Login Link -->
+        <div class="login-link mt-3">
+            <span>Already have an account?</span>
+            <a href="{{ url_for('routes.login') }}" class="login-link-btn">Login here</a>
+        </div>
         {% endif %}
     </div>
 </div>
