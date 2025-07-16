@@ -118,6 +118,33 @@ class DatabaseMigrator:
             logger.warning(f"Could not get table info for {table_name}: {str(e)}")
             return []
     
+    def _safe_read_table(self, table_name):
+        """
+        Safely read a table from SQLite, handling type mismatches.
+        Falls back to string types for INTEGER columns that contain non-numeric data.
+        """
+        try:
+            return pd.read_sql_table(table_name, self.sqlite_engine)
+        except ValueError as e:
+            if "invalid literal for int()" not in str(e):
+                raise  # unrelated problem – re-raise
+            
+            # Get column information to identify INTEGER columns
+            with self.sqlite_engine.connect() as conn:
+                result = conn.execute(text(f"PRAGMA table_info({table_name})"))
+                columns = result.fetchall()
+            
+            # Find INTEGER columns that might contain string data
+            int_cols = [col[1] for col in columns if 'INT' in col[2].upper()]
+            dtype_dict = {c: 'string' for c in int_cols}
+            
+            logger.warning(f"Type mismatch detected in table '{table_name}'. Falling back to string dtypes for INTEGER columns: {int_cols}")
+            
+            # Re-read using SQL query with explicit string dtypes
+            return pd.read_sql_query(f"SELECT * FROM {table_name}", 
+                                   self.sqlite_engine, 
+                                   dtype=dtype_dict)
+    
     def create_table_in_postgres(self, table_name):
         """
         Create a table in PostgreSQL based on the SQLite schema.
@@ -303,7 +330,7 @@ class DatabaseMigrator:
             
             # Step 3: Read data from SQLite
             logger.info(f"Reading data from SQLite table '{table_name}'...")
-            df = pd.read_sql_table(table_name, self.sqlite_engine)
+            df = self._safe_read_table(table_name)
             row_count = len(df)
             
             if row_count == 0:
