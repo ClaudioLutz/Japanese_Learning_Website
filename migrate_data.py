@@ -157,8 +157,12 @@ class DatabaseMigrator:
             
             # Create table in PostgreSQL
             with self.postgres_engine.connect() as conn:
+                # Handle reserved words for DROP statement
+                reserved_words = {'user', 'order', 'group', 'table', 'column'}
+                drop_table_name = f'"{table_name}"' if table_name.lower() in reserved_words else table_name
+                
                 # Drop table if it exists (for clean migration)
-                conn.execute(text(f"DROP TABLE IF EXISTS {table_name} CASCADE"))
+                conn.execute(text(f"DROP TABLE IF EXISTS {drop_table_name} CASCADE"))
                 conn.execute(text(postgres_create_sql))
                 conn.commit()
             
@@ -193,14 +197,23 @@ class DatabaseMigrator:
             'BOOLEAN': 'BOOLEAN',
             'DATETIME': 'TIMESTAMP',
             'DATE': 'DATE',
-            'TIME': 'TIME'
+            'TIME': 'TIME',
+            'JSON': 'JSONB'
         }
+        
+        # Handle reserved words in PostgreSQL
+        reserved_words = {'user', 'order', 'group', 'table', 'column'}
+        actual_table_name = f'"{table_name}"' if table_name.lower() in reserved_words else table_name
         
         # Build PostgreSQL CREATE TABLE statement
         postgres_columns = []
+        primary_keys = []
         
         for col in columns:
             col_id, col_name, col_type, not_null, default_value, is_pk = col
+            
+            # Handle reserved column names
+            actual_col_name = f'"{col_name}"' if col_name.lower() in reserved_words else col_name
             
             # Map SQLite type to PostgreSQL type
             pg_type = col_type.upper()
@@ -209,32 +222,58 @@ class DatabaseMigrator:
                     pg_type = postgres_type
                     break
             
-            # Handle special cases
+            # Handle special cases for data types
+            if col_name == 'ai_generation_details':
+                pg_type = 'JSONB'
+            elif col_name == 'difficulty_level' and pg_type == 'INTEGER':
+                # Keep as INTEGER but handle string values in data preparation
+                pass
+            
+            # Handle SERIAL type for primary keys
             if 'AUTOINCREMENT' in sqlite_sql.upper() and is_pk:
                 pg_type = 'SERIAL'
-            elif pg_type == 'INTEGER' and is_pk:
+            elif pg_type == 'INTEGER' and is_pk and not any(other_col[5] for other_col in columns if other_col != col):
+                # Only use SERIAL if this is the only primary key
                 pg_type = 'SERIAL'
             
             # Build column definition
-            col_def = f"{col_name} {pg_type}"
+            col_def = f"{actual_col_name} {pg_type}"
             
             # Add constraints
             if not_null and not is_pk:
                 col_def += " NOT NULL"
             
+            # Handle default values
             if default_value is not None:
                 if pg_type in ['TEXT', 'VARCHAR', 'CHAR']:
-                    col_def += f" DEFAULT '{default_value}'"
+                    # Fix single quote escaping
+                    escaped_default = str(default_value).replace("'", "''")
+                    col_def += f" DEFAULT '{escaped_default}'"
+                elif pg_type == 'BOOLEAN':
+                    # Convert 0/1 to boolean
+                    bool_val = 'TRUE' if str(default_value) in ['1', 'true', 'True'] else 'FALSE'
+                    col_def += f" DEFAULT {bool_val}"
                 else:
                     col_def += f" DEFAULT {default_value}"
             
+            # Collect primary keys separately
             if is_pk:
-                col_def += " PRIMARY KEY"
+                primary_keys.append(actual_col_name)
             
             postgres_columns.append(col_def)
         
+        # Add primary key constraint if there are multiple primary keys
+        if len(primary_keys) > 1:
+            pk_constraint = f"PRIMARY KEY ({', '.join(primary_keys)})"
+            postgres_columns.append(pk_constraint)
+        elif len(primary_keys) == 1 and not any('SERIAL' in col for col in postgres_columns):
+            # Add PRIMARY KEY to single primary key column if not SERIAL
+            for i, col in enumerate(postgres_columns):
+                if primary_keys[0] in col and 'PRIMARY KEY' not in col:
+                    postgres_columns[i] += " PRIMARY KEY"
+        
         # Create the final PostgreSQL CREATE TABLE statement
-        postgres_sql = f"CREATE TABLE {table_name} (\n    " + ",\n    ".join(postgres_columns) + "\n)"
+        postgres_sql = f"CREATE TABLE {actual_table_name} (\n    " + ",\n    ".join(postgres_columns) + "\n)"
         
         return postgres_sql
 
@@ -289,7 +328,10 @@ class DatabaseMigrator:
             
             # Step 6: Verify the migration
             with self.postgres_engine.connect() as conn:
-                result = conn.execute(text(f"SELECT COUNT(*) FROM {table_name}"))
+                # Handle reserved words for verification query
+                reserved_words = {'user', 'order', 'group', 'table', 'column'}
+                verify_table_name = f'"{table_name}"' if table_name.lower() in reserved_words else table_name
+                result = conn.execute(text(f"SELECT COUNT(*) FROM {verify_table_name}"))
                 postgres_count = result.fetchone()[0]
             
             if postgres_count == row_count:
@@ -311,20 +353,59 @@ class DatabaseMigrator:
         Handle common data type issues between SQLite and PostgreSQL.
         """
         try:
+            import json
+            
             # Convert datetime columns properly
             for col in df.columns:
                 if df[col].dtype == 'object':
                     # Try to convert datetime strings
                     if any(df[col].astype(str).str.contains(r'\d{4}-\d{2}-\d{2}', na=False)):
                         try:
-                            df[col] = pd.to_datetime(df[col], errors='ignore')
+                            df[col] = pd.to_datetime(df[col], errors='coerce')
                         except:
                             pass
                 
                 # Handle boolean columns (SQLite stores as 0/1)
-                if col.lower() in ['is_active', 'is_admin', 'is_published', 'enabled', 'active']:
+                if col.lower() in ['is_active', 'is_admin', 'is_published', 'enabled', 'active', 'allow_guest_access', 'is_optional', 'is_interactive', 'is_correct', 'is_completed', 'generated_by_ai', 'created_by_ai']:
                     if df[col].dtype in ['int64', 'float64']:
                         df[col] = df[col].astype(bool)
+                
+                # Handle JSON columns
+                if col == 'ai_generation_details':
+                    def convert_to_json(value):
+                        if pd.isna(value) or value is None:
+                            return None
+                        if isinstance(value, dict):
+                            return json.dumps(value)
+                        if isinstance(value, str):
+                            try:
+                                # Try to parse as JSON to validate
+                                json.loads(value)
+                                return value
+                            except:
+                                return json.dumps({"raw_value": value})
+                        return json.dumps({"raw_value": str(value)})
+                    
+                    df[col] = df[col].apply(convert_to_json)
+                
+                # Handle difficulty_level conversion (string to integer)
+                if col == 'difficulty_level':
+                    def convert_difficulty(value):
+                        if pd.isna(value) or value is None:
+                            return None
+                        if isinstance(value, str):
+                            difficulty_map = {
+                                'easy': 1,
+                                'medium': 2,
+                                'hard': 3,
+                                'beginner': 1,
+                                'intermediate': 2,
+                                'advanced': 3
+                            }
+                            return difficulty_map.get(value.lower(), 1)  # Default to 1 if unknown
+                        return int(value) if str(value).isdigit() else 1
+                    
+                    df[col] = df[col].apply(convert_difficulty)
             
             logger.debug(f"Prepared DataFrame for table '{table_name}' with shape {df.shape}")
             return df
