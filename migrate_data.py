@@ -18,6 +18,10 @@ from sqlalchemy import create_engine, text, inspect
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime
 import time
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Configure logging
 logging.basicConfig(
@@ -69,7 +73,7 @@ class DatabaseMigrator:
                 f"{self.postgres_config['database']}"
             )
             self.postgres_engine = create_engine(postgres_url)
-            logger.info("Connected to PostgreSQL database via Cloud SQL Auth Proxy")
+            logger.info("Connected to local PostgreSQL database")
             
             # Test connections
             with self.sqlite_engine.connect() as conn:
@@ -193,11 +197,11 @@ class DatabaseMigrator:
                 conn.execute(text(postgres_create_sql))
                 conn.commit()
             
-            logger.info(f"✅ Successfully created table '{table_name}' in PostgreSQL")
+            logger.info(f"[SUCCESS] Successfully created table '{table_name}' in PostgreSQL")
             return True
             
         except Exception as e:
-            logger.error(f"❌ Failed to create table '{table_name}': {str(e)}")
+            logger.error(f"[FAILED] Failed to create table '{table_name}': {str(e)}")
             return False
     
     def convert_sqlite_to_postgres_schema(self, sqlite_sql, columns, table_name):
@@ -362,16 +366,16 @@ class DatabaseMigrator:
                 postgres_count = result.fetchone()[0]
             
             if postgres_count == row_count:
-                logger.info(f"✅ Successfully migrated table '{table_name}': {row_count} rows")
+                logger.info(f"[SUCCESS] Successfully migrated table '{table_name}': {row_count} rows")
                 return True, row_count, None
             else:
                 error_msg = f"Row count mismatch: SQLite={row_count}, PostgreSQL={postgres_count}"
-                logger.error(f"❌ Migration verification failed for table '{table_name}': {error_msg}")
+                logger.error(f"[FAILED] Migration verification failed for table '{table_name}': {error_msg}")
                 return False, row_count, error_msg
                 
         except Exception as e:
             error_msg = str(e)
-            logger.error(f"❌ Failed to migrate table '{table_name}': {error_msg}")
+            logger.error(f"[FAILED] Failed to migrate table '{table_name}': {error_msg}")
             return False, 0, error_msg
     
     def prepare_dataframe_for_postgres(self, df, table_name):
@@ -477,7 +481,7 @@ class DatabaseMigrator:
         logger.info("=" * 60)
         logger.info("STARTING DATABASE MIGRATION")
         logger.info("Source: SQLite (instance/site.db)")
-        logger.info("Target: Google Cloud SQL PostgreSQL (japanese_learning)")
+        logger.info("Target: Local PostgreSQL (japanese_learning)")
         logger.info("=" * 60)
         
         start_time = datetime.now()
@@ -537,7 +541,7 @@ class DatabaseMigrator:
         logger.info("\nDETAILED RESULTS:")
         logger.info("-" * 40)
         for result in migration_results:
-            status = "✅ SUCCESS" if result['success'] else "❌ FAILED"
+            status = "[SUCCESS]" if result['success'] else "[FAILED]"
             logger.info(f"{result['table']:<20} | {status:<10} | {result['rows']:>8} rows")
             if not result['success'] and result['error']:
                 logger.info(f"{'':>20} | Error: {result['error']}")
@@ -551,10 +555,10 @@ class DatabaseMigrator:
         logger.info(f"\nMigration log saved to: migration_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log")
         
         if failed_migrations > 0:
-            logger.warning(f"\n⚠️  {failed_migrations} table(s) failed to migrate. Check the log for details.")
+            logger.warning(f"\n[WARNING] {failed_migrations} table(s) failed to migrate. Check the log for details.")
             sys.exit(1)
         else:
-            logger.info("\n🎉 All tables migrated successfully!")
+            logger.info("\n[SUCCESS] All tables migrated successfully!")
 
 def main():
     """Main entry point for the migration script."""
