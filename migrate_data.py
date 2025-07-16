@@ -406,6 +406,28 @@ class DatabaseMigrator:
                         return int(value) if str(value).isdigit() else 1
                     
                     df[col] = df[col].apply(convert_difficulty)
+                
+                # Handle jlpt_level conversion (string to integer)
+                if col == 'jlpt_level':
+                    def convert_jlpt_level(value):
+                        if pd.isna(value) or value is None:
+                            return None
+                        if isinstance(value, str):
+                            # Handle JLPT level strings like "N1", "N2", "N3", "N4", "N5", "NN4", etc.
+                            value_clean = value.upper().strip()
+                            if value_clean.startswith('N'):
+                                # Extract the number part
+                                number_part = value_clean.replace('N', '').replace('N', '')  # Handle "NN4" -> "4"
+                                if number_part.isdigit():
+                                    return int(number_part)
+                            # If it's already a number string
+                            if value_clean.isdigit():
+                                return int(value_clean)
+                            # Default to N5 (5) if we can't parse it
+                            return 5
+                        return int(value) if str(value).isdigit() else 5
+                    
+                    df[col] = df[col].apply(convert_jlpt_level)
             
             logger.debug(f"Prepared DataFrame for table '{table_name}' with shape {df.shape}")
             return df
