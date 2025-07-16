@@ -425,7 +425,10 @@ class DatabaseMigrator:
                                 return int(value_clean)
                             # Default to N5 (5) if we can't parse it
                             return 5
-                        return int(value) if str(value).isdigit() else 5
+                        try:
+                            return int(value)
+                        except (ValueError, TypeError):
+                            return 5
                     
                     df[col] = df[col].apply(convert_jlpt_level)
             
