@@ -2,7 +2,7 @@
 
 ## 1. Introduction
 
-The Japanese Learning Website utilizes a relational database managed by SQLAlchemy ORM. The schema is designed to support user management, content organization (Kana, Kanji, Vocabulary, Grammar), a comprehensive lesson system with progress tracking, and interactive quiz functionalities. Database migrations are handled by Alembic.
+The Japanese Learning Website utilizes a **PostgreSQL** relational database managed by SQLAlchemy ORM. The application was successfully migrated from SQLite to PostgreSQL for improved performance, concurrent access, and production scalability. The schema is designed to support user management, content organization (Kana, Kanji, Vocabulary, Grammar), a comprehensive lesson system with progress tracking, and interactive quiz functionalities. Database migrations are handled by Alembic.
 
 This document outlines the structure of each table (model) in the database.
 

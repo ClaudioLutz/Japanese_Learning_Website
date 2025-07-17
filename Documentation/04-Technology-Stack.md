@@ -45,7 +45,8 @@ This section outlines the key technologies used in the project and the rationale
 
 | Technology        | Version         | Purpose                                     | Design Rationale                                                                                                                            |
 |-------------------|-----------------|---------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
-| **SQLite**        | (Python default)| Development and default production database | Simple, file-based database, zero-configuration, suitable for development and small to medium-scale applications. Easy to set up and manage. |
+| **PostgreSQL**    | 17.5            | Primary production database                 | Robust, ACID-compliant relational database with excellent performance, concurrent access, and advanced features. Migrated from SQLite for production use. |
+| **SQLite**        | (Python default)| Legacy development database                 | Simple, file-based database used during initial development. Now replaced by PostgreSQL for better performance and scalability. |
 | **Alembic**       | Direct Usage    | Database schema migration tool              | Handles versioning of the database schema, allowing for controlled evolution of table structures. Integrated via `migrations/` directory.   |
 
 ## Design Choices & Justifications
@@ -64,7 +65,7 @@ This section outlines the key technologies used in the project and the rationale
 
 ### Database Design
 - **Normalized Relational Schema**: Designed to reduce data redundancy and improve data integrity using foreign keys and relationships (primarily aiming for Third Normal Form - 3NF).
-- **SQLite as Default**: Chosen for ease of setup and development. The use of SQLAlchemy allows for a straightforward migration to more robust databases like PostgreSQL or MySQL for production scaling.
+- **PostgreSQL Migration**: Successfully migrated from SQLite to PostgreSQL for improved performance, concurrent access, and production scalability. Migration completed using custom migration script (`migrate_data.py`).
 - **Alembic for Migrations**: Ensures that database schema changes are version-controlled (via `migrations/` directory) and can be applied systematically across different environments using `run_migrations.py`.
 
 ### Security
@@ -115,9 +116,11 @@ This section outlines the key technologies used in the project and the rationale
 - **Bootstrap 5.3.3** - Responsive UI framework
 
 ### Database
-- **SQLite** - Development database (easily replaceable with PostgreSQL/MySQL)
-- **Database File**:
-  - `instance/site.db` - Main application database. (Note: `japanese_learning.db` is a legacy database file found in the `deprecated/` directory and is not used by the current application.)
+- **PostgreSQL** - Primary production database (migrated from SQLite)
+- **Database Configuration**:
+  - Local PostgreSQL server: `japanese_learning` database
+  - Connection managed via `DATABASE_URL` environment variable
+  - Legacy SQLite files: `instance/site.db` (migrated data), `japanese_learning.db` (deprecated)
 
 ### Development Tools
 - **Python 3.8+** - Programming language

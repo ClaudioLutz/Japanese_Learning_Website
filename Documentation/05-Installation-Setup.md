@@ -7,7 +7,9 @@ Ensure the following software is installed on your system:
 - **Python**: Version 3.8 or higher.
 - **pip**: Python package installer (usually comes with Python).
 - **Git**: Version control system for cloning the repository.
-- **SQLite 3**: (Optional, but good to have the command-line client for direct database inspection. The Python `sqlite3` module is built-in.)
+- **PostgreSQL**: Version 12 or higher (primary database).
+- **psql**: PostgreSQL command-line client (for database management).
+- **SQLite 3**: (Optional, for legacy database inspection. The Python `sqlite3` module is built-in.)
 
 ## Step-by-Step Installation
 
@@ -37,7 +39,51 @@ Install all required Python packages listed in `requirements.txt`.
 pip install -r requirements.txt
 ```
 
-### 4. Environment Configuration (`.env` file)
+### 4. PostgreSQL Database Setup
+
+The application now uses PostgreSQL as its primary database. Follow these steps to set up PostgreSQL:
+
+#### a. Install PostgreSQL
+- **Windows**: Download and install from [postgresql.org](https://www.postgresql.org/download/windows/)
+- **macOS**: Use Homebrew: `brew install postgresql`
+- **Linux**: Use your package manager: `sudo apt-get install postgresql postgresql-contrib`
+
+#### b. Create Database and User
+```sql
+-- Connect to PostgreSQL as superuser
+psql -U postgres
+
+-- Create database
+CREATE DATABASE japanese_learning;
+
+-- Create application user
+CREATE USER app_user WITH PASSWORD 'your_secure_password';
+
+-- Grant privileges
+GRANT ALL PRIVILEGES ON DATABASE japanese_learning TO app_user;
+
+-- Exit psql
+\q
+```
+
+#### c. Verify Connection
+Test the database connection:
+```bash
+psql -U app_user -d japanese_learning -h localhost
+```
+
+#### d. Migration from SQLite (if applicable)
+If you have existing SQLite data, use the migration script:
+```bash
+python migrate_data.py
+```
+This script will:
+- Connect to both SQLite (`instance/site.db`) and PostgreSQL databases
+- Migrate all tables and data with proper type conversions
+- Handle JLPT level conversions and data validation
+- Provide detailed logging of the migration process
+
+### 5. Environment Configuration (`.env` file)
 Create a `.env` file in the root directory of the project. This file stores environment-specific configurations. Add the following essential variables:
 ```env
 # Flask Configuration
@@ -49,7 +95,8 @@ FLASK_DEBUG=True      # Set to False in production
 SECRET_KEY=your-super-secret-and-random-key-here
 
 # Database Configuration
-DATABASE_URL=sqlite:///instance/site.db # Path to the SQLite database file
+DATABASE_URL=postgresql://app_user:your_password@localhost:5432/japanese_learning # PostgreSQL connection string
+# Legacy SQLite (for reference): DATABASE_URL=sqlite:///instance/site.db
 
 # File Upload Configuration
 UPLOAD_FOLDER=app/static/uploads # Default path for storing uploaded files
@@ -60,7 +107,7 @@ MAX_CONTENT_LENGTH=16777216 # Optional: Max file size for uploads (e.g., 16MB)
 - The `instance` folder (for `site.db`) will be created automatically by Flask if it doesn't exist when the database is first accessed or initialized.
 - Ensure `UPLOAD_FOLDER` (`app/static/uploads`) exists or is created. The application attempts to create subdirectories within this folder.
 
-### 5. Database Initialization and Seeding
+### 6. Database Initialization and Seeding
 For a fresh setup, the project uses a sequence of Python scripts to initialize the database, create an admin user, and seed initial data.
 
 #### a. Initial Database Setup and Admin Creation
@@ -83,7 +130,7 @@ python create_admin.py
 ```
 Follow the prompts to set the username, email, and password.
 
-### 6. Run the Development Server
+### 7. Run the Development Server
 ```bash
 flask run
 # Alternatively, you can use:
@@ -91,7 +138,7 @@ flask run
 ```
 The application will typically be available at `http://127.0.0.1:5000/` or `http://localhost:5000/`.
 
-### 7. Access the Application
+### 8. Access the Application
 -   **Main Site:** `http://localhost:5000/`
 -   **Admin Panel:** `http://localhost:5000/admin` (Login with the admin credentials created by `setup_unified_auth.py` or `create_admin.py`).
 

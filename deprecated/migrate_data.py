@@ -59,20 +59,39 @@ class DatabaseMigrator:
     def create_connections(self):
         """Create database connections for both SQLite and PostgreSQL."""
         try:
-            # SQLite connection
+            # SQLite connection with encoding handling
             sqlite_url = f"sqlite:///{self.sqlite_db_path}"
-            self.sqlite_engine = create_engine(sqlite_url)
+            # Add connect_args to handle encoding issues
+            self.sqlite_engine = create_engine(
+                sqlite_url,
+                connect_args={
+                    'check_same_thread': False,
+                },
+                # Use text_factory to handle encoding issues
+                module=None
+            )
             logger.info(f"Connected to SQLite database: {self.sqlite_db_path}")
             
             # PostgreSQL connection via Cloud SQL Auth Proxy
+            # URL encode the password to handle special characters
+            from urllib.parse import quote_plus
+            encoded_password = quote_plus(self.postgres_config['password'])
+            
             postgres_url = (
                 f"postgresql://{self.postgres_config['username']}:"
-                f"{self.postgres_config['password']}@"
+                f"{encoded_password}@"
                 f"{self.postgres_config['host']}:"
                 f"{self.postgres_config['port']}/"
                 f"{self.postgres_config['database']}"
+                f"?client_encoding=utf8"
             )
-            self.postgres_engine = create_engine(postgres_url)
+            self.postgres_engine = create_engine(
+                postgres_url,
+                connect_args={
+                    "client_encoding": "utf8",
+                    "options": "-c client_encoding=utf8"
+                }
+            )
             logger.info("Connected to local PostgreSQL database")
             
             # Test connections
@@ -80,9 +99,19 @@ class DatabaseMigrator:
                 conn.execute(text("SELECT 1"))
             logger.info("SQLite connection test successful")
             
-            with self.postgres_engine.connect() as conn:
-                conn.execute(text("SELECT 1"))
-            logger.info("PostgreSQL connection test successful")
+            try:
+                logger.info("Attempting PostgreSQL connection test...")
+                with self.postgres_engine.connect() as conn:
+                    logger.info("PostgreSQL connection established, executing test query...")
+                    result = conn.execute(text("SELECT 1"))
+                    logger.info(f"Test query result: {result.fetchone()}")
+                logger.info("PostgreSQL connection test successful")
+            except Exception as pg_error:
+                logger.error(f"PostgreSQL connection test failed: {str(pg_error)}")
+                logger.error(f"Error type: {type(pg_error)}")
+                import traceback
+                logger.error(f"Full traceback: {traceback.format_exc()}")
+                raise pg_error
             
         except Exception as e:
             logger.error(f"Failed to create database connections: {str(e)}")
@@ -124,30 +153,100 @@ class DatabaseMigrator:
     
     def _safe_read_table(self, table_name):
         """
-        Safely read a table from SQLite, handling type mismatches.
+        Safely read a table from SQLite, handling type mismatches and encoding issues.
         Falls back to string types for INTEGER columns that contain non-numeric data.
         """
         try:
             return pd.read_sql_table(table_name, self.sqlite_engine)
-        except ValueError as e:
-            if "invalid literal for int()" not in str(e):
-                raise  # unrelated problem – re-raise
+        except (ValueError, UnicodeDecodeError) as e:
+            logger.warning(f"Error reading table '{table_name}': {str(e)}")
             
-            # Get column information to identify INTEGER columns
+            if "invalid literal for int()" in str(e):
+                # Handle type mismatch
+                with self.sqlite_engine.connect() as conn:
+                    result = conn.execute(text(f"PRAGMA table_info({table_name})"))
+                    columns = result.fetchall()
+                
+                # Find INTEGER columns that might contain string data
+                int_cols = [col[1] for col in columns if 'INT' in col[2].upper()]
+                dtype_dict = {c: 'string' for c in int_cols}
+                
+                logger.warning(f"Type mismatch detected in table '{table_name}'. Falling back to string dtypes for INTEGER columns: {int_cols}")
+                
+                # Re-read using SQL query with explicit string dtypes
+                return pd.read_sql_query(f"SELECT * FROM {table_name}", 
+                                       self.sqlite_engine, 
+                                       dtype=dtype_dict)
+            else:
+                # Handle encoding issues by reading with raw SQL and manual encoding handling
+                return self._read_table_with_encoding_handling(table_name)
+    
+    def _read_table_with_encoding_handling(self, table_name):
+        """
+        Read table data with manual encoding handling for problematic characters.
+        """
+        try:
+            logger.info(f"Attempting to read table '{table_name}' with encoding handling...")
+            
+            # Read data using raw SQL with manual encoding handling
             with self.sqlite_engine.connect() as conn:
+                # First, get column names
                 result = conn.execute(text(f"PRAGMA table_info({table_name})"))
-                columns = result.fetchall()
-            
-            # Find INTEGER columns that might contain string data
-            int_cols = [col[1] for col in columns if 'INT' in col[2].upper()]
-            dtype_dict = {c: 'string' for c in int_cols}
-            
-            logger.warning(f"Type mismatch detected in table '{table_name}'. Falling back to string dtypes for INTEGER columns: {int_cols}")
-            
-            # Re-read using SQL query with explicit string dtypes
-            return pd.read_sql_query(f"SELECT * FROM {table_name}", 
-                                   self.sqlite_engine, 
-                                   dtype=dtype_dict)
+                columns = [col[1] for col in result.fetchall()]
+                
+                # Read all data as text to handle encoding issues
+                result = conn.execute(text(f"SELECT * FROM {table_name}"))
+                rows = result.fetchall()
+                
+                # Convert to DataFrame with encoding handling
+                data = []
+                for row in rows:
+                    processed_row = []
+                    for value in row:
+                        if isinstance(value, bytes):
+                            # Handle bytes data with multiple encoding attempts
+                            try:
+                                processed_value = value.decode('utf-8')
+                            except UnicodeDecodeError:
+                                try:
+                                    processed_value = value.decode('latin-1')
+                                    logger.debug(f"Decoded bytes using latin-1: {processed_value[:50]}...")
+                                except UnicodeDecodeError:
+                                    try:
+                                        processed_value = value.decode('windows-1252')
+                                        logger.debug(f"Decoded bytes using windows-1252: {processed_value[:50]}...")
+                                    except UnicodeDecodeError:
+                                        # Last resort: replace problematic characters
+                                        processed_value = value.decode('utf-8', errors='replace')
+                                        logger.warning(f"Used error replacement for problematic bytes")
+                        elif isinstance(value, str):
+                            # Handle string data that might have encoding issues
+                            try:
+                                # Try to encode/decode to ensure proper UTF-8
+                                processed_value = value.encode('utf-8', errors='replace').decode('utf-8')
+                            except (UnicodeEncodeError, UnicodeDecodeError):
+                                processed_value = str(value)
+                        else:
+                            processed_value = value
+                        
+                        processed_row.append(processed_value)
+                    data.append(processed_row)
+                
+                # Create DataFrame
+                df = pd.DataFrame(data, columns=columns)
+                logger.info(f"Successfully read table '{table_name}' with encoding handling: {len(df)} rows")
+                return df
+                
+        except Exception as e:
+            logger.error(f"Failed to read table '{table_name}' even with encoding handling: {str(e)}")
+            # Return empty DataFrame with column structure
+            try:
+                with self.sqlite_engine.connect() as conn:
+                    result = conn.execute(text(f"PRAGMA table_info({table_name})"))
+                    columns = [col[1] for col in result.fetchall()]
+                return pd.DataFrame(columns=columns)
+            except:
+                return pd.DataFrame()
     
     def create_table_in_postgres(self, table_name):
         """
@@ -385,6 +484,24 @@ class DatabaseMigrator:
         """
         try:
             import json
+            
+            # First, ensure all text data is properly UTF-8 encoded
+            for col in df.columns:
+                if df[col].dtype == 'object':
+                    def clean_text(value):
+                        if pd.isna(value) or value is None:
+                            return None
+                        if isinstance(value, str):
+                            # Ensure proper UTF-8 encoding
+                            try:
+                                # Remove any problematic characters
+                                cleaned = value.encode('utf-8', errors='replace').decode('utf-8')
+                                return cleaned
+                            except (UnicodeEncodeError, UnicodeDecodeError):
+                                return str(value)
+                        return value
+                    
+                    df[col] = df[col].apply(clean_text)
             
             # Handle jlpt_level conversion FIRST (before other processing)
             if 'jlpt_level' in df.columns:
