@@ -134,6 +134,8 @@ Represents a single lesson, containing various content items and metadata.
 | `allow_guest_access` | Boolean     | Not Nullable, Default: False                    | Flag indicating if guests can access this lesson without authentication.  |
 | `instruction_language`| String(10)  | Not Nullable, Default: 'english'              | Language for explanations/instructions (e.g., 'english', 'german').       |
 | `thumbnail_url`      | String(255) | Nullable                                        | URL for a lesson cover image.                                             |
+| `background_image_url`| String(255) | Nullable                                       | URL for a lesson background image.                                        |
+| `background_image_path`| String(500) | Nullable                                      | File path for uploaded background image.                                  |
 | `video_intro_url`    | String(255) | Nullable                                        | URL for an optional introductory video for the lesson.                    |
 | `created_at`         | DateTime    | Default: `datetime.utcnow`                      | Timestamp of when the lesson was created.                                 |
 | `updated_at`         | DateTime    | Default: `datetime.utcnow`, OnUpdate: `datetime.utcnow` | Timestamp of the last update.                                       |
@@ -228,7 +230,7 @@ Stores a single question that can be part of a `LessonContent` item marked as in
 |-------------------|-------------|------------------------------------------------------|---------------------------------------------------------------------------|
 | `id`              | Integer     | Primary Key                                          | Unique identifier for the quiz question.                                  |
 | `lesson_content_id`| Integer     | Foreign Key (`lesson_content.id`), Not Nullable    | ID of the `LessonContent` item this question belongs to.                  |
-| `question_type`   | String(50)  | Not Nullable                                         | Type of question (e.g., 'multiple_choice', 'fill_blank', 'true_false').   |
+| `question_type`   | String(50)  | Not Nullable                                         | Type of question (e.g., 'multiple_choice', 'fill_blank', 'true_false', 'matching').   |
 | `question_text`   | Text        | Not Nullable                                         | The text of the question.                                                 |
 | `explanation`     | Text        | Nullable                                             | Explanation for the correct answer, shown after attempting.               |
 | `hint`            | Text        | Nullable                                             | A hint to help the user solve the question.                               |

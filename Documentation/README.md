@@ -31,16 +31,20 @@ This documentation provides comprehensive information about the Japanese Learnin
 - [**15-Development-Workflow.md**](15-Development-Workflow.md) - Recommended development processes, version control, and coding standards
 - [**16-Troubleshooting.md**](16-Troubleshooting.md) - Common issues and solutions
 - [**17-Future-Roadmap.md**](17-Future-Roadmap.md) - Planned features and enhancements
+
+### Advanced Features & Systems
 - [**18-AI-Lesson-Creation.md**](18-AI-Lesson-Creation.md) - Comprehensive AI lesson creation system documentation
 - [**19-Lesson-Creation-Scripts.md**](19-Lesson-Creation-Scripts.md) - Advanced lesson creation scripts and automation
 - [**20-File-Upload-System.md**](20-File-Upload-System.md) - Comprehensive file upload system documentation
 - [**21-Lesson-Export-Import-System.md**](21-Lesson-Export-Import-System.md) - Lesson backup and migration system
 - [**22-Forms-and-CSRF-Protection.md**](22-Forms-and-CSRF-Protection.md) - Form handling and security implementation
 - [**23-User-Progress-and-Quiz-System.md**](23-User-Progress-and-Quiz-System.md) - Progress tracking and interactive quiz system
+- [**24-AI-Content-Generation-Capabilities.md**](24-AI-Content-Generation-Capabilities.md) - AI content generation features and capabilities
 - [**25-Intelligence-and-Adaptation.md**](25-Intelligence-and-Adaptation.md) - AI-powered adaptive learning system
 - [**26-Lesson-Template-System.md**](26-Lesson-Template-System.md) - System for creating lessons from templates
 - [**27-Multi-Modal-Content-Generation.md**](27-Multi-Modal-Content-Generation.md) - System for generating visual and auditory content
 - [**28-Courses-Panel-System.md**](28-Courses-Panel-System.md) - Comprehensive course management and organization system
+- [**29-AI-Services-System.md**](29-AI-Services-System.md) - Complete AI services architecture and implementation
 
 ### Enhanced Lesson Creation System
 - [**Enhanced-Lesson-Creation-Scripts/**](Enhanced-Lesson-Creation-Scripts/) - Comprehensive analysis and enhancement documentation for the lesson creation system
@@ -211,7 +215,7 @@ The project features a sophisticated lesson creation system documented in the [E
 ## Project Status
 
 **Current Version:** 5.0 (Production-Ready System)
-**Last Updated:** July 14, 2025
+**Last Updated:** January 17, 2025
 **Active Development:** Documentation updates and system optimization
 
 ### Recent Achievements

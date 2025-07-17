@@ -4,20 +4,19 @@
 A comprehensive web-based Japanese learning platform that provides structured lessons for learning Hiragana, Katakana, Kanji, vocabulary, and grammar. The platform features a tiered subscription model with free and premium content access.
 
 ## Key Features
-- **Unified Authentication System:** Single, secure login for users and administrators.
-- **Subscription Management:** Supports Free and Premium content access tiers.
-- **Comprehensive Content Management System (CMS):** Full CRUD operations for Kana, Kanji, Vocabulary, and Grammar.
-- **Role-Based Access Control (RBAC):** Distinct permissions for student and administrator roles.
-- **Interactive Lesson System:** Paginated lessons with multimedia, interactive quizzes (multiple choice, fill-in-the-blank, true/false), and content ordering.
-- **User Progress Tracking:** Monitors completion of lessons and individual content items/pages.
-- **AI-Powered Lesson Creation:** Tools to assist administrators in generating lesson content.
-- **Personalized Learning Paths**: AI-generated remedial and advancement lessons based on user performance.
-- **Automated Content Validation**: AI-powered validation of content for accuracy and quality.
-- **Scripted Lesson Creation:** Utilities for bulk creation of specific lesson types.
-- **Lesson Prerequisites & Categories:** Structured learning paths and organized content discovery.
-- **Responsive Design:** Accessible on desktop and mobile devices.
-- **File Upload System:** Secure handling of multimedia files for lessons.
-- **Carousel Navigation:** Intuitive swipe-based navigation for lesson pages.
+- **Unified Authentication System:** Single, secure login for users and administrators with guest access support.
+- **Subscription Management:** Supports Free and Premium content access tiers with upgrade/downgrade functionality.
+- **Comprehensive Content Management System (CMS):** Full CRUD operations for Kana, Kanji, Vocabulary, and Grammar with AI-powered content generation.
+- **Role-Based Access Control (RBAC):** Distinct permissions for student and administrator roles with CSRF protection.
+- **Interactive Lesson System:** Multi-page lessons with multimedia, interactive quizzes (multiple choice, fill-in-the-blank, true/false, matching), and flexible content ordering.
+- **Course Organization System:** Structured course collections with lesson groupings and progress tracking.
+- **User Progress Tracking:** Comprehensive monitoring of lesson completion, quiz performance, and individual content progress.
+- **AI-Powered Content Generation:** Advanced AI services for lesson content, explanations, quiz creation, and educational image generation.
+- **Lesson Export/Import System:** Complete lesson portability with ZIP packaging for content sharing and backup.
+- **File Upload System:** Secure multimedia file handling with validation, processing, and organized storage.
+- **Guest Access Support:** Allows non-authenticated users to access selected free content.
+- **Content Approval Workflow:** Review and approval system for AI-generated content.
+- **Responsive Design:** Optimized experience across desktop, tablet, and mobile devices.
 
 ## Target Users
 
@@ -77,26 +76,36 @@ A comprehensive web-based Japanese learning platform that provides structured le
 
 ### Content Management
 - **CRUD Operations:** Full Create, Read, Update, Delete capabilities for all content types (Kana, Kanji, Vocabulary, Grammar).
-- **Multimedia Support:** Integration of text, images, videos, and audio via URLs or direct file uploads.
-- **File Upload System:** Secure handling, storage, and serving of uploaded media files.
-- **Content Validation:** Basic validation for uploaded content.
-- **AI-Assisted Content Generation:** Tools to help admins create lesson materials.
-- **Adaptive Learning System**: AI-powered analysis of user performance to generate personalized lessons and study plans.
-- **Content Validation Framework**: Automated validation of content for linguistic accuracy, cultural context, and educational effectiveness.
-- **Scripted Content Creation:** Utilities for bulk-generating certain lesson types.
+- **Multimedia Support:** Integration of text, images, videos, and audio via URLs or direct file uploads with comprehensive validation.
+- **File Upload System:** Secure handling, storage, and serving of uploaded media files with MIME type validation and image processing.
+- **Content Validation:** Advanced validation for uploaded content including file type verification and security checks.
+- **AI-Assisted Content Generation:** Comprehensive AI tools for generating lesson content, explanations, quizzes, and educational images.
+- **Content Approval Workflow:** Review and approval system for AI-generated content with status tracking.
+- **Bulk Operations:** Support for bulk content creation, editing, and deletion operations.
+- **Export/Import System:** Complete lesson export to JSON/ZIP format with file packaging for content sharing.
 
 ### Lesson System
-- **Structured Learning:** Multi-page lessons with flexible ordering of diverse content items (text, images, videos, quizzes).
-- **Interactive Quizzes:** Multiple choice, fill-in-the-blank, and true/false question types embedded within lessons.
-- **Progress Tracking:** Detailed monitoring of user progress through lessons and individual pages/content items.
-- **Prerequisites & Categories:** Define lesson dependencies and organize content into color-coded categories for discoverability.
-- **Carousel Navigation:** User-controlled, swipe-friendly navigation through lesson pages.
+- **Multi-Page Structure:** Lessons organized into pages with metadata support for titles and descriptions.
+- **Flexible Content Ordering:** Drag-and-drop reordering of content within pages and across lesson structure.
+- **Interactive Elements:** Multiple quiz types (multiple choice, fill-in-blank, true/false, matching) with adaptive scoring.
+- **Progress Tracking:** Detailed monitoring of user progress through lessons, pages, and individual content items.
+- **Prerequisites & Categories:** Define lesson dependencies and organize content into color-coded categories.
+- **Course Organization:** Group lessons into structured courses with progress tracking and completion metrics.
+- **Guest Access:** Configurable guest access for selected free content without authentication.
+
+### Quiz System
+- **Multiple Question Types:** Support for multiple choice, fill-in-the-blank, true/false, and matching questions.
+- **Adaptive Scoring:** Configurable attempts, passing scores, and progressive hints.
+- **Detailed Feedback:** Question-specific explanations and option-level feedback.
+- **Progress Integration:** Quiz results integrated with overall lesson progress tracking.
+- **AI-Generated Questions:** Automated quiz creation with difficulty adjustment and variety.
 
 ### User Experience
-- **Responsive Design:** Optimized for a seamless experience on desktop, tablet, and mobile devices.
+- **Responsive Design:** Optimized for seamless experience across desktop, tablet, and mobile devices.
 - **Intuitive Navigation:** Clear pathways for lesson discovery, progression, and content interaction.
-- **Progress Visualization:** Clear indicators of lesson completion and overall progress.
-- **Accessibility:** Adherence to accessibility best practices is an ongoing goal.
+- **Progress Visualization:** Comprehensive indicators of lesson completion, quiz performance, and overall progress.
+- **Guest Support:** Non-authenticated access to selected free content for trial and accessibility.
+- **Subscription Management:** Easy upgrade/downgrade between free and premium tiers.
 
 ## Technical Architecture
 - **Backend Framework:** Python with Flask.
