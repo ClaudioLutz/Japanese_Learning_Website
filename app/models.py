@@ -137,6 +137,10 @@ class Lesson(db.Model):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
+    # Pricing fields
+    price: Mapped[float] = mapped_column(db.Float, nullable=False, default=0.0)
+    is_purchasable: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    
     # Relationships
     content_items: Mapped[List['LessonContent']] = relationship('LessonContent', backref='lesson', lazy=True, cascade='all, delete-orphan')
     prerequisites: Mapped[List['LessonPrerequisite']] = relationship('LessonPrerequisite', 
@@ -160,19 +164,49 @@ class Lesson(db.Model):
         return [prereq.prerequisite_lesson for prereq in self.prerequisites]
     
     def is_accessible_to_user(self, user):
-        """Check if user can access this lesson based on subscription and prerequisites"""
+        """Check if user can access this lesson based on pricing, subscription and prerequisites"""
         # Handle guest users (not authenticated)
         if user is None or not hasattr(user, 'is_authenticated') or not user.is_authenticated:
-            if self.allow_guest_access and self.lesson_type == 'free':
+            # Free lessons with guest access
+            if self.price == 0.0 and self.allow_guest_access:
                 return True, "Accessible as guest"
             else:
                 return False, "Login required to access this lesson"
         
-        # Check subscription level for authenticated users
+        # For authenticated users, check pricing first
+        if self.price == 0.0:
+            # Free lesson - check prerequisites only
+            for prereq in self.get_prerequisites(): # type: ignore
+                progress = UserLessonProgress.query.filter_by(
+                    user_id=user.id, lesson_id=prereq.id
+                ).first()
+                if not progress or not progress.is_completed:
+                    return False, f"Must complete '{prereq.title}' first"
+            return True, "Free lesson"
+        
+        # Paid lesson - check if user purchased it
+        if self.is_purchasable:
+            purchase = LessonPurchase.query.filter_by(
+                user_id=user.id, 
+                lesson_id=self.id
+            ).first()
+            if purchase:
+                # User owns the lesson - check prerequisites
+                for prereq in self.get_prerequisites(): # type: ignore
+                    progress = UserLessonProgress.query.filter_by(
+                        user_id=user.id, lesson_id=prereq.id
+                    ).first()
+                    if not progress or not progress.is_completed:
+                        return False, f"Must complete '{prereq.title}' first"
+                return True, "Purchased"
+            else:
+                return False, f"Purchase required (CHF {self.price:.2f})"
+        
+        # Legacy subscription check (for existing premium lessons)
         if self.lesson_type == 'premium' and user.subscription_level != 'premium':
             return False, "Premium subscription required"
         
-        # Check prerequisites for authenticated users
+        # Check prerequisites for other cases
         for prereq in self.get_prerequisites(): # type: ignore
             progress = UserLessonProgress.query.filter_by(
                 user_id=user.id, lesson_id=prereq.id
@@ -435,6 +469,23 @@ class UserLessonProgress(db.Model):
                     UserQuizAnswer.user_id == self.user_id,
                     UserQuizAnswer.question_id.in_(question_ids)
                 ).delete(synchronize_session=False)
+
+class LessonPurchase(db.Model):
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('user.id'), nullable=False)
+    lesson_id: Mapped[int] = mapped_column(Integer, ForeignKey('lesson.id'), nullable=False)
+    price_paid: Mapped[float] = mapped_column(db.Float, nullable=False)
+    purchased_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    stripe_payment_intent_id: Mapped[str] = mapped_column(String(100), nullable=True)  # For future Stripe integration
+    
+    # Relationships
+    user: Mapped['User'] = relationship('User', backref='lesson_purchases')
+    lesson: Mapped['Lesson'] = relationship('Lesson', backref='purchases')
+    
+    __table_args__ = (db.UniqueConstraint('user_id', 'lesson_id'),)
+    
+    def __repr__(self):
+        return f'<LessonPurchase user:{self.user_id} lesson:{self.lesson_id} price:{self.price_paid}>'
 
 @login_manager.user_loader
 def load_user(user_id):

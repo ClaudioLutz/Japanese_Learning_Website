@@ -36,6 +36,7 @@
                                     <th>Title</th>
                                     <th>Category</th>
                                     <th>Type</th>
+                                    <th>Price</th>
                                     <th>Difficulty</th>
                                     <th>Duration</th>
                                     <th>Instruction Language</th>
@@ -152,6 +153,25 @@
                         <small class="form-text text-muted">Allow unauthenticated users to view this lesson</small>
                     </div>
                 </div>
+                
+                <!-- Pricing Section -->
+                <div class="form-group">
+                    <h6 class="text-primary">💰 Pricing Settings</h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="lessonPrice">Price (CHF)</label>
+                            <input type="number" id="lessonPrice" name="price" class="form-control" min="0" step="0.01" value="0.00">
+                            <small class="form-text text-muted">Set to 0.00 for free lessons</small>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check mt-4">
+                                <input type="checkbox" id="lessonPurchasable" name="is_purchasable" class="form-check-input">
+                                <label for="lessonPurchasable" class="form-check-label">Enable Individual Purchase</label>
+                                <small class="form-text text-muted d-block">Allow users to buy this lesson individually</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" onclick="closeModal('addLessonModal')">Cancel</button>
@@ -257,6 +277,25 @@
                         <input type="checkbox" id="editLessonGuestAccess" name="allow_guest_access" class="form-check-input">
                         <label for="editLessonGuestAccess" class="form-check-label">Allow Guest Access</label>
                         <small class="form-text text-muted">Allow unauthenticated users to view this lesson</small>
+                    </div>
+                </div>
+                
+                <!-- Pricing Section -->
+                <div class="form-group">
+                    <h6 class="text-primary">💰 Pricing Settings</h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="editLessonPrice">Price (CHF)</label>
+                            <input type="number" id="editLessonPrice" name="price" class="form-control" min="0" step="0.01" value="0.00">
+                            <small class="form-text text-muted">Set to 0.00 for free lessons</small>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check mt-4">
+                                <input type="checkbox" id="editLessonPurchasable" name="is_purchasable" class="form-check-input">
+                                <label for="editLessonPurchasable" class="form-check-label">Enable Individual Purchase</label>
+                                <small class="form-text text-muted d-block">Allow users to buy this lesson individually</small>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1230,6 +1269,13 @@ async function loadLessons() {
                 <td>${lesson.title}</td>
                 <td><span class="badge badge-info">${lesson.category_name || 'No Category'}</span></td>
                 <td><span class="badge ${lesson.lesson_type === 'free' ? 'badge-success' : 'badge-warning'}">${lesson.lesson_type}</span></td>
+                <td>
+                    ${lesson.price > 0 ? 
+                        `<span class="badge badge-warning">CHF ${lesson.price.toFixed(2)}</span>` + 
+                        (lesson.is_purchasable ? ' <span class="badge badge-success">Purchasable</span>' : ' <span class="badge badge-secondary">Not Purchasable</span>') :
+                        '<span class="badge badge-success">Free</span>'
+                    }
+                </td>
                 <td>${lesson.difficulty_level || 'N/A'}</td>
                 <td>${lesson.estimated_duration || 'N/A'} min</td>
                 <td>${lesson.instruction_language || 'N/A'}</td>

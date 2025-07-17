@@ -5,7 +5,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request,
 from flask_login import login_user, logout_user, login_required, current_user
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError # Import specific exceptions
 from app import db
-from app.models import User, Kana, Kanji, Vocabulary, Grammar, LessonCategory, Lesson, LessonContent, LessonPrerequisite, UserLessonProgress, QuizQuestion, QuizOption, UserQuizAnswer, LessonPage, Course
+from app.models import User, Kana, Kanji, Vocabulary, Grammar, LessonCategory, Lesson, LessonContent, LessonPrerequisite, UserLessonProgress, QuizQuestion, QuizOption, UserQuizAnswer, LessonPage, Course, LessonPurchase
 from app.forms import RegistrationForm, LoginForm, CSRFTokenForm
 from app.ai_services import AILessonContentGenerator
 from app.lesson_export_import import (
@@ -914,6 +914,23 @@ def update_lesson(item_id):
     item.instruction_language = data.get('instruction_language', item.instruction_language)
     item.thumbnail_url = data.get('thumbnail_url', item.thumbnail_url)
     item.video_intro_url = data.get('video_intro_url', item.video_intro_url)
+
+    # Handle pricing fields
+    if 'price' in data:
+        try:
+            price = float(data['price'])
+            if price < 0:
+                return jsonify({"error": "Price cannot be negative"}), 400
+            item.price = price
+        except (ValueError, TypeError):
+            return jsonify({"error": "Invalid price format"}), 400
+    
+    # Handle is_purchasable field
+    is_purchasable = data.get('is_purchasable', item.is_purchasable)
+    if isinstance(is_purchasable, str):
+        item.is_purchasable = is_purchasable.lower() in ['true', 'on', '1', 'yes']
+    else:
+        item.is_purchasable = bool(is_purchasable) if is_purchasable is not None else item.is_purchasable
 
     # Handle course assignment
     if 'course_ids' in data:
@@ -1824,6 +1841,193 @@ def reset_lesson_progress(lesson_id):
         flash('Invalid request to reset progress.', 'danger')
 
     return redirect(url_for('routes.view_lesson', lesson_id=lesson_id))
+
+# == LESSON PRICING AND PURCHASE API ==
+@bp.route('/api/lessons/<int:lesson_id>/purchase', methods=['POST'])
+@login_required
+def purchase_lesson(lesson_id):
+    """Purchase a lesson (MVP with mock payment)"""
+    lesson = Lesson.query.get_or_404(lesson_id)
+    
+    # Validate that the lesson is purchasable
+    if not lesson.is_purchasable or lesson.price <= 0:
+        return jsonify({"error": "This lesson is not available for purchase"}), 400
+    
+    # Check if user already owns this lesson
+    existing_purchase = LessonPurchase.query.filter_by(
+        user_id=current_user.id, 
+        lesson_id=lesson_id
+    ).first()
+    
+    if existing_purchase:
+        return jsonify({"error": "You already own this lesson"}), 400
+    
+    try:
+        # Create purchase record (MVP: instant purchase without payment processing)
+        purchase = LessonPurchase(
+            user_id=current_user.id,
+            lesson_id=lesson_id,
+            price_paid=lesson.price,
+            purchased_at=datetime.utcnow(),
+            stripe_payment_intent_id=None  # Will be used for future Stripe integration
+        )
+        
+        db.session.add(purchase)
+        db.session.commit()
+        
+        current_app.logger.info(f"User {current_user.id} purchased lesson {lesson_id} for CHF {lesson.price}")
+        
+        return jsonify({
+            "success": True,
+            "message": f"Successfully purchased '{lesson.title}' for CHF {lesson.price:.2f}",
+            "purchase_id": purchase.id,
+            "lesson_id": lesson_id,
+            "price_paid": lesson.price
+        }), 201
+        
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error purchasing lesson {lesson_id} for user {current_user.id}: {e}")
+        return jsonify({"error": "Purchase failed. Please try again."}), 500
+
+@bp.route('/api/user/purchases', methods=['GET'])
+@login_required
+def get_user_purchases():
+    """Get all purchases for the current user"""
+    purchases = LessonPurchase.query.filter_by(user_id=current_user.id).all()
+    
+    purchases_data = []
+    for purchase in purchases:
+        purchase_dict = model_to_dict(purchase)
+        purchase_dict['lesson_title'] = purchase.lesson.title
+        purchase_dict['lesson_description'] = purchase.lesson.description
+        purchases_data.append(purchase_dict)
+    
+    return jsonify(purchases_data)
+
+@bp.route('/api/lessons/<int:lesson_id>/purchase-status', methods=['GET'])
+@login_required
+def get_lesson_purchase_status(lesson_id):
+    """Check if user has purchased a specific lesson"""
+    lesson = Lesson.query.get_or_404(lesson_id)
+    
+    purchase = LessonPurchase.query.filter_by(
+        user_id=current_user.id, 
+        lesson_id=lesson_id
+    ).first()
+    
+    return jsonify({
+        "lesson_id": lesson_id,
+        "is_purchased": purchase is not None,
+        "purchase_date": purchase.purchased_at.isoformat() if purchase else None,
+        "price_paid": purchase.price_paid if purchase else None,
+        "current_price": lesson.price,
+        "is_purchasable": lesson.is_purchasable
+    })
+
+# == ADMIN PURCHASE MANAGEMENT API ==
+@bp.route('/api/admin/purchases', methods=['GET'])
+@login_required
+@admin_required
+def list_all_purchases():
+    """Get all purchases for admin review"""
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 50, type=int)
+    
+    purchases = LessonPurchase.query.order_by(LessonPurchase.purchased_at.desc()).paginate(
+        page=page, per_page=per_page, error_out=False
+    )
+    
+    purchases_data = []
+    for purchase in purchases.items:
+        purchase_dict = model_to_dict(purchase)
+        purchase_dict['user_username'] = purchase.user.username
+        purchase_dict['user_email'] = purchase.user.email
+        purchase_dict['lesson_title'] = purchase.lesson.title
+        purchases_data.append(purchase_dict)
+    
+    return jsonify({
+        "purchases": purchases_data,
+        "total": purchases.total,
+        "pages": purchases.pages,
+        "current_page": purchases.page,
+        "per_page": purchases.per_page
+    })
+
+@bp.route('/api/admin/lessons/<int:lesson_id>/purchases', methods=['GET'])
+@login_required
+@admin_required
+def get_lesson_purchases(lesson_id):
+    """Get all purchases for a specific lesson"""
+    lesson = Lesson.query.get_or_404(lesson_id)
+    
+    purchases = LessonPurchase.query.filter_by(lesson_id=lesson_id).order_by(
+        LessonPurchase.purchased_at.desc()
+    ).all()
+    
+    purchases_data = []
+    for purchase in purchases:
+        purchase_dict = model_to_dict(purchase)
+        purchase_dict['user_username'] = purchase.user.username
+        purchase_dict['user_email'] = purchase.user.email
+        purchases_data.append(purchase_dict)
+    
+    return jsonify({
+        "lesson_id": lesson_id,
+        "lesson_title": lesson.title,
+        "total_purchases": len(purchases),
+        "total_revenue": sum(p.price_paid for p in purchases),
+        "purchases": purchases_data
+    })
+
+@bp.route('/api/admin/revenue-stats', methods=['GET'])
+@login_required
+@admin_required
+def get_revenue_stats():
+    """Get revenue statistics for admin dashboard"""
+    from sqlalchemy import func
+    
+    # Total revenue
+    total_revenue = db.session.query(func.sum(LessonPurchase.price_paid)).scalar() or 0
+    
+    # Total purchases
+    total_purchases = LessonPurchase.query.count()
+    
+    # Revenue by lesson
+    lesson_revenue = db.session.query(
+        Lesson.title,
+        Lesson.id,
+        func.count(LessonPurchase.id).label('purchase_count'),
+        func.sum(LessonPurchase.price_paid).label('revenue')
+    ).join(LessonPurchase).group_by(Lesson.id, Lesson.title).all()
+    
+    # Recent purchases (last 30 days)
+    from datetime import timedelta
+    thirty_days_ago = datetime.utcnow() - timedelta(days=30)
+    recent_revenue = db.session.query(func.sum(LessonPurchase.price_paid)).filter(
+        LessonPurchase.purchased_at >= thirty_days_ago
+    ).scalar() or 0
+    
+    recent_purchases = LessonPurchase.query.filter(
+        LessonPurchase.purchased_at >= thirty_days_ago
+    ).count()
+    
+    return jsonify({
+        "total_revenue": float(total_revenue),
+        "total_purchases": total_purchases,
+        "recent_revenue_30d": float(recent_revenue),
+        "recent_purchases_30d": recent_purchases,
+        "average_price": float(total_revenue / total_purchases) if total_purchases > 0 else 0,
+        "lesson_revenue": [
+            {
+                "lesson_id": lesson_id,
+                "lesson_title": title,
+                "purchase_count": purchase_count,
+                "revenue": float(revenue)
+            }
+            for title, lesson_id, purchase_count, revenue in lesson_revenue
+        ]
+    })
 
 @bp.route('/api/admin/lessons/<int:lesson_id>/content/interactive', methods=['POST'])
 @login_required
