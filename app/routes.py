@@ -271,6 +271,36 @@ def view_course(course_id):
                          average_difficulty=average_difficulty,
                          has_started=has_started)
 
+@bp.route('/purchase/<int:lesson_id>')
+@login_required
+def purchase_lesson_page(lesson_id):
+    """Display the purchase page for a lesson"""
+    lesson = Lesson.query.get_or_404(lesson_id)
+    
+    # Check if lesson is purchasable
+    if not lesson.is_purchasable or lesson.price <= 0:
+        flash('This lesson is not available for purchase.', 'warning')
+        return redirect(url_for('routes.lessons'))
+    
+    # Check if user already owns this lesson
+    existing_purchase = LessonPurchase.query.filter_by(
+        user_id=current_user.id, 
+        lesson_id=lesson_id
+    ).first()
+    
+    if existing_purchase:
+        flash('You already own this lesson!', 'info')
+        return redirect(url_for('routes.view_lesson', lesson_id=lesson_id))
+    
+    # Check if user can access this lesson for free (shouldn't happen, but safety check)
+    accessible, message = lesson.is_accessible_to_user(current_user)
+    if accessible:
+        flash('This lesson is already accessible to you.', 'info')
+        return redirect(url_for('routes.view_lesson', lesson_id=lesson_id))
+    
+    form = CSRFTokenForm()
+    return render_template('purchase.html', lesson=lesson, form=form)
+
 @bp.route('/lessons/<int:lesson_id>')
 def view_lesson(lesson_id):
     """View a specific lesson"""
@@ -293,9 +323,19 @@ def view_lesson(lesson_id):
         ).first()
         
         if not progress:
-            progress = UserLessonProgress(user_id=current_user.id, lesson_id=lesson_id)
-            db.session.add(progress)
-            db.session.commit()
+            try:
+                progress = UserLessonProgress(user_id=current_user.id, lesson_id=lesson_id)
+                db.session.add(progress)
+                db.session.commit()
+            except IntegrityError:
+                # Another request might have created the record, rollback and try again
+                db.session.rollback()
+                progress = UserLessonProgress.query.filter_by(
+                    user_id=current_user.id, lesson_id=lesson_id
+                ).first()
+                # If still not found, log the issue but continue without progress tracking
+                if not progress:
+                    current_app.logger.error(f"Failed to create or find progress record for user {current_user.id}, lesson {lesson_id}")
     
     # Get all quiz questions for this lesson
     quiz_questions = []
@@ -1788,6 +1828,111 @@ def get_public_categories():
         current_app.logger.error(f"Error fetching public categories: {e}")
         return jsonify([]), 200  # Return empty array on error
 
+@bp.route('/api/lessons/<int:lesson_id>/reset', methods=['POST'])
+@login_required
+def reset_lesson_progress_api(lesson_id):
+    """Reset user progress for a lesson via API"""
+    lesson = Lesson.query.get_or_404(lesson_id)
+    
+    # Check access
+    accessible, message = lesson.is_accessible_to_user(current_user)
+    if not accessible:
+        return jsonify({"error": message}), 403
+    
+    try:
+        from sqlalchemy import text
+        
+        current_app.logger.info(f"API reset starting for user {current_user.id}, lesson {lesson_id}")
+        
+        progress = UserLessonProgress.query.filter_by(
+            user_id=current_user.id, lesson_id=lesson_id
+        ).first()
+
+        if progress:
+            current_app.logger.info(f"Found progress record for user {current_user.id}, lesson {lesson_id}")
+            
+            # Get interactive content IDs using direct SQL to avoid lazy loading
+            interactive_content_sql = text("""
+                SELECT id FROM lesson_content 
+                WHERE lesson_id = :lesson_id AND is_interactive = true
+            """)
+            
+            interactive_content_result = db.session.execute(interactive_content_sql, {
+                'lesson_id': lesson_id
+            })
+            content_ids = [row[0] for row in interactive_content_result]
+            current_app.logger.info(f"Found {len(content_ids)} interactive content items")
+            
+            if content_ids:
+                # Get question IDs for these content items - fix PostgreSQL array syntax
+                question_ids_sql = text("""
+                    SELECT id FROM quiz_question 
+                    WHERE lesson_content_id IN :content_ids
+                """)
+                
+                question_result = db.session.execute(question_ids_sql, {
+                    'content_ids': tuple(content_ids)
+                })
+                question_ids = [row[0] for row in question_result]
+                current_app.logger.info(f"Found {len(question_ids)} quiz questions")
+                
+                if question_ids:
+                    # Delete quiz answers using direct SQL - fix PostgreSQL array syntax
+                    delete_answers_sql = text("""
+                        DELETE FROM user_quiz_answer 
+                        WHERE user_id = :user_id AND question_id IN :question_ids
+                    """)
+                    
+                    result = db.session.execute(delete_answers_sql, {
+                        'user_id': current_user.id,
+                        'question_ids': tuple(question_ids)
+                    })
+                    current_app.logger.info(f"Deleted {result.rowcount} quiz answers")
+            
+            # Reset progress using direct SQL
+            reset_progress_sql = text("""
+                UPDATE user_lesson_progress 
+                SET completed_at = NULL,
+                    is_completed = false,
+                    progress_percentage = 0,
+                    time_spent = 0,
+                    content_progress = '{}'
+                WHERE user_id = :user_id AND lesson_id = :lesson_id
+            """)
+            
+            result = db.session.execute(reset_progress_sql, {
+                'user_id': current_user.id,
+                'lesson_id': lesson_id
+            })
+            current_app.logger.info(f"Updated {result.rowcount} progress records")
+            
+            db.session.commit()
+            current_app.logger.info(f"Successfully reset progress for user {current_user.id}, lesson {lesson_id}")
+            
+            # Refresh the progress object and return it
+            db.session.refresh(progress)
+            return jsonify({
+                "success": True,
+                "message": "Progress reset successfully",
+                "progress": model_to_dict(progress)
+            })
+        else:
+            current_app.logger.info(f"No progress found for user {current_user.id}, lesson {lesson_id}")
+            return jsonify({
+                "success": True,
+                "message": "No progress found for this lesson",
+                "progress": None
+            })
+            
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        current_app.logger.error(f"SQLAlchemy error resetting lesson progress for user {current_user.id}, lesson {lesson_id}: {e}", exc_info=True)
+        return jsonify({"error": "Failed to reset progress. Please try again."}), 500
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Unexpected error resetting lesson progress for user {current_user.id}, lesson {lesson_id}: {e}", exc_info=True)
+        return jsonify({"error": "Failed to reset progress. Please try again."}), 500
+
 @bp.route('/api/lessons/<int:lesson_id>/progress', methods=['POST'])
 @login_required
 def update_lesson_progress(lesson_id):
@@ -1800,25 +1945,123 @@ def update_lesson_progress(lesson_id):
         return jsonify({"error": message}), 403
     
     data = request.json
-    progress = UserLessonProgress.query.filter_by(
-        user_id=current_user.id, lesson_id=lesson_id
-    ).first()
     
-    if not progress:
-        progress = UserLessonProgress(user_id=current_user.id, lesson_id=lesson_id)
-        db.session.add(progress)
-    
-    # Update progress fields
-    if data and 'content_id' in data:
-        progress.mark_content_completed(data['content_id'])
-    
-    if data and 'time_spent' in data:
-        progress.time_spent += data['time_spent']
-    
-    progress.last_accessed = db.func.now()
-    
-    db.session.commit()
-    return jsonify(model_to_dict(progress))
+    try:
+        # Use a completely different approach: direct SQL updates to avoid session conflicts
+        from sqlalchemy import text
+        
+        # First, try to get existing progress record
+        progress = UserLessonProgress.query.filter_by(
+            user_id=current_user.id, lesson_id=lesson_id
+        ).first()
+        
+        if not progress:
+            # Use INSERT ... ON CONFLICT to handle race conditions at database level
+            insert_sql = text("""
+                INSERT INTO user_lesson_progress (user_id, lesson_id, started_at, last_accessed, progress_percentage, time_spent, content_progress, is_completed)
+                VALUES (:user_id, :lesson_id, :now, :now, 0, 0, '{}', false)
+                ON CONFLICT (user_id, lesson_id) DO NOTHING
+                RETURNING id
+            """)
+            
+            result = db.session.execute(insert_sql, {
+                'user_id': current_user.id,
+                'lesson_id': lesson_id,
+                'now': datetime.utcnow()
+            })
+            
+            db.session.commit()
+            
+            # Now get the progress record (either newly created or existing)
+            progress = UserLessonProgress.query.filter_by(
+                user_id=current_user.id, lesson_id=lesson_id
+            ).first()
+            
+            if not progress:
+                return jsonify({"error": "Failed to create or find progress record"}), 500
+        
+        # Update progress fields using direct SQL to avoid session conflicts
+        if data and 'content_id' in data:
+            # Get current content progress
+            content_progress = progress.get_content_progress()
+            content_progress[str(data['content_id'])] = True
+            
+            # Calculate progress percentage manually
+            total_content = db.session.query(db.func.count(LessonContent.id)).filter_by(lesson_id=lesson_id).scalar()
+            if total_content > 0:
+                completed_content = len([k for k, v in content_progress.items() if v])
+                new_progress_percentage = int((completed_content / total_content) * 100)
+                is_completed = new_progress_percentage == 100
+                completed_at = datetime.utcnow() if is_completed and not progress.is_completed else progress.completed_at
+            else:
+                new_progress_percentage = 0
+                is_completed = False
+                completed_at = progress.completed_at
+            
+            # Use direct SQL update to avoid session conflicts
+            update_sql = text("""
+                UPDATE user_lesson_progress 
+                SET content_progress = :content_progress,
+                    progress_percentage = :progress_percentage,
+                    is_completed = :is_completed,
+                    completed_at = :completed_at,
+                    last_accessed = :last_accessed,
+                    time_spent = time_spent + :additional_time
+                WHERE user_id = :user_id AND lesson_id = :lesson_id
+            """)
+            
+            additional_time = data.get('time_spent', 0) if data else 0
+            
+            db.session.execute(update_sql, {
+                'content_progress': json.dumps(content_progress),
+                'progress_percentage': new_progress_percentage,
+                'is_completed': is_completed,
+                'completed_at': completed_at,
+                'last_accessed': datetime.utcnow(),
+                'additional_time': additional_time,
+                'user_id': current_user.id,
+                'lesson_id': lesson_id
+            })
+            
+        elif data and 'time_spent' in data:
+            # Just update time spent and last accessed
+            update_sql = text("""
+                UPDATE user_lesson_progress 
+                SET time_spent = time_spent + :additional_time,
+                    last_accessed = :last_accessed
+                WHERE user_id = :user_id AND lesson_id = :lesson_id
+            """)
+            
+            db.session.execute(update_sql, {
+                'additional_time': data['time_spent'],
+                'last_accessed': datetime.utcnow(),
+                'user_id': current_user.id,
+                'lesson_id': lesson_id
+            })
+        else:
+            # Just update last accessed
+            update_sql = text("""
+                UPDATE user_lesson_progress 
+                SET last_accessed = :last_accessed
+                WHERE user_id = :user_id AND lesson_id = :lesson_id
+            """)
+            
+            db.session.execute(update_sql, {
+                'last_accessed': datetime.utcnow(),
+                'user_id': current_user.id,
+                'lesson_id': lesson_id
+            })
+        
+        db.session.commit()
+        
+        # Refresh the progress object and return it
+        db.session.refresh(progress)
+        return jsonify(model_to_dict(progress))
+        
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error updating lesson progress for user {current_user.id}, lesson {lesson_id}: {e}")
+        return jsonify({"error": "Failed to update progress"}), 500
 
 @bp.route('/lessons/<int:lesson_id>/reset', methods=['POST'])
 @login_required
@@ -1826,18 +2069,92 @@ def reset_lesson_progress(lesson_id):
     """Reset user progress for a specific lesson."""
     form = CSRFTokenForm() # Instantiate the form
     if form.validate_on_submit(): # Validate CSRF token
-        progress = UserLessonProgress.query.filter_by(
-            user_id=current_user.id, lesson_id=lesson_id
-        ).first()
+        try:
+            # Use direct SQL to avoid session conflicts, similar to update_lesson_progress
+            from sqlalchemy import text
+            
+            current_app.logger.info(f"Starting reset for user {current_user.id}, lesson {lesson_id}")
+            
+            progress = UserLessonProgress.query.filter_by(
+                user_id=current_user.id, lesson_id=lesson_id
+            ).first()
 
-        if progress:
-            progress.reset()  # Assuming a reset method in the model
-            db.session.commit()
-            flash('Your progress for this lesson has been reset.', 'success')
-        else:
-            flash('No progress found for this lesson.', 'info')
+            if progress:
+                current_app.logger.info(f"Found progress record for user {current_user.id}, lesson {lesson_id}")
+                
+                # Get interactive content IDs using direct SQL to avoid lazy loading
+                interactive_content_sql = text("""
+                    SELECT id FROM lesson_content 
+                    WHERE lesson_id = :lesson_id AND is_interactive = true
+                """)
+                
+                interactive_content_result = db.session.execute(interactive_content_sql, {
+                    'lesson_id': lesson_id
+                })
+                content_ids = [row[0] for row in interactive_content_result]
+                current_app.logger.info(f"Found {len(content_ids)} interactive content items")
+                
+                if content_ids:
+                    # Get question IDs for these content items - fix PostgreSQL array syntax
+                    question_ids_sql = text("""
+                        SELECT id FROM quiz_question 
+                        WHERE lesson_content_id IN :content_ids
+                    """)
+                    
+                    question_result = db.session.execute(question_ids_sql, {
+                        'content_ids': tuple(content_ids)
+                    })
+                    question_ids = [row[0] for row in question_result]
+                    current_app.logger.info(f"Found {len(question_ids)} quiz questions")
+                    
+                    if question_ids:
+                        # Delete quiz answers using direct SQL - fix PostgreSQL array syntax
+                        delete_answers_sql = text("""
+                            DELETE FROM user_quiz_answer 
+                            WHERE user_id = :user_id AND question_id IN :question_ids
+                        """)
+                        
+                        result = db.session.execute(delete_answers_sql, {
+                            'user_id': current_user.id,
+                            'question_ids': tuple(question_ids)
+                        })
+                        current_app.logger.info(f"Deleted {result.rowcount} quiz answers")
+                
+                # Reset progress using direct SQL
+                reset_progress_sql = text("""
+                    UPDATE user_lesson_progress 
+                    SET completed_at = NULL,
+                        is_completed = false,
+                        progress_percentage = 0,
+                        time_spent = 0,
+                        content_progress = '{}'
+                    WHERE user_id = :user_id AND lesson_id = :lesson_id
+                """)
+                
+                result = db.session.execute(reset_progress_sql, {
+                    'user_id': current_user.id,
+                    'lesson_id': lesson_id
+                })
+                current_app.logger.info(f"Updated {result.rowcount} progress records")
+                
+                db.session.commit()
+                current_app.logger.info(f"Successfully reset progress for user {current_user.id}, lesson {lesson_id}")
+                flash('Your progress for this lesson has been reset.', 'success')
+            else:
+                current_app.logger.info(f"No progress found for user {current_user.id}, lesson {lesson_id}")
+                flash('No progress found for this lesson.', 'info')
+                
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            current_app.logger.error(f"SQLAlchemy error resetting lesson progress for user {current_user.id}, lesson {lesson_id}: {e}", exc_info=True)
+            flash('Failed to reset progress. Please try again.', 'danger')
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Unexpected error resetting lesson progress for user {current_user.id}, lesson {lesson_id}: {e}", exc_info=True)
+            flash('Failed to reset progress. Please try again.', 'danger')
     else:
         # This case implies a CSRF validation failure or other form error
+        current_app.logger.error(f"CSRF validation failed for reset request from user {current_user.id}, lesson {lesson_id}")
         flash('Invalid request to reset progress.', 'danger')
 
     return redirect(url_for('routes.view_lesson', lesson_id=lesson_id))

@@ -1,0 +1,242 @@
+{% extends "base.html" %}
+
+{% block title %}Purchase Lesson - Japanese Learning{% endblock %}
+
+{% block body_attributes %}
+    style="background-image: url('{{ url_for('static', filename='images/Lesson_Background.png') }}'); background-size: cover; background-repeat: no-repeat; background-attachment: fixed;"
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3><i class="fas fa-shopping-cart"></i> Purchase Lesson</h3>
+                </div>
+                <div class="card-body">
+                    <!-- Lesson Information -->
+                    <div class="lesson-info mb-4">
+                        <div class="row">
+                            <div class="col-md-4">
+                                {% if lesson.background_image_path %}
+                                    <img src="{{ url_for('static', filename='uploads/' + lesson.background_image_path) }}" 
+                                         class="img-fluid rounded" alt="{{ lesson.title }}">
+                                {% elif lesson.background_image_url %}
+                                    <img src="{{ lesson.background_image_url }}" 
+                                         class="img-fluid rounded" alt="{{ lesson.title }}">
+                                {% else %}
+                                    <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 120px;">
+                                        <i class="fas fa-book fa-3x text-muted"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-8">
+                                <h4>{{ lesson.title }}</h4>
+                                <p class="text-muted">{{ lesson.description or 'No description available.' }}</p>
+                                <div class="lesson-meta">
+                                    <span class="badge bg-info me-2">
+                                        <i class="fas fa-signal"></i> Difficulty: {{ lesson.difficulty_level or 'N/A' }}/5
+                                    </span>
+                                    <span class="badge bg-secondary me-2">
+                                        <i class="fas fa-clock"></i> {{ lesson.estimated_duration or 'N/A' }} min
+                                    </span>
+                                    {% if lesson.category %}
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-tag"></i> {{ lesson.category.name }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Price Information -->
+                    <div class="price-section mb-4 p-3 bg-light rounded">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h5 class="mb-0">Lesson Price</h5>
+                                <small class="text-muted">One-time purchase for lifetime access</small>
+                            </div>
+                            <div class="col-auto">
+                                <h3 class="text-primary mb-0">CHF {{ "%.2f"|format(lesson.price) }}</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Purchase Benefits -->
+                    <div class="benefits-section mb-4">
+                        <h6><i class="fas fa-check-circle text-success"></i> What you get:</h6>
+                        <ul class="list-unstyled ms-3">
+                            <li><i class="fas fa-infinity text-primary"></i> Lifetime access to this lesson</li>
+                            <li><i class="fas fa-mobile-alt text-primary"></i> Access on all your devices</li>
+                            <li><i class="fas fa-redo text-primary"></i> Ability to retake and review anytime</li>
+                            <li><i class="fas fa-chart-line text-primary"></i> Progress tracking and completion certificates</li>
+                        </ul>
+                    </div>
+
+                    <!-- Purchase Form -->
+                    <form id="purchaseForm">
+                        {{ form.hidden_tag() }}
+                        
+                        <!-- Payment Method (Dummy for MVP) -->
+                        <div class="payment-method mb-4">
+                            <h6><i class="fas fa-credit-card"></i> Payment Method</h6>
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle"></i>
+                                <strong>Demo Mode:</strong> This is a demonstration purchase. No real payment will be processed.
+                                Click "Complete Purchase" to simulate buying this lesson.
+                            </div>
+                            
+                            <div class="card border-primary">
+                                <div class="card-body">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="paymentMethod" id="demoPayment" checked>
+                                        <label class="form-check-label" for="demoPayment">
+                                            <i class="fas fa-play-circle text-primary"></i> Demo Payment (Free for testing)
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Terms and Conditions -->
+                        <div class="terms mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                                <label class="form-check-label" for="agreeTerms">
+                                    I agree to the <a href="#" class="text-decoration-none">Terms of Service</a> and 
+                                    <a href="#" class="text-decoration-none">Privacy Policy</a>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Purchase Buttons -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg" id="purchaseBtn">
+                                <i class="fas fa-shopping-cart"></i> Complete Purchase - CHF {{ "%.2f"|format(lesson.price) }}
+                            </button>
+                            <a href="{{ url_for('routes.lessons') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Lessons
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Security Notice -->
+            <div class="text-center mt-3">
+                <small class="text-muted">
+                    <i class="fas fa-shield-alt"></i> Your purchase is secure and protected. 
+                    Questions? <a href="#" class="text-decoration-none">Contact Support</a>
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Purchase Processing Modal -->
+<div class="modal fade" id="processingModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center p-4">
+                <div class="spinner-border text-primary mb-3" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <h5>Processing your purchase...</h5>
+                <p class="text-muted mb-0">Please wait while we complete your transaction.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-check-circle"></i> Purchase Successful!
+                </h5>
+            </div>
+            <div class="modal-body text-center p-4">
+                <i class="fas fa-check-circle text-success fa-4x mb-3"></i>
+                <h4>Congratulations!</h4>
+                <p>You have successfully purchased <strong id="purchasedLessonTitle">{{ lesson.title }}</strong></p>
+                <p class="text-muted">You now have lifetime access to this lesson.</p>
+            </div>
+            <div class="modal-footer">
+                <a href="{{ url_for('routes.view_lesson', lesson_id=lesson.id) }}" class="btn btn-primary">
+                    <i class="fas fa-play"></i> Start Lesson Now
+                </a>
+                <a href="{{ url_for('routes.lessons') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-list"></i> Browse More Lessons
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('purchaseForm');
+    const purchaseBtn = document.getElementById('purchaseBtn');
+    const processingModal = new bootstrap.Modal(document.getElementById('processingModal'));
+    const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Check if terms are agreed
+        const agreeTerms = document.getElementById('agreeTerms');
+        if (!agreeTerms.checked) {
+            alert('Please agree to the Terms of Service and Privacy Policy to continue.');
+            return;
+        }
+
+        // Disable button and show processing
+        purchaseBtn.disabled = true;
+        purchaseBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        processingModal.show();
+
+        try {
+            // Make purchase API call
+            const response = await fetch(`/api/lessons/{{ lesson.id }}/purchase`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrf_token]').value
+                },
+                body: JSON.stringify({})
+            });
+
+            const result = await response.json();
+
+            // Hide processing modal
+            processingModal.hide();
+
+            if (response.ok && result.success) {
+                // Show success modal
+                document.getElementById('purchasedLessonTitle').textContent = '{{ lesson.title }}';
+                successModal.show();
+            } else {
+                // Show error
+                alert(result.error || 'Purchase failed. Please try again.');
+                
+                // Re-enable button
+                purchaseBtn.disabled = false;
+                purchaseBtn.innerHTML = '<i class="fas fa-shopping-cart"></i> Complete Purchase - CHF {{ "%.2f"|format(lesson.price) }}';
+            }
+        } catch (error) {
+            console.error('Purchase error:', error);
+            processingModal.hide();
+            alert('An error occurred during purchase. Please try again.');
+            
+            // Re-enable button
+            purchaseBtn.disabled = false;
+            purchaseBtn.innerHTML = '<i class="fas fa-shopping-cart"></i> Complete Purchase - CHF {{ "%.2f"|format(lesson.price) }}';
+        }
+    });
+});
+</script>
+{% endblock %}

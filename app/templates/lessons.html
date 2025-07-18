@@ -230,9 +230,15 @@ function createLessonCard(lesson) {
                                 ${isGuest && lesson.allow_guest_access ? ' (Guest Mode)' : ''}
                             </a>
                         ` : `
-                            <button class="lesson-action-btn lesson-action-btn-disabled" disabled>
-                                ${lesson.access_message}
-                            </button>
+                            ${lesson.access_message && lesson.access_message.includes('Purchase required') ? `
+                                <button class="lesson-action-btn lesson-purchase-btn" onclick="purchaseLesson(${lesson.id}, '${lesson.title}', ${lesson.price})">
+                                    ${lesson.access_message}
+                                </button>
+                            ` : `
+                                <button class="lesson-action-btn lesson-action-btn-disabled" disabled>
+                                    ${lesson.access_message}
+                                </button>
+                            `}
                             ${isGuest && !lesson.allow_guest_access ? `
                                 <small class="lesson-login-hint">
                                     <a href="/login">Login</a> or 
@@ -275,9 +281,15 @@ function createLessonCard(lesson) {
                                 ${isGuest && lesson.allow_guest_access ? ' (Guest Mode)' : ''}
                             </a>
                         ` : `
-                            <button class="btn btn-secondary w-100" disabled>
-                                ${lesson.access_message}
-                            </button>
+                            ${lesson.access_message && lesson.access_message.includes('Purchase required') ? `
+                                <button class="btn btn-warning w-100" onclick="purchaseLesson(${lesson.id}, '${lesson.title}', ${lesson.price})">
+                                    ${lesson.access_message}
+                                </button>
+                            ` : `
+                                <button class="btn btn-secondary w-100" disabled>
+                                    ${lesson.access_message}
+                                </button>
+                            `}
                             ${isGuest && !lesson.allow_guest_access ? `
                                 <small class="text-muted mt-2 d-block">
                                     <a href="/login" class="text-decoration-none">Login</a> or 
@@ -324,6 +336,18 @@ function showError(message) {
             </div>
         </div>
     `;
+}
+
+async function purchaseLesson(lessonId, lessonTitle, price) {
+    // Check if user is logged in
+    if (!window.currentUser) {
+        alert('Please log in to purchase lessons.');
+        window.location.href = '/login';
+        return;
+    }
+    
+    // Redirect to purchase page
+    window.location.href = `/purchase/${lessonId}`;
 }
 </script>
 {% endblock %}

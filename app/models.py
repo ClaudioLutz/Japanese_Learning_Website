@@ -248,7 +248,7 @@ class LessonPrerequisite(db.Model):
     lesson_id: Mapped[int] = mapped_column(Integer, ForeignKey('lesson.id'), nullable=False)
     prerequisite_lesson_id: Mapped[int] = mapped_column(Integer, ForeignKey('lesson.id'), nullable=False)
     
-    prerequisite_lesson: Mapped["Lesson"] = relationship(foreign_keys=[prerequisite_lesson_id])
+    prerequisite_lesson: Mapped["Lesson"] = relationship(foreign_keys=[prerequisite_lesson_id], overlaps="required_by")
     
     __table_args__ = (db.UniqueConstraint('lesson_id', 'prerequisite_lesson_id'),)
     
@@ -411,7 +411,7 @@ class UserLessonProgress(db.Model):
     last_accessed = db.Column(db.DateTime, default=datetime.utcnow)
     content_progress = db.Column(db.Text)
     
-    lesson: Mapped['Lesson'] = relationship(foreign_keys=[lesson_id])
+    lesson: Mapped['Lesson'] = relationship(foreign_keys=[lesson_id], overlaps="user_progress")
 
     __table_args__ = (db.UniqueConstraint('user_id', 'lesson_id'),)
     
