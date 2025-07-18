@@ -137,6 +137,8 @@ Represents a single lesson, containing various content items and metadata.
 | `background_image_url`| String(255) | Nullable                                       | URL for a lesson background image.                                        |
 | `background_image_path`| String(500) | Nullable                                      | File path for uploaded background image.                                  |
 | `video_intro_url`    | String(255) | Nullable                                        | URL for an optional introductory video for the lesson.                    |
+| `price`              | Float       | Not Nullable, Default: 0.0                     | Price of the lesson in CHF. 0.0 indicates a free lesson.                 |
+| `is_purchasable`     | Boolean     | Not Nullable, Default: False                    | Flag indicating if the lesson can be purchased individually.               |
 | `created_at`         | DateTime    | Default: `datetime.utcnow`                      | Timestamp of when the lesson was created.                                 |
 | `updated_at`         | DateTime    | Default: `datetime.utcnow`, OnUpdate: `datetime.utcnow` | Timestamp of the last update.                                       |
 
@@ -148,6 +150,7 @@ Represents a single lesson, containing various content items and metadata.
 - `user_progress`: One-to-Many with `UserLessonProgress`. Tracks progress for multiple users on this lesson.
 - `pages_metadata`: One-to-Many with `LessonPage`. Stores metadata for each page within the lesson.
 - `courses`: Many-to-Many with `Course` through `course_lessons` association table.
+- `purchases`: One-to-Many with `LessonPurchase`. Tracks purchases of this lesson by users.
 
 ---
 
@@ -347,10 +350,70 @@ This table enables courses to contain multiple lessons and lessons to belong to 
 
 ---
 
-## 7. Database Migrations
+## 7. Monetization Models
+
+### 7.1. `LessonPurchase`
+
+Tracks individual lesson purchases by users, supporting the per-lesson pricing monetization strategy.
+
+| Column                    | Type        | Constraints                                           | Description                                                                     |
+|---------------------------|-------------|-------------------------------------------------------|---------------------------------------------------------------------------------|
+| `id`                      | Integer     | Primary Key                                           | Unique identifier for the purchase record.                                      |
+| `user_id`                 | Integer     | Foreign Key (`user.id`), Not Nullable                 | ID of the `User` who made the purchase.                                        |
+| `lesson_id`               | Integer     | Foreign Key (`lesson.id`), Not Nullable               | ID of the `Lesson` that was purchased.                                         |
+| `price_paid`              | Float       | Not Nullable                                          | Amount paid for the lesson in CHF at the time of purchase.                     |
+| `purchased_at`            | DateTime    | Default: `datetime.utcnow`                            | Timestamp when the purchase was completed.                                     |
+| `stripe_payment_intent_id`| String(100) | Nullable                                              | Stripe payment intent ID for future payment gateway integration.               |
+|                           |             | Unique Constraint (`user_id`, `lesson_id`)            | Ensures a user can only purchase the same lesson once.                         |
+
+**Relationships:**
+- `user`: Many-to-One with `User`. Links to the user who made the purchase.
+- `lesson`: Many-to-One with `Lesson`. Links to the purchased lesson.
+
+**Business Logic:**
+- Lessons with `price = 0.0` are considered free and do not require purchase records.
+- Lessons with `price > 0.0` and `is_purchasable = True` can be purchased through the purchase flow.
+- The `is_accessible_to_user()` method on the `Lesson` model checks for purchase records to determine access.
+- Purchase records are created instantly in MVP mode (dummy payment) but will integrate with Stripe for real payments.
+
+---
+
+## 8. Database Migrations
 
 Database schema changes are managed using Alembic. Migration scripts are located in the `migrations/versions/` directory.
-- To generate a new migration after model changes: `alembic revision -m "description_of_changes"`
-- To apply pending migrations: `python run_migrations.py` (which typically runs `alembic upgrade head`)
+- To generate a new migration after model changes: `flask db revision -m "description_of_changes"`
+- To apply pending migrations: `flask db upgrade`
 
 The initial schema is created by `db.create_all()` (called via `python setup_unified_auth.py`). Subsequent changes rely on Alembic migrations.
+
+### Recent Migrations
+
+#### Lesson Pricing Implementation (July 2025)
+Two migrations were added to implement the per-lesson pricing MVP feature:
+
+1. **`c45713e40a57_add_lesson_pricing_fields.py`** - Added pricing fields to the `Lesson` table:
+   - `price` (Float, default 0.0) - Lesson price in CHF
+   - `is_purchasable` (Boolean, default False) - Whether the lesson can be purchased individually
+
+2. **`f518706fd7a4_add_lesson_purchase_table.py`** - Created the `LessonPurchase` table:
+   - Tracks individual lesson purchases by users
+   - Includes foreign keys to `User` and `Lesson` tables
+   - Stores purchase price, timestamp, and Stripe payment intent ID for future integration
+   - Enforces unique constraint to prevent duplicate purchases
+
+These migrations maintain backward compatibility - all existing lessons default to free (`price = 0.0`, `is_purchasable = False`).
+
+### Migration Commands
+```bash
+# Check current migration status
+flask db current
+
+# View migration history
+flask db history
+
+# Apply all pending migrations
+flask db upgrade
+
+# Rollback to specific migration (use with caution)
+flask db downgrade <revision_id>
+```
