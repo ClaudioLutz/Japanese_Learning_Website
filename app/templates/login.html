@@ -2,6 +2,18 @@
 {% block title %}Login{% endblock %}
 {% block content %}
     <h2>Login</h2>
+    
+    <!-- Google OAuth Login Button -->
+    <div class="mb-4">
+        <a href="{{ url_for('social.auth', backend='google-oauth2') }}" class="btn btn-danger btn-lg w-100 mb-3">
+            <i class="fab fa-google me-2"></i>Continue with Google
+        </a>
+        <div class="text-center">
+            <small class="text-muted">or</small>
+        </div>
+    </div>
+    
+    <!-- Traditional Email/Password Login -->
     <form method="POST">
         {{ form.hidden_tag() }}
         <div class="mb-3">
@@ -22,6 +34,10 @@
             {{ form.remember(class="form-check-input") }}
             {{ form.remember.label(class="form-check-label") }}
         </div>
-        {{ form.submit(class="btn btn-primary") }}
+        {{ form.submit(class="btn btn-primary w-100") }}
     </form>
+    
+    <div class="text-center mt-3">
+        <p>Don't have an account? <a href="{{ url_for('routes.register') }}">Sign up here</a></p>
+    </div>
 {% endblock %}

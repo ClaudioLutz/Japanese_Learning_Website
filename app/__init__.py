@@ -25,12 +25,33 @@ login_manager.login_message_category = 'info'
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
     # Ensure SECRET_KEY is set, otherwise CSRF protection (and sessions) won't work.
-    # This is typically loaded from config.py or environment variables.
-    # Example: app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or 'a_default_secret_key'
-    # Example: app.config['WTF_CSRF_SECRET_KEY'] = os.environ.get('WTF_CSRF_SECRET_KEY') or 'a_csrf_secret_key'
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or 'dev-secret-key-change-in-production'
+    app.config['WTF_CSRF_SECRET_KEY'] = os.environ.get('WTF_CSRF_SECRET_KEY') or 'dev-csrf-secret-key-change-in-production'
+    
     app.config.from_pyfile('config.py', silent=True) # Load config from instance folder
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') or \
         'sqlite:///' + os.path.join(app.instance_path, 'site.db')
+    
+    # Google OAuth Configuration
+    app.config.update({
+        'SOCIAL_AUTH_GOOGLE_OAUTH2_KEY': os.environ.get('GOOGLE_CLIENT_ID'),
+        'SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET': os.environ.get('GOOGLE_CLIENT_SECRET'),
+        'SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE': ['openid', 'email', 'profile'],
+        'SOCIAL_AUTH_GOOGLE_OAUTH2_USE_PKCE': True,
+        'SOCIAL_AUTH_LOGIN_REDIRECT_URL': '/',
+        'SOCIAL_AUTH_LOGIN_ERROR_URL': '/login',
+        'SOCIAL_AUTH_PIPELINE': (
+            'social_core.pipeline.social_auth.social_details',
+            'social_core.pipeline.social_auth.social_uid',
+            'social_core.pipeline.social_auth.auth_allowed',
+            'social_core.pipeline.social_auth.social_user',
+            'social_core.pipeline.user.get_username',
+            'app.social_auth_config.create_user_and_login',
+            'social_core.pipeline.social_auth.associate_user',
+            'social_core.pipeline.social_auth.load_extra_data',
+            'social_core.pipeline.user.user_details',
+        ),
+    })
     
     # Get absolute path for the upload folder
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -71,6 +92,11 @@ def create_app():
     # Register Jinja filter
     app.jinja_env.filters['to_embed_url'] = convert_to_embed_url
 
-    app.register_blueprint(routes.bp) # Register the blueprint
+    # Register blueprints
+    app.register_blueprint(routes.bp) # Register the main routes blueprint
+    
+    # Register social auth blueprint
+    from social_flask.routes import social_auth
+    app.register_blueprint(social_auth, url_prefix='/auth')
 
     return app
