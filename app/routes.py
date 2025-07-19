@@ -3048,9 +3048,11 @@ def import_lesson_package():
             imported_lesson = import_lesson_from_zip(temp_zip_path, handle_duplicates)
             
             return jsonify({
+                "success": True,
                 "message": "Lesson package imported successfully",
                 "lesson_id": imported_lesson.id,
-                "lesson_title": imported_lesson.title
+                "lesson_title": imported_lesson.title,
+                "imported_count": 1
             }), 201
             
         finally:

@@ -6,44 +6,72 @@ from flask import current_app
 from openai.types.chat import ChatCompletionMessageParam
 from openai.types.chat.completion_create_params import ResponseFormat
 from typing import Literal
+import google.generativeai as genai
 
 class AILessonContentGenerator:
     """
-    A service class to handle AI content generation using the OpenAI API.
+    A service class to handle AI content generation using Gemini for text and OpenAI for images.
     """
     def __init__(self):
+        # Initialize OpenAI client for image generation
         try:
-            self.api_key = os.environ.get('OPENAI_API_KEY')
-            if not self.api_key:
-                raise ValueError("OPENAI_API_KEY environment variable not set.")
-            self.client = OpenAI(api_key=self.api_key)
+            self.openai_api_key = os.environ.get('OPENAI_API_KEY')
+            if not self.openai_api_key:
+                current_app.logger.warning("OPENAI_API_KEY environment variable not set. Image generation will be disabled.")
+                self.openai_client = None
+            else:
+                self.openai_client = OpenAI(api_key=self.openai_api_key)
         except Exception as e:
             current_app.logger.error(f"Failed to initialize OpenAI client: {e}")
-            self.client = None
+            self.openai_client = None
+        
+        # Initialize Gemini client for text generation
+        try:
+            self.gemini_api_key = os.environ.get('GEMINI_API_KEY')
+            if not self.gemini_api_key:
+                raise ValueError("GEMINI_API_KEY environment variable not set.")
+            genai.configure(api_key=self.gemini_api_key)
+            self.gemini_model = genai.GenerativeModel('gemini-2.5-pro')
+        except Exception as e:
+            current_app.logger.error(f"Failed to initialize Gemini client: {e}")
+            self.gemini_model = None
+        
+        # For backward compatibility, keep the old client reference for image methods
+        self.client = self.openai_client
 
     def _generate_content(self, system_prompt, user_prompt, is_json=False):
-        """Helper function to call the OpenAI API."""
-        if not self.client:
-            return None, "OpenAI client is not initialized. Check API key."
+        """Helper function to call the Gemini API for text generation."""
+        if not self.gemini_model:
+            return None, "Gemini client is not initialized. Check API key."
 
         try:
-            messages: list[ChatCompletionMessageParam] = [
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt}
-            ]
+            # Combine system and user prompts for Gemini
+            combined_prompt = f"{system_prompt}\n\n{user_prompt}"
             
-            response_format: ResponseFormat = {"type": "json_object"} if is_json else {"type": "text"}
+            # Add JSON formatting instruction if needed
+            if is_json:
+                combined_prompt += "\n\nIMPORTANT: Return your response as a valid JSON object only, with no additional text, markdown formatting, or code blocks."
             
-            completion = self.client.chat.completions.create(
-                model="gpt-4.1", # Or "gpt-3.5-turbo"
-                messages=messages,
-                response_format=response_format
-            )
+            # Generate content using Gemini
+            response = self.gemini_model.generate_content(combined_prompt)
             
-            content = completion.choices[0].message.content
-            return content, None
+            if response and response.text:
+                content = response.text.strip()
+                
+                # If JSON is expected, clean up any markdown formatting
+                if is_json and content:
+                    # Remove markdown code blocks if present
+                    if content.startswith('```json'):
+                        content = content.replace('```json', '').replace('```', '').strip()
+                    elif content.startswith('```'):
+                        content = content.replace('```', '').strip()
+                
+                return content, None
+            else:
+                return None, "Empty response from Gemini"
+                
         except Exception as e:
-            current_app.logger.error(f"OpenAI API call failed: {e}")
+            current_app.logger.error(f"Gemini API call failed: {e}")
             return None, str(e)
 
     def generate_explanation(self, topic, difficulty, keywords):
