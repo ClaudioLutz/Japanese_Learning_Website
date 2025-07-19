@@ -443,6 +443,142 @@ class AILessonContentGenerator:
             current_app.logger.error(f"Failed to parse JSON from AI response: {e}\nResponse: {content}")
             return {"error": "Failed to parse AI response as JSON."}
 
+    def generate_page_quiz_batch(self, topic, difficulty, keywords, quiz_specifications):
+        """
+        Generates a batch of quiz questions for a single page in one AI session.
+        This ensures context awareness and prevents duplicate questions.
+        
+        Args:
+            topic: The lesson topic/page title
+            difficulty: Difficulty level
+            keywords: Keywords to focus on
+            quiz_specifications: List of dicts with quiz types and counts
+                Example: [
+                    {"type": "multiple_choice", "count": 2},
+                    {"type": "true_false", "count": 1},
+                    {"type": "matching", "count": 1}
+                ]
+        
+        Returns:
+            Dict with 'questions' array containing all generated questions
+        """
+        system_prompt = (
+            "You are an expert Japanese quiz designer. Generate a comprehensive set of quiz questions "
+            "for a single lesson page in ONE session. This is critical - you must create ALL questions "
+            "with full awareness of each other to ensure variety, avoid duplication, and create "
+            "complementary questions that test different aspects of the topic. "
+            "Format the output as a single, valid JSON object containing all questions."
+        )
+        
+        # Build the quiz specifications description
+        quiz_specs_text = []
+        total_questions = 0
+        for spec in quiz_specifications:
+            quiz_specs_text.append(f"- {spec['count']} {spec['type'].replace('_', ' ')} question(s)")
+            total_questions += spec['count']
+        
+        quiz_specs_description = "\n".join(quiz_specs_text)
+        
+        user_prompt = f"""
+        Lesson Topic: {topic}
+        Target Difficulty: {difficulty}
+        Keywords to test: {keywords}
+        
+        Generate {total_questions} quiz questions with the following distribution:
+        {quiz_specs_description}
+        
+        CRITICAL REQUIREMENTS:
+        1. CONTEXT AWARENESS: Create questions that complement each other and cover different aspects
+        2. NO DUPLICATION: Ensure each question tests different knowledge or skills
+        3. VARIETY: Use different question formats, approaches, and difficulty nuances
+        4. PROGRESSION: Consider logical flow from basic to more complex concepts
+        
+        Generate a JSON object with this structure:
+        {{
+          "questions": [
+            {{
+              "question_type": "multiple_choice",
+              "question_text": "The question...",
+              "difficulty_level": {difficulty},
+              "hint": "A subtle hint to help the user.",
+              "options": [
+                {{"text": "Option A...", "is_correct": false, "feedback": "Feedback for A..."}},
+                {{"text": "Option B...", "is_correct": true, "feedback": "Feedback for B..."}},
+                {{"text": "Option C...", "is_correct": false, "feedback": "Feedback for C..."}},
+                {{"text": "Option D...", "is_correct": false, "feedback": "Feedback for D..."}}
+              ],
+              "overall_explanation": "A general explanation for the correct answer."
+            }},
+            {{
+              "question_type": "true_false",
+              "question_text": "The true/false statement...",
+              "correct_answer": true,
+              "explanation": "A detailed explanation of why the statement is true or false."
+            }},
+            {{
+              "question_type": "matching",
+              "question_text": "Match the Japanese words to their English meanings.",
+              "pairs": [
+                {{"prompt": "Japanese Word A (romanization)", "answer": "English Meaning A"}},
+                {{"prompt": "Japanese Word B (romanization)", "answer": "English Meaning B"}},
+                {{"prompt": "Japanese Word C (romanization)", "answer": "English Meaning C"}},
+                {{"prompt": "Japanese Word D (romanization)", "answer": "English Meaning D"}}
+              ],
+              "explanation": "General explanation for the set of pairs with full romanization."
+            }},
+            {{
+              "question_type": "fill_in_the_blank",
+              "question_text": "Sentence with a ___ to fill in.",
+              "correct_answer": "The word that fills the blank",
+              "explanation": "Explanation of the correct answer and grammar."
+            }}
+          ]
+        }}
+        
+        ROMANIZATION REQUIREMENTS:
+        - ALWAYS include romanized pronunciation for ALL Japanese characters
+        - In QUESTION TEXT: Use romanization strategically - include it for context words but NOT for the term being tested
+        - In ANSWER OPTIONS: Always include full romanization for all Japanese terms
+        - In EXPLANATIONS: Always include romanization for all Japanese terms
+        
+        QUESTION VARIETY STRATEGIES:
+        - Multiple Choice: Mix meaning, usage, context, and situational questions
+        - True/False: Test facts, usage rules, and cultural knowledge
+        - Matching: Connect words with meanings, sounds with situations, etc.
+        - Ensure each question tests a different aspect of the topic
+        - Avoid similar question structures or content overlap
+        
+        IMPORTANT: Return EXACTLY the number and types of questions specified above.
+        """
+        
+        content, error = self._generate_content(system_prompt, user_prompt, is_json=True)
+        if error:
+            return {"error": error}
+        
+        try:
+            if content:
+                result = json.loads(content)
+                
+                # Validate the structure
+                if 'questions' not in result or not isinstance(result['questions'], list):
+                    return {"error": "Invalid batch quiz structure: missing or invalid questions array"}
+                
+                # Validate we got the expected number of questions
+                if len(result['questions']) != total_questions:
+                    current_app.logger.warning(f"Expected {total_questions} questions, got {len(result['questions'])}")
+                
+                # Validate each question has required fields
+                for i, question in enumerate(result['questions']):
+                    if not isinstance(question, dict) or 'question_type' not in question or 'question_text' not in question:
+                        return {"error": f"Invalid question structure at index {i}"}
+                
+                return result
+            else:
+                return {"error": "Empty response from AI"}
+        except json.JSONDecodeError as e:
+            current_app.logger.error(f"Failed to parse JSON from AI response: {e}\nResponse: {content}")
+            return {"error": "Failed to parse AI response as JSON."}
+
     def generate_multiple_choice_question(self, topic, difficulty, keywords, question_number=None):
         """Generates a multiple-choice question in a structured JSON format."""
         system_prompt = (

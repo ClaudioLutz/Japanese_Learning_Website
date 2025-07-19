@@ -306,43 +306,35 @@ def create_lesson(app):
             
             quiz_content_order_index = 0
             
-            # Generate varied quiz questions (4 per quiz page)
-            print(f"🤖 Generating quiz questions for {page_title}...")
+            # Generate all quiz questions for this page in one batch session
+            print(f"🤖 Generating batch quiz questions for {page_title}...")
             
-            # Quiz types cycle through different formats - 4 quizzes per page
-            quiz_types = [
-                ("multiple_choice", "Multiple Choice"),
-                ("true_false", "True/False"),
-                ("matching", "Matching"),
-                ("multiple_choice", "Multiple Choice")
+            # Define quiz specifications for this page (5 quizzes total)
+            quiz_specifications = [
+                {"type": "multiple_choice", "count": 3},
+                {"type": "true_false", "count": 1},
+                {"type": "matching", "count": 1}
             ]
             
-            for quiz_num in range(4):  # 4 quizzes per quiz page
-                quiz_type, quiz_name = quiz_types[quiz_num]
+            # Generate all quizzes in one AI session to ensure variety and avoid duplication
+            batch_quiz_result = generator.generate_page_quiz_batch(
+                f"{page_title} onomatopoeia and mimetic words. Focus on: {content_focus}",
+                LESSON_DIFFICULTY,
+                keywords,
+                quiz_specifications
+            )
+            
+            if "error" not in batch_quiz_result and "questions" in batch_quiz_result:
+                questions = batch_quiz_result["questions"]
+                print(f"✅ Generated {len(questions)} quiz questions in batch for {page_title}")
                 
-                print(f"  Generating {quiz_name} quiz #{quiz_num + 1}...")
-                
-                if quiz_type == "multiple_choice":
-                    quiz_result = generator.generate_multiple_choice_question(
-                        f"{page_title} onomatopoeia and mimetic words knowledge. Focus on: {content_focus}", 
-                        LESSON_DIFFICULTY, 
-                        keywords,
-                        question_number=quiz_num
-                    )
-                elif quiz_type == "true_false":
-                    quiz_result = generator.generate_true_false_question(
-                        f"{page_title} onomatopoeia facts and usage. Focus on: {content_focus}", 
-                        LESSON_DIFFICULTY, 
-                        keywords
-                    )
-                else:  # matching
-                    quiz_result = generator.generate_matching_question(
-                        f"{page_title} onomatopoeia vocabulary and meanings. Focus on: {content_focus}", 
-                        LESSON_DIFFICULTY, 
-                        keywords
-                    )
-                
-                if "error" not in quiz_result:
+                # Process each question from the batch
+                for quiz_num, quiz_data in enumerate(questions):
+                    quiz_type = quiz_data.get("question_type", "multiple_choice")
+                    quiz_name = quiz_type.replace("_", " ").title()
+                    
+                    print(f"  Processing {quiz_name} quiz #{quiz_num + 1}...")
+                    
                     # Create quiz content
                     quiz_content = LessonContent(
                         lesson_id=lesson.id,
@@ -361,8 +353,8 @@ def create_lesson(app):
                     question = QuizQuestion(
                         lesson_content_id=quiz_content.id,
                         question_type=quiz_type,
-                        question_text=quiz_result['question_text'],
-                        explanation=quiz_result.get('overall_explanation', quiz_result.get('explanation', ''))
+                        question_text=quiz_data['question_text'],
+                        explanation=quiz_data.get('overall_explanation', quiz_data.get('explanation', ''))
                     )
                     db.session.add(question)
                     db.session.flush()
@@ -370,7 +362,7 @@ def create_lesson(app):
                     # Handle different quiz types with their specific data structures
                     if quiz_type == "multiple_choice":
                         # Multiple choice has 'options' array
-                        options = quiz_result.get('options', [])
+                        options = quiz_data.get('options', [])
                         if isinstance(options, str):
                             try:
                                 options = json.loads(options)
@@ -389,14 +381,14 @@ def create_lesson(app):
                     
                     elif quiz_type == "true_false":
                         # True/false has 'correct_answer' boolean
-                        correct_answer = quiz_result.get('correct_answer', True)
+                        correct_answer = quiz_data.get('correct_answer', True)
                         
                         # Create True option
                         true_option = QuizOption(
                             question_id=question.id,
                             option_text="True",
                             is_correct=(correct_answer == True),
-                            feedback=quiz_result.get('explanation', '')
+                            feedback=quiz_data.get('explanation', '')
                         )
                         db.session.add(true_option)
                         
@@ -405,13 +397,13 @@ def create_lesson(app):
                             question_id=question.id,
                             option_text="False",
                             is_correct=(correct_answer == False),
-                            feedback=quiz_result.get('explanation', '')
+                            feedback=quiz_data.get('explanation', '')
                         )
                         db.session.add(false_option)
                     
                     elif quiz_type == "matching":
                         # Matching has 'pairs' array
-                        pairs = quiz_result.get('pairs', [])
+                        pairs = quiz_data.get('pairs', [])
                         if isinstance(pairs, str):
                             try:
                                 pairs = json.loads(pairs)
@@ -437,8 +429,141 @@ def create_lesson(app):
                     
                     print(f"✅ {quiz_name} quiz #{quiz_num + 1} added to quiz page {quiz_page_number}.")
                     quiz_content_order_index += 1
-                else:
-                    print(f"❌ Error generating {quiz_name} quiz #{quiz_num + 1}: {quiz_result.get('error', 'Unknown error')}")
+            else:
+                print(f"❌ Error generating batch quiz questions for {page_title}: {batch_quiz_result.get('error', 'Unknown error')}")
+                # Fallback to individual generation if batch fails
+                print("🔄 Falling back to individual quiz generation...")
+                
+                # Quiz types cycle through different formats - 4 quizzes per page
+                quiz_types = [
+                    ("multiple_choice", "Multiple Choice"),
+                    ("true_false", "True/False"),
+                    ("matching", "Matching"),
+                    ("multiple_choice", "Multiple Choice")
+                ]
+                
+                for quiz_num in range(4):  # 4 quizzes per quiz page
+                    quiz_type, quiz_name = quiz_types[quiz_num]
+                    
+                    print(f"  Generating {quiz_name} quiz #{quiz_num + 1}...")
+                    
+                    if quiz_type == "multiple_choice":
+                        quiz_result = generator.generate_multiple_choice_question(
+                            f"{page_title} onomatopoeia and mimetic words knowledge. Focus on: {content_focus}", 
+                            LESSON_DIFFICULTY, 
+                            keywords,
+                            question_number=quiz_num
+                        )
+                    elif quiz_type == "true_false":
+                        quiz_result = generator.generate_true_false_question(
+                            f"{page_title} onomatopoeia facts and usage. Focus on: {content_focus}", 
+                            LESSON_DIFFICULTY, 
+                            keywords
+                        )
+                    else:  # matching
+                        quiz_result = generator.generate_matching_question(
+                            f"{page_title} onomatopoeia vocabulary and meanings. Focus on: {content_focus}", 
+                            LESSON_DIFFICULTY, 
+                            keywords
+                        )
+                    
+                    if "error" not in quiz_result:
+                        # Create quiz content
+                        quiz_content = LessonContent(
+                            lesson_id=lesson.id,
+                            content_type="interactive",
+                            title=f"{page_title} - {quiz_name} Quiz #{quiz_num + 1}",
+                            content_text=f"Test your knowledge about {page_title}",
+                            is_interactive=True,
+                            order_index=quiz_content_order_index,
+                            page_number=quiz_page_number,
+                            generated_by_ai=True
+                        )
+                        db.session.add(quiz_content)
+                        db.session.flush()
+
+                        # Create question
+                        question = QuizQuestion(
+                            lesson_content_id=quiz_content.id,
+                            question_type=quiz_type,
+                            question_text=quiz_result['question_text'],
+                            explanation=quiz_result.get('overall_explanation', quiz_result.get('explanation', ''))
+                        )
+                        db.session.add(question)
+                        db.session.flush()
+
+                        # Handle different quiz types with their specific data structures
+                        if quiz_type == "multiple_choice":
+                            # Multiple choice has 'options' array
+                            options = quiz_result.get('options', [])
+                            if isinstance(options, str):
+                                try:
+                                    options = json.loads(options)
+                                except json.JSONDecodeError:
+                                    print(f"❌ Error parsing multiple choice options for quiz page {quiz_page_number}")
+                                    continue
+
+                            for option_data in options:
+                                option = QuizOption(
+                                    question_id=question.id,
+                                    option_text=option_data['text'],
+                                    is_correct=option_data['is_correct'],
+                                    feedback=option_data.get('feedback', '')
+                                )
+                                db.session.add(option)
+                        
+                        elif quiz_type == "true_false":
+                            # True/false has 'correct_answer' boolean
+                            correct_answer = quiz_result.get('correct_answer', True)
+                            
+                            # Create True option
+                            true_option = QuizOption(
+                                question_id=question.id,
+                                option_text="True",
+                                is_correct=(correct_answer == True),
+                                feedback=quiz_result.get('explanation', '')
+                            )
+                            db.session.add(true_option)
+                            
+                            # Create False option
+                            false_option = QuizOption(
+                                question_id=question.id,
+                                option_text="False",
+                                is_correct=(correct_answer == False),
+                                feedback=quiz_result.get('explanation', '')
+                            )
+                            db.session.add(false_option)
+                        
+                        elif quiz_type == "matching":
+                            # Matching has 'pairs' array
+                            pairs = quiz_result.get('pairs', [])
+                            if isinstance(pairs, str):
+                                try:
+                                    pairs = json.loads(pairs)
+                                except json.JSONDecodeError:
+                                    print(f"❌ Error parsing matching pairs for quiz page {quiz_page_number}")
+                                    continue
+                            
+                            # For matching questions, we create options where:
+                            # - option_text contains the prompt (Japanese onomatopoeia)
+                            # - feedback contains the correct answer (English meaning/description)
+                            # - is_correct is always True for matching (since each has its correct pair)
+                            for i, pair in enumerate(pairs):
+                                if isinstance(pair, dict) and 'prompt' in pair and 'answer' in pair:
+                                    # Create one option per pair with prompt as option_text and answer as feedback
+                                    matching_option = QuizOption(
+                                        question_id=question.id,
+                                        option_text=pair['prompt'],  # Japanese onomatopoeia with romanization
+                                        is_correct=True,  # All matching options are "correct" in their pairing
+                                        feedback=pair['answer'],  # English meaning/description
+                                        order_index=i
+                                    )
+                                    db.session.add(matching_option)
+                        
+                        print(f"✅ {quiz_name} quiz #{quiz_num + 1} added to quiz page {quiz_page_number}.")
+                        quiz_content_order_index += 1
+                    else:
+                        print(f"❌ Error generating {quiz_name} quiz #{quiz_num + 1}: {quiz_result.get('error', 'Unknown error')}")
 
             # Move to next pair of pages (content + quiz)
             current_page_number += 2
