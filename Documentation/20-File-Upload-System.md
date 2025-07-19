@@ -377,10 +377,10 @@ The system creates an organized directory structure:
 app/static/uploads/
 ├── temp/                    # Temporary files during processing
 ├── lessons/
-│   ├── image/              # Image files
+│   ├── images/             # Image files (note: plural)
 │   │   ├── filename1.jpg
 │   │   └── filename2.png
-│   ├── video/              # Video files
+│   ├── videos/             # Video files (note: plural)
 │   │   ├── filename1.mp4
 │   │   └── filename2.webm
 │   └── audio/              # Audio files
@@ -423,5 +423,196 @@ def delete_file(self):
             current_app.logger.error(f"Error deleting file {file_full_path}: {e}")
             return False
 ```
+
+## 10. Page Number Handling
+
+### 10.1. Content Organization by Pages
+
+The file upload system integrates with the lesson page system to organize content:
+
+```python
+@bp.route('/api/admin/lessons/<int:lesson_id>/content/new', methods=['POST'])
+@login_required
+@admin_required
+def add_lesson_content(lesson_id):
+    # ... existing code ...
+    
+    page_number = data.get('page_number', 1)
+
+    # Ensure a LessonPage entry exists for this page
+    lesson_page = LessonPage.query.filter_by(lesson_id=lesson_id, page_number=page_number).first()
+    if not lesson_page:
+        lesson_page = LessonPage(
+            lesson_id=lesson_id, 
+            page_number=page_number,
+            title=f"Page {page_number}"
+        )
+        db.session.add(lesson_page)
+
+    # Determine the next order index for the given page
+    last_content_on_page = LessonContent.query.filter_by(
+        lesson_id=lesson_id, 
+        page_number=page_number
+    ).order_by(LessonContent.order_index.desc()).first()
+    next_order_index = (last_content_on_page.order_index + 1) if last_content_on_page else 0
+```
+
+### 10.2. Page-Based File Organization
+
+Files are organized not only by type but also by their associated lesson pages, enabling:
+
+- **Page-specific content management**: Files can be grouped by lesson pages
+- **Sequential content ordering**: Content maintains order within each page
+- **Page deletion handling**: When pages are deleted, associated files are cleaned up
+
+## 11. Bulk Operations
+
+### 11.1. Bulk Content Management
+
+The system supports bulk operations for efficient content management:
+
+```python
+@bp.route('/api/admin/lessons/<int:lesson_id>/content/bulk-update', methods=['PUT'])
+@bp.route('/api/admin/lessons/<int:lesson_id>/content/bulk-duplicate', methods=['POST'])
+@bp.route('/api/admin/lessons/<int:lesson_id>/content/bulk-delete', methods=['DELETE'])
+```
+
+### 11.2. Bulk File Handling
+
+When performing bulk operations, the system:
+
+- **Preserves file associations**: Duplicated content maintains file references
+- **Handles file cleanup**: Bulk deletion removes associated files from filesystem
+- **Maintains data integrity**: Operations are wrapped in database transactions
+
+## 12. Export/Import Integration
+
+### 12.1. File Inclusion in Exports
+
+The file upload system integrates with lesson export functionality:
+
+```python
+@bp.route('/api/admin/lessons/<int:lesson_id>/export-package', methods=['POST'])
+def export_lesson_package(lesson_id):
+    data = request.json or {}
+    include_files = data.get('include_files', True)
+    
+    # Files are packaged with lesson data when include_files=True
+    zip_path = create_lesson_export_package(lesson_id, temp_dir, include_files)
+```
+
+### 12.2. File Restoration on Import
+
+During lesson import, the system:
+
+- **Validates file paths**: Ensures imported file references are valid
+- **Recreates directory structure**: Maintains organized file storage
+- **Handles file conflicts**: Manages duplicate files during import
+
+## 13. Error Handling and Recovery
+
+### 13.1. Comprehensive Error Management
+
+The file upload system implements robust error handling:
+
+```python
+try:
+    # File operations
+    file_storage.save(temp_filepath)
+    # Validation and processing
+    if not FileUploadHandler.validate_file_content(temp_filepath, file_type_from_ext):
+        FileUploadHandler.delete_file(temp_filepath)
+        return jsonify({'success': False, 'error': 'File content validation failed'}), 415
+except Exception as e:
+    current_app.logger.error(f"File upload failed: {e}", exc_info=True)
+    if os.path.exists(temp_filepath):
+        FileUploadHandler.delete_file(temp_filepath)
+    return jsonify({'success': False, 'error': 'Server error occurred'}), 500
+finally:
+    # Cleanup temporary files
+    if os.path.exists(temp_filepath):
+        FileUploadHandler.delete_file(temp_filepath)
+```
+
+### 13.2. Rollback Mechanisms
+
+- **Database rollbacks**: Failed operations trigger database rollbacks
+- **File cleanup**: Temporary files are always cleaned up
+- **Partial failure handling**: System handles scenarios where file deletion succeeds but database operations fail
+
+## 14. Performance Considerations
+
+### 14.1. Temporary File Processing
+
+The system uses a temporary file approach to:
+
+- **Minimize risk**: Validate files before moving to final location
+- **Improve performance**: Process files in dedicated temporary space
+- **Enable atomic operations**: Move validated files in single operation
+
+### 14.2. File Size and Type Limits
+
+Configuration includes performance-oriented limits:
+
+```python
+MAX_CONTENT_LENGTH = 100 * 1024 * 1024  # 100MB max file size
+ALLOWED_EXTENSIONS = {
+    'image': {'png', 'jpg', 'jpeg', 'gif', 'webp'},
+    'video': {'mp4', 'webm', 'ogg', 'avi', 'mov'},
+    'audio': {'mp3', 'wav', 'ogg', 'aac', 'm4a'}
+}
+```
+
+## 15. Troubleshooting
+
+### 15.1. Common Issues
+
+**File Upload Fails with 415 Error**
+- Check file extension against `ALLOWED_EXTENSIONS`
+- Verify MIME type validation with `python-magic`
+- Ensure file content matches extension
+
+**Files Not Accessible After Upload**
+- Verify file serving route is implemented: `/uploads/<path:filename>`
+- Check file permissions in upload directory
+- Confirm `UPLOAD_FOLDER` configuration is correct
+
+**Image Processing Failures**
+- Ensure Pillow library is installed and updated
+- Check image file integrity
+- Verify sufficient disk space for processing
+
+### 15.2. Debugging Tools
+
+**File Information Endpoint**
+```python
+file_info = FileUploadHandler.get_file_info(file_path)
+# Returns: size, MIME type, dimensions (for images)
+```
+
+**Logging Configuration**
+```python
+current_app.logger.error(f"File upload failed: {e}", exc_info=True)
+# Provides detailed error information for debugging
+```
+
+## 16. Security Best Practices
+
+### 16.1. Defense in Depth
+
+The system implements multiple security layers:
+
+1. **Extension validation** (first line of defense)
+2. **MIME type verification** (content-based validation)
+3. **File processing** (strips malicious content from images)
+4. **Path validation** (prevents directory traversal)
+5. **Access control** (admin-only upload endpoints)
+
+### 16.2. Security Recommendations
+
+- **Regular updates**: Keep `python-magic` and `Pillow` libraries updated
+- **File scanning**: Consider integrating antivirus scanning for uploaded files
+- **Storage isolation**: Use separate storage for uploaded files
+- **Access logging**: Monitor file access patterns for suspicious activity
 
 This comprehensive file upload system provides secure, organized, and efficient handling of multimedia content for the Japanese Learning Website.

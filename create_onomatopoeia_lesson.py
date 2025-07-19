@@ -134,9 +134,31 @@ def create_lesson(app):
         existing_lesson = Lesson.query.filter_by(title=LESSON_TITLE).first()
         if existing_lesson:
             print(f"Found existing lesson '{LESSON_TITLE}' (ID: {existing_lesson.id}). Deleting it.")
+            
+            # First, delete all user quiz answers for this lesson to avoid foreign key constraints
+            from app.models import UserQuizAnswer, QuizQuestion, QuizOption
+            
+            # Get all content IDs for this lesson
+            content_ids = [content.id for content in existing_lesson.content_items if content.is_interactive]
+            
+            if content_ids:
+                # Get all question IDs for this lesson's content
+                question_ids = [q.id for q in QuizQuestion.query.filter(QuizQuestion.lesson_content_id.in_(content_ids)).all()]
+                
+                if question_ids:
+                    # Delete all user quiz answers for these questions
+                    deleted_answers = UserQuizAnswer.query.filter(UserQuizAnswer.question_id.in_(question_ids)).delete(synchronize_session=False)
+                    print(f"  Deleted {deleted_answers} user quiz answers")
+                    
+                    # Delete all user lesson progress for this lesson
+                    from app.models import UserLessonProgress
+                    deleted_progress = UserLessonProgress.query.filter_by(lesson_id=existing_lesson.id).delete(synchronize_session=False)
+                    print(f"  Deleted {deleted_progress} user progress records")
+            
+            # Now delete the lesson (cascades will handle the rest)
             db.session.delete(existing_lesson)
             db.session.commit()
-            print("✅ Existing lesson deleted.")
+            print("✅ Existing lesson and all related data deleted.")
 
         # Create the lesson
         lesson = Lesson(

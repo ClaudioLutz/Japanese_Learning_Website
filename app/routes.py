@@ -3152,6 +3152,27 @@ def export_multiple_lessons():
         current_app.logger.error(f"Error exporting multiple lessons: {e}")
         return jsonify({"error": "Failed to export lessons"}), 500
 
+@bp.route('/uploads/<path:filename>')
+def uploaded_file(filename):
+    """Serve uploaded files"""
+    import os
+    from flask import send_from_directory
+    
+    upload_folder = current_app.config['UPLOAD_FOLDER']
+    file_path = os.path.join(upload_folder, filename)
+    
+    # Security check - ensure file is within upload folder
+    if not os.path.abspath(file_path).startswith(os.path.abspath(upload_folder)):
+        return jsonify({"error": "Access denied"}), 403
+    
+    if not os.path.exists(file_path):
+        return jsonify({"error": "File not found"}), 404
+    
+    directory = os.path.dirname(file_path)
+    basename = os.path.basename(file_path)
+    
+    return send_from_directory(directory, basename)
+
 @bp.route('/api/admin/lessons/import-info', methods=['POST'])
 @login_required
 @admin_required
