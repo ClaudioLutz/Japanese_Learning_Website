@@ -134,7 +134,7 @@ Represents a single lesson, containing various content items and metadata.
 | `allow_guest_access` | Boolean     | Not Nullable, Default: False                    | Flag indicating if guests can access this lesson without authentication.  |
 | `instruction_language`| String(10)  | Not Nullable, Default: 'english'              | Language for explanations/instructions (e.g., 'english', 'german').       |
 | `thumbnail_url`      | String(255) | Nullable                                        | URL for a lesson cover image.                                             |
-| `background_image_url`| String(255) | Nullable                                       | URL for a lesson background image.                                        |
+| `background_image_url`| String(1000) | Nullable                                      | URL for a lesson background image.                                        |
 | `background_image_path`| String(500) | Nullable                                      | File path for uploaded background image.                                  |
 | `video_intro_url`    | String(255) | Nullable                                        | URL for an optional introductory video for the lesson.                    |
 | `price`              | Float       | Not Nullable, Default: 0.0                     | Price of the lesson in CHF. 0.0 indicates a free lesson.                 |
@@ -378,7 +378,77 @@ Tracks individual lesson purchases by users, supporting the per-lesson pricing m
 
 ---
 
-## 8. Database Migrations
+## 8. Social Authentication Models
+
+The application includes social authentication capabilities through Python Social Auth, which creates several tables to manage OAuth flows and user associations.
+
+### 8.1. `social_auth_usersocialauth`
+
+Links users to their social media accounts (Google, Facebook, etc.).
+
+| Column      | Type        | Constraints                                    | Description                                                      |
+|-------------|-------------|------------------------------------------------|------------------------------------------------------------------|
+| `id`        | Integer     | Primary Key                                    | Unique identifier for the social auth association.               |
+| `provider`  | String(32)  | Not Nullable                                   | Name of the social provider (e.g., 'google-oauth2', 'facebook'). |
+| `uid`       | String(255) | Not Nullable                                   | User ID from the social provider.                                |
+| `extra_data`| Text        | Nullable                                       | JSON data containing additional information from the provider.    |
+| `user_id`   | Integer     | Foreign Key (`user.id`), Not Nullable         | ID of the `User` this social account is linked to.               |
+| `created`   | DateTime    | Not Nullable                                   | Timestamp when the association was created.                      |
+| `modified`  | DateTime    | Not Nullable                                   | Timestamp when the association was last modified.                |
+|             |             | Unique Constraint (`provider`, `uid`)          | Ensures each social account can only be linked once.             |
+
+**Relationships:**
+- `user`: Many-to-One with `User`. Links to the user account.
+
+---
+
+### 8.2. `social_auth_nonce`
+
+Stores nonces for OpenID authentication to prevent replay attacks.
+
+| Column       | Type        | Constraints                                           | Description                                                    |
+|--------------|-------------|-------------------------------------------------------|----------------------------------------------------------------|
+| `id`         | Integer     | Primary Key                                           | Unique identifier for the nonce.                               |
+| `server_url` | String(255) | Not Nullable                                          | URL of the OpenID server.                                      |
+| `timestamp`  | Integer     | Not Nullable                                          | Unix timestamp when the nonce was created.                     |
+| `salt`       | String(65)  | Not Nullable                                          | Random salt value for the nonce.                               |
+|              |             | Unique Constraint (`server_url`, `timestamp`, `salt`) | Ensures nonce uniqueness for replay attack prevention.         |
+
+---
+
+### 8.3. `social_auth_association`
+
+Stores OpenID associations for authentication.
+
+| Column       | Type        | Constraints                                    | Description                                                    |
+|--------------|-------------|------------------------------------------------|----------------------------------------------------------------|
+| `id`         | Integer     | Primary Key                                    | Unique identifier for the association.                         |
+| `server_url` | String(255) | Not Nullable                                   | URL of the OpenID server.                                      |
+| `handle`     | String(255) | Not Nullable                                   | Association handle from the server.                            |
+| `secret`     | String(255) | Not Nullable                                   | Shared secret for the association.                             |
+| `issued`     | Integer     | Not Nullable                                   | Unix timestamp when the association was issued.                |
+| `lifetime`   | Integer     | Not Nullable                                   | Lifetime of the association in seconds.                        |
+| `assoc_type` | String(64)  | Not Nullable                                   | Type of association (e.g., 'HMAC-SHA1', 'HMAC-SHA256').        |
+|              |             | Unique Constraint (`server_url`, `handle`)     | Ensures unique associations per server and handle.             |
+
+---
+
+### 8.4. `social_auth_code`
+
+Stores verification codes for email-based authentication flows.
+
+| Column      | Type        | Constraints                                    | Description                                                    |
+|-------------|-------------|------------------------------------------------|----------------------------------------------------------------|
+| `id`        | Integer     | Primary Key                                    | Unique identifier for the verification code.                   |
+| `email`     | String(254) | Not Nullable                                   | Email address the code was sent to.                            |
+| `code`      | String(32)  | Not Nullable                                   | Verification code sent to the user.                            |
+| `verified`  | Boolean     | Not Nullable, Default: False                   | Flag indicating if the code has been verified.                 |
+| `timestamp` | DateTime    | Not Nullable                                   | Timestamp when the code was generated.                         |
+|             |             | Unique Constraint (`email`, `code`)            | Ensures unique codes per email address.                        |
+
+---
+
+## 9. Database Migrations
 
 Database schema changes are managed using Alembic. Migration scripts are located in the `migrations/versions/` directory.
 - To generate a new migration after model changes: `flask db revision -m "description_of_changes"`
@@ -402,6 +472,17 @@ Two migrations were added to implement the per-lesson pricing MVP feature:
    - Enforces unique constraint to prevent duplicate purchases
 
 These migrations maintain backward compatibility - all existing lessons default to free (`price = 0.0`, `is_purchasable = False`).
+
+#### Social Authentication Implementation (July 2025)
+**`2c4c0235605b_add_social_auth_tables.py`** - Added social authentication support:
+- Created `social_auth_usersocialauth` table for linking users to social accounts
+- Created `social_auth_nonce`, `social_auth_association`, and `social_auth_code` tables for OAuth flow management
+- Enables Google OAuth and other social login providers through Python Social Auth
+
+#### Background Image URL Length Fix (July 2025)
+**`fix_background_image_url_length.py`** - Increased `background_image_url` field length:
+- Changed `Lesson.background_image_url` from VARCHAR(255) to VARCHAR(1000)
+- Accommodates longer URLs for background images, especially AI-generated image URLs
 
 ### Migration Commands
 ```bash
