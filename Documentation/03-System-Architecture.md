@@ -1,7 +1,7 @@
 # System Architecture
 
 ## High-Level Architecture Overview
-The Japanese Learning Website follows a **layered monolithic architecture** with clear separation of concerns, designed for maintainability and future scalability. The system is built primarily using the **Model-View-Controller (MVC)** pattern, adapted for a Flask environment.
+The Japanese Learning Website follows a **layered monolithic architecture** with clear separation of concerns, designed for maintainability and future scalability. The system is built primarily using the **Model-View-Controller (MVC)** pattern, adapted for a Flask environment with modern features including AI integration, social authentication, and a comprehensive lesson management system.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -19,19 +19,26 @@ The Japanese Learning Website follows a **layered monolithic architecture** with
 │ │ Routes        │◀─▶│ Forms          │  │ Utilities      │ │
 │ │ (app/routes.py) │   │ (app/forms.py) │ │(app/utils.py)  │ │
 │ │  - Controller   │   │  - Validation  │ │  - FileUpload  │ │
-│ │  - API Endpoints│   └────────────────┘ │  - Helpers     │ │
-│ └───────┬───────┘                        └────────────────┘ │
+│ │  - API Endpoints│   │  - CSRF Protect│ │  - Helpers     │ │
+│ └───────┬───────┘   └────────────────┘ └────────────────┘ │
 │         │                                ┌────────────────┐ │
 │         │                                │ AI Services    │ │
 │         │                                │(app/ai_services.py)│
+│         │                                │ - Gemini API   │ │
+│         │                                │ - OpenAI DALL-E│ │
+│         │                                └────────────────┘ │
+│         │                                ┌────────────────┐ │
+│         │                                │ Social Auth    │ │
+│         │                                │(social_auth_   │ │
+│         │                                │ config.py)     │ │
 │         │                                └────────────────┘ │
 │         ▼ (Interacts with Models, Renders Templates)        │
 │ ┌───────────────┐     ┌────────────────┐ ┌────────────────┐ │
 │ │ Models        │◀─▶ │ Database       │ │ Lesson Exp/Imp │ │
 │ │ (app/models.py) │   │ (SQLAlchemy ORM) │ │(app/lesson_export_import.py)│
-│ │  - Data Logic   │   │  - SQLite      │ └────────────────┘ │
-│ │  - Business Rules│  └────────────────┘                    │
-│ └───────────────┘                                           │
+│ │  - Data Logic   │   │  - PostgreSQL  │ └────────────────┘ │
+│ │  - Business Rules│  │  - Migrations  │                    │
+│ └───────────────┘   └────────────────┘                    │
 │         │                                                   │
 │         ▼ (Renders)                                         │
 │ ┌───────────────┐                                           │
@@ -46,27 +53,32 @@ The Japanese Learning Website follows a **layered monolithic architecture** with
 │                     Data Storage Layer                      │
 ├─────────────────────────────────────────────────────────────┤
 │  ┌─────────────┐   ┌─────────────┐   ┌───────────────────┐  │
-│  │   SQLite    │   │ Migrations  │   │ File System       │  │
-│  │ (site.db)   │   │ (Alembic)   │   │ (UPLOAD_FOLDER)   │  │
+│  │ PostgreSQL  │   │ Migrations  │   │ File System       │  │
+│  │ (Primary DB)│   │ (Alembic)   │   │ (UPLOAD_FOLDER)   │  │
 │  └─────────────┘   └─────────────┘   └───────────────────┘  │
+│                                                             │
+│  ┌─────────────┐   ┌─────────────┐                         │
+│  │ External    │   │ Cloud       │                         │
+│  │ AI APIs     │   │ Storage     │                         │
+│  │ (Optional)  │   │ (Future)    │                         │
+│  └─────────────┘   └─────────────┘                         │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 ## Core Design Principles
 
 ### 1. Separation of Concerns
-- **Models (`app/models.py`)**: Define the data structure, relationships, and business logic directly related to data entities (e.g., User, Lesson, Kana). They interact with the ORM (SQLAlchemy).
-- **Views (Templates - `app/templates/`)**: Handle the presentation logic. Jinja2 templates are used to render HTML dynamically based on data passed from controllers.
-- **Controllers (Routes - `app/routes.py`)**: Manage the application flow. They handle incoming HTTP requests, interact with models to fetch or modify data, process input (often with the help of forms), and select appropriate templates to render or return JSON responses for API calls.
-- **Forms (`app/forms.py`)**: Manage form data submission, validation (using WTForms and Flask-WTF), and CSRF protection.
-- **Utilities (`app/utils.py`)**: Contain helper functions and classes that provide reusable logic across different parts of the application, such as `FileUploadHandler` for managing file uploads and `convert_to_embed_url` for YouTube URLs.
-- **AI Services (`app/ai_services.py`)**: Encapsulate logic for interacting with external AI APIs (e.g., OpenAI) for features like content generation.
-- **User Performance Analyzer (`app/user_performance_analyzer.py`)**: Analyzes user performance data to identify weaknesses and suggest remediation.
-- **Content Validator (`app/content_validator.py`)**: Validates content accuracy, cultural context, and educational effectiveness.
-- **Personalized Lesson Generator (`app/personalized_lesson_generator.py`)**: Generates adaptive lessons based on user performance analysis.
-- **Lesson Template (`lesson_template.py`)**: Creates lessons from predefined JSON templates.
-- **Multi-Modal Generator (`multi_modal_generator.py`)**: Generates visual and auditory content for lessons.
-- **Lesson Export/Import (`app/lesson_export_import.py`)**: Handles the serialization and deserialization of lesson data for backup, transfer, or bulk creation purposes.
+- **Models (`app/models.py`)**: Define the data structure, relationships, and business logic directly related to data entities (e.g., User, Lesson, Kana, Course, LessonPurchase). They interact with the ORM (SQLAlchemy) and include complex business logic for lesson accessibility, progress tracking, and pricing.
+- **Views (Templates - `app/templates/`)**: Handle the presentation logic. Jinja2 templates are used to render HTML dynamically based on data passed from controllers. Includes specialized templates for admin interfaces, lesson viewing, and course management.
+- **Controllers (Routes - `app/routes.py`)**: Manage the application flow using Flask Blueprints. They handle incoming HTTP requests, interact with models to fetch or modify data, process input (often with the help of forms), and select appropriate templates to render or return JSON responses for comprehensive API endpoints.
+- **Forms (`app/forms.py`)**: Manage form data submission, validation (using WTForms and Flask-WTF), and CSRF protection with dedicated forms for registration, login, and CSRF token handling.
+- **Utilities (`app/utils.py`)**: Contain helper functions and classes that provide reusable logic across different parts of the application, such as `FileUploadHandler` for managing secure file uploads with MIME validation and `convert_to_embed_url` for YouTube URLs.
+- **AI Services (`app/ai_services.py`)**: Comprehensive AI integration service that encapsulates logic for interacting with multiple AI APIs:
+  - **Gemini API**: For text generation, explanations, and quiz content
+  - **OpenAI DALL-E**: For image generation and visual content creation
+  - **Batch Processing**: Advanced quiz generation with context awareness
+- **Social Authentication (`app/social_auth_config.py`)**: Handles Google OAuth integration and social login workflows.
+- **Lesson Export/Import (`app/lesson_export_import.py`)**: Handles the serialization and deserialization of lesson data for backup, transfer, or bulk creation purposes with ZIP package support.
 
 ### 2. Single Responsibility Principle
 - Each Python module (e.g., `models.py`, `routes.py`, `forms.py`, `utils.py`, `ai_services.py`, `lesson_export_import.py`) has a distinct area of responsibility.
@@ -82,20 +94,37 @@ The Japanese Learning Website follows a **layered monolithic architecture** with
 - Python package dependencies are managed in `requirements.txt` and isolated using virtual environments.
 
 ### 4. Security by Design
-- **Authentication**: Managed by Flask-Login, ensuring users are authenticated for protected routes.
-- **Authorization**: Implemented via custom decorators (`@admin_required`, `@premium_required`) in `app/routes.py` and checks on `current_user` attributes (e.g., `is_admin`, `subscription_level`) to enforce role-based access control (RBAC).
+- **Authentication**: Multi-layered authentication system:
+  - **Flask-Login**: Traditional email/password authentication
+  - **Google OAuth**: Social authentication via `python-social-auth`
+  - **Session Management**: Secure session handling with proper logout flows
+- **Authorization**: Comprehensive role-based access control (RBAC):
+  - Custom decorators (`@admin_required`, `@premium_required`) in `app/routes.py`
+  - User attribute checks (`is_admin`, `subscription_level`)
+  - Lesson-specific access control with pricing and prerequisite validation
+  - Purchase-based access control for paid lessons
 - **Input Validation**:
-    - For web forms: Handled by WTForms validators defined in `app/forms.py`.
-    - For API endpoints: Explicit checks on JSON payload data within the route handlers in `app/routes.py`.
-- **CSRF Protection**: Provided by Flask-WTF for all form submissions. A dedicated `CSRFTokenForm` is used for actions (like lesson reset or subscription changes) that are triggered by POST requests but don't have other form fields.
-- **File Upload Security**: The `FileUploadHandler` in `app/utils.py` implements several security measures:
-    - Strict validation of allowed file extensions (`ALLOWED_EXTENSIONS` configuration).
-    - MIME type validation of file content using `python-magic` to prevent type confusion.
-    - Generation of secure, unique filenames to prevent directory traversal or overwriting issues.
-    - Image processing (resizing, conversion) to mitigate risks from malformed image files.
-    - Uploaded files are stored in a designated `UPLOAD_FOLDER`, and served via a controlled route (`/uploads/<path:filename>`) that includes path validation.
-- **Password Security**: Passwords are hashed using `generate_password_hash` (PBKDF2) from Werkzeug.
-- **XSS Prevention**: Jinja2 templating engine auto-escapes variables by default, mitigating Cross-Site Scripting risks.
+  - **Web Forms**: WTForms validators in `app/forms.py` with email validation
+  - **API Endpoints**: Comprehensive JSON payload validation in route handlers
+  - **File Uploads**: Multi-layer validation including extension, MIME type, and content validation
+- **CSRF Protection**: 
+  - Flask-WTF CSRF protection for all form submissions
+  - Dedicated `CSRFTokenForm` for AJAX operations
+  - CSRF token validation in API endpoints
+- **File Upload Security**: Enhanced `FileUploadHandler` in `app/utils.py`:
+  - Strict validation of allowed file extensions by type (image, video, audio)
+  - MIME type validation using `python-magic` library
+  - Secure filename generation with UUID components
+  - Image processing and optimization using Pillow
+  - Path traversal prevention with absolute path validation
+  - Organized storage in type-specific subdirectories
+  - Controlled file serving via `/uploads/<path:filename>` route
+- **Database Security**:
+  - PostgreSQL with proper connection string handling
+  - SQLAlchemy ORM preventing SQL injection
+  - Environment variable configuration for sensitive data
+- **Password Security**: Werkzeug password hashing with PBKDF2
+- **XSS Prevention**: Jinja2 auto-escaping with additional input sanitization
 
 ## Data Flow Architecture
 
@@ -226,9 +255,80 @@ The Japanese Learning Website follows a **layered monolithic architecture** with
 5. Client-side JavaScript receives the JSON response and updates the UI (e.g., shows a checkmark, displays quiz result, updates progress bar).
 ```
 
+## Technology Stack
+
+### Backend Framework
+- **Flask 2.0+**: Modern Python web framework with Blueprint architecture
+- **SQLAlchemy 2.5+**: Advanced ORM with type hints and modern Python features
+- **Flask-Login 0.6+**: User session management and authentication
+- **Flask-WTF 1.0+**: Form handling and CSRF protection
+- **Flask-Migrate 3.1+**: Database migration management via Alembic
+
+### Database
+- **PostgreSQL**: Primary production database with advanced features
+- **psycopg[binary] 3.0+**: Modern PostgreSQL adapter for Python
+- **Alembic**: Database migration and version control
+
+### AI Integration
+- **Google Gemini API**: Advanced text generation, explanations, and quiz content
+- **OpenAI API 1.0+**: DALL-E image generation and visual content creation
+- **Custom AI Service Layer**: Unified interface for multiple AI providers
+
+### Authentication & Security
+- **python-social-auth**: Google OAuth and social login integration
+- **Authlib 1.2+**: OAuth client implementation
+- **PyJWT 2.4+**: JSON Web Token handling
+- **Werkzeug 2.0+**: Password hashing and security utilities
+
+### File Processing
+- **Pillow 9.0+**: Image processing and optimization
+- **python-magic**: MIME type detection and validation
+- **Secure file upload system**: Custom implementation with validation
+
+### Development & Deployment
+- **python-dotenv**: Environment variable management
+- **Gunicorn**: WSGI HTTP Server for production
+- **pandas 1.3+**: Data processing and analytics support
+
+## Enhanced Data Models
+
+### Core Entities
+- **User**: Enhanced with subscription levels, admin flags, and social auth integration
+- **Lesson**: Complex model with pricing, prerequisites, guest access, and multi-language support
+- **Course**: Lesson organization and progression tracking
+- **LessonContent**: Flexible content system supporting text, media, and interactive elements
+- **LessonPurchase**: E-commerce functionality for paid lessons
+
+### Content Management
+- **Kana, Kanji, Vocabulary, Grammar**: Structured Japanese language content
+- **LessonCategory**: Content organization and visual theming
+- **LessonPage**: Multi-page lesson structure with metadata
+- **QuizQuestion/QuizOption**: Comprehensive quiz system with multiple question types
+
+### Progress Tracking
+- **UserLessonProgress**: Detailed progress tracking with JSON content progress
+- **UserQuizAnswer**: Quiz attempt tracking with feedback and scoring
+
+## AI-Powered Features
+
+### Content Generation
+- **Automated Explanations**: Context-aware educational content
+- **Quiz Generation**: Multiple question types with batch processing
+- **Image Creation**: Custom educational illustrations via DALL-E
+- **Multimedia Analysis**: Content enhancement suggestions
+
+### Advanced Capabilities
+- **Batch Quiz Processing**: Context-aware question generation in single API calls
+- **Romanization Integration**: Automatic pronunciation guides
+- **Difficulty Adaptation**: Content tailored to learner levels
+- **Cultural Context**: Culturally appropriate content generation
+
 ## Scalability Considerations
 - **Modular Design**: Clear separation allows for future microservice extraction
-- **Database Abstraction**: SQLAlchemy ORM enables easy database migration
+- **Database Abstraction**: SQLAlchemy ORM enables easy database migration and scaling
 - **Stateless Design**: Session-based authentication supports horizontal scaling
 - **File Management**: Centralized upload handling supports CDN integration
-- **API-First Approach**: RESTful APIs enable frontend flexibility and mobile app development
+- **API-First Approach**: Comprehensive RESTful APIs enable frontend flexibility and mobile app development
+- **AI Service Abstraction**: Unified AI interface allows for easy provider switching and load balancing
+- **Blueprint Architecture**: Flask Blueprints enable modular application structure
+- **Environment-Based Configuration**: Supports multiple deployment environments

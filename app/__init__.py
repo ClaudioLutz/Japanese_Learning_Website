@@ -29,8 +29,16 @@ def create_app():
     app.config['WTF_CSRF_SECRET_KEY'] = os.environ.get('WTF_CSRF_SECRET_KEY') or 'dev-csrf-secret-key-change-in-production'
     
     app.config.from_pyfile('config.py', silent=True) # Load config from instance folder
+    
+    # Force reload environment variables
+    from dotenv import load_dotenv
+    load_dotenv(override=True)
+    
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') or \
-        'sqlite:///' + os.path.join(app.instance_path, 'site.db')
+        'postgresql://postgres:E8BnuCBpWKP@localhost:5433/japanese_learning'
+    
+    # Debug: Print the actual DATABASE_URI being used
+    print(f"DEBUG: Using DATABASE_URI: {app.config['SQLALCHEMY_DATABASE_URI']}")
     
     # Google OAuth Configuration
     app.config.update({
