@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-This script creates a comprehensive Japanese Onomatopoeia and Mimetic Words lesson organized into pages.
-Each content page covers different daily life scenarios with onomatopoeia, followed by dedicated quiz pages.
+This script creates a comprehensive A Day in the Life: Exploring Daily Routines in Japan lesson organized into pages.
+Each content page covers different aspects of the topic with explanations, followed by dedicated quiz pages.
 The quizzes are separated from the explanatory content as requested.
 """
 import os
@@ -11,12 +11,12 @@ import urllib.request
 from datetime import datetime
 import uuid
 
-# Add the app directory to Python path
-sys.path.insert(0, os.path.dirname(__file__))
+# Add the project root directory to Python path
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 # Load environment variables manually
 def load_env():
-    env_path = os.path.join(os.path.dirname(__file__), '.env')
+    env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env')
     if os.path.exists(env_path):
         with open(env_path, 'r') as f:
             for line in f:
@@ -32,67 +32,60 @@ from app.models import Lesson, LessonContent, QuizQuestion, QuizOption
 from app.ai_services import AILessonContentGenerator
 
 # --- Configuration ---
-LESSON_TITLE = "Onomatopoeia and Mimetic Words in Daily Life"
-LESSON_DIFFICULTY = "Intermediate"
-LESSON_DESCRIPTION = "Discover the vibrant world of Japanese onomatopoeia and mimetic words used in everyday situations. Learn how sound words and descriptive expressions bring Japanese language to life through daily scenarios."
+LESSON_TITLE = "A Day in the Life: Exploring Daily Routines in Japan"
+LESSON_DIFFICULTY = "Beginner"
+LESSON_DESCRIPTION = "Discover the typical daily routines of Japanese people, from morning rituals to evening activities.  Learn essential vocabulary and grammar to describe your own routine and gain insights into Japanese lifestyles."
 
 # Lesson content pages configuration (explanation pages only)
 CONTENT_PAGES = [
     {
         "page_number": 2,
-        "title": "Morning Routines - 朝の音 (Asa no Oto)",
-        "keywords": "morning, alarm, water, brushing teeth, shower, wake up sounds, りんりん, ざあざあ, しゃかしゃか, ぴちゃぴちゃ, daily routine",
-        "image_concept": "Peaceful morning scene showing various morning routine activities with visual sound effects - alarm clock ringing, water flowing from tap, toothbrush sounds, shower running, birds chirping outside window. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Common morning sounds and activities: alarm clocks (りんりん), water sounds (ざあざあ, ぴちゃぴちゃ), brushing teeth (しゃかしゃか), and other morning routine onomatopoeia."
+        "title": "Waking Up and Getting Ready - 朝の習慣 (Asa no Shūkan)",
+        "keywords": "wake up, get up, morning, breakfast, prepare, wash face, brush teeth",
+        "image_concept": "A cute anime character stretching in bed after waking up, sunlight streaming through the window. The character has a slightly sleepy but happy expression. Pajamas are simple and pastel-colored. Background includes a minimalist, tidy Japanese-style bedroom.",
+        "content_focus": "Students learn basic morning routine vocabulary and sentence structures like 'I wake up at 7 am.'"
     },
     {
         "page_number": 3,
-        "title": "Cooking and Eating - 料理の音 (Ryouri no Oto)",
-        "keywords": "cooking, eating, sizzling, chopping, slurping, ジュージュー, トントン, ずるずる, ぺろぺろ, kitchen sounds, food preparation",
-        "image_concept": "Lively kitchen scene with someone cooking - sizzling pan, chopping vegetables, boiling water, eating noodles with chopsticks, various cooking activities with sound effect visualizations. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Kitchen and eating sounds: sizzling (ジュージュー), chopping (トントン), slurping noodles (ずるずる), licking (ぺろぺろ), and cooking-related onomatopoeia."
+        "title": "Breakfast - 朝食 (Chōshoku)",
+        "keywords": "breakfast, eat, drink, toast, rice, miso soup, coffee, tea, milk, egg",
+        "image_concept": "A close-up of a typical Japanese breakfast spread on a low table with a tatami mat background. Food items include a bowl of miso soup, grilled fish, pickled vegetables, and a bowl of rice. Cute manga-style steam rises from the food. No utensils or people visible.",
+        "content_focus": "Introduce common Japanese breakfast foods and related verbs. Practice asking and answering 'What do you eat for breakfast?'"
     },
     {
         "page_number": 4,
-        "title": "Weather and Nature - 天気と自然の音 (Tenki to Shizen no Oto)",
-        "keywords": "weather, nature, rain, wind, thunder, animals, ざあざあ, ごろごろ, ひゅうひゅう, ちゅんちゅん, わんわん, にゃあにゃあ",
-        "image_concept": "Beautiful nature scene showing different weather conditions and animals - rain falling, wind blowing trees, thunder clouds, birds singing, dogs barking, cats meowing, seasonal atmosphere. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Natural sounds and weather: heavy rain (ざあざあ), thunder (ごろごろ), wind (ひゅうひゅう), bird songs (ちゅんちゅん), and animal sounds (わんわん, にゃあにゃあ)."
+        "title": "Commuting to Work/School - 通勤・通学 (Tsūkin/Tsūgaku)",
+        "keywords": "commute, train, bus, walk, bicycle, station, school, work, company",
+        "image_concept": "A cute anime character wearing a school uniform standing on a crowded train platform.  The background includes other passengers waiting and a train approaching the station. Focus is on the character's anticipation and the bustling atmosphere.",
+        "content_focus": "Learn vocabulary for transportation and locations. Practice describing how people get to work or school."
     },
     {
         "page_number": 5,
-        "title": "Emotions and Feelings - 感情の表現 (Kanjou no Hyougen)",
-        "keywords": "emotions, feelings, heart beating, sighing, laughing, どきどき, はあはあ, あはは, えーん, うるうる, excitement, sadness",
-        "image_concept": "Expressive scene showing various emotional states - person with racing heart, sighing, laughing with friends, crying, sparkling eyes with emotion, emotional expressions in daily life. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Emotional expressions: heart racing (どきどき), heavy breathing (はあはあ), laughter (あはは), crying (えーん), teary eyes (うるうる), and feeling-related mimetic words."
+        "title": "Work/School Day - 仕事・学校 (Shigoto/Gakkō)",
+        "keywords": "work, study, office, classroom, meeting, teacher, student, colleague, boss",
+        "image_concept": "A cute anime character diligently working at a desk with a laptop and some books.  The background shows a tidy and organized office/classroom environment with other characters working/studying in the background.",
+        "content_focus": "Introduce vocabulary related to work and school activities. Practice simple sentences describing daily tasks."
     },
     {
         "page_number": 6,
-        "title": "Movement and Actions - 動きの音 (Ugoki no Oto)",
-        "keywords": "movement, walking, running, falling, jumping, てくてく, だだだ, どすん, ぴょんぴょん, するする, physical actions",
-        "image_concept": "Dynamic scene showing various movements and actions - people walking, running, jumping, something falling, smooth sliding motions, active daily life movements. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Movement sounds: walking (てくてく), running (だだだ), falling (どすん), jumping (ぴょんぴょん), sliding smoothly (するする), and action-related onomatopoeia."
+        "title": "Evening Routine - 夕方の習慣 (Yūgata no Shūkan)",
+        "keywords": "dinner, bath, relax, study, watch TV, read, family time",
+        "image_concept": "A cute anime family enjoying dinner together around a low table with a tatami mat background. Food is visible, but focus is on the warm family interaction and the cozy atmosphere of a Japanese home.",
+        "content_focus": "Learn about typical evening activities and practice using time-related expressions like 'after work' or 'before sleeping'."
     },
     {
         "page_number": 7,
-        "title": "Communication Sounds - コミュニケーションの音 (Communication no Oto)",
-        "keywords": "communication, phone, knocking, typing, doorbell, りんりん, こんこん, かたかた, ぴんぽん, がちゃがちゃ, daily communication",
-        "image_concept": "Communication scene showing phone ringing, someone knocking on door, typing on keyboard, doorbell, various communication devices and interactions in daily life. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Communication sounds: phone ringing (りんりん), knocking (こんこん), typing (かたかた), doorbell (ぴんぽん), rattling (がちゃがちゃ), and interaction-related sounds."
+        "title": "Bathing - お風呂 (Ofuro)",
+        "keywords": "bath, shower, wash, relax, hot water, soap, shampoo, bathroom",
+        "image_concept": "A cute anime character relaxing in a traditional Japanese-style wooden bathtub with steam rising.  The background includes typical bathroom elements like a bucket and stool. Focus is on the character's relaxed expression and the peaceful atmosphere.",
+        "content_focus": "Introduce Japanese bathing culture and related vocabulary. Discuss the importance of bathing in Japanese daily life."
     },
     {
         "page_number": 8,
-        "title": "Household Activities - 家事の音 (Kaji no Oto)",
-        "keywords": "household, cleaning, washing, opening, closing, ごしごし, じゃぶじゃぶ, がらがら, ぱたん, きゅっきゅっ, domestic activities",
-        "image_concept": "Busy household scene with cleaning activities - scrubbing, washing dishes, opening/closing doors and windows, squeaky clean sounds, domestic life activities. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Household sounds: scrubbing (ごしごし), washing (じゃぶじゃぶ), rattling (がらがら), closing gently (ぱたん), squeaky clean (きゅっきゅっ), and cleaning-related onomatopoeia."
-    },
-    {
-        "page_number": 9,
-        "title": "Transportation - 交通の音 (Koutsu no Oto)",
-        "keywords": "transportation, car, train, bicycle, ブーブー, がたんごとん, りんりん, ぶるるん, vehicle sounds, travel, movement",
-        "image_concept": "Transportation scene showing various vehicles - cars driving, trains on tracks, bicycles with bells, engines starting, busy transportation hub with different vehicle sounds. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Transportation sounds: car engine (ブーブー), train on tracks (がたんごとん), bicycle bell (りんりん), engine revving (ぶるるん), and vehicle-related onomatopoeia."
+        "title": "Sleeping - 就寝 (Shūshin)",
+        "keywords": "sleep, bed, bedroom, pajamas, dream, good night, tired",
+        "image_concept": "A cute anime character sleeping soundly in a futon on a tatami mat.  The room is dark and peaceful, with moonlight filtering through a shoji screen window. Focus is on the character's peaceful sleeping expression.",
+        "content_focus": "Review the day's vocabulary and learn phrases related to going to bed. Practice describing a full daily routine."
     }
 ]
 
@@ -194,7 +187,7 @@ def create_lesson(app):
             title=LESSON_TITLE,
             description=LESSON_DESCRIPTION,
             lesson_type="free",  # or "premium"
-            difficulty_level=2,  # 1=Beginner, 2=Intermediate, 3=Advanced
+            difficulty_level=1,  # 1=Beginner, 2=Intermediate, 3=Advanced
             is_published=True
         )
         db.session.add(lesson)
@@ -252,7 +245,7 @@ def create_lesson(app):
         
         # Generate overview image
         print(f"🖼️ Generating lesson overview image...")
-        overview_image_concept = "Vibrant collage showing various Japanese onomatopoeia in daily life - sound waves, speech bubbles with sound effects, people in different daily activities (cooking, walking, talking), nature sounds, emotional expressions, all in a harmonious composition representing the richness of Japanese sound words. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image."
+        overview_image_concept = "Vibrant overview scene representing A Day in the Life: Exploring Daily Routines in Japan - showing the main themes and cultural elements of this lesson in a harmonious composition. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image."
         
         image_result = generator.generate_single_image(overview_image_concept, "1024x1024", "hd")
         
@@ -268,7 +261,7 @@ def create_lesson(app):
                 image_content = LessonContent(
                     lesson_id=lesson.id,
                     content_type="image",
-                    title="Onomatopoeia and Mimetic Words - Lesson Overview",
+                    title="A Day in the Life: Exploring Daily Routines in Japan - Lesson Overview",
                     content_text="Welcome to the vibrant world of Japanese sound words",
                     file_path=file_path,
                     file_size=file_size,
@@ -284,8 +277,8 @@ def create_lesson(app):
 
         # Generate welcoming introduction text
         print(f"🤖 Generating lesson introduction...")
-        intro_topic = f"Comprehensive introduction to {LESSON_TITLE}. Explain what students will learn about Japanese onomatopoeia (giongo) and mimetic words (gitaigo), their importance in daily communication, how they make Japanese language more expressive and vivid, and what daily life scenarios will be covered. Include learning objectives and cultural significance of sound words in Japanese."
-        intro_keywords = "onomatopoeia, mimetic words, giongo, gitaigo, daily life, Japanese expressions, sound words, cultural communication, language learning"
+        intro_topic = f"Comprehensive introduction to {LESSON_TITLE}. Explain what students will learn in this lesson about daily routines of a typical japanese person, the cultural significance and practical applications. Include learning objectives and how this knowledge will help students understand Japanese culture and daily life better."
+        intro_keywords = "daily routine, morning routine, evening routine, breakfast, lunch, dinner, work, school, commute, free time, hobbies, sleeping, waking up, bathing, Japanese culture"
         
         intro_result = generator.generate_formatted_explanation(intro_topic, LESSON_DIFFICULTY, intro_keywords)
         
@@ -293,7 +286,7 @@ def create_lesson(app):
             intro_content = LessonContent(
                 lesson_id=lesson.id,
                 content_type="text",
-                title="Welcome to Japanese Onomatopoeia",
+                title="Welcome to A Day in the Life: Exploring Daily Routines in Japan",
                 content_text=intro_result['generated_text'],
                 order_index=content_order_index,
                 page_number=1,
@@ -657,8 +650,8 @@ def create_lesson(app):
         
         # Generate conclusion text
         print(f"🤖 Generating lesson conclusion...")
-        conclusion_topic = "Conclusion for Japanese Onomatopoeia and Mimetic Words lesson. Summarize key learnings about Japanese sound words, their importance in daily communication, how they enrich the language, and encourage continued practice and listening for these expressions in real-life situations."
-        conclusion_keywords = "onomatopoeia, mimetic words, daily life, Japanese expressions, language enrichment, communication, cultural understanding, conclusion"
+        conclusion_topic = "Conclusion for A Day in the Life: Exploring Daily Routines in Japan lesson. Summarize key learnings from this lesson, their importance in understanding Japanese culture and daily life, and encourage continued practice and application of this knowledge."
+        conclusion_keywords = "daily routine, morning routine, evening routine, breakfast, lunch, dinner, work, school, commute, free time, hobbies, sleeping, waking up, bathing, Japanese culture, cultural understanding, conclusion"
         
         conclusion_result = generator.generate_formatted_explanation(conclusion_topic, LESSON_DIFFICULTY, conclusion_keywords)
         
@@ -666,7 +659,7 @@ def create_lesson(app):
             conclusion_content = LessonContent(
                 lesson_id=lesson.id,
                 content_type="text",
-                title="Onomatopoeia and Mimetic Words - Lesson Conclusion",
+                title="A Day in the Life: Exploring Daily Routines in Japan - Lesson Conclusion",
                 content_text=conclusion_result['generated_text'],
                 order_index=content_order_index,
                 page_number=final_page_number,
@@ -706,8 +699,8 @@ def create_lesson(app):
                     final_quiz_content = LessonContent(
                         lesson_id=lesson.id,
                         content_type="interactive",
-                        title="Onomatopoeia and Mimetic Words - Comprehensive Final Quiz",
-                        content_text="Test your overall knowledge of Japanese onomatopoeia and mimetic words in daily life",
+                        title="A Day in the Life: Exploring Daily Routines in Japan - Comprehensive Final Quiz",
+                        content_text="Test your overall knowledge of a day in the life: exploring daily routines in japan",
                         is_interactive=True,
                         order_index=content_order_index,
                         page_number=final_page_number,

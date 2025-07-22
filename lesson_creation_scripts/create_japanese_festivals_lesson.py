@@ -11,8 +11,8 @@ import urllib.request
 from datetime import datetime
 import uuid
 
-# Add the app directory to Python path
-sys.path.insert(0, os.path.dirname(__file__))
+# Add the project root directory to Python path
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 # Load environment variables manually
 def load_env():

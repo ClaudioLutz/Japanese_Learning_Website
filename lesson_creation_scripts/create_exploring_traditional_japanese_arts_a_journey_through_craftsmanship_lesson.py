@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-This script creates a comprehensive Japanese Onomatopoeia and Mimetic Words lesson organized into pages.
-Each content page covers different daily life scenarios with onomatopoeia, followed by dedicated quiz pages.
+This script creates a comprehensive Exploring Traditional Japanese Arts: A Journey Through Craftsmanship lesson organized into pages.
+Each content page covers different aspects of the topic with explanations, followed by dedicated quiz pages.
 The quizzes are separated from the explanatory content as requested.
 """
 import os
@@ -11,12 +11,12 @@ import urllib.request
 from datetime import datetime
 import uuid
 
-# Add the app directory to Python path
-sys.path.insert(0, os.path.dirname(__file__))
+# Add the project root directory to Python path
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 # Load environment variables manually
 def load_env():
-    env_path = os.path.join(os.path.dirname(__file__), '.env')
+    env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env')
     if os.path.exists(env_path):
         with open(env_path, 'r') as f:
             for line in f:
@@ -32,67 +32,60 @@ from app.models import Lesson, LessonContent, QuizQuestion, QuizOption
 from app.ai_services import AILessonContentGenerator
 
 # --- Configuration ---
-LESSON_TITLE = "Onomatopoeia and Mimetic Words in Daily Life"
-LESSON_DIFFICULTY = "Intermediate"
-LESSON_DESCRIPTION = "Discover the vibrant world of Japanese onomatopoeia and mimetic words used in everyday situations. Learn how sound words and descriptive expressions bring Japanese language to life through daily scenarios."
+LESSON_TITLE = "Exploring Traditional Japanese Arts: A Journey Through Craftsmanship"
+LESSON_DIFFICULTY = "Beginner"
+LESSON_DESCRIPTION = "Immerse yourself in the rich world of traditional Japanese arts and crafts. This lesson explores the terminology and phrases related to iconic art forms like tea ceremony, calligraphy, and pottery, providing a glimpse into their cultural significance."
 
 # Lesson content pages configuration (explanation pages only)
 CONTENT_PAGES = [
     {
         "page_number": 2,
-        "title": "Morning Routines - 朝の音 (Asa no Oto)",
-        "keywords": "morning, alarm, water, brushing teeth, shower, wake up sounds, りんりん, ざあざあ, しゃかしゃか, ぴちゃぴちゃ, daily routine",
-        "image_concept": "Peaceful morning scene showing various morning routine activities with visual sound effects - alarm clock ringing, water flowing from tap, toothbrush sounds, shower running, birds chirping outside window. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Common morning sounds and activities: alarm clocks (りんりん), water sounds (ざあざあ, ぴちゃぴちゃ), brushing teeth (しゃかしゃか), and other morning routine onomatopoeia."
+        "title": "Introduction to Traditional Arts - 伝統芸術入門 (Dentō Geijutsu Nyūmon)",
+        "keywords": "traditional arts, crafts, overview, introduction, Japan, culture",
+        "image_concept": "A montage of various traditional Japanese art forms: a teacup, a calligraphy brush, a pottery wheel, a folded kimono. Cute manga/anime style with clean lines, soft color palette, focus on the objects themselves without any human interaction. No text.",
+        "content_focus": "Students will learn basic terminology related to traditional Japanese arts and crafts and gain a general overview of the different forms."
     },
     {
         "page_number": 3,
-        "title": "Cooking and Eating - 料理の音 (Ryouri no Oto)",
-        "keywords": "cooking, eating, sizzling, chopping, slurping, ジュージュー, トントン, ずるずる, ぺろぺろ, kitchen sounds, food preparation",
-        "image_concept": "Lively kitchen scene with someone cooking - sizzling pan, chopping vegetables, boiling water, eating noodles with chopsticks, various cooking activities with sound effect visualizations. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Kitchen and eating sounds: sizzling (ジュージュー), chopping (トントン), slurping noodles (ずるずる), licking (ぺろぺろ), and cooking-related onomatopoeia."
+        "title": "The Art of Tea Ceremony - 茶道 (Sadō)",
+        "keywords": "tea ceremony, sadō, matcha, teahouse, chashitsu, etiquette, ritual",
+        "image_concept": "A cute manga/anime style depiction of a traditional teahouse (chashitsu) nestled in a serene garden with bamboo and cherry blossoms.  Focus on the architectural details of the teahouse. No text.",
+        "content_focus": "This page focuses on vocabulary and phrases related to the tea ceremony, including key objects and procedures."
     },
     {
         "page_number": 4,
-        "title": "Weather and Nature - 天気と自然の音 (Tenki to Shizen no Oto)",
-        "keywords": "weather, nature, rain, wind, thunder, animals, ざあざあ, ごろごろ, ひゅうひゅう, ちゅんちゅん, わんわん, にゃあにゃあ",
-        "image_concept": "Beautiful nature scene showing different weather conditions and animals - rain falling, wind blowing trees, thunder clouds, birds singing, dogs barking, cats meowing, seasonal atmosphere. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Natural sounds and weather: heavy rain (ざあざあ), thunder (ごろごろ), wind (ひゅうひゅう), bird songs (ちゅんちゅん), and animal sounds (わんわん, にゃあにゃあ)."
+        "title": "The Elegance of Calligraphy - 書道 (Shodō)",
+        "keywords": "calligraphy, shodō, brush, ink, paper, kanji, characters, art",
+        "image_concept": "Close-up of neatly arranged calligraphy tools: brushes, inkstone, ink stick, paper.  Cute manga/anime style, clean lines, focus on the texture and material of the objects.  No text.",
+        "content_focus": "Students learn basic terms related to calligraphy tools, techniques, and the aesthetic principles behind this art form."
     },
     {
         "page_number": 5,
-        "title": "Emotions and Feelings - 感情の表現 (Kanjou no Hyougen)",
-        "keywords": "emotions, feelings, heart beating, sighing, laughing, どきどき, はあはあ, あはは, えーん, うるうる, excitement, sadness",
-        "image_concept": "Expressive scene showing various emotional states - person with racing heart, sighing, laughing with friends, crying, sparkling eyes with emotion, emotional expressions in daily life. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Emotional expressions: heart racing (どきどき), heavy breathing (はあはあ), laughter (あはは), crying (えーん), teary eyes (うるうる), and feeling-related mimetic words."
+        "title": "The Craft of Pottery - 陶芸 (Tōgei)",
+        "keywords": "pottery, ceramics, yakimono, clay, kiln, glaze, firing, techniques",
+        "image_concept": "A variety of different styles of Japanese pottery displayed on a shelf: teacups, bowls, vases. Cute manga/anime style, vibrant colors and glazes. No text.",
+        "content_focus": "This page covers vocabulary related to pottery making, different types of pottery, and the process from clay to finished product."
     },
     {
         "page_number": 6,
-        "title": "Movement and Actions - 動きの音 (Ugoki no Oto)",
-        "keywords": "movement, walking, running, falling, jumping, てくてく, だだだ, どすん, ぴょんぴょん, するする, physical actions",
-        "image_concept": "Dynamic scene showing various movements and actions - people walking, running, jumping, something falling, smooth sliding motions, active daily life movements. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Movement sounds: walking (てくてく), running (だだだ), falling (どすん), jumping (ぴょんぴょん), sliding smoothly (するする), and action-related onomatopoeia."
+        "title": "Exploring Other Traditional Arts -  その他の伝統芸術 (Sonota no Dentō Geijutsu)",
+        "keywords": "origami, ikebana, flower arranging, lacquerware, woodblock printing, ukiyo-e, performing arts",
+        "image_concept": "A collection of different traditional craft items: a colorful origami crane, a vibrant ikebana arrangement, a detailed piece of lacquerware.  Cute manga/anime art style, focus on the intricate details and craftsmanship. No text.",
+        "content_focus": "This page introduces several other traditional Japanese arts like origami, ikebana, and ukiyo-e, expanding students' knowledge of Japanese artistic expression."
     },
     {
         "page_number": 7,
-        "title": "Communication Sounds - コミュニケーションの音 (Communication no Oto)",
-        "keywords": "communication, phone, knocking, typing, doorbell, りんりん, こんこん, かたかた, ぴんぽん, がちゃがちゃ, daily communication",
-        "image_concept": "Communication scene showing phone ringing, someone knocking on door, typing on keyboard, doorbell, various communication devices and interactions in daily life. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Communication sounds: phone ringing (りんりん), knocking (こんこん), typing (かたかた), doorbell (ぴんぽん), rattling (がちゃがちゃ), and interaction-related sounds."
+        "title": "Putting it all together - まとめ (Matome)",
+        "keywords": "review, practice, dialogue, scenarios, cultural context",
+        "image_concept": "A cute manga/anime style depiction of a person admiring traditional crafts at a shop or festival stall. Focus on the atmosphere and interaction with the crafts without showing any specific dialogue or text.",
+        "content_focus": "Students will review the vocabulary and phrases learned throughout the lesson through simple dialogues and real-life scenarios related to visiting craft shops or attending a tea ceremony."
     },
     {
         "page_number": 8,
-        "title": "Household Activities - 家事の音 (Kaji no Oto)",
-        "keywords": "household, cleaning, washing, opening, closing, ごしごし, じゃぶじゃぶ, がらがら, ぱたん, きゅっきゅっ, domestic activities",
-        "image_concept": "Busy household scene with cleaning activities - scrubbing, washing dishes, opening/closing doors and windows, squeaky clean sounds, domestic life activities. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Household sounds: scrubbing (ごしごし), washing (じゃぶじゃぶ), rattling (がらがら), closing gently (ぱたん), squeaky clean (きゅっきゅっ), and cleaning-related onomatopoeia."
-    },
-    {
-        "page_number": 9,
-        "title": "Transportation - 交通の音 (Koutsu no Oto)",
-        "keywords": "transportation, car, train, bicycle, ブーブー, がたんごとん, りんりん, ぶるるん, vehicle sounds, travel, movement",
-        "image_concept": "Transportation scene showing various vehicles - cars driving, trains on tracks, bicycles with bells, engines starting, busy transportation hub with different vehicle sounds. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Transportation sounds: car engine (ブーブー), train on tracks (がたんごとん), bicycle bell (りんりん), engine revving (ぶるるん), and vehicle-related onomatopoeia."
+        "title": "Further Exploration - さらなる探求 (Saranaru Tankyū)",
+        "keywords": "resources, museums, online platforms, further study, cultural immersion",
+        "image_concept": "A stylized representation of various learning resources: books, a computer screen with a website open, a museum building. Cute manga/anime style, focus on access to information and continued learning.  No text.",
+        "content_focus": "This page provides links to external resources, museums, and online platforms where students can continue their exploration of Japanese arts and crafts."
     }
 ]
 
@@ -194,7 +187,7 @@ def create_lesson(app):
             title=LESSON_TITLE,
             description=LESSON_DESCRIPTION,
             lesson_type="free",  # or "premium"
-            difficulty_level=2,  # 1=Beginner, 2=Intermediate, 3=Advanced
+            difficulty_level=1,  # 1=Beginner, 2=Intermediate, 3=Advanced
             is_published=True
         )
         db.session.add(lesson)
@@ -252,7 +245,7 @@ def create_lesson(app):
         
         # Generate overview image
         print(f"🖼️ Generating lesson overview image...")
-        overview_image_concept = "Vibrant collage showing various Japanese onomatopoeia in daily life - sound waves, speech bubbles with sound effects, people in different daily activities (cooking, walking, talking), nature sounds, emotional expressions, all in a harmonious composition representing the richness of Japanese sound words. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image."
+        overview_image_concept = "Vibrant overview scene representing Exploring Traditional Japanese Arts: A Journey Through Craftsmanship - showing the main themes and cultural elements of this lesson in a harmonious composition. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image."
         
         image_result = generator.generate_single_image(overview_image_concept, "1024x1024", "hd")
         
@@ -268,7 +261,7 @@ def create_lesson(app):
                 image_content = LessonContent(
                     lesson_id=lesson.id,
                     content_type="image",
-                    title="Onomatopoeia and Mimetic Words - Lesson Overview",
+                    title="Exploring Traditional Japanese Arts: A Journey Through Craftsmanship - Lesson Overview",
                     content_text="Welcome to the vibrant world of Japanese sound words",
                     file_path=file_path,
                     file_size=file_size,
@@ -284,8 +277,8 @@ def create_lesson(app):
 
         # Generate welcoming introduction text
         print(f"🤖 Generating lesson introduction...")
-        intro_topic = f"Comprehensive introduction to {LESSON_TITLE}. Explain what students will learn about Japanese onomatopoeia (giongo) and mimetic words (gitaigo), their importance in daily communication, how they make Japanese language more expressive and vivid, and what daily life scenarios will be covered. Include learning objectives and cultural significance of sound words in Japanese."
-        intro_keywords = "onomatopoeia, mimetic words, giongo, gitaigo, daily life, Japanese expressions, sound words, cultural communication, language learning"
+        intro_topic = f"Comprehensive introduction to {LESSON_TITLE}. Explain what students will learn in this lesson about traditional japanese arts and crafts, the cultural significance and practical applications. Include learning objectives and how this knowledge will help students understand Japanese culture and daily life better."
+        intro_keywords = "traditional arts, crafts, tea ceremony, sadō, calligraphy, shodō, pottery, yakimono, kimono, geisha, ukiyo-e, Japanese aesthetics, wabi-sabi, craftsmanship, cultural heritage, Japan, art history"
         
         intro_result = generator.generate_formatted_explanation(intro_topic, LESSON_DIFFICULTY, intro_keywords)
         
@@ -293,7 +286,7 @@ def create_lesson(app):
             intro_content = LessonContent(
                 lesson_id=lesson.id,
                 content_type="text",
-                title="Welcome to Japanese Onomatopoeia",
+                title="Welcome to Exploring Traditional Japanese Arts: A Journey Through Craftsmanship",
                 content_text=intro_result['generated_text'],
                 order_index=content_order_index,
                 page_number=1,
@@ -657,8 +650,8 @@ def create_lesson(app):
         
         # Generate conclusion text
         print(f"🤖 Generating lesson conclusion...")
-        conclusion_topic = "Conclusion for Japanese Onomatopoeia and Mimetic Words lesson. Summarize key learnings about Japanese sound words, their importance in daily communication, how they enrich the language, and encourage continued practice and listening for these expressions in real-life situations."
-        conclusion_keywords = "onomatopoeia, mimetic words, daily life, Japanese expressions, language enrichment, communication, cultural understanding, conclusion"
+        conclusion_topic = "Conclusion for Exploring Traditional Japanese Arts: A Journey Through Craftsmanship lesson. Summarize key learnings from this lesson, their importance in understanding Japanese culture and daily life, and encourage continued practice and application of this knowledge."
+        conclusion_keywords = "traditional arts, crafts, tea ceremony, sadō, calligraphy, shodō, pottery, yakimono, kimono, geisha, ukiyo-e, Japanese aesthetics, wabi-sabi, craftsmanship, cultural heritage, Japan, art history, cultural understanding, conclusion"
         
         conclusion_result = generator.generate_formatted_explanation(conclusion_topic, LESSON_DIFFICULTY, conclusion_keywords)
         
@@ -666,7 +659,7 @@ def create_lesson(app):
             conclusion_content = LessonContent(
                 lesson_id=lesson.id,
                 content_type="text",
-                title="Onomatopoeia and Mimetic Words - Lesson Conclusion",
+                title="Exploring Traditional Japanese Arts: A Journey Through Craftsmanship - Lesson Conclusion",
                 content_text=conclusion_result['generated_text'],
                 order_index=content_order_index,
                 page_number=final_page_number,
@@ -706,8 +699,8 @@ def create_lesson(app):
                     final_quiz_content = LessonContent(
                         lesson_id=lesson.id,
                         content_type="interactive",
-                        title="Onomatopoeia and Mimetic Words - Comprehensive Final Quiz",
-                        content_text="Test your overall knowledge of Japanese onomatopoeia and mimetic words in daily life",
+                        title="Exploring Traditional Japanese Arts: A Journey Through Craftsmanship - Comprehensive Final Quiz",
+                        content_text="Test your overall knowledge of exploring traditional japanese arts: a journey through craftsmanship",
                         is_interactive=True,
                         order_index=content_order_index,
                         page_number=final_page_number,

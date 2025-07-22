@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-This script creates a comprehensive Japanese Onomatopoeia and Mimetic Words lesson organized into pages.
-Each content page covers different daily life scenarios with onomatopoeia, followed by dedicated quiz pages.
+This script creates a comprehensive Relax and Rejuvenate: A Journey into Japanese Onsen Culture lesson organized into pages.
+Each content page covers different aspects of the topic with explanations, followed by dedicated quiz pages.
 The quizzes are separated from the explanatory content as requested.
 """
 import os
@@ -11,12 +11,12 @@ import urllib.request
 from datetime import datetime
 import uuid
 
-# Add the app directory to Python path
-sys.path.insert(0, os.path.dirname(__file__))
+# Add the project root directory to Python path
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 # Load environment variables manually
 def load_env():
-    env_path = os.path.join(os.path.dirname(__file__), '.env')
+    env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env')
     if os.path.exists(env_path):
         with open(env_path, 'r') as f:
             for line in f:
@@ -32,67 +32,60 @@ from app.models import Lesson, LessonContent, QuizQuestion, QuizOption
 from app.ai_services import AILessonContentGenerator
 
 # --- Configuration ---
-LESSON_TITLE = "Onomatopoeia and Mimetic Words in Daily Life"
+LESSON_TITLE = "Relax and Rejuvenate: A Journey into Japanese Onsen Culture"
 LESSON_DIFFICULTY = "Intermediate"
-LESSON_DESCRIPTION = "Discover the vibrant world of Japanese onomatopoeia and mimetic words used in everyday situations. Learn how sound words and descriptive expressions bring Japanese language to life through daily scenarios."
+LESSON_DESCRIPTION = "Dive into the soothing world of Japanese hot springs! This lesson explores vocabulary related to health, wellness, and onsen etiquette, offering a glimpse into this cherished Japanese tradition."
 
 # Lesson content pages configuration (explanation pages only)
 CONTENT_PAGES = [
     {
         "page_number": 2,
-        "title": "Morning Routines - 朝の音 (Asa no Oto)",
-        "keywords": "morning, alarm, water, brushing teeth, shower, wake up sounds, りんりん, ざあざあ, しゃかしゃか, ぴちゃぴちゃ, daily routine",
-        "image_concept": "Peaceful morning scene showing various morning routine activities with visual sound effects - alarm clock ringing, water flowing from tap, toothbrush sounds, shower running, birds chirping outside window. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Common morning sounds and activities: alarm clocks (りんりん), water sounds (ざあざあ, ぴちゃぴちゃ), brushing teeth (しゃかしゃか), and other morning routine onomatopoeia."
+        "title": "Health and Wellness Vocabulary - 健康と美容の語彙 (Kenkou to Biyou no Goi)",
+        "keywords": "health, wellness, beauty, body parts, feeling well, feeling sick",
+        "image_concept": "A cute anime character relaxing with a cup of tea, enjoying the fresh air in a peaceful garden. Cherry blossoms can be subtly in the background, but no signage visible.",
+        "content_focus": "Students will learn basic vocabulary related to health, wellness, and describing physical sensations."
     },
     {
         "page_number": 3,
-        "title": "Cooking and Eating - 料理の音 (Ryouri no Oto)",
-        "keywords": "cooking, eating, sizzling, chopping, slurping, ジュージュー, トントン, ずるずる, ぺろぺろ, kitchen sounds, food preparation",
-        "image_concept": "Lively kitchen scene with someone cooking - sizzling pan, chopping vegetables, boiling water, eating noodles with chopsticks, various cooking activities with sound effect visualizations. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Kitchen and eating sounds: sizzling (ジュージュー), chopping (トントン), slurping noodles (ずるずる), licking (ぺろぺろ), and cooking-related onomatopoeia."
+        "title": "Introduction to Onsen - 温泉入門 (Onsen Nyūmon)",
+        "keywords": "onsen, types of onsen, hot spring, rotenburo (open-air bath), sentou (public bath)",
+        "image_concept": "A charming manga-style illustration of a steaming outdoor onsen nestled amidst a snowy mountain landscape. Focus on the steam and natural beauty, no characters or signs.",
+        "content_focus": "Introduces the concept of onsen, different types, and distinguishes it from regular baths."
     },
     {
         "page_number": 4,
-        "title": "Weather and Nature - 天気と自然の音 (Tenki to Shizen no Oto)",
-        "keywords": "weather, nature, rain, wind, thunder, animals, ざあざあ, ごろごろ, ひゅうひゅう, ちゅんちゅん, わんわん, にゃあにゃあ",
-        "image_concept": "Beautiful nature scene showing different weather conditions and animals - rain falling, wind blowing trees, thunder clouds, birds singing, dogs barking, cats meowing, seasonal atmosphere. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Natural sounds and weather: heavy rain (ざあざあ), thunder (ごろごろ), wind (ひゅうひゅう), bird songs (ちゅんちゅん), and animal sounds (わんわん, にゃあにゃあ)."
+        "title": "Onsen Etiquette: Before Entering - 入浴前のマナー (Nyūyoku mae no Manaa)",
+        "keywords": "etiquette, washing, nudity, tattoos, manners",
+        "image_concept": "Cute anime-style depiction of a basket with toiletries (shampoo, conditioner, soap) and a small towel next to a wooden bucket filled with water. No text or visible characters.",
+        "content_focus": "Covers pre-bath etiquette such as washing and the cultural norms surrounding tattoos."
     },
     {
         "page_number": 5,
-        "title": "Emotions and Feelings - 感情の表現 (Kanjou no Hyougen)",
-        "keywords": "emotions, feelings, heart beating, sighing, laughing, どきどき, はあはあ, あはは, えーん, うるうる, excitement, sadness",
-        "image_concept": "Expressive scene showing various emotional states - person with racing heart, sighing, laughing with friends, crying, sparkling eyes with emotion, emotional expressions in daily life. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Emotional expressions: heart racing (どきどき), heavy breathing (はあはあ), laughter (あはは), crying (えーん), teary eyes (うるうる), and feeling-related mimetic words."
+        "title": "Onsen Etiquette: Inside the Bath - 浴槽内のマナー (Yokusōnai no Manaa)",
+        "keywords": "bathing, hair, towel, talking, respect",
+        "image_concept": "A simple, clean manga illustration of steam rising from a hot spring bath. Hints of smooth rocks around the edge of the bath, no people or text.",
+        "content_focus": "Focuses on behavior inside the bath, including hair etiquette and appropriate conversation levels."
     },
     {
         "page_number": 6,
-        "title": "Movement and Actions - 動きの音 (Ugoki no Oto)",
-        "keywords": "movement, walking, running, falling, jumping, てくてく, だだだ, どすん, ぴょんぴょん, するする, physical actions",
-        "image_concept": "Dynamic scene showing various movements and actions - people walking, running, jumping, something falling, smooth sliding motions, active daily life movements. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Movement sounds: walking (てくてく), running (だだだ), falling (どすん), jumping (ぴょんぴょん), sliding smoothly (するする), and action-related onomatopoeia."
+        "title": "Yukata: The Onsen Attire - ゆかた：温泉の服装 (Yukata: Onsen no Fukusō)",
+        "keywords": "yukata, dressing, clothing, traditional wear, onsen fashion",
+        "image_concept": "A neatly folded yukata with an obi (sash) placed artistically on a bamboo mat. Subtle Japanese patterns on the yukata, but no visible text or labels.",
+        "content_focus": "Introduces the yukata, how to wear it, and its significance in onsen culture."
     },
     {
         "page_number": 7,
-        "title": "Communication Sounds - コミュニケーションの音 (Communication no Oto)",
-        "keywords": "communication, phone, knocking, typing, doorbell, りんりん, こんこん, かたかた, ぴんぽん, がちゃがちゃ, daily communication",
-        "image_concept": "Communication scene showing phone ringing, someone knocking on door, typing on keyboard, doorbell, various communication devices and interactions in daily life. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Communication sounds: phone ringing (りんりん), knocking (こんこん), typing (かたかた), doorbell (ぴんぽん), rattling (がちゃがちゃ), and interaction-related sounds."
+        "title": "Regional Onsen Variations - 地方の温泉 (Chihō no Onsen)",
+        "keywords": "regional differences, onsen types, water composition, famous onsen locations",
+        "image_concept": "A manga-style landscape depicting various onsen settings: a mountain onsen, a seaside onsen, and a traditional onsen town. Focus on the diverse environments, no text or characters.",
+        "content_focus": "Explores the diverse onsen experiences across Japan, highlighting regional specialties and water types."
     },
     {
         "page_number": 8,
-        "title": "Household Activities - 家事の音 (Kaji no Oto)",
-        "keywords": "household, cleaning, washing, opening, closing, ごしごし, じゃぶじゃぶ, がらがら, ぱたん, きゅっきゅっ, domestic activities",
-        "image_concept": "Busy household scene with cleaning activities - scrubbing, washing dishes, opening/closing doors and windows, squeaky clean sounds, domestic life activities. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Household sounds: scrubbing (ごしごし), washing (じゃぶじゃぶ), rattling (がらがら), closing gently (ぱたん), squeaky clean (きゅっきゅっ), and cleaning-related onomatopoeia."
-    },
-    {
-        "page_number": 9,
-        "title": "Transportation - 交通の音 (Koutsu no Oto)",
-        "keywords": "transportation, car, train, bicycle, ブーブー, がたんごとん, りんりん, ぶるるん, vehicle sounds, travel, movement",
-        "image_concept": "Transportation scene showing various vehicles - cars driving, trains on tracks, bicycles with bells, engines starting, busy transportation hub with different vehicle sounds. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Transportation sounds: car engine (ブーブー), train on tracks (がたんごとん), bicycle bell (りんりん), engine revving (ぶるるん), and vehicle-related onomatopoeia."
+        "title": "Planning an Onsen Trip - 温泉旅行の計画 (Onsen Ryokō no Keikaku)",
+        "keywords": "travel, accommodation, booking, transportation, onsen resorts",
+        "image_concept": "A cute anime character looking at a map of Japan with various onsen locations marked. Focus on the anticipation of the journey, no specific text or place names on the map.",
+        "content_focus": "Provides practical tips and vocabulary for planning and booking an onsen trip in Japan."
     }
 ]
 
@@ -252,7 +245,7 @@ def create_lesson(app):
         
         # Generate overview image
         print(f"🖼️ Generating lesson overview image...")
-        overview_image_concept = "Vibrant collage showing various Japanese onomatopoeia in daily life - sound waves, speech bubbles with sound effects, people in different daily activities (cooking, walking, talking), nature sounds, emotional expressions, all in a harmonious composition representing the richness of Japanese sound words. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image."
+        overview_image_concept = "Vibrant overview scene representing Relax and Rejuvenate: A Journey into Japanese Onsen Culture - showing the main themes and cultural elements of this lesson in a harmonious composition. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image."
         
         image_result = generator.generate_single_image(overview_image_concept, "1024x1024", "hd")
         
@@ -268,7 +261,7 @@ def create_lesson(app):
                 image_content = LessonContent(
                     lesson_id=lesson.id,
                     content_type="image",
-                    title="Onomatopoeia and Mimetic Words - Lesson Overview",
+                    title="Relax and Rejuvenate: A Journey into Japanese Onsen Culture - Lesson Overview",
                     content_text="Welcome to the vibrant world of Japanese sound words",
                     file_path=file_path,
                     file_size=file_size,
@@ -284,8 +277,8 @@ def create_lesson(app):
 
         # Generate welcoming introduction text
         print(f"🤖 Generating lesson introduction...")
-        intro_topic = f"Comprehensive introduction to {LESSON_TITLE}. Explain what students will learn about Japanese onomatopoeia (giongo) and mimetic words (gitaigo), their importance in daily communication, how they make Japanese language more expressive and vivid, and what daily life scenarios will be covered. Include learning objectives and cultural significance of sound words in Japanese."
-        intro_keywords = "onomatopoeia, mimetic words, giongo, gitaigo, daily life, Japanese expressions, sound words, cultural communication, language learning"
+        intro_topic = f"Comprehensive introduction to {LESSON_TITLE}. Explain what students will learn in this lesson about health, wellness, and japanese hot springs (onsen), the cultural significance and practical applications. Include learning objectives and how this knowledge will help students understand Japanese culture and daily life better."
+        intro_keywords = "onsen, hot springs, health, wellness, relaxation, etiquette, ゆかた(yukata), 温泉(onsen), 風呂(furo), 健康(kenkou), 美容(biyou), マナー(manaa), 露天風呂(rotenburo), 銭湯(sentou), 温泉旅行(onsen ryokou)"
         
         intro_result = generator.generate_formatted_explanation(intro_topic, LESSON_DIFFICULTY, intro_keywords)
         
@@ -293,7 +286,7 @@ def create_lesson(app):
             intro_content = LessonContent(
                 lesson_id=lesson.id,
                 content_type="text",
-                title="Welcome to Japanese Onomatopoeia",
+                title="Welcome to Relax and Rejuvenate: A Journey into Japanese Onsen Culture",
                 content_text=intro_result['generated_text'],
                 order_index=content_order_index,
                 page_number=1,
@@ -657,8 +650,8 @@ def create_lesson(app):
         
         # Generate conclusion text
         print(f"🤖 Generating lesson conclusion...")
-        conclusion_topic = "Conclusion for Japanese Onomatopoeia and Mimetic Words lesson. Summarize key learnings about Japanese sound words, their importance in daily communication, how they enrich the language, and encourage continued practice and listening for these expressions in real-life situations."
-        conclusion_keywords = "onomatopoeia, mimetic words, daily life, Japanese expressions, language enrichment, communication, cultural understanding, conclusion"
+        conclusion_topic = "Conclusion for Relax and Rejuvenate: A Journey into Japanese Onsen Culture lesson. Summarize key learnings from this lesson, their importance in understanding Japanese culture and daily life, and encourage continued practice and application of this knowledge."
+        conclusion_keywords = "onsen, hot springs, health, wellness, relaxation, etiquette, ゆかた(yukata), 温泉(onsen), 風呂(furo), 健康(kenkou), 美容(biyou), マナー(manaa), 露天風呂(rotenburo), 銭湯(sentou), 温泉旅行(onsen ryokou), cultural understanding, conclusion"
         
         conclusion_result = generator.generate_formatted_explanation(conclusion_topic, LESSON_DIFFICULTY, conclusion_keywords)
         
@@ -666,7 +659,7 @@ def create_lesson(app):
             conclusion_content = LessonContent(
                 lesson_id=lesson.id,
                 content_type="text",
-                title="Onomatopoeia and Mimetic Words - Lesson Conclusion",
+                title="Relax and Rejuvenate: A Journey into Japanese Onsen Culture - Lesson Conclusion",
                 content_text=conclusion_result['generated_text'],
                 order_index=content_order_index,
                 page_number=final_page_number,
@@ -706,8 +699,8 @@ def create_lesson(app):
                     final_quiz_content = LessonContent(
                         lesson_id=lesson.id,
                         content_type="interactive",
-                        title="Onomatopoeia and Mimetic Words - Comprehensive Final Quiz",
-                        content_text="Test your overall knowledge of Japanese onomatopoeia and mimetic words in daily life",
+                        title="Relax and Rejuvenate: A Journey into Japanese Onsen Culture - Comprehensive Final Quiz",
+                        content_text="Test your overall knowledge of relax and rejuvenate: a journey into japanese onsen culture",
                         is_interactive=True,
                         order_index=content_order_index,
                         page_number=final_page_number,

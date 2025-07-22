@@ -1,0 +1,430 @@
+{
+  "topics": [
+    {
+      "id": 1,
+      "title": "Japanese Internet Slang and Social Media Expressions",
+      "description": "Explore popular abbreviations, terms, and expressions used on Japanese social media platforms and online communities. Learn how digital communication shapes modern Japanese language.",
+      "difficulty": "Intermediate",
+      "difficulty_level": 2,
+      "keywords": "internet slang, social media, abbreviations, online communication, digital Japanese, SNS, Twitter, Instagram, LINE, modern expressions",
+      "cultural_focus": "Digital communication culture, generational language differences, online etiquette",
+      "content_pages": [
+        {
+          "title": "SNS Basics - ソーシャルメディアの基本 (Social Media no Kihon)",
+          "keywords": "SNS, Twitter, Instagram, LINE, Facebook, TikTok, social media platforms, basic terms",
+          "content_focus": "Basic social media platform names, common interface terms, and fundamental online communication vocabulary.",
+          "image_concept": "Modern scene showing young people using various social media apps on smartphones and computers - Twitter, Instagram, LINE, TikTok interfaces visible, people posting, liking, sharing content in a casual setting."
+        },
+        {
+          "title": "Common Abbreviations - よく使われる略語 (Yoku Tsukawareru Ryakugo)",
+          "keywords": "abbreviations, shortened words, text speak, quick communication, efficiency, modern slang",
+          "content_focus": "Popular Japanese internet abbreviations like おつ (otsu), りょ (ryo), よろ (yoro), and their usage contexts.",
+          "image_concept": "Chat interface showing various abbreviated messages, speech bubbles with shortened Japanese text, people typing quickly on phones with abbreviation examples floating around."
+        },
+        {
+          "title": "Emoticons and Kaomoji - 顔文字 (Kaomoji)",
+          "keywords": "emoticons, kaomoji, facial expressions, emotions, text art, Japanese emoticons, feelings",
+          "content_focus": "Japanese-style emoticons (kaomoji) like (^_^), (>_<), orz, and their emotional meanings and usage.",
+          "image_concept": "Colorful display of various Japanese emoticons and kaomoji floating in digital space, with people's faces showing corresponding emotions, screen interfaces showing text conversations."
+        },
+        {
+          "title": "Hashtag Culture - ハッシュタグ文化 (Hashtag Bunka)",
+          "keywords": "hashtags, trending topics, viral content, social movements, community building, tagging",
+          "content_focus": "How hashtags work in Japanese social media, popular hashtag patterns, and cultural significance of trending topics.",
+          "image_concept": "Social media feed showing trending hashtags in Japanese, people participating in hashtag campaigns, viral content spreading across different platforms."
+        },
+        {
+          "title": "Online Gaming Terms - オンラインゲーム用語 (Online Game Yougo)",
+          "keywords": "gaming, online games, multiplayer, competition, strategy, team play, gaming slang",
+          "content_focus": "Gaming-specific Japanese internet slang, team communication terms, and competitive gaming vocabulary.",
+          "image_concept": "Gaming setup with multiple screens showing online games, players communicating through headsets, gaming terminology and chat messages visible on screens."
+        },
+        {
+          "title": "Meme Culture - ミーム文化 (Meme Bunka)",
+          "keywords": "memes, viral content, internet humor, cultural references, shared jokes, online trends",
+          "content_focus": "Japanese internet memes, viral phrases, and how humor spreads through online communities.",
+          "image_concept": "Collage of popular Japanese internet memes, people laughing at screens, viral images and phrases spreading through social networks."
+        },
+        {
+          "title": "Digital Etiquette - デジタルマナー (Digital Manner)",
+          "keywords": "online etiquette, digital manners, respectful communication, cyber bullying prevention, proper behavior",
+          "content_focus": "Proper online behavior, respectful digital communication, and understanding Japanese internet etiquette norms.",
+          "image_concept": "Split scene showing good vs bad online behavior, people communicating respectfully online, digital citizenship concepts illustrated."
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Understanding Japanese Convenience Store Culture",
+      "description": "Master the vocabulary, phrases, and cultural knowledge needed to navigate Japanese convenience stores (konbini) like a local. Learn about products, services, and etiquette.",
+      "difficulty": "Beginner",
+      "difficulty_level": 1,
+      "keywords": "convenience store, konbini, shopping, daily necessities, services, food, drinks, payment, customer service",
+      "cultural_focus": "Convenience store culture, customer service expectations, daily life integration",
+      "content_pages": [
+        {
+          "title": "Konbini Basics - コンビニの基本 (Konbini no Kihon)",
+          "keywords": "convenience store, konbini, location, hours, basic services, entrance, layout",
+          "content_focus": "Introduction to Japanese convenience stores, their role in daily life, basic layout, and fundamental vocabulary.",
+          "image_concept": "Typical Japanese convenience store exterior and interior, showing the bright lighting, organized shelves, customers entering and shopping, staff at counter."
+        },
+        {
+          "title": "Food and Beverages - 食べ物と飲み物 (Tabemono to Nomimono)",
+          "keywords": "food, drinks, bento, onigiri, snacks, hot food, cold drinks, alcohol, seasonal items",
+          "content_focus": "Common konbini food items, beverages, seasonal specialties, and how to identify and order them.",
+          "image_concept": "Konbini food section showing bento boxes, onigiri, sandwiches, hot food counter, drink refrigerators, customers selecting items."
+        },
+        {
+          "title": "Services and Utilities - サービスと公共料金 (Service to Koukyou Ryoukin)",
+          "keywords": "services, bill payment, ATM, copying, printing, ticket booking, package delivery, utilities",
+          "content_focus": "Various services available at konbini beyond shopping: bill payments, ATM usage, printing, and delivery services.",
+          "image_concept": "Konbini service area showing ATM machine, copy/print station, customers paying bills, package pickup counter, various service terminals."
+        },
+        {
+          "title": "Payment Methods - 支払い方法 (Shiharai Houhou)",
+          "keywords": "payment, cash, credit card, IC card, mobile payment, QR code, electronic money, change",
+          "content_focus": "Different payment options available in Japanese konbini, from cash to digital payments and IC cards.",
+          "image_concept": "Payment counter showing various payment methods - cash, credit cards, IC cards, mobile phones for payment, customer and staff interaction."
+        },
+        {
+          "title": "Seasonal Products - 季節商品 (Kisetsu Shouhin)",
+          "keywords": "seasonal items, limited edition, holidays, festivals, special occasions, seasonal food, campaigns",
+          "content_focus": "How konbini adapt their products for seasons, holidays, and special events throughout the year.",
+          "image_concept": "Konbini displaying seasonal products - Christmas cakes, New Year items, summer festival goods, seasonal decorations and themed products."
+        },
+        {
+          "title": "Customer Service Phrases - 接客用語 (Sekkyaku Yougo)",
+          "keywords": "customer service, polite expressions, staff phrases, shopping interaction, thank you, welcome, assistance",
+          "content_focus": "Common phrases used by konbini staff and appropriate customer responses for smooth interactions.",
+          "image_concept": "Friendly interaction between konbini staff and customers, showing polite bowing, helpful service, warm customer service atmosphere."
+        },
+        {
+          "title": "Konbini Etiquette - コンビニマナー (Konbini Manner)",
+          "keywords": "etiquette, manners, proper behavior, respect, consideration, social norms, customer behavior",
+          "content_focus": "Proper behavior and etiquette when shopping at Japanese convenience stores, cultural expectations and social norms.",
+          "image_concept": "Well-behaved customers in konbini - quiet conversation, organized queuing, respectful interaction, clean and orderly shopping environment."
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Japanese Pop Culture: Anime and Manga Terminology",
+      "description": "Dive into the rich vocabulary of anime and manga culture. Learn terms, phrases, and expressions that will enhance your understanding of Japanese pop culture.",
+      "difficulty": "Intermediate",
+      "difficulty_level": 2,
+      "keywords": "anime, manga, otaku culture, genres, characters, storytelling, Japanese pop culture, entertainment, media",
+      "cultural_focus": "Pop culture influence, otaku subculture, media consumption patterns",
+      "content_pages": [
+        {
+          "title": "Basic Anime and Manga Terms - アニメ・マンガ基本用語 (Anime Manga Kihon Yougo)",
+          "keywords": "anime, manga, otaku, seiyuu, mangaka, studio, serialization, adaptation, basic terminology",
+          "content_focus": "Fundamental vocabulary for anime and manga, including creator roles, production terms, and basic concepts.",
+          "image_concept": "Anime and manga creation scene showing artists drawing, voice actors recording, animation studios, manga being read, creative process visualization."
+        },
+        {
+          "title": "Character Types and Archetypes - キャラクタータイプ (Character Type)",
+          "keywords": "character types, tsundere, yandere, kuudere, protagonist, antagonist, supporting characters, personality traits",
+          "content_focus": "Common character archetypes in anime and manga, personality types, and their typical behaviors and roles.",
+          "image_concept": "Diverse anime/manga characters displaying different personality types - tsundere, yandere, kuudere characters with visual representations of their traits."
+        },
+        {
+          "title": "Genres and Demographics - ジャンルと対象層 (Genre to Taishou-sou)",
+          "keywords": "shounen, shoujo, seinen, josei, genres, demographics, target audience, story themes, age groups",
+          "content_focus": "Different anime and manga genres, their target demographics, and characteristic themes and storytelling styles.",
+          "image_concept": "Visual representation of different manga/anime genres - action shounen, romantic shoujo, mature seinen, elegant josei with typical scenes from each."
+        },
+        {
+          "title": "Otaku Culture and Fandom - オタク文化とファンダム (Otaku Bunka to Fandom)",
+          "keywords": "otaku, fandom, conventions, cosplay, merchandise, collecting, fan activities, community, dedication",
+          "content_focus": "Otaku subculture, fan activities, conventions, cosplay, and the social aspects of anime/manga fandom.",
+          "image_concept": "Anime convention scene with cosplayers, merchandise booths, fans meeting, people in costumes, vibrant otaku culture atmosphere."
+        },
+        {
+          "title": "Production and Industry Terms - 制作・業界用語 (Seisaku Gyoukai Yougo)",
+          "keywords": "animation studio, production committee, seiyuu, director, producer, budget, schedule, industry, business",
+          "content_focus": "Behind-the-scenes terminology related to anime and manga production, industry structure, and business aspects.",
+          "image_concept": "Animation studio workspace showing animators at work, recording booth with voice actors, production meetings, industry professionals collaborating."
+        },
+        {
+          "title": "Fan Expressions and Reactions - ファンの表現と反応 (Fan no Hyougen to Hannou)",
+          "keywords": "fan reactions, excitement expressions, emotional responses, community language, online discussions, enthusiasm",
+          "content_focus": "Common expressions used by fans to express excitement, disappointment, and various emotions about anime and manga.",
+          "image_concept": "Fans expressing various emotions while watching anime or reading manga - excitement, surprise, tears, laughter, passionate discussions."
+        },
+        {
+          "title": "Merchandise and Collecting - グッズとコレクション (Goods to Collection)",
+          "keywords": "merchandise, figures, goods, collecting, limited edition, collaboration, shopping, fan items, memorabilia",
+          "content_focus": "Vocabulary related to anime/manga merchandise, collecting culture, and the various types of fan goods available.",
+          "image_concept": "Display of anime merchandise - figures, posters, keychains, limited edition items, collectors organizing their collections, merchandise stores."
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Expressions for Dining Out in Japan",
+      "description": "Master the essential vocabulary, etiquette, and phrases needed for dining experiences in Japanese restaurants, izakaya, and cafés. Navigate menus and social dining situations with confidence.",
+      "difficulty": "Beginner",
+      "difficulty_level": 1,
+      "keywords": "dining out, restaurants, izakaya, cafés, food ordering, menu, etiquette, table manners, social dining",
+      "cultural_focus": "Dining etiquette, restaurant culture, social aspects of eating out",
+      "content_pages": [
+        {
+          "title": "Restaurant Types - レストランの種類 (Restaurant no Shurui)",
+          "keywords": "restaurant types, izakaya, family restaurant, sushi bar, ramen shop, café, dining establishments, atmosphere",
+          "content_focus": "Different types of dining establishments in Japan, their characteristics, and what to expect at each.",
+          "image_concept": "Montage of different Japanese dining establishments - traditional izakaya, modern family restaurant, sushi counter, ramen shop, cozy café."
+        },
+        {
+          "title": "Making Reservations - 予約をする (Yoyaku wo Suru)",
+          "keywords": "reservations, booking, phone calls, online booking, party size, time, date, confirmation, cancellation",
+          "content_focus": "How to make restaurant reservations, essential phrases for booking, and reservation etiquette.",
+          "image_concept": "Person making restaurant reservation on phone, restaurant staff taking bookings, online reservation system, calendar and time scheduling."
+        },
+        {
+          "title": "Reading Menus - メニューを読む (Menu wo Yomu)",
+          "keywords": "menu, food items, prices, categories, appetizers, main dishes, desserts, drinks, seasonal specials",
+          "content_focus": "Understanding Japanese menus, food categories, pricing, and how to identify different types of dishes.",
+          "image_concept": "Japanese restaurant menu with various dishes, customers studying menu, waiter explaining items, food photos and descriptions visible."
+        },
+        {
+          "title": "Ordering Food and Drinks - 注文する (Chuumon Suru)",
+          "keywords": "ordering, food selection, drinks, recommendations, allergies, preferences, quantity, sharing, special requests",
+          "content_focus": "Phrases and vocabulary for ordering food and drinks, expressing preferences, and handling special dietary needs.",
+          "image_concept": "Customers ordering from waiter, pointing at menu items, discussing food choices, waiter taking notes, friendly restaurant interaction."
+        },
+        {
+          "title": "Table Manners and Etiquette - テーブルマナー (Table Manner)",
+          "keywords": "table manners, chopsticks, etiquette, proper behavior, respect, social norms, dining customs, politeness",
+          "content_focus": "Proper dining etiquette in Japanese restaurants, chopstick usage, and social expectations during meals.",
+          "image_concept": "Proper dining scene showing correct chopstick usage, polite table behavior, people enjoying meal together with good manners."
+        },
+        {
+          "title": "Payment and Tipping - 支払いとチップ (Shiharai to Chip)",
+          "keywords": "payment, bill, check, splitting bill, cash, credit card, no tipping culture, payment etiquette",
+          "content_focus": "How to handle payment in Japanese restaurants, understanding the no-tipping culture, and payment etiquette.",
+          "image_concept": "Restaurant payment scene at counter, customers paying bill, cash and card payment options, polite payment interaction."
+        },
+        {
+          "title": "Social Dining Phrases - 社交的な食事の表現 (Shakouteki na Shokuji no Hyougen)",
+          "keywords": "social dining, conversation, compliments, sharing food, group dining, celebrations, toasting, enjoyment",
+          "content_focus": "Phrases for social dining situations, complimenting food, sharing meals, and enjoying group dining experiences.",
+          "image_concept": "Group of friends enjoying meal together, toasting with drinks, sharing food, lively conversation, celebratory dining atmosphere."
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Unique Japanese Festivals (Matsuri)",
+      "description": "Explore the language and traditions of Japan's fascinating festivals. Learn vocabulary related to seasonal celebrations, traditional activities, and cultural significance of matsuri.",
+      "difficulty": "Intermediate",
+      "difficulty_level": 2,
+      "keywords": "festivals, matsuri, traditions, celebrations, seasonal events, cultural activities, community, Japanese culture",
+      "cultural_focus": "Traditional culture, community participation, seasonal celebrations, cultural preservation",
+      "content_pages": [
+        {
+          "title": "Festival Basics - 祭りの基本 (Matsuri no Kihon)",
+          "keywords": "matsuri, festival, celebration, tradition, community, shrine, temple, seasonal events, cultural significance",
+          "content_focus": "Introduction to Japanese festivals, their cultural importance, types of festivals, and basic vocabulary.",
+          "image_concept": "Traditional Japanese festival scene with colorful decorations, people in yukata, festival stalls, lanterns, shrine in background."
+        },
+        {
+          "title": "Summer Festivals - 夏祭り (Natsu Matsuri)",
+          "keywords": "summer festivals, fireworks, hanabi, yukata, food stalls, games, evening celebrations, hot weather activities",
+          "content_focus": "Summer festival vocabulary, fireworks displays, traditional clothing, and typical summer festival activities.",
+          "image_concept": "Summer festival evening scene with fireworks in sky, people in yukata watching, food stalls, festival games, warm summer atmosphere."
+        },
+        {
+          "title": "Traditional Festival Foods - 祭りの伝統料理 (Matsuri no Dentou Ryouri)",
+          "keywords": "festival food, street food, takoyaki, yakitori, kakigouri, taiyaki, food stalls, traditional snacks",
+          "content_focus": "Traditional festival foods, street food vocabulary, and popular snacks found at Japanese festivals.",
+          "image_concept": "Festival food stalls showing various traditional foods - takoyaki, yakitori, kakigouri, people enjoying festival snacks."
+        },
+        {
+          "title": "Festival Activities and Games - 祭りの活動とゲーム (Matsuri no Katsudou to Game)",
+          "keywords": "festival games, goldfish scooping, ring toss, shooting games, traditional activities, prizes, entertainment",
+          "content_focus": "Traditional festival games and activities, how to participate, and vocabulary for festival entertainment.",
+          "image_concept": "Festival game stalls with goldfish scooping, ring toss, shooting games, children and adults playing, prizes displayed."
+        },
+        {
+          "title": "Religious and Spiritual Aspects - 宗教的・精神的側面 (Shuukyouteki Seishinteki Sokumen)",
+          "keywords": "shrine, temple, prayers, offerings, spiritual significance, religious ceremonies, blessings, purification",
+          "content_focus": "Religious and spiritual elements of festivals, shrine visits, prayers, and ceremonial aspects.",
+          "image_concept": "Shrine during festival with people praying, making offerings, priests conducting ceremonies, spiritual atmosphere."
+        },
+        {
+          "title": "Regional Festival Variations - 地域の祭りの違い (Chiiki no Matsuri no Chigai)",
+          "keywords": "regional festivals, local traditions, unique celebrations, cultural differences, famous festivals, regional specialties",
+          "content_focus": "How festivals vary by region, famous regional festivals, and unique local traditions and celebrations.",
+          "image_concept": "Collage of different regional festivals showing unique costumes, activities, and traditions from various parts of Japan."
+        },
+        {
+          "title": "Modern Festival Evolution - 現代の祭りの進化 (Gendai no Matsuri no Shinka)",
+          "keywords": "modern festivals, evolution, contemporary elements, technology, globalization, tradition preservation, change",
+          "content_focus": "How traditional festivals have evolved in modern times, balancing tradition with contemporary elements.",
+          "image_concept": "Modern festival scene blending traditional and contemporary elements - traditional activities with modern technology, diverse participants."
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Understanding Japanese Business Etiquette",
+      "description": "Master professional vocabulary and essential polite expressions for Japanese business settings. Learn the cultural nuances of workplace communication and business relationships.",
+      "difficulty": "Advanced",
+      "difficulty_level": 3,
+      "keywords": "business etiquette, professional communication, workplace culture, meetings, presentations, networking, hierarchy, respect",
+      "cultural_focus": "Corporate culture, hierarchical relationships, professional respect, business customs",
+      "content_pages": [
+        {
+          "title": "Business Card Exchange - 名刺交換 (Meishi Koukan)",
+          "keywords": "business cards, meishi, exchange etiquette, proper handling, respect, first impressions, networking, professional introduction",
+          "content_focus": "Proper business card exchange etiquette, handling procedures, and the cultural significance of meishi in Japanese business.",
+          "image_concept": "Professional business card exchange scene with proper two-handed presentation, bowing, respectful handling, business meeting setting."
+        },
+        {
+          "title": "Meeting Etiquette - 会議のマナー (Kaigi no Manner)",
+          "keywords": "meetings, conference etiquette, punctuality, seating arrangements, speaking order, respect, hierarchy, participation",
+          "content_focus": "Proper behavior in business meetings, understanding hierarchy, speaking protocols, and meeting participation etiquette.",
+          "image_concept": "Professional business meeting with proper seating arrangement, participants listening respectfully, presenter at front, formal atmosphere."
+        },
+        {
+          "title": "Email and Communication - メールとコミュニケーション (Mail to Communication)",
+          "keywords": "business email, formal communication, polite language, keigo, written etiquette, professional correspondence, respect levels",
+          "content_focus": "Professional email writing, formal communication styles, appropriate keigo usage, and written business etiquette.",
+          "image_concept": "Professional writing business email at desk, formal office environment, computer screen showing polite Japanese business correspondence."
+        },
+        {
+          "title": "Presentation Skills - プレゼンテーションスキル (Presentation Skill)",
+          "keywords": "presentations, public speaking, visual aids, audience engagement, professional delivery, business proposals, formal speaking",
+          "content_focus": "Vocabulary and phrases for business presentations, formal speaking techniques, and professional presentation etiquette.",
+          "image_concept": "Business presentation scene with presenter at front, professional slides, engaged audience, formal business presentation setting."
+        },
+        {
+          "title": "Networking and Socializing - ネットワーキングと社交 (Networking to Shakou)",
+          "keywords": "networking, business socializing, after-work activities, relationship building, professional connections, social skills",
+          "content_focus": "Building professional relationships, networking vocabulary, and appropriate social behavior in business contexts.",
+          "image_concept": "Business networking event with professionals mingling, exchanging cards, casual business conversation, social business atmosphere."
+        },
+        {
+          "title": "Hierarchy and Respect - 階層と敬意 (Kaisou to Kei-i)",
+          "keywords": "hierarchy, senpai-kohai, respect levels, organizational structure, authority, proper behavior, workplace relationships",
+          "content_focus": "Understanding Japanese workplace hierarchy, showing appropriate respect, and navigating organizational relationships.",
+          "image_concept": "Office hierarchy visualization showing different levels of respect, bowing, proper workplace interactions, organizational structure."
+        },
+        {
+          "title": "Conflict Resolution - 紛争解決 (Funsou Kaiketsu)",
+          "keywords": "conflict resolution, problem solving, diplomatic communication, harmony maintenance, face-saving, professional disputes",
+          "content_focus": "Handling workplace conflicts diplomatically, maintaining harmony, and professional problem-solving approaches.",
+          "image_concept": "Professional mediation scene with calm discussion, diplomatic gestures, problem-solving meeting, harmonious conflict resolution."
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "Expressions and Etiquette in Japanese Public Transportation",
+      "description": "Navigate Japanese public transportation systems with confidence. Learn essential vocabulary, cultural insights, and proper etiquette for trains, buses, and taxis.",
+      "difficulty": "Beginner",
+      "difficulty_level": 1,
+      "keywords": "public transportation, trains, buses, taxis, etiquette, navigation, tickets, stations, travel, urban mobility",
+      "cultural_focus": "Transportation etiquette, social consideration, urban life, punctuality culture",
+      "content_pages": [
+        {
+          "title": "Train System Basics - 電車システムの基本 (Densha System no Kihon)",
+          "keywords": "train system, JR, private lines, subway, stations, platforms, tickets, IC cards, navigation",
+          "content_focus": "Understanding Japanese train systems, different railway companies, station navigation, and basic ticketing.",
+          "image_concept": "Busy Japanese train station with clear signage, people using IC cards, platform scenes, trains arriving and departing."
+        },
+        {
+          "title": "Buying Tickets and IC Cards - 切符とICカードの購入 (Kippu to IC Card no Konyuu)",
+          "keywords": "tickets, IC cards, ticket machines, fare calculation, destinations, payment methods, recharging, validation",
+          "content_focus": "How to buy tickets and use IC cards, understanding fare systems, and navigating ticket machines.",
+          "image_concept": "Ticket machine interface with person purchasing tickets, IC card usage, fare charts, payment process visualization."
+        },
+        {
+          "title": "Train Etiquette - 電車のマナー (Densha no Manner)",
+          "keywords": "train etiquette, quiet behavior, priority seats, backpack removal, phone usage, consideration, respect, crowded trains",
+          "content_focus": "Proper behavior on trains, consideration for other passengers, and understanding Japanese train etiquette norms.",
+          "image_concept": "Well-behaved passengers on train showing proper etiquette - quiet conversation, priority seats, respectful behavior."
+        },
+        {
+          "title": "Bus Transportation - バス交通 (Bus Koutsu)",
+          "keywords": "buses, bus stops, route numbers, fare payment, getting on and off, bus etiquette, local transportation",
+          "content_focus": "Using Japanese bus systems, understanding routes, payment methods, and bus-specific etiquette.",
+          "image_concept": "Japanese bus scene with passengers boarding, fare payment, bus stop with route information, orderly queuing."
+        },
+        {
+          "title": "Taxi Services - タクシーサービス (Taxi Service)",
+          "keywords": "taxis, fare calculation, destinations, automatic doors, tipping culture, taxi etiquette, urban transportation",
+          "content_focus": "Using taxi services in Japan, understanding fare systems, proper etiquette, and communication with drivers.",
+          "image_concept": "Japanese taxi with automatic door, passenger getting in, driver in professional attire, urban taxi service scene."
+        },
+        {
+          "title": "Rush Hour Navigation - ラッシュアワーの移動 (Rush Hour no Idou)",
+          "keywords": "rush hour, crowded trains, peak times, patience, consideration, survival strategies, busy commuting",
+          "content_focus": "Navigating crowded public transportation during rush hours, strategies for busy times, and maintaining etiquette.",
+          "image_concept": "Crowded rush hour train scene with passengers maintaining proper etiquette despite crowded conditions, patient waiting."
+        },
+        {
+          "title": "Emergency and Assistance - 緊急時と援助 (Kinkyuu-ji to Enjo)",
+          "keywords": "emergencies, assistance, help requests, station staff, lost items, medical emergencies, safety procedures",
+          "content_focus": "Handling emergencies on public transportation, asking for help, and understanding safety procedures.",
+          "image_concept": "Station staff helping passengers, emergency procedures, assistance being provided, safety and help scenarios."
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "title": "Traveling in Japan: Practical Survival Phrases",
+      "description": "Essential phrases and vocabulary for traveling and navigating Japanese cities. Master practical communication for tourists and visitors exploring Japan.",
+      "difficulty": "Beginner",
+      "difficulty_level": 1,
+      "keywords": "travel, tourism, navigation, directions, accommodation, sightseeing, practical phrases, survival Japanese, tourist communication",
+      "cultural_focus": "Tourist experience, hospitality culture, navigation assistance, cultural sensitivity",
+      "content_pages": [
+        {
+          "title": "Airport and Immigration - 空港と入国審査 (Kuukou to Nyuukoku Shinsa)",
+          "keywords": "airport, immigration, customs, passport, visa, arrival, departure, baggage claim, transportation to city",
+          "content_focus": "Essential phrases for airport procedures, immigration, customs, and getting from airport to city center.",
+          "image_concept": "Japanese airport scene with immigration counters, customs area, travelers with luggage, airport staff assisting visitors."
+        },
+        {
+          "title": "Accommodation - 宿泊施設 (Shukuhaku Shisetsu)",
+          "keywords": "hotels, ryokan, hostels, check-in, check-out, reservations, room types, amenities, accommodation services",
+          "content_focus": "Vocabulary for different types of accommodation, check-in/out procedures, and hotel services.",
+          "image_concept": "Various Japanese accommodation types - modern hotel lobby, traditional ryokan, hostel reception, check-in procedures."
+        },
+        {
+          "title": "Asking for Directions - 道を尋ねる (Michi wo Tazuneru)",
+          "keywords": "directions, navigation, landmarks, street names, maps, GPS, getting lost, finding locations, helpful strangers",
+          "content_focus": "Essential phrases for asking directions, understanding responses, and navigating Japanese cities.",
+          "image_concept": "Tourist asking local person for directions, pointing at map, helpful interaction, street scene with landmarks."
+        },
+        {
+          "title": "Shopping and Souvenirs - 買い物とお土産 (Kaimono to Omiyage)",
+          "keywords": "shopping, souvenirs, prices, bargaining, payment, tax-free shopping, department stores, traditional crafts",
+          "content_focus": "Shopping vocabulary, souvenir hunting, understanding prices, and navigating different types of stores.",
+          "image_concept": "Tourist shopping scene with souvenir shops, department stores, traditional craft stores, payment interactions."
+        },
+        {
+          "title": "Sightseeing and Attractions - 観光と名所 (Kankou to Meisho)",
+          "keywords": "sightseeing, tourist attractions, temples, shrines, museums, parks, tickets, guided tours, cultural sites",
+          "content_focus": "Vocabulary for visiting tourist attractions, buying tickets, understanding cultural sites, and tour participation.",
+          "image_concept": "Tourists visiting famous Japanese attractions - temples, shrines, museums, taking photos, guided tour groups."
+        },
+        {
+          "title": "Emergency Situations - 緊急事態 (Kinkyuu Jitai)",
+          "keywords": "emergencies, medical help, police, lost passport, theft, accidents, hospital, embassy, emergency contacts",
+          "content_focus": "Critical phrases for emergency situations, getting help, medical emergencies, and handling travel problems.",
+          "image_concept": "Emergency assistance scenes - medical help, police assistance, embassy visit, helpful emergency responders."
+        },
+        {
+          "title": "Cultural Experiences - 文化体験 (Bunka Taiken)",
+          "keywords": "cultural activities, tea ceremony, traditional arts, workshops, cultural immersion, local experiences, participation",
+          "content_focus": "Participating in cultural activities, traditional experiences, and respectful engagement with Japanese culture.",
+          "image_concept": "Tourists participating in cultural activities - tea ceremony, traditional crafts, cultural workshops, respectful engagement."
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "title": "Idiomatic Expressions and Proverbs in Japanese",
+      "description": "Explore meaningful idioms and prover

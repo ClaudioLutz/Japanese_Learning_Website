@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-This script creates a comprehensive Japanese Onomatopoeia and Mimetic Words lesson organized into pages.
-Each content page covers different daily life scenarios with onomatopoeia, followed by dedicated quiz pages.
+This script creates a comprehensive Navigating the Japanese Workplace: Essential Business Etiquette lesson organized into pages.
+Each content page covers different aspects of the topic with explanations, followed by dedicated quiz pages.
 The quizzes are separated from the explanatory content as requested.
 """
 import os
@@ -11,12 +11,12 @@ import urllib.request
 from datetime import datetime
 import uuid
 
-# Add the app directory to Python path
-sys.path.insert(0, os.path.dirname(__file__))
+# Add the project root directory to Python path
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 # Load environment variables manually
 def load_env():
-    env_path = os.path.join(os.path.dirname(__file__), '.env')
+    env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env')
     if os.path.exists(env_path):
         with open(env_path, 'r') as f:
             for line in f:
@@ -32,67 +32,60 @@ from app.models import Lesson, LessonContent, QuizQuestion, QuizOption
 from app.ai_services import AILessonContentGenerator
 
 # --- Configuration ---
-LESSON_TITLE = "Onomatopoeia and Mimetic Words in Daily Life"
+LESSON_TITLE = "Navigating the Japanese Workplace: Essential Business Etiquette"
 LESSON_DIFFICULTY = "Intermediate"
-LESSON_DESCRIPTION = "Discover the vibrant world of Japanese onomatopoeia and mimetic words used in everyday situations. Learn how sound words and descriptive expressions bring Japanese language to life through daily scenarios."
+LESSON_DESCRIPTION = "Master the art of Japanese business etiquette with this comprehensive lesson. Learn essential vocabulary, polite expressions, and cultural nuances to confidently interact in professional settings."
 
 # Lesson content pages configuration (explanation pages only)
 CONTENT_PAGES = [
     {
         "page_number": 2,
-        "title": "Morning Routines - 朝の音 (Asa no Oto)",
-        "keywords": "morning, alarm, water, brushing teeth, shower, wake up sounds, りんりん, ざあざあ, しゃかしゃか, ぴちゃぴちゃ, daily routine",
-        "image_concept": "Peaceful morning scene showing various morning routine activities with visual sound effects - alarm clock ringing, water flowing from tap, toothbrush sounds, shower running, birds chirping outside window. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Common morning sounds and activities: alarm clocks (りんりん), water sounds (ざあざあ, ぴちゃぴちゃ), brushing teeth (しゃかしゃか), and other morning routine onomatopoeia."
+        "title": "First Impressions - Hajimemashite (Hajimemashite)",
+        "keywords": "greetings, introductions, bowing, business cards (meishi), first impressions",
+        "image_concept": "Two anime-style business professionals, one slightly older, exchanging business cards with a slight bow. Background of a modern, minimalist Japanese office. Focus on the respectful exchange and posture. No text or writing on the cards.",
+        "content_focus": "Learn proper bowing etiquette, self-introductions, and exchanging business cards (meishi) with respect and formality."
     },
     {
         "page_number": 3,
-        "title": "Cooking and Eating - 料理の音 (Ryouri no Oto)",
-        "keywords": "cooking, eating, sizzling, chopping, slurping, ジュージュー, トントン, ずるずる, ぺろぺろ, kitchen sounds, food preparation",
-        "image_concept": "Lively kitchen scene with someone cooking - sizzling pan, chopping vegetables, boiling water, eating noodles with chopsticks, various cooking activities with sound effect visualizations. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Kitchen and eating sounds: sizzling (ジュージュー), chopping (トントン), slurping noodles (ずるずる), licking (ぺろぺろ), and cooking-related onomatopoeia."
+        "title": "Respectful Language - Keigo (Keigo)",
+        "keywords": "honorifics, polite language, sonkeigo, kenjougo, teineigo",
+        "image_concept": "A younger anime-style employee speaking respectfully to a senior colleague. Subtle visual cues like posture and hand gestures should convey respect. Office setting. No speech bubbles or text.",
+        "content_focus": "Understand the importance of honorifics (keigo) and practice using respectful language (sonkeigo, kenjougo, teineigo) appropriately."
     },
     {
         "page_number": 4,
-        "title": "Weather and Nature - 天気と自然の音 (Tenki to Shizen no Oto)",
-        "keywords": "weather, nature, rain, wind, thunder, animals, ざあざあ, ごろごろ, ひゅうひゅう, ちゅんちゅん, わんわん, にゃあにゃあ",
-        "image_concept": "Beautiful nature scene showing different weather conditions and animals - rain falling, wind blowing trees, thunder clouds, birds singing, dogs barking, cats meowing, seasonal atmosphere. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Natural sounds and weather: heavy rain (ざあざあ), thunder (ごろごろ), wind (ひゅうひゅう), bird songs (ちゅんちゅん), and animal sounds (わんわん, にゃあにゃあ)."
+        "title": "Meeting Etiquette - Kaigi no Reigi (Kaigi no Reigi)",
+        "keywords": "meetings, punctuality, seating arrangements, agenda, taking minutes",
+        "image_concept": "An anime-style business meeting scene with several attendees seated around a table. Focus on the organized arrangement and attentive postures. No visible writing on any documents or presentations.",
+        "content_focus": "Learn the protocols of Japanese business meetings, including punctuality, seating arrangements, and contributing respectfully."
     },
     {
         "page_number": 5,
-        "title": "Emotions and Feelings - 感情の表現 (Kanjou no Hyougen)",
-        "keywords": "emotions, feelings, heart beating, sighing, laughing, どきどき, はあはあ, あはは, えーん, うるうる, excitement, sadness",
-        "image_concept": "Expressive scene showing various emotional states - person with racing heart, sighing, laughing with friends, crying, sparkling eyes with emotion, emotional expressions in daily life. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Emotional expressions: heart racing (どきどき), heavy breathing (はあはあ), laughter (あはは), crying (えーん), teary eyes (うるうる), and feeling-related mimetic words."
+        "title": "Business Card Mastery - Meishi Koukan (Meishi Koukan)",
+        "keywords": "business cards, exchanging, receiving, handling, storage",
+        "image_concept": "Close-up of two hands respectfully exchanging business cards. Clean and simple background. Emphasis on careful handling of the cards. No text or writing visible.",
+        "content_focus": "Deep dive into the nuances of business card exchange, including proper handling, receiving, and storing meishi."
     },
     {
         "page_number": 6,
-        "title": "Movement and Actions - 動きの音 (Ugoki no Oto)",
-        "keywords": "movement, walking, running, falling, jumping, てくてく, だだだ, どすん, ぴょんぴょん, するする, physical actions",
-        "image_concept": "Dynamic scene showing various movements and actions - people walking, running, jumping, something falling, smooth sliding motions, active daily life movements. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Movement sounds: walking (てくてく), running (だだだ), falling (どすん), jumping (ぴょんぴょん), sliding smoothly (するする), and action-related onomatopoeia."
+        "title": "Email & Phone Etiquette - Denshi メール to Denwa no Reigi (Denshi Mēru to Denwa no Reigi)",
+        "keywords": "email, telephone, communication, formal language, closing phrases",
+        "image_concept": "An anime-style character sitting at a desk, holding a phone to their ear with one hand and typing an email on a laptop with the other. Focus on the focused expression and professional posture. No text or characters visible on the screen or phone.",
+        "content_focus": "Master appropriate language and conventions for professional email and telephone communication in Japanese."
     },
     {
         "page_number": 7,
-        "title": "Communication Sounds - コミュニケーションの音 (Communication no Oto)",
-        "keywords": "communication, phone, knocking, typing, doorbell, りんりん, こんこん, かたかた, ぴんぽん, がちゃがちゃ, daily communication",
-        "image_concept": "Communication scene showing phone ringing, someone knocking on door, typing on keyboard, doorbell, various communication devices and interactions in daily life. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Communication sounds: phone ringing (りんりん), knocking (こんこん), typing (かたかた), doorbell (ぴんぽん), rattling (がちゃがちゃ), and interaction-related sounds."
+        "title": "Gift-Giving Customs - Okurimono no Shūkan (Okurimono no Shūkan)",
+        "keywords": "gifts, presenting gifts, receiving gifts, occasions, wrapping",
+        "image_concept": "Two anime characters, one presenting a neatly wrapped gift to the other, who is receiving it with both hands and a slight bow.  Focus should be on the respectful gesture and the presentation of the gift. No visible writing or characters on the wrapping paper.",
+        "content_focus": "Explore the cultural significance of gift-giving in Japanese business and learn appropriate practices for presenting and receiving gifts."
     },
     {
         "page_number": 8,
-        "title": "Household Activities - 家事の音 (Kaji no Oto)",
-        "keywords": "household, cleaning, washing, opening, closing, ごしごし, じゃぶじゃぶ, がらがら, ぱたん, きゅっきゅっ, domestic activities",
-        "image_concept": "Busy household scene with cleaning activities - scrubbing, washing dishes, opening/closing doors and windows, squeaky clean sounds, domestic life activities. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Household sounds: scrubbing (ごしごし), washing (じゃぶじゃぶ), rattling (がらがら), closing gently (ぱたん), squeaky clean (きゅっきゅっ), and cleaning-related onomatopoeia."
-    },
-    {
-        "page_number": 9,
-        "title": "Transportation - 交通の音 (Koutsu no Oto)",
-        "keywords": "transportation, car, train, bicycle, ブーブー, がたんごとん, りんりん, ぶるるん, vehicle sounds, travel, movement",
-        "image_concept": "Transportation scene showing various vehicles - cars driving, trains on tracks, bicycles with bells, engines starting, busy transportation hub with different vehicle sounds. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Transportation sounds: car engine (ブーブー), train on tracks (がたんごとん), bicycle bell (りんりん), engine revving (ぶるるん), and vehicle-related onomatopoeia."
+        "title": "Dining Etiquette - Shokuji no Reigi (Shokuji no Reigi)",
+        "keywords": "business meals, chopsticks, pouring drinks, toasting, table manners",
+        "image_concept": "Anime-style business dinner scene with several characters seated around a table with various Japanese dishes. Focus on the proper use of chopsticks and general table manners. No visible text or writing.",
+        "content_focus": "Learn essential dining etiquette for business settings, from using chopsticks correctly to navigating toasts and table manners."
     }
 ]
 
@@ -252,7 +245,7 @@ def create_lesson(app):
         
         # Generate overview image
         print(f"🖼️ Generating lesson overview image...")
-        overview_image_concept = "Vibrant collage showing various Japanese onomatopoeia in daily life - sound waves, speech bubbles with sound effects, people in different daily activities (cooking, walking, talking), nature sounds, emotional expressions, all in a harmonious composition representing the richness of Japanese sound words. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image."
+        overview_image_concept = "Vibrant overview scene representing Navigating the Japanese Workplace: Essential Business Etiquette - showing the main themes and cultural elements of this lesson in a harmonious composition. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image."
         
         image_result = generator.generate_single_image(overview_image_concept, "1024x1024", "hd")
         
@@ -268,7 +261,7 @@ def create_lesson(app):
                 image_content = LessonContent(
                     lesson_id=lesson.id,
                     content_type="image",
-                    title="Onomatopoeia and Mimetic Words - Lesson Overview",
+                    title="Navigating the Japanese Workplace: Essential Business Etiquette - Lesson Overview",
                     content_text="Welcome to the vibrant world of Japanese sound words",
                     file_path=file_path,
                     file_size=file_size,
@@ -284,8 +277,8 @@ def create_lesson(app):
 
         # Generate welcoming introduction text
         print(f"🤖 Generating lesson introduction...")
-        intro_topic = f"Comprehensive introduction to {LESSON_TITLE}. Explain what students will learn about Japanese onomatopoeia (giongo) and mimetic words (gitaigo), their importance in daily communication, how they make Japanese language more expressive and vivid, and what daily life scenarios will be covered. Include learning objectives and cultural significance of sound words in Japanese."
-        intro_keywords = "onomatopoeia, mimetic words, giongo, gitaigo, daily life, Japanese expressions, sound words, cultural communication, language learning"
+        intro_topic = f"Comprehensive introduction to {LESSON_TITLE}. Explain what students will learn in this lesson about understanding japanese business etiquette, the cultural significance and practical applications. Include learning objectives and how this knowledge will help students understand Japanese culture and daily life better."
+        intro_keywords = "business Japanese, keigo, honorifics, business etiquette, meetings, greetings, introductions, business cards, email etiquette, telephone etiquette, gift-giving, dining etiquette, cultural sensitivity, workplace culture, Japan"
         
         intro_result = generator.generate_formatted_explanation(intro_topic, LESSON_DIFFICULTY, intro_keywords)
         
@@ -293,7 +286,7 @@ def create_lesson(app):
             intro_content = LessonContent(
                 lesson_id=lesson.id,
                 content_type="text",
-                title="Welcome to Japanese Onomatopoeia",
+                title="Welcome to Navigating the Japanese Workplace: Essential Business Etiquette",
                 content_text=intro_result['generated_text'],
                 order_index=content_order_index,
                 page_number=1,
@@ -657,8 +650,8 @@ def create_lesson(app):
         
         # Generate conclusion text
         print(f"🤖 Generating lesson conclusion...")
-        conclusion_topic = "Conclusion for Japanese Onomatopoeia and Mimetic Words lesson. Summarize key learnings about Japanese sound words, their importance in daily communication, how they enrich the language, and encourage continued practice and listening for these expressions in real-life situations."
-        conclusion_keywords = "onomatopoeia, mimetic words, daily life, Japanese expressions, language enrichment, communication, cultural understanding, conclusion"
+        conclusion_topic = "Conclusion for Navigating the Japanese Workplace: Essential Business Etiquette lesson. Summarize key learnings from this lesson, their importance in understanding Japanese culture and daily life, and encourage continued practice and application of this knowledge."
+        conclusion_keywords = "business Japanese, keigo, honorifics, business etiquette, meetings, greetings, introductions, business cards, email etiquette, telephone etiquette, gift-giving, dining etiquette, cultural sensitivity, workplace culture, Japan, cultural understanding, conclusion"
         
         conclusion_result = generator.generate_formatted_explanation(conclusion_topic, LESSON_DIFFICULTY, conclusion_keywords)
         
@@ -666,7 +659,7 @@ def create_lesson(app):
             conclusion_content = LessonContent(
                 lesson_id=lesson.id,
                 content_type="text",
-                title="Onomatopoeia and Mimetic Words - Lesson Conclusion",
+                title="Navigating the Japanese Workplace: Essential Business Etiquette - Lesson Conclusion",
                 content_text=conclusion_result['generated_text'],
                 order_index=content_order_index,
                 page_number=final_page_number,
@@ -706,8 +699,8 @@ def create_lesson(app):
                     final_quiz_content = LessonContent(
                         lesson_id=lesson.id,
                         content_type="interactive",
-                        title="Onomatopoeia and Mimetic Words - Comprehensive Final Quiz",
-                        content_text="Test your overall knowledge of Japanese onomatopoeia and mimetic words in daily life",
+                        title="Navigating the Japanese Workplace: Essential Business Etiquette - Comprehensive Final Quiz",
+                        content_text="Test your overall knowledge of navigating the japanese workplace: essential business etiquette",
                         is_interactive=True,
                         order_index=content_order_index,
                         page_number=final_page_number,

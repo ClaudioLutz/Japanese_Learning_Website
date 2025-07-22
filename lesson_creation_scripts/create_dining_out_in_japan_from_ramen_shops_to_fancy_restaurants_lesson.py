@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-This script creates a comprehensive Japanese Onomatopoeia and Mimetic Words lesson organized into pages.
-Each content page covers different daily life scenarios with onomatopoeia, followed by dedicated quiz pages.
+This script creates a comprehensive Dining Out in Japan: From Ramen Shops to Fancy Restaurants lesson organized into pages.
+Each content page covers different aspects of the topic with explanations, followed by dedicated quiz pages.
 The quizzes are separated from the explanatory content as requested.
 """
 import os
@@ -11,12 +11,12 @@ import urllib.request
 from datetime import datetime
 import uuid
 
-# Add the app directory to Python path
-sys.path.insert(0, os.path.dirname(__file__))
+# Add the project root directory to Python path
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 # Load environment variables manually
 def load_env():
-    env_path = os.path.join(os.path.dirname(__file__), '.env')
+    env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env')
     if os.path.exists(env_path):
         with open(env_path, 'r') as f:
             for line in f:
@@ -32,67 +32,60 @@ from app.models import Lesson, LessonContent, QuizQuestion, QuizOption
 from app.ai_services import AILessonContentGenerator
 
 # --- Configuration ---
-LESSON_TITLE = "Onomatopoeia and Mimetic Words in Daily Life"
+LESSON_TITLE = "Dining Out in Japan: From Ramen Shops to Fancy Restaurants"
 LESSON_DIFFICULTY = "Intermediate"
-LESSON_DESCRIPTION = "Discover the vibrant world of Japanese onomatopoeia and mimetic words used in everyday situations. Learn how sound words and descriptive expressions bring Japanese language to life through daily scenarios."
+LESSON_DESCRIPTION = "Master the art of Japanese dining! This lesson covers essential vocabulary, etiquette, and phrases for various dining situations, from casual ramen shops and lively izakaya to formal Japanese restaurants."
 
 # Lesson content pages configuration (explanation pages only)
 CONTENT_PAGES = [
     {
         "page_number": 2,
-        "title": "Morning Routines - 朝の音 (Asa no Oto)",
-        "keywords": "morning, alarm, water, brushing teeth, shower, wake up sounds, りんりん, ざあざあ, しゃかしゃか, ぴちゃぴちゃ, daily routine",
-        "image_concept": "Peaceful morning scene showing various morning routine activities with visual sound effects - alarm clock ringing, water flowing from tap, toothbrush sounds, shower running, birds chirping outside window. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Common morning sounds and activities: alarm clocks (りんりん), water sounds (ざあざあ, ぴちゃぴちゃ), brushing teeth (しゃかしゃか), and other morning routine onomatopoeia."
+        "title": "Restaurant Types - レストランの種類 (Resutoran no shurui)",
+        "keywords": "restaurant, izakaya, cafe, ramen shop, fast food, family restaurant, formal restaurant",
+        "image_concept": "Cute manga/anime style illustration of different restaurant facades: a ramen shop with steaming bowls, a traditional izakaya with lanterns, and a modern cafe with pastries. No text.",
+        "content_focus": "Introduces various types of dining establishments in Japan and their characteristics."
     },
     {
         "page_number": 3,
-        "title": "Cooking and Eating - 料理の音 (Ryouri no Oto)",
-        "keywords": "cooking, eating, sizzling, chopping, slurping, ジュージュー, トントン, ずるずる, ぺろぺろ, kitchen sounds, food preparation",
-        "image_concept": "Lively kitchen scene with someone cooking - sizzling pan, chopping vegetables, boiling water, eating noodles with chopsticks, various cooking activities with sound effect visualizations. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Kitchen and eating sounds: sizzling (ジュージュー), chopping (トントン), slurping noodles (ずるずる), licking (ぺろぺろ), and cooking-related onomatopoeia."
+        "title": "Making a Reservation - 予約をする (Yoyaku o suru)",
+        "keywords": "reservation, phone call, online booking, table for two, time, date, name",
+        "image_concept": "A person smiling while talking on the phone, presumably making a restaurant reservation. Cherry blossoms visible outside the window. Cute manga/anime style, no text.",
+        "content_focus": "Covers phrases and procedures for making reservations by phone and online."
     },
     {
         "page_number": 4,
-        "title": "Weather and Nature - 天気と自然の音 (Tenki to Shizen no Oto)",
-        "keywords": "weather, nature, rain, wind, thunder, animals, ざあざあ, ごろごろ, ひゅうひゅう, ちゅんちゅん, わんわん, にゃあにゃあ",
-        "image_concept": "Beautiful nature scene showing different weather conditions and animals - rain falling, wind blowing trees, thunder clouds, birds singing, dogs barking, cats meowing, seasonal atmosphere. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Natural sounds and weather: heavy rain (ざあざあ), thunder (ごろごろ), wind (ひゅうひゅう), bird songs (ちゅんちゅん), and animal sounds (わんわん, にゃあにゃあ)."
+        "title": "Ordering Food and Drinks - 注文する (Chūmon suru)",
+        "keywords": "menu, ordering, recommendations, set meal, a la carte, drinks, specials",
+        "image_concept": "A person looking at a menu with a variety of delicious-looking food illustrations.  Cute manga/anime style, no text on the menu.",
+        "content_focus": "Teaches vocabulary and phrases for ordering from menus, asking for recommendations, and specifying dietary needs."
     },
     {
         "page_number": 5,
-        "title": "Emotions and Feelings - 感情の表現 (Kanjou no Hyougen)",
-        "keywords": "emotions, feelings, heart beating, sighing, laughing, どきどき, はあはあ, あはは, えーん, うるうる, excitement, sadness",
-        "image_concept": "Expressive scene showing various emotional states - person with racing heart, sighing, laughing with friends, crying, sparkling eyes with emotion, emotional expressions in daily life. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Emotional expressions: heart racing (どきどき), heavy breathing (はあはあ), laughter (あはは), crying (えーん), teary eyes (うるうる), and feeling-related mimetic words."
+        "title": "Chopstick Etiquette - 箸の使い方 (Hashi no tsukaikata)",
+        "keywords": "chopsticks, etiquette, passing food, serving oneself, don'ts, resting chopsticks, sharing dishes",
+        "image_concept": "An illustration showing the correct and incorrect ways to use chopsticks. Depict common mistakes like sticking chopsticks vertically in rice. Cute manga/anime style, no text.",
+        "content_focus": "Explains the do's and don'ts of using chopsticks in Japan, including proper handling techniques and cultural considerations."
     },
     {
         "page_number": 6,
-        "title": "Movement and Actions - 動きの音 (Ugoki no Oto)",
-        "keywords": "movement, walking, running, falling, jumping, てくてく, だだだ, どすん, ぴょんぴょん, するする, physical actions",
-        "image_concept": "Dynamic scene showing various movements and actions - people walking, running, jumping, something falling, smooth sliding motions, active daily life movements. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Movement sounds: walking (てくてく), running (だだだ), falling (どすん), jumping (ぴょんぴょん), sliding smoothly (するする), and action-related onomatopoeia."
+        "title": "Dining Conversations - 食卓での会話 (Shokutaku de no kaiwa)",
+        "keywords": "phrases, compliments, thank you, delicious, asking for more, offering food, conversation starters",
+        "image_concept": "Friends enjoying a meal together at a table, laughing and talking.  Steam rising from the food. Cute manga/anime style, no speech bubbles or text.",
+        "content_focus": "Provides useful phrases for engaging in polite conversations during meals, including complimenting the food and thanking the host."
     },
     {
         "page_number": 7,
-        "title": "Communication Sounds - コミュニケーションの音 (Communication no Oto)",
-        "keywords": "communication, phone, knocking, typing, doorbell, りんりん, こんこん, かたかた, ぴんぽん, がちゃがちゃ, daily communication",
-        "image_concept": "Communication scene showing phone ringing, someone knocking on door, typing on keyboard, doorbell, various communication devices and interactions in daily life. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Communication sounds: phone ringing (りんりん), knocking (こんこん), typing (かたかた), doorbell (ぴんぽん), rattling (がちゃがちゃ), and interaction-related sounds."
+        "title": "Paying the Bill - 会計をする (Kaikei o suru)",
+        "keywords": "bill, paying, splitting the bill, cash, credit card, electronic payment, tipping",
+        "image_concept": "A person paying the bill at a register or handing cash to a waiter. Cute manga/anime style, no numbers or text on the bill or money.",
+        "content_focus": "Covers various payment methods and the etiquette surrounding paying the bill, including splitting the bill and tipping customs."
     },
     {
         "page_number": 8,
-        "title": "Household Activities - 家事の音 (Kaji no Oto)",
-        "keywords": "household, cleaning, washing, opening, closing, ごしごし, じゃぶじゃぶ, がらがら, ぱたん, きゅっきゅっ, domestic activities",
-        "image_concept": "Busy household scene with cleaning activities - scrubbing, washing dishes, opening/closing doors and windows, squeaky clean sounds, domestic life activities. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Household sounds: scrubbing (ごしごし), washing (じゃぶじゃぶ), rattling (がらがら), closing gently (ぱたん), squeaky clean (きゅっきゅっ), and cleaning-related onomatopoeia."
-    },
-    {
-        "page_number": 9,
-        "title": "Transportation - 交通の音 (Koutsu no Oto)",
-        "keywords": "transportation, car, train, bicycle, ブーブー, がたんごとん, りんりん, ぶるるん, vehicle sounds, travel, movement",
-        "image_concept": "Transportation scene showing various vehicles - cars driving, trains on tracks, bicycles with bells, engines starting, busy transportation hub with different vehicle sounds. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image.",
-        "content_focus": "Transportation sounds: car engine (ブーブー), train on tracks (がたんごとん), bicycle bell (りんりん), engine revving (ぶるるん), and vehicle-related onomatopoeia."
+        "title": "Izakaya Culture - 居酒屋文化 (Izakaya bunka)",
+        "keywords": "izakaya, atmosphere, sharing dishes, drinks, etiquette, socializing, ordering more, last call",
+        "image_concept": "A lively izakaya scene with people enjoying drinks and food together. Lanterns and warm lighting create a festive atmosphere. Cute manga/anime style, no text or writing.",
+        "content_focus": "Explores the unique culture of izakaya, including ordering customs, sharing dishes, and socializing etiquette."
     }
 ]
 
@@ -252,7 +245,7 @@ def create_lesson(app):
         
         # Generate overview image
         print(f"🖼️ Generating lesson overview image...")
-        overview_image_concept = "Vibrant collage showing various Japanese onomatopoeia in daily life - sound waves, speech bubbles with sound effects, people in different daily activities (cooking, walking, talking), nature sounds, emotional expressions, all in a harmonious composition representing the richness of Japanese sound words. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image."
+        overview_image_concept = "Vibrant overview scene representing Dining Out in Japan: From Ramen Shops to Fancy Restaurants - showing the main themes and cultural elements of this lesson in a harmonious composition. Style: cute manga/anime art style with clean lines and cultural authenticity. IMPORTANT: No text, writing, signs, or characters should be visible in the image."
         
         image_result = generator.generate_single_image(overview_image_concept, "1024x1024", "hd")
         
@@ -268,7 +261,7 @@ def create_lesson(app):
                 image_content = LessonContent(
                     lesson_id=lesson.id,
                     content_type="image",
-                    title="Onomatopoeia and Mimetic Words - Lesson Overview",
+                    title="Dining Out in Japan: From Ramen Shops to Fancy Restaurants - Lesson Overview",
                     content_text="Welcome to the vibrant world of Japanese sound words",
                     file_path=file_path,
                     file_size=file_size,
@@ -284,8 +277,8 @@ def create_lesson(app):
 
         # Generate welcoming introduction text
         print(f"🤖 Generating lesson introduction...")
-        intro_topic = f"Comprehensive introduction to {LESSON_TITLE}. Explain what students will learn about Japanese onomatopoeia (giongo) and mimetic words (gitaigo), their importance in daily communication, how they make Japanese language more expressive and vivid, and what daily life scenarios will be covered. Include learning objectives and cultural significance of sound words in Japanese."
-        intro_keywords = "onomatopoeia, mimetic words, giongo, gitaigo, daily life, Japanese expressions, sound words, cultural communication, language learning"
+        intro_topic = f"Comprehensive introduction to {LESSON_TITLE}. Explain what students will learn in this lesson about expressions for dining out in japan, the cultural significance and practical applications. Include learning objectives and how this knowledge will help students understand Japanese culture and daily life better."
+        intro_keywords = "restaurant, izakaya, cafe, ordering, menu, etiquette, bill, paying, reservation, chopsticks, drinks, Japanese food, vocabulary, phrases, cultural norms"
         
         intro_result = generator.generate_formatted_explanation(intro_topic, LESSON_DIFFICULTY, intro_keywords)
         
@@ -293,7 +286,7 @@ def create_lesson(app):
             intro_content = LessonContent(
                 lesson_id=lesson.id,
                 content_type="text",
-                title="Welcome to Japanese Onomatopoeia",
+                title="Welcome to Dining Out in Japan: From Ramen Shops to Fancy Restaurants",
                 content_text=intro_result['generated_text'],
                 order_index=content_order_index,
                 page_number=1,
@@ -657,8 +650,8 @@ def create_lesson(app):
         
         # Generate conclusion text
         print(f"🤖 Generating lesson conclusion...")
-        conclusion_topic = "Conclusion for Japanese Onomatopoeia and Mimetic Words lesson. Summarize key learnings about Japanese sound words, their importance in daily communication, how they enrich the language, and encourage continued practice and listening for these expressions in real-life situations."
-        conclusion_keywords = "onomatopoeia, mimetic words, daily life, Japanese expressions, language enrichment, communication, cultural understanding, conclusion"
+        conclusion_topic = "Conclusion for Dining Out in Japan: From Ramen Shops to Fancy Restaurants lesson. Summarize key learnings from this lesson, their importance in understanding Japanese culture and daily life, and encourage continued practice and application of this knowledge."
+        conclusion_keywords = "restaurant, izakaya, cafe, ordering, menu, etiquette, bill, paying, reservation, chopsticks, drinks, Japanese food, vocabulary, phrases, cultural norms, cultural understanding, conclusion"
         
         conclusion_result = generator.generate_formatted_explanation(conclusion_topic, LESSON_DIFFICULTY, conclusion_keywords)
         
@@ -666,7 +659,7 @@ def create_lesson(app):
             conclusion_content = LessonContent(
                 lesson_id=lesson.id,
                 content_type="text",
-                title="Onomatopoeia and Mimetic Words - Lesson Conclusion",
+                title="Dining Out in Japan: From Ramen Shops to Fancy Restaurants - Lesson Conclusion",
                 content_text=conclusion_result['generated_text'],
                 order_index=content_order_index,
                 page_number=final_page_number,
@@ -706,8 +699,8 @@ def create_lesson(app):
                     final_quiz_content = LessonContent(
                         lesson_id=lesson.id,
                         content_type="interactive",
-                        title="Onomatopoeia and Mimetic Words - Comprehensive Final Quiz",
-                        content_text="Test your overall knowledge of Japanese onomatopoeia and mimetic words in daily life",
+                        title="Dining Out in Japan: From Ramen Shops to Fancy Restaurants - Comprehensive Final Quiz",
+                        content_text="Test your overall knowledge of dining out in japan: from ramen shops to fancy restaurants",
                         is_interactive=True,
                         order_index=content_order_index,
                         page_number=final_page_number,
