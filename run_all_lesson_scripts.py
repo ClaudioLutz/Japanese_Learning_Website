@@ -95,13 +95,45 @@ class BatchExecutor:
         if not self.skip_existing:
             return False
         
-        # This is a simplified check - in a real implementation, you might
-        # want to check the database directly or parse the script to get the lesson title
-        script_name = os.path.basename(script_path)
-        
-        # For now, we'll assume lessons don't exist unless specifically checked
-        # You could enhance this by connecting to the database and checking
-        return False
+        try:
+            # Import Flask app and models to check database
+            sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+            from app import create_app, db
+            from app.models import Lesson
+            
+            # Create app context
+            app = create_app()
+            with app.app_context():
+                # Extract lesson title from script by reading the LESSON_TITLE variable
+                script_name = os.path.basename(script_path)
+                
+                # Read the script file to extract the lesson title
+                with open(script_path, 'r', encoding='utf-8') as f:
+                    script_content = f.read()
+                
+                # Look for LESSON_TITLE = "..." pattern
+                import re
+                title_match = re.search(r'LESSON_TITLE\s*=\s*["\']([^"\']+)["\']', script_content)
+                
+                if title_match:
+                    lesson_title = title_match.group(1)
+                    
+                    # Check if lesson exists in database
+                    existing_lesson = Lesson.query.filter_by(title=lesson_title).first()
+                    
+                    if existing_lesson:
+                        print(f"  📚 Lesson '{lesson_title}' already exists in database (ID: {existing_lesson.id})")
+                        return True
+                    else:
+                        print(f"  🆕 Lesson '{lesson_title}' not found in database - will create")
+                        return False
+                else:
+                    print(f"  ⚠️  Could not extract lesson title from {script_name}")
+                    return False
+                    
+        except Exception as e:
+            print(f"  ❌ Error checking if lesson exists: {e}")
+            return False
     
     def execute_script(self, script_path):
         """Execute a single lesson creation script."""
@@ -121,24 +153,40 @@ class BatchExecutor:
         
         process = None
         try:
-            # Execute the script using subprocess with proper working directory and encoding
+            # Execute the script using subprocess with real-time output
             process = subprocess.Popen(
                 [sys.executable, script_path],
                 stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
+                stderr=subprocess.STDOUT,  # Merge stderr into stdout
                 text=True,
                 cwd=os.path.dirname(os.path.abspath(__file__)),  # Set working directory to project root
                 encoding='utf-8',  # Force UTF-8 encoding
-                errors='replace'  # Handle encoding errors gracefully
+                errors='replace',  # Handle encoding errors gracefully
+                bufsize=1,  # Line buffered
+                universal_newlines=True
             )
             
-            # Wait for completion with timeout
-            stdout, stderr = process.communicate(timeout=1800)  # 30 minute timeout
+            # Read output line by line and display in real-time
+            stdout_lines = []
+            if process.stdout:
+                while True:
+                    output = process.stdout.readline()
+                    if output == '' and process.poll() is not None:
+                        break
+                    if output:
+                        print(f"   {output.strip()}")  # Indent subprocess output
+                        stdout_lines.append(output)
+            
+            # Wait for process to complete
+            process.wait()
+            
+            # Create result object
+            stdout = ''.join(stdout_lines)
             result = subprocess.CompletedProcess(
                 args=[sys.executable, script_path],
                 returncode=process.returncode,
                 stdout=stdout,
-                stderr=stderr
+                stderr=""  # We merged stderr into stdout
             )
             
             execution_time = time.time() - start_time

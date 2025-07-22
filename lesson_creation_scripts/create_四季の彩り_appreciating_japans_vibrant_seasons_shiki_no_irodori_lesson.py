@@ -28,7 +28,7 @@ def load_env():
 load_env()
 
 from app import create_app, db
-from app.models import Lesson, LessonContent, QuizQuestion, QuizOption
+from app.models import Lesson, LessonContent, QuizQuestion, QuizOption, UserQuizAnswer, UserLessonProgress
 from app.ai_services import AILessonContentGenerator
 
 # --- Configuration ---
@@ -158,7 +158,7 @@ def create_lesson(app):
             print(f"Found existing lesson '{LESSON_TITLE}' (ID: {existing_lesson.id}). Deleting it.")
             
             # First, delete all user quiz answers for this lesson to avoid foreign key constraints
-            from app.models import UserQuizAnswer, QuizQuestion, QuizOption
+            from app.models import UserQuizAnswer
             
             # Get all content IDs for this lesson
             content_ids = [content.id for content in existing_lesson.content_items if content.is_interactive]
@@ -173,7 +173,7 @@ def create_lesson(app):
                     print(f"  Deleted {deleted_answers} user quiz answers")
                     
                     # Delete all user lesson progress for this lesson
-                    from app.models import UserLessonProgress
+                    # UserLessonProgress imported at top level
                     deleted_progress = UserLessonProgress.query.filter_by(lesson_id=existing_lesson.id).delete(synchronize_session=False)
                     print(f"  Deleted {deleted_progress} user progress records")
             
