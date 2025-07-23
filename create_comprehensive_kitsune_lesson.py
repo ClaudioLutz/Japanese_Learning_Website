@@ -11,7 +11,7 @@ from app.models import (
     Lesson, LessonContent, QuizQuestion, QuizOption, LessonCategory, 
     Kanji, Vocabulary, Grammar, LessonPage
 )
-from app.ai_services import AILessonContentGenerator
+from app.ai_services import AILessonContentGenerator, convert_difficulty_to_int
 
 def create_comprehensive_kitsune_lesson():
     """
@@ -150,7 +150,7 @@ def create_comprehensive_kitsune_lesson():
             print(f"  Grammar {grammar_point} already exists in database")
             generated_grammar_id = existing_grammar.id
         else:
-            grammar_data = ai_generator.generate_grammar_data(grammar_point=grammar_point, jlpt_level='N4')
+            grammar_data = ai_generator.generate_grammar_data(grammar_point=grammar_point, jlpt_level=4)
             if grammar_data and 'error' not in grammar_data:
                 print(f"  Generated data: {json.dumps(grammar_data, indent=2, ensure_ascii=False)}")
                 
@@ -412,7 +412,7 @@ def create_comprehensive_kitsune_lesson():
                 question_text=mc_question['question_text'],
                 explanation=mc_question.get('overall_explanation', ''),
                 hint=mc_question.get('hint', ''),
-                difficulty_level=mc_question.get('difficulty_level', 2),
+                difficulty_level=convert_difficulty_to_int(mc_question.get('difficulty_level', 'medium')),
                 points=2,
                 order_index=100
             )

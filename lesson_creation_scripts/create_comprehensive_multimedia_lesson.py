@@ -27,7 +27,7 @@ import sys
 from datetime import datetime
 
 # Add the app directory to Python path for imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'app'))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from app import create_app, db
 from app.models import Lesson, LessonContent, LessonCategory, LessonPage, Vocabulary, Kanji, Grammar
@@ -49,7 +49,7 @@ def create_comprehensive_tea_ceremony_lesson():
         'title': '茶道 - The Art of Japanese Tea Ceremony',
         'description': 'Discover the profound beauty and cultural significance of the Japanese tea ceremony through this comprehensive multimedia experience. Learn about the philosophy, tools, procedures, and cultural context of this ancient art form.',
         'topic': 'Japanese Tea Ceremony Culture',
-        'difficulty': 'Intermediate',
+        'difficulty': 3,
         'category': 'Japanese Culture & Arts',
         'lesson_type': 'premium',  # Premium content for comprehensive features
         'duration': 45,  # 45 minutes estimated
@@ -86,7 +86,7 @@ def create_comprehensive_tea_ceremony_lesson():
                     'type': 'multiple_choice',
                     'title': 'Philosophy Quiz',
                     'topic': 'Japanese Tea Ceremony Philosophy',
-                    'difficulty': 'Intermediate',
+                    'difficulty': 3,
                     'keywords': 'wa, kei, sei, jaku, Sen no Rikyu, four principles'
                 }
             },
@@ -130,7 +130,7 @@ def create_comprehensive_tea_ceremony_lesson():
                     'type': 'fill_blank',
                     'title': 'Vocabulary Practice',
                     'topic': 'Tea Ceremony Vocabulary',
-                    'difficulty': 'Intermediate',
+                    'difficulty': 3,
                     'keywords': 'chawan, chasen, teishu, temae'
                 }
             },
@@ -179,7 +179,7 @@ def create_comprehensive_tea_ceremony_lesson():
                     'type': 'true_false',
                     'title': 'Tea Room Knowledge',
                     'topic': 'Tea Room Architecture',
-                    'difficulty': 'Intermediate',
+                    'difficulty': 3,
                     'keywords': 'nijiriguchi, tokonoma, ro, yojohan'
                 }
             },
@@ -242,7 +242,7 @@ def create_comprehensive_tea_ceremony_lesson():
                     'type': 'multiple_choice',
                     'title': 'Utensils Identification',
                     'topic': 'Tea Ceremony Utensils',
-                    'difficulty': 'Intermediate',
+                    'difficulty': 3,
                     'keywords': 'chawan, chashaku, chasen, chaire, chadogu'
                 }
             },
@@ -307,7 +307,7 @@ def create_comprehensive_tea_ceremony_lesson():
                     'type': 'fill_blank',
                     'title': 'Procedure Steps',
                     'topic': 'Tea Ceremony Procedure',
-                    'difficulty': 'Intermediate',
+                    'difficulty': 3,
                     'keywords': 'temae, junbi, kiyome, teicha, katazuke'
                 }
             },
@@ -377,7 +377,7 @@ def create_comprehensive_tea_ceremony_lesson():
                     'type': 'multiple_choice',
                     'title': 'Seasonal Knowledge',
                     'topic': 'Seasonal Awareness in Tea Ceremony',
-                    'difficulty': 'Intermediate',
+                    'difficulty': 3,
                     'keywords': 'kisetsukan, haru, natsu, aki, fuyu, mujo, mono no aware'
                 }
             },
@@ -484,7 +484,7 @@ def create_comprehensive_tea_ceremony_lesson():
                     'type': 'true_false',
                     'title': 'Modern Applications',
                     'topic': 'Modern Tea Ceremony Applications',
-                    'difficulty': 'Intermediate',
+                    'difficulty': 3,
                     'keywords': 'gendai, omotenashi, corporate culture, therapeutic'
                 }
             }

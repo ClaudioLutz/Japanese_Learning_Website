@@ -8,6 +8,91 @@ from openai.types.chat.completion_create_params import ResponseFormat
 from typing import Literal
 import google.generativeai as genai
 
+
+def convert_jlpt_level_to_int(jlpt_level):
+    """
+    Convert JLPT level from string format (N4, N3, etc.) to integer format (4, 3, etc.)
+    
+    Args:
+        jlpt_level: String like "N4", "N3" or integer like 4, 3
+    
+    Returns:
+        Integer representation of JLPT level
+    """
+    if isinstance(jlpt_level, int):
+        return jlpt_level
+    
+    if isinstance(jlpt_level, str):
+        # Handle formats like "N4", "n4", "4"
+        jlpt_level = jlpt_level.upper().strip()
+        if jlpt_level.startswith('N'):
+            try:
+                return int(jlpt_level[1:])
+            except ValueError:
+                pass
+        else:
+            try:
+                return int(jlpt_level)
+            except ValueError:
+                pass
+    
+    # Default to N5 (beginner level) if conversion fails
+    return 5
+
+
+def truncate_field(text, max_length):
+    """
+    Truncate text to fit database field constraints
+    
+    Args:
+        text: Text to truncate
+        max_length: Maximum allowed length
+    
+    Returns:
+        Truncated text that fits the constraint
+    """
+    if not text:
+        return text
+    
+    if len(text) <= max_length:
+        return text
+    
+    # Truncate and add ellipsis
+    return text[:max_length-3] + "..."
+
+
+def convert_difficulty_to_int(difficulty):
+    """
+    Convert difficulty level from string format to integer format
+    
+    Args:
+        difficulty: String like "easy", "medium", "hard" or integer
+    
+    Returns:
+        Integer representation of difficulty level (1-5)
+    """
+    if isinstance(difficulty, int):
+        return max(1, min(5, difficulty))  # Ensure it's between 1-5
+    
+    if isinstance(difficulty, str):
+        difficulty = difficulty.lower().strip()
+        difficulty_map = {
+            'easy': 1,
+            'beginner': 1,
+            'elementary': 1,
+            'basic': 1,
+            'medium': 3,
+            'intermediate': 3,
+            'hard': 4,
+            'advanced': 4,
+            'expert': 5,
+            'master': 5
+        }
+        return difficulty_map.get(difficulty, 3)  # Default to intermediate
+    
+    return 3  # Default to intermediate
+
+
 class AILessonContentGenerator:
     """
     A service class to handle AI content generation using Gemini for text and OpenAI for images.
@@ -147,7 +232,15 @@ class AILessonContentGenerator:
         
         try:
             if content:
-                return json.loads(content)
+                result = json.loads(content)
+                
+                # Convert difficulty levels to integers for all questions
+                if 'questions' in result and isinstance(result['questions'], list):
+                    for question in result['questions']:
+                        if 'difficulty_level' in question:
+                            question['difficulty_level'] = convert_difficulty_to_int(question['difficulty_level'])
+                
+                return result
             else:
                 return {"error": "Empty response from AI"}
         except json.JSONDecodeError as e:
@@ -676,10 +769,17 @@ class AILessonContentGenerator:
         Generate a JSON object with a single key "questions" that contains a list of quiz questions.
         For each question, provide the following fields:
         - question_text
-        - difficulty_level (from the provided list)
+        - difficulty_level (MUST be a NUMBER from 1-5, NOT text like "easy" or "medium")
         - hint
         - options (list of dicts with text, is_correct, feedback)
         - overall_explanation
+        
+        CRITICAL: The difficulty_level field MUST be an integer number (1, 2, 3, 4, or 5), NOT a string.
+        - 1 = Beginner/Easy
+        - 2 = Elementary 
+        - 3 = Intermediate/Medium
+        - 4 = Advanced/Hard
+        - 5 = Expert/Master
         
         Example for a single question in the list:
         {{
@@ -692,6 +792,8 @@ class AILessonContentGenerator:
           ],
           "overall_explanation": "..."
         }}
+        
+        IMPORTANT: Use ONLY numeric values (1, 2, 3, 4, 5) for difficulty_level, never use text like "easy", "medium", "hard".
         """
         
         content, error = self._generate_content(system_prompt, user_prompt, is_json=True)
@@ -723,7 +825,7 @@ class AILessonContentGenerator:
           "meaning": "Primary English meaning",
           "onyomi": "Onyomi reading in Katakana",
           "kunyomi": "Kunyomi reading in Hiragana",
-          "jlpt_level": {jlpt_level},
+          "jlpt_level": {convert_jlpt_level_to_int(jlpt_level)},
           "stroke_count": 10,
           "radical": "Radical character"
         }}
@@ -755,7 +857,7 @@ class AILessonContentGenerator:
           "word": "{word}",
           "reading": "Reading of the word in Hiragana",
           "meaning": "Primary English meaning",
-          "jlpt_level": {jlpt_level},
+          "jlpt_level": {convert_jlpt_level_to_int(jlpt_level)},
           "example_sentence_japanese": "Example sentence in Japanese using the word.",
           "example_sentence_english": "English translation of the example sentence."
         }}
@@ -787,7 +889,7 @@ class AILessonContentGenerator:
           "title": "{grammar_point}",
           "explanation": "Detailed explanation of the grammar point, its usage, and nuances.",
           "structure": "Common structure, e.g., 'Verb (dictionary form) + ように'",
-          "jlpt_level": {jlpt_level},
+          "jlpt_level": {convert_jlpt_level_to_int(jlpt_level)},
           "example_sentences": [
             {{"japanese": "Sentence 1 in Japanese.", "english": "Translation 1 in English."}},
             {{"japanese": "Sentence 2 in Japanese.", "english": "Translation 2 in English."}}
@@ -800,6 +902,12 @@ class AILessonContentGenerator:
         try:
             if content:
                 data = json.loads(content)
+                # Truncate fields that might be too long for database constraints
+                if 'title' in data:
+                    data['title'] = truncate_field(data['title'], 200)
+                if 'structure' in data:
+                    data['structure'] = truncate_field(data['structure'], 255)
+                
                 # The model might return a list of dicts for example_sentences, but the model expects a JSON string.
                 if 'example_sentences' in data and isinstance(data['example_sentences'], list):
                     data['example_sentences'] = json.dumps(data['example_sentences'], ensure_ascii=False)
