@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 # Google Cloud PostgreSQL configuration
 CLOUD_DB_CONFIG = {
-    'host': '34.65.227.94',  # Your Google Cloud SQL public IP
+    'host': '127.0.0.1',  # Your Google Cloud SQL public IP
     'dbname': 'japanese_learning',
     'user': 'app_user',
     'password': 'Dg34.67MDt',
