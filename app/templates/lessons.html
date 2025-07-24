@@ -2,6 +2,10 @@
 
 {% block title %}Lessons - Japanese Learning{% endblock %}
 
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/lessons.css') }}">
+{% endblock %}
+
 {% block body_attributes %}
     style="background-image: url('{{ url_for('static', filename='images/Lesson_Background.png') }}'); background-size: cover; background-repeat: no-repeat; background-attachment: fixed;"
 {% endblock %}
@@ -10,19 +14,27 @@
 <div class="container mt-4">
     <div class="row">
         <div class="col-12">
-            <h1 class="mb-4">Japanese Learning Lessons</h1>
+            <h1 class="page-title mb-4">Japanese Learning Lessons</h1>
+            
+            <!-- Category Navigation -->
+            <div class="categories-section mb-5">
+                <h2 class="section-title mb-4">Browse by Category</h2>
+                <div id="categoriesContainer" class="categories-grid">
+                    <!-- Categories will be loaded here -->
+                </div>
+            </div>
             
             <!-- Filter Controls -->
-            <div class="card filter-card mb-4">
+            <div class="card filter-card mb-4" id="filterCard">
                 <div class="card-body">
-                    <div class="row">
+                    <div class="row align-items-end">
                         <div class="col-md-3">
                             <label for="categoryFilter" class="form-label">Category</label>
                             <select id="categoryFilter" class="form-select">
                                 <option value="">All Categories</option>
                             </select>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <label for="typeFilter" class="form-label">Type</label>
                             <select id="typeFilter" class="form-select">
                                 <option value="">All Types</option>
@@ -30,7 +42,7 @@
                                 <option value="premium">Premium</option>
                             </select>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <label for="difficultyFilter" class="form-label">Difficulty</label>
                             <select id="difficultyFilter" class="form-select">
                                 <option value="">All Levels</option>
@@ -47,39 +59,64 @@
                                 <option value="all">All Languages</option>
                                 <option value="english">English</option>
                                 <option value="german">German</option>
-                                <!-- Add other languages as needed -->
                             </select>
                         </div>
-                        <div class="col-md-3 d-flex align-items-end">
-                            <button type="button" class="btn btn-primary" onclick="applyFilters()">Apply Filters</button>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-primary w-100" onclick="applyFilters()">Apply Filters</button>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="clearFilters()">
+                                <i class="fas fa-times"></i> Clear All Filters
+                            </button>
+                            <span id="activeFiltersDisplay" class="ms-3 text-muted"></span>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- Breadcrumb Navigation -->
+            <nav aria-label="breadcrumb" id="breadcrumbNav" style="display: none;">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="#" onclick="showAllCategories()" class="text-decoration-none">
+                            <i class="fas fa-home"></i> All Categories
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page" id="currentCategoryName"></li>
+                </ol>
+            </nav>
+
             <!-- Lessons Grid -->
-            <div id="lessonsContainer" class="row">
+            <div id="lessonsContainer">
                 <!-- Lessons will be loaded here -->
             </div>
             
             <!-- Loading Spinner -->
             <div id="loadingSpinner" class="text-center my-5" style="display: none;">
-                <div class="spinner-border" role="status">
+                <div class="spinner-border text-primary" role="status">
                     <span class="visually-hidden">Loading...</span>
                 </div>
+                <p class="mt-2 text-muted">Loading lessons...</p>
             </div>
             
             <!-- No Lessons Message -->
             <div id="noLessonsMessage" class="text-center my-5" style="display: none;">
-                <div class="card">
+                <div class="card no-lessons-card">
                     <div class="card-body">
-                        <h4>No lessons available yet</h4>
-                        <p class="text-muted">It looks like there are no lessons in the database yet.</p>
-                        <p class="text-muted">If you're an admin, you can create lessons using the Admin Panel or by running the lesson creation scripts.</p>
-                        <p class="text-muted">Otherwise, please check back later for new content!</p>
+                        <i class="fas fa-book-open fa-3x text-muted mb-3"></i>
+                        <h4>No lessons found</h4>
+                        <p class="text-muted">No lessons match your current filters.</p>
+                        <button class="btn btn-primary" onclick="clearFilters()">Clear Filters</button>
                     </div>
                 </div>
             </div>
+
+            <!-- Back to Top Button -->
+            <button id="backToTop" class="btn btn-primary back-to-top" onclick="scrollToTop()" style="display: none;">
+                <i class="fas fa-arrow-up"></i>
+            </button>
         </div>
     </div>
 </div>
@@ -87,11 +124,30 @@
 <script>
 let allLessons = [];
 let categories = [];
+let currentView = 'categories'; // 'categories' or 'lessons'
+let selectedCategoryId = null;
 
 document.addEventListener('DOMContentLoaded', function() {
     loadLessons();
     loadCategories();
+    setupScrollListener();
 });
+
+// Scroll listener for back to top button
+function setupScrollListener() {
+    window.addEventListener('scroll', function() {
+        const backToTop = document.getElementById('backToTop');
+        if (window.pageYOffset > 300) {
+            backToTop.style.display = 'block';
+        } else {
+            backToTop.style.display = 'none';
+        }
+    });
+}
+
+function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
 async function loadLessons(language = 'all') {
     showLoading(true);
@@ -105,15 +161,16 @@ async function loadLessons(language = 'all') {
         
         allLessons = await response.json();
         
-        // Handle empty lessons array gracefully
         if (!Array.isArray(allLessons)) {
             allLessons = [];
         }
         
-        applyFilters(); // Apply all filters after loading
+        // Show categories by default
+        showAllCategories();
+        
     } catch (error) {
         console.error('Error loading lessons:', error);
-        allLessons = []; // Ensure we have an empty array
+        allLessons = [];
         showError('Failed to load lessons. Please try again later.');
     } finally {
         showLoading(false);
@@ -126,13 +183,18 @@ async function loadCategories() {
         if (response.ok) {
             categories = await response.json();
             
+            // Populate category filter dropdown
             const categoryFilter = document.getElementById('categoryFilter');
+            categoryFilter.innerHTML = '<option value="">All Categories</option>';
             categories.forEach(category => {
                 const option = document.createElement('option');
                 option.value = category.id;
                 option.textContent = category.name;
                 categoryFilter.appendChild(option);
             });
+            
+            // Display categories
+            displayCategories();
         } else {
             console.log('Categories not available');
             const categoryFilter = document.getElementById('categoryFilter');
@@ -141,11 +203,139 @@ async function loadCategories() {
         }
     } catch (error) {
         console.error('Error loading categories:', error);
-        // Disable category filter on error
         const categoryFilter = document.getElementById('categoryFilter');
         categoryFilter.disabled = true;
         categoryFilter.innerHTML = '<option value="">Categories (Unavailable)</option>';
     }
+}
+
+function displayCategories() {
+    const container = document.getElementById('categoriesContainer');
+    container.innerHTML = '';
+    
+    if (categories.length === 0) {
+        container.innerHTML = '<p class="text-muted text-center">No categories available.</p>';
+        return;
+    }
+    
+    // Calculate lesson counts per category
+    const lessonCounts = {};
+    categories.forEach(category => {
+        lessonCounts[category.id] = allLessons.filter(lesson => 
+            lesson.category_id === category.id
+        ).length;
+    });
+    
+    categories.forEach((category, index) => {
+        const categoryCard = document.createElement('div');
+        categoryCard.className = 'category-card animate-in';
+        categoryCard.onclick = () => showCategoryLessons(category.id, category.name);
+        
+        // Add background image support
+        if (category.background_image_url || category.background_image_path) {
+            const backgroundUrl = category.background_image_path ? 
+                `/static/uploads/${category.background_image_path}` : 
+                category.background_image_url;
+            categoryCard.style.backgroundImage = `url('${backgroundUrl}')`;
+            categoryCard.setAttribute('data-background', 'true');
+        }
+        
+        const lessonCount = lessonCounts[category.id] || 0;
+        
+        categoryCard.innerHTML = `
+            <div class="category-card-inner">
+                <div class="category-icon" style="background: linear-gradient(135deg, ${category.color_code}, ${adjustBrightness(category.color_code, -20)});">
+                    <i class="fas ${getCategoryIcon(category.name)}"></i>
+                </div>
+                <div class="category-content">
+                    <h3 class="category-name">${category.name}</h3>
+                    <p class="category-description">${category.description || 'Explore lessons in this category'}</p>
+                    <div class="category-stats">
+                        <span class="lesson-count">
+                            <i class="fas fa-book"></i>
+                            ${lessonCount} lesson${lessonCount !== 1 ? 's' : ''}
+                        </span>
+                    </div>
+                </div>
+                <div class="category-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+        `;
+        
+        // Add staggered animation delay
+        categoryCard.style.animationDelay = `${(index + 1) * 0.1}s`;
+        
+        container.appendChild(categoryCard);
+    });
+}
+
+function getCategoryIcon(categoryName) {
+    const iconMap = {
+        'Culture & Traditions': 'fa-torii-gate',
+        'Daily Life & Society': 'fa-home',
+        'Food & Dining': 'fa-utensils',
+        'Language & Communication': 'fa-comments',
+        'Pop Culture & Modern Japan': 'fa-gamepad',
+        'Travel & Geography': 'fa-map-marked-alt'
+    };
+    return iconMap[categoryName] || 'fa-book';
+}
+
+function adjustBrightness(hex, percent) {
+    // Remove # if present
+    hex = hex.replace('#', '');
+    
+    // Parse r, g, b values
+    const num = parseInt(hex, 16);
+    const amt = Math.round(2.55 * percent);
+    const R = (num >> 16) + amt;
+    const G = (num >> 8 & 0x00FF) + amt;
+    const B = (num & 0x0000FF) + amt;
+    
+    return '#' + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+        (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+        (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+}
+
+function showAllCategories() {
+    currentView = 'categories';
+    selectedCategoryId = null;
+    
+    // Update UI
+    document.getElementById('categoriesContainer').parentElement.style.display = 'block';
+    document.getElementById('breadcrumbNav').style.display = 'none';
+    document.getElementById('lessonsContainer').innerHTML = '';
+    document.getElementById('noLessonsMessage').style.display = 'none';
+    
+    // Reset filters
+    clearFilters();
+    
+    // Display categories
+    displayCategories();
+}
+
+function showCategoryLessons(categoryId, categoryName) {
+    currentView = 'lessons';
+    selectedCategoryId = categoryId;
+    
+    // Update UI
+    document.getElementById('categoriesContainer').parentElement.style.display = 'none';
+    document.getElementById('breadcrumbNav').style.display = 'block';
+    document.getElementById('currentCategoryName').textContent = categoryName;
+    
+    // Set category filter
+    document.getElementById('categoryFilter').value = categoryId;
+    
+    // Filter and display lessons
+    const filteredLessons = allLessons.filter(lesson => lesson.category_id === categoryId);
+    displayLessons(filteredLessons);
+    
+    // Update active filters display
+    updateActiveFiltersDisplay();
+    
+    // Smooth scroll to lessons
+    document.getElementById('lessonsContainer').scrollIntoView({ behavior: 'smooth' });
 }
 
 function displayLessons(lessons) {
@@ -160,142 +350,134 @@ function displayLessons(lessons) {
     }
     
     noLessonsMessage.style.display = 'none';
+
+    // Create lessons grid
+    const lessonsGrid = document.createElement('div');
+    lessonsGrid.className = 'lessons-grid';
     
     lessons.forEach(lesson => {
         const lessonCard = createLessonCard(lesson);
-        container.appendChild(lessonCard);
+        lessonsGrid.appendChild(lessonCard);
     });
+    
+    container.appendChild(lessonsGrid);
 }
 
 function createLessonCard(lesson) {
     const col = document.createElement('div');
-    col.className = 'col-md-6 col-lg-4 mb-4';
+    col.className = 'lesson-card-wrapper';
     
     const accessible = lesson.accessible;
     const progress = lesson.progress;
     const progressPercentage = progress ? progress.progress_percentage : 0;
-    const isGuest = !window.currentUser; // Check if user is logged in
+    const isGuest = !window.currentUser;
     
-    // Check if lesson has background image, prioritizing the local path
     const hasLocalBackground = lesson.background_image_path;
-    // Construct the URL using the standard static path, as uploads are inside the static folder.
     const backgroundUrl = hasLocalBackground ? 
         `/static/uploads/${lesson.background_image_path}` : 
-        lesson.background_image_url; // Fallback to the remote URL if no local path
+        lesson.background_image_url;
 
     const hasBackground = backgroundUrl;
-    const backgroundStyle = hasBackground ?
-        `style="background-image: url('${backgroundUrl}');"` :
-        '';
     
-    const cardClass = hasBackground ? 'lesson-card-with-bg' : 'lesson-card-default';
-    
-    // SPLIT LAYOUT STRUCTURE WITH BACKGROUND SUPPORT
     if (hasBackground) {
         col.innerHTML = `
-            <div class="card lesson-card h-100 lesson-card-split ${!accessible ? 'locked' : ''}">
-                <!-- Image Section -->
-                <div class="lesson-card-image-section" style="background-image: url('${backgroundUrl}');">
-                    <div class="lesson-card-image-overlay">
+            <div class="lesson-card ${!accessible ? 'locked' : ''}">
+                <div class="lesson-card-image" style="background-image: url('${backgroundUrl}');">
+                    <div class="lesson-card-overlay">
                         <div class="lesson-badges">
-                            <span class="badge ${lesson.lesson_type === 'free' ? 'bg-success' : 'bg-warning'}">${lesson.lesson_type}</span>
-                            ${lesson.category_name ? `<span class="badge bg-info text-dark">${lesson.category_name}</span>` : ''}
-                            ${lesson.allow_guest_access ? '<span class="badge bg-light text-dark">👤 Guest Friendly</span>' : ''}
+                            <span class="badge ${lesson.lesson_type === 'free' ? 'badge-success' : 'badge-warning'}">${lesson.lesson_type}</span>
+                            ${lesson.allow_guest_access ? '<span class="badge badge-guest">👤 Guest Friendly</span>' : ''}
                         </div>
+                        ${progress ? `
+                            <div class="lesson-progress-overlay">
+                                <div class="progress-circle">
+                                    <span>${progressPercentage}%</span>
+                                </div>
+                            </div>
+                        ` : ''}
                     </div>
                 </div>
                 
-                <!-- Content Section -->
-                <div class="lesson-card-content-section">
-                    <div class="lesson-card-header">
-                        <h5 class="lesson-card-title">${lesson.title}</h5>
-                        <p class="lesson-card-description">${lesson.description || 'No description available.'}</p>
+                <div class="lesson-card-content">
+                    <h5 class="lesson-title">${lesson.title}</h5>
+                    <p class="lesson-description">${lesson.description || 'No description available.'}</p>
+                    
+                    <div class="lesson-meta">
+                        <span class="meta-item">
+                            <i class="fas fa-signal"></i>
+                            Level ${lesson.difficulty_level || 'N/A'}
+                        </span>
+                        <span class="meta-item">
+                            <i class="fas fa-clock"></i>
+                            ${lesson.estimated_duration || 'N/A'} min
+                        </span>
                     </div>
                     
                     <div class="lesson-card-footer">
-                        <div class="lesson-meta-row">
-                            <span class="meta-item">📊 ${lesson.difficulty_level || 'N/A'}/5</span>
-                            <span class="meta-item">⏱️ ${lesson.estimated_duration || 'N/A'} min</span>
-                        </div>
-                        
-                        ${progress ? `
-                            <div class="lesson-progress-bar">
-                                <div class="progress-fill" style="width: ${progressPercentage}%"></div>
-                            </div>
-                        ` : ''}
-                        
                         ${accessible ? `
-                            <a href="/lessons/${lesson.id}" class="lesson-action-btn">
+                            <a href="/lessons/${lesson.id}" class="btn btn-primary lesson-btn">
                                 ${progress ? (progressPercentage === 100 ? 'Review Lesson' : 'Continue Lesson') : 'Start Lesson'}
-                                ${isGuest && lesson.allow_guest_access ? ' (Guest Mode)' : ''}
                             </a>
                         ` : `
                             ${lesson.access_message && lesson.access_message.includes('Purchase required') ? `
-                                <button class="lesson-action-btn lesson-purchase-btn" onclick="purchaseLesson(${lesson.id}, '${lesson.title}', ${lesson.price})">
+                                <button class="btn btn-warning lesson-btn" onclick="purchaseLesson(${lesson.id}, '${lesson.title}', ${lesson.price})">
                                     ${lesson.access_message}
                                 </button>
                             ` : `
-                                <button class="lesson-action-btn lesson-action-btn-disabled" disabled>
+                                <button class="btn btn-secondary lesson-btn" disabled>
                                     ${lesson.access_message}
                                 </button>
                             `}
-                            ${isGuest && !lesson.allow_guest_access ? `
-                                <small class="lesson-login-hint">
-                                    <a href="/login">Login</a> or 
-                                    <a href="/register">Register</a> to access this lesson
-                                </small>
-                            ` : ''}
                         `}
                     </div>
                 </div>
             </div>
         `;
     } else {
-        // Fallback for lessons without background images
         col.innerHTML = `
-            <div class="card lesson-card h-100 lesson-card-default ${!accessible ? 'locked' : ''}">
-                <div class="card-body d-flex flex-column">
-                    <div class="mb-2">
-                        <span class="badge ${lesson.lesson_type === 'free' ? 'bg-success' : 'bg-warning'}">${lesson.lesson_type}</span>
-                        ${lesson.category_name ? `<span class="badge bg-info text-dark">${lesson.category_name}</span>` : ''}
-                        ${lesson.allow_guest_access ? '<span class="badge bg-light text-dark">👤 Guest Friendly</span>' : ''}
+            <div class="lesson-card lesson-card-no-image ${!accessible ? 'locked' : ''}">
+                <div class="lesson-card-content">
+                    <div class="lesson-badges mb-2">
+                        <span class="badge ${lesson.lesson_type === 'free' ? 'badge-success' : 'badge-warning'}">${lesson.lesson_type}</span>
+                        ${lesson.allow_guest_access ? '<span class="badge badge-guest">👤 Guest Friendly</span>' : ''}
                     </div>
-                    <h5 class="card-title mt-1">${lesson.title}</h5>
-                    <p class="card-text small text-muted flex-grow-1">${lesson.description || 'No description available.'}</p>
                     
-                    <div class="mt-auto">
-                        <div class="d-flex justify-content-between small text-muted mb-3">
-                            <span>📊 Difficulty: ${lesson.difficulty_level || 'N/A'}/5</span>
-                            <span>⏱️ ${lesson.estimated_duration || 'N/A'} min</span>
+                    <h5 class="lesson-title">${lesson.title}</h5>
+                    <p class="lesson-description">${lesson.description || 'No description available.'}</p>
+                    
+                    <div class="lesson-meta">
+                        <span class="meta-item">
+                            <i class="fas fa-signal"></i>
+                            Level ${lesson.difficulty_level || 'N/A'}
+                        </span>
+                        <span class="meta-item">
+                            <i class="fas fa-clock"></i>
+                            ${lesson.estimated_duration || 'N/A'} min
+                        </span>
+                    </div>
+                    
+                    ${progress ? `
+                        <div class="lesson-progress-bar mb-3">
+                            <div class="progress-fill" style="width: ${progressPercentage}%"></div>
+                            <span class="progress-text">${progressPercentage}% Complete</span>
                         </div>
-                        
-                        ${progress ? `
-                            <div class="progress mb-3" style="height: 6px;">
-                                <div class="progress-bar" role="progressbar" style="width: ${progressPercentage}%" aria-valuenow="${progressPercentage}" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                        ` : '<div class="mb-3" style="height: 6px;"></div>'}
-                        
+                    ` : ''}
+                    
+                    <div class="lesson-card-footer">
                         ${accessible ? `
-                            <a href="/lessons/${lesson.id}" class="btn btn-primary w-100">
+                            <a href="/lessons/${lesson.id}" class="btn btn-primary lesson-btn w-100">
                                 ${progress ? (progressPercentage === 100 ? 'Review Lesson' : 'Continue Lesson') : 'Start Lesson'}
-                                ${isGuest && lesson.allow_guest_access ? ' (Guest Mode)' : ''}
                             </a>
                         ` : `
                             ${lesson.access_message && lesson.access_message.includes('Purchase required') ? `
-                                <button class="btn btn-warning w-100" onclick="purchaseLesson(${lesson.id}, '${lesson.title}', ${lesson.price})">
+                                <button class="btn btn-warning lesson-btn w-100" onclick="purchaseLesson(${lesson.id}, '${lesson.title}', ${lesson.price})">
                                     ${lesson.access_message}
                                 </button>
                             ` : `
-                                <button class="btn btn-secondary w-100" disabled>
+                                <button class="btn btn-secondary lesson-btn w-100" disabled>
                                     ${lesson.access_message}
                                 </button>
                             `}
-                            ${isGuest && !lesson.allow_guest_access ? `
-                                <small class="text-muted mt-2 d-block">
-                                    <a href="/login" class="text-decoration-none">Login</a> or 
-                                    <a href="/register" class="text-decoration-none">Register</a> to access this lesson
-                                </small>
-                            ` : ''}
                         `}
                     </div>
                 </div>
@@ -307,12 +489,24 @@ function createLessonCard(lesson) {
 }
 
 function applyFilters() {
+    if (currentView === 'categories') {
+        // If we're in category view and a category filter is selected, switch to lessons view
+        const categoryFilter = document.getElementById('categoryFilter').value;
+        if (categoryFilter) {
+            const category = categories.find(c => c.id == categoryFilter);
+            if (category) {
+                showCategoryLessons(category.id, category.name);
+                return;
+            }
+        }
+        return;
+    }
+    
     const categoryFilter = document.getElementById('categoryFilter').value;
     const typeFilter = document.getElementById('typeFilter').value;
     const difficultyFilter = document.getElementById('difficultyFilter').value;
     const languageFilter = document.getElementById('languageFilter').value;
 
-    // Filter the already loaded lessons
     let filteredLessons = allLessons.filter(lesson => {
         if (categoryFilter && lesson.category_id != categoryFilter) return false;
         if (typeFilter && lesson.lesson_type !== typeFilter) return false;
@@ -320,7 +514,48 @@ function applyFilters() {
         if (languageFilter && languageFilter !== 'all' && lesson.instruction_language !== languageFilter) return false;
         return true;
     });
+    
     displayLessons(filteredLessons);
+    updateActiveFiltersDisplay();
+}
+
+function clearFilters() {
+    document.getElementById('categoryFilter').value = '';
+    document.getElementById('typeFilter').value = '';
+    document.getElementById('difficultyFilter').value = '';
+    document.getElementById('languageFilter').value = 'all';
+    
+    if (currentView === 'lessons') {
+        // If we're in lessons view, show all lessons
+        displayLessons(allLessons);
+    }
+    
+    updateActiveFiltersDisplay();
+}
+
+function updateActiveFiltersDisplay() {
+    const display = document.getElementById('activeFiltersDisplay');
+    const filters = [];
+    
+    const categoryFilter = document.getElementById('categoryFilter').value;
+    const typeFilter = document.getElementById('typeFilter').value;
+    const difficultyFilter = document.getElementById('difficultyFilter').value;
+    const languageFilter = document.getElementById('languageFilter').value;
+    
+    if (categoryFilter) {
+        const category = categories.find(c => c.id == categoryFilter);
+        if (category) filters.push(`Category: ${category.name}`);
+    }
+    if (typeFilter) filters.push(`Type: ${typeFilter}`);
+    if (difficultyFilter) filters.push(`Level: ${difficultyFilter}`);
+    if (languageFilter && languageFilter !== 'all') filters.push(`Language: ${languageFilter}`);
+    
+    if (filters.length > 0) {
+        display.textContent = `Active filters: ${filters.join(', ')}`;
+        display.style.display = 'inline';
+    } else {
+        display.style.display = 'none';
+    }
 }
 
 function showLoading(show) {
@@ -330,24 +565,26 @@ function showLoading(show) {
 function showError(message) {
     const container = document.getElementById('lessonsContainer');
     container.innerHTML = `
-        <div class="col-12">
-            <div class="alert alert-danger" role="alert">
-                ${message}
-            </div>
+        <div class="alert alert-danger" role="alert">
+            <i class="fas fa-exclamation-triangle"></i>
+            ${message}
         </div>
     `;
 }
 
 async function purchaseLesson(lessonId, lessonTitle, price) {
-    // Check if user is logged in
     if (!window.currentUser) {
         alert('Please log in to purchase lessons.');
         window.location.href = '/login';
         return;
     }
     
-    // Redirect to purchase page
     window.location.href = `/purchase/${lessonId}`;
 }
+
+// Language filter change handler
+document.getElementById('languageFilter').addEventListener('change', function() {
+    loadLessons(this.value);
+});
 </script>
 {% endblock %}
