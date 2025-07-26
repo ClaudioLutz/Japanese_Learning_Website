@@ -1,16 +1,16 @@
-# German Lesson Topics
+# Japanisch-Lektionen für Deutschsprachige
 
-1. **German Greetings and Basic Phrases**
-* Learn how to greet people and introduce yourself in German. Covers formal and informal situations.
+1. **Grundlagen der japanischen Aussprache**
+* Lerne die Laute der japanischen Sprache, einschließlich Hiragana und Katakana, mit Schwerpunkt auf für Deutschsprachige schwierigen Lauten.
 
-2. **Ordering Food and Drinks in German**
-* A practical guide to ordering food and drinks at a German restaurant or cafe. Includes common vocabulary and phrases.
+2. **Begrüßungen und grundlegende Phrasen**
+* Eine praktische Anleitung zu alltäglichen Begrüßungen, Vorstellungen und wichtigen Höflichkeitsfloskeln in formellen und informellen Situationen.
 
-3. **Navigating Public Transport in Germany**
-* Learn how to buy tickets, ask for directions, and understand announcements on trains, buses, and trams in Germany.
+3. **Bestellen in einem japanischen Restaurant**
+* Lerne, wie man in einem Restaurant bestellt, nach Empfehlungen fragt und bezahlt, einschließlich nützlicher Vokabeln für Speisen und Getränke.
 
-4. **German Cases: Nominative, Accusative, Dative, and Genitive**
-* An introduction to the four German cases, explaining their functions and how they affect articles and pronouns.
+4. **Sich im japanischen Nahverkehr zurechtfinden**
+* Eine Anleitung zum Kauf von Fahrkarten, zum Fragen nach dem Weg und zum Verständnis von Durchsagen in Zügen und Bussen in Japan.
 
-5. **Talking about Hobbies and Free Time in German**
-* Learn how to talk about your hobbies and what you like to do in your free time.
+5. **Die Partikel は (wa), が (ga), を (o) und に (ni)**
+* Eine Einführung in die grundlegenden japanischen Partikel, die ihre Funktionen und Verwendung in Sätzen erklärt.

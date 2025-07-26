@@ -1,12 +1,15 @@
 # In app/ai_services.py
 import os
 import json
+import base64
 from openai import OpenAI
 from flask import current_app
 from openai.types.chat import ChatCompletionMessageParam
 from openai.types.chat.completion_create_params import ResponseFormat
 from typing import Literal
 import google.generativeai as genai
+from PIL import Image
+from io import BytesIO
 
 
 def convert_jlpt_level_to_int(jlpt_level):
@@ -95,10 +98,10 @@ def convert_difficulty_to_int(difficulty):
 
 class AILessonContentGenerator:
     """
-    A service class to handle AI content generation using Gemini for text and OpenAI for images.
+    A service class to handle AI content generation using Gemini for text and OpenAI for all image generation.
     """
     def __init__(self):
-        # Initialize OpenAI client for image generation
+        # Initialize OpenAI client for all image generation
         try:
             self.openai_api_key = os.environ.get('OPENAI_API_KEY')
             if not self.openai_api_key:
@@ -121,7 +124,7 @@ class AILessonContentGenerator:
             current_app.logger.error(f"Failed to initialize Gemini client: {e}")
             self.gemini_model = None
         
-        # For backward compatibility, keep the old client reference for image methods
+        # For backward compatibility, keep the old client reference for OpenAI methods
         self.client = self.openai_client
 
     def _generate_content(self, system_prompt, user_prompt, is_json=False):
@@ -324,35 +327,60 @@ class AILessonContentGenerator:
         
         return {"generated_images": generated_images}
 
-    def generate_single_image(self, prompt: str, size: Literal["1024x1024", "1792x1024", "1024x1792"] = "1024x1024", quality: Literal["standard", "hd"] = "standard"):
-        """Generate a single image using DALL-E."""
-        if not self.client:
+    def generate_single_image(self, prompt: str, size: Literal["1024x1024", "1536x1024", "1024x1536"] = "1024x1024", quality: Literal["standard", "hd"] = "standard"):
+        """Generate a single image using OpenAI's gpt-image-1 model for content images."""
+        if not self.openai_client:
             return {"error": "OpenAI client is not initialized"}
         
         try:
-            response = self.client.images.generate(
-                model="dall-e-3",
-                prompt=prompt,
+            # Enhance prompt for manga style (avoiding safety triggers)
+            enhanced_prompt = f"{prompt}, anime classroom, cheerful instructor, pastel palette, manga art style, clean lines, bright colors, cultural authenticity, professional illustration quality, detailed and expressive"
+            
+            # Generate image using OpenAI's gpt-image-1 model
+            current_app.logger.info(f"Generating image with OpenAI gpt-image-1: {enhanced_prompt[:100]}...")
+            
+            response = self.openai_client.images.generate(
+                model="gpt-image-1",
+                prompt=enhanced_prompt,
                 size=size,
-                quality=quality,
+                quality="high" if quality == "hd" else "medium",
                 n=1
             )
             
-            if response.data:
-                return {
-                    "image_url": response.data[0].url,
-                    "prompt": prompt,
-                    "size": size,
-                    "quality": quality
-                }
-            return {"error": "No image data in response"}
+            if response.data and len(response.data) > 0:
+                # Get the base64 image data
+                img_b64 = response.data[0].b64_json
+                
+                if img_b64:
+                    # Decode base64 to bytes
+                    img_bytes = base64.b64decode(img_b64)
+                    
+                    # Create PIL Image from bytes
+                    image = Image.open(BytesIO(img_bytes))
+                    
+                    return {
+                        "image_url": "openai_gpt_image_1_generated",  # Placeholder - will be handled by download function
+                        "image_data": image,  # Store the PIL Image object
+                        "image_bytes": img_bytes,  # Store raw bytes for saving
+                        "prompt": prompt,
+                        "size": size,
+                        "quality": quality,
+                        "model": "openai-gpt-image-1"
+                    }
+                else:
+                    return {"error": "No base64 image data in OpenAI response"}
+            else:
+                return {"error": "No image data in response from OpenAI"}
             
         except Exception as e:
-            current_app.logger.error(f"Failed to generate image: {e}")
+            current_app.logger.error(f"Failed to generate image with OpenAI gpt-image-1: {e}")
             return {"error": str(e)}
 
     def generate_lesson_tile_background(self, lesson_title: str, lesson_description: str, difficulty_level: int = 1):
-        """Generate a background image specifically optimized for lesson tiles."""
+        """Generate a background image specifically optimized for lesson tiles using OpenAI."""
+        if not self.openai_client:
+            return {"error": "OpenAI client is not initialized"}
+            
         system_prompt = (
             "You are an expert at creating subtle, educational background images for lesson tiles. "
             "Generate a prompt for a background image that will be used behind text on a lesson card. "
@@ -391,13 +419,35 @@ class AILessonContentGenerator:
         if not content:
             return {"error": "Empty response from AI"}
             
-        # Generate the actual background image
+        # Generate the actual background image using OpenAI
         background_prompt = content.strip()
         
         # Add technical specifications for tile backgrounds
         enhanced_prompt = f"{background_prompt}. Soft lighting, subtle texture, optimized for text overlay, professional educational design, high quality, clean composition."
         
-        return self.generate_single_image(enhanced_prompt, "1024x1024", "standard")
+        # Use OpenAI DALL-E for background images
+        try:
+            response = self.openai_client.images.generate(
+                model="dall-e-3",
+                prompt=enhanced_prompt,
+                size="1024x1024",
+                quality="standard",
+                n=1
+            )
+            
+            if response.data:
+                return {
+                    "image_url": response.data[0].url,
+                    "prompt": enhanced_prompt,
+                    "size": "1024x1024",
+                    "quality": "standard",
+                    "model": "openai-dalle3"
+                }
+            return {"error": "No image data in response from OpenAI"}
+            
+        except Exception as e:
+            current_app.logger.error(f"Failed to generate background image with OpenAI: {e}")
+            return {"error": str(e)}
 
     def analyze_content_for_multimedia_needs(self, content_text, lesson_topic):
         """Analyze lesson content to suggest multimedia enhancements."""

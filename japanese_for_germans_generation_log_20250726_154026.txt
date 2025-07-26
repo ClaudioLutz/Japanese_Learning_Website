@@ -1,0 +1,26 @@
+Google Gemini gemini-2.5-pro initialized successfully
+Found 2 Japanese lessons for Germans to generate.
+File loaded: lesson_creation_template.py
+
+--- Processing Topic 1/2: Exploring Japanese Regional Dialects (Hogen) ---
+🤖 Generating lesson structure for: Exploring Japanese Regional Dialects (Hogen)
+Generated structure with 7 content pages
+Generated script for: Eine Reise durch Japans Dialekte: Von Kansai-ben bis Tohoku-ben
+Script saved: lesson_creation_scripts\de_create_eine_reise_durch_japans_dialekte_von_kansai_ben_bis_tohoku_ben_lesson.py
+⏳ Waiting 2 seconds before next generation...
+
+--- Processing Topic 2/2: The Art of Japanese Counters (Josuushi) ---
+🤖 Generating lesson structure for: The Art of Japanese Counters (Josuushi)
+Generated structure with 7 content pages
+Generated script for: Die Kunst der japanischen Zählwörter (Josuushi)
+Script saved: lesson_creation_scripts\de_create_die_kunst_der_japanischen_zählwörter_josuushi_lesson.py
+
+================================================================================
+JAPANESE LESSONS FOR GERMANS - GENERATION SUMMARY
+================================================================================
+Successfully generated: 2 scripts
+Failed generations: 0
+Scripts saved to: lesson_creation_scripts/
+Log saved to: japanese_for_germans_generation_log_20250726_154026.txt
+
+Generation complete! 2 Japanese lesson scripts for German speakers are ready.

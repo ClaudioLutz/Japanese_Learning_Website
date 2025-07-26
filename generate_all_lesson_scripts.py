@@ -26,70 +26,23 @@ import re
 import json
 import time
 from datetime import datetime
-try:
-    import google.generativeai as genai
-    GEMINI_AVAILABLE = True
-except ImportError:
-    GEMINI_AVAILABLE = False
-    print("❌ Google Generative AI library not installed. Install with: pip install google-generativeai")
+from lesson_pipeline_utils import (
+    setup_logging,
+    load_env,
+    initialize_gemini,
+    read_file,
+    save_script,
+    create_script_filename,
+    truncate_text,
+)
 
 # Configuration
-GEMINI_MODEL = "gemini-2.5-pro"  # if you change the model to 1.5 you are a stupid fuck.
-LESSON_TEMPLATE_FILE = "create_onomatopoeia_lesson.py"
+GEMINI_MODEL = "gemini-2.5-pro"
+LESSON_TEMPLATE_FILE = "lesson_creation_template.py"
 TOPICS_FILE = "Japanese lesson generator.md"
 OUTPUT_DIR = "lesson_creation_scripts"
 LOG_FILE = f"lesson_generation_log_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
-
-def setup_logging():
-    """Setup logging to both console and file."""
-    class Logger:
-        def __init__(self, filename):
-            self.terminal = sys.stdout
-            self.log = open(filename, "w", encoding='utf-8')
-
-        def write(self, message):
-            self.terminal.write(message)
-            self.log.write(message)
-            self.log.flush()
-
-        def flush(self):
-            self.terminal.flush()
-            self.log.flush()
-
-    sys.stdout = Logger(LOG_FILE)
-
-def load_env():
-    """Load environment variables from .env file."""
-    env_path = os.path.join(os.path.dirname(__file__), '.env')
-    if os.path.exists(env_path):
-        with open(env_path, 'r') as f:
-            for line in f:
-                if '=' in line and not line.strip().startswith('#'):
-                    key, value = line.strip().split('=', 1)
-                    value = value.strip('"\'')
-                    os.environ[key] = value
-
-def initialize_gemini():
-    """Initialize Google Gemini API."""
-    if not GEMINI_AVAILABLE:
-        print("❌ Google Generative AI library not available.")
-        print("Install with: pip install google-generativeai")
-        return None
-        
-    api_key = os.environ.get('GOOGLE_API_KEY')
-    if not api_key:
-        print("❌ Error: GOOGLE_API_KEY not found in environment variables.")
-        print("Please add your Google Gemini API key to your .env file.")
-        return None
-    
-    try:
-        genai.configure(api_key=api_key)
-        model = genai.GenerativeModel(GEMINI_MODEL)
-        print(f"✅ Google Gemini {GEMINI_MODEL} initialized successfully")
-        return model
-    except Exception as e:
-        print(f"❌ Error initializing Gemini: {e}")
-        return None
+LANGUAGE = "en"
 
 def read_topics_file():
     """Read and parse the Japanese lesson generator.md file."""
@@ -107,7 +60,7 @@ def read_topics_file():
             title = match[1].strip()
             description = match[2].strip()
             
-            # Skip topic #2 (Onomatopoeia) as it already exists
+# Skip topic #2 (Onomatopoeia) as it is the template
             if topic_id != 2:
                 topics.append({
                     'id': topic_id,
@@ -115,23 +68,16 @@ def read_topics_file():
                     'description': description
                 })
         
-        print(f"✅ Found {len(topics)} topics to generate (excluding existing onomatopoeia lesson)")
+        print(f"Found {len(topics)} topics to generate (excluding existing onomatopoeia lesson)")
         return topics
     
     except Exception as e:
-        print(f"❌ Error reading topics file: {e}")
+        print(f"Error reading topics file: {e}")
         return []
 
 def read_template_file():
     """Read the template lesson creation script."""
-    try:
-        with open(LESSON_TEMPLATE_FILE, 'r', encoding='utf-8') as f:
-            template_content = f.read()
-        print(f"✅ Template file loaded: {LESSON_TEMPLATE_FILE}")
-        return template_content
-    except Exception as e:
-        print(f"❌ Error reading template file: {e}")
-        return None
+    return read_file(LESSON_TEMPLATE_FILE)
 
 def convert_difficulty_to_int(difficulty_str):
     """Convert difficulty string to integer."""
@@ -225,28 +171,15 @@ Make sure the lesson is educationally sound, culturally authentic, and engaging 
         if json_start != -1 and json_end != -1:
             json_text = response_text[json_start:json_end]
             lesson_structure = json.loads(json_text)
-            print(f"✅ Generated structure with {len(lesson_structure.get('content_pages', []))} content pages")
+            print(f"Generated structure with {len(lesson_structure.get('content_pages', []))} content pages")
             return lesson_structure
         else:
-            print(f"❌ Could not extract JSON from Gemini response")
+            print(f"Could not extract JSON from Gemini response")
             return None
             
     except Exception as e:
-        print(f"❌ Error generating lesson structure: {e}")
+        print(f"Error generating lesson structure: {e}")
         return None
-
-def create_script_filename(title):
-    """Create a valid filename from lesson title."""
-    # Remove special characters and convert to lowercase
-    filename = re.sub(r'[^\w\s-]', '', title.lower())
-    filename = re.sub(r'[-\s]+', '_', filename)
-    return f"create_{filename}_lesson.py"
-
-def truncate_text(text, max_length):
-    """Truncate text to fit database constraints."""
-    if not text or len(text) <= max_length:
-        return text
-    return text[:max_length-3] + "..."
 
 def generate_lesson_script(template_content, topic, lesson_structure):
     """Generate the lesson creation script using the template with all fixes applied."""
@@ -259,18 +192,18 @@ def generate_lesson_script(template_content, topic, lesson_structure):
         content_pages_end = template_content.find(']', content_pages_start) + 1
         
         if content_pages_start == -1 or content_pages_end == -1:
-            print("❌ Could not find CONTENT_PAGES in template")
+            print("Could not find CONTENT_PAGES in template")
             return None
         
         # Generate new CONTENT_PAGES configuration
         new_content_pages = "CONTENT_PAGES = [\n"
         for i, page in enumerate(lesson_structure['content_pages']):
             new_content_pages += f'    {{\n'
-            new_content_pages += f'        "page_number": {i + 2},\n'  # Start from page 2 (page 1 is intro)
-            new_content_pages += f'        "title": "{page["title"]}",\n'
-            new_content_pages += f'        "keywords": "{truncate_text(page["keywords"], 500)}",\n'
-            new_content_pages += f'        "image_concept": "{truncate_text(page["image_concept"], 1000)}",\n'
-            new_content_pages += f'        "content_focus": "{truncate_text(page["content_focus"], 500)}"\n'
+            new_content_pages += f'        "page_number": {i + 2},\n'
+            new_content_pages += f'        "title": "{page["title"].replace('"', '\\"')}",\n'
+            new_content_pages += f'        "keywords": "{truncate_text(page["keywords"], 500).replace('"', '\\"')}",\n'
+            new_content_pages += f'        "image_concept": "{truncate_text(page["image_concept"], 1000).replace('"', '\\"')}",\n'
+            new_content_pages += f'        "content_focus": "{truncate_text(page["content_focus"], 500).replace('"', '\\"')}"\n'
             new_content_pages += f'    }}'
             if i < len(lesson_structure['content_pages']) - 1:
                 new_content_pages += ','
@@ -364,8 +297,27 @@ from app.ai_services import AILessonContentGenerator'''
         
         # Also need to import LessonCategory
         new_script = new_script.replace(
-            'from app.models import Lesson, LessonContent, QuizQuestion, QuizOption, UserQuizAnswer, UserLessonProgress',
-            'from app.models import Lesson, LessonCategory, LessonContent, QuizQuestion, QuizOption, UserQuizAnswer, UserLessonProgress'
+            'from app.models import Lesson, LessonContent, QuizQuestion, QuizOption',
+            'from app.models import Lesson, LessonCategory, LessonContent, QuizQuestion, QuizOption'
+        )
+
+        # FIX 17: Add UTF-8 encoding fix for Windows console
+        utf8_fix_code = '''import codecs
+
+# Reconfigure stdout to use UTF-8 encoding, especially for Windows
+if sys.stdout.encoding != 'utf-8':
+    try:
+        sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer, 'strict')
+        sys.stderr = codecs.getwriter('utf-8')(sys.stderr.buffer, 'strict')
+    except Exception as e:
+        print(f"Could not reconfigure stdout/stderr to UTF-8: {e}")
+
+'''
+        # Inject the fix after the initial imports
+        new_script = new_script.replace(
+            "import uuid\n",
+            "import uuid\n" + utf8_fix_code,
+            1  # Only replace the first occurrence
         )
 
         # FIX 7: Update script header comment and add encoding declaration
@@ -501,31 +453,20 @@ if sys.stdout.encoding != 'utf-8':
             1  # Only replace the first occurrence
         )
         
-        print(f"✅ Generated script for: {script_title}")
+        print(f"Generated script for: {script_title}")
         return new_script
         
     except Exception as e:
-        print(f"❌ Error generating script: {e}")
+        print(f"Error generating script: {e}")
         return None
 
-def save_script(script_content, filename):
+def save_generated_script(script_content, filename):
     """Save the generated script to the output directory."""
-    try:
-        os.makedirs(OUTPUT_DIR, exist_ok=True)
-        filepath = os.path.join(OUTPUT_DIR, filename)
-        
-        with open(filepath, 'w', encoding='utf-8') as f:
-            f.write(script_content)
-        
-        print(f"✅ Script saved: {filepath}")
-        return True
-    except Exception as e:
-        print(f"❌ Error saving script: {e}")
-        return False
+    return save_script(script_content, filename, OUTPUT_DIR)
 
 def main():
     """Main execution function."""
-    print("🚀 Starting Google Gemini 2.5 Pro Lesson Script Generator - FIXED VERSION")
+    print("Starting Google Gemini 2.5 Pro Lesson Script Generator - FIXED VERSION")
     print("=" * 80)
     print("This version generates scripts with all known issues pre-fixed:")
     print("✓ Correct Python path setup")
@@ -536,13 +477,13 @@ def main():
     print("✓ Correct .env file path resolution")
     print("=" * 80)
     
-    setup_logging()
+    setup_logging(LOG_FILE)
     
     # Load environment variables
     load_env()
     
     # Initialize Gemini
-    model = initialize_gemini()
+    model = initialize_gemini(GEMINI_MODEL)
     if not model:
         return
     
@@ -566,20 +507,20 @@ def main():
         # Generate lesson structure using Gemini
         lesson_structure = generate_lesson_structure(model, topic)
         if not lesson_structure:
-            print(f"❌ Failed to generate structure for: {topic['title']}")
+            print(f"Failed to generate structure for: {topic['title']}")
             failed_generations += 1
             continue
         
         # Generate script with all fixes applied
         script_content = generate_lesson_script(template_content, topic, lesson_structure)
         if not script_content:
-            print(f"❌ Failed to generate script for: {topic['title']}")
+            print(f"Failed to generate script for: {topic['title']}")
             failed_generations += 1
             continue
         
         # Save script
-        filename = create_script_filename(lesson_structure['lesson_title'])
-        if save_script(script_content, filename):
+        filename = create_script_filename(lesson_structure['lesson_title'], LANGUAGE)
+        if save_generated_script(script_content, filename):
             successful_generations += 1
         else:
             failed_generations += 1
@@ -591,26 +532,26 @@ def main():
     
     # Final summary
     print("\n" + "=" * 80)
-    print("📊 GENERATION SUMMARY")
+    print("GENERATION SUMMARY")
     print("=" * 80)
-    print(f"✅ Successfully generated: {successful_generations} scripts")
-    print(f"❌ Failed generations: {failed_generations}")
-    print(f"📁 Scripts saved to: {OUTPUT_DIR}/")
-    print(f"📝 Log saved to: {LOG_FILE}")
+    print(f"Successfully generated: {successful_generations} scripts")
+    print(f"Failed generations: {failed_generations}")
+    print(f"Scripts saved to: {OUTPUT_DIR}/")
+    print(f"Log saved to: {LOG_FILE}")
     
     if successful_generations > 0:
-        print(f"\n🎉 Generation complete! {successful_generations} lesson creation scripts are ready.")
-        print("✅ All scripts generated with fixes applied - no additional fix scripts needed!")
+        print(f"\nGeneration complete! {successful_generations} lesson creation scripts are ready.")
+        print("All scripts generated with fixes applied - no additional fix scripts needed!")
         print("Next step: Run 'python run_all_lesson_scripts.py' to create all lessons in the database.")
         print("\nFixes applied to all generated scripts:")
-        print("  ✓ Correct Python path setup for subdirectory execution")
-        print("  ✓ Consolidated imports to prevent UnboundLocalError")
-        print("  ✓ Difficulty levels converted to integers")
-        print("  ✓ Database field length constraints handled")
-        print("  ✓ Correct .env file path resolution")
-        print("  ✓ All imports consolidated at top level")
+        print("  - Correct Python path setup for subdirectory execution")
+        print("  - Consolidated imports to prevent UnboundLocalError")
+        print("  - Difficulty levels converted to integers")
+        print("  - Database field length constraints handled")
+        print("  - Correct .env file path resolution")
+        print("  - All imports consolidated at top level")
     else:
-        print("\n❌ No scripts were generated successfully. Please check the errors above.")
+        print("\nNo scripts were generated successfully. Please check the errors above.")
 
 if __name__ == "__main__":
     main()

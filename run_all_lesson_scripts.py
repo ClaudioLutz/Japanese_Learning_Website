@@ -22,17 +22,19 @@ import time
 import argparse
 from datetime import datetime
 import glob
+from lesson_pipeline_utils import setup_logging
 
 # Configuration
 SCRIPTS_DIR = "lesson_creation_scripts"
-LOG_FILE = f"batch_execution_log_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+LOG_FILE = f"logs/batch_execution_log_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
 EXECUTION_DELAY = 3  # Seconds between script executions
 
 class BatchExecutor:
-    def __init__(self, dry_run=False, skip_existing=False, selected_topics=None):
+    def __init__(self, dry_run=False, skip_existing=False, selected_topics=None, language='en'):
         self.dry_run = dry_run
         self.skip_existing = skip_existing
         self.selected_topics = selected_topics or []
+        self.language = language
         self.successful_executions = 0
         self.failed_executions = 0
         self.skipped_executions = 0
@@ -40,34 +42,16 @@ class BatchExecutor:
         self.errors = []
         
         # Setup logging
-        self.setup_logging()
-    
-    def setup_logging(self):
-        """Setup logging to both console and file."""
-        class Logger:
-            def __init__(self, filename):
-                self.terminal = sys.stdout
-                self.log = open(filename, "w", encoding='utf-8')
-
-            def write(self, message):
-                self.terminal.write(message)
-                self.log.write(message)
-                self.log.flush()
-
-            def flush(self):
-                self.terminal.flush()
-                self.log.flush()
-
-        sys.stdout = Logger(LOG_FILE)
+        setup_logging(LOG_FILE)
     
     def discover_scripts(self):
         """Discover all lesson creation scripts in the scripts directory."""
         if not os.path.exists(SCRIPTS_DIR):
-            print(f"❌ Scripts directory not found: {SCRIPTS_DIR}")
+            print(f"Scripts directory not found: {SCRIPTS_DIR}")
             return []
         
-        # Find all Python scripts that start with "create_" and end with "_lesson.py"
-        pattern = os.path.join(SCRIPTS_DIR, "create_*_lesson.py")
+        # Find all Python scripts that start with the language prefix
+        pattern = os.path.join(SCRIPTS_DIR, f"{self.language}_create_*_lesson.py")
         scripts = glob.glob(pattern)
         
         # Sort scripts alphabetically for consistent execution order
@@ -84,7 +68,7 @@ class BatchExecutor:
                         break
             scripts = filtered_scripts
         
-        print(f"✅ Found {len(scripts)} lesson creation scripts")
+        print(f"Found {len(scripts)} lesson creation scripts")
         for script in scripts:
             print(f"   - {os.path.basename(script)}")
         
@@ -122,17 +106,17 @@ class BatchExecutor:
                     existing_lesson = Lesson.query.filter_by(title=lesson_title).first()
                     
                     if existing_lesson:
-                        print(f"  📚 Lesson '{lesson_title}' already exists in database (ID: {existing_lesson.id})")
+                        print(f"  Lesson '{lesson_title}' already exists in database (ID: {existing_lesson.id})")
                         return True
                     else:
-                        print(f"  🆕 Lesson '{lesson_title}' not found in database - will create")
+                        print(f"  Lesson '{lesson_title}' not found in database - will create")
                         return False
                 else:
-                    print(f"  ⚠️  Could not extract lesson title from {script_name}")
+                    print(f"  Could not extract lesson title from {script_name}")
                     return False
                     
         except Exception as e:
-            print(f"  ❌ Error checking if lesson exists: {e}")
+            print(f"  Error checking if lesson exists: {e}")
             return False
     
     def execute_script(self, script_path):
@@ -140,15 +124,15 @@ class BatchExecutor:
         script_name = os.path.basename(script_path)
         
         if self.dry_run:
-            print(f"🔍 [DRY RUN] Would execute: {script_name}")
+            print(f"[DRY RUN] Would execute: {script_name}")
             return True
         
         if self.check_lesson_exists(script_path):
-            print(f"⏭️  Skipping {script_name} (lesson already exists)")
+            print(f"Skipping {script_name} (lesson already exists)")
             self.skipped_executions += 1
             return True
         
-        print(f"🎯 Executing: {script_name}")
+        print(f"Executing: {script_name}")
         start_time = time.time()
         
         process = None
@@ -193,7 +177,7 @@ class BatchExecutor:
             self.execution_times[script_name] = execution_time
             
             if result.returncode == 0:
-                print(f"✅ Success: {script_name} ({execution_time:.1f}s)")
+                print(f"Success: {script_name} ({execution_time:.1f}s)")
                 
                 # Print last few lines of output for confirmation
                 if result.stdout:
@@ -206,7 +190,7 @@ class BatchExecutor:
                 self.successful_executions += 1
                 return True
             else:
-                print(f"❌ Failed: {script_name} (exit code: {result.returncode})")
+                print(f"Failed: {script_name} (exit code: {result.returncode})")
                 
                 # Print error output
                 if result.stderr:
@@ -224,16 +208,16 @@ class BatchExecutor:
                 
         except subprocess.TimeoutExpired as e:
             execution_time = time.time() - start_time
-            print(f"⏰ Timeout: {script_name} (exceeded 30 minutes)")
+            print(f"Timeout: {script_name} (exceeded 30 minutes)")
             
             # Kill the process if it's still running
             try:
                 if process and process.poll() is None:  # Process is still running
                     process.kill()
                     process.wait()
-                    print(f"   🔪 Process terminated due to timeout")
+                    print(f"   Process terminated due to timeout")
             except Exception as kill_error:
-                print(f"   ⚠️  Could not kill process: {kill_error}")
+                print(f"   Could not kill process: {kill_error}")
             
             self.errors.append({
                 'script': script_name,
@@ -245,7 +229,7 @@ class BatchExecutor:
             
         except Exception as e:
             execution_time = time.time() - start_time
-            print(f"💥 Exception: {script_name} - {str(e)}")
+            print(f"Exception: {script_name} - {str(e)}")
             self.errors.append({
                 'script': script_name,
                 'exit_code': 'EXCEPTION',
@@ -260,27 +244,27 @@ class BatchExecutor:
         total_time = sum(self.execution_times.values())
         
         print("\n" + "=" * 60)
-        print("📊 BATCH EXECUTION SUMMARY")
+        print("BATCH EXECUTION SUMMARY")
         print("=" * 60)
-        print(f"📈 Total scripts processed: {total_scripts}")
-        print(f"✅ Successful executions: {self.successful_executions}")
-        print(f"❌ Failed executions: {self.failed_executions}")
-        print(f"⏭️  Skipped executions: {self.skipped_executions}")
-        print(f"⏱️  Total execution time: {total_time:.1f} seconds ({total_time/60:.1f} minutes)")
+        print(f"Total scripts processed: {total_scripts}")
+        print(f"Successful executions: {self.successful_executions}")
+        print(f"Failed executions: {self.failed_executions}")
+        print(f"Skipped executions: {self.skipped_executions}")
+        print(f"Total execution time: {total_time:.1f} seconds ({total_time/60:.1f} minutes)")
         
         if self.execution_times:
             avg_time = total_time / len(self.execution_times)
-            print(f"📊 Average execution time: {avg_time:.1f} seconds")
+            print(f"Average execution time: {avg_time:.1f} seconds")
         
         # Print execution times for successful scripts
         if self.execution_times:
-            print(f"\n⏱️  Individual Execution Times:")
+            print(f"\nIndividual Execution Times:")
             for script, exec_time in sorted(self.execution_times.items()):
                 print(f"   {script}: {exec_time:.1f}s")
         
         # Print errors if any
         if self.errors:
-            print(f"\n❌ Errors Encountered:")
+            print(f"\nErrors Encountered:")
             for error in self.errors:
                 print(f"   {error['script']}: {error['exit_code']}")
                 if len(error['error']) > 100:
@@ -288,36 +272,36 @@ class BatchExecutor:
                 else:
                     print(f"      {error['error']}")
         
-        print(f"\n📝 Detailed log saved to: {LOG_FILE}")
+        print(f"\nDetailed log saved to: {LOG_FILE}")
         
         # Final status
         if self.failed_executions == 0:
-            print(f"\n🎉 All scripts executed successfully!")
+            print(f"\nAll scripts executed successfully!")
             if self.successful_executions > 0:
                 print(f"   {self.successful_executions} lessons have been created in the database.")
         else:
-            print(f"\n⚠️  {self.failed_executions} scripts failed. Check the errors above.")
+            print(f"\n{self.failed_executions} scripts failed. Check the errors above.")
     
     def run(self):
         """Main execution method."""
-        print("🚀 Starting Batch Lesson Script Execution")
+        print("Starting Batch Lesson Script Execution")
         print("=" * 60)
         
         if self.dry_run:
-            print("🔍 DRY RUN MODE - No scripts will be actually executed")
+            print("DRY RUN MODE - No scripts will be actually executed")
         
         if self.skip_existing:
-            print("⏭️  SKIP EXISTING MODE - Will skip lessons that already exist")
+            print("SKIP EXISTING MODE - Will skip lessons that already exist")
         
         if self.selected_topics:
-            print(f"🎯 SELECTIVE MODE - Only processing topics: {', '.join(self.selected_topics)}")
+            print(f"SELECTIVE MODE - Only processing topics: {', '.join(self.selected_topics)}")
         
         print()
         
         # Discover scripts
         scripts = self.discover_scripts()
         if not scripts:
-            print("❌ No scripts found to execute.")
+            print("No scripts found to execute.")
             return
         
         # Execute scripts
@@ -342,11 +326,19 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python run_all_lesson_scripts.py                    # Run all scripts
-  python run_all_lesson_scripts.py --dry-run          # Preview what would be executed
-  python run_all_lesson_scripts.py --skip-existing    # Skip already created lessons
-  python run_all_lesson_scripts.py --topics "internet,anime,business"  # Run specific topics
+  python run_all_lesson_scripts.py --language en                    # Run all English scripts
+  python run_all_lesson_scripts.py --language de --dry-run          # Preview what would be executed for German
+  python run_all_lesson_scripts.py --language en --skip-existing    # Skip already created English lessons
+  python run_all_lesson_scripts.py --language de --topics "internet,anime"  # Run specific German topics
         """
+    )
+    
+    parser.add_argument(
+        '--language',
+        type=str,
+        default='en',
+        choices=['en', 'de'],
+        help='Specify which language scripts to execute: en, de.'
     )
     
     parser.add_argument(
@@ -378,7 +370,8 @@ Examples:
     executor = BatchExecutor(
         dry_run=args.dry_run,
         skip_existing=args.skip_existing,
-        selected_topics=selected_topics
+        selected_topics=selected_topics,
+        language=args.language
     )
     
     executor.run()
