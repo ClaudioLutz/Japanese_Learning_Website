@@ -1,0 +1,40 @@
+🚀 Starting Batch Lesson Script Execution
+============================================================
+
+✅ Found 19 lesson creation scripts
+   - create_core_grammar_mastering_japanese_particles_は_が_を_and_に_lesson.py
+   - create_emergency_and_safety_in_japan_a_practical_guide_lesson.py
+   - create_inside_the_japanese_workplace_company_culture_and_norms_lesson.py
+   - create_making_friends_in_japan_from_hajimemashite_to_mata_asobo_lesson.py
+   - create_mastering_japanese_bureaucracy_your_guide_to_official_procedures_lesson.py
+   - create_mastering_keigo_the_art_of_japanese_politeness_lesson.py
+   - create_mastering_the_japanese_supermarket_from_aisles_to_checkout_lesson.py
+   - create_navigating_nuance_masculine_and_feminine_speech_in_japanese_lesson.py
+   - create_the_art_of_giving_receiving_mastering_あげる_くれる_もらう_lesson.py
+   - create_the_art_of_japanese_counters_counting_with_josuushi_lesson.py
+   - create_the_art_of_laughter_an_introduction_to_japanese_humor_lesson.py
+   - create_the_japanese_music_scene_from_j_pop_to_enka_lesson.py
+   - create_verb_conjugation_fundamentals_mastering_the_core_of_japanese_lesson.py
+   - create_心の彩り微妙な感情の表現_kokoro_no_irodori_bimyō_na_kanjō_no_hyōgen_the_colors_of_the_heart_expressing_subtle_emotions_lesson.py
+   - create_恋の日本語恋愛と人間関係のガイド_koi_no_nihongo_a_guide_to_romance_and_relationships_lesson.py
+   - create_日本のスポーツ文化相撲野球そして武道_japans_sports_culture_sumo_baseball_and_budo_lesson.py
+   - create_日本のテクノロジーとイノベーション_nihon_no_tekunorojī_to_inobēshon_lesson.py
+   - create_日本の住まい探しアパート契約と新生活_nihon_no_sumai_sagashi_apāto_keiyaku_to_shin_seikatsu_finding_a_home_in_japan_renting_an_apartment_and_starting_a_new_life_lesson.py
+   - create_日本の学校生活入学から卒業まで_japanese_school_life_from_entrance_to_graduation_lesson.py
+
+--- [1/19] Processing: create_core_grammar_mastering_japanese_particles_は_が_を_and_に_lesson.py ---
+🎯 Executing: create_core_grammar_mastering_japanese_particles_は_が_を_and_に_lesson.py
+   DEBUG: Using DATABASE_URI: postgresql://postgres:E8BnuCBpWKP@localhost:5433/japanese_learning
+   Traceback (most recent call last):
+   File "C:\Codes\Japanese_learning_Website_project\Japanese_Learning_Website\lesson_creation_scripts\create_core_grammar_mastering_japanese_particles_\u306f_\u304c_\u3092_and_\u306b_lesson.py", line 761, in <module>
+   create_lesson(app)
+   ~~~~~~~~~~~~~^^^^^
+   File "C:\Codes\Japanese_learning_Website_project\Japanese_Learning_Website\lesson_creation_scripts\create_core_grammar_mastering_japanese_particles_\u306f_\u304c_\u3092_and_\u306b_lesson.py", line 161, in create_lesson
+   print(f"--- Creating Lesson: {LESSON_TITLE} ---")
+   ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   File "C:\Users\claud\AppData\Local\Programs\Python\Python313\Lib\encodings\cp1252.py", line 19, in encode
+   return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+   ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   UnicodeEncodeError: 'charmap' codec can't encode character '\u306f' in position 64: character maps to <undefined>
+❌ Failed: create_core_grammar_mastering_japanese_particles_は_が_を_and_に_lesson.py (exit code: 1)
+⏳ Waiting 3 seconds before next execution...

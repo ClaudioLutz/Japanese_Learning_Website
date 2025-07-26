@@ -1,0 +1,29 @@
+✅ Google Gemini gemini-2.5-pro initialized successfully
+✅ Found 1 topics to generate (excluding existing onomatopoeia lesson)
+✅ Template file loaded: create_onomatopoeia_lesson.py
+
+--- Processing Topic 1/1: Mastering Keigo (Honorific Language) ---
+🤖 Generating lesson structure for: Mastering Keigo (Honorific Language)
+✅ Generated structure with 7 content pages
+✅ Generated script for: Mastering Keigo: The Art of Japanese Politeness
+✅ Script saved: lesson_creation_scripts\create_mastering_keigo_the_art_of_japanese_politeness_lesson.py
+
+================================================================================
+📊 GENERATION SUMMARY
+================================================================================
+✅ Successfully generated: 1 scripts
+❌ Failed generations: 0
+📁 Scripts saved to: lesson_creation_scripts/
+📝 Log saved to: lesson_generation_log_20250725_222828.txt
+
+🎉 Generation complete! 1 lesson creation scripts are ready.
+✅ All scripts generated with fixes applied - no additional fix scripts needed!
+Next step: Run 'python run_all_lesson_scripts.py' to create all lessons in the database.
+
+Fixes applied to all generated scripts:
+  ✓ Correct Python path setup for subdirectory execution
+  ✓ Consolidated imports to prevent UnboundLocalError
+  ✓ Difficulty levels converted to integers
+  ✓ Database field length constraints handled
+  ✓ Correct .env file path resolution
+  ✓ All imports consolidated at top level
