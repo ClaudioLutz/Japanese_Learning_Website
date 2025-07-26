@@ -381,7 +381,7 @@
                     <div class="page-menu-item" onclick="goToPage({{ loop.index0 }})" data-page="{{ loop.index0 }}">
                         <div class="page-menu-number">{{ loop.index }}</div>
                         <div>
-                            <div class="fw-bold">{{ page.metadata.title or 'Page ' ~ loop.index }}</div>
+                            <div class="fw-bold">{{ page.metadata.title or (page.content[0].title if page.content else 'Page ' ~ loop.index) }}</div>
                             {% if page.metadata.description %}
                             <small class="text-muted">{{ page.metadata.description }}</small>
                             {% endif %}
