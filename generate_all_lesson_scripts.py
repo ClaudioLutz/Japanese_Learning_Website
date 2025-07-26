@@ -151,6 +151,18 @@ def convert_difficulty_to_int(difficulty_str):
 
 def generate_lesson_structure(model, topic):
     """Use Gemini to generate lesson structure for a topic."""
+    
+    # List of available categories
+    available_categories = [
+        "Culture & Traditions",
+        "Food & Dining",
+        "Daily Life & Society",
+        "Pop Culture & Modern Japan",
+        "Language & Communication",
+        "Travel & Geography",
+        "Language Fundamentals"
+    ]
+    
     prompt = f"""
 You are an expert Japanese language educator and curriculum designer. Analyze the following Japanese lesson topic and create a comprehensive lesson structure.
 
@@ -161,6 +173,7 @@ Generate a detailed lesson structure in JSON format with the following specifica
 
 1. LESSON METADATA:
    - Determine appropriate difficulty level (Beginner, Intermediate, or Advanced)
+   - Choose the most relevant category from this list: {', '.join(available_categories)}
    - Create comprehensive keywords (10-15 relevant terms)
    - Define cultural focus areas
    - Write an engaging lesson description (2-3 sentences)
@@ -182,6 +195,7 @@ Return ONLY a valid JSON object with this exact structure:
   "lesson_title": "Complete lesson title",
   "lesson_description": "Detailed description for students",
   "difficulty": "Beginner/Intermediate/Advanced",
+  "category_name": "Chosen Category Name",
   "keywords": "comma-separated keywords",
   "cultural_focus": "main cultural aspects covered",
   "content_pages": [
@@ -315,6 +329,45 @@ from app.ai_services import AILessonContentGenerator'''
             f'difficulty_level={difficulty_int},  # 1=Beginner, 2=Intermediate, 3=Advanced'
         )
         
+        # Add category assignment logic
+        category_name = lesson_structure.get("category_name", "Language Fundamentals")
+        
+        # Inject category lookup and assignment into the create_lesson function
+        category_logic = f'''
+        # Find category
+        category = LessonCategory.query.filter_by(name="{category_name}").first()
+        if not category:
+            print(f"[WARNING] Category '{category_name}' not found. Defaulting to 'Language Fundamentals'.")
+            category = LessonCategory.query.filter_by(name="Language Fundamentals").first()
+            if not category:
+                print("[ERROR] Default category 'Language Fundamentals' not found. Cannot assign category.")
+                # Create it if it doesn't exist
+                category = LessonCategory(name="Language Fundamentals", description="Core concepts of the Japanese language.")
+                db.session.add(category)
+                db.session.commit()
+                print("[OK] Created default category 'Language Fundamentals'.")
+
+        # Create the lesson
+        lesson = Lesson(
+            title=LESSON_TITLE,
+            description=LESSON_DESCRIPTION,
+            lesson_type="free",
+            difficulty_level={difficulty_int},
+            is_published=True,
+            category_id=category.id if category else None
+        )
+'''
+        
+        # Replace the original lesson creation block
+        lesson_creation_pattern = r'# Create the lesson\n        lesson = Lesson\([\s\S]*?\)'
+        new_script = re.sub(lesson_creation_pattern, category_logic, new_script, 1)
+        
+        # Also need to import LessonCategory
+        new_script = new_script.replace(
+            'from app.models import Lesson, LessonContent, QuizQuestion, QuizOption, UserQuizAnswer, UserLessonProgress',
+            'from app.models import Lesson, LessonCategory, LessonContent, QuizQuestion, QuizOption, UserQuizAnswer, UserLessonProgress'
+        )
+
         # FIX 7: Update script header comment and add encoding declaration
         script_title = lesson_structure["lesson_title"]
         new_header = f'#!/usr/bin/env python3\n# -*- coding: utf-8 -*-\n"""\nThis script creates a comprehensive {script_title} lesson organized into pages.\nEach content page covers different aspects of the topic with explanations, followed by dedicated quiz pages.\nThe quizzes are separated from the explanatory content as requested.\n\nFIXES APPLIED:\n- Correct Python path setup for subdirectory execution\n- Consolidated imports to avoid UnboundLocalError\n- Proper difficulty level integer conversion\n- Database field length constraints handled\n- Correct .env file path resolution\n- UTF-8 encoding declaration for Unicode support\n"""'
