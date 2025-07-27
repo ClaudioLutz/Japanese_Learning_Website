@@ -379,14 +379,17 @@
                 <div class="page-overview-content show" id="pageOverviewContent">
                     {% for page in lesson.pages %}
                     {% set page_content_count = page.content|length %}
-                    {% set completed_content_count = 0 %}
                     {% if current_user.is_authenticated and progress %}
                         {% set content_progress = progress.get_content_progress() %}
+                        {% set completed_content_ids = [] %}
                         {% for content in page.content %}
-                            {% if content_progress.get(content.id|string) == true %}
-                                {% set completed_content_count = completed_content_count + 1 %}
+                            {% if content_progress.get(content.id|string) == true or content_progress.get(content.id) == true %}
+                                {% if completed_content_ids.append(content.id) %}{% endif %}
                             {% endif %}
                         {% endfor %}
+                        {% set completed_content_count = completed_content_ids|length %}
+                    {% else %}
+                        {% set completed_content_count = 0 %}
                     {% endif %}
                     <!-- DEBUG: Page {{ loop.index }}, Total: {{ page_content_count }}, Completed: {{ completed_content_count }} -->
                     <div class="page-menu-item" onclick="goToPage({{ loop.index0 }})" data-page="{{ loop.index0 }}">
@@ -403,9 +406,9 @@
                                     {{ completed_content_count }}/{{ page_content_count }} completed
                                 </small>
                                 {% if page_content_count > 0 %}
-                                <div class="progress mt-1" style="height: 4px;">
+                                <div class="progress mt-1" style="height: 6px; background-color: #e9ecef; border-radius: 3px;">
                                     <div class="progress-bar bg-success" role="progressbar" 
-                                         style="width: {{ (completed_content_count / page_content_count * 100)|round(1) }}%" 
+                                         style="width: {{ (completed_content_count / page_content_count * 100)|round(1) }}%; min-width: 0;" 
                                          aria-valuenow="{{ (completed_content_count / page_content_count * 100)|round(1) }}" 
                                          aria-valuemin="0" aria-valuemax="100">
                                     </div>
@@ -547,24 +550,11 @@
                                                 {% else %}
                                                     {% if content.content_type == 'text' %}
                                                     <div class="text-content-container">
-                                                        {% if content.title %}
-                                                        <div class="content-header mb-3">
-                                                            <h4 class="content-title">{{ content.title }}</h4>
-                                                            {% if content.content_text and 'information_slide' in content.content_text %}
-                                                            <span class="badge bg-info">Information Slide</span>
-                                                            {% endif %}
-                                                        </div>
-                                                        {% endif %}
-                                                        
                                                         <div class="rich-text-content">
                                                             {{ content.content_text | safe }}
                                                         </div>
                                                     </div>
                                                     {% else %}
-                                                        {% if content.content_text %}
-                                                        <div class="mb-3">{{ content.content_text | safe }}</div>
-                                                        {% endif %}
-                                                        
                                                         {% if content.content_type == 'image' %}
                                                             {% if content.file_path %}
                                                             <img src="{{ url_for('static', filename='uploads/' + content.file_path) }}" class="img-fluid rounded" alt="{{ content.title }}" style="max-width: 100%; height: auto;">
@@ -581,6 +571,10 @@
                                                                 <source src="{{ content.media_url }}" type="audio/mpeg">
                                                                 Your browser does not support the audio element.
                                                             </audio>
+                                                            {% endif %}
+                                                        {% else %}
+                                                            {% if content.content_text %}
+                                                            <div class="mb-3">{{ content.content_text | safe }}</div>
                                                             {% endif %}
                                                         {% endif %}
                                                     {% endif %}
@@ -1017,11 +1011,13 @@ async function markContentComplete(contentId) {
             
             // Update UI
             const contentItem = document.querySelector(`[data-content-id="${contentId}"]`);
-            const markBtn = contentItem.querySelector('.mark-complete-btn');
-            const completedBadge = contentItem.querySelector('.completed-badge');
-            
-            markBtn.style.display = 'none';
-            completedBadge.style.display = 'inline';
+            if (contentItem) {
+                const markBtn = contentItem.querySelector('.mark-complete-btn');
+                const completedBadge = contentItem.querySelector('.completed-badge');
+                
+                if (markBtn) markBtn.style.display = 'none';
+                if (completedBadge) completedBadge.style.display = 'inline';
+            }
             
             // Update progress bar
             const progressBar = document.querySelector('.progress-bar');
@@ -1030,29 +1026,47 @@ async function markContentComplete(contentId) {
                 progressBar.setAttribute('aria-valuenow', progress.progress_percentage);
                 
                 // Update percentage text
-                const percentageText = document.querySelector('.progress').previousElementSibling.querySelector('.text-muted');
+                const percentageText = document.querySelector('.progress').previousElementSibling?.querySelector('.text-muted');
                 if (percentageText) {
                     percentageText.textContent = progress.progress_percentage + '%';
                 }
             }
             
             // Update page overview completion counts
-            updatePageOverviewCompletionCounts();
+            try {
+                updatePageOverviewCompletionCounts(contentId);
+            } catch (overviewError) {
+                console.warn('Error updating page overview:', overviewError);
+                // Don't show error to user for this non-critical update
+            }
             
             // Show completion message if 100%
             if (progress.progress_percentage === 100) {
-                const completionMessage = document.createElement('div');
-                completionMessage.className = 'alert alert-success mt-3';
-                completionMessage.innerHTML = '<i class="fas fa-trophy"></i> Congratulations! You have completed this lesson!';
-                document.querySelector('.card-body').appendChild(completionMessage);
+                const cardBody = document.querySelector('.card-body');
+                if (cardBody && !cardBody.querySelector('.alert-success')) {
+                    const completionMessage = document.createElement('div');
+                    completionMessage.className = 'alert alert-success mt-3';
+                    completionMessage.innerHTML = '<i class="fas fa-trophy"></i> Congratulations! You have completed this lesson!';
+                    cardBody.appendChild(completionMessage);
+                }
             }
             
         } else {
-            alert('Error updating progress. Please try again.');
+            const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+            console.error('Server error response:', errorData);
+            alert('Error updating progress: ' + (errorData.error || 'Please try again.'));
         }
     } catch (error) {
         console.error('Error marking content complete:', error);
-        alert('Error updating progress. Please try again.');
+        // Only show error if it's a network error or parsing error
+        if (error instanceof TypeError && error.message.includes('fetch')) {
+            alert('Network error. Please check your connection and try again.');
+        } else if (error instanceof SyntaxError) {
+            alert('Server response error. Please try again.');
+        } else {
+            console.error('Unexpected error in markContentComplete:', error);
+            // Don't show alert for unexpected errors that might be UI-related
+        }
     }
 }
 
@@ -1257,35 +1271,73 @@ function handleSwipe() {
 
 function initializePageOverviewCompletionCounts() {
     // This function preserves the server-side calculated completion counts
-    // and only updates them when content is actually marked complete
+    // and ensures the DOM state matches the server-side progress data
     console.log('Initializing page overview completion counts...');
     
+    // Set the correct DOM state for all content items based on server-side progress data
+    {% if current_user.is_authenticated and progress %}
+    const contentProgress = {{ progress.get_content_progress() | tojson }};
+    console.log('Server-side content progress:', contentProgress);
+    
+    // Update DOM elements to match server-side progress
+    Object.keys(contentProgress).forEach(contentId => {
+        if (contentProgress[contentId] === true) {
+            const contentItem = document.querySelector(`[data-content-id="${contentId}"]`);
+            if (contentItem) {
+                const markBtn = contentItem.querySelector('.mark-complete-btn');
+                const completedBadge = contentItem.querySelector('.completed-badge');
+                
+                if (markBtn) markBtn.style.display = 'none';
+                if (completedBadge) completedBadge.style.display = 'inline';
+            }
+        }
+    });
+    {% endif %}
+    
     // The server-side template has already calculated the correct completion counts
-    // We don't need to recalculate them on initial load, just ensure they're visible
+    // We don't need to recalculate them on initial load, just ensure they're preserved
     const pageOverviewContent = document.getElementById('pageOverviewContent');
     if (pageOverviewContent && pageOverviewContent.classList.contains('show')) {
-        console.log('Page overview is visible with server-side calculated counts');
+        console.log('Page overview is visible with server-side calculated counts preserved');
     }
 }
 
-function updatePageOverviewCompletionCounts() {
+function updatePageOverviewCompletionCounts(completedContentId) {
+    console.log('Updating page overview completion counts for content ID:', completedContentId);
+    
     // Get all page menu items
     const pageMenuItems = document.querySelectorAll('.page-menu-item');
     
     pageMenuItems.forEach((menuItem, pageIndex) => {
-        // Get all content items for this page
-        const pageContentItems = document.querySelectorAll(`.carousel-item:nth-child(${pageIndex + 1}) [data-content-id]`);
+        // Get the page number from the data attribute or calculate it
+        const pageNumber = pageIndex + 1;
+        
+        // Get all content items for this specific page
+        const pageContentItems = document.querySelectorAll(`.carousel-item:nth-child(${pageNumber}) [data-content-id]`);
         
         let completedCount = 0;
         const totalCount = pageContentItems.length;
         
-        // Count completed items
+        // Count completed items by checking both the completed badge visibility and mark complete button visibility
         pageContentItems.forEach(contentItem => {
+            const contentId = contentItem.getAttribute('data-content-id');
             const completedBadge = contentItem.querySelector('.completed-badge');
-            if (completedBadge && completedBadge.style.display !== 'none') {
+            const markCompleteBtn = contentItem.querySelector('.mark-complete-btn');
+            
+            // An item is completed if:
+            // 1. The completed badge is visible (not hidden)
+            // 2. OR the mark complete button is hidden (meaning it was completed)
+            // 3. OR this is the content item that was just completed
+            const isCompleted = (completedBadge && completedBadge.style.display !== 'none') ||
+                              (markCompleteBtn && markCompleteBtn.style.display === 'none') ||
+                              (completedContentId && contentId === completedContentId.toString());
+            
+            if (isCompleted) {
                 completedCount++;
             }
         });
+        
+        console.log(`Page ${pageNumber}: ${completedCount}/${totalCount} completed`);
         
         // Update the completion text
         const completionText = menuItem.querySelector('small');
@@ -1312,5 +1364,199 @@ window.addEventListener('beforeunload', function() {
             JSON.stringify({ time_spent: timeSpent }));
     }
 });
+
+// Japanese Text Auto-Detection and Audio System
+class JapaneseTextAudioSystem {
+    constructor() {
+        this.japaneseRegex = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF\u3000-\u303F]/;
+        this.init();
+    }
+    
+    init() {
+        // Process content when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            this.processAllContent();
+        });
+    }
+    
+    processAllContent() {
+        // Target lesson content areas
+        const contentAreas = document.querySelectorAll(
+            '.content-item, .rich-text-content, .text-content-container, .details'
+        );
+        
+        contentAreas.forEach(area => {
+            this.processElement(area);
+        });
+    }
+    
+    processElement(element) {
+        // Skip if already processed
+        if (element.dataset.japaneseProcessed) return;
+        
+        // Process text nodes
+        this.processTextNodes(element);
+        element.dataset.japaneseProcessed = 'true';
+    }
+    
+    processTextNodes(element) {
+        const walker = document.createTreeWalker(
+            element,
+            NodeFilter.SHOW_TEXT,
+            {
+                acceptNode: (node) => {
+                    // Skip if parent already has audio functionality
+                    if (node.parentElement.classList.contains('japanese-audio-text') ||
+                        node.parentElement.classList.contains('audio-btn')) {
+                        return NodeFilter.FILTER_REJECT;
+                    }
+                    
+                    // Only process nodes with Japanese text
+                    return this.japaneseRegex.test(node.textContent) ? 
+                        NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+                }
+            }
+        );
+        
+        const textNodes = [];
+        let node;
+        while (node = walker.nextNode()) {
+            textNodes.push(node);
+        }
+        
+        // Process each text node
+        textNodes.forEach(textNode => {
+            this.wrapJapaneseText(textNode);
+        });
+    }
+    
+    wrapJapaneseText(textNode) {
+        const text = textNode.textContent;
+        const segments = this.findJapaneseSegments(text);
+        
+        if (segments.length === 0) return;
+        
+        const fragment = document.createDocumentFragment();
+        let lastIndex = 0;
+        
+        segments.forEach(segment => {
+            // Add text before Japanese segment
+            if (segment.start > lastIndex) {
+                fragment.appendChild(
+                    document.createTextNode(text.slice(lastIndex, segment.start))
+                );
+            }
+            
+            // Create clickable Japanese text element
+            const audioSpan = document.createElement('span');
+            audioSpan.className = 'japanese-audio-text';
+            audioSpan.textContent = segment.text;
+            audioSpan.setAttribute('data-japanese-text', segment.text);
+            audioSpan.setAttribute('title', 'Click to hear pronunciation');
+            audioSpan.style.cursor = 'pointer';
+            
+            // Add click handler
+            audioSpan.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.playText(segment.text, audioSpan);
+            });
+            
+            fragment.appendChild(audioSpan);
+            lastIndex = segment.end;
+        });
+        
+        // Add remaining text
+        if (lastIndex < text.length) {
+            fragment.appendChild(
+                document.createTextNode(text.slice(lastIndex))
+            );
+        }
+        
+        // Replace original text node
+        textNode.parentNode.replaceChild(fragment, textNode);
+    }
+    
+    findJapaneseSegments(text) {
+        const segments = [];
+        let currentSegment = null;
+        
+        for (let i = 0; i < text.length; i++) {
+            const char = text[i];
+            const isJapanese = this.isJapaneseChar(char);
+            
+            if (isJapanese) {
+                if (!currentSegment) {
+                    currentSegment = {
+                        text: char,
+                        start: i,
+                        end: i + 1
+                    };
+                } else {
+                    currentSegment.text += char;
+                    currentSegment.end = i + 1;
+                }
+            } else {
+                if (currentSegment) {
+                    if (currentSegment.text.trim().length > 0) {
+                        segments.push(currentSegment);
+                    }
+                    currentSegment = null;
+                }
+            }
+        }
+        
+        // Handle segment at end
+        if (currentSegment && currentSegment.text.trim().length > 0) {
+            segments.push(currentSegment);
+        }
+        
+        return segments;
+    }
+    
+    isJapaneseChar(char) {
+        const code = char.charCodeAt(0);
+        return (
+            (code >= 0x3040 && code <= 0x309F) || // Hiragana
+            (code >= 0x30A0 && code <= 0x30FF) || // Katakana
+            (code >= 0x4E00 && code <= 0x9FAF) || // Kanji
+            (code >= 0x3000 && code <= 0x303F)    // Japanese punctuation
+        );
+    }
+    
+    playText(text, element) {
+        if ('speechSynthesis' in window) {
+            // Add visual feedback
+            element.classList.add('playing-audio');
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'ja-JP';
+            utterance.rate = 0.8;
+            utterance.pitch = 1.0;
+            
+            // Try to use a Japanese voice if available
+            const voices = speechSynthesis.getVoices();
+            const japaneseVoice = voices.find(voice => voice.lang.startsWith('ja'));
+            if (japaneseVoice) {
+                utterance.voice = japaneseVoice;
+            }
+            
+            utterance.addEventListener('end', () => {
+                element.classList.remove('playing-audio');
+            });
+            
+            utterance.addEventListener('error', () => {
+                element.classList.remove('playing-audio');
+                console.error('Speech synthesis error');
+            });
+            
+            speechSynthesis.speak(utterance);
+        } else {
+            console.error('Speech synthesis not supported');
+        }
+    }
+}
+
+// Initialize the Japanese text audio system
+const japaneseAudioSystem = new JapaneseTextAudioSystem();
 </script>
 {% endblock %}

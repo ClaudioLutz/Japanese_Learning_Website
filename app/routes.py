@@ -2032,6 +2032,16 @@ def reset_lesson_progress_api(lesson_id):
 @login_required
 def update_lesson_progress(lesson_id):
     """Update user progress for a lesson"""
+    # Validate CSRF token from header
+    from flask_wtf.csrf import validate_csrf
+    try:
+        csrf_token = request.headers.get('X-CSRFToken')
+        if not csrf_token:
+            return jsonify({"error": "CSRF token missing"}), 400
+        validate_csrf(csrf_token)
+    except Exception as e:
+        return jsonify({"error": "CSRF token invalid"}), 400
+    
     lesson = Lesson.query.get_or_404(lesson_id)
     
     # Check access
@@ -2511,6 +2521,16 @@ from sqlalchemy.orm import joinedload
 @login_required
 def submit_quiz_answer(lesson_id, question_id):
     """Submit answer to quiz question"""
+    # Validate CSRF token from header
+    from flask_wtf.csrf import validate_csrf
+    try:
+        csrf_token = request.headers.get('X-CSRFToken')
+        if not csrf_token:
+            return jsonify({"error": "CSRF token missing"}), 400
+        validate_csrf(csrf_token)
+    except Exception as e:
+        return jsonify({"error": "CSRF token invalid"}), 400
+    
     try:
         lesson = Lesson.query.get_or_404(lesson_id)
         question = QuizQuestion.query.filter_by(id=question_id).first()

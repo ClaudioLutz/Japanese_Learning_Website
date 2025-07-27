@@ -1655,6 +1655,48 @@ button[onclick*="moveContentInPage"]:active {
     text-align: center !important;
 }
 
+/* Make lesson images smaller and more manageable */
+.content-item img,
+.lesson-content-card img,
+.content-body img {
+    max-width: 750px !important; /* Limit maximum width */
+    width: auto !important;
+    height: auto !important;
+    display: block !important;
+    margin: 0 auto !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* For very large screens, make images even more reasonable */
+@media (min-width: 1200px) {
+    .content-item img,
+    .lesson-content-card img,
+    .content-body img {
+        max-width: 650px !important;
+    }
+}
+
+/* For mobile devices, allow images to be responsive but still reasonable */
+@media (max-width: 768px) {
+    .content-item img,
+    .lesson-content-card img,
+    .content-body img {
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+}
+
+/* For very small mobile screens */
+@media (max-width: 576px) {
+    .content-item img,
+    .lesson-content-card img,
+    .content-body img {
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+}
+
 /* Enhanced Courses Page Styles */
 
 /* Hero Section */
@@ -2227,6 +2269,55 @@ button[onclick*="moveContentInPage"]:active {
     
     .course-card-content {
         padding: 1.25rem;
+    }
+}
+
+/* Japanese Text Audio Styling */
+.japanese-audio-text {
+    color: var(--primary-color);
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    display: inline;
+}
+
+.japanese-audio-text:hover {
+    background-color: rgba(74, 144, 226, 0.1);
+    text-decoration-color: var(--primary-color);
+    transform: translateY(-1px);
+}
+
+.japanese-audio-text.playing-audio {
+    background-color: var(--secondary-color);
+    color: white;
+    animation: audioPlaying 1s infinite;
+}
+
+@keyframes audioPlaying {
+    0%, 100% { 
+        background-color: var(--secondary-color);
+        transform: scale(1);
+    }
+    50% { 
+        background-color: var(--primary-color);
+        transform: scale(1.05);
+    }
+}
+
+/* Mobile responsive adjustments for Japanese audio text */
+@media (max-width: 768px) {
+    .japanese-audio-text {
+        padding: 3px 5px;
+        font-size: 1rem;
+        line-height: 1.4;
+    }
+    
+    .japanese-audio-text:hover {
+        background-color: rgba(74, 144, 226, 0.15);
     }
 }
 

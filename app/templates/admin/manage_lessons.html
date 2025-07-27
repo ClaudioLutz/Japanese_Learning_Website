@@ -949,6 +949,102 @@
 </div>
 
 <style>
+/* Table column width adjustments */
+#lessonsTable th:nth-child(1), /* Order */
+#lessonsTable td:nth-child(1) {
+    width: 80px;
+    min-width: 80px;
+    max-width: 80px;
+}
+
+#lessonsTable th:nth-child(2), /* ID */
+#lessonsTable td:nth-child(2) {
+    width: 60px;
+    min-width: 60px;
+    max-width: 60px;
+}
+
+#lessonsTable th:nth-child(3), /* Title */
+#lessonsTable td:nth-child(3) {
+    width: 25%;
+    min-width: 200px;
+}
+
+#lessonsTable th:nth-child(4), /* Category */
+#lessonsTable td:nth-child(4) {
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+}
+
+#lessonsTable th:nth-child(5), /* Type */
+#lessonsTable td:nth-child(5) {
+    width: 80px;
+    min-width: 80px;
+    max-width: 80px;
+}
+
+#lessonsTable th:nth-child(6), /* Price */
+#lessonsTable td:nth-child(6) {
+    width: 100px;
+    min-width: 100px;
+    max-width: 100px;
+}
+
+#lessonsTable th:nth-child(7), /* Difficulty */
+#lessonsTable td:nth-child(7) {
+    width: 80px;
+    min-width: 80px;
+    max-width: 80px;
+}
+
+#lessonsTable th:nth-child(8), /* Duration */
+#lessonsTable td:nth-child(8) {
+    width: 90px;
+    min-width: 90px;
+    max-width: 90px;
+}
+
+#lessonsTable th:nth-child(9), /* Instruction Language */
+#lessonsTable td:nth-child(9) {
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+}
+
+#lessonsTable th:nth-child(10), /* Content Items */
+#lessonsTable td:nth-child(10) {
+    width: 90px;
+    min-width: 90px;
+    max-width: 90px;
+}
+
+#lessonsTable th:nth-child(11), /* Published */
+#lessonsTable td:nth-child(11) {
+    width: 80px;
+    min-width: 80px;
+    max-width: 80px;
+}
+
+#lessonsTable th:nth-child(12), /* Actions */
+#lessonsTable td:nth-child(12) {
+    width: 90px;
+    min-width: 90px;
+    max-width: 90px;
+}
+
+/* Ensure table layout is fixed for consistent column widths */
+#lessonsTable {
+    table-layout: fixed;
+    width: 100%;
+}
+
+/* Make title text wrap properly */
+#lessonsTable td:nth-child(3) {
+    word-wrap: break-word;
+    white-space: normal;
+}
+
 .content-step {
     min-height: 400px;
 }
@@ -1046,6 +1142,24 @@
 .reorder-btn:hover {
     background-color: #e9ecef !important;
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Compact action buttons styling */
+.btn-xs {
+    padding: 0.125rem 0.25rem;
+    font-size: 0.75rem;
+    line-height: 1.2;
+    border-radius: 0.15rem;
+    min-width: 28px;
+    height: 24px;
+}
+
+.btn-group-vertical .btn-xs {
+    margin-bottom: 1px;
+}
+
+.btn-group-vertical .btn-xs:last-child {
+    margin-bottom: 0;
 }
 
 #lessonContentModal .modal-body,
@@ -1282,9 +1396,17 @@ async function loadLessons() {
                 <td>${lesson.content_count}</td>
                 <td><span class="badge ${lesson.is_published ? 'badge-success' : 'badge-secondary'}">${lesson.is_published ? 'Yes' : 'No'}</span></td>
                 <td>
-                    <button class="btn btn-sm btn-info" onclick="manageContent(${lesson.id}, '${lesson.title}')">Content</button>
-                    <button class="btn btn-sm btn-warning" onclick="editLesson(${lesson.id})">Edit</button>
-                    <button class="btn btn-sm btn-danger" onclick="deleteLesson(${lesson.id})">Delete</button>
+                    <div class="btn-group-vertical btn-group-sm" role="group">
+                        <button class="btn btn-info btn-xs" onclick="manageContent(${lesson.id}, '${lesson.title}')" title="Manage Content">
+                            <i class="fas fa-list"></i>
+                        </button>
+                        <button class="btn btn-warning btn-xs" onclick="editLesson(${lesson.id})" title="Edit Lesson">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger btn-xs" onclick="deleteLesson(${lesson.id})" title="Delete Lesson">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
                 </td>
             `;
             tbody.appendChild(row);

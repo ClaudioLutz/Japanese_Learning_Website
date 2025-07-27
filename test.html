@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Japanese TTS POC</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: grid;
+            place-content: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+        .clickable-kanji {
+            font-size: 3rem;
+            cursor: pointer;
+            padding: 1rem;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+        .clickable-kanji:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Minimal Effort Japanese TTS</h1>
+    <p>Click the Japanese text below to hear it spoken.</p>
+    
+    <span class="clickable-kanji" id="japaneseText">日本語の音声</span>
+
+    <script>
+        // 1. Get the element containing the Japanese text
+        const japaneseTextElement = document.getElementById('japaneseText');
+
+        // 2. Add a click event listener to it
+        japaneseTextElement.addEventListener('click', () => {
+            const textToSpeak = japaneseTextElement.textContent;
+            speak(textToSpeak);
+        });
+
+        function speak(text) {
+            // 3. Check if the browser supports the Web Speech API
+            if ('speechSynthesis' in window) {
+                // 4. Create a new speech request
+                const utterance = new SpeechSynthesisUtterance(text);
+                
+                // 5. Set the language to Japanese
+                utterance.lang = 'ja-JP';
+                
+                // 6. (Optional) Adjust the speaking rate
+                utterance.rate = 0.8; // A little slower for clarity
+
+                // 7. Speak the text
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert('Sorry, your browser does not support text-to-speech.');
+            }
+        }
+    </script>
+
+</body>
+</html>

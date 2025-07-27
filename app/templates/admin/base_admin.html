@@ -44,12 +44,45 @@
             flex-direction: column;
             flex-shrink: 0;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: width 0.3s ease, padding 0.3s ease;
+            position: relative;
+        }
+
+        nav.collapsed {
+            width: 70px;
+            padding: 1.5rem 0.5rem;
         }
 
         .container {
             flex-grow: 1;
             padding: 2rem 3rem;
             overflow-y: auto;
+            transition: margin-left 0.3s ease;
+        }
+
+        /* Sidebar Toggle Button */
+        .sidebar-toggle {
+            position: absolute;
+            top: 1rem;
+            right: -15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.8rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            transition: background-color 0.2s;
+            z-index: 1001;
+        }
+
+        .sidebar-toggle:hover {
+            background-color: #4338ca;
         }
 
         /* Navigation */
@@ -86,12 +119,64 @@
             margin-right: 1rem;
             width: 20px;
             text-align: center;
+            transition: margin-right 0.3s ease;
+        }
+
+        nav.collapsed ul li a i {
+            margin-right: 0;
+        }
+
+        nav ul li a .nav-text {
+            transition: opacity 0.3s ease;
+        }
+
+        nav.collapsed ul li a .nav-text {
+            opacity: 0;
+            width: 0;
+            overflow: hidden;
+        }
+
+        nav.collapsed .nav-header {
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         nav ul li a:hover,
         nav ul li a.active {
             background-color: #eef2ff;
             color: var(--primary-color);
+        }
+
+        /* Tooltip for collapsed sidebar */
+        nav.collapsed ul li {
+            position: relative;
+        }
+
+        nav.collapsed ul li a:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            left: 60px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #1f2937;
+            color: white;
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        nav.collapsed ul li a:hover::before {
+            content: '';
+            position: absolute;
+            left: 55px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 5px solid transparent;
+            border-right-color: #1f2937;
+            z-index: 1000;
         }
 
         .nav-footer {
@@ -119,12 +204,15 @@
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            table-layout: fixed;
         }
 
         th, td {
             padding: 1rem;
             text-align: left;
             border-bottom: 1px solid var(--border-color);
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
 
         th {
@@ -133,6 +221,22 @@
             font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
+        }
+
+        /* Title column specific styling */
+        th:nth-child(3), td:nth-child(3) {
+            max-width: 200px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            line-height: 1.4;
+        }
+
+        /* Actions column styling */
+        th:last-child, td:last-child {
+            width: 80px;
+            min-width: 80px;
+            text-align: center;
         }
 
         tbody tr:last-child td {
@@ -581,29 +685,32 @@
     </style>
 </head>
 <body>
-<nav>
-<div>
-<div class="nav-header">Admin</div>
-<ul>
-<li><a href="{{ url_for('routes.admin_index') }}"><i class="fas fa-home"></i>Home</a></li>
-<li><a href="{{ url_for('routes.admin_manage_lessons') }}"><i class="fas fa-book-open"></i>Manage Lessons</a></li>
-<li><a href="{{ url_for('routes.admin_manage_courses') }}"><i class="fas fa-chalkboard-teacher"></i>Manage Courses</a></li>
-<li><a href="{{ url_for('routes.admin_manage_categories') }}"><i class="fas fa-tags"></i>Manage Categories</a></li>
-<li><a href="{{ url_for('routes.admin_manage_kana') }}"><i class="fas fa-pen-nib"></i>Manage Kana</a></li>
-<li><a href="{{ url_for('routes.admin_manage_kanji') }}"><i class="fas fa-font"></i>Manage Kanji</a></li>
-<li><a href="{{ url_for('routes.admin_manage_vocabulary') }}"><i class="fas fa-spell-check"></i>Manage Vocabulary</a></li>
-<li><a href="{{ url_for('routes.admin_manage_grammar') }}"><i class="fas fa-list-alt"></i>Manage Grammar</a></li>
-<li><a href="{{ url_for('routes.admin_manage_approval') }}"><i class="fas fa-check-circle"></i>Content Approval</a></li>
-</ul>
-</div>
-<div class="nav-footer">
-<ul>
-<li><a href="{{ url_for('routes.index') }}"><i class="fas fa-arrow-left"></i>Go Back to Site</a></li>
-{% if current_user.is_authenticated %}
-<li><a href="{{ url_for('routes.logout') }}"><i class="fas fa-sign-out-alt"></i>Logout ({{ current_user.username }})</a></li>
-{% endif %}
-</ul>
-</div>
+<nav id="sidebar">
+    <button class="sidebar-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-chevron-left" id="toggle-icon"></i>
+    </button>
+    <div>
+        <div class="nav-header">Admin</div>
+        <ul>
+            <li><a href="{{ url_for('routes.admin_index') }}" data-tooltip="Home"><i class="fas fa-home"></i><span class="nav-text">Home</span></a></li>
+            <li><a href="{{ url_for('routes.admin_manage_lessons') }}" data-tooltip="Manage Lessons"><i class="fas fa-book-open"></i><span class="nav-text">Manage Lessons</span></a></li>
+            <li><a href="{{ url_for('routes.admin_manage_courses') }}" data-tooltip="Manage Courses"><i class="fas fa-chalkboard-teacher"></i><span class="nav-text">Manage Courses</span></a></li>
+            <li><a href="{{ url_for('routes.admin_manage_categories') }}" data-tooltip="Manage Categories"><i class="fas fa-tags"></i><span class="nav-text">Manage Categories</span></a></li>
+            <li><a href="{{ url_for('routes.admin_manage_kana') }}" data-tooltip="Manage Kana"><i class="fas fa-pen-nib"></i><span class="nav-text">Manage Kana</span></a></li>
+            <li><a href="{{ url_for('routes.admin_manage_kanji') }}" data-tooltip="Manage Kanji"><i class="fas fa-font"></i><span class="nav-text">Manage Kanji</span></a></li>
+            <li><a href="{{ url_for('routes.admin_manage_vocabulary') }}" data-tooltip="Manage Vocabulary"><i class="fas fa-spell-check"></i><span class="nav-text">Manage Vocabulary</span></a></li>
+            <li><a href="{{ url_for('routes.admin_manage_grammar') }}" data-tooltip="Manage Grammar"><i class="fas fa-list-alt"></i><span class="nav-text">Manage Grammar</span></a></li>
+            <li><a href="{{ url_for('routes.admin_manage_approval') }}" data-tooltip="Content Approval"><i class="fas fa-check-circle"></i><span class="nav-text">Content Approval</span></a></li>
+        </ul>
+    </div>
+    <div class="nav-footer">
+        <ul>
+            <li><a href="{{ url_for('routes.index') }}" data-tooltip="Go Back to Site"><i class="fas fa-arrow-left"></i><span class="nav-text">Go Back to Site</span></a></li>
+            {% if current_user.is_authenticated %}
+            <li><a href="{{ url_for('routes.logout') }}" data-tooltip="Logout ({{ current_user.username }})"><i class="fas fa-sign-out-alt"></i><span class="nav-text">Logout ({{ current_user.username }})</span></a></li>
+            {% endif %}
+        </ul>
+    </div>
 </nav>
 
 <main class="container">
@@ -633,6 +740,39 @@
             modal.classList.remove('is-open');
         }
     }
+
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const toggleIcon = document.getElementById('toggle-icon');
+        const isCollapsed = sidebar.classList.contains('collapsed');
+        
+        if (isCollapsed) {
+            // Expand sidebar
+            sidebar.classList.remove('collapsed');
+            toggleIcon.classList.remove('fa-chevron-right');
+            toggleIcon.classList.add('fa-chevron-left');
+            localStorage.setItem('sidebarCollapsed', 'false');
+        } else {
+            // Collapse sidebar
+            sidebar.classList.add('collapsed');
+            toggleIcon.classList.remove('fa-chevron-left');
+            toggleIcon.classList.add('fa-chevron-right');
+            localStorage.setItem('sidebarCollapsed', 'true');
+        }
+    }
+
+    // Restore sidebar state on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebar = document.getElementById('sidebar');
+        const toggleIcon = document.getElementById('toggle-icon');
+        const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+        
+        if (isCollapsed) {
+            sidebar.classList.add('collapsed');
+            toggleIcon.classList.remove('fa-chevron-left');
+            toggleIcon.classList.add('fa-chevron-right');
+        }
+    });
 
     window.onclick = function(event) {
         const modals = document.querySelectorAll('.modal.is-open');

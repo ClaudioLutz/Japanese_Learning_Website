@@ -473,14 +473,14 @@ class UserLessonProgress(db.Model):
 class LessonPurchase(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey('user.id'), nullable=False)
-    lesson_id: Mapped[int] = mapped_column(Integer, ForeignKey('lesson.id'), nullable=False)
+    lesson_id: Mapped[int] = mapped_column(Integer, ForeignKey('lesson.id', ondelete='CASCADE'), nullable=False)
     price_paid: Mapped[float] = mapped_column(db.Float, nullable=False)
     purchased_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     stripe_payment_intent_id: Mapped[str] = mapped_column(String(100), nullable=True)  # For future Stripe integration
     
     # Relationships
     user: Mapped['User'] = relationship('User', backref='lesson_purchases')
-    lesson: Mapped['Lesson'] = relationship('Lesson', backref='purchases')
+    lesson: Mapped['Lesson'] = relationship('Lesson', backref=db.backref('purchases', cascade='all, delete-orphan'))
     
     __table_args__ = (db.UniqueConstraint('user_id', 'lesson_id'),)
     
