@@ -373,17 +373,52 @@
                 <div class="page-overview-header" onclick="togglePageOverview()">
                     <div class="d-flex justify-content-between align-items-center">
                         <h6 class="mb-0"><i class="fas fa-list"></i> Page Overview</h6>
-                        <i class="fas fa-chevron-down" id="overviewToggleIcon"></i>
+                        <i class="fas fa-chevron-up" id="overviewToggleIcon"></i>
                     </div>
                 </div>
-                <div class="page-overview-content" id="pageOverviewContent">
+                <div class="page-overview-content show" id="pageOverviewContent">
                     {% for page in lesson.pages %}
+                    {% set page_content_count = page.content|length %}
+                    {% set completed_content_count = 0 %}
+                    {% if current_user.is_authenticated and progress %}
+                        {% set content_progress = progress.get_content_progress() %}
+                        {% for content in page.content %}
+                            {% if content_progress.get(content.id|string) == true %}
+                                {% set completed_content_count = completed_content_count + 1 %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    <!-- DEBUG: Page {{ loop.index }}, Total: {{ page_content_count }}, Completed: {{ completed_content_count }} -->
                     <div class="page-menu-item" onclick="goToPage({{ loop.index0 }})" data-page="{{ loop.index0 }}">
                         <div class="page-menu-number">{{ loop.index }}</div>
-                        <div>
+                        <div class="flex-grow-1">
                             <div class="fw-bold">{{ page.metadata.title or (page.content[0].title if page.content else 'Page ' ~ loop.index) }}</div>
                             {% if page.metadata.description %}
                             <small class="text-muted">{{ page.metadata.description }}</small>
+                            {% endif %}
+                            {% if current_user.is_authenticated %}
+                            <div class="mt-1">
+                                <small class="text-muted">
+                                    <i class="fas fa-check-circle"></i> 
+                                    {{ completed_content_count }}/{{ page_content_count }} completed
+                                </small>
+                                {% if page_content_count > 0 %}
+                                <div class="progress mt-1" style="height: 4px;">
+                                    <div class="progress-bar bg-success" role="progressbar" 
+                                         style="width: {{ (completed_content_count / page_content_count * 100)|round(1) }}%" 
+                                         aria-valuenow="{{ (completed_content_count / page_content_count * 100)|round(1) }}" 
+                                         aria-valuemin="0" aria-valuemax="100">
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% else %}
+                            <div class="mt-1">
+                                <small class="text-muted">
+                                    <i class="fas fa-list"></i> 
+                                    {{ page_content_count }} content item{{ 's' if page_content_count != 1 else '' }}
+                                </small>
+                            </div>
                             {% endif %}
                         </div>
                     </div>
@@ -420,6 +455,7 @@
                                                     {% endif %}
                                                 </h6>
                                                 {% if current_user.is_authenticated %}
+                                                {% if not content.is_interactive %}
                                                 <button class="btn btn-sm btn-outline-success mark-complete-btn" 
                                                         onclick="markContentComplete({{ content.id }})"
                                                         {% if progress and progress.get_content_progress().get(content.id | string) %}
@@ -427,6 +463,7 @@
                                                         {% endif %}>
                                                     Mark Complete
                                                 </button>
+                                                {% endif %}
                                                 <span class="badge bg-success completed-badge" 
                                                       {% if not (progress and progress.get_content_progress().get(content.id | string)) %}
                                                       style="display: none;"
@@ -863,13 +900,21 @@ async function submitQuizAnswer(lessonId, questionId) {
     }
     
     try {
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
+        const csrfToken = csrfTokenElement ? csrfTokenElement.getAttribute('content') : null;
+        
+        const headers = { 
+            'Content-Type': 'application/json'
+        };
+        
+        // Only add CSRF token if it exists
+        if (csrfToken) {
+            headers['X-CSRFToken'] = csrfToken;
+        }
+        
         const response = await fetch('/api/lessons/' + lessonId + '/quiz/' + questionId + '/answer', {
             method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken
-            },
+            headers: headers,
             body: JSON.stringify(answerData)
         });
         
@@ -932,22 +977,43 @@ function updateAttempts(questionId, attemptsRemaining) {
 
 async function markContentComplete(contentId) {
     try {
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const lessonId = '{{ lesson.id }}';
+        
+        // Get CSRF token from meta tag
+        const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
+        if (!csrfTokenElement) {
+            console.error('CSRF token not found in meta tag');
+            alert('Security token missing. Please refresh the page.');
+            return;
+        }
+        
+        const csrfToken = csrfTokenElement.getAttribute('content');
+        console.log('CSRF token found:', csrfToken ? 'Yes' : 'No');
+        
+        const headers = { 
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        };
+        
+        const requestData = { 
+            content_id: contentId,
+            time_spent: Math.floor((Date.now() - startTime) / 60000) // minutes
+        };
+        
+        console.log('Sending request to mark content complete:', requestData);
+        console.log('Headers:', headers);
+        
         const response = await fetch('/api/lessons/' + lessonId + '/progress', {
             method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken
-            },
-            body: JSON.stringify({ 
-                content_id: contentId,
-                time_spent: Math.floor((Date.now() - startTime) / 60000) // minutes
-            })
+            headers: headers,
+            body: JSON.stringify(requestData)
         });
+        
+        console.log('Response status:', response.status);
         
         if (response.ok) {
             const progress = await response.json();
+            console.log('Progress updated successfully:', progress);
             
             // Update UI
             const contentItem = document.querySelector(`[data-content-id="${contentId}"]`);
@@ -969,6 +1035,9 @@ async function markContentComplete(contentId) {
                     percentageText.textContent = progress.progress_percentage + '%';
                 }
             }
+            
+            // Update page overview completion counts
+            updatePageOverviewCompletionCounts();
             
             // Show completion message if 100%
             if (progress.progress_percentage === 100) {
@@ -998,6 +1067,10 @@ document.addEventListener('DOMContentLoaded', function() {
         setupKeyboardNavigation();
         showKeyboardHint();
     }
+    
+    // Initialize page overview completion counts on page load
+    // This ensures the server-side calculated values are preserved
+    initializePageOverviewCompletionCounts();
 });
 
 function initializeNavigation() {
@@ -1180,6 +1253,54 @@ function handleSwipe() {
             nextPage();
         }
     }
+}
+
+function initializePageOverviewCompletionCounts() {
+    // This function preserves the server-side calculated completion counts
+    // and only updates them when content is actually marked complete
+    console.log('Initializing page overview completion counts...');
+    
+    // The server-side template has already calculated the correct completion counts
+    // We don't need to recalculate them on initial load, just ensure they're visible
+    const pageOverviewContent = document.getElementById('pageOverviewContent');
+    if (pageOverviewContent && pageOverviewContent.classList.contains('show')) {
+        console.log('Page overview is visible with server-side calculated counts');
+    }
+}
+
+function updatePageOverviewCompletionCounts() {
+    // Get all page menu items
+    const pageMenuItems = document.querySelectorAll('.page-menu-item');
+    
+    pageMenuItems.forEach((menuItem, pageIndex) => {
+        // Get all content items for this page
+        const pageContentItems = document.querySelectorAll(`.carousel-item:nth-child(${pageIndex + 1}) [data-content-id]`);
+        
+        let completedCount = 0;
+        const totalCount = pageContentItems.length;
+        
+        // Count completed items
+        pageContentItems.forEach(contentItem => {
+            const completedBadge = contentItem.querySelector('.completed-badge');
+            if (completedBadge && completedBadge.style.display !== 'none') {
+                completedCount++;
+            }
+        });
+        
+        // Update the completion text
+        const completionText = menuItem.querySelector('small');
+        if (completionText) {
+            completionText.innerHTML = `<i class="fas fa-check-circle"></i> ${completedCount}/${totalCount} completed`;
+        }
+        
+        // Update the progress bar
+        const progressBar = menuItem.querySelector('.progress-bar');
+        if (progressBar && totalCount > 0) {
+            const percentage = Math.round((completedCount / totalCount) * 100);
+            progressBar.style.width = percentage + '%';
+            progressBar.setAttribute('aria-valuenow', percentage);
+        }
+    });
 }
 
 // Track time spent on page

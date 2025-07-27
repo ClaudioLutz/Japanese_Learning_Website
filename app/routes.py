@@ -52,21 +52,38 @@ def admin_required(f):
 @bp.route('/')
 @bp.route('/home')
 def index():
-    # Get counts for the welcome page
-    total_lessons = Lesson.query.filter_by(is_published=True).count()
-    total_courses = Course.query.filter_by(is_published=True).count()
+    # Get language-specific lesson counts
+    english_lessons = Lesson.query.filter_by(is_published=True, instruction_language='english').count()
+    german_lessons = Lesson.query.filter_by(is_published=True, instruction_language='german').count()
     
-    # Get accessible lessons for guest users
-    guest_accessible_lessons = Lesson.query.filter_by(
+    # Get guest accessible lessons by language
+    english_guest_lessons = Lesson.query.filter_by(
         is_published=True, 
         allow_guest_access=True, 
-        lesson_type='free'
+        lesson_type='free',
+        instruction_language='english'
     ).count()
+    
+    german_guest_lessons = Lesson.query.filter_by(
+        is_published=True, 
+        allow_guest_access=True, 
+        lesson_type='free',
+        instruction_language='german'
+    ).count()
+    
+    # Get total counts for backward compatibility
+    total_lessons = english_lessons + german_lessons
+    total_courses = Course.query.filter_by(is_published=True).count()
+    guest_accessible_lessons = english_guest_lessons + german_guest_lessons
     
     return render_template('index.html', 
                          total_lessons=total_lessons,
                          total_courses=total_courses,
-                         guest_accessible_lessons=guest_accessible_lessons)
+                         guest_accessible_lessons=guest_accessible_lessons,
+                         english_lessons=english_lessons,
+                         german_lessons=german_lessons,
+                         english_guest_lessons=english_guest_lessons,
+                         german_guest_lessons=german_guest_lessons)
 
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
@@ -114,6 +131,84 @@ def logout():
     logout_user()
     flash('You have been logged out.', 'info')
     return redirect(url_for('routes.index'))
+
+@bp.route('/profile')
+@login_required
+def user_profile():
+    """Display user profile with lesson progress and statistics"""
+    from sqlalchemy import func, desc
+    
+    # Get user's lesson progress
+    user_progress = UserLessonProgress.query.filter_by(user_id=current_user.id).all()
+    
+    # Separate started and completed lessons
+    started_lessons = []
+    completed_lessons = []
+    
+    for progress in user_progress:
+        lesson_data = {
+            'lesson': progress.lesson,
+            'progress': progress,
+            'category_name': progress.lesson.category.name if progress.lesson.category else 'Uncategorized'
+        }
+        
+        if progress.is_completed:
+            completed_lessons.append(lesson_data)
+        else:
+            started_lessons.append(lesson_data)
+    
+    # Sort lessons by progress percentage (descending - highest progress first)
+    started_lessons.sort(key=lambda x: x['progress'].progress_percentage, reverse=True)
+    completed_lessons.sort(key=lambda x: x['progress'].completed_at or x['progress'].last_accessed, reverse=True)
+    
+    # Calculate statistics
+    total_lessons_started = len(user_progress)
+    total_lessons_completed = len(completed_lessons)
+    completion_rate = (total_lessons_completed / total_lessons_started * 100) if total_lessons_started > 0 else 0
+    total_time_spent = sum(progress.time_spent for progress in user_progress)
+    
+    # Get progress by category
+    category_stats = {}
+    for progress in user_progress:
+        category_name = progress.lesson.category.name if progress.lesson.category else 'Uncategorized'
+        if category_name not in category_stats:
+            category_stats[category_name] = {
+                'total': 0,
+                'completed': 0,
+                'time_spent': 0
+            }
+        
+        category_stats[category_name]['total'] += 1
+        category_stats[category_name]['time_spent'] += progress.time_spent
+        if progress.is_completed:
+            category_stats[category_name]['completed'] += 1
+    
+    # Calculate completion rate for each category
+    for category in category_stats:
+        total = category_stats[category]['total']
+        completed = category_stats[category]['completed']
+        category_stats[category]['completion_rate'] = (completed / total * 100) if total > 0 else 0
+    
+    # Get recent activity (last 10 lessons accessed)
+    recent_activity = UserLessonProgress.query.filter_by(user_id=current_user.id)\
+        .order_by(desc(UserLessonProgress.last_accessed))\
+        .limit(10).all()
+    
+    # Get user's purchases if any
+    user_purchases = LessonPurchase.query.filter_by(user_id=current_user.id).all()
+    total_spent = sum(purchase.price_paid for purchase in user_purchases)
+    
+    return render_template('user_profile.html',
+                         started_lessons=started_lessons,
+                         completed_lessons=completed_lessons,
+                         total_lessons_started=total_lessons_started,
+                         total_lessons_completed=total_lessons_completed,
+                         completion_rate=completion_rate,
+                         total_time_spent=total_time_spent,
+                         category_stats=category_stats,
+                         recent_activity=recent_activity,
+                         user_purchases=user_purchases,
+                         total_spent=total_spent)
 
 # --- Member Routes (Simulated Premium) ---
 

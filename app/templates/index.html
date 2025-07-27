@@ -12,59 +12,259 @@
                 <i class="fas fa-torii-gate"></i>
             </div>
             <h1 class="welcome-title">Begin Your Japanese Journey</h1>
-            <p class="welcome-subtitle">Master the language through interactive lessons, from basic Kana to complex Kanji</p>
+            <p class="welcome-subtitle">Choose your preferred instruction language to start learning Japanese</p>
         </div>
 
-        <!-- Stats Section -->
-        <div class="welcome-stats mb-4">
-            <div class="stats-container">
-                <div class="stat-item">
-                    <div class="stat-number">{{ total_lessons }}</div>
-                    <div class="stat-label">Interactive Lessons</div>
+        <!-- Language Selection Cards -->
+        <div class="language-selection-container mb-4">
+            <div class="row justify-content-center">
+                <!-- English Language Card -->
+                <div class="col-md-5 mb-3">
+                    <div class="language-card" onclick="selectLanguage('english')">
+                        <div class="language-card-header">
+                            <div class="language-flag">
+                                <i class="fas fa-flag" style="color: #012169;"></i>
+                                <span class="flag-text">🇬🇧</span>
+                            </div>
+                            <h3 class="language-title">Learn Japanese in English</h3>
+                        </div>
+                        <div class="language-stats">
+                            <div class="stat-row">
+                                <span class="stat-label">
+                                    <i class="fas fa-book"></i>
+                                    Lessons Available:
+                                </span>
+                                <span class="stat-value">{{ english_lessons }}</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">
+                                    <i class="fas fa-unlock"></i>
+                                    Free to Try:
+                                </span>
+                                <span class="stat-value">{{ english_guest_lessons }}</span>
+                            </div>
+                        </div>
+                        <div class="language-card-footer">
+                            <button class="btn btn-primary language-btn">
+                                <i class="fas fa-arrow-right"></i>
+                                Start Learning
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div class="stat-divider"></div>
-                <div class="stat-item">
-                    <div class="stat-number">{{ total_courses }}</div>
-                    <div class="stat-label">Learning Courses</div>
-                </div>
-                <div class="stat-divider"></div>
-                <div class="stat-item">
-                    <div class="stat-number">{{ guest_accessible_lessons }}</div>
-                    <div class="stat-label">Free to Try</div>
+
+                <!-- German Language Card -->
+                <div class="col-md-5 mb-3">
+                    <div class="language-card" onclick="selectLanguage('german')">
+                        <div class="language-card-header">
+                            <div class="language-flag">
+                                <i class="fas fa-flag" style="color: #000000;"></i>
+                                <span class="flag-text">🇩🇪</span>
+                            </div>
+                            <h3 class="language-title">Japanisch auf Deutsch lernen</h3>
+                        </div>
+                        <div class="language-stats">
+                            <div class="stat-row">
+                                <span class="stat-label">
+                                    <i class="fas fa-book"></i>
+                                    Verfügbare Lektionen:
+                                </span>
+                                <span class="stat-value">{{ german_lessons }}</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">
+                                    <i class="fas fa-unlock"></i>
+                                    Kostenlos testen:
+                                </span>
+                                <span class="stat-value">{{ german_guest_lessons }}</span>
+                            </div>
+                        </div>
+                        <div class="language-card-footer">
+                            <button class="btn btn-primary language-btn">
+                                <i class="fas fa-arrow-right"></i>
+                                Lernen beginnen
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Action Buttons Section -->
-        {% if current_user.is_authenticated %}
-        <div class="welcome-actions">
-            <a href="{{ url_for('routes.lessons') }}" class="welcome-btn welcome-btn-primary">
-                <i class="fas fa-play-circle"></i>
-                <span>Continue Learning</span>
-            </a>
-            <a href="{{ url_for('routes.courses') }}" class="welcome-btn welcome-btn-secondary">
-                <i class="fas fa-graduation-cap"></i>
-                <span>Browse Courses</span>
-            </a>
+        <!-- Additional Options -->
+        <div class="additional-options">
+            {% if not current_user.is_authenticated %}
+            <div class="auth-options mb-3">
+                <a href="{{ url_for('routes.register') }}" class="btn btn-success me-2">
+                    <i class="fas fa-user-plus"></i>
+                    Create Account
+                </a>
+                <a href="{{ url_for('routes.login') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Login
+                </a>
+            </div>
+            {% endif %}
+            
+            <div class="browse-all-link">
+                <a href="{{ url_for('routes.lessons') }}" class="text-muted">
+                    <i class="fas fa-list"></i>
+                    Browse all lessons
+                </a>
+            </div>
         </div>
-        {% else %}
-        <div class="welcome-actions">
-            <a href="{{ url_for('routes.lessons') }}" class="welcome-btn welcome-btn-primary">
-                <i class="fas fa-book-open"></i>
-                <span>Try Lessons as Guest</span>
-            </a>
-            <a href="{{ url_for('routes.register') }}" class="welcome-btn welcome-btn-success">
-                <i class="fas fa-user-plus"></i>
-                <span>Create Account</span>
-            </a>
-        </div>
-
-        <!-- Login Link -->
-        <div class="login-link mt-3">
-            <span>Already have an account?</span>
-            <a href="{{ url_for('routes.login') }}" class="login-link-btn">Login here</a>
-        </div>
-        {% endif %}
     </div>
 </div>
+
+<style>
+.language-selection-container {
+    margin: 2rem 0;
+}
+
+.language-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.language-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    border-color: #007bff;
+}
+
+.language-card-header {
+    margin-bottom: 1.5rem;
+}
+
+.language-flag {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.flag-text {
+    font-size: 2rem;
+    margin-left: 0.5rem;
+}
+
+.language-title {
+    color: #2c3e50;
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.language-stats {
+    margin-bottom: 1.5rem;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.8rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.stat-row:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.stat-label {
+    color: #6c757d;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.stat-value {
+    color: #007bff;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.language-card-footer {
+    margin-top: auto;
+}
+
+.language-btn {
+    width: 100%;
+    padding: 0.8rem 1.5rem;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.language-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+}
+
+.additional-options {
+    margin-top: 2rem;
+}
+
+.auth-options .btn {
+    margin: 0.25rem;
+}
+
+.browse-all-link {
+    margin-top: 1rem;
+}
+
+.browse-all-link a {
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.3s ease;
+}
+
+.browse-all-link a:hover {
+    color: #007bff !important;
+}
+
+@media (max-width: 768px) {
+    .language-card {
+        margin-bottom: 1rem;
+    }
+    
+    .language-title {
+        font-size: 1.2rem;
+    }
+    
+    .stat-row {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+}
+</style>
+
+<script>
+function selectLanguage(language) {
+    // Store the selected language in localStorage for persistence
+    localStorage.setItem('selectedLanguage', language);
+    
+    // Redirect to lessons page with language parameter
+    window.location.href = `{{ url_for('routes.lessons') }}?language=${language}`;
+}
+
+// Add keyboard navigation
+document.addEventListener('keydown', function(e) {
+    if (e.key === '1') {
+        selectLanguage('english');
+    } else if (e.key === '2') {
+        selectLanguage('german');
+    }
+});
+</script>
 {% endblock %}

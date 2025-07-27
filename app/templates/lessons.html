@@ -128,7 +128,29 @@ let currentView = 'categories'; // 'categories' or 'lessons'
 let selectedCategoryId = null;
 
 document.addEventListener('DOMContentLoaded', function() {
-    loadLessons();
+    // Check for language parameter first
+    const urlParams = new URLSearchParams(window.location.search);
+    const languageParam = urlParams.get('language');
+    
+    if (languageParam) {
+        // Set the language filter first
+        const languageFilter = document.getElementById('languageFilter');
+        if (languageParam === 'english') {
+            languageFilter.value = 'english';
+        } else if (languageParam === 'german') {
+            languageFilter.value = 'german';
+        }
+        
+        // Load lessons with the specified language
+        loadLessons(languageParam);
+        
+        // Update breadcrumb to show language context
+        updateLanguageBreadcrumb(languageParam);
+    } else {
+        // Load all lessons if no language parameter
+        loadLessons();
+    }
+    
     loadCategories();
     setupScrollListener();
 });
@@ -165,8 +187,20 @@ async function loadLessons(language = 'all') {
             allLessons = [];
         }
         
-        // Show categories by default
-        showAllCategories();
+        console.log('Loaded lessons:', allLessons.length, 'for language:', language);
+        
+        // Always show categories view when lessons are loaded
+        currentView = 'categories';
+        
+        // Ensure categories section is visible
+        document.getElementById('categoriesContainer').parentElement.style.display = 'block';
+        document.getElementById('lessonsContainer').innerHTML = '';
+        document.getElementById('noLessonsMessage').style.display = 'none';
+        
+        // Display categories after lessons are loaded
+        if (categories.length > 0) {
+            displayCategories();
+        }
         
     } catch (error) {
         console.error('Error loading lessons:', error);
@@ -188,7 +222,7 @@ async function loadCategories() {
             categoryFilter.innerHTML = '<option value="">All Categories</option>';
             categories.forEach(category => {
                 const option = document.createElement('option');
-                option.value = category.id;
+                option.value = String(category.id); // ★ Fix 1: Make option values strings
                 option.textContent = category.name;
                 categoryFilter.appendChild(option);
             });
@@ -218,15 +252,43 @@ function displayCategories() {
         return;
     }
     
-    // Calculate lesson counts per category
+    // Calculate lesson counts per category (only for current filtered lessons)
     const lessonCounts = {};
+    const categoriesWithLessons = [];
+    
     categories.forEach(category => {
-        lessonCounts[category.id] = allLessons.filter(lesson => 
+        const lessonCount = allLessons.filter(lesson => 
             lesson.category_id === category.id
         ).length;
+        
+        lessonCounts[category.id] = lessonCount;
+        
+        // Only include categories that have lessons in the current language filter
+        if (lessonCount > 0) {
+            categoriesWithLessons.push(category);
+        }
     });
     
-    categories.forEach((category, index) => {
+    // Check if no categories have lessons for the current language
+    if (categoriesWithLessons.length === 0) {
+        const currentLanguage = document.getElementById('languageFilter').value;
+        const languageName = currentLanguage === 'english' ? 'English' : 
+                            currentLanguage === 'german' ? 'German' : 'this language';
+        
+        container.innerHTML = `
+            <div class="text-center py-5">
+                <i class="fas fa-language fa-3x text-muted mb-3"></i>
+                <h4 class="text-muted">No categories available</h4>
+                <p class="text-muted">No lessons found for ${languageName} instruction language.</p>
+                <button class="btn btn-primary" onclick="clearLanguageFilter()">
+                    <i class="fas fa-globe"></i> Show All Languages
+                </button>
+            </div>
+        `;
+        return;
+    }
+    
+    categoriesWithLessons.forEach((category, index) => {
         const categoryCard = document.createElement('div');
         categoryCard.className = 'category-card animate-in';
         categoryCard.onclick = () => showCategoryLessons(category.id, category.name);
@@ -298,6 +360,18 @@ function adjustBrightness(hex, percent) {
         (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
 }
 
+// ★ Fix 2: Helper functions for proper select handling
+function setSelectValue(select, value) {
+    select.value = String(value);                 // 1️⃣ string
+    select.dispatchEvent(new Event('change'));    // 2️⃣ notify listeners
+}
+
+function ensureOption(select, id, text) {
+    if (![...select.options].some(o => o.value === String(id))) {
+        select.add(new Option(text, id));
+    }
+}
+
 function showAllCategories() {
     currentView = 'categories';
     selectedCategoryId = null;
@@ -308,8 +382,10 @@ function showAllCategories() {
     document.getElementById('lessonsContainer').innerHTML = '';
     document.getElementById('noLessonsMessage').style.display = 'none';
     
-    // Reset filters
+    // Reset filters but preserve language filter
+    const currentLanguage = document.getElementById('languageFilter').value;
     clearFilters();
+    document.getElementById('languageFilter').value = currentLanguage;
     
     // Display categories
     displayCategories();
@@ -317,22 +393,36 @@ function showAllCategories() {
 
 function showCategoryLessons(categoryId, categoryName) {
     currentView = 'lessons';
-    selectedCategoryId = categoryId;
+    selectedCategoryId = String(categoryId); // ★ Fix 3: Store as string for comparison
     
     // Update UI
     document.getElementById('categoriesContainer').parentElement.style.display = 'none';
     document.getElementById('breadcrumbNav').style.display = 'block';
-    document.getElementById('currentCategoryName').textContent = categoryName;
     
-    // Set category filter
-    document.getElementById('categoryFilter').value = categoryId;
+    // ★ ROOT CAUSE FIX: Ensure currentCategoryName element exists before setting textContent
+    let currentCategoryElement = document.getElementById('currentCategoryName');
+    if (!currentCategoryElement) {
+        // Element was destroyed by updateLanguageBreadcrumb - recreate the breadcrumb structure
+        const breadcrumbList = document.querySelector('#breadcrumbNav .breadcrumb');
+        breadcrumbList.innerHTML = `
+            <li class="breadcrumb-item">
+                <a href="#" onclick="showAllCategories()" class="text-decoration-none">
+                    <i class="fas fa-home"></i> All Categories
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page" id="currentCategoryName"></li>
+        `;
+        currentCategoryElement = document.getElementById('currentCategoryName');
+    }
+    currentCategoryElement.textContent = categoryName;
     
-    // Filter and display lessons
-    const filteredLessons = allLessons.filter(lesson => lesson.category_id === categoryId);
-    displayLessons(filteredLessons);
+    // ★ Fix 2: Use helper functions for proper dropdown handling
+    const catSelect = document.getElementById('categoryFilter');
+    ensureOption(catSelect, categoryId, categoryName);
+    setSelectValue(catSelect, categoryId);
     
-    // Update active filters display
-    updateActiveFiltersDisplay();
+    // Apply filters automatically to show the lessons and update the UI properly
+    applyFilters();
     
     // Smooth scroll to lessons
     document.getElementById('lessonsContainer').scrollIntoView({ behavior: 'smooth' });
@@ -489,23 +579,27 @@ function createLessonCard(lesson) {
 }
 
 function applyFilters() {
-    if (currentView === 'categories') {
-        // If we're in category view and a category filter is selected, switch to lessons view
-        const categoryFilter = document.getElementById('categoryFilter').value;
-        if (categoryFilter) {
-            const category = categories.find(c => c.id == categoryFilter);
-            if (category) {
-                showCategoryLessons(category.id, category.name);
-                return;
-            }
-        }
-        return;
-    }
-    
     const categoryFilter = document.getElementById('categoryFilter').value;
     const typeFilter = document.getElementById('typeFilter').value;
     const difficultyFilter = document.getElementById('difficultyFilter').value;
     const languageFilter = document.getElementById('languageFilter').value;
+
+    // If we're in category view and a category filter is selected, switch to lessons view
+    // But only if we're not already in the process of showing category lessons (to prevent circular calls)
+    // ★ Fix 3: Compare strings to strings (no parseInt needed since selectedCategoryId is now a string)
+    if (currentView === 'categories' && categoryFilter && selectedCategoryId !== categoryFilter) {
+        const category = categories.find(c => c.id == categoryFilter);
+        if (category) {
+            showCategoryLessons(category.id, category.name);
+            return;
+        }
+    }
+
+    // Switch to lessons view if we have any filters applied
+    if (currentView === 'categories' && (categoryFilter || typeFilter || difficultyFilter || (languageFilter && languageFilter !== 'all'))) {
+        currentView = 'lessons';
+        document.getElementById('categoriesContainer').parentElement.style.display = 'none';
+    }
 
     let filteredLessons = allLessons.filter(lesson => {
         if (categoryFilter && lesson.category_id != categoryFilter) return false;
@@ -558,6 +652,23 @@ function updateActiveFiltersDisplay() {
     }
 }
 
+function clearLanguageFilter() {
+    // Reset language filter to show all languages
+    document.getElementById('languageFilter').value = 'all';
+    
+    // Reload lessons with all languages
+    loadLessons('all');
+    
+    // Hide language breadcrumb
+    const breadcrumbNav = document.getElementById('breadcrumbNav');
+    breadcrumbNav.style.display = 'none';
+    
+    // Update URL to remove language parameter
+    const url = new URL(window.location);
+    url.searchParams.delete('language');
+    window.history.replaceState({}, '', url);
+}
+
 function showLoading(show) {
     document.getElementById('loadingSpinner').style.display = show ? 'block' : 'none';
 }
@@ -586,5 +697,31 @@ async function purchaseLesson(lessonId, lessonTitle, price) {
 document.getElementById('languageFilter').addEventListener('change', function() {
     loadLessons(this.value);
 });
+
+
+function updateLanguageBreadcrumb(language) {
+    const breadcrumbNav = document.getElementById('breadcrumbNav');
+    const breadcrumbList = breadcrumbNav.querySelector('.breadcrumb');
+    
+    // Create language breadcrumb
+    const languageName = language === 'english' ? 'English Instructions' : 'Deutsche Anweisungen';
+    const languageItem = document.createElement('li');
+    languageItem.className = 'breadcrumb-item active';
+    languageItem.setAttribute('aria-current', 'page');
+    languageItem.innerHTML = `<i class="fas fa-language"></i> ${languageName}`;
+    
+    // Clear existing breadcrumb and add home + language
+    breadcrumbList.innerHTML = `
+        <li class="breadcrumb-item">
+            <a href="{{ url_for('routes.index') }}" class="text-decoration-none">
+                <i class="fas fa-home"></i> Home
+            </a>
+        </li>
+    `;
+    breadcrumbList.appendChild(languageItem);
+    
+    // Show breadcrumb
+    breadcrumbNav.style.display = 'block';
+}
 </script>
 {% endblock %}

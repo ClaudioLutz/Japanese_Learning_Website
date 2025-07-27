@@ -1,0 +1,511 @@
+{% extends "base.html" %}
+
+{% block title %}User Profile{% endblock %}
+
+{% block styles %}
+<style>
+    .profile-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+        border-radius: 10px;
+    }
+    
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+    
+    .stats-card {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1.5rem;
+        border-left: 4px solid #667eea;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #667eea;
+    }
+    
+    .stat-label {
+        color: #666;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .lesson-card {
+        background: white;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        border-left: 4px solid #28a745;
+        transition: transform 0.2s;
+    }
+    
+    .lesson-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    }
+    
+    .lesson-card.in-progress {
+        border-left-color: #ffc107;
+    }
+    
+    .lesson-title {
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+    
+    .lesson-meta {
+        font-size: 0.85rem;
+        color: #666;
+        margin-bottom: 0.5rem;
+    }
+    
+    .progress-bar-container {
+        background: #f0f0f0;
+        border-radius: 10px;
+        height: 8px;
+        overflow: hidden;
+        margin-bottom: 0.5rem;
+    }
+    
+    .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #28a745, #20c997);
+        border-radius: 10px;
+        transition: width 0.3s ease;
+    }
+    
+    .progress-bar.in-progress {
+        background: linear-gradient(90deg, #ffc107, #fd7e14);
+    }
+    
+    .category-stats {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1.5rem;
+    }
+    
+    .category-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .category-item:last-child {
+        border-bottom: none;
+    }
+    
+    .category-name {
+        font-weight: 500;
+        color: #333;
+    }
+    
+    .category-progress {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .category-percentage {
+        font-weight: bold;
+        color: #667eea;
+        min-width: 50px;
+        text-align: right;
+    }
+    
+    .recent-activity {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .activity-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+    
+    .activity-icon {
+        width: 40px;
+        height: 40px;
+        background: #f8f9fa;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        color: #667eea;
+    }
+    
+    .activity-content {
+        flex: 1;
+    }
+    
+    .activity-title {
+        font-weight: 500;
+        color: #333;
+        margin-bottom: 0.25rem;
+    }
+    
+    .activity-time {
+        font-size: 0.8rem;
+        color: #666;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: #666;
+    }
+    
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: #ddd;
+    }
+    
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .time-spent {
+        color: #28a745;
+        font-weight: 500;
+    }
+    
+    .lessons-in-progress-container {
+        max-height: 600px;
+        overflow-y: auto;
+        padding-right: 0.5rem;
+    }
+    
+    .lessons-in-progress-container::-webkit-scrollbar {
+        width: 8px;
+    }
+    
+    .lessons-in-progress-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+    
+    .lessons-in-progress-container::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 4px;
+    }
+    
+    .lessons-in-progress-container::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+    }
+    
+    .purchases-section {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1.5rem;
+    }
+    
+    .purchase-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+    }
+    
+    .purchase-item:last-child {
+        margin-bottom: 0;
+    }
+    
+    .purchase-title {
+        font-weight: 500;
+        color: #333;
+    }
+    
+    .purchase-price {
+        font-weight: bold;
+        color: #28a745;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-2 text-center">
+                <div class="profile-avatar mx-auto">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+            <div class="col-md-10">
+                <h1 class="mb-2">{{ current_user.username }}</h1>
+                <p class="mb-1">
+                    <i class="fas fa-envelope me-2"></i>{{ current_user.email }}
+                </p>
+                <p class="mb-0">
+                    <i class="fas fa-crown me-2"></i>{{ current_user.subscription_level | capitalize }} Member
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Statistics Overview -->
+    <div class="row mb-4">
+        <div class="col-md-3 col-sm-6">
+            <div class="stats-card text-center">
+                <div class="stat-number">{{ total_lessons_started }}</div>
+                <div class="stat-label">Lessons Started</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="stats-card text-center">
+                <div class="stat-number">{{ total_lessons_completed }}</div>
+                <div class="stat-label">Lessons Completed</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="stats-card text-center">
+                <div class="stat-number">{{ "%.1f"|format(completion_rate) }}%</div>
+                <div class="stat-label">Completion Rate</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="stats-card text-center">
+                <div class="stat-number">{{ (total_time_spent // 60) if total_time_spent else 0 }}</div>
+                <div class="stat-label">Minutes Studied</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Lessons in Progress -->
+        <div class="col-lg-6">
+            <div class="section-title">
+                <i class="fas fa-play-circle"></i>
+                Lessons in Progress ({{ started_lessons|length }})
+            </div>
+            
+            <div class="lessons-in-progress-container">
+                {% if started_lessons %}
+                    {% for lesson_data in started_lessons %}
+                    <div class="lesson-card in-progress">
+                        <div class="lesson-title">
+                            <a href="{{ url_for('routes.view_lesson', lesson_id=lesson_data.lesson.id) }}" class="text-decoration-none">
+                                {{ lesson_data.lesson.title }}
+                            </a>
+                        </div>
+                        <div class="lesson-meta">
+                            <i class="fas fa-tag me-1"></i>{{ lesson_data.category_name }}
+                            {% if lesson_data.lesson.estimated_duration %}
+                            <span class="ms-2"><i class="fas fa-clock me-1"></i>{{ lesson_data.lesson.estimated_duration }} min</span>
+                            {% endif %}
+                            <span class="ms-2 time-spent">
+                                <i class="fas fa-stopwatch me-1"></i>{{ (lesson_data.progress.time_spent // 60) if lesson_data.progress.time_spent else 0 }} min studied
+                            </span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar in-progress" style="width: {{ lesson_data.progress.progress_percentage }}%"></div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">{{ lesson_data.progress.progress_percentage }}% complete</small>
+                            <small class="text-muted">
+                                Last accessed: {{ lesson_data.progress.last_accessed.strftime('%b %d, %Y') if lesson_data.progress.last_accessed else 'Never' }}
+                            </small>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-book-open"></i>
+                        <h5>No lessons in progress</h5>
+                        <p>Start a lesson to see your progress here!</p>
+                        <a href="{{ url_for('routes.lessons') }}" class="btn btn-primary">Browse Lessons</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Completed Lessons -->
+        <div class="col-lg-6">
+            <div class="section-title">
+                <i class="fas fa-check-circle"></i>
+                Completed Lessons ({{ completed_lessons|length }})
+            </div>
+            
+            {% if completed_lessons %}
+                {% for lesson_data in completed_lessons %}
+                <div class="lesson-card">
+                    <div class="lesson-title">
+                        <a href="{{ url_for('routes.view_lesson', lesson_id=lesson_data.lesson.id) }}" class="text-decoration-none">
+                            {{ lesson_data.lesson.title }}
+                        </a>
+                        <i class="fas fa-check-circle text-success ms-2"></i>
+                    </div>
+                    <div class="lesson-meta">
+                        <i class="fas fa-tag me-1"></i>{{ lesson_data.category_name }}
+                        <span class="ms-2 time-spent">
+                            <i class="fas fa-stopwatch me-1"></i>{{ (lesson_data.progress.time_spent // 60) if lesson_data.progress.time_spent else 0 }} min studied
+                        </span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: 100%"></div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-success">✓ Completed</small>
+                        <small class="text-muted">
+                            Completed: {{ lesson_data.progress.completed_at.strftime('%b %d, %Y') if lesson_data.progress.completed_at else 'Unknown' }}
+                        </small>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-trophy"></i>
+                    <h5>No completed lessons yet</h5>
+                    <p>Complete your first lesson to see it here!</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Progress by Category -->
+    {% if category_stats %}
+    <div class="row mt-4">
+        <div class="col-lg-6">
+            <div class="section-title">
+                <i class="fas fa-chart-pie"></i>
+                Progress by Category
+            </div>
+            <div class="category-stats">
+                {% for category_name, stats in category_stats.items() %}
+                <div class="category-item">
+                    <div>
+                        <div class="category-name">{{ category_name }}</div>
+                        <small class="text-muted">
+                            {{ stats.completed }}/{{ stats.total }} lessons • 
+                            {{ (stats.time_spent // 60) if stats.time_spent else 0 }} min
+                        </small>
+                    </div>
+                    <div class="category-progress">
+                        <div class="category-percentage">{{ "%.0f"|format(stats.completion_rate) }}%</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="col-lg-6">
+            <div class="section-title">
+                <i class="fas fa-history"></i>
+                Recent Activity
+            </div>
+            <div class="recent-activity">
+                {% if recent_activity %}
+                    {% for activity in recent_activity %}
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            {% if activity.is_completed %}
+                                <i class="fas fa-check-circle"></i>
+                            {% else %}
+                                <i class="fas fa-play-circle"></i>
+                            {% endif %}
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">
+                                <a href="{{ url_for('routes.view_lesson', lesson_id=activity.lesson.id) }}" class="text-decoration-none">
+                                    {{ activity.lesson.title }}
+                                </a>
+                            </div>
+                            <div class="activity-time">
+                                {% if activity.is_completed %}
+                                    Completed {{ activity.completed_at.strftime('%b %d, %Y') if activity.completed_at else 'recently' }}
+                                {% else %}
+                                    Last accessed {{ activity.last_accessed.strftime('%b %d, %Y') if activity.last_accessed else 'recently' }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-clock"></i>
+                        <h6>No recent activity</h6>
+                        <p>Start learning to see your activity here!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Purchases Section -->
+    {% if user_purchases %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="section-title">
+                <i class="fas fa-shopping-cart"></i>
+                Your Purchases
+            </div>
+            <div class="purchases-section">
+                {% for purchase in user_purchases %}
+                <div class="purchase-item">
+                    <div>
+                        <div class="purchase-title">{{ purchase.lesson.title }}</div>
+                        <small class="text-muted">
+                            Purchased {{ purchase.purchased_at.strftime('%b %d, %Y') }}
+                        </small>
+                    </div>
+                    <div class="purchase-price">CHF {{ "%.2f"|format(purchase.price_paid) }}</div>
+                </div>
+                {% endfor %}
+                <div class="mt-3 pt-3 border-top">
+                    <div class="d-flex justify-content-between">
+                        <strong>Total Spent:</strong>
+                        <strong class="text-success">CHF {{ "%.2f"|format(total_spent) }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

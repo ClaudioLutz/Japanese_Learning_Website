@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category Filter Bug - Minimal Reproduction</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .category-card { 
+            border: 1px solid #ccc; 
+            padding: 10px; 
+            margin: 10px; 
+            cursor: pointer; 
+            background: #f9f9f9;
+        }
+        .category-card:hover { background: #e9e9e9; }
+        select { padding: 5px; margin: 10px; }
+        button { padding: 8px 16px; margin: 10px; }
+        .debug-info { 
+            background: #f0f0f0; 
+            padding: 10px; 
+            margin: 10px 0; 
+            font-family: monospace; 
+            white-space: pre-wrap;
+        }
+        .lessons-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+        .lesson-card { border: 1px solid #ddd; padding: 10px; background: white; }
+    </style>
+</head>
+<body>
+    <h1>Category Filter Bug - Minimal Reproduction</h1>
+    
+    <div id="debugInfo" class="debug-info">Debug info will appear here...</div>
+    
+    <h2>Categories</h2>
+    <div id="categoriesContainer"></div>
+    
+    <h2>Filters</h2>
+    <label>Category: 
+        <select id="categoryFilter">
+            <option value="">All Categories</option>
+        </select>
+    </label>
+    <button onclick="applyFilters()">Apply Filters</button>
+    <button onclick="clearFilters()">Clear Filters</button>
+    
+    <h2>Lessons</h2>
+    <div id="lessonsContainer"></div>
+    <div id="noLessonsMessage" style="display: none;">No lessons found</div>
+
+    <script>
+        // Global variables (mimicking the original)
+        let allLessons = [];
+        let categories = [];
+        let currentView = 'categories';
+        let selectedCategoryId = null;
+        
+        // Debug logging function
+        function debugLog(message, data = null) {
+            const timestamp = new Date().toLocaleTimeString();
+            const debugDiv = document.getElementById('debugInfo');
+            const logEntry = `[${timestamp}] ${message}${data ? '\n' + JSON.stringify(data, null, 2) : ''}`;
+            debugDiv.textContent = logEntry + '\n\n' + debugDiv.textContent;
+            console.log(message, data);
+        }
+        
+        // Mock data (simplified version of real data)
+        const mockCategories = [
+            { id: 1, name: "Food & Dining" },
+            { id: 2, name: "Culture & Traditions" },
+            { id: 3, name: "Daily Life & Society" }
+        ];
+        
+        const mockLessons = [
+            { id: 1, title: "Basic Restaurant Phrases", category_id: 1 },
+            { id: 2, title: "Ordering Food", category_id: 1 },
+            { id: 3, title: "Japanese Festivals", category_id: 2 },
+            { id: 4, title: "Tea Ceremony", category_id: 2 },
+            { id: 5, title: "Daily Greetings", category_id: 3 }
+        ];
+        
+        // Simulate async loading with timing
+        async function loadCategories() {
+            debugLog('🔄 loadCategories() called');
+            
+            // Simulate network delay
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            categories = [...mockCategories];
+            debugLog('✅ Categories loaded', categories);
+            
+            // Populate dropdown
+            const categoryFilter = document.getElementById('categoryFilter');
+            categoryFilter.innerHTML = '<option value="">All Categories</option>';
+            
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = String(category.id);
+                option.textContent = category.name;
+                categoryFilter.appendChild(option);
+                debugLog(`➕ Added option: value="${option.value}", text="${option.textContent}"`);
+            });
+            
+            displayCategories();
+        }
+        
+        async function loadLessons() {
+            debugLog('🔄 loadLessons() called');
+            
+            // Simulate network delay
+            await new Promise(resolve => setTimeout(resolve, 50));
+            
+            allLessons = [...mockLessons];
+            debugLog('✅ Lessons loaded', allLessons);
+        }
+        
+        function displayCategories() {
+            debugLog('🎨 displayCategories() called');
+            const container = document.getElementById('categoriesContainer');
+            container.innerHTML = '';
+            
+            categories.forEach(category => {
+                const categoryCard = document.createElement('div');
+                categoryCard.className = 'category-card';
+                categoryCard.textContent = category.name;
+                categoryCard.onclick = () => showCategoryLessons(category.id, category.name);
+                container.appendChild(categoryCard);
+            });
+        }
+        
+        // CRITICAL FUNCTION - This is where the bug occurs
+        function showCategoryLessons(categoryId, categoryName) {
+            debugLog(`🎯 showCategoryLessons(${categoryId}, "${categoryName}") called`);
+            
+            currentView = 'lessons';
+            selectedCategoryId = String(categoryId);
+            
+            debugLog('📊 State before dropdown update:', {
+                currentView,
+                selectedCategoryId,
+                categoryId: categoryId,
+                categoryIdType: typeof categoryId
+            });
+            
+            // Get dropdown element
+            const catSelect = document.getElementById('categoryFilter');
+            debugLog('🔍 Dropdown state before update:', {
+                currentValue: catSelect.value,
+                availableOptions: Array.from(catSelect.options).map(opt => ({
+                    value: opt.value,
+                    text: opt.textContent,
+                    valueType: typeof opt.value
+                }))
+            });
+            
+            // HYPOTHESIS 1 TEST: Check if option exists
+            const targetOption = Array.from(catSelect.options).find(opt => opt.value === String(categoryId));
+            debugLog('🔍 Target option search result:', {
+                searchingFor: String(categoryId),
+                found: !!targetOption,
+                targetOption: targetOption ? {
+                    value: targetOption.value,
+                    text: targetOption.textContent
+                } : null
+            });
+            
+            // Set the value
+            catSelect.value = String(categoryId);
+            debugLog('⚡ After setting catSelect.value:', {
+                setValue: String(categoryId),
+                actualValue: catSelect.value,
+                selectedIndex: catSelect.selectedIndex,
+                selectedOption: catSelect.selectedOptions[0] ? {
+                    value: catSelect.selectedOptions[0].value,
+                    text: catSelect.selectedOptions[0].textContent
+                } : null
+            });
+            
+            // HYPOTHESIS 2 TEST: Check visual update
+            setTimeout(() => {
+                debugLog('⏰ Visual state check (after 100ms):', {
+                    dropdownValue: catSelect.value,
+                    visibleText: catSelect.selectedOptions[0]?.textContent || 'NO SELECTION',
+                    selectedIndex: catSelect.selectedIndex
+                });
+            }, 100);
+            
+            // Dispatch change event
+            const changeEvent = new Event('change', { bubbles: true });
+            catSelect.dispatchEvent(changeEvent);
+            debugLog('📡 Change event dispatched');
+            
+            // Apply filters
+            debugLog('🔄 Calling applyFilters()');
+            applyFilters();
+        }
+        
+        function applyFilters() {
+            debugLog('🔧 applyFilters() called');
+            
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            debugLog('📋 Filter values:', {
+                categoryFilter,
+                categoryFilterType: typeof categoryFilter,
+                selectedCategoryId,
+                selectedCategoryIdType: typeof selectedCategoryId
+            });
+            
+            // HYPOTHESIS 3 TEST: Check filtering logic
+            let filteredLessons = allLessons.filter(lesson => {
+                const matches = !categoryFilter || lesson.category_id == categoryFilter;
+                debugLog(`🔍 Lesson ${lesson.id} (category_id: ${lesson.category_id}):`, {
+                    categoryFilter,
+                    lessonCategoryId: lesson.category_id,
+                    comparison: `${lesson.category_id} == ${categoryFilter}`,
+                    matches
+                });
+                return matches;
+            });
+            
+            debugLog('✅ Filtered lessons result:', {
+                totalLessons: allLessons.length,
+                filteredCount: filteredLessons.length,
+                filteredLessons
+            });
+            
+            displayLessons(filteredLessons);
+        }
+        
+        function displayLessons(lessons) {
+            debugLog(`🎨 displayLessons() called with ${lessons.length} lessons`);
+            
+            const container = document.getElementById('lessonsContainer');
+            const noLessonsMessage = document.getElementById('noLessonsMessage');
+            
+            container.innerHTML = '';
+            
+            if (lessons.length === 0) {
+                noLessonsMessage.style.display = 'block';
+                debugLog('❌ No lessons to display');
+                return;
+            }
+            
+            noLessonsMessage.style.display = 'none';
+            
+            const lessonsGrid = document.createElement('div');
+            lessonsGrid.className = 'lessons-grid';
+            
+            lessons.forEach(lesson => {
+                const lessonCard = document.createElement('div');
+                lessonCard.className = 'lesson-card';
+                lessonCard.innerHTML = `
+                    <h4>${lesson.title}</h4>
+                    <p>Category ID: ${lesson.category_id}</p>
+                `;
+                lessonsGrid.appendChild(lessonCard);
+            });
+            
+            container.appendChild(lessonsGrid);
+            debugLog('✅ Lessons displayed successfully');
+        }
+        
+        function clearFilters() {
+            debugLog('🧹 clearFilters() called');
+            document.getElementById('categoryFilter').value = '';
+            displayLessons(allLessons);
+        }
+        
+        // Add change event listener to dropdown for debugging
+        document.getElementById('categoryFilter').addEventListener('change', function(e) {
+            debugLog('🎧 Dropdown change event fired:', {
+                newValue: e.target.value,
+                selectedText: e.target.selectedOptions[0]?.textContent || 'NO SELECTION'
+            });
+        });
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async function() {
+            debugLog('🚀 DOM Content Loaded - Starting initialization');
+            
+            // Test different loading orders to check for race conditions
+            debugLog('⏱️ Testing loading sequence...');
+            
+            // Load categories first, then lessons (original order)
+            await loadCategories();
+            await loadLessons();
+            
+            debugLog('✅ Initialization complete');
+            
+            // HYPOTHESIS 4 TEST: Test immediate vs delayed execution
+            debugLog('🧪 Testing immediate category selection...');
+            setTimeout(() => {
+                debugLog('🧪 Testing delayed category selection (after 500ms)...');
+                showCategoryLessons(1, "Food & Dining");
+            }, 500);
+        });
+    </script>
+</body>
+</html>
