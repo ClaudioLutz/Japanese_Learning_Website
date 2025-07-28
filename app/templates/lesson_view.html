@@ -652,12 +652,16 @@
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-6">
-                                                                    {% set user_selected_answer = '' %}
-                                                                    {% if user_answer and user_answer.text_answer %}
+                                                                    {% set display_answer = '' %}
+                                                                    {% if user_answer and user_answer.is_correct %}
+                                                                        {# If quiz is completed correctly, show the correct answer #}
+                                                                        {% set display_answer = option.feedback %}
+                                                                    {% elif user_answer and user_answer.text_answer %}
+                                                                        {# If quiz is not completed, show user's last selection #}
                                                                         {% set user_pairs = user_answer.text_answer | from_json %}
                                                                         {% for pair in user_pairs %}
                                                                             {% if pair.prompt == option.option_text %}
-                                                                                {% set user_selected_answer = pair.answer %}
+                                                                                {% set display_answer = pair.answer %}
                                                                             {% endif %}
                                                                         {% endfor %}
                                                                     {% endif %}
@@ -668,7 +672,7 @@
                                                                             {% if user_answer and user_answer.is_correct %}disabled{% endif %}>
                                                                         <option value="">Choose...</option>
                                                                         {% for answer_option in question.options | sort(attribute='order_index') %}
-                                                                        <option value="{{ answer_option.feedback }}" {% if user_selected_answer == answer_option.feedback %}selected{% endif %}>{{ answer_option.feedback }}</option>
+                                                                        <option value="{{ answer_option.feedback }}" {% if display_answer == answer_option.feedback %}selected{% endif %}>{{ answer_option.feedback }}</option>
                                                                         {% endfor %}
                                                                     </select>
                                                                 </div>
@@ -843,13 +847,43 @@ document.addEventListener('DOMContentLoaded', () => {
     // Shuffle matching quiz options while preserving selected state
     const matchingSelects = document.querySelectorAll('.matching-select');
     matchingSelects.forEach(select => {
-        // Store the currently selected value
-        const selectedValue = select.value;
+        // Store the currently selected value from the server-side template
+        let selectedValue = '';
         
-        const options = Array.from(select.querySelectorAll('option')).slice(1); // Skip the first "Choose..." option
-        const shuffled = shuffleArray(options);
+        // First try to get the selected value from the select element itself
+        if (select.value && select.value !== '') {
+            selectedValue = select.value;
+            console.log('Found selected value from select.value:', selectedValue);
+        } else {
+            // Try to find an option with the 'selected' attribute
+            const selectedOption = select.querySelector('option[selected]');
+            if (selectedOption) {
+                selectedValue = selectedOption.value;
+                console.log('Found selected value from selected attribute:', selectedValue);
+            }
+        }
         
-        // Remove existing options (except first)
+        // Only shuffle if there are options to shuffle (more than just "Choose...")
+        const options = Array.from(select.querySelectorAll('option')).slice(1);
+        if (options.length <= 1) {
+            console.log('Not enough options to shuffle for this select');
+            return; // Skip shuffling if there's only one or no options
+        }
+        
+        console.log('Shuffling matching quiz options, preserving selection:', selectedValue);
+        
+        // Create new option elements to avoid DOM manipulation issues
+        const newOptions = options.map(option => {
+            const newOption = document.createElement('option');
+            newOption.value = option.value;
+            newOption.textContent = option.textContent;
+            return newOption;
+        });
+        
+        // Shuffle the new options
+        const shuffled = shuffleArray(newOptions);
+        
+        // Remove all options except the first "Choose..." one
         while (select.children.length > 1) {
             select.removeChild(select.lastChild);
         }
@@ -859,9 +893,20 @@ document.addEventListener('DOMContentLoaded', () => {
             select.appendChild(option);
         });
         
-        // Restore the selected value if it existed
-        if (selectedValue) {
-            select.value = selectedValue;
+        // Restore the selected value
+        if (selectedValue && selectedValue !== '') {
+            // Use a timeout to ensure DOM is fully updated
+            setTimeout(() => {
+                select.value = selectedValue;
+                console.log('Restored matching quiz selection:', selectedValue, 'Current value:', select.value);
+                
+                // Verify the selection was applied correctly
+                if (select.value === selectedValue) {
+                    console.log('✓ Matching quiz selection successfully restored');
+                } else {
+                    console.warn('✗ Failed to restore matching quiz selection');
+                }
+            }, 10);
         }
     });
 });
