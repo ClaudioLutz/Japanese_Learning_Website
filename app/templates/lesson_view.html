@@ -264,9 +264,6 @@
                             <p class="card-text">{{ lesson.description or 'No description available.' }}</p>
                             
                             <div class="d-flex flex-wrap gap-2 mb-3">
-                                <span class="badge {{ 'bg-success' if lesson.lesson_type == 'free' else 'bg-warning' }}">
-                                    {{ lesson.lesson_type | title }}
-                                </span>
                                 {% if lesson.category %}
                                 <span class="badge bg-info">{{ lesson.category.name }}</span>
                                 {% endif %}

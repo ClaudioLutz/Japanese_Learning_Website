@@ -5,7 +5,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request,
 from flask_login import login_user, logout_user, login_required, current_user
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError # Import specific exceptions
 from app import db
-from app.models import User, Kana, Kanji, Vocabulary, Grammar, LessonCategory, Lesson, LessonContent, LessonPrerequisite, UserLessonProgress, QuizQuestion, QuizOption, UserQuizAnswer, LessonPage, Course, LessonPurchase
+from app.models import User, Kana, Kanji, Vocabulary, Grammar, LessonCategory, Lesson, LessonContent, LessonPrerequisite, UserLessonProgress, QuizQuestion, QuizOption, UserQuizAnswer, LessonPage, Course, LessonPurchase, CoursePurchase
 from app.forms import RegistrationForm, LoginForm, CSRFTokenForm
 from app.ai_services import AILessonContentGenerator
 from app.lesson_export_import import (
@@ -315,11 +315,67 @@ def courses():
     courses = Course.query.filter_by(is_published=True).all()
     return render_template('courses.html', courses=courses)
 
+@bp.route('/my-lessons')
+@login_required
+def my_lessons():
+    """Display all bought lessons for the current user"""
+    # Get all purchased lessons for the current user
+    user_purchases = LessonPurchase.query.filter_by(user_id=current_user.id).order_by(LessonPurchase.purchased_at.desc()).all()
+    
+    # Prepare lesson data with progress information
+    purchased_lessons = []
+    total_spent = 0
+    completed_count = 0
+    total_time_spent = 0
+    
+    for purchase in user_purchases:
+        lesson = purchase.lesson
+        
+        # Get progress for this lesson
+        progress = UserLessonProgress.query.filter_by(
+            user_id=current_user.id, 
+            lesson_id=lesson.id
+        ).first()
+        
+        # Calculate statistics
+        total_spent += purchase.price_paid
+        if progress and progress.is_completed:
+            completed_count += 1
+        if progress:
+            total_time_spent += progress.time_spent or 0
+        
+        purchased_lessons.append({
+            'lesson': lesson,
+            'purchase': purchase,
+            'progress': progress,
+            'category_name': lesson.category.name if lesson.category else 'Uncategorized',
+            'accessible': True,  # User owns the lesson
+            'access_message': 'Purchased'
+        })
+    
+    # Calculate completion rate
+    completion_rate = (completed_count / len(user_purchases) * 100) if user_purchases else 0
+    
+    return render_template('my_lessons.html',
+                         purchased_lessons=purchased_lessons,
+                         total_spent=total_spent,
+                         total_purchased_lessons=len(user_purchases),
+                         completed_count=completed_count,
+                         completion_rate=completion_rate,
+                         total_time_spent=total_time_spent)
+
 @bp.route('/course/<int:course_id>')
 def view_course(course_id):
     """View a specific course"""
     course = Course.query.get_or_404(course_id)
     
+    # Check if the user has purchased the course
+    has_purchased = False
+    if current_user.is_authenticated:
+        purchase = CoursePurchase.query.filter_by(user_id=current_user.id, course_id=course.id).first()
+        if purchase:
+            has_purchased = True
+
     # Get user progress for all lessons in this course
     lesson_progress = {}
     total_lessons = len(course.lessons)
@@ -364,7 +420,8 @@ def view_course(course_id):
                          completed_lessons=completed_lessons,
                          total_duration=total_duration,
                          average_difficulty=average_difficulty,
-                         has_started=has_started)
+                         has_started=has_started,
+                         has_purchased=has_purchased)
 
 @bp.route('/purchase/<int:lesson_id>')
 @login_required
@@ -925,6 +982,8 @@ def update_course(item_id):
     item.description = data.get('description', item.description)
     item.background_image_url = data.get('background_image_url', item.background_image_url)
     item.is_published = data.get('is_published', item.is_published)
+    item.price = data.get('price', item.price)
+    item.is_purchasable = data.get('is_purchasable', item.is_purchasable)
 
     if 'lessons' in data:
         item.lessons = []
@@ -1911,7 +1970,15 @@ def get_user_lessons():
 def get_courses():
     """Get all courses"""
     courses = Course.query.filter_by(is_published=True).all()
-    return jsonify([model_to_dict(course) for course in courses])
+    courses_data = []
+    for course in courses:
+        course_dict = model_to_dict(course)
+        if current_user.is_authenticated:
+            course_dict['is_purchased'] = CoursePurchase.query.filter_by(user_id=current_user.id, course_id=course.id).first() is not None
+        else:
+            course_dict['is_purchased'] = False
+        courses_data.append(course_dict)
+    return jsonify(courses_data)
 
 @bp.route('/api/categories', methods=['GET'])
 def get_public_categories():
@@ -2265,6 +2332,52 @@ def reset_lesson_progress(lesson_id):
     return redirect(url_for('routes.view_lesson', lesson_id=lesson_id))
 
 # == LESSON PRICING AND PURCHASE API ==
+@bp.route('/api/courses/<int:course_id>/purchase', methods=['POST'])
+@login_required
+def purchase_course(course_id):
+    """Purchase a course (MVP with mock payment)"""
+    course = Course.query.get_or_404(course_id)
+    
+    # Validate that the course is purchasable
+    if not course.is_purchasable or course.price <= 0:
+        return jsonify({"error": "This course is not available for purchase"}), 400
+    
+    # Check if user already owns this course
+    existing_purchase = CoursePurchase.query.filter_by(
+        user_id=current_user.id, 
+        course_id=course_id
+    ).first()
+    
+    if existing_purchase:
+        return jsonify({"error": "You already own this course"}), 400
+    
+    try:
+        # Create purchase record
+        purchase = CoursePurchase(
+            user_id=current_user.id,
+            course_id=course_id,
+            price_paid=course.price,
+            purchased_at=datetime.utcnow()
+        )
+        
+        db.session.add(purchase)
+        db.session.commit()
+        
+        current_app.logger.info(f"User {current_user.id} purchased course {course_id} for CHF {course.price}")
+        
+        return jsonify({
+            "success": True,
+            "message": f"Successfully purchased '{course.title}' for CHF {course.price:.2f}",
+            "purchase_id": purchase.id,
+            "course_id": course_id,
+            "price_paid": course.price
+        }), 201
+        
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error purchasing course {course_id} for user {current_user.id}: {e}")
+        return jsonify({"error": "Purchase failed. Please try again."}), 500
+
 @bp.route('/api/lessons/<int:lesson_id>/purchase', methods=['POST'])
 @login_required
 def purchase_lesson(lesson_id):

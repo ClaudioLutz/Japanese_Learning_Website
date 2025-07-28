@@ -6,8 +6,7 @@ from datetime import datetime
 import json
 from typing import List
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey, Table, Column, Integer, String, Text, Boolean, DateTime, JSON
-
+from sqlalchemy import ForeignKey, Table, Column, Integer, String, Text, Boolean, DateTime, JSON, event
 class User(UserMixin, db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     username: Mapped[str] = mapped_column(String(80), unique=True, nullable=False)
@@ -17,6 +16,7 @@ class User(UserMixin, db.Model):
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 
     lesson_progress: Mapped[List['UserLessonProgress']] = relationship('UserLessonProgress', backref='user', lazy=True, cascade='all, delete-orphan')
+    course_purchases: Mapped[List['CoursePurchase']] = relationship('CoursePurchase', backref='user', lazy=True, cascade='all, delete-orphan')
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -187,7 +187,7 @@ class Lesson(db.Model):
         # Paid lesson - check if user purchased it
         if self.is_purchasable:
             purchase = LessonPurchase.query.filter_by(
-                user_id=user.id, 
+                user_id=user.id,
                 lesson_id=self.id
             ).first()
             if purchase:
@@ -199,8 +199,24 @@ class Lesson(db.Model):
                     if not progress or not progress.is_completed:
                         return False, f"Must complete '{prereq.title}' first"
                 return True, "Purchased"
-            else:
-                return False, f"Purchase required (CHF {self.price:.2f})"
+
+            # Check if the lesson is part of a purchased course
+            for course in self.courses:
+                course_purchase = CoursePurchase.query.filter_by(
+                    user_id=user.id,
+                    course_id=course.id
+                ).first()
+                if course_purchase:
+                    # User owns the course, so grant access to the lesson
+                    for prereq in self.get_prerequisites(): # type: ignore
+                        progress = UserLessonProgress.query.filter_by(
+                            user_id=user.id, lesson_id=prereq.id
+                        ).first()
+                        if not progress or not progress.is_completed:
+                            return False, f"Must complete '{prereq.title}' first"
+                    return True, f"Accessible through course '{course.title}'"
+            
+            return False, f"Purchase required (CHF {self.price:.2f})"
         
         # Legacy subscription check (for existing premium lessons)
         if self.lesson_type == 'premium' and user.subscription_level != 'premium':
@@ -505,8 +521,44 @@ class Course(db.Model):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
+    # Pricing fields
+    price: Mapped[float] = mapped_column(db.Float, nullable=False, default=0.0)
+    is_purchasable: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    
     lessons: Mapped[List['Lesson']] = relationship('Lesson', secondary=course_lessons, lazy='subquery',
                               back_populates='courses')
 
     def __repr__(self):
         return f'<Course {self.title}>'
+
+class CoursePurchase(db.Model):
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('user.id'), nullable=False)
+    course_id: Mapped[int] = mapped_column(Integer, ForeignKey('course.id', ondelete='CASCADE'), nullable=False)
+    price_paid: Mapped[float] = mapped_column(db.Float, nullable=False)
+    purchased_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    stripe_payment_intent_id: Mapped[str] = mapped_column(String(100), nullable=True)
+
+    course: Mapped['Course'] = relationship('Course', backref=db.backref('purchases', cascade='all, delete-orphan'))
+
+    __table_args__ = (db.UniqueConstraint('user_id', 'course_id'),)
+
+    def __repr__(self):
+        return f'<CoursePurchase user:{self.user_id} course:{self.course_id} price:{self.price_paid}>'
+
+
+# SQLAlchemy event listeners to automatically maintain lesson type consistency
+@event.listens_for(Lesson, 'before_insert')
+@event.listens_for(Lesson, 'before_update')
+def update_lesson_type_on_price_change(mapper, connection, target):
+    """
+    Automatically set lesson_type based on price before insert/update operations.
+    This ensures consistency between lesson_type and pricing.
+    
+    - lesson_type = "free" when price = 0.00
+    - lesson_type = "paid" when price > 0.00
+    """
+    if target.price == 0.0:
+        target.lesson_type = "free"
+    else:
+        target.lesson_type = "paid"

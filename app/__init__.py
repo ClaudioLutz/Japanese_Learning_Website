@@ -46,18 +46,21 @@ def create_app():
         'SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET': os.environ.get('GOOGLE_CLIENT_SECRET'),
         'SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE': ['openid', 'email', 'profile'],
         'SOCIAL_AUTH_GOOGLE_OAUTH2_USE_PKCE': True,
+        'SOCIAL_AUTH_GOOGLE_OAUTH2_USER_ID_KEY': 'sub',  # Use Google's 'sub' field as the uid instead of email
         'SOCIAL_AUTH_LOGIN_REDIRECT_URL': '/',
         'SOCIAL_AUTH_LOGIN_ERROR_URL': '/login',
+        'SOCIAL_AUTH_AUTHENTICATION_BACKENDS': [
+            'social_core.backends.google.GoogleOAuth2',
+        ],
+        'SOCIAL_AUTH_USER_MODEL': 'app.models.User',
+        'SOCIAL_AUTH_STORAGE': 'social_flask_sqlalchemy.models.FlaskStorage',
         'SOCIAL_AUTH_PIPELINE': (
             'social_core.pipeline.social_auth.social_details',
             'social_core.pipeline.social_auth.social_uid',
+            'app.social_auth_config.fix_google_uid',  # Fix Google uid to use 'sub' field
             'social_core.pipeline.social_auth.auth_allowed',
-            'social_core.pipeline.social_auth.social_user',
-            'social_core.pipeline.user.get_username',
-            'app.social_auth_config.create_user_and_login',
-            'social_core.pipeline.social_auth.associate_user',
-            'social_core.pipeline.social_auth.load_extra_data',
-            'social_core.pipeline.user.user_details',
+            'app.social_auth_config.create_user_and_login',  # Custom function handles everything
+            'app.social_auth_config.custom_associate_user',  # Custom function handles social auth records
         ),
     })
     
@@ -93,9 +96,20 @@ def create_app():
 
     # Import models and routes here to avoid circular imports
     from app import models
-    from app.models import Course
+    from app.models import Course, User
+    
+    # Initialize social auth storage after models are imported
+    from social_flask_sqlalchemy.models import UserSocialAuth
+    UserSocialAuth.app_session = db.session
     from app import routes
     from app.utils import convert_to_embed_url
+    
+    # Add user to Flask global context for social auth
+    @app.before_request
+    def load_current_user():
+        from flask import g
+        from flask_login import current_user
+        g.user = current_user if current_user.is_authenticated else None
 
     # Register Jinja filter
     app.jinja_env.filters['to_embed_url'] = convert_to_embed_url
@@ -103,7 +117,11 @@ def create_app():
     # Register blueprints
     app.register_blueprint(routes.bp) # Register the main routes blueprint
     
-    # Register social auth blueprint
+    # Register custom OAuth blueprint BEFORE social auth to override it
+    from app.oauth_routes import oauth_bp
+    app.register_blueprint(oauth_bp)
+    
+    # Register social auth blueprint (for /auth/login/google-oauth2/ route only)
     from social_flask.routes import social_auth
     app.register_blueprint(social_auth, url_prefix='/auth')
 

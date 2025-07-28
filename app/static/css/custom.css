@@ -2349,15 +2349,8 @@ button[onclick*="moveContentInPage"]:active {
 }
 
 .course-hero-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, 
-        rgba(74, 144, 226, 0.9) 0%, 
-        rgba(80, 227, 194, 0.8) 50%, 
-        rgba(74, 144, 226, 0.9) 100%);
+    /* Remove overlay completely to show background image at 100% */
+    display: none;
 }
 
 .course-hero-content {
@@ -2369,7 +2362,7 @@ button[onclick*="moveContentInPage"]:active {
 
 .course-category-badge {
     display: inline-block;
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.3);
     padding: 0.75rem 1.5rem;
@@ -2379,14 +2372,22 @@ button[onclick*="moveContentInPage"]:active {
     margin-bottom: 2rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    color: white;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .course-hero-title {
     font-size: 4rem;
     font-weight: 700;
     margin-bottom: 1.5rem;
-    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     line-height: 1.1;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    padding: 1rem 2rem;
+    border-radius: 20px;
+    color: white;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    display: inline-block;
 }
 
 .course-hero-description {
@@ -2394,10 +2395,15 @@ button[onclick*="moveContentInPage"]:active {
     font-weight: 300;
     line-height: 1.6;
     margin-bottom: 3rem;
-    opacity: 0.95;
     max-width: 800px;
     margin-left: auto;
     margin-right: auto;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    padding: 1.5rem 2rem;
+    border-radius: 15px;
+    color: white;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
 }
 
 /* Course Stats Row */
@@ -2413,12 +2419,14 @@ button[onclick*="moveContentInPage"]:active {
     display: flex;
     align-items: center;
     gap: 1rem;
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     padding: 1.25rem 1.75rem;
     border-radius: 20px;
     min-width: 140px;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+    color: white;
 }
 
 .stat-icon {
@@ -2443,14 +2451,15 @@ button[onclick*="moveContentInPage"]:active {
     font-weight: 700;
     line-height: 1;
     margin-bottom: 0.25rem;
+    color: var(--primary-color);
 }
 
 .stat-label {
     font-size: 0.875rem;
-    opacity: 0.9;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     font-weight: 500;
+    color: rgba(255, 255, 255, 0.85);
 }
 
 /* Enhanced Progress Section */
@@ -2466,18 +2475,21 @@ button[onclick*="moveContentInPage"]:active {
 .progress-track {
     position: relative;
     height: 12px;
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
     border-radius: 6px;
     overflow: hidden;
     margin-bottom: 1rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #ffffff 0%, rgba(255, 255, 255, 0.8) 100%);
+    background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
     border-radius: 6px;
     transition: width 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     position: relative;
+    box-shadow: 0 2px 8px rgba(74, 144, 226, 0.4);
 }
 
 .progress-glow {
@@ -2496,8 +2508,13 @@ button[onclick*="moveContentInPage"]:active {
     display: flex;
     justify-content: space-between;
     font-size: 0.875rem;
-    opacity: 0.9;
     font-weight: 500;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 /* Action Buttons */

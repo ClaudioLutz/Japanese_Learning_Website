@@ -1,0 +1,476 @@
+{% extends "base.html" %}
+
+{% block title %}My Lessons{% endblock %}
+
+{% block styles %}
+<style>
+    .my-lessons-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+        border-radius: 10px;
+    }
+    
+    .lessons-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        border-left: 4px solid #667eea;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #667eea;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stat-label {
+        color: #666;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .lessons-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+    
+    .lesson-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s, box-shadow 0.2s;
+        border-left: 4px solid #28a745;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .lesson-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .lesson-card.completed {
+        border-left-color: #28a745;
+    }
+    
+    .lesson-card.in-progress {
+        border-left-color: #ffc107;
+    }
+    
+    .lesson-card.not-started {
+        border-left-color: #6c757d;
+    }
+    
+    .lesson-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+    
+    .lesson-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 0.5rem;
+        line-height: 1.3;
+    }
+    
+    .lesson-title a {
+        color: inherit;
+        text-decoration: none;
+    }
+    
+    .lesson-title a:hover {
+        color: #667eea;
+    }
+    
+    .lesson-status {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .lesson-status.completed {
+        background: #d4edda;
+        color: #155724;
+    }
+    
+    .lesson-status.in-progress {
+        background: #fff3cd;
+        color: #856404;
+    }
+    
+    .lesson-status.not-started {
+        background: #f8f9fa;
+        color: #6c757d;
+    }
+    
+    .lesson-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        font-size: 0.85rem;
+        color: #666;
+    }
+    
+    .lesson-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+    
+    .lesson-progress {
+        margin-bottom: 1rem;
+    }
+    
+    .progress-bar-container {
+        background: #f0f0f0;
+        border-radius: 10px;
+        height: 8px;
+        overflow: hidden;
+        margin-bottom: 0.5rem;
+    }
+    
+    .progress-bar {
+        height: 100%;
+        border-radius: 10px;
+        transition: width 0.3s ease;
+    }
+    
+    .progress-bar.completed {
+        background: linear-gradient(90deg, #28a745, #20c997);
+    }
+    
+    .progress-bar.in-progress {
+        background: linear-gradient(90deg, #ffc107, #fd7e14);
+    }
+    
+    .progress-bar.not-started {
+        background: linear-gradient(90deg, #6c757d, #495057);
+    }
+    
+    .progress-text {
+        font-size: 0.8rem;
+        color: #666;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .lesson-purchase-info {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-top: 1rem;
+        border-left: 3px solid #28a745;
+    }
+    
+    .purchase-date {
+        font-size: 0.8rem;
+        color: #666;
+        margin-bottom: 0.25rem;
+    }
+    
+    .purchase-price {
+        font-weight: bold;
+        color: #28a745;
+        font-size: 1.1rem;
+    }
+    
+    .lesson-actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+    
+    .btn-lesson {
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 500;
+        transition: all 0.2s;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .btn-primary {
+        background: #667eea;
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background: #5a6fd8;
+        color: white;
+    }
+    
+    .btn-outline {
+        background: transparent;
+        color: #667eea;
+        border: 1px solid #667eea;
+    }
+    
+    .btn-outline:hover {
+        background: #667eea;
+        color: white;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #666;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .empty-state i {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        color: #ddd;
+    }
+    
+    .empty-state h3 {
+        margin-bottom: 1rem;
+        color: #333;
+    }
+    
+    .empty-state p {
+        margin-bottom: 2rem;
+        font-size: 1.1rem;
+    }
+    
+    .category-badge {
+        background: #e9ecef;
+        color: #495057;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+    
+    .time-spent {
+        color: #28a745;
+        font-weight: 500;
+    }
+    
+    @media (max-width: 768px) {
+        .lessons-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .lessons-stats {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .lesson-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+        
+        .lesson-meta {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="my-lessons-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="mb-2">
+                    <i class="fas fa-graduation-cap me-2"></i>
+                    My Purchased Lessons
+                </h1>
+                <p class="mb-0">Track your progress and continue learning</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <div class="text-white">
+                    <div class="h4 mb-1">CHF {{ "%.2f"|format(total_spent) }}</div>
+                    <small>Total Investment</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Statistics Overview -->
+    <div class="lessons-stats">
+        <div class="stat-card">
+            <div class="stat-number">{{ total_purchased_lessons }}</div>
+            <div class="stat-label">Lessons Owned</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ completed_count }}</div>
+            <div class="stat-label">Completed</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ "%.1f"|format(completion_rate) }}%</div>
+            <div class="stat-label">Completion Rate</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ (total_time_spent // 60) if total_time_spent else 0 }}</div>
+            <div class="stat-label">Minutes Studied</div>
+        </div>
+    </div>
+
+    {% if purchased_lessons %}
+        <!-- Lessons Grid -->
+        <div class="lessons-grid">
+            {% for lesson_data in purchased_lessons %}
+            {% set lesson = lesson_data.lesson %}
+            {% set purchase = lesson_data.purchase %}
+            {% set progress = lesson_data.progress %}
+            {% set category_name = lesson_data.category_name %}
+            
+            {% if progress and progress.is_completed %}
+                {% set status_class = "completed" %}
+                {% set status_text = "Completed" %}
+                {% set progress_percentage = 100 %}
+            {% elif progress and progress.progress_percentage > 0 %}
+                {% set status_class = "in-progress" %}
+                {% set status_text = "In Progress" %}
+                {% set progress_percentage = progress.progress_percentage %}
+            {% else %}
+                {% set status_class = "not-started" %}
+                {% set status_text = "Not Started" %}
+                {% set progress_percentage = 0 %}
+            {% endif %}
+            
+            <div class="lesson-card {{ status_class }}">
+                <div class="lesson-header">
+                    <div>
+                        <h3 class="lesson-title">
+                            <a href="{{ url_for('routes.view_lesson', lesson_id=lesson.id) }}">
+                                {{ lesson.title }}
+                            </a>
+                        </h3>
+                        {% if lesson.description %}
+                        <p class="text-muted mb-2">{{ lesson.description[:100] }}{% if lesson.description|length > 100 %}...{% endif %}</p>
+                        {% endif %}
+                    </div>
+                    <span class="lesson-status {{ status_class }}">{{ status_text }}</span>
+                </div>
+                
+                <div class="lesson-meta">
+                    <div class="lesson-meta-item">
+                        <i class="fas fa-tag"></i>
+                        <span class="category-badge">{{ category_name }}</span>
+                    </div>
+                    {% if lesson.difficulty_level %}
+                    <div class="lesson-meta-item">
+                        <i class="fas fa-signal"></i>
+                        <span>Level {{ lesson.difficulty_level }}</span>
+                    </div>
+                    {% endif %}
+                    {% if lesson.estimated_duration %}
+                    <div class="lesson-meta-item">
+                        <i class="fas fa-clock"></i>
+                        <span>{{ lesson.estimated_duration }} min</span>
+                    </div>
+                    {% endif %}
+                    {% if progress and progress.time_spent %}
+                    <div class="lesson-meta-item">
+                        <i class="fas fa-stopwatch"></i>
+                        <span class="time-spent">{{ (progress.time_spent // 60) }} min studied</span>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="lesson-progress">
+                    <div class="progress-bar-container">
+                        <div class="progress-bar {{ status_class }}" style="width: {{ progress_percentage }}%"></div>
+                    </div>
+                    <div class="progress-text">
+                        <span>{{ progress_percentage }}% complete</span>
+                        {% if progress and progress.last_accessed %}
+                        <span>Last accessed: {{ progress.last_accessed.strftime('%b %d') }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="lesson-purchase-info">
+                    <div class="purchase-date">
+                        <i class="fas fa-calendar-alt me-1"></i>
+                        Purchased {{ purchase.purchased_at.strftime('%B %d, %Y') }}
+                    </div>
+                    <div class="purchase-price">
+                        <i class="fas fa-tag me-1"></i>
+                        CHF {{ "%.2f"|format(purchase.price_paid) }}
+                    </div>
+                </div>
+                
+                <div class="lesson-actions">
+                    {% if progress and progress.is_completed %}
+                    <a href="{{ url_for('routes.view_lesson', lesson_id=lesson.id) }}" class="btn-lesson btn-outline">
+                        <i class="fas fa-eye me-1"></i>Review
+                    </a>
+                    {% elif progress and progress.progress_percentage > 0 %}
+                    <a href="{{ url_for('routes.view_lesson', lesson_id=lesson.id) }}" class="btn-lesson btn-primary">
+                        <i class="fas fa-play me-1"></i>Continue
+                    </a>
+                    {% else %}
+                    <a href="{{ url_for('routes.view_lesson', lesson_id=lesson.id) }}" class="btn-lesson btn-primary">
+                        <i class="fas fa-play me-1"></i>Start Learning
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <!-- Empty State -->
+        <div class="empty-state">
+            <i class="fas fa-shopping-cart"></i>
+            <h3>No Purchased Lessons Yet</h3>
+            <p>You haven't purchased any lessons yet. Browse our lesson catalog to find lessons that interest you!</p>
+            <a href="{{ url_for('routes.lessons') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-search me-2"></i>Browse Lessons
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Add any JavaScript functionality here if needed
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animate progress bars on page load
+        const progressBars = document.querySelectorAll('.progress-bar');
+        progressBars.forEach(bar => {
+            const width = bar.style.width;
+            bar.style.width = '0%';
+            setTimeout(() => {
+                bar.style.width = width;
+            }, 100);
+        });
+    });
+</script>
+{% endblock %}

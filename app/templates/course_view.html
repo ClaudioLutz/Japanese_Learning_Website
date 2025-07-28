@@ -11,11 +11,7 @@
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-10 text-center">
-                    <!-- Course Badge -->
-                    <div class="course-category-badge">
-                        <i class="fas fa-graduation-cap me-2"></i>
-                        Japanese Learning Course
-                    </div>
+                    <!-- Course Badge Removed -->
                     
                     <!-- Course Title -->
                     <h1 class="course-hero-title">{{ course.title }}</h1>
@@ -88,26 +84,18 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Action Buttons -->
-                    <div class="course-action-buttons">
-                        {% if has_started %}
-                            <a href="#lessons" class="course-primary-btn">
-                                <i class="fas fa-play me-2"></i>
-                                Continue Learning
+                    <div class="course-hero-actions mt-4">
+                        {% if course.is_purchasable and not has_purchased %}
+                            <a href="#" class="btn btn-primary btn-lg disabled" aria-disabled="true">
+                                <i class="fas fa-play-circle me-2"></i>Start Course
                             </a>
-                            <a href="#lessons" class="course-secondary-btn">
-                                <i class="fas fa-list me-2"></i>
-                                View Lessons
-                            </a>
+                            <p class="text-white mt-2">Purchase required to start</p>
                         {% else %}
-                            <a href="#lessons" class="course-primary-btn">
-                                <i class="fas fa-rocket me-2"></i>
-                                Start Course
-                            </a>
-                            <a href="#lessons" class="course-secondary-btn">
-                                <i class="fas fa-eye me-2"></i>
-                                Preview Lessons
+                            <a href="{{ url_for('routes.view_lesson', lesson_id=course.lessons[0].id) if course.lessons else '#' }}" class="btn btn-primary btn-lg">
+                                <i class="fas fa-play-circle me-2"></i>
+                                {% if has_started %}Continue Course{% else %}Start Course{% endif %}
                             </a>
                         {% endif %}
                     </div>
@@ -135,9 +123,9 @@
                         {% set is_completed = progress and progress.is_completed %}
                         {% set progress_percent = progress.progress_percentage if progress else 0 %}
                         
-                        <div class="lesson-card mb-3">
-                            <a href="{{ url_for('routes.view_lesson', lesson_id=lesson.id) }}" 
-                               class="lesson-card-link text-decoration-none">
+                        <div class="lesson-card mb-3 {% if course.is_purchasable and not has_purchased %}locked{% endif %}">
+                            <a href="{{ url_for('routes.view_lesson', lesson_id=lesson.id) if not course.is_purchasable or has_purchased else '#' }}" 
+                               class="lesson-card-link text-decoration-none {% if course.is_purchasable and not has_purchased %}disabled-link{% endif %}">
                                 <div class="card border-0 shadow-sm">
                                     <div class="card-body">
                                         <div class="row align-items-center">
@@ -199,7 +187,9 @@
                                                 </div>
                                             </div>
                                             <div class="col-auto">
-                                                {% if is_completed %}
+                                                {% if course.is_purchasable and not has_purchased %}
+                                                    <i class="fas fa-lock text-muted"></i>
+                                                {% elif is_completed %}
                                                     <span class="badge bg-success">Completed</span>
                                                 {% elif progress and progress_percent > 0 %}
                                                     <span class="badge bg-warning">{{ progress_percent }}%</span>
@@ -283,6 +273,20 @@
                     </div>
                 </div>
                 
+                <!-- Purchase Card -->
+                {% if course.is_purchasable and not has_purchased %}
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Purchase Course</h5>
+                        <p class="card-text">Get full access to all {{ total_lessons }} lessons in this course.</p>
+                        <h3 class="price mb-3">CHF {{ "%.2f"|format(course.price) }}</h3>
+                        <button class="btn btn-success btn-lg w-100" id="purchase-course-btn" data-course-id="{{ course.id }}">
+                            <i class="fas fa-shopping-cart me-2"></i>Purchase Now
+                        </button>
+                    </div>
+                </div>
+                {% endif %}
+
                 <!-- Course Image -->
                 <div class="card border-0 shadow-sm">
                     <img src="{{ course.background_image_url or 'https://via.placeholder.com/400x250' }}" 
@@ -298,4 +302,42 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const purchaseBtn = document.getElementById('purchase-course-btn');
+    if (purchaseBtn) {
+        purchaseBtn.addEventListener('click', function() {
+            const courseId = this.dataset.courseId;
+            // Add CSRF token to the request
+            const csrfToken = '{{ csrf_token() }}';
+            
+            fetch(`/api/courses/${courseId}/purchase`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success message and reload the page
+                    alert(data.message);
+                    window.location.reload();
+                } else {
+                    // Show error message
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An unexpected error occurred. Please try again.');
+            });
+        });
+    }
+});
+</script>
 {% endblock %}

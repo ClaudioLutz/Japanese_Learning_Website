@@ -21,6 +21,8 @@
                             <th>Title</th>
                             <th>Description</th>
                             <th>Published</th>
+                            <th>Price</th>
+                            <th>Purchasable</th>
                             <th>Lessons</th>
                             <th>Actions</th>
                         </tr>
@@ -57,6 +59,13 @@
                 
                 <label>
                     <input type="checkbox" id="courseIsPublished"> Published
+                </label>
+
+                <label for="coursePrice">Price (CHF)</label>
+                <input type="number" id="coursePrice" step="0.01" min="0">
+
+                <label>
+                    <input type="checkbox" id="courseIsPurchasable"> Purchasable
                 </label>
                 
                 <label for="courseLessons">Lessons</label>
@@ -114,6 +123,8 @@ function renderCoursesTable() {
             <td>${course.title || ''}</td>
             <td>${course.description || ''}</td>
             <td><span class="badge ${course.is_published ? 'badge-success' : 'badge-secondary'}">${course.is_published ? 'Yes' : 'No'}</span></td>
+            <td>${course.price != null ? `CHF ${course.price.toFixed(2)}` : 'N/A'}</td>
+            <td><span class="badge ${course.is_purchasable ? 'badge-success' : 'badge-secondary'}">${course.is_purchasable ? 'Yes' : 'No'}</span></td>
             <td>${course.lessons ? course.lessons.length : 0}</td>
             <td class="actions">
                 <button class="btn btn-warning btn-sm" onclick="editCourse(${course.id})">
@@ -173,6 +184,8 @@ async function editCourse(courseId) {
         document.getElementById('courseDescription').value = course.description || '';
         document.getElementById('courseBackgroundImage').value = course.background_image_url || '';
         document.getElementById('courseIsPublished').checked = course.is_published || false;
+        document.getElementById('coursePrice').value = course.price || 0;
+        document.getElementById('courseIsPurchasable').checked = course.is_purchasable || false;
         
         await loadLessons();
         
@@ -209,6 +222,8 @@ async function saveCourse() {
         description: document.getElementById('courseDescription').value.trim(),
         background_image_url: document.getElementById('courseBackgroundImage').value.trim(),
         is_published: document.getElementById('courseIsPublished').checked,
+        price: parseFloat(document.getElementById('coursePrice').value) || 0,
+        is_purchasable: document.getElementById('courseIsPurchasable').checked,
         lessons: selectedLessons
     };
     
