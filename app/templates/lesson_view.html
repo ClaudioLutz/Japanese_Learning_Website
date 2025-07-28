@@ -1185,6 +1185,10 @@ function restorePageFromURL() {
         if (pageNum >= 1 && pageNum <= totalPages) {
             const pageIndex = pageNum - 1;
             goToPage(pageIndex);
+            // Restore scroll position after page is loaded
+            setTimeout(() => {
+                restoreScrollPosition();
+            }, 100);
             return;
         }
     }
@@ -1192,6 +1196,42 @@ function restorePageFromURL() {
     // No valid hash found, stay on page 1
     currentPage = 0;
     updateNavigationUI();
+    // Still restore scroll position even if no hash
+    setTimeout(() => {
+        restoreScrollPosition();
+    }, 100);
+}
+
+function saveScrollPosition() {
+    // Save both page and scroll position
+    const scrollData = {
+        page: currentPage + 1,
+        scrollY: window.scrollY,
+        timestamp: Date.now()
+    };
+    localStorage.setItem(`lesson-${lessonData.id}-scroll`, JSON.stringify(scrollData));
+}
+
+function restoreScrollPosition() {
+    try {
+        const savedData = localStorage.getItem(`lesson-${lessonData.id}-scroll`);
+        if (savedData) {
+            const scrollData = JSON.parse(savedData);
+            // Only restore if it's recent (within 5 minutes) and for the same page
+            const isRecent = (Date.now() - scrollData.timestamp) < 300000; // 5 minutes
+            const isSamePage = scrollData.page === (currentPage + 1);
+            
+            if (isRecent && isSamePage && scrollData.scrollY) {
+                console.log(`Restoring scroll position: ${scrollData.scrollY}px`);
+                window.scrollTo({
+                    top: scrollData.scrollY,
+                    behavior: 'instant' // No smooth scrolling on restore
+                });
+            }
+        }
+    } catch (error) {
+        console.warn('Error restoring scroll position:', error);
+    }
 }
 
 function updateURLHash() {
@@ -1460,7 +1500,7 @@ function updatePageOverviewCompletionCounts(completedContentId) {
     });
 }
 
-// Track time spent on page
+// Track time spent on page and save scroll position
 window.addEventListener('beforeunload', function() {
     const timeSpent = Math.floor((Date.now() - startTime) / 60000);
     if (timeSpent > 0) {
@@ -1479,6 +1519,27 @@ window.addEventListener('beforeunload', function() {
             navigator.sendBeacon('/api/lessons/' + lessonId + '/progress', formData);
         }
     }
+    
+    // Save scroll position before leaving
+    saveScrollPosition();
+});
+
+// Save scroll position periodically while user is on page
+let scrollSaveTimeout;
+window.addEventListener('scroll', function() {
+    // Debounce scroll position saving to avoid too many localStorage writes
+    clearTimeout(scrollSaveTimeout);
+    scrollSaveTimeout = setTimeout(() => {
+        saveScrollPosition();
+    }, 1000); // Save scroll position 1 second after user stops scrolling
+});
+
+// Save scroll position when page changes
+document.addEventListener('DOMContentLoaded', function() {
+    // Save initial scroll position
+    setTimeout(() => {
+        saveScrollPosition();
+    }, 1000);
 });
 
 // Japanese Text Auto-Detection and Audio System
