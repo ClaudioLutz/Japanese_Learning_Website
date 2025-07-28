@@ -2099,10 +2099,10 @@ def reset_lesson_progress_api(lesson_id):
 @login_required
 def update_lesson_progress(lesson_id):
     """Update user progress for a lesson"""
-    # Validate CSRF token from header
+    # Validate CSRF token from header (for JSON requests) or form data (for sendBeacon)
     from flask_wtf.csrf import validate_csrf
     try:
-        csrf_token = request.headers.get('X-CSRFToken')
+        csrf_token = request.headers.get('X-CSRFToken') or request.form.get('csrf_token')
         if not csrf_token:
             return jsonify({"error": "CSRF token missing"}), 400
         validate_csrf(csrf_token)
@@ -2116,7 +2116,23 @@ def update_lesson_progress(lesson_id):
     if not accessible:
         return jsonify({"error": message}), 403
     
-    data = request.json
+    # Handle both JSON and form data
+    if request.is_json:
+        data = request.json
+    else:
+        # Convert form data to dict for consistent handling
+        data = request.form.to_dict()
+        # Convert string numbers to integers where appropriate
+        if 'content_id' in data:
+            try:
+                data['content_id'] = int(data['content_id'])
+            except (ValueError, TypeError):
+                pass
+        if 'time_spent' in data:
+            try:
+                data['time_spent'] = int(data['time_spent'])
+            except (ValueError, TypeError):
+                pass
     
     try:
         # Use a completely different approach: direct SQL updates to avoid session conflicts

@@ -111,8 +111,20 @@ def create_app():
         from flask_login import current_user
         g.user = current_user if current_user.is_authenticated else None
 
-    # Register Jinja filter
+    # Register Jinja filters
     app.jinja_env.filters['to_embed_url'] = convert_to_embed_url
+    
+    # Add JSON parsing filter for templates
+    import json
+    def from_json_filter(value):
+        if not value:
+            return []
+        try:
+            return json.loads(value)
+        except (json.JSONDecodeError, TypeError):
+            return []
+    
+    app.jinja_env.filters['from_json'] = from_json_filter
 
     # Register blueprints
     app.register_blueprint(routes.bp) # Register the main routes blueprint

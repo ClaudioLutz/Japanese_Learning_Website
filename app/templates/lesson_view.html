@@ -652,6 +652,15 @@
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-6">
+                                                                    {% set user_selected_answer = '' %}
+                                                                    {% if user_answer and user_answer.text_answer %}
+                                                                        {% set user_pairs = user_answer.text_answer | from_json %}
+                                                                        {% for pair in user_pairs %}
+                                                                            {% if pair.prompt == option.option_text %}
+                                                                                {% set user_selected_answer = pair.answer %}
+                                                                            {% endif %}
+                                                                        {% endfor %}
+                                                                    {% endif %}
                                                                     <select class="form-select matching-select" 
                                                                             data-prompt="{{ option.option_text }}" 
                                                                             data-correct-answer="{{ option.feedback }}"
@@ -659,7 +668,7 @@
                                                                             {% if user_answer and user_answer.is_correct %}disabled{% endif %}>
                                                                         <option value="">Choose...</option>
                                                                         {% for answer_option in question.options | sort(attribute='order_index') %}
-                                                                        <option value="{{ answer_option.feedback }}">{{ answer_option.feedback }}</option>
+                                                                        <option value="{{ answer_option.feedback }}" {% if user_selected_answer == answer_option.feedback %}selected{% endif %}>{{ answer_option.feedback }}</option>
                                                                         {% endfor %}
                                                                     </select>
                                                                 </div>
@@ -783,6 +792,19 @@
 </div>
 
 <script>
+// Server-side data rendered by Jinja2
+const lessonData = {
+    id: '{{ lesson.id }}',
+    totalPages: {{ lesson.pages|length if lesson.pages else 0 }},
+    {% if current_user.is_authenticated and progress %}
+    contentProgress: {{ progress.get_content_progress() | tojson }},
+    hasProgress: true
+    {% else %}
+    contentProgress: {},
+    hasProgress: false
+    {% endif %}
+};
+
 let startTime = Date.now();
 
 // 3D Flip Card JavaScript - Scalable Implementation
@@ -818,9 +840,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Shuffle matching quiz options
+    // Shuffle matching quiz options while preserving selected state
     const matchingSelects = document.querySelectorAll('.matching-select');
     matchingSelects.forEach(select => {
+        // Store the currently selected value
+        const selectedValue = select.value;
+        
         const options = Array.from(select.querySelectorAll('option')).slice(1); // Skip the first "Choose..." option
         const shuffled = shuffleArray(options);
         
@@ -833,6 +858,11 @@ document.addEventListener('DOMContentLoaded', () => {
         shuffled.forEach(option => {
             select.appendChild(option);
         });
+        
+        // Restore the selected value if it existed
+        if (selectedValue) {
+            select.value = selectedValue;
+        }
     });
 });
 
@@ -968,7 +998,7 @@ function updateAttempts(questionId, attemptsRemaining) {
 
 async function markContentComplete(contentId) {
     try {
-        const lessonId = '{{ lesson.id }}';
+        const lessonId = lessonData.id;
         
         // Get CSRF token from meta tag
         const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
@@ -1069,7 +1099,7 @@ async function markContentComplete(contentId) {
 
 // Enhanced Navigation Functions
 let currentPage = 0;
-const totalPages = {{ lesson.pages|length if lesson.pages else 0 }};
+const totalPages = lessonData.totalPages;
 
 // Initialize navigation on page load
 document.addEventListener('DOMContentLoaded', function() {
@@ -1077,6 +1107,9 @@ document.addEventListener('DOMContentLoaded', function() {
         initializeNavigation();
         setupKeyboardNavigation();
         showKeyboardHint();
+        
+        // Restore page from URL hash
+        restorePageFromURL();
     }
     
     // Initialize page overview completion counts on page load
@@ -1091,11 +1124,37 @@ function initializeNavigation() {
         carousel.addEventListener('slide.bs.carousel', function(event) {
             currentPage = event.to;
             updateNavigationUI();
+            updateURLHash();
         });
     }
     
     // Update initial state
     updateNavigationUI();
+}
+
+function restorePageFromURL() {
+    // Check if there's a page hash in the URL
+    const hash = window.location.hash;
+    if (hash && hash.startsWith('#page-')) {
+        const pageNum = parseInt(hash.replace('#page-', ''), 10);
+        if (pageNum >= 1 && pageNum <= totalPages) {
+            const pageIndex = pageNum - 1;
+            goToPage(pageIndex);
+            return;
+        }
+    }
+    
+    // No valid hash found, stay on page 1
+    currentPage = 0;
+    updateNavigationUI();
+}
+
+function updateURLHash() {
+    // Update URL hash without triggering page reload
+    const newHash = `#page-${currentPage + 1}`;
+    if (window.location.hash !== newHash) {
+        history.replaceState(null, null, newHash);
+    }
 }
 
 function updateNavigationUI() {
@@ -1272,24 +1331,28 @@ function initializePageOverviewCompletionCounts() {
     console.log('Initializing page overview completion counts...');
     
     // Set the correct DOM state for all content items based on server-side progress data
-    {% if current_user.is_authenticated and progress %}
-    const contentProgress = {{ progress.get_content_progress() | tojson }};
-    console.log('Server-side content progress:', contentProgress);
-    
-    // Update DOM elements to match server-side progress
-    Object.keys(contentProgress).forEach(contentId => {
-        if (contentProgress[contentId] === true) {
-            const contentItem = document.querySelector(`[data-content-id="${contentId}"]`);
-            if (contentItem) {
-                const markBtn = contentItem.querySelector('.mark-complete-btn');
-                const completedBadge = contentItem.querySelector('.completed-badge');
-                
-                if (markBtn) markBtn.style.display = 'none';
-                if (completedBadge) completedBadge.style.display = 'inline';
-            }
+    if (lessonData.hasProgress && lessonData.contentProgress) {
+        try {
+            const contentProgress = lessonData.contentProgress;
+            console.log('Server-side content progress:', contentProgress);
+            
+            // Update DOM elements to match server-side progress
+            Object.keys(contentProgress).forEach(contentId => {
+                if (contentProgress[contentId] === true) {
+                    const contentItem = document.querySelector(`[data-content-id="${contentId}"]`);
+                    if (contentItem) {
+                        const markBtn = contentItem.querySelector('.mark-complete-btn');
+                        const completedBadge = contentItem.querySelector('.completed-badge');
+                        
+                        if (markBtn) markBtn.style.display = 'none';
+                        if (completedBadge) completedBadge.style.display = 'inline';
+                    }
+                }
+            });
+        } catch (error) {
+            console.error('Error initializing content progress:', error);
         }
-    });
-    {% endif %}
+    }
     
     // The server-side template has already calculated the correct completion counts
     // We don't need to recalculate them on initial load, just ensure they're preserved
@@ -1356,9 +1419,20 @@ function updatePageOverviewCompletionCounts(completedContentId) {
 window.addEventListener('beforeunload', function() {
     const timeSpent = Math.floor((Date.now() - startTime) / 60000);
     if (timeSpent > 0) {
-        const lessonId = '{{ lesson.id }}';
-        navigator.sendBeacon('/api/lessons/' + lessonId + '/progress', 
-            JSON.stringify({ time_spent: timeSpent }));
+        const lessonId = lessonData.id;
+        
+        // Get CSRF token for sendBeacon
+        const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
+        if (csrfTokenElement) {
+            const csrfToken = csrfTokenElement.getAttribute('content');
+            
+            // Create form data with CSRF token for sendBeacon
+            const formData = new FormData();
+            formData.append('time_spent', timeSpent);
+            formData.append('csrf_token', csrfToken);
+            
+            navigator.sendBeacon('/api/lessons/' + lessonId + '/progress', formData);
+        }
     }
 });
 
