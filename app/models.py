@@ -6,7 +6,7 @@ from datetime import datetime
 import json
 from typing import List
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey, Table, Column, Integer, String, Text, Boolean, DateTime, JSON, event
+from sqlalchemy import ForeignKey, Table, Column, Integer, String, Text, Boolean, DateTime, JSON, event, BigInteger
 class User(UserMixin, db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     username: Mapped[str] = mapped_column(String(80), unique=True, nullable=False)
@@ -492,14 +492,16 @@ class LessonPurchase(db.Model):
     lesson_id: Mapped[int] = mapped_column(Integer, ForeignKey('lesson.id', ondelete='CASCADE'), nullable=False)
     price_paid: Mapped[float] = mapped_column(db.Float, nullable=False)
     purchased_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-    stripe_payment_intent_id: Mapped[str] = mapped_column(String(100), nullable=True)  # For future Stripe integration
-    
+    # Rename stripe_payment_intent_id and add state tracking
+    postfinance_transaction_id: Mapped[int] = mapped_column(BigInteger, nullable=True, index=True)
+    transaction_state: Mapped[str] = mapped_column(String(50), nullable=True)
+
     # Relationships
     user: Mapped['User'] = relationship('User', backref='lesson_purchases')
     lesson: Mapped['Lesson'] = relationship('Lesson', backref=db.backref('purchases', cascade='all, delete-orphan'))
-    
+
     __table_args__ = (db.UniqueConstraint('user_id', 'lesson_id'),)
-    
+
     def __repr__(self):
         return f'<LessonPurchase user:{self.user_id} lesson:{self.lesson_id} price:{self.price_paid}>'
 
@@ -537,7 +539,9 @@ class CoursePurchase(db.Model):
     course_id: Mapped[int] = mapped_column(Integer, ForeignKey('course.id', ondelete='CASCADE'), nullable=False)
     price_paid: Mapped[float] = mapped_column(db.Float, nullable=False)
     purchased_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-    stripe_payment_intent_id: Mapped[str] = mapped_column(String(100), nullable=True)
+    # Rename stripe_payment_intent_id and add state tracking
+    postfinance_transaction_id: Mapped[int] = mapped_column(BigInteger, nullable=True, index=True)
+    transaction_state: Mapped[str] = mapped_column(String(50), nullable=True)
 
     course: Mapped['Course'] = relationship('Course', backref=db.backref('purchases', cascade='all, delete-orphan'))
 
@@ -545,6 +549,26 @@ class CoursePurchase(db.Model):
 
     def __repr__(self):
         return f'<CoursePurchase user:{self.user_id} course:{self.course_id} price:{self.price_paid}>'
+
+
+class PaymentTransaction(db.Model):
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    # Use BigInteger for the transaction_id as per API documentation
+    transaction_id: Mapped[int] = mapped_column(BigInteger, unique=True, nullable=False, index=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('user.id'), nullable=True)
+    item_type: Mapped[str] = mapped_column(String(20), nullable=False)  # 'lesson' or 'course'
+    item_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    amount: Mapped[float] = mapped_column(db.Float, nullable=False)
+    currency: Mapped[str] = mapped_column(String(3), default='CHF')
+    state: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    # Use JSON for efficient querying of webhook data
+    webhook_data: Mapped[dict] = mapped_column(JSON, nullable=True)
+    transaction_metadata: Mapped[dict] = mapped_column(JSON, nullable=True)
+
+    def __repr__(self):
+        return f'<PaymentTransaction {self.transaction_id} - {self.state}>'
 
 
 # SQLAlchemy event listeners to automatically maintain lesson type consistency

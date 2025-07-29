@@ -45,26 +45,26 @@ This document outlines the initial plan for integrating PostFinance Checkout pay
 
 #### 1.2 Environment Configuration
 - [x] Add PostFinance credentials to environment variables
-- [ ] Update `instance/config.py` with payment configuration
-- [ ] Create separate configs for development/production
-- [ ] Implement credential validation and error handling
+- [x] Update `instance/config.py` with payment configuration
+- [x] Create separate configs for development/production
+- [x] Implement credential validation and error handling
 
 #### 1.3 Database Model Updates
-- [ ] Rename `stripe_payment_intent_id` to `postfinance_transaction_id`
-- [ ] Add `transaction_state` field with enum support for PFP states: `PENDING`, `CONFIRMED`, `PROCESSING`, `FAILED`, `AUTHORIZED`, `VOIDED`, `COMPLETED`, `FULFILL`
-- [ ] Create `PaymentTransaction` model for detailed transaction logging with webhook data storage
-- [ ] Add migration scripts for existing purchase records
-- [ ] Implement database indexes for performance on transaction_id and state fields
-- [ ] Add metadata_json field to store lesson_id/course_id from PFP transaction metadata
+- [x] Rename `stripe_payment_intent_id` to `postfinance_transaction_id`
+- [x] Add `transaction_state` field with enum support for PFP states: `PENDING`, `CONFIRMED`, `PROCESSING`, `FAILED`, `AUTHORIZED`, `VOIDED`, `COMPLETED`, `FULFILL`
+- [x] Create `PaymentTransaction` model for detailed transaction logging with webhook data storage
+- [x] Add migration scripts for existing purchase records
+- [x] Implement database indexes for performance on transaction_id and state fields
+- [x] Add transaction_metadata field to store lesson_id/course_id from PFP transaction metadata
 
 #### 1.4 SDK Integration Setup
-- [ ] Install PostFinance Checkout SDK
-- [ ] Create `PostFinanceService` class for payment operations
-- [ ] Implement HMAC-SHA512 MAC signature authentication for all API calls
-- [ ] Add configuration validation for space_id, user_id, and api_secret
-- [ ] Implement error handling for Client Error and Server Error models
-- [ ] Add comprehensive logging for all payment operations
-- [ ] Create unit tests for MAC authentication and basic SDK integration
+- [x] Install PostFinance Checkout SDK
+- [x] Create `PostFinanceService` class for payment operations
+- [x] Implement HMAC-SHA512 MAC signature authentication for all API calls
+- [x] Add configuration validation for space_id, user_id, and api_secret
+- [x] Implement error handling for Client Error and Server Error models
+- [x] Add comprehensive logging for all payment operations
+- [x] Create unit tests for MAC authentication and basic SDK integration
 
 ### Expected Deliverables
 - PostFinance Checkout account configured

@@ -36,7 +36,7 @@ This document provides a detailed, step-by-step guide for completing Phase 1 of 
 
 **Action Items**:
 
-1.  **Update `.env` file**:
+1.  **Update `.env` file**: ✅
     *   Add the following keys to your `.env` file with the credentials obtained in step 1.1.
 
     ```dotenv
@@ -50,7 +50,7 @@ This document provides a detailed, step-by-step guide for completing Phase 1 of 
     PAYMENT_FAILURE_URL="https://<your_domain>/payment/failure"
     ```
 
-2.  **Update `instance/config.py`**:
+2.  **Update `instance/config.py`**: ✅
     *   Modify the file to load the PostFinance credentials from the environment variables.
 
     ```python
@@ -86,16 +86,16 @@ This document provides a detailed, step-by-step guide for completing Phase 1 of 
 
 ---
 
-## 1.3: Database Model Updates
+## 1.3: Database Model Updates ✅
 
 **Objective**: Modify the existing database schema to support PostFinance transaction data and states.
 
 **Action Items**:
 
-1.  **Create a New Migration File**:
+1.  **Create a New Migration File**: ✅
     *   Use `flask db migrate -m "Add PostFinance payment integration fields"` to generate a new migration script.
 
-2.  **Modify `app/models.py`**:
+2.  **Modify `app/models.py`**: ✅
     *   Update the `LessonPurchase` and `CoursePurchase` models.
     *   Create a new `PaymentTransaction` model for detailed logging.
 
@@ -177,13 +177,13 @@ This document provides a detailed, step-by-step guide for completing Phase 1 of 
 
 ---
 
-## 1.4: SDK Integration Setup
+## 1.4: SDK Integration Setup ✅
 
 **Objective**: Install the PostFinance Checkout SDK and create a dedicated service class for all payment operations.
 
 **Action Items**:
 
-1.  **Install the SDK**:
+1.  **Install the SDK**: ✅
     *   Add `postfinancecheckout` to your `requirements.txt` file.
     *   Run `pip install -r requirements.txt`.
 
@@ -193,7 +193,7 @@ This document provides a detailed, step-by-step guide for completing Phase 1 of 
     postfinancecheckout
     ```
 
-2.  **Create `app/services/payment_service.py`**:
+2.  **Create `app/services/payment_service.py`**: ✅
     *   Create a new file to house the `PostFinanceService` class. This encapsulates all interaction with the PostFinance API.
 
     ```python
