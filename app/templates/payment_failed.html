@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="alert alert-danger text-center">
+        <h2><i class="fa fa-times-circle"></i> Payment Failed</h2>
+        <p>Unfortunately, your payment could not be processed.</p>
+    </div>
+    
+    <div class="card">
+        <div class="card-body text-center">
+            <h4>What Happened?</h4>
+            <p>Your payment was not completed. This could be due to:</p>
+            <ul class="text-left">
+                <li>Payment method declined</li>
+                <li>Insufficient funds</li>
+                <li>Payment cancelled</li>
+                <li>Technical issue</li>
+                <li>Session timeout</li>
+            </ul>
+            
+            <div class="mt-3">
+                <a href="javascript:history.back()" class="btn btn-secondary me-2">
+                    Try Again
+                </a>
+                <a href="{{ url_for('routes.lessons') }}" class="btn btn-primary">
+                    Browse Lessons
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Enhanced payment failure tracking and user feedback - Phase 2.5
+window.addEventListener('load', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const transactionId = urlParams.get('transaction_id');
+    const errorCode = urlParams.get('error_code');
+    const errorMessage = urlParams.get('error_message');
+    
+    if (transactionId) {
+        // Show loading indicator for status check
+        const loadingIndicator = document.createElement('div');
+        loadingIndicator.className = 'alert alert-info';
+        loadingIndicator.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Checking transaction status...';
+        document.querySelector('.container').appendChild(loadingIndicator);
+        
+        // Check actual transaction status
+        fetch(`/api/payment/status/${transactionId}`)
+        .then(response => response.json())
+        .then(data => {
+            loadingIndicator.remove();
+            
+            if (data.success) {
+                // Show transaction details
+                const detailsAlert = document.createElement('div');
+                detailsAlert.className = 'alert alert-info mt-3';
+                
+                let statusMessage = 'Transaction failed';
+                let statusIcon = 'fa-times-circle';
+                let statusClass = 'alert-danger';
+                
+                if (data.state === 'FAILED' || data.state === 'DECLINE') {
+                    statusMessage = 'Payment was declined';
+                } else if (data.state === 'VOIDED') {
+                    statusMessage = 'Payment was cancelled';
+                } else if (data.state === 'TIMEOUT') {
+                    statusMessage = 'Payment session timed out';
+                } else if (data.state === 'PENDING') {
+                    statusMessage = 'Payment is still processing';
+                    statusIcon = 'fa-clock-o';
+                    statusClass = 'alert-warning';
+                }
+                
+                detailsAlert.className = `alert ${statusClass} mt-3`;
+                detailsAlert.innerHTML = `
+                    <h5><i class="fa ${statusIcon}"></i> Transaction Details</h5>
+                    <p><strong>Status:</strong> ${statusMessage}</p>
+                    <p><strong>Transaction ID:</strong> ${transactionId}</p>
+                    <p><strong>Item:</strong> ${data.item_type} (ID: ${data.item_id})</p>
+                    <p><strong>Amount:</strong> CHF ${data.amount}</p>
+                    ${errorCode ? `<p><strong>Error Code:</strong> ${errorCode}</p>` : ''}
+                    ${errorMessage ? `<p><strong>Error:</strong> ${decodeURIComponent(errorMessage)}</p>` : ''}
+                `;
+                document.querySelector('.container').appendChild(detailsAlert);
+                
+                // If still pending, show different message
+                if (data.state === 'PENDING') {
+                    const pendingAlert = document.createElement('div');
+                    pendingAlert.className = 'alert alert-warning mt-3';
+                    pendingAlert.innerHTML = `
+                        <h5><i class="fa fa-info-circle"></i> Payment May Still Process</h5>
+                        <p>This transaction is still being processed. Please check your email for confirmation.</p>
+                        <p>If you were charged, your purchase will be completed automatically.</p>
+                    `;
+                    document.querySelector('.container').appendChild(pendingAlert);
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Status check error:', error);
+            loadingIndicator.remove();
+            
+            // Show basic transaction info
+            if (transactionId) {
+                const errorAlert = document.createElement('div');
+                errorAlert.className = 'alert alert-warning mt-3';
+                errorAlert.innerHTML = `
+                    <h5><i class="fa fa-exclamation-triangle"></i> Transaction Information</h5>
+                    <p><strong>Transaction ID:</strong> ${transactionId}</p>
+                    ${errorCode ? `<p><strong>Error Code:</strong> ${errorCode}</p>` : ''}
+                    ${errorMessage ? `<p><strong>Error:</strong> ${decodeURIComponent(errorMessage)}</p>` : ''}
+                    <p>Unable to verify current status. Please contact support if you have concerns.</p>
+                `;
+                document.querySelector('.container').appendChild(errorAlert);
+            }
+        });
+    } else if (errorCode || errorMessage) {
+        // Show error details even without transaction ID
+        const errorAlert = document.createElement('div');
+        errorAlert.className = 'alert alert-warning mt-3';
+        errorAlert.innerHTML = `
+            <h5><i class="fa fa-exclamation-triangle"></i> Error Details</h5>
+            ${errorCode ? `<p><strong>Error Code:</strong> ${errorCode}</p>` : ''}
+            ${errorMessage ? `<p><strong>Error:</strong> ${decodeURIComponent(errorMessage)}</p>` : ''}
+        `;
+        document.querySelector('.container').appendChild(errorAlert);
+    }
+});
+</script>
+{% endblock %}

@@ -2,6 +2,14 @@
 
 This document provides a detailed, step-by-step guide for completing Phase 1 of the PostFinance Checkout integration. It incorporates information from the initial plan, the official API documentation, the Python SDK, and an analysis of the existing application codebase.
 
+This phase is all about **preparation**. Before the cash register can be used, you need to get everything ready behind the scenes.
+
+* **Getting the Keys**: This involves creating an account with the payment provider (PostFinance) and getting the necessary secret codes and IDs. It's like getting the keys to the cash register and the store.
+* **Connecting the Wires**: The application's configuration is updated to securely store these secret codes so it knows how to communicate with the payment system.
+* **Preparing the Ledger**: The application's database (its memory) is updated to add new columns for tracking payment information, like a transaction ID and its status (e.g., "completed" or "failed"). This is like preparing a new ledger book to record sales.
+
+At the end of Phase 1, all the setup is done, but nothing is functional for the customer yet. The "Buy" button still doesn't do anything new.
+
 ---
 
 ## 1.1: Account Setup and Credentials

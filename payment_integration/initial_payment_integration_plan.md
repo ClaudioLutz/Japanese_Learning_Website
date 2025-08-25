@@ -85,35 +85,51 @@ This document outlines the initial plan for integrating PostFinance Checkout pay
 
 ### Key Tasks
 
-#### 2.1 Payment Service Layer
-- [ ] Implement `create_transaction()` method using `POST /api/transaction/create` endpoint
-- [ ] Build `generate_payment_page_url()` using `GET /api/transaction-payment-page/payment-page-url` endpoint
-- [ ] Add transaction status checking with `GET /api/transaction/read` endpoint
-- [ ] Implement refund processing using refund API endpoints (if needed)
-- [ ] Create comprehensive error handling for Client Error and Server Error response models
+#### 2.1 Payment Service Layer ✅ COMPLETED
+- [x] Implement `create_transaction()` method using `POST /api/transaction/create` endpoint
+- [x] Build `generate_payment_page_url()` using `GET /api/transaction-payment-page/payment-page-url` endpoint
+- [x] Add transaction status checking with `GET /api/transaction/read` endpoint
+- [x] Implement refund processing using refund API endpoints (if needed)
+- [x] Create comprehensive error handling for Client Error and Server Error response models
 - [ ] Add support for alternative integration modes (iframe, lightbox) for future enhancement
 
-#### 2.2 API Endpoint Updates
-- [ ] Update `/api/lessons/<id>/purchase` endpoint
-- [ ] Update `/api/courses/<id>/purchase` endpoint
-- [ ] Add `/api/payment/status/<transaction_id>` endpoint
-- [ ] Implement `/api/payment/cancel` endpoint
-- [ ] Add CSRF protection for all payment endpoints
+#### 2.2 Database Transaction Management ✅ COMPLETED
+- [x] Create PaymentTransactionService class
+- [x] Implement transaction state management
+- [x] Add purchase completion logic
+- [x] Create transaction tracking and audit trail
+- [x] Handle transaction state updates from webhooks
 
-#### 2.3 Transaction Management
-- [ ] Implement transaction creation with detailed line items using `Line Item` model fields: `name`, `quantity`, `uniqueId`, `unitPriceIncludingTax`, `sku`, `type` (PRODUCT, DISCOUNT)
-- [ ] Use transaction `metaData` field to store lesson_id/course_id for clean data linking
-- [ ] Set transaction `currency` field (CHF) - ensure all line items use same currency
-- [ ] Configure `successUrl` and `failedUrl` for payment completion redirects
-- [ ] Implement timeout handling for pending payments with proper state transitions
-- [ ] Add comprehensive transaction logging and audit trail with webhook data preservation
+#### 2.3 API Endpoint Updates ✅ COMPLETED
+- [x] Update `/api/lessons/<id>/purchase` endpoint
+- [x] Update `/api/courses/<id>/purchase` endpoint
+- [x] Add `/api/payment/status/<transaction_id>` endpoint
+- [x] Implement `/api/payment/cancel` endpoint
+- [x] Add CSRF protection for all payment endpoints
+- [x] Create payment success/failure redirect routes
+- [x] Implement payment result templates
 
-#### 2.4 Payment Flow Implementation
-- [ ] Create payment initiation flow
-- [ ] Implement redirect to PostFinance payment page
-- [ ] Handle payment completion redirects
-- [ ] Add payment cancellation handling
-- [ ] Implement error recovery mechanisms
+#### 2.4 Transaction Management ✅ COMPLETED (Phase 2.5 Enhanced)
+- [x] Implement transaction creation with detailed line items using `Line Item` model fields: `name`, `quantity`, `uniqueId`, `unitPriceIncludingTax`, `sku`, `type` (PRODUCT, DISCOUNT)
+- [x] Use transaction `metaData` field to store lesson_id/course_id for clean data linking
+- [x] Set transaction `currency` field (CHF) - ensure all line items use same currency
+- [x] Configure `successUrl` and `failedUrl` for payment completion redirects
+- [x] Implement timeout handling for pending payments with proper state transitions
+- [x] Add comprehensive transaction logging and audit trail with webhook data preservation
+- [x] Enhanced error handling classes (PaymentErrorHandler)
+- [x] Transaction timeout monitoring with configurable thresholds
+- [x] User-friendly error message mapping
+
+#### 2.5 Payment Flow Implementation ✅ COMPLETED (Phase 2.5 Enhanced)
+- [x] Create payment initiation flow
+- [x] Implement redirect to PostFinance payment page
+- [x] Handle payment completion redirects with enhanced status verification
+- [x] Add payment cancellation handling
+- [x] Implement error recovery mechanisms
+- [x] Enhanced payment success page with real-time status verification
+- [x] Enhanced payment failure page with detailed error tracking
+- [x] User-friendly error messages and transaction details display
+- [x] Loading states and error handling in frontend
 
 ### Expected Deliverables
 - Fully functional payment processing

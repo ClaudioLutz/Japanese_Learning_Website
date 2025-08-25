@@ -17,8 +17,14 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 POSTFINANCE_SPACE_ID = os.environ.get('POSTFINANCE_SPACE_ID')
 POSTFINANCE_USER_ID = os.environ.get('POSTFINANCE_USER_ID')
 POSTFINANCE_API_SECRET = os.environ.get('POSTFINANCE_API_SECRET')
-PAYMENT_SUCCESS_URL = os.environ.get('PAYMENT_SUCCESS_URL')
-PAYMENT_FAILURE_URL = os.environ.get('PAYMENT_FAILURE_URL')
+
+# Payment redirect URLs - Phase 2.5 Configuration
+PAYMENT_SUCCESS_URL = os.environ.get('PAYMENT_SUCCESS_URL', 'http://localhost:5000/payment/success')
+PAYMENT_FAILURE_URL = os.environ.get('PAYMENT_FAILURE_URL', 'http://localhost:5000/payment/failed')
+
+# Payment system configuration
+PAYMENT_TIMEOUT_HOURS = int(os.environ.get('PAYMENT_TIMEOUT_HOURS', 1))
+PAYMENT_MAX_ATTEMPTS = int(os.environ.get('PAYMENT_MAX_ATTEMPTS', 3))
 
 # Basic validation to ensure payment config is loaded
 if not all([POSTFINANCE_SPACE_ID, POSTFINANCE_USER_ID, POSTFINANCE_API_SECRET]):

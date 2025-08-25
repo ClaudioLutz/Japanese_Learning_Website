@@ -2351,10 +2351,31 @@ def reset_lesson_progress(lesson_id):
 @bp.route('/api/courses/<int:course_id>/purchase', methods=['POST'])
 @login_required
 def purchase_course(course_id):
-    """Purchase a course (MVP with mock payment)"""
+    """
+    Initiate course purchase with PostFinance Checkout
+    
+    Flow:
+    1. Validate course and user eligibility
+    2. Create PostFinance transaction
+    3. Store transaction in database
+    4. Return payment URL for redirect
+    """
+    from app.services.payment_service import get_payment_service
+    from app.services.transaction_service import PaymentTransactionService
+    
+    # Validate CSRF token
+    from flask_wtf.csrf import validate_csrf
+    try:
+        csrf_token = request.headers.get('X-CSRFToken')
+        if not csrf_token:
+            return jsonify({"error": "CSRF token missing"}), 400
+        validate_csrf(csrf_token)
+    except Exception:
+        return jsonify({"error": "CSRF token invalid"}), 400
+    
     course = Course.query.get_or_404(course_id)
     
-    # Validate that the course is purchasable
+    # Validate course is purchasable
     if not course.is_purchasable or course.price <= 0:
         return jsonify({"error": "This course is not available for purchase"}), 400
     
@@ -2368,39 +2389,82 @@ def purchase_course(course_id):
         return jsonify({"error": "You already own this course"}), 400
     
     try:
-        # Create purchase record
-        purchase = CoursePurchase(
-            user_id=current_user.id,
-            course_id=course_id,
-            price_paid=course.price,
-            purchased_at=datetime.utcnow()
+        # Initialize services
+        payment_service = get_payment_service()
+        transaction_service = PaymentTransactionService()
+        
+        # Create PostFinance transaction
+        result = payment_service.create_course_transaction(current_user, course)
+        
+        if not result['success']:
+            return jsonify({
+                "error": result['error'],
+                "error_type": result.get('error_type')
+            }), 400
+        
+        transaction_id = result['transaction_id']
+        
+        # Store transaction in database
+        payment_transaction = transaction_service.create_payment_transaction(
+            transaction_id=transaction_id,
+            user=current_user,
+            item_type='course',
+            item_id=course_id,
+            amount=course.price
         )
         
-        db.session.add(purchase)
-        db.session.commit()
+        # Generate payment URL
+        url_result = payment_service.generate_payment_page_url(transaction_id)
         
-        current_app.logger.info(f"User {current_user.id} purchased course {course_id} for CHF {course.price}")
+        if not url_result['success']:
+            return jsonify({
+                "error": "Failed to generate payment URL",
+                "error_details": url_result['error']
+            }), 500
+        
+        current_app.logger.info(f"Course purchase initiated: User {current_user.id}, Course {course_id}, Transaction {transaction_id}")
         
         return jsonify({
             "success": True,
-            "message": f"Successfully purchased '{course.title}' for CHF {course.price:.2f}",
-            "purchase_id": purchase.id,
-            "course_id": course_id,
-            "price_paid": course.price
+            "transaction_id": transaction_id,
+            "payment_url": url_result['payment_url'],
+            "course_title": course.title,
+            "amount": course.price,
+            "currency": "CHF"
         }), 201
         
-    except SQLAlchemyError as e:
-        db.session.rollback()
-        current_app.logger.error(f"Error purchasing course {course_id} for user {current_user.id}: {e}")
-        return jsonify({"error": "Purchase failed. Please try again."}), 500
+    except Exception as e:
+        current_app.logger.error(f"Error initiating course purchase: {e}")
+        return jsonify({"error": "Purchase initiation failed"}), 500
 
 @bp.route('/api/lessons/<int:lesson_id>/purchase', methods=['POST'])
 @login_required
 def purchase_lesson(lesson_id):
-    """Purchase a lesson (MVP with mock payment)"""
+    """
+    Initiate lesson purchase with PostFinance Checkout
+    
+    Flow:
+    1. Validate lesson and user eligibility
+    2. Create PostFinance transaction
+    3. Store transaction in database
+    4. Return payment URL for redirect
+    """
+    from app.services.payment_service import get_payment_service
+    from app.services.transaction_service import PaymentTransactionService
+    
+    # Validate CSRF token
+    from flask_wtf.csrf import validate_csrf
+    try:
+        csrf_token = request.headers.get('X-CSRFToken')
+        if not csrf_token:
+            return jsonify({"error": "CSRF token missing"}), 400
+        validate_csrf(csrf_token)
+    except Exception:
+        return jsonify({"error": "CSRF token invalid"}), 400
+    
     lesson = Lesson.query.get_or_404(lesson_id)
     
-    # Validate that the lesson is purchasable
+    # Validate lesson is purchasable
     if not lesson.is_purchasable or lesson.price <= 0:
         return jsonify({"error": "This lesson is not available for purchase"}), 400
     
@@ -2414,32 +2478,159 @@ def purchase_lesson(lesson_id):
         return jsonify({"error": "You already own this lesson"}), 400
     
     try:
-        # Create purchase record (MVP: instant purchase without payment processing)
-        purchase = LessonPurchase(
-            user_id=current_user.id,
-            lesson_id=lesson_id,
-            price_paid=lesson.price,
-            purchased_at=datetime.utcnow(),
-            stripe_payment_intent_id=None  # Will be used for future Stripe integration
+        # Initialize services
+        payment_service = get_payment_service()
+        transaction_service = PaymentTransactionService()
+        
+        # Create PostFinance transaction
+        result = payment_service.create_lesson_transaction(current_user, lesson)
+        
+        if not result['success']:
+            return jsonify({
+                "error": result['error'],
+                "error_type": result.get('error_type')
+            }), 400
+        
+        transaction_id = result['transaction_id']
+        
+        # Store transaction in database
+        payment_transaction = transaction_service.create_payment_transaction(
+            transaction_id=transaction_id,
+            user=current_user,
+            item_type='lesson',
+            item_id=lesson_id,
+            amount=lesson.price
         )
         
-        db.session.add(purchase)
-        db.session.commit()
+        # Generate payment URL
+        url_result = payment_service.generate_payment_page_url(transaction_id)
         
-        current_app.logger.info(f"User {current_user.id} purchased lesson {lesson_id} for CHF {lesson.price}")
+        if not url_result['success']:
+            return jsonify({
+                "error": "Failed to generate payment URL",
+                "error_details": url_result['error']
+            }), 500
+        
+        current_app.logger.info(f"Lesson purchase initiated: User {current_user.id}, Lesson {lesson_id}, Transaction {transaction_id}")
         
         return jsonify({
             "success": True,
-            "message": f"Successfully purchased '{lesson.title}' for CHF {lesson.price:.2f}",
-            "purchase_id": purchase.id,
-            "lesson_id": lesson_id,
-            "price_paid": lesson.price
+            "transaction_id": transaction_id,
+            "payment_url": url_result['payment_url'],
+            "lesson_title": lesson.title,
+            "amount": lesson.price,
+            "currency": "CHF"
         }), 201
         
-    except SQLAlchemyError as e:
-        db.session.rollback()
-        current_app.logger.error(f"Error purchasing lesson {lesson_id} for user {current_user.id}: {e}")
-        return jsonify({"error": "Purchase failed. Please try again."}), 500
+    except Exception as e:
+        current_app.logger.error(f"Error initiating lesson purchase: {e}")
+        return jsonify({"error": "Purchase initiation failed"}), 500
+
+@bp.route('/api/payment/status/<int:transaction_id>', methods=['GET'])
+@login_required
+def get_payment_status(transaction_id):
+    """
+    Check payment status for a transaction
+    
+    Returns current transaction state and details
+    """
+    from app.services.payment_service import get_payment_service
+    from app.services.transaction_service import PaymentTransactionService
+    from app.models import PaymentTransaction
+    
+    # Verify user owns this transaction
+    payment_transaction = PaymentTransaction.query.filter_by(
+        transaction_id=transaction_id,
+        user_id=current_user.id
+    ).first_or_404()
+    
+    try:
+        payment_service = get_payment_service()
+        result = payment_service.get_transaction_status(transaction_id)
+        
+        if result['success']:
+            # Update local state if different
+            if result['state'] != payment_transaction.state:
+                transaction_service = PaymentTransactionService()
+                transaction_service.update_transaction_state(
+                    transaction_id, 
+                    result['state']
+                )
+            
+            return jsonify({
+                "success": True,
+                "transaction_id": transaction_id,
+                "state": result['state'],
+                "item_type": payment_transaction.item_type,
+                "item_id": payment_transaction.item_id,
+                "amount": payment_transaction.amount
+            })
+        else:
+            return jsonify({
+                "error": result['error']
+            }), 400
+            
+    except Exception as e:
+        current_app.logger.error(f"Error checking payment status: {e}")
+        return jsonify({"error": "Status check failed"}), 500
+
+@bp.route('/api/payment/cancel/<int:transaction_id>', methods=['POST'])
+@login_required
+def cancel_payment(transaction_id):
+    """
+    Cancel a pending payment transaction
+    
+    Note: This is for user-initiated cancellation
+    PostFinance handles timeout cancellation automatically
+    """
+    from app.services.transaction_service import PaymentTransactionService
+    from app.models import PaymentTransaction
+    
+    # Validate CSRF token
+    from flask_wtf.csrf import validate_csrf
+    try:
+        csrf_token = request.headers.get('X-CSRFToken')
+        if not csrf_token:
+            return jsonify({"error": "CSRF token missing"}), 400
+        validate_csrf(csrf_token)
+    except Exception:
+        return jsonify({"error": "CSRF token invalid"}), 400
+    
+    # Verify user owns this transaction
+    payment_transaction = PaymentTransaction.query.filter_by(
+        transaction_id=transaction_id,
+        user_id=current_user.id,
+        state='PENDING'
+    ).first_or_404()
+    
+    try:
+        transaction_service = PaymentTransactionService()
+        success = transaction_service.update_transaction_state(
+            transaction_id, 
+            'CANCELLED'
+        )
+        
+        if success:
+            return jsonify({
+                "success": True,
+                "message": "Payment cancelled successfully"
+            })
+        else:
+            return jsonify({"error": "Failed to cancel payment"}), 500
+            
+    except Exception as e:
+        current_app.logger.error(f"Error cancelling payment: {e}")
+        return jsonify({"error": "Cancellation failed"}), 500
+
+@bp.route('/payment/success')
+def payment_success():
+    """Handle successful payment redirect from PostFinance"""
+    return render_template('payment_success.html')
+
+@bp.route('/payment/failed')
+def payment_failed():
+    """Handle failed payment redirect from PostFinance"""
+    return render_template('payment_failed.html')
 
 @bp.route('/api/user/purchases', methods=['GET'])
 @login_required
