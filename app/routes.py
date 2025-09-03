@@ -49,6 +49,34 @@ def admin_required(f):
     return decorated_function
 
 # --- Public Routes ---
+@bp.route('/healthz')
+def healthz():
+    """Simple health check for Cloud Run startup probe"""
+    return jsonify({
+        "status": "ok",
+        "timestamp": datetime.utcnow().isoformat(),
+        "service": "Japanese Learning Website"
+    }), 200
+
+@bp.route('/health')
+def health_check():
+    """Full health check endpoint with database connectivity check"""
+    try:
+        # Basic database connectivity check
+        db.session.execute(db.text('SELECT 1'))
+        return jsonify({
+            "status": "healthy",
+            "timestamp": datetime.utcnow().isoformat(),
+            "service": "Japanese Learning Website"
+        }), 200
+    except Exception as e:
+        current_app.logger.error(f"Health check failed: {e}")
+        return jsonify({
+            "status": "unhealthy", 
+            "error": str(e),
+            "timestamp": datetime.utcnow().isoformat()
+        }), 503
+
 @bp.route('/')
 @bp.route('/home')
 def index():

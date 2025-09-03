@@ -26,6 +26,6 @@ PAYMENT_FAILURE_URL = os.environ.get('PAYMENT_FAILURE_URL', 'http://localhost:50
 PAYMENT_TIMEOUT_HOURS = int(os.environ.get('PAYMENT_TIMEOUT_HOURS', 1))
 PAYMENT_MAX_ATTEMPTS = int(os.environ.get('PAYMENT_MAX_ATTEMPTS', 3))
 
-# Basic validation to ensure payment config is loaded
+# Basic validation to ensure payment config is loaded (optional for deployment)
 if not all([POSTFINANCE_SPACE_ID, POSTFINANCE_USER_ID, POSTFINANCE_API_SECRET]):
-    raise ValueError("PostFinance Checkout credentials are not fully configured in the environment.")
+    print("⚠️  WARNING: PostFinance Checkout credentials are not configured. Payment functionality will be disabled.")

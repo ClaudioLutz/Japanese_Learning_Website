@@ -1,0 +1,106 @@
+nach timout:
+
+
+billwilson_rip2012@learning-japanese:~$ sudo nano /etc/systemd/system/jl.service
+
+[Unit]
+Description=Gunicorn service for Japanese Learning Flask app
+After=network.target cloud-sql-proxy.service
+Requires=cloud-sql-proxy.service
+
+[Service]
+User=jl
+Group=www-data
+WorkingDirectory=/srv/japanese-learning/app
+EnvironmentFile=/etc/jl.env
+ExecStart=/srv/japanese-learning/app/.venv/bin/gunicorn \
+  -w 2 --threads 4 --timeout 90 \
+  --bind unix:/run/jl/jl.sock "app:create_app()"
+RuntimeDirectory=jl
+RuntimeDirectoryMode=0755
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
+
+billwilson_rip2012@learning-japanese:~$ sudo -u jl bash -lc '
+cd /srv/japanese-learning/app
+. .venv/bin/activate
+which gunicorn
+'
+bash: line 2: cd: /srv/japanese-learning/app: No such file or directory
+bash: line 3: .venv/bin/activate: Permission denied
+billwilson_rip2012@learning-japanese:~$ sudo chmod +x /srv/japanese-learning/app/.venv/bin/gunicorn
+chmod: cannot access '/srv/japanese-learning/app/.venv/bin/gunicorn': No such file or directory
+billwilson_rip2012@learning-japanese:~$ # create the app user (no login shell) if it doesn't exist
+id jl 2>/dev/null || sudo adduser --system --group --home /srv/japanese-learning jl
+
+# base dirs
+sudo mkdir -p /srv/japanese-learning
+sudo chown -R jl:jl /srv/japanese-learning
+uid=105(jl) gid=111(jl) groups=111(jl)
+billwilson_rip2012@learning-japanese:~$ sudo -u jl bash -lc '
+
+
+billwilson_rip2012@learning-japanese:~$ google-cloud-sdk.list:1 and google-cloud-sdk.list:2
+-bash: google-cloud-sdk.list:1: command not found
+billwilson_rip2012@learning-japanese:~$ sudo nano /etc/apt/sources.list.d/google-cloud-sdk.list
+billwilson_rip2012@learning-japanese:~$ sudo rm -rf /var/lib/apt/lists/*
+sudo apt update
+
+billwilson_rip2012@learning-japanese:~$ sudo -u jl bash -lc '
+cd /srv/japanese-learning
+rm -rf app
+git clone https://github.com/ClaudioLutz/Japanese_Learning_Website.git app
+cd app
+python3 -m venv .venv
+. .venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt gunicorn
+which gunicorn
+'
+
+
+
+billwilson_rip2012@learning-japanese:~$ nano /etc/systemd/system/jl.service
+billwilson_rip2012@learning-japanese:~$ sudo systemctl daemon-reload
+sudo systemctl enable --now jl
+sudo systemctl status jl --no-pager
+
+
+
+billwilson_rip2012@learning-japanese:~$ sudo tee /etc/nginx/sites-available/japanese-learning >/dev/null <<'EOF'
+server {
+    listen 80;
+    server_name japanese-learning.ch www.japanese-learning.ch;
+
+    # allow modest uploads; tune as needed
+    client_max_body_size 25m;
+
+    # proxy to the Gunicorn UNIX socket
+    location / {
+        proxy_pass http://unix:/run/jl/jl.sock;
+        proxy_set_header Host              $host;
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+EOF
+
+
+
+
+billwilson_rip2012@learning-japanese:~$ # enable your site
+sudo ln -sf /etc/nginx/sites-available/japanese-learning \
+             /etc/nginx/sites-enabled/japanese-learning
+
+# optional: disable Debian's default site to avoid conflicts
+sudo rm -f /etc/nginx/sites-enabled/default
+
+
+
+billwilson_rip2012@learning-japanese:~$ sudo nginx -t
+sudo systemctl reload nginx
+sudo systemctl status nginx --no-pager

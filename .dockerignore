@@ -1,0 +1,19 @@
+# keep secrets & big stuff out of the image / context
+.env
+.git/
+__pycache__/
+*.pyc
+.venv/
+venv/
+node_modules/
+*.log
+data/
+datasets/
+uploads/
+instance/app.db
+logs/
+deprecated/
+Documentation/
+HowToNotes/
+.gitignore
+*.md

@@ -1,0 +1,130 @@
+# .gcloudignore - Exclude files from Cloud Run deployment
+# This file works like .gitignore to reduce deployment package size
+
+# Documentation and guides (not needed in production)
+Documentation/
+HowToNotes/
+*.md
+README*
+CHANGELOG*
+
+# Deprecated code and backups
+deprecated/
+*_backup/
+*_old/
+backup_*
+*_backup.*
+
+# Local instance and configuration files
+instance/
+*.local
+local_*
+
+# Development and testing files
+tests/
+test_*
+*_test.*
+debug_*
+
+# Logs and temporary files
+logs/
+*.log
+*.txt
+*_log_*
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Lesson creation scripts (development only)
+lesson_creation_scripts/
+lesson_creation_scripts_*/
+*lesson_scripts/
+lesson_templates/
+
+# Migration and setup scripts (not needed in production)
+migrate_*.py
+create_*.py
+populate_*.py
+fix_*.py
+update_*.py
+replicate_*.py
+run_*.py
+setup_*.py
+*_migration.py
+
+# Payment integration documentation
+payment_integration/
+
+# Development tools and configs
+.vscode/
+.idea/
+*.code-workspace
+.DS_Store
+Thumbs.db
+
+# Python cache and virtual environment
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+env/
+.env.local
+.env.development
+.env.test
+
+# Docker files for local development only
+docker-compose.yml
+.dockerignore
+entrypoint.sh
+
+# Git files
+.git/
+.gitignore
+.gitattributes
+
+# IDE and editor files
+*.swp
+*.swo
+*~
+.*.swp
+.*.swo
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Large media files (if any)
+*.mp4
+*.avi
+*.mov
+*.wmv
+*.flv
+*.webm
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Archive files
+*.zip
+*.tar.gz
+*.tar.bz2
+*.rar
+*.7z
+
+# Only include essential production files:
+# - app/ directory (core application)
+# - requirements.txt (dependencies)
+# - run.py (main entry point)
+# - entrypoint-cloud-run.sh (Cloud Run startup script)
+# - Static assets in app/static/
+# - Templates in app/templates/

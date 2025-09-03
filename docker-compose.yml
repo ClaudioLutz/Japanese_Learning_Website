@@ -1,0 +1,43 @@
+version: "3.8"
+services:
+  web:
+    build: .
+    container_name: japanese_app
+    environment:
+      # Use the PostgreSQL URL with psycopg v3 driver and Docker service name for host
+      DATABASE_URL: postgresql+psycopg://app_user:JapaneseApp2025!@db:5432/japanese_learning
+      SECRET_KEY: "your-super-secret-key"            # from .env (ensure to replace with your actual secret)
+      WTF_CSRF_SECRET_KEY: "your-csrf-secret-key"    # from .env
+      FLASK_ENV: "development"       # or "production" as needed (controls Flask debug mode)
+      # Database connection variables for entrypoint script
+      POSTGRES_PASSWORD: "JapaneseApp2025!"
+      # PostFinance Checkout credentials (placeholder values for testing)
+      POSTFINANCE_SPACE_ID: "placeholder-space-id"
+      POSTFINANCE_USER_ID: "placeholder-user-id"  
+      POSTFINANCE_API_SECRET: "placeholder-api-secret"
+      # (Include other env vars as needed, e.g., GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, OPENAI_API_KEY, etc.)
+    ports:
+      - "5000:5000"        # Maps host port 5000 to container's 5000 (Flask/Gunicorn)
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:15-alpine
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: "app_user"
+      POSTGRES_PASSWORD: "JapaneseApp2025!"
+      POSTGRES_DB: "japanese_learning"
+    ports:
+      - "5432:5432"        # (Optional) expose DB to host for direct access
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app_user -d japanese_learning"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres_data:
