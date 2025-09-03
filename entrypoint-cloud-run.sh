@@ -17,10 +17,10 @@ wait_for_database() {
     for i in {1..30}; do
         if python -c "
 import os
-from sqlalchemy import create_engine
+import psycopg
 try:
-    engine = create_engine(os.environ['DATABASE_URL'])
-    conn = engine.connect()
+    # Use psycopg3 directly for connection test
+    conn = psycopg.connect(os.environ['DATABASE_URL'])
     conn.close()
     print('✅ Database connection successful!')
     exit(0)

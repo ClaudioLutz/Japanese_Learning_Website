@@ -133,6 +133,10 @@ def create_app():
     from app.oauth_routes import oauth_bp
     app.register_blueprint(oauth_bp)
     
+    # Register debug routes blueprint for troubleshooting
+    from app.debug_routes import debug_bp
+    app.register_blueprint(debug_bp)
+    
     # Register social auth blueprint (for /auth/login/google-oauth2/ route only)
     from social_flask.routes import social_auth
     app.register_blueprint(social_auth, url_prefix='/auth')

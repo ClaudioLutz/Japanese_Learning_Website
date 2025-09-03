@@ -1,31 +1,46 @@
-# Use Python 3.10 slim base image
+# Cloud Run optimized Dockerfile for Japanese Learning Website
 FROM python:3.12-slim-bookworm
 
 # Set working directory
 WORKDIR /app
 
-# Install system packages (libmagic for python-magic, postgresql-client for database connectivity check, etc.)
+# Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libmagic1 build-essential libpq-dev postgresql-client \
-    && rm -rf /var/lib/apt/lists/*
+    libmagic1 \
+    build-essential \
+    libpq-dev \
+    postgresql-client \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# Copy requirements first for better caching
+COPY requirements.txt .
 
 # Install Python dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
-COPY . . 
+COPY . .
 
-# Copy and set permissions for entrypoint script
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+# Copy and set permissions for Cloud Run entrypoint script
+COPY entrypoint-cloud-run.sh /entrypoint-cloud-run.sh
+RUN chmod +x /entrypoint-cloud-run.sh
 
-# Expose the Flask port
-EXPOSE 5000
+# Create non-root user for security
+RUN useradd --create-home --shell /bin/bash app \
+    && chown -R app:app /app
+USER app
 
-# Define environment variables (optional defaults)
-ENV FLASK_APP=run.py \
-    FLASK_ENV=production
+# Cloud Run expects the container to listen on $PORT
+ENV PORT=8080
+ENV FLASK_APP=run.py
+ENV FLASK_ENV=production
 
-# Use entrypoint script to handle database initialization
-ENTRYPOINT ["/entrypoint.sh"]
+# Expose port (Cloud Run will override this with $PORT)
+EXPOSE $PORT
+
+# Health check removed - let Cloud Run handle it
+
+# Use Cloud Run optimized entrypoint
+ENTRYPOINT ["/entrypoint-cloud-run.sh"]

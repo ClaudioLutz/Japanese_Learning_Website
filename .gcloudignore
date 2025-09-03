@@ -29,12 +29,15 @@ debug_*
 # Logs and temporary files
 logs/
 *.log
-*.txt
 *_log_*
 *.tmp
 *.temp
 temp/
 tmp/
+
+# Exclude txt files but allow requirements.txt
+*.txt
+!requirements.txt
 
 # Lesson creation scripts (development only)
 lesson_creation_scripts/

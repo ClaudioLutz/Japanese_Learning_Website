@@ -402,7 +402,34 @@ class EnhancedPostFinanceService(PostFinanceService):
 
 # You can add a simple function to get a service instance
 def get_payment_service():
-    return EnhancedPostFinanceService()
+    """
+    Get the appropriate payment service (PostFinance or Mock) based on configuration
+    """
+    from flask import current_app
+    
+    # Check if PostFinance credentials are properly configured
+    postfinance_configured = all([
+        current_app.config.get('POSTFINANCE_USER_ID'),
+        current_app.config.get('POSTFINANCE_API_SECRET'),
+        current_app.config.get('POSTFINANCE_SPACE_ID'),
+    ])
+    
+    # Also check if we're explicitly in mock mode
+    force_mock_mode = current_app.config.get('MOCK_PAYMENTS_ENABLED', False)
+    
+    if not postfinance_configured or force_mock_mode:
+        current_app.logger.info("Using MockPaymentService - PostFinance not configured or mock mode enabled")
+        from app.services.mock_payment_service import MockPaymentService
+        return MockPaymentService()
+    else:
+        # Try to use real PostFinance service
+        try:
+            current_app.logger.info("Using PostFinanceService - credentials configured")
+            return EnhancedPostFinanceService()
+        except Exception as e:
+            current_app.logger.warning(f"PostFinance service initialization failed, falling back to mock: {e}")
+            from app.services.mock_payment_service import MockPaymentService
+            return MockPaymentService()
 
 # Backward compatibility
 def get_basic_payment_service():

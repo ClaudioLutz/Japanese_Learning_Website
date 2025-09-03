@@ -2388,7 +2388,7 @@ def purchase_course(course_id):
     3. Store transaction in database
     4. Return payment URL for redirect
     """
-    from app.services.payment_service import get_payment_service
+    from app.services.payment_factory import get_payment_service
     from app.services.transaction_service import PaymentTransactionService
     
     # Validate CSRF token
@@ -2477,7 +2477,7 @@ def purchase_lesson(lesson_id):
     3. Store transaction in database
     4. Return payment URL for redirect
     """
-    from app.services.payment_service import get_payment_service
+    from app.services.payment_factory import get_payment_service
     from app.services.transaction_service import PaymentTransactionService
     
     # Validate CSRF token
@@ -2562,7 +2562,7 @@ def get_payment_status(transaction_id):
     
     Returns current transaction state and details
     """
-    from app.services.payment_service import get_payment_service
+    from app.services.payment_factory import get_payment_service
     from app.services.transaction_service import PaymentTransactionService
     from app.models import PaymentTransaction
     

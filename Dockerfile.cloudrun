@@ -40,7 +40,5 @@ ENV FLASK_ENV=production
 # Expose port (Cloud Run will override this with $PORT)
 EXPOSE $PORT
 
-# Health check removed - let Cloud Run handle it
-
 # Use Cloud Run optimized entrypoint
 ENTRYPOINT ["/entrypoint-cloud-run.sh"]
