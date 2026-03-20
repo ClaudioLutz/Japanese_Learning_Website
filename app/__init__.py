@@ -27,18 +27,38 @@ def create_app():
     # Ensure SECRET_KEY is set, otherwise CSRF protection (and sessions) won't work.
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or 'dev-secret-key-change-in-production'
     app.config['WTF_CSRF_SECRET_KEY'] = os.environ.get('WTF_CSRF_SECRET_KEY') or 'dev-csrf-secret-key-change-in-production'
+    app.config['GCS_BUCKET_NAME'] = os.environ.get('GCS_BUCKET_NAME') or 'jpl-website-assets-jpl-website-bill-20251130'
     
     app.config.from_pyfile('config.py', silent=True) # Load config from instance folder
     
-    # Force reload environment variables
+    # Load environment variables (do not override existing env vars)
     from dotenv import load_dotenv
-    load_dotenv(override=True)
+    load_dotenv()
     
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') or \
-        'postgresql://postgres:E8BnuCBpWKP@localhost:5433/japanese_learning'
+    # Debug: Print environment variables status
+    print("DEBUG: Environment Variables Check:")
+    print(f"DEBUG: Available env vars: {list(os.environ.keys())}")
+    
+    db_url = os.environ.get('DATABASE_URL')
+    if db_url:
+        print(f"DEBUG: DATABASE_URL is set. Length: {len(db_url)}")
+        # Mask password for logging
+        if '@' in db_url:
+            safe_url = db_url.split('@')[1]
+            print(f"DEBUG: DATABASE_URL host part: {safe_url}")
+    else:
+        print("CRITICAL: DATABASE_URL is NOT set in environment!")
+
+    print(f"DEBUG: GCS_BUCKET_NAME: {os.environ.get('GCS_BUCKET_NAME')}")
+
+    # Remove fallback to force error if env var is missing
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+    
+    if not app.config['SQLALCHEMY_DATABASE_URI']:
+        print("CRITICAL: SQLALCHEMY_DATABASE_URI is None! Application will likely fail.")
     
     # Debug: Print the actual DATABASE_URI being used
-    print(f"DEBUG: Using DATABASE_URI: {app.config['SQLALCHEMY_DATABASE_URI']}")
+    print(f"DEBUG: Final SQLALCHEMY_DATABASE_URI: {app.config['SQLALCHEMY_DATABASE_URI']}")
     
     # Google OAuth Configuration
     app.config.update({

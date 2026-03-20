@@ -259,6 +259,44 @@ class Lesson(db.Model):
         # Return a list of page objects, sorted by page number
         return [pages_dict[p_num] for p_num in sorted(pages_dict.keys())]
 
+    def get_background_url(self):
+        """Get URL for background image, handling GCS if enabled"""
+        from flask import url_for, current_app
+        
+        # If we have a path, try to resolve it
+        if self.background_image_path:
+            # Check if GCS is enabled
+            bucket_name = current_app.config.get('GCS_BUCKET_NAME')
+            if bucket_name:
+                # Remove leading slashes if any
+                clean_path = self.background_image_path.lstrip('/')
+                return f"https://storage.googleapis.com/{bucket_name}/{clean_path}"
+            
+            # Fallback to local serving
+            return url_for('routes.uploaded_file', filename=self.background_image_path)
+            
+        # Fallback to the URL field if path is not set
+        return self.background_image_url
+
+    def get_thumbnail_url(self):
+        """Get URL for thumbnail, handling GCS if enabled"""
+        from flask import url_for, current_app
+        
+        if self.thumbnail_url:
+            if self.thumbnail_url.startswith('http'):
+                return self.thumbnail_url
+            
+            # Check if GCS is enabled
+            bucket_name = current_app.config.get('GCS_BUCKET_NAME')
+            if bucket_name:
+                clean_path = self.thumbnail_url.lstrip('/')
+                return f"https://storage.googleapis.com/{bucket_name}/{clean_path}"
+            
+            # Fallback to local serving
+            return url_for('routes.uploaded_file', filename=self.thumbnail_url)
+            
+        return None
+
 class LessonPrerequisite(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     lesson_id: Mapped[int] = mapped_column(Integer, ForeignKey('lesson.id'), nullable=False)
@@ -327,6 +365,23 @@ class LessonContent(db.Model):
         """Get URL for accessing uploaded file"""
         from flask import url_for
         if self.file_path:
+            # If it's a full URL (already migrated or external), return it
+            if self.file_path.startswith('http'):
+                return self.file_path
+            
+            # If it's a relative path, construct the GCS URL
+            # Assuming the file_path stored in DB is relative to 'uploads/'
+            # e.g. 'lessons/image/lesson_1/file.jpg'
+            
+            # Check if GCS is enabled (bucket name is set)
+            from flask import current_app
+            bucket_name = current_app.config.get('GCS_BUCKET_NAME')
+            if bucket_name:
+                # Remove leading slashes if any
+                clean_path = self.file_path.lstrip('/')
+                return f"https://storage.googleapis.com/{bucket_name}/{clean_path}"
+            
+            # Fallback to local serving (for development if GCS not set)
             return url_for('routes.uploaded_file', filename=self.file_path)
         return self.media_url  # Fallback to URL-based media
     

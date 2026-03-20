@@ -276,8 +276,8 @@
                             </div>
                         </div>
                         <div class="col-md-4">
-                            {% if lesson.thumbnail_url %}
-                            <img src="{{ lesson.thumbnail_url }}" class="img-fluid rounded" alt="{{ lesson.title }}">
+                            {% if lesson.get_thumbnail_url() %}
+                            <img src="{{ lesson.get_thumbnail_url() }}" class="img-fluid rounded" alt="{{ lesson.title }}">
                             {% endif %}
                         </div>
                     </div>

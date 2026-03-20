@@ -229,3 +229,79 @@ class FileUploadHandler:
         if file_type in allowed_extensions:
             return list(allowed_extensions[file_type])
         return []
+
+    @staticmethod
+    def save_file(file_storage, file_type, lesson_id=None):
+        """
+        Save file to GCS (if configured) or local storage.
+        Handles temp file creation, validation, and processing.
+        Returns: (file_path, file_info, error_message)
+        """
+        from app.gcs_utils import upload_file_to_gcs
+        
+        filename = secure_filename(file_storage.filename)
+        unique_filename = FileUploadHandler.generate_unique_filename(filename)
+        
+        # Determine relative path for DB and GCS
+        if lesson_id:
+            relative_path = f"lessons/{file_type}/lesson_{lesson_id}/{unique_filename}"
+        else:
+            relative_path = f"temp/{unique_filename}"
+            
+        # Create temp file for processing/validation
+        temp_dir = os.path.join(current_app.config['UPLOAD_FOLDER'], 'temp')
+        os.makedirs(temp_dir, exist_ok=True)
+        temp_path = os.path.join(temp_dir, unique_filename)
+        
+        try:
+            file_storage.save(temp_path)
+            
+            # Validate content
+            if not FileUploadHandler.validate_file_content(temp_path, file_type):
+                os.remove(temp_path)
+                return None, None, "Invalid file content"
+            
+            # Process image if needed
+            if file_type == 'image':
+                FileUploadHandler.process_image(temp_path)
+                
+            # Get file info
+            file_info = FileUploadHandler.get_file_info(temp_path)
+            
+            # Check if GCS is enabled
+            if current_app.config.get('GCS_BUCKET_NAME'):
+                # Upload to GCS
+                with open(temp_path, 'rb') as f:
+                    # Determine content type
+                    content_type = file_info.get('mime_type')
+                    if not content_type:
+                        content_type, _ = mimetypes.guess_type(filename)
+                        
+                    public_url = upload_file_to_gcs(f, relative_path, content_type)
+                    
+                if not public_url:
+                    os.remove(temp_path)
+                    return None, None, "Failed to upload to GCS"
+                    
+                # Clean up temp file
+                os.remove(temp_path)
+                
+                # Return relative path (same as before) so DB remains consistent
+                # The get_file_url model method handles the GCS URL generation
+                return relative_path, file_info, None
+            else:
+                # Local storage (move from temp to final destination)
+                if lesson_id:
+                    final_dir = FileUploadHandler.create_lesson_directory(lesson_id, file_type)
+                    final_path = os.path.join(final_dir, unique_filename)
+                    os.rename(temp_path, final_path)
+                    return relative_path, file_info, None
+                else:
+                    # If no lesson_id, keep in temp (or handle as needed)
+                    return relative_path, file_info, None
+                    
+        except Exception as e:
+            current_app.logger.error(f"Error saving file: {e}")
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+            return None, None, f"Server error: {str(e)}"

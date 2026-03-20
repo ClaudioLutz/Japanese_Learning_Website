@@ -1089,6 +1089,8 @@ def create_lesson():
 def get_lesson(item_id):
     item = Lesson.query.get_or_404(item_id)
     lesson_dict = model_to_dict(item)
+    lesson_dict['background_image_url'] = item.get_background_url()
+    lesson_dict['thumbnail_url'] = item.get_thumbnail_url()
     lesson_dict['category_name'] = item.category.name if item.category else None
     
     # Use the updated `pages` property from the model
@@ -1974,13 +1976,15 @@ def get_user_lessons():
     for lesson in lessons:
         accessible, message = lesson.is_accessible_to_user(user)
         lesson_dict = model_to_dict(lesson)
+        lesson_dict['thumbnail_url'] = lesson.get_thumbnail_url()
         lesson_dict['accessible'] = accessible
         lesson_dict['access_message'] = message
         lesson_dict['category_name'] = lesson.category.name if lesson.category else None
         
         # Add background image information
-        lesson_dict['background_image_url'] = lesson.background_image_url
-        lesson_dict['background_image_path'] = lesson.background_image_path
+        lesson_dict['background_image_url'] = lesson.get_background_url()
+        # Clear the path so frontend doesn't try to use it with hardcoded /static/uploads/
+        lesson_dict['background_image_path'] = None
         
         # Get user progress if exists (only for authenticated users)
         progress = None
@@ -3166,19 +3170,21 @@ from app.utils import FileUploadHandler # Import FileUploadHandler
 def upload_file():
     """Handle file upload, validate, process, and return file information"""
     import os
+    from app.utils import FileUploadHandler
 
     if 'file' not in request.files:
         return jsonify({'success': False, 'error': 'No file part in the request'}), 400
 
     file_storage = request.files['file']
     lesson_id_str = request.form.get('lesson_id') # Optional: for organizing files by lesson
+    lesson_id = int(lesson_id_str) if lesson_id_str and lesson_id_str.isdigit() else None
 
     if not file_storage or not file_storage.filename:
         return jsonify({'success': False, 'error': 'No file selected'}), 400
 
     original_filename = file_storage.filename
 
-    # A2: Check allowed extensions (basic check)
+    # Check allowed extensions (basic check)
     file_type_from_ext = FileUploadHandler.get_file_type(original_filename)
     if not file_type_from_ext:
         return jsonify({'success': False, 'error': 'File type not allowed by extension.'}), 415
@@ -3186,54 +3192,32 @@ def upload_file():
     if not FileUploadHandler.allowed_file(original_filename, file_type_from_ext):
         return jsonify({'success': False, 'error': f"File extension for '{file_type_from_ext}' not allowed."}), 415
 
-    # A3: Generate unique filename
-    # We use secure_filename within generate_unique_filename
-    unique_filename = FileUploadHandler.generate_unique_filename(original_filename)
-
-    # Determine target directory (more dynamic based on file type and optional lesson_id)
-    # For now, let's keep it simpler and categorize by file_type. Lesson-specific folders can be a future enhancement.
-    # A5: Modified target directory logic
-    upload_folder = current_app.config['UPLOAD_FOLDER']
-
-    # Create a temporary path first for validation
-    temp_dir = os.path.join(upload_folder, 'temp') # Defined in __init__.py
-    os.makedirs(temp_dir, exist_ok=True)
-    temp_filepath = os.path.join(temp_dir, unique_filename)
-
     try:
-        file_storage.save(temp_filepath)
-
-        # A1: Validate file content (MIME type)
-        if not FileUploadHandler.validate_file_content(temp_filepath, file_type_from_ext):
-            FileUploadHandler.delete_file(temp_filepath) # Clean up temp file
-            return jsonify({'success': False, 'error': 'File content does not match extension or is not allowed.'}), 415
-
-        # A4: Process image if it's an image file
-        if file_type_from_ext == 'image':
-            if not FileUploadHandler.process_image(temp_filepath):
-                FileUploadHandler.delete_file(temp_filepath) # Clean up temp file
-                return jsonify({'success': False, 'error': 'Image processing failed.'}), 500
+        # Use the new save_file method which handles local/GCS storage
+        relative_file_path, file_info, error = FileUploadHandler.save_file(
+            file_storage, 
+            file_type_from_ext, 
+            lesson_id
+        )
         
-        # Determine final directory based on file type
-        # This is a simplified version. A more robust system might use lesson_id if provided.
-        final_type_dir = os.path.join(upload_folder, 'lessons', file_type_from_ext)
-        os.makedirs(final_type_dir, exist_ok=True)
-        final_filepath = os.path.join(final_type_dir, unique_filename)
-        
-        # Move validated and processed file to its final destination
-        os.rename(temp_filepath, final_filepath)
-
-        # Get file info for the response
-        file_info = FileUploadHandler.get_file_info(final_filepath)
-
-        # Relative path for URL generation and storing in DB
-        relative_file_path = os.path.join('lessons', file_type_from_ext, unique_filename).replace('\\', '/')
+        if error:
+            return jsonify({'success': False, 'error': error}), 500
+            
+        # Construct the full URL
+        # We can use a dummy LessonContent to leverage the get_file_url logic
+        # or just replicate it here for the response
+        bucket_name = current_app.config.get('GCS_BUCKET_NAME')
+        if bucket_name:
+            clean_path = relative_file_path.lstrip('/')
+            file_url = f"https://storage.googleapis.com/{bucket_name}/{clean_path}"
+        else:
+            file_url = url_for('routes.uploaded_file', filename=relative_file_path, _external=False)
 
         return jsonify({
             'success': True,
-            'filePath': url_for('static', filename=os.path.join('uploads', relative_file_path).replace('\\', '/'), _external=False), # Path for url_for
+            'filePath': file_url,
             'dbPath': relative_file_path, # Path to store in DB
-            'fileName': unique_filename,
+            'fileName': os.path.basename(relative_file_path),
             'originalFilename': original_filename,
             'fileType': file_type_from_ext,
             'fileSize': file_info.get('size'),
@@ -3243,13 +3227,7 @@ def upload_file():
 
     except Exception as e:
         current_app.logger.error(f"File upload failed: {e}", exc_info=True)
-        if os.path.exists(temp_filepath): # Ensure cleanup on any other exception
-            FileUploadHandler.delete_file(temp_filepath)
         return jsonify({'success': False, 'error': 'An server error occurred during file upload.'}), 500
-    finally:
-        # Double check temp file is removed if it still exists (e.g. if os.rename failed)
-        if os.path.exists(temp_filepath):
-             FileUploadHandler.delete_file(temp_filepath)
 
 
 @bp.route('/api/admin/lessons/<int:lesson_id>/content/file', methods=['POST'])
