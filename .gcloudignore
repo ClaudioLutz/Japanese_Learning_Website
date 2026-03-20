@@ -24,7 +24,7 @@ local_*
 tests/
 test_*
 *_test.*
-debug_*
+
 
 # Logs and temporary files
 logs/
@@ -74,6 +74,7 @@ __pycache__/
 .Python
 venv/
 env/
+.env
 .env.local
 .env.development
 .env.test
@@ -111,11 +112,18 @@ Thumbs.db
 *.wmv
 *.flv
 *.webm
+*.mp3
+*.wav
+*.ogg
+*.m4a
 
 # Database files
 *.db
 *.sqlite
 *.sqlite3
+*.sql
+database_dump/
+
 
 # Archive files
 *.zip
@@ -123,6 +131,10 @@ Thumbs.db
 *.tar.bz2
 *.rar
 *.7z
+
+# Static assets to exclude
+app/static/uploads/
+app/static/images/temp/
 
 # Only include essential production files:
 # - app/ directory (core application)
