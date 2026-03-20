@@ -7,7 +7,7 @@ echo "This script migrates data from your local Docker PostgreSQL to Cloud SQL"
 echo ""
 
 # Configuration variables (should match deploy script)
-PROJECT_ID="healthy-coil-466105-d7"
+PROJECT_ID="jpl-website-bill-20251130"
 REGION="europe-west6"
 INSTANCE="jpl-psql"
 DB="japanese_learning"

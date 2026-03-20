@@ -5,7 +5,7 @@ echo "🚀 Japanese Learning Website - Cloud Run Deployment Script"
 echo "=========================================================="
 
 # Configuration variables
-PROJECT_ID="healthy-coil-466105-d7"
+PROJECT_ID="jpl-website-bill-20251130"
 REGION="europe-west6"
 INSTANCE="jpl-psql"
 DB="japanese_learning"
@@ -34,6 +34,8 @@ echo "🔧 Enabling required APIs..."
 gcloud services enable sqladmin.googleapis.com
 gcloud services enable run.googleapis.com
 gcloud services enable artifactregistry.googleapis.com
+gcloud services enable compute.googleapis.com
+gcloud services enable cloudbuild.googleapis.com
 
 # Create Cloud SQL instance (or use existing)
 echo "🗄️ Checking Cloud SQL PostgreSQL instance..."

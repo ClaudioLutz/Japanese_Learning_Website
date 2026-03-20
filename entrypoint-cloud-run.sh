@@ -17,10 +17,10 @@ wait_for_database() {
     for i in {1..30}; do
         if python -c "
 import os
-import psycopg
+import psycopg2
 try:
-    # Use psycopg3 directly for connection test
-    conn = psycopg.connect(os.environ['DATABASE_URL'])
+    # Use psycopg2 directly for connection test
+    conn = psycopg2.connect(os.environ['DATABASE_URL'])
     conn.close()
     print('✅ Database connection successful!')
     exit(0)

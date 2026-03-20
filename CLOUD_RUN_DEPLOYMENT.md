@@ -6,16 +6,16 @@ This guide provides step-by-step instructions for deploying your Japanese Learni
 ## 🚀 Quick Deployment
 
 ### Prerequisites
-- ✅ GCP project configured: `healthy-coil-466105-d7`
+- ✅ GCP project configured: `jpl-website-bill-20251130`
 - ✅ Docker containers working locally
 - ✅ gcloud CLI installed and authenticated
 - ✅ Deployment scripts created and ready
 
 ### 1. Deploy Infrastructure and Application
 
-```bash
-# Execute the complete deployment script
-./deploy-to-cloud-run.sh
+```powershell
+# Execute the complete deployment script (PowerShell)
+./deploy-to-cloud-run.ps1
 ```
 
 This script will:
@@ -66,7 +66,7 @@ This will:
 ### Database Connection
 Your app now uses this connection string format:
 ```
-postgresql+psycopg://app_user:PASSWORD@/japanese_learning?host=/cloudsql/healthy-coil-466105-d7:europe-west6:jpl-psql
+postgresql+psycopg://app_user:PASSWORD@/japanese_learning?host=/cloudsql/jpl-website-bill-20251130:europe-west6:jpl-psql
 ```
 
 ### Health Check Endpoint
@@ -181,7 +181,7 @@ The deployment script creates minimal required permissions:
 **Database Connection Failed**
 ```bash
 # Check service account permissions
-gcloud projects get-iam-policy healthy-coil-466105-d7
+gcloud projects get-iam-policy jpl-website-bill-20251130
 
 # Verify Cloud SQL instance
 gcloud sql instances describe jpl-psql
