@@ -1,0 +1,46 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e3]:
+      - link " Japanese Learning Master the Language" [ref=e5] [cursor=pointer]:
+        - /url: /home
+        - generic [ref=e7]: 
+        - generic [ref=e8]:
+          - generic [ref=e9]: Japanese Learning
+          - generic [ref=e10]: Master the Language
+      - generic [ref=e11]:
+        - link " Lessons" [ref=e14] [cursor=pointer]:
+          - /url: /lessons
+          - generic [ref=e15]: 
+          - generic [ref=e16]: Lessons
+        - generic [ref=e18]:
+          - link " Login" [ref=e19] [cursor=pointer]:
+            - /url: /login
+            - generic [ref=e20]: 
+            - generic [ref=e21]: Login
+          - link " Register" [ref=e22] [cursor=pointer]:
+            - /url: /register
+            - generic [ref=e23]: 
+            - generic [ref=e24]: Register
+      - text:   
+  - generic [ref=e25]:
+    - heading "Register" [level=2] [ref=e26]
+    - generic [ref=e27]:
+      - generic [ref=e28]:
+        - generic [ref=e29]: Username
+        - textbox "Username" [ref=e30]: newuser
+        - generic [ref=e31]: Please use a different username.
+      - generic [ref=e32]:
+        - generic [ref=e33]: Email
+        - textbox "Email" [ref=e34]: newuser@test.com
+        - generic [ref=e35]: Please use a different email address.
+      - generic [ref=e36]:
+        - generic [ref=e37]: Password
+        - textbox "Password" [ref=e38]
+      - generic [ref=e39]:
+        - generic [ref=e40]: Repeat Password
+        - textbox "Repeat Password" [ref=e41]
+      - button "Register" [ref=e42] [cursor=pointer]
+```

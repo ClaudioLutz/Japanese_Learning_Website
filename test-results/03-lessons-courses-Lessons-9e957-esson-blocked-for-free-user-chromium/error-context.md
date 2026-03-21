@@ -1,0 +1,67 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e3]:
+      - link " Japanese Learning Master the Language" [ref=e5] [cursor=pointer]:
+        - /url: /home
+        - generic [ref=e7]: 
+        - generic [ref=e8]:
+          - generic [ref=e9]: Japanese Learning
+          - generic [ref=e10]: Master the Language
+      - generic [ref=e11]:
+        - generic [ref=e13]:
+          - link " Lessons" [ref=e14] [cursor=pointer]:
+            - /url: /lessons
+            - generic [ref=e15]: 
+            - generic [ref=e16]: Lessons
+          - link " Courses" [ref=e17] [cursor=pointer]:
+            - /url: /courses
+            - generic [ref=e18]: 
+            - generic [ref=e19]: Courses
+          - link " My Lessons" [ref=e20] [cursor=pointer]:
+            - /url: /my-lessons
+            - generic [ref=e21]: 
+            - generic [ref=e22]: My Lessons
+          - link " Profile" [ref=e23] [cursor=pointer]:
+            - /url: /profile
+            - generic [ref=e24]: 
+            - generic [ref=e25]: Profile
+        - generic [ref=e26]:
+          - generic [ref=e27]:
+            - generic [ref=e29]: 
+            - generic [ref=e30]:
+              - generic [ref=e31]: testuser
+              - generic [ref=e32]:
+                - generic [ref=e33]: 
+                - text: User
+          - link " Logout" [ref=e35] [cursor=pointer]:
+            - /url: /logout
+            - generic [ref=e36]: 
+            - generic [ref=e37]: Logout
+      - text:       
+  - generic [ref=e41]:
+    - generic [ref=e43]:
+      - generic [ref=e45]:
+        - heading "Business Japanese Conversation" [level=1] [ref=e46]
+        - paragraph [ref=e47]: Professional Japanese for business meetings and emails.
+        - generic [ref=e48]:
+          - generic [ref=e49]: Hiragana
+          - generic [ref=e50]: "Difficulty: advanced/5"
+          - generic [ref=e51]: 90 minutes
+      - generic [ref=e53]:
+        - generic [ref=e54]:
+          - heading "Your Progress" [level=6] [ref=e55]
+          - generic [ref=e56]: 0%
+        - generic [ref=e57]:
+          - progressbar
+        - generic [ref=e59]: "Started: 2026-03-20"
+    - generic [ref=e60]:
+      - heading "Lesson Content" [level=5] [ref=e62]
+      - generic [ref=e64]:
+        - heading "No content available yet" [level=5] [ref=e65]
+        - paragraph [ref=e66]: This lesson is still being prepared. Please check back later.
+    - link "← Back to Lessons" [ref=e68] [cursor=pointer]:
+      - /url: /lessons
+```

@@ -558,16 +558,23 @@
                                                             {% elif content.media_url %}
                                                             <img src="{{ content.media_url }}" class="img-fluid rounded" alt="{{ content.title }}" style="max-width: 100%; height: auto;">
                                                             {% endif %}
+                                                        {% elif content.content_type == 'audio' %}
+                                                            {% if content.file_path %}
+                                                            <audio controls class="w-100">
+                                                                <source src="{{ url_for('static', filename='uploads/' + content.file_path) }}" type="audio/mpeg">
+                                                                Dein Browser unterstützt kein Audio.
+                                                            </audio>
+                                                            {% elif content.media_url %}
+                                                            <audio controls class="w-100">
+                                                                <source src="{{ content.media_url }}" type="audio/mpeg">
+                                                                Dein Browser unterstützt kein Audio.
+                                                            </audio>
+                                                            {% endif %}
                                                         {% elif content.media_url %}
                                                             {% if content.content_type == 'video' %}
                                                             <div class="ratio ratio-16x9">
                                                                 <iframe src="{{ content.media_url | to_embed_url }}" allowfullscreen></iframe>
                                                             </div>
-                                                            {% elif content.content_type == 'audio' %}
-                                                            <audio controls class="w-100">
-                                                                <source src="{{ content.media_url }}" type="audio/mpeg">
-                                                                Your browser does not support the audio element.
-                                                            </audio>
                                                             {% endif %}
                                                         {% else %}
                                                             {% if content.content_text %}

@@ -7,7 +7,8 @@ from flask import current_app
 from openai.types.chat import ChatCompletionMessageParam
 from openai.types.chat.completion_create_params import ResponseFormat
 from typing import Literal
-import google.generativeai as genai
+from google import genai
+from pathlib import Path
 from PIL import Image
 from io import BytesIO
 
@@ -115,49 +116,51 @@ class AILessonContentGenerator:
         
         # Initialize Gemini client for text generation
         try:
-            self.gemini_api_key = os.environ.get('GEMINI_API_KEY')
+            self.gemini_api_key = os.environ.get('GEMINI_API_KEY') or os.environ.get('GOOGLE_AI_API_KEY')
             if not self.gemini_api_key:
                 raise ValueError("GEMINI_API_KEY environment variable not set.")
-            genai.configure(api_key=self.gemini_api_key)
-            self.gemini_model = genai.GenerativeModel('gemini-2.5-pro')
+            self.gemini_client = genai.Client(api_key=self.gemini_api_key)
+            self.gemini_model_name = 'gemini-3-flash'
         except Exception as e:
             current_app.logger.error(f"Failed to initialize Gemini client: {e}")
-            self.gemini_model = None
+            self.gemini_client = None
+            self.gemini_model_name = None
         
         # For backward compatibility, keep the old client reference for OpenAI methods
         self.client = self.openai_client
 
     def _generate_content(self, system_prompt, user_prompt, is_json=False):
         """Helper function to call the Gemini API for text generation."""
-        if not self.gemini_model:
+        if not self.gemini_client:
             return None, "Gemini client is not initialized. Check API key."
 
         try:
-            # Combine system and user prompts for Gemini
-            combined_prompt = f"{system_prompt}\n\n{user_prompt}"
-            
-            # Add JSON formatting instruction if needed
+            # Build config
+            config = {"system_instruction": system_prompt}
             if is_json:
-                combined_prompt += "\n\nIMPORTANT: Return your response as a valid JSON object only, with no additional text, markdown formatting, or code blocks."
-            
-            # Generate content using Gemini
-            response = self.gemini_model.generate_content(combined_prompt)
-            
+                user_prompt += "\n\nIMPORTANT: Return your response as a valid JSON object only, with no additional text, markdown formatting, or code blocks."
+
+            # Generate content using new google.genai SDK
+            response = self.gemini_client.models.generate_content(
+                model=self.gemini_model_name,
+                contents=user_prompt,
+                config=config,
+            )
+
             if response and response.text:
                 content = response.text.strip()
-                
+
                 # If JSON is expected, clean up any markdown formatting
                 if is_json and content:
-                    # Remove markdown code blocks if present
                     if content.startswith('```json'):
                         content = content.replace('```json', '').replace('```', '').strip()
                     elif content.startswith('```'):
                         content = content.replace('```', '').strip()
-                
+
                 return content, None
             else:
                 return None, "Empty response from Gemini"
-                
+
         except Exception as e:
             current_app.logger.error(f"Gemini API call failed: {e}")
             return None, str(e)
@@ -328,19 +331,19 @@ class AILessonContentGenerator:
         return {"generated_images": generated_images}
 
     def generate_single_image(self, prompt: str, size: Literal["1024x1024", "1536x1024", "1024x1536"] = "1024x1024", quality: Literal["standard", "hd"] = "standard"):
-        """Generate a single image using OpenAI's gpt-image-1 model for content images."""
+        """Generate a single image using OpenAI's gpt-image-1-mini model for content images."""
         if not self.openai_client:
             return {"error": "OpenAI client is not initialized"}
-        
+
         try:
             # Enhance prompt for manga style (avoiding safety triggers)
             enhanced_prompt = f"{prompt}, anime classroom, cheerful instructor, pastel palette, manga art style, clean lines, bright colors, cultural authenticity, professional illustration quality, detailed and expressive"
-            
-            # Generate image using OpenAI's gpt-image-1 model
-            current_app.logger.info(f"Generating image with OpenAI gpt-image-1: {enhanced_prompt[:100]}...")
-            
+
+            # Generate image using OpenAI's gpt-image-1-mini model
+            current_app.logger.info(f"Generating image with OpenAI gpt-image-1-mini: {enhanced_prompt[:100]}...")
+
             response = self.openai_client.images.generate(
-                model="gpt-image-1",
+                model="gpt-image-1-mini",
                 prompt=enhanced_prompt,
                 size=size,
                 quality="high" if quality == "hd" else "medium",
@@ -365,7 +368,7 @@ class AILessonContentGenerator:
                         "prompt": prompt,
                         "size": size,
                         "quality": quality,
-                        "model": "openai-gpt-image-1"
+                        "model": "openai-gpt-image-1-mini"
                     }
                 else:
                     return {"error": "No base64 image data in OpenAI response"}
@@ -373,7 +376,7 @@ class AILessonContentGenerator:
                 return {"error": "No image data in response from OpenAI"}
             
         except Exception as e:
-            current_app.logger.error(f"Failed to generate image with OpenAI gpt-image-1: {e}")
+            current_app.logger.error(f"Failed to generate image with OpenAI gpt-image-1-mini: {e}")
             return {"error": str(e)}
 
     def generate_lesson_tile_background(self, lesson_title: str, lesson_description: str, difficulty_level: int = 1):
@@ -428,20 +431,33 @@ class AILessonContentGenerator:
         # Use OpenAI DALL-E for background images
         try:
             response = self.openai_client.images.generate(
-                model="dall-e-3",
+                model="gpt-image-1-mini",
                 prompt=enhanced_prompt,
                 size="1024x1024",
-                quality="standard",
+                quality="medium",
                 n=1
             )
-            
-            if response.data:
+
+            if response.data and response.data[0].b64_json:
+                img_b64 = response.data[0].b64_json
+                img_bytes = base64.b64decode(img_b64)
+                image = Image.open(BytesIO(img_bytes))
+                return {
+                    "image_url": "openai_gpt_image_1_mini_generated",
+                    "image_data": image,
+                    "image_bytes": img_bytes,
+                    "prompt": enhanced_prompt,
+                    "size": "1024x1024",
+                    "quality": "medium",
+                    "model": "openai-gpt-image-1-mini"
+                }
+            elif response.data and response.data[0].url:
                 return {
                     "image_url": response.data[0].url,
                     "prompt": enhanced_prompt,
                     "size": "1024x1024",
-                    "quality": "standard",
-                    "model": "openai-dalle3"
+                    "quality": "medium",
+                    "model": "openai-gpt-image-1-mini"
                 }
             return {"error": "No image data in response from OpenAI"}
             
@@ -967,3 +983,105 @@ class AILessonContentGenerator:
         except json.JSONDecodeError as e:
             current_app.logger.error(f"Failed to parse JSON from AI response: {e}\nResponse: {content}")
             return {"error": "Failed to parse AI response as JSON."}
+
+
+class GoogleCloudTTS:
+    """Google Cloud Text-to-Speech via REST API mit API Key (kein OAuth noetig)."""
+
+    VOICES = {
+        'female': 'ja-JP-Neural2-B',
+        'male': 'ja-JP-Neural2-D',
+    }
+
+    TTS_URL = "https://texttospeech.googleapis.com/v1/text:synthesize"
+
+    def __init__(self):
+        import requests as _requests
+        self.requests = _requests
+        self.api_key = os.environ.get('GOOGLE_TTS_API_KEY') or os.environ.get('GOOGLE_API_KEY')
+        if self.api_key:
+            self.client = True
+        else:
+            current_app.logger.error("Google Cloud TTS: Kein GOOGLE_API_KEY gesetzt")
+            self.client = None
+
+    def generate_audio(
+        self,
+        text: str,
+        output_path: str,
+        voice: str = 'female',
+        speed: float = 0.75,
+        use_ssml: bool = False,
+    ) -> dict:
+        """Generiert eine MP3-Audiodatei via REST API."""
+        if not self.client:
+            return {"error": "Google Cloud TTS: Kein API Key"}
+
+        try:
+            voice_name = self.VOICES.get(voice, self.VOICES['female'])
+
+            if use_ssml:
+                input_data = {"ssml": text}
+            else:
+                ssml = f'<speak><prosody rate="{speed}">{text}</prosody></speak>'
+                input_data = {"ssml": ssml}
+
+            payload = {
+                "input": input_data,
+                "voice": {"languageCode": "ja-JP", "name": voice_name},
+                "audioConfig": {
+                    "audioEncoding": "MP3",
+                    "speakingRate": speed if not use_ssml else 1.0,
+                },
+            }
+
+            response = self.requests.post(
+                f"{self.TTS_URL}?key={self.api_key}",
+                json=payload,
+                timeout=30,
+            )
+
+            if response.status_code != 200:
+                error_msg = response.json().get("error", {}).get("message", response.text[:200])
+                return {"error": f"TTS API {response.status_code}: {error_msg}"}
+
+            audio_b64 = response.json().get("audioContent")
+            if not audio_b64:
+                return {"error": "Keine Audio-Daten in API-Antwort"}
+
+            audio_bytes = base64.b64decode(audio_b64)
+
+            output = Path(output_path)
+            output.parent.mkdir(parents=True, exist_ok=True)
+            output.write_bytes(audio_bytes)
+
+            current_app.logger.info(f"TTS Audio generiert: {output_path} ({len(audio_bytes)} bytes)")
+
+            return {
+                "audio_path": output_path,
+                "size_bytes": len(audio_bytes),
+                "voice": voice_name,
+                "speed": speed,
+            }
+
+        except Exception as e:
+            current_app.logger.error(f"TTS Fehler: {e}")
+            return {"error": str(e)}
+
+    def generate_kana_audio(self, kana: str, romaji: str, output_dir: str, voice: str = 'female') -> dict:
+        """Generiert Audio für ein einzelnes Kana-Zeichen (langsam, deutlich)."""
+        filename = f"kana_{romaji}.mp3"
+        output_path = str(Path(output_dir) / filename)
+        return self.generate_audio(kana, output_path, voice=voice, speed=0.7)
+
+    def generate_vocabulary_audio(self, word: str, reading: str, output_dir: str, voice: str = 'female') -> dict:
+        """Generiert Audio für ein Vokabelwort (langsam für Anfänger)."""
+        filename = f"vocab_{reading.replace(' ', '_')}.mp3"
+        output_path = str(Path(output_dir) / filename)
+        return self.generate_audio(word, output_path, voice=voice, speed=0.6)
+
+    def generate_dialogue_audio(self, text: str, line_number: int, output_dir: str, voice: str = 'female') -> dict:
+        """Generiert Audio für eine Dialog-Zeile."""
+        filename = f"dialogue_{line_number:02d}_{voice}.mp3"
+        output_path = str(Path(output_dir) / filename)
+        return self.generate_audio(text, output_path, voice=voice, speed=0.7)

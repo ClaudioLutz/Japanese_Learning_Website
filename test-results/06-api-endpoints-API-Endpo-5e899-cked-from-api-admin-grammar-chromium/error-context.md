@@ -1,0 +1,96 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e3]:
+      - link " Japanese Learning Master the Language" [ref=e5] [cursor=pointer]:
+        - /url: /home
+        - generic [ref=e7]: 
+        - generic [ref=e8]:
+          - generic [ref=e9]: Japanese Learning
+          - generic [ref=e10]: Master the Language
+      - generic [ref=e11]:
+        - generic [ref=e13]:
+          - link " Lessons" [ref=e14] [cursor=pointer]:
+            - /url: /lessons
+            - generic [ref=e15]: 
+            - generic [ref=e16]: Lessons
+          - link " Courses" [ref=e17] [cursor=pointer]:
+            - /url: /courses
+            - generic [ref=e18]: 
+            - generic [ref=e19]: Courses
+          - link " My Lessons" [ref=e20] [cursor=pointer]:
+            - /url: /my-lessons
+            - generic [ref=e21]: 
+            - generic [ref=e22]: My Lessons
+          - link " Profile" [ref=e23] [cursor=pointer]:
+            - /url: /profile
+            - generic [ref=e24]: 
+            - generic [ref=e25]: Profile
+        - generic [ref=e26]:
+          - generic [ref=e27]:
+            - generic [ref=e29]: 
+            - generic [ref=e30]:
+              - generic [ref=e31]: testuser
+              - generic [ref=e32]:
+                - generic [ref=e33]: 
+                - text: User
+          - link " Logout" [ref=e35] [cursor=pointer]:
+            - /url: /logout
+            - generic [ref=e36]: 
+            - generic [ref=e37]: Logout
+      - text:       
+  - generic [ref=e38]:
+    - generic [ref=e39]: Login successful!
+    - generic [ref=e41]:
+      - generic [ref=e42]:
+        - generic [ref=e44]: 
+        - heading "Begin Your Japanese Journey" [level=1] [ref=e45]
+        - paragraph [ref=e46]: Choose your preferred instruction language to start learning Japanese
+      - generic [ref=e48]:
+        - generic [ref=e50] [cursor=pointer]:
+          - generic [ref=e51]:
+            - generic [ref=e52]:
+              - generic [ref=e53]: 
+              - text: 🇬🇧
+            - heading "Learn Japanese in English" [level=3] [ref=e54]
+          - generic [ref=e55]:
+            - generic [ref=e56]:
+              - generic [ref=e57]:
+                - generic [ref=e58]: 
+                - text: "Lessons Available:"
+              - generic [ref=e59]: "2"
+            - generic [ref=e60]:
+              - generic [ref=e61]:
+                - generic [ref=e62]: 
+                - text: "Free to Try:"
+              - generic [ref=e63]: "1"
+          - button " Start Learning" [ref=e65]:
+            - generic [ref=e66]: 
+            - text: Start Learning
+        - generic [ref=e68] [cursor=pointer]:
+          - generic [ref=e69]:
+            - generic [ref=e70]:
+              - generic [ref=e71]: 
+              - text: 🇩🇪
+            - heading "Japanisch auf Deutsch lernen" [level=3] [ref=e72]
+          - generic [ref=e73]:
+            - generic [ref=e74]:
+              - generic [ref=e75]:
+                - generic [ref=e76]: 
+                - text: "Verfügbare Lektionen:"
+              - generic [ref=e77]: "1"
+            - generic [ref=e78]:
+              - generic [ref=e79]:
+                - generic [ref=e80]: 
+                - text: "Kostenlos testen:"
+              - generic [ref=e81]: "0"
+          - button " Lernen beginnen" [ref=e83]:
+            - generic [ref=e84]: 
+            - text: Lernen beginnen
+      - link " Browse all lessons" [ref=e87] [cursor=pointer]:
+        - /url: /lessons
+        - generic [ref=e88]: 
+        - text: Browse all lessons
+```
