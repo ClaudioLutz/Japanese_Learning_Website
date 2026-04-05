@@ -1,9 +1,0 @@
-runtime: python39
-entrypoint: gunicorn -b :$PORT 'app:create_app()'
-
-handlers:
-- url: /static
-  static_dir: app/static
-- url: /uploads
-  static_dir: app/static/uploads
-  static_dir: app/static/uploads

@@ -96,23 +96,23 @@ class PaymentTransactionService:
                     user_id=payment_transaction.user_id,
                     lesson_id=payment_transaction.item_id,
                     price_paid=payment_transaction.amount,
-                    postfinance_transaction_id=payment_transaction.transaction_id,
+                    provider_transaction_id=payment_transaction.transaction_id,
                     transaction_state=payment_transaction.state
                 )
                 db.session.add(lesson_purchase)
-                
+
         elif payment_transaction.item_type == 'course':
             existing_purchase = CoursePurchase.query.filter_by(
                 user_id=payment_transaction.user_id,
                 course_id=payment_transaction.item_id
             ).first()
-            
+
             if not existing_purchase:
                 course_purchase = CoursePurchase(
                     user_id=payment_transaction.user_id,
                     course_id=payment_transaction.item_id,
                     price_paid=payment_transaction.amount,
-                    postfinance_transaction_id=payment_transaction.transaction_id,
+                    provider_transaction_id=payment_transaction.transaction_id,
                     transaction_state=payment_transaction.state
                 )
                 db.session.add(course_purchase)

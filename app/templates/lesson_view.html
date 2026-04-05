@@ -4,16 +4,185 @@
 
 {% block content %}
 <style>
-    /* Enhanced Navigation Styles */
-    .lesson-navigation-top {
-        background: linear-gradient(135deg, #4a90e2 0%, #50e3c2 100%);
-        color: white;
-        padding: 1rem 1.5rem;
-        border-radius: 12px;
-        margin-bottom: 1.5rem;
-        box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
+    /* ── Left Sidebar Navigation ── */
+    .lesson-layout {
+        display: flex;
+        min-height: calc(100vh - 80px);
     }
-    
+
+    .lesson-sidebar {
+        width: 280px;
+        flex-shrink: 0;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+        background: #fff;
+        border-right: 1px solid #e9ecef;
+        padding: 1rem 0;
+        z-index: 100;
+    }
+
+    .lesson-sidebar::-webkit-scrollbar {
+        width: 4px;
+    }
+    .lesson-sidebar::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 2px;
+    }
+
+    .sidebar-header {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #e9ecef;
+        margin-bottom: 0.5rem;
+    }
+
+    .sidebar-header h6 {
+        margin: 0;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #6c757d;
+    }
+
+    .sidebar-progress {
+        padding: 0 1rem 0.75rem;
+        border-bottom: 1px solid #e9ecef;
+        margin-bottom: 0.5rem;
+    }
+
+    .sidebar-progress-bar {
+        height: 6px;
+        background-color: #e9ecef;
+        border-radius: 3px;
+        overflow: hidden;
+        margin-top: 0.4rem;
+    }
+
+    .sidebar-progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #4a90e2, #50e3c2);
+        border-radius: 3px;
+        transition: width 0.3s ease;
+    }
+
+    .sidebar-progress-text {
+        font-size: 0.75rem;
+        color: #6c757d;
+    }
+
+    .sidebar-pages {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .sidebar-page-item {
+        display: flex;
+        align-items: center;
+        padding: 0.6rem 1rem;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        text-decoration: none;
+        color: #495057;
+        border-left: 3px solid transparent;
+        font-size: 0.85rem;
+    }
+
+    .sidebar-page-item:hover {
+        background-color: #f0f4ff;
+        color: #4a90e2;
+        text-decoration: none;
+        border-left-color: #4a90e2;
+    }
+
+    .sidebar-page-item.active {
+        background-color: #e8f4f8;
+        color: #2d7d9a;
+        border-left-color: #50e3c2;
+        font-weight: 600;
+    }
+
+    .sidebar-page-num {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        margin-right: 0.75rem;
+        font-size: 0.75rem;
+        flex-shrink: 0;
+        background-color: #e9ecef;
+        color: #495057;
+    }
+
+    .sidebar-page-item.active .sidebar-page-num {
+        background: linear-gradient(135deg, #4a90e2, #50e3c2);
+        color: white;
+    }
+
+    .sidebar-page-item:hover .sidebar-page-num {
+        background-color: #4a90e2;
+        color: white;
+    }
+
+    .sidebar-page-title {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .sidebar-page-check {
+        margin-left: auto;
+        color: #50e3c2;
+        font-size: 0.7rem;
+        flex-shrink: 0;
+    }
+
+    .sidebar-nav-buttons {
+        padding: 0.75rem 1rem;
+        border-top: 1px solid #e9ecef;
+        display: flex;
+        gap: 0.5rem;
+        margin-top: auto;
+    }
+
+    .sidebar-nav-btn {
+        flex: 1;
+        padding: 0.5rem;
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        background: #fff;
+        color: #495057;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        text-align: center;
+    }
+
+    .sidebar-nav-btn:hover:not(:disabled) {
+        background-color: #4a90e2;
+        color: white;
+        border-color: #4a90e2;
+    }
+
+    .sidebar-nav-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+
+    .lesson-main-content {
+        flex: 1;
+        min-width: 0;
+        padding: 1.5rem;
+    }
+
+    /* Bottom Navigation (compact, inside content area) */
     .lesson-navigation-bottom {
         background-color: #ffffff;
         border: 1px solid #e9ecef;
@@ -22,27 +191,7 @@
         margin-top: 1.5rem;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
-    
-    .page-counter {
-        font-size: 1.1rem;
-        font-weight: 600;
-    }
-    
-    .nav-progress-bar {
-        height: 8px;
-        background-color: rgba(255, 255, 255, 0.3);
-        border-radius: 4px;
-        overflow: hidden;
-        margin: 0.5rem 0;
-    }
-    
-    .nav-progress-fill {
-        height: 100%;
-        background-color: white;
-        border-radius: 4px;
-        transition: width 0.3s ease;
-    }
-    
+
     .nav-btn {
         padding: 0.75rem 1.5rem;
         font-weight: 600;
@@ -51,110 +200,50 @@
         border: none;
         min-width: 120px;
     }
-    
+
     .nav-btn:hover:not(:disabled) {
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
-    
+
     .nav-btn:disabled {
         opacity: 0.5;
         cursor: not-allowed;
     }
-    
+
     .nav-btn-primary {
         background-color: #4a90e2;
         color: white;
     }
-    
+
     .nav-btn-secondary {
         background-color: #6c757d;
         color: white;
     }
-    
-    /* Page Overview Menu */
-    .page-overview {
-        background-color: #f8f9fa;
-        border: 1px solid #e9ecef;
-        border-radius: 12px;
-        margin-bottom: 1.5rem;
-    }
-    
-    .page-overview-header {
-        padding: 1rem 1.5rem;
-        background-color: white;
-        border-bottom: 1px solid #e9ecef;
-        border-radius: 12px 12px 0 0;
-        cursor: pointer;
-        transition: background-color 0.2s ease;
-    }
-    
-    .page-overview-header:hover {
-        background-color: #f8f9fa;
-    }
-    
-    .page-overview-content {
-        padding: 1rem;
-        display: none;
-        max-height: 300px;
-        overflow-y: auto;
-    }
-    
-    .page-overview-content.show {
-        display: block;
-    }
-    
-    .page-menu-item {
-        display: flex;
-        align-items: center;
-        padding: 0.75rem 1rem;
-        margin-bottom: 0.5rem;
-        background-color: white;
-        border: 1px solid #e9ecef;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        text-decoration: none;
-        color: inherit;
-    }
-    
-    .page-menu-item:hover {
-        background-color: #4a90e2;
-        color: white;
-        transform: translateX(5px);
-        text-decoration: none;
-    }
-    
-    .page-menu-item.active {
-        background-color: #50e3c2;
-        color: white;
-        border-color: #50e3c2;
-    }
-    
-    .page-menu-number {
-        background-color: #4a90e2;
-        color: white;
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+
+    .page-counter {
+        font-size: 1.1rem;
         font-weight: 600;
-        margin-right: 1rem;
-        font-size: 0.9rem;
     }
-    
-    .page-menu-item.active .page-menu-number {
-        background-color: white;
-        color: #50e3c2;
+
+    /* Mobile sidebar toggle */
+    .sidebar-toggle {
+        display: none;
+        position: fixed;
+        bottom: 1rem;
+        left: 1rem;
+        z-index: 200;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #4a90e2, #50e3c2);
+        color: white;
+        border: none;
+        box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
+        font-size: 1.2rem;
+        cursor: pointer;
     }
-    
-    .page-menu-item:hover .page-menu-number {
-        background-color: white;
-        color: #4a90e2;
-    }
-    
+
     /* Enhanced Carousel Controls */
     #lessonCarousel .carousel-control-prev,
     #lessonCarousel .carousel-control-next {
@@ -228,34 +317,123 @@
     }
     
     /* Mobile responsive */
-    @media (max-width: 768px) {
-        .lesson-navigation-top,
+    @media (max-width: 991px) {
+        .lesson-sidebar {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100vh;
+            z-index: 1050;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .lesson-sidebar.show {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1040;
+        }
+
+        .sidebar-overlay.show {
+            display: block;
+        }
+
+        .sidebar-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lesson-main-content {
+            padding: 1rem;
+        }
+
         .lesson-navigation-bottom {
             padding: 0.75rem 1rem;
         }
-        
+
         .nav-btn {
             min-width: 100px;
             padding: 0.5rem 1rem;
         }
-        
-        .page-counter {
-            font-size: 1rem;
-        }
-        
-        #lessonCarousel .carousel-control-prev,
-        #lessonCarousel .carousel-control-next {
-            width: 12%;
-        }
-        
+
         .keyboard-hint {
             display: none;
         }
     }
 </style>
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-12">
+<!-- Mobile sidebar overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<!-- Mobile sidebar toggle button -->
+<button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()" title="Seitenübersicht">
+    <i class="fas fa-list"></i>
+</button>
+
+<div class="lesson-layout">
+    <!-- Left Sidebar Navigation -->
+    {% if lesson.pages and lesson.pages|length > 1 %}
+    <nav class="lesson-sidebar" id="lessonSidebar">
+        <div class="sidebar-header">
+            <h6><i class="fas fa-book-open"></i> Seitenübersicht</h6>
+        </div>
+        <div class="sidebar-progress">
+            <div class="sidebar-progress-text">
+                <span id="sidebarPageCounter">Seite 1 von {{ lesson.pages|length }}</span>
+            </div>
+            <div class="sidebar-progress-bar">
+                <div class="sidebar-progress-fill" id="sidebarProgressFill" style="width: {{ (100 / lesson.pages|length)|round(1) }}%"></div>
+            </div>
+        </div>
+        <ul class="sidebar-pages" id="sidebarPages">
+            {% for page in lesson.pages %}
+            {% set page_content_count = page.content|length %}
+            {% if current_user.is_authenticated and progress %}
+                {% set content_progress = progress.get_content_progress() %}
+                {% set completed_content_ids = [] %}
+                {% for content in page.content %}
+                    {% if content_progress.get(content.id|string) == true or content_progress.get(content.id) == true %}
+                        {% if completed_content_ids.append(content.id) %}{% endif %}
+                    {% endif %}
+                {% endfor %}
+                {% set completed_content_count = completed_content_ids|length %}
+            {% else %}
+                {% set completed_content_count = 0 %}
+            {% endif %}
+            <li class="sidebar-page-item{% if loop.first %} active{% endif %}"
+                onclick="goToPage({{ loop.index0 }})" data-page="{{ loop.index0 }}">
+                <span class="sidebar-page-num">{{ loop.index }}</span>
+                <span class="sidebar-page-title">{{ page.metadata.title or (page.content[0].title if page.content else 'Seite ' ~ loop.index) }}</span>
+                {% if current_user.is_authenticated and completed_content_count == page_content_count and page_content_count > 0 %}
+                <span class="sidebar-page-check"><i class="fas fa-check-circle"></i></span>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+        <div class="sidebar-nav-buttons">
+            <button class="sidebar-nav-btn" id="sidebarPrev" onclick="previousPage()" disabled>
+                <i class="fas fa-chevron-left"></i> Zurück
+            </button>
+            <button class="sidebar-nav-btn" id="sidebarNext" onclick="nextPage()">
+                Weiter <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </nav>
+    {% endif %}
+
+    <!-- Main Content Area -->
+    <div class="lesson-main-content">
             <div class="card lesson-header-card mb-4">
                 <div class="card-body">
                     <div class="row">
@@ -342,90 +520,7 @@
             </div>
             {% endif %}
 
-            <!-- Enhanced Top Navigation -->
-            {% if lesson.pages and lesson.pages|length > 1 %}
-            <div class="lesson-navigation-top">
-                <div class="row align-items-center">
-                    <div class="col-md-4">
-                        <button class="nav-btn nav-btn-secondary" id="prevPageTop" onclick="previousPage()" disabled>
-                            <i class="fas fa-chevron-left"></i> Previous
-                        </button>
-                    </div>
-                    <div class="col-md-4 text-center">
-                        <div class="page-counter" id="pageCounter">Page 1 of {{ lesson.pages|length }}</div>
-                        <div class="nav-progress-bar">
-                            <div class="nav-progress-fill" id="navProgressFill" style="width: {{ (100 / lesson.pages|length)|round(1) }}%"></div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 text-end">
-                        <button class="nav-btn nav-btn-primary" id="nextPageTop" onclick="nextPage()">
-                            Next <i class="fas fa-chevron-right"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Page Overview Menu -->
-            <div class="page-overview">
-                <div class="page-overview-header" onclick="togglePageOverview()">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h6 class="mb-0"><i class="fas fa-list"></i> Page Overview</h6>
-                        <i class="fas fa-chevron-up" id="overviewToggleIcon"></i>
-                    </div>
-                </div>
-                <div class="page-overview-content show" id="pageOverviewContent">
-                    {% for page in lesson.pages %}
-                    {% set page_content_count = page.content|length %}
-                    {% if current_user.is_authenticated and progress %}
-                        {% set content_progress = progress.get_content_progress() %}
-                        {% set completed_content_ids = [] %}
-                        {% for content in page.content %}
-                            {% if content_progress.get(content.id|string) == true or content_progress.get(content.id) == true %}
-                                {% if completed_content_ids.append(content.id) %}{% endif %}
-                            {% endif %}
-                        {% endfor %}
-                        {% set completed_content_count = completed_content_ids|length %}
-                    {% else %}
-                        {% set completed_content_count = 0 %}
-                    {% endif %}
-                    <!-- DEBUG: Page {{ loop.index }}, Total: {{ page_content_count }}, Completed: {{ completed_content_count }} -->
-                    <div class="page-menu-item" onclick="goToPage({{ loop.index0 }})" data-page="{{ loop.index0 }}">
-                        <div class="page-menu-number">{{ loop.index }}</div>
-                        <div class="flex-grow-1">
-                            <div class="fw-bold">{{ page.metadata.title or (page.content[0].title if page.content else 'Page ' ~ loop.index) }}</div>
-                            {% if page.metadata.description %}
-                            <small class="text-muted">{{ page.metadata.description }}</small>
-                            {% endif %}
-                            {% if current_user.is_authenticated %}
-                            <div class="mt-1">
-                                <small class="text-muted">
-                                    <i class="fas fa-check-circle"></i> 
-                                    {{ completed_content_count }}/{{ page_content_count }} completed
-                                </small>
-                                {% if page_content_count > 0 %}
-                                <div class="progress mt-1" style="height: 6px; background-color: #e9ecef; border-radius: 3px;">
-                                    <div class="progress-bar bg-success" role="progressbar" 
-                                         style="width: {{ (completed_content_count / page_content_count * 100)|round(1) }}%; min-width: 0;" 
-                                         aria-valuenow="{{ (completed_content_count / page_content_count * 100)|round(1) }}" 
-                                         aria-valuemin="0" aria-valuemax="100">
-                                    </div>
-                                </div>
-                                {% endif %}
-                            </div>
-                            {% else %}
-                            <div class="mt-1">
-                                <small class="text-muted">
-                                    <i class="fas fa-list"></i> 
-                                    {{ page_content_count }} content item{{ 's' if page_content_count != 1 else '' }}
-                                </small>
-                            </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-            {% endif %}
+            <!-- Navigation is now in the left sidebar -->
 
             <div class="card lesson-content-card">
                 <div class="card-header">
@@ -776,6 +871,49 @@
             </div>
             {% endif %}
 
+            <!-- Completion Modal -->
+            <div class="modal fade" id="lessonCompleteModal" tabindex="-1" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content completion-modal">
+                  <div class="modal-body text-center py-5">
+                    <div class="completion-icon mb-3">
+                      <i class="fas fa-trophy"></i>
+                    </div>
+                    <h2 class="completion-title">おめでとう!</h2>
+                    <p class="text-muted mb-0">{{ lesson.title }}</p>
+                    <div class="row g-3 my-4">
+                      <div class="col-4">
+                        <div class="stat-card">
+                          <div class="stat-value" id="completionAccuracy">—</div>
+                          <div class="stat-label">Genauigkeit</div>
+                        </div>
+                      </div>
+                      <div class="col-4">
+                        <div class="stat-card">
+                          <div class="stat-value" id="completionItems">—</div>
+                          <div class="stat-label">Gelernt</div>
+                        </div>
+                      </div>
+                      <div class="col-4">
+                        <div class="stat-card">
+                          <div class="stat-value" id="completionTime">—</div>
+                          <div class="stat-label">Minuten</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="d-grid gap-2 mt-4">
+                      <a href="{{ url_for('routes.lessons') }}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-arrow-right me-2"></i>Weiter zu den Lektionen
+                      </a>
+                      <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        Lektion nochmal ansehen
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div class="mt-4 d-flex justify-content-between">
                 <a href="{{ url_for('routes.lessons') }}" class="btn btn-outline-secondary">
                     ← Back to Lessons
@@ -798,9 +936,8 @@
                     {% endif %}
                 </div>
             </div>
-        </div>
-    </div>
-</div>
+    </div><!-- /lesson-main-content -->
+</div><!-- /lesson-layout -->
 
 <script>
 // Server-side data rendered by Jinja2
@@ -831,7 +968,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const flipper = card.querySelector('.card-flipper');
 
         // Add click event listener to the card (the button)
-        card.addEventListener('click', () => {
+        card.addEventListener('click', (e) => {
+            // Don't flip if clicking audio button
+            if (e.target.closest('.card-audio-btn')) return;
+
             // Check if the card is currently flipped
             const isFlipped = flipper.classList.contains('is-flipped');
 
@@ -1119,15 +1259,9 @@ async function markContentComplete(contentId) {
                 // Don't show error to user for this non-critical update
             }
             
-            // Show completion message if 100%
+            // Show completion celebration if 100%
             if (progress.progress_percentage === 100) {
-                const cardBody = document.querySelector('.card-body');
-                if (cardBody && !cardBody.querySelector('.alert-success')) {
-                    const completionMessage = document.createElement('div');
-                    completionMessage.className = 'alert alert-success mt-3';
-                    completionMessage.innerHTML = '<i class="fas fa-trophy"></i> Congratulations! You have completed this lesson!';
-                    cardBody.appendChild(completionMessage);
-                }
+                showLessonComplete();
             }
             
         } else {
@@ -1250,46 +1384,61 @@ function updateURLHash() {
 }
 
 function updateNavigationUI() {
-    // Update page counters
-    const pageText = `Page ${currentPage + 1} of ${totalPages}`;
-    document.getElementById('pageCounter').textContent = pageText;
-    document.getElementById('pageCounterBottom').textContent = pageText;
-    
-    // Update progress bar
+    // Update sidebar page counter
+    const sidebarCounter = document.getElementById('sidebarPageCounter');
+    if (sidebarCounter) {
+        sidebarCounter.textContent = `Seite ${currentPage + 1} von ${totalPages}`;
+    }
+
+    // Update bottom nav counter
+    const bottomCounter = document.getElementById('pageCounterBottom');
+    if (bottomCounter) {
+        bottomCounter.textContent = `Seite ${currentPage + 1} von ${totalPages}`;
+    }
+
+    // Update sidebar progress bar
     const progressPercentage = ((currentPage + 1) / totalPages) * 100;
-    document.getElementById('navProgressFill').style.width = progressPercentage + '%';
-    
-    // Update button states
-    const prevButtons = ['prevPageTop', 'prevPageBottom'];
-    const nextButtons = ['nextPageTop', 'nextPageBottom'];
-    
-    prevButtons.forEach(id => {
-        const btn = document.getElementById(id);
-        if (btn) {
-            btn.disabled = currentPage === 0;
-        }
-    });
-    
-    nextButtons.forEach(id => {
-        const btn = document.getElementById(id);
-        if (btn) {
-            btn.disabled = currentPage === totalPages - 1;
-        }
-    });
-    
-    // Update page overview menu
-    updatePageOverviewMenu();
+    const sidebarFill = document.getElementById('sidebarProgressFill');
+    if (sidebarFill) {
+        sidebarFill.style.width = progressPercentage + '%';
+    }
+
+    // Update sidebar prev/next buttons
+    const sidebarPrev = document.getElementById('sidebarPrev');
+    const sidebarNext = document.getElementById('sidebarNext');
+    if (sidebarPrev) sidebarPrev.disabled = currentPage === 0;
+    if (sidebarNext) sidebarNext.disabled = currentPage === totalPages - 1;
+
+    // Update bottom nav buttons
+    const prevBottom = document.getElementById('prevPageBottom');
+    const nextBottom = document.getElementById('nextPageBottom');
+    if (prevBottom) prevBottom.disabled = currentPage === 0;
+    if (nextBottom) nextBottom.disabled = currentPage === totalPages - 1;
+
+    // Update sidebar page list
+    updateSidebarPages();
 }
 
-function updatePageOverviewMenu() {
-    const menuItems = document.querySelectorAll('.page-menu-item');
-    menuItems.forEach((item, index) => {
+function updateSidebarPages() {
+    const items = document.querySelectorAll('.sidebar-page-item');
+    items.forEach((item, index) => {
         if (index === currentPage) {
             item.classList.add('active');
+            // Scroll active item into view in sidebar
+            item.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
         } else {
             item.classList.remove('active');
         }
     });
+}
+
+function toggleSidebar() {
+    const sidebar = document.getElementById('lessonSidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    if (sidebar && overlay) {
+        sidebar.classList.toggle('show');
+        overlay.classList.toggle('show');
+    }
 }
 
 function previousPage() {
@@ -1314,23 +1463,13 @@ function goToPage(pageIndex) {
     if (pageIndex >= 0 && pageIndex < totalPages) {
         const carousel = new bootstrap.Carousel(document.getElementById('lessonCarousel'));
         carousel.to(pageIndex);
-        // Scroll to top of the page
+        // Close mobile sidebar if open
+        const sidebar = document.getElementById('lessonSidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        if (sidebar) sidebar.classList.remove('show');
+        if (overlay) overlay.classList.remove('show');
+        // Scroll to top of content
         window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-}
-
-function togglePageOverview() {
-    const content = document.getElementById('pageOverviewContent');
-    const icon = document.getElementById('overviewToggleIcon');
-    
-    if (content.classList.contains('show')) {
-        content.classList.remove('show');
-        icon.classList.remove('fa-chevron-up');
-        icon.classList.add('fa-chevron-down');
-    } else {
-        content.classList.add('show');
-        icon.classList.remove('fa-chevron-down');
-        icon.classList.add('fa-chevron-up');
     }
 }
 
@@ -1366,7 +1505,7 @@ function setupKeyboardNavigation() {
             case 'o':
             case 'O':
                 event.preventDefault();
-                togglePageOverview();
+                toggleSidebar();
                 break;
         }
     });
@@ -1378,7 +1517,7 @@ function showKeyboardHint() {
     if (!hint) {
         hint = document.createElement('div');
         hint.className = 'keyboard-hint';
-        hint.innerHTML = '← → Space: Navigate | O: Overview | Home/End: First/Last';
+        hint.innerHTML = '← → Space: Navigieren | O: Sidebar | Home/End: Erste/Letzte';
         document.body.appendChild(hint);
     }
     
@@ -1418,24 +1557,16 @@ function handleSwipe() {
 }
 
 function initializePageOverviewCompletionCounts() {
-    // This function preserves the server-side calculated completion counts
-    // and ensures the DOM state matches the server-side progress data
-    console.log('Initializing page overview completion counts...');
-    
     // Set the correct DOM state for all content items based on server-side progress data
     if (lessonData.hasProgress && lessonData.contentProgress) {
         try {
             const contentProgress = lessonData.contentProgress;
-            console.log('Server-side content progress:', contentProgress);
-            
-            // Update DOM elements to match server-side progress
             Object.keys(contentProgress).forEach(contentId => {
                 if (contentProgress[contentId] === true) {
                     const contentItem = document.querySelector(`[data-content-id="${contentId}"]`);
                     if (contentItem) {
                         const markBtn = contentItem.querySelector('.mark-complete-btn');
                         const completedBadge = contentItem.querySelector('.completed-badge');
-                        
                         if (markBtn) markBtn.style.display = 'none';
                         if (completedBadge) completedBadge.style.display = 'inline';
                     }
@@ -1445,64 +1576,38 @@ function initializePageOverviewCompletionCounts() {
             console.error('Error initializing content progress:', error);
         }
     }
-    
-    // The server-side template has already calculated the correct completion counts
-    // We don't need to recalculate them on initial load, just ensure they're preserved
-    const pageOverviewContent = document.getElementById('pageOverviewContent');
-    if (pageOverviewContent && pageOverviewContent.classList.contains('show')) {
-        console.log('Page overview is visible with server-side calculated counts preserved');
-    }
 }
 
 function updatePageOverviewCompletionCounts(completedContentId) {
-    console.log('Updating page overview completion counts for content ID:', completedContentId);
-    
-    // Get all page menu items
-    const pageMenuItems = document.querySelectorAll('.page-menu-item');
-    
-    pageMenuItems.forEach((menuItem, pageIndex) => {
-        // Get the page number from the data attribute or calculate it
+    // Update sidebar checkmarks when content is completed
+    const sidebarItems = document.querySelectorAll('.sidebar-page-item');
+    sidebarItems.forEach((item, pageIndex) => {
         const pageNumber = pageIndex + 1;
-        
-        // Get all content items for this specific page
         const pageContentItems = document.querySelectorAll(`.carousel-item:nth-child(${pageNumber}) [data-content-id]`);
-        
         let completedCount = 0;
         const totalCount = pageContentItems.length;
-        
-        // Count completed items by checking both the completed badge visibility and mark complete button visibility
+
         pageContentItems.forEach(contentItem => {
             const contentId = contentItem.getAttribute('data-content-id');
             const completedBadge = contentItem.querySelector('.completed-badge');
             const markCompleteBtn = contentItem.querySelector('.mark-complete-btn');
-            
-            // An item is completed if:
-            // 1. The completed badge is visible (not hidden)
-            // 2. OR the mark complete button is hidden (meaning it was completed)
-            // 3. OR this is the content item that was just completed
             const isCompleted = (completedBadge && completedBadge.style.display !== 'none') ||
                               (markCompleteBtn && markCompleteBtn.style.display === 'none') ||
                               (completedContentId && contentId === completedContentId.toString());
-            
-            if (isCompleted) {
-                completedCount++;
-            }
+            if (isCompleted) completedCount++;
         });
-        
-        console.log(`Page ${pageNumber}: ${completedCount}/${totalCount} completed`);
-        
-        // Update the completion text
-        const completionText = menuItem.querySelector('small');
-        if (completionText) {
-            completionText.innerHTML = `<i class="fas fa-check-circle"></i> ${completedCount}/${totalCount} completed`;
-        }
-        
-        // Update the progress bar
-        const progressBar = menuItem.querySelector('.progress-bar');
-        if (progressBar && totalCount > 0) {
-            const percentage = Math.round((completedCount / totalCount) * 100);
-            progressBar.style.width = percentage + '%';
-            progressBar.setAttribute('aria-valuenow', percentage);
+
+        // Show/hide checkmark in sidebar
+        let check = item.querySelector('.sidebar-page-check');
+        if (completedCount === totalCount && totalCount > 0) {
+            if (!check) {
+                check = document.createElement('span');
+                check.className = 'sidebar-page-check';
+                check.innerHTML = '<i class="fas fa-check-circle"></i>';
+                item.appendChild(check);
+            }
+        } else if (check) {
+            check.remove();
         }
     });
 }
@@ -1742,5 +1847,631 @@ class JapaneseTextAudioSystem {
 
 // Initialize the Japanese text audio system
 const japaneseAudioSystem = new JapaneseTextAudioSystem();
+
+// ============================================================
+// ENHANCEMENT: Universal Read-Aloud Player for ALL content items
+// ============================================================
+
+// Map content titles to pre-generated OpenAI TTS MP3 files
+const textAudioMap = {
+    'Linas Geschichte': 'text_s1_lina',
+    'Aussprache üben': 'text_s2_tipp',
+    'Hinweis zur て-Form': 'text_s3_te_form',
+    'Dialog-Transkription': 'text_s3_transkription',
+    'Schilder lesen': 'text_s5_schilder',
+    'Kulturecke: Das Kanji 道': 'text_s5_kultur',
+    'Rollentausch': 'text_s6_rollentausch',
+    'Geschafft!': 'text_s6_geschafft',
+    'Zusammenfassung': 'text_s7_zusammenfassung',
+};
+
+let readAloudAudio = null;
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.content-item').forEach(item => {
+        if (item.classList.contains('in-deck')) return;
+        if (item.querySelector('.interactive-content-container')) return;
+
+        const textEl = item.querySelector('.rich-text-content, .text-content-container, .dialog-transcript');
+        if (!textEl) return;
+
+        // Find matching audio file by content title
+        const titleEl = item.querySelector('h6');
+        const title = titleEl ? titleEl.textContent.trim().split('\n')[0].trim() : '';
+        const audioFile = textAudioMap[title];
+        if (!audioFile) return;  // No pre-generated audio for this block
+
+        const bar = document.createElement('div');
+        bar.className = 'read-aloud-bar';
+        bar.innerHTML = `
+            <button class="read-aloud-btn read-aloud-play" title="Vorlesen">
+                <i class="fas fa-play"></i>
+            </button>
+            <button class="read-aloud-btn read-aloud-stop" title="Stopp" style="display:none;">
+                <i class="fas fa-stop"></i>
+            </button>
+            <span class="read-aloud-label">Vorlesen</span>
+        `;
+
+        const titleRow = item.querySelector('.d-flex.justify-content-between');
+        if (titleRow) titleRow.after(bar);
+
+        const playBtn = bar.querySelector('.read-aloud-play');
+        const stopBtn = bar.querySelector('.read-aloud-stop');
+        const label = bar.querySelector('.read-aloud-label');
+        const audioUrl = audioBasePath + audioFile + '.mp3';
+
+        playBtn.addEventListener('click', () => {
+            if (readAloudAudio && !readAloudAudio.paused && readAloudAudio.src.includes(audioFile)) {
+                // Pause
+                readAloudAudio.pause();
+                playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                playBtn.classList.remove('is-playing');
+                playBtn.classList.add('is-paused');
+                label.textContent = 'Pausiert';
+                return;
+            }
+            if (readAloudAudio && readAloudAudio.paused && readAloudAudio.src.includes(audioFile)) {
+                // Resume
+                readAloudAudio.play();
+                playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                playBtn.classList.remove('is-paused');
+                playBtn.classList.add('is-playing');
+                label.textContent = 'Wird vorgelesen...';
+                return;
+            }
+
+            // Stop any previous
+            if (readAloudAudio) {
+                readAloudAudio.pause();
+                readAloudAudio = null;
+            }
+            document.querySelectorAll('.read-aloud-play.is-playing, .read-aloud-play.is-paused').forEach(b => {
+                b.innerHTML = '<i class="fas fa-play"></i>';
+                b.classList.remove('is-playing', 'is-paused');
+            });
+            document.querySelectorAll('.read-aloud-stop').forEach(s => s.style.display = 'none');
+            document.querySelectorAll('.read-aloud-label').forEach(l => l.textContent = 'Vorlesen');
+
+            // Play
+            readAloudAudio = new Audio(audioUrl);
+            readAloudAudio.play();
+            playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            playBtn.classList.add('is-playing');
+            stopBtn.style.display = '';
+            label.textContent = 'Wird vorgelesen...';
+
+            readAloudAudio.addEventListener('ended', () => {
+                playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                playBtn.classList.remove('is-playing');
+                stopBtn.style.display = 'none';
+                label.textContent = 'Vorlesen';
+                readAloudAudio = null;
+            });
+        });
+
+        stopBtn.addEventListener('click', () => {
+            if (readAloudAudio) {
+                readAloudAudio.pause();
+                readAloudAudio.currentTime = 0;
+                readAloudAudio = null;
+            }
+            playBtn.innerHTML = '<i class="fas fa-play"></i>';
+            playBtn.classList.remove('is-playing', 'is-paused');
+            stopBtn.style.display = 'none';
+            label.textContent = 'Vorlesen';
+        });
+    });
+});
+
+// ============================================================
+// ENHANCEMENT: Confetti + Completion Modal
+// ============================================================
+
+// Load canvas-confetti from CDN dynamically
+(function() {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js';
+    document.head.appendChild(script);
+})();
+
+let completionShown = false;
+
+function showLessonComplete() {
+    if (completionShown) return;
+    completionShown = true;
+
+    // Calculate stats
+    const totalContent = document.querySelectorAll('.content-item').length;
+    const quizQuestions = document.querySelectorAll('.quiz-question');
+    let correctAnswers = 0;
+    quizQuestions.forEach(q => {
+        if (q.querySelector('.badge.bg-success')) correctAnswers++;
+    });
+    const accuracy = quizQuestions.length > 0
+        ? Math.round((correctAnswers / quizQuestions.length) * 100) + '%'
+        : '100%';
+    const timeMinutes = Math.round((Date.now() - startTime) / 60000);
+
+    // Update modal stats
+    const accEl = document.getElementById('completionAccuracy');
+    const itemsEl = document.getElementById('completionItems');
+    const timeEl = document.getElementById('completionTime');
+    if (accEl) accEl.textContent = accuracy;
+    if (itemsEl) itemsEl.textContent = totalContent;
+    if (timeEl) timeEl.textContent = timeMinutes < 1 ? '<1' : timeMinutes;
+
+    // Fire confetti
+    setTimeout(() => {
+        if (typeof confetti === 'function') {
+            // Center burst
+            confetti({ particleCount: 80, spread: 160, origin: { y: 0.6 }, disableForReducedMotion: true });
+            // Side bursts
+            setTimeout(() => {
+                confetti({ particleCount: 40, angle: 60, spread: 55, origin: { x: 0 } });
+                confetti({ particleCount: 40, angle: 120, spread: 55, origin: { x: 1 } });
+            }, 250);
+        }
+    }, 200);
+
+    // Show modal
+    setTimeout(() => {
+        const modalEl = document.getElementById('lessonCompleteModal');
+        if (modalEl) {
+            const modal = new bootstrap.Modal(modalEl);
+            modal.show();
+        }
+    }, 600);
+}
+
+// ============================================================
+// ENHANCEMENT: Flashcard Deck Mode (one card at a time, shuffle, repeat)
+// ============================================================
+
+const allDecks = []; // Track all deck instances for keyboard shortcuts
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Find pages with 2+ flip cards and convert to deck mode
+    document.querySelectorAll('.carousel-item').forEach(page => {
+        const contentItems = page.querySelectorAll('.content-item');
+        const cardItems = [];
+
+        contentItems.forEach(item => {
+            const flipCard = item.querySelector('.flip-card');
+            if (flipCard) cardItems.push({ item, flipCard });
+        });
+
+        if (cardItems.length < 2) {
+            // Single card or no cards — add audio button only
+            cardItems.forEach(({ flipCard }) => enhanceFlipCard(flipCard));
+            return;
+        }
+
+        // Create the deck container
+        const deck = createDeck(cardItems, page);
+        allDecks.push(deck);
+    });
+});
+
+function enhanceFlipCard(flipCard) {
+    const charEl = flipCard.querySelector('.kana-char');
+    const vocabEl = flipCard.querySelector('.vocab-word');
+    const text = charEl ? charEl.textContent.trim() : (vocabEl ? vocabEl.textContent.trim() : '');
+
+    // Add image to card BACK
+    const back = flipCard.querySelector('.card-face--back');
+    if (back && text && !back.querySelector('.card-image')) {
+        let fileName = null;
+        if (charEl && !vocabEl) {
+            fileName = kanjiImageMap[text] || imageFileMap[text];
+        } else {
+            fileName = imageFileMap[text];
+        }
+
+        if (fileName) {
+            const imgDiv = document.createElement('div');
+            imgDiv.className = 'card-image';
+            imgDiv.innerHTML = `<img src="${imageBasePath}${fileName}.png" alt="${text}" loading="lazy">`;
+            back.insertBefore(imgDiv, back.firstChild);
+            back.classList.add('has-image');
+        }
+    }
+
+    // Add audio button to card back (positioned over image via CSS)
+    const backFace = back || flipCard.querySelector('.card-face--back');
+    if (backFace && text && !backFace.querySelector('.card-audio-btn')) {
+        const audioBtn = document.createElement('button');
+        audioBtn.className = 'card-audio-btn';
+        audioBtn.title = 'Vorlesen';
+        audioBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+        audioBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            playCardAudio(text, audioBtn);
+        });
+        backFace.appendChild(audioBtn);
+    }
+}
+
+function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+function createDeck(cardItems, page) {
+    const total = cardItems.length;
+    const container = page.querySelector('.page-container');
+
+    // Hide original content-items (cards only)
+    cardItems.forEach(({ item }) => item.classList.add('in-deck'));
+
+    // Clone all flip-card elements and add audio buttons
+    const allCards = cardItems.map(({ flipCard, item }) => {
+        const clone = flipCard.cloneNode(true);
+        enhanceFlipCard(clone);
+        // Store contentId for mark-complete
+        clone.dataset.contentId = item.dataset.contentId;
+        return clone;
+    });
+
+    // Build pending queue (shuffled)
+    let pending = shuffle([...Array(total).keys()]);
+    let learned = 0;
+    let currentIdx = 0;
+
+    // Create deck UI
+    const deckEl = document.createElement('div');
+    deckEl.className = 'deck-container';
+    deckEl.innerHTML = `
+        <div class="deck-header">
+            <div class="deck-stats">
+                <span class="badge bg-success deck-learned">0 / ${total} gelernt</span>
+                <span class="text-muted deck-remaining">${total} verbleibend</span>
+            </div>
+            <div class="progress">
+                <div class="progress-bar bg-success deck-bar" style="width: 0%; transition: width 0.4s ease;"></div>
+            </div>
+        </div>
+        <div class="deck-card-area"></div>
+        <div class="confidence-buttons">
+            <button class="btn btn-danger confidence-btn" data-rating="again">
+                <i class="fas fa-redo"></i> Nochmal <span class="kbd-hint">1</span>
+            </button>
+            <button class="btn btn-warning confidence-btn" data-rating="hard">
+                <i class="fas fa-brain"></i> Schwer <span class="kbd-hint">2</span>
+            </button>
+            <button class="btn btn-success confidence-btn" data-rating="good">
+                <i class="fas fa-check"></i> Gewusst <span class="kbd-hint">3</span>
+            </button>
+        </div>
+        <div class="deck-complete" style="display: none;">
+            <div class="deck-complete-icon">🎉</div>
+            <h4>Alle Karten gelernt!</h4>
+            <p class="text-muted">Du hast alle ${total} Karten in diesem Set gemeistert.</p>
+            <button class="btn btn-outline-primary btn-sm deck-restart">
+                <i class="fas fa-redo"></i> Nochmal üben
+            </button>
+        </div>
+    `;
+
+    // Find first content-item that's a card, insert deck before it
+    const firstCardItem = cardItems[0].item;
+    firstCardItem.parentNode.insertBefore(deckEl, firstCardItem);
+
+    const cardArea = deckEl.querySelector('.deck-card-area');
+    const btnGroup = deckEl.querySelector('.confidence-buttons');
+    const completeEl = deckEl.querySelector('.deck-complete');
+
+    // Show card function
+    function showCard(idx) {
+        cardArea.innerHTML = '';
+        btnGroup.classList.remove('visible');
+
+        const card = allCards[idx].cloneNode(true);
+        card.classList.add('card-enter');
+        cardArea.appendChild(card);
+
+        // Re-attach audio button listeners (cloneNode doesn't copy event listeners)
+        card.querySelectorAll('.card-audio-btn').forEach(btn => {
+            const charEl = card.querySelector('.kana-char');
+            const vocabEl = card.querySelector('.vocab-word');
+            const text = charEl ? charEl.textContent : (vocabEl ? vocabEl.textContent : '');
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                playCardAudio(text.trim(), btn);
+            });
+        });
+
+        // Setup flip behavior
+        const scene = card.querySelector('.card-scene');
+        const flipper = card.querySelector('.card-flipper');
+        if (scene && flipper) {
+            scene.addEventListener('click', (e) => {
+                // Don't flip if clicking audio button
+                if (e.target.closest('.card-audio-btn')) return;
+                flipper.classList.toggle('is-flipped');
+                if (flipper.classList.contains('is-flipped')) {
+                    btnGroup.classList.add('visible');
+                } else {
+                    btnGroup.classList.remove('visible');
+                }
+            });
+        }
+    }
+
+    // Update stats display
+    function updateStats() {
+        deckEl.querySelector('.deck-learned').textContent = `${learned} / ${total} gelernt`;
+        deckEl.querySelector('.deck-remaining').textContent = `${pending.length} verbleibend`;
+        deckEl.querySelector('.deck-bar').style.width = `${(learned / total) * 100}%`;
+    }
+
+    // Rate card handler
+    function rateCard(rating) {
+        const currentCard = cardArea.querySelector('.flip-card');
+        if (!currentCard) return;
+
+        const cardIndex = pending[currentIdx];
+
+        if (rating === 'again') {
+            // Shake animation, card stays in deck
+            currentCard.classList.add('card-exit-shake');
+            setTimeout(() => {
+                // Move to later position in pending
+                pending.splice(currentIdx, 1);
+                const insertAt = Math.min(currentIdx + 2 + Math.floor(Math.random() * 3), pending.length);
+                pending.splice(insertAt, 0, cardIndex);
+                if (currentIdx >= pending.length) currentIdx = 0;
+                showCard(pending[currentIdx]);
+                updateStats();
+            }, 450);
+        } else {
+            // Slide out, card is learned
+            currentCard.classList.add('card-exit-right');
+
+            // Mark content complete if authenticated
+            const contentId = allCards[cardIndex].dataset.contentId;
+            if (contentId && typeof markContentComplete === 'function') {
+                markContentComplete(parseInt(contentId));
+            }
+
+            setTimeout(() => {
+                learned++;
+                pending.splice(currentIdx, 1);
+
+                if (pending.length === 0) {
+                    // All done!
+                    cardArea.style.display = 'none';
+                    btnGroup.style.display = 'none';
+                    completeEl.style.display = 'block';
+                    updateStats();
+                    return;
+                }
+
+                if (currentIdx >= pending.length) currentIdx = 0;
+                showCard(pending[currentIdx]);
+                updateStats();
+            }, 350);
+        }
+    }
+
+    // Button click handlers
+    btnGroup.querySelectorAll('.confidence-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            rateCard(btn.dataset.rating);
+        });
+    });
+
+    // Restart button
+    deckEl.querySelector('.deck-restart').addEventListener('click', () => {
+        pending = shuffle([...Array(total).keys()]);
+        learned = 0;
+        currentIdx = 0;
+        cardArea.style.display = 'flex';
+        btnGroup.style.display = '';
+        btnGroup.classList.remove('visible');
+        completeEl.style.display = 'none';
+        showCard(pending[currentIdx]);
+        updateStats();
+    });
+
+    // Show first card
+    showCard(pending[currentIdx]);
+    updateStats();
+
+    return { rateCard, page, deckEl };
+}
+
+// ============================================================
+// ENHANCEMENT: Card Audio (MP3 files with Web Speech API fallback)
+// ============================================================
+
+// Map Japanese text to pre-generated flashcard images
+const imageFileMap = {
+    'すみません': 'sumimasen',
+    '駅': 'eki',
+    '出口': 'deguchi',
+    '右': 'migi',
+    '左': 'hidari',
+    'まっすぐ': 'massugu',
+    '交差点': 'kousaten',
+    '信号': 'shingou',
+    '橋': 'hashi',
+};
+const kanjiImageMap = {
+    '右': 'kanji_migi',
+    '左': 'kanji_hidari',
+    '駅': 'kanji_eki',
+    '道': 'kanji_michi',
+};
+const imageBasePath = '/static/uploads/lessons/images/tokyo_wegbeschreibung/';
+
+// Map Japanese text to pre-generated MP3 files (single word)
+const audioFileMap = {
+    'すみません': 'vocab_sumimasen',
+    '駅': 'vocab_eki',
+    '出口': 'vocab_deguchi',
+    '右': 'vocab_migi',
+    '左': 'vocab_hidari',
+    'まっすぐ': 'vocab_massugu',
+    '交差点': 'vocab_kousaten',
+    '信号': 'vocab_shingou',
+    '橋': 'vocab_hashi',
+};
+
+// Map Japanese text to readout sequences (JP word → DE meaning → JP example → DE example)
+const readoutMap = {
+    'すみません': 'readout_sumimasen',
+    '駅': 'readout_eki',
+    '出口': 'readout_deguchi',
+    '右': 'readout_migi',
+    '左': 'readout_hidari',
+    'まっすぐ': 'readout_massugu',
+    '交差点': 'readout_kousaten',
+    '信号': 'readout_shingou',
+    '橋': 'readout_hashi',
+};
+const kanjiReadoutMap = {
+    '右': 'readout_kanji_migi',
+    '左': 'readout_kanji_hidari',
+    '駅': 'readout_kanji_eki',
+    '道': 'readout_kanji_michi',
+};
+const audioBasePath = '/static/uploads/lessons/audio/tokyo_wegbeschreibung/';
+const audioExt = '.mp3';
+let currentAudio = null;
+let audioQueue = [];
+let isPlayingQueue = false;
+
+function playCardAudio(text, btnElement) {
+    // Stop any currently playing audio
+    stopAudioQueue();
+
+    const trimmed = text.trim();
+
+    // Visual feedback
+    if (btnElement) btnElement.classList.add('playing');
+
+    // Try full readout (JP + DE + Example) first
+    const readoutBase = kanjiReadoutMap[trimmed] || readoutMap[trimmed];
+    if (readoutBase) {
+        // Check if it's a kanji card (only 2 files) or vocab (4 files)
+        const isKanji = !!kanjiReadoutMap[trimmed];
+        const files = isKanji
+            ? [`${readoutBase}_jp`, `${readoutBase}_de`]
+            : [`${readoutBase}_jp`, `${readoutBase}_de`, `${readoutBase}_ex_jp`, `${readoutBase}_ex_de`];
+
+        playAudioSequence(files, btnElement);
+        return;
+    }
+
+    // Fallback: single word MP3
+    const singleFile = audioFileMap[trimmed];
+    if (singleFile) {
+        playAudioSequence([singleFile], btnElement);
+        return;
+    }
+
+    // Last fallback: Web Speech API
+    playCardAudioFallback(trimmed, btnElement);
+}
+
+function playAudioSequence(fileNames, btnElement) {
+    audioQueue = fileNames.map(f => audioBasePath + f + audioExt);
+    isPlayingQueue = true;
+    playNextInQueue(btnElement);
+}
+
+function playNextInQueue(btnElement) {
+    if (audioQueue.length === 0 || !isPlayingQueue) {
+        isPlayingQueue = false;
+        if (btnElement) btnElement.classList.remove('playing');
+        currentAudio = null;
+        return;
+    }
+
+    const url = audioQueue.shift();
+    const audio = new Audio(url);
+    currentAudio = audio;
+
+    audio.addEventListener('ended', () => {
+        // Short pause between segments
+        setTimeout(() => playNextInQueue(btnElement), 400);
+    });
+    audio.addEventListener('error', () => {
+        // Skip failed file, continue with next
+        setTimeout(() => playNextInQueue(btnElement), 100);
+    });
+    audio.play();
+}
+
+function stopAudioQueue() {
+    isPlayingQueue = false;
+    audioQueue = [];
+    if (currentAudio) {
+        currentAudio.pause();
+        currentAudio = null;
+    }
+    // Remove playing state from all buttons
+    document.querySelectorAll('.card-audio-btn.playing').forEach(b => b.classList.remove('playing'));
+}
+
+function playCardAudioFallback(text, btnElement) {
+    if (!('speechSynthesis' in window)) {
+        if (btnElement) btnElement.classList.remove('playing');
+        return;
+    }
+    if (btnElement) btnElement.classList.add('playing');
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'ja-JP';
+    utterance.rate = 0.7;
+    const voices = speechSynthesis.getVoices();
+    const jpVoice = voices.find(v => v.lang.startsWith('ja'));
+    if (jpVoice) utterance.voice = jpVoice;
+    utterance.addEventListener('end', () => { if (btnElement) btnElement.classList.remove('playing'); });
+    utterance.addEventListener('error', () => { if (btnElement) btnElement.classList.remove('playing'); });
+    speechSynthesis.speak(utterance);
+}
+
+// ============================================================
+// ENHANCEMENT: Keyboard Shortcuts for Deck Mode
+// ============================================================
+
+document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+
+    const activePage = document.querySelector('.carousel-item.active');
+    if (!activePage) return;
+
+    // Find deck on active page
+    const deck = allDecks.find(d => d.page === activePage);
+    if (!deck) return;
+
+    const cardArea = deck.deckEl.querySelector('.deck-card-area');
+    const btnGroup = deck.deckEl.querySelector('.confidence-buttons');
+    const currentCard = cardArea ? cardArea.querySelector('.flip-card') : null;
+    if (!currentCard) return;
+
+    const isFlipped = btnGroup && btnGroup.classList.contains('visible');
+
+    // Space: flip current card
+    if (e.code === 'Space' && !isFlipped) {
+        e.preventDefault();
+        const scene = currentCard.querySelector('.card-scene');
+        if (scene) scene.click();
+        return;
+    }
+
+    // 1/2/3: rate card (only when flipped)
+    if (isFlipped && ['1', '2', '3'].includes(e.key)) {
+        e.preventDefault();
+        const ratings = { '1': 'again', '2': 'hard', '3': 'good' };
+        deck.rateCard(ratings[e.key]);
+    }
+});
 </script>
 {% endblock %}

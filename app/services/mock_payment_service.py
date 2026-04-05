@@ -42,7 +42,7 @@ class MockPaymentService:
             lesson_purchase.purchased_at = datetime.utcnow()
             # Generate a mock transaction ID for consistency
             mock_transaction_id = random.randint(1000000, 9999999)
-            lesson_purchase.postfinance_transaction_id = mock_transaction_id
+            lesson_purchase.provider_transaction_id = mock_transaction_id
             lesson_purchase.transaction_state = 'COMPLETED'  # Mock completion
             
             db.session.add(lesson_purchase)
@@ -95,7 +95,7 @@ class MockPaymentService:
             course_purchase.purchased_at = datetime.utcnow()
             # Generate a mock transaction ID for consistency
             mock_transaction_id = random.randint(1000000, 9999999)
-            course_purchase.postfinance_transaction_id = mock_transaction_id
+            course_purchase.provider_transaction_id = mock_transaction_id
             course_purchase.transaction_state = 'COMPLETED'  # Mock completion
             
             db.session.add(course_purchase)

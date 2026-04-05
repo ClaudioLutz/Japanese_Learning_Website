@@ -1,10 +1,11 @@
 # app/routes.py
 import json
+import os
 from datetime import datetime
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError # Import specific exceptions
-from app import db
+from app import db, csrf
 from app.models import User, Kana, Kanji, Vocabulary, Grammar, LessonCategory, Lesson, LessonContent, LessonPrerequisite, UserLessonProgress, QuizQuestion, QuizOption, UserQuizAnswer, LessonPage, Course, LessonPurchase, CoursePurchase
 from app.forms import RegistrationForm, LoginForm, CSRFTokenForm
 from app.ai_services import AILessonContentGenerator
@@ -2656,13 +2657,71 @@ def cancel_payment(transaction_id):
 
 @bp.route('/payment/success')
 def payment_success():
-    """Handle successful payment redirect from PostFinance"""
+    """Handle successful payment redirect"""
     return render_template('payment_success.html')
 
 @bp.route('/payment/failed')
 def payment_failed():
-    """Handle failed payment redirect from PostFinance"""
+    """Handle failed payment redirect"""
     return render_template('payment_failed.html')
+
+@bp.route('/api/payment/webhook/payrexx', methods=['POST'])
+@csrf.exempt
+def payrexx_webhook():
+    """
+    Payrexx Webhook-Endpoint für Transaktions-Updates.
+    Empfängt POST-Requests von Payrexx bei Statusänderungen.
+    Muss innerhalb von 20 Sekunden antworten.
+    """
+    from app.services.transaction_service import PaymentTransactionService
+    from app.models import PaymentTransaction
+
+    # Signatur prüfen
+    signature = request.headers.get('X-Webhook-Signature', '')
+    payload = request.get_data()
+
+    payrexx_webhook_secret = current_app.config.get('PAYREXX_WEBHOOK_SECRET') or os.environ.get('PAYREXX_WEBHOOK_SECRET')
+    if payrexx_webhook_secret:
+        import hmac as hmac_mod
+        import hashlib
+        computed = hmac_mod.new(
+            payrexx_webhook_secret.encode('utf-8'),
+            payload,
+            hashlib.sha256,
+        ).hexdigest()
+        if not hmac_mod.compare_digest(computed, signature):
+            current_app.logger.warning("Payrexx Webhook: Ungültige Signatur")
+            return jsonify({"error": "Invalid signature"}), 403
+
+    data = request.get_json(silent=True)
+    if not data:
+        return jsonify({"error": "No payload"}), 400
+
+    # Transaktionsdaten extrahieren
+    transaction = data.get('transaction', {})
+    txn_status = transaction.get('status', '')
+    reference_id = transaction.get('referenceId', '')
+    invoice = transaction.get('invoice', {}) or {}
+    gateway_id = invoice.get('paymentLinkId') or transaction.get('id')
+
+    current_app.logger.info(
+        f"Payrexx Webhook: Gateway {gateway_id}, Status '{txn_status}', Ref '{reference_id}'"
+    )
+
+    # Status mappen
+    from app.services.payrexx_payment_service import PayrexxPaymentService
+    internal_state = PayrexxPaymentService._map_status(txn_status)
+
+    # PaymentTransaction in DB suchen und updaten
+    if gateway_id:
+        transaction_service = PaymentTransactionService()
+        transaction_service.update_transaction_state(
+            transaction_id=int(gateway_id),
+            new_state=internal_state,
+            webhook_data=data,
+        )
+
+    return jsonify({"status": "ok"}), 200
 
 @bp.route('/api/user/purchases', methods=['GET'])
 @login_required

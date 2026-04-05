@@ -53,10 +53,17 @@ def create_app():
 
     # Remove fallback to force error if env var is missing
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
-    
+
     if not app.config['SQLALCHEMY_DATABASE_URI']:
         print("CRITICAL: SQLALCHEMY_DATABASE_URI is None! Application will likely fail.")
-    
+
+    # SQLite: busy timeout setzen um "database is locked" zu vermeiden
+    db_uri = app.config['SQLALCHEMY_DATABASE_URI'] or ''
+    if db_uri.startswith('sqlite'):
+        app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+            'connect_args': {'timeout': 20}
+        }
+
     # Debug: Print the actual DATABASE_URI being used
     print(f"DEBUG: Final SQLALCHEMY_DATABASE_URI: {app.config['SQLALCHEMY_DATABASE_URI']}")
     
@@ -94,6 +101,12 @@ def create_app():
         'video': {'mp4', 'webm', 'ogg', 'avi', 'mov'},
         'audio': {'mp3', 'wav', 'ogg', 'aac', 'm4a'}
     }
+
+    # Payment-Konfiguration (Payrexx)
+    app.config['PAYMENT_PROVIDER'] = os.environ.get('PAYMENT_PROVIDER', 'mock')
+    app.config['PAYREXX_INSTANCE'] = os.environ.get('PAYREXX_INSTANCE')
+    app.config['PAYREXX_API_SECRET'] = os.environ.get('PAYREXX_API_SECRET')
+    app.config['PAYREXX_WEBHOOK_SECRET'] = os.environ.get('PAYREXX_WEBHOOK_SECRET')
 
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH

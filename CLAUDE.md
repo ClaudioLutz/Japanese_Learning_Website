@@ -16,26 +16,29 @@ Flask-basierte Japanisch-Lernplattform mit Lektions-/Kursverwaltung, Benutzeraut
 ## Projektstruktur
 ```
 app/
-  __init__.py          # App Factory (create_app), Extensions
-  models.py            # SQLAlchemy Models (~643 Zeilen)
-  routes.py            # Alle Routen + API-Endpoints (~3'722 Zeilen)
-  utils.py             # FileUploadHandler, URL-Utils (~307 Zeilen)
-  forms.py             # WTForms (Registration, Login, CSRF)
-  gcs_utils.py         # Google Cloud Storage Helpers
-  ai_services.py       # KI-Content-Generierung (OpenAI/Gemini)
-  social_auth_config.py # Google OAuth Pipeline
+  __init__.py            # App Factory (create_app), Extensions
+  models.py              # SQLAlchemy Models
+  routes.py              # Alle Routen + API-Endpoints
+  utils.py               # FileUploadHandler, URL-Utils
+  forms.py               # WTForms (Registration, Login, CSRF)
+  gcs_utils.py           # Google Cloud Storage Helpers
+  ai_services.py         # KI-Content-Generierung (OpenAI/Gemini)
+  social_auth_config.py  # Google OAuth Pipeline
   services/
-    payment_service.py      # PostFinance Integration
-    mock_payment_service.py # Dev Payment Mock
-    payment_factory.py      # Wählt Mock/Real basierend auf Umgebung
-  templates/           # Jinja2 Templates
-  static/              # CSS, Bilder, Uploads
-run.py                 # Entry Point
-requirements.txt       # Python Dependencies
-Dockerfile.cloudrun    # Produktions-Container
-docker-compose.yml     # Lokale Entwicklung (Flask + PostgreSQL 15)
-deploy-to-cloud-run.sh # GCP Deployment-Automatisierung
-deploy-to-cloud-run.ps1 # PowerShell-Variante
+    payrexx_payment_service.py  # Payrexx Integration (aktiv)
+    payment_service.py          # PostFinance Integration (Legacy)
+    mock_payment_service.py     # Dev Payment Mock
+    payment_factory.py          # Wählt Provider: payrexx/postfinance/mock
+  templates/             # Jinja2 Templates
+  static/                # CSS, Bilder, Uploads
+tests/                   # Playwright E2E-Tests
+migrations/              # Alembic DB-Migrationen
+run.py                   # Entry Point
+requirements.txt         # Python Dependencies
+Dockerfile.cloudrun      # Produktions-Container
+docker-compose.yml       # Lokale Entwicklung (Flask + PostgreSQL 15)
+deploy-to-cloud-run.sh   # GCP Deployment-Automatisierung
+deploy-to-cloud-run.ps1  # PowerShell-Variante
 ```
 
 ## Lokale Entwicklung
@@ -68,9 +71,16 @@ OPENAI_API_KEY="<OpenAI Key>"
 GOOGLE_AI_API_KEY="<Gemini Key>"
 GOOGLE_CLIENT_ID="<OAuth Client ID>"
 GOOGLE_CLIENT_SECRET="<OAuth Secret>"
-POSTFINANCE_SPACE_ID="<Space ID>"
-POSTFINANCE_USER_ID="<User ID>"
-POSTFINANCE_API_SECRET="<API Secret>"
+## Payment (Payrexx)
+PAYMENT_PROVIDER="payrexx"              # payrexx | postfinance | mock
+PAYREXX_INSTANCE="<instanzname>"        # z.B. "meinshop" bei meinshop.payrexx.com
+PAYREXX_API_SECRET="<api-secret>"
+PAYREXX_WEBHOOK_SECRET="<webhook-signing-key>"
+
+## Legacy (PostFinance, nicht mehr aktiv)
+# POSTFINANCE_SPACE_ID="<Space ID>"
+# POSTFINANCE_USER_ID="<User ID>"
+# POSTFINANCE_API_SECRET="<API Secret>"
 ```
 
 **Wichtig:** `DATABASE_URL` ist Pflicht — es gibt keinen Fallback mehr in `__init__.py`.
@@ -108,7 +118,7 @@ Decorators: `@login_required`, `@admin_required`, `@premium_required`.
 ## Wichtige Muster
 - **GCS-aware URLs**: Models lösen Datei-URLs via GCS auf wenn Bucket konfiguriert, sonst lokal
 - **KI-Genehmigung**: KI-generierte Items haben `generated_by_ai`-Flag, Admin-Genehmigung erforderlich
-- **Payment Mock**: `MockPaymentService` in Dev, echte PostFinance in Prod
+- **Payment Factory**: `PAYMENT_PROVIDER` Env-Variable steuert Provider (payrexx/postfinance/mock)
 - **App Factory**: `create_app()` in `app/__init__.py`
 - **File Uploads**: UUID-Dateinamen, MIME-Validierung, Bildverkleinerung (Pillow), max 100MB
 
@@ -120,10 +130,7 @@ Decorators: `@login_required`, `@admin_required`, `@premium_required`.
 - **Deployment**: `./deploy-to-cloud-run.sh` oder `./deploy-to-cloud-run.ps1`
 
 ## Bekannte offene Baustellen
-1. **PostFinance-Zahlung nicht produktiv** — Letzte Commits zeigen "payment not yet working", MockPayment aktiv
+1. **Payrexx-Zahlung integriert, noch nicht produktiv** — PayrexxPaymentService erstellt, Payrexx-Konto und API-Keys noch einzurichten
 2. **GCP-Projekt-Status unklar** — Muss geprüft werden ob das Projekt noch existiert
-3. **Keine automatisierten Tests** — Playwright-Config existiert, aber keine aktiven Tests
+3. **Playwright E2E-Tests** — 8 Spec-Dateien in `tests/`, benötigen `npm install` und laufenden Test-Server
 4. **Debug-Logging in __init__.py** — Gibt Umgebungsvariablen aus, sollte vor Produktion entfernt werden
-
-## Dokumentation
-Guides in `HowToNotes/` zu: OAuth-Setup, Deployment, Monetarisierung, Quiz-Generierung, lokales DB-Setup, GCP VM SSH.

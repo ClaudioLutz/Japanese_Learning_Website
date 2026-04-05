@@ -547,8 +547,7 @@ class LessonPurchase(db.Model):
     lesson_id: Mapped[int] = mapped_column(Integer, ForeignKey('lesson.id', ondelete='CASCADE'), nullable=False)
     price_paid: Mapped[float] = mapped_column(db.Float, nullable=False)
     purchased_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-    # Rename stripe_payment_intent_id and add state tracking
-    postfinance_transaction_id: Mapped[int] = mapped_column(BigInteger, nullable=True, index=True)
+    provider_transaction_id: Mapped[int] = mapped_column(BigInteger, nullable=True, index=True)
     transaction_state: Mapped[str] = mapped_column(String(50), nullable=True)
 
     # Relationships
@@ -594,8 +593,7 @@ class CoursePurchase(db.Model):
     course_id: Mapped[int] = mapped_column(Integer, ForeignKey('course.id', ondelete='CASCADE'), nullable=False)
     price_paid: Mapped[float] = mapped_column(db.Float, nullable=False)
     purchased_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-    # Rename stripe_payment_intent_id and add state tracking
-    postfinance_transaction_id: Mapped[int] = mapped_column(BigInteger, nullable=True, index=True)
+    provider_transaction_id: Mapped[int] = mapped_column(BigInteger, nullable=True, index=True)
     transaction_state: Mapped[str] = mapped_column(String(50), nullable=True)
 
     course: Mapped['Course'] = relationship('Course', backref=db.backref('purchases', cascade='all, delete-orphan'))

@@ -1426,6 +1426,9 @@ button[onclick*="moveContentInPage"]:active {
     transform: rotateY(180deg); /* Pre-rotates the back face. */
     border-left: 4px solid var(--secondary-color);
 }
+.card-face--back.has-image {
+    border-left: none;
+}
 
 /* Hover effects for flip cards */
 .card-scene:hover .card-face {
@@ -1522,6 +1525,329 @@ button[onclick*="moveContentInPage"]:active {
 /* Animation for flip hint */
 .card-scene:hover .flip-hint {
     opacity: 1;
+}
+
+/* --- Flashcard Deck Mode --- */
+.deck-container {
+    max-width: 750px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+/* Deck progress header */
+.deck-header {
+    background: linear-gradient(135deg, #f8f9fa, #fff);
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.25rem;
+}
+.deck-header .progress {
+    height: 10px;
+    border-radius: 5px;
+    background-color: #e9ecef;
+}
+.deck-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* Single card display area */
+.deck-card-area {
+    min-height: 380px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+.deck-card-area .flip-card {
+    width: 100%;
+    margin-bottom: 0;
+}
+.deck-card-area .card-scene {
+    height: 360px;
+    margin-bottom: 0;
+}
+
+/* Flashcard image on BACK side — side-by-side layout: image left, text right */
+.card-face--back.has-image {
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+}
+.card-face--back .card-image {
+    width: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.card-face--back .card-image img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 12px 0 0 12px;
+}
+.card-face--back.has-image .details {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 24px;
+    font-size: 14px;
+    overflow-y: auto;
+    text-align: center;
+    position: relative;
+}
+.card-face--back.has-image .details p {
+    margin: 0 0 6px 0;
+    line-height: 1.5;
+}
+.card-face--back.has-image .card-audio-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 2;
+    background: rgba(255,255,255,0.9);
+}
+
+/* Back side scrollable for cards without image */
+.card-face--back:not(.has-image) .details {
+    overflow-y: auto;
+    max-height: 100%;
+}
+
+/* Confidence buttons */
+.confidence-buttons {
+    display: none;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: 0.75rem;
+    animation: fadeSlideUp 0.3s ease;
+}
+.confidence-buttons.visible {
+    display: flex;
+}
+.confidence-btn {
+    flex: 1;
+    max-width: 160px;
+    padding: 0.6rem 1rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+}
+.confidence-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Card transition animations */
+.deck-card-area .flip-card {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.deck-card-area .flip-card.card-exit-right {
+    animation: slideOutRight 0.35s ease forwards;
+}
+.deck-card-area .flip-card.card-exit-shake {
+    animation: cardShake 0.4s ease;
+}
+.deck-card-area .flip-card.card-enter {
+    animation: cardFadeIn 0.3s ease;
+}
+@keyframes slideOutRight {
+    to { transform: translateX(80px) rotate(6deg); opacity: 0; }
+}
+@keyframes cardShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
+@keyframes cardFadeIn {
+    from { opacity: 0; transform: translateX(-30px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* Deck complete message */
+.deck-complete {
+    text-align: center;
+    padding: 2rem 1rem;
+    animation: fadeSlideUp 0.5s ease;
+}
+.deck-complete-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+.deck-complete h4 {
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+/* Hide original content-item wrapper for cards in deck mode */
+.content-item.in-deck {
+    display: none !important;
+}
+
+/* --- Read Aloud Player Bar --- */
+.read-aloud-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    padding: 6px 10px;
+    background: #f0f4f8;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+.read-aloud-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+}
+.read-aloud-btn:hover {
+    transform: scale(1.1);
+}
+.read-aloud-play {
+    background: var(--primary-color);
+    color: white;
+}
+.read-aloud-play:hover {
+    background: #3a7bd5;
+}
+.read-aloud-play.is-playing {
+    background: #f59e0b;
+}
+.read-aloud-play.is-paused {
+    background: #10b981;
+}
+.read-aloud-stop {
+    background: #ef4444;
+    color: white;
+}
+.read-aloud-stop:hover {
+    background: #dc2626;
+}
+.read-aloud-label {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-left: 4px;
+}
+
+/* --- Audio Button on Card Back --- */
+.card-audio-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 2px solid var(--primary-color);
+    background: transparent;
+    color: var(--primary-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 8px;
+}
+.card-audio-btn:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: scale(1.1);
+}
+.card-audio-btn.playing {
+    background: var(--primary-color);
+    color: white;
+    animation: audioPulse 0.8s ease infinite;
+}
+@keyframes audioPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(74, 144, 226, 0.4); }
+    50% { box-shadow: 0 0 0 8px rgba(74, 144, 226, 0); }
+}
+
+/* --- Completion Modal --- */
+.completion-modal {
+    border: none;
+    border-radius: 20px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #fff9e6 0%, #ffffff 30%);
+}
+.completion-icon {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+.completion-icon i {
+    font-size: 2.5rem;
+    color: white;
+}
+.completion-title {
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #4a90e2, #50e3c2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.stat-card {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 1rem 0.5rem;
+}
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #4a90e2;
+}
+.stat-label {
+    font-size: 0.8rem;
+    color: #6c757d;
+    text-transform: uppercase;
+}
+@keyframes bounceIn {
+    0% { transform: scale(0); opacity: 0; }
+    60% { transform: scale(1.2); }
+    100% { transform: scale(1); opacity: 1; }
+}
+@keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.stat-card:nth-child(1) { animation: fadeSlideUp 0.4s ease forwards; }
+.stat-card:nth-child(2) { animation: fadeSlideUp 0.4s 0.15s ease forwards; }
+.stat-card:nth-child(3) { animation: fadeSlideUp 0.4s 0.3s ease forwards; }
+
+/* --- Keyboard Shortcut Hints --- */
+.kbd-hint {
+    display: inline-block;
+    background: #e9ecef;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 0 6px;
+    font-size: 0.75rem;
+    font-family: monospace;
+    color: #495057;
+    margin-left: 4px;
+    line-height: 1.6;
 }
 
 /* Page Title Styling - Make lesson page titles smaller and more readable */
@@ -2129,7 +2455,25 @@ button[onclick*="moveContentInPage"]:active {
         font-size: 14px;
         padding: 15px;
     }
-    
+
+    /* Mobile: stack image above text */
+    .card-face--back.has-image {
+        flex-direction: column;
+    }
+    .card-face--back.has-image .card-image {
+        width: 100%;
+        height: 50%;
+    }
+    .card-face--back.has-image .card-image img {
+        border-radius: 12px 12px 0 0;
+    }
+    .card-face--back.has-image .details {
+        width: 100%;
+        height: 50%;
+        padding: 10px 12px;
+        font-size: 12px;
+    }
+
     /* Courses page mobile adjustments */
     .courses-hero-section {
         padding: 2.5rem 0 2rem 0;
