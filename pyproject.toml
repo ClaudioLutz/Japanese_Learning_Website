@@ -1,0 +1,40 @@
+[tool.pytest.ini_options]
+testpaths = ["tests/unit", "tests/integration"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--tb=short",
+    "-q",
+]
+markers = [
+    "slow: Langsame Tests (deselect mit '-m \"not slow\"')",
+    "integration: Integrationstests mit DB",
+]
+
+[tool.coverage.run]
+source = ["app"]
+omit = [
+    "app/static/*",
+    "app/templates/*",
+    "app/content_validator.py",
+    "app/gcs_utils.py",
+    "app/jlpt_utils.py",
+    "app/personalized_lesson_generator.py",
+    "app/user_performance_analyzer.py",
+    "app/social_auth_config.py",
+    "app/oauth_routes.py",
+    "app/debug_routes.py",
+    "app/services/payment_service.py",
+]
+branch = true
+
+[tool.coverage.report]
+fail_under = 35
+show_missing = true
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.",
+    "if TYPE_CHECKING:",
+]
