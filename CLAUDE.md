@@ -129,8 +129,9 @@ Decorators: `@login_required`, `@admin_required`, `@premium_required`.
 - **Cloud Run**: `japanese-learning-app` (Port 8080, 2 Gunicorn Workers)
 - **Deployment**: `./deploy-to-cloud-run.sh` oder `./deploy-to-cloud-run.ps1`
 
-## Arbeitsweise — Commit & Push
+## Arbeitsweise — Sauberer Git-Status
 - **Jede Änderung sofort committen und pushen** — nach jeder abgeschlossenen Teilaufgabe wird ein Git-Commit erstellt und auf den Remote gepusht. Das verbessert die Nachvollziehbarkeit und schützt vor Datenverlust.
+- **Keine losen Dateien** — am Ende jeder Session muss `git status` sauber sein. Jede Datei muss entweder committed+gepusht, in `.gitignore` eingetragen, oder gelöscht werden falls nicht mehr gebraucht.
 - Commit-Messages auf Deutsch, aussagekräftig.
 
 ## Quiz-System — Einschränkungen

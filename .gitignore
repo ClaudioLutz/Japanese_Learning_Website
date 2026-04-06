@@ -112,3 +112,12 @@ models/
 .dmypy.json
 dmypy.json
 .pyre/
+
+# Generated audio files (TTS, large binaries)
+app/static/uploads/lessons/audio/
+
+# Scan-Bilder (Copyright, nicht committen)
+scripts/mnn_pages/
+
+# TTS-Testausgaben (temporär)
+scripts/tts_test_output/
