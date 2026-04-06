@@ -174,4 +174,12 @@ def create_app():
     from social_flask.routes import social_auth
     app.register_blueprint(social_auth, url_prefix='/auth')
 
+    # Custom Jinja2 Filter: Newlines → <br>
+    from markupsafe import Markup, escape
+    @app.template_filter('nl2br')
+    def nl2br_filter(text):
+        if not text:
+            return ''
+        return Markup(escape(text).replace('\n', Markup('<br>')))
+
     return app
