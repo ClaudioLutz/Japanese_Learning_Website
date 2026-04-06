@@ -323,7 +323,7 @@ def build_audio_texts(data: dict) -> list[tuple]:
 def update_database(lesson_number: int, audio_items: list[tuple[str, str, str, int]]):
     """Aktualisiert die DB: alte Audio-Einträge löschen, neue erstellen."""
     from app import create_app, db
-    from app.models import Lesson, LessonContent
+    from app.models import Lesson, LessonContent, LessonPage
 
     app = create_app()
     with app.app_context():
@@ -342,6 +342,19 @@ def update_database(lesson_number: int, audio_items: list[tuple[str, str, str, i
         for old in old_audio:
             print(f"  [DEL] Alter Eintrag: {old.title} — {old.file_path}")
             db.session.delete(old)
+
+        # LessonPages sicherstellen fuer Audio-Seiten (4=Practice, 5=Test)
+        PAGE_TITLES = {4: "Practice", 5: "Test"}
+        audio_page_numbers = set(item[3] for item in audio_items)
+        for pn in audio_page_numbers:
+            if pn in PAGE_TITLES:
+                existing_page = LessonPage.query.filter_by(
+                    lesson_id=lesson.id, page_number=pn
+                ).first()
+                if not existing_page:
+                    new_page = LessonPage(lesson_id=lesson.id, page_number=pn, title=PAGE_TITLES[pn])
+                    db.session.add(new_page)
+                    print(f"  [NEW] LessonPage: Seite {pn} ({PAGE_TITLES[pn]})")
 
         # Neue Audio-Einträge erstellen
         for item in audio_items:

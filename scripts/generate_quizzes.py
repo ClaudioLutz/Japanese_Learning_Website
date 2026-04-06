@@ -239,6 +239,21 @@ def main():
                 print("Tipp: --force verwenden um bestehende Quizzes zu ueberschreiben.")
                 return
 
+        # LessonPages fuer Practice (4) und Test (5) sicherstellen
+        if not args.dry_run:
+            from app.models import LessonPage
+            PAGE_TITLES = {4: "Practice", 5: "Test"}
+            for pn, ptitle in PAGE_TITLES.items():
+                if pn in target_pages:
+                    existing_page = LessonPage.query.filter_by(
+                        lesson_id=lesson.id, page_number=pn
+                    ).first()
+                    if not existing_page:
+                        new_page = LessonPage(lesson_id=lesson.id, page_number=pn, title=ptitle)
+                        db.session.add(new_page)
+                        db.session.flush()
+                        print(f"  [NEW] LessonPage: Seite {pn} ({ptitle})")
+
         ai = AILessonContentGenerator()
 
         # Keywords vorbereiten
