@@ -71,12 +71,14 @@ def build_conversation_keywords(data: dict) -> str:
 
 
 def save_quiz_to_db(lesson, page_number: int, title: str, quiz_result: dict,
-                    max_attempts: int = 3, passing_score: int = 70):
+                    max_attempts: int = 3, passing_score: int = 70,
+                    order_index_start: int = 900):
     """Speichert generierte Quiz-Fragen in die DB.
 
     Args:
         max_attempts: 0 = unbegrenzt (Practice), 3 = Standard (Test)
         passing_score: 0 = kein Bestehen noetig (Practice), 70 = Standard
+        order_index_start: Basis-order_index fuer die Fragen
     """
     from app import db
     from app.models import LessonContent, QuizQuestion, QuizOption
@@ -98,7 +100,7 @@ def save_quiz_to_db(lesson, page_number: int, title: str, quiz_result: dict,
             max_attempts=max_attempts,
             passing_score=passing_score,
             page_number=page_number,
-            order_index=900 + count,  # Nach dem regulaeren Content
+            order_index=order_index_start + count,  # Nach dem regulaeren Content
         )
         db.session.add(content)
         db.session.flush()
@@ -250,29 +252,56 @@ def main():
                     saved = save_quiz_to_db(lesson, page_number=2, title="Grammar Quiz", quiz_result=grammar_result)
                     print(f"  {saved} Fragen gespeichert.")
 
-        # === Seite 3: Konversation-Quiz (1x Matching) ===
+        # === Seite 3: Pro Konversation ein Quiz ===
         if 3 in target_pages:
-            print(f"\n--- Seite 3: Konversation-Quiz ---")
-            conv_topic = f"Japanese Conversation from Minna No Nihongo Lesson {lesson_num}: Self-Introduction dialogue"
+            all_convs = []
+            # Hauptkonversation
+            if data.get("conversation"):
+                all_convs.append(data["conversation"])
+            # Zusaetzliche Konversationen
+            all_convs.extend(data.get("additional_conversations", []))
 
-            conv_result = ai.generate_page_quiz_batch(
-                topic=conv_topic,
-                difficulty=1,
-                keywords=conv_keywords,
-                quiz_specifications=[
-                    {"type": "matching", "count": 1},
-                ],
-            )
+            for conv_idx, conv in enumerate(all_convs):
+                conv_title = conv.get("title", f"Conversation {conv_idx + 1}")
+                print(f"\n--- Seite 3, Dialog {conv_idx + 1}/{len(all_convs)}: {conv_title} ---")
 
-            if "error" in conv_result:
-                print(f"  FEHLER: {conv_result['error']}")
-            else:
-                print(f"  {len(conv_result.get('questions', []))} Fragen generiert")
-                if args.dry_run:
-                    print(json.dumps(conv_result, indent=2, ensure_ascii=False))
+                # Keywords aus dieser spezifischen Konversation
+                conv_kw_parts = []
+                for line in conv.get("lines", []):
+                    conv_kw_parts.append(
+                        f"{line['speaker']}: {line['japanese']} ({line.get('romaji', '')}) = {line['english']}"
+                    )
+                this_conv_keywords = "; ".join(conv_kw_parts)
+
+                conv_topic = (
+                    f"Japanese Conversation Quiz for Minna No Nihongo Lesson {lesson_num}: "
+                    f"'{conv_title}'. Based on this specific dialogue: {this_conv_keywords}. "
+                    f"Create questions that test understanding of this conversation."
+                )
+
+                conv_result = ai.generate_page_quiz_batch(
+                    topic=conv_topic,
+                    difficulty=1,
+                    keywords=this_conv_keywords,
+                    quiz_specifications=[
+                        {"type": "multiple_choice", "count": 1},
+                    ],
+                )
+
+                if "error" in conv_result:
+                    print(f"  FEHLER: {conv_result['error']}")
                 else:
-                    saved = save_quiz_to_db(lesson, page_number=3, title="Conversation Quiz", quiz_result=conv_result)
-                    print(f"  {saved} Fragen gespeichert.")
+                    print(f"  {len(conv_result.get('questions', []))} Fragen generiert")
+                    if args.dry_run:
+                        print(json.dumps(conv_result, indent=2, ensure_ascii=False))
+                    else:
+                        saved = save_quiz_to_db(
+                            lesson, page_number=3,
+                            title=f"Quiz: {conv_title}",
+                            quiz_result=conv_result,
+                            order_index_start=900 + conv_idx * 10,
+                        )
+                        print(f"  {saved} Fragen gespeichert.")
 
         # === Seite 4: Practice — Übungsfragen (formativ, unbegrenzte Versuche) ===
         if 4 in target_pages:

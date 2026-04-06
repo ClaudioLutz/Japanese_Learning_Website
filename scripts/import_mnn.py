@@ -167,6 +167,18 @@ def get_or_create_course(title: str, description: str = "") -> Course:
     return course
 
 
+def _format_conversation(conv: dict) -> str:
+    """Formatiert eine Konversation als lesbaren Text."""
+    lines = []
+    for line in conv.get("lines", []):
+        lines.append(f"{line['speaker']}: {line['japanese']}")
+        if line.get("romaji"):
+            lines.append(f"  ({line['romaji']})")
+        lines.append(f"  → {line['english']}")
+        lines.append("")  # Leerzeile zwischen Sprechern
+    return "\n".join(lines).strip()
+
+
 def create_lesson(
     data: dict,
     vocab_items: list[Vocabulary],
@@ -259,30 +271,40 @@ def create_lesson(
         )
         db.session.add(content)
 
-    # --- Seite 3: Konversation ---
+    # --- Seite 3: Konversation (Haupt- + Zusatzdialoge) ---
     conv = data.get("conversation")
     if conv:
         page3 = LessonPage(lesson_id=lesson.id, page_number=3, title="Conversation")
         db.session.add(page3)
 
-        conv_lines = []
-        for line in conv.get("lines", []):
-            conv_lines.append(f"{line['speaker']}: {line['japanese']}")
-            if line.get("romaji"):
-                conv_lines.append(f"  ({line['romaji']})")
-            conv_lines.append(f"  → {line['english']}")
-            conv_lines.append("")  # Leerzeile zwischen Sprechern
-        conv_text = "\n".join(conv_lines).strip()
-
+        # Hauptkonversation
         conv_content = LessonContent(
             lesson_id=lesson.id,
             content_type="text",
             title=conv.get("title", "Conversation"),
-            content_text=conv_text,
+            content_text=_format_conversation(conv),
             page_number=3,
             order_index=0,
         )
         db.session.add(conv_content)
+
+        # Zusätzliche Konversationen
+        for idx, extra_conv in enumerate(data.get("additional_conversations", []), start=1):
+            situation = extra_conv.get("situation", "")
+            title_text = extra_conv.get("title", f"Conversation {idx + 1}")
+            if situation:
+                title_text = f"{title_text} — {situation}"
+
+            extra_content = LessonContent(
+                lesson_id=lesson.id,
+                content_type="text",
+                title=title_text,
+                content_text=_format_conversation(extra_conv),
+                page_number=3,
+                order_index=idx,
+            )
+            db.session.add(extra_content)
+            print(f"  [NEW] Conversation: {title_text}")
 
     return lesson
 
@@ -454,7 +476,8 @@ def import_lesson_file(filepath: Path, dry_run: bool = False) -> None:
     print(f"  Vokabeln:  {len(data.get('vocabulary', []) + data.get('vocabulary_countries', []))}")
     print(f"  Grammatik: {len(data.get('grammar', []))}")
     if data.get("conversation"):
-        print(f"  Konversation: {data['conversation'].get('title', '?')}")
+        extra_count = len(data.get("additional_conversations", []))
+        print(f"  Konversation: {data['conversation'].get('title', '?')} + {extra_count} Zusatzdialoge")
     print(f"  Audio:     {audio_count} Dateien")
 
 

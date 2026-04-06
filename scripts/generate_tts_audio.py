@@ -58,6 +58,8 @@ SPEAKER_GENDER = {
     "Watt": "male",         # ワット
     "Schmidt": "male",      # シュミット
     "Takahashi": "male",    # 高橋
+    "Gupta": "male",        # グプタ
+    "Wang": "female",       # ワン
 }
 
 
@@ -270,6 +272,18 @@ def build_audio_texts(data: dict) -> list[tuple]:
             "multi_voice",  # Flag für Multi-Voice-Generierung
         ))
 
+    # 4b) Zusätzliche Konversationen — Seite 3 (Multi-Voice!)
+    for idx, extra_conv in enumerate(data.get("additional_conversations", []), start=1):
+        if extra_conv.get("lines"):
+            conv_title = extra_conv.get("title", f"Conversation {idx + 1}")
+            items.append((
+                f"{prefix}_conversation_{idx + 1}.mp3",
+                f"{conv_title} (Audio)",
+                extra_conv["lines"],
+                3,
+                "multi_voice",
+            ))
+
     # 5) Übungen — Seite 4 (Vokabel-Drill)
     drill_lines = []
     for v in data.get("vocabulary", [])[:10]:
@@ -330,7 +344,8 @@ def update_database(lesson_number: int, audio_items: list[tuple[str, str, str, i
             db.session.delete(old)
 
         # Neue Audio-Einträge erstellen
-        for filename, title, _text, page_number in audio_items:
+        for item in audio_items:
+            filename, title, _text, page_number = item[0], item[1], item[2], item[3]
             rel_path = f"lessons/audio/mnn_lesson_{lesson_number:02d}/{filename}"
             content = LessonContent(
                 lesson_id=lesson.id,

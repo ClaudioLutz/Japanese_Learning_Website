@@ -134,6 +134,12 @@ Decorators: `@login_required`, `@admin_required`, `@premium_required`.
 - **Keine losen Dateien** — am Ende jeder Session muss `git status` sauber sein. Jede Datei muss entweder committed+gepusht, in `.gitignore` eingetragen, oder gelöscht werden falls nicht mehr gebraucht.
 - Commit-Messages auf Deutsch, aussagekräftig.
 
+## Qualitätssicherung — Pflichtregeln
+- **Tests aktualisieren und ausführen** — Bei jeder Code-Änderung müssen betroffene Tests angepasst und alle Tests mit `pytest` ausgeführt werden. Kein Commit mit fehlschlagenden Tests.
+- **Coverage nicht senken** — `fail_under` in pyproject.toml darf nur erhöht, nie gesenkt werden.
+- **Neue Features brauchen Tests** — Neue Routen, Services oder Models werden nicht ohne zugehörige Unit-/Integrationstests committed.
+- **Linting** — Nach Python-Änderungen `ruff check` ausführen und Fehler beheben.
+
 ## Quiz-System — Einschränkungen
 - **Kein `fill_in_the_blank`** — Dieser Fragetyp wird nicht mehr verwendet. Nur `multiple_choice`, `true_false` und `matching` sind erlaubt.
 
