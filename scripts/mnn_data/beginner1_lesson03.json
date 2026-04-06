@@ -32,7 +32,7 @@
     {"word": "ちか", "reading": "chika", "meaning": "basement", "kanji": "地下", "part_of_speech": "noun"},
     {"word": "いっかい", "reading": "ikkai", "meaning": "first floor", "kanji": "一階", "part_of_speech": "noun"},
     {"word": "にかい", "reading": "nikai", "meaning": "second floor", "kanji": "二階", "part_of_speech": "noun"},
-    {"word": "さんかい", "reading": "sankai", "meaning": "third floor", "kanji": "三階", "part_of_speech": "noun"},
+    {"word": "さんがい", "reading": "sangai", "meaning": "third floor", "kanji": "三階", "part_of_speech": "noun"},
     {"word": "なんがい", "reading": "nangai", "meaning": "what floor", "kanji": "何階", "part_of_speech": "noun"},
     {"word": "えん", "reading": "en", "meaning": "yen (Japanese currency)", "kanji": "円", "part_of_speech": "counter"},
     {"word": "いくら", "reading": "ikura", "meaning": "how much", "kanji": null, "part_of_speech": "noun"},
@@ -79,7 +79,7 @@
       "title": "何階 (Floor Counter)",
       "structure": "N は なんがい ですか",
       "jlpt_level": 5,
-      "explanation": "何階 (nangai) is used to ask which floor something is on. The counter ～階 (kai/gai) is used for floors of a building. Note the sound changes: 三階 is sankai (not sangai), and 何階 is nangai.",
+      "explanation": "何階 (nangai) is used to ask which floor something is on. The counter ～階 (kai/gai) is used for floors of a building. Note the sound changes: 三階 is sangai (not sankai), and 何階 is nangai.",
       "example_sentences": "⑧ 食堂は 何階ですか。\n  (Shokudou wa nangai desu ka.)\n  — What floor is the cafeteria on?\n…地下一階です。(Chika ikkai desu.) — It's on basement level one."
     }
   ],
@@ -93,7 +93,7 @@
       {"speaker": "Kimura", "japanese": "そうですか。トイレも 地下ですか。", "romaji": "Sou desu ka. Toire mo chika desu ka.", "english": "I see. Is the restroom also in the basement?"},
       {"speaker": "Hayashi", "japanese": "いいえ、トイレは 二階です。", "romaji": "Iie, toire wa nikai desu.", "english": "No, the restroom is on the second floor."},
       {"speaker": "Kimura", "japanese": "会議室は 何階ですか。", "romaji": "Kaigishitsu wa nangai desu ka.", "english": "What floor is the conference room on?"},
-      {"speaker": "Hayashi", "japanese": "会議室は 三階です。エレベーターは あそこです。", "romaji": "Kaigishitsu wa sankai desu. Erebeetaa wa asoko desu.", "english": "The conference room is on the third floor. The elevator is over there."},
+      {"speaker": "Hayashi", "japanese": "会議室は 三階です。エレベーターは あそこです。", "romaji": "Kaigishitsu wa sangai desu. Erebeetaa wa asoko desu.", "english": "The conference room is on the third floor. The elevator is over there."},
       {"speaker": "Kimura", "japanese": "ありがとうございます。", "romaji": "Arigatou gozaimasu.", "english": "Thank you very much."},
       {"speaker": "Hayashi", "japanese": "いいえ。", "romaji": "Iie.", "english": "Not at all."}
     ]
