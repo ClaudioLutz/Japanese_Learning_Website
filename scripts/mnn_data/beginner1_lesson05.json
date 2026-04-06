@@ -1,0 +1,100 @@
+{
+  "source": "Minna No Nihongo Beginner I",
+  "lesson_number": 5,
+  "title": "Lesson 5 – Going and Coming",
+  "title_ja": "第5課",
+  "jlpt_level": 5,
+  "description": "Place へ 行きます/来ます/帰ります, Transportmittel (で), Person と V ます, いつ (wann).",
+
+  "vocabulary": [
+    {"word": "いきます", "reading": "ikimasu", "meaning": "to go", "kanji": "行きます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "きます", "reading": "kimasu", "meaning": "to come", "kanji": "来ます", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "かえります", "reading": "kaerimasu", "meaning": "to go home, to return", "kanji": "帰ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "がっこう", "reading": "gakkou", "meaning": "school", "kanji": "学校", "part_of_speech": "noun"},
+    {"word": "スーパー", "reading": "suupaa", "meaning": "supermarket", "kanji": null, "part_of_speech": "noun"},
+    {"word": "えき", "reading": "eki", "meaning": "station", "kanji": "駅", "part_of_speech": "noun"},
+    {"word": "ひこうき", "reading": "hikouki", "meaning": "airplane", "kanji": "飛行機", "part_of_speech": "noun"},
+    {"word": "ふね", "reading": "fune", "meaning": "ship, boat", "kanji": "船", "part_of_speech": "noun"},
+    {"word": "でんしゃ", "reading": "densha", "meaning": "train (electric)", "kanji": "電車", "part_of_speech": "noun"},
+    {"word": "バス", "reading": "basu", "meaning": "bus", "kanji": null, "part_of_speech": "noun"},
+    {"word": "タクシー", "reading": "takushii", "meaning": "taxi", "kanji": null, "part_of_speech": "noun"},
+    {"word": "じてんしゃ", "reading": "jitensha", "meaning": "bicycle", "kanji": "自転車", "part_of_speech": "noun"},
+    {"word": "あるいて", "reading": "aruite", "meaning": "on foot, walking", "kanji": "歩いて", "part_of_speech": "adverb"},
+    {"word": "ひと", "reading": "hito", "meaning": "person, people", "kanji": "人", "part_of_speech": "noun"},
+    {"word": "ともだち", "reading": "tomodachi", "meaning": "friend", "kanji": "友達", "part_of_speech": "noun"},
+    {"word": "かぞく", "reading": "kazoku", "meaning": "family", "kanji": "家族", "part_of_speech": "noun"},
+    {"word": "ひとりで", "reading": "hitori de", "meaning": "alone, by oneself", "kanji": "一人で", "part_of_speech": "adverb"},
+    {"word": "せんしゅう", "reading": "senshuu", "meaning": "last week", "kanji": "先週", "part_of_speech": "noun"},
+    {"word": "こんしゅう", "reading": "konshuu", "meaning": "this week", "kanji": "今週", "part_of_speech": "noun"},
+    {"word": "らいしゅう", "reading": "raishuu", "meaning": "next week", "kanji": "来週", "part_of_speech": "noun"},
+    {"word": "せんげつ", "reading": "sengetsu", "meaning": "last month", "kanji": "先月", "part_of_speech": "noun"},
+    {"word": "こんげつ", "reading": "kongetsu", "meaning": "this month", "kanji": "今月", "part_of_speech": "noun"},
+    {"word": "らいげつ", "reading": "raigetsu", "meaning": "next month", "kanji": "来月", "part_of_speech": "noun"},
+    {"word": "きょねん", "reading": "kyonen", "meaning": "last year", "kanji": "去年", "part_of_speech": "noun"},
+    {"word": "ことし", "reading": "kotoshi", "meaning": "this year", "kanji": "今年", "part_of_speech": "noun"},
+    {"word": "らいねん", "reading": "rainen", "meaning": "next year", "kanji": "来年", "part_of_speech": "noun"},
+    {"word": "いつ", "reading": "itsu", "meaning": "when", "kanji": null, "part_of_speech": "noun"},
+    {"word": "たんじょうび", "reading": "tanjoubi", "meaning": "birthday", "kanji": "誕生日", "part_of_speech": "noun"},
+    {"word": "ふつう", "reading": "futsuu", "meaning": "local train, ordinary", "kanji": "普通", "part_of_speech": "noun"},
+    {"word": "きゅうこう", "reading": "kyuukou", "meaning": "express train", "kanji": "急行", "part_of_speech": "noun"},
+    {"word": "しんかんせん", "reading": "shinkansen", "meaning": "bullet train", "kanji": "新幹線", "part_of_speech": "noun"},
+    {"word": "ちかてつ", "reading": "chikatetsu", "meaning": "subway", "kanji": "地下鉄", "part_of_speech": "noun"},
+    {"word": "デパート", "reading": "depaato", "meaning": "department store", "kanji": null, "part_of_speech": "noun"},
+    {"word": "どうぶつえん", "reading": "doubutsuen", "meaning": "zoo", "kanji": "動物園", "part_of_speech": "noun"},
+    {"word": "こうえん", "reading": "kouen", "meaning": "park", "kanji": "公園", "part_of_speech": "noun"},
+    {"word": "みせ", "reading": "mise", "meaning": "shop, store", "kanji": "店", "part_of_speech": "noun"},
+    {"word": "レストラン", "reading": "resutoran", "meaning": "restaurant", "kanji": null, "part_of_speech": "noun"},
+    {"word": "おはなみ", "reading": "ohanami", "meaning": "cherry blossom viewing", "kanji": "お花見", "part_of_speech": "noun"},
+    {"word": "いっしょに", "reading": "issho ni", "meaning": "together", "kanji": "一緒に", "part_of_speech": "adverb"},
+    {"word": "ええ", "reading": "ee", "meaning": "yes (casual)", "kanji": null, "part_of_speech": "expression"},
+    {"word": "いいですね", "reading": "ii desu ne", "meaning": "That sounds nice", "kanji": null, "part_of_speech": "expression"}
+  ],
+
+  "vocabulary_countries": [],
+
+  "grammar": [
+    {
+      "title": "Place へ 行きます/来ます/帰ります (Movement Verbs with へ)",
+      "structure": "Place へ V ます",
+      "jlpt_level": 5,
+      "explanation": "The particle へ (pronounced 'e') indicates the direction or destination of movement. It is used with the verbs 行きます (to go), 来ます (to come), and 帰ります (to return). The particle に can also be used in place of へ with the same meaning for these verbs.",
+      "example_sentences": "① 学校へ 行きます。\n  (Gakkou e ikimasu.)\n  — I go to school.\n② きのう 東京へ 来ました。\n  (Kinou Toukyou e kimashita.)\n  — I came to Tokyo yesterday.\n③ 七時に うちへ 帰ります。\n  (Shichiji ni uchi e kaerimasu.)\n  — I return home at seven o'clock."
+    },
+    {
+      "title": "乗り物で 行きます (Transportation — Means Particle で)",
+      "structure": "乗り物 で V ます",
+      "jlpt_level": 5,
+      "explanation": "The particle で indicates the means of transportation used. When going on foot, the expression 歩いて (aruite) is used instead of a noun + で construction.",
+      "example_sentences": "④ 電車で 会社へ 行きます。\n  (Densha de kaisha e ikimasu.)\n  — I go to the company by train.\n⑤ タクシーで 駅へ 行きました。\n  (Takushii de eki e ikimashita.)\n  — I went to the station by taxi.\n⑥ 歩いて 学校へ 行きます。\n  (Aruite gakkou e ikimasu.)\n  — I walk to school."
+    },
+    {
+      "title": "Person と V ます (Doing Something with Someone)",
+      "structure": "Person と V ます",
+      "jlpt_level": 5,
+      "explanation": "The particle と is used to indicate the person you do something with. When doing something alone, use 一人で (hitori de) instead of Person と.",
+      "example_sentences": "⑦ 友達と 公園へ 行きます。\n  (Tomodachi to kouen e ikimasu.)\n  — I go to the park with a friend.\n⑧ 一人で 来ました。\n  (Hitori de kimashita.)\n  — I came alone."
+    },
+    {
+      "title": "いつ (When — Interrogative)",
+      "structure": "いつ V ますか",
+      "jlpt_level": 5,
+      "explanation": "いつ is the interrogative word used to ask 'when'. It does not require the particle に. It can be placed in the position of the time expression in a sentence.",
+      "example_sentences": "⑨ いつ 日本へ 来ましたか。\n  (Itsu Nihon e kimashita ka.)\n  — When did you come to Japan?\n…先月 来ました。(Sengetsu kimashita.) — I came last month.\n⑩ 誕生日は いつですか。\n  (Tanjoubi wa itsu desu ka.)\n  — When is your birthday?"
+    }
+  ],
+
+  "conversation": {
+    "title": "Shall we go together?",
+    "title_ja": "いっしょに いきませんか",
+    "lines": [
+      {"speaker": "Nakamura", "japanese": "来週の 土曜日、動物園へ 行きませんか。", "romaji": "Raishuu no doyoubi, doubutsuen e ikimasen ka.", "english": "Won't you go to the zoo next Saturday?"},
+      {"speaker": "Ogawa", "japanese": "いいですね。だれと 行きますか。", "romaji": "Ii desu ne. Dare to ikimasu ka.", "english": "That sounds nice. Who are you going with?"},
+      {"speaker": "Nakamura", "japanese": "田中さんと 行きます。小川さんも いっしょに いきませんか。", "romaji": "Tanaka-san to ikimasu. Ogawa-san mo issho ni ikimasen ka.", "english": "I'm going with Mr. Tanaka. Won't you come along too, Ms. Ogawa?"},
+      {"speaker": "Ogawa", "japanese": "ええ、ぜひ。何で 行きますか。", "romaji": "Ee, zehi. Nan de ikimasu ka.", "english": "Yes, I'd love to. How do we get there?"},
+      {"speaker": "Nakamura", "japanese": "電車で 行きます。駅から バスで 十分です。", "romaji": "Densha de ikimasu. Eki kara basu de juppun desu.", "english": "We'll go by train. It's ten minutes by bus from the station."},
+      {"speaker": "Ogawa", "japanese": "何時に 駅へ 行きますか。", "romaji": "Nanji ni eki e ikimasu ka.", "english": "What time will we go to the station?"},
+      {"speaker": "Nakamura", "japanese": "九時に 駅へ 行きます。", "romaji": "Kuji ni eki e ikimasu.", "english": "We'll go to the station at nine."},
+      {"speaker": "Ogawa", "japanese": "わかりました。土曜日に。", "romaji": "Wakarimashita. Doyoubi ni.", "english": "Got it. See you Saturday."}
+    ]
+  }
+}

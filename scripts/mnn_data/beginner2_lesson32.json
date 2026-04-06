@@ -1,0 +1,82 @@
+{
+  "source": "Minna No Nihongo Beginner II",
+  "lesson_number": 32,
+  "title": "Lesson 32 – Advice & Probability",
+  "title_ja": "第32課",
+  "jlpt_level": 4,
+  "description": "Ratschläge und Vermutungen: ～たほうがいいです (man sollte besser), ～かもしれません (vielleicht), ～でしょう (wahrscheinlich).",
+
+  "vocabulary": [
+    {"word": "うんどうします", "reading": "undou shimasu", "meaning": "to exercise", "kanji": "運動します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "むりをします", "reading": "muri o shimasu", "meaning": "to overdo, to push oneself", "kanji": "無理をします", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "せいかつします", "reading": "seikatsu shimasu", "meaning": "to live (a lifestyle)", "kanji": "生活します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "やすみます", "reading": "yasumimasu", "meaning": "to rest, to take a day off", "kanji": "休みます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "ねます", "reading": "nemasu", "meaning": "to sleep, to go to bed", "kanji": "寝ます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "のみすぎます", "reading": "nomisugimasu", "meaning": "to drink too much", "kanji": "飲みすぎます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "たべすぎます", "reading": "tabesugimasu", "meaning": "to eat too much", "kanji": "食べすぎます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "ふとります", "reading": "futorimasu", "meaning": "to gain weight", "kanji": "太ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "やせます", "reading": "yasemasu", "meaning": "to lose weight, to become thin", "kanji": "痩せます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "へります", "reading": "herimasu", "meaning": "to decrease", "kanji": "減ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "ふえます", "reading": "fuemasu", "meaning": "to increase", "kanji": "増えます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "のりかえます", "reading": "norikaemasu", "meaning": "to transfer (trains)", "kanji": "乗り換えます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "かぜ", "reading": "kaze", "meaning": "cold (illness)", "kanji": "風邪", "part_of_speech": "noun"},
+    {"word": "ねつ", "reading": "netsu", "meaning": "fever", "kanji": "熱", "part_of_speech": "noun"},
+    {"word": "びょうき", "reading": "byouki", "meaning": "illness, disease", "kanji": "病気", "part_of_speech": "noun"},
+    {"word": "くすり", "reading": "kusuri", "meaning": "medicine", "kanji": "薬", "part_of_speech": "noun"},
+    {"word": "たいちょう", "reading": "taichou", "meaning": "physical condition", "kanji": "体調", "part_of_speech": "noun"},
+    {"word": "けんこう", "reading": "kenkou", "meaning": "health", "kanji": "健康", "part_of_speech": "noun"},
+    {"word": "てんきよほう", "reading": "tenki yohou", "meaning": "weather forecast", "kanji": "天気予報", "part_of_speech": "noun"},
+    {"word": "きおん", "reading": "kion", "meaning": "temperature (weather)", "kanji": "気温", "part_of_speech": "noun"},
+    {"word": "たいふう", "reading": "taifuu", "meaning": "typhoon", "kanji": "台風", "part_of_speech": "noun"},
+    {"word": "くもり", "reading": "kumori", "meaning": "cloudy", "kanji": "曇り", "part_of_speech": "noun"},
+    {"word": "せいかつ", "reading": "seikatsu", "meaning": "life, lifestyle", "kanji": "生活", "part_of_speech": "noun"},
+    {"word": "きぶん", "reading": "kibun", "meaning": "feeling, mood", "kanji": "気分", "part_of_speech": "noun"},
+    {"word": "じゅうぶん", "reading": "juubun", "meaning": "sufficient, enough", "kanji": "十分", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "ひどい", "reading": "hidoi", "meaning": "terrible, severe", "kanji": null, "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "だるい", "reading": "darui", "meaning": "sluggish, languid", "kanji": null, "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "かならず", "reading": "kanarazu", "meaning": "certainly, without fail", "kanji": "必ず", "part_of_speech": "adverb"},
+    {"word": "たぶん", "reading": "tabun", "meaning": "probably, perhaps", "kanji": "多分", "part_of_speech": "adverb"},
+    {"word": "もしかしたら", "reading": "moshikashitara", "meaning": "perhaps, possibly", "kanji": null, "part_of_speech": "adverb"}
+  ],
+
+  "vocabulary_countries": [],
+
+  "grammar": [
+    {
+      "title": "V た form + ほうが いいです (Had better ~)",
+      "structure": "V た form + ほうが いいです / V ない form + ほうが いいです",
+      "jlpt_level": 4,
+      "explanation": "This pattern is used to give advice or make a recommendation. ～たほうがいいです means 'you had better do ~' or 'it would be better to ~'. The negative form ～ないほうがいいです means 'you had better not ~'. The た form version suggests doing something, while the ない form advises against doing something.",
+      "example_sentences": "① 薬を 飲んだほうが いいですよ。\n  (Kusuri o nonda hou ga ii desu yo.)\n  — You had better take some medicine.\n② 今日は 無理をしないほうが いいですよ。\n  (Kyou wa muri o shinai hou ga ii desu yo.)\n  — You had better not push yourself today.\n③ もっと 野菜を 食べたほうが いいです。\n  (Motto yasai o tabeta hou ga ii desu.)\n  — You should eat more vegetables."
+    },
+    {
+      "title": "～かもしれません (Might, maybe)",
+      "structure": "V plain / い-Adj / な-Adj (な→) / N (な→) + かもしれません",
+      "jlpt_level": 4,
+      "explanation": "～かもしれません expresses the speaker's guess that something might be the case. It indicates a lower degree of certainty than でしょう. For な-adjectives and nouns, な is dropped before かもしれません. The casual form is かもしれない, often shortened to かも.",
+      "example_sentences": "④ 明日は 雨が 降るかもしれません。\n  (Ashita wa ame ga furu kamoshiremasen.)\n  — It might rain tomorrow.\n⑤ あの レストランは 高いかもしれません。\n  (Ano resutoran wa takai kamoshiremasen.)\n  — That restaurant might be expensive.\n⑥ 田中さんは 病気かもしれません。\n  (Tanaka-san wa byouki kamoshiremasen.)\n  — Mr. Tanaka might be sick."
+    },
+    {
+      "title": "～でしょう (Probably, I think)",
+      "structure": "V plain / い-Adj / な-Adj (な→) / N (な→) + でしょう",
+      "jlpt_level": 4,
+      "explanation": "～でしょう expresses the speaker's conjecture or forecast. It indicates that the speaker thinks something is probably the case. It is commonly used in weather forecasts. With a rising intonation, it can be used to confirm something. でしょう has a higher degree of certainty than かもしれません.",
+      "example_sentences": "⑦ 午後は 晴れるでしょう。\n  (Gogo wa hareru deshou.)\n  — It will probably be sunny in the afternoon.\n⑧ 明日は 寒いでしょう。\n  (Ashita wa samui deshou.)\n  — It will probably be cold tomorrow.\n⑨ 台風は 来ないでしょう。\n  (Taifuu wa konai deshou.)\n  — The typhoon probably won't come."
+    }
+  ],
+
+  "conversation": {
+    "title": "You had better rest",
+    "title_ja": "休んだほうが いいですよ",
+    "lines": [
+      {"speaker": "Suzuki", "japanese": "リーさん、顔色が 悪いですね。大丈夫ですか。", "romaji": "Rii-san, kaoiro ga warui desu ne. Daijoubu desu ka.", "english": "Lee, you don't look well. Are you okay?"},
+      {"speaker": "Lee", "japanese": "ちょっと 熱が あるかもしれません。体が だるいです。", "romaji": "Chotto netsu ga aru kamoshiremasen. Karada ga darui desu.", "english": "I might have a slight fever. My body feels sluggish."},
+      {"speaker": "Suzuki", "japanese": "それは いけませんね。薬を 飲んだほうが いいですよ。", "romaji": "Sore wa ikemasen ne. Kusuri o nonda hou ga ii desu yo.", "english": "That's not good. You should take some medicine."},
+      {"speaker": "Lee", "japanese": "ええ、さっき 飲みました。でも、今日 会議が あるんです。", "romaji": "Ee, sakki nomimashita. Demo, kyou kaigi ga arun desu.", "english": "Yes, I just took some. But I have a meeting today."},
+      {"speaker": "Suzuki", "japanese": "無理をしないほうが いいですよ。今日は 早く 帰って 休んだほうが いいです。", "romaji": "Muri o shinai hou ga ii desu yo. Kyou wa hayaku kaette yasunda hou ga ii desu.", "english": "You shouldn't push yourself. You should go home early and rest today."},
+      {"speaker": "Lee", "japanese": "そうですね。明日は 大丈夫でしょうか。", "romaji": "Sou desu ne. Ashita wa daijoubu deshou ka.", "english": "You're right. Will I be okay by tomorrow?"},
+      {"speaker": "Suzuki", "japanese": "十分 寝たら、たぶん よくなるでしょう。お大事に。", "romaji": "Juubun netara, tabun yoku naru deshou. Odaiji ni.", "english": "If you sleep well, you'll probably get better. Take care."},
+      {"speaker": "Lee", "japanese": "ありがとうございます。そうします。", "romaji": "Arigatou gozaimasu. Sou shimasu.", "english": "Thank you. I'll do that."}
+    ]
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "source": "Minna No Nihongo Beginner I",
+  "lesson_number": 16,
+  "title": "Lesson 16 – Connecting Actions and Descriptions",
+  "title_ja": "第16課",
+  "jlpt_level": 5,
+  "description": "動詞のて形で動作を繋ぐ、い形容詞→くて、な形容詞→で、Vてから（〜してから）の使い方を学ぶ。",
+
+  "vocabulary": [
+    {"word": "のります", "reading": "norimasu", "meaning": "to ride, to get on", "kanji": "乗ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "おります", "reading": "orimasu", "meaning": "to get off", "kanji": "降ります", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "のりかえます", "reading": "norikaemasu", "meaning": "to transfer (vehicle)", "kanji": "乗り換えます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "あびます", "reading": "abimasu", "meaning": "to take (a shower)", "kanji": "浴びます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "いれます", "reading": "iremasu", "meaning": "to put in, to insert", "kanji": "入れます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "だします", "reading": "dashimasu", "meaning": "to take out, to send", "kanji": "出します", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "おろします", "reading": "oroshimasu", "meaning": "to withdraw (money)", "kanji": "下ろします", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "はいります", "reading": "hairimasu", "meaning": "to enter", "kanji": "入ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "でます", "reading": "demasu", "meaning": "to exit, to leave", "kanji": "出ます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "おします", "reading": "oshimasu", "meaning": "to push, to press", "kanji": "押します", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "わかいです", "reading": "wakai desu", "meaning": "young", "kanji": "若い", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "ながいです", "reading": "nagai desu", "meaning": "long", "kanji": "長い", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "みじかいです", "reading": "mijikai desu", "meaning": "short (length)", "kanji": "短い", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "あかるいです", "reading": "akarui desu", "meaning": "bright, cheerful", "kanji": "明るい", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "くらいです", "reading": "kurai desu", "meaning": "dark", "kanji": "暗い", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "からだ", "reading": "karada", "meaning": "body", "kanji": "体", "part_of_speech": "noun"},
+    {"word": "あたま", "reading": "atama", "meaning": "head", "kanji": "頭", "part_of_speech": "noun"},
+    {"word": "かみ", "reading": "kami", "meaning": "hair", "kanji": "髪", "part_of_speech": "noun"},
+    {"word": "かお", "reading": "kao", "meaning": "face", "kanji": "顔", "part_of_speech": "noun"},
+    {"word": "め", "reading": "me", "meaning": "eye", "kanji": "目", "part_of_speech": "noun"},
+    {"word": "みみ", "reading": "mimi", "meaning": "ear", "kanji": "耳", "part_of_speech": "noun"},
+    {"word": "おかね", "reading": "okane", "meaning": "money", "kanji": "お金", "part_of_speech": "noun"},
+    {"word": "きっぷ", "reading": "kippu", "meaning": "ticket", "kanji": "切符", "part_of_speech": "noun"},
+    {"word": "シャワー", "reading": "shawaa", "meaning": "shower", "kanji": null, "part_of_speech": "noun"},
+    {"word": "みどりいろ", "reading": "midoriiro", "meaning": "green (color)", "kanji": "緑色", "part_of_speech": "noun"},
+    {"word": "ボタン", "reading": "botan", "meaning": "button", "kanji": null, "part_of_speech": "noun"},
+    {"word": "つぎに", "reading": "tsugi ni", "meaning": "next, then", "kanji": "次に", "part_of_speech": "adverb"},
+    {"word": "まず", "reading": "mazu", "meaning": "first (of all)", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "せが たかいです", "reading": "se ga takai desu", "meaning": "tall (person)", "kanji": "背が高い", "part_of_speech": "expression"},
+    {"word": "せが ひくいです", "reading": "se ga hikui desu", "meaning": "short (person)", "kanji": "背が低い", "part_of_speech": "expression"}
+  ],
+
+  "vocabulary_countries": [],
+
+  "grammar": [
+    {
+      "title": "V₁て、V₂て、V₃ (Verb Chaining with て-form)",
+      "structure": "V₁て、V₂て、V₃",
+      "jlpt_level": 5,
+      "explanation": "When describing a sequence of actions, the verbs are connected using the て-form. The て-form of the verb expresses that actions take place one after another. The tense of the whole sentence is determined by the final verb at the end.",
+      "example_sentences": "① あさ おきて、シャワーを あびて、あさごはんを たべます。\n  (Asa okite, shawaa o abite, asagohan o tabemasu.)\n  — In the morning, I get up, take a shower, and eat breakfast.\n② えきまで あるいて、でんしゃに のって、かいしゃに いきます。\n  (Eki made aruite, densha ni notte, kaisha ni ikimasu.)\n  — I walk to the station, get on the train, and go to work."
+    },
+    {
+      "title": "い-Adj くて、〜 (Connecting い-adjectives)",
+      "structure": "い-Adj(い→くて)、〜",
+      "jlpt_level": 5,
+      "explanation": "To connect い-adjectives, replace the final い with くて. This is similar to using 'and' in English to connect two descriptions. The tense and polarity are determined by the final predicate.",
+      "example_sentences": "③ このへやは ひろくて、あかるいです。\n  (Kono heya wa hirokute, akarui desu.)\n  — This room is spacious and bright.\n④ きのうの テストは ながくて、むずかしかったです。\n  (Kinou no tesuto wa nagakute, muzukashikatta desu.)\n  — Yesterday's test was long and difficult."
+    },
+    {
+      "title": "な-Adj で、〜 (Connecting な-adjectives)",
+      "structure": "な-Adj で、〜",
+      "jlpt_level": 5,
+      "explanation": "To connect な-adjectives, add で after the adjective stem (without な). This works the same way as くて for い-adjectives — it connects two descriptions. Nouns can also be connected this way: N₁ で N₂ です.",
+      "example_sentences": "⑤ ミラーさんは ハンサムで、しんせつです。\n  (Miraa-san wa hansamu de, shinsetsu desu.)\n  — Mr. Miller is handsome and kind.\n⑥ ならは しずかで、きれいな まちです。\n  (Nara wa shizuka de, kirei na machi desu.)\n  — Nara is a quiet and beautiful city."
+    },
+    {
+      "title": "V てから (After Doing ~)",
+      "structure": "V₁てから、V₂",
+      "jlpt_level": 5,
+      "explanation": "Vてから indicates that one action is completed before the next action takes place. It emphasizes the order of events more strongly than simply connecting verbs with て. The action before てから must be finished before the action after it begins.",
+      "example_sentences": "⑦ おかねを おろしてから、かいものに いきます。\n  (Okane o oroshite kara, kaimono ni ikimasu.)\n  — After withdrawing money, I will go shopping.\n⑧ にほんに きてから、すしを はじめて たべました。\n  (Nihon ni kite kara, sushi o hajimete tabemashita.)\n  — After coming to Japan, I ate sushi for the first time."
+    }
+  ],
+
+  "conversation": {
+    "title": "My Morning Routine",
+    "title_ja": "あさの ルーティーン",
+    "lines": [
+      {"speaker": "Tanaka", "japanese": "スミスさんは まいあさ なにを しますか。", "romaji": "Sumisu-san wa maiasa nani o shimasu ka.", "english": "What do you do every morning, Mr. Smith?"},
+      {"speaker": "Smith", "japanese": "まず おきて、シャワーを あびて、あさごはんを たべます。", "romaji": "Mazu okite, shawaa o abite, asagohan o tabemasu.", "english": "First I get up, take a shower, and eat breakfast."},
+      {"speaker": "Tanaka", "japanese": "あさごはんの あとで、すぐ でかけますか。", "romaji": "Asagohan no ato de, sugu dekakemasu ka.", "english": "Do you leave right after breakfast?"},
+      {"speaker": "Smith", "japanese": "いいえ。あさごはんを たべてから、すこし にほんごを べんきょうします。", "romaji": "Iie. Asagohan o tabete kara, sukoshi nihongo o benkyou shimasu.", "english": "No. After eating breakfast, I study Japanese a little."},
+      {"speaker": "Tanaka", "japanese": "えらいですね。それから かいしゃへ いきますか。", "romaji": "Erai desu ne. Sorekara kaisha e ikimasu ka.", "english": "That's admirable. Then you go to the office?"},
+      {"speaker": "Smith", "japanese": "はい。えきまで あるいて、でんしゃに のって、かいしゃに いきます。", "romaji": "Hai. Eki made aruite, densha ni notte, kaisha ni ikimasu.", "english": "Yes. I walk to the station, get on the train, and go to the office."},
+      {"speaker": "Tanaka", "japanese": "でんしゃは こんでいますか。", "romaji": "Densha wa konde imasu ka.", "english": "Is the train crowded?"},
+      {"speaker": "Smith", "japanese": "あさは とても こんでいて、たいへんです。", "romaji": "Asa wa totemo konde ite, taihen desu.", "english": "In the morning it's very crowded and tough."}
+    ]
+  }
+}

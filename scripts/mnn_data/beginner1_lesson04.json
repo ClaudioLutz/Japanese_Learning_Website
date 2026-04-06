@@ -1,0 +1,105 @@
+{
+  "source": "Minna No Nihongo Beginner I",
+  "lesson_number": 4,
+  "title": "Lesson 4 – Time and Daily Schedule",
+  "title_ja": "第4課",
+  "jlpt_level": 5,
+  "description": "Zeitausdrücke (今, ～時, ～分), V ます/ません/ました/ませんでした, に (Zeitpartikel), から～まで (von...bis).",
+
+  "vocabulary": [
+    {"word": "おきます", "reading": "okimasu", "meaning": "to get up, to wake up", "kanji": "起きます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "ねます", "reading": "nemasu", "meaning": "to sleep, to go to bed", "kanji": "寝ます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "はたらきます", "reading": "hatarakimasu", "meaning": "to work", "kanji": "働きます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "やすみます", "reading": "yasumimasu", "meaning": "to rest, to take a day off", "kanji": "休みます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "べんきょうします", "reading": "benkyoushimasu", "meaning": "to study", "kanji": "勉強します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "おわります", "reading": "owarimasu", "meaning": "to finish, to end", "kanji": "終わります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "はじまります", "reading": "hajimarimasu", "meaning": "to begin, to start", "kanji": "始まります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "いま", "reading": "ima", "meaning": "now", "kanji": "今", "part_of_speech": "noun"},
+    {"word": "じ", "reading": "ji", "meaning": "o'clock (counter)", "kanji": "時", "part_of_speech": "counter"},
+    {"word": "ふん", "reading": "fun", "meaning": "minute (counter)", "kanji": "分", "part_of_speech": "counter"},
+    {"word": "はん", "reading": "han", "meaning": "half (past the hour)", "kanji": "半", "part_of_speech": "noun"},
+    {"word": "ごぜん", "reading": "gozen", "meaning": "a.m., morning", "kanji": "午前", "part_of_speech": "noun"},
+    {"word": "ごご", "reading": "gogo", "meaning": "p.m., afternoon", "kanji": "午後", "part_of_speech": "noun"},
+    {"word": "あさ", "reading": "asa", "meaning": "morning", "kanji": "朝", "part_of_speech": "noun"},
+    {"word": "ひる", "reading": "hiru", "meaning": "noon, daytime", "kanji": "昼", "part_of_speech": "noun"},
+    {"word": "ばん", "reading": "ban", "meaning": "evening, night", "kanji": "晩", "part_of_speech": "noun"},
+    {"word": "よる", "reading": "yoru", "meaning": "night", "kanji": "夜", "part_of_speech": "noun"},
+    {"word": "おととい", "reading": "ototoi", "meaning": "the day before yesterday", "kanji": null, "part_of_speech": "noun"},
+    {"word": "きのう", "reading": "kinou", "meaning": "yesterday", "kanji": "昨日", "part_of_speech": "noun"},
+    {"word": "きょう", "reading": "kyou", "meaning": "today", "kanji": "今日", "part_of_speech": "noun"},
+    {"word": "あした", "reading": "ashita", "meaning": "tomorrow", "kanji": "明日", "part_of_speech": "noun"},
+    {"word": "あさって", "reading": "asatte", "meaning": "the day after tomorrow", "kanji": null, "part_of_speech": "noun"},
+    {"word": "けさ", "reading": "kesa", "meaning": "this morning", "kanji": "今朝", "part_of_speech": "noun"},
+    {"word": "こんばん", "reading": "konban", "meaning": "this evening", "kanji": "今晩", "part_of_speech": "noun"},
+    {"word": "やすみ", "reading": "yasumi", "meaning": "rest, holiday, day off", "kanji": "休み", "part_of_speech": "noun"},
+    {"word": "ひるやすみ", "reading": "hiruyasumi", "meaning": "lunch break", "kanji": "昼休み", "part_of_speech": "noun"},
+    {"word": "まいにち", "reading": "mainichi", "meaning": "every day", "kanji": "毎日", "part_of_speech": "noun"},
+    {"word": "まいあさ", "reading": "maiasa", "meaning": "every morning", "kanji": "毎朝", "part_of_speech": "noun"},
+    {"word": "まいばん", "reading": "maiban", "meaning": "every night", "kanji": "毎晩", "part_of_speech": "noun"},
+    {"word": "にちようび", "reading": "nichiyoubi", "meaning": "Sunday", "kanji": "日曜日", "part_of_speech": "noun"},
+    {"word": "げつようび", "reading": "getsuyoubi", "meaning": "Monday", "kanji": "月曜日", "part_of_speech": "noun"},
+    {"word": "かようび", "reading": "kayoubi", "meaning": "Tuesday", "kanji": "火曜日", "part_of_speech": "noun"},
+    {"word": "すいようび", "reading": "suiyoubi", "meaning": "Wednesday", "kanji": "水曜日", "part_of_speech": "noun"},
+    {"word": "もくようび", "reading": "mokuyoubi", "meaning": "Thursday", "kanji": "木曜日", "part_of_speech": "noun"},
+    {"word": "きんようび", "reading": "kinyoubi", "meaning": "Friday", "kanji": "金曜日", "part_of_speech": "noun"},
+    {"word": "どようび", "reading": "doyoubi", "meaning": "Saturday", "kanji": "土曜日", "part_of_speech": "noun"},
+    {"word": "なんじ", "reading": "nanji", "meaning": "what time", "kanji": "何時", "part_of_speech": "noun"},
+    {"word": "なんぷん", "reading": "nanpun", "meaning": "what minute", "kanji": "何分", "part_of_speech": "noun"},
+    {"word": "なんようび", "reading": "nanyoubi", "meaning": "what day of the week", "kanji": "何曜日", "part_of_speech": "noun"},
+    {"word": "ぎんこう", "reading": "ginkou", "meaning": "bank", "kanji": "銀行", "part_of_speech": "noun"},
+    {"word": "ゆうびんきょく", "reading": "yuubinkyoku", "meaning": "post office", "kanji": "郵便局", "part_of_speech": "noun"},
+    {"word": "としょかん", "reading": "toshokan", "meaning": "library", "kanji": "図書館", "part_of_speech": "noun"},
+    {"word": "びじゅつかん", "reading": "bijutsukan", "meaning": "art museum", "kanji": "美術館", "part_of_speech": "noun"},
+    {"word": "たいへんですね", "reading": "taihen desu ne", "meaning": "That's tough, isn't it?", "kanji": "大変ですね", "part_of_speech": "expression"},
+    {"word": "そうですね", "reading": "sou desu ne", "meaning": "Let me see / That's right", "kanji": null, "part_of_speech": "expression"}
+  ],
+
+  "vocabulary_countries": [],
+
+  "grammar": [
+    {
+      "title": "今 ～時 ～分 です (Telling Time)",
+      "structure": "今 ～時 ～分 です",
+      "jlpt_level": 5,
+      "explanation": "Time is expressed using the counters 時 (ji, o'clock) and 分 (fun/pun, minutes). 今 (ima) means 'now'. 半 (han) means 'half past'. Note the special readings: 4時 is yoji (not yonji), 7時 is shichiji, and 9時 is kuji. For minutes, pay attention to sound changes such as 1分 ippun, 3分 sanpun, 6分 roppun, 8分 happun, 10分 juppun.",
+      "example_sentences": "① 今 七時です。\n  (Ima shichiji desu.)\n  — It is seven o'clock now.\n② 今 九時半です。\n  (Ima kuji han desu.)\n  — It is half past nine now."
+    },
+    {
+      "title": "V ます / V ません / V ました / V ませんでした (Verb Conjugation — Polite Form)",
+      "structure": "V ます / V ません / V ました / V ませんでした",
+      "jlpt_level": 5,
+      "explanation": "ます is the polite present/future affirmative form of verbs. ません is the polite present/future negative. ました is the polite past affirmative. ませんでした is the polite past negative. These four forms cover all basic tense and polarity combinations in polite speech.",
+      "example_sentences": "③ 毎日 勉強します。\n  (Mainichi benkyoushimasu.)\n  — I study every day.\n④ きのう 働きませんでした。\n  (Kinou hatarakimasen deshita.)\n  — I did not work yesterday.\n⑤ きのう 勉強しましたか。\n  (Kinou benkyoushimashita ka.)\n  — Did you study yesterday?\n…はい、しました。(Hai, shimashita.) — Yes, I did."
+    },
+    {
+      "title": "Time に V ます (Time Particle に)",
+      "structure": "Time に V ます",
+      "jlpt_level": 5,
+      "explanation": "The particle に is used to indicate specific time when an action takes place. It is used with clock time, days of the week, and dates. However, に is NOT used with relative time words like きょう, きのう, あした, けさ, まいにち, いつ.",
+      "example_sentences": "⑥ 六時に 起きます。\n  (Rokuji ni okimasu.)\n  — I get up at six o'clock.\n⑦ 月曜日に 勉強します。\n  (Getsuyoubi ni benkyoushimasu.)\n  — I study on Monday."
+    },
+    {
+      "title": "～から ～まで (From ~ To ~)",
+      "structure": "N₁ から N₂ まで",
+      "jlpt_level": 5,
+      "explanation": "から indicates a starting point (from) and まで indicates an ending point (to/until). They can be used with times, days, and places. から and まで can each be used alone, and they do not always have to appear together.",
+      "example_sentences": "⑧ 九時から 五時まで 働きます。\n  (Kuji kara goji made hatarakimasu.)\n  — I work from nine to five.\n⑨ 銀行は 九時から です。\n  (Ginkou wa kuji kara desu.)\n  — The bank is open from nine o'clock."
+    }
+  ],
+
+  "conversation": {
+    "title": "What time do you get up?",
+    "title_ja": "なんじに おきますか",
+    "lines": [
+      {"speaker": "Mori", "japanese": "森さんは 毎朝 何時に 起きますか。", "romaji": "Mori-san wa maiasa nanji ni okimasu ka.", "english": "What time do you get up every morning, Mr. Mori?"},
+      {"speaker": "Mori", "japanese": "六時半に 起きます。", "romaji": "Rokuji han ni okimasu.", "english": "I get up at half past six."},
+      {"speaker": "Ito", "japanese": "仕事は 何時からですか。", "romaji": "Shigoto wa nanji kara desu ka.", "english": "What time does work start?"},
+      {"speaker": "Mori", "japanese": "八時から 五時までです。", "romaji": "Hachiji kara goji made desu.", "english": "From eight to five."},
+      {"speaker": "Ito", "japanese": "昼休みは 何時からですか。", "romaji": "Hiruyasumi wa nanji kara desu ka.", "english": "What time does the lunch break start?"},
+      {"speaker": "Mori", "japanese": "十二時から 一時までです。伊藤さんは？", "romaji": "Juuniji kara ichiji made desu. Itou-san wa?", "english": "From twelve to one. How about you, Ms. Ito?"},
+      {"speaker": "Ito", "japanese": "わたしは 九時から 六時まで 働きます。", "romaji": "Watashi wa kuji kara rokuji made hatarakimasu.", "english": "I work from nine to six."},
+      {"speaker": "Mori", "japanese": "大変ですね。", "romaji": "Taihen desu ne.", "english": "That's tough, isn't it?"},
+      {"speaker": "Ito", "japanese": "そうですね。でも、土曜日は 休みです。", "romaji": "Sou desu ne. Demo, doyoubi wa yasumi desu.", "english": "Yes. But Saturday is a day off."}
+    ]
+  }
+}

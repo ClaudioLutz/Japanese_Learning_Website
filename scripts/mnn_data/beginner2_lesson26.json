@@ -1,0 +1,78 @@
+{
+  "source": "Minna No Nihongo Beginner II",
+  "lesson_number": 26,
+  "title": "Lesson 26 – Explaining Reasons",
+  "title_ja": "第26課",
+  "jlpt_level": 4,
+  "description": "Erklärungsform ～んです, Einleitung zu Bitten mit ～んですが, und sehr höfliche Bitten mit ～ていただけませんか.",
+
+  "vocabulary": [
+    {"word": "診る", "reading": "miru", "meaning": "to examine (a patient)", "kanji": "診る", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "探す", "reading": "sagasu", "meaning": "to look for, to search", "kanji": "探す", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "届ける", "reading": "todokeru", "meaning": "to deliver, to report", "kanji": "届ける", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "回す", "reading": "mawasu", "meaning": "to turn, to pass around", "kanji": "回す", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "引っ越す", "reading": "hikkosu", "meaning": "to move (house)", "kanji": "引っ越す", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "連絡する", "reading": "renraku suru", "meaning": "to contact", "kanji": "連絡する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "相談する", "reading": "soudan suru", "meaning": "to consult, to discuss", "kanji": "相談する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "遅れる", "reading": "okureru", "meaning": "to be late", "kanji": "遅れる", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "間に合う", "reading": "maniau", "meaning": "to be in time", "kanji": "間に合う", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "濡れる", "reading": "nureru", "meaning": "to get wet", "kanji": "濡れる", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "直す", "reading": "naosu", "meaning": "to repair, to fix", "kanji": "直す", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "具合", "reading": "guai", "meaning": "condition (health/machine)", "kanji": "具合", "part_of_speech": "noun"},
+    {"word": "症状", "reading": "shoujou", "meaning": "symptom", "kanji": "症状", "part_of_speech": "noun"},
+    {"word": "風邪", "reading": "kaze", "meaning": "cold (illness)", "kanji": "風邪", "part_of_speech": "noun"},
+    {"word": "熱", "reading": "netsu", "meaning": "fever, heat", "kanji": "熱", "part_of_speech": "noun"},
+    {"word": "咳", "reading": "seki", "meaning": "cough", "kanji": "咳", "part_of_speech": "noun"},
+    {"word": "理由", "reading": "riyuu", "meaning": "reason", "kanji": "理由", "part_of_speech": "noun"},
+    {"word": "不動産屋", "reading": "fudousan'ya", "meaning": "real estate agency", "kanji": "不動産屋", "part_of_speech": "noun"},
+    {"word": "近所", "reading": "kinjo", "meaning": "neighbourhood", "kanji": "近所", "part_of_speech": "noun"},
+    {"word": "交通", "reading": "koutsuu", "meaning": "traffic, transportation", "kanji": "交通", "part_of_speech": "noun"},
+    {"word": "周り", "reading": "mawari", "meaning": "surroundings", "kanji": "周り", "part_of_speech": "noun"},
+    {"word": "便利", "reading": "benri", "meaning": "convenient", "kanji": "便利", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "嫌", "reading": "iya", "meaning": "unpleasant, disagreeable", "kanji": "嫌", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "実は", "reading": "jitsu wa", "meaning": "actually, to tell the truth", "kanji": "実は", "part_of_speech": "adverb"},
+    {"word": "もうすぐ", "reading": "mousugu", "meaning": "soon, shortly", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "そろそろ", "reading": "sorosoro", "meaning": "soon, it's about time", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "ちょっと", "reading": "chotto", "meaning": "a little, excuse me", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "どうしたんですか", "reading": "doushitan desu ka", "meaning": "What happened? / What's wrong?", "kanji": null, "part_of_speech": "expression"},
+    {"word": "すみませんが", "reading": "sumimasen ga", "meaning": "Excuse me, but...", "kanji": null, "part_of_speech": "expression"}
+  ],
+
+  "grammar": [
+    {
+      "title": "～んです (Explanation / Emphasis)",
+      "structure": "V-plain / い-adj / な-adj + な / N + な + んです",
+      "jlpt_level": 4,
+      "explanation": "～んです (formal: ～のです) is used when the speaker is explaining a situation, giving a reason, or emphasizing a fact. It conveys that there is a background context. In questions, it asks for an explanation ('Is it that...?'). For い-adjectives and verbs, attach んです directly to the plain form. For な-adjectives and nouns, insert な before んです.",
+      "example_sentences": "① どうしたんですか。\n  (Doushitan desu ka.)\n  — What happened? (asking for explanation)\n② 頭が痛いんです。\n  (Atama ga itai n desu.)\n  — It's that I have a headache. (explaining)\n③ あしたは試験なんです。\n  (Ashita wa shiken na n desu.)\n  — It's that I have an exam tomorrow."
+    },
+    {
+      "title": "～んですが (Preface to a Request or Question)",
+      "structure": "V-plain / Adj / N + な + んですが、～",
+      "jlpt_level": 4,
+      "explanation": "～んですが is used as a lead-in to a request, question, or proposal. By explaining the situation first with ～んですが, the following request sounds softer and more natural. Often the actual request is left unsaid if the context makes it obvious.",
+      "example_sentences": "④ 引っ越ししたいんですが、いい不動産屋を知りませんか。\n  (Hikkoshi shitai n desu ga, ii fudousan'ya wo shirimasen ka.)\n  — I'd like to move — do you know a good real estate agent?\n⑤ パソコンの調子が悪いんですが…\n  (Pasokon no choushi ga warui n desu ga...)\n  — My computer isn't working well... (implied: could you help?)"
+    },
+    {
+      "title": "～ていただけませんか (Very Polite Request)",
+      "structure": "V-て form + いただけませんか",
+      "jlpt_level": 4,
+      "explanation": "～ていただけませんか is the most polite way to make a request in everyday situations. It literally means 'Could I receive the favour of you doing...?' It is more polite than ～てもらえませんか or ～てくださいませんか, and is appropriate for strangers, superiors, or formal contexts.",
+      "example_sentences": "⑥ この漢字の読み方を教えていただけませんか。\n  (Kono kanji no yomikata wo oshiete itadakemasen ka.)\n  — Could you please tell me how to read this kanji?\n⑦ もう少しゆっくり話していただけませんか。\n  (Mou sukoshi yukkuri hanashite itadakemasen ka.)\n  — Could you please speak a little more slowly?"
+    }
+  ],
+
+  "conversation": {
+    "title": "What happened?",
+    "title_ja": "どうしたんですか",
+    "lines": [
+      {"speaker": "Tanaka", "japanese": "ミラーさん、顔色が悪いですね。どうしたんですか。", "romaji": "Miraa-san, kaoiro ga warui desu ne. Doushitan desu ka.", "english": "Mr. Miller, you look pale. What happened?"},
+      {"speaker": "Miller", "japanese": "実は、きのうから熱があるんです。", "romaji": "Jitsu wa, kinou kara netsu ga aru n desu.", "english": "Actually, I've had a fever since yesterday."},
+      {"speaker": "Tanaka", "japanese": "それは大変ですね。病院へ行きましたか。", "romaji": "Sore wa taihen desu ne. Byouin e ikimashita ka.", "english": "That's terrible. Did you go to the hospital?"},
+      {"speaker": "Miller", "japanese": "いいえ、まだなんです。いい病院を知らないんですが、どこかいい所はありませんか。", "romaji": "Iie, mada na n desu. Ii byouin wo shiranai n desu ga, doko ka ii tokoro wa arimasen ka.", "english": "No, not yet. I don't know a good hospital — is there a good place somewhere?"},
+      {"speaker": "Tanaka", "japanese": "駅の近くに田中医院がありますよ。よかったら、電話番号を調べましょうか。", "romaji": "Eki no chikaku ni Tanaka Iin ga arimasu yo. Yokattara, denwa bangou wo shirabemashō ka.", "english": "There's Tanaka Clinic near the station. If you'd like, shall I look up the phone number?"},
+      {"speaker": "Miller", "japanese": "すみません、調べていただけませんか。", "romaji": "Sumimasen, shirabete itadakemasen ka.", "english": "Excuse me, could you please look it up for me?"},
+      {"speaker": "Tanaka", "japanese": "いいですよ。ちょっと待ってくださいね。", "romaji": "Ii desu yo. Chotto matte kudasai ne.", "english": "Sure. Please wait a moment."}
+    ]
+  }
+}

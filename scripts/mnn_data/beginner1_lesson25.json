@@ -1,0 +1,90 @@
+{
+  "source": "Minna No Nihongo Beginner I",
+  "lesson_number": 25,
+  "title": "Lesson 25 – Conditionals and Concessions",
+  "title_ja": "第25課",
+  "jlpt_level": 5,
+  "description": "Bedingungen und Einräumungen: ～たら (wenn/falls), ～ても (auch wenn/obwohl), hypothetische Situationen.",
+
+  "vocabulary": [
+    {"word": "おもいだします", "reading": "omoidashimasu", "meaning": "to remember, to recall", "kanji": "思い出します", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "わすれます", "reading": "wasuremasu", "meaning": "to forget", "kanji": "忘れます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "まにあいます", "reading": "maniaimasu", "meaning": "to be in time", "kanji": "間に合います", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "おくれます", "reading": "okuremasu", "meaning": "to be late", "kanji": "遅れます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "やめます", "reading": "yamemasu", "meaning": "to quit, to stop", "kanji": "辞めます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "こまります", "reading": "komarimasu", "meaning": "to be troubled, to be in difficulty", "kanji": "困ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "あきらめます", "reading": "akiramemasu", "meaning": "to give up", "kanji": "諦めます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "がんばります", "reading": "ganbarimasu", "meaning": "to do one's best", "kanji": "頑張ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "たすかります", "reading": "tasukarimasu", "meaning": "to be saved, to be helped", "kanji": "助かります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "うかります", "reading": "ukarimasu", "meaning": "to pass (an exam)", "kanji": "受かります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "おちます", "reading": "ochimasu", "meaning": "to fail (an exam), to fall", "kanji": "落ちます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "そうだんします", "reading": "soudan shimasu", "meaning": "to consult, to discuss", "kanji": "相談します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "しけん", "reading": "shiken", "meaning": "exam, test", "kanji": "試験", "part_of_speech": "noun"},
+    {"word": "めんせつ", "reading": "mensetsu", "meaning": "interview", "kanji": "面接", "part_of_speech": "noun"},
+    {"word": "きかい", "reading": "kikai", "meaning": "opportunity, chance", "kanji": "機会", "part_of_speech": "noun"},
+    {"word": "けっか", "reading": "kekka", "meaning": "result", "kanji": "結果", "part_of_speech": "noun"},
+    {"word": "もんだい", "reading": "mondai", "meaning": "problem, question", "kanji": "問題", "part_of_speech": "noun"},
+    {"word": "こたえ", "reading": "kotae", "meaning": "answer", "kanji": "答え", "part_of_speech": "noun"},
+    {"word": "じょうけん", "reading": "jouken", "meaning": "condition, requirement", "kanji": "条件", "part_of_speech": "noun"},
+    {"word": "きゅうりょう", "reading": "kyuuryou", "meaning": "salary, pay", "kanji": "給料", "part_of_speech": "noun"},
+    {"word": "しゅうしょく", "reading": "shuushoku", "meaning": "finding employment", "kanji": "就職", "part_of_speech": "noun"},
+    {"word": "にゅうがく", "reading": "nyuugaku", "meaning": "enrollment, entering school", "kanji": "入学", "part_of_speech": "noun"},
+    {"word": "そつぎょう", "reading": "sotsugyou", "meaning": "graduation", "kanji": "卒業", "part_of_speech": "noun"},
+    {"word": "たからくじ", "reading": "takarakuji", "meaning": "lottery", "kanji": "宝くじ", "part_of_speech": "noun"},
+    {"word": "ゆうしょう", "reading": "yuushou", "meaning": "winning (a championship)", "kanji": "優勝", "part_of_speech": "noun"},
+    {"word": "ざんねん", "reading": "zannen", "meaning": "regrettable, disappointing", "kanji": "残念", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "ふあん", "reading": "fuan", "meaning": "anxious, uneasy", "kanji": "不安", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "むずかしい", "reading": "muzukashii", "meaning": "difficult", "kanji": "難しい", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "もし", "reading": "moshi", "meaning": "if (hypothetical)", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "たとえ", "reading": "tatoe", "meaning": "even if (emphasis)", "kanji": null, "part_of_speech": "adverb"}
+  ],
+
+  "vocabulary_countries": [],
+
+  "grammar": [
+    {
+      "title": "V た form + ら (Conditional: If/When ~)",
+      "structure": "V た form + ら、～",
+      "jlpt_level": 5,
+      "explanation": "～たら is a conditional form meaning 'if' or 'when'. It is formed by adding ら to the た form of verbs. ～たら indicates that when or if the first action/event is completed, then the second action/event will happen. It can express hypothetical conditions (with もし) or temporal sequences. ～たら is the most versatile conditional in Japanese and can be used in most situations.",
+      "example_sentences": "① 雨が 降ったら、出かけません。\n  (Ame ga futtara, dekakemasen.)\n  — If it rains, I won't go out.\n② 駅に 着いたら、電話してください。\n  (Eki ni tsuitara, denwa shite kudasai.)\n  — When you arrive at the station, please call me.\n③ もし 宝くじに 当たったら、旅行します。\n  (Moshi takarakuji ni atattara, ryokou shimasu.)\n  — If I won the lottery, I would travel."
+    },
+    {
+      "title": "い-Adj / な-Adj / N + たら (If it is ~)",
+      "structure": "い-Adj (-い → -かったら) / な-Adj + だったら / N + だったら",
+      "jlpt_level": 5,
+      "explanation": "The ～たら conditional can also be used with adjectives and nouns. For い-adjectives, replace い with かったら. For な-adjectives and nouns, add だったら. The negative forms are: い-Adj → ～くなかったら, な-Adj/N → ～じゃなかったら.",
+      "example_sentences": "④ 安かったら、買います。\n  (Yasukattara, kaimasu.)\n  — If it's cheap, I'll buy it.\n⑤ 暇だったら、映画を 見に 行きませんか。\n  (Hima dattara, eiga o mi ni ikimasen ka.)\n  — If you're free, shall we go see a movie?\n⑥ 日曜日だったら、大丈夫です。\n  (Nichiyoubi dattara, daijoubu desu.)\n  — If it's Sunday, that's fine."
+    },
+    {
+      "title": "V て form + も (Even if/though ~)",
+      "structure": "V て form + も、～",
+      "jlpt_level": 5,
+      "explanation": "～ても means 'even if' or 'even though'. It expresses a concession — the result in the main clause is true regardless of the condition in the ～ても clause. For verbs, attach も to the て form. This pattern is used when the expected result does not change despite a certain condition.",
+      "example_sentences": "⑦ 雨が 降っても、サッカーを します。\n  (Ame ga futte mo, sakkaa o shimasu.)\n  — Even if it rains, I will play soccer.\n⑧ 何回 聞いても、わかりません。\n  (Nankai kiite mo, wakarimasen.)\n  — Even if I ask many times, I don't understand.\n⑨ たくさん 食べても、太りません。\n  (Takusan tabete mo, futorimasen.)\n  — Even if I eat a lot, I don't gain weight."
+    },
+    {
+      "title": "い-Adj / な-Adj / N + ても (Even if it is ~)",
+      "structure": "い-Adj (-い → -くても) / な-Adj + でも / N + でも",
+      "jlpt_level": 5,
+      "explanation": "The ～ても concessive form extends to adjectives and nouns. For い-adjectives, replace い with くても. For な-adjectives and nouns, use でも. The result in the main clause holds true regardless of the state described.",
+      "example_sentences": "⑩ 高くても、買いたいです。\n  (Takakute mo, kaitai desu.)\n  — Even if it's expensive, I want to buy it.\n⑪ 問題が 難しくても、諦めません。\n  (Mondai ga muzukashikute mo, akiramemasen.)\n  — Even if the problem is difficult, I won't give up.\n⑫ 残念でも、次の 機会に 頑張ります。\n  (Zannen demo, tsugi no kikai ni ganbarimasu.)\n  — Even if it's disappointing, I'll do my best next time."
+    }
+  ],
+
+  "conversation": {
+    "title": "If you pass the exam",
+    "title_ja": "試験に 受かったら",
+    "lines": [
+      {"speaker": "Hayashi", "japanese": "来月の 試験の 準備は どうですか。", "romaji": "Raigetsu no shiken no junbi wa dou desu ka.", "english": "How is your preparation for next month's exam?"},
+      {"speaker": "Ogawa", "japanese": "毎日 勉強していますが、ちょっと 不安です。", "romaji": "Mainichi benkyou shite imasu ga, chotto fuan desu.", "english": "I'm studying every day, but I'm a bit anxious."},
+      {"speaker": "Hayashi", "japanese": "試験に 受かったら、どう しますか。", "romaji": "Shiken ni ukattara, dou shimasu ka.", "english": "If you pass the exam, what will you do?"},
+      {"speaker": "Ogawa", "japanese": "受かったら、東京の 大学に 入学したいです。", "romaji": "Ukattara, Toukyou no daigaku ni nyuugaku shitai desu.", "english": "If I pass, I want to enroll at a university in Tokyo."},
+      {"speaker": "Hayashi", "japanese": "もし 受からなかったら？", "romaji": "Moshi ukaranakattara?", "english": "What if you don't pass?"},
+      {"speaker": "Ogawa", "japanese": "落ちても、諦めません。もう 一度 頑張ります。", "romaji": "Ochite mo, akiramemasen. Mou ichido ganbarimasu.", "english": "Even if I fail, I won't give up. I'll try again."},
+      {"speaker": "Hayashi", "japanese": "その 気持ちが あったら、きっと 大丈夫ですよ。", "romaji": "Sono kimochi ga attara, kitto daijoubu desu yo.", "english": "If you have that spirit, I'm sure you'll be fine."},
+      {"speaker": "Ogawa", "japanese": "ありがとうございます。困ったら、また 相談しても いいですか。", "romaji": "Arigatou gozaimasu. Komattara, mata soudan shite mo ii desu ka.", "english": "Thank you. If I'm in trouble, may I consult you again?"},
+      {"speaker": "Hayashi", "japanese": "もちろんです。いつでも 来てください。", "romaji": "Mochiron desu. Itsudemo kite kudasai.", "english": "Of course. Please come anytime."}
+    ]
+  }
+}

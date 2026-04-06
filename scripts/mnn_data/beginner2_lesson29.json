@@ -1,0 +1,78 @@
+{
+  "source": "Minna No Nihongo Beginner II",
+  "lesson_number": 29,
+  "title": "Lesson 29 – Completion and Regret",
+  "title_ja": "第29課",
+  "jlpt_level": 4,
+  "description": "Abschluss/Bedauern mit ～てしまいます/～てしまいました, umgangssprachliche Formen ～ちゃった/～じゃった.",
+
+  "vocabulary": [
+    {"word": "落とす", "reading": "otosu", "meaning": "to drop, to lose (something)", "kanji": "落とす", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "倒れる", "reading": "taoreru", "meaning": "to collapse, to fall down", "kanji": "倒れる", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "ぶつける", "reading": "butsukeru", "meaning": "to bump, to hit against", "kanji": null, "part_of_speech": "verb", "verb_group": 2},
+    {"word": "汚す", "reading": "yogosu", "meaning": "to make dirty, to stain", "kanji": "汚す", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "壊す", "reading": "kowasu", "meaning": "to break, to destroy", "kanji": "壊す", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "壊れる", "reading": "kowareru", "meaning": "to break (intransitive), to be broken", "kanji": "壊れる", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "無くす", "reading": "nakusu", "meaning": "to lose (something)", "kanji": "無くす", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "忘れる", "reading": "wasureru", "meaning": "to forget", "kanji": "忘れる", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "寝坊する", "reading": "nebou suru", "meaning": "to oversleep", "kanji": "寝坊する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "遅刻する", "reading": "chikoku suru", "meaning": "to be late (for appointment)", "kanji": "遅刻する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "諦める", "reading": "akirameru", "meaning": "to give up", "kanji": "諦める", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "太る", "reading": "futoru", "meaning": "to gain weight", "kanji": "太る", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "痩せる", "reading": "yaseru", "meaning": "to lose weight", "kanji": "痩せる", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "乗り過ごす", "reading": "norisugosu", "meaning": "to ride past (one's stop)", "kanji": "乗り過ごす", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "濡らす", "reading": "nurasu", "meaning": "to wet, to make wet", "kanji": "濡らす", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "財布", "reading": "saifu", "meaning": "wallet, purse", "kanji": "財布", "part_of_speech": "noun"},
+    {"word": "鍵", "reading": "kagi", "meaning": "key", "kanji": "鍵", "part_of_speech": "noun"},
+    {"word": "花瓶", "reading": "kabin", "meaning": "flower vase", "kanji": "花瓶", "part_of_speech": "noun"},
+    {"word": "書類", "reading": "shorui", "meaning": "documents, papers", "kanji": "書類", "part_of_speech": "noun"},
+    {"word": "締め切り", "reading": "shimekiri", "meaning": "deadline", "kanji": "締め切り", "part_of_speech": "noun"},
+    {"word": "うっかり", "reading": "ukkari", "meaning": "carelessly, absent-mindedly", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "つい", "reading": "tsui", "meaning": "unintentionally, accidentally", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "全部", "reading": "zenbu", "meaning": "all, everything", "kanji": "全部", "part_of_speech": "noun"},
+    {"word": "ケーキ", "reading": "keeki", "meaning": "cake", "kanji": null, "part_of_speech": "noun"},
+    {"word": "目覚まし時計", "reading": "mezamashi dokei", "meaning": "alarm clock", "kanji": "目覚まし時計", "part_of_speech": "noun"},
+    {"word": "残念", "reading": "zannen", "meaning": "regrettable, unfortunate", "kanji": "残念", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "しまった", "reading": "shimatta", "meaning": "Oh no! (expression of regret)", "kanji": null, "part_of_speech": "expression"},
+    {"word": "やっぱり", "reading": "yappari", "meaning": "as I thought, after all (colloquial)", "kanji": null, "part_of_speech": "adverb"}
+  ],
+
+  "grammar": [
+    {
+      "title": "～てしまいます (Completion)",
+      "structure": "V-て form + しまいます",
+      "jlpt_level": 4,
+      "explanation": "～てしまいます expresses that an action is/will be completed entirely or thoroughly. It emphasizes the completion of an action, often something done in its entirety. Used when the speaker wants to convey that the whole action is finished.",
+      "example_sentences": "① この本はもう読んでしまいました。\n  (Kono hon wa mou yonde shimaimashita.)\n  — I have already finished reading this book.\n② 宿題を全部やってしまいましょう。\n  (Shukudai wo zenbu yatte shimaimashou.)\n  — Let's finish all the homework."
+    },
+    {
+      "title": "～てしまいました (Regret / Unintentional Result)",
+      "structure": "V-て form + しまいました",
+      "jlpt_level": 4,
+      "explanation": "～てしまいました is used to express regret, disappointment, or an unfortunate outcome. It conveys that something happened unintentionally or that the speaker feels sorry about the result. This is one of the most common uses of ～てしまう in daily conversation.",
+      "example_sentences": "③ 電車の中に傘を忘れてしまいました。\n  (Densha no naka ni kasa wo wasurete shimaimashita.)\n  — I accidentally left my umbrella on the train.\n④ 約束の時間に遅れてしまいました。\n  (Yakusoku no jikan ni okurete shimaimashita.)\n  — I ended up being late for the appointment."
+    },
+    {
+      "title": "～ちゃった / ～じゃった (Colloquial ～てしまった)",
+      "structure": "V-て → ～ちゃった (te-shimatta), V-で → ～じゃった (de-shimatta)",
+      "jlpt_level": 4,
+      "explanation": "In colloquial speech, ～てしまう contracts to ～ちゃう, and ～でしまう contracts to ～じゃう. The past forms are ～ちゃった and ～じゃった. For example: 食べてしまった → 食べちゃった, 飲んでしまった → 飲んじゃった. These forms are very common in casual conversation but should not be used in formal writing or speech.",
+      "example_sentences": "⑤ ケーキ、全部食べちゃった。\n  (Keeki, zenbu tabechatta.)\n  — I ate all the cake. (oops)\n⑥ 財布を無くしちゃったんです。\n  (Saifu wo nakushichattan desu.)\n  — I lost my wallet. (unfortunately)\n⑦ 電車で寝ちゃって、乗り過ごしちゃった。\n  (Densha de nechatte, norisugoshichatta.)\n  — I fell asleep on the train and missed my stop."
+    }
+  ],
+
+  "conversation": {
+    "title": "I overslept!",
+    "title_ja": "寝坊しちゃった！",
+    "lines": [
+      {"speaker": "Sato", "japanese": "あれ、田中さん、今日は遅かったね。", "romaji": "Are, Tanaka-san, kyou wa osokatta ne.", "english": "Oh, Mr. Tanaka, you're late today."},
+      {"speaker": "Tanaka", "japanese": "すみません。寝坊してしまって…目覚まし時計が壊れちゃったんです。", "romaji": "Sumimasen. Nebou shite shimatte... mezamashi dokei ga kowarechattan desu.", "english": "I'm sorry. I overslept... My alarm clock broke."},
+      {"speaker": "Sato", "japanese": "それは大変だったね。ところで、きのうのレポートはもう出した？", "romaji": "Sore wa taihen datta ne. Tokoro de, kinou no repooto wa mou dashita?", "english": "That's rough. By the way, did you already submit yesterday's report?"},
+      {"speaker": "Tanaka", "japanese": "あ、しまった！うっかり忘れてしまいました。", "romaji": "A, shimatta! Ukkari wasurete shimaimashita.", "english": "Oh no! I carelessly forgot about it!"},
+      {"speaker": "Sato", "japanese": "締め切りは今日の5時だよ。急いだほうがいいよ。", "romaji": "Shimekiri wa kyou no goji da yo. Isoida hou ga ii yo.", "english": "The deadline is 5 o'clock today. You'd better hurry."},
+      {"speaker": "Tanaka", "japanese": "実はデータも全部消しちゃって、最初からやり直さなければなりません。", "romaji": "Jitsu wa deeta mo zenbu keshichatte, saisho kara yarinaosanakereba narimasen.", "english": "Actually, I accidentally deleted all the data too, so I have to redo it from scratch."},
+      {"speaker": "Sato", "japanese": "え、本当？大丈夫？手伝おうか。", "romaji": "E, hontou? Daijoubu? Tetsudaou ka.", "english": "Really? Are you OK? Shall I help?"},
+      {"speaker": "Tanaka", "japanese": "ありがとう。助かるよ。今日は本当にいい日じゃないなあ。", "romaji": "Arigatou. Tasukaru yo. Kyou wa hontou ni ii hi ja nai naa.", "english": "Thanks. That would be a big help. Today is really not a good day."}
+    ]
+  }
+}

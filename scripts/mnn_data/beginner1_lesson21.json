@@ -1,0 +1,92 @@
+{
+  "source": "Minna No Nihongo Beginner I",
+  "lesson_number": 21,
+  "title": "Lesson 21 – Expressing Opinions",
+  "title_ja": "第21課",
+  "jlpt_level": 5,
+  "description": "Meinungen und Zitate ausdrücken: Plain form + と思います, ～と言います, ～でしょう？, Zitate mit Plain form.",
+
+  "vocabulary": [
+    {"word": "おもいます", "reading": "omoimasu", "meaning": "to think", "kanji": "思います", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "いいます", "reading": "iimasu", "meaning": "to say, to tell", "kanji": "言います", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "かちます", "reading": "kachimasu", "meaning": "to win", "kanji": "勝ちます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "まけます", "reading": "makemasu", "meaning": "to lose (a game)", "kanji": "負けます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "なります", "reading": "narimasu", "meaning": "to become", "kanji": null, "part_of_speech": "verb", "verb_group": 1},
+    {"word": "あります", "reading": "arimasu", "meaning": "to take place, to be held", "kanji": null, "part_of_speech": "verb", "verb_group": 1},
+    {"word": "しんじます", "reading": "shinjimasu", "meaning": "to believe", "kanji": "信じます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "かんがえます", "reading": "kangaemasu", "meaning": "to consider, to think about", "kanji": "考えます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "つたえます", "reading": "tsutaemasu", "meaning": "to convey, to pass on", "kanji": "伝えます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "いけん", "reading": "iken", "meaning": "opinion", "kanji": "意見", "part_of_speech": "noun"},
+    {"word": "ニュース", "reading": "nyuusu", "meaning": "news", "kanji": null, "part_of_speech": "noun"},
+    {"word": "しあい", "reading": "shiai", "meaning": "match, game", "kanji": "試合", "part_of_speech": "noun"},
+    {"word": "せんきょ", "reading": "senkyo", "meaning": "election", "kanji": "選挙", "part_of_speech": "noun"},
+    {"word": "せいじ", "reading": "seiji", "meaning": "politics", "kanji": "政治", "part_of_speech": "noun"},
+    {"word": "けいざい", "reading": "keizai", "meaning": "economy", "kanji": "経済", "part_of_speech": "noun"},
+    {"word": "しょうらい", "reading": "shourai", "meaning": "future", "kanji": "将来", "part_of_speech": "noun"},
+    {"word": "ゆめ", "reading": "yume", "meaning": "dream", "kanji": "夢", "part_of_speech": "noun"},
+    {"word": "うそ", "reading": "uso", "meaning": "lie", "kanji": "嘘", "part_of_speech": "noun"},
+    {"word": "ほんとう", "reading": "hontou", "meaning": "truth, reality", "kanji": "本当", "part_of_speech": "noun"},
+    {"word": "せかい", "reading": "sekai", "meaning": "world", "kanji": "世界", "part_of_speech": "noun"},
+    {"word": "しゃかい", "reading": "shakai", "meaning": "society", "kanji": "社会", "part_of_speech": "noun"},
+    {"word": "ぶんか", "reading": "bunka", "meaning": "culture", "kanji": "文化", "part_of_speech": "noun"},
+    {"word": "かならず", "reading": "kanarazu", "meaning": "certainly, without fail", "kanji": "必ず", "part_of_speech": "adverb"},
+    {"word": "たぶん", "reading": "tabun", "meaning": "probably, perhaps", "kanji": "多分", "part_of_speech": "adverb"},
+    {"word": "きっと", "reading": "kitto", "meaning": "surely, certainly", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "ほんとうに", "reading": "hontou ni", "meaning": "really, truly", "kanji": "本当に", "part_of_speech": "adverb"},
+    {"word": "さいきん", "reading": "saikin", "meaning": "recently", "kanji": "最近", "part_of_speech": "noun"},
+    {"word": "テレビばんぐみ", "reading": "terebi bangumi", "meaning": "TV program", "kanji": "テレビ番組", "part_of_speech": "noun"},
+    {"word": "ばんぐみ", "reading": "bangumi", "meaning": "program (TV, radio)", "kanji": "番組", "part_of_speech": "noun"},
+    {"word": "むり", "reading": "muri", "meaning": "impossible, unreasonable", "kanji": "無理", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "ふくざつ", "reading": "fukuzatsu", "meaning": "complicated, complex", "kanji": "複雑", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "ひつよう", "reading": "hitsuyou", "meaning": "necessary", "kanji": "必要", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "すばらしい", "reading": "subarashii", "meaning": "wonderful, splendid", "kanji": "素晴らしい", "part_of_speech": "i-adjective", "adjective_type": "i"}
+  ],
+
+  "vocabulary_countries": [],
+
+  "grammar": [
+    {
+      "title": "Plain form と思います (I think that...)",
+      "structure": "Plain form + と思います",
+      "jlpt_level": 5,
+      "explanation": "と思います is used to express the speaker's opinion or guess. The plain form of a verb, adjective, or noun sentence is placed before と思います. For na-adjectives and nouns in the present affirmative, だ is added before と思います (e.g., しずかだと思います, 学生だと思います). The negative form と思いません means the speaker does not think something is the case.",
+      "example_sentences": "① 明日は 雨が 降ると 思います。\n  (Ashita wa ame ga furu to omoimasu.)\n  — I think it will rain tomorrow.\n② あの 映画は おもしろいと 思います。\n  (Ano eiga wa omoshiroi to omoimasu.)\n  — I think that movie is interesting.\n③ この 問題は 複雑だと 思います。\n  (Kono mondai wa fukuzatsu da to omoimasu.)\n  — I think this problem is complicated."
+    },
+    {
+      "title": "Plain form と言います (Say that...)",
+      "structure": "Plain form + と言います",
+      "jlpt_level": 5,
+      "explanation": "と言います is used to quote what someone said. The plain form of a sentence is placed before と言います to report what was said. Direct quotes use 「 」, while indirect quotes use the plain form. When quoting names of things, ～と言います means 'it is called ~'.",
+      "example_sentences": "④ 田中さんは 「明日 来る」と 言いました。\n  (Tanaka-san wa 'ashita kuru' to iimashita.)\n  — Mr. Tanaka said he would come tomorrow.\n⑤ 天気予報は 明日 晴れると 言っていました。\n  (Tenki yohou wa ashita hareru to itte imashita.)\n  — The weather forecast said it will be sunny tomorrow.\n⑥ これは 日本語で 何と 言いますか。\n  (Kore wa nihongo de nan to iimasu ka.)\n  — What do you call this in Japanese?"
+    },
+    {
+      "title": "～でしょう？ (Isn't it? / Right?)",
+      "structure": "Plain form + でしょう？",
+      "jlpt_level": 5,
+      "explanation": "でしょう？ with a rising intonation is used to confirm something the speaker believes to be true. It seeks agreement from the listener, similar to 'isn't it?' or 'right?' in English. The plain form of the sentence comes before でしょう. For na-adjectives and nouns, だ is dropped before でしょう.",
+      "example_sentences": "⑦ 明日は 日曜日でしょう？\n  (Ashita wa nichiyoubi deshou?)\n  — Tomorrow is Sunday, isn't it?\n⑧ この 料理は おいしいでしょう？\n  (Kono ryouri wa oishii deshou?)\n  — This dish is delicious, isn't it?\n⑨ 鈴木さんも 来るでしょう？\n  (Suzuki-san mo kuru deshou?)\n  — Suzuki is coming too, right?"
+    },
+    {
+      "title": "Plain form による引用 (Quotation with Plain Form)",
+      "structure": "(Sentence in plain form) + と + Verb of communication",
+      "jlpt_level": 5,
+      "explanation": "The particle と is used to mark quotations and reported speech. The sentence before と is always in the plain form when indirectly quoting. Various verbs of communication can follow と, such as 言います (say), 思います (think), 聞きます (hear/ask), 書きます (write), and 伝えます (convey). This structure is essential for reporting information from other sources.",
+      "example_sentences": "⑩ 新聞に 経済が よくなると 書いてありました。\n  (Shinbun ni keizai ga yoku naru to kaite arimashita.)\n  — It was written in the newspaper that the economy will improve.\n⑪ 友達に 来週 試合が あると 聞きました。\n  (Tomodachi ni raishuu shiai ga aru to kikimashita.)\n  — I heard from a friend that there is a match next week."
+    }
+  ],
+
+  "conversation": {
+    "title": "What do you think about the future?",
+    "title_ja": "将来について どう 思いますか",
+    "lines": [
+      {"speaker": "Yamada", "japanese": "鈴木さん、最近の ニュースを 見ましたか。", "romaji": "Suzuki-san, saikin no nyuusu o mimashita ka.", "english": "Suzuki, did you see the recent news?"},
+      {"speaker": "Suzuki", "japanese": "ええ、見ました。経済が よくなると 言っていましたね。", "romaji": "Ee, mimashita. Keizai ga yoku naru to itte imashita ne.", "english": "Yes, I did. They said the economy would improve, right?"},
+      {"speaker": "Yamada", "japanese": "そうですね。でも、わたしは まだ 難しいと 思います。", "romaji": "Sou desu ne. Demo, watashi wa mada muzukashii to omoimasu.", "english": "That's right. But I think it's still difficult."},
+      {"speaker": "Suzuki", "japanese": "どうしてですか。", "romaji": "Doushite desu ka.", "english": "Why is that?"},
+      {"speaker": "Yamada", "japanese": "社会の 問題が 複雑だと 思うからです。", "romaji": "Shakai no mondai ga fukuzatsu da to omou kara desu.", "english": "Because I think society's problems are complicated."},
+      {"speaker": "Suzuki", "japanese": "そうですか。でも、田中先生は きっと よくなると 言っていましたよ。", "romaji": "Sou desu ka. Demo, Tanaka-sensei wa kitto yoku naru to itte imashita yo.", "english": "I see. But Teacher Tanaka said it will surely get better."},
+      {"speaker": "Yamada", "japanese": "田中先生の 意見は いつも すばらしいでしょう？", "romaji": "Tanaka-sensei no iken wa itsumo subarashii deshou?", "english": "Teacher Tanaka's opinions are always wonderful, aren't they?"},
+      {"speaker": "Suzuki", "japanese": "ええ、本当に そう 思います。", "romaji": "Ee, hontou ni sou omoimasu.", "english": "Yes, I really think so."}
+    ]
+  }
+}

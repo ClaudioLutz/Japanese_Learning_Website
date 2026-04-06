@@ -1,0 +1,98 @@
+{
+  "source": "Minna No Nihongo Beginner I",
+  "lesson_number": 2,
+  "title": "Lesson 2 – Demonstrative Pronouns",
+  "title_ja": "第2課",
+  "jlpt_level": 5,
+  "description": "Demonstrativpronomen これ/それ/あれ, この/その/あの + N, Auswahlfragen N₁ですか N₂ですか.",
+
+  "vocabulary": [
+    {"word": "これ", "reading": "kore", "meaning": "this (thing here)", "kanji": null, "part_of_speech": "noun"},
+    {"word": "それ", "reading": "sore", "meaning": "that (thing near you)", "kanji": null, "part_of_speech": "noun"},
+    {"word": "あれ", "reading": "are", "meaning": "that (thing over there)", "kanji": null, "part_of_speech": "noun"},
+    {"word": "この", "reading": "kono", "meaning": "this ~ (modifier)", "kanji": null},
+    {"word": "その", "reading": "sono", "meaning": "that ~ (near you, modifier)", "kanji": null},
+    {"word": "あの", "reading": "ano", "meaning": "that ~ (over there, modifier)", "kanji": null},
+    {"word": "ほん", "reading": "hon", "meaning": "book", "kanji": "本", "part_of_speech": "noun"},
+    {"word": "じしょ", "reading": "jisho", "meaning": "dictionary", "kanji": "辞書", "part_of_speech": "noun"},
+    {"word": "ざっし", "reading": "zasshi", "meaning": "magazine", "kanji": "雑誌", "part_of_speech": "noun"},
+    {"word": "しんぶん", "reading": "shinbun", "meaning": "newspaper", "kanji": "新聞", "part_of_speech": "noun"},
+    {"word": "ノート", "reading": "nooto", "meaning": "notebook", "kanji": null, "part_of_speech": "noun"},
+    {"word": "てちょう", "reading": "techou", "meaning": "pocket notebook, planner", "kanji": "手帳", "part_of_speech": "noun"},
+    {"word": "めいし", "reading": "meishi", "meaning": "business card", "kanji": "名刺", "part_of_speech": "noun"},
+    {"word": "カード", "reading": "kaado", "meaning": "card", "kanji": null, "part_of_speech": "noun"},
+    {"word": "えんぴつ", "reading": "enpitsu", "meaning": "pencil", "kanji": "鉛筆", "part_of_speech": "noun"},
+    {"word": "ボールペン", "reading": "boorupen", "meaning": "ballpoint pen", "kanji": null, "part_of_speech": "noun"},
+    {"word": "シャープペンシル", "reading": "shaapupenshiru", "meaning": "mechanical pencil", "kanji": null, "part_of_speech": "noun"},
+    {"word": "かぎ", "reading": "kagi", "meaning": "key", "kanji": "鍵", "part_of_speech": "noun"},
+    {"word": "とけい", "reading": "tokei", "meaning": "watch, clock", "kanji": "時計", "part_of_speech": "noun"},
+    {"word": "かさ", "reading": "kasa", "meaning": "umbrella", "kanji": "傘", "part_of_speech": "noun"},
+    {"word": "かばん", "reading": "kaban", "meaning": "bag, briefcase", "kanji": null, "part_of_speech": "noun"},
+    {"word": "テレビ", "reading": "terebi", "meaning": "television", "kanji": null, "part_of_speech": "noun"},
+    {"word": "ラジオ", "reading": "rajio", "meaning": "radio", "kanji": null, "part_of_speech": "noun"},
+    {"word": "カメラ", "reading": "kamera", "meaning": "camera", "kanji": null, "part_of_speech": "noun"},
+    {"word": "コンピューター", "reading": "konpyuutaa", "meaning": "computer", "kanji": null, "part_of_speech": "noun"},
+    {"word": "くるま", "reading": "kuruma", "meaning": "car, vehicle", "kanji": "車", "part_of_speech": "noun"},
+    {"word": "つくえ", "reading": "tsukue", "meaning": "desk", "kanji": "机", "part_of_speech": "noun"},
+    {"word": "チョコレート", "reading": "chokoreeto", "meaning": "chocolate", "kanji": null, "part_of_speech": "noun"},
+    {"word": "コーヒー", "reading": "koohii", "meaning": "coffee", "kanji": null, "part_of_speech": "noun"},
+    {"word": "えいご", "reading": "eigo", "meaning": "English language", "kanji": "英語", "part_of_speech": "noun"},
+    {"word": "にほんご", "reading": "nihongo", "meaning": "Japanese language", "kanji": "日本語", "part_of_speech": "noun"},
+    {"word": "なん", "reading": "nan", "meaning": "what", "kanji": "何", "part_of_speech": "noun"},
+    {"word": "そう", "reading": "sou", "meaning": "so, that's right", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "ちがいます", "reading": "chigaimasu", "meaning": "No, that's wrong / It's different", "kanji": "違います", "part_of_speech": "expression"},
+    {"word": "そうですか", "reading": "sou desu ka", "meaning": "Is that so? / I see", "kanji": null, "part_of_speech": "expression"},
+    {"word": "あのう", "reading": "anou", "meaning": "well, um (hesitation)", "kanji": null, "part_of_speech": "expression"},
+    {"word": "おみやげ", "reading": "omiyage", "meaning": "souvenir, gift", "kanji": "お土産", "part_of_speech": "noun"},
+    {"word": "どうも", "reading": "doumo", "meaning": "thank you (casual)", "kanji": null, "part_of_speech": "expression"},
+    {"word": "どうぞ", "reading": "douzo", "meaning": "please (offering)", "kanji": null, "part_of_speech": "expression"}
+  ],
+
+  "vocabulary_countries": [],
+
+  "grammar": [
+    {
+      "title": "これ/それ/あれ (Demonstrative Pronouns for Things)",
+      "structure": "これ / それ / あれ は N です",
+      "jlpt_level": 5,
+      "explanation": "これ refers to a thing near the speaker. それ refers to a thing near the listener. あれ refers to a thing far from both the speaker and the listener. These words are used as pronouns to point out things.",
+      "example_sentences": "① これは 辞書です。\n  (Kore wa jisho desu.)\n  — This is a dictionary.\n② それは 新聞ですか。\n  (Sore wa shinbun desu ka.)\n  — Is that a newspaper?\n③ あれは テレビです。\n  (Are wa terebi desu.)\n  — That over there is a television."
+    },
+    {
+      "title": "この/その/あの N (Demonstrative Modifiers)",
+      "structure": "この / その / あの + N",
+      "jlpt_level": 5,
+      "explanation": "この, その, and あの modify nouns and cannot stand alone. この + noun refers to a thing or person near the speaker. その + noun refers to a thing or person near the listener. あの + noun refers to a thing or person far from both speaker and listener.",
+      "example_sentences": "④ この本は わたしのです。\n  (Kono hon wa watashi no desu.)\n  — This book is mine.\n⑤ その鍵は 田中さんのです。\n  (Sono kagi wa Tanaka-san no desu.)\n  — That key is Mr. Tanaka's.\n⑥ あの車は だれのですか。\n  (Ano kuruma wa dare no desu ka.)\n  — Whose car is that over there?"
+    },
+    {
+      "title": "N₁ですか、N₂ですか (Choice Questions)",
+      "structure": "N₁ ですか、N₂ ですか",
+      "jlpt_level": 5,
+      "explanation": "This pattern is used to ask the listener to choose between two or more options. The answer is not はい or いいえ but one of the given options.",
+      "example_sentences": "⑦ これは 英語の 本ですか、日本語の 本ですか。\n  (Kore wa eigo no hon desu ka, nihongo no hon desu ka.)\n  — Is this an English book or a Japanese book?\n…日本語の 本です。(Nihongo no hon desu.) — It's a Japanese book."
+    },
+    {
+      "title": "N₁ の N₂ (Possession and Relation — expanded)",
+      "structure": "N₁ の N₂",
+      "jlpt_level": 5,
+      "explanation": "In Lesson 2, の expands its usage. N₁ can indicate the possessor (watashi no hon = my book), the country or language of origin, or the topic area of something. When the context makes the second noun obvious, it can be omitted: わたしのです means 'It is mine'.",
+      "example_sentences": "⑧ これは わたしの 傘です。\n  (Kore wa watashi no kasa desu.)\n  — This is my umbrella.\n⑨ この本は だれのですか。\n  (Kono hon wa dare no desu ka.)\n  — Whose book is this?\n…山田さんのです。(Yamada-san no desu.) — It is Ms. Yamada's."
+    }
+  ],
+
+  "conversation": {
+    "title": "Whose umbrella is this?",
+    "title_ja": "これは だれの かさですか",
+    "lines": [
+      {"speaker": "Tanaka", "japanese": "すみません。それは わたしの かばんですか。", "romaji": "Sumimasen. Sore wa watashi no kaban desu ka.", "english": "Excuse me. Is that my bag?"},
+      {"speaker": "Suzuki", "japanese": "これですか。いいえ、ちがいます。これは 山田さんのです。", "romaji": "Kore desu ka. Iie, chigaimasu. Kore wa Yamada-san no desu.", "english": "This one? No, it isn't. This is Ms. Yamada's."},
+      {"speaker": "Tanaka", "japanese": "そうですか。あの かさは だれのですか。", "romaji": "Sou desu ka. Ano kasa wa dare no desu ka.", "english": "I see. Whose umbrella is that over there?"},
+      {"speaker": "Suzuki", "japanese": "あれは わたしのです。", "romaji": "Are wa watashi no desu.", "english": "That is mine."},
+      {"speaker": "Tanaka", "japanese": "あのう、この ノートは 鈴木さんのですか、山田さんのですか。", "romaji": "Anou, kono nooto wa Suzuki-san no desu ka, Yamada-san no desu ka.", "english": "Um, is this notebook yours or Ms. Yamada's?"},
+      {"speaker": "Suzuki", "japanese": "わたしのです。どうも。", "romaji": "Watashi no desu. Doumo.", "english": "It's mine. Thanks."},
+      {"speaker": "Yamada", "japanese": "田中さん、これは 田中さんの かばんですか。", "romaji": "Tanaka-san, kore wa Tanaka-san no kaban desu ka.", "english": "Mr. Tanaka, is this your bag?"},
+      {"speaker": "Tanaka", "japanese": "はい、わたしのです。ありがとうございます。", "romaji": "Hai, watashi no desu. Arigatou gozaimasu.", "english": "Yes, it's mine. Thank you very much."}
+    ]
+  }
+}

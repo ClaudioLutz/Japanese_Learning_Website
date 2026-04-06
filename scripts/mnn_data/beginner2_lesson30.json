@@ -1,0 +1,81 @@
+{
+  "source": "Minna No Nihongo Beginner II",
+  "lesson_number": 30,
+  "title": "Lesson 30 – Preparation and Resultant State",
+  "title_ja": "第30課",
+  "jlpt_level": 4,
+  "description": "Intentionaler Zustand mit ～てあります (transitiv), Vorbereitung/Belassen mit ～ておきます, Aufforderung ～ておいてください.",
+
+  "vocabulary": [
+    {"word": "貼る", "reading": "haru", "meaning": "to stick, to paste", "kanji": "貼る", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "掛ける", "reading": "kakeru", "meaning": "to hang (something)", "kanji": "掛ける", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "飾る", "reading": "kazaru", "meaning": "to decorate", "kanji": "飾る", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "並べる", "reading": "naraberu", "meaning": "to line up, to arrange", "kanji": "並べる", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "植える", "reading": "ueru", "meaning": "to plant", "kanji": "植える", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "片付ける", "reading": "katazukeru", "meaning": "to tidy up, to put away", "kanji": "片付ける", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "準備する", "reading": "junbi suru", "meaning": "to prepare", "kanji": "準備する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "確認する", "reading": "kakunin suru", "meaning": "to confirm, to check", "kanji": "確認する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "予習する", "reading": "yoshuu suru", "meaning": "to prepare (lessons beforehand)", "kanji": "予習する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "復習する", "reading": "fukushuu suru", "meaning": "to review (lessons)", "kanji": "復習する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "戻す", "reading": "modosu", "meaning": "to put back, to return (something)", "kanji": "戻す", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "閉める", "reading": "shimeru", "meaning": "to close, to shut", "kanji": "閉める", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "消す", "reading": "kesu", "meaning": "to turn off, to erase", "kanji": "消す", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "冷やす", "reading": "hiyasu", "meaning": "to cool, to chill", "kanji": "冷やす", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "ポスター", "reading": "posutaa", "meaning": "poster", "kanji": null, "part_of_speech": "noun"},
+    {"word": "花見", "reading": "hanami", "meaning": "cherry blossom viewing", "kanji": "花見", "part_of_speech": "noun"},
+    {"word": "パーティー", "reading": "paatii", "meaning": "party", "kanji": null, "part_of_speech": "noun"},
+    {"word": "会議室", "reading": "kaigishitsu", "meaning": "meeting room", "kanji": "会議室", "part_of_speech": "noun"},
+    {"word": "エアコン", "reading": "eakon", "meaning": "air conditioner", "kanji": null, "part_of_speech": "noun"},
+    {"word": "カーテン", "reading": "kaaten", "meaning": "curtain", "kanji": null, "part_of_speech": "noun"},
+    {"word": "棚", "reading": "tana", "meaning": "shelf", "kanji": "棚", "part_of_speech": "noun"},
+    {"word": "花瓶", "reading": "kabin", "meaning": "flower vase", "kanji": "花瓶", "part_of_speech": "noun"},
+    {"word": "飲み物", "reading": "nomimono", "meaning": "beverage, drink", "kanji": "飲み物", "part_of_speech": "noun"},
+    {"word": "食料品", "reading": "shokuryouhin", "meaning": "groceries, food items", "kanji": "食料品", "part_of_speech": "noun"},
+    {"word": "お知らせ", "reading": "oshirase", "meaning": "notice, announcement", "kanji": "お知らせ", "part_of_speech": "noun"},
+    {"word": "出張", "reading": "shutchou", "meaning": "business trip", "kanji": "出張", "part_of_speech": "noun"},
+    {"word": "そのままにする", "reading": "sono mama ni suru", "meaning": "to leave as is", "kanji": null, "part_of_speech": "expression"},
+    {"word": "あらかじめ", "reading": "arakajime", "meaning": "in advance, beforehand", "kanji": "予め", "part_of_speech": "adverb"},
+    {"word": "もう", "reading": "mou", "meaning": "already", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "まだ", "reading": "mada", "meaning": "not yet, still", "kanji": null, "part_of_speech": "adverb"}
+  ],
+
+  "grammar": [
+    {
+      "title": "～てあります (Intentional Resultant State)",
+      "structure": "N が V-て form + あります (transitive verb)",
+      "jlpt_level": 4,
+      "explanation": "～てあります describes a state that results from someone's intentional action. It uses transitive verbs and focuses on the resulting state rather than the action itself. The object of the transitive verb takes が (not を). For example, 窓が開けてあります means 'The window has been opened (by someone, and it remains open)'. This differs from ～ています with intransitive verbs (窓が開いています — the window is open, neutral observation).",
+      "example_sentences": "① 壁にポスターが貼ってあります。\n  (Kabe ni posutaa ga hatte arimasu.)\n  — A poster has been put up on the wall. (someone put it there)\n② テーブルの上にお皿が並べてあります。\n  (Teeburu no ue ni osara ga narabete arimasu.)\n  — Plates have been arranged on the table."
+    },
+    {
+      "title": "～ておきます (Preparation / Leaving As Is)",
+      "structure": "V-て form + おきます",
+      "jlpt_level": 4,
+      "explanation": "～ておきます has two main uses: (1) doing something in advance as preparation for a future event — パーティーの前に飲み物を買っておきます (I'll buy drinks before the party); (2) leaving something as it is, not changing the current state — そのままにしておいてください (Please leave it as it is). The colloquial form contracts to ～とく (e.g., 買っとく).",
+      "example_sentences": "③ 会議の前に資料をコピーしておきます。\n  (Kaigi no mae ni shiryou wo kopii shite okimasu.)\n  — I'll copy the documents before the meeting.\n④ 旅行の前にホテルを予約しておいたほうがいいですよ。\n  (Ryokou no mae ni hoteru wo yoyaku shite oita hou ga ii desu yo.)\n  — You should reserve a hotel before the trip.\n⑤ エアコンはつけておいてください。\n  (Eakon wa tsukete oite kudasai.)\n  — Please leave the air conditioner on."
+    },
+    {
+      "title": "～ておいてください (Request to Prepare / Leave As Is)",
+      "structure": "V-て form + おいてください",
+      "jlpt_level": 4,
+      "explanation": "～ておいてください is used to ask someone to do something in advance (preparation) or to leave something in its current state. It combines the preparation/maintenance meaning of ～ておく with the request form ～てください.",
+      "example_sentences": "⑥ 明日の会議の資料を準備しておいてください。\n  (Ashita no kaigi no shiryou wo junbi shite oite kudasai.)\n  — Please prepare the documents for tomorrow's meeting.\n⑦ 窓は開けておいてください。\n  (Mado wa akete oite kudasai.)\n  — Please leave the window open.\n⑧ 使ったら元の場所に戻しておいてください。\n  (Tsukattara moto no basho ni modoshite oite kudasai.)\n  — After using it, please put it back where it was."
+    }
+  ],
+
+  "conversation": {
+    "title": "Preparing for the party",
+    "title_ja": "パーティーの準備",
+    "lines": [
+      {"speaker": "Yamada", "japanese": "来週の歓迎会の準備はどうなっていますか。", "romaji": "Raishuu no kangeikai no junbi wa dou natte imasu ka.", "english": "How are the preparations for next week's welcome party going?"},
+      {"speaker": "Suzuki", "japanese": "飲み物はもう買ってあります。お菓子も注文しておきました。", "romaji": "Nomimono wa mou katte arimasu. Okashi mo chuumon shite okimashita.", "english": "The drinks have already been bought. I also ordered snacks in advance."},
+      {"speaker": "Yamada", "japanese": "ありがとう。会議室の予約は？", "romaji": "Arigatou. Kaigishitsu no yoyaku wa?", "english": "Thanks. What about the meeting room reservation?"},
+      {"speaker": "Kim", "japanese": "3階の会議室を予約してあります。テーブルも並べておきました。", "romaji": "Sangai no kaigishitsu wo yoyaku shite arimasu. Teeburu mo narabete okimashita.", "english": "The third-floor meeting room has been reserved. I also arranged the tables in advance."},
+      {"speaker": "Yamada", "japanese": "いいですね。壁に歓迎のポスターを貼っておいてください。", "romaji": "Ii desu ne. Kabe ni kangei no posutaa wo hatte oite kudasai.", "english": "Great. Please put up a welcome poster on the wall."},
+      {"speaker": "Kim", "japanese": "わかりました。花も飾っておきますか。", "romaji": "Wakarimashita. Hana mo kazatte okimasu ka.", "english": "Understood. Shall I also put up some flower decorations?"},
+      {"speaker": "Yamada", "japanese": "ええ、お願いします。あ、飲み物は冷蔵庫で冷やしておいてくださいね。", "romaji": "Ee, onegaishimasu. A, nomimono wa reizouko de hiyashite oite kudasai ne.", "english": "Yes, please. Oh, and please chill the drinks in the fridge."},
+      {"speaker": "Suzuki", "japanese": "はい、もう冷蔵庫に入れてありますよ。", "romaji": "Hai, mou reizouko ni irete arimasu yo.", "english": "Yes, they've already been put in the fridge."},
+      {"speaker": "Yamada", "japanese": "完璧ですね。みなさん、ありがとうございます。", "romaji": "Kanpeki desu ne. Minasan, arigatou gozaimasu.", "english": "Perfect. Thank you all."}
+    ]
+  }
+}

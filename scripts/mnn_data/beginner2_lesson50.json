@@ -1,0 +1,81 @@
+{
+  "source": "Minna No Nihongo Beginner II",
+  "lesson_number": 50,
+  "title": "Lesson 50 – Humble Speech (謙譲語)",
+  "title_ja": "第50課",
+  "jlpt_level": 4,
+  "description": "Kenjougo (謙譲語): Bescheidene Sprechweise fuer die eigenen Handlungen gegenueber Hoeherstehenden. お＋V-masu Stamm＋します, spezielle bescheidene Verben (参る, おる, 申す, いたす, 拝見する, 存じる, うかがう).",
+
+  "vocabulary": [
+    {"word": "参る", "reading": "まいる / mairu", "meaning": "to go / to come (humble)", "kanji": "参る", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "おる", "reading": "oru", "meaning": "to be, to exist (humble of いる)", "kanji": null, "part_of_speech": "verb", "verb_group": 1},
+    {"word": "申す", "reading": "もうす / mousu", "meaning": "to say, to be called (humble)", "kanji": "申す", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "いたす", "reading": "itasu", "meaning": "to do (humble of する)", "kanji": null, "part_of_speech": "verb", "verb_group": 1},
+    {"word": "拝見する", "reading": "はいけんする / haiken suru", "meaning": "to look at, to see (humble)", "kanji": "拝見する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "存じる", "reading": "ぞんじる / zonjiru", "meaning": "to know (humble)", "kanji": "存じる", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "うかがう", "reading": "ukagau", "meaning": "to ask / to visit / to hear (humble)", "kanji": null, "part_of_speech": "verb", "verb_group": 1},
+    {"word": "差し上げる", "reading": "さしあげる / sashiageru", "meaning": "to give (humble of あげる)", "kanji": "差し上げる", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "いただく", "reading": "itadaku", "meaning": "to receive / to eat / to drink (humble)", "kanji": null, "part_of_speech": "verb", "verb_group": 1},
+    {"word": "お目にかかる", "reading": "おめにかかる / ome ni kakaru", "meaning": "to meet (humble)", "kanji": "お目にかかる", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "ご連絡する", "reading": "ごれんらくする / gorenraku suru", "meaning": "to contact (humble)", "kanji": "ご連絡する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "お待ちする", "reading": "おまちする / omachi suru", "meaning": "to wait (humble)", "kanji": "お待ちする", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "お届けする", "reading": "おとどけする / otodoke suru", "meaning": "to deliver (humble)", "kanji": "お届けする", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "名刺", "reading": "めいし / meishi", "meaning": "business card", "kanji": "名刺", "part_of_speech": "noun"},
+    {"word": "担当", "reading": "たんとう / tantou", "meaning": "person in charge", "kanji": "担当", "part_of_speech": "noun"},
+    {"word": "取引先", "reading": "とりひきさき / torihikisaki", "meaning": "business partner, client company", "kanji": "取引先", "part_of_speech": "noun"},
+    {"word": "打ち合わせ", "reading": "うちあわせ / uchiawase", "meaning": "business meeting, briefing", "kanji": "打ち合わせ", "part_of_speech": "noun"},
+    {"word": "ご用件", "reading": "ごようけん / goyouken", "meaning": "business, matter (honorific)", "kanji": "ご用件", "part_of_speech": "noun"},
+    {"word": "ご提案", "reading": "ごていあん / goteian", "meaning": "proposal (honorific)", "kanji": "ご提案", "part_of_speech": "noun"},
+    {"word": "弊社", "reading": "へいしゃ / heisha", "meaning": "our company (humble)", "kanji": "弊社", "part_of_speech": "noun"},
+    {"word": "御社", "reading": "おんしゃ / onsha", "meaning": "your company (honorific)", "kanji": "御社", "part_of_speech": "noun"},
+    {"word": "貴社", "reading": "きしゃ / kisha", "meaning": "your company (written honorific)", "kanji": "貴社", "part_of_speech": "noun"},
+    {"word": "少々", "reading": "しょうしょう / shoushou", "meaning": "a little, a moment (formal)", "kanji": "少々", "part_of_speech": "adverb"},
+    {"word": "かしこまりました", "reading": "kashikomarimashita", "meaning": "certainly, understood (very formal)", "kanji": null, "part_of_speech": "expression"},
+    {"word": "恐れ入りますが", "reading": "おそれいりますが / osore irimasu ga", "meaning": "I'm sorry to trouble you, but (very polite)", "kanji": "恐れ入りますが", "part_of_speech": "expression"},
+    {"word": "お電話", "reading": "おでんわ / odenwa", "meaning": "telephone call (polite)", "kanji": "お電話", "part_of_speech": "noun"},
+    {"word": "ただいま", "reading": "tadaima", "meaning": "right now, at this moment (formal)", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "あいにく", "reading": "ainiku", "meaning": "unfortunately", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "席を外す", "reading": "せきをはずす / seki o hazusu", "meaning": "to step away from one's desk", "kanji": "席を外す", "part_of_speech": "verb", "verb_group": 1}
+  ],
+
+  "grammar": [
+    {
+      "title": "お + V-masu stem + します (Humble pattern)",
+      "structure": "お + V-masu stem + します",
+      "jlpt_level": 4,
+      "explanation": "This is the general pattern for humble (謙譲語) expressions, used to lower your own actions when speaking to or about superiors. Take the masu-stem of the verb, add お before it and します after it. IMPORTANT: This form is ONLY used for YOUR OWN actions. Never use it for someone else's actions. For Sino-Japanese (漢語) words, use ご instead of お: ご連絡します, ご案内します, ご説明します.",
+      "example_sentences": "① 私が お持ちします。\n  (Watashi ga omochi shimasu.)\n  — I will carry it (for you).\n② 駅まで お送りします。\n  (Eki made ookuri shimasu.)\n  — I will take you to the station.\n③ 後ほど ご連絡します。\n  (Nochihodo gorenraku shimasu.)\n  — I will contact you later."
+    },
+    {
+      "title": "Special Humble Verbs (特別な謙譲語)",
+      "structure": "参る (行く/来る), おる (いる), 申す (言う), いたす (する), 拝見する (見る), 存じる (知る), うかがう (聞く/行く/訪ねる), いただく (もらう/食べる/飲む), 差し上げる (あげる), お目にかかる (会う)",
+      "jlpt_level": 4,
+      "explanation": "Some common verbs have special humble replacements that must be memorized. These are used for YOUR OWN actions when speaking to superiors. 参る replaces 行く and 来る (I go/come). おる replaces いる (I am). 申す replaces 言う (I say). いたす replaces する (I do). 拝見する replaces 見る (I look at). 存じる replaces 知る (I know). うかがう replaces 聞く, 行く, and 訪ねる (I ask/visit). CRITICAL: Never use these for other people's actions — that would be rude.",
+      "example_sentences": "④ 私は 田中と 申します。\n  (Watashi wa Tanaka to moushimasu.)\n  — My name is Tanaka. (humble)\n⑤ 3時に そちらに 参ります。\n  (San-ji ni sochira ni mairimasu.)\n  — I will come there at 3 o'clock. (humble)\n⑥ お名刺を 拝見しても よろしいですか。\n  (Omeishi o haiken shite mo yoroshii desu ka.)\n  — May I look at your business card? (humble)\n⑦ その 件については 存じております。\n  (Sono ken ni tsuite wa zonjite orimasu.)\n  — I know about that matter. (humble)"
+    },
+    {
+      "title": "Combining 尊敬語 and 謙譲語 in Conversation",
+      "structure": "Honorific for others + Humble for self in the same exchange",
+      "jlpt_level": 4,
+      "explanation": "In real keigo conversations, speakers use 謙譲語 (humble) for their own actions and 尊敬語 (honorific) for the other person's actions within the same conversation. For example, when speaking with a client: use 参ります for 'I will go', but いらっしゃいます for 'you/they will come'. Use 申します for 'I say', but おっしゃいます for 'you say'. When referring to your own company, use 弊社 (heisha). For the other person's company, use 御社 (onsha, spoken) or 貴社 (kisha, written).",
+      "example_sentences": "⑧ 先生が いらっしゃったら、私が ご案内いたします。\n  (Sensei ga irasshattara, watashi ga goannai itashimasu.)\n  — When the professor arrives (honorific), I will guide him (humble).\n⑨ 部長が おっしゃった 件について、ご説明いたします。\n  (Buchou ga osshatta ken ni tsuite, gosetsumei itashimasu.)\n  — Regarding the matter the department manager mentioned (honorific), I will explain (humble).\n⑩ 御社の ご提案を 拝見いたしました。弊社で 検討させていただきます。\n  (Onsha no goteian o haiken itashimashita. Heisha de kentou sasete itadakimasu.)\n  — I have looked at (humble) your company's (honorific) proposal. Our company (humble) will consider it."
+    }
+  ],
+
+  "conversation": {
+    "title": "A Business Phone Call",
+    "title_ja": "ビジネスの 電話",
+    "lines": [
+      {"speaker": "Receptionist", "japanese": "はい、ABC商事でございます。", "romaji": "Hai, ABC shouji de gozaimasu.", "english": "Hello, this is ABC Trading."},
+      {"speaker": "Tanaka", "japanese": "いつも お世話に なっております。XYZ工業の 田中と 申します。", "romaji": "Itsumo osewa ni natte orimasu. XYZ kougyou no Tanaka to moushimasu.", "english": "Thank you for your continued support. My name is Tanaka from XYZ Industries."},
+      {"speaker": "Receptionist", "japanese": "田中様、いつも ありがとうございます。ご用件を うかがっても よろしいですか。", "romaji": "Tanaka-sama, itsumo arigatou gozaimasu. Goyouken o ukagatte mo yoroshii desu ka.", "english": "Mr. Tanaka, thank you as always. May I ask what this is regarding?"},
+      {"speaker": "Tanaka", "japanese": "山本部長に お目にかかりたいのですが、いらっしゃいますか。", "romaji": "Yamamoto-buchou ni ome ni kakaritai no desu ga, irasshaimasu ka.", "english": "I would like to meet Department Manager Yamamoto. Is he in?"},
+      {"speaker": "Receptionist", "japanese": "あいにく 山本は ただいま 席を 外しております。", "romaji": "Ainiku Yamamoto wa tadaima seki o hazushite orimasu.", "english": "Unfortunately, Yamamoto is away from his desk at the moment."},
+      {"speaker": "Tanaka", "japanese": "そうですか。では、御社に うかがいたいのですが、明日の ご都合は いかがですか。", "romaji": "Sou desu ka. Dewa, onsha ni ukagaitai no desu ga, ashita no gotsugou wa ikaga desu ka.", "english": "I see. Well, I would like to visit your company. How is tomorrow for you?"},
+      {"speaker": "Receptionist", "japanese": "少々 お待ちください。…お待たせいたしました。明日の 2時でしたら 山本は おりますが。", "romaji": "Shoushou omachi kudasai. ...Omatase itashimashita. Ashita no ni-ji deshitara Yamamoto wa orimasu ga.", "english": "One moment please. ...Sorry to keep you waiting. If it's 2 o'clock tomorrow, Yamamoto will be here."},
+      {"speaker": "Tanaka", "japanese": "では、2時に 参ります。弊社の 新しい ご提案を お持ちいたします。", "romaji": "Dewa, ni-ji ni mairimasu. Heisha no atarashii goteian o omochi itashimasu.", "english": "Then I will come at 2 o'clock. I will bring our company's new proposal."},
+      {"speaker": "Receptionist", "japanese": "かしこまりました。山本に 申し伝えます。お待ちしております。", "romaji": "Kashikomarimashita. Yamamoto ni moushitsutaemasu. Omachi shite orimasu.", "english": "Certainly. I will relay the message to Yamamoto. We look forward to seeing you."},
+      {"speaker": "Tanaka", "japanese": "よろしく お願いいたします。失礼いたします。", "romaji": "Yoroshiku onegai itashimasu. Shitsurei itashimasu.", "english": "Thank you very much. Goodbye."}
+    ]
+  }
+}

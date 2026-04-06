@@ -1,0 +1,99 @@
+{
+  "source": "Minna No Nihongo Beginner I",
+  "lesson_number": 6,
+  "title": "Lesson 6 – Actions and Invitations",
+  "title_ja": "第6課",
+  "jlpt_level": 5,
+  "description": "Aktionen mit を und で: Objektpartikel を, Ortspartikel で, Einladungen mit ませんか und Vorschläge mit ましょう.",
+
+  "vocabulary": [
+    {"word": "たべます", "reading": "tabemasu", "meaning": "to eat", "kanji": "食べます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "のみます", "reading": "nomimasu", "meaning": "to drink", "kanji": "飲みます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "すいます", "reading": "suimasu", "meaning": "to smoke", "kanji": "吸います", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "みます", "reading": "mimasu", "meaning": "to see, to watch", "kanji": "見ます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "ききます", "reading": "kikimasu", "meaning": "to listen, to hear", "kanji": "聞きます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "よみます", "reading": "yomimasu", "meaning": "to read", "kanji": "読みます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "かきます", "reading": "kakimasu", "meaning": "to write, to draw", "kanji": "書きます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "かいます", "reading": "kaimasu", "meaning": "to buy", "kanji": "買います", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "とります", "reading": "torimasu", "meaning": "to take (a photo)", "kanji": "撮ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "します", "reading": "shimasu", "meaning": "to do", "kanji": null, "part_of_speech": "verb", "verb_group": 3},
+    {"word": "ごはん", "reading": "gohan", "meaning": "meal, cooked rice", "kanji": "ご飯", "part_of_speech": "noun"},
+    {"word": "あさごはん", "reading": "asagohan", "meaning": "breakfast", "kanji": "朝ご飯", "part_of_speech": "noun"},
+    {"word": "ひるごはん", "reading": "hirugohan", "meaning": "lunch", "kanji": "昼ご飯", "part_of_speech": "noun"},
+    {"word": "ばんごはん", "reading": "bangohan", "meaning": "dinner", "kanji": "晩ご飯", "part_of_speech": "noun"},
+    {"word": "パン", "reading": "pan", "meaning": "bread", "kanji": null, "part_of_speech": "noun"},
+    {"word": "たまご", "reading": "tamago", "meaning": "egg", "kanji": "卵", "part_of_speech": "noun"},
+    {"word": "にく", "reading": "niku", "meaning": "meat", "kanji": "肉", "part_of_speech": "noun"},
+    {"word": "さかな", "reading": "sakana", "meaning": "fish", "kanji": "魚", "part_of_speech": "noun"},
+    {"word": "やさい", "reading": "yasai", "meaning": "vegetable", "kanji": "野菜", "part_of_speech": "noun"},
+    {"word": "くだもの", "reading": "kudamono", "meaning": "fruit", "kanji": "果物", "part_of_speech": "noun"},
+    {"word": "みず", "reading": "mizu", "meaning": "water", "kanji": "水", "part_of_speech": "noun"},
+    {"word": "おちゃ", "reading": "ocha", "meaning": "tea, green tea", "kanji": "お茶", "part_of_speech": "noun"},
+    {"word": "コーヒー", "reading": "koohii", "meaning": "coffee", "kanji": null, "part_of_speech": "noun"},
+    {"word": "ジュース", "reading": "juusu", "meaning": "juice", "kanji": null, "part_of_speech": "noun"},
+    {"word": "ビール", "reading": "biiru", "meaning": "beer", "kanji": null, "part_of_speech": "noun"},
+    {"word": "しんぶん", "reading": "shinbun", "meaning": "newspaper", "kanji": "新聞", "part_of_speech": "noun"},
+    {"word": "ざっし", "reading": "zasshi", "meaning": "magazine", "kanji": "雑誌", "part_of_speech": "noun"},
+    {"word": "てがみ", "reading": "tegami", "meaning": "letter", "kanji": "手紙", "part_of_speech": "noun"},
+    {"word": "しゃしん", "reading": "shashin", "meaning": "photograph", "kanji": "写真", "part_of_speech": "noun"},
+    {"word": "えいが", "reading": "eiga", "meaning": "movie, film", "kanji": "映画", "part_of_speech": "noun"},
+    {"word": "おんがく", "reading": "ongaku", "meaning": "music", "kanji": "音楽", "part_of_speech": "noun"},
+    {"word": "しゅくだい", "reading": "shukudai", "meaning": "homework", "kanji": "宿題", "part_of_speech": "noun"},
+    {"word": "レストラン", "reading": "resutoran", "meaning": "restaurant", "kanji": null, "part_of_speech": "noun"},
+    {"word": "にわ", "reading": "niwa", "meaning": "garden", "kanji": "庭", "part_of_speech": "noun"},
+    {"word": "いっしょに", "reading": "issho ni", "meaning": "together", "kanji": "一緒に", "part_of_speech": "adverb"},
+    {"word": "ちょっと", "reading": "chotto", "meaning": "a little, a moment", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "いつも", "reading": "itsumo", "meaning": "always", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "ときどき", "reading": "tokidoki", "meaning": "sometimes", "kanji": "時々", "part_of_speech": "adverb"},
+    {"word": "それから", "reading": "sorekara", "meaning": "after that, and then", "kanji": null, "part_of_speech": "conjunction"},
+    {"word": "なにを", "reading": "nani o", "meaning": "what (with object particle)", "kanji": "何を", "part_of_speech": "expression"}
+  ],
+
+  "vocabulary_countries": [],
+
+  "grammar": [
+    {
+      "title": "N を V ます (Object Particle を)",
+      "structure": "N を V ます",
+      "jlpt_level": 5,
+      "explanation": "The particle を indicates the object of a transitive verb. It marks the noun that the action is performed on. The pronunciation of を is 'o', the same as お, but it is written as を when used as a particle.",
+      "example_sentences": "① ジュースを 飲みます。\n  (Juusu o nomimasu.)\n  — I drink juice.\n② 新聞を 読みます。\n  (Shinbun o yomimasu.)\n  — I read a newspaper."
+    },
+    {
+      "title": "Place で V ます (Location Particle で)",
+      "structure": "Place で V ます",
+      "jlpt_level": 5,
+      "explanation": "The particle で indicates the place where an action takes place. It tells us where the activity described by the verb is performed. Note: で is used for the location of actions, not for the location of existence (which uses に).",
+      "example_sentences": "③ レストランで 昼ご飯を 食べます。\n  (Resutoran de hirugohan o tabemasu.)\n  — I eat lunch at a restaurant.\n④ うちで 映画を 見ます。\n  (Uchi de eiga o mimasu.)\n  — I watch a movie at home."
+    },
+    {
+      "title": "V ませんか (Invitation)",
+      "structure": "V ませんか",
+      "jlpt_level": 5,
+      "explanation": "V ませんか is used to invite someone to do something. It literally means 'Won't you...?' but functions as a polite invitation. It is softer and more polite than the direct imperative form.",
+      "example_sentences": "⑤ 一緒に 昼ご飯を 食べませんか。\n  (Issho ni hirugohan o tabemasen ka.)\n  — Won't you eat lunch together (with me)?\n⑥ 一緒に コーヒーを 飲みませんか。\n  (Issho ni koohii o nomimasen ka.)\n  — Would you like to have coffee together?"
+    },
+    {
+      "title": "V ましょう (Let's ~)",
+      "structure": "V ましょう",
+      "jlpt_level": 5,
+      "explanation": "V ましょう is used to suggest doing something together. It is used when the speaker wants to positively invite the listener to do something. It can also be used as a response to an invitation with V ませんか, meaning 'Yes, let's do that.'",
+      "example_sentences": "⑦ ちょっと 休みましょう。\n  (Chotto yasumimashou.)\n  — Let's take a short break.\n⑧ 一緒に 映画を 見ましょう。\n  (Issho ni eiga o mimashou.)\n  — Let's watch a movie together."
+    }
+  ],
+
+  "conversation": {
+    "title": "Shall we eat together?",
+    "title_ja": "一緒に 食べませんか",
+    "lines": [
+      {"speaker": "Tanaka", "japanese": "田中さんは 毎日 どこで 昼ご飯を 食べますか。", "romaji": "Tanaka-san wa mainichi doko de hirugohan o tabemasu ka.", "english": "Tanaka, where do you eat lunch every day?"},
+      {"speaker": "Tanaka", "japanese": "いつも 会社の 食堂で 食べます。山本さんは？", "romaji": "Itsumo kaisha no shokudou de tabemasu. Yamamoto-san wa?", "english": "I always eat at the company cafeteria. How about you, Yamamoto?"},
+      {"speaker": "Yamamoto", "japanese": "わたしは ときどき あの レストランで 食べます。", "romaji": "Watashi wa tokidoki ano resutoran de tabemasu.", "english": "I sometimes eat at that restaurant."},
+      {"speaker": "Tanaka", "japanese": "そうですか。何を 食べますか。", "romaji": "Sou desu ka. Nani o tabemasu ka.", "english": "Is that so? What do you eat?"},
+      {"speaker": "Yamamoto", "japanese": "魚と 野菜を 食べます。おいしいですよ。", "romaji": "Sakana to yasai o tabemasu. Oishii desu yo.", "english": "I eat fish and vegetables. It's delicious."},
+      {"speaker": "Tanaka", "japanese": "いいですね。", "romaji": "Ii desu ne.", "english": "That sounds nice."},
+      {"speaker": "Yamamoto", "japanese": "今日 一緒に 食べませんか。", "romaji": "Kyou issho ni tabemasen ka.", "english": "Would you like to eat together today?"},
+      {"speaker": "Tanaka", "japanese": "ええ、食べましょう。", "romaji": "Ee, tabemashou.", "english": "Yes, let's eat."}
+    ]
+  }
+}

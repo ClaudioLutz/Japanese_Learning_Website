@@ -14,8 +14,8 @@ import sys
 import io
 from pathlib import Path
 
-# Windows: UTF-8
-if sys.platform == "win32":
+# Windows: UTF-8 (nicht unter pytest, da es Capture stoert)
+if sys.platform == "win32" and "pytest" not in sys.modules:
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
     sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
 
@@ -163,11 +163,24 @@ def save_quiz_to_db(lesson, page_number: int, title: str, quiz_result: dict,
     return count
 
 
+def check_existing_quizzes(lesson, page_number: int) -> int:
+    """Prueft ob bereits Quizzes fuer eine Seite existieren. Gibt Anzahl zurueck."""
+    from app.models import LessonContent
+    existing = LessonContent.query.filter_by(
+        lesson_id=lesson.id,
+        is_interactive=True,
+        page_number=page_number,
+    ).count()
+    return existing
+
+
 def main():
     import argparse
     parser = argparse.ArgumentParser(description="Quiz-Generierung für MNN-Lektionen")
     parser.add_argument("--lesson", type=int, default=1)
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--force", action="store_true",
+                        help="Bestehende Quizzes ueberschreiben (loescht alte, generiert neu)")
     parser.add_argument("--pages", type=str, default="1,2,3,4,5",
                         help="Komma-getrennte Seitennummern (z.B. '4,5' für nur Practice+Test)")
     args = parser.parse_args()
@@ -194,6 +207,37 @@ def main():
             print(f"FEHLER: Lektion {lesson_num} nicht in DB!")
             sys.exit(1)
         print(f"Lektion: {lesson.title} (ID {lesson.id})")
+
+        # Duplikat-Schutz: Bestehende Quizzes pruefen
+        if not args.dry_run:
+            from app.models import LessonContent, QuizQuestion, QuizOption
+            pages_to_skip = []
+            for p in target_pages:
+                existing_count = check_existing_quizzes(lesson, p)
+                if existing_count > 0:
+                    if args.force:
+                        # --force: Bestehende Quizzes loeschen
+                        existing_items = LessonContent.query.filter_by(
+                            lesson_id=lesson.id,
+                            is_interactive=True,
+                            page_number=p,
+                        ).all()
+                        for item in existing_items:
+                            # Zugehoerige QuizQuestions + Options loeschen
+                            for qq in QuizQuestion.query.filter_by(lesson_content_id=item.id).all():
+                                QuizOption.query.filter_by(question_id=qq.id).delete()
+                                db.session.delete(qq)
+                            db.session.delete(item)
+                        db.session.flush()
+                        print(f"  [FORCE] Seite {p}: {existing_count} bestehende Quizzes geloescht")
+                    else:
+                        print(f"  [SKIP] Seite {p}: Bereits {existing_count} Quizzes vorhanden (--force zum Ueberschreiben)")
+                        pages_to_skip.append(p)
+            target_pages = [p for p in target_pages if p not in pages_to_skip]
+            if not target_pages:
+                print("\nAlle Seiten haben bereits Quizzes. Nichts zu tun.")
+                print("Tipp: --force verwenden um bestehende Quizzes zu ueberschreiben.")
+                return
 
         ai = AILessonContentGenerator()
 

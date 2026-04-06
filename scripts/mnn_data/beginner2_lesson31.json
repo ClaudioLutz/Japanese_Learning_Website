@@ -1,0 +1,87 @@
+{
+  "source": "Minna No Nihongo Beginner II",
+  "lesson_number": 31,
+  "title": "Lesson 31 – Volitional Form & Plans",
+  "title_ja": "第31課",
+  "jlpt_level": 4,
+  "description": "Willensform (意向形): ～よう, ～(よ)うと思っています (beabsichtigen), ～つもりです (vorhaben), ～予定です (geplant sein).",
+
+  "vocabulary": [
+    {"word": "たてます", "reading": "tatemasu", "meaning": "to build, to construct", "kanji": "建てます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "はしります", "reading": "hashirimasu", "meaning": "to run", "kanji": "走ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "とります", "reading": "torimasu", "meaning": "to take (a vacation)", "kanji": "取ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "ためます", "reading": "tamemasu", "meaning": "to save (money)", "kanji": "貯めます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "しらべます", "reading": "shirabemasu", "meaning": "to investigate, to look up", "kanji": "調べます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "なおします", "reading": "naoshimasu", "meaning": "to repair, to fix", "kanji": "直します", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "もうしこみます", "reading": "moushikomimasu", "meaning": "to apply (for)", "kanji": "申し込みます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "つづけます", "reading": "tsuzukemasu", "meaning": "to continue", "kanji": "続けます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "うけます", "reading": "ukemasu", "meaning": "to take (an exam), to receive", "kanji": "受けます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "ひっこしします", "reading": "hikkoshi shimasu", "meaning": "to move (house)", "kanji": "引っ越しします", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "けいかくします", "reading": "keikaku shimasu", "meaning": "to plan", "kanji": "計画します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "よやくします", "reading": "yoyaku shimasu", "meaning": "to reserve, to book", "kanji": "予約します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "そつぎょうします", "reading": "sotsugyou shimasu", "meaning": "to graduate", "kanji": "卒業します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "けっこんします", "reading": "kekkon shimasu", "meaning": "to marry", "kanji": "結婚します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "よてい", "reading": "yotei", "meaning": "plan, schedule", "kanji": "予定", "part_of_speech": "noun"},
+    {"word": "けいかく", "reading": "keikaku", "meaning": "plan, project", "kanji": "計画", "part_of_speech": "noun"},
+    {"word": "しょうらい", "reading": "shourai", "meaning": "future", "kanji": "将来", "part_of_speech": "noun"},
+    {"word": "ゆめ", "reading": "yume", "meaning": "dream", "kanji": "夢", "part_of_speech": "noun"},
+    {"word": "マラソン", "reading": "marason", "meaning": "marathon", "kanji": null, "part_of_speech": "noun"},
+    {"word": "りょこう", "reading": "ryokou", "meaning": "travel, trip", "kanji": "旅行", "part_of_speech": "noun"},
+    {"word": "かいがい", "reading": "kaigai", "meaning": "overseas", "kanji": "海外", "part_of_speech": "noun"},
+    {"word": "だいがくいん", "reading": "daigakuin", "meaning": "graduate school", "kanji": "大学院", "part_of_speech": "noun"},
+    {"word": "しかく", "reading": "shikaku", "meaning": "qualification, certificate", "kanji": "資格", "part_of_speech": "noun"},
+    {"word": "きかい", "reading": "kikai", "meaning": "opportunity, chance", "kanji": "機会", "part_of_speech": "noun"},
+    {"word": "ボーナス", "reading": "boonasu", "meaning": "bonus", "kanji": null, "part_of_speech": "noun"},
+    {"word": "まだ", "reading": "mada", "meaning": "not yet, still", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "そろそろ", "reading": "sorosoro", "meaning": "soon, before long", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "できるだけ", "reading": "dekirudake", "meaning": "as much as possible", "kanji": null, "part_of_speech": "adverb"}
+  ],
+
+  "vocabulary_countries": [],
+
+  "grammar": [
+    {
+      "title": "V 意向形 (Volitional Form: Let's ~, I'll ~)",
+      "structure": "Group 1: -い → -おう / Group 2: -ます → -よう / Group 3: しよう・こよう",
+      "jlpt_level": 4,
+      "explanation": "The volitional form expresses the speaker's will or intention to do something, or is used to invite someone ('Let's ~'). For Group 1 verbs, the final -i sound of the ます-stem changes to the -o sound and よう is added (e.g., 書きます → 書こう). For Group 2 verbs, ます is replaced by よう (e.g., 食べます → 食べよう). Group 3: します → しよう, きます → こよう.",
+      "example_sentences": "① ちょっと 休もう。\n  (Chotto yasumou.)\n  — Let's take a break.\n② 来年 日本へ 行こう。\n  (Rainen Nihon e ikou.)\n  — Let's go to Japan next year.\n③ いっしょに 昼ごはんを 食べよう。\n  (Issho ni hirugohan o tabeyou.)\n  — Let's eat lunch together."
+    },
+    {
+      "title": "V (よ)うと思っています (I'm thinking of ~ing)",
+      "structure": "V volitional form + と思っています",
+      "jlpt_level": 4,
+      "explanation": "This pattern expresses an intention or plan that the speaker has been thinking about for some time. ～と思っています indicates a continuing intention, while ～と思います suggests a decision made on the spot. The volitional form + と思っています is commonly used to talk about one's plans in conversation.",
+      "example_sentences": "④ 来月 引っ越そうと 思っています。\n  (Raigetsu hikkosou to omotte imasu.)\n  — I'm thinking of moving next month.\n⑤ 大学院に 行こうと 思っています。\n  (Daigakuin ni ikou to omotte imasu.)\n  — I'm thinking of going to graduate school."
+    },
+    {
+      "title": "V dictionary form + つもりです (I intend to ~)",
+      "structure": "V dict. + つもりです / V ない form + つもりです",
+      "jlpt_level": 4,
+      "explanation": "～つもりです expresses the speaker's firm intention or plan. It is stronger than ～(よ)うと思っています. The negative ～ないつもりです means 'I intend not to ~'. つもりです is used for personal intentions, not for scheduled events beyond one's control.",
+      "example_sentences": "⑥ 夏休みに ヨーロッパを 旅行するつもりです。\n  (Natsuyasumi ni Yooroppa o ryokou suru tsumori desu.)\n  — I intend to travel around Europe during summer vacation.\n⑦ 来年は 結婚しないつもりです。\n  (Rainen wa kekkon shinai tsumori desu.)\n  — I don't intend to get married next year."
+    },
+    {
+      "title": "V dictionary form / N の + 予定です (It is scheduled to ~)",
+      "structure": "V dict. + 予定です / N の + 予定です",
+      "jlpt_level": 4,
+      "explanation": "～予定です indicates a scheduled plan or arrangement. Unlike つもりです (personal intention), 予定です can be used for events that are already arranged or decided. It is commonly used for business schedules, travel itineraries, and confirmed plans.",
+      "example_sentences": "⑧ 3月に 卒業する予定です。\n  (San-gatsu ni sotsugyou suru yotei desu.)\n  — I'm scheduled to graduate in March.\n⑨ 会議は 来週の 月曜日の 予定です。\n  (Kaigi wa raishuu no getsuyoubi no yotei desu.)\n  — The meeting is scheduled for next Monday."
+    }
+  ],
+
+  "conversation": {
+    "title": "What are your plans for the future?",
+    "title_ja": "将来の 計画は？",
+    "lines": [
+      {"speaker": "Tanaka", "japanese": "もうすぐ 卒業ですね。将来の 計画は ありますか。", "romaji": "Mousugu sotsugyou desu ne. Shourai no keikaku wa arimasu ka.", "english": "You'll graduate soon, won't you. Do you have plans for the future?"},
+      {"speaker": "Kim", "japanese": "ええ、卒業したら 国へ 帰る予定です。", "romaji": "Ee, sotsugyou shitara kuni e kaeru yotei desu.", "english": "Yes, after graduation I'm scheduled to go back to my country."},
+      {"speaker": "Tanaka", "japanese": "そうですか。国で 何を するつもりですか。", "romaji": "Sou desu ka. Kuni de nani o suru tsumori desu ka.", "english": "I see. What do you intend to do in your country?"},
+      {"speaker": "Kim", "japanese": "日本語の 先生に なろうと 思っています。", "romaji": "Nihongo no sensei ni narou to omotte imasu.", "english": "I'm thinking of becoming a Japanese teacher."},
+      {"speaker": "Tanaka", "japanese": "いいですね。資格の 試験は もう 受けましたか。", "romaji": "Ii desu ne. Shikaku no shiken wa mou ukemashita ka.", "english": "That's great. Have you already taken the qualification exam?"},
+      {"speaker": "Kim", "japanese": "いいえ、まだです。来月 受ける予定です。できるだけ がんばります。", "romaji": "Iie, mada desu. Raigetsu ukeru yotei desu. Dekirudake ganbarimasu.", "english": "No, not yet. I'm scheduled to take it next month. I'll do my best."},
+      {"speaker": "Tanaka", "japanese": "応援しています。いっしょに お祝いしよう。", "romaji": "Ouen shite imasu. Issho ni oiwai shiyou.", "english": "I'm rooting for you. Let's celebrate together."},
+      {"speaker": "Kim", "japanese": "ありがとうございます。ぜひ そうしましょう。", "romaji": "Arigatou gozaimasu. Zehi sou shimashou.", "english": "Thank you very much. Let's definitely do that."}
+    ]
+  }
+}

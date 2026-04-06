@@ -1,0 +1,85 @@
+{
+  "source": "Minna No Nihongo Beginner II",
+  "lesson_number": 27,
+  "title": "Lesson 27 – Potential Form",
+  "title_ja": "第27課",
+  "jlpt_level": 4,
+  "description": "Potential-Form (～られる/～える), unwillkürliches Wahrnehmen mit 見えます/聞こえます, できます (Fähigkeit/Fertigstellung), Konjugation für Gruppe I/II/III.",
+
+  "vocabulary": [
+    {"word": "弾く", "reading": "hiku", "meaning": "to play (stringed instrument/piano)", "kanji": "弾く", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "歌う", "reading": "utau", "meaning": "to sing", "kanji": "歌う", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "集める", "reading": "atsumeru", "meaning": "to collect, to gather", "kanji": "集める", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "捨てる", "reading": "suteru", "meaning": "to throw away", "kanji": "捨てる", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "交換する", "reading": "koukan suru", "meaning": "to exchange", "kanji": "交換する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "運転する", "reading": "unten suru", "meaning": "to drive", "kanji": "運転する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "予約する", "reading": "yoyaku suru", "meaning": "to reserve, to book", "kanji": "予約する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "見える", "reading": "mieru", "meaning": "to be visible, can see", "kanji": "見える", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "聞こえる", "reading": "kikoeru", "meaning": "to be audible, can hear", "kanji": "聞こえる", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "出来る", "reading": "dekiru", "meaning": "to be able to, to be completed", "kanji": "出来る", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "焼く", "reading": "yaku", "meaning": "to grill, to bake", "kanji": "焼く", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "通う", "reading": "kayou", "meaning": "to commute, to attend regularly", "kanji": "通う", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "慣れる", "reading": "nareru", "meaning": "to get used to", "kanji": "慣れる", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "ピアノ", "reading": "piano", "meaning": "piano", "kanji": null, "part_of_speech": "noun"},
+    {"word": "ギター", "reading": "gitaa", "meaning": "guitar", "kanji": null, "part_of_speech": "noun"},
+    {"word": "楽器", "reading": "gakki", "meaning": "musical instrument", "kanji": "楽器", "part_of_speech": "noun"},
+    {"word": "ドル", "reading": "doru", "meaning": "dollar", "kanji": null, "part_of_speech": "noun"},
+    {"word": "夢", "reading": "yume", "meaning": "dream", "kanji": "夢", "part_of_speech": "noun"},
+    {"word": "景色", "reading": "keshiki", "meaning": "scenery, view", "kanji": "景色", "part_of_speech": "noun"},
+    {"word": "星", "reading": "hoshi", "meaning": "star", "kanji": "星", "part_of_speech": "noun"},
+    {"word": "海岸", "reading": "kaigan", "meaning": "coast, seashore", "kanji": "海岸", "part_of_speech": "noun"},
+    {"word": "味", "reading": "aji", "meaning": "taste, flavour", "kanji": "味", "part_of_speech": "noun"},
+    {"word": "生活", "reading": "seikatsu", "meaning": "life, living", "kanji": "生活", "part_of_speech": "noun"},
+    {"word": "能力", "reading": "nouryoku", "meaning": "ability, capability", "kanji": "能力", "part_of_speech": "noun"},
+    {"word": "免許", "reading": "menkyo", "meaning": "licence", "kanji": "免許", "part_of_speech": "noun"},
+    {"word": "日常会話", "reading": "nichijou kaiwa", "meaning": "daily conversation", "kanji": "日常会話", "part_of_speech": "noun"},
+    {"word": "はっきり", "reading": "hakkiri", "meaning": "clearly, distinctly", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "残念ですが", "reading": "zannen desu ga", "meaning": "unfortunately", "kanji": "残念ですが", "part_of_speech": "expression"},
+    {"word": "すごい", "reading": "sugoi", "meaning": "amazing, great", "kanji": null, "part_of_speech": "i-adjective", "adjective_type": "i"}
+  ],
+
+  "grammar": [
+    {
+      "title": "可能形 — Potential Form (Group I)",
+      "structure": "V-ます → u-ending changes to e-ending + る (e.g. 書きます → 書ける)",
+      "jlpt_level": 4,
+      "explanation": "The potential form expresses ability ('can do'). For Group I verbs, change the final -u vowel of the dictionary form to -e and add -ru. For example: 書く→書ける, 読む→読める, 話す→話せる, 泳ぐ→泳げる. The object particle を often changes to が with potential verbs.",
+      "example_sentences": "① 漢字が読めますか。\n  (Kanji ga yomemasu ka.)\n  — Can you read kanji?\n② 日本語が少し話せます。\n  (Nihongo ga sukoshi hanasemasu.)\n  — I can speak a little Japanese."
+    },
+    {
+      "title": "可能形 — Potential Form (Group II & III)",
+      "structure": "Group II: V-る → V-られる (e.g. 食べる → 食べられる)\nGroup III: する → できる, 来る → 来られる",
+      "jlpt_level": 4,
+      "explanation": "For Group II verbs, drop -ru and add -rareru. For Group III: する becomes できる, 来る（くる）becomes 来られる（こられる）. In colloquial speech, Group II verbs often drop the ら: 食べれる (ra-nuki kotoba), but the standard form uses ら.",
+      "example_sentences": "③ 刺身が食べられますか。\n  (Sashimi ga taberaremasu ka.)\n  — Can you eat sashimi?\n④ あした来られますか。\n  (Ashita koraremasu ka.)\n  — Can you come tomorrow?"
+    },
+    {
+      "title": "見えます / 聞こえます (Involuntary Perception)",
+      "structure": "N が 見えます / 聞こえます",
+      "jlpt_level": 4,
+      "explanation": "見えます means 'something is visible / can be seen' and 聞こえます means 'something is audible / can be heard'. These express involuntary or natural perception — the ability to perceive without effort. They differ from 見られる (can watch, have the opportunity to see) and 聞ける (can listen, have the opportunity to hear), which express willful actions.",
+      "example_sentences": "⑤ ここから富士山が見えます。\n  (Koko kara Fujisan ga miemasu.)\n  — You can see Mt. Fuji from here.\n⑥ 音楽が聞こえますか。\n  (Ongaku ga kikoemasu ka.)\n  — Can you hear the music?"
+    },
+    {
+      "title": "できます (Ability / Completion)",
+      "structure": "N ができます / V-dict + ことができます",
+      "jlpt_level": 4,
+      "explanation": "できます has two main uses: (1) expressing ability with nouns — テニスができます (I can play tennis), and (2) indicating completion — 新しい駅ができました (A new station was built/completed). When used with verbs, the structure V-dictionary form + ことができます is used for more formal contexts.",
+      "example_sentences": "⑦ テニスができますか。\n  (Tenisu ga dekimasu ka.)\n  — Can you play tennis?\n⑧ この辺に新しいスーパーができました。\n  (Kono hen ni atarashii suupaa ga dekimashita.)\n  — A new supermarket was built around here."
+    }
+  ],
+
+  "conversation": {
+    "title": "What can you do?",
+    "title_ja": "何ができますか",
+    "lines": [
+      {"speaker": "Yamada", "japanese": "キムさんは楽器が何かできますか。", "romaji": "Kimu-san wa gakki ga nani ka dekimasu ka.", "english": "Ms. Kim, can you play any instruments?"},
+      {"speaker": "Kim", "japanese": "ええ、ピアノが少し弾けます。山田さんは？", "romaji": "Ee, piano ga sukoshi hikemasu. Yamada-san wa?", "english": "Yes, I can play the piano a little. How about you, Mr. Yamada?"},
+      {"speaker": "Yamada", "japanese": "僕はギターが弾けるよ。でも歌は全然だめ。", "romaji": "Boku wa gitaa ga hikeru yo. Demo uta wa zenzen dame.", "english": "I can play the guitar. But singing, I'm totally hopeless."},
+      {"speaker": "Kim", "japanese": "そうですか。ところで、この窓から何か見えますか。", "romaji": "Sou desu ka. Tokoro de, kono mado kara nani ka miemasu ka.", "english": "I see. By the way, can you see anything from this window?"},
+      {"speaker": "Yamada", "japanese": "うん、天気がいい日は富士山が見えるよ。", "romaji": "Un, tenki ga ii hi wa Fujisan ga mieru yo.", "english": "Yeah, on clear days you can see Mt. Fuji."},
+      {"speaker": "Kim", "japanese": "すごいですね！写真を撮ってもいいですか。", "romaji": "Sugoi desu ne! Shashin wo totte mo ii desu ka.", "english": "That's amazing! May I take a photo?"},
+      {"speaker": "Yamada", "japanese": "もちろん。今日はよく見えるから、いい写真が撮れると思うよ。", "romaji": "Mochiron. Kyou wa yoku mieru kara, ii shashin ga toreru to omou yo.", "english": "Of course. It's clearly visible today, so I think you can get a good photo."}
+    ]
+  }
+}

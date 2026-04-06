@@ -1,0 +1,85 @@
+{
+  "source": "Minna No Nihongo Beginner II",
+  "lesson_number": 37,
+  "title": "Lesson 37 – Passive Voice (受身形)",
+  "title_ja": "第37課",
+  "jlpt_level": 4,
+  "description": "Passiv (受身形): Direkte und indirekte Passivkonstruktionen, Leidenspassiv (迷惑の受身), Passiv bei Schöpfung/Geburt.",
+
+  "vocabulary": [
+    {"word": "ほめる", "reading": "homeru", "meaning": "to praise", "kanji": "褒める", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "しかる", "reading": "shikaru", "meaning": "to scold", "kanji": "叱る", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "さそう", "reading": "sasou", "meaning": "to invite", "kanji": "誘う", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "ふむ", "reading": "fumu", "meaning": "to step on", "kanji": "踏む", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "ぬすむ", "reading": "nusumu", "meaning": "to steal", "kanji": "盗む", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "こわす", "reading": "kowasu", "meaning": "to break (something)", "kanji": "壊す", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "よごす", "reading": "yogosu", "meaning": "to make dirty", "kanji": "汚す", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "たてる", "reading": "tateru", "meaning": "to build", "kanji": "建てる", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "はつめいする", "reading": "hatsumei suru", "meaning": "to invent", "kanji": "発明する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "はっけんする", "reading": "hakken suru", "meaning": "to discover", "kanji": "発見する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "なく", "reading": "naku", "meaning": "to cry", "kanji": "泣く", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "わらう", "reading": "warau", "meaning": "to laugh", "kanji": "笑う", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "おこる", "reading": "okoru", "meaning": "to get angry", "kanji": "怒る", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "こまる", "reading": "komaru", "meaning": "to be troubled", "kanji": "困る", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "どろぼう", "reading": "dorobou", "meaning": "thief, burglar", "kanji": "泥棒", "part_of_speech": "noun"},
+    {"word": "けいさつ", "reading": "keisatsu", "meaning": "police", "kanji": "警察", "part_of_speech": "noun"},
+    {"word": "せかい", "reading": "sekai", "meaning": "world", "kanji": "世界", "part_of_speech": "noun"},
+    {"word": "じしん", "reading": "jishin", "meaning": "earthquake", "kanji": "地震", "part_of_speech": "noun"},
+    {"word": "たいふう", "reading": "taifuu", "meaning": "typhoon", "kanji": "台風", "part_of_speech": "noun"},
+    {"word": "せいき", "reading": "seiki", "meaning": "century", "kanji": "世紀", "part_of_speech": "noun"},
+    {"word": "かがくしゃ", "reading": "kagakusha", "meaning": "scientist", "kanji": "科学者", "part_of_speech": "noun"},
+    {"word": "さくひん", "reading": "sakuhin", "meaning": "work (of art, literature)", "kanji": "作品", "part_of_speech": "noun"},
+    {"word": "めいわく", "reading": "meiwaku", "meaning": "nuisance, annoyance", "kanji": "迷惑", "part_of_speech": "noun"},
+    {"word": "うそ", "reading": "uso", "meaning": "lie, falsehood", "kanji": "嘘", "part_of_speech": "noun"},
+    {"word": "まんいん", "reading": "man'in", "meaning": "full (of people), packed", "kanji": "満員", "part_of_speech": "noun"},
+    {"word": "さいふ", "reading": "saifu", "meaning": "wallet", "kanji": "財布", "part_of_speech": "noun"},
+    {"word": "おとなりのひと", "reading": "otonari no hito", "meaning": "next-door neighbour", "kanji": "お隣の人", "part_of_speech": "noun"},
+    {"word": "かわいそうに", "reading": "kawaisou ni", "meaning": "poor thing, how pitiful", "kanji": null, "part_of_speech": "expression"},
+    {"word": "いたずらする", "reading": "itazura suru", "meaning": "to play a prank, to be mischievous", "kanji": null, "part_of_speech": "verb", "verb_group": 3}
+  ],
+
+  "grammar": [
+    {
+      "title": "N₁ は N₂ に V-(ら)れる (Direct Passive)",
+      "structure": "N₁ は N₂ に V-(ら)れます",
+      "jlpt_level": 4,
+      "explanation": "In the direct passive, the object of an active sentence becomes the subject. The person who does the action is marked with に. Group 1 verbs change the last -u to -areru, Group 2 verbs add -rareru, する becomes される, くる becomes こられる. This is used when the receiver of the action is the topic.",
+      "example_sentences": "① わたしは 部長に 褒められました。\n  (Watashi wa buchou ni homeraremashita.)\n  — I was praised by the department head.\n② このビルは 100年前に 建てられました。\n  (Kono biru wa hyaku-nen mae ni tateraremashita.)\n  — This building was built 100 years ago."
+    },
+    {
+      "title": "Indirect/Adversative Passive (迷惑の受身)",
+      "structure": "N₁ は N₂ に V-(ら)れる (adversative nuance)",
+      "jlpt_level": 4,
+      "explanation": "The indirect passive (also called adversative passive or 迷惑の受身) is used when the subject is negatively affected by someone else's action. The action does not directly involve the subject, but the subject is inconvenienced or annoyed by it. This usage is unique to Japanese and has no direct equivalent in English.",
+      "example_sentences": "③ わたしは 電車で 隣の人に 足を 踏まれました。\n  (Watashi wa densha de tonari no hito ni ashi o fumaremashita.)\n  — I had my foot stepped on by the person next to me on the train.\n④ わたしは 雨に 降られて、ぬれました。\n  (Watashi wa ame ni furarete, nuremashita.)\n  — I got rained on and got wet."
+    },
+    {
+      "title": "N が/は (N₂ によって) V-(ら)れる (Passive of Creation/Discovery)",
+      "structure": "N は (N₂ によって) V-(ら)れました",
+      "jlpt_level": 4,
+      "explanation": "When describing inventions, discoveries, or the creation of works, the passive is used with によって instead of に to indicate the creator or discoverer. によって is used because these events are historical facts rather than actions that affect someone.",
+      "example_sentences": "⑤ 電話は ベルによって 発明されました。\n  (Denwa wa Beru ni yotte hatsumei saremashita.)\n  — The telephone was invented by Bell.\n⑥ この小説は 夏目漱石によって 書かれました。\n  (Kono shousetsu wa Natsume Souseki ni yotte kakaremashita.)\n  — This novel was written by Natsume Soseki."
+    },
+    {
+      "title": "V-(ら)れる — Passive Conjugation Overview",
+      "structure": "Group 1: -u → -areru / Group 2: -ru → -rareru / Group 3: する → される, くる → こられる",
+      "jlpt_level": 4,
+      "explanation": "To form the passive: Group 1 verbs change the final -u syllable to the -a row and add れる (e.g. 書く → 書かれる, 読む → 読まれる). Group 2 verbs drop -る and add -られる (e.g. 食べる → 食べられる). Irregular verbs: する → される, くる → こられる. The passive form conjugates as a Group 2 verb (e.g. passive-masu: 書かれます).",
+      "example_sentences": "⑦ 先生に 名前を 呼ばれました。\n  (Sensei ni namae o yobaremashita.)\n  — My name was called by the teacher.\n⑧ 弟に ケーキを 食べられました。\n  (Otouto ni keeki o taberaremashita.)\n  — My cake was eaten by my younger brother. (I'm annoyed about it.)"
+    }
+  ],
+
+  "conversation": {
+    "title": "I had my wallet stolen",
+    "title_ja": "財布を 盗まれたんです",
+    "lines": [
+      {"speaker": "Suzuki", "japanese": "どうしたんですか。元気が ないですね。", "romaji": "Dou shita n desu ka. Genki ga nai desu ne.", "english": "What happened? You don't look well."},
+      {"speaker": "Kim", "japanese": "きのう 電車の 中で 財布を 盗まれたんです。", "romaji": "Kinou densha no naka de saifu o nusumareta n desu.", "english": "I had my wallet stolen on the train yesterday."},
+      {"speaker": "Suzuki", "japanese": "えっ、それは 大変でしたね。警察に 届けましたか。", "romaji": "E', sore wa taihen deshita ne. Keisatsu ni todokemashita ka.", "english": "Oh no, that's terrible. Did you report it to the police?"},
+      {"speaker": "Kim", "japanese": "はい、届けました。でも まだ 見つかっていません。", "romaji": "Hai, todokemashita. Demo mada mitsukatte imasen.", "english": "Yes, I did. But it hasn't been found yet."},
+      {"speaker": "Suzuki", "japanese": "かわいそうに。お金は たくさん 入って いましたか。", "romaji": "Kawaisou ni. Okane wa takusan haitte imashita ka.", "english": "Poor you. Was there a lot of money in it?"},
+      {"speaker": "Kim", "japanese": "ええ。それに、電車が 満員で、足も 踏まれて、本当に ひどい一日でした。", "romaji": "Ee. Sore ni, densha ga man'in de, ashi mo fumarete, hontou ni hidoi ichinichi deshita.", "english": "Yes. On top of that, the train was packed, my foot was stepped on, and it was really a terrible day."},
+      {"speaker": "Suzuki", "japanese": "それは 本当に 大変でしたね。気をつけてくださいね。", "romaji": "Sore wa hontou ni taihen deshita ne. Ki o tsukete kudasai ne.", "english": "That was really tough. Please be careful."}
+    ]
+  }
+}

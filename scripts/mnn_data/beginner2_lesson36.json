@@ -1,0 +1,86 @@
+{
+  "source": "Minna No Nihongo Beginner II",
+  "lesson_number": 36,
+  "title": "Lesson 36 – Purpose & Effort (ように)",
+  "title_ja": "第36課",
+  "jlpt_level": 4,
+  "description": "Ziele und Bemühungen ausdrücken: ように (Zweck mit intransitiven/Potentialverben), ようにする (sich bemühen), ようになりました (Zustandsänderung), ようにしてください (Aufforderung zur Bemühung).",
+
+  "vocabulary": [
+    {"word": "はしる", "reading": "hashiru", "meaning": "to run", "kanji": "走る", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "およぐ", "reading": "oyogu", "meaning": "to swim", "kanji": "泳ぐ", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "うんどうする", "reading": "undou suru", "meaning": "to exercise", "kanji": "運動する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "まにあう", "reading": "maniau", "meaning": "to be in time", "kanji": "間に合う", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "なれる", "reading": "nareru", "meaning": "to get used to", "kanji": "慣れる", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "かわる", "reading": "kawaru", "meaning": "to change (intransitive)", "kanji": "変わる", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "まもる", "reading": "mamoru", "meaning": "to protect, to keep (a rule)", "kanji": "守る", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "やせる", "reading": "yaseru", "meaning": "to lose weight", "kanji": null, "part_of_speech": "verb", "verb_group": 2},
+    {"word": "ふとる", "reading": "futoru", "meaning": "to gain weight", "kanji": "太る", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "さんぽする", "reading": "sanpo suru", "meaning": "to take a walk", "kanji": "散歩する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "きをつける", "reading": "ki o tsukeru", "meaning": "to be careful", "kanji": "気をつける", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "めざましどけい", "reading": "mezamashi dokei", "meaning": "alarm clock", "kanji": "目覚まし時計", "part_of_speech": "noun"},
+    {"word": "けんこう", "reading": "kenkou", "meaning": "health", "kanji": "健康", "part_of_speech": "noun"},
+    {"word": "せいかつ", "reading": "seikatsu", "meaning": "life, daily life", "kanji": "生活", "part_of_speech": "noun"},
+    {"word": "しゅうかん", "reading": "shuukan", "meaning": "habit", "kanji": "習慣", "part_of_speech": "noun"},
+    {"word": "たいじゅう", "reading": "taijuu", "meaning": "body weight", "kanji": "体重", "part_of_speech": "noun"},
+    {"word": "にっき", "reading": "nikki", "meaning": "diary", "kanji": "日記", "part_of_speech": "noun"},
+    {"word": "やくそく", "reading": "yakusoku", "meaning": "promise, appointment", "kanji": "約束", "part_of_speech": "noun"},
+    {"word": "もくひょう", "reading": "mokuhyou", "meaning": "goal, target", "kanji": "目標", "part_of_speech": "noun"},
+    {"word": "きそくただしい", "reading": "kisoku tadashii", "meaning": "regular, well-regulated", "kanji": "規則正しい", "part_of_speech": "i-adjective"},
+    {"word": "さいきん", "reading": "saikin", "meaning": "recently", "kanji": "最近", "part_of_speech": "adverb"},
+    {"word": "できるだけ", "reading": "dekiru dake", "meaning": "as much as possible", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "かならず", "reading": "kanarazu", "meaning": "always, without fail", "kanji": "必ず", "part_of_speech": "adverb"},
+    {"word": "なるべく", "reading": "narubeku", "meaning": "as much as possible", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "むかし", "reading": "mukashi", "meaning": "the old days, long ago", "kanji": "昔", "part_of_speech": "noun"},
+    {"word": "ちこくする", "reading": "chikoku suru", "meaning": "to be late", "kanji": "遅刻する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "おさけ", "reading": "osake", "meaning": "alcohol, sake", "kanji": "お酒", "part_of_speech": "noun"},
+    {"word": "のみすぎる", "reading": "nomisugiru", "meaning": "to drink too much", "kanji": "飲みすぎる", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "おきる", "reading": "okiru", "meaning": "to get up, to wake up", "kanji": "起きる", "part_of_speech": "verb", "verb_group": 2}
+  ],
+
+  "grammar": [
+    {
+      "title": "V (dict/nai) + ように (Purpose with Intransitive/Potential Verbs)",
+      "structure": "V (dict form / nai form) + ように、〜",
+      "jlpt_level": 4,
+      "explanation": "ように is used to express a purpose or goal when the verb before ように is intransitive or a potential form. It indicates the desired state or result that the speaker aims for. Unlike ために, which is used with volitional verbs, ように is used with verbs describing states or abilities.",
+      "example_sentences": "① 朝 早く 起きられるように、目覚まし時計を 買いました。\n  (Asa hayaku okirareru you ni, mezamashi dokei o kaimashita.)\n  — I bought an alarm clock so that I can wake up early in the morning.\n② 忘れないように、メモしました。\n  (Wasurenai you ni, memo shimashita.)\n  — I took notes so that I would not forget."
+    },
+    {
+      "title": "V (dict/nai) + ようにする (Try to / Make an Effort)",
+      "structure": "V (dict form / nai form) + ようにする",
+      "jlpt_level": 4,
+      "explanation": "ようにする expresses that the speaker consciously tries or makes an effort to do something, or to make a change in behavior. It implies an ongoing effort or new habit.",
+      "example_sentences": "③ 毎日 運動するようにしています。\n  (Mainichi undou suru you ni shite imasu.)\n  — I try to exercise every day.\n④ 甘い物を 食べないようにしています。\n  (Amai mono o tabenai you ni shite imasu.)\n  — I am trying not to eat sweet things."
+    },
+    {
+      "title": "V (dict/nai) + ようになりました (Change of State/Ability)",
+      "structure": "V (dict form / nai form) + ようになりました",
+      "jlpt_level": 4,
+      "explanation": "ようになりました is used to express a change in state or ability over time. It indicates that something which was not possible or did not happen before has now become possible or habitual. It often describes acquiring new abilities or changes in habit.",
+      "example_sentences": "⑤ 日本語が 話せるようになりました。\n  (Nihongo ga hanaseru you ni narimashita.)\n  — I have become able to speak Japanese.\n⑥ 子供が 野菜を 食べるようになりました。\n  (Kodomo ga yasai o taberu you ni narimashita.)\n  — My child has started eating vegetables."
+    },
+    {
+      "title": "V (dict/nai) + ようにしてください (Please Try To)",
+      "structure": "V (dict form / nai form) + ようにしてください",
+      "jlpt_level": 4,
+      "explanation": "ようにしてください is used to politely ask or instruct someone to make an effort to do or not do something. It is softer than a direct command and implies ongoing effort rather than a single action.",
+      "example_sentences": "⑦ 遅刻しないようにしてください。\n  (Chikoku shinai you ni shite kudasai.)\n  — Please try not to be late.\n⑧ できるだけ 規則正しい 生活を するようにしてください。\n  (Dekiru dake kisoku tadashii seikatsu o suru you ni shite kudasai.)\n  — Please try to live as regular a life as possible."
+    }
+  ],
+
+  "conversation": {
+    "title": "Have you been exercising?",
+    "title_ja": "運動していますか",
+    "lines": [
+      {"speaker": "Doctor", "japanese": "最近、体の 調子は どうですか。", "romaji": "Saikin, karada no choushi wa dou desu ka.", "english": "How has your health been recently?"},
+      {"speaker": "Tanaka", "japanese": "ちょっと 太りました。体重が ５キロも 増えたんです。", "romaji": "Chotto futorimashita. Taijuu ga go-kiro mo fueta n desu.", "english": "I've gained a bit of weight. I gained as much as 5 kilograms."},
+      {"speaker": "Doctor", "japanese": "運動していますか。", "romaji": "Undou shite imasu ka.", "english": "Have you been exercising?"},
+      {"speaker": "Tanaka", "japanese": "いいえ、最近 忙しくて、ぜんぜん していません。", "romaji": "Iie, saikin isogashikute, zenzen shite imasen.", "english": "No, I've been busy recently, so I haven't exercised at all."},
+      {"speaker": "Doctor", "japanese": "やせられるように、毎日 散歩するようにしてください。", "romaji": "Yaserareru you ni, mainichi sanpo suru you ni shite kudasai.", "english": "In order to lose weight, please try to take a walk every day."},
+      {"speaker": "Tanaka", "japanese": "はい、わかりました。お酒も 飲みすぎないようにします。", "romaji": "Hai, wakarimashita. Osake mo nomisuginai you ni shimasu.", "english": "Yes, I understand. I'll also try not to drink too much alcohol."},
+      {"speaker": "Doctor", "japanese": "それは いいですね。できるだけ 規則正しい 生活を するようにしてくださいね。", "romaji": "Sore wa ii desu ne. Dekiru dake kisoku tadashii seikatsu o suru you ni shite kudasai ne.", "english": "That's good. Please try to live as regular a life as possible."},
+      {"speaker": "Tanaka", "japanese": "はい、がんばります。", "romaji": "Hai, ganbarimasu.", "english": "Yes, I'll do my best."}
+    ]
+  }
+}

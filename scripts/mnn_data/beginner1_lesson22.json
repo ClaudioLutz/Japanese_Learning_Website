@@ -1,0 +1,92 @@
+{
+  "source": "Minna No Nihongo Beginner I",
+  "lesson_number": 22,
+  "title": "Lesson 22 – Noun Modification with Clauses",
+  "title_ja": "第22課",
+  "jlpt_level": 5,
+  "description": "Nomen-Modifikation durch Nebensätze (Relativsätze): Plain form + N zur Beschreibung von Personen, Dingen und Orten.",
+
+  "vocabulary": [
+    {"word": "きます", "reading": "kimasu", "meaning": "to wear (upper body)", "kanji": "着ます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "はきます", "reading": "hakimasu", "meaning": "to wear (lower body), to put on (shoes)", "kanji": "履きます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "かぶります", "reading": "kaburimasu", "meaning": "to wear (hat), to put on (head)", "kanji": null, "part_of_speech": "verb", "verb_group": 1},
+    {"word": "かけます", "reading": "kakemasu", "meaning": "to wear (glasses)", "kanji": null, "part_of_speech": "verb", "verb_group": 2},
+    {"word": "うまれます", "reading": "umaremasu", "meaning": "to be born", "kanji": "生まれます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "すみます", "reading": "sumimasu", "meaning": "to live, to reside", "kanji": "住みます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "しります", "reading": "shirimasu", "meaning": "to get to know", "kanji": "知ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "つくります", "reading": "tsukurimasu", "meaning": "to make, to produce", "kanji": "作ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "うります", "reading": "urimasu", "meaning": "to sell", "kanji": "売ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "コート", "reading": "kooto", "meaning": "coat", "kanji": null, "part_of_speech": "noun"},
+    {"word": "スーツ", "reading": "suutsu", "meaning": "suit", "kanji": null, "part_of_speech": "noun"},
+    {"word": "セーター", "reading": "seetaa", "meaning": "sweater", "kanji": null, "part_of_speech": "noun"},
+    {"word": "ぼうし", "reading": "boushi", "meaning": "hat, cap", "kanji": "帽子", "part_of_speech": "noun"},
+    {"word": "めがね", "reading": "megane", "meaning": "glasses", "kanji": "眼鏡", "part_of_speech": "noun"},
+    {"word": "くつ", "reading": "kutsu", "meaning": "shoes", "kanji": "靴", "part_of_speech": "noun"},
+    {"word": "ネクタイ", "reading": "nekutai", "meaning": "necktie", "kanji": null, "part_of_speech": "noun"},
+    {"word": "ようふく", "reading": "youfuku", "meaning": "Western-style clothes", "kanji": "洋服", "part_of_speech": "noun"},
+    {"word": "せいかく", "reading": "seikaku", "meaning": "personality, character", "kanji": "性格", "part_of_speech": "noun"},
+    {"word": "かたち", "reading": "katachi", "meaning": "shape, form", "kanji": "形", "part_of_speech": "noun"},
+    {"word": "いろ", "reading": "iro", "meaning": "color", "kanji": "色", "part_of_speech": "noun"},
+    {"word": "デザイン", "reading": "dezain", "meaning": "design", "kanji": null, "part_of_speech": "noun"},
+    {"word": "せいひん", "reading": "seihin", "meaning": "product, goods", "kanji": "製品", "part_of_speech": "noun"},
+    {"word": "こうじょう", "reading": "koujou", "meaning": "factory", "kanji": "工場", "part_of_speech": "noun"},
+    {"word": "ちほう", "reading": "chihou", "meaning": "region, area", "kanji": "地方", "part_of_speech": "noun"},
+    {"word": "おきゃくさま", "reading": "okyakusama", "meaning": "customer, guest (polite)", "kanji": "お客様", "part_of_speech": "noun"},
+    {"word": "しまい", "reading": "shimai", "meaning": "sisters", "kanji": "姉妹", "part_of_speech": "noun"},
+    {"word": "しんせつ", "reading": "shinsetsu", "meaning": "kind, helpful", "kanji": "親切", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "にぎやか", "reading": "nigiyaka", "meaning": "lively, bustling", "kanji": null, "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "しずか", "reading": "shizuka", "meaning": "quiet, calm", "kanji": "静か", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "ながい", "reading": "nagai", "meaning": "long", "kanji": "長い", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "みじかい", "reading": "mijikai", "meaning": "short", "kanji": "短い", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "あかるい", "reading": "akarui", "meaning": "bright, cheerful", "kanji": "明るい", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "まるい", "reading": "marui", "meaning": "round", "kanji": "丸い", "part_of_speech": "i-adjective", "adjective_type": "i"}
+  ],
+
+  "vocabulary_countries": [],
+
+  "grammar": [
+    {
+      "title": "Plain form + N (Noun Modification / Relative Clauses)",
+      "structure": "V (plain form) + N",
+      "jlpt_level": 5,
+      "explanation": "In Japanese, a clause can modify a noun by placing it directly before the noun. The verb in the modifying clause is always in the plain form. This is equivalent to relative clauses in English ('the book that I bought', 'the person who came'). The modified noun can be the subject, object, or any other element of the modifying clause.",
+      "example_sentences": "① わたしが きのう 買った 本は おもしろいです。\n  (Watashi ga kinou katta hon wa omoshiroi desu.)\n  — The book I bought yesterday is interesting.\n② あそこに いる 人は 山田さんです。\n  (Asoko ni iru hito wa Yamada-san desu.)\n  — The person who is over there is Mr. Yamada."
+    },
+    {
+      "title": "い-Adjective + N (Adjective Modification)",
+      "structure": "い-Adj + N",
+      "jlpt_level": 5,
+      "explanation": "い-adjectives directly modify a noun by placing them before it. The adjective keeps its い ending. This is a review of basic adjective modification, now combined with clause modification in more complex sentences.",
+      "example_sentences": "③ 長い 髪の 女の人は 姉です。\n  (Nagai kami no onna no hito wa ane desu.)\n  — The woman with long hair is my older sister.\n④ 丸い 形の ケーキを 作りました。\n  (Marui katachi no keeki o tsukurimashita.)\n  — I made a round-shaped cake."
+    },
+    {
+      "title": "な-Adjective + な + N (な-Adjective Modification)",
+      "structure": "な-Adj + な + N",
+      "jlpt_level": 5,
+      "explanation": "な-adjectives require な between the adjective and the noun when modifying it. In relative clause structures, this な is essential to distinguish な-adjectives from nouns.",
+      "example_sentences": "⑤ 静かな 町に 住みたいです。\n  (Shizuka na machi ni sumitai desu.)\n  — I want to live in a quiet town.\n⑥ 親切な 人が 道を 教えてくれました。\n  (Shinsetsu na hito ga michi o oshiete kuremashita.)\n  — A kind person taught me the way."
+    },
+    {
+      "title": "Complex Noun Modification (Clause + N)",
+      "structure": "(Clause in plain form) + N + Particle + Predicate",
+      "jlpt_level": 5,
+      "explanation": "Multiple modifying elements (clauses, adjectives) can be combined to create detailed noun descriptions. The entire modifying clause or phrase comes before the noun. Within the modifying clause, が is used instead of は for the subject.",
+      "example_sentences": "⑦ 青い セーターを 着ている 人は だれですか。\n  (Aoi seetaa o kite iru hito wa dare desu ka.)\n  — Who is the person wearing a blue sweater?\n⑧ 母が 作った 料理は とても おいしかったです。\n  (Haha ga tsukutta ryouri wa totemo oishikatta desu.)\n  — The food my mother made was very delicious.\n⑨ わたしが 住んでいる 町は にぎやかです。\n  (Watashi ga sunde iru machi wa nigiyaka desu.)\n  — The town where I live is lively."
+    }
+  ],
+
+  "conversation": {
+    "title": "Who is that person?",
+    "title_ja": "あの 人は だれですか",
+    "lines": [
+      {"speaker": "Kimura", "japanese": "あそこに いる 人を 知っていますか。", "romaji": "Asoko ni iru hito o shitte imasu ka.", "english": "Do you know the person who is over there?"},
+      {"speaker": "Honda", "japanese": "白い コートを 着ている 人ですか。", "romaji": "Shiroi kooto o kite iru hito desu ka.", "english": "The person wearing a white coat?"},
+      {"speaker": "Kimura", "japanese": "いいえ、眼鏡を かけている 人です。", "romaji": "Iie, megane o kakete iru hito desu.", "english": "No, the person wearing glasses."},
+      {"speaker": "Honda", "japanese": "ああ、あの 人は 新しい 工場で 働いている 田中さんですよ。", "romaji": "Aa, ano hito wa atarashii koujou de hataraite iru Tanaka-san desu yo.", "english": "Ah, that person is Tanaka, who works at the new factory."},
+      {"speaker": "Kimura", "japanese": "そうですか。性格が 明るい 人だと 思いました。", "romaji": "Sou desu ka. Seikaku ga akarui hito da to omoimashita.", "english": "I see. I thought he was a cheerful person."},
+      {"speaker": "Honda", "japanese": "ええ、とても 親切な 人ですよ。", "romaji": "Ee, totemo shinsetsu na hito desu yo.", "english": "Yes, he is a very kind person."},
+      {"speaker": "Kimura", "japanese": "わたしが 住んでいる 町にも 工場が ありますね。", "romaji": "Watashi ga sunde iru machi ni mo koujou ga arimasu ne.", "english": "There is also a factory in the town where I live, right?"},
+      {"speaker": "Honda", "japanese": "ええ、あの 工場は いい 製品を 作っていると 聞きました。", "romaji": "Ee, ano koujou wa ii seihin o tsukutte iru to kikimashita.", "english": "Yes, I heard that factory makes good products."}
+    ]
+  }
+}

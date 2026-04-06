@@ -1,0 +1,85 @@
+{
+  "source": "Minna No Nihongo Beginner II",
+  "lesson_number": 44,
+  "title": "Lesson 44 – Too Much and Ease of Action",
+  "title_ja": "第44課",
+  "jlpt_level": 4,
+  "description": "Uebermass und Leichtigkeit: ～すぎます (zu viel), ～やすい/～にくい (leicht/schwer zu tun), Adj-く/N-に + します (machen), ～くなります/～になります (werden).",
+
+  "vocabulary": [
+    {"word": "なきます", "reading": "nakimasu", "meaning": "to cry", "kanji": "泣きます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "わらいます", "reading": "waraimasu", "meaning": "to laugh", "kanji": "笑います", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "かわきます", "reading": "kawakimasu", "meaning": "to get dry", "kanji": "乾きます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "すべります", "reading": "suberimasu", "meaning": "to slip, to slide", "kanji": "滑ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "たおれます", "reading": "taoremasu", "meaning": "to fall down, to collapse", "kanji": "倒れます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "やけどします", "reading": "yakedo shimasu", "meaning": "to get burned", "kanji": "やけどします", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "のりかえます", "reading": "norikaemasu", "meaning": "to transfer (vehicles)", "kanji": "乗り換えます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "まちがえます", "reading": "machigaemasu", "meaning": "to make a mistake", "kanji": "間違えます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "おとします", "reading": "otoshimasu", "meaning": "to drop", "kanji": "落とします", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "みつけます", "reading": "mitsukemasu", "meaning": "to find", "kanji": "見つけます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "さわります", "reading": "sawarimasu", "meaning": "to touch", "kanji": "触ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "ぬります", "reading": "nurimasu", "meaning": "to paint, to apply", "kanji": "塗ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "はきやすい", "reading": "hakiyasui", "meaning": "easy to wear (shoes)", "kanji": null, "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "くらい", "reading": "kurai", "meaning": "dark", "kanji": "暗い", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "あかるい", "reading": "akarui", "meaning": "bright", "kanji": "明るい", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "からい", "reading": "karai", "meaning": "spicy, hot", "kanji": "辛い", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "うすい", "reading": "usui", "meaning": "thin, light (color/taste)", "kanji": "薄い", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "こい", "reading": "koi", "meaning": "thick, strong (color/taste)", "kanji": "濃い", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "ねだん", "reading": "nedan", "meaning": "price", "kanji": "値段", "part_of_speech": "noun"},
+    {"word": "かたち", "reading": "katachi", "meaning": "shape, form", "kanji": "形", "part_of_speech": "noun"},
+    {"word": "いろ", "reading": "iro", "meaning": "color", "kanji": "色", "part_of_speech": "noun"},
+    {"word": "デザイン", "reading": "dezain", "meaning": "design", "kanji": null, "part_of_speech": "noun"},
+    {"word": "サイズ", "reading": "saizu", "meaning": "size", "kanji": null, "part_of_speech": "noun"},
+    {"word": "おんど", "reading": "ondo", "meaning": "temperature", "kanji": "温度", "part_of_speech": "noun"},
+    {"word": "おおきさ", "reading": "ookisa", "meaning": "size, magnitude", "kanji": "大きさ", "part_of_speech": "noun"},
+    {"word": "おもさ", "reading": "omosa", "meaning": "weight", "kanji": "重さ", "part_of_speech": "noun"},
+    {"word": "ながさ", "reading": "nagasa", "meaning": "length", "kanji": "長さ", "part_of_speech": "noun"},
+    {"word": "はんぶん", "reading": "hanbun", "meaning": "half", "kanji": "半分", "part_of_speech": "noun"},
+    {"word": "もっと", "reading": "motto", "meaning": "more", "kanji": null, "part_of_speech": "adverb"}
+  ],
+
+  "grammar": [
+    {
+      "title": "～すぎます — Too much / Excessively",
+      "structure": "V-masu stem + すぎます / い-Adj (drop い) + すぎます / な-Adj (drop な) + すぎます",
+      "jlpt_level": 4,
+      "explanation": "～すぎます indicates that something is excessive or overdone. It means 'too much' or 'too ~'. For verbs, remove ます and add すぎます. For い-adjectives, remove the final い and add すぎます. For な-adjectives, remove な and add すぎます. The resulting form conjugates as a Group 2 verb (すぎない, すぎて, etc.).",
+      "example_sentences": "① ゆうべ お酒を 飲みすぎました。\n  (Yuube osake o nomisugimashita.)\n  — I drank too much alcohol last night.\n② このかばんは 重すぎます。\n  (Kono kaban wa omosugimasu.)\n  — This bag is too heavy.\n③ この部屋は 静かすぎます。\n  (Kono heya wa shizuka sugimasu.)\n  — This room is too quiet."
+    },
+    {
+      "title": "～やすい / ～にくい — Easy / Hard to do",
+      "structure": "V-masu stem + やすい / にくい",
+      "jlpt_level": 4,
+      "explanation": "～やすい means 'easy to do ~' and ～にくい means 'hard to do ~'. Attach them to the masu-stem of a verb. The resulting word is an い-adjective and conjugates accordingly (読みやすくない, 食べにくかった, etc.). These describe inherent properties of the object, not the subject's ability.",
+      "example_sentences": "④ この辞書は 使いやすいです。\n  (Kono jisho wa tsukaiyasui desu.)\n  — This dictionary is easy to use.\n⑤ この字は 読みにくいです。\n  (Kono ji wa yominikui desu.)\n  — This writing is hard to read.\n⑥ 白い服は 汚れやすいです。\n  (Shiroi fuku wa yogoreyasui desu.)\n  — White clothes get dirty easily."
+    },
+    {
+      "title": "Adj-く / N-に + します — Make / Change into",
+      "structure": "い-Adj (drop い) + く + します / な-Adj + に + します / N + に + します",
+      "jlpt_level": 4,
+      "explanation": "This pattern means 'to make something ~' or 'to change something into ~'. For い-adjectives, change い to く and add します. For な-adjectives and nouns, add に and します. The subject intentionally causes a change.",
+      "example_sentences": "⑦ 音を 小さくしてください。\n  (Oto o chiisaku shite kudasai.)\n  — Please make the sound quieter.\n⑧ 部屋を きれいに しました。\n  (Heya o kirei ni shimashita.)\n  — I made the room clean.\n⑨ 息子を 医者に したいです。\n  (Musuko o isha ni shitai desu.)\n  — I want to make my son a doctor."
+    },
+    {
+      "title": "～くなります / ～になります — Become",
+      "structure": "い-Adj (drop い) + く + なります / な-Adj + に + なります / N + に + なります",
+      "jlpt_level": 4,
+      "explanation": "This pattern means 'to become ~'. It describes a change of state that happens naturally (not caused intentionally by someone). For い-adjectives, change い to く and add なります. For な-adjectives and nouns, add に and なります.",
+      "example_sentences": "⑩ 日本語が 上手に なりましたね。\n  (Nihongo ga jouzu ni narimashita ne.)\n  — Your Japanese has become good, hasn't it?\n⑪ 来年 20歳に なります。\n  (Rainen hatachi ni narimasu.)\n  — I will turn 20 next year.\n⑫ 最近 暖かく なりましたね。\n  (Saikin atatakaku narimashita ne.)\n  — It has become warm recently, hasn't it?"
+    }
+  ],
+
+  "conversation": {
+    "title": "These shoes are easy to walk in",
+    "title_ja": "この靴は歩きやすいです",
+    "lines": [
+      {"speaker": "Miller", "japanese": "すみません、この靴を はいてみても いいですか。", "romaji": "Sumimasen, kono kutsu o haite mite mo ii desu ka.", "english": "Excuse me, may I try on these shoes?"},
+      {"speaker": "Clerk", "japanese": "はい、どうぞ。サイズは いかがですか。", "romaji": "Hai, douzo. Saizu wa ikaga desu ka.", "english": "Yes, please go ahead. How is the size?"},
+      {"speaker": "Miller", "japanese": "ちょっと 小さすぎます。もっと 大きいのは ありますか。", "romaji": "Chotto chiisasugimasu. Motto ookii no wa arimasu ka.", "english": "They're a bit too small. Do you have bigger ones?"},
+      {"speaker": "Clerk", "japanese": "はい、こちらは いかがですか。歩きやすいと 人気がありますよ。", "romaji": "Hai, kochira wa ikaga desu ka. Arukiyasui to ninki ga arimasu yo.", "english": "Yes, how about these? They're popular because they're easy to walk in."},
+      {"speaker": "Miller", "japanese": "あ、いいですね。でも 色を もう少し 明るく できますか。", "romaji": "A, ii desu ne. Demo iro o mou sukoshi akaruku dekimasu ka.", "english": "Oh, these are nice. But can you make the color a bit brighter?"},
+      {"speaker": "Clerk", "japanese": "同じデザインで 白が ありますよ。最近 白が 人気に なってきました。", "romaji": "Onaji dezain de shiro ga arimasu yo. Saikin shiro ga ninki ni natte kimashita.", "english": "We have white in the same design. White has become popular recently."},
+      {"speaker": "Miller", "japanese": "じゃ、白に します。", "romaji": "Ja, shiro ni shimasu.", "english": "Then I'll go with white."}
+    ]
+  }
+}

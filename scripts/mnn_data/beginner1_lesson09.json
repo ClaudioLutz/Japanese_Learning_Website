@@ -1,0 +1,93 @@
+{
+  "source": "Minna No Nihongo Beginner I",
+  "lesson_number": 9,
+  "title": "Lesson 9 – Likes, Skills and Reasons",
+  "title_ja": "第9課",
+  "jlpt_level": 5,
+  "description": "Vorlieben, Fähigkeiten und Gründe: N が 好きです/上手です/わかります (mit が), ～から (Grund/weil), どうして (warum).",
+
+  "vocabulary": [
+    {"word": "すき", "reading": "suki", "meaning": "like, fond of", "kanji": "好き", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "きらい", "reading": "kirai", "meaning": "dislike, hate", "kanji": "嫌い", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "じょうず", "reading": "jouzu", "meaning": "good at, skillful", "kanji": "上手", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "へた", "reading": "heta", "meaning": "poor at, unskillful", "kanji": "下手", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "わかります", "reading": "wakarimasu", "meaning": "to understand, to know", "kanji": "分かります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "あります", "reading": "arimasu", "meaning": "to have, to possess", "kanji": null, "part_of_speech": "verb", "verb_group": 1},
+    {"word": "うたいます", "reading": "utaimasu", "meaning": "to sing", "kanji": "歌います", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "ひきます", "reading": "hikimasu", "meaning": "to play (string instrument/piano)", "kanji": "弾きます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "およぎます", "reading": "oyogimasu", "meaning": "to swim", "kanji": "泳ぎます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "つくります", "reading": "tsukurimasu", "meaning": "to make, to cook", "kanji": "作ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "おんがく", "reading": "ongaku", "meaning": "music", "kanji": "音楽", "part_of_speech": "noun"},
+    {"word": "うた", "reading": "uta", "meaning": "song", "kanji": "歌", "part_of_speech": "noun"},
+    {"word": "ダンス", "reading": "dansu", "meaning": "dance", "kanji": null, "part_of_speech": "noun"},
+    {"word": "スポーツ", "reading": "supootsu", "meaning": "sports", "kanji": null, "part_of_speech": "noun"},
+    {"word": "サッカー", "reading": "sakkaa", "meaning": "soccer", "kanji": null, "part_of_speech": "noun"},
+    {"word": "やきゅう", "reading": "yakyuu", "meaning": "baseball", "kanji": "野球", "part_of_speech": "noun"},
+    {"word": "テニス", "reading": "tenisu", "meaning": "tennis", "kanji": null, "part_of_speech": "noun"},
+    {"word": "りょうり", "reading": "ryouri", "meaning": "cooking, cuisine", "kanji": "料理", "part_of_speech": "noun"},
+    {"word": "え", "reading": "e", "meaning": "picture, painting", "kanji": "絵", "part_of_speech": "noun"},
+    {"word": "ピアノ", "reading": "piano", "meaning": "piano", "kanji": null, "part_of_speech": "noun"},
+    {"word": "ギター", "reading": "gitaa", "meaning": "guitar", "kanji": null, "part_of_speech": "noun"},
+    {"word": "かんじ", "reading": "kanji", "meaning": "Chinese characters", "kanji": "漢字", "part_of_speech": "noun"},
+    {"word": "ひらがな", "reading": "hiragana", "meaning": "hiragana", "kanji": null, "part_of_speech": "noun"},
+    {"word": "カタカナ", "reading": "katakana", "meaning": "katakana", "kanji": null, "part_of_speech": "noun"},
+    {"word": "じかん", "reading": "jikan", "meaning": "time", "kanji": "時間", "part_of_speech": "noun"},
+    {"word": "よく", "reading": "yoku", "meaning": "often, well", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "だいたい", "reading": "daitai", "meaning": "mostly, approximately", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "たくさん", "reading": "takusan", "meaning": "a lot, many", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "すこし", "reading": "sukoshi", "meaning": "a little, a few", "kanji": "少し", "part_of_speech": "adverb"},
+    {"word": "ぜんぜん", "reading": "zenzen", "meaning": "not at all (with negative)", "kanji": "全然", "part_of_speech": "adverb"},
+    {"word": "どうして", "reading": "doushite", "meaning": "why", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "から", "reading": "kara", "meaning": "because, so", "kanji": null, "part_of_speech": "conjunction"}
+  ],
+
+  "vocabulary_countries": [],
+
+  "grammar": [
+    {
+      "title": "N が 好きです / 嫌いです (Likes and Dislikes with が)",
+      "structure": "N は N₂ が 好きです / 嫌いです",
+      "jlpt_level": 5,
+      "explanation": "When expressing likes and dislikes, the object of the feeling is marked with the particle が, not を. 好きです means 'to like' and 嫌いです means 'to dislike'. The degree can be modified with とても (very much) or あまり (not very much, with negative). だいすき means 'to love / like very much'.",
+      "example_sentences": "① わたしは 音楽が 好きです。\n  (Watashi wa ongaku ga suki desu.)\n  — I like music.\n② わたしは 野菜が あまり 好きじゃ ありません。\n  (Watashi wa yasai ga amari suki ja arimasen.)\n  — I don't like vegetables very much."
+    },
+    {
+      "title": "N が 上手です / 下手です / わかります (Skills and Understanding with が)",
+      "structure": "N は N₂ が 上手です / 下手です / わかります",
+      "jlpt_level": 5,
+      "explanation": "Similar to 好きです, the particle が marks the object with 上手です (good at), 下手です (poor at), and わかります (understand). Note: 上手 should not be used to describe your own abilities as it sounds boastful. Use あまり上手じゃありません to be modest about your skills.",
+      "example_sentences": "③ 田中さんは ピアノが 上手です。\n  (Tanaka-san wa piano ga jouzu desu.)\n  — Mr. Tanaka is good at piano.\n④ わたしは 漢字が わかります。\n  (Watashi wa kanji ga wakarimasu.)\n  — I understand kanji.\n⑤ わたしは 日本語が 少し わかります。\n  (Watashi wa nihongo ga sukoshi wakarimasu.)\n  — I understand a little Japanese."
+    },
+    {
+      "title": "～から (Because / Reason)",
+      "structure": "S₁ から、S₂ / S₂。S₁ から。",
+      "jlpt_level": 5,
+      "explanation": "から is placed after a sentence to indicate the reason or cause. It means 'because'. The reason clause (with から) can come before or after the result clause. When answering a どうして question, the reason sentence ends with ～から です.",
+      "example_sentences": "⑥ 時間が ありませんから、朝ご飯を 食べません。\n  (Jikan ga arimasen kara, asagohan o tabemasen.)\n  — Because I don't have time, I don't eat breakfast.\n⑦ どうして 日本語を 勉強しますか。\n  (Doushite nihongo o benkyou shimasu ka.)\n  — Why do you study Japanese?\n…日本の 音楽が 好きですから。\n  (Nihon no ongaku ga suki desu kara.)\n  — Because I like Japanese music."
+    },
+    {
+      "title": "どうして (Why)",
+      "structure": "どうして S か",
+      "jlpt_level": 5,
+      "explanation": "どうして is a question word meaning 'why'. It is placed at the beginning of the sentence before the part you are asking about. The answer to a どうして question uses から (because) at the end of the reason clause.",
+      "example_sentences": "⑧ どうして きのう 来ませんでしたか。\n  (Doushite kinou kimasen deshita ka.)\n  — Why didn't you come yesterday?\n…忙しかったですから。\n  (Isogashikatta desu kara.)\n  — Because I was busy."
+    }
+  ],
+
+  "conversation": {
+    "title": "What are your hobbies?",
+    "title_ja": "趣味は 何ですか",
+    "lines": [
+      {"speaker": "Ogawa", "japanese": "リーさん、趣味は 何ですか。", "romaji": "Rii-san, shumi wa nan desu ka.", "english": "Lee, what are your hobbies?"},
+      {"speaker": "Lee", "japanese": "音楽が 好きです。よく ギターを 弾きます。", "romaji": "Ongaku ga suki desu. Yoku gitaa o hikimasu.", "english": "I like music. I often play the guitar."},
+      {"speaker": "Ogawa", "japanese": "いいですね。上手ですか。", "romaji": "Ii desu ne. Jouzu desu ka.", "english": "That's nice. Are you good at it?"},
+      {"speaker": "Lee", "japanese": "いいえ、あまり 上手じゃ ありません。小川さんは？", "romaji": "Iie, amari jouzu ja arimasen. Ogawa-san wa?", "english": "No, I'm not very good. How about you, Ogawa?"},
+      {"speaker": "Ogawa", "japanese": "わたしは 料理が 好きです。", "romaji": "Watashi wa ryouri ga suki desu.", "english": "I like cooking."},
+      {"speaker": "Lee", "japanese": "どんな 料理を 作りますか。", "romaji": "Donna ryouri o tsukurimasu ka.", "english": "What kind of cooking do you make?"},
+      {"speaker": "Ogawa", "japanese": "日本の 料理を 作ります。魚の 料理が とても 好きです。", "romaji": "Nihon no ryouri o tsukurimasu. Sakana no ryouri ga totemo suki desu.", "english": "I make Japanese food. I like fish dishes very much."},
+      {"speaker": "Lee", "japanese": "わたしも 日本の 料理が 好きです。おいしいですから。", "romaji": "Watashi mo nihon no ryouri ga suki desu. Oishii desu kara.", "english": "I also like Japanese food. Because it's delicious."},
+      {"speaker": "Ogawa", "japanese": "じゃ、今度 一緒に 料理を 作りませんか。", "romaji": "Ja, kondo issho ni ryouri o tsukurimasen ka.", "english": "Well then, shall we cook together sometime?"},
+      {"speaker": "Lee", "japanese": "ええ、作りましょう。", "romaji": "Ee, tsukurimashou.", "english": "Yes, let's do that."}
+    ]
+  }
+}

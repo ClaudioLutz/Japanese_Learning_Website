@@ -1,0 +1,77 @@
+{
+  "source": "Minna No Nihongo Beginner II",
+  "lesson_number": 43,
+  "title": "Lesson 43 – Appearance and Change",
+  "title_ja": "第43課",
+  "jlpt_level": 4,
+  "description": "Aussehen und Veraenderung: ～そうです (sieht aus wie / scheint), ～てきます (hingehen und zurueckkommen / beginnen), ～ていきます (von jetzt an weiter).",
+
+  "vocabulary": [
+    {"word": "つきます", "reading": "tsukimasu", "meaning": "to arrive, to reach", "kanji": "着きます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "ふえます", "reading": "fuemasu", "meaning": "to increase", "kanji": "増えます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "へります", "reading": "herimasu", "meaning": "to decrease", "kanji": "減ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "あがります", "reading": "agarimasu", "meaning": "to go up, to rise", "kanji": "上がります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "さがります", "reading": "sagarimasu", "meaning": "to go down, to fall", "kanji": "下がります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "きれます", "reading": "kiremasu", "meaning": "to break, to snap, to run out", "kanji": "切れます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "とれます", "reading": "toremasu", "meaning": "to come off, to be removed", "kanji": "取れます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "おちます", "reading": "ochimasu", "meaning": "to fall, to drop", "kanji": "落ちます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "なくなります", "reading": "nakunarimasu", "meaning": "to run out, to be gone", "kanji": "なくなります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "かわきます", "reading": "kawakimasu", "meaning": "to dry, to get thirsty", "kanji": "乾きます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "ぬれます", "reading": "nuremasu", "meaning": "to get wet", "kanji": "濡れます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "ふとります", "reading": "futorimasu", "meaning": "to gain weight", "kanji": "太ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "やせます", "reading": "yasemasu", "meaning": "to lose weight", "kanji": "やせます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "よごれます", "reading": "yogoremasu", "meaning": "to get dirty", "kanji": "汚れます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "こわれます", "reading": "kowaremasu", "meaning": "to break (intransitive)", "kanji": "壊れます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "おいしそう", "reading": "oishisou", "meaning": "looks delicious", "kanji": null, "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "まずそう", "reading": "mazusou", "meaning": "looks bad (taste)", "kanji": null, "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "じんこう", "reading": "jinkou", "meaning": "population", "kanji": "人口", "part_of_speech": "noun"},
+    {"word": "におい", "reading": "nioi", "meaning": "smell, scent", "kanji": "匂い", "part_of_speech": "noun"},
+    {"word": "かがみ", "reading": "kagami", "meaning": "mirror", "kanji": "鏡", "part_of_speech": "noun"},
+    {"word": "ボタン", "reading": "botan", "meaning": "button", "kanji": null, "part_of_speech": "noun"},
+    {"word": "きおん", "reading": "kion", "meaning": "temperature (air)", "kanji": "気温", "part_of_speech": "noun"},
+    {"word": "さいきん", "reading": "saikin", "meaning": "recently", "kanji": "最近", "part_of_speech": "adverb"},
+    {"word": "だんだん", "reading": "dandan", "meaning": "gradually", "kanji": "だんだん", "part_of_speech": "adverb"},
+    {"word": "そろそろ", "reading": "sorosoro", "meaning": "soon, before long", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "このまま", "reading": "konomama", "meaning": "as it is, like this", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "まるい", "reading": "marui", "meaning": "round", "kanji": "丸い", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "かなしい", "reading": "kanashii", "meaning": "sad", "kanji": "悲しい", "part_of_speech": "i-adjective", "adjective_type": "i"}
+  ],
+
+  "grammar": [
+    {
+      "title": "V-masu stem / Adj stem + そうです — Appearance (looks like ~)",
+      "structure": "V-masu stem + そうです / い-Adj (drop い) + そうです / な-Adj (drop な) + そうです",
+      "jlpt_level": 4,
+      "explanation": "～そうです expresses the speaker's impression or conjecture based on what they see. It means 'it looks like ~' or 'it seems ~'. For verbs, remove ます and add そうです. For い-adjectives, remove the final い and add そうです. For な-adjectives, remove な and add そうです. Exception: いい becomes よさそうです, ない becomes なさそうです. This form expresses the speaker's own visual impression — not hearsay.",
+      "example_sentences": "① このケーキは おいしそうですね。\n  (Kono keeki wa oishisou desu ne.)\n  — This cake looks delicious, doesn't it?\n② 雨が 降りそうです。\n  (Ame ga furisou desu.)\n  — It looks like it's going to rain.\n③ この本は おもしろそうです。\n  (Kono hon wa omoshirosou desu.)\n  — This book looks interesting.\n④ 彼は 元気そうです。\n  (Kare wa genkisou desu.)\n  — He looks well/healthy."
+    },
+    {
+      "title": "～てきます — Go and come back / Begin to",
+      "structure": "V て-form + きます",
+      "jlpt_level": 4,
+      "explanation": "～てきます has two main uses: (1) To go somewhere, do something, and come back. This implies the speaker will return. (2) To describe a change that has started and is continuing toward the present. It indicates something has begun to happen and the effect is approaching or becoming noticeable.",
+      "example_sentences": "⑤ ちょっと コーヒーを 買ってきます。\n  (Chotto koohii o katte kimasu.)\n  — I'll go buy some coffee (and come back).\n⑥ だんだん 暖かく なってきましたね。\n  (Dandan atatakakunatte kimashita ne.)\n  — It has gradually become warmer, hasn't it?\n⑦ 人口が 増えてきました。\n  (Jinkou ga fuete kimashita.)\n  — The population has been increasing."
+    },
+    {
+      "title": "～ていきます — Continue from now on / Go away",
+      "structure": "V て-form + いきます",
+      "jlpt_level": 4,
+      "explanation": "～ていきます is the counterpart of ～てきます. It has two main uses: (1) To do something and then go (leave). (2) To describe a change that will continue from now into the future, moving away from the present moment. It indicates something will keep happening going forward.",
+      "example_sentences": "⑧ お弁当を 持っていきます。\n  (Obentou o motte ikimasu.)\n  — I'll take a boxed lunch (with me).\n⑨ これから 気温は 下がっていくでしょう。\n  (Korekara kion wa sagatte iku deshou.)\n  — The temperature will probably continue to drop from now on.\n⑩ これからも 日本語を 勉強していきたいです。\n  (Korekara mo nihongo o benkyou shite ikitai desu.)\n  — I want to continue studying Japanese from now on."
+    }
+  ],
+
+  "conversation": {
+    "title": "This cake looks delicious!",
+    "title_ja": "このケーキ、おいしそうですね",
+    "lines": [
+      {"speaker": "Maria", "japanese": "わあ、このケーキ、おいしそうですね。", "romaji": "Waa, kono keeki, oishisou desu ne.", "english": "Wow, this cake looks delicious!"},
+      {"speaker": "Kimura", "japanese": "ええ。最近 この店は 人気が 出てきましたよ。", "romaji": "Ee. Saikin kono mise wa ninki ga dete kimashita yo.", "english": "Yes. This shop has been gaining popularity recently."},
+      {"speaker": "Maria", "japanese": "あ、外を 見てください。雨が 降りそうですね。", "romaji": "A, soto o mite kudasai. Ame ga furisou desu ne.", "english": "Oh, look outside. It looks like it's going to rain."},
+      {"speaker": "Kimura", "japanese": "そうですね。空が だんだん 暗く なってきましたね。", "romaji": "Sou desu ne. Sora ga dandan kuraku natte kimashita ne.", "english": "You're right. The sky has been getting gradually darker."},
+      {"speaker": "Maria", "japanese": "傘を 持ってきませんでした。どうしよう。", "romaji": "Kasa o motte kimasen deshita. Doushiyou.", "english": "I didn't bring an umbrella. What shall I do?"},
+      {"speaker": "Kimura", "japanese": "大丈夫ですよ。コンビニで 買っていきましょう。", "romaji": "Daijoubu desu yo. Konbini de katte ikimashou.", "english": "It's fine. Let's buy one at the convenience store on the way."},
+      {"speaker": "Maria", "japanese": "そうしましょう。じゃ、そろそろ 出ましょうか。", "romaji": "Sou shimashou. Ja, sorosoro demashou ka.", "english": "Let's do that. Well, shall we leave soon?"}
+    ]
+  }
+}

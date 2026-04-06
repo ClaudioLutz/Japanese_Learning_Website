@@ -1,0 +1,77 @@
+{
+  "source": "Minna No Nihongo Beginner II",
+  "lesson_number": 49,
+  "title": "Lesson 49 – Honorific Speech (尊敬語)",
+  "title_ja": "第49課",
+  "jlpt_level": 4,
+  "description": "Sonkeigo (尊敬語): Ehrenhafte Sprechweise fuer die Handlungen anderer. お＋V-masu Stamm＋になります, spezielle Ehrenwort-Verben (いらっしゃる, おっしゃる, 召し上がる, ご覧になる), passive Form als Hoeflichkeit.",
+
+  "vocabulary": [
+    {"word": "いらっしゃる", "reading": "irassharu", "meaning": "to be / to go / to come (honorific)", "kanji": null, "part_of_speech": "verb", "verb_group": 1},
+    {"word": "おっしゃる", "reading": "ossharu", "meaning": "to say (honorific)", "kanji": null, "part_of_speech": "verb", "verb_group": 1},
+    {"word": "召し上がる", "reading": "めしあがる / meshiagaru", "meaning": "to eat / to drink (honorific)", "kanji": "召し上がる", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "ご覧になる", "reading": "ごらんになる / goran ni naru", "meaning": "to look / to see (honorific)", "kanji": "ご覧になる", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "ご存じ", "reading": "ごぞんじ / gozonji", "meaning": "to know (honorific)", "kanji": "ご存じ", "part_of_speech": "expression"},
+    {"word": "くださる", "reading": "kudasaru", "meaning": "to give (honorific, to me/us)", "kanji": null, "part_of_speech": "verb", "verb_group": 1},
+    {"word": "お越しになる", "reading": "おこしになる / okoshi ni naru", "meaning": "to come (honorific)", "kanji": "お越しになる", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "お休みになる", "reading": "おやすみになる / oyasumi ni naru", "meaning": "to sleep / to rest (honorific)", "kanji": "お休みになる", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "ご利用になる", "reading": "ごりようになる / goriyou ni naru", "meaning": "to use (honorific)", "kanji": "ご利用になる", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "お客様", "reading": "おきゃくさま / okyakusama", "meaning": "guest, customer (honorific)", "kanji": "お客様", "part_of_speech": "noun"},
+    {"word": "社長", "reading": "しゃちょう / shachou", "meaning": "company president", "kanji": "社長", "part_of_speech": "noun"},
+    {"word": "先輩", "reading": "せんぱい / senpai", "meaning": "senior (colleague/student)", "kanji": "先輩", "part_of_speech": "noun"},
+    {"word": "受付", "reading": "うけつけ / uketsuke", "meaning": "reception (desk)", "kanji": "受付", "part_of_speech": "noun"},
+    {"word": "講演", "reading": "こうえん / kouen", "meaning": "lecture, speech", "kanji": "講演", "part_of_speech": "noun"},
+    {"word": "予約", "reading": "よやく / yoyaku", "meaning": "reservation", "kanji": "予約", "part_of_speech": "noun"},
+    {"word": "ご出席", "reading": "ごしゅっせき / goshusseki", "meaning": "attendance (honorific)", "kanji": "ご出席", "part_of_speech": "noun"},
+    {"word": "ご住所", "reading": "ごじゅうしょ / gojuusho", "meaning": "address (honorific)", "kanji": "ご住所", "part_of_speech": "noun"},
+    {"word": "お名前", "reading": "おなまえ / onamae", "meaning": "name (honorific)", "kanji": "お名前", "part_of_speech": "noun"},
+    {"word": "お忙しい", "reading": "おいそがしい / oisogashii", "meaning": "busy (honorific)", "kanji": "お忙しい", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "ご多忙", "reading": "ごたぼう / gotabou", "meaning": "busy (very formal honorific)", "kanji": "ご多忙", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "ご家族", "reading": "ごかぞく / gokazoku", "meaning": "family (honorific)", "kanji": "ご家族", "part_of_speech": "noun"},
+    {"word": "どちら", "reading": "dochira", "meaning": "where / which (polite)", "kanji": null, "part_of_speech": "noun"},
+    {"word": "お掛けになる", "reading": "おかけになる / okake ni naru", "meaning": "to sit down (honorific)", "kanji": "お掛けになる", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "ご案内する", "reading": "ごあんないする / goannai suru", "meaning": "to guide (humble, used for own action)", "kanji": "ご案内する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "お待ちになる", "reading": "おまちになる / omachi ni naru", "meaning": "to wait (honorific)", "kanji": "お待ちになる", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "失礼します", "reading": "しつれいします / shitsurei shimasu", "meaning": "excuse me (when entering/leaving)", "kanji": "失礼します", "part_of_speech": "expression"}
+  ],
+
+  "grammar": [
+    {
+      "title": "お + V-masu stem + になります (Honorific pattern)",
+      "structure": "お + V-masu stem + になります",
+      "jlpt_level": 4,
+      "explanation": "This is the general pattern for making respectful (honorific) expressions about someone else's actions. Take the masu-stem of the verb, add お before it and になります after it. This pattern is used to show respect for the actions of superiors, customers, or people of higher status. IMPORTANT: This form is ONLY used for other people's actions, NEVER for your own. Example: お読みになります (someone respected reads), お帰りになります (someone respected goes home).",
+      "example_sentences": "① 先生は もう お帰りに なりました。\n  (Sensei wa mou okaeri ni narimashita.)\n  — The teacher has already gone home.\n② 社長は この 本を お読みに なりました。\n  (Shachou wa kono hon o oyomi ni narimashita.)\n  — The president read this book.\n③ どうぞ お掛けに なってください。\n  (Douzo okake ni natte kudasai.)\n  — Please have a seat."
+    },
+    {
+      "title": "Special Honorific Verbs (特別な尊敬語)",
+      "structure": "いらっしゃる (いる/行く/来る), おっしゃる (言う), 召し上がる (食べる/飲む), ご覧になる (見る), ご存じ (知っている), くださる (くれる)",
+      "jlpt_level": 4,
+      "explanation": "Some common verbs have special honorific replacements that are used instead of the お + V-masu stem + になります pattern. These must be memorized. いらっしゃる replaces いる, 行く, and 来る. おっしゃる replaces 言う. 召し上がる replaces 食べる and 飲む. ご覧になる replaces 見る. ご存じ replaces 知っている. くださる replaces くれる. CRITICAL: These are ONLY for the actions of OTHER people you want to show respect to. Never use them for your own actions.",
+      "example_sentences": "④ 先生は 研究室に いらっしゃいます。\n  (Sensei wa kenkyuushitsu ni irasshaimasu.)\n  — The professor is in the research lab.\n⑤ 部長は 何と おっしゃいましたか。\n  (Buchou wa nan to osshaimashita ka.)\n  — What did the department manager say?\n⑥ どうぞ 召し上がってください。\n  (Douzo meshiagatte kudasai.)\n  — Please eat/drink. (offering to a superior)\n⑦ この 映画を ご覧に なりましたか。\n  (Kono eiga o goran ni narimashita ka.)\n  — Have you seen this movie? (to a superior)"
+    },
+    {
+      "title": "～れる/られる as Honorific (受身形の尊敬用法)",
+      "structure": "V-passive form used as honorific",
+      "jlpt_level": 4,
+      "explanation": "The passive form (れる/られる) can also be used as a less formal honorific expression. It is not as polite as お + V-masu stem + になります or the special honorific verbs, but it is simpler and commonly used. Group 1: change -u to -areru (書く→書かれる). Group 2: drop -ru, add -rareru (食べる→食べられる). Group 3: する→される, 来る→来られる. This usage is the same form as passive voice, so context determines the meaning.",
+      "example_sentences": "⑧ 社長は 9時に 来られます。\n  (Shachou wa ku-ji ni koraremasu.)\n  — The president will come at 9 o'clock. (honorific)\n⑨ 先生は もう 帰られました。\n  (Sensei wa mou kaeraremashita.)\n  — The teacher has already gone home. (honorific)\n⑩ 部長は この 記事を 読まれましたか。\n  (Buchou wa kono kiji o yomaremashita ka.)\n  — Has the department manager read this article? (honorific)"
+    }
+  ],
+
+  "conversation": {
+    "title": "The Professor's Lecture",
+    "title_ja": "先生の 講演",
+    "lines": [
+      {"speaker": "Receptionist", "japanese": "いらっしゃいませ。本日の 講演に お越しですか。", "romaji": "Irasshaimase. Honjitsu no kouen ni okoshi desu ka.", "english": "Welcome. Are you here for today's lecture?"},
+      {"speaker": "Yamada", "japanese": "はい。山田と 申します。予約を しているはずですが。", "romaji": "Hai. Yamada to moushimasu. Yoyaku o shite iru hazu desu ga.", "english": "Yes. My name is Yamada. I should have a reservation."},
+      {"speaker": "Receptionist", "japanese": "山田様ですね。確認いたしました。どうぞ お掛けに なって お待ちください。", "romaji": "Yamada-sama desu ne. Kakunin itashimashita. Douzo okake ni natte omachi kudasai.", "english": "Mr. Yamada, right. I've confirmed it. Please have a seat and wait."},
+      {"speaker": "Yamada", "japanese": "田中先生は もう いらっしゃいますか。", "romaji": "Tanaka-sensei wa mou irasshaimasu ka.", "english": "Is Professor Tanaka already here?"},
+      {"speaker": "Receptionist", "japanese": "はい、先生は 先ほど お越しに なりました。今 資料を ご覧に なっています。", "romaji": "Hai, sensei wa sakihodo okoshi ni narimashita. Ima shiryou o goran ni natte imasu.", "english": "Yes, the professor arrived a short while ago. He is currently looking at the materials."},
+      {"speaker": "Yamada", "japanese": "そうですか。先生の ご著書は 読ませていただきました。すばらしいですね。", "romaji": "Sou desu ka. Sensei no gochosho wa yomasete itadakimashita. Subarashii desu ne.", "english": "I see. I had the chance to read the professor's book. It's wonderful."},
+      {"speaker": "Receptionist", "japanese": "先生も そう おっしゃって くださると お喜びに なると 思います。", "romaji": "Sensei mo sou osshatte kudasaru to oyorokobi ni naru to omoimasu.", "english": "I think the professor would be pleased if you told him that."},
+      {"speaker": "Yamada", "japanese": "講演の 後で 先生に ご挨拶させていただけますか。", "romaji": "Kouen no ato de sensei ni goaisatsu sasete itadakemasu ka.", "english": "May I greet the professor after the lecture?"},
+      {"speaker": "Receptionist", "japanese": "もちろんです。先生も ぜひ とおっしゃっていました。", "romaji": "Mochiron desu. Sensei mo zehi to osshatte imashita.", "english": "Of course. The professor also said he'd be happy to."}
+    ]
+  }
+}

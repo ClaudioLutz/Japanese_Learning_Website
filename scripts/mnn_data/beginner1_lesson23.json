@@ -1,0 +1,93 @@
+{
+  "source": "Minna No Nihongo Beginner I",
+  "lesson_number": 23,
+  "title": "Lesson 23 – When and If",
+  "title_ja": "第23課",
+  "jlpt_level": 5,
+  "description": "Zeitangaben und Bedingungen: ～とき (wenn/als), V-dictionary form + と (wenn/falls), Adjektive und Nomen mit とき.",
+
+  "vocabulary": [
+    {"word": "きこえます", "reading": "kikoemasu", "meaning": "to be audible, can hear", "kanji": "聞こえます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "みえます", "reading": "miemasu", "meaning": "to be visible, can see", "kanji": "見えます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "さがします", "reading": "sagashimasu", "meaning": "to look for, to search", "kanji": "探します", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "まわします", "reading": "mawashimasu", "meaning": "to turn, to rotate", "kanji": "回します", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "ひきます", "reading": "hikimasu", "meaning": "to pull", "kanji": "引きます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "おします", "reading": "oshimasu", "meaning": "to push, to press", "kanji": "押します", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "かわります", "reading": "kawarimasu", "meaning": "to change (intransitive)", "kanji": "変わります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "さわります", "reading": "sawarimasu", "meaning": "to touch", "kanji": "触ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "あるきます", "reading": "arukimasu", "meaning": "to walk", "kanji": "歩きます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "わたります", "reading": "watarimasu", "meaning": "to cross (road, bridge)", "kanji": "渡ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "きをつけます", "reading": "ki o tsukemasu", "meaning": "to be careful", "kanji": "気をつけます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "とき", "reading": "toki", "meaning": "time, when", "kanji": "時", "part_of_speech": "noun"},
+    {"word": "こうさてん", "reading": "kousaten", "meaning": "intersection, crossroads", "kanji": "交差点", "part_of_speech": "noun"},
+    {"word": "しんごう", "reading": "shingou", "meaning": "traffic light", "kanji": "信号", "part_of_speech": "noun"},
+    {"word": "かど", "reading": "kado", "meaning": "corner", "kanji": "角", "part_of_speech": "noun"},
+    {"word": "はし", "reading": "hashi", "meaning": "bridge", "kanji": "橋", "part_of_speech": "noun"},
+    {"word": "ちゅうしゃじょう", "reading": "chuushajou", "meaning": "parking lot", "kanji": "駐車場", "part_of_speech": "noun"},
+    {"word": "おてら", "reading": "otera", "meaning": "Buddhist temple", "kanji": "お寺", "part_of_speech": "noun"},
+    {"word": "じんじゃ", "reading": "jinja", "meaning": "Shinto shrine", "kanji": "神社", "part_of_speech": "noun"},
+    {"word": "きせつ", "reading": "kisetsu", "meaning": "season", "kanji": "季節", "part_of_speech": "noun"},
+    {"word": "はる", "reading": "haru", "meaning": "spring", "kanji": "春", "part_of_speech": "noun"},
+    {"word": "なつ", "reading": "natsu", "meaning": "summer", "kanji": "夏", "part_of_speech": "noun"},
+    {"word": "あき", "reading": "aki", "meaning": "autumn", "kanji": "秋", "part_of_speech": "noun"},
+    {"word": "ふゆ", "reading": "fuyu", "meaning": "winter", "kanji": "冬", "part_of_speech": "noun"},
+    {"word": "ボタン", "reading": "botan", "meaning": "button", "kanji": null, "part_of_speech": "noun"},
+    {"word": "こども", "reading": "kodomo", "meaning": "child", "kanji": "子供", "part_of_speech": "noun"},
+    {"word": "おとな", "reading": "otona", "meaning": "adult", "kanji": "大人", "part_of_speech": "noun"},
+    {"word": "けしき", "reading": "keshiki", "meaning": "scenery, landscape", "kanji": "景色", "part_of_speech": "noun"},
+    {"word": "みぎ", "reading": "migi", "meaning": "right (direction)", "kanji": "右", "part_of_speech": "noun"},
+    {"word": "ひだり", "reading": "hidari", "meaning": "left (direction)", "kanji": "左", "part_of_speech": "noun"},
+    {"word": "まっすぐ", "reading": "massugu", "meaning": "straight", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "あぶない", "reading": "abunai", "meaning": "dangerous", "kanji": "危ない", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "すずしい", "reading": "suzushii", "meaning": "cool (temperature)", "kanji": "涼しい", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "あたたかい", "reading": "atatakai", "meaning": "warm", "kanji": "暖かい", "part_of_speech": "i-adjective", "adjective_type": "i"}
+  ],
+
+  "vocabulary_countries": [],
+
+  "grammar": [
+    {
+      "title": "V dictionary form + とき (When doing ~)",
+      "structure": "V (dictionary form) + とき、～",
+      "jlpt_level": 5,
+      "explanation": "とき means 'when' or 'at the time of'. When the verb before とき is in the dictionary form, it indicates a time before the action is completed — 'when about to do' or 'when doing'. The main clause describes what happens at that time. The tense of the main clause determines whether the event is past, present, or future.",
+      "example_sentences": "① 図書館へ 行く とき、この 道を 歩きます。\n  (Toshokan e iku toki, kono michi o arukimasu.)\n  — When I go to the library, I walk along this road.\n② 寝る とき、電気を 消します。\n  (Neru toki, denki o keshimasu.)\n  — When I go to bed, I turn off the lights."
+    },
+    {
+      "title": "V た form + とき (When/After having done ~)",
+      "structure": "V (た form) + とき、～",
+      "jlpt_level": 5,
+      "explanation": "When the verb before とき is in the た form (past), it indicates a time after the action has been completed — 'after doing' or 'when one has done'. This contrasts with the dictionary form + とき which refers to a time before or during the action.",
+      "example_sentences": "③ 日本に 来た とき、富士山を 見ました。\n  (Nihon ni kita toki, Fujisan o mimashita.)\n  — When I came to Japan, I saw Mount Fuji.\n④ 駅に 着いた とき、友達に 電話しました。\n  (Eki ni tsuita toki, tomodachi ni denwa shimashita.)\n  — When I arrived at the station, I called my friend."
+    },
+    {
+      "title": "Adj / N + とき (When it is ~)",
+      "structure": "い-Adj + とき / な-Adj + な + とき / N + の + とき",
+      "jlpt_level": 5,
+      "explanation": "とき can also follow adjectives and nouns. For い-adjectives, add とき directly. For な-adjectives, add な before とき. For nouns, add の before とき. This describes the time when a certain state or condition exists.",
+      "example_sentences": "⑤ 暑い とき、窓を 開けます。\n  (Atsui toki, mado o akemasu.)\n  — When it's hot, I open the window.\n⑥ 暇な とき、散歩します。\n  (Hima na toki, sanpo shimasu.)\n  — When I'm free, I take a walk.\n⑦ 子供の とき、よく この 公園で 遊びました。\n  (Kodomo no toki, yoku kono kouen de asobimashita.)\n  — When I was a child, I often played in this park."
+    },
+    {
+      "title": "V dictionary form + と (Conditional: When/If ~)",
+      "structure": "V (dictionary form) + と、～",
+      "jlpt_level": 5,
+      "explanation": "The particle と after the dictionary form of a verb expresses a natural or habitual consequence — 'when' or 'if' something happens, then something else always follows. It is used for natural phenomena, machine operations, giving directions, and habitual actions. It cannot be used with requests, invitations, or intentions.",
+      "example_sentences": "⑧ この ボタンを 押すと、ドアが 開きます。\n  (Kono botan o osu to, doa ga akimasu.)\n  — If you press this button, the door opens.\n⑨ 春に なると、桜が 咲きます。\n  (Haru ni naru to, sakura ga sakimasu.)\n  — When spring comes, the cherry blossoms bloom.\n⑩ まっすぐ 行くと、右に 神社が 見えます。\n  (Massugu iku to, migi ni jinja ga miemasu.)\n  — If you go straight, you can see a shrine on the right."
+    }
+  ],
+
+  "conversation": {
+    "title": "How do I get to the temple?",
+    "title_ja": "お寺まで どうやって 行きますか",
+    "lines": [
+      {"speaker": "Nakamura", "japanese": "すみません、この 近くに お寺が ありますか。", "romaji": "Sumimasen, kono chikaku ni otera ga arimasu ka.", "english": "Excuse me, is there a temple near here?"},
+      {"speaker": "Ito", "japanese": "ええ、ありますよ。この 道を まっすぐ 行くと、交差点が あります。", "romaji": "Ee, arimasu yo. Kono michi o massugu iku to, kousaten ga arimasu.", "english": "Yes, there is. If you go straight on this road, there is an intersection."},
+      {"speaker": "Nakamura", "japanese": "交差点を 渡る とき、気をつけた ほうが いいですか。", "romaji": "Kousaten o wataru toki, ki o tsuketa hou ga ii desu ka.", "english": "When crossing the intersection, should I be careful?"},
+      {"speaker": "Ito", "japanese": "ええ、信号が ない ところですから、危ないです。", "romaji": "Ee, shingou ga nai tokoro desu kara, abunai desu.", "english": "Yes, because there is no traffic light there, it's dangerous."},
+      {"speaker": "Nakamura", "japanese": "わかりました。交差点の あとは？", "romaji": "Wakarimashita. Kousaten no ato wa?", "english": "I understand. After the intersection?"},
+      {"speaker": "Ito", "japanese": "左に 曲がると、橋が 見えます。橋を 渡った とき、右に お寺が あります。", "romaji": "Hidari ni magaru to, hashi ga miemasu. Hashi o watatta toki, migi ni otera ga arimasu.", "english": "If you turn left, you'll see a bridge. When you've crossed the bridge, the temple is on the right."},
+      {"speaker": "Nakamura", "japanese": "春の とき、景色が きれいでしょう？", "romaji": "Haru no toki, keshiki ga kirei deshou?", "english": "In spring, the scenery is beautiful, isn't it?"},
+      {"speaker": "Ito", "japanese": "ええ、とても きれいですよ。暖かい とき、ぜひ また 来てください。", "romaji": "Ee, totemo kirei desu yo. Atatakai toki, zehi mata kite kudasai.", "english": "Yes, it's very beautiful. Please come again when it's warm."}
+    ]
+  }
+}

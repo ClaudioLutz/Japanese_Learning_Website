@@ -1,0 +1,85 @@
+{
+  "source": "Minna No Nihongo Beginner II",
+  "lesson_number": 38,
+  "title": "Lesson 38 – Nominalization with の",
+  "title_ja": "第38課",
+  "jlpt_level": 4,
+  "description": "Nominalisierung mit の: V-dict + のは Adj です, V-dict + のが 好き/上手, V-dict + のを 忘れました, Spaltsatz ～のは ～です.",
+
+  "vocabulary": [
+    {"word": "ピアノをひく", "reading": "piano o hiku", "meaning": "to play the piano", "kanji": "ピアノを弾く", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "おどる", "reading": "odoru", "meaning": "to dance", "kanji": "踊る", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "えをかく", "reading": "e o kaku", "meaning": "to draw a picture", "kanji": "絵を描く", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "うたう", "reading": "utau", "meaning": "to sing", "kanji": "歌う", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "あつめる", "reading": "atsumeru", "meaning": "to collect, to gather", "kanji": "集める", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "すてる", "reading": "suteru", "meaning": "to throw away", "kanji": "捨てる", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "かたづける", "reading": "katadzukeru", "meaning": "to tidy up", "kanji": "片付ける", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "つづける", "reading": "tsuzukeru", "meaning": "to continue", "kanji": "続ける", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "みつける", "reading": "mitsukeru", "meaning": "to find", "kanji": "見つける", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "たのしむ", "reading": "tanoshimu", "meaning": "to enjoy", "kanji": "楽しむ", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "しゅみ", "reading": "shumi", "meaning": "hobby", "kanji": "趣味", "part_of_speech": "noun"},
+    {"word": "きって", "reading": "kitte", "meaning": "stamp (postage)", "kanji": "切手", "part_of_speech": "noun"},
+    {"word": "りょうり", "reading": "ryouri", "meaning": "cooking, cuisine", "kanji": "料理", "part_of_speech": "noun"},
+    {"word": "おんがく", "reading": "ongaku", "meaning": "music", "kanji": "音楽", "part_of_speech": "noun"},
+    {"word": "やくそく", "reading": "yakusoku", "meaning": "promise, appointment", "kanji": "約束", "part_of_speech": "noun"},
+    {"word": "じゅんび", "reading": "junbi", "meaning": "preparation", "kanji": "準備", "part_of_speech": "noun"},
+    {"word": "おくりもの", "reading": "okurimono", "meaning": "present, gift", "kanji": "贈り物", "part_of_speech": "noun"},
+    {"word": "きもち", "reading": "kimochi", "meaning": "feeling", "kanji": "気持ち", "part_of_speech": "noun"},
+    {"word": "でんとう", "reading": "dentou", "meaning": "tradition", "kanji": "伝統", "part_of_speech": "noun"},
+    {"word": "ぶんか", "reading": "bunka", "meaning": "culture", "kanji": "文化", "part_of_speech": "noun"},
+    {"word": "じょうず", "reading": "jouzu", "meaning": "skillful, good at", "kanji": "上手", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "へた", "reading": "heta", "meaning": "unskillful, poor at", "kanji": "下手", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "たのしい", "reading": "tanoshii", "meaning": "fun, enjoyable", "kanji": "楽しい", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "むずかしい", "reading": "muzukashii", "meaning": "difficult", "kanji": "難しい", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "かんたん", "reading": "kantan", "meaning": "easy, simple", "kanji": "簡単", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "とくい", "reading": "tokui", "meaning": "good at, proud of", "kanji": "得意", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "にがて", "reading": "nigate", "meaning": "not good at, weak point", "kanji": "苦手", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "うっかり", "reading": "ukkari", "meaning": "carelessly, absent-mindedly", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "いっしょうけんめい", "reading": "isshoukenmei", "meaning": "with all one's might", "kanji": "一生懸命", "part_of_speech": "adverb"}
+  ],
+
+  "grammar": [
+    {
+      "title": "V-dict + のは Adj です (Doing ~ is ~)",
+      "structure": "V (dict form) + のは [Adj] です",
+      "jlpt_level": 4,
+      "explanation": "Adding の after the dictionary form of a verb turns the verb phrase into a noun clause (nominalization). This noun clause can then be used as the topic (は) of a sentence, allowing you to make statements about the action itself. The adjective describes the quality of doing that action.",
+      "example_sentences": "① 外国語を 覚えるのは 難しいです。\n  (Gaikokugo o oboeru no wa muzukashii desu.)\n  — Learning a foreign language is difficult.\n② 一人で 旅行するのは 楽しいです。\n  (Hitori de ryokou suru no wa tanoshii desu.)\n  — Traveling alone is fun."
+    },
+    {
+      "title": "V-dict + のが 好き/上手 (Like/Good at Doing ~)",
+      "structure": "V (dict form) + のが [好き / 上手 / 下手 / 得意 / 苦手] です",
+      "jlpt_level": 4,
+      "explanation": "When expressing likes, dislikes, or ability related to an action, の nominalizes the verb and が marks it as the object of adjectives like 好き (like), 上手 (good at), 下手 (poor at), 得意 (strong point), or 苦手 (weak point).",
+      "example_sentences": "③ わたしは 料理を 作るのが 好きです。\n  (Watashi wa ryouri o tsukuru no ga suki desu.)\n  — I like cooking.\n④ 田中さんは ピアノを 弾くのが 上手です。\n  (Tanaka-san wa piano o hiku no ga jouzu desu.)\n  — Ms. Tanaka is good at playing the piano."
+    },
+    {
+      "title": "V-dict + のを 忘れました (Forgot to Do ~)",
+      "structure": "V (dict form) + のを [忘れました / 知っています / etc.]",
+      "jlpt_level": 4,
+      "explanation": "The nominalized verb phrase (V + の) can also be used as the object of a sentence with を. Common combinations include のを忘れました (forgot to do ~), のを知っています (know that ~), and のを手伝ってください (please help with doing ~).",
+      "example_sentences": "⑤ うっかり 約束の 時間を 確認するのを 忘れました。\n  (Ukkari yakusoku no jikan o kakunin suru no o wasuremashita.)\n  — I carelessly forgot to check the appointment time.\n⑥ 窓を 閉めるのを 忘れないでください。\n  (Mado o shimeru no o wasurenaide kudasai.)\n  — Please don't forget to close the window."
+    },
+    {
+      "title": "～のは ～です (Cleft Sentence)",
+      "structure": "V (ta form / dict form) + のは [N / sentence] です",
+      "jlpt_level": 4,
+      "explanation": "This pattern is used to emphasize a particular piece of information. The のは～です construction works like a cleft sentence in English ('It is ~ that ...' / 'The reason ~ is ...'). It focuses attention on the part after のは.",
+      "example_sentences": "⑦ わたしが この本を 買ったのは 去年です。\n  (Watashi ga kono hon o katta no wa kyonen desu.)\n  — It was last year that I bought this book.\n⑧ 彼に プレゼントを あげたのは 山田さんです。\n  (Kare ni purezento o ageta no wa Yamada-san desu.)\n  — It was Mr. Yamada who gave him the present."
+    }
+  ],
+
+  "conversation": {
+    "title": "What's your hobby?",
+    "title_ja": "趣味は 何ですか",
+    "lines": [
+      {"speaker": "Lee", "japanese": "山田さんの 趣味は 何ですか。", "romaji": "Yamada-san no shumi wa nan desu ka.", "english": "What is your hobby, Mr. Yamada?"},
+      {"speaker": "Yamada", "japanese": "切手を 集めるのが 趣味です。子供の ときから ずっと 続けています。", "romaji": "Kitte o atsumeru no ga shumi desu. Kodomo no toki kara zutto tsuzukete imasu.", "english": "Collecting stamps is my hobby. I've been doing it since I was a child."},
+      {"speaker": "Lee", "japanese": "そうですか。わたしは 絵を 描くのが 好きなんですが、上手じゃないんです。", "romaji": "Sou desu ka. Watashi wa e o kaku no ga suki na n desu ga, jouzu ja nai n desu.", "english": "I see. I like drawing pictures, but I'm not good at it."},
+      {"speaker": "Yamada", "japanese": "リーさんは 料理も 上手だと 聞きましたよ。", "romaji": "Rii-san wa ryouri mo jouzu da to kikimashita yo.", "english": "I heard you're also good at cooking, Ms. Lee."},
+      {"speaker": "Lee", "japanese": "ええ、料理を 作るのは 楽しいです。でも、きのう うっかり 材料を 買うのを 忘れて しまいました。", "romaji": "Ee, ryouri o tsukuru no wa tanoshii desu. Demo, kinou ukkari zairyou o kau no o wasurete shimaimashita.", "english": "Yes, cooking is fun. But yesterday I carelessly forgot to buy ingredients."},
+      {"speaker": "Yamada", "japanese": "それは 大変でしたね。", "romaji": "Sore wa taihen deshita ne.", "english": "That must have been tough."},
+      {"speaker": "Lee", "japanese": "ええ。それで 作ったのは 簡単な サラダだけでした。", "romaji": "Ee. Sore de tsukutta no wa kantan na sarada dake deshita.", "english": "Yes. So what I made was just a simple salad."}
+    ]
+  }
+}

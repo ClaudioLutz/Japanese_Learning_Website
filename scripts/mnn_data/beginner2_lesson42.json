@@ -1,0 +1,77 @@
+{
+  "source": "Minna No Nihongo Beginner II",
+  "lesson_number": 42,
+  "title": "Lesson 42 – Purpose",
+  "title_ja": "第42課",
+  "jlpt_level": 4,
+  "description": "Zweck und Absicht ausdruecken: ～ために (Zweck mit Nomen/willentlichem Verb), ～のに (Zweck: Verwendungszweck / benoetigte Zeit/Kosten).",
+
+  "vocabulary": [
+    {"word": "つつみます", "reading": "tsutsumimasu", "meaning": "to wrap", "kanji": "包みます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "わかします", "reading": "wakashimasu", "meaning": "to boil (water)", "kanji": "沸かします", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "まぜます", "reading": "mazemasu", "meaning": "to mix", "kanji": "混ぜます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "ためます", "reading": "tamemasu", "meaning": "to save (money)", "kanji": "貯めます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "りゅうがくします", "reading": "ryuugaku shimasu", "meaning": "to study abroad", "kanji": "留学します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "きょういくします", "reading": "kyouiku shimasu", "meaning": "to educate", "kanji": "教育します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "しゅうりします", "reading": "shuuri shimasu", "meaning": "to repair", "kanji": "修理します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "ゆしゅつします", "reading": "yushutsu shimasu", "meaning": "to export", "kanji": "輸出します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "ゆにゅうします", "reading": "yunyuu shimasu", "meaning": "to import", "kanji": "輸入します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "はつめいします", "reading": "hatsumei shimasu", "meaning": "to invent", "kanji": "発明します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "はっけんします", "reading": "hakken shimasu", "meaning": "to discover", "kanji": "発見します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "けんこう", "reading": "kenkou", "meaning": "health", "kanji": "健康", "part_of_speech": "noun"},
+    {"word": "しょうらい", "reading": "shourai", "meaning": "future", "kanji": "将来", "part_of_speech": "noun"},
+    {"word": "もくてき", "reading": "mokuteki", "meaning": "purpose, objective", "kanji": "目的", "part_of_speech": "noun"},
+    {"word": "けんきゅう", "reading": "kenkyuu", "meaning": "research", "kanji": "研究", "part_of_speech": "noun"},
+    {"word": "きかい", "reading": "kikai", "meaning": "machine", "kanji": "機械", "part_of_speech": "noun"},
+    {"word": "どうぐ", "reading": "dougu", "meaning": "tool, instrument", "kanji": "道具", "part_of_speech": "noun"},
+    {"word": "せいひん", "reading": "seihin", "meaning": "product", "kanji": "製品", "part_of_speech": "noun"},
+    {"word": "げんりょう", "reading": "genryou", "meaning": "raw material", "kanji": "原料", "part_of_speech": "noun"},
+    {"word": "こめ", "reading": "kome", "meaning": "rice (uncooked)", "kanji": "米", "part_of_speech": "noun"},
+    {"word": "むぎ", "reading": "mugi", "meaning": "wheat", "kanji": "麦", "part_of_speech": "noun"},
+    {"word": "ほうりつ", "reading": "houritsu", "meaning": "law", "kanji": "法律", "part_of_speech": "noun"},
+    {"word": "きょういく", "reading": "kyouiku", "meaning": "education", "kanji": "教育", "part_of_speech": "noun"},
+    {"word": "ぶんか", "reading": "bunka", "meaning": "culture", "kanji": "文化", "part_of_speech": "noun"},
+    {"word": "しぜん", "reading": "shizen", "meaning": "nature", "kanji": "自然", "part_of_speech": "noun"},
+    {"word": "ひつよう", "reading": "hitsuyou", "meaning": "necessary", "kanji": "必要", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "このあいだ", "reading": "konoaida", "meaning": "the other day, recently", "kanji": "この間", "part_of_speech": "adverb"},
+    {"word": "たとえば", "reading": "tatoeba", "meaning": "for example", "kanji": "例えば", "part_of_speech": "adverb"}
+  ],
+
+  "grammar": [
+    {
+      "title": "V (dictionary form) / N の ために — Purpose (volitional)",
+      "structure": "V (dict.) ために / N の ために",
+      "jlpt_level": 4,
+      "explanation": "～ために expresses purpose or goal when the subject intentionally performs an action. With verbs, use the dictionary form before ために. With nouns, use の before ために. The verb before ために must be a volitional verb (something the speaker chooses to do). The subjects of both clauses should be the same person.",
+      "example_sentences": "① 家を 買う ために、お金を 貯めています。\n  (Ie o kau tame ni, okane o tamete imasu.)\n  — I am saving money in order to buy a house.\n② 健康の ために、毎朝 走っています。\n  (Kenkou no tame ni, maiasa hashitte imasu.)\n  — I run every morning for my health.\n③ 日本語を 勉強する ために、日本へ 来ました。\n  (Nihongo o benkyou suru tame ni, Nihon e kimashita.)\n  — I came to Japan in order to study Japanese."
+    },
+    {
+      "title": "V (dictionary form) のに / N に — Purpose: use, time, money needed",
+      "structure": "V (dict.) のに {かかります / いります / つかいます / べんりです etc.}",
+      "jlpt_level": 4,
+      "explanation": "～のに is used to express purpose in the sense of 'for doing ~' — specifically when talking about what is needed, how much time or money something takes, or how useful something is for a purpose. Unlike ために, のに is used with non-volitional predicates such as かかります (it takes), いります (is needed), べんりです (convenient), etc.",
+      "example_sentences": "④ この漢字を 覚えるのに 3日 かかりました。\n  (Kono kanji o oboeru noni mikka kakarimashita.)\n  — It took three days to memorize these kanji.\n⑤ パンを 作るのに 小麦粉と 水が いります。\n  (Pan o tsukuru noni komugiko to mizu ga irimasu.)\n  — Flour and water are needed to make bread.\n⑥ このはさみは 紙を 切るのに べんりです。\n  (Kono hasami wa kami o kiru noni benri desu.)\n  — These scissors are convenient for cutting paper."
+    },
+    {
+      "title": "N に (time/money needed)",
+      "structure": "N に + time/money expression + かかります",
+      "jlpt_level": 4,
+      "explanation": "When expressing how much time or money is needed for something, the particle に marks what the time or money is needed for. This is a simpler pattern using a noun directly with に instead of the verbal のに pattern.",
+      "example_sentences": "⑦ 修理に 2万円 かかります。\n  (Shuuri ni niman'en kakarimasu.)\n  — The repair costs 20,000 yen.\n⑧ 東京から 大阪まで 新幹線に 2時間半 かかります。\n  (Toukyou kara Oosaka made shinkansen ni nijikan han kakarimasu.)\n  — It takes two and a half hours by Shinkansen from Tokyo to Osaka."
+    }
+  ],
+
+  "conversation": {
+    "title": "What did you come to Japan for?",
+    "title_ja": "日本へ何をしに来ましたか",
+    "lines": [
+      {"speaker": "Suzuki", "japanese": "ミラーさんは どうして 日本へ 来たんですか。", "romaji": "Miraa-san wa doushite Nihon e kita n desu ka.", "english": "Why did you come to Japan, Mr. Miller?"},
+      {"speaker": "Miller", "japanese": "日本の 文化を 研究する ために 来ました。", "romaji": "Nihon no bunka o kenkyuu suru tame ni kimashita.", "english": "I came to research Japanese culture."},
+      {"speaker": "Suzuki", "japanese": "そうですか。研究に どのくらい かかりますか。", "romaji": "Sou desu ka. Kenkyuu ni dono kurai kakarimasu ka.", "english": "I see. How long will the research take?"},
+      {"speaker": "Miller", "japanese": "2年ぐらい かかると 思います。この辞書は 論文を 書くのに 使っています。", "romaji": "Ninen gurai kakaru to omoimasu. Kono jisho wa ronbun o kaku noni tsukatte imasu.", "english": "I think it will take about two years. I use this dictionary for writing papers."},
+      {"speaker": "Suzuki", "japanese": "将来は どうするつもりですか。", "romaji": "Shourai wa dou suru tsumori desu ka.", "english": "What do you plan to do in the future?"},
+      {"speaker": "Miller", "japanese": "アメリカの 大学で 教える ために、博士号を 取りたいです。", "romaji": "Amerika no daigaku de oshieru tame ni, hakushigou o toritai desu.", "english": "I want to get a doctorate in order to teach at an American university."},
+      {"speaker": "Suzuki", "japanese": "それは すばらしいですね。がんばってください。", "romaji": "Sore wa subarashii desu ne. Ganbatte kudasai.", "english": "That's wonderful. Good luck!"}
+    ]
+  }
+}

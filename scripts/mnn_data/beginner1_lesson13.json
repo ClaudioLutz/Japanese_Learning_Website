@@ -1,0 +1,88 @@
+{
+  "source": "Minna No Nihongo Beginner I",
+  "lesson_number": 13,
+  "title": "Lesson 13 – Desires and Purpose",
+  "title_ja": "第13課",
+  "jlpt_level": 5,
+  "description": "Wünsche ausdrücken: N が ほしいです (Nomen wollen), V たいです (Verb wollen), Zielangabe: Place へ V に 行きます.",
+
+  "vocabulary": [
+    {"word": "あそびます", "reading": "asobimasu", "meaning": "to play, to have fun", "kanji": "遊びます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "およぎます", "reading": "oyogimasu", "meaning": "to swim", "kanji": "泳ぎます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "のぼります", "reading": "noborimasu", "meaning": "to climb", "kanji": "登ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "つかれます", "reading": "tsukaremasu", "meaning": "to get tired", "kanji": "疲れます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "さんぽします", "reading": "sanpo shimasu", "meaning": "to take a walk", "kanji": "散歩します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "けんがくします", "reading": "kengaku shimasu", "meaning": "to visit/tour (for study)", "kanji": "見学します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "かいものします", "reading": "kaimono shimasu", "meaning": "to go shopping", "kanji": "買い物します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "しょくじします", "reading": "shokuji shimasu", "meaning": "to have a meal", "kanji": "食事します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "ほしい", "reading": "hoshii", "meaning": "want (something)", "kanji": "欲しい", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "さびしい", "reading": "sabishii", "meaning": "lonely", "kanji": "寂しい", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "ひろい", "reading": "hiroi", "meaning": "wide, spacious", "kanji": "広い", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "うみ", "reading": "umi", "meaning": "sea, ocean", "kanji": "海", "part_of_speech": "noun"},
+    {"word": "プール", "reading": "puuru", "meaning": "swimming pool", "kanji": null, "part_of_speech": "noun"},
+    {"word": "かわ", "reading": "kawa", "meaning": "river", "kanji": "川", "part_of_speech": "noun"},
+    {"word": "こうえん", "reading": "kouen", "meaning": "park", "kanji": "公園", "part_of_speech": "noun"},
+    {"word": "びじゅつかん", "reading": "bijutsukan", "meaning": "art museum", "kanji": "美術館", "part_of_speech": "noun"},
+    {"word": "どうぶつえん", "reading": "doubutsuen", "meaning": "zoo", "kanji": "動物園", "part_of_speech": "noun"},
+    {"word": "おてら", "reading": "otera", "meaning": "temple", "kanji": "お寺", "part_of_speech": "noun"},
+    {"word": "じんじゃ", "reading": "jinja", "meaning": "shrine", "kanji": "神社", "part_of_speech": "noun"},
+    {"word": "くに", "reading": "kuni", "meaning": "country, home country", "kanji": "国", "part_of_speech": "noun"},
+    {"word": "おみやげ", "reading": "omiyage", "meaning": "souvenir", "kanji": "お土産", "part_of_speech": "noun"},
+    {"word": "カメラ", "reading": "kamera", "meaning": "camera", "kanji": null, "part_of_speech": "noun"},
+    {"word": "パソコン", "reading": "pasokon", "meaning": "personal computer", "kanji": null, "part_of_speech": "noun"},
+    {"word": "けいたい", "reading": "keitai", "meaning": "mobile phone", "kanji": "携帯", "part_of_speech": "noun"},
+    {"word": "じてんしゃ", "reading": "jitensha", "meaning": "bicycle", "kanji": "自転車", "part_of_speech": "noun"},
+    {"word": "くるま", "reading": "kuruma", "meaning": "car", "kanji": "車", "part_of_speech": "noun"},
+    {"word": "こんど", "reading": "kondo", "meaning": "next time, this time", "kanji": "今度", "part_of_speech": "noun"},
+    {"word": "つぎ", "reading": "tsugi", "meaning": "next", "kanji": "次", "part_of_speech": "noun"},
+    {"word": "なにか", "reading": "nanika", "meaning": "something", "kanji": "何か"},
+    {"word": "どこか", "reading": "dokoka", "meaning": "somewhere", "kanji": null},
+    {"word": "いっしょに", "reading": "issho ni", "meaning": "together", "kanji": "一緒に", "part_of_speech": "adverb"},
+    {"word": "べつに", "reading": "betsu ni", "meaning": "not particularly", "kanji": "別に", "part_of_speech": "adverb"},
+    {"word": "もう", "reading": "mou", "meaning": "already, soon", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "ぜひ", "reading": "zehi", "meaning": "by all means, definitely", "kanji": "是非", "part_of_speech": "adverb"},
+    {"word": "のどがかわきます", "reading": "nodo ga kawakimasu", "meaning": "to be thirsty", "kanji": "喉が渇きます", "part_of_speech": "expression"},
+    {"word": "おなかがすきます", "reading": "onaka ga sukimasu", "meaning": "to be hungry", "kanji": "お腹がすきます", "part_of_speech": "expression"}
+  ],
+
+  "vocabulary_countries": [],
+
+  "grammar": [
+    {
+      "title": "N が ほしいです (Want a Noun)",
+      "structure": "N が ほしいです / ほしくないです",
+      "jlpt_level": 5,
+      "explanation": "ほしい is an い-adjective meaning 'want'. The desired object is marked with the particle が. This expression is only used for the speaker's own desires, or when asking the listener directly. It cannot be used to describe a third person's desires. The negative form is ほしくないです.",
+      "example_sentences": "① いま なにが ほしいですか。\n  (Ima nani ga hoshii desu ka.)\n  — What do you want now?\n…あたらしい パソコンが ほしいです。\n  (Atarashii pasokon ga hoshii desu.)\n  — I want a new computer.\n② わたしは くるまは ほしくないです。\n  (Watashi wa kuruma wa hoshikunai desu.)\n  — I don't want a car."
+    },
+    {
+      "title": "V たいです (Want to Do Something)",
+      "structure": "V ます-stem + たいです / たくないです",
+      "jlpt_level": 5,
+      "explanation": "To express a desire to do something, replace ます with たいです. Like ほしい, this expression is only used for the speaker's own desires or when asking the listener. たい conjugates like an い-adjective: past is たかったです, negative is たくないです. The object particle を can be replaced by が with たい.",
+      "example_sentences": "③ おきなわへ いきたいです。\n  (Okinawa e ikitai desu.)\n  — I want to go to Okinawa.\n④ なにを たべたいですか。\n  (Nani o tabetai desu ka.)\n  — What do you want to eat?\n…おすしが たべたいです。\n  (Osushi ga tabetai desu.)\n  — I want to eat sushi.\n⑤ きのう どこも いきたくなかったです。\n  (Kinou doko mo ikitakunakatta desu.)\n  — I didn't want to go anywhere yesterday."
+    },
+    {
+      "title": "Place へ V に 行きます (Go Somewhere to Do Something)",
+      "structure": "Place へ V ます-stem に 行きます/来ます/帰ります",
+      "jlpt_level": 5,
+      "explanation": "To express going (or coming) somewhere for a purpose, use the verb ます-stem + に after the destination. The purpose verb is in its ます-stem form (remove ます). For する-verbs, the noun form is used: 買い物に行きます (go shopping), 食事に行きます (go to eat). This pattern works with 行きます, 来ます, and 帰ります.",
+      "example_sentences": "⑥ こうえんへ さんぽに いきます。\n  (Kouen e sanpo ni ikimasu.)\n  — I go to the park to take a walk.\n⑦ にほんへ にほんごを べんきょうしに きました。\n  (Nihon e nihongo o benkyou shi ni kimashita.)\n  — I came to Japan to study Japanese.\n⑧ デパートへ くつを かいに いきます。\n  (Depaato e kutsu o kai ni ikimasu.)\n  — I'll go to the department store to buy shoes."
+    }
+  ],
+
+  "conversation": {
+    "title": "What do you want to do on the weekend?",
+    "title_ja": "しゅうまつ なにを したいですか",
+    "lines": [
+      {"speaker": "Hayashi", "japanese": "リーさん、こんどの しゅうまつ なにを したいですか。", "romaji": "Rii-san, kondo no shuumatsu nani o shitai desu ka.", "english": "Mr. Lee, what do you want to do this weekend?"},
+      {"speaker": "Lee", "japanese": "うみへ およぎに いきたいです。", "romaji": "Umi e oyogi ni ikitai desu.", "english": "I want to go to the sea to swim."},
+      {"speaker": "Hayashi", "japanese": "いいですね。わたしも いきたいです。", "romaji": "Ii desu ne. Watashi mo ikitai desu.", "english": "That sounds nice. I want to go too."},
+      {"speaker": "Lee", "japanese": "じゃ、いっしょに いきませんか。", "romaji": "Ja, issho ni ikimasen ka.", "english": "Then, shall we go together?"},
+      {"speaker": "Hayashi", "japanese": "ええ、ぜひ。なにか ほしいものは ありますか。", "romaji": "Ee, zehi. Nanika hoshii mono wa arimasu ka.", "english": "Yes, definitely. Is there something you want?"},
+      {"speaker": "Lee", "japanese": "あたらしい カメラが ほしいです。うみの しゃしんを とりたいですから。", "romaji": "Atarashii kamera ga hoshii desu. Umi no shashin o toritai desu kara.", "english": "I want a new camera. Because I want to take photos of the sea."},
+      {"speaker": "Hayashi", "japanese": "じゃ、どようびに でんきやへ カメラを かいに いきましょう。", "romaji": "Ja, doyoubi ni denkiya e kamera o kai ni ikimashou.", "english": "Then let's go to the electronics store to buy a camera on Saturday."},
+      {"speaker": "Lee", "japanese": "いいですね。そうしましょう。", "romaji": "Ii desu ne. Sou shimashou.", "english": "Sounds good. Let's do that."}
+    ]
+  }
+}

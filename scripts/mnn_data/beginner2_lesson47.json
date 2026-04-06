@@ -1,0 +1,78 @@
+{
+  "source": "Minna No Nihongo Beginner II",
+  "lesson_number": 47,
+  "title": "Lesson 47 – Hearsay & Appearance (そうです・ようです・みたいです)",
+  "title_ja": "第47課",
+  "jlpt_level": 4,
+  "description": "Hörensagen und Vermutung: ～そうです (伝聞 — man sagt, dass), ～ようです (es scheint, basierend auf Beweisen), ～みたいです (umgangssprachlich für ようです).",
+
+  "vocabulary": [
+    {"word": "優勝する", "reading": "ゆうしょうする / yuushou suru", "meaning": "to win a championship", "kanji": "優勝する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "転勤する", "reading": "てんきんする / tenkin suru", "meaning": "to be transferred (work)", "kanji": "転勤する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "倒産する", "reading": "とうさんする / tousan suru", "meaning": "to go bankrupt", "kanji": "倒産する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "離婚する", "reading": "りこんする / rikon suru", "meaning": "to get divorced", "kanji": "離婚する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "開発する", "reading": "かいはつする / kaihatsu suru", "meaning": "to develop (technology)", "kanji": "開発する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "値上げする", "reading": "ねあげする / neage suru", "meaning": "to raise the price", "kanji": "値上げする", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "咲く", "reading": "さく / saku", "meaning": "to bloom", "kanji": "咲く", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "濡れる", "reading": "ぬれる / nureru", "meaning": "to get wet", "kanji": "濡れる", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "足りる", "reading": "たりる / tariru", "meaning": "to be sufficient", "kanji": "足りる", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "ニュース", "reading": "nyuusu", "meaning": "news", "kanji": null, "part_of_speech": "noun"},
+    {"word": "うわさ", "reading": "uwasa", "meaning": "rumor, gossip", "kanji": null, "part_of_speech": "noun"},
+    {"word": "番組", "reading": "ばんぐみ / bangumi", "meaning": "TV/radio program", "kanji": "番組", "part_of_speech": "noun"},
+    {"word": "天気予報", "reading": "てんきよほう / tenki yohou", "meaning": "weather forecast", "kanji": "天気予報", "part_of_speech": "noun"},
+    {"word": "試合", "reading": "しあい / shiai", "meaning": "match, game", "kanji": "試合", "part_of_speech": "noun"},
+    {"word": "地震", "reading": "じしん / jishin", "meaning": "earthquake", "kanji": "地震", "part_of_speech": "noun"},
+    {"word": "台風", "reading": "たいふう / taifuu", "meaning": "typhoon", "kanji": "台風", "part_of_speech": "noun"},
+    {"word": "新製品", "reading": "しんせいひん / shinseihin", "meaning": "new product", "kanji": "新製品", "part_of_speech": "noun"},
+    {"word": "売り上げ", "reading": "うりあげ / uriage", "meaning": "sales (revenue)", "kanji": "売り上げ", "part_of_speech": "noun"},
+    {"word": "情報", "reading": "じょうほう / jouhou", "meaning": "information", "kanji": "情報", "part_of_speech": "noun"},
+    {"word": "記事", "reading": "きじ / kiji", "meaning": "article (newspaper)", "kanji": "記事", "part_of_speech": "noun"},
+    {"word": "新聞によると", "reading": "しんぶんによると / shinbun ni yoru to", "meaning": "according to the newspaper", "kanji": "新聞によると", "part_of_speech": "expression"},
+    {"word": "どうも", "reading": "doumo", "meaning": "it seems, somehow", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "どうやら", "reading": "douyara", "meaning": "it seems like, apparently", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "残念な", "reading": "ざんねんな / zannen na", "meaning": "regrettable, disappointing", "kanji": "残念な", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "正確な", "reading": "せいかくな / seikaku na", "meaning": "accurate, precise", "kanji": "正確な", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "確実な", "reading": "かくじつな / kakujitsu na", "meaning": "certain, reliable", "kanji": "確実な", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "人気がある", "reading": "にんきがある / ninki ga aru", "meaning": "to be popular", "kanji": "人気がある", "part_of_speech": "expression"},
+    {"word": "どうしたんですか", "reading": "doushitan desu ka", "meaning": "What happened? What's wrong?", "kanji": null, "part_of_speech": "expression"}
+  ],
+
+  "grammar": [
+    {
+      "title": "Plain form + そうです (Hearsay: I heard that ~)",
+      "structure": "V/い-adj/な-adj/N plain form + そうです",
+      "jlpt_level": 4,
+      "explanation": "そうです attached to the plain form of a sentence reports information the speaker heard from another source (hearsay). This is different from the そうです in Lesson 43, which expresses appearance based on visual impression (V-masu stem/adj stem + そうです). Hearsay そうです uses the complete plain form before そうです. Common introductions include ニュースによると (according to the news) or ～さんの話では (according to what Mr./Ms. ~ said).",
+      "example_sentences": "① 天気予報によると、明日は 雨だそうです。\n  (Tenki yohou ni yoru to, ashita wa ame da sou desu.)\n  — According to the weather forecast, it will rain tomorrow.\n② あの 会社は 倒産した そうです。\n  (Ano kaisha wa tousan shita sou desu.)\n  — I heard that company went bankrupt.\n③ あの レストランは おいしい そうです。\n  (Ano resutoran wa oishii sou desu.)\n  — I heard that restaurant is delicious."
+    },
+    {
+      "title": "～ようです (It seems / It appears — based on evidence)",
+      "structure": "V/い-adj/な-adj plain form + ようです / N + の + ようです",
+      "jlpt_level": 4,
+      "explanation": "ようです expresses the speaker's conjecture based on what they have observed, heard, read, or otherwise gathered evidence for. It suggests the speaker is not completely sure but has reasons to believe something is the case. It is more formal and objective than みたいです. Before ようです: verbs and い-adjectives use plain form, な-adjectives take な, and nouns take の.",
+      "example_sentences": "④ だれも いないようです。\n  (Dare mo inai you desu.)\n  — It seems like nobody is here.\n⑤ この 機械は 故障の ようです。\n  (Kono kikai wa koshou no you desu.)\n  — This machine seems to be broken.\n⑥ 彼は 病気の ようです。 顔色が 悪いですから。\n  (Kare wa byouki no you desu. Kaoiro ga warui desu kara.)\n  — He seems to be sick. Because his complexion is bad."
+    },
+    {
+      "title": "～みたいです (It seems ~ — colloquial)",
+      "structure": "V/い-adj plain form + みたいです / な-adj + みたいです / N + みたいです",
+      "jlpt_level": 4,
+      "explanation": "みたいです has the same meaning as ようです but is used more in casual, spoken Japanese. Unlike ようです, the forms before みたいです are simpler: な-adjectives and nouns connect directly without な or の. It also has a secondary meaning of 'like ~' (comparison), similar to よう.",
+      "example_sentences": "⑦ 電車が 止まった みたいです。\n  (Densha ga tomatta mitai desu.)\n  — It seems the train stopped.\n⑧ あの 店は もう 閉まった みたいです。\n  (Ano mise wa mou shimatta mitai desu.)\n  — It seems that store already closed.\n⑨ 外は 寒い みたいです。みんな コートを 着ていますから。\n  (Soto wa samui mitai desu. Minna kooto o kite imasu kara.)\n  — It seems cold outside. Because everyone is wearing coats."
+    }
+  ],
+
+  "conversation": {
+    "title": "Did You Hear the News?",
+    "title_ja": "ニュースを 聞きましたか",
+    "lines": [
+      {"speaker": "Suzuki", "japanese": "木村さん、山田さんの こと、聞きましたか。", "romaji": "Kimura-san, Yamada-san no koto, kikimashita ka.", "english": "Ms. Kimura, did you hear about Mr. Yamada?"},
+      {"speaker": "Kimura", "japanese": "いいえ、何が あったんですか。", "romaji": "Iie, nani ga attan desu ka.", "english": "No, what happened?"},
+      {"speaker": "Suzuki", "japanese": "来月 大阪に 転勤する そうです。", "romaji": "Raigetsu Oosaka ni tenkin suru sou desu.", "english": "I heard he's being transferred to Osaka next month."},
+      {"speaker": "Kimura", "japanese": "えっ、本当ですか。急ですね。", "romaji": "E, hontou desu ka. Kyuu desu ne.", "english": "What, really? That's sudden."},
+      {"speaker": "Suzuki", "japanese": "ええ。奥さんは あまり うれしくない ようです。", "romaji": "Ee. Okusan wa amari ureshiku nai you desu.", "english": "Yes. His wife doesn't seem very happy about it."},
+      {"speaker": "Kimura", "japanese": "そうでしょうね。お子さんも 学校を 変わらなければ なりませんから。", "romaji": "Sou deshou ne. Okosan mo gakkou o kawaranakereba narimasen kara.", "english": "I imagine so. The children would have to change schools too."},
+      {"speaker": "Suzuki", "japanese": "大阪支社は 忙しい みたいですから、大変でしょうね。", "romaji": "Oosaka shisha wa isogashii mitai desu kara, taihen deshou ne.", "english": "The Osaka branch seems busy, so it'll be tough."},
+      {"speaker": "Kimura", "japanese": "残念ですが、応援しましょう。", "romaji": "Zannen desu ga, ouen shimashou.", "english": "It's a shame, but let's support him."}
+    ]
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "source": "Minna No Nihongo Beginner I",
+  "lesson_number": 8,
+  "title": "Lesson 8 – Adjectives",
+  "title_ja": "第8課",
+  "jlpt_level": 5,
+  "description": "Adjektive: い-Adjektive und な-Adjektive, Adj + N, どう/どんな (wie/was für), とても/あまり (Grad-Adverbien).",
+
+  "vocabulary": [
+    {"word": "おおきい", "reading": "ookii", "meaning": "big, large", "kanji": "大きい", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "ちいさい", "reading": "chiisai", "meaning": "small, little", "kanji": "小さい", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "あたらしい", "reading": "atarashii", "meaning": "new", "kanji": "新しい", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "ふるい", "reading": "furui", "meaning": "old (things)", "kanji": "古い", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "いい", "reading": "ii", "meaning": "good, nice", "kanji": null, "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "わるい", "reading": "warui", "meaning": "bad", "kanji": "悪い", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "あつい", "reading": "atsui", "meaning": "hot (weather/temperature)", "kanji": "暑い", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "さむい", "reading": "samui", "meaning": "cold (weather)", "kanji": "寒い", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "たかい", "reading": "takai", "meaning": "expensive, high", "kanji": "高い", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "やすい", "reading": "yasui", "meaning": "cheap, inexpensive", "kanji": "安い", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "おもしろい", "reading": "omoshiroi", "meaning": "interesting, funny", "kanji": "面白い", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "つまらない", "reading": "tsumaranai", "meaning": "boring, dull", "kanji": null, "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "おいしい", "reading": "oishii", "meaning": "delicious", "kanji": null, "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "まずい", "reading": "mazui", "meaning": "bad-tasting", "kanji": null, "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "いそがしい", "reading": "isogashii", "meaning": "busy", "kanji": "忙しい", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "たのしい", "reading": "tanoshii", "meaning": "enjoyable, fun", "kanji": "楽しい", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "むずかしい", "reading": "muzukashii", "meaning": "difficult", "kanji": "難しい", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "やさしい", "reading": "yasashii", "meaning": "easy, kind", "kanji": "優しい", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "げんき", "reading": "genki", "meaning": "healthy, energetic", "kanji": "元気", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "しずか", "reading": "shizuka", "meaning": "quiet", "kanji": "静か", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "にぎやか", "reading": "nigiyaka", "meaning": "lively, bustling", "kanji": null, "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "ゆうめい", "reading": "yuumei", "meaning": "famous", "kanji": "有名", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "きれい", "reading": "kirei", "meaning": "beautiful, clean", "kanji": null, "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "ひま", "reading": "hima", "meaning": "free (not busy)", "kanji": "暇", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "しんせつ", "reading": "shinsetsu", "meaning": "kind, helpful", "kanji": "親切", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "まち", "reading": "machi", "meaning": "town, city", "kanji": "町", "part_of_speech": "noun"},
+    {"word": "たべもの", "reading": "tabemono", "meaning": "food", "kanji": "食べ物", "part_of_speech": "noun"},
+    {"word": "のみもの", "reading": "nomimono", "meaning": "drink, beverage", "kanji": "飲み物", "part_of_speech": "noun"},
+    {"word": "くるま", "reading": "kuruma", "meaning": "car", "kanji": "車", "part_of_speech": "noun"},
+    {"word": "ところ", "reading": "tokoro", "meaning": "place", "kanji": "所", "part_of_speech": "noun"},
+    {"word": "しごと", "reading": "shigoto", "meaning": "work, job", "kanji": "仕事", "part_of_speech": "noun"},
+    {"word": "せいかつ", "reading": "seikatsu", "meaning": "life, living", "kanji": "生活", "part_of_speech": "noun"},
+    {"word": "とても", "reading": "totemo", "meaning": "very", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "あまり", "reading": "amari", "meaning": "not very (with negative)", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "どう", "reading": "dou", "meaning": "how", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "どんな", "reading": "donna", "meaning": "what kind of", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "そうですね", "reading": "sou desu ne", "meaning": "that's right, let me see", "kanji": null, "part_of_speech": "expression"}
+  ],
+
+  "vocabulary_countries": [],
+
+  "grammar": [
+    {
+      "title": "い-adjectives (い-Adjektive)",
+      "structure": "N は い-Adj です / N は い-Adj くないです",
+      "jlpt_level": 5,
+      "explanation": "い-adjectives always end in い. In the affirmative polite form, you add です after the adjective. In the negative form, the final い is dropped and replaced by くないです. For example: おおきい → おおきくないです. The adjective いい (good) is irregular: its negative form is よくないです.",
+      "example_sentences": "① この 本は 面白いです。\n  (Kono hon wa omoshiroi desu.)\n  — This book is interesting.\n② この 映画は 面白くないです。\n  (Kono eiga wa omoshiroku nai desu.)\n  — This movie is not interesting.\n③ あの レストランは よくないです。\n  (Ano resutoran wa yoku nai desu.)\n  — That restaurant is not good."
+    },
+    {
+      "title": "な-adjectives (な-Adjektive)",
+      "structure": "N は な-Adj です / N は な-Adj じゃ ありません",
+      "jlpt_level": 5,
+      "explanation": "な-adjectives function like nouns in their conjugation. The affirmative polite form uses です, and the negative form uses じゃ ありません, just like nouns. When modifying a noun, な is placed between the adjective and the noun (e.g. きれいな まち).",
+      "example_sentences": "④ 大阪は にぎやかです。\n  (Oosaka wa nigiyaka desu.)\n  — Osaka is lively.\n⑤ この 公園は 静かじゃ ありません。\n  (Kono kouen wa shizuka ja arimasen.)\n  — This park is not quiet."
+    },
+    {
+      "title": "Adj + N (Adjective modifying Noun)",
+      "structure": "い-Adj N / な-Adj な N",
+      "jlpt_level": 5,
+      "explanation": "Adjectives can be placed before nouns to modify them. い-adjectives are placed directly before the noun (e.g. 大きい 車). な-adjectives require な between the adjective and noun (e.g. 静かな 町). This is similar to English adjective placement.",
+      "example_sentences": "⑥ これは 新しい 車です。\n  (Kore wa atarashii kuruma desu.)\n  — This is a new car.\n⑦ 京都は きれいな 町です。\n  (Kyouto wa kirei na machi desu.)\n  — Kyoto is a beautiful town."
+    },
+    {
+      "title": "どう / どんな (How / What kind of)",
+      "structure": "N は どうですか / どんな N ですか",
+      "jlpt_level": 5,
+      "explanation": "どう is used to ask about the quality or state of something, meaning 'how is it?'. どんな is placed before a noun and asks 'what kind of ~?'. Both are used to ask for descriptions or opinions about things.",
+      "example_sentences": "⑧ 日本の 生活は どうですか。\n  (Nihon no seikatsu wa dou desu ka.)\n  — How is life in Japan?\n⑨ 東京は どんな 町ですか。\n  (Toukyou wa donna machi desu ka.)\n  — What kind of city is Tokyo?\n…大きい にぎやかな 町です。(Ookii nigiyaka na machi desu.) — It's a big, lively city."
+    },
+    {
+      "title": "とても / あまり (Degree Adverbs)",
+      "structure": "とても Adj です / あまり Adj くないです・じゃ ありません",
+      "jlpt_level": 5,
+      "explanation": "とても means 'very' and is used to emphasize an adjective in affirmative sentences. あまり means 'not very' and is always used with a negative form. It softens the negation, indicating something is not particularly the case.",
+      "example_sentences": "⑩ この 食べ物は とても おいしいです。\n  (Kono tabemono wa totemo oishii desu.)\n  — This food is very delicious.\n⑪ この 映画は あまり 面白くないです。\n  (Kono eiga wa amari omoshiroku nai desu.)\n  — This movie is not very interesting."
+    }
+  ],
+
+  "conversation": {
+    "title": "How is Tokyo?",
+    "title_ja": "東京は どうですか",
+    "lines": [
+      {"speaker": "Nakamura", "japanese": "リンさんは もう 東京の 生活に なれましたか。", "romaji": "Rin-san wa mou Toukyou no seikatsu ni naremashita ka.", "english": "Lin, have you gotten used to life in Tokyo?"},
+      {"speaker": "Lin", "japanese": "ええ、もう なれました。", "romaji": "Ee, mou naremashita.", "english": "Yes, I have."},
+      {"speaker": "Nakamura", "japanese": "東京は どうですか。", "romaji": "Toukyou wa dou desu ka.", "english": "How is Tokyo?"},
+      {"speaker": "Lin", "japanese": "とても にぎやかな 町ですね。食べ物も おいしいです。", "romaji": "Totemo nigiyaka na machi desu ne. Tabemono mo oishii desu.", "english": "It's a very lively city. The food is also delicious."},
+      {"speaker": "Nakamura", "japanese": "そうですね。どんな 食べ物が 好きですか。", "romaji": "Sou desu ne. Donna tabemono ga suki desu ka.", "english": "That's right. What kind of food do you like?"},
+      {"speaker": "Lin", "japanese": "日本の 魚は とても おいしいです。でも ちょっと 高いです。", "romaji": "Nihon no sakana wa totemo oishii desu. Demo chotto takai desu.", "english": "Japanese fish is very delicious. But it's a little expensive."},
+      {"speaker": "Nakamura", "japanese": "そうですか。仕事は どうですか。", "romaji": "Sou desu ka. Shigoto wa dou desu ka.", "english": "I see. How is work?"},
+      {"speaker": "Lin", "japanese": "忙しいですが、とても 楽しいです。みなさんは とても 親切です。", "romaji": "Isogashii desu ga, totemo tanoshii desu. Minasan wa totemo shinsetsu desu.", "english": "It's busy, but very fun. Everyone is very kind."}
+    ]
+  }
+}

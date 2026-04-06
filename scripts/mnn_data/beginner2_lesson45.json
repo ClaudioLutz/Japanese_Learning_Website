@@ -1,0 +1,78 @@
+{
+  "source": "Minna No Nihongo Beginner II",
+  "lesson_number": 45,
+  "title": "Lesson 45 – Conditionals and Contrast",
+  "title_ja": "第45課",
+  "jlpt_level": 4,
+  "description": "Bedingungen und Kontrast: ～場合は (im Falle von), ～のに (obwohl / trotzdem), ～ても/でも (selbst wenn).",
+
+  "vocabulary": [
+    {"word": "すてます", "reading": "sutemasu", "meaning": "to throw away, to discard", "kanji": "捨てます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "とどきます", "reading": "todokimasu", "meaning": "to arrive, to be delivered", "kanji": "届きます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "こまります", "reading": "komarimasu", "meaning": "to be in trouble", "kanji": "困ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "あきらめます", "reading": "akiramemasu", "meaning": "to give up", "kanji": "諦めます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "ぬすみます", "reading": "nusumimasu", "meaning": "to steal", "kanji": "盗みます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "にげます", "reading": "nigemasu", "meaning": "to escape, to run away", "kanji": "逃げます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "さわぎます", "reading": "sawagimasu", "meaning": "to make noise, to be noisy", "kanji": "騒ぎます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "たずねます", "reading": "tazunemasu", "meaning": "to visit, to ask", "kanji": "訪ねます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "ちゅういします", "reading": "chuui shimasu", "meaning": "to be careful, to warn", "kanji": "注意します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "そうだんします", "reading": "soudan shimasu", "meaning": "to consult, to discuss", "kanji": "相談します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "れんらくします", "reading": "renraku shimasu", "meaning": "to contact", "kanji": "連絡します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "ばあい", "reading": "baai", "meaning": "case, situation", "kanji": "場合", "part_of_speech": "noun"},
+    {"word": "じしん", "reading": "jishin", "meaning": "earthquake", "kanji": "地震", "part_of_speech": "noun"},
+    {"word": "たいふう", "reading": "taifuu", "meaning": "typhoon", "kanji": "台風", "part_of_speech": "noun"},
+    {"word": "かじ", "reading": "kaji", "meaning": "fire (disaster)", "kanji": "火事", "part_of_speech": "noun"},
+    {"word": "じこ", "reading": "jiko", "meaning": "accident", "kanji": "事故", "part_of_speech": "noun"},
+    {"word": "きそく", "reading": "kisoku", "meaning": "rule, regulation", "kanji": "規則", "part_of_speech": "noun"},
+    {"word": "せきにん", "reading": "sekinin", "meaning": "responsibility", "kanji": "責任", "part_of_speech": "noun"},
+    {"word": "げんいん", "reading": "gen'in", "meaning": "cause, reason", "kanji": "原因", "part_of_speech": "noun"},
+    {"word": "けいさつ", "reading": "keisatsu", "meaning": "police", "kanji": "警察", "part_of_speech": "noun"},
+    {"word": "しょうぼうしゃ", "reading": "shoubousha", "meaning": "fire engine", "kanji": "消防車", "part_of_speech": "noun"},
+    {"word": "きゅうきゅうしゃ", "reading": "kyuukyuusha", "meaning": "ambulance", "kanji": "救急車", "part_of_speech": "noun"},
+    {"word": "ひなんじょ", "reading": "hinanjo", "meaning": "evacuation site, shelter", "kanji": "避難所", "part_of_speech": "noun"},
+    {"word": "たいせつ", "reading": "taisetsu", "meaning": "important", "kanji": "大切", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "あんぜん", "reading": "anzen", "meaning": "safe", "kanji": "安全", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "きけん", "reading": "kiken", "meaning": "dangerous", "kanji": "危険", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "たとえ", "reading": "tatoe", "meaning": "even if (used with ～ても)", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "まんいち", "reading": "man'ichi", "meaning": "by any chance, if by some chance", "kanji": "万一", "part_of_speech": "adverb"},
+    {"word": "いくら", "reading": "ikura", "meaning": "no matter how much (used with ～ても)", "kanji": null, "part_of_speech": "adverb"}
+  ],
+
+  "grammar": [
+    {
+      "title": "～場合は — In case of / When",
+      "structure": "V (plain) 場合は / い-Adj 場合は / な-Adj な 場合は / N の 場合は",
+      "jlpt_level": 4,
+      "explanation": "～場合は means 'in the case of ~' or 'when ~'. It is used to describe what to do or what happens in a particular situation. It is more formal than ～とき and often used for rules, instructions, and hypothetical situations. Verbs in plain form (both past and non-past) precede 場合は. For な-adjectives, add な before 場合は. For nouns, add の before 場合は.",
+      "example_sentences": "① 地震の 場合は、エレベーターを 使わないでください。\n  (Jishin no baai wa, erebeetaa o tsukawanaide kudasai.)\n  — In case of an earthquake, please do not use the elevator.\n② パスポートを なくした 場合は、すぐ 警察に 届けてください。\n  (Pasupooto o nakushita baai wa, sugu keisatsu ni todokete kudasai.)\n  — If you lose your passport, please report it to the police immediately.\n③ 都合が 悪い 場合は、連絡してください。\n  (Tsugou ga warui baai wa, renraku shite kudasai.)\n  — If it is inconvenient, please contact us."
+    },
+    {
+      "title": "～のに — Although / Despite (contrast)",
+      "structure": "V (plain) のに / い-Adj のに / な-Adj な のに / N な のに",
+      "jlpt_level": 4,
+      "explanation": "～のに expresses contrast or unexpectedness, meaning 'although ~' or 'despite ~'. The result in the main clause is contrary to what would normally be expected. This のに (contrast) is different from the のに in Lesson 42 (purpose). The contrast のに often carries a nuance of dissatisfaction, regret, or surprise. For な-adjectives and nouns, な comes before のに.",
+      "example_sentences": "④ 薬を 飲んだのに、まだ 熱が あります。\n  (Kusuri o nonda noni, mada netsu ga arimasu.)\n  — Although I took medicine, I still have a fever.\n⑤ 約束したのに、彼は 来ませんでした。\n  (Yakusoku shita noni, kare wa kimasen deshita.)\n  — Although he promised, he didn't come.\n⑥ この携帯は 新しいのに、もう 壊れました。\n  (Kono keitai wa atarashii noni, mou kowaremashita.)\n  — Although this phone is new, it already broke."
+    },
+    {
+      "title": "～ても / ～でも — Even if",
+      "structure": "V て-form + も / い-Adj (drop い) + くても / な-Adj + でも / N + でも",
+      "jlpt_level": 4,
+      "explanation": "～ても/でも means 'even if ~' or 'even though ~'. It indicates that the result in the main clause will not change regardless of the condition stated. For verbs, use the て-form + も. For い-adjectives, change い to くても. For な-adjectives, use でも. For nouns, use でも. Often used with いくら (no matter how much) or たとえ (even if).",
+      "example_sentences": "⑦ 雨が 降っても、サッカーを します。\n  (Ame ga futte mo, sakkaa o shimasu.)\n  — Even if it rains, I will play soccer.\n⑧ いくら 高くても、買います。\n  (Ikura takakute mo, kaimasu.)\n  — No matter how expensive it is, I will buy it.\n⑨ たとえ 反対されても、留学します。\n  (Tatoe hantai sarete mo, ryuugaku shimasu.)\n  — Even if I am opposed, I will study abroad."
+    }
+  ],
+
+  "conversation": {
+    "title": "What should we do in case of an earthquake?",
+    "title_ja": "地震の場合はどうしたらいいですか",
+    "lines": [
+      {"speaker": "Miller", "japanese": "日本は 地震が 多いですね。地震の 場合は、どうしたら いいですか。", "romaji": "Nihon wa jishin ga ooi desu ne. Jishin no baai wa, dou shitara ii desu ka.", "english": "Japan has many earthquakes. What should we do in case of an earthquake?"},
+      {"speaker": "Yamada", "japanese": "まず、テーブルの 下に 入ってください。", "romaji": "Mazu, teeburu no shita ni haitte kudasai.", "english": "First, get under a table."},
+      {"speaker": "Miller", "japanese": "火事の 場合は どうですか。", "romaji": "Kaji no baai wa dou desu ka.", "english": "What about in case of fire?"},
+      {"speaker": "Yamada", "japanese": "すぐ 外に 逃げてください。エレベーターは 使わないでください。たとえ 1階でも、階段を 使ってください。", "romaji": "Sugu soto ni nigete kudasai. Erebeetaa wa tsukawanaide kudasai. Tatoe ikkai demo, kaidan o tsukatte kudasai.", "english": "Please escape outside immediately. Don't use the elevator. Even if it's the first floor, please use the stairs."},
+      {"speaker": "Miller", "japanese": "この建物は 新しいのに、よく 避難訓練を するんですね。", "romaji": "Kono tatemono wa atarashii noni, yoku hinan kunren o suru n desu ne.", "english": "Although this building is new, you do evacuation drills often."},
+      {"speaker": "Yamada", "japanese": "ええ。いくら 安全でも、準備は 大切ですよ。万一の 場合は、この番号に 連絡してください。", "romaji": "Ee. Ikura anzen demo, junbi wa taisetsu desu yo. Man'ichi no baai wa, kono bangou ni renraku shite kudasai.", "english": "Yes. No matter how safe it is, preparation is important. In case of emergency, please contact this number."},
+      {"speaker": "Miller", "japanese": "わかりました。ありがとうございます。", "romaji": "Wakarimashita. Arigatou gozaimasu.", "english": "I understand. Thank you."}
+    ]
+  }
+}

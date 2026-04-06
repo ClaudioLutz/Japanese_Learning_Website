@@ -1,0 +1,104 @@
+{
+  "source": "Minna No Nihongo Beginner I",
+  "lesson_number": 11,
+  "title": "Lesson 11 – Counting and Duration",
+  "title_ja": "第11課",
+  "jlpt_level": 5,
+  "description": "Zähler und Mengenangaben (ひとつ～とお, ～人, ～枚, ～台, ～回), Zeitdauer (～か月, ～週間), どのぐらい.",
+
+  "vocabulary": [
+    {"word": "ひとつ", "reading": "hitotsu", "meaning": "one (thing)", "kanji": "一つ", "part_of_speech": "counter"},
+    {"word": "ふたつ", "reading": "futatsu", "meaning": "two (things)", "kanji": "二つ", "part_of_speech": "counter"},
+    {"word": "みっつ", "reading": "mittsu", "meaning": "three (things)", "kanji": "三つ", "part_of_speech": "counter"},
+    {"word": "よっつ", "reading": "yottsu", "meaning": "four (things)", "kanji": "四つ", "part_of_speech": "counter"},
+    {"word": "いつつ", "reading": "itsutsu", "meaning": "five (things)", "kanji": "五つ", "part_of_speech": "counter"},
+    {"word": "むっつ", "reading": "muttsu", "meaning": "six (things)", "kanji": "六つ", "part_of_speech": "counter"},
+    {"word": "ななつ", "reading": "nanatsu", "meaning": "seven (things)", "kanji": "七つ", "part_of_speech": "counter"},
+    {"word": "やっつ", "reading": "yattsu", "meaning": "eight (things)", "kanji": "八つ", "part_of_speech": "counter"},
+    {"word": "ここのつ", "reading": "kokonotsu", "meaning": "nine (things)", "kanji": "九つ", "part_of_speech": "counter"},
+    {"word": "とお", "reading": "too", "meaning": "ten (things)", "kanji": "十", "part_of_speech": "counter"},
+    {"word": "いくつ", "reading": "ikutsu", "meaning": "how many", "kanji": null},
+    {"word": "ひとり", "reading": "hitori", "meaning": "one person", "kanji": "一人", "part_of_speech": "counter"},
+    {"word": "ふたり", "reading": "futari", "meaning": "two people", "kanji": "二人", "part_of_speech": "counter"},
+    {"word": "～にん", "reading": "~nin", "meaning": "~ people (counter)", "kanji": "～人", "part_of_speech": "counter"},
+    {"word": "～だい", "reading": "~dai", "meaning": "~ machines/vehicles (counter)", "kanji": "～台", "part_of_speech": "counter"},
+    {"word": "～まい", "reading": "~mai", "meaning": "~ flat objects (counter)", "kanji": "～枚", "part_of_speech": "counter"},
+    {"word": "～かい", "reading": "~kai", "meaning": "~ times (counter)", "kanji": "～回", "part_of_speech": "counter"},
+    {"word": "～ほん", "reading": "~hon", "meaning": "~ long objects (counter)", "kanji": "～本", "part_of_speech": "counter"},
+    {"word": "～さつ", "reading": "~satsu", "meaning": "~ bound volumes (counter)", "kanji": "～冊", "part_of_speech": "counter"},
+    {"word": "～はい", "reading": "~hai", "meaning": "~ cups/glasses (counter)", "kanji": "～杯", "part_of_speech": "counter"},
+    {"word": "りんご", "reading": "ringo", "meaning": "apple", "kanji": null, "part_of_speech": "noun"},
+    {"word": "みかん", "reading": "mikan", "meaning": "mandarin orange", "kanji": null, "part_of_speech": "noun"},
+    {"word": "サンドイッチ", "reading": "sandoitchi", "meaning": "sandwich", "kanji": null, "part_of_speech": "noun"},
+    {"word": "ジュース", "reading": "juusu", "meaning": "juice", "kanji": null, "part_of_speech": "noun"},
+    {"word": "きって", "reading": "kitte", "meaning": "postage stamp", "kanji": "切手", "part_of_speech": "noun"},
+    {"word": "はがき", "reading": "hagaki", "meaning": "postcard", "kanji": "葉書", "part_of_speech": "noun"},
+    {"word": "ふうとう", "reading": "fuutou", "meaning": "envelope", "kanji": "封筒", "part_of_speech": "noun"},
+    {"word": "おとな", "reading": "otona", "meaning": "adult", "kanji": "大人", "part_of_speech": "noun"},
+    {"word": "こども", "reading": "kodomo", "meaning": "child", "kanji": "子供", "part_of_speech": "noun"},
+    {"word": "かぞく", "reading": "kazoku", "meaning": "family", "kanji": "家族", "part_of_speech": "noun"},
+    {"word": "いっしゅうかん", "reading": "isshuukan", "meaning": "one week", "kanji": "一週間", "part_of_speech": "counter"},
+    {"word": "～しゅうかん", "reading": "~shuukan", "meaning": "~ weeks (counter)", "kanji": "～週間", "part_of_speech": "counter"},
+    {"word": "いっかげつ", "reading": "ikkagetsu", "meaning": "one month (duration)", "kanji": "一か月", "part_of_speech": "counter"},
+    {"word": "～かげつ", "reading": "~kagetsu", "meaning": "~ months (duration)", "kanji": "～か月", "part_of_speech": "counter"},
+    {"word": "～ねん", "reading": "~nen", "meaning": "~ years (duration)", "kanji": "～年", "part_of_speech": "counter"},
+    {"word": "どのぐらい", "reading": "dono gurai", "meaning": "how long, how much", "kanji": null},
+    {"word": "ぜんぶで", "reading": "zenbu de", "meaning": "in total, altogether", "kanji": "全部で"},
+    {"word": "いくら", "reading": "ikura", "meaning": "how much (price)", "kanji": null},
+    {"word": "ください", "reading": "kudasai", "meaning": "please give me", "kanji": null, "part_of_speech": "expression"},
+    {"word": "かみ", "reading": "kami", "meaning": "paper", "kanji": "紙", "part_of_speech": "noun"},
+    {"word": "にほんご", "reading": "nihongo", "meaning": "Japanese language", "kanji": "日本語", "part_of_speech": "noun"},
+    {"word": "べんきょう", "reading": "benkyou", "meaning": "study", "kanji": "勉強", "part_of_speech": "noun"},
+    {"word": "かかります", "reading": "kakarimasu", "meaning": "it takes (time/money)", "kanji": null, "part_of_speech": "verb", "verb_group": 1},
+    {"word": "います", "reading": "imasu", "meaning": "to exist (living things)", "kanji": null, "part_of_speech": "verb", "verb_group": 2},
+    {"word": "おくります", "reading": "okurimasu", "meaning": "to send", "kanji": "送ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "もらいます", "reading": "moraimasu", "meaning": "to receive", "kanji": null, "part_of_speech": "verb", "verb_group": 1}
+  ],
+
+  "vocabulary_countries": [],
+
+  "grammar": [
+    {
+      "title": "Counting with ひとつ～とお (General Counter)",
+      "structure": "N を ひとつ / ふたつ / … / とお ください",
+      "jlpt_level": 5,
+      "explanation": "Japanese uses the native counting system ひとつ through とお to count general objects from 1 to 10. This counter is used for objects that do not have a specific counter or when the specific counter is not known. The number comes after the object and its particle.",
+      "example_sentences": "① りんごを みっつ ください。\n  (Ringo o mittsu kudasai.)\n  — Please give me three apples.\n② みかんを いつつ かいました。\n  (Mikan o itsutsu kaimashita.)\n  — I bought five mandarin oranges."
+    },
+    {
+      "title": "Specific Counters (～人, ～枚, ～台, ～本, ～杯, ～回)",
+      "structure": "N を Number + Counter ください",
+      "jlpt_level": 5,
+      "explanation": "Different categories of objects require specific counters. ～人 (nin) counts people (irregular: ひとり for 1, ふたり for 2), ～枚 (mai) counts flat objects like paper and stamps, ～台 (dai) counts machines and vehicles, ～本 (hon) counts long cylindrical objects, ～杯 (hai) counts cups and glasses, ～回 (kai) counts occurrences or times. The counter is placed after the number and usually after the particle.",
+      "example_sentences": "③ きってを ５まい ください。\n  (Kitte o go-mai kudasai.)\n  — Please give me five stamps.\n④ がくせいが ３にん います。\n  (Gakusei ga san-nin imasu.)\n  — There are three students.\n⑤ くるまが ２だい あります。\n  (Kuruma ga ni-dai arimasu.)\n  — There are two cars."
+    },
+    {
+      "title": "Period of Time (Duration: ～か月, ～週間)",
+      "structure": "期間 + Verb / 期間 かかります",
+      "jlpt_level": 5,
+      "explanation": "Duration of time is expressed with special counters: ～週間 (shuukan) for weeks, ～か月 (kagetsu) for months, ～年 (nen) for years. These expressions indicate how long an action or state continues. The particle に is not used with duration expressions — they connect directly to the verb.",
+      "example_sentences": "⑥ にほんごを ６かげつ べんきょうしました。\n  (Nihongo o roku-kagetsu benkyou shimashita.)\n  — I studied Japanese for six months.\n⑦ いっしゅうかん やすみました。\n  (Isshuukan yasumimashita.)\n  — I took one week off."
+    },
+    {
+      "title": "どのぐらい (How Long / How Much)",
+      "structure": "どのぐらい Verb か",
+      "jlpt_level": 5,
+      "explanation": "どのぐらい is used to ask about the duration or extent of an action. It can ask 'how long' for time duration or 'how much' for quantity. The answer replaces どのぐらい with the specific duration or amount.",
+      "example_sentences": "⑧ どのぐらい にほんごを べんきょうしましたか。\n  (Dono gurai nihongo o benkyou shimashita ka.)\n  — How long did you study Japanese?\n…３かげつ べんきょうしました。\n  (San-kagetsu benkyou shimashita.)\n  — I studied for three months.\n⑨ おおさかまで どのぐらい かかりますか。\n  (Oosaka made dono gurai kakarimasu ka.)\n  — How long does it take to Osaka?\n…２じかん３０ぷん かかります。\n  (Ni-jikan sanjuppun kakarimasu.)\n  — It takes two hours and thirty minutes."
+    }
+  ],
+
+  "conversation": {
+    "title": "At the post office",
+    "title_ja": "ゆうびんきょくで",
+    "lines": [
+      {"speaker": "Tanaka", "japanese": "すみません。８０えんの きってを ５まい ください。", "romaji": "Sumimasen. Hachijuu-en no kitte o go-mai kudasai.", "english": "Excuse me. Please give me five 80-yen stamps."},
+      {"speaker": "Clerk", "japanese": "はい。ほかに なにか。", "romaji": "Hai. Hoka ni nanika.", "english": "Yes. Anything else?"},
+      {"speaker": "Tanaka", "japanese": "はがきを ３まい おねがいします。", "romaji": "Hagaki o san-mai onegaishimasu.", "english": "Three postcards, please."},
+      {"speaker": "Clerk", "japanese": "はい。ぜんぶで ５５０えんです。", "romaji": "Hai. Zenbu de gohyaku gojuu-en desu.", "english": "Yes. That will be 550 yen in total."},
+      {"speaker": "Tanaka", "japanese": "あのう、ドイツまで はがきは どのぐらい かかりますか。", "romaji": "Anou, Doitsu made hagaki wa dono gurai kakarimasu ka.", "english": "Um, how long does a postcard to Germany take?"},
+      {"speaker": "Clerk", "japanese": "いっしゅうかんぐらい かかります。", "romaji": "Isshuukan gurai kakarimasu.", "english": "It takes about one week."},
+      {"speaker": "Tanaka", "japanese": "そうですか。ありがとうございます。", "romaji": "Sou desu ka. Arigatou gozaimasu.", "english": "I see. Thank you very much."}
+    ]
+  }
+}

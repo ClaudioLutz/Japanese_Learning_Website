@@ -1,0 +1,78 @@
+{
+  "source": "Minna No Nihongo Beginner II",
+  "lesson_number": 28,
+  "title": "Lesson 28 – While Doing / Listing Reasons",
+  "title_ja": "第28課",
+  "jlpt_level": 4,
+  "description": "Gleichzeitige Handlungen mit ～ながら, mehrere Gründe auflisten mit ～し～し, und それに (ausserdem).",
+
+  "vocabulary": [
+    {"word": "付き合う", "reading": "tsukiau", "meaning": "to associate with, to go along with", "kanji": "付き合う", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "噛む", "reading": "kamu", "meaning": "to chew, to bite", "kanji": "噛む", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "選ぶ", "reading": "erabu", "meaning": "to choose, to select", "kanji": "選ぶ", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "通る", "reading": "tooru", "meaning": "to pass through", "kanji": "通る", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "散歩する", "reading": "sanpo suru", "meaning": "to take a walk", "kanji": "散歩する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "片付ける", "reading": "katazukeru", "meaning": "to tidy up", "kanji": "片付ける", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "続ける", "reading": "tsuzukeru", "meaning": "to continue", "kanji": "続ける", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "踊る", "reading": "odoru", "meaning": "to dance", "kanji": "踊る", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "サボる", "reading": "saboru", "meaning": "to skip (class/work), to slack off", "kanji": null, "part_of_speech": "verb", "verb_group": 1},
+    {"word": "育てる", "reading": "sodateru", "meaning": "to raise, to bring up", "kanji": "育てる", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "日記", "reading": "nikki", "meaning": "diary", "kanji": "日記", "part_of_speech": "noun"},
+    {"word": "習慣", "reading": "shuukan", "meaning": "habit, custom", "kanji": "習慣", "part_of_speech": "noun"},
+    {"word": "レポート", "reading": "repooto", "meaning": "report", "kanji": null, "part_of_speech": "noun"},
+    {"word": "ジョギング", "reading": "jogingu", "meaning": "jogging", "kanji": null, "part_of_speech": "noun"},
+    {"word": "ガム", "reading": "gamu", "meaning": "chewing gum", "kanji": null, "part_of_speech": "noun"},
+    {"word": "給料", "reading": "kyuuryou", "meaning": "salary", "kanji": "給料", "part_of_speech": "noun"},
+    {"word": "残業", "reading": "zangyou", "meaning": "overtime work", "kanji": "残業", "part_of_speech": "noun"},
+    {"word": "環境", "reading": "kankyou", "meaning": "environment", "kanji": "環境", "part_of_speech": "noun"},
+    {"word": "雰囲気", "reading": "fun'iki", "meaning": "atmosphere, ambiance", "kanji": "雰囲気", "part_of_speech": "noun"},
+    {"word": "通勤", "reading": "tsuukin", "meaning": "commuting", "kanji": "通勤", "part_of_speech": "noun"},
+    {"word": "やりがい", "reading": "yarigai", "meaning": "sense of achievement, rewarding", "kanji": null, "part_of_speech": "noun"},
+    {"word": "職場", "reading": "shokuba", "meaning": "workplace", "kanji": "職場", "part_of_speech": "noun"},
+    {"word": "チーム", "reading": "chiimu", "meaning": "team", "kanji": null, "part_of_speech": "noun"},
+    {"word": "それに", "reading": "soreni", "meaning": "moreover, besides", "kanji": null, "part_of_speech": "conjunction"},
+    {"word": "やはり", "reading": "yahari", "meaning": "as expected, after all", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "つまらない", "reading": "tsumaranai", "meaning": "boring, dull", "kanji": null, "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "複雑", "reading": "fukuzatsu", "meaning": "complicated, complex", "kanji": "複雑", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "最近", "reading": "saikin", "meaning": "recently, lately", "kanji": "最近", "part_of_speech": "adverb"}
+  ],
+
+  "grammar": [
+    {
+      "title": "～ながら (While Doing ~)",
+      "structure": "V-ます stem + ながら、V₂",
+      "jlpt_level": 4,
+      "explanation": "～ながら indicates doing two actions simultaneously. The verb before ながら is the secondary (accompanying) action, while the main action comes at the end of the sentence. The subject of both actions must be the same person.",
+      "example_sentences": "① 音楽を聞きながら、勉強します。\n  (Ongaku wo kikinagara, benkyou shimasu.)\n  — I study while listening to music.\n② コーヒーを飲みながら、新聞を読みます。\n  (Koohii wo nominagara, shinbun wo yomimasu.)\n  — I read the newspaper while drinking coffee."
+    },
+    {
+      "title": "～し、～し (Listing Multiple Reasons)",
+      "structure": "S₁(plain) し、S₂(plain) し、S₃",
+      "jlpt_level": 4,
+      "explanation": "～し is used to list multiple reasons or characteristics. It implies there are additional reasons beyond those stated. Each clause before し uses the plain form. It can be used with affirmative and negative, present and past forms. Often used when explaining why you like/dislike something or when justifying a decision.",
+      "example_sentences": "③ この店は安いし、おいしいし、よく行きます。\n  (Kono mise wa yasui shi, oishii shi, yoku ikimasu.)\n  — This restaurant is cheap, the food is tasty, so I go there often.\n④ きのうは天気もよかったし、友達にも会えたし、いい一日でした。\n  (Kinou wa tenki mo yokatta shi, tomodachi ni mo aeta shi, ii ichinichi deshita.)\n  — Yesterday the weather was nice, I got to see friends — it was a good day."
+    },
+    {
+      "title": "それに (Moreover, Besides)",
+      "structure": "S₁。それに、S₂。",
+      "jlpt_level": 4,
+      "explanation": "それに is a conjunction meaning 'moreover', 'besides', or 'on top of that'. It adds supplementary information that supports the same direction as the previous statement. If the first statement is positive, the added information is also positive; the same applies for negative statements.",
+      "example_sentences": "⑤ あのレストランは料理がおいしいです。それに、値段も安いです。\n  (Ano resutoran wa ryouri ga oishii desu. Soreni, nedan mo yasui desu.)\n  — That restaurant has delicious food. Moreover, the prices are cheap.\n⑥ この仕事は残業が多いです。それに、給料も少ないです。\n  (Kono shigoto wa zangyou ga ooi desu. Soreni, kyuuryou mo sukunai desu.)\n  — This job has a lot of overtime. On top of that, the salary is low."
+    }
+  ],
+
+  "conversation": {
+    "title": "How is your new job?",
+    "title_ja": "新しい仕事はどうですか",
+    "lines": [
+      {"speaker": "Suzuki", "japanese": "新しい仕事はどう？", "romaji": "Atarashii shigoto wa dou?", "english": "How's the new job?"},
+      {"speaker": "Tanaka", "japanese": "すごくいいよ。仕事にやりがいがあるし、チームの雰囲気もいいし。", "romaji": "Sugoku ii yo. Shigoto ni yarigai ga aru shi, chiimu no fun'iki mo ii shi.", "english": "It's really great. The work is rewarding, and the team atmosphere is good."},
+      {"speaker": "Suzuki", "japanese": "よかったね。通勤は大変じゃない？", "romaji": "Yokatta ne. Tsuukin wa taihen ja nai?", "english": "That's great. Isn't the commute tough?"},
+      {"speaker": "Tanaka", "japanese": "電車で40分ぐらいだけど、音楽を聞きながら本を読んでるから、そんなに大変じゃないよ。", "romaji": "Densha de yonjuppun gurai da kedo, ongaku wo kikinagara hon wo yonderu kara, sonna ni taihen ja nai yo.", "english": "It's about 40 minutes by train, but I read books while listening to music, so it's not that bad."},
+      {"speaker": "Suzuki", "japanese": "そう。前の会社はどうだったの？", "romaji": "Sou. Mae no kaisha wa dou datta no?", "english": "I see. How was your previous company?"},
+      {"speaker": "Tanaka", "japanese": "残業が多かったし、給料も安かったし、やめてよかったと思う。", "romaji": "Zangyou ga ookatta shi, kyuuryou mo yasukatta shi, yamete yokatta to omou.", "english": "There was a lot of overtime, the salary was low — I think it was good that I quit."},
+      {"speaker": "Suzuki", "japanese": "それに、前の職場は駅から遠かったよね。", "romaji": "Soreni, mae no shokuba wa eki kara tookatta yo ne.", "english": "Besides, the previous workplace was far from the station, right?"},
+      {"speaker": "Tanaka", "japanese": "うん、そうそう。やはり転職してよかった。", "romaji": "Un, sou sou. Yahari tenshoku shite yokatta.", "english": "Yeah, exactly. I'm glad I changed jobs after all."}
+    ]
+  }
+}

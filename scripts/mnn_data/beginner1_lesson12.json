@@ -1,0 +1,93 @@
+{
+  "source": "Minna No Nihongo Beginner I",
+  "lesson_number": 12,
+  "title": "Lesson 12 – Adjective Past Tense and Comparisons",
+  "title_ja": "第12課",
+  "jlpt_level": 5,
+  "description": "Adjektiv-Vergangenheit und Verneinung (い-adj/な-adj), Vergleiche mit より…のほうが, Superlativ mit いちばん.",
+
+  "vocabulary": [
+    {"word": "かんたん", "reading": "kantan", "meaning": "easy, simple", "kanji": "簡単", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "ちかい", "reading": "chikai", "meaning": "near, close", "kanji": "近い", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "とおい", "reading": "tooi", "meaning": "far", "kanji": "遠い", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "はやい", "reading": "hayai", "meaning": "fast, early", "kanji": "速い", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "おそい", "reading": "osoi", "meaning": "slow, late", "kanji": "遅い", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "おおい", "reading": "ooi", "meaning": "many, much", "kanji": "多い", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "すくない", "reading": "sukunai", "meaning": "few, little", "kanji": "少ない", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "あたたかい", "reading": "atatakai", "meaning": "warm", "kanji": "暖かい", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "すずしい", "reading": "suzushii", "meaning": "cool (temperature)", "kanji": "涼しい", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "あまい", "reading": "amai", "meaning": "sweet", "kanji": "甘い", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "からい", "reading": "karai", "meaning": "spicy, hot", "kanji": "辛い", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "おもい", "reading": "omoi", "meaning": "heavy", "kanji": "重い", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "かるい", "reading": "karui", "meaning": "light (weight)", "kanji": "軽い", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "にぎやか", "reading": "nigiyaka", "meaning": "lively, bustling", "kanji": null, "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "しずか", "reading": "shizuka", "meaning": "quiet", "kanji": "静か", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "ゆうめい", "reading": "yuumei", "meaning": "famous", "kanji": "有名", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "きせつ", "reading": "kisetsu", "meaning": "season", "kanji": "季節", "part_of_speech": "noun"},
+    {"word": "はる", "reading": "haru", "meaning": "spring", "kanji": "春", "part_of_speech": "noun"},
+    {"word": "なつ", "reading": "natsu", "meaning": "summer", "kanji": "夏", "part_of_speech": "noun"},
+    {"word": "あき", "reading": "aki", "meaning": "autumn", "kanji": "秋", "part_of_speech": "noun"},
+    {"word": "ふゆ", "reading": "fuyu", "meaning": "winter", "kanji": "冬", "part_of_speech": "noun"},
+    {"word": "てんき", "reading": "tenki", "meaning": "weather", "kanji": "天気", "part_of_speech": "noun"},
+    {"word": "さくら", "reading": "sakura", "meaning": "cherry blossom", "kanji": "桜", "part_of_speech": "noun"},
+    {"word": "やま", "reading": "yama", "meaning": "mountain", "kanji": "山", "part_of_speech": "noun"},
+    {"word": "まち", "reading": "machi", "meaning": "town, city", "kanji": "町", "part_of_speech": "noun"},
+    {"word": "りょうり", "reading": "ryouri", "meaning": "cooking, cuisine", "kanji": "料理", "part_of_speech": "noun"},
+    {"word": "たべもの", "reading": "tabemono", "meaning": "food", "kanji": "食べ物", "part_of_speech": "noun"},
+    {"word": "のみもの", "reading": "nomimono", "meaning": "drink, beverage", "kanji": "飲み物", "part_of_speech": "noun"},
+    {"word": "スポーツ", "reading": "supootsu", "meaning": "sport", "kanji": null, "part_of_speech": "noun"},
+    {"word": "サッカー", "reading": "sakkaa", "meaning": "soccer", "kanji": null, "part_of_speech": "noun"},
+    {"word": "やきゅう", "reading": "yakyuu", "meaning": "baseball", "kanji": "野球", "part_of_speech": "noun"},
+    {"word": "いちばん", "reading": "ichiban", "meaning": "the most, number one", "kanji": "一番"},
+    {"word": "ずっと", "reading": "zutto", "meaning": "by far, much (more)", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "どちら", "reading": "dochira", "meaning": "which (of two)", "kanji": null},
+    {"word": "どれ", "reading": "dore", "meaning": "which (of three or more)", "kanji": null}
+  ],
+
+  "vocabulary_countries": [],
+
+  "grammar": [
+    {
+      "title": "い-Adjective Past Tense (かった / くなかった)",
+      "structure": "い-adj (～い → ～かったです / ～くなかったです)",
+      "jlpt_level": 5,
+      "explanation": "To form the past tense of い-adjectives, drop the final い and add かったです for affirmative past, or くなかったです for negative past. The adjective いい (good) is irregular: its past forms are よかったです (was good) and よくなかったです (was not good).",
+      "example_sentences": "① きのうは あつかったです。\n  (Kinou wa atsukatta desu.)\n  — Yesterday was hot.\n② きのうの テストは むずかしくなかったです。\n  (Kinou no tesuto wa muzukashikunakatta desu.)\n  — Yesterday's test was not difficult.\n③ りょこうは よかったです。\n  (Ryokou wa yokatta desu.)\n  — The trip was good."
+    },
+    {
+      "title": "な-Adjective Past Tense (でした / じゃなかった)",
+      "structure": "な-adj + でした / じゃなかったです",
+      "jlpt_level": 5,
+      "explanation": "For な-adjectives, the past tense is formed by replacing です with でした (affirmative) or じゃなかったです (negative). This is similar to how nouns form past tense with です.",
+      "example_sentences": "④ きのうの パーティーは にぎやかでした。\n  (Kinou no paatii wa nigiyaka deshita.)\n  — Yesterday's party was lively.\n⑤ こうえんは しずかじゃなかったです。\n  (Kouen wa shizuka ja nakatta desu.)\n  — The park was not quiet."
+    },
+    {
+      "title": "Comparison: N₁ より N₂ のほうが (N₂ is more ~ than N₁)",
+      "structure": "N₁ より N₂ のほうが Adj",
+      "jlpt_level": 5,
+      "explanation": "To compare two things, use N₁ より N₂ のほうが + adjective. This states that N₂ has more of the quality described by the adjective than N₁. You can also ask which of two items has more of a quality using どちらのほうが.",
+      "example_sentences": "⑥ とうきょうより おおさかのほうが にぎやかです。\n  (Toukyou yori Oosaka no hou ga nigiyaka desu.)\n  — Osaka is more lively than Tokyo.\n⑦ ひこうきと でんしゃと どちらのほうが はやいですか。\n  (Hikouki to densha to dochira no hou ga hayai desu ka.)\n  — Which is faster, the airplane or the train?\n…ひこうきのほうが はやいです。\n  (Hikouki no hou ga hayai desu.)\n  — The airplane is faster."
+    },
+    {
+      "title": "Superlative: N の中で いちばん Adj (the most Adj among N)",
+      "structure": "N の中で いちばん Adj",
+      "jlpt_level": 5,
+      "explanation": "To express the superlative (the most ~), use N のなかで いちばん + adjective. The group is indicated with のなかで (among). For categories like seasons or things, you can ask with どれが (which of three or more) or いつが (when).",
+      "example_sentences": "⑧ にほんで いちばん たかい やまは ふじさんです。\n  (Nihon de ichiban takai yama wa Fujisan desu.)\n  — The tallest mountain in Japan is Mt. Fuji.\n⑨ きせつの なかで いつが いちばん すきですか。\n  (Kisetsu no naka de itsu ga ichiban suki desu ka.)\n  — Which season do you like the most?\n…はるが いちばん すきです。\n  (Haru ga ichiban suki desu.)\n  — I like spring the most."
+    }
+  ],
+
+  "conversation": {
+    "title": "Which season do you like?",
+    "title_ja": "どのきせつが すきですか",
+    "lines": [
+      {"speaker": "Suzuki", "japanese": "スミスさんは にほんの きせつの なかで どれが いちばん すきですか。", "romaji": "Sumisu-san wa Nihon no kisetsu no naka de dore ga ichiban suki desu ka.", "english": "Mr. Smith, which Japanese season do you like the most?"},
+      {"speaker": "Smith", "japanese": "あきが いちばん すきです。すずしくて、きれいですから。", "romaji": "Aki ga ichiban suki desu. Suzushikute, kirei desu kara.", "english": "I like autumn the most. Because it's cool and beautiful."},
+      {"speaker": "Suzuki", "japanese": "そうですか。わたしは はるが すきです。さくらが きれいですよ。", "romaji": "Sou desu ka. Watashi wa haru ga suki desu. Sakura ga kirei desu yo.", "english": "I see. I like spring. The cherry blossoms are beautiful."},
+      {"speaker": "Smith", "japanese": "はると あきと どちらのほうが あたたかいですか。", "romaji": "Haru to aki to dochira no hou ga atatakai desu ka.", "english": "Which is warmer, spring or autumn?"},
+      {"speaker": "Suzuki", "japanese": "そうですね。はるのほうが すこし あたたかいです。", "romaji": "Sou desu ne. Haru no hou ga sukoshi atatakai desu.", "english": "Let me think. Spring is a little warmer."},
+      {"speaker": "Smith", "japanese": "ふゆは さむかったですか。", "romaji": "Fuyu wa samukatta desu ka.", "english": "Was winter cold?"},
+      {"speaker": "Suzuki", "japanese": "ええ、ことしの ふゆは とても さむかったです。", "romaji": "Ee, kotoshi no fuyu wa totemo samukatta desu.", "english": "Yes, this year's winter was very cold."}
+    ]
+  }
+}

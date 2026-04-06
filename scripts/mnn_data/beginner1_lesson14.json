@@ -1,0 +1,97 @@
+{
+  "source": "Minna No Nihongo Beginner I",
+  "lesson_number": 14,
+  "title": "Lesson 14 – Te-Form and Requests",
+  "title_ja": "第14課",
+  "jlpt_level": 5,
+  "description": "Verbgruppen I/II/III, て-Form Konjugation, ～てください (bitte tun), ～ています (Verlaufsform/Zustand).",
+
+  "vocabulary": [
+    {"word": "つけます", "reading": "tsukemasu", "meaning": "to turn on (a light, etc.)", "kanji": "点けます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "けします", "reading": "keshimasu", "meaning": "to turn off, to erase", "kanji": "消します", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "あけます", "reading": "akemasu", "meaning": "to open", "kanji": "開けます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "しめます", "reading": "shimemasu", "meaning": "to close", "kanji": "閉めます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "とめます", "reading": "tomemasu", "meaning": "to stop, to park", "kanji": "止めます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "まちます", "reading": "machimasu", "meaning": "to wait", "kanji": "待ちます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "もちます", "reading": "mochimasu", "meaning": "to hold, to have", "kanji": "持ちます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "とります", "reading": "torimasu", "meaning": "to take, to pass", "kanji": "取ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "てつだいます", "reading": "tetsudaimasu", "meaning": "to help, to assist", "kanji": "手伝います", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "よびます", "reading": "yobimasu", "meaning": "to call", "kanji": "呼びます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "はなします", "reading": "hanashimasu", "meaning": "to speak, to talk", "kanji": "話します", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "つかいます", "reading": "tsukaimasu", "meaning": "to use", "kanji": "使います", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "すわります", "reading": "suwarimasu", "meaning": "to sit down", "kanji": "座ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "たちます", "reading": "tachimasu", "meaning": "to stand up", "kanji": "立ちます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "はいります", "reading": "hairimasu", "meaning": "to enter", "kanji": "入ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "でます", "reading": "demasu", "meaning": "to go out, to leave", "kanji": "出ます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "あめがふります", "reading": "ame ga furimasu", "meaning": "it rains", "kanji": "雨が降ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "コピーします", "reading": "kopii shimasu", "meaning": "to copy", "kanji": null, "part_of_speech": "verb", "verb_group": 3},
+    {"word": "でんわします", "reading": "denwa shimasu", "meaning": "to make a phone call", "kanji": "電話します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "たべます", "reading": "tabemasu", "meaning": "to eat", "kanji": "食べます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "のみます", "reading": "nomimasu", "meaning": "to drink", "kanji": "飲みます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "かきます", "reading": "kakimasu", "meaning": "to write", "kanji": "書きます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "いそぎます", "reading": "isogimasu", "meaning": "to hurry", "kanji": "急ぎます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "よみます", "reading": "yomimasu", "meaning": "to read", "kanji": "読みます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "みます", "reading": "mimasu", "meaning": "to see, to watch", "kanji": "見ます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "きます", "reading": "kimasu", "meaning": "to come", "kanji": "来ます", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "します", "reading": "shimasu", "meaning": "to do", "kanji": null, "part_of_speech": "verb", "verb_group": 3},
+    {"word": "でんき", "reading": "denki", "meaning": "electricity, light", "kanji": "電気", "part_of_speech": "noun"},
+    {"word": "エアコン", "reading": "eakon", "meaning": "air conditioner", "kanji": null, "part_of_speech": "noun"},
+    {"word": "まど", "reading": "mado", "meaning": "window", "kanji": "窓", "part_of_speech": "noun"},
+    {"word": "ドア", "reading": "doa", "meaning": "door", "kanji": null, "part_of_speech": "noun"},
+    {"word": "しお", "reading": "shio", "meaning": "salt", "kanji": "塩", "part_of_speech": "noun"},
+    {"word": "さとう", "reading": "satou", "meaning": "sugar", "kanji": "砂糖", "part_of_speech": "noun"},
+    {"word": "でんわばんごう", "reading": "denwa bangou", "meaning": "telephone number", "kanji": "電話番号", "part_of_speech": "noun"},
+    {"word": "じゅうしょ", "reading": "juusho", "meaning": "address", "kanji": "住所", "part_of_speech": "noun"},
+    {"word": "なまえ", "reading": "namae", "meaning": "name", "kanji": "名前", "part_of_speech": "noun"},
+    {"word": "かさ", "reading": "kasa", "meaning": "umbrella", "kanji": "傘", "part_of_speech": "noun"},
+    {"word": "ゆっくり", "reading": "yukkuri", "meaning": "slowly", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "すぐ", "reading": "sugu", "meaning": "immediately, right away", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "もういちど", "reading": "mou ichido", "meaning": "once more", "kanji": "もう一度", "part_of_speech": "adverb"}
+  ],
+
+  "vocabulary_countries": [],
+
+  "grammar": [
+    {
+      "title": "Verb Groups I, II, III (動詞のグループ)",
+      "structure": "Group I (五段) / Group II (一段) / Group III (不規則)",
+      "jlpt_level": 5,
+      "explanation": "Japanese verbs are classified into three groups for conjugation. Group I (Godan/五段): Most verbs — the syllable before ます is from the い-row (き, ぎ, し, ち, に, び, み, り, い). Group II (Ichidan/一段): Verbs where the syllable before ます is from the え-row (え-stem like たべます, あけます) or some い-row verbs with short stems (みます, おきます). Group III (Irregular/不規則): Only two verbs — きます (to come) and します (to do), including compound する-verbs like べんきょうします. Knowing the group is essential for forming the て-form and other conjugations.",
+      "example_sentences": "Group I: かきます → かき (き=い-row)\nGroup I: のみます → のみ (み=い-row)\nGroup II: たべます → たべ (べ=え-row)\nGroup II: みます → み (short stem)\nGroup III: きます, します"
+    },
+    {
+      "title": "て-Form Conjugation (テ形)",
+      "structure": "Group I: varies / Group II: ～ます → ～て / Group III: きます→きて, します→して",
+      "jlpt_level": 5,
+      "explanation": "The て-form is one of the most important verb conjugations. For Group II, simply replace ます with て (たべます→たべて). For Group III: きます→きて, します→して. For Group I, the ending before ます determines the て-form: き→いて (かきます→かいて), ぎ→いで (いそぎます→いそいで), び・み・に→んで (よびます→よんで, のみます→のんで), ち・り・い→って (まちます→まって, とります→とって), し→して (はなします→はなして). Exception: いきます→いって.",
+      "example_sentences": "① かいて (かきます → write)\n② いそいで (いそぎます → hurry)\n③ よんで (よびます → call)\n④ のんで (のみます → drink)\n⑤ まって (まちます → wait)\n⑥ とって (とります → take)\n⑦ はなして (はなします → speak)\n⑧ たべて (たべます → eat)\n⑨ きて (きます → come)\n⑩ して (します → do)"
+    },
+    {
+      "title": "～てください (Please Do ~)",
+      "structure": "V て-form + ください",
+      "jlpt_level": 5,
+      "explanation": "て-form + ください is used to make a request or give an instruction. It is polite and means 'please do ~'. It is commonly used in the classroom, at work, and in daily life to ask someone to do something.",
+      "example_sentences": "① すみません。しおを とってください。\n  (Sumimasen. Shio o totte kudasai.)\n  — Excuse me. Please pass the salt.\n② ここに なまえを かいてください。\n  (Koko ni namae o kaite kudasai.)\n  — Please write your name here.\n③ ゆっくり はなしてください。\n  (Yukkuri hanashite kudasai.)\n  — Please speak slowly."
+    },
+    {
+      "title": "～ています (Progressive / Ongoing State)",
+      "structure": "V て-form + います",
+      "jlpt_level": 5,
+      "explanation": "て-form + います expresses an action in progress (like the English '-ing' form) or a resultant state. When used with action verbs, it shows the action is happening now: いま たべています (I am eating now). When used with verbs that express a change, it shows the resulting state: まどが あいています (The window is open). The negative form is ていません.",
+      "example_sentences": "④ いま なにを していますか。\n  (Ima nani o shite imasu ka.)\n  — What are you doing now?\n…ほんを よんでいます。\n  (Hon o yonde imasu.)\n  — I am reading a book.\n⑤ あめが ふっています。\n  (Ame ga futte imasu.)\n  — It is raining.\n⑥ ミラーさんは でんわを かけています。\n  (Miraa-san wa denwa o kakete imasu.)\n  — Mr. Miller is making a phone call."
+    }
+  ],
+
+  "conversation": {
+    "title": "Please turn on the light",
+    "title_ja": "でんきを つけてください",
+    "lines": [
+      {"speaker": "Kimura", "japanese": "すみません。ちょっと くらいですね。でんきを つけてください。", "romaji": "Sumimasen. Chotto kurai desu ne. Denki o tsukete kudasai.", "english": "Excuse me. It's a bit dark, isn't it. Please turn on the light."},
+      {"speaker": "Yamamoto", "japanese": "はい、わかりました。まども あけましょうか。", "romaji": "Hai, wakarimashita. Mado mo akemashou ka.", "english": "OK, understood. Shall I open the window too?"},
+      {"speaker": "Kimura", "japanese": "いいえ、いま あめが ふっていますから、しめてください。", "romaji": "Iie, ima ame ga futte imasu kara, shimete kudasai.", "english": "No, it's raining now, so please keep it closed."},
+      {"speaker": "Yamamoto", "japanese": "あ、ほんとうですね。ところで、たなかさんは？", "romaji": "A, hontou desu ne. Tokoro de, Tanaka-san wa?", "english": "Ah, you're right. By the way, where is Mr. Tanaka?"},
+      {"speaker": "Kimura", "japanese": "たなかさんは いま でんわを かけています。すぐ きますよ。", "romaji": "Tanaka-san wa ima denwa o kakete imasu. Sugu kimasu yo.", "english": "Mr. Tanaka is making a phone call now. He'll come right away."},
+      {"speaker": "Yamamoto", "japanese": "わかりました。じゃ、まっています。", "romaji": "Wakarimashita. Ja, matte imasu.", "english": "Understood. Then, I'll be waiting."}
+    ]
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "source": "Minna No Nihongo Beginner II",
+  "lesson_number": 41,
+  "title": "Lesson 41 – Giving and Receiving (Keigo)",
+  "title_ja": "第41課",
+  "jlpt_level": 4,
+  "description": "Keigo-Verben fuer Geben und Empfangen: いただきます (bescheiden), くださいます (ehrerbietig), さしあげます (bescheiden), やります, ～ていただけませんか (hoefliche Bitte).",
+
+  "vocabulary": [
+    {"word": "いただきます", "reading": "itadakimasu", "meaning": "to receive (humble)", "kanji": null, "part_of_speech": "verb", "verb_group": 1},
+    {"word": "くださいます", "reading": "kudasaimasu", "meaning": "to give (honorific, someone gives to me)", "kanji": "下さいます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "さしあげます", "reading": "sashiagemasu", "meaning": "to give (humble, I give to someone)", "kanji": "差し上げます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "やります", "reading": "yarimasu", "meaning": "to give (to animals, plants, inferiors)", "kanji": null, "part_of_speech": "verb", "verb_group": 1},
+    {"word": "よびます", "reading": "yobimasu", "meaning": "to call, to invite", "kanji": "呼びます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "とどけます", "reading": "todokemasu", "meaning": "to deliver", "kanji": "届けます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "しょうかいします", "reading": "shoukai shimasu", "meaning": "to introduce", "kanji": "紹介します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "あんないします", "reading": "annai shimasu", "meaning": "to guide, to show around", "kanji": "案内します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "せつめいします", "reading": "setsumei shimasu", "meaning": "to explain", "kanji": "説明します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "おくります", "reading": "okurimasu", "meaning": "to send", "kanji": "送ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "おみやげ", "reading": "omiyage", "meaning": "souvenir", "kanji": "お土産", "part_of_speech": "noun"},
+    {"word": "おれい", "reading": "orei", "meaning": "thanks, gratitude", "kanji": "お礼", "part_of_speech": "noun"},
+    {"word": "おいわい", "reading": "oiwai", "meaning": "congratulatory gift, celebration", "kanji": "お祝い", "part_of_speech": "noun"},
+    {"word": "おみまい", "reading": "omimai", "meaning": "visiting a sick person, get-well gift", "kanji": "お見舞い", "part_of_speech": "noun"},
+    {"word": "きもち", "reading": "kimochi", "meaning": "feeling", "kanji": "気持ち", "part_of_speech": "noun"},
+    {"word": "ちょうちょう", "reading": "chouchou", "meaning": "section chief", "kanji": "課長", "part_of_speech": "noun"},
+    {"word": "ぶちょう", "reading": "buchou", "meaning": "department manager", "kanji": "部長", "part_of_speech": "noun"},
+    {"word": "しゃちょう", "reading": "shachou", "meaning": "company president", "kanji": "社長", "part_of_speech": "noun"},
+    {"word": "おきゃくさま", "reading": "okyakusama", "meaning": "customer, guest (polite)", "kanji": "お客様", "part_of_speech": "noun"},
+    {"word": "にもつ", "reading": "nimotsu", "meaning": "luggage, baggage", "kanji": "荷物", "part_of_speech": "noun"},
+    {"word": "えさ", "reading": "esa", "meaning": "feed, food (for animals)", "kanji": "餌", "part_of_speech": "noun"},
+    {"word": "はなたば", "reading": "hanataba", "meaning": "bouquet of flowers", "kanji": "花束", "part_of_speech": "noun"},
+    {"word": "しょるい", "reading": "shorui", "meaning": "document", "kanji": "書類", "part_of_speech": "noun"},
+    {"word": "じょうし", "reading": "joushi", "meaning": "superior, boss", "kanji": "上司", "part_of_speech": "noun"},
+    {"word": "ぶか", "reading": "buka", "meaning": "subordinate", "kanji": "部下", "part_of_speech": "noun"},
+    {"word": "おかげさまで", "reading": "okagesamade", "meaning": "thanks to you", "kanji": null, "part_of_speech": "expression"},
+    {"word": "つまらないものですが", "reading": "tsumaranai mono desu ga", "meaning": "it's nothing special, but... (when giving a gift)", "kanji": null, "part_of_speech": "expression"},
+    {"word": "おせわになりました", "reading": "osewa ni narimashita", "meaning": "thank you for your help", "kanji": "お世話になりました", "part_of_speech": "expression"}
+  ],
+
+  "grammar": [
+    {
+      "title": "いただきます — Humble form of もらいます",
+      "structure": "N₁ は N₂ に N₃ を いただきます",
+      "jlpt_level": 4,
+      "explanation": "いただきます is the humble form of もらいます (to receive). It is used when the speaker (or someone in the speaker's in-group) receives something from a person of higher status. N₁ is the receiver (speaker/in-group), N₂ is the giver (person of higher status), and N₃ is the thing received. Because it is a humble expression, the subject is always 'I' or someone in the speaker's group — never the superior.",
+      "example_sentences": "① わたしは 社長に 本を いただきました。\n  (Watashi wa shachou ni hon o itadakimashita.)\n  — I received a book from the company president.\n② 先生に 辞書を いただきました。\n  (Sensei ni jisho o itadakimashita.)\n  — I received a dictionary from my teacher."
+    },
+    {
+      "title": "くださいます — Honorific form of くれます",
+      "structure": "N₁ が N₂ に N₃ を くださいます",
+      "jlpt_level": 4,
+      "explanation": "くださいます is the honorific form of くれます (someone gives to me). It is used when a person of higher status gives something to the speaker (or the speaker's in-group). N₁ is the giver (person of higher status), N₂ is the receiver (speaker/in-group), and N₃ is the thing given. The subject performing the action is the respected person.",
+      "example_sentences": "③ 部長が [わたしに] お土産を くださいました。\n  (Buchou ga [watashi ni] omiyage o kudasaimashita.)\n  — The department manager gave me a souvenir.\n④ 先生が 写真を くださいました。\n  (Sensei ga shashin o kudasaimashita.)\n  — The teacher gave me a photograph."
+    },
+    {
+      "title": "さしあげます / やります — Humble give / Give to inferiors",
+      "structure": "N₁ は N₂ に N₃ を さしあげます / やります",
+      "jlpt_level": 4,
+      "explanation": "さしあげます is the humble form of あげます (to give). It is used when the speaker (or someone in the speaker's in-group) gives something to a person of higher status. やります is used when giving to animals, plants, or people of clearly lower status (e.g., giving food to a pet). Note: さしあげます can sound overly humble or presumptuous in some contexts, so use with care.",
+      "example_sentences": "⑤ わたしは 先生に お花を さしあげました。\n  (Watashi wa sensei ni ohana o sashiagemashita.)\n  — I gave flowers to my teacher.\n⑥ 犬に 餌を やりました。\n  (Inu ni esa o yarimashita.)\n  — I gave food to the dog."
+    },
+    {
+      "title": "～ていただけませんか — Very polite request",
+      "structure": "V て-form + いただけませんか",
+      "jlpt_level": 4,
+      "explanation": "～ていただけませんか is a very polite way to make a request. It literally means 'Could I receive the favor of you doing ~?' It is more polite than ～てくださいませんか or ～てください. Use this form when asking a favor of a superior, a stranger, or in formal situations.",
+      "example_sentences": "⑦ この書類を 説明していただけませんか。\n  (Kono shorui o setsumei shite itadakemasen ka.)\n  — Could you please explain this document?\n⑧ 駅まで 送っていただけませんか。\n  (Eki made okutte itadakemasen ka.)\n  — Could you please take me to the station?"
+    }
+  ],
+
+  "conversation": {
+    "title": "Thank you very much for this wonderful gift",
+    "title_ja": "すてきなお土産をありがとうございます",
+    "lines": [
+      {"speaker": "Tanaka", "japanese": "ミラーさん、先日は すてきな お土産を いただきまして、ありがとうございました。", "romaji": "Miraa-san, senjitsu wa suteki na omiyage o itadakimashite, arigatou gozaimashita.", "english": "Mr. Miller, thank you very much for the wonderful souvenir the other day."},
+      {"speaker": "Miller", "japanese": "いいえ、つまらないものですが。お口に 合いましたか。", "romaji": "Iie, tsumaranai mono desu ga. Okuchi ni aimashita ka.", "english": "Not at all, it was nothing special. Did you like it?"},
+      {"speaker": "Tanaka", "japanese": "ええ、家族も とても 喜んでいました。ところで、来週の 会議の 書類なんですが…", "romaji": "Ee, kazoku mo totemo yorokonde imashita. Tokorode, raishuu no kaigi no shorui nan desu ga...", "english": "Yes, my family was very happy too. By the way, about the documents for next week's meeting..."},
+      {"speaker": "Miller", "japanese": "はい、なんでしょうか。", "romaji": "Hai, nan deshou ka.", "english": "Yes, what is it?"},
+      {"speaker": "Tanaka", "japanese": "英語の 部分を 翻訳していただけませんか。", "romaji": "Eigo no bubun o honyaku shite itadakemasen ka.", "english": "Could you please translate the English parts?"},
+      {"speaker": "Miller", "japanese": "はい、もちろんです。金曜日までに お届けします。", "romaji": "Hai, mochiron desu. Kinyoubi made ni otodoke shimasu.", "english": "Yes, of course. I'll deliver it to you by Friday."},
+      {"speaker": "Tanaka", "japanese": "助かります。よろしくお願いします。", "romaji": "Tasukarimasu. Yoroshiku onegai shimasu.", "english": "That's a great help. Thank you in advance."}
+    ]
+  }
+}

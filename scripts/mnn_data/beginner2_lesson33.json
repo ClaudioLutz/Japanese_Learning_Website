@@ -1,0 +1,88 @@
+{
+  "source": "Minna No Nihongo Beginner II",
+  "lesson_number": 33,
+  "title": "Lesson 33 – Imperative, Prohibitive & Indirect Speech",
+  "title_ja": "第33課",
+  "jlpt_level": 4,
+  "description": "Befehlsform (命令形: ～ろ/～なさい), Verbotsform (禁止形: ～な), indirekte Rede (～と言っていました), Schilder und Anweisungen.",
+
+  "vocabulary": [
+    {"word": "にげます", "reading": "nigemasu", "meaning": "to escape, to run away", "kanji": "逃げます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "さわります", "reading": "sawarimasu", "meaning": "to touch", "kanji": "触ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "まもります", "reading": "mamorimasu", "meaning": "to protect, to obey (rules)", "kanji": "守ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "すわります", "reading": "suwarimasu", "meaning": "to sit down", "kanji": "座ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "たちます", "reading": "tachimasu", "meaning": "to stand up", "kanji": "立ちます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "さわぎます", "reading": "sawagimasu", "meaning": "to make noise, to be rowdy", "kanji": "騒ぎます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "はいります", "reading": "hairimasu", "meaning": "to enter", "kanji": "入ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "すてます", "reading": "sutemasu", "meaning": "to throw away, to discard", "kanji": "捨てます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "つたえます", "reading": "tsutaemasu", "meaning": "to convey, to pass on (a message)", "kanji": "伝えます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "あやまります", "reading": "ayamarimasu", "meaning": "to apologize", "kanji": "謝ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "おこります", "reading": "okorimasu", "meaning": "to get angry", "kanji": "怒ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "ほめます", "reading": "homemasu", "meaning": "to praise", "kanji": "褒めます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "しかります", "reading": "shikarimasu", "meaning": "to scold", "kanji": "叱ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "でんごん", "reading": "dengon", "meaning": "message", "kanji": "伝言", "part_of_speech": "noun"},
+    {"word": "きんえん", "reading": "kin'en", "meaning": "no smoking", "kanji": "禁煙", "part_of_speech": "noun"},
+    {"word": "ちゅうしゃきんし", "reading": "chuusha kinshi", "meaning": "no parking", "kanji": "駐車禁止", "part_of_speech": "noun"},
+    {"word": "たちいりきんし", "reading": "tachiiri kinshi", "meaning": "no entry", "kanji": "立入禁止", "part_of_speech": "noun"},
+    {"word": "ひじょうぐち", "reading": "hijouguchi", "meaning": "emergency exit", "kanji": "非常口", "part_of_speech": "noun"},
+    {"word": "かんばん", "reading": "kanban", "meaning": "sign, signboard", "kanji": "看板", "part_of_speech": "noun"},
+    {"word": "ルール", "reading": "ruuru", "meaning": "rule", "kanji": null, "part_of_speech": "noun"},
+    {"word": "めいれい", "reading": "meirei", "meaning": "order, command", "kanji": "命令", "part_of_speech": "noun"},
+    {"word": "しじ", "reading": "shiji", "meaning": "instruction, direction", "kanji": "指示", "part_of_speech": "noun"},
+    {"word": "コーチ", "reading": "koochi", "meaning": "coach", "kanji": null, "part_of_speech": "noun"},
+    {"word": "せんぱい", "reading": "senpai", "meaning": "senior (at school/work)", "kanji": "先輩", "part_of_speech": "noun"},
+    {"word": "こうはい", "reading": "kouhai", "meaning": "junior (at school/work)", "kanji": "後輩", "part_of_speech": "noun"},
+    {"word": "かんとく", "reading": "kantoku", "meaning": "director, manager, coach", "kanji": "監督", "part_of_speech": "noun"},
+    {"word": "しんぱい", "reading": "shinpai", "meaning": "worried, anxious", "kanji": "心配", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "きびしい", "reading": "kibishii", "meaning": "strict, harsh", "kanji": "厳しい", "part_of_speech": "i-adjective", "adjective_type": "i"}
+  ],
+
+  "vocabulary_countries": [],
+
+  "grammar": [
+    {
+      "title": "命令形 (Imperative Form: Do ~!)",
+      "structure": "Group 1: -い → -え / Group 2: -ます → -ろ (or -なさい) / Group 3: しろ・こい",
+      "jlpt_level": 4,
+      "explanation": "The imperative form is used to give direct commands. For Group 1, the final vowel changes to -e (e.g., 書きます → 書け). For Group 2, ます is replaced by ろ (e.g., 食べます → 食べろ). Group 3: します → しろ, きます → こい. This form sounds strong and is mainly used by men in informal situations, in emergencies, or in sports coaching. The polite imperative ～なさい (e.g., 食べなさい) is softer and often used by parents or teachers.",
+      "example_sentences": "① 早く 走れ！\n  (Hayaku hashire!)\n  — Run fast!\n② ここに 座れ。\n  (Koko ni suwere.)\n  — Sit here.\n③ 静かに しなさい。\n  (Shizuka ni shinasai.)\n  — Be quiet. (polite command)"
+    },
+    {
+      "title": "禁止形 (Prohibitive Form: Don't ~!)",
+      "structure": "V dictionary form + な",
+      "jlpt_level": 4,
+      "explanation": "The prohibitive form is made by adding な to the dictionary form of a verb. It means 'Don't do ~!' and is a strong, direct prohibition. It is commonly seen on signs (e.g., 入るな — Don't enter!) and used in urgent situations. In everyday speech, ～ないでください is the polite equivalent.",
+      "example_sentences": "④ ここに 入るな！\n  (Koko ni hairu na!)\n  — Don't enter here!\n⑤ さわるな。危ない。\n  (Sawaru na. Abunai.)\n  — Don't touch it. It's dangerous.\n⑥ 騒ぐな！\n  (Sawagu na!)\n  — Don't make noise!"
+    },
+    {
+      "title": "～と 言っていました (Indirect Speech: Someone said ~)",
+      "structure": "Plain form + と 言っていました / と 言いました",
+      "jlpt_level": 4,
+      "explanation": "This pattern is used to report what someone said (indirect speech). ～と言いました reports a one-time statement, while ～と言っていました reports something someone has been saying or said in the speaker's memory. The quoted part uses plain form. For conveying messages: ～と伝えてください (please tell them that ~).",
+      "example_sentences": "⑦ 田中さんは 明日 来ないと 言っていました。\n  (Tanaka-san wa ashita konai to itte imashita.)\n  — Mr. Tanaka said he won't come tomorrow.\n⑧ 先生は「もっと 勉強しなさい」と 言いました。\n  (Sensei wa 'motto benkyou shinasai' to iimashita.)\n  — The teacher said, 'Study more.'\n⑨ すみません、山田さんに 3時に 来てくださいと 伝えてください。\n  (Sumimasen, Yamada-san ni san-ji ni kite kudasai to tsutaete kudasai.)\n  — Excuse me, please tell Mr. Yamada to come at 3 o'clock."
+    },
+    {
+      "title": "看板・標識の読み方 (Reading Signs & Instructions)",
+      "structure": "Imperative / Prohibitive forms on signs",
+      "jlpt_level": 4,
+      "explanation": "In Japan, signs and notices often use imperative and prohibitive forms, as well as special expressions. Common patterns include: 禁止 (prohibited), 注意 (caution), ～こと (instruction, e.g., 静かにすること — Be quiet), and ～べからず (classical prohibitive). Understanding these forms is essential for daily life in Japan.",
+      "example_sentences": "⑩ 「禁煙」— No smoking.\n  (Kin'en)\n⑪ 「立入禁止」— No entry.\n  (Tachiiri kinshi)\n⑫ 「非常口」— Emergency exit.\n  (Hijouguchi)\n⑬ 「ゴミを 捨てるな」— Don't throw away trash.\n  (Gomi o suteru na)"
+    }
+  ],
+
+  "conversation": {
+    "title": "Please pass on the message",
+    "title_ja": "伝言を お願いします",
+    "lines": [
+      {"speaker": "Yamada", "japanese": "すみません、中村さんは いらっしゃいますか。", "romaji": "Sumimasen, Nakamura-san wa irasshaimasu ka.", "english": "Excuse me, is Mr. Nakamura here?"},
+      {"speaker": "Receptionist", "japanese": "中村は 今 外出しています。", "romaji": "Nakamura wa ima gaishutsu shite imasu.", "english": "Nakamura is out right now."},
+      {"speaker": "Yamada", "japanese": "そうですか。では、伝言を お願いできますか。", "romaji": "Sou desu ka. Dewa, dengon o onegai dekimasu ka.", "english": "I see. Could I leave a message then?"},
+      {"speaker": "Receptionist", "japanese": "はい、どうぞ。", "romaji": "Hai, douzo.", "english": "Yes, please go ahead."},
+      {"speaker": "Yamada", "japanese": "明日の 会議は 3時からに 変わったと 伝えてください。", "romaji": "Ashita no kaigi wa san-ji kara ni kawatta to tsutaete kudasai.", "english": "Please tell him the meeting tomorrow has changed to 3 o'clock."},
+      {"speaker": "Receptionist", "japanese": "会議が 3時からですね。わかりました。", "romaji": "Kaigi ga san-ji kara desu ne. Wakarimashita.", "english": "The meeting is from 3 o'clock, right. Understood."},
+      {"speaker": "Yamada", "japanese": "それから、資料を 忘れないでと 言っていたと 伝えてください。", "romaji": "Sorekara, shiryou o wasurenaide to itte ita to tsutaete kudasai.", "english": "Also, please tell him I said not to forget the documents."},
+      {"speaker": "Receptionist", "japanese": "はい、必ず 伝えます。", "romaji": "Hai, kanarazu tsutaemasu.", "english": "Yes, I will make sure to pass it on."},
+      {"speaker": "Yamada", "japanese": "よろしく お願いします。失礼します。", "romaji": "Yoroshiku onegai shimasu. Shitsurei shimasu.", "english": "Thank you. Goodbye."}
+    ]
+  }
+}

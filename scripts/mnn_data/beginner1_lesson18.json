@@ -1,0 +1,89 @@
+{
+  "source": "Minna No Nihongo Beginner I",
+  "lesson_number": 18,
+  "title": "Lesson 18 – Dictionary Form, Abilities and Hobbies",
+  "title_ja": "第18課",
+  "jlpt_level": 5,
+  "description": "辞書形の作り方、～ことができます（能力）、趣味は～ことです、V辞書形＋前にの使い方を学ぶ。",
+
+  "vocabulary": [
+    {"word": "ひきます", "reading": "hikimasu", "meaning": "to play (stringed instrument)", "kanji": "弾きます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "うたいます", "reading": "utaimasu", "meaning": "to sing", "kanji": "歌います", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "あつめます", "reading": "atsumemasu", "meaning": "to collect", "kanji": "集めます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "すてます", "reading": "sutemasu", "meaning": "to throw away", "kanji": "捨てます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "かえます", "reading": "kaemasu", "meaning": "to exchange, to change", "kanji": "換えます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "うんてんします", "reading": "unten shimasu", "meaning": "to drive", "kanji": "運転します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "よやくします", "reading": "yoyaku shimasu", "meaning": "to make a reservation", "kanji": "予約します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "けんがくします", "reading": "kengaku shimasu", "meaning": "to visit (for study/tour)", "kanji": "見学します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "およぎます", "reading": "oyogimasu", "meaning": "to swim", "kanji": "泳ぎます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "なおします", "reading": "naoshimasu", "meaning": "to fix, to repair", "kanji": "直します", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "ピアノ", "reading": "piano", "meaning": "piano", "kanji": null, "part_of_speech": "noun"},
+    {"word": "ギター", "reading": "gitaa", "meaning": "guitar", "kanji": null, "part_of_speech": "noun"},
+    {"word": "しゅみ", "reading": "shumi", "meaning": "hobby", "kanji": "趣味", "part_of_speech": "noun"},
+    {"word": "にっき", "reading": "nikki", "meaning": "diary", "kanji": "日記", "part_of_speech": "noun"},
+    {"word": "いのり", "reading": "inori", "meaning": "prayer", "kanji": "祈り", "part_of_speech": "noun"},
+    {"word": "おてら", "reading": "otera", "meaning": "temple", "kanji": "お寺", "part_of_speech": "noun"},
+    {"word": "じんじゃ", "reading": "jinja", "meaning": "shrine", "kanji": "神社", "part_of_speech": "noun"},
+    {"word": "おちゃ", "reading": "ocha", "meaning": "green tea", "kanji": "お茶", "part_of_speech": "noun"},
+    {"word": "ぼん おどり", "reading": "bon odori", "meaning": "Bon festival dance", "kanji": "盆踊り", "part_of_speech": "noun"},
+    {"word": "クラシック", "reading": "kurashikku", "meaning": "classical music", "kanji": null, "part_of_speech": "noun"},
+    {"word": "りょうり", "reading": "ryouri", "meaning": "cooking, cuisine", "kanji": "料理", "part_of_speech": "noun"},
+    {"word": "つり", "reading": "tsuri", "meaning": "fishing", "kanji": "釣り", "part_of_speech": "noun"},
+    {"word": "スキー", "reading": "sukii", "meaning": "skiing", "kanji": null, "part_of_speech": "noun"},
+    {"word": "ねる", "reading": "neru", "meaning": "to sleep (dict. form)", "kanji": "寝る", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "いきる", "reading": "ikiru", "meaning": "to live (dict. form)", "kanji": "生きる", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "とくべつ", "reading": "tokubetsu", "meaning": "special", "kanji": "特別", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "じょうず", "reading": "jouzu", "meaning": "skillful, good at", "kanji": "上手", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "へた", "reading": "heta", "meaning": "poor at, unskillful", "kanji": "下手", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "ことば", "reading": "kotoba", "meaning": "word, language", "kanji": "言葉", "part_of_speech": "noun"},
+    {"word": "ぜんぜん", "reading": "zenzen", "meaning": "not at all (with negative)", "kanji": "全然", "part_of_speech": "adverb"}
+  ],
+
+  "vocabulary_countries": [],
+
+  "grammar": [
+    {
+      "title": "辞書形 (Dictionary Form of Verbs)",
+      "structure": "Group I: ～い→～う / Group II: ～ます→～る / Group III: します→する, きます→くる",
+      "jlpt_level": 5,
+      "explanation": "The dictionary form is the basic form of a verb as listed in dictionaries. For Group I verbs, change the final い-row sound to the corresponding う-row sound (e.g., かきます→かく, のみます→のむ). For Group II verbs, drop ます and add る (e.g., たべます→たべる). Group III irregular: します→する, きます→くる. The dictionary form is used in informal speech and as a base for several grammar patterns.",
+      "example_sentences": "① かきます → かく (kaku — to write)\n② のみます → のむ (nomu — to drink)\n③ たべます → たべる (taberu — to eat)\n④ します → する (suru — to do)\n⑤ きます → くる (kuru — to come)"
+    },
+    {
+      "title": "V-dict ことができます (Can Do ~)",
+      "structure": "V-dict + ことができます",
+      "jlpt_level": 5,
+      "explanation": "This pattern is used to express ability or possibility. The dictionary form of a verb is followed by ことができます. To ask about ability, use ことができますか. The negative form is ことができません. This pattern can be used for both learned skills and situational possibilities.",
+      "example_sentences": "⑥ わたしは にほんごを はなすことが できます。\n  (Watashi wa nihongo o hanasu koto ga dekimasu.)\n  — I can speak Japanese.\n⑦ ここで およぐことが できますか。\n  (Koko de oyogu koto ga dekimasu ka.)\n  — Can you swim here?\n…いいえ、できません。(Iie, dekimasen.) — No, you can't."
+    },
+    {
+      "title": "趣味は V-dict ことです (My Hobby Is ~ing)",
+      "structure": "趣味は V-dict ことです",
+      "jlpt_level": 5,
+      "explanation": "To describe hobbies, the dictionary form of a verb followed by こと turns the verb into a noun (nominalization). This nominalized verb can then be used as the topic or subject of a sentence. The pattern 趣味は～ことです means 'My hobby is ~ing.'",
+      "example_sentences": "⑧ しゅみは えを かくことです。\n  (Shumi wa e o kaku koto desu.)\n  — My hobby is drawing pictures.\n⑨ わたしの しゅみは ふるい きってを あつめることです。\n  (Watashi no shumi wa furui kitte o atsumeru koto desu.)\n  — My hobby is collecting old stamps."
+    },
+    {
+      "title": "V-dict 前に (Before Doing ~)",
+      "structure": "V-dict + 前に、〜",
+      "jlpt_level": 5,
+      "explanation": "The dictionary form of a verb followed by 前に means 'before doing ~.' The action after 前に is done before the action expressed by the verb before 前に. Note that the verb before 前に is always in the dictionary form regardless of the tense of the sentence.",
+      "example_sentences": "⑩ ねる前に、にっきを かきます。\n  (Neru mae ni, nikki o kakimasu.)\n  — Before sleeping, I write in my diary.\n⑪ にほんに くる前に、ひらがなを べんきょうしました。\n  (Nihon ni kuru mae ni, hiragana o benkyou shimashita.)\n  — Before coming to Japan, I studied hiragana."
+    }
+  ],
+
+  "conversation": {
+    "title": "Hobbies and Abilities",
+    "title_ja": "しゅみと できること",
+    "lines": [
+      {"speaker": "Kimura", "japanese": "リーさんの しゅみは なんですか。", "romaji": "Rii-san no shumi wa nan desu ka.", "english": "What is your hobby, Ms. Lee?"},
+      {"speaker": "Lee", "japanese": "りょうりを つくることです。やすみの ひは よく いろいろな くにの りょうりを つくります。", "romaji": "Ryouri o tsukuru koto desu. Yasumi no hi wa yoku iroiro na kuni no ryouri o tsukurimasu.", "english": "It's cooking. On my days off I often make dishes from various countries."},
+      {"speaker": "Kimura", "japanese": "いいですね。にほんりょうりも つくることが できますか。", "romaji": "Ii desu ne. Nihon ryouri mo tsukuru koto ga dekimasu ka.", "english": "That's nice. Can you make Japanese food too?"},
+      {"speaker": "Lee", "japanese": "はい。みそしるや てんぷらを つくることが できます。", "romaji": "Hai. Misoshiru ya tempura o tsukuru koto ga dekimasu.", "english": "Yes. I can make miso soup and tempura."},
+      {"speaker": "Kimura", "japanese": "すごいですね。きむらさんは？", "romaji": "Sugoi desu ne. Kimura-san wa?", "english": "That's amazing. How about you, Mr. Kimura?"},
+      {"speaker": "Kimura", "japanese": "わたしは ギターを ひくことです。まいばん ねる前に、すこし れんしゅうします。", "romaji": "Watashi wa gitaa o hiku koto desu. Maiban neru mae ni, sukoshi renshuu shimasu.", "english": "Mine is playing guitar. Every night before sleeping, I practice a little."},
+      {"speaker": "Lee", "japanese": "クラシックですか。", "romaji": "Kurashikku desu ka.", "english": "Classical music?"},
+      {"speaker": "Kimura", "japanese": "いいえ、ポップスです。クラシックは ひくことが できません。", "romaji": "Iie, poppusu desu. Kurashikku wa hiku koto ga dekimasen.", "english": "No, pop music. I can't play classical."}
+    ]
+  }
+}

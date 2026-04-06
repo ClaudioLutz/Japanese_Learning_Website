@@ -1,0 +1,86 @@
+{
+  "source": "Minna No Nihongo Beginner I",
+  "lesson_number": 7,
+  "title": "Lesson 7 – Giving and Receiving",
+  "title_ja": "第7課",
+  "jlpt_level": 5,
+  "description": "Werkzeuge/Mittel mit で, Geben und Empfangen (あげます/もらいます/くれます), もう V ました (schon erledigt).",
+
+  "vocabulary": [
+    {"word": "きります", "reading": "kirimasu", "meaning": "to cut", "kanji": "切ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "おくります", "reading": "okurimasu", "meaning": "to send", "kanji": "送ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "あげます", "reading": "agemasu", "meaning": "to give (to someone)", "kanji": null, "part_of_speech": "verb", "verb_group": 2},
+    {"word": "もらいます", "reading": "moraimasu", "meaning": "to receive", "kanji": null, "part_of_speech": "verb", "verb_group": 1},
+    {"word": "くれます", "reading": "kuremasu", "meaning": "to give (to me/my group)", "kanji": null, "part_of_speech": "verb", "verb_group": 2},
+    {"word": "かします", "reading": "kashimasu", "meaning": "to lend", "kanji": "貸します", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "かります", "reading": "karimasu", "meaning": "to borrow", "kanji": "借ります", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "おしえます", "reading": "oshiemasu", "meaning": "to teach, to tell", "kanji": "教えます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "ならいます", "reading": "naraimasu", "meaning": "to learn", "kanji": "習います", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "かけます", "reading": "kakemasu", "meaning": "to make a phone call", "kanji": null, "part_of_speech": "verb", "verb_group": 2},
+    {"word": "て", "reading": "te", "meaning": "hand", "kanji": "手", "part_of_speech": "noun"},
+    {"word": "はし", "reading": "hashi", "meaning": "chopsticks", "kanji": "箸", "part_of_speech": "noun"},
+    {"word": "スプーン", "reading": "supuun", "meaning": "spoon", "kanji": null, "part_of_speech": "noun"},
+    {"word": "ナイフ", "reading": "naifu", "meaning": "knife", "kanji": null, "part_of_speech": "noun"},
+    {"word": "フォーク", "reading": "fooku", "meaning": "fork", "kanji": null, "part_of_speech": "noun"},
+    {"word": "はさみ", "reading": "hasami", "meaning": "scissors", "kanji": null, "part_of_speech": "noun"},
+    {"word": "でんわ", "reading": "denwa", "meaning": "telephone", "kanji": "電話", "part_of_speech": "noun"},
+    {"word": "メール", "reading": "meeru", "meaning": "email", "kanji": null, "part_of_speech": "noun"},
+    {"word": "にほんご", "reading": "nihongo", "meaning": "Japanese language", "kanji": "日本語", "part_of_speech": "noun"},
+    {"word": "えいご", "reading": "eigo", "meaning": "English language", "kanji": "英語", "part_of_speech": "noun"},
+    {"word": "ことば", "reading": "kotoba", "meaning": "word, language", "kanji": "言葉", "part_of_speech": "noun"},
+    {"word": "はな", "reading": "hana", "meaning": "flower", "kanji": "花", "part_of_speech": "noun"},
+    {"word": "プレゼント", "reading": "purezento", "meaning": "present, gift", "kanji": null, "part_of_speech": "noun"},
+    {"word": "チョコレート", "reading": "chokoreeto", "meaning": "chocolate", "kanji": null, "part_of_speech": "noun"},
+    {"word": "ネクタイ", "reading": "nekutai", "meaning": "necktie", "kanji": null, "part_of_speech": "noun"},
+    {"word": "シャツ", "reading": "shatsu", "meaning": "shirt", "kanji": null, "part_of_speech": "noun"},
+    {"word": "クリスマス", "reading": "kurisumasu", "meaning": "Christmas", "kanji": null, "part_of_speech": "noun"},
+    {"word": "たんじょうび", "reading": "tanjoubi", "meaning": "birthday", "kanji": "誕生日", "part_of_speech": "noun"},
+    {"word": "おかあさん", "reading": "okaasan", "meaning": "mother (polite)", "kanji": "お母さん", "part_of_speech": "noun"},
+    {"word": "おとうさん", "reading": "otousan", "meaning": "father (polite)", "kanji": "お父さん", "part_of_speech": "noun"},
+    {"word": "もう", "reading": "mou", "meaning": "already", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "まだ", "reading": "mada", "meaning": "not yet", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "これから", "reading": "korekara", "meaning": "from now on, after this", "kanji": null, "part_of_speech": "adverb"}
+  ],
+
+  "vocabulary_countries": [],
+
+  "grammar": [
+    {
+      "title": "道具/手段 で V ます (Means/Tool Particle で)",
+      "structure": "N(tool/means) で V ます",
+      "jlpt_level": 5,
+      "explanation": "The particle で is used to indicate the means, tool, or method by which an action is carried out. It answers the question 'by what means?' or 'with what tool?'. This usage of で is different from the location-で learned in Lesson 6.",
+      "example_sentences": "① はしで 魚を 食べます。\n  (Hashi de sakana o tabemasu.)\n  — I eat fish with chopsticks.\n② 日本語で 手紙を 書きます。\n  (Nihongo de tegami o kakimasu.)\n  — I write a letter in Japanese."
+    },
+    {
+      "title": "あげます / もらいます / くれます (Giving and Receiving)",
+      "structure": "Person₁ は Person₂ に N を あげます / Person₁ は Person₂ に N を もらいます / Person は わたし に N を くれます",
+      "jlpt_level": 5,
+      "explanation": "Japanese has three verbs for giving and receiving. あげます means 'to give' (from the speaker or a third person to another). もらいます means 'to receive' (the subject receives from someone, marked with に or から). くれます means 'to give to me/my in-group' — used when someone gives something to the speaker or someone in the speaker's group.",
+      "example_sentences": "③ わたしは 山田さんに 花を あげます。\n  (Watashi wa Yamada-san ni hana o agemasu.)\n  — I give flowers to Ms. Yamada.\n④ わたしは 田中さんに 本を もらいました。\n  (Watashi wa Tanaka-san ni hon o moraimashita.)\n  — I received a book from Mr. Tanaka.\n⑤ 母は わたしに シャツを くれました。\n  (Haha wa watashi ni shatsu o kuremashita.)\n  — My mother gave me a shirt."
+    },
+    {
+      "title": "もう V ました / まだです (Already / Not yet)",
+      "structure": "もう V ましたか — はい、もう V ました / いいえ、まだです",
+      "jlpt_level": 5,
+      "explanation": "もう means 'already' and is used with the past tense (V ました) to express that an action has already been completed. When answering negatively, まだです ('not yet') is used. Note: the negative answer uses まだです, not まだ V ませんでした.",
+      "example_sentences": "⑥ もう 昼ご飯を 食べましたか。\n  (Mou hirugohan o tabemashita ka.)\n  — Have you already eaten lunch?\n…はい、もう 食べました。(Hai, mou tabemashita.) — Yes, I already ate.\n…いいえ、まだです。(Iie, mada desu.) — No, not yet."
+    }
+  ],
+
+  "conversation": {
+    "title": "A birthday present",
+    "title_ja": "誕生日の プレゼント",
+    "lines": [
+      {"speaker": "Suzuki", "japanese": "来週は お母さんの 誕生日ですね。", "romaji": "Raishuu wa okaasan no tanjoubi desu ne.", "english": "Next week is your mother's birthday, right?"},
+      {"speaker": "Kimura", "japanese": "ええ。何を あげますか…。", "romaji": "Ee. Nani o agemasu ka...", "english": "Yes. What should I give her..."},
+      {"speaker": "Suzuki", "japanese": "花は どうですか。", "romaji": "Hana wa dou desu ka.", "english": "How about flowers?"},
+      {"speaker": "Kimura", "japanese": "いいですね。花と チョコレートを あげます。", "romaji": "Ii desu ne. Hana to chokoreeto o agemasu.", "english": "That sounds good. I'll give her flowers and chocolate."},
+      {"speaker": "Suzuki", "japanese": "すてきですね。もう 買いましたか。", "romaji": "Suteki desu ne. Mou kaimashita ka.", "english": "That's lovely. Have you already bought them?"},
+      {"speaker": "Kimura", "japanese": "いいえ、まだです。土曜日に デパートで 買います。", "romaji": "Iie, mada desu. Doyoubi ni depaato de kaimasu.", "english": "No, not yet. I'll buy them at the department store on Saturday."},
+      {"speaker": "Suzuki", "japanese": "そうですか。わたしも 母に プレゼントを 送りました。", "romaji": "Sou desu ka. Watashi mo haha ni purezento o okurimashita.", "english": "I see. I also sent a present to my mother."},
+      {"speaker": "Kimura", "japanese": "何を 送りましたか。", "romaji": "Nani o okurimashita ka.", "english": "What did you send?"},
+      {"speaker": "Suzuki", "japanese": "ネクタイを 送りました。父に もらった お金で 買いました。", "romaji": "Nekutai o okurimashita. Chichi ni moratta okane de kaimashita.", "english": "I sent a necktie. I bought it with money I received from my father."}
+    ]
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "source": "Minna No Nihongo Beginner I",
+  "lesson_number": 24,
+  "title": "Lesson 24 – Giving and Receiving Favors",
+  "title_ja": "第24課",
+  "jlpt_level": 5,
+  "description": "Geben und Empfangen von Gefallen: くれます, ～てあげます, ～てもらいます, ～てくれます.",
+
+  "vocabulary": [
+    {"word": "くれます", "reading": "kuremasu", "meaning": "to give (to me/my group)", "kanji": null, "part_of_speech": "verb", "verb_group": 2},
+    {"word": "おくります", "reading": "okurimasu", "meaning": "to send", "kanji": "送ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "なおします", "reading": "naoshimasu", "meaning": "to fix, to repair", "kanji": "直します", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "てつだいます", "reading": "tetsudaimasu", "meaning": "to help, to assist", "kanji": "手伝います", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "よびます", "reading": "yobimasu", "meaning": "to call, to invite", "kanji": "呼びます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "しょうたいします", "reading": "shoutai shimasu", "meaning": "to invite (formally)", "kanji": "招待します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "せつめいします", "reading": "setsumei shimasu", "meaning": "to explain", "kanji": "説明します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "あんないします", "reading": "annai shimasu", "meaning": "to guide, to show around", "kanji": "案内します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "しょうかいします", "reading": "shoukai shimasu", "meaning": "to introduce", "kanji": "紹介します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "おくりもの", "reading": "okurimono", "meaning": "gift, present", "kanji": "贈り物", "part_of_speech": "noun"},
+    {"word": "おみやげ", "reading": "omiyage", "meaning": "souvenir", "kanji": "お土産", "part_of_speech": "noun"},
+    {"word": "にもつ", "reading": "nimotsu", "meaning": "luggage, baggage", "kanji": "荷物", "part_of_speech": "noun"},
+    {"word": "おれい", "reading": "orei", "meaning": "thanks, gratitude", "kanji": "お礼", "part_of_speech": "noun"},
+    {"word": "おかえし", "reading": "okaeshi", "meaning": "return gift", "kanji": "お返し", "part_of_speech": "noun"},
+    {"word": "ひっこし", "reading": "hikkoshi", "meaning": "moving (house)", "kanji": "引っ越し", "part_of_speech": "noun"},
+    {"word": "じゅうしょ", "reading": "juusho", "meaning": "address", "kanji": "住所", "part_of_speech": "noun"},
+    {"word": "でんわばんごう", "reading": "denwa bangou", "meaning": "phone number", "kanji": "電話番号", "part_of_speech": "noun"},
+    {"word": "おじいさん", "reading": "ojiisan", "meaning": "grandfather, elderly man", "kanji": null, "part_of_speech": "noun"},
+    {"word": "おばあさん", "reading": "obaasan", "meaning": "grandmother, elderly woman", "kanji": null, "part_of_speech": "noun"},
+    {"word": "おじさん", "reading": "ojisan", "meaning": "uncle, middle-aged man", "kanji": null, "part_of_speech": "noun"},
+    {"word": "おばさん", "reading": "obasan", "meaning": "aunt, middle-aged woman", "kanji": null, "part_of_speech": "noun"},
+    {"word": "おきゃくさん", "reading": "okyakusan", "meaning": "guest, visitor, customer", "kanji": "お客さん", "part_of_speech": "noun"},
+    {"word": "じぶん", "reading": "jibun", "meaning": "oneself", "kanji": "自分", "part_of_speech": "noun"},
+    {"word": "はこ", "reading": "hako", "meaning": "box", "kanji": "箱", "part_of_speech": "noun"},
+    {"word": "ふうとう", "reading": "fuutou", "meaning": "envelope", "kanji": "封筒", "part_of_speech": "noun"},
+    {"word": "きっぷ", "reading": "kippu", "meaning": "ticket", "kanji": "切符", "part_of_speech": "noun"},
+    {"word": "おかし", "reading": "okashi", "meaning": "sweets, snacks", "kanji": "お菓子", "part_of_speech": "noun"},
+    {"word": "はな", "reading": "hana", "meaning": "flower", "kanji": "花", "part_of_speech": "noun"},
+    {"word": "うれしい", "reading": "ureshii", "meaning": "happy, glad", "kanji": "嬉しい", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "ていねい", "reading": "teinei", "meaning": "polite, careful", "kanji": "丁寧", "part_of_speech": "na-adjective", "adjective_type": "na"}
+  ],
+
+  "vocabulary_countries": [],
+
+  "grammar": [
+    {
+      "title": "くれます (Give to me/my group)",
+      "structure": "Person が (わたしに) N を くれます",
+      "jlpt_level": 5,
+      "explanation": "くれます is used when someone gives something to the speaker or the speaker's in-group (family, close friends). The giver is the subject marked by が, and the receiver is marked by に. くれます implies a sense of gratitude from the speaker. This contrasts with あげます, which is used when giving to others.",
+      "example_sentences": "① 友達が わたしに 花を くれました。\n  (Tomodachi ga watashi ni hana o kuremashita.)\n  — My friend gave me flowers.\n② 母が 新しい 時計を くれました。\n  (Haha ga atarashii tokei o kuremashita.)\n  — My mother gave me a new watch."
+    },
+    {
+      "title": "～てあげます (Do a favor for someone)",
+      "structure": "V て-form + あげます",
+      "jlpt_level": 5,
+      "explanation": "～てあげます means to do something as a favor for someone else. The speaker (or subject) performs an action for the benefit of another person. Be careful when using this about yourself, as it can sound like you are emphasizing your own generosity. It is safer to use with third persons or when offering help.",
+      "example_sentences": "③ わたしは 妹に 本を 読んであげました。\n  (Watashi wa imouto ni hon o yonde agemashita.)\n  — I read a book for my younger sister.\n④ 友達の 荷物を 持ってあげました。\n  (Tomodachi no nimotsu o motte agemashita.)\n  — I carried my friend's luggage (for them)."
+    },
+    {
+      "title": "～てもらいます (Receive a favor from someone)",
+      "structure": "V て-form + もらいます",
+      "jlpt_level": 5,
+      "explanation": "～てもらいます means the speaker receives the benefit of someone's action. The person who does the favor is marked with に. This form focuses on the receiver's perspective and expresses gratitude. It is commonly used when describing help or favors received.",
+      "example_sentences": "⑤ わたしは 田中さんに 道を 教えてもらいました。\n  (Watashi wa Tanaka-san ni michi o oshiete moraimashita.)\n  — I had Mr. Tanaka teach me the way. (= Mr. Tanaka taught me the way.)\n⑥ 先生に 作文を 直してもらいました。\n  (Sensei ni sakubun o naoshite moraimashita.)\n  — I had the teacher correct my essay."
+    },
+    {
+      "title": "～てくれます (Someone does a favor for me)",
+      "structure": "Person が V て-form + くれます",
+      "jlpt_level": 5,
+      "explanation": "～てくれます means someone does something for the speaker or the speaker's in-group. The doer is the subject marked by が. Like くれます with objects, it implies the speaker feels grateful. This is the counterpart of ～てもらいます but viewed from the giver's side.",
+      "example_sentences": "⑦ 友達が 駅まで 送ってくれました。\n  (Tomodachi ga eki made okutte kuremashita.)\n  — My friend took me to the station.\n⑧ 田中さんが 町を 案内してくれました。\n  (Tanaka-san ga machi o annai shite kuremashita.)\n  — Mr. Tanaka showed me around the town.\n⑨ おばあさんが お菓子を 作ってくれました。\n  (Obaasan ga okashi o tsukutte kuremashita.)\n  — My grandmother made sweets for me."
+    }
+  ],
+
+  "conversation": {
+    "title": "Thank you for helping me move",
+    "title_ja": "引っ越しを 手伝ってくれて ありがとう",
+    "lines": [
+      {"speaker": "Sato", "japanese": "来週 引っ越しを するんですが、手伝ってもらえますか。", "romaji": "Raishuu hikkoshi o suru n desu ga, tetsudatte moraemasu ka.", "english": "I'm moving next week, could you help me?"},
+      {"speaker": "Takahashi", "japanese": "いいですよ。何を したら いいですか。", "romaji": "Ii desu yo. Nani o shitara ii desu ka.", "english": "Sure. What should I do?"},
+      {"speaker": "Sato", "japanese": "荷物を 運ぶのを 手伝ってほしいんです。", "romaji": "Nimotsu o hakobu no o tetsudatte hoshii n desu.", "english": "I want help carrying the luggage."},
+      {"speaker": "Takahashi", "japanese": "わかりました。山本さんも 呼びましょうか。", "romaji": "Wakarimashita. Yamamoto-san mo yobimashou ka.", "english": "I understand. Shall I call Yamamoto too?"},
+      {"speaker": "Sato", "japanese": "ええ、お願いします。山本さんは いつも いろいろ 手伝ってくれますね。", "romaji": "Ee, onegai shimasu. Yamamoto-san wa itsumo iroiro tetsudatte kuremasu ne.", "english": "Yes, please. Yamamoto always helps with various things, doesn't he?"},
+      {"speaker": "Takahashi", "japanese": "ええ。先月 わたしも 山本さんに 引っ越しを 手伝ってもらいましたよ。", "romaji": "Ee. Sengetsu watashi mo Yamamoto-san ni hikkoshi o tetsudatte moraimashita yo.", "english": "Yes. Last month I also had Yamamoto help me with my move."},
+      {"speaker": "Sato", "japanese": "そうですか。お礼に 何か おいしい ものを 作ってあげたいです。", "romaji": "Sou desu ka. Orei ni nanika oishii mono o tsukutte agetai desu.", "english": "I see. I want to make something delicious as thanks."},
+      {"speaker": "Takahashi", "japanese": "きっと 喜びますよ。", "romaji": "Kitto yorokobimasu yo.", "english": "I'm sure he'll be happy."}
+    ]
+  }
+}

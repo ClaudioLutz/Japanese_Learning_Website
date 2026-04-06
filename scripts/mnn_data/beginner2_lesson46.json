@@ -1,0 +1,79 @@
+{
+  "source": "Minna No Nihongo Beginner II",
+  "lesson_number": 46,
+  "title": "Lesson 46 – Timing Expressions (ところ・ばかり・はず)",
+  "title_ja": "第46課",
+  "jlpt_level": 4,
+  "description": "Zeitliche Ausdrücke: ～ところです (gerade dabei / kurz davor / gerade fertig), ～ばかりです (gerade erst), ～はずです (sollte eigentlich).",
+
+  "vocabulary": [
+    {"word": "沸く", "reading": "わく / waku", "meaning": "to boil", "kanji": "沸く", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "混む", "reading": "こむ / komu", "meaning": "to get crowded", "kanji": "混む", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "空く", "reading": "すく / suku", "meaning": "to become empty, not crowded", "kanji": "空く", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "届く", "reading": "とどく / todoku", "meaning": "to arrive, to reach", "kanji": "届く", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "届ける", "reading": "とどける / todokeru", "meaning": "to deliver", "kanji": "届ける", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "治る", "reading": "なおる / naoru", "meaning": "to be cured, to heal", "kanji": "治る", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "片付ける", "reading": "かたづける / katazukeru", "meaning": "to tidy up", "kanji": "片付ける", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "出張する", "reading": "しゅっちょうする / shutchou suru", "meaning": "to go on a business trip", "kanji": "出張する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "連絡する", "reading": "れんらくする / renraku suru", "meaning": "to contact", "kanji": "連絡する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "終了する", "reading": "しゅうりょうする / shuuryou suru", "meaning": "to finish, to end", "kanji": "終了する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "予定", "reading": "よてい / yotei", "meaning": "schedule, plan", "kanji": "予定", "part_of_speech": "noun"},
+    {"word": "会議", "reading": "かいぎ / kaigi", "meaning": "meeting, conference", "kanji": "会議", "part_of_speech": "noun"},
+    {"word": "出発", "reading": "しゅっぱつ / shuppatsu", "meaning": "departure", "kanji": "出発", "part_of_speech": "noun"},
+    {"word": "到着", "reading": "とうちゃく / touchaku", "meaning": "arrival", "kanji": "到着", "part_of_speech": "noun"},
+    {"word": "荷物", "reading": "にもつ / nimotsu", "meaning": "luggage, package", "kanji": "荷物", "part_of_speech": "noun"},
+    {"word": "資料", "reading": "しりょう / shiryou", "meaning": "documents, materials", "kanji": "資料", "part_of_speech": "noun"},
+    {"word": "報告書", "reading": "ほうこくしょ / houkokusho", "meaning": "report (document)", "kanji": "報告書", "part_of_speech": "noun"},
+    {"word": "締め切り", "reading": "しめきり / shimekiri", "meaning": "deadline", "kanji": "締め切り", "part_of_speech": "noun"},
+    {"word": "来月", "reading": "らいげつ / raigetsu", "meaning": "next month", "kanji": "来月", "part_of_speech": "noun"},
+    {"word": "ちょうど", "reading": "choudo", "meaning": "just, exactly", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "たった今", "reading": "たったいま / tatta ima", "meaning": "just now", "kanji": "たった今", "part_of_speech": "adverb"},
+    {"word": "まだ", "reading": "mada", "meaning": "still, not yet", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "もうすぐ", "reading": "mousugu", "meaning": "soon, before long", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "そろそろ", "reading": "sorosoro", "meaning": "soon, it's about time", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "確か", "reading": "たしか / tashika", "meaning": "sure, certain; if I remember correctly", "kanji": "確か", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "間に合う", "reading": "まにあう / maniau", "meaning": "to be in time", "kanji": "間に合う", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "準備する", "reading": "じゅんびする / junbi suru", "meaning": "to prepare", "kanji": "準備する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "先ほど", "reading": "さきほど / sakihodo", "meaning": "a short while ago (polite)", "kanji": "先ほど", "part_of_speech": "adverb"},
+    {"word": "お湯", "reading": "おゆ / oyu", "meaning": "hot water", "kanji": "お湯", "part_of_speech": "noun"}
+  ],
+
+  "grammar": [
+    {
+      "title": "V ところです (About to / In the middle of / Just finished)",
+      "structure": "V-dictionary form + ところです / V-ている + ところです / V-た + ところです",
+      "jlpt_level": 4,
+      "explanation": "ところ literally means 'place' but when used with verbs it indicates the stage or timing of an action. With dictionary form: the action is about to happen. With ている form: the action is in progress right now. With た form: the action has just been completed.",
+      "example_sentences": "① これから 昼ごはんを 食べる ところです。\n  (Kore kara hirugohan o taberu tokoro desu.)\n  — I am about to eat lunch.\n② 今 報告書を 書いている ところです。\n  (Ima houkokusho o kaite iru tokoro desu.)\n  — I am in the middle of writing a report right now.\n③ たった今 会議が 終わった ところです。\n  (Tatta ima kaigi ga owatta tokoro desu.)\n  — The meeting has just ended."
+    },
+    {
+      "title": "V たばかりです (Just did ~)",
+      "structure": "V-た form + ばかりです",
+      "jlpt_level": 4,
+      "explanation": "たばかりです emphasizes that only a short time has passed since an action was completed. Unlike たところ, which focuses on the exact moment of completion, たばかり can be used even when some time has passed, as long as the speaker feels it was recent. It conveys the nuance of 'only just did' or 'did just recently'.",
+      "example_sentences": "④ 日本に 来た ばかりです。\n  (Nihon ni kita bakari desu.)\n  — I just came to Japan (recently).\n⑤ さっき お昼を 食べた ばかりなので、おなかは すいていません。\n  (Sakki ohiru o tabeta bakari na node, onaka wa suite imasen.)\n  — I just ate lunch a little while ago, so I'm not hungry."
+    },
+    {
+      "title": "～はずです (Should be / Expected to)",
+      "structure": "Plain form + はずです / N + の + はずです / な-adj + な + はずです",
+      "jlpt_level": 4,
+      "explanation": "はず expresses the speaker's expectation or belief that something should be the case, based on reliable information or logical reasoning. It is different from でしょう, which is a guess. はず indicates the speaker has reason to believe something is true. The negative is ～ないはずです (should not be).",
+      "example_sentences": "⑥ 荷物は 明日 届く はずです。\n  (Nimotsu wa ashita todoku hazu desu.)\n  — The package should arrive tomorrow.\n⑦ 彼女は もう 出発した はずです。\n  (Kanojo wa mou shuppatsu shita hazu desu.)\n  — She should have already departed.\n⑧ この 資料は 正しい はずです。\n  (Kono shiryou wa tadashii hazu desu.)\n  — This document should be correct."
+    }
+  ],
+
+  "conversation": {
+    "title": "About the Meeting Schedule",
+    "title_ja": "会議の予定について",
+    "lines": [
+      {"speaker": "Tanaka", "japanese": "木村さん、田中部長は いらっしゃいますか。", "romaji": "Kimura-san, Tanaka-buchou wa irasshaimasu ka.", "english": "Ms. Kimura, is Department Manager Tanaka here?"},
+      {"speaker": "Kimura", "japanese": "田中部長は 今 会議に 出ている ところです。", "romaji": "Tanaka-buchou wa ima kaigi ni dete iru tokoro desu.", "english": "Department Manager Tanaka is in a meeting right now."},
+      {"speaker": "Tanaka", "japanese": "そうですか。会議は 何時に 終わる はずですか。", "romaji": "Sou desu ka. Kaigi wa nanji ni owaru hazu desu ka.", "english": "I see. What time should the meeting end?"},
+      {"speaker": "Kimura", "japanese": "3時に 終了する はずですが…。あ、ちょうど 今 終わった ところです。", "romaji": "San-ji ni shuuryou suru hazu desu ga... A, choudo ima owatta tokoro desu.", "english": "It should end at 3 o'clock, but... Oh, it just ended right now."},
+      {"speaker": "Tanaka", "japanese": "よかった。大阪出張の 資料が たった今 届いた ばかりなんです。", "romaji": "Yokatta. Oosaka shutchou no shiryou ga tatta ima todoita bakari nan desu.", "english": "Great. The documents for the Osaka business trip just arrived."},
+      {"speaker": "Kimura", "japanese": "じゃ、すぐ 部長に お渡しします。", "romaji": "Ja, sugu buchou ni owatashi shimasu.", "english": "Then I'll give them to the manager right away."},
+      {"speaker": "Tanaka", "japanese": "お願いします。出発は 来週の はずですから、そろそろ 準備しないと。", "romaji": "Onegaishimasu. Shuppatsu wa raishuu no hazu desu kara, sorosoro junbi shinai to.", "english": "Please. The departure should be next week, so it's about time to prepare."},
+      {"speaker": "Kimura", "japanese": "わかりました。連絡しておきます。", "romaji": "Wakarimashita. Renraku shite okimasu.", "english": "Understood. I'll contact him."}
+    ]
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "source": "Minna No Nihongo Beginner II",
+  "lesson_number": 48,
+  "title": "Lesson 48 – Causative Form (使役形)",
+  "title_ja": "第48課",
+  "jlpt_level": 4,
+  "description": "Kausativform (使役形): ～させます (jemanden etwas tun lassen / machen), ～させてください (bitte erlauben Sie mir), Eltern-Kind- und Vorgesetzten-Kontexte.",
+
+  "vocabulary": [
+    {"word": "運ぶ", "reading": "はこぶ / hakobu", "meaning": "to carry, to transport", "kanji": "運ぶ", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "届ける", "reading": "とどける / todokeru", "meaning": "to deliver, to report", "kanji": "届ける", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "泣く", "reading": "なく / naku", "meaning": "to cry", "kanji": "泣く", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "笑う", "reading": "わらう / warau", "meaning": "to laugh, to smile", "kanji": "笑う", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "習う", "reading": "ならう / narau", "meaning": "to learn", "kanji": "習う", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "通う", "reading": "かよう / kayou", "meaning": "to commute, to attend regularly", "kanji": "通う", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "持たせる", "reading": "もたせる / motaseru", "meaning": "to make/let someone hold", "kanji": "持たせる", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "やめさせる", "reading": "yamesaseru", "meaning": "to make someone quit", "kanji": null, "part_of_speech": "verb", "verb_group": 2},
+    {"word": "残業する", "reading": "ざんぎょうする / zangyou suru", "meaning": "to work overtime", "kanji": "残業する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "サボる", "reading": "saboru", "meaning": "to skip (class/work)", "kanji": null, "part_of_speech": "verb", "verb_group": 1},
+    {"word": "塾", "reading": "じゅく / juku", "meaning": "cram school", "kanji": "塾", "part_of_speech": "noun"},
+    {"word": "部下", "reading": "ぶか / buka", "meaning": "subordinate (at work)", "kanji": "部下", "part_of_speech": "noun"},
+    {"word": "上司", "reading": "じょうし / joushi", "meaning": "boss, superior", "kanji": "上司", "part_of_speech": "noun"},
+    {"word": "社長", "reading": "しゃちょう / shachou", "meaning": "company president", "kanji": "社長", "part_of_speech": "noun"},
+    {"word": "部長", "reading": "ぶちょう / buchou", "meaning": "department manager", "kanji": "部長", "part_of_speech": "noun"},
+    {"word": "課長", "reading": "かちょう / kachou", "meaning": "section chief", "kanji": "課長", "part_of_speech": "noun"},
+    {"word": "新人", "reading": "しんじん / shinjin", "meaning": "newcomer, new employee", "kanji": "新人", "part_of_speech": "noun"},
+    {"word": "息子", "reading": "むすこ / musuko", "meaning": "son", "kanji": "息子", "part_of_speech": "noun"},
+    {"word": "娘", "reading": "むすめ / musume", "meaning": "daughter", "kanji": "娘", "part_of_speech": "noun"},
+    {"word": "ピアノ", "reading": "piano", "meaning": "piano", "kanji": null, "part_of_speech": "noun"},
+    {"word": "お使い", "reading": "おつかい / otsukai", "meaning": "errand", "kanji": "お使い", "part_of_speech": "noun"},
+    {"word": "手伝い", "reading": "てつだい / tetsudai", "meaning": "help, assistance", "kanji": "手伝い", "part_of_speech": "noun"},
+    {"word": "コピー", "reading": "kopii", "meaning": "copy, photocopy", "kanji": null, "part_of_speech": "noun"},
+    {"word": "自由に", "reading": "じゆうに / jiyuu ni", "meaning": "freely", "kanji": "自由に", "part_of_speech": "adverb"},
+    {"word": "無理に", "reading": "むりに / muri ni", "meaning": "forcibly, against one's will", "kanji": "無理に", "part_of_speech": "adverb"},
+    {"word": "嫌がる", "reading": "いやがる / iyagaru", "meaning": "to show dislike, to be reluctant", "kanji": "嫌がる", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "叱る", "reading": "しかる / shikaru", "meaning": "to scold", "kanji": "叱る", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "褒める", "reading": "ほめる / homeru", "meaning": "to praise", "kanji": "褒める", "part_of_speech": "verb", "verb_group": 2}
+  ],
+
+  "grammar": [
+    {
+      "title": "Causative Form (使役形) — Formation",
+      "structure": "Group 1: V-ない stem + せる / Group 2: V-ない stem + させる / Group 3: する→させる, 来る→来させる",
+      "jlpt_level": 4,
+      "explanation": "The causative form is used when someone in a position of authority makes or lets another person do something. Formation: Group 1 verbs — change the last -u sound to -a and add せる (e.g., 書く→書かせる, 読む→読ませる, 行く→行かせる). Group 2 verbs — drop the final -る and add させる (e.g., 食べる→食べさせる, 見る→見させる). Group 3: する→させる, 来る(くる)→来させる(こさせる). The person who is made to do something is marked with を for intransitive verbs and に for transitive verbs.",
+      "example_sentences": "① 先生は 学生に 本を 読ませました。\n  (Sensei wa gakusei ni hon o yomasemashita.)\n  — The teacher made the students read a book.\n② 母は 子どもを 買い物に 行かせました。\n  (Haha wa kodomo o kaimono ni ikasemashita.)\n  — The mother made/let the child go shopping.\n③ 部長は 新人に コピーを 取らせました。\n  (Buchou wa shinjin ni kopii o torasemashita.)\n  — The department manager had the new employee make copies."
+    },
+    {
+      "title": "～させてください (Please let me ~)",
+      "structure": "V-causative て form + ください",
+      "jlpt_level": 4,
+      "explanation": "させてください is used to politely ask for permission to do something. It literally means 'please make/let me do ~'. This is a common and important expression in business and formal situations. The more polite form is させていただけませんか.",
+      "example_sentences": "④ 明日 休ませて ください。\n  (Ashita yasumasete kudasai.)\n  — Please let me take the day off tomorrow.\n⑤ この プロジェクトを やらせて ください。\n  (Kono purojekuto o yarasete kudasai.)\n  — Please let me do this project.\n⑥ 一言 言わせて ください。\n  (Hitokoto iwasete kudasai.)\n  — Please let me say one thing."
+    },
+    {
+      "title": "Causative — Make vs. Let (Context)",
+      "structure": "Authority figure は person を/に V-させます",
+      "jlpt_level": 4,
+      "explanation": "Whether the causative means 'make someone do' (compulsion) or 'let someone do' (permission) depends on context. When the person being caused to act does not want to do it, it implies compulsion (make). When the person wants to do it, it implies permission (let). In parent-child and boss-employee relationships, the context usually makes the meaning clear. Adding 自由に (freely) or 無理に (forcibly) can clarify the nuance.",
+      "example_sentences": "⑦ 父は 息子を 塾に 通わせています。\n  (Chichi wa musuko o juku ni kayowasete imasu.)\n  — The father makes his son attend cram school.\n⑧ 母は 娘に 好きな 服を 着させました。\n  (Haha wa musume ni sukina fuku o kisasemashita.)\n  — The mother let her daughter wear the clothes she liked.\n⑨ 課長は 部下を 残業させました。\n  (Kachou wa buka o zangyou sasemashita.)\n  — The section chief made his subordinate work overtime."
+    }
+  ],
+
+  "conversation": {
+    "title": "Children's Lessons",
+    "title_ja": "子どもの 習い事",
+    "lines": [
+      {"speaker": "Yamada", "japanese": "佐藤さんの お子さんは 何か 習い事を していますか。", "romaji": "Satou-san no okosan wa nanika naraigoto o shite imasu ka.", "english": "Are your children taking any lessons, Ms. Sato?"},
+      {"speaker": "Sato", "japanese": "ええ、息子を 水泳教室に 通わせています。", "romaji": "Ee, musuko o suiei kyoushitsu ni kayowasete imasu.", "english": "Yes, I'm having my son attend swimming classes."},
+      {"speaker": "Yamada", "japanese": "そうですか。息子さんは 喜んで いますか。", "romaji": "Sou desu ka. Musuko-san wa yorokonde imasu ka.", "english": "I see. Is your son happy about it?"},
+      {"speaker": "Sato", "japanese": "最初は 嫌がっていましたが、今は 楽しそうです。娘には ピアノを 習わせています。", "romaji": "Saisho wa iyagatte imashita ga, ima wa tanoshisou desu. Musume ni wa piano o narawasete imasu.", "english": "At first he didn't want to, but now he seems to enjoy it. I'm having my daughter learn piano."},
+      {"speaker": "Yamada", "japanese": "いいですね。うちは 子どもに 自由に させています。", "romaji": "Ii desu ne. Uchi wa kodomo ni jiyuu ni sasete imasu.", "english": "That's nice. In our family, we let the children do as they please."},
+      {"speaker": "Sato", "japanese": "それも いいですね。無理に させても 続きませんからね。", "romaji": "Sore mo ii desu ne. Muri ni sasete mo tsuzukimasen kara ne.", "english": "That's also good. If you force them, they won't continue anyway."},
+      {"speaker": "Yamada", "japanese": "でも、最近 息子が「塾に 行かせて」と 言い出して…。", "romaji": "Demo, saikin musuko ga 'juku ni ikasete' to iidashite...", "english": "But recently my son started saying 'let me go to cram school'..."},
+      {"speaker": "Sato", "japanese": "えっ、自分から？すごいですね！行かせて あげたら いいんじゃないですか。", "romaji": "E, jibun kara? Sugoi desu ne! Ikasete agetara ii n ja nai desu ka.", "english": "What, on his own initiative? That's great! Why not let him go?"}
+    ]
+  }
+}

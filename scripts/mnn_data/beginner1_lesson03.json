@@ -1,0 +1,101 @@
+{
+  "source": "Minna No Nihongo Beginner I",
+  "lesson_number": 3,
+  "title": "Lesson 3 – Places and Prices",
+  "title_ja": "第3課",
+  "jlpt_level": 5,
+  "description": "Ortswörter ここ/そこ/あそこ, N は Place です, どこ (wo), いくら (wie viel), Zähler.",
+
+  "vocabulary": [
+    {"word": "ここ", "reading": "koko", "meaning": "here, this place", "kanji": null, "part_of_speech": "noun"},
+    {"word": "そこ", "reading": "soko", "meaning": "there, that place (near you)", "kanji": null, "part_of_speech": "noun"},
+    {"word": "あそこ", "reading": "asoko", "meaning": "over there, that place (far)", "kanji": null, "part_of_speech": "noun"},
+    {"word": "どこ", "reading": "doko", "meaning": "where, what place", "kanji": null, "part_of_speech": "noun"},
+    {"word": "こちら", "reading": "kochira", "meaning": "this way, here (polite)", "kanji": null, "part_of_speech": "noun"},
+    {"word": "そちら", "reading": "sochira", "meaning": "that way, there (polite)", "kanji": null, "part_of_speech": "noun"},
+    {"word": "あちら", "reading": "achira", "meaning": "that way, over there (polite)", "kanji": null, "part_of_speech": "noun"},
+    {"word": "どちら", "reading": "dochira", "meaning": "which way, where (polite)", "kanji": null, "part_of_speech": "noun"},
+    {"word": "きょうしつ", "reading": "kyoushitsu", "meaning": "classroom", "kanji": "教室", "part_of_speech": "noun"},
+    {"word": "しょくどう", "reading": "shokudou", "meaning": "dining hall, cafeteria", "kanji": "食堂", "part_of_speech": "noun"},
+    {"word": "じむしょ", "reading": "jimusho", "meaning": "office", "kanji": "事務所", "part_of_speech": "noun"},
+    {"word": "かいぎしつ", "reading": "kaigishitsu", "meaning": "conference room", "kanji": "会議室", "part_of_speech": "noun"},
+    {"word": "うけつけ", "reading": "uketsuke", "meaning": "reception desk", "kanji": "受付", "part_of_speech": "noun"},
+    {"word": "ロビー", "reading": "robii", "meaning": "lobby", "kanji": null, "part_of_speech": "noun"},
+    {"word": "へや", "reading": "heya", "meaning": "room", "kanji": "部屋", "part_of_speech": "noun"},
+    {"word": "トイレ", "reading": "toire", "meaning": "toilet, restroom", "kanji": null, "part_of_speech": "noun"},
+    {"word": "かいだん", "reading": "kaidan", "meaning": "stairs, staircase", "kanji": "階段", "part_of_speech": "noun"},
+    {"word": "エレベーター", "reading": "erebeetaa", "meaning": "elevator", "kanji": null, "part_of_speech": "noun"},
+    {"word": "エスカレーター", "reading": "esukareetaa", "meaning": "escalator", "kanji": null, "part_of_speech": "noun"},
+    {"word": "おてあらい", "reading": "otearai", "meaning": "lavatory, restroom (polite)", "kanji": "お手洗い", "part_of_speech": "noun"},
+    {"word": "じどうはんばいき", "reading": "jidouhanbaiki", "meaning": "vending machine", "kanji": "自動販売機", "part_of_speech": "noun"},
+    {"word": "うりば", "reading": "uriba", "meaning": "department, counter (in a store)", "kanji": "売り場", "part_of_speech": "noun"},
+    {"word": "ちか", "reading": "chika", "meaning": "basement", "kanji": "地下", "part_of_speech": "noun"},
+    {"word": "いっかい", "reading": "ikkai", "meaning": "first floor", "kanji": "一階", "part_of_speech": "noun"},
+    {"word": "にかい", "reading": "nikai", "meaning": "second floor", "kanji": "二階", "part_of_speech": "noun"},
+    {"word": "さんかい", "reading": "sankai", "meaning": "third floor", "kanji": "三階", "part_of_speech": "noun"},
+    {"word": "なんがい", "reading": "nangai", "meaning": "what floor", "kanji": "何階", "part_of_speech": "noun"},
+    {"word": "えん", "reading": "en", "meaning": "yen (Japanese currency)", "kanji": "円", "part_of_speech": "counter"},
+    {"word": "いくら", "reading": "ikura", "meaning": "how much", "kanji": null, "part_of_speech": "noun"},
+    {"word": "ひゃく", "reading": "hyaku", "meaning": "hundred", "kanji": "百", "part_of_speech": "noun"},
+    {"word": "せん", "reading": "sen", "meaning": "thousand", "kanji": "千", "part_of_speech": "noun"},
+    {"word": "まん", "reading": "man", "meaning": "ten thousand", "kanji": "万", "part_of_speech": "noun"},
+    {"word": "くつ", "reading": "kutsu", "meaning": "shoes", "kanji": "靴", "part_of_speech": "noun"},
+    {"word": "ネクタイ", "reading": "nekutai", "meaning": "necktie", "kanji": null, "part_of_speech": "noun"},
+    {"word": "ワイン", "reading": "wain", "meaning": "wine", "kanji": null, "part_of_speech": "noun"},
+    {"word": "くに", "reading": "kuni", "meaning": "country, homeland", "kanji": "国", "part_of_speech": "noun"},
+    {"word": "かいしゃ", "reading": "kaisha", "meaning": "company", "kanji": "会社", "part_of_speech": "noun"},
+    {"word": "うち", "reading": "uchi", "meaning": "home, house", "kanji": null, "part_of_speech": "noun"},
+    {"word": "でんわ", "reading": "denwa", "meaning": "telephone", "kanji": "電話", "part_of_speech": "noun"},
+    {"word": "でんわばんごう", "reading": "denwabangou", "meaning": "telephone number", "kanji": "電話番号", "part_of_speech": "noun"},
+    {"word": "なんばん", "reading": "nanban", "meaning": "what number", "kanji": "何番", "part_of_speech": "noun"},
+    {"word": "すみません", "reading": "sumimasen", "meaning": "excuse me, I'm sorry", "kanji": null, "part_of_speech": "expression"}
+  ],
+
+  "vocabulary_countries": [],
+
+  "grammar": [
+    {
+      "title": "ここ/そこ/あそこ (Demonstrative Place Words)",
+      "structure": "ここ / そこ / あそこ は N です",
+      "jlpt_level": 5,
+      "explanation": "ここ refers to the place where the speaker is. そこ refers to the place where the listener is. あそこ refers to a place far from both the speaker and the listener. These are used to indicate locations. どこ is the interrogative word for asking about places.",
+      "example_sentences": "① ここは 教室です。\n  (Koko wa kyoushitsu desu.)\n  — Here is the classroom.\n② そこは 食堂です。\n  (Soko wa shokudou desu.)\n  — There is the cafeteria.\n③ トイレは どこですか。\n  (Toire wa doko desu ka.)\n  — Where is the restroom?"
+    },
+    {
+      "title": "N は Place です (Location of Things/People)",
+      "structure": "N は Place です",
+      "jlpt_level": 5,
+      "explanation": "This pattern indicates where something or someone is located. The topic (N) is followed by は, and the place is given before です. The polite forms こちら, そちら, あちら, and どちら can be used instead of ここ, そこ, あそこ, and どこ.",
+      "example_sentences": "④ 受付は 一階です。\n  (Uketsuke wa ikkai desu.)\n  — The reception is on the first floor.\n⑤ 山田さんの 会社は どちらですか。\n  (Yamada-san no kaisha wa dochira desu ka.)\n  — Where is Mr. Yamada's company?"
+    },
+    {
+      "title": "N はいくらですか (Asking Prices)",
+      "structure": "N は いくら ですか",
+      "jlpt_level": 5,
+      "explanation": "いくら is used to ask the price of something. The answer uses the counter 円 (en, yen). Numbers are combined with 円 to state prices.",
+      "example_sentences": "⑥ この 時計は いくらですか。\n  (Kono tokei wa ikura desu ka.)\n  — How much is this watch?\n…三千円です。(Sanzen en desu.) — It's 3,000 yen.\n⑦ その ネクタイは いくらですか。\n  (Sono nekutai wa ikura desu ka.)\n  — How much is that necktie?\n…二千五百円です。(Nisen gohyaku en desu.) — It's 2,500 yen."
+    },
+    {
+      "title": "何階 (Floor Counter)",
+      "structure": "N は なんがい ですか",
+      "jlpt_level": 5,
+      "explanation": "何階 (nangai) is used to ask which floor something is on. The counter ～階 (kai/gai) is used for floors of a building. Note the sound changes: 三階 is sankai (not sangai), and 何階 is nangai.",
+      "example_sentences": "⑧ 食堂は 何階ですか。\n  (Shokudou wa nangai desu ka.)\n  — What floor is the cafeteria on?\n…地下一階です。(Chika ikkai desu.) — It's on basement level one."
+    }
+  ],
+
+  "conversation": {
+    "title": "Where is the cafeteria?",
+    "title_ja": "しょくどうは どこですか",
+    "lines": [
+      {"speaker": "Kimura", "japanese": "すみません。食堂は どこですか。", "romaji": "Sumimasen. Shokudou wa doko desu ka.", "english": "Excuse me. Where is the cafeteria?"},
+      {"speaker": "Hayashi", "japanese": "食堂は 地下です。", "romaji": "Shokudou wa chika desu.", "english": "The cafeteria is in the basement."},
+      {"speaker": "Kimura", "japanese": "そうですか。トイレも 地下ですか。", "romaji": "Sou desu ka. Toire mo chika desu ka.", "english": "I see. Is the restroom also in the basement?"},
+      {"speaker": "Hayashi", "japanese": "いいえ、トイレは 二階です。", "romaji": "Iie, toire wa nikai desu.", "english": "No, the restroom is on the second floor."},
+      {"speaker": "Kimura", "japanese": "会議室は 何階ですか。", "romaji": "Kaigishitsu wa nangai desu ka.", "english": "What floor is the conference room on?"},
+      {"speaker": "Hayashi", "japanese": "会議室は 三階です。エレベーターは あそこです。", "romaji": "Kaigishitsu wa sankai desu. Erebeetaa wa asoko desu.", "english": "The conference room is on the third floor. The elevator is over there."},
+      {"speaker": "Kimura", "japanese": "ありがとうございます。", "romaji": "Arigatou gozaimasu.", "english": "Thank you very much."},
+      {"speaker": "Hayashi", "japanese": "いいえ。", "romaji": "Iie.", "english": "Not at all."}
+    ]
+  }
+}

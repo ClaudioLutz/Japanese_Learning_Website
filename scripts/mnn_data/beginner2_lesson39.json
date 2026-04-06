@@ -1,0 +1,85 @@
+{
+  "source": "Minna No Nihongo Beginner II",
+  "lesson_number": 39,
+  "title": "Lesson 39 – Reasons & Despite (ので / のに)",
+  "title_ja": "第39課",
+  "jlpt_level": 4,
+  "description": "Gründe und Gegensätze ausdrücken: V-te/N-de (Grund für unwillkürliches Ergebnis), ので (objektiver Grund), のに (obwohl/trotzdem), 途中で (unterwegs/mittendrin).",
+
+  "vocabulary": [
+    {"word": "こむ", "reading": "komu", "meaning": "to be crowded", "kanji": "込む", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "すく", "reading": "suku", "meaning": "to become empty", "kanji": "空く", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "おくれる", "reading": "okureru", "meaning": "to be late, to be delayed", "kanji": "遅れる", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "あんしんする", "reading": "anshin suru", "meaning": "to feel relieved", "kanji": "安心する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "しんぱいする", "reading": "shinpai suru", "meaning": "to worry", "kanji": "心配する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "がっかりする", "reading": "gakkari suru", "meaning": "to be disappointed", "kanji": null, "part_of_speech": "verb", "verb_group": 3},
+    {"word": "びっくりする", "reading": "bikkuri suru", "meaning": "to be surprised", "kanji": null, "part_of_speech": "verb", "verb_group": 3},
+    {"word": "なおす", "reading": "naosu", "meaning": "to fix, to repair", "kanji": "直す", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "こしょうする", "reading": "koshou suru", "meaning": "to break down (machine)", "kanji": "故障する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "ちゅうしする", "reading": "chuushi suru", "meaning": "to cancel", "kanji": "中止する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "やくにたつ", "reading": "yaku ni tatsu", "meaning": "to be useful", "kanji": "役に立つ", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "うかる", "reading": "ukaru", "meaning": "to pass (an exam)", "kanji": "受かる", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "おちる", "reading": "ochiru", "meaning": "to fail (an exam), to fall", "kanji": "落ちる", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "じこ", "reading": "jiko", "meaning": "accident", "kanji": "事故", "part_of_speech": "noun"},
+    {"word": "こうじ", "reading": "kouji", "meaning": "construction work", "kanji": "工事", "part_of_speech": "noun"},
+    {"word": "じゅうたい", "reading": "juutai", "meaning": "traffic jam", "kanji": "渋滞", "part_of_speech": "noun"},
+    {"word": "かじ", "reading": "kaji", "meaning": "fire (disaster)", "kanji": "火事", "part_of_speech": "noun"},
+    {"word": "げんいん", "reading": "gen'in", "meaning": "cause, reason", "kanji": "原因", "part_of_speech": "noun"},
+    {"word": "けっか", "reading": "kekka", "meaning": "result", "kanji": "結果", "part_of_speech": "noun"},
+    {"word": "しけん", "reading": "shiken", "meaning": "exam, test", "kanji": "試験", "part_of_speech": "noun"},
+    {"word": "ぼうねんかい", "reading": "bounenkai", "meaning": "year-end party", "kanji": "忘年会", "part_of_speech": "noun"},
+    {"word": "とちゅう", "reading": "tochuu", "meaning": "on the way, in the middle of", "kanji": "途中", "part_of_speech": "noun"},
+    {"word": "ざんねん", "reading": "zannen", "meaning": "regrettable, disappointing", "kanji": "残念", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "ふべん", "reading": "fuben", "meaning": "inconvenient", "kanji": "不便", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "けっきょく", "reading": "kekkyoku", "meaning": "after all, in the end", "kanji": "結局", "part_of_speech": "adverb"},
+    {"word": "たしかに", "reading": "tashika ni", "meaning": "certainly, surely", "kanji": "確かに", "part_of_speech": "adverb"},
+    {"word": "せっかく", "reading": "sekkaku", "meaning": "with much effort, specially", "kanji": "折角", "part_of_speech": "adverb"},
+    {"word": "いっしょうけんめい", "reading": "isshoukenmei", "meaning": "with all one's effort", "kanji": "一生懸命", "part_of_speech": "adverb"}
+  ],
+
+  "grammar": [
+    {
+      "title": "V-て / N-で (Reason for Involuntary Result)",
+      "structure": "V-て form / N で、〜 (involuntary result)",
+      "jlpt_level": 4,
+      "explanation": "The te-form of a verb or で after a noun can express a cause or reason, especially when the result is something involuntary or beyond the speaker's control. The result is typically an emotional reaction, a state, or an uncontrollable consequence. This cannot be used when the result is a deliberate action.",
+      "example_sentences": "① 事故が あって、電車が 遅れました。\n  (Jiko ga atte, densha ga okuremashita.)\n  — There was an accident, and the train was delayed.\n② 地震で ビルが 壊れました。\n  (Jishin de biru ga kowaremashita.)\n  — The building was destroyed by the earthquake."
+    },
+    {
+      "title": "～ので (Because — Objective Reason)",
+      "structure": "Sentence (plain form) + ので、〜",
+      "jlpt_level": 4,
+      "explanation": "ので connects two sentences where the first is the reason for the second. It presents the reason objectively and sounds softer and more polite than から. Before ので, na-adjectives and nouns use な instead of だ (e.g. 静かなので, 学生なので). ので is preferred in formal situations and when giving reasons to superiors.",
+      "example_sentences": "③ 電車が 遅れたので、会社に 遅刻しました。\n  (Densha ga okureta node, kaisha ni chikoku shimashita.)\n  — Because the train was delayed, I was late for work.\n④ このレストランは おいしいので、いつも 込んでいます。\n  (Kono resutoran wa oishii node, itsumo konde imasu.)\n  — Because this restaurant is delicious, it's always crowded."
+    },
+    {
+      "title": "～のに (Although / Despite)",
+      "structure": "Sentence (plain form) + のに、〜",
+      "jlpt_level": 4,
+      "explanation": "のに connects two sentences where the second is an unexpected or contradictory result of the first. It expresses the speaker's surprise, dissatisfaction, or regret. Before のに, na-adjectives and nouns use な instead of だ. のに often carries a nuance of complaint or disappointment.",
+      "example_sentences": "⑤ 一生懸命 勉強したのに、試験に 落ちました。\n  (Isshoukenmei benkyou shita noni, shiken ni ochimashita.)\n  — Although I studied hard, I failed the exam.\n⑥ 約束したのに、来ませんでした。\n  (Yakusoku shita noni, kimasen deshita.)\n  — Although we made a promise, they didn't come."
+    },
+    {
+      "title": "途中で (In the Middle of / On the Way)",
+      "structure": "V-dict + 途中で / N の 途中で",
+      "jlpt_level": 4,
+      "explanation": "途中で means 'in the middle of' or 'on the way'. It indicates that something happens while another action is in progress or while going somewhere. With verbs, the dictionary form is used before 途中で. With nouns (often places), の途中で is used.",
+      "example_sentences": "⑦ 会社へ 行く 途中で、友達に 会いました。\n  (Kaisha e iku tochuu de, tomodachi ni aimashita.)\n  — On the way to the office, I met a friend.\n⑧ 映画を 見ている 途中で、寝て しまいました。\n  (Eiga o mite iru tochuu de, nete shimaimashita.)\n  — I fell asleep in the middle of watching a movie."
+    }
+  ],
+
+  "conversation": {
+    "title": "I was late because of the traffic jam",
+    "title_ja": "渋滞で 遅れたんです",
+    "lines": [
+      {"speaker": "Sato", "japanese": "すみません、遅く なりました。", "romaji": "Sumimasen, osoku narimashita.", "english": "I'm sorry I'm late."},
+      {"speaker": "Tanaka", "japanese": "どうしたんですか。", "romaji": "Dou shita n desu ka.", "english": "What happened?"},
+      {"speaker": "Sato", "japanese": "事故が あって、道が 渋滞していたので、遅れたんです。", "romaji": "Jiko ga atte, michi ga juutai shite ita node, okureta n desu.", "english": "There was an accident and the road was jammed, so I was late."},
+      {"speaker": "Tanaka", "japanese": "そうですか。大変でしたね。", "romaji": "Sou desu ka. Taihen deshita ne.", "english": "I see. That was tough."},
+      {"speaker": "Sato", "japanese": "せっかく 早く 出たのに、結局 いつもより 遅く なって しまいました。", "romaji": "Sekkaku hayaku deta noni, kekkyoku itsumo yori osoku natte shimaimashita.", "english": "Although I specially left early, I ended up being later than usual."},
+      {"speaker": "Tanaka", "japanese": "途中で 電話できませんでしたか。", "romaji": "Tochuu de denwa dekimasen deshita ka.", "english": "Couldn't you call on the way?"},
+      {"speaker": "Sato", "japanese": "すみません。携帯の 電池が なかったので、電話できなかったんです。", "romaji": "Sumimasen. Keitai no denchi ga nakatta node, denwa dekinakatta n desu.", "english": "I'm sorry. My phone battery was dead, so I couldn't call."},
+      {"speaker": "Tanaka", "japanese": "そうですか。まあ、無事で よかったです。", "romaji": "Sou desu ka. Maa, buji de yokatta desu.", "english": "I see. Well, I'm glad you're safe."}
+    ]
+  }
+}

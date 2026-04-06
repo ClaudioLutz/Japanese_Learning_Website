@@ -1,0 +1,78 @@
+{
+  "source": "Minna No Nihongo Beginner II",
+  "lesson_number": 40,
+  "title": "Lesson 40 – Embedded Questions & Trying",
+  "title_ja": "第40課",
+  "jlpt_level": 4,
+  "description": "Eingebettete Fragen: Question word + か (～かわかりますか), V-てみます (etwas ausprobieren), ～か どうか (ob ... oder nicht).",
+
+  "vocabulary": [
+    {"word": "しらべる", "reading": "shiraberu", "meaning": "to investigate, to look up", "kanji": "調べる", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "かんがえる", "reading": "kangaeru", "meaning": "to think, to consider", "kanji": "考える", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "さんかする", "reading": "sanka suru", "meaning": "to participate", "kanji": "参加する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "きめる", "reading": "kimeru", "meaning": "to decide", "kanji": "決める", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "たしかめる", "reading": "tashikameru", "meaning": "to confirm, to make sure", "kanji": "確かめる", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "もうしこむ", "reading": "moushikomu", "meaning": "to apply for", "kanji": "申し込む", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "きがつく", "reading": "ki ga tsuku", "meaning": "to notice", "kanji": "気がつく", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "まよう", "reading": "mayou", "meaning": "to be lost, to hesitate", "kanji": "迷う", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "たずねる", "reading": "tazuneru", "meaning": "to ask, to inquire", "kanji": "尋ねる", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "そうだんする", "reading": "soudan suru", "meaning": "to consult", "kanji": "相談する", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "ためす", "reading": "tamesu", "meaning": "to try, to test", "kanji": "試す", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "あじ", "reading": "aji", "meaning": "taste, flavor", "kanji": "味", "part_of_speech": "noun"},
+    {"word": "きかい", "reading": "kikai", "meaning": "opportunity, chance", "kanji": "機会", "part_of_speech": "noun"},
+    {"word": "うけつけ", "reading": "uketsuke", "meaning": "reception desk", "kanji": "受付", "part_of_speech": "noun"},
+    {"word": "ばしょ", "reading": "basho", "meaning": "place, location", "kanji": "場所", "part_of_speech": "noun"},
+    {"word": "りゆう", "reading": "riyuu", "meaning": "reason", "kanji": "理由", "part_of_speech": "noun"},
+    {"word": "よてい", "reading": "yotei", "meaning": "plan, schedule", "kanji": "予定", "part_of_speech": "noun"},
+    {"word": "けいけん", "reading": "keiken", "meaning": "experience", "kanji": "経験", "part_of_speech": "noun"},
+    {"word": "ないよう", "reading": "naiyou", "meaning": "content, details", "kanji": "内容", "part_of_speech": "noun"},
+    {"word": "にほんりょうり", "reading": "nihon ryouri", "meaning": "Japanese cuisine", "kanji": "日本料理", "part_of_speech": "noun"},
+    {"word": "おすすめ", "reading": "osusume", "meaning": "recommendation", "kanji": null, "part_of_speech": "noun"},
+    {"word": "メニュー", "reading": "menyuu", "meaning": "menu", "kanji": null, "part_of_speech": "noun"},
+    {"word": "チャンス", "reading": "chansu", "meaning": "chance", "kanji": null, "part_of_speech": "noun"},
+    {"word": "はっきり", "reading": "hakkiri", "meaning": "clearly", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "もし", "reading": "moshi", "meaning": "if", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "めずらしい", "reading": "mezurashii", "meaning": "rare, unusual", "kanji": "珍しい", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "ただしい", "reading": "tadashii", "meaning": "correct, right", "kanji": "正しい", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "なっとう", "reading": "nattou", "meaning": "natto (fermented soybeans)", "kanji": "納豆", "part_of_speech": "noun"}
+  ],
+
+  "grammar": [
+    {
+      "title": "Question word + か～ (Embedded Questions)",
+      "structure": "Question word + V (plain form) + か、[わかりますか / 知っていますか / 教えてください / etc.]",
+      "jlpt_level": 4,
+      "explanation": "When a question is embedded within a larger sentence, the question clause uses the plain form and ends with か. The particle か replaces the question mark. The sentence-final verb expresses what is being done with the information (knowing, understanding, asking, etc.). Note that in embedded questions, the topic particle は in the question clause often changes to が.",
+      "example_sentences": "① この バスが どこへ 行くか、知っていますか。\n  (Kono basu ga doko e iku ka, shitte imasu ka.)\n  — Do you know where this bus goes?\n② いつ 届くか、わかりません。\n  (Itsu todoku ka, wakarimasen.)\n  — I don't know when it will arrive.\n③ 受付が どこに あるか、教えて ください。\n  (Uketsuke ga doko ni aru ka, oshiete kudasai.)\n  — Please tell me where the reception desk is."
+    },
+    {
+      "title": "V-てみます (Try Doing ~)",
+      "structure": "V-て form + みます",
+      "jlpt_level": 4,
+      "explanation": "V-てみます expresses trying something out to see what it is like, or doing something as an experiment. It implies that the speaker has not done this action before and wants to experience it. みる literally means 'to see', so the pattern conveys the idea of doing something and seeing the result.",
+      "example_sentences": "④ この 料理を 食べてみます。\n  (Kono ryouri o tabete mimasu.)\n  — I'll try eating this dish.\n⑤ 一度 着物を 着てみたいです。\n  (Ichido kimono o kite mitai desu.)\n  — I'd like to try wearing a kimono once.\n⑥ 新しい アプリを 使ってみました。とても 便利でした。\n  (Atarashii apuri o tsukatte mimashita. Totemo benri deshita.)\n  — I tried using the new app. It was very convenient."
+    },
+    {
+      "title": "～か どうか (Whether or Not)",
+      "structure": "V (plain form) + か どうか、〜",
+      "jlpt_level": 4,
+      "explanation": "かどうか is used when the embedded question is a yes/no type (whether or not something is the case). It follows the plain form of the verb. For na-adjectives, だ is dropped before かどうか. For nouns, だ is also dropped. This pattern is used with verbs like わかる, 知る, 確かめる, 調べる, 決める, etc.",
+      "example_sentences": "⑦ あしたの パーティーに 行くか どうか、まだ 決めていません。\n  (Ashita no paatii ni iku ka dou ka, mada kimete imasen.)\n  — I haven't decided yet whether or not to go to tomorrow's party.\n⑧ この 答えが 正しいか どうか、確かめて ください。\n  (Kono kotae ga tadashii ka dou ka, tashikamete kudasai.)\n  — Please confirm whether this answer is correct or not."
+    }
+  ],
+
+  "conversation": {
+    "title": "Shall we try it?",
+    "title_ja": "食べてみましょう",
+    "lines": [
+      {"speaker": "Miller", "japanese": "この レストランの メニューは 日本語だけですね。何が おすすめか、わかりますか。", "romaji": "Kono resutoran no menyuu wa nihongo dake desu ne. Nani ga osusume ka, wakarimasu ka.", "english": "This restaurant's menu is only in Japanese. Do you know what's recommended?"},
+      {"speaker": "Yamada", "japanese": "ここは 魚料理が おいしいですよ。納豆は 食べたことが ありますか。", "romaji": "Koko wa sakana ryouri ga oishii desu yo. Nattou wa tabeta koto ga arimasu ka.", "english": "The fish dishes are good here. Have you ever eaten natto?"},
+      {"speaker": "Miller", "japanese": "いいえ、まだ ないです。おいしいか どうか、ちょっと 心配です。", "romaji": "Iie, mada nai desu. Oishii ka dou ka, chotto shinpai desu.", "english": "No, not yet. I'm a bit worried about whether it's good or not."},
+      {"speaker": "Yamada", "japanese": "好きか どうかは 人によって 違いますが、一度 食べてみて ください。", "romaji": "Suki ka dou ka wa hito ni yotte chigaimasu ga, ichido tabete mite kudasai.", "english": "Whether you like it or not varies by person, but please try it once."},
+      {"speaker": "Miller", "japanese": "そうですね。せっかくの 機会ですから、食べてみます。", "romaji": "Sou desu ne. Sekkaku no kikai desu kara, tabete mimasu.", "english": "You're right. Since it's a good opportunity, I'll try it."},
+      {"speaker": "Yamada", "japanese": "それから、何を 飲むか 決めましょう。", "romaji": "Sore kara, nani o nomu ka kimemeshou.", "english": "And then let's decide what to drink."},
+      {"speaker": "Miller", "japanese": "日本酒が あるか どうか、聞いて もらえますか。", "romaji": "Nihonshu ga aru ka dou ka, kiite moraemasu ka.", "english": "Could you ask whether they have sake?"},
+      {"speaker": "Yamada", "japanese": "もちろん。すみません、日本酒は ありますか。", "romaji": "Mochiron. Sumimasen, nihonshu wa arimasu ka.", "english": "Of course. Excuse me, do you have sake?"}
+    ]
+  }
+}

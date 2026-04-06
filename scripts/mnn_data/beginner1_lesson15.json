@@ -1,0 +1,82 @@
+{
+  "source": "Minna No Nihongo Beginner I",
+  "lesson_number": 15,
+  "title": "Lesson 15 – Permission and Prohibition",
+  "title_ja": "第15課",
+  "jlpt_level": 5,
+  "description": "Erlaubnis: ～てもいいです, Verbot: ～てはいけません, Resultativer Zustand: ～ています (結婚しています, 住んでいます).",
+
+  "vocabulary": [
+    {"word": "おきます", "reading": "okimasu", "meaning": "to put, to place", "kanji": "置きます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "つくります", "reading": "tsukurimasu", "meaning": "to make, to produce", "kanji": "作ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "うります", "reading": "urimasu", "meaning": "to sell", "kanji": "売ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "しります", "reading": "shirimasu", "meaning": "to get to know", "kanji": "知ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "すみます", "reading": "sumimasu", "meaning": "to live, to reside", "kanji": "住みます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "けっこんします", "reading": "kekkon shimasu", "meaning": "to get married", "kanji": "結婚します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "すいます", "reading": "suimasu", "meaning": "to smoke, to inhale", "kanji": "吸います", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "さわります", "reading": "sawarimasu", "meaning": "to touch", "kanji": "触ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "すてます", "reading": "sutemasu", "meaning": "to throw away", "kanji": "捨てます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "うごきます", "reading": "ugokimasu", "meaning": "to move", "kanji": "動きます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "つとめます", "reading": "tsutomemasu", "meaning": "to work for (a company)", "kanji": "勤めます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "かえります", "reading": "kaerimasu", "meaning": "to return, to go home", "kanji": "帰ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "とります", "reading": "torimasu", "meaning": "to take (a photo)", "kanji": "撮ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "たばこ", "reading": "tabako", "meaning": "cigarette, tobacco", "kanji": null, "part_of_speech": "noun"},
+    {"word": "ごみ", "reading": "gomi", "meaning": "garbage, rubbish", "kanji": null, "part_of_speech": "noun"},
+    {"word": "けいかん", "reading": "keikan", "meaning": "police officer", "kanji": "警官", "part_of_speech": "noun"},
+    {"word": "しゃしん", "reading": "shashin", "meaning": "photograph", "kanji": "写真", "part_of_speech": "noun"},
+    {"word": "おかね", "reading": "okane", "meaning": "money", "kanji": "お金", "part_of_speech": "noun"},
+    {"word": "にもつ", "reading": "nimotsu", "meaning": "luggage, baggage", "kanji": "荷物", "part_of_speech": "noun"},
+    {"word": "きんえん", "reading": "kinen", "meaning": "no smoking", "kanji": "禁煙", "part_of_speech": "noun"},
+    {"word": "さつえいきんし", "reading": "satsuei kinshi", "meaning": "photography prohibited", "kanji": "撮影禁止", "part_of_speech": "noun"},
+    {"word": "しんごう", "reading": "shingou", "meaning": "traffic light", "kanji": "信号", "part_of_speech": "noun"},
+    {"word": "かいだん", "reading": "kaidan", "meaning": "stairs", "kanji": "階段", "part_of_speech": "noun"},
+    {"word": "くうこう", "reading": "kuukou", "meaning": "airport", "kanji": "空港", "part_of_speech": "noun"},
+    {"word": "こくばん", "reading": "kokuban", "meaning": "blackboard", "kanji": "黒板", "part_of_speech": "noun"},
+    {"word": "としょかん", "reading": "toshokan", "meaning": "library", "kanji": "図書館", "part_of_speech": "noun"},
+    {"word": "おしごと", "reading": "oshigoto", "meaning": "work (polite)", "kanji": "お仕事", "part_of_speech": "noun"},
+    {"word": "どくしん", "reading": "dokushin", "meaning": "single, unmarried", "kanji": "独身", "part_of_speech": "noun"},
+    {"word": "もちろん", "reading": "mochiron", "meaning": "of course", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "まだ", "reading": "mada", "meaning": "still, not yet", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "ここで", "reading": "koko de", "meaning": "here (at this place)", "kanji": null}
+  ],
+
+  "vocabulary_countries": [],
+
+  "grammar": [
+    {
+      "title": "～てもいいです (Permission: May I ~?)",
+      "structure": "V て-form + も いいです",
+      "jlpt_level": 5,
+      "explanation": "て-form + もいいです is used to give or ask for permission. It means 'it is OK to do ~' or 'you may do ~'. To ask permission, add か at the end: ～てもいいですか. The affirmative answer is はい、～てもいいです or はい、どうぞ. The negative answer uses ～てはいけません.",
+      "example_sentences": "① ここで しゃしんを とってもいいですか。\n  (Koko de shashin o totte mo ii desu ka.)\n  — May I take photos here?\n…はい、とってもいいです。\n  (Hai, totte mo ii desu.)\n  — Yes, you may take photos.\n② このパソコンを つかってもいいですか。\n  (Kono pasokon o tsukatte mo ii desu ka.)\n  — May I use this computer?\n…はい、どうぞ。\n  (Hai, douzo.)\n  — Yes, please go ahead."
+    },
+    {
+      "title": "～てはいけません (Prohibition: You must not ~)",
+      "structure": "V て-form + は いけません",
+      "jlpt_level": 5,
+      "explanation": "て-form + はいけません means 'you must not do ~' or 'it is not allowed to do ~'. This is used for rules, regulations, and prohibitions. It is stronger than ～ないでください (please don't). In casual speech, ～ちゃいけません or ～ちゃだめです are often used.",
+      "example_sentences": "③ ここで たばこを すってはいけません。\n  (Koko de tabako o sutte wa ikemasen.)\n  — You must not smoke here.\n④ としょかんで おおきい こえで はなしてはいけません。\n  (Toshokan de ookii koe de hanashite wa ikemasen.)\n  — You must not speak loudly in the library.\n⑤ ここに ごみを すててはいけません。\n  (Koko ni gomi o sutete wa ikemasen.)\n  — You must not throw garbage here."
+    },
+    {
+      "title": "～ています (Resultant State: 住んでいます, 結婚しています)",
+      "structure": "V て-form + います (resultant state)",
+      "jlpt_level": 5,
+      "explanation": "In addition to expressing an ongoing action (Lesson 14), て-form + います can express a resultant state — the current condition that resulted from a past action. For example, 結婚しています does not mean 'is getting married right now' but rather 'is married' (the state resulting from having gotten married). Similarly, 住んでいます means 'is living (in a place)', 知っています means 'knows'. Note: the negative of 知っています is 知りません (not 知っていません).",
+      "example_sentences": "⑥ わたしは とうきょうに すんでいます。\n  (Watashi wa Toukyou ni sunde imasu.)\n  — I live in Tokyo.\n⑦ やまださんは けっこんしていますか。\n  (Yamada-san wa kekkon shite imasu ka.)\n  — Is Mr. Yamada married?\n…はい、けっこんしています。\n  (Hai, kekkon shite imasu.)\n  — Yes, he is married.\n⑧ ミラーさんの でんわばんごうを しっていますか。\n  (Miraa-san no denwa bangou o shitte imasu ka.)\n  — Do you know Mr. Miller's phone number?\n…いいえ、しりません。\n  (Iie, shirimasen.)\n  — No, I don't know."
+    }
+  ],
+
+  "conversation": {
+    "title": "May I take a photo?",
+    "title_ja": "しゃしんを とってもいいですか",
+    "lines": [
+      {"speaker": "Garcia", "japanese": "すみません。ここで しゃしんを とってもいいですか。", "romaji": "Sumimasen. Koko de shashin o totte mo ii desu ka.", "english": "Excuse me. May I take a photo here?"},
+      {"speaker": "Guard", "japanese": "いいえ、ここは さつえいきんしです。しゃしんを とってはいけません。", "romaji": "Iie, koko wa satsuei kinshi desu. Shashin o totte wa ikemasen.", "english": "No, photography is prohibited here. You must not take photos."},
+      {"speaker": "Garcia", "japanese": "そうですか。じゃ、そとでは とってもいいですか。", "romaji": "Sou desu ka. Ja, soto de wa totte mo ii desu ka.", "english": "I see. Then, may I take them outside?"},
+      {"speaker": "Guard", "japanese": "はい、そとは だいじょうぶです。どうぞ。", "romaji": "Hai, soto wa daijoubu desu. Douzo.", "english": "Yes, outside is fine. Please go ahead."},
+      {"speaker": "Garcia", "japanese": "ありがとうございます。あのう、にもつを ここに おいてもいいですか。", "romaji": "Arigatou gozaimasu. Anou, nimotsu o koko ni oite mo ii desu ka.", "english": "Thank you. Um, may I put my luggage here?"},
+      {"speaker": "Guard", "japanese": "いいえ、ここに にもつを おいてはいけません。かいだんの よこに おいてください。", "romaji": "Iie, koko ni nimotsu o oite wa ikemasen. Kaidan no yoko ni oite kudasai.", "english": "No, you must not place luggage here. Please put it next to the stairs."},
+      {"speaker": "Garcia", "japanese": "わかりました。すみません。", "romaji": "Wakarimashita. Sumimasen.", "english": "Understood. I'm sorry."}
+    ]
+  }
+}

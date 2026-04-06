@@ -1,0 +1,98 @@
+{
+  "source": "Minna No Nihongo Beginner I",
+  "lesson_number": 10,
+  "title": "Lesson 10 – Existence and Location",
+  "title_ja": "第10課",
+  "jlpt_level": 5,
+  "description": "Existenzverben あります/います, Ortsangaben mit に, Aufzählung mit や (und andere).",
+
+  "vocabulary": [
+    {"word": "あります", "reading": "arimasu", "meaning": "to exist, there is (inanimate)", "kanji": null, "part_of_speech": "verb", "verb_group": 1},
+    {"word": "います", "reading": "imasu", "meaning": "to exist, there is (animate)", "kanji": null, "part_of_speech": "verb", "verb_group": 2},
+    {"word": "うえ", "reading": "ue", "meaning": "on, above", "kanji": "上", "part_of_speech": "noun"},
+    {"word": "した", "reading": "shita", "meaning": "under, below", "kanji": "下", "part_of_speech": "noun"},
+    {"word": "まえ", "reading": "mae", "meaning": "in front of", "kanji": "前", "part_of_speech": "noun"},
+    {"word": "うしろ", "reading": "ushiro", "meaning": "behind", "kanji": "後ろ", "part_of_speech": "noun"},
+    {"word": "みぎ", "reading": "migi", "meaning": "right", "kanji": "右", "part_of_speech": "noun"},
+    {"word": "ひだり", "reading": "hidari", "meaning": "left", "kanji": "左", "part_of_speech": "noun"},
+    {"word": "なか", "reading": "naka", "meaning": "inside", "kanji": "中", "part_of_speech": "noun"},
+    {"word": "そと", "reading": "soto", "meaning": "outside", "kanji": "外", "part_of_speech": "noun"},
+    {"word": "となり", "reading": "tonari", "meaning": "next to, neighboring", "kanji": "隣", "part_of_speech": "noun"},
+    {"word": "ちかく", "reading": "chikaku", "meaning": "near, nearby", "kanji": "近く", "part_of_speech": "noun"},
+    {"word": "あいだ", "reading": "aida", "meaning": "between", "kanji": "間", "part_of_speech": "noun"},
+    {"word": "つくえ", "reading": "tsukue", "meaning": "desk", "kanji": "机", "part_of_speech": "noun"},
+    {"word": "いす", "reading": "isu", "meaning": "chair", "kanji": null, "part_of_speech": "noun"},
+    {"word": "テーブル", "reading": "teeburu", "meaning": "table", "kanji": null, "part_of_speech": "noun"},
+    {"word": "ベッド", "reading": "beddo", "meaning": "bed", "kanji": null, "part_of_speech": "noun"},
+    {"word": "たな", "reading": "tana", "meaning": "shelf", "kanji": "棚", "part_of_speech": "noun"},
+    {"word": "はこ", "reading": "hako", "meaning": "box", "kanji": "箱", "part_of_speech": "noun"},
+    {"word": "へや", "reading": "heya", "meaning": "room", "kanji": "部屋", "part_of_speech": "noun"},
+    {"word": "きょうしつ", "reading": "kyoushitsu", "meaning": "classroom", "kanji": "教室", "part_of_speech": "noun"},
+    {"word": "こうえん", "reading": "kouen", "meaning": "park", "kanji": "公園", "part_of_speech": "noun"},
+    {"word": "ぎんこう", "reading": "ginkou", "meaning": "bank", "kanji": "銀行", "part_of_speech": "noun"},
+    {"word": "ゆうびんきょく", "reading": "yuubinkyoku", "meaning": "post office", "kanji": "郵便局", "part_of_speech": "noun"},
+    {"word": "スーパー", "reading": "suupaa", "meaning": "supermarket", "kanji": null, "part_of_speech": "noun"},
+    {"word": "コンビニ", "reading": "konbini", "meaning": "convenience store", "kanji": null, "part_of_speech": "noun"},
+    {"word": "き", "reading": "ki", "meaning": "tree", "kanji": "木", "part_of_speech": "noun"},
+    {"word": "いぬ", "reading": "inu", "meaning": "dog", "kanji": "犬", "part_of_speech": "noun"},
+    {"word": "ねこ", "reading": "neko", "meaning": "cat", "kanji": "猫", "part_of_speech": "noun"},
+    {"word": "とり", "reading": "tori", "meaning": "bird", "kanji": "鳥", "part_of_speech": "noun"},
+    {"word": "パソコン", "reading": "pasokon", "meaning": "personal computer", "kanji": null, "part_of_speech": "noun"},
+    {"word": "でんわ", "reading": "denwa", "meaning": "telephone", "kanji": "電話", "part_of_speech": "noun"},
+    {"word": "とけい", "reading": "tokei", "meaning": "clock, watch", "kanji": "時計", "part_of_speech": "noun"},
+    {"word": "かばん", "reading": "kaban", "meaning": "bag", "kanji": null, "part_of_speech": "noun"},
+    {"word": "かさ", "reading": "kasa", "meaning": "umbrella", "kanji": "傘", "part_of_speech": "noun"},
+    {"word": "かぎ", "reading": "kagi", "meaning": "key", "kanji": null, "part_of_speech": "noun"},
+    {"word": "なに", "reading": "nani", "meaning": "what", "kanji": "何", "part_of_speech": "noun"},
+    {"word": "だれ", "reading": "dare", "meaning": "who", "kanji": null, "part_of_speech": "noun"}
+  ],
+
+  "vocabulary_countries": [],
+
+  "grammar": [
+    {
+      "title": "N₁ に N₂ が あります / います (Existence at a Location)",
+      "structure": "Place に N が あります / います",
+      "jlpt_level": 5,
+      "explanation": "あります is used for inanimate objects (things, plants) and います is used for animate beings (people, animals). The particle に marks the location where something or someone exists. The thing or person that exists is marked with が. This pattern states 'there is/are X at Y'.",
+      "example_sentences": "① 部屋に テーブルが あります。\n  (Heya ni teeburu ga arimasu.)\n  — There is a table in the room.\n② 公園に 犬が います。\n  (Kouen ni inu ga imasu.)\n  — There is a dog in the park.\n③ 教室に 学生が います。\n  (Kyoushitsu ni gakusei ga imasu.)\n  — There are students in the classroom."
+    },
+    {
+      "title": "N₁ は N₂ に あります / います (Location of a Known Item)",
+      "structure": "N は Place に あります / います",
+      "jlpt_level": 5,
+      "explanation": "When the thing or person is already known (the topic), は is used instead of が, and the pattern tells us WHERE that thing/person is located. The location is still marked with に. This is the reverse pattern: 'X is at Y' (as opposed to 'at Y there is X').",
+      "example_sentences": "④ 銀行は 駅の 近くに あります。\n  (Ginkou wa eki no chikaku ni arimasu.)\n  — The bank is near the station.\n⑤ 猫は テーブルの 下に います。\n  (Neko wa teeburu no shita ni imasu.)\n  — The cat is under the table."
+    },
+    {
+      "title": "Position Words (位置詞)",
+      "structure": "N の 上/下/前/後ろ/右/左/中/外/隣/近く/間",
+      "jlpt_level": 5,
+      "explanation": "Position words indicate the relative location of one thing to another. They are connected to the reference noun with の. Common position words include: 上 (above), 下 (below), 前 (in front), 後ろ (behind), 右 (right), 左 (left), 中 (inside), 外 (outside), 隣 (next to), 近く (near), 間 (between). For 間, use N₁ と N₂ の 間.",
+      "example_sentences": "⑥ 本は 机の 上に あります。\n  (Hon wa tsukue no ue ni arimasu.)\n  — The book is on the desk.\n⑦ 郵便局は 銀行と スーパーの 間に あります。\n  (Yuubinkyoku wa ginkou to suupaa no aida ni arimasu.)\n  — The post office is between the bank and the supermarket."
+    },
+    {
+      "title": "N₁ や N₂ (And, Among Others)",
+      "structure": "N₁ や N₂ (など)",
+      "jlpt_level": 5,
+      "explanation": "や is used to list examples from a larger group, meaning 'things like N₁ and N₂ (and others)'. Unlike と, which lists all items exhaustively, や implies there are more items not mentioned. It is often followed by など (etc.) to reinforce this meaning.",
+      "example_sentences": "⑧ 箱の 中に 鍵や 時計が あります。\n  (Hako no naka ni kagi ya tokei ga arimasu.)\n  — In the box there are things like keys and watches.\n⑨ 部屋に 机や いすや 本棚が あります。\n  (Heya ni tsukue ya isu ya hondana ga arimasu.)\n  — In the room there are things like a desk, chairs, and a bookshelf."
+    }
+  ],
+
+  "conversation": {
+    "title": "Where is the post office?",
+    "title_ja": "郵便局は どこですか",
+    "lines": [
+      {"speaker": "Morita", "japanese": "すみません。この 近くに 郵便局が ありますか。", "romaji": "Sumimasen. Kono chikaku ni yuubinkyoku ga arimasu ka.", "english": "Excuse me. Is there a post office near here?"},
+      {"speaker": "Ito", "japanese": "はい、ありますよ。あの コンビニの 隣に あります。", "romaji": "Hai, arimasu yo. Ano konbini no tonari ni arimasu.", "english": "Yes, there is. It's next to that convenience store."},
+      {"speaker": "Morita", "japanese": "そうですか。銀行も ありますか。", "romaji": "Sou desu ka. Ginkou mo arimasu ka.", "english": "I see. Is there also a bank?"},
+      {"speaker": "Ito", "japanese": "ええ。銀行は 駅の 前に あります。", "romaji": "Ee. Ginkou wa eki no mae ni arimasu.", "english": "Yes. The bank is in front of the station."},
+      {"speaker": "Morita", "japanese": "ありがとうございます。あの、スーパーは どこに ありますか。", "romaji": "Arigatou gozaimasu. Ano, suupaa wa doko ni arimasu ka.", "english": "Thank you. Um, where is the supermarket?"},
+      {"speaker": "Ito", "japanese": "スーパーは 公園の 近くに あります。公園の 右に あります。", "romaji": "Suupaa wa kouen no chikaku ni arimasu. Kouen no migi ni arimasu.", "english": "The supermarket is near the park. It's to the right of the park."},
+      {"speaker": "Morita", "japanese": "公園に 何が ありますか。", "romaji": "Kouen ni nani ga arimasu ka.", "english": "What is in the park?"},
+      {"speaker": "Ito", "japanese": "木や 花が あります。猫や 鳥も いますよ。", "romaji": "Ki ya hana ga arimasu. Neko ya tori mo imasu yo.", "english": "There are things like trees and flowers. There are also cats and birds."},
+      {"speaker": "Morita", "japanese": "いいですね。どうも ありがとうございます。", "romaji": "Ii desu ne. Doumo arigatou gozaimasu.", "english": "That sounds nice. Thank you very much."}
+    ]
+  }
+}

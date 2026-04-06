@@ -21,8 +21,8 @@ import sys
 import io
 from pathlib import Path
 
-# Windows: UTF-8-Ausgabe erzwingen
-if sys.platform == "win32":
+# Windows: UTF-8-Ausgabe erzwingen (nicht unter pytest, da es Capture stoert)
+if sys.platform == "win32" and "pytest" not in sys.modules:
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
     sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
 

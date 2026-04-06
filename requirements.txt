@@ -20,3 +20,4 @@ pyjwt>=2.4.0
 postfinancecheckout
 google-cloud-storage
 google-cloud-texttospeech>=2.14.0
+pydantic>=2.11

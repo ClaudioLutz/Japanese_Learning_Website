@@ -1,0 +1,85 @@
+{
+  "source": "Minna No Nihongo Beginner II",
+  "lesson_number": 34,
+  "title": "Lesson 34 – Following Instructions & Sequences",
+  "title_ja": "第34課",
+  "jlpt_level": 4,
+  "description": "Anweisungen und Reihenfolgen: ～とおりに (gemäss, wie), V-た/V-dict + とおりに, ～あとで (nachdem), ～てから (nachdem man etw. getan hat).",
+
+  "vocabulary": [
+    {"word": "まぜます", "reading": "mazemasu", "meaning": "to mix", "kanji": "混ぜます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "きります", "reading": "kirimasu", "meaning": "to cut", "kanji": "切ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "やきます", "reading": "yakimasu", "meaning": "to bake, to grill, to fry", "kanji": "焼きます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "にます", "reading": "nimasu", "meaning": "to boil, to simmer, to stew", "kanji": "煮ます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "むきます", "reading": "mukimasu", "meaning": "to peel", "kanji": "むきます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "くわえます", "reading": "kuwaemasu", "meaning": "to add", "kanji": "加えます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "あたためます", "reading": "atatamemasu", "meaning": "to heat, to warm up", "kanji": "温めます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "ひやします", "reading": "hiyashimasu", "meaning": "to cool, to chill", "kanji": "冷やします", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "つつみます", "reading": "tsutsumimasu", "meaning": "to wrap", "kanji": "包みます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "おります", "reading": "orimasu", "meaning": "to fold", "kanji": "折ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "くみたてます", "reading": "kumitatemasu", "meaning": "to assemble, to put together", "kanji": "組み立てます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "かわかします", "reading": "kawakashimasu", "meaning": "to dry", "kanji": "乾かします", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "そめます", "reading": "somemasu", "meaning": "to dye", "kanji": "染めます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "せつめいします", "reading": "setsumei shimasu", "meaning": "to explain", "kanji": "説明します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "りょうり", "reading": "ryouri", "meaning": "cooking, dish", "kanji": "料理", "part_of_speech": "noun"},
+    {"word": "ざいりょう", "reading": "zairyou", "meaning": "ingredient, material", "kanji": "材料", "part_of_speech": "noun"},
+    {"word": "レシピ", "reading": "reshipi", "meaning": "recipe", "kanji": null, "part_of_speech": "noun"},
+    {"word": "せつめいしょ", "reading": "setsumeisho", "meaning": "instruction manual", "kanji": "説明書", "part_of_speech": "noun"},
+    {"word": "てじゅん", "reading": "tejun", "meaning": "procedure, steps", "kanji": "手順", "part_of_speech": "noun"},
+    {"word": "おりがみ", "reading": "origami", "meaning": "origami, paper folding", "kanji": "折り紙", "part_of_speech": "noun"},
+    {"word": "しょうゆ", "reading": "shouyu", "meaning": "soy sauce", "kanji": "醤油", "part_of_speech": "noun"},
+    {"word": "さとう", "reading": "satou", "meaning": "sugar", "kanji": "砂糖", "part_of_speech": "noun"},
+    {"word": "しお", "reading": "shio", "meaning": "salt", "kanji": "塩", "part_of_speech": "noun"},
+    {"word": "あぶら", "reading": "abura", "meaning": "oil", "kanji": "油", "part_of_speech": "noun"},
+    {"word": "なべ", "reading": "nabe", "meaning": "pot, pan", "kanji": "鍋", "part_of_speech": "noun"},
+    {"word": "フライパン", "reading": "furaipan", "meaning": "frying pan", "kanji": null, "part_of_speech": "noun"},
+    {"word": "かんたん", "reading": "kantan", "meaning": "simple, easy", "kanji": "簡単", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "ふくざつ", "reading": "fukuzatsu", "meaning": "complicated, complex", "kanji": "複雑", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "まず", "reading": "mazu", "meaning": "first of all", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "つぎに", "reading": "tsugi ni", "meaning": "next, then", "kanji": "次に", "part_of_speech": "adverb"},
+    {"word": "さいごに", "reading": "saigo ni", "meaning": "finally, lastly", "kanji": "最後に", "part_of_speech": "adverb"}
+  ],
+
+  "vocabulary_countries": [],
+
+  "grammar": [
+    {
+      "title": "V た form / V dictionary form + とおりに (According to, as ~ did/does)",
+      "structure": "V た + とおりに / V dict. + とおりに / N の + とおりに",
+      "jlpt_level": 4,
+      "explanation": "～とおりに means 'in the same way as ~', 'according to ~', or 'just as ~'. When used with the た form, it means 'do as someone did'. With the dictionary form, it means 'do as someone does/will do'. With a noun + の, it means 'according to the noun' (e.g., 説明書のとおりに — according to the manual). This pattern is essential for giving and following instructions.",
+      "example_sentences": "① 先生が 言ったとおりに してください。\n  (Sensei ga itta toori ni shite kudasai.)\n  — Please do as the teacher said.\n② レシピの とおりに 作りました。\n  (Reshipi no toori ni tsukurimashita.)\n  — I made it according to the recipe.\n③ 私が するとおりに してください。\n  (Watashi ga suru toori ni shite kudasai.)\n  — Please do it the way I do."
+    },
+    {
+      "title": "V た form + あとで (After doing ~)",
+      "structure": "V た form + あとで / N の + あとで",
+      "jlpt_level": 4,
+      "explanation": "～たあとで means 'after doing ~'. It indicates that one action is completed before another begins. With nouns, use N のあとで. The key difference from ～てから is that ～たあとで simply states the time sequence, while ～てから emphasizes that the first action is a prerequisite for the second.",
+      "example_sentences": "④ ごはんを 食べたあとで、薬を 飲みます。\n  (Gohan o tabeta ato de, kusuri o nomimasu.)\n  — After eating, I take medicine.\n⑤ 仕事のあとで、買い物に 行きます。\n  (Shigoto no ato de, kaimono ni ikimasu.)\n  — After work, I'll go shopping."
+    },
+    {
+      "title": "V て form + から (After doing ~, since doing ~)",
+      "structure": "V て form + から、～",
+      "jlpt_level": 4,
+      "explanation": "～てから means 'after doing ~' with emphasis on the sequence — the first action must be completed before moving to the second. It implies that the first action is a necessary step or prerequisite. Compared to ～たあとで, ～てから more strongly suggests a deliberate order of actions.",
+      "example_sentences": "⑥ 手を 洗ってから、料理を 始めましょう。\n  (Te o aratte kara, ryouri o hajimemashou.)\n  — Let's wash our hands and then start cooking.\n⑦ 野菜を 切ってから、鍋に 入れてください。\n  (Yasai o kitte kara, nabe ni irete kudasai.)\n  — After cutting the vegetables, please put them in the pot.\n⑧ 説明書を 読んでから、組み立ててください。\n  (Setsumeisho o yonde kara, kumitatete kudasai.)\n  — Please read the instructions before assembling it."
+    }
+  ],
+
+  "conversation": {
+    "title": "How to make Japanese curry",
+    "title_ja": "カレーの 作り方",
+    "lines": [
+      {"speaker": "Maria", "japanese": "日本の カレーを 作りたいんですが、教えてもらえますか。", "romaji": "Nihon no karee o tsukuritain desu ga, oshiete moraemasu ka.", "english": "I'd like to make Japanese curry. Could you teach me?"},
+      {"speaker": "Sato", "japanese": "いいですよ。まず、材料を 準備してから 始めましょう。", "romaji": "Ii desu yo. Mazu, zairyou o junbi shite kara hajimemashou.", "english": "Sure. First, let's prepare the ingredients and then start."},
+      {"speaker": "Maria", "japanese": "はい。じゃがいもと にんじんは どう しますか。", "romaji": "Hai. Jagaimo to ninjin wa dou shimasu ka.", "english": "Okay. What do I do with the potatoes and carrots?"},
+      {"speaker": "Sato", "japanese": "皮を むいたあとで、小さく 切ってください。", "romaji": "Kawa o muita ato de, chiisaku kitte kudasai.", "english": "After peeling them, please cut them into small pieces."},
+      {"speaker": "Maria", "japanese": "わかりました。次は？", "romaji": "Wakarimashita. Tsugi wa?", "english": "Got it. What's next?"},
+      {"speaker": "Sato", "japanese": "私が するとおりに してください。フライパンに 油を 入れて、肉を 焼きます。", "romaji": "Watashi ga suru toori ni shite kudasai. Furaipan ni abura o irete, niku o yakimasu.", "english": "Please do as I do. Put oil in the frying pan and cook the meat."},
+      {"speaker": "Maria", "japanese": "肉を 焼いてから、野菜も 入れますか。", "romaji": "Niku o yaite kara, yasai mo iremasu ka.", "english": "After cooking the meat, do I add the vegetables too?"},
+      {"speaker": "Sato", "japanese": "はい、そのとおりです。全部 入れたあとで、水を 加えて 煮てください。", "romaji": "Hai, sono toori desu. Zenbu ireta ato de, mizu o kuwaete nite kudasai.", "english": "Yes, exactly. After putting everything in, add water and let it simmer."},
+      {"speaker": "Maria", "japanese": "レシピのとおりに やってみます。ありがとうございます。", "romaji": "Reshipi no toori ni yatte mimasu. Arigatou gozaimasu.", "english": "I'll try doing it according to the recipe. Thank you."},
+      {"speaker": "Sato", "japanese": "簡単ですから、大丈夫ですよ。", "romaji": "Kantan desu kara, daijoubu desu yo.", "english": "It's simple, so you'll be fine."}
+    ]
+  }
+}

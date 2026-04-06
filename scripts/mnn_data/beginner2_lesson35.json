@@ -1,0 +1,83 @@
+{
+  "source": "Minna No Nihongo Beginner II",
+  "lesson_number": 35,
+  "title": "Lesson 35 – Conditional ば-Form",
+  "title_ja": "第35課",
+  "jlpt_level": 4,
+  "description": "Konditionalform ば: V-ば (wenn), Adj-ければ, N-なら, ～ば～ほど (je mehr... desto mehr).",
+
+  "vocabulary": [
+    {"word": "さきます", "reading": "sakimasu", "meaning": "to bloom", "kanji": "咲きます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "かちます", "reading": "kachimasu", "meaning": "to win", "kanji": "勝ちます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "まけます", "reading": "makemasu", "meaning": "to lose (a game)", "kanji": "負けます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "やくにたちます", "reading": "yaku ni tachimasu", "meaning": "to be useful", "kanji": "役に立ちます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "すすみます", "reading": "susumimasu", "meaning": "to progress, to advance", "kanji": "進みます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "なれます", "reading": "naremasu", "meaning": "to get used to", "kanji": "慣れます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "あつめます", "reading": "atsumemasu", "meaning": "to collect, to gather", "kanji": "集めます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "しんじます", "reading": "shinjimasu", "meaning": "to believe", "kanji": "信じます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "つとめます", "reading": "tsutomemasu", "meaning": "to work (for a company)", "kanji": "勤めます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "さんかします", "reading": "sanka shimasu", "meaning": "to participate", "kanji": "参加します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "せいこうします", "reading": "seikou shimasu", "meaning": "to succeed", "kanji": "成功します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "れんしゅうします", "reading": "renshuu shimasu", "meaning": "to practice", "kanji": "練習します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "どりょくします", "reading": "doryoku shimasu", "meaning": "to make an effort", "kanji": "努力します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "じょうけん", "reading": "jouken", "meaning": "condition, requirement", "kanji": "条件", "part_of_speech": "noun"},
+    {"word": "けいけん", "reading": "keiken", "meaning": "experience", "kanji": "経験", "part_of_speech": "noun"},
+    {"word": "チャンス", "reading": "chansu", "meaning": "chance, opportunity", "kanji": null, "part_of_speech": "noun"},
+    {"word": "じしん", "reading": "jishin", "meaning": "confidence", "kanji": "自信", "part_of_speech": "noun"},
+    {"word": "のうりょく", "reading": "nouryoku", "meaning": "ability, capability", "kanji": "能力", "part_of_speech": "noun"},
+    {"word": "きょうみ", "reading": "kyoumi", "meaning": "interest", "kanji": "興味", "part_of_speech": "noun"},
+    {"word": "せいせき", "reading": "seiseki", "meaning": "grades, results", "kanji": "成績", "part_of_speech": "noun"},
+    {"word": "たいかい", "reading": "taikai", "meaning": "tournament, competition", "kanji": "大会", "part_of_speech": "noun"},
+    {"word": "しあい", "reading": "shiai", "meaning": "match, game", "kanji": "試合", "part_of_speech": "noun"},
+    {"word": "さくら", "reading": "sakura", "meaning": "cherry blossom", "kanji": "桜", "part_of_speech": "noun"},
+    {"word": "きせつ", "reading": "kisetsu", "meaning": "season", "kanji": "季節", "part_of_speech": "noun"},
+    {"word": "あたたかい", "reading": "atatakai", "meaning": "warm", "kanji": "暖かい", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "すずしい", "reading": "suzushii", "meaning": "cool (weather)", "kanji": "涼しい", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "ふかい", "reading": "fukai", "meaning": "deep", "kanji": "深い", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "べんり", "reading": "benri", "meaning": "convenient, handy", "kanji": "便利", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "ゆうめい", "reading": "yuumei", "meaning": "famous", "kanji": "有名", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "もっと", "reading": "motto", "meaning": "more", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "どんどん", "reading": "dondon", "meaning": "steadily, rapidly", "kanji": null, "part_of_speech": "adverb"}
+  ],
+
+  "vocabulary_countries": [],
+
+  "grammar": [
+    {
+      "title": "V ば-Form (Conditional: If ~)",
+      "structure": "Group 1: -い → -えば / Group 2: -ます → -れば / Group 3: すれば・くれば",
+      "jlpt_level": 4,
+      "explanation": "The ば conditional form expresses a general condition: 'if ~'. For Group 1 verbs, the final -i sound changes to -e and ば is added (e.g., 書きます → 書けば). For Group 2 verbs, ます is replaced by れば (e.g., 食べます → 食べれば). Group 3: します → すれば, きます → くれば. The ば form is used for hypothetical conditions and general truths. It is NOT used when the main clause expresses the speaker's will, request, or invitation.",
+      "example_sentences": "① 春に なれば、桜が 咲きます。\n  (Haru ni nareba, sakura ga sakimasu.)\n  — If spring comes, the cherry blossoms will bloom.\n② ボタンを 押せば、ドアが 開きます。\n  (Botan o oseba, doa ga akimasu.)\n  — If you press the button, the door opens.\n③ 毎日 練習すれば、上手に なります。\n  (Mainichi renshuu sureba, jouzu ni narimasu.)\n  — If you practice every day, you will get better."
+    },
+    {
+      "title": "い-Adj ければ / な-Adj なら / N なら (If it is ~)",
+      "structure": "い-Adj: -い → -ければ / な-Adj + なら(ば) / N + なら(ば)",
+      "jlpt_level": 4,
+      "explanation": "The ば conditional extends to adjectives and nouns. For い-adjectives, replace い with ければ (e.g., 安い → 安ければ). The negative is ～くなければ. For な-adjectives and nouns, use なら or ならば. なら is particularly common in conversation and can also mean 'if it's about ~' or 'speaking of ~'.",
+      "example_sentences": "④ 安ければ、買います。\n  (Yasukereba, kaimasu.)\n  — If it's cheap, I'll buy it.\n⑤ 暇なら、手伝ってください。\n  (Hima nara, tetsudatte kudasai.)\n  — If you're free, please help me.\n⑥ 日本語の 勉強なら、この 本が いいですよ。\n  (Nihongo no benkyou nara, kono hon ga ii desu yo.)\n  — If it's about studying Japanese, this book is good."
+    },
+    {
+      "title": "～ば ～ほど (The more ~ the more ~)",
+      "structure": "V ば form + V dict. + ほど / い-Adj ければ い-Adj + ほど",
+      "jlpt_level": 4,
+      "explanation": "This pattern means 'the more ~ the more ~'. The same verb or adjective appears twice: first in the ば form, then in the dictionary or plain form followed by ほど. It expresses that as one condition increases, the result also increases proportionally.",
+      "example_sentences": "⑦ 練習すれば するほど、上手に なります。\n  (Renshuu sureba suru hodo, jouzu ni narimasu.)\n  — The more you practice, the better you get.\n⑧ 日本語は 勉強すれば するほど、おもしろく なります。\n  (Nihongo wa benkyou sureba suru hodo, omoshiroku narimasu.)\n  — The more you study Japanese, the more interesting it becomes.\n⑨ 安ければ 安いほど いいです。\n  (Yasukereba yasui hodo ii desu.)\n  — The cheaper, the better."
+    }
+  ],
+
+  "conversation": {
+    "title": "If you could live anywhere",
+    "title_ja": "どこにでも 住めれば",
+    "lines": [
+      {"speaker": "Watanabe", "japanese": "もし どこにでも 住めれば、どこに 住みたいですか。", "romaji": "Moshi doko ni demo sumereba, doko ni sumitai desu ka.", "english": "If you could live anywhere, where would you want to live?"},
+      {"speaker": "Chen", "japanese": "暖かければ、どこでも いいです。沖縄なら 住みたいですね。", "romaji": "Atatakakereba, doko demo ii desu. Okinawa nara sumitai desu ne.", "english": "If it's warm, anywhere is fine. If it's Okinawa, I'd like to live there."},
+      {"speaker": "Watanabe", "japanese": "沖縄は いいですね。私は 京都に 興味が あります。", "romaji": "Okinawa wa ii desu ne. Watashi wa Kyouto ni kyoumi ga arimasu.", "english": "Okinawa is nice. I'm interested in Kyoto."},
+      {"speaker": "Chen", "japanese": "京都なら、春が いちばん きれいでしょうね。", "romaji": "Kyouto nara, haru ga ichiban kirei deshou ne.", "english": "If it's Kyoto, spring would be the most beautiful, right?"},
+      {"speaker": "Watanabe", "japanese": "ええ、春に なれば 桜が 咲きますからね。", "romaji": "Ee, haru ni nareba sakura ga sakimasu kara ne.", "english": "Yes, if spring comes the cherry blossoms bloom."},
+      {"speaker": "Chen", "japanese": "日本に 長く いれば いるほど、日本の 季節が 好きに なりますね。", "romaji": "Nihon ni nagaku ireba iru hodo, Nihon no kisetsu ga suki ni narimasu ne.", "english": "The longer you stay in Japan, the more you like the seasons."},
+      {"speaker": "Watanabe", "japanese": "そうですね。経験が 深ければ 深いほど、おもしろいですよ。", "romaji": "Sou desu ne. Keiken ga fukakereba fukai hodo, omoshiroi desu yo.", "english": "That's true. The deeper the experience, the more interesting it is."},
+      {"speaker": "Chen", "japanese": "もっと 日本語が 上手に なれば、もっと 楽しめますね。努力します。", "romaji": "Motto Nihongo ga jouzu ni nareba, motto tanoshimemasu ne. Doryoku shimasu.", "english": "If my Japanese gets better, I can enjoy it more. I'll make an effort."}
+    ]
+  }
+}

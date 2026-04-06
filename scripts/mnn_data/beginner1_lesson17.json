@@ -1,0 +1,88 @@
+{
+  "source": "Minna No Nihongo Beginner I",
+  "lesson_number": 17,
+  "title": "Lesson 17 – ない-Form: Prohibitions and Obligations",
+  "title_ja": "第17課",
+  "jlpt_level": 5,
+  "description": "ない形の作り方、～ないでください（禁止）、～なければなりません（義務）、～なくてもいいです（不必要）を学ぶ。",
+
+  "vocabulary": [
+    {"word": "おぼえます", "reading": "oboemasu", "meaning": "to memorize, to remember", "kanji": "覚えます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "わすれます", "reading": "wasuremasu", "meaning": "to forget", "kanji": "忘れます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "なくします", "reading": "nakushimasu", "meaning": "to lose (something)", "kanji": null, "part_of_speech": "verb", "verb_group": 1},
+    {"word": "はらいます", "reading": "haraimasu", "meaning": "to pay", "kanji": "払います", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "かえします", "reading": "kaeshimasu", "meaning": "to return (something)", "kanji": "返します", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "でかけます", "reading": "dekakemasu", "meaning": "to go out", "kanji": "出かけます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "ぬぎます", "reading": "nugimasu", "meaning": "to take off (clothes/shoes)", "kanji": "脱ぎます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "もっていきます", "reading": "motte ikimasu", "meaning": "to take (something)", "kanji": "持って行きます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "もってきます", "reading": "motte kimasu", "meaning": "to bring (something)", "kanji": "持って来ます", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "しんぱいします", "reading": "shinpai shimasu", "meaning": "to worry", "kanji": "心配します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "ざんぎょうします", "reading": "zangyou shimasu", "meaning": "to work overtime", "kanji": "残業します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "しゅっちょうします", "reading": "shucchou shimasu", "meaning": "to go on a business trip", "kanji": "出張します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "のみます", "reading": "nomimasu", "meaning": "to drink", "kanji": "飲みます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "さわります", "reading": "sawarimasu", "meaning": "to touch", "kanji": "触ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "たいせつ", "reading": "taisetsu", "meaning": "important, precious", "kanji": "大切", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "あぶない", "reading": "abunai", "meaning": "dangerous", "kanji": "危ない", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "ひつよう", "reading": "hitsuyou", "meaning": "necessary", "kanji": "必要", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "むり", "reading": "muri", "meaning": "impossible, unreasonable", "kanji": "無理", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "レポート", "reading": "repooto", "meaning": "report", "kanji": null, "part_of_speech": "noun"},
+    {"word": "けいたいでんわ", "reading": "keitai denwa", "meaning": "mobile phone", "kanji": "携帯電話", "part_of_speech": "noun"},
+    {"word": "パスポート", "reading": "pasupooto", "meaning": "passport", "kanji": null, "part_of_speech": "noun"},
+    {"word": "ビザ", "reading": "biza", "meaning": "visa", "kanji": null, "part_of_speech": "noun"},
+    {"word": "くうこう", "reading": "kuukou", "meaning": "airport", "kanji": "空港", "part_of_speech": "noun"},
+    {"word": "きそく", "reading": "kisoku", "meaning": "rule, regulation", "kanji": "規則", "part_of_speech": "noun"},
+    {"word": "しけん", "reading": "shiken", "meaning": "examination, test", "kanji": "試験", "part_of_speech": "noun"},
+    {"word": "かならず", "reading": "kanarazu", "meaning": "without fail, certainly", "kanji": "必ず", "part_of_speech": "adverb"},
+    {"word": "まだ", "reading": "mada", "meaning": "not yet", "kanji": null, "part_of_speech": "adverb"},
+    {"word": "くつ", "reading": "kutsu", "meaning": "shoes", "kanji": "靴", "part_of_speech": "noun"},
+    {"word": "ここでは", "reading": "koko de wa", "meaning": "here (contrastive)", "kanji": null, "part_of_speech": "expression"},
+    {"word": "だめです", "reading": "dame desu", "meaning": "no good, not allowed", "kanji": "駄目", "part_of_speech": "expression"}
+  ],
+
+  "vocabulary_countries": [],
+
+  "grammar": [
+    {
+      "title": "ない-Form (Negative Plain Form of Verbs)",
+      "structure": "Group I: ～い→～あない / Group II: ～ます→～ない / Group III: します→しない, きます→こない",
+      "jlpt_level": 5,
+      "explanation": "The ない-form is the informal negative form of verbs. For Group I verbs, change the final う-row sound to the あ-row sound and add ない (e.g., かく→かかない). Exception: verbs ending in う become わない (e.g., あう→あわない). For Group II verbs, drop ます and add ない (e.g., たべます→たべない). Group III irregular: します→しない, きます→こない. The ない-form is also used as the base for several important grammar patterns.",
+      "example_sentences": "① かきます → かかない (kakanai — do not write)\n② たべます → たべない (tabenai — do not eat)\n③ します → しない (shinai — do not do)\n④ きます → こない (konai — do not come)"
+    },
+    {
+      "title": "～ないでください (Please Don't ~)",
+      "structure": "V-ない + でください",
+      "jlpt_level": 5,
+      "explanation": "This pattern is used to ask or tell someone not to do something. It is the negative counterpart of ～てください. Replace ます-form with ない-form and add でください. It is used for polite requests, rules, and instructions.",
+      "example_sentences": "⑤ ここで しゃしんを とらないでください。\n  (Koko de shashin o toranai de kudasai.)\n  — Please don't take photos here.\n⑥ この きかいに さわらないでください。\n  (Kono kikai ni sawaranai de kudasai.)\n  — Please don't touch this machine."
+    },
+    {
+      "title": "～なければなりません (Must Do ~)",
+      "structure": "V-ない(い→ければなりません)",
+      "jlpt_level": 5,
+      "explanation": "This pattern expresses obligation or necessity — something that must be done. Take the ない-form, remove the final い and add ければなりません. The literal meaning is 'if one does not do it, it won't do.' In conversation, the shorter form ～なきゃ is often used.",
+      "example_sentences": "⑦ まいにち くすりを のまなければなりません。\n  (Mainichi kusuri o nomanakereба narimasen.)\n  — I must take medicine every day.\n⑧ あした しけんが ありますから、べんきょうしなければなりません。\n  (Ashita shiken ga arimasu kara, benkyou shinakereba narimasen.)\n  — Because there's a test tomorrow, I must study."
+    },
+    {
+      "title": "～なくてもいいです (Don't Have To ~)",
+      "structure": "V-ない(い→くてもいいです)",
+      "jlpt_level": 5,
+      "explanation": "This pattern expresses that something is not necessary — there is no obligation to do it. Take the ない-form, remove the final い and add くてもいいです. It is the opposite of ～なければなりません. It literally means 'even if one doesn't do it, it's fine.'",
+      "example_sentences": "⑨ あしたは やすみですから、はやく おきなくてもいいです。\n  (Ashita wa yasumi desu kara, hayaku okinakute mo ii desu.)\n  — Tomorrow is a day off, so I don't have to wake up early.\n⑩ この レポートは あした だしてください。きょうは ださなくてもいいです。\n  (Kono repooto wa ashita dashite kudasai. Kyou wa dasanakute mo ii desu.)\n  — Please submit this report tomorrow. You don't have to submit it today."
+    }
+  ],
+
+  "conversation": {
+    "title": "Rules at the Office",
+    "title_ja": "かいしゃの きそく",
+    "lines": [
+      {"speaker": "Yamamoto", "japanese": "すみません。この へやで たべても いいですか。", "romaji": "Sumimasen. Kono heya de tabete mo ii desu ka.", "english": "Excuse me. May I eat in this room?"},
+      {"speaker": "Suzuki", "japanese": "いいえ、ここでは たべないでください。", "romaji": "Iie, koko de wa tabenai de kudasai.", "english": "No, please don't eat here."},
+      {"speaker": "Yamamoto", "japanese": "わかりました。それから、レポートは いつまでに ださなければなりませんか。", "romaji": "Wakarimashita. Sorekara, repooto wa itsu made ni dasanakereba narimasen ka.", "english": "I understand. Also, by when must I submit the report?"},
+      {"speaker": "Suzuki", "japanese": "きんようびまでに だしてください。", "romaji": "Kinyoubi made ni dashite kudasai.", "english": "Please submit it by Friday."},
+      {"speaker": "Yamamoto", "japanese": "にほんごで かかなければなりませんか。", "romaji": "Nihongo de kakanakereba narimasen ka.", "english": "Must I write it in Japanese?"},
+      {"speaker": "Suzuki", "japanese": "いいえ、にほんごで かかなくてもいいですよ。えいごでも だいじょうぶです。", "romaji": "Iie, nihongo de kakanakute mo ii desu yo. Eigo de mo daijoubu desu.", "english": "No, you don't have to write it in Japanese. English is also fine."},
+      {"speaker": "Yamamoto", "japanese": "ああ、よかったです。ありがとうございます。", "romaji": "Aa, yokatta desu. Arigatou gozaimasu.", "english": "Oh, that's a relief. Thank you."}
+    ]
+  }
+}

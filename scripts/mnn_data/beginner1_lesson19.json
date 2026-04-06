@@ -1,0 +1,91 @@
+{
+  "source": "Minna No Nihongo Beginner I",
+  "lesson_number": 19,
+  "title": "Lesson 19 – た-Form: Experiences and Listing Actions",
+  "title_ja": "第19課",
+  "jlpt_level": 5,
+  "description": "た形の作り方、～たことがあります（経験）、～たり～たりします（動作の並列）、～たあとで（〜した後で）を学ぶ。",
+
+  "vocabulary": [
+    {"word": "のぼります", "reading": "noborimasu", "meaning": "to climb", "kanji": "登ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "とまります", "reading": "tomarimasu", "meaning": "to stay (at a hotel)", "kanji": "泊まります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "そうじします", "reading": "souji shimasu", "meaning": "to clean", "kanji": "掃除します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "せんたくします", "reading": "sentaku shimasu", "meaning": "to do laundry", "kanji": "洗濯します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "なります", "reading": "narimasu", "meaning": "to become", "kanji": null, "part_of_speech": "verb", "verb_group": 1},
+    {"word": "つかれます", "reading": "tsukaremasu", "meaning": "to get tired", "kanji": "疲れます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "さんぽします", "reading": "sanpo shimasu", "meaning": "to take a walk", "kanji": "散歩します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "おもいだします", "reading": "omoidashimasu", "meaning": "to recall, to remember", "kanji": "思い出します", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "けいけんします", "reading": "keiken shimasu", "meaning": "to experience", "kanji": "経験します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "かちます", "reading": "kachimasu", "meaning": "to win", "kanji": "勝ちます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "まけます", "reading": "makemasu", "meaning": "to lose (a game)", "kanji": "負けます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "やきます", "reading": "yakimasu", "meaning": "to grill, to bake", "kanji": "焼きます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "おんせん", "reading": "onsen", "meaning": "hot spring", "kanji": "温泉", "part_of_speech": "noun"},
+    {"word": "やま", "reading": "yama", "meaning": "mountain", "kanji": "山", "part_of_speech": "noun"},
+    {"word": "かわ", "reading": "kawa", "meaning": "river", "kanji": "川", "part_of_speech": "noun"},
+    {"word": "うみ", "reading": "umi", "meaning": "sea, ocean", "kanji": "海", "part_of_speech": "noun"},
+    {"word": "おまつり", "reading": "omatsuri", "meaning": "festival", "kanji": "お祭り", "part_of_speech": "noun"},
+    {"word": "しあい", "reading": "shiai", "meaning": "match, game", "kanji": "試合", "part_of_speech": "noun"},
+    {"word": "すもう", "reading": "sumou", "meaning": "sumo wrestling", "kanji": "相撲", "part_of_speech": "noun"},
+    {"word": "おかし", "reading": "okashi", "meaning": "sweets, snacks", "kanji": "お菓子", "part_of_speech": "noun"},
+    {"word": "りょかん", "reading": "ryokan", "meaning": "Japanese-style inn", "kanji": "旅館", "part_of_speech": "noun"},
+    {"word": "けしき", "reading": "keshiki", "meaning": "scenery, view", "kanji": "景色", "part_of_speech": "noun"},
+    {"word": "にもつ", "reading": "nimotsu", "meaning": "luggage, baggage", "kanji": "荷物", "part_of_speech": "noun"},
+    {"word": "きもの", "reading": "kimono", "meaning": "kimono", "kanji": "着物", "part_of_speech": "noun"},
+    {"word": "ふじさん", "reading": "Fujisan", "meaning": "Mt. Fuji", "kanji": "富士山", "part_of_speech": "noun"},
+    {"word": "いちど", "reading": "ichido", "meaning": "once, one time", "kanji": "一度", "part_of_speech": "adverb"},
+    {"word": "にど", "reading": "nido", "meaning": "twice, two times", "kanji": "二度", "part_of_speech": "adverb"},
+    {"word": "なんども", "reading": "nando mo", "meaning": "many times", "kanji": "何度も", "part_of_speech": "adverb"},
+    {"word": "すばらしい", "reading": "subarashii", "meaning": "wonderful, splendid", "kanji": "素晴らしい", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "いろいろ", "reading": "iroiro", "meaning": "various", "kanji": "色々", "part_of_speech": "na-adjective", "adjective_type": "na"}
+  ],
+
+  "vocabulary_countries": [],
+
+  "grammar": [
+    {
+      "title": "た-Form (Past Plain Form of Verbs)",
+      "structure": "Same conjugation rules as て-form, but with た/だ instead of て/で",
+      "jlpt_level": 5,
+      "explanation": "The た-form is the informal past tense of verbs. It follows the same conjugation rules as the て-form: where て appears, replace it with た, and where で appears, replace it with だ. For example: かいて→かいた, のんで→のんだ, たべて→たべた, して→した, きて→きた. The た-form is used in casual speech as the past tense and serves as the base for several grammar patterns.",
+      "example_sentences": "① かきます → かいた (kaita — wrote)\n② のみます → のんだ (nonda — drank)\n③ たべます → たべた (tabeta — ate)\n④ します → した (shita — did)\n⑤ きます → きた (kita — came)"
+    },
+    {
+      "title": "～たことがあります (Have Experienced ~)",
+      "structure": "V-た + ことがあります",
+      "jlpt_level": 5,
+      "explanation": "This pattern is used to talk about past experiences — things one has or has not done at some point in life. The た-form of a verb followed by ことがあります means 'I have done ~.' The negative ことがありません means 'I have never done ~.' This pattern focuses on whether an experience has occurred, not when.",
+      "example_sentences": "⑥ にほんの おんせんに はいったことが あります。\n  (Nihon no onsen ni haitta koto ga arimasu.)\n  — I have been to a Japanese hot spring.\n⑦ すもうを みたことが ありません。\n  (Sumou o mita koto ga arimasen.)\n  — I have never seen sumo."
+    },
+    {
+      "title": "～たり～たりします (Doing Things Like ~ and ~)",
+      "structure": "V₁-た + り、V₂-た + り します",
+      "jlpt_level": 5,
+      "explanation": "This pattern lists representative actions from a larger set of activities. It implies that the speaker did these things among others. The た-form of each verb is followed by り, and the sentence ends with します (or しました for past tense). It is commonly used to describe how one spends time.",
+      "example_sentences": "⑧ やすみの ひは ほんを よんだり、さんぽしたりします。\n  (Yasumi no hi wa hon o yondari, sanpo shitari shimasu.)\n  — On days off, I do things like read books and take walks.\n⑨ きのう うちで そうじしたり、せんたくしたりしました。\n  (Kinou uchi de souji shitari, sentaku shitari shimashita.)\n  — Yesterday at home, I did things like cleaning and laundry."
+    },
+    {
+      "title": "～たあとで (After Doing ~)",
+      "structure": "V-た + あとで、〜",
+      "jlpt_level": 5,
+      "explanation": "The た-form of a verb followed by あとで means 'after doing ~.' The action described after あとで takes place after the completion of the action before あとで. This is similar to Vてから but is slightly more neutral in emphasis. With nouns, use Nのあとで.",
+      "example_sentences": "⑩ ひるごはんを たべたあとで、コーヒーを のみます。\n  (Hirugohan o tabeta ato de, koohii o nomimasu.)\n  — After eating lunch, I drink coffee.\n⑪ しごとが おわったあとで、ともだちと のみに いきました。\n  (Shigoto ga owatta ato de, tomodachi to nomi ni ikimashita.)\n  — After work was over, I went drinking with friends."
+    }
+  ],
+
+  "conversation": {
+    "title": "Travel Experiences",
+    "title_ja": "りょこうの けいけん",
+    "lines": [
+      {"speaker": "Nakamura", "japanese": "ガルシアさんは ふじさんに のぼったことが ありますか。", "romaji": "Garushia-san wa Fujisan ni nobotta koto ga arimasu ka.", "english": "Have you ever climbed Mt. Fuji, Mr. Garcia?"},
+      {"speaker": "Garcia", "japanese": "はい、いちど あります。きょねんの なつ のぼりました。", "romaji": "Hai, ichido arimasu. Kyonen no natsu noborimashita.", "english": "Yes, once. I climbed it last summer."},
+      {"speaker": "Nakamura", "japanese": "いいですね。どうでしたか。", "romaji": "Ii desu ne. Dou deshita ka.", "english": "That's great. How was it?"},
+      {"speaker": "Garcia", "japanese": "とても つかれましたが、けしきが すばらしかったです。", "romaji": "Totemo tsukaremashita ga, keshiki ga subarashikatta desu.", "english": "I was very tired, but the scenery was wonderful."},
+      {"speaker": "Nakamura", "japanese": "のぼったあとで、なにを しましたか。", "romaji": "Nobotta ato de, nani o shimashita ka.", "english": "What did you do after climbing?"},
+      {"speaker": "Garcia", "japanese": "ちかくの りょかんに とまって、おんせんに はいりました。", "romaji": "Chikaku no ryokan ni tomatte, onsen ni hairimashita.", "english": "I stayed at a nearby ryokan and went to a hot spring."},
+      {"speaker": "Nakamura", "japanese": "やすみの ひは ほかに なにを しますか。", "romaji": "Yasumi no hi wa hoka ni nani o shimasu ka.", "english": "What else do you do on your days off?"},
+      {"speaker": "Garcia", "japanese": "しゃしんを とったり、にほんりょうりを つくったりします。", "romaji": "Shashin o tottari, nihon ryouri o tsukuttari shimasu.", "english": "I do things like take photos and cook Japanese food."},
+      {"speaker": "Nakamura", "japanese": "たのしそうですね。こんどの やすみに いっしょに どこかに いきませんか。", "romaji": "Tanoshisou desu ne. Kondo no yasumi ni issho ni dokoka ni ikimasen ka.", "english": "That sounds fun. Shall we go somewhere together next holiday?"},
+      {"speaker": "Garcia", "japanese": "いいですね。ぜひ いきましょう。", "romaji": "Ii desu ne. Zehi ikimashou.", "english": "That sounds great. Let's definitely go."}
+    ]
+  }
+}

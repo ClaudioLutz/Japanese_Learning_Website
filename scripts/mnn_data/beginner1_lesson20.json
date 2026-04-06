@@ -1,0 +1,91 @@
+{
+  "source": "Minna No Nihongo Beginner I",
+  "lesson_number": 20,
+  "title": "Lesson 20 – Plain Form (普通形) and Casual Speech",
+  "title_ja": "第20課",
+  "jlpt_level": 5,
+  "description": "普通形（動詞・い形容詞・な形容詞・名詞の全パターン）、丁寧体と普通体の違い、カジュアルな会話スタイルを学ぶ。",
+
+  "vocabulary": [
+    {"word": "いります", "reading": "irimasu", "meaning": "to need, to require", "kanji": "要ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "しらべます", "reading": "shirabemasu", "meaning": "to investigate, to look up", "kanji": "調べます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "なおります", "reading": "naorimasu", "meaning": "to be repaired, to recover", "kanji": "治ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "しります", "reading": "shirimasu", "meaning": "to get to know", "kanji": "知ります", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "すみます", "reading": "sumimasu", "meaning": "to live, to reside", "kanji": "住みます", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "けっこんします", "reading": "kekkon shimasu", "meaning": "to get married", "kanji": "結婚します", "part_of_speech": "verb", "verb_group": 3},
+    {"word": "かいます", "reading": "kaimasu", "meaning": "to keep (a pet)", "kanji": "飼います", "part_of_speech": "verb", "verb_group": 1},
+    {"word": "つとめます", "reading": "tsutomemasu", "meaning": "to be employed at", "kanji": "勤めます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "やります", "reading": "yarimasu", "meaning": "to do (casual)", "kanji": null, "part_of_speech": "verb", "verb_group": 1},
+    {"word": "こたえます", "reading": "kotaemasu", "meaning": "to answer", "kanji": "答えます", "part_of_speech": "verb", "verb_group": 2},
+    {"word": "ていねい", "reading": "teinei", "meaning": "polite, courteous", "kanji": "丁寧", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "しんせつ", "reading": "shinsetsu", "meaning": "kind, helpful", "kanji": "親切", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "ふべん", "reading": "fuben", "meaning": "inconvenient", "kanji": "不便", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "すてき", "reading": "suteki", "meaning": "lovely, nice", "kanji": "素敵", "part_of_speech": "na-adjective", "adjective_type": "na"},
+    {"word": "さびしい", "reading": "sabishii", "meaning": "lonely", "kanji": "寂しい", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "うれしい", "reading": "ureshii", "meaning": "happy, glad", "kanji": "嬉しい", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "かなしい", "reading": "kanashii", "meaning": "sad", "kanji": "悲しい", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "こわい", "reading": "kowai", "meaning": "scary, afraid", "kanji": "怖い", "part_of_speech": "i-adjective", "adjective_type": "i"},
+    {"word": "ふつう", "reading": "futsuu", "meaning": "ordinary, normal", "kanji": "普通", "part_of_speech": "noun"},
+    {"word": "ともだち", "reading": "tomodachi", "meaning": "friend", "kanji": "友達", "part_of_speech": "noun"},
+    {"word": "かれ", "reading": "kare", "meaning": "he, boyfriend", "kanji": "彼", "part_of_speech": "noun"},
+    {"word": "かのじょ", "reading": "kanojo", "meaning": "she, girlfriend", "kanji": "彼女", "part_of_speech": "noun"},
+    {"word": "おっと", "reading": "otto", "meaning": "husband (one's own)", "kanji": "夫", "part_of_speech": "noun"},
+    {"word": "つま", "reading": "tsuma", "meaning": "wife (one's own)", "kanji": "妻", "part_of_speech": "noun"},
+    {"word": "ごしゅじん", "reading": "goshujin", "meaning": "husband (someone else's)", "kanji": "ご主人", "part_of_speech": "noun"},
+    {"word": "おくさん", "reading": "okusan", "meaning": "wife (someone else's)", "kanji": "奥さん", "part_of_speech": "noun"},
+    {"word": "かぞく", "reading": "kazoku", "meaning": "family", "kanji": "家族", "part_of_speech": "noun"},
+    {"word": "ペット", "reading": "petto", "meaning": "pet", "kanji": null, "part_of_speech": "noun"},
+    {"word": "ほんとうに", "reading": "hontou ni", "meaning": "really, truly", "kanji": "本当に", "part_of_speech": "adverb"},
+    {"word": "たぶん", "reading": "tabun", "meaning": "probably, maybe", "kanji": "多分", "part_of_speech": "adverb"}
+  ],
+
+  "vocabulary_countries": [],
+
+  "grammar": [
+    {
+      "title": "普通形 — 動詞 (Plain Form of Verbs)",
+      "structure": "肯定: V-dict / V-た　否定: V-ない / V-なかった",
+      "jlpt_level": 5,
+      "explanation": "The plain form (普通形) of verbs has four variations: present affirmative (dictionary form: いく), present negative (ない-form: いかない), past affirmative (た-form: いった), and past negative (なかった-form: いかなかった). The past negative is formed by replacing ない with なかった. These forms are used in casual conversation, before certain grammar patterns, and in subordinate clauses.",
+      "example_sentences": "① いきます → いく / いかない / いった / いかなかった\n  (ikimasu → iku / ikanai / itta / ikanakatta)\n② たべます → たべる / たべない / たべた / たべなかった\n  (tabemasu → taberu / tabenai / tabeta / tabenakatta)\n③ します → する / しない / した / しなかった\n  (shimasu → suru / shinai / shita / shinakatta)"
+    },
+    {
+      "title": "普通形 — い形容詞 (Plain Form of い-adjectives)",
+      "structure": "肯定: ～い / ～かった　否定: ～くない / ～くなかった",
+      "jlpt_level": 5,
+      "explanation": "い-adjectives have their own plain form conjugation. Present affirmative: たかい. Present negative: replace い with くない (たかくない). Past affirmative: replace い with かった (たかかった). Past negative: replace い with くなかった (たかくなかった). Note: いい (good) is irregular: いい / よくない / よかった / よくなかった.",
+      "example_sentences": "④ たかい → たかい / たかくない / たかかった / たかくなかった\n  (takai → takai / takakunai / takakatta / takakunakatta)\n⑤ いい → いい / よくない / よかった / よくなかった\n  (ii → ii / yokunai / yokatta / yokunakatta)"
+    },
+    {
+      "title": "普通形 — な形容詞・名詞 (Plain Form of な-adj and Nouns)",
+      "structure": "肯定: ～だ / ～だった　否定: ～じゃない / ～じゃなかった",
+      "jlpt_level": 5,
+      "explanation": "な-adjectives and nouns share the same plain form pattern. Present affirmative: stem + だ (しずかだ, がくせいだ). Present negative: stem + じゃない (しずかじゃない). Past affirmative: stem + だった (しずかだった). Past negative: stem + じゃなかった (しずかじゃなかった). In formal writing, では is used instead of じゃ.",
+      "example_sentences": "⑥ しずか → しずかだ / しずかじゃない / しずかだった / しずかじゃなかった\n  (shizuka → shizuka da / shizuka ja nai / shizuka datta / shizuka ja nakatta)\n⑦ がくせい → がくせいだ / がくせいじゃない / がくせいだった / がくせいじゃなかった\n  (gakusei → gakusei da / gakusei ja nai / gakusei datta / gakusei ja nakatta)"
+    },
+    {
+      "title": "丁寧体と普通体 (Polite vs. Plain Speech Styles)",
+      "structure": "丁寧体: ～です/～ます　普通体: plain forms",
+      "jlpt_level": 5,
+      "explanation": "Japanese has two main speech styles: polite style (丁寧体) using です/ます endings, and plain style (普通体) using plain forms. Polite style is used with strangers, superiors, and in formal situations. Plain style is used with close friends, family, and people of the same age or younger. In plain style, the question particle か is often dropped and rising intonation alone marks a question. The particle ね and よ are commonly added in casual speech.",
+      "example_sentences": "⑧ 丁寧: あした しけんが ありますか。\n  普通: あした しけんが ある？\n  (Ashita shiken ga aru?)\n  — Is there a test tomorrow?\n⑨ 丁寧: この えいがは おもしろかったです。\n  普通: この えいが、おもしろかった。\n  (Kono eiga, omoshirokatta.)\n  — This movie was interesting.\n⑩ 丁寧: やまださんは げんきですか。\n  普通: やまだ、げんき？\n  (Yamada, genki?)\n  — Are you well, Yamada?"
+    }
+  ],
+
+  "conversation": {
+    "title": "Casual Chat Between Friends",
+    "title_ja": "ともだちとの おしゃべり",
+    "lines": [
+      {"speaker": "Yuki", "japanese": "ねえ、けんた。きのう なにしてた？", "romaji": "Nee, Kenta. Kinou nani shiteta?", "english": "Hey, Kenta. What were you doing yesterday?"},
+      {"speaker": "Kenta", "japanese": "うちで えいがを みたり、ゲームを したりしてた。ゆきは？", "romaji": "Uchi de eiga o mitari, geemu o shitari shiteta. Yuki wa?", "english": "I was doing things like watching movies and playing games at home. How about you, Yuki?"},
+      {"speaker": "Yuki", "japanese": "わたしは ともだちと かいものに いった。あたらしい かばんを かったよ。", "romaji": "Watashi wa tomodachi to kaimono ni itta. Atarashii kaban o katta yo.", "english": "I went shopping with a friend. I bought a new bag."},
+      {"speaker": "Kenta", "japanese": "いいね。あ、そうだ。らいしゅう たなかの たんじょうびパーティーが あるの しってる？", "romaji": "Ii ne. A, sou da. Raishuu Tanaka no tanjoubi paatii ga aru no shitteru?", "english": "Nice. Oh, right. Do you know there's a birthday party for Tanaka next week?"},
+      {"speaker": "Yuki", "japanese": "うん、しってる。どようびでしょ？", "romaji": "Un, shitteru. Doyoubi desho?", "english": "Yeah, I know. It's Saturday, right?"},
+      {"speaker": "Kenta", "japanese": "そう。プレゼント、もう かった？", "romaji": "Sou. Purezento, mou katta?", "english": "Right. Have you already bought a present?"},
+      {"speaker": "Yuki", "japanese": "まだ かってない。なにが いいかな。", "romaji": "Mada katte nai. Nani ga ii ka na.", "english": "I haven't bought one yet. I wonder what would be good."},
+      {"speaker": "Kenta", "japanese": "たなかは ほんが すきだから、ほんは どう？", "romaji": "Tanaka wa hon ga suki da kara, hon wa dou?", "english": "Tanaka likes books, so how about a book?"},
+      {"speaker": "Yuki", "japanese": "ああ、それ いいね。じゃ、あした いっしょに かいに いかない？", "romaji": "Aa, sore ii ne. Ja, ashita issho ni kai ni ikanai?", "english": "Oh, that's a good idea. Then, shall we go buy one together tomorrow?"},
+      {"speaker": "Kenta", "japanese": "いいよ。じゃ、あした ３じに えきで。", "romaji": "Ii yo. Ja, ashita sanji ni eki de.", "english": "Sure. Then, tomorrow at 3 at the station."}
+    ]
+  }
+}
