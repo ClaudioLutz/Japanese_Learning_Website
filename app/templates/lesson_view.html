@@ -618,6 +618,9 @@
                                                                                 <p><strong>JLPT Level:</strong> N{{ content_data.jlpt_level }}</p>
                                                                                 {% endif %}
                                                                             {% elif content.content_type == 'vocabulary' %}
+                                                                                {% if content_data.reading %}
+                                                                                <p><strong>Reading:</strong> {{ content_data.reading }}</p>
+                                                                                {% endif %}
                                                                                 <p><strong>Meaning:</strong> {{ content_data.meaning }}</p>
                                                                                 {% if content_data.example_sentence_japanese %}
                                                                                 <p><strong>Example:</strong><br>{{ content_data.example_sentence_japanese }}</p>
@@ -628,7 +631,7 @@
                                                                             {% elif content.content_type == 'grammar' %}
                                                                                 <p><strong>Explanation:</strong><br>{{ content_data.explanation }}</p>
                                                                                 {% if content_data.example_sentences %}
-                                                                                <p><strong>Examples:</strong><br>{{ content_data.example_sentences }}</p>
+                                                                                <p><strong>Examples:</strong><br>{{ content_data.example_sentences | nl2br }}</p>
                                                                                 {% endif %}
                                                                             {% endif %}
                                                                         </div>
@@ -643,7 +646,7 @@
                                                     {% if content.content_type == 'text' %}
                                                     <div class="text-content-container">
                                                         <div class="rich-text-content">
-                                                            {{ content.content_text | safe }}
+                                                            {{ content.content_text | nl2br }}
                                                         </div>
                                                     </div>
                                                     {% else %}
@@ -656,12 +659,12 @@
                                                         {% elif content.content_type == 'audio' %}
                                                             {% if content.file_path %}
                                                             <audio controls class="w-100">
-                                                                <source src="{{ url_for('static', filename='uploads/' + content.file_path) }}" type="audio/mpeg">
+                                                                <source src="{{ url_for('static', filename='uploads/' + content.file_path) }}?v={{ content.id }}" type="audio/mpeg">
                                                                 Dein Browser unterstützt kein Audio.
                                                             </audio>
                                                             {% elif content.media_url %}
                                                             <audio controls class="w-100">
-                                                                <source src="{{ content.media_url }}" type="audio/mpeg">
+                                                                <source src="{{ content.media_url }}?v={{ content.id }}" type="audio/mpeg">
                                                                 Dein Browser unterstützt kein Audio.
                                                             </audio>
                                                             {% endif %}

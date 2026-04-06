@@ -120,7 +120,7 @@ class AILessonContentGenerator:
             if not self.gemini_api_key:
                 raise ValueError("GEMINI_API_KEY environment variable not set.")
             self.gemini_client = genai.Client(api_key=self.gemini_api_key)
-            self.gemini_model_name = 'gemini-3-flash'
+            self.gemini_model_name = 'gemini-3-flash-preview'
         except Exception as e:
             current_app.logger.error(f"Failed to initialize Gemini client: {e}")
             self.gemini_client = None
@@ -685,15 +685,9 @@ class AILessonContentGenerator:
               ],
               "explanation": "General explanation for the set of pairs with full romanization."
             }},
-            {{
-              "question_type": "fill_in_the_blank",
-              "question_text": "Sentence with a ___ to fill in.",
-              "correct_answer": "The word that fills the blank",
-              "explanation": "Explanation of the correct answer and grammar."
-            }}
           ]
         }}
-        
+
         ROMANIZATION REQUIREMENTS:
         - ALWAYS include romanized pronunciation for ALL Japanese characters
         - In QUESTION TEXT: Use romanization strategically - include it for context words but NOT for the term being tested

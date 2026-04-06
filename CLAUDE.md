@@ -129,6 +129,13 @@ Decorators: `@login_required`, `@admin_required`, `@premium_required`.
 - **Cloud Run**: `japanese-learning-app` (Port 8080, 2 Gunicorn Workers)
 - **Deployment**: `./deploy-to-cloud-run.sh` oder `./deploy-to-cloud-run.ps1`
 
+## Arbeitsweise — Commit & Push
+- **Jede Änderung sofort committen und pushen** — nach jeder abgeschlossenen Teilaufgabe wird ein Git-Commit erstellt und auf den Remote gepusht. Das verbessert die Nachvollziehbarkeit und schützt vor Datenverlust.
+- Commit-Messages auf Deutsch, aussagekräftig.
+
+## Quiz-System — Einschränkungen
+- **Kein `fill_in_the_blank`** — Dieser Fragetyp wird nicht mehr verwendet. Nur `multiple_choice`, `true_false` und `matching` sind erlaubt.
+
 ## Bekannte offene Baustellen
 1. **Payrexx-Zahlung integriert, noch nicht produktiv** — PayrexxPaymentService erstellt, Payrexx-Konto und API-Keys noch einzurichten
 2. **GCP-Projekt-Status unklar** — Muss geprüft werden ob das Projekt noch existiert

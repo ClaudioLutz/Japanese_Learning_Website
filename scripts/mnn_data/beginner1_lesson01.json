@@ -1,0 +1,109 @@
+{
+  "source": "Minna No Nihongo Beginner I",
+  "lesson_number": 1,
+  "title": "Lesson 1 – Self-Introduction",
+  "title_ja": "第1課",
+  "jlpt_level": 5,
+  "description": "Selbstvorstellung: Grundlegende Partikel は, じゃありません, か, も, の und Höflichkeitsform です.",
+
+  "vocabulary": [
+    {"word": "わたし", "reading": "watashi", "meaning": "I", "kanji": null},
+    {"word": "わたしたち", "reading": "watashitachi", "meaning": "we", "kanji": null},
+    {"word": "あなた", "reading": "anata", "meaning": "you", "kanji": null},
+    {"word": "あのひと", "reading": "ano hito", "meaning": "that person, he, she", "kanji": "あの人"},
+    {"word": "あのかた", "reading": "ano kata", "meaning": "that person (polite)", "kanji": "あの方"},
+    {"word": "みなさん", "reading": "minasan", "meaning": "ladies and gentlemen, all of you", "kanji": "皆さん"},
+    {"word": "せんせい", "reading": "sensei", "meaning": "teacher, instructor", "kanji": "先生"},
+    {"word": "きょうし", "reading": "kyoushi", "meaning": "teacher, instructor", "kanji": "教師"},
+    {"word": "がくせい", "reading": "gakusei", "meaning": "student", "kanji": "学生"},
+    {"word": "かいしゃいん", "reading": "kaishain", "meaning": "company employee", "kanji": "会社員"},
+    {"word": "しゃいん", "reading": "shain", "meaning": "employee of ~", "kanji": "社員"},
+    {"word": "ぎんこういん", "reading": "ginkouin", "meaning": "bank employee", "kanji": "銀行員"},
+    {"word": "いしゃ", "reading": "isha", "meaning": "medical doctor", "kanji": "医者"},
+    {"word": "けんきゅうしゃ", "reading": "kenkyuusha", "meaning": "researcher, scholar", "kanji": "研究者"},
+    {"word": "エンジニア", "reading": "enjinia", "meaning": "engineer", "kanji": null},
+    {"word": "だいがく", "reading": "daigaku", "meaning": "university", "kanji": "大学"},
+    {"word": "びょういん", "reading": "byouin", "meaning": "hospital", "kanji": "病院"},
+    {"word": "でんき", "reading": "denki", "meaning": "electricity, light", "kanji": "電気"},
+    {"word": "だれ", "reading": "dare", "meaning": "who", "kanji": null},
+    {"word": "どなた", "reading": "donata", "meaning": "who (polite)", "kanji": null},
+    {"word": "さい", "reading": "sai", "meaning": "~ years old", "kanji": "一歳"},
+    {"word": "なんさい", "reading": "nansai", "meaning": "how old", "kanji": "何歳"},
+    {"word": "はい", "reading": "hai", "meaning": "yes", "kanji": null},
+    {"word": "いいえ", "reading": "iie", "meaning": "no", "kanji": null},
+    {"word": "しつれいですが", "reading": "shitsurei desu ga", "meaning": "Excuse me, but", "kanji": "失礼ですが"},
+    {"word": "おなまえは？", "reading": "o-namae wa?", "meaning": "May I have your name?", "kanji": "お名前は？"},
+    {"word": "はじめまして", "reading": "hajimemashite", "meaning": "How do you do?", "kanji": "初めまして"},
+    {"word": "どうぞよろしく", "reading": "douzo yoroshiku", "meaning": "Pleased to meet you", "kanji": null}
+  ],
+
+  "vocabulary_countries": [
+    {"word": "アメリカ", "reading": "Amerika", "meaning": "U.S.A."},
+    {"word": "イギリス", "reading": "Igirisu", "meaning": "U.K."},
+    {"word": "インド", "reading": "Indo", "meaning": "India"},
+    {"word": "インドネシア", "reading": "Indoneshia", "meaning": "Indonesia"},
+    {"word": "韓国", "reading": "Kankoku", "meaning": "South Korea"},
+    {"word": "タイ", "reading": "Tai", "meaning": "Thailand"},
+    {"word": "中国", "reading": "Chuugoku", "meaning": "China"},
+    {"word": "ドイツ", "reading": "Doitsu", "meaning": "Germany"},
+    {"word": "日本", "reading": "Nihon", "meaning": "Japan"},
+    {"word": "フランス", "reading": "Furansu", "meaning": "France"},
+    {"word": "ブラジル", "reading": "Burajiru", "meaning": "Brazil"}
+  ],
+
+  "grammar": [
+    {
+      "title": "N は N です (Topic Particle は + です)",
+      "structure": "N₁ は N₂ です",
+      "jlpt_level": 5,
+      "explanation": "The particle は indicates that the word before it is the topic of the sentence. You select a noun you want to talk about, add は to show that it is the topic and give a statement about the topic. Nouns used with です work as predicates. です indicates judgement or assertion, and also conveys that the speaker is being polite towards the listener.",
+      "example_sentences": "① わたしは マイク・ミラーです。\n  (Watashi wa Maiku Miraa desu.)\n  — I am Mike Miller.\n② わたしは エンジニアです。\n  (Watashi wa enjinia desu.)\n  — I am an engineer."
+    },
+    {
+      "title": "N じゃ ありません (Negative Form)",
+      "structure": "N₁ は N₂ じゃ ありません",
+      "jlpt_level": 5,
+      "explanation": "じゃ ありません is the negative form of です. It is the form used in daily conversation. For a formal speech or writing, では ありません is used instead.",
+      "example_sentences": "③ サントスさんは 学生じゃ ありません。\n  (Santosu-san wa gakusei ja arimasen.)\n  — Mr. Santos is not a student."
+    },
+    {
+      "title": "S か (Question Particle か)",
+      "structure": "S か",
+      "jlpt_level": 5,
+      "explanation": "The particle か is used to express the speaker's doubt, question, uncertainty, etc. A question is formed by simply adding か to the end of the sentence. A question ends with a rising intonation. When か is added to the end of a sentence, it becomes a question. The word order does not change. Questions asking whether a statement is correct or not: answer with はい or いいえ. Questions with interrogatives: an interrogative replaces the part of the sentence that covers what you want to ask about, and か is added at the end.",
+      "example_sentences": "④ ミラーさんは アメリカ人ですか。\n  (Miraa-san wa Amerikajin desu ka.)\n  — Is Mr. Miller an American?\n…はい、アメリカ人です。(Hai, Amerikajin desu.) — Yes, he is.\n⑤ ミラーさんは 先生ですか。\n  (Miraa-san wa sensei desu ka.)\n  — Is Mr. Miller a teacher?\n…いいえ、先生じゃ ありません。(Iie, sensei ja arimasen.) — No, he is not.\n⑥ あの方は どなたですか。\n  (Ano kata wa donata desu ka.)\n  — Who is that man?\n…[あの方は] ミラーさんです。(Miraa-san desu.) — That's Mr. Miller."
+    },
+    {
+      "title": "N も (Particle も — also, too)",
+      "structure": "N も",
+      "jlpt_level": 5,
+      "explanation": "も is added after a topic instead of は when the statement about the topic is the same as the previous topic. It means 'also' or 'too'.",
+      "example_sentences": "⑦ ミラーさんは 会社員です。\n  (Miraa-san wa kaishain desu.)\n  — Mr. Miller is a company employee.\nグプタさんも 会社員です。\n  (Guputa-san mo kaishain desu.)\n  — Mr. Gupta is also a company employee."
+    },
+    {
+      "title": "N の N (Possessive/Modifier の)",
+      "structure": "N₁ の N₂",
+      "jlpt_level": 5,
+      "explanation": "の is used to connect two nouns. N₁ modifies N₂. In Lesson 1, N₁ is an organization or some kind of group to which N₂ belongs.",
+      "example_sentences": "⑧ ミラーさんは IMCの 社員です。\n  (Miraa-san wa IMC no shain desu.)\n  — Mr. Miller is an IMC employee."
+    },
+    {
+      "title": "〜さん (Honorific Suffix)",
+      "structure": "Name + さん",
+      "jlpt_level": 5,
+      "explanation": "さん is added to the name of the listener or a third person to show the speaker's respect to the person. It should never be used with the speaker's own name. When referring directly to the listener, the word あなた (you) is not commonly used if you know the listener's name. The listener's family name followed by さん is usually used.",
+      "example_sentences": "⑨ あの方は ミラーさんです。\n  (Ano kata wa Miraa-san desu.)\n  — That's Mr. Miller.\n⑩ 鈴木：ミラーさんは 学生ですか。\n  (Suzuki: Miraa-san wa gakusei desu ka.)\n  — Suzuki: Are you a student?\nミラー：いいえ、会社員です。\n  (Miraa: Iie, kaishain desu.)\n  — Miller: No, I'm a company employee."
+    }
+  ],
+
+  "conversation": {
+    "title": "How do you do?",
+    "title_ja": "はじめまして",
+    "lines": [
+      {"speaker": "Sato", "japanese": "おはようございます。", "romaji": "Ohayou gozaimasu.", "english": "Good morning."},
+      {"speaker": "Yamada", "japanese": "おはようございます。佐藤さん、こちらは ミラーさんです。", "romaji": "Ohayou gozaimasu. Satou-san, kochira wa Miraa-san desu.", "english": "Good morning. Ms. Sato, this is Mr. Miller."},
+      {"speaker": "Miller", "japanese": "はじめまして。マイク・ミラーです。アメリカから きました。どうぞ よろしく おねがいします。", "romaji": "Hajimemashite. Maiku Miraa desu. Amerika kara kimashita. Douzo yoroshiku onegaishimasu.", "english": "How do you do? I am Mike Miller. I am from the United States of America. Nice to meet you."},
+      {"speaker": "Sato", "japanese": "佐藤 けいこです。どうぞ よろしく。", "romaji": "Satou Keiko desu. Douzo yoroshiku.", "english": "I am Sato Keiko. Nice to meet you."}
+    ]
+  }
+}
