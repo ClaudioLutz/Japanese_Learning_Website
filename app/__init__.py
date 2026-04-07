@@ -182,4 +182,8 @@ def create_app():
             return ''
         return Markup(escape(text).replace('\n', Markup('<br>')))
 
+    # Flask-Admin fuer Standard-CRUD registrieren
+    from app.admin_views import init_admin
+    init_admin(app, db.session)
+
     return app

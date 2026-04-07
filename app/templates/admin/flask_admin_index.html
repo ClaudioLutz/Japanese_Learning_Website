@@ -1,0 +1,48 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+<div style="padding: 20px;">
+    <h2>JP Admin Dashboard</h2>
+    <p>Willkommen im Admin-Bereich. Verwalten Sie hier Ihre Daten.</p>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-top: 24px;">
+        <div style="background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; text-align: center;">
+            <div style="font-size: 2em; font-weight: 700; color: #4f46e5;">{{ stats.users }}</div>
+            <div style="color: #6b7280; margin-top: 4px;">Benutzer</div>
+        </div>
+        <div style="background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; text-align: center;">
+            <div style="font-size: 2em; font-weight: 700; color: #4f46e5;">{{ stats.lessons }}</div>
+            <div style="color: #6b7280; margin-top: 4px;">Lektionen</div>
+        </div>
+        <div style="background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; text-align: center;">
+            <div style="font-size: 2em; font-weight: 700; color: #4f46e5;">{{ stats.courses }}</div>
+            <div style="color: #6b7280; margin-top: 4px;">Kurse</div>
+        </div>
+        <div style="background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; text-align: center;">
+            <div style="font-size: 2em; font-weight: 700; color: #4f46e5;">{{ stats.vocabulary }}</div>
+            <div style="color: #6b7280; margin-top: 4px;">Vokabeln</div>
+        </div>
+        <div style="background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; text-align: center;">
+            <div style="font-size: 2em; font-weight: 700; color: #4f46e5;">{{ stats.grammar }}</div>
+            <div style="color: #6b7280; margin-top: 4px;">Grammatik</div>
+        </div>
+        <div style="background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; text-align: center;">
+            <div style="font-size: 2em; font-weight: 700; color: #4f46e5;">{{ stats.kanji }}</div>
+            <div style="color: #6b7280; margin-top: 4px;">Kanji</div>
+        </div>
+        <div style="background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; text-align: center;">
+            <div style="font-size: 2em; font-weight: 700; color: #4f46e5;">{{ stats.kana }}</div>
+            <div style="color: #6b7280; margin-top: 4px;">Kana</div>
+        </div>
+        <div style="background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; text-align: center;">
+            <div style="font-size: 2em; font-weight: 700; color: #4f46e5;">{{ stats.categories }}</div>
+            <div style="color: #6b7280; margin-top: 4px;">Kategorien</div>
+        </div>
+    </div>
+
+    <div style="margin-top: 32px; padding: 16px; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px;">
+        <strong>Hinweis:</strong> Fuer den Lektions-Editor und die KI-Content-Genehmigung verwenden Sie bitte den
+        <a href="/admin" style="color: #4f46e5; font-weight: 600;">Custom Admin-Bereich</a>.
+    </div>
+</div>
+{% endblock %}
