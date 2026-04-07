@@ -29,11 +29,14 @@ app/
     payment_service.py          # PostFinance Integration (Legacy)
     mock_payment_service.py     # Dev Payment Mock
     payment_factory.py          # Wählt Provider: payrexx/postfinance/mock
+  admin_views.py         # Flask-Admin ModelViews (CRUD-Panel)
   templates/             # Jinja2 Templates
   static/                # CSS, Bilder, Uploads
 tests/                   # Playwright E2E-Tests
 migrations/              # Alembic DB-Migrationen
 run.py                   # Entry Point
+admin_dashboard.py       # Streamlit Analytics-Dashboard (Port 8501)
+.streamlit/              # Streamlit-Konfiguration
 requirements.txt         # Python Dependencies
 Dockerfile.cloudrun      # Produktions-Container
 docker-compose.yml       # Lokale Entwicklung (Flask + PostgreSQL 15)
@@ -60,6 +63,10 @@ source venv/Scripts/activate   # Windows/Git Bash
 # 3. App starten
 python run.py
 # → http://localhost:5000
+
+# 4. (Optional) Analytics-Dashboard starten
+streamlit run admin_dashboard.py
+# → http://localhost:8501
 ```
 
 ### .env Vorlage (Pflichtfelder)
@@ -110,6 +117,11 @@ source venv/Scripts/activate
 flask db migrate -m "Beschreibung"
 flask db upgrade
 ```
+
+## Admin-Interfaces
+- **Custom Admin** (`/admin`) — Lektions-Editor, KI-Approval, Import/Export (bestehend)
+- **Flask-Admin CRUD-Panel** (`/admin-panel`) — Auto-CRUD für Kana, Kanji, Vokabeln, Grammatik, Kategorien, Kurse, Lektionen, Benutzer
+- **Streamlit Dashboard** (`localhost:8501`) — Analytics: Benutzer, Lektionen, Content, Umsatz
 
 ## Zugriffskontrolle
 Lektion-Zugriff: Guest (kostenlos+allow_guest) → Free (Voraussetzungen prüfen) → Paid (Kauf prüfen) → Premium (Abo prüfen).
