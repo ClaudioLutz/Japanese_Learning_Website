@@ -1,131 +1,156 @@
 {% extends "admin/base_admin.html" %}
 
-{% block title %}Manage Content Approval{% endblock %}
+{% block title %}Content Approval{% endblock %}
+
+{% block page_header %}
+<h2 class="text-2xl font-semibold text-gray-900 dark:text-white">Content Approval</h2>
+{% endblock %}
 
 {% block content %}
-<div class="container-fluid mt-4">
-    <h1 class="mb-4">Content Approval Queue</h1>
-
-    <!-- Pending Kanji -->
-    <div class="card shadow mb-4">
-        <div class="card-header">
-            <h2 class="h5 mb-0">Pending Kanji ({{ pending_kanji|length }})</h2>
-        </div>
-        <div class="card-body">
-            {% if pending_kanji %}
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover">
-                    <thead class="thead-light">
-                        <tr>
-                            <th>Character</th>
-                            <th>Meaning</th>
-                            <th>Onyomi</th>
-                            <th>Kunyomi</th>
-                            <th>JLPT Level</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in pending_kanji %}
-                        <tr id="kanji-{{ item.id }}">
-                            <td>{{ item.character }}</td>
-                            <td>{{ item.meaning }}</td>
-                            <td>{{ item.onyomi }}</td>
-                            <td>{{ item.kunyomi }}</td>
-                            <td>N{{ item.jlpt_level }}</td>
-                            <td>
-                                <button class="btn btn-success btn-sm" onclick="handleApproval('kanji', {{ item.id }}, 'approve')">Approve</button>
-                                <button class="btn btn-danger btn-sm" onclick="handleApproval('kanji', {{ item.id }}, 'reject')">Reject</button>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% else %}
-            <p class="text-muted">No pending Kanji to approve.</p>
-            {% endif %}
-        </div>
+<!-- Stats -->
+<div class="flex gap-4 mb-6">
+    <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-lg px-4 py-2.5 text-sm">
+        <span class="text-gray-500 dark:text-slate-400">Kanji:</span>
+        <span class="font-semibold text-amber-600 dark:text-amber-400">{{ pending_kanji|length }}</span>
     </div>
-
-    <!-- Pending Vocabulary -->
-    <div class="card shadow mb-4">
-        <div class="card-header">
-            <h2 class="h5 mb-0">Pending Vocabulary ({{ pending_vocabulary|length }})</h2>
-        </div>
-        <div class="card-body">
-            {% if pending_vocabulary %}
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover">
-                    <thead class="thead-light">
-                        <tr>
-                            <th>Word</th>
-                            <th>Reading</th>
-                            <th>Meaning</th>
-                            <th>JLPT Level</th>
-                            <th>Example</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in pending_vocabulary %}
-                        <tr id="vocabulary-{{ item.id }}">
-                            <td>{{ item.word }}</td>
-                            <td>{{ item.reading }}</td>
-                            <td>{{ item.meaning }}</td>
-                            <td>N{{ item.jlpt_level }}</td>
-                            <td>{{ item.example_sentence_japanese }}</td>
-                            <td>
-                                <button class="btn btn-success btn-sm" onclick="handleApproval('vocabulary', {{ item.id }}, 'approve')">Approve</button>
-                                <button class="btn btn-danger btn-sm" onclick="handleApproval('vocabulary', {{ item.id }}, 'reject')">Reject</button>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% else %}
-            <p class="text-muted">No pending vocabulary to approve.</p>
-            {% endif %}
-        </div>
+    <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-lg px-4 py-2.5 text-sm">
+        <span class="text-gray-500 dark:text-slate-400">Vocabulary:</span>
+        <span class="font-semibold text-amber-600 dark:text-amber-400">{{ pending_vocabulary|length }}</span>
     </div>
+    <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-lg px-4 py-2.5 text-sm">
+        <span class="text-gray-500 dark:text-slate-400">Grammar:</span>
+        <span class="font-semibold text-amber-600 dark:text-amber-400">{{ pending_grammar|length }}</span>
+    </div>
+</div>
 
-    <!-- Pending Grammar -->
-    <div class="card shadow mb-4">
-        <div class="card-header">
-            <h2 class="h5 mb-0">Pending Grammar ({{ pending_grammar|length }})</h2>
+<!-- Pending Kanji -->
+<div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl mb-6 overflow-hidden">
+    <div class="px-5 py-4 border-b border-gray-200 dark:border-slate-800 flex items-center justify-between">
+        <h3 class="text-base font-semibold text-gray-900 dark:text-white">Pending Kanji <span class="text-gray-400 dark:text-slate-500 font-normal">({{ pending_kanji|length }})</span></h3>
+    </div>
+    <div class="p-5">
+        {% if pending_kanji %}
+        <table class="!shadow-none !rounded-none !m-0">
+            <thead>
+                <tr>
+                    <th class="!bg-gray-50 dark:!bg-slate-800/50">Character</th>
+                    <th class="!bg-gray-50 dark:!bg-slate-800/50">Meaning</th>
+                    <th class="!bg-gray-50 dark:!bg-slate-800/50">Onyomi</th>
+                    <th class="!bg-gray-50 dark:!bg-slate-800/50">Kunyomi</th>
+                    <th class="!bg-gray-50 dark:!bg-slate-800/50">JLPT</th>
+                    <th class="!bg-gray-50 dark:!bg-slate-800/50 !text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in pending_kanji %}
+                <tr id="kanji-{{ item.id }}" class="hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors">
+                    <td class="!text-2xl !font-medium">{{ item.character }}</td>
+                    <td>{{ item.meaning }}</td>
+                    <td class="!text-sm !text-gray-600 dark:!text-slate-400">{{ item.onyomi }}</td>
+                    <td class="!text-sm !text-gray-600 dark:!text-slate-400">{{ item.kunyomi }}</td>
+                    <td><span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300">N{{ item.jlpt_level }}</span></td>
+                    <td class="!text-center">
+                        <div class="flex items-center justify-center gap-2">
+                            <button class="!bg-emerald-600 hover:!bg-emerald-700 !text-white !text-xs !px-3 !py-1.5" onclick="handleApproval('kanji', {{ item.id }}, 'approve')"><i class="fas fa-check mr-1"></i> Approve</button>
+                            <button class="!bg-red-600 hover:!bg-red-700 !text-white !text-xs !px-3 !py-1.5" onclick="handleApproval('kanji', {{ item.id }}, 'reject')"><i class="fas fa-times mr-1"></i> Reject</button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="text-center py-8">
+            <i class="fas fa-check-circle text-3xl text-emerald-300 dark:text-emerald-700 mb-2"></i>
+            <p class="text-gray-400 dark:text-slate-500 text-sm">No pending kanji to approve.</p>
         </div>
-        <div class="card-body">
-            {% if pending_grammar %}
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover">
-                    <thead class="thead-light">
-                        <tr>
-                            <th>Title</th>
-                            <th>Explanation</th>
-                            <th>JLPT Level</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in pending_grammar %}
-                        <tr id="grammar-{{ item.id }}">
-                            <td>{{ item.title }}</td>
-                            <td>{{ item.explanation|truncate(100) }}</td>
-                            <td>N{{ item.jlpt_level }}</td>
-                            <td>
-                                <button class="btn btn-success btn-sm" onclick="handleApproval('grammar', {{ item.id }}, 'approve')">Approve</button>
-                                <button class="btn btn-danger btn-sm" onclick="handleApproval('grammar', {{ item.id }}, 'reject')">Reject</button>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% else %}
-            <p class="text-muted">No pending grammar to approve.</p>
-            {% endif %}
+        {% endif %}
+    </div>
+</div>
+
+<!-- Pending Vocabulary -->
+<div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl mb-6 overflow-hidden">
+    <div class="px-5 py-4 border-b border-gray-200 dark:border-slate-800">
+        <h3 class="text-base font-semibold text-gray-900 dark:text-white">Pending Vocabulary <span class="text-gray-400 dark:text-slate-500 font-normal">({{ pending_vocabulary|length }})</span></h3>
+    </div>
+    <div class="p-5">
+        {% if pending_vocabulary %}
+        <table class="!shadow-none !rounded-none !m-0">
+            <thead>
+                <tr>
+                    <th class="!bg-gray-50 dark:!bg-slate-800/50">Word</th>
+                    <th class="!bg-gray-50 dark:!bg-slate-800/50">Reading</th>
+                    <th class="!bg-gray-50 dark:!bg-slate-800/50">Meaning</th>
+                    <th class="!bg-gray-50 dark:!bg-slate-800/50">JLPT</th>
+                    <th class="!bg-gray-50 dark:!bg-slate-800/50">Example</th>
+                    <th class="!bg-gray-50 dark:!bg-slate-800/50 !text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in pending_vocabulary %}
+                <tr id="vocabulary-{{ item.id }}" class="hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors">
+                    <td class="!text-lg !font-medium">{{ item.word }}</td>
+                    <td class="!text-sm !text-gray-600 dark:!text-slate-400">{{ item.reading }}</td>
+                    <td>{{ item.meaning }}</td>
+                    <td><span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300">N{{ item.jlpt_level }}</span></td>
+                    <td class="!text-sm !text-gray-600 dark:!text-slate-400 !max-w-[200px] !truncate">{{ item.example_sentence_japanese }}</td>
+                    <td class="!text-center">
+                        <div class="flex items-center justify-center gap-2">
+                            <button class="!bg-emerald-600 hover:!bg-emerald-700 !text-white !text-xs !px-3 !py-1.5" onclick="handleApproval('vocabulary', {{ item.id }}, 'approve')"><i class="fas fa-check mr-1"></i> Approve</button>
+                            <button class="!bg-red-600 hover:!bg-red-700 !text-white !text-xs !px-3 !py-1.5" onclick="handleApproval('vocabulary', {{ item.id }}, 'reject')"><i class="fas fa-times mr-1"></i> Reject</button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="text-center py-8">
+            <i class="fas fa-check-circle text-3xl text-emerald-300 dark:text-emerald-700 mb-2"></i>
+            <p class="text-gray-400 dark:text-slate-500 text-sm">No pending vocabulary to approve.</p>
         </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Pending Grammar -->
+<div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl mb-6 overflow-hidden">
+    <div class="px-5 py-4 border-b border-gray-200 dark:border-slate-800">
+        <h3 class="text-base font-semibold text-gray-900 dark:text-white">Pending Grammar <span class="text-gray-400 dark:text-slate-500 font-normal">({{ pending_grammar|length }})</span></h3>
+    </div>
+    <div class="p-5">
+        {% if pending_grammar %}
+        <table class="!shadow-none !rounded-none !m-0">
+            <thead>
+                <tr>
+                    <th class="!bg-gray-50 dark:!bg-slate-800/50">Title</th>
+                    <th class="!bg-gray-50 dark:!bg-slate-800/50">Explanation</th>
+                    <th class="!bg-gray-50 dark:!bg-slate-800/50">JLPT</th>
+                    <th class="!bg-gray-50 dark:!bg-slate-800/50 !text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in pending_grammar %}
+                <tr id="grammar-{{ item.id }}" class="hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors">
+                    <td class="!font-medium">{{ item.title }}</td>
+                    <td class="!text-sm !text-gray-600 dark:!text-slate-400 !max-w-[300px] !truncate">{{ item.explanation|truncate(100) }}</td>
+                    <td><span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300">N{{ item.jlpt_level }}</span></td>
+                    <td class="!text-center">
+                        <div class="flex items-center justify-center gap-2">
+                            <button class="!bg-emerald-600 hover:!bg-emerald-700 !text-white !text-xs !px-3 !py-1.5" onclick="handleApproval('grammar', {{ item.id }}, 'approve')"><i class="fas fa-check mr-1"></i> Approve</button>
+                            <button class="!bg-red-600 hover:!bg-red-700 !text-white !text-xs !px-3 !py-1.5" onclick="handleApproval('grammar', {{ item.id }}, 'reject')"><i class="fas fa-times mr-1"></i> Reject</button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="text-center py-8">
+            <i class="fas fa-check-circle text-3xl text-emerald-300 dark:text-emerald-700 mb-2"></i>
+            <p class="text-gray-400 dark:text-slate-500 text-sm">No pending grammar to approve.</p>
+        </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
@@ -139,29 +164,25 @@ async function handleApproval(contentType, itemId, action) {
     try {
         const response = await fetch(url, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken
-            }
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken }
         });
-
         const result = await response.json();
 
         if (response.ok) {
-            // Remove the row from the table
             const row = document.getElementById(`${contentType}-${itemId}`);
             if (row) {
-                row.remove();
+                row.style.transition = 'opacity 0.3s, transform 0.3s';
+                row.style.opacity = '0';
+                row.style.transform = 'translateX(20px)';
+                setTimeout(() => row.remove(), 300);
             }
-            // Show success message (optional)
-            alert(result.message);
+            showToast(result.message || `${contentType} ${action}d successfully`);
         } else {
-            // Show error message
-            alert(`Error: ${result.error}`);
+            showToast(`Error: ${result.error}`, 'error');
         }
     } catch (error) {
         console.error('Approval action failed:', error);
-        alert('An unexpected error occurred. Please check the console.');
+        showToast('An unexpected error occurred', 'error');
     }
 }
 </script>

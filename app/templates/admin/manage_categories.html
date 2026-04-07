@@ -1,46 +1,34 @@
 {% extends "admin/base_admin.html" %}
 
-{% block title %}Manage Categories - Admin Panel{% endblock %}
+{% block title %}Manage Categories{% endblock %}
+
+{% block page_header %}
+<h2 class="text-2xl font-semibold text-gray-900 dark:text-white">Categories</h2>
+{% endblock %}
+
+{% block page_actions %}
+<button onclick="openModal('addCategoryModal')" class="!bg-primary-600 hover:!bg-primary-700">
+    <i class="fas fa-plus"></i> Add Category
+</button>
+{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2>Manage Lesson Categories</h2>
-                <button type="button" class="btn btn-primary" onclick="openModal('addCategoryModal')">
-                    <i class="fas fa-plus"></i> Add New Category
-                </button>
-            </div>
-
-            <!-- Categories Table -->
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">All Categories</h5>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-striped" id="categoriesTable">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th>Description</th>
-                                    <th>Color</th>
-                                    <th>Lessons Count</th>
-                                    <th>Created</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Content will be loaded via JavaScript -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<!-- Table -->
+<div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl overflow-hidden">
+    <table id="categoriesTable" class="!shadow-none !rounded-none !m-0">
+        <thead>
+            <tr>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50">ID</th>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50">Name</th>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50">Description</th>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50">Color</th>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50">Lessons</th>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50">Created</th>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50 !text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
 </div>
 
 <!-- Add Category Modal -->
@@ -53,29 +41,19 @@
         <form id="addCategoryForm">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="modal-body">
-                <div class="form-group">
-                    <label for="categoryName">Name *</label>
-                    <input type="text" id="categoryName" name="name" class="form-control" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="categoryDescription">Description</label>
-                    <textarea id="categoryDescription" name="description" class="form-control" rows="3"></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label for="categoryColor">Color</label>
-                    <div class="input-group">
-                        <input type="color" id="categoryColor" name="color_code" class="form-control" value="#007bff" style="height: 38px;">
-                        <div class="input-group-append">
-                            <span class="input-group-text" id="colorPreview" style="background-color: #007bff; color: white;">Preview</span>
-                        </div>
-                    </div>
+                <label for="categoryName">Name *</label>
+                <input type="text" id="categoryName" name="name" required>
+                <label for="categoryDescription">Description</label>
+                <textarea id="categoryDescription" name="description" rows="3"></textarea>
+                <label for="categoryColor">Color</label>
+                <div class="flex items-center gap-3 mb-4">
+                    <input type="color" id="categoryColor" name="color_code" value="#4f46e5" class="!w-12 !h-10 !p-0.5 !mb-0 !rounded-lg !cursor-pointer">
+                    <span id="colorPreview" class="px-3 py-1.5 rounded-lg text-white text-sm font-medium" style="background-color: #4f46e5;">Preview</span>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeModal('addCategoryModal')">Cancel</button>
-                <button type="submit" class="btn btn-primary">Add Category</button>
+                <button type="button" class="btn-secondary" onclick="closeModal('addCategoryModal')">Cancel</button>
+                <button type="submit">Add Category</button>
             </div>
         </form>
     </div>
@@ -92,212 +70,165 @@
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <input type="hidden" id="editCategoryId" name="id">
             <div class="modal-body">
-                <div class="form-group">
-                    <label for="editCategoryName">Name *</label>
-                    <input type="text" id="editCategoryName" name="name" class="form-control" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="editCategoryDescription">Description</label>
-                    <textarea id="editCategoryDescription" name="description" class="form-control" rows="3"></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label for="editCategoryColor">Color</label>
-                    <div class="input-group">
-                        <input type="color" id="editCategoryColor" name="color_code" class="form-control" style="height: 38px;">
-                        <div class="input-group-append">
-                            <span class="input-group-text" id="editColorPreview" style="color: white;">Preview</span>
-                        </div>
-                    </div>
+                <label for="editCategoryName">Name *</label>
+                <input type="text" id="editCategoryName" name="name" required>
+                <label for="editCategoryDescription">Description</label>
+                <textarea id="editCategoryDescription" name="description" rows="3"></textarea>
+                <label for="editCategoryColor">Color</label>
+                <div class="flex items-center gap-3 mb-4">
+                    <input type="color" id="editCategoryColor" name="color_code" class="!w-12 !h-10 !p-0.5 !mb-0 !rounded-lg !cursor-pointer">
+                    <span id="editColorPreview" class="px-3 py-1.5 rounded-lg text-white text-sm font-medium">Preview</span>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeModal('editCategoryModal')">Cancel</button>
-                <button type="submit" class="btn btn-primary">Update Category</button>
+                <button type="button" class="btn-secondary" onclick="closeModal('editCategoryModal')">Cancel</button>
+                <button type="submit">Update Category</button>
             </div>
         </form>
     </div>
 </div>
 
 <script>
-// Load categories on page load
 document.addEventListener('DOMContentLoaded', function() {
     loadCategories();
-    
-    // Color picker event listeners
     document.getElementById('categoryColor').addEventListener('change', function() {
         document.getElementById('colorPreview').style.backgroundColor = this.value;
     });
-    
     document.getElementById('editCategoryColor').addEventListener('change', function() {
         document.getElementById('editColorPreview').style.backgroundColor = this.value;
     });
 });
 
-// Load all categories
+function escapeHtml(str) {
+    if (!str) return '';
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
 async function loadCategories() {
     try {
         const response = await fetch('/api/admin/categories');
         const categories = await response.json();
-        
+        const lessonsResponse = await fetch('/api/admin/lessons');
+        const lessons = await lessonsResponse.json();
+
         const tbody = document.querySelector('#categoriesTable tbody');
         tbody.innerHTML = '';
-        
+
+        if (categories.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" class="!text-center !py-8 !text-gray-400 dark:!text-slate-500">No categories yet</td></tr>';
+            return;
+        }
+
         for (const category of categories) {
-            // Get lesson count for this category
-            const lessonsResponse = await fetch('/api/admin/lessons');
-            const lessons = await lessonsResponse.json();
-            const lessonCount = lessons.filter(lesson => lesson.category_id === category.id).length;
-            
+            const lessonCount = lessons.filter(l => l.category_id === category.id).length;
             const row = document.createElement('tr');
+            row.className = 'hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors';
             row.innerHTML = `
-                <td>${category.id}</td>
-                <td>${category.name}</td>
-                <td>${category.description || 'No description'}</td>
-                <td>
-                    <span class="badge" style="background-color: ${category.color_code}; color: white;">
-                        ${category.color_code}
-                    </span>
-                </td>
-                <td>${lessonCount}</td>
-                <td>${new Date(category.created_at).toLocaleDateString()}</td>
-                <td>
-                    <button class="btn btn-sm btn-warning" onclick="editCategory(${category.id})">Edit</button>
-                    <button class="btn btn-sm btn-danger" onclick="deleteCategory(${category.id})" ${lessonCount > 0 ? 'disabled title="Cannot delete category with lessons"' : ''}>Delete</button>
+                <td class="!text-gray-400 dark:!text-slate-500 !text-sm">${category.id}</td>
+                <td class="!font-medium">${escapeHtml(category.name)}</td>
+                <td class="!text-sm !text-gray-600 dark:!text-slate-400">${escapeHtml(category.description) || '<span class="text-gray-300 dark:text-slate-600">--</span>'}</td>
+                <td><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium text-white" style="background-color: ${category.color_code};">${category.color_code}</span></td>
+                <td class="!text-sm">${lessonCount}</td>
+                <td class="!text-sm !text-gray-500 dark:!text-slate-400">${new Date(category.created_at).toLocaleDateString()}</td>
+                <td class="!text-center">
+                    <div class="flex items-center justify-center gap-1">
+                        <button onclick="editCategory(${category.id})" class="!bg-transparent !text-gray-400 hover:!text-primary-600 !shadow-none !p-2 !rounded-lg" title="Edit"><i class="fas fa-pen-to-square"></i></button>
+                        <button onclick="deleteCategory(${category.id})" class="!bg-transparent !text-gray-400 hover:!text-red-600 !shadow-none !p-2 !rounded-lg ${lessonCount > 0 ? '!opacity-30 !cursor-not-allowed' : ''}" title="${lessonCount > 0 ? 'Cannot delete: has lessons' : 'Delete'}" ${lessonCount > 0 ? 'disabled' : ''}><i class="fas fa-trash-can"></i></button>
+                    </div>
                 </td>
             `;
             tbody.appendChild(row);
         }
     } catch (error) {
         console.error('Error loading categories:', error);
-        alert('Error loading categories');
+        showToast('Error loading categories', 'error');
     }
 }
 
-// Add new category
 document.getElementById('addCategoryForm').addEventListener('submit', async function(e) {
     e.preventDefault();
-    
     const formData = new FormData(this);
     const data = Object.fromEntries(formData.entries());
     const csrfToken = data.csrf_token;
     delete data.csrf_token;
-    
-    // Convert empty description to null
     if (data.description === '') data.description = null;
-    
+
     try {
         const response = await fetch('/api/admin/categories/new', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken
-            },
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
             body: JSON.stringify(data)
         });
-        
         if (response.ok) {
-            closeModal('addCategoryModal');
-            this.reset();
-            document.getElementById('colorPreview').style.backgroundColor = '#007bff';
+            closeModal('addCategoryModal'); this.reset();
+            document.getElementById('colorPreview').style.backgroundColor = '#4f46e5';
             loadCategories();
-            alert('Category added successfully!');
+            showToast('Category added successfully');
         } else {
-            const error = await response.json();
-            alert('Error: ' + error.error);
+            const err = await response.json();
+            showToast('Error: ' + err.error, 'error');
         }
     } catch (error) {
-        console.error('Error adding category:', error);
-        alert('Error adding category');
+        showToast('Error adding category', 'error');
     }
 });
 
-// Edit category
 async function editCategory(id) {
     try {
         const response = await fetch(`/api/admin/categories/${id}`);
         const category = await response.json();
-        
         document.getElementById('editCategoryId').value = category.id;
         document.getElementById('editCategoryName').value = category.name;
         document.getElementById('editCategoryDescription').value = category.description || '';
         document.getElementById('editCategoryColor').value = category.color_code;
         document.getElementById('editColorPreview').style.backgroundColor = category.color_code;
-        
         openModal('editCategoryModal');
     } catch (error) {
-        console.error('Error loading category:', error);
-        alert('Error loading category');
+        showToast('Error loading category', 'error');
     }
 }
 
-// Update category
 document.getElementById('editCategoryForm').addEventListener('submit', async function(e) {
     e.preventDefault();
-    
     const formData = new FormData(this);
     const data = Object.fromEntries(formData.entries());
     const id = data.id;
     const csrfToken = data.csrf_token;
-    delete data.id;
-    delete data.csrf_token;
-    
-    // Convert empty description to null
+    delete data.id; delete data.csrf_token;
     if (data.description === '') data.description = null;
-    
+
     try {
         const response = await fetch(`/api/admin/categories/${id}/edit`, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken
-            },
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
             body: JSON.stringify(data)
         });
-        
         if (response.ok) {
-            closeModal('editCategoryModal');
-            loadCategories();
-            alert('Category updated successfully!');
+            closeModal('editCategoryModal'); loadCategories();
+            showToast('Category updated successfully');
         } else {
-            const error = await response.json();
-            alert('Error: ' + error.error);
+            const err = await response.json();
+            showToast('Error: ' + err.error, 'error');
         }
     } catch (error) {
-        console.error('Error updating category:', error);
-        alert('Error updating category');
+        showToast('Error updating category', 'error');
     }
 });
 
-// Delete category
 async function deleteCategory(id) {
-    if (!confirm('Are you sure you want to delete this category? This action cannot be undone.')) {
-        return;
-    }
-    
+    if (!confirm('Delete this category?')) return;
     try {
         const csrfToken = document.querySelector('#addCategoryForm [name="csrf_token"]').value;
         const response = await fetch(`/api/admin/categories/${id}/delete`, {
-            method: 'DELETE',
-            headers: {
-                'X-CSRFToken': csrfToken
-            }
+            method: 'DELETE', headers: { 'X-CSRFToken': csrfToken }
         });
-        
-        if (response.ok) {
-            loadCategories();
-            alert('Category deleted successfully!');
-        } else {
-            const error = await response.json();
-            alert('Error: ' + error.error);
-        }
+        if (response.ok) { loadCategories(); showToast('Category deleted'); }
+        else { const err = await response.json(); showToast('Error: ' + err.error, 'error'); }
     } catch (error) {
-        console.error('Error deleting category:', error);
-        alert('Error deleting category');
+        showToast('Error deleting category', 'error');
     }
 }
-
-// Modal functions are now handled by base_admin.html
 </script>
 {% endblock %}

@@ -2,39 +2,76 @@
 
 {% block title %}Manage Vocabulary{% endblock %}
 
-{% block content %}
-<h2>Manage Vocabulary</h2>
+{% block page_header %}
+<h2 class="text-2xl font-semibold text-gray-900 dark:text-white">Vocabulary</h2>
+{% endblock %}
 
-<button onclick="openModal('addVocabModal')">Add New Vocabulary</button>
+{% block page_actions %}
+<button onclick="openModal('addVocabModal')" class="!bg-primary-600 hover:!bg-primary-700">
+    <i class="fas fa-plus"></i> Add Vocabulary
+</button>
+{% endblock %}
+
+{% block content %}
+<!-- Search Bar -->
+<div class="flex flex-col sm:flex-row gap-3 mb-5">
+    <div class="relative flex-1">
+        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500"></i>
+        <input type="text" id="vocabSearch" placeholder="Search by word, reading or meaning..."
+               class="!w-full !pl-10 !pr-4 !py-2.5 !mb-0 !rounded-lg !border !border-gray-200 dark:!border-slate-700 !bg-white dark:!bg-slate-900 !text-sm"
+               oninput="filterVocab()">
+    </div>
+    <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-lg px-4 py-2.5 text-sm">
+        <span class="text-gray-500 dark:text-slate-400">Total:</span>
+        <span class="font-semibold text-gray-900 dark:text-white" id="vocabCount">0</span>
+    </div>
+</div>
+
+<!-- Table -->
+<div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl overflow-hidden">
+    <table id="vocabTable" class="!shadow-none !rounded-none !m-0">
+        <thead>
+            <tr>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50">ID</th>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50">Word</th>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50">Reading</th>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50">Meaning</th>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50">JLPT</th>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50 !text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
 
 <!-- Add Vocabulary Modal -->
 <div id="addVocabModal" class="modal">
     <div class="modal-content">
-        <span class="close-button" onclick="closeModal('addVocabModal')">&times;</span>
-        <h3>Add New Vocabulary</h3>
+        <div class="modal-header">
+            <h4>Add New Vocabulary</h4>
+            <span class="close" onclick="closeModal('addVocabModal')">&times;</span>
+        </div>
         <form id="addVocabForm">
-            <label for="add-word">Word (Japanese):</label>
-            <input type="text" id="add-word" name="word" required>
-
-            <label for="add-reading">Reading (Hiragana/Katakana):</label>
-            <input type="text" id="add-reading" name="reading" required>
-
-            <label for="add-meaning">Meaning (English, comma-separated):</label>
-            <textarea id="add-meaning" name="meaning" required></textarea>
-
-            <label for="add-jlpt_level">JLPT Level (N1-N5 as 1-5):</label>
-            <input type="number" id="add-jlpt_level" name="jlpt_level" min="1" max="5">
-
-            <label for="add-example_sentence_japanese">Example Sentence (Japanese):</label>
-            <textarea id="add-example_sentence_japanese" name="example_sentence_japanese"></textarea>
-
-            <label for="add-example_sentence_english">Example Sentence (English):</label>
-            <textarea id="add-example_sentence_english" name="example_sentence_english"></textarea>
-
-            <label for="add-audio_url">Audio URL:</label>
-            <input type="text" id="add-audio_url" name="audio_url">
-
-            <button type="submit">Add Vocabulary</button>
+            <div class="modal-body">
+                <label for="add-word">Word (Japanese):</label>
+                <input type="text" id="add-word" name="word" required>
+                <label for="add-reading">Reading (Hiragana/Katakana):</label>
+                <input type="text" id="add-reading" name="reading" required>
+                <label for="add-meaning">Meaning (English, comma-separated):</label>
+                <textarea id="add-meaning" name="meaning" required></textarea>
+                <label for="add-jlpt_level">JLPT Level (1-5):</label>
+                <input type="number" id="add-jlpt_level" name="jlpt_level" min="1" max="5">
+                <label for="add-example_sentence_japanese">Example Sentence (Japanese):</label>
+                <textarea id="add-example_sentence_japanese" name="example_sentence_japanese"></textarea>
+                <label for="add-example_sentence_english">Example Sentence (English):</label>
+                <textarea id="add-example_sentence_english" name="example_sentence_english"></textarea>
+                <label for="add-audio_url">Audio URL:</label>
+                <input type="text" id="add-audio_url" name="audio_url">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeModal('addVocabModal')">Cancel</button>
+                <button type="submit">Add Vocabulary</button>
+            </div>
         </form>
     </div>
 </div>
@@ -42,51 +79,35 @@
 <!-- Edit Vocabulary Modal -->
 <div id="editVocabModal" class="modal">
     <div class="modal-content">
-        <span class="close-button" onclick="closeModal('editVocabModal')">&times;</span>
-        <h3>Edit Vocabulary</h3>
+        <div class="modal-header">
+            <h4>Edit Vocabulary</h4>
+            <span class="close" onclick="closeModal('editVocabModal')">&times;</span>
+        </div>
         <form id="editVocabForm" class="form-edit">
             <input type="hidden" id="edit-id" name="id">
-            <label for="edit-word">Word (Japanese):</label>
-            <input type="text" id="edit-word" name="word" required>
-
-            <label for="edit-reading">Reading (Hiragana/Katakana):</label>
-            <input type="text" id="edit-reading" name="reading" required>
-
-            <label for="edit-meaning">Meaning (English, comma-separated):</label>
-            <textarea id="edit-meaning" name="meaning" required></textarea>
-
-            <label for="edit-jlpt_level">JLPT Level (N1-N5 as 1-5):</label>
-            <input type="number" id="edit-jlpt_level" name="jlpt_level" min="1" max="5">
-
-            <label for="edit-example_sentence_japanese">Example Sentence (Japanese):</label>
-            <textarea id="edit-example_sentence_japanese" name="example_sentence_japanese"></textarea>
-
-            <label for="edit-example_sentence_english">Example Sentence (English):</label>
-            <textarea id="edit-example_sentence_english" name="example_sentence_english"></textarea>
-
-            <label for="edit-audio_url">Audio URL:</label>
-            <input type="text" id="edit-audio_url" name="audio_url">
-            <button type="submit">Save Changes</button>
+            <div class="modal-body">
+                <label for="edit-word">Word (Japanese):</label>
+                <input type="text" id="edit-word" name="word" required>
+                <label for="edit-reading">Reading (Hiragana/Katakana):</label>
+                <input type="text" id="edit-reading" name="reading" required>
+                <label for="edit-meaning">Meaning (English, comma-separated):</label>
+                <textarea id="edit-meaning" name="meaning" required></textarea>
+                <label for="edit-jlpt_level">JLPT Level (1-5):</label>
+                <input type="number" id="edit-jlpt_level" name="jlpt_level" min="1" max="5">
+                <label for="edit-example_sentence_japanese">Example Sentence (Japanese):</label>
+                <textarea id="edit-example_sentence_japanese" name="example_sentence_japanese"></textarea>
+                <label for="edit-example_sentence_english">Example Sentence (English):</label>
+                <textarea id="edit-example_sentence_english" name="example_sentence_english"></textarea>
+                <label for="edit-audio_url">Audio URL:</label>
+                <input type="text" id="edit-audio_url" name="audio_url">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeModal('editVocabModal')">Cancel</button>
+                <button type="submit">Save Changes</button>
+            </div>
         </form>
     </div>
 </div>
-
-<h3>Existing Vocabulary</h3>
-<table id="vocabTable">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Word</th>
-            <th>Reading</th>
-            <th>Meaning</th>
-            <th>JLPT</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        <!-- Vocab items will be loaded here by JavaScript -->
-    </tbody>
-</table>
 {% endblock %}
 
 {% block extra_js %}
@@ -94,25 +115,56 @@
     const addVocabForm = document.getElementById('addVocabForm');
     const editVocabForm = document.getElementById('editVocabForm');
     const vocabTableBody = document.querySelector('#vocabTable tbody');
+    let allVocabData = [];
 
-    async function fetchVocab() {
-        const response = await fetch('{{ url_for("routes.list_vocabulary") }}');
-        const vocabList = await response.json();
+    function escapeHtml(str) {
+        if (!str) return '';
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    function filterVocab() {
+        const search = document.getElementById('vocabSearch').value.toLowerCase();
+        const filtered = allVocabData.filter(v =>
+            !search || (v.word && v.word.toLowerCase().includes(search)) ||
+            (v.reading && v.reading.toLowerCase().includes(search)) ||
+            (v.meaning && v.meaning.toLowerCase().includes(search))
+        );
+        renderTable(filtered);
+    }
+
+    function renderTable(list) {
+        document.getElementById('vocabCount').textContent = allVocabData.length;
         vocabTableBody.innerHTML = '';
-        vocabList.forEach(vocab => {
+        if (list.length === 0) {
+            vocabTableBody.innerHTML = '<tr><td colspan="6" class="!text-center !py-8 !text-gray-400 dark:!text-slate-500">No vocabulary found</td></tr>';
+            return;
+        }
+        list.forEach(vocab => {
             const row = vocabTableBody.insertRow();
+            row.className = 'hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors';
+            const jlptBadge = vocab.jlpt_level ? `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300">N${vocab.jlpt_level}</span>` : '<span class="text-gray-300 dark:text-slate-600">--</span>';
             row.innerHTML = `
-                <td>${vocab.id}</td>
-                <td>${vocab.word}</td>
-                <td>${vocab.reading}</td>
-                <td>${vocab.meaning}</td>
-                <td>${vocab.jlpt_level || ''}</td>
-                <td class="actions">
-                    <a href="#" class="edit" onclick="openEditModal(${vocab.id})">Edit</a>
-                    <a href="#" class="delete" onclick="deleteVocab(${vocab.id}, '${vocab.word}')">Delete</a>
+                <td class="!text-gray-400 dark:!text-slate-500 !text-sm">${vocab.id}</td>
+                <td class="!text-lg !font-medium">${escapeHtml(vocab.word)}</td>
+                <td class="!text-sm !text-gray-600 dark:!text-slate-400">${escapeHtml(vocab.reading)}</td>
+                <td class="!text-sm !max-w-[250px] !truncate">${escapeHtml(vocab.meaning)}</td>
+                <td>${jlptBadge}</td>
+                <td class="!text-center">
+                    <div class="flex items-center justify-center gap-1">
+                        <button onclick="openEditModal(${vocab.id})" class="!bg-transparent !text-gray-400 hover:!text-primary-600 !shadow-none !p-2 !rounded-lg" title="Edit"><i class="fas fa-pen-to-square"></i></button>
+                        <button onclick="deleteVocab(${vocab.id}, '${escapeHtml(vocab.word)}')" class="!bg-transparent !text-gray-400 hover:!text-red-600 !shadow-none !p-2 !rounded-lg" title="Delete"><i class="fas fa-trash-can"></i></button>
+                    </div>
                 </td>
             `;
         });
+    }
+
+    async function fetchVocab() {
+        const response = await fetch('{{ url_for("routes.list_vocabulary") }}');
+        allVocabData = await response.json();
+        renderTable(allVocabData);
     }
 
     addVocabForm.addEventListener('submit', async function(event) {
@@ -122,30 +174,21 @@
         if (data.jlpt_level === '') data.jlpt_level = null;
 
         const response = await fetch('{{ url_for("routes.create_vocabulary") }}', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
         });
-
         if (response.ok) {
-            addVocabForm.reset();
-            closeModal('addVocabModal');
-            fetchVocab();
-            alert('Vocabulary item added successfully!');
+            addVocabForm.reset(); closeModal('addVocabModal'); fetchVocab();
+            showToast('Vocabulary added successfully');
         } else {
-            const errorData = await response.json();
-            alert('Error adding vocabulary: ' + (errorData.error || response.statusText));
+            const err = await response.json();
+            showToast('Error: ' + (err.error || response.statusText), 'error');
         }
     });
 
     async function openEditModal(id) {
         const response = await fetch(`/api/admin/vocabulary/${id}`);
-        if (!response.ok) {
-            alert('Error fetching vocabulary details.');
-            return;
-        }
+        if (!response.ok) { showToast('Error fetching vocabulary', 'error'); return; }
         const vocab = await response.json();
-
         document.getElementById('edit-id').value = vocab.id;
         document.getElementById('edit-word').value = vocab.word;
         document.getElementById('edit-reading').value = vocab.reading;
@@ -166,36 +209,22 @@
         if (data.jlpt_level === '') data.jlpt_level = null;
 
         const response = await fetch(`/api/admin/vocabulary/${id}/edit`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
+            method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
         });
-
         if (response.ok) {
-            closeModal('editVocabModal');
-            fetchVocab();
-            alert('Vocabulary item updated successfully!');
+            closeModal('editVocabModal'); fetchVocab();
+            showToast('Vocabulary updated successfully');
         } else {
-            const errorData = await response.json();
-            alert('Error updating vocabulary: ' + (errorData.error || response.statusText));
+            const err = await response.json();
+            showToast('Error: ' + (err.error || response.statusText), 'error');
         }
     });
 
     async function deleteVocab(id, word) {
-        if (!confirm(`Are you sure you want to delete vocabulary: ${word}?`)) {
-            return;
-        }
-        const response = await fetch(`/api/admin/vocabulary/${id}/delete`, {
-            method: 'DELETE'
-        });
-
-        if (response.ok) {
-            fetchVocab();
-            alert('Vocabulary item deleted successfully!');
-        } else {
-            const errorData = await response.json();
-            alert('Error deleting vocabulary: ' + (errorData.error || response.statusText));
-        }
+        if (!confirm(`Delete vocabulary: ${word}?`)) return;
+        const response = await fetch(`/api/admin/vocabulary/${id}/delete`, { method: 'DELETE' });
+        if (response.ok) { fetchVocab(); showToast('Vocabulary deleted'); }
+        else { const err = await response.json(); showToast('Error: ' + (err.error || response.statusText), 'error'); }
     }
 
     fetchVocab();

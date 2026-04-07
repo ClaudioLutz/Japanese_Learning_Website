@@ -1,9 +1,105 @@
 {% extends "admin/base_admin.html" %}
 
-{% block title %}Admin Home{% endblock %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block page_header %}
+<h2 class="text-2xl font-semibold text-gray-900 dark:text-white">Dashboard</h2>
+{% endblock %}
 
 {% block content %}
-<h2>Welcome to the Admin Dashboard</h2>
-<p>Select a content type from the navigation menu to manage it.</p>
-<p>This dashboard allows you to perform CRUD (Create, Read, Update, Delete) operations on the learning materials for the Japanese Learning Website.</p>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    {% set stats = [
+        ('Lessons', 'fa-book-open', 'primary'),
+        ('Courses', 'fa-chalkboard-teacher', 'indigo'),
+        ('Kana', 'fa-pen-nib', 'violet'),
+        ('Kanji', 'fa-font', 'purple'),
+        ('Vocabulary', 'fa-spell-check', 'blue'),
+        ('Grammar', 'fa-list-alt', 'cyan'),
+        ('Categories', 'fa-tags', 'teal'),
+        ('Users', 'fa-users', 'slate'),
+    ] %}
+    {% for label, icon, color in stats %}
+    <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl p-5 hover:shadow-md transition-shadow">
+        <div class="flex items-center justify-between mb-3">
+            <div class="w-10 h-10 rounded-lg bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center">
+                <i class="fas {{ icon }} text-primary-600 dark:text-primary-400"></i>
+            </div>
+        </div>
+        <div class="text-2xl font-bold text-gray-900 dark:text-white" id="stat-{{ label|lower }}">--</div>
+        <div class="text-sm text-gray-500 dark:text-slate-400 mt-1">{{ label }}</div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Quick Actions -->
+    <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl p-6">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Actions</h3>
+        <div class="space-y-2">
+            <a href="{{ url_for('routes.admin_manage_lessons') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors no-underline text-gray-700 dark:text-slate-300">
+                <i class="fas fa-plus-circle text-primary-600 dark:text-primary-400 w-5"></i>
+                <span class="text-sm font-medium">Manage Lessons</span>
+            </a>
+            <a href="{{ url_for('routes.admin_manage_approval') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors no-underline text-gray-700 dark:text-slate-300">
+                <i class="fas fa-check-circle text-emerald-600 dark:text-emerald-400 w-5"></i>
+                <span class="text-sm font-medium">Content Approval</span>
+            </a>
+            <a href="{{ url_for('admin_panel.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors no-underline text-gray-700 dark:text-slate-300">
+                <i class="fas fa-table text-blue-600 dark:text-blue-400 w-5"></i>
+                <span class="text-sm font-medium">CRUD-Panel (Flask-Admin)</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Info -->
+    <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl p-6">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Hinweise</h3>
+        <div class="space-y-3 text-sm text-gray-600 dark:text-slate-400">
+            <div class="flex items-start gap-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <i class="fas fa-info-circle text-blue-500 mt-0.5"></i>
+                <span>Verwenden Sie den <strong>Lektions-Editor</strong> unter "Lessons" fuer die vollstaendige Lektionsverwaltung mit Drag-and-Drop, Import/Export und Quiz-Editor.</span>
+            </div>
+            <div class="flex items-start gap-3 p-3 bg-violet-50 dark:bg-violet-900/20 rounded-lg">
+                <i class="fas fa-database text-violet-500 mt-0.5"></i>
+                <span>Das <strong>CRUD-Panel</strong> bietet schnellen Zugriff auf alle Datenbank-Tabellen mit Suche, Filter und CSV-Export.</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', async function() {
+    try {
+        // Fetch counts from existing API endpoints
+        const endpoints = {
+            lessons: '/api/admin/lessons',
+            courses: '/api/admin/courses',
+            kana: '/api/admin/kana',
+            kanji: '/api/admin/kanji',
+            vocabulary: '/api/admin/vocabulary',
+            grammar: '/api/admin/grammar',
+            categories: '/api/admin/categories',
+        };
+
+        for (const [key, url] of Object.entries(endpoints)) {
+            try {
+                const resp = await fetch(url);
+                if (resp.ok) {
+                    const data = await resp.json();
+                    const el = document.getElementById(`stat-${key}`);
+                    if (el) el.textContent = Array.isArray(data) ? data.length : '?';
+                }
+            } catch(e) { /* ignore individual failures */ }
+        }
+
+        // Users count (use a rough approach - check if endpoint exists)
+        const usersEl = document.getElementById('stat-users');
+        if (usersEl) usersEl.textContent = '--';
+    } catch(e) {
+        console.error('Error loading stats:', e);
+    }
+});
+</script>
 {% endblock %}

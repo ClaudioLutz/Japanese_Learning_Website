@@ -1,48 +1,80 @@
 {% extends 'admin/master.html' %}
 
-{% block body %}
-<div style="padding: 20px;">
-    <h2>JP Admin Dashboard</h2>
-    <p>Willkommen im Admin-Bereich. Verwalten Sie hier Ihre Daten.</p>
+{% block head_css %}
+{{ super() }}
+<style>
+    /* Override Flask-Admin Bootstrap with matching design tokens */
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif !important; }
+    .navbar-default, .navbar { background-color: #4f46e5 !important; border-color: #4338ca !important; }
+    .navbar-default .navbar-brand, .navbar .navbar-brand { color: white !important; font-weight: 600 !important; }
+    .navbar-default .navbar-nav > li > a, .navbar .navbar-nav > li > a { color: rgba(255,255,255,0.85) !important; }
+    .navbar-default .navbar-nav > li > a:hover, .navbar .navbar-nav > li > a:hover { color: white !important; }
+    .navbar-default .navbar-nav > .active > a { background-color: rgba(255,255,255,0.1) !important; color: white !important; }
+    .container, .container-fluid { max-width: 100%; }
 
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-top: 24px;">
-        <div style="background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; text-align: center;">
-            <div style="font-size: 2em; font-weight: 700; color: #4f46e5;">{{ stats.users }}</div>
-            <div style="color: #6b7280; margin-top: 4px;">Benutzer</div>
+    .stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-top: 24px; }
+    .stat-card {
+        background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 24px;
+        text-align: center; transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .stat-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); transform: translateY(-2px); }
+    .stat-value { font-size: 2.25em; font-weight: 700; color: #4f46e5; line-height: 1.2; }
+    .stat-label { color: #6b7280; margin-top: 6px; font-size: 0.875rem; font-weight: 500; }
+    .info-box {
+        margin-top: 32px; padding: 16px 20px; background: #eef2ff; border: 1px solid #c7d2fe;
+        border-radius: 12px; font-size: 0.875rem; color: #3730a3; display: flex; align-items: center; gap: 12px;
+    }
+    .info-box i { font-size: 1.1rem; }
+    .info-box a { color: #4f46e5; font-weight: 600; text-decoration: none; }
+    .info-box a:hover { text-decoration: underline; }
+    h2 { font-weight: 600; color: #1f2937; font-size: 1.5rem; }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+<div style="padding: 24px;">
+    <h2>JP Admin Dashboard</h2>
+    <p style="color: #6b7280; font-size: 0.875rem;">Willkommen im Admin-Bereich. Verwalten Sie hier Ihre Daten.</p>
+
+    <div class="stat-grid">
+        <div class="stat-card">
+            <div class="stat-value">{{ stats.users }}</div>
+            <div class="stat-label">Benutzer</div>
         </div>
-        <div style="background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; text-align: center;">
-            <div style="font-size: 2em; font-weight: 700; color: #4f46e5;">{{ stats.lessons }}</div>
-            <div style="color: #6b7280; margin-top: 4px;">Lektionen</div>
+        <div class="stat-card">
+            <div class="stat-value">{{ stats.lessons }}</div>
+            <div class="stat-label">Lektionen</div>
         </div>
-        <div style="background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; text-align: center;">
-            <div style="font-size: 2em; font-weight: 700; color: #4f46e5;">{{ stats.courses }}</div>
-            <div style="color: #6b7280; margin-top: 4px;">Kurse</div>
+        <div class="stat-card">
+            <div class="stat-value">{{ stats.courses }}</div>
+            <div class="stat-label">Kurse</div>
         </div>
-        <div style="background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; text-align: center;">
-            <div style="font-size: 2em; font-weight: 700; color: #4f46e5;">{{ stats.vocabulary }}</div>
-            <div style="color: #6b7280; margin-top: 4px;">Vokabeln</div>
+        <div class="stat-card">
+            <div class="stat-value">{{ stats.vocabulary }}</div>
+            <div class="stat-label">Vokabeln</div>
         </div>
-        <div style="background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; text-align: center;">
-            <div style="font-size: 2em; font-weight: 700; color: #4f46e5;">{{ stats.grammar }}</div>
-            <div style="color: #6b7280; margin-top: 4px;">Grammatik</div>
+        <div class="stat-card">
+            <div class="stat-value">{{ stats.grammar }}</div>
+            <div class="stat-label">Grammatik</div>
         </div>
-        <div style="background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; text-align: center;">
-            <div style="font-size: 2em; font-weight: 700; color: #4f46e5;">{{ stats.kanji }}</div>
-            <div style="color: #6b7280; margin-top: 4px;">Kanji</div>
+        <div class="stat-card">
+            <div class="stat-value">{{ stats.kanji }}</div>
+            <div class="stat-label">Kanji</div>
         </div>
-        <div style="background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; text-align: center;">
-            <div style="font-size: 2em; font-weight: 700; color: #4f46e5;">{{ stats.kana }}</div>
-            <div style="color: #6b7280; margin-top: 4px;">Kana</div>
+        <div class="stat-card">
+            <div class="stat-value">{{ stats.kana }}</div>
+            <div class="stat-label">Kana</div>
         </div>
-        <div style="background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; text-align: center;">
-            <div style="font-size: 2em; font-weight: 700; color: #4f46e5;">{{ stats.categories }}</div>
-            <div style="color: #6b7280; margin-top: 4px;">Kategorien</div>
+        <div class="stat-card">
+            <div class="stat-value">{{ stats.categories }}</div>
+            <div class="stat-label">Kategorien</div>
         </div>
     </div>
 
-    <div style="margin-top: 32px; padding: 16px; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px;">
-        <strong>Hinweis:</strong> Fuer den Lektions-Editor und die KI-Content-Genehmigung verwenden Sie bitte den
-        <a href="/admin" style="color: #4f46e5; font-weight: 600;">Custom Admin-Bereich</a>.
+    <div class="info-box">
+        <i class="fas fa-arrow-left"></i>
+        <span>Fuer den Lektions-Editor und die KI-Content-Genehmigung verwenden Sie bitte den <a href="/admin">Custom Admin-Bereich</a>.</span>
     </div>
 </div>
 {% endblock %}

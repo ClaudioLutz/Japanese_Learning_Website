@@ -2,35 +2,72 @@
 
 {% block title %}Manage Grammar{% endblock %}
 
-{% block content %}
-<h2>Manage Grammar</h2>
+{% block page_header %}
+<h2 class="text-2xl font-semibold text-gray-900 dark:text-white">Grammar</h2>
+{% endblock %}
 
-<button onclick="openModal('addGrammarModal')">Add New Grammar Rule</button>
+{% block page_actions %}
+<button onclick="openModal('addGrammarModal')" class="!bg-primary-600 hover:!bg-primary-700">
+    <i class="fas fa-plus"></i> Add Grammar Rule
+</button>
+{% endblock %}
+
+{% block content %}
+<!-- Search Bar -->
+<div class="flex flex-col sm:flex-row gap-3 mb-5">
+    <div class="relative flex-1">
+        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500"></i>
+        <input type="text" id="grammarSearch" placeholder="Search by title or structure..."
+               class="!w-full !pl-10 !pr-4 !py-2.5 !mb-0 !rounded-lg !border !border-gray-200 dark:!border-slate-700 !bg-white dark:!bg-slate-900 !text-sm"
+               oninput="filterGrammar()">
+    </div>
+    <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-lg px-4 py-2.5 text-sm">
+        <span class="text-gray-500 dark:text-slate-400">Total:</span>
+        <span class="font-semibold text-gray-900 dark:text-white" id="grammarCount">0</span>
+    </div>
+</div>
+
+<!-- Table -->
+<div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl overflow-hidden">
+    <table id="grammarTable" class="!shadow-none !rounded-none !m-0">
+        <thead>
+            <tr>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50">ID</th>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50">Title</th>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50">JLPT</th>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50">Structure</th>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50 !text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
 
 <!-- Add Grammar Modal -->
 <div id="addGrammarModal" class="modal">
     <div class="modal-content">
-        <span class="close-button" onclick="closeModal('addGrammarModal')">&times;</span>
-        <h3>Add New Grammar Rule</h3>
+        <div class="modal-header">
+            <h4>Add New Grammar Rule</h4>
+            <span class="close" onclick="closeModal('addGrammarModal')">&times;</span>
+        </div>
         <form id="addGrammarForm">
-            <label for="add-title">Title:</label>
-            <input type="text" id="add-title" name="title" required>
-
-            <label for="add-explanation">Explanation:</label>
-            <textarea id="add-explanation" name="explanation" rows="5" required></textarea>
-
-            <label for="add-structure">Structure (e.g., Verb (dict) + こと):</label>
-            <input type="text" id="add-structure" name="structure">
-
-            <label for="add-jlpt_level">JLPT Level (N1-N5 as 1-5):</label>
-            <input type="number" id="add-jlpt_level" name="jlpt_level" min="1" max="5">
-
-            <label for="add-example_sentences">Example Sentences (JSON format):</label>
-            <textarea id="add-example_sentences" name="example_sentences" rows="3" placeholder='[{"ja": "Sentence 1 JP", "en": "Sentence 1 EN"}, {"ja": "Sentence 2 JP", "en": "Sentence 2 EN"}]'></textarea>
-            <small>Use JSON: [{"ja": "日本語の文", "en": "English sentence"}, ...]</small>
-
-
-            <button type="submit">Add Grammar Rule</button>
+            <div class="modal-body">
+                <label for="add-title">Title:</label>
+                <input type="text" id="add-title" name="title" required>
+                <label for="add-explanation">Explanation:</label>
+                <textarea id="add-explanation" name="explanation" rows="5" required></textarea>
+                <label for="add-structure">Structure:</label>
+                <input type="text" id="add-structure" name="structure" placeholder="e.g. Verb (dict) + koto">
+                <label for="add-jlpt_level">JLPT Level (1-5):</label>
+                <input type="number" id="add-jlpt_level" name="jlpt_level" min="1" max="5">
+                <label for="add-example_sentences">Example Sentences (JSON):</label>
+                <textarea id="add-example_sentences" name="example_sentences" rows="3" placeholder='[{"ja": "...", "en": "..."}]'></textarea>
+                <p class="text-xs text-gray-400 dark:text-slate-500 -mt-2 mb-3">Format: [{"ja": "Japanese", "en": "English"}, ...]</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeModal('addGrammarModal')">Cancel</button>
+                <button type="submit">Add Grammar Rule</button>
+            </div>
         </form>
     </div>
 </div>
@@ -38,46 +75,32 @@
 <!-- Edit Grammar Modal -->
 <div id="editGrammarModal" class="modal">
     <div class="modal-content">
-        <span class="close-button" onclick="closeModal('editGrammarModal')">&times;</span>
-        <h3>Edit Grammar Rule</h3>
+        <div class="modal-header">
+            <h4>Edit Grammar Rule</h4>
+            <span class="close" onclick="closeModal('editGrammarModal')">&times;</span>
+        </div>
         <form id="editGrammarForm" class="form-edit">
             <input type="hidden" id="edit-id" name="id">
-            <label for="edit-title">Title:</label>
-            <input type="text" id="edit-title" name="title" required>
-
-            <label for="edit-explanation">Explanation:</label>
-            <textarea id="edit-explanation" name="explanation" rows="5" required></textarea>
-
-            <label for="edit-structure">Structure:</label>
-            <input type="text" id="edit-structure" name="structure">
-
-            <label for="edit-jlpt_level">JLPT Level (N1-N5 as 1-5):</label>
-            <input type="number" id="edit-jlpt_level" name="jlpt_level" min="1" max="5">
-
-            <label for="edit-example_sentences">Example Sentences (JSON format):</label>
-            <textarea id="edit-example_sentences" name="example_sentences" rows="3"></textarea>
-            <small>Use JSON: [{"ja": "日本語の文", "en": "English sentence"}, ...]</small>
-
-            <button type="submit">Save Changes</button>
+            <div class="modal-body">
+                <label for="edit-title">Title:</label>
+                <input type="text" id="edit-title" name="title" required>
+                <label for="edit-explanation">Explanation:</label>
+                <textarea id="edit-explanation" name="explanation" rows="5" required></textarea>
+                <label for="edit-structure">Structure:</label>
+                <input type="text" id="edit-structure" name="structure">
+                <label for="edit-jlpt_level">JLPT Level (1-5):</label>
+                <input type="number" id="edit-jlpt_level" name="jlpt_level" min="1" max="5">
+                <label for="edit-example_sentences">Example Sentences (JSON):</label>
+                <textarea id="edit-example_sentences" name="example_sentences" rows="3"></textarea>
+                <p class="text-xs text-gray-400 dark:text-slate-500 -mt-2 mb-3">Format: [{"ja": "Japanese", "en": "English"}, ...]</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeModal('editGrammarModal')">Cancel</button>
+                <button type="submit">Save Changes</button>
+            </div>
         </form>
     </div>
 </div>
-
-<h3>Existing Grammar Rules</h3>
-<table id="grammarTable">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Title</th>
-            <th>JLPT</th>
-            <th>Structure</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        <!-- Grammar items will be loaded here by JavaScript -->
-    </tbody>
-</table>
 {% endblock %}
 
 {% block extra_js %}
@@ -85,76 +108,89 @@
     const addGrammarForm = document.getElementById('addGrammarForm');
     const editGrammarForm = document.getElementById('editGrammarForm');
     const grammarTableBody = document.querySelector('#grammarTable tbody');
+    let allGrammarData = [];
 
-    // Helper to validate JSON
+    function escapeHtml(str) {
+        if (!str) return '';
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
     function isValidJson(str) {
-        if (!str || str.trim() === '') return true; // Allow empty for optional
-        try {
-            JSON.parse(str);
-        } catch (e) {
-            return false;
-        }
+        if (!str || str.trim() === '') return true;
+        try { JSON.parse(str); } catch (e) { return false; }
         return true;
     }
 
-    async function fetchGrammar() {
-        const response = await fetch('{{ url_for("routes.list_grammar") }}');
-        const grammarList = await response.json();
+    function filterGrammar() {
+        const search = document.getElementById('grammarSearch').value.toLowerCase();
+        const filtered = allGrammarData.filter(g =>
+            !search || (g.title && g.title.toLowerCase().includes(search)) ||
+            (g.structure && g.structure.toLowerCase().includes(search))
+        );
+        renderTable(filtered);
+    }
+
+    function renderTable(list) {
+        document.getElementById('grammarCount').textContent = allGrammarData.length;
         grammarTableBody.innerHTML = '';
-        grammarList.forEach(grammar => {
+        if (list.length === 0) {
+            grammarTableBody.innerHTML = '<tr><td colspan="5" class="!text-center !py-8 !text-gray-400 dark:!text-slate-500">No grammar rules found</td></tr>';
+            return;
+        }
+        list.forEach(grammar => {
             const row = grammarTableBody.insertRow();
+            row.className = 'hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors';
+            const jlptBadge = grammar.jlpt_level ? `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300">N${grammar.jlpt_level}</span>` : '<span class="text-gray-300 dark:text-slate-600">--</span>';
             row.innerHTML = `
-                <td>${grammar.id}</td>
-                <td>${grammar.title}</td>
-                <td>${grammar.jlpt_level || ''}</td>
-                <td>${grammar.structure || ''}</td>
-                <td class="actions">
-                    <a href="#" class="edit" onclick="openEditModal(${grammar.id})">Edit</a>
-                    <a href="#" class="delete" onclick="deleteGrammar(${grammar.id}, '${grammar.title}')">Delete</a>
+                <td class="!text-gray-400 dark:!text-slate-500 !text-sm">${grammar.id}</td>
+                <td class="!font-medium">${escapeHtml(grammar.title)}</td>
+                <td>${jlptBadge}</td>
+                <td class="!text-sm !text-gray-600 dark:!text-slate-400 !font-mono">${escapeHtml(grammar.structure) || '<span class="text-gray-300 dark:text-slate-600">--</span>'}</td>
+                <td class="!text-center">
+                    <div class="flex items-center justify-center gap-1">
+                        <button onclick="openEditModal(${grammar.id})" class="!bg-transparent !text-gray-400 hover:!text-primary-600 !shadow-none !p-2 !rounded-lg" title="Edit"><i class="fas fa-pen-to-square"></i></button>
+                        <button onclick="deleteGrammar(${grammar.id}, '${escapeHtml(grammar.title)}')" class="!bg-transparent !text-gray-400 hover:!text-red-600 !shadow-none !p-2 !rounded-lg" title="Delete"><i class="fas fa-trash-can"></i></button>
+                    </div>
                 </td>
             `;
         });
     }
 
+    async function fetchGrammar() {
+        const response = await fetch('{{ url_for("routes.list_grammar") }}');
+        allGrammarData = await response.json();
+        renderTable(allGrammarData);
+    }
+
     addGrammarForm.addEventListener('submit', async function(event) {
         event.preventDefault();
-        const examplesJson = document.getElementById('add-example_sentences').value;
-        if (examplesJson.trim() !== "" && !isValidJson(examplesJson)) {
-            alert('Invalid JSON format for Example Sentences.');
-            return;
+        const exJson = document.getElementById('add-example_sentences').value;
+        if (exJson.trim() !== "" && !isValidJson(exJson)) {
+            showToast('Invalid JSON for example sentences', 'error'); return;
         }
-
         const formData = new FormData(addGrammarForm);
         const data = Object.fromEntries(formData.entries());
         if (data.jlpt_level === '') data.jlpt_level = null;
         if (data.example_sentences.trim() === "") data.example_sentences = null;
 
-
         const response = await fetch('{{ url_for("routes.create_grammar") }}', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
         });
-
         if (response.ok) {
-            addGrammarForm.reset();
-            closeModal('addGrammarModal');
-            fetchGrammar();
-            alert('Grammar rule added successfully!');
+            addGrammarForm.reset(); closeModal('addGrammarModal'); fetchGrammar();
+            showToast('Grammar rule added successfully');
         } else {
-            const errorData = await response.json();
-            alert('Error adding grammar rule: ' + (errorData.error || response.statusText));
+            const err = await response.json();
+            showToast('Error: ' + (err.error || response.statusText), 'error');
         }
     });
 
     async function openEditModal(id) {
         const response = await fetch(`/api/admin/grammar/${id}`);
-        if (!response.ok) {
-            alert('Error fetching grammar details.');
-            return;
-        }
+        if (!response.ok) { showToast('Error fetching grammar', 'error'); return; }
         const grammar = await response.json();
-
         document.getElementById('edit-id').value = grammar.id;
         document.getElementById('edit-title').value = grammar.title;
         document.getElementById('edit-explanation').value = grammar.explanation;
@@ -166,13 +202,10 @@
 
     editGrammarForm.addEventListener('submit', async function(event) {
         event.preventDefault();
-
-        const examplesJson = document.getElementById('edit-example_sentences').value;
-        if (examplesJson.trim() !== "" && !isValidJson(examplesJson)) {
-            alert('Invalid JSON format for Example Sentences.');
-            return;
+        const exJson = document.getElementById('edit-example_sentences').value;
+        if (exJson.trim() !== "" && !isValidJson(exJson)) {
+            showToast('Invalid JSON for example sentences', 'error'); return;
         }
-
         const id = document.getElementById('edit-id').value;
         const formData = new FormData(editGrammarForm);
         const data = Object.fromEntries(formData.entries());
@@ -180,38 +213,23 @@
         if (data.jlpt_level === '') data.jlpt_level = null;
         if (data.example_sentences.trim() === "") data.example_sentences = null;
 
-
         const response = await fetch(`/api/admin/grammar/${id}/edit`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
+            method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
         });
-
         if (response.ok) {
-            closeModal('editGrammarModal');
-            fetchGrammar();
-            alert('Grammar rule updated successfully!');
+            closeModal('editGrammarModal'); fetchGrammar();
+            showToast('Grammar rule updated successfully');
         } else {
-            const errorData = await response.json();
-            alert('Error updating grammar rule: ' + (errorData.error || response.statusText));
+            const err = await response.json();
+            showToast('Error: ' + (err.error || response.statusText), 'error');
         }
     });
 
     async function deleteGrammar(id, title) {
-        if (!confirm(`Are you sure you want to delete grammar rule: ${title}?`)) {
-            return;
-        }
-        const response = await fetch(`/api/admin/grammar/${id}/delete`, {
-            method: 'DELETE'
-        });
-
-        if (response.ok) {
-            fetchGrammar();
-            alert('Grammar rule deleted successfully!');
-        } else {
-            const errorData = await response.json();
-            alert('Error deleting grammar: ' + (errorData.error || response.statusText));
-        }
+        if (!confirm(`Delete grammar rule: ${title}?`)) return;
+        const response = await fetch(`/api/admin/grammar/${id}/delete`, { method: 'DELETE' });
+        if (response.ok) { fetchGrammar(); showToast('Grammar rule deleted'); }
+        else { const err = await response.json(); showToast('Error: ' + (err.error || response.statusText), 'error'); }
     }
 
     fetchGrammar();

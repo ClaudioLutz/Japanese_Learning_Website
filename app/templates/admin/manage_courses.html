@@ -2,38 +2,34 @@
 
 {% block title %}Manage Courses{% endblock %}
 
+{% block page_header %}
+<h2 class="text-2xl font-semibold text-gray-900 dark:text-white">Courses</h2>
+{% endblock %}
+
+{% block page_actions %}
+<button onclick="openAddCourseModal()" class="!bg-primary-600 hover:!bg-primary-700">
+    <i class="fas fa-plus"></i> Add Course
+</button>
+{% endblock %}
+
 {% block content %}
-<div class="container-fluid">
-    <h2>Manage Courses</h2>
-    <div class="card mb-4">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <span><i class="fas fa-chalkboard-teacher"></i> Courses</span>
-            <button class="btn btn-primary" onclick="openAddCourseModal()" id="addCourseBtn">
-                <i class="fas fa-plus"></i> Add New Course
-            </button>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table id="coursesTable" class="table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Title</th>
-                            <th>Description</th>
-                            <th>Published</th>
-                            <th>Price</th>
-                            <th>Purchasable</th>
-                            <th>Lessons</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Data will be populated by JavaScript -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+<!-- Table -->
+<div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl overflow-hidden">
+    <table id="coursesTable" class="!shadow-none !rounded-none !m-0">
+        <thead>
+            <tr>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50">ID</th>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50">Title</th>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50">Description</th>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50">Published</th>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50">Price</th>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50">Purchasable</th>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50">Lessons</th>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50 !text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
 </div>
 
 <!-- Course Modal -->
@@ -47,37 +43,36 @@
             <form id="courseForm">
                 {{ form.csrf_token }}
                 <input type="hidden" id="courseId">
-                
+
                 <label for="courseTitle">Title *</label>
                 <input type="text" id="courseTitle" required>
-                
+
                 <label for="courseDescription">Description</label>
                 <textarea id="courseDescription" rows="3"></textarea>
-                
+
                 <label for="courseBackgroundImage">Background Image URL</label>
                 <input type="text" id="courseBackgroundImage">
-                
-                <label>
-                    <input type="checkbox" id="courseIsPublished"> Published
-                </label>
+
+                <div class="flex gap-6 mb-4">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="courseIsPublished" class="!w-4 !h-4 !mb-0"> Published
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="courseIsPurchasable" class="!w-4 !h-4 !mb-0"> Purchasable
+                    </label>
+                </div>
 
                 <label for="coursePrice">Price (CHF)</label>
                 <input type="number" id="coursePrice" step="0.01" min="0">
 
-                <label>
-                    <input type="checkbox" id="courseIsPurchasable"> Purchasable
-                </label>
-                
                 <label for="courseLessons">Lessons</label>
-                <select multiple id="courseLessons" style="height: 150px;">
-                    <!-- Lessons will be populated by JavaScript -->
-                </select>
-                <small>Hold Ctrl/Cmd to select multiple lessons</small>
+                <select multiple id="courseLessons" class="!h-[150px]"></select>
+                <p class="text-xs text-gray-400 dark:text-slate-500 -mt-2 mb-3">Hold Ctrl/Cmd to select multiple</p>
             </form>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" onclick="closeModal('courseModal')">Close</button>
-            <button type="button" class="btn btn-primary" onclick="saveCourse()">Save</button>
+            <button type="button" class="btn-secondary" onclick="closeModal('courseModal')">Cancel</button>
+            <button type="button" onclick="saveCourse()">Save</button>
         </div>
     </div>
 </div>
@@ -87,68 +82,66 @@
 <script>
 let coursesData = [];
 
-// Get CSRF token from the form
+function escapeHtml(str) {
+    if (!str) return '';
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
 function getCSRFToken() {
     const form = document.getElementById('courseForm');
-    if (form && form.csrf_token) {
-        return form.csrf_token.value;
-    }
-    console.error('CSRF token not found');
+    if (form && form.csrf_token) return form.csrf_token.value;
     return null;
 }
 
-// Load courses data
 async function loadCourses() {
     try {
         const response = await fetch('/api/admin/courses');
         if (!response.ok) throw new Error('Failed to load courses');
-        
         coursesData = await response.json();
         renderCoursesTable();
     } catch (error) {
-        console.error('Error loading courses:', error);
-        alert('Failed to load courses. Please refresh the page.');
+        showToast('Failed to load courses', 'error');
     }
 }
 
-// Render courses table
 function renderCoursesTable() {
     const tbody = document.querySelector('#coursesTable tbody');
     tbody.innerHTML = '';
-    
+    if (coursesData.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="!text-center !py-8 !text-gray-400 dark:!text-slate-500">No courses yet</td></tr>';
+        return;
+    }
     coursesData.forEach(course => {
         const row = document.createElement('tr');
+        row.className = 'hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors';
         row.innerHTML = `
-            <td>${course.id}</td>
-            <td>${course.title || ''}</td>
-            <td>${course.description || ''}</td>
-            <td><span class="badge ${course.is_published ? 'badge-success' : 'badge-secondary'}">${course.is_published ? 'Yes' : 'No'}</span></td>
-            <td>${course.price != null ? `CHF ${course.price.toFixed(2)}` : 'N/A'}</td>
-            <td><span class="badge ${course.is_purchasable ? 'badge-success' : 'badge-secondary'}">${course.is_purchasable ? 'Yes' : 'No'}</span></td>
-            <td>${course.lessons ? course.lessons.length : 0}</td>
-            <td class="actions">
-                <button class="btn btn-warning btn-sm" onclick="editCourse(${course.id})">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn btn-danger btn-sm" onclick="deleteCourse(${course.id})">
-                    <i class="fas fa-trash"></i>
-                </button>
+            <td class="!text-gray-400 dark:!text-slate-500 !text-sm">${course.id}</td>
+            <td class="!font-medium">${escapeHtml(course.title)}</td>
+            <td class="!text-sm !text-gray-600 dark:!text-slate-400 !max-w-[200px] !truncate">${escapeHtml(course.description) || '<span class="text-gray-300 dark:text-slate-600">--</span>'}</td>
+            <td><span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${course.is_published ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300' : 'bg-gray-100 text-gray-600 dark:bg-slate-700 dark:text-slate-400'}">${course.is_published ? 'Yes' : 'No'}</span></td>
+            <td class="!text-sm">${course.price != null ? `CHF ${course.price.toFixed(2)}` : '--'}</td>
+            <td><span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${course.is_purchasable ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300' : 'bg-gray-100 text-gray-600 dark:bg-slate-700 dark:text-slate-400'}">${course.is_purchasable ? 'Yes' : 'No'}</span></td>
+            <td class="!text-sm">${course.lessons ? course.lessons.length : 0}</td>
+            <td class="!text-center">
+                <div class="flex items-center justify-center gap-1">
+                    <button onclick="editCourse(${course.id})" class="!bg-transparent !text-gray-400 hover:!text-primary-600 !shadow-none !p-2 !rounded-lg" title="Edit"><i class="fas fa-pen-to-square"></i></button>
+                    <button onclick="deleteCourse(${course.id})" class="!bg-transparent !text-gray-400 hover:!text-red-600 !shadow-none !p-2 !rounded-lg" title="Delete"><i class="fas fa-trash-can"></i></button>
+                </div>
             </td>
         `;
         tbody.appendChild(row);
     });
 }
 
-// Load lessons for the select dropdown
 async function loadLessons() {
     try {
         const response = await fetch('/api/admin/lessons');
         if (!response.ok) throw new Error('Failed to load lessons');
-        
         const lessons = await response.json();
         const select = document.getElementById('courseLessons');
         select.innerHTML = '';
-        
         lessons.forEach(lesson => {
             const option = document.createElement('option');
             option.value = lesson.id;
@@ -156,12 +149,10 @@ async function loadLessons() {
             select.appendChild(option);
         });
     } catch (error) {
-        console.error('Error loading lessons:', error);
-        alert('Failed to load lessons.');
+        showToast('Failed to load lessons', 'error');
     }
 }
 
-// Open add course modal
 function openAddCourseModal() {
     document.getElementById('courseModalLabel').textContent = 'Add Course';
     document.getElementById('courseForm').reset();
@@ -170,14 +161,12 @@ function openAddCourseModal() {
     openModal('courseModal');
 }
 
-// Edit course
 async function editCourse(courseId) {
     try {
         const response = await fetch(`/api/admin/courses/${courseId}`);
         if (!response.ok) throw new Error('Failed to load course');
-        
         const course = await response.json();
-        
+
         document.getElementById('courseModalLabel').textContent = 'Edit Course';
         document.getElementById('courseId').value = course.id;
         document.getElementById('courseTitle').value = course.title || '';
@@ -186,37 +175,26 @@ async function editCourse(courseId) {
         document.getElementById('courseIsPublished').checked = course.is_published || false;
         document.getElementById('coursePrice').value = course.price || 0;
         document.getElementById('courseIsPurchasable').checked = course.is_purchasable || false;
-        
+
         await loadLessons();
-        
-        // Select the lessons that are part of this course
         const select = document.getElementById('courseLessons');
-        const lessonIds = course.lessons ? course.lessons.map(lesson => lesson.id.toString()) : [];
-        
-        for (let option of select.options) {
-            option.selected = lessonIds.includes(option.value);
-        }
-        
+        const lessonIds = course.lessons ? course.lessons.map(l => l.id.toString()) : [];
+        for (let option of select.options) option.selected = lessonIds.includes(option.value);
+
         openModal('courseModal');
     } catch (error) {
-        console.error('Error loading course:', error);
-        alert('Failed to load course details.');
+        showToast('Failed to load course details', 'error');
     }
 }
 
-// Save course
 async function saveCourse() {
     const courseId = document.getElementById('courseId').value;
     const title = document.getElementById('courseTitle').value.trim();
-    
-    if (!title) {
-        alert('Please enter a course title.');
-        return;
-    }
-    
+    if (!title) { showToast('Please enter a title', 'error'); return; }
+
     const select = document.getElementById('courseLessons');
-    const selectedLessons = Array.from(select.selectedOptions).map(option => parseInt(option.value));
-    
+    const selectedLessons = Array.from(select.selectedOptions).map(o => parseInt(o.value));
+
     const courseData = {
         title: title,
         description: document.getElementById('courseDescription').value.trim(),
@@ -226,66 +204,37 @@ async function saveCourse() {
         is_purchasable: document.getElementById('courseIsPurchasable').checked,
         lessons: selectedLessons
     };
-    
+
     try {
         const url = courseId ? `/api/admin/courses/${courseId}/edit` : '/api/admin/courses/new';
         const method = courseId ? 'PUT' : 'POST';
-        
         const response = await fetch(url, {
-            method: method,
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCSRFToken()
-            },
+            method, headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRFToken() },
             body: JSON.stringify(courseData)
         });
-        
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.error || 'Failed to save course');
-        }
-        
-        closeModal('courseModal');
-        loadCourses(); // Reload the table
-        alert(courseId ? 'Course updated successfully!' : 'Course created successfully!');
-        
+        if (!response.ok) { const err = await response.json(); throw new Error(err.error || 'Failed to save'); }
+
+        closeModal('courseModal'); loadCourses();
+        showToast(courseId ? 'Course updated' : 'Course created');
     } catch (error) {
-        console.error('Error saving course:', error);
-        alert('Failed to save course: ' + error.message);
+        showToast('Error: ' + error.message, 'error');
     }
 }
 
-// Delete course
 async function deleteCourse(courseId) {
-    if (!confirm('Are you sure you want to delete this course? This action cannot be undone.')) {
-        return;
-    }
-    
+    if (!confirm('Delete this course?')) return;
     try {
         const response = await fetch(`/api/admin/courses/${courseId}/delete`, {
-            method: 'DELETE',
-            headers: {
-                'X-CSRFToken': getCSRFToken()
-            }
+            method: 'DELETE', headers: { 'X-CSRFToken': getCSRFToken() }
         });
-        
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.error || 'Failed to delete course');
-        }
-        
-        loadCourses(); // Reload the table
-        alert('Course deleted successfully!');
-        
+        if (!response.ok) { const err = await response.json(); throw new Error(err.error || 'Failed to delete'); }
+        loadCourses();
+        showToast('Course deleted');
     } catch (error) {
-        console.error('Error deleting course:', error);
-        alert('Failed to delete course: ' + error.message);
+        showToast('Error: ' + error.message, 'error');
     }
 }
 
-// Initialize page
-document.addEventListener('DOMContentLoaded', function() {
-    loadCourses();
-});
+document.addEventListener('DOMContentLoaded', function() { loadCourses(); });
 </script>
 {% endblock %}

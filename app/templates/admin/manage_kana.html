@@ -2,36 +2,101 @@
 
 {% block title %}Manage Kana{% endblock %}
 
-{% block content %}
-<h2>Manage Kana</h2>
+{% block page_header %}
+<h2 class="text-2xl font-semibold text-gray-900 dark:text-white">Kana</h2>
+{% endblock %}
 
-<button onclick="openModal('addKanaModal')">Add New Kana</button>
+{% block page_actions %}
+<button onclick="openModal('addKanaModal')" class="!bg-primary-600 hover:!bg-primary-700">
+    <i class="fas fa-plus"></i> Add Kana
+</button>
+{% endblock %}
+
+{% block content %}
+<!-- Search & Filter Bar -->
+<div class="flex flex-col sm:flex-row gap-3 mb-5" x-data="{ filter: 'all' }">
+    <div class="relative flex-1">
+        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500"></i>
+        <input type="text" id="kanaSearch" placeholder="Search kana..."
+               class="!w-full !pl-10 !pr-4 !py-2.5 !mb-0 !rounded-lg !border !border-gray-200 dark:!border-slate-700 !bg-white dark:!bg-slate-900 !text-sm"
+               oninput="filterKana()">
+    </div>
+    <div class="flex gap-2">
+        <button :class="filter === 'all' ? '!bg-primary-600 !text-white' : '!bg-gray-100 dark:!bg-slate-800 !text-gray-600 dark:!text-slate-300'"
+                @click="filter = 'all'; filterKana()" class="!text-sm !px-4 !py-2.5 !rounded-lg">All</button>
+        <button :class="filter === 'hiragana' ? '!bg-primary-600 !text-white' : '!bg-gray-100 dark:!bg-slate-800 !text-gray-600 dark:!text-slate-300'"
+                @click="filter = 'hiragana'; filterKana()" class="!text-sm !px-4 !py-2.5 !rounded-lg" id="filterHiragana">Hiragana</button>
+        <button :class="filter === 'katakana' ? '!bg-primary-600 !text-white' : '!bg-gray-100 dark:!bg-slate-800 !text-gray-600 dark:!text-slate-300'"
+                @click="filter = 'katakana'; filterKana()" class="!text-sm !px-4 !py-2.5 !rounded-lg" id="filterKatakana">Katakana</button>
+    </div>
+</div>
+
+<!-- Stats Row -->
+<div class="flex gap-4 mb-5">
+    <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-lg px-4 py-2.5 text-sm">
+        <span class="text-gray-500 dark:text-slate-400">Total:</span>
+        <span class="font-semibold text-gray-900 dark:text-white" id="kanaCount">0</span>
+    </div>
+    <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-lg px-4 py-2.5 text-sm">
+        <span class="text-gray-500 dark:text-slate-400">Hiragana:</span>
+        <span class="font-semibold text-gray-900 dark:text-white" id="hiraganaCount">0</span>
+    </div>
+    <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-lg px-4 py-2.5 text-sm">
+        <span class="text-gray-500 dark:text-slate-400">Katakana:</span>
+        <span class="font-semibold text-gray-900 dark:text-white" id="katakanaCount">0</span>
+    </div>
+</div>
+
+<!-- Table -->
+<div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl overflow-hidden">
+    <table id="kanaTable" class="!shadow-none !rounded-none !m-0">
+        <thead>
+            <tr>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50">ID</th>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50">Character</th>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50">Romanization</th>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50">Type</th>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50">Stroke Order</th>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50">Sound URL</th>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50 !text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
 
 <!-- Add Kana Modal -->
 <div id="addKanaModal" class="modal">
     <div class="modal-content">
-        <span class="close-button" onclick="closeModal('addKanaModal')">&times;</span>
-        <h3>Add New Kana</h3>
+        <div class="modal-header">
+            <h4>Add New Kana</h4>
+            <span class="close" onclick="closeModal('addKanaModal')">&times;</span>
+        </div>
         <form id="addKanaForm">
-            <label for="add-character">Character:</label>
-            <input type="text" id="add-character" name="character" required maxlength="1">
+            <div class="modal-body">
+                <label for="add-character">Character:</label>
+                <input type="text" id="add-character" name="character" required maxlength="1">
 
-            <label for="add-romanization">Romanization:</label>
-            <input type="text" id="add-romanization" name="romanization" required>
+                <label for="add-romanization">Romanization:</label>
+                <input type="text" id="add-romanization" name="romanization" required>
 
-            <label for="add-type">Type:</label>
-            <select id="add-type" name="type" required>
-                <option value="hiragana">Hiragana</option>
-                <option value="katakana">Katakana</option>
-            </select>
+                <label for="add-type">Type:</label>
+                <select id="add-type" name="type" required>
+                    <option value="hiragana">Hiragana</option>
+                    <option value="katakana">Katakana</option>
+                </select>
 
-            <label for="add-stroke_order_info">Stroke Order Info (URL/Data):</label>
-            <input type="text" id="add-stroke_order_info" name="stroke_order_info">
+                <label for="add-stroke_order_info">Stroke Order Info:</label>
+                <input type="text" id="add-stroke_order_info" name="stroke_order_info">
 
-            <label for="add-example_sound_url">Example Sound URL:</label>
-            <input type="text" id="add-example_sound_url" name="example_sound_url">
-
-            <button type="submit">Add Kana</button>
+                <label for="add-example_sound_url">Sound URL:</label>
+                <input type="text" id="add-example_sound_url" name="example_sound_url">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeModal('addKanaModal')">Cancel</button>
+                <button type="submit">Add Kana</button>
+            </div>
         </form>
     </div>
 </div>
@@ -39,55 +104,42 @@
 <!-- Edit Kana Modal -->
 <div id="editKanaModal" class="modal">
     <div class="modal-content">
-        <span class="close-button" onclick="closeModal('editKanaModal')">&times;</span>
-        <h3>Edit Kana</h3>
+        <div class="modal-header">
+            <h4>Edit Kana</h4>
+            <span class="close" onclick="closeModal('editKanaModal')">&times;</span>
+        </div>
         <form id="editKanaForm" class="form-edit">
             <input type="hidden" id="edit-id" name="id">
-            <label for="edit-character">Character:</label>
-            <input type="text" id="edit-character" name="character" required maxlength="1">
+            <div class="modal-body">
+                <label for="edit-character">Character:</label>
+                <input type="text" id="edit-character" name="character" required maxlength="1">
 
-            <label for="edit-romanization">Romanization:</label>
-            <input type="text" id="edit-romanization" name="romanization" required>
+                <label for="edit-romanization">Romanization:</label>
+                <input type="text" id="edit-romanization" name="romanization" required>
 
-            <label for="edit-type">Type:</label>
-            <select id="edit-type" name="type" required>
-                <option value="hiragana">Hiragana</option>
-                <option value="katakana">Katakana</option>
-            </select>
+                <label for="edit-type">Type:</label>
+                <select id="edit-type" name="type" required>
+                    <option value="hiragana">Hiragana</option>
+                    <option value="katakana">Katakana</option>
+                </select>
 
-            <label for="edit-stroke_order_info">Stroke Order Info (URL/Data):</label>
-            <input type="text" id="edit-stroke_order_info" name="stroke_order_info">
+                <label for="edit-stroke_order_info">Stroke Order Info:</label>
+                <input type="text" id="edit-stroke_order_info" name="stroke_order_info">
 
-            <label for="edit-example_sound_url">Example Sound URL:</label>
-            <input type="text" id="edit-example_sound_url" name="example_sound_url">
-
-            <button type="submit">Save Changes</button>
+                <label for="edit-example_sound_url">Sound URL:</label>
+                <input type="text" id="edit-example_sound_url" name="example_sound_url">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeModal('editKanaModal')">Cancel</button>
+                <button type="submit">Save Changes</button>
+            </div>
         </form>
     </div>
 </div>
-
-<h3>Existing Kana</h3>
-<table id="kanaTable">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Character</th>
-            <th>Romanization</th>
-            <th>Type</th>
-            <th>Stroke Order Info</th>
-            <th>Sound URL</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        <!-- Kana items will be loaded here by JavaScript -->
-    </tbody>
-</table>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    // Function to get CSRF token from meta tag
     function getCsrfToken() {
         return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     }
@@ -95,26 +147,73 @@
     const addKanaForm = document.getElementById('addKanaForm');
     const editKanaForm = document.getElementById('editKanaForm');
     const kanaTableBody = document.querySelector('#kanaTable tbody');
+    let allKanaData = [];
 
-    async function fetchKana() {
-        const response = await fetch('{{ url_for("routes.list_kana") }}');
-        const kanaList = await response.json();
-        kanaTableBody.innerHTML = ''; // Clear existing rows
+    function updateCounts() {
+        document.getElementById('kanaCount').textContent = allKanaData.length;
+        document.getElementById('hiraganaCount').textContent = allKanaData.filter(k => k.type === 'hiragana').length;
+        document.getElementById('katakanaCount').textContent = allKanaData.filter(k => k.type === 'katakana').length;
+    }
+
+    function filterKana() {
+        const search = document.getElementById('kanaSearch').value.toLowerCase();
+        const filterBtn = document.getElementById('filterHiragana');
+        const activeFilter = filterBtn && filterBtn.classList.contains('!bg-primary-600') ? 'hiragana' :
+                            document.getElementById('filterKatakana')?.classList.contains('!bg-primary-600') ? 'katakana' : 'all';
+
+        const filtered = allKanaData.filter(kana => {
+            const matchesSearch = !search ||
+                kana.character.toLowerCase().includes(search) ||
+                kana.romanization.toLowerCase().includes(search);
+            const matchesFilter = activeFilter === 'all' || kana.type === activeFilter;
+            return matchesSearch && matchesFilter;
+        });
+
+        renderKanaTable(filtered);
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    function renderKanaTable(kanaList) {
+        kanaTableBody.innerHTML = '';
+        if (kanaList.length === 0) {
+            kanaTableBody.innerHTML = '<tr><td colspan="7" class="!text-center !py-8 !text-gray-400 dark:!text-slate-500">No kana found</td></tr>';
+            return;
+        }
         kanaList.forEach(kana => {
             const row = kanaTableBody.insertRow();
+            row.className = 'hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors';
             row.innerHTML = `
-                <td>${kana.id}</td>
-                <td>${kana.character}</td>
-                <td>${kana.romanization}</td>
-                <td>${kana.type}</td>
-                <td>${kana.stroke_order_info || ''}</td>
-                <td>${kana.example_sound_url || ''}</td>
-                <td class="actions">
-                    <a href="#" class="edit" onclick="openEditModal(${kana.id})">Edit</a>
-                    <a href="#" class="delete" onclick="deleteKana(${kana.id}, '${kana.character}')">Delete</a>
+                <td class="!text-gray-400 dark:!text-slate-500 !text-sm">${kana.id}</td>
+                <td class="!text-2xl !font-medium">${escapeHtml(kana.character)}</td>
+                <td class="!font-medium">${escapeHtml(kana.romanization)}</td>
+                <td><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${kana.type === 'hiragana' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' : 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300'}">${escapeHtml(kana.type)}</span></td>
+                <td class="!text-sm !text-gray-500 dark:!text-slate-400 !truncate !max-w-[150px]">${escapeHtml(kana.stroke_order_info) || '<span class="text-gray-300 dark:text-slate-600">--</span>'}</td>
+                <td class="!text-sm !text-gray-500 dark:!text-slate-400 !truncate !max-w-[150px]">${escapeHtml(kana.example_sound_url) || '<span class="text-gray-300 dark:text-slate-600">--</span>'}</td>
+                <td class="!text-center">
+                    <div class="flex items-center justify-center gap-1">
+                        <button onclick="openEditModal(${kana.id})" class="!bg-transparent !text-gray-400 hover:!text-primary-600 !shadow-none !p-2 !rounded-lg" title="Edit">
+                            <i class="fas fa-pen-to-square"></i>
+                        </button>
+                        <button onclick="deleteKana(${kana.id}, '${escapeHtml(kana.character)}')" class="!bg-transparent !text-gray-400 hover:!text-red-600 !shadow-none !p-2 !rounded-lg" title="Delete">
+                            <i class="fas fa-trash-can"></i>
+                        </button>
+                    </div>
                 </td>
             `;
         });
+    }
+
+    async function fetchKana() {
+        const response = await fetch('{{ url_for("routes.list_kana") }}');
+        allKanaData = await response.json();
+        updateCounts();
+        renderKanaTable(allKanaData);
     }
 
     addKanaForm.addEventListener('submit', async function(event) {
@@ -124,31 +223,24 @@
 
         const response = await fetch('{{ url_for("routes.create_kana") }}', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCsrfToken() // Add CSRF token header
-            },
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfToken() },
             body: JSON.stringify(data)
         });
 
         if (response.ok) {
             addKanaForm.reset();
             closeModal('addKanaModal');
-            fetchKana(); // Refresh table
-            // Consider adding a flash message system via JS if not reloading page
-            alert('Kana added successfully!');
+            fetchKana();
+            showToast('Kana added successfully');
         } else {
             const errorData = await response.json();
-            alert('Error adding Kana: ' + (errorData.error || response.statusText));
+            showToast('Error: ' + (errorData.error || response.statusText), 'error');
         }
     });
 
     async function openEditModal(id) {
         const response = await fetch(`/api/admin/kana/${id}`);
-        if (!response.ok) {
-            alert('Error fetching Kana details.');
-            return;
-        }
+        if (!response.ok) { showToast('Error fetching kana details', 'error'); return; }
         const kana = await response.json();
 
         document.getElementById('edit-id').value = kana.id;
@@ -165,48 +257,40 @@
         const id = document.getElementById('edit-id').value;
         const formData = new FormData(editKanaForm);
         const data = Object.fromEntries(formData.entries());
-        delete data.id; // Not needed in body for update
+        delete data.id;
 
         const response = await fetch(`/api/admin/kana/${id}/edit`, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCsrfToken() // Add CSRF token header
-            },
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfToken() },
             body: JSON.stringify(data)
         });
 
         if (response.ok) {
             closeModal('editKanaModal');
-            fetchKana(); // Refresh table
-            alert('Kana updated successfully!');
+            fetchKana();
+            showToast('Kana updated successfully');
         } else {
             const errorData = await response.json();
-            alert('Error updating Kana: ' + (errorData.error || response.statusText));
+            showToast('Error: ' + (errorData.error || response.statusText), 'error');
         }
     });
 
     async function deleteKana(id, character) {
-        if (!confirm(`Are you sure you want to delete Kana: ${character}?`)) {
-            return;
-        }
+        if (!confirm(`Delete kana: ${character}?`)) return;
         const response = await fetch(`/api/admin/kana/${id}/delete`, {
             method: 'DELETE',
-            headers: {
-                'X-CSRFToken': getCsrfToken() // Add CSRF token header
-            }
+            headers: { 'X-CSRFToken': getCsrfToken() }
         });
 
         if (response.ok) {
-            fetchKana(); // Refresh table
-            alert('Kana deleted successfully!');
+            fetchKana();
+            showToast('Kana deleted');
         } else {
             const errorData = await response.json();
-            alert('Error deleting Kana: ' + (errorData.error || response.statusText));
+            showToast('Error: ' + (errorData.error || response.statusText), 'error');
         }
     }
 
-    // Initial fetch
     fetchKana();
 </script>
 {% endblock %}
