@@ -378,7 +378,7 @@ function validateContentData(data) {
         if (!data.title) { showToast(`Please provide a title for ${data.content_type} content`, 'error'); return false; }
         const contentSource = document.querySelector('input[name="contentSource"]:checked')?.value;
         if (contentSource === 'upload') {
-            if (!uploadedFileData || !uploadedFileData.filePath) { showToast(`Please upload a ${data.content_type} file`, 'error'); return false; }
+            if (!uploadedFileData || !uploadedFileData.dbPath || uploadedFileData.filePath) { showToast(`Please upload a ${data.content_type} file`, 'error'); return false; }
         } else if (contentSource === 'url') {
             if (!data.media_url) { showToast(`Please provide a URL for ${data.content_type} content`, 'error'); return false; }
         } else { showToast('Please select either file upload or URL option', 'error'); return false; }
@@ -569,7 +569,7 @@ async function saveContentToLesson(isEditing = false) {
             if (selectedContentType === 'text' && quillEditor) saveData.content_text = quillEditor.root.innerHTML;
             else if (['video', 'audio', 'image'].includes(selectedContentType)) {
                 const src = document.querySelector('input[name="contentSource"]:checked')?.value;
-                if (src === 'upload' && uploadedFileData) { saveData.file_path = uploadedFileData.filePath; saveData.media_url = null; }
+                if (src === 'upload' && uploadedFileData) { saveData.file_path = uploadedFileData.dbPath || uploadedFileData.filePath; saveData.media_url = null; }
                 else saveData.file_path = null;
             } else if (selectedContentType === 'interactive') {
                 saveData = buildInteractiveSaveData(saveData);
@@ -582,7 +582,7 @@ async function saveContentToLesson(isEditing = false) {
                 const src = document.querySelector('input[name="contentSource"]:checked')?.value;
                 if (src === 'upload' && uploadedFileData) {
                     endpoint = `/api/admin/lessons/${currentLessonId}/content/file`;
-                    saveData = { content_type: selectedContentType, title: currentContentData.title, description: currentContentData.content_text || '', file_path: uploadedFileData.filePath, file_size: uploadedFileData.file_size, file_type: uploadedFileData.file_type, original_filename: uploadedFileData.original_filename, order_index: currentContentData.order_index || 0, page_number: currentPageNumber || currentContentData.page_number || document.getElementById('contentPageNumber')?.value || 1, is_optional: currentContentData.is_optional === 'on' };
+                    saveData = { content_type: selectedContentType, title: currentContentData.title, description: currentContentData.content_text || '', file_path: uploadedFileData.dbPath || uploadedFileData.filePath, file_size: uploadedFileData.file_size, file_type: uploadedFileData.file_type, original_filename: uploadedFileData.original_filename, order_index: currentContentData.order_index || 0, page_number: currentPageNumber || currentContentData.page_number || document.getElementById('contentPageNumber')?.value || 1, is_optional: currentContentData.is_optional === 'on' };
                 } else {
                     endpoint = `/api/admin/lessons/${currentLessonId}/content/new`;
                     if (!currentContentData.media_url) { showToast('Please provide a URL', 'error'); return; }
