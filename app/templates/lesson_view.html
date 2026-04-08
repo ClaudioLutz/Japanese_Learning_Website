@@ -2675,9 +2675,9 @@ document.addEventListener('DOMContentLoaded', function() {
         groups.forEach(function(group, groupIdx) {
             if (group.length < 2) return;
 
-            // Detect completion status per quiz
+            // Detect completion status per quiz: check for disabled inputs (answered correctly or out of attempts)
             const statuses = group.map(function(item) {
-                return !!item.querySelector('.badge.bg-success, .completed-badge:not([style*="display: none"])');
+                return !!item.querySelector('input:disabled, select:disabled');
             });
 
             // Shorten titles to just "Quiz" + number
