@@ -1322,33 +1322,35 @@ async function submitQuizAnswer(lessonId, questionId) {
 
 function showQuizFeedback(questionId, result) {
     const feedbackElement = document.getElementById(`feedback_${questionId}`);
-    
+    const questionElement = document.querySelector(`[data-question-id="${questionId}"]`);
+
     let feedbackHtml = '';
     if (result.is_correct) {
-        feedbackHtml = '<div class="alert alert-success">✓ Correct!</div>';
+        feedbackHtml = '<div class="alert alert-success py-2"><i class="fas fa-check-circle me-1"></i> Richtig!</div>';
+    } else if (result.attempts_remaining === 0) {
+        feedbackHtml = '<div class="alert alert-danger py-2"><i class="fas fa-times-circle me-1"></i> Falsch — keine Versuche mehr.</div>';
     } else {
-        feedbackHtml = '<div class="alert alert-danger">✗ Incorrect</div>';
+        const plural = result.attempts_remaining === 1 ? 'Versuch' : 'Versuche';
+        feedbackHtml = `<div class="alert alert-warning py-2"><i class="fas fa-redo me-1"></i> Falsch — noch ${result.attempts_remaining} ${plural}.</div>`;
     }
-    
+
+    // Only show explanation/feedback when solution is revealed (correct or last attempt)
     if (result.explanation) {
-        feedbackHtml += `<div class="alert alert-info">${result.explanation}</div>`;
+        feedbackHtml += `<div class="alert alert-info py-2">${result.explanation}</div>`;
     }
-    
     if (result.option_feedback) {
-        feedbackHtml += `<div class="alert alert-warning">${result.option_feedback}</div>`;
+        feedbackHtml += `<div class="alert alert-secondary py-2">${result.option_feedback}</div>`;
     }
-    
+
     feedbackElement.innerHTML = feedbackHtml;
     feedbackElement.style.display = 'block';
-    
+
     // Disable question if correct or no attempts remaining
     if (result.is_correct || result.attempts_remaining === 0) {
-        const questionElement = document.querySelector(`[data-question-id="${questionId}"]`);
-        const inputs = questionElement.querySelectorAll('input');
+        const inputs = questionElement.querySelectorAll('input, select');
         const button = questionElement.querySelector('button');
-        
         inputs.forEach(input => input.disabled = true);
-        if(button) button.disabled = true;
+        if (button) button.disabled = true;
     }
 }
 

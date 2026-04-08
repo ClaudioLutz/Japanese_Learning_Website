@@ -3033,14 +3033,20 @@ def submit_quiz_answer(lesson_id, question_id):
         if question.content and question.content.max_attempts:
             attempts_remaining = question.content.max_attempts - answer.attempts
 
+        # Only reveal explanation and correct answer when:
+        # - Answer is correct, OR
+        # - No attempts remaining (last attempt used)
+        show_solution = is_correct or attempts_remaining == 0
+
         result = {
             'is_correct': is_correct,
-            'explanation': question.explanation,
             'attempts_remaining': attempts_remaining
         }
-        
-        if selected_option:
-            result['option_feedback'] = selected_option.feedback
+
+        if show_solution:
+            result['explanation'] = question.explanation
+            if selected_option:
+                result['option_feedback'] = selected_option.feedback
         
         current_app.logger.info(f"Answer for question {question_id} processed. Result: {result}")
         return jsonify(result)
