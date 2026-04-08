@@ -6,30 +6,29 @@
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
 <style>
 [x-cloak] { display: none !important; }
-/* Quiz Carousel Slide Transitions — direction-aware via --quiz-dir */
-.quiz-slides-container { position: relative; overflow: hidden; }
-.quiz-slide-enter {
-    transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1), opacity 300ms ease;
+/* Quiz Carousel Slide Transitions */
+.quiz-slides-container { position: relative; overflow: hidden; min-height: 100px; }
+.quiz-slide { will-change: transform, opacity; }
+.quiz-slide-anim {
+    animation-duration: 320ms;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    animation-fill-mode: both;
 }
-.quiz-slide-enter-from {
-    opacity: 0;
-    transform: translateX(calc(var(--quiz-dir, 1) * 60px)) scale(0.97);
+@keyframes quizSlideInRight {
+    from { opacity: 0; transform: translateX(50px) scale(0.97); }
+    to { opacity: 1; transform: translateX(0) scale(1); }
 }
-.quiz-slide-enter-to {
-    opacity: 1;
-    transform: translateX(0) scale(1);
+@keyframes quizSlideInLeft {
+    from { opacity: 0; transform: translateX(-50px) scale(0.97); }
+    to { opacity: 1; transform: translateX(0) scale(1); }
 }
-.quiz-slide-leave {
-    transition: transform 220ms cubic-bezier(0.55, 0.06, 0.68, 0.19), opacity 180ms ease;
-    position: absolute; width: 100%; top: 0; left: 0;
+@keyframes quizSlideOutLeft {
+    from { opacity: 1; transform: translateX(0) scale(1); }
+    to { opacity: 0; transform: translateX(-30px) scale(0.97); }
 }
-.quiz-slide-leave-from {
-    opacity: 1;
-    transform: translateX(0) scale(1);
-}
-.quiz-slide-leave-to {
-    opacity: 0;
-    transform: translateX(calc(var(--quiz-dir, 1) * -40px)) scale(0.97);
+@keyframes quizSlideOutRight {
+    from { opacity: 1; transform: translateX(0) scale(1); }
+    to { opacity: 0; transform: translateX(30px) scale(0.97); }
 }
 
 /* Quiz Carousel Dots */
@@ -2772,20 +2771,31 @@ document.addEventListener('DOMContentLoaded', function() {
             group.forEach(function(item, idx) {
                 const slide = document.createElement('div');
                 slide.className = 'quiz-slide';
-                slide.style.minHeight = '100px';
-                slide.setAttribute('x-show', 'current === ' + idx);
-                slide.setAttribute('x-transition:enter', 'quiz-slide-enter');
-                slide.setAttribute('x-transition:enter-start', 'quiz-slide-enter-from');
-                slide.setAttribute('x-transition:enter-end', 'quiz-slide-enter-to');
-                slide.setAttribute('x-transition:leave', 'quiz-slide-leave');
-                slide.setAttribute('x-transition:leave-start', 'quiz-slide-leave-from');
-                slide.setAttribute('x-transition:leave-end', 'quiz-slide-leave-to');
+                slide.style.display = idx === 0 ? 'block' : 'none';
+                slide.dataset.slideIdx = idx;
                 slide.appendChild(item);
                 slidesContainer.appendChild(slide);
             });
 
-            // Direction-aware: add x-effect to update CSS custom property
-            wrapper.setAttribute('x-effect', "$el.style.setProperty('--quiz-dir', direction === 'right' ? '1' : '-1')");
+            // Animate slide transitions via x-effect watching 'current'
+            wrapper.setAttribute('x-effect', `
+                const slides = $el.querySelectorAll('.quiz-slide');
+                slides.forEach((s, i) => {
+                    if (i === current) {
+                        s.style.display = 'block';
+                        s.classList.remove('quiz-slide-anim');
+                        s.style.animation = 'none';
+                        s.offsetHeight; // force reflow
+                        s.style.animation = '';
+                        s.classList.add('quiz-slide-anim');
+                        s.style.animationName = direction === 'right' ? 'quizSlideInRight' : 'quizSlideInLeft';
+                    } else if (s.style.display !== 'none') {
+                        s.classList.add('quiz-slide-anim');
+                        s.style.animationName = direction === 'right' ? 'quizSlideOutLeft' : 'quizSlideOutRight';
+                        s.addEventListener('animationend', () => { s.style.display = 'none'; s.classList.remove('quiz-slide-anim'); }, {once: true});
+                    }
+                });
+            `);
 
             // Initialize Alpine on the new element
             if (window.Alpine) Alpine.initTree(wrapper);
