@@ -32,4 +32,7 @@ def db_downgrade():
     downgrade()
 
 if __name__ == '__main__':
-    app.run(debug=True) # debug=True for development, turn off for production
+    app.run(
+        debug=True,
+        exclude_patterns=['venv/*', '*.pyc', '__pycache__/*', '.git/*', 'node_modules/*']
+    )
