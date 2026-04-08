@@ -691,7 +691,7 @@
 
                                             {# Slides #}
                                             {% for content in page.content %}
-                                            <div class="quiz-slide" x-show="current === {{ loop.index0 }}" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 transform translate-x-4" x-transition:enter-end="opacity-100 transform translate-x-0">
+                                            <div class="quiz-slide" x-show="current === {{ loop.index0 }}" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" style="min-height: 120px;">
                                                 <div class="content-item p-3 border rounded bg-white shadow-sm" data-content-id="{{ content.id }}">
                                                     <h6 class="mb-3">
                                                         {{ content.title or (content.content_type + ' #' + (content.content_id | string if content.content_id else 'Custom')) }}
