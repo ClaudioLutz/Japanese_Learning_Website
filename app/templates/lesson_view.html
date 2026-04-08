@@ -6,6 +6,32 @@
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
 <style>
 [x-cloak] { display: none !important; }
+/* Quiz Carousel Slide Transitions — direction-aware via --quiz-dir */
+.quiz-slides-container { position: relative; overflow: hidden; }
+.quiz-slide-enter {
+    transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1), opacity 300ms ease;
+}
+.quiz-slide-enter-from {
+    opacity: 0;
+    transform: translateX(calc(var(--quiz-dir, 1) * 60px)) scale(0.97);
+}
+.quiz-slide-enter-to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+}
+.quiz-slide-leave {
+    transition: transform 220ms cubic-bezier(0.55, 0.06, 0.68, 0.19), opacity 180ms ease;
+    position: absolute; width: 100%; top: 0; left: 0;
+}
+.quiz-slide-leave-from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+}
+.quiz-slide-leave-to {
+    opacity: 0;
+    transform: translateX(calc(var(--quiz-dir, 1) * -40px)) scale(0.97);
+}
+
 /* Quiz Carousel Dots */
 .quiz-dot {
     width: 12px; height: 12px; border-radius: 50%; border: none;
@@ -2660,9 +2686,17 @@ document.addEventListener('keydown', (e) => {
 function quizCarousel(totalSlides, completedArr) {
     return {
         current: 0,
+        prev_idx: -1,
+        direction: 'right',
         total: totalSlides,
         completed: completedArr || [],
-        goTo(idx) { this.current = idx; }
+        goTo(idx) {
+            this.direction = idx > this.current ? 'right' : 'left';
+            this.prev_idx = this.current;
+            this.current = idx;
+        },
+        next() { if (this.current < this.total - 1) this.goTo(this.current + 1); },
+        prev() { if (this.current > 0) this.goTo(this.current - 1); }
     };
 }
 
@@ -2722,10 +2756,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
                 <div class="quiz-slides-container" style="position: relative; overflow: hidden;"></div>
                 <div class="d-flex justify-content-between mt-3 pt-2 border-top">
-                    <button class="btn btn-outline-secondary btn-sm" @click="current > 0 && current--" :disabled="current === 0" :class="current === 0 ? 'opacity-50' : ''">
+                    <button class="btn btn-outline-secondary btn-sm" @click="prev()" :disabled="current === 0" :class="current === 0 ? 'opacity-50' : ''">
                         <i class="fas fa-chevron-left me-1"></i> Zurück
                     </button>
-                    <button class="btn btn-sm" style="background: #6366f1; color: white;" @click="current < total - 1 && current++" x-show="current < total - 1">
+                    <button class="btn btn-sm" style="background: #6366f1; color: white;" @click="next()" x-show="current < total - 1">
                         Weiter <i class="fas fa-chevron-right ms-1"></i>
                     </button>
                     <span x-show="current === total - 1" class="badge bg-success py-2 px-3">Quiz abgeschlossen</span>
@@ -2738,14 +2772,20 @@ document.addEventListener('DOMContentLoaded', function() {
             group.forEach(function(item, idx) {
                 const slide = document.createElement('div');
                 slide.className = 'quiz-slide';
-                slide.setAttribute('x-show', 'current === ' + idx);
-                slide.setAttribute('x-transition:enter', 'transition ease-out duration-300');
-                slide.setAttribute('x-transition:enter-start', 'opacity-0 transform translate-x-2');
-                slide.setAttribute('x-transition:enter-end', 'opacity-100 transform translate-x-0');
                 slide.style.minHeight = '100px';
+                slide.setAttribute('x-show', 'current === ' + idx);
+                slide.setAttribute('x-transition:enter', 'quiz-slide-enter');
+                slide.setAttribute('x-transition:enter-start', 'quiz-slide-enter-from');
+                slide.setAttribute('x-transition:enter-end', 'quiz-slide-enter-to');
+                slide.setAttribute('x-transition:leave', 'quiz-slide-leave');
+                slide.setAttribute('x-transition:leave-start', 'quiz-slide-leave-from');
+                slide.setAttribute('x-transition:leave-end', 'quiz-slide-leave-to');
                 slide.appendChild(item);
                 slidesContainer.appendChild(slide);
             });
+
+            // Direction-aware: add x-effect to update CSS custom property
+            wrapper.setAttribute('x-effect', "$el.style.setProperty('--quiz-dir', direction === 'right' ? '1' : '-1')");
 
             // Initialize Alpine on the new element
             if (window.Alpine) Alpine.initTree(wrapper);
