@@ -316,6 +316,7 @@ class LessonPage(db.Model):
     page_number = db.Column(db.Integer, nullable=False)
     title = db.Column(db.String(200), nullable=True)
     description = db.Column(db.Text, nullable=True)
+    page_type = db.Column(db.String(20), default='normal', nullable=False)  # 'normal' or 'quiz_carousel'
 
     __table_args__ = (db.UniqueConstraint('lesson_id', 'page_number'),)
 

@@ -134,6 +134,20 @@
                     <label for="pageDescription">Page Description</label>
                     <textarea id="pageDescription" class="form-control" rows="3"></textarea>
                 </div>
+                <div class="form-group">
+                    <label class="text-sm font-medium">Page Layout</label>
+                    <div class="flex gap-3 mt-1">
+                        <label class="flex items-center gap-2 cursor-pointer text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-slate-700 has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50 dark:has-[:checked]:bg-primary-900/20 transition-all">
+                            <input type="radio" name="pageType" value="normal" id="pageTypeNormal" class="!w-4 !h-4 !mb-0" checked>
+                            <i class="fas fa-list text-gray-400"></i> Normal
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-slate-700 has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50 dark:has-[:checked]:bg-primary-900/20 transition-all">
+                            <input type="radio" name="pageType" value="quiz_carousel" id="pageTypeCarousel" class="!w-4 !h-4 !mb-0">
+                            <i class="fas fa-layer-group text-gray-400"></i> Quiz-Karussell
+                        </label>
+                    </div>
+                    <p class="text-[0.7rem] text-gray-400 dark:text-slate-500 mt-1" id="pageTypeHint">Inhalte werden als scrollbare Liste angezeigt.</p>
+                </div>
                 <button type="button" class="btn-success !text-sm" onclick="savePageDetails()">Save Details</button>
             </form>
             <hr class="my-4 border-gray-200 dark:border-slate-700">

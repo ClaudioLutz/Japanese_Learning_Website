@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-improvements.css') }}">
     {% block styles %}{% endblock %}
+    {% block extra_head %}{% endblock %}
 </head>
 <body {% block body_attributes %}{% endblock %}>
     <nav class="enhanced-navbar">

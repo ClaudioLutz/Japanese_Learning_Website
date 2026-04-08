@@ -1968,7 +1968,8 @@ def update_lesson_page(lesson_id, page_num):
             lesson_id=lesson_id,
             page_number=page_num,
             title=data.get('title', f'Page {page_num}'),
-            description=data.get('description', '')
+            description=data.get('description', ''),
+            page_type=data.get('page_type', 'normal')
         )
         db.session.add(page)
         current_app.logger.info(f"Created new page {page_num} for lesson {lesson_id}")
@@ -1976,6 +1977,8 @@ def update_lesson_page(lesson_id, page_num):
         if data:
             page.title = data.get('title', page.title)
             page.description = data.get('description', page.description)
+            if 'page_type' in data:
+                page.page_type = data['page_type']
             current_app.logger.info(f"Updating existing page {page_num} for lesson {lesson_id}")
 
     try:

@@ -59,22 +59,43 @@ async function editPage(pageNumber) {
     if (pageData && pageData.metadata) {
         document.getElementById('pageTitle').value = pageData.metadata.title || '';
         document.getElementById('pageDescription').value = pageData.metadata.description || '';
+        // Set page type radio
+        const pageType = pageData.metadata.page_type || 'normal';
+        const radio = document.getElementById(pageType === 'quiz_carousel' ? 'pageTypeCarousel' : 'pageTypeNormal');
+        if (radio) radio.checked = true;
+        updatePageTypeHint(pageType);
     } else {
         document.getElementById('pageTitle').value = `Page ${pageNumber}`;
         document.getElementById('pageDescription').value = '';
+        document.getElementById('pageTypeNormal').checked = true;
+        updatePageTypeHint('normal');
     }
     await loadPageContentForEditor(pageNumber);
     openModal('pageEditorModal');
 }
 
+function updatePageTypeHint(type) {
+    const hint = document.getElementById('pageTypeHint');
+    if (hint) hint.textContent = type === 'quiz_carousel'
+        ? 'Inhalte werden als Karussell mit Slide-Navigation angezeigt — ideal fuer Quiz-Fragen.'
+        : 'Inhalte werden als scrollbare Liste angezeigt.';
+}
+// Bind radio change events
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('input[name="pageType"]').forEach(r => {
+        r.addEventListener('change', () => updatePageTypeHint(r.value));
+    });
+});
+
 async function savePageDetails() {
     const title = document.getElementById('pageTitle').value;
     const description = document.getElementById('pageDescription').value;
+    const pageType = document.querySelector('input[name="pageType"]:checked')?.value || 'normal';
     try {
         const response = await fetch(`/api/admin/lessons/${currentLessonId}/pages/${currentPageNumber}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRFToken() },
-            body: JSON.stringify({ title, description })
+            body: JSON.stringify({ title, description, page_type: pageType })
         });
         if (response.ok) {
             showToast('Page details saved');

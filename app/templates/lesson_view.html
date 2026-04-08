@@ -2,6 +2,11 @@
 
 {% block title %}{{ lesson.title }} - Japanese Learning{% endblock %}
 
+{% block extra_head %}
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+<style>[x-cloak] { display: none !important; }</style>
+{% endblock %}
+
 {% block content %}
 <style>
     /* ── Left Sidebar Navigation ── */
@@ -671,6 +676,179 @@
                                             {% endif %}
                                         </div>
                                         {% endfor %}
+
+                                        {% elif page.metadata and page.metadata.page_type == 'quiz_carousel' %}
+                                        {# === Quiz Carousel Page === #}
+                                        <div class="quiz-carousel-container" x-data="quizCarousel({{ page.content | length }})" x-cloak>
+                                            {# Progress Bar #}
+                                            <div class="d-flex align-items-center mb-3 gap-2">
+                                                <span class="badge bg-primary" x-text="'Frage ' + (current + 1) + ' / ' + total"></span>
+                                                <div class="progress flex-grow-1" style="height: 6px;">
+                                                    <div class="progress-bar bg-primary" :style="'width: ' + ((current + 1) / total * 100) + '%'" style="transition: width 0.3s;"></div>
+                                                </div>
+                                                <span class="text-muted small" x-show="score > 0" x-text="score + ' richtig'"></span>
+                                            </div>
+
+                                            {# Slides #}
+                                            {% for content in page.content %}
+                                            <div class="quiz-slide" x-show="current === {{ loop.index0 }}" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 transform translate-x-4" x-transition:enter-end="opacity-100 transform translate-x-0">
+                                                <div class="content-item p-3 border rounded bg-white shadow-sm" data-content-id="{{ content.id }}">
+                                                    <h6 class="mb-3">
+                                                        {{ content.title or (content.content_type + ' #' + (content.content_id | string if content.content_id else 'Custom')) }}
+                                                    </h6>
+                                                    <div class="content-body">
+                                                        {# Reuse existing content rendering #}
+                                                        {% if content.content_type in ['kana', 'kanji', 'vocabulary', 'grammar'] %}
+                                                            {% set content_data = content.get_content_data() %}
+                                                            {% if content_data %}
+                                                            <div class="flip-card">
+                                                                <button class="card-scene" tabindex="0">
+                                                                    <div class="card-flipper">
+                                                                        <div class="card-face card-face--front">
+                                                                            {% if content.content_type == 'kana' %}
+                                                                                <span class="kana-char">{{ content_data.character }}</span>
+                                                                            {% elif content.content_type == 'kanji' %}
+                                                                                <span class="kana-char">{{ content_data.character }}</span>
+                                                                            {% elif content.content_type == 'vocabulary' %}
+                                                                                <div class="vocab-front">
+                                                                                    <div class="vocab-word">{{ content_data.word }}</div>
+                                                                                    <div class="vocab-reading">{{ content_data.reading }}</div>
+                                                                                </div>
+                                                                            {% elif content.content_type == 'grammar' %}
+                                                                                <div class="grammar-front">
+                                                                                    <div class="grammar-title">{{ content_data.title }}</div>
+                                                                                </div>
+                                                                            {% endif %}
+                                                                            <div class="flip-hint">Click to flip</div>
+                                                                        </div>
+                                                                        <div class="card-face card-face--back">
+                                                                            <div class="details">
+                                                                                {% if content.content_type == 'kana' %}
+                                                                                    <p><strong>Romanization:</strong> {{ content_data.romanization }}</p>
+                                                                                {% elif content.content_type == 'kanji' %}
+                                                                                    <p><strong>Meaning:</strong> {{ content_data.meaning }}</p>
+                                                                                    <p><strong>Onyomi:</strong> {{ content_data.onyomi or 'N/A' }}</p>
+                                                                                    <p><strong>Kunyomi:</strong> {{ content_data.kunyomi or 'N/A' }}</p>
+                                                                                {% elif content.content_type == 'vocabulary' %}
+                                                                                    <p><strong>Meaning:</strong> {{ content_data.meaning }}</p>
+                                                                                {% elif content.content_type == 'grammar' %}
+                                                                                    <p>{{ content_data.explanation[:200] if content_data.explanation else '' }}</p>
+                                                                                {% endif %}
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </button>
+                                                            </div>
+                                                            {% endif %}
+                                                        {% elif content.content_type == 'text' %}
+                                                            <div class="rich-text-content">{{ content.content_text | safe }}</div>
+                                                        {% elif content.content_type == 'image' %}
+                                                            {% if content.file_path %}
+                                                            <img src="{{ url_for('static', filename='uploads/' + content.file_path) }}" class="img-fluid rounded" alt="{{ content.title }}">
+                                                            {% elif content.media_url %}
+                                                            <img src="{{ content.media_url }}" class="img-fluid rounded" alt="{{ content.title }}">
+                                                            {% endif %}
+                                                        {% elif content.content_type == 'audio' %}
+                                                            <audio controls class="w-100">
+                                                                {% if content.file_path %}<source src="{{ url_for('static', filename='uploads/' + content.file_path) }}" type="audio/mpeg">
+                                                                {% elif content.media_url %}<source src="{{ content.media_url }}" type="audio/mpeg">{% endif %}
+                                                            </audio>
+                                                        {% elif content.is_interactive and current_user.is_authenticated %}
+                                                            <div class="interactive-content-container" data-content-id="{{ content.id }}">
+                                                                {% for question in content.quiz_questions %}
+                                                                {% set user_answer = user_quiz_answers.get(question.id) %}
+                                                                <div class="quiz-question" data-question-id="{{ question.id }}" data-question-type="{{ question.question_type }}">
+                                                                    <div class="question-header mb-3">
+                                                                        <h6>{{ question.question_text | safe }}</h6>
+                                                                        {% if user_answer and user_answer.is_correct %}
+                                                                        <span class="badge bg-success ms-2">&#10003; Correct</span>
+                                                                        {% endif %}
+                                                                    </div>
+                                                                    {% if question.question_type in ['multiple_choice', 'true_false'] %}
+                                                                    <div class="{{ question.question_type }}-options">
+                                                                        {% for option in question.options | sort(attribute='order_index') %}
+                                                                        <div class="form-check mb-2">
+                                                                            <input class="form-check-input" type="radio" name="question_{{ question.id }}"
+                                                                                   id="option_{{ option.id }}" value="{{ option.id }}"
+                                                                                   {% if user_answer and user_answer.selected_option_id == option.id %}checked{% endif %}
+                                                                                   {% if user_answer and user_answer.is_correct %}disabled{% endif %}>
+                                                                            <label class="form-check-label" for="option_{{ option.id }}">{{ option.option_text }}</label>
+                                                                        </div>
+                                                                        {% endfor %}
+                                                                    </div>
+                                                                    {% elif question.question_type == 'matching' %}
+                                                                    <div class="matching-quiz">
+                                                                        <p class="text-muted small">Match each term with its correct meaning:</p>
+                                                                        <div class="matching-pairs">
+                                                                            {% for option in question.options | sort(attribute='order_index') %}
+                                                                            <div class="matching-pair mb-2 p-2 border rounded">
+                                                                                <div class="row align-items-center">
+                                                                                    <div class="col-md-6"><strong>{{ option.option_text }}</strong></div>
+                                                                                    <div class="col-md-6">
+                                                                                        <select class="form-select form-select-sm matching-select"
+                                                                                                data-prompt="{{ option.option_text }}"
+                                                                                                data-correct-answer="{{ option.feedback }}"
+                                                                                                data-question-id="{{ question.id }}"
+                                                                                                {% if user_answer and user_answer.is_correct %}disabled{% endif %}>
+                                                                                            <option value="">Choose...</option>
+                                                                                            {% for a in question.options | sort(attribute='order_index') %}
+                                                                                            <option value="{{ a.feedback }}">{{ a.feedback }}</option>
+                                                                                            {% endfor %}
+                                                                                        </select>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            {% endfor %}
+                                                                        </div>
+                                                                    </div>
+                                                                    {% endif %}
+                                                                    <div class="question-actions mt-3">
+                                                                        <button class="btn btn-sm btn-primary" onclick="submitQuizAnswer('{{ lesson.id }}', '{{ question.id }}')">Submit Answer</button>
+                                                                        <div class="quiz-feedback mt-2" id="feedback_{{ question.id }}"
+                                                                             {% if user_answer %}style="display: block;"{% else %}style="display: none;"{% endif %}>
+                                                                            {% if user_answer %}
+                                                                                {% if user_answer.is_correct %}<div class="alert alert-success py-2">&#10003; Correct!</div>
+                                                                                {% else %}<div class="alert alert-danger py-2">&#10007; Incorrect</div>{% endif %}
+                                                                                {% if question.explanation %}<div class="alert alert-info py-2">{{ question.explanation }}</div>{% endif %}
+                                                                            {% endif %}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                {% endfor %}
+                                                            </div>
+                                                        {% elif content.is_interactive %}
+                                                            <div class="alert alert-warning py-2">
+                                                                <i class="fas fa-lock"></i> <a href="{{ url_for('routes.login') }}">Login</a> to access quizzes.
+                                                            </div>
+                                                        {% endif %}
+                                                    </div>
+                                                    {% if current_user.is_authenticated and not content.is_interactive %}
+                                                    <div class="text-end mt-2">
+                                                        <button class="btn btn-sm btn-outline-success mark-complete-btn"
+                                                                onclick="markContentComplete({{ content.id }})"
+                                                                {% if progress and progress.get_content_progress().get(content.id | string) %}style="display: none;"{% endif %}>
+                                                            Mark Complete
+                                                        </button>
+                                                    </div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+
+                                            {# Navigation Buttons #}
+                                            <div class="d-flex justify-content-between mt-3">
+                                                <button class="btn btn-outline-secondary btn-sm" @click="prev()" :disabled="current === 0">
+                                                    <i class="fas fa-chevron-left me-1"></i> Previous
+                                                </button>
+                                                <button class="btn btn-primary btn-sm" @click="next()" x-show="current < total - 1">
+                                                    Next <i class="fas fa-chevron-right ms-1"></i>
+                                                </button>
+                                                <div x-show="current === total - 1" class="text-center">
+                                                    <span class="badge bg-success fs-6 py-2 px-3" x-show="score === total">All correct!</span>
+                                                    <span class="badge bg-info fs-6 py-2 px-3" x-show="score > 0 && score < total" x-text="score + '/' + total + ' correct'"></span>
+                                                </div>
+                                            </div>
+                                        </div>
 
                                         {% else %}
                                         {# === Normal Page: Standard Content Loop === #}
@@ -2625,5 +2803,17 @@ document.addEventListener('keydown', (e) => {
         deck.rateCard(ratings[e.key]);
     }
 });
+
+// ── Quiz Carousel Alpine Component ──────────────────────────────────
+function quizCarousel(totalSlides) {
+    return {
+        current: 0,
+        total: totalSlides,
+        score: 0,
+        next() { if (this.current < this.total - 1) this.current++; },
+        prev() { if (this.current > 0) this.current--; },
+        addScore() { this.score++; }
+    };
+}
 </script>
 {% endblock %}
