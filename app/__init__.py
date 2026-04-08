@@ -27,7 +27,7 @@ def create_app():
     # Ensure SECRET_KEY is set, otherwise CSRF protection (and sessions) won't work.
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or 'dev-secret-key-change-in-production'
     app.config['WTF_CSRF_SECRET_KEY'] = os.environ.get('WTF_CSRF_SECRET_KEY') or 'dev-csrf-secret-key-change-in-production'
-    app.config['GCS_BUCKET_NAME'] = os.environ.get('GCS_BUCKET_NAME') or 'jpl-website-assets-jpl-website-bill-20251130'
+    app.config['GCS_BUCKET_NAME'] = os.environ.get('GCS_BUCKET_NAME') or None
     
     app.config.from_pyfile('config.py', silent=True) # Load config from instance folder
     app.config['TEMPLATES_AUTO_RELOAD'] = True

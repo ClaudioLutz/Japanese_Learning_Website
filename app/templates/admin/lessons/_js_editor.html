@@ -417,6 +417,7 @@ async function previewContent() {
         const fd = new FormData(document.getElementById('contentConfigForm'));
         currentContentData = Object.fromEntries(fd.entries());
         currentContentData.content_type = selectedContentType;
+        if (currentContentData.media_title) currentContentData.title = currentContentData.media_title;
         if (validateContentData(currentContentData)) { await generateWizardPreview(currentContentData); showContentPreviewStep(); }
         return;
     }
@@ -430,6 +431,7 @@ async function previewContent() {
         const fd = new FormData(document.getElementById('contentConfigForm'));
         currentContentData = Object.fromEntries(fd.entries());
         currentContentData.content_type = selectedContentType;
+        if (currentContentData.media_title) currentContentData.title = currentContentData.media_title;
         if (validateContentData(currentContentData)) { await generateWizardPreview(currentContentData); showContentPreviewStep(); }
     } catch (error) {
         console.error('Upload failed:', error);
@@ -580,7 +582,7 @@ async function saveContentToLesson(isEditing = false) {
                 const src = document.querySelector('input[name="contentSource"]:checked')?.value;
                 if (src === 'upload' && uploadedFileData) {
                     endpoint = `/api/admin/lessons/${currentLessonId}/content/file`;
-                    saveData = { content_type: selectedContentType, title: currentContentData.title, description: currentContentData.content_text || '', file_path: uploadedFileData.filePath, file_size: uploadedFileData.file_size, file_type: uploadedFileData.file_type, original_filename: uploadedFileData.original_filename, order_index: currentContentData.order_index || 0, page_number: currentContentData.page_number || 1, is_optional: currentContentData.is_optional === 'on' };
+                    saveData = { content_type: selectedContentType, title: currentContentData.title, description: currentContentData.content_text || '', file_path: uploadedFileData.filePath, file_size: uploadedFileData.file_size, file_type: uploadedFileData.file_type, original_filename: uploadedFileData.original_filename, order_index: currentContentData.order_index || 0, page_number: currentPageNumber || currentContentData.page_number || document.getElementById('contentPageNumber')?.value || 1, is_optional: currentContentData.is_optional === 'on' };
                 } else {
                     endpoint = `/api/admin/lessons/${currentLessonId}/content/new`;
                     if (!currentContentData.media_url) { showToast('Please provide a URL', 'error'); return; }
