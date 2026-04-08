@@ -4,7 +4,22 @@
 
 {% block extra_head %}
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
-<style>[x-cloak] { display: none !important; }</style>
+<style>
+[x-cloak] { display: none !important; }
+/* Quiz Carousel Dots */
+.quiz-dot {
+    width: 34px; height: 34px; border-radius: 50%; border: 2.5px solid #d1d5db;
+    background: transparent; color: #9ca3af; font-size: 12px; font-weight: 700;
+    cursor: pointer; transition: all 0.25s ease; display: inline-flex;
+    align-items: center; justify-content: center; padding: 0;
+}
+.quiz-dot:hover { transform: scale(1.1); }
+.quiz-dot-completed { border-color: #10b981; background: #10b981; color: #fff; }
+.quiz-dot-completed:hover { background: #059669; border-color: #059669; }
+.quiz-dot-open { border-color: #d1d5db; background: #f9fafb; color: #6b7280; }
+.quiz-dot-active { transform: scale(1.2); box-shadow: 0 0 0 3px rgba(99,102,241,0.3); border-color: #6366f1 !important; }
+.quiz-dot-completed.quiz-dot-active { box-shadow: 0 0 0 3px rgba(16,185,129,0.3); border-color: #059669 !important; }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -2632,83 +2647,92 @@ document.addEventListener('keydown', (e) => {
 });
 
 // ── Quiz Carousel: Auto-group consecutive interactive items ─────────
-function quizCarousel(totalSlides) {
+function quizCarousel(totalSlides, completedArr) {
     return {
         current: 0,
         total: totalSlides,
-        score: 0,
-        next() { if (this.current < this.total - 1) this.current++; },
-        prev() { if (this.current > 0) this.current--; },
-        addScore() { this.score++; }
+        completed: completedArr || [],
+        goTo(idx) { this.current = idx; }
     };
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Find all page containers and auto-group consecutive quizzes
     document.querySelectorAll('.page-container').forEach(function(pageContainer) {
         const items = Array.from(pageContainer.querySelectorAll(':scope > .content-item, :scope > div > .content-item'));
         if (items.length === 0) return;
 
-        // Group consecutive interactive items
         const groups = [];
         let currentGroup = null;
-
         items.forEach(function(item) {
             const isQuiz = item.querySelector('.interactive-content-container') !== null;
             if (isQuiz) {
-                if (!currentGroup) {
-                    currentGroup = [];
-                    groups.push(currentGroup);
-                }
+                if (!currentGroup) { currentGroup = []; groups.push(currentGroup); }
                 currentGroup.push(item);
-            } else {
-                currentGroup = null;
-            }
+            } else { currentGroup = null; }
         });
 
-        // Wrap groups of 2+ consecutive quizzes in a carousel
         groups.forEach(function(group, groupIdx) {
             if (group.length < 2) return;
 
-            const carouselId = 'quiz-auto-carousel-' + groupIdx + '-' + Math.random().toString(36).substr(2, 5);
-            const wrapper = document.createElement('div');
-            wrapper.className = 'quiz-carousel-container mb-4';
-            wrapper.setAttribute('x-data', 'quizCarousel(' + group.length + ')');
+            // Detect completion status per quiz
+            const statuses = group.map(function(item) {
+                return !!item.querySelector('.badge.bg-success, .completed-badge:not([style*="display: none"])');
+            });
 
-            // Progress bar
+            // Shorten titles to just "Quiz" + number
+            group.forEach(function(item, idx) {
+                const h6 = item.querySelector(':scope > .d-flex > h6, :scope > h6');
+                if (h6) h6.textContent = 'Quiz ' + (idx + 1);
+            });
+
+            // Build dot navigation HTML using Alpine for active state + CSS classes for completed
+            let dotsHtml = '';
+            statuses.forEach(function(completed, idx) {
+                const cls = completed ? 'quiz-dot-completed' : 'quiz-dot-open';
+                dotsHtml += `<button @click="goTo(${idx})" class="quiz-dot ${cls}" :class="current === ${idx} ? 'quiz-dot-active' : ''">${idx + 1}</button>`;
+            });
+
+            const completedJson = JSON.stringify(statuses);
+            const wrapper = document.createElement('div');
+            wrapper.className = 'quiz-carousel-container mb-4 p-3 border rounded bg-white shadow-sm';
+            wrapper.setAttribute('x-data', 'quizCarousel(' + group.length + ', ' + completedJson + ')');
+
             wrapper.innerHTML = `
-                <div class="d-flex align-items-center mb-3 gap-2">
-                    <span class="badge bg-primary" x-text="'Frage ' + (current + 1) + ' / ' + total"></span>
-                    <div class="progress flex-grow-1" style="height: 6px;">
-                        <div class="progress-bar bg-primary" :style="'width: ' + ((current + 1) / total * 100) + '%'" style="transition: width 0.3s;"></div>
+                <div class="text-center mb-3">
+                    <h6 class="mb-2" style="color: #6366f1;"><i class="fas fa-question-circle me-1"></i> Quiz</h6>
+                    <div class="d-flex justify-content-center align-items-center gap-1 flex-wrap mb-2">
+                        ${dotsHtml}
+                    </div>
+                    <div class="d-flex align-items-center gap-2 justify-content-center">
+                        <small class="text-muted" x-text="'Frage ' + (current + 1) + ' von ' + total"></small>
+                        <div class="progress" style="height: 4px; width: 120px;">
+                            <div class="progress-bar" style="background: #6366f1; transition: width 0.3s;" :style="'width: ' + ((current + 1) / total * 100) + '%'"></div>
+                        </div>
                     </div>
                 </div>
-                <div class="quiz-slides-container"></div>
-                <div class="d-flex justify-content-between mt-3">
-                    <button class="btn btn-outline-secondary btn-sm" @click="prev()" :disabled="current === 0">
+                <div class="quiz-slides-container" style="position: relative; overflow: hidden;"></div>
+                <div class="d-flex justify-content-between mt-3 pt-2 border-top">
+                    <button class="btn btn-outline-secondary btn-sm" @click="current > 0 && current--" :disabled="current === 0" :class="current === 0 ? 'opacity-50' : ''">
                         <i class="fas fa-chevron-left me-1"></i> Zurück
                     </button>
-                    <button class="btn btn-primary btn-sm" @click="next()" x-show="current < total - 1">
+                    <button class="btn btn-sm" style="background: #6366f1; color: white;" @click="current < total - 1 && current++" x-show="current < total - 1">
                         Weiter <i class="fas fa-chevron-right ms-1"></i>
                     </button>
-                    <div x-show="current === total - 1" class="text-center">
-                        <span class="text-muted small">Ende des Quiz</span>
-                    </div>
+                    <span x-show="current === total - 1" class="badge bg-success py-2 px-3">Quiz abgeschlossen</span>
                 </div>
             `;
 
-            // Insert wrapper before the first quiz in the group
             group[0].parentNode.insertBefore(wrapper, group[0]);
             const slidesContainer = wrapper.querySelector('.quiz-slides-container');
 
-            // Move quiz items into slides
             group.forEach(function(item, idx) {
                 const slide = document.createElement('div');
                 slide.className = 'quiz-slide';
                 slide.setAttribute('x-show', 'current === ' + idx);
-                slide.setAttribute('x-transition:enter', 'transition ease-out duration-200');
-                slide.setAttribute('x-transition:enter-start', 'opacity-0');
-                slide.setAttribute('x-transition:enter-end', 'opacity-100');
+                slide.setAttribute('x-transition:enter', 'transition ease-out duration-300');
+                slide.setAttribute('x-transition:enter-start', 'opacity-0 transform translate-x-2');
+                slide.setAttribute('x-transition:enter-end', 'opacity-100 transform translate-x-0');
+                slide.style.minHeight = '100px';
                 slide.appendChild(item);
                 slidesContainer.appendChild(slide);
             });
