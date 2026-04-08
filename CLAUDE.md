@@ -11,7 +11,8 @@ Flask-basierte Japanisch-Lernplattform mit Lektions-/Kursverwaltung, Benutzeraut
 - **Zahlungen**: PostFinance Checkout (CHF) — **noch nicht produktiv, MockPayment aktiv**
 - **Storage**: Google Cloud Storage (GCS) für Medien, lokaler Fallback
 - **Deployment**: Google Cloud Run, Docker, Gunicorn
-- **Frontend**: Jinja2 Templates, kein JS-Framework
+- **Frontend**: Jinja2 Templates, Tailwind CSS (Play CDN), Alpine.js 3.14, HTMX 2.0
+- **Admin-UI**: Modulare Partials, Dark Mode, Command Palette (Ctrl+K), Toast-Notifications
 
 ## Projektstruktur
 ```
@@ -30,9 +31,32 @@ app/
     mock_payment_service.py     # Dev Payment Mock
     payment_factory.py          # Wählt Provider: payrexx/postfinance/mock
   admin_views.py         # Flask-Admin ModelViews (CRUD-Panel)
-  templates/             # Jinja2 Templates
+  templates/
+    admin/
+      base_admin.html    # Admin-Base: Tailwind, Alpine.js, HTMX, Dark Mode, Command Palette
+      manage_lessons.html # Orchestrator (67 Zeilen, inkludiert Partials)
+      lessons/           # 11 modulare Partials fuer den Lektions-Editor
+        _lesson_modals.html    # Add/Edit Lesson Modals
+        _content_modal.html    # Content Manager, Preview, Page Editor
+        _content_wizard.html   # 3-Step Content Wizard (9 Content-Typen)
+        _import_export.html    # Import/Export Modals
+        _styles.html           # CSS + Quill Editor
+        _js_core.html          # CSRF, Lesson CRUD, Categories, escapeHtml
+        _js_content.html       # Content Load, Bulk Ops, Preview
+        _js_editor.html        # Quill, Wizard, Inline-Editing, Save
+        _js_file_upload.html   # Drag & Drop, Upload, Progress
+        _js_pages.html         # Page CRUD, Page Content Editor
+        _js_import_export.html # Export/Import Logik
+      manage_kana.html   # Kana-Verwaltung (modernisiert)
+      manage_kanji.html  # Kanji-Verwaltung (modernisiert)
+      manage_vocabulary.html  # Vocabulary-Verwaltung (modernisiert)
+      manage_grammar.html     # Grammar-Verwaltung (modernisiert)
+      manage_categories.html  # Kategorien-Verwaltung (modernisiert)
+      manage_courses.html     # Kurse-Verwaltung (modernisiert)
+      manage_approval.html    # KI-Approval Queue (modernisiert)
+      admin_index.html        # Dashboard mit Statistiken
   static/                # CSS, Bilder, Uploads
-tests/                   # Playwright E2E-Tests
+tests/                   # pytest Unit/Integration + Playwright E2E
 migrations/              # Alembic DB-Migrationen
 run.py                   # Entry Point
 admin_dashboard.py       # Streamlit Analytics-Dashboard (Port 8501)
@@ -119,7 +143,13 @@ flask db upgrade
 ```
 
 ## Admin-Interfaces
-- **Custom Admin** (`/admin`) — Lektions-Editor, KI-Approval, Import/Export (bestehend)
+- **Custom Admin** (`/admin`) — Modernisiert mit Tailwind CSS, Alpine.js, HTMX
+  - Dark Mode (Toggle in Sidebar, localStorage-Persistenz)
+  - Command Palette (Ctrl+K) mit Navigation + Aktionen
+  - Toast-Notifications statt alert()-Dialoge
+  - Lektions-Editor: 11 modulare Partials statt 4'342-Zeilen-Monolith
+  - Inline-Editing: Vocabulary/Kanji/Kana/Grammar-Details direkt im Content-Editor bearbeitbar
+  - detail_text: Japanische Inhalte (Wort, Lesung, Bedeutung) direkt in der Content-Tabelle sichtbar
 - **Flask-Admin CRUD-Panel** (`/admin-panel`) — Auto-CRUD für Kana, Kanji, Vokabeln, Grammatik, Kategorien, Kurse, Lektionen, Benutzer
 - **Streamlit Dashboard** (`localhost:8501`) — Analytics: Benutzer, Lektionen, Content, Umsatz
 
@@ -133,6 +163,10 @@ Decorators: `@login_required`, `@admin_required`, `@premium_required`.
 - **Payment Factory**: `PAYMENT_PROVIDER` Env-Variable steuert Provider (payrexx/postfinance/mock)
 - **App Factory**: `create_app()` in `app/__init__.py`
 - **File Uploads**: UUID-Dateinamen, MIME-Validierung, Bildverkleinerung (Pillow), max 100MB
+- **Admin-UI Architektur**: base_admin.html (Tailwind+Alpine+HTMX) → Child-Templates nutzen Blocks (`page_header`, `page_actions`, `content`, `extra_css`, `extra_js`)
+- **Lektions-Editor Partials**: manage_lessons.html ist ein 67-Zeilen-Orchestrator der 11 Partials aus `lessons/` inkludiert. Jedes Partial ist eigenständig testbar.
+- **Inline Reference Editing**: Content-Editor lädt referenzierte Daten (Vocabulary/Kanji/etc.) per API und speichert Änderungen beim Save zurück — Änderungen wirken global.
+- **Playwright MCP**: Konfiguriert in `.mcp.json` für Browser-basierte UI-Tests via Claude Code
 
 ## GCP Deployment
 - **Projekt**: `jpl-website-bill-20251130` — **Status unklar, möglicherweise gelöscht**
@@ -160,3 +194,5 @@ Decorators: `@login_required`, `@admin_required`, `@premium_required`.
 2. **GCP-Projekt-Status unklar** — Muss geprüft werden ob das Projekt noch existiert
 3. **Playwright E2E-Tests** — 8 Spec-Dateien in `tests/`, benötigen `npm install` und laufenden Test-Server
 4. **Debug-Logging in __init__.py** — Gibt Umgebungsvariablen aus, sollte vor Produktion entfernt werden
+5. **Docker-Container `japanese_app`** — Alter Container (7 Monate) belegt Port 5000 wenn Docker Desktop läuft. `docker stop japanese_app` vor lokalem Start nötig.
+6. **DB-Migration ausstehend** — Spalten `provider_transaction_id` und `transaction_state` in `lesson_purchase` manuell hinzugefügt, Migration fehlt noch
