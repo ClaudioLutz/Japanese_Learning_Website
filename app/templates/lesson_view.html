@@ -676,7 +676,7 @@
                                                                 {% if user_answer %}
                                                                     {% if user_answer.is_correct %}<div class="alert alert-success py-2"><i class="fas fa-check-circle me-1"></i> Richtig!</div>
                                                                     {% elif show_solution %}<div class="alert alert-danger py-2"><i class="fas fa-times-circle me-1"></i> Falsch — keine Versuche mehr.</div>
-                                                                    {% else %}<div class="alert alert-warning py-2"><i class="fas fa-redo me-1"></i> Falsch — noch {{ max_att - user_answer.attempts }} Versuche.</div>{% endif %}
+                                                                    {% else %}<div class="alert alert-warning py-2"><i class="fas fa-redo me-1"></i> Falsch — {% if max_att > 0 %}noch {{ [max_att - user_answer.attempts, 0] | max }} {{ 'Versuch' if (max_att - user_answer.attempts) == 1 else 'Versuche' }}.{% else %}versuche es nochmal.{% endif %}</div>{% endif %}
                                                                     {% if show_solution and question.explanation %}<div class="alert alert-info py-2">{{ question.explanation }}</div>{% endif %}
                                                                 {% endif %}
                                                             </div>
@@ -962,7 +962,7 @@
                                                                     {% elif show_solution %}
                                                                     <div class="alert alert-danger py-2"><i class="fas fa-times-circle me-1"></i> Falsch — keine Versuche mehr.</div>
                                                                     {% else %}
-                                                                    <div class="alert alert-warning py-2"><i class="fas fa-redo me-1"></i> Falsch — noch {{ max_att - user_answer.attempts }} Versuche.</div>
+                                                                    <div class="alert alert-warning py-2"><i class="fas fa-redo me-1"></i> Falsch — {% if max_att > 0 %}noch {{ [max_att - user_answer.attempts, 0] | max }} {{ 'Versuch' if (max_att - user_answer.attempts) == 1 else 'Versuche' }}.{% else %}versuche es nochmal.{% endif %}</div>
                                                                     {% endif %}
                                                                     {% if show_solution and question.explanation %}
                                                                     <div class="alert alert-info py-2">{{ question.explanation }}</div>
