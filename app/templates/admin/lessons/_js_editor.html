@@ -344,7 +344,7 @@ async function populateContentForm(content) {
                 content.options.forEach(option => {
                     addOption();
                     const idx = optionCount - 1;
-                    document.querySelector(`input[name="option_${idx}"]`).value = option.text;
+                    document.querySelector(`input[name="option_${idx}"]`).value = option.option_text;
                     document.querySelector(`input[name="feedback_${idx}"]`).value = option.feedback || '';
                     if (option.is_correct) document.querySelector(`input[name="correct_option"][value="${idx}"]`).checked = true;
                 });
