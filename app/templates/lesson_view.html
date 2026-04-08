@@ -667,14 +667,17 @@
                                                             </div>
                                                         </div>
                                                         {% endif %}
+                                                        {% set max_att = content.max_attempts or 0 %}
+                                                        {% set show_solution = user_answer and (user_answer.is_correct or (max_att > 0 and user_answer.attempts >= max_att)) %}
                                                         <div class="question-actions mt-3">
-                                                            <button class="btn btn-sm btn-primary" onclick="submitQuizAnswer('{{ lesson.id }}', '{{ question.id }}')">Submit Answer</button>
+                                                            <button class="btn btn-sm btn-primary" onclick="submitQuizAnswer('{{ lesson.id }}', '{{ question.id }}')" {% if show_solution %}disabled{% endif %}>Submit Answer</button>
                                                             <div class="quiz-feedback mt-2" id="feedback_{{ question.id }}"
                                                                  {% if user_answer %}style="display: block;"{% else %}style="display: none;"{% endif %}>
                                                                 {% if user_answer %}
-                                                                    {% if user_answer.is_correct %}<div class="alert alert-success py-2">&#10003; Correct!</div>
-                                                                    {% else %}<div class="alert alert-danger py-2">&#10007; Incorrect</div>{% endif %}
-                                                                    {% if question.explanation %}<div class="alert alert-info py-2">{{ question.explanation }}</div>{% endif %}
+                                                                    {% if user_answer.is_correct %}<div class="alert alert-success py-2"><i class="fas fa-check-circle me-1"></i> Richtig!</div>
+                                                                    {% elif show_solution %}<div class="alert alert-danger py-2"><i class="fas fa-times-circle me-1"></i> Falsch — keine Versuche mehr.</div>
+                                                                    {% else %}<div class="alert alert-warning py-2"><i class="fas fa-redo me-1"></i> Falsch — noch {{ max_att - user_answer.attempts }} Versuche.</div>{% endif %}
+                                                                    {% if show_solution and question.explanation %}<div class="alert alert-info py-2">{{ question.explanation }}</div>{% endif %}
                                                                 {% endif %}
                                                             </div>
                                                         </div>
@@ -839,6 +842,8 @@
                                                 <div class="interactive-content-container" data-content-id="{{ content.id }}">
                                                     {% for question in content.quiz_questions %}
                                                     {% set user_answer = user_quiz_answers.get(question.id) %}
+                                                    {% set q_max = content.max_attempts or 0 %}
+                                                    {% set q_solved = user_answer and (user_answer.is_correct or (q_max > 0 and user_answer.attempts >= q_max)) %}
                                                     <div class="quiz-question mb-4" data-question-id="{{ question.id }}" data-question-type="{{ question.question_type }}">
                                                         <div class="question-header mb-3">
                                                             <h5>{{ question.question_text | safe }}</h5>
@@ -857,19 +862,19 @@
                                                                 <input class="form-check-input" type="radio" name="question_{{ question.id }}" 
                                                                        id="option_{{ option.id }}" value="{{ option.id }}"
                                                                        {% if user_answer and user_answer.selected_option_id == option.id %}checked{% endif %}
-                                                                       {% if user_answer and user_answer.is_correct %}disabled{% endif %}>
+                                                                       {% if q_solved %}disabled{% endif %}>
                                                                 <label class="form-check-label" for="option_{{ option.id }}">
                                                                     {{ option.option_text }}
                                                                 </label>
                                                             </div>
                                                             {% endfor %}
                                                         </div>
-                                                        
+
                                                         {% elif question.question_type == 'fill_blank' %}
                                                         <div class="fill-blank-input">
                                                             <div class="question-text mb-3">
                                                                 {% if user_answer and user_answer.text_answer %}
-                                                                {% set input_html = '<input type="text" class="form-control d-inline-block" style="width: 200px;" id="blank_' ~ question.id ~ '" value="' ~ user_answer.text_answer ~ '"' ~ (' disabled' if user_answer.is_correct else '') ~ '>' %}
+                                                                {% set input_html = '<input type="text" class="form-control d-inline-block" style="width: 200px;" id="blank_' ~ question.id ~ '" value="' ~ user_answer.text_answer ~ '"' ~ (' disabled' if q_solved else '') ~ '>' %}
                                                                 {{ question.question_text | replace('___', input_html) | safe }}
                                                                 {% else %}
                                                                 {% set input_html = '<input type="text" class="form-control d-inline-block" style="width: 200px;" id="blank_' ~ question.id ~ '">' %}
@@ -877,15 +882,15 @@
                                                                 {% endif %}
                                                             </div>
                                                         </div>
-                                                        
+
                                                         {% elif question.question_type == 'true_false' %}
                                                         <div class="true-false-options">
                                                             {% for option in question.options | sort(attribute='order_index') %}
                                                             <div class="form-check mb-2">
-                                                                <input class="form-check-input" type="radio" name="question_{{ question.id }}" 
+                                                                <input class="form-check-input" type="radio" name="question_{{ question.id }}"
                                                                        id="option_{{ option.id }}" value="{{ option.id }}"
                                                                        {% if user_answer and user_answer.selected_option_id == option.id %}checked{% endif %}
-                                                                       {% if user_answer and user_answer.is_correct %}disabled{% endif %}>
+                                                                       {% if q_solved %}disabled{% endif %}>
                                                                 <label class="form-check-label" for="option_{{ option.id }}">
                                                                     {{ option.option_text }}
                                                                 </label>
@@ -923,11 +928,11 @@
                                                                             {% endif %}
                                                                         {% endfor %}
                                                                     {% endif %}
-                                                                    <select class="form-select matching-select" 
-                                                                            data-prompt="{{ option.option_text }}" 
+                                                                    <select class="form-select matching-select"
+                                                                            data-prompt="{{ option.option_text }}"
                                                                             data-correct-answer="{{ option.feedback }}"
                                                                             data-question-id="{{ question.id }}"
-                                                                            {% if user_answer and user_answer.is_correct %}disabled{% endif %}>
+                                                                            {% if q_solved %}disabled{% endif %}>
                                                                         <option value="">Choose...</option>
                                                                         {% for answer_option in question.options | sort(attribute='order_index') %}
                                                                         <option value="{{ answer_option.feedback }}" {% if display_answer == answer_option.feedback %}selected{% endif %}>{{ answer_option.feedback }}</option>
@@ -943,20 +948,24 @@
                                         </div>
                                                         {% endif %}
                                                         
+                                                        {% set max_att = content.max_attempts or 0 %}
+                                                        {% set show_solution = user_answer and (user_answer.is_correct or (max_att > 0 and user_answer.attempts >= max_att)) %}
                                                         <div class="question-actions mt-3">
-                                                            <button class="btn btn-primary" onclick="submitQuizAnswer('{{ lesson.id }}', '{{ question.id }}')">
+                                                            <button class="btn btn-primary" onclick="submitQuizAnswer('{{ lesson.id }}', '{{ question.id }}')" {% if show_solution %}disabled{% endif %}>
                                                                 Submit Answer
                                                             </button>
-                                                            <div class="quiz-feedback mt-2" id="feedback_{{ question.id }}" 
+                                                            <div class="quiz-feedback mt-2" id="feedback_{{ question.id }}"
                                                                  {% if user_answer %}style="display: block;"{% else %}style="display: none;"{% endif %}>
                                                                 {% if user_answer %}
                                                                     {% if user_answer.is_correct %}
-                                                                    <div class="alert alert-success">✓ Correct!</div>
+                                                                    <div class="alert alert-success py-2"><i class="fas fa-check-circle me-1"></i> Richtig!</div>
+                                                                    {% elif show_solution %}
+                                                                    <div class="alert alert-danger py-2"><i class="fas fa-times-circle me-1"></i> Falsch — keine Versuche mehr.</div>
                                                                     {% else %}
-                                                                    <div class="alert alert-danger">✗ Incorrect</div>
+                                                                    <div class="alert alert-warning py-2"><i class="fas fa-redo me-1"></i> Falsch — noch {{ max_att - user_answer.attempts }} Versuche.</div>
                                                                     {% endif %}
-                                                                    {% if question.explanation %}
-                                                                    <div class="alert alert-info">{{ question.explanation }}</div>
+                                                                    {% if show_solution and question.explanation %}
+                                                                    <div class="alert alert-info py-2">{{ question.explanation }}</div>
                                                                     {% endif %}
                                                                 {% endif %}
                                                             </div>

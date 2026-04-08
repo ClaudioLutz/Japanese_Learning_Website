@@ -3043,10 +3043,13 @@ def submit_quiz_answer(lesson_id, question_id):
             'attempts_remaining': attempts_remaining
         }
 
+        # Always show why the selected option is wrong/right
+        if selected_option and selected_option.feedback:
+            result['option_feedback'] = selected_option.feedback
+
+        # Only reveal the full explanation (correct answer) when solved
         if show_solution:
             result['explanation'] = question.explanation
-            if selected_option:
-                result['option_feedback'] = selected_option.feedback
         
         current_app.logger.info(f"Answer for question {question_id} processed. Result: {result}")
         return jsonify(result)
