@@ -1,0 +1,142 @@
+{# ── Export Lesson Modal ───────────────────────────────────────────── #}
+<div id="exportLessonModal" class="modal">
+    <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-header">
+            <h4>Export Lessons</h4>
+            <span class="close" onclick="closeModal('exportLessonModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="text-sm font-medium">Export Options</label>
+                <div class="flex flex-col gap-2 mt-1">
+                    <label class="flex items-center gap-2 cursor-pointer text-sm">
+                        <input type="radio" id="exportSingle" name="exportType" value="single" class="!w-4 !h-4 !mb-0" checked onchange="toggleExportOptions()"> Export Single Lesson
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer text-sm">
+                        <input type="radio" id="exportMultiple" name="exportType" value="multiple" class="!w-4 !h-4 !mb-0" onchange="toggleExportOptions()"> Export Multiple Lessons
+                    </label>
+                </div>
+            </div>
+
+            {# Single Lesson Export #}
+            <div id="singleExportOptions">
+                <div class="form-group">
+                    <label for="exportLessonSelect">Select Lesson</label>
+                    <select id="exportLessonSelect" class="form-control">
+                        <option value="">Choose a lesson...</option>
+                    </select>
+                </div>
+            </div>
+
+            {# Multiple Lesson Export #}
+            <div id="multipleExportOptions" style="display: none;">
+                <div class="form-group">
+                    <label>Select Lessons</label>
+                    <div id="exportLessonsList" class="border border-gray-200 dark:border-slate-700 rounded-lg p-3" style="max-height: 200px; overflow-y: auto;">
+                        {# Lesson checkboxes populated by JS #}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="text-sm font-medium">Export Format</label>
+                <div class="flex flex-col gap-2 mt-1">
+                    <label class="flex items-center gap-2 cursor-pointer text-sm">
+                        <input type="radio" id="exportJSON" name="exportFormat" value="json" class="!w-4 !h-4 !mb-0" checked> JSON (Data Only)
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer text-sm">
+                        <input type="radio" id="exportZIP" name="exportFormat" value="zip" class="!w-4 !h-4 !mb-0"> ZIP Package (Data + Files)
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="flex items-center gap-2 cursor-pointer text-sm">
+                    <input type="checkbox" id="includeFiles" class="!w-4 !h-4 !mb-0" checked> Include Media Files
+                </label>
+                <p class="text-xs text-gray-400 dark:text-slate-500 mt-1">Include uploaded images, audio, and video files</p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-secondary" onclick="closeModal('exportLessonModal')">Cancel</button>
+            <button type="button" onclick="startExport()">
+                <i class="fas fa-download"></i> Export
+            </button>
+        </div>
+    </div>
+</div>
+
+{# ── Import Lesson Modal ──────────────────────────────────────────── #}
+<div id="importLessonModal" class="modal">
+    <div class="modal-content" style="max-width: 700px;">
+        <div class="modal-header">
+            <h4>Import Lesson</h4>
+            <span class="close" onclick="closeModal('importLessonModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="text-sm font-medium">Import Method</label>
+                <div class="flex flex-col gap-2 mt-1">
+                    <label class="flex items-center gap-2 cursor-pointer text-sm">
+                        <input type="radio" id="importFile" name="importMethod" value="file" class="!w-4 !h-4 !mb-0" checked onchange="toggleImportMethod()"> Upload File
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer text-sm">
+                        <input type="radio" id="importJSON" name="importMethod" value="json" class="!w-4 !h-4 !mb-0" onchange="toggleImportMethod()"> Paste JSON Data
+                    </label>
+                </div>
+            </div>
+
+            {# File Upload Method #}
+            <div id="fileImportSection">
+                <div class="form-group">
+                    <label for="importFileInput">Select File</label>
+                    <input type="file" id="importFileInput" class="form-control" accept=".json,.zip" onchange="analyzeImportFile()">
+                    <p class="text-xs text-gray-400 dark:text-slate-500 -mt-2">Supported formats: JSON files or ZIP packages</p>
+                </div>
+            </div>
+
+            {# JSON Paste Method #}
+            <div id="jsonImportSection" style="display: none;">
+                <div class="form-group">
+                    <label for="importJSONText">Paste JSON Data</label>
+                    <textarea id="importJSONText" class="form-control" rows="8" placeholder="Paste your lesson JSON data here..."></textarea>
+                    <button type="button" class="btn-sm btn-secondary mt-2" onclick="analyzeJSONData()">Analyze Data</button>
+                </div>
+            </div>
+
+            {# Import Analysis Results #}
+            <div id="importAnalysis" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="text-sm font-semibold mb-0">Import Preview</h6>
+                    </div>
+                    <div class="card-body">
+                        <div id="importAnalysisContent"></div>
+                    </div>
+                </div>
+            </div>
+
+            {# Import Options #}
+            <div id="importOptions" style="display: none;">
+                <div class="form-group">
+                    <label>Handle Duplicate Lessons</label>
+                    <select id="duplicateHandling" class="form-control">
+                        <option value="rename">Rename (add suffix)</option>
+                        <option value="replace">Replace existing</option>
+                        <option value="skip">Skip import</option>
+                    </select>
+                    <p class="text-xs text-gray-400 dark:text-slate-500 -mt-2">What to do if a lesson with the same title already exists</p>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-secondary" onclick="closeModal('importLessonModal')">Cancel</button>
+            <button type="button" id="previewImportBtn" style="background-color: #3b82f6; display: none;" onclick="previewImportData()">
+                <i class="fas fa-eye"></i> Preview Import
+            </button>
+            <button type="button" id="importBtn" class="btn-success" onclick="startImport()" style="display: none;">
+                <i class="fas fa-upload"></i> Import Lesson
+            </button>
+        </div>
+    </div>
+</div>

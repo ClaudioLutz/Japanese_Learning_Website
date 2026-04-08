@@ -1,0 +1,56 @@
+{# ── Lesson Editor Styles ─────────────────────────────────────────── #}
+<style>
+/* Table layout */
+#lessonsTable { width: 100%; }
+
+/* Content wizard */
+.content-step { min-height: 400px; }
+.content-type-card { cursor: pointer; transition: transform 0.2s; }
+.content-type-card:hover { transform: translateY(-2px); }
+.content-type-card .card { border: 2px solid var(--border-color); transition: border-color 0.2s; }
+.content-type-card:hover .card { border-color: var(--primary-color); }
+.content-type-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+#contentPreviewArea { max-height: 300px; overflow-y: auto; }
+
+/* File Upload */
+.file-upload-area {
+    border: 2px dashed var(--border-color); border-radius: 8px; padding: 2rem;
+    text-align: center; cursor: pointer; transition: all 0.3s ease;
+    background-color: rgba(0,0,0,0.02);
+}
+.dark .file-upload-area { background-color: rgba(255,255,255,0.02); }
+.file-upload-area:hover { border-color: var(--primary-color); background-color: rgba(79,70,229,0.05); }
+.file-upload-area.drag-over { border-color: var(--primary-color); background-color: rgba(79,70,229,0.05); transform: scale(1.02); }
+.upload-placeholder { color: var(--secondary-color); }
+.upload-placeholder i { margin-bottom: 1rem; }
+.upload-progress .progress { height: 8px; border-radius: 4px; background-color: var(--border-color); }
+.upload-progress .progress-bar { background-color: var(--primary-color); height: 100%; border-radius: 4px; transition: width 0.3s; }
+.upload-success { color: var(--success-color); }
+
+/* Reorder buttons */
+.reorder-btn {
+    min-width: 35px; border: 1px solid var(--border-color) !important;
+    background-color: rgba(0,0,0,0.02) !important; transition: all 0.2s ease-in-out;
+    color: var(--text-color) !important; font-size: 0.75rem;
+}
+.dark .reorder-btn { background-color: rgba(255,255,255,0.05) !important; }
+.reorder-btn:hover { background-color: rgba(0,0,0,0.06) !important; box-shadow: 0 0 8px rgba(0,0,0,0.15) !important; }
+
+/* Compact action buttons */
+.btn-xs {
+    padding: 0.125rem 0.25rem; font-size: 0.75rem; line-height: 1.2;
+    border-radius: 0.15rem; min-width: 28px; height: 24px;
+}
+.btn-group-vertical .btn-xs { margin-bottom: 1px; }
+.btn-group-vertical .btn-xs:last-child { margin-bottom: 0; }
+
+/* Modal content scroll */
+#lessonContentModal .modal-body, #pageEditorModal .modal-body { max-height: 75vh; overflow-y: auto; }
+
+/* Page overview cards */
+.page-overview-card { transition: box-shadow 0.2s, transform 0.2s; }
+.page-overview-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); transform: translateY(-1px); }
+</style>
+
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.0/dist/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.0/dist/quill.js"></script>

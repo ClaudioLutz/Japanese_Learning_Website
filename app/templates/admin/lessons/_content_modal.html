@@ -1,0 +1,155 @@
+{# ── Lesson Content Modal (Pages Overview + Content Table) ─────────── #}
+<div id="lessonContentModal" class="modal">
+    <div class="modal-content" style="max-width: 1200px;">
+        <div class="modal-header">
+            <h4>Manage Lesson Content</h4>
+            <span class="close" onclick="closeModal('lessonContentModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="flex items-center justify-between mb-4">
+                <h5 id="contentLessonTitle" class="text-lg font-semibold text-gray-900 dark:text-white">Lesson Content</h5>
+                <div class="flex gap-2">
+                    <button type="button" class="btn-secondary !text-sm" onclick="addNewPage()">
+                        <i class="fas fa-plus"></i> Add New Page
+                    </button>
+                    <button type="button" class="!text-sm" onclick="openAddContentModal()">
+                        <i class="fas fa-plus"></i> Add Content
+                    </button>
+                </div>
+            </div>
+
+            <div id="pagesContainer" class="mt-3">
+                {# Pages will be loaded here via JS #}
+            </div>
+
+            {# Individual Actions Panel #}
+            <div class="individual-actions-panel mb-3" style="display: none;" id="individualActionsPanel">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="text-sm font-semibold mb-2">Selected Item Actions</h6>
+                        <div class="flex items-center justify-between">
+                            <div class="flex gap-2">
+                                <button type="button" class="btn-sm" style="background-color: #3b82f6;" onclick="individualPreview()">
+                                    <i class="fas fa-eye"></i> Preview
+                                </button>
+                                <button type="button" class="btn-sm btn-warning" onclick="individualEdit()">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button type="button" class="btn-sm btn-secondary" onclick="individualDuplicate()">
+                                    <i class="fas fa-copy"></i> Duplicate
+                                </button>
+                            </div>
+                            <button type="button" class="btn-sm btn-secondary" onclick="hideIndividualActions()">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="table table-sm" id="lessonContentTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">Order</th>
+                            <th>Type</th>
+                            <th>Title</th>
+                            <th>Status</th>
+                            <th>Optional</th>
+                            <th style="width: 50px;">Select</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sortableContentList">
+                        {# Content loaded via JS with drag handles #}
+                    </tbody>
+                </table>
+            </div>
+
+            {# Bulk Operations Panel #}
+            <div class="bulk-operations-panel mt-3" style="display: none;" id="bulkOperationsPanel">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="text-sm font-semibold mb-2">Bulk Operations</h6>
+                        <div class="flex items-center justify-between">
+                            <div class="flex gap-2">
+                                <button type="button" class="btn-sm" style="background-color: var(--primary-color);" onclick="bulkSetOptional(true)">
+                                    Mark as Optional
+                                </button>
+                                <button type="button" class="btn-sm" style="background-color: var(--primary-color);" onclick="bulkSetOptional(false)">
+                                    Mark as Required
+                                </button>
+                            </div>
+                            <div class="flex gap-2">
+                                <button type="button" class="btn-sm btn-danger" onclick="bulkDelete()">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                                <button type="button" class="btn-sm btn-secondary" onclick="hideBulkOperations()">
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-secondary" onclick="closeModal('lessonContentModal')">Close</button>
+        </div>
+    </div>
+</div>
+
+{# ── Content Preview Modal ─────────────────────────────────────────── #}
+<div id="contentPreviewModal" class="modal">
+    <div class="modal-content" style="max-width: 900px;">
+        <div class="modal-header">
+            <h4>Content Preview</h4>
+            <span class="close" onclick="closeModal('contentPreviewModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div id="contentPreviewContainer">
+                {# Preview content loaded here #}
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-secondary" onclick="closeModal('contentPreviewModal')">Close</button>
+            <button type="button" onclick="editContentFromPreview()">Edit Content</button>
+        </div>
+    </div>
+</div>
+
+{# ── Page Editor Modal ─────────────────────────────────────────────── #}
+<div id="pageEditorModal" class="modal">
+    <div class="modal-content" style="max-width: 1400px;">
+        <div class="modal-header">
+            <h4 id="pageEditorTitle">Edit Page</h4>
+            <span class="close" onclick="closeModal('pageEditorModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form id="pageDetailsForm">
+                <div class="form-group">
+                    <label for="pageTitle">Page Title</label>
+                    <input type="text" id="pageTitle" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="pageDescription">Page Description</label>
+                    <textarea id="pageDescription" class="form-control" rows="3"></textarea>
+                </div>
+                <button type="button" class="btn-success !text-sm" onclick="savePageDetails()">Save Details</button>
+            </form>
+            <hr class="my-4 border-gray-200 dark:border-slate-700">
+            <div class="flex items-center justify-between mb-4">
+                <h5 id="pageEditorSubtitle" class="text-base font-semibold text-gray-900 dark:text-white">Page Content</h5>
+                <button type="button" class="!text-sm" onclick="openAddContentToPageModal()">
+                    <i class="fas fa-plus"></i> Add Content to This Page
+                </button>
+            </div>
+
+            <div id="pageContentContainer">
+                {# Page content loaded here #}
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-secondary" onclick="closeModal('pageEditorModal')">Close</button>
+        </div>
+    </div>
+</div>

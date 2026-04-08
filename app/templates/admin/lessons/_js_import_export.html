@@ -1,0 +1,213 @@
+{# ── Import/Export JS ──────────────────────────────────────────────── #}
+<script>
+// ── Populate Export Options ─────────────────────────────────────────
+function populateExportOptions() {
+    if (!window.availableLessons) return;
+    const exportSelect = document.getElementById('exportLessonSelect');
+    if (exportSelect) {
+        while (exportSelect.children.length > 1) exportSelect.removeChild(exportSelect.lastChild);
+        window.availableLessons.forEach(lesson => {
+            const option = document.createElement('option');
+            option.value = lesson.id;
+            option.textContent = lesson.title;
+            exportSelect.appendChild(option);
+        });
+    }
+    const exportListContainer = document.getElementById('exportLessonsList');
+    if (exportListContainer) {
+        exportListContainer.innerHTML = '';
+        window.availableLessons.forEach(lesson => {
+            exportListContainer.insertAdjacentHTML('beforeend', `
+                <label class="flex items-center gap-2 cursor-pointer text-sm py-1">
+                    <input type="checkbox" name="selectedLessons" value="${lesson.id}" class="!w-4 !h-4 !mb-0"> ${escapeHtml(lesson.title)}
+                </label>
+            `);
+        });
+    }
+}
+
+function toggleExportOptions() {
+    const exportType = document.querySelector('input[name="exportType"]:checked').value;
+    document.getElementById('singleExportOptions').style.display = exportType === 'single' ? 'block' : 'none';
+    document.getElementById('multipleExportOptions').style.display = exportType === 'multiple' ? 'block' : 'none';
+}
+
+// ── Download Helper ─────────────────────────────────────────────────
+function downloadBlob(blob, filename) {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+}
+
+// ── Start Export ────────────────────────────────────────────────────
+async function startExport() {
+    const exportType = document.querySelector('input[name="exportType"]:checked').value;
+    const exportFormat = document.querySelector('input[name="exportFormat"]:checked').value;
+    const includeFiles = document.getElementById('includeFiles').checked;
+    try {
+        if (exportType === 'single') {
+            const lessonId = document.getElementById('exportLessonSelect').value;
+            if (!lessonId) { showToast('Please select a lesson to export', 'error'); return; }
+            if (exportFormat === 'zip' || includeFiles) {
+                const response = await fetch(`/api/admin/lessons/${lessonId}/export-package`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRFToken() },
+                    body: JSON.stringify({ include_files: includeFiles })
+                });
+                if (response.ok) { downloadBlob(await response.blob(), `lesson_${lessonId}_package.zip`); closeModal('exportLessonModal'); }
+                else { const error = await response.json(); showToast('Export failed: ' + (error.error || 'Unknown error'), 'error'); }
+            } else {
+                const response = await fetch(`/api/admin/lessons/${lessonId}/export?include_files=${includeFiles}`, {
+                    method: 'GET',
+                    headers: { 'X-CSRFToken': getCSRFToken() }
+                });
+                if (response.ok) { downloadBlob(await response.blob(), `lesson_${lessonId}.json`); closeModal('exportLessonModal'); }
+                else { const error = await response.json(); showToast('Export failed: ' + (error.error || 'Unknown error'), 'error'); }
+            }
+        } else {
+            const selectedLessons = [];
+            document.querySelectorAll('#exportLessonsList input[type="checkbox"]:checked').forEach(cb => selectedLessons.push(parseInt(cb.value)));
+            if (selectedLessons.length === 0) { showToast('Please select at least one lesson to export', 'error'); return; }
+            const response = await fetch('/api/admin/lessons/export-multiple', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRFToken() },
+                body: JSON.stringify({ lesson_ids: selectedLessons, include_files: includeFiles })
+            });
+            if (response.ok) { downloadBlob(await response.blob(), `lessons_export_${new Date().toISOString().split('T')[0]}.zip`); closeModal('exportLessonModal'); }
+            else { const error = await response.json(); showToast('Export failed: ' + (error.error || 'Unknown error'), 'error'); }
+        }
+    } catch (error) {
+        console.error('Export error:', error);
+        showToast('Export failed. Please try again.', 'error');
+    }
+}
+
+// ── Import Functions ────────────────────────────────────────────────
+function toggleImportMethod() {
+    const method = document.querySelector('input[name="importMethod"]:checked').value;
+    document.getElementById('fileImportSection').style.display = method === 'file' ? 'block' : 'none';
+    document.getElementById('jsonImportSection').style.display = method === 'json' ? 'block' : 'none';
+    document.getElementById('importAnalysis').style.display = 'none';
+    document.getElementById('importOptions').style.display = 'none';
+    document.getElementById('importBtn').style.display = 'none';
+    document.getElementById('previewImportBtn').style.display = 'none';
+}
+
+async function analyzeImportFile() {
+    const fileInput = document.getElementById('importFileInput');
+    if (!fileInput.files[0]) return;
+    document.getElementById('previewImportBtn').style.display = 'inline-block';
+    await previewImportData();
+}
+
+async function analyzeJSONData() {
+    const jsonText = document.getElementById('importJSONText').value.trim();
+    if (!jsonText) { showToast('Please paste JSON data first', 'error'); return; }
+    try { JSON.parse(jsonText); } catch (e) { showToast('Invalid JSON data', 'error'); return; }
+    document.getElementById('previewImportBtn').style.display = 'inline-block';
+    await previewImportData();
+}
+
+async function previewImportData() {
+    const method = document.querySelector('input[name="importMethod"]:checked').value;
+    let formData = new FormData();
+    if (method === 'file') {
+        const file = document.getElementById('importFileInput').files[0];
+        if (!file) { showToast('Please select a file first', 'error'); return; }
+        formData.append('file', file);
+    } else {
+        const jsonText = document.getElementById('importJSONText').value.trim();
+        if (!jsonText) { showToast('Please paste JSON data first', 'error'); return; }
+        formData.append('file', new Blob([jsonText], { type: 'application/json' }), 'lesson.json');
+    }
+    try {
+        const response = await fetch('/api/admin/lessons/import-info', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': getCSRFToken() },
+            body: formData
+        });
+        const data = await response.json();
+        if (data.success) {
+            displayImportAnalysis(data.info);
+            document.getElementById('importOptions').style.display = 'block';
+            document.getElementById('importBtn').style.display = 'inline-block';
+        } else { showToast('Analysis failed: ' + (data.error || 'Unknown error'), 'error'); }
+    } catch (error) {
+        console.error('Analysis error:', error);
+        showToast('Analysis failed', 'error');
+    }
+}
+
+function displayImportAnalysis(info) {
+    let html = '<div class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-sm">';
+    html += `<p><strong>File Type:</strong> ${info.file_type || 'JSON'}</p>`;
+    html += `<p><strong>Lessons Found:</strong> ${info.lesson_count || 1}</p>`;
+    if (info.lessons && info.lessons.length > 0) {
+        html += '<p class="font-medium mt-2">Lesson Details:</p><ul class="list-disc pl-5">';
+        info.lessons.forEach(lesson => {
+            html += `<li><strong>${escapeHtml(lesson.title)}</strong>`;
+            if (lesson.difficulty) html += ` - ${escapeHtml(lesson.difficulty)} level`;
+            if (lesson.pages) html += ` (${lesson.pages} pages)`;
+            if (lesson.content_count) html += ` - ${lesson.content_count} content items`;
+            if (lesson.files && lesson.files.length > 0) html += ` - ${lesson.files.length} files`;
+            html += '</li>';
+        });
+        html += '</ul>';
+    }
+    if (info.warnings && info.warnings.length > 0) {
+        html += '<div class="mt-3 p-2 bg-amber-50 dark:bg-amber-900/20 rounded text-amber-700 dark:text-amber-300"><strong>Warnings:</strong><ul class="list-disc pl-5">';
+        info.warnings.forEach(w => { html += `<li>${escapeHtml(w)}</li>`; });
+        html += '</ul></div>';
+    }
+    html += '</div>';
+    document.getElementById('importAnalysisContent').innerHTML = html;
+    document.getElementById('importAnalysis').style.display = 'block';
+}
+
+async function startImport() {
+    const method = document.querySelector('input[name="importMethod"]:checked').value;
+    const handleDuplicates = document.getElementById('duplicateHandling').value;
+    let formData = new FormData();
+    formData.append('handle_duplicates', handleDuplicates);
+    if (method === 'file') {
+        const file = document.getElementById('importFileInput').files[0];
+        if (!file) { showToast('Please select a file first', 'error'); return; }
+        formData.append('file', file);
+    } else {
+        const jsonText = document.getElementById('importJSONText').value.trim();
+        if (!jsonText) { showToast('Please paste JSON data first', 'error'); return; }
+        formData.append('file', new Blob([jsonText], { type: 'application/json' }), 'lesson.json');
+    }
+    const importBtn = document.getElementById('importBtn');
+    const originalText = importBtn.textContent;
+    importBtn.disabled = true;
+    importBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Importing...';
+    try {
+        const file = formData.get('file');
+        const endpoint = (file.name && file.name.endsWith('.zip')) ? '/api/admin/lessons/import-package' : '/api/admin/lessons/import';
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': getCSRFToken() },
+            body: formData
+        });
+        const data = await response.json();
+        if (data.success) {
+            showToast(`Import successful! Imported ${data.imported_count || 1} lesson(s).`);
+            closeModal('importLessonModal');
+            loadLessons();
+        } else { showToast('Import failed: ' + (data.error || 'Unknown error'), 'error'); }
+    } catch (error) {
+        console.error('Import error:', error);
+        showToast('Import failed. Please try again.', 'error');
+    } finally {
+        importBtn.disabled = false;
+        importBtn.innerHTML = originalText;
+    }
+}
+</script>

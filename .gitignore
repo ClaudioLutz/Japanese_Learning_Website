@@ -121,3 +121,5 @@ scripts/mnn_pages/
 
 # TTS-Testausgaben (temporär)
 scripts/tts_test_output/
+.playwright-mcp/
+test_screenshots/

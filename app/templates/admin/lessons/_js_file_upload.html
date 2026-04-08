@@ -1,0 +1,138 @@
+{# ── File Upload JS: Drag & Drop, Upload, Progress ─────────────────── #}
+<script>
+let uploadedFileData = null;
+
+function getFileAcceptTypes(contentType) {
+    return { 'image': 'image/*', 'video': 'video/*', 'audio': 'audio/*' }[contentType] || '*/*';
+}
+
+function getSupportedFormats(contentType) {
+    return { 'image': 'JPG, PNG, GIF, WebP', 'video': 'MP4, WebM, OGG, AVI, MOV', 'audio': 'MP3, WAV, OGG, AAC, M4A' }[contentType] || 'All formats';
+}
+
+function toggleContentSource(source) {
+    const fileSection = document.getElementById('fileUploadSection');
+    const urlSection = document.getElementById('urlSection');
+    if (source === 'upload') {
+        fileSection.style.display = 'block';
+        urlSection.style.display = 'none';
+        const urlInput = document.getElementById('mediaUrl');
+        if (urlInput) urlInput.value = '';
+    } else {
+        fileSection.style.display = 'none';
+        urlSection.style.display = 'block';
+        clearUploadedFile();
+    }
+}
+
+function initializeDragAndDrop() {
+    const uploadArea = document.getElementById('fileUploadArea');
+    if (!uploadArea) return;
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, preventDefaults, false);
+        document.body.addEventListener(eventName, preventDefaults, false);
+    });
+    ['dragenter', 'dragover'].forEach(eventName => { uploadArea.addEventListener(eventName, () => uploadArea.classList.add('drag-over'), false); });
+    ['dragleave', 'drop'].forEach(eventName => { uploadArea.addEventListener(eventName, () => uploadArea.classList.remove('drag-over'), false); });
+    uploadArea.addEventListener('drop', function(e) {
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            const fileInput = document.getElementById('contentFile');
+            fileInput.files = files;
+            handleFileSelect({ target: fileInput });
+        }
+    }, false);
+}
+
+function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
+
+function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    if (!validateFileType(file, selectedContentType)) { showToast(`Invalid file type. Please select a ${selectedContentType} file.`, 'error'); clearFileInput(); return; }
+    if (file.size > 100 * 1024 * 1024) { showToast('File size exceeds 100MB limit', 'error'); clearFileInput(); return; }
+    uploadFile(file);
+}
+
+function validateFileType(file, expectedType) {
+    const ext = file.name.split('.').pop().toLowerCase();
+    const valid = { 'image': ['jpg', 'jpeg', 'png', 'gif', 'webp'], 'video': ['mp4', 'webm', 'ogg', 'avi', 'mov'], 'audio': ['mp3', 'wav', 'ogg', 'aac', 'm4a'] };
+    return valid[expectedType] && valid[expectedType].includes(ext);
+}
+
+function uploadFile(file) {
+    return new Promise((resolve, reject) => {
+        if (!currentLessonId) { reject(new Error('No lesson selected')); return; }
+        isFileUploading = true;
+        showUploadProgress();
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('lesson_id', currentLessonId);
+        const xhr = new XMLHttpRequest();
+        xhr.upload.addEventListener('progress', function(e) {
+            if (e.lengthComputable) updateUploadProgress((e.loaded / e.total) * 100);
+        });
+        xhr.onload = function() {
+            isFileUploading = false;
+            if (xhr.status >= 200 && xhr.status < 300) {
+                try {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response.success) { showUploadSuccess(response); resolve(response); }
+                    else { showUploadError(response.error || 'Upload failed'); reject(new Error(response.error || 'Upload failed')); }
+                } catch (e) { showUploadError('Failed to parse server response.'); reject(new Error('Failed to parse response.')); }
+            } else {
+                try { const err = JSON.parse(xhr.responseText); showUploadError(err.error || `Status: ${xhr.status}`); reject(new Error(err.error || `Status: ${xhr.status}`)); }
+                catch (e) { showUploadError(`Status: ${xhr.status}`); reject(new Error(`Status: ${xhr.status}`)); }
+            }
+        };
+        xhr.onerror = function() { isFileUploading = false; showUploadError('Network error'); reject(new Error('Network error.')); };
+        xhr.open('POST', '/api/admin/upload-file', true);
+        xhr.send(formData);
+    });
+}
+
+function showUploadProgress() {
+    document.getElementById('uploadPlaceholder').style.display = 'none';
+    document.getElementById('uploadProgress').style.display = 'block';
+    document.getElementById('uploadSuccess').style.display = 'none';
+}
+
+function updateUploadProgress(percent) {
+    document.getElementById('progressBar').style.width = percent + '%';
+    document.getElementById('uploadPercent').textContent = Math.round(percent) + '%';
+}
+
+function showUploadSuccess(fileData) {
+    document.getElementById('uploadPlaceholder').style.display = 'none';
+    document.getElementById('uploadProgress').style.display = 'none';
+    document.getElementById('uploadSuccess').style.display = 'block';
+    const fileName = document.getElementById('uploadedFileName');
+    const originalFilename = fileData.original_filename || fileData.fileName;
+    const formattedSize = fileData.formatted_size || '';
+    fileName.textContent = `${originalFilename} ${formattedSize ? '(' + formattedSize + ')' : ''}`;
+}
+
+function showUploadError(message) {
+    document.getElementById('uploadPlaceholder').style.display = 'block';
+    document.getElementById('uploadProgress').style.display = 'none';
+    document.getElementById('uploadSuccess').style.display = 'none';
+    showToast('Upload failed: ' + message, 'error');
+    clearFileInput();
+}
+
+function clearUploadedFile() {
+    uploadedFileData = null;
+    clearFileInput();
+    const placeholder = document.getElementById('uploadPlaceholder');
+    const progress = document.getElementById('uploadProgress');
+    const success = document.getElementById('uploadSuccess');
+    if (placeholder) placeholder.style.display = 'block';
+    if (progress) progress.style.display = 'none';
+    if (success) success.style.display = 'none';
+}
+
+function clearFileInput() {
+    const fileInput = document.getElementById('contentFile');
+    if (fileInput) fileInput.value = '';
+}
+</script>

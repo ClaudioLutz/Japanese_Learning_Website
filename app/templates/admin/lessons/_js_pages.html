@@ -1,0 +1,258 @@
+{# ── Page Management JS: Add, Delete, Edit Pages, Page Content ──── #}
+<script>
+let currentPageNumber = null;
+
+async function addNewPage() {
+    const pagesContainer = document.getElementById('pagesContainer');
+    const existingPages = pagesContainer.querySelectorAll('[data-page-number]');
+    const lastPage = existingPages.length > 0 ? Math.max(...Array.from(existingPages).map(p => parseInt(p.dataset.pageNumber))) : 0;
+    const newPageNum = lastPage + 1;
+
+    try {
+        // Persist the page to the database
+        const response = await fetch(`/api/admin/lessons/${currentLessonId}/pages/${newPageNum}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRFToken() },
+            body: JSON.stringify({ title: `Page ${newPageNum}`, description: '' })
+        });
+        if (!response.ok) {
+            const error = await response.json();
+            showToast('Error creating page: ' + (error.error || 'Unknown error'), 'error');
+            return;
+        }
+        showToast(`Page ${newPageNum} created`);
+        // Reload to show the new page from the API
+        loadLessonContent(currentLessonId);
+    } catch (error) {
+        console.error('Error creating page:', error);
+        showToast('Error creating page', 'error');
+    }
+}
+
+async function deletePage(pageNum) {
+    if (!confirm(`Are you sure you want to delete Page ${pageNum} and all its content? This cannot be undone.`)) return;
+    try {
+        const response = await fetch(`/api/admin/lessons/${currentLessonId}/pages/${pageNum}/delete`, {
+            method: 'DELETE',
+            headers: { 'X-CSRFToken': getCSRFToken() }
+        });
+        if (response.ok) {
+            showToast('Page deleted');
+            loadLessonContent(currentLessonId);
+        } else {
+            const error = await response.json();
+            showToast('Error: ' + error.error, 'error');
+        }
+    } catch (error) {
+        console.error('Error deleting page:', error);
+        showToast('An error occurred while deleting the page', 'error');
+    }
+}
+
+async function editPage(pageNumber) {
+    currentPageNumber = pageNumber;
+    document.getElementById('pageEditorTitle').textContent = `Edit Page ${pageNumber}`;
+    document.getElementById('pageEditorSubtitle').textContent = `Page ${pageNumber} Content`;
+    const response = await fetch(`/api/admin/lessons/${currentLessonId}`);
+    const lesson = await response.json();
+    const pageData = lesson.pages.find(p => p.page_number === pageNumber);
+    if (pageData && pageData.metadata) {
+        document.getElementById('pageTitle').value = pageData.metadata.title || '';
+        document.getElementById('pageDescription').value = pageData.metadata.description || '';
+    } else {
+        document.getElementById('pageTitle').value = `Page ${pageNumber}`;
+        document.getElementById('pageDescription').value = '';
+    }
+    await loadPageContentForEditor(pageNumber);
+    openModal('pageEditorModal');
+}
+
+async function savePageDetails() {
+    const title = document.getElementById('pageTitle').value;
+    const description = document.getElementById('pageDescription').value;
+    try {
+        const response = await fetch(`/api/admin/lessons/${currentLessonId}/pages/${currentPageNumber}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRFToken() },
+            body: JSON.stringify({ title, description })
+        });
+        if (response.ok) {
+            showToast('Page details saved');
+            loadLessonContent(currentLessonId);
+        } else {
+            const error = await response.json();
+            showToast('Error: ' + error.error, 'error');
+        }
+    } catch (error) {
+        console.error('Error saving page details:', error);
+        showToast('An error occurred while saving page details', 'error');
+    }
+}
+
+async function loadPageContentForEditor(pageNumber) {
+    try {
+        const response = await fetch(`/api/admin/lessons/${currentLessonId}`);
+        const lesson = await response.json();
+        const page = lesson.pages.find(p => p.page_number === pageNumber);
+        const container = document.getElementById('pageContentContainer');
+
+        if (!page || page.content.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-8">
+                    <i class="fas fa-file-circle-plus text-3xl text-gray-300 dark:text-slate-600 mb-2"></i>
+                    <h6 class="text-gray-500 dark:text-slate-400 font-medium">No content on this page yet</h6>
+                    <p class="text-sm text-gray-400 dark:text-slate-500">Click "Add Content to This Page" to get started</p>
+                </div>
+            `;
+            return;
+        }
+
+        const pageContent = page.content.sort((a, b) => a.order_index - b.order_index);
+        let contentHtml = `
+            <div class="overflow-x-auto">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="width: 80px;">Order</th>
+                            <th>Type</th>
+                            <th>Title</th>
+                            <th>Optional</th>
+                            <th style="width: 200px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+
+        pageContent.forEach((item, index) => {
+            contentHtml += `
+                <tr data-content-id="${item.id}" class="hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors">
+                    <td>
+                        <div class="flex flex-col items-center">
+                            <button class="btn reorder-btn !p-0.5" onclick="moveContentInPage(${item.id}, 'up')" ${index === 0 ? 'disabled' : ''}>▲</button>
+                            <span class="text-xs text-gray-500 dark:text-slate-400 my-0.5">${item.order_index}</span>
+                            <button class="btn reorder-btn !p-0.5" onclick="moveContentInPage(${item.id}, 'down')" ${index === pageContent.length - 1 ? 'disabled' : ''}>▼</button>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge ${getContentTypeBadgeClass(item.content_type)}">${escapeHtml(item.content_type)}</span>
+                        ${item.is_interactive ? '<span class="badge bg-info ml-1">Interactive</span>' : ''}
+                    </td>
+                    <td>
+                        <div class="font-medium text-sm">${escapeHtml(item.title || item.content_type + ' #' + (item.content_id || 'Custom'))}</div>
+                        ${item.detail_text ? '<div class="text-xs text-primary-600 dark:text-primary-400 mt-0.5">' + escapeHtml(item.detail_text) + '</div>' : ''}
+                        ${item.content_text && !item.detail_text ? '<small class="text-gray-400 dark:text-slate-500">' + escapeHtml(truncateText(item.content_text, 80)) + '</small>' : ''}
+                    </td>
+                    <td>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${item.is_optional ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300' : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'}">
+                            ${item.is_optional ? 'Optional' : 'Required'}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="flex gap-1">
+                            <button class="!bg-transparent !text-gray-400 hover:!text-blue-600 !shadow-none !p-1.5 !rounded" onclick="previewContentById(${item.id})" title="Preview"><i class="fas fa-eye text-xs"></i></button>
+                            <button class="!bg-transparent !text-gray-400 hover:!text-primary-600 !shadow-none !p-1.5 !rounded" onclick="editContent(${item.id})" title="Edit"><i class="fas fa-pen-to-square text-xs"></i></button>
+                            <button class="!bg-transparent !text-gray-400 hover:!text-red-600 !shadow-none !p-1.5 !rounded" onclick="deleteContentFromPage(${item.id})" title="Delete"><i class="fas fa-trash-can text-xs"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+
+        contentHtml += '</tbody></table></div>';
+        container.innerHTML = contentHtml;
+    } catch (error) {
+        console.error('Error loading page content:', error);
+        document.getElementById('pageContentContainer').innerHTML = '<div class="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg text-red-600 dark:text-red-400 text-sm">Error loading page content. Please try again.</div>';
+    }
+}
+
+function openAddContentToPageModal() {
+    if (!currentPageNumber) { showToast('No page selected', 'error'); return; }
+    // Save page number BEFORE closeModal resets it
+    const pageNum = currentPageNumber;
+    closeModal('pageEditorModal');
+    openAddContentModal(false);
+    // Restore currentPageNumber (was nulled by closeModal)
+    currentPageNumber = pageNum;
+    const setPageNumber = () => {
+        const pageNumberField = document.getElementById('contentPageNumber');
+        if (pageNumberField) {
+            pageNumberField.value = pageNum;
+            pageNumberField.readOnly = true;
+            pageNumberField.setAttribute('data-locked-page', pageNum);
+        } else { setTimeout(setPageNumber, 50); }
+    };
+    setPageNumber();
+    setTimeout(setPageNumber, 100);
+    setTimeout(setPageNumber, 200);
+}
+
+async function moveContentInPage(contentId, direction) {
+    try {
+        const response = await fetch(`/api/admin/lessons/${currentLessonId}/content/${contentId}/move`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRFToken() },
+            body: JSON.stringify({ direction: direction })
+        });
+        if (response.ok) {
+            await loadPageContentForEditor(currentPageNumber);
+            loadLessonContent(currentLessonId);
+        } else {
+            const error = await response.json();
+            showToast('Error: ' + error.error, 'error');
+        }
+    } catch (error) {
+        console.error('Error moving content:', error);
+        showToast('Error moving content', 'error');
+    }
+}
+
+async function removeContentFromPage(contentId) {
+    const lessonId = currentLessonId;
+    const pageNum = currentPageNumber;
+    if (!lessonId || !pageNum) { showToast('Error: Could not determine the current lesson or page', 'error'); return; }
+    if (!confirm(`Are you sure you want to remove content item #${contentId} from this page?`)) return;
+
+    const deleteButton = document.querySelector(`tr[data-content-id="${contentId}"] button[title="Delete"]`);
+    if (deleteButton) { deleteButton.disabled = true; deleteButton.innerHTML = '<i class="fas fa-spinner fa-spin text-xs"></i>'; }
+
+    try {
+        const response = await fetch(`/api/admin/lessons/${lessonId}/content/${contentId}/delete`, {
+            method: 'DELETE',
+            headers: { 'X-CSRFToken': getCSRFToken(), 'Content-Type': 'application/json' }
+        });
+        const responseData = await response.json();
+        if (response.ok) {
+            showToast(responseData.message || 'Content removed');
+            await loadPageContentForEditor(pageNum);
+            loadLessonContent(lessonId);
+            loadLessons();
+        } else {
+            showToast('Error: ' + (responseData.error || 'An unknown error occurred'), 'error');
+        }
+    } catch (error) {
+        console.error('A network error occurred:', error);
+        showToast('A network error occurred', 'error');
+    } finally {
+        if (deleteButton) { deleteButton.disabled = false; deleteButton.innerHTML = '<i class="fas fa-trash-can text-xs"></i>'; }
+    }
+}
+
+async function deleteContentFromPage(contentId) { return await removeContentFromPage(contentId); }
+
+// ── Extend closeModal for content-specific cleanup ──────────────────
+(function() {
+    const _baseCloseModal = window.closeModal;
+    window.closeModal = function(modalId) {
+        // Call the original closeModal from base_admin.html
+        if (_baseCloseModal) _baseCloseModal(modalId);
+        // Additional cleanup for content modals
+        if (modalId === 'addContentModal') {
+            uploadedFileData = null;
+            const pageNumberField = document.getElementById('contentPageNumber');
+            if (pageNumberField) pageNumberField.readOnly = false;
+        }
+        if (modalId === 'pageEditorModal') currentPageNumber = null;
+    };
+})();
+</script>

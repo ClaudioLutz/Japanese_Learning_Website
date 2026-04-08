@@ -1094,17 +1094,49 @@ def get_lesson(item_id):
     lesson_dict['thumbnail_url'] = item.get_thumbnail_url()
     lesson_dict['category_name'] = item.category.name if item.category else None
     
-    # Use the updated `pages` property from the model
+    # Build pages from content items (pages with content)
     pages_data = []
+    seen_page_numbers = set()
     for page in item.pages:
-        page_info = {
-            'page_number': page['content'][0].page_number if page['content'] else None,
-            'content': [model_to_dict(c) for c in page['content']],
-            'metadata': model_to_dict(page['metadata']) if page['metadata'] else None
-        }
-        if page_info['page_number'] is not None:
+        content_dicts = []
+        for c in page['content']:
+            cd = model_to_dict(c)
+            # Add detail_text summary for display in page editor
+            ref = c.get_content_data()
+            if c.content_type == 'kana' and ref:
+                cd['detail_text'] = f"{ref.character} ({ref.romanization}) — {ref.type}"
+            elif c.content_type == 'kanji' and ref:
+                cd['detail_text'] = f"{ref.character} — {ref.meaning}"
+                if ref.onyomi:
+                    cd['detail_text'] += f" | On: {ref.onyomi}"
+                if ref.kunyomi:
+                    cd['detail_text'] += f" | Kun: {ref.kunyomi}"
+            elif c.content_type == 'vocabulary' and ref:
+                cd['detail_text'] = f"{ref.word} ({ref.reading}) — {ref.meaning}"
+            elif c.content_type == 'grammar' and ref:
+                cd['detail_text'] = f"{ref.title}"
+                if ref.structure:
+                    cd['detail_text'] += f" | {ref.structure}"
+            content_dicts.append(cd)
+        page_num = page['content'][0].page_number if page['content'] else None
+        if page_num is not None:
+            seen_page_numbers.add(page_num)
+            page_info = {
+                'page_number': page_num,
+                'content': content_dicts,
+                'metadata': model_to_dict(page['metadata']) if page['metadata'] else None
+            }
             pages_data.append(page_info)
-    
+
+    # Also include empty LessonPage entries (pages with metadata but no content)
+    for lp in item.pages_metadata:
+        if lp.page_number not in seen_page_numbers:
+            pages_data.append({
+                'page_number': lp.page_number,
+                'content': [],
+                'metadata': model_to_dict(lp)
+            })
+
     lesson_dict['pages'] = sorted(pages_data, key=lambda p: p['page_number'])
     lesson_dict['prerequisites'] = [model_to_dict(prereq.prerequisite_lesson) for prereq in item.prerequisites]
     

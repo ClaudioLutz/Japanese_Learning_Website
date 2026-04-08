@@ -30,6 +30,7 @@ def create_app():
     app.config['GCS_BUCKET_NAME'] = os.environ.get('GCS_BUCKET_NAME') or 'jpl-website-assets-jpl-website-bill-20251130'
     
     app.config.from_pyfile('config.py', silent=True) # Load config from instance folder
+    app.config['TEMPLATES_AUTO_RELOAD'] = True
     
     # Load environment variables (do not override existing env vars)
     from dotenv import load_dotenv

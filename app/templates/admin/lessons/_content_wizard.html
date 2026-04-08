@@ -1,0 +1,289 @@
+{# ── Enhanced Add Content Wizard Modal ─────────────────────────────── #}
+<div id="addContentModal" class="modal">
+    <div class="modal-content" style="max-width: 900px;">
+        <div class="modal-header">
+            <h4 id="addContentModalTitle">Add Content to Lesson</h4>
+            <span class="close" onclick="closeModal('addContentModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            {# Step 1: Content Type Selection #}
+            <div id="contentTypeStep" class="content-step">
+                <h5 class="mb-4 text-base font-semibold text-gray-900 dark:text-white">Choose Content Type:</h5>
+                <div class="grid grid-cols-3 gap-3">
+                    <div class="content-type-card" onclick="selectContentType('kana')">
+                        <div class="card h-full text-center">
+                            <div class="card-body">
+                                <div class="content-type-icon">📝</div>
+                                <h6 class="font-semibold text-sm">Kana</h6>
+                                <p class="text-xs text-gray-500 dark:text-slate-400">Hiragana & Katakana characters</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content-type-card" onclick="selectContentType('kanji')">
+                        <div class="card h-full text-center">
+                            <div class="card-body">
+                                <div class="content-type-icon">🔤</div>
+                                <h6 class="font-semibold text-sm">Kanji</h6>
+                                <p class="text-xs text-gray-500 dark:text-slate-400">Chinese characters</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content-type-card" onclick="selectContentType('vocabulary')">
+                        <div class="card h-full text-center">
+                            <div class="card-body">
+                                <div class="content-type-icon">📚</div>
+                                <h6 class="font-semibold text-sm">Vocabulary</h6>
+                                <p class="text-xs text-gray-500 dark:text-slate-400">Words & phrases</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content-type-card" onclick="selectContentType('grammar')">
+                        <div class="card h-full text-center">
+                            <div class="card-body">
+                                <div class="content-type-icon">📖</div>
+                                <h6 class="font-semibold text-sm">Grammar</h6>
+                                <p class="text-xs text-gray-500 dark:text-slate-400">Grammar rules & patterns</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content-type-card" onclick="selectContentType('text')">
+                        <div class="card h-full text-center">
+                            <div class="card-body">
+                                <div class="content-type-icon">📄</div>
+                                <h6 class="font-semibold text-sm">Text</h6>
+                                <p class="text-xs text-gray-500 dark:text-slate-400">Custom text content</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content-type-card" onclick="selectContentType('video')">
+                        <div class="card h-full text-center">
+                            <div class="card-body">
+                                <div class="content-type-icon">🎥</div>
+                                <h6 class="font-semibold text-sm">Video</h6>
+                                <p class="text-xs text-gray-500 dark:text-slate-400">Video content (URL)</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content-type-card" onclick="selectContentType('audio')">
+                        <div class="card h-full text-center">
+                            <div class="card-body">
+                                <div class="content-type-icon">🎵</div>
+                                <h6 class="font-semibold text-sm">Audio</h6>
+                                <p class="text-xs text-gray-500 dark:text-slate-400">Audio content (URL)</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content-type-card" onclick="selectContentType('image')">
+                        <div class="card h-full text-center">
+                            <div class="card-body">
+                                <div class="content-type-icon">🖼️</div>
+                                <h6 class="font-semibold text-sm">Image</h6>
+                                <p class="text-xs text-gray-500 dark:text-slate-400">Image content (URL)</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content-type-card" onclick="selectContentType('interactive')">
+                        <div class="card h-full text-center">
+                            <div class="card-body">
+                                <div class="content-type-icon">🎮</div>
+                                <h6 class="font-semibold text-sm">Interactive</h6>
+                                <p class="text-xs text-gray-500 dark:text-slate-400">Quizzes, questions, etc.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Step 2: Content Configuration #}
+            <div id="contentConfigStep" class="content-step" style="display: none;">
+                <div class="flex items-center justify-between mb-4">
+                    <h5 id="configStepTitle" class="text-base font-semibold text-gray-900 dark:text-white">Configure Content</h5>
+                    <button type="button" class="btn-sm btn-secondary" onclick="showContentTypeStep()">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                </div>
+
+                <form id="contentConfigForm">
+                    {{ form.csrf_token }}
+                    <input type="hidden" id="editingContentId" name="editing_content_id">
+                    <div id="contentConfigFields">
+                        {# Dynamic form fields inserted here by JS #}
+                    </div>
+
+                    {# Rich Text Content Section #}
+                    <div id="richTextSection" style="display: none;">
+                        <div class="form-group">
+                            <label for="textContentTitle">Title *</label>
+                            <input type="text" id="textContentTitle" name="text_title" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="textContentType">Content Type</label>
+                            <select id="textContentType" name="text_content_type" class="form-control">
+                                <option value="information_slide">Information Slide</option>
+                                <option value="text_block">Text Block</option>
+                                <option value="instructions">Instructions</option>
+                                <option value="explanation">Explanation</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="richTextContent">Content *</label>
+                            <div id="quillEditor" style="height: 300px;"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="text-sm font-medium">Quick Templates:</label>
+                            <div class="flex gap-2 mt-1">
+                                <button type="button" class="btn-sm btn-secondary" onclick="applyTemplate('basic_slide')">Basic Slide</button>
+                                <button type="button" class="btn-sm btn-secondary" onclick="applyTemplate('instruction_slide')">Instructions</button>
+                                <button type="button" class="btn-sm btn-secondary" onclick="applyTemplate('explanation_slide')">Explanation</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="text-sm font-medium">Preview:</label>
+                            <div id="richTextPreview" class="border border-gray-200 dark:border-slate-700 p-3 rounded-lg bg-gray-50 dark:bg-slate-800/50" style="min-height: 100px;">
+                                <em class="text-gray-400 dark:text-slate-500">Content preview will appear here...</em>
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Interactive Content Section #}
+                    <div id="interactiveSection" style="display: none;">
+                        <div class="form-group">
+                            <label for="interactiveTitle">Title *</label>
+                            <input type="text" id="interactiveTitle" name="interactive_title" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="interactiveType">Interactive Type</label>
+                            <select id="interactiveType" name="interactive_type" class="form-control" onchange="showInteractiveForm(this.value)">
+                                <option value="">Select Type</option>
+                                <option value="multiple_choice">Multiple Choice Question</option>
+                                <option value="fill_blank">Fill in the Blank</option>
+                                <option value="true_false">True/False</option>
+                                <option value="matching">Matching Exercise</option>
+                                <option value="quiz">Mini Quiz (Multiple Questions)</option>
+                            </select>
+                        </div>
+
+                        {# Multiple Choice Form #}
+                        <div id="multipleChoiceForm" style="display: none;">
+                            <div class="form-group">
+                                <label for="mcQuestion">Question *</label>
+                                <textarea id="mcQuestion" name="question_text" class="form-control" rows="3"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Answer Options:</label>
+                                <div id="mcOptions">
+                                    <div class="option-item mb-2" data-option="0">
+                                        <div class="flex items-center gap-2">
+                                            <input type="radio" name="correct_option" value="0" class="!w-4 !h-4 !mb-0">
+                                            <input type="text" class="form-control !mb-0 flex-1" name="option_0" placeholder="Option A">
+                                            <button type="button" class="btn-sm btn-danger" onclick="removeOption(0)">×</button>
+                                        </div>
+                                        <input type="text" class="form-control !text-sm mt-1" name="feedback_0" placeholder="Feedback for this option (optional)">
+                                    </div>
+                                </div>
+                                <button type="button" class="btn-sm" style="background-color: var(--primary-color);" onclick="addOption()">+ Add Option</button>
+                            </div>
+                            <div class="form-group">
+                                <label for="mcExplanation">Explanation (optional)</label>
+                                <textarea id="mcExplanation" name="explanation" class="form-control" rows="2" placeholder="Explain why this is the correct answer"></textarea>
+                            </div>
+                        </div>
+
+                        {# Fill in the Blank Form #}
+                        <div id="fillBlankForm" style="display: none;">
+                            <div class="form-group">
+                                <label for="fbQuestion">Question Text *</label>
+                                <textarea id="fbQuestion" name="question_text" class="form-control" rows="3" placeholder="Use [BLANK] to indicate where students should fill in answers"></textarea>
+                                <p class="text-xs text-gray-400 dark:text-slate-500 -mt-2">Example: "The capital of Japan is [BLANK]."</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="fbAnswers">Correct Answers *</label>
+                                <input type="text" id="fbAnswers" name="correct_answers" class="form-control" placeholder="Tokyo, tokyo, TOKYO (comma-separated)">
+                            </div>
+                            <div class="form-group">
+                                <label for="fbExplanation">Explanation (optional)</label>
+                                <textarea id="fbExplanation" name="explanation" class="form-control" rows="2"></textarea>
+                            </div>
+                        </div>
+
+                        {# True/False Form #}
+                        <div id="trueFalseForm" style="display: none;">
+                            <div class="form-group">
+                                <label for="tfQuestion">Statement *</label>
+                                <textarea id="tfQuestion" name="question_text" class="form-control" rows="3"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Correct Answer</label>
+                                <div class="flex gap-4 mt-1">
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input class="!w-4 !h-4 !mb-0" type="radio" name="tf_answer" id="tfTrue" value="true"> True
+                                    </label>
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input class="!w-4 !h-4 !mb-0" type="radio" name="tf_answer" id="tfFalse" value="false"> False
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="tfExplanation">Explanation *</label>
+                                <textarea id="tfExplanation" name="explanation" class="form-control" rows="2" placeholder="Explain why this statement is true or false"></textarea>
+                            </div>
+                        </div>
+
+                        {# Quiz Settings #}
+                        <div class="grid grid-cols-2 gap-4 mt-3">
+                            <div class="form-group">
+                                <label for="maxAttempts">Max Attempts</label>
+                                <input type="number" id="maxAttempts" name="max_attempts" class="form-control" value="3" min="1" max="10">
+                            </div>
+                            <div class="form-group">
+                                <label for="passingScore">Passing Score (%)</label>
+                                <input type="number" id="passingScore" name="passing_score" class="form-control" value="70" min="0" max="100">
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Common fields for all content types #}
+                    <div class="grid grid-cols-3 gap-4 mt-4 pt-4 border-t border-gray-200 dark:border-slate-700">
+                        <div class="form-group">
+                            <label for="contentOrder">Order Index</label>
+                            <input type="number" id="contentOrder" name="order_index" class="form-control" min="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="contentPageNumber">Page Number *</label>
+                            <input type="number" id="contentPageNumber" name="page_number" class="form-control" min="1" value="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="flex items-center gap-2 cursor-pointer text-sm mt-6">
+                                <input type="checkbox" id="contentOptional" name="is_optional" class="!w-4 !h-4 !mb-0"> Optional Content
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            {# Step 3: Preview & Confirm #}
+            <div id="contentPreviewStep" class="content-step" style="display: none;">
+                <div class="flex items-center justify-between mb-4">
+                    <h5 class="text-base font-semibold text-gray-900 dark:text-white">Preview & Confirm</h5>
+                    <button type="button" class="btn-sm btn-secondary" onclick="showContentConfigStep()">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="text-sm font-semibold mb-0">Content Preview</h6>
+                    </div>
+                    <div class="card-body" id="contentPreviewArea">
+                        {# Preview content displayed here #}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-secondary" onclick="closeModal('addContentModal')">Cancel</button>
+            <button type="button" id="previewBtn" onclick="previewContent()" style="display: none;">Preview</button>
+            <button type="button" id="saveContentBtn" class="btn-success" onclick="saveContentToLesson()" style="display: none;">Add to Lesson</button>
+        </div>
+    </div>
+</div>

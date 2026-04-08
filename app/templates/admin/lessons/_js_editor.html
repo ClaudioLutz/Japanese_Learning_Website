@@ -1,0 +1,651 @@
+{# ── Content Editor JS: Quill, Templates, Wizard, Save ─────────────── #}
+<script>
+let quillEditor;
+let selectedContentType = null;
+let contentOptions = {};
+let currentContentData = {};
+let isFileUploading = false;
+let optionCount = 2;
+
+const contentTemplates = {
+    basic_slide: `<h2>Slide Title</h2><p>Your content goes here. You can use <strong>bold text</strong>, <em>italic text</em>, and other formatting.</p><ul><li>Bullet point 1</li><li>Bullet point 2</li></ul>`,
+    instruction_slide: `<h2>Instructions</h2><p>Follow these steps:</p><ol><li><strong>Step 1:</strong> Description of first step</li><li><strong>Step 2:</strong> Description of second step</li><li><strong>Step 3:</strong> Description of third step</li></ol><div style="background-color: #e7f3ff; padding: 10px; border-left: 4px solid #2196F3; margin: 10px 0;"><strong>Tip:</strong> Add helpful tips here</div>`,
+    explanation_slide: `<h2>Explanation</h2><p>This section explains an important concept:</p><h3>Key Points:</h3><ul><li><strong>Point 1:</strong> Explanation</li><li><strong>Point 2:</strong> Explanation</li></ul><h3>Example:</h3><div style="background-color: #f0f8f0; padding: 15px; border-radius: 5px; margin: 10px 0;"><p>Example content goes here...</p></div><h3>Remember:</h3><div style="background-color: #fff3cd; padding: 10px; border-left: 4px solid #ffc107; margin: 10px 0;"><strong>Important:</strong> Key takeaway message</div>`
+};
+
+function applyTemplate(templateName) {
+    if (contentTemplates[templateName] && quillEditor) {
+        quillEditor.root.innerHTML = contentTemplates[templateName];
+        updateRichTextPreview();
+    }
+}
+
+// ── Interactive Forms ────────────────────────────────────────────────
+function showInteractiveForm(type) {
+    document.getElementById('multipleChoiceForm').style.display = 'none';
+    document.getElementById('fillBlankForm').style.display = 'none';
+    document.getElementById('trueFalseForm').style.display = 'none';
+    if (type === 'multiple_choice') { document.getElementById('multipleChoiceForm').style.display = 'block'; initializeMultipleChoice(); }
+    else if (type === 'fill_blank') { document.getElementById('fillBlankForm').style.display = 'block'; }
+    else if (type === 'true_false') { document.getElementById('trueFalseForm').style.display = 'block'; }
+}
+
+function initializeMultipleChoice() {
+    const optionsContainer = document.getElementById('mcOptions');
+    optionsContainer.innerHTML = '';
+    optionCount = 0;
+    for (let i = 0; i < 2; i++) addOption();
+}
+
+function addOption() {
+    const optionsContainer = document.getElementById('mcOptions');
+    const optionIndex = optionCount++;
+    const optionLetter = String.fromCharCode(65 + optionIndex);
+    const optionHtml = `
+        <div class="option-item mb-2" data-option="${optionIndex}">
+            <div class="flex items-center gap-2">
+                <input type="radio" name="correct_option" value="${optionIndex}" class="!w-4 !h-4 !mb-0">
+                <input type="text" class="form-control !mb-0 flex-1" name="option_${optionIndex}" placeholder="Option ${optionLetter}">
+                <button type="button" class="btn-sm btn-danger" onclick="removeOption(${optionIndex})">×</button>
+            </div>
+            <input type="text" class="form-control !text-sm mt-1" name="feedback_${optionIndex}" placeholder="Feedback for this option (optional)">
+        </div>
+    `;
+    optionsContainer.insertAdjacentHTML('beforeend', optionHtml);
+}
+
+function removeOption(optionIndex) {
+    const el = document.querySelector(`[data-option="${optionIndex}"]`);
+    if (el) el.remove();
+}
+
+// ── Rich Text Editor ────────────────────────────────────────────────
+function initializeRichTextEditor(initialContent = '') {
+    const container = document.getElementById('quillEditor');
+    if (!container) return;
+    if (container.innerHTML) container.innerHTML = '';
+    quillEditor = new Quill(container, {
+        theme: 'snow',
+        modules: { toolbar: [[{ 'header': [1, 2, 3, false] }], ['bold', 'italic', 'underline'], [{ 'list': 'ordered'}, { 'list': 'bullet' }], ['link'], ['clean']] },
+        placeholder: 'Compose your content...',
+    });
+    if (initialContent) quillEditor.root.innerHTML = initialContent;
+    quillEditor.on('text-change', updateRichTextPreview);
+}
+
+function destroyRichTextEditor() {
+    if (quillEditor) {
+        const container = document.getElementById('quillEditor');
+        if (container) container.innerHTML = '';
+        quillEditor = null;
+    }
+}
+
+function updateRichTextPreview() {
+    if (quillEditor) document.getElementById('richTextPreview').innerHTML = quillEditor.root.innerHTML;
+}
+
+// ── Open Add Content Modal ──────────────────────────────────────────
+function openAddContentModal(isEditing = false) {
+    if (!currentLessonId) { showToast('Please select a lesson first', 'error'); return; }
+    selectedContentType = null;
+    currentContentData = {};
+    uploadedFileData = null;
+    document.getElementById('contentConfigForm').reset();
+    document.getElementById('editingContentId').value = '';
+    document.getElementById('addContentModalTitle').textContent = 'Add Content to Lesson';
+    const saveBtn = document.getElementById('saveContentBtn');
+    saveBtn.textContent = 'Add to Lesson';
+    saveBtn.onclick = () => saveContentToLesson(false);
+    if (!isEditing) showContentTypeStep();
+    openModal('addContentModal');
+}
+
+// ── Wizard Steps ────────────────────────────────────────────────────
+function showContentTypeStep() {
+    document.getElementById('contentTypeStep').style.display = 'block';
+    document.getElementById('contentConfigStep').style.display = 'none';
+    document.getElementById('contentPreviewStep').style.display = 'none';
+    document.getElementById('previewBtn').style.display = 'none';
+    document.getElementById('saveContentBtn').style.display = 'none';
+}
+
+function showContentConfigStep() {
+    document.getElementById('contentTypeStep').style.display = 'none';
+    document.getElementById('contentConfigStep').style.display = 'block';
+    document.getElementById('contentPreviewStep').style.display = 'none';
+    document.getElementById('previewBtn').style.display = 'inline-block';
+    document.getElementById('saveContentBtn').style.display = 'none';
+}
+
+function showContentPreviewStep() {
+    document.getElementById('contentTypeStep').style.display = 'none';
+    document.getElementById('contentConfigStep').style.display = 'none';
+    document.getElementById('contentPreviewStep').style.display = 'block';
+    document.getElementById('previewBtn').style.display = 'none';
+    document.getElementById('saveContentBtn').style.display = 'inline-block';
+}
+
+// ── Select Content Type ─────────────────────────────────────────────
+async function selectContentType(contentType) {
+    selectedContentType = contentType;
+    const titles = { 'kana': 'Configure Kana Content', 'kanji': 'Configure Kanji Content', 'vocabulary': 'Configure Vocabulary Content', 'grammar': 'Configure Grammar Content', 'text': 'Configure Text Content', 'video': 'Configure Video Content', 'audio': 'Configure Audio Content', 'image': 'Configure Image Content', 'interactive': 'Configure Interactive Content' };
+    document.getElementById('configStepTitle').textContent = titles[contentType] || 'Configure Content';
+    if (['kana', 'kanji', 'vocabulary', 'grammar'].includes(contentType)) await loadContentOptions(contentType);
+    generateContentConfigForm(contentType);
+    showContentConfigStep();
+}
+
+async function loadContentOptions(contentType) {
+    try {
+        const response = await fetch(`/api/admin/content-options/${contentType}`);
+        contentOptions[contentType] = response.ok ? await response.json() : [];
+    } catch (error) {
+        console.error(`Error loading ${contentType} options:`, error);
+        contentOptions[contentType] = [];
+    }
+}
+
+// ── Generate Content Config Form ────────────────────────────────────
+function generateContentConfigForm(contentType, content = null) {
+    const fieldsContainer = document.getElementById('contentConfigFields');
+    fieldsContainer.innerHTML = '';
+    document.getElementById('richTextSection').style.display = 'none';
+    document.getElementById('interactiveSection').style.display = 'none';
+    destroyRichTextEditor();
+
+    if (['kana', 'kanji', 'vocabulary', 'grammar'].includes(contentType)) {
+        const options = contentOptions[contentType] || [];
+        const refFields = {
+            vocabulary: `
+                <div class="grid grid-cols-3 gap-3">
+                    <div class="form-group"><label for="refWord">Word *</label><input type="text" id="refWord" name="ref_word" class="form-control"></div>
+                    <div class="form-group"><label for="refReading">Reading *</label><input type="text" id="refReading" name="ref_reading" class="form-control"></div>
+                    <div class="form-group"><label for="refMeaning">Meaning *</label><input type="text" id="refMeaning" name="ref_meaning" class="form-control"></div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="form-group"><label for="refExJp">Example (JP)</label><input type="text" id="refExJp" name="ref_example_jp" class="form-control" placeholder="日本語の例文"></div>
+                    <div class="form-group"><label for="refExEn">Example (EN)</label><input type="text" id="refExEn" name="ref_example_en" class="form-control" placeholder="English translation"></div>
+                </div>`,
+            kanji: `
+                <div class="grid grid-cols-4 gap-3">
+                    <div class="form-group"><label for="refCharacter">Character *</label><input type="text" id="refCharacter" name="ref_character" class="form-control !text-2xl !text-center"></div>
+                    <div class="form-group"><label for="refMeaning">Meaning *</label><input type="text" id="refMeaning" name="ref_meaning" class="form-control"></div>
+                    <div class="form-group"><label for="refOnyomi">Onyomi</label><input type="text" id="refOnyomi" name="ref_onyomi" class="form-control"></div>
+                    <div class="form-group"><label for="refKunyomi">Kunyomi</label><input type="text" id="refKunyomi" name="ref_kunyomi" class="form-control"></div>
+                </div>`,
+            kana: `
+                <div class="grid grid-cols-3 gap-3">
+                    <div class="form-group"><label for="refCharacter">Character *</label><input type="text" id="refCharacter" name="ref_character" class="form-control !text-2xl !text-center"></div>
+                    <div class="form-group"><label for="refRomanization">Romanization *</label><input type="text" id="refRomanization" name="ref_romanization" class="form-control"></div>
+                    <div class="form-group"><label for="refType">Type</label><select id="refType" name="ref_type" class="form-control"><option value="hiragana">Hiragana</option><option value="katakana">Katakana</option></select></div>
+                </div>`,
+            grammar: `
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="form-group"><label for="refGrammarTitle">Title *</label><input type="text" id="refGrammarTitle" name="ref_grammar_title" class="form-control"></div>
+                    <div class="form-group"><label for="refStructure">Structure</label><input type="text" id="refStructure" name="ref_structure" class="form-control"></div>
+                </div>
+                <div class="form-group"><label for="refExplanation">Explanation</label><textarea id="refExplanation" name="ref_explanation" class="form-control" rows="3"></textarea></div>`
+        };
+        const label = contentType.charAt(0).toUpperCase() + contentType.slice(1);
+
+        fieldsContainer.innerHTML = `
+            <div class="form-group">
+                <label for="existingContentSelect">Select ${label} *</label>
+                <select id="existingContentSelect" name="content_id" class="form-control" required onchange="onRefItemSelected('${contentType}', this.value)">
+                    <option value="">Choose ${contentType}...</option>
+                    ${options.map(item => {
+                        let displayText = '';
+                        if (contentType === 'kana') displayText = `${item.character} (${item.romanization})`;
+                        else if (contentType === 'kanji') displayText = `${item.character} - ${item.meaning}`;
+                        else if (contentType === 'vocabulary') displayText = `${item.word} (${item.reading}) - ${item.meaning}`;
+                        else if (contentType === 'grammar') displayText = item.title;
+                        return `<option value="${item.id}">${escapeHtml(displayText)}</option>`;
+                    }).join('')}
+                </select>
+            </div>
+            <div id="refFieldsContainer" style="display: none;">
+                <div class="border border-primary-200 dark:border-primary-800 rounded-lg p-4 mb-4 bg-primary-50/50 dark:bg-primary-900/10">
+                    <h6 class="text-sm font-semibold text-primary-700 dark:text-primary-300 mb-3"><i class="fas fa-pen-to-square mr-1"></i> ${label} Details</h6>
+                    ${refFields[contentType] || ''}
+                    <p class="text-[0.7rem] text-gray-400 dark:text-slate-500 -mt-2"><i class="fas fa-info-circle mr-1"></i>Changes apply globally to all lessons using this ${contentType}.</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="customTitle">Custom Title (optional)</label>
+                <input type="text" id="customTitle" name="custom_title" class="form-control" placeholder="Override default title">
+            </div>
+        `;
+    } else if (contentType === 'text') {
+        document.getElementById('richTextSection').style.display = 'block';
+        initializeRichTextEditor(content ? content.content_text : '');
+    } else if (contentType === 'interactive') {
+        document.getElementById('interactiveSection').style.display = 'block';
+    } else if (['video', 'audio', 'image'].includes(contentType)) {
+        const placeholders = { 'video': 'https://www.youtube.com/watch?v=...', 'audio': 'https://example.com/audio.mp3', 'image': 'https://example.com/image.jpg' };
+        fieldsContainer.innerHTML = `
+            <div class="form-group">
+                <label for="mediaTitle">Title *</label>
+                <input type="text" id="mediaTitle" name="media_title" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label class="text-sm font-medium">Content Source</label>
+                <div class="flex gap-3 mt-1 mb-3">
+                    <label class="flex items-center gap-2 cursor-pointer text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-slate-700 has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50 dark:has-[:checked]:bg-primary-900/20">
+                        <input type="radio" name="contentSource" value="upload" checked onchange="toggleContentSource('upload')" class="!w-4 !h-4 !mb-0"> Upload File
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-slate-700 has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50 dark:has-[:checked]:bg-primary-900/20">
+                        <input type="radio" name="contentSource" value="url" onchange="toggleContentSource('url')" class="!w-4 !h-4 !mb-0"> Use URL
+                    </label>
+                </div>
+            </div>
+            <div id="fileUploadSection">
+                <div class="form-group">
+                    <label>Upload ${contentType.charAt(0).toUpperCase() + contentType.slice(1)} File *</label>
+                    <div class="file-upload-area" id="fileUploadArea" onclick="document.getElementById('contentFile').click()">
+                        <input type="file" id="contentFile" name="file" accept="${getFileAcceptTypes(contentType)}" style="display: none;" onchange="handleFileSelect(event)">
+                        <div class="upload-placeholder" id="uploadPlaceholder">
+                            <i class="fas fa-cloud-upload-alt fa-3x text-gray-300 dark:text-slate-600"></i>
+                            <p class="mt-2 text-sm">Click to select ${contentType} file or drag and drop</p>
+                            <small class="text-gray-400 dark:text-slate-500">Supported: <span id="supportedFormats">${getSupportedFormats(contentType)}</span> | Max 100MB</small>
+                        </div>
+                        <div class="upload-progress" id="uploadProgress" style="display: none;">
+                            <div class="progress mb-2"><div class="progress-bar" id="progressBar" style="width: 0%"></div></div>
+                            <small>Uploading... <span id="uploadPercent">0%</span></small>
+                        </div>
+                        <div class="upload-success" id="uploadSuccess" style="display: none;">
+                            <i class="fas fa-check-circle fa-2x text-emerald-500"></i>
+                            <p class="mb-1 text-sm font-medium">File uploaded successfully!</p>
+                            <small id="uploadedFileName" class="text-gray-500 dark:text-slate-400"></small>
+                            <button type="button" class="btn-sm btn-secondary mt-2" onclick="clearUploadedFile()"><i class="fas fa-times"></i> Remove</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="urlSection" style="display: none;">
+                <div class="form-group">
+                    <label for="mediaUrl">${contentType.charAt(0).toUpperCase() + contentType.slice(1)} URL *</label>
+                    <input type="url" id="mediaUrl" name="media_url" class="form-control" placeholder="${placeholders[contentType]}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="mediaDescription">Description (optional)</label>
+                <textarea id="mediaDescription" name="content_text" class="form-control" rows="3" placeholder="Optional description or notes"></textarea>
+            </div>
+        `;
+        setTimeout(() => initializeDragAndDrop(), 100);
+    }
+}
+
+// ── Edit Content ────────────────────────────────────────────────────
+async function editContent(contentId) {
+    try {
+        const response = await fetch(`/api/admin/content/${contentId}`);
+        if (!response.ok) throw new Error('Failed to fetch content details.');
+        const content = await response.json();
+        openAddContentModal(true);
+        document.getElementById('editingContentId').value = content.id;
+        document.getElementById('addContentModalTitle').textContent = 'Edit Content';
+        const saveBtn = document.getElementById('saveContentBtn');
+        saveBtn.textContent = 'Update Content';
+        saveBtn.onclick = () => saveContentToLesson(true);
+        await populateContentForm(content);
+    } catch (error) {
+        console.error('Error preparing content for editing:', error);
+        showToast('Error: ' + error.message, 'error');
+    }
+}
+
+async function populateContentForm(content) {
+    selectedContentType = content.content_type;
+    if (['kana', 'kanji', 'vocabulary', 'grammar'].includes(selectedContentType)) await loadContentOptions(selectedContentType);
+    document.getElementById('configStepTitle').textContent = `Edit ${selectedContentType.charAt(0).toUpperCase() + selectedContentType.slice(1)} Content`;
+    generateContentConfigForm(selectedContentType, content);
+    showContentConfigStep();
+    document.getElementById('contentTypeStep').style.display = 'none';
+    document.getElementById('contentOrder').value = content.order_index || 0;
+    document.getElementById('contentPageNumber').value = content.page_number || 1;
+    document.getElementById('contentOptional').checked = content.is_optional;
+
+    if (['kana', 'kanji', 'vocabulary', 'grammar'].includes(content.content_type)) {
+        document.getElementById('existingContentSelect').value = content.content_id;
+        document.getElementById('customTitle').value = content.title || '';
+        // Load and populate inline reference fields
+        if (content.content_id) {
+            const refContainer = document.getElementById('refFieldsContainer');
+            if (refContainer) refContainer.style.display = 'block';
+            await loadReferenceFields(content.content_type, content.content_id);
+        }
+    } else if (content.content_type === 'text') {
+        document.getElementById('textContentTitle').value = content.title || '';
+    } else if (['video', 'audio', 'image'].includes(content.content_type)) {
+        document.getElementById('mediaTitle').value = content.title || '';
+        document.getElementById('mediaDescription').value = content.content_text || '';
+        if (content.file_path) {
+            toggleContentSource('upload');
+            uploadedFileData = { filePath: content.file_path, original_filename: content.original_filename || content.file_path.split('/').pop(), file_size: content.file_size, file_type: content.file_type };
+            showUploadSuccess(uploadedFileData);
+        } else if (content.media_url) {
+            toggleContentSource('url');
+            document.getElementById('mediaUrl').value = content.media_url;
+        }
+    } else if (content.content_type === 'interactive') {
+        document.getElementById('interactiveTitle').value = content.title || '';
+        const interactiveType = content.interactive_type;
+        document.getElementById('interactiveType').value = interactiveType;
+        showInteractiveForm(interactiveType);
+        if (interactiveType === 'multiple_choice') {
+            document.getElementById('mcQuestion').value = content.question_text || '';
+            document.getElementById('mcExplanation').value = content.explanation || '';
+            const optionsContainer = document.getElementById('mcOptions');
+            optionsContainer.innerHTML = '';
+            optionCount = 0;
+            if (content.options && content.options.length > 0) {
+                content.options.forEach(option => {
+                    addOption();
+                    const idx = optionCount - 1;
+                    document.querySelector(`input[name="option_${idx}"]`).value = option.text;
+                    document.querySelector(`input[name="feedback_${idx}"]`).value = option.feedback || '';
+                    if (option.is_correct) document.querySelector(`input[name="correct_option"][value="${idx}"]`).checked = true;
+                });
+            }
+        } else if (interactiveType === 'fill_blank') {
+            document.getElementById('fbQuestion').value = content.question_text || '';
+            document.getElementById('fbAnswers').value = content.correct_answers || '';
+            document.getElementById('fbExplanation').value = content.explanation || '';
+        } else if (interactiveType === 'true_false') {
+            document.getElementById('tfQuestion').value = content.question_text || '';
+            document.getElementById('tfExplanation').value = content.explanation || '';
+            if (content.correct_answer === true) document.getElementById('tfTrue').checked = true;
+            else if (content.correct_answer === false) document.getElementById('tfFalse').checked = true;
+        }
+    }
+}
+
+// ── Validate Content Data ───────────────────────────────────────────
+function validateContentData(data) {
+    if (['kana', 'kanji', 'vocabulary', 'grammar'].includes(data.content_type)) {
+        if (!data.content_id) { showToast(`Please select a ${data.content_type} item`, 'error'); return false; }
+    } else if (data.content_type === 'text') {
+        if (quillEditor) {
+            const content = quillEditor.root.innerHTML;
+            if (!data.title || !content || content.trim() === '<p><br></p>') { showToast('Please provide both title and content', 'error'); return false; }
+            data.content_text = content;
+        } else { showToast('Editor not initialized', 'error'); return false; }
+    } else if (data.content_type === 'interactive') {
+        if (!data.title || !data.interactive_type) { showToast('Please provide a title and select an interactive type', 'error'); return false; }
+    } else if (['video', 'audio', 'image'].includes(data.content_type)) {
+        if (!data.title) { showToast(`Please provide a title for ${data.content_type} content`, 'error'); return false; }
+        const contentSource = document.querySelector('input[name="contentSource"]:checked')?.value;
+        if (contentSource === 'upload') {
+            if (!uploadedFileData || !uploadedFileData.filePath) { showToast(`Please upload a ${data.content_type} file`, 'error'); return false; }
+        } else if (contentSource === 'url') {
+            if (!data.media_url) { showToast(`Please provide a URL for ${data.content_type} content`, 'error'); return false; }
+        } else { showToast('Please select either file upload or URL option', 'error'); return false; }
+    }
+    return true;
+}
+
+// ── Preview Content (wizard step 3) ─────────────────────────────────
+async function previewContent() {
+    const formData = new FormData(document.getElementById('contentConfigForm'));
+    currentContentData = Object.fromEntries(formData.entries());
+    currentContentData.content_type = selectedContentType;
+    if (currentContentData.text_title) currentContentData.title = currentContentData.text_title;
+    else if (currentContentData.interactive_title) currentContentData.title = currentContentData.interactive_title;
+    else if (currentContentData.media_title) currentContentData.title = currentContentData.media_title;
+    else if (currentContentData.custom_title) currentContentData.title = currentContentData.custom_title;
+    if (!validateContentData(currentContentData)) return;
+
+    if (['text', 'interactive', 'kana', 'kanji', 'vocabulary', 'grammar'].includes(selectedContentType)) {
+        await generateWizardPreview(currentContentData);
+        showContentPreviewStep();
+        return;
+    }
+
+    const contentSource = document.querySelector('input[name="contentSource"]:checked')?.value;
+    if (contentSource === 'url') {
+        await generateWizardPreview(currentContentData);
+        showContentPreviewStep();
+        return;
+    }
+
+    const fileInput = document.getElementById('contentFile');
+    const file = fileInput ? fileInput.files[0] : null;
+    if (!file && !uploadedFileData) { showToast('Please select a file first', 'error'); return; }
+    if (uploadedFileData) {
+        const fd = new FormData(document.getElementById('contentConfigForm'));
+        currentContentData = Object.fromEntries(fd.entries());
+        currentContentData.content_type = selectedContentType;
+        if (validateContentData(currentContentData)) { await generateWizardPreview(currentContentData); showContentPreviewStep(); }
+        return;
+    }
+
+    const previewButton = document.getElementById('previewBtn');
+    previewButton.disabled = true;
+    previewButton.textContent = 'Uploading...';
+    try {
+        const data = await uploadFile(file);
+        uploadedFileData = data;
+        const fd = new FormData(document.getElementById('contentConfigForm'));
+        currentContentData = Object.fromEntries(fd.entries());
+        currentContentData.content_type = selectedContentType;
+        if (validateContentData(currentContentData)) { await generateWizardPreview(currentContentData); showContentPreviewStep(); }
+    } catch (error) {
+        console.error('Upload failed:', error);
+        showToast(error.message, 'error');
+        uploadedFileData = null;
+    } finally {
+        previewButton.disabled = false;
+        previewButton.textContent = 'Preview';
+    }
+}
+
+// ── Generate Wizard Preview ─────────────────────────────────────────
+async function generateWizardPreview(data) {
+    const previewArea = document.getElementById('contentPreviewArea');
+    let html = '';
+    if (['kana', 'kanji', 'vocabulary', 'grammar'].includes(data.content_type)) {
+        const options = contentOptions[data.content_type] || [];
+        const item = options.find(i => i.id == data.content_id);
+        if (item) {
+            if (data.content_type === 'kana') html = `<h6>${escapeHtml(data.title || 'Kana: ' + item.character)}</h6><p><strong>Character:</strong> ${item.character} | <strong>Romanization:</strong> ${item.romanization} | <strong>Type:</strong> ${item.type}</p>`;
+            else if (data.content_type === 'kanji') html = `<h6>${escapeHtml(data.title || 'Kanji: ' + item.character)}</h6><p><strong>Character:</strong> ${item.character} | <strong>Meaning:</strong> ${escapeHtml(item.meaning)} | <strong>Onyomi:</strong> ${item.onyomi || 'N/A'} | <strong>Kunyomi:</strong> ${item.kunyomi || 'N/A'}</p>`;
+            else if (data.content_type === 'vocabulary') html = `<h6>${escapeHtml(data.title || 'Vocabulary: ' + item.word)}</h6><p><strong>Word:</strong> ${item.word} | <strong>Reading:</strong> ${item.reading} | <strong>Meaning:</strong> ${escapeHtml(item.meaning)}</p>`;
+            else if (data.content_type === 'grammar') html = `<h6>${escapeHtml(data.title || item.title)}</h6><p><strong>Structure:</strong> ${item.structure || 'N/A'} | <strong>JLPT:</strong> ${item.jlpt_level || 'N/A'}</p><p>${escapeHtml(truncateText(item.explanation, 200))}</p>`;
+        }
+    } else if (data.content_type === 'text') {
+        html = `<h6>${escapeHtml(data.title)}</h6><div class="mt-2 rich-text-content">${data.content_text}</div>`;
+    } else if (data.content_type === 'interactive') {
+        html = `<h6>${escapeHtml(data.title)}</h6><p>Interactive Content: ${data.interactive_type}</p>`;
+    } else if (['video', 'audio', 'image'].includes(data.content_type)) {
+        const src = document.querySelector('input[name="contentSource"]:checked')?.value;
+        if (src === 'upload' && uploadedFileData) html = `<h6>${escapeHtml(data.title)}</h6><p><strong>File:</strong> ${escapeHtml(uploadedFileData.original_filename)} ${uploadedFileData.formatted_size ? '(' + uploadedFileData.formatted_size + ')' : ''}</p>${data.content_text ? '<p><strong>Description:</strong> ' + escapeHtml(data.content_text) + '</p>' : ''}`;
+        else if (src === 'url' && data.media_url) html = `<h6>${escapeHtml(data.title)}</h6><p><strong>URL:</strong> ${escapeHtml(data.media_url)}</p>${data.content_text ? '<p><strong>Description:</strong> ' + escapeHtml(data.content_text) + '</p>' : ''}`;
+    }
+    html += `<hr class="my-3 border-gray-200 dark:border-slate-700"><div class="flex gap-8 text-sm"><span><strong>Order:</strong> ${data.order_index || 0}</span><span><strong>Optional:</strong> ${data.is_optional ? 'Yes' : 'No'}</span></div>`;
+    previewArea.innerHTML = html;
+}
+
+// ── Load/Save Reference Fields (inline edit of kana/kanji/vocab/grammar) ──
+async function onRefItemSelected(contentType, contentId) {
+    const container = document.getElementById('refFieldsContainer');
+    if (!container) return;
+    if (!contentId) { container.style.display = 'none'; return; }
+    container.style.display = 'block';
+    await loadReferenceFields(contentType, contentId);
+}
+
+async function loadReferenceFields(contentType, contentId) {
+    try {
+        const response = await fetch(`/api/admin/${contentType}/${contentId}`);
+        if (!response.ok) return;
+        const data = await response.json();
+        if (contentType === 'vocabulary') {
+            const f = (id) => document.getElementById(id);
+            if (f('refWord')) f('refWord').value = data.word || '';
+            if (f('refReading')) f('refReading').value = data.reading || '';
+            if (f('refMeaning')) f('refMeaning').value = data.meaning || '';
+            if (f('refExJp')) f('refExJp').value = data.example_sentence_japanese || '';
+            if (f('refExEn')) f('refExEn').value = data.example_sentence_english || '';
+        } else if (contentType === 'kanji') {
+            const f = (id) => document.getElementById(id);
+            if (f('refCharacter')) f('refCharacter').value = data.character || '';
+            if (f('refMeaning')) f('refMeaning').value = data.meaning || '';
+            if (f('refOnyomi')) f('refOnyomi').value = data.onyomi || '';
+            if (f('refKunyomi')) f('refKunyomi').value = data.kunyomi || '';
+        } else if (contentType === 'kana') {
+            const f = (id) => document.getElementById(id);
+            if (f('refCharacter')) f('refCharacter').value = data.character || '';
+            if (f('refRomanization')) f('refRomanization').value = data.romanization || '';
+            if (f('refType')) f('refType').value = data.type || 'hiragana';
+        } else if (contentType === 'grammar') {
+            const f = (id) => document.getElementById(id);
+            if (f('refGrammarTitle')) f('refGrammarTitle').value = data.title || '';
+            if (f('refStructure')) f('refStructure').value = data.structure || '';
+            if (f('refExplanation')) f('refExplanation').value = data.explanation || '';
+        }
+    } catch (error) {
+        console.error('Error loading reference fields:', error);
+    }
+}
+
+async function saveReferenceFields(contentType, contentId) {
+    let refData = {};
+    if (contentType === 'vocabulary') {
+        const f = (id) => document.getElementById(id);
+        if (!f('refWord')) return;
+        refData = { word: f('refWord').value, reading: f('refReading').value, meaning: f('refMeaning').value, example_sentence_japanese: f('refExJp').value, example_sentence_english: f('refExEn').value };
+    } else if (contentType === 'kanji') {
+        const f = (id) => document.getElementById(id);
+        if (!f('refCharacter')) return;
+        refData = { character: f('refCharacter').value, meaning: f('refMeaning').value, onyomi: f('refOnyomi').value, kunyomi: f('refKunyomi').value };
+    } else if (contentType === 'kana') {
+        const f = (id) => document.getElementById(id);
+        if (!f('refCharacter')) return;
+        refData = { character: f('refCharacter').value, romanization: f('refRomanization').value, type: f('refType').value };
+    } else if (contentType === 'grammar') {
+        const f = (id) => document.getElementById(id);
+        if (!f('refGrammarTitle')) return;
+        refData = { title: f('refGrammarTitle').value, structure: f('refStructure').value, explanation: f('refExplanation').value };
+    } else { return; }
+
+    try {
+        await fetch(`/api/admin/${contentType}/${contentId}/edit`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRFToken() },
+            body: JSON.stringify(refData)
+        });
+    } catch (error) {
+        console.error('Error saving reference fields:', error);
+    }
+}
+
+// ── Save Content to Lesson ──────────────────────────────────────────
+async function saveContentToLesson(isEditing = false) {
+    if (!currentLessonId) { showToast('Missing lesson data', 'error'); return; }
+    const formData = new FormData(document.getElementById('contentConfigForm'));
+    currentContentData = Object.fromEntries(formData.entries());
+    currentContentData.content_type = selectedContentType;
+    const pageNumberField = document.getElementById('contentPageNumber');
+    if (currentPageNumber && !isEditing) currentContentData.page_number = currentPageNumber;
+    if (currentContentData.text_title) currentContentData.title = currentContentData.text_title;
+    else if (currentContentData.interactive_title) currentContentData.title = currentContentData.interactive_title;
+    else if (currentContentData.media_title) currentContentData.title = currentContentData.media_title;
+    else if (currentContentData.custom_title) currentContentData.title = currentContentData.custom_title;
+    if (!validateContentData(currentContentData)) return;
+
+    try {
+        let endpoint;
+        const method = isEditing ? 'PUT' : 'POST';
+        let saveData = { ...currentContentData };
+        const editingContentId = document.getElementById('editingContentId').value;
+
+        if (isEditing && editingContentId) {
+            endpoint = `/api/admin/content/${editingContentId}/edit`;
+            saveData.title = currentContentData.title;
+            if (selectedContentType === 'text' && quillEditor) saveData.content_text = quillEditor.root.innerHTML;
+            else if (['video', 'audio', 'image'].includes(selectedContentType)) {
+                const src = document.querySelector('input[name="contentSource"]:checked')?.value;
+                if (src === 'upload' && uploadedFileData) { saveData.file_path = uploadedFileData.filePath; saveData.media_url = null; }
+                else saveData.file_path = null;
+            } else if (selectedContentType === 'interactive') {
+                saveData = buildInteractiveSaveData(saveData);
+            }
+        } else {
+            if (selectedContentType === 'interactive') {
+                endpoint = `/api/admin/lessons/${currentLessonId}/content/interactive`;
+                saveData = buildInteractiveSaveData(saveData);
+            } else if (['video', 'audio', 'image'].includes(selectedContentType)) {
+                const src = document.querySelector('input[name="contentSource"]:checked')?.value;
+                if (src === 'upload' && uploadedFileData) {
+                    endpoint = `/api/admin/lessons/${currentLessonId}/content/file`;
+                    saveData = { content_type: selectedContentType, title: currentContentData.title, description: currentContentData.content_text || '', file_path: uploadedFileData.filePath, file_size: uploadedFileData.file_size, file_type: uploadedFileData.file_type, original_filename: uploadedFileData.original_filename, order_index: currentContentData.order_index || 0, page_number: currentContentData.page_number || 1, is_optional: currentContentData.is_optional === 'on' };
+                } else {
+                    endpoint = `/api/admin/lessons/${currentLessonId}/content/new`;
+                    if (!currentContentData.media_url) { showToast('Please provide a URL', 'error'); return; }
+                    saveData.media_url = currentContentData.media_url;
+                }
+            } else {
+                endpoint = `/api/admin/lessons/${currentLessonId}/content/new`;
+                if (selectedContentType === 'text' && quillEditor) saveData.content_text = quillEditor.root.innerHTML;
+            }
+        }
+
+        const response = await fetch(endpoint, {
+            method: method,
+            headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': getCSRFToken() },
+            body: JSON.stringify(saveData)
+        });
+
+        if (response.ok) {
+            // Save inline reference fields if editing kana/kanji/vocabulary/grammar
+            if (['kana', 'kanji', 'vocabulary', 'grammar'].includes(selectedContentType) && currentContentData.content_id) {
+                await saveReferenceFields(selectedContentType, currentContentData.content_id);
+            }
+            closeModal('addContentModal');
+            loadLessonContent(currentLessonId);
+            loadLessons();
+            showToast(`Content ${isEditing ? 'updated' : 'added'} successfully`);
+            uploadedFileData = null;
+        } else {
+            const errorText = await response.text();
+            try { const error = JSON.parse(errorText); showToast('Error: ' + (error.error || 'Unknown error'), 'error'); }
+            catch (e) { showToast('Error: ' + errorText, 'error'); }
+        }
+    } catch (error) {
+        console.error('Error saving content:', error);
+        showToast('Error saving content: ' + error.message, 'error');
+    }
+}
+
+function buildInteractiveSaveData(saveData) {
+    const interactiveType = document.getElementById('interactiveType').value;
+    saveData.interactive_type = interactiveType;
+    saveData.is_interactive = true;
+    if (interactiveType === 'multiple_choice') {
+        saveData.question_text = document.getElementById('mcQuestion').value;
+        saveData.explanation = document.getElementById('mcExplanation').value;
+        const correctOption = document.querySelector('input[name="correct_option"]:checked')?.value;
+        const options = [];
+        document.querySelectorAll('.option-item').forEach(element => {
+            const optionInput = element.querySelector(`input[name^="option_"]`);
+            const feedbackInput = element.querySelector(`input[name^="feedback_"]`);
+            if (optionInput && optionInput.value.trim()) {
+                options.push({ text: optionInput.value.trim(), is_correct: correctOption === element.dataset.option, feedback: feedbackInput ? feedbackInput.value.trim() : '' });
+            }
+        });
+        saveData.options = options;
+    } else if (interactiveType === 'fill_blank') {
+        saveData.question_text = document.getElementById('fbQuestion').value;
+        saveData.correct_answers = document.getElementById('fbAnswers').value;
+        saveData.explanation = document.getElementById('fbExplanation').value;
+    } else if (interactiveType === 'true_false') {
+        const correctAnswer = document.querySelector('input[name="tf_answer"]:checked')?.value;
+        saveData.question_text = document.getElementById('tfQuestion').value;
+        saveData.correct_answer = correctAnswer === 'true';
+        saveData.explanation = document.getElementById('tfExplanation').value;
+    }
+    return saveData;
+}
+</script>

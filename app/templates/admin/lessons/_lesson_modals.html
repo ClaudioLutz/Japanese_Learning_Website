@@ -1,0 +1,208 @@
+{# ── Add Lesson Modal ──────────────────────────────────────────────── #}
+<div id="addLessonModal" class="modal">
+    <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-header">
+            <h4>Add New Lesson</h4>
+            <span class="close" onclick="closeModal('addLessonModal')">&times;</span>
+        </div>
+        <form id="addLessonForm">
+            {{ form.csrf_token }}
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="lessonTitle">Title *</label>
+                    <input type="text" id="lessonTitle" name="title" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="lessonDescription">Description</label>
+                    <textarea id="lessonDescription" name="description" class="form-control" rows="3"></textarea>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label for="lessonType">Type *</label>
+                        <select id="lessonType" name="lesson_type" class="form-control" required>
+                            <option value="">Select Type</option>
+                            <option value="free">Free</option>
+                            <option value="premium">Premium</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="lessonCategory">Category</label>
+                        <select id="lessonCategory" name="category_id" class="form-control">
+                            <option value="">Select Category</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="form-group">
+                        <label for="lessonDifficulty">Difficulty (1-5)</label>
+                        <input type="number" id="lessonDifficulty" name="difficulty_level" class="form-control" min="1" max="5">
+                    </div>
+                    <div class="form-group">
+                        <label for="lessonDuration">Duration (min)</label>
+                        <input type="number" id="lessonDuration" name="estimated_duration" class="form-control" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="lessonOrder">Order Index</label>
+                        <input type="number" id="lessonOrder" name="order_index" class="form-control" min="0" value="0">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="lessonThumbnail">Thumbnail URL</label>
+                    <input type="url" id="lessonThumbnail" name="thumbnail_url" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label for="lessonVideo">Video Intro URL</label>
+                    <input type="url" id="lessonVideo" name="video_intro_url" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label for="lessonLanguage">Instruction Language</label>
+                    <select id="lessonLanguage" name="instruction_language" class="form-control">
+                        <option value="english">English</option>
+                        <option value="spanish">Spanish</option>
+                        <option value="french">French</option>
+                    </select>
+                </div>
+
+                <div class="flex gap-6 mb-4">
+                    <label class="flex items-center gap-2 cursor-pointer text-sm">
+                        <input type="checkbox" id="lessonPublished" name="is_published" class="!w-4 !h-4 !mb-0"> Published
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer text-sm">
+                        <input type="checkbox" id="lessonGuestAccess" name="allow_guest_access" class="!w-4 !h-4 !mb-0"> Allow Guest Access
+                    </label>
+                </div>
+
+                <div class="border-t border-gray-200 dark:border-slate-700 pt-4 mt-4">
+                    <h6 class="text-sm font-semibold text-primary-600 dark:text-primary-400 mb-3">Pricing Settings</h6>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="form-group">
+                            <label for="lessonPrice">Price (CHF)</label>
+                            <input type="number" id="lessonPrice" name="price" class="form-control" min="0" step="0.01" value="0.00">
+                            <p class="text-xs text-gray-400 dark:text-slate-500 -mt-2">Set to 0.00 for free lessons</p>
+                        </div>
+                        <div class="form-group">
+                            <label class="flex items-center gap-2 cursor-pointer text-sm mt-6">
+                                <input type="checkbox" id="lessonPurchasable" name="is_purchasable" class="!w-4 !h-4 !mb-0"> Enable Individual Purchase
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeModal('addLessonModal')">Cancel</button>
+                <button type="submit">Add Lesson</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{# ── Edit Lesson Modal ─────────────────────────────────────────────── #}
+<div id="editLessonModal" class="modal">
+    <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-header">
+            <h4>Edit Lesson</h4>
+            <span class="close" onclick="closeModal('editLessonModal')">&times;</span>
+        </div>
+        <form id="editLessonForm">
+            {{ form.csrf_token }}
+            <input type="hidden" id="editLessonId" name="id">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="editLessonTitle">Title *</label>
+                    <input type="text" id="editLessonTitle" name="title" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="editLessonDescription">Description</label>
+                    <textarea id="editLessonDescription" name="description" class="form-control" rows="3"></textarea>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label for="editLessonType">Type *</label>
+                        <select id="editLessonType" name="lesson_type" class="form-control" required>
+                            <option value="">Select Type</option>
+                            <option value="free">Free</option>
+                            <option value="premium">Premium</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editLessonCategory">Category</label>
+                        <select id="editLessonCategory" name="category_id" class="form-control">
+                            <option value="">Select Category</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="form-group">
+                        <label for="editLessonDifficulty">Difficulty (1-5)</label>
+                        <input type="number" id="editLessonDifficulty" name="difficulty_level" class="form-control" min="1" max="5">
+                    </div>
+                    <div class="form-group">
+                        <label for="editLessonDuration">Duration (min)</label>
+                        <input type="number" id="editLessonDuration" name="estimated_duration" class="form-control" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="editLessonOrder">Order Index</label>
+                        <input type="number" id="editLessonOrder" name="order_index" class="form-control" min="0">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="editLessonThumbnail">Thumbnail URL</label>
+                    <input type="url" id="editLessonThumbnail" name="thumbnail_url" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label for="editLessonVideo">Video Intro URL</label>
+                    <input type="url" id="editLessonVideo" name="video_intro_url" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label for="editLessonLanguage">Instruction Language</label>
+                    <select id="editLessonLanguage" name="instruction_language" class="form-control">
+                        <option value="english">English</option>
+                        <option value="spanish">Spanish</option>
+                        <option value="french">French</option>
+                    </select>
+                </div>
+
+                <div class="flex gap-6 mb-4">
+                    <label class="flex items-center gap-2 cursor-pointer text-sm">
+                        <input type="checkbox" id="editLessonPublished" name="is_published" class="!w-4 !h-4 !mb-0"> Published
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer text-sm">
+                        <input type="checkbox" id="editLessonGuestAccess" name="allow_guest_access" class="!w-4 !h-4 !mb-0"> Allow Guest Access
+                    </label>
+                </div>
+
+                <div class="border-t border-gray-200 dark:border-slate-700 pt-4 mt-4">
+                    <h6 class="text-sm font-semibold text-primary-600 dark:text-primary-400 mb-3">Pricing Settings</h6>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="form-group">
+                            <label for="editLessonPrice">Price (CHF)</label>
+                            <input type="number" id="editLessonPrice" name="price" class="form-control" min="0" step="0.01" value="0.00">
+                            <p class="text-xs text-gray-400 dark:text-slate-500 -mt-2">Set to 0.00 for free lessons</p>
+                        </div>
+                        <div class="form-group">
+                            <label class="flex items-center gap-2 cursor-pointer text-sm mt-6">
+                                <input type="checkbox" id="editLessonPurchasable" name="is_purchasable" class="!w-4 !h-4 !mb-0"> Enable Individual Purchase
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeModal('editLessonModal')">Cancel</button>
+                <button type="submit">Update Lesson</button>
+            </div>
+        </form>
+    </div>
+</div>
