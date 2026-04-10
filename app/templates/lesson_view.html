@@ -1306,6 +1306,17 @@ function shuffleArray(array) {
     return shuffled;
 }
 
+function showQuizWarning(questionId, message) {
+    const feedbackEl = document.getElementById(`feedback_${questionId}`);
+    if (feedbackEl) {
+        feedbackEl.innerHTML = `<div class="alert alert-warning py-2 d-flex align-items-center">
+            <i class="fas fa-exclamation-triangle me-2"></i> ${message}
+        </div>`;
+        feedbackEl.style.display = 'block';
+        setTimeout(() => { feedbackEl.style.display = 'none'; }, 3000);
+    }
+}
+
 async function submitQuizAnswer(lessonId, questionId) {
     const questionElement = document.querySelector(`[data-question-id="${questionId}"]`);
     const questionType = questionElement.dataset.questionType;
@@ -1315,7 +1326,7 @@ async function submitQuizAnswer(lessonId, questionId) {
     if (questionType === 'multiple_choice' || questionType === 'true_false') {
         const selectedOption = questionElement.querySelector(`input[name="question_${questionId}"]:checked`);
         if (!selectedOption) {
-            alert('Please select an answer');
+            showQuizWarning(questionId, 'Bitte wähle eine Antwort aus.');
             return;
         }
         answerData.selected_option_id = selectedOption.value;
@@ -1323,7 +1334,7 @@ async function submitQuizAnswer(lessonId, questionId) {
     } else if (questionType === 'fill_blank') {
         const textInput = questionElement.querySelector(`#blank_${questionId}`);
         if (!textInput || !textInput.value.trim()) {
-            alert('Please provide an answer');
+            showQuizWarning(questionId, 'Bitte gib eine Antwort ein.');
             return;
         }
         answerData.text_answer = textInput.value.trim();
@@ -1345,7 +1356,7 @@ async function submitQuizAnswer(lessonId, questionId) {
         });
 
         if (!allSelected) {
-            alert('Please match all items.');
+            showQuizWarning(questionId, 'Bitte ordne alle Begriffe zu.');
             return;
         }
     }
