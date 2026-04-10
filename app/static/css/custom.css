@@ -1694,8 +1694,6 @@ button[onclick*="moveContentInPage"]:active {
 }
 
 .flip-card .vocab-reading {
-
-.flip-card .vocab-reading {
     font-size: 20px;
     color: var(--text-light);
     font-family: 'Noto Sans JP', sans-serif;
