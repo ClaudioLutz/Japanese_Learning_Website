@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% set admin_edit_url = url_for('routes.admin_manage_lessons') + '?focus=' + lesson.id|string %}
+{% set admin_edit_url = url_for('routes.admin_manage_lessons') + '?edit=' + lesson.id|string %}
 
 {% block title %}{{ lesson.title }} - Japanese Learning{% endblock %}
 
@@ -607,7 +607,7 @@
                                             <div class="mb-3">
                                                 <audio controls class="w-100">
                                                     {% if content.file_path %}
-                                                    <source src="{{ url_for('static', filename='uploads/' + content.file_path) }}?v={{ content.id }}" type="audio/mpeg">
+                                                    <source src="{{ content.get_file_url() }}?v={{ content.id }}" type="audio/mpeg">
                                                     {% elif content.media_url %}
                                                     <source src="{{ content.media_url }}?v={{ content.id }}" type="audio/mpeg">
                                                     {% endif %}
@@ -834,14 +834,14 @@
                                                     {% else %}
                                                         {% if content.content_type == 'image' %}
                                                             {% if content.file_path %}
-                                                            <img src="{{ url_for('static', filename='uploads/' + content.file_path) }}" class="img-fluid rounded" alt="{{ content.title }}" style="max-width: 100%; height: auto;">
+                                                            <img src="{{ content.get_file_url() }}" class="img-fluid rounded" alt="{{ content.title }}" style="max-width: 100%; height: auto;">
                                                             {% elif content.media_url %}
                                                             <img src="{{ content.media_url }}" class="img-fluid rounded" alt="{{ content.title }}" style="max-width: 100%; height: auto;">
                                                             {% endif %}
                                                         {% elif content.content_type == 'audio' %}
                                                             {% if content.file_path %}
                                                             <audio controls class="w-100">
-                                                                <source src="{{ url_for('static', filename='uploads/' + content.file_path) }}?v={{ content.id }}" type="audio/mpeg">
+                                                                <source src="{{ content.get_file_url() }}?v={{ content.id }}" type="audio/mpeg">
                                                                 Dein Browser unterstützt kein Audio.
                                                             </audio>
                                                             {% elif content.media_url %}
@@ -2801,6 +2801,205 @@ document.addEventListener('DOMContentLoaded', function() {
             // Initialize Alpine on the new element
             if (window.Alpine) Alpine.initTree(wrapper);
         });
+    });
+});
+</script>
+
+{# ── Custom Audio Player ── #}
+<style>
+.custom-audio-player {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    width: 100%;
+}
+.custom-audio-player .audio-play-btn {
+    width: 52px; height: 52px; min-width: 52px;
+    border-radius: 50%;
+    background: var(--primary-color, #4a90e2);
+    border: none; color: white;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
+    box-shadow: 0 2px 8px rgba(74,144,226,0.3);
+    position: relative;
+}
+.custom-audio-player .audio-play-btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 4px 14px rgba(74,144,226,0.4);
+}
+.custom-audio-player .audio-play-btn:active { transform: scale(0.95); }
+.custom-audio-player .audio-play-btn.is-playing {
+    animation: audioPulse 1.8s ease-out infinite;
+}
+@keyframes audioPulse {
+    0% { box-shadow: 0 0 0 0 rgba(74,144,226,0.4); }
+    70% { box-shadow: 0 0 0 12px rgba(74,144,226,0); }
+    100% { box-shadow: 0 0 0 0 rgba(74,144,226,0); }
+}
+.custom-audio-player .audio-wave {
+    display: none; gap: 3px; align-items: center;
+    height: 20px; justify-content: center;
+}
+.custom-audio-player .audio-play-btn.is-playing .fa-play { display: none; }
+.custom-audio-player .audio-play-btn.is-playing .audio-wave { display: flex; }
+.custom-audio-player .audio-play-btn:not(.is-playing) .fa-pause { display: none; }
+.custom-audio-player .audio-play-btn.is-playing .fa-play,
+.custom-audio-player .audio-play-btn:not(.is-playing) .fa-pause { display: none; }
+.custom-audio-player .audio-wave span {
+    width: 3px; background: white; border-radius: 2px;
+    animation: audioWave 1s ease-in-out infinite;
+}
+.custom-audio-player .audio-wave span:nth-child(2) { animation-delay: 0.15s; }
+.custom-audio-player .audio-wave span:nth-child(3) { animation-delay: 0.3s; }
+.custom-audio-player .audio-wave span:nth-child(4) { animation-delay: 0.45s; }
+@keyframes audioWave {
+    0%, 100% { height: 6px; }
+    50% { height: 18px; }
+}
+.custom-audio-player .audio-track {
+    flex: 1; display: flex; flex-direction: column; gap: 6px;
+}
+.custom-audio-player .audio-progress-wrap {
+    width: 100%; height: 6px; background: #cbd5e1;
+    border-radius: 3px; cursor: pointer; position: relative;
+    transition: height 0.15s;
+}
+.custom-audio-player .audio-progress-wrap:hover { height: 8px; }
+.custom-audio-player .audio-progress-bar {
+    height: 100%; width: 0%; border-radius: 3px;
+    background: var(--primary-color, #4a90e2);
+    transition: width 0.1s linear;
+    position: relative;
+}
+.custom-audio-player .audio-progress-bar::after {
+    content: '';
+    position: absolute; right: -5px; top: 50%; transform: translateY(-50%);
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--primary-color, #4a90e2);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    opacity: 0; transition: opacity 0.15s;
+}
+.custom-audio-player .audio-progress-wrap:hover .audio-progress-bar::after { opacity: 1; }
+.custom-audio-player .audio-meta {
+    display: flex; justify-content: space-between; align-items: center;
+}
+.custom-audio-player .audio-time {
+    font-size: 0.75rem; color: #64748b; font-variant-numeric: tabular-nums;
+}
+.custom-audio-player .audio-speed-btn {
+    font-size: 0.7rem; padding: 2px 8px;
+    border-radius: 10px; border: 1px solid #cbd5e1;
+    background: white; color: #475569; cursor: pointer;
+    transition: all 0.15s; font-weight: 600;
+}
+.custom-audio-player .audio-speed-btn:hover {
+    background: var(--primary-color, #4a90e2); color: white; border-color: transparent;
+}
+</style>
+<script>
+// ── Custom Audio Player: ersetzt alle nativen <audio> Elemente ──
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('audio[controls]').forEach(audio => {
+        const src = audio.querySelector('source')?.src || audio.src;
+        if (!src) return;
+
+        const player = document.createElement('div');
+        player.className = 'custom-audio-player';
+        player.innerHTML = `
+            <button class="audio-play-btn" type="button">
+                <i class="fas fa-play"></i>
+                <i class="fas fa-pause"></i>
+                <div class="audio-wave"><span></span><span></span><span></span><span></span></div>
+            </button>
+            <div class="audio-track">
+                <div class="audio-progress-wrap">
+                    <div class="audio-progress-bar"></div>
+                </div>
+                <div class="audio-meta">
+                    <span class="audio-time">0:00 / 0:00</span>
+                    <button class="audio-speed-btn" type="button">1x</button>
+                </div>
+            </div>
+        `;
+
+        const newAudio = new Audio(src);
+        newAudio.preload = 'metadata';
+        const playBtn = player.querySelector('.audio-play-btn');
+        const progressWrap = player.querySelector('.audio-progress-wrap');
+        const progressBar = player.querySelector('.audio-progress-bar');
+        const timeDisplay = player.querySelector('.audio-time');
+        const speedBtn = player.querySelector('.audio-speed-btn');
+        const speeds = [0.75, 1, 1.25, 1.5];
+        let speedIdx = 1;
+
+        function fmt(s) {
+            if (isNaN(s)) return '0:00';
+            const m = Math.floor(s / 60);
+            const sec = Math.floor(s % 60);
+            return m + ':' + (sec < 10 ? '0' : '') + sec;
+        }
+
+        playBtn.addEventListener('click', () => {
+            if (newAudio.paused) {
+                // Pause alle anderen Player
+                document.querySelectorAll('.custom-audio-player audio-active').forEach(el => el.pause?.());
+                document.querySelectorAll('.audio-play-btn.is-playing').forEach(btn => {
+                    if (btn !== playBtn) {
+                        btn.classList.remove('is-playing');
+                        btn._audio?.pause();
+                    }
+                });
+                newAudio.play();
+                playBtn.classList.add('is-playing');
+            } else {
+                newAudio.pause();
+                playBtn.classList.remove('is-playing');
+            }
+        });
+        playBtn._audio = newAudio;
+
+        newAudio.addEventListener('loadedmetadata', () => {
+            timeDisplay.textContent = fmt(0) + ' / ' + fmt(newAudio.duration);
+        });
+
+        newAudio.addEventListener('timeupdate', () => {
+            const pct = (newAudio.currentTime / newAudio.duration) * 100;
+            progressBar.style.width = pct + '%';
+            timeDisplay.textContent = fmt(newAudio.currentTime) + ' / ' + fmt(newAudio.duration);
+        });
+
+        newAudio.addEventListener('ended', () => {
+            playBtn.classList.remove('is-playing');
+            progressBar.style.width = '0%';
+            timeDisplay.textContent = fmt(0) + ' / ' + fmt(newAudio.duration);
+        });
+
+        progressWrap.addEventListener('click', (e) => {
+            const rect = progressWrap.getBoundingClientRect();
+            const pct = (e.clientX - rect.left) / rect.width;
+            newAudio.currentTime = pct * newAudio.duration;
+        });
+
+        speedBtn.addEventListener('click', () => {
+            speedIdx = (speedIdx + 1) % speeds.length;
+            newAudio.playbackRate = speeds[speedIdx];
+            speedBtn.textContent = speeds[speedIdx] + 'x';
+        });
+
+        // Ersetze das originale audio-Element
+        const wrapper = audio.closest('.mb-3') || audio.parentElement;
+        if (wrapper && wrapper.contains(audio)) {
+            audio.style.display = 'none';
+            wrapper.insertBefore(player, audio);
+        } else {
+            audio.replaceWith(player);
+        }
     });
 });
 </script>
