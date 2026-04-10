@@ -15,11 +15,34 @@ class User(UserMixin, db.Model):
     subscription_level: Mapped[str] = mapped_column(String(50), default='free')
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 
+    # Account Lockout
+    failed_login_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False, server_default='0')
+    locked_until: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+
     lesson_progress: Mapped[List['UserLessonProgress']] = relationship('UserLessonProgress', backref='user', lazy=True, cascade='all, delete-orphan')
     course_purchases: Mapped[List['CoursePurchase']] = relationship('CoursePurchase', backref='user', lazy=True, cascade='all, delete-orphan')
 
+    LOCKOUT_THRESHOLD = 5
+    LOCKOUT_DURATION_MINUTES = 15
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
+    @property
+    def is_locked(self):
+        if self.locked_until and self.locked_until > datetime.utcnow():
+            return True
+        return False
+
+    def record_failed_login(self):
+        from datetime import timedelta
+        self.failed_login_count = (self.failed_login_count or 0) + 1
+        if self.failed_login_count >= self.LOCKOUT_THRESHOLD:
+            self.locked_until = datetime.utcnow() + timedelta(minutes=self.LOCKOUT_DURATION_MINUTES)
+
+    def record_successful_login(self):
+        self.failed_login_count = 0
+        self.locked_until = None
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

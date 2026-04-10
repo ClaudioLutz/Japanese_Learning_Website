@@ -5,7 +5,7 @@ from datetime import datetime
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError # Import specific exceptions
-from app import db, csrf
+from app import db, csrf, limiter
 from app.models import User, Kana, Kanji, Vocabulary, Grammar, LessonCategory, Lesson, LessonContent, LessonPrerequisite, UserLessonProgress, QuizQuestion, QuizOption, UserQuizAnswer, LessonPage, Course, LessonPurchase, CoursePurchase
 from app.forms import RegistrationForm, LoginForm, CSRFTokenForm
 from app.ai_services import AILessonContentGenerator
@@ -115,6 +115,7 @@ def index():
                          german_guest_lessons=german_guest_lessons)
 
 @bp.route('/register', methods=['GET', 'POST'])
+@limiter.limit("5 per minute")
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('routes.index'))
@@ -129,6 +130,7 @@ def register():
     return render_template('register.html', form=form)
 
 @bp.route('/login', methods=['GET', 'POST'])
+@limiter.limit("10 per minute")
 def login():
     if current_user.is_authenticated:
         # Redirect based on user role
@@ -139,18 +141,25 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        if user and user.check_password(form.password.data):
+        if user and user.is_locked:
+            flash('Account temporarily locked due to too many failed attempts. Please try again later.', 'danger')
+        elif user and user.check_password(form.password.data):
+            user.record_successful_login()
+            db.session.commit()
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next')
             flash('Login successful!', 'success')
-            # Redirect based on user role if no next page specified
-            if not next_page:
+            # Open-Redirect-Schutz: nur relative URLs erlauben
+            if not next_page or not next_page.startswith('/') or next_page.startswith('//'):
                 if user.is_admin:
                     return redirect(url_for('routes.admin_index'))
                 else:
                     return redirect(url_for('routes.index'))
             return redirect(next_page)
         else:
+            if user:
+                user.record_failed_login()
+                db.session.commit()
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html', form=form)
 

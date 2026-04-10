@@ -5,7 +5,10 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate
-from flask_wtf.csrf import CSRFProtect # Import CSRFProtect
+from flask_wtf.csrf import CSRFProtect
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+from flask_talisman import Talisman
 import os
 from werkzeug.utils import secure_filename
 
@@ -16,7 +19,8 @@ load_dotenv()
 db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
-csrf = CSRFProtect() # Initialize CSRFProtect
+csrf = CSRFProtect()
+limiter = Limiter(key_func=get_remote_address, default_limits=["200 per hour"])
 
 login_manager.login_view = 'routes.login' # type: ignore
 login_manager.login_message = 'Please log in to access this page.'
@@ -24,50 +28,44 @@ login_manager.login_message_category = 'info'
 
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
-    # Ensure SECRET_KEY is set, otherwise CSRF protection (and sessions) won't work.
-    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or 'dev-secret-key-change-in-production'
-    app.config['WTF_CSRF_SECRET_KEY'] = os.environ.get('WTF_CSRF_SECRET_KEY') or 'dev-csrf-secret-key-change-in-production'
+    # SECRET_KEY ist Pflicht — ohne gültigen Key keine Sessions/CSRF
+    secret_key = os.environ.get('SECRET_KEY')
+    if not secret_key:
+        raise RuntimeError(
+            "SECRET_KEY ist nicht gesetzt! "
+            "Bitte in .env definieren: SECRET_KEY=\"<zufälliger Key>\""
+        )
+    app.config['SECRET_KEY'] = secret_key
+    app.config['WTF_CSRF_SECRET_KEY'] = os.environ.get('WTF_CSRF_SECRET_KEY', secret_key)
     app.config['GCS_BUCKET_NAME'] = os.environ.get('GCS_BUCKET_NAME') or None
-    
+
     app.config.from_pyfile('config.py', silent=True) # Load config from instance folder
     app.config['TEMPLATES_AUTO_RELOAD'] = True
+
+    # Session-Cookie-Security
+    is_production = os.environ.get('FLASK_ENV') == 'production' or os.environ.get('GAE_ENV', '').startswith('standard')
+    app.config['SESSION_COOKIE_HTTPONLY'] = True
+    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+    app.config['SESSION_COOKIE_SECURE'] = is_production
+    app.config['REMEMBER_COOKIE_HTTPONLY'] = True
+    app.config['REMEMBER_COOKIE_SAMESITE'] = 'Lax'
+    app.config['REMEMBER_COOKIE_SECURE'] = is_production
     
-    # Load environment variables (do not override existing env vars)
-    from dotenv import load_dotenv
-    load_dotenv()
-    
-    # Debug: Print environment variables status
-    print("DEBUG: Environment Variables Check:")
-    print(f"DEBUG: Available env vars: {list(os.environ.keys())}")
-    
+    # DATABASE_URL ist Pflicht
     db_url = os.environ.get('DATABASE_URL')
-    if db_url:
-        print(f"DEBUG: DATABASE_URL is set. Length: {len(db_url)}")
-        # Mask password for logging
-        if '@' in db_url:
-            safe_url = db_url.split('@')[1]
-            print(f"DEBUG: DATABASE_URL host part: {safe_url}")
-    else:
-        print("CRITICAL: DATABASE_URL is NOT set in environment!")
-
-    print(f"DEBUG: GCS_BUCKET_NAME: {os.environ.get('GCS_BUCKET_NAME')}")
-
-    # Remove fallback to force error if env var is missing
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
-
-    if not app.config['SQLALCHEMY_DATABASE_URI']:
-        print("CRITICAL: SQLALCHEMY_DATABASE_URI is None! Application will likely fail.")
+    if not db_url:
+        raise RuntimeError(
+            "DATABASE_URL ist nicht gesetzt! "
+            "Bitte in .env definieren."
+        )
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 
     # SQLite: busy timeout setzen um "database is locked" zu vermeiden
-    db_uri = app.config['SQLALCHEMY_DATABASE_URI'] or ''
-    if db_uri.startswith('sqlite'):
+    if db_url.startswith('sqlite'):
         app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
             'connect_args': {'timeout': 20}
         }
 
-    # Debug: Print the actual DATABASE_URI being used
-    print(f"DEBUG: Final SQLALCHEMY_DATABASE_URI: {app.config['SQLALCHEMY_DATABASE_URI']}")
-    
     # Google OAuth Configuration
     app.config.update({
         'SOCIAL_AUTH_GOOGLE_OAUTH2_KEY': os.environ.get('GOOGLE_CLIENT_ID'),
@@ -126,7 +124,46 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
     login_manager.init_app(app)
-    csrf.init_app(app) # Initialize CSRFProtect with the app
+    csrf.init_app(app)
+    limiter.init_app(app)
+
+    # Security Headers via Talisman
+    csp = {
+        'default-src': "'self'",
+        'script-src': [
+            "'self'",
+            "'unsafe-inline'",
+            "'unsafe-eval'",
+            "cdn.jsdelivr.net",
+            "cdn.tailwindcss.com",
+            "cdn.tiny.cloud",
+            "cdnjs.cloudflare.com",
+            "code.jquery.com",
+            "unpkg.com",
+        ],
+        'style-src': [
+            "'self'",
+            "'unsafe-inline'",
+            "cdn.jsdelivr.net",
+            "cdn.tailwindcss.com",
+            "cdnjs.cloudflare.com",
+            "fonts.googleapis.com",
+        ],
+        'font-src': [
+            "'self'",
+            "cdnjs.cloudflare.com",
+            "fonts.gstatic.com",
+        ],
+        'img-src': ["'self'", "data:", "blob:", "storage.googleapis.com"],
+        'media-src': ["'self'", "blob:", "storage.googleapis.com"],
+        'connect-src': ["'self'"],
+    }
+    Talisman(
+        app,
+        content_security_policy=csp,
+        force_https=is_production,
+        session_cookie_secure=is_production,
+    )
 
     # Import models and routes here to avoid circular imports
     from app import models
