@@ -119,8 +119,9 @@ app/static/uploads/lessons/audio/
 # Scan-Bilder (Copyright, nicht committen)
 scripts/mnn_pages/
 
-# TTS-Testausgaben (temporär)
+# TTS-Testausgaben und Cache
 scripts/tts_test_output/
+app/static/cache/tts/
 .playwright-mcp/
 test_screenshots/
 uploads/
