@@ -1539,12 +1539,31 @@ button[onclick*="moveContentInPage"]:active {
     text-align: center;
 }
 
+.flip-card .vocab-image {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 8px;
+    flex-shrink: 0;
+}
+
+.flip-card .vocab-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
 .flip-card .vocab-word {
     font-size: 48px;
     color: var(--primary-color);
     font-family: 'Noto Sans JP', sans-serif;
     font-weight: 500;
     margin-bottom: 8px;
+}
+
+.flip-card .has-image .vocab-word {
+    font-size: 36px;
+    margin-bottom: 4px;
 }
 
 .flip-card .vocab-reading {
@@ -2730,45 +2749,22 @@ button[onclick*="moveContentInPage"]:active {
     }
 }
 
-/* Multilingual TTS Text Segments */
-.tts-segment {
+/* TTS — Klickbare Absaetze und Zeilen */
+.tts-segment,
+.tts-line {
     cursor: pointer;
-    padding: 1px 3px;
-    border-radius: 3px;
+    padding: 2px 4px;
+    border-radius: 4px;
     transition: background 0.15s, box-shadow 0.15s;
-    display: inline;
 }
-.tts-segment:hover {
-    background: rgba(43, 76, 126, 0.08);
-    text-decoration: underline;
-    text-decoration-color: var(--primary-color);
+.tts-segment:hover,
+.tts-line:hover {
+    background: rgba(43, 76, 126, 0.06);
 }
-.tts-segment[data-lang="ja-JP"] {
-    color: var(--primary-color);
-    font-weight: 500;
-}
-.tts-segment[data-lang="de-DE"]:hover {
-    background: rgba(122, 154, 90, 0.1);
-    text-decoration-color: var(--zen-matcha);
-}
-.tts-segment.tts-playing {
-    background: rgba(43, 76, 126, 0.15);
-    box-shadow: 0 0 0 2px rgba(43, 76, 126, 0.2);
-    border-radius: 3px;
-}
-.tts-segment[data-lang="ja-JP"].tts-playing {
-    background: rgba(43, 76, 126, 0.2);
-    color: var(--zen-indigo-dark);
-}
-.tts-segment[data-lang="de-DE"].tts-playing {
-    background: rgba(122, 154, 90, 0.15);
-    box-shadow: 0 0 0 2px rgba(122, 154, 90, 0.2);
-}
-
-@media (max-width: 768px) {
-    .tts-segment {
-        padding: 2px 4px;
-    }
+.tts-segment.tts-playing,
+.tts-line.tts-playing {
+    background: rgba(43, 76, 126, 0.12);
+    box-shadow: 0 0 0 2px rgba(43, 76, 126, 0.15);
 }
 
 /* Enhanced Course View Page Styles */

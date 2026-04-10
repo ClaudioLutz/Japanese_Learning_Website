@@ -2009,27 +2009,90 @@ class MultilingualTextAudioSystem {
     }
 
     makeParagraphClickable(p) {
-        if (p.classList.contains('tts-segment')) return;
-        const text = p.textContent.trim();
-        if (text.length < 2) return;
+        if (p.dataset.ttsReady) return;
+        p.dataset.ttsReady = 'true';
 
-        // Den Wert-Text extrahieren (ohne Label wie "Reading:", "Meaning:")
-        const strong = p.querySelector('strong');
-        let speakText = text;
-        if (strong) {
-            speakText = text.replace(strong.textContent, '').trim();
+        // Prüfen ob der Absatz <br>-Tags enthält (= mehrzeilig, z.B. Explanation/Examples)
+        const hasBr = p.querySelector('br');
+
+        if (hasBr) {
+            // Mehrzeilig: Jede Zeile einzeln klickbar machen
+            this.splitByLines(p);
+        } else {
+            // Einzeilig: Ganzen Absatz klickbar machen (z.B. "Reading: asoko")
+            const text = p.textContent.trim();
+            if (text.length < 2) return;
+
+            // Label entfernen (z.B. "Reading:", "Meaning:")
+            const strong = p.querySelector('strong');
+            let speakText = text;
+            if (strong) speakText = text.replace(strong.textContent, '').trim();
+            if (speakText.length < 1) return;
+
+            p.classList.add('tts-segment');
+            p.setAttribute('title', 'Klick zum Vorlesen');
+            p.style.cursor = 'pointer';
+            p.addEventListener('click', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                this.playText(speakText, p);
+            });
         }
-        if (speakText.length < 1) return;
+    }
 
-        // Absatz klickbar machen
-        p.classList.add('tts-segment');
-        p.setAttribute('title', 'Klick zum Vorlesen');
-        p.style.cursor = 'pointer';
+    splitByLines(p) {
+        // HTML nach <br> aufteilen — jede Zeile wird ein klickbarer Span
+        const children = [...p.childNodes];
+        const lines = [];
+        let currentLine = [];
 
-        p.addEventListener('click', (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            this.playText(speakText, p);
+        children.forEach(node => {
+            if (node.nodeName === 'BR') {
+                if (currentLine.length > 0) lines.push(currentLine);
+                currentLine = [];
+            } else {
+                currentLine.push(node);
+            }
+        });
+        if (currentLine.length > 0) lines.push(currentLine);
+
+        // Absatz leeren und mit klickbaren Zeilen neu befuellen
+        p.innerHTML = '';
+
+        lines.forEach((lineNodes, i) => {
+            // Text dieser Zeile zusammensetzen
+            const text = lineNodes.map(n => n.textContent).join('').trim();
+
+            // Labels (<strong>) beibehalten aber nicht vorlesen
+            const hasStrong = lineNodes.some(n => n.nodeName === 'STRONG' || (n.querySelector && n.querySelector('strong')));
+            let speakText = text;
+            if (hasStrong) {
+                // Label-Text entfernen
+                const labelText = lineNodes.filter(n => n.nodeName === 'STRONG').map(n => n.textContent).join('');
+                speakText = text.replace(labelText, '').trim();
+            }
+
+            if (speakText.length > 1) {
+                // Klickbare Zeile erstellen
+                const span = document.createElement('span');
+                span.className = 'tts-line';
+                span.setAttribute('title', 'Klick zum Vorlesen');
+                lineNodes.forEach(n => span.appendChild(n.cloneNode(true)));
+
+                span.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    this.playText(speakText, span);
+                });
+
+                p.appendChild(span);
+            } else {
+                // Zu kurz — einfach als Text einfuegen
+                lineNodes.forEach(n => p.appendChild(n.cloneNode(true)));
+            }
+
+            // <br> wieder einfuegen (ausser nach letzter Zeile)
+            if (i < lines.length - 1) p.appendChild(document.createElement('br'));
         });
     }
 
