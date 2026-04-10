@@ -1533,13 +1533,14 @@ button[onclick*="moveContentInPage"]:active {
 /* 1. The Scene: Establishes the 3D space and perspective. */
 .card-scene {
     width: 100%;
-    height: 200px;
-    perspective: 1000px; /* Defines the "distance" for the 3D effect. */
+    height: 280px;
+    perspective: 1000px;
     background-color: transparent;
     border: none;
     padding: 0;
     cursor: pointer;
     margin-bottom: 1rem;
+    overflow: hidden;
 }
 
 /* 2. The Flipper: The 3D object that rotates. */
@@ -1569,7 +1570,7 @@ button[onclick*="moveContentInPage"]:active {
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     border: 1px solid var(--border-color);
-    transition: box-shadow 0.3s ease;
+    /* transition: box-shadow entfernt — kann backface-visibility in Chrome brechen */
 }
 
 /* 5. The Front Face: Specific styling. */
@@ -1581,8 +1582,9 @@ button[onclick*="moveContentInPage"]:active {
 /* 6. The Back Face: Specific styling and initial rotation. */
 .card-face--back {
     background-color: var(--background-color);
-    transform: rotateY(180deg); /* Pre-rotates the back face. */
+    transform: rotateY(180deg);
     border-left: 4px solid var(--secondary-color);
+    overflow-y: auto;
 }
 .card-face--back.has-image {
     border-left: none;
@@ -1792,7 +1794,7 @@ button[onclick*="moveContentInPage"]:active {
 /* Flashcard image on BACK side — side-by-side layout: image left, text right */
 .card-face--back.has-image {
     padding: 0;
-    overflow: hidden;
+    overflow: clip; /* clip statt hidden — bricht backface-visibility nicht */
     display: flex;
     flex-direction: row;
     align-items: stretch;
@@ -1866,9 +1868,9 @@ button[onclick*="moveContentInPage"]:active {
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-/* Card transition animations */
+/* Card transition animations — nur opacity, kein transform (bricht backface-visibility) */
 .deck-card-area .flip-card {
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    transition: opacity 0.3s ease;
 }
 .deck-card-area .flip-card.card-exit-right {
     animation: slideOutRight 0.35s ease forwards;
@@ -1880,16 +1882,16 @@ button[onclick*="moveContentInPage"]:active {
     animation: cardFadeIn 0.3s ease;
 }
 @keyframes slideOutRight {
-    to { transform: translateX(80px) rotate(6deg); opacity: 0; }
+    to { opacity: 0; }
 }
 @keyframes cardShake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-10px); }
-    75% { transform: translateX(10px); }
+    0%, 100% { margin-left: 0; }
+    25% { margin-left: -10px; }
+    75% { margin-left: 10px; }
 }
 @keyframes cardFadeIn {
-    from { opacity: 0; transform: translateX(-30px); }
-    to { opacity: 1; transform: translateX(0); }
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 /* Deck complete message */
