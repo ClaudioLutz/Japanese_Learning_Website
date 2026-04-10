@@ -1913,6 +1913,61 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 1000);
 });
 
+// ============================================================
+// Google Cloud TTS Neural2 — hochwertige japanische Aussprache
+// ============================================================
+let _cloudTTSAudio = null;
+
+function playCloudTTS(text, speed, onEnd) {
+    // Laufende Wiedergabe stoppen
+    if (_cloudTTSAudio) { _cloudTTSAudio.pause(); _cloudTTSAudio = null; }
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    fetch('/api/tts', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken || '',
+        },
+        body: JSON.stringify({ text: text, speed: speed || 0.85 }),
+    })
+    .then(resp => {
+        if (!resp.ok) throw new Error('TTS API Fehler');
+        return resp.blob();
+    })
+    .then(blob => {
+        const url = URL.createObjectURL(blob);
+        _cloudTTSAudio = new Audio(url);
+        _cloudTTSAudio.addEventListener('ended', () => {
+            URL.revokeObjectURL(url);
+            _cloudTTSAudio = null;
+            if (onEnd) onEnd();
+        });
+        _cloudTTSAudio.addEventListener('error', () => {
+            URL.revokeObjectURL(url);
+            _cloudTTSAudio = null;
+            if (onEnd) onEnd();
+        });
+        _cloudTTSAudio.play();
+    })
+    .catch(() => {
+        // Fallback: Browser-TTS
+        if ('speechSynthesis' in window) {
+            speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = 'ja-JP';
+            u.rate = 0.7;
+            const v = speechSynthesis.getVoices().find(v => v.lang.startsWith('ja'));
+            if (v) u.voice = v;
+            u.addEventListener('end', () => { if (onEnd) onEnd(); });
+            u.addEventListener('error', () => { if (onEnd) onEnd(); });
+            speechSynthesis.speak(u);
+        } else {
+            if (onEnd) onEnd();
+        }
+    });
+}
+
 // Multilingual Text-to-Speech System (Japanese, English, German)
 class MultilingualTextAudioSystem {
     constructor() {
@@ -2076,30 +2131,46 @@ class MultilingualTextAudioSystem {
     }
 
     playText(text, lang, element) {
-        if (!('speechSynthesis' in window)) return;
-
-        // Laufende Wiedergabe stoppen
-        speechSynthesis.cancel();
-
         element.classList.add('tts-playing');
+        const done = () => element.classList.remove('tts-playing');
 
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = lang;
-        utterance.rate = lang === 'ja-JP' ? 0.8 : 0.9;
-        utterance.pitch = 1.0;
-
-        // Passende Stimme suchen
-        const voice = this.voices.find(v => v.lang.startsWith(lang.split('-')[0]));
-        if (voice) utterance.voice = voice;
-
-        utterance.addEventListener('end', () => {
-            element.classList.remove('tts-playing');
+        // OpenAI TTS via Server-Endpoint (natuerliche Stimmen, gecached)
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+        fetch('/api/tts', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(csrfToken ? { 'X-CSRFToken': csrfToken } : {})
+            },
+            body: JSON.stringify({ text: text, lang: lang })
+        })
+        .then(resp => {
+            if (!resp.ok) throw new Error('TTS API error');
+            return resp.blob();
+        })
+        .then(blob => {
+            const url = URL.createObjectURL(blob);
+            const audio = new Audio(url);
+            audio.addEventListener('ended', () => { done(); URL.revokeObjectURL(url); });
+            audio.addEventListener('error', () => { done(); URL.revokeObjectURL(url); });
+            audio.play();
+        })
+        .catch(() => {
+            // Fallback: Browser Web Speech API
+            if ('speechSynthesis' in window) {
+                speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = lang;
+                utterance.rate = lang === 'ja-JP' ? 0.8 : 0.9;
+                const voice = this.voices.find(v => v.lang.startsWith(lang.split('-')[0]));
+                if (voice) utterance.voice = voice;
+                utterance.addEventListener('end', done);
+                utterance.addEventListener('error', done);
+                speechSynthesis.speak(utterance);
+            } else {
+                done();
+            }
         });
-        utterance.addEventListener('error', () => {
-            element.classList.remove('tts-playing');
-        });
-
-        speechSynthesis.speak(utterance);
     }
 }
 
@@ -2685,20 +2756,8 @@ function stopAudioQueue() {
 }
 
 function playCardAudioFallback(text, btnElement) {
-    if (!('speechSynthesis' in window)) {
-        if (btnElement) btnElement.classList.remove('playing');
-        return;
-    }
     if (btnElement) btnElement.classList.add('playing');
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'ja-JP';
-    utterance.rate = 0.7;
-    const voices = speechSynthesis.getVoices();
-    const jpVoice = voices.find(v => v.lang.startsWith('ja'));
-    if (jpVoice) utterance.voice = jpVoice;
-    utterance.addEventListener('end', () => { if (btnElement) btnElement.classList.remove('playing'); });
-    utterance.addEventListener('error', () => { if (btnElement) btnElement.classList.remove('playing'); });
-    speechSynthesis.speak(utterance);
+    playCloudTTS(text, 0.80, () => { if (btnElement) btnElement.classList.remove('playing'); });
 }
 
 // ============================================================

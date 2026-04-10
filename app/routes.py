@@ -78,6 +78,52 @@ def health_check():
             "timestamp": datetime.utcnow().isoformat()
         }), 503
 
+@bp.route('/api/tts', methods=['POST'])
+@csrf.exempt
+@limiter.limit("30 per minute")
+def tts_synthesize():
+    """Google Cloud TTS Neural2 — hochwertige japanische Aussprache."""
+    import base64
+    import requests as http_requests
+
+    data = request.get_json(silent=True) or {}
+    text = (data.get('text') or '').strip()
+    if not text or len(text) > 200:
+        return jsonify({"error": "Text fehlt oder zu lang (max 200 Zeichen)"}), 400
+
+    api_key = current_app.config.get('GOOGLE_TTS_API_KEY') or os.environ.get('GOOGLE_TTS_API_KEY') or os.environ.get('GOOGLE_API_KEY')
+    if not api_key:
+        return jsonify({"error": "TTS nicht konfiguriert"}), 503
+
+    voice_name = "ja-JP-Neural2-B"
+    speed = float(data.get('speed', 0.85))
+    speed = max(0.5, min(speed, 1.5))
+
+    payload = {
+        "input": {"ssml": f'<speak><prosody rate="{speed}">{text}</prosody></speak>'},
+        "voice": {"languageCode": "ja-JP", "name": voice_name},
+        "audioConfig": {"audioEncoding": "MP3"},
+    }
+
+    try:
+        resp = http_requests.post(
+            f"https://texttospeech.googleapis.com/v1/text:synthesize?key={api_key}",
+            json=payload, timeout=10,
+        )
+        if resp.status_code != 200:
+            return jsonify({"error": "TTS API Fehler"}), 502
+
+        audio_b64 = resp.json().get("audioContent", "")
+        audio_bytes = base64.b64decode(audio_b64)
+        from flask import make_response
+        response = make_response(audio_bytes)
+        response.headers['Content-Type'] = 'audio/mpeg'
+        response.headers['Cache-Control'] = 'public, max-age=86400'
+        return response
+    except Exception:
+        return jsonify({"error": "TTS Fehler"}), 502
+
+
 @bp.route('/')
 @bp.route('/home')
 def index():
@@ -2070,6 +2116,60 @@ def get_public_categories():
     except Exception as e:
         current_app.logger.error(f"Error fetching public categories: {e}")
         return jsonify([]), 200  # Return empty array on error
+
+@bp.route('/api/tts', methods=['POST'])
+@login_required
+@limiter.limit("30 per minute")
+def text_to_speech():
+    """Generiert natuerliche Sprache via OpenAI TTS mit File-Cache."""
+    import hashlib
+    from pathlib import Path
+    from openai import OpenAI
+
+    data = request.get_json()
+    if not data or not data.get('text'):
+        return jsonify({'error': 'text required'}), 400
+
+    text = data['text'].strip()[:500]  # Max 500 Zeichen
+    lang = data.get('lang', 'en-US')
+
+    # Voice-Zuordnung nach Sprache
+    voice_map = {
+        'ja-JP': 'nova',      # Nova klingt gut fuer Japanisch
+        'de-DE': 'alloy',     # Alloy fuer Deutsch
+        'en-US': 'echo',      # Echo fuer Englisch
+    }
+    voice = voice_map.get(lang, 'alloy')
+
+    # Cache-Key aus Text + Sprache
+    cache_key = hashlib.md5(f"{text}_{lang}_{voice}".encode()).hexdigest()
+    cache_dir = Path(current_app.static_folder) / 'cache' / 'tts'
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    cache_file = cache_dir / f"{cache_key}.mp3"
+
+    # Aus Cache liefern falls vorhanden
+    if cache_file.exists():
+        return current_app.send_static_file(f'cache/tts/{cache_key}.mp3')
+
+    # OpenAI TTS API aufrufen
+    try:
+        api_key = os.environ.get('OPENAI_API_KEY')
+        if not api_key:
+            return jsonify({'error': 'OpenAI API key not configured'}), 500
+
+        client = OpenAI(api_key=api_key)
+        response = client.audio.speech.create(
+            model="tts-1",
+            voice=voice,
+            input=text,
+            speed=0.9 if lang == 'ja-JP' else 1.0,
+        )
+        response.write_to_file(str(cache_file))
+        return current_app.send_static_file(f'cache/tts/{cache_key}.mp3')
+    except Exception as e:
+        current_app.logger.error(f"TTS error: {e}")
+        return jsonify({'error': 'TTS generation failed'}), 500
+
 
 @bp.route('/api/lessons/<int:lesson_id>/reset', methods=['POST'])
 @login_required
