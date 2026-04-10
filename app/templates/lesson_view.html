@@ -786,7 +786,7 @@
                                                     {% set content_data = content.get_content_data() %}
                                                     {% if content_data %}
                                                         <div class="flip-card">
-                                                            <button class="card-scene" 
+                                                            <div class="card-scene" role="button"
                                                                     aria-label="Flip card for {% if content.content_type in ['kana', 'kanji'] %}{{ content_data.character }}{% elif content.content_type == 'vocabulary' %}{{ content_data.word }}{% else %}{{ content_data.title }}{% endif %} to see details"
                                                                     tabindex="0">
                                                                 <div class="card-flipper">
@@ -855,7 +855,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                            </button>
+                                                            </div>
                                                         </div>
                                                     {% else %}
                                                         <p class="text-muted">Content not found.</p>
@@ -2449,6 +2449,8 @@ function shuffle(arr) {
 function createDeck(cardItems, page) {
     const total = cardItems.length;
     const container = page.querySelector('.page-container');
+    const pageIdx = [...document.querySelectorAll('.carousel-item')].indexOf(page);
+    const storageKey = `deck_${lessonData.id}_page${pageIdx}`;
 
     // Hide original content-items (cards only)
     cardItems.forEach(({ item }) => item.classList.add('in-deck'));
@@ -2462,10 +2464,30 @@ function createDeck(cardItems, page) {
         return clone;
     });
 
-    // Build pending queue (shuffled)
-    let pending = shuffle([...Array(total).keys()]);
-    let learned = 0;
-    let currentIdx = 0;
+    // Fortschritt aus localStorage laden
+    let saved = null;
+    try { saved = JSON.parse(localStorage.getItem(storageKey)); } catch(e) {}
+
+    let pending, learned, currentIdx;
+    if (saved && saved.total === total && saved.pending?.length > 0) {
+        pending = saved.pending;
+        learned = saved.learned || 0;
+        currentIdx = 0;
+        console.log(`[Deck] Fortschritt geladen: ${learned}/${total} gelernt`);
+    } else {
+        pending = shuffle([...Array(total).keys()]);
+        learned = 0;
+        currentIdx = 0;
+    }
+
+    // Fortschritt speichern
+    function saveProgress() {
+        try {
+            localStorage.setItem(storageKey, JSON.stringify({
+                total, pending: [...pending], learned, timestamp: Date.now()
+            }));
+        } catch(e) {}
+    }
 
     // Create deck UI
     const deckEl = document.createElement('div');
@@ -2579,6 +2601,7 @@ function createDeck(cardItems, page) {
                 if (currentIdx >= pending.length) currentIdx = 0;
                 showCard(pending[currentIdx]);
                 updateStats();
+                saveProgress();
             }, 450);
         } else {
             // Slide out, card is learned
@@ -2600,12 +2623,14 @@ function createDeck(cardItems, page) {
                     btnGroup.style.display = 'none';
                     completeEl.style.display = 'block';
                     updateStats();
+                    saveProgress();
                     return;
                 }
 
                 if (currentIdx >= pending.length) currentIdx = 0;
                 showCard(pending[currentIdx]);
                 updateStats();
+                saveProgress();
             }, 350);
         }
     }
@@ -2623,6 +2648,7 @@ function createDeck(cardItems, page) {
         pending = shuffle([...Array(total).keys()]);
         learned = 0;
         currentIdx = 0;
+        try { localStorage.removeItem(storageKey); } catch(e) {}
         cardArea.style.display = 'flex';
         btnGroup.style.display = '';
         btnGroup.classList.remove('visible');
