@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% set admin_edit_url = url_for('routes.admin_manage_courses') + '?focus=' + course.id|string %}
+{% set admin_edit_url = url_for('routes.admin_manage_courses') + '?edit=' + course.id|string %}
 
 {% block title %}{{ course.title }}{% endblock %}
 

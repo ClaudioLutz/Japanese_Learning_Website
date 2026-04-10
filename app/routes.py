@@ -2046,16 +2046,20 @@ def get_user_lessons():
 @bp.route('/api/courses', methods=['GET'])
 def get_courses():
     """Get all courses"""
-    courses = Course.query.filter_by(is_published=True).all()
-    courses_data = []
-    for course in courses:
-        course_dict = model_to_dict(course)
-        if current_user.is_authenticated:
-            course_dict['is_purchased'] = CoursePurchase.query.filter_by(user_id=current_user.id, course_id=course.id).first() is not None
-        else:
-            course_dict['is_purchased'] = False
-        courses_data.append(course_dict)
-    return jsonify(courses_data)
+    try:
+        courses = Course.query.filter_by(is_published=True).all()
+        courses_data = []
+        for course in courses:
+            course_dict = model_to_dict(course)
+            if current_user.is_authenticated:
+                course_dict['is_purchased'] = CoursePurchase.query.filter_by(user_id=current_user.id, course_id=course.id).first() is not None
+            else:
+                course_dict['is_purchased'] = False
+            courses_data.append(course_dict)
+        return jsonify(courses_data)
+    except Exception as e:
+        current_app.logger.error(f"Error fetching courses: {e}")
+        return jsonify([]), 200
 
 @bp.route('/api/categories', methods=['GET'])
 def get_public_categories():

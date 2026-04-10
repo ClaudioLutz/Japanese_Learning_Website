@@ -264,22 +264,28 @@ async function moveLesson(lessonId, direction) {
     }
 }
 
-// ── Focus-Highlight bei ?focus= Parameter ───────────────────────────
-function focusLessonFromUrl() {
-    const focusId = new URLSearchParams(window.location.search).get('focus');
-    if (!focusId) return;
-    const row = document.querySelector(`#lessonsTable tbody tr[data-lesson-id="${focusId}"]`);
-    if (row) {
-        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        row.style.transition = 'background 0.3s';
-        row.style.background = 'rgba(245,158,11,0.2)';
-        setTimeout(() => { row.style.background = ''; }, 3000);
+// ── Focus/Edit bei URL-Parametern ────────────────────────────────────
+function handleUrlParams() {
+    const params = new URLSearchParams(window.location.search);
+    const editId = params.get('edit');
+    const focusId = params.get('focus') || editId;
+    if (focusId) {
+        const row = document.querySelector(`#lessonsTable tbody tr[data-lesson-id="${focusId}"]`);
+        if (row) {
+            row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            row.style.transition = 'background 0.3s';
+            row.style.background = 'rgba(245,158,11,0.2)';
+            setTimeout(() => { row.style.background = ''; }, 3000);
+        }
+    }
+    if (editId) {
+        editLesson(parseInt(editId));
     }
 }
 
 // ── Init ────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function() {
-    loadLessons().then(() => { setTimeout(focusLessonFromUrl, 300); });
+    loadLessons().then(() => { setTimeout(handleUrlParams, 300); });
     loadCategories();
 });
 </script>

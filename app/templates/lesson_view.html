@@ -257,18 +257,36 @@
     }
 
     .nav-btn-primary {
-        background-color: #4a90e2;
+        background-color: var(--primary-color, #2B4C7E);
         color: white;
     }
 
     .nav-btn-secondary {
-        background-color: #6c757d;
+        background-color: var(--zen-sumi-light, #5A5A5A);
         color: white;
     }
 
     .page-counter {
         font-size: 1.1rem;
         font-weight: 600;
+    }
+
+    /* Mobile: Fixierte Bottom-Navigation */
+    @media (max-width: 991px) {
+        .lesson-navigation-bottom {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            margin: 0;
+            border-radius: 0;
+            border: none;
+            border-top: 1px solid var(--border-color, #D4CFC5);
+            z-index: 100;
+            padding: 0.6rem 1rem;
+            box-shadow: 0 -2px 12px rgba(0,0,0,0.1);
+        }
+        .lesson-main-content {
+            padding-bottom: 80px !important;
+        }
     }
 
     /* Mobile sidebar toggle */
@@ -420,16 +438,30 @@
 
     /* ── Conversation Page ── */
     .conv-text-section {
-        background: #f8f9fa;
+        background: var(--background-color, #F5F0E8);
         border-radius: 8px;
         padding: 1rem 1.25rem;
         margin-bottom: 1rem;
-        border-left: 4px solid #4a90e2;
+        border-left: 4px solid var(--primary-color, #2B4C7E);
     }
 
     .conv-quiz-section {
-        border-top: 1px solid #e9ecef;
+        border-top: 1px solid var(--border-color, #D4CFC5);
         padding-top: 1rem;
+    }
+
+    /* Quiz Micro-Interactions */
+    @keyframes quizShake {
+        0%, 100% { transform: translateX(0); }
+        20% { transform: translateX(-6px); }
+        40% { transform: translateX(6px); }
+        60% { transform: translateX(-4px); }
+        80% { transform: translateX(4px); }
+    }
+    @keyframes quizCorrectPulse {
+        0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(122,154,90,0.4); }
+        50% { transform: scale(1.01); box-shadow: 0 0 0 8px rgba(122,154,90,0); }
+        100% { transform: scale(1); box-shadow: none; }
     }
 </style>
 <!-- Mobile sidebar overlay -->
@@ -1379,6 +1411,14 @@ function showQuizFeedback(questionId, result) {
 
     feedbackElement.innerHTML = feedbackHtml;
     feedbackElement.style.display = 'block';
+
+    // Micro-Interaction: Shake bei falsch, Pulse bei richtig
+    if (result.is_correct) {
+        questionElement.style.animation = 'quizCorrectPulse 0.4s ease';
+    } else {
+        questionElement.style.animation = 'quizShake 0.4s ease';
+    }
+    setTimeout(() => { questionElement.style.animation = ''; }, 500);
 
     // Disable question if correct or no attempts remaining
     if (result.is_correct || result.attempts_remaining === 0) {
