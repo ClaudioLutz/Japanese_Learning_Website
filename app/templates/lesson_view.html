@@ -1913,199 +1913,198 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 1000);
 });
 
-// Japanese Text Auto-Detection and Audio System
-class JapaneseTextAudioSystem {
+// Multilingual Text-to-Speech System (Japanese, English, German)
+class MultilingualTextAudioSystem {
     constructor() {
         this.japaneseRegex = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF\u3000-\u303F]/;
+        this.germanRegex = /[äöüÄÖÜß]/;
+        // Default-Sprache aus der Lektion (instruction_language)
+        this.defaultLang = '{{ lesson.instruction_language|default("english") }}' === 'german' ? 'de-DE' : 'en-US';
+        this.voices = [];
         this.init();
     }
-    
+
     init() {
-        // Process content when page loads
+        // Voices laden (async in manchen Browsern)
+        if ('speechSynthesis' in window) {
+            this.voices = speechSynthesis.getVoices();
+            speechSynthesis.addEventListener('voiceschanged', () => {
+                this.voices = speechSynthesis.getVoices();
+            });
+        }
         document.addEventListener('DOMContentLoaded', () => {
             this.processAllContent();
         });
     }
-    
+
     processAllContent() {
-        // Target lesson content areas
         const contentAreas = document.querySelectorAll(
             '.content-item, .rich-text-content, .text-content-container, .details'
         );
-        
-        contentAreas.forEach(area => {
-            this.processElement(area);
-        });
+        contentAreas.forEach(area => this.processElement(area));
     }
-    
+
     processElement(element) {
-        // Skip if already processed
-        if (element.dataset.japaneseProcessed) return;
-        
-        // Process text nodes
+        if (element.dataset.ttsProcessed) return;
         this.processTextNodes(element);
-        element.dataset.japaneseProcessed = 'true';
+        element.dataset.ttsProcessed = 'true';
     }
-    
+
+    // Element erneut verarbeiten (fuer geklonte Karten im Deck)
+    reprocessElement(element) {
+        element.removeAttribute('data-tts-processed');
+        // Bestehende TTS-Spans zuruecksetzen
+        element.querySelectorAll('.tts-segment').forEach(span => {
+            span.replaceWith(document.createTextNode(span.textContent));
+        });
+        element.normalize();
+        this.processElement(element);
+    }
+
     processTextNodes(element) {
         const walker = document.createTreeWalker(
             element,
             NodeFilter.SHOW_TEXT,
             {
                 acceptNode: (node) => {
-                    // Skip if parent already has audio functionality
-                    if (node.parentElement.classList.contains('japanese-audio-text') ||
-                        node.parentElement.classList.contains('audio-btn')) {
+                    if (node.parentElement.classList.contains('tts-segment') ||
+                        node.parentElement.classList.contains('japanese-audio-text') ||
+                        node.parentElement.classList.contains('audio-btn') ||
+                        node.parentElement.tagName === 'BUTTON' ||
+                        node.parentElement.tagName === 'STYLE' ||
+                        node.parentElement.tagName === 'SCRIPT') {
                         return NodeFilter.FILTER_REJECT;
                     }
-                    
-                    // Only process nodes with Japanese text
-                    return this.japaneseRegex.test(node.textContent) ? 
+                    // Nur Textknoten mit echtem Inhalt verarbeiten
+                    return node.textContent.trim().length > 1 ?
                         NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
                 }
             }
         );
-        
+
         const textNodes = [];
         let node;
         while (node = walker.nextNode()) {
             textNodes.push(node);
         }
-        
-        // Process each text node
-        textNodes.forEach(textNode => {
-            this.wrapJapaneseText(textNode);
-        });
+        textNodes.forEach(textNode => this.wrapTextSegments(textNode));
     }
-    
-    wrapJapaneseText(textNode) {
-        const text = textNode.textContent;
-        const segments = this.findJapaneseSegments(text);
-        
-        if (segments.length === 0) return;
-        
-        const fragment = document.createDocumentFragment();
-        let lastIndex = 0;
-        
-        segments.forEach(segment => {
-            // Add text before Japanese segment
-            if (segment.start > lastIndex) {
-                fragment.appendChild(
-                    document.createTextNode(text.slice(lastIndex, segment.start))
-                );
-            }
-            
-            // Create clickable Japanese text element
-            const audioSpan = document.createElement('span');
-            audioSpan.className = 'japanese-audio-text';
-            audioSpan.textContent = segment.text;
-            audioSpan.setAttribute('data-japanese-text', segment.text);
-            audioSpan.setAttribute('title', 'Click to hear pronunciation');
-            audioSpan.style.cursor = 'pointer';
-            
-            // Add click handler
-            audioSpan.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.playText(segment.text, audioSpan);
-            });
-            
-            fragment.appendChild(audioSpan);
-            lastIndex = segment.end;
-        });
-        
-        // Add remaining text
-        if (lastIndex < text.length) {
-            fragment.appendChild(
-                document.createTextNode(text.slice(lastIndex))
-            );
-        }
-        
-        // Replace original text node
-        textNode.parentNode.replaceChild(fragment, textNode);
+
+    // Sprache eines Textsegments erkennen
+    detectLanguage(text) {
+        if (this.japaneseRegex.test(text)) return 'ja-JP';
+        if (this.germanRegex.test(text)) return 'de-DE';
+        return this.defaultLang;
     }
-    
-    findJapaneseSegments(text) {
-        const segments = [];
-        let currentSegment = null;
-        
-        for (let i = 0; i < text.length; i++) {
-            const char = text[i];
-            const isJapanese = this.isJapaneseChar(char);
-            
-            if (isJapanese) {
-                if (!currentSegment) {
-                    currentSegment = {
-                        text: char,
-                        start: i,
-                        end: i + 1
-                    };
-                } else {
-                    currentSegment.text += char;
-                    currentSegment.end = i + 1;
-                }
-            } else {
-                if (currentSegment) {
-                    if (currentSegment.text.trim().length > 0) {
-                        segments.push(currentSegment);
-                    }
-                    currentSegment = null;
-                }
-            }
-        }
-        
-        // Handle segment at end
-        if (currentSegment && currentSegment.text.trim().length > 0) {
-            segments.push(currentSegment);
-        }
-        
-        return segments;
-    }
-    
+
     isJapaneseChar(char) {
         const code = char.charCodeAt(0);
         return (
             (code >= 0x3040 && code <= 0x309F) || // Hiragana
             (code >= 0x30A0 && code <= 0x30FF) || // Katakana
             (code >= 0x4E00 && code <= 0x9FAF) || // Kanji
-            (code >= 0x3000 && code <= 0x303F)    // Japanese punctuation
+            (code >= 0x3000 && code <= 0x303F)    // Japanische Satzzeichen
         );
     }
-    
-    playText(text, element) {
-        if ('speechSynthesis' in window) {
-            // Add visual feedback
-            element.classList.add('playing-audio');
-            
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'ja-JP';
-            utterance.rate = 0.8;
-            utterance.pitch = 1.0;
-            
-            // Try to use a Japanese voice if available
-            const voices = speechSynthesis.getVoices();
-            const japaneseVoice = voices.find(voice => voice.lang.startsWith('ja'));
-            if (japaneseVoice) {
-                utterance.voice = japaneseVoice;
+
+    // Text in Sprach-Segmente aufteilen
+    segmentText(text) {
+        const segments = [];
+        let current = { text: '', lang: null };
+
+        for (let i = 0; i < text.length; i++) {
+            const char = text[i];
+            const isJP = this.isJapaneseChar(char);
+            const charLang = isJP ? 'ja-JP' : null; // null = nicht-japanisch
+
+            if (charLang !== current.lang) {
+                if (current.text.length > 0) {
+                    segments.push({ ...current });
+                }
+                current = { text: char, lang: charLang };
+            } else {
+                current.text += char;
             }
-            
-            utterance.addEventListener('end', () => {
-                element.classList.remove('playing-audio');
-            });
-            
-            utterance.addEventListener('error', () => {
-                element.classList.remove('playing-audio');
-                console.error('Speech synthesis error');
-            });
-            
-            speechSynthesis.speak(utterance);
-        } else {
-            console.error('Speech synthesis not supported');
         }
+        if (current.text.length > 0) {
+            segments.push(current);
+        }
+
+        // Nicht-japanische Segmente: Sprache anhand Inhalt erkennen
+        return segments.map(seg => ({
+            text: seg.text,
+            lang: seg.lang || this.detectLanguage(seg.text)
+        }));
+    }
+
+    wrapTextSegments(textNode) {
+        const text = textNode.textContent;
+        const segments = this.segmentText(text);
+
+        // Nur Labels/Kurztext => nicht wrappen
+        const hasContent = segments.some(s => s.text.trim().length > 1);
+        if (!hasContent) return;
+
+        const fragment = document.createDocumentFragment();
+
+        segments.forEach(seg => {
+            const trimmed = seg.text.trim();
+            // Nur Leerzeichen/Satzzeichen => als Text belassen
+            if (trimmed.length <= 1 && !/[\u3040-\u9FAF]/.test(trimmed)) {
+                fragment.appendChild(document.createTextNode(seg.text));
+                return;
+            }
+
+            const span = document.createElement('span');
+            span.className = 'tts-segment';
+            span.textContent = seg.text;
+            span.setAttribute('data-lang', seg.lang);
+            span.setAttribute('title', seg.lang === 'ja-JP' ? 'Klick: Japanisch vorlesen' :
+                                       seg.lang === 'de-DE' ? 'Klick: Deutsch vorlesen' :
+                                                              'Click: Read aloud');
+
+            span.addEventListener('click', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                this.playText(trimmed, seg.lang, span);
+            });
+
+            fragment.appendChild(span);
+        });
+
+        textNode.parentNode.replaceChild(fragment, textNode);
+    }
+
+    playText(text, lang, element) {
+        if (!('speechSynthesis' in window)) return;
+
+        // Laufende Wiedergabe stoppen
+        speechSynthesis.cancel();
+
+        element.classList.add('tts-playing');
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = lang;
+        utterance.rate = lang === 'ja-JP' ? 0.8 : 0.9;
+        utterance.pitch = 1.0;
+
+        // Passende Stimme suchen
+        const voice = this.voices.find(v => v.lang.startsWith(lang.split('-')[0]));
+        if (voice) utterance.voice = voice;
+
+        utterance.addEventListener('end', () => {
+            element.classList.remove('tts-playing');
+        });
+        utterance.addEventListener('error', () => {
+            element.classList.remove('tts-playing');
+        });
+
+        speechSynthesis.speak(utterance);
     }
 }
 
-// Initialize the Japanese text audio system
-const japaneseAudioSystem = new JapaneseTextAudioSystem();
+// Initialize the multilingual text audio system
+const japaneseAudioSystem = new MultilingualTextAudioSystem();
 
 // ============================================================
 // ENHANCEMENT: Universal Read-Aloud Player for ALL content items
@@ -2443,6 +2442,12 @@ function createDeck(cardItems, page) {
                 playCardAudio(text.trim(), btn);
             });
         });
+
+        // TTS-Spans neu initialisieren (geklonte Karten verlieren Event-Listener)
+        const details = card.querySelector('.details');
+        if (details && japaneseAudioSystem) {
+            japaneseAudioSystem.reprocessElement(details);
+        }
 
         // Setup flip behavior
         const scene = card.querySelector('.card-scene');

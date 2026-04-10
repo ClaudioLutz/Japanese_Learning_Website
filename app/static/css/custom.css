@@ -2730,6 +2730,47 @@ button[onclick*="moveContentInPage"]:active {
     }
 }
 
+/* Multilingual TTS Text Segments */
+.tts-segment {
+    cursor: pointer;
+    padding: 1px 3px;
+    border-radius: 3px;
+    transition: background 0.15s, box-shadow 0.15s;
+    display: inline;
+}
+.tts-segment:hover {
+    background: rgba(43, 76, 126, 0.08);
+    text-decoration: underline;
+    text-decoration-color: var(--primary-color);
+}
+.tts-segment[data-lang="ja-JP"] {
+    color: var(--primary-color);
+    font-weight: 500;
+}
+.tts-segment[data-lang="de-DE"]:hover {
+    background: rgba(122, 154, 90, 0.1);
+    text-decoration-color: var(--zen-matcha);
+}
+.tts-segment.tts-playing {
+    background: rgba(43, 76, 126, 0.15);
+    box-shadow: 0 0 0 2px rgba(43, 76, 126, 0.2);
+    border-radius: 3px;
+}
+.tts-segment[data-lang="ja-JP"].tts-playing {
+    background: rgba(43, 76, 126, 0.2);
+    color: var(--zen-indigo-dark);
+}
+.tts-segment[data-lang="de-DE"].tts-playing {
+    background: rgba(122, 154, 90, 0.15);
+    box-shadow: 0 0 0 2px rgba(122, 154, 90, 0.2);
+}
+
+@media (max-width: 768px) {
+    .tts-segment {
+        padding: 2px 4px;
+    }
+}
+
 /* Enhanced Course View Page Styles */
 
 /* Course Hero Section */
