@@ -305,11 +305,16 @@ function displayCategories() {
         
         const lessonCount = lessonCounts[category.id] || 0;
         
+        // Sprach-Flagge aus dem Kategorienamen ableiten
+        const langFlag = category.name.includes('Deutsch') ? '🇩🇪' :
+                         category.name.includes('English') ? '🇬🇧' : '';
+
         categoryCard.innerHTML = `
             <div class="category-card-inner">
                 <div class="category-icon" style="background: linear-gradient(135deg, ${category.color_code}, ${adjustBrightness(category.color_code, -20)});">
                     <i class="fas ${getCategoryIcon(category.name)}"></i>
                 </div>
+                ${langFlag ? `<span class="category-lang-flag" title="${category.name.includes('Deutsch') ? 'Deutsche Unterrichtssprache' : 'English instruction'}">${langFlag}</span>` : ''}
                 <div class="category-content">
                     <h3 class="category-name">${category.name}</h3>
                     <p class="category-description">${category.description || 'Explore lessons in this category'}</p>
