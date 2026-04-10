@@ -364,7 +364,7 @@
 <body class="font-sans bg-gray-50 dark:bg-slate-950 text-gray-900 dark:text-slate-200 min-h-screen flex">
 
 <!-- ═══ Sidebar ═══════════════════════════════════════════════════════ -->
-<nav id="sidebar" class="w-64 bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-slate-800 flex flex-col flex-shrink-0 p-5 relative shadow-sm"
+<nav id="sidebar" class="w-64 h-screen sticky top-0 bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-slate-800 flex flex-col flex-shrink-0 p-5 relative shadow-sm"
      x-data="{ collapsed: localStorage.getItem('sidebarCollapsed') === 'true' }"
      x-init="if (collapsed) $el.classList.add('collapsed')"
      x-bind:class="collapsed ? 'collapsed' : ''">
@@ -376,7 +376,7 @@
         <i class="fas" :class="collapsed ? 'fa-chevron-right' : 'fa-chevron-left'"></i>
     </button>
 
-    <div class="flex-1">
+    <div class="flex-1 overflow-y-auto min-h-0">
         <!-- Logo / Header -->
         <div class="text-center mb-6">
             <div class="nav-header-text text-xl font-bold text-primary-600 dark:text-primary-400">Admin</div>
