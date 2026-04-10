@@ -50,6 +50,7 @@ async function loadLessons() {
         lessons.forEach((lesson, index) => {
             // Title row spanning all columns
             const titleRow = document.createElement('tr');
+            titleRow.dataset.lessonId = lesson.id;
             titleRow.className = index > 0 ? 'border-t-2 border-gray-200 dark:border-slate-700' : '';
             titleRow.innerHTML = `
                 <td colspan="11" class="!py-2.5 !px-4 !bg-gray-50/80 dark:!bg-slate-800/30">
@@ -263,9 +264,22 @@ async function moveLesson(lessonId, direction) {
     }
 }
 
+// ── Focus-Highlight bei ?focus= Parameter ───────────────────────────
+function focusLessonFromUrl() {
+    const focusId = new URLSearchParams(window.location.search).get('focus');
+    if (!focusId) return;
+    const row = document.querySelector(`#lessonsTable tbody tr[data-lesson-id="${focusId}"]`);
+    if (row) {
+        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        row.style.transition = 'background 0.3s';
+        row.style.background = 'rgba(245,158,11,0.2)';
+        setTimeout(() => { row.style.background = ''; }, 3000);
+    }
+}
+
 // ── Init ────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function() {
-    loadLessons();
+    loadLessons().then(() => { setTimeout(focusLessonFromUrl, 300); });
     loadCategories();
 });
 </script>

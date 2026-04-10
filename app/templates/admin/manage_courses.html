@@ -115,6 +115,7 @@ function renderCoursesTable() {
     }
     coursesData.forEach(course => {
         const row = document.createElement('tr');
+        row.dataset.courseId = course.id;
         row.className = 'hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors';
         row.innerHTML = `
             <td class="!text-gray-400 dark:!text-slate-500 !text-sm">${course.id}</td>
@@ -235,6 +236,20 @@ async function deleteCourse(courseId) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', function() { loadCourses(); });
+function focusCourseFromUrl() {
+    const focusId = new URLSearchParams(window.location.search).get('focus');
+    if (!focusId) return;
+    const row = document.querySelector(`#coursesTable tbody tr[data-course-id="${focusId}"]`);
+    if (row) {
+        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        row.style.transition = 'background 0.3s';
+        row.style.background = 'rgba(245,158,11,0.2)';
+        setTimeout(() => { row.style.background = ''; }, 3000);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadCourses().then(() => { setTimeout(focusCourseFromUrl, 300); });
+});
 </script>
 {% endblock %}
