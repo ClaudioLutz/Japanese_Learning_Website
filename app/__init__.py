@@ -43,7 +43,11 @@ def create_app():
     app.config['TEMPLATES_AUTO_RELOAD'] = True
 
     # Session-Cookie-Security
-    is_production = os.environ.get('FLASK_ENV') == 'production' or os.environ.get('GAE_ENV', '').startswith('standard')
+    is_production = (
+        os.environ.get('FLASK_ENV') == 'production'
+        or os.environ.get('K_SERVICE')  # Cloud Run
+        or os.environ.get('GAE_ENV', '').startswith('standard')  # App Engine
+    )
     app.config['SESSION_COOKIE_HTTPONLY'] = True
     app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
     app.config['SESSION_COOKIE_SECURE'] = is_production
@@ -161,6 +165,7 @@ def create_app():
     Talisman(
         app,
         content_security_policy=csp,
+        content_security_policy_nonce_in=[],
         force_https=is_production,
         session_cookie_secure=is_production,
     )

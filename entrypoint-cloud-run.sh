@@ -41,8 +41,8 @@ except Exception as e:
 # Wait for database connection with timeout
 wait_for_database
 
-# Initialize database schema if needed (with error handling)
-echo "🔧 Attempting database initialization..."
+# Datenbank-Migrationen ausfuehren
+echo "🔧 Running database migrations..."
 python -c "
 import os
 import sys
@@ -51,15 +51,17 @@ try:
     app = create_app()
     with app.app_context():
         try:
-            # Try to create all tables
-            db.create_all()
-            print('✅ Database tables created/verified successfully!')
+            from flask_migrate import upgrade
+            upgrade()
+            print('✅ Database migrations applied successfully!')
         except Exception as e:
-            print(f'⚠️  Database initialization note: {e}')
-            print('This may be expected if tables already exist or database is unavailable.')
-except ImportError as e:
-    print(f'⚠️  Import error during database setup: {e}')
-    print('Application will start without database initialization.')
+            print(f'⚠️  Migration note: {e}')
+            # Fallback: Tabellen direkt erstellen falls noch keine Migrationen existieren
+            try:
+                db.create_all()
+                print('✅ Database tables created via create_all() as fallback.')
+            except Exception as e2:
+                print(f'⚠️  create_all fallback failed: {e2}')
 except Exception as e:
     print(f'⚠️  Database setup error: {e}')
     print('Application will start anyway.')

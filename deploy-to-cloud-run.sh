@@ -5,7 +5,7 @@ echo "🚀 Japanese Learning Website - Cloud Run Deployment Script"
 echo "=========================================================="
 
 # Configuration variables
-PROJECT_ID="jpl-website-bill-20251130"
+PROJECT_ID="healthy-coil-466105-d7"
 REGION="europe-west6"
 INSTANCE="jpl-psql"
 DB="japanese_learning"
@@ -45,13 +45,12 @@ else
     echo "Creating new Cloud SQL PostgreSQL instance..."
     gcloud sql instances create $INSTANCE \
       --database-version=POSTGRES_15 \
-      --cpu=1 \
-      --memory=4GiB \
+      --tier=db-f1-micro \
       --region=$REGION \
       --storage-type=SSD \
-      --storage-size=20GB \
+      --storage-size=10GB \
       --backup-start-time=02:00 \
-      --deletion-protection
+      --edition=enterprise
     echo "✅ Cloud SQL instance created successfully!"
 fi
 
@@ -146,7 +145,7 @@ gcloud secrets add-iam-policy-binding wtf-csrf-secret-key \
 echo "✅ Secrets setup completed!"
 
 # Create environment variables for deployment  
-DATABASE_URL="postgresql+psycopg://${DB_USER}:${DB_PASS}@/${DB}?host=/cloudsql/${PROJECT_ID}:${REGION}:${INSTANCE}"
+DATABASE_URL="postgresql+psycopg2://${DB_USER}:${DB_PASS}@/${DB}?host=/cloudsql/${PROJECT_ID}:${REGION}:${INSTANCE}"
 
 echo "🚀 Building and deploying Docker container to Cloud Run..."
 
@@ -176,14 +175,12 @@ gcloud run deploy $SERVICE \
   --region $REGION \
   --allow-unauthenticated \
   --add-cloudsql-instances "$PROJECT_ID:$REGION:$INSTANCE" \
-  --set-env-vars "DATABASE_URL=$DATABASE_URL" \
-  --set-secrets "SECRET_KEY=flask-secret-key:latest" \
-  --set-secrets "WTF_CSRF_SECRET_KEY=wtf-csrf-secret-key:latest" \
-  --set-env-vars "FLASK_ENV=production" \
-  --memory=2Gi \
-  --cpu=2 \
-  --max-instances=10 \
-  --timeout=900 \
+  --set-env-vars "DATABASE_URL=$DATABASE_URL,FLASK_ENV=production,PAYMENT_PROVIDER=mock" \
+  --set-secrets "SECRET_KEY=flask-secret-key:latest,WTF_CSRF_SECRET_KEY=wtf-csrf-secret-key:latest" \
+  --memory=1Gi \
+  --cpu=1 \
+  --max-instances=5 \
+  --timeout=300 \
   --port=8080 \
   --execution-environment=gen2
 

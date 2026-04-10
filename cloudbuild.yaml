@@ -1,0 +1,12 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-f'
+      - 'Dockerfile.cloudrun'
+      - '-t'
+      - 'europe-west6-docker.pkg.dev/$PROJECT_ID/app-images/japanese-learning-app:latest'
+      - '.'
+images:
+  - 'europe-west6-docker.pkg.dev/$PROJECT_ID/app-images/japanese-learning-app:latest'
+timeout: '1200s'

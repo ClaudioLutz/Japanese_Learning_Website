@@ -23,9 +23,9 @@ RUN pip install --no-cache-dir --upgrade pip \
 # Copy application code
 COPY . .
 
-# Copy and set permissions for Cloud Run entrypoint script
+# Copy and set permissions for Cloud Run entrypoint script (fix Windows CRLF)
 COPY entrypoint-cloud-run.sh /entrypoint-cloud-run.sh
-RUN chmod +x /entrypoint-cloud-run.sh
+RUN sed -i 's/\r$//' /entrypoint-cloud-run.sh && chmod +x /entrypoint-cloud-run.sh
 
 # Create non-root user for security
 RUN useradd --create-home --shell /bin/bash app \
