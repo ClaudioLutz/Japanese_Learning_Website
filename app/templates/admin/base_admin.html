@@ -422,7 +422,7 @@
             <span class="nav-text" x-text="$store.darkMode.on ? 'Light Mode' : 'Dark Mode'"></span>
         </button>
         <ul class="list-none p-0 m-0 space-y-0.5">
-            <li><a href="{{ url_for('routes.index') }}" data-tooltip="Back to Site" class="flex items-center px-3 py-2.5 rounded-lg text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800 font-medium text-sm transition-all no-underline"><i class="fas fa-arrow-left w-5 text-center mr-3"></i><span class="nav-text">Back to Site</span></a></li>
+            <li><a href="{{ url_for('routes.index') }}" id="backToSiteLink" data-tooltip="Back to Site" class="flex items-center px-3 py-2.5 rounded-lg text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800 font-medium text-sm transition-all no-underline" onclick="event.preventDefault(); const ref = document.referrer; if (ref && !ref.includes('/admin')) { window.location.href = ref; } else { window.location.href = '{{ url_for('routes.index') }}'; }"><i class="fas fa-arrow-left w-5 text-center mr-3"></i><span class="nav-text">Back to Site</span></a></li>
             {% if current_user.is_authenticated %}
             <li><a href="{{ url_for('routes.logout') }}" data-tooltip="Logout" class="flex items-center px-3 py-2.5 rounded-lg text-gray-600 dark:text-slate-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 font-medium text-sm transition-all no-underline"><i class="fas fa-sign-out-alt w-5 text-center mr-3"></i><span class="nav-text">Logout ({{ current_user.username }})</span></a></li>
             {% endif %}
@@ -613,7 +613,7 @@
                 { id: 'grammar', title: 'Manage Grammar', icon: 'fas fa-list-alt', section: 'Japanese', url: '{{ url_for("routes.admin_manage_grammar") }}' },
                 { id: 'approval', title: 'Content Approval', icon: 'fas fa-check-circle', section: 'Tools', url: '{{ url_for("routes.admin_manage_approval") }}' },
                 { id: 'crud', title: 'CRUD-Panel (Flask-Admin)', icon: 'fas fa-table', section: 'Tools', url: '{{ url_for("admin_panel.index") }}' },
-                { id: 'site', title: 'Back to Site', icon: 'fas fa-arrow-left', section: 'Actions', url: '{{ url_for("routes.index") }}' },
+                { id: 'site', title: 'Back to Site', icon: 'fas fa-arrow-left', section: 'Actions', action: 'backToSite' },
                 { id: 'darkmode', title: 'Toggle Dark Mode', icon: 'fas fa-moon', section: 'Actions', action: 'toggleDark' },
             ],
             init() {
@@ -645,6 +645,9 @@
                 this.open = false;
                 if (cmd.action === 'toggleDark') {
                     Alpine.store('darkMode').toggle();
+                } else if (cmd.action === 'backToSite') {
+                    const ref = document.referrer;
+                    window.location.href = (ref && !ref.includes('/admin')) ? ref : '{{ url_for("routes.index") }}';
                 } else if (cmd.url) {
                     window.location.href = cmd.url;
                 }

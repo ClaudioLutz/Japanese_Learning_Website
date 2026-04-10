@@ -1210,8 +1210,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Add click event listener to the card (the button)
         card.addEventListener('click', (e) => {
-            // Don't flip if clicking audio button
-            if (e.target.closest('.card-audio-btn')) return;
+            // Don't flip if clicking audio button or TTS text
+            if (e.target.closest('.card-audio-btn, .tts-segment, .tts-line')) return;
 
             // Check if the card is currently flipped
             const isFlipped = flipper.classList.contains('is-flipped');
@@ -2488,8 +2488,8 @@ function createDeck(cardItems, page) {
         const flipper = card.querySelector('.card-flipper');
         if (scene && flipper) {
             scene.addEventListener('click', (e) => {
-                // Don't flip if clicking audio button
-                if (e.target.closest('.card-audio-btn')) return;
+                // Don't flip if clicking audio button or TTS text
+                if (e.target.closest('.card-audio-btn, .tts-segment, .tts-line')) return;
                 flipper.classList.toggle('is-flipped');
                 if (flipper.classList.contains('is-flipped')) {
                     btnGroup.classList.add('visible');

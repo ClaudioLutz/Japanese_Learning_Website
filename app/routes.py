@@ -2097,6 +2097,7 @@ def get_courses():
         courses_data = []
         for course in courses:
             course_dict = model_to_dict(course)
+            course_dict['lessons'] = [{'id': l.id, 'title': l.title} for l in course.lessons]
             if current_user.is_authenticated:
                 course_dict['is_purchased'] = CoursePurchase.query.filter_by(user_id=current_user.id, course_id=course.id).first() is not None
             else:
