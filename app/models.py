@@ -19,6 +19,12 @@ class User(UserMixin, db.Model):
     failed_login_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False, server_default='0')
     locked_until: Mapped[datetime] = mapped_column(DateTime, nullable=True)
 
+    # Streak-System
+    current_streak: Mapped[int] = mapped_column(Integer, default=0, nullable=False, server_default='0')
+    longest_streak: Mapped[int] = mapped_column(Integer, default=0, nullable=False, server_default='0')
+    last_activity_date = db.Column(db.Date, nullable=True)
+    total_xp: Mapped[int] = mapped_column(Integer, default=0, nullable=False, server_default='0')
+
     lesson_progress: Mapped[List['UserLessonProgress']] = relationship('UserLessonProgress', backref='user', lazy=True, cascade='all, delete-orphan')
     course_purchases: Mapped[List['CoursePurchase']] = relationship('CoursePurchase', backref='user', lazy=True, cascade='all, delete-orphan')
 
@@ -43,6 +49,21 @@ class User(UserMixin, db.Model):
     def record_successful_login(self):
         self.failed_login_count = 0
         self.locked_until = None
+        self.update_streak()
+
+    def update_streak(self):
+        """Aktualisiert den Tages-Streak bei Aktivitaet."""
+        today = datetime.utcnow().date()
+        if self.last_activity_date == today:
+            return  # Bereits heute aktiv
+        from datetime import timedelta
+        if self.last_activity_date == today - timedelta(days=1):
+            self.current_streak = (self.current_streak or 0) + 1
+        else:
+            self.current_streak = 1
+        if self.current_streak > (self.longest_streak or 0):
+            self.longest_streak = self.current_streak
+        self.last_activity_date = today
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -98,6 +119,7 @@ class Vocabulary(db.Model):
     example_sentence_japanese = db.Column(db.Text, nullable=True)
     example_sentence_english = db.Column(db.Text, nullable=True)
     audio_url = db.Column(db.String(255), nullable=True)
+    image_url = db.Column(db.String(500), nullable=True)
     status = db.Column(db.String(20), default='approved', nullable=False)  # 'approved', 'pending_approval'
     created_by_ai = db.Column(db.Boolean, default=False, nullable=False)
 

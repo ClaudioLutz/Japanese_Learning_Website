@@ -5,7 +5,7 @@
 
 ---
 
-## TODO-Liste
+## TODO-Liste               
 
 ### Bugs (Prioritaet 1)
 - [ ] **"Unable to Load Courses" fixen** -- `/api/courses` hat kein Error-Handling und stuerzt bei DB-Fehler ab (fehlende Spalte `failed_login_count`). Sofort-Fix: try-except + DB-Migration ausfuehren.

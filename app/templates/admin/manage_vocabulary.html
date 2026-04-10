@@ -7,6 +7,9 @@
 {% endblock %}
 
 {% block page_actions %}
+<button onclick="generateVocabImages()" id="genImagesBtn" class="!bg-amber-600 hover:!bg-amber-700">
+    <i class="fas fa-image"></i> <span id="genImagesBtnText">Generate Images</span>
+</button>
 <button onclick="openModal('addVocabModal')" class="!bg-primary-600 hover:!bg-primary-700">
     <i class="fas fa-plus"></i> Add Vocabulary
 </button>
@@ -33,6 +36,7 @@
         <thead>
             <tr>
                 <th class="!bg-gray-50 dark:!bg-slate-800/50">ID</th>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50">Img</th>
                 <th class="!bg-gray-50 dark:!bg-slate-800/50">Word</th>
                 <th class="!bg-gray-50 dark:!bg-slate-800/50">Reading</th>
                 <th class="!bg-gray-50 dark:!bg-slate-800/50">Meaning</th>
@@ -138,15 +142,19 @@
         document.getElementById('vocabCount').textContent = allVocabData.length;
         vocabTableBody.innerHTML = '';
         if (list.length === 0) {
-            vocabTableBody.innerHTML = '<tr><td colspan="6" class="!text-center !py-8 !text-gray-400 dark:!text-slate-500">No vocabulary found</td></tr>';
+            vocabTableBody.innerHTML = '<tr><td colspan="7" class="!text-center !py-8 !text-gray-400 dark:!text-slate-500">No vocabulary found</td></tr>';
             return;
         }
         list.forEach(vocab => {
             const row = vocabTableBody.insertRow();
             row.className = 'hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors';
             const jlptBadge = vocab.jlpt_level ? `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300">N${vocab.jlpt_level}</span>` : '<span class="text-gray-300 dark:text-slate-600">--</span>';
+            const imgCell = vocab.image_url
+                ? `<img src="/uploads/${escapeHtml(vocab.image_url)}" class="w-8 h-8 rounded object-contain" alt="">`
+                : '<span class="text-gray-300 dark:text-slate-600">--</span>';
             row.innerHTML = `
                 <td class="!text-gray-400 dark:!text-slate-500 !text-sm">${vocab.id}</td>
+                <td>${imgCell}</td>
                 <td class="!text-lg !font-medium">${escapeHtml(vocab.word)}</td>
                 <td class="!text-sm !text-gray-600 dark:!text-slate-400">${escapeHtml(vocab.reading)}</td>
                 <td class="!text-sm !max-w-[250px] !truncate">${escapeHtml(vocab.meaning)}</td>
@@ -225,6 +233,47 @@
         const response = await fetch(`/api/admin/vocabulary/${id}/delete`, { method: 'DELETE' });
         if (response.ok) { fetchVocab(); showToast('Vocabulary deleted'); }
         else { const err = await response.json(); showToast('Error: ' + (err.error || response.statusText), 'error'); }
+    }
+
+    async function generateVocabImages() {
+        const withoutImage = allVocabData.filter(v => !v.image_url);
+        if (withoutImage.length === 0) {
+            showToast('Alle Vokabeln haben bereits ein Bild.', 'info');
+            return;
+        }
+        if (!confirm(`${withoutImage.length} Vokabeln ohne Bild gefunden. Bilder jetzt generieren? (Dies kann einige Minuten dauern)`)) return;
+
+        const btn = document.getElementById('genImagesBtn');
+        const btnText = document.getElementById('genImagesBtnText');
+        btn.disabled = true;
+        btnText.textContent = `Generiere... (0/${withoutImage.length})`;
+
+        let generated = 0;
+        let errors = 0;
+        const batchSize = 5;
+
+        for (let i = 0; i < withoutImage.length; i += batchSize) {
+            const batch = withoutImage.slice(i, i + batchSize);
+            const ids = batch.map(v => v.id);
+            try {
+                const response = await fetch('/api/admin/vocabulary/generate-images', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ vocabulary_ids: ids })
+                });
+                const result = await response.json();
+                generated += result.generated || 0;
+                errors += result.errors || 0;
+            } catch (e) {
+                errors += batch.length;
+            }
+            btnText.textContent = `Generiere... (${generated}/${withoutImage.length})`;
+        }
+
+        btn.disabled = false;
+        btnText.textContent = 'Generate Images';
+        showToast(`${generated} Bilder generiert, ${errors} Fehler.`, errors > 0 ? 'warning' : 'success');
+        fetchVocab();
     }
 
     fetchVocab();

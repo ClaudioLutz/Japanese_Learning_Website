@@ -379,6 +379,48 @@ class AILessonContentGenerator:
             current_app.logger.error(f"Failed to generate image with OpenAI gpt-image-1-mini: {e}")
             return {"error": str(e)}
 
+    def generate_vocabulary_image(self, word: str, meaning: str, size: str = "1024x1024"):
+        """Generate a simple, modern icon-style image for a vocabulary flashcard.
+
+        Style: Flat design, geometric shapes, minimal detail, muted pastel colors.
+        """
+        if not self.openai_client:
+            return {"error": "OpenAI client is not initialized"}
+
+        prompt = (
+            f"A single, centered icon representing the concept '{meaning}'. "
+            "STRICT RULE: absolutely NO text, NO letters, NO characters, NO writing, "
+            "NO symbols, NO numbers, NO words of any language anywhere in the image. "
+            "Only pure visual imagery. "
+            "Flat design, geometric simple shapes, minimal detail, soft muted pastel colors, "
+            "white background, no shadows, clean vector-style illustration, "
+            "modern minimalist pictogram, like a simple app icon."
+        )
+
+        try:
+            current_app.logger.info(f"Generating vocab image for '{word}' ({meaning})")
+            response = self.openai_client.images.generate(
+                model="gpt-image-1-mini",
+                prompt=prompt,
+                size=size,
+                quality="medium",
+                n=1
+            )
+
+            if response.data and response.data[0].b64_json:
+                img_bytes = base64.b64decode(response.data[0].b64_json)
+                image = Image.open(BytesIO(img_bytes))
+                return {
+                    "image": image,
+                    "image_bytes": img_bytes,
+                    "prompt": prompt,
+                    "word": word
+                }
+            return {"error": "No image data in response"}
+        except Exception as e:
+            current_app.logger.error(f"Failed to generate vocab image for '{word}': {e}")
+            return {"error": str(e)}
+
     def generate_lesson_tile_background(self, lesson_title: str, lesson_description: str, difficulty_level: int = 1):
         """Generate a background image specifically optimized for lesson tiles using OpenAI."""
         if not self.openai_client:

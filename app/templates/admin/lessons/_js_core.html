@@ -67,9 +67,9 @@ async function loadLessons() {
             row.className = 'hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors';
             row.innerHTML = `
                 <td>
-                    <div class="flex flex-col items-center">
+                    <div class="flex items-center gap-1">
                         <button class="btn reorder-btn !p-0.5" onclick="moveLesson(${lesson.id}, 'up')" ${index === 0 ? 'disabled' : ''}>▲</button>
-                        <span class="text-xs text-gray-500 dark:text-slate-400 my-0.5">${lesson.order_index}</span>
+                        <span class="text-xs text-gray-500 dark:text-slate-400">${lesson.order_index}</span>
                         <button class="btn reorder-btn !p-0.5" onclick="moveLesson(${lesson.id}, 'down')" ${index === lessons.length - 1 ? 'disabled' : ''}>▼</button>
                     </div>
                 </td>

@@ -70,6 +70,18 @@
                 <!-- User Section -->
                 <div class="navbar-user-section">
                     {% if current_user.is_authenticated %}
+                        <div class="user-gamification">
+                            {% if current_user.current_streak and current_user.current_streak > 0 %}
+                            <div class="streak-badge" title="{{ current_user.current_streak }} Tage Streak">
+                                <i class="fas fa-fire"></i>
+                                <span>{{ current_user.current_streak }}</span>
+                            </div>
+                            {% endif %}
+                            <div class="xp-badge" title="{{ current_user.total_xp or 0 }} XP gesammelt">
+                                <i class="fas fa-star"></i>
+                                <span>{{ current_user.total_xp or 0 }}</span>
+                            </div>
+                        </div>
                         <div class="user-info">
                             <div class="user-avatar"><i class="fas fa-user"></i></div>
                             <div class="user-details">
