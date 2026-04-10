@@ -2121,7 +2121,7 @@ def get_public_categories():
 @login_required
 @limiter.limit("30 per minute")
 def text_to_speech():
-    """Generiert natuerliche Sprache via OpenAI TTS mit File-Cache."""
+    """OpenAI TTS — eine Voice (nova) spricht alles, erkennt Sprache automatisch."""
     import hashlib
     from pathlib import Path
     from openai import OpenAI
@@ -2131,18 +2131,12 @@ def text_to_speech():
         return jsonify({'error': 'text required'}), 400
 
     text = data['text'].strip()[:500]  # Max 500 Zeichen
-    lang = data.get('lang', 'en-US')
 
-    # Voice-Zuordnung nach Sprache
-    voice_map = {
-        'ja-JP': 'nova',      # Nova klingt gut fuer Japanisch
-        'de-DE': 'alloy',     # Alloy fuer Deutsch
-        'en-US': 'echo',      # Echo fuer Englisch
-    }
-    voice = voice_map.get(lang, 'alloy')
+    # Eine Voice fuer alles — nova ist multilingual (JP/EN/DE)
+    voice = 'nova'
 
-    # Cache-Key aus Text + Sprache
-    cache_key = hashlib.md5(f"{text}_{lang}_{voice}".encode()).hexdigest()
+    # Cache-Key aus Text
+    cache_key = hashlib.md5(f"{text}_{voice}".encode()).hexdigest()
     cache_dir = Path(current_app.static_folder) / 'cache' / 'tts'
     cache_dir.mkdir(parents=True, exist_ok=True)
     cache_file = cache_dir / f"{cache_key}.mp3"
@@ -2162,7 +2156,6 @@ def text_to_speech():
             model="tts-1",
             voice=voice,
             input=text,
-            speed=0.9 if lang == 'ja-JP' else 1.0,
         )
         response.write_to_file(str(cache_file))
         return current_app.send_static_file(f'cache/tts/{cache_key}.mp3')
@@ -3300,10 +3293,61 @@ def generate_lesson_images():
 
     return jsonify(result)
 
+# == VOCABULARY IMAGE GENERATION API ==
+@bp.route('/api/admin/vocabulary/generate-images', methods=['POST'])
+@login_required
+@admin_required
+def generate_vocabulary_images():
+    """Batch-generate simple icon images for vocabulary items without images."""
+    import uuid
+
+    data = request.json or {}
+    vocab_ids = data.get('vocabulary_ids')  # Optional: specific IDs, otherwise all without image
+
+    if vocab_ids:
+        vocabs = Vocabulary.query.filter(Vocabulary.id.in_(vocab_ids)).all()
+    else:
+        vocabs = Vocabulary.query.filter(
+            (Vocabulary.image_url.is_(None)) | (Vocabulary.image_url == '')
+        ).all()
+
+    if not vocabs:
+        return jsonify({"message": "Keine Vokabeln ohne Bild gefunden.", "generated": 0}), 200
+
+    generator = AILessonContentGenerator()
+    generated = []
+    errors = []
+    upload_dir = os.path.join(current_app.config['UPLOAD_FOLDER'], 'vocabulary', 'images')
+    os.makedirs(upload_dir, exist_ok=True)
+
+    for vocab in vocabs:
+        result = generator.generate_vocabulary_image(vocab.word, vocab.meaning)
+        if 'error' in result:
+            errors.append({"id": vocab.id, "word": vocab.word, "error": result['error']})
+            continue
+
+        filename = f"vocab_{vocab.id}_{uuid.uuid4().hex[:8]}.png"
+        relative_path = f"vocabulary/images/{filename}"
+        save_path = os.path.join(upload_dir, filename)
+
+        try:
+            result['image'].save(save_path, 'PNG')
+            vocab.image_url = relative_path
+            generated.append({"id": vocab.id, "word": vocab.word, "image_url": relative_path})
+        except Exception as e:
+            errors.append({"id": vocab.id, "word": vocab.word, "error": str(e)})
+
+    db.session.commit()
+    return jsonify({
+        "generated": len(generated),
+        "errors": len(errors),
+        "details": generated,
+        "error_details": errors
+    }), 200
+
+
 # == FILE UPLOAD API ==
 from app.utils import FileUploadHandler # Import FileUploadHandler
-
-# ... (other imports and code) ...
 
 # == FILE UPLOAD API ==
 @bp.route('/api/admin/upload-file', methods=['POST'])

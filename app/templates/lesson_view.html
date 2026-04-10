@@ -797,7 +797,12 @@
                                                                         {% elif content.content_type == 'kanji' %}
                                                                             <span class="kana-char">{{ content_data.character }}</span>
                                                                         {% elif content.content_type == 'vocabulary' %}
-                                                                            <div class="vocab-front">
+                                                                            <div class="vocab-front {% if content_data.image_url %}has-image{% endif %}">
+                                                                                {% if content_data.image_url %}
+                                                                                <div class="vocab-image">
+                                                                                    <img src="{{ url_for('routes.uploaded_file', filename=content_data.image_url) }}" alt="{{ content_data.meaning }}">
+                                                                                </div>
+                                                                                {% endif %}
                                                                                 <div class="vocab-word">{{ content_data.word }}</div>
                                                                                 <div class="vocab-reading">{{ content_data.reading }}</div>
                                                                             </div>
@@ -1968,173 +1973,74 @@ function playCloudTTS(text, speed, onEnd) {
     });
 }
 
-// Multilingual Text-to-Speech System (Japanese, English, German)
+// TTS System — Absatz-basiert, eine OpenAI-Voice (nova) fuer alles
+// Klick auf einen Absatz → ganzer Text geht an OpenAI → nova spricht alles korrekt
 class MultilingualTextAudioSystem {
     constructor() {
-        this.japaneseRegex = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF\u3000-\u303F]/;
-        this.germanRegex = /[äöüÄÖÜß]/;
-        // Default-Sprache aus der Lektion (instruction_language)
-        this.defaultLang = '{{ lesson.instruction_language|default("english") }}' === 'german' ? 'de-DE' : 'en-US';
-        this.voices = [];
+        this.currentAudio = null;
         this.init();
     }
 
     init() {
-        // Voices laden (async in manchen Browsern)
-        if ('speechSynthesis' in window) {
-            this.voices = speechSynthesis.getVoices();
-            speechSynthesis.addEventListener('voiceschanged', () => {
-                this.voices = speechSynthesis.getVoices();
-            });
-        }
-        document.addEventListener('DOMContentLoaded', () => {
-            this.processAllContent();
-        });
+        document.addEventListener('DOMContentLoaded', () => this.processAllContent());
     }
 
     processAllContent() {
-        const contentAreas = document.querySelectorAll(
-            '.content-item, .rich-text-content, .text-content-container, .details'
+        document.querySelectorAll('.details, .rich-text-content, .text-content-container').forEach(
+            area => this.processElement(area)
         );
-        contentAreas.forEach(area => this.processElement(area));
     }
 
     processElement(element) {
         if (element.dataset.ttsProcessed) return;
-        this.processTextNodes(element);
+        // Alle <p>-Absaetze im Element klickbar machen
+        const paragraphs = element.querySelectorAll('p');
+        if (paragraphs.length > 0) {
+            paragraphs.forEach(p => this.makeParagraphClickable(p));
+        }
         element.dataset.ttsProcessed = 'true';
     }
 
-    // Element erneut verarbeiten (fuer geklonte Karten im Deck)
+    // Fuer geklonte Deck-Karten
     reprocessElement(element) {
         element.removeAttribute('data-tts-processed');
-        // Bestehende TTS-Spans zuruecksetzen
-        element.querySelectorAll('.tts-segment').forEach(span => {
-            span.replaceWith(document.createTextNode(span.textContent));
-        });
-        element.normalize();
+        element.querySelectorAll('.tts-segment').forEach(s => s.classList.remove('tts-segment'));
         this.processElement(element);
     }
 
-    processTextNodes(element) {
-        const walker = document.createTreeWalker(
-            element,
-            NodeFilter.SHOW_TEXT,
-            {
-                acceptNode: (node) => {
-                    if (node.parentElement.classList.contains('tts-segment') ||
-                        node.parentElement.classList.contains('japanese-audio-text') ||
-                        node.parentElement.classList.contains('audio-btn') ||
-                        node.parentElement.tagName === 'BUTTON' ||
-                        node.parentElement.tagName === 'STYLE' ||
-                        node.parentElement.tagName === 'SCRIPT') {
-                        return NodeFilter.FILTER_REJECT;
-                    }
-                    // Nur Textknoten mit echtem Inhalt verarbeiten
-                    return node.textContent.trim().length > 1 ?
-                        NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
-                }
-            }
-        );
+    makeParagraphClickable(p) {
+        if (p.classList.contains('tts-segment')) return;
+        const text = p.textContent.trim();
+        if (text.length < 2) return;
 
-        const textNodes = [];
-        let node;
-        while (node = walker.nextNode()) {
-            textNodes.push(node);
+        // Den Wert-Text extrahieren (ohne Label wie "Reading:", "Meaning:")
+        const strong = p.querySelector('strong');
+        let speakText = text;
+        if (strong) {
+            speakText = text.replace(strong.textContent, '').trim();
         }
-        textNodes.forEach(textNode => this.wrapTextSegments(textNode));
-    }
+        if (speakText.length < 1) return;
 
-    // Sprache eines Textsegments erkennen
-    detectLanguage(text) {
-        if (this.japaneseRegex.test(text)) return 'ja-JP';
-        if (this.germanRegex.test(text)) return 'de-DE';
-        return this.defaultLang;
-    }
+        // Absatz klickbar machen
+        p.classList.add('tts-segment');
+        p.setAttribute('title', 'Klick zum Vorlesen');
+        p.style.cursor = 'pointer';
 
-    isJapaneseChar(char) {
-        const code = char.charCodeAt(0);
-        return (
-            (code >= 0x3040 && code <= 0x309F) || // Hiragana
-            (code >= 0x30A0 && code <= 0x30FF) || // Katakana
-            (code >= 0x4E00 && code <= 0x9FAF) || // Kanji
-            (code >= 0x3000 && code <= 0x303F)    // Japanische Satzzeichen
-        );
-    }
-
-    // Text in Sprach-Segmente aufteilen
-    segmentText(text) {
-        const segments = [];
-        let current = { text: '', lang: null };
-
-        for (let i = 0; i < text.length; i++) {
-            const char = text[i];
-            const isJP = this.isJapaneseChar(char);
-            const charLang = isJP ? 'ja-JP' : null; // null = nicht-japanisch
-
-            if (charLang !== current.lang) {
-                if (current.text.length > 0) {
-                    segments.push({ ...current });
-                }
-                current = { text: char, lang: charLang };
-            } else {
-                current.text += char;
-            }
-        }
-        if (current.text.length > 0) {
-            segments.push(current);
-        }
-
-        // Nicht-japanische Segmente: Sprache anhand Inhalt erkennen
-        return segments.map(seg => ({
-            text: seg.text,
-            lang: seg.lang || this.detectLanguage(seg.text)
-        }));
-    }
-
-    wrapTextSegments(textNode) {
-        const text = textNode.textContent;
-        const segments = this.segmentText(text);
-
-        // Nur Labels/Kurztext => nicht wrappen
-        const hasContent = segments.some(s => s.text.trim().length > 1);
-        if (!hasContent) return;
-
-        const fragment = document.createDocumentFragment();
-
-        segments.forEach(seg => {
-            const trimmed = seg.text.trim();
-            // Nur Leerzeichen/Satzzeichen => als Text belassen
-            if (trimmed.length <= 1 && !/[\u3040-\u9FAF]/.test(trimmed)) {
-                fragment.appendChild(document.createTextNode(seg.text));
-                return;
-            }
-
-            const span = document.createElement('span');
-            span.className = 'tts-segment';
-            span.textContent = seg.text;
-            span.setAttribute('data-lang', seg.lang);
-            span.setAttribute('title', seg.lang === 'ja-JP' ? 'Klick: Japanisch vorlesen' :
-                                       seg.lang === 'de-DE' ? 'Klick: Deutsch vorlesen' :
-                                                              'Click: Read aloud');
-
-            span.addEventListener('click', (e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                this.playText(trimmed, seg.lang, span);
-            });
-
-            fragment.appendChild(span);
+        p.addEventListener('click', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            this.playText(speakText, p);
         });
-
-        textNode.parentNode.replaceChild(fragment, textNode);
     }
 
-    playText(text, lang, element) {
-        element.classList.add('tts-playing');
-        const done = () => element.classList.remove('tts-playing');
+    playText(text, element) {
+        // Laufende Wiedergabe stoppen
+        if (this.currentAudio) { this.currentAudio.pause(); this.currentAudio = null; }
+        document.querySelectorAll('.tts-playing').forEach(el => el.classList.remove('tts-playing'));
 
-        // OpenAI TTS via Server-Endpoint (natuerliche Stimmen, gecached)
+        element.classList.add('tts-playing');
+        const done = () => { element.classList.remove('tts-playing'); this.currentAudio = null; };
+
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
         fetch('/api/tts', {
             method: 'POST',
@@ -2142,7 +2048,7 @@ class MultilingualTextAudioSystem {
                 'Content-Type': 'application/json',
                 ...(csrfToken ? { 'X-CSRFToken': csrfToken } : {})
             },
-            body: JSON.stringify({ text: text, lang: lang })
+            body: JSON.stringify({ text: text })
         })
         .then(resp => {
             if (!resp.ok) throw new Error('TTS API error');
@@ -2150,31 +2056,26 @@ class MultilingualTextAudioSystem {
         })
         .then(blob => {
             const url = URL.createObjectURL(blob);
-            const audio = new Audio(url);
-            audio.addEventListener('ended', () => { done(); URL.revokeObjectURL(url); });
-            audio.addEventListener('error', () => { done(); URL.revokeObjectURL(url); });
-            audio.play();
+            this.currentAudio = new Audio(url);
+            this.currentAudio.addEventListener('ended', () => { done(); URL.revokeObjectURL(url); });
+            this.currentAudio.addEventListener('error', () => { done(); URL.revokeObjectURL(url); });
+            this.currentAudio.play();
         })
         .catch(() => {
             // Fallback: Browser Web Speech API
             if ('speechSynthesis' in window) {
                 speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = lang;
-                utterance.rate = lang === 'ja-JP' ? 0.8 : 0.9;
-                const voice = this.voices.find(v => v.lang.startsWith(lang.split('-')[0]));
-                if (voice) utterance.voice = voice;
-                utterance.addEventListener('end', done);
-                utterance.addEventListener('error', done);
-                speechSynthesis.speak(utterance);
-            } else {
-                done();
-            }
+                const u = new SpeechSynthesisUtterance(text);
+                u.rate = 0.9;
+                u.addEventListener('end', done);
+                u.addEventListener('error', done);
+                speechSynthesis.speak(u);
+            } else { done(); }
         });
     }
 }
 
-// Initialize the multilingual text audio system
+// Initialize
 const japaneseAudioSystem = new MultilingualTextAudioSystem();
 
 // ============================================================
