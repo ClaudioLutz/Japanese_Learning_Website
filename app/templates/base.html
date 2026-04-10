@@ -9,18 +9,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-improvements.css') }}">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
     {% block styles %}{% endblock %}
     {% block extra_head %}{% endblock %}
 </head>
 <body {% block body_attributes %}{% endblock %}>
-    <nav class="enhanced-navbar">
+    <nav class="enhanced-navbar" x-data="{ navOpen: false }" @click.away="navOpen = false" @resize.window="if(window.innerWidth >= 992) navOpen = false">
         <div class="navbar-container">
-            <!-- Brand Section -->
+            <!-- Brand -->
             <div class="navbar-brand-section">
                 <a class="enhanced-navbar-brand" href="{{ url_for('routes.index') }}">
-                    <div class="brand-icon">
-                        <i class="fas fa-torii-gate"></i>
-                    </div>
+                    <div class="brand-icon"><i class="fas fa-torii-gate"></i></div>
                     <div class="brand-text">
                         <span class="brand-name">Japanese Learning</span>
                         <span class="brand-tagline">Master the Language</span>
@@ -28,34 +27,41 @@
                 </a>
             </div>
 
-            <!-- Mobile Menu Toggle -->
-            <button class="mobile-menu-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-                <span class="hamburger-line"></span>
-                <span class="hamburger-line"></span>
-                <span class="hamburger-line"></span>
+            <!-- Hamburger Toggle (nur sichtbar unter 992px) -->
+            <button class="mobile-menu-toggle"
+                    @click="navOpen = !navOpen"
+                    :aria-expanded="navOpen.toString()"
+                    aria-label="Navigation umschalten">
+                <span class="hamburger-line" :class="navOpen && 'hamburger-open-1'"></span>
+                <span class="hamburger-line" :class="navOpen && 'hamburger-open-2'"></span>
+                <span class="hamburger-line" :class="navOpen && 'hamburger-open-3'"></span>
             </button>
 
-            <!-- Navigation Content -->
-            <div class="navbar-content-wrapper">
-                <!-- Main Navigation -->
+            <!-- Navigation (Desktop: CSS erzwingt sichtbar / Mobile: Alpine toggle) -->
+            <div class="navbar-content-wrapper"
+                 x-show="navOpen"
+                 x-transition:enter="nav-dropdown-enter"
+                 x-transition:enter-start="nav-dropdown-enter-start"
+                 x-transition:enter-end="nav-dropdown-enter-end"
+                 x-transition:leave="nav-dropdown-leave"
+                 x-transition:leave-start="nav-dropdown-leave-start"
+                 x-transition:leave-end="nav-dropdown-leave-end">
+
+                <!-- Nav Links -->
                 <div class="navbar-nav-section">
                     <div class="nav-links">
                         <a class="enhanced-nav-link" href="{{ url_for('routes.lessons') }}">
-                            <i class="fas fa-book-open"></i>
-                            <span>Lessons</span>
+                            <i class="fas fa-book-open"></i><span>Lessons</span>
                         </a>
                         {% if current_user.is_authenticated %}
                         <a class="enhanced-nav-link" href="{{ url_for('routes.courses') }}">
-                            <i class="fas fa-graduation-cap"></i>
-                            <span>Courses</span>
+                            <i class="fas fa-graduation-cap"></i><span>Courses</span>
                         </a>
                         <a class="enhanced-nav-link" href="{{ url_for('routes.my_lessons') }}">
-                            <i class="fas fa-shopping-bag"></i>
-                            <span>My Lessons</span>
+                            <i class="fas fa-shopping-bag"></i><span>My Lessons</span>
                         </a>
                         <a class="enhanced-nav-link" href="{{ url_for('routes.user_profile') }}">
-                            <i class="fas fa-user-circle"></i>
-                            <span>Profile</span>
+                            <i class="fas fa-user-circle"></i><span>Profile</span>
                         </a>
                         {% endif %}
                     </div>
@@ -64,119 +70,30 @@
                 <!-- User Section -->
                 <div class="navbar-user-section">
                     {% if current_user.is_authenticated %}
-                        <!-- User Info -->
                         <div class="user-info">
-                            <div class="user-avatar">
-                                <i class="fas fa-user"></i>
-                            </div>
+                            <div class="user-avatar"><i class="fas fa-user"></i></div>
                             <div class="user-details">
                                 <span class="user-name">{{ current_user.username }}</span>
-                                <span class="user-subscription">
-                                    <i class="fas fa-user"></i>
-                                    User
-                                </span>
+                                <span class="user-subscription"><i class="fas fa-user"></i> User</span>
                             </div>
                         </div>
-
-                        <!-- Action Buttons -->
                         <div class="nav-actions">
-                            {% if current_user.is_authenticated and current_user.is_admin %}
+                            {% if current_user.is_admin %}
                             <a class="nav-action-btn admin-btn" href="{{ url_for('routes.admin_index') }}">
-                                <i class="fas fa-cog"></i>
-                                <span>Admin</span>
+                                <i class="fas fa-cog"></i><span>Admin</span>
                             </a>
                             {% endif %}
-                            
-                            
                             <a class="nav-action-btn logout-btn" href="{{ url_for('routes.logout') }}">
-                                <i class="fas fa-sign-out-alt"></i>
-                                <span>Logout</span>
+                                <i class="fas fa-sign-out-alt"></i><span>Logout</span>
                             </a>
                         </div>
                     {% else %}
-                        <!-- Guest Actions -->
                         <div class="nav-actions">
                             <a class="nav-action-btn login-btn" href="{{ url_for('routes.login') }}">
-                                <i class="fas fa-sign-in-alt"></i>
-                                <span>Login</span>
+                                <i class="fas fa-sign-in-alt"></i><span>Login</span>
                             </a>
                             <a class="nav-action-btn register-btn" href="{{ url_for('routes.register') }}">
-                                <i class="fas fa-user-plus"></i>
-                                <span>Register</span>
-                            </a>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <!-- Mobile Navigation Menu -->
-            <div class="collapse navbar-collapse mobile-nav-menu" id="navbarContent">
-                <!-- Mobile Main Navigation -->
-                <div class="mobile-nav-section">
-                    <div class="mobile-nav-links">
-                        <a class="mobile-nav-link" href="{{ url_for('routes.lessons') }}">
-                            <i class="fas fa-book-open"></i>
-                            <span>Lessons</span>
-                        </a>
-                        {% if current_user.is_authenticated %}
-                        <a class="mobile-nav-link" href="{{ url_for('routes.courses') }}">
-                            <i class="fas fa-graduation-cap"></i>
-                            <span>Courses</span>
-                        </a>
-                        <a class="mobile-nav-link" href="{{ url_for('routes.my_lessons') }}">
-                            <i class="fas fa-shopping-bag"></i>
-                            <span>My Lessons</span>
-                        </a>
-                        <a class="mobile-nav-link" href="{{ url_for('routes.user_profile') }}">
-                            <i class="fas fa-user-circle"></i>
-                            <span>Profile</span>
-                        </a>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <!-- Mobile User Section -->
-                <div class="mobile-user-section">
-                    {% if current_user.is_authenticated %}
-                        <!-- Mobile User Info -->
-                        <div class="mobile-user-info">
-                            <div class="user-avatar">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <div class="user-details">
-                                <span class="user-name">{{ current_user.username }}</span>
-                                <span class="user-subscription">
-                                    <i class="fas fa-user"></i>
-                                    User
-                                </span>
-                            </div>
-                        </div>
-
-                        <!-- Mobile Action Buttons -->
-                        <div class="mobile-nav-actions">
-                            {% if current_user.is_authenticated and current_user.is_admin %}
-                            <a class="mobile-nav-action-btn admin-btn" href="{{ url_for('routes.admin_index') }}">
-                                <i class="fas fa-cog"></i>
-                                <span>Admin Panel</span>
-                            </a>
-                            {% endif %}
-                            
-                            
-                            <a class="mobile-nav-action-btn logout-btn" href="{{ url_for('routes.logout') }}">
-                                <i class="fas fa-sign-out-alt"></i>
-                                <span>Logout</span>
-                            </a>
-                        </div>
-                    {% else %}
-                        <!-- Mobile Guest Actions -->
-                        <div class="mobile-nav-actions">
-                            <a class="mobile-nav-action-btn login-btn" href="{{ url_for('routes.login') }}">
-                                <i class="fas fa-sign-in-alt"></i>
-                                <span>Login</span>
-                            </a>
-                            <a class="mobile-nav-action-btn register-btn" href="{{ url_for('routes.register') }}">
-                                <i class="fas fa-user-plus"></i>
-                                <span>Register</span>
+                                <i class="fas fa-user-plus"></i><span>Register</span>
                             </a>
                         </div>
                     {% endif %}
