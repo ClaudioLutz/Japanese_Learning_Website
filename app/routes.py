@@ -2379,12 +2379,18 @@ def update_lesson_progress(lesson_id):
                 'lesson_id': lesson_id
             })
         
+        # Streak bei Lernaktivitaet aktualisieren
+        current_user.update_streak()
+
         db.session.commit()
-        
+
         # Refresh the progress object and return it
         db.session.refresh(progress)
-        return jsonify(model_to_dict(progress))
-        
+        result = model_to_dict(progress)
+        result['streak'] = current_user.current_streak or 0
+        result['total_xp'] = current_user.total_xp or 0
+        return jsonify(result)
+
     except SQLAlchemyError as e:
         db.session.rollback()
         current_app.logger.error(f"Error updating lesson progress for user {current_user.id}, lesson {lesson_id}: {e}")
@@ -3131,9 +3137,16 @@ def submit_quiz_answer(lesson_id, question_id):
             return jsonify({"error": "Unsupported question type"}), 400
 
         answer.answered_at = db.func.now()
-        
+
+        # XP vergeben bei korrekter Antwort
+        xp_earned = 0
+        if is_correct:
+            xp_earned = question.points or 10
+            current_user.total_xp = (current_user.total_xp or 0) + xp_earned
+            current_user.update_streak()
+
         db.session.commit()
-        
+
         # Return result with feedback
         # Calculate remaining attempts safely
         attempts_remaining = 'Unlimited'
@@ -3147,7 +3160,10 @@ def submit_quiz_answer(lesson_id, question_id):
 
         result = {
             'is_correct': is_correct,
-            'attempts_remaining': attempts_remaining
+            'attempts_remaining': attempts_remaining,
+            'xp_earned': xp_earned,
+            'total_xp': current_user.total_xp or 0,
+            'streak': current_user.current_streak or 0
         }
 
         # Always show why the selected option is wrong/right
@@ -3781,6 +3797,7 @@ def export_multiple_lessons():
         return jsonify({"error": "Failed to export lessons"}), 500
 
 @bp.route('/uploads/<path:filename>')
+@limiter.exempt
 def uploaded_file(filename):
     """Serve uploaded files"""
     import os
