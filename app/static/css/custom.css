@@ -1630,19 +1630,22 @@ button[onclick*="moveContentInPage"]:active {
 .flip-card .vocab-front {
     flex-direction: column;
     text-align: center;
-    position: relative;
-    width: 100%;
-    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Vorderseite MIT Bild: Bild als Hintergrund, Text darüber */
 .flip-card .vocab-front.has-image {
+    position: relative;
+    width: 100%;
+    height: 100%;
     justify-content: flex-end;
     overflow: hidden;
     border-radius: 12px;
 }
 
-.flip-card .vocab-image {
+.flip-card .has-image .vocab-image {
     position: absolute;
     inset: 0;
     display: flex;
@@ -1651,7 +1654,7 @@ button[onclick*="moveContentInPage"]:active {
     overflow: hidden;
 }
 
-.flip-card .vocab-image img {
+.flip-card .has-image .vocab-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
