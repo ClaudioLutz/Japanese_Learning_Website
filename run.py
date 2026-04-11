@@ -32,7 +32,10 @@ def db_downgrade():
     downgrade()
 
 if __name__ == '__main__':
+    # reloader_type='stat' umgeht den Watchdog-Bug mit *.pyc-Pattern-Konflikten
     app.run(
         debug=True,
-        exclude_patterns=['venv/*', '*.pyc', '__pycache__/*', '.git/*', 'node_modules/*']
+        use_reloader=True,
+        reloader_type='stat',
+        extra_files=[],
     )
