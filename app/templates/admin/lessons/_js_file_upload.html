@@ -13,14 +13,18 @@ function getSupportedFormats(contentType) {
 function toggleContentSource(source) {
     const fileSection = document.getElementById('fileUploadSection');
     const urlSection = document.getElementById('urlSection');
+    const recordSection = document.getElementById('recordSection');
+    if (fileSection) fileSection.style.display = source === 'upload' ? 'block' : 'none';
+    if (urlSection) urlSection.style.display = source === 'url' ? 'block' : 'none';
+    if (recordSection) recordSection.style.display = source === 'record' ? 'block' : 'none';
     if (source === 'upload') {
-        fileSection.style.display = 'block';
-        urlSection.style.display = 'none';
         const urlInput = document.getElementById('mediaUrl');
         if (urlInput) urlInput.value = '';
-    } else {
-        fileSection.style.display = 'none';
-        urlSection.style.display = 'block';
+        if (typeof AudioRecorder !== 'undefined') AudioRecorder.reset();
+    } else if (source === 'url') {
+        clearUploadedFile();
+        if (typeof AudioRecorder !== 'undefined') AudioRecorder.reset();
+    } else if (source === 'record') {
         clearUploadedFile();
     }
 }
@@ -56,8 +60,194 @@ function handleFileSelect(event) {
 
 function validateFileType(file, expectedType) {
     const ext = file.name.split('.').pop().toLowerCase();
-    const valid = { 'image': ['jpg', 'jpeg', 'png', 'gif', 'webp'], 'video': ['mp4', 'webm', 'ogg', 'avi', 'mov'], 'audio': ['mp3', 'wav', 'ogg', 'aac', 'm4a'] };
+    const valid = { 'image': ['jpg', 'jpeg', 'png', 'gif', 'webp'], 'video': ['mp4', 'webm', 'ogg', 'avi', 'mov'], 'audio': ['mp3', 'wav', 'ogg', 'aac', 'm4a', 'webm', 'opus'] };
     return valid[expectedType] && valid[expectedType].includes(ext);
+}
+
+// ── Audio Recorder (wavesurfer.js + MediaRecorder) ───────────────────
+const AudioRecorder = (() => {
+    let ws = null;          // WaveSurfer instance
+    let recordPlugin = null;
+    let recordedBlob = null;
+    let recordedUrl = null;
+    let playWs = null;      // Playback WaveSurfer instance
+    let timerInterval = null;
+    let startTime = 0;
+    const MAX_DURATION_MS = 60000; // 1 min
+
+    function formatTime(ms) {
+        const s = Math.floor(ms / 1000);
+        const mm = String(Math.floor(s / 60)).padStart(2, '0');
+        const ss = String(s % 60).padStart(2, '0');
+        return `${mm}:${ss}`;
+    }
+
+    function setButtonStates({ recording = false, hasRecording = false }) {
+        const $rec = document.getElementById('recBtnRecord');
+        const $stop = document.getElementById('recBtnStop');
+        const $play = document.getElementById('recBtnPlay');
+        const $retake = document.getElementById('recBtnRetake');
+        const $save = document.getElementById('recBtnSave');
+        if (!$rec) return;
+        $rec.disabled = recording || hasRecording;
+        $stop.disabled = !recording;
+        $play.disabled = !hasRecording;
+        $retake.disabled = !hasRecording || recording;
+        if ($save) $save.disabled = !hasRecording || recording;
+        $rec.classList.toggle('pulsing', recording);
+    }
+
+    function updateTimer() {
+        const $t = document.getElementById('recTimer');
+        if (!$t) return;
+        const elapsed = Date.now() - startTime;
+        $t.textContent = `${formatTime(elapsed)} / ${formatTime(MAX_DURATION_MS)}`;
+        if (elapsed >= MAX_DURATION_MS) stop();
+    }
+
+    async function ensureWavesurfer() {
+        if (ws) return ws;
+        const container = document.getElementById('recWaveform');
+        if (!container || typeof WaveSurfer === 'undefined') return null;
+        ws = WaveSurfer.create({
+            container,
+            waveColor: '#818cf8',
+            progressColor: '#4f46e5',
+            cursorColor: '#4f46e5',
+            height: 80,
+            barWidth: 2,
+            barRadius: 2,
+        });
+        const RecordPluginCtor = (WaveSurfer.Record || window.RecordPlugin);
+        recordPlugin = ws.registerPlugin(RecordPluginCtor.create({
+            scrollingWaveform: true,
+            renderRecordedAudio: false,
+        }));
+        recordPlugin.on('record-end', (blob) => {
+            recordedBlob = blob;
+            if (recordedUrl) URL.revokeObjectURL(recordedUrl);
+            recordedUrl = URL.createObjectURL(blob);
+            setButtonStates({ recording: false, hasRecording: true });
+            clearInterval(timerInterval);
+            // Switch to playback waveform
+            if (playWs) { try { playWs.destroy(); } catch (e) {} }
+            playWs = WaveSurfer.create({
+                container,
+                waveColor: '#a5b4fc',
+                progressColor: '#4f46e5',
+                cursorColor: '#4f46e5',
+                height: 80,
+                barWidth: 2,
+                barRadius: 2,
+                url: recordedUrl,
+            });
+        });
+        return ws;
+    }
+
+    async function start() {
+        const wsInstance = await ensureWavesurfer();
+        if (!wsInstance || !recordPlugin) {
+            showToast('Recorder nicht verfuegbar', 'error');
+            return;
+        }
+        if (playWs) { try { playWs.destroy(); } catch (e) {} playWs = null; }
+        recordedBlob = null;
+        if (recordedUrl) { URL.revokeObjectURL(recordedUrl); recordedUrl = null; }
+        try {
+            await recordPlugin.startRecording();
+            setButtonStates({ recording: true, hasRecording: false });
+            startTime = Date.now();
+            timerInterval = setInterval(updateTimer, 100);
+        } catch (err) {
+            console.error('getUserMedia error:', err);
+            if (err && err.name === 'NotAllowedError') {
+                showToast('Mikrofon-Zugriff verweigert — bitte in Browser-Einstellungen erlauben', 'error');
+            } else {
+                showToast('Aufnahme konnte nicht gestartet werden', 'error');
+            }
+        }
+    }
+
+    function stop() {
+        if (!recordPlugin) return;
+        try { recordPlugin.stopRecording(); } catch (e) {}
+        clearInterval(timerInterval);
+    }
+
+    function playback() {
+        if (playWs) playWs.playPause();
+    }
+
+    function retake() {
+        recordedBlob = null;
+        if (recordedUrl) { URL.revokeObjectURL(recordedUrl); recordedUrl = null; }
+        if (playWs) { try { playWs.destroy(); } catch (e) {} playWs = null; }
+        setButtonStates({ recording: false, hasRecording: false });
+        document.getElementById('recTimer').textContent = '00:00 / ' + formatTime(MAX_DURATION_MS);
+        // Re-create scrolling-waveform instance
+        if (ws) { try { ws.destroy(); } catch (e) {} ws = null; recordPlugin = null; }
+    }
+
+    async function save() {
+        if (!recordedBlob) return null;
+        if (!currentLessonId) { showToast('Keine Lektion ausgewaehlt', 'error'); return null; }
+        const formData = new FormData();
+        const fileName = `recording_${Date.now()}.webm`;
+        formData.append('file', recordedBlob, fileName);
+        formData.append('lesson_id', currentLessonId);
+        try {
+            const res = await fetch('/api/admin/audio/record-upload', {
+                method: 'POST',
+                headers: { 'X-CSRFToken': getCSRFToken() },
+                body: formData,
+            });
+            const data = await res.json();
+            if (!data.success) throw new Error(data.error || 'upload failed');
+            // Feed into existing upload-success path so wizard saves URL
+            uploadedFileData = data;
+            showUploadSuccess(data);
+            // Hide recorder tab, show upload tab with success state
+            switchRecorderTab('upload');
+            showToast('Aufnahme gespeichert');
+            return data;
+        } catch (err) {
+            console.error(err);
+            showToast('Upload fehlgeschlagen: ' + err.message, 'error');
+            return null;
+        }
+    }
+
+    function reset() {
+        retake();
+        if (ws) { try { ws.destroy(); } catch (e) {} ws = null; recordPlugin = null; }
+        if (playWs) { try { playWs.destroy(); } catch (e) {} playWs = null; }
+        recordedBlob = null;
+        if (recordedUrl) { URL.revokeObjectURL(recordedUrl); recordedUrl = null; }
+        clearInterval(timerInterval);
+    }
+
+    return { start, stop, playback, retake, save, reset };
+})();
+
+function switchRecorderTab(tab) {
+    const upload = document.getElementById('uploadTabPanel');
+    const record = document.getElementById('recordTabPanel');
+    const tabUpload = document.getElementById('uploadTabBtn');
+    const tabRecord = document.getElementById('recordTabBtn');
+    if (!upload || !record) return;
+    if (tab === 'record') {
+        upload.style.display = 'none';
+        record.style.display = 'block';
+        if (tabUpload) tabUpload.classList.remove('active-tab');
+        if (tabRecord) tabRecord.classList.add('active-tab');
+    } else {
+        upload.style.display = 'block';
+        record.style.display = 'none';
+        if (tabUpload) tabUpload.classList.add('active-tab');
+        if (tabRecord) tabRecord.classList.remove('active-tab');
+        AudioRecorder.reset();
+    }
 }
 
 function uploadFile(file) {

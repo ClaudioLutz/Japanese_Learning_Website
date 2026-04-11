@@ -14,7 +14,7 @@
     <button onclick="openModal('exportLessonModal')" style="background-color: #3b82f6;" class="hover:!opacity-90">
         <i class="fas fa-download"></i> Export
     </button>
-    <button onclick="openModal('addLessonModal')" class="!bg-primary-600 hover:!bg-primary-700">
+    <button onclick="openModal('addLessonModal')" data-shortcut="new" class="!bg-primary-600 hover:!bg-primary-700" title="N">
         <i class="fas fa-plus"></i> Add Lesson
     </button>
 </div>
@@ -25,6 +25,15 @@
 {% endblock %}
 
 {% block content %}
+{# ── Bulk Action Bar ────────────────────────────────────────────────── #}
+<div id="lessonsBulkBar" class="bulk-action-bar" style="display:none;">
+    <span class="text-sm font-semibold"><span data-bulk-count>0</span> ausgewaehlt</span>
+    <button type="button" onclick="bulkPublishLessons(true)"><i class="fas fa-eye"></i> Publish</button>
+    <button type="button" onclick="bulkPublishLessons(false)"><i class="fas fa-eye-slash"></i> Unpublish</button>
+    <button type="button" onclick="bulkDeleteLessons()"><i class="fas fa-trash"></i> Delete</button>
+    <button type="button" class="!ml-auto" onclick="document.querySelectorAll('.lesson-checkbox').forEach(c=>c.checked=false); updateBulkBar();"><i class="fas fa-times"></i> Abbrechen</button>
+</div>
+
 {# ── Lessons Table ─────────────────────────────────────────────────── #}
 <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl overflow-hidden">
     <table id="lessonsTable" class="!shadow-none !rounded-none !m-0">

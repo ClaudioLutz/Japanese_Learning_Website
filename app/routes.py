@@ -1622,6 +1622,165 @@ def reorder_page_content_api(lesson_id, page_number):
         current_app.logger.error(f"Error reordering content: {e}")
         return jsonify({"error": "Database error occurred"}), 500
 
+@bp.route('/api/admin/lessons/<int:item_id>/patch', methods=['PATCH'])
+@login_required
+@admin_required
+def patch_lesson(item_id):
+    """Partial update of a lesson — used for inline-edit of single fields."""
+    item = Lesson.query.get_or_404(item_id)
+    data = request.json or {}
+    allowed = {'title', 'description', 'is_published', 'lesson_type', 'order_index',
+               'instruction_language', 'difficulty_level', 'estimated_duration'}
+    for key, value in data.items():
+        if key in allowed:
+            setattr(item, key, value)
+    try:
+        db.session.commit()
+        return jsonify(model_to_dict(item)), 200
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error patching lesson: {e}")
+        return jsonify({"error": "Database error"}), 500
+
+
+@bp.route('/api/admin/lessons/<int:lesson_id>/pages/reorder', methods=['POST'])
+@login_required
+@admin_required
+def reorder_lesson_pages(lesson_id):
+    """Reorder pages inside a lesson by renumbering page_number based on provided list."""
+    Lesson.query.get_or_404(lesson_id)
+    data = request.json or {}
+    ordered_old_numbers = data.get('page_numbers', [])
+    if not ordered_old_numbers:
+        return jsonify({"error": "No page_numbers provided"}), 400
+
+    try:
+        # Temporary shift to avoid unique-constraint clashes on (lesson_id, page_number)
+        OFFSET = 10000
+        pages_map = {}
+        for old_num in ordered_old_numbers:
+            page = LessonPage.query.filter_by(lesson_id=lesson_id, page_number=old_num).first()
+            if page:
+                pages_map[old_num] = page
+                page.page_number = old_num + OFFSET
+        db.session.flush()
+
+        # Also shift content items
+        content_items = LessonContent.query.filter_by(lesson_id=lesson_id).all()
+        for item in content_items:
+            item.page_number = item.page_number + OFFSET
+        db.session.flush()
+
+        # Now assign new sequential numbers (1..N)
+        for new_idx, old_num in enumerate(ordered_old_numbers, start=1):
+            page = pages_map.get(old_num)
+            if page:
+                page.page_number = new_idx
+            # Update all content on that old_num to new_idx
+            shifted_old = old_num + OFFSET
+            LessonContent.query.filter_by(
+                lesson_id=lesson_id, page_number=shifted_old
+            ).update({LessonContent.page_number: new_idx}, synchronize_session=False)
+
+        db.session.commit()
+        return jsonify({"message": "Pages reordered successfully"}), 200
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error reordering pages: {e}")
+        return jsonify({"error": "Database error occurred"}), 500
+
+
+@bp.route('/api/admin/lessons/<int:lesson_id>/content/<int:content_id>/move-to-page', methods=['POST'])
+@login_required
+@admin_required
+def move_content_to_page(lesson_id, content_id):
+    """Move a content item to a different page, inserted at given position."""
+    data = request.json or {}
+    target_page = data.get('target_page')
+    target_index = data.get('target_index', 0)
+    if target_page is None:
+        return jsonify({"error": "target_page required"}), 400
+
+    content = LessonContent.query.filter_by(id=content_id, lesson_id=lesson_id).first_or_404()
+    old_page = content.page_number
+
+    # Ensure target page exists
+    lesson_page = LessonPage.query.filter_by(lesson_id=lesson_id, page_number=target_page).first()
+    if not lesson_page:
+        lesson_page = LessonPage(lesson_id=lesson_id, page_number=target_page, title=f"Page {target_page}")
+        db.session.add(lesson_page)
+
+    try:
+        content.page_number = target_page
+        db.session.flush()
+
+        # Insert at target_index on target page
+        target_items = LessonContent.query.filter_by(
+            lesson_id=lesson_id, page_number=target_page
+        ).filter(LessonContent.id != content_id).order_by(LessonContent.order_index, LessonContent.id).all()
+        target_items.insert(max(0, min(int(target_index), len(target_items))), content)
+        for idx, item in enumerate(target_items):
+            item.order_index = idx
+
+        # Close gaps on old page
+        if old_page != target_page:
+            reorder_page_content(lesson_id, old_page)
+
+        db.session.commit()
+        return jsonify({"message": "Content moved", "page_number": target_page}), 200
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error moving content to page: {e}")
+        return jsonify({"error": "Database error occurred"}), 500
+
+
+@bp.route('/api/admin/audio/record-upload', methods=['POST'])
+@login_required
+@admin_required
+def upload_audio_recording():
+    """Accept a MediaRecorder Blob (audio/webm) from the admin recording widget."""
+    import os
+    import uuid
+
+    if 'file' not in request.files:
+        return jsonify({'success': False, 'error': 'No audio blob in request'}), 400
+    blob = request.files['file']
+    if not blob or not blob.filename:
+        blob.filename = f'recording_{uuid.uuid4().hex}.webm'
+
+    # Force audio type, ensure extension is one of the allowed set
+    _, ext = os.path.splitext(blob.filename)
+    if ext.lower().lstrip('.') not in current_app.config['ALLOWED_EXTENSIONS']['audio']:
+        blob.filename = f'recording_{uuid.uuid4().hex}.webm'
+
+    lesson_id_str = request.form.get('lesson_id')
+    lesson_id = int(lesson_id_str) if lesson_id_str and lesson_id_str.isdigit() else None
+
+    try:
+        relative_file_path, file_info, error = FileUploadHandler.save_file(blob, 'audio', lesson_id)
+        if error:
+            return jsonify({'success': False, 'error': error}), 500
+        bucket_name = current_app.config.get('GCS_BUCKET_NAME')
+        if bucket_name:
+            clean_path = relative_file_path.lstrip('/')
+            file_url = f"https://storage.googleapis.com/{bucket_name}/{clean_path}"
+        else:
+            file_url = url_for('routes.uploaded_file', filename=relative_file_path, _external=False)
+        return jsonify({
+            'success': True,
+            'filePath': file_url,
+            'dbPath': relative_file_path,
+            'fileName': os.path.basename(relative_file_path),
+            'originalFilename': blob.filename,
+            'fileType': 'audio',
+            'fileSize': file_info.get('size'),
+            'mimeType': file_info.get('mime_type'),
+        }), 200
+    except Exception as e:
+        current_app.logger.error(f"Audio recording upload failed: {e}", exc_info=True)
+        return jsonify({'success': False, 'error': 'Upload failed'}), 500
+
+
 @bp.route('/api/admin/content/<int:content_id>/preview', methods=['GET'])
 @login_required
 @admin_required

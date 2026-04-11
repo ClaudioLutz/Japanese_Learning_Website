@@ -41,6 +41,10 @@
     <script src="https://cdn.tiny.cloud/1/0zy0mudtkt8811ll5m8kja6adp3ro871x715seh0c5vqzehu/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
+    <!-- wavesurfer.js v7 + Record Plugin (fuer Admin Audio-Aufnahme) -->
+    <script src="https://unpkg.com/wavesurfer.js@7.8.6/dist/wavesurfer.min.js"></script>
+    <script src="https://unpkg.com/wavesurfer.js@7.8.6/dist/plugins/record.min.js"></script>
+
     <!-- Alpine.js Dark Mode Store (vor Alpine-Init) -->
     <script>
         document.addEventListener('alpine:init', () => {
@@ -655,6 +659,62 @@
         };
     }
 
+    // ── Keyboard Shortcuts (global, Power-User Workflow) ─────────────
+    (function() {
+        const isTyping = (el) => {
+            if (!el) return false;
+            const tag = (el.tagName || '').toLowerCase();
+            return tag === 'input' || tag === 'textarea' || tag === 'select' || el.isContentEditable;
+        };
+        let gSeqActive = false;
+        let gSeqTimer = null;
+        const shortcuts = {
+            '/': () => {
+                const search = document.querySelector('input[type="search"], input[name*="search" i], #searchInput');
+                if (search) { search.focus(); return true; }
+                return false;
+            },
+            '?': () => { document.getElementById('shortcutsOverlay').classList.add('is-open'); return true; },
+            'n': () => {
+                const btn = document.querySelector('[data-shortcut="new"], [onclick*="addLessonModal"]');
+                if (btn) { btn.click(); return true; }
+                return false;
+            },
+        };
+        const goMap = {
+            'l': '{{ url_for("routes.admin_manage_lessons") }}',
+            'c': '{{ url_for("routes.admin_manage_courses") }}',
+            'k': '{{ url_for("routes.admin_manage_kanji") }}',
+            'v': '{{ url_for("routes.admin_manage_vocabulary") }}',
+            'g': '{{ url_for("routes.admin_manage_grammar") }}',
+            'h': '{{ url_for("routes.admin_index") }}',
+        };
+        document.addEventListener('keydown', (e) => {
+            if (isTyping(e.target)) return;
+            if (e.metaKey || e.ctrlKey || e.altKey) return;
+            // Close overlay with Escape
+            if (e.key === 'Escape') {
+                const ov = document.getElementById('shortcutsOverlay');
+                if (ov && ov.classList.contains('is-open')) { ov.classList.remove('is-open'); e.preventDefault(); return; }
+            }
+            // g-sequence (g then letter)
+            if (gSeqActive) {
+                const target = goMap[e.key.toLowerCase()];
+                gSeqActive = false;
+                clearTimeout(gSeqTimer);
+                if (target) { e.preventDefault(); window.location.href = target; }
+                return;
+            }
+            if (e.key === 'g') {
+                gSeqActive = true;
+                gSeqTimer = setTimeout(() => { gSeqActive = false; }, 1200);
+                return;
+            }
+            const handler = shortcuts[e.key];
+            if (handler && handler()) e.preventDefault();
+        });
+    })();
+
     // ── Active Nav Highlighting ──────────────────────────────────────
     document.addEventListener('DOMContentLoaded', function() {
         const currentPath = window.location.pathname;
@@ -665,6 +725,34 @@
         });
     });
 </script>
+<!-- ═══ Keyboard Shortcut Overlay (? to open) ═══════════════════════ -->
+<div id="shortcutsOverlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9998;display:none;align-items:center;justify-content:center;padding:1.5rem;">
+    <div style="background:var(--surface-color);color:var(--text-color);border-radius:14px;max-width:640px;width:100%;padding:1.75rem;box-shadow:0 25px 60px rgba(0,0,0,0.35);">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+            <h3 style="font-size:1.1rem;font-weight:700;margin:0;">Tastenkombinationen</h3>
+            <button onclick="document.getElementById('shortcutsOverlay').classList.remove('is-open')" style="background:transparent;border:none;color:var(--secondary-color);font-size:1.5rem;cursor:pointer;">&times;</button>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1.5rem;font-size:0.85rem;">
+            <div><span class="kbd">Ctrl</span> + <span class="kbd">K</span> &nbsp; Command Palette</div>
+            <div><span class="kbd">?</span> &nbsp; Dieses Menue</div>
+            <div><span class="kbd">/</span> &nbsp; Fokus Suche</div>
+            <div><span class="kbd">N</span> &nbsp; Neu anlegen</div>
+            <div><span class="kbd">G</span> <span class="kbd">H</span> &nbsp; Go Home</div>
+            <div><span class="kbd">G</span> <span class="kbd">L</span> &nbsp; Go Lessons</div>
+            <div><span class="kbd">G</span> <span class="kbd">C</span> &nbsp; Go Courses</div>
+            <div><span class="kbd">G</span> <span class="kbd">K</span> &nbsp; Go Kanji</div>
+            <div><span class="kbd">G</span> <span class="kbd">V</span> &nbsp; Go Vocabulary</div>
+            <div><span class="kbd">G</span> <span class="kbd">G</span> &nbsp; Go Grammar</div>
+            <div style="grid-column:1/-1;border-top:1px solid var(--border-color);padding-top:0.75rem;margin-top:0.5rem;font-size:0.75rem;color:var(--secondary-color);">
+                Im Lesson-Editor: Per Drag-Handle sortieren, Titel direkt anklicken zum Umbenennen.
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+#shortcutsOverlay.is-open { display: flex !important; }
+</style>
+
 {% block extra_js %}{% endblock %}
 </body>
 </html>

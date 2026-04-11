@@ -110,7 +110,8 @@ class FileUploadHandler:
             elif expected_type == 'video':
                 return mime_type.startswith('video/')
             elif expected_type == 'audio':
-                return mime_type.startswith('audio/')
+                # MediaRecorder audio/webm wird von python-magic oft als video/webm erkannt
+                return mime_type.startswith('audio/') or mime_type in ('video/webm', 'application/ogg')
             
             return True
         except Exception as e:

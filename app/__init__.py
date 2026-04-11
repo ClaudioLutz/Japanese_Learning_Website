@@ -102,7 +102,7 @@ def create_app():
     ALLOWED_EXTENSIONS = {
         'image': {'png', 'jpg', 'jpeg', 'gif', 'webp'},
         'video': {'mp4', 'webm', 'ogg', 'avi', 'mov'},
-        'audio': {'mp3', 'wav', 'ogg', 'aac', 'm4a'}
+        'audio': {'mp3', 'wav', 'ogg', 'aac', 'm4a', 'webm', 'opus'}
     }
 
     # Payment-Konfiguration (Payrexx)

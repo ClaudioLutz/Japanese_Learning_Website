@@ -49,12 +49,15 @@ async function loadLessonContent(lessonId) {
                 <div class="card mb-3 page-overview-card" data-page-number="${pageNum}">
                     <div class="card-body">
                         <div class="flex items-center justify-between">
-                            <div>
-                                <h6 class="font-semibold text-sm text-gray-900 dark:text-white mb-1">
-                                    ${escapeHtml(title)}
-                                    ${isCarousel ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[0.65rem] font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 ml-2"><i class="fas fa-layer-group mr-1"></i>Karussell</span>' : ''}
-                                </h6>
-                                <p class="text-xs text-gray-500 dark:text-slate-400 mb-0">${escapeHtml(truncateText(description, 100))}</p>
+                            <div class="flex items-center gap-2 flex-1">
+                                <span class="drag-handle page-drag-handle" title="Seite ziehen"><i class="fas fa-grip-vertical"></i></span>
+                                <div>
+                                    <h6 class="font-semibold text-sm text-gray-900 dark:text-white mb-1">
+                                        <span class="inline-editable" data-inline-edit="page-title" data-page-number="${pageNum}" contenteditable="true" spellcheck="false">${escapeHtml(title)}</span>
+                                        ${isCarousel ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[0.65rem] font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 ml-2"><i class="fas fa-layer-group mr-1"></i>Karussell</span>' : ''}
+                                    </h6>
+                                    <p class="text-xs text-gray-500 dark:text-slate-400 mb-0">${escapeHtml(truncateText(description, 100))}</p>
+                                </div>
                             </div>
                             <div class="flex gap-2">
                                 <button class="btn-sm" onclick="editPage(${pageNum})">
@@ -70,10 +73,81 @@ async function loadLessonContent(lessonId) {
             `;
             pagesContainer.insertAdjacentHTML('beforeend', pageHtml);
         }
+        initPageSortable(lessonId);
+        initPageInlineEdit(lessonId);
     } catch (error) {
         console.error('Error loading lesson content:', error);
         showToast('Error loading lesson content', 'error');
     }
+}
+
+// ── SortableJS for pages ────────────────────────────────────────────
+let _pageSortable = null;
+function initPageSortable(lessonId) {
+    const container = document.getElementById('pagesContainer');
+    if (!container || typeof Sortable === 'undefined') return;
+    if (_pageSortable) { try { _pageSortable.destroy(); } catch (e) {} }
+    _pageSortable = new Sortable(container, {
+        handle: '.page-drag-handle',
+        draggable: '.page-overview-card',
+        animation: 150,
+        ghostClass: 'sortable-ghost',
+        chosenClass: 'sortable-chosen',
+        dragClass: 'sortable-drag',
+        onEnd: async () => {
+            const numbers = Array.from(container.querySelectorAll('.page-overview-card'))
+                .map(el => parseInt(el.dataset.pageNumber));
+            try {
+                const res = await fetch(`/api/admin/lessons/${lessonId}/pages/reorder`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRFToken() },
+                    body: JSON.stringify({ page_numbers: numbers })
+                });
+                if (!res.ok) throw new Error('page reorder failed');
+                showToast('Seitenreihenfolge gespeichert');
+                loadLessonContent(lessonId);
+            } catch (err) {
+                console.error(err);
+                showToast('Fehler — bitte neu laden', 'error');
+                loadLessonContent(lessonId);
+            }
+        }
+    });
+}
+
+function initPageInlineEdit(lessonId) {
+    document.querySelectorAll('[data-inline-edit="page-title"]').forEach(el => {
+        if (el.dataset.inlineInit) return;
+        el.dataset.inlineInit = '1';
+        el.dataset.original = el.textContent.trim();
+        el.addEventListener('mousedown', (e) => e.stopPropagation());
+        el.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); el.blur(); }
+            if (e.key === 'Escape') { el.textContent = el.dataset.original; el.blur(); }
+        });
+        el.addEventListener('blur', async () => {
+            const newTitle = el.textContent.trim();
+            if (!newTitle || newTitle === el.dataset.original) { el.textContent = el.dataset.original; return; }
+            const pageNum = el.dataset.pageNumber;
+            el.classList.add('saving');
+            try {
+                const res = await fetch(`/api/admin/lessons/${lessonId}/pages/${pageNum}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRFToken() },
+                    body: JSON.stringify({ title: newTitle })
+                });
+                if (!res.ok) throw new Error('page patch failed');
+                el.dataset.original = newTitle;
+                el.classList.remove('saving');
+                el.classList.add('saved');
+                setTimeout(() => el.classList.remove('saved'), 800);
+            } catch (err) {
+                el.textContent = el.dataset.original;
+                el.classList.remove('saving');
+                showToast('Fehler beim Speichern', 'error');
+            }
+        });
+    });
 }
 
 // ── Remove Content ──────────────────────────────────────────────────

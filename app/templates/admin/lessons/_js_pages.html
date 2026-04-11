@@ -134,26 +134,24 @@ async function loadPageContentForEditor(pageNumber) {
                 <table class="table">
                     <thead>
                         <tr>
-                            <th style="width: 80px;">Order</th>
+                            <th style="width: 50px;"></th>
+                            <th style="width: 40px;">#</th>
                             <th>Type</th>
                             <th>Title</th>
                             <th>Optional</th>
                             <th style="width: 200px;">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="pageContentSortable">
         `;
 
         pageContent.forEach((item, index) => {
             contentHtml += `
                 <tr data-content-id="${item.id}" class="hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors">
-                    <td>
-                        <div class="flex flex-col items-center">
-                            <button class="btn reorder-btn !p-0.5" onclick="moveContentInPage(${item.id}, 'up')" ${index === 0 ? 'disabled' : ''}>▲</button>
-                            <span class="text-xs text-gray-500 dark:text-slate-400 my-0.5">${item.order_index}</span>
-                            <button class="btn reorder-btn !p-0.5" onclick="moveContentInPage(${item.id}, 'down')" ${index === pageContent.length - 1 ? 'disabled' : ''}>▼</button>
-                        </div>
+                    <td class="!text-center">
+                        <span class="drag-handle content-drag-handle" title="Ziehen zum Umsortieren"><i class="fas fa-grip-vertical"></i></span>
                     </td>
+                    <td class="!text-xs !text-gray-500 dark:!text-slate-400">${item.order_index}</td>
                     <td>
                         <span class="badge ${getContentTypeBadgeClass(item.content_type)}">${escapeHtml(item.content_type)}</span>
                         ${item.is_interactive ? '<span class="badge bg-info ml-1">Interactive</span>' : ''}
@@ -181,6 +179,7 @@ async function loadPageContentForEditor(pageNumber) {
 
         contentHtml += '</tbody></table></div>';
         container.innerHTML = contentHtml;
+        initContentSortable(currentLessonId, pageNumber);
     } catch (error) {
         console.error('Error loading page content:', error);
         document.getElementById('pageContentContainer').innerHTML = '<div class="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg text-red-600 dark:text-red-400 text-sm">Error loading page content. Please try again.</div>';
@@ -206,6 +205,40 @@ function openAddContentToPageModal() {
     setPageNumber();
     setTimeout(setPageNumber, 100);
     setTimeout(setPageNumber, 200);
+}
+
+// ── SortableJS for content inside page editor ──────────────────────
+let _contentSortable = null;
+function initContentSortable(lessonId, pageNumber) {
+    const tbody = document.getElementById('pageContentSortable');
+    if (!tbody || typeof Sortable === 'undefined') return;
+    if (_contentSortable) { try { _contentSortable.destroy(); } catch (e) {} }
+    _contentSortable = new Sortable(tbody, {
+        handle: '.content-drag-handle',
+        animation: 150,
+        ghostClass: 'sortable-ghost',
+        chosenClass: 'sortable-chosen',
+        dragClass: 'sortable-drag',
+        onEnd: async () => {
+            const ids = Array.from(tbody.querySelectorAll('tr[data-content-id]'))
+                .map(tr => parseInt(tr.dataset.contentId));
+            try {
+                const res = await fetch(`/api/admin/lessons/${lessonId}/pages/${pageNumber}/reorder`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRFToken() },
+                    body: JSON.stringify({ content_ids: ids })
+                });
+                if (!res.ok) throw new Error('content reorder failed');
+                showToast('Reihenfolge gespeichert');
+                // Reload in background to sync order_index labels
+                loadPageContentForEditor(pageNumber);
+            } catch (err) {
+                console.error(err);
+                showToast('Fehler — bitte neu laden', 'error');
+                loadPageContentForEditor(pageNumber);
+            }
+        }
+    });
 }
 
 async function moveContentInPage(contentId, direction) {

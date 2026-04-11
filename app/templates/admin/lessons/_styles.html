@@ -50,6 +50,153 @@
 /* Page overview cards */
 .page-overview-card { transition: box-shadow 0.2s, transform 0.2s; }
 .page-overview-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); transform: translateY(-1px); }
+
+/* ── Drag & Drop Handles ────────────────────────────────────────── */
+.drag-handle {
+    cursor: grab;
+    color: #9ca3af;
+    padding: 0 0.25rem;
+    user-select: none;
+    touch-action: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    transition: color 0.15s;
+}
+.drag-handle:hover { color: #4f46e5; }
+.drag-handle:active { cursor: grabbing; }
+.dark .drag-handle { color: #64748b; }
+.dark .drag-handle:hover { color: #818cf8; }
+
+.sortable-ghost {
+    opacity: 0.4 !important;
+    background: rgba(79, 70, 229, 0.1) !important;
+}
+.sortable-chosen {
+    background: rgba(79, 70, 229, 0.05) !important;
+}
+.sortable-drag {
+    opacity: 0.9 !important;
+    transform: rotate(1deg);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* ── Inline-editable titles ─────────────────────────────────────── */
+.inline-editable {
+    cursor: text;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: background 0.15s, box-shadow 0.15s;
+    border: 1px solid transparent;
+}
+.inline-editable:hover {
+    background: rgba(79, 70, 229, 0.06);
+    border-color: rgba(79, 70, 229, 0.2);
+}
+.inline-editable:focus {
+    outline: none;
+    background: white;
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+.dark .inline-editable:focus { background: #0f172a; }
+.inline-editable.saving { opacity: 0.6; pointer-events: none; }
+.inline-editable.saved { background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.4); }
+
+/* ── Audio Recording Widget ─────────────────────────────────────── */
+.audio-recorder {
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.25rem;
+    background: rgba(0, 0, 0, 0.02);
+}
+.dark .audio-recorder { background: rgba(255, 255, 255, 0.02); }
+.audio-recorder__waveform {
+    min-height: 96px;
+    background: white;
+    border-radius: 8px;
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+}
+.dark .audio-recorder__waveform { background: #0f172a; }
+.audio-recorder__controls {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-top: 0.75rem;
+    flex-wrap: wrap;
+}
+.rec-btn {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: none;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.rec-btn:hover { transform: scale(1.05); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+.rec-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+.rec-btn--record { background: #dc2626; }
+.rec-btn--stop { background: #374151; }
+.rec-btn--play { background: #4f46e5; }
+.rec-btn--retake { background: #f59e0b; }
+.rec-btn.pulsing { animation: rec-pulse 1.3s infinite; }
+@keyframes rec-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
+    50% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
+}
+.rec-timer {
+    font-family: 'SFMono-Regular', Consolas, monospace;
+    font-size: 0.95rem;
+    color: var(--text-color);
+    margin-left: auto;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Bulk Action Bar ────────────────────────────────────────────── */
+.bulk-action-bar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: linear-gradient(to right, #4f46e5, #6366f1);
+    color: white;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    box-shadow: 0 8px 24px rgba(79, 70, 229, 0.25);
+    margin-bottom: 0.75rem;
+}
+.bulk-action-bar button {
+    background: rgba(255, 255, 255, 0.15) !important;
+    color: white !important;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+.bulk-action-bar button:hover { background: rgba(255, 255, 255, 0.25) !important; }
+
+/* ── Keyboard Shortcut Overlay ──────────────────────────────────── */
+.kbd {
+    display: inline-block;
+    padding: 0.15rem 0.45rem;
+    background: #e5e7eb;
+    color: #111827;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.75rem;
+    box-shadow: 0 1px 0 #9ca3af;
+    border: 1px solid #d1d5db;
+}
+.dark .kbd { background: #334155; color: #f1f5f9; border-color: #475569; box-shadow: 0 1px 0 #1e293b; }
 </style>
 
 <link href="https://cdn.jsdelivr.net/npm/quill@2.0.0/dist/quill.snow.css" rel="stylesheet">

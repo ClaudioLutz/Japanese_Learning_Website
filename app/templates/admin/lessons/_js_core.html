@@ -47,15 +47,24 @@ async function loadLessons() {
             return;
         }
 
+        // Sortable-Container ueber tbody (Sortable kann tr's sortieren, aber
+        // wir haben Doppel-Rows pro Lesson (Title + Data) — wir gruppieren via tbody-Blocks).
+        // Einfacher: ein tbody pro Lesson, jedes tbody ist sortierbar im Table.
+        // Wir loesen das indem wir nur die DATA-rows als draggable markieren und nach Reorder
+        // die komplette Tabelle neu rendern.
+
         lessons.forEach((lesson, index) => {
             // Title row spanning all columns
             const titleRow = document.createElement('tr');
             titleRow.dataset.lessonId = lesson.id;
-            titleRow.className = index > 0 ? 'border-t-2 border-gray-200 dark:border-slate-700' : '';
+            titleRow.dataset.lessonRow = 'title';
+            titleRow.className = (index > 0 ? 'border-t-2 border-gray-200 dark:border-slate-700 ' : '') + 'lesson-row';
             titleRow.innerHTML = `
                 <td colspan="11" class="!py-2.5 !px-4 !bg-gray-50/80 dark:!bg-slate-800/30">
                     <div class="flex items-center gap-3">
-                        <span class="text-base font-semibold text-gray-900 dark:text-white">${escapeHtml(lesson.title)}</span>
+                        <span class="drag-handle lesson-drag-handle" title="Ziehen zum Umsortieren"><i class="fas fa-grip-vertical"></i></span>
+                        <input type="checkbox" class="lesson-checkbox !w-4 !h-4 !mb-0" value="${lesson.id}" onclick="event.stopPropagation(); updateBulkBar();">
+                        <span class="text-base font-semibold text-gray-900 dark:text-white inline-editable" data-inline-edit="lesson-title" data-lesson-id="${lesson.id}" contenteditable="true" spellcheck="false">${escapeHtml(lesson.title)}</span>
                         <span class="text-xs text-gray-400 dark:text-slate-500">#${lesson.id}</span>
                     </div>
                 </td>
@@ -64,14 +73,12 @@ async function loadLessons() {
 
             // Data row
             const row = document.createElement('tr');
-            row.className = 'hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors';
+            row.dataset.lessonId = lesson.id;
+            row.dataset.lessonRow = 'data';
+            row.className = 'lesson-row hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors';
             row.innerHTML = `
                 <td>
-                    <div class="flex items-center gap-1">
-                        <button class="btn reorder-btn !p-0.5" onclick="moveLesson(${lesson.id}, 'up')" ${index === 0 ? 'disabled' : ''}>▲</button>
-                        <span class="text-xs text-gray-500 dark:text-slate-400">${lesson.order_index}</span>
-                        <button class="btn reorder-btn !p-0.5" onclick="moveLesson(${lesson.id}, 'down')" ${index === lessons.length - 1 ? 'disabled' : ''}>▼</button>
-                    </div>
+                    <span class="text-xs text-gray-500 dark:text-slate-400">${lesson.order_index}</span>
                 </td>
                 <td class="!text-gray-400 dark:!text-slate-500 !text-sm">${lesson.id}</td>
                 <td><span class="badge badge-info">${escapeHtml(lesson.category_name) || 'No Category'}</span></td>
@@ -100,10 +107,140 @@ async function loadLessons() {
         });
 
         populateExportOptions();
+        initLessonSortable();
+        initLessonInlineEdit();
+        updateBulkBar();
     } catch (error) {
         console.error('Error loading lessons:', error);
         showToast('Error loading lessons', 'error');
     }
+}
+
+// ── SortableJS for lessons table ────────────────────────────────────
+let _lessonSortable = null;
+function initLessonSortable() {
+    const tbody = document.querySelector('#lessonsTable tbody');
+    if (!tbody || typeof Sortable === 'undefined') return;
+    if (_lessonSortable) { try { _lessonSortable.destroy(); } catch (e) {} }
+
+    // Sortable only accepts sibling elements. We drag the TITLE row; the DATA row
+    // moves together because we pair them in onEnd.
+    _lessonSortable = new Sortable(tbody, {
+        handle: '.lesson-drag-handle',
+        draggable: 'tr[data-lesson-row="title"]',
+        animation: 150,
+        ghostClass: 'sortable-ghost',
+        chosenClass: 'sortable-chosen',
+        dragClass: 'sortable-drag',
+        onEnd: async function(evt) {
+            // After the title row moves, also move its data row neighbor.
+            // Collect current order of lesson IDs from the DOM.
+            const titleRows = tbody.querySelectorAll('tr[data-lesson-row="title"]');
+            const ids = [];
+            titleRows.forEach(tr => {
+                const id = parseInt(tr.dataset.lessonId);
+                ids.push(id);
+                // Ensure data row follows the title row.
+                const dataRow = tbody.querySelector(`tr[data-lesson-row="data"][data-lesson-id="${id}"]`);
+                if (dataRow && tr.nextSibling !== dataRow) {
+                    tbody.insertBefore(dataRow, tr.nextSibling);
+                }
+            });
+            try {
+                const res = await fetch('/api/admin/lessons/reorder', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRFToken() },
+                    body: JSON.stringify({ lesson_ids: ids })
+                });
+                if (!res.ok) throw new Error('reorder failed');
+                showToast('Reihenfolge gespeichert');
+            } catch (err) {
+                console.error(err);
+                showToast('Fehler beim Speichern — bitte neu laden', 'error');
+                loadLessons();
+            }
+        }
+    });
+}
+
+// ── Inline-edit lesson titles via contenteditable ──────────────────
+function initLessonInlineEdit() {
+    document.querySelectorAll('[data-inline-edit="lesson-title"]').forEach(el => {
+        if (el.dataset.inlineInit) return;
+        el.dataset.inlineInit = '1';
+        el.dataset.original = el.textContent.trim();
+
+        // Block lesson-row drag from handle when clicking the editable title
+        el.addEventListener('mousedown', (e) => e.stopPropagation());
+
+        el.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); el.blur(); }
+            if (e.key === 'Escape') { el.textContent = el.dataset.original; el.blur(); }
+        });
+        el.addEventListener('blur', async () => {
+            const newTitle = el.textContent.trim();
+            if (!newTitle || newTitle === el.dataset.original) { el.textContent = el.dataset.original; return; }
+            const lessonId = el.dataset.lessonId;
+            el.classList.add('saving');
+            try {
+                const res = await fetch(`/api/admin/lessons/${lessonId}/patch`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRFToken() },
+                    body: JSON.stringify({ title: newTitle })
+                });
+                if (!res.ok) throw new Error('patch failed');
+                el.dataset.original = newTitle;
+                el.classList.remove('saving');
+                el.classList.add('saved');
+                setTimeout(() => el.classList.remove('saved'), 800);
+            } catch (err) {
+                console.error(err);
+                el.textContent = el.dataset.original;
+                el.classList.remove('saving');
+                showToast('Fehler beim Speichern', 'error');
+            }
+        });
+    });
+}
+
+// ── Bulk Selection Bar ──────────────────────────────────────────────
+function updateBulkBar() {
+    const bar = document.getElementById('lessonsBulkBar');
+    if (!bar) return;
+    const checked = document.querySelectorAll('.lesson-checkbox:checked');
+    if (checked.length === 0) { bar.style.display = 'none'; return; }
+    bar.style.display = 'flex';
+    const count = bar.querySelector('[data-bulk-count]');
+    if (count) count.textContent = checked.length;
+}
+function getSelectedLessonIds() {
+    return Array.from(document.querySelectorAll('.lesson-checkbox:checked')).map(cb => parseInt(cb.value));
+}
+async function bulkDeleteLessons() {
+    const ids = getSelectedLessonIds();
+    if (ids.length === 0) return;
+    if (!confirm(`${ids.length} Lektion(en) wirklich loeschen?`)) return;
+    for (const id of ids) {
+        try { await fetch(`/api/admin/lessons/${id}/delete`, { method: 'DELETE', headers: { 'X-CSRFToken': getCSRFToken() }}); }
+        catch (e) { console.error(e); }
+    }
+    showToast(`${ids.length} Lektion(en) geloescht`);
+    loadLessons();
+}
+async function bulkPublishLessons(state) {
+    const ids = getSelectedLessonIds();
+    if (ids.length === 0) return;
+    for (const id of ids) {
+        try {
+            await fetch(`/api/admin/lessons/${id}/patch`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRFToken() },
+                body: JSON.stringify({ is_published: state })
+            });
+        } catch (e) { console.error(e); }
+    }
+    showToast(`${ids.length} Lektion(en) ${state ? 'veroeffentlicht' : 'entzogen'}`);
+    loadLessons();
 }
 
 // ── Load Categories ─────────────────────────────────────────────────

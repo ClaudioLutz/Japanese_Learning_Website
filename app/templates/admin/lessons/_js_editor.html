@@ -223,6 +223,7 @@ function generateContentConfigForm(contentType, content = null) {
         document.getElementById('interactiveSection').style.display = 'block';
     } else if (['video', 'audio', 'image'].includes(contentType)) {
         const placeholders = { 'video': 'https://www.youtube.com/watch?v=...', 'audio': 'https://example.com/audio.mp3', 'image': 'https://example.com/image.jpg' };
+        const isAudio = contentType === 'audio';
         fieldsContainer.innerHTML = `
             <div class="form-group">
                 <label for="mediaTitle">Title *</label>
@@ -234,11 +235,30 @@ function generateContentConfigForm(contentType, content = null) {
                     <label class="flex items-center gap-2 cursor-pointer text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-slate-700 has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50 dark:has-[:checked]:bg-primary-900/20">
                         <input type="radio" name="contentSource" value="upload" checked onchange="toggleContentSource('upload')" class="!w-4 !h-4 !mb-0"> Upload File
                     </label>
+                    ${isAudio ? `
+                    <label class="flex items-center gap-2 cursor-pointer text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-slate-700 has-[:checked]:border-red-500 has-[:checked]:bg-red-50 dark:has-[:checked]:bg-red-900/20">
+                        <input type="radio" name="contentSource" value="record" onchange="toggleContentSource('record')" class="!w-4 !h-4 !mb-0"> <i class="fas fa-microphone"></i> Direkt aufnehmen
+                    </label>` : ''}
                     <label class="flex items-center gap-2 cursor-pointer text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-slate-700 has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50 dark:has-[:checked]:bg-primary-900/20">
                         <input type="radio" name="contentSource" value="url" onchange="toggleContentSource('url')" class="!w-4 !h-4 !mb-0"> Use URL
                     </label>
                 </div>
             </div>
+            ${isAudio ? `
+            <div id="recordSection" style="display:none;">
+                <div class="audio-recorder">
+                    <div id="recWaveform" class="audio-recorder__waveform"></div>
+                    <div class="audio-recorder__controls">
+                        <button type="button" id="recBtnRecord" class="rec-btn rec-btn--record" title="Aufnahme starten" onclick="AudioRecorder.start()"><i class="fas fa-circle"></i></button>
+                        <button type="button" id="recBtnStop" class="rec-btn rec-btn--stop" title="Stop" disabled onclick="AudioRecorder.stop()"><i class="fas fa-stop"></i></button>
+                        <button type="button" id="recBtnPlay" class="rec-btn rec-btn--play" title="Abspielen" disabled onclick="AudioRecorder.playback()"><i class="fas fa-play"></i></button>
+                        <button type="button" id="recBtnRetake" class="rec-btn rec-btn--retake" title="Erneut aufnehmen" disabled onclick="AudioRecorder.retake()"><i class="fas fa-redo"></i></button>
+                        <button type="button" id="recBtnSave" class="btn-sm btn-success" disabled onclick="AudioRecorder.save()"><i class="fas fa-check"></i> Aufnahme uebernehmen</button>
+                        <span id="recTimer" class="rec-timer">00:00 / 01:00</span>
+                    </div>
+                    <p class="text-xs text-gray-500 dark:text-slate-400 mt-2"><i class="fas fa-info-circle"></i> Max. 1 Minute. Aufnahme wird als webm/opus gespeichert.</p>
+                </div>
+            </div>` : ''}
             <div id="fileUploadSection">
                 <div class="form-group">
                     <label>Upload ${contentType.charAt(0).toUpperCase() + contentType.slice(1)} File *</label>
