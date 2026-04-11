@@ -1796,12 +1796,15 @@ def preview_content(content_id):
         if content_data:
             preview_data['content_data'] = model_to_dict(content_data)
     
-    # Add quiz questions for interactive content
+    # Add quiz questions (with options) for interactive content
     if content.is_interactive:
-        preview_data['quiz_questions'] = [
-            model_to_dict(q) for q in content.quiz_questions
-        ]
-    
+        questions_out = []
+        for q in content.quiz_questions:
+            qd = model_to_dict(q)
+            qd['options'] = [model_to_dict(opt) for opt in q.options]
+            questions_out.append(qd)
+        preview_data['quiz_questions'] = questions_out
+
     return jsonify(preview_data)
 
 @bp.route('/api/admin/content/<int:content_id>', methods=['GET'])
