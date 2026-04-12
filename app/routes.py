@@ -3971,24 +3971,30 @@ def export_multiple_lessons():
 @bp.route('/uploads/<path:filename>')
 @limiter.exempt
 def uploaded_file(filename):
-    """Serve uploaded files"""
+    """Serve uploaded files — lokal oder via GCS-Redirect"""
     import os
     from flask import send_from_directory
-    
+
     upload_folder = current_app.config['UPLOAD_FOLDER']
     file_path = os.path.join(upload_folder, filename)
-    
+
     # Security check - ensure file is within upload folder
     if not os.path.abspath(file_path).startswith(os.path.abspath(upload_folder)):
         return jsonify({"error": "Access denied"}), 403
-    
-    if not os.path.exists(file_path):
-        return jsonify({"error": "File not found"}), 404
-    
-    directory = os.path.dirname(file_path)
-    basename = os.path.basename(file_path)
-    
-    return send_from_directory(directory, basename)
+
+    # Lokal vorhanden? Direkt ausliefern
+    if os.path.exists(file_path):
+        directory = os.path.dirname(file_path)
+        basename = os.path.basename(file_path)
+        return send_from_directory(directory, basename)
+
+    # Fallback: GCS-Redirect wenn Bucket konfiguriert
+    bucket_name = current_app.config.get('GCS_BUCKET_NAME')
+    if bucket_name:
+        gcs_url = f"https://storage.googleapis.com/{bucket_name}/{filename}"
+        return redirect(gcs_url)
+
+    return jsonify({"error": "File not found"}), 404
 
 @bp.route('/api/admin/lessons/import-info', methods=['POST'])
 @login_required
