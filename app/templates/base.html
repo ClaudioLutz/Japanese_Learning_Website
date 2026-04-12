@@ -60,6 +60,10 @@
                         <a class="enhanced-nav-link" href="{{ url_for('routes.my_lessons') }}">
                             <i class="fas fa-shopping-bag"></i><span>My Lessons</span>
                         </a>
+                        <a class="enhanced-nav-link" href="{{ url_for('srs.review_page') }}" style="position:relative;">
+                            <i class="fas fa-brain"></i><span>Review</span>
+                            <span class="review-badge-desktop" id="reviewBadgeDesktop" style="display:none;"></span>
+                        </a>
                         <a class="enhanced-nav-link" href="{{ url_for('routes.user_profile') }}">
                             <i class="fas fa-user-circle"></i><span>Profile</span>
                         </a>
@@ -216,6 +220,21 @@
         border-radius: 8px;
         padding: 0 3px;
     }
+    .review-badge-desktop {
+        position: absolute;
+        top: -2px;
+        right: -8px;
+        background: #dc3545;
+        color: #fff;
+        font-size: 0.6rem;
+        font-weight: 700;
+        min-width: 16px;
+        height: 16px;
+        line-height: 16px;
+        text-align: center;
+        border-radius: 8px;
+        padding: 0 3px;
+    }
     </style>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -243,14 +262,15 @@
     
     {% if current_user.is_authenticated %}
     <script>
-    // Load SRS due-count badge
+    // Load SRS due-count badge (mobile + desktop)
     (function() {
-        const badge = document.getElementById('reviewBadge');
-        if (!badge) return;
         fetch('/api/srs/stats').then(r => r.json()).then(data => {
             if (data.due_count > 0) {
-                badge.textContent = data.due_count > 99 ? '99+' : data.due_count;
-                badge.style.display = '';
+                const label = data.due_count > 99 ? '99+' : data.due_count;
+                ['reviewBadge', 'reviewBadgeDesktop'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) { el.textContent = label; el.style.display = ''; }
+                });
             }
         }).catch(() => {});
     })();
