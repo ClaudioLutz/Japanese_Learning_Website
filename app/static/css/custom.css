@@ -1540,7 +1540,9 @@ button[onclick*="moveContentInPage"]:active {
     padding: 0;
     cursor: pointer;
     margin-bottom: 1rem;
-    overflow: clip; /* clip statt hidden — overflow:hidden bricht backface-visibility in Chrome/Safari */
+    /* overflow:hidden bricht backface-visibility in manchen Browsern.
+       overflow:clip ist besser, wird aber nicht ueberall unterstuetzt.
+       Daher: kein overflow — stattdessen backface-visibility auf allen Elementen. */
 }
 
 /* 2. The Flipper: The 3D object that rotates. */
@@ -1738,6 +1740,12 @@ button[onclick*="moveContentInPage"]:active {
     padding: 2px 10px;
     border-radius: 10px;
     z-index: 3;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+/* Flip-Hint beim Flip ausblenden */
+.card-flipper.is-flipped .flip-hint {
+    display: none;
 }
 
 /* Animation for flip hint */
