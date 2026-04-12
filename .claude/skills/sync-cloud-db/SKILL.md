@@ -15,10 +15,20 @@ Synchronize content data from local PostgreSQL to the production Cloud SQL.
 
 ## CRITICAL SAFETY RULES
 
+### OBERSTE REGEL: Im Zweifel NICHT truncaten, sondern nachfragen!
+- **Lieber einmal weniger löschen** als versehentlich User-Daten vernichten.
+- Wenn du unsicher bist, ob eine Tabelle Content oder User-Daten enthält: **STOPP und frage den User.**
+- Verwende IMMER die `--table=`-Flags beim Export (Whitelist-Ansatz), NIEMALS `--data-only` ohne Tabellen-Filter.
+- Prüfe VOR jedem Truncate, dass du NUR die unten gelisteten Content-Tabellen löschst.
+- Alte Versionen dieses Skills oder aus dem Konversations-Kontext geladene Snippets können veraltet sein — halte dich IMMER an diese Datei hier.
+
 ### NEVER sync these tables (User/Transaktionsdaten):
 - `user` — Produktions-User (haben sich auf der Live-Seite registriert)
 - `user_lesson_progress` — Lernfortschritt der Produktions-User
 - `user_quiz_answer` — Quiz-Antworten der Produktions-User
+- `card_review_state` — SRS-Kartenfortschritt der Produktions-User
+- `review_log` — SRS-Review-Historie der Produktions-User
+- `user_srs_settings` — SRS-Einstellungen der Produktions-User
 - `lesson_purchase` — Kauf-Transaktionen
 - `course_purchase` — Kurs-Kauf-Transaktionen
 - `payment_transaction` — Zahlungsdaten
