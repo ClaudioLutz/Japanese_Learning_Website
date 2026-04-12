@@ -1540,7 +1540,7 @@ button[onclick*="moveContentInPage"]:active {
     padding: 0;
     cursor: pointer;
     margin-bottom: 1rem;
-    overflow: hidden;
+    overflow: clip; /* clip statt hidden — overflow:hidden bricht backface-visibility in Chrome/Safari */
 }
 
 /* 2. The Flipper: The 3D object that rotates. */
@@ -3613,10 +3613,12 @@ button[onclick*="moveContentInPage"]:active {
         background: rgba(255, 255, 255, 0.97);
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
-        border-top: 1px solid rgba(0, 0, 0, 0.08);
-        box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.06);
-        padding: 0.35rem 0;
-        padding-bottom: calc(0.35rem + env(safe-area-inset-bottom, 0px));
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.04);
+        padding: 0.2rem 0.5rem;
+        padding-bottom: calc(0.2rem + env(safe-area-inset-bottom, 0px));
+        gap: 0.25rem;
+        border-radius: 18px 18px 0 0;
     }
 
     .bottom-nav-item {
@@ -3625,28 +3627,30 @@ button[onclick*="moveContentInPage"]:active {
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 0.15rem;
-        padding: 0.35rem 0;
+        gap: 0.1rem;
+        padding: 0.25rem 0.4rem;
         color: #6b7280;
         text-decoration: none;
-        font-size: 0.65rem;
+        font-size: 0.6rem;
         font-weight: 500;
         transition: color 0.15s;
-        min-height: 44px;
+        min-height: 40px;
+        border-radius: 12px;
         -webkit-tap-highlight-color: transparent;
     }
 
     .bottom-nav-item i {
-        font-size: 1.15rem;
+        font-size: 1.05rem;
         transition: transform 0.15s;
     }
 
     .bottom-nav-item.active {
         color: var(--zen-indigo, #2b4c7e);
+        background: rgba(43, 76, 126, 0.06);
     }
 
     .bottom-nav-item.active i {
-        transform: scale(1.1);
+        transform: scale(1.08);
     }
 
     .bottom-nav-item:active {
@@ -3656,18 +3660,18 @@ button[onclick*="moveContentInPage"]:active {
 
     /* Body padding-bottom fuer Bottom-Nav-Platz */
     body {
-        padding-bottom: 64px !important;
+        padding-bottom: 56px !important;
     }
 
     /* Admin-FAB ueber die Bottom-Nav schieben */
     .admin-floating-edit {
-        bottom: 76px !important;
+        bottom: 66px !important;
     }
 
     /* Back-to-Top ueber die Bottom-Nav schieben */
     .back-to-top,
     #backToTop {
-        bottom: 76px !important;
+        bottom: 66px !important;
     }
 }
 

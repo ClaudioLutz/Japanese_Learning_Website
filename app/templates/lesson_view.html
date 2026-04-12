@@ -33,16 +33,17 @@
 
 /* Quiz Carousel Dots */
 .quiz-dot {
-    width: 12px; height: 12px; border-radius: 50%; border: none;
+    width: 8px; height: 8px; border-radius: 50%; border: none;
     background: #d1d5db; cursor: pointer; transition: all 0.25s ease;
     display: inline-block; padding: 0; font-size: 0; line-height: 0;
+    margin: 0 4px;
 }
-.quiz-dot:hover { transform: scale(1.3); }
+.quiz-dot:hover { transform: scale(1.2); }
 .quiz-dot-completed { background: var(--zen-matcha, #7A9A5A); }
 .quiz-dot-completed:hover { background: var(--zen-matcha-light, #C5D5A8); }
 .quiz-dot-open { background: #d1d5db; }
-.quiz-dot-active { transform: scale(1.5); box-shadow: 0 0 0 3px rgba(99,102,241,0.3); }
-.quiz-dot-completed.quiz-dot-active { box-shadow: 0 0 0 3px rgba(16,185,129,0.3); }
+.quiz-dot-active { transform: scale(1.3); box-shadow: 0 0 0 2px rgba(99,102,241,0.25); }
+.quiz-dot-completed.quiz-dot-active { box-shadow: 0 0 0 2px rgba(16,185,129,0.25); }
 </style>
 {% endblock %}
 
@@ -270,8 +271,31 @@
         font-weight: 600;
     }
 
-    /* Mobile: Fixierte Bottom-Navigation */
-    @media (max-width: 991px) {
+    /* Mobile: Lesson-Navigation ueber der Bottom-Nav */
+    @media (max-width: 767px) {
+        .lesson-navigation-bottom {
+            position: fixed;
+            bottom: 56px; /* ueber der Bottom-Nav */
+            left: 0; right: 0;
+            margin: 0;
+            border-radius: 0;
+            border: none;
+            border-top: 1px solid var(--border-color, #D4CFC5);
+            z-index: 1035;
+            padding: 0.4rem 0.75rem;
+            box-shadow: 0 -1px 6px rgba(0,0,0,0.06);
+            background: rgba(255,255,255,0.97);
+            backdrop-filter: blur(8px);
+        }
+        .lesson-main-content {
+            padding-bottom: 120px !important; /* Platz fuer Nav + Bottom-Nav */
+        }
+        /* Sidebar-Toggle FAB ausblenden — wird durch Bottom-Nav-Item ersetzt */
+        .sidebar-toggle {
+            display: none !important;
+        }
+    }
+    @media (min-width: 768px) and (max-width: 991px) {
         .lesson-navigation-bottom {
             position: fixed;
             bottom: 0; left: 0; right: 0;
@@ -342,18 +366,18 @@
     
     #lessonCarousel .carousel-indicators [data-bs-target] {
         background-color: #a0a0a0;
-        width: 12px;
-        height: 12px;
+        width: 8px;
+        height: 8px;
         border-radius: 50%;
-        margin: 0 5px;
+        margin: 0 6px;
         transition: all 0.3s ease;
     }
-    
+
     #lessonCarousel .carousel-indicators .active {
         background-color: var(--primary-color, #2B4C7E);
-        transform: scale(1.2);
+        transform: scale(1.15);
     }
-    
+
     #lessonCarousel .carousel-indicators [data-bs-target]:hover {
         background-color: var(--zen-matcha, #7A9A5A);
         transform: scale(1.1);
@@ -796,12 +820,7 @@
                                                                         {% elif content.content_type == 'kanji' %}
                                                                             <span class="kana-char">{{ content_data.character }}</span>
                                                                         {% elif content.content_type == 'vocabulary' %}
-                                                                            <div class="vocab-front {% if content_data.image_url %}has-image{% endif %}">
-                                                                                {% if content_data.image_url %}
-                                                                                <div class="vocab-image">
-                                                                                    <img src="{{ url_for('routes.uploaded_file', filename=content_data.image_url) }}" alt="{{ content_data.meaning }}">
-                                                                                </div>
-                                                                                {% endif %}
+                                                                            <div class="vocab-front">
                                                                                 <div class="vocab-word">{{ content_data.word }}</div>
                                                                                 <div class="vocab-reading">{{ content_data.reading }}</div>
                                                                             </div>
@@ -816,7 +835,12 @@
                                                                         <div class="flip-hint">Click to flip</div>
                                                                     </div>
                                                                     
-                                                                    <div class="card-face card-face--back">
+                                                                    <div class="card-face card-face--back {% if content.content_type == 'vocabulary' and content_data.image_url %}has-image{% endif %}">
+                                                                        {% if content.content_type == 'vocabulary' and content_data.image_url %}
+                                                                        <div class="card-image">
+                                                                            <img src="{{ url_for('routes.uploaded_file', filename=content_data.image_url) }}" alt="{{ content_data.meaning }}">
+                                                                        </div>
+                                                                        {% endif %}
                                                                         <div class="details">
                                                                             {% if content.content_type == 'kana' %}
                                                                                 <p><strong>Romanization:</strong> {{ content_data.romanization }}</p>
@@ -3184,4 +3208,273 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
+<!-- ══ Page-Overview Bottom-Sheet (Mobile) ══════════════════════════ -->
+{% if lesson.pages and lesson.pages|length > 1 %}
+<div class="page-bottom-sheet-overlay" id="pageSheetOverlay"></div>
+<div class="page-bottom-sheet" id="pageBottomSheet">
+    <div class="page-sheet-handle" id="pageSheetHandle"><span></span></div>
+    <div class="page-sheet-header">
+        <h6><i class="fas fa-book-open"></i> Seitenübersicht</h6>
+        <span class="page-sheet-counter" id="pageSheetCounter">Seite 1 von {{ lesson.pages|length }}</span>
+    </div>
+    <div class="page-sheet-progress">
+        <div class="page-sheet-progress-fill" id="pageSheetProgressFill" style="width: {{ (100 / lesson.pages|length)|round(1) }}%"></div>
+    </div>
+    <ul class="page-sheet-list" id="pageSheetList">
+        {% for page in lesson.pages %}
+        <li class="page-sheet-item{% if loop.first %} active{% endif %}" data-page="{{ loop.index0 }}" onclick="goToPage({{ loop.index0 }}); closePageSheet();">
+            <span class="page-sheet-num">{{ loop.index }}</span>
+            <span class="page-sheet-title">{{ page.metadata.title or (page.content[0].title if page.content else 'Seite ' ~ loop.index) }}</span>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<style>
+/* ── Bottom-Sheet Overlay ── */
+.page-bottom-sheet-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    z-index: 1060;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+.page-bottom-sheet-overlay.show {
+    display: block;
+    opacity: 1;
+}
+
+/* ── Bottom-Sheet Panel ── */
+.page-bottom-sheet {
+    display: none;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 1070;
+    background: #fff;
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -4px 24px rgba(0,0,0,0.12);
+    max-height: 60vh;
+    overflow-y: auto;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.page-bottom-sheet.show {
+    display: block;
+    transform: translateY(0);
+}
+
+.page-sheet-handle {
+    display: flex;
+    justify-content: center;
+    padding: 10px 0 4px;
+    cursor: grab;
+}
+.page-sheet-handle span {
+    width: 36px;
+    height: 4px;
+    border-radius: 2px;
+    background: #d1d5db;
+}
+
+.page-sheet-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1.25rem;
+}
+.page-sheet-header h6 {
+    margin: 0;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-light, #5A5A5A);
+}
+.page-sheet-counter {
+    font-size: 0.75rem;
+    color: var(--text-light, #5A5A5A);
+}
+
+.page-sheet-progress {
+    height: 4px;
+    background: var(--border-color, #D4CFC5);
+    margin: 0 1.25rem 0.5rem;
+    border-radius: 2px;
+    overflow: hidden;
+}
+.page-sheet-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--zen-indigo), var(--zen-matcha));
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+
+.page-sheet-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 0.5rem;
+}
+
+.page-sheet-item {
+    display: flex;
+    align-items: center;
+    padding: 0.65rem 1.25rem;
+    cursor: pointer;
+    transition: background 0.15s;
+    color: var(--text-color, #2C2C2C);
+    font-size: 0.85rem;
+    border-left: 3px solid transparent;
+}
+.page-sheet-item:hover {
+    background: rgba(43, 76, 126, 0.05);
+}
+.page-sheet-item.active {
+    background: rgba(43, 76, 126, 0.08);
+    border-left-color: var(--zen-matcha, #7A9A5A);
+    font-weight: 600;
+}
+
+.page-sheet-num {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    margin-right: 0.75rem;
+    font-size: 0.72rem;
+    flex-shrink: 0;
+    background: var(--border-color, #D4CFC5);
+    color: var(--text-color, #2C2C2C);
+}
+.page-sheet-item.active .page-sheet-num {
+    background: linear-gradient(135deg, var(--zen-indigo), var(--zen-matcha));
+    color: white;
+}
+
+.page-sheet-title {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Nur auf Mobile zeigen */
+@media (min-width: 768px) {
+    .page-bottom-sheet-overlay,
+    .page-bottom-sheet {
+        display: none !important;
+    }
+}
+</style>
+
+<script>
+// ── Bottom-Sheet Logik + Bottom-Nav Integration ──
+// DOMContentLoaded noetig, da Bottom-Nav in base.html NACH dem content-Block gerendert wird
+document.addEventListener('DOMContentLoaded', function() {
+(function() {
+    const overlay = document.getElementById('pageSheetOverlay');
+    const sheet = document.getElementById('pageBottomSheet');
+    if (!overlay || !sheet) return;
+
+    // Bottom-Nav: "My Lessons" durch "Seiten" ersetzen (nur auf Lesson-View)
+    const bottomNav = document.getElementById('mobileBottomNav');
+    if (bottomNav) {
+        const navItems = bottomNav.querySelectorAll('.bottom-nav-item');
+        navItems.forEach(item => {
+            const label = item.querySelector('span');
+            if (label && (label.textContent.trim() === 'My Lessons' || label.textContent.trim() === 'Seitenübersicht')) {
+                item.setAttribute('href', 'javascript:void(0)');
+                item.querySelector('i').className = 'fas fa-layer-group';
+                label.textContent = 'Seiten';
+                item.classList.remove('active');
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    togglePageSheet();
+                });
+            }
+        });
+    }
+
+    window.togglePageSheet = function() {
+        const isOpen = sheet.classList.contains('show');
+        if (isOpen) {
+            closePageSheet();
+        } else {
+            openPageSheet();
+        }
+    };
+
+    window.openPageSheet = function() {
+        overlay.classList.add('show');
+        sheet.classList.add('show');
+        // Animation: kurz warten, dann transform auslösen
+        requestAnimationFrame(() => {
+            sheet.style.transform = 'translateY(0)';
+        });
+    };
+
+    window.closePageSheet = function() {
+        sheet.style.transform = 'translateY(100%)';
+        overlay.classList.remove('show');
+        setTimeout(() => {
+            sheet.classList.remove('show');
+        }, 300);
+    };
+
+    overlay.addEventListener('click', closePageSheet);
+
+    // Sync: Wenn goToPage aufgerufen wird, aktualisiere auch das Bottom-Sheet
+    const origGoToPage = window.goToPage;
+    if (origGoToPage) {
+        window.goToPage = function(idx) {
+            origGoToPage(idx);
+            updatePageSheet(idx);
+        };
+    }
+
+    window.updatePageSheet = function(idx) {
+        const items = sheet.querySelectorAll('.page-sheet-item');
+        const total = items.length;
+        items.forEach((item, i) => {
+            item.classList.toggle('active', i === idx);
+        });
+        const counter = document.getElementById('pageSheetCounter');
+        if (counter) counter.textContent = 'Seite ' + (idx + 1) + ' von ' + total;
+        const fill = document.getElementById('pageSheetProgressFill');
+        if (fill) fill.style.width = ((idx + 1) / total * 100) + '%';
+    };
+
+    // Auch previousPage/nextPage wrappen fuer Sheet-Sync
+    const origPrev = window.previousPage;
+    const origNext = window.nextPage;
+    if (origPrev) {
+        window.previousPage = function() {
+            origPrev();
+            // Aktuelle Seite aus dem Carousel auslesen
+            const active = document.querySelector('#lessonCarousel .carousel-item.active');
+            if (active) {
+                const items = [...document.querySelectorAll('#lessonCarousel .carousel-item')];
+                updatePageSheet(items.indexOf(active));
+            }
+        };
+    }
+    if (origNext) {
+        window.nextPage = function() {
+            origNext();
+            const active = document.querySelector('#lessonCarousel .carousel-item.active');
+            if (active) {
+                const items = [...document.querySelectorAll('#lessonCarousel .carousel-item')];
+                updatePageSheet(items.indexOf(active));
+            }
+        };
+    }
+})();
+}); // DOMContentLoaded
+</script>
+{% endif %}
+
 {% endblock %}
