@@ -1725,8 +1725,6 @@ function previousPage() {
     if (currentPage > 0) {
         const carousel = new bootstrap.Carousel(document.getElementById('lessonCarousel'));
         carousel.prev();
-        // Scroll to top of the page
-        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 }
 
@@ -1734,8 +1732,6 @@ function nextPage() {
     if (currentPage < totalPages - 1) {
         const carousel = new bootstrap.Carousel(document.getElementById('lessonCarousel'));
         carousel.next();
-        // Scroll to top of the page
-        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 }
 
@@ -1808,29 +1804,33 @@ function showKeyboardHint() {
     }, 3000);
 }
 
-// Touch/Swipe support for mobile
+// Touch/Swipe support for mobile — mit Y-Achsen-Guard
 let touchStartX = 0;
 let touchEndX = 0;
+let touchStartY = 0;
+let touchEndY = 0;
 
 document.addEventListener('touchstart', function(event) {
     touchStartX = event.changedTouches[0].screenX;
+    touchStartY = event.changedTouches[0].screenY;
 });
 
 document.addEventListener('touchend', function(event) {
     touchEndX = event.changedTouches[0].screenX;
+    touchEndY = event.changedTouches[0].screenY;
     handleSwipe();
 });
 
 function handleSwipe() {
-    const swipeThreshold = 50;
-    const swipeDistance = touchEndX - touchStartX;
-    
-    if (Math.abs(swipeDistance) > swipeThreshold) {
-        if (swipeDistance > 0) {
-            // Swipe right - go to previous page
+    const swipeThreshold = 80;
+    const deltaX = touchEndX - touchStartX;
+    const deltaY = touchEndY - touchStartY;
+
+    // Nur horizontale Swipes erkennen: X-Distanz > Threshold UND > Y-Distanz
+    if (Math.abs(deltaX) > swipeThreshold && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
+        if (deltaX > 0) {
             previousPage();
         } else {
-            // Swipe left - go to next page
             nextPage();
         }
     }

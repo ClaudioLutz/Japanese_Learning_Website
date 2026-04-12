@@ -25,17 +25,31 @@
                 </div>
             </div>
             
-            <!-- Filter Controls -->
+            <!-- Filter Controls — Mobile: Collapsible, Desktop: immer sichtbar -->
             <div class="card filter-card mb-4" id="filterCard">
-                <div class="card-body">
+                <!-- Mobile: Toggle-Button + Active-Chips -->
+                <div class="d-md-none px-3 py-2 d-flex align-items-center justify-content-between" id="mobileFilterToggle" style="cursor:pointer;" onclick="toggleMobileFilters()">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="fas fa-sliders-h text-primary"></i>
+                        <span class="fw-semibold" style="font-size:0.95rem;">Filter</span>
+                        <span id="filterBadge" class="badge bg-primary rounded-pill" style="display:none;">0</span>
+                    </div>
+                    <i id="filterChevron" class="fas fa-chevron-down text-muted" style="transition:transform 0.2s;"></i>
+                </div>
+                <!-- Active Filter Chips (Mobile, always visible) -->
+                <div id="activeFilterChips" class="d-md-none px-3 pb-2" style="display:none;">
+                    <!-- Chips inserted by JS -->
+                </div>
+
+                <div class="card-body" id="filterBody">
                     <div class="row align-items-end">
-                        <div class="col-md-3">
+                        <div class="col-6 col-md-3 mb-2 mb-md-0">
                             <label for="categoryFilter" class="form-label">Category</label>
                             <select id="categoryFilter" class="form-select">
                                 <option value="">All Categories</option>
                             </select>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-6 col-md-2 mb-2 mb-md-0">
                             <label for="typeFilter" class="form-label">Type</label>
                             <select id="typeFilter" class="form-select">
                                 <option value="">All Types</option>
@@ -43,7 +57,7 @@
                                 <option value="paid">Paid</option>
                             </select>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-6 col-md-2 mb-2 mb-md-0">
                             <label for="difficultyFilter" class="form-label">Difficulty</label>
                             <select id="difficultyFilter" class="form-select">
                                 <option value="">All Levels</option>
@@ -54,7 +68,7 @@
                                 <option value="5">Expert (5)</option>
                             </select>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-6 col-md-3 mb-2 mb-md-0">
                             <label for="languageFilter" class="form-label">Instruction Language</label>
                             <select id="languageFilter" class="form-select">
                                 <option value="all">All Languages</option>
@@ -62,16 +76,16 @@
                                 <option value="german">German</option>
                             </select>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-2 d-none d-md-block">
                             <button type="button" class="btn btn-primary w-100" onclick="applyFilters()">Apply Filters</button>
                         </div>
                     </div>
-                    <div class="row mt-3">
+                    <div class="row mt-2">
                         <div class="col-12">
-                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="clearFilters()">
-                                <i class="fas fa-times"></i> Clear All Filters
-                            </button>
-                            <span id="activeFiltersDisplay" class="ms-3 text-muted"></span>
+                            <a href="#" class="text-muted text-decoration-none" style="font-size:0.8rem;" onclick="event.preventDefault(); clearFilters();">
+                                <i class="fas fa-times"></i> Reset
+                            </a>
+                            <span id="activeFiltersDisplay" class="ms-3 text-muted d-none d-md-inline"></span>
                         </div>
                     </div>
                 </div>
@@ -656,6 +670,7 @@ function updateActiveFiltersDisplay() {
     } else {
         display.style.display = 'none';
     }
+    updateFilterBadgeAndChips();
 }
 
 function clearLanguageFilter() {
@@ -699,9 +714,71 @@ async function purchaseLesson(lessonId, lessonTitle, price) {
     window.location.href = `/purchase/${lessonId}`;
 }
 
-// Language filter change handler
+// ── Mobile Filter Toggle ────────────────────────────────────────────
+let mobileFiltersOpen = false;
+function toggleMobileFilters() {
+    mobileFiltersOpen = !mobileFiltersOpen;
+    const body = document.getElementById('filterBody');
+    const chevron = document.getElementById('filterChevron');
+    if (mobileFiltersOpen) {
+        body.style.display = 'block';
+        chevron.style.transform = 'rotate(180deg)';
+    } else {
+        body.style.display = 'none';
+        chevron.style.transform = 'rotate(0)';
+    }
+}
+
+function updateFilterBadgeAndChips() {
+    const badge = document.getElementById('filterBadge');
+    const chipsContainer = document.getElementById('activeFilterChips');
+    if (!badge || !chipsContainer) return;
+    const filters = [];
+    const cat = document.getElementById('categoryFilter');
+    const typ = document.getElementById('typeFilter');
+    const dif = document.getElementById('difficultyFilter');
+    const lan = document.getElementById('languageFilter');
+    if (cat.value) filters.push({ label: cat.options[cat.selectedIndex].text, field: 'categoryFilter' });
+    if (typ.value) filters.push({ label: typ.options[typ.selectedIndex].text, field: 'typeFilter' });
+    if (dif.value) filters.push({ label: dif.options[dif.selectedIndex].text, field: 'difficultyFilter' });
+    if (lan.value && lan.value !== 'all') filters.push({ label: lan.options[lan.selectedIndex].text, field: 'languageFilter' });
+    badge.textContent = filters.length;
+    badge.style.display = filters.length > 0 ? 'inline-block' : 'none';
+    if (filters.length > 0) {
+        chipsContainer.style.display = 'flex';
+        chipsContainer.style.flexWrap = 'wrap';
+        chipsContainer.style.gap = '0.35rem';
+        chipsContainer.innerHTML = filters.map(f =>
+            `<span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle" style="font-size:0.75rem;font-weight:500;cursor:pointer;" onclick="document.getElementById('${f.field}').value='${f.field==='languageFilter'?'all':''}'; applyFilters();">
+                ${f.label} <i class="fas fa-times ms-1" style="font-size:0.6rem;"></i>
+            </span>`
+        ).join('');
+    } else {
+        chipsContainer.style.display = 'none';
+        chipsContainer.innerHTML = '';
+    }
+}
+
+// Initial: Mobile-Filter collapsed
+if (window.innerWidth < 768) {
+    const filterBody = document.getElementById('filterBody');
+    if (filterBody) filterBody.style.display = 'none';
+}
+
+// Auto-Apply: Jede Filter-Aenderung loest sofort Filterung aus
+['categoryFilter', 'typeFilter', 'difficultyFilter'].forEach(id => {
+    document.getElementById(id).addEventListener('change', () => applyFilters());
+});
+
+// Language filter: Braucht Daten-Reload (andere API-Abfrage), dann Auto-Apply
 document.getElementById('languageFilter').addEventListener('change', function() {
-    loadLessons(this.value);
+    loadLessons(this.value).then(() => {
+        // Nach Reload: Falls andere Filter gesetzt, direkt anwenden
+        const hasFilters = document.getElementById('categoryFilter').value ||
+                           document.getElementById('typeFilter').value ||
+                           document.getElementById('difficultyFilter').value;
+        if (hasFilters) applyFilters();
+    });
 });
 
 
