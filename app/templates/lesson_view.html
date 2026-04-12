@@ -2526,20 +2526,56 @@ function createDeck(cardItems, page) {
         return clone;
     });
 
-    // Fortschritt aus localStorage laden
-    let saved = null;
-    try { saved = JSON.parse(localStorage.getItem(storageKey)); } catch(e) {}
-
+    // Fortschritt laden: DB-First, localStorage als Fallback
     let pending, learned, currentIdx;
-    if (saved && saved.total === total && saved.pending?.length > 0) {
-        pending = saved.pending;
-        learned = saved.learned || 0;
-        currentIdx = 0;
-        console.log(`[Deck] Fortschritt geladen: ${learned}/${total} gelernt`);
+
+    // Default: alle Karten pending
+    pending = shuffle([...Array(total).keys()]);
+    learned = 0;
+    currentIdx = 0;
+
+    // DB-Fortschritt laden (asynchron, aktualisiert Deck nach Antwort)
+    if (isAuthenticated) {
+        fetch(`/api/srs/reviewed-ids?lesson_id=${lessonData.id}`)
+            .then(r => r.json())
+            .then(data => {
+                const reviewedIds = new Set(data.reviewed_ids.map(String));
+                // Finde Karten-Indizes die bereits bewertet wurden
+                const reviewedIndices = new Set();
+                allCards.forEach((card, idx) => {
+                    if (reviewedIds.has(card.dataset.contentId)) {
+                        reviewedIndices.add(idx);
+                    }
+                });
+                if (reviewedIndices.size > 0 && reviewedIndices.size < total) {
+                    // Nur nicht-bewertete Karten als pending
+                    pending = shuffle([...Array(total).keys()].filter(i => !reviewedIndices.has(i)));
+                    learned = reviewedIndices.size;
+                    currentIdx = 0;
+                    console.log(`[Deck] DB-Fortschritt: ${learned}/${total} gelernt`);
+                    showCard(pending[currentIdx]);
+                    updateStats();
+                } else if (reviewedIndices.size >= total) {
+                    // Alle Karten gelernt
+                    learned = total;
+                    pending = [];
+                    cardArea.style.display = 'none';
+                    btnGroup.style.display = 'none';
+                    completeEl.style.display = 'block';
+                    updateStats();
+                }
+            })
+            .catch(e => console.warn('[Deck] DB-Fortschritt nicht ladbar:', e));
     } else {
-        pending = shuffle([...Array(total).keys()]);
-        learned = 0;
-        currentIdx = 0;
+        // Nicht eingeloggt: localStorage-Fallback
+        let saved = null;
+        try { saved = JSON.parse(localStorage.getItem(storageKey)); } catch(e) {}
+        if (saved && saved.total === total && saved.pending?.length > 0) {
+            pending = saved.pending;
+            learned = saved.learned || 0;
+            currentIdx = 0;
+            console.log(`[Deck] localStorage-Fortschritt: ${learned}/${total} gelernt`);
+        }
     }
 
     // Fortschritt speichern

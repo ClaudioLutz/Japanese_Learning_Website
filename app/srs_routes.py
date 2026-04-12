@@ -101,6 +101,24 @@ def api_interval_preview():
     return jsonify(previews)
 
 
+@srs_bp.route('/api/srs/reviewed-ids')
+@login_required
+def api_reviewed_ids():
+    """Gibt alle Content-IDs zurueck, die der User bereits bewertet hat (fuer Deck-Init)."""
+    from app.models import CardReviewState
+    lesson_id = request.args.get('lesson_id', type=int)
+
+    query = CardReviewState.query.filter(
+        CardReviewState.user_id == current_user.id,
+    )
+    if lesson_id:
+        from app.models import LessonContent
+        query = query.join(LessonContent).filter(LessonContent.lesson_id == lesson_id)
+
+    ids = [r.content_id for r in query.all()]
+    return jsonify({'reviewed_ids': ids})
+
+
 @srs_bp.route('/api/srs/stats')
 @login_required
 def api_stats():
