@@ -316,6 +316,7 @@ def get_content_data_for_review(content_item):
         data['details'] = {
             'explanation': ref.explanation,
             'structure': ref.structure or '',
+            'romaji': ref.romaji or '',
             'examples': ref.example_sentences or '',
         }
 

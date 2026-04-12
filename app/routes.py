@@ -859,6 +859,7 @@ def create_grammar():
         title=data['title'],
         explanation=data['explanation'],
         structure=data.get('structure'),
+        romaji=data.get('romaji'),
         jlpt_level=data.get('jlpt_level'),
         example_sentences=data.get('example_sentences')
     )
@@ -892,6 +893,7 @@ def update_grammar(item_id):
     item.title = data.get('title', item.title)
     item.explanation = data.get('explanation', item.explanation)
     item.structure = data.get('structure', item.structure)
+    item.romaji = data.get('romaji', item.romaji)
     item.jlpt_level = data.get('jlpt_level', item.jlpt_level)
     item.example_sentences = data.get('example_sentences', item.example_sentences)
 

@@ -433,6 +433,7 @@
         let subText = '';
         if (card.content_type === 'kana' && d.romanization) subText = d.romanization;
         else if (card.content_type === 'vocabulary' && d.reading) subText = d.reading;
+        else if (card.content_type === 'grammar' && d.romaji) subText = d.romaji;
 
         // Bild fuer die Rueckseite
         let imageHTML = '';
@@ -456,7 +457,8 @@
                        (d.example_jp ? detailRow('Beispiel', d.example_jp, true) : '') +
                        (d.example_en ? detailRow('', d.example_en) : '');
         } else if (card.content_type === 'grammar') {
-            backHTML = detailRow('Struktur', d.structure) +
+            backHTML = detailRow('Romaji', d.romaji) +
+                       detailRow('Struktur', d.structure) +
                        `<div style="margin-top:0.5rem;font-size:0.85rem;">${escapeHtml(d.explanation || '').substring(0, 300)}</div>`;
         }
 

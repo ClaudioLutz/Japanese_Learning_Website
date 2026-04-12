@@ -34,6 +34,7 @@
             <tr>
                 <th class="!bg-gray-50 dark:!bg-slate-800/50">ID</th>
                 <th class="!bg-gray-50 dark:!bg-slate-800/50">Title</th>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50">Romaji</th>
                 <th class="!bg-gray-50 dark:!bg-slate-800/50">JLPT</th>
                 <th class="!bg-gray-50 dark:!bg-slate-800/50">Structure</th>
                 <th class="!bg-gray-50 dark:!bg-slate-800/50 !text-center">Actions</th>
@@ -56,6 +57,8 @@
                 <input type="text" id="add-title" name="title" required>
                 <label for="add-explanation">Explanation:</label>
                 <textarea id="add-explanation" name="explanation" rows="5" required></textarea>
+                <label for="add-romaji">Romaji:</label>
+                <input type="text" id="add-romaji" name="romaji" placeholder="e.g. ~sou desu">
                 <label for="add-structure">Structure:</label>
                 <input type="text" id="add-structure" name="structure" placeholder="e.g. Verb (dict) + koto">
                 <label for="add-jlpt_level">JLPT Level (1-5):</label>
@@ -86,6 +89,8 @@
                 <input type="text" id="edit-title" name="title" required>
                 <label for="edit-explanation">Explanation:</label>
                 <textarea id="edit-explanation" name="explanation" rows="5" required></textarea>
+                <label for="edit-romaji">Romaji:</label>
+                <input type="text" id="edit-romaji" name="romaji">
                 <label for="edit-structure">Structure:</label>
                 <input type="text" id="edit-structure" name="structure">
                 <label for="edit-jlpt_level">JLPT Level (1-5):</label>
@@ -127,6 +132,7 @@
         const search = document.getElementById('grammarSearch').value.toLowerCase();
         const filtered = allGrammarData.filter(g =>
             !search || (g.title && g.title.toLowerCase().includes(search)) ||
+            (g.romaji && g.romaji.toLowerCase().includes(search)) ||
             (g.structure && g.structure.toLowerCase().includes(search))
         );
         renderTable(filtered);
@@ -136,7 +142,7 @@
         document.getElementById('grammarCount').textContent = allGrammarData.length;
         grammarTableBody.innerHTML = '';
         if (list.length === 0) {
-            grammarTableBody.innerHTML = '<tr><td colspan="5" class="!text-center !py-8 !text-gray-400 dark:!text-slate-500">No grammar rules found</td></tr>';
+            grammarTableBody.innerHTML = '<tr><td colspan="6" class="!text-center !py-8 !text-gray-400 dark:!text-slate-500">No grammar rules found</td></tr>';
             return;
         }
         list.forEach(grammar => {
@@ -146,6 +152,7 @@
             row.innerHTML = `
                 <td class="!text-gray-400 dark:!text-slate-500 !text-sm">${grammar.id}</td>
                 <td class="!font-medium">${escapeHtml(grammar.title)}</td>
+                <td class="!text-sm !text-gray-500 dark:!text-slate-400">${escapeHtml(grammar.romaji) || '<span class="text-gray-300 dark:text-slate-600">--</span>'}</td>
                 <td>${jlptBadge}</td>
                 <td class="!text-sm !text-gray-600 dark:!text-slate-400 !font-mono">${escapeHtml(grammar.structure) || '<span class="text-gray-300 dark:text-slate-600">--</span>'}</td>
                 <td class="!text-center">
@@ -194,6 +201,7 @@
         document.getElementById('edit-id').value = grammar.id;
         document.getElementById('edit-title').value = grammar.title;
         document.getElementById('edit-explanation').value = grammar.explanation;
+        document.getElementById('edit-romaji').value = grammar.romaji || '';
         document.getElementById('edit-structure').value = grammar.structure || '';
         document.getElementById('edit-jlpt_level').value = grammar.jlpt_level || '';
         document.getElementById('edit-example_sentences').value = grammar.example_sentences || '';

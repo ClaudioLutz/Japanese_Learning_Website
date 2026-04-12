@@ -122,12 +122,13 @@ class VocabularyAdmin(SecureModelView):
 
 
 class GrammarAdmin(SecureModelView):
-    column_list = ['id', 'title', 'structure', 'jlpt_level', 'status', 'created_by_ai']
-    column_searchable_list = ['title', 'structure', 'explanation']
+    column_list = ['id', 'title', 'romaji', 'structure', 'jlpt_level', 'status', 'created_by_ai']
+    column_searchable_list = ['title', 'romaji', 'structure', 'explanation']
     column_filters = ['jlpt_level', 'status', 'created_by_ai']
     column_editable_list = ['status']
     column_labels = {
         'title': 'Titel',
+        'romaji': 'Romaji',
         'explanation': 'Erklaerung',
         'structure': 'Struktur',
         'jlpt_level': 'JLPT',
@@ -136,7 +137,7 @@ class GrammarAdmin(SecureModelView):
         'created_by_ai': 'KI-generiert',
     }
     form_columns = [
-        'title', 'structure', 'explanation', 'jlpt_level',
+        'title', 'romaji', 'structure', 'explanation', 'jlpt_level',
         'example_sentences', 'status', 'created_by_ai',
     ]
 

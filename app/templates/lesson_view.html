@@ -837,6 +837,9 @@
                                                                         {% elif content.content_type == 'grammar' %}
                                                                             <div class="grammar-front">
                                                                                 <div class="grammar-title">{{ content_data.title }}</div>
+                                                                                {% if content_data.romaji %}
+                                                                                <div class="vocab-reading">{{ content_data.romaji }}</div>
+                                                                                {% endif %}
                                                                                 {% if content_data.structure %}
                                                                                 <div class="grammar-structure">{{ content_data.structure }}</div>
                                                                                 {% endif %}
@@ -881,6 +884,9 @@
                                                                                 {% endif %}
                                                                                 {% endif %}
                                                                             {% elif content.content_type == 'grammar' %}
+                                                                                {% if content_data.romaji %}
+                                                                                <p><strong>Romaji:</strong> {{ content_data.romaji }}</p>
+                                                                                {% endif %}
                                                                                 <p><strong>Explanation:</strong><br>{{ content_data.explanation }}</p>
                                                                                 {% if content_data.example_sentences %}
                                                                                 <p><strong>Examples:</strong><br>{{ content_data.example_sentences | nl2br }}</p>
