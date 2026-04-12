@@ -232,18 +232,26 @@
         background-color: #ffffff;
         border: 1px solid var(--border-color, #D4CFC5);
         border-radius: 12px;
-        padding: 1rem 1.5rem;
+        padding: 0.6rem 1rem;
         margin-top: 1.5rem;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
+    .lesson-nav-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+    }
+
     .nav-btn {
-        padding: 0.75rem 1.5rem;
+        padding: 0.5rem 1rem;
         font-weight: 600;
         border-radius: 8px;
         transition: all 0.2s ease;
         border: none;
-        min-width: 120px;
+        font-size: 0.85rem;
+        white-space: nowrap;
     }
 
     .nav-btn:hover:not(:disabled) {
@@ -282,13 +290,20 @@
             border: none;
             border-top: 1px solid var(--border-color, #D4CFC5);
             z-index: 1035;
-            padding: 0.4rem 0.75rem;
+            padding: 0.25rem 0.5rem;
             box-shadow: 0 -1px 6px rgba(0,0,0,0.06);
             background: rgba(255,255,255,0.97);
             backdrop-filter: blur(8px);
         }
+        .nav-btn {
+            padding: 0.35rem 0.6rem;
+            font-size: 0.78rem;
+        }
+        .page-counter {
+            font-size: 0.78rem !important;
+        }
         .lesson-main-content {
-            padding-bottom: 120px !important; /* Platz fuer Nav + Bottom-Nav */
+            padding-bottom: 110px !important;
         }
         /* Sidebar-Toggle FAB ausblenden — wird durch Bottom-Nav-Item ersetzt */
         .sidebar-toggle {
@@ -446,12 +461,7 @@
         }
 
         .lesson-navigation-bottom {
-            padding: 0.75rem 1rem;
-        }
-
-        .nav-btn {
-            min-width: 100px;
-            padding: 0.5rem 1rem;
+            padding: 0.5rem 0.75rem;
         }
 
         .keyboard-hint {
@@ -1118,20 +1128,14 @@
             <!-- Enhanced Bottom Navigation -->
             {% if lesson.pages and lesson.pages|length > 1 %}
             <div class="lesson-navigation-bottom">
-                <div class="row align-items-center">
-                    <div class="col-md-4">
-                        <button class="nav-btn nav-btn-secondary" id="prevPageBottom" onclick="previousPage()" disabled>
-                            <i class="fas fa-chevron-left"></i> Previous
-                        </button>
-                    </div>
-                    <div class="col-md-4 text-center">
-                        <div class="page-counter" id="pageCounterBottom">Page 1 of {{ lesson.pages|length }}</div>
-                    </div>
-                    <div class="col-md-4 text-end">
-                        <button class="nav-btn nav-btn-primary" id="nextPageBottom" onclick="nextPage()">
-                            Next <i class="fas fa-chevron-right"></i>
-                        </button>
-                    </div>
+                <div class="lesson-nav-row">
+                    <button class="nav-btn nav-btn-secondary" id="prevPageBottom" onclick="previousPage()" disabled>
+                        <i class="fas fa-chevron-left"></i> <span class="nav-btn-text">Previous</span>
+                    </button>
+                    <div class="page-counter" id="pageCounterBottom">Seite 1 von {{ lesson.pages|length }}</div>
+                    <button class="nav-btn nav-btn-primary" id="nextPageBottom" onclick="nextPage()">
+                        <span class="nav-btn-text">Next</span> <i class="fas fa-chevron-right"></i>
+                    </button>
                 </div>
             </div>
             {% endif %}
