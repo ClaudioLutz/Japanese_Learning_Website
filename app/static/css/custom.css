@@ -3594,3 +3594,199 @@ button[onclick*="moveContentInPage"]:active {
         padding: 0.3rem 0.6rem;
     }
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   MOBILE BOTTOM NAVIGATION BAR
+   ══════════════════════════════════════════════════════════════════ */
+.mobile-bottom-nav {
+    display: none; /* Hidden on desktop */
+}
+
+@media (max-width: 767px) {
+    .mobile-bottom-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1040;
+        background: rgba(255, 255, 255, 0.97);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-top: 1px solid rgba(0, 0, 0, 0.08);
+        box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.06);
+        padding: 0.35rem 0;
+        padding-bottom: calc(0.35rem + env(safe-area-inset-bottom, 0px));
+    }
+
+    .bottom-nav-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.15rem;
+        padding: 0.35rem 0;
+        color: #6b7280;
+        text-decoration: none;
+        font-size: 0.65rem;
+        font-weight: 500;
+        transition: color 0.15s;
+        min-height: 44px;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .bottom-nav-item i {
+        font-size: 1.15rem;
+        transition: transform 0.15s;
+    }
+
+    .bottom-nav-item.active {
+        color: var(--zen-indigo, #2b4c7e);
+    }
+
+    .bottom-nav-item.active i {
+        transform: scale(1.1);
+    }
+
+    .bottom-nav-item:active {
+        color: var(--zen-indigo, #2b4c7e);
+        transform: scale(0.95);
+    }
+
+    /* Body padding-bottom fuer Bottom-Nav-Platz */
+    body {
+        padding-bottom: 64px !important;
+    }
+
+    /* Admin-FAB ueber die Bottom-Nav schieben */
+    .admin-floating-edit {
+        bottom: 76px !important;
+    }
+
+    /* Back-to-Top ueber die Bottom-Nav schieben */
+    .back-to-top,
+    #backToTop {
+        bottom: 76px !important;
+    }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   SKELETON LOADER (fuer Lessons + allgemein)
+   ══════════════════════════════════════════════════════════════════ */
+.skeleton {
+    position: relative;
+    overflow: hidden;
+    background: #e5e7eb;
+    border-radius: 8px;
+}
+
+.skeleton::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+    animation: skeleton-shimmer 1.5s infinite;
+}
+
+@keyframes skeleton-shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.skeleton-card {
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.skeleton-card .skeleton-image {
+    width: 100%;
+    height: 160px;
+}
+
+.skeleton-card .skeleton-title {
+    height: 20px;
+    width: 70%;
+    margin: 1rem;
+}
+
+.skeleton-card .skeleton-text {
+    height: 14px;
+    width: 90%;
+    margin: 0.5rem 1rem;
+}
+
+.skeleton-card .skeleton-badge {
+    height: 24px;
+    width: 80px;
+    margin: 0.5rem 1rem 1rem;
+    border-radius: 12px;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   PREFERS-REDUCED-MOTION
+   ══════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    .skeleton::after {
+        animation: none !important;
+    }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   TAP-TARGET MINIMUM SIZE (44px Apple/Google)
+   ══════════════════════════════════════════════════════════════════ */
+@media (max-width: 767px) {
+    a.btn,
+    button,
+    .btn,
+    .nav-btn,
+    .form-select,
+    .form-control,
+    select {
+        min-height: 44px;
+    }
+
+    .enhanced-nav-link,
+    .nav-action-btn {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   SWIPE HINT (Progressive Disclosure)
+   ══════════════════════════════════════════════════════════════════ */
+.swipe-hint {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.75);
+    color: white;
+    padding: 0.6rem 1.25rem;
+    border-radius: 24px;
+    font-size: 0.8rem;
+    z-index: 1060;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+    white-space: nowrap;
+}
+
+.swipe-hint.show {
+    opacity: 1;
+}
+
+.swipe-hint i {
+    margin: 0 0.35rem;
+}

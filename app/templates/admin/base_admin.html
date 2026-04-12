@@ -62,6 +62,44 @@
         /* ── Alpine.js x-cloak ───────────────────────────────────────── */
         [x-cloak] { display: none !important; }
 
+        /* ── Skeleton Loader (Admin) ─────────────────────────────── */
+        .admin-skeleton {
+            position: relative;
+            overflow: hidden;
+            background: var(--border-color);
+            border-radius: 6px;
+        }
+        .admin-skeleton::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: admin-skeleton-shimmer 1.5s infinite;
+        }
+        @keyframes admin-skeleton-shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        .admin-skeleton-row {
+            display: flex;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .admin-skeleton-cell {
+            height: 16px;
+            border-radius: 4px;
+        }
+
+        /* ── prefers-reduced-motion (Admin) ───────────────────────── */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
         /* ── Legacy CSS Variables (Abwaertskompatibilitaet) ──────────── */
         :root {
             --primary-color: #4f46e5;

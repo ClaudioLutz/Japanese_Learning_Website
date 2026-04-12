@@ -1,3 +1,53 @@
+/* ── Category Pills (Mobile horizontal scroll) ──────────────────── */
+.category-pills-wrapper {
+    overflow: hidden;
+    padding: 0 0.5rem;
+}
+.category-pills {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 0.25rem 0;
+}
+.category-pills::-webkit-scrollbar { display: none; }
+.category-pill {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    background: white;
+    border: 1.5px solid #e5e7eb;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #374151;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.15s;
+    min-height: 38px;
+    -webkit-tap-highlight-color: transparent;
+}
+.category-pill:active { transform: scale(0.95); }
+.category-pill.active {
+    background: var(--zen-indigo, #2b4c7e);
+    color: white;
+    border-color: var(--zen-indigo, #2b4c7e);
+}
+.category-pill .pill-count {
+    background: rgba(0,0,0,0.08);
+    color: inherit;
+    font-size: 0.7rem;
+    padding: 0.1rem 0.45rem;
+    border-radius: 10px;
+    font-weight: 600;
+}
+.category-pill.active .pill-count {
+    background: rgba(255,255,255,0.2);
+}
+
 /* Lessons Page Specific Styles */
 
 /* Page Title */

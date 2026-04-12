@@ -1744,8 +1744,11 @@ function goToPage(pageIndex) {
         const overlay = document.getElementById('sidebarOverlay');
         if (sidebar) sidebar.classList.remove('show');
         if (overlay) overlay.classList.remove('show');
-        // Scroll to top of content
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // Scroll zum Carousel-Container statt ganz oben
+        const carouselEl = document.getElementById('lessonCarousel');
+        if (carouselEl) {
+            carouselEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
     }
 }
 
@@ -1833,8 +1836,28 @@ function handleSwipe() {
         } else {
             nextPage();
         }
+        // Haptic feedback (Mobile-Browser die es unterstuetzen)
+        if (navigator.vibrate) navigator.vibrate(10);
     }
 }
+
+// ── Swipe-Hint (einmalig zeigen, dann nie wieder) ──────────────────
+(function() {
+    if (localStorage.getItem('swipeHintShown')) return;
+    if (!'ontouchstart' in window) return;
+    setTimeout(() => {
+        const hint = document.createElement('div');
+        hint.className = 'swipe-hint';
+        hint.innerHTML = '<i class="fas fa-hand-point-left"></i> Wischen zum Blaettern <i class="fas fa-hand-point-right"></i>';
+        document.body.appendChild(hint);
+        requestAnimationFrame(() => hint.classList.add('show'));
+        setTimeout(() => {
+            hint.classList.remove('show');
+            setTimeout(() => hint.remove(), 300);
+        }, 3500);
+        localStorage.setItem('swipeHintShown', 'true');
+    }, 2000);
+})();
 
 function initializePageOverviewCompletionCounts() {
     // Set the correct DOM state for all content items based on server-side progress data

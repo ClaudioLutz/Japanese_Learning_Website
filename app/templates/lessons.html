@@ -17,6 +17,13 @@
         <div class="col-12">
             <h1 class="page-title mb-4">Japanese Learning Lessons</h1>
             
+            <!-- Category Pills (Mobile: horizontal scrollbar, Desktop: hidden — Grid stattdessen) -->
+            <div class="category-pills-wrapper d-md-none mb-3" id="categoryPillsWrapper" style="display:none !important;">
+                <div class="category-pills" id="categoryPills">
+                    <!-- Pills inserted by JS -->
+                </div>
+            </div>
+
             <!-- Category Navigation -->
             <div class="categories-section mb-5">
                 <h2 class="section-title mb-4">Browse by Category</h2>
@@ -108,12 +115,13 @@
                 <!-- Lessons will be loaded here -->
             </div>
             
-            <!-- Loading Spinner -->
-            <div id="loadingSpinner" class="text-center my-5" style="display: none;">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Loading...</span>
+            <!-- Loading Skeleton -->
+            <div id="loadingSpinner" style="display: none;">
+                <div class="categories-grid">
+                    <div class="skeleton-card skeleton"><div class="skeleton-image skeleton"></div><div class="skeleton-title skeleton"></div><div class="skeleton-text skeleton"></div><div class="skeleton-badge skeleton"></div></div>
+                    <div class="skeleton-card skeleton"><div class="skeleton-image skeleton"></div><div class="skeleton-title skeleton"></div><div class="skeleton-text skeleton"></div><div class="skeleton-badge skeleton"></div></div>
+                    <div class="skeleton-card skeleton d-none d-md-block"><div class="skeleton-image skeleton"></div><div class="skeleton-title skeleton"></div><div class="skeleton-text skeleton"></div><div class="skeleton-badge skeleton"></div></div>
                 </div>
-                <p class="mt-2 text-muted">Loading lessons...</p>
             </div>
             
             <!-- No Lessons Message -->
@@ -142,31 +150,25 @@ let categories = [];
 let currentView = 'categories'; // 'categories' or 'lessons'
 let selectedCategoryId = null;
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Check for language parameter first
+document.addEventListener('DOMContentLoaded', async function() {
     const urlParams = new URLSearchParams(window.location.search);
     const languageParam = urlParams.get('language');
-    
+
     if (languageParam) {
-        // Set the language filter first
         const languageFilter = document.getElementById('languageFilter');
-        if (languageParam === 'english') {
-            languageFilter.value = 'english';
-        } else if (languageParam === 'german') {
-            languageFilter.value = 'german';
-        }
-        
-        // Load lessons with the specified language
-        loadLessons(languageParam);
-        
-        // Update breadcrumb to show language context
+        if (languageParam === 'english') languageFilter.value = 'english';
+        else if (languageParam === 'german') languageFilter.value = 'german';
         updateLanguageBreadcrumb(languageParam);
-    } else {
-        // Load all lessons if no language parameter
-        loadLessons();
     }
-    
-    loadCategories();
+
+    // Parallel laden, aber displayCategories erst NACH beiden Calls
+    await Promise.all([
+        loadLessons(languageParam || 'all'),
+        loadCategories()
+    ]);
+    // Sicherstellen dass Kategorien angezeigt werden
+    displayCategories();
+
     setupScrollListener();
 });
 
@@ -350,6 +352,7 @@ function displayCategories() {
         
         container.appendChild(categoryCard);
     });
+    updateCategoryPills();
 }
 
 function getCategoryIcon(categoryName) {
@@ -712,6 +715,38 @@ async function purchaseLesson(lessonId, lessonTitle, price) {
     }
     
     window.location.href = `/purchase/${lessonId}`;
+}
+
+// ── Category Pills (Mobile horizontal scrollbar) ────────────────────
+function updateCategoryPills() {
+    const wrapper = document.getElementById('categoryPillsWrapper');
+    const container = document.getElementById('categoryPills');
+    if (!wrapper || !container) return;
+    if (window.innerWidth >= 768 || categories.length === 0) {
+        wrapper.style.display = 'none';
+        wrapper.style.setProperty('display', 'none', 'important');
+        return;
+    }
+    // Show pills
+    wrapper.style.removeProperty('display');
+    wrapper.style.display = 'flex';
+    container.innerHTML = '';
+    // "All" pill
+    const allPill = document.createElement('button');
+    allPill.className = 'category-pill' + (!selectedCategoryId ? ' active' : '');
+    allPill.innerHTML = `All <span class="pill-count">${allLessons.length}</span>`;
+    allPill.onclick = () => showAllCategories();
+    container.appendChild(allPill);
+
+    categories.forEach(cat => {
+        const count = allLessons.filter(l => l.category_id === cat.id).length;
+        if (count === 0) return;
+        const pill = document.createElement('button');
+        pill.className = 'category-pill' + (selectedCategoryId == cat.id ? ' active' : '');
+        pill.innerHTML = `${cat.name} <span class="pill-count">${count}</span>`;
+        pill.onclick = () => showCategoryLessons(cat.id, cat.name);
+        container.appendChild(pill);
+    });
 }
 
 // ── Mobile Filter Toggle ────────────────────────────────────────────

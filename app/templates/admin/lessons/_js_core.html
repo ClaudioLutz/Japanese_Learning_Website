@@ -420,6 +420,37 @@ function handleUrlParams() {
     }
 }
 
+// ── Autosave Drafts (localStorage) ──────────────────────────────────
+const AUTOSAVE_KEY = 'admin_lesson_draft';
+let _autosaveTimer = null;
+function startAutosave(formId) {
+    stopAutosave();
+    _autosaveTimer = setInterval(() => {
+        const form = document.getElementById(formId);
+        if (!form) return;
+        const data = Object.fromEntries(new FormData(form).entries());
+        try { localStorage.setItem(AUTOSAVE_KEY + '_' + formId, JSON.stringify(data)); } catch (e) {}
+    }, 5000);
+}
+function stopAutosave() { if (_autosaveTimer) { clearInterval(_autosaveTimer); _autosaveTimer = null; } }
+function restoreAutosave(formId) {
+    try {
+        const saved = JSON.parse(localStorage.getItem(AUTOSAVE_KEY + '_' + formId));
+        if (!saved) return false;
+        const form = document.getElementById(formId);
+        if (!form) return false;
+        Object.keys(saved).forEach(key => {
+            const input = form.elements[key];
+            if (input && input.type !== 'hidden' && key !== 'csrf_token') input.value = saved[key];
+        });
+        return true;
+    } catch (e) { return false; }
+}
+function clearAutosave(formId) {
+    try { localStorage.removeItem(AUTOSAVE_KEY + '_' + formId); } catch (e) {}
+    stopAutosave();
+}
+
 // ── Init ────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function() {
     loadLessons().then(() => { setTimeout(handleUrlParams, 300); });
