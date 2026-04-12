@@ -52,5 +52,12 @@ gcloud sql instances patch jpl-psql --clear-authorized-networks \
 
 - NEVER leave the authorized network open after finishing
 - NEVER run UPDATE/DELETE without WHERE clause
+- NEVER modify these tables without explicit user confirmation:
+  - `user` — Registrierungen, Passwörter, Abos
+  - `user_lesson_progress` — Lernfortschritt
+  - `user_quiz_answer` — Quiz-Antworten
+  - `lesson_purchase` / `course_purchase` — Käufe
+  - `payment_transaction` — Zahlungen
 - For write operations: always SELECT first to verify affected rows
 - Prefer READ-ONLY queries unless explicitly asked to modify data
+- Bei Zweifeln: lieber nachfragen als Daten verlieren
