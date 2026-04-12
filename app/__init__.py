@@ -11,6 +11,7 @@ from flask_limiter.util import get_remote_address
 from flask_talisman import Talisman
 import os
 from werkzeug.utils import secure_filename
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 # Load environment variables
 from dotenv import load_dotenv
@@ -28,6 +29,9 @@ login_manager.login_message_category = 'info'
 
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
+    # ProxyFix: Cloud Run / Loadbalancer leitet HTTPS-Traffic als HTTP weiter.
+    # Ohne ProxyFix sieht Flask nur http:// und OAuth redirect_uri stimmt nicht.
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
     # SECRET_KEY ist Pflicht — ohne gültigen Key keine Sessions/CSRF
     secret_key = os.environ.get('SECRET_KEY')
     if not secret_key:
