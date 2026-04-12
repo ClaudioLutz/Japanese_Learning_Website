@@ -876,7 +876,11 @@
                                                                                 {% if content_data.reading %}
                                                                                 <p><strong>Reading:</strong> {{ content_data.reading }}</p>
                                                                                 {% endif %}
+                                                                                {% if lesson.instruction_language == 'german' and content_data.meaning_de %}
+                                                                                <p><strong>Bedeutung:</strong> {{ content_data.meaning_de }}</p>
+                                                                                {% else %}
                                                                                 <p><strong>Meaning:</strong> {{ content_data.meaning }}</p>
+                                                                                {% endif %}
                                                                                 {% if content_data.example_sentence_japanese %}
                                                                                 <p><strong>Example:</strong><br>{{ content_data.example_sentence_japanese }}</p>
                                                                                 {% if content_data.example_sentence_english %}

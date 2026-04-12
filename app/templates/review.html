@@ -428,6 +428,7 @@
         const frontText = card.front || '?';
         const isLong = frontText.length > 6;
         const d = card.details || {};
+        const isGerman = card.instruction_language === 'german';
 
         // Romaji/Reading unter dem Haupttext auf der Vorderseite
         let subText = '';
@@ -452,8 +453,9 @@
                        detailRow("On'yomi", d.onyomi, true) +
                        detailRow("Kun'yomi", d.kunyomi, true);
         } else if (card.content_type === 'vocabulary') {
+            const vocabMeaning = (isGerman && d.meaning_de) ? d.meaning_de : d.meaning;
             backHTML = imageHTML + detailRow('Lesung', d.reading, true) +
-                       detailRow('Bedeutung', d.meaning) +
+                       detailRow('Bedeutung', vocabMeaning) +
                        (d.example_jp ? detailRow('Beispiel', d.example_jp, true) : '') +
                        (d.example_en ? detailRow('', d.example_en) : '');
         } else if (card.content_type === 'grammar') {

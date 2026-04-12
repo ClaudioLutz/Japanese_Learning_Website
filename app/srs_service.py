@@ -282,6 +282,7 @@ def get_content_data_for_review(content_item):
         'content_type': content_item.content_type,
         'lesson_id': content_item.lesson_id,
         'lesson_title': content_item.lesson.title if content_item.lesson else '',
+        'instruction_language': content_item.lesson.instruction_language if content_item.lesson else 'english',
     }
 
     ref = content_item.get_content_data()
@@ -307,6 +308,7 @@ def get_content_data_for_review(content_item):
         data['details'] = {
             'reading': ref.reading,
             'meaning': ref.meaning,
+            'meaning_de': ref.meaning_de or '',
             'example_jp': ref.example_sentence_japanese or '',
             'example_en': ref.example_sentence_english or '',
             'image_url': ref.image_url or '',

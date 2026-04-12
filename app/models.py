@@ -115,6 +115,7 @@ class Vocabulary(db.Model):
     word = db.Column(db.String(100), nullable=False, unique=True)
     reading = db.Column(db.String(100), nullable=False)
     meaning = db.Column(db.Text, nullable=False)
+    meaning_de = db.Column(db.Text, nullable=True)
     jlpt_level = db.Column(db.Integer, nullable=True)
     example_sentence_japanese = db.Column(db.Text, nullable=True)
     example_sentence_english = db.Column(db.Text, nullable=True)
