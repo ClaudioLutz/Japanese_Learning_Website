@@ -122,7 +122,7 @@ PAYREXX_WEBHOOK_SECRET="<webhook-signing-key>"
 - **User**: `app_user` / **Passwort**: `JapaneseApp2025!`
 - **Port**: 5432
 - **DB**: `japanese_learning`
-- **Daten**: 4 User, 80 Lektionen, 3 Kurse, 4'184 Content-Items (Stand März 2026)
+- **Daten**: 8 User, 10 Lektionen (5 EN + 5 DE), 1 Kurs, 802 Content-Items, 250 Quiz-Fragen (Stand April 2026)
 
 ### Modelle (Hauptentitäten)
 - **User** — Auth, subscription_level (free/premium), is_admin
@@ -168,12 +168,81 @@ Decorators: `@login_required`, `@admin_required`, `@premium_required`.
 - **Inline Reference Editing**: Content-Editor lädt referenzierte Daten (Vocabulary/Kanji/etc.) per API und speichert Änderungen beim Save zurück — Änderungen wirken global.
 - **Playwright MCP**: Konfiguriert in `.mcp.json` für Browser-basierte UI-Tests via Claude Code
 
-## GCP Deployment
-- **Projekt**: `jpl-website-bill-20251130` — **Status unklar, möglicherweise gelöscht**
-- **Region**: europe-west6 (Zürich)
-- **Cloud SQL**: `jpl-psql` (PostgreSQL, 1 CPU, 4GB RAM)
-- **Cloud Run**: `japanese-learning-app` (Port 8080, 2 Gunicorn Workers)
-- **Deployment**: `./deploy-to-cloud-run.sh` oder `./deploy-to-cloud-run.ps1`
+## GCP Deployment & Produktion
+
+### Infrastruktur
+- **Projekt-ID**: `healthy-coil-466105-d7` (Name: "Japanese-Learning-Website")
+- **Account**: `claudio.lutz.cv@gmail.com`
+- **Domain**: https://japanese-learning.ch (SSL via Google-managed Zertifikat)
+- **Domain-Registrar**: Hostpoint (DNS-Zone dort verwaltet)
+
+### Cloud Run
+- **Service**: `japanese-learning-app`
+- **Region**: `europe-west1` (Belgien — Zürich unterstützt kein Domain Mapping)
+- **Image**: `europe-west6-docker.pkg.dev/healthy-coil-466105-d7/app-images/japanese-learning-app:latest`
+- **Ressourcen**: 1 CPU, 1Gi RAM, max 5 Instanzen, Timeout 300s
+- **Port**: 8080 (Gunicorn, 2 Workers)
+- **Build-Config**: `cloudbuild.yaml` (referenziert `Dockerfile.cloudrun`)
+
+### Cloud SQL
+- **Instanz**: `jpl-psql` (PostgreSQL 15, db-f1-micro, europe-west6)
+- **IP**: `34.65.56.56` (Public IP, standardmässig keine autorisierten Netzwerke)
+- **DB**: `japanese_learning`, User: `app_user`
+- **Passwort**: in Secret Manager unter `db-password`
+- **Verbindung von Cloud Run**: Unix Socket `/cloudsql/healthy-coil-466105-d7:europe-west6:jpl-psql`
+
+### Cloud SQL Zugriff (lokal)
+```bash
+# Option A: Temporär IP autorisieren
+gcloud sql instances patch jpl-psql \
+  --authorized-networks=$(curl -s ifconfig.me)/32 \
+  --project=healthy-coil-466105-d7 --quiet
+DB_PASS=$(gcloud secrets versions access latest --secret=db-password --project=healthy-coil-466105-d7)
+PGPASSWORD="$DB_PASS" psql -h 34.65.56.56 -U app_user -d japanese_learning
+# WICHTIG: Danach wieder sperren!
+gcloud sql instances patch jpl-psql --clear-authorized-networks \
+  --project=healthy-coil-466105-d7 --quiet
+
+# Option B: Cloud SQL Proxy (sicherer, kein IP-Freigabe nötig)
+cloud-sql-proxy healthy-coil-466105-d7:europe-west6:jpl-psql --port=5433
+# Dann: psql -h localhost -p 5433 -U app_user -d japanese_learning
+```
+
+### Secret Manager
+- `db-password` — Cloud SQL Passwort
+- `flask-secret-key` — Flask SECRET_KEY
+- `wtf-csrf-secret-key` — CSRF Secret
+
+### GCS (Google Cloud Storage)
+- **Bucket**: `jpl-website-assets` (öffentlich lesbar)
+- **Inhalt**: Audio-Dateien (144 MP3s, ~12 MB), Bilder
+- **Pfadstruktur**: `gs://jpl-website-assets/lessons/audio/{lektion}/datei.mp3`
+- **URL-Muster**: `https://storage.googleapis.com/jpl-website-assets/lessons/audio/...`
+- App nutzt `GCS_BUCKET_NAME` Env-Variable; Models lösen URLs via `get_file_url()` auf
+
+### Deployment (Slash-Command)
+```
+/deploy
+```
+Oder manuell:
+```bash
+# 1. Image bauen
+gcloud builds submit --config=cloudbuild.yaml --project=healthy-coil-466105-d7 \
+  --account=claudio.lutz.cv@gmail.com .
+# 2. Deployen
+gcloud run services update japanese-learning-app \
+  --image=europe-west6-docker.pkg.dev/healthy-coil-466105-d7/app-images/japanese-learning-app:latest \
+  --region=europe-west1 --project=healthy-coil-466105-d7 \
+  --account=claudio.lutz.cv@gmail.com
+# 3. Verifizieren
+curl -s -o /dev/null -w "%{http_code}" https://japanese-learning.ch/
+```
+
+### Geschätzte Kosten (~12-15 CHF/Monat)
+- Cloud SQL db-f1-micro: ~8 CHF
+- Cloud Run (pay-per-use): ~2-5 CHF
+- Artifact Registry + Secrets: ~1 CHF
+- Domain (japanese-learning.ch): ~15 CHF/Jahr
 
 ## Arbeitsweise — Sauberer Git-Status
 - **Jede Änderung sofort committen und pushen** — nach jeder abgeschlossenen Teilaufgabe wird ein Git-Commit erstellt und auf den Remote gepusht. Das verbessert die Nachvollziehbarkeit und schützt vor Datenverlust.
@@ -192,8 +261,6 @@ Decorators: `@login_required`, `@admin_required`, `@premium_required`.
 
 ## Bekannte offene Baustellen
 1. **Payrexx-Zahlung integriert, noch nicht produktiv** — PayrexxPaymentService erstellt, Payrexx-Konto und API-Keys noch einzurichten
-2. **GCP-Projekt-Status unklar** — Muss geprüft werden ob das Projekt noch existiert
-3. **Playwright E2E-Tests** — 8 Spec-Dateien in `tests/`, benötigen `npm install` und laufenden Test-Server
-4. **Debug-Logging in __init__.py** — Gibt Umgebungsvariablen aus, sollte vor Produktion entfernt werden
-5. **Docker-Container `japanese_app`** — Alter Container (7 Monate) belegt Port 5000 wenn Docker Desktop läuft. `docker stop japanese_app` vor lokalem Start nötig.
-6. **DB-Migration ausstehend** — Spalten `provider_transaction_id` und `transaction_state` in `lesson_purchase` manuell hinzugefügt, Migration fehlt noch
+2. **Playwright E2E-Tests** — 8 Spec-Dateien in `tests/`, benötigen `npm install` und laufenden Test-Server
+3. **Google OAuth Redirect-URI** — `https://japanese-learning.ch/auth/complete/google-oauth2/` muss in Google Cloud Console als Redirect-URI eingetragen sein (mit Trailing-Slash!)
+4. **Docker-Container `japanese_app`** — Alter Container belegt Port 5000 wenn Docker Desktop läuft. `docker stop japanese_app` vor lokalem Start nötig.
