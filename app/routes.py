@@ -151,14 +151,24 @@ def index():
     total_courses = Course.query.filter_by(is_published=True).count()
     guest_accessible_lessons = english_guest_lessons + german_guest_lessons
     
-    return render_template('index.html', 
+    # Letzte bearbeitete Lektion fuer eingeloggte User
+    last_lesson = None
+    if current_user.is_authenticated:
+        last_progress = UserLessonProgress.query.filter_by(
+            user_id=current_user.id
+        ).order_by(UserLessonProgress.last_accessed.desc()).first()
+        if last_progress:
+            last_lesson = Lesson.query.get(last_progress.lesson_id)
+
+    return render_template('index.html',
                          total_lessons=total_lessons,
                          total_courses=total_courses,
                          guest_accessible_lessons=guest_accessible_lessons,
                          english_lessons=english_lessons,
                          german_lessons=german_lessons,
                          english_guest_lessons=english_guest_lessons,
-                         german_guest_lessons=german_guest_lessons)
+                         german_guest_lessons=german_guest_lessons,
+                         last_lesson=last_lesson)
 
 @bp.route('/register', methods=['GET', 'POST'])
 @limiter.limit("5 per minute")

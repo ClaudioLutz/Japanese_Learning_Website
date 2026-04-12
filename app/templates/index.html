@@ -7,109 +7,83 @@
 {% block content %}
 <div class="d-flex align-items-center justify-content-center" style="min-height: 80vh;">
     <div class="modern-welcome-card text-center">
-        <!-- Header Section -->
-        <div class="welcome-header mb-4">
-            <div class="welcome-icon mb-3">
+        <!-- Compact Header -->
+        <div class="welcome-header mb-2">
+            <div class="welcome-icon mb-2">
                 <i class="fas fa-torii-gate"></i>
             </div>
             <h1 class="welcome-title">Begin Your Japanese Journey</h1>
-            <p class="welcome-subtitle">Choose your preferred instruction language to start learning Japanese</p>
+            <p class="welcome-subtitle">Choose your instruction language</p>
         </div>
 
-        <!-- Language Selection Cards -->
-        <div class="language-selection-container mb-4">
-            <div class="row justify-content-center">
-                <!-- English Language Card -->
-                <div class="col-md-5 mb-3">
-                    <div class="language-card" onclick="selectLanguage('english')">
-                        <div class="language-card-header">
-                            <div class="language-flag">
-                                <i class="fas fa-flag" style="color: #012169;"></i>
-                                <span class="flag-text">🇬🇧</span>
-                            </div>
-                            <h3 class="language-title">Learn Japanese in English</h3>
-                        </div>
-                        <div class="language-stats">
-                            <div class="stat-row">
-                                <span class="stat-label">
-                                    <i class="fas fa-book"></i>
-                                    Lessons Available:
-                                </span>
-                                <span class="stat-value">{{ english_lessons }}</span>
-                            </div>
-                            <div class="stat-row">
-                                <span class="stat-label">
-                                    <i class="fas fa-unlock"></i>
-                                    Free to Try:
-                                </span>
-                                <span class="stat-value">{{ english_guest_lessons }}</span>
-                            </div>
-                        </div>
-                        <div class="language-card-footer">
-                            <button class="btn btn-primary language-btn">
-                                <i class="fas fa-arrow-right"></i>
-                                Start Learning
-                            </button>
-                        </div>
-                    </div>
+        {% if current_user.is_authenticated and last_lesson %}
+        <!-- Continue Learning (eingeloggte User) -->
+        <div class="continue-learning mb-3">
+            <a href="{{ url_for('routes.view_lesson', lesson_id=last_lesson.id) }}" class="continue-card">
+                <div class="continue-icon">
+                    <i class="fas fa-play-circle"></i>
                 </div>
+                <div class="continue-info">
+                    <span class="continue-label">Weiter lernen</span>
+                    <span class="continue-title">{{ last_lesson.title }}</span>
+                </div>
+                <i class="fas fa-chevron-right continue-arrow"></i>
+            </a>
+        </div>
+        {% endif %}
 
-                <!-- German Language Card -->
-                <div class="col-md-5 mb-3">
-                    <div class="language-card" onclick="selectLanguage('german')">
-                        <div class="language-card-header">
-                            <div class="language-flag">
-                                <i class="fas fa-flag" style="color: #000000;"></i>
-                                <span class="flag-text">🇩🇪</span>
-                            </div>
-                            <h3 class="language-title">Japanisch auf Deutsch lernen</h3>
-                        </div>
-                        <div class="language-stats">
-                            <div class="stat-row">
-                                <span class="stat-label">
-                                    <i class="fas fa-book"></i>
-                                    Verfügbare Lektionen:
-                                </span>
-                                <span class="stat-value">{{ german_lessons }}</span>
-                            </div>
-                            <div class="stat-row">
-                                <span class="stat-label">
-                                    <i class="fas fa-unlock"></i>
-                                    Kostenlos testen:
-                                </span>
-                                <span class="stat-value">{{ german_guest_lessons }}</span>
-                            </div>
-                        </div>
-                        <div class="language-card-footer">
-                            <button class="btn btn-primary language-btn">
-                                <i class="fas fa-arrow-right"></i>
-                                Lernen beginnen
-                            </button>
-                        </div>
-                    </div>
+        <!-- Language Selection — kompaktes 2-Spalten-Grid -->
+        <div class="lang-grid mb-3">
+            <div class="lang-card" onclick="selectLanguage('english')">
+                <svg class="lang-flag-img" width="40" height="28" viewBox="0 0 60 42" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="60" height="42" fill="#012169"/>
+                    <path d="M0,0 L60,42 M60,0 L0,42" stroke="#fff" stroke-width="7"/>
+                    <path d="M0,0 L60,42 M60,0 L0,42" stroke="#C8102E" stroke-width="4"/>
+                    <path d="M30,0 V42 M0,21 H60" stroke="#fff" stroke-width="12"/>
+                    <path d="M30,0 V42 M0,21 H60" stroke="#C8102E" stroke-width="7"/>
+                </svg>
+                <h3 class="lang-title">Learn Japanese in English</h3>
+                <div class="lang-meta">
+                    <span><i class="fas fa-book"></i> {{ english_lessons }} Lessons</span>
+                    <span><i class="fas fa-unlock"></i> {{ english_guest_lessons }} Free</span>
                 </div>
+                <button class="btn btn-primary lang-btn">
+                    <i class="fas fa-arrow-right"></i> Start
+                </button>
+            </div>
+
+            <div class="lang-card" onclick="selectLanguage('german')">
+                <svg class="lang-flag-img" width="40" height="28" viewBox="0 0 60 42" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="60" height="14" fill="#000"/>
+                    <rect y="14" width="60" height="14" fill="#D00"/>
+                    <rect y="28" width="60" height="14" fill="#FFCE00"/>
+                </svg>
+                <h3 class="lang-title">Japanisch auf Deutsch lernen</h3>
+                <div class="lang-meta">
+                    <span><i class="fas fa-book"></i> {{ german_lessons }} Lektionen</span>
+                    <span><i class="fas fa-unlock"></i> {{ german_guest_lessons }} Gratis</span>
+                </div>
+                <button class="btn btn-primary lang-btn">
+                    <i class="fas fa-arrow-right"></i> Start
+                </button>
             </div>
         </div>
 
         <!-- Additional Options -->
         <div class="additional-options">
             {% if not current_user.is_authenticated %}
-            <div class="auth-options mb-3">
-                <a href="{{ url_for('routes.register') }}" class="btn btn-success me-2">
-                    <i class="fas fa-user-plus"></i>
-                    Create Account
+            <div class="auth-options mb-2">
+                <a href="{{ url_for('routes.register') }}" class="btn btn-success btn-sm me-1">
+                    <i class="fas fa-user-plus"></i> Create Account
                 </a>
-                <a href="{{ url_for('routes.login') }}" class="btn btn-outline-primary">
-                    <i class="fas fa-sign-in-alt"></i>
-                    Login
+                <a href="{{ url_for('routes.login') }}" class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-sign-in-alt"></i> Login
                 </a>
             </div>
             {% endif %}
-            
             <div class="browse-all-link">
                 <a href="{{ url_for('routes.lessons') }}" class="text-muted">
-                    <i class="fas fa-list"></i>
-                    Browse all lessons
+                    <i class="fas fa-list"></i> Browse all lessons
                 </a>
             </div>
         </div>
@@ -117,155 +91,177 @@
 </div>
 
 <style>
-.language-selection-container {
-    margin: 2rem 0;
+/* ── Language Grid ── */
+.lang-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1rem 0;
 }
 
-.language-card {
+.lang-card {
     background: rgba(255, 255, 255, 0.95);
-    border-radius: 15px;
-    padding: 2rem;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
+    border-radius: 14px;
+    padding: 1.25rem 1rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    transition: all 0.25s ease;
     cursor: pointer;
     border: 2px solid transparent;
-    height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-}
-
-.language-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-    border-color: #007bff;
-}
-
-.language-card-header {
-    margin-bottom: 1.5rem;
-}
-
-.language-flag {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-}
-
-.flag-text {
-    font-size: 2rem;
-    margin-left: 0.5rem;
-}
-
-.language-title {
-    color: #2c3e50;
-    font-size: 1.4rem;
-    font-weight: 600;
-    margin: 0;
-}
-
-.language-stats {
-    margin-bottom: 1.5rem;
-}
-
-.stat-row {
-    display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.8rem;
-    padding: 0.5rem 0;
-    border-bottom: 1px solid #eee;
-}
-
-.stat-row:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-}
-
-.stat-label {
-    color: #6c757d;
-    font-size: 0.9rem;
-    display: flex;
-    align-items: center;
+    text-align: center;
     gap: 0.5rem;
 }
 
-.stat-value {
-    color: #007bff;
-    font-weight: 600;
-    font-size: 1.1rem;
+.lang-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.14);
+    border-color: var(--primary-color, #2B4C7E);
 }
 
-.language-card-footer {
+.lang-flag-img {
+    border-radius: 4px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+}
+
+.lang-title {
+    color: #2c3e50;
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.lang-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    font-size: 0.78rem;
+    color: #6c757d;
+}
+.lang-meta span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+}
+.lang-meta i {
+    font-size: 0.7rem;
+    width: 14px;
+}
+
+.lang-btn {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+    border-radius: 8px;
     margin-top: auto;
 }
 
-.language-btn {
-    width: 100%;
-    padding: 0.8rem 1.5rem;
+/* ── Continue Learning Card ── */
+.continue-card {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: linear-gradient(135deg, rgba(43,76,126,0.08), rgba(122,154,90,0.08));
+    border: 1px solid rgba(43,76,126,0.15);
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    text-decoration: none;
+    color: var(--text-color, #2C2C2C);
+    transition: all 0.2s;
+}
+.continue-card:hover {
+    background: linear-gradient(135deg, rgba(43,76,126,0.12), rgba(122,154,90,0.12));
+    transform: translateY(-1px);
+    text-decoration: none;
+    color: var(--text-color, #2C2C2C);
+}
+.continue-icon {
+    font-size: 1.5rem;
+    color: var(--zen-matcha, #7A9A5A);
+    flex-shrink: 0;
+}
+.continue-info {
+    flex: 1;
+    text-align: left;
+    min-width: 0;
+}
+.continue-label {
+    display: block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-light, #5A5A5A);
     font-weight: 600;
-    border-radius: 8px;
-    transition: all 0.3s ease;
+}
+.continue-title {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.continue-arrow {
+    color: var(--text-light, #5A5A5A);
+    font-size: 0.8rem;
+    flex-shrink: 0;
 }
 
-.language-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
-}
-
+/* ── Additional Options ── */
 .additional-options {
-    margin-top: 2rem;
+    margin-top: 0.75rem;
 }
-
-.auth-options .btn {
-    margin: 0.25rem;
-}
-
 .browse-all-link {
-    margin-top: 1rem;
+    margin-top: 0.5rem;
 }
-
 .browse-all-link a {
     text-decoration: none;
-    font-size: 0.9rem;
-    transition: color 0.3s ease;
+    font-size: 0.85rem;
+    transition: color 0.2s;
 }
-
 .browse-all-link a:hover {
     color: #007bff !important;
 }
 
-@media (max-width: 768px) {
-    .language-card {
-        margin-bottom: 1rem;
+/* ── Mobile ── */
+@media (max-width: 767px) {
+    .lang-grid {
+        gap: 0.6rem;
     }
-    
-    .language-title {
-        font-size: 1.2rem;
+    .lang-card {
+        padding: 0.9rem 0.6rem;
+        border-radius: 12px;
     }
-    
-    .stat-row {
-        flex-direction: column;
-        text-align: center;
-        gap: 0.5rem;
+    .lang-flag-img {
+        width: 32px;
+        height: auto;
+    }
+    .lang-title {
+        font-size: 0.85rem;
+    }
+    .lang-meta {
+        font-size: 0.7rem;
+    }
+    .lang-btn {
+        padding: 0.4rem 0.5rem;
+        font-size: 0.78rem;
     }
 }
 </style>
 
 <script>
 function selectLanguage(language) {
-    // Store the selected language in localStorage for persistence
     localStorage.setItem('selectedLanguage', language);
-    
-    // Redirect to lessons page with language parameter
     window.location.href = `{{ url_for('routes.lessons') }}?language=${language}`;
 }
 
-// Add keyboard navigation
 document.addEventListener('keydown', function(e) {
-    if (e.key === '1') {
-        selectLanguage('english');
-    } else if (e.key === '2') {
-        selectLanguage('german');
-    }
+    if (e.key === '1') selectLanguage('english');
+    else if (e.key === '2') selectLanguage('german');
 });
 </script>
 {% endblock %}
