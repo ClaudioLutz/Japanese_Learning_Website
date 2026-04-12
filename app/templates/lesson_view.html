@@ -1235,6 +1235,7 @@ const lessonData = {
 };
 
 let startTime = Date.now();
+const isAuthenticated = {{ 'true' if current_user.is_authenticated else 'false' }};
 
 // 3D Flip Card JavaScript - Scalable Implementation
 document.addEventListener('DOMContentLoaded', () => {
@@ -2555,14 +2556,25 @@ function createDeck(cardItems, page) {
         </div>
         <div class="deck-card-area"></div>
         <div class="confidence-buttons">
-            <button class="btn btn-danger confidence-btn" data-rating="again">
-                <i class="fas fa-redo"></i> Nochmal <span class="kbd-hint">1</span>
+            <button class="btn confidence-btn btn-srs-again" data-rating="1">
+                <i class="fas fa-redo"></i> Nochmal
+                <span class="interval-hint"></span>
+                <span class="kbd-hint">1</span>
             </button>
-            <button class="btn btn-warning confidence-btn" data-rating="hard">
-                <i class="fas fa-brain"></i> Schwer <span class="kbd-hint">2</span>
+            <button class="btn confidence-btn btn-srs-hard" data-rating="2">
+                <i class="fas fa-brain"></i> Schwer
+                <span class="interval-hint"></span>
+                <span class="kbd-hint">2</span>
             </button>
-            <button class="btn btn-success confidence-btn" data-rating="good">
-                <i class="fas fa-check"></i> Gewusst <span class="kbd-hint">3</span>
+            <button class="btn confidence-btn btn-srs-good" data-rating="3">
+                <i class="fas fa-check"></i> Gut
+                <span class="interval-hint"></span>
+                <span class="kbd-hint">3</span>
+            </button>
+            <button class="btn confidence-btn btn-srs-easy" data-rating="4">
+                <i class="fas fa-bolt"></i> Einfach
+                <span class="interval-hint"></span>
+                <span class="kbd-hint">4</span>
             </button>
         </div>
         <div class="deck-complete" style="display: none;">
@@ -2610,6 +2622,9 @@ function createDeck(cardItems, page) {
             japaneseAudioSystem.reprocessElement(details);
         }
 
+        // Track flip time for time_taken_ms
+        let cardFlipTime = null;
+
         // Setup flip behavior
         const scene = card.querySelector('.card-scene');
         const flipper = card.querySelector('.card-flipper');
@@ -2620,11 +2635,51 @@ function createDeck(cardItems, page) {
                 flipper.classList.toggle('is-flipped');
                 if (flipper.classList.contains('is-flipped')) {
                     btnGroup.classList.add('visible');
+                    cardFlipTime = Date.now();
+                    // Fetch interval preview when card is flipped
+                    const contentId = allCards[idx].dataset.contentId;
+                    if (isAuthenticated && contentId) {
+                        fetchIntervalPreview(contentId, btnGroup);
+                    }
                 } else {
                     btnGroup.classList.remove('visible');
                 }
             });
         }
+
+        // Store flipTime getter on deckEl for rateCard access
+        deckEl._getFlipTime = () => cardFlipTime;
+    }
+
+    // Fetch and display interval previews under buttons
+    const intervalCache = {};
+    async function fetchIntervalPreview(contentId, btnContainer) {
+        if (!isAuthenticated) return;
+        const cacheKey = String(contentId);
+        if (intervalCache[cacheKey]) {
+            applyIntervalHints(intervalCache[cacheKey], btnContainer);
+            return;
+        }
+        try {
+            const resp = await fetch(`/api/srs/preview?content_id=${contentId}`);
+            if (resp.ok) {
+                const data = await resp.json();
+                intervalCache[cacheKey] = data;
+                applyIntervalHints(data, btnContainer);
+            }
+        } catch (e) {
+            console.warn('[SRS] Interval preview fetch failed:', e);
+        }
+    }
+
+    function applyIntervalHints(data, btnContainer) {
+        btnContainer.querySelectorAll('.confidence-btn').forEach(btn => {
+            const rating = btn.dataset.rating;
+            const hint = btn.querySelector('.interval-hint');
+            if (hint && data[rating]) {
+                hint.textContent = data[rating];
+            }
+        });
     }
 
     // Update stats display
@@ -2634,18 +2689,37 @@ function createDeck(cardItems, page) {
         deckEl.querySelector('.deck-bar').style.width = `${(learned / total) * 100}%`;
     }
 
-    // Rate card handler
-    function rateCard(rating) {
+    // Rate card handler (SRS-integrated)
+    function rateCard(ratingInt) {
         const currentCard = cardArea.querySelector('.flip-card');
         if (!currentCard) return;
 
         const cardIndex = pending[currentIdx];
+        const contentId = allCards[cardIndex].dataset.contentId;
+        const timeTaken = deckEl._getFlipTime ? Date.now() - (deckEl._getFlipTime() || Date.now()) : null;
 
-        if (rating === 'again') {
-            // Shake animation, card stays in deck
+        // Send SRS rating to backend (fire-and-forget for UI responsiveness)
+        if (isAuthenticated && contentId) {
+            const csrfTokenEl = document.querySelector('meta[name="csrf-token"]');
+            const csrfToken = csrfTokenEl ? csrfTokenEl.getAttribute('content') : '';
+            fetch('/api/srs/rate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+                body: JSON.stringify({
+                    content_id: parseInt(contentId),
+                    rating: ratingInt,
+                    time_taken_ms: timeTaken > 0 ? timeTaken : null
+                })
+            }).catch(e => console.warn('[SRS] Rate failed:', e));
+
+            // Invalidate interval cache for this card
+            delete intervalCache[String(contentId)];
+        }
+
+        if (ratingInt === 1) {
+            // Again: Shake animation, card stays in deck
             currentCard.classList.add('card-exit-shake');
             setTimeout(() => {
-                // Move to later position in pending
                 pending.splice(currentIdx, 1);
                 const insertAt = Math.min(currentIdx + 2 + Math.floor(Math.random() * 3), pending.length);
                 pending.splice(insertAt, 0, cardIndex);
@@ -2655,12 +2729,11 @@ function createDeck(cardItems, page) {
                 saveProgress();
             }, 450);
         } else {
-            // Slide out, card is learned
-            currentCard.classList.add('card-exit-right');
+            // Hard/Good/Easy: Slide out
+            currentCard.classList.add(ratingInt === 2 ? 'card-exit-left' : 'card-exit-right');
 
-            // Mark content complete if authenticated
-            const contentId = allCards[cardIndex].dataset.contentId;
-            if (contentId && typeof markContentComplete === 'function') {
+            // Mark content complete for Good/Easy (Dual-Write)
+            if (ratingInt >= 3 && contentId && typeof markContentComplete === 'function') {
                 markContentComplete(parseInt(contentId));
             }
 
@@ -2669,7 +2742,6 @@ function createDeck(cardItems, page) {
                 pending.splice(currentIdx, 1);
 
                 if (pending.length === 0) {
-                    // All done!
                     cardArea.style.display = 'none';
                     btnGroup.style.display = 'none';
                     completeEl.style.display = 'block';
@@ -2690,7 +2762,7 @@ function createDeck(cardItems, page) {
     btnGroup.querySelectorAll('.confidence-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
-            rateCard(btn.dataset.rating);
+            rateCard(parseInt(btn.dataset.rating));
         });
     });
 
@@ -2883,11 +2955,10 @@ document.addEventListener('keydown', (e) => {
         return;
     }
 
-    // 1/2/3: rate card (only when flipped)
-    if (isFlipped && ['1', '2', '3'].includes(e.key)) {
+    // 1/2/3/4: rate card (only when flipped)
+    if (isFlipped && ['1', '2', '3', '4'].includes(e.key)) {
         e.preventDefault();
-        const ratings = { '1': 'again', '2': 'hard', '3': 'good' };
-        deck.rateCard(ratings[e.key]);
+        deck.rateCard(parseInt(e.key));
     }
 });
 

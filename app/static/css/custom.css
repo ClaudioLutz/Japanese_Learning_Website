@@ -1851,10 +1851,10 @@ button[onclick*="moveContentInPage"]:active {
     max-height: 100%;
 }
 
-/* Confidence buttons */
+/* Confidence buttons (SRS 4-level rating) */
 .confidence-buttons {
     display: none;
-    gap: 0.5rem;
+    gap: 0.4rem;
     justify-content: center;
     margin-top: 0.75rem;
     animation: fadeSlideUp 0.3s ease;
@@ -1864,16 +1864,49 @@ button[onclick*="moveContentInPage"]:active {
 }
 .confidence-btn {
     flex: 1;
-    max-width: 160px;
-    padding: 0.6rem 1rem;
+    max-width: 140px;
+    padding: 0.5rem 0.4rem;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     border-radius: 10px;
     transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    line-height: 1.2;
+    border: none;
+    color: #fff;
+}
+.confidence-btn .interval-hint {
+    font-size: 0.65rem;
+    font-weight: 400;
+    opacity: 0.85;
+    min-height: 0.8em;
 }
 .confidence-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    color: #fff;
+}
+/* SRS Button colors */
+.btn-srs-again { background-color: #dc3545; }
+.btn-srs-again:hover { background-color: #c82333; color: #fff; }
+.btn-srs-hard { background-color: #fd7e14; }
+.btn-srs-hard:hover { background-color: #e8690b; color: #fff; }
+.btn-srs-good { background-color: #28a745; }
+.btn-srs-good:hover { background-color: #218838; color: #fff; }
+.btn-srs-easy { background-color: #007bff; }
+.btn-srs-easy:hover { background-color: #0069d9; color: #fff; }
+
+@media (max-width: 576px) {
+    .confidence-btn {
+        padding: 0.4rem 0.25rem;
+        font-size: 0.7rem;
+        max-width: none;
+    }
+    .confidence-btn i { display: none; }
+    .confidence-btn .interval-hint { font-size: 0.6rem; }
 }
 
 /* Card transition animations — nur opacity, kein transform (bricht backface-visibility) */
@@ -1883,6 +1916,9 @@ button[onclick*="moveContentInPage"]:active {
 .deck-card-area .flip-card.card-exit-right {
     animation: slideOutRight 0.35s ease forwards;
 }
+.deck-card-area .flip-card.card-exit-left {
+    animation: slideOutLeft 0.35s ease forwards;
+}
 .deck-card-area .flip-card.card-exit-shake {
     animation: cardShake 0.4s ease;
 }
@@ -1890,6 +1926,9 @@ button[onclick*="moveContentInPage"]:active {
     animation: cardFadeIn 0.3s ease;
 }
 @keyframes slideOutRight {
+    to { opacity: 0; }
+}
+@keyframes slideOutLeft {
     to { opacity: 0; }
 }
 @keyframes cardShake {

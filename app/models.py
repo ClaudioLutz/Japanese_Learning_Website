@@ -650,6 +650,89 @@ class CoursePurchase(db.Model):
         return f'<CoursePurchase user:{self.user_id} course:{self.course_id} price:{self.price_paid}>'
 
 
+class CardReviewState(db.Model):
+    """SRS-Zustand pro User + Content-Item (FSRS-Algorithmus)."""
+    __tablename__ = 'card_review_state'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, index=True)
+    content_id = db.Column(db.Integer, db.ForeignKey('lesson_content.id'), nullable=False)
+
+    # FSRS Card State (kompletter State als JSON via Card.to_json())
+    fsrs_card_state = db.Column(db.Text, nullable=False)
+
+    # Denormalisierte Felder fuer Queries
+    due_date = db.Column(db.DateTime, nullable=False, index=True)
+    status = db.Column(db.String(20), nullable=False, default='new')
+    # Werte: 'new', 'learning', 'review', 'relearning', 'suspended'
+
+    # Statistiken
+    reps = db.Column(db.Integer, default=0, nullable=False)
+    lapses = db.Column(db.Integer, default=0, nullable=False)
+
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Beziehungen
+    user = db.relationship('User', backref=db.backref('card_states', lazy='dynamic'))
+    content = db.relationship('LessonContent', backref=db.backref('review_states', lazy='dynamic'))
+
+    __table_args__ = (
+        db.UniqueConstraint('user_id', 'content_id', name='uq_user_content_review'),
+        db.Index('ix_card_review_due', 'user_id', 'due_date', 'status'),
+    )
+
+    def __repr__(self):
+        return f'<CardReviewState user:{self.user_id} content:{self.content_id} status:{self.status}>'
+
+
+class ReviewLog(db.Model):
+    """Protokoll jeder Bewertung — Basis fuer FSRS-Optimizer."""
+    __tablename__ = 'review_log'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, index=True)
+    content_id = db.Column(db.Integer, db.ForeignKey('lesson_content.id'), nullable=False)
+
+    rating = db.Column(db.Integer, nullable=False)  # 1=Again, 2=Hard, 3=Good, 4=Easy
+    reviewed_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, index=True)
+    time_taken_ms = db.Column(db.Integer)
+
+    # FSRS ReviewLog State (fuer Optimizer)
+    fsrs_review_log = db.Column(db.Text)
+
+    # Denormalisiert fuer Statistiken
+    scheduled_days = db.Column(db.Integer)
+    elapsed_days = db.Column(db.Integer)
+
+    # Beziehungen
+    user = db.relationship('User', backref=db.backref('review_logs', lazy='dynamic'))
+    content = db.relationship('LessonContent')
+
+    def __repr__(self):
+        return f'<ReviewLog user:{self.user_id} content:{self.content_id} rating:{self.rating}>'
+
+
+class UserSRSSettings(db.Model):
+    """Persoenliche SRS-Einstellungen pro User."""
+    __tablename__ = 'user_srs_settings'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), unique=True, nullable=False)
+
+    desired_retention = db.Column(db.Float, default=0.9)
+    daily_new_cards = db.Column(db.Integer, default=20)
+    daily_review_limit = db.Column(db.Integer, default=100)
+
+    # FSRS Optimizer Parameters (21 Floats als JSON, nach ~1000 Reviews)
+    fsrs_parameters = db.Column(db.Text)
+
+    user = db.relationship('User', backref=db.backref('srs_settings', uselist=False))
+
+    def __repr__(self):
+        return f'<UserSRSSettings user:{self.user_id} retention:{self.desired_retention}>'
+
+
 class PaymentTransaction(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     # Use BigInteger for the transaction_id as per API documentation

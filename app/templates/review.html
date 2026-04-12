@@ -1,0 +1,637 @@
+{% extends "base.html" %}
+
+{% block title %}Tägliche Wiederholung{% endblock %}
+
+{% block styles %}
+<style>
+    .review-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 1rem;
+        padding-bottom: 80px;
+    }
+
+    /* ── Stats Header ── */
+    .review-stats-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        padding: 0.75rem 1rem;
+        background: var(--card-bg, #FFFDF7);
+        border-radius: 12px;
+        border: 1px solid var(--border-color, #D4CFC5);
+        margin-bottom: 1rem;
+        font-size: 0.85rem;
+    }
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        white-space: nowrap;
+    }
+    .stat-value {
+        font-weight: 700;
+        color: var(--primary-color, #2B4C7E);
+    }
+
+    /* ── Session Progress ── */
+    .session-progress {
+        margin-bottom: 1rem;
+    }
+    .session-progress .progress {
+        height: 6px;
+        border-radius: 3px;
+        background: var(--border-color, #D4CFC5);
+    }
+    .session-progress .progress-bar {
+        background: var(--zen-matcha, #7A9A5A);
+        transition: width 0.4s ease;
+    }
+    .session-info {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.75rem;
+        color: var(--text-muted, #8C8378);
+        margin-top: 0.25rem;
+    }
+
+    /* ── Card Area ── */
+    .review-card-area {
+        min-height: 280px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 0.5rem;
+    }
+
+    /* ── Card Context (Lesson info) ── */
+    .card-context {
+        text-align: center;
+        font-size: 0.75rem;
+        color: var(--text-muted, #8C8378);
+        margin-top: 0.5rem;
+    }
+    .card-context .lesson-tag {
+        background: var(--background-color, #F5F0E8);
+        padding: 2px 8px;
+        border-radius: 8px;
+        margin: 0 4px;
+    }
+
+    /* ── Review Flip Card ── */
+    .review-flip-card {
+        width: 100%;
+        max-width: 400px;
+        perspective: 1000px;
+        cursor: pointer;
+    }
+    .review-card-scene {
+        width: 100%;
+        min-height: 260px;
+        position: relative;
+        transform-style: preserve-3d;
+        transition: transform 0.5s ease;
+    }
+    .review-card-scene.is-flipped {
+        transform: rotateY(180deg);
+    }
+    .review-card-face {
+        position: absolute;
+        inset: 0;
+        backface-visibility: hidden;
+        border-radius: 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+        border: 1px solid var(--border-color, #D4CFC5);
+        background: var(--card-bg, #FFFDF7);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .review-card-face--back {
+        transform: rotateY(180deg);
+        overflow-y: auto;
+        justify-content: flex-start;
+        align-items: stretch;
+        text-align: left;
+    }
+    .review-card-front-text {
+        font-size: 3rem;
+        font-weight: 700;
+        color: var(--primary-color, #2B4C7E);
+        text-align: center;
+    }
+    .review-card-front-text.small-text {
+        font-size: 1.5rem;
+    }
+    .review-card-hint {
+        font-size: 0.8rem;
+        color: var(--text-muted, #8C8378);
+        margin-top: 1rem;
+    }
+    .review-detail-row {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+    .review-detail-label {
+        font-weight: 600;
+        color: var(--text-muted, #8C8378);
+        min-width: 70px;
+        flex-shrink: 0;
+    }
+    .review-detail-value {
+        color: var(--text-color, #2C2416);
+    }
+    .review-detail-value.jp-text {
+        font-size: 1.1rem;
+    }
+
+    /* ── SRS Rating Buttons (Review page) ── */
+    .review-buttons {
+        display: none;
+        gap: 0.4rem;
+        justify-content: center;
+        margin-top: 0.75rem;
+        animation: fadeSlideUp 0.3s ease;
+    }
+    .review-buttons.visible {
+        display: flex;
+    }
+    .review-btn {
+        flex: 1;
+        max-width: 140px;
+        padding: 0.5rem 0.4rem;
+        font-weight: 600;
+        font-size: 0.8rem;
+        border-radius: 10px;
+        border: none;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        line-height: 1.2;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .review-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        color: #fff;
+    }
+    .review-btn .interval-hint {
+        font-size: 0.65rem;
+        font-weight: 400;
+        opacity: 0.85;
+        min-height: 0.8em;
+    }
+    .review-btn[data-rating="1"] { background-color: #dc3545; }
+    .review-btn[data-rating="1"]:hover { background-color: #c82333; }
+    .review-btn[data-rating="2"] { background-color: #fd7e14; }
+    .review-btn[data-rating="2"]:hover { background-color: #e8690b; }
+    .review-btn[data-rating="3"] { background-color: #28a745; }
+    .review-btn[data-rating="3"]:hover { background-color: #218838; }
+    .review-btn[data-rating="4"] { background-color: #007bff; }
+    .review-btn[data-rating="4"]:hover { background-color: #0069d9; }
+
+    @media (max-width: 576px) {
+        .review-btn { padding: 0.4rem 0.25rem; font-size: 0.7rem; max-width: none; }
+        .review-btn i { display: none; }
+        .review-btn .interval-hint { font-size: 0.6rem; }
+        .review-card-front-text { font-size: 2.5rem; }
+    }
+
+    /* ── Empty / Complete States ── */
+    .review-empty, .review-complete {
+        text-align: center;
+        padding: 3rem 1rem;
+    }
+    .review-empty-icon, .review-complete-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+    .review-complete h4 { color: var(--primary-color, #2B4C7E); }
+
+    .session-summary {
+        background: var(--card-bg, #FFFDF7);
+        border-radius: 12px;
+        border: 1px solid var(--border-color, #D4CFC5);
+        padding: 1.5rem;
+        margin-top: 1rem;
+        text-align: left;
+    }
+    .session-summary .summary-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.3rem 0;
+        font-size: 0.9rem;
+    }
+    .session-summary .summary-label { color: var(--text-muted, #8C8378); }
+    .session-summary .summary-value { font-weight: 600; }
+
+    @keyframes fadeSlideUp {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="review-container">
+    <h5 style="margin-bottom: 0.75rem; color: var(--primary-color, #2B4C7E);">
+        <i class="fas fa-brain me-1"></i> Tägliche Wiederholung
+    </h5>
+
+    <!-- Stats Bar -->
+    <div class="review-stats-bar" id="reviewStatsBar">
+        <div class="stat-item">
+            <i class="fas fa-fire" style="color: #fd7e14;"></i>
+            <span>Streak: <span class="stat-value" id="statStreak">{{ stats.current_streak }}</span></span>
+        </div>
+        <div class="stat-item">
+            <i class="fas fa-inbox" style="color: #dc3545;"></i>
+            <span>Fällig: <span class="stat-value" id="statDue">{{ stats.due_count }}</span></span>
+        </div>
+        <div class="stat-item">
+            <i class="fas fa-check-circle" style="color: #28a745;"></i>
+            <span>Heute: <span class="stat-value" id="statToday">{{ stats.reviews_today }}</span></span>
+        </div>
+        <div class="stat-item">
+            <i class="fas fa-layer-group" style="color: #007bff;"></i>
+            <span>Gesamt: <span class="stat-value" id="statTotal">{{ stats.total_cards }}</span></span>
+        </div>
+    </div>
+
+    <!-- Session Progress -->
+    <div class="session-progress" id="sessionProgress" style="display: none;">
+        <div class="progress">
+            <div class="progress-bar" id="sessionBar" style="width: 0%;"></div>
+        </div>
+        <div class="session-info">
+            <span id="sessionCount">0 / 0</span>
+            <span id="sessionTime">0 Min</span>
+        </div>
+    </div>
+
+    <!-- Card Area -->
+    <div class="review-card-area" id="reviewCardArea">
+        <!-- Filled by JavaScript -->
+    </div>
+
+    <!-- Rating Buttons -->
+    <div class="review-buttons" id="reviewButtons">
+        <button class="review-btn" data-rating="1">
+            <span><i class="fas fa-redo"></i> Nochmal</span>
+            <span class="interval-hint"></span>
+        </button>
+        <button class="review-btn" data-rating="2">
+            <span><i class="fas fa-brain"></i> Schwer</span>
+            <span class="interval-hint"></span>
+        </button>
+        <button class="review-btn" data-rating="3">
+            <span><i class="fas fa-check"></i> Gut</span>
+            <span class="interval-hint"></span>
+        </button>
+        <button class="review-btn" data-rating="4">
+            <span><i class="fas fa-bolt"></i> Einfach</span>
+            <span class="interval-hint"></span>
+        </button>
+    </div>
+
+    <!-- Card Context -->
+    <div class="card-context" id="cardContext" style="display: none;">
+        <span class="lesson-tag" id="cardLesson"></span>
+        <span id="cardType"></span>
+    </div>
+
+    <!-- Empty State -->
+    <div class="review-empty" id="reviewEmpty" style="display: none;">
+        <div class="review-empty-icon">
+            {% if stats.total_cards == 0 %}
+            <i class="fas fa-seedling" style="color: var(--zen-matcha, #7A9A5A);"></i>
+            {% else %}
+            <i class="fas fa-check-double" style="color: var(--zen-matcha, #7A9A5A);"></i>
+            {% endif %}
+        </div>
+        {% if stats.total_cards == 0 %}
+        <h5>Noch keine Karten gelernt</h5>
+        <p class="text-muted">Starte eine Lektion, um Karten zu sammeln.</p>
+        <a href="{{ url_for('routes.lessons') }}" class="btn btn-primary btn-sm mt-2">
+            <i class="fas fa-book-open me-1"></i> Lektionen ansehen
+        </a>
+        {% else %}
+        <h5>Alles erledigt!</h5>
+        <p class="text-muted">Keine Karten fällig. Komm später wieder.</p>
+        {% endif %}
+    </div>
+
+    <!-- Session Complete -->
+    <div class="review-complete" id="reviewComplete" style="display: none;">
+        <div class="review-complete-icon">
+            <i class="fas fa-trophy" style="color: #f59e0b;"></i>
+        </div>
+        <h4>Session beendet!</h4>
+        <div class="session-summary" id="sessionSummary">
+            <div class="summary-row">
+                <span class="summary-label">Karten wiederholt</span>
+                <span class="summary-value" id="summaryCards">0</span>
+            </div>
+            <div class="summary-row">
+                <span class="summary-label">Dauer</span>
+                <span class="summary-value" id="summaryTime">0 Min</span>
+            </div>
+            <div class="summary-row">
+                <span class="summary-label">Erfolgsrate</span>
+                <span class="summary-value" id="summaryRate">0%</span>
+            </div>
+            <div class="summary-row">
+                <span class="summary-label">Streak</span>
+                <span class="summary-value" id="summaryStreak">0 Tage</span>
+            </div>
+        </div>
+        <div class="mt-3">
+            <a href="{{ url_for('routes.lessons') }}" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-book-open me-1"></i> Weiter lernen
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+    const cardArea = document.getElementById('reviewCardArea');
+    const btnGroup = document.getElementById('reviewButtons');
+    const cardContext = document.getElementById('cardContext');
+    const emptyEl = document.getElementById('reviewEmpty');
+    const completeEl = document.getElementById('reviewComplete');
+    const progressEl = document.getElementById('sessionProgress');
+
+    let cards = [];
+    let currentIdx = 0;
+    let sessionStart = Date.now();
+    let cardFlipTime = null;
+    let sessionStats = { total: 0, reviewed: 0, good: 0 };
+    const intervalCache = {};
+    const TYPE_LABELS = { kana: 'Kana', kanji: 'Kanji', vocabulary: 'Vokabel', grammar: 'Grammatik' };
+
+    // ── Load due cards ──
+    async function loadCards() {
+        try {
+            const resp = await fetch('/api/srs/due?limit=50');
+            const data = await resp.json();
+            cards = data.cards || [];
+            sessionStats.total = cards.length;
+
+            if (cards.length === 0) {
+                emptyEl.style.display = 'block';
+                cardArea.style.display = 'none';
+                return;
+            }
+
+            // Shuffle
+            for (let i = cards.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [cards[i], cards[j]] = [cards[j], cards[i]];
+            }
+
+            progressEl.style.display = 'block';
+            currentIdx = 0;
+            showCard();
+        } catch (e) {
+            console.error('[Review] Load failed:', e);
+            cardArea.innerHTML = '<p class="text-muted">Fehler beim Laden der Karten.</p>';
+        }
+    }
+
+    // ── Render a flip card ──
+    function showCard() {
+        if (currentIdx >= cards.length) {
+            showComplete();
+            return;
+        }
+
+        const card = cards[currentIdx];
+        btnGroup.classList.remove('visible');
+        cardFlipTime = null;
+
+        // Clear interval hints
+        btnGroup.querySelectorAll('.interval-hint').forEach(h => h.textContent = '');
+
+        const frontText = card.front || '?';
+        const isLong = frontText.length > 6;
+
+        let backHTML = '';
+        const d = card.details || {};
+
+        if (card.content_type === 'kana') {
+            backHTML = detailRow('Romaji', d.romanization) + detailRow('Typ', d.type);
+        } else if (card.content_type === 'kanji') {
+            backHTML = detailRow('Bedeutung', d.meaning) +
+                       detailRow("On'yomi", d.onyomi, true) +
+                       detailRow("Kun'yomi", d.kunyomi, true);
+        } else if (card.content_type === 'vocabulary') {
+            backHTML = detailRow('Lesung', d.reading, true) +
+                       detailRow('Bedeutung', d.meaning) +
+                       (d.example_jp ? detailRow('Beispiel', d.example_jp, true) : '') +
+                       (d.example_en ? detailRow('', d.example_en) : '');
+        } else if (card.content_type === 'grammar') {
+            backHTML = detailRow('Struktur', d.structure) +
+                       `<div style="margin-top:0.5rem;font-size:0.85rem;">${escapeHtml(d.explanation || '').substring(0, 300)}</div>`;
+        }
+
+        cardArea.innerHTML = `
+            <div class="review-flip-card" id="activeReviewCard">
+                <div class="review-card-scene" id="reviewScene">
+                    <div class="review-card-face review-card-face--front">
+                        <div class="review-card-front-text ${isLong ? 'small-text' : ''}">${escapeHtml(frontText)}</div>
+                        <div class="review-card-hint">Klicken zum Umdrehen</div>
+                    </div>
+                    <div class="review-card-face review-card-face--back">
+                        ${backHTML}
+                    </div>
+                </div>
+            </div>`;
+
+        // Flip handler
+        const scene = document.getElementById('reviewScene');
+        scene.addEventListener('click', () => {
+            scene.classList.toggle('is-flipped');
+            if (scene.classList.contains('is-flipped')) {
+                btnGroup.classList.add('visible');
+                cardFlipTime = Date.now();
+                fetchPreview(card.content_id);
+            } else {
+                btnGroup.classList.remove('visible');
+            }
+        });
+
+        // Context
+        cardContext.style.display = 'block';
+        document.getElementById('cardLesson').textContent = card.lesson_title || '';
+        document.getElementById('cardType').textContent = TYPE_LABELS[card.content_type] || card.content_type;
+
+        updateProgress();
+    }
+
+    function detailRow(label, value, isJp) {
+        if (!value) return '';
+        return `<div class="review-detail-row">
+            ${label ? `<span class="review-detail-label">${escapeHtml(label)}</span>` : '<span class="review-detail-label"></span>'}
+            <span class="review-detail-value ${isJp ? 'jp-text' : ''}">${escapeHtml(value)}</span>
+        </div>`;
+    }
+
+    function escapeHtml(str) {
+        const d = document.createElement('div');
+        d.textContent = str;
+        return d.innerHTML;
+    }
+
+    // ── Fetch interval preview ──
+    async function fetchPreview(contentId) {
+        const key = String(contentId);
+        if (intervalCache[key]) { applyHints(intervalCache[key]); return; }
+        try {
+            const resp = await fetch(`/api/srs/preview?content_id=${contentId}`);
+            if (resp.ok) {
+                const data = await resp.json();
+                intervalCache[key] = data;
+                applyHints(data);
+            }
+        } catch (e) { /* silent */ }
+    }
+
+    function applyHints(data) {
+        btnGroup.querySelectorAll('.review-btn').forEach(btn => {
+            const r = btn.dataset.rating;
+            const hint = btn.querySelector('.interval-hint');
+            if (hint && data[r]) hint.textContent = data[r];
+        });
+    }
+
+    // ── Rate card ──
+    async function rateCard(ratingInt) {
+        const card = cards[currentIdx];
+        if (!card) return;
+
+        const timeTaken = cardFlipTime ? Date.now() - cardFlipTime : null;
+
+        // Send to backend
+        try {
+            await fetch('/api/srs/rate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+                body: JSON.stringify({
+                    content_id: card.content_id,
+                    rating: ratingInt,
+                    time_taken_ms: timeTaken > 0 ? timeTaken : null
+                })
+            });
+        } catch (e) {
+            console.warn('[Review] Rate failed:', e);
+        }
+
+        // Invalidate cache
+        delete intervalCache[String(card.content_id)];
+
+        // Update session stats
+        sessionStats.reviewed++;
+        if (ratingInt >= 3) sessionStats.good++;
+
+        // Update stat counters
+        const dueEl = document.getElementById('statDue');
+        const todayEl = document.getElementById('statToday');
+        if (dueEl) dueEl.textContent = Math.max(0, parseInt(dueEl.textContent) - 1);
+        if (todayEl) todayEl.textContent = parseInt(todayEl.textContent) + 1;
+
+        if (ratingInt === 1) {
+            // Again: move card to later in queue
+            cards.splice(currentIdx, 1);
+            const insertAt = Math.min(currentIdx + 2 + Math.floor(Math.random() * 3), cards.length);
+            cards.splice(insertAt, 0, card);
+            sessionStats.total = cards.length;
+        } else {
+            // Hard/Good/Easy: remove
+            currentIdx++;
+        }
+
+        showCard();
+    }
+
+    // ── Button handlers ──
+    btnGroup.querySelectorAll('.review-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            rateCard(parseInt(btn.dataset.rating));
+        });
+    });
+
+    // ── Keyboard shortcuts ──
+    document.addEventListener('keydown', (e) => {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+        const scene = document.getElementById('reviewScene');
+        if (!scene) return;
+
+        const isFlipped = scene.classList.contains('is-flipped');
+
+        if (e.code === 'Space' && !isFlipped) {
+            e.preventDefault();
+            scene.click();
+        }
+
+        if (isFlipped && ['1', '2', '3', '4'].includes(e.key)) {
+            e.preventDefault();
+            rateCard(parseInt(e.key));
+        }
+    });
+
+    // ── Progress ──
+    function updateProgress() {
+        const done = sessionStats.reviewed;
+        const total = sessionStats.total;
+        const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+
+        document.getElementById('sessionBar').style.width = pct + '%';
+        document.getElementById('sessionCount').textContent = `${done} / ${total}`;
+
+        const mins = Math.round((Date.now() - sessionStart) / 60000);
+        document.getElementById('sessionTime').textContent = `${mins} Min`;
+    }
+
+    // ── Complete ──
+    function showComplete() {
+        cardArea.style.display = 'none';
+        btnGroup.style.display = 'none';
+        cardContext.style.display = 'none';
+        progressEl.style.display = 'none';
+        completeEl.style.display = 'block';
+
+        const mins = Math.round((Date.now() - sessionStart) / 60000);
+        const rate = sessionStats.reviewed > 0
+            ? Math.round((sessionStats.good / sessionStats.reviewed) * 100)
+            : 0;
+
+        document.getElementById('summaryCards').textContent = sessionStats.reviewed;
+        document.getElementById('summaryTime').textContent = `${mins} Min`;
+        document.getElementById('summaryRate').textContent = rate + '%';
+
+        // Fetch updated streak
+        fetch('/api/srs/stats').then(r => r.json()).then(data => {
+            document.getElementById('summaryStreak').textContent = (data.current_streak || 0) + ' Tage';
+        }).catch(() => {});
+    }
+
+    // ── Init ──
+    loadCards();
+})();
+</script>
+{% endblock %}

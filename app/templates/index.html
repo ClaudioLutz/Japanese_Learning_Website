@@ -16,9 +16,10 @@
             <p class="welcome-subtitle">Choose your instruction language</p>
         </div>
 
-        {% if current_user.is_authenticated and last_lesson %}
-        <!-- Continue Learning (eingeloggte User) -->
+        {% if current_user.is_authenticated %}
+        <!-- Continue Learning + Review -->
         <div class="continue-learning mb-3">
+            {% if last_lesson %}
             <a href="{{ url_for('routes.view_lesson', lesson_id=last_lesson.id) }}" class="continue-card">
                 <div class="continue-icon">
                     <i class="fas fa-play-circle"></i>
@@ -26,6 +27,17 @@
                 <div class="continue-info">
                     <span class="continue-label">Weiter lernen</span>
                     <span class="continue-title">{{ last_lesson.title }}</span>
+                </div>
+                <i class="fas fa-chevron-right continue-arrow"></i>
+            </a>
+            {% endif %}
+            <a href="{{ url_for('srs.review_page') }}" class="continue-card review-card" id="homeReviewCard" style="display:none;">
+                <div class="continue-icon">
+                    <i class="fas fa-brain" style="color: #dc3545;"></i>
+                </div>
+                <div class="continue-info">
+                    <span class="continue-label">Karten fällig</span>
+                    <span class="continue-title" id="homeReviewCount">0 Karten wiederholen</span>
                 </div>
                 <i class="fas fa-chevron-right continue-arrow"></i>
             </a>
@@ -211,6 +223,13 @@
     flex-shrink: 0;
 }
 
+/* ── Continue Learning Container ── */
+.continue-learning {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
 /* ── Additional Options ── */
 .additional-options {
     margin-top: 0.75rem;
@@ -263,5 +282,17 @@ document.addEventListener('keydown', function(e) {
     if (e.key === '1') selectLanguage('english');
     else if (e.key === '2') selectLanguage('german');
 });
+
+// Load SRS due count for homepage
+(function() {
+    const reviewCard = document.getElementById('homeReviewCard');
+    if (!reviewCard) return;
+    fetch('/api/srs/stats').then(r => r.json()).then(data => {
+        if (data.due_count > 0) {
+            document.getElementById('homeReviewCount').textContent = data.due_count + ' Karten wiederholen';
+            reviewCard.style.display = 'flex';
+        }
+    }).catch(() => {});
+})();
 </script>
 {% endblock %}
