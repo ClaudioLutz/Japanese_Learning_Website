@@ -134,7 +134,7 @@ class Grammar(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False, unique=True)
     explanation = db.Column(db.Text, nullable=False)
-    structure = db.Column(db.String(255), nullable=True)
+    structure = db.Column(db.Text, nullable=True)
     romaji = db.Column(db.String(500), nullable=True)
     jlpt_level = db.Column(db.Integer, nullable=True)
     example_sentences = db.Column(db.Text, nullable=True)
