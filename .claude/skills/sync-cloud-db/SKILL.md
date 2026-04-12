@@ -105,10 +105,17 @@ PGPASSWORD="JapaneseApp2025!" pg_dump -h localhost -U app_user -d japanese_learn
 
 ### 5. Truncate ONLY content tables on Cloud SQL
 
+**ACHTUNG CASCADE:** Weil `lesson_content` und `lesson` Foreign Keys von User-Tabellen
+haben (user_lesson_progress, card_review_state, review_log, lesson_purchase, etc.),
+löscht CASCADE auch diese Daten! Das ist aktuell unvermeidbar.
+**Informiere den User VOR dem Truncate über diesen Seiteneffekt und frage nach Bestätigung.**
+
 ```bash
 DB_PASS=$(gcloud secrets versions access latest --secret=db-password --project=healthy-coil-466105-d7)
 PGPASSWORD="$DB_PASS" psql -h 34.65.56.56 -U app_user -d japanese_learning -c "
--- NUR Content-Tabellen! User-Daten bleiben unangetastet.
+-- NUR Content-Tabellen! User-Tabelle bleibt unangetastet.
+-- ACHTUNG: CASCADE loescht auch user_lesson_progress, card_review_state,
+-- review_log, lesson_purchase, course_purchase, user_quiz_answer!
 TRUNCATE TABLE quiz_option, quiz_question, lesson_content, lesson_page,
   lesson_prerequisite, lesson, lesson_category, course, course_lessons,
   kana, kanji, vocabulary, grammar CASCADE;
