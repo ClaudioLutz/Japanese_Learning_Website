@@ -459,7 +459,8 @@
         } else if (card.content_type === 'grammar') {
             backHTML = detailRow('Romaji', d.romaji) +
                        detailRow('Struktur', d.structure) +
-                       `<div style="margin-top:0.5rem;font-size:0.85rem;">${escapeHtml(d.explanation || '').substring(0, 300)}</div>`;
+                       `<div style="margin-top:0.5rem;font-size:0.85rem;">${escapeHtml(d.explanation || '').substring(0, 300)}</div>` +
+                       (d.examples ? `<div style="margin-top:0.75rem;padding-top:0.5rem;border-top:1px solid var(--border-color,#e5e5e5);font-size:0.8rem;white-space:pre-line;">${escapeHtml(d.examples).substring(0, 500)}</div>` : '');
         }
 
         cardArea.innerHTML = `
