@@ -1,0 +1,369 @@
+{% extends "base.html" %}
+
+{% block title %}Karten-Browser{% endblock %}
+
+{% block styles %}
+<style>
+    .browse-container { max-width: 1100px; margin: 0 auto; padding: 1rem; padding-bottom: 80px; }
+    .browse-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+    .browse-header h5 { color: var(--primary-color, #2B4C7E); margin: 0; }
+    .browse-total { font-size: 0.85rem; color: var(--text-muted); }
+
+    .browse-layout { display: grid; grid-template-columns: 220px 1fr; gap: 1rem; }
+    @media (max-width: 768px) { .browse-layout { grid-template-columns: 1fr; } }
+
+    /* Sidebar */
+    .browse-sidebar { background: var(--card-bg, #FFFDF7); border: 1px solid var(--border-color, #D4CFC5); border-radius: 12px; padding: 1rem; height: fit-content; }
+    .filter-group { margin-bottom: 1rem; }
+    .filter-group label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.3rem; text-transform: uppercase; letter-spacing: 0.5px; }
+    .filter-checkbox { display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; margin-bottom: 0.2rem; cursor: pointer; }
+    .filter-checkbox input { accent-color: var(--primary-color, #2B4C7E); }
+    .filter-toggle { display: flex; align-items: center; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.3rem; }
+    .filter-toggle input[type="checkbox"] { width: 36px; height: 20px; appearance: none; background: #ccc; border-radius: 10px; position: relative; cursor: pointer; transition: background 0.2s; }
+    .filter-toggle input[type="checkbox"]:checked { background: var(--primary-color, #2B4C7E); }
+    .filter-toggle input[type="checkbox"]::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: #fff; border-radius: 50%; transition: transform 0.2s; }
+    .filter-toggle input[type="checkbox"]:checked::after { transform: translateX(16px); }
+    .filter-select { width: 100%; padding: 0.35rem; border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.85rem; background: var(--card-bg); }
+    .filter-btn { width: 100%; padding: 0.4rem; border: none; border-radius: 8px; background: var(--primary-color, #2B4C7E); color: #fff; font-size: 0.8rem; cursor: pointer; }
+    .filter-btn:hover { opacity: 0.9; }
+    .filter-btn-outline { background: transparent; border: 1px solid var(--border-color); color: var(--text-color); }
+
+    @media (max-width: 768px) {
+        .browse-sidebar { display: none; }
+        .browse-sidebar.open { display: block; }
+        .mobile-filter-toggle { display: block; margin-bottom: 0.75rem; }
+    }
+    @media (min-width: 769px) { .mobile-filter-toggle { display: none; } }
+
+    /* Main content */
+    .browse-search { position: relative; margin-bottom: 0.75rem; }
+    .browse-search input { width: 100%; padding: 0.5rem 0.5rem 0.5rem 2rem; border: 1px solid var(--border-color); border-radius: 10px; font-size: 0.9rem; background: var(--card-bg); }
+    .browse-search i { position: absolute; left: 0.7rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+
+    .browse-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; font-size: 0.8rem; }
+    .sort-select { padding: 0.3rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.8rem; }
+
+    /* Table */
+    .browse-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .browse-table th { padding: 0.5rem; text-align: left; font-weight: 600; color: var(--text-muted); border-bottom: 2px solid var(--border-color); font-size: 0.75rem; }
+    .browse-table td { padding: 0.5rem; border-bottom: 1px solid var(--border-color, #eee); }
+    .browse-table tr { cursor: pointer; transition: background 0.15s; }
+    .browse-table tr:hover { background: var(--background-color, #F5F0E8); }
+    .browse-table tr.selected { background: rgba(43, 76, 126, 0.08); }
+
+    .stage-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
+    .card-front-text { font-weight: 600; }
+    .leech-indicator { color: #dc3545; font-size: 0.75rem; }
+
+    /* Mobile: Table → Card layout */
+    @media (max-width: 768px) {
+        .browse-table thead { display: none; }
+        .browse-table tr { display: block; border: 1px solid var(--border-color); border-radius: 10px; margin-bottom: 0.5rem; padding: 0.75rem; }
+        .browse-table td { display: block; padding: 0.15rem 0; border: none; }
+        .browse-table td::before { content: attr(data-label); font-weight: 600; color: var(--text-muted); margin-right: 0.5rem; font-size: 0.75rem; }
+    }
+
+    /* Pagination */
+    .browse-pagination { display: flex; justify-content: center; align-items: center; gap: 0.5rem; margin-top: 1rem; font-size: 0.85rem; }
+    .browse-pagination button { padding: 0.3rem 0.7rem; border: 1px solid var(--border-color); border-radius: 6px; background: var(--card-bg); cursor: pointer; }
+    .browse-pagination button:disabled { opacity: 0.5; cursor: default; }
+    .browse-pagination button:hover:not(:disabled) { background: var(--background-color); }
+
+    /* Floating Action Bar */
+    .floating-action-bar { position: fixed; bottom: 70px; left: 50%; transform: translateX(-50%); background: var(--primary-color, #2B4C7E); color: #fff; border-radius: 12px; padding: 0.5rem 1rem; display: flex; align-items: center; gap: 0.75rem; font-size: 0.85rem; box-shadow: 0 4px 20px rgba(0,0,0,0.2); z-index: 1000; animation: slideUp 0.3s ease; }
+    .floating-action-bar button { padding: 0.3rem 0.6rem; border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; background: transparent; color: #fff; font-size: 0.75rem; cursor: pointer; }
+    .floating-action-bar button:hover { background: rgba(255,255,255,0.15); }
+    @keyframes slideUp { from { transform: translateX(-50%) translateY(20px); opacity: 0; } to { transform: translateX(-50%) translateY(0); opacity: 1; } }
+
+    /* Detail Modal */
+    .detail-modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1100; display: flex; align-items: center; justify-content: center; }
+    .detail-modal { background: var(--card-bg, #fff); border-radius: 16px; max-width: 500px; width: 90%; max-height: 85vh; overflow-y: auto; padding: 1.5rem; }
+    .detail-modal h5 { color: var(--primary-color); margin-bottom: 1rem; }
+    .detail-row { display: flex; gap: 0.5rem; margin-bottom: 0.4rem; font-size: 0.85rem; }
+    .detail-label { font-weight: 600; color: var(--text-muted); min-width: 80px; }
+    .detail-history { margin-top: 0.75rem; }
+    .detail-history-item { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin: 2px; }
+    .detail-history-item.r1 { background: #dc354520; color: #dc3545; }
+    .detail-history-item.r2 { background: #fd7e1420; color: #fd7e14; }
+    .detail-history-item.r3 { background: #28a74520; color: #28a745; }
+    .detail-history-item.r4 { background: #007bff20; color: #007bff; }
+    .detail-actions { display: flex; gap: 0.5rem; margin-top: 1rem; }
+    .detail-actions button { flex: 1; padding: 0.4rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--card-bg); cursor: pointer; font-size: 0.8rem; }
+    .detail-actions button:hover { background: var(--background-color); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="browse-container" x-data="cardBrowser()" x-init="loadCards()" @keydown.slash.prevent="$refs.searchInput.focus()" @keydown.escape="selectedIds = []; detailCard = null; filtersOpen = false">
+    <div class="browse-header">
+        <h5><i class="fas fa-th-list me-1"></i> Karten-Browser</h5>
+        <span class="browse-total"><span x-text="total"></span> Karten</span>
+    </div>
+
+    <!-- Mobile Filter Toggle -->
+    <button class="mobile-filter-toggle filter-btn" @click="filtersOpen = !filtersOpen">
+        <i class="fas fa-filter me-1"></i> Filter <span x-show="filtersOpen">ausblenden</span><span x-show="!filtersOpen">anzeigen</span>
+    </button>
+
+    <div class="browse-layout">
+        <!-- Sidebar Filters -->
+        <div class="browse-sidebar" :class="filtersOpen && 'open'">
+            <div class="filter-group">
+                <label>Status</label>
+                <label class="filter-checkbox"><input type="checkbox" value="new" x-model="filters.status"> Neu</label>
+                <label class="filter-checkbox"><input type="checkbox" value="learning" x-model="filters.status"> Lernen</label>
+                <label class="filter-checkbox"><input type="checkbox" value="review" x-model="filters.status"> Review</label>
+                <label class="filter-checkbox"><input type="checkbox" value="relearning" x-model="filters.status"> Relearning</label>
+                <label class="filter-checkbox"><input type="checkbox" value="suspended" x-model="filters.status"> Suspendiert</label>
+            </div>
+            <div class="filter-group">
+                <label>Content-Typ</label>
+                <label class="filter-checkbox"><input type="checkbox" value="kana" x-model="filters.contentType"> Kana</label>
+                <label class="filter-checkbox"><input type="checkbox" value="kanji" x-model="filters.contentType"> Kanji</label>
+                <label class="filter-checkbox"><input type="checkbox" value="vocabulary" x-model="filters.contentType"> Vokabel</label>
+                <label class="filter-checkbox"><input type="checkbox" value="grammar" x-model="filters.contentType"> Grammatik</label>
+            </div>
+            <div class="filter-group">
+                <label>Lektion</label>
+                <select class="filter-select" x-model="filters.lessonId">
+                    <option value="">Alle</option>
+                    {% for lesson in lessons %}
+                    <option value="{{ lesson.id }}">{{ lesson.title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter-group">
+                <div class="filter-toggle"><span>Nur Leeches</span><input type="checkbox" x-model="filters.leech"></div>
+                <div class="filter-toggle"><span>Heute faellig</span><input type="checkbox" x-model="filters.dueToday"></div>
+            </div>
+            <button class="filter-btn" @click="page = 1; loadCards()">Filter anwenden</button>
+            <button class="filter-btn filter-btn-outline" style="margin-top:0.3rem;" @click="resetFilters()">Zuruecksetzen</button>
+        </div>
+
+        <!-- Main Content -->
+        <div>
+            <div class="browse-search">
+                <i class="fas fa-search"></i>
+                <input type="text" x-ref="searchInput" x-model="searchQuery" @input.debounce.300ms="page = 1; loadCards()" placeholder="Suche: Wort, Bedeutung, Lesung...">
+            </div>
+
+            <div class="browse-controls">
+                <span x-text="`Seite ${page} von ${pages}`" style="color:var(--text-muted);"></span>
+                <div>
+                    <label style="font-size:0.75rem; color:var(--text-muted);">Sortieren:</label>
+                    <select class="sort-select" x-model="sortField" @change="loadCards()">
+                        <option value="due_date">Faellig</option>
+                        <option value="lapses">Fehler</option>
+                        <option value="reps">Reviews</option>
+                        <option value="created_at">Erstellt</option>
+                    </select>
+                    <button style="border:1px solid var(--border-color);border-radius:4px;padding:2px 6px;cursor:pointer;background:var(--card-bg);" @click="sortDir = sortDir === 'asc' ? 'desc' : 'asc'; loadCards()" x-text="sortDir === 'asc' ? '↑' : '↓'"></button>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <table class="browse-table">
+                <thead>
+                    <tr>
+                        <th style="width:30px;"><input type="checkbox" @change="toggleAll($event)"></th>
+                        <th>Karte</th>
+                        <th>Typ</th>
+                        <th>Stufe</th>
+                        <th>Faellig</th>
+                        <th>Lapses</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template x-for="card in cards" :key="card.content_id">
+                        <tr :class="selectedIds.includes(card.content_id) && 'selected'" @click="showDetail(card.content_id)">
+                            <td @click.stop><input type="checkbox" :value="card.content_id" x-model.number="selectedIds"></td>
+                            <td data-label="Karte"><span class="card-front-text" x-text="card.front"></span></td>
+                            <td data-label="Typ" x-text="typeLabel(card.content_type)"></td>
+                            <td data-label="Stufe"><span class="stage-dot" :style="`background:${card.stage_color}`"></span><span x-text="card.stage_name" style="font-size:0.8rem;"></span></td>
+                            <td data-label="Faellig" x-text="formatDate(card.due_date)"></td>
+                            <td data-label="Lapses"><span x-text="card.lapses"></span><span x-show="card.is_leech" class="leech-indicator"> !</span></td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+
+            <div x-show="cards.length === 0" style="text-align:center;padding:2rem;color:var(--text-muted);">
+                <i class="fas fa-inbox" style="font-size:2rem;"></i>
+                <p>Keine Karten gefunden.</p>
+            </div>
+
+            <!-- Pagination -->
+            <div class="browse-pagination" x-show="pages > 1">
+                <button @click="page = Math.max(1, page - 1); loadCards()" :disabled="page <= 1"><i class="fas fa-chevron-left"></i></button>
+                <span x-text="`${page} / ${pages}`"></span>
+                <button @click="page = Math.min(pages, page + 1); loadCards()" :disabled="page >= pages"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Action Bar -->
+    <div class="floating-action-bar" x-show="selectedIds.length > 0" x-transition>
+        <span x-text="selectedIds.length + ' ausgewaehlt'"></span>
+        <button @click="bulkAction('suspend')"><i class="fas fa-pause me-1"></i>Suspendieren</button>
+        <button @click="bulkAction('unsuspend')"><i class="fas fa-play me-1"></i>Aktivieren</button>
+        <button @click="if(confirm('Wirklich zuruecksetzen?')) bulkAction('reset')"><i class="fas fa-undo me-1"></i>Reset</button>
+        <button @click="exportCSV()"><i class="fas fa-download me-1"></i>CSV</button>
+    </div>
+
+    <!-- Detail Modal -->
+    <div class="detail-modal-backdrop" x-show="detailCard" @click.self="detailCard = null" x-transition>
+        <div class="detail-modal" x-show="detailCard">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+                <h5 x-text="detailCard?.front || ''"></h5>
+                <button style="background:none;border:none;font-size:1.2rem;cursor:pointer;" @click="detailCard = null">&times;</button>
+            </div>
+            <template x-if="detailCard">
+                <div>
+                    <div class="detail-row"><span class="detail-label">Typ</span><span x-text="typeLabel(detailCard.content_type)"></span></div>
+                    <div class="detail-row"><span class="detail-label">Lektion</span><span x-text="detailCard.lesson_title"></span></div>
+                    <div class="detail-row"><span class="detail-label">Stufe</span><span><span class="stage-dot" :style="`background:${detailCard.stage_color}`"></span><span x-text="detailCard.stage_name"></span></span></div>
+                    <div class="detail-row"><span class="detail-label">Faellig</span><span x-text="detailCard.due_date"></span></div>
+                    <div class="detail-row"><span class="detail-label">Stability</span><span x-text="detailCard.stability + ' Tage'"></span></div>
+                    <div class="detail-row"><span class="detail-label">Difficulty</span><span x-text="detailCard.difficulty"></span></div>
+                    <div class="detail-row"><span class="detail-label">Reviews</span><span x-text="detailCard.reps"></span></div>
+                    <div class="detail-row"><span class="detail-label">Fehler</span><span x-text="detailCard.lapses"></span></div>
+
+                    <div class="detail-history" x-show="detailCard.review_history && detailCard.review_history.length">
+                        <div style="font-weight:600;font-size:0.8rem;margin-bottom:0.3rem;">Review-Verlauf</div>
+                        <template x-for="h in (detailCard.review_history || [])" :key="h.date">
+                            <span class="detail-history-item" :class="'r' + h.rating" x-text="h.date.slice(5,10) + ' ' + h.rating_label"></span>
+                        </template>
+                    </div>
+
+                    <div class="detail-actions">
+                        <button @click="cardAction('suspend', detailCard.content_id)"><i class="fas fa-pause me-1"></i>Suspendieren</button>
+                        <button @click="if(confirm('FSRS-State zuruecksetzen?')) cardAction('reset', detailCard.content_id)"><i class="fas fa-undo me-1"></i>Reset</button>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function cardBrowser() {
+    return {
+        cards: [],
+        total: 0,
+        page: 1,
+        pages: 1,
+        searchQuery: '',
+        sortField: 'due_date',
+        sortDir: 'asc',
+        selectedIds: [],
+        detailCard: null,
+        filtersOpen: false,
+        filters: {
+            status: [],
+            contentType: [],
+            lessonId: '',
+            leech: false,
+            dueToday: false,
+        },
+
+        typeLabel(t) {
+            return {kana:'Kana', kanji:'Kanji', vocabulary:'Vokabel', grammar:'Grammatik'}[t] || t;
+        },
+
+        formatDate(iso) {
+            if (!iso) return '-';
+            const d = new Date(iso);
+            const now = new Date();
+            const diff = Math.floor((d - now) / 86400000);
+            if (diff < 0) return 'Faellig';
+            if (diff === 0) return 'Heute';
+            if (diff === 1) return 'Morgen';
+            return `${diff} Tage`;
+        },
+
+        async loadCards() {
+            const params = new URLSearchParams({
+                q: this.searchQuery,
+                sort: this.sortField,
+                order: this.sortDir,
+                page: this.page,
+                per_page: 50,
+            });
+            if (this.filters.status.length) params.set('status', this.filters.status.join(','));
+            if (this.filters.contentType.length) params.set('content_type', this.filters.contentType.join(','));
+            if (this.filters.lessonId) params.set('lesson_id', this.filters.lessonId);
+            if (this.filters.leech) params.set('leech', 'true');
+            if (this.filters.dueToday) params.set('due_today', 'true');
+
+            try {
+                const resp = await fetch(`/api/srs/browse?${params}`);
+                const data = await resp.json();
+                this.cards = data.cards || [];
+                this.total = data.total || 0;
+                this.pages = data.pages || 1;
+            } catch (e) {
+                console.error('[Browse] Load failed:', e);
+            }
+        },
+
+        resetFilters() {
+            this.filters = { status: [], contentType: [], lessonId: '', leech: false, dueToday: false };
+            this.searchQuery = '';
+            this.page = 1;
+            this.loadCards();
+        },
+
+        toggleAll(event) {
+            if (event.target.checked) {
+                this.selectedIds = this.cards.map(c => c.content_id);
+            } else {
+                this.selectedIds = [];
+            }
+        },
+
+        async showDetail(contentId) {
+            try {
+                const resp = await fetch(`/api/srs/card/${contentId}/detail`);
+                this.detailCard = await resp.json();
+            } catch (e) {
+                console.error('[Browse] Detail failed:', e);
+            }
+        },
+
+        async cardAction(action, contentId) {
+            const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+            await fetch(`/api/srs/card/${action}`, {
+                method: 'POST',
+                headers: {'Content-Type':'application/json', 'X-CSRFToken': csrf},
+                body: JSON.stringify({content_id: contentId})
+            });
+            this.detailCard = null;
+            this.loadCards();
+        },
+
+        async bulkAction(action) {
+            const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+            await fetch('/api/srs/bulk-action', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json', 'X-CSRFToken': csrf},
+                body: JSON.stringify({ action, content_ids: this.selectedIds })
+            });
+            this.selectedIds = [];
+            this.loadCards();
+        },
+
+        exportCSV() {
+            const params = new URLSearchParams({ q: this.searchQuery, sort: this.sortField, order: this.sortDir });
+            if (this.filters.status.length) params.set('status', this.filters.status.join(','));
+            if (this.filters.contentType.length) params.set('content_type', this.filters.contentType.join(','));
+            if (this.filters.lessonId) params.set('lesson_id', this.filters.lessonId);
+            if (this.filters.leech) params.set('leech', 'true');
+            if (this.filters.dueToday) params.set('due_today', 'true');
+            window.location.href = `/api/srs/browse/export?${params}`;
+        },
+    };
+}
+</script>
+{% endblock %}

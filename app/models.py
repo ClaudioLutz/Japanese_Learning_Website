@@ -25,6 +25,11 @@ class User(UserMixin, db.Model):
     last_activity_date = db.Column(db.Date, nullable=True)
     total_xp: Mapped[int] = mapped_column(Integer, default=0, nullable=False, server_default='0')
 
+    # Phase 6: Gamification
+    level: Mapped[int] = mapped_column(Integer, default=1, nullable=False, server_default='1')
+    total_reviews: Mapped[int] = mapped_column(Integer, default=0, nullable=False, server_default='0')
+    total_mastered: Mapped[int] = mapped_column(Integer, default=0, nullable=False, server_default='0')
+
     lesson_progress: Mapped[List['UserLessonProgress']] = relationship('UserLessonProgress', backref='user', lazy=True, cascade='all, delete-orphan')
     course_purchases: Mapped[List['CoursePurchase']] = relationship('CoursePurchase', backref='user', lazy=True, cascade='all, delete-orphan')
 
@@ -52,18 +57,63 @@ class User(UserMixin, db.Model):
         self.update_streak()
 
     def update_streak(self):
-        """Aktualisiert den Tages-Streak bei Aktivitaet."""
+        """Aktualisiert den Tages-Streak bei Aktivitaet mit Streak-Freeze-Unterstuetzung."""
         today = datetime.utcnow().date()
         if self.last_activity_date == today:
             return  # Bereits heute aktiv
         from datetime import timedelta
+
+        # Streak-Freeze-Nachfuellung (1x pro Woche)
+        settings = getattr(self, 'srs_settings', None)
+        if settings:
+            if not settings.last_freeze_replenish or (today - settings.last_freeze_replenish).days >= 7:
+                settings.streak_freezes_available = 1
+                settings.last_freeze_replenish = today
+
         if self.last_activity_date == today - timedelta(days=1):
+            # Gestern gelernt → Streak weiter
             self.current_streak = (self.current_streak or 0) + 1
+        elif (self.last_activity_date
+              and self.last_activity_date == today - timedelta(days=2)
+              and settings
+              and (settings.streak_freezes_available or 0) > 0):
+            # Vorgestern gelernt, gestern verpasst, Freeze verfuegbar
+            settings.streak_freezes_available -= 1
+            # Streak bleibt (kein +1, aber kein Reset)
         else:
             self.current_streak = 1
         if self.current_streak > (self.longest_streak or 0):
             self.longest_streak = self.current_streak
         self.last_activity_date = today
+
+    def add_xp(self, amount):
+        """Fuegt XP hinzu und prueft Level-Up."""
+        self.total_xp = (self.total_xp or 0) + amount
+        while self.total_xp >= self.xp_for_next_level:
+            self.level = (self.level or 1) + 1
+
+    @property
+    def xp_for_next_level(self):
+        """XP-Schwelle fuer das naechste Level (polynomiale Kurve)."""
+        return int(100 * ((self.level or 1) ** 1.5))
+
+    @property
+    def level_title(self):
+        """Japanisch-thematischer Level-Titel."""
+        lvl = self.level or 1
+        if lvl <= 5:
+            return 'Anfaenger (初心者)'
+        elif lvl <= 10:
+            return 'Schueler (学生)'
+        elif lvl <= 15:
+            return 'Lehrling (見習い)'
+        elif lvl <= 25:
+            return 'Fortgeschritten (上級者)'
+        elif lvl <= 40:
+            return 'Experte (達人)'
+        elif lvl <= 50:
+            return 'Meister (師匠)'
+        return 'Grossmeister (名人)'
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -729,10 +779,65 @@ class UserSRSSettings(db.Model):
     # FSRS Optimizer Parameters (21 Floats als JSON, nach ~1000 Reviews)
     fsrs_parameters = db.Column(db.Text)
 
+    # Phase 6: Streak-Freeze + Leech-Schwelle
+    streak_freezes_available = db.Column(db.Integer, default=1, nullable=False, server_default='1')
+    last_freeze_replenish = db.Column(db.Date, nullable=True)
+    leech_threshold = db.Column(db.Integer, default=8, nullable=False, server_default='8')
+
     user = db.relationship('User', backref=db.backref('srs_settings', uselist=False))
 
     def __repr__(self):
         return f'<UserSRSSettings user:{self.user_id} retention:{self.desired_retention}>'
+
+
+class UserAchievement(db.Model):
+    """Freigeschaltete Achievements pro User."""
+    __tablename__ = 'user_achievement'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, index=True)
+    achievement_key = db.Column(db.String(50), nullable=False)
+    unlocked_at = db.Column(db.DateTime, default=datetime.utcnow)
+    notified = db.Column(db.Boolean, default=False, nullable=False)
+
+    user = db.relationship('User', backref=db.backref('achievements', lazy='dynamic'))
+
+    __table_args__ = (
+        db.UniqueConstraint('user_id', 'achievement_key', name='uq_user_achievement'),
+    )
+
+    def __repr__(self):
+        return f'<UserAchievement user:{self.user_id} key:{self.achievement_key}>'
+
+
+class DailyReviewAggregate(db.Model):
+    """Taeglich aggregierte Review-Statistiken (Heatmap, Performance)."""
+    __tablename__ = 'daily_review_aggregate'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, index=True)
+    review_date = db.Column(db.Date, nullable=False, index=True)
+
+    total_reviews = db.Column(db.Integer, default=0, nullable=False)
+    correct_reviews = db.Column(db.Integer, default=0, nullable=False)
+    again_count = db.Column(db.Integer, default=0, nullable=False)
+    hard_count = db.Column(db.Integer, default=0, nullable=False)
+    good_count = db.Column(db.Integer, default=0, nullable=False)
+    easy_count = db.Column(db.Integer, default=0, nullable=False)
+    total_time_ms = db.Column(db.BigInteger, default=0, nullable=False)
+    xp_earned = db.Column(db.Integer, default=0, nullable=False)
+    new_cards_learned = db.Column(db.Integer, default=0, nullable=False)
+    cards_leveled_up = db.Column(db.Integer, default=0, nullable=False)
+    cards_leveled_down = db.Column(db.Integer, default=0, nullable=False)
+
+    user = db.relationship('User', backref=db.backref('daily_aggregates', lazy='dynamic'))
+
+    __table_args__ = (
+        db.UniqueConstraint('user_id', 'review_date', name='uq_user_daily_agg'),
+    )
+
+    def __repr__(self):
+        return f'<DailyReviewAggregate user:{self.user_id} date:{self.review_date}>'
 
 
 class PaymentTransaction(db.Model):

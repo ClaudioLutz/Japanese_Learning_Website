@@ -13,7 +13,8 @@ from app.models import (
     LessonCategory, Lesson, LessonContent, LessonPage,
     LessonPrerequisite, Course, LessonPurchase, CoursePurchase,
     PaymentTransaction, QuizQuestion, QuizOption, UserLessonProgress,
-    UserQuizAnswer,
+    UserQuizAnswer, CardReviewState, ReviewLog, UserSRSSettings,
+    UserAchievement, DailyReviewAggregate,
 )
 
 
@@ -257,3 +258,61 @@ class UserLessonProgressFactory(BaseFactory):
     is_completed = False
     progress_percentage = 0
     time_spent = 0
+
+
+# ── SRS Factories ────────────────────────────────────────
+
+
+class CardReviewStateFactory(BaseFactory):
+    class Meta:
+        model = CardReviewState
+
+    user_id = None
+    content_id = None
+    fsrs_card_state = LazyFunction(lambda: '{"stability":1.0,"difficulty":5.0,"due":"2026-04-14T00:00:00+00:00","last_review":"2026-04-13T00:00:00+00:00","reps":1,"lapses":0,"state":2,"step":null}')
+    due_date = LazyFunction(datetime.utcnow)
+    status = 'review'
+    reps = 1
+    lapses = 0
+
+
+class ReviewLogFactory(BaseFactory):
+    class Meta:
+        model = ReviewLog
+
+    user_id = None
+    content_id = None
+    rating = 3
+    reviewed_at = LazyFunction(datetime.utcnow)
+    time_taken_ms = 5000
+    scheduled_days = 1
+    elapsed_days = 0
+
+
+class UserSRSSettingsFactory(BaseFactory):
+    class Meta:
+        model = UserSRSSettings
+
+    user_id = None
+    desired_retention = 0.9
+    daily_new_cards = 20
+    daily_review_limit = 100
+
+
+class UserAchievementFactory(BaseFactory):
+    class Meta:
+        model = UserAchievement
+
+    user_id = None
+    achievement_key = 'streak_7'
+    notified = False
+
+
+class DailyReviewAggregateFactory(BaseFactory):
+    class Meta:
+        model = DailyReviewAggregate
+
+    user_id = None
+    review_date = LazyFunction(lambda: datetime.utcnow().date())
+    total_reviews = 0
+    correct_reviews = 0

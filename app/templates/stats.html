@@ -1,0 +1,386 @@
+{% extends "base.html" %}
+
+{% block title %}Statistiken{% endblock %}
+
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block styles %}
+<style>
+    .stats-container { max-width: 960px; margin: 0 auto; padding: 1rem; padding-bottom: 80px; }
+    .stats-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+    .stats-header h5 { color: var(--primary-color, #2B4C7E); margin: 0; }
+
+    .stats-overview { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.75rem; margin-bottom: 1.5rem; }
+    .stat-card { background: var(--card-bg, #FFFDF7); border: 1px solid var(--border-color, #D4CFC5); border-radius: 12px; padding: 0.75rem; text-align: center; }
+    .stat-card .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--primary-color, #2B4C7E); }
+    .stat-card .stat-label { font-size: 0.75rem; color: var(--text-muted, #8C8378); }
+
+    .chart-section { background: var(--card-bg, #FFFDF7); border: 1px solid var(--border-color, #D4CFC5); border-radius: 12px; padding: 1rem; margin-bottom: 1rem; }
+    .chart-section h6 { color: var(--primary-color, #2B4C7E); margin-bottom: 0.75rem; font-size: 0.9rem; }
+    .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+    @media (max-width: 768px) { .chart-row { grid-template-columns: 1fr; } }
+
+    .heatmap-grid { display: flex; flex-wrap: wrap; gap: 2px; margin-top: 0.5rem; }
+    .heatmap-cell { width: 12px; height: 12px; border-radius: 2px; }
+    .heatmap-legend { display: flex; align-items: center; gap: 4px; font-size: 0.7rem; color: var(--text-muted); margin-top: 0.5rem; }
+
+    .leech-table { width: 100%; font-size: 0.85rem; }
+    .leech-table th { font-weight: 600; color: var(--text-muted); padding: 0.4rem; border-bottom: 1px solid var(--border-color); text-align: left; }
+    .leech-table td { padding: 0.4rem; border-bottom: 1px solid var(--border-color, #eee); }
+    .leech-table .leech-warning { color: #dc3545; }
+    .leech-action { background: none; border: 1px solid var(--border-color); border-radius: 6px; padding: 2px 8px; font-size: 0.75rem; cursor: pointer; }
+    .leech-action:hover { background: var(--background-color, #F5F0E8); }
+
+    .jlpt-section { margin-bottom: 1rem; }
+    .jlpt-level { margin-bottom: 0.75rem; }
+    .jlpt-level-header { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.25rem; }
+    .jlpt-level-header strong { color: var(--primary-color); }
+    .jlpt-bar { height: 20px; background: var(--border-color, #D4CFC5); border-radius: 10px; overflow: hidden; }
+    .jlpt-bar-fill { height: 100%; border-radius: 10px; transition: width 0.5s ease; }
+    .jlpt-detail { font-size: 0.7rem; color: var(--text-muted); margin-top: 2px; }
+
+    .badge-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 0.75rem; }
+    .badge-item { text-align: center; padding: 0.75rem 0.5rem; border-radius: 10px; border: 1px solid var(--border-color); background: var(--card-bg); }
+    .badge-item.locked { opacity: 0.4; }
+    .badge-item .badge-icon { font-size: 1.5rem; margin-bottom: 0.25rem; }
+    .badge-item .badge-name { font-size: 0.7rem; font-weight: 600; }
+    .badge-item .badge-desc { font-size: 0.6rem; color: var(--text-muted); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="stats-container" x-data="statsPage()" x-init="loadAll()">
+    <div class="stats-header">
+        <h5><i class="fas fa-chart-bar me-1"></i> Statistiken</h5>
+        <div style="font-size:0.8rem; color:var(--text-muted);">
+            Level <strong x-text="stats.level">{{ stats.level }}</strong> — <span x-text="stats.level_title">{{ stats.level_title }}</span>
+            &nbsp;&middot;&nbsp; <span x-text="stats.total_xp">{{ stats.total_xp }}</span> XP
+        </div>
+    </div>
+
+    <!-- Overview Cards -->
+    <div class="stats-overview">
+        <div class="stat-card">
+            <div class="stat-value">{{ stats.total_cards }}</div>
+            <div class="stat-label">Karten gesamt</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ stats.due_count }}</div>
+            <div class="stat-label">Heute faellig</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ stats.reviews_today }}</div>
+            <div class="stat-label">Reviews heute</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ stats.current_streak }}</div>
+            <div class="stat-label"><i class="fas fa-fire" style="color:#fd7e14;"></i> Streak</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ stats.success_rate }}%</div>
+            <div class="stat-label">Erfolgsrate</div>
+        </div>
+    </div>
+
+    <!-- Heatmap -->
+    <div class="chart-section">
+        <h6><i class="fas fa-calendar-alt me-1"></i> Review-Aktivitaet (letzte 365 Tage)</h6>
+        <div class="heatmap-grid" id="heatmapGrid"></div>
+        <div class="heatmap-legend">
+            <span>Weniger</span>
+            <span class="heatmap-cell" style="background:#ebedf0;"></span>
+            <span class="heatmap-cell" style="background:#9be9a8;"></span>
+            <span class="heatmap-cell" style="background:#40c463;"></span>
+            <span class="heatmap-cell" style="background:#30a14e;"></span>
+            <span class="heatmap-cell" style="background:#216e39;"></span>
+            <span>Mehr</span>
+        </div>
+    </div>
+
+    <!-- Charts Row 1: Retention + Forecast -->
+    <div class="chart-row">
+        <div class="chart-section">
+            <h6><i class="fas fa-chart-line me-1"></i> Retention nach Intervall</h6>
+            <canvas id="retentionChart" height="200"></canvas>
+        </div>
+        <div class="chart-section">
+            <h6><i class="fas fa-chart-bar me-1"></i> Review-Forecast (30 Tage)</h6>
+            <canvas id="forecastChart" height="200"></canvas>
+        </div>
+    </div>
+
+    <!-- Charts Row 2: Maturity + Content Type -->
+    <div class="chart-row">
+        <div class="chart-section">
+            <h6><i class="fas fa-chart-pie me-1"></i> Karten-Verteilung</h6>
+            <canvas id="maturityChart" height="200"></canvas>
+        </div>
+        <div class="chart-section">
+            <h6><i class="fas fa-layer-group me-1"></i> Performance nach Typ</h6>
+            <canvas id="contentTypeChart" height="200"></canvas>
+        </div>
+    </div>
+
+    <!-- Response Time Histogram -->
+    <div class="chart-section">
+        <h6><i class="fas fa-stopwatch me-1"></i> Antwortzeiten</h6>
+        <canvas id="responseTimeChart" height="180"></canvas>
+    </div>
+
+    <!-- Leeches -->
+    <div class="chart-section" x-show="leeches.length > 0">
+        <h6><i class="fas fa-bug me-1"></i> Problematische Karten (<span x-text="leeches.length"></span>)</h6>
+        <table class="leech-table">
+            <thead><tr><th>Karte</th><th>Typ</th><th>Fehler</th><th>Quote</th><th>Aktion</th></tr></thead>
+            <tbody>
+                <template x-for="l in leeches" :key="l.content_id">
+                    <tr>
+                        <td x-text="l.front" style="font-weight:600;"></td>
+                        <td x-text="l.content_type"></td>
+                        <td class="leech-warning" x-text="l.lapses"></td>
+                        <td x-text="l.failure_rate + '%'"></td>
+                        <td>
+                            <button class="leech-action" @click="suspendCard(l.content_id)">Suspendieren</button>
+                            <button class="leech-action" @click="resetCard(l.content_id)">Reset</button>
+                        </td>
+                    </tr>
+                </template>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- JLPT Progress -->
+    <div class="chart-section jlpt-section">
+        <h6><i class="fas fa-flag me-1"></i> JLPT-Fortschritt</h6>
+        <template x-for="(data, level) in jlptProgress" :key="level">
+            <div class="jlpt-level">
+                <div class="jlpt-level-header">
+                    <strong x-text="level"></strong>
+                    <span x-text="data.percent + '%'"></span>
+                </div>
+                <div class="jlpt-bar">
+                    <div class="jlpt-bar-fill" :style="`width:${data.percent}%; background: ${data.percent > 80 ? '#28a745' : data.percent > 40 ? '#fd7e14' : '#dc3545'}`"></div>
+                </div>
+                <div class="jlpt-detail">
+                    Vokabeln: <span x-text="data.vocab_mastered + '/' + data.vocab_total"></span>
+                    &nbsp;&middot;&nbsp; Kanji: <span x-text="data.kanji_mastered + '/' + data.kanji_total"></span>
+                </div>
+            </div>
+        </template>
+    </div>
+
+    <!-- Achievements -->
+    <div class="chart-section">
+        <h6><i class="fas fa-trophy me-1"></i> Achievements (<span x-text="achievementsUnlocked"></span> / <span x-text="achievementsTotal"></span>)</h6>
+        <div class="badge-gallery">
+            <template x-for="a in allAchievements" :key="a.key">
+                <div class="badge-item" :class="a.unlocked ? '' : 'locked'" :title="a.description">
+                    <div class="badge-icon"><i :class="'fas ' + a.icon"></i></div>
+                    <div class="badge-name" x-text="a.name"></div>
+                    <div class="badge-desc" x-text="a.unlocked ? 'Freigeschaltet' : a.description"></div>
+                </div>
+            </template>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function statsPage() {
+    return {
+        stats: {{ stats | tojson }},
+        leeches: [],
+        jlptProgress: {},
+        allAchievements: [],
+        achievementsUnlocked: 0,
+        achievementsTotal: 0,
+
+        async loadAll() {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+            // Parallel fetches
+            const [heatmap, retention, forecast, maturity, contentType, responseTimes, leechData, jlpt, achievements] = await Promise.all([
+                fetch('/api/srs/stats/heatmap').then(r => r.json()).catch(() => ({data:[]})),
+                fetch('/api/srs/stats/retention').then(r => r.json()).catch(() => ({data:[], desired_retention:90})),
+                fetch('/api/srs/stats/forecast').then(r => r.json()).catch(() => ({data:[]})),
+                fetch('/api/srs/stats/maturity').then(r => r.json()).catch(() => ({})),
+                fetch('/api/srs/stats/content-type').then(r => r.json()).catch(() => ({data:[]})),
+                fetch('/api/srs/stats/response-times').then(r => r.json()).catch(() => ({data:[]})),
+                fetch('/api/srs/stats/leeches').then(r => r.json()).catch(() => ({data:[]})),
+                fetch('/api/srs/jlpt-progress').then(r => r.json()).catch(() => ({})),
+                fetch('/api/srs/achievements').then(r => r.json()).catch(() => ({unlocked:[], locked:[]})),
+            ]);
+
+            this.leeches = leechData.data || [];
+            this.jlptProgress = jlpt;
+            this.allAchievements = [
+                ...(achievements.unlocked || []).map(a => ({...a, unlocked: true})),
+                ...(achievements.locked || []).map(a => ({...a, unlocked: false})),
+            ];
+            this.achievementsUnlocked = (achievements.unlocked || []).length;
+            this.achievementsTotal = this.allAchievements.length;
+
+            this.renderHeatmap(heatmap.data || []);
+            this.renderRetention(retention.data || [], retention.desired_retention || 90);
+            this.renderForecast(forecast.data || []);
+            this.renderMaturity(maturity);
+            this.renderContentType(contentType.data || []);
+            this.renderResponseTimes(responseTimes.data || []);
+        },
+
+        renderHeatmap(data) {
+            const grid = document.getElementById('heatmapGrid');
+            if (!grid) return;
+
+            // Daten in Lookup umwandeln
+            const lookup = {};
+            let maxCount = 1;
+            data.forEach(d => { lookup[d.date] = d.count; if (d.count > maxCount) maxCount = d.count; });
+
+            const colors = ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'];
+            const today = new Date();
+            const html = [];
+
+            for (let i = 364; i >= 0; i--) {
+                const d = new Date(today);
+                d.setDate(d.getDate() - i);
+                const key = d.toISOString().split('T')[0];
+                const count = lookup[key] || 0;
+                const level = count === 0 ? 0 : Math.min(4, Math.ceil(count / maxCount * 4));
+                const title = `${key}: ${count} Reviews`;
+                html.push(`<span class="heatmap-cell" style="background:${colors[level]}" title="${title}"></span>`);
+            }
+            grid.innerHTML = html.join('');
+        },
+
+        renderRetention(data, desired) {
+            const ctx = document.getElementById('retentionChart');
+            if (!ctx || !data.length) return;
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.map(d => d.interval),
+                    datasets: [{
+                        label: 'Retention %',
+                        data: data.map(d => d.retention),
+                        backgroundColor: data.map(d => d.retention >= desired ? '#28a745' : '#fd7e14'),
+                        borderRadius: 4,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false },
+                        annotation: { annotations: { line: { type: 'line', yMin: desired, yMax: desired, borderColor: '#dc3545', borderDash: [5,5] } } }
+                    },
+                    scales: { y: { min: 0, max: 100, title: { display: true, text: '%' } } }
+                }
+            });
+        },
+
+        renderForecast(data) {
+            const ctx = document.getElementById('forecastChart');
+            if (!ctx || !data.length) return;
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.map(d => d.date.slice(5)),
+                    datasets: [{
+                        label: 'Faellige Reviews',
+                        data: data.map(d => d.count),
+                        backgroundColor: data.map((d, i) => i === 0 ? '#2B4C7E' : '#6c9bd2'),
+                        borderRadius: 2,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: { x: { ticks: { maxTicksLimit: 10, font: { size: 10 } } }, y: { beginAtZero: true } }
+                }
+            });
+        },
+
+        renderMaturity(data) {
+            const ctx = document.getElementById('maturityChart');
+            if (!ctx) return;
+            const labels = ['Neu', 'Lernen', 'Jung', 'Reif', 'Gemeistert', 'Suspendiert'];
+            const colors = ['#6c757d', '#dc3545', '#fd7e14', '#28a745', '#ffc107', '#adb5bd'];
+            const values = labels.map(l => data[l] || 0);
+            if (values.every(v => v === 0)) return;
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: { labels, datasets: [{ data: values, backgroundColor: colors, borderWidth: 1 }] },
+                options: { responsive: true, plugins: { legend: { position: 'right', labels: { font: { size: 11 } } } } }
+            });
+        },
+
+        renderContentType(data) {
+            const ctx = document.getElementById('contentTypeChart');
+            if (!ctx || !data.length) return;
+            const typeLabels = { kana: 'Kana', kanji: 'Kanji', vocabulary: 'Vokabel', grammar: 'Grammatik' };
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.map(d => typeLabels[d.type] || d.type),
+                    datasets: [{
+                        label: 'Retention %',
+                        data: data.map(d => d.retention),
+                        backgroundColor: data.map(d => d.retention >= 90 ? '#28a745' : d.retention >= 80 ? '#fd7e14' : '#dc3545'),
+                        borderRadius: 4,
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: { x: { min: 0, max: 100, title: { display: true, text: 'Retention %' } } }
+                }
+            });
+        },
+
+        renderResponseTimes(data) {
+            const ctx = document.getElementById('responseTimeChart');
+            if (!ctx || !data.length) return;
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.map(d => d.range),
+                    datasets: [
+                        { label: 'Nochmal', data: data.map(d => d.again), backgroundColor: '#dc3545' },
+                        { label: 'Schwer', data: data.map(d => d.hard), backgroundColor: '#fd7e14' },
+                        { label: 'Gut', data: data.map(d => d.good), backgroundColor: '#28a745' },
+                        { label: 'Einfach', data: data.map(d => d.easy), backgroundColor: '#007bff' },
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { position: 'top', labels: { font: { size: 10 } } } },
+                    scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } }
+                }
+            });
+        },
+
+        async suspendCard(contentId) {
+            const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+            await fetch('/api/srs/card/suspend', {
+                method: 'POST', headers: {'Content-Type':'application/json', 'X-CSRFToken': csrf},
+                body: JSON.stringify({content_id: contentId})
+            });
+            this.leeches = this.leeches.filter(l => l.content_id !== contentId);
+        },
+
+        async resetCard(contentId) {
+            const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+            await fetch('/api/srs/card/reset', {
+                method: 'POST', headers: {'Content-Type':'application/json', 'X-CSRFToken': csrf},
+                body: JSON.stringify({content_id: contentId})
+            });
+            this.leeches = this.leeches.filter(l => l.content_id !== contentId);
+        },
+    };
+}
+</script>
+{% endblock %}

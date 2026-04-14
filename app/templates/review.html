@@ -238,6 +238,25 @@
         from { opacity: 0; transform: translateY(8px); }
         to { opacity: 1; transform: translateY(0); }
     }
+
+    /* Achievement Toast */
+    .achievement-toast {
+        position: fixed; top: 20px; right: 20px; z-index: 1100;
+        background: var(--card-bg, #FFFDF7); border: 1px solid #ffc107;
+        border-radius: 12px; padding: 0.75rem 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        animation: toastIn 0.4s ease, toastOut 0.4s ease 3.5s forwards;
+        max-width: 300px;
+    }
+    .achievement-toast .toast-title { font-weight: 700; font-size: 0.85rem; color: var(--primary-color); }
+    .achievement-toast .toast-desc { font-size: 0.75rem; color: var(--text-muted); }
+    @keyframes toastIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes toastOut { from { opacity: 1; } to { opacity: 0; transform: translateY(-10px); } }
+
+    /* XP-Anzeige in Session-Summary */
+    .xp-summary { display: flex; align-items: center; gap: 0.5rem; color: #f59e0b; font-weight: 700; }
+    .stage-changes { font-size: 0.8rem; margin-top: 0.3rem; }
+    .stage-up { color: #28a745; }
+    .stage-down { color: #dc3545; }
 </style>
 {% endblock %}
 
@@ -353,10 +372,19 @@
                 <span class="summary-label">Streak</span>
                 <span class="summary-value" id="summaryStreak">0 Tage</span>
             </div>
+            <div class="summary-row">
+                <span class="summary-label">XP verdient</span>
+                <span class="summary-value xp-summary"><i class="fas fa-star"></i> <span id="summaryXP">0</span></span>
+            </div>
+            <div class="stage-changes" id="stageChanges"></div>
+            <div id="sessionAchievements" style="margin-top:0.5rem;"></div>
         </div>
-        <div class="mt-3">
+        <div class="mt-3" style="display:flex;gap:0.5rem;justify-content:center;">
             <a href="{{ url_for('routes.lessons') }}" class="btn btn-outline-primary btn-sm">
                 <i class="fas fa-book-open me-1"></i> Weiter lernen
+            </a>
+            <a href="{{ url_for('srs.stats_page') }}" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-chart-bar me-1"></i> Statistiken
             </a>
         </div>
     </div>
@@ -378,7 +406,7 @@
     let currentIdx = 0;
     let sessionStart = Date.now();
     let cardFlipTime = null;
-    let sessionStats = { total: 0, reviewed: 0, good: 0 };
+    let sessionStats = { total: 0, reviewed: 0, good: 0, xpEarned: 0, stagesUp: 0, stagesDown: 0, achievements: [] };
     const intervalCache = {};
     const TYPE_LABELS = { kana: 'Kana', kanji: 'Kanji', vocabulary: 'Vokabel', grammar: 'Grammatik' };
 
@@ -545,7 +573,7 @@
 
         // Send to backend
         try {
-            await fetch('/api/srs/rate', {
+            const resp = await fetch('/api/srs/rate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
                 body: JSON.stringify({
@@ -554,6 +582,22 @@
                     time_taken_ms: timeTaken > 0 ? timeTaken : null
                 })
             });
+            const result = await resp.json();
+
+            // Gamification-Tracking
+            sessionStats.xpEarned += (result.xp_earned || 0);
+            if (result.stage_changed) {
+                if (result.card_stage > 0) sessionStats.stagesUp++;
+                else sessionStats.stagesDown++;
+            }
+
+            // Achievement-Toasts
+            if (result.new_achievements && result.new_achievements.length) {
+                result.new_achievements.forEach(a => {
+                    sessionStats.achievements.push(a);
+                    showAchievementToast(a);
+                });
+            }
         } catch (e) {
             console.warn('[Review] Rate failed:', e);
         }
@@ -642,10 +686,44 @@
         document.getElementById('summaryCards').textContent = sessionStats.reviewed;
         document.getElementById('summaryTime').textContent = `${mins} Min`;
         document.getElementById('summaryRate').textContent = rate + '%';
+        document.getElementById('summaryXP').textContent = `+${sessionStats.xpEarned}`;
+
+        // Stage changes
+        const stageEl = document.getElementById('stageChanges');
+        const parts = [];
+        if (sessionStats.stagesUp > 0) parts.push(`<span class="stage-up">&#8593; ${sessionStats.stagesUp} aufgestiegen</span>`);
+        if (sessionStats.stagesDown > 0) parts.push(`<span class="stage-down">&#8595; ${sessionStats.stagesDown} zurueckgefallen</span>`);
+        if (parts.length) stageEl.innerHTML = parts.join(' &middot; ');
+
+        // Session achievements
+        const achEl = document.getElementById('sessionAchievements');
+        if (sessionStats.achievements.length) {
+            achEl.innerHTML = sessionStats.achievements.map(a =>
+                `<div style="font-size:0.8rem;"><i class="fas ${a.icon}" style="color:#f59e0b;"></i> <strong>${a.name}</strong></div>`
+            ).join('');
+        }
 
         // Fetch updated streak
         fetch('/api/srs/stats').then(r => r.json()).then(data => {
             document.getElementById('summaryStreak').textContent = (data.current_streak || 0) + ' Tage';
+        }).catch(() => {});
+    }
+
+    function showAchievementToast(achievement) {
+        const toast = document.createElement('div');
+        toast.className = 'achievement-toast';
+        toast.innerHTML = `
+            <div class="toast-title"><i class="fas fa-trophy" style="color:#f59e0b;"></i> Neues Achievement!</div>
+            <div><i class="fas ${achievement.icon}"></i> <strong>${achievement.name}</strong></div>
+            <div class="toast-desc">${achievement.description}</div>`;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 4000);
+
+        // Mark as notified
+        fetch('/api/srs/achievements/notify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+            body: JSON.stringify({ achievement_keys: [achievement.key] })
         }).catch(() => {});
     }
 
