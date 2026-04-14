@@ -244,6 +244,12 @@ curl -s -o /dev/null -w "%{http_code}" https://japanese-learning.ch/
 - Artifact Registry + Secrets: ~1 CHF
 - Domain (japanese-learning.ch): ~15 CHF/Jahr
 
+## Datenbank-Sync — Pflicht-Reihenfolge
+- **IMMER Cloud→Lokal ZUERST** — Vor jedem Lokal→Cloud-Push muss der aktuelle Produktionsstand heruntergeladen werden. Der Admin kann auf japanese-learning.ch jederzeit Inhalte bearbeiten. Ein blindes Lokal→Cloud überschreibt diese Änderungen.
+- **Ablauf**: `/sync-cloud-db` Skill ausführen — der macht automatisch: (A) Cloud→Lokal, dann (B) Lokal→Cloud.
+- **Scripts**: `scripts/sync_from_cloud.py` (Cloud→Lokal) und `scripts/sync_content_upsert.py` (Lokal→Cloud)
+- **Geschützte Tabellen**: User-Daten, Fortschritt, SRS-States, Käufe werden NIEMALS synchronisiert.
+
 ## Arbeitsweise — Sauberer Git-Status
 - **Jede Änderung sofort committen und pushen** — nach jeder abgeschlossenen Teilaufgabe wird ein Git-Commit erstellt und auf den Remote gepusht. Das verbessert die Nachvollziehbarkeit und schützt vor Datenverlust.
 - **Keine losen Dateien** — am Ende jeder Session muss `git status` sauber sein. Jede Datei muss entweder committed+gepusht, in `.gitignore` eingetragen, oder gelöscht werden falls nicht mehr gebraucht.
