@@ -164,6 +164,7 @@ class Vocabulary(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     word = db.Column(db.String(100), nullable=False, unique=True)
     reading = db.Column(db.String(100), nullable=False)
+    romaji = db.Column(db.String(200), nullable=True)
     meaning = db.Column(db.Text, nullable=False)
     meaning_de = db.Column(db.Text, nullable=True)
     jlpt_level = db.Column(db.Integer, nullable=True)

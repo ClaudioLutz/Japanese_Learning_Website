@@ -39,8 +39,12 @@ ALLOWED_CONTENT_TYPES = {"kana", "kanji", "vocabulary", "grammar", "text", "imag
 ALLOWED_PAGE_TYPES = {"normal", "quiz_carousel"}
 
 REQUIRED_LESSON_FIELDS = ["title", "description", "jlpt_level", "topic", "pages"]
-REQUIRED_VOCAB_FIELDS = ["word", "reading", "meaning", "meaning_de", "jlpt_level"]
-REQUIRED_GRAMMAR_FIELDS = ["title", "explanation", "structure", "jlpt_level"]
+REQUIRED_VOCAB_FIELDS = ["word", "reading", "romaji", "meaning", "meaning_de", "jlpt_level"]
+REQUIRED_GRAMMAR_FIELDS = ["title", "explanation", "structure", "romaji", "jlpt_level"]
+
+# HTML-Tags in content_text sind verboten: lesson_view.html:683 nutzt `| nl2br`,
+# was HTML escaped. Nur Plaintext mit \n\n fuer Absaetze.
+HTML_TAG_RE = __import__("re").compile(r"<\s*/?\s*[a-zA-Z][^>]*>")
 
 
 class ValidationError(Exception):
@@ -84,6 +88,18 @@ def validate_draft(draft: dict) -> list[str]:
             if ct not in ALLOWED_CONTENT_TYPES:
                 errors.append(f"Page {p_idx}.{c_idx}: content_type={ct} nicht erlaubt")
                 continue
+
+            # HTML-Tag-Check fuer text-Content: lesson_view.html nutzt | nl2br
+            if ct == "text":
+                data = item.get("data", {})
+                ctext = data.get("content_text", "")
+                tags = HTML_TAG_RE.findall(ctext)
+                if tags:
+                    errors.append(
+                        f"Page {p_idx}.{c_idx} text: HTML-Tags verboten "
+                        f"(lesson_view.html nutzt | nl2br → Tags werden escaped). "
+                        f"Gefunden: {tags[:3]}. Nutze Plaintext mit \\n\\n fuer Absaetze."
+                    )
 
             if ct == "vocabulary":
                 data = item.get("data", {})
@@ -134,16 +150,25 @@ def validate_draft(draft: dict) -> list[str]:
                             f"genau 1 richtige Option, hat {correct}"
                         )
 
-    # Budget-Checks aus SKILL.md §4
-    if not (8 <= vocab_count <= 12):
-        errors.append(f"Vocabulary-Count {vocab_count} ausserhalb [8,12]")
-    if not (1 <= grammar_count <= 2):
-        errors.append(f"Grammar-Count {grammar_count} ausserhalb [1,2]")
-    if not (6 <= quiz_count <= 10):
-        errors.append(f"Quiz-Count {quiz_count} ausserhalb [6,10]")
+    # Budget-Checks aus SKILL.md §4 (angepasst 2026-04-24: groessere Lektionen)
+    if not (15 <= vocab_count <= 25):
+        errors.append(f"Vocabulary-Count {vocab_count} ausserhalb [15,25]")
+    if not (2 <= grammar_count <= 4):
+        errors.append(f"Grammar-Count {grammar_count} ausserhalb [2,4]")
+    if not (10 <= quiz_count <= 18):
+        errors.append(f"Quiz-Count {quiz_count} ausserhalb [10,18]")
     if len(quiz_types_seen) < 2:
         errors.append(
             f"Mind. 2 verschiedene Quiz-Typen erforderlich, nur {quiz_types_seen} verwendet"
+        )
+    if len(pages) < 5:
+        errors.append(f"Mindestens 5 Pages erforderlich (Einfuehrung/Vokabeln/Grammar/Dialog/Quiz/Zusammenfassung), hat {len(pages)}")
+
+    # Bilder-Pflicht: thumbnail_url im Lesson-Header
+    if not draft.get("thumbnail_url"):
+        errors.append(
+            "thumbnail_url fehlt. Pipeline-Schritt `images` muss vor `insert` laufen "
+            "(DALL-E Thumbnail). Notfalls manuell URL setzen."
         )
 
     # Umlaut-Fallback-Check
@@ -230,6 +255,7 @@ def _get_or_create_vocab(db, Vocabulary, data: dict) -> int:
     v = Vocabulary(
         word=data["word"],
         reading=data["reading"],
+        romaji=data.get("romaji"),
         meaning=data["meaning"],
         meaning_de=data.get("meaning_de"),
         jlpt_level=data.get("jlpt_level"),

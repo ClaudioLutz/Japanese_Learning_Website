@@ -41,6 +41,24 @@ Selbstverbesserndes Log. Wird vor jedem Run gelesen, nach jedem Run angehängt.
 
 <!-- Neuste Einträge oben, älteste unten. -->
 
+## 2026-04-24 21:00 — User-Feedback nach visueller Sichtung Lesson 142
+
+**Claudio nach Öffnen von Lesson 142 im Browser:**
+1. HTML-Tags erscheinen als Text statt gerendert → **Ursache gefunden:** `lesson_view.html:683` nutzt `{{ content.content_text | nl2br }}`, das escaped HTML. Nur Plaintext wird korrekt dargestellt.
+2. Rōmaji fehlt komplett in der Lektion → User verlangt "Oman'sch-japanisch-westliche Schreibweise". `Vocabulary` hatte bisher kein `romaji`-Feld.
+3. Bilder fehlen (Thumbnail + Schlüsselvokabeln).
+4. Lektion inhaltlich zu dünn: 10 Vokabeln + 1 Grammar + 7 Quiz reichen nicht für einen wertvollen Lernpass.
+
+**Actions (alle in SKILL.md §3, §4, §5 hochgehoben):**
+- Neue Migration `a3f5c2d1b8e9`: `Vocabulary.romaji` Spalte (String(200), nullable).
+- Neue Regel: **KEIN HTML in `content_text`** (Plaintext + `\n\n`).
+- Neue Regel: **Rōmaji ist Pflicht** in `Vocabulary.romaji`, `Grammar.romaji` und am Anfang jedes `example_sentence_english`.
+- Neue Regel: **Bilder (Thumbnail + ≥3 Vokabel-Bilder) sind Pflicht**, nicht optional.
+- Neues Budget: **15–25 Vokabeln, 2–4 Grammar, 10–18 Quiz, ≥5 Pages** (+ separater Dialog-Page).
+- Validator in `pipeline.py` erzwingt alle diese Regeln beim `validate`-Schritt.
+
+---
+
 ## 2026-04-24 20:30 — N5 Essen im Restaurant (Lesson ID 142)
 
 ### Erfolge

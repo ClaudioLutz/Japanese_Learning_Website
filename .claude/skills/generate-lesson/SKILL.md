@@ -46,27 +46,66 @@ Verletzung ⇒ sofortiger Abbruch, keine Insertion:
 - **`created_by_ai = True`** für alle generierten Kana/Kanji/Vocabulary/Grammar-Einträge. `LessonContent.generated_by_ai = True` ebenfalls.
 - **`status = 'approved'`** direkt (User-Entscheidung 2026-04-20).
 - **Duplicate-Check**: Vor jedem INSERT in Kana/Kanji/Vocabulary/Grammar prüfen ob `character`/`word`/`title` schon existiert → bestehende ID wiederverwenden, NICHT neue Zeile erzeugen.
+- **KEIN HTML in `content_text`** (content_type `text`). Das Template [lesson_view.html:683](../../app/templates/lesson_view.html#L683) rendert mit `| nl2br`, nicht `| safe` — alle Tags erscheinen als Text. Nutze **Plaintext mit `\n\n` für Absätze**, keine `<p>`, `<b>`, `<ul>` usw. Für Hervorhebung: Anführungszeichen 「…」 (japanisch) oder kursiv via Markdown-Konvention im Plaintext.
+- **Rōmaji ist PFLICHT** — an drei Stellen:
+  1. `Vocabulary.romaji` (neue Spalte seit Migration `a3f5c2d1b8e9`): Hepburn-Transkription des Wortes, z.B. `word="家族", reading="かぞく", romaji="kazoku"`.
+  2. `Grammar.romaji` (bestand schon): Struktur in Rōmaji, z.B. `"[noun] + wo + kudasai"`.
+  3. `example_sentence_english`: muss mit Rōmaji-Version des Satzes beginnen, Format `"Romaji — English meaning"`, z.B. `"Watashi no kazoku wa yo-nin desu. — My family has four people."`. So sieht Mayuko in JEDER Darstellung die westliche Lesung.
+- **Bilder sind PFLICHT** — `thumbnail_url` muss vor Insert gesetzt sein. Pipeline-Schritt `images` (DALL-E) läuft vor `insert`, NICHT optional. Zusätzlich: **mind. 3 `Vocabulary.image_url`** für zentrale Schlüsselvokabeln der Lektion (die das Thema visuell verankern, z.B. bei "Restaurant" → Menü, Essen, Getränk).
 
-## 4. Lektions-Struktur (Zielbild)
+## 4. Lektions-Struktur (Zielbild) — erweitert 2026-04-24
 
-Jede generierte Lektion enthält:
+Eine Lektion muss substantiell sein, damit Mayuko echten Lernwert hat. Zu dünn ⇒ zurückgeschickt. Jede generierte Lektion enthält **mindestens 5 Seiten**:
 
 ```
 Lesson (title, description, jlpt_level→difficulty_level 1-5, instruction_language='german',
-        lesson_type='free', is_published=True, allow_guest_access=True für erste Lektion pro Thema)
-├─ LessonPage 1: "Einführung & Vokabeln" (page_type='normal')
-│   ├─ LessonContent: text (kurze DE-Einleitung, 2-4 Sätze)
-│   └─ LessonContent: vocabulary (6-10 Einträge, Referenz auf Vocabulary-Tabelle)
-├─ LessonPage 2: "Grammatik" (page_type='normal')
-│   ├─ LessonContent: text (DE-Erklärung des Musters)
-│   └─ LessonContent: grammar (1-2 Grammar-Einträge)
-├─ LessonPage 3: "Übung" (page_type='quiz_carousel')
-│   └─ LessonContent mit QuizQuestions (6-10 Fragen, Mix aus multiple_choice / true_false / matching)
-└─ LessonPage 4: "Zusammenfassung" (page_type='normal')
-    └─ LessonContent: text (Review + Ausblick nächste Lektion)
+        lesson_type='free', is_published=False (erst nach Sichtung True),
+        allow_guest_access=True für erste Lektion pro Thema,
+        thumbnail_url=DALL-E-URL (Pflicht!))
+
+├─ LessonPage 1: "Einführung" (page_type='normal')
+│   └─ LessonContent: text — DE-Einleitung (4-8 Sätze, Plaintext!),
+│      was lernst du, warum ist es im Alltag nützlich, typische Situation.
+│
+├─ LessonPage 2: "Vokabeln Teil 1" (page_type='normal')
+│   └─ LessonContent: vocabulary ×8-12 — erste Hälfte der Wörter,
+│      thematisch homogen. Jede Vokabel: word + reading + romaji + meaning_de +
+│      example_sentence_japanese + example_sentence_english (mit Romaji-Prefix).
+│      Mind. 1 dieser Vokabeln hat image_url (DALL-E).
+│
+├─ LessonPage 3: "Vokabeln Teil 2" (page_type='normal')
+│   └─ LessonContent: vocabulary ×7-13 — zweite Hälfte.
+│      Mind. 1-2 weitere image_urls.
+│
+├─ LessonPage 4: "Grammatik" (page_type='normal')
+│   ├─ LessonContent: text — DE-Erklärung des Musters (Plaintext, mehrere Absätze).
+│   └─ LessonContent: grammar ×2-4 — mit structure, romaji, 3-4 Beispielsätzen
+│      je Eintrag (jeweils JP + Romaji + DE-Übersetzung).
+│
+├─ LessonPage 5: "Dialog / Anwendung" (page_type='normal')
+│   └─ LessonContent: text — ein realistischer Mini-Dialog (Gast ↔ Personal /
+│      zwei Freunde / Kunde ↔ Verkäufer), jede Zeile in JP + Romaji + DE.
+│      Plaintext, Sprecherrollen als "A:" und "B:" am Zeilenanfang.
+│
+├─ LessonPage 6: "Übung" (page_type='quiz_carousel')
+│   └─ LessonContent mit QuizQuestions ×10-18 — Mix aus
+│      multiple_choice / true_false / matching. Mind. 3 Typen, jeder Typ ≥2×.
+│      Distraktoren aus derselben semantischen Domäne.
+│
+└─ LessonPage 7: "Zusammenfassung" (page_type='normal')
+    └─ LessonContent: text — Review der Kern-Vokabeln/Grammatik,
+       Lerntipps, konkreter Ausblick auf die nächste Lektion.
 ```
 
-**Minimal-Budget pro Lektion:** 8 Vokabeln + 1 Grammatik + 6 Quiz-Fragen. Maximal: 12/2/10.
+**Budget pro Lektion (hart validiert):**
+- Vokabeln: **15–25** (vorher 8–12 war zu wenig).
+- Grammatik: **2–4** (vorher 1–2 war zu dünn).
+- Quiz: **10–18** (vorher 6–10 war zu wenig Übung).
+- Pages: **≥5**.
+- Thumbnail-Bild: **1** (Pflicht).
+- Vokabel-Bilder: **≥3** für Schlüsselvokabeln (Pflicht).
+
+Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
 
 ## 5. Content-Qualität: Beispiel-Patterns
 
@@ -76,21 +115,26 @@ Lesson (title, description, jlpt_level→difficulty_level 1-5, instruction_langu
 {
   "word": "家族",
   "reading": "かぞく",
+  "romaji": "kazoku",
   "meaning": "family",
   "meaning_de": "Familie",
   "jlpt_level": 5,
   "example_sentence_japanese": "わたしの かぞくは よにんです。",
-  "example_sentence_english": "My family has four people.",
+  "example_sentence_english": "Watashi no kazoku wa yo-nin desu. — My family has four people.",
+  "image_url": null,
   "status": "approved",
   "created_by_ai": true
 }
 ```
 
 **Regeln:**
-- `meaning` (EN) + `meaning_de` (DE) beide Pflicht
-- `reading` in Hiragana (nie Katakana, ausser bei Lehnwörtern)
-- `example_sentence_japanese` nutzt Leerzeichen zwischen Wörtern wenn N5 (Hiragana-Fokus)
-- Beispielsatz max 12 Silben / ca. 8 Wörter
+- `word` + `reading` + `romaji` + `meaning` + `meaning_de` sind alle Pflicht.
+- `reading` in Hiragana (nie Katakana, ausser bei Lehnwörtern wie `メニュー`).
+- `romaji` Hepburn-Transkription des ganzen Wortes, Kleinschreibung, Trennstriche bei zusammengesetzten Lesungen (`yo-nin`, `o-cha`).
+- `example_sentence_japanese` nutzt Leerzeichen zwischen Wörtern bei N5 (Hiragana-Fokus).
+- `example_sentence_english` **muss Format `"Romaji-Satz — English translation"` haben** — so liest Mayuko den Satz auch westlich, nicht nur Hiragana.
+- Beispielsatz max ~12 Silben / ca. 8 Wörter.
+- `image_url`: Bei Schlüsselvokabeln (≥3 pro Lektion) DALL-E-URL. Sonst null.
 
 ### Grammar-Eintrag
 
@@ -176,12 +220,14 @@ Lesson (title, description, jlpt_level→difficulty_level 1-5, instruction_langu
     .claude/skills/generate-lesson/drafts/{timestamp}_{topic}.json
 
 [2] python .claude/skills/generate-lesson/pipeline.py validate {draft_path}
-    → prüft Constraints (§3), Schema-Konformität, JLPT-Level-Konsistenz
+    → prüft Constraints (§3), Schema-Konformität, JLPT-Level-Konsistenz,
+       HTML-Tag-Verbot in text-Content, Rōmaji-Pflicht, Thumbnail-Pflicht
     → Fehler = Abbruch mit detaillierter Liste
 
-[3] (optional) python .claude/skills/generate-lesson/pipeline.py images {draft_path}
-    → ruft DALL-E für thumbnail + Vokabel-Bilder
-    → ergänzt image_url / thumbnail_url im Draft
+[3] python .claude/skills/generate-lesson/pipeline.py images {draft_path}
+    → PFLICHT (nicht mehr optional). Ruft DALL-E für thumbnail +
+       mind. 3 Schlüsselvokabel-Bilder. Ergänzt image_url/thumbnail_url
+       im Draft. Bei fehlendem OPENAI_API_KEY: User fragen, NICHT weitermachen.
 
 [4] python .claude/skills/generate-lesson/pipeline.py insert {draft_path}
     → Transaktionaler INSERT in Postgres (docker-compose DB)
@@ -273,6 +319,7 @@ Nach jedem Run anhängen (siehe [learnings.md](learnings.md) für Template):
 - Lokal-DB: `postgresql://app_user:JapaneseApp2025!@localhost:5432/japanese_learning`
 - **Admin-Credentials** stehen in `.env` als `ADMIN_EMAIL` (z.B. `admin@example.com`) und `ADMIN_PASSWORD`. Verify-Scripts MÜSSEN diese via `dotenv` laden. Niemals hardcoden.
 - **pg_isready-Check:** `docker exec postgres_db pg_isready -U app_user -d japanese_learning` ist der zuverlässigste Readiness-Check.
+- **Windows-Shell-Encoding:** Python-Scripts, die japanische Zeichen (Hiragana/Katakana/Kanji) per `print()` ausgeben, brauchen `PYTHONIOENCODING=utf-8` als Env-Variable, sonst `UnicodeEncodeError: cp1252`. Beispiel: `PYTHONIOENCODING=utf-8 python script.py`. Alternativ beim Skript-Start: `sys.stdout.reconfigure(encoding='utf-8')`.
 - Bestehende `AILessonContentGenerator` in `app/ai_services.py` — **NICHT NUTZEN** (User-Entscheidung: Claude schreibt selbst)
 
 ## 11. Deploy & Live-Schalten
