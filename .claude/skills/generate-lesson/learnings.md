@@ -41,6 +41,50 @@ Selbstverbesserndes Log. Wird vor jedem Run gelesen, nach jedem Run angehängt.
 
 <!-- Neuste Einträge oben, älteste unten. -->
 
+## 2026-04-24 21:15 — N5 Zahlen — Von 1 bis 10'000 (Lesson ID 143)
+
+### Erfolge
+- 22 Vokabeln (Grundzahlen 0-10, Zehner, 100/1'000/10'000, Yen, sai/nansai, denwa bangou, nanban) — alle N5, thematisch kohärent
+- 3 Grammatik-Einträge (Alter 〜さい, Preis 〜円, Telefonnummer) — jeder mit Romaji im `romaji`-Feld UND in `structure` daneben, plus dreizeilig formatierten `example_sentences` (JP / Romaji / DE)
+- 14 Quiz-Fragen: 7 MC + 4 TF + 3 Matching — alle 3 erlaubten Typen vertreten
+- 7 Pages (Einführung, 2× Vokabeln, Grammatik, Dialog, Quiz, Zusammenfassung) — über Budget-Minimum
+- Dialog mit eigenen Charakteren (Tanaka Haruto & Lisa Weber), nicht MNN-Original-Figuren; Format exakt nach `_format_conversation` (speaker: JP / (romaji) / → DE)
+- Umlaute durchgängig korrekt (Einführung, nützlich, höflich, wörtlich, Sonderlesung, Fünfzig, überschreibt)
+- Romaji in allen Feldern: `content_text` jedes JP-Worts, `Grammar.title/.structure/.explanation/.example_sentences`, `QuizQuestion.hint/.explanation`, `QuizOption.option_text/.feedback`
+- Thumbnail via DALL-E (gpt-image-1-mini) generiert, lokal gespeichert, URL gesetzt
+- Validator lief sauber durch (nur thumbnail_url-Fehler vor dem images-Step, erwartet)
+- Insert-Transaktion atomar, Lesson 143 + 7 Pages + 22 Vocab-Referenzen + 3 Grammar + 14 Questions + 38 Options in einer Transaktion
+
+### Probleme / Erkenntnisse
+
+1. **pipeline.py `generate_single_image(purpose=…)` hatte falsche Signatur** — `AILessonContentGenerator.generate_single_image()` in `app/ai_services.py:333` akzeptiert nur `prompt`, `size`, `quality`. `purpose` war ein halluzinierter Parameter. Zusätzlich: Methode liefert `image_bytes` (PIL + raw bytes) statt direktem URL; Pipeline nutzte aber `result.get("image_url")` was nur ein Platzhalter-String ist. **Fix angewandt**: `pipeline.py` schreibt bytes jetzt lokal nach `app/static/uploads/generated/thumbnail_{slug}_{ts}.png` und setzt relative URL. → **Regel: Wenn Pipeline-Code Services aufruft, periodisch auf Drift prüfen; `gen.generate_single_image()` hat sich seit Stub-Zeit geändert.**
+
+2. **MNN-Import-Altdaten inkonsistent**: 8 bestehende Vokabeln (ひゃく, せん, まん, えん, さい, なんさい, でんわばんごう, なんばん) hatten Romaji in der `reading`-Spalte (Hepburn-Text statt Hiragana) und NULL in `romaji`. Die `_get_or_create_vocab`-Funktion hat sie korrekt dedupliziert — aber die inkonsistenten Daten blieben auf der Karte sichtbar. **Fix angewandt**: UPDATE auf alle 8 Wörter: `reading` → Hiragana, `romaji` → vorheriger Romaji-Wert. → **Regel: Beim Duplicate-Match zusätzlich prüfen, ob die Bestands-Vokabel dem heutigen Schema genügt (`romaji NOT NULL`, `reading matches ^[ぁ-んァ-ヶー]+$`). Wenn nein: opportunistisch backfillen, nicht nur neue Lektion drumrum schreiben.**
+
+3. **DeprecationWarnings für `datetime.utcnow()`** in pipeline.py — niedrigprio, aber jetzt mehrfach gesehen. Python 3.13-ready: `datetime.now(datetime.UTC)`. Kein neuer Fehler, nur Lint.
+
+### Aktuelle Regeln (kumulativ, wichtigste zuerst)
+
+1. **Mayuko-First** vor jeder Design-Entscheidung.
+2. **Anfänger-Only (N5/N4)** — N3+ out-of-scope.
+3. **Keine `fill_in_the_blank` Quiz-Typen.**
+4. **Instruction-Language default `german`.**
+5. **Beispielsätze nur mit Vokabeln/Kanji ≤ Lesson-Level.**
+6. **Umlaute echt (UTF-8), nie ASCII-Fallback.**
+7. **Duplicate-Check via `_get_or_create_*` vor Kana/Kanji/Vocabulary/Grammar-Insert.**
+8. **Atomare Transaktion:** Ganze Lektion oder nichts.
+9. **Verifikation Pflicht** (DB-Query, Playwright oder HTTP-Fallback) bevor `is_published=True`.
+10. **Mind. 2 Quiz-Typen pro Lektion** (Zahlen-Lesson: 3 genutzt).
+11. **MC-Distraktoren aus selber semantischer Domäne.**
+12. **Grammar-Eintrag: `romaji` immer füllen**, nicht nur `structure`.
+13. **Admin-Credentials:** `ADMIN_EMAIL` und `ADMIN_PASSWORD` aus `.env` — nicht hardcoden.
+14. **Admin-Lesson-Liste:** `/api/admin/lessons` (JSON), nicht `/admin/manage/lessons` (AJAX-Shell).
+15. **Docker-Start-Check:** Docker-Desktop-Prozess prüfen, nicht nur `docker compose ps`.
+16. **Rōmaji in ALLEN Textfeldern** (auch content_text, grammar.structure, quiz.hint/explanation, option.feedback).
+17. **Umlaute hart validiert** — jedes erkannte `ue/oe/ae/ss` bricht validate ab.
+18. **Beim Duplicate-Match Bestands-Vokabel auf aktuelles Schema prüfen** (reading=Hiragana, romaji NOT NULL). Wenn inkonsistent: im selben Run opportunistisch backfillen.
+19. **Pipeline-Service-Calls periodisch auf Signatur-Drift prüfen** — `generate_single_image` akzeptiert kein `purpose`-Arg, liefert `image_bytes` statt finalem URL.
+
 ## 2026-04-24 21:30 — User-Feedback: Romaji überall, Umlaute statt ASCII
 
 **Claudio nach weiterer Sichtung von Lesson 142 (Grammar-Karte):**

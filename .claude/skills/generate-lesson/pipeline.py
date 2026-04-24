@@ -495,13 +495,26 @@ def generate_images(draft_path: Path):
             f"minimalist flat illustration of '{topic}', "
             f"soft pastels, no text, Japanese aesthetic"
         )
-        result = gen.generate_single_image(prompt=prompt, purpose="thumbnail")
-        if result and result.get("success"):
-            draft["thumbnail_url"] = result.get("image_url")
+        result = gen.generate_single_image(prompt=prompt)
+        if result and result.get("image_bytes"):
+            img_bytes = result["image_bytes"]
+            # Lokal als PNG unter app/static/uploads/generated/ ablegen.
+            out_dir = PROJECT_ROOT / "app" / "static" / "uploads" / "generated"
+            out_dir.mkdir(parents=True, exist_ok=True)
+            slug = draft.get("topic", "lesson").lower().replace(" ", "_")
+            ts = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+            filename = f"thumbnail_{slug}_{ts}.png"
+            out_path = out_dir / filename
+            out_path.write_bytes(img_bytes)
+            url = f"/static/uploads/generated/{filename}"
+            draft["thumbnail_url"] = url
             draft_path.write_text(
                 json.dumps(draft, ensure_ascii=False, indent=2), encoding="utf-8"
             )
-            print(f"[OK] Thumbnail: {result.get('image_url')}")
+            print(f"[OK] Thumbnail gespeichert: {out_path} -> {url}")
+        else:
+            err = (result or {}).get("error", "unbekannt")
+            print(f"[FEHLER] Bild-Generierung fehlgeschlagen: {err}")
 
 
 # ========================================================================

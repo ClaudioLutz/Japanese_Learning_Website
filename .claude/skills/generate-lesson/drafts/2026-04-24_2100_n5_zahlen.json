@@ -1,0 +1,763 @@
+{
+  "title": "N5 Zahlen — Von 1 bis 10'000",
+  "description": "Lerne die japanischen Grundzahlen von 0 bis 10'000 und wie du sie im Alltag nutzt: Alter angeben, Preise sagen und Telefonnummern austauschen. Mit Dialog (Tanaka trifft Lisa) und interaktivem Quiz.",
+  "jlpt_level": 5,
+  "topic": "Zahlen",
+  "instruction_language": "german",
+  "allow_guest_access": true,
+  "thumbnail_url": "/static/uploads/generated/thumbnail_zahlen_20260424_191421.png",
+  "pages": [
+    {
+      "title": "Einführung",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Warum Zahlen zuerst?",
+            "content_text": "Zahlen sind der vielleicht nützlichste Grundbaustein im Japanischen. Ohne sie kannst du nicht sagen, wie alt du bist, wieviel etwas kostet, welche Uhrzeit es ist oder welche Telefonnummer du hast.\n\nIn dieser Lektion lernst du die Zahlen 0 bis 10'000. Zuerst die Grundzahlen von 0 bis 10, dann die Zehner, die Hunderter, Tausender und den besonderen Begriff für 10'000 — 「まん」 (man). Japanisch zählt nämlich ab 10'000 in Zehntausender-Schritten, nicht in Tausendern wie Deutsch.\n\nDu lernst auch drei wichtige Anwendungen: Wie du dein Alter mit 「さい」 (sai, 'Jahre alt') angibst, wie du einen Preis in 「えん」 (en, 'Yen') nennst und wie du nach einer Telefonnummer 「でんわばんごう」 (denwa bangou) fragst.\n\nAm Ende der Lektion wirst du verstehen, wieso vier verschiedene Aussprachen für die Ziffer 4 existieren (よん / yon und し / shi) und wann du welche nutzt. Das ist einer der klassischen Stolpersteine — aber wenn du es einmal verinnerlicht hast, sprichst du souveräner als die meisten Anfänger."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln Teil 1 — Zahlen 0 bis 10",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "ゼロ",
+            "reading": "ゼロ",
+            "romaji": "zero",
+            "meaning": "zero",
+            "meaning_de": "Null (0)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "こたえは ゼロです。",
+            "example_sentence_english": "Kotae wa zero desu. — The answer is zero."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "いち",
+            "reading": "いち",
+            "romaji": "ichi",
+            "meaning": "one",
+            "meaning_de": "Eins (1)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "いちから はじめましょう。",
+            "example_sentence_english": "Ichi kara hajimemashou. — Let's start from one."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "に",
+            "reading": "に",
+            "romaji": "ni",
+            "meaning": "two",
+            "meaning_de": "Zwei (2)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "リンゴが にこ あります。",
+            "example_sentence_english": "Ringo ga ni-ko arimasu. — There are two apples."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "さん",
+            "reading": "さん",
+            "romaji": "san",
+            "meaning": "three",
+            "meaning_de": "Drei (3)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "かぞくは さんにんです。",
+            "example_sentence_english": "Kazoku wa san-nin desu. — My family has three people."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "よん",
+            "reading": "よん",
+            "romaji": "yon",
+            "meaning": "four",
+            "meaning_de": "Vier (4) — auch 「し」 (shi), aber im Alltag meist よん",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "よんじに あいましょう。",
+            "example_sentence_english": "Yon-ji ni aimashou. — Let's meet at four o'clock."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "ご",
+            "reading": "ご",
+            "romaji": "go",
+            "meaning": "five",
+            "meaning_de": "Fünf (5)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ごふん まってください。",
+            "example_sentence_english": "Go-fun matte kudasai. — Please wait five minutes."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "ろく",
+            "reading": "ろく",
+            "romaji": "roku",
+            "meaning": "six",
+            "meaning_de": "Sechs (6)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ろくじに おきます。",
+            "example_sentence_english": "Roku-ji ni okimasu. — I get up at six o'clock."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "なな",
+            "reading": "なな",
+            "romaji": "nana",
+            "meaning": "seven",
+            "meaning_de": "Sieben (7) — auch 「しち」 (shichi)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ななさいの こどもです。",
+            "example_sentence_english": "Nana-sai no kodomo desu. — It's a seven-year-old child."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "はち",
+            "reading": "はち",
+            "romaji": "hachi",
+            "meaning": "eight",
+            "meaning_de": "Acht (8)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "はちじから はたらきます。",
+            "example_sentence_english": "Hachi-ji kara hatarakimasu. — I work from eight o'clock."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "きゅう",
+            "reading": "きゅう",
+            "romaji": "kyuu",
+            "meaning": "nine",
+            "meaning_de": "Neun (9) — auch 「く」 (ku)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "きゅうじに ねます。",
+            "example_sentence_english": "Kyuu-ji ni nemasu. — I go to sleep at nine o'clock."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "じゅう",
+            "reading": "じゅう",
+            "romaji": "juu",
+            "meaning": "ten",
+            "meaning_de": "Zehn (10)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "じゅうふんで できます。",
+            "example_sentence_english": "Juu-pun de dekimasu. — It will be done in ten minutes."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln Teil 2 — Zehner, Hunderter, Tausender",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "じゅういち",
+            "reading": "じゅういち",
+            "romaji": "juuichi",
+            "meaning": "eleven",
+            "meaning_de": "Elf (11) — wörtlich 'Zehn-Eins'",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "じゅういちじに ひるごはんです。",
+            "example_sentence_english": "Juuichi-ji ni hirugohan desu. — Lunch is at eleven o'clock."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "にじゅう",
+            "reading": "にじゅう",
+            "romaji": "nijuu",
+            "meaning": "twenty",
+            "meaning_de": "Zwanzig (20) — wörtlich 'Zwei-Zehn'",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あには にじゅうごさいです。",
+            "example_sentence_english": "Ani wa nijuugo-sai desu. — My older brother is twenty-five years old."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "ごじゅう",
+            "reading": "ごじゅう",
+            "romaji": "gojuu",
+            "meaning": "fifty",
+            "meaning_de": "Fünfzig (50)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "このほんは ごじゅうページです。",
+            "example_sentence_english": "Kono hon wa gojuu-peeji desu. — This book has fifty pages."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "ひゃく",
+            "reading": "ひゃく",
+            "romaji": "hyaku",
+            "meaning": "hundred",
+            "meaning_de": "Hundert (100)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ひゃくえんの パンです。",
+            "example_sentence_english": "Hyaku-en no pan desu. — It's a 100-yen bread."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "せん",
+            "reading": "せん",
+            "romaji": "sen",
+            "meaning": "thousand",
+            "meaning_de": "Tausend (1'000)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "この シャツは せんえんです。",
+            "example_sentence_english": "Kono shatsu wa sen-en desu. — This shirt costs 1'000 yen."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "まん",
+            "reading": "まん",
+            "romaji": "man",
+            "meaning": "ten thousand",
+            "meaning_de": "Zehntausend (10'000) — im Japanischen eigene Einheit, nicht 'zehn Tausend'",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "いちまんえんの とけいです。",
+            "example_sentence_english": "Ichiman-en no tokei desu. — It's a 10'000-yen watch."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "えん",
+            "reading": "えん",
+            "romaji": "en",
+            "meaning": "yen (Japanese currency)",
+            "meaning_de": "Yen (japanische Währung)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ごひゃくえん おねがいします。",
+            "example_sentence_english": "Gohyaku-en onegaishimasu. — Five hundred yen, please."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "さい",
+            "reading": "さい",
+            "romaji": "sai",
+            "meaning": "years old (age counter)",
+            "meaning_de": "Jahre alt (Zähler für Alter)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "わたしは さんじゅっさいです。",
+            "example_sentence_english": "Watashi wa sanjussai desu. — I am thirty years old."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "なんさい",
+            "reading": "なんさい",
+            "romaji": "nansai",
+            "meaning": "how old",
+            "meaning_de": "Wie alt?",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "おこさんは なんさいですか。",
+            "example_sentence_english": "Okosan wa nansai desu ka. — How old is your child?"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "でんわばんごう",
+            "reading": "でんわばんごう",
+            "romaji": "denwa bangou",
+            "meaning": "telephone number",
+            "meaning_de": "Telefonnummer",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "でんわばんごうを おしえてください。",
+            "example_sentence_english": "Denwa bangou wo oshiete kudasai. — Please tell me your phone number."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "なんばん",
+            "reading": "なんばん",
+            "romaji": "nanban",
+            "meaning": "what number",
+            "meaning_de": "Welche Nummer?",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "でんわは なんばんですか。",
+            "example_sentence_english": "Denwa wa nanban desu ka. — What is the phone number?"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Grammatik — Alter, Preis und Telefonnummern",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Drei Muster, die du ab heute täglich brauchst",
+            "content_text": "In Japan werden Zahlen selten nackt genannt. Fast immer hängt ein Zähler oder eine Einheit dahinter, die erklärt, was gezählt wird. Für Anfänger sind drei Muster zentral:\n\n1) Alter — 「[Zahl] + さい」 (sai). Beispiel: 「にじゅうごさい」 (nijuugo-sai, 25 Jahre alt). Frage: 「なんさいですか」 (nansai desu ka, 'Wie alt sind Sie?').\n\n2) Preis — 「[Zahl] + えん」 (en). Beispiel: 「せんえん」 (sen-en, 1'000 Yen). Frage: 「いくらですか」 (ikura desu ka, 'Wie viel kostet das?').\n\n3) Telefonnummer — bei Telefonnummern werden die Ziffern einzeln gesprochen, mit 「の」 (no) als Trennzeichen vor den letzten vier Ziffern. Beispiel: 090-1234-5678 wird 「ぜろきゅうぜろ の いちにさんよん の ごろくななはち」 (zero-kyuu-zero no ichi-ni-san-yon no go-roku-nana-hachi).\n\nAchte auf die Lesungen bei 4, 7 und 9: In Zähl-Kombinationen wird meist 「よん」 (yon), 「なな」 (nana) und 「きゅう」 (kyuu) genutzt — diese Lesungen sind 'sicherer', weil 「し」 (shi) unglücklicherweise wie 'Tod' klingt und 「く」 (ku) wie 'Leid'. Japaner meiden sie in Zählsituationen."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "[Zahl] + さい (sai) — Alter angeben",
+            "structure": "[Zahl] + さい + です  ([Zahl] + sai + desu)",
+            "romaji": "[number] + sai + desu",
+            "explanation": "Mit 「さい」 (sai) drückst du dein Alter aus. Die Struktur lautet 「[Zahl] + さい + です」. Bei 20 Jahren gibt es eine unregelmässige Lesung: 「はたち」 (hatachi) — merke dir das als Sonderfall. Bei 1, 8 und 10 wird 「さい」 zu 「っさい」: 「いっさい」 (issai, 1 Jahr), 「はっさい」 (hassai, 8 Jahre), 「じゅっさい」 (jussai, 10 Jahre). Die Frage nach dem Alter ist 「なんさいですか」 (nansai desu ka). Höflicher bei älteren Personen: 「おいくつですか」 (oikutsu desu ka).",
+            "jlpt_level": 5,
+            "example_sentences": "わたしは さんじゅうごさいです。\n  (Watashi wa sanjuugo-sai desu.)\n  → Ich bin 35 Jahre alt.\n\nいもうとは はたちです。\n  (Imouto wa hatachi desu.)\n  → Meine jüngere Schwester ist 20 Jahre alt.\n\nおこさんは なんさいですか。\n  (Okosan wa nansai desu ka.)\n  → Wie alt ist Ihr Kind?"
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "[Zahl] + 円 (en) — Preise nennen",
+            "structure": "[Zahl] + 円 + です  ([Zahl] + en + desu)",
+            "romaji": "[number] + en + desu",
+            "explanation": "Für Preisangaben kombinierst du eine Zahl mit 「円」 (en) — dem japanischen Yen. Die Struktur lautet 「[Zahl] + 円 + です」. Bei grossen Zahlen zählt Japanisch in 「まん」 (man, Zehntausender) statt in Tausendern. 30'000 Yen heisst also 「さんまんえん」 (san-man-en), nicht 「さんじゅっせんえん」. Die Frage nach dem Preis ist 「いくらですか」 (ikura desu ka). Achte auf die Sonderlesungen: 300 ist 「さんびゃく」 (sanbyaku), 600 「ろっぴゃく」 (roppyaku), 800 「はっぴゃく」 (happyaku); 3'000 ist 「さんぜん」 (sanzen), 8'000 「はっせん」 (hassen).",
+            "jlpt_level": 5,
+            "example_sentences": "このパンは ひゃくえんです。\n  (Kono pan wa hyaku-en desu.)\n  → Dieses Brot kostet 100 Yen.\n\nコーヒーは さんびゃくえんです。\n  (Koohii wa sanbyaku-en desu.)\n  → Der Kaffee kostet 300 Yen.\n\nこの とけいは いちまんえんです。\n  (Kono tokei wa ichiman-en desu.)\n  → Diese Uhr kostet 10'000 Yen."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "でんわばんごうは [Ziffern] です — Telefonnummer angeben",
+            "structure": "でんわばんごうは [Ziffern] です  (denwa bangou wa [Ziffern] desu)",
+            "romaji": "denwa bangou wa [digits] desu",
+            "explanation": "Telefonnummern werden Ziffer für Ziffer ausgesprochen, verbunden mit 「の」 (no) an den Blockgrenzen. Bei 4, 7, 9 wird 「よん」 (yon), 「なな」 (nana), 「きゅう」 (kyuu) verwendet — nie 「し」 (shi), 「しち」 (shichi) oder 「く」 (ku) bei Telefonnummern, das wäre missverständlich. Die Null kann 「ぜろ」 (zero) oder 「まる」 (maru) sein; in formellen Kontexten öfter 「ぜろ」. Die Frage lautet 「でんわばんごうは なんばんですか」 (denwa bangou wa nanban desu ka).",
+            "jlpt_level": 5,
+            "example_sentences": "でんわばんごうは ぜろきゅうぜろの いちにさんよんの ごろくななはちです。\n  (Denwa bangou wa zero-kyuu-zero no ichi-ni-san-yon no go-roku-nana-hachi desu.)\n  → Die Telefonnummer ist 090-1234-5678.\n\nでんわばんごうは なんばんですか。\n  (Denwa bangou wa nanban desu ka.)\n  → Welche Telefonnummer hast du?\n\nかいしゃのでんわは ぜろさんの いちにさんよんの ごろくななはちです。\n  (Kaisha no denwa wa zero-san no ichi-ni-san-yon no go-roku-nana-hachi desu.)\n  → Die Firmentelefonnummer ist 03-1234-5678."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Dialog — Tanaka trifft Lisa",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Erste Begegnung auf einer Willkommensparty",
+            "content_text": "Tanaka Haruto arbeitet in Zürich und lernt auf einer Willkommensparty seine neue Kollegin Lisa Weber kennen. Sie tauschen Alter und Telefonnummern aus, damit sie sich verabreden können.\n\nTanaka: はじめまして。たなか はるとです。\n  (Hajimemashite. Tanaka Haruto desu.)\n  → Freut mich. Ich bin Tanaka Haruto.\n\nLisa: はじめまして。リサ・ウェーバーです。よろしく おねがいします。\n  (Hajimemashite. Risa Weebaa desu. Yoroshiku onegaishimasu.)\n  → Freut mich. Ich bin Lisa Weber. Angenehm.\n\nTanaka: リサさんは なんさいですか。\n  (Risa-san wa nansai desu ka.)\n  → Wie alt sind Sie, Lisa?\n\nLisa: にじゅうはっさいです。たなかさんは。\n  (Nijuuhassai desu. Tanaka-san wa.)\n  → Ich bin 28 Jahre alt. Und Sie, Tanaka-san?\n\nTanaka: わたしは さんじゅうにさいです。\n  (Watashi wa sanjuuni-sai desu.)\n  → Ich bin 32 Jahre alt.\n\nLisa: そうですか。\n  (Sou desu ka.)\n  → Ach so.\n\nTanaka: リサさんの でんわばんごうは なんばんですか。\n  (Risa-san no denwa bangou wa nanban desu ka.)\n  → Wie lautet Ihre Telefonnummer, Lisa?\n\nLisa: ぜろななぎんの いちにさんよんの ごろくななはちです。\n  (Zero-nana-gin no ichi-ni-san-yon no go-roku-nana-hachi desu.)\n  → Sie ist 079-1234-5678.\n\nTanaka: ありがとうございます。\n  (Arigatou gozaimasu.)\n  → Vielen Dank."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Übung — Quiz",
+      "page_type": "quiz_carousel",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Teste dein Zahlen-Wissen",
+            "content_text": "Vierzehn Fragen zu den Zahlen 0-10'000 und ihren Anwendungen für Alter, Preis und Telefonnummer."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「さん」 (san)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "Die Zahl nach zwei.",
+              "explanation": "「さん」 (san) heisst 'drei'. Das wird sowohl als reine Zahl als auch in Kombination mit Zählern verwendet (z.B. 「さんにん」 san-nin, drei Personen).",
+              "options": [
+                {
+                  "option_text": "Eins",
+                  "is_correct": false,
+                  "feedback": "Eins heisst 「いち」 (ichi)."
+                },
+                {
+                  "option_text": "Drei",
+                  "is_correct": true,
+                  "feedback": "Richtig! 「さん」 = 3."
+                },
+                {
+                  "option_text": "Fünf",
+                  "is_correct": false,
+                  "feedback": "Fünf heisst 「ご」 (go)."
+                },
+                {
+                  "option_text": "Sieben",
+                  "is_correct": false,
+                  "feedback": "Sieben heisst 「なな」 (nana) oder 「しち」 (shichi)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie sagt man 'zehn' auf Japanisch?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "Beginnt mit dem Laut 'j' und endet auf langes 'u'.",
+              "explanation": "'Zehn' heisst 「じゅう」 (juu). Das Zeichen 十 wird ebenfalls juu gelesen.",
+              "options": [
+                {
+                  "option_text": "じゅう (juu)",
+                  "is_correct": true,
+                  "feedback": "Korrekt! 「じゅう」 = 10."
+                },
+                {
+                  "option_text": "ひゃく (hyaku)",
+                  "is_correct": false,
+                  "feedback": "「ひゃく」 bedeutet 100."
+                },
+                {
+                  "option_text": "せん (sen)",
+                  "is_correct": false,
+                  "feedback": "「せん」 bedeutet 1'000."
+                },
+                {
+                  "option_text": "きゅう (kyuu)",
+                  "is_correct": false,
+                  "feedback": "「きゅう」 bedeutet 9."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welche Zahl ist 「ひゃく」 (hyaku)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "Eine Hunderter-Einheit.",
+              "explanation": "「ひゃく」 (hyaku) bedeutet 100. Bei bestimmten Vielfachen wird die Lesung unregelmässig: 300 ist 「さんびゃく」 (sanbyaku), 600 ist 「ろっぴゃく」 (roppyaku), 800 ist 「はっぴゃく」 (happyaku).",
+              "options": [
+                {
+                  "option_text": "10",
+                  "is_correct": false,
+                  "feedback": "10 ist 「じゅう」 (juu)."
+                },
+                {
+                  "option_text": "100",
+                  "is_correct": true,
+                  "feedback": "Richtig! 「ひゃく」 = 100."
+                },
+                {
+                  "option_text": "1'000",
+                  "is_correct": false,
+                  "feedback": "1'000 ist 「せん」 (sen)."
+                },
+                {
+                  "option_text": "10'000",
+                  "is_correct": false,
+                  "feedback": "10'000 ist 「まん」 (man)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie sagt man '25 Jahre alt'?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Alter wird mit 「さい」 (sai) gebildet.",
+              "explanation": "「にじゅうごさい」 (nijuugo-sai) setzt sich aus にじゅう (20) + ご (5) + さい (Jahre alt) zusammen. Die Frage dazu ist 「なんさいですか」 (nansai desu ka).",
+              "options": [
+                {
+                  "option_text": "にじゅうごさい (nijuugo-sai)",
+                  "is_correct": true,
+                  "feedback": "Korrekt! 20 + 5 + Jahre alt."
+                },
+                {
+                  "option_text": "にじゅうごえん (nijuugo-en)",
+                  "is_correct": false,
+                  "feedback": "Das wäre '25 Yen' — also ein Preis, kein Alter."
+                },
+                {
+                  "option_text": "にひゃくごさい (nihyaku-go-sai)",
+                  "is_correct": false,
+                  "feedback": "Das wäre 205 Jahre — möglich, aber wohl nicht gemeint."
+                },
+                {
+                  "option_text": "ごじゅうにさい (gojuuni-sai)",
+                  "is_correct": false,
+                  "feedback": "Das wäre 52 Jahre alt (50 + 2 + sai)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「いくらですか」 (ikura desu ka)?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Typische Frage in einem Laden.",
+              "explanation": "「いくらですか」 ist die Standardfrage nach dem Preis. Die Antwort enthält meist 「〜えんです」 (~en desu, '... Yen').",
+              "options": [
+                {
+                  "option_text": "Wie alt sind Sie?",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「なんさいですか」 (nansai desu ka)."
+                },
+                {
+                  "option_text": "Wie viel kostet es?",
+                  "is_correct": true,
+                  "feedback": "Richtig! Die Standardfrage nach dem Preis."
+                },
+                {
+                  "option_text": "Wo ist das?",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「どこですか」 (doko desu ka)."
+                },
+                {
+                  "option_text": "Was ist Ihre Telefonnummer?",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「でんわばんごうは なんばんですか」."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welche Zahl ist 「いちまん」 (ichiman)?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Japanisch zählt ab hier in einer eigenen Einheit.",
+              "explanation": "「いちまん」 (ichiman) bedeutet 10'000. Japanisch hat ab 10'000 eine eigene Einheit 「まん」, nicht 'zehn Tausend'. 100'000 ist folglich 「じゅうまん」 (juuman), 1'000'000 ist 「ひゃくまん」 (hyakuman).",
+              "options": [
+                {
+                  "option_text": "1'000",
+                  "is_correct": false,
+                  "feedback": "1'000 ist 「せん」 (sen)."
+                },
+                {
+                  "option_text": "10'000",
+                  "is_correct": true,
+                  "feedback": "Korrekt! 「まん」 ist die Zehntausender-Einheit."
+                },
+                {
+                  "option_text": "100'000",
+                  "is_correct": false,
+                  "feedback": "100'000 ist 「じゅうまん」 (juuman)."
+                },
+                {
+                  "option_text": "1'000'000",
+                  "is_correct": false,
+                  "feedback": "1'000'000 ist 「ひゃくまん」 (hyakuman)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie liest du am sichersten die Ziffer 4 in einer Telefonnummer?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Nicht die Lesung, die wie 'Tod' klingt.",
+              "explanation": "In Telefonnummern und Alters-Angaben wird 「よん」 (yon) bevorzugt, weil 「し」 (shi) phonetisch identisch mit 「死」 (shi, Tod) ist. Aus diesem Grund wird 「し」 im Alltag oft vermieden.",
+              "options": [
+                {
+                  "option_text": "し (shi)",
+                  "is_correct": false,
+                  "feedback": "Klingt wie 'Tod' — im Alltag wird よん bevorzugt."
+                },
+                {
+                  "option_text": "よん (yon)",
+                  "is_correct": true,
+                  "feedback": "Richtig — das ist die alltagstaugliche Lesung."
+                },
+                {
+                  "option_text": "よっつ (yottsu)",
+                  "is_correct": false,
+                  "feedback": "Das ist der Zähler für allgemeine Dinge (4 Stück), nicht die reine Zahl in einer Telefonnummer."
+                },
+                {
+                  "option_text": "しち (shichi)",
+                  "is_correct": false,
+                  "feedback": "「しち」 bedeutet 7, nicht 4."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「せん」 (sen) bedeutet 10'000.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Falsch. 「せん」 (sen) bedeutet 1'000. 10'000 heisst 「まん」 (man).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Falsche Antwort: 「せん」 = 1'000, nicht 10'000."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt! 「せん」 = 1'000, 「まん」 = 10'000."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「なんさいですか」 (nansai desu ka) bedeutet 'Wie alt sind Sie?'.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Richtig. 「なんさい」 (nansai) = 'wie alt', 「ですか」 = Frageform. Höflicher bei älteren Personen: 「おいくつですか」 (oikutsu desu ka).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt! Standard-Altersfrage im Japanischen."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — 「なんさいですか」 ist die Standardfrage nach dem Alter."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "In einer Telefonnummer wird die 0 meist als 「まる」 (maru) oder 「ぜろ」 (zero) gesprochen.",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Richtig. Beide Varianten sind üblich: 「ぜろ」 (zero) ist etwas formeller, 「まる」 (maru, wörtlich 'Kreis') ist umgangssprachlich häufig.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt! Beide Lesungen sind alltäglich."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — Telefonnummern nutzen ぜろ oder まる für 0."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「はたち」 (hatachi) bedeutet '20 Jahre alt' und ist eine Sonderlesung.",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Richtig. 20 Jahre alt ist 「はたち」 — eine eigene Lesung, nicht 「にじゅっさい」. Das Wort kommt aus dem klassischen Japanisch und wird auch heute noch bevorzugt.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt — wichtiger Sonderfall in der Altersangabe."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — 20 Jahre alt ist immer 「はたち」 (hatachi)."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde die japanische Zahl mit dem korrekten Wert.",
+              "difficulty_level": 1,
+              "points": 2,
+              "options": [
+                {
+                  "option_text": "いち (ichi) | 1",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "ご (go) | 5",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "じゅう (juu) | 10",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "ひゃく (hyaku) | 100",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde die Zahl-Kombination mit ihrer Bedeutung.",
+              "difficulty_level": 2,
+              "points": 2,
+              "options": [
+                {
+                  "option_text": "にじゅう (nijuu) | 20",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "ごじゅう (gojuu) | 50",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "せん (sen) | 1'000",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "まん (man) | 10'000",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde die Frage mit der passenden Antwort-Struktur.",
+              "difficulty_level": 3,
+              "points": 2,
+              "options": [
+                {
+                  "option_text": "なんさいですか (nansai desu ka) | 〜さいです (~sai desu)",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "いくらですか (ikura desu ka) | 〜えんです (~en desu)",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "でんわばんごうは なんばんですか (denwa bangou wa nanban desu ka) | 〜の〜の〜です (~ no ~ no ~ desu)",
+                  "is_correct": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Zusammenfassung",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Was du jetzt kannst",
+            "content_text": "Hervorragend. Du hast die wichtigsten Grundzahlen und ihre drei häufigsten Anwendungen im Japanischen gelernt.\n\nDeine neuen Werkzeuge:\n\n• Grundzahlen 0-10: 「ゼロ / いち / に / さん / よん / ご / ろく / なな / はち / きゅう / じゅう」 (zero / ichi / ni / san / yon / go / roku / nana / hachi / kyuu / juu).\n• Zehner, Hunderter, Tausender, Zehntausender: 「にじゅう / ひゃく / せん / まん」 (nijuu / hyaku / sen / man).\n• Alter angeben mit 「さい」 (sai) — Sonderlesung 「はたち」 (hatachi) für 20.\n• Preise mit 「えん」 (en) — Sonderlesungen 300 「さんびゃく」 (sanbyaku), 600 「ろっぴゃく」 (roppyaku), 800 「はっぴゃく」 (happyaku).\n• Telefonnummern Ziffer für Ziffer mit 「の」 (no) als Trennzeichen, und immer 「よん」 (yon), 「なな」 (nana), 「きゅう」 (kyuu) für 4, 7, 9.\n\nLerntipp: Gehe heute einmal einkaufen — real oder gedanklich — und versuche, alle Preise auf Japanisch zu sagen. Schau dir eine Produktpackung an, lies die Stückzahl laut vor. Je mehr Wiederholung im Alltag, desto schneller sitzen die Zahlen.\n\nNächste Lektion (Vorschlag): Uhrzeit und Wochentage. Dort baust du direkt auf den Zahlen 1-12 auf und lernst 「〜じ」 (ji, Uhr) sowie die sieben Wochentage. Danach kannst du Verabredungen treffen und Öffnungszeiten verstehen.\n\nBis zur nächsten Lektion — がんばってください。 (ganbatte kudasai. — Gib dein Bestes.)"
+          }
+        }
+      ]
+    }
+  ]
+}
