@@ -233,6 +233,17 @@ def create_app():
             return ''
         return Markup(escape(text).replace('\n', Markup('<br>')))
 
+    # Custom Jinja2 Filter: JSON-String → dict (for dialog_slideshow content)
+    import json as _json
+    @app.template_filter('fromjson')
+    def fromjson_filter(value):
+        if not value:
+            return None
+        try:
+            return _json.loads(value)
+        except (ValueError, TypeError):
+            return None
+
     # Flask-Admin fuer Standard-CRUD registrieren
     from app.admin_views import init_admin
     init_admin(app, db.session)

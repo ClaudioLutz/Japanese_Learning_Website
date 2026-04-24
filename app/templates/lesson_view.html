@@ -935,6 +935,61 @@
                                                                 Dein Browser unterstützt kein Audio.
                                                             </audio>
                                                             {% endif %}
+                                                        {% elif content.content_type == 'dialog_slideshow' %}
+                                                            {% set slideshow = content.content_text | fromjson if content.content_text else none %}
+                                                            {% if slideshow and slideshow.slides %}
+                                                            <div class="dialog-slideshow"
+                                                                 x-data="dialogSlideshow({{ slideshow.slides | tojson | safe }})"
+                                                                 x-init="init()">
+                                                                <div class="slideshow-stage position-relative rounded overflow-hidden"
+                                                                     style="background:#111;">
+                                                                    <template x-for="(slide, idx) in slides" :key="idx">
+                                                                        <div class="slideshow-slide"
+                                                                             x-show="idx === current"
+                                                                             x-transition.opacity.duration.400ms>
+                                                                            <img :src="slide.image" :alt="slide.speaker + ' scene'"
+                                                                                 class="w-100" style="display:block;max-height:480px;object-fit:cover;">
+                                                                            <div class="slideshow-caption p-3"
+                                                                                 style="background:rgba(17,17,17,0.8);color:#fff;">
+                                                                                <div class="slideshow-speaker small text-uppercase opacity-75" x-text="slide.speaker"></div>
+                                                                                <div class="slideshow-jp fs-4 mt-1" x-text="slide.jp"></div>
+                                                                                <div class="slideshow-romaji fst-italic opacity-75 mt-1" x-text="slide.romaji"></div>
+                                                                                <div class="slideshow-de mt-1" x-text="slide.de"></div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </template>
+                                                                </div>
+                                                                <div class="slideshow-controls d-flex align-items-center gap-2 mt-2">
+                                                                    <button type="button" class="btn btn-sm btn-outline-secondary"
+                                                                            @click="prev()" :disabled="current === 0"
+                                                                            aria-label="Vorherige Zeile">
+                                                                        <i class="fas fa-chevron-left"></i>
+                                                                    </button>
+                                                                    <button type="button" class="btn btn-sm btn-primary"
+                                                                            @click="playCurrent()" aria-label="Abspielen">
+                                                                        <i class="fas fa-play"></i>
+                                                                        <span class="ms-1">Abspielen</span>
+                                                                    </button>
+                                                                    <button type="button" class="btn btn-sm btn-outline-secondary"
+                                                                            @click="next()" :disabled="current >= slides.length - 1"
+                                                                            aria-label="Naechste Zeile">
+                                                                        <i class="fas fa-chevron-right"></i>
+                                                                    </button>
+                                                                    <div class="form-check form-switch ms-auto mb-0">
+                                                                        <input class="form-check-input" type="checkbox"
+                                                                               :id="'auto-' + {{ content.id }}" x-model="autoAdvance">
+                                                                        <label class="form-check-label small" :for="'auto-' + {{ content.id }}">
+                                                                            Auto-weiter
+                                                                        </label>
+                                                                    </div>
+                                                                    <span class="small opacity-75">
+                                                                        <span x-text="current + 1"></span> / <span x-text="slides.length"></span>
+                                                                    </span>
+                                                                </div>
+                                                                <audio x-ref="audio" preload="none"
+                                                                       @ended="onEnded()"></audio>
+                                                            </div>
+                                                            {% endif %}
                                                         {% elif content.media_url %}
                                                             {% if content.content_type == 'video' %}
                                                             <div class="ratio ratio-16x9">
@@ -3603,5 +3658,53 @@ document.addEventListener('DOMContentLoaded', function() {
 }); // DOMContentLoaded
 </script>
 {% endif %}
+
+<script>
+// Alpine.js Slideshow-Player fuer content_type='dialog_slideshow'.
+// Ein Slide pro Dialog-Zeile mit Bild, Speaker, JP, Romaji, DE und
+// einer zugehoerigen MP3. Auto-Advance springt nach audio.ended weiter.
+window.dialogSlideshow = function(slides) {
+    return {
+        slides: slides || [],
+        current: 0,
+        autoAdvance: true,
+        init() {
+            this.$nextTick(() => this._loadAudio());
+        },
+        _loadAudio() {
+            const audio = this.$refs.audio;
+            if (!audio || !this.slides[this.current]) return;
+            audio.src = this.slides[this.current].audio;
+        },
+        playCurrent() {
+            const audio = this.$refs.audio;
+            if (!audio) return;
+            if (audio.src !== this.slides[this.current].audio && !audio.src.endsWith(this.slides[this.current].audio)) {
+                audio.src = this.slides[this.current].audio;
+            }
+            audio.currentTime = 0;
+            audio.play().catch(() => {});
+        },
+        next() {
+            if (this.current < this.slides.length - 1) {
+                this.current += 1;
+                this._loadAudio();
+                if (this.autoAdvance) this.$nextTick(() => this.playCurrent());
+            }
+        },
+        prev() {
+            if (this.current > 0) {
+                this.current -= 1;
+                this._loadAudio();
+            }
+        },
+        onEnded() {
+            if (this.autoAdvance) {
+                setTimeout(() => this.next(), 600);
+            }
+        },
+    };
+};
+</script>
 
 {% endblock %}

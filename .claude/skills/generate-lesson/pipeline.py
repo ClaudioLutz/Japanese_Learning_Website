@@ -575,6 +575,23 @@ def generate_conversation_audio(lesson_id: int) -> int:
     return result.returncode
 
 
+def generate_dialog_slideshow(lesson_id: int) -> int:
+    """Baut pro Dialog-Zeile ein Slide mit TTS-Audio und DALL-E-Bild.
+
+    Siehe scripts/gen_dialog_slideshow.py fuer die Details. Legt einen
+    LessonContent(content_type='dialog_slideshow', content_text=JSON)
+    auf der Dialog-Page an.
+    """
+    script = SKILL_DIR / "scripts" / "gen_dialog_slideshow.py"
+    env = os.environ.copy()
+    env["PYTHONIOENCODING"] = "utf-8"
+    result = subprocess.run(
+        [sys.executable, str(script), str(lesson_id)],
+        cwd=PROJECT_ROOT, env=env,
+    )
+    return result.returncode
+
+
 # ========================================================================
 # CLI
 # ========================================================================
@@ -596,6 +613,9 @@ def main():
 
     p_aud = sub.add_parser("audio", help="Dialog-MP3 via Google Cloud TTS generieren")
     p_aud.add_argument("lesson_id", type=int)
+
+    p_slide = sub.add_parser("slideshow", help="Dialog-Slideshow (TTS+DALL-E pro Zeile) bauen")
+    p_slide.add_argument("lesson_id", type=int)
 
     p_cmt = sub.add_parser("commit", help="Git-commit Skill-Metadata")
     p_cmt.add_argument("lesson_id", type=int)
@@ -619,6 +639,8 @@ def main():
         insert_draft(args.draft)
     elif args.cmd == "audio":
         sys.exit(generate_conversation_audio(args.lesson_id))
+    elif args.cmd == "slideshow":
+        sys.exit(generate_dialog_slideshow(args.lesson_id))
     elif args.cmd == "commit":
         git_commit(args.lesson_id)
 

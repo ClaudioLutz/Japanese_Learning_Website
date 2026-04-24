@@ -310,6 +310,23 @@ Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
        an. Idempotent: existierendes Audio wird übersprungen.
     → Benoetigt GOOGLE_API_KEY in .env.
 
+[4c] python .claude/skills/generate-lesson/pipeline.py slideshow {lesson_id}
+    → PFLICHT nach audio. Baut pro Dialog-Zeile ein Slide mit:
+       - 1 MP3 (Google TTS, Gender-korrekte Voice aus SPEAKER_GENDER)
+       - 1 PNG (OpenAI gpt-image-1-mini, Ghibli-Aquarell-Stil, quality='hd',
+         STRIKT ohne Text/Kanji/Ziffern — Charakter-Schablone bleibt konstant
+         ueber alle Slides).
+       Legt LessonContent(content_type='dialog_slideshow') auf order_index=2
+       an (audio=1, slideshow=2, text=3). Das Template in lesson_view.html
+       rendert einen Alpine.js-Slideshow-Player mit Auto-Advance.
+       Idempotent: existierende Zeilen-Assets werden uebersprungen, bestehender
+       dialog_slideshow-Eintrag wird aktualisiert.
+       Assets unter app/static/uploads/lessons/dialog_slideshow/lesson_{id}/.
+       Charaktere werden in scripts/gen_dialog_slideshow.py CHARACTER_SHEETS
+       gepflegt — neue Charaktere dort hinzufuegen, sonst generisches
+       Portrait-Fallback.
+       Kosten: ~50 Rappen pro Lektion (9 HD-Bilder + 9 TTS-Calls).
+
 [5] Verifikation — zwei Pfade, je nach Verfügbarkeit:
 
     [5a] Bevorzugt: python .claude/skills/generate-lesson/verify.py {lesson_id}
