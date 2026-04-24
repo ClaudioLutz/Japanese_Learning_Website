@@ -58,7 +58,9 @@ def main() -> int:
             filename = f"vocab_{v.id}_{hash_suffix}.png"
             out_path = OUT_DIR / filename
             out_path.write_bytes(result["image_bytes"])
-            url = f"/static/uploads/vocab_generated/{filename}"
+            # Pfad relativ zu UPLOAD_FOLDER (app/static/uploads/) — das Template
+            # ruft url_for('routes.uploaded_file', filename=image_url) auf.
+            url = f"vocab_generated/{filename}"
             v.image_url = url
             db.session.commit()
             print(f"      OK -> {url}")

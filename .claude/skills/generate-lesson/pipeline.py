@@ -542,7 +542,10 @@ def generate_images(draft_path: Path):
             hash_suffix = hashlib.md5(word.encode()).hexdigest()[:8]
             filename = f"vocab_{hash_suffix}.png"
             (vocab_dir / filename).write_bytes(res["image_bytes"])
-            data["image_url"] = f"/static/uploads/vocab_generated/{filename}"
+            # IMPORTANT: Pfad relativ zu UPLOAD_FOLDER (app/static/uploads/),
+            # damit url_for('routes.uploaded_file', filename=...) passt.
+            # Siehe lesson_view.html:859 und routes.py:3973 /uploads/<path:filename>.
+            data["image_url"] = f"vocab_generated/{filename}"
 
         # Draft ueberschreiben mit gefuellten URLs
         draft_path.write_text(
