@@ -124,8 +124,12 @@ Lesson (title, description, jlpt_level→difficulty_level 1-5, instruction_langu
 │      Format **exakt wie `_format_conversation()` in scripts/import_mnn.py:170**:
 │         Speaker: 日本語テキスト
 │           (romaji)
-│           → Deutsche Übersetzung
+│           -> Deutsche Übersetzung       ← ASCII-Pfeil `->`, NICHT `→`
 │         (Leerzeile)
+│      **Format muss exakt dem MNN-DE-Standard entsprechen** (Lessons 137–141):
+│      `_format_conversation()` in scripts/import_mnn.py:170 nutzt `->`, nicht
+│      den Unicode-Pfeil. Templates rendern beide gleich via `| nl2br`, aber die
+│      Konsistenz mit den bestehenden DE-Lektionen ist Pflicht.
 │      Sprecher sind **eigene Namen** (nicht Miller/Satou aus MNN).
 │      Wenn die Lektion thematisch einem MNN-Kapitel entspricht: Dialog-Struktur
 │      orientiert sich an der MNN-`conversation`-Vorlage aus `scripts/mnn_data/`,
@@ -147,7 +151,12 @@ Lesson (title, description, jlpt_level→difficulty_level 1-5, instruction_langu
 - Quiz: **10–18** (vorher 6–10 war zu wenig Übung).
 - Pages: **≥5**.
 - Thumbnail-Bild: **1** (Pflicht).
-- Vokabel-Bilder: **≥3** für Schlüsselvokabeln (Pflicht).
+- Vokabel-Bilder: **ALLE Vokabeln** (nicht mehr nur 3 — angehoben 2026-04-24 nach
+  Sichtung von MNN L1–L5 DE, wo ausnahmslos jede Vocabulary-Zeile ein `image_url`
+  hat). Pipeline-Schritt `images` generiert per `AILessonContentGenerator.
+  generate_vocabulary_image()` für jede Vokabel ohne `image_url` ein Icon und
+  speichert es unter `app/static/uploads/vocab_generated/vocab_{id}_{hash}.png`.
+  Bestehende Vokabeln mit `image_url` werden übersprungen (idempotent).
 
 Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
 

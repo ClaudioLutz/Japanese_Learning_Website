@@ -487,34 +487,68 @@ def generate_images(draft_path: Path):
     draft = json.loads(draft_path.read_text(encoding="utf-8"))
     app = create_app()
 
+    import hashlib
+
     with app.app_context():
         gen = AILessonContentGenerator()
-        # Nur Thumbnail, keine Lesson-Bilder (um API-Kosten niedrig zu halten)
-        topic = draft.get("topic", draft["title"])
-        prompt = (
-            f"minimalist flat illustration of '{topic}', "
-            f"soft pastels, no text, Japanese aesthetic"
-        )
-        result = gen.generate_single_image(prompt=prompt)
-        if result and result.get("image_bytes"):
-            img_bytes = result["image_bytes"]
-            # Lokal als PNG unter app/static/uploads/generated/ ablegen.
-            out_dir = PROJECT_ROOT / "app" / "static" / "uploads" / "generated"
-            out_dir.mkdir(parents=True, exist_ok=True)
-            slug = draft.get("topic", "lesson").lower().replace(" ", "_")
-            ts = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
-            filename = f"thumbnail_{slug}_{ts}.png"
-            out_path = out_dir / filename
-            out_path.write_bytes(img_bytes)
-            url = f"/static/uploads/generated/{filename}"
-            draft["thumbnail_url"] = url
-            draft_path.write_text(
-                json.dumps(draft, ensure_ascii=False, indent=2), encoding="utf-8"
+
+        # --- (1) Thumbnail ------------------------------------------------
+        if not draft.get("thumbnail_url"):
+            topic = draft.get("topic", draft["title"])
+            prompt = (
+                f"minimalist flat illustration of '{topic}', "
+                f"soft pastels, no text, Japanese aesthetic"
             )
-            print(f"[OK] Thumbnail gespeichert: {out_path} -> {url}")
+            result = gen.generate_single_image(prompt=prompt)
+            if result and result.get("image_bytes"):
+                thumb_dir = PROJECT_ROOT / "app" / "static" / "uploads" / "generated"
+                thumb_dir.mkdir(parents=True, exist_ok=True)
+                slug = draft.get("topic", "lesson").lower().replace(" ", "_")
+                ts = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+                filename = f"thumbnail_{slug}_{ts}.png"
+                (thumb_dir / filename).write_bytes(result["image_bytes"])
+                draft["thumbnail_url"] = f"/static/uploads/generated/{filename}"
+                print(f"[OK] Thumbnail -> {draft['thumbnail_url']}")
+            else:
+                err = (result or {}).get("error", "unbekannt")
+                print(f"[FEHLER] Thumbnail-Generierung: {err}")
         else:
-            err = (result or {}).get("error", "unbekannt")
-            print(f"[FEHLER] Bild-Generierung fehlgeschlagen: {err}")
+            print(f"[SKIP] Thumbnail vorhanden: {draft['thumbnail_url']}")
+
+        # --- (2) Vokabel-Icons fuer JEDE Vokabel --------------------------
+        vocab_dir = PROJECT_ROOT / "app" / "static" / "uploads" / "vocab_generated"
+        vocab_dir.mkdir(parents=True, exist_ok=True)
+
+        vocab_items = [
+            item
+            for page in draft.get("pages", [])
+            for item in page.get("contents", [])
+            if item.get("content_type") == "vocabulary"
+        ]
+        print(f"[INFO] {len(vocab_items)} Vokabeln — generiere fehlende Icons")
+
+        for i, item in enumerate(vocab_items, start=1):
+            data = item.get("data", {})
+            if data.get("image_url"):
+                continue
+            word = data.get("word", "")
+            meaning = data.get("meaning") or data.get("meaning_de") or word
+            print(f"  [{i:2d}/{len(vocab_items)}] {word} ({meaning[:35]})")
+            res = gen.generate_vocabulary_image(word=word, meaning=meaning)
+            if not res or "image_bytes" not in res:
+                err = (res or {}).get("error", "unbekannt")
+                print(f"      [FEHLER] {err}")
+                continue
+            hash_suffix = hashlib.md5(word.encode()).hexdigest()[:8]
+            filename = f"vocab_{hash_suffix}.png"
+            (vocab_dir / filename).write_bytes(res["image_bytes"])
+            data["image_url"] = f"/static/uploads/vocab_generated/{filename}"
+
+        # Draft ueberschreiben mit gefuellten URLs
+        draft_path.write_text(
+            json.dumps(draft, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+        print("[OK] Draft aktualisiert.")
 
 
 # ========================================================================

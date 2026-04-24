@@ -1703,6 +1703,14 @@ button[onclick*="moveContentInPage"]:active {
     font-family: 'Noto Sans JP', sans-serif;
 }
 
+.flip-card .vocab-romaji {
+    font-size: 16px;
+    color: var(--text-light);
+    font-style: italic;
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+}
+
 /* Grammar specific styling */
 .flip-card .grammar-front {
     flex-direction: column;

@@ -832,7 +832,12 @@
                                                                         {% elif content.content_type == 'vocabulary' %}
                                                                             <div class="vocab-front">
                                                                                 <div class="vocab-word">{{ content_data.word }}</div>
+                                                                                {% if content_data.reading and content_data.reading != content_data.word %}
                                                                                 <div class="vocab-reading">{{ content_data.reading }}</div>
+                                                                                {% endif %}
+                                                                                {% if content_data.romaji %}
+                                                                                <div class="vocab-romaji">{{ content_data.romaji }}</div>
+                                                                                {% endif %}
                                                                             </div>
                                                                         {% elif content.content_type == 'grammar' %}
                                                                             <div class="grammar-front">
@@ -2778,8 +2783,9 @@ function createDeck(cardItems, page) {
             // Hard/Good/Easy: Slide out
             currentCard.classList.add(ratingInt === 2 ? 'card-exit-left' : 'card-exit-right');
 
-            // Mark content complete for Good/Easy (Dual-Write)
-            if (ratingInt >= 3 && contentId && typeof markContentComplete === 'function') {
+            // Karte aus Deck raus (Schwer/Gut/Einfach) = fuer Lektionsfortschritt als gesehen zaehlen.
+            // SRS-Scheduling unterscheidet weiterhin die Schwierigkeit via /api/srs/rate.
+            if (ratingInt >= 2 && contentId && typeof markContentComplete === 'function') {
                 markContentComplete(parseInt(contentId));
             }
 
