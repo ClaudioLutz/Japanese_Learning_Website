@@ -265,15 +265,20 @@ Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
   "question_text": "Verbinde das japanische Wort mit der deutschen Übersetzung.",
   "difficulty_level": 2,
   "options": [
-    {"option_text": "父 | Vater",     "is_correct": true},
-    {"option_text": "母 | Mutter",    "is_correct": true},
-    {"option_text": "姉 | ältere Schwester", "is_correct": true},
-    {"option_text": "兄 | älterer Bruder",   "is_correct": true}
+    {"option_text": "父 (chichi)",  "feedback": "Vater",              "is_correct": true},
+    {"option_text": "母 (haha)",    "feedback": "Mutter",             "is_correct": true},
+    {"option_text": "姉 (ane)",     "feedback": "ältere Schwester",   "is_correct": true},
+    {"option_text": "兄 (ani)",     "feedback": "älterer Bruder",     "is_correct": true}
   ]
 }
 ```
 
-*Matching-Konvention in dieser Codebase:* `option_text` enthält Pair in Format `"[JP] | [DE]"`, alle Optionen sind `is_correct=true` (das Frontend shuffelt und verifiziert Paarung).
+*Matching-Konvention in dieser Codebase* (exakt wie Template [lesson_view.html:744-752](../../app/templates/lesson_view.html#L744) erwartet):
+- **`option_text` = linke Seite** (Prompt, z.B. das japanische Wort mit Rōmaji in Klammern — NICHT mit `|`-Trenner).
+- **`feedback` = rechte Seite** (die Antwort, die im Dropdown auswählbar erscheint, z.B. die deutsche Übersetzung).
+- **`is_correct = true` für alle Optionen** — das Frontend shuffelt die `feedback`-Werte und der User muss jeden `option_text` dem richtigen `feedback`-Wert zuordnen.
+
+**Achtung — häufiger Fehler:** Ein Format wie `option_text="JP | DE"` mit leerem `feedback` führt dazu, dass das Dropdown nur „None" anzeigt. Immer gesplittet speichern.
 
 ## 6. Pipeline-Ablauf
 
