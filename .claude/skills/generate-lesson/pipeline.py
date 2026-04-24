@@ -555,6 +555,27 @@ def generate_images(draft_path: Path):
 
 
 # ========================================================================
+# AUDIO (Google Cloud TTS fuer die Dialog-Page)
+# ========================================================================
+
+def generate_conversation_audio(lesson_id: int) -> int:
+    """Rendert die Dialog-Page einer Lesson als MP3 (Google Cloud TTS)
+    und legt ein LessonContent(content_type='audio') vor dem Dialog-Text an.
+
+    Idempotent: hat die Dialog-Page bereits ein audio-Content, kein Neu-Insert.
+    Gibt 0 = OK, 1 = Fehler, 2 = Skip (existiert) zurueck.
+    """
+    script = SKILL_DIR / "scripts" / "gen_conversation_audio.py"
+    env = os.environ.copy()
+    env["PYTHONIOENCODING"] = "utf-8"
+    result = subprocess.run(
+        [sys.executable, str(script), str(lesson_id)],
+        cwd=PROJECT_ROOT, env=env,
+    )
+    return result.returncode
+
+
+# ========================================================================
 # CLI
 # ========================================================================
 
@@ -572,6 +593,9 @@ def main():
 
     p_ins = sub.add_parser("insert", help="Draft in DB persistieren")
     p_ins.add_argument("draft", type=Path)
+
+    p_aud = sub.add_parser("audio", help="Dialog-MP3 via Google Cloud TTS generieren")
+    p_aud.add_argument("lesson_id", type=int)
 
     p_cmt = sub.add_parser("commit", help="Git-commit Skill-Metadata")
     p_cmt.add_argument("lesson_id", type=int)
@@ -593,6 +617,8 @@ def main():
         generate_images(args.draft)
     elif args.cmd == "insert":
         insert_draft(args.draft)
+    elif args.cmd == "audio":
+        sys.exit(generate_conversation_audio(args.lesson_id))
     elif args.cmd == "commit":
         git_commit(args.lesson_id)
 

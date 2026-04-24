@@ -90,6 +90,7 @@ Verletzung ⇒ sofortiger Abbruch, keine Insertion:
   3. `example_sentence_english`: muss mit Rōmaji-Version des Satzes beginnen, Format `"Romaji — English meaning"`, z.B. `"Watashi no kazoku wa yo-nin desu. — My family has four people."`. So sieht Mayuko in JEDER Darstellung die westliche Lesung.
 - **Bilder sind PFLICHT** — `thumbnail_url` muss vor Insert gesetzt sein. Pipeline-Schritt `images` (DALL-E) läuft vor `insert`, NICHT optional. Zusätzlich: **jede Vokabel** muss `image_url` haben (MNN-DE-Standard, siehe §4-Budget).
 - **`Vocabulary.image_url` muss relativ zu `UPLOAD_FOLDER` sein** (= `app/static/uploads/`), NICHT absolut. Das Template [lesson_view.html:859](../../app/templates/lesson_view.html#L859) ruft `url_for('routes.uploaded_file', filename=content_data.image_url)` auf — die Route [routes.py:3973 `/uploads/<path:filename>`](../../app/routes.py#L3973) dient aus `UPLOAD_FOLDER`. Richtige Werte: `vocab_generated/vocab_abc.png`, `vocabulary/images/vocab_124.png`. **Falsch**: `/static/uploads/vocab_generated/…`, `http://…`, `static/uploads/…`.
+- **Audio für die Konversation ist PFLICHT** — jede Dialog-Page bekommt ein eigenes `LessonContent(content_type='audio')` **vor** dem Dialog-Text (`order_index=1`, Text auf `order_index=2`). Der Pipeline-Schritt `audio {lesson_id}` rendert via Google Cloud TTS (Neural2-B, langsam=0.85) eine einzige MP3 mit allen japanischen Sprecher-Zeilen, 700ms-Pausen dazwischen. Speicherort: `app/static/uploads/lessons/audio/lesson_{id}/conversation.mp3`. Felder im LessonContent: `file_path="lessons/audio/lesson_{id}/conversation.mp3"` (relativ zu `UPLOAD_FOLDER`!), `file_type="audio/mpeg"`, `title="Konversation (Audio)"`. Das Template ([lesson_view.html:674](../../app/templates/lesson_view.html#L674)) nutzt `content.get_file_url()` — der GCS-aware Resolver im Model [models.py:463](../../app/models.py#L463). Benötigt `GOOGLE_API_KEY` oder `GOOGLE_TTS_API_KEY` in `.env`.
 
 ## 4. Lektions-Struktur (Zielbild) — erweitert 2026-04-24
 
@@ -294,6 +295,15 @@ Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
     → Transaktionaler INSERT in Postgres (docker-compose DB)
     → Bei Fehler: Rollback, keine Teil-Lektion
     → Gibt lesson_id zurück
+
+[4b] python .claude/skills/generate-lesson/pipeline.py audio {lesson_id}
+    → PFLICHT nach Insert. Findet die Dialog-Page automatisch (per Titel:
+       'Dialog' / 'Konversation' / 'Gespräch' / 'Conversation'), extrahiert
+       die japanischen Sprecher-Zeilen aus dem text-Content, rendert EINE
+       MP3 via Google Cloud TTS (SSML mit 700ms-Pausen) und legt einen
+       LessonContent(content_type='audio') auf order_index=1 vor dem Text
+       an. Idempotent: existierendes Audio wird übersprungen.
+    → Benoetigt GOOGLE_API_KEY in .env.
 
 [5] Verifikation — zwei Pfade, je nach Verfügbarkeit:
 
