@@ -41,6 +41,42 @@ Selbstverbesserndes Log. Wird vor jedem Run gelesen, nach jedem Run angehängt.
 
 <!-- Neuste Einträge oben, älteste unten. -->
 
+## 2026-04-24 21:30 — User-Feedback: Romaji überall, Umlaute statt ASCII
+
+**Claudio nach weiterer Sichtung von Lesson 142 (Grammar-Karte):**
+1. Grammar-Karte zeigte `[Nomen] + を + ください` ohne Romaji-Auflösung daneben.
+   Romaji war nur separat als `[noun] + wo + kudasai` unten, aber nicht direkt
+   neben der JP-Struktur sichtbar.
+2. Meine content_text-Plaintexts hatten Umlaut-Fallbacks (ue/oe/ss/ae) statt
+   echten Umlauten. "moechtest", "hoeflich", "koestlich", "haengen" usw.
+
+**Actions:**
+- SKILL.md §3 "Keine Umlaut-Fallbacks": hart ausformuliert. Gilt in jedem
+  DE-Text-Feld — `content_text`, `hint`, `explanation`, `feedback`,
+  `option_text`, `Lesson.description`, `LessonPage.title` usw.
+- SKILL.md §3 "Rōmaji NEBEN JEDEM japanischen Zeichen": komplett ausgebaut
+  mit Liste aller betroffenen Felder: `content_text`, `Grammar.title`,
+  `Grammar.structure`, `Grammar.explanation`, `Grammar.example_sentences`,
+  `QuizQuestion.question_text/hint/explanation`, `QuizOption.option_text/feedback`,
+  `Vocabulary.romaji`, `Vocabulary.example_sentence_english`.
+- pipeline.py Validator:
+  - **Umlaut-Fallback-Check** ist jetzt HARTER Fehler (vorher nur informativ).
+    Erkennt `hoeflich, fuer, Einfuehrung, Getraenk, Schueler, koennen` etc.
+  - **Romaji-in-content_text-Check**: wenn `content_text` JP-Zeichen enthält,
+    muss mind. eine Klammer-Passage `(romaji)` vorkommen.
+- Lesson 142: fix2-Script ausgeführt. 4 content_text neu mit echten Umlauten
+  und Romaji-Annotation pro JP-Wort; Grammar #48 (〜をください) mit
+  strukturiertem example_sentences (dreizeilig: JP / Romaji / DE),
+  angereicherter explanation mit Romaji an jeder JP-Stelle.
+
+**Neue Regel (kumulativ, ab sofort):**
+16. **Rōmaji in ALLEN Textfeldern** (nicht nur Vocab/Grammar-Records).
+    JP-Zeichen bekommen immer `(romaji)` in Klammern direkt danach.
+17. **Umlaute hart validiert** — jedes erkannte `ue/oe/ae/ss` in deutschen
+    Wörtern bricht den validate-Schritt ab.
+
+---
+
 ## 2026-04-24 21:20 — MNN-Rohdaten-Recherche & Konversations-Pattern
 
 **Recherche-Ergebnis auf Claudios Anfrage:**

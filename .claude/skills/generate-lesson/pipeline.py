@@ -171,13 +171,43 @@ def validate_draft(draft: dict) -> list[str]:
             "(DALL-E Thumbnail). Notfalls manuell URL setzen."
         )
 
-    # Umlaut-Fallback-Check
-    explanation_blob = json.dumps(draft, ensure_ascii=False)
-    fallback_patterns = ["ae ", "oe ", "ue ", "ss "]  # heuristisch
-    for pat in fallback_patterns:
-        if f" {pat}" in explanation_blob.lower():
-            # Nur informativ — Umlaut-Echtheit muss User prüfen
-            pass
+    # Umlaut-Fallback-Check (hart) — erkennt ASCII-Ersatz fuer Umlaute
+    # in ALLEN deutschen Fliesstexten des Drafts.
+    blob = json.dumps(draft, ensure_ascii=False)
+    # Regex: typische deutsche Woerter, die bei Umlaut-Fallback erscheinen
+    umlaut_fallback_re = __import__("re").compile(
+        r"\b("
+        r"hoeflich|Hoeflich|"
+        r"fuer|Fuer|ueber|Ueber|"
+        r"koennen|Koennen|koennt|muessen|Muessen|"
+        r"hoeren|Hoeren|nuetzlich|Nuetzlich|"
+        r"Schueler|schuelerin|Schuelerin|Gruesse|gruesse|"
+        r"Einfuehrung|einfuehrung|Uebung|uebung|Uebersicht|uebersicht|"
+        r"Getraenk|getraenk|koestlich|Koestlich|spaet|Spaet|"
+        r"Waehrung|waehrung|Erklaerung|erklaerung|Uebersetzung|uebersetzung"
+        r")\b"
+    )
+    for m in umlaut_fallback_re.finditer(blob):
+        errors.append(
+            f"ASCII-Umlaut-Fallback verboten: '{m.group(0)}' — "
+            f"nutze Umlaute (ue → ü, oe → ö, ae → ä)."
+        )
+
+    # Romaji-in-Text-Check: Wenn ein content_text japanische Zeichen enthaelt,
+    # muss in naher Umgebung auch Romaji (lateinische Klammer-Passage) stehen.
+    jp_char_re = __import__("re").compile(r"[぀-ヿ一-鿿]")
+    romaji_hint_re = __import__("re").compile(r"\([a-zA-Z][a-zA-Z \-'?!.,]{1,}\)")
+    for p_idx, page in enumerate(draft.get("pages", []), start=1):
+        for c_idx, item in enumerate(page.get("contents", []), start=1):
+            if item.get("content_type") != "text":
+                continue
+            ctext = item.get("data", {}).get("content_text", "")
+            if jp_char_re.search(ctext) and not romaji_hint_re.search(ctext):
+                errors.append(
+                    f"Page {p_idx}.{c_idx} text enthaelt JP-Zeichen, "
+                    f"aber keine Romaji in Klammern. Regel: jedes JP-Wort "
+                    f"im Fliesstext muss mit Romaji `(romaji)` annotiert sein."
+                )
 
     return errors
 
