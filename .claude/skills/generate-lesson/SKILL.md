@@ -19,8 +19,11 @@ Bevor du überhaupt Content schreibst:
 
 1. **Lies [learnings.md](learnings.md).** Dort steht, was in vorherigen Runs geklappt hat und was nicht. Wende diese Regeln strikt an.
 2. **Lies [improve-jpl/SKILL.md](../improve-jpl/SKILL.md).** Die Produkt-Vision (Mayuko-Lackmustest, Nicht-Ziele) gilt uneingeschränkt.
-3. **DB-Status prüfen:** Führe `python .claude/skills/generate-lesson/pipeline.py status` aus. Das zeigt, welche Themen/JLPT-Level wenig approved Content haben — Grundlage für Vorschlag bei Aufruf ohne Argumente.
-4. **Docker-DB muss laufen:** `docker compose ps db` → wenn nicht up, `docker compose up db -d`.
+3. **Docker-Stack muss laufen — zweistufiger Check:**
+   - **a) Docker-Desktop-Prozess:** `docker compose ps db` schlägt mit "cannot find the file specified" / "docker daemon not running" fehl, wenn Docker Desktop nicht läuft. In dem Fall: `Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe"` (PowerShell) — Start dauert 30–60 s.
+   - **b) DB-Container:** Danach `docker compose up db -d` und mit `docker exec postgres_db pg_isready -U app_user -d japanese_learning` warten, bis "accepting connections" erscheint.
+4. **DB-Status prüfen:** Führe `python .claude/skills/generate-lesson/pipeline.py status` aus. Das zeigt, welche Themen/JLPT-Level wenig approved Content haben — Grundlage für Vorschlag bei Aufruf ohne Argumente.
+5. **Admin-Credentials aus `.env`:** Für alle verifikationsbezogenen Logins gilt `ADMIN_EMAIL` und `ADMIN_PASSWORD` aus der lokalen `.env`. NIEMALS hardcoden. Login-Form-Feld heisst **`email`** (nicht `username`), Post-Login-Redirect ist **`/admin`** (nicht `/dashboard`).
 
 ## 2. Input-Modi
 
@@ -185,11 +188,21 @@ Lesson (title, description, jlpt_level→difficulty_level 1-5, instruction_langu
     → Bei Fehler: Rollback, keine Teil-Lektion
     → Gibt lesson_id zurück
 
-[5] python .claude/skills/generate-lesson/verify.py {lesson_id}
-    → Playwright: Login als admin, navigiere zu /admin/manage/lessons,
-       öffne Lektion, klicke jede Page, checke Quiz
-    → Screenshots in verifications/{lesson_id}/
-    → Report: OK oder Issue-Liste
+[5] Verifikation — zwei Pfade, je nach Verfügbarkeit:
+
+    [5a] Bevorzugt: python .claude/skills/generate-lesson/verify.py {lesson_id}
+         → Playwright-Headless-Browser: Login als admin (email/password aus .env!),
+           /lessons/{id} öffnen, alle Pages durchklicken, Quiz, Deck-Karussell-CSS-Check.
+         → Screenshots in verifications/{lesson_id}/.
+
+    [5b] Fallback, wenn MCP-Chrome besetzt ("Browser is already in use"):
+         HTTP-basierte Verifikation via requests.Session:
+         - POST /login mit email=ADMIN_EMAIL, password=ADMIN_PASSWORD aus .env (CSRF-Token vorher via GET).
+         - GET /lessons/{id} → HTTP 200, Titel + Vokabeln + Grammatik + Umlaute im HTML.
+         - GET /api/admin/lessons (JSON!) → Lesson muss in Liste sein.
+           ACHTUNG: /admin/manage/lessons ist eine AJAX-Shell; die Titel
+           werden client-seitig geladen und stehen NICHT im Server-HTML.
+         - Dann: User bitten, /lessons/{id} visuell durchzuklicken (Deck-Karussell).
 
 [6] Git-Commit (automatisch):
     git add .claude/skills/generate-lesson/generated-lessons.jsonl
@@ -252,8 +265,14 @@ Nach jedem Run anhängen (siehe [learnings.md](learnings.md) für Template):
 ## 10. Technische Referenzen (für den Skill, nicht für Claude's Inhalt)
 
 - DB-Modelle: `app/models.py` (Kana:127, Kanji:142, Vocabulary:162, Grammar:183, Lesson:218, LessonPage:409, LessonContent:423, QuizQuestion:522, QuizOption:542)
-- Admin-Routen für Verifikation: `/admin/manage/lessons`, `/admin/manage/vocabulary`, `/admin/manage/grammar`
+- **Verifikations-Endpoints:**
+  - `/login` — POST-Felder: `email` (nicht username!) + `password` + `csrf_token`. Erfolg-Redirect für Admin: `/admin`.
+  - `/lessons/{id}` — Detailseite (Server-Rendered, gut für Content-Checks).
+  - `/api/admin/lessons` — **JSON**-Liste aller Lektionen (für Sichtbarkeits-Check).
+  - `/admin/manage/lessons` — **AJAX-Shell**, Daten kommen client-seitig. HTML enthält KEINE Titel, für Verifikation UNGEEIGNET.
 - Lokal-DB: `postgresql://app_user:JapaneseApp2025!@localhost:5432/japanese_learning`
+- **Admin-Credentials** stehen in `.env` als `ADMIN_EMAIL` (z.B. `admin@example.com`) und `ADMIN_PASSWORD`. Verify-Scripts MÜSSEN diese via `dotenv` laden. Niemals hardcoden.
+- **pg_isready-Check:** `docker exec postgres_db pg_isready -U app_user -d japanese_learning` ist der zuverlässigste Readiness-Check.
 - Bestehende `AILessonContentGenerator` in `app/ai_services.py` — **NICHT NUTZEN** (User-Entscheidung: Claude schreibt selbst)
 
 ## 11. Deploy & Live-Schalten

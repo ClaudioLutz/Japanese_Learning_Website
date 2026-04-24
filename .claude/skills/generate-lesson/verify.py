@@ -7,15 +7,19 @@ testet Quiz-Interaktionen, und speichert Screenshots als Evidenz.
 Usage:
   python .claude/skills/generate-lesson/verify.py <lesson_id>
 """
+import os
 import sys
 import argparse
 from pathlib import Path
 from datetime import datetime
+from dotenv import load_dotenv
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 SKILL_DIR = Path(__file__).resolve().parent
 VERIFICATIONS_DIR = SKILL_DIR / "verifications"
 VERIFICATIONS_DIR.mkdir(exist_ok=True)
+
+load_dotenv(PROJECT_ROOT / ".env")
 
 
 def verify_lesson(lesson_id: int, base_url: str = "http://localhost:5000"):
@@ -26,8 +30,12 @@ def verify_lesson(lesson_id: int, base_url: str = "http://localhost:5000"):
     run_dir.mkdir()
     issues = []
 
-    admin_user = "admin"  # muss im lokalen docker-db-Seed existieren
-    admin_pass = "admin"  # Dev-Only!
+    # Credentials aus .env — Login-Form nutzt Feld 'email' (nicht 'username')
+    admin_email = os.environ.get("ADMIN_EMAIL", "admin@example.com")
+    admin_pass = os.environ.get("ADMIN_PASSWORD")
+    if not admin_pass:
+        print("[FAIL] ADMIN_PASSWORD nicht in .env gesetzt")
+        return False
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=False)
@@ -35,12 +43,12 @@ def verify_lesson(lesson_id: int, base_url: str = "http://localhost:5000"):
         page = context.new_page()
 
         try:
-            # 1. Login
-            page.goto(f"{base_url}/auth/login")
-            page.fill('input[name="username"]', admin_user)
+            # 1. Login (Admin wird zu /admin redirected, nicht /dashboard)
+            page.goto(f"{base_url}/login")
+            page.fill('input[name="email"]', admin_email)
             page.fill('input[name="password"]', admin_pass)
             page.click('button[type="submit"]')
-            page.wait_for_url("**/dashboard*", timeout=5000)
+            page.wait_for_url("**/admin*", timeout=10000)
             page.screenshot(path=run_dir / "01_login_ok.png")
 
             # 2. Lesson-Detail oeffnen
@@ -74,18 +82,23 @@ def verify_lesson(lesson_id: int, base_url: str = "http://localhost:5000"):
                     issues.append("Mehr als 10 Pages durchlaufen — Endlosschleife vermutet")
                     break
 
-            # 4. Admin-Approval-Page checken
-            page.goto(f"{base_url}/admin/manage/lessons")
-            page.wait_for_load_state("networkidle")
-            page.screenshot(path=run_dir / "04_admin_lessons.png")
-
-            # 5. Lesson in Admin-Liste sichtbar?
-            if not page.locator(f"text=/Lesson.*{lesson_id}/").first.is_visible():
-                issues.append(f"Lesson {lesson_id} in /admin/manage/lessons nicht gefunden")
+            # 4. Admin-Approval-Page checken (via JSON-API, nicht AJAX-Shell)
+            import requests
+            # Cookie aus Playwright ins requests-Session uebernehmen
+            cookies = {c["name"]: c["value"] for c in context.cookies()}
+            api_r = requests.get(f"{base_url}/api/admin/lessons", cookies=cookies, timeout=10)
+            if api_r.status_code != 200 or str(lesson_id) not in api_r.text:
+                issues.append(
+                    f"Lesson {lesson_id} nicht in /api/admin/lessons "
+                    f"(HTTP {api_r.status_code})"
+                )
 
         except Exception as e:
             issues.append(f"Unexpected error: {e}")
-            page.screenshot(path=run_dir / "99_error.png")
+            try:
+                page.screenshot(path=run_dir / "99_error.png")
+            except Exception:
+                pass
 
         finally:
             browser.close()

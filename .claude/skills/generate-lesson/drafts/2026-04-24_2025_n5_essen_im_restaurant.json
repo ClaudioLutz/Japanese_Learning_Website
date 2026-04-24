@@ -1,0 +1,293 @@
+{
+  "title": "Essen im Restaurant",
+  "description": "Lerne die wichtigsten Vokabeln und die höfliche Bestell-Phrase 「〜をください」, damit du in einem japanischen Restaurant Wasser, Tee oder ein Gericht bestellen kannst.",
+  "topic": "Essen im Restaurant",
+  "jlpt_level": 5,
+  "instruction_language": "german",
+  "allow_guest_access": false,
+  "pages": [
+    {
+      "page_number": 1,
+      "title": "Einführung & Vokabeln",
+      "description": "Grundwortschatz rund um das Restaurant.",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Willkommen im Restaurant",
+            "content_text": "<p>In dieser Lektion lernst du, wie du in Japan im Restaurant bestellst. Dort begrüsst dich das Personal meist mit 「いらっしゃいませ」 (<i>irasshaimase</i>, 'Willkommen'). Gleich darauf bekommst du die Speisekarte (<b>メニュー</b>) und wirst gefragt, was du möchtest.</p><p>Lerne zuerst die zehn wichtigsten Wörter. Danach lernst du die höfliche Phrase, mit der du alles bestellen kannst.</p>"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "レストラン",
+            "reading": "レストラン",
+            "meaning": "restaurant",
+            "meaning_de": "Restaurant",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "レストランで ばんごはんを たべます。",
+            "example_sentence_english": "I eat dinner at a restaurant."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "メニュー",
+            "reading": "メニュー",
+            "meaning": "menu",
+            "meaning_de": "Speisekarte, Menü",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "メニューを ください。",
+            "example_sentence_english": "Please give me the menu."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "水",
+            "reading": "みず",
+            "meaning": "water",
+            "meaning_de": "Wasser",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "みずを のみます。",
+            "example_sentence_english": "I drink water."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "お茶",
+            "reading": "おちゃ",
+            "meaning": "(green) tea",
+            "meaning_de": "(grüner) Tee",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "おちゃは あついです。",
+            "example_sentence_english": "The tea is hot."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "ご飯",
+            "reading": "ごはん",
+            "meaning": "cooked rice, meal",
+            "meaning_de": "Reis, Mahlzeit",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ごはんを たべます。",
+            "example_sentence_english": "I eat rice (a meal)."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "肉",
+            "reading": "にく",
+            "meaning": "meat",
+            "meaning_de": "Fleisch",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "にくは おいしいです。",
+            "example_sentence_english": "The meat is delicious."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "魚",
+            "reading": "さかな",
+            "meaning": "fish",
+            "meaning_de": "Fisch",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "さかなを たべますか。",
+            "example_sentence_english": "Do you eat fish?"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "飲み物",
+            "reading": "のみもの",
+            "meaning": "drink, beverage",
+            "meaning_de": "Getränk",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "のみものは なんですか。",
+            "example_sentence_english": "What is the drink?"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "食べ物",
+            "reading": "たべもの",
+            "meaning": "food",
+            "meaning_de": "Essen, Speise",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "にほんの たべものが すきです。",
+            "example_sentence_english": "I like Japanese food."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "美味しい",
+            "reading": "おいしい",
+            "meaning": "delicious, tasty",
+            "meaning_de": "lecker, köstlich",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "この ごはんは おいしいです。",
+            "example_sentence_english": "This rice is delicious."
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 2,
+      "title": "Grammatik: Etwas höflich bestellen",
+      "description": "Die Universalphrase zum Bestellen in jedem japanischen Restaurant.",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "「〜をください」 — Ich hätte gern ~",
+            "content_text": "<p>Wenn du in Japan etwas bestellen oder höflich um etwas bitten möchtest, nutzt du das Muster <b>「〜をください」</b> (<i>~ wo kudasai</i>). Es entspricht ungefähr 'Ich hätte gern ~' oder 'Bitte geben Sie mir ~'.</p><ul><li>Das Partikel 「を」 (<i>wo</i>, wird 'o' ausgesprochen) markiert das Objekt, das du haben möchtest.</li><li>「ください」 ist die höfliche Bitte-Form von 「くれる」 ('geben').</li></ul><p>Diese Phrase funktioniert in Restaurants, Läden und überall, wo du höflich um etwas bittest.</p>"
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "〜をください (höfliche Bitte)",
+            "explanation": "「〜をください」 ist die Standard-Formel, um in Japan höflich um etwas zu bitten. Das Partikel 「を」 markiert das Objekt der Bitte, 「ください」 ist die höfliche Bitte-Form des Verbs 「くれる」 ('geben'). Du nutzt diese Phrase im Restaurant, um Essen oder Getränke zu bestellen, aber auch in Geschäften, um nach einer Ware zu fragen. Sie ist in allen Alltagssituationen sicher und höflich.",
+            "structure": "[Nomen] + を + ください",
+            "romaji": "[noun] + wo + kudasai",
+            "jlpt_level": 5,
+            "example_sentences": "みずを ください。 (Mizu wo kudasai.) — Bitte Wasser.\nおちゃを ください。 (Ocha wo kudasai.) — Ich hätte gern grünen Tee.\nメニューを ください。 (Menyuu wo kudasai.) — Die Speisekarte, bitte."
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 3,
+      "title": "Übung: Bestellen im Restaurant",
+      "description": "Teste dein Wissen mit gemischten Fragen.",
+      "page_type": "quiz_carousel",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Quiz",
+            "content_text": "<p>Sieben Fragen zu Vokabeln und Grammatik. Viel Erfolg!</p>"
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「みず」?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "Etwas, das du jeden Tag trinkst.",
+              "explanation": "「みず」 (水) heisst 'Wasser'. Im Restaurant bekommst du es oft kostenlos dazu.",
+              "options": [
+                {"option_text": "Wasser", "is_correct": true,  "feedback": "Richtig! 「みず」 = Wasser."},
+                {"option_text": "Tee",    "is_correct": false, "feedback": "Das wäre 「おちゃ」."},
+                {"option_text": "Reis",   "is_correct": false, "feedback": "Das wäre 「ごはん」."},
+                {"option_text": "Fisch",  "is_correct": false, "feedback": "Das wäre 「さかな」."}
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Du möchtest höflich grünen Tee bestellen. Welcher Satz ist korrekt?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Die Bestell-Formel lautet 「〜をください」.",
+              "explanation": "「おちゃをください」 ist die Standard-Höflichkeitsformel: [Nomen] + を + ください.",
+              "options": [
+                {"option_text": "おちゃを ください。", "is_correct": true,  "feedback": "Richtig! Höflich und korrekt."},
+                {"option_text": "おちゃは ください。", "is_correct": false, "feedback": "Das Partikel ist falsch — es muss 「を」 sein, nicht 「は」."},
+                {"option_text": "おちゃを たべます。", "is_correct": false, "feedback": "「たべます」 heisst 'essen', nicht 'bitten'. Und Tee trinkt man."},
+                {"option_text": "おちゃが ください。", "is_correct": false, "feedback": "Das Partikel 「が」 passt hier nicht — bei Bitten wird 「を」 verwendet."}
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「おいしい」 bedeutet 'lecker'.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Stimmt — 「おいしい」 (美味しい) ist genau das Wort, das japanische Gäste beim Essen am häufigsten sagen.",
+              "options": [
+                {"option_text": "Richtig", "is_correct": true,  "feedback": "Korrekt — おいしい = lecker."},
+                {"option_text": "Falsch",  "is_correct": false, "feedback": "Doch: 「おいしい」 heisst 'lecker'."}
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde das japanische Wort mit der deutschen Bedeutung.",
+              "difficulty_level": 2,
+              "points": 2,
+              "explanation": "Vier zentrale Restaurant-Vokabeln auf einen Blick.",
+              "options": [
+                {"option_text": "肉 | Fleisch",   "is_correct": true},
+                {"option_text": "魚 | Fisch",     "is_correct": true},
+                {"option_text": "ご飯 | Reis",    "is_correct": true},
+                {"option_text": "飲み物 | Getränk", "is_correct": true}
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welches Wort heisst 'Speisekarte'?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「メニュー」 ist ein Lehnwort (aus dem Englischen 'menu') und wird in Katakana geschrieben.",
+              "options": [
+                {"option_text": "メニュー",   "is_correct": true,  "feedback": "Richtig! メニュー = Speisekarte."},
+                {"option_text": "レストラン", "is_correct": false, "feedback": "Das heisst 'Restaurant', nicht 'Speisekarte'."},
+                {"option_text": "たべもの",  "is_correct": false, "feedback": "「たべもの」 heisst allgemein 'Essen'."},
+                {"option_text": "のみもの",  "is_correct": false, "feedback": "「のみもの」 heisst 'Getränk'."}
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「ごはん」 bedeutet 'Fleisch'.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Falsch: 「ごはん」 heisst 'Reis' oder auch 'Mahlzeit'. 'Fleisch' ist 「にく」 (肉).",
+              "options": [
+                {"option_text": "Richtig", "is_correct": false, "feedback": "Ungenau — 「ごはん」 heisst Reis, nicht Fleisch."},
+                {"option_text": "Falsch",  "is_correct": true,  "feedback": "Korrekt. 「ごはん」 = Reis, 「にく」 = Fleisch."}
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welche Struktur nutzt man in Japan, um höflich um etwas zu bitten?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Die Formel endet immer mit 「ください」.",
+              "explanation": "Die Universalformel ist [Nomen] + を + ください. Sie funktioniert im Restaurant, im Laden und überall, wo du höflich um etwas bittest.",
+              "options": [
+                {"option_text": "[Nomen] + を + ください", "is_correct": true,  "feedback": "Genau! Das ist die Standard-Bitte-Formel."},
+                {"option_text": "[Nomen] + は + です",     "is_correct": false, "feedback": "Das ist die Aussage-Struktur ('X ist Y'), keine Bitte."},
+                {"option_text": "[Nomen] + が + すき",     "is_correct": false, "feedback": "Das drückt 'mögen' aus, keine Bitte."},
+                {"option_text": "[Nomen] + に + います",   "is_correct": false, "feedback": "Das beschreibt einen Aufenthaltsort, keine Bitte."}
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "page_number": 4,
+      "title": "Zusammenfassung",
+      "description": "Das Wichtigste im Überblick.",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Was du jetzt kannst",
+            "content_text": "<p>Du kannst jetzt:</p><ul><li>zehn Grundvokabeln rund ums Restaurant erkennen: <b>レストラン, メニュー, 水, お茶, ご飯, 肉, 魚, 飲み物, 食べ物, 美味しい</b>,</li><li>mit der höflichen Formel <b>「〜をください」</b> alles bestellen, was auf der Karte steht,</li><li>positiv auf gutes Essen reagieren mit <b>「おいしいです」</b>.</li></ul><p><b>Nächster Schritt:</b> In der nächsten Lektion lernst du Zahlen und wie du die Rechnung verlangst (「おかいけいを ください」 — 'Die Rechnung bitte').</p><p>Tipp: Wiederhole die neuen Vokabeln noch heute im Kartensystem — so bleiben sie am besten hängen.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
