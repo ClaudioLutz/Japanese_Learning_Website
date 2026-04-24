@@ -1,5 +1,6 @@
-"""Fix Lesson 143 dialog format to match MNN DE style (-> instead of →)
-and correct Lisa's phone number typo (ぜろななぎん → ぜろななきゅう)."""
+"""Fix Lesson 143 dialog: remove intro paragraph so the conversation
+starts directly with 'Tanaka: ...' (MNN L1 DE style). Also fix typo
+ぜろななぎん -> ぜろななきゅう."""
 import sys
 from pathlib import Path
 
@@ -11,9 +12,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 from app import create_app, db
 from app.models import LessonContent
 
-NEW_DIALOG = """Tanaka Haruto arbeitet in Zürich und lernt auf einer Willkommensparty seine neue Kollegin Lisa Weber kennen. Sie tauschen Alter und Telefonnummern aus, damit sie sich verabreden können.
-
-Tanaka: はじめまして。たなか はるとです。
+NEW_DIALOG = """Tanaka: はじめまして。たなか はるとです。
   (Hajimemashite. Tanaka Haruto desu.)
   -> Freut mich. Ich bin Tanaka Haruto.
 
@@ -56,6 +55,6 @@ with app.app_context():
         print("[FEHLER] LessonContent 6154 nicht gefunden")
         sys.exit(1)
     lc.content_text = NEW_DIALOG
-    lc.title = "Tanaka trifft Lisa — Willkommensparty"
+    lc.title = "Willkommensparty — Tanaka trifft Lisa"
     db.session.commit()
-    print(f"[OK] Dialog fuer Lesson 143 / LC 6154 aktualisiert ({len(NEW_DIALOG)} Zeichen).")
+    print(f"[OK] Dialog fuer Lesson 143 / LC 6154 aktualisiert ({len(NEW_DIALOG)} Zeichen, ohne Intro).")

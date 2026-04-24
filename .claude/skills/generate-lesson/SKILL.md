@@ -122,6 +122,13 @@ Lesson (title, description, jlpt_level→difficulty_level 1-5, instruction_langu
 │
 ├─ LessonPage 5: "Dialog / Konversation" (page_type='normal') — PFLICHT
 │   └─ LessonContent: text — realistischer Mini-Dialog (6–10 Zeilen).
+│      **KEIN Einleitungs-Absatz vor dem Dialog.** Der `content_text` beginnt
+│      unmittelbar mit der ersten Sprecher-Zeile (`Tanaka: ...`), wie bei
+│      MNN L1–L5 DE (Lessons 137–141). Szenario/Setting gehören in den
+│      LessonContent.title (z.B. "Willkommensparty — Tanaka trifft Lisa"),
+│      nicht in einen Prosa-Vorspann. Grund: `| nl2br` rendert nur Zeilen-
+│      umbrüche — ein Prosa-Absatz vor dem Dialog lässt das Konversations-
+│      Element visuell in einer Textwand verschwinden.
 │      Format **exakt wie `_format_conversation()` in scripts/import_mnn.py:170**:
 │         Speaker: 日本語テキスト
 │           (romaji)
