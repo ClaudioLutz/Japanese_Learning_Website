@@ -30,9 +30,34 @@ Bevor du überhaupt Content schreibst:
 | Aufruf | Verhalten |
 |---|---|
 | `/generate-lesson` (ohne Args) | DB-Gap-Analyse → 3 Themen-Vorschläge mit Begründung → User wählt |
-| `/generate-lesson N5 Familie` | Direktes Thema, JLPT-Level N5 |
-| `/generate-lesson --from-mnn Kapitel 3` | Quelle: Minna no Nihongo (Daten in `scripts/mnn_data/`) |
+| `/generate-lesson N5 Familie` | Direktes Thema, JLPT-Level N5. Wenn thematisch passendes MNN-Kapitel existiert, **orientiere dich daran** (siehe §2a). |
+| `/generate-lesson --from-mnn 3` | Quelle: Minna no Nihongo Kapitel 3 (lies `scripts/mnn_data/beginner1_lesson03.json`). Siehe §2a. |
 | `/generate-lesson --from-jlpt N5` | Zufälliges noch nicht abgedecktes N5-Thema |
+
+## 2a. Minna-no-Nihongo-Quellen (WICHTIG)
+
+**Rohdaten liegen vor:** `scripts/mnn_data/beginner1_lesson01.json` … `beginner2_lesson50.json` (50 Lektionen). Jede Datei enthält `vocabulary[]`, `vocabulary_countries[]`, `grammar[]`, `conversation{title, lines[]}` und teils `additional_conversations[]`. Die bestehenden 10 Lektionen in der DB (IDs 131–141, Titel `MNN L1…L5` EN+DE) wurden per `scripts/import_mnn.py` **direkt** importiert, ohne AI, als wörtliche Übernahme.
+
+**Wie Claude MNN nutzt:**
+1. **MNN ist Vorlage, nicht Copy-Paste.** Die bestehenden 10 Lektionen sind Wort-für-Wort-Import. Deine Aufgabe: auf derselben thematischen/grammatikalischen/vokabulären **Linie** eine **neue Lektion** schreiben, mit:
+   - **Anderen Namen/Personen.** MNN nutzt Mike Miller, Satou Keiko, Guputa-san, Yamada. Du nutzt andere Namen (z.B. Tanaka Haruto, Lisa Weber, Ueno Sensei). Keine MNN-Originalfiguren wiederverwenden.
+   - **Leicht anderen Beispielsätzen** — gleiche Grammatik, gleiche Vokabelsätze, aber neu formuliert. Kein Satz wird 1:1 aus der MNN-JSON übernommen.
+   - **Gleichem Grammatik-Kern** — wenn MNN-Kapitel 3 Demonstrativpronomen lehrt, lehrst auch du Demonstrativpronomen, mit denselben Strukturen (`これ/それ/あれ + は + N + です`).
+2. **Vokabeln übernehmen:** Die Vokabel-Liste aus MNN-JSON darfst du weitgehend übernehmen (Vocabulary-Tabelle ist eh dedupliziert — Wörter wie `わたし` sind schon da). Füge Romaji hinzu, wenn fehlt.
+3. **Konversation ist Pflicht** — siehe §4 Page-Struktur "Dialog/Anwendung". Nutze dieselbe `speaker / japanese / romaji / english`-Struktur wie in der MNN-JSON, aber mit deinen neuen Namen und leicht anderem Verlauf.
+4. **Zusätzlicher DB-Gap-Check:** Bevor du eine neue Lektion zu MNN-Kapitel N schreibst, prüfe ob `MNN L{N}:` bereits existiert (`Lesson.title` LIKE `MNN L{N}:%`). Wenn ja, wähle einen Titel ohne `MNN L{N}:`-Präfix, damit es keine Kollision mit dem Original-Import gibt (z.B. `N5 Selbstvorstellung — Tanaka trifft Lisa`).
+
+**Konversations-Plaintext-Format** (entspricht `_format_conversation` in `scripts/import_mnn.py:170`):
+```
+Tanaka: こんにちは。わたしは たなかです。
+  (Konnichiwa. Watashi wa Tanaka desu.)
+  → Guten Tag. Ich bin Tanaka.
+
+Lisa: はじめまして。リサです。ドイツから きました。
+  (Hajimemashite. Risa desu. Doitsu kara kimashita.)
+  → Freut mich. Ich bin Lisa. Ich komme aus Deutschland.
+```
+Leerzeile zwischen Sprechern, Einrückung der Romaji-Zeile mit zwei Leerzeichen, `→` für die deutsche Übersetzung.
 
 ## 3. Harte Constraints (Nicht-Verhandelbar)
 
@@ -82,10 +107,17 @@ Lesson (title, description, jlpt_level→difficulty_level 1-5, instruction_langu
 │   └─ LessonContent: grammar ×2-4 — mit structure, romaji, 3-4 Beispielsätzen
 │      je Eintrag (jeweils JP + Romaji + DE-Übersetzung).
 │
-├─ LessonPage 5: "Dialog / Anwendung" (page_type='normal')
-│   └─ LessonContent: text — ein realistischer Mini-Dialog (Gast ↔ Personal /
-│      zwei Freunde / Kunde ↔ Verkäufer), jede Zeile in JP + Romaji + DE.
-│      Plaintext, Sprecherrollen als "A:" und "B:" am Zeilenanfang.
+├─ LessonPage 5: "Dialog / Konversation" (page_type='normal') — PFLICHT
+│   └─ LessonContent: text — realistischer Mini-Dialog (6–10 Zeilen).
+│      Format **exakt wie `_format_conversation()` in scripts/import_mnn.py:170**:
+│         Speaker: 日本語テキスト
+│           (romaji)
+│           → Deutsche Übersetzung
+│         (Leerzeile)
+│      Sprecher sind **eigene Namen** (nicht Miller/Satou aus MNN).
+│      Wenn die Lektion thematisch einem MNN-Kapitel entspricht: Dialog-Struktur
+│      orientiert sich an der MNN-`conversation`-Vorlage aus `scripts/mnn_data/`,
+│      aber Text ist neu formuliert (andere Namen, leichte Variation). Siehe §2a.
 │
 ├─ LessonPage 6: "Übung" (page_type='quiz_carousel')
 │   └─ LessonContent mit QuizQuestions ×10-18 — Mix aus
@@ -301,7 +333,8 @@ Nach jedem Run anhängen (siehe [learnings.md](learnings.md) für Template):
 ## 9. Quellen-Referenzen
 
 - **JLPT N5 Vokabel-Liste (offiziell):** [sources/jlpt-n5-vocab.md](sources/jlpt-n5-vocab.md) — 800 Kernwörter
-- **Minna no Nihongo Import-Daten:** `scripts/mnn_data/` (JSON-Files pro Kapitel, bereits im Projekt)
+- **Minna no Nihongo Rohdaten:** `scripts/mnn_data/beginner1_lesson01.json` … `beginner2_lesson50.json` — **50 Lektionen**, Schema `{source, lesson_number, title, jlpt_level, description, vocabulary[], vocabulary_countries[], grammar[{title, structure, jlpt_level, explanation, example_sentences}], conversation{title, lines[{speaker, japanese, romaji, english}]}, additional_conversations[]}`. Standard-Workflow: vor Schreiben einer Lektion MNN-JSON lesen, Vokabeln/Grammatik als thematischen Anker nutzen, eigenen Text + eigene Charaktere schreiben (siehe §2a).
+- **MNN-Import-Referenz:** [scripts/import_mnn.py](../../scripts/import_mnn.py) zeigt, wie die 10 Bestandslektionen (IDs 131–141) strukturiert wurden — 5-Seiten-Layout (Vocab → Grammar → Konversation → Übung → Prüfung). Die `_format_conversation()`-Funktion ab Zeile 170 ist die Referenz für das Dialog-Plaintext-Format.
 - **Bestehender DB-Content als Referenz:** SELECT in der DB zeigt, was schon da ist. Beispiel:
   ```sql
   SELECT word, reading, meaning_de, jlpt_level FROM vocabulary WHERE jlpt_level = 5;

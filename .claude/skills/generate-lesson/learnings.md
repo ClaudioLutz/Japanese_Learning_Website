@@ -41,6 +41,25 @@ Selbstverbesserndes Log. Wird vor jedem Run gelesen, nach jedem Run angehängt.
 
 <!-- Neuste Einträge oben, älteste unten. -->
 
+## 2026-04-24 21:20 — MNN-Rohdaten-Recherche & Konversations-Pattern
+
+**Recherche-Ergebnis auf Claudios Anfrage:**
+
+1. **MNN-Rohdaten liegen vor**: `scripts/mnn_data/beginner1_lesson01.json` bis `beginner2_lesson50.json` — 50 Lektionen komplett strukturiert (Vocabulary, Grammar, Conversation mit speaker/japanese/romaji/english, teils additional_conversations).
+
+2. **Bestehende 10 MNN-Lektionen in der DB** (IDs 131–141, `MNN L1…L5` EN + DE) wurden via `scripts/import_mnn.py` **direkt importiert** — keine AI. Layout: 5 Seiten (Vokabeln → Grammatik → Konversation → Übung → Prüfung). Konversation liegt als Plaintext in `lesson_content.content_text` auf `page_number=3`, Format: `Speaker: 日本語\n  (romaji)\n  → English/Deutsch`, Leerzeile zwischen Sprechern — erzeugt durch `_format_conversation()` in [scripts/import_mnn.py:170](../../scripts/import_mnn.py#L170).
+
+3. **Konsequenz für generate-lesson:**
+   - MNN-JSON dient als **Vorlage**, nicht zur Copy-Paste. Claude schreibt auf Basis der MNN-Grammatik/Vokabeln eine neue Lektion mit **anderen Charakteren** (nicht Miller/Satou/Yamada) und leicht variiertem Dialog-Text.
+   - Konversations-Page ist Pflicht und nutzt exakt das `_format_conversation()`-Plaintext-Format.
+
+**Actions:**
+- SKILL.md §2a neu: Komplette Sektion zu MNN-Nutzung (Rohdaten-Pfade, Vorlagen-Regel, Konversations-Format).
+- SKILL.md §4: Dialog-Page (bisher "A:/B:") durch das `_format_conversation`-Format ersetzt.
+- SKILL.md §9: Explizite Pfade zu allen 50 MNN-JSONs und import_mnn.py-Verweis.
+
+---
+
 ## 2026-04-24 21:00 — User-Feedback nach visueller Sichtung Lesson 142
 
 **Claudio nach Öffnen von Lesson 142 im Browser:**
