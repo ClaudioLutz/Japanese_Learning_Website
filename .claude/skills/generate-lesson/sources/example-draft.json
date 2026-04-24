@@ -1,0 +1,229 @@
+{
+  "_comment": "Referenz-Draft. Claude schreibt neue Drafts in diesem Format. Nicht ausfuehren (ist keine echte Lesson).",
+  "title": "Familie auf Japanisch",
+  "description": "Lerne die wichtigsten Vokabeln fuer Familienmitglieder und baue deine ersten Selbstvorstellungs-Saetze.",
+  "jlpt_level": 5,
+  "topic": "Familie",
+  "instruction_language": "german",
+  "allow_guest_access": true,
+  "pages": [
+    {
+      "title": "Einführung & Vokabeln",
+      "description": "Die wichtigsten Familien-Woerter",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Willkommen",
+            "content_text": "In dieser Lektion lernst du, wie du auf Japanisch ueber deine Familie sprichst. Achtung: Auf Japanisch gibt es unterschiedliche Woerter fuer die eigene Familie und die Familie anderer."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "家族",
+            "reading": "かぞく",
+            "meaning": "family",
+            "meaning_de": "Familie",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "わたしの かぞくは よにんです。",
+            "example_sentence_english": "My family has four people."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "父",
+            "reading": "ちち",
+            "meaning": "father (own)",
+            "meaning_de": "Vater (eigener)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ちちは かいしゃいんです。",
+            "example_sentence_english": "My father is an office worker."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "母",
+            "reading": "はは",
+            "meaning": "mother (own)",
+            "meaning_de": "Mutter (eigene)",
+            "jlpt_level": 5
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "兄",
+            "reading": "あに",
+            "meaning": "older brother (own)",
+            "meaning_de": "älterer Bruder (eigener)",
+            "jlpt_level": 5
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "姉",
+            "reading": "あね",
+            "meaning": "older sister (own)",
+            "meaning_de": "ältere Schwester (eigene)",
+            "jlpt_level": 5
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "弟",
+            "reading": "おとうと",
+            "meaning": "younger brother",
+            "meaning_de": "jüngerer Bruder",
+            "jlpt_level": 5
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "妹",
+            "reading": "いもうと",
+            "meaning": "younger sister",
+            "meaning_de": "jüngere Schwester",
+            "jlpt_level": 5
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "子供",
+            "reading": "こども",
+            "meaning": "child",
+            "meaning_de": "Kind",
+            "jlpt_level": 5
+          }
+        }
+      ]
+    },
+    {
+      "title": "Grammatik: は als Themenmarker",
+      "description": "Der erste Baustein fuer jeden Satz",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "Die Partikel は (ausgesprochen 'wa', nicht 'ha') markiert das Thema des Satzes. Sie steht direkt nach dem Wort, ueber das du etwas aussagen willst."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "は als Themenmarker",
+            "explanation": "Die Partikel は markiert das Thema eines Satzes und wird 'wa' ausgesprochen (nicht 'ha'). Sie steht direkt nach dem Wort, ueber das man etwas sagen moechte, und ist einer der wichtigsten Bausteine der japanischen Grammatik.",
+            "structure": "[Thema] + は + [Aussage]",
+            "romaji": "[topic] + wa + [statement]",
+            "jlpt_level": 5,
+            "example_sentences": "わたしは がくせいです。 (Watashi wa gakusei desu.) — Ich bin Schüler/in.\nははは せんせいです。 (Haha wa sensei desu.) — Meine Mutter ist Lehrerin.\nこどもは ふたりです。 (Kodomo wa futari desu.) — Es sind zwei Kinder."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Übung",
+      "description": "Quiz zum Gelernten",
+      "page_type": "quiz_carousel",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {"content_text": "6 Fragen zum heutigen Stoff."},
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 家族 (かぞく)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "Personen, die zusammenleben.",
+              "explanation": "家族 (かぞく) heisst 'Familie'.",
+              "options": [
+                {"option_text": "Familie", "is_correct": true,  "feedback": "Richtig!"},
+                {"option_text": "Schule",  "is_correct": false, "feedback": "Das waere 学校 (がっこう)."},
+                {"option_text": "Freund",  "is_correct": false, "feedback": "Das waere 友達 (ともだち)."},
+                {"option_text": "Arbeit",  "is_correct": false, "feedback": "Das waere 仕事 (しごと)."}
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「ちち」 bezeichnet den eigenen Vater.",
+              "difficulty_level": 1,
+              "explanation": "Ja — ちち ist die bescheidene Form fuer den eigenen Vater. Fuer den Vater anderer sagt man おとうさん.",
+              "options": [
+                {"option_text": "Richtig", "is_correct": true,  "feedback": "Korrekt."},
+                {"option_text": "Falsch",  "is_correct": false, "feedback": "Doch — ちち = eigener Vater."}
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde das japanische Wort mit der deutschen Übersetzung.",
+              "difficulty_level": 2,
+              "options": [
+                {"option_text": "父 | Vater",                 "is_correct": true},
+                {"option_text": "母 | Mutter",                "is_correct": true},
+                {"option_text": "姉 | ältere Schwester",      "is_correct": true},
+                {"option_text": "兄 | älterer Bruder",        "is_correct": true}
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welches Wort bedeutet 'jüngere Schwester'?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "妹 (いもうと) = juengere Schwester. 姉 = aeltere Schwester, 弟 = juengerer Bruder.",
+              "options": [
+                {"option_text": "妹 (いもうと)", "is_correct": true,  "feedback": "Richtig!"},
+                {"option_text": "姉 (あね)",     "is_correct": false, "feedback": "Das ist die aeltere Schwester."},
+                {"option_text": "弟 (おとうと)", "is_correct": false, "feedback": "Das ist der juengere Bruder."},
+                {"option_text": "母 (はは)",     "is_correct": false, "feedback": "Das ist die Mutter."}
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Die Partikel は wird 'ha' ausgesprochen, wenn sie als Themenmarker steht.",
+              "difficulty_level": 2,
+              "explanation": "Nein — als Themenmarker wird は als 'wa' ausgesprochen. 'ha' ist nur die normale Lesung des Hiragana-Zeichens.",
+              "options": [
+                {"option_text": "Richtig", "is_correct": false, "feedback": "Als Themenmarker: 'wa'."},
+                {"option_text": "Falsch",  "is_correct": true,  "feedback": "Korrekt — 'wa' als Themenmarker."}
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welche Übersetzung passt: 「ははは せんせいです。」",
+              "difficulty_level": 2,
+              "explanation": "「ははは せんせいです。」 = 'Meine Mutter ist Lehrerin.' Das erste は ist Themenmarker (wa), das zweite ist Teil des Wortes はは (Mutter).",
+              "options": [
+                {"option_text": "Meine Mutter ist Lehrerin.",  "is_correct": true,  "feedback": "Richtig!"},
+                {"option_text": "Mein Vater ist Lehrer.",       "is_correct": false, "feedback": "Vater waere ちち."},
+                {"option_text": "Meine Mutter ist Studentin.",  "is_correct": false, "feedback": "Studentin waere がくせい."},
+                {"option_text": "Meine Schwester ist Aerztin.", "is_correct": false, "feedback": "Steht nichts von Schwester im Satz."}
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Zusammenfassung",
+      "description": "Was du heute gelernt hast",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "In dieser Lektion hast du 8 Vokabeln zur Familie und die Themenmarker-Partikel は gelernt. In der naechsten Lektion geht es um Zahlen, damit du Saetze wie 'Meine Familie hat vier Personen' auch wirklich bauen kannst."
+          }
+        }
+      ]
+    }
+  ]
+}

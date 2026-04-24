@@ -1,0 +1,4 @@
+# Verifications are run-specific — keep only the folder, not individual runs
+verifications/lesson_*/
+# But keep the directory itself
+!verifications/.gitkeep
