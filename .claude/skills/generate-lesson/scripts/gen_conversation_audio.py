@@ -23,16 +23,13 @@ from app import create_app, db
 from app.models import Lesson, LessonPage, LessonContent
 from app.ai_services import GoogleCloudTTS
 
-
-# Voice-Rotation nach Sprecher-Reihenfolge. Google Cloud TTS ja-JP
-# Neural2-Stimmen: B/C = female, D = male. Wir nehmen fuer Abwechslung
-# B (female hell), D (male), C (female dunkler), D (male) ...
-VOICE_POOL = [
-    "ja-JP-Neural2-B",  # female
-    "ja-JP-Neural2-D",  # male
-    "ja-JP-Neural2-C",  # female (other)
-    "ja-JP-Neural2-D",  # male
-]
+# Gender-basierte Voice-Zuordnung aus scripts/generate_tts_audio.py
+# importieren — single source of truth fuer Sprecher/Stimmen-Mapping.
+# Die erweiterte SPEAKER_GENDER (inkl. Lisa, Haruto, Mayuko etc.) lebt dort.
+_MNN_SCRIPT = PROJECT_ROOT / "scripts"
+if str(_MNN_SCRIPT) not in sys.path:
+    sys.path.insert(0, str(_MNN_SCRIPT))
+from generate_tts_audio import SPEAKER_GENDER, get_voice_for_speaker  # noqa: E402
 
 
 def find_dialog_page(lesson_id: int) -> LessonPage | None:
@@ -70,11 +67,26 @@ def parse_dialog(content_text: str) -> list[tuple[str, str]]:
 
 
 def assign_voices(pairs: list[tuple[str, str]]) -> dict[str, str]:
-    """Map each unique speaker name to a voice, in order of first appearance."""
-    mapping: dict[str, str] = {}
+    """Map each unique speaker name to a voice based on SPEAKER_GENDER.
+
+    Delegiert an get_voice_for_speaker() aus scripts/generate_tts_audio.py,
+    damit die MNN-Lektionen (1-5) und neue Claude-Lektionen konsistent
+    dasselbe Gender-Mapping nutzen. Bei unbekannten Namen warnt die Funktion
+    die mit Abwechslungs-Heuristik — dann sollte der Sprecher nachgetragen
+    werden.
+    """
+    speaker_order: list[str] = []
     for speaker, _ in pairs:
-        if speaker not in mapping:
-            mapping[speaker] = VOICE_POOL[len(mapping) % len(VOICE_POOL)]
+        if speaker not in speaker_order:
+            speaker_order.append(speaker)
+    mapping: dict[str, str] = {}
+    for speaker in speaker_order:
+        if speaker not in SPEAKER_GENDER:
+            print(
+                f"  [WARN] Sprecher '{speaker}' nicht in SPEAKER_GENDER — "
+                f"erweitere scripts/generate_tts_audio.py SPEAKER_GENDER."
+            )
+        mapping[speaker] = get_voice_for_speaker(speaker, speaker_order)
     return mapping
 
 

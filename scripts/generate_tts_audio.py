@@ -42,8 +42,11 @@ VOICE_FEMALE = "ja-JP-Neural2-B"   # Weiblich (Standard)
 VOICE_MALE_1 = "ja-JP-Neural2-C"   # Männlich 1
 VOICE_MALE_2 = "ja-JP-Neural2-D"   # Männlich 2
 
-# Geschlecht der Sprecher (bekannte MNN-Charaktere)
+# Geschlecht der Sprecher (bekannte MNN-Charaktere + Claude-generierte
+# Anfaenger-Lektionen). Wichtig fuer korrekte Stimmen-Zuordnung — ein
+# maennlicher Name darf NIE eine weibliche Stimme bekommen.
 SPEAKER_GENDER = {
+    # MNN-Charaktere
     "Sato": "female",      # 佐藤けいこ
     "Yamada": "male",       # 山田
     "Miller": "male",       # マイク・ミラー
@@ -60,6 +63,27 @@ SPEAKER_GENDER = {
     "Takahashi": "male",    # 高橋
     "Gupta": "male",        # グプタ
     "Wang": "female",       # ワン
+    # Charaktere, die Claude selbst in neuen Lektionen nutzt
+    "Lisa": "female",
+    "Mayuko": "female",
+    "Anna": "female",
+    "Emma": "female",
+    "Sophie": "female",
+    "Claudia": "female",
+    "Sakura": "female",
+    "Hanako": "female",
+    "Yuki": "female",
+    "Haruto": "male",
+    "Claudio": "male",
+    "Paul": "male",
+    "Tom": "male",
+    "Max": "male",
+    "Michael": "male",
+    "David": "male",
+    "Ken": "male",
+    "Hiroshi": "male",
+    "Ueno": "female",      # Ueno-sensei (default female-leaning)
+    "Weber": "female",     # Nachname allein kein Indikator — konservativ female
 }
 
 
