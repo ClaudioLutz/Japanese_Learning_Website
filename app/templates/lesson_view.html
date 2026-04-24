@@ -938,8 +938,9 @@
                                                         {% elif content.content_type == 'dialog_slideshow' %}
                                                             {% set slideshow = content.content_text | fromjson if content.content_text else none %}
                                                             {% if slideshow and slideshow.slides %}
+                                                            <script type="application/json" id="slideshow-data-{{ content.id }}">{{ slideshow.slides | tojson | safe }}</script>
                                                             <div class="dialog-slideshow"
-                                                                 x-data="dialogSlideshow({{ slideshow.slides | tojson | safe }})"
+                                                                 x-data="dialogSlideshow({{ content.id }})"
                                                                  x-init="init()">
                                                                 <div class="slideshow-stage position-relative rounded overflow-hidden"
                                                                      style="background:#111;">
@@ -3663,9 +3664,18 @@ document.addEventListener('DOMContentLoaded', function() {
 // Alpine.js Slideshow-Player fuer content_type='dialog_slideshow'.
 // Ein Slide pro Dialog-Zeile mit Bild, Speaker, JP, Romaji, DE und
 // einer zugehoerigen MP3. Auto-Advance springt nach audio.ended weiter.
-window.dialogSlideshow = function(slides) {
+window.dialogSlideshow = function(contentId) {
+    const dataEl = document.getElementById('slideshow-data-' + contentId);
+    let slidesData = [];
+    if (dataEl) {
+        try {
+            slidesData = JSON.parse(dataEl.textContent);
+        } catch (err) {
+            console.error('[dialogSlideshow] JSON parse error', err);
+        }
+    }
     return {
-        slides: slides || [],
+        slides: slidesData,
         current: 0,
         autoAdvance: true,
         init() {

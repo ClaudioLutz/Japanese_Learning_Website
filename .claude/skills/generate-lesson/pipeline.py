@@ -507,7 +507,9 @@ def generate_images(draft_path: Path):
                 ts = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
                 filename = f"thumbnail_{slug}_{ts}.png"
                 (thumb_dir / filename).write_bytes(result["image_bytes"])
-                draft["thumbnail_url"] = f"/static/uploads/generated/{filename}"
+                # Relativ zu UPLOAD_FOLDER — url_for('routes.uploaded_file')
+                # baut sonst einen doppelten /uploads-Pfad.
+                draft["thumbnail_url"] = f"generated/{filename}"
                 print(f"[OK] Thumbnail -> {draft['thumbnail_url']}")
             else:
                 err = (result or {}).get("error", "unbekannt")
