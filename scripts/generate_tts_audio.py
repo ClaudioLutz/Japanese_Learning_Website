@@ -38,9 +38,17 @@ VOICE_NAME = "ja-JP-Neural2-B"
 SPEAKING_RATE = 0.85  # Langsamer für Lernende
 
 # Stimmen für Multi-Voice Konversation
-VOICE_FEMALE = "ja-JP-Neural2-B"   # Weiblich (Standard)
-VOICE_MALE_1 = "ja-JP-Neural2-C"   # Männlich 1
-VOICE_MALE_2 = "ja-JP-Neural2-D"   # Männlich 2
+# WICHTIG (korrigiert 2026-04-24): ja-JP-Neural2-C ist laut Google Cloud
+# TTS-Dokumentation WEIBLICH, nicht männlich — vorherige Kommentare waren
+# falsch und fuehrten dazu, dass Maenner weiblich klangen. Offizielles
+# Gender-Mapping: Neural2-B=FEMALE, Neural2-C=FEMALE, Neural2-D=MALE.
+# Es gibt nur EINE maennliche Neural2-Stimme; fuer zweiten Mann nehmen
+# wir Wavenet-D (anderes Modell, damit sich die beiden Maenner
+# unterscheiden).
+VOICE_FEMALE = "ja-JP-Neural2-B"    # Weiblich 1 (Neural2)
+VOICE_FEMALE_2 = "ja-JP-Neural2-C"  # Weiblich 2 (Neural2)
+VOICE_MALE_1 = "ja-JP-Neural2-D"    # Maennlich 1 (Neural2)
+VOICE_MALE_2 = "ja-JP-Wavenet-D"    # Maennlich 2 (Wavenet — klar anders als Neural2-D)
 
 # Geschlecht der Sprecher (bekannte MNN-Charaktere + Claude-generierte
 # Anfaenger-Lektionen). Wichtig fuer korrekte Stimmen-Zuordnung — ein
@@ -88,20 +96,28 @@ SPEAKER_GENDER = {
 
 
 def get_voice_for_speaker(speaker: str, speaker_list: list[str]) -> str:
-    """Weist einem Sprecher eine TTS-Stimme zu basierend auf Geschlecht."""
-    gender = SPEAKER_GENDER.get(speaker, None)
+    """Weist einem Sprecher eine TTS-Stimme zu basierend auf Geschlecht.
 
-    if gender is None:
-        # Unbekannter Sprecher: abwechselnd männlich/weiblich
-        idx = speaker_list.index(speaker) if speaker in speaker_list else 0
-        gender = "female" if idx % 2 == 0 else "male"
+    Erster Mann / erste Frau bekommen die Neural2-Stimmen; ab dem zweiten
+    Sprecher desselben Geschlechts wird auf die Alternativ-Stimme gewechselt,
+    damit gleichgeschlechtliche Sprecher klanglich unterscheidbar bleiben.
+    """
+    def _gender_for(s: str) -> str:
+        g = SPEAKER_GENDER.get(s, None)
+        if g is not None:
+            return g
+        idx = speaker_list.index(s) if s in speaker_list else 0
+        return "female" if idx % 2 == 0 else "male"
+
+    gender = _gender_for(speaker)
 
     if gender == "female":
+        female_speakers = [s for s in speaker_list if _gender_for(s) == "female"]
+        if speaker in female_speakers and female_speakers.index(speaker) >= 1:
+            return VOICE_FEMALE_2
         return VOICE_FEMALE
 
-    # Männliche Sprecher: erster Mann = MALE_1, zweiter = MALE_2
-    male_speakers = [s for s in speaker_list
-                     if SPEAKER_GENDER.get(s, "male" if speaker_list.index(s) % 2 == 1 else "female") == "male"]
+    male_speakers = [s for s in speaker_list if _gender_for(s) == "male"]
     if speaker in male_speakers and male_speakers.index(speaker) >= 1:
         return VOICE_MALE_2
     return VOICE_MALE_1
