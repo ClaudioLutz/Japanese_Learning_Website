@@ -1,0 +1,544 @@
+{
+  "kind": "kana",
+  "title": "Hiragana 2 — T-Reihe, N-Reihe und H-Reihe",
+  "description": "Die nächsten 15 Hiragana-Zeichen lernen: die T-Reihe (ta/chi/tsu/te/to), die N-Reihe (na/ni/nu/ne/no) und die H-Reihe (ha/hi/fu/he/ho). Mit Aussprache-Ausnahmen (chi, tsu, fu), Lese-Übungen und Quiz.",
+  "topic": "hiragana_2_tnh",
+  "jlpt_level": 5,
+  "instruction_language": "german",
+  "allow_guest_access": true,
+  "thumbnail_url": "generated/thumbnail_hiragana_2_tnh_20260425_195150.png",
+  "pages": [
+    {
+      "title": "Einführung — Hiragana Teil 2",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Weiter geht's mit den nächsten 15 Zeichen",
+            "content_text": "## Wo stehst du jetzt?\n\nIn **Hiragana 1** hast du bereits 15 Zeichen gelernt: die fünf Vokale 「あいうえお」 (a, i, u, e, o), die K-Reihe 「かきくけこ」 (ka, ki, ku, ke, ko) und die S-Reihe 「さしすせそ」 (sa, shi, su, se, so).\n\n## Was lernst du jetzt?\n\nIn dieser Lektion folgen die **nächsten drei Reihen** — also weitere **15 Zeichen**:\n\n1. Die **T-Reihe**: 「たちつてと」 (ta, chi, tsu, te, to)\n2. Die **N-Reihe**: 「なにぬねの」 (na, ni, nu, ne, no)\n3. Die **H-Reihe**: 「はひふへほ」 (ha, hi, fu, he, ho)\n\n> **Achtung:** Die T-Reihe und die H-Reihe haben **mehrere Ausnahmen**. In der T-Reihe: 「ち」 (chi statt ti) und 「つ」 (tsu statt tu). In der H-Reihe: 「ふ」 (fu statt hu). Das sind die wichtigsten Stolperfallen — wir gehen sie gleich Schritt für Schritt durch.\n\n## Was kannst du danach lesen?\n\nMit deinen bisherigen 15 + diesen 15 = **30 Zeichen** liest du schon Hunderte japanische Wörter, zum Beispiel 「ねこ」 (neko, 'Katze'), 「はな」 (hana, 'Blume') oder 「あなた」 (anata, 'du').\n\n**Tipp:** Sprich jedes neue Zeichen **mehrmals laut aus**, während du es ansiehst. So verknüpfst du Form und Klang im Gedächtnis."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Die 15 neuen Zeichen",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Die T-Reihe (ta, chi, tsu, te, to)",
+            "content_text": "## T-Reihe — mit zwei Ausnahmen\n\nDie T-Reihe folgt dem Muster **T + Vokal**, hat aber **zwei wichtige Ausnahmen**:\n\n- **ta** wie in *Tasche*\n- **chi** ⚠ — nicht 'ti', sondern **'tschi'** wie in *Tschüss*\n- **tsu** ⚠ — nicht 'tu', sondern **'tsu'** (die Zungenspitze klickt einmal kurz hinter den Zähnen)\n- **te** wie in *Tee*\n- **to** wie in *Tor*\n\n> **Merke:** 「ち」 (chi) und 「つ」 (tsu) sind die zwei berühmten Stolperfallen der T-Reihe. Sie kommen in vielen Wörtern vor — z.B. 「ちかい」 (chikai, 'nah') oder 「つき」 (tsuki, 'Mond').\n\n**Mini-Übung:** Lies 「たて」 (tate, 'senkrecht'), 「ちち」 (chichi, 'Vater') und 「とけい」 (tokei, 'Uhr') laut."
+          }
+        },
+        {
+          "content_type": "kana",
+          "data": {
+            "character": "た",
+            "romanization": "ta",
+            "type": "hiragana"
+          }
+        },
+        {
+          "content_type": "kana",
+          "data": {
+            "character": "ち",
+            "romanization": "chi",
+            "type": "hiragana"
+          }
+        },
+        {
+          "content_type": "kana",
+          "data": {
+            "character": "つ",
+            "romanization": "tsu",
+            "type": "hiragana"
+          }
+        },
+        {
+          "content_type": "kana",
+          "data": {
+            "character": "て",
+            "romanization": "te",
+            "type": "hiragana"
+          }
+        },
+        {
+          "content_type": "kana",
+          "data": {
+            "character": "と",
+            "romanization": "to",
+            "type": "hiragana"
+          }
+        },
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Die N-Reihe (na, ni, nu, ne, no)",
+            "content_text": "## N-Reihe — keine Ausnahmen\n\nDie N-Reihe ist **angenehm regelmässig**. Alle fünf Zeichen folgen dem Muster **N + Vokal**:\n\n- **na** wie in *Name*\n- **ni** wie in *nie*\n- **nu** wie in *Nudel* (kurz)\n- **ne** wie in *Nest*\n- **no** wie in *Note*\n\n> **Gute Nachricht:** Wenn du die fünf Vokale beherrschst, kannst du die N-Reihe sofort. Keine Stolperfallen.\n\n**Mini-Übung:** Lies 「なに」 (nani, 'was?'), 「ねこ」 (neko, 'Katze') und 「いぬ」 (inu, 'Hund') laut."
+          }
+        },
+        {
+          "content_type": "kana",
+          "data": {
+            "character": "な",
+            "romanization": "na",
+            "type": "hiragana"
+          }
+        },
+        {
+          "content_type": "kana",
+          "data": {
+            "character": "に",
+            "romanization": "ni",
+            "type": "hiragana"
+          }
+        },
+        {
+          "content_type": "kana",
+          "data": {
+            "character": "ぬ",
+            "romanization": "nu",
+            "type": "hiragana"
+          }
+        },
+        {
+          "content_type": "kana",
+          "data": {
+            "character": "ね",
+            "romanization": "ne",
+            "type": "hiragana"
+          }
+        },
+        {
+          "content_type": "kana",
+          "data": {
+            "character": "の",
+            "romanization": "no",
+            "type": "hiragana"
+          }
+        },
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Die H-Reihe (ha, hi, fu, he, ho)",
+            "content_text": "## H-Reihe — mit einer Ausnahme\n\nDie H-Reihe folgt dem Muster **H + Vokal**, mit **einer Ausnahme**:\n\n- **ha** wie in *Hase*\n- **hi** wie in *Hilfe*\n- **fu** ⚠ — nicht 'hu', sondern ein **weiches 'fu'**, fast wie ein leises Pusten zwischen f und h\n- **he** wie in *Held*\n- **ho** wie in *Hose*\n\n> **Achtung:** 「ふ」 (fu) ist die Stolperfalle der H-Reihe. Es ist **kein scharfes f** wie im deutschen *Fisch*, sondern ein weiches Geräusch, bei dem die Lippen sich nicht ganz schliessen — fast wie ein leises Pusten.\n\n**Mini-Übung:** Lies 「はな」 (hana, 'Blume'), 「ひと」 (hito, 'Person') und 「ふね」 (fune, 'Boot') laut.\n\n## Wörter, die du nun lesen kannst\n\nMit Hiragana 1 + 2 (= 30 Zeichen) liest du schon viele echte japanische Wörter:\n\n- 「たかい」 (takai) — hoch, teuer\n- 「ちいさい」 (chiisai) — klein\n- 「つき」 (tsuki) — Mond\n- 「ねこ」 (neko) — Katze\n- 「いぬ」 (inu) — Hund\n- 「はな」 (hana) — Blume\n- 「ふね」 (fune) — Boot\n- 「ほし」 (hoshi) — Stern"
+          }
+        },
+        {
+          "content_type": "kana",
+          "data": {
+            "character": "は",
+            "romanization": "ha",
+            "type": "hiragana"
+          }
+        },
+        {
+          "content_type": "kana",
+          "data": {
+            "character": "ひ",
+            "romanization": "hi",
+            "type": "hiragana"
+          }
+        },
+        {
+          "content_type": "kana",
+          "data": {
+            "character": "ふ",
+            "romanization": "fu",
+            "type": "hiragana"
+          }
+        },
+        {
+          "content_type": "kana",
+          "data": {
+            "character": "へ",
+            "romanization": "he",
+            "type": "hiragana"
+          }
+        },
+        {
+          "content_type": "kana",
+          "data": {
+            "character": "ほ",
+            "romanization": "ho",
+            "type": "hiragana"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Aussprache & Schreibhinweise",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Worauf du beim Lesen und Schreiben achten musst",
+            "content_text": "## Die drei wichtigsten Ausnahmen\n\nIn diesen 15 Zeichen stecken **drei Ausnahmen**, die du dir aktiv einprägen musst:\n\n1. **「ち」 (chi)** — nicht 'ti', sondern **'tschi'** wie in *Tschüss*\n2. **「つ」 (tsu)** — nicht 'tu', sondern **'tsu'** mit einem kurzen Klicken der Zunge\n3. **「ふ」 (fu)** — nicht 'hu', sondern ein **weiches 'fu'** ohne festen Lippenschluss\n\n> **Eselsbrücke:** Jedes japanische Reihen-Schema hat **eine oder zwei Ausnahmen**. Wenn du sie früh erkennst, fallen sie dir nicht mehr auf — sie werden Teil deines Lesens.\n\n## Verwechslungsgefahr — sehr ähnliche Zeichen\n\nDiese Paare sehen sich auf den ersten Blick **fast gleich** aus. Schau genau hin:\n\n- **「ね」 (ne) vs. 「れ」 (re) vs. 「わ」 (wa)** — alle drei haben einen senkrechten Strich links und einen Schwung rechts. Re und Wa lernst du erst später, aber merke dir den **kleinen Schwanz unten rechts** bei ne\n- **「ぬ」 (nu) vs. 「め」 (me)** — me lernst du erst später; nu hat **eine Schleife mehr**\n- **「は」 (ha) vs. 「ほ」 (ho)** — ho hat **einen zusätzlichen waagerechten Strich** oben\n- **「ち」 (chi) vs. 「さ」 (sa)** — siehe Hiragana 1: chi ist **gespiegelt zu sa**\n- **「つ」 (tsu) vs. 「う」 (u)** — u hat einen kleinen Strich oben, tsu ist **eine reine Wellenlinie**\n\n> **Lerntipp:** Schreibe jedes neue Zeichen **mindestens fünfmal** mit der Hand. Die Hand merkt sich Form und Reihenfolge besser als das Auge allein.\n\n## Strichfolge — kurze Wiederholung\n\nWie in Hiragana 1 gilt: **von oben nach unten, von links nach rechts**. Bei den meisten neuen Zeichen sind es **2 bis 4 Striche**:\n\n- 「つ」 (tsu) und 「し」 (shi) — nur **ein Strich**\n- 「と」 (to) und 「て」 (te) — **zwei Striche**\n- 「な」 (na), 「ほ」 (ho), 「ふ」 (fu) — **vier Striche**\n\n## Tipp zum Üben\n\nLies jeden Tag **drei einfache Wörter laut**, ohne auf die Romaji zu schauen. Schon nach einer Woche wirst du die Zeichen automatisch erkennen — versprochen."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Übung",
+      "page_type": "quiz_carousel",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Teste dein Wissen\n\nGleich kommen **zwölf Fragen** zu den 15 neuen Hiragana, die du gerade gelernt hast.\n\n- **Multiple-Choice:** Welche Romaji-Lesung passt zum Zeichen?\n- **Richtig/Falsch:** Stimmt die angegebene Lesung?\n- **Matching:** Verbinde Zeichen mit Lesung\n\n> **Tipp:** Konzentriere dich besonders auf die drei Ausnahmen 「ち」 (chi), 「つ」 (tsu) und 「ふ」 (fu). Du kannst die Übung beliebig oft wiederholen."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie liest man 「ち」?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Eine der berühmten Ausnahmen der T-Reihe — nicht 'ti'.",
+              "explanation": "「ち」 wird **chi** gelesen (gesprochen wie 'tschi' in 'Tschüss'). Das ist die erste Stolperfalle der T-Reihe.",
+              "options": [
+                {
+                  "option_text": "chi",
+                  "is_correct": true,
+                  "feedback": "Richtig! 「ち」 = chi (mit 'tsch'-Laut)."
+                },
+                {
+                  "option_text": "ti",
+                  "is_correct": false,
+                  "feedback": "Klassische Falle — 「ち」 wird **chi** gesprochen, nicht ti."
+                },
+                {
+                  "option_text": "shi",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「し」 (shi) — ähnliche Form, aber spiegelverkehrt."
+                },
+                {
+                  "option_text": "sa",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「さ」 (sa) — das Spiegelbild von chi."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welches Zeichen wird **tsu** gelesen?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Die zweite Ausnahme der T-Reihe — eine reine Wellenlinie.",
+              "explanation": "「つ」 = tsu, eine einzige geschwungene Linie. Nicht zu verwechseln mit 「う」 (u).",
+              "options": [
+                {
+                  "option_text": "「た」 (ta)",
+                  "is_correct": false,
+                  "feedback": "「た」 ist ta — der erste Buchstabe der T-Reihe."
+                },
+                {
+                  "option_text": "「て」 (te)",
+                  "is_correct": false,
+                  "feedback": "「て」 ist te — zwei kurze Striche, kein Schwung."
+                },
+                {
+                  "option_text": "「つ」 (tsu)",
+                  "is_correct": true,
+                  "feedback": "Richtig! 「つ」 = tsu."
+                },
+                {
+                  "option_text": "「う」 (u)",
+                  "is_correct": false,
+                  "feedback": "「う」 ist u — ähnlich, aber mit einem kleinen Strich oben."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie liest man 「ふ」?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Die Ausnahme der H-Reihe — kein scharfes f.",
+              "explanation": "「ふ」 = fu, ein weicher Laut zwischen f und h. Nicht 'hu' wie zu erwarten wäre.",
+              "options": [
+                {
+                  "option_text": "fu",
+                  "is_correct": true,
+                  "feedback": "Richtig! 「ふ」 = fu."
+                },
+                {
+                  "option_text": "hu",
+                  "is_correct": false,
+                  "feedback": "Klassische Falle — die H-Reihe hat hier eine Ausnahme: fu, nicht hu."
+                },
+                {
+                  "option_text": "ho",
+                  "is_correct": false,
+                  "feedback": "「ほ」 wäre ho — hat einen Querstrich oben."
+                },
+                {
+                  "option_text": "ha",
+                  "is_correct": false,
+                  "feedback": "「は」 wäre ha — der erste Buchstabe der H-Reihe."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welche Romaji-Lesung passt zu 「ね」?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "N-Reihe, viertes Zeichen — kein Stolperfall.",
+              "explanation": "「ね」 = ne, gesprochen wie 'ne' in 'Nest'. Du kennst es aus 「ねこ」 (neko, 'Katze').",
+              "options": [
+                {
+                  "option_text": "ne",
+                  "is_correct": true,
+                  "feedback": "Richtig! 「ね」 = ne."
+                },
+                {
+                  "option_text": "no",
+                  "is_correct": false,
+                  "feedback": "「の」 wäre no — eine geschlossene Schleife."
+                },
+                {
+                  "option_text": "nu",
+                  "is_correct": false,
+                  "feedback": "「ぬ」 wäre nu — sieht ähnlich aus, hat aber eine Schleife."
+                },
+                {
+                  "option_text": "na",
+                  "is_correct": false,
+                  "feedback": "「な」 wäre na — der erste Buchstabe der N-Reihe."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welches Zeichen ist **ho**?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "H-Reihe, letztes Zeichen — fast wie ha, aber mit einem Strich mehr.",
+              "explanation": "「ほ」 = ho. Unterscheidet sich von 「は」 (ha) durch den **zusätzlichen waagerechten Strich** oben.",
+              "options": [
+                {
+                  "option_text": "「は」",
+                  "is_correct": false,
+                  "feedback": "「は」 ist ha — fehlt der obere Querstrich."
+                },
+                {
+                  "option_text": "「ひ」",
+                  "is_correct": false,
+                  "feedback": "「ひ」 ist hi — eine geschwungene Form."
+                },
+                {
+                  "option_text": "「ほ」",
+                  "is_correct": true,
+                  "feedback": "Richtig! 「ほ」 = ho."
+                },
+                {
+                  "option_text": "「へ」",
+                  "is_correct": false,
+                  "feedback": "「へ」 ist he — eine kleine Bergform."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie liest man das Wort 「ねこ」?",
+              "difficulty_level": 2,
+              "points": 2,
+              "hint": "ne + ko — ein sehr beliebtes Tier in Japan.",
+              "explanation": "「ね」 (ne) + 「こ」 (ko) = **neko** — Katze auf Japanisch.",
+              "options": [
+                {
+                  "option_text": "neko",
+                  "is_correct": true,
+                  "feedback": "Richtig! 「ねこ」 = neko (Katze)."
+                },
+                {
+                  "option_text": "neku",
+                  "is_correct": false,
+                  "feedback": "Fast — aber 「こ」 wird ko gesprochen, nicht ku."
+                },
+                {
+                  "option_text": "nuko",
+                  "is_correct": false,
+                  "feedback": "「ぬ」 wäre nu — hier steht aber 「ね」 (ne)."
+                },
+                {
+                  "option_text": "noko",
+                  "is_correct": false,
+                  "feedback": "「の」 wäre no — hier steht aber 「ね」 (ne)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie liest man das Wort 「ふね」?",
+              "difficulty_level": 2,
+              "points": 2,
+              "hint": "Achtung — die H-Reihe hat eine Ausnahme.",
+              "explanation": "「ふ」 (fu) + 「ね」 (ne) = **fune** — Boot auf Japanisch.",
+              "options": [
+                {
+                  "option_text": "fune",
+                  "is_correct": true,
+                  "feedback": "Richtig! 「ふね」 = fune (Boot)."
+                },
+                {
+                  "option_text": "hune",
+                  "is_correct": false,
+                  "feedback": "Klassische Falle — 「ふ」 ist fu, nicht hu."
+                },
+                {
+                  "option_text": "funo",
+                  "is_correct": false,
+                  "feedback": "「の」 wäre no — hier steht aber 「ね」 (ne)."
+                },
+                {
+                  "option_text": "tsune",
+                  "is_correct": false,
+                  "feedback": "「つ」 wäre tsu — hier steht aber 「ふ」 (fu)."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Das Zeichen 「ち」 wird **'ti'** gelesen.",
+              "difficulty_level": 2,
+              "explanation": "Falsch — 「ち」 wird **'chi'** gesprochen (wie 'tschi'). Das ist die erste Ausnahme der T-Reihe.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nein — 「ち」 wird 'chi' gesprochen, nicht 'ti'."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt — 「ち」 ist 'chi', nicht 'ti'."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Die N-Reihe 「なにぬねの」 hat **keine** Ausspracheausnahmen.",
+              "difficulty_level": 1,
+              "explanation": "Richtig — die N-Reihe ist regelmässig: na, ni, nu, ne, no. Keine Stolperfalle.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt — die N-Reihe ist die einzige der drei neuen Reihen ohne Ausnahme."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — die N-Reihe folgt dem regulären N+Vokal-Muster ohne Ausnahme."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「つ」 wird **'tsu'** gelesen, nicht 'tu'.",
+              "difficulty_level": 1,
+              "explanation": "Richtig — 「つ」 = tsu, mit einem kurzen Klicken der Zungenspitze hinter den Zähnen.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt — 「つ」 ist tsu, nicht tu."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — 「つ」 ist die zweite Ausnahme der T-Reihe und wird tsu gesprochen."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde jedes Zeichen der T-Reihe mit seiner Lesung.",
+              "difficulty_level": 2,
+              "points": 2,
+              "explanation": "Die T-Reihe hat zwei Ausnahmen: 「ち」 (chi) und 「つ」 (tsu) — die anderen drei folgen dem regulären T+Vokal-Muster.",
+              "options": [
+                {
+                  "option_text": "「た」",
+                  "is_correct": true,
+                  "feedback": "ta"
+                },
+                {
+                  "option_text": "「ち」",
+                  "is_correct": true,
+                  "feedback": "chi"
+                },
+                {
+                  "option_text": "「つ」",
+                  "is_correct": true,
+                  "feedback": "tsu"
+                },
+                {
+                  "option_text": "「て」",
+                  "is_correct": true,
+                  "feedback": "te"
+                },
+                {
+                  "option_text": "「と」",
+                  "is_correct": true,
+                  "feedback": "to"
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde jedes Zeichen der N- und H-Reihe mit seiner Lesung.",
+              "difficulty_level": 3,
+              "points": 2,
+              "explanation": "Wenn du diese fünf flüssig kannst, beherrschst du auch die Ausnahme 「ふ」 (fu).",
+              "options": [
+                {
+                  "option_text": "「な」",
+                  "is_correct": true,
+                  "feedback": "na"
+                },
+                {
+                  "option_text": "「の」",
+                  "is_correct": true,
+                  "feedback": "no"
+                },
+                {
+                  "option_text": "「は」",
+                  "is_correct": true,
+                  "feedback": "ha"
+                },
+                {
+                  "option_text": "「ふ」",
+                  "is_correct": true,
+                  "feedback": "fu"
+                },
+                {
+                  "option_text": "「ほ」",
+                  "is_correct": true,
+                  "feedback": "ho"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Zusammenfassung & nächste Schritte",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Was du jetzt kannst",
+            "content_text": "## Geschafft — 30 Hiragana insgesamt\n\nMit dieser Lektion kennst du nun:\n\n- Aus **Hiragana 1**: Vokale + K-Reihe + S-Reihe (15 Zeichen)\n- Aus **Hiragana 2**: T-Reihe + N-Reihe + H-Reihe (15 weitere Zeichen)\n- **Insgesamt 30 von 46** Hiragana-Grundzeichen — fast zwei Drittel!\n\n## Die wichtigsten Ausnahmen im Überblick\n\nDiese **vier Stolperfallen** musst du dir besonders merken:\n\n1. **「し」 (shi)** — nicht 'si' (aus Hiragana 1)\n2. **「ち」 (chi)** — nicht 'ti'\n3. **「つ」 (tsu)** — nicht 'tu'\n4. **「ふ」 (fu)** — nicht 'hu'\n\n> **Eselsbrücke:** Alle vier Ausnahmen liegen am **Anfang oder in der Mitte** der jeweiligen Reihe — nie am Ende.\n\n## Wörter, die du jetzt lesen kannst\n\nMit deinen 30 Zeichen liest du schon viele echte japanische Wörter:\n\n- 「ねこ」 (neko) — Katze\n- 「いぬ」 (inu) — Hund\n- 「はな」 (hana) — Blume\n- 「ふね」 (fune) — Boot\n- 「ほし」 (hoshi) — Stern\n- 「つき」 (tsuki) — Mond\n- 「あなた」 (anata) — du\n- 「なに」 (nani) — was?\n- 「ちかい」 (chikai) — nah\n- 「とけい」 (tokei) — Uhr\n\n> **Probier es:** Lies jedes Wort **laut**, ohne auf die Romaji zu schauen. Schaffst du fünf hintereinander ohne Fehler, sitzt die Lektion.\n\n## Lerntipps für die nächsten Tage\n\n1. **Schreibe jeden Tag** alle 30 Zeichen einmal mit der Hand — zehn Minuten reichen\n2. **Lies kurze Wörter laut**, nicht nur einzelne Zeichen\n3. **Wiederhole das Quiz**, bis du alle Fragen ohne Hilfe schaffst\n4. **Übe gezielt die vier Ausnahmen** (shi, chi, tsu, fu) — sie kommen in fast jedem japanischen Satz vor\n\n## Was kommt als Nächstes?\n\n- **Hiragana 3** — die M-Reihe 「まみむめも」, Y-Reihe 「やゆよ」, R-Reihe 「らりるれろ」, W-Reihe 「わを」 und der Sonderling 「ん」\n- Danach die **Diakritika** (が/ざ/だ/ば/ぱ) — kleine Striche, die einen Konsonanten weicher oder härter machen\n- Und schliesslich die **Yōon** (きゃ/しゃ/…) — kombinierte Silben\n\nWenn du Hiragana komplett kannst, beginnst du mit den ersten **Vokabel-Lektionen** auf N5-Niveau."
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -47,6 +47,32 @@ Selbstverbesserndes Log. Wird vor jedem Run gelesen, nach jedem Run angehängt.
 
 <!-- Neuste Einträge oben, älteste unten. -->
 
+## 2026-04-25 21:55 — Hiragana 2 — T-Reihe, N-Reihe und H-Reihe (Lesson ID 147)
+
+### Erfolge — zweite Schreibsystem-Lektion, Pipeline ohne Korrekturschleifen
+
+- **5 Pages** (Einführung / Die 15 neuen Zeichen / Aussprache & Schreibhinweise / Übung / Zusammenfassung), **15 neue Hiragana** (T-Reihe + N-Reihe + H-Reihe = たちつてと + なにぬねの + はひふへほ), **12 Quiz-Fragen** (7 MC + 3 TF + 2 Matching) — alle 3 erlaubten Typen, jeder ≥2×.
+- **Bestandsschutz griff sofort:** UNIQUE-Constraint auf `Kana.character` deduppte bei den 15 neuen Zeichen — keine bestehende ID wurde überschrieben.
+- **Pipeline lief in einem Rutsch durch:** validate → images (1 Thumb, 0 Vokabel-Icons) → insert (atomar, Lesson 147) → text-audio (7 MP3s für alle Prosa-Pages). Keine Korrekturschleife nötig — die §2b-Regeln und §3-Constraints sind nach Lesson 146 stabil.
+- **Modul-Zuweisung:** `category_id=30` (`n5-hiragana`), `order_index=2` (direkt hinter Hiragana 1), `is_published=true`.
+- **Playwright-Verifikation:** 0 Console-Errors, 5 Pages in Sidebar, 7 Audio-Player (für alle 7 Prosa-text-Blöcke), `[Deck] Found 5 carousel pages` + `Page 1: 15 flip cards`. Page 2 zeigt das Deck-Karussell korrekt (eine Karte sichtbar, Counter "0/15 gelernt, 15 verbleibend"). Page 4 Quiz-Intro mit Markdown-Hierarchie + Login-Gate (Guest erwartet).
+- **Drei didaktische Audio-Player auf Page 2** — jede Reihe (T/N/H) hat ihren eigenen text-Block mit eigenem MP3, was die Aussprache-Erklärung pro Reihe direkt anhörbar macht. User-Aufwand pro Reihe: ein Klick.
+
+### Probleme / Erkenntnisse
+
+1. **Kana-Pipeline ist nach Lesson 146 produktionsreif.** Lesson 147 lief ohne einzige manuelle Korrektur durch — Validator akzeptierte den Draft beim ersten Mal (nur thumbnail_url-Fehler vor `images`-Schritt, das ist erwartetes Verhalten). Beweist die §2b-Vergleichstabelle als belastbare Spezifikation.
+2. **Zwei Pages als didaktischer Multi-Audio-Block** funktioniert sauber — drei text-Blöcke auf Page 2 (T-Reihe / N-Reihe / H-Reihe) bekommen drei separate text-audio-MP3s, jeder Block ist einzeln anhörbar. Das skaliert für Hiragana 3 (M/Y/R/W + ん) genauso, oder sogar für Katakana-Lektionen mit 5 Reihen pro Lektion.
+3. **Wiederverwendbares Pattern:** Hiragana-Lektionen folgen einem strikten Schablonen-Format (1 Einführungs-Page + 1 Zeichen-Page mit verschachtelten text+kana-Blöcken + 1 Schreib/Aussprache-Page + 1 Quiz + 1 Zusammenfassung). Hiragana 3 kann praktisch durch Variabel-Substitution (Reihen-Namen + Ausnahmen + neue Beispielwörter) aus dem 147-Draft generiert werden — minimaler kognitiver Aufwand pro Folge-Lektion.
+4. **Kosten pro Kana-Lektion:** 1 DALL-E-Thumbnail (~5 Rappen) + 7 TTS-MP3s (~1 Rappen) = ~6 Rappen total. Vocabulary-Lektion zum Vergleich: ~50 Rappen (Slideshow + Vocab-Icons). Kana-Lektionen sind die billigsten in der Pipeline.
+5. **Quiz-Mix bestätigt sich als robust** — die 12 Fragen (7 MC + 3 TF + 2 Matching) decken Lesen einzelner Zeichen, Erkennen von Ausnahmen, und Lesen kompletter Wörter ab. Selbe Verteilung wie Lesson 146 → Vorlage etabliert.
+
+### Aktuelle Regeln (Ergänzung ab diesem Run)
+
+33. **Schreibsystem-Lektionen mit didaktischer Reihen-Aufteilung sollten pro Reihe einen eigenen text-Block haben** (Mini-Erklärung + Mini-Übung). Vorteile: pro-Reihe-Audio via text-audio, kürzere Einzelblöcke (besser scannbar), klare visuelle Trennung. Pattern: text(Reihe1-Erklärung) → kana×5 (Reihe1) → text(Reihe2) → kana×5 (Reihe2) → text(Reihe3) → kana×5 (Reihe3).
+34. **Die Hiragana-Lektionsschablone ist stabil** — gleiche Page-Struktur, gleicher Quiz-Mix, gleiches Modul (n5-hiragana). Folge-Lektionen Hiragana 3 (M/Y/R/W + ん), Diakritika und Yōon können direkt nach diesem Muster generiert werden.
+
+---
+
 ## 2026-04-25 21:40 — Hiragana 1 — Vokale, K-Reihe und S-Reihe (Lesson ID 146)
 
 ### Erfolge — erste Schreibsystem-Lektion
