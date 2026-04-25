@@ -690,7 +690,7 @@ class UserLessonProgress(db.Model):
 class LessonPurchase(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey('user.id'), nullable=False)
-    lesson_id: Mapped[int] = mapped_column(Integer, ForeignKey('lesson.id', ondelete='CASCADE'), nullable=False)
+    lesson_id: Mapped[int] = mapped_column(Integer, ForeignKey('lesson.id', ondelete='RESTRICT'), nullable=False)
     price_paid: Mapped[float] = mapped_column(db.Float, nullable=False)
     purchased_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     provider_transaction_id: Mapped[int] = mapped_column(BigInteger, nullable=True, index=True)
@@ -698,7 +698,8 @@ class LessonPurchase(db.Model):
 
     # Relationships
     user: Mapped['User'] = relationship('User', backref='lesson_purchases')
-    lesson: Mapped['Lesson'] = relationship('Lesson', backref=db.backref('purchases', cascade='all, delete-orphan'))
+    # Hinweis: ORM-Cascade entfernt — DB-FK ist RESTRICT, Loeschungen werden geblockt.
+    lesson: Mapped['Lesson'] = relationship('Lesson', backref=db.backref('purchases'))
 
     __table_args__ = (db.UniqueConstraint('user_id', 'lesson_id'),)
 
@@ -736,13 +737,14 @@ class Course(db.Model):
 class CoursePurchase(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey('user.id'), nullable=False)
-    course_id: Mapped[int] = mapped_column(Integer, ForeignKey('course.id', ondelete='CASCADE'), nullable=False)
+    course_id: Mapped[int] = mapped_column(Integer, ForeignKey('course.id', ondelete='RESTRICT'), nullable=False)
     price_paid: Mapped[float] = mapped_column(db.Float, nullable=False)
     purchased_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     provider_transaction_id: Mapped[int] = mapped_column(BigInteger, nullable=True, index=True)
     transaction_state: Mapped[str] = mapped_column(String(50), nullable=True)
 
-    course: Mapped['Course'] = relationship('Course', backref=db.backref('purchases', cascade='all, delete-orphan'))
+    # Hinweis: ORM-Cascade entfernt — DB-FK ist RESTRICT, Loeschungen werden geblockt.
+    course: Mapped['Course'] = relationship('Course', backref=db.backref('purchases'))
 
     __table_args__ = (db.UniqueConstraint('user_id', 'course_id'),)
 

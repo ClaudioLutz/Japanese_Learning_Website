@@ -13,10 +13,23 @@ import argparse
 import sys
 import io
 
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+# UTF-8 stdout-Wrapping nur beim direkten Script-Aufruf (nicht beim Import in
+# Tests, sonst killt es pytest's stdout-Capture).
+if __name__ == '__main__':
+    try:
+        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    except (AttributeError, ValueError):
+        pass
 
 import psycopg2
-from psycopg2.extras import execute_values
+
+from scripts.sync_safety import (
+    backup_user_tables,
+    collect_snapshot,
+    detect_drift,
+    find_blocking_user_data,
+    load_snapshot,
+)
 
 # Content-Tabellen in Reihenfolge (Foreign-Key-Abhängigkeiten beachten)
 CONTENT_TABLES = [
@@ -48,8 +61,13 @@ def get_columns(cur, table_name):
     return [row[0] for row in cur.fetchall()]
 
 
-def sync_table(local_cur, cloud_cur, table_info):
-    """Synchronisiert eine Tabelle via UPSERT."""
+def sync_table(local_cur, cloud_cur, table_info, allow_user_data_delete=False):
+    """Synchronisiert eine Tabelle via UPSERT.
+
+    allow_user_data_delete=False: Wenn ein DELETE auf Cloud-Zeilen User-Daten
+    referenziert (siehe DELETION_BLOCKERS), wird ein Fehler geworfen statt
+    blind zu loeschen — verhindert stillen Datenverlust bei Race-Conditions.
+    """
     table = table_info['name']
     pk = table_info['pk']
 
@@ -103,7 +121,6 @@ def sync_table(local_cur, cloud_cur, table_info):
 
     # Zeilen auf Cloud einfügen/aktualisieren
     inserted = 0
-    updated = 0
     for row in local_rows:
         cloud_cur.execute(sql, row)
         if cloud_cur.rowcount > 0:
@@ -121,6 +138,33 @@ def sync_table(local_cur, cloud_cur, table_info):
     to_delete = cloud_pks - local_pks
     deleted = 0
     if to_delete:
+        # Kaufschutz: Pruefen ob User-Daten auf zu loeschende Cloud-IDs zeigen.
+        # Nur fuer Tabellen mit single-column PK (User-FKs zeigen nie auf
+        # composite PKs in unserem Schema).
+        if not isinstance(pk, list):
+            simple_ids = {row[0] for row in to_delete}
+            blockers = find_blocking_user_data(cloud_cur, table, simple_ids)
+            if blockers and not allow_user_data_delete:
+                msg_lines = [
+                    f"\nABBRUCH: Lokales Sync wuerde {len(to_delete)} Cloud-Zeile(n) "
+                    f"in '{table}' loeschen, auf die User-Daten zeigen:"
+                ]
+                for user_table, fk_col, ref_id, cnt in blockers:
+                    msg_lines.append(
+                        f"  - {table}.id={ref_id}: {cnt} Eintrag/Eintraege in "
+                        f"{user_table}.{fk_col}"
+                    )
+                msg_lines.append(
+                    "\nMoegliche Ursachen:"
+                    "\n  1. Cloud-Admin hat seit dem letzten Pull neue Inhalte angelegt."
+                    "\n  2. Lokale Inhalte wurden geloescht, aber Produktion hat User-Daten."
+                    "\nAktionen:"
+                    "\n  - Erneut /sync-cloud-db (Cloud->Lokal) ausfuehren, dann pushen."
+                    "\n  - Oder explizit --force-delete-user-data setzen "
+                    "(Datenverlust akzeptiert)."
+                )
+                raise RuntimeError("\n".join(msg_lines))
+
         for pk_val in to_delete:
             if isinstance(pk, list):
                 where = ' AND '.join(
@@ -170,6 +214,13 @@ def main():
     parser.add_argument('--cloud-db', default='japanese_learning')
     parser.add_argument('--dry-run', action='store_true',
                         help='Nur anzeigen, nicht schreiben')
+    parser.add_argument('--skip-drift-check', action='store_true',
+                        help='Drift-Check ueberspringen (NICHT empfohlen)')
+    parser.add_argument('--skip-backup', action='store_true',
+                        help='User-Daten-Backup ueberspringen (NICHT empfohlen)')
+    parser.add_argument('--force-delete-user-data', action='store_true',
+                        help='Cloud-Zeilen auch dann loeschen, wenn User-Daten '
+                             'darauf zeigen (Datenverlust akzeptiert)')
     args = parser.parse_args()
 
     print("Verbinde mit lokaler DB...")
@@ -189,6 +240,44 @@ def main():
     cloud_conn.autocommit = False
     cloud_cur = cloud_conn.cursor()
 
+    # === DRIFT-CHECK ===
+    # Vergleicht aktuellen Cloud-Stand mit dem Snapshot vom letzten Pull.
+    # Wenn Cloud sich seit dem Pull geaendert hat (Admin-Edit), wuerde der
+    # Push diese Aenderungen ueberschreiben oder Loeschen ausloesen.
+    if not args.skip_drift_check:
+        print("\n--- Drift-Check ---")
+        snapshot_data = load_snapshot()
+        if not snapshot_data:
+            print("  KEIN Cloud-Snapshot gefunden (.last_cloud_sync.json).")
+            print("  Bitte erst Cloud->Lokal synchronisieren:")
+            print("    python scripts/sync_from_cloud.py --cloud-host ... --cloud-password ...")
+            print("  Oder mit --skip-drift-check ueberspringen (NICHT empfohlen).")
+            sys.exit(2)
+
+        snap_tables = [t['name'] for t in CONTENT_TABLES]
+        current_cloud = collect_snapshot(cloud_cur, snap_tables)
+        diffs = detect_drift(snapshot_data['snapshot'], current_cloud)
+        if diffs:
+            print("  WARNUNG: Cloud hat sich seit dem letzten Pull geaendert!")
+            print(f"  Snapshot vom: {snapshot_data['taken_at']}")
+            for d in diffs:
+                print(d)
+            print("\n  Empfehlung: Cloud->Lokal erneut ziehen, dann pushen.")
+            print("  Mit --skip-drift-check ueberspringen falls bewusst.")
+            sys.exit(2)
+        print(f"  OK — Cloud-Stand identisch zum Snapshot vom "
+              f"{snapshot_data['taken_at']}")
+
+    # === USER-DATEN-BACKUP ===
+    # pg_dump aller User-Tabellen vor jedem Push — Insurance gegen Bugs.
+    if not args.skip_backup and not args.dry_run:
+        print("\n--- User-Daten-Backup (Cloud) ---")
+        backup_user_tables(
+            host=args.cloud_host, port=args.cloud_port,
+            user=args.cloud_user, password=args.cloud_password,
+            db=args.cloud_db, label='cloud_pre_push',
+        )
+
     print("\n--- Content-Sync (UPSERT) ---\n")
     print(f"{'Tabelle':<22} {'Lokal':>6} {'Upsert':>7} {'Gelöscht':>9}")
     print("-" * 48)
@@ -198,7 +287,8 @@ def main():
     try:
         for table_info in CONTENT_TABLES:
             rows, upserted, deleted = sync_table(
-                local_cur, cloud_cur, table_info
+                local_cur, cloud_cur, table_info,
+                allow_user_data_delete=args.force_delete_user_data,
             )
             total_upsert += upserted
             total_deleted += deleted

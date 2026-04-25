@@ -14,9 +14,16 @@ import argparse
 import sys
 import io
 
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+# UTF-8 stdout-Wrapping nur beim direkten Script-Aufruf (nicht beim Import).
+if __name__ == '__main__':
+    try:
+        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    except (AttributeError, ValueError):
+        pass
 
 import psycopg2
+
+from scripts.sync_safety import collect_snapshot, write_snapshot
 
 # Content-Tabellen in Reihenfolge (Foreign-Key-Abhaengigkeiten beachten)
 # Gleiche Reihenfolge wie sync_content_upsert.py
@@ -231,6 +238,12 @@ def main():
         else:
             local_conn.commit()
             print(f"\nErfolgreich: {total_upsert} upserts, {total_deleted} geloescht.")
+
+            # Cloud-Snapshot fuer Drift-Detection beim naechsten Push speichern.
+            print("\nSchreibe Cloud-Snapshot fuer Drift-Detection...")
+            snap_tables = [t['name'] for t in CONTENT_TABLES]
+            cloud_snap = collect_snapshot(cloud_cur, snap_tables)
+            write_snapshot(cloud_snap, source_host=args.cloud_host)
 
     except Exception as e:
         local_conn.rollback()

@@ -24,6 +24,20 @@ Ein blindes Lokal→Cloud wuerde diese Aenderungen ueberschreiben.
 - **KEIN TRUNCATE** — Verwende IMMER die UPSERT-Scripts.
 - **Im Zweifel nachfragen** — Lieber einmal weniger aendern als User-Daten verlieren.
 
+### Eingebaute Schutzmechanismen (seit Audit 2026-04-25)
+
+Das Skript `sync_content_upsert.py` ist mehrfach abgesichert. Schutzschichten in der Reihenfolge ihrer Aktivierung:
+
+1. **Drift-Check** — Vergleicht den aktuellen Cloud-Stand (Count, MAX(id), MAX(updated_at) pro Content-Tabelle) mit dem Snapshot, der beim letzten Cloud→Lokal-Pull in `.last_cloud_sync.json` abgelegt wurde. Bei Abweichung (z.B. Admin hat zwischenzeitlich auf der Live-Seite editiert): **Abbruch mit Aufforderung, erneut zu pullen**.
+2. **User-Daten-Backup** — Vor jedem Push werden alle User-Tabellen (`user`, `user_lesson_progress`, `user_quiz_answer`, `card_review_state`, `review_log`, `user_srs_settings`, `user_achievement`, `daily_review_aggregate`, `lesson_purchase`, `course_purchase`, `payment_transaction`) per `pg_dump` nach `backups/user_data/cloud_pre_push_<timestamp>.sql` gesichert.
+3. **Kaufschutz / Deletion-Blocker** — Bevor das Skript eine Cloud-Content-Zeile loescht (weil sie lokal fehlt), prueft es ob User-Daten darauf zeigen (`user_lesson_progress`, `user_quiz_answer`, `card_review_state`, `review_log`, `lesson_purchase`, `course_purchase`). Bei Treffer: **Abbruch mit Liste der betroffenen IDs**.
+4. **DB-FK RESTRICT** — Migration `d8e2c1a4f6b3` hat die Purchase-FKs von `ON DELETE CASCADE` auf `ON DELETE RESTRICT` umgestellt. Selbst wenn alle anderen Schutzschichten umgangen werden, blockt die DB jeden DELETE auf einer Lesson/Course mit aktiven Kaeufen.
+
+Override-Flags (nur fuer Notfaelle):
+- `--skip-drift-check` — Drift ignorieren (z.B. wenn man bewusst Cloud-Aenderungen ueberschreiben will)
+- `--skip-backup` — kein Backup erstellen (z.B. wenn pg_dump fehlt)
+- `--force-delete-user-data` — Inhalte trotz User-FK loeschen (Datenverlust akzeptiert; macht den Sync nur erfolgreich, wenn FK-Constraints es erlauben)
+
 ### Diese Tabellen werden NIEMALS veraendert (User-Daten):
 - `user` — Produktions-User
 - `user_lesson_progress` — Lernfortschritt
@@ -97,6 +111,7 @@ Das Script:
 - Fuehrt UPSERT in die lokale DB aus
 - Loescht lokale Zeilen die auf Cloud nicht mehr existieren
 - Aktualisiert Sequences und Alembic-Version
+- **Schreibt nach erfolgreichem Pull `.last_cloud_sync.json`** (Snapshot fuer Drift-Detection beim naechsten Push)
 - Bei Fehler: automatischer Rollback
 
 ### 6. SCHRITT B: Lokal → Cloud

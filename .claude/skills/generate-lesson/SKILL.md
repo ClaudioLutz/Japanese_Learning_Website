@@ -17,6 +17,7 @@ Erstelle eine **komplette, sofort nutzbare Lektion** für deutschsprachige Anfä
 
 Bevor du überhaupt Content schreibst:
 
+0. **Cloud-Sync-Status prüfen.** Liegt `.last_cloud_sync.json` vor und ist der `taken_at`-Timestamp <12h alt? Wenn nein (oder Datei fehlt): Empfehle dem User vor dem Generieren einen `/sync-cloud-db` Cloud→Lokal-Pull. Grund: Der spätere Push vergleicht den lokalen Stand gegen diesen Snapshot — ohne aktuellen Snapshot scheitert der Push am Drift-Check (seit Audit 2026-04-25). Wenn der User explizit ohne vorherigen Pull arbeiten will, OK — er weiss dann, dass beim Push ein Drift-Fehler kommen kann.
 1. **Lies [learnings.md](learnings.md).** Dort steht, was in vorherigen Runs geklappt hat und was nicht. Wende diese Regeln strikt an.
 2. **Lies [improve-jpl/SKILL.md](../improve-jpl/SKILL.md).** Die Produkt-Vision (Anfänger-First mit Mayuko-Fachreview, JLPT-Leitprinzip §1.5, Nicht-Ziele) gilt uneingeschränkt.
    - **Coverage prüfen** vor Themen-Wahl: `python .claude/skills/generate-lesson/pipeline.py coverage 5 --show-missing 30` zeigt fehlende N5-Vokabeln/Kanji. Themen so wählen, dass möglichst viele fehlende Items abgedeckt werden, statt schon vorhandene zu doppeln.
