@@ -333,7 +333,12 @@ Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
        Rendert pro `LessonContent.text` eine MP3 (Google Cloud TTS, DE+JA
        gemischt, Sprach-Splitter):
        - JA-Segmente (Hira/Kata/Kanji)  → ja-JP-Neural2-B (weiblich)
-       - DE-Segmente (Lateinschrift)    → de-DE-Neural2-F (weiblich)
+       - DE-Segmente (Lateinschrift)    → de-DE-Neural2-G (weiblich)
+       ⚠️ **Voice-Namen NIE raten** — Google liefert silently eine Default-
+       Voice wenn der `name` nicht existiert (z.B. de-DE-Neural2-F existiert
+       nicht, F ist en-US). Vor jedem neuen Voice-Namen:
+       `curl 'https://texttospeech.googleapis.com/v1/voices?languageCode=de-DE&key=$GOOGLE_API_KEY'`
+       und Existenz prüfen, sonst geistert silent eine andere Stimme rein.
        Markdown wird vor TTS gestrippt: `**bold**`, `## H2`, Listen, `> quote`,
        `code`, `(romaji)` direkt nach JP-Zeichen — Ohren brauchen sie nicht.
        Skip-Heuristik: Dialog-Bloecke (Speaker-Format) werden uebersprungen
@@ -350,6 +355,23 @@ Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
        den ganzen Text inkl. Deutsch — klang akzentbehaftet. Splitter loest das.
        Kosten: ~1 Rappen pro Lektion (4 Pages * ~5000 Zeichen Google TTS).
        Dauer: ~30 s pro Lektion (sequenzielle Segment-Calls).
+
+       ⚠️ TEMPLATE-FALLE 2 (lesson_view.html ~Z.683 + Z.918):
+       (a) Der Audio-Player hat `<audio src="/static/uploads/...">`. Das CSS
+           [.content-item:has(img[src*="uploads"])](app/static/css/custom.css)
+           triggert text-align:center wenn der Selector `[src*=...]` zu breit
+           ist (audio-Tags matchen auch). Pflicht-Selector: `:has(img[src*=...])`.
+           Plus expliziter override:
+             .text-audio-player { text-align: left !important; }
+             .content-item:has(.text-audio-player) .rich-text-content { text-align: left !important; }
+       (b) `MultilingualTextAudioSystem` (lesson_view.html ~Z.2134) macht jeden
+           `<p>` in `.rich-text-content` klickbar und ruft `/api/tts` (ja-JP-
+           Voice) für den GANZEN Text auf — DE wird mit ja-Voice gesprochen
+           ("rassistischer Akzent"-Bug 2026-04-25). `processAllContent` MUSS
+           `.rich-text-content`-Elemente skippen, deren Container bereits einen
+           `.text-audio-player` enthalten. `.details` (Vocab/Kanji-Karten,
+           JP-only) bleiben klickbar. Bei Template-/JS-Aenderungen NIE den
+           Skip-Check entfernen.
 
 [4c] python .claude/skills/generate-lesson/pipeline.py slideshow {lesson_id}
     → PFLICHT nach audio. Baut pro Dialog-Zeile ein Slide mit:

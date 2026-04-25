@@ -47,6 +47,60 @@ Selbstverbesserndes Log. Wird vor jedem Run gelesen, nach jedem Run angehängt.
 
 <!-- Neuste Einträge oben, älteste unten. -->
 
+## 2026-04-25 20:15 — text-audio Bugs (Lesson 144 nach Live-Check)
+
+### User-Feedback wörtlich
+> "die formatierung ist abgefucked alles center ausserdem ist immer noch
+> die japanische stimme die deutsch spricht!! das toent ultra rassistisch!!"
+
+### Bug A — Center-Alignment im Markdown-Block
+- **Ursache:** CSS-Selector `.content-item:has([src*="uploads"])` (custom.css
+  Z.2303) sollte ursprünglich Bild-Content erkennen, mached aber auch
+  `<audio src="/static/uploads/…">`. Der ganze Block wurde zentriert.
+- **Fix:** Selector verschärft auf `:has(img[src*="uploads"])` + expliziter
+  text-align:left override fuer `.text-audio-player` und seine Container.
+- **Regel für nächstes Mal:** `:has([src*=...])` ohne Tag-Qualifier sind
+  fragil — sobald ein neues Element-Typ mit `src=` auftaucht (audio, video,
+  iframe, source), greift die Regel mit. **`:has()`-Selektoren immer mit
+  Tag-Name qualifizieren** (`:has(img[src...])`, nicht `:has([src...])`).
+
+### Bug B — Ja-Voice spricht Deutsch ("rassistischer Akzent")
+- **Ursache:** Bestehendes `MultilingualTextAudioSystem` (lesson_view.html
+  Z.2134) macht jeden `<p>` in `.rich-text-content` klickbar und ruft
+  `/api/tts` auf — der Endpoint nutzt fest ja-JP-Voice. Mein neuer
+  text-audio-Player war zwar korrekt (DE+JA-Splitter), aber der parallel
+  laufende Klick-Handler überschrieb beim Klicken auf den Text die
+  Wiedergabe mit ja-Voice für DE.
+- **Fix:** `processAllContent` skipt `.rich-text-content`/`.text-content-container`
+  Elemente, deren Container bereits `.text-audio-player` enthalten.
+  `.details` (Vocab/Kanji-Karten, JP-only) bleiben klickbar.
+- **Regel für nächstes Mal:** **Bevor neuer TTS-Player im Template
+  eingehängt wird, alle bestehenden Speech-Synthesis-Mechanismen
+  identifizieren** (`grep speechSynthesis`, `grep /api/tts`, `grep
+  SpeechSynthesisUtterance`). Wenn parallel laufend → Sieger im Conflict
+  definieren oder den alten Mechanismus für betroffene Container
+  deaktivieren.
+
+### Bug C — Voice-Name ohne Existenzcheck (silent fallback)
+- **Ursache:** `de-DE-Neural2-F` existiert nicht (nur G/H bei Neural2 für
+  de-DE — F ist en-US). Google liefert silently eine andere Voice ohne
+  Fehlermeldung — verhalten ist undokumentiert und kann sich ändern.
+- **Fix:** auf `de-DE-Neural2-G` korrigiert.
+- **Regel für nächstes Mal:** **Voice-Namen NIE raten.** Vor jeder
+  Verwendung gegen die voices-API prüfen:
+  `curl 'https://texttospeech.googleapis.com/v1/voices?languageCode=<LANG>&key=$KEY'`
+  und nur dort gelistete Namen verwenden.
+
+### Aktuelle Regeln (Ergänzung)
+23. **`:has()`-CSS-Selektoren immer Tag-qualifiziert** (`:has(img[src...])`,
+    nie nur `:has([src...])`).
+24. **Vor neuem TTS-Player alle bestehenden Speech-Mechanismen mappen** und
+    Konflikte explizit auflösen (siehe Bug B oben).
+25. **TTS Voice-Namen IMMER gegen voices-API verifizieren** vor
+    Verwendung — Google macht silent fallback statt zu fehlern.
+
+---
+
 ## 2026-04-25 18:30 — N5 Familie — Wer gehört zu dir? (Lesson ID 144)
 
 ### Erfolge
