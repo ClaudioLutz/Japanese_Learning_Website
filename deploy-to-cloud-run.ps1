@@ -219,6 +219,7 @@ gcloud run deploy $SERVICE `
   --set-env-vars "GCS_BUCKET_NAME=jpl-website-assets-${PROJECT_ID}" `
   --memory=2Gi `
   --cpu=2 `
+  --min-instances=1 `
   --max-instances=10 `
   --timeout=900 `
   --port=8080 `

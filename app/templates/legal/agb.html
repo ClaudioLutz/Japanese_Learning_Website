@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}AGB{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width:800px;">
+  <h1 class="mb-4">Allgemeine Geschäftsbedingungen</h1>
+
+  <h2 class="h4 mt-4">1. Geltungsbereich</h2>
+  <p>
+    Diese AGB gelten für die Nutzung der Plattform <a href="https://japanese-learning.ch">japanese-learning.ch</a>
+    (nachfolgend „Plattform"), betrieben von {{ legal_owner_name or '[Name des Anbieters]' }},
+    {{ legal_owner_zip or '[PLZ]' }} {{ legal_owner_city or '[Ort]' }} (nachfolgend „Anbieter").
+  </p>
+
+  <h2 class="h4 mt-4">2. Leistungen</h2>
+  <p>
+    Die Plattform bietet Lerninhalte zur japanischen Sprache (Lektionen, Vokabeln, Quiz, Audio, Lernkarten). Ein Teil
+    der Inhalte ist kostenlos zugänglich. Kostenpflichtige Inhalte werden im Vorfeld klar als solche gekennzeichnet.
+  </p>
+
+  <h2 class="h4 mt-4">3. Registrierung und Konto</h2>
+  <p>
+    Für die Nutzung kostenpflichtiger Inhalte ist eine Registrierung mit gültiger E-Mail-Adresse erforderlich. Du
+    versicherst, dass deine Angaben wahrheitsgemäss sind und dass du mindestens 16 Jahre alt bist (oder eine
+    Einverständniserklärung deiner Erziehungsberechtigten vorliegt).
+  </p>
+
+  <h2 class="h4 mt-4">4. Preise und Zahlung</h2>
+  <p>
+    Alle Preise sind in Schweizer Franken (CHF) und enthalten — soweit gesetzlich anwendbar — die Mehrwertsteuer.
+    Die Zahlung erfolgt über den Anbieter <strong>Payrexx AG</strong>. Mit dem Abschluss des Kaufs schliesst du einen
+    Vertrag über die Bereitstellung der gekauften Inhalte. Die Inhalte werden unmittelbar nach Zahlungseingang
+    freigeschaltet.
+  </p>
+
+  <h2 class="h4 mt-4">5. Widerrufsrecht / Rücktritt</h2>
+  <p>
+    Mit dem Kauf eines digitalen Inhalts erklärst du dich ausdrücklich damit einverstanden, dass die Lieferung sofort
+    beginnt. Da es sich um digitale Inhalte handelt, die unmittelbar nach Kauf freigeschaltet werden, erlischt das
+    Widerrufsrecht mit Beginn der Bereitstellung.
+  </p>
+  <p>
+    Bei technischen Mängeln, die die Nutzung der Inhalte verhindern und die wir nicht innerhalb von 14 Tagen beheben
+    können, hast du Anspruch auf vollständige Rückerstattung. Details siehe
+    <a href="{{ url_for('legal.widerruf') }}">Widerrufsbelehrung</a>.
+  </p>
+
+  <h2 class="h4 mt-4">6. Nutzungsrechte</h2>
+  <p>
+    Mit dem Kauf erhältst du das Recht, die Inhalte für deine persönliche, nicht-kommerzielle Lerntätigkeit zu nutzen.
+    Eine Weitergabe, Vervielfältigung oder kommerzielle Verwertung ist ohne schriftliche Zustimmung des Anbieters nicht
+    gestattet.
+  </p>
+
+  <h2 class="h4 mt-4">7. Haftung</h2>
+  <p>
+    Der Anbieter haftet nur für Schäden, die durch grobe Fahrlässigkeit oder Vorsatz verursacht wurden. Die Haftung für
+    indirekte oder Folgeschäden ist ausgeschlossen, soweit gesetzlich zulässig.
+  </p>
+
+  <h2 class="h4 mt-4">8. Verfügbarkeit</h2>
+  <p>
+    Wir bemühen uns um eine Verfügbarkeit von 99 % im Jahresmittel, garantieren diese jedoch nicht. Geplante Wartungen
+    werden nach Möglichkeit ausserhalb der Hauptnutzungszeiten durchgeführt.
+  </p>
+
+  <h2 class="h4 mt-4">9. Kündigung</h2>
+  <p>
+    Du kannst dein Konto jederzeit über die Profileinstellungen löschen. Bereits gekaufte Inhalte bleiben bis zum
+    Ende des Bezahlzeitraums (bei einmaligen Käufen unbegrenzt) zugänglich, solange dein Konto besteht.
+  </p>
+
+  <h2 class="h4 mt-4">10. Änderungen der AGB</h2>
+  <p>
+    Wir behalten uns vor, diese AGB anzupassen. Änderungen werden registrierten Nutzern per E-Mail mit mindestens 30
+    Tagen Vorlauf mitgeteilt.
+  </p>
+
+  <h2 class="h4 mt-4">11. Anwendbares Recht und Gerichtsstand</h2>
+  <p>
+    Es gilt Schweizer Recht. Gerichtsstand ist {{ legal_owner_city or '[Ort des Anbieters]' }}, soweit gesetzlich zulässig.
+  </p>
+
+  <p class="text-muted small mt-5">Stand: {{ today_de }}</p>
+</div>
+{% endblock %}

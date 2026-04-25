@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Impressum{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width:800px;">
+  <h1 class="mb-4">Impressum</h1>
+
+  <h2 class="h4 mt-4">Anbieter</h2>
+  <p>
+    <strong>{{ legal_owner_name or '[Name des Anbieters]' }}</strong><br>
+    {{ legal_owner_street or '[Strasse Nr.]' }}<br>
+    {{ legal_owner_zip or '[PLZ]' }} {{ legal_owner_city or '[Ort]' }}<br>
+    Schweiz
+  </p>
+
+  <h2 class="h4 mt-4">Kontakt</h2>
+  <p>
+    E-Mail: <a href="mailto:{{ legal_email or 'info@japanese-learning.ch' }}">{{ legal_email or 'info@japanese-learning.ch' }}</a><br>
+    Web: <a href="https://japanese-learning.ch">japanese-learning.ch</a>
+  </p>
+
+  {% if legal_uid %}
+  <h2 class="h4 mt-4">Mehrwertsteuer</h2>
+  <p>UID-Nummer: {{ legal_uid }}</p>
+  {% endif %}
+
+  <h2 class="h4 mt-4">Verantwortlich für den Inhalt</h2>
+  <p>{{ legal_owner_name or '[Name des Anbieters]' }}</p>
+
+  <h2 class="h4 mt-4">Haftungsausschluss</h2>
+  <p>
+    Der Anbieter übernimmt keinerlei Gewähr hinsichtlich der inhaltlichen Richtigkeit, Genauigkeit, Aktualität,
+    Zuverlässigkeit und Vollständigkeit der Informationen. Haftungsansprüche gegen den Anbieter wegen Schäden
+    materieller oder immaterieller Art, welche aus dem Zugriff oder der Nutzung der veröffentlichten Informationen
+    entstanden sind, werden ausgeschlossen.
+  </p>
+  <p>
+    Alle Angebote sind unverbindlich. Der Anbieter behält es sich ausdrücklich vor, Teile der Seiten oder das gesamte
+    Angebot ohne gesonderte Ankündigung zu verändern, zu ergänzen, zu löschen oder die Veröffentlichung zeitweise oder
+    endgültig einzustellen.
+  </p>
+
+  <h2 class="h4 mt-4">Urheberrecht</h2>
+  <p>
+    Die Urheber- und alle anderen Rechte an Inhalten, Bildern, Fotos oder anderen Dateien auf dieser Website gehören
+    ausschliesslich {{ legal_owner_name or '[Name des Anbieters]' }} oder den speziell genannten Rechteinhabern. Für die
+    Reproduktion jeglicher Elemente ist die schriftliche Zustimmung der Urheberrechtsträger im Voraus einzuholen.
+  </p>
+
+  <p class="text-muted small mt-5">Stand: {{ today_de }}</p>
+</div>
+{% endblock %}

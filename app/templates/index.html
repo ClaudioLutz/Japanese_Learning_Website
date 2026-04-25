@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% set admin_edit_url = url_for('routes.admin_index') %}
-{% block title %}Home{% endblock %}
+{% block title %}Japanisch lernen{% endblock %}
 
 {% block body_attributes %}style="background-image: url('{{ url_for('static', filename='images/japan_welcome_page.png') }}'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;"{% endblock %}
 
@@ -12,8 +12,8 @@
             <div class="welcome-icon mb-2">
                 <i class="fas fa-torii-gate"></i>
             </div>
-            <h1 class="welcome-title">Begin Your Japanese Journey</h1>
-            <p class="welcome-subtitle">Choose your instruction language</p>
+            <h1 class="welcome-title">Beginne deine japanische Reise</h1>
+            <p class="welcome-subtitle">Wähle deine Unterrichtssprache</p>
         </div>
 
         {% if current_user.is_authenticated %}

@@ -102,9 +102,9 @@ class User(UserMixin, db.Model):
         """Japanisch-thematischer Level-Titel."""
         lvl = self.level or 1
         if lvl <= 5:
-            return 'Anfaenger (初心者)'
+            return 'Anfänger (初心者)'
         elif lvl <= 10:
-            return 'Schueler (学生)'
+            return 'Schüler (学生)'
         elif lvl <= 15:
             return 'Lehrling (見習い)'
         elif lvl <= 25:

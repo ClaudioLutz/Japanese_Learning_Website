@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Datenschutzerklärung{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width:800px;">
+  <h1 class="mb-4">Datenschutzerklärung</h1>
+
+  <p>
+    Der Schutz deiner Daten ist uns wichtig. Diese Erklärung beschreibt, welche Daten wir erheben, wofür wir sie nutzen
+    und welche Rechte du hast. Wir richten uns nach dem Schweizer Datenschutzgesetz (DSG) und der EU-Datenschutz-
+    Grundverordnung (DSGVO), soweit sie auf uns anwendbar ist.
+  </p>
+
+  <h2 class="h4 mt-4">1. Verantwortlicher</h2>
+  <p>
+    {{ legal_owner_name or '[Name des Anbieters]' }}, {{ legal_owner_street or '[Strasse]' }},
+    {{ legal_owner_zip or '[PLZ]' }} {{ legal_owner_city or '[Ort]' }}, Schweiz.<br>
+    Kontakt: <a href="mailto:{{ legal_email or 'info@japanese-learning.ch' }}">{{ legal_email or 'info@japanese-learning.ch' }}</a>
+  </p>
+
+  <h2 class="h4 mt-4">2. Welche Daten wir verarbeiten</h2>
+  <ul>
+    <li><strong>Konto-Daten:</strong> E-Mail-Adresse, Benutzername, Passwort (gehasht). Erhoben bei der Registrierung.</li>
+    <li><strong>Lernfortschritt:</strong> abgeschlossene Lektionen, Quiz-Antworten, Karten-Wiederholungen, XP, Streaks.</li>
+    <li><strong>Zahlungsdaten:</strong> Bei Käufen werden Vor-/Nachname und Rechnungsadresse an unseren Zahlungs-
+      anbieter (Payrexx) übertragen. Wir speichern keine Kreditkartendaten.</li>
+    <li><strong>Technische Daten:</strong> IP-Adresse, Browser-Typ, Zeitstempel der Zugriffe — zur Sicherheit und
+      Fehleranalyse, max. 90 Tage gespeichert.</li>
+    <li><strong>Cookies:</strong> ein Session-Cookie für die Anmeldung, ein CSRF-Cookie für die Sicherheit von Formularen.
+      Keine Tracking-Cookies, keine Werbe-Cookies.</li>
+  </ul>
+
+  <h2 class="h4 mt-4">3. Wofür wir die Daten nutzen</h2>
+  <ul>
+    <li>Bereitstellung des Lernangebots (Konto, Fortschritt, Wiederholungssystem).</li>
+    <li>Abwicklung von Käufen über Payrexx.</li>
+    <li>Pflege und Sicherheit der Plattform.</li>
+    <li>Bei explizitem Einverständnis: gelegentliche E-Mails über neue Lektionen.</li>
+  </ul>
+
+  <h2 class="h4 mt-4">4. Weitergabe an Dritte</h2>
+  <p>
+    Wir geben deine Daten nur an die folgenden Dienstleister weiter, soweit für den Betrieb der Plattform nötig:
+  </p>
+  <ul>
+    <li><strong>Google Cloud Platform</strong> (Hosting, Datenbank, Cloud Storage) — Server in der EU
+      (europe-west1, europe-west6).</li>
+    <li><strong>Payrexx AG, Schweiz</strong> — Zahlungsabwicklung.</li>
+    <li><strong>Google OAuth</strong> — wenn du dich per Google-Konto anmeldest.</li>
+  </ul>
+  <p>Wir verkaufen oder vermieten deine Daten nicht.</p>
+
+  <h2 class="h4 mt-4">5. Speicherdauer</h2>
+  <p>
+    Konto-Daten werden gespeichert, solange dein Konto besteht. Auf deine Anfrage löschen wir es jederzeit. Buchhaltungs-
+    relevante Belege (z. B. zu Käufen) werden gemäss Schweizer Recht 10 Jahre aufbewahrt.
+  </p>
+
+  <h2 class="h4 mt-4">6. Deine Rechte</h2>
+  <p>Du hast das Recht auf:</p>
+  <ul>
+    <li>Auskunft über die zu deiner Person gespeicherten Daten,</li>
+    <li>Berichtigung unrichtiger Daten,</li>
+    <li>Löschung deines Kontos und der zugehörigen Daten,</li>
+    <li>Datenübertragbarkeit (Export deiner Lernfortschritte als JSON),</li>
+    <li>Widerruf einer erteilten Einwilligung,</li>
+    <li>Beschwerde beim <a href="https://www.edoeb.admin.ch">Eidgenössischen Datenschutzbeauftragten</a>.</li>
+  </ul>
+  <p>
+    Bitte sende deine Anfrage per E-Mail an <a href="mailto:{{ legal_email or 'info@japanese-learning.ch' }}">{{ legal_email or 'info@japanese-learning.ch' }}</a>.
+  </p>
+
+  <h2 class="h4 mt-4">7. Sicherheit</h2>
+  <p>
+    Passwörter werden ausschliesslich als Hash gespeichert (Werkzeug PBKDF2). Der Datenverkehr läuft via HTTPS. Backups
+    sind verschlüsselt.
+  </p>
+
+  <p class="text-muted small mt-5">Stand: {{ today_de }}</p>
+</div>
+{% endblock %}

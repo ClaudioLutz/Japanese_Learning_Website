@@ -25,10 +25,10 @@ CARD_STAGES = [
     (90, 'Meister', '#9b59b6'),
     (30, 'Vertraut 2', '#009432'),
     (14, 'Vertraut 1', '#6ab04c'),
-    (7, 'Anfaenger 4', '#ffbe76'),
-    (3, 'Anfaenger 3', '#f0932b'),
-    (1, 'Anfaenger 2', '#ee5a24'),
-    (0.17, 'Anfaenger 1', '#ff6b6b'),
+    (7, 'Anfänger 4', '#ffbe76'),
+    (3, 'Anfänger 3', '#f0932b'),
+    (1, 'Anfänger 2', '#ee5a24'),
+    (0.17, 'Anfänger 1', '#ff6b6b'),
     (0, 'Neu', '#6c757d'),
 ]
 

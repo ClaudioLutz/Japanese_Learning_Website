@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Widerrufsbelehrung{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width:800px;">
+  <h1 class="mb-4">Widerrufsbelehrung</h1>
+
+  <h2 class="h4 mt-4">Widerrufsrecht für Verbraucher</h2>
+  <p>
+    Du hast das Recht, binnen 14 Tagen ohne Angabe von Gründen vom Kaufvertrag zurückzutreten.
+  </p>
+
+  <h2 class="h4 mt-4">Wichtige Ausnahme: digitale Inhalte</h2>
+  <p>
+    Bei digitalen Inhalten, die nicht auf einem körperlichen Datenträger geliefert werden (z. B. Online-Lektionen,
+    Audio-Aufnahmen, Lernkarten), erlischt das Widerrufsrecht, wenn du beim Kauf ausdrücklich zustimmst, dass die
+    Bereitstellung sofort beginnt. Diese Zustimmung holen wir vor jedem Kauf via Checkbox ein.
+  </p>
+  <p>
+    Solltest du dieser sofortigen Bereitstellung <em>nicht</em> zustimmen, läuft die 14-Tage-Frist ab Vertragsschluss.
+    In diesem Fall werden die gekauften Inhalte erst nach Ablauf der Frist freigeschaltet.
+  </p>
+
+  <h2 class="h4 mt-4">Rückerstattung bei technischen Mängeln</h2>
+  <p>
+    Unabhängig vom Widerrufsrecht erstatten wir den Kaufpreis vollständig zurück, wenn:
+  </p>
+  <ul>
+    <li>die gekauften Inhalte technisch nicht abrufbar sind und der Mangel innerhalb von 14 Tagen nicht behoben wird,</li>
+    <li>die Inhalte nicht der Beschreibung im Lektions-Vorschau entsprechen.</li>
+  </ul>
+
+  <h2 class="h4 mt-4">Wie du widerrufst</h2>
+  <p>
+    Sende eine kurze E-Mail an
+    <a href="mailto:{{ legal_email or 'info@japanese-learning.ch' }}">{{ legal_email or 'info@japanese-learning.ch' }}</a>
+    mit folgenden Angaben:
+  </p>
+  <ul>
+    <li>Vor- und Nachname</li>
+    <li>E-Mail-Adresse deines Kontos</li>
+    <li>Bestellnummer (siehe Bestellbestätigung)</li>
+    <li>Datum der Bestellung</li>
+  </ul>
+  <p>
+    Wir bestätigen den Widerruf innerhalb von 3 Werktagen und erstatten den Kaufpreis innerhalb von 14 Tagen über
+    den ursprünglichen Zahlungsweg.
+  </p>
+
+  <h2 class="h4 mt-4">Muster-Widerrufsformular</h2>
+  <pre style="white-space:pre-wrap;background:#f8f9fa;padding:1em;border-radius:8px;">
+An:        {{ legal_owner_name or '[Name des Anbieters]' }}
+           {{ legal_email or 'info@japanese-learning.ch' }}
+
+Hiermit widerrufe(n) ich/wir den von mir/uns abgeschlossenen Vertrag
+über den Kauf der folgenden digitalen Inhalte:
+___________________________________________________________
+
+Bestellt am:        ___________________________
+Erhalten am:        ___________________________
+Name:               ___________________________
+E-Mail-Konto:       ___________________________
+Datum:              ___________________________
+Unterschrift:       ___________________________
+  </pre>
+
+  <p class="text-muted small mt-5">Stand: {{ today_de }}</p>
+</div>
+{% endblock %}

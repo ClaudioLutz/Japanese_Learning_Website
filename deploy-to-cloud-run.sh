@@ -179,6 +179,7 @@ gcloud run deploy $SERVICE \
   --set-secrets "SECRET_KEY=flask-secret-key:latest,WTF_CSRF_SECRET_KEY=wtf-csrf-secret-key:latest" \
   --memory=1Gi \
   --cpu=1 \
+  --min-instances=1 \
   --max-instances=5 \
   --timeout=300 \
   --port=8080 \

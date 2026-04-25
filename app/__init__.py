@@ -220,6 +220,18 @@ def create_app():
     # Register debug routes blueprint for troubleshooting
     from app.debug_routes import debug_bp
     app.register_blueprint(debug_bp)
+
+    # Legal pages (Impressum, AGB, Datenschutz, Widerruf) — gesetzliche Pflicht
+    # vor Live-Schaltung mit echten Zahlungen.
+    from app.legal_routes import bp as legal_bp
+    app.register_blueprint(legal_bp)
+
+    # current_year fuer den Footer
+    from datetime import datetime as _dt
+
+    @app.context_processor
+    def _inject_current_year():
+        return {"current_year": _dt.utcnow().year}
     
     # Register social auth blueprint (for /auth/login/google-oauth2/ route only)
     from social_flask.routes import social_auth

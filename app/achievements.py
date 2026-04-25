@@ -152,7 +152,7 @@ ACHIEVEMENTS = {
 
     # ── Level ──
     'level_5': {
-        'name': 'Schueler',
+        'name': 'Schüler',
         'description': 'Level 5 erreicht',
         'icon': 'fa-user-graduate',
         'category': 'level',
