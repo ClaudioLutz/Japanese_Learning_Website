@@ -58,7 +58,7 @@
         </div>
         <div class="hero-meta">
           <span>📚 {{ german_lessons }} Lektionen auf Deutsch</span>
-          <span>🆓 {{ guest_accessible_lessons }} Gratis-Einstieg ohne Login</span>
+          <span>🆓 {{ german_guest_lessons }} Gratis-Einstieg ohne Login</span>
           <span>🇨🇭 Made in Switzerland</span>
         </div>
       </div>
@@ -190,8 +190,9 @@
   </section>
 
   {# ──────────────────────────────────────────────
-     SEKUNDÄRE OPTIONEN — Sprachwahl + Lessons-Browser
+     SEKUNDÄRE OPTIONEN — Sprachwahl (nur wenn mehrere Sprachen aktiv)
      ────────────────────────────────────────────── #}
+  {% if 'english' in visible_languages and 'german' in visible_languages %}
   <section class="secondary-section">
     <h3 class="section-subtitle">Lieber auf Englisch?</h3>
     <div class="lang-grid-mini">
@@ -211,6 +212,7 @@
       </a>
     </div>
   </section>
+  {% endif %}
 
 </div>
 

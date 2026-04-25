@@ -119,6 +119,14 @@ def create_app():
     app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH
     app.config['ALLOWED_EXTENSIONS'] = ALLOWED_EXTENSIONS
 
+    # Content-Sprachen: welche instruction_language sind oeffentlich sichtbar?
+    # Default: nur Deutsch (Mayuko-Direktive: erst N5 DE komplett, dann erweitern).
+    # Per Env CONTENT_LANGUAGES=german,english bilingual aktivierbar.
+    _langs_env = os.environ.get('CONTENT_LANGUAGES', 'german')
+    app.config['CONTENT_LANGUAGES'] = [
+        lang.strip() for lang in _langs_env.split(',') if lang.strip()
+    ]
+
     # Create upload directories if they don't exist
     upload_dirs = [
         os.path.join(UPLOAD_FOLDER, 'lessons', 'images'),

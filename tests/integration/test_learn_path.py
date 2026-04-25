@@ -68,7 +68,9 @@ class TestLearnPathRoute:
         """Modul mit Lektion zeigt Lektions-Link."""
         mod = _make_module("with-lesson", jlpt_level=5, display_order=1, name="Mit Lektion")
         db.session.flush()
-        lesson = LessonFactory(category_id=mod.id, is_published=True, title="Mein Lernstoff")
+        # CONTENT_LANGUAGES default = ['german'] — Test-Lesson muss German sein
+        lesson = LessonFactory(category_id=mod.id, is_published=True,
+                                title="Mein Lernstoff", instruction_language="german")
         db.session.commit()
         resp = client.get("/learn/n5")
         assert b"Mein Lernstoff" in resp.data

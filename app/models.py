@@ -229,10 +229,17 @@ class LessonCategory(db.Model):
     def __repr__(self):
         return f'<LessonCategory {self.name}>'
 
-    def completion_for_user(self, user) -> tuple[int, int]:
-        """Returns (completed_lessons, total_published_lessons) fuer Pfad-Anzeige."""
+    def completion_for_user(self, user, languages: list[str] | None = None) -> tuple[int, int]:
+        """Returns (completed_lessons, total_published_lessons) fuer Pfad-Anzeige.
+
+        Wenn `languages` gesetzt ist (z.B. ['german']), werden nur Lessons mit
+        passender instruction_language gezaehlt — fuer den Sprach-Filter aus
+        app.config['CONTENT_LANGUAGES'].
+        """
         from app.models import Lesson, UserLessonProgress
         published = [l for l in self.lessons if l.is_published]
+        if languages is not None:
+            published = [l for l in published if l.instruction_language in languages]
         total = len(published)
         if not user or not getattr(user, 'is_authenticated', False) or total == 0:
             return 0, total

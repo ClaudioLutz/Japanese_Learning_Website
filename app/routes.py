@@ -161,6 +161,7 @@ def index():
             last_lesson = Lesson.query.get(last_progress.lesson_id)
 
     # JLPT-Lernpfad-Daten (Mayuko-Direktive 2026-04-25): Pfad als Startseiten-Inhalt
+    visible_langs = current_app.config.get('CONTENT_LANGUAGES', ['german'])
     user = current_user if current_user.is_authenticated else None
     n5_modules_raw = (
         LessonCategory.query.filter_by(jlpt_level=5)
@@ -170,10 +171,11 @@ def index():
     n5_modules = []
     next_module_id = None  # erstes nicht-vollendetes Modul fuer Auto-Scroll/Pulsation
     for m in n5_modules_raw:
-        done, total = m.completion_for_user(user)
+        done, total = m.completion_for_user(user, languages=visible_langs)
         unlocked = m.is_unlocked_for_user(user)
         published_lessons = sorted(
-            [l for l in m.lessons if l.is_published],
+            [l for l in m.lessons
+             if l.is_published and l.instruction_language in visible_langs],
             key=lambda l: (l.order_index or 0, l.id),
         )
         is_complete = total > 0 and done == total
@@ -220,7 +222,8 @@ def index():
                          last_lesson=last_lesson,
                          n5_modules=n5_modules,
                          n5_groups=n5_groups,
-                         next_module_id=next_module_id)
+                         next_module_id=next_module_id,
+                         visible_languages=visible_langs)
 
 @bp.route('/register', methods=['GET', 'POST'])
 @limiter.limit("5 per minute")
@@ -464,6 +467,7 @@ def learn_path(level: int = 5):
     if level not in (1, 2, 3, 4, 5):
         from flask import abort
         abort(404)
+    visible_langs = current_app.config.get('CONTENT_LANGUAGES', ['german'])
     modules = (
         LessonCategory.query.filter_by(jlpt_level=level)
         .order_by(LessonCategory.display_order.asc(), LessonCategory.id.asc())
@@ -472,10 +476,11 @@ def learn_path(level: int = 5):
     user = current_user if current_user.is_authenticated else None
     rendered_modules = []
     for m in modules:
-        done, total = m.completion_for_user(user)
+        done, total = m.completion_for_user(user, languages=visible_langs)
         unlocked = m.is_unlocked_for_user(user)
         published_lessons = sorted(
-            [l for l in m.lessons if l.is_published],
+            [l for l in m.lessons
+             if l.is_published and l.instruction_language in visible_langs],
             key=lambda l: (l.order_index or 0, l.id),
         )
         rendered_modules.append({
@@ -2316,12 +2321,19 @@ def update_lesson_page(lesson_id, page_num):
 def get_user_lessons():
     """Get lessons accessible to the current user or guest, with optional filtering."""
     instruction_language = request.args.get('instruction_language')
-    
+    visible_langs = current_app.config.get('CONTENT_LANGUAGES', ['german'])
+
     query = Lesson.query.filter_by(is_published=True)
-    
+
     if instruction_language and instruction_language.lower() != 'all':
+        # Explizite Sprachwahl muss in den global sichtbaren Sprachen liegen
+        if instruction_language not in visible_langs:
+            return jsonify({"lessons": []})
         query = query.filter(Lesson.instruction_language == instruction_language)
-        
+    else:
+        # Default: nur global sichtbare Sprachen (Mayuko-Direktive: erst DE komplett)
+        query = query.filter(Lesson.instruction_language.in_(visible_langs))
+
     lessons = query.order_by(Lesson.order_index.asc(), Lesson.id.asc()).all()
     
     accessible_lessons = []
