@@ -82,6 +82,7 @@ Verletzung ⇒ sofortiger Abbruch, keine Insertion:
   - Ziel: Ein deutschsprachiger Anfänger (inkl. Claudio) kann **jeden Satz** überall in der Lektion westlich aussprechen, selbst wenn er ein Kanji nicht kennt.
 - **Instruction-Language**: default `'german'` (deutschsprachige Anfänger sind die primäre Zielgruppe). Englisch nur auf explizite User-Anweisung.
 - **Beispielsätze dürfen NUR Kanji/Vokabeln des eigenen oder eines niedrigeren JLPT-Levels enthalten.** N5-Lektion darf keine N3-Kanji im Beispielsatz haben. Wenn unvermeidbar: schreibe den Satz in Hiragana.
+  - **Bekannte N5-Vokabel-Falle:** Viele „klassische" N5-Familien-Vokabeln (家族, 兄弟, 両親, 子供, 兄, 姉, 弟, 妹, お父さん, お母さん, お兄さん, お姉さん) enthalten Kanji, die NICHT im N5-Kanji-Set (80 Zeichen) stehen — 兄, 姉, 弟, 妹, 家, 族, 親, 供 sind alle erst N4. Validator wirft ERROR. Lösung: in `content_text`, `Grammar.example_sentences` und `LessonContent.text` nur die Hiragana-Variante schreiben (かぞく, きょうだい, りょうしん, あに, あね, おとうと, いもうと, おとうさん, おかあさん, …). Im `Vocabulary.word`-Feld bleibt die Kanji-Form (das ist die Karteikarte selbst). Im N5-Kanji-Set sind aus Familie nur: 人, 子, 女, 男, 父, 母, 友. Auch andere N5-Vokabeln können solche „N4-Kanji-N5-Vokabeln" sein — bei Validator-Hinweis stets Hiragana wählen.
 - **`created_by_ai = True`** für alle generierten Kana/Kanji/Vocabulary/Grammar-Einträge. `LessonContent.generated_by_ai = True` ebenfalls.
 - **`status = 'approved'`** direkt (User-Entscheidung 2026-04-20).
 - **Duplicate-Check**: Vor jedem INSERT in Kana/Kanji/Vocabulary/Grammar prüfen ob `character`/`word`/`title` schon existiert → bestehende ID wiederverwenden, NICHT neue Zeile erzeugen.
@@ -328,6 +329,8 @@ Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
        gepflegt — neue Charaktere dort hinzufuegen, sonst generisches
        Portrait-Fallback.
        Kosten: ~50 Rappen pro Lektion (9 HD-Bilder + 9 TTS-Calls).
+       Generierung dauert ~5 min (synchron, sequenzielle DALL-E-Calls).
+       Bei Background-Run: TaskOutput mit timeout >= 300000ms verwenden.
 
        ⚠️ TEMPLATE-FALLE (lesson_view.html ~Z.945-961): Die Slides MUESSEN
        per CSS-Grid-Stacking gerendert werden, sonst doppeltes Bild waehrend
@@ -343,15 +346,34 @@ Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
        400ms-Crossfades vertikal (alte fadet aus, neue fadet ein, beide
        gleichzeitig im Block-Flow). Bei Template-Aenderungen NIE entfernen.
 
-[5] Verifikation — zwei Pfade, je nach Verfügbarkeit:
+[4d] Modul-Zuweisung (PFLICHT vor Verifikation):
+    Nach Insert ist die Lesson noch keinem JLPT-Modul zugeordnet (`lesson.category_id` ist möglicherweise NULL).
+    Den N5-Modul ermitteln, der thematisch passt (Tabelle `lesson_category`,
+    Slugs wie `n5-familie-personen`, `n5-zahlen-zeit`, `n5-alltag-essen`,
+    `n5-reise-ort`, `n5-erste-saetze`, `n5-begruessung-hoeflichkeit`,
+    `n5-hiragana`, `n5-katakana`):
+       SELECT id FROM lesson_category WHERE slug='n5-familie-personen';
+    Dann zuweisen + publishen:
+       UPDATE lesson SET category_id=<modul_id>, order_index=<n>, is_published=true WHERE id=<lesson_id>;
+    Spalte heisst **`order_index`** (NICHT `order_in_module` — gibt es nicht).
+    Für `order_index`: kleinste freie Zahl im Modul wählen (siehe MNN-Bestand).
 
-    [5a] Bevorzugt: python .claude/skills/generate-lesson/verify.py {lesson_id}
-         → Playwright-Headless-Browser: Login als admin (email/password aus .env!),
-           /lessons/{id} öffnen, alle Pages durchklicken, Quiz, Deck-Karussell-CSS-Check.
-         → Screenshots in verifications/{lesson_id}/.
+[5] Verifikation — drei Pfade, je nach Verfügbarkeit:
 
-    [5b] Fallback, wenn MCP-Chrome besetzt ("Browser is already in use"):
-         HTTP-basierte Verifikation via requests.Session:
+    [5a] Bevorzugt (User-Wunsch 2026-04-25): Playwright MCP direkt aus dieser Conversation.
+         - Lokalen Flask-Server prüfen (curl http://localhost:5000/ → 200).
+         - Bei MCP-Chrome admin-bereits-eingeloggt nicht erneut /login aufrufen,
+           direkt zu /lessons/{id}.
+         - Sidebar-Pages haben `data-page` als 0-basierten Index — Page 5 = `data-page="4"`.
+           Sidebar-Klicks via document.querySelector('.sidebar-page-item[data-page="N"]').click().
+         - Screenshots: lesson{id}_pageN_*.png — fullPage:true für vollständigen Check.
+         - Slideshow-Test: button[aria-label="Naechste Zeile"] klicken, Counter "X / 9" prüfen.
+         - Console-Log: keine Errors, [Deck] Found N carousel pages, deckCheck > 0.
+
+    [5b] Alt-Pfad: python .claude/skills/generate-lesson/verify.py {lesson_id}
+         → Headless-Playwright. Screenshots in verifications/{lesson_id}/.
+
+    [5c] Fallback, wenn beide Browser-Pfade scheitern: HTTP via requests.Session:
          - POST /login mit email=ADMIN_EMAIL, password=ADMIN_PASSWORD aus .env (CSRF-Token vorher via GET).
          - GET /lessons/{id} → HTTP 200, Titel + Vokabeln + Grammatik + Umlaute im HTML.
          - GET /api/admin/lessons (JSON!) → Lesson muss in Liste sein.

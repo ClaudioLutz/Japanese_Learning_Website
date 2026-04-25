@@ -47,6 +47,82 @@ Selbstverbesserndes Log. Wird vor jedem Run gelesen, nach jedem Run angehängt.
 
 <!-- Neuste Einträge oben, älteste unten. -->
 
+## 2026-04-25 18:30 — N5 Familie — Wer gehört zu dir? (Lesson ID 144)
+
+### Erfolge
+- 23 Familienvokabeln (alle in N5 canonical via `vocab`-Key, keine ERROR-Treffer)
+  — eigene-Familie-Reihe (ちち/はは/あに/あね/おとうと/いもうと) + höfliche Reihe
+  (おとうさん/おかあさん/おにいさん/おねえさん) + Sammelbegriffe (家族/兄弟/両親) +
+  Personenwörter (人/男/女/男の子/女の子/友達/子供) + Zähler (一人/二人) + 私.
+- 3 Grammatikkarten (uchi/soto, Possessiv の, います für Personen) — alle mit
+  Romaji-Annotation in `title/structure/explanation`, dreizeiligen
+  example_sentences (JP / Romaji / DE).
+- 14 Quizfragen: 7 MC + 4 TF + 3 Matching — alle 3 erlaubten Typen, jeder ≥2×.
+  Distraktoren aus selber semantischer Domäne (Familienbegriffe).
+- 7 Pages (Einführung, Vokabeln 1+2, Grammatik, Dialog, Quiz, Zusammenfassung).
+- Dialog mit eigenen Charakteren (Tanaka & Lisa), Format korrekt nach
+  `_format_conversation` (`speaker: JP / (romaji) / -> DE`).
+- Pipeline lief vollständig: validate → images (1 Thumb + 23 Vocab-Icons) →
+  insert (Lesson 144, Trans atomar) → audio (1 MP3, 9 Sprecherzeilen, 34s) →
+  slideshow (9 PNGs + 9 MP3s, ~5 min Generierung).
+- Modul-Zuweisung: `category_id=34` (N5 Familie & Personen),
+  `order_index=0`, `is_published=true`.
+- Playwright-MCP-Verifikation: alle 7 Pages durchgeklickt, Slideshow-Wechsel
+  ohne doppelte Bilder (Grid-Stacking funktioniert), Quiz rendert, keine
+  Console-Errors, [Deck] Page-Verteilung 0/10/13/3/0/0/0 korrekt, 0 broken
+  images, 35 Bilder geladen.
+
+### Probleme / Erkenntnisse
+
+1. **Familien-Kanji-Falle** — die "klassischen" N5-Familien-Vokabeln (家族, 兄弟,
+   両親, 兄, 姉, 弟, 妹, お父さん, お母さん, お兄さん, お姉さん, 子供) enthalten
+   alle Kanji, die im N5-Kanji-Set (80 Zeichen) FEHLEN: 兄/姉/弟/妹/家/族/親/供
+   sind alle erst N4. Validator wirft 5× ERROR auf meinen ersten Draft. Aus
+   N5-Familie-Kanji sind nur 人, 子, 女, 男, 父, 母, 友 erlaubt. **→ Regel: in
+   `content_text`, `Grammar.example_sentences`, `LessonContent.text` Familie-
+   Wörter mit N4-Kanji immer als Hiragana (かぞく, きょうだい, りょうしん,
+   あに, あね, おとうと, いもうと) schreiben. Im `Vocabulary.word`-Feld bleibt
+   die Kanji-Form, weil das die Karteikarte selbst ist.** SKILL.md §3 ergänzt.
+
+2. **Quiz-Intro-Page (`page_type='quiz_carousel'`) ist auch ein content_text** —
+   ich hatte „ます-Form von います" ohne Romaji-Klammern geschrieben. Validator
+   fing es korrekt. **→ Regel: die einleitende `text`-Zelle vor den
+   quiz_questions zählt voll als content_text mit Romaji-Pflicht.** Bereits
+   in §3-Regel "Rōmaji NEBEN JEDEM JP-Zeichen — überall" enthalten, aber wert
+   sich zu erinnern, dass auch Quiz-Intro dazu gehört.
+
+3. **Modul-Zuweisung war kein Pipeline-Step** — nach `insert` ist die Lesson
+   `category_id=NULL` und `is_published=False`. Manuelles `UPDATE lesson SET
+   category_id=N, order_index=M, is_published=true WHERE id=X;` nötig, sonst
+   taucht die Lesson nicht im Lernpfad auf. **→ Regel: nach `insert` IMMER
+   die Modul-Zuweisung machen, basierend auf Thema → Slug-Mapping (siehe
+   `lesson_category` Tabelle).** SKILL.md §6 mit Schritt [4d] ergänzt.
+
+4. **Spalte heisst `order_index`, NICHT `order_in_module`** — kostete 1 Versuch.
+   In SKILL.md §6 [4d] explizit dokumentiert.
+
+5. **Slideshow-Generierung dauert ~5 Minuten und ist sequenziell** — 9 DALL-E-
+   HD-Bilder + 9 TTS. Background-Run mit `TaskOutput timeout >= 300000ms`. Wenn
+   man parallel an anderem arbeitet (z.B. Modul-Zuweisung), kein Problem.
+
+6. **Bekannte Limitation gpt-image-1-mini**: die generierten "Tanaka"-Bilder
+   wirken eher westlich-asiatisch, nicht spezifisch japanisch — gut genug für
+   die Lektion, aber wenn man explizit japanische Charaktere bräuchte, müsste
+   der Prompt expliziter sein. Akzeptabel als "stilisierte Charaktere".
+
+### Aktuelle Regeln (kumulativ, Ergänzungen ab diesem Run)
+
+20. **Familie-Kanji-Falle:** N5-Vokabeln können N4-Kanji enthalten — Hiragana
+    in Beispielsätzen + Fliesstext nutzen (siehe SKILL.md §3 "Bekannte N5-
+    Vokabel-Falle"-Block).
+21. **Modul-Zuweisung nach Insert ist Pflicht** (`UPDATE lesson SET
+    category_id=N, order_index=M, is_published=true`). Spalte heisst
+    `order_index`, nicht `order_in_module`.
+22. **Quiz-Intro-text-Cell wird wie content_text validiert** — Romaji-Pflicht
+    gilt auch dort.
+
+---
+
 ## 2026-04-25 — Slideshow-Render-Bug (Lesson ID 143, betrifft alle dialog_slideshow-Lektionen)
 
 ### Problem (vom User auf Production gemeldet)

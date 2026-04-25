@@ -1,0 +1,815 @@
+{
+  "title": "N5 Familie — Wer gehört zu dir?",
+  "description": "Lerne die wichtigsten japanischen Familienbegriffe und den entscheidenden Unterschied zwischen 「ちち」 (chichi, eigener Vater) und 「おとうさん」 (otousan, Vater einer anderen Person). Mit Dialog (Tanaka spricht über seine Familie) und 14 interaktiven Quiz-Fragen.",
+  "jlpt_level": 5,
+  "topic": "Familie",
+  "instruction_language": "german",
+  "allow_guest_access": true,
+  "thumbnail_url": "generated/thumbnail_familie_20260425_163736.png",
+  "pages": [
+    {
+      "title": "Einführung",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Familie auf Japanisch — zwei Wortgruppen statt einer",
+            "content_text": "Im Deutschen sagst du immer 'mein Vater' und 'der Vater meiner Freundin' mit demselben Wort. Im Japanischen ist das anders: Es gibt zwei komplette Wortgruppen für Familienmitglieder — eine für die eigene Familie (bescheiden) und eine für die Familie anderer Leute (höflich).\n\nFür den eigenen Vater sagst du 「ちち」 (chichi). Wenn du über den Vater einer anderen Person sprichst oder ihn direkt anredest, sagst du 「おとうさん」 (otousan). Dasselbe Prinzip gilt für Mutter, ältere Geschwister, Onkel, Tante — wirklich jedes Familienmitglied.\n\nDas wirkt am Anfang ungewohnt, hat aber eine klare Logik: Es ist Teil der japanischen 「うち」 (uchi, 'innen') und 「そと」 (soto, 'aussen') Unterscheidung. Über die eigene Gruppe sprichst du bescheiden, über andere höflich. Wer das durcheinanderbringt, klingt entweder arrogant oder kindlich.\n\nIn dieser Lektion lernst du 23 Wörter rund um die Familie, drei Grammatikmuster (uchi/soto, das Possessiv 「の」 (no), das Existenzverb 「います」 (imasu) für Personen) und führst einen vollständigen Mini-Dialog: Tanaka stellt seine Familie vor.\n\nAm Ende kannst du sagen, wieviele Personen zu deiner Familie gehören, jedes Mitglied benennen und nach der Familie deines Gegenübers fragen — mit der richtigen Höflichkeitsstufe."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln Teil 1 — Eigene Familie",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "家族",
+            "reading": "かぞく",
+            "romaji": "kazoku",
+            "meaning": "family",
+            "meaning_de": "Familie",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "わたしの かぞくは よにんです。",
+            "example_sentence_english": "Watashi no kazoku wa yo-nin desu. — My family has four people.",
+            "image_url": "vocab_generated/vocab_cb1f7d20.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "父",
+            "reading": "ちち",
+            "romaji": "chichi",
+            "meaning": "(my) father (humble)",
+            "meaning_de": "(mein) Vater (bescheidene Form)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "父は エンジニアです。",
+            "example_sentence_english": "Chichi wa enjinia desu. — My father is an engineer.",
+            "image_url": "vocab_generated/vocab_e7378bff.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "母",
+            "reading": "はは",
+            "romaji": "haha",
+            "meaning": "(my) mother (humble)",
+            "meaning_de": "(meine) Mutter (bescheidene Form)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "母は 先生です。",
+            "example_sentence_english": "Haha wa sensei desu. — My mother is a teacher.",
+            "image_url": "vocab_generated/vocab_21e4bd76.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "兄",
+            "reading": "あに",
+            "romaji": "ani",
+            "meaning": "(my) older brother (humble)",
+            "meaning_de": "(mein) älterer Bruder (bescheidene Form)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あには とうきょうに います。",
+            "example_sentence_english": "Ani wa Toukyou ni imasu. — My older brother is in Tokyo.",
+            "image_url": "vocab_generated/vocab_63b9b59e.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "姉",
+            "reading": "あね",
+            "romaji": "ane",
+            "meaning": "(my) older sister (humble)",
+            "meaning_de": "(meine) ältere Schwester (bescheidene Form)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あねは 大学生です。",
+            "example_sentence_english": "Ane wa daigakusei desu. — My older sister is a university student.",
+            "image_url": "vocab_generated/vocab_1c90c5dc.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "弟",
+            "reading": "おとうと",
+            "romaji": "otouto",
+            "meaning": "(my) younger brother",
+            "meaning_de": "(mein) jüngerer Bruder",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "おとうとは 八さいです。",
+            "example_sentence_english": "Otouto wa hassai desu. — My younger brother is eight years old.",
+            "image_url": "vocab_generated/vocab_10b8e3ca.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "妹",
+            "reading": "いもうと",
+            "romaji": "imouto",
+            "meaning": "(my) younger sister",
+            "meaning_de": "(meine) jüngere Schwester",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "いもうとは 学生です。",
+            "example_sentence_english": "Imouto wa gakusei desu. — My younger sister is a student.",
+            "image_url": "vocab_generated/vocab_aa809807.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "兄弟",
+            "reading": "きょうだい",
+            "romaji": "kyoudai",
+            "meaning": "siblings, brothers and sisters",
+            "meaning_de": "Geschwister",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "きょうだいは 三人です。",
+            "example_sentence_english": "Kyoudai wa san-nin desu. — I have three siblings.",
+            "image_url": "vocab_generated/vocab_c8b87810.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "両親",
+            "reading": "りょうしん",
+            "romaji": "ryoushin",
+            "meaning": "parents",
+            "meaning_de": "Eltern (beide zusammen)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "りょうしんは おおさかに います。",
+            "example_sentence_english": "Ryoushin wa Oosaka ni imasu. — My parents are in Osaka.",
+            "image_url": "vocab_generated/vocab_178b2996.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "私",
+            "reading": "わたし",
+            "romaji": "watashi",
+            "meaning": "I, me",
+            "meaning_de": "ich (höflich, neutral)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "わたしは 学生です。",
+            "example_sentence_english": "Watashi wa gakusei desu. — I am a student.",
+            "image_url": "vocab_generated/vocab_b511e681.png"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln Teil 2 — Andere Personen & Höflichkeitsformen",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "お父さん",
+            "reading": "おとうさん",
+            "romaji": "otousan",
+            "meaning": "(someone else's) father (polite)",
+            "meaning_de": "Vater (einer anderen Person, höflich)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "たなかさんの おとうさんは 先生です。",
+            "example_sentence_english": "Tanaka-san no otousan wa sensei desu. — Mr. Tanaka's father is a teacher.",
+            "image_url": "vocab_generated/vocab_dc9aa7e3.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "お母さん",
+            "reading": "おかあさん",
+            "romaji": "okaasan",
+            "meaning": "(someone else's) mother (polite)",
+            "meaning_de": "Mutter (einer anderen Person, höflich)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "リサさんの おかあさんは いしゃです。",
+            "example_sentence_english": "Risa-san no okaasan wa isha desu. — Lisa's mother is a doctor.",
+            "image_url": "vocab_generated/vocab_bbe81368.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "お兄さん",
+            "reading": "おにいさん",
+            "romaji": "oniisan",
+            "meaning": "(someone else's) older brother (polite)",
+            "meaning_de": "älterer Bruder (einer anderen Person, höflich)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "おにいさんは なんさいですか。",
+            "example_sentence_english": "Oniisan wa nansai desu ka. — How old is your older brother?",
+            "image_url": "vocab_generated/vocab_3830b0e1.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "お姉さん",
+            "reading": "おねえさん",
+            "romaji": "oneesan",
+            "meaning": "(someone else's) older sister (polite)",
+            "meaning_de": "ältere Schwester (einer anderen Person, höflich)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "おねえさんは どこに いますか。",
+            "example_sentence_english": "Oneesan wa doko ni imasu ka. — Where is your older sister?",
+            "image_url": "vocab_generated/vocab_9bc8dd49.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "子供",
+            "reading": "こども",
+            "romaji": "kodomo",
+            "meaning": "child, children",
+            "meaning_de": "Kind, Kinder",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "こどもは 二人 います。",
+            "example_sentence_english": "Kodomo wa futari imasu. — I have two children.",
+            "image_url": "vocab_generated/vocab_3f89eb1b.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "男",
+            "reading": "おとこ",
+            "romaji": "otoko",
+            "meaning": "man, male",
+            "meaning_de": "Mann, männlich",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あの 男の人は だれですか。",
+            "example_sentence_english": "Ano otoko no hito wa dare desu ka. — Who is that man over there?",
+            "image_url": "vocab_generated/vocab_36a4908a.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "女",
+            "reading": "おんな",
+            "romaji": "onna",
+            "meaning": "woman, female",
+            "meaning_de": "Frau, weiblich",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あの 女の人は 母です。",
+            "example_sentence_english": "Ano onna no hito wa haha desu. — That woman is my mother.",
+            "image_url": "vocab_generated/vocab_87c835a6.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "男の子",
+            "reading": "おとこのこ",
+            "romaji": "otoko no ko",
+            "meaning": "boy",
+            "meaning_de": "Junge",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "おとこのこが 一人 います。",
+            "example_sentence_english": "Otoko no ko ga hitori imasu. — There is one boy.",
+            "image_url": "vocab_generated/vocab_a3b86f52.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "女の子",
+            "reading": "おんなのこ",
+            "romaji": "onna no ko",
+            "meaning": "girl",
+            "meaning_de": "Mädchen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "おんなのこは 五さいです。",
+            "example_sentence_english": "Onna no ko wa go-sai desu. — The girl is five years old.",
+            "image_url": "vocab_generated/vocab_2edfa812.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "友達",
+            "reading": "ともだち",
+            "romaji": "tomodachi",
+            "meaning": "friend",
+            "meaning_de": "Freund, Freundin",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ともだちと えいがを 見ます。",
+            "example_sentence_english": "Tomodachi to eiga wo mimasu. — I watch a movie with my friend.",
+            "image_url": "vocab_generated/vocab_21612576.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "人",
+            "reading": "ひと",
+            "romaji": "hito",
+            "meaning": "person",
+            "meaning_de": "Person, Mensch",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あの 人は ともだちです。",
+            "example_sentence_english": "Ano hito wa tomodachi desu. — That person is my friend.",
+            "image_url": "vocab_generated/vocab_465afe3c.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "一人",
+            "reading": "ひとり",
+            "romaji": "hitori",
+            "meaning": "one person; alone",
+            "meaning_de": "eine Person; allein",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あには 一人で きました。",
+            "example_sentence_english": "Ani wa hitori de kimashita. — My older brother came alone.",
+            "image_url": "vocab_generated/vocab_31746c7e.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "二人",
+            "reading": "ふたり",
+            "romaji": "futari",
+            "meaning": "two people",
+            "meaning_de": "zwei Personen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "りょうしんは 二人とも 学生でした。",
+            "example_sentence_english": "Ryoushin wa futari tomo gakusei deshita. — Both of my parents were students.",
+            "image_url": "vocab_generated/vocab_4f26f442.png"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Grammatik — uchi/soto, Possessiv の und います",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Drei Muster für jedes Familiengespräch",
+            "content_text": "Drei Grammatikbausteine reichen, um über jede Familie souverän zu sprechen.\n\n1) 「うち」 vs. 「そと」 (uchi vs. soto): Über die eigene Familie sprichst du bescheiden — 「ちち」 (chichi, mein Vater), 「はは」 (haha, meine Mutter), 「あに」 (ani, mein älterer Bruder). Über die Familie anderer Leute sprichst du höflich — 「おとうさん」 (otousan), 「おかあさん」 (okaasan), 「おにいさん」 (oniisan). Wenn du dein Gegenüber direkt nach seinem Vater fragst, nutzt du immer die höfliche Form: 「おとうさんは おげんきですか」 (otousan wa ogenki desu ka, 'Geht es Ihrem Vater gut?').\n\n2) Possessiv 「の」 (no): Ähnlich dem deutschen Genitiv. 「わたしの かぞく」 (watashi no kazoku, 'meine Familie'), 「たなかさんの おとうさん」 (Tanaka-san no otousan, 'Tanaka-sans Vater'). Reihenfolge: Besitzer + 「の」 (no) + Besessenes. Du kannst mehrere 「の」 (no) verketten: 「ともだちの おかあさんの 名前」 (tomodachi no okaasan no namae, 'der Name der Mutter meines Freundes').\n\n3) 「います」 (imasu) für Personen: Im Japanischen gibt es zwei Existenzverben — 「あります」 (arimasu) für leblose Dinge und 「います」 (imasu) für Lebewesen. Familienmitglieder sind Lebewesen, also immer 「います」 (imasu): 「あにが 二人 います」 (ani ga futari imasu, 'Ich habe zwei ältere Brüder'), 「こどもが いません」 (kodomo ga imasen, 'Ich habe keine Kinder'). Achte auf die Partikel: 「が」 (ga) markiert die Person, deren Existenz du angibst."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "うち vs. そと — bescheidene und höfliche Familienbegriffe",
+            "structure": "Eigene Familie: 父/母/兄/姉  | Andere Familie: お父さん/お母さん/お兄さん/お姉さん  (uchi vs. soto)",
+            "romaji": "uchi (own): chichi/haha/ani/ane  vs.  soto (others): otousan/okaasan/oniisan/oneesan",
+            "explanation": "Im Japanischen wechselst du das Wort für ein Familienmitglied, je nachdem ob du über deine eigene oder eine andere Familie sprichst. Über die eigene Familie sprichst du bescheiden, über die andere höflich. Auch die direkte Anrede (z.B. 'Mama!') nutzt die höfliche Form, weil du sie als 'andere Person' adressierst. Verwechslungen klingen entweder arrogant (höfliche Form für die eigene Familie nutzen — 'mein Herr Vater') oder respektlos (bescheidene Form für die Familie eines Gegenübers — '(dein) bescheidener Vater'). Merksatz: Über uns selbst klein, über andere gross.",
+            "jlpt_level": 5,
+            "example_sentences": "わたしの 父は 五十さいです。\n  (Watashi no chichi wa go-juu sai desu.)\n  → Mein Vater ist 50 Jahre alt.\n\nリサさんの おとうさんは おいしゃさんです。\n  (Risa-san no otousan wa oishasan desu.)\n  → Lisas Vater ist Arzt.\n\nお母さん、ごはんは。\n  (Okaasan, gohan wa?)\n  → Mama, was ist mit dem Essen? (Direkte Anrede an die eigene Mutter — höfliche Form.)"
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "Possessiv の (no) — 'meine Familie', 'Tanakas Mutter'",
+            "structure": "[Besitzer] + の + [Besessenes]  ([owner] + no + [thing])",
+            "romaji": "[owner] + no + [thing]",
+            "explanation": "Das Partikel 「の」 (no) verbindet zwei Nomen und drückt Besitz, Zugehörigkeit oder Spezifizierung aus — vergleichbar mit dem deutschen Genitiv oder dem englischen 's. Reihenfolge ist umgekehrt zum Englischen: Besitzer kommt zuerst, dann 「の」, dann das Besessene. Mehrere 「の」 lassen sich verketten: 「ともだちの おねえさんの 子供」 (tomodachi no oneesan no kodomo, 'das Kind der älteren Schwester meines Freundes'). Wichtig: 「の」 wird auch genutzt, um Beruf oder Herkunft zu spezifizieren: 「日本語の 先生」 (nihongo no sensei, 'Japanisch-Lehrer').",
+            "jlpt_level": 5,
+            "example_sentences": "わたしの かぞくは 四人です。\n  (Watashi no kazoku wa yo-nin desu.)\n  → Meine Familie hat vier Personen.\n\nたなかさんの おかあさんは 大学の 先生です。\n  (Tanaka-san no okaasan wa daigaku no sensei desu.)\n  → Tanaka-sans Mutter ist Universitätsdozentin.\n\nともだちの おとうとは 中学生です。\n  (Tomodachi no otouto wa chuugakusei desu.)\n  → Der jüngere Bruder meines Freundes ist Mittelschüler."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "[Person] + が + [Anzahl] + います — Personen zählen und beschreiben",
+            "structure": "[Person] + が + [Anzahl + にん] + います  ([person] + ga + [count + nin] + imasu)",
+            "romaji": "[person] + ga + [count + nin] + imasu",
+            "explanation": "「います」 (imasu) ist das Existenzverb für Lebewesen — Menschen, Tiere, alles was sich bewegt. Für leblose Dinge nutzt man stattdessen 「あります」 (arimasu). Bei Familienangaben gilt: Person + 「が」 + Zähler + 「います」. Der Personenzähler ist 「にん」 (nin), mit Sonderlesungen für 1 (「ひとり」, hitori) und 2 (「ふたり」, futari). Negation: 「いません」 (imasen, 'es gibt nicht / ich habe nicht'). Frage nach Anzahl: 「なんにん いますか」 (nan-nin imasu ka, 'Wie viele Personen sind es?').",
+            "jlpt_level": 5,
+            "example_sentences": "あにが 一人 います。\n  (Ani ga hitori imasu.)\n  → Ich habe einen älteren Bruder.\n\nきょうだいは 何人 いますか。\n  (Kyoudai wa nan-nin imasu ka.)\n  → Wie viele Geschwister hast du?\n\nこどもは いません。\n  (Kodomo wa imasen.)\n  → Ich habe keine Kinder."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Dialog — Tanaka stellt seine Familie vor",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Beim Mittagessen — Lisa fragt nach Tanakas Familie",
+            "content_text": "Tanaka: わたしの かぞくは 四人です。\n  (Watashi no kazoku wa yo-nin desu.)\n  -> Meine Familie hat vier Personen.\n\nLisa: そうですか。だれが いますか。\n  (Sou desu ka. Dare ga imasu ka.)\n  -> Ach so. Wer gehört dazu?\n\nTanaka: 父と 母と あねと わたしです。\n  (Chichi to haha to ane to watashi desu.)\n  -> Vater, Mutter, meine ältere Schwester und ich.\n\nLisa: おねえさんは なんさいですか。\n  (Oneesan wa nansai desu ka.)\n  -> Wie alt ist deine ältere Schwester?\n\nTanaka: あねは さんじゅうごさいです。とうきょうに います。\n  (Ane wa sanjuugo-sai desu. Toukyou ni imasu.)\n  -> Sie ist 35 Jahre alt. Sie ist in Tokyo.\n\nLisa: おとうさんと おかあさんは どこに いますか。\n  (Otousan to okaasan wa doko ni imasu ka.)\n  -> Wo sind dein Vater und deine Mutter?\n\nTanaka: りょうしんは おおさかに います。 リサさんの かぞくは 何人ですか。\n  (Ryoushin wa Oosaka ni imasu. Risa-san no kazoku wa nan-nin desu ka.)\n  -> Meine Eltern sind in Osaka. Wieviele Personen gehören zu deiner Familie, Lisa?\n\nLisa: わたしの かぞくは 五人です。 りょうしんと おとうとが 二人 います。\n  (Watashi no kazoku wa go-nin desu. Ryoushin to otouto ga futari imasu.)\n  -> Meine Familie hat fünf Personen. Eltern und zwei jüngere Brüder.\n\nTanaka: にぎやかですね。\n  (Nigiyaka desu ne.)\n  -> Da ist sicher viel los."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Übung — Quiz",
+      "page_type": "quiz_carousel",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Teste dein Familien-Wissen",
+            "content_text": "Vierzehn Fragen zu Familienvokabeln, uchi/soto-Unterscheidung und der 「ます」 (masu) -Form von 「います」 (imasu)."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「家族」 (かぞく, kazoku)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "Es geht um Personen, die zusammenleben.",
+              "explanation": "「家族」 (kazoku) heisst 'Familie'. Das erste Kanji 家 bedeutet 'Haus', das zweite 族 'Stamm/Gruppe' — wörtlich also 'Hausgruppe'.",
+              "options": [
+                {
+                  "option_text": "Familie",
+                  "is_correct": true,
+                  "feedback": "Richtig! 「家族」 = Familie."
+                },
+                {
+                  "option_text": "Schule",
+                  "is_correct": false,
+                  "feedback": "Schule heisst 「学校」 (gakkou)."
+                },
+                {
+                  "option_text": "Freund",
+                  "is_correct": false,
+                  "feedback": "Freund heisst 「友達」 (tomodachi)."
+                },
+                {
+                  "option_text": "Arbeit",
+                  "is_correct": false,
+                  "feedback": "Arbeit heisst 「仕事」 (shigoto, N4)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie sagst du 'mein Vater' (über die eigene Familie sprechend)?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Bei der eigenen Familie nutzt du die bescheidene Form.",
+              "explanation": "「ちち」 (chichi) ist die bescheidene Form für den eigenen Vater. 「おとうさん」 (otousan) wäre die höfliche Form — die nutzt du, wenn du über den Vater einer anderen Person sprichst oder ihn direkt anredest.",
+              "options": [
+                {
+                  "option_text": "ちち (chichi)",
+                  "is_correct": true,
+                  "feedback": "Korrekt — bescheidene Form für die eigene Familie."
+                },
+                {
+                  "option_text": "おとうさん (otousan)",
+                  "is_correct": false,
+                  "feedback": "Das wäre der Vater einer anderen Person — oder die direkte Anrede."
+                },
+                {
+                  "option_text": "はは (haha)",
+                  "is_correct": false,
+                  "feedback": "「はは」 heisst Mutter, nicht Vater."
+                },
+                {
+                  "option_text": "あに (ani)",
+                  "is_correct": false,
+                  "feedback": "「あに」 heisst älterer Bruder."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie sprichst du höflich über die Mutter deiner Freundin Lisa?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Andere Familie = höfliche Form.",
+              "explanation": "「リサさんの おかあさん」 nutzt die höfliche Form 「おかあさん」, weil du über die Mutter einer anderen Person sprichst. 「リサさんの はは」 wäre falsch — 「はは」 ist nur für die eigene Mutter.",
+              "options": [
+                {
+                  "option_text": "リサさんの おかあさん (Risa-san no okaasan)",
+                  "is_correct": true,
+                  "feedback": "Richtig! Höfliche Form für die Mutter einer anderen Person."
+                },
+                {
+                  "option_text": "リサさんの はは (Risa-san no haha)",
+                  "is_correct": false,
+                  "feedback": "「はは」 ist die bescheidene Form, nur für die eigene Mutter."
+                },
+                {
+                  "option_text": "リサさんの ちち (Risa-san no chichi)",
+                  "is_correct": false,
+                  "feedback": "「ちち」 heisst Vater, nicht Mutter."
+                },
+                {
+                  "option_text": "リサさんの あね (Risa-san no ane)",
+                  "is_correct": false,
+                  "feedback": "「あね」 heisst ältere Schwester, und ist ausserdem die bescheidene Form."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「兄弟」 (きょうだい, kyoudai)?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Wörtlich 'älterer Bruder + jüngerer Bruder'.",
+              "explanation": "「兄弟」 (kyoudai) bedeutet 'Geschwister' — egal ob Brüder, Schwestern oder gemischt. Das Wort setzt sich aus den Kanji 兄 (älterer Bruder) und 弟 (jüngerer Bruder) zusammen.",
+              "options": [
+                {
+                  "option_text": "Eltern",
+                  "is_correct": false,
+                  "feedback": "Eltern heissen 「両親」 (ryoushin)."
+                },
+                {
+                  "option_text": "Geschwister",
+                  "is_correct": true,
+                  "feedback": "Korrekt — alle Geschwister zusammen."
+                },
+                {
+                  "option_text": "Kinder",
+                  "is_correct": false,
+                  "feedback": "Kinder heissen 「子供」 (kodomo)."
+                },
+                {
+                  "option_text": "Cousins",
+                  "is_correct": false,
+                  "feedback": "Cousins heissen 「いとこ」 (itoko, N4)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welches Verb nutzt du für 'es gibt einen jüngeren Bruder' (Existenz von Personen)?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Personen sind Lebewesen.",
+              "explanation": "「います」 (imasu) ist das Existenzverb für Lebewesen — Menschen, Tiere. Für leblose Dinge nutzt man 「あります」 (arimasu).",
+              "options": [
+                {
+                  "option_text": "あります (arimasu)",
+                  "is_correct": false,
+                  "feedback": "「あります」 ist nur für leblose Dinge — Bücher, Stühle, Geld."
+                },
+                {
+                  "option_text": "います (imasu)",
+                  "is_correct": true,
+                  "feedback": "Korrekt — Personen und Tiere bekommen います."
+                },
+                {
+                  "option_text": "です (desu)",
+                  "is_correct": false,
+                  "feedback": "「です」 ist die Kopula 'ist/sind', nicht das Existenzverb."
+                },
+                {
+                  "option_text": "ます (masu)",
+                  "is_correct": false,
+                  "feedback": "「ます」 ist nur die Höflichkeits-Endung, kein eigenständiges Verb."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie sagst du 'Ich habe zwei jüngere Brüder.'?",
+              "difficulty_level": 3,
+              "points": 1,
+              "hint": "Personenzähler für 2 ist 「ふたり」 (futari).",
+              "explanation": "「おとうとが ふたり います」 nutzt den Sonderzähler 「ふたり」 (futari) für 2 Personen. 「ににん」 ist falsch — 1 und 2 Personen haben unregelmässige Lesungen (ひとり, ふたり), erst ab 3 nutzt man die regelmässige Form (さんにん).",
+              "options": [
+                {
+                  "option_text": "おとうとが ふたり います。",
+                  "is_correct": true,
+                  "feedback": "Korrekt!"
+                },
+                {
+                  "option_text": "おとうとが ににん います。",
+                  "is_correct": false,
+                  "feedback": "Falsch — 2 Personen heisst ふたり, nicht ににん."
+                },
+                {
+                  "option_text": "おとうとが ふたり あります。",
+                  "is_correct": false,
+                  "feedback": "「あります」 ist für leblose Dinge — Brüder sind Personen, also います."
+                },
+                {
+                  "option_text": "おとうとは ふたりです。",
+                  "is_correct": false,
+                  "feedback": "Grammatikalisch zwar möglich ('die jüngeren Brüder sind zwei'), aber bei Anzahl-Angaben ist die います-Konstruktion natürlicher."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welches Partikel verbindet Besitzer und Besessenes — wie das deutsche '-s' / 'von'?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "Ein einsilbiges Partikel.",
+              "explanation": "「の」 (no) ist das Possessiv-Partikel. Reihenfolge: Besitzer + 「の」 + Besessenes. Beispiel: 「わたしの 家族」 (watashi no kazoku, 'meine Familie').",
+              "options": [
+                {
+                  "option_text": "は (wa)",
+                  "is_correct": false,
+                  "feedback": "「は」 markiert das Thema, nicht den Besitz."
+                },
+                {
+                  "option_text": "の (no)",
+                  "is_correct": true,
+                  "feedback": "Richtig! 「の」 verbindet Besitzer und Besessenes."
+                },
+                {
+                  "option_text": "を (wo)",
+                  "is_correct": false,
+                  "feedback": "「を」 markiert das direkte Objekt."
+                },
+                {
+                  "option_text": "が (ga)",
+                  "is_correct": false,
+                  "feedback": "「が」 markiert das Subjekt."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「あね」 (ane) bedeutet 'meine ältere Schwester' (bescheidene Form).",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Stimmt. 「あね」 (ane) ist die bescheidene Form für die eigene ältere Schwester. Über die ältere Schwester einer anderen Person sagt man 「おねえさん」 (oneesan).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt — あね = eigene ältere Schwester."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — あね ist die bescheidene Form für die eigene ältere Schwester."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Wenn du deine eigene Mutter direkt anredest, sagst du 「はは」 (haha).",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Falsch. Bei direkter Anrede nutzt du immer die höfliche Form: 「おかあさん」 (okaasan). 「はは」 nutzt du nur, wenn du gegenüber Dritten über deine Mutter sprichst.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Ungenau — bei direkter Anrede nutzt du okaasan, nicht haha."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt — direkte Anrede nutzt immer die höfliche Form, also okaasan."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「ともだち」 (tomodachi) bedeutet 'Bruder'.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Falsch. 「ともだち」 heisst 'Freund/Freundin'. 'Bruder' ist 「あに」 (ani, älterer Bruder) oder 「おとうと」 (otouto, jüngerer Bruder).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Falsch — ともだち = Freund."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt — ともだち heisst Freund, nicht Bruder."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「両親」 (りょうしん, ryoushin) bedeutet beide Eltern zusammen.",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Stimmt. 「両親」 (ryoushin) heisst 'Eltern' — Vater und Mutter zusammen. Wörtlich 両 = 'beide' + 親 = 'Elternteil'.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt — Vater + Mutter = Eltern."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — 両親 sind beide Eltern zusammen."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde die bescheidene Form (eigene Familie) mit der deutschen Übersetzung.",
+              "difficulty_level": 2,
+              "points": 2,
+              "options": [
+                {
+                  "option_text": "父 (chichi)",
+                  "feedback": "(mein) Vater",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "母 (haha)",
+                  "feedback": "(meine) Mutter",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "兄 (ani)",
+                  "feedback": "(mein) älterer Bruder",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "姉 (ane)",
+                  "feedback": "(meine) ältere Schwester",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde die höfliche Form (andere Familie) mit der deutschen Übersetzung.",
+              "difficulty_level": 2,
+              "points": 2,
+              "options": [
+                {
+                  "option_text": "お父さん (otousan)",
+                  "feedback": "Vater (höflich)",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "お母さん (okaasan)",
+                  "feedback": "Mutter (höflich)",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "お兄さん (oniisan)",
+                  "feedback": "älterer Bruder (höflich)",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "お姉さん (oneesan)",
+                  "feedback": "ältere Schwester (höflich)",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde die Personenangabe mit der korrekten Lesung.",
+              "difficulty_level": 3,
+              "points": 2,
+              "options": [
+                {
+                  "option_text": "一人",
+                  "feedback": "ひとり (hitori) — eine Person",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "二人",
+                  "feedback": "ふたり (futari) — zwei Personen",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "三人",
+                  "feedback": "さんにん (san-nin) — drei Personen",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "何人",
+                  "feedback": "なんにん (nan-nin) — wie viele Personen",
+                  "is_correct": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Zusammenfassung",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Was du jetzt kannst",
+            "content_text": "Du hast in dieser Lektion 23 Familienvokabeln gelernt — von 「かぞく」 (kazoku, Familie) selbst über die bescheidene 「ちち / はは / あに / あね」-Reihe für die eigene Familie bis zur höflichen 「おとうさん / おかあさん / おにいさん / おねえさん」-Reihe für die Familie anderer Personen. Dazu Sammelbegriffe wie 「きょうだい」 (kyoudai, Geschwister), 「りょうしん」 (ryoushin, Eltern) und 「こども」 (kodomo, Kind), sowie die Personen-Wörter 「人」 (hito), 「男」 (otoko), 「女」 (onna), 「男の子」 (otoko no ko), 「女の子」 (onna no ko), 「ともだち」 (tomodachi) und die Zähler 「一人」 (hitori), 「二人」 (futari).\n\nGrammatisch hast du drei Bausteine gelernt: das uchi/soto-Prinzip (eigene vs. fremde Familie), das Possessiv 「の」 (no) und das Existenzverb 「います」 (imasu) für Personen. Die Faustregel ist: Über uns selbst klein, über andere gross. Und Lebewesen bekommen 「います」 (imasu), Dinge bekommen 「あります」 (arimasu).\n\nIm Dialog hast du gesehen, wie sich Tanaka und Lisa über ihre Familien austauschen — eine sehr typische erste Konversation in Japan. Die Fragen 「かぞくは 何人ですか」 (kazoku wa nan-nin desu ka, 'Wie viele Personen sind in deiner Familie?') und 「きょうだいは いますか」 (kyoudai wa imasu ka, 'Hast du Geschwister?') gehören zum Standard-Smalltalk.\n\nIn der nächsten Lektion baust du darauf auf: Du lernst Berufe und kannst dann sagen, was deine Familienmitglieder beruflich machen — 「父は エンジニアです」 (chichi wa enjinia desu, 'Mein Vater ist Ingenieur')."
+          }
+        }
+      ]
+    }
+  ]
+}
