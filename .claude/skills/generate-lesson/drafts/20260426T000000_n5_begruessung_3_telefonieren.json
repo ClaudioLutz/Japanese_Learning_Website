@@ -1,0 +1,804 @@
+{
+  "title": "N5 Begrüssung & Höflichkeit 3 — Am Telefon",
+  "description": "Wie man auf Japanisch telefoniert: 「もしもし」 (moshi moshi), 「タナカさんは いますか」 (Tanaka-san wa imasu ka — Ist Herr Tanaka da?), Telefonnummern verstehen, sich am Telefon vorstellen. Du lernst die Existenz-Verben います/いません und 「～と いいます」 (~to iimasu — ich heisse).",
+  "jlpt_level": 5,
+  "topic": "Begrüssung & Höflichkeit",
+  "instruction_language": "german",
+  "allow_guest_access": true,
+  "pages": [
+    {
+      "title": "Einführung — もしもし!",
+      "description": "Worum geht es in dieser Lektion?",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Willkommen",
+            "content_text": "## 「もしもし」 (moshi moshi) — der erste Schritt am Telefon\n\nIn Japan beginnt **jedes Telefonat** mit einem speziellen Wort: 「もしもし」 (moshi moshi). Es entspricht dem deutschen *Hallo?* und wird **nur** am Telefon benutzt — niemals im direkten Gespräch.\n\nDanach folgt eine genaue Choreografie: Du nennst deinen **Namen**, fragst nach der **Person**, die du sprechen willst, und reagierst auf die Antwort. In dieser Lektion lernst du diese Choreografie und die wichtigsten Wörter dafür.\n\n### Was du nach dieser Lektion kannst\n\n- Die zentralen **Telefon-Vokabeln**: でんわ (denwa — *Telefon*), ばんごう (bangō — *Nummer*), なまえ (namae — *Name*), はなす (hanasu — *sprechen*).\n- Die Frage **「～さんは いますか」** (~san wa imasu ka — *Ist Herr/Frau ~ da?*) korrekt stellen und auf 「います」 / 「いません」 reagieren.\n- Dich am Telefon vorstellen mit **「～と いいます」** (~to iimasu — *Ich heisse ~*).\n- Höflich um Wiederholung bitten: **「もう いちど おねがいします」** (mō ichido onegai shimasu — *Bitte noch einmal*).\n\n> **Lerntipp:** Sag deine eigene Telefonnummer fünfmal laut auf Japanisch — im Telefon-Stil mit 「ーの」 (no) zwischen den Zifferngruppen. Das festigt die Aussprache von 0 als 「ぜろ」 oder 「まる」 (zero/maru) und macht dich am Telefon sicher.\n\nNach dieser Lektion kannst du ein **kurzes Telefongespräch** auf Japanisch führen."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln 1 — Telefon und Namen",
+      "description": "Acht Wörter rund ums Telefonieren",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Vokabeln rund ums Telefonieren",
+            "content_text": "## Acht Telefon-Vokabeln\n\nDie acht folgenden Wörter sind das **Skelett** jedes Telefonats:\n\n- **でんわ (denwa)** — *Telefon*\n- **もしもし (moshi moshi)** — *Hallo?* (nur am Telefon!)\n- **ばんごう (bangō)** — *Nummer*\n- **なまえ (namae)** — *Name*\n- **はなし (hanashi)** — *Gespräch, Geschichte*\n- **はなす (hanasu)** — *sprechen, reden*\n- **いう (iu)** — *sagen, heissen*\n- **わかる (wakaru)** — *verstehen*\n\n> **Wichtig:** Das Wort **「もしもし」** (moshi moshi) hat einen besonderen Stellenwert: Du benutzt es **nie** in einem Face-to-Face-Gespräch. Wenn du es trotzdem im Alltag sagst, klingt es seltsam — fast wie ein deutsches *Bitte? Hallooo?* zu jemandem, der direkt vor dir steht.\n\nUnd: 「いう」 (iu) heisst nicht nur *sagen*, sondern wird auch für **Namen** gebraucht: 「タナカと いいます」 (Tanaka to iimasu — *Ich heisse Tanaka*)."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "電話",
+            "reading": "でんわ",
+            "romaji": "denwa",
+            "meaning": "telephone",
+            "meaning_de": "Telefon, Anruf",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ははに でんわを します。",
+            "example_sentence_english": "Haha ni denwa wo shimasu. — I will call my mother.",
+            "image_url": "vocab_generated/vocab_f7e4f10d.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "もしもし",
+            "reading": "もしもし",
+            "romaji": "moshi moshi",
+            "meaning": "Hello? (on the phone)",
+            "meaning_de": "Hallo? (am Telefon)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "もしもし、タナカですが。",
+            "example_sentence_english": "Moshi moshi, Tanaka desu ga. — Hello, this is Tanaka.",
+            "image_url": "vocab_generated/vocab_6ad076e7.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "番号",
+            "reading": "ばんごう",
+            "romaji": "bangou",
+            "meaning": "number",
+            "meaning_de": "Nummer",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "でんわばんごうは なんばんですか。",
+            "example_sentence_english": "Denwa-bangou wa nanban desu ka. — What is the phone number?",
+            "image_url": "vocab_generated/vocab_d04d5b3e.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "名前",
+            "reading": "なまえ",
+            "romaji": "namae",
+            "meaning": "name",
+            "meaning_de": "Name",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "おなまえは なんですか。",
+            "example_sentence_english": "Onamae wa nan desu ka. — What is your name?",
+            "image_url": "vocab_generated/vocab_5b9e23e2.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "話",
+            "reading": "はなし",
+            "romaji": "hanashi",
+            "meaning": "talk, story",
+            "meaning_de": "Gespräch, Geschichte",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "おもしろい はなしを ききました。",
+            "example_sentence_english": "Omoshiroi hanashi wo kikimashita. — I heard an interesting story.",
+            "image_url": "vocab_generated/vocab_80ecea03.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "話す",
+            "reading": "はなす",
+            "romaji": "hanasu",
+            "meaning": "to speak",
+            "meaning_de": "sprechen, reden",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ともだちと でんわで はなします。",
+            "example_sentence_english": "Tomodachi to denwa de hanashimasu. — I talk on the phone with a friend.",
+            "image_url": "vocab_generated/vocab_edca5e90.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "言う",
+            "reading": "いう",
+            "romaji": "iu",
+            "meaning": "to say, to be called",
+            "meaning_de": "sagen, heissen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "わたしは タナカと いいます。",
+            "example_sentence_english": "Watashi wa Tanaka to iimasu. — I am called Tanaka.",
+            "image_url": "vocab_generated/vocab_dcbf78dd.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "分かる",
+            "reading": "わかる",
+            "romaji": "wakaru",
+            "meaning": "to understand",
+            "meaning_de": "verstehen, kennen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "にほんごが すこし わかります。",
+            "example_sentence_english": "Nihongo ga sukoshi wakarimasu. — I understand a little Japanese.",
+            "image_url": "vocab_generated/vocab_934b3597.png"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln 2 — Höflichkeit und Zeit",
+      "description": "Zehn weitere Wörter für Bitten, Hören und Zeitangaben",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Höflichkeit und Zeit am Telefon",
+            "content_text": "## Höflich abschwächen, hören, planen\n\n### Höflichkeit\n- **ちょっと (chotto)** — *ein bisschen, etwas* — typische **Abschwächung** vor einer Bitte oder einer Absage\n- **どうぞ (dōzo)** — *bitte sehr* — wenn du jemandem etwas anbietest oder zustimmst\n- **どうも (dōmo)** — *danke / sehr* — höflich-knapp, oft als 「どうも ありがとう」 verstärkt\n- **～さん (~san)** — höfliches Suffix, vergleichbar mit *Herr/Frau*\n- **きく (kiku)** — *hören, fragen*\n\n### Zeit-Wörter\n- **いま (ima)** — *jetzt*\n- **こんばん (konban)** — *heute Abend*\n- **あと (ato)** — *danach, später*\n- **たぶん (tabun)** — *vielleicht, wahrscheinlich*\n- **いちばん (ichiban)** — *am meisten, Nummer eins*\n\n> **Lerntipp:** Das Wort 「ちょっと」 (chotto) ist eines der **wichtigsten** im japanischen Alltag. Es weicht jede direkte Aussage ab und macht eine Absage höflich: 「ちょっと わかりません」 (chotto wakarimasen — *Es ist etwas unklar*) ist deutlich höflicher als das blanke 「わかりません」."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "ちょっと",
+            "reading": "ちょっと",
+            "romaji": "chotto",
+            "meaning": "a little, somewhat",
+            "meaning_de": "ein bisschen, etwas",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ちょっと まって ください。",
+            "example_sentence_english": "Chotto matte kudasai. — Please wait a moment.",
+            "image_url": "vocab_generated/vocab_8a3a9326.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "どうぞ",
+            "reading": "どうぞ",
+            "romaji": "douzo",
+            "meaning": "please, by all means",
+            "meaning_de": "bitte sehr",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "どうぞ、おはいり ください。",
+            "example_sentence_english": "Dōzo, ohairi kudasai. — Please, come in.",
+            "image_url": "vocab_generated/vocab_cf30ffeb.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "どうも",
+            "reading": "どうも",
+            "romaji": "doumo",
+            "meaning": "Thanks; somehow",
+            "meaning_de": "danke (sehr); irgendwie",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "どうも ありがとう ございます。",
+            "example_sentence_english": "Dōmo arigatō gozaimasu. — Thank you very much.",
+            "image_url": "vocab_generated/vocab_8fd75f3b.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "～さん",
+            "reading": "～さん",
+            "romaji": "~san",
+            "meaning": "Mr./Ms. ~",
+            "meaning_de": "Herr/Frau ~ (höflich)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "タナカさんは いますか。",
+            "example_sentence_english": "Tanaka-san wa imasu ka. — Is Mr. Tanaka there?",
+            "image_url": "vocab_generated/vocab_23f12185.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "聞く",
+            "reading": "きく",
+            "romaji": "kiku",
+            "meaning": "to hear, to ask",
+            "meaning_de": "hören, fragen, zuhören",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "せんせいに しつもんを ききます。",
+            "example_sentence_english": "Sensei ni shitsumon wo kikimasu. — I ask the teacher a question.",
+            "image_url": "vocab_generated/vocab_082dacde.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "今",
+            "reading": "いま",
+            "romaji": "ima",
+            "meaning": "now",
+            "meaning_de": "jetzt, gerade",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "いま、なんじですか。",
+            "example_sentence_english": "Ima, nan-ji desu ka. — What time is it now?",
+            "image_url": "vocab_generated/vocab_ba4b5ed1.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "今晩",
+            "reading": "こんばん",
+            "romaji": "konban",
+            "meaning": "this evening, tonight",
+            "meaning_de": "heute Abend",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "こんばん、でんわします。",
+            "example_sentence_english": "Konban, denwa shimasu. — I will call you tonight.",
+            "image_url": "vocab_generated/vocab_4ba37493.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "後",
+            "reading": "あと",
+            "romaji": "ato",
+            "meaning": "afterwards, later",
+            "meaning_de": "danach, später",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あとで でんわを かけます。",
+            "example_sentence_english": "Ato de denwa wo kakemasu. — I will call later.",
+            "image_url": "vocab_generated/vocab_8fe061b0.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "多分",
+            "reading": "たぶん",
+            "romaji": "tabun",
+            "meaning": "perhaps, probably",
+            "meaning_de": "vielleicht, wahrscheinlich",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "たぶん、こんばん きます。",
+            "example_sentence_english": "Tabun, konban kimasu. — Maybe he/she will come tonight.",
+            "image_url": "vocab_generated/vocab_ba741a9f.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "一番",
+            "reading": "いちばん",
+            "romaji": "ichiban",
+            "meaning": "best, number one, most",
+            "meaning_de": "Nummer eins, am meisten",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あには いちばん せが たかいです。",
+            "example_sentence_english": "Ani wa ichiban se ga takai desu. — My older brother is the tallest.",
+            "image_url": "vocab_generated/vocab_6fea294b.png"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Grammatik — います, いません, ～と いいます",
+      "description": "Personen-Existenz und sich am Telefon vorstellen",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Drei Bausteine für jedes Telefongespräch",
+            "content_text": "## Drei zentrale Grammatik-Strukturen\n\n### 1. 「～は います / いません」 — *Ist (Person) da?*\n\nDas Verb 「います」 (imasu) drückt die **Existenz von Lebewesen** aus (Menschen, Tiere). Bei Gegenständen wird stattdessen 「あります」 (arimasu) verwendet — das siehst du in der nächsten Lektion. Am Telefon ist 「います」 das **wichtigste** Verb:\n\n```\n[Person]さんは + います か。  → Ist Herr/Frau ~ da?\n[Person]さんは + いません。   → Herr/Frau ~ ist nicht da.\n```\n\n- **Bestätigung:** 「はい、います」 (Hai, imasu — *Ja, er/sie ist da*).\n- **Verneinung:** 「いいえ、いません」 (Iie, imasen — *Nein, er/sie ist nicht da*) oder höflicher: 「ちょっと、いません」 (Chotto, imasen — *Er/Sie ist gerade nicht da*).\n\n### 2. 「～と いいます」 — *Ich heisse ~*\n\nMit dem Partikel 「と」 (to, *als ~*) und dem Verb 「いう」 (iu, *sagen / heissen*) stellst du dich am Telefon höflich vor.\n\n```\n[Eigener Name] + と + いいます。\n[name] + to + iimasu.\n```\n\n- **Beispiel:** 「タナカと いいます」 (Tanaka to iimasu — *Ich heisse Tanaka*).\n- **Frage:** 「おなまえは なんと いいますか」 (Onamae wa nan to iimasu ka — *Wie heisst du?*).\n\n### 3. 「ちょっと ＿＿ですが…」 — *höflich abschwächen*\n\nWenn du etwas **nicht weisst** oder **nicht kannst**, hängst du an die negative Aussage 「ちょっと」 (chotto, *etwas*) und 「が」 (ga, *aber*) an. Das macht die Aussage weicher und höflicher.\n\n- **Direkt:** わかりません (Wakarimasen — *Ich verstehe nicht*).\n- **Höflich:** ちょっと わかりません (Chotto wakarimasen — *Ich verstehe es nicht ganz*).\n- **Mit が:** いま、ちょっと いそがしいですが… (Ima, chotto isogashii desu ga… — *Ich bin gerade etwas beschäftigt…* — die Antwort wird durch das angehängte 「が」 unterbrochen, der Hörer versteht sofort: *Anruf ist ungelegen*).\n\n> **Merkregel:** 「ちょっと」 (chotto) und 「が」 (ga) sind die zwei kleinen Wörter, die einen direkten Satz in einen höflichen verwandeln. Sie sind im japanischen Alltag unverzichtbar — vor allem am Telefon."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "Personen-Existenz: ～は います / いません (~wa imasu / imasen)",
+            "structure": "[Person]は + います / いません  ([person] wa imasu/imasen)",
+            "romaji": "[person] wa imasu / imasen",
+            "explanation": "「います」 (imasu) drückt die Existenz von **Lebewesen** aus (Menschen, Tiere). Für Gegenstände wird 「あります」 (arimasu) verwendet. Die Frage 「～さんは いますか」 (~san wa imasu ka — *Ist Herr/Frau ~ da?*) ist die zentrale Telefon-Phrase. Verneinung: 「いません」 (imasen — *ist nicht da*).",
+            "jlpt_level": 5,
+            "example_sentences": "タナカさんは いますか。 (Tanaka-san wa imasu ka.) — Ist Herr Tanaka da?\nはい、います。 (Hai, imasu.) — Ja, er ist da.\nすみません、いま いません。 (Sumimasen, ima imasen.) — Entschuldigung, er ist gerade nicht da."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "Sich vorstellen: ～と いいます (~to iimasu)",
+            "structure": "[Eigener Name]と いいます。  ([name] to iimasu.)",
+            "romaji": "[name] to iimasu",
+            "explanation": "「～と いいます」 (~to iimasu) wörtlich: *Ich werde [Name] genannt*. Der Partikel 「と」 (to) markiert hier den **Inhalt einer Aussage** (die Bedeutung 'als ~'). Am Telefon und beim Erstkontakt ist diese Form höflicher als 「わたしは タナカです」 (Watashi wa Tanaka desu), weil sie betont, dass es um den Namen geht. Die Frage lautet 「なんと いいますか」 (Nan to iimasu ka — *Wie heisst es / Wie sagt man dazu?*).",
+            "jlpt_level": 5,
+            "example_sentences": "わたしは タナカと いいます。 (Watashi wa Tanaka to iimasu.) — Ich heisse Tanaka.\nおなまえは なんと いいますか。 (Onamae wa nan to iimasu ka.) — Wie heisst du?\nこの ひとは リサと いいます。 (Kono hito wa Risa to iimasu.) — Diese Person heisst Lisa."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "Höflich abschwächen: ちょっと ＿ですが… (chotto ~ desu ga...)",
+            "structure": "ちょっと + [Adjektiv/Verb]ですが…  (chotto + [adj/verb] desu ga…)",
+            "romaji": "chotto [adj/verb] desu ga...",
+            "explanation": "「ちょっと」 (chotto, *ein bisschen / etwas*) ist die wichtigste **Abschwächung** im Japanischen. Vor einer negativen Aussage macht sie diese höflich: 「ちょっと わかりません」 (Chotto wakarimasen — *Es ist etwas unklar*). Mit dem angehängten Partikel 「が」 (ga, *aber*) und dem Auslassungs-Pünktchen wird der Satz unvollendet und damit besonders höflich — der Hörer versteht das implizite *Nein* sofort.",
+            "jlpt_level": 5,
+            "example_sentences": "ちょっと わかりません。 (Chotto wakarimasen.) — Ich verstehe das nicht ganz.\nいま、ちょっと いそがしいですが… (Ima, chotto isogashii desu ga…) — Ich bin gerade etwas beschäftigt…\nちょっと まって ください。 (Chotto matte kudasai.) — Bitte einen Moment."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Dialog — Tanaka ruft Lisa an",
+      "description": "Mini-Telefongespräch mit Verständnisfragen",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Telefongespräch — Lisa und Tanaka",
+            "content_text": "Lisa: もしもし、ヴェーバーです。\n  (Moshi moshi, Wēbā desu.)\n  -> Hallo? Hier ist Weber.\n\nTanaka: あ、リサさん？タナカです。こんばんは。\n  (A, Risa-san? Tanaka desu. Konbanwa.)\n  -> Ah, Lisa? Hier ist Tanaka. Guten Abend.\n\nLisa: タナカさん、こんばんは。げんきですか。\n  (Tanaka-san, konbanwa. Genki desu ka.)\n  -> Tanaka, guten Abend. Wie geht es dir?\n\nTanaka: はい、げんきです。あの、いま、ちょっと いいですか。\n  (Hai, genki desu. Ano, ima, chotto ii desu ka.)\n  -> Mir geht es gut. Hast du gerade einen Moment?\n\nLisa: はい、どうぞ。\n  (Hai, dōzo.)\n  -> Ja, gerne.\n\nTanaka: あした、しょくどうで たべませんか。\n  (Ashita, shokudō de tabemasen ka.)\n  -> Möchtest du morgen in der Kantine essen?\n\nLisa: いいですね。なんじから ですか。\n  (Ii desu ne. Nan-ji kara desu ka.)\n  -> Klingt gut. Ab wann?\n\nTanaka: たぶん、じゅうにじから です。\n  (Tabun, jūni-ji kara desu.)\n  -> Vielleicht ab zwölf Uhr.\n\nLisa: わかりました。じゃあ、あした しょくどうで。\n  (Wakarimashita. Jā, ashita shokudō de.)\n  -> Verstanden. Bis morgen, in der Kantine.\n\nTanaka: はい、どうも。さようなら。\n  (Hai, dōmo. Sayōnara.)\n  -> Ja, danke. Auf Wiedersehen."
+          }
+        },
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Verständnisfragen zum Dialog",
+            "content_text": "## Hast du das **Telefongespräch** verstanden?\n\nBeantworte die folgenden Fragen anhand der **Anruf-Choreografie** zwischen Lisa und Tanaka. Achte besonders auf:\n\n- Wer **ruft an** und wie meldet sich die andere Person?\n- Welche **Höflichkeitsphrase** nutzt Tanaka, um den Anruf zu beginnen?\n- Wann und wo **treffen** sich die beiden?\n\n> **Tipp:** Lies den Dialog mit lauter Stimme — Telefon-Japanisch ist Hör-Training."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie meldet sich Lisa am Telefon?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "Achte auf das erste, was sie sagt.",
+              "explanation": "Lisa sagt: 「もしもし、ヴェーバーです」 (Moshi moshi, Wēbā desu — *Hallo? Hier ist Weber*). Sie nennt direkt ihren Nachnamen.",
+              "options": [
+                {
+                  "option_text": "「もしもし、ヴェーバーです」 (Moshi moshi, Wēbā desu)",
+                  "is_correct": true,
+                  "feedback": "Richtig — am Telefon nennt man den Nachnamen direkt nach 「もしもし」."
+                },
+                {
+                  "option_text": "「こんにちは、リサです」 (Konnichiwa, Risa desu)",
+                  "is_correct": false,
+                  "feedback": "Falsch — 「こんにちは」 ist die Tag-Begrüssung, nicht Telefon."
+                },
+                {
+                  "option_text": "「はい、リサです」 (Hai, Risa desu)",
+                  "is_correct": false,
+                  "feedback": "Falsch — Lisa nutzt zuerst 「もしもし」 und ihren Nachnamen."
+                },
+                {
+                  "option_text": "「すみません、ヴェーバー です」 (Sumimasen, Wēbā desu)",
+                  "is_correct": false,
+                  "feedback": "Falsch — sie entschuldigt sich nicht zur Begrüssung."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie beginnt Tanaka sein Anliegen höflich?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Achte auf den Zusatz mit 「ちょっと」.",
+              "explanation": "Tanaka sagt: 「あの、いま、ちょっと いいですか」 (Ano, ima, chotto ii desu ka — *Ähm, hast du gerade einen Moment?*). Das ist die typische höfliche Eröffnung.",
+              "options": [
+                {
+                  "option_text": "「ちょっと いいですか」 (Chotto ii desu ka)",
+                  "is_correct": true,
+                  "feedback": "Richtig — die höfliche Bitte um einen Moment Aufmerksamkeit."
+                },
+                {
+                  "option_text": "「いまから はなします」 (Ima kara hanashimasu)",
+                  "is_correct": false,
+                  "feedback": "Falsch — diese Aussage ist zu direkt."
+                },
+                {
+                  "option_text": "「もう いちど」 (Mō ichido)",
+                  "is_correct": false,
+                  "feedback": "Falsch — das wäre eine Bitte um Wiederholung."
+                },
+                {
+                  "option_text": "「いいえ、けっこうです」 (Iie, kekkō desu)",
+                  "is_correct": false,
+                  "feedback": "Falsch — das wäre eine höfliche Ablehnung."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Tanaka und Lisa treffen sich heute Abend in der Kantine.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Falsch — Tanaka sagt 「あした、しょくどうで たべませんか」 (Ashita, shokudō de tabemasen ka — *Möchtest du **morgen** in der Kantine essen?*). Es ist morgen, nicht heute Abend.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Falsch — sie treffen sich morgen, nicht heute Abend."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt — das Treffen ist あした (ashita — morgen)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Um wieviel Uhr soll das Treffen beginnen?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Achte auf 「じゅうにじ」 (jūni-ji).",
+              "explanation": "Tanaka sagt: 「たぶん、じゅうにじから です」 (Tabun, jūni-ji kara desu — *Vielleicht ab 12 Uhr*).",
+              "options": [
+                {
+                  "option_text": "12 Uhr",
+                  "is_correct": true,
+                  "feedback": "Richtig — じゅうに-じ = 12 Uhr."
+                },
+                {
+                  "option_text": "10 Uhr",
+                  "is_correct": false,
+                  "feedback": "Falsch — じゅう-じ wäre 10 Uhr."
+                },
+                {
+                  "option_text": "2 Uhr",
+                  "is_correct": false,
+                  "feedback": "Falsch — に-じ wäre 2 Uhr."
+                },
+                {
+                  "option_text": "20 Uhr",
+                  "is_correct": false,
+                  "feedback": "Falsch — Japaner zählen Uhrzeiten meist 1-12, mit Tageszeit-Präfix."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Übung — Am Telefon trainieren",
+      "description": "Quiz mit Multiple-Choice, True/False und Matching",
+      "page_type": "quiz_carousel",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Übung",
+            "content_text": "## Zeit zu üben!\n\nDie folgenden Fragen testen alle Bereiche dieser Lektion:\n\n- **Telefon-Vokabeln** — Erkennst du でんわ (denwa), もしもし (moshi moshi), ばんごう (bangō)?\n- **います / いません** — Wie fragst du, ob jemand da ist?\n- **～と いいます** — Wie stellst du dich am Telefon vor?\n- **ちょっと-Höflichkeit** — Wie weichst du eine direkte Aussage ab?\n\n> **Tipp:** Lies bei Unsicherheit nochmal die Grammatik-Seite — vor allem den Unterschied zwischen 「もしもし」 (nur Telefon) und 「こんにちは」 (Tag-Begrüssung)."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "In welcher Situation sagt man 「もしもし」 (moshi moshi)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「もしもし」 wird **ausschliesslich am Telefon** gesagt, beim Annehmen oder Anrufen. Im direkten Gespräch klingt es seltsam.",
+              "options": [
+                {
+                  "option_text": "Am Telefon",
+                  "is_correct": true,
+                  "feedback": "Richtig — もしもし ist die Telefon-Anrede."
+                },
+                {
+                  "option_text": "Bei einer Begrüssung im Café",
+                  "is_correct": false,
+                  "feedback": "Falsch — dort sagt man こんにちは (konnichiwa)."
+                },
+                {
+                  "option_text": "Beim Verabschieden",
+                  "is_correct": false,
+                  "feedback": "Falsch — dort sagt man さようなら (sayōnara)."
+                },
+                {
+                  "option_text": "Beim Bezahlen",
+                  "is_correct": false,
+                  "feedback": "Falsch — dort sagt man おねがいします (onegai shimasu)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie fragst du auf Japanisch 'Ist Herr Tanaka da?'",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "います ist das Verb für die Existenz von Personen.",
+              "explanation": "「タナカさんは いますか」 (Tanaka-san wa imasu ka — *Ist Herr Tanaka da?*). 「います」 (imasu) für Personen, 「あります」 (arimasu) für Gegenstände.",
+              "options": [
+                {
+                  "option_text": "タナカさんは いますか (Tanaka-san wa imasu ka)",
+                  "is_correct": true,
+                  "feedback": "Richtig — ist die Standard-Telefonfrage."
+                },
+                {
+                  "option_text": "タナカさんは ありますか (Tanaka-san wa arimasu ka)",
+                  "is_correct": false,
+                  "feedback": "Falsch — あります ist nur für Gegenstände, nicht für Personen."
+                },
+                {
+                  "option_text": "タナカさんが いますか (Tanaka-san ga imasu ka)",
+                  "is_correct": false,
+                  "feedback": "Falsch — bei der Frage nach einer bekannten Person ist は (wa) korrekt."
+                },
+                {
+                  "option_text": "タナカさんを いますか (Tanaka-san wo imasu ka)",
+                  "is_correct": false,
+                  "feedback": "Falsch — を ist der Akkusativ-Partikel, hier nicht passend."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie sagt man 'Ich heisse Lisa' auf Japanisch?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "～と いいます mit dem eigenen Namen davor.",
+              "explanation": "「わたしは リサと いいます」 (Watashi wa Risa to iimasu — *Ich heisse Lisa*). Der Partikel 「と」 markiert den Namen als Inhalt der Aussage.",
+              "options": [
+                {
+                  "option_text": "わたしは リサと いいます (Watashi wa Risa to iimasu)",
+                  "is_correct": true,
+                  "feedback": "Richtig — die höfliche Vorstellungsform."
+                },
+                {
+                  "option_text": "わたしは リサに いいます (Watashi wa Risa ni iimasu)",
+                  "is_correct": false,
+                  "feedback": "Falsch — に passt hier nicht."
+                },
+                {
+                  "option_text": "わたしは リサが いいます (Watashi wa Risa ga iimasu)",
+                  "is_correct": false,
+                  "feedback": "Falsch — が ist hier falsch."
+                },
+                {
+                  "option_text": "わたしは リサを いいます (Watashi wa Risa wo iimasu)",
+                  "is_correct": false,
+                  "feedback": "Falsch — を ist hier falsch."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「ちょっと いそがしいですが…」 (chotto isogashii desu ga…)?",
+              "difficulty_level": 3,
+              "points": 1,
+              "hint": "ちょっと + が = höfliche Abschwächung mit unausgesprochenem 'aber'.",
+              "explanation": "Wörtlich: *Ich bin etwas beschäftigt, aber…*. Das angehängte 「が」 (ga) und das Aussparen des Satzendes signalisieren höflich: *Ich kann gerade nicht*. Der Hörer versteht das implizite *Nein*.",
+              "options": [
+                {
+                  "option_text": "Höfliche Andeutung, dass man gerade keine Zeit hat",
+                  "is_correct": true,
+                  "feedback": "Richtig — typische japanische Höflichkeitsformel."
+                },
+                {
+                  "option_text": "Klare Zustimmung, gleich Zeit zu haben",
+                  "is_correct": false,
+                  "feedback": "Falsch — das wäre 「いま、いいですよ」."
+                },
+                {
+                  "option_text": "Eine Frage nach der Uhrzeit",
+                  "is_correct": false,
+                  "feedback": "Falsch — Uhrzeitfrage wäre 「なんじですか」."
+                },
+                {
+                  "option_text": "Ein verspätetes Hallo",
+                  "is_correct": false,
+                  "feedback": "Falsch — bezieht sich auf Beschäftigtsein, nicht Begrüssung."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「います」 (imasu) wird für die Existenz von Personen und Tieren benutzt; 「あります」 (arimasu) für Gegenstände.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Richtig — das ist eine der wichtigsten Unterscheidungen im N5: belebt (います) versus unbelebt (あります).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt — belebt vs. unbelebt."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — います für Lebewesen, あります für Sachen."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Das Wort 「もしもし」 (moshi moshi) kann man auch im Café statt 「こんにちは」 sagen.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Falsch — 「もしもし」 ist **ausschliesslich** für das Telefon. Im direkten Gespräch klingt es merkwürdig.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Falsch — もしもし ist nur am Telefon korrekt."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt — もしもし ist eine reine Telefon-Anrede."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie sagt man höflich 'Bitte einen Moment'?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "「ちょっと まって ください」 (Chotto matte kudasai — *Bitte einen Moment*). Das 「ちょっと」 macht die Bitte höflich-knapp.",
+              "options": [
+                {
+                  "option_text": "ちょっと まって ください (Chotto matte kudasai)",
+                  "is_correct": true,
+                  "feedback": "Richtig — Standardphrase."
+                },
+                {
+                  "option_text": "いま まちます (Ima machimasu)",
+                  "is_correct": false,
+                  "feedback": "Falsch — das hiesse 'Ich warte jetzt'."
+                },
+                {
+                  "option_text": "あとで きて ください (Ato de kite kudasai)",
+                  "is_correct": false,
+                  "feedback": "Falsch — das hiesse 'Bitte komm später'."
+                },
+                {
+                  "option_text": "もう いちど (Mō ichido)",
+                  "is_correct": false,
+                  "feedback": "Falsch — das hiesse 'Noch einmal'."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「たぶん、こんばん きます」 (Tabun, konban kimasu)?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "「たぶん」 (tabun) heisst *vielleicht*, 「こんばん」 (konban) heisst *heute Abend*, 「きます」 (kimasu) heisst *kommt*. Zusammen: *Vielleicht kommt er/sie heute Abend*.",
+              "options": [
+                {
+                  "option_text": "Vielleicht kommt er/sie heute Abend.",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "Heute Abend kommt sicher niemand.",
+                  "is_correct": false,
+                  "feedback": "Falsch — たぶん ist *vielleicht*, nicht *sicher nicht*."
+                },
+                {
+                  "option_text": "Heute Abend ist es leise.",
+                  "is_correct": false,
+                  "feedback": "Falsch — leise wäre しずか."
+                },
+                {
+                  "option_text": "Vielleicht ruft er/sie morgen an.",
+                  "is_correct": false,
+                  "feedback": "Falsch — きます heisst *kommt*, nicht *ruft an*."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「どうも」 (dōmo) kann sowohl 'danke' als auch 'irgendwie' bedeuten.",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Richtig — im Alltag bedeutet 「どうも」 (dōmo) meist *danke*. In Sätzen wie 「どうも わかりません」 (dōmo wakarimasen — *irgendwie verstehe ich es nicht*) heisst es *irgendwie/nicht ganz*.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt — どうも hat zwei Bedeutungen."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — どうも ist mehrdeutig."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde das japanische Wort mit der deutschen Bedeutung.",
+              "difficulty_level": 2,
+              "points": 2,
+              "options": [
+                {
+                  "option_text": "電話 (denwa)",
+                  "feedback": "Telefon",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "番号 (bangō)",
+                  "feedback": "Nummer",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "名前 (namae)",
+                  "feedback": "Name",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "話す (hanasu)",
+                  "feedback": "sprechen",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde die Telefon-Phrase mit der deutschen Bedeutung.",
+              "difficulty_level": 2,
+              "points": 2,
+              "options": [
+                {
+                  "option_text": "もしもし (moshi moshi)",
+                  "feedback": "Hallo? (Telefon)",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "いますか (imasu ka)",
+                  "feedback": "Ist (Person) da?",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "ちょっと まって ください (chotto matte kudasai)",
+                  "feedback": "Bitte einen Moment",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "わかりました (wakarimashita)",
+                  "feedback": "Verstanden",
+                  "is_correct": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Zusammenfassung & nächste Schritte",
+      "description": "Was du jetzt am Telefon kannst",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Geschafft!",
+            "content_text": "## Was du jetzt kannst\n\nNach dieser Lektion kannst du:\n\n- Ein japanisches **Telefonat eröffnen** mit 「もしもし」 (moshi moshi) und deinem Namen\n- Nach jemandem fragen mit **「～さんは いますか」** (~san wa imasu ka)\n- Dich höflich vorstellen mit **「～と いいます」** (~to iimasu)\n- Einen direkten Satz höflich abschwächen mit **「ちょっと」** (chotto) und **「が」** (ga)\n- Über Zeitpunkte sprechen: いま (ima — jetzt), こんばん (konban — heute Abend), あした (ashita — morgen), あと (ato — später)\n\n### Wichtige Merkpunkte\n\n- **「もしもし」** wird ausschliesslich am Telefon benutzt — nie im direkten Gespräch.\n- **「います」** (imasu) für Personen / Tiere; **「あります」** (arimasu) für Gegenstände — nie verwechseln!\n- **「ちょっと」** + Negativaussage = höflich abgeschwächte Absage.\n- Beim Vorstellen am Telefon: erst 「もしもし」, dann der eigene Name, dann das Anliegen.\n\n> **Lerntipp:** Notiere dir drei Telefonnummern (Familie, Freund, Mayuko) und sage sie laut auf Japanisch durch. Das festigt sowohl die Zahlen-Lektion als auch das Telefon-Vokabular.\n\n### Was kommt als Nächstes?\n\nIn der nächsten Lektion (**N5 Begrüssung & Höflichkeit 4**) lernst du, dich höflich zu **entschuldigen** und ein **Geschenk zu übergeben** — typische japanische Phrasen mit 「どうぞ」 (dōzo) und 「どうも」 (dōmo). Auf bald!"
+          }
+        }
+      ]
+    }
+  ],
+  "thumbnail_url": "generated/thumbnail_begrüssung_&_höflichkeit_20260425_221144.png"
+}

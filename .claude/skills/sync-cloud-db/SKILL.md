@@ -126,6 +126,27 @@ PYTHONIOENCODING=utf-8 PYTHONPATH=. python scripts/sync_content_upsert.py \
   --cloud-host 34.65.56.56 --cloud-password "$DB_PASS"
 ```
 
+### 6b. SCHRITT C: Assets nach GCS hochladen (PFLICHT seit 2026-04-26)
+
+**Lesson Learned 2026-04-26:** DB-Sync allein reicht nicht. Vokabel-
+Bilder, Audio-Dateien, Slideshow-Assets liegen lokal in
+`app/static/uploads/` — die Live-Seite loest sie aber via
+`https://storage.googleapis.com/jpl-website-assets/...` auf. Wenn die
+Dateien nicht im GCS-Bucket sind, kommt **404** und die Lerner sehen
+Bilder/Audios nicht (User-Beschwerde 2026-04-26: "die bilder werden auf
+der webseite nicht angezeigt aber lokal schon" und "das audio funktioniert
+auch nicht auf der deployten webseite").
+
+```bash
+# Synchronisiert vocab_generated, generated, lessons/audio,
+# lessons/text_audio, lessons/dialog_slideshow per `gcloud storage rsync -r`.
+PYTHONIOENCODING=utf-8 PYTHONPATH=. python scripts/sync_assets_to_gcs.py
+```
+
+Idempotent: rsync laedt nur neue/geaenderte Dateien hoch. Bei einer
+einzelnen neuen Lektion typisch ~30 Dateien (Thumb + Vokabel-Bilder +
+Conversation-MP3 + Slideshow-PNG/MP3 + Text-Audio-MP3s), ~5-15 MB.
+
 ### 7. ALWAYS close access
 
 ```bash

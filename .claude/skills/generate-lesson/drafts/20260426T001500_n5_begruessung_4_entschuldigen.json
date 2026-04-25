@@ -1,0 +1,812 @@
+{
+  "title": "N5 Begrüssung & Höflichkeit 4 — Entschuldigen und Geschenke übergeben",
+  "description": "Wie man sich in Japan höflich entschuldigt (「すみません」, 「ごめんなさい」, 「おそく なりました」) und ein Geschenk übergibt (「どうぞ」, 「これは…です」). Du lernst die Antworten 「いいえ、大丈夫です」 und den Unterschied zwischen 「もう」 (schon) und 「まだ」 (noch nicht).",
+  "jlpt_level": 5,
+  "topic": "Begrüssung & Höflichkeit",
+  "instruction_language": "german",
+  "allow_guest_access": true,
+  "pages": [
+    {
+      "title": "Einführung — Höflichkeit am Ende des Tages",
+      "description": "Worum geht es in dieser Lektion?",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Willkommen",
+            "content_text": "## Sich entschuldigen, etwas überreichen — die feine Choreografie\n\nIn Japan sind **Entschuldigungen** und **Geschenk-Übergaben** Alltag. Wenn du fünf Minuten zu spät zu einem Treffen kommst, sagst du nicht einfach *Sorry* und setzt dich hin — du verbeugst dich kurz und sagst 「すみません、おそく なりました」 (Sumimasen, osoku narimashita — *Entschuldigung, ich bin spät dran*). Wenn du jemandem ein **kleines Mitbringsel** überreichst, sagst du **nicht** *Hier, ein Geschenk für dich!*, sondern 「どうぞ、これは ちいさい プレゼントです」 (Dōzo, kore wa chiisai purezento desu — *Bitte sehr, das ist eine kleine Aufmerksamkeit*).\n\n### Was du nach dieser Lektion kannst\n\n- Höflich um Entschuldigung bitten: **「すみません」** (sumimasen) und **「ごめんなさい」** (gomennasai)\n- Auf eine Entschuldigung höflich reagieren: **「いいえ、だいじょうぶです」** (iie, daijōbu desu — *Nein, alles gut*)\n- Ein **Geschenk** überreichen mit 「どうぞ」 (dōzo) und sich dafür bedanken mit 「どうも、ありがとう」 (dōmo, arigatō)\n- Den Unterschied zwischen **「もう」** (mō — *schon, bereits*) und **「まだ」** (mada — *noch (nicht)*) verstehen und im Satz nutzen\n- Adjektive **adverbial** verwenden: 「おそく なりました」 (osoku narimashita — *ich bin spät geworden / spät dran*)\n\n> **Lerntipp:** In Japan ist das Mass der Höflichkeit **wichtiger** als die direkte Information. Lieber eine Sekunde zu höflich als eine zu direkt — die Beziehung zählt mehr als die Effizienz."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln 1 — Entschuldigung und Zeitgefühl",
+      "description": "Acht Wörter für Entschuldigung, Pünktlichkeit und Aspekt",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Entschuldigen und Zeit",
+            "content_text": "## Acht Vokabeln rund um Entschuldigung\n\nDiese acht Wörter brauchst du in jedem Gespräch, wenn du dich entschuldigen oder nach der Zeit fragen willst.\n\n### Entschuldigungs-Phrasen\n- **すみません (sumimasen)** — *Entschuldigung*; auch *Danke* (wenn jemand etwas für dich tut)\n- **ごめんなさい (gomennasai)** — *Es tut mir leid* — direkter, persönlicher als 「すみません」\n- **だいじょうぶ (daijōbu)** — *kein Problem, alles gut* (na-Adj.)\n\n### Zeit-Adjektive und Aspekt\n- **おそい (osoi)** — *spät, langsam* (i-Adj.)\n- **はやい (hayai)** — *früh, schnell* (i-Adj.)\n- **わすれる (wasureru)** — *vergessen*\n- **もう (mō)** — *schon, bereits* (Aspekt: abgeschlossen)\n- **まだ (mada)** — *noch, noch nicht* (Aspekt: nicht abgeschlossen)\n\n> **Wichtig:** 「すみません」 ist das Schweizer Taschenmesser der japanischen Höflichkeit. Es kann *Entschuldigung*, *Verzeihung*, *Danke* und sogar *Hallo* (zum Anrufen einer Bedienung) bedeuten. Im Zweifel ist 「すみません」 **immer** richtig."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "すみません",
+            "reading": "すみません",
+            "romaji": "sumimasen",
+            "meaning": "excuse me; sorry; thanks",
+            "meaning_de": "Entschuldigung; Verzeihung; danke",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "すみません、おそく なりました。",
+            "example_sentence_english": "Sumimasen, osoku narimashita. — Sorry, I'm late.",
+            "is_canonical_override": true,
+            "source_note": "Klassische N5-Höflichkeitsphrase, in jedem Standard-Lehrwerk (Minna no Nihongo, Genki, Marugoto N5) als Kern-Vokabel enthalten — fehlt in der einzelwort-zentrierten JLPT-Liste, ist aber unverzichtbar.",
+            "image_url": "vocab_generated/vocab_27eeedab.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "ごめんなさい",
+            "reading": "ごめんなさい",
+            "romaji": "gomennasai",
+            "meaning": "I'm sorry",
+            "meaning_de": "Es tut mir leid",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ごめんなさい、わすれました。",
+            "example_sentence_english": "Gomennasai, wasuremashita. — I'm sorry, I forgot.",
+            "is_canonical_override": true,
+            "source_note": "Standard-Entschuldigung im N5-Niveau (Minna no Nihongo Lektion 6, Genki I).",
+            "image_url": "vocab_generated/vocab_03942332.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "大丈夫",
+            "reading": "だいじょうぶ",
+            "romaji": "daijoubu",
+            "meaning": "all right, no problem",
+            "meaning_de": "kein Problem, alles in Ordnung (na-Adj.)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "いいえ、だいじょうぶです。",
+            "example_sentence_english": "Iie, daijōbu desu. — No, it's fine.",
+            "image_url": "vocab_generated/vocab_435c38e0.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "遅い",
+            "reading": "おそい",
+            "romaji": "osoi",
+            "meaning": "late, slow",
+            "meaning_de": "spät, langsam (i-Adj.)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "でんしゃが おそいです。",
+            "example_sentence_english": "Densha ga osoi desu. — The train is slow.",
+            "image_url": "vocab_generated/vocab_a091c766.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "早い",
+            "reading": "はやい",
+            "romaji": "hayai",
+            "meaning": "early, fast",
+            "meaning_de": "früh, schnell (i-Adj.)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あには はやいです。",
+            "example_sentence_english": "Ani wa hayai desu. — My older brother is fast.",
+            "image_url": "vocab_generated/vocab_38373424.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "忘れる",
+            "reading": "わすれる",
+            "romaji": "wasureru",
+            "meaning": "to forget",
+            "meaning_de": "vergessen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "なまえを わすれました。",
+            "example_sentence_english": "Namae wo wasuremashita. — I forgot the name.",
+            "image_url": "vocab_generated/vocab_4a0e4722.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "もう",
+            "reading": "もう",
+            "romaji": "mou",
+            "meaning": "already; more",
+            "meaning_de": "schon, bereits",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "もう たべました。",
+            "example_sentence_english": "Mō tabemashita. — I have already eaten.",
+            "image_url": "vocab_generated/vocab_d10ff269.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "まだ",
+            "reading": "まだ",
+            "romaji": "mada",
+            "meaning": "yet, still",
+            "meaning_de": "noch, noch nicht",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "まだ きていません。",
+            "example_sentence_english": "Mada kite imasen. — He/she hasn't come yet.",
+            "image_url": "vocab_generated/vocab_f687bb8e.png"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln 2 — Geschenke und Übergabe",
+      "description": "Zehn Wörter rund um kleine Mitbringsel und das Bedanken",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Geschenke und Phrasen zum Überreichen",
+            "content_text": "## Was kann man überreichen?\n\nIn Japan überreichen sich Menschen oft **kleine Aufmerksamkeiten**. Hier sind zehn N5-Wörter für typische Geschenke und die Phrasen rund ums Überreichen.\n\n### Mitbringsel\n- **プレゼント (purezento)** — *Geschenk*\n- **はな (hana)** — *Blume(n)*\n- **ほん (hon)** — *Buch*\n- **ハンカチ (hankachi)** — *Taschentuch*\n- **はこ (hako)** — *Schachtel*\n\n### Bedanken / Reagieren\n- **ありがとう (arigatō)** — *danke*\n- **たいせつ (taisetsu)** — *wichtig, kostbar* (na-Adj.)\n- **ほんとう (hontō)** — *wirklich, wahr*\n- **いいえ (iie)** — *nein, gar nicht*\n- **もんだい (mondai)** — *Problem*\n\n> **Kultur-Tipp:** In Japan ist es üblich, beim Überreichen eines Geschenks die **eigene Aufmerksamkeit kleinzumachen**: 「ちいさい プレゼントですが、どうぞ」 (Chiisai purezento desu ga, dōzo — *Es ist nur eine Kleinigkeit, aber bitte*). Das ist nicht falsche Bescheidenheit — es ist eine Höflichkeit, die den Beschenkten **nicht in die Verpflichtung** stellt."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "プレゼント",
+            "reading": "プレゼント",
+            "romaji": "purezento",
+            "meaning": "present, gift",
+            "meaning_de": "Geschenk, Aufmerksamkeit",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ははに プレゼントを かいました。",
+            "example_sentence_english": "Haha ni purezento wo kaimashita. — I bought my mother a gift.",
+            "is_canonical_override": true,
+            "source_note": "Lehnwort, in N5-Lehrwerken (Minna no Nihongo Lektion 7, Genki I) als Kern-Vokabel enthalten.",
+            "image_url": "vocab_generated/vocab_06862ca7.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "ありがとう",
+            "reading": "ありがとう",
+            "romaji": "arigatou",
+            "meaning": "thank you",
+            "meaning_de": "danke",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ほんとうに ありがとう。",
+            "example_sentence_english": "Hontō ni arigatō. — Thank you so much.",
+            "is_canonical_override": true,
+            "source_note": "Standard-Dank, JLPT N5 in jedem Lehrwerk.",
+            "image_url": "vocab_generated/vocab_8ceba444.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "花",
+            "reading": "はな",
+            "romaji": "hana",
+            "meaning": "flower",
+            "meaning_de": "Blume(n)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "はなが きれいです。",
+            "example_sentence_english": "Hana ga kirei desu. — The flowers are beautiful.",
+            "image_url": "vocab_generated/vocab_22dbba75.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "本",
+            "reading": "ほん",
+            "romaji": "hon",
+            "meaning": "book",
+            "meaning_de": "Buch",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "おもしろい ほんを よみました。",
+            "example_sentence_english": "Omoshiroi hon wo yomimashita. — I read an interesting book.",
+            "image_url": "vocab_generated/vocab_a4fb8425.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "ハンカチ",
+            "reading": "ハンカチ",
+            "romaji": "hankachi",
+            "meaning": "handkerchief",
+            "meaning_de": "Taschentuch",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ハンカチを どうぞ。",
+            "example_sentence_english": "Hankachi wo dōzo. — Here is a handkerchief.",
+            "image_url": "vocab_generated/vocab_c8135028.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "箱",
+            "reading": "はこ",
+            "romaji": "hako",
+            "meaning": "box",
+            "meaning_de": "Schachtel, Kiste",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ちいさい はこの なかに プレゼントが あります。",
+            "example_sentence_english": "Chiisai hako no naka ni purezento ga arimasu. — There is a present in the small box.",
+            "image_url": "vocab_generated/vocab_231206dd.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "大切",
+            "reading": "たいせつ",
+            "romaji": "taisetsu",
+            "meaning": "important, precious",
+            "meaning_de": "wichtig, kostbar (na-Adj.)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ともだちは たいせつな ひとです。",
+            "example_sentence_english": "Tomodachi wa taisetsu na hito desu. — A friend is an important person.",
+            "image_url": "vocab_generated/vocab_40a5126f.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "本当",
+            "reading": "ほんとう",
+            "romaji": "hontou",
+            "meaning": "real, true",
+            "meaning_de": "wirklich, wahr",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ほんとうですか。",
+            "example_sentence_english": "Hontō desu ka. — Really?",
+            "image_url": "vocab_generated/vocab_d4b6f23c.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "いいえ",
+            "reading": "いいえ",
+            "romaji": "iie",
+            "meaning": "no, not at all",
+            "meaning_de": "nein, gar nicht",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "いいえ、だいじょうぶです。",
+            "example_sentence_english": "Iie, daijōbu desu. — No, it's fine.",
+            "image_url": "vocab_generated/vocab_5c7c39d0.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "問題",
+            "reading": "もんだい",
+            "romaji": "mondai",
+            "meaning": "problem",
+            "meaning_de": "Problem, Frage",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "もんだいは ありません。",
+            "example_sentence_english": "Mondai wa arimasen. — There is no problem.",
+            "image_url": "vocab_generated/vocab_25486ad4.png"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Grammatik — Entschuldigen, Übergeben, schon vs. noch",
+      "description": "Drei zentrale Patterns für Höflichkeit und Aspekt",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Drei Bausteine für höfliche Interaktion",
+            "content_text": "## Drei zentrale Patterns\n\n### 1. Adverb-Form von i-Adjektiven: 「い → く」\n\nWenn du ein i-Adjektiv vor einem Verb nutzen willst, wird das letzte 「い」 zu 「く」. Das ist die **Adverb-Form**.\n\n```\nおそい (osoi — spät) → おそく (osoku — spät, adverbial)\nはやい (hayai — schnell) → はやく (hayaku — schnell, adverbial)\n```\n\nDamit kannst du sagen, dass etwas **wird**: 「おそく なりました」 (osoku narimashita — *ich bin spät dran geworden*).\n\n### 2. Geschenk-Übergabe: 「どうぞ、これは ＿です」\n\nDie höfliche Geschenk-Übergabe folgt einer festen Choreografie:\n\n```\n[Geber]: どうぞ、これは [Geschenk] です。\n[Empfänger]: どうも、ありがとう ございます。\n```\n\nDie typische **Bescheidenheits-Phrase** zum Überreichen lautet 「ちいさい ものですが、どうぞ」 (Chiisai mono desu ga, dōzo — *Es ist nur eine Kleinigkeit, bitte*).\n\n### 3. もう vs. まだ — schon und noch (nicht)\n\n**「もう」** (mō, *schon*) markiert eine **abgeschlossene Handlung**.\n**「まだ」** (mada, *noch*) markiert eine **nicht abgeschlossene Handlung**.\n\n```\nもう たべました。 (Mō tabemashita.) — Ich habe schon gegessen.\nまだ たべていません。 (Mada tabete imasen.) — Ich habe noch nicht gegessen.\n```\n\nMit Adjektiven:\n- もう おそいです (mō osoi desu — *es ist schon spät*)\n- まだ はやいです (mada hayai desu — *es ist noch früh*)\n\n> **Merkregel:** Auf die Frage 「もう ＿しましたか?」 (mō ~shimashita ka — *Haben Sie schon ~?*) antwortest du entweder mit 「はい、もう しました」 (hai, mō shimashita — *ja, schon*) oder 「いいえ、まだです」 (iie, mada desu — *nein, noch nicht*)."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "Adverb-Form: い-Adjektiv → -く + Verb",
+            "structure": "[i-Adj-Stamm] + く + [Verb]  ([i-adj-stem] + ku + [verb])",
+            "romaji": "[i-adj-stem] + ku + [verb]",
+            "explanation": "Bei i-Adjektiven wird das letzte 「い」 (i) zu 「く」 (ku), wenn das Adjektiv vor einem Verb steht (adverbiale Verwendung). Damit beschreibst du, **wie** etwas geschieht oder zu welchem Zustand etwas wird. Häufige Kombination: 「[Adj-stamm]く なる」 (~ku naru — *zu ~ werden*). Beispiel: 「おそく なりました」 (osoku narimashita — *ich bin spät geworden / spät dran*). **Achtung:** Bei な-Adjektiven steht 「に」 (ni) statt 「く」: 「しずかに します」 (shizuka ni shimasu — *es leise machen*).",
+            "jlpt_level": 5,
+            "example_sentences": "おそく なりました。 (Osoku narimashita.) — Ich bin spät dran.\nはやく きて ください。 (Hayaku kite kudasai.) — Bitte komm schnell.\nまいにち やすく かいます。 (Mainichi yasuku kaimasu.) — Ich kaufe es jeden Tag günstig."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "Geschenk-Übergabe: どうぞ + これは ～です",
+            "structure": "どうぞ、これは + [Geschenk]です。 / どうも、ありがとう ございます。",
+            "romaji": "douzo, kore wa [geschenk] desu / doumo, arigatou gozaimasu",
+            "explanation": "Die höfliche Übergabe eines Geschenks folgt einer festen Choreografie: Der Geber sagt 「どうぞ」 (dōzo — *bitte sehr*) und beschreibt das Geschenk knapp. Der Empfänger antwortet mit 「どうも、ありがとう ございます」 (dōmo, arigatō gozaimasu — *vielen Dank*). Eine typische **Bescheidenheits-Formel** des Gebers lautet 「ちいさい ものですが、どうぞ」 (chiisai mono desu ga, dōzo — *es ist nur eine Kleinigkeit, aber bitte*) — sie nimmt dem Empfänger die soziale Verpflichtung. **Wichtig:** Geschenke werden in Japan **mit beiden Händen** überreicht und entgegengenommen.",
+            "jlpt_level": 5,
+            "example_sentences": "どうぞ、これは プレゼントです。 (Dōzo, kore wa purezento desu.) — Bitte, das ist ein Geschenk.\nちいさい ものですが、どうぞ。 (Chiisai mono desu ga, dōzo.) — Es ist nur eine Kleinigkeit, aber bitte.\nどうも、ほんとうに ありがとう ございます。 (Dōmo, hontō ni arigatō gozaimasu.) — Vielen herzlichen Dank."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "Aspekt: もう (schon) vs. まだ (noch nicht)",
+            "structure": "もう + [Verb-ました] / まだ + [Verb-ていません]  (mou + [verb-mashita] / mada + [verb-te imasen])",
+            "romaji": "mou + [verb-mashita]  /  mada + [verb-te imasen]",
+            "explanation": "「もう」 (mō, *schon*) markiert eine **abgeschlossene Handlung** — das Verb steht in der ました-Vergangenheit. 「まだ」 (mada, *noch nicht*) markiert eine **nicht abgeschlossene Handlung** — das Verb steht in der ていません-Verlaufsform. Auf die Frage 「もう ＿しましたか?」 (mō ~shimashita ka) antwortet man entweder bestätigend mit 「はい、もう しました」 oder verneinend mit 「いいえ、まだです」. **Achtung:** 「いいえ、しませんでした」 wäre falsch, denn die Handlung ist noch nicht erledigt — sie kann später erfolgen.",
+            "jlpt_level": 5,
+            "example_sentences": "もう ばんごはんを たべました。 (Mō bangohan wo tabemashita.) — Ich habe schon zu Abend gegessen.\nまだ ごはんを たべていません。 (Mada gohan wo tabete imasen.) — Ich habe noch nicht gegessen.\nもう おそいです。 (Mō osoi desu.) — Es ist schon spät."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Dialog — Tanaka kommt zu spät und übergibt ein Geschenk",
+      "description": "Mini-Dialog mit Verständnisfragen",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "An der Tür — Tanaka entschuldigt sich",
+            "content_text": "Tanaka: リサさん、すみません。おそく なりました。\n  (Risa-san, sumimasen. Osoku narimashita.)\n  -> Lisa, Entschuldigung. Ich bin spät dran.\n\nLisa: いいえ、だいじょうぶです。どうぞ、おはいり ください。\n  (Iie, daijōbu desu. Dōzo, ohairi kudasai.)\n  -> Nein, kein Problem. Bitte, komm rein.\n\nTanaka: ありがとう。あ、これは ちいさい プレゼントですが、どうぞ。\n  (Arigatō. A, kore wa chiisai purezento desu ga, dōzo.)\n  -> Danke. Ah, das ist eine kleine Aufmerksamkeit, bitte.\n\nLisa: わあ、ほんとうに ありがとう ございます。なんですか。\n  (Wā, hontō ni arigatō gozaimasu. Nan desu ka.)\n  -> Wow, vielen herzlichen Dank. Was ist es?\n\nTanaka: たいせつな ほんです。とても おもしろいですよ。\n  (Taisetsu na hon desu. Totemo omoshiroi desu yo.)\n  -> Es ist ein besonderes Buch. Es ist sehr interessant.\n\nLisa: タナカさん、もう ばんごはんを たべましたか。\n  (Tanaka-san, mō bangohan wo tabemashita ka.)\n  -> Tanaka, hast du schon zu Abend gegessen?\n\nTanaka: いいえ、まだです。\n  (Iie, mada desu.)\n  -> Nein, noch nicht.\n\nLisa: じゃあ、いっしょに たべませんか。\n  (Jā, isshoni tabemasen ka.)\n  -> Dann lass uns zusammen essen.\n\nTanaka: ありがとう ございます。"
+          }
+        },
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Verständnisfragen zum Dialog",
+            "content_text": "## Hast du den Dialog **verstanden**?\n\nBeantworte die folgenden Fragen anhand der **Begrüssung** an der Tür. Achte besonders auf:\n\n- Wie entschuldigt sich Tanaka?\n- Was bringt Tanaka **mit** und wie reagiert Lisa?\n- Hat Tanaka **schon** zu Abend gegessen?\n\n> **Tipp:** Lies den Dialog laut — die Höflichkeitsphrasen werden so im Mund verankert."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Womit entschuldigt sich Tanaka beim Kommen?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "Achte auf seinen ersten Satz mit すみません.",
+              "explanation": "Tanaka sagt: 「すみません。おそく なりました」 (Sumimasen. Osoku narimashita — *Entschuldigung. Ich bin spät dran*). Das ist die Standard-Entschuldigung für Verspätung.",
+              "options": [
+                {
+                  "option_text": "「すみません、おそく なりました」 (Sumimasen, osoku narimashita)",
+                  "is_correct": true,
+                  "feedback": "Richtig — Standard-Phrase für Verspätung."
+                },
+                {
+                  "option_text": "「ごめん、わすれました」 (Gomen, wasuremashita)",
+                  "is_correct": false,
+                  "feedback": "Falsch — er hat nichts vergessen."
+                },
+                {
+                  "option_text": "「もう おそいです」 (Mō osoi desu)",
+                  "is_correct": false,
+                  "feedback": "Falsch — diese Aussage benutzt er nicht zur Entschuldigung."
+                },
+                {
+                  "option_text": "「ちょっと まって」 (Chotto matte)",
+                  "is_correct": false,
+                  "feedback": "Falsch — das wäre eine Bitte um Geduld."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bringt Tanaka als Geschenk mit?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "Lisa fragt 「なんですか」 — und Tanaka antwortet.",
+              "explanation": "Tanaka sagt: 「たいせつな ほんです」 (Taisetsu na hon desu — *Es ist ein besonderes Buch*).",
+              "options": [
+                {
+                  "option_text": "Ein wichtiges Buch",
+                  "is_correct": true,
+                  "feedback": "Richtig — たいせつな ほん (taisetsu na hon)."
+                },
+                {
+                  "option_text": "Einen Strauss Blumen",
+                  "is_correct": false,
+                  "feedback": "Falsch — はな wird nicht erwähnt."
+                },
+                {
+                  "option_text": "Ein Taschentuch",
+                  "is_correct": false,
+                  "feedback": "Falsch — ハンカチ kommt nicht im Dialog vor."
+                },
+                {
+                  "option_text": "Eine kleine Schachtel ohne Inhalt",
+                  "is_correct": false,
+                  "feedback": "Falsch — Tanaka beschreibt den Inhalt klar."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Tanaka hat schon zu Abend gegessen.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Falsch — Tanaka antwortet auf Lisas Frage 「もう ばんごはんを たべましたか」 mit 「いいえ、まだです」 (Iie, mada desu — *Nein, noch nicht*).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Falsch — er sagt 「まだです」 (noch nicht)."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt — Tanaka hat noch nicht gegessen."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie reagiert Lisa auf Tanakas Entschuldigung?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Achte auf die Standard-Antwort, die das Gefühl entlastet.",
+              "explanation": "Lisa sagt: 「いいえ、だいじょうぶです」 (Iie, daijōbu desu — *Nein, alles gut*).",
+              "options": [
+                {
+                  "option_text": "「いいえ、だいじょうぶです」 (Iie, daijōbu desu)",
+                  "is_correct": true,
+                  "feedback": "Richtig — die Standard-Antwort auf eine Entschuldigung."
+                },
+                {
+                  "option_text": "「すみません」 (Sumimasen)",
+                  "is_correct": false,
+                  "feedback": "Falsch — das wäre eine eigene Entschuldigung."
+                },
+                {
+                  "option_text": "「ちょっと まって」 (Chotto matte)",
+                  "is_correct": false,
+                  "feedback": "Falsch — das wäre eine Bitte um Geduld."
+                },
+                {
+                  "option_text": "「ほんとう?」 (Hontō?)",
+                  "is_correct": false,
+                  "feedback": "Falsch — sie zweifelt nicht, sondern entlastet."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Übung — Entschuldigen, Schenken, Aspekt",
+      "description": "Quiz mit Multiple-Choice, True/False und Matching",
+      "page_type": "quiz_carousel",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Übung",
+            "content_text": "## Zeit zu üben!\n\nDie folgenden Fragen testen alle Bereiche dieser Lektion:\n\n- **Entschuldigungs-Vokabeln** — すみません (sumimasen) vs. ごめんなさい (gomennasai) — wann nutzt man welches?\n- **Adverb-Form** — wann sagt man 「おそく」 (osoku) statt 「おそい」 (osoi)?\n- **Geschenk-Phrasen** — wie überreicht man höflich, wie reagiert man?\n- **もう (mō) vs. まだ (mada)** — schon oder noch nicht?\n\n> **Tipp:** Spiele die Phrasen im Kopf durch — wenn du sie real laut sagen kannst, bleiben sie hängen."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welcher Ausdruck passt zu einer höflichen Verspätungs-Entschuldigung?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「すみません、おそく なりました」 (Sumimasen, osoku narimashita) ist die Standard-Phrase. Die Adverb-Form 「おそく」 (osoku, von おそい) zeigt, dass jemand spät geworden ist.",
+              "options": [
+                {
+                  "option_text": "すみません、おそく なりました (Sumimasen, osoku narimashita)",
+                  "is_correct": true,
+                  "feedback": "Richtig — Standard-Phrase für Verspätung."
+                },
+                {
+                  "option_text": "ごめん、しずかです (Gomen, shizuka desu)",
+                  "is_correct": false,
+                  "feedback": "Falsch — Stille ist hier kein Grund."
+                },
+                {
+                  "option_text": "どうぞ、たべて ください (Dōzo, tabete kudasai)",
+                  "is_correct": false,
+                  "feedback": "Falsch — diese Phrase gehört zum Essen-Anbieten."
+                },
+                {
+                  "option_text": "もう おそく ありませんか (Mō osoku arimasen ka)",
+                  "is_correct": false,
+                  "feedback": "Falsch — das wäre eine seltsame Frage ohne Verspätungs-Bezug."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie heisst die Adverb-Form von 「はやい」 (hayai — schnell)?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Bei i-Adjektiven wird die letzte い zu く.",
+              "explanation": "「はやい」 (hayai) → 「はやく」 (hayaku). Beispiel: 「はやく きて ください」 (Hayaku kite kudasai — *Bitte komm schnell*).",
+              "options": [
+                {
+                  "option_text": "はやく (hayaku)",
+                  "is_correct": true,
+                  "feedback": "Richtig — い → く."
+                },
+                {
+                  "option_text": "はやい (hayai)",
+                  "is_correct": false,
+                  "feedback": "Das ist die normale Adjektiv-Form, nicht die Adverb-Form."
+                },
+                {
+                  "option_text": "はやな (hayana)",
+                  "is_correct": false,
+                  "feedback": "Falsch — はやい ist ein i-Adjektiv, kein な-Adjektiv."
+                },
+                {
+                  "option_text": "はやの (hayano)",
+                  "is_correct": false,
+                  "feedback": "Falsch — diese Form gibt es nicht."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welche Antwort gibt man auf 「もう ばんごはんを たべましたか」, wenn man **noch nicht** gegessen hat?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "「いいえ、まだ ＿」 — was kommt am Ende?",
+              "explanation": "「いいえ、まだです」 (Iie, mada desu — *Nein, noch nicht*). Die Vollform wäre 「まだ たべていません」 (mada tabete imasen), aber 「まだです」 ist die kompakte Standard-Antwort.",
+              "options": [
+                {
+                  "option_text": "いいえ、まだです (Iie, mada desu)",
+                  "is_correct": true,
+                  "feedback": "Richtig — Standard-Antwort."
+                },
+                {
+                  "option_text": "いいえ、もう たべました (Iie, mō tabemashita)",
+                  "is_correct": false,
+                  "feedback": "Falsch — もう たべました heisst gerade *schon gegessen*."
+                },
+                {
+                  "option_text": "はい、まだです (Hai, mada desu)",
+                  "is_correct": false,
+                  "feedback": "Falsch — はい und まだ widersprechen sich."
+                },
+                {
+                  "option_text": "いいえ、たべません (Iie, tabemasen)",
+                  "is_correct": false,
+                  "feedback": "Falsch — diese Form bedeutet *ich werde nicht essen*, nicht *noch nicht gegessen*."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie übergibt Tanaka höflich ein Geschenk?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "「どうぞ、これは ちいさい プレゼントです」 (Dōzo, kore wa chiisai purezento desu — *Bitte, das ist eine kleine Aufmerksamkeit*) — typische Übergabe-Phrase mit Bescheidenheits-Note.",
+              "options": [
+                {
+                  "option_text": "「どうぞ、これは ちいさい プレゼントです」 (Dōzo, kore wa chiisai purezento desu)",
+                  "is_correct": true,
+                  "feedback": "Richtig — Übergabe mit Bescheidenheit."
+                },
+                {
+                  "option_text": "「どうも ありがとう、これは プレゼントです」 (Dōmo arigatō, kore wa purezento desu)",
+                  "is_correct": false,
+                  "feedback": "Falsch — das wäre die Empfänger-Phrase."
+                },
+                {
+                  "option_text": "「これは おおきい プレゼントです」 (Kore wa ōkii purezento desu)",
+                  "is_correct": false,
+                  "feedback": "Falsch — auf Japanisch verkleinert man das Geschenk höflich."
+                },
+                {
+                  "option_text": "「もう プレゼントを もらいました」 (Mō purezento wo moraimashita)",
+                  "is_correct": false,
+                  "feedback": "Falsch — das wäre die Empfänger-Aussage *Ich habe schon ein Geschenk bekommen*."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「だいじょうぶです」 (daijōbu desu) ist eine typische Antwort auf eine Entschuldigung.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Richtig — 「だいじょうぶです」 entlastet den Sprecher und heisst *kein Problem*. Es passt auf Entschuldigungen, Sorgenfragen und Bestätigungs-Bitten.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt — Standard-Antwort."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — だいじょうぶ ist die Standard-Antlast-Phrase."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「もう」 (mō) heisst *schon, bereits* — die Handlung ist abgeschlossen.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Richtig — 「もう ＿しました」 = *ich habe schon ＿*. Im Kontrast steht 「まだ」 (mada — *noch nicht*).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt!"
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — もう steht für eine abgeschlossene Handlung."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「ちいさい ものですが、どうぞ」 (Chiisai mono desu ga, dōzo)?",
+              "difficulty_level": 3,
+              "points": 1,
+              "hint": "Wörtlich: *Es ist eine kleine Sache, aber bitte*.",
+              "explanation": "Die Phrase ist eine **Bescheidenheits-Formel** beim Übergeben eines Geschenks. Sie nimmt dem Empfänger die soziale Verpflichtung, ein Gegen-Geschenk zu machen.",
+              "options": [
+                {
+                  "option_text": "Eine bescheidene Geschenk-Übergabe",
+                  "is_correct": true,
+                  "feedback": "Richtig — typische japanische Höflichkeit."
+                },
+                {
+                  "option_text": "Eine Frage nach der Grösse einer Sache",
+                  "is_correct": false,
+                  "feedback": "Falsch — keine echte Frage."
+                },
+                {
+                  "option_text": "Eine Entschuldigung für eine kleine Verspätung",
+                  "is_correct": false,
+                  "feedback": "Falsch — es geht hier nicht um Zeit."
+                },
+                {
+                  "option_text": "Eine Aussage, dass etwas zu klein ist",
+                  "is_correct": false,
+                  "feedback": "Falsch — die Bescheidenheit zeigt sich, nicht eine Beschwerde."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welcher Satz heisst 'Ich habe den Namen vergessen'?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "「なまえを わすれました」 (Namae wo wasuremashita — *Ich habe den Namen vergessen*). 「を」 markiert das vergessene Objekt, ました ist die höfliche Vergangenheit.",
+              "options": [
+                {
+                  "option_text": "なまえを わすれました (Namae wo wasuremashita)",
+                  "is_correct": true,
+                  "feedback": "Richtig — Standard-Konstruktion."
+                },
+                {
+                  "option_text": "なまえが わすれました (Namae ga wasuremashita)",
+                  "is_correct": false,
+                  "feedback": "Falsch — bei わすれる steht を, nicht が."
+                },
+                {
+                  "option_text": "なまえを わすれます (Namae wo wasuremasu)",
+                  "is_correct": false,
+                  "feedback": "Falsch — diese Form ist Gegenwart, nicht Vergangenheit."
+                },
+                {
+                  "option_text": "なまえに わすれました (Namae ni wasuremashita)",
+                  "is_correct": false,
+                  "feedback": "Falsch — に passt hier nicht."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「すみません」 (sumimasen) kann sowohl *Entschuldigung* als auch *Danke* (für eine Hilfe) bedeuten.",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Richtig — 「すみません」 ist mehrdeutig: bei einem Versehen *Entschuldigung*, bei einer Hilfeleistung kann es auch *Danke* heissen, weil man dem anderen Mühe gemacht hat.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt — すみません ist mehrdeutig."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — bei Hilfeleistung ist すみません ein höfliches Danke."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde die Höflichkeits-Phrase mit der deutschen Bedeutung.",
+              "difficulty_level": 2,
+              "points": 2,
+              "options": [
+                {
+                  "option_text": "すみません (sumimasen)",
+                  "feedback": "Entschuldigung",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "ごめんなさい (gomennasai)",
+                  "feedback": "Es tut mir leid",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "だいじょうぶ (daijōbu)",
+                  "feedback": "kein Problem",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "ありがとう (arigatō)",
+                  "feedback": "danke",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde das Mitbringsel mit der deutschen Bedeutung.",
+              "difficulty_level": 2,
+              "points": 2,
+              "options": [
+                {
+                  "option_text": "プレゼント (purezento)",
+                  "feedback": "Geschenk",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "花 (hana)",
+                  "feedback": "Blume",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "本 (hon)",
+                  "feedback": "Buch",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "ハンカチ (hankachi)",
+                  "feedback": "Taschentuch",
+                  "is_correct": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Zusammenfassung & nächste Schritte",
+      "description": "Was du jetzt mit Höflichkeitsphrasen kannst",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Geschafft!",
+            "content_text": "## Was du jetzt kannst\n\nNach dieser Lektion kannst du:\n\n- Dich höflich für eine Verspätung **entschuldigen** mit 「すみません、おそく なりました」\n- Eine Entschuldigung mit 「いいえ、だいじょうぶです」 **entlasten**\n- Ein **Geschenk höflich überreichen** mit 「どうぞ、これは ちいさい プレゼントですが」\n- Auf ein Geschenk mit 「どうも、ほんとうに ありがとう ございます」 reagieren\n- Den Aspekt **「もう」 (schon)** vs. **「まだ」 (noch nicht)** korrekt einsetzen\n- i-Adjektive **adverbial** verwenden (い → く), z.B. 「おそく なる」\n\n### Wichtige Merkpunkte\n\n- **「すみません」** ist Entschuldigung UND Dank für Hilfe — Schweizer Taschenmesser der Höflichkeit.\n- Bei i-Adjektiven adverbial: い → く (おそい → おそく).\n- **「もう ～しました」** = abgeschlossen. **「まだ ～ていません」** = nicht abgeschlossen.\n- Beim Übergeben **immer** höflich kleinmachen: 「ちいさい ものですが、どうぞ」.\n- Geschenke werden in Japan **mit beiden Händen** überreicht und entgegengenommen.\n\n> **Lerntipp:** Notiere drei Situationen aus deinem Alltag, in denen du dich heute hättest entschuldigen oder Danke sagen können — und formuliere sie auf Japanisch durch.\n\n### Was kommt als Nächstes?\n\nIn der nächsten Lektion (**N5 Erste Sätze 3**) lernst du die wichtigsten **Verb-Formen**: ます/ました/ません/ませんでした (Gegenwart, Vergangenheit, Negation) und die Existenz-Verben **います/あります**. Das ist der grosse grammatikalische Sprung im N5! Auf bald!"
+          }
+        }
+      ]
+    }
+  ],
+  "thumbnail_url": "generated/thumbnail_begrüssung_&_höflichkeit_20260425_222213.png"
+}

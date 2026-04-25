@@ -638,6 +638,19 @@ Das pusht Lessons/Content/Quiz/Vocabulary auf Cloud SQL. User-Daten
 (Progress, Kaeufe, SRS) sind durch 4 Schutzschichten abgesichert (siehe
 sync-cloud-db SKILL.md).
 
+### 11a-bis. GCS-Asset-Sync (Bilder, Audios, Slideshows) — PFLICHT
+```bash
+PYTHONIOENCODING=utf-8 PYTHONPATH=. python scripts/sync_assets_to_gcs.py
+```
+**Lesson Learned 2026-04-26**: DB-Sync transportiert nur die DB-Felder
+(image_url, file_path, media_url). Die referenzierten Dateien (PNG, MP3)
+liegen physisch in `app/static/uploads/...` — Production loest die URLs
+aber gegen den GCS-Bucket auf. Ohne Asset-Sync: 404 fuer Bilder und
+Audios live. `/sync-cloud-db` ruft das mittlerweile selbst auf, aber bei
+Manuellem Push immer mit-erinnern. Symptom-Beispiele 2026-04-26:
+"die bilder werden auf der webseite nicht angezeigt aber lokal schon"
++ "das audio funktioniert auch nicht auf der deployten webseite".
+
 ### 11b. Cloud Run Deploy (Code)
 **Nur noetig wenn seit dem letzten Deploy Code-Aenderungen gepusht wurden**
 (Templates, CSS, JS, Python). Pruefen mit:
