@@ -16,122 +16,342 @@
     {% block extra_head %}{% endblock %}
 </head>
 <body {% block body_attributes %}{% endblock %}>
-    <nav class="enhanced-navbar" x-data="{ navOpen: false }" @click.away="navOpen = false" @resize.window="if(window.innerWidth >= 992) navOpen = false">
-        <div class="navbar-container">
-            <!-- Brand -->
-            <div class="navbar-brand-section">
-                <a class="enhanced-navbar-brand" href="{{ url_for('routes.index') }}">
-                    <div class="brand-icon"><i class="fas fa-torii-gate"></i></div>
-                    <div class="brand-text">
-                        <span class="brand-name">Japanese Learning</span>
-                        <span class="brand-tagline">Japanisch lernen</span>
-                    </div>
-                </a>
-            </div>
+    {# ──────────────────────────────────────────────────────────────
+       Top-Nav v2 — minimal, sticky, backdrop-blur
+       Pattern: Linear / Notion / Stripe / Duolingo Web 2024+
+       ────────────────────────────────────────────────────────────── #}
+    <nav class="topnav" x-data="{ mobileOpen: false, userMenuOpen: false }"
+         @click.away="userMenuOpen = false; mobileOpen = false"
+         @keydown.escape.window="userMenuOpen = false; mobileOpen = false">
+      <div class="topnav-inner">
 
-            <!-- Hamburger Toggle (nur sichtbar unter 992px) -->
-            <button class="mobile-menu-toggle"
-                    @click="navOpen = !navOpen"
-                    :aria-expanded="navOpen.toString()"
-                    aria-label="Navigation umschalten">
-                <span class="hamburger-line" :class="navOpen && 'hamburger-open-1'"></span>
-                <span class="hamburger-line" :class="navOpen && 'hamburger-open-2'"></span>
-                <span class="hamburger-line" :class="navOpen && 'hamburger-open-3'"></span>
-            </button>
+        {# Brand — kompakt einzeilig #}
+        <a href="{{ url_for('routes.index') }}" class="topnav-brand">
+          <span class="topnav-brand-icon">⛩</span>
+          <span class="topnav-brand-text">
+            <span class="topnav-brand-name">Japanese Learning</span>
+            <span class="topnav-brand-tag">日本語</span>
+          </span>
+        </a>
 
-            <!-- Navigation (Desktop: CSS erzwingt sichtbar / Mobile: Alpine toggle) -->
-            <div class="navbar-content-wrapper"
-                 x-show="navOpen"
-                 x-transition:enter="nav-dropdown-enter"
-                 x-transition:enter-start="nav-dropdown-enter-start"
-                 x-transition:enter-end="nav-dropdown-enter-end"
-                 x-transition:leave="nav-dropdown-leave"
-                 x-transition:leave-start="nav-dropdown-leave-start"
-                 x-transition:leave-end="nav-dropdown-leave-end">
-
-                <!-- Nav Links -->
-                <div class="navbar-nav-section">
-                    <div class="nav-links">
-                        <a class="enhanced-nav-link" href="{{ url_for('routes.learn_path', level=5) }}">
-                            <i class="fas fa-route"></i><span>Lernpfad</span>
-                        </a>
-                        <a class="enhanced-nav-link" href="{{ url_for('routes.lessons') }}">
-                            <i class="fas fa-book-open"></i><span>Lektionen</span>
-                        </a>
-                        {% if current_user.is_authenticated %}
-                        <a class="enhanced-nav-link" href="{{ url_for('routes.courses') }}">
-                            <i class="fas fa-graduation-cap"></i><span>Kurse</span>
-                        </a>
-                        <a class="enhanced-nav-link" href="{{ url_for('routes.my_lessons') }}">
-                            <i class="fas fa-shopping-bag"></i><span>Meine Lektionen</span>
-                        </a>
-                        <a class="enhanced-nav-link" href="{{ url_for('srs.review_page') }}" style="position:relative;">
-                            <i class="fas fa-brain"></i><span>Wiederholen</span>
-                            <span class="review-badge-desktop" id="reviewBadgeDesktop" style="display:none;"></span>
-                        </a>
-                        <a class="enhanced-nav-link" href="{{ url_for('srs.stats_page') }}">
-                            <i class="fas fa-chart-bar"></i><span>Statistik</span>
-                        </a>
-                        <a class="enhanced-nav-link" href="{{ url_for('srs.browse_page') }}">
-                            <i class="fas fa-th-list"></i><span>Stöbern</span>
-                        </a>
-                        <a class="enhanced-nav-link" href="{{ url_for('routes.user_profile') }}">
-                            <i class="fas fa-user-circle"></i><span>Profil</span>
-                        </a>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <!-- User Section -->
-                <div class="navbar-user-section">
-                    {% if current_user.is_authenticated %}
-                        <div class="user-gamification">
-                            {% if current_user.current_streak and current_user.current_streak > 0 %}
-                            <div class="streak-badge" title="{{ current_user.current_streak }} Tage Streak">
-                                <i class="fas fa-fire"></i>
-                                <span>{{ current_user.current_streak }}</span>
-                            </div>
-                            {% endif %}
-                            <div class="xp-badge" title="Level {{ current_user.level or 1 }} — {{ current_user.level_title }}">
-                                <i class="fas fa-layer-group"></i>
-                                <span>Lv.{{ current_user.level or 1 }}</span>
-                            </div>
-                            <div class="xp-badge" title="{{ current_user.total_xp or 0 }} XP gesammelt">
-                                <i class="fas fa-star"></i>
-                                <span>{{ current_user.total_xp or 0 }}</span>
-                            </div>
-                        </div>
-                        <div class="user-info">
-                            <div class="user-avatar"><i class="fas fa-user"></i></div>
-                            <div class="user-details">
-                                <span class="user-name">{{ current_user.username }}</span>
-                                <span class="user-subscription"><i class="fas fa-user"></i> User</span>
-                            </div>
-                        </div>
-                        <div class="nav-actions">
-                            {% if current_user.is_admin %}
-                            <a class="nav-action-btn admin-btn" href="{{ url_for('routes.admin_index') }}">
-                                <i class="fas fa-cog"></i><span>Admin</span>
-                            </a>
-                            {% endif %}
-                            <a class="nav-action-btn logout-btn" href="{{ url_for('routes.logout') }}">
-                                <i class="fas fa-sign-out-alt"></i><span>Logout</span>
-                            </a>
-                        </div>
-                    {% else %}
-                        <div class="nav-actions">
-                            <a class="nav-action-btn login-btn" href="{{ url_for('routes.login') }}">
-                                <i class="fas fa-sign-in-alt"></i><span>Login</span>
-                            </a>
-                            <a class="nav-action-btn register-btn" href="{{ url_for('routes.register') }}">
-                                <i class="fas fa-user-plus"></i><span>Register</span>
-                            </a>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
+        {# Primary Nav — 3-4 essentielle Items, Active-State per request.endpoint #}
+        <div class="topnav-primary" :class="mobileOpen && 'is-open'">
+          <a href="{{ url_for('routes.learn_path', level=5) }}"
+             class="topnav-link {% if request.endpoint == 'routes.learn_path' or request.endpoint == 'routes.index' %}is-active{% endif %}">
+            <i class="fas fa-route"></i><span>Lernpfad</span>
+          </a>
+          <a href="{{ url_for('routes.lessons') }}"
+             class="topnav-link {% if request.endpoint in ['routes.lessons', 'routes.view_lesson'] %}is-active{% endif %}">
+            <i class="fas fa-book-open"></i><span>Lektionen</span>
+          </a>
+          {% if current_user.is_authenticated %}
+          <a href="{{ url_for('srs.review_page') }}"
+             class="topnav-link {% if request.endpoint == 'srs.review_page' %}is-active{% endif %}"
+             style="position:relative;">
+            <i class="fas fa-brain"></i><span>Wiederholen</span>
+            <span class="topnav-badge-dot" id="reviewBadgeDesktop" style="display:none;"></span>
+          </a>
+          <a href="{{ url_for('srs.browse_page') }}"
+             class="topnav-link {% if request.endpoint == 'srs.browse_page' %}is-active{% endif %}">
+            <i class="fas fa-th-list"></i><span>Stöbern</span>
+          </a>
+          {% endif %}
         </div>
+
+        {# Right Group — Stats + User #}
+        <div class="topnav-right">
+          {% if current_user.is_authenticated %}
+            {# Stats: nur Streak + Level (XP raus, ist im Profil) #}
+            <div class="topnav-stats">
+              {% if current_user.current_streak and current_user.current_streak > 0 %}
+              <div class="topnav-stat" title="{{ current_user.current_streak }} Tage Streak">
+                <span class="topnav-stat-ico">🔥</span>
+                <span class="topnav-stat-val">{{ current_user.current_streak }}</span>
+              </div>
+              {% endif %}
+              <div class="topnav-stat" title="Level {{ current_user.level or 1 }} — {{ current_user.level_title }}">
+                <span class="topnav-stat-ico">⚡</span>
+                <span class="topnav-stat-val">Lv.{{ current_user.level or 1 }}</span>
+              </div>
+            </div>
+
+            {# User-Dropdown — alle anderen Aktionen hier hinein #}
+            <div class="topnav-user" @click.stop="userMenuOpen = !userMenuOpen">
+              <button type="button" class="topnav-user-btn" :aria-expanded="userMenuOpen.toString()" aria-label="Benutzer-Menü">
+                <span class="topnav-avatar">{{ current_user.username[0].upper() }}</span>
+                <span class="topnav-user-name">{{ current_user.username }}</span>
+                <i class="fas fa-chevron-down topnav-user-chev"></i>
+              </button>
+              <div class="topnav-dropdown" x-show="userMenuOpen" x-transition>
+                <div class="topnav-dd-head">
+                  <strong>{{ current_user.username }}</strong>
+                  <small>{{ current_user.level_title }}</small>
+                </div>
+                <a href="{{ url_for('routes.user_profile') }}" class="topnav-dd-item">
+                  <i class="fas fa-user-circle"></i> Profil
+                </a>
+                <a href="{{ url_for('routes.my_lessons') }}" class="topnav-dd-item">
+                  <i class="fas fa-shopping-bag"></i> Meine Lektionen
+                </a>
+                <a href="{{ url_for('routes.courses') }}" class="topnav-dd-item">
+                  <i class="fas fa-graduation-cap"></i> Kurse
+                </a>
+                <a href="{{ url_for('srs.stats_page') }}" class="topnav-dd-item">
+                  <i class="fas fa-chart-bar"></i> Statistik
+                </a>
+                {% if current_user.is_admin %}
+                <div class="topnav-dd-divider"></div>
+                <a href="{{ url_for('routes.admin_index') }}" class="topnav-dd-item">
+                  <i class="fas fa-cog"></i> Admin
+                </a>
+                {% endif %}
+                <div class="topnav-dd-divider"></div>
+                <a href="{{ url_for('routes.logout') }}" class="topnav-dd-item topnav-dd-danger">
+                  <i class="fas fa-sign-out-alt"></i> Abmelden
+                </a>
+              </div>
+            </div>
+          {% else %}
+            <div class="topnav-auth">
+              <a href="{{ url_for('routes.login') }}" class="topnav-btn topnav-btn-ghost">Anmelden</a>
+              <a href="{{ url_for('routes.register') }}" class="topnav-btn topnav-btn-primary">Kostenlos starten</a>
+            </div>
+          {% endif %}
+
+          {# Mobile-Hamburger — nur unter 992px #}
+          <button class="topnav-burger" @click.stop="mobileOpen = !mobileOpen" aria-label="Menü öffnen">
+            <i class="fas" :class="mobileOpen ? 'fa-times' : 'fa-bars'"></i>
+          </button>
+        </div>
+      </div>
     </nav>
+
+    <style>
+    /* ════════════════════════════════════════════════════════════
+       TOP-NAV v2 — minimal, professionell, sticky
+       ════════════════════════════════════════════════════════════ */
+    .topnav {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: saturate(180%) blur(14px);
+        -webkit-backdrop-filter: saturate(180%) blur(14px);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+    }
+    .topnav-inner {
+        max-width: 1280px;
+        margin: 0 auto;
+        height: 60px;
+        padding: 0 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    /* ── Brand ── */
+    .topnav-brand {
+        display: flex; align-items: center; gap: 0.55rem;
+        text-decoration: none;
+        color: #1a1a1a;
+        flex-shrink: 0;
+    }
+    .topnav-brand:hover { text-decoration: none; color: #1a1a1a; }
+    .topnav-brand-icon { font-size: 1.5rem; line-height: 1; }
+    .topnav-brand-text { display: flex; flex-direction: column; line-height: 1.1; }
+    .topnav-brand-name {
+        font-weight: 700; font-size: 0.95rem; color: #1a1a1a;
+        letter-spacing: -0.01em;
+    }
+    .topnav-brand-tag {
+        font-size: 0.7rem; color: #888; font-weight: 500;
+    }
+
+    /* ── Primary Nav ── */
+    .topnav-primary {
+        display: flex; align-items: center; gap: 0.15rem;
+        flex: 1;
+        margin-left: 1rem;
+    }
+    .topnav-link {
+        display: inline-flex; align-items: center; gap: 0.5rem;
+        padding: 0.5rem 0.85rem;
+        border-radius: 8px;
+        color: #4a4a4a;
+        font-size: 0.92rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: background-color 0.15s, color 0.15s;
+        position: relative;
+    }
+    .topnav-link i { font-size: 0.85rem; opacity: 0.8; }
+    .topnav-link:hover {
+        background: rgba(0, 0, 0, 0.04);
+        color: #1a1a1a;
+        text-decoration: none;
+    }
+    .topnav-link.is-active {
+        background: rgba(13, 110, 253, 0.08);
+        color: #0d6efd;
+    }
+    .topnav-link.is-active i { opacity: 1; }
+    .topnav-badge-dot {
+        position: absolute; top: 6px; right: 6px;
+        width: 7px; height: 7px;
+        border-radius: 50%;
+        background: #dc3545;
+        box-shadow: 0 0 0 2px rgba(255,255,255,0.85);
+    }
+
+    /* ── Right Group ── */
+    .topnav-right {
+        display: flex; align-items: center; gap: 0.6rem;
+        flex-shrink: 0;
+    }
+    .topnav-stats {
+        display: flex; align-items: center; gap: 0.4rem;
+    }
+    .topnav-stat {
+        display: inline-flex; align-items: center; gap: 0.3rem;
+        padding: 0.3rem 0.6rem;
+        background: rgba(0, 0, 0, 0.04);
+        border-radius: 999px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #4a4a4a;
+    }
+    .topnav-stat-ico { font-size: 0.85rem; }
+
+    /* ── User-Menu ── */
+    .topnav-user { position: relative; }
+    .topnav-user-btn {
+        display: inline-flex; align-items: center; gap: 0.5rem;
+        padding: 0.3rem 0.55rem 0.3rem 0.3rem;
+        background: transparent;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: 999px;
+        cursor: pointer;
+        transition: background-color 0.15s, border-color 0.15s;
+        color: #1a1a1a;
+        font-size: 0.88rem;
+        font-weight: 500;
+    }
+    .topnav-user-btn:hover {
+        background: rgba(0, 0, 0, 0.04);
+        border-color: rgba(0, 0, 0, 0.15);
+    }
+    .topnav-avatar {
+        width: 28px; height: 28px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #4f46e5, #2563eb);
+        color: #fff;
+        font-weight: 700; font-size: 0.8rem;
+        display: inline-flex; align-items: center; justify-content: center;
+    }
+    .topnav-user-chev { font-size: 0.7rem; opacity: 0.5; }
+    .topnav-dropdown {
+        position: absolute; top: calc(100% + 6px); right: 0;
+        background: #fff;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+        min-width: 220px;
+        padding: 0.4rem;
+        z-index: 1010;
+    }
+    .topnav-dd-head {
+        padding: 0.55rem 0.75rem 0.5rem;
+        border-bottom: 1px solid rgba(0,0,0,0.06);
+        margin-bottom: 0.3rem;
+    }
+    .topnav-dd-head strong { display: block; font-size: 0.92rem; color: #1a1a1a; }
+    .topnav-dd-head small { font-size: 0.75rem; color: #888; }
+    .topnav-dd-item {
+        display: flex; align-items: center; gap: 0.6rem;
+        padding: 0.5rem 0.75rem;
+        border-radius: 6px;
+        color: #4a4a4a;
+        font-size: 0.88rem;
+        text-decoration: none;
+    }
+    .topnav-dd-item i { width: 16px; font-size: 0.85rem; opacity: 0.7; }
+    .topnav-dd-item:hover {
+        background: rgba(0, 0, 0, 0.05);
+        color: #1a1a1a;
+        text-decoration: none;
+    }
+    .topnav-dd-danger { color: #dc3545; }
+    .topnav-dd-danger:hover { background: rgba(220, 53, 69, 0.08); color: #b02a37; }
+    .topnav-dd-divider {
+        height: 1px;
+        background: rgba(0,0,0,0.06);
+        margin: 0.3rem 0;
+    }
+
+    /* ── Auth-Buttons (Gast) ── */
+    .topnav-auth { display: flex; gap: 0.4rem; }
+    .topnav-btn {
+        padding: 0.45rem 0.95rem;
+        border-radius: 8px;
+        font-size: 0.88rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+    }
+    .topnav-btn-ghost {
+        color: #4a4a4a;
+        background: transparent;
+    }
+    .topnav-btn-ghost:hover { background: rgba(0,0,0,0.05); color: #1a1a1a; text-decoration: none; }
+    .topnav-btn-primary {
+        background: #0d6efd;
+        color: #fff;
+    }
+    .topnav-btn-primary:hover { background: #0b5ed7; color: #fff; text-decoration: none; }
+
+    /* ── Mobile-Burger ── */
+    .topnav-burger {
+        display: none;
+        background: transparent;
+        border: 1px solid rgba(0,0,0,0.08);
+        width: 38px; height: 38px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+        color: #1a1a1a;
+    }
+    .topnav-burger:hover { background: rgba(0,0,0,0.04); }
+
+    /* ── Responsive ── */
+    @media (max-width: 991px) {
+        .topnav-primary {
+            position: absolute;
+            top: 60px; left: 0; right: 0;
+            background: #fff;
+            flex-direction: column;
+            align-items: stretch;
+            padding: 0.6rem;
+            gap: 0.2rem;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            display: none;
+        }
+        .topnav-primary.is-open { display: flex; }
+        .topnav-link { padding: 0.7rem 0.85rem; }
+        .topnav-burger { display: inline-flex; align-items: center; justify-content: center; }
+        .topnav-stats { display: none; }     /* auf Mobile in Profil-Seite verlagern */
+        .topnav-user-name { display: none; } /* nur Avatar zeigen */
+        .topnav-brand-tag { display: none; }
+    }
+    @media (max-width: 480px) {
+        .topnav-inner { padding: 0 0.75rem; gap: 0.5rem; }
+        .topnav-brand-name { font-size: 0.88rem; }
+        .topnav-auth .topnav-btn-ghost { display: none; } /* auf Mobile nur Primary-CTA */
+    }
+
+    /* Print: Nav weg */
+    @media print { .topnav { display: none; } }
+    </style>
     <div class="container mt-4">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
