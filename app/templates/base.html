@@ -56,27 +56,27 @@
                             <i class="fas fa-route"></i><span>Lernpfad</span>
                         </a>
                         <a class="enhanced-nav-link" href="{{ url_for('routes.lessons') }}">
-                            <i class="fas fa-book-open"></i><span>Lessons</span>
+                            <i class="fas fa-book-open"></i><span>Lektionen</span>
                         </a>
                         {% if current_user.is_authenticated %}
                         <a class="enhanced-nav-link" href="{{ url_for('routes.courses') }}">
-                            <i class="fas fa-graduation-cap"></i><span>Courses</span>
+                            <i class="fas fa-graduation-cap"></i><span>Kurse</span>
                         </a>
                         <a class="enhanced-nav-link" href="{{ url_for('routes.my_lessons') }}">
-                            <i class="fas fa-shopping-bag"></i><span>My Lessons</span>
+                            <i class="fas fa-shopping-bag"></i><span>Meine Lektionen</span>
                         </a>
                         <a class="enhanced-nav-link" href="{{ url_for('srs.review_page') }}" style="position:relative;">
-                            <i class="fas fa-brain"></i><span>Review</span>
+                            <i class="fas fa-brain"></i><span>Wiederholen</span>
                             <span class="review-badge-desktop" id="reviewBadgeDesktop" style="display:none;"></span>
                         </a>
                         <a class="enhanced-nav-link" href="{{ url_for('srs.stats_page') }}">
-                            <i class="fas fa-chart-bar"></i><span>Stats</span>
+                            <i class="fas fa-chart-bar"></i><span>Statistik</span>
                         </a>
                         <a class="enhanced-nav-link" href="{{ url_for('srs.browse_page') }}">
-                            <i class="fas fa-th-list"></i><span>Browse</span>
+                            <i class="fas fa-th-list"></i><span>Stöbern</span>
                         </a>
                         <a class="enhanced-nav-link" href="{{ url_for('routes.user_profile') }}">
-                            <i class="fas fa-user-circle"></i><span>Profile</span>
+                            <i class="fas fa-user-circle"></i><span>Profil</span>
                         </a>
                         {% endif %}
                     </div>

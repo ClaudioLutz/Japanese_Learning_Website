@@ -177,7 +177,7 @@ def index():
             key=lambda l: (l.order_index or 0, l.id),
         )
         is_complete = total > 0 and done == total
-        if next_module_id is None and unlocked and not is_complete:
+        if next_module_id is None and unlocked and total > 0 and not is_complete:
             next_module_id = m.id
         n5_modules.append({
             "module": m,
@@ -188,10 +188,26 @@ def index():
             "is_complete": is_complete,
             "is_next": False,  # gesetzt nach Loop
             "lessons": published_lessons,
+            # Erste Lektion fuer Direkt-CTA
+            "first_lesson": published_lessons[0] if published_lessons else None,
         })
     for entry in n5_modules:
         if entry["module"].id == next_module_id:
             entry["is_next"] = True
+
+    # Pfad in 3 didaktische Gruppen aufteilen (Schreibsystem / Wortschatz / Grammatik)
+    SCHREIB_SLUGS = {"n5-hiragana", "n5-katakana"}
+    GRAMMATIK_SLUGS = {"n5-erste-saetze"}
+    n5_groups = [
+        {"title": "1. Schreibsystem", "subtitle": "Hiragana und Katakana — Pflicht vor allem anderen.",
+         "modules": [e for e in n5_modules if e["module"].slug in SCHREIB_SLUGS]},
+        {"title": "2. Grundwortschatz", "subtitle": "Themen-Module mit Vokabeln, Beispielsätzen und Dialogen.",
+         "modules": [e for e in n5_modules
+                     if e["module"].slug not in SCHREIB_SLUGS
+                     and e["module"].slug not in GRAMMATIK_SLUGS]},
+        {"title": "3. Erste Sätze", "subtitle": "Grammatik, die alles zusammenbringt.",
+         "modules": [e for e in n5_modules if e["module"].slug in GRAMMATIK_SLUGS]},
+    ]
 
     return render_template('index.html',
                          total_lessons=total_lessons,
@@ -203,6 +219,7 @@ def index():
                          german_guest_lessons=german_guest_lessons,
                          last_lesson=last_lesson,
                          n5_modules=n5_modules,
+                         n5_groups=n5_groups,
                          next_module_id=next_module_id)
 
 @bp.route('/register', methods=['GET', 'POST'])

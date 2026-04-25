@@ -87,66 +87,100 @@
       </div>
     {% endif %}
 
-    <div class="lernpfad-grid">
-      {% for entry in n5_modules %}
-        {% set m = entry.module %}
-        <div class="lernpfad-module
-                    {% if not entry.unlocked %}is-locked{% endif %}
-                    {% if entry.is_next %}is-next{% endif %}
-                    {% if entry.is_complete %}is-complete{% endif %}"
-             id="module-{{ m.id }}"
-             style="border-top: 4px solid {{ m.color_code or '#0d6efd' }};">
-
-          <div class="module-icon-row">
-            <div class="module-icon" aria-hidden="true">{{ m.icon_emoji or '📖' }}</div>
-            <div class="module-titles">
-              <h3 class="module-title">
-                {{ m.name.split(' · ')[-1] if ' · ' in m.name else m.name }}
-              </h3>
-              <small class="module-meta">Modul {{ m.display_order or '?' }}</small>
-            </div>
-            {% if not entry.unlocked %}
-              <span class="module-lock" title="Voraussetzung noch nicht erfüllt (≥80 % des Vorgängers)">🔒</span>
-            {% elif entry.is_complete %}
-              <span class="module-check" title="Modul abgeschlossen">✅</span>
-            {% elif entry.is_next %}
-              <span class="module-next-badge">START</span>
-            {% endif %}
-          </div>
-
-          <p class="module-desc">{{ m.description }}</p>
-
-          <div class="module-progress">
-            <div class="progress" style="height: 6px;">
-              <div class="progress-bar"
-                   role="progressbar"
-                   style="width: {{ entry.percent }}%; background-color: {{ m.color_code or '#0d6efd' }};"
-                   aria-valuenow="{{ entry.percent }}"
-                   aria-valuemin="0"
-                   aria-valuemax="100"></div>
-            </div>
-            <small class="module-progress-text">{{ entry.done }} / {{ entry.total }} Lektionen</small>
-          </div>
-
-          {% if entry.lessons %}
-            <ul class="module-lessons">
-              {% for lesson in entry.lessons[:4] %}
-                <li>
-                  <a href="{{ url_for('routes.view_lesson', lesson_id=lesson.id) }}">
-                    › {{ lesson.title }}
-                  </a>
-                </li>
-              {% endfor %}
-              {% if entry.lessons|length > 4 %}
-                <li class="text-muted small">… {{ entry.lessons|length - 4 }} weitere</li>
-              {% endif %}
-            </ul>
-          {% else %}
-            <p class="module-empty"><em>Lektionen folgen.</em></p>
-          {% endif %}
+    {% for group in n5_groups %}
+      {% if group.modules %}
+      <div class="lernpfad-group">
+        <div class="lernpfad-group-header">
+          <h3 class="lernpfad-group-title">{{ group.title }}</h3>
+          <p class="lernpfad-group-subtitle">{{ group.subtitle }}</p>
         </div>
-      {% endfor %}
-    </div>
+        <div class="lernpfad-grid">
+          {% for entry in group.modules %}
+            {% set m = entry.module %}
+            <div class="lernpfad-module
+                        {% if not entry.unlocked %}is-locked{% endif %}
+                        {% if entry.is_next %}is-next{% endif %}
+                        {% if entry.is_complete %}is-complete{% endif %}"
+                 id="module-{{ m.id }}"
+                 style="border-top: 4px solid {{ m.color_code or '#0d6efd' }};">
+
+              <div class="module-icon-row">
+                <div class="module-icon" aria-hidden="true">{{ m.icon_emoji or '📖' }}</div>
+                <div class="module-titles">
+                  <h4 class="module-title">
+                    {{ m.name.split(' · ')[-1] if ' · ' in m.name else m.name }}
+                  </h4>
+                  <small class="module-meta">Modul {{ m.display_order or '?' }}</small>
+                </div>
+                {% if not entry.unlocked %}
+                  <span class="module-lock" title="Voraussetzung noch nicht erfüllt (≥80 % des Vorgängers)">🔒</span>
+                {% elif entry.is_complete %}
+                  <span class="module-check" title="Modul abgeschlossen">✅</span>
+                {% elif entry.is_next %}
+                  <span class="module-next-badge">START</span>
+                {% endif %}
+              </div>
+
+              <p class="module-desc">{{ m.description }}</p>
+
+              {% if entry.total > 0 %}
+              <div class="module-progress">
+                <div class="progress" style="height: 6px;">
+                  <div class="progress-bar"
+                       role="progressbar"
+                       style="width: {{ entry.percent }}%; background-color: {{ m.color_code or '#0d6efd' }};"
+                       aria-valuenow="{{ entry.percent }}"
+                       aria-valuemin="0"
+                       aria-valuemax="100"></div>
+                </div>
+                <small class="module-progress-text">{{ entry.done }} / {{ entry.total }} Lektionen</small>
+              </div>
+              {% endif %}
+
+              {% if entry.lessons %}
+                <ul class="module-lessons">
+                  {% for lesson in entry.lessons[:3] %}
+                    <li>
+                      <a href="{{ url_for('routes.view_lesson', lesson_id=lesson.id) }}">
+                        › {{ lesson.title }}
+                      </a>
+                    </li>
+                  {% endfor %}
+                  {% if entry.lessons|length > 3 %}
+                    <li class="text-muted small">… {{ entry.lessons|length - 3 }} weitere</li>
+                  {% endif %}
+                </ul>
+              {% endif %}
+
+              {# CTA-Button am Card-Bottom — klar, je nach State #}
+              <div class="module-cta">
+                {% if not entry.unlocked %}
+                  <span class="module-cta-disabled">🔒 Erst Vorgänger abschliessen</span>
+                {% elif entry.is_complete %}
+                  <a href="{{ url_for('routes.view_lesson', lesson_id=entry.first_lesson.id) }}"
+                     class="module-cta-btn module-cta-done">
+                    ✓ Abgeschlossen — wiederholen
+                  </a>
+                {% elif entry.first_lesson and entry.done > 0 %}
+                  <a href="{{ url_for('routes.view_lesson', lesson_id=entry.first_lesson.id) }}"
+                     class="module-cta-btn module-cta-continue">
+                    Fortfahren →
+                  </a>
+                {% elif entry.first_lesson %}
+                  <a href="{{ url_for('routes.view_lesson', lesson_id=entry.first_lesson.id) }}"
+                     class="module-cta-btn module-cta-start">
+                    Beginnen →
+                  </a>
+                {% else %}
+                  <span class="module-cta-disabled">Inhalte in Vorbereitung</span>
+                {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+    {% endfor %}
 
     <div class="lernpfad-footer">
       <a href="{{ url_for('routes.lessons') }}" class="btn btn-outline-secondary btn-sm">
@@ -376,6 +410,62 @@
     color: #888;
     font-size: 0.82rem;
     margin: 0.4rem 0 0;
+    font-style: italic;
+}
+
+/* ── Group-Header ── */
+.lernpfad-group { margin-bottom: 2rem; }
+.lernpfad-group-header { margin: 0 0 0.75rem; }
+.lernpfad-group-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0;
+}
+.lernpfad-group-subtitle {
+    color: #6c757d;
+    font-size: 0.85rem;
+    margin: 0.1rem 0 0;
+}
+
+/* ── Module CTA-Button ── */
+.module-cta {
+    margin-top: 0.6rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid #f0f0f0;
+}
+.module-cta-btn {
+    display: block;
+    text-align: center;
+    padding: 0.45rem 0.6rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.88rem;
+    transition: transform 0.1s, box-shadow 0.15s;
+}
+.module-cta-btn:hover { transform: translateY(-1px); text-decoration: none; }
+.module-cta-start {
+    background: #0d6efd;
+    color: #fff;
+}
+.module-cta-start:hover { background: #0b5ed7; color: #fff; box-shadow: 0 3px 10px rgba(13,110,253,0.25); }
+.module-cta-continue {
+    background: #198754;
+    color: #fff;
+}
+.module-cta-continue:hover { background: #157347; color: #fff; box-shadow: 0 3px 10px rgba(25,135,84,0.25); }
+.module-cta-done {
+    background: #f3f3f3;
+    color: #6c757d;
+}
+.module-cta-done:hover { background: #e7e7e7; color: #495057; }
+.module-cta-disabled {
+    display: block;
+    text-align: center;
+    padding: 0.45rem 0.6rem;
+    color: #999;
+    font-size: 0.82rem;
     font-style: italic;
 }
 
