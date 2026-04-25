@@ -2142,9 +2142,16 @@ class MultilingualTextAudioSystem {
     }
 
     processAllContent() {
-        document.querySelectorAll('.details, .rich-text-content, .text-content-container').forEach(
-            area => this.processElement(area)
-        );
+        // .details (Vocab/Kanji-Karten, nur JP) bleiben klickbar.
+        // .rich-text-content / .text-content-container bekommen die Klick-TTS NUR,
+        // wenn KEIN dedizierter DE/JA-Player oben steht (sonst spielt /api/tts
+        // den deutschen Teil mit ja-Voice → klingt nach japanischem Akzent).
+        document.querySelectorAll('.details').forEach(area => this.processElement(area));
+        document.querySelectorAll('.rich-text-content, .text-content-container').forEach(area => {
+            const container = area.closest('.content-item, .conv-text-section');
+            if (container && container.querySelector('.text-audio-player')) return;
+            this.processElement(area);
+        });
     }
 
     processElement(element) {

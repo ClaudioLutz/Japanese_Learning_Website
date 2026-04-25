@@ -2300,15 +2300,27 @@ button[onclick*="moveContentInPage"]:active {
 
 /* Specifically target image content items */
 .content-item .content-body:has(img),
-.content-item:has([src*="uploads"]),
-.content-item:has([src*="static"]) {
+.content-item:has(img[src*="uploads"]),
+.content-item:has(img[src*="static"]) {
     text-align: center !important;
 }
 
 .content-item .content-body:has(img) .mb-3,
-.content-item:has([src*="uploads"]) .mb-3,
-.content-item:has([src*="static"]) .mb-3 {
+.content-item:has(img[src*="uploads"]) .mb-3,
+.content-item:has(img[src*="static"]) .mb-3 {
     text-align: center !important;
+}
+
+/* Text-audio Player darf den Markdown-Text NICHT zentrieren — er erbt sonst
+   von .content-item:has([src*="uploads"]) wegen des audio-src. Forciere
+   left-align fuer rich-text-content + den Player selbst. */
+.text-audio-player {
+    text-align: left !important;
+}
+.content-item:has(.text-audio-player) .rich-text-content,
+.content-item:has(.text-audio-player) .text-content-container,
+.content-item:has(.text-audio-player) .content-body {
+    text-align: left !important;
 }
 
 /* Make lesson images smaller and more manageable */

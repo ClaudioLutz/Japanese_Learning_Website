@@ -43,7 +43,11 @@ from app.ai_services import GoogleCloudTTS
 # Voices
 # ---------------------------------------------------------------------------
 JA_VOICE = "ja-JP-Neural2-B"  # weiblich, klar; Mayuko-getestet
-DE_VOICE = "de-DE-Neural2-F"  # weiblich, neutral; passt zur ja-Voice in Tonlage
+# WICHTIG: de-DE Neural2 hat NUR G (weiblich) und H (maennlich) — F existiert
+# nicht (das ist en-US). Falscher Name liefert silently ja-Voice → "rassistisch"-
+# klingender deutscher Akzent (User-Bug 2026-04-25). Liste der validen Voices:
+# `curl https://texttospeech.googleapis.com/v1/voices?languageCode=de-DE&key=...`
+DE_VOICE = "de-DE-Neural2-G"  # weiblich, klar deutsch
 
 # ---------------------------------------------------------------------------
 # Markdown-Strip + Romaji-Strip
