@@ -8,14 +8,14 @@
 
 {% block styles %}
 <style>
-    .stats-container { max-width: 960px; margin: 0 auto; padding: 1rem; padding-bottom: 80px; }
-    .stats-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
-    .stats-header h5 { color: var(--primary-color, #2B4C7E); margin: 0; }
+    .srs-stats-page { max-width: 960px; margin: 0 auto; padding: 1rem; padding-bottom: 80px; }
+    .srs-stats-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+    .srs-stats-header h5 { color: var(--primary-color, #2B4C7E); margin: 0; }
 
-    .stats-overview { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.75rem; margin-bottom: 1.5rem; }
-    .stat-card { background: var(--card-bg, #FFFDF7); border: 1px solid var(--border-color, #D4CFC5); border-radius: 12px; padding: 0.75rem; text-align: center; }
-    .stat-card .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--primary-color, #2B4C7E); }
-    .stat-card .stat-label { font-size: 0.75rem; color: var(--text-muted, #8C8378); }
+    .srs-stats-overview { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.75rem; margin-bottom: 1.5rem; }
+    .srs-stat-card { background: var(--card-bg, #FFFDF7); border: 1px solid var(--border-color, #D4CFC5); border-radius: 12px; padding: 0.75rem; text-align: center; }
+    .srs-stat-card .srs-stat-value { font-size: 1.5rem; font-weight: 700; color: var(--primary-color, #2B4C7E); }
+    .srs-stat-card .srs-stat-label { font-size: 0.75rem; color: var(--text-muted, #8C8378); text-transform: none; letter-spacing: 0; }
 
     .chart-section { background: var(--card-bg, #FFFDF7); border: 1px solid var(--border-color, #D4CFC5); border-radius: 12px; padding: 1rem; margin-bottom: 1rem; }
     .chart-section h6 { color: var(--primary-color, #2B4C7E); margin-bottom: 0.75rem; font-size: 0.9rem; }
@@ -51,8 +51,8 @@
 {% endblock %}
 
 {% block content %}
-<div class="stats-container" x-data="statsPage()" x-init="loadAll()">
-    <div class="stats-header">
+<div class="srs-stats-page" x-data="statsPage()" x-init="loadAll()">
+    <div class="srs-stats-header">
         <h5><i class="fas fa-chart-bar me-1"></i> Statistiken</h5>
         <div style="font-size:0.8rem; color:var(--text-muted);">
             Level <strong x-text="stats.level">{{ stats.level }}</strong> — <span x-text="stats.level_title">{{ stats.level_title }}</span>
@@ -61,26 +61,26 @@
     </div>
 
     <!-- Overview Cards -->
-    <div class="stats-overview">
-        <div class="stat-card">
-            <div class="stat-value">{{ stats.total_cards }}</div>
-            <div class="stat-label">Karten gesamt</div>
+    <div class="srs-stats-overview">
+        <div class="srs-stat-card">
+            <div class="srs-stat-value">{{ stats.total_cards }}</div>
+            <div class="srs-stat-label">Karten gesamt</div>
         </div>
-        <div class="stat-card">
-            <div class="stat-value">{{ stats.due_count }}</div>
-            <div class="stat-label">Heute faellig</div>
+        <div class="srs-stat-card">
+            <div class="srs-stat-value">{{ stats.due_count }}</div>
+            <div class="srs-stat-label">Heute faellig</div>
         </div>
-        <div class="stat-card">
-            <div class="stat-value">{{ stats.reviews_today }}</div>
-            <div class="stat-label">Reviews heute</div>
+        <div class="srs-stat-card">
+            <div class="srs-stat-value">{{ stats.reviews_today }}</div>
+            <div class="srs-stat-label">Reviews heute</div>
         </div>
-        <div class="stat-card">
-            <div class="stat-value">{{ stats.current_streak }}</div>
-            <div class="stat-label"><i class="fas fa-fire" style="color:#fd7e14;"></i> Streak</div>
+        <div class="srs-stat-card">
+            <div class="srs-stat-value">{{ stats.current_streak }}</div>
+            <div class="srs-stat-label"><i class="fas fa-fire" style="color:#fd7e14;"></i> Streak</div>
         </div>
-        <div class="stat-card">
-            <div class="stat-value">{{ stats.success_rate }}%</div>
-            <div class="stat-label">Erfolgsrate</div>
+        <div class="srs-stat-card">
+            <div class="srs-stat-value">{{ stats.success_rate }}%</div>
+            <div class="srs-stat-label">Erfolgsrate</div>
         </div>
     </div>
 

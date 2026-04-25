@@ -182,15 +182,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('purchaseForm');
     const purchaseBtn = document.getElementById('purchaseBtn');
     const processingModal = new bootstrap.Modal(document.getElementById('processingModal'));
-    const successModal = new bootstrap.Modal(document.getElementById('successModal'));
 
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
-        
-        // Check if terms are agreed
+
         const agreeTerms = document.getElementById('agreeTerms');
         if (!agreeTerms.checked) {
-            alert('Please agree to the Terms of Service and Privacy Policy to continue.');
+            showPurchaseError('Bitte akzeptiere die Nutzungsbedingungen und Datenschutzerklärung.');
             return;
         }
 
@@ -212,29 +210,35 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const result = await response.json();
 
-            // Hide processing modal
-            processingModal.hide();
-
-            if (response.ok && result.success) {
-                // Show success modal
-                document.getElementById('purchasedLessonTitle').textContent = '{{ lesson.title }}';
-                successModal.show();
-            } else {
-                // Show error
-                alert(result.error || 'Purchase failed. Please try again.');
-                
-                // Re-enable button
-                purchaseBtn.disabled = false;
-                purchaseBtn.innerHTML = '<i class="fas fa-shopping-cart"></i> Complete Purchase - CHF {{ "%.2f"|format(lesson.price) }}';
+            if (response.ok && result.success && result.payment_url) {
+                window.location.href = result.payment_url;
+                return;
             }
+
+            processingModal.hide();
+            showPurchaseError(result.error || 'Kauf fehlgeschlagen. Bitte erneut versuchen.');
+            purchaseBtn.disabled = false;
+            purchaseBtn.innerHTML = '<i class="fas fa-shopping-cart"></i> Complete Purchase - CHF {{ "%.2f"|format(lesson.price) }}';
         } catch (error) {
             console.error('Purchase error:', error);
             processingModal.hide();
-            alert('An error occurred during purchase. Please try again.');
-            
-            // Re-enable button
+            showPurchaseError('Beim Kauf ist ein Fehler aufgetreten. Bitte erneut versuchen.');
+
             purchaseBtn.disabled = false;
             purchaseBtn.innerHTML = '<i class="fas fa-shopping-cart"></i> Complete Purchase - CHF {{ "%.2f"|format(lesson.price) }}';
+        }
+
+        function showPurchaseError(msg) {
+            let alertEl = document.getElementById('purchaseError');
+            if (!alertEl) {
+                alertEl = document.createElement('div');
+                alertEl.id = 'purchaseError';
+                alertEl.className = 'alert alert-danger mt-3';
+                alertEl.setAttribute('role', 'alert');
+                form.parentElement.insertBefore(alertEl, form);
+            }
+            alertEl.textContent = msg;
+            alertEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
     });
 });

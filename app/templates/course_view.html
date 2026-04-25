@@ -315,6 +315,10 @@ document.addEventListener('DOMContentLoaded', function() {
             // Add CSRF token to the request
             const csrfToken = '{{ csrf_token() }}';
             
+            purchaseBtn.disabled = true;
+            const originalHtml = purchaseBtn.innerHTML;
+            purchaseBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verarbeite Kauf…';
+
             fetch(`/api/courses/${courseId}/purchase`, {
                 method: 'POST',
                 headers: {
@@ -322,21 +326,35 @@ document.addEventListener('DOMContentLoaded', function() {
                     'X-CSRFToken': csrfToken
                 },
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Show success message and reload the page
-                    alert(data.message);
-                    window.location.reload();
-                } else {
-                    // Show error message
-                    alert('Error: ' + data.error);
+            .then(response => response.json().then(data => ({ ok: response.ok, data })))
+            .then(({ ok, data }) => {
+                if (ok && data.success && data.payment_url) {
+                    window.location.href = data.payment_url;
+                    return;
                 }
+                showCourseError(data.error || 'Kauf fehlgeschlagen. Bitte erneut versuchen.');
+                purchaseBtn.disabled = false;
+                purchaseBtn.innerHTML = originalHtml;
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('An unexpected error occurred. Please try again.');
+                showCourseError('Beim Kauf ist ein Fehler aufgetreten. Bitte erneut versuchen.');
+                purchaseBtn.disabled = false;
+                purchaseBtn.innerHTML = originalHtml;
             });
+
+            function showCourseError(msg) {
+                let alertEl = document.getElementById('courseError');
+                if (!alertEl) {
+                    alertEl = document.createElement('div');
+                    alertEl.id = 'courseError';
+                    alertEl.className = 'alert alert-danger mt-3';
+                    alertEl.setAttribute('role', 'alert');
+                    purchaseBtn.parentElement.appendChild(alertEl);
+                }
+                alertEl.textContent = msg;
+                alertEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
         });
     }
 });
