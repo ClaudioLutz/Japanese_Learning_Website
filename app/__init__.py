@@ -43,6 +43,23 @@ def create_app():
     app.config['WTF_CSRF_SECRET_KEY'] = os.environ.get('WTF_CSRF_SECRET_KEY', secret_key)
     app.config['GCS_BUCKET_NAME'] = os.environ.get('GCS_BUCKET_NAME') or None
 
+    # SEO-Konfiguration (von base.html / robots.txt / sitemap.xml gelesen)
+    app.config['SITE_URL'] = os.environ.get('SITE_URL', 'https://japanese-learning.ch').rstrip('/')
+    app.config['SITE_NAME'] = os.environ.get('SITE_NAME', 'Japanese Learning')
+    app.config['SITE_DESCRIPTION'] = os.environ.get(
+        'SITE_DESCRIPTION',
+        'Japanisch lernen für deutschsprachige Anfänger — strukturiert nach JLPT-Level. '
+        'Hiragana, Katakana, Kanji, Vokabeln, Grammatik und erste Dialoge in einem klaren Lernpfad.'
+    )
+    app.config['SEO_DEFAULT_OG_IMAGE'] = os.environ.get(
+        'SEO_DEFAULT_OG_IMAGE',
+        '/static/favicon.png'
+    )
+    # Search-Console Meta-Verifikation (Fallback, falls DNS-TXT nicht möglich)
+    app.config['GOOGLE_SITE_VERIFICATION'] = os.environ.get('GOOGLE_SITE_VERIFICATION', '')
+    # Crawler-Steuerung: in Staging auf "noindex,nofollow" setzen, in Prod leer/Default lassen
+    app.config['ROBOTS_INDEX'] = os.environ.get('ROBOTS_INDEX', 'index,follow')
+
     app.config.from_pyfile('config.py', silent=True) # Load config from instance folder
     app.config['TEMPLATES_AUTO_RELOAD'] = True
 
@@ -234,12 +251,35 @@ def create_app():
     from app.legal_routes import bp as legal_bp
     app.register_blueprint(legal_bp)
 
-    # current_year fuer den Footer
+    # SEO: robots.txt + sitemap.xml
+    from app.seo_routes import seo_bp
+    app.register_blueprint(seo_bp)
+    csrf.exempt(seo_bp)
+
+    # current_year fuer den Footer + SEO-Default-Daten fuer base.html
     from datetime import datetime as _dt
+    from flask import request as _flask_request
 
     @app.context_processor
-    def _inject_current_year():
-        return {"current_year": _dt.utcnow().year}
+    def _inject_common_template_vars():
+        site_url = app.config['SITE_URL']
+        try:
+            canonical = site_url + _flask_request.path
+        except RuntimeError:
+            canonical = site_url
+        og_image = app.config['SEO_DEFAULT_OG_IMAGE']
+        if og_image and og_image.startswith('/'):
+            og_image = site_url + og_image
+        return {
+            'current_year': _dt.utcnow().year,
+            'site_url': site_url,
+            'site_name': app.config['SITE_NAME'],
+            'site_description': app.config['SITE_DESCRIPTION'],
+            'default_og_image': og_image,
+            'google_site_verification': app.config['GOOGLE_SITE_VERIFICATION'],
+            'robots_index': app.config['ROBOTS_INDEX'],
+            'default_canonical': canonical,
+        }
     
     # Register social auth blueprint (for /auth/login/google-oauth2/ route only)
     from social_flask.routes import social_auth

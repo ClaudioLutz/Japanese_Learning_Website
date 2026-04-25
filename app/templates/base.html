@@ -4,7 +4,30 @@
     <meta charset="UTF-8">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Japanisch lernen{% endblock %} · Japanese Learning</title>
+    <title>{% block title %}Japanisch lernen{% endblock %} · {{ site_name }}</title>
+
+    {# ── SEO: Description / Canonical / Robots ── #}
+    <meta name="description" content="{% block meta_description %}{{ site_description }}{% endblock %}">
+    <meta name="robots" content="{% block robots %}{{ robots_index }}{% endblock %}">
+    <link rel="canonical" href="{% block canonical %}{{ default_canonical }}{% endblock %}">
+    {% if google_site_verification %}
+    <meta name="google-site-verification" content="{{ google_site_verification }}">
+    {% endif %}
+    <meta name="theme-color" content="#0d6efd">
+
+    {# ── Open Graph / Twitter Card ── #}
+    <meta property="og:site_name" content="{{ site_name }}">
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:locale" content="de_DE">
+    <meta property="og:title" content="{% block og_title %}{{ self.title() }} · {{ site_name }}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{{ self.meta_description() }}{% endblock %}">
+    <meta property="og:url" content="{% block og_url %}{{ self.canonical() }}{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}{{ default_og_image }}{% endblock %}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ self.og_title() }}">
+    <meta name="twitter:description" content="{{ self.og_description() }}">
+    <meta name="twitter:image" content="{{ self.og_image() }}">
+
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
     <link rel="alternate icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
@@ -12,6 +35,47 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-improvements.css') }}">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+
+    {# ── Structured Data (Schema.org JSON-LD) ── #}
+    {% block structured_data %}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "EducationalOrganization",
+          "@id": "{{ site_url }}/#org",
+          "name": "{{ site_name }}",
+          "url": "{{ site_url }}",
+          "logo": "{{ site_url }}/static/favicon.png",
+          "description": "{{ site_description }}",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Promenadenstrasse 72",
+            "postalCode": "9400",
+            "addressLocality": "Rorschach",
+            "addressCountry": "CH"
+          },
+          "email": "info@japanese-learning.ch"
+        },
+        {
+          "@type": "WebSite",
+          "@id": "{{ site_url }}/#website",
+          "url": "{{ site_url }}",
+          "name": "{{ site_name }}",
+          "inLanguage": "de-DE",
+          "publisher": { "@id": "{{ site_url }}/#org" },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "{{ site_url }}/lessons?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        }
+      ]
+    }
+    </script>
+    {% endblock %}
+
     {% block styles %}{% endblock %}
     {% block extra_head %}{% endblock %}
 </head>

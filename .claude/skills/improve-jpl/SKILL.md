@@ -7,7 +7,7 @@ description: Verbessert die Japanese Learning Website (japanese-learning.ch). Au
 
 Dieser Skill ist das Produkt-Gehirn der Seite. CLAUDE.md liefert das Tech-Wissen (Stack, Deployment, DB-Sync); hier steht, *warum* es die Seite gibt, *für wen*, und *was als Nächstes* sinnvoll ist.
 
-**Stand: 2026-04-25 (Nach grosser Lernpfad-Iteration + Payrexx-KYC-Wiedereinreichung)**
+**Stand: 2026-04-26 (Nach SEO-Basis-Implementierung)**
 
 ## 1. Warum diese Seite existiert (Hierarchie der Zwecke)
 
@@ -65,7 +65,29 @@ Mayuko (Lehrerin) hat als pädagogische Anweisung gegeben: **„Lektionen nach J
 - **N5-Grammar-Liste** noch nicht maschinell importiert (`canonical.grammar` ist leer). Coverage-Dashboard zeigt deshalb keine Grammar-%.
 - **Region-Konsolidierung** Cloud Run nach `europe-west6` (eliminiert 76s-Cold-Start) — nach Payrexx-Live als Performance-Initiative.
 
-## 3.5 Erledigte Live-Blocker (für Vollständigkeit, 2026-04-23 → 25)
+## 3.6 SEO — Basis ist live, Search Console wartet auf Claudio (2026-04-26)
+
+Erste Google-Sichtbarkeit ist wichtig, weil organischer Traffic der einzige nicht-bezahlte Akquisitions-Kanal ist und vor Payrexx-Live Aufmerksamkeit aufbauen kann.
+
+**Bereits implementiert (2026-04-26):**
+- `app/templates/base.html` — `<meta name="description">`, `robots`, `canonical`, OpenGraph, Twitter Card, JSON-LD `EducationalOrganization` + `WebSite` mit SearchAction. Jinja-Blocks `meta_description`, `og_image`, `og_type`, `structured_data` pro-Seite überschreibbar.
+- `app/seo_routes.py` — eigenes Blueprint mit `/robots.txt` (Admin/API/Auth/SRS/Payment ausgeschlossen) und `/sitemap.xml` (dynamisch aus Lesson + Course + statisch).
+- `lesson_view.html` — `Course`-JSON-LD pro Lektion mit `educationalLevel: "JLPT N5"`.
+- Pro-Seite Meta-Descriptions: index, lessons, lesson_view, courses, course_view, learn_path.
+- Env-Schalter: `SITE_URL`, `ROBOTS_INDEX` (Staging→`noindex,nofollow`), `GOOGLE_SITE_VERIFICATION` (Fallback ohne DNS-Zugriff), `SEO_DEFAULT_OG_IMAGE`.
+
+**Was Claudio noch tun muss (manuell, einmalig):**
+1. **Search Console verifizieren** — Property `japanese-learning.ch` (Domain), TXT-Record bei Hostpoint setzen. Detaillierte Schritte stehen in `CLAUDE.md` unter „SEO & Google Search Console".
+2. **Sitemap einreichen** — `https://japanese-learning.ch/sitemap.xml` in Search Console.
+3. **OG-Image hochladen** — derzeit nur Favicon als Fallback. Empfehlung: 1200×630 PNG mit Hero-Visual nach GCS, dann `SEO_DEFAULT_OG_IMAGE` in Cloud Run setzen. Wirkt in Social-Shares (LinkedIn/Twitter/WhatsApp).
+4. **PageSpeed-Check** — https://pagespeed.web.dev/?url=https://japanese-learning.ch — falls Core Web Vitals rot, vorher Cold-Start-Region-Konsolidierung (`europe-west6`) erwägen.
+
+**Was SEO langfristig bremst:**
+- N5-Coverage 7.5 % heisst wenig öffentlicher Content für Google. Jede neue Lesson = neue indexierbare URL = mehr Long-Tail-Treffer ("hiragana lernen", "japanisch zahlen 1-10"). **Inhalte produzieren ist auch SEO-Hebel #1.**
+- Lessons-Detailseite zeigt für Gäste nur Marketing-Snippet, Hauptcontent hinter Login/Paywall → niedrige Indexierungs-Tiefe. Bei sehr beliebten Themen (Hiragana-Tabelle) ggf. Teil-Inhalt für Crawler erlauben.
+- Keine Blog-/Artikel-Sektion → keine breiten Keyword-Themen. Erst bauen, wenn N5 ≥80 %.
+
+## 3.5 Erledigte Live-Blocker (für Vollständigkeit, 2026-04-23 → 26)
 
 Diese Punkte waren in §3 — sind erledigt:
 
@@ -78,6 +100,7 @@ Diese Punkte waren in §3 — sind erledigt:
 - ✅ **Legal-Pages** — `/legal/{impressum,agb,datenschutz,widerruf}` live mit echten Daten (Promenadenstrasse 72, 9400 Rorschach, info@japanese-learning.ch).
 - ✅ **info@-Mailbox** — Hostpoint Cloud Office Limited (gratis), Forward auf Gmail. Setup in `reference_hostpoint_info_mailbox.md`.
 - ✅ **Payrexx-KYC eingereicht** — 2026-04-25, Antwort erwartet bis ~2026-04-29.
+- ✅ **SEO-Basis** — robots.txt, sitemap.xml, Meta-/OG-/JSON-LD-Tags in `base.html`, pro-Seite Descriptions. Search-Console-Verifikation (Hostpoint TXT) noch von Claudio einmalig manuell zu erledigen.
 
 ## 4. Leitplanken für "Bestehendes verbessern" (der Dauermodus)
 
@@ -132,6 +155,7 @@ Kein A/B-Testing und keine Analytics-Obsession. Die Signale:
 | "Kannst du die UI reviewen?" | Auf Sprach-Konsistenz (CONTENT_LANGUAGES respektiert?), Mobile-Breakpoints (Top-Nav unter 992px, Pfad-Karten 1-Spalter unter 575px), Active-State der Top-Nav, Umlaut-Korrektheit, Pulsation auf nächstem Modul achten. |
 | "Es gibt einen Bug" | In dieser Reihenfolge ausschliessen: (1) Deck-Karussell-CSS, (2) Dialog-Slideshow Grid-Stacking, (3) DB-Sync-Reihenfolge, (4) Cloud-Run-Cold-Start, (5) Umlaut/Charset, (6) routes.py-Monolith. |
 | "Sollen wir das refactoren?" | Nur wenn der Ort sowieso gerade berührt wird. Kandidaten: routes.py (Lernpfad-Logik in eigenes Modul), base.html (Top-Nav-CSS in custom.css), alte `enhanced-navbar-*` Klassen löschen. |
+| "SEO / Google-Sichtbarkeit?" | Basis ist live (siehe §3.6). Nächste Schritte: Claudio muss Search Console mit Hostpoint-TXT verifizieren (Anleitung in CLAUDE.md), dann Sitemap submitten. Inhalte produzieren ist Hebel #1, weil mehr Lessons = mehr indexierbare URLs. Bei neuen public Routes: in `seo_routes.py::sitemap_xml()` `static_pages` ergänzen. |
 | "Wie bekomme ich den ersten Nutzer?" | Erst Payrexx-Freigabe abwarten. Dann: Onboarding als Fremder durchspielen (Inkognito), Reibung dokumentieren, ein konkretes Premium-Produkt sichtbar machen ("N5 Komplett" CHF 14.90 — sobald 100 % Coverage). |
 | "Englisch wieder anschalten?" | `CONTENT_LANGUAGES=german,english` Env-Var setzen (lokal `.env`, prod via `gcloud run services update --update-env-vars`). Memory `project_content_languages_filter.md`. |
 | "Neue Module / JLPT-Level?" | LessonCategory mit `jlpt_level`, `slug`, `display_order` anlegen. Optional `prerequisite_category_id`. Lessons via `category_id` zuordnen. Route `/learn/n4` funktioniert automatisch. |

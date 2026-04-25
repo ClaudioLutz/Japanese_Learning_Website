@@ -1,7 +1,32 @@
 {% extends "base.html" %}
 {% set admin_edit_url = url_for('routes.admin_manage_lessons') + '?edit=' + lesson.id|string %}
 
-{% block title %}{{ lesson.title }} - Japanese Learning{% endblock %}
+{% block title %}{{ lesson.title }}{% endblock %}
+{% block meta_description %}{% if lesson.description %}{{ lesson.description|striptags|truncate(160, killwords=True) }}{% else %}Japanisch-Lektion: {{ lesson.title }}{% if lesson.category and lesson.category.jlpt_level %} (JLPT N{{ lesson.category.jlpt_level }}){% endif %} — Vokabeln, Grammatik und Quiz auf Deutsch.{% endif %}{% endblock %}
+{% block og_type %}article{% endblock %}
+{% if lesson.background_image_url or lesson.thumbnail_url %}
+{% block og_image %}{{ lesson.background_image_url or lesson.thumbnail_url }}{% endblock %}
+{% endif %}
+{% block structured_data %}
+{{ super() }}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": {{ lesson.title|tojson }},
+  "description": {{ (lesson.description or lesson.title)|striptags|truncate(300, killwords=True)|tojson }},
+  "url": "{{ site_url }}/lessons/{{ lesson.id }}",
+  "inLanguage": "de-DE",
+  "provider": {
+    "@type": "EducationalOrganization",
+    "@id": "{{ site_url }}/#org",
+    "name": "{{ site_name }}",
+    "sameAs": "{{ site_url }}"
+  }{% if lesson.category and lesson.category.jlpt_level %},
+  "educationalLevel": "JLPT N{{ lesson.category.jlpt_level }}"{% endif %}
+}
+</script>
+{% endblock %}
 
 {% block extra_head %}
 <style>

@@ -244,6 +244,44 @@ curl -s -o /dev/null -w "%{http_code}" https://japanese-learning.ch/
 - Artifact Registry + Secrets: ~1 CHF
 - Domain (japanese-learning.ch): ~15 CHF/Jahr
 
+## SEO & Google Search Console
+
+### Implementierte Basis (im Code)
+- **Meta-Tags** in `app/templates/base.html`: `description`, `robots`, `canonical`, OpenGraph, Twitter Card. Pro-Seite überschreibbar via Jinja-Blocks (`meta_description`, `og_image`, `og_type`, `structured_data`).
+- **JSON-LD** in `base.html`: `EducationalOrganization` + `WebSite` mit SearchAction. `lesson_view.html` ergänzt `Course`-Schema pro Lektion.
+- **`/robots.txt`** und **`/sitemap.xml`** als Routes in `app/seo_routes.py` (eigenes Blueprint, von CSRF exempt). Sitemap pullt alle `is_published` Lessons + Courses + statische Seiten dynamisch aus der DB.
+- **Steuer-Env-Variablen** (`__init__.py`):
+  - `SITE_URL` (Default `https://japanese-learning.ch`)
+  - `ROBOTS_INDEX` — auf Staging/Preview auf `noindex,nofollow` setzen, dann sperrt robots.txt automatisch alles
+  - `GOOGLE_SITE_VERIFICATION` — optionaler Meta-Tag-Fallback, falls DNS-TXT nicht möglich
+  - `SEO_DEFAULT_OG_IMAGE` — empfohlen: 1200×630 PNG ins GCS hochladen, URL hier eintragen
+
+### Google Search Console — Setup-Schritte
+1. **Search Console öffnen**: https://search.google.com/search-console — mit `claudio.lutz.cv@gmail.com` einloggen.
+2. **Property anlegen** → **Domain** (nicht URL-Prefix), Eingabe: `japanese-learning.ch`. Domain-Property erfasst beide Schemas (https/www) auf einmal.
+3. **Verifikations-TXT-Record** kopieren (Format `google-site-verification=…`).
+4. **Bei Hostpoint** (Domain-Registrar, siehe Memory): DNS-Zone von `japanese-learning.ch` → neuer **TXT-Record** mit Host `@`, Wert `google-site-verification=…`. Propagation: meist <1h, max 72h.
+5. **In Search Console** "Verify" klicken. (TXT-Record nach Verifikation drinlassen — entfernen invalidiert.)
+6. **Sitemap einreichen**: in Search Console links **Sitemaps** → URL `https://japanese-learning.ch/sitemap.xml` einreichen.
+7. **Indexing anfordern**: rechts oben "URL inspection" für `/`, `/learn/n5`, `/lessons` — "Request Indexing" klicken (initial einmalig).
+
+**Fallback ohne DNS-Zugriff**: in Cloud Run die Env-Variable `GOOGLE_SITE_VERIFICATION=<token>` setzen → `<meta name="google-site-verification">` rendert automatisch in `<head>`. Dann in Search Console "HTML tag"-Methode wählen.
+
+### Verification & Monitoring
+```bash
+# Lokal verifizieren:
+curl -s http://localhost:5000/robots.txt | head -20
+curl -s http://localhost:5000/sitemap.xml | head -40
+# Live verifizieren:
+curl -sI https://japanese-learning.ch/sitemap.xml
+curl -s https://japanese-learning.ch/sitemap.xml | grep -c '<url>'
+```
+- **Rich-Results-Test**: https://search.google.com/test/rich-results (JSON-LD validieren)
+- **PageSpeed / Core Web Vitals**: https://pagespeed.web.dev/?url=https://japanese-learning.ch
+
+### Wenn neue oeffentliche Routen dazukommen
+Statische Seiten in `app/seo_routes.py::sitemap_xml()` ergänzen (`static_pages`-Liste). Lessons/Courses laufen automatisch mit, sobald `is_published=True`.
+
 ## Datenbank-Sync — Pflicht-Reihenfolge
 - **IMMER Cloud→Lokal ZUERST** — Vor jedem Lokal→Cloud-Push muss der aktuelle Produktionsstand heruntergeladen werden. Der Admin kann auf japanese-learning.ch jederzeit Inhalte bearbeiten. Ein blindes Lokal→Cloud überschreibt diese Änderungen.
 - **Ablauf**: `/sync-cloud-db` Skill ausführen — der macht automatisch: (A) Cloud→Lokal, dann (B) Lokal→Cloud.
