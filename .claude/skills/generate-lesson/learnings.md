@@ -41,6 +41,25 @@ Selbstverbesserndes Log. Wird vor jedem Run gelesen, nach jedem Run angehängt.
 
 <!-- Neuste Einträge oben, älteste unten. -->
 
+## 2026-04-25 — Slideshow-Render-Bug (Lesson ID 143, betrifft alle dialog_slideshow-Lektionen)
+
+### Problem (vom User auf Production gemeldet)
+Beim Slide-Wechsel in der Konversations-Slideshow waren kurzzeitig zwei Slides gleichzeitig sichtbar — die alte fadete unten weiter, die neue erschien oben darüber, sodass die Stage-Höhe verdoppelt wurde während der 400ms-Crossfade-Transition.
+
+### Ursache
+In [app/templates/lesson_view.html:945-961](app/templates/lesson_view.html#L945-L961) waren die Slides als normale Block-Geschwister im Stage-Container gerendert. Während Alpine `x-transition.opacity.duration.400ms` die alte ausblendet UND die neue einblendet, sind beide gleichzeitig `display:block` — und stapeln sich vertikal im Block-Flow.
+
+### Fix
+CSS-Grid-Stacking: `slideshow-stage` auf `display:grid`, jede `slideshow-slide` auf `style="grid-area:1/1;"`. Alle Slides belegen dieselbe Grid-Zelle, also überlappen sie statt sich vertikal zu stapeln. Stage-Höhe = grösster Slide; Crossfade läuft sauber.
+
+### Regel für nächstes Mal
+**Wenn das Slideshow-Template in `lesson_view.html` jemals umgeschrieben wird, MUSS das Grid-Stacking erhalten bleiben.** Die Pflicht-Struktur ist in SKILL.md §4c als „TEMPLATE-FALLE" dokumentiert. Verifikation nach Template-Change: in der gerenderten Lektion zwischen 2 Slides hin- und herklicken — wenn die Stage-Höhe „springt" oder doppelte Bilder erscheinen, ist das Grid-Stacking verloren gegangen.
+
+### Aktualisierte Aktuelle Regeln (Ergaenzung zu den 10 Initial-Regeln)
+11. **Slideshow-Template Grid-Stacking-Pattern** ([SKILL.md §4c TEMPLATE-FALLE](SKILL.md)) NIE entfernen, sonst doppeltes Bild beim Slide-Wechsel.
+
+---
+
 ## 2026-04-24 21:15 — N5 Zahlen — Von 1 bis 10'000 (Lesson ID 143)
 
 ### Erfolge

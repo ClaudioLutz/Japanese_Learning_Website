@@ -318,7 +318,7 @@ Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
          ueber alle Slides).
        Legt LessonContent(content_type='dialog_slideshow') auf order_index=2
        an (audio=1, slideshow=2, text=3). Das Template in lesson_view.html
-       rendert einen Alpine.js-Slideshow-Player mit Auto-Advance.
+       (~Zeile 945) rendert einen Alpine.js-Slideshow-Player mit Auto-Advance.
        Idempotent: existierende Zeilen-Assets werden uebersprungen, bestehender
        dialog_slideshow-Eintrag wird aktualisiert.
        Assets unter app/static/uploads/lessons/dialog_slideshow/lesson_{id}/.
@@ -326,6 +326,20 @@ Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
        gepflegt — neue Charaktere dort hinzufuegen, sonst generisches
        Portrait-Fallback.
        Kosten: ~50 Rappen pro Lektion (9 HD-Bilder + 9 TTS-Calls).
+
+       ⚠️ TEMPLATE-FALLE (lesson_view.html ~Z.945-961): Die Slides MUESSEN
+       per CSS-Grid-Stacking gerendert werden, sonst doppeltes Bild waehrend
+       der x-transition.opacity. Pflicht-Pattern:
+         <div class="slideshow-stage ..." style="...display:grid;">
+           <template x-for="(slide, idx) in slides" :key="idx">
+             <div class="slideshow-slide" style="grid-area:1/1;"
+                  x-show="idx === current"
+                  x-transition.opacity.duration.400ms>...</div>
+           </template>
+         </div>
+       Ohne `display:grid` + `grid-area:1/1` stapeln sich Slides waehrend des
+       400ms-Crossfades vertikal (alte fadet aus, neue fadet ein, beide
+       gleichzeitig im Block-Flow). Bei Template-Aenderungen NIE entfernen.
 
 [5] Verifikation — zwei Pfade, je nach Verfügbarkeit:
 

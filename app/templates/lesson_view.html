@@ -943,9 +943,10 @@
                                                                  x-data="dialogSlideshow({{ content.id }})"
                                                                  x-init="init()">
                                                                 <div class="slideshow-stage position-relative rounded overflow-hidden"
-                                                                     style="background:#111;">
+                                                                     style="background:#111;display:grid;">
                                                                     <template x-for="(slide, idx) in slides" :key="idx">
                                                                         <div class="slideshow-slide"
+                                                                             style="grid-area:1/1;"
                                                                              x-show="idx === current"
                                                                              x-transition.opacity.duration.400ms>
                                                                             <img :src="slide.image" :alt="slide.speaker + ' scene'"
