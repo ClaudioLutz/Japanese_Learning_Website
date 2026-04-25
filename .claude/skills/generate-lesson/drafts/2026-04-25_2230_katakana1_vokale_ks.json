@@ -1,0 +1,542 @@
+{
+  "kind": "kana",
+  "title": "Katakana 1 — Vokale, K-Reihe und S-Reihe",
+  "description": "Die ersten 15 Katakana-Zeichen lernen: die fünf Vokale (ア/イ/ウ/エ/オ), die K-Reihe (カ/キ/ク/ケ/コ) und die S-Reihe (サ/シ/ス/セ/ソ). Mit Aussprache, Lese-Übungen und Quiz.",
+  "topic": "katakana_1_vokale_ks",
+  "jlpt_level": 5,
+  "instruction_language": "german",
+  "allow_guest_access": true,
+  "thumbnail_url": "generated/thumbnail_katakana_1_vokale_ks_20260425_201708.png",
+  "pages": [
+    {
+      "title": "Einführung — Was ist Katakana?",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Willkommen zur ersten Katakana-Lektion",
+            "content_text": "## Was ist Katakana?\n\nKatakana ist die **zweite** der drei japanischen Schriften (neben Hiragana und Kanji). Wie Hiragana ist es eine **Silbenschrift** mit **46 Grundzeichen** — und sie steht für **dieselben Silben** wie Hiragana.\n\n## Wofür wird Katakana verwendet?\n\nKatakana hat einen **klaren Zweck**:\n\n- **Lehnwörter** aus anderen Sprachen: 「コーヒー」 (kōhī, 'Kaffee'), 「コンピューター」 (konpyūtā, 'Computer')\n- **Eigennamen** ausländischer Personen, Länder, Marken: 「ドイツ」 (Doitsu, 'Deutschland'), 「クラウディオ」 (Kuraudio, 'Claudio')\n- **Tier- und Pflanzennamen** in wissenschaftlichen Texten: 「サクラ」 (sakura, 'Kirschblüte')\n- **Lautmalerei und Betonung** wie Kursivschrift im Deutschen\n\n> **Wichtig:** Wenn du in einem japanischen Text ein Wort siehst, das nach **'ausländisch'** klingt, ist es fast sicher in Katakana geschrieben.\n\n## Was lernst du in dieser Lektion?\n\nDie ersten **drei Reihen** der Katakana-Tabelle, also **15 Zeichen**:\n\n1. Die fünf **Vokale**: 「アイウエオ」 (a, i, u, e, o)\n2. Die **K-Reihe**: 「カキクケコ」 (ka, ki, ku, ke, ko)\n3. Die **S-Reihe**: 「サシスセソ」 (sa, shi, su, se, so)\n\n## Hiragana vs. Katakana — gleicher Klang, andere Form\n\nDieselben Silben gibt es in beiden Schriften:\n\n- 「あ」 (Hiragana a) ↔ 「ア」 (Katakana a)\n- 「か」 (Hiragana ka) ↔ 「カ」 (Katakana ka)\n- 「し」 (Hiragana shi) ↔ 「シ」 (Katakana shi)\n\n> **Charakteristisch:** Katakana wirkt **eckig** und **scharfkantig**, Hiragana **rund** und **fliessend**. Das ist der schnellste Weg, sie auf einen Blick zu unterscheiden.\n\n**Tipp:** Sprich jedes Zeichen **laut aus**, während du es ansiehst. Das verknüpft Form und Klang im Gedächtnis."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Die 15 Zeichen",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Die Vokale (a, i, u, e, o)",
+            "content_text": "## Vokale — die Basis\n\nWie bei Hiragana sind die fünf Vokale die **wichtigsten Zeichen**. Jede weitere Reihe baut auf ihnen auf:\n\n- **a** wie in *Vater*\n- **i** wie in *Liebe*\n- **u** wie in *Buch* (kurz)\n- **e** wie in *Bett*\n- **o** wie in *Boot*\n\n> **Eselsbrücke:** 「ア」 (a) sieht aus wie ein gespiegeltes 'A' mit einem Knick. 「オ」 (o) hat einen Querbalken oben — wie ein Kreuz mit Schwung.\n\n**Mini-Übung:** Sag 「アイウエオ」 (a-i-u-e-o) mehrmals hintereinander. Diese Reihenfolge wirst du **überall** in der Tabelle wiederfinden."
+          }
+        },
+        {
+          "content_type": "kana",
+          "data": {
+            "character": "ア",
+            "romanization": "a",
+            "type": "katakana"
+          }
+        },
+        {
+          "content_type": "kana",
+          "data": {
+            "character": "イ",
+            "romanization": "i",
+            "type": "katakana"
+          }
+        },
+        {
+          "content_type": "kana",
+          "data": {
+            "character": "ウ",
+            "romanization": "u",
+            "type": "katakana"
+          }
+        },
+        {
+          "content_type": "kana",
+          "data": {
+            "character": "エ",
+            "romanization": "e",
+            "type": "katakana"
+          }
+        },
+        {
+          "content_type": "kana",
+          "data": {
+            "character": "オ",
+            "romanization": "o",
+            "type": "katakana"
+          }
+        },
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Die K-Reihe (ka, ki, ku, ke, ko)",
+            "content_text": "## K-Reihe — Konsonant K + Vokal\n\nWie bei Hiragana folgt die K-Reihe dem Muster **K + Vokal**:\n\n- **ka** wie in *Karte*\n- **ki** wie in *Kiste*\n- **ku** wie in *Kuchen* (kurz)\n- **ke** wie in *Kette*\n- **ko** wie in *Korb*\n\n> **Verwechslungsgefahr:** 「カ」 (ka) und 「ク」 (ku) sind ähnlich. **Ka** hat zwei klare Striche, **ku** nur einen geschwungenen.\n\n**Mini-Wörter:** 「カメラ」 (kamera, 'Kamera'), 「ケーキ」 (kēki, 'Kuchen'), 「コーラ」 (kōra, 'Cola')."
+          }
+        },
+        {
+          "content_type": "kana",
+          "data": {
+            "character": "カ",
+            "romanization": "ka",
+            "type": "katakana"
+          }
+        },
+        {
+          "content_type": "kana",
+          "data": {
+            "character": "キ",
+            "romanization": "ki",
+            "type": "katakana"
+          }
+        },
+        {
+          "content_type": "kana",
+          "data": {
+            "character": "ク",
+            "romanization": "ku",
+            "type": "katakana"
+          }
+        },
+        {
+          "content_type": "kana",
+          "data": {
+            "character": "ケ",
+            "romanization": "ke",
+            "type": "katakana"
+          }
+        },
+        {
+          "content_type": "kana",
+          "data": {
+            "character": "コ",
+            "romanization": "ko",
+            "type": "katakana"
+          }
+        },
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Die S-Reihe (sa, shi, su, se, so)",
+            "content_text": "## S-Reihe — mit derselben Ausnahme wie Hiragana\n\nDie S-Reihe folgt dem Muster **S + Vokal** — mit derselben Ausnahme wie bei Hiragana:\n\n- **sa** wie in *Sand* (stimmloses s)\n- **shi** ⚠ — nicht 'si', sondern **'schi'** wie in *Schiene*\n- **su** wie in *Suppe* (kurz)\n- **se** wie in *Sex* (stimmloses s)\n- **so** wie in *Sonne* (stimmloses s)\n\n> **Achtung — Verwechslungsfalle:** 「シ」 (shi) und 「ツ」 (tsu, kommt in Katakana 2) sehen sich **sehr** ähnlich. Genau so 「ソ」 (so) und 「ン」 (n). Schau auf die **Strich-Richtung**:\n> - 「シ」 (shi) — Striche gehen von **unten nach oben**\n> - 「ツ」 (tsu) — Striche gehen von **oben nach unten**\n> - 「ソ」 (so) — ein Strich, **steiler** Winkel\n> - 「ン」 (n) — ein Strich, **flacher** Winkel\n\n**Mini-Wörter:** 「サラダ」 (sarada, 'Salat'), 「スシ」 (sushi), 「セット」 (setto, 'Set')."
+          }
+        },
+        {
+          "content_type": "kana",
+          "data": {
+            "character": "サ",
+            "romanization": "sa",
+            "type": "katakana"
+          }
+        },
+        {
+          "content_type": "kana",
+          "data": {
+            "character": "シ",
+            "romanization": "shi",
+            "type": "katakana"
+          }
+        },
+        {
+          "content_type": "kana",
+          "data": {
+            "character": "ス",
+            "romanization": "su",
+            "type": "katakana"
+          }
+        },
+        {
+          "content_type": "kana",
+          "data": {
+            "character": "セ",
+            "romanization": "se",
+            "type": "katakana"
+          }
+        },
+        {
+          "content_type": "kana",
+          "data": {
+            "character": "ソ",
+            "romanization": "so",
+            "type": "katakana"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Aussprache & Schreibhinweise",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Worauf du achten musst",
+            "content_text": "## Aussprache — identisch zu Hiragana\n\n**Wichtig vorab:** Katakana **klingt genauso** wie Hiragana. Jede Katakana-Silbe hat eine exakte Hiragana-Entsprechung. Es gibt **keine** zusätzlichen Klänge — nur andere Formen.\n\n**Vokale sind kurz und klar.** 「ア」 (a) wird kurz gesprochen, nicht 'aaaa'.\n\n**Die Ausnahme 「シ」 (shi).** Wie bei Hiragana: nicht 'si', sondern **'schi'**. Diese Stolperfalle gibt es in fast jeder Reihe.\n\n## Der Längungsstrich 「ー」\n\nKatakana kennt eine Eigenheit, die Hiragana nicht hat: den **Längungsstrich** 「ー」 (ein einfacher waagerechter Strich). Er **verlängert den vorherigen Vokal**:\n\n- 「コーヒー」 (kōhī, 'Kaffee') — das 「ー」 verdoppelt das o und das i\n- 「ケーキ」 (kēki, 'Kuchen') — verlängert das e\n- 「カレー」 (karē, 'Curry') — verlängert das e am Ende\n\n> **Merke:** In Lehnwörtern siehst du 「ー」 sehr oft, weil viele Fremdwörter lange Vokale haben (Coffee → kōhī).\n\n## Verwechslungsgefahr — die Katakana-Klassiker\n\nKatakana hat **vier berüchtigte Verwechslungspaare**:\n\n- **「シ」 (shi) vs. 「ツ」 (tsu)** — Strich-Richtung beachten (siehe oben)\n- **「ソ」 (so) vs. 「ン」 (n)** — Strich-Winkel beachten\n- **「カ」 (ka) vs. 「ク」 (ku)** — ka hat einen extra Strich oben\n- **「コ」 (ko) vs. 「ユ」 (yu)** — ko ist eckig, yu offen\n\n> **Tipp:** Wenn du dir bei einem Zeichen nicht sicher bist, **dreh den Kopf leicht** oder schreib es mit dem Finger in die Luft. Die Strich-Richtung wird klarer, wenn du die Bewegung nachfühlst.\n\n## Strichfolge\n\nWie immer: **von oben nach unten, von links nach rechts**. Katakana hat tendenziell **weniger und geradere Striche** als Hiragana — das macht das Schreiben tatsächlich einfacher.\n\n## Tipp zum Üben\n\nKatakana lernst du am schnellsten, wenn du **echte Lehnwörter** liest. Schau dir Speisekarten oder Werbetexte an — die meisten Katakana-Wörter sind **englische Wörter** in japanischer Aussprache."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Übung",
+      "page_type": "quiz_carousel",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Teste dein Wissen\n\nGleich kommen **zwölf Fragen** zu den 15 Katakana, die du gerade gelernt hast.\n\n- **Multiple-Choice:** Welche Romaji-Lesung passt zum Zeichen?\n- **Richtig/Falsch:** Stimmt die angegebene Lesung?\n- **Matching:** Verbinde Zeichen mit Lesung\n\n> **Tipp:** Achte besonders auf die Verwechslungspaare 「シ」 (shi) vs. 「ツ」 (tsu) und 「カ」 (ka) vs. 「ク」 (ku)."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie liest man 「ア」?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "Erster Vokal — wie in 'Vater'.",
+              "explanation": "「ア」 ist der Katakana-Vokal **a**, kurz und offen.",
+              "options": [
+                {
+                  "option_text": "a",
+                  "is_correct": true,
+                  "feedback": "Richtig! 「ア」 = a."
+                },
+                {
+                  "option_text": "i",
+                  "is_correct": false,
+                  "feedback": "「イ」 wäre i — zwei klare Striche."
+                },
+                {
+                  "option_text": "o",
+                  "is_correct": false,
+                  "feedback": "「オ」 wäre o — mit Querbalken oben."
+                },
+                {
+                  "option_text": "u",
+                  "is_correct": false,
+                  "feedback": "「ウ」 wäre u — mit Häkchen oben."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welches Zeichen wird **shi** gelesen?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Striche gehen von unten nach oben — nicht zu verwechseln mit tsu.",
+              "explanation": "「シ」 = shi. Die zwei kleinen Striche sind **gestapelt** und zeigen schräg nach oben rechts.",
+              "options": [
+                {
+                  "option_text": "「サ」 (sa)",
+                  "is_correct": false,
+                  "feedback": "「サ」 ist sa — anderer Aufbau."
+                },
+                {
+                  "option_text": "「シ」 (shi)",
+                  "is_correct": true,
+                  "feedback": "Richtig! 「シ」 = shi."
+                },
+                {
+                  "option_text": "「ス」 (su)",
+                  "is_correct": false,
+                  "feedback": "「ス」 ist su — eckiger Knick."
+                },
+                {
+                  "option_text": "「ソ」 (so)",
+                  "is_correct": false,
+                  "feedback": "「ソ」 ist so — nur zwei Striche."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie liest man 「ク」?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "K-Reihe — verwechselbar mit ka, aber ohne Querstrich.",
+              "explanation": "「ク」 wird **ku** gelesen. Im Gegensatz zu 「カ」 (ka) hat es **keinen** zusätzlichen Strich.",
+              "options": [
+                {
+                  "option_text": "ku",
+                  "is_correct": true,
+                  "feedback": "Richtig! 「ク」 = ku."
+                },
+                {
+                  "option_text": "ka",
+                  "is_correct": false,
+                  "feedback": "「カ」 wäre ka — hat einen extra Strich rechts."
+                },
+                {
+                  "option_text": "ke",
+                  "is_correct": false,
+                  "feedback": "「ケ」 wäre ke."
+                },
+                {
+                  "option_text": "ko",
+                  "is_correct": false,
+                  "feedback": "「コ」 wäre ko — eckiger Aufbau."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welche Romaji-Lesung passt zu 「オ」?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「オ」 ist der Vokal **o**, kurz wie in 'Boot'. Markant ist der Querbalken oben.",
+              "options": [
+                {
+                  "option_text": "o",
+                  "is_correct": true,
+                  "feedback": "Richtig! 「オ」 = o."
+                },
+                {
+                  "option_text": "u",
+                  "is_correct": false,
+                  "feedback": "「ウ」 wäre u."
+                },
+                {
+                  "option_text": "a",
+                  "is_correct": false,
+                  "feedback": "「ア」 wäre a."
+                },
+                {
+                  "option_text": "e",
+                  "is_correct": false,
+                  "feedback": "「エ」 wäre e."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welches Zeichen ist **ki**?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "K-Reihe, zweites Zeichen — drei Striche.",
+              "explanation": "「キ」 = ki. Drei Striche, davon zwei waagerecht und einer senkrecht.",
+              "options": [
+                {
+                  "option_text": "「カ」",
+                  "is_correct": false,
+                  "feedback": "「カ」 ist ka."
+                },
+                {
+                  "option_text": "「キ」",
+                  "is_correct": true,
+                  "feedback": "Richtig! 「キ」 = ki."
+                },
+                {
+                  "option_text": "「ケ」",
+                  "is_correct": false,
+                  "feedback": "「ケ」 ist ke."
+                },
+                {
+                  "option_text": "「コ」",
+                  "is_correct": false,
+                  "feedback": "「コ」 ist ko — zwei eckige Striche."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Das Zeichen 「シ」 wird 'si' gelesen.",
+              "difficulty_level": 2,
+              "explanation": "Falsch — 「シ」 wird **'shi'** gesprochen (mit 'sch'). Wie bei Hiragana 「し」.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nein — 「シ」 = shi (mit 'sch')."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt — 「シ」 ist 'shi', nicht 'si'."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Katakana wird vor allem für **Lehnwörter** und **ausländische Eigennamen** verwendet.",
+              "difficulty_level": 1,
+              "explanation": "Richtig — das ist der klassische Hauptzweck von Katakana.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt — Katakana = Lehnwörter und Eigennamen."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — das ist genau die Rolle von Katakana."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Katakana hat **dieselbe Lautstruktur** wie Hiragana — gleiche Silben, andere Form.",
+              "difficulty_level": 1,
+              "explanation": "Richtig — beide Schriftsysteme decken dieselben 46 Silben ab. Die Form unterscheidet sich, der Klang ist identisch.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt — gleiche Silben, andere Form."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — die Lautstruktur ist 1:1 dieselbe."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie liest man das Wort 「カメラ」?",
+              "difficulty_level": 2,
+              "points": 2,
+              "hint": "ka + me + ra — ein bekanntes Lehnwort.",
+              "explanation": "「カ」 (ka) + 「メ」 (me) + 「ラ」 (ra) = **kamera** — Kamera (das Wort kommt aus dem Englischen).",
+              "options": [
+                {
+                  "option_text": "kamera",
+                  "is_correct": true,
+                  "feedback": "Richtig! 「カメラ」 = kamera."
+                },
+                {
+                  "option_text": "karera",
+                  "is_correct": false,
+                  "feedback": "「メ」 ist me, nicht re."
+                },
+                {
+                  "option_text": "kemora",
+                  "is_correct": false,
+                  "feedback": "Reihenfolge stimmt nicht."
+                },
+                {
+                  "option_text": "kemera",
+                  "is_correct": false,
+                  "feedback": "「カ」 ist ka, nicht ke."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welches Zeichen ist **e** (der Vokal)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「エ」 = e, drei waagerechte Striche und ein verbindender senkrechter — wie ein gespiegeltes 'E'.",
+              "options": [
+                {
+                  "option_text": "「ア」",
+                  "is_correct": false,
+                  "feedback": "「ア」 ist a."
+                },
+                {
+                  "option_text": "「イ」",
+                  "is_correct": false,
+                  "feedback": "「イ」 ist i."
+                },
+                {
+                  "option_text": "「エ」",
+                  "is_correct": true,
+                  "feedback": "Richtig! 「エ」 = e."
+                },
+                {
+                  "option_text": "「オ」",
+                  "is_correct": false,
+                  "feedback": "「オ」 ist o."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde jeden Katakana-Vokal mit seiner Lesung.",
+              "difficulty_level": 2,
+              "points": 2,
+              "explanation": "Die fünf Vokale **a-i-u-e-o** sind die Basis aller weiteren Katakana-Reihen.",
+              "options": [
+                {
+                  "option_text": "「ア」",
+                  "is_correct": true,
+                  "feedback": "a"
+                },
+                {
+                  "option_text": "「イ」",
+                  "is_correct": true,
+                  "feedback": "i"
+                },
+                {
+                  "option_text": "「ウ」",
+                  "is_correct": true,
+                  "feedback": "u"
+                },
+                {
+                  "option_text": "「エ」",
+                  "is_correct": true,
+                  "feedback": "e"
+                },
+                {
+                  "option_text": "「オ」",
+                  "is_correct": true,
+                  "feedback": "o"
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde jedes Zeichen der K- und S-Reihe mit seiner Lesung.",
+              "difficulty_level": 3,
+              "points": 2,
+              "explanation": "Wenn du diese fünf flüssig kannst, hast du die ersten 15 Katakana sicher im Griff.",
+              "options": [
+                {
+                  "option_text": "「カ」",
+                  "is_correct": true,
+                  "feedback": "ka"
+                },
+                {
+                  "option_text": "「ク」",
+                  "is_correct": true,
+                  "feedback": "ku"
+                },
+                {
+                  "option_text": "「シ」",
+                  "is_correct": true,
+                  "feedback": "shi"
+                },
+                {
+                  "option_text": "「ス」",
+                  "is_correct": true,
+                  "feedback": "su"
+                },
+                {
+                  "option_text": "「ソ」",
+                  "is_correct": true,
+                  "feedback": "so"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Zusammenfassung & nächste Schritte",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Was du jetzt kannst",
+            "content_text": "## Geschafft — die ersten 15 Katakana\n\nDu hast in dieser Lektion gelernt:\n\n- Die **fünf Vokale** 「アイウエオ」 (a, i, u, e, o)\n- Die **K-Reihe** 「カキクケコ」 (ka, ki, ku, ke, ko)\n- Die **S-Reihe** 「サシスセソ」 (sa, shi, su, se, so)\n- Wofür Katakana genutzt wird (Lehnwörter, Eigennamen, Lautmalerei)\n- Den **Längungsstrich** 「ー」 (verlängert den vorherigen Vokal)\n- Die ersten Verwechslungspaare (シ/ツ, ソ/ン, カ/ク)\n\n## Lehnwörter, die du jetzt lesen kannst\n\nMit deinen 15 Katakana liest du schon einige typische Lehnwörter:\n\n- 「アイス」 (aisu) — Eis\n- 「カメラ」 (kamera) — Kamera\n- 「ケーキ」 (kēki) — Kuchen\n- 「コーラ」 (kōra) — Cola\n- 「サラダ」 (sarada) — Salat\n- 「スキー」 (sukī) — Ski\n- 「セット」 (setto) — Set\n\n> **Probier es:** Lies jedes Wort **laut**, ohne auf die Romaji zu schauen. Wenn du den englischen Ursprung erkennst, sitzt das Lesen.\n\n## Lerntipps für die nächsten Tage\n\n1. **Schreibe jeden Tag** alle 15 Zeichen einmal mit der Hand — fünf Minuten reichen\n2. **Lies Lehnwörter laut** — Speisekarten und Werbung sind ideale Übungstexte\n3. **Wiederhole das Quiz**, bis du alle Fragen ohne Hilfe schaffst\n4. **Achte auf die Verwechslungspaare** — Strich-Richtung und -Winkel\n\n## Was kommt als Nächstes?\n\n- **Katakana 2** — die T-Reihe 「タチツテト」, N-Reihe 「ナニヌネノ」 und H-Reihe 「ハヒフヘホ」 (15 weitere Zeichen)\n- Danach Katakana 3 (M/Y/R/W + ン), Katakana 4 (Diakritika + Längungsstrich) und Katakana 5 (Yōon + Lehnwort-Spezialitäten)\n\nWenn du Katakana komplett kannst, kannst du **jeden** japanischen Text mit Hiragana + Katakana lesen — das deckt einen Grossteil des N5-Materials ab."
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -47,6 +47,31 @@ Selbstverbesserndes Log. Wird vor jedem Run gelesen, nach jedem Run angehängt.
 
 <!-- Neuste Einträge oben, älteste unten. -->
 
+## 2026-04-25 22:35 — Katakana 1-5 — komplette Katakana-Serie (Lesson IDs 151-155)
+
+### Erfolge — Schreibsystem komplett
+
+- **Fünf Katakana-Lektionen** in einem Schwung erstellt: K1 (Vokale+K+S, 15 Zeichen), K2 (T+N+H, 15), K3 (M/Y/R/W+ン, 16), K4 (Diakritika 25 + Längungsstrich), K5 (Yōon 12 + Lehnwort-Spezialitäten 13).
+- **96 Katakana-Einträge** in der DB (deutlich weniger als die 104 Hiragana, weil Yōon/Spezialitäten kompakter behandelt wurden — eigene Lektion K5 deckt nur K/S/J/CH-Yōon plus die wichtigsten Lehnwort-Sondersilben ab).
+- **Modul `n5-katakana` (id=31)** komplett: 5 Lektionen, order_index 1-5, alle published.
+- **Pipeline lief in einem Rutsch durch:** Validator akzeptierte alle 5 Drafts beim ersten Mal (nur thumbnail_url-Fehler vor `images`-Schritt — erwartet). Keine Korrekturschleifen.
+- **Lehnwort-Spezialitäten als didaktisches Highlight:** K5 deckt 「ティ」, 「ディ」, 「ファ」, 「フィ」, 「フェ」, 「フォ」, 「ウィ」, 「ウェ」, 「ウォ」, 「ヴァ」, 「ヴィ」, 「ヴェ」, 「ヴォ」 ab — Klänge, die nur in Katakana existieren. Diese sind in Hiragana nicht gelernt worden.
+
+### Probleme / Erkenntnisse
+
+1. **Vorlagen-Pattern skaliert linear:** Hiragana-Vorlagen direkt für Katakana wiederverwendbar — gleiche 5-Page-Struktur, gleicher Quiz-Mix, gleiche Validator-Regeln. Pro Lektion ca. 3-4 Minuten Generierungszeit (validate + images + insert + text-audio + Modul-Update + Verify).
+2. **Bestandsschutz greift auch bei Yōon:** UNIQUE-Constraint auf `Kana.character` matcht auch zweistellige Strings wie 「キャ」 korrekt — keine Kollisionen mit den gleichlautenden Hiragana-Yōon (verschiedene Unicode-Codepoints).
+3. **Längungsstrich 「ー」 als didaktischer Mehrwert:** K4 hebt diese Katakana-spezifische Eigenheit explizit hervor. Kein eigenes Kana-Item (es ist ein Modifier, kein Buchstabe), aber zentral für jedes Lehnwort-Lesen.
+4. **Schreibsystem-Modul-Pattern stabil:** Hiragana (Modul 30, 5 Lektionen) und Katakana (Modul 31, 5 Lektionen) haben jetzt dieselbe Struktur — als Vorlage für jedes weitere Schreibsystem (theoretisch könnte man dasselbe für Kanji-Reihen machen, ist aber didaktisch anders zu strukturieren).
+5. **Kosten:** 5 DALL-E-Thumbnails (~25 Rappen) + ~35 TTS-MP3s (~5 Rappen) = ~30 Rappen für die ganze Serie. Bei 5 Schreibsystem-Lektionen sehr günstig.
+
+### Aktuelle Regeln (Ergänzung ab diesem Run)
+
+37. **Katakana-Lektionsschablone ist identisch zu Hiragana** — gleiche Page-Struktur, Quiz-Mix, Modul-Pattern. Folge-Schreibsystem-Lektionen (theoretisch z.B. Kanji-Klassiker) können direkt nach diesem Muster generiert werden.
+38. **K5 (Yōon) deckt nur die häufigsten Yōon ab** (K, S, J, CH = 12 Zeichen) plus die 13 Lehnwort-Spezialitäten (ティ/ディ/ファ etc.). Im Gegensatz zu H5 (33 Yōon) ist das pragmatisch — Katakana-Yōon kommen seltener vor als Hiragana-Yōon, weil Lehnwörter andere Klänge bevorzugen.
+
+---
+
 ## 2026-04-25 22:15 — Hiragana 3, 4 und 5 — komplette Hiragana-Serie (Lesson IDs 148, 149, 150)
 
 ### Erfolge — Hiragana ist komplett
