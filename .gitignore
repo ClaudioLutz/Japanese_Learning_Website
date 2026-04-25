@@ -116,6 +116,9 @@ dmypy.json
 # Generated audio files (TTS, large binaries)
 app/static/uploads/lessons/audio/
 
+# Generated dialog slideshow assets (TTS + DALL-E pro Zeile, large binaries)
+app/static/uploads/lessons/dialog_slideshow/
+
 # Scan-Bilder (Copyright, nicht committen)
 scripts/mnn_pages/
 
@@ -125,3 +128,14 @@ app/static/cache/tts/
 .playwright-mcp/
 test_screenshots/
 uploads/
+
+# Claude Code skill internals (lock-files, runtime state)
+.claude/scheduled_tasks.lock
+
+# Ad-hoc Screenshots im Repo-Root — gehoeren in test_screenshots/ oder
+# .playwright-mcp/, nicht oben.
+/*.png
+/*.jpg
+/*.jpeg
+/*.gif
+/*.webp
