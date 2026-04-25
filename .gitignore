@@ -144,3 +144,10 @@ inspiration/
 /*.webp
 .last_cloud_sync.json
 backups/
+
+# Skill-Verifikations-Screenshots (per-lesson, ad-hoc)
+.claude/skills/generate-lesson/verifications/
+verifications/
+
+# Ad-hoc Deploy-Verifikations-Screenshots
+deploy_check_*.png

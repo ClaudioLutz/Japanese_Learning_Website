@@ -628,10 +628,45 @@ Nach jedem Run anhängen (siehe [learnings.md](learnings.md) für Template):
 
 ## 11. Deploy & Live-Schalten
 
-Nach erfolgreicher Verifikation ist die Lektion in der **lokalen** DB. Für Production:
+Nach erfolgreicher Verifikation ist die Lektion in der **lokalen** DB. Für Production sind ZWEI Schritte noetig:
 
+### 11a. DB-Sync (Inhalt)
 ```bash
-/sync-cloud-db   # zuerst Cloud→Lokal prüfen, dann Lokal→Cloud
+/sync-cloud-db   # zuerst Cloud→Lokal pruefen, dann Lokal→Cloud
 ```
+Das pusht Lessons/Content/Quiz/Vocabulary auf Cloud SQL. User-Daten
+(Progress, Kaeufe, SRS) sind durch 4 Schutzschichten abgesichert (siehe
+sync-cloud-db SKILL.md).
+
+### 11b. Cloud Run Deploy (Code)
+**Nur noetig wenn seit dem letzten Deploy Code-Aenderungen gepusht wurden**
+(Templates, CSS, JS, Python). Pruefen mit:
+```bash
+LAST_DEPLOY=$(gcloud run services describe japanese-learning-app \
+  --region=europe-west1 --project=healthy-coil-466105-d7 \
+  --account=claudio.lutz.cv@gmail.com \
+  --format="value(status.conditions[0].lastTransitionTime)")
+git log --since="$LAST_DEPLOY" --oneline -- app/ scripts/ run.py
+```
+
+Wenn Commits >0:
+```bash
+/deploy
+```
+Oder manuell:
+```bash
+gcloud builds submit --config=cloudbuild.yaml \
+  --project=healthy-coil-466105-d7 --account=claudio.lutz.cv@gmail.com .
+gcloud run services update japanese-learning-app \
+  --image=europe-west6-docker.pkg.dev/healthy-coil-466105-d7/app-images/japanese-learning-app:latest \
+  --region=europe-west1 --project=healthy-coil-466105-d7 \
+  --account=claudio.lutz.cv@gmail.com
+```
+
+**Lesson Learned 2026-04-25**: Nur DB-Sync ohne Cloud-Run-Deploy fuehrt
+dazu, dass die Live-Seite die neuen Lessons zwar anzeigt, aber NICHT
+mit den aktuellsten Templates/CSS/JS rendert. Wenn das Skill UI-Updates
+in den Lessons nutzt (z.B. Markdown-Rendering, text-audio-Player,
+neue Templates), MUSS auch deployed werden.
 
 **Nicht im Skill automatisiert** — Push auf Production bleibt explizite User-Aktion, damit kein Lerner eine halb-fertige Lektion sieht und Mayuko bei Bedarf vor dem Live-Gang ein Fachreview machen kann.

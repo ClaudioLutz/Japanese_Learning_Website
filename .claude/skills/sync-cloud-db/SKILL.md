@@ -135,10 +135,78 @@ gcloud sql instances patch jpl-psql --clear-authorized-networks \
 
 NEVER forget this step.
 
-### 8. Summary
+### 8. WICHTIG: Code-Aenderungen brauchen separaten Cloud-Run-Deploy
+
+Dieser Skill synchronisiert NUR die Datenbank. Wenn seit dem letzten
+`/deploy` Code geaendert wurde (Templates, CSS, JS, Python, neue Routes),
+ist die Live-Seite trotz erfolgreichem DB-Sync NICHT auf dem aktuellen
+Stand. Symptom: lokale UI-Verbesserungen sind auf japanese-learning.ch
+nicht sichtbar.
+
+Pflicht-Check vor dem Sync-Ende:
+```bash
+# Letzte deployed Revision?
+gcloud run services describe japanese-learning-app \
+  --region=europe-west1 --project=healthy-coil-466105-d7 \
+  --account=claudio.lutz.cv@gmail.com \
+  --format="value(status.conditions[0].lastTransitionTime)"
+
+# Code-Commits seitdem?
+git log --since="$LAST_DEPLOY_TIME" --oneline -- app/ scripts/ run.py
+```
+
+Falls Commits >0 → User auf `/deploy` hinweisen oder direkt vorschlagen,
+das Deploy auszufuehren:
+```bash
+gcloud builds submit --config=cloudbuild.yaml \
+  --project=healthy-coil-466105-d7 --account=claudio.lutz.cv@gmail.com .
+gcloud run services update japanese-learning-app \
+  --image=europe-west6-docker.pkg.dev/healthy-coil-466105-d7/app-images/japanese-learning-app:latest \
+  --region=europe-west1 --project=healthy-coil-466105-d7 \
+  --account=claudio.lutz.cv@gmail.com
+```
+
+Begruendung (Lesson Learned 2026-04-25): Nach DB-Sync von 14 neuen Lessons
+zeigte japanese-learning.ch zwar die neuen Lektionen, aber NICHT die
+neue Top-Nav, Markdown-Rendering und text-audio-Updates aus Commits
+seit 14:00 — weil Cloud Run noch das alte Image lief. User: "lokal und
+webseite sehen nicht gleich aus".
+
+### 9. Schema-Drift pruefen (Pflicht-Check)
+
+Vor dem Push pruefen, ob lokal und Cloud auf derselben Alembic-Migration
+sind:
+
+```bash
+LOCAL_VER=$(PGPASSWORD="JapaneseApp2025!" psql -h localhost -U app_user \
+  -d japanese_learning -t -A -c "SELECT version_num FROM alembic_version;")
+CLOUD_VER=$(PGPASSWORD="$DB_PASS" psql -h 34.65.56.56 -U app_user \
+  -d japanese_learning -t -A -c "SELECT version_num FROM alembic_version;")
+echo "Lokal: $LOCAL_VER  Cloud: $CLOUD_VER"
+```
+
+Wenn unterschiedlich: ZUERST `flask db upgrade` mit `DATABASE_URL` auf
+Cloud zeigend, DANN Sync. Begruendung: Der Sync-Push setzt
+`alembic_version` auf den lokalen Stand — wenn die Migrationen physisch
+nicht angewendet sind, glaubt Alembic faelschlicherweise, dass sie es
+sind.
+
+```bash
+# Cloud-Migrationen anwenden
+DATABASE_URL="postgresql://app_user:${DB_PASS}@34.65.56.56:5432/japanese_learning" \
+  flask db upgrade
+```
+
+Bei Phase-Tabellen, die physisch schon existieren aber alembic_version
+noch nicht hochgezogen wurde: `flask db stamp <revision>` setzt nur den
+Marker.
+
+### 10. Summary
 
 Report:
 - Schritt A: Cloud→Lokal (row counts, upserts, deletes)
 - Schritt B: Lokal→Cloud (row counts, upserts, deletes)
 - Tables protected (user, progress, purchases — untouched)
 - Cloud SQL access closed
+- **Cloud-Run-Image-Stand vs. Code-Commits seitdem** (deploy noetig?)
+- **Schema-Drift gecheckt** (Migrationen synchron?)
