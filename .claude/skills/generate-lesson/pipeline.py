@@ -6,10 +6,19 @@ Dieses Script validiert, persistiert, und loggt.
 
 Subcommands:
   status                 # DB-Gap-Analyse: welche JLPT-Themen fehlen?
-  validate <draft.json>  # Prüft Constraints, ohne zu schreiben
+  validate <draft.json>  # Prüft Constraints (STRENG: Niveau-Mix-Verbot via canonical list)
   images   <draft.json>  # Generiert DALL-E-Bilder für Thumbnail/Vokabeln
   insert   <draft.json>  # Transaktionaler INSERT, gibt lesson_id zurück
+  audio    <lesson_id>   # Dialog-MP3 via Google Cloud TTS
+  slideshow <lesson_id>  # Pro-Zeile Slideshow (TTS + DALL-E)
+  coverage [level]       # JLPT-Coverage-Dashboard: DB vs. canonical list (default: 5)
   commit   <lesson_id>   # Git-add/commit/push (nur Metadaten, kein App-Code)
+
+JLPT-Leitprinzip (Mayuko-Direktive 2026-04-25, siehe improve-jpl §1.5):
+  Eine N5-Lektion enthaelt NUR N5-Inhalte. Vokabel-Wort nicht in canonical
+  N5-Liste → ERROR. Kanji im example_sentence_japanese nicht in canonical
+  N5-Kanji-Set → ERROR. Source: sources/jlpt_n5_canonical.json (elzup MIT
+  + AnchorI permissive, derived from Tanos).
 
 Usage: python .claude/skills/generate-lesson/pipeline.py <subcommand> [args]
 """
@@ -46,9 +55,57 @@ REQUIRED_GRAMMAR_FIELDS = ["title", "explanation", "structure", "romaji", "jlpt_
 # was HTML escaped. Nur Plaintext mit \n\n fuer Absaetze.
 HTML_TAG_RE = __import__("re").compile(r"<\s*/?\s*[a-zA-Z][^>]*>")
 
+# Kanji-Range fuer Tokenisierung von Beispielsaetzen
+KANJI_RE = __import__("re").compile(r"[一-鿿]")
+KANA_ONLY_RE = __import__("re").compile(r"^[぀-ヿ\s　、。「」々ー]+$")
+
 
 class ValidationError(Exception):
     pass
+
+
+# ========================================================================
+# CANONICAL JLPT LISTS (Mayuko-Direktive 2026-04-25: strenger Niveau-Mix)
+# ========================================================================
+
+_CANONICAL_CACHE: dict[int, dict] = {}
+
+
+def load_canonical(level: int) -> dict:
+    """Laedt canonical JLPT-Level-Daten (Vokabeln, Kanji, Grammatik).
+
+    Liefert dict mit Schluesseln 'vocab_set', 'kanji_set', 'vocab_list', 'kanji_list'.
+    Cached pro Level. Wirft FileNotFoundError, wenn die canonical JSON fehlt.
+    """
+    if level in _CANONICAL_CACHE:
+        return _CANONICAL_CACHE[level]
+    path = SKILL_DIR / "sources" / f"jlpt_n{level}_canonical.json"
+    if not path.exists():
+        raise FileNotFoundError(
+            f"Canonical JLPT-N{level}-Liste fehlt: {path}\n"
+            f"Aktuell verfuegbar: nur N5. Andere Levels brauchen Manual-Import."
+        )
+    data = json.loads(path.read_text(encoding="utf-8"))
+    cache = {
+        "raw": data,
+        "vocab_list": data.get("vocab", []),
+        "kanji_list": data.get("kanji", []),
+        "vocab_set": {v["word"] for v in data.get("vocab", [])},
+        "vocab_reading_set": {(v["word"], v["reading"]) for v in data.get("vocab", [])},
+        "kanji_set": {k["char"] for k in data.get("kanji", [])},
+    }
+    _CANONICAL_CACHE[level] = cache
+    return cache
+
+
+def is_pure_kana(s: str) -> bool:
+    """True wenn String nur Hiragana/Katakana/Satzzeichen enthaelt (keine Kanji)."""
+    return bool(KANA_ONLY_RE.match(s)) if s else True
+
+
+def extract_kanji(text: str) -> set[str]:
+    """Gibt Set aller Kanji-Zeichen im Text zurueck."""
+    return set(KANJI_RE.findall(text or ""))
 
 
 def validate_draft(draft: dict) -> list[str]:
@@ -117,12 +174,38 @@ def validate_draft(draft: dict) -> list[str]:
                         f"jlpt_level={v_jlpt} > Lesson-Level {jlpt}"
                     )
 
+                # Mayuko-Direktive 2026-04-25: STRENG, Niveau-Mix verboten.
+                # Vokabel-Wort MUSS in canonical-Liste des Lesson-Levels stehen,
+                # ausser explizit als is_proper_noun=true markiert (Namen) oder
+                # is_canonical_override=true (selten, mit Begruendung in source_note).
+                if jlpt == 5 and not data.get("is_proper_noun") and not data.get("is_canonical_override"):
+                    try:
+                        canon = load_canonical(5)
+                        word = data.get("word", "")
+                        if word and word not in canon["vocab_set"]:
+                            errors.append(
+                                f"Page {p_idx}.{c_idx} Vocabulary '{word}' "
+                                f"NICHT in canonical N5-Liste (sources/jlpt_n5_canonical.json). "
+                                f"Mayuko-Direktive: kein Niveau-Mix in N5. "
+                                f"Falls Eigenname → data.is_proper_noun=true; "
+                                f"falls bewusste Ausnahme → data.is_canonical_override=true + source_note."
+                            )
+                    except FileNotFoundError as e:
+                        errors.append(f"Canonical-Liste fehlt: {e}")
+
             elif ct == "grammar":
                 data = item.get("data", {})
                 grammar_count += 1
                 for f in REQUIRED_GRAMMAR_FIELDS:
                     if f not in data:
                         errors.append(f"Page {p_idx}.{c_idx} Grammar fehlt: {f}")
+                # Grammatik-Level-Check (analog zu Vocabulary)
+                g_jlpt = data.get("jlpt_level")
+                if g_jlpt is not None and g_jlpt > jlpt:
+                    errors.append(
+                        f"Page {p_idx}.{c_idx} Grammar '{data.get('title')}': "
+                        f"jlpt_level={g_jlpt} > Lesson-Level {jlpt}"
+                    )
 
             # Quiz-Fragen (in quiz_carousel)
             for q_idx, q in enumerate(item.get("quiz_questions", []), start=1):
@@ -170,6 +253,48 @@ def validate_draft(draft: dict) -> list[str]:
             "thumbnail_url fehlt. Pipeline-Schritt `images` muss vor `insert` laufen "
             "(DALL-E Thumbnail). Notfalls manuell URL setzen."
         )
+
+    # Mayuko-Direktive 2026-04-25 (Kanji-Disziplin):
+    # Alle Kanji in JP-Texten der Lektion (Beispielsaetze, Dialog, Grammatik-
+    # Beispiele) muessen im canonical-Set des Lesson-Levels stehen.
+    if jlpt == 5:
+        try:
+            canon = load_canonical(5)
+            n5_kanji_set = canon["kanji_set"]
+            jp_text_blobs: list[tuple[str, str]] = []  # (location, text)
+            for p_idx, page in enumerate(draft.get("pages", []), start=1):
+                for c_idx, item in enumerate(page.get("contents", []), start=1):
+                    data = item.get("data", {}) or {}
+                    if item.get("content_type") == "text":
+                        jp_text_blobs.append(
+                            (f"Page{p_idx}.{c_idx}.text.content_text",
+                             data.get("content_text", "") or "")
+                        )
+                    elif item.get("content_type") == "vocabulary":
+                        jp_text_blobs.append(
+                            (f"Page{p_idx}.{c_idx}.vocab.example_sentence_japanese",
+                             data.get("example_sentence_japanese", "") or "")
+                        )
+                    elif item.get("content_type") == "grammar":
+                        ex = data.get("example_sentences") or ""
+                        if isinstance(ex, list):
+                            ex = "\n".join(str(x) for x in ex)
+                        jp_text_blobs.append(
+                            (f"Page{p_idx}.{c_idx}.grammar.example_sentences", ex)
+                        )
+            offending: dict[str, set[str]] = {}
+            for location, text in jp_text_blobs:
+                bad = extract_kanji(text) - n5_kanji_set
+                if bad:
+                    offending[location] = bad
+            for loc, kanji in offending.items():
+                errors.append(
+                    f"{loc}: enthaelt Kanji ausserhalb canonical N5-Set: "
+                    f"{sorted(kanji)}. Mayuko-Direktive: keine N4+ Kanji in N5-Lektion. "
+                    f"Schreibe das Wort in Hiragana oder ersetze durch N5-Kanji-Wort."
+                )
+        except FileNotFoundError as e:
+            errors.append(f"Canonical-Liste fehlt: {e}")
 
     # Umlaut-Fallback-Check (hart) — erkennt ASCII-Ersatz fuer Umlaute
     # in ALLEN deutschen Fliesstexten des Drafts.
@@ -271,6 +396,104 @@ def db_status():
                 missing.append(topic)
         for t in missing[:5]:
             print(f"    - {t} (keine Lesson mit diesem Titel-Fragment gefunden)")
+
+
+# ========================================================================
+# JLPT-COVERAGE-DASHBOARD (coverage)
+# ========================================================================
+
+def jlpt_coverage(level: int = 5, show_missing: int = 30):
+    """Vergleicht DB-Inhalt vs. canonical JLPT-Liste fuer ein Level.
+
+    Zeigt prozentuale Coverage und (Top-N) fehlende Items, damit Claudio
+    weiss welche Vokabeln/Kanji noch generiert werden muessen.
+    """
+    try:
+        canon = load_canonical(level)
+    except FileNotFoundError as e:
+        print(f"[FEHLER] {e}")
+        return
+
+    try:
+        from app import create_app, db
+        from app.models import Vocabulary, Kanji
+    except ImportError as e:
+        print(f"[FEHLER] App-Import fehlgeschlagen: {e}")
+        print("Tipp: venv aktivieren und docker compose up db -d")
+        return
+
+    app = create_app()
+    with app.app_context():
+        # Vokabeln in DB mit jlpt_level=level (Match auf word)
+        db_vocab_words = {
+            v.word for v in db.session.query(Vocabulary).filter_by(jlpt_level=level).all()
+        }
+        canon_vocab_words = canon["vocab_set"]
+        # Auch Vokabeln ohne jlpt_level mitzaehlen, falls Wort in canonical-Liste
+        all_db_vocab = {v.word for v in db.session.query(Vocabulary).all()}
+        covered_vocab = canon_vocab_words & (db_vocab_words | all_db_vocab)
+        missing_vocab = canon_vocab_words - all_db_vocab
+
+        # Kanji in DB mit jlpt_level=level
+        db_kanji_chars = {
+            k.character for k in db.session.query(Kanji).filter_by(jlpt_level=level).all()
+        }
+        all_db_kanji = {k.character for k in db.session.query(Kanji).all()}
+        canon_kanji_chars = canon["kanji_set"]
+        covered_kanji = canon_kanji_chars & (db_kanji_chars | all_db_kanji)
+        missing_kanji = canon_kanji_chars - all_db_kanji
+
+        v_total = len(canon_vocab_words)
+        v_cov = len(covered_vocab)
+        v_pct = (100.0 * v_cov / v_total) if v_total else 0.0
+
+        k_total = len(canon_kanji_chars)
+        k_cov = len(covered_kanji)
+        k_pct = (100.0 * k_cov / k_total) if k_total else 0.0
+
+        canon_grammar_count = canon["raw"].get("counts", {}).get("grammar", 0)
+
+        print("=" * 70)
+        print(f"  JLPT-N{level} Coverage-Dashboard")
+        print(f"  Source: {canon['raw'].get('sources', {}).get('vocab', {}).get('origin', '?')}")
+        print("=" * 70)
+        print(f"  Vokabeln:   {v_cov:>4} / {v_total:<4} = {v_pct:5.1f}%")
+        print(f"  Kanji:      {k_cov:>4} / {k_total:<4} = {k_pct:5.1f}%")
+        print(f"  Grammatik:  (canonical-Liste fuer N{level} noch nicht maschinell importiert)")
+        print()
+        if missing_vocab:
+            print(f"  Fehlende Vokabeln (Top {min(show_missing, len(missing_vocab))} von {len(missing_vocab)}):")
+            # Sortiert nach canonical-Reihenfolge wenn moeglich
+            ordered_missing = [
+                v["word"] for v in canon["vocab_list"] if v["word"] in missing_vocab
+            ]
+            for w in ordered_missing[:show_missing]:
+                # Lookup reading + meaning fuer Zeile
+                entry = next((v for v in canon["vocab_list"] if v["word"] == w), None)
+                if entry:
+                    print(f"    - {w}  {entry.get('reading', ''):<10}  {entry.get('meaning_en', '')[:50]}")
+                else:
+                    print(f"    - {w}")
+            if len(missing_vocab) > show_missing:
+                print(f"    ... ({len(missing_vocab) - show_missing} weitere)")
+        else:
+            print("  Vokabeln: 100% gedeckt 🎉")
+
+        print()
+        if missing_kanji:
+            print(f"  Fehlende Kanji ({len(missing_kanji)} von {k_total}):")
+            ordered_missing_k = [
+                k["char"] for k in canon["kanji_list"] if k["char"] in missing_kanji
+            ]
+            print(f"    {' '.join(ordered_missing_k[:show_missing])}")
+            if len(missing_kanji) > show_missing:
+                print(f"    ... ({len(missing_kanji) - show_missing} weitere)")
+        else:
+            print("  Kanji: 100% gedeckt 🎉")
+
+        print()
+        print("  Mayuko-Direktive: N5 zuerst auf 100%, bevor N4 begonnen wird.")
+        print("=" * 70)
 
 
 # ========================================================================
@@ -619,6 +842,12 @@ def main():
     p_slide = sub.add_parser("slideshow", help="Dialog-Slideshow (TTS+DALL-E pro Zeile) bauen")
     p_slide.add_argument("lesson_id", type=int)
 
+    p_cov = sub.add_parser("coverage", help="JLPT-Coverage-Dashboard (DB vs. canonical list)")
+    p_cov.add_argument("level", type=int, nargs="?", default=5,
+                       help="JLPT-Level (default: 5)")
+    p_cov.add_argument("--show-missing", type=int, default=30,
+                       help="Anzahl fehlender Items zu zeigen (default: 30)")
+
     p_cmt = sub.add_parser("commit", help="Git-commit Skill-Metadata")
     p_cmt.add_argument("lesson_id", type=int)
 
@@ -643,6 +872,8 @@ def main():
         sys.exit(generate_conversation_audio(args.lesson_id))
     elif args.cmd == "slideshow":
         sys.exit(generate_dialog_slideshow(args.lesson_id))
+    elif args.cmd == "coverage":
+        jlpt_coverage(args.level, show_missing=args.show_missing)
     elif args.cmd == "commit":
         git_commit(args.lesson_id)
 

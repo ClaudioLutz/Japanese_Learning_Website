@@ -132,6 +132,9 @@ uploads/
 # Claude Code skill internals (lock-files, runtime state)
 .claude/scheduled_tasks.lock
 
+# Inspirations-Material (Lehrbuecher, PDFs — Copyright nicht committen)
+inspiration/
+
 # Ad-hoc Screenshots im Repo-Root — gehoeren in test_screenshots/ oder
 # .playwright-mcp/, nicht oben.
 /*.png

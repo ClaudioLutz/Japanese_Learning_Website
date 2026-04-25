@@ -1,0 +1,4021 @@
+{
+  "level": "N5",
+  "version": "2026-04-25",
+  "sources": {
+    "vocab": {
+      "origin": "https://github.com/elzup/jlpt-word-list (src/n5.csv)",
+      "license": "MIT",
+      "derived_from": "tanos.co.uk via chyyran/jlpt-anki-decks via jamsinclair/open-anki-jlpt-decks",
+      "note": "De-facto N5 standard. Japan Foundation publiziert seit 2010 keine offizielle Liste mehr."
+    },
+    "kanji": {
+      "origin": "https://github.com/AnchorI/jlpt-kanji-dictionary (jlpt-kanji.json)",
+      "license": "See LICENSE in repo (permissive).",
+      "note": "jlpt-Feld auf N5 gefiltert."
+    },
+    "grammar": {
+      "origin": "Manuelle Liste ausstehend — Tanos N5 grammar (~80 points) noch nicht maschinell importiert.",
+      "license": "TBD"
+    }
+  },
+  "counts": {
+    "vocab": 718,
+    "kanji": 80,
+    "grammar": 0
+  },
+  "vocab": [
+    {
+      "word": "ああ",
+      "reading": "ああ",
+      "meaning_en": "Ah!, Oh!"
+    },
+    {
+      "word": "会う",
+      "reading": "あう",
+      "meaning_en": "to meet, to see"
+    },
+    {
+      "word": "青",
+      "reading": "あお",
+      "meaning_en": "blue"
+    },
+    {
+      "word": "青い",
+      "reading": "あおい",
+      "meaning_en": "blue"
+    },
+    {
+      "word": "赤",
+      "reading": "あか",
+      "meaning_en": "red"
+    },
+    {
+      "word": "赤い",
+      "reading": "あかい",
+      "meaning_en": "red"
+    },
+    {
+      "word": "明るい",
+      "reading": "あかるい",
+      "meaning_en": "bright (in reference to personality or weather); cheerful"
+    },
+    {
+      "word": "秋",
+      "reading": "あき",
+      "meaning_en": "fall (season)"
+    },
+    {
+      "word": "開く",
+      "reading": "あく",
+      "meaning_en": "to open, to become open"
+    },
+    {
+      "word": "開ける",
+      "reading": "あける",
+      "meaning_en": "to open (v.t.)"
+    },
+    {
+      "word": "上げる",
+      "reading": "あげる",
+      "meaning_en": "to raise, to lift"
+    },
+    {
+      "word": "朝",
+      "reading": "あさ",
+      "meaning_en": "morning"
+    },
+    {
+      "word": "朝御飯",
+      "reading": "あさごはん",
+      "meaning_en": "breakfast"
+    },
+    {
+      "word": "明後日",
+      "reading": "あさって",
+      "meaning_en": "day after tomorrow"
+    },
+    {
+      "word": "足; 脚",
+      "reading": "あし",
+      "meaning_en": "foot; leg"
+    },
+    {
+      "word": "明日",
+      "reading": "あした",
+      "meaning_en": "tomorrow"
+    },
+    {
+      "word": "あそこ",
+      "reading": "あそこ",
+      "meaning_en": "there, over there, that place"
+    },
+    {
+      "word": "遊ぶ",
+      "reading": "あそぶ",
+      "meaning_en": "to play; to spend time pleasantly; to hang out"
+    },
+    {
+      "word": "暖かい",
+      "reading": "あたたかい",
+      "meaning_en": "warm"
+    },
+    {
+      "word": "頭",
+      "reading": "あたま",
+      "meaning_en": "head"
+    },
+    {
+      "word": "新しい",
+      "reading": "あたらしい",
+      "meaning_en": "new"
+    },
+    {
+      "word": "あちら",
+      "reading": "あちら",
+      "meaning_en": "this way (polite)"
+    },
+    {
+      "word": "暑い",
+      "reading": "あつい",
+      "meaning_en": "hot (in reference to weather), warm"
+    },
+    {
+      "word": "熱い",
+      "reading": "あつい",
+      "meaning_en": "hot (objects)"
+    },
+    {
+      "word": "厚い",
+      "reading": "あつい",
+      "meaning_en": "kind, warm(hearted), thick, deep"
+    },
+    {
+      "word": "あっち",
+      "reading": "あっち",
+      "meaning_en": "over there"
+    },
+    {
+      "word": "後",
+      "reading": "あと",
+      "meaning_en": "afterwards (later); in the future; the rest; since then"
+    },
+    {
+      "word": "あなた",
+      "reading": "あなた",
+      "meaning_en": "you"
+    },
+    {
+      "word": "兄",
+      "reading": "あに",
+      "meaning_en": "(my) older brother (humble)"
+    },
+    {
+      "word": "姉",
+      "reading": "あね",
+      "meaning_en": "(my) older sister (humble)"
+    },
+    {
+      "word": "アパート",
+      "reading": "アパート",
+      "meaning_en": "apartment (abbr.)"
+    },
+    {
+      "word": "あの",
+      "reading": "あの",
+      "meaning_en": "that over there; like that, that way; um..."
+    },
+    {
+      "word": "浴びる",
+      "reading": "あびる",
+      "meaning_en": "to bathe, to shower"
+    },
+    {
+      "word": "危ない",
+      "reading": "あぶない",
+      "meaning_en": "dangerous, critical"
+    },
+    {
+      "word": "甘い",
+      "reading": "あまい",
+      "meaning_en": "generous, sweet"
+    },
+    {
+      "word": "余り",
+      "reading": "あまり",
+      "meaning_en": "not very; surplus"
+    },
+    {
+      "word": "雨",
+      "reading": "あめ",
+      "meaning_en": "rain"
+    },
+    {
+      "word": "飴",
+      "reading": "あめ",
+      "meaning_en": "(hard) candy"
+    },
+    {
+      "word": "洗う",
+      "reading": "あらう",
+      "meaning_en": "to wash"
+    },
+    {
+      "word": "在る",
+      "reading": "ある",
+      "meaning_en": "to be, to have"
+    },
+    {
+      "word": "有る",
+      "reading": "ある",
+      "meaning_en": "to be, to have"
+    },
+    {
+      "word": "歩く",
+      "reading": "あるく",
+      "meaning_en": "to walk"
+    },
+    {
+      "word": "あれ",
+      "reading": "あれ",
+      "meaning_en": "that one (over there)"
+    },
+    {
+      "word": "いい; よい",
+      "reading": "いい; よい",
+      "meaning_en": "good"
+    },
+    {
+      "word": "いいえ",
+      "reading": "いいえ",
+      "meaning_en": "no, not at all"
+    },
+    {
+      "word": "言う",
+      "reading": "いう",
+      "meaning_en": "to say"
+    },
+    {
+      "word": "家",
+      "reading": "いえ",
+      "meaning_en": "house, home"
+    },
+    {
+      "word": "いかが",
+      "reading": "いかが",
+      "meaning_en": "how, in what way"
+    },
+    {
+      "word": "行く",
+      "reading": "いく; ゆく",
+      "meaning_en": "to go"
+    },
+    {
+      "word": "いくつ",
+      "reading": "いくつ",
+      "meaning_en": "how many, how old"
+    },
+    {
+      "word": "いくら",
+      "reading": "いくら",
+      "meaning_en": "how much, how many"
+    },
+    {
+      "word": "池",
+      "reading": "いけ",
+      "meaning_en": "pond"
+    },
+    {
+      "word": "医者",
+      "reading": "いしゃ",
+      "meaning_en": "doctor; physician"
+    },
+    {
+      "word": "椅子",
+      "reading": "いす",
+      "meaning_en": "chair"
+    },
+    {
+      "word": "忙しい",
+      "reading": "いそがしい",
+      "meaning_en": "busy (people, days)"
+    },
+    {
+      "word": "痛い",
+      "reading": "いたい",
+      "meaning_en": "hurt; painful; sore"
+    },
+    {
+      "word": "一",
+      "reading": "いち",
+      "meaning_en": "one"
+    },
+    {
+      "word": "一日",
+      "reading": "いちにち",
+      "meaning_en": "one day (duration)"
+    },
+    {
+      "word": "一番",
+      "reading": "いちばん",
+      "meaning_en": "best (most), first, number one"
+    },
+    {
+      "word": "いつ",
+      "reading": "いつ",
+      "meaning_en": "when"
+    },
+    {
+      "word": "五日",
+      "reading": "いつか",
+      "meaning_en": "five days; fifth day of the month"
+    },
+    {
+      "word": "一緒",
+      "reading": "いっしょ",
+      "meaning_en": "together"
+    },
+    {
+      "word": "五つ",
+      "reading": "いつつ",
+      "meaning_en": "five things"
+    },
+    {
+      "word": "いつも",
+      "reading": "いつも",
+      "meaning_en": "always, usually, every time, never (with neg. verb)"
+    },
+    {
+      "word": "犬",
+      "reading": "いぬ",
+      "meaning_en": "dog"
+    },
+    {
+      "word": "今",
+      "reading": "いま",
+      "meaning_en": "now"
+    },
+    {
+      "word": "意味",
+      "reading": "いみ",
+      "meaning_en": "meaning, significance"
+    },
+    {
+      "word": "妹",
+      "reading": "いもうと",
+      "meaning_en": "younger sister (humble)"
+    },
+    {
+      "word": "嫌",
+      "reading": "いや",
+      "meaning_en": "disagreeable, detestable, unpleasant"
+    },
+    {
+      "word": "入口",
+      "reading": "いりぐち",
+      "meaning_en": "entrance"
+    },
+    {
+      "word": "居る",
+      "reading": "いる",
+      "meaning_en": "(humble) to be (animate), to exist"
+    },
+    {
+      "word": "要る",
+      "reading": "いる",
+      "meaning_en": "to need"
+    },
+    {
+      "word": "入れる",
+      "reading": "いれる",
+      "meaning_en": "to put in"
+    },
+    {
+      "word": "色",
+      "reading": "いろ",
+      "meaning_en": "color"
+    },
+    {
+      "word": "色々",
+      "reading": "いろいろ",
+      "meaning_en": "various"
+    },
+    {
+      "word": "上",
+      "reading": "うえ",
+      "meaning_en": "above (up, top, etc.), over, on top of"
+    },
+    {
+      "word": "後ろ",
+      "reading": "うしろ",
+      "meaning_en": "back, behind, rear"
+    },
+    {
+      "word": "薄い",
+      "reading": "うすい",
+      "meaning_en": "thin, weak"
+    },
+    {
+      "word": "歌",
+      "reading": "うた",
+      "meaning_en": "a song"
+    },
+    {
+      "word": "歌う",
+      "reading": "うたう",
+      "meaning_en": "to sing"
+    },
+    {
+      "word": "うち",
+      "reading": "うち",
+      "meaning_en": "home; house; my place"
+    },
+    {
+      "word": "生まれる",
+      "reading": "うまれる",
+      "meaning_en": "to be born"
+    },
+    {
+      "word": "海",
+      "reading": "うみ",
+      "meaning_en": "sea, beach"
+    },
+    {
+      "word": "売る",
+      "reading": "うる",
+      "meaning_en": "to sell (v.t.)"
+    },
+    {
+      "word": "うるさい",
+      "reading": "うるさい",
+      "meaning_en": "noisy; annoying"
+    },
+    {
+      "word": "上着",
+      "reading": "うわぎ",
+      "meaning_en": "coat, jacket"
+    },
+    {
+      "word": "絵",
+      "reading": "え",
+      "meaning_en": "a painting; a picture; a drawing"
+    },
+    {
+      "word": "映画",
+      "reading": "えいが",
+      "meaning_en": "movie, film"
+    },
+    {
+      "word": "映画館",
+      "reading": "えいがかん",
+      "meaning_en": "movie theater, cinema"
+    },
+    {
+      "word": "英語",
+      "reading": "えいご",
+      "meaning_en": "English (language)"
+    },
+    {
+      "word": "ええ",
+      "reading": "ええ",
+      "meaning_en": "yes"
+    },
+    {
+      "word": "駅",
+      "reading": "えき",
+      "meaning_en": "station"
+    },
+    {
+      "word": "エレベーター",
+      "reading": "エレベーター",
+      "meaning_en": "elevator"
+    },
+    {
+      "word": "～円",
+      "reading": "～えん",
+      "meaning_en": "Yen"
+    },
+    {
+      "word": "鉛筆",
+      "reading": "えんぴつ",
+      "meaning_en": "pencil"
+    },
+    {
+      "word": "お～",
+      "reading": "お～",
+      "meaning_en": "honorable ~ (honorific)"
+    },
+    {
+      "word": "美味しい",
+      "reading": "おいしい",
+      "meaning_en": "delicious, tasty"
+    },
+    {
+      "word": "多い",
+      "reading": "おおい",
+      "meaning_en": "many; there are a lot"
+    },
+    {
+      "word": "大きい",
+      "reading": "おおきい",
+      "meaning_en": "big, large"
+    },
+    {
+      "word": "大きな",
+      "reading": "おおきな",
+      "meaning_en": "big"
+    },
+    {
+      "word": "大勢",
+      "reading": "おおぜい",
+      "meaning_en": "great number of people"
+    },
+    {
+      "word": "お母さん",
+      "reading": "おかあさん",
+      "meaning_en": "mother (formal)"
+    },
+    {
+      "word": "お菓子",
+      "reading": "おかし",
+      "meaning_en": "confections, sweets, snack"
+    },
+    {
+      "word": "お金",
+      "reading": "おかね",
+      "meaning_en": "money"
+    },
+    {
+      "word": "起きる",
+      "reading": "おきる",
+      "meaning_en": "to get up (e.g., from sleeping); to happen"
+    },
+    {
+      "word": "置く",
+      "reading": "おく",
+      "meaning_en": "to put; to lay; to place"
+    },
+    {
+      "word": "奥さん",
+      "reading": "おくさん",
+      "meaning_en": "(someone else's) wife (hon.)"
+    },
+    {
+      "word": "お酒",
+      "reading": "おさけ",
+      "meaning_en": "sake; alcohol"
+    },
+    {
+      "word": "お皿",
+      "reading": "おさら",
+      "meaning_en": "plate, dish"
+    },
+    {
+      "word": "伯父; 叔父さん",
+      "reading": "おじさん",
+      "meaning_en": "uncle, middle-aged man"
+    },
+    {
+      "word": "おじいさん",
+      "reading": "おじいさん",
+      "meaning_en": "grandfather, male senior citizen"
+    },
+    {
+      "word": "教える",
+      "reading": "おしえる",
+      "meaning_en": "to teach, to inform, to instruct"
+    },
+    {
+      "word": "押す",
+      "reading": "おす",
+      "meaning_en": "to push, to press, to stamp (e.g., a passport)"
+    },
+    {
+      "word": "遅い",
+      "reading": "おそい",
+      "meaning_en": "slow; (to be) late"
+    },
+    {
+      "word": "お茶",
+      "reading": "おちゃ",
+      "meaning_en": "(green) tea"
+    },
+    {
+      "word": "お手洗い",
+      "reading": "おてあらい",
+      "meaning_en": "toilet, restroom, bathroom (lit., a place to wash one's hands)"
+    },
+    {
+      "word": "お父さん",
+      "reading": "おとうさん",
+      "meaning_en": "father (formal)"
+    },
+    {
+      "word": "弟",
+      "reading": "おとうと",
+      "meaning_en": "younger brother"
+    },
+    {
+      "word": "男",
+      "reading": "おとこ",
+      "meaning_en": "man, male"
+    },
+    {
+      "word": "男の子",
+      "reading": "おとこのこ",
+      "meaning_en": "boy"
+    },
+    {
+      "word": "一昨日",
+      "reading": "おととい",
+      "meaning_en": "the day before yesterday"
+    },
+    {
+      "word": "おととし",
+      "reading": "おととし",
+      "meaning_en": "year before last"
+    },
+    {
+      "word": "大人",
+      "reading": "おとな",
+      "meaning_en": "adult"
+    },
+    {
+      "word": "お腹",
+      "reading": "おなか",
+      "meaning_en": "stomach"
+    },
+    {
+      "word": "同じ",
+      "reading": "おなじ",
+      "meaning_en": "same, identical"
+    },
+    {
+      "word": "お兄さん",
+      "reading": "おにいさん",
+      "meaning_en": "(someone else's) older brother (formal)"
+    },
+    {
+      "word": "お姉さん",
+      "reading": "おねえさん",
+      "meaning_en": "older sister (formal)"
+    },
+    {
+      "word": "伯母さん; 叔母さん",
+      "reading": "おばさん",
+      "meaning_en": "aunt"
+    },
+    {
+      "word": "おばあさん",
+      "reading": "おばあさん",
+      "meaning_en": "grandmother, female senior-citizen"
+    },
+    {
+      "word": "お風呂",
+      "reading": "おふろ",
+      "meaning_en": "a bath"
+    },
+    {
+      "word": "お弁当",
+      "reading": "おべんとう",
+      "meaning_en": "a boxed lunch"
+    },
+    {
+      "word": "覚える",
+      "reading": "おぼえる",
+      "meaning_en": "to learn, to commit to memory, to remember, to memorize"
+    },
+    {
+      "word": "おまわりさん",
+      "reading": "おまわりさん",
+      "meaning_en": "policeman (friendly term)"
+    },
+    {
+      "word": "重い",
+      "reading": "おもい",
+      "meaning_en": "heavy; serious"
+    },
+    {
+      "word": "面白い",
+      "reading": "おもしろい",
+      "meaning_en": "interesting, amusing"
+    },
+    {
+      "word": "泳ぐ",
+      "reading": "およぐ",
+      "meaning_en": "to swim"
+    },
+    {
+      "word": "降りる",
+      "reading": "おりる",
+      "meaning_en": "to get off"
+    },
+    {
+      "word": "終る",
+      "reading": "おわる",
+      "meaning_en": "to finish, to close"
+    },
+    {
+      "word": "音楽",
+      "reading": "おんがく",
+      "meaning_en": "Music"
+    },
+    {
+      "word": "女",
+      "reading": "おんな",
+      "meaning_en": "woman, female"
+    },
+    {
+      "word": "女の子",
+      "reading": "おんなのこ",
+      "meaning_en": "girl"
+    },
+    {
+      "word": "～回",
+      "reading": "～かい",
+      "meaning_en": "counter for occurrences (~ times)"
+    },
+    {
+      "word": "～階",
+      "reading": "～かい",
+      "meaning_en": "counter for stories (floors) of a building"
+    },
+    {
+      "word": "外国",
+      "reading": "がいこく",
+      "meaning_en": "foreign country; abroad"
+    },
+    {
+      "word": "外国人",
+      "reading": "がいこくじん",
+      "meaning_en": "foreigner"
+    },
+    {
+      "word": "会社",
+      "reading": "かいしゃ",
+      "meaning_en": "company, corporation"
+    },
+    {
+      "word": "階段",
+      "reading": "かいだん",
+      "meaning_en": "stairs"
+    },
+    {
+      "word": "買い物",
+      "reading": "かいもの",
+      "meaning_en": "shopping"
+    },
+    {
+      "word": "買う",
+      "reading": "かう",
+      "meaning_en": "to buy"
+    },
+    {
+      "word": "返す",
+      "reading": "かえす",
+      "meaning_en": "to return something"
+    },
+    {
+      "word": "帰る",
+      "reading": "かえる",
+      "meaning_en": "to go back, to go home, to return"
+    },
+    {
+      "word": "顔",
+      "reading": "かお",
+      "meaning_en": "face (body part)"
+    },
+    {
+      "word": "かかる",
+      "reading": "かかる",
+      "meaning_en": "it takes (amount of time, money) (v.i.)"
+    },
+    {
+      "word": "鍵",
+      "reading": "かぎ",
+      "meaning_en": "a lock; a key"
+    },
+    {
+      "word": "書く",
+      "reading": "かく",
+      "meaning_en": "to write"
+    },
+    {
+      "word": "学生",
+      "reading": "がくせい",
+      "meaning_en": "student"
+    },
+    {
+      "word": "～か月",
+      "reading": "～かげつ",
+      "meaning_en": "(number of) months"
+    },
+    {
+      "word": "掛ける",
+      "reading": "かける",
+      "meaning_en": "to put on (e.g., glasses); to hang (e.g., on a wall)"
+    },
+    {
+      "word": "かける",
+      "reading": "かける",
+      "meaning_en": "to dial/call (e.g., phone); to sit down"
+    },
+    {
+      "word": "傘",
+      "reading": "かさ",
+      "meaning_en": "umbrella, parasol"
+    },
+    {
+      "word": "貸す",
+      "reading": "かす",
+      "meaning_en": "to lend"
+    },
+    {
+      "word": "風",
+      "reading": "かぜ",
+      "meaning_en": "wind, breeze"
+    },
+    {
+      "word": "風邪",
+      "reading": "かぜ",
+      "meaning_en": "cold, flu"
+    },
+    {
+      "word": "方",
+      "reading": "かた",
+      "meaning_en": "-- honorific form for 人 (ひと) --; way of doing"
+    },
+    {
+      "word": "家族",
+      "reading": "かぞく",
+      "meaning_en": "family, members of a family"
+    },
+    {
+      "word": "片仮名",
+      "reading": "かたかな",
+      "meaning_en": "katakana"
+    },
+    {
+      "word": "～月",
+      "reading": "～がつ",
+      "meaning_en": "month of year"
+    },
+    {
+      "word": "学校",
+      "reading": "がっこう",
+      "meaning_en": "a school"
+    },
+    {
+      "word": "カップ",
+      "reading": "カップ",
+      "meaning_en": "cup"
+    },
+    {
+      "word": "家庭",
+      "reading": "かてい",
+      "meaning_en": "home; family"
+    },
+    {
+      "word": "角",
+      "reading": "かど",
+      "meaning_en": "corner (e.g., desk, pavement)"
+    },
+    {
+      "word": "かばん",
+      "reading": "かばん",
+      "meaning_en": "bag, basket"
+    },
+    {
+      "word": "花瓶",
+      "reading": "かびん",
+      "meaning_en": "(flower) vase"
+    },
+    {
+      "word": "かぶる",
+      "reading": "かぶる",
+      "meaning_en": "to wear, to put on (e.g., a hat on the head)"
+    },
+    {
+      "word": "紙",
+      "reading": "かみ",
+      "meaning_en": "paper"
+    },
+    {
+      "word": "カメラ",
+      "reading": "カメラ",
+      "meaning_en": "camera"
+    },
+    {
+      "word": "火曜日",
+      "reading": "かようび",
+      "meaning_en": "Tuesday"
+    },
+    {
+      "word": "辛い",
+      "reading": "からい",
+      "meaning_en": "hot and spicy; salty"
+    },
+    {
+      "word": "体",
+      "reading": "からだ",
+      "meaning_en": "body; health"
+    },
+    {
+      "word": "借りる",
+      "reading": "かりる",
+      "meaning_en": "to borrow, to owe"
+    },
+    {
+      "word": "～がる",
+      "reading": "～がる",
+      "meaning_en": "feel"
+    },
+    {
+      "word": "軽い",
+      "reading": "かるい",
+      "meaning_en": "light, non-serious, minor"
+    },
+    {
+      "word": "カレー",
+      "reading": "カレー",
+      "meaning_en": "curry (abbr. for curry and rice)"
+    },
+    {
+      "word": "カレンダー",
+      "reading": "カレンダー",
+      "meaning_en": "calendar"
+    },
+    {
+      "word": "川; 河",
+      "reading": "かわ",
+      "meaning_en": "river"
+    },
+    {
+      "word": "～側",
+      "reading": "～がわ",
+      "meaning_en": "~ side"
+    },
+    {
+      "word": "可愛い",
+      "reading": "かわいい",
+      "meaning_en": "cute, adorable"
+    },
+    {
+      "word": "漢字",
+      "reading": "かんじ",
+      "meaning_en": "kanji; Chinese character"
+    },
+    {
+      "word": "木",
+      "reading": "き",
+      "meaning_en": "tree, wood, timber"
+    },
+    {
+      "word": "黄色",
+      "reading": "きいろ",
+      "meaning_en": "yellow"
+    },
+    {
+      "word": "黄色い",
+      "reading": "きいろい",
+      "meaning_en": "yellow"
+    },
+    {
+      "word": "消える",
+      "reading": "きえる",
+      "meaning_en": "to vanish, to disappear"
+    },
+    {
+      "word": "聞く",
+      "reading": "きく",
+      "meaning_en": "to hear, to listen, to ask"
+    },
+    {
+      "word": "北",
+      "reading": "きた",
+      "meaning_en": "north"
+    },
+    {
+      "word": "ギター",
+      "reading": "ギター",
+      "meaning_en": "guitar"
+    },
+    {
+      "word": "汚い",
+      "reading": "きたない",
+      "meaning_en": "dirty, unclean, filthy"
+    },
+    {
+      "word": "喫茶店",
+      "reading": "きっさてん",
+      "meaning_en": "café"
+    },
+    {
+      "word": "切手",
+      "reading": "きって",
+      "meaning_en": "postal (postage) stamps"
+    },
+    {
+      "word": "切符",
+      "reading": "きっぷ",
+      "meaning_en": "a ticket"
+    },
+    {
+      "word": "昨日",
+      "reading": "きのう",
+      "meaning_en": "yesterday"
+    },
+    {
+      "word": "九",
+      "reading": "きゅう",
+      "meaning_en": "nine"
+    },
+    {
+      "word": "牛肉",
+      "reading": "ぎゅうにく",
+      "meaning_en": "beef"
+    },
+    {
+      "word": "牛乳",
+      "reading": "ぎゅうにゅう",
+      "meaning_en": "milk"
+    },
+    {
+      "word": "今日",
+      "reading": "きょう",
+      "meaning_en": "today, this day"
+    },
+    {
+      "word": "教室",
+      "reading": "きょうしつ",
+      "meaning_en": "classroom"
+    },
+    {
+      "word": "兄弟",
+      "reading": "きょうだい",
+      "meaning_en": "siblings (humble), brothers and sisters"
+    },
+    {
+      "word": "去年",
+      "reading": "きょねん",
+      "meaning_en": "last year"
+    },
+    {
+      "word": "嫌い",
+      "reading": "きらい",
+      "meaning_en": "dislike"
+    },
+    {
+      "word": "切る",
+      "reading": "きる",
+      "meaning_en": "to cut; to hang up (a phone)"
+    },
+    {
+      "word": "着る",
+      "reading": "きる",
+      "meaning_en": "to put on (clothes above your waist); to wear"
+    },
+    {
+      "word": "綺麗",
+      "reading": "きれい",
+      "meaning_en": "pretty, clean, tidy"
+    },
+    {
+      "word": "キロ; キログラム",
+      "reading": "キロ; キログラム",
+      "meaning_en": "(abbr.) kilo (kilogram)"
+    },
+    {
+      "word": "キロ; キロメートル",
+      "reading": "キロ; キロメートル",
+      "meaning_en": "(abbr.) kilo (kilometer)"
+    },
+    {
+      "word": "銀行",
+      "reading": "ぎんこう",
+      "meaning_en": "bank"
+    },
+    {
+      "word": "金曜日",
+      "reading": "きんようび",
+      "meaning_en": "Friday"
+    },
+    {
+      "word": "九",
+      "reading": "く",
+      "meaning_en": "nine"
+    },
+    {
+      "word": "薬",
+      "reading": "くすり",
+      "meaning_en": "medicine"
+    },
+    {
+      "word": "下さい",
+      "reading": "ください",
+      "meaning_en": "(with te-form verb) please do for me"
+    },
+    {
+      "word": "果物",
+      "reading": "くだもの",
+      "meaning_en": "fruit"
+    },
+    {
+      "word": "口",
+      "reading": "くち",
+      "meaning_en": "job opening; mouth"
+    },
+    {
+      "word": "靴",
+      "reading": "くつ",
+      "meaning_en": "shoes, footwear"
+    },
+    {
+      "word": "靴下",
+      "reading": "くつした",
+      "meaning_en": "socks"
+    },
+    {
+      "word": "国",
+      "reading": "くに",
+      "meaning_en": "country; place of origin"
+    },
+    {
+      "word": "曇り",
+      "reading": "くもり",
+      "meaning_en": "cloudiness, cloudy weather"
+    },
+    {
+      "word": "曇る",
+      "reading": "くもる",
+      "meaning_en": "to become cloudy, to become dim"
+    },
+    {
+      "word": "暗い",
+      "reading": "くらい",
+      "meaning_en": "dark, gloomy"
+    },
+    {
+      "word": "～くらい; ぐらい",
+      "reading": "～くらい; ぐらい",
+      "meaning_en": "approximate (quantity)"
+    },
+    {
+      "word": "クラス",
+      "reading": "クラス",
+      "meaning_en": "a class"
+    },
+    {
+      "word": "グラム",
+      "reading": "グラム",
+      "meaning_en": "gram"
+    },
+    {
+      "word": "来る",
+      "reading": "くる",
+      "meaning_en": "to come"
+    },
+    {
+      "word": "車",
+      "reading": "くるま",
+      "meaning_en": "car, vehicle"
+    },
+    {
+      "word": "黒",
+      "reading": "くろ",
+      "meaning_en": "black"
+    },
+    {
+      "word": "黒い",
+      "reading": "くろい",
+      "meaning_en": "black; dark"
+    },
+    {
+      "word": "警官",
+      "reading": "けいかん",
+      "meaning_en": "police officer"
+    },
+    {
+      "word": "今朝",
+      "reading": "けさ",
+      "meaning_en": "this morning"
+    },
+    {
+      "word": "消す",
+      "reading": "けす",
+      "meaning_en": "to erase, to delete, to turn off power"
+    },
+    {
+      "word": "結構",
+      "reading": "けっこう",
+      "meaning_en": "splendid; enough, tolerably"
+    },
+    {
+      "word": "結婚",
+      "reading": "けっこん (する)",
+      "meaning_en": "marriage (get married)"
+    },
+    {
+      "word": "月曜日",
+      "reading": "げつようび",
+      "meaning_en": "Monday"
+    },
+    {
+      "word": "玄関",
+      "reading": "げんかん",
+      "meaning_en": "entrance (to a house or a building)"
+    },
+    {
+      "word": "元気",
+      "reading": "げんき",
+      "meaning_en": "health(y), energetic"
+    },
+    {
+      "word": "～個",
+      "reading": "～こ",
+      "meaning_en": "counter for small items (e.g., fruits, cups)"
+    },
+    {
+      "word": "五",
+      "reading": "ご",
+      "meaning_en": "five"
+    },
+    {
+      "word": "～語",
+      "reading": "～ご",
+      "meaning_en": "word, language"
+    },
+    {
+      "word": "公園",
+      "reading": "こうえん",
+      "meaning_en": "a park"
+    },
+    {
+      "word": "交差点",
+      "reading": "こうさてん",
+      "meaning_en": "intersection"
+    },
+    {
+      "word": "紅茶",
+      "reading": "こうちゃ",
+      "meaning_en": "black tea"
+    },
+    {
+      "word": "交番",
+      "reading": "こうばん",
+      "meaning_en": "police box"
+    },
+    {
+      "word": "声",
+      "reading": "こえ",
+      "meaning_en": "voice"
+    },
+    {
+      "word": "コート",
+      "reading": "コート",
+      "meaning_en": "coat; court (e.g., tennis)"
+    },
+    {
+      "word": "コーヒー",
+      "reading": "コーヒー",
+      "meaning_en": "coffee"
+    },
+    {
+      "word": "ここ",
+      "reading": "ここ",
+      "meaning_en": "here, this place"
+    },
+    {
+      "word": "午後",
+      "reading": "ごご",
+      "meaning_en": "afternoon, P.M."
+    },
+    {
+      "word": "九日",
+      "reading": "ここのか",
+      "meaning_en": "nine days; ninth day of the month"
+    },
+    {
+      "word": "九つ",
+      "reading": "ここのつ",
+      "meaning_en": "nine things"
+    },
+    {
+      "word": "午前",
+      "reading": "ごぜん",
+      "meaning_en": "morning, A.M."
+    },
+    {
+      "word": "答える",
+      "reading": "こたえる",
+      "meaning_en": "to answer, to reply"
+    },
+    {
+      "word": "こちら",
+      "reading": "こちら",
+      "meaning_en": "this person (polite); this way (polite)"
+    },
+    {
+      "word": "こっち",
+      "reading": "こっち",
+      "meaning_en": "this person; this direction; this side"
+    },
+    {
+      "word": "コップ",
+      "reading": "コップ",
+      "meaning_en": "a tumbler; a glass"
+    },
+    {
+      "word": "今年",
+      "reading": "ことし",
+      "meaning_en": "this year"
+    },
+    {
+      "word": "言葉",
+      "reading": "ことば",
+      "meaning_en": "language; word(s); expression(s)"
+    },
+    {
+      "word": "子供",
+      "reading": "こども",
+      "meaning_en": "child(ren)"
+    },
+    {
+      "word": "この",
+      "reading": "この",
+      "meaning_en": "this"
+    },
+    {
+      "word": "御飯",
+      "reading": "ごはん",
+      "meaning_en": "rice (cooked); meal"
+    },
+    {
+      "word": "コピーする",
+      "reading": "コピーする",
+      "meaning_en": "to copy"
+    },
+    {
+      "word": "困る",
+      "reading": "こまる",
+      "meaning_en": "to be bothered, to have difficulty"
+    },
+    {
+      "word": "これ",
+      "reading": "これ",
+      "meaning_en": "this one"
+    },
+    {
+      "word": "～ころ; ～ごろ",
+      "reading": "～ころ; ～ごろ",
+      "meaning_en": "about, toward, approximately (time)"
+    },
+    {
+      "word": "今月",
+      "reading": "こんげつ",
+      "meaning_en": "this month"
+    },
+    {
+      "word": "今週",
+      "reading": "こんしゅう",
+      "meaning_en": "this week"
+    },
+    {
+      "word": "こんな",
+      "reading": "こんな",
+      "meaning_en": "such, like this"
+    },
+    {
+      "word": "今晩",
+      "reading": "こんばん",
+      "meaning_en": "tonight, this evening"
+    },
+    {
+      "word": "さあ",
+      "reading": "さあ",
+      "meaning_en": "come now, well"
+    },
+    {
+      "word": "～歳",
+      "reading": "～さい",
+      "meaning_en": "~ years old"
+    },
+    {
+      "word": "財布",
+      "reading": "さいふ",
+      "meaning_en": "wallet"
+    },
+    {
+      "word": "魚",
+      "reading": "さかな",
+      "meaning_en": "fish"
+    },
+    {
+      "word": "先",
+      "reading": "さき",
+      "meaning_en": "future; recent, previous"
+    },
+    {
+      "word": "咲く",
+      "reading": "さく",
+      "meaning_en": "to bloom"
+    },
+    {
+      "word": "作文",
+      "reading": "さくぶん",
+      "meaning_en": "essay; composition"
+    },
+    {
+      "word": "差す",
+      "reading": "さす",
+      "meaning_en": "to raise (stretch out) hands, to raise (e.g., umbrella)"
+    },
+    {
+      "word": "～冊",
+      "reading": "～さつ",
+      "meaning_en": "counter for books"
+    },
+    {
+      "word": "雑誌",
+      "reading": "ざっし",
+      "meaning_en": "magazine, journal"
+    },
+    {
+      "word": "砂糖",
+      "reading": "さとう",
+      "meaning_en": "sugar"
+    },
+    {
+      "word": "寒い",
+      "reading": "さむい",
+      "meaning_en": "cold (in reference to weather)"
+    },
+    {
+      "word": "さ来年",
+      "reading": "さらいねん",
+      "meaning_en": "year after next"
+    },
+    {
+      "word": "～さん",
+      "reading": "～さん",
+      "meaning_en": "Mr. ~, Ms. ~"
+    },
+    {
+      "word": "三",
+      "reading": "さん",
+      "meaning_en": "three"
+    },
+    {
+      "word": "散歩",
+      "reading": "さんぽ (する)",
+      "meaning_en": "walk, stroll"
+    },
+    {
+      "word": "四",
+      "reading": "し",
+      "meaning_en": "four"
+    },
+    {
+      "word": "～時",
+      "reading": "～じ",
+      "meaning_en": "~ o'clock (time)"
+    },
+    {
+      "word": "塩",
+      "reading": "しお",
+      "meaning_en": "salt"
+    },
+    {
+      "word": "しかし",
+      "reading": "しかし",
+      "meaning_en": "however; but"
+    },
+    {
+      "word": "時間",
+      "reading": "じかん",
+      "meaning_en": "time"
+    },
+    {
+      "word": "～時間",
+      "reading": "～じかん",
+      "meaning_en": "~ hours"
+    },
+    {
+      "word": "仕事",
+      "reading": "しごと",
+      "meaning_en": "work, job, occupation, employment"
+    },
+    {
+      "word": "辞書",
+      "reading": "じしょ",
+      "meaning_en": "dictionary"
+    },
+    {
+      "word": "静か",
+      "reading": "しずか",
+      "meaning_en": "quiet, calm"
+    },
+    {
+      "word": "下",
+      "reading": "した",
+      "meaning_en": "under, below, beneath"
+    },
+    {
+      "word": "七",
+      "reading": "しち",
+      "meaning_en": "seven"
+    },
+    {
+      "word": "質問",
+      "reading": "しつもん",
+      "meaning_en": "question, inquiry"
+    },
+    {
+      "word": "自転車",
+      "reading": "じてんしゃ",
+      "meaning_en": "bicycle"
+    },
+    {
+      "word": "自動車",
+      "reading": "じどうしゃ",
+      "meaning_en": "automobile"
+    },
+    {
+      "word": "死ぬ",
+      "reading": "しぬ",
+      "meaning_en": "to die"
+    },
+    {
+      "word": "字引",
+      "reading": "じびき",
+      "meaning_en": "dictionary"
+    },
+    {
+      "word": "自分",
+      "reading": "じぶん",
+      "meaning_en": "myself, oneself"
+    },
+    {
+      "word": "閉まる",
+      "reading": "しまる",
+      "meaning_en": "to close, to be closed"
+    },
+    {
+      "word": "閉める",
+      "reading": "しめる",
+      "meaning_en": "to close, to shut"
+    },
+    {
+      "word": "締める",
+      "reading": "しめる",
+      "meaning_en": "to tie, to fasten, to tighten"
+    },
+    {
+      "word": "じゃ; じゃあ",
+      "reading": "じゃ; じゃあ",
+      "meaning_en": "well, well then"
+    },
+    {
+      "word": "写真",
+      "reading": "しゃしん",
+      "meaning_en": "a picture; a photograph"
+    },
+    {
+      "word": "シャツ",
+      "reading": "シャツ",
+      "meaning_en": "shirt"
+    },
+    {
+      "word": "シャワー",
+      "reading": "シャワー",
+      "meaning_en": "shower"
+    },
+    {
+      "word": "十",
+      "reading": "じゅう",
+      "meaning_en": "ten"
+    },
+    {
+      "word": "～中",
+      "reading": "～じゅう",
+      "meaning_en": "during, while"
+    },
+    {
+      "word": "～週間",
+      "reading": "～しゅうかん",
+      "meaning_en": "~ weeks"
+    },
+    {
+      "word": "授業",
+      "reading": "じゅぎょう",
+      "meaning_en": "a class (of school)"
+    },
+    {
+      "word": "宿題",
+      "reading": "しゅくだい",
+      "meaning_en": "homework"
+    },
+    {
+      "word": "上手",
+      "reading": "じょうず",
+      "meaning_en": "be good at, skillful"
+    },
+    {
+      "word": "丈夫",
+      "reading": "じょうぶ",
+      "meaning_en": "strong, solid, durable"
+    },
+    {
+      "word": "醤油",
+      "reading": "しょうゆ",
+      "meaning_en": "soy sauce"
+    },
+    {
+      "word": "食堂",
+      "reading": "しょくどう",
+      "meaning_en": "cafeteria, dining hall"
+    },
+    {
+      "word": "知る",
+      "reading": "しる",
+      "meaning_en": "to know, to understand"
+    },
+    {
+      "word": "白",
+      "reading": "しろ",
+      "meaning_en": "white"
+    },
+    {
+      "word": "白い",
+      "reading": "しろい",
+      "meaning_en": "white"
+    },
+    {
+      "word": "～人",
+      "reading": "～じん",
+      "meaning_en": "counter for people"
+    },
+    {
+      "word": "新聞",
+      "reading": "しんぶん",
+      "meaning_en": "newspaper"
+    },
+    {
+      "word": "水曜日",
+      "reading": "すいようび",
+      "meaning_en": "Wednesday"
+    },
+    {
+      "word": "吸う",
+      "reading": "すう",
+      "meaning_en": "to breathe in, to suck"
+    },
+    {
+      "word": "スカート",
+      "reading": "スカート",
+      "meaning_en": "skirt"
+    },
+    {
+      "word": "好き",
+      "reading": "すき",
+      "meaning_en": "liking, fondness, love"
+    },
+    {
+      "word": "～すぎ",
+      "reading": "～すぎ",
+      "meaning_en": "past; to exceed, ~ too much"
+    },
+    {
+      "word": "少ない",
+      "reading": "すくない",
+      "meaning_en": "a little; a few"
+    },
+    {
+      "word": "すぐに",
+      "reading": "すぐに",
+      "meaning_en": "immediately, soon"
+    },
+    {
+      "word": "少し",
+      "reading": "すこし",
+      "meaning_en": "little, few"
+    },
+    {
+      "word": "涼しい",
+      "reading": "すずしい",
+      "meaning_en": "cool, refreshing (in reference to weather)"
+    },
+    {
+      "word": "～ずつ",
+      "reading": "～ずつ",
+      "meaning_en": "at a time"
+    },
+    {
+      "word": "ストーブ",
+      "reading": "ストーブ",
+      "meaning_en": "heater (lit: stove)"
+    },
+    {
+      "word": "スプーン",
+      "reading": "スプーン",
+      "meaning_en": "spoon"
+    },
+    {
+      "word": "スポーツ",
+      "reading": "スポーツ",
+      "meaning_en": "sport(s)"
+    },
+    {
+      "word": "ズボン",
+      "reading": "ズボン",
+      "meaning_en": "trousers"
+    },
+    {
+      "word": "住む",
+      "reading": "すむ",
+      "meaning_en": "to reside, to live in"
+    },
+    {
+      "word": "する",
+      "reading": "する",
+      "meaning_en": "to do, to try; to wear small items (e.g., necktie, watch, etc.)"
+    },
+    {
+      "word": "座る",
+      "reading": "すわる",
+      "meaning_en": "to sit"
+    },
+    {
+      "word": "背",
+      "reading": "せい",
+      "meaning_en": "(one's) height, stature"
+    },
+    {
+      "word": "生徒",
+      "reading": "せいと",
+      "meaning_en": "student; pupil"
+    },
+    {
+      "word": "セーター",
+      "reading": "セーター",
+      "meaning_en": "sweater"
+    },
+    {
+      "word": "石鹸",
+      "reading": "せっけん",
+      "meaning_en": "soap"
+    },
+    {
+      "word": "背広",
+      "reading": "せびろ",
+      "meaning_en": "men's suit"
+    },
+    {
+      "word": "狭い",
+      "reading": "せまい",
+      "meaning_en": "narrow; not spacious"
+    },
+    {
+      "word": "ゼロ",
+      "reading": "ゼロ",
+      "meaning_en": "zero"
+    },
+    {
+      "word": "千",
+      "reading": "せん",
+      "meaning_en": "thousand"
+    },
+    {
+      "word": "先月",
+      "reading": "せんげつ",
+      "meaning_en": "last month"
+    },
+    {
+      "word": "先週",
+      "reading": "せんしゅう",
+      "meaning_en": "last week"
+    },
+    {
+      "word": "先生",
+      "reading": "せんせい",
+      "meaning_en": "teacher, professor; master; doctor"
+    },
+    {
+      "word": "洗濯",
+      "reading": "せんたく",
+      "meaning_en": "washing, laundry"
+    },
+    {
+      "word": "全部",
+      "reading": "ぜんぶ",
+      "meaning_en": "all, entire, whole"
+    },
+    {
+      "word": "そう; そうです",
+      "reading": "そう; そうです",
+      "meaning_en": "yes; appears, to be the case"
+    },
+    {
+      "word": "掃除",
+      "reading": "そうじ (する)",
+      "meaning_en": "cleaning, sweeping"
+    },
+    {
+      "word": "そうして; そして",
+      "reading": "そうして; そして",
+      "meaning_en": "and, like that"
+    },
+    {
+      "word": "そこ",
+      "reading": "そこ",
+      "meaning_en": "that place, there; bottom, sole"
+    },
+    {
+      "word": "そちら",
+      "reading": "そちら",
+      "meaning_en": "over there"
+    },
+    {
+      "word": "そっち",
+      "reading": "そっち",
+      "meaning_en": "over there"
+    },
+    {
+      "word": "外",
+      "reading": "そと",
+      "meaning_en": "outside, exterior"
+    },
+    {
+      "word": "その",
+      "reading": "その",
+      "meaning_en": "that"
+    },
+    {
+      "word": "そば",
+      "reading": "そば",
+      "meaning_en": "near, close, beside; Japanese traditional buckwheat noodle"
+    },
+    {
+      "word": "空",
+      "reading": "そら",
+      "meaning_en": "sky"
+    },
+    {
+      "word": "それ",
+      "reading": "それ",
+      "meaning_en": "that one"
+    },
+    {
+      "word": "それから",
+      "reading": "それから",
+      "meaning_en": "and then, after that"
+    },
+    {
+      "word": "それでは",
+      "reading": "それでは",
+      "meaning_en": "in that situation, well then..."
+    },
+    {
+      "word": "～台",
+      "reading": "～だい",
+      "meaning_en": "counter for vehicles; machines"
+    },
+    {
+      "word": "大学",
+      "reading": "だいがく",
+      "meaning_en": "college; university"
+    },
+    {
+      "word": "大使館",
+      "reading": "たいしかん",
+      "meaning_en": "embassy"
+    },
+    {
+      "word": "大丈夫",
+      "reading": "だいじょうぶ",
+      "meaning_en": "It's ok (all right); No need to worry; Everything is under control"
+    },
+    {
+      "word": "大好き",
+      "reading": "だいすき",
+      "meaning_en": "very like-able, like very much"
+    },
+    {
+      "word": "大切",
+      "reading": "たいせつ",
+      "meaning_en": "important"
+    },
+    {
+      "word": "台所",
+      "reading": "だいどころ",
+      "meaning_en": "kitchen"
+    },
+    {
+      "word": "大変",
+      "reading": "たいへん",
+      "meaning_en": "very; difficult, hard"
+    },
+    {
+      "word": "高い",
+      "reading": "たかい",
+      "meaning_en": "tall, high; expensive"
+    },
+    {
+      "word": "～だけ",
+      "reading": "～だけ",
+      "meaning_en": "only ~, just ~, as ~"
+    },
+    {
+      "word": "沢山",
+      "reading": "たくさん",
+      "meaning_en": "many, much"
+    },
+    {
+      "word": "タクシー",
+      "reading": "タクシー",
+      "meaning_en": "taxi"
+    },
+    {
+      "word": "出す",
+      "reading": "だす",
+      "meaning_en": "to take (something) out; to hand in (something)"
+    },
+    {
+      "word": "～たち",
+      "reading": "～たち",
+      "meaning_en": "plural suffix"
+    },
+    {
+      "word": "立つ",
+      "reading": "たつ",
+      "meaning_en": "to stand up"
+    },
+    {
+      "word": "たて",
+      "reading": "たて",
+      "meaning_en": "length, height"
+    },
+    {
+      "word": "建物",
+      "reading": "たてもの",
+      "meaning_en": "building"
+    },
+    {
+      "word": "楽しい",
+      "reading": "たのしい",
+      "meaning_en": "enjoyable, fun"
+    },
+    {
+      "word": "頼む",
+      "reading": "たのむ",
+      "meaning_en": "to request, to ask (a favor)"
+    },
+    {
+      "word": "たばこ",
+      "reading": "たばこ",
+      "meaning_en": "tobacco, cigarettes"
+    },
+    {
+      "word": "多分",
+      "reading": "たぶん",
+      "meaning_en": "perhaps, probably, maybe"
+    },
+    {
+      "word": "食べ物",
+      "reading": "たべもの",
+      "meaning_en": "food"
+    },
+    {
+      "word": "食べる",
+      "reading": "たべる",
+      "meaning_en": "to eat"
+    },
+    {
+      "word": "卵",
+      "reading": "たまご",
+      "meaning_en": "egg"
+    },
+    {
+      "word": "誰",
+      "reading": "だれ",
+      "meaning_en": "who"
+    },
+    {
+      "word": "誰か",
+      "reading": "だれか",
+      "meaning_en": "someone"
+    },
+    {
+      "word": "誕生日",
+      "reading": "たんじょうび",
+      "meaning_en": "birthday"
+    },
+    {
+      "word": "段々",
+      "reading": "だんだん",
+      "meaning_en": "gradually, by degrees"
+    },
+    {
+      "word": "小さい",
+      "reading": "ちいさい",
+      "meaning_en": "small, little"
+    },
+    {
+      "word": "小さな",
+      "reading": "ちいさな",
+      "meaning_en": "small, little"
+    },
+    {
+      "word": "近い",
+      "reading": "ちかい",
+      "meaning_en": "near, close by, short"
+    },
+    {
+      "word": "違う",
+      "reading": "ちがう",
+      "meaning_en": "to be different; to differ; wrong"
+    },
+    {
+      "word": "近く",
+      "reading": "ちかく",
+      "meaning_en": "nearby; in the neighborhood"
+    },
+    {
+      "word": "地下鉄",
+      "reading": "ちかてつ",
+      "meaning_en": "underground train, subway"
+    },
+    {
+      "word": "地図",
+      "reading": "ちず",
+      "meaning_en": "a map"
+    },
+    {
+      "word": "父",
+      "reading": "ちち",
+      "meaning_en": "(my) father"
+    },
+    {
+      "word": "茶色",
+      "reading": "ちゃいろ",
+      "meaning_en": "brown"
+    },
+    {
+      "word": "茶碗",
+      "reading": "ちゃわん",
+      "meaning_en": "rice bowl"
+    },
+    {
+      "word": "～中",
+      "reading": "～ちゅう",
+      "meaning_en": "during, while ~ing"
+    },
+    {
+      "word": "丁度",
+      "reading": "ちょうど",
+      "meaning_en": "just, right, exactly"
+    },
+    {
+      "word": "ちょっと",
+      "reading": "ちょっと",
+      "meaning_en": "a little, somewhat; just a little, somewhat"
+    },
+    {
+      "word": "一日",
+      "reading": "ついたち",
+      "meaning_en": "one day; first day of the month"
+    },
+    {
+      "word": "使う",
+      "reading": "つかう",
+      "meaning_en": "to use"
+    },
+    {
+      "word": "疲れる",
+      "reading": "つかれる",
+      "meaning_en": "to get (become) tired; to become fatigued"
+    },
+    {
+      "word": "次",
+      "reading": "つぎ",
+      "meaning_en": "next"
+    },
+    {
+      "word": "着く",
+      "reading": "つく",
+      "meaning_en": "to arrive at, to reach"
+    },
+    {
+      "word": "机",
+      "reading": "つくえ",
+      "meaning_en": "desk"
+    },
+    {
+      "word": "作る",
+      "reading": "つくる",
+      "meaning_en": "to make, to create"
+    },
+    {
+      "word": "つける",
+      "reading": "つける",
+      "meaning_en": "to turn on (e.g., a light); to take"
+    },
+    {
+      "word": "勤める",
+      "reading": "つとめる",
+      "meaning_en": "to work (for)"
+    },
+    {
+      "word": "つまらない",
+      "reading": "つまらない",
+      "meaning_en": "boring, dull; insignificant"
+    },
+    {
+      "word": "冷たい",
+      "reading": "つめたい",
+      "meaning_en": "cold (things, people)"
+    },
+    {
+      "word": "強い",
+      "reading": "つよい",
+      "meaning_en": "strong, powerful"
+    },
+    {
+      "word": "手",
+      "reading": "て",
+      "meaning_en": "hand"
+    },
+    {
+      "word": "テープ",
+      "reading": "テープ",
+      "meaning_en": "tape"
+    },
+    {
+      "word": "テープレコーダー",
+      "reading": "テープレコーダー",
+      "meaning_en": "tape recorder"
+    },
+    {
+      "word": "テーブル",
+      "reading": "テーブル",
+      "meaning_en": "table"
+    },
+    {
+      "word": "出かける",
+      "reading": "でかける",
+      "meaning_en": "to go out; to depart"
+    },
+    {
+      "word": "手紙",
+      "reading": "てがみ",
+      "meaning_en": "letter"
+    },
+    {
+      "word": "できる",
+      "reading": "できる",
+      "meaning_en": "to be able to (to accomplish)"
+    },
+    {
+      "word": "出口",
+      "reading": "でぐち",
+      "meaning_en": "an exit"
+    },
+    {
+      "word": "テスト",
+      "reading": "テスト",
+      "meaning_en": "test"
+    },
+    {
+      "word": "では",
+      "reading": "では",
+      "meaning_en": "then, well, so"
+    },
+    {
+      "word": "デパート",
+      "reading": "デパート",
+      "meaning_en": "(abbr.) department store"
+    },
+    {
+      "word": "でも",
+      "reading": "でも",
+      "meaning_en": "but, however"
+    },
+    {
+      "word": "出る",
+      "reading": "でる",
+      "meaning_en": "to appear, to leave"
+    },
+    {
+      "word": "テレビ",
+      "reading": "テレビ",
+      "meaning_en": "television, TV"
+    },
+    {
+      "word": "天気",
+      "reading": "てんき",
+      "meaning_en": "weather"
+    },
+    {
+      "word": "電気",
+      "reading": "でんき",
+      "meaning_en": "electricity, (electric) light"
+    },
+    {
+      "word": "電車",
+      "reading": "でんしゃ",
+      "meaning_en": "electric train"
+    },
+    {
+      "word": "電話",
+      "reading": "でんわ",
+      "meaning_en": "a telephone"
+    },
+    {
+      "word": "戸",
+      "reading": "と",
+      "meaning_en": "door (Japanese style)"
+    },
+    {
+      "word": "～度",
+      "reading": "～ど",
+      "meaning_en": "counter for occurrences; ~ degree; ~ point"
+    },
+    {
+      "word": "ドア",
+      "reading": "ドア",
+      "meaning_en": "door (Western style)"
+    },
+    {
+      "word": "トイレ",
+      "reading": "トイレ",
+      "meaning_en": "bathroom; toilet"
+    },
+    {
+      "word": "どう",
+      "reading": "どう",
+      "meaning_en": "how, in what way"
+    },
+    {
+      "word": "どうして",
+      "reading": "どうして",
+      "meaning_en": "why, for what reason"
+    },
+    {
+      "word": "どうぞ",
+      "reading": "どうぞ",
+      "meaning_en": "please, kindly, by all means"
+    },
+    {
+      "word": "動物",
+      "reading": "どうぶつ",
+      "meaning_en": "animal"
+    },
+    {
+      "word": "どうも",
+      "reading": "どうも",
+      "meaning_en": "Thank you; somehow; no matter how hard one may try"
+    },
+    {
+      "word": "十",
+      "reading": "(〜を) とお",
+      "meaning_en": "ten (~)"
+    },
+    {
+      "word": "遠い",
+      "reading": "とおい",
+      "meaning_en": "far (away), distant"
+    },
+    {
+      "word": "十日",
+      "reading": "とおか",
+      "meaning_en": "ten days; tenth day of the month"
+    },
+    {
+      "word": "～時",
+      "reading": "～とき",
+      "meaning_en": "at the time of ~"
+    },
+    {
+      "word": "時々",
+      "reading": "ときどき",
+      "meaning_en": "sometimes"
+    },
+    {
+      "word": "時計",
+      "reading": "とけい",
+      "meaning_en": "a watch; a clock"
+    },
+    {
+      "word": "どこ",
+      "reading": "どこ",
+      "meaning_en": "where, what place"
+    },
+    {
+      "word": "所",
+      "reading": "ところ",
+      "meaning_en": "place"
+    },
+    {
+      "word": "年",
+      "reading": "とし",
+      "meaning_en": "year, age"
+    },
+    {
+      "word": "図書館",
+      "reading": "としょかん",
+      "meaning_en": "library"
+    },
+    {
+      "word": "どちら",
+      "reading": "どちら",
+      "meaning_en": "which (one) (way); where (polite)"
+    },
+    {
+      "word": "どっち",
+      "reading": "どっち",
+      "meaning_en": "which one, which way"
+    },
+    {
+      "word": "とても",
+      "reading": "とても",
+      "meaning_en": "very (much), greatly, exceedingly"
+    },
+    {
+      "word": "どなた",
+      "reading": "どなた",
+      "meaning_en": "who"
+    },
+    {
+      "word": "隣",
+      "reading": "となり",
+      "meaning_en": "next to, next door to"
+    },
+    {
+      "word": "どの",
+      "reading": "どの",
+      "meaning_en": "which"
+    },
+    {
+      "word": "飛ぶ",
+      "reading": "とぶ",
+      "meaning_en": "to fly, to hop"
+    },
+    {
+      "word": "止まる",
+      "reading": "とまる",
+      "meaning_en": "to come to a halt"
+    },
+    {
+      "word": "友達",
+      "reading": "ともだち",
+      "meaning_en": "friend"
+    },
+    {
+      "word": "土曜日",
+      "reading": "どようび",
+      "meaning_en": "Saturday"
+    },
+    {
+      "word": "鳥",
+      "reading": "とり",
+      "meaning_en": "chicken (lit., bird)"
+    },
+    {
+      "word": "鶏肉",
+      "reading": "とりにく",
+      "meaning_en": "chicken meat"
+    },
+    {
+      "word": "取る",
+      "reading": "とる",
+      "meaning_en": "to take (a class); to get (a grade)"
+    },
+    {
+      "word": "撮る",
+      "reading": "とる",
+      "meaning_en": "to take (a photo), to make (a film)"
+    },
+    {
+      "word": "どれ",
+      "reading": "どれ",
+      "meaning_en": "which one"
+    },
+    {
+      "word": "どんな",
+      "reading": "どんな",
+      "meaning_en": "what, what kind of"
+    },
+    {
+      "word": "ない",
+      "reading": "ない",
+      "meaning_en": "there isn't, doesn't have"
+    },
+    {
+      "word": "ナイフ",
+      "reading": "ナイフ",
+      "meaning_en": "knife"
+    },
+    {
+      "word": "中",
+      "reading": "なか",
+      "meaning_en": "inside, middle, among"
+    },
+    {
+      "word": "長い",
+      "reading": "ながい",
+      "meaning_en": "long, lengthy"
+    },
+    {
+      "word": "鳴く",
+      "reading": "なく",
+      "meaning_en": "to make sound (animal)"
+    },
+    {
+      "word": "無くす",
+      "reading": "なくす",
+      "meaning_en": "to lose something"
+    },
+    {
+      "word": "なぜ",
+      "reading": "なぜ",
+      "meaning_en": "why (same as どうして)"
+    },
+    {
+      "word": "夏",
+      "reading": "なつ",
+      "meaning_en": "summer"
+    },
+    {
+      "word": "夏休み",
+      "reading": "なつやすみ",
+      "meaning_en": "summer vacation"
+    },
+    {
+      "word": "～など",
+      "reading": "～など",
+      "meaning_en": "et cetera"
+    },
+    {
+      "word": "七つ",
+      "reading": "ななつ",
+      "meaning_en": "seven things"
+    },
+    {
+      "word": "何",
+      "reading": "なん; なに",
+      "meaning_en": "what"
+    },
+    {
+      "word": "七日",
+      "reading": "なのか",
+      "meaning_en": "seven days; seventh day (of the month)"
+    },
+    {
+      "word": "名前",
+      "reading": "なまえ",
+      "meaning_en": "name"
+    },
+    {
+      "word": "習う",
+      "reading": "ならう",
+      "meaning_en": "to learn"
+    },
+    {
+      "word": "並ぶ",
+      "reading": "ならぶ",
+      "meaning_en": "to line up, to stand in a line (v.i.)"
+    },
+    {
+      "word": "並べる",
+      "reading": "ならべる",
+      "meaning_en": "to put (things) side by side; to line up"
+    },
+    {
+      "word": "なる",
+      "reading": "なる",
+      "meaning_en": "to become"
+    },
+    {
+      "word": "何～",
+      "reading": "なん～",
+      "meaning_en": "what sort of ~"
+    },
+    {
+      "word": "二",
+      "reading": "に",
+      "meaning_en": "two"
+    },
+    {
+      "word": "にぎやか",
+      "reading": "にぎやか",
+      "meaning_en": "bustling, busy"
+    },
+    {
+      "word": "肉",
+      "reading": "にく",
+      "meaning_en": "meat"
+    },
+    {
+      "word": "西",
+      "reading": "にし",
+      "meaning_en": "west"
+    },
+    {
+      "word": "～日",
+      "reading": "～にち",
+      "meaning_en": "~ day of the month, for ~ days"
+    },
+    {
+      "word": "日曜日",
+      "reading": "にちようび",
+      "meaning_en": "Sunday"
+    },
+    {
+      "word": "荷物",
+      "reading": "にもつ",
+      "meaning_en": "luggage; baggage"
+    },
+    {
+      "word": "ニュース",
+      "reading": "ニュース",
+      "meaning_en": "news"
+    },
+    {
+      "word": "庭",
+      "reading": "にわ",
+      "meaning_en": "garden"
+    },
+    {
+      "word": "～人",
+      "reading": "～にん",
+      "meaning_en": "counter for people"
+    },
+    {
+      "word": "脱ぐ",
+      "reading": "ぬぐ",
+      "meaning_en": "to take off (clothes)"
+    },
+    {
+      "word": "温い",
+      "reading": "ぬるい",
+      "meaning_en": "lukewarm"
+    },
+    {
+      "word": "ネクタイ",
+      "reading": "ネクタイ",
+      "meaning_en": "tie, necktie"
+    },
+    {
+      "word": "猫",
+      "reading": "ねこ",
+      "meaning_en": "cat"
+    },
+    {
+      "word": "寝る",
+      "reading": "ねる",
+      "meaning_en": "to sleep; to go to sleep; to go to bed"
+    },
+    {
+      "word": "～年",
+      "reading": "～ねん",
+      "meaning_en": "~ years"
+    },
+    {
+      "word": "ノート",
+      "reading": "ノート",
+      "meaning_en": "notebook"
+    },
+    {
+      "word": "登る",
+      "reading": "のぼる",
+      "meaning_en": "to climb"
+    },
+    {
+      "word": "飲み物",
+      "reading": "のみもの",
+      "meaning_en": "drink, beverage"
+    },
+    {
+      "word": "飲む",
+      "reading": "のむ",
+      "meaning_en": "to drink"
+    },
+    {
+      "word": "乗る",
+      "reading": "のる",
+      "meaning_en": "to get on, to ride in, to board"
+    },
+    {
+      "word": "歯",
+      "reading": "は",
+      "meaning_en": "tooth"
+    },
+    {
+      "word": "パーティー",
+      "reading": "パーティー",
+      "meaning_en": "a party"
+    },
+    {
+      "word": "はい",
+      "reading": "はい",
+      "meaning_en": "yes"
+    },
+    {
+      "word": "～杯",
+      "reading": "～はい",
+      "meaning_en": "counter for cupfuls"
+    },
+    {
+      "word": "灰皿",
+      "reading": "はいざら",
+      "meaning_en": "ashtray"
+    },
+    {
+      "word": "入る",
+      "reading": "はいる",
+      "meaning_en": "to enter, to contain, to hold"
+    },
+    {
+      "word": "葉書",
+      "reading": "はがき",
+      "meaning_en": "postcard"
+    },
+    {
+      "word": "はく",
+      "reading": "はく",
+      "meaning_en": "to put on (items below your waist)"
+    },
+    {
+      "word": "箱",
+      "reading": "はこ",
+      "meaning_en": "box"
+    },
+    {
+      "word": "橋",
+      "reading": "はし",
+      "meaning_en": "bridge"
+    },
+    {
+      "word": "箸",
+      "reading": "はし",
+      "meaning_en": "chopsticks"
+    },
+    {
+      "word": "始まる",
+      "reading": "はじまる",
+      "meaning_en": "(something) begins"
+    },
+    {
+      "word": "初め; 始め",
+      "reading": "はじめ",
+      "meaning_en": "beginning, start"
+    },
+    {
+      "word": "初めて",
+      "reading": "はじめて",
+      "meaning_en": "for the first time"
+    },
+    {
+      "word": "走る",
+      "reading": "はしる",
+      "meaning_en": "to run"
+    },
+    {
+      "word": "バス",
+      "reading": "バス",
+      "meaning_en": "bus; bath; bass"
+    },
+    {
+      "word": "バター",
+      "reading": "バター",
+      "meaning_en": "butter"
+    },
+    {
+      "word": "二十歳",
+      "reading": "はたち",
+      "meaning_en": "20 years old"
+    },
+    {
+      "word": "働く",
+      "reading": "はたらく",
+      "meaning_en": "to work"
+    },
+    {
+      "word": "八",
+      "reading": "はち",
+      "meaning_en": "eight"
+    },
+    {
+      "word": "二十日",
+      "reading": "はつか",
+      "meaning_en": "twenty days, twentieth (day of the month)"
+    },
+    {
+      "word": "花",
+      "reading": "はな",
+      "meaning_en": "flower"
+    },
+    {
+      "word": "鼻",
+      "reading": "はな",
+      "meaning_en": "nose"
+    },
+    {
+      "word": "話",
+      "reading": "はなし",
+      "meaning_en": "talk (chat), story"
+    },
+    {
+      "word": "話す",
+      "reading": "はなす",
+      "meaning_en": "to speak"
+    },
+    {
+      "word": "母",
+      "reading": "はは",
+      "meaning_en": "(my) mother"
+    },
+    {
+      "word": "早い",
+      "reading": "はやい",
+      "meaning_en": "early"
+    },
+    {
+      "word": "速い",
+      "reading": "はやい",
+      "meaning_en": "fast, quick"
+    },
+    {
+      "word": "春",
+      "reading": "はる",
+      "meaning_en": "spring"
+    },
+    {
+      "word": "貼る",
+      "reading": "はる",
+      "meaning_en": "to post; to paste; to attach"
+    },
+    {
+      "word": "晴れ",
+      "reading": "はれ",
+      "meaning_en": "clear (sunny) weather"
+    },
+    {
+      "word": "晴れる",
+      "reading": "はれる",
+      "meaning_en": "to be sunny"
+    },
+    {
+      "word": "半",
+      "reading": "はん",
+      "meaning_en": "half (e.g., にじはん | half-past two)"
+    },
+    {
+      "word": "晩",
+      "reading": "ばん",
+      "meaning_en": "evening"
+    },
+    {
+      "word": "～番",
+      "reading": "～ばん",
+      "meaning_en": "~st; ~th best"
+    },
+    {
+      "word": "パン",
+      "reading": "パン",
+      "meaning_en": "bread"
+    },
+    {
+      "word": "ハンカチ",
+      "reading": "ハンカチ",
+      "meaning_en": "handkerchief"
+    },
+    {
+      "word": "番号",
+      "reading": "ばんごう",
+      "meaning_en": "number, series of digits"
+    },
+    {
+      "word": "晩御飯",
+      "reading": "ばんごはん",
+      "meaning_en": "dinner, evening meal"
+    },
+    {
+      "word": "半分",
+      "reading": "はんぶん",
+      "meaning_en": "half"
+    },
+    {
+      "word": "東",
+      "reading": "ひがし",
+      "meaning_en": "east"
+    },
+    {
+      "word": "～匹",
+      "reading": "～ひき",
+      "meaning_en": "counter for small animals"
+    },
+    {
+      "word": "引く",
+      "reading": "ひく",
+      "meaning_en": "to pull, to draw; subtract"
+    },
+    {
+      "word": "弾く",
+      "reading": "ひく",
+      "meaning_en": "to play (a string instrument or piano)"
+    },
+    {
+      "word": "低い",
+      "reading": "ひくい",
+      "meaning_en": "short, low"
+    },
+    {
+      "word": "飛行機",
+      "reading": "ひこうき",
+      "meaning_en": "airplane"
+    },
+    {
+      "word": "左",
+      "reading": "ひだり",
+      "meaning_en": "left hand side"
+    },
+    {
+      "word": "人",
+      "reading": "ひと",
+      "meaning_en": "man, person"
+    },
+    {
+      "word": "一つ",
+      "reading": "ひとつ",
+      "meaning_en": "one thing"
+    },
+    {
+      "word": "一月",
+      "reading": "ひとつき",
+      "meaning_en": "one month"
+    },
+    {
+      "word": "一人",
+      "reading": "ひとり",
+      "meaning_en": "one person"
+    },
+    {
+      "word": "暇",
+      "reading": "ひま",
+      "meaning_en": "free time, leisure"
+    },
+    {
+      "word": "百",
+      "reading": "ひゃく",
+      "meaning_en": "hundred"
+    },
+    {
+      "word": "病院",
+      "reading": "びょういん",
+      "meaning_en": "hospital"
+    },
+    {
+      "word": "病気",
+      "reading": "びょうき",
+      "meaning_en": "illness; sickness"
+    },
+    {
+      "word": "平仮名",
+      "reading": "ひらがな",
+      "meaning_en": "hiragana"
+    },
+    {
+      "word": "昼",
+      "reading": "ひる",
+      "meaning_en": "noon, daytime"
+    },
+    {
+      "word": "昼御飯",
+      "reading": "ひるごはん",
+      "meaning_en": "lunch, midday meal"
+    },
+    {
+      "word": "広い",
+      "reading": "ひろい",
+      "meaning_en": "spacious; wide; broad"
+    },
+    {
+      "word": "フィルム",
+      "reading": "フィルム",
+      "meaning_en": "film (roll of)"
+    },
+    {
+      "word": "封筒",
+      "reading": "ふうとう",
+      "meaning_en": "envelope"
+    },
+    {
+      "word": "プール",
+      "reading": "プール",
+      "meaning_en": "swimming pool"
+    },
+    {
+      "word": "フォーク",
+      "reading": "フォーク",
+      "meaning_en": "fork"
+    },
+    {
+      "word": "吹く",
+      "reading": "ふく",
+      "meaning_en": "to blow (wind, etc.)"
+    },
+    {
+      "word": "服",
+      "reading": "ふく",
+      "meaning_en": "clothes"
+    },
+    {
+      "word": "二つ",
+      "reading": "ふたつ",
+      "meaning_en": "two things"
+    },
+    {
+      "word": "豚肉",
+      "reading": "ぶたにく",
+      "meaning_en": "pork"
+    },
+    {
+      "word": "二人",
+      "reading": "ふたり",
+      "meaning_en": "two people"
+    },
+    {
+      "word": "二日",
+      "reading": "ふつか",
+      "meaning_en": "two days; second day of the month"
+    },
+    {
+      "word": "太い",
+      "reading": "ふとい",
+      "meaning_en": "fat, thick"
+    },
+    {
+      "word": "冬",
+      "reading": "ふゆ",
+      "meaning_en": "winter"
+    },
+    {
+      "word": "降る",
+      "reading": "ふる",
+      "meaning_en": "to precipitate, to fall (e.g., rain, snow, etc.)"
+    },
+    {
+      "word": "古い",
+      "reading": "ふるい",
+      "meaning_en": "old (in reference to objects, not people), aged, ancient"
+    },
+    {
+      "word": "～分",
+      "reading": "～ふん",
+      "meaning_en": "~ minutes"
+    },
+    {
+      "word": "文章",
+      "reading": "ぶんしょう",
+      "meaning_en": "sentence, text"
+    },
+    {
+      "word": "ページ",
+      "reading": "ページ",
+      "meaning_en": "a page"
+    },
+    {
+      "word": "下手",
+      "reading": "へた",
+      "meaning_en": "unskillful, poor"
+    },
+    {
+      "word": "ベッド",
+      "reading": "ベッド",
+      "meaning_en": "bed"
+    },
+    {
+      "word": "ペット",
+      "reading": "ペット",
+      "meaning_en": "pet"
+    },
+    {
+      "word": "部屋",
+      "reading": "へや",
+      "meaning_en": "a room"
+    },
+    {
+      "word": "辺",
+      "reading": "へん",
+      "meaning_en": "area, vicinity"
+    },
+    {
+      "word": "ペン",
+      "reading": "ペン",
+      "meaning_en": "pen"
+    },
+    {
+      "word": "勉強",
+      "reading": "べんきょう (する)",
+      "meaning_en": "study"
+    },
+    {
+      "word": "便利",
+      "reading": "べんり",
+      "meaning_en": "convenient, handy"
+    },
+    {
+      "word": "帽子",
+      "reading": "ぼうし",
+      "meaning_en": "hat; cap"
+    },
+    {
+      "word": "ボールペン",
+      "reading": "ボールペン",
+      "meaning_en": "ball-point pen"
+    },
+    {
+      "word": "外",
+      "reading": "ほか",
+      "meaning_en": "other, the rest"
+    },
+    {
+      "word": "ポケット",
+      "reading": "ポケット",
+      "meaning_en": "pocket"
+    },
+    {
+      "word": "欲しい",
+      "reading": "ほしい",
+      "meaning_en": "to want, in need of"
+    },
+    {
+      "word": "ポスト",
+      "reading": "ポスト",
+      "meaning_en": "mailbox; post, position"
+    },
+    {
+      "word": "細い",
+      "reading": "ほそい",
+      "meaning_en": "thin, slender, fine"
+    },
+    {
+      "word": "ボタン",
+      "reading": "ボタン",
+      "meaning_en": "button"
+    },
+    {
+      "word": "ホテル",
+      "reading": "ホテル",
+      "meaning_en": "hotel"
+    },
+    {
+      "word": "本",
+      "reading": "ほん",
+      "meaning_en": "book"
+    },
+    {
+      "word": "～本",
+      "reading": "～ほん",
+      "meaning_en": "counter for long cylindrical things"
+    },
+    {
+      "word": "本棚",
+      "reading": "ほんだな",
+      "meaning_en": "bookshelf"
+    },
+    {
+      "word": "本当",
+      "reading": "ほんとう",
+      "meaning_en": "real, true"
+    },
+    {
+      "word": "～枚",
+      "reading": "～まい",
+      "meaning_en": "counter for flat things"
+    },
+    {
+      "word": "毎朝",
+      "reading": "まいあさ",
+      "meaning_en": "every morning"
+    },
+    {
+      "word": "毎月",
+      "reading": "まいげつ; まいつき",
+      "meaning_en": "every month, monthly"
+    },
+    {
+      "word": "毎週",
+      "reading": "まいしゅう",
+      "meaning_en": "every week"
+    },
+    {
+      "word": "毎日",
+      "reading": "まいにち",
+      "meaning_en": "every day"
+    },
+    {
+      "word": "毎年",
+      "reading": "まいねん; まいとし",
+      "meaning_en": "every year, yearly, annually"
+    },
+    {
+      "word": "毎晩",
+      "reading": "まいばん",
+      "meaning_en": "every night"
+    },
+    {
+      "word": "前",
+      "reading": "まえ",
+      "meaning_en": "before, in front"
+    },
+    {
+      "word": "～前",
+      "reading": "～まえ",
+      "meaning_en": "in front of ~"
+    },
+    {
+      "word": "曲る",
+      "reading": "まがる",
+      "meaning_en": "to turn, to bend"
+    },
+    {
+      "word": "まずい",
+      "reading": "まずい",
+      "meaning_en": "terrible (in reference to food), unappetizing, unpleasant (taste)"
+    },
+    {
+      "word": "また",
+      "reading": "また",
+      "meaning_en": "and; furthermore"
+    },
+    {
+      "word": "まだ",
+      "reading": "まだ",
+      "meaning_en": "yet, still, besides"
+    },
+    {
+      "word": "町",
+      "reading": "まち",
+      "meaning_en": "town; city"
+    },
+    {
+      "word": "待つ",
+      "reading": "まつ",
+      "meaning_en": "to wait"
+    },
+    {
+      "word": "まっすぐ",
+      "reading": "まっすぐ",
+      "meaning_en": "straight (ahead), direct"
+    },
+    {
+      "word": "マッチ",
+      "reading": "マッチ",
+      "meaning_en": "match"
+    },
+    {
+      "word": "窓",
+      "reading": "まど",
+      "meaning_en": "window"
+    },
+    {
+      "word": "丸い; 円い",
+      "reading": "まるい",
+      "meaning_en": "round, circular"
+    },
+    {
+      "word": "万",
+      "reading": "まん",
+      "meaning_en": "ten thousand"
+    },
+    {
+      "word": "万年筆",
+      "reading": "まんねんひつ",
+      "meaning_en": "fountain pen"
+    },
+    {
+      "word": "磨く",
+      "reading": "みがく",
+      "meaning_en": "to brush (teeth); to polish"
+    },
+    {
+      "word": "右",
+      "reading": "みぎ",
+      "meaning_en": "right hand side"
+    },
+    {
+      "word": "短い",
+      "reading": "みじかい",
+      "meaning_en": "short (length)"
+    },
+    {
+      "word": "水",
+      "reading": "みず",
+      "meaning_en": "water"
+    },
+    {
+      "word": "店",
+      "reading": "みせ",
+      "meaning_en": "store, shop"
+    },
+    {
+      "word": "見せる",
+      "reading": "みせる",
+      "meaning_en": "to show, to display"
+    },
+    {
+      "word": "道",
+      "reading": "みち",
+      "meaning_en": "road, street; way, directions"
+    },
+    {
+      "word": "三日",
+      "reading": "みっか",
+      "meaning_en": "three days, third day of the month"
+    },
+    {
+      "word": "三つ",
+      "reading": "みっつ",
+      "meaning_en": "three things"
+    },
+    {
+      "word": "緑",
+      "reading": "みどり",
+      "meaning_en": "green"
+    },
+    {
+      "word": "皆さん",
+      "reading": "みなさん",
+      "meaning_en": "all of you, everyone"
+    },
+    {
+      "word": "南",
+      "reading": "みなみ",
+      "meaning_en": "South"
+    },
+    {
+      "word": "耳",
+      "reading": "みみ",
+      "meaning_en": "ear"
+    },
+    {
+      "word": "見る",
+      "reading": "みる",
+      "meaning_en": "to see, to look"
+    },
+    {
+      "word": "みんな",
+      "reading": "みんな",
+      "meaning_en": "all, everyone, everybody"
+    },
+    {
+      "word": "六日",
+      "reading": "むいか",
+      "meaning_en": "six days; sixth day of month"
+    },
+    {
+      "word": "向こう",
+      "reading": "むこう",
+      "meaning_en": "beyond, over there"
+    },
+    {
+      "word": "難しい",
+      "reading": "むずかしい",
+      "meaning_en": "difficult"
+    },
+    {
+      "word": "六つ",
+      "reading": "むっつ",
+      "meaning_en": "six things"
+    },
+    {
+      "word": "村",
+      "reading": "むら",
+      "meaning_en": "village"
+    },
+    {
+      "word": "目",
+      "reading": "め",
+      "meaning_en": "eye(s)"
+    },
+    {
+      "word": "メートル",
+      "reading": "メートル",
+      "meaning_en": "meter"
+    },
+    {
+      "word": "眼鏡",
+      "reading": "めがね",
+      "meaning_en": "eye glasses"
+    },
+    {
+      "word": "もう",
+      "reading": "もう",
+      "meaning_en": "already; again; more"
+    },
+    {
+      "word": "木曜日",
+      "reading": "もくようび",
+      "meaning_en": "Thursday"
+    },
+    {
+      "word": "もしもし",
+      "reading": "もしもし",
+      "meaning_en": "Hello? (used on the phone)"
+    },
+    {
+      "word": "持つ",
+      "reading": "もつ",
+      "meaning_en": "to hold, to carry; to possess"
+    },
+    {
+      "word": "もっと",
+      "reading": "もっと",
+      "meaning_en": "more"
+    },
+    {
+      "word": "物",
+      "reading": "もの",
+      "meaning_en": "thing (concrete object)"
+    },
+    {
+      "word": "門",
+      "reading": "もん",
+      "meaning_en": "gate"
+    },
+    {
+      "word": "問題",
+      "reading": "もんだい",
+      "meaning_en": "a problem"
+    },
+    {
+      "word": "～屋",
+      "reading": "～や",
+      "meaning_en": "~ shop"
+    },
+    {
+      "word": "八百屋",
+      "reading": "やおや",
+      "meaning_en": "greengrocer"
+    },
+    {
+      "word": "野菜",
+      "reading": "やさい",
+      "meaning_en": "vegetable"
+    },
+    {
+      "word": "易しい",
+      "reading": "やさしい",
+      "meaning_en": "easy, plain, simple"
+    },
+    {
+      "word": "安い",
+      "reading": "やすい",
+      "meaning_en": "inexpensive; cheap (things)"
+    },
+    {
+      "word": "休み",
+      "reading": "やすみ",
+      "meaning_en": "holiday; day off; absence"
+    },
+    {
+      "word": "休む",
+      "reading": "やすむ",
+      "meaning_en": "to rest, to have a break, to get time off"
+    },
+    {
+      "word": "八つ",
+      "reading": "やっつ",
+      "meaning_en": "eight things"
+    },
+    {
+      "word": "山",
+      "reading": "やま",
+      "meaning_en": "mountain"
+    },
+    {
+      "word": "やる",
+      "reading": "やる",
+      "meaning_en": "to do; to give (to pets, parents, siblings, etc.)"
+    },
+    {
+      "word": "夕方",
+      "reading": "ゆうがた",
+      "meaning_en": "late afternoon (typically just before dinner time), evening"
+    },
+    {
+      "word": "夕飯",
+      "reading": "ゆうはん",
+      "meaning_en": "dinner, supper, evening meal"
+    },
+    {
+      "word": "郵便局",
+      "reading": "ゆうびんきょく",
+      "meaning_en": "post office"
+    },
+    {
+      "word": "昨夜",
+      "reading": "ゆうべ",
+      "meaning_en": "last night"
+    },
+    {
+      "word": "有名",
+      "reading": "ゆうめい",
+      "meaning_en": "famous"
+    },
+    {
+      "word": "雪",
+      "reading": "ゆき",
+      "meaning_en": "snow"
+    },
+    {
+      "word": "ゆっくりと",
+      "reading": "ゆっくりと",
+      "meaning_en": "slowly, at ease"
+    },
+    {
+      "word": "八日",
+      "reading": "ようか",
+      "meaning_en": "eight days; eighth day of the month"
+    },
+    {
+      "word": "洋服",
+      "reading": "ようふく",
+      "meaning_en": "Western-style clothes"
+    },
+    {
+      "word": "よく",
+      "reading": "よく",
+      "meaning_en": "frequently, often (much); well, skillfully"
+    },
+    {
+      "word": "横",
+      "reading": "よこ",
+      "meaning_en": "beside; side; width"
+    },
+    {
+      "word": "四日",
+      "reading": "よっか",
+      "meaning_en": "four days; fourth day of the month"
+    },
+    {
+      "word": "四つ",
+      "reading": "よっつ",
+      "meaning_en": "four things"
+    },
+    {
+      "word": "呼ぶ",
+      "reading": "よぶ",
+      "meaning_en": "to call (one's name); to invite"
+    },
+    {
+      "word": "読む",
+      "reading": "よむ",
+      "meaning_en": "to read"
+    },
+    {
+      "word": "夜",
+      "reading": "よる",
+      "meaning_en": "evening, night"
+    },
+    {
+      "word": "弱い",
+      "reading": "よわい",
+      "meaning_en": "weak"
+    },
+    {
+      "word": "来月",
+      "reading": "らいげつ",
+      "meaning_en": "next month"
+    },
+    {
+      "word": "来週",
+      "reading": "らいしゅう",
+      "meaning_en": "next week"
+    },
+    {
+      "word": "来年",
+      "reading": "らいねん",
+      "meaning_en": "next year"
+    },
+    {
+      "word": "ラジオ",
+      "reading": "ラジオ",
+      "meaning_en": "radio"
+    },
+    {
+      "word": "ラジオカセ",
+      "reading": "ラジオカセ",
+      "meaning_en": "radio cassette player"
+    },
+    {
+      "word": "りっぱ",
+      "reading": "りっぱ",
+      "meaning_en": "splendid, fine"
+    },
+    {
+      "word": "留学生",
+      "reading": "りゅうがくせい",
+      "meaning_en": "international student"
+    },
+    {
+      "word": "両親",
+      "reading": "りょうしん",
+      "meaning_en": "parents (lit., both parents)"
+    },
+    {
+      "word": "料理",
+      "reading": "りょうり",
+      "meaning_en": "cooking; cuisine"
+    },
+    {
+      "word": "旅行",
+      "reading": "りょこう",
+      "meaning_en": "travel, trip"
+    },
+    {
+      "word": "零",
+      "reading": "れい",
+      "meaning_en": "zero, nought"
+    },
+    {
+      "word": "冷蔵庫",
+      "reading": "れいぞうこ",
+      "meaning_en": "refrigerator"
+    },
+    {
+      "word": "レコード",
+      "reading": "レコード",
+      "meaning_en": "record"
+    },
+    {
+      "word": "レストラン",
+      "reading": "レストラン",
+      "meaning_en": "restaurant"
+    },
+    {
+      "word": "練習",
+      "reading": "れんしゅう (する)",
+      "meaning_en": "(to) practice"
+    },
+    {
+      "word": "廊下",
+      "reading": "ろうか",
+      "meaning_en": "corridor"
+    },
+    {
+      "word": "六",
+      "reading": "ろく",
+      "meaning_en": "six"
+    },
+    {
+      "word": "ワイシャツ",
+      "reading": "ワイシャツ",
+      "meaning_en": "shirt (lit: white shirt), business shirt"
+    },
+    {
+      "word": "若い",
+      "reading": "わかい",
+      "meaning_en": "young"
+    },
+    {
+      "word": "分かる",
+      "reading": "わかる",
+      "meaning_en": "to understand"
+    },
+    {
+      "word": "忘れる",
+      "reading": "わすれる",
+      "meaning_en": "to forget"
+    },
+    {
+      "word": "私",
+      "reading": "わたし",
+      "meaning_en": "I, myself"
+    },
+    {
+      "word": "私",
+      "reading": "わたくし",
+      "meaning_en": "I (formal), myself, private affairs"
+    },
+    {
+      "word": "渡す",
+      "reading": "わたす",
+      "meaning_en": "to hand (something) over (v.t.); to get across"
+    },
+    {
+      "word": "渡る",
+      "reading": "わたる",
+      "meaning_en": "to cross over, to go across"
+    },
+    {
+      "word": "悪い",
+      "reading": "わるい",
+      "meaning_en": "bad, sinful; inferior"
+    }
+  ],
+  "kanji": [
+    {
+      "char": "人",
+      "strokes": 2,
+      "frequency": 1
+    },
+    {
+      "char": "一",
+      "strokes": null,
+      "frequency": 2
+    },
+    {
+      "char": "日",
+      "strokes": 4,
+      "frequency": 3
+    },
+    {
+      "char": "大",
+      "strokes": 3,
+      "frequency": 4
+    },
+    {
+      "char": "年",
+      "strokes": 6,
+      "frequency": 5
+    },
+    {
+      "char": "出",
+      "strokes": 5,
+      "frequency": 6
+    },
+    {
+      "char": "本",
+      "strokes": 5,
+      "frequency": 7
+    },
+    {
+      "char": "中",
+      "strokes": 4,
+      "frequency": 8
+    },
+    {
+      "char": "子",
+      "strokes": 3,
+      "frequency": 9
+    },
+    {
+      "char": "見",
+      "strokes": 7,
+      "frequency": 10
+    },
+    {
+      "char": "国",
+      "strokes": 8,
+      "frequency": 11
+    },
+    {
+      "char": "上",
+      "strokes": 3,
+      "frequency": 13
+    },
+    {
+      "char": "分",
+      "strokes": 4,
+      "frequency": 14
+    },
+    {
+      "char": "生",
+      "strokes": 5,
+      "frequency": 15
+    },
+    {
+      "char": "行",
+      "strokes": 6,
+      "frequency": 18
+    },
+    {
+      "char": "二",
+      "strokes": 2,
+      "frequency": 20
+    },
+    {
+      "char": "間",
+      "strokes": 12,
+      "frequency": 21
+    },
+    {
+      "char": "時",
+      "strokes": 10,
+      "frequency": 24
+    },
+    {
+      "char": "気",
+      "strokes": 6,
+      "frequency": 25
+    },
+    {
+      "char": "十",
+      "strokes": 2,
+      "frequency": 27
+    },
+    {
+      "char": "女",
+      "strokes": 3,
+      "frequency": 29
+    },
+    {
+      "char": "三",
+      "strokes": 3,
+      "frequency": 30
+    },
+    {
+      "char": "前",
+      "strokes": 9,
+      "frequency": 31
+    },
+    {
+      "char": "入",
+      "strokes": 2,
+      "frequency": 34
+    },
+    {
+      "char": "小",
+      "strokes": 3,
+      "frequency": 35
+    },
+    {
+      "char": "後",
+      "strokes": 9,
+      "frequency": 38
+    },
+    {
+      "char": "長",
+      "strokes": 8,
+      "frequency": 40
+    },
+    {
+      "char": "下",
+      "strokes": 3,
+      "frequency": 44
+    },
+    {
+      "char": "学",
+      "strokes": 8,
+      "frequency": 47
+    },
+    {
+      "char": "月",
+      "strokes": 4,
+      "frequency": 49
+    },
+    {
+      "char": "何",
+      "strokes": 7,
+      "frequency": 51
+    },
+    {
+      "char": "来",
+      "strokes": 7,
+      "frequency": 52
+    },
+    {
+      "char": "話",
+      "strokes": 13,
+      "frequency": 54
+    },
+    {
+      "char": "山",
+      "strokes": 3,
+      "frequency": 60
+    },
+    {
+      "char": "高",
+      "strokes": 10,
+      "frequency": 65
+    },
+    {
+      "char": "今",
+      "strokes": 4,
+      "frequency": 71
+    },
+    {
+      "char": "書",
+      "strokes": 10,
+      "frequency": 72
+    },
+    {
+      "char": "五",
+      "strokes": 4,
+      "frequency": 75
+    },
+    {
+      "char": "名",
+      "strokes": 6,
+      "frequency": 78
+    },
+    {
+      "char": "金",
+      "strokes": 8,
+      "frequency": 79
+    },
+    {
+      "char": "男",
+      "strokes": 7,
+      "frequency": 84
+    },
+    {
+      "char": "外",
+      "strokes": 5,
+      "frequency": 97
+    },
+    {
+      "char": "四",
+      "strokes": 5,
+      "frequency": 103
+    },
+    {
+      "char": "先",
+      "strokes": 6,
+      "frequency": 104
+    },
+    {
+      "char": "川",
+      "strokes": 3,
+      "frequency": 109
+    },
+    {
+      "char": "東",
+      "strokes": 8,
+      "frequency": 110
+    },
+    {
+      "char": "聞",
+      "strokes": 14,
+      "frequency": 115
+    },
+    {
+      "char": "語",
+      "strokes": 14,
+      "frequency": 129
+    },
+    {
+      "char": "九",
+      "strokes": 2,
+      "frequency": 137
+    },
+    {
+      "char": "食",
+      "strokes": 9,
+      "frequency": 142
+    },
+    {
+      "char": "八",
+      "strokes": 2,
+      "frequency": 144
+    },
+    {
+      "char": "水",
+      "strokes": 4,
+      "frequency": 146
+    },
+    {
+      "char": "天",
+      "strokes": 4,
+      "frequency": 159
+    },
+    {
+      "char": "木",
+      "strokes": 4,
+      "frequency": 162
+    },
+    {
+      "char": "六",
+      "strokes": 4,
+      "frequency": 173
+    },
+    {
+      "char": "万",
+      "strokes": 3,
+      "frequency": 193
+    },
+    {
+      "char": "白",
+      "strokes": 5,
+      "frequency": 196
+    },
+    {
+      "char": "七",
+      "strokes": 2,
+      "frequency": 199
+    },
+    {
+      "char": "円",
+      "strokes": 4,
+      "frequency": 208
+    },
+    {
+      "char": "電",
+      "strokes": 13,
+      "frequency": 214
+    },
+    {
+      "char": "父",
+      "strokes": 4,
+      "frequency": 227
+    },
+    {
+      "char": "北",
+      "strokes": 5,
+      "frequency": 232
+    },
+    {
+      "char": "車",
+      "strokes": 7,
+      "frequency": 234
+    },
+    {
+      "char": "母",
+      "strokes": 5,
+      "frequency": 238
+    },
+    {
+      "char": "半",
+      "strokes": 5,
+      "frequency": 250
+    },
+    {
+      "char": "百",
+      "strokes": 6,
+      "frequency": 279
+    },
+    {
+      "char": "土",
+      "strokes": 3,
+      "frequency": 284
+    },
+    {
+      "char": "西",
+      "strokes": 6,
+      "frequency": 291
+    },
+    {
+      "char": "読",
+      "strokes": 14,
+      "frequency": 306
+    },
+    {
+      "char": "千",
+      "strokes": 3,
+      "frequency": 307
+    },
+    {
+      "char": "校",
+      "strokes": 10,
+      "frequency": 316
+    },
+    {
+      "char": "右",
+      "strokes": 5,
+      "frequency": 341
+    },
+    {
+      "char": "南",
+      "strokes": 9,
+      "frequency": 378
+    },
+    {
+      "char": "左",
+      "strokes": 5,
+      "frequency": 384
+    },
+    {
+      "char": "友",
+      "strokes": 4,
+      "frequency": 458
+    },
+    {
+      "char": "火",
+      "strokes": 4,
+      "frequency": 465
+    },
+    {
+      "char": "毎",
+      "strokes": 6,
+      "frequency": 669
+    },
+    {
+      "char": "雨",
+      "strokes": 8,
+      "frequency": 798
+    },
+    {
+      "char": "休",
+      "strokes": 6,
+      "frequency": 811
+    },
+    {
+      "char": "午",
+      "strokes": 4,
+      "frequency": 873
+    }
+  ],
+  "grammar": []
+}

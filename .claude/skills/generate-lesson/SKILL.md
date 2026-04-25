@@ -19,6 +19,8 @@ Bevor du überhaupt Content schreibst:
 
 1. **Lies [learnings.md](learnings.md).** Dort steht, was in vorherigen Runs geklappt hat und was nicht. Wende diese Regeln strikt an.
 2. **Lies [improve-jpl/SKILL.md](../improve-jpl/SKILL.md).** Die Produkt-Vision (Anfänger-First mit Mayuko-Fachreview, JLPT-Leitprinzip §1.5, Nicht-Ziele) gilt uneingeschränkt.
+   - **Coverage prüfen** vor Themen-Wahl: `python .claude/skills/generate-lesson/pipeline.py coverage 5 --show-missing 30` zeigt fehlende N5-Vokabeln/Kanji. Themen so wählen, dass möglichst viele fehlende Items abgedeckt werden, statt schon vorhandene zu doppeln.
+   - **Validator ist STRENG** (Mayuko-Direktive 2026-04-25): jedes Vokabel-Wort muss in `sources/jlpt_n5_canonical.json` stehen, sonst ERROR. Eigennamen: `data.is_proper_noun=true`. Bewusste Ausnahmen: `data.is_canonical_override=true` + `data.source_note="…"`. Kanji im `example_sentence_japanese` müssen im N5-Kanji-Set stehen — sonst Hiragana schreiben.
 3. **Docker-Stack muss laufen — zweistufiger Check:**
    - **a) Docker-Desktop-Prozess:** `docker compose ps db` schlägt mit "cannot find the file specified" / "docker daemon not running" fehl, wenn Docker Desktop nicht läuft. In dem Fall: `Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe"` (PowerShell) — Start dauert 30–60 s.
    - **b) DB-Container:** Danach `docker compose up db -d` und mit `docker exec postgres_db pg_isready -U app_user -d japanese_learning` warten, bis "accepting connections" erscheint.
