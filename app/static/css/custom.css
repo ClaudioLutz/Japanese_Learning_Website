@@ -2155,15 +2155,72 @@ button[onclick*="moveContentInPage"]:active {
     font-weight: 600 !important;
 }
 
-/* Target rich text content headings on desktop */
-.rich-text-content h1,
-.rich-text-content h2,
-.rich-text-content h3,
-.rich-text-content h4 {
-    font-size: 1.3rem !important;
-    line-height: 1.4 !important;
-    margin-bottom: 1rem !important;
+/* Markdown-Hierarchie in LessonContent: visuelle Differenzierung */
+.rich-text-content h2 {
+    font-size: 1.5rem !important;
+    line-height: 1.3 !important;
+    margin: 1.5rem 0 0.75rem !important;
+    font-weight: 700 !important;
+    color: var(--primary-color, #1e3a8a) !important;
+    border-bottom: 2px solid rgba(30, 58, 138, 0.15);
+    padding-bottom: 0.35rem;
+}
+.rich-text-content h3 {
+    font-size: 1.2rem !important;
+    line-height: 1.35 !important;
+    margin: 1.25rem 0 0.5rem !important;
     font-weight: 600 !important;
+    color: #334155 !important;
+}
+.rich-text-content h4 {
+    font-size: 1.05rem !important;
+    line-height: 1.4 !important;
+    margin: 1rem 0 0.4rem !important;
+    font-weight: 600 !important;
+    color: #475569 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.rich-text-content strong, .rich-text-content b {
+    color: #0f172a;
+    font-weight: 700;
+}
+.rich-text-content em, .rich-text-content i {
+    color: #475569;
+    font-style: italic;
+}
+.rich-text-content ul, .rich-text-content ol {
+    margin: 0.5rem 0 1rem 1.5rem;
+    padding-left: 0.5rem;
+}
+.rich-text-content ul li, .rich-text-content ol li {
+    margin: 0.35rem 0;
+    line-height: 1.6;
+}
+.rich-text-content blockquote {
+    border-left: 4px solid #fbbf24;
+    background: rgba(251, 191, 36, 0.08);
+    padding: 0.6rem 0.9rem;
+    margin: 0.9rem 0;
+    border-radius: 0 6px 6px 0;
+    font-style: italic;
+    color: #334155;
+}
+.rich-text-content code {
+    background: #f1f5f9;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.92em;
+    color: #be123c;
+}
+.rich-text-content p {
+    margin: 0.6rem 0 0.9rem;
+}
+.rich-text-content hr {
+    border: none;
+    border-top: 1px dashed #cbd5e1;
+    margin: 1.25rem 0;
 }
 
 /* Target text content container headings on desktop */

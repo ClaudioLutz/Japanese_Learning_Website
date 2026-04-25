@@ -264,6 +264,34 @@ def create_app():
         except (ValueError, TypeError):
             return None
 
+    # Custom Jinja2 Filter: Markdown → safe HTML (fuer LessonContent.content_text)
+    # Erlaubt Headings/Bold/Italic/Listen/Blockquote/Code → visuelle Hierarchie
+    # auf den Lesson-Pages. Bestehende Plain-Text-Inhalte bleiben kompatibel
+    # (Markdown ist Obermenge, \n\n bleibt Absatz).
+    import markdown as _md
+    import bleach as _bleach
+    _MD_ALLOWED_TAGS = {
+        'h2', 'h3', 'h4', 'p', 'br', 'strong', 'em', 'b', 'i',
+        'ul', 'ol', 'li', 'blockquote', 'code', 'pre', 'hr',
+        'a', 'span',
+    }
+    _MD_ALLOWED_ATTRS = {'a': ['href', 'title', 'rel'], 'span': ['class']}
+    _MD_INSTANCE = _md.Markdown(extensions=['extra', 'sane_lists', 'nl2br'])
+
+    @app.template_filter('markdown_safe')
+    def markdown_safe_filter(text):
+        if not text:
+            return ''
+        _MD_INSTANCE.reset()
+        html = _MD_INSTANCE.convert(text)
+        cleaned = _bleach.clean(
+            html, tags=_MD_ALLOWED_TAGS, attributes=_MD_ALLOWED_ATTRS,
+            strip=True,
+        )
+        # Externe Links absichern
+        cleaned = _bleach.linkify(cleaned)
+        return Markup(cleaned)
+
     # Flask-Admin fuer Standard-CRUD registrieren
     from app.admin_views import init_admin
     init_admin(app, db.session)

@@ -86,7 +86,12 @@ Verletzung ⇒ sofortiger Abbruch, keine Insertion:
 - **`created_by_ai = True`** für alle generierten Kana/Kanji/Vocabulary/Grammar-Einträge. `LessonContent.generated_by_ai = True` ebenfalls.
 - **`status = 'approved'`** direkt (User-Entscheidung 2026-04-20).
 - **Duplicate-Check**: Vor jedem INSERT in Kana/Kanji/Vocabulary/Grammar prüfen ob `character`/`word`/`title` schon existiert → bestehende ID wiederverwenden, NICHT neue Zeile erzeugen.
-- **KEIN HTML in `content_text`** (content_type `text`). Das Template [lesson_view.html:683](../../app/templates/lesson_view.html#L683) rendert mit `| nl2br`, nicht `| safe` — alle Tags erscheinen als Text. Nutze **Plaintext mit `\n\n` für Absätze**, keine `<p>`, `<b>`, `<ul>` usw. Für Hervorhebung: Anführungszeichen 「…」 (japanisch) oder kursiv via Markdown-Konvention im Plaintext.
+- **Markdown JA — KEIN roher HTML in `content_text`** (content_type `text`). Seit 2026-04-25 rendert das Template [lesson_view.html:683/916](../../app/templates/lesson_view.html#L683) mit dem `| markdown_safe`-Filter ([app/__init__.py](../../app/__init__.py)) — Markdown wird zu Bleach-gesäubertem HTML. **Pflicht: visuelle Hierarchie pro Text-Page**, sonst sehen alle Sektionen gleich aus.
+  - **Erlaubte Markdown-Bausteine:** `## Headline H2` (Sektions-Titel), `### Headline H3` (Unter-Sektion), `**fett**` (Schlüsselwörter und JP-Begriffe wie `**「ちち」 (chichi)**`), `*kursiv*` (Romaji-Hinweise), `- Liste` und `1. Liste`, `> Blockquote` (Merksatz/Beispiel), `` `code` `` (Strukturen wie `` `[Nomen] + です` ``), `---` (Trennlinie zwischen 2 Themenblöcken), `[Linktext](https://…)`.
+  - **Pflicht-Mindestformatierung pro `content_text`-Block:** mind. **1× H2 oder H3** (Sektionstitel) + mind. **2× `**bold**`** für Schlüsselbegriffe + mind. **1× Liste oder Blockquote**, wenn Absatz Aufzählung/Merksatz enthält. Reine Prosa ohne Hervorhebung ist verboten — sieht "alles gleich" aus (User-Feedback 2026-04-25).
+  - **NICHT erlaubt:** roher HTML (`<p>`, `<div>`, `<style>`, `<script>`, `onclick=`). Bleach strippt diese — verschwendete Zeichen.
+  - **Absätze trennen:** Leerzeile (`\n\n`) wie bisher.
+  - Das `| markdown_safe`-Rendering nutzt die `nl2br`-Markdown-Extension, also bleiben einfache Zeilenumbrüche im Dialog-Text-Block erhalten (Konversation rendert wie zuvor).
 - **Rōmaji ist PFLICHT** — an drei Stellen:
   1. `Vocabulary.romaji` (neue Spalte seit Migration `a3f5c2d1b8e9`): Hepburn-Transkription des Wortes, z.B. `word="家族", reading="かぞく", romaji="kazoku"`.
   2. `Grammar.romaji` (bestand schon): Struktur in Rōmaji, z.B. `"[noun] + wo + kudasai"`.
@@ -125,7 +130,7 @@ Lesson (title, description, jlpt_level→difficulty_level 1-5, instruction_langu
 │      je Eintrag (jeweils JP + Romaji + DE-Übersetzung).
 │
 ├─ LessonPage 5: "Dialog / Konversation" (page_type='normal') — PFLICHT
-│   └─ LessonContent: text — realistischer Mini-Dialog (6–10 Zeilen).
+│   ├─ LessonContent: text — realistischer Mini-Dialog (6–10 Zeilen).
 │      **KEIN Einleitungs-Absatz vor dem Dialog.** Der `content_text` beginnt
 │      unmittelbar mit der ersten Sprecher-Zeile (`Tanaka: ...`), wie bei
 │      MNN L1–L5 DE (Lessons 137–141). Szenario/Setting gehören in den
@@ -146,6 +151,15 @@ Lesson (title, description, jlpt_level→difficulty_level 1-5, instruction_langu
 │      Wenn die Lektion thematisch einem MNN-Kapitel entspricht: Dialog-Struktur
 │      orientiert sich an der MNN-`conversation`-Vorlage aus `scripts/mnn_data/`,
 │      aber Text ist neu formuliert (andere Namen, leichte Variation). Siehe §2a.
+│   └─ LessonContent mit QuizQuestions ×3-5 — **Verständnisfragen zum Dialog**
+│      (PFLICHT seit 2026-04-25, User-Direktive). Direkt nach dem Dialog-Text
+│      auf derselben Page als zweites LessonContent. Page-Type bleibt 'normal',
+│      aber das zweite Element ist ein interaktives Quiz. Fragen prüfen
+│      Hörverständnis: Wer sagt was, wo passiert es, was ist die Antwort von X?
+│      Mix aus multiple_choice + true_false. Mind. eine Frage pro 2 Dialog-
+│      Zeilen. Distraktoren aus dem Dialog selbst (z.B. andere Person/Ort/Zahl).
+│      Diese Verständnisfragen zählen MIT in den 10-18-Quiz-Budget der Lektion;
+│      die Übung-Page (Page 6) bleibt das Haupt-Quiz mit dem Rest.
 │
 ├─ LessonPage 6: "Übung" (page_type='quiz_carousel')
 │   └─ LessonContent mit QuizQuestions ×10-18 — Mix aus
@@ -278,6 +292,7 @@ Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
 
 *Matching-Konvention in dieser Codebase* (exakt wie Template [lesson_view.html:744-752](../../app/templates/lesson_view.html#L744) erwartet):
 - **`option_text` = linke Seite** (Prompt, z.B. das japanische Wort mit Rōmaji in Klammern — NICHT mit `|`-Trenner).
+  - **Romaji-Pflicht im linken Prompt**: jede `option_text`-Zelle, die JP-Zeichen enthält, MUSS Romaji in Klammern haben — auch bei Zahlen-Zählern wie `一人 (hitori)`, `何人 (nan-nin)`. Sonst kann der Anfänger den Prompt nicht lesen, der Dropdown-Match ist Glücksspiel. (Lesson 144 Z.3513-Bug 2026-04-25.)
 - **`feedback` = rechte Seite** (die Antwort, die im Dropdown auswählbar erscheint, z.B. die deutsche Übersetzung).
 - **`is_correct = true` für alle Optionen** — das Frontend shuffelt die `feedback`-Werte und der User muss jeden `option_text` dem richtigen `feedback`-Wert zuordnen.
 

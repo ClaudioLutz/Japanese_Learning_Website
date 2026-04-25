@@ -26,3 +26,5 @@ Flask-Limiter>=3.8
 flask-talisman>=1.1
 streamlit>=1.56
 fsrs>=6.3.0,<7.0
+markdown>=3.10
+bleach>=6.3

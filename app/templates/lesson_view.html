@@ -680,7 +680,7 @@
                                             </div>
                                             {% elif content.content_type == 'text' %}
                                             <div class="conv-text-section" data-content-id="{{ content.id }}">
-                                                <div class="rich-text-content">{{ content.content_text | nl2br }}</div>
+                                                <div class="rich-text-content">{{ content.content_text | markdown_safe }}</div>
                                                 {% if current_user.is_authenticated %}
                                                 <div class="text-end mt-2">
                                                     <button class="btn btn-sm btn-outline-success mark-complete-btn"
@@ -913,7 +913,7 @@
                                                     {% if content.content_type == 'text' %}
                                                     <div class="text-content-container">
                                                         <div class="rich-text-content">
-                                                            {{ content.content_text | nl2br }}
+                                                            {{ content.content_text | markdown_safe }}
                                                         </div>
                                                     </div>
                                                     {% else %}

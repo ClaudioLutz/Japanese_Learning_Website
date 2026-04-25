@@ -51,9 +51,16 @@ REQUIRED_LESSON_FIELDS = ["title", "description", "jlpt_level", "topic", "pages"
 REQUIRED_VOCAB_FIELDS = ["word", "reading", "romaji", "meaning", "meaning_de", "jlpt_level"]
 REQUIRED_GRAMMAR_FIELDS = ["title", "explanation", "structure", "romaji", "jlpt_level"]
 
-# HTML-Tags in content_text sind verboten: lesson_view.html:683 nutzt `| nl2br`,
-# was HTML escaped. Nur Plaintext mit \n\n fuer Absaetze.
+# Roher HTML in content_text ist verboten (auch wenn Bleach in markdown_safe
+# strippt — Verschwendung). Markdown-Bausteine sind erlaubt: ## Headlines, **bold**,
+# *italic*, - Listen, > Blockquote, `code`, --- hr.
 HTML_TAG_RE = __import__("re").compile(r"<\s*/?\s*[a-zA-Z][^>]*>")
+# Heuristik fuer Markdown-Hierarchie (User-Direktive 2026-04-25: jeder text-Block
+# braucht visuelle Differenzierung, sonst sieht alles gleich aus).
+MD_HEADING_RE = __import__("re").compile(r"^#{2,4}\s+\S", __import__("re").MULTILINE)
+MD_BOLD_RE = __import__("re").compile(r"\*\*[^*\n]+\*\*")
+MD_LIST_RE = __import__("re").compile(r"^\s*(?:[-*]|\d+\.)\s+\S", __import__("re").MULTILINE)
+MD_BLOCKQUOTE_RE = __import__("re").compile(r"^>\s+\S", __import__("re").MULTILINE)
 
 # Kanji-Range fuer Tokenisierung von Beispielsaetzen
 KANJI_RE = __import__("re").compile(r"[一-鿿]")
@@ -146,17 +153,39 @@ def validate_draft(draft: dict) -> list[str]:
                 errors.append(f"Page {p_idx}.{c_idx}: content_type={ct} nicht erlaubt")
                 continue
 
-            # HTML-Tag-Check fuer text-Content: lesson_view.html nutzt | nl2br
+            # HTML-Tag-Check fuer text-Content: roher HTML bleibt verboten
+            # (markdown_safe nutzt Bleach-Whitelist, alles andere wird gestrippt).
             if ct == "text":
                 data = item.get("data", {})
                 ctext = data.get("content_text", "")
                 tags = HTML_TAG_RE.findall(ctext)
                 if tags:
                     errors.append(
-                        f"Page {p_idx}.{c_idx} text: HTML-Tags verboten "
-                        f"(lesson_view.html nutzt | nl2br → Tags werden escaped). "
-                        f"Gefunden: {tags[:3]}. Nutze Plaintext mit \\n\\n fuer Absaetze."
+                        f"Page {p_idx}.{c_idx} text: roher HTML verboten "
+                        f"(markdown_safe rendert Markdown — `<p>`/`<div>`/`<script>` werden gestrippt). "
+                        f"Gefunden: {tags[:3]}. Nutze Markdown: ## Headline, **bold**, - Liste, > Quote."
                     )
+                # Markdown-Hierarchie-Pflicht (User-Direktive 2026-04-25):
+                # Skip Quiz-Intro (sehr kurz) und Dialog-Block (Speaker: ... Format).
+                is_dialog = "Tanaka:" in ctext or "Lisa:" in ctext or "Speaker:" in ctext.replace(":", ":")
+                speakers = sum(1 for line in ctext.split("\n") if line.strip() and ":" in line.split()[0] if line.strip())
+                # Heuristik: wenn >=4 Sprecher-Zeilen, ist es ein Dialog → keine Heading-Pflicht
+                if not is_dialog and len(ctext) >= 200:
+                    has_heading = bool(MD_HEADING_RE.search(ctext))
+                    bold_count = len(MD_BOLD_RE.findall(ctext))
+                    has_list_or_quote = bool(MD_LIST_RE.search(ctext) or MD_BLOCKQUOTE_RE.search(ctext))
+                    missing = []
+                    if not has_heading:
+                        missing.append("mind. 1× ## Headline")
+                    if bold_count < 2:
+                        missing.append(f"mind. 2× **bold** (gefunden: {bold_count})")
+                    if not has_list_or_quote:
+                        missing.append("mind. 1× Liste (- ...) oder Blockquote (> ...)")
+                    if missing:
+                        errors.append(
+                            f"Page {p_idx}.{c_idx} text: Markdown-Hierarchie unvollstaendig — {', '.join(missing)}. "
+                            f"Reine Prosa-Bloecke sind verboten (User-Direktive 2026-04-25: 'sieht alles gleich aus')."
+                        )
 
             if ct == "vocabulary":
                 data = item.get("data", {})
