@@ -29,6 +29,14 @@ Mayuko (Lehrerin) hat als paedagogische Anweisung gegeben: **„Lektionen nach J
 - Marketing: "N5 Komplett" als verkaufbares Anker-Produkt (klares Versprechen statt "lerne Japanisch"). Passt zur Preisempfehlung CHF 14.90.
 - Validator (`generate-lesson`): jeder Beispielsatz und jede Vokabel MUSS gegen `jlpt_level` geprüft werden. N5-Lektion mit N4-Vokabel = Validierungsfehler, keine Warnung.
 
+### Mayukos konkrete Antworten 2026-04-25 (HARTE REGELN)
+
+Auf direkte Rückfragen hat Mayuko **drei verbindliche Regeln** festgelegt:
+
+1. **N5 zuerst komplett, bevor N4 begonnen wird.** Keine N4-Lektionen, solange N5 nicht 100% abgedeckt ist. Backlog bleibt auf N5 bis Coverage-Dashboard 100% zeigt.
+2. **Offizielle JLPT-Wortlisten als Quelle**, nicht Minna no Nihongo. MNN ist als Hauptquelle abgesetzt; kann ergänzend dienen, aber JLPT entscheidet über Scope. → `sources/jlpt-n5-vocab.md` gegen offizielle JLPT-N5-Liste verifizieren/ersetzen.
+3. **Strenger Niveau-Mix-Verbot.** Eine N5-Lektion enthält **null** N4+-Wörter. Keine „Bonus"-Vokabeln, kein „nur dieses eine Mal". Validator muss bei Fund eines Cross-Level-Wortes mit ERROR (nicht Warning) abbrechen.
+
 **Memory:** [project_jlpt_leitprinzip.md](project_jlpt_leitprinzip.md) im User-Memory hat den vollen Kontext.
 
 ## 2. Das Produktversprechen

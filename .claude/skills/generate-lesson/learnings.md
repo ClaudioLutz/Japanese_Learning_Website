@@ -26,7 +26,11 @@ Selbstverbesserndes Log. Wird vor jedem Run gelesen, nach jedem Run angehängt.
 
 1. **Anfänger-First (Claudio dogfoodet):** Vor jeder Design-Entscheidung: "Würde Claudio bzw. ein deutschsprachiger Anfänger das bemerken, verstehen, wiederkommen?" Wenn nein → zurückstellen.
 1b. **Mayuko-Fachreview:** Mayuko (Japanisch-Lehrerin, Native Speaker, NICHT Lernerin) prüft fachliche Korrektheit. Bei JP-Inhalt: "Würde sie das freigeben?" Bei Zweifel zeigen, bevor live.
-1c. **JLPT-Leitprinzip (Mayuko-Direktive 2026-04-25):** Lektionen strikt nach JLPT-Levels. Niveau-Disziplin (eine N5-Lektion enthält NUR N5-Inhalte), Vollständigkeit pro Level, offizielle JLPT-Wortlisten als Quelle. Siehe [improve-jpl §1.5](../improve-jpl/SKILL.md).
+1c. **JLPT-Leitprinzip (Mayuko-Direktive 2026-04-25, präzisiert mit harten Regeln):**
+   - **N5 zuerst komplett, bevor N4** — keine N4-Lektionen, solange N5 < 100% Coverage.
+   - **Offizielle JLPT-Wortlisten als Quelle**, nicht Minna no Nihongo. MNN ergänzend OK, JLPT entscheidet über Scope.
+   - **STRENG: kein Niveau-Mix.** N5-Lektion enthält null N4+-Wörter. Validator MUSS bei Cross-Level-Wort mit ERROR abbrechen, nicht warnen. Keine „Bonus"-Vokabeln, kein „nur dieses Mal".
+   - Siehe [improve-jpl §1.5](../improve-jpl/SKILL.md) und Memory `project_jlpt_leitprinzip.md`.
 2. **Anfänger-Only:** N5 und N4. N3+ ist aktuell aus-scope.
 3. **Keine `fill_in_the_blank` Quiz-Typen.** Niemals. Auch nicht "nur diesmal".
 4. **Instruction-Language default `german`.** Sprache der primären Zielgruppe.
