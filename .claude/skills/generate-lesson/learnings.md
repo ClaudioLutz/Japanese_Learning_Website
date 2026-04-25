@@ -24,10 +24,12 @@ Selbstverbesserndes Log. Wird vor jedem Run gelesen, nach jedem Run angehängt.
 
 ## Initial-Regeln (vor erstem Run, aus improve-jpl + CLAUDE.md abgeleitet)
 
-1. **Mayuko-First:** Vor jeder Design-Entscheidung: "Würde Mayuko das bemerken, verstehen, wiederkommen?" Wenn nein → zurückstellen.
+1. **Anfänger-First (Claudio dogfoodet):** Vor jeder Design-Entscheidung: "Würde Claudio bzw. ein deutschsprachiger Anfänger das bemerken, verstehen, wiederkommen?" Wenn nein → zurückstellen.
+1b. **Mayuko-Fachreview:** Mayuko (Japanisch-Lehrerin, Native Speaker, NICHT Lernerin) prüft fachliche Korrektheit. Bei JP-Inhalt: "Würde sie das freigeben?" Bei Zweifel zeigen, bevor live.
+1c. **JLPT-Leitprinzip (Mayuko-Direktive 2026-04-25):** Lektionen strikt nach JLPT-Levels. Niveau-Disziplin (eine N5-Lektion enthält NUR N5-Inhalte), Vollständigkeit pro Level, offizielle JLPT-Wortlisten als Quelle. Siehe [improve-jpl §1.5](../improve-jpl/SKILL.md).
 2. **Anfänger-Only:** N5 und N4. N3+ ist aktuell aus-scope.
 3. **Keine `fill_in_the_blank` Quiz-Typen.** Niemals. Auch nicht "nur diesmal".
-4. **Instruction-Language default `german`.** Mayukos Sprache.
+4. **Instruction-Language default `german`.** Sprache der primären Zielgruppe.
 5. **Beispielsätze dürfen KEINE Kanji/Vokabeln über dem Lektions-Level nutzen.** Wenn unvermeidbar: Hiragana schreiben.
 6. **Umlaute echt, nicht ASCII-Fallback.** Schüler, nicht Schueler.
 7. **Duplicate-Check vor Kana/Kanji/Vocabulary/Grammar-Insert.** Bestehende ID wiederverwenden.
@@ -84,7 +86,7 @@ CSS-Grid-Stacking: `slideshow-stage` auf `display:grid`, jede `slideshow-slide` 
 
 ### Aktuelle Regeln (kumulativ, wichtigste zuerst)
 
-1. **Mayuko-First** vor jeder Design-Entscheidung.
+1. **Anfänger-First (Claudio dogfoodet)** + **Mayuko-Fachreview** (Lehrerin gibt JP-Inhalt frei) + **JLPT-Leitprinzip** (Niveau-Disziplin, Vollständigkeit, offizielle Listen).
 2. **Anfänger-Only (N5/N4)** — N3+ out-of-scope.
 3. **Keine `fill_in_the_blank` Quiz-Typen.**
 4. **Instruction-Language default `german`.**
@@ -205,7 +207,7 @@ CSS-Grid-Stacking: `slideshow-stage` auf `display:grid`, jede `slideshow-slide` 
 
 ### Aktuelle Regeln (kumulativ, wichtigste zuerst)
 
-1. **Mayuko-First** vor jeder Design-Entscheidung.
+1. **Anfänger-First (Claudio dogfoodet)** + **Mayuko-Fachreview** (Lehrerin gibt JP-Inhalt frei) + **JLPT-Leitprinzip** (Niveau-Disziplin, Vollständigkeit, offizielle Listen).
 2. **Anfänger-Only (N5/N4)** — N3+ out-of-scope.
 3. **Keine `fill_in_the_blank` Quiz-Typen.**
 4. **Instruction-Language default `german`.**

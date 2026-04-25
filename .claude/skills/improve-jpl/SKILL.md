@@ -9,11 +9,27 @@ Dieser Skill ist das Produkt-Gehirn der Seite. CLAUDE.md liefert das Tech-Wissen
 
 ## 1. Warum diese Seite existiert (Hierarchie der Zwecke)
 
-1. **Mayuko-Lackmustest** — Primärer Zweck ist, Claudios Frau Mayuko beim Lernen zu unterstützen. Sie ist die wichtigste Nutzerin. Vor jedem Vorschlag: "Würde Mayuko das bemerken, verstehen, wiederkommen?"
-2. **Claudio dogfoodet** — Er lernt selbst Japanisch auf der Seite. Eigenes Lernerlebnis ist ein sekundäres Signal für Qualität.
+1. **Claudio dogfoodet** — Primärer in-house Nutzer. Claudio lernt selbst Japanisch auf der Seite. Sein Lernerlebnis = wichtigstes Signal für Qualität. Vor jedem Vorschlag: "Würde Claudio das bemerken, verstehen, wiederkommen?"
+2. **Mayuko ist Native-Speaker- & Pädagogik-Reviewerin** — Mayuko ist Claudios Frau und **japanische Lehrerin** (nicht Lernerin!). Sie ist die fachliche Autorität für Korrektheit (JP-Sätze, Grammatik, natürlicher Sprachgebrauch, pädagogische Reihenfolge). Vor neuen Inhalten: "Würde Mayuko das fachlich freigeben?" Bei Zweifel: Mayuko zeigen, bevor live.
 3. **Öffentliches Produkt** — Die Seite soll für deutschsprachige Anfänger eine echte Alternative zu Duolingo/WaniKani/Bunpro werden.
 
-Reihenfolge zählt: Wenn eine Idee (3) dient aber (1) nicht, zurückstellen.
+Reihenfolge zählt: Wenn eine Idee (3) dient aber (1) nicht, zurückstellen. Wenn (1) gefällt aber (2) sagt "fachlich falsch", zurück zum Reissbrett.
+
+## 1.5 Leitprinzip — Inhalt nach JLPT (Mayuko-Direktive 2026-04-25)
+
+Mayuko (Lehrerin) hat als paedagogische Anweisung gegeben: **„Lektionen nach JLPT machen."** Das ist kein Vorschlag, sondern strategische Richtungsgebung. Bedeutet **drei Dinge** gleichzeitig:
+
+1. **Niveau-Disziplin**: Eine N5-Lektion enthält **nur** N5-Vokabular, N5-Kanji, N5-Grammatik. Kein einziges N4-Wort schummelt sich rein. Ein Lerner muss sich auf die Stufe verlassen können.
+2. **Vollständigkeit pro Level**: Damit die Seite jemanden auf JLPT vorbereitet, muss das ganze Level abgedeckt sein. N5 = ~100 Kanji, ~800 Vokabeln, ~80 Grammatik-Punkte. Aktuell hat die DB ~10 Lektionen — N5 ist weit von „komplett" entfernt.
+3. **Offizielle JLPT-Listen als Source of Truth**: Nicht Bauch-Wortauswahl, sondern offizielle JLPT-Wortlisten (siehe `.claude/skills/generate-lesson/sources/jlpt-n5-vocab.md`).
+
+**Konsequenzen für Empfehlungen / Roadmap:**
+- Inhalts-Roadmap: Erst N5 sättigen, dann N4. Keine N3+ Lektionen, solange N5 < 80% Coverage.
+- UI: JLPT-Lernpfad als Primär-Achse, nicht thematische Sammlung. Dashboard "N5-Coverage: X% / Y% / Z%".
+- Marketing: "N5 Komplett" als verkaufbares Anker-Produkt (klares Versprechen statt "lerne Japanisch"). Passt zur Preisempfehlung CHF 14.90.
+- Validator (`generate-lesson`): jeder Beispielsatz und jede Vokabel MUSS gegen `jlpt_level` geprüft werden. N5-Lektion mit N4-Vokabel = Validierungsfehler, keine Warnung.
+
+**Memory:** [project_jlpt_leitprinzip.md](project_jlpt_leitprinzip.md) im User-Memory hat den vollen Kontext.
 
 ## 2. Das Produktversprechen
 
@@ -29,7 +45,8 @@ Reihenfolge zählt: Wenn eine Idee (3) dient aber (1) nicht, zurückstellen.
 - Kein `fill_in_the_blank` (siehe CLAUDE.md — `multiple_choice` / `true_false` / `matching` only)
 - Keine JLPT-N2/N1-Features, solange die Anfänger-Basis nicht rund ist
 - Keine neuen Frameworks/Abstraktionen "auf Vorrat"
-- Keine Features, die nur für Claudio Sinn ergeben, aber nicht für Mayuko oder einen fremden Anfänger
+- Keine Features, die nur für Claudio Sinn ergeben, aber nicht für einen fremden deutschsprachigen Anfänger
+- Keine Inhalte, die Mayuko (japanische Lehrerin) als fachlich falsch oder unnatürlich markieren würde
 
 ## 3. Harte Blocker für den Live-Gang (Reihenfolge)
 
@@ -45,7 +62,7 @@ Claudio will: *alles was besteht verbessern, UI verbessern, Bugs fixen, ersten f
 
 **Grosse Dateien sind Warnsignale, keine Normalität:**
 - `app/routes.py` → **4'106 Zeilen**. Gott-Datei. Nichts Neues reinstopfen. Wenn ein Patch hier grösser als ~30 Zeilen wird, ist das der Moment, einen Blueprint oder ein Service-Modul abzuspalten.
-- `app/templates/lesson_view.html` → **3'602 Zeilen**. Genau der Ort, wo Mayuko tatsächlich lernt. Änderungen hier brauchen besondere Sorgfalt; grössere Additionen in Partials auslagern, analog zum bereits modularisierten `manage_lessons.html`.
+- `app/templates/lesson_view.html` → **3'602 Zeilen**. Genau der Ort, wo Claudio tatsächlich lernt (und wo künftige zahlende Nutzer lernen). Änderungen hier brauchen besondere Sorgfalt; grössere Additionen in Partials auslagern, analog zum bereits modularisierten `manage_lessons.html`.
 - `app/templates/lessons.html` → 845 Zeilen. Beobachten.
 - `app/models.py` → 877 Zeilen. Akzeptabel, aber bei neuen Entities prüfen, ob eigenes Modul-File sinnvoll ist.
 
@@ -59,16 +76,16 @@ Claudio will: *alles was besteht verbessern, UI verbessern, Bugs fixen, ersten f
 - Nach jeder `custom.css`-Änderung: Browser-Konsole auf `[Deck]`-Meldungen prüfen, visuell bestätigen, dass nur eine Karte sichtbar ist.
 
 **DB-Sync-Reihenfolge:**
-- IMMER Cloud→Lokal vor Lokal→Cloud. Mayuko/Admin editiert live. Blindes Push überschreibt Produktionsänderungen. Siehe Memory + CLAUDE.md.
+- IMMER Cloud→Lokal vor Lokal→Cloud. Admin (Claudio bzw. Mayuko-Review) editiert live. Blindes Push überschreibt Produktionsänderungen. Siehe Memory + CLAUDE.md.
 
 ## 5. Woran "besser" gemessen wird
 
 Kein A/B-Testing und keine Analytics-Obsession. Die Signale:
 
-- **Mayuko kommt ohne Aufforderung wieder.** Wichtigster Indikator.
+- **Claudio kommt ohne Aufforderung wieder** und merkt echten Lernfortschritt (Retention ≠ Klickspass). Wichtigster Indikator.
+- **Mayuko's fachliches Urteil** — sie würde den Inhalt einer Schülerin guten Gewissens empfehlen.
 - **Erster fremder Nutzer** registriert sich und loggt am Folgetag wieder ein.
 - **Payrexx KYC durch** → erste echte CHF-Zahlung möglich.
-- **Claudio selbst** merkt echten Lernfortschritt (Retention ≠ Klickspass).
 - **Hygiene:** `git status` sauber, Tests grün, Coverage nicht gefallen, Inkognito-Startseite fehlerfrei.
 
 ## 6. Entscheidungsheuristik (wie dieser Skill im Dialog hilft)
@@ -76,7 +93,7 @@ Kein A/B-Testing und keine Analytics-Obsession. Die Signale:
 | Claudio fragt / sagt | Reaktion |
 |----------------------|----------|
 | "Was soll ich als nächstes machen?" | Blocker aus §3 in Reihenfolge durchgehen, bis Payrexx live ist. |
-| "Ich hätte eine Idee: [Feature X]" | Zwei Fragen: (a) Verbessert das Bestehendes, oder baut es Neues? (b) Würde Mayuko es bemerken? Beide "nein" → zurückstellen. |
+| "Ich hätte eine Idee: [Feature X]" | Drei Fragen: (a) Verbessert das Bestehendes oder baut es Neues? (b) Würde Claudio (oder ein fremder Anfänger) es bemerken/nutzen? (c) Wenn es JP-Inhalt betrifft: würde Mayuko (Lehrerin) es fachlich freigeben? |
 | "Kannst du die UI reviewen?" | Auf Sprach-Konsistenz, Mobile-Breakpoints, Dark-Mode-Konsistenz, Umlaut-Korrektheit achten. Nicht nur Desktop. |
 | "Es gibt einen Bug" | In dieser Reihenfolge ausschliessen: (1) Deck-Karussell-CSS, (2) DB-Sync-Reihenfolge, (3) Cloud-Run-Cold-Start, (4) Umlaut/Charset, (5) routes.py-Monolith. |
 | "Sollen wir das refactoren?" | Nur wenn der Ort sowieso gerade berührt wird. Keine Refactor-Marathons. Grosse Dateien aus §4 sind legitime Ziele bei Gelegenheit. |

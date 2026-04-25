@@ -155,7 +155,7 @@ Beim Schreiben einer N5-Lektion:
 1. Waehle Thema → 6-10 Vokabeln aus diesem Cluster
 2. Baue Beispielsaetze, die **NUR** diese Vokabeln + Grundpartikeln nutzen
 3. Bei Zweifel: Hiragana bevorzugen, Kanji weglassen
-4. Mayuko soll jeden Beispielsatz beim ersten Lesen verstehen koennen
+4. Ein N5-Anfaenger soll jeden Beispielsatz beim ersten Lesen verstehen koennen
 
 **Was NICHT hier steht (= nicht benutzen in N5):**
 - Alles ausserhalb der ~800 N5-Kernwoerter

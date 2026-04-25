@@ -7,7 +7,7 @@ description: Generiert eine vollständige Japanisch-Lektion (Lesson + LessonPage
 
 ## Auftrag
 
-Erstelle eine **komplette, sofort nutzbare Lektion** für Mayuko und andere deutschsprachige Anfänger. **Du schreibst den gesamten Text-Content selbst** (keine OpenAI/Gemini-Calls). Der Skill ist der Orchestrator: Er gibt dir Schema, Guardrails und die Persistierungs-/Verifikations-/Git-Schritte vor; du produzierst den japanischen Content als strukturiertes JSON.
+Erstelle eine **komplette, sofort nutzbare Lektion** für deutschsprachige Anfänger (inkl. Claudio selbst, der die Seite dogfoodet). **Du schreibst den gesamten Text-Content selbst** (keine OpenAI/Gemini-Calls). Der Skill ist der Orchestrator: Er gibt dir Schema, Guardrails und die Persistierungs-/Verifikations-/Git-Schritte vor; du produzierst den japanischen Content als strukturiertes JSON. Mayuko (Claudios Frau, japanische Lehrerin) prüft Inhalte fachlich — sie ist Reviewerin, nicht Lernerin.
 
 **Einzige Ausnahme: Bilder.** Für `thumbnail_url` und `Vocabulary.image_url` kannst du DALL-E per Script aufrufen (siehe §7).
 
@@ -18,7 +18,7 @@ Erstelle eine **komplette, sofort nutzbare Lektion** für Mayuko und andere deut
 Bevor du überhaupt Content schreibst:
 
 1. **Lies [learnings.md](learnings.md).** Dort steht, was in vorherigen Runs geklappt hat und was nicht. Wende diese Regeln strikt an.
-2. **Lies [improve-jpl/SKILL.md](../improve-jpl/SKILL.md).** Die Produkt-Vision (Mayuko-Lackmustest, Nicht-Ziele) gilt uneingeschränkt.
+2. **Lies [improve-jpl/SKILL.md](../improve-jpl/SKILL.md).** Die Produkt-Vision (Anfänger-First mit Mayuko-Fachreview, JLPT-Leitprinzip §1.5, Nicht-Ziele) gilt uneingeschränkt.
 3. **Docker-Stack muss laufen — zweistufiger Check:**
    - **a) Docker-Desktop-Prozess:** `docker compose ps db` schlägt mit "cannot find the file specified" / "docker daemon not running" fehl, wenn Docker Desktop nicht läuft. In dem Fall: `Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe"` (PowerShell) — Start dauert 30–60 s.
    - **b) DB-Container:** Danach `docker compose up db -d` und mit `docker exec postgres_db pg_isready -U app_user -d japanese_learning` warten, bis "accepting connections" erscheint.
@@ -69,7 +69,7 @@ Verletzung ⇒ sofortiger Abbruch, keine Insertion:
 - **Rōmaji NEBEN JEDEM japanischen Zeichen, das der Lerner nicht automatisch lesen kann — überall, ausnahmslos.** Jedes Auftreten von Kanji/Hiragana/Katakana in einem Text-Feld bekommt in derselben Zeile Rōmaji in Klammern `(romaji)`. Folgende Felder sind alle betroffen:
   - **`LessonContent.content_text`** (Einleitung, Grammatik-Erklärung, Dialog, Zusammenfassung): jedes JP-Wort/Phrase mit Rōmaji in Klammern. Beispiel: `Dort begrüßt dich das Personal mit 「いらっしゃいませ」 (irasshaimase, 'Willkommen')`. In jedem Satz neu, nicht nur beim ersten Vorkommen.
   - **`Grammar.title`**: wenn der Titel JP-Zeichen enthält (`〜をください (höfliche Bitte)`), muss Rōmaji dabei sein → `〜をください (~ wo kudasai — höfliche Bitte)`.
-  - **`Grammar.structure`**: wenn die Struktur JP-Zeichen enthält (`[Nomen] + を + ください`), muss direkt danach die Rōmaji-Variante stehen. Da das `structure`-Feld nur **einzelne Zeile** ist: Rōmaji in derselben Zeile in Klammern, z.B. `[Nomen] + を + ください  ([noun] + wo + kudasai)`. Zusätzlich bleibt das `Grammar.romaji`-Feld (wird separat gerendert). Beide redundant zu haben ist OK — das Template zeigt mal das eine, mal das andere, Mayuko sieht es so oder so.
+  - **`Grammar.structure`**: wenn die Struktur JP-Zeichen enthält (`[Nomen] + を + ください`), muss direkt danach die Rōmaji-Variante stehen. Da das `structure`-Feld nur **einzelne Zeile** ist: Rōmaji in derselben Zeile in Klammern, z.B. `[Nomen] + を + ください  ([noun] + wo + kudasai)`. Zusätzlich bleibt das `Grammar.romaji`-Feld (wird separat gerendert). Beide redundant zu haben ist OK — das Template zeigt mal das eine, mal das andere, der Lerner sieht es so oder so.
   - **`Grammar.explanation`** (DE-Erklärung): jeder JP-Ausdruck in Klammern mit Rōmaji. `「を」 (wo, ausgesprochen 'o')` statt nur `「を」`.
   - **`Grammar.example_sentences`**: jeder JP-Satz JP-Zeile → Rōmaji-Zeile → DE-Zeile (dreizeilig).
   - **`QuizQuestion.question_text`, `.hint`, `.explanation`**: wenn JP-Zeichen darin stehen, Rōmaji in Klammern. `Was bedeutet 「水」 (mizu)?` statt `Was bedeutet 「水」?`.
@@ -77,8 +77,8 @@ Verletzung ⇒ sofortiger Abbruch, keine Insertion:
   - **`Vocabulary.romaji`** (Datenbankfeld, eigene Spalte): Hepburn-Rōmaji des Wortes.
   - **`Vocabulary.example_sentence_english`** beginnt mit Rōmaji-Satz, Format `"Romaji — English"` (bereits in §5 beschrieben).
   - **`Vocabulary.example_sentence_japanese`** bleibt rein JP — dort ist Rōmaji redundant, weil `reading` + `romaji` in derselben Vokabel-Karte stehen.
-  - Ziel: Mayuko kann **jeden Satz** überall in der Lektion westlich aussprechen, selbst wenn sie ein Kanji nicht kennt.
-- **Instruction-Language**: default `'german'` (Mayuko ist primäre Zielgruppe). Englisch nur auf explizite User-Anweisung.
+  - Ziel: Ein deutschsprachiger Anfänger (inkl. Claudio) kann **jeden Satz** überall in der Lektion westlich aussprechen, selbst wenn er ein Kanji nicht kennt.
+- **Instruction-Language**: default `'german'` (deutschsprachige Anfänger sind die primäre Zielgruppe). Englisch nur auf explizite User-Anweisung.
 - **Beispielsätze dürfen NUR Kanji/Vokabeln des eigenen oder eines niedrigeren JLPT-Levels enthalten.** N5-Lektion darf keine N3-Kanji im Beispielsatz haben. Wenn unvermeidbar: schreibe den Satz in Hiragana.
 - **`created_by_ai = True`** für alle generierten Kana/Kanji/Vocabulary/Grammar-Einträge. `LessonContent.generated_by_ai = True` ebenfalls.
 - **`status = 'approved'`** direkt (User-Entscheidung 2026-04-20).
@@ -87,14 +87,14 @@ Verletzung ⇒ sofortiger Abbruch, keine Insertion:
 - **Rōmaji ist PFLICHT** — an drei Stellen:
   1. `Vocabulary.romaji` (neue Spalte seit Migration `a3f5c2d1b8e9`): Hepburn-Transkription des Wortes, z.B. `word="家族", reading="かぞく", romaji="kazoku"`.
   2. `Grammar.romaji` (bestand schon): Struktur in Rōmaji, z.B. `"[noun] + wo + kudasai"`.
-  3. `example_sentence_english`: muss mit Rōmaji-Version des Satzes beginnen, Format `"Romaji — English meaning"`, z.B. `"Watashi no kazoku wa yo-nin desu. — My family has four people."`. So sieht Mayuko in JEDER Darstellung die westliche Lesung.
+  3. `example_sentence_english`: muss mit Rōmaji-Version des Satzes beginnen, Format `"Romaji — English meaning"`, z.B. `"Watashi no kazoku wa yo-nin desu. — My family has four people."`. So sieht der Lerner in JEDER Darstellung die westliche Lesung.
 - **Bilder sind PFLICHT** — `thumbnail_url` muss vor Insert gesetzt sein. Pipeline-Schritt `images` (DALL-E) läuft vor `insert`, NICHT optional. Zusätzlich: **jede Vokabel** muss `image_url` haben (MNN-DE-Standard, siehe §4-Budget).
 - **`Vocabulary.image_url` muss relativ zu `UPLOAD_FOLDER` sein** (= `app/static/uploads/`), NICHT absolut. Das Template [lesson_view.html:859](../../app/templates/lesson_view.html#L859) ruft `url_for('routes.uploaded_file', filename=content_data.image_url)` auf — die Route [routes.py:3973 `/uploads/<path:filename>`](../../app/routes.py#L3973) dient aus `UPLOAD_FOLDER`. Richtige Werte: `vocab_generated/vocab_abc.png`, `vocabulary/images/vocab_124.png`. **Falsch**: `/static/uploads/vocab_generated/…`, `http://…`, `static/uploads/…`.
 - **Audio für die Konversation ist PFLICHT** — jede Dialog-Page bekommt ein eigenes `LessonContent(content_type='audio')` **vor** dem Dialog-Text (`order_index=1`, Text auf `order_index=2`). Der Pipeline-Schritt `audio {lesson_id}` rendert via Google Cloud TTS (Neural2-B, langsam=0.85) eine einzige MP3 mit allen japanischen Sprecher-Zeilen, 700ms-Pausen dazwischen. Speicherort: `app/static/uploads/lessons/audio/lesson_{id}/conversation.mp3`. Felder im LessonContent: `file_path="lessons/audio/lesson_{id}/conversation.mp3"` (relativ zu `UPLOAD_FOLDER`!), `file_type="audio/mpeg"`, `title="Konversation (Audio)"`. Das Template ([lesson_view.html:674](../../app/templates/lesson_view.html#L674)) nutzt `content.get_file_url()` — der GCS-aware Resolver im Model [models.py:463](../../app/models.py#L463). Benötigt `GOOGLE_API_KEY` oder `GOOGLE_TTS_API_KEY` in `.env`.
 
 ## 4. Lektions-Struktur (Zielbild) — erweitert 2026-04-24
 
-Eine Lektion muss substantiell sein, damit Mayuko echten Lernwert hat. Zu dünn ⇒ zurückgeschickt. Jede generierte Lektion enthält **mindestens 5 Seiten**:
+Eine Lektion muss substantiell sein, damit der Lerner echten Lernwert hat (und Mayuko sie als Lehrerin guten Gewissens freigibt). Zu dünn ⇒ zurückgeschickt. Jede generierte Lektion enthält **mindestens 5 Seiten**:
 
 ```
 Lesson (title, description, jlpt_level→difficulty_level 1-5, instruction_language='german',
@@ -194,7 +194,7 @@ Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
 - `reading` in Hiragana (nie Katakana, ausser bei Lehnwörtern wie `メニュー`).
 - `romaji` Hepburn-Transkription des ganzen Wortes, Kleinschreibung, Trennstriche bei zusammengesetzten Lesungen (`yo-nin`, `o-cha`).
 - `example_sentence_japanese` nutzt Leerzeichen zwischen Wörtern bei N5 (Hiragana-Fokus).
-- `example_sentence_english` **muss Format `"Romaji-Satz — English translation"` haben** — so liest Mayuko den Satz auch westlich, nicht nur Hiragana.
+- `example_sentence_english` **muss Format `"Romaji-Satz — English translation"` haben** — so liest der Lerner den Satz auch westlich, nicht nur Hiragana.
 - Beispielsatz max ~12 Silben / ca. 8 Wörter.
 - `image_url`: Bei Schlüsselvokabeln (≥3 pro Lektion) DALL-E-URL. Sonst null.
 
@@ -240,7 +240,7 @@ Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
 **Regeln:**
 - Genau 4 Optionen bei `multiple_choice`, davon genau 1 korrekt
 - Distraktoren müssen plausibel sein (andere N5-Vokabeln, nicht offensichtlich falsch)
-- `feedback` pro Option immer füllen — das ist Mayukos Lerneffekt bei Fehlern
+- `feedback` pro Option immer füllen — das ist der Lerneffekt für den Anfänger bei Fehlern
 
 ### True-False-Frage
 
@@ -414,7 +414,7 @@ Nach jedem Run anhängen (siehe [learnings.md](learnings.md) für Template):
   ```sql
   SELECT word, reading, meaning_de, jlpt_level FROM vocabulary WHERE jlpt_level = 5;
   ```
-- **Mayuko-Lackmustest:** [improve-jpl/SKILL.md §1](../improve-jpl/SKILL.md)
+- **Anfänger-First mit Mayuko-Fachreview + JLPT-Leitprinzip:** [improve-jpl/SKILL.md §1 und §1.5](../improve-jpl/SKILL.md)
 
 ## 10. Technische Referenzen (für den Skill, nicht für Claude's Inhalt)
 
@@ -438,4 +438,4 @@ Nach erfolgreicher Verifikation ist die Lektion in der **lokalen** DB. Für Prod
 /sync-cloud-db   # zuerst Cloud→Lokal prüfen, dann Lokal→Cloud
 ```
 
-**Nicht im Skill automatisiert** — Push auf Production bleibt explizite User-Aktion, damit Mayuko keine halb-fertige Lektion sieht.
+**Nicht im Skill automatisiert** — Push auf Production bleibt explizite User-Aktion, damit kein Lerner eine halb-fertige Lektion sieht und Mayuko bei Bedarf vor dem Live-Gang ein Fachreview machen kann.
