@@ -211,7 +211,7 @@ def main() -> int:
             existing_audio.file_path = rel_path
             existing_audio.file_type = "audio/mpeg"
             existing_audio.file_size = len(merged)
-            existing_audio.media_url = f"/static/uploads/{rel_path}"
+            existing_audio.media_url = f"/uploads/{rel_path}"
             existing_audio.ai_generation_details = ai_details
             db.session.commit()
             print(f"[OK] LessonContent {existing_audio.id} aktualisiert (Multi-Voice).")
@@ -226,7 +226,7 @@ def main() -> int:
                 file_path=rel_path,
                 file_type="audio/mpeg",
                 file_size=len(merged),
-                media_url=f"/static/uploads/{rel_path}",
+                media_url=f"/uploads/{rel_path}",
                 generated_by_ai=True,
                 ai_generation_details=ai_details,
             )

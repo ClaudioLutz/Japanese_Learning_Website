@@ -265,15 +265,17 @@ def main() -> int:
                 image_path.write_bytes(result["image_bytes"])
                 print(f"      image -> {image_path.name} ({len(result['image_bytes'])} bytes)")
 
-            # relative URL path fuer Jinja (/static/uploads/...):
+            # relative URL path fuer Jinja: /uploads/-Route hat GCS-Fallback
+            # (routes.py:4076), /static/uploads/ funktioniert lokal aber 404 in
+            # Cloud Run — siehe Bug 2026-04-26.
             slides.append({
                 "speaker": speaker,
                 "voice": voice,
                 "jp": jp,
                 "romaji": romaji,
                 "de": de,
-                "audio": f"/static/uploads/lessons/dialog_slideshow/lesson_{lesson_id}/{line_slug}.mp3",
-                "image": f"/static/uploads/lessons/dialog_slideshow/lesson_{lesson_id}/{line_slug}.png",
+                "audio": f"/uploads/lessons/dialog_slideshow/lesson_{lesson_id}/{line_slug}.mp3",
+                "image": f"/uploads/lessons/dialog_slideshow/lesson_{lesson_id}/{line_slug}.png",
             })
 
         slideshow_json = json.dumps({

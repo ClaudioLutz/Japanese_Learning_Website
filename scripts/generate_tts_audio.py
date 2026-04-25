@@ -404,7 +404,7 @@ def update_database(lesson_number: int, audio_items: list[tuple[str, str, str, i
                 lesson_id=lesson.id,
                 content_type="audio",
                 title=title,
-                media_url=f"/static/uploads/{rel_path}",
+                media_url=f"/uploads/{rel_path}",
                 file_path=rel_path,
                 file_type="audio/mpeg",
                 original_filename=filename,

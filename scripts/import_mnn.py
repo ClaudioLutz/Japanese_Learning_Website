@@ -383,7 +383,7 @@ def import_audio_for_lesson(
             lesson_id=lesson.id,
             content_type="audio",
             title=label,
-            media_url=f"/static/uploads/{rel_path}",
+            media_url=f"/uploads/{rel_path}",
             file_path=rel_path,
             file_type="audio/mpeg",
             original_filename=audio_file.name,

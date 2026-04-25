@@ -705,9 +705,9 @@
                                             </div>
                                             {% elif content.content_type == 'text' %}
                                             <div class="conv-text-section" data-content-id="{{ content.id }}">
-                                                {% if content.media_url and content.file_type == 'audio/mpeg' %}
+                                                {% if (content.file_path or content.media_url) and content.file_type == 'audio/mpeg' %}
                                                 <div class="text-audio-player mb-3">
-                                                  <audio controls preload="none" src="{{ content.media_url }}" style="width:100%;max-width:540px;"></audio>
+                                                  <audio controls preload="none" src="{{ content.get_file_url() if content.file_path else content.media_url }}" style="width:100%;max-width:540px;"></audio>
                                                   <div class="text-audio-meta small text-muted mt-1">
                                                     🔊 Vorlesen — Deutsch + Japanisch (separate Stimmen)
                                                   </div>
@@ -945,9 +945,9 @@
                                                 {% else %}
                                                     {% if content.content_type == 'text' %}
                                                     <div class="text-content-container">
-                                                        {% if content.media_url and content.file_type == 'audio/mpeg' %}
+                                                        {% if (content.file_path or content.media_url) and content.file_type == 'audio/mpeg' %}
                                                         <div class="text-audio-player mb-3" data-content-id="{{ content.id }}">
-                                                          <audio controls preload="none" src="{{ content.media_url }}" style="width:100%;max-width:540px;"></audio>
+                                                          <audio controls preload="none" src="{{ content.get_file_url() if content.file_path else content.media_url }}" style="width:100%;max-width:540px;"></audio>
                                                           <div class="text-audio-meta small text-muted mt-1">
                                                             🔊 Vorlesen — Deutsch + Japanisch (separate Stimmen)
                                                           </div>

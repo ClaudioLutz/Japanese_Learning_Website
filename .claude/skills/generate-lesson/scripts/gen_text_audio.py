@@ -296,7 +296,8 @@ def main() -> int:
             out_path.write_bytes(merged)
 
             rel = f"lessons/text_audio/lesson_{args.lesson_id}/{out_name}"
-            lc.media_url = f"/static/uploads/{rel}"
+            # /uploads/-Route hat GCS-Fallback (routes.py:4076), /static/uploads/ nicht.
+            lc.media_url = f"/uploads/{rel}"
             lc.file_path = rel
             lc.file_type = "audio/mpeg"
             lc.file_size = len(merged)
