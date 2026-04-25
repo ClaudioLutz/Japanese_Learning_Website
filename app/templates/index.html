@@ -2,297 +2,464 @@
 {% set admin_edit_url = url_for('routes.admin_index') %}
 {% block title %}Japanisch lernen{% endblock %}
 
-{% block body_attributes %}style="background-image: url('{{ url_for('static', filename='images/japan_welcome_page.png') }}'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;"{% endblock %}
-
 {% block content %}
-<div class="d-flex align-items-center justify-content-center" style="min-height: 80vh;">
-    <div class="modern-welcome-card text-center">
-        <!-- Compact Header -->
-        <div class="welcome-header mb-2">
-            <div class="welcome-icon mb-2">
-                <i class="fas fa-torii-gate"></i>
-            </div>
-            <h1 class="welcome-title">Beginne deine japanische Reise</h1>
-            <p class="welcome-subtitle">Wähle deine Unterrichtssprache</p>
-        </div>
+<div class="home-wrapper">
 
-        {% if current_user.is_authenticated %}
-        <!-- Continue Learning + Review -->
-        <div class="continue-learning mb-3">
-            {% if last_lesson %}
-            <a href="{{ url_for('routes.view_lesson', lesson_id=last_lesson.id) }}" class="continue-card">
-                <div class="continue-icon">
-                    <i class="fas fa-play-circle"></i>
-                </div>
-                <div class="continue-info">
-                    <span class="continue-label">Weiter lernen</span>
-                    <span class="continue-title">{{ last_lesson.title }}</span>
-                </div>
-                <i class="fas fa-chevron-right continue-arrow"></i>
-            </a>
-            {% endif %}
-            <a href="{{ url_for('srs.review_page') }}" class="continue-card review-card" id="homeReviewCard" style="display:none;">
-                <div class="continue-icon">
-                    <i class="fas fa-brain" style="color: #dc3545;"></i>
-                </div>
-                <div class="continue-info">
-                    <span class="continue-label">Karten fällig</span>
-                    <span class="continue-title" id="homeReviewCount">0 Karten wiederholen</span>
-                </div>
-                <i class="fas fa-chevron-right continue-arrow"></i>
-            </a>
+  {# ──────────────────────────────────────────────
+     HERO — Gast vs. Eingeloggt
+     ────────────────────────────────────────────── #}
+  <section class="home-hero">
+    {% if current_user.is_authenticated %}
+      {# Eingeloggt: Continue-Learning + naechstes Modul #}
+      <div class="hero-card hero-card-auth">
+        <div class="hero-greeting">
+          こんにちは, <strong>{{ current_user.username }}</strong> 👋
+          {% if current_user.current_streak and current_user.current_streak > 0 %}
+            · 🔥 {{ current_user.current_streak }} Tage Streak
+          {% endif %}
         </div>
+        {% if last_lesson %}
+          <h1 class="hero-title">Weiter lernen</h1>
+          <p class="hero-sub">Du warst zuletzt hier — direkt weiter ohne Suchen.</p>
+          <a href="{{ url_for('routes.view_lesson', lesson_id=last_lesson.id) }}"
+             class="btn btn-primary btn-lg hero-cta">
+            ▶ {{ last_lesson.title }}
+          </a>
+        {% else %}
+          <h1 class="hero-title">Bereit für deine erste Lektion?</h1>
+          <p class="hero-sub">
+            Springe direkt in den N5-Pfad — Modul für Modul, von Hiragana bis zu deinen ersten Sätzen.
+          </p>
+          <a href="#lernpfad" class="btn btn-primary btn-lg hero-cta">
+            🚀 N5-Pfad starten
+          </a>
         {% endif %}
-
-        <!-- Language Selection — kompaktes 2-Spalten-Grid -->
-        <div class="lang-grid mb-3">
-            <div class="lang-card" onclick="selectLanguage('english')">
-                <svg class="lang-flag-img" width="40" height="28" viewBox="0 0 60 42" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="60" height="42" fill="#012169"/>
-                    <path d="M0,0 L60,42 M60,0 L0,42" stroke="#fff" stroke-width="7"/>
-                    <path d="M0,0 L60,42 M60,0 L0,42" stroke="#C8102E" stroke-width="4"/>
-                    <path d="M30,0 V42 M0,21 H60" stroke="#fff" stroke-width="12"/>
-                    <path d="M30,0 V42 M0,21 H60" stroke="#C8102E" stroke-width="7"/>
-                </svg>
-                <h3 class="lang-title">Learn Japanese in English</h3>
-                <div class="lang-meta">
-                    <span><i class="fas fa-book"></i> {{ english_lessons }} Lessons</span>
-                    <span><i class="fas fa-unlock"></i> {{ english_guest_lessons }} Free</span>
-                </div>
-                <button class="btn btn-primary lang-btn">
-                    <i class="fas fa-arrow-right"></i> Start
-                </button>
-            </div>
-
-            <div class="lang-card" onclick="selectLanguage('german')">
-                <svg class="lang-flag-img" width="40" height="28" viewBox="0 0 60 42" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="60" height="14" fill="#000"/>
-                    <rect y="14" width="60" height="14" fill="#D00"/>
-                    <rect y="28" width="60" height="14" fill="#FFCE00"/>
-                </svg>
-                <h3 class="lang-title">Japanisch auf Deutsch lernen</h3>
-                <div class="lang-meta">
-                    <span><i class="fas fa-book"></i> {{ german_lessons }} Lektionen</span>
-                    <span><i class="fas fa-unlock"></i> {{ german_guest_lessons }} Gratis</span>
-                </div>
-                <button class="btn btn-primary lang-btn">
-                    <i class="fas fa-arrow-right"></i> Start
-                </button>
-            </div>
+        <a href="{{ url_for('srs.review_page') }}" class="hero-secondary-link" id="homeReviewLink" style="display:none;">
+          🧠 <span id="homeReviewCount">0 Karten</span> wiederholen
+        </a>
+      </div>
+    {% else %}
+      {# Gast: Conversion-Hero #}
+      <div class="hero-card hero-card-guest">
+        <div class="hero-icon">⛩</div>
+        <h1 class="hero-title">Japanisch lernen — kostenlos starten</h1>
+        <p class="hero-sub">
+          Strukturiert nach JLPT-Level. Hiragana, Katakana, erste Kanji,
+          Vokabeln, Grammatik und Konversation — alles in einem klaren Pfad.
+          Auf Deutsch erklärt.
+        </p>
+        <div class="hero-actions">
+          <a href="{{ url_for('routes.register') }}" class="btn btn-primary btn-lg hero-cta">
+            Kostenlos starten
+          </a>
+          <a href="#lernpfad" class="btn btn-outline-secondary btn-lg hero-cta">
+            Pfad ansehen
+          </a>
         </div>
-
-        <!-- Additional Options -->
-        <div class="additional-options">
-            {% if not current_user.is_authenticated %}
-            <div class="auth-options mb-2">
-                <a href="{{ url_for('routes.register') }}" class="btn btn-success btn-sm me-1">
-                    <i class="fas fa-user-plus"></i> Create Account
-                </a>
-                <a href="{{ url_for('routes.login') }}" class="btn btn-outline-primary btn-sm">
-                    <i class="fas fa-sign-in-alt"></i> Login
-                </a>
-            </div>
-            {% endif %}
-            <div class="browse-all-link">
-                <a href="{{ url_for('routes.lessons') }}" class="text-muted">
-                    <i class="fas fa-list"></i> Browse all lessons
-                </a>
-            </div>
+        <div class="hero-meta">
+          <span>📚 {{ german_lessons }} Lektionen auf Deutsch</span>
+          <span>🆓 {{ guest_accessible_lessons }} Gratis-Einstieg ohne Login</span>
+          <span>🇨🇭 Made in Switzerland</span>
         </div>
+      </div>
+    {% endif %}
+  </section>
+
+  {# ──────────────────────────────────────────────
+     LERNPFAD N5 — die Module als Karten
+     ────────────────────────────────────────────── #}
+  <section class="lernpfad-section" id="lernpfad">
+    <div class="lernpfad-header">
+      <h2 class="lernpfad-title">📚 JLPT N5 — Dein Lernpfad</h2>
+      <p class="lernpfad-sub">
+        {% if current_user.is_authenticated and next_module_id %}
+          Pulsierend markiert: dein nächstes Modul.
+        {% else %}
+          Acht Module, vom Schreibsystem bis zu deinen ersten Sätzen.
+          Module bauen aufeinander auf.
+        {% endif %}
+      </p>
     </div>
+
+    {% if not n5_modules %}
+      <div class="alert alert-info">
+        N5-Module sind noch nicht konfiguriert. <a href="{{ url_for('routes.lessons') }}">Alle Lektionen ansehen →</a>
+      </div>
+    {% endif %}
+
+    <div class="lernpfad-grid">
+      {% for entry in n5_modules %}
+        {% set m = entry.module %}
+        <div class="lernpfad-module
+                    {% if not entry.unlocked %}is-locked{% endif %}
+                    {% if entry.is_next %}is-next{% endif %}
+                    {% if entry.is_complete %}is-complete{% endif %}"
+             id="module-{{ m.id }}"
+             style="border-top: 4px solid {{ m.color_code or '#0d6efd' }};">
+
+          <div class="module-icon-row">
+            <div class="module-icon" aria-hidden="true">{{ m.icon_emoji or '📖' }}</div>
+            <div class="module-titles">
+              <h3 class="module-title">
+                {{ m.name.split(' · ')[-1] if ' · ' in m.name else m.name }}
+              </h3>
+              <small class="module-meta">Modul {{ m.display_order or '?' }}</small>
+            </div>
+            {% if not entry.unlocked %}
+              <span class="module-lock" title="Voraussetzung noch nicht erfüllt (≥80 % des Vorgängers)">🔒</span>
+            {% elif entry.is_complete %}
+              <span class="module-check" title="Modul abgeschlossen">✅</span>
+            {% elif entry.is_next %}
+              <span class="module-next-badge">START</span>
+            {% endif %}
+          </div>
+
+          <p class="module-desc">{{ m.description }}</p>
+
+          <div class="module-progress">
+            <div class="progress" style="height: 6px;">
+              <div class="progress-bar"
+                   role="progressbar"
+                   style="width: {{ entry.percent }}%; background-color: {{ m.color_code or '#0d6efd' }};"
+                   aria-valuenow="{{ entry.percent }}"
+                   aria-valuemin="0"
+                   aria-valuemax="100"></div>
+            </div>
+            <small class="module-progress-text">{{ entry.done }} / {{ entry.total }} Lektionen</small>
+          </div>
+
+          {% if entry.lessons %}
+            <ul class="module-lessons">
+              {% for lesson in entry.lessons[:4] %}
+                <li>
+                  <a href="{{ url_for('routes.view_lesson', lesson_id=lesson.id) }}">
+                    › {{ lesson.title }}
+                  </a>
+                </li>
+              {% endfor %}
+              {% if entry.lessons|length > 4 %}
+                <li class="text-muted small">… {{ entry.lessons|length - 4 }} weitere</li>
+              {% endif %}
+            </ul>
+          {% else %}
+            <p class="module-empty"><em>Lektionen folgen.</em></p>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="lernpfad-footer">
+      <a href="{{ url_for('routes.lessons') }}" class="btn btn-outline-secondary btn-sm">
+        Alle Lektionen klassisch ansehen
+      </a>
+    </div>
+  </section>
+
+  {# ──────────────────────────────────────────────
+     SEKUNDÄRE OPTIONEN — Sprachwahl + Lessons-Browser
+     ────────────────────────────────────────────── #}
+  <section class="secondary-section">
+    <h3 class="section-subtitle">Lieber auf Englisch?</h3>
+    <div class="lang-grid-mini">
+      <a href="{{ url_for('routes.lessons') }}?language=english" class="lang-mini lang-mini-en">
+        <span class="lang-mini-flag">🇬🇧</span>
+        <span class="lang-mini-text">
+          <strong>Learn Japanese in English</strong>
+          <small>{{ english_lessons }} Lessons · {{ english_guest_lessons }} Free</small>
+        </span>
+      </a>
+      <a href="{{ url_for('routes.lessons') }}?language=german" class="lang-mini lang-mini-de">
+        <span class="lang-mini-flag">🇩🇪</span>
+        <span class="lang-mini-text">
+          <strong>Japanisch auf Deutsch</strong>
+          <small>{{ german_lessons }} Lektionen · {{ german_guest_lessons }} Gratis</small>
+        </span>
+      </a>
+    </div>
+  </section>
+
 </div>
 
 <style>
-/* ── Language Grid ── */
-.lang-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin: 1rem 0;
+/* ────────────────────────────────────────
+   HOME WRAPPER + HERO
+   ──────────────────────────────────────── */
+.home-wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem 3rem;
 }
-
-.lang-card {
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 14px;
-    padding: 1.25rem 1rem;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-    transition: all 0.25s ease;
-    cursor: pointer;
-    border: 2px solid transparent;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.home-hero {
+    margin-bottom: 2.5rem;
+}
+.hero-card {
+    background: rgba(255, 255, 255, 0.97);
+    border-radius: 16px;
+    padding: 2rem 1.75rem;
+    box-shadow: 0 6px 28px rgba(0, 0, 0, 0.08);
     text-align: center;
-    gap: 0.5rem;
 }
-
-.lang-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.14);
-    border-color: var(--primary-color, #2B4C7E);
+.hero-card-guest {
+    background: linear-gradient(135deg, rgba(255,255,255,0.97), rgba(243,232,255,0.97));
 }
-
-.lang-flag-img {
-    border-radius: 4px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+.hero-card-auth {
+    background: linear-gradient(135deg, rgba(255,255,255,0.97), rgba(213,242,213,0.92));
 }
-
-.lang-title {
+.hero-greeting {
+    font-size: 0.95rem;
+    color: #5a5a5a;
+    margin-bottom: 0.5rem;
+}
+.hero-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+.hero-title {
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+    font-weight: 700;
     color: #2c3e50;
+    margin: 0 0 0.5rem;
+}
+.hero-sub {
+    color: #5a5a5a;
     font-size: 1rem;
-    font-weight: 600;
-    margin: 0;
-    line-height: 1.3;
+    line-height: 1.5;
+    margin: 0 auto 1.25rem;
+    max-width: 640px;
 }
-
-.lang-meta {
+.hero-actions {
     display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    font-size: 0.78rem;
-    color: #6c757d;
-}
-.lang-meta span {
-    display: flex;
-    align-items: center;
+    flex-wrap: wrap;
     justify-content: center;
-    gap: 0.3rem;
-}
-.lang-meta i {
-    font-size: 0.7rem;
-    width: 14px;
-}
-
-.lang-btn {
-    width: 100%;
-    padding: 0.5rem 0.75rem;
-    font-weight: 600;
-    font-size: 0.85rem;
-    border-radius: 8px;
-    margin-top: auto;
-}
-
-/* ── Continue Learning Card ── */
-.continue-card {
-    display: flex;
-    align-items: center;
     gap: 0.75rem;
-    background: linear-gradient(135deg, rgba(43,76,126,0.08), rgba(122,154,90,0.08));
-    border: 1px solid rgba(43,76,126,0.15);
-    border-radius: 12px;
-    padding: 0.75rem 1rem;
-    text-decoration: none;
-    color: var(--text-color, #2C2C2C);
-    transition: all 0.2s;
+    margin-bottom: 1rem;
 }
-.continue-card:hover {
-    background: linear-gradient(135deg, rgba(43,76,126,0.12), rgba(122,154,90,0.12));
-    transform: translateY(-1px);
-    text-decoration: none;
-    color: var(--text-color, #2C2C2C);
-}
-.continue-icon {
-    font-size: 1.5rem;
-    color: var(--zen-matcha, #7A9A5A);
-    flex-shrink: 0;
-}
-.continue-info {
-    flex: 1;
-    text-align: left;
-    min-width: 0;
-}
-.continue-label {
-    display: block;
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--text-light, #5A5A5A);
+.hero-cta {
+    min-width: 180px;
     font-weight: 600;
 }
-.continue-title {
-    display: block;
-    font-size: 0.9rem;
-    font-weight: 600;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-.continue-arrow {
-    color: var(--text-light, #5A5A5A);
-    font-size: 0.8rem;
-    flex-shrink: 0;
-}
-
-/* ── Continue Learning Container ── */
-.continue-learning {
+.hero-meta {
     display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-/* ── Additional Options ── */
-.additional-options {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem 1.5rem;
+    font-size: 0.85rem;
+    color: #6c757d;
     margin-top: 0.75rem;
 }
-.browse-all-link {
-    margin-top: 0.5rem;
-}
-.browse-all-link a {
+.hero-secondary-link {
+    display: block;
+    margin-top: 0.75rem;
+    color: #dc3545;
     text-decoration: none;
-    font-size: 0.85rem;
-    transition: color 0.2s;
+    font-size: 0.95rem;
+    font-weight: 500;
 }
-.browse-all-link a:hover {
-    color: #007bff !important;
+.hero-secondary-link:hover { text-decoration: underline; }
+
+/* ────────────────────────────────────────
+   LERNPFAD-GRID
+   ──────────────────────────────────────── */
+.lernpfad-section { margin-bottom: 2.5rem; }
+.lernpfad-header { text-align: center; margin-bottom: 1.5rem; }
+.lernpfad-title {
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0 0 0.25rem;
+}
+.lernpfad-sub { color: #6c757d; font-size: 0.95rem; margin: 0; }
+
+.lernpfad-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
 }
 
-/* ── Mobile ── */
-@media (max-width: 767px) {
-    .lang-grid {
-        gap: 0.6rem;
-    }
-    .lang-card {
-        padding: 0.9rem 0.6rem;
-        border-radius: 12px;
-    }
-    .lang-flag-img {
-        width: 32px;
-        height: auto;
-    }
-    .lang-title {
-        font-size: 0.85rem;
-    }
-    .lang-meta {
-        font-size: 0.7rem;
-    }
-    .lang-btn {
-        padding: 0.4rem 0.5rem;
-        font-size: 0.78rem;
-    }
+.lernpfad-module {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1rem 1.1rem 1.1rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.lernpfad-module:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
+.lernpfad-module.is-locked {
+    opacity: 0.6;
+}
+.lernpfad-module.is-complete {
+    background: linear-gradient(180deg, #fff 0%, #d8f5d8 100%);
+}
+.lernpfad-module.is-next {
+    box-shadow:
+      0 0 0 3px rgba(13, 110, 253, 0.4),
+      0 6px 20px rgba(13, 110, 253, 0.18);
+    animation: pulseNext 2.4s ease-in-out infinite;
+}
+@keyframes pulseNext {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.4), 0 6px 20px rgba(13, 110, 253, 0.18); }
+    50%      { box-shadow: 0 0 0 6px rgba(13, 110, 253, 0.18), 0 6px 24px rgba(13, 110, 253, 0.25); }
+}
+
+.module-icon-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+.module-icon {
+    font-size: 2rem;
+    line-height: 1;
+}
+.module-titles { flex: 1; min-width: 0; }
+.module-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0;
+    line-height: 1.25;
+}
+.module-meta {
+    color: #888;
+    font-size: 0.78rem;
+}
+.module-lock, .module-check {
+    font-size: 1.25rem;
+}
+.module-next-badge {
+    background: #0d6efd;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+}
+
+.module-desc {
+    color: #5a5a5a;
+    font-size: 0.85rem;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.module-progress { margin-top: 0.4rem; }
+.module-progress-text {
+    display: block;
+    color: #6c757d;
+    font-size: 0.78rem;
+    margin-top: 0.25rem;
+    text-align: right;
+}
+
+.module-lessons {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 0.5rem;
+}
+.module-lessons li { font-size: 0.85rem; }
+.module-lessons a {
+    display: block;
+    padding: 0.2rem 0;
+    color: #495057;
+    text-decoration: none;
+}
+.module-lessons a:hover { color: #0d6efd; text-decoration: underline; }
+.module-empty {
+    color: #888;
+    font-size: 0.82rem;
+    margin: 0.4rem 0 0;
+    font-style: italic;
+}
+
+.lernpfad-footer {
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+/* ────────────────────────────────────────
+   SEKUNDÄR-SECTION
+   ──────────────────────────────────────── */
+.secondary-section {
+    border-top: 1px solid rgba(0,0,0,0.08);
+    padding-top: 2rem;
+    text-align: center;
+}
+.section-subtitle {
+    font-size: 1rem;
+    color: #6c757d;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+.lang-grid-mini {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.75rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+.lang-mini {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.7rem 1rem;
+    background: rgba(255,255,255,0.95);
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 10px;
+    text-decoration: none;
+    color: #2c3e50;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+.lang-mini:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    color: #2c3e50;
+    text-decoration: none;
+}
+.lang-mini-flag { font-size: 1.5rem; }
+.lang-mini-text { display: flex; flex-direction: column; text-align: left; line-height: 1.2; }
+.lang-mini-text small { color: #6c757d; font-size: 0.78rem; }
+
+@media (max-width: 575px) {
+    .home-wrapper { padding: 1rem 0.75rem 2rem; }
+    .hero-card { padding: 1.5rem 1.1rem; }
+    .lernpfad-grid { grid-template-columns: 1fr; }
 }
 </style>
 
 <script>
-function selectLanguage(language) {
-    localStorage.setItem('selectedLanguage', language);
-    window.location.href = `{{ url_for('routes.lessons') }}?language=${language}`;
-}
-
-document.addEventListener('keydown', function(e) {
-    if (e.key === '1') selectLanguage('english');
-    else if (e.key === '2') selectLanguage('german');
-});
-
-// Load SRS due count for homepage
 (function() {
-    const reviewCard = document.getElementById('homeReviewCard');
-    if (!reviewCard) return;
+  // SRS-Karten faellig (eingeloggt)
+  const reviewLink = document.getElementById('homeReviewLink');
+  if (reviewLink) {
     fetch('/api/srs/stats').then(r => r.json()).then(data => {
-        if (data.due_count > 0) {
-            document.getElementById('homeReviewCount').textContent = data.due_count + ' Karten wiederholen';
-            reviewCard.style.display = 'flex';
-        }
+      if (data.due_count > 0) {
+        document.getElementById('homeReviewCount').textContent = data.due_count + ' Karten';
+        reviewLink.style.display = 'inline-block';
+      }
     }).catch(() => {});
+  }
+
+  // Auto-Scroll zum naechsten Modul (eingeloggt + Next-Modul vorhanden)
+  {% if current_user.is_authenticated and next_module_id %}
+  const nextEl = document.getElementById('module-{{ next_module_id }}');
+  if (nextEl) {
+    // Verzoegert leicht, damit der Scroll nicht den Hero ueberschreibt
+    setTimeout(() => {
+      // Nur wenn der User noch nicht selbst gescrollt hat
+      if (window.scrollY < 50) {
+        nextEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 800);
+  }
+  {% endif %}
 })();
 </script>
 {% endblock %}

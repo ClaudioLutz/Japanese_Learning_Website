@@ -40,6 +40,44 @@ class TestHomepage:
         resp = client.get("/home")
         assert resp.status_code == 200
 
+    def test_homepage_shows_n5_path_section(self, client, app_context):
+        """Homepage zeigt JLPT-N5-Lernpfad-Section (Mayuko-Direktive)."""
+        from app.models import LessonCategory
+        cat = LessonCategoryFactory(
+            slug='test-n5-mod-home',
+            jlpt_level=5,
+            display_order=1,
+            name='Test N5 Module',
+            icon_emoji='あ',
+        )
+        db.session.commit()
+        resp = client.get("/")
+        body = resp.data.decode('utf-8')
+        assert 'JLPT N5' in body or 'Lernpfad' in body
+        assert 'Test N5 Module' in body
+
+    def test_homepage_guest_shows_signup_cta(self, client):
+        """Gast sieht Sign-Up-CTA auf Homepage."""
+        resp = client.get("/")
+        body = resp.data.decode('utf-8')
+        assert 'Kostenlos starten' in body
+
+    def test_homepage_authenticated_shows_continue(self, auth_client):
+        """Eingeloggter User sieht Continue-Hero (Greeting oder Weiter-CTA)."""
+        client, user = auth_client
+        resp = client.get("/")
+        body = resp.data.decode('utf-8')
+        assert user.username in body or 'Weiter' in body or 'Bereit' in body
+        # Sign-Up-CTA verschwindet bei Login
+        assert 'Kostenlos starten' not in body
+
+    def test_homepage_includes_lernpfad_nav_link(self, client):
+        """Top-Nav enthaelt 'Lernpfad'-Link."""
+        resp = client.get("/")
+        body = resp.data.decode('utf-8')
+        assert 'Lernpfad' in body
+        assert '/learn/n5' in body
+
 
 # ── I-PR03: Lessons-Seite ───────────────────────────────────
 

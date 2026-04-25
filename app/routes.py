@@ -160,6 +160,39 @@ def index():
         if last_progress:
             last_lesson = Lesson.query.get(last_progress.lesson_id)
 
+    # JLPT-Lernpfad-Daten (Mayuko-Direktive 2026-04-25): Pfad als Startseiten-Inhalt
+    user = current_user if current_user.is_authenticated else None
+    n5_modules_raw = (
+        LessonCategory.query.filter_by(jlpt_level=5)
+        .order_by(LessonCategory.display_order.asc(), LessonCategory.id.asc())
+        .all()
+    )
+    n5_modules = []
+    next_module_id = None  # erstes nicht-vollendetes Modul fuer Auto-Scroll/Pulsation
+    for m in n5_modules_raw:
+        done, total = m.completion_for_user(user)
+        unlocked = m.is_unlocked_for_user(user)
+        published_lessons = sorted(
+            [l for l in m.lessons if l.is_published],
+            key=lambda l: (l.order_index or 0, l.id),
+        )
+        is_complete = total > 0 and done == total
+        if next_module_id is None and unlocked and not is_complete:
+            next_module_id = m.id
+        n5_modules.append({
+            "module": m,
+            "done": done,
+            "total": total,
+            "percent": round(100.0 * done / total) if total else 0,
+            "unlocked": unlocked,
+            "is_complete": is_complete,
+            "is_next": False,  # gesetzt nach Loop
+            "lessons": published_lessons,
+        })
+    for entry in n5_modules:
+        if entry["module"].id == next_module_id:
+            entry["is_next"] = True
+
     return render_template('index.html',
                          total_lessons=total_lessons,
                          total_courses=total_courses,
@@ -168,7 +201,9 @@ def index():
                          german_lessons=german_lessons,
                          english_guest_lessons=english_guest_lessons,
                          german_guest_lessons=german_guest_lessons,
-                         last_lesson=last_lesson)
+                         last_lesson=last_lesson,
+                         n5_modules=n5_modules,
+                         next_module_id=next_module_id)
 
 @bp.route('/register', methods=['GET', 'POST'])
 @limiter.limit("5 per minute")
