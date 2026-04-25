@@ -305,8 +305,8 @@ def validate_draft(draft: dict) -> list[str]:
     # Budget-Checks aus SKILL.md §4 (angepasst 2026-04-24: groessere Lektionen).
     # Bei kind=kana gelten andere Budgets (Schreibsystem-Lektion ohne Vocab/Grammar).
     if kind == "kana":
-        if not (5 <= kana_count <= 20):
-            errors.append(f"Kana-Count {kana_count} ausserhalb [5,20] (kind=kana)")
+        if not (5 <= kana_count <= 35):
+            errors.append(f"Kana-Count {kana_count} ausserhalb [5,35] (kind=kana)")
         if not (8 <= quiz_count <= 16):
             errors.append(f"Quiz-Count {quiz_count} ausserhalb [8,16] (kind=kana)")
         if len(quiz_types_seen) < 2:

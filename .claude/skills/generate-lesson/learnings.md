@@ -47,6 +47,30 @@ Selbstverbesserndes Log. Wird vor jedem Run gelesen, nach jedem Run angehängt.
 
 <!-- Neuste Einträge oben, älteste unten. -->
 
+## 2026-04-25 22:15 — Hiragana 3, 4 und 5 — komplette Hiragana-Serie (Lesson IDs 148, 149, 150)
+
+### Erfolge — Hiragana ist komplett
+
+- **Drei Lektionen in Folge** generiert: Hiragana 3 (M/Y/R/W + ん, 16 Zeichen), Hiragana 4 (Diakritika が/ざ/だ/ば/ぱ, 25 Zeichen), Hiragana 5 (Yōon, 33 Zeichen). Damit sind alle 5 Hiragana-Lektionen (146-150) im Modul `n5-hiragana` (order_index 1-5).
+- **Pipeline-Vorlage skaliert sauber:** Jede Lektion folgte derselben 5-Page-Struktur (Einführung / Zeichen / Aussprache / Übung / Zusammenfassung). Quiz-Mix konstant 7-8 MC + 3-4 TF + 2 Matching.
+- **Bestandsschutz funktioniert auch bei Yōon:** UNIQUE-Constraint auf `Kana.character` matchte alle 33 Yōon (zweistellige Strings wie 「きゃ」, 「ぎゅ」) korrekt — keine Kollisionen.
+- **Validator-Limit angehoben:** kana-Count-Limit von 20 auf 35 erhöht (`pipeline.py` §3 Validator), damit Diakritika- (25) und Yōon-Lektionen (33) durchgehen. Kana-Lektion ist die einzige Sonderform mit grösseren Kana-Mengen.
+- **Playwright-Verifikation aller drei Lektionen:** 0 Console-Errors, jeweils 5 Pages, alle Audios geladen, keine broken Images. Yōon-Deck zeigt korrekt 33 flip cards auf Page 1.
+
+### Probleme / Erkenntnisse
+
+1. **Kana-Limit war zu niedrig für Diakritika/Yōon-Lektionen.** §3 Validator hatte `5 <= kana_count <= 20`. 25 Diakritika und 33 Yōon brachen ab. Limit auf `35` erhöht — Begründung: Diakritika und Yōon sind die einzigen Lektionstypen, die so viele Kana haben, und sie sind didaktisch begründet (komplette Reihen statt willkürliche Auswahl).
+2. **Quiz-Intro-Text muss Romaji haben — gilt auch bei Erklärungen über kleine Zeichen.** Lesson 150 brach beim Insert ab, weil der Quiz-Intro die ya/ゆ/yo-Vergleichslogik ohne Romaji-Klammern beschrieb. Fix: `「や」 (ya) / 「ゆ」 (yu) / ...` Pattern auch in Vergleichs-Tabellen anwenden, nicht nur bei einzelnen Wörtern.
+3. **Yōon brauchen längere text-audio-Generierung:** ~3 Minuten für 8 MP3s mit insgesamt mehr Segmenten als typische Lektion (Erklärungen über kleine Zeichen sind länger). Innerhalb 240s-Timeout aber problemlos.
+4. **Vorlagen-Pattern stabil über 5 Hiragana-Lektionen:** Selbe Page-Struktur, selber Quiz-Mix, selbes Modul. Pro Lektion ca. 5-10 Minuten Generierungszeit (validate + images + insert + text-audio + Verify) — schnell genug für Batch-Generierung.
+
+### Aktuelle Regeln (Ergänzung ab diesem Run)
+
+35. **Kana-Count-Limit ist 35** (nicht mehr 20) — Diakritika- und Yōon-Lektionen brauchen vollständige Reihen.
+36. **Quiz-Intro-Text mit JP-Vergleichen muss Romaji-Annotationen enthalten**, auch bei Erklärungen über kleine ゃ/ゅ/ょ vs. grosse や/ゆ/よ. Validator fängt das, aber besser direkt sauber schreiben.
+
+---
+
 ## 2026-04-25 21:55 — Hiragana 2 — T-Reihe, N-Reihe und H-Reihe (Lesson ID 147)
 
 ### Erfolge — zweite Schreibsystem-Lektion, Pipeline ohne Korrekturschleifen
