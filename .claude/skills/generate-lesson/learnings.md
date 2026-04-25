@@ -47,6 +47,107 @@ Selbstverbesserndes Log. Wird vor jedem Run gelesen, nach jedem Run angehängt.
 
 <!-- Neuste Einträge oben, älteste unten. -->
 
+## 2026-04-26 00:50 — N5-Lektionen 156-160 + GCS-Asset-Bug-Fix
+
+### 5 N5-Lektionen erstellt
+
+- **156**: N5 Familie & Personen 2 (Berufe, Charakter, na/i-Adjektive)
+- **157**: N5 Alltag & Essen 2 (Restaurant, Lebensmittel, ~tai-Form, mögen)
+- **158**: N5 Begrüssung & Höflichkeit 3 (Telefonieren, moshi moshi, imasu/iu)
+- **159**: N5 Begrüssung & Höflichkeit 4 (Entschuldigen, douzo/doumo, mou/mada)
+- **160**: N5 Erste Sätze 3 (ます/ました/ません/ませんでした, います/あります, te-Form)
+
+### Erfolge
+
+- **5 Lektionen in einem Schwung** (~6h Generierungszeit). Pipeline lief in einem
+  Rutsch durch — pro Lesson ca. 2 Korrekturschleifen für JP-ohne-Romaji-Fehler.
+- **N5-Canonical-Override** für すみません/ごめんなさい/ありがとう/プレゼント/いる/ある
+  mit `is_canonical_override: true` + `source_note` (Standard-N5 in MNN/Genki, fehlt
+  in der einzelwort-zentrierten JLPT-Liste). Validator akzeptiert.
+- **Module-Coverage erweitert**: n5-familie-personen 1→2, n5-alltag-essen 1→2,
+  n5-begruessung-hoeflichkeit 2→4, n5-erste-saetze 2→3.
+
+### Live-Bug 2026-04-26: 「bilder + audios fehlen auf der webseite, lokal funktioniert」
+
+User-Direktive (wörtlich):
+> "ich habe festgestellt dass in der webseite bei den lern karten die bilder
+> nicht angezeigt werden aber lokal schon"
+> "audio funktioniert auch nicht auf der deployten webseite"
+
+**Bug-Root-Cause** (zwei Schichten):
+
+1. **Asset-Sync fehlte**: Generierte Dateien (Vokabel-Bilder PNG, Konversations-MP3,
+   Slideshow-PNG/MP3, text-audio-MP3) wurden lokal in `app/static/uploads/...`
+   geschrieben — aber NIE zum GCS-Bucket `jpl-website-assets` hochgeladen. Cloud
+   Run hat Image ohne Assets → 404.
+
+2. **Pfad-Prefix falsch**: Skripte gen_text_audio.py, gen_conversation_audio.py,
+   gen_dialog_slideshow.py, generate_tts_audio.py und import_mnn.py setzen
+   `media_url=f"/static/uploads/{rel}"`. Live-Production routet `/static/uploads/`
+   direkt zur Flask-static-Folder (im Container) → 404, weil Asset im Container
+   nicht existiert. Die `/uploads/`-Route (routes.py:4076) hat dagegen einen
+   **GCS-Fallback per 302-Redirect** — die ist die richtige.
+
+**Fix (3 Komponenten, alle committed):**
+
+1. **scripts/sync_assets_to_gcs.py** (NEU): synchronisiert die fünf Asset-
+   Verzeichnisse (vocab_generated, generated, lessons/audio, lessons/text_audio,
+   lessons/dialog_slideshow) nach `gs://jpl-website-assets/` per `gcloud storage
+   rsync -r`. Idempotent, schnell (~30s pro neue Lesson).
+2. **Skripte gefixt**: alle `/static/uploads/{rel}`-Patterns durch `/uploads/{rel}`
+   ersetzt — die /uploads/-Route hat den GCS-Fallback.
+3. **Template lesson_view.html**: text-audio-Player verwendet jetzt
+   `content.get_file_url()` (das über `file_path` + `GCS_BUCKET_NAME` aufloest)
+   statt `content.media_url` direkt.
+4. **Bestands-Daten-Migration**: SQL UPDATE auf Cloud + Lokal-DB:
+   `REPLACE(media_url, '/static/uploads/', '/uploads/')` für 188 LessonContent
+   und 8 dialog_slideshow JSON-Felder.
+
+### Probleme / Erkenntnisse
+
+1. **sync_from_cloud.py loescht lokale neue Lessons** (FK-Fehler:
+   "lesson_page_lesson_id_fkey"). Bei der Workflow `lokal generieren → pushen`
+   ist Cloud→Lokal-Pull kontraproduktiv, weil er die neuen lokalen Lessons als
+   "in Cloud nicht vorhanden" interpretiert und löschen will. **Workaround:**
+   `--skip-drift-check` direkt beim Push, ohne vorher zu pullen. **Regel für
+   nächstes Mal:** sync_from_cloud.py braucht eine Option `--keep-local-newer`
+   oder einen Filter, der lokale Rows mit max(id) > Cloud max(id) nicht löscht.
+   (TODO: scripts/sync_from_cloud.py Refactoring.)
+2. **JSON-String-Doublequote-Falle**: deutsche Anführungszeichen `„X"` enthalten
+   ein Schliessungszeichen, das ASCII-`"` ist und JSON bricht. **Regel:** in
+   JSON-Drafts immer ASCII-Quoten oder spitze Klammern verwenden, nie
+   `„...".`-Pattern.
+3. **Cloud-Run-Image-Drift**: Erster Build bei Asset-Bug-Fix-Zeit wurde mit den
+   ALTEN Templates gestartet, weil ich die Template-Aenderungen nach Build-Start
+   gemacht habe. Lesson Learned: **Bei Multi-Step-Fixes erst alle Code-Aenderungen,
+   dann ein einziger Build**.
+4. **GCS-ADC-Falle**: Application Default Credentials waren mit
+   `claudio.lutz86@gmail.com` registriert (alter Account ohne Berechtigung).
+   `gcloud auth application-default login` muss separat von `gcloud config set
+   account` aktualisiert werden. **Workaround:** `gcloud storage rsync` mit
+   `--account=` Flag nutzt das aktive Account direkt — keine ADC-Konflikte.
+
+### Aktuelle Regeln (Ergänzung ab diesem Run)
+
+39. **Asset-Sync nach GCS ist Pflicht** nach jeder Lesson-Generierung. Skript
+    `scripts/sync_assets_to_gcs.py` aufrufen, sonst 404 für Vokabel-Bilder/Audios
+    auf der Live-Seite. Skill-SKILL.md §11a-bis dokumentiert das.
+40. **media_url darf NIE mit `/static/uploads/`-Prefix gesetzt werden.** Statt-
+    dessen `/uploads/`-Prefix (uploaded_file-Route mit GCS-Fallback). Gilt für
+    text_audio, conversation_audio, dialog_slideshow.
+41. **Slideshow content_text JSON `image`/`audio`-Pfade** ebenfalls mit
+    `/uploads/`-Prefix, nicht `/static/uploads/`.
+42. **Template-Pattern für media-content**: erst `content.file_path` checken
+    und `content.get_file_url()` aufrufen (das resolvet GCS), Fallback auf
+    `content.media_url`. Niemals nur `media_url` direkt einbinden.
+43. **N5-Canonical-Override** mit `is_canonical_override: true` +
+    `source_note: "Standard-N5 in MNN Lektion X / Genki I"` ist OK fuer
+    Wörter wie すみません, ありがとう, ごめんなさい, プレゼント, いる, ある —
+    die in der einzelwort-zentrierten JLPT-Liste fehlen, aber in jedem Lehrwerk
+    Kern-Vokabeln sind.
+
+---
+
 ## 2026-04-25 22:35 — Katakana 1-5 — komplette Katakana-Serie (Lesson IDs 151-155)
 
 ### Erfolge — Schreibsystem komplett
