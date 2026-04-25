@@ -829,6 +829,28 @@ def generate_conversation_audio(lesson_id: int) -> int:
     return result.returncode
 
 
+def generate_text_audio(lesson_id: int, force: bool = False, page: int | None = None) -> int:
+    """Rendert pro text-LessonContent eine MP3 (DE+JA gemischt via Google TTS).
+
+    Splittet Text in Sprachsegmente und nutzt de-DE-Voice fuer Lateinschrift,
+    ja-JP-Voice fuer Hira/Kata/Kanji. So klingt der deutsche Teil nicht mehr
+    mit japanischem Akzent (User-Direktive 2026-04-25).
+
+    Setzt `LessonContent.media_url` — das Template rendert dann einen
+    Mini-Player oberhalb des Markdown-Texts. Idempotent ueber text_hash.
+    """
+    script = SKILL_DIR / "scripts" / "gen_text_audio.py"
+    env = os.environ.copy()
+    env["PYTHONIOENCODING"] = "utf-8"
+    cmd = [sys.executable, str(script), str(lesson_id)]
+    if force:
+        cmd.append("--force")
+    if page is not None:
+        cmd.extend(["--page", str(page)])
+    result = subprocess.run(cmd, cwd=PROJECT_ROOT, env=env)
+    return result.returncode
+
+
 def generate_dialog_slideshow(lesson_id: int) -> int:
     """Baut pro Dialog-Zeile ein Slide mit TTS-Audio und DALL-E-Bild.
 
@@ -868,6 +890,11 @@ def main():
     p_aud = sub.add_parser("audio", help="Dialog-MP3 via Google Cloud TTS generieren")
     p_aud.add_argument("lesson_id", type=int)
 
+    p_taud = sub.add_parser("text-audio", help="Pro text-LessonContent eine MP3 (DE+JA gemischt)")
+    p_taud.add_argument("lesson_id", type=int)
+    p_taud.add_argument("--page", type=int, default=None)
+    p_taud.add_argument("--force", action="store_true")
+
     p_slide = sub.add_parser("slideshow", help="Dialog-Slideshow (TTS+DALL-E pro Zeile) bauen")
     p_slide.add_argument("lesson_id", type=int)
 
@@ -899,6 +926,8 @@ def main():
         insert_draft(args.draft)
     elif args.cmd == "audio":
         sys.exit(generate_conversation_audio(args.lesson_id))
+    elif args.cmd == "text-audio":
+        sys.exit(generate_text_audio(args.lesson_id, force=args.force, page=args.page))
     elif args.cmd == "slideshow":
         sys.exit(generate_dialog_slideshow(args.lesson_id))
     elif args.cmd == "coverage":

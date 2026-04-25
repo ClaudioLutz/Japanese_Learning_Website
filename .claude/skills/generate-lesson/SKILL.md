@@ -328,6 +328,29 @@ Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
        an. Idempotent: existierendes Audio wird übersprungen.
     → Benoetigt GOOGLE_API_KEY in .env.
 
+[4b2] python .claude/skills/generate-lesson/pipeline.py text-audio {lesson_id}
+    → PFLICHT seit 2026-04-25 fuer jede Lesson mit text-Bloecken >=80 Zeichen.
+       Rendert pro `LessonContent.text` eine MP3 (Google Cloud TTS, DE+JA
+       gemischt, Sprach-Splitter):
+       - JA-Segmente (Hira/Kata/Kanji)  → ja-JP-Neural2-B (weiblich)
+       - DE-Segmente (Lateinschrift)    → de-DE-Neural2-F (weiblich)
+       Markdown wird vor TTS gestrippt: `**bold**`, `## H2`, Listen, `> quote`,
+       `code`, `(romaji)` direkt nach JP-Zeichen — Ohren brauchen sie nicht.
+       Skip-Heuristik: Dialog-Bloecke (Speaker-Format) werden uebersprungen
+       (sind durch `audio` + `slideshow` schon abgedeckt). Idempotent ueber
+       SHA1-Hash des content_text in `ai_generation_details.text_hash`.
+       MP3-Pfad: `app/static/uploads/lessons/text_audio/lesson_{id}/page_{n}_content_{cid}.mp3`
+       (geschrieben in `LessonContent.media_url` + `file_path` + `file_size`).
+       Das Template ([lesson_view.html:683/918](../../app/templates/lesson_view.html#L683))
+       rendert oberhalb des `rich-text-content` einen `<audio controls>`-Player
+       mit Label "🔊 Vorlesen — Deutsch + Japanisch (separate Stimmen)".
+       Optionen: `--page N` (nur eine Page rendern), `--force` (existierende
+       MP3s neu erzeugen).
+       Begruendung (User-Direktive 2026-04-25): Vorher las eine ja-JP-Stimme
+       den ganzen Text inkl. Deutsch — klang akzentbehaftet. Splitter loest das.
+       Kosten: ~1 Rappen pro Lektion (4 Pages * ~5000 Zeichen Google TTS).
+       Dauer: ~30 s pro Lektion (sequenzielle Segment-Calls).
+
 [4c] python .claude/skills/generate-lesson/pipeline.py slideshow {lesson_id}
     → PFLICHT nach audio. Baut pro Dialog-Zeile ein Slide mit:
        - 1 MP3 (Google TTS, Gender-korrekte Voice aus SPEAKER_GENDER)

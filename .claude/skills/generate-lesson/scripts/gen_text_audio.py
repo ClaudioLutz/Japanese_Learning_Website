@@ -1,0 +1,316 @@
+"""Generate per-Text-Block TTS audio fuer eine Lesson (DE+JA gemischt).
+
+Usage:
+  python gen_text_audio.py <lesson_id> [--page <n>]
+
+User-Direktive 2026-04-25: Vorlese-Stimme soll Deutsch nicht mit japanischem
+Akzent sprechen. Loesung: Text-Block in Sprachsegmente splitten (Hira/Kata/
+Kanji → ja-JP-Stimme, Lateinschrift → de-DE-Stimme), pro Segment einen
+Google-Cloud-TTS-Call, MP3s byte-concat (Google MP3 ist CBR ohne globalen
+Header — pro Sprecher-Wechsel ein neuer Stream funktioniert).
+
+Pro Text-LessonContent eine eigene MP3 in
+  app/static/uploads/lessons/text_audio/lesson_{id}/page_{n}_content_{cid}.mp3
+und `LessonContent.media_url` wird auf den Pfad gesetzt — dann rendert das
+Template einen Mini-Player oberhalb des `rich-text-content`.
+
+Idempotent: existiert media_url + Datei mit identischem content_text-Hash
+in `ai_generation_details.text_hash`, wird neu gerendert NUR mit `--force`.
+Markdown wird vor TTS gestrippt: `**bold**`, `## H2`, Listen `- `, Code,
+`(romaji)` direkt nach JP-Zeichen werden entfernt (Ohren brauchen sie nicht).
+
+Skip-Heuristik: text-Bloecke unter 80 Zeichen (Quiz-Intro, Mini-Texte) und
+Dialog-Bloecke (Speaker: ... Format) werden uebersprungen — fuer Dialoge
+existiert bereits `pipeline.py audio` + `slideshow`.
+"""
+import argparse
+import base64
+import hashlib
+import re
+import sys
+from pathlib import Path
+
+sys.stdout.reconfigure(encoding="utf-8")
+
+PROJECT_ROOT = Path(__file__).resolve().parents[4]
+sys.path.insert(0, str(PROJECT_ROOT))
+
+from app import create_app, db
+from app.models import Lesson, LessonContent
+from app.ai_services import GoogleCloudTTS
+
+# ---------------------------------------------------------------------------
+# Voices
+# ---------------------------------------------------------------------------
+JA_VOICE = "ja-JP-Neural2-B"  # weiblich, klar; Mayuko-getestet
+DE_VOICE = "de-DE-Neural2-F"  # weiblich, neutral; passt zur ja-Voice in Tonlage
+
+# ---------------------------------------------------------------------------
+# Markdown-Strip + Romaji-Strip
+# ---------------------------------------------------------------------------
+_MD_PATTERNS = [
+    (re.compile(r"^\s{0,3}#{1,6}\s+", re.MULTILINE), ""),       # # Headings → Text
+    (re.compile(r"\*\*(.+?)\*\*"), r"\1"),                       # **bold** → bold
+    (re.compile(r"(?<!\*)\*(?!\*)([^*\n]+?)\*(?!\*)"), r"\1"),  # *italic* → italic
+    (re.compile(r"`([^`\n]+)`"), r"\1"),                          # `code` → code
+    (re.compile(r"^\s*>\s+", re.MULTILINE), ""),                  # > quote → quote
+    (re.compile(r"^\s*[-*+]\s+", re.MULTILINE), ""),              # - list → list
+    (re.compile(r"^\s*\d+\.\s+", re.MULTILINE), ""),              # 1. list → list
+    (re.compile(r"^---+\s*$", re.MULTILINE), ""),                 # --- hr → leer
+]
+
+# Romaji direkt nach JP-Zeichen (oder JP-Bracket) wird vor TTS entfernt.
+# Heuristik: ` (latein-words-with-spaces-and-comma-and-apostroph)` direkt nach
+# JP-Klammer 」 oder JP-Zeichen.
+_ROMAJI_AFTER_JP = re.compile(
+    r"(?<=[぀-ヿ㐀-鿿」])\s*\(([ -~À-ÿ~,\-'’\.]+)\)"
+)
+
+
+def strip_markdown(text: str) -> str:
+    out = text
+    for pat, repl in _MD_PATTERNS:
+        out = pat.sub(repl, out)
+    return out
+
+
+def strip_romaji_after_jp(text: str) -> str:
+    """Entfernt `(romaji)` direkt nach JP-Zeichen — Ohren brauchen sie nicht.
+
+    Heuristik: Klammer-Inhalt ist NUR ASCII (Lateinbuchstaben + ein paar
+    Satzzeichen) UND steht direkt (oder mit Leerzeichen) nach einem JP-Zeichen
+    oder einer JP-Klammer 」. Beispiele die GESTRIPPT werden:
+      - 「ちち」 (chichi) → 「ちち」
+      - 家族 (kazoku, Familie) → 家族   ← (kazoku, Familie) wird entfernt, weil ASCII-only
+    Beispiele die BLEIBEN:
+      - Eltern (beide zusammen) — keine JP davor → bleibt
+    """
+    return _ROMAJI_AFTER_JP.sub("", text)
+
+
+# ---------------------------------------------------------------------------
+# DE/JA Sprach-Segmenter
+# ---------------------------------------------------------------------------
+# Unicode-Bereiche
+_JP_RE = re.compile(r"[぀-ゟ゠-ヿ㐀-䶿一-鿿ｦ-ﾟ]")
+_LATIN_RE = re.compile(r"[A-Za-zÀ-ſ]")
+
+
+def char_lang(ch: str) -> str | None:
+    """Klassifiziert ein Zeichen als 'ja' / 'de' / None (neutral: digit, space, punct)."""
+    if _JP_RE.match(ch):
+        return "ja"
+    if _LATIN_RE.match(ch):
+        return "de"
+    return None  # Ziffern, Leerzeichen, Satzzeichen — folgt vorherigem Segment
+
+
+def segment_by_language(text: str) -> list[tuple[str, str]]:
+    """Splittet einen Text in `[(lang, segment)]`-Tupel.
+
+    Neutrale Zeichen (Ziffern, Leerzeichen, Satzzeichen) werden dem aktuellen
+    Segment angehängt. Wechsel von 'ja' nach 'de' (oder umgekehrt) startet ein
+    neues Segment. Wenn der Text mit neutralen Zeichen anfängt, wird das erste
+    JP- oder Latin-Zeichen die Sprache des ersten Segments setzen.
+    """
+    segments: list[tuple[str, str]] = []
+    current_lang: str | None = None
+    buf: list[str] = []
+
+    for ch in text:
+        lang = char_lang(ch)
+        if lang is None:
+            buf.append(ch)
+            continue
+        if current_lang is None:
+            current_lang = lang
+            buf.append(ch)
+        elif lang == current_lang:
+            buf.append(ch)
+        else:
+            # Sprach-Wechsel: bisheriges Segment abschliessen
+            seg = "".join(buf).strip()
+            if seg:
+                segments.append((current_lang, seg))
+            current_lang = lang
+            buf = [ch]
+    # Letzten Buf flushen
+    if buf and current_lang:
+        seg = "".join(buf).strip()
+        if seg:
+            segments.append((current_lang, seg))
+    return segments
+
+
+# ---------------------------------------------------------------------------
+# TTS-Call
+# ---------------------------------------------------------------------------
+def _xml_escape(s: str) -> str:
+    return (
+        s.replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace('"', "&quot;")
+    )
+
+
+def synth_segment(tts: GoogleCloudTTS, lang: str, text: str, speed: float = 0.95) -> bytes | None:
+    """Ruft Google TTS REST API mit DE- oder JA-Voice auf, gibt MP3-Bytes."""
+    voice = JA_VOICE if lang == "ja" else DE_VOICE
+    lang_code = "ja-JP" if lang == "ja" else "de-DE"
+    ssml = f'<speak><prosody rate="{speed}">{_xml_escape(text)}<break time="200ms"/></prosody></speak>'
+    payload = {
+        "input": {"ssml": ssml},
+        "voice": {"languageCode": lang_code, "name": voice},
+        "audioConfig": {"audioEncoding": "MP3"},
+    }
+    resp = tts.requests.post(
+        f"{tts.TTS_URL}?key={tts.api_key}", json=payload, timeout=30,
+    )
+    if resp.status_code != 200:
+        print(f"      [TTS FEHLER] {resp.status_code} ({lang}): {resp.text[:160]}")
+        return None
+    audio_b64 = resp.json().get("audioContent")
+    return base64.b64decode(audio_b64) if audio_b64 else None
+
+
+# ---------------------------------------------------------------------------
+# Text-Auswahl
+# ---------------------------------------------------------------------------
+def is_dialog_block(text: str) -> bool:
+    """Heuristik: Text enthaelt Speaker-Zeilen wie 'Tanaka: ...' oder 'Lisa: ...'."""
+    speakers = 0
+    for line in text.splitlines():
+        line = line.strip()
+        if not line or line.startswith("(") or line.startswith("->"):
+            continue
+        # erste Token vor : ist potenziell Sprecher
+        if ":" in line.split()[0] and len(line.split(":")[0]) <= 15:
+            speakers += 1
+    return speakers >= 4
+
+
+def text_hash(text: str) -> str:
+    return hashlib.sha1(text.encode("utf-8")).hexdigest()[:12]
+
+
+# ---------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("lesson_id", type=int)
+    ap.add_argument("--page", type=int, default=None,
+                    help="Nur diese Page rendern (default: alle)")
+    ap.add_argument("--force", action="store_true",
+                    help="Bestehende MP3s neu erzeugen")
+    ap.add_argument("--min-chars", type=int, default=80,
+                    help="Mindestlaenge fuer Vorlese-MP3 (default: 80)")
+    args = ap.parse_args()
+
+    app = create_app()
+    with app.app_context():
+        lesson = db.session.get(Lesson, args.lesson_id)
+        if not lesson:
+            print(f"[FEHLER] Lesson {args.lesson_id} nicht gefunden.")
+            return 1
+
+        q = (
+            db.session.query(LessonContent)
+            .filter_by(lesson_id=args.lesson_id, content_type="text")
+            .order_by(LessonContent.page_number, LessonContent.order_index)
+        )
+        if args.page is not None:
+            q = q.filter(LessonContent.page_number == args.page)
+        rows = q.all()
+        if not rows:
+            print(f"[FEHLER] Keine text-LessonContents in Lesson {args.lesson_id}.")
+            return 1
+
+        tts = GoogleCloudTTS()
+        if not tts.client:
+            print("[FEHLER] Google TTS nicht konfiguriert (GOOGLE_API_KEY/GOOGLE_TTS_API_KEY fehlt).")
+            return 1
+
+        out_root = (
+            PROJECT_ROOT / "app" / "static" / "uploads"
+            / "lessons" / "text_audio" / f"lesson_{args.lesson_id}"
+        )
+        out_root.mkdir(parents=True, exist_ok=True)
+
+        rendered = 0
+        skipped = 0
+        for lc in rows:
+            text = lc.content_text or ""
+            if not text.strip():
+                continue
+            if len(text) < args.min_chars:
+                print(f"[SKIP] LC {lc.id} (Page {lc.page_number}): zu kurz ({len(text)} < {args.min_chars}).")
+                skipped += 1
+                continue
+            if is_dialog_block(text):
+                print(f"[SKIP] LC {lc.id} (Page {lc.page_number}): Dialog — bereits via `audio`-Step abgedeckt.")
+                skipped += 1
+                continue
+
+            new_hash = text_hash(text)
+            existing_details = lc.ai_generation_details or {}
+            if (
+                not args.force
+                and lc.media_url
+                and existing_details.get("text_hash") == new_hash
+            ):
+                print(f"[SKIP] LC {lc.id} (Page {lc.page_number}): MP3 aktuell (hash {new_hash}).")
+                skipped += 1
+                continue
+
+            # Markdown + Romaji weg
+            tts_text = strip_markdown(text)
+            tts_text = strip_romaji_after_jp(tts_text)
+
+            segments = segment_by_language(tts_text)
+            if not segments:
+                print(f"[SKIP] LC {lc.id}: Nach Strip keine sprechbaren Segmente.")
+                skipped += 1
+                continue
+
+            seg_summary = ", ".join(f"{lang}={len(t)}" for lang, t in segments[:8])
+            print(f"[INFO] LC {lc.id} (Page {lc.page_number}, '{lc.title or ''}'): "
+                  f"{len(segments)} Segmente ({seg_summary}{'...' if len(segments) > 8 else ''})")
+
+            mp3_chunks: list[bytes] = []
+            for i, (lang, seg) in enumerate(segments, start=1):
+                mp3 = synth_segment(tts, lang, seg)
+                if mp3 is None:
+                    print(f"      [FEHLER] Segment {i} ({lang}) liefert kein MP3 — Abbruch.")
+                    return 1
+                mp3_chunks.append(mp3)
+
+            merged = b"".join(mp3_chunks)
+            out_name = f"page_{lc.page_number}_content_{lc.id}.mp3"
+            out_path = out_root / out_name
+            out_path.write_bytes(merged)
+
+            rel = f"lessons/text_audio/lesson_{args.lesson_id}/{out_name}"
+            lc.media_url = f"/static/uploads/{rel}"
+            lc.file_path = rel
+            lc.file_type = "audio/mpeg"
+            lc.file_size = len(merged)
+            lc.ai_generation_details = {
+                **existing_details,
+                "tts_generator": "google_cloud_tts_de_ja_split",
+                "ja_voice": JA_VOICE,
+                "de_voice": DE_VOICE,
+                "text_hash": new_hash,
+                "segments": len(segments),
+            }
+            db.session.commit()
+            print(f"      [OK] {out_name} ({len(merged)} bytes, {len(mp3_chunks)} Segmente).")
+            rendered += 1
+
+        print(f"\n[FERTIG] {rendered} MP3s neu gerendert, {skipped} uebersprungen.")
+        return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

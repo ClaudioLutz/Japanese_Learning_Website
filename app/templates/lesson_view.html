@@ -680,6 +680,14 @@
                                             </div>
                                             {% elif content.content_type == 'text' %}
                                             <div class="conv-text-section" data-content-id="{{ content.id }}">
+                                                {% if content.media_url and content.file_type == 'audio/mpeg' %}
+                                                <div class="text-audio-player mb-3">
+                                                  <audio controls preload="none" src="{{ content.media_url }}" style="width:100%;max-width:540px;"></audio>
+                                                  <div class="text-audio-meta small text-muted mt-1">
+                                                    🔊 Vorlesen — Deutsch + Japanisch (separate Stimmen)
+                                                  </div>
+                                                </div>
+                                                {% endif %}
                                                 <div class="rich-text-content">{{ content.content_text | markdown_safe }}</div>
                                                 {% if current_user.is_authenticated %}
                                                 <div class="text-end mt-2">
@@ -912,6 +920,14 @@
                                                 {% else %}
                                                     {% if content.content_type == 'text' %}
                                                     <div class="text-content-container">
+                                                        {% if content.media_url and content.file_type == 'audio/mpeg' %}
+                                                        <div class="text-audio-player mb-3" data-content-id="{{ content.id }}">
+                                                          <audio controls preload="none" src="{{ content.media_url }}" style="width:100%;max-width:540px;"></audio>
+                                                          <div class="text-audio-meta small text-muted mt-1">
+                                                            🔊 Vorlesen — Deutsch + Japanisch (separate Stimmen)
+                                                          </div>
+                                                        </div>
+                                                        {% endif %}
                                                         <div class="rich-text-content">
                                                             {{ content.content_text | markdown_safe }}
                                                         </div>
