@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}JLPT N{{ level }} Lernpfad{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="row mb-4">
+    <div class="col-12">
+      <nav aria-label="breadcrumb" class="small">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{{ url_for('routes.index') }}">Start</a></li>
+          <li class="breadcrumb-item active" aria-current="page">JLPT N{{ level }} Pfad</li>
+        </ol>
+      </nav>
+      <h1 class="display-5 mb-2">📚 JLPT N{{ level }} Lernpfad</h1>
+      <p class="lead text-muted">
+        {% if level == 5 %}
+          Der Einstieg ins Japanische. Arbeite die Module der Reihe nach durch — jedes baut auf dem vorigen auf.
+        {% elif level == 4 %}
+          Aufbauend auf N5. Erweiterte Grammatik, mehr Vokabular, längere Texte.
+        {% else %}
+          Fortgeschrittenes Japanisch.
+        {% endif %}
+      </p>
+      {% if level == 5 %}
+      <div class="alert alert-info small mb-0">
+        💡 <strong>Tipp:</strong> Das Schloss-Symbol bedeutet, dass das Vorgänger-Modul noch nicht zu mindestens 80 % abgeschlossen ist.
+        Du kannst trotzdem alle Module ansehen, der Fortschritt zählt aber erst, wenn du registriert bist.
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if not modules %}
+    <div class="alert alert-warning">
+      Für N{{ level }} sind noch keine Module konfiguriert. Bitte im Admin-Panel
+      (<code>/admin-panel/lessoncategory</code>) Kategorien mit
+      <code>jlpt_level={{ level }}</code> anlegen.
+    </div>
+  {% endif %}
+
+  <div class="row g-4">
+    {% for entry in modules %}
+      {% set m = entry.module %}
+      <div class="col-md-6 col-lg-4">
+        <div class="card h-100 shadow-sm {% if not entry.unlocked %}opacity-75{% endif %}"
+             style="border-top: 4px solid {{ m.color_code or '#0d6efd' }};">
+          <div class="card-body d-flex flex-column">
+            <div class="d-flex align-items-center mb-2">
+              <div class="display-6 me-2" aria-hidden="true">
+                {{ m.icon_emoji or '📖' }}
+              </div>
+              <div>
+                <h5 class="card-title mb-0">{{ m.name.split(' · ')[-1] if ' · ' in m.name else m.name }}</h5>
+                <small class="text-muted">Modul {{ m.display_order or '?' }}</small>
+              </div>
+              {% if not entry.unlocked %}
+                <span class="ms-auto" title="Voraussetzung noch nicht erfüllt">🔒</span>
+              {% endif %}
+            </div>
+
+            <p class="card-text small text-muted flex-grow-1">{{ m.description }}</p>
+
+            {# Fortschritts-Balken #}
+            <div class="mt-2">
+              <div class="d-flex justify-content-between small mb-1">
+                <span class="text-muted">Fortschritt</span>
+                <span class="fw-bold">{{ entry.done }} / {{ entry.total }}</span>
+              </div>
+              <div class="progress" style="height: 6px;">
+                <div class="progress-bar"
+                     role="progressbar"
+                     style="width: {{ entry.percent }}%; background-color: {{ m.color_code or '#0d6efd' }};"
+                     aria-valuenow="{{ entry.percent }}"
+                     aria-valuemin="0"
+                     aria-valuemax="100"></div>
+              </div>
+            </div>
+
+            {# Lektionen-Liste oder Hinweis #}
+            <div class="mt-3">
+              {% if entry.lessons %}
+                <div class="small">
+                  {% for lesson in entry.lessons[:5] %}
+                    <a href="{{ url_for('routes.view_lesson', lesson_id=lesson.id) }}"
+                       class="d-block text-decoration-none py-1 border-bottom">
+                      <span class="text-secondary">›</span> {{ lesson.title }}
+                    </a>
+                  {% endfor %}
+                  {% if entry.lessons|length > 5 %}
+                    <small class="text-muted">… {{ entry.lessons|length - 5 }} weitere</small>
+                  {% endif %}
+                </div>
+              {% else %}
+                <div class="small text-muted fst-italic">
+                  Noch keine Lektionen in diesem Modul. <br>
+                  <a href="{{ url_for('routes.lessons') }}">Alle Lektionen ansehen →</a>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="row mt-5">
+    <div class="col-12 text-center">
+      <a href="{{ url_for('routes.lessons') }}" class="btn btn-outline-secondary">
+        Alle Lektionen ansehen (klassisch)
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

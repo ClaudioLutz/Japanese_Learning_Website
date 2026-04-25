@@ -403,6 +403,43 @@ def lessons():
     """Browse available lessons"""
     return render_template('lessons.html')
 
+
+@bp.route('/learn')
+@bp.route('/learn/n<int:level>')
+def learn_path(level: int = 5):
+    """JLPT-strukturierter Lernpfad — zeigt Module fuer ein Level mit Fortschritt
+    und Lock-Status. Mayuko-Direktive 2026-04-25: erst N5 komplett, dann N4."""
+    if level not in (1, 2, 3, 4, 5):
+        from flask import abort
+        abort(404)
+    modules = (
+        LessonCategory.query.filter_by(jlpt_level=level)
+        .order_by(LessonCategory.display_order.asc(), LessonCategory.id.asc())
+        .all()
+    )
+    user = current_user if current_user.is_authenticated else None
+    rendered_modules = []
+    for m in modules:
+        done, total = m.completion_for_user(user)
+        unlocked = m.is_unlocked_for_user(user)
+        published_lessons = sorted(
+            [l for l in m.lessons if l.is_published],
+            key=lambda l: (l.order_index or 0, l.id),
+        )
+        rendered_modules.append({
+            "module": m,
+            "done": done,
+            "total": total,
+            "percent": round(100.0 * done / total) if total else 0,
+            "unlocked": unlocked,
+            "lessons": published_lessons,
+        })
+    return render_template(
+        'learn_path.html',
+        level=level,
+        modules=rendered_modules,
+    )
+
 @bp.route('/courses')
 def courses():
     """Browse available courses"""

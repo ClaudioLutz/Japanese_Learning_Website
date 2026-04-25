@@ -67,9 +67,10 @@ class TestLevelSystem:
         from tests.factories import UserFactory
         user = UserFactory()
         db.session.commit()
-        assert 'Anfaenger' in user.level_title
+        # Umlaute korrekt (siehe Mayuko-Direktive: keine ASCII-Fallbacks)
+        assert 'Anfänger' in user.level_title
         user.level = 10
-        assert 'Schueler' in user.level_title
+        assert 'Schüler' in user.level_title
         user.level = 50
         assert 'Meister' in user.level_title
         user.level = 51
@@ -92,7 +93,7 @@ class TestCardStages:
     def test_low_stability(self, app):
         stage_idx, name, _ = get_card_stage('{"stability": 0.5}')
         assert stage_idx == 1
-        assert 'Anfaenger 1' in name
+        assert 'Anfänger 1' in name
 
     def test_medium_stability(self, app):
         stage_idx, name, _ = get_card_stage('{"stability": 20.0}')
@@ -108,10 +109,10 @@ class TestCardStages:
         """Alle Schwellenwerte pruefen."""
         test_cases = [
             (0.1, 0, 'Neu'),
-            (0.5, 1, 'Anfaenger 1'),
-            (2.0, 2, 'Anfaenger 2'),
-            (5.0, 3, 'Anfaenger 3'),
-            (10.0, 4, 'Anfaenger 4'),
+            (0.5, 1, 'Anfänger 1'),
+            (2.0, 2, 'Anfänger 2'),
+            (5.0, 3, 'Anfänger 3'),
+            (10.0, 4, 'Anfänger 4'),
             (20.0, 5, 'Vertraut 1'),
             (50.0, 6, 'Vertraut 2'),
             (100.0, 7, 'Meister'),

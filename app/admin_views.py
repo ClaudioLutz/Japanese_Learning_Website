@@ -143,16 +143,30 @@ class GrammarAdmin(SecureModelView):
 
 
 class LessonCategoryAdmin(SecureModelView):
-    column_list = ['id', 'name', 'description', 'color_code', 'created_at']
-    column_searchable_list = ['name', 'description']
-    column_editable_list = ['name', 'color_code']
+    column_list = [
+        'id', 'name', 'jlpt_level', 'display_order', 'icon_emoji',
+        'prerequisite', 'color_code', 'created_at',
+    ]
+    column_searchable_list = ['name', 'slug', 'description']
+    column_filters = ['jlpt_level']
+    column_editable_list = ['name', 'color_code', 'display_order', 'jlpt_level', 'icon_emoji']
+    column_default_sort = [('jlpt_level', False), ('display_order', False)]
     column_labels = {
         'name': 'Name',
+        'slug': 'Slug (Identifier)',
         'description': 'Beschreibung',
         'color_code': 'Farbe (Hex)',
+        'jlpt_level': 'JLPT-Level',
+        'display_order': 'Reihenfolge',
+        'icon_emoji': 'Icon (Emoji/Zeichen)',
+        'prerequisite': 'Voraussetzung (Modul)',
+        'prerequisite_category_id': 'Voraussetzung (Modul)',
         'created_at': 'Erstellt am',
     }
-    form_columns = ['name', 'description', 'color_code']
+    form_columns = [
+        'name', 'slug', 'description', 'color_code',
+        'jlpt_level', 'display_order', 'icon_emoji', 'prerequisite',
+    ]
 
 
 class CourseAdmin(SecureModelView):

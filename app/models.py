@@ -206,15 +206,55 @@ class LessonCategory(db.Model):
     description = db.Column(db.Text)
     color_code = db.Column(db.String(7), default='#007bff')  # hex color for UI
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
+
+    # Lernpfad-Felder (Mayuko-Direktive 2026-04-25: JLPT-strukturierter Pfad)
+    # Eine Kategorie wirkt als Modul innerhalb eines JLPT-Levels.
+    slug = db.Column(db.String(80), unique=True, nullable=True)  # z.B. 'n5-hiragana'
+    jlpt_level = db.Column(db.Integer, nullable=True)             # 5, 4, 3, 2, 1
+    display_order = db.Column(db.Integer, default=0, nullable=False)  # Reihenfolge innerhalb Level
+    icon_emoji = db.Column(db.String(8), nullable=True)           # z.B. 'あ' oder '🔢'
+    prerequisite_category_id = db.Column(
+        db.Integer, db.ForeignKey('lesson_category.id'), nullable=True
+    )
+
     # Relationship
     lessons = db.relationship('Lesson', backref='category', lazy=True)
-    
+    prerequisite = db.relationship(
+        'LessonCategory', remote_side=[id], foreign_keys=[prerequisite_category_id]
+    )
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
     def __repr__(self):
         return f'<LessonCategory {self.name}>'
+
+    def completion_for_user(self, user) -> tuple[int, int]:
+        """Returns (completed_lessons, total_published_lessons) fuer Pfad-Anzeige."""
+        from app.models import Lesson, UserLessonProgress
+        published = [l for l in self.lessons if l.is_published]
+        total = len(published)
+        if not user or not getattr(user, 'is_authenticated', False) or total == 0:
+            return 0, total
+        progress = UserLessonProgress.query.filter(
+            UserLessonProgress.user_id == user.id,
+            UserLessonProgress.lesson_id.in_([l.id for l in published]),
+            UserLessonProgress.is_completed == True,  # noqa: E712
+        ).count()
+        return progress, total
+
+    def is_unlocked_for_user(self, user, threshold: float = 0.8) -> bool:
+        """Modul ist freigeschaltet, wenn Vorgaenger-Modul zu >=threshold complete ist.
+        Ohne Voraussetzung: immer unlocked. Anonyme User: unlocked wenn Modul kostenlose
+        Inhalte hat (Detail-Pruefung erfolgt bei Lektion-Zugriff)."""
+        if self.prerequisite_category_id is None:
+            return True
+        if not user or not getattr(user, 'is_authenticated', False):
+            return True  # Anonyme User sehen alles, harte Pruefung beim Lesson-Zugriff
+        done, total = self.prerequisite.completion_for_user(user)
+        if total == 0:
+            return True
+        return (done / total) >= threshold
 
 class Lesson(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
