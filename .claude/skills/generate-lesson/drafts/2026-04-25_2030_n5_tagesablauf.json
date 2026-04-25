@@ -1,0 +1,818 @@
+{
+  "title": "N5 Tagesablauf — Wann stehst du auf?",
+  "description": "Lerne die wichtigsten Verben des Tagesablaufs (aufstehen, essen, arbeiten, schlafen) und wie du Uhrzeiten auf Japanisch nennst. Mit Tanaka, Lisa und Ueno-sensei sprichst du in der höflichen ます-Form über deinen Tag.",
+  "jlpt_level": 5,
+  "topic": "Tagesablauf",
+  "instruction_language": "german",
+  "allow_guest_access": false,
+  "thumbnail_url": "generated/thumbnail_tagesablauf_20260425_184517.png",
+  "pages": [
+    {
+      "title": "Einführung — Mein Tag",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Wann stehst du auf? Wann gehst du schlafen?",
+            "content_text": "## Wann stehst du auf? Wann gehst du schlafen?\n\nIn dieser Lektion lernst du die Sprache für **deinen Tagesablauf** auf Japanisch. Du kannst danach erzählen, wann du **aufstehst**, **arbeitest**, **isst** und **schläfst** — und du kannst andere danach fragen.\n\n### Was du lernen wirst\n\n- **20 alltägliche Wörter** für Tagesabschnitte und Verben (おきる (okiru — aufstehen), ねる (neru — schlafen), たべる (taberu — essen), かえる (kaeru — heimgehen), …)\n- Die **höfliche Verbform ます (masu)**, die du in fast jeder Situation in Japan verwendest\n- Wie du eine **Uhrzeit nennst**: 「七時半です」 (shichi-ji han desu) — \"Es ist halb acht\"\n- Das Muster **「～から～まで」 (~ kara ~ made)** für \"von ... bis ...\"\n\n### Warum ist das nützlich?\n\n> Wenn du in Japan jemanden kennenlernst, ist eine der ersten Fragen oft: 「おしごとは 何時からですか？」 (Oshigoto wa nan-ji kara desu ka? — Ab wann arbeitest du?). Mit dieser Lektion kannst du antworten — und mitreden.\n\nAm Ende prüfst du das Gelernte mit einem **Hörverständnis-Quiz** zum Dialog und einem **abschliessenden Übungsteil**."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln Teil 1 — Tagesabschnitte & Zeit",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "今",
+            "reading": "いま",
+            "romaji": "ima",
+            "meaning": "now",
+            "meaning_de": "jetzt",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "今、何時ですか。",
+            "example_sentence_english": "Ima, nan-ji desu ka? — What time is it now?",
+            "image_url": "vocab_generated/vocab_ba4b5ed1.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "朝",
+            "reading": "あさ",
+            "romaji": "asa",
+            "meaning": "morning",
+            "meaning_de": "Morgen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あさ、コーヒーを のみます。",
+            "example_sentence_english": "Asa, koohii o nomimasu. — In the morning I drink coffee.",
+            "image_url": "vocab_generated/vocab_1cfa3d28.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "昼",
+            "reading": "ひる",
+            "romaji": "hiru",
+            "meaning": "noon, daytime",
+            "meaning_de": "Mittag",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ひるに ごはんを たべます。",
+            "example_sentence_english": "Hiru ni gohan o tabemasu. — At noon I eat a meal.",
+            "image_url": "vocab_generated/vocab_fe4a27c0.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "夜",
+            "reading": "よる",
+            "romaji": "yoru",
+            "meaning": "evening, night",
+            "meaning_de": "Abend, Nacht",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "よる、ほんを よみます。",
+            "example_sentence_english": "Yoru, hon o yomimasu. — In the evening I read a book.",
+            "image_url": "vocab_generated/vocab_7345a62e.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "午前",
+            "reading": "ごぜん",
+            "romaji": "gozen",
+            "meaning": "morning, A.M.",
+            "meaning_de": "vormittags, A.M.",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "午前 九時に 学校へ 行きます。",
+            "example_sentence_english": "Gozen ku-ji ni gakkou e ikimasu. — At 9 A.M. I go to school.",
+            "image_url": "vocab_generated/vocab_bb3b79ba.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "午後",
+            "reading": "ごご",
+            "romaji": "gogo",
+            "meaning": "afternoon, P.M.",
+            "meaning_de": "nachmittags, P.M.",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "午後 三時まで 学校です。",
+            "example_sentence_english": "Gogo san-ji made gakkou desu. — School lasts until 3 P.M.",
+            "image_url": "vocab_generated/vocab_b5cc30a8.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "半",
+            "reading": "はん",
+            "romaji": "han",
+            "meaning": "half (past)",
+            "meaning_de": "halb (Uhrzeit)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "今 七時半です。",
+            "example_sentence_english": "Ima shichi-ji han desu. — It is now half past seven.",
+            "image_url": "vocab_generated/vocab_2475dea6.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "毎日",
+            "reading": "まいにち",
+            "romaji": "mainichi",
+            "meaning": "every day",
+            "meaning_de": "jeden Tag",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "まいにち、本を よみます。",
+            "example_sentence_english": "Mainichi, hon o yomimasu. — Every day I read a book.",
+            "image_url": "vocab_generated/vocab_b0e91c12.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "今日",
+            "reading": "きょう",
+            "romaji": "kyou",
+            "meaning": "today",
+            "meaning_de": "heute",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "今日は やすみます。",
+            "example_sentence_english": "Kyou wa yasumimasu. — Today I rest.",
+            "image_url": "vocab_generated/vocab_296304f1.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "明日",
+            "reading": "あした",
+            "romaji": "ashita",
+            "meaning": "tomorrow",
+            "meaning_de": "morgen (der Tag)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あした 学校へ 行きます。",
+            "example_sentence_english": "Ashita gakkou e ikimasu. — Tomorrow I go to school.",
+            "image_url": "vocab_generated/vocab_2a7733d6.png"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln Teil 2 — Verben des Tagesablaufs",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "起きる",
+            "reading": "おきる",
+            "romaji": "okiru",
+            "meaning": "to get up",
+            "meaning_de": "aufstehen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "わたしは 六時に おきます。",
+            "example_sentence_english": "Watashi wa roku-ji ni okimasu. — I get up at six o'clock.",
+            "image_url": "vocab_generated/vocab_a25fb9f6.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "寝る",
+            "reading": "ねる",
+            "romaji": "neru",
+            "meaning": "to sleep, to go to bed",
+            "meaning_de": "schlafen, zu Bett gehen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "わたしは 十一時に ねます。",
+            "example_sentence_english": "Watashi wa juuichi-ji ni nemasu. — I go to bed at eleven.",
+            "image_url": "vocab_generated/vocab_f0932127.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "食べる",
+            "reading": "たべる",
+            "romaji": "taberu",
+            "meaning": "to eat",
+            "meaning_de": "essen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ひるに ごはんを たべます。",
+            "example_sentence_english": "Hiru ni gohan o tabemasu. — At noon I eat a meal.",
+            "image_url": "vocab_generated/vocab_bebf9807.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "飲む",
+            "reading": "のむ",
+            "romaji": "nomu",
+            "meaning": "to drink",
+            "meaning_de": "trinken",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あさ、コーヒーを のみます。",
+            "example_sentence_english": "Asa, koohii o nomimasu. — I drink coffee in the morning.",
+            "image_url": "vocab_generated/vocab_c439a5f7.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "働く",
+            "reading": "はたらく",
+            "romaji": "hataraku",
+            "meaning": "to work",
+            "meaning_de": "arbeiten",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "わたしは 八時から はたらきます。",
+            "example_sentence_english": "Watashi wa hachi-ji kara hatarakimasu. — I work from eight o'clock.",
+            "image_url": "vocab_generated/vocab_a426e9a8.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "休む",
+            "reading": "やすむ",
+            "romaji": "yasumu",
+            "meaning": "to rest, to have a break",
+            "meaning_de": "ausruhen, Pause machen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "今日は やすみます。",
+            "example_sentence_english": "Kyou wa yasumimasu. — Today I rest.",
+            "image_url": "vocab_generated/vocab_99f660a5.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "勉強",
+            "reading": "べんきょう",
+            "romaji": "benkyou",
+            "meaning": "study",
+            "meaning_de": "Lernen, Studium",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "よる、にほんごを べんきょうします。",
+            "example_sentence_english": "Yoru, nihongo o benkyou shimasu. — In the evening I study Japanese.",
+            "image_url": "vocab_generated/vocab_76e5d9c8.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "始まる",
+            "reading": "はじまる",
+            "romaji": "hajimaru",
+            "meaning": "to begin",
+            "meaning_de": "beginnen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "学校は 八時に はじまります。",
+            "example_sentence_english": "Gakkou wa hachi-ji ni hajimarimasu. — School begins at eight.",
+            "image_url": "vocab_generated/vocab_01cc377e.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "終る",
+            "reading": "おわる",
+            "romaji": "owaru",
+            "meaning": "to finish, to end",
+            "meaning_de": "enden, aufhören",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "学校は 三時に おわります。",
+            "example_sentence_english": "Gakkou wa san-ji ni owarimasu. — School ends at three.",
+            "image_url": "vocab_generated/vocab_ae74bebb.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "帰る",
+            "reading": "かえる",
+            "romaji": "kaeru",
+            "meaning": "to go home, to return",
+            "meaning_de": "nach Hause gehen, zurückkehren",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "六時に いえへ かえります。",
+            "example_sentence_english": "Roku-ji ni ie e kaerimasu. — I go home at six.",
+            "image_url": "vocab_generated/vocab_d05410bf.png"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Grammatik — Uhrzeit, ます-Form, ～から～まで",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Drei Bausteine für deinen Tagesablauf",
+            "content_text": "## Drei Bausteine, um über deinen Tag zu sprechen\n\nMit den folgenden drei Mustern kannst du fast alles ausdrücken, was zu deinem Tagesablauf gehört: **die Uhrzeit nennen**, **Tätigkeiten höflich beschreiben** und **Zeitspannen angeben**.\n\n### 1. Uhrzeit nennen — 今 ～時 ～分 です\n\nUm zu sagen, wie spät es ist oder wann etwas passiert, nutzt du das Muster `[Stunde] 時 [Minuten] 分 です`. Statt `30 分` sagt man fast immer **半 (han)** für \"halb\".\n\n- 今 七時です。 (Ima shichi-ji desu.) — Es ist jetzt sieben Uhr.\n- 今 七時半です。 (Ima shichi-ji han desu.) — Es ist jetzt halb acht.\n\n### 2. Höfliche Verbform — ます (-masu)\n\nFast alle japanischen Verben, die du in dieser Lektion siehst, enden auf **～ます**. Das ist die **höfliche Form**, die du in jedem Alltagsgespräch (Schule, Arbeit, Restaurant, mit Fremden) verwendest.\n\n- **～ます** — Gegenwart positiv: おきます (okimasu) — ich stehe auf\n- **～ません** — Gegenwart negativ: おきません (okimasen) — ich stehe nicht auf\n- **～ました** — Vergangenheit positiv: おきました (okimashita) — ich bin aufgestanden\n- **～ませんでした** — Vergangenheit negativ: おきませんでした — ich bin nicht aufgestanden\n\n> Merke: **Höfliche Verben enden immer auf einen Vokal + す**. Die ます-Form ist neutral-höflich — du kannst sie immer verwenden, ohne unhöflich zu klingen.\n\n### 3. Zeitspannen — ～から ～まで (von ~ bis ~)\n\n- **から (kara)** = von / ab\n- **まで (made)** = bis\n\nMit `[Anfang] から [Ende] まで` drückst du eine **Zeitspanne** aus.\n\n- 八時**から** 五時**まで** はたらきます。 (Hachi-ji **kara** go-ji **made** hatarakimasu.) — Ich arbeite **von** 8 **bis** 5.\n- 月よう日**から** 金よう日**まで** 学校です。 (Getsu-youbi kara kin-youbi made gakkou desu.) — **Von** Montag **bis** Freitag bin ich in der Schule."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "今 ～時 ～分 です (Uhrzeit angeben)",
+            "structure": "[Stunde] + 時 + [Minuten] + 分 + です  ([hour] + ji + [minutes] + fun + desu)",
+            "romaji": "[hour] + ji + [minutes] + fun + desu",
+            "explanation": "Eine Uhrzeit auf Japanisch besteht aus dem Stunden-Zähler 「時」 (ji), optional gefolgt vom Minuten-Zähler 「分」 (fun/pun). Statt 「30分」 (sanjuppun) sagt man üblicherweise 「半」 (han) für 'halb'. Die Zähllaute für Stunden sind unregelmässig — besonders 4 Uhr ist 「四時」 (yo-ji), nicht 'shi-ji'. Vor einer Uhrzeit stellt man oft 「今」 (ima) für 'jetzt'.",
+            "jlpt_level": 5,
+            "example_sentences": "今 九時です。 (Ima ku-ji desu.) — Es ist jetzt neun Uhr.\n今 九時十五分です。 (Ima ku-ji juu-go-fun desu.) — Es ist jetzt neun Uhr fünfzehn.\n今 七時半です。 (Ima shichi-ji han desu.) — Es ist jetzt halb acht."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "ます-Form (höfliche Gegenwart)",
+            "structure": "[Verb-Stamm] + ます  ([verb stem] + masu)",
+            "romaji": "[verb stem] + masu",
+            "explanation": "Die ます-Form ist die universelle höfliche Verbform. Sie funktioniert in jeder Alltagssituation, ohne unhöflich zu klingen. Aus 「おきる」 (okiru, aufstehen) wird 「おきます」 (okimasu, ich stehe auf). Aus 「のむ」 (nomu, trinken) wird 「のみます」 (nomimasu). Negativ: 「おきません」 (okimasen, ich stehe nicht auf). Vergangenheit: 「おきました」 (okimashita, ich bin aufgestanden).",
+            "jlpt_level": 5,
+            "example_sentences": "わたしは 六時に おきます。 (Watashi wa roku-ji ni okimasu.) — Ich stehe um sechs auf.\n今日は はたらきません。 (Kyou wa hatarakimasen.) — Heute arbeite ich nicht.\nきのう 十一時に ねました。 (Kinou juuichi-ji ni nemashita.) — Gestern bin ich um elf zu Bett gegangen."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "～から ～まで (von ~ bis ~)",
+            "structure": "[N₁] + から + [N₂] + まで  ([N1] + kara + [N2] + made)",
+            "romaji": "[N1] + kara + [N2] + made",
+            "explanation": "Mit 「から」 (kara, von/ab) und 「まで」 (made, bis) gibst du eine Zeitspanne oder Strecke an. Sehr häufig bei Arbeitszeiten und Öffnungszeiten. Beide Partikel können auch einzeln stehen, z.B. nur 「八時から」 (ab acht) oder nur 「五時まで」 (bis fünf).",
+            "jlpt_level": 5,
+            "example_sentences": "しごとは 八時から 五時までです。 (Shigoto wa hachi-ji kara go-ji made desu.) — Die Arbeit ist von acht bis fünf.\n学校は 月よう日から 金よう日までです。 (Gakkou wa getsu-youbi kara kin-youbi made desu.) — Die Schule ist von Montag bis Freitag.\nひるやすみは 十二時から 一時までです。 (Hiruyasumi wa juuni-ji kara ichi-ji made desu.) — Die Mittagspause ist von zwölf bis eins."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Dialog — Tanaka & Lisa über ihren Tag",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "In der Pause — Tanaka fragt Lisa über ihren Tag",
+            "content_text": "Tanaka: リサさん、まいあさ 何時に おきますか。\n  (Risa-san, maiasa nan-ji ni okimasu ka.)\n  -> Lisa, wann stehst du jeden Morgen auf?\n\nLisa: わたしは 六時半に おきます。たなかさんは？\n  (Watashi wa roku-ji han ni okimasu. Tanaka-san wa?)\n  -> Ich stehe um halb sieben auf. Und du, Tanaka?\n\nTanaka: わたしは 七時に おきます。しごとは 何時から 何時までですか。\n  (Watashi wa shichi-ji ni okimasu. Shigoto wa nan-ji kara nan-ji made desu ka.)\n  -> Ich stehe um sieben auf. Wann arbeitest du, von wann bis wann?\n\nLisa: 九時から 六時までです。ひるやすみは 十二時から 一時までです。\n  (Ku-ji kara roku-ji made desu. Hiruyasumi wa juuni-ji kara ichi-ji made desu.)\n  -> Von neun bis sechs. Mittagspause ist von zwölf bis eins.\n\nTanaka: よる、何を しますか。\n  (Yoru, nani o shimasu ka.)\n  -> Was machst du am Abend?\n\nLisa: いえに かえって、にほんごを べんきょうします。それから ほんを よみます。\n  (Ie ni kaette, nihongo o benkyou shimasu. Sorekara hon o yomimasu.)\n  -> Ich gehe nach Hause und lerne Japanisch. Danach lese ich ein Buch.\n\nTanaka: いいですね。何時に ねますか。\n  (Ii desu ne. Nan-ji ni nemasu ka.)\n  -> Schön. Wann gehst du schlafen?\n\nLisa: 十一時半に ねます。\n  (Juuichi-ji han ni nemasu.)\n  -> Ich gehe um halb zwölf zu Bett."
+          }
+        },
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Verständnisfragen zum Dialog",
+            "content_text": "Vier kurze Fragen zum Hörverständnis. Lies (oder höre) den Dialog oben noch einmal und beantworte sie."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wann steht Lisa jeden Morgen auf?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "Sie sagt 「六時半に おきます」 (roku-ji han ni okimasu).",
+              "explanation": "Lisa sagt 「六時半に おきます」 — sie steht um halb sieben (6:30) auf.",
+              "options": [
+                {
+                  "option_text": "Um sechs Uhr",
+                  "is_correct": false,
+                  "feedback": "Nicht ganz — sie sagt 「六時半」 (roku-ji han), also halb sieben."
+                },
+                {
+                  "option_text": "Um halb sieben",
+                  "is_correct": true,
+                  "feedback": "Richtig! 「六時半」 (roku-ji han) bedeutet 6:30."
+                },
+                {
+                  "option_text": "Um sieben Uhr",
+                  "is_correct": false,
+                  "feedback": "Das ist Tanaka — er steht um sieben auf."
+                },
+                {
+                  "option_text": "Um halb acht",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「七時半」 (shichi-ji han) — Lisa steht früher auf."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Von wann bis wann arbeitet Lisa?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "Achte auf das Muster 「～から ～まで」 (~ kara ~ made).",
+              "explanation": "Lisa sagt 「九時から 六時までです」 (ku-ji kara roku-ji made desu) — sie arbeitet von neun bis sechs.",
+              "options": [
+                {
+                  "option_text": "Von 8 bis 5",
+                  "is_correct": false,
+                  "feedback": "Nicht ganz — sie sagt 「九時から 六時まで」."
+                },
+                {
+                  "option_text": "Von 9 bis 6",
+                  "is_correct": true,
+                  "feedback": "Genau! 「九時から 六時までです」 (ku-ji kara roku-ji made desu)."
+                },
+                {
+                  "option_text": "Von 9 bis 5",
+                  "is_correct": false,
+                  "feedback": "Sie arbeitet bis 「六時」 (roku-ji), also bis 6."
+                },
+                {
+                  "option_text": "Von 7 bis 6",
+                  "is_correct": false,
+                  "feedback": "Um sieben steht Tanaka auf — das ist nicht ihre Arbeitszeit."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Lisa lernt am Abend Japanisch.",
+              "difficulty_level": 1,
+              "explanation": "Korrekt — Lisa sagt 「よる、にほんごを べんきょうします」 (yoru, nihongo o benkyou shimasu).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Ja — sie lernt am Abend Japanisch und liest danach ein Buch."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — Lisa sagt klar 「よる、にほんごを べんきょうします」."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wann geht Lisa zu Bett?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "Sie sagt 「十一時半」 (juuichi-ji han).",
+              "explanation": "Lisa antwortet 「十一時半に ねます」 — sie geht um halb zwölf (23:30) zu Bett.",
+              "options": [
+                {
+                  "option_text": "Um 10 Uhr",
+                  "is_correct": false,
+                  "feedback": "Nein — sie geht später zu Bett."
+                },
+                {
+                  "option_text": "Um halb elf",
+                  "is_correct": false,
+                  "feedback": "Nicht ganz — sie sagt 「十一時半」 (juuichi-ji han), also 11:30."
+                },
+                {
+                  "option_text": "Um halb zwölf",
+                  "is_correct": true,
+                  "feedback": "Richtig! 「十一時半に ねます」 (juuichi-ji han ni nemasu)."
+                },
+                {
+                  "option_text": "Um 12 Uhr",
+                  "is_correct": false,
+                  "feedback": "Sie geht etwas früher zu Bett, um 「十一時半」."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Übung — Quiz",
+      "page_type": "quiz_carousel",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Übungs-Quiz — Tagesablauf",
+            "content_text": "Elf Aufgaben zu Vokabeln, Uhrzeit, der 「ます」 (masu) -Form und 「～から ～まで」 (kara made). Mix aus Multiple-Choice, True/False und Matching."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「おきます」 (okimasu)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "Was machst du als Erstes am Morgen?",
+              "explanation": "「おきます」 (okimasu) ist die ます-Form von 「おきる」 — aufstehen.",
+              "options": [
+                {
+                  "option_text": "aufstehen",
+                  "is_correct": true,
+                  "feedback": "Richtig — おきます = ich stehe auf."
+                },
+                {
+                  "option_text": "schlafen",
+                  "is_correct": false,
+                  "feedback": "Schlafen wäre 「ねます」 (nemasu)."
+                },
+                {
+                  "option_text": "essen",
+                  "is_correct": false,
+                  "feedback": "Essen wäre 「たべます」 (tabemasu)."
+                },
+                {
+                  "option_text": "arbeiten",
+                  "is_correct": false,
+                  "feedback": "Arbeiten wäre 「はたらきます」 (hatarakimasu)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie sagt man auf Japanisch \"Ich gehe um sieben Uhr zu Bett\"?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Achte auf die Reihenfolge: Zeit + に + Verb + ます.",
+              "explanation": "「七時に ねます」 (shichi-ji ni nemasu) — Die Zeitangabe steht vor dem Verb, die Partikel 「に」 markiert den Zeitpunkt.",
+              "options": [
+                {
+                  "option_text": "七時に ねます。 (shichi-ji ni nemasu)",
+                  "is_correct": true,
+                  "feedback": "Genau! Zeit + に + Verb-ます."
+                },
+                {
+                  "option_text": "ねます 七時に。 (nemasu shichi-ji ni)",
+                  "is_correct": false,
+                  "feedback": "Im Japanischen steht das Verb am Ende — Zeit kommt davor."
+                },
+                {
+                  "option_text": "七時 ねます。 (shichi-ji nemasu)",
+                  "is_correct": false,
+                  "feedback": "Die Partikel 「に」 fehlt — sie markiert den Zeitpunkt."
+                },
+                {
+                  "option_text": "七時で ねます。 (shichi-ji de nemasu)",
+                  "is_correct": false,
+                  "feedback": "「で」 ist die Ort-Partikel, nicht die Zeit-Partikel — du brauchst 「に」."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「七時半」 (shichi-ji han)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「七時」 = sieben Uhr, 「半」 = halb (= +30 Minuten). Zusammen: halb acht (7:30).",
+              "options": [
+                {
+                  "option_text": "Halb acht (7:30)",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「半」 bedeutet 30 Minuten nach voller Stunde."
+                },
+                {
+                  "option_text": "Halb sieben (6:30)",
+                  "is_correct": false,
+                  "feedback": "Halb sieben wäre 「六時半」 (roku-ji han)."
+                },
+                {
+                  "option_text": "Sieben Uhr genau",
+                  "is_correct": false,
+                  "feedback": "Sieben Uhr genau wäre nur 「七時」 ohne 「半」."
+                },
+                {
+                  "option_text": "Halb sieben Uhr abends",
+                  "is_correct": false,
+                  "feedback": "Tageszeit (vormittags/nachmittags) wird mit 「午前/午後」 angegeben."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「ません」 macht aus einem Verb die Vergangenheitsform.",
+              "difficulty_level": 2,
+              "explanation": "「ません」 (masen) ist die NEGATIVE Gegenwartsform (z.B. たべません = ich esse nicht). Die Vergangenheit wäre 「ました」 (mashita).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nein — 「ません」 ist Negation in der Gegenwart, nicht Vergangenheit."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt — 「ません」 = negative Gegenwart. Die Vergangenheit ist 「ました」."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welche Übersetzung ist richtig: 「学校は 八時から 三時までです。」 (gakkou wa hachi-ji kara san-ji made desu)",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "「から」 = von, 「まで」 = bis.",
+              "explanation": "「八時から 三時まで」 (hachi-ji kara san-ji made) bedeutet 'von acht bis drei'.",
+              "options": [
+                {
+                  "option_text": "Die Schule ist von acht bis drei.",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「から…まで」 = 'von … bis …'."
+                },
+                {
+                  "option_text": "Die Schule beginnt um drei Uhr.",
+                  "is_correct": false,
+                  "feedback": "Drei Uhr ist das ENDE — 「まで」 markiert das Ende der Spanne."
+                },
+                {
+                  "option_text": "Die Schule ist um acht zu Ende.",
+                  "is_correct": false,
+                  "feedback": "Acht Uhr ist der ANFANG — 「から」 markiert den Beginn."
+                },
+                {
+                  "option_text": "Die Schule ist nur am Vormittag.",
+                  "is_correct": false,
+                  "feedback": "Sie geht bis 「三時」 (san-ji), also drei Uhr nachmittags."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde die japanischen Wörter mit ihrer Bedeutung.",
+              "difficulty_level": 1,
+              "options": [
+                {
+                  "option_text": "朝 (asa)",
+                  "feedback": "Morgen",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "昼 (hiru)",
+                  "feedback": "Mittag",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "夜 (yoru)",
+                  "feedback": "Abend, Nacht",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "今 (ima)",
+                  "feedback": "jetzt",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde die Verben in der ます-Form mit der deutschen Übersetzung.",
+              "difficulty_level": 2,
+              "options": [
+                {
+                  "option_text": "たべます (tabemasu)",
+                  "feedback": "essen",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "のみます (nomimasu)",
+                  "feedback": "trinken",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "はたらきます (hatarakimasu)",
+                  "feedback": "arbeiten",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "かえります (kaerimasu)",
+                  "feedback": "nach Hause gehen",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was passt am besten in die Lücke? 「あした 学校へ ___ 。」 (ashita gakkou e ___ )",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Wenn du irgendwo HIN gehst, brauchst du das Verb für 'gehen' in der ます-Form.",
+              "explanation": "「行きます」 (ikimasu) ist die ます-Form von 「行く」 (iku, gehen). 「へ」 (e) markiert das Ziel der Bewegung.",
+              "options": [
+                {
+                  "option_text": "行きます (ikimasu)",
+                  "is_correct": true,
+                  "feedback": "Genau — 「学校へ 行きます」 (gakkou e ikimasu) = ich gehe zur Schule."
+                },
+                {
+                  "option_text": "ねます (nemasu)",
+                  "is_correct": false,
+                  "feedback": "「ねます」 = ich schlafe. Das passt nicht zu 「学校へ」."
+                },
+                {
+                  "option_text": "たべます (tabemasu)",
+                  "is_correct": false,
+                  "feedback": "「たべます」 = ich esse. Das passt nicht zu 「学校へ」."
+                },
+                {
+                  "option_text": "おきます (okimasu)",
+                  "is_correct": false,
+                  "feedback": "「おきます」 = ich stehe auf — keine Bewegung zu einem Ort."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「午後 三時」 (gogo san-ji) bedeutet 3 Uhr nachts.",
+              "difficulty_level": 1,
+              "explanation": "「午後」 (gogo) = nachmittags / P.M. — also drei Uhr NACHMITTAGS. 3 Uhr nachts wäre 「午前 三時」 (gozen san-ji).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nein — 「午後」 (gogo) = nachmittags, also 15:00."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt — 「午後 三時」 = 15:00. Für 3 Uhr nachts: 「午前 三時」."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie sagst du \"Ich lerne jeden Tag Japanisch\" auf Japanisch?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "「まいにち」 (mainichi) heisst 'jeden Tag'.",
+              "explanation": "「まいにち、にほんごを べんきょうします」 (mainichi, nihongo o benkyou shimasu) — Subjekt (ich) + Zeit (jeden Tag) + Objekt (Japanisch) + Verb (lernen-ます).",
+              "options": [
+                {
+                  "option_text": "まいにち、にほんごを べんきょうします。 (mainichi, nihongo o benkyou shimasu)",
+                  "is_correct": true,
+                  "feedback": "Richtig — Zeit + Objekt + を + Verb-ます."
+                },
+                {
+                  "option_text": "にほんごを まいにち でした。 (nihongo o mainichi deshita)",
+                  "is_correct": false,
+                  "feedback": "「でした」 (deshita) ist die Vergangenheit der Kopula 「です」 — kein Verb für 'lernen'."
+                },
+                {
+                  "option_text": "まいにち、にほんごは べんきょう。 (mainichi, nihongo wa benkyou)",
+                  "is_correct": false,
+                  "feedback": "Das Verb fehlt in der ます-Form. 「べんきょうします」 ist Pflicht."
+                },
+                {
+                  "option_text": "にほんごで まいにち べんきょう。 (nihongo de mainichi benkyou)",
+                  "is_correct": false,
+                  "feedback": "「で」 (de) ist die falsche Partikel — du brauchst 「を」 (o) für das direkte Objekt."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welche Form ist die VERGANGENHEIT von 「たべます」 (tabemasu)?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Die Vergangenheit positiv ist 「ました」 (mashita) — also 「たべました」 (tabemashita) = ich habe gegessen.",
+              "options": [
+                {
+                  "option_text": "たべました (tabemashita)",
+                  "is_correct": true,
+                  "feedback": "Richtig — ます → ました für die Vergangenheit."
+                },
+                {
+                  "option_text": "たべません (tabemasen)",
+                  "is_correct": false,
+                  "feedback": "Das ist die negative Gegenwart (ich esse nicht)."
+                },
+                {
+                  "option_text": "たべませんでした (tabemasen deshita)",
+                  "is_correct": false,
+                  "feedback": "Das ist die negative Vergangenheit (ich habe nicht gegessen)."
+                },
+                {
+                  "option_text": "たべる (taberu)",
+                  "is_correct": false,
+                  "feedback": "Das ist die Wörterbuchform — keine Vergangenheit."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Zusammenfassung & Ausblick",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Was du jetzt kannst",
+            "content_text": "## Du kannst jetzt über deinen Tag sprechen\n\nDu hast in dieser Lektion **drei zentrale Werkzeuge** gelernt, die du in fast jedem Alltagsgespräch in Japan brauchst.\n\n### Die wichtigsten Bausteine\n\n- **20 Verben & Tageszeit-Wörter** — von 「おきる」 (okiru — aufstehen) bis 「ねる」 (neru — schlafen)\n- Die **höfliche ます-Form** mit allen vier Tempora: ます (masu) / ません (masen) / ました (mashita) / ませんでした (masen deshita)\n- **Zeitspannen** mit 「～から ～まで」 (kara — made)\n- **Uhrzeiten** mit 「～時 / ～分 / 半」 (ji / fun / han)\n\n### Tipps für den Alltag\n\n> **Übe laut**: Sage jeden Morgen auf Japanisch, was du heute machst — auch nur leise im Kopf. Das festigt die 「ます」 (masu) -Form schneller als jedes Lehrbuch.\n\n- Frage einen japanischen Freund: **「何時に おきますか？」** (Nan-ji ni okimasu ka? — Wann stehst du auf?). Du wirst die Antwort verstehen.\n- Achte beim nächsten Anime-/Drama-Schauen auf die 「ます」 (masu) -Form. Du wirst sie überall hören.\n- Wenn dir ein neues Verb begegnet (z.B. **「およぐ」** (oyogu — schwimmen)), versuche selbst die 「ます」 (masu) -Form zu bilden: oyogu → oyogi**ます**.\n\n### Was kommt als Nächstes?\n\n1. **N5 — Wochentage & Wochenplan**: Wir lernen die Tage 「月よう日」 (getsu-youbi) bis 「日よう日」 (nichi-youbi) und kombinieren sie mit der 「ます」 (masu) -Form aus dieser Lektion.\n2. **N5 — Im Restaurant bestellen**: Du kannst dann zu Lisa und Tanaka in ihre Mittagspause kommen und mitbestellen.\n3. **N5 — Hobbys & Freizeit**: Mit den Verben 「見る」 (miru — sehen), 「読む」 (yomu — lesen), 「聞く」 (kiku — hören), 「あそぶ」 (asobu — spielen) erzählst du, was du am Abend gerne machst.\n\nGut gemacht — **「また あした！」** (mata ashita! — bis morgen!)"
+          }
+        }
+      ]
+    }
+  ]
+}

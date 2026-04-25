@@ -313,6 +313,16 @@ Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
     → PFLICHT (nicht mehr optional). Ruft DALL-E für thumbnail +
        mind. 3 Schlüsselvokabel-Bilder. Ergänzt image_url/thumbnail_url
        im Draft. Bei fehlendem OPENAI_API_KEY: User fragen, NICHT weitermachen.
+    ⚠️ **DALL-E Safety-Filter False-Positives** (Lesson 145, 食べる):
+       Vereinzelte Vokabeln (vor allem Verben mit körperlichem Bezug wie
+       essen/schlafen/baden) werden vom DALL-E-Filter als "self-harm" o.ä.
+       missdeutet (`safety_violations=[self-harm]`, HTTP 400). Pipeline
+       laeuft trotzdem weiter und ueberspringt nur dieses eine Bild.
+       Workaround nach Pipeline-Ende: `image_url` der betroffenen Vokabel
+       manuell mit objekt-fokussiertem Prompt nachgenerieren (z.B. "a bowl
+       of warm rice with chopsticks held above it, no people"), Datei in
+       `app/static/uploads/vocab_generated/vocab_<hash>.png` speichern und
+       im Draft-JSON setzen. Lektion ist mit 19/20 Bildern noch nutzbar.
 
 [4] python .claude/skills/generate-lesson/pipeline.py insert {draft_path}
     → Transaktionaler INSERT in Postgres (docker-compose DB)
@@ -372,6 +382,23 @@ Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
            `.text-audio-player` enthalten. `.details` (Vocab/Kanji-Karten,
            JP-only) bleiben klickbar. Bei Template-/JS-Aenderungen NIE den
            Skip-Check entfernen.
+
+[4b3] **order_index-Kollision auf Dialog-Page pruefen** (PFLICHT seit 2026-04-25
+    nach Lesson 145):
+    Nach `insert` nummeriert Pipeline alle Items der Dialog-Page ab `order_index=1`
+    (Dialog-Text + Verstaendnis-Intro auf Page 5 -> beide bekommen 1+2). Dann
+    setzt `audio` einen LC mit `order_index=1`, `slideshow` einen mit
+    `order_index=2`, ohne die bestehenden zu verschieben. Resultat: 4 LCs mit
+    oi-Werten 1/1/1/2 -> DB sortiert nicht-deterministisch -> Frontend rendert
+    in zufaelliger Reihenfolge (z.B. Verstaendnisfragen vor Dialog-Text).
+    Pflicht-Check + Korrektur:
+       SELECT id, content_type, order_index, title FROM lesson_content
+       WHERE lesson_id=<X> AND page_number=<dialog_page_n> ORDER BY order_index, id;
+    Soll-Reihenfolge auf der Dialog-Page:
+       audio=1, dialog_slideshow=2, text(dialog)=3, text(verstaendnisfragen)=4
+    Korrigieren mit `UPDATE lesson_content SET order_index=N WHERE id=X;`.
+    (TODO Skill-Verbesserung: `audio`/`slideshow` sollten bestehende LCs
+    automatisch verschieben statt zu ueberschreiben.)
 
 [4c] python .claude/skills/generate-lesson/pipeline.py slideshow {lesson_id}
     → PFLICHT nach audio. Baut pro Dialog-Zeile ein Slide mit:

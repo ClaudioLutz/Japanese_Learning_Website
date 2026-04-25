@@ -47,6 +47,99 @@ Selbstverbesserndes Log. Wird vor jedem Run gelesen, nach jedem Run angehängt.
 
 <!-- Neuste Einträge oben, älteste unten. -->
 
+## 2026-04-25 20:30 — N5 Tagesablauf — Wann stehst du auf? (Lesson ID 145)
+
+### Erfolge
+- 20 N5-Vokabeln aus dem Tagesablauf-Cluster (おきる/ねる/たべる/のむ/はたらく/
+  やすむ/べんきょう/はじまる/おわる/かえる + Tagesabschnitte 朝/昼/夜/今/午前/
+  午後/半/毎日/今日/明日). Alle in `vocab`-Key der canonical N5-Liste.
+- 3 Grammatikkarten: Uhrzeit (今 ～時 ～分 です), ます-Form (mit allen 4 Tempora),
+  ～から ～まで. Volle Romaji-Annotation.
+- 15 Quiz-Fragen total: 4 Verständnisfragen auf der Dialog-Page (3 MC + 1 TF) +
+  11 Übungsfragen (7 MC + 2 TF + 2 Matching).
+- 7 Pages mit Markdown-Hierarchie (## H2 + ### H3 + Bold + Listen + Blockquote)
+  in allen 3 Prosa-Seiten (Einführung, Grammatik-Erklärung, Zusammenfassung).
+- Pipeline lief vollständig: validate → images (1 Thumb + 19/20 Vocab-Icons) →
+  insert (Lesson 145) → audio (1 MP3, 8 Sprecher-Zeilen, ~30s) → text-audio
+  (5 MP3s für Prosa-Pages) → slideshow (8 PNGs + 8 MP3s, ~5 min).
+- Modul-Zuweisung: `n5-zahlen-zeit` (category_id=32, order_index=8, published).
+- Playwright-Verifikation: Page 1 Markdown-Hierarchie sauber, Page 2 Deck-
+  Karussell zeigt eine Karte, Page 5 Audio + Slideshow + Dialog + Quiz in
+  korrekter didaktischer Reihenfolge, Page 6 alle 11 Quiz-Fragen renderten.
+
+### Probleme / Erkenntnisse
+
+1. **Slideshow-Skript pickte falschen text-LC** — `gen_dialog_slideshow.py`
+   nutzte `.first()` ohne `order_by` und ohne Speaker-Format-Check. Auf der
+   Dialog-Page liegen seit dem 2026-04-25 Verständnisfragen-Update ZWEI text-
+   LCs (Dialog selbst + Verständnis-Intro). DB-Reihenfolge ist nicht garantiert
+   → Slideshow griff oft den Verständnis-Intro-Text und brach mit "Keine
+   Dialog-Zeilen extrahiert" ab.
+   - **Fix:** im Skript ALLE text-LCs holen (sortiert nach order_index, id),
+     den ersten mit gültigem Speaker-Format (`Name: ...`) auswählen.
+   - **Regel:** Wenn auf einer Page mehrere LCs gleichen content_types liegen
+     können, NIE `.first()` ohne explizites `order_by` UND ohne semantischen
+     Filter (hier: parse_dialog_triplets() muss > 0 Triplets liefern).
+
+2. **Order-Index-Kollision bei nachträglichen audio/slideshow-Inserts** —
+   `pipeline.py insert` nummeriert alle Items der Dialog-Page ab `order_index=1`
+   (Dialog-Text + Verständnis-Intro). Dann setzt `audio` einen LC auf
+   `order_index=1` und `slideshow` einen auf `order_index=2`, ohne die
+   bestehenden zu verschieben. Resultat: 4 LCs mit oi-Werten 1/1/1/2 → DB
+   sortiert nicht-deterministisch → Frontend rendert in falscher Reihenfolge
+   (Verständnisfragen vor Dialog-Text).
+   - **Workaround diesmal:** manuell per SQL `UPDATE lesson_content SET
+     order_index=N WHERE id=X` korrigiert (audio=1, slideshow=2, dialog-text=3,
+     verstaendnisfragen=4).
+   - **Regel für nächstes Mal:** Nach `audio` + `slideshow` immer `SELECT id,
+     content_type, order_index FROM lesson_content WHERE lesson_id=X AND
+     page_number=5 ORDER BY order_index, id;` ausführen und Kollisionen
+     manuell fixen — oder Skill so umbauen, dass `audio`/`slideshow` die
+     bestehenden LCs verschieben statt zu ueberschreiben.
+
+3. **OpenAI DALL-E lehnt "to eat" als Safety-Violation (self-harm) ab** —
+   das Vocab-Prompt-Template enthielt vermutlich Worte, die der DALL-E-Filter
+   als selbstverletzendes Verhalten missdeutete. 19/20 Bilder OK, nur 食べる
+   blockiert.
+   - **Workaround:** manuell mit explizitem, harmlosem Prompt erzeugt
+     ("a bowl of warm rice with chopsticks held above it, no people").
+   - **Regel:** DALL-E-Safety-Reject auf Vocab-Bilder ist gelegentlich
+     unvermeidbar. Pipeline weitermachen lassen, am Ende geblockte Vokabeln
+     mit Fallback-Prompt nachgenerieren. Lektion ist mit fehlendem Bild
+     (1 von 20) noch fully usable.
+
+4. **Anzahl der Quiz-Fragen:** 11 Übungs-Fragen lagen knapp unter dem
+   Skill-Budget von 10-18 — passte aber. Mit den 4 Verständnisfragen kommt
+   die Lektion auf 15 total, was komfortabel im Korridor liegt.
+
+5. **N5-Verben mit N4-Kanji-Falle (Wiederholung von Lesson 144):** 起 (起きる),
+   寝 (寝る), 仕 (仕事), 帰 (帰る), 事 (仕事), 遊 (遊ぶ) sind alle KEINE N5-
+   Kanji — Validator fing 5 Fälle in meinen content_text-Blöcken.
+   Hiragana-Lösung wie gewohnt: おきる, ねる, しごと, かえる, あそぶ.
+   - **Bestaetigung Regel 20** (Familie-Kanji-Falle gilt analog für ALLE
+     Themen, nicht nur Familie). SKILL.md §3 wurde fuer Familie geschrieben,
+     gilt aber Tagesablauf, Hobbys, Restaurant — überall wo N5-Vokabeln
+     N4-Kanji haben.
+
+### Aktuelle Regeln (Ergänzung ab diesem Run)
+
+26. **Slideshow-Skript: `.first()` durch `order_by + semantic filter` ersetzen.**
+    Wenn mehrere LCs gleichen Typs auf einer Page liegen koennen, immer den
+    semantisch richtigen finden (hier: Speaker-Format-Check).
+27. **Nach `audio`/`slideshow` order_index-Kollision pruefen** und ggf.
+    Dialog-Text/Verstaendnis-Intro per SQL nachsortieren, sonst rendert
+    Page 5 in zufaelliger Reihenfolge. Reihenfolge-Standard: audio=1,
+    slideshow=2, dialog-text=3, verstaendnisfragen=4.
+28. **DALL-E Safety-Reject ist normal** — bei einzelnen Vokabeln (oft Verben)
+    schlagen Generierungen fehl. Pipeline weiterlaufen lassen, am Schluss
+    nur die geblockten Vokabeln manuell nachgenerieren mit harmlosem,
+    objekt-fokussiertem Prompt (statt verb-fokussiert).
+29. **N4-Kanji-Falle gilt ueber alle Themen** (Familie, Tagesablauf, Hobbys, …)
+    — N5-Vokabeln mit N4-Kanji im Beispielsatz immer in Hiragana schreiben.
+    SKILL.md §3 ist generell, nicht thema-spezifisch.
+
+---
+
 ## 2026-04-25 20:15 — text-audio Bugs (Lesson 144 nach Live-Check)
 
 ### User-Feedback wörtlich

@@ -186,19 +186,28 @@ def main() -> int:
             print("[FEHLER] Keine Dialog-Page")
             return 1
 
-        text_lc = (
+        # Auf der Dialog-Page koennen mehrere text-LCs liegen (Dialog selbst +
+        # z.B. Verstaendnisfragen-Intro). Den richtigen wir per Speaker-Format
+        # finden, nicht per .first() (DB-Reihenfolge ist nicht garantiert).
+        text_lcs = (
             db.session.query(LessonContent)
             .filter_by(lesson_id=lesson_id, page_number=dialog_page.page_number, content_type="text")
-            .first()
+            .order_by(LessonContent.order_index.asc(), LessonContent.id.asc())
+            .all()
         )
-        if not text_lc or not text_lc.content_text:
-            print("[FEHLER] Kein Dialog-Text auf der Dialog-Page")
-            return 1
-
-        triplets = parse_dialog_triplets(text_lc.content_text)
-        triplets = [t for t in triplets if t.get("jp") and t.get("speaker")]
-        if not triplets:
-            print("[FEHLER] Keine Dialog-Zeilen extrahiert")
+        text_lc = None
+        triplets: list[dict] = []
+        for candidate in text_lcs:
+            if not candidate.content_text:
+                continue
+            cand_triplets = parse_dialog_triplets(candidate.content_text)
+            cand_triplets = [t for t in cand_triplets if t.get("jp") and t.get("speaker")]
+            if cand_triplets:
+                text_lc = candidate
+                triplets = cand_triplets
+                break
+        if not text_lc:
+            print("[FEHLER] Kein Dialog-Text auf der Dialog-Page (kein Speaker-Format gefunden)")
             return 1
 
         speakers_ordered: list[str] = []
