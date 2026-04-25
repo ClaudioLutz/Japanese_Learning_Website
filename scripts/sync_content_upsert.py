@@ -22,6 +22,13 @@ if __name__ == '__main__':
         pass
 
 import psycopg2
+import psycopg2.extensions
+from psycopg2.extras import Json
+
+# psycopg2 kann dict-Werte nicht nativ in JSONB/JSON-Spalten schreiben.
+# lesson_content.ai_generation_details ist ein JSON-Feld; ohne Adapter
+# scheitert der UPSERT mit "can't adapt type 'dict'".
+psycopg2.extensions.register_adapter(dict, Json)
 
 from scripts.sync_safety import (
     backup_user_tables,

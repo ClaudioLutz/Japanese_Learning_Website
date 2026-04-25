@@ -62,12 +62,19 @@ DELETION_BLOCKERS: dict[str, list[tuple[str, str]]] = {
 
 # ---------- Snapshot / Drift-Detection ----------
 
+# Tabellen ohne id-Spalte (Composite PKs etc.) — Drift wird via COUNT(*) erkannt.
+_TABLES_WITHOUT_ID = {'course_lessons'}
+
+
 def _drift_query(table: str) -> str:
     """SQL fuer Drift-Marker pro Tabelle.
 
     Tabellen mit `updated_at` liefern (count, max(id), max(updated_at)).
     Tabellen ohne `updated_at` liefern (count, max(id), NULL).
+    Junction-Tabellen ohne `id`-Spalte liefern (count, 0, NULL).
     """
+    if table in _TABLES_WITHOUT_ID:
+        return f'SELECT COUNT(*)::bigint, 0::bigint, NULL::timestamp FROM "{table}"'
     if table in ('lesson', 'course', 'card_review_state', 'payment_transaction'):
         return (
             f'SELECT COUNT(*)::bigint, COALESCE(MAX(id),0)::bigint, '
@@ -80,10 +87,18 @@ def _drift_query(table: str) -> str:
 
 
 def collect_snapshot(cur, tables: Iterable[str]) -> dict:
-    """Sammelt Drift-Marker fuer Liste von Tabellen."""
+    """Sammelt Drift-Marker fuer Liste von Tabellen.
+
+    Nutzt Savepoints, damit ein Fehler bei einer Tabelle nicht die ganze
+    Transaktion abortet (Postgres: nach Error muss SAVEPOINT zurueckgerollt
+    werden, sonst werden alle weiteren Queries auf der Connection mit
+    'current transaction is aborted' abgewiesen).
+    """
     snap: dict[str, dict] = {}
-    for table in tables:
+    for i, table in enumerate(tables):
+        sp_name = f'sp_drift_{i}'
         try:
+            cur.execute(f'SAVEPOINT {sp_name}')
             cur.execute(_drift_query(table))
             row = cur.fetchone()
             count, max_id, max_updated = row
@@ -92,7 +107,13 @@ def collect_snapshot(cur, tables: Iterable[str]) -> dict:
                 'max_id': int(max_id),
                 'max_updated_at': max_updated.isoformat() if max_updated else None,
             }
+            cur.execute(f'RELEASE SAVEPOINT {sp_name}')
         except Exception as exc:
+            try:
+                cur.execute(f'ROLLBACK TO SAVEPOINT {sp_name}')
+                cur.execute(f'RELEASE SAVEPOINT {sp_name}')
+            except Exception:
+                pass
             snap[table] = {'error': str(exc)}
     return snap
 

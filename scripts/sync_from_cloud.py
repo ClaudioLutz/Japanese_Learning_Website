@@ -22,6 +22,11 @@ if __name__ == '__main__':
         pass
 
 import psycopg2
+import psycopg2.extensions
+from psycopg2.extras import Json
+
+# Dict-Adapter fuer JSON-Felder (s. sync_content_upsert.py).
+psycopg2.extensions.register_adapter(dict, Json)
 
 from scripts.sync_safety import collect_snapshot, write_snapshot
 
