@@ -50,6 +50,13 @@ ALLOWED_PAGE_TYPES = {"normal", "quiz_carousel"}
 REQUIRED_LESSON_FIELDS = ["title", "description", "jlpt_level", "topic", "pages"]
 REQUIRED_VOCAB_FIELDS = ["word", "reading", "romaji", "meaning", "meaning_de", "jlpt_level"]
 REQUIRED_GRAMMAR_FIELDS = ["title", "explanation", "structure", "romaji", "jlpt_level"]
+REQUIRED_KANA_FIELDS = ["character", "romanization", "type"]
+
+# Lesson-Kind-Discriminator (default: vocabulary). 'kana' = Schreibsystem-Lektion
+# (Hiragana/Katakana). Bei 'kana' werden Vocabulary/Grammar/N5-Canonical-Checks
+# uebersprungen; statt dessen werden Kana-Eintraege validiert und inseriert.
+ALLOWED_LESSON_KINDS = {"vocabulary", "kana"}
+ALLOWED_KANA_TYPES = {"hiragana", "katakana"}
 
 # Roher HTML in content_text ist verboten (auch wenn Bleach in markdown_safe
 # strippt — Verschwendung). Markdown-Bausteine sind erlaubt: ## Headlines, **bold**,
@@ -128,6 +135,11 @@ def validate_draft(draft: dict) -> list[str]:
     if jlpt not in ALLOWED_JLPT:
         errors.append(f"jlpt_level={jlpt} nicht erlaubt. Erlaubt: {sorted(ALLOWED_JLPT)}")
 
+    # Lesson-Kind-Discriminator: 'vocabulary' (default) oder 'kana'
+    kind = draft.get("kind", "vocabulary")
+    if kind not in ALLOWED_LESSON_KINDS:
+        errors.append(f"kind={kind} nicht erlaubt. Erlaubt: {sorted(ALLOWED_LESSON_KINDS)}")
+
     pages = draft.get("pages", [])
     if len(pages) < 3:
         errors.append(f"Mindestens 3 Pages erforderlich, hat {len(pages)}")
@@ -139,6 +151,7 @@ def validate_draft(draft: dict) -> list[str]:
     # Pages + Content
     vocab_count = 0
     grammar_count = 0
+    kana_count = 0
     quiz_count = 0
     quiz_types_seen = set()
 
@@ -187,7 +200,34 @@ def validate_draft(draft: dict) -> list[str]:
                             f"Reine Prosa-Bloecke sind verboten (User-Direktive 2026-04-25: 'sieht alles gleich aus')."
                         )
 
-            if ct == "vocabulary":
+            if ct == "kana":
+                data = item.get("data", {})
+                kana_count += 1
+                for f in REQUIRED_KANA_FIELDS:
+                    if f not in data:
+                        errors.append(f"Page {p_idx}.{c_idx} Kana fehlt: {f}")
+                ktype = data.get("type")
+                if ktype not in ALLOWED_KANA_TYPES:
+                    errors.append(
+                        f"Page {p_idx}.{c_idx} Kana '{data.get('character')}': "
+                        f"type={ktype} ungueltig. Erlaubt: {sorted(ALLOWED_KANA_TYPES)}"
+                    )
+                # Character muss zu type passen (Hiragana/Katakana-Range)
+                ch = data.get("character", "")
+                if ch and ktype == "hiragana":
+                    import re as _re
+                    if not _re.match(r"^[぀-ゟ]+$", ch):
+                        errors.append(
+                            f"Page {p_idx}.{c_idx} Kana '{ch}': nicht in Hiragana-Range"
+                        )
+                elif ch and ktype == "katakana":
+                    import re as _re
+                    if not _re.match(r"^[゠-ヿ]+$", ch):
+                        errors.append(
+                            f"Page {p_idx}.{c_idx} Kana '{ch}': nicht in Katakana-Range"
+                        )
+
+            elif ct == "vocabulary":
                 data = item.get("data", {})
                 vocab_count += 1
                 for f in REQUIRED_VOCAB_FIELDS:
@@ -262,19 +302,42 @@ def validate_draft(draft: dict) -> list[str]:
                             f"genau 1 richtige Option, hat {correct}"
                         )
 
-    # Budget-Checks aus SKILL.md §4 (angepasst 2026-04-24: groessere Lektionen)
-    if not (15 <= vocab_count <= 25):
-        errors.append(f"Vocabulary-Count {vocab_count} ausserhalb [15,25]")
-    if not (2 <= grammar_count <= 4):
-        errors.append(f"Grammar-Count {grammar_count} ausserhalb [2,4]")
-    if not (10 <= quiz_count <= 18):
-        errors.append(f"Quiz-Count {quiz_count} ausserhalb [10,18]")
-    if len(quiz_types_seen) < 2:
-        errors.append(
-            f"Mind. 2 verschiedene Quiz-Typen erforderlich, nur {quiz_types_seen} verwendet"
-        )
-    if len(pages) < 5:
-        errors.append(f"Mindestens 5 Pages erforderlich (Einfuehrung/Vokabeln/Grammar/Dialog/Quiz/Zusammenfassung), hat {len(pages)}")
+    # Budget-Checks aus SKILL.md §4 (angepasst 2026-04-24: groessere Lektionen).
+    # Bei kind=kana gelten andere Budgets (Schreibsystem-Lektion ohne Vocab/Grammar).
+    if kind == "kana":
+        if not (5 <= kana_count <= 20):
+            errors.append(f"Kana-Count {kana_count} ausserhalb [5,20] (kind=kana)")
+        if not (8 <= quiz_count <= 16):
+            errors.append(f"Quiz-Count {quiz_count} ausserhalb [8,16] (kind=kana)")
+        if len(quiz_types_seen) < 2:
+            errors.append(
+                f"Mind. 2 verschiedene Quiz-Typen erforderlich, nur {quiz_types_seen} verwendet"
+            )
+        if len(pages) < 4:
+            errors.append(f"Mindestens 4 Pages erforderlich (kind=kana), hat {len(pages)}")
+        if vocab_count > 0:
+            errors.append(
+                f"kind=kana: Vocabulary-Eintraege ({vocab_count}) nicht erlaubt. "
+                f"Wenn Lese-Drill-Woerter noetig sind, in Markdown-Text als Beispiele schreiben."
+            )
+        if grammar_count > 0:
+            errors.append(
+                f"kind=kana: Grammar-Eintraege ({grammar_count}) nicht erlaubt. "
+                f"Aussprache/Strichfolge gehoeren in Markdown-Text-Pages."
+            )
+    else:
+        if not (15 <= vocab_count <= 25):
+            errors.append(f"Vocabulary-Count {vocab_count} ausserhalb [15,25]")
+        if not (2 <= grammar_count <= 4):
+            errors.append(f"Grammar-Count {grammar_count} ausserhalb [2,4]")
+        if not (10 <= quiz_count <= 18):
+            errors.append(f"Quiz-Count {quiz_count} ausserhalb [10,18]")
+        if len(quiz_types_seen) < 2:
+            errors.append(
+                f"Mind. 2 verschiedene Quiz-Typen erforderlich, nur {quiz_types_seen} verwendet"
+            )
+        if len(pages) < 5:
+            errors.append(f"Mindestens 5 Pages erforderlich (Einfuehrung/Vokabeln/Grammar/Dialog/Quiz/Zusammenfassung), hat {len(pages)}")
 
     # Bilder-Pflicht: thumbnail_url im Lesson-Header
     if not draft.get("thumbnail_url"):
@@ -286,7 +349,9 @@ def validate_draft(draft: dict) -> list[str]:
     # Mayuko-Direktive 2026-04-25 (Kanji-Disziplin):
     # Alle Kanji in JP-Texten der Lektion (Beispielsaetze, Dialog, Grammatik-
     # Beispiele) muessen im canonical-Set des Lesson-Levels stehen.
-    if jlpt == 5:
+    # Bei kind=kana wird der Check uebersprungen — eine reine Hiragana/Katakana-
+    # Lektion enthaelt strukturell keine Kanji-Beispielsaetze.
+    if jlpt == 5 and kind != "kana":
         try:
             canon = load_canonical(5)
             n5_kanji_set = canon["kanji_set"]
@@ -529,6 +594,28 @@ def jlpt_coverage(level: int = 5, show_missing: int = 30):
 # INSERT
 # ========================================================================
 
+def _get_or_create_kana(db, Kana, data: dict) -> int:
+    """Duplicate-safe: gibt bestehende ID zurueck oder erstellt neu.
+
+    Match ueber `character` (UNIQUE constraint in der DB). Aktualisiert KEINE
+    bestehenden Eintraege — wenn ein Zeichen schon existiert, wird die ID
+    der existierenden Zeile zurueckgegeben. Das schuetzt manuelle Edits.
+    """
+    existing = db.session.query(Kana).filter_by(character=data["character"]).first()
+    if existing:
+        return existing.id
+    k = Kana(
+        character=data["character"],
+        romanization=data["romanization"],
+        type=data["type"],
+        stroke_order_info=data.get("stroke_order_info"),
+        example_sound_url=data.get("example_sound_url"),
+    )
+    db.session.add(k)
+    db.session.flush()
+    return k.id
+
+
 def _get_or_create_vocab(db, Vocabulary, data: dict) -> int:
     """Duplicate-safe: gibt bestehende ID zurueck oder erstellt neu."""
     existing = db.session.query(Vocabulary).filter_by(word=data["word"]).first()
@@ -582,7 +669,7 @@ def insert_draft(draft_path: Path) -> int:
 
     from app import create_app, db
     from app.models import (
-        Lesson, LessonPage, LessonContent, Vocabulary, Grammar,
+        Lesson, LessonPage, LessonContent, Vocabulary, Grammar, Kana,
         QuizQuestion, QuizOption,
     )
 
@@ -628,7 +715,9 @@ def insert_draft(draft_path: Path) -> int:
                     content_text = None
                     title = None
 
-                    if ct == "vocabulary":
+                    if ct == "kana":
+                        content_id = _get_or_create_kana(db, Kana, item["data"])
+                    elif ct == "vocabulary":
                         content_id = _get_or_create_vocab(db, Vocabulary, item["data"])
                     elif ct == "grammar":
                         content_id = _get_or_create_grammar(db, Grammar, item["data"])

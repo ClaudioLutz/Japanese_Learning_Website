@@ -47,6 +47,34 @@ Selbstverbesserndes Log. Wird vor jedem Run gelesen, nach jedem Run angehängt.
 
 <!-- Neuste Einträge oben, älteste unten. -->
 
+## 2026-04-25 21:40 — Hiragana 1 — Vokale, K-Reihe und S-Reihe (Lesson ID 146)
+
+### Erfolge — erste Schreibsystem-Lektion
+
+- **Skill-Erweiterung `kind="kana"`** in einem Run umgesetzt: Validator + Insert + Image-Skip getrennt vom Vocabulary-Pfad. SKILL.md §2b dokumentiert die Sonderform mit Vergleichstabelle und Page-Struktur-Zielbild.
+- **5 Pages** (Einführung / Die 15 Zeichen / Aussprache & Schreibhinweise / Übung / Zusammenfassung), **15 Hiragana** (Vokale + K-Reihe + S-Reihe), **12 Quiz-Fragen** (8 MC + 2 TF + 2 Matching) — alle 3 erlaubten Typen.
+- **Bestandsschutz:** die initialen 10 Hiragana あいうえおかきくけこ (DB-IDs 1-10) wurden via UNIQUE-Constraint dedupliziert; nur die 5 neuen Zeichen さしすせそ (IDs 11-15) wurden eingefügt.
+- **Pipeline-Schritte:** validate → images (1 Thumb, 0 Vocab-Icons übersprungen) → insert (Lesson 146 atomar) → text-audio (7 MP3s für alle Prosa-Pages, DE+JA-Splitter sauber) → audio/slideshow übersprungen (kein Dialog).
+- **Modul-Zuweisung:** `category_id=30` (`n5-hiragana`), `order_index=1`, `is_published=true`.
+- **Playwright-Verifikation:** 5 Pages in Sidebar, 7 Audio-Player, 0 broken Images, 0 Console-Errors. Page 2 zeigt das Deck-Karussell korrekt (eine Karte sichtbar, Counter "0/15 gelernt"). Page 4 Quiz-Intro mit Markdown-Hierarchie + Login-Gate für Guests (erwartet).
+
+### Probleme / Erkenntnisse
+
+1. **Validator akzeptiert `kind=kana` und überspringt Vocabulary/Grammar/N5-Canonical-Checks korrekt.** Einziger initialer Fehler war die Thumbnail-Pflicht (wird durch images-Schritt erfüllt) — passt 1:1 zum Vocabulary-Workflow. Keine Sonderbehandlung für den User nötig.
+2. **Kana-Lektion läuft komplett ohne Slideshow/Audio-Konversation** — die generischen Pipeline-Steps für Dialog gibt es bei kind=kana schlicht nicht. 5 Pipeline-Schritte (validate, images, insert, text-audio, modul-zuweisung) statt 8 — schneller und billiger pro Lektion.
+3. **Bilder-Aufwand minimal:** nur 1 Thumbnail-DALL-E-Call pro kana-Lektion (statt 1 Thumb + N Vokabel-Icons). Spart ca. 90 % der OpenAI-Kosten gegenüber Vocabulary-Lektion.
+4. **Initiale 10 Hiragana waren bereits in der DB** — `_get_or_create_kana()` Duplicate-Check via `character`-UNIQUE funktionierte fehlerfrei; bestehende IDs wurden wiederverwendet, kein Override.
+5. **Markdown-Hierarchie-Validator triggerte bei keinem text-Block** — die Pflicht (## H2 + 2× **bold** + Liste/Quote) wurde in allen 7 Prosa-Texten von Anfang an erfüllt. Kein Korrektur-Loop nötig.
+6. **Kein N5-Kanji-Disziplin-Check nötig** — eine Hiragana-Lektion enthält per Definition keine Kanji-Beispielsätze. Validator-Skip via `kind != "kana"` ist sauber.
+
+### Aktuelle Regeln (Ergänzung ab diesem Run)
+
+30. **Kana-Lektion = Sonderform mit `kind: "kana"` im Draft.** Validator-Pfad, Page-Struktur und Pipeline-Steps sind in SKILL.md §2b vollständig spezifiziert. Vocabulary/Grammar = 0, Kana = 5-20, Quiz = 8-16, Pages ≥ 4. Audio/Slideshow überspringen.
+31. **Kana-Lektionen brauchen eigene Modul-Slugs:** `n5-hiragana` (id=30) und `n5-katakana` (id=31). Zuweisung via UPDATE wie bei Vocabulary-Lektionen.
+32. **Bestandsschutz bei Kana ist UNIQUE-Constraint-getrieben** — `_get_or_create_kana()` matcht nur über `character`, modifiziert nichts an bestehenden Eintraegen. Sicher gegen versehentliches Überschreiben manueller Edits.
+
+---
+
 ## 2026-04-25 20:30 — N5 Tagesablauf — Wann stehst du auf? (Lesson ID 145)
 
 ### Erfolge

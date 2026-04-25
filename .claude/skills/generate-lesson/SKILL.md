@@ -35,6 +35,7 @@ Bevor du überhaupt Content schreibst:
 | `/generate-lesson N5 Familie` | Direktes Thema, JLPT-Level N5. Wenn thematisch passendes MNN-Kapitel existiert, **orientiere dich daran** (siehe §2a). |
 | `/generate-lesson --from-mnn 3` | Quelle: Minna no Nihongo Kapitel 3 (lies `scripts/mnn_data/beginner1_lesson03.json`). Siehe §2a. |
 | `/generate-lesson --from-jlpt N5` | Zufälliges noch nicht abgedecktes N5-Thema |
+| `/generate-lesson Hiragana` / `Katakana` | **Schreibsystem-Lektion** — Draft mit `"kind": "kana"` statt Vocabulary/Grammar. Siehe §2b. |
 
 ## 2a. Minna-no-Nihongo-Quellen (WICHTIG)
 
@@ -60,6 +61,89 @@ Lisa: はじめまして。リサです。ドイツから きました。
   → Freut mich. Ich bin Lisa. Ich komme aus Deutschland.
 ```
 Leerzeile zwischen Sprechern, Einrückung der Romaji-Zeile mit zwei Leerzeichen, `→` für die deutsche Übersetzung.
+
+## 2b. Schreibsystem-Lektionen (`kind: "kana"`) — Hiragana / Katakana
+
+Hiragana- und Katakana-Lektionen sind eine **Sonderform**. Statt JLPT-Vokabeln und Grammatik wird das **Schriftsystem selbst** unterrichtet. Die Pipeline kennt dafür den Discriminator `"kind": "kana"` im Draft (Default ist `"vocabulary"`, kann weggelassen werden).
+
+**Was anders ist als bei einer Vocabulary-Lektion:**
+
+| Bereich | Vocabulary-Lektion (Default) | Kana-Lektion (`kind: "kana"`) |
+|---|---|---|
+| Lesson-`kind`-Feld | `"vocabulary"` (oder weglassen) | `"kana"` (Pflicht!) |
+| Vokabel-Einträge | 15–25 Pflicht | **0 erlaubt** (Validator bricht ab) |
+| Grammatik-Einträge | 2–4 Pflicht | **0 erlaubt** (Validator bricht ab) |
+| Kana-Einträge | 0 (oder optional) | **5–20 Pflicht** |
+| Quiz-Fragen | 10–18 | 8–16 |
+| Pages | ≥5 | ≥4 |
+| Dialog-Page | Pflicht | weggelassen (kein Konversationskontext) |
+| Audio-Pipeline | Pflicht | **übersprungen** (keine Dialog-Page) |
+| Slideshow-Pipeline | Pflicht | **übersprungen** |
+| text-audio | Pflicht für Prosa-Pages | bleibt aktiv für Markdown-Pages |
+| Vokabel-Bilder | jede Vokabel | **entfällt** (keine Vokabeln) |
+| Thumbnail | Pflicht | Pflicht |
+| N5-Canonical-Vokabel-Check | aktiv | übersprungen |
+| N5-Kanji-Disziplin-Check | aktiv | übersprungen (Kana-Lektion enthält per Definition keine Kanji-Beispielsätze) |
+| Romaji/Umlaut/Markdown-Hierarchie-Check | aktiv | bleibt aktiv |
+| Modul-Zuweisung | passendes N5-Themen-Modul | `n5-hiragana` (id=30) bzw. `n5-katakana` (id=31) |
+
+**Page-Struktur einer Kana-Lektion (Zielbild):**
+
+```
+Lesson (kind="kana", title="Hiragana 1 — …", jlpt_level=5,
+        thumbnail_url=DALL-E-URL)
+
+├─ LessonPage 1: "Einführung" (page_type='normal')
+│   └─ LessonContent: text — Was ist Hiragana? Warum lernen? Wie liest man die
+│      Tabelle? Markdown-Hierarchie Pflicht (## H2 + **bold** + Liste/Quote).
+│
+├─ LessonPage 2: "Die Zeichen" (page_type='normal')
+│   └─ LessonContent: kana ×N — jede Zeile ein Kana-Element mit
+│      character + romanization + type. Optional stroke_order_info /
+│      example_sound_url.
+│
+├─ LessonPage 3: "Aussprache & Schreibhinweise" (page_type='normal')
+│   └─ LessonContent: text — Wie spricht man die Vokale? Welche Reihen-
+│      Strukturen wiederholen sich? Welche Häkchen unterscheiden は/ほ?
+│      Markdown-Hierarchie Pflicht.
+│
+├─ LessonPage 4: "Übung" (page_type='quiz_carousel')
+│   └─ LessonContent mit QuizQuestions ×8-16 — Mix aus
+│      multiple_choice (Zeichen → Romaji) + matching (5 Paare Zeichen↔Romaji)
+│      + true_false (z.B. "「く」 wird 'ku' gelesen.").
+│
+└─ LessonPage 5: "Zusammenfassung & nächste Schritte" (page_type='normal')
+    └─ LessonContent: text — Wiederholung, Lerntipps, Vorschau auf nächste
+       Hiragana-Lektion.
+```
+
+**Schema des `kana`-Content-Items im Draft:**
+
+```json
+{
+  "content_type": "kana",
+  "data": {
+    "character": "あ",
+    "romanization": "a",
+    "type": "hiragana",
+    "stroke_order_info": null,
+    "example_sound_url": null
+  }
+}
+```
+
+**Pipeline-Schritte bei Kana-Lektion:**
+1. `validate` — neuer Validator-Pfad (Vocab/Grammar verboten, kana-Budget aktiv).
+2. `images` — generiert nur Thumbnail (keine Vokabel-Icons, weil keine Vokabeln).
+3. `insert` — `_get_or_create_kana()` deduppt über `character` (UNIQUE-Constraint).
+4. `audio` — überspringen (kein Dialog).
+5. `text-audio` — laufen lassen für die Prosa-Markdown-Pages.
+6. `slideshow` — überspringen.
+7. Modul-Zuweisung: `category_id=30` für Hiragana, `31` für Katakana.
+
+**Quiz-Distraktoren bei Kana:** ähnliche Zeichen wählen (ね/れ/わ/ぬ verwechselbar, さ/き/ち, シ/ツ, ソ/ン, etc.) — fördert echtes Lesen, nicht Raten.
+
+**Bestandsschutz:** `Kana.character` ist UNIQUE. Wenn ein Zeichen bereits existiert (z.B. die initialen 10 Hiragana あ-こ in der DB), wird die bestehende ID wiederverwendet — kein Update auf bestehende Eintragsdaten (schützt manuelle Edits).
 
 ## 3. Harte Constraints (Nicht-Verhandelbar)
 
