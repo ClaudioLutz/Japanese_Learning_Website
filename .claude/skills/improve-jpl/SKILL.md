@@ -7,7 +7,7 @@ description: Verbessert die Japanese Learning Website (japanese-learning.ch). Au
 
 Dieser Skill ist das Produkt-Gehirn der Seite. CLAUDE.md liefert das Tech-Wissen (Stack, Deployment, DB-Sync); hier steht, *warum* es die Seite gibt, *für wen*, und *was als Nächstes* sinnvoll ist.
 
-**Stand: 2026-04-26 (SEO-Setup komplett: Search Console verifiziert, Sitemap eingereicht, OG-Image live, www-Mapping konfiguriert)**
+**Stand: 2026-04-26 abends — Monetarisierungs-Funnel komplett deployed (Revision 00034-ptk + DB-Sync). Bundle CHF 9.90 / Single CHF 5 / 1 Lesson pro Modul gratis. Paywall-Conversion-Seite + Modul-Detail-Seiten + Brand-Refresh (Torii + Fraunces). Wartet nur noch auf Payrexx-KYC fuer echte Zahlungen.**
 
 ## 1. Warum diese Seite existiert (Hierarchie der Zwecke)
 
@@ -49,21 +49,23 @@ Mayuko (Lehrerin) hat als pädagogische Anweisung gegeben: **„Lektionen nach J
 - Keine Features, die nur für Claudio Sinn ergeben, aber nicht für einen fremden deutschsprachigen Anfänger
 - Keine Inhalte, die Mayuko (japanische Lehrerin) als fachlich falsch markieren würde
 
-## 3. Aktuell offene Themen (Stand 2026-04-25)
+## 3. Aktuell offene Themen (Stand 2026-04-26 abends)
 
-**Payrexx-KYC läuft** (eingereicht 2026-04-25, Antwort in 1-2 Werktagen). Während Wartezeit:
+**Payrexx-KYC läuft** (eingereicht 2026-04-25, Antwort ~2026-04-29). Während Wartezeit:
 
-1. **N5-Inhalte produzieren** — wichtigster Hebel. Vokabel-Coverage 33 %, Kanji-Coverage nur 2.5 %. Kanji-Themen priorisieren. Pro Generierungs-Sprint Coverage-Dashboard checken, dann gezielt fehlende Vokabeln/Kanji als Themen wählen. Validator ist streng (Niveau-Mix-Verbot), Escape-Hatches dokumentiert.
-2. **Mayuko Vor-Live-Review** — bevor Lektionen veröffentlicht werden, sollte Mayuko sie durchsehen. Workflow noch nicht etabliert. Pragmatisch: Lesson-URL teilen, Feedback einarbeiten, dann `is_published=True`.
-3. **Bestehende Lessons den Modulen feiner zuordnen** — 12 Lessons sind grob gemappt (Skript `scripts/assign_lessons_to_modules.py`), aber `order_in_module` könnte feingetunt werden (Hiragana-Lektion vor erster Vokabel-Lektion).
-4. **Hiragana / Katakana / Erste-Sätze-Module sind noch leer** — diese drei Module zeigen "Inhalte in Vorbereitung" auf der Startseite. Höchste Priorität für nächste Generierungen.
-5. **Nach Payrexx-KYC-Freigabe:** Live-Konfig durchziehen (Schritt 5 aus Memory `project_payrexx_kyc_wiedereinreichung.md`) — Secrets anlegen, `PAYMENT_PROVIDER=payrexx` setzen, Webhook-URL bei Payrexx eintragen (`/api/payment/webhook/payrexx`).
+1. **Payrexx-Live-Konfig** (sobald KYC durch ist) — `PAYMENT_PROVIDER=mock` aktuell, akzeptiert Mock-Käufe. Sobald KYC OK: GCP Secrets + `PAYMENT_PROVIDER=payrexx` + Webhook bei Payrexx eintragen. **Konkrete gcloud-Kommandos** in Memory `project_payrexx_kyc_wiedereinreichung.md` Schritt 5+6.
+2. **AGB juristisch prüfen lassen** vor erstem echten Kauf (~CHF 100-200 bei gryps.ch / lawbster.ch). §5b Pre-Order-Klausel ist neu, der Rest ist Vorlage.
+3. **N5-Inhalte produzieren** — Vokabel-Coverage 33 %, Kanji-Coverage 2.5 % (Engpass). **Kanji-Themen priorisieren.** Pro Generierungs-Sprint: Coverage-Dashboard checken (`pipeline.py coverage 5`), dann gezielt fehlende Vokabeln/Kanji wählen. **Nach jeder neuen Lesson:** `python scripts/setup_n5_bundle.py` + `python scripts/apply_n5_pricing_duolingo.py` ausführen, dann `/sync-cloud-db`.
+4. **Mayuko Vor-Live-Review** — Workflow noch nicht etabliert. Pragmatisch: Lesson-URL teilen, Feedback einarbeiten, dann `is_published=True`.
+5. **Erste 5 Tester einladen** (Freunde, Mayukos Schülerinnen) — gratis Konto + Bundle-Code als Geschenk → Feedback einarbeiten, bevor öffentlich beworben wird.
 
 **Mittelfristige offene Themen** (nicht akut):
-- **Pre-Login-Onboarding-Funnel** — Duolingo-Stil "Wo stehst du? / Tagesziel" vor Sign-Up. Gilt als Conversion-Hebel, aber erst sinnvoll wenn N5 substantiell gefüllt.
-- **Pro-User-Sprach-Setting** statt globalem `CONTENT_LANGUAGES` — wenn DE+EN parallel angeboten werden sollen.
-- **N5-Grammar-Liste** noch nicht maschinell importiert (`canonical.grammar` ist leer). Coverage-Dashboard zeigt deshalb keine Grammar-%.
-- **Region-Konsolidierung** Cloud Run nach `europe-west6` (eliminiert 76s-Cold-Start) — nach Payrexx-Live als Performance-Initiative.
+- **Pre-Login-Onboarding-Funnel** — Duolingo-Stil "Wo stehst du? / Tagesziel" vor Sign-Up. Erst sinnvoll wenn N5 ≥ 60 % Coverage.
+- **Soft-Paywall nach Aha-Moment** — Banner auf `/lessons/<id>` für nicht-zahlende User mit ≥ 5 abgeschlossenen Lessons (geplante Phase 3 des Funnels). Aktuell zeigt Bundle-Hint-Banner über Lernpfad.
+- **Pro-User-Sprach-Setting** statt globalem `CONTENT_LANGUAGES`.
+- **N5-Grammar-Liste** noch nicht maschinell importiert.
+- **Region-Konsolidierung** Cloud Run nach `europe-west6`.
+- **Daten-Bereinigung Vocabulary.romaji** — 13 Vokabeln haben `romaji=None` (z.B. „駅" mit reading=„えき (eki)" statt sauberem Format). Klein, aber Conversion-relevant für Sub-Text-Anzeige.
 
 ## 3.6 SEO — Setup komplett, jetzt liefert Content den Hebel (2026-04-26)
 
@@ -91,6 +93,28 @@ Organischer Traffic ist der einzige nicht-bezahlte Akquisitions-Kanal. Vor Payre
 - PageSpeed-Check vor grösseren Marketing-Aktionen: https://pagespeed.web.dev/?url=https://japanese-learning.ch
 - Social-Share-Vorschau: https://www.opengraph.xyz/url/https%3A%2F%2Fjapanese-learning.ch
 
+## 3.4 Monetarisierungs-Funnel komplett (Code+DB live, 2026-04-26 abends)
+
+**Verkaufsseite + Paywall + Bundle-Architektur:**
+- ✅ **Bundle = Course (Course-ID 7 „JLPT N5 Komplett"):** kein neues Modell, reuset CoursePurchase + Webhook ohne Änderung. Architektur in Memory `project_n5_bundle_implementation.md`.
+- ✅ **`/n5-bundle`** Verkaufsseite mit Live-Coverage-Widget, Early-Access-Pill, Vergleichstabelle, FAQ, AGB-Pflicht-Checkbox, 30-Tage-Refund prominent (Quicksprout +21-26 % Conversion-Pattern).
+- ✅ **`/api/bundles/n5/purchase`** Buy-API mit dynamischem Preis (CHF 9.90 → 14.90 ab Vokabel-Coverage 80 %).
+- ✅ **`/learn/n5/<slug>`** Modul-Detail-Seiten (8 neue indexierbare URLs in Sitemap) — „Beginnen" führt zur Übersicht statt direktem Lesson-Sprung; bei nur 1 Lesson Auto-Redirect.
+- ✅ **`lesson_paywall.html`** — Klick auf paid Lesson zeigt Conversion-Seite mit Lesson-Tease + Zwei-CTA (Bundle empfohlen + Single sekundär), kein Browser-Reset/Flash.
+- ✅ **Pricing-Migration Duolingo-Style** — 1 Lesson pro Modul gratis, restliche 20 paid à CHF 5. Bundle ab 2 gewollten Single-Lessons günstiger. Konfig + Math in `project_pricing_strategie_n5.md`.
+- ✅ **Prerequisites gelockert** — alle 7 Module ohne Vorgänger, kein Korridor mehr (Brilliant/Duolingo-Path-Pattern). `prerequisite_category_id=NULL` via `loosen_n5_prerequisites.py` (mit Backup-JSON für Restore).
+- ✅ **Admin-Bypass** in `Lesson.is_accessible_to_user()` + auf Bundle-Seite — Mayuko + Claudio sehen alles frei.
+- ✅ **Funnel-Touchpoints überall sichtbar:** Top-Nav-CTA-Outline mit Hover-Tooltip, Hero-Sekundärlink, Bundle-Hint-Banner über Lernpfad (nur für Nicht-Käufer/Nicht-Admins), Bottom-CTA auf Modul-Detail-Seite.
+- ✅ **Brand-Refresh:** handgezeichnetes Lila-Torii (`torii-logo.svg`) + Fraunces-Wordmark + Noto Serif JP statt Unicode-Emoji + System-Font. Neuer Favicon mit gleichem Torii.
+- ✅ **Review-Karten neu:** Bedeutung gross + zentriert, Lesung+Romaji leise darunter, Beispiel in eigener Section, Pill-Buttons mit Soft-Colors statt grellen Vollflächen, Romaji-Hint-Button für Kana-Karten (Spoiler-Schutz beim Lernen).
+- ✅ **Romaji-Bug für Vocabulary gefixt:** SRS-API lieferte `romaji` nie aus → bei Kana-only-Wörtern (かばん) sah man `reading == word` doppelt. Jetzt: bei `word === reading` zeig Romaji als Untertext.
+- ✅ **Lernpfad-Konsolidierung:** `/learn/n5` → 301 auf `/#lernpfad` (Single Source of Truth). Modul-Detail-Breadcrumb angepasst.
+- ✅ **AGB §5b** „Pre-Order und Bundles im Aufbau" + 6-Monate-Stagnations-Refund-Klausel + Widerruf-Belehrung mit Pre-Order-Spezifikum.
+- ✅ **DB-Sync auf Cloud (2026-04-26 abends):** 5557 Upserts, 0 Deletes, User-Daten unangetastet. 892 GCS-Assets synchron.
+- ✅ **Live-Verify:** https://japanese-learning.ch/n5-bundle, /learn/n5/n5-hiragana, /lessons/148 alle 200.
+
+**User-bestätigte Patterns** + Anti-Patterns siehe `feedback_funnel_patterns_2026_04_26.md`.
+
 ## 3.5 Erledigte Live-Blocker (für Vollständigkeit, 2026-04-23 → 26)
 
 Diese Punkte waren in §3 — sind erledigt:
@@ -109,24 +133,34 @@ Diese Punkte waren in §3 — sind erledigt:
 
 ## 4. Leitplanken für "Bestehendes verbessern" (der Dauermodus)
 
-**Grosse Dateien sind Warnsignale (Stand 2026-04-25):**
-- `app/routes.py` → **4'207 Zeilen** (+101 seit letzter Aktualisierung). Gott-Datei. Wenn Patch hier > 30 Zeilen wird, in Blueprint/Service-Modul abspalten.
-- `app/templates/lesson_view.html` → **3'721 Zeilen**. Wo Claudio tatsächlich lernt. Grössere Additionen in Partials.
-- `app/templates/lessons.html` → 845 Zeilen. Beobachten.
-- `app/templates/base.html` → ca. 600 Zeilen (gewachsen wegen Top-Nav v2 inline-CSS). Inline-CSS könnte in `custom.css` ausgelagert werden.
-- `app/templates/index.html` → 557 Zeilen. Komplett neu seit 2026-04-25 (JLPT-Pfad als Startseite).
-- `app/models.py` → 925 Zeilen. Akzeptabel.
+**Grosse Dateien sind Warnsignale (Stand 2026-04-26 abends):**
+- `app/routes.py` → ca. **4'250 Zeilen** (+ module_detail-Route, paywall-render, show_bundle_hint). Gott-Datei. Wenn Patch hier > 30 Zeilen wird, in Blueprint/Service-Modul abspalten — wie es bei `bundle_routes.py`, `seo_routes.py`, `legal_routes.py` schon vorgemacht ist.
+- `app/templates/lesson_view.html` → **3'721 Zeilen**. Grössere Additionen in Partials.
+- `app/templates/base.html` → ca. **750 Zeilen** (gewachsen wegen Bundle-CTA-Outline-CSS, Tooltip-Pseudo-Elemente, Brand-Block mit SVG + Custom-Font-Setup). Inline-CSS könnte in `custom.css` ausgelagert werden — niedrige Priorität.
+- `app/templates/index.html` → ca. **600 Zeilen** (Hero + Bundle-Hint-Banner + JLPT-Pfad).
+- `app/templates/review.html` → ca. **800 Zeilen** (CSS + Card-Render + Pill-Buttons + Stats-Bar + Achievement-Toast).
+- `app/templates/bundles/n5_bundle.html` → ca. **300 Zeilen**. Conversion-kritisch — vor jedem Edit kurz überlegen ob du die Conversion brichst.
+- `app/templates/lesson_paywall.html` → ca. **270 Zeilen**. Conversion-kritisch (Bundle/Single-Auswahl).
+- `app/templates/module_detail.html` → ca. **180 Zeilen**.
+- `app/models.py` → ca. **935 Zeilen** (mit Admin-Bypass + deutschen Messages). Akzeptabel.
 
 **Architektur-Patterns die erhalten bleiben müssen:**
 
-- **Lernpfad als Startseite**: `routes.index()` rendert Hero + N5-Pfad-Module. Logik für `next_module_id` (erstes unlocked + nicht complete + has lessons), Auto-Scroll, Pulsation. NIE durch generischen "Lessons"-Browser ersetzen.
-- **LessonCategory = Modul-Container**: Felder `slug`, `jlpt_level`, `display_order`, `icon_emoji`, `prerequisite_category_id`. Methods `completion_for_user(user, languages)`, `is_unlocked_for_user(user)`. DAG via prerequisite, ≥80 %-Schwelle für unlock.
-- **CONTENT_LANGUAGES Filter**: `app.config['CONTENT_LANGUAGES']` (default `['german']`). Alle Lesson-Listings filtern. Wenn jemand die englischen Lessons sehen will: Env setzen.
-- **Top-Nav v2 Klassen** (`topnav-*`): nicht mit alten `enhanced-navbar-*` mischen.
-- **Snake-Path-Rendering** im Pfad: 3 Gruppen mit Section-Headers, Karten in `repeat(auto-fill, minmax(280px, 1fr))`, Pulsation per `is-next`-Klasse, Lock-Icon bei `is-locked`.
+- **Lernpfad als Startseite**: `routes.index()` rendert Hero + N5-Pfad-Module. Logik für `next_module_id`, Bundle-Hint-Banner, Auto-Scroll, Pulsation. NIE durch generischen "Lessons"-Browser ersetzen.
+- **LessonCategory = Modul-Container**: Felder `slug`, `jlpt_level`, `display_order`, `icon_emoji`, `prerequisite_category_id`. **Stand 2026-04-26: Prerequisites alle NULL — Pfad ist Empfehlung, kein Korridor.** Falls jemand Sperren wieder will: `loosen_n5_prerequisites.py --restore` mit Backup-JSON.
+- **Bundle = Course-Pattern**: kein neues Bundle-Modell. Course-ID 7 ist der einzige „is_published=False AND is_purchasable=True"-Course. Pattern in Memory `project_n5_bundle_implementation.md`.
+- **`Lesson.is_accessible_to_user()` Cascade**: 1) Admin-Bypass, 2) Free-Lesson, 3) LessonPurchase, 4) **CoursePurchase (Bundle-Mechanismus)**, 5) Premium-Sub. Reihenfolge nicht ändern.
+- **`view_lesson()` rendert Paywall, kein Redirect**: Bei `not accessible AND price>0 AND is_purchasable` → `lesson_paywall.html`. Bei `Login required` → Login-Redirect. Bei prerequisite-Fail → Flash + Lessons-Liste.
+- **Modul-Detail mit Skip-Optimierung**: `/learn/n5/<slug>` redirected bei `len(published_lessons)<=1` direkt zur Lesson — keine Klick-Friction für Mini-Module.
+- **Funnel-Hint-Suppression**: `show_bundle_hint` ist `False` für Admins UND für User mit `CoursePurchase` auf Bundle-Course. Sonst penetriert der Hint Käufer mit „Tipp: kauf das Bundle".
+- **CONTENT_LANGUAGES Filter**: default `['german']`. Bilingual via Env.
+- **Top-Nav v2 Klassen** (`topnav-*`): `topnav-link-cta` ist Outline-Style mit `data-cta-tooltip` Pseudo-Element. Nicht mit Vollflächen-Buttons mischen.
+- **Brand-Block:** SVG-Torii (`/static/torii-logo.svg`) + Fraunces (Wordmark) + Noto Serif JP (Tag). Hover dreht Torii via cubic-bezier. CSP erlaubt `fonts.googleapis.com` + `fonts.gstatic.com`.
+- **`/learn/n5` ist 301 auf `/#lernpfad`** — Single Source of Truth ist die Startseite. `/learn/n4` ist 404 (Mayuko-Direktive: erst N5).
+- **Snake-Path-Rendering** im Pfad: 3 Gruppen, `repeat(auto-fill, minmax(280px, 1fr))`, `is-next` für Pulsation. Lock-Icon nur falls `prerequisite_category_id` wieder gesetzt würde.
 
 **Testabdeckung:**
-- `pyproject.toml` `fail_under = 35`. Aktuell **388 Tests grün**. CLAUDE.md-Regel: Coverage nicht senken.
+- `pyproject.toml` `fail_under = 35`. Aktuell **432 Tests grün** (388 vorher + 15 Bundle-Tests + 7 Modul-/Paywall-Tests + diverse). CLAUDE.md-Regel: Coverage nicht senken.
 - 8 Playwright-Specs in `tests/` weiterhin **verwaist** (kein CI). Browser-Tests via Playwright MCP ad-hoc.
 
 **CSS-Falle im Deck-Karussell** (unverändert kritisch):
@@ -154,16 +188,19 @@ Kein A/B-Testing und keine Analytics-Obsession. Die Signale:
 
 | Claudio fragt / sagt | Reaktion |
 |----------------------|----------|
-| "Was soll ich als nächstes machen?" | §3 in Reihenfolge. **Wahrscheinlichste Antwort 2026-04: N5-Inhalte produzieren** — Vokabel-Coverage bei 33 %, Kanji aber erst 2.5 % (Engpass), Hiragana-Modul noch leer. |
-| "Welches Thema generieren?" | Erst `coverage 5 --show-missing 30` laufen lassen, dann ein Thema mit vielen fehlenden Vokabeln wählen. NIE Bauch-Themen, NIE Wiederholung schon gedeckter Wörter. |
+| "Was soll ich als nächstes machen?" | §3 in Reihenfolge. **Wahrscheinlichste Antwort 2026-04-26 abends: Payrexx-KYC abwarten** + parallel **N5-Inhalte (vor allem Kanji 2.5 %)** produzieren. Funnel ist live, jede neue paid Lesson erhöht Bundle-Wert. |
+| "Welches Thema generieren?" | Erst `coverage 5 --show-missing 30` laufen lassen, **Kanji priorisieren** (nur 2 von 80). Nach Generierung: `setup_n5_bundle.py` + `apply_n5_pricing_duolingo.py` + `/sync-cloud-db`. |
 | "Ich hätte eine Idee: [Feature X]" | Vier Fragen: (a) Verbessert das Bestehendes oder baut Neues? (b) Würde Claudio (oder ein fremder Anfänger) es bemerken/nutzen? (c) Wenn JP-Inhalt: würde Mayuko es freigeben? (d) Hilft es, N5 schneller auf 100 % zu bringen oder ist es Ablenkung davon? |
-| "Kannst du die UI reviewen?" | Auf Sprach-Konsistenz (CONTENT_LANGUAGES respektiert?), Mobile-Breakpoints (Top-Nav unter 992px, Pfad-Karten 1-Spalter unter 575px), Active-State der Top-Nav, Umlaut-Korrektheit, Pulsation auf nächstem Modul achten. |
-| "Es gibt einen Bug" | In dieser Reihenfolge ausschliessen: (1) Deck-Karussell-CSS, (2) Dialog-Slideshow Grid-Stacking, (3) DB-Sync-Reihenfolge, (4) Cloud-Run-Cold-Start, (5) Umlaut/Charset, (6) routes.py-Monolith. |
-| "Sollen wir das refactoren?" | Nur wenn der Ort sowieso gerade berührt wird. Kandidaten: routes.py (Lernpfad-Logik in eigenes Modul), base.html (Top-Nav-CSS in custom.css), alte `enhanced-navbar-*` Klassen löschen. |
-| "SEO / Google-Sichtbarkeit?" | Setup komplett (§3.6): Search Console verifiziert, Sitemap eingereicht (34 URLs), OG-Image live, www-Subdomain konfiguriert. **Hebel #1 jetzt: N5-Content produzieren** — jede neue Lesson = neue indexierbare URL. Sitemap regeneriert sich automatisch DB-getrieben. Bei neuen public Routes: in `seo_routes.py::sitemap_xml()` `static_pages` ergänzen. |
-| "Wie bekomme ich den ersten Nutzer?" | Erst Payrexx-Freigabe abwarten. Dann: Onboarding als Fremder durchspielen (Inkognito), Reibung dokumentieren, ein konkretes Premium-Produkt sichtbar machen ("N5 Komplett" CHF 14.90 — sobald 100 % Coverage). |
-| "Englisch wieder anschalten?" | `CONTENT_LANGUAGES=german,english` Env-Var setzen (lokal `.env`, prod via `gcloud run services update --update-env-vars`). Memory `project_content_languages_filter.md`. |
-| "Neue Module / JLPT-Level?" | LessonCategory mit `jlpt_level`, `slug`, `display_order` anlegen. Optional `prerequisite_category_id`. Lessons via `category_id` zuordnen. Route `/learn/n4` funktioniert automatisch. |
+| "Wie passt der Funnel?" | Touchpoints heute: Top-Nav-CTA, Hero-Sekundärlink, Bundle-Hint-Banner über Pfad, Modul-Detail-Bottom-CTA, Lesson-Paywall. **NICHT mehr addieren ohne A/B-Daten** — Anti-Pattern „Needy Design" laut NN/g. |
+| "Pricing ändern?" | Konstanten in `app/services/bundle_service.py` (`SINGLE_LESSON_PRICE_CHF`, `EARLY_BIRD_PRICE_CHF`, `REGULAR_PRICE_CHF`, `EARLY_BIRD_THRESHOLD_PCT`). Math + Strategie in `project_pricing_strategie_n5.md`. **Bundle muss ab 2 Single-Lessons günstiger sein** — sonst Anker kaputt. |
+| "Kannst du die UI reviewen?" | Auf Sprach-Konsistenz (CONTENT_LANGUAGES, deutsche Access-Messages), Mobile-Breakpoints (Top-Nav unter 992px, Pfad-Karten 1-Spalter unter 575px), Active-State der Top-Nav, Umlaut-Korrektheit, Pill-Button-Style (kein grelles Vollflächen) achten. |
+| "Es gibt einen Bug" | In dieser Reihenfolge ausschliessen: (1) Deck-Karussell-CSS, (2) Dialog-Slideshow Grid-Stacking, (3) DB-Sync-Reihenfolge, (4) Englische Access-Message übersehen, (5) Bundle-Course existiert in Cloud-DB?, (6) GCS-Asset-404, (7) routes.py-Monolith. |
+| "Sollen wir das refactoren?" | Nur wenn der Ort sowieso gerade berührt wird. Kandidaten: routes.py (module_detail könnte in eigenes Modul), base.html (Top-Nav-CSS in custom.css), alte `enhanced-navbar-*` Klassen löschen. **`bundle_routes.py` und `module_detail.html` haben Conversion-Wert — vor Refactoring überlegen ob du die Conversion brichst.** |
+| "SEO / Google-Sichtbarkeit?" | Setup komplett (§3.6): Search Console verifiziert, Sitemap (jetzt **42 URLs** mit 8 Modul-Detail-Seiten + /n5-bundle), OG-Image live, www-Subdomain konfiguriert. **Hebel #1: N5-Content produzieren.** Bei neuen public Routes: `seo_routes.py::sitemap_xml()` `static_pages` ergänzen. |
+| "Wie bekomme ich den ersten Nutzer?" | Erst Payrexx-Live, dann erste 5 Tester (Freunde, Mayukos Schülerinnen) gratis einladen + Bundle gratis freischalten via Admin-Tool oder direkt CoursePurchase-Insert. Feedback einarbeiten, dann öffentlich. |
+| "Englisch wieder anschalten?" | `CONTENT_LANGUAGES=german,english` Env-Var. Memory `project_content_languages_filter.md`. |
+| "Neue Module / JLPT-Level?" | LessonCategory mit `jlpt_level`, `slug`, `display_order` anlegen. Lessons via `category_id` zuordnen. Sitemap-Modul-Eintrag automatisch. **N4-Bundle:** Pattern duplizieren — neuer Course "JLPT N4 Komplett", neue bundle_service-Funktionen, neue Route `/n4-bundle`. Generalisierung erst bei 3+ Bundles. |
+| "Lesson-Paywall stört" | Kann Admin nie sehen (Bypass). Falls echte Anpassung nötig: `app/templates/lesson_paywall.html` (Conversion-kritisch). Layout-Pattern: Tease oben (Lesson-Titel + Beschreibung sichtbar), zwei CTA-Cards nebeneinander (empfohlen + sekundär). |
 
 ## 7. Verweise (Wissen, das nicht hier dupliziert wird)
 
@@ -172,6 +209,9 @@ Kein A/B-Testing und keine Analytics-Obsession. Die Signale:
 - **JLPT-Leitprinzip mit harten Regeln** → User-Memory `project_jlpt_leitprinzip.md`
 - **Mayuko ist Lehrerin, nicht Lernerin** → User-Memory `user_mayuko_japanisch_lehrerin.md`
 - **Payrexx-KYC-Wiedereinreichung 2026-04-25** → `project_payrexx_kyc_wiedereinreichung.md`
+- **N5-Bundle Code+DB Architektur** → `project_n5_bundle_implementation.md`
+- **N5-Pricing-Strategie (Konstanten + Math)** → `project_pricing_strategie_n5.md`
+- **Funnel-Patterns vs. Anti-Patterns** → `feedback_funnel_patterns_2026_04_26.md`
 - **CONTENT_LANGUAGES-Filter Setup** → `project_content_languages_filter.md`
 - **Cloud-Run-Cold-Start-Hintergrund** → `project_cold_start_76_sekunden.md`
 - **Hostpoint info@-Mailbox** → `reference_hostpoint_info_mailbox.md`
