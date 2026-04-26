@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <rect width="64" height="64" rx="12" fill="#1d3557"/>
-  <text x="32" y="44" text-anchor="middle" font-family="'Noto Sans JP', 'Hiragino Sans', sans-serif"
-        font-size="36" font-weight="700" fill="#f1faee">日</text>
+  <!-- Lila-Hintergrund (passt zur Brand-Farbe), Torii in Weiss fuer hohen Kontrast im Browser-Tab -->
+  <rect width="64" height="64" rx="12" fill="#4f46e5"/>
+  <g fill="none" stroke="#ffffff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 7 17 Q 32 12 57 17 L 56 21 Q 32 16 8 21 Z" fill="#ffffff" stroke-width="1.5"/>
+    <path d="M 11 27 Q 32 25 53 27" stroke-width="3.4"/>
+    <path d="M 32 22 L 32 26.5" stroke-width="2.6"/>
+    <path d="M 14.5 22 Q 13.5 38 12.2 56" stroke-width="4.2"/>
+    <path d="M 49.5 22 Q 50.7 38 51.8 56" stroke-width="4.2"/>
+  </g>
 </svg>
