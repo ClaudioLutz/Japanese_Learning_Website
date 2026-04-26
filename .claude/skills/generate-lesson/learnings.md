@@ -47,6 +47,48 @@ Selbstverbesserndes Log. Wird vor jedem Run gelesen, nach jedem Run angehängt.
 
 <!-- Neuste Einträge oben, älteste unten. -->
 
+## 2026-04-26 09:00 — 6er-Drop N5-Lektionen 161-166
+
+### Erstellte Lektionen
+
+- **161**: N5 Erste Sätze 4 — Te-Form (Modul 37, n5-erste-saetze, order=6)
+- **162**: N5 Reise & Ort — In der Stadt (Modul 36, n5-reise-ort, order=10)
+- **163**: N5 Wetter & Jahreszeiten (Modul 35, n5-alltag-essen, order=2)
+- **164**: N5 Kanji 1 — Zahlen 一 bis 十 (Modul 32, n5-zahlen-zeit, order=9)
+- **165**: N5 Hobbys & Freizeit (Modul 34, n5-familie-personen, order=2)
+- **166**: N5 Wegbeschreibung (Modul 36, n5-reise-ort, order=11)
+
+### Erfolge
+
+- **Sechs Lektionen in einem Schwung** erstellt mit der vollen Pipeline (validate → images → insert → audio → text-audio → slideshow). Pro Lektion ca. 15-20 Minuten Generierungszeit. Bilder-Generierung dominiert (ca. 5min DALL-E pro Lektion), Slideshow zusätzlich 3-5min im Hintergrund.
+- **Alle Drafts auf erstem oder zweitem Validate-Pass durch.** L3, L5 sogar beim ersten Validate clean — die Vorab-Coverage-Prüfung gegen canonical und N5-Kanji-Set hat Korrekturschleifen reduziert.
+- **N5-Canonical-Override** für Standard-Wörter, die in der einzelwort-zentrierten JLPT-Liste fehlen: 勉強する, ゆっくり, もう一度 (L1), スーパー (L2), 趣味, ゲーム, カラオケ, 野球, サッカー (L5), 信号, 曲がる (L6), 円 (L4). Alle mit `is_canonical_override: true` + ausführlichem `source_note` mit MNN-Lektions-Verweis.
+- **Modul-Coverage erweitert**: 
+  - n5-erste-saetze: 3→4 (Te-Form schliesst Grammatik-Linie ab)
+  - n5-reise-ort: 4→5→6 (Stadt + Wegbeschreibung)
+  - n5-zahlen-zeit: 4→5 (erster Kanji-fokussierter Lesson-Typ)
+  - n5-familie-personen: 2→3 (Hobbys rundet Personenbeschreibung ab)
+  - n5-alltag-essen: 2→3 (Wetter als Smalltalk-Erweiterung)
+- **Slideshow im Hintergrund parallelisiert**: Während L(N) slideshow rendert (~5min), kann ich L(N+1) draft schreiben + validate + images. Effektive Pipeline-Zeit fast halbiert.
+
+### Probleme / Erkenntnisse
+
+1. **N4-Kanji in häufigen N5-Verben**: 飲, 待, 帰, 起, 寝, 買, 作, 立, 座, 急, 歩, 走, 泳, 遊, 働, 住, 使, 取, 会, 言, 乗, 持. Validator bricht bei jeder Te-Form-Lektion mit diesen Verben ab — Lösung ist konsequent Hiragana in Beispielsätzen. Die Falle: 一 ist OK, 飲 nicht — beide sind „klassische" N5-Vokabeln, aber nur eines ist im N5-Kanji-Set.
+2. **「会」 ist nicht im N5-Kanji-Set**: 会う ist zwar N5-Vokabel, aber 会 ist nicht im N5-Kanji (nur 80 zugelassen). In Beispielsätzen muss 「あう」, 「あいます」 stehen.
+3. **「東口」 / 「西口」 funktioniert nicht**: 口 ist nicht im N5-Kanji-Set. Workaround: 「ひがしぐち」 in Hiragana oder 「ひがしがわ」 (Ostseite).
+4. **Pipeline-`replace_all` Falle bei JSON**: Bei der Korrektur 「公園」 → 「こうえん」 muss ich aufpassen, dass ich das `word`-Feld nicht mit-ändere — das Vokabel-Wort soll Kanji bleiben (Karteikarte). Lösung: erst alles ersetzen, dann gezielt das `word`-Feld zurückbauen.
+5. **DALL-E-Safety-Filter False-Positive**: 飲む blockiert (wie 食べる in Lesson 145). 18/19 Bilder OK reicht — der Lerner sieht eine Vokabel-Karte ohne Bild, das ist verkraftbar.
+6. **Pipeline-Step-Reihenfolge auf Page 5 (Dialog)**: Nach `audio` + `slideshow` haben Verständnisfragen-Quiz und Slideshow beide order_index=2 — Skill-Direktive 4b3 verlangt manuellen Fix per UPDATE auf order_index=4 für das Verständnisfragen-LessonContent. Habe das pro Lektion sofort nach dem Insert gemacht.
+7. **MD-Hierarchie-Validator ist STRENG**: 200+ Zeichen + keine `## Headline` + weniger als 2× `**bold**` → Abbruch. Hat in keiner der 6 Lektionen geklappt, weil ich von Anfang an konsequent strukturiert geschrieben habe.
+
+### Aktuelle Regeln (Ergänzung ab diesem Run)
+
+44. **N5-Kanji-Set ist nur 80 Zeichen** — viele „klassische" N5-Vokabeln haben Kanji ausserhalb (飲 待 帰 起 寝 買 作 教 立 座 急 歩 走 泳 遊 働 住 使 取 会 言 乗 持 送 呼 歌 口 意 室 駅 銀 郵 公 園 図 館 病 院 家 地 鉄 町 道 切 符 度 訓 音 好 嫌 上 手 下 手 趣 味 信 号 曲 写 真 旅 行 料 理 野 球). In `Vocabulary.word` darf das Kanji bleiben (Karteikarte), in `example_sentence_japanese`, `Grammar.example_sentences`, `content_text` MUSS Hiragana stehen.
+45. **Page-5-Order-Index-Fix als Standard-Schritt nach Pipeline**: `UPDATE lesson_content SET order_index=4 WHERE id=<verstaendnisfragen-text-id>;` — der Validator-Quiz-Block kollidiert mit dem dialog_slideshow auf order_index=2.
+46. **「ひがしぐち」/「にしぐち」 statt 「東口」/「西口」** in N5-Kontext, weil 口 nicht im N5-Kanji-Set ist. Alternativ: 「ひがしがわ」/「にしがわ」 (Seite).
+
+---
+
 ## 2026-04-26 00:50 — N5-Lektionen 156-160 + GCS-Asset-Bug-Fix
 
 ### 5 N5-Lektionen erstellt

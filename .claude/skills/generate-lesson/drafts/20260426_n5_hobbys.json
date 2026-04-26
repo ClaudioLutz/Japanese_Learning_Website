@@ -1,0 +1,754 @@
+{
+  "title": "N5 Hobbys & Freizeit — Was machst du gerne?",
+  "description": "Lerne, wie du auf Japanisch über Hobbys und Freizeit redest — Sport, Musik, Filme, Reisen, Kochen — und drücke aus, was du gerne magst, nicht magst und worin du gut oder schlecht bist.",
+  "jlpt_level": 5,
+  "topic": "Hobbys und Freizeit",
+  "instruction_language": "german",
+  "allow_guest_access": false,
+  "pages": [
+    {
+      "title": "Einführung — Über sich erzählen",
+      "description": "Hobbys als Smalltalk-Thema",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Hobbys sind die schnellste Brücke zu echten Gesprächen",
+            "content_text": "## Sich vorstellen über Hobbys\n\nDu hast in Lektion 1 gelernt, dich vorzustellen — Name, Beruf, Herkunft. Aber echte Gespräche fangen erst beim Thema **Hobbys** und **Freizeit** an. Wer auf 「しゅみは なんですか」 (shumi wa nan desu ka, 'Was sind deine Hobbys?') antworten kann, wirkt sofort nahbar.\n\n### Was du heute lernst\n\n- **Hobby-Vokabeln:** 「しゅみ」 (shumi, Hobby), 「スポーツ」 (supootsu), 「おんがく」 (ongaku, Musik), 「えいが」 (eiga, Film), 「しゃしん」 (shashin, Foto), 「りょこう」 (ryokou, Reise), 「りょうり」 (ryouri, Kochen).\n- **Sportarten:** 「やきゅう」 (yakyuu, Baseball), 「サッカー」 (sakkaa), 「ダンス」 (dansu).\n- **Vier wichtige na-Adjektive:** 「すきな」 (suki na, gemocht), 「きらいな」 (kirai na, nicht gemocht), 「じょうずな」 (jouzu na, gut), 「へたな」 (heta na, schlecht).\n- **Vier Grammatik-Muster:** 「が すきです」 (ga suki desu, 'mag ich'), 「が きらいです」 (ga kirai desu, 'mag ich nicht'), 「が じょうずです」 (ga jouzu desu, 'kann ich gut'), 「どんな N が すきですか」 (donna N ga suki desu ka, 'Was für N magst du?').\n\n### Praktischer Nutzen\n\n- Du kannst dich beim ersten Treffen mit Mayuko-sensei vertieft vorstellen.\n- Du kannst auf einer Sprachpartner-Plattform mit Japanern Gemeinsamkeiten finden.\n- Die Adjektive 「すき / きらい / じょうず / へた」 funktionieren weit über Hobbys hinaus — auch über Essen, Personen, Wetter.\n\n> **Lerntipp:** Bereite zwei Sätze vor, die du auswendig kannst: 「わたしの しゅみは 〜です」 (watashi no shumi wa ~ desu) und 「〜が とても すきです」 (~ ga totemo suki desu). Diese zwei Sätze trägst du mit dir wie eine kleine Visitenkarte."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln 1 — Hobbys und Aktivitäten",
+      "description": "Sport, Musik, Film, Foto, Reise",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "趣味",
+            "reading": "しゅみ",
+            "romaji": "shumi",
+            "meaning": "hobby",
+            "meaning_de": "Hobby",
+            "jlpt_level": 5,
+            "is_canonical_override": true,
+            "source_note": "Standard-N5 in MNN Lektion 18 / Genki I — das zentrale Wort für jedes Hobby-Gespräch. Fehlt in der einzelwort-zentrierten JLPT-Liste.",
+            "example_sentence_japanese": "わたしの しゅみは おんがくです。",
+            "example_sentence_english": "Watashi no shumi wa ongaku desu. — My hobby is music.",
+            "image_url": "vocab_generated/vocab_fe074089.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "スポーツ",
+            "reading": "スポーツ",
+            "romaji": "supootsu",
+            "meaning": "sport, sports",
+            "meaning_de": "Sport",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "スポーツが すきです。",
+            "example_sentence_english": "Supootsu ga suki desu. — I like sports.",
+            "image_url": "vocab_generated/vocab_0aa0aad9.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "音楽",
+            "reading": "おんがく",
+            "romaji": "ongaku",
+            "meaning": "music",
+            "meaning_de": "Musik",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "まいばん おんがくを 聞きます。",
+            "example_sentence_english": "Maiban ongaku o kikimasu. — I listen to music every evening.",
+            "image_url": "vocab_generated/vocab_c854b567.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "映画",
+            "reading": "えいが",
+            "romaji": "eiga",
+            "meaning": "movie, film",
+            "meaning_de": "Film, Kino",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あした えいがを 見ましょう。",
+            "example_sentence_english": "Ashita eiga o mimashou. — Let's watch a movie tomorrow.",
+            "image_url": "vocab_generated/vocab_a08a27db.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "写真",
+            "reading": "しゃしん",
+            "romaji": "shashin",
+            "meaning": "photo, photograph",
+            "meaning_de": "Foto",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "しゃしんを 一まい とりました。",
+            "example_sentence_english": "Shashin o ichi-mai torimashita. — I took one photo.",
+            "image_url": "vocab_generated/vocab_37e38080.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "旅行",
+            "reading": "りょこう",
+            "romaji": "ryokou",
+            "meaning": "trip, travel",
+            "meaning_de": "Reise",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "なつに 日本へ りょこうします。",
+            "example_sentence_english": "Natsu ni Nihon e ryokou shimasu. — I will travel to Japan in summer.",
+            "image_url": "vocab_generated/vocab_87483408.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "料理",
+            "reading": "りょうり",
+            "romaji": "ryouri",
+            "meaning": "cooking, dish",
+            "meaning_de": "Kochen, Gericht",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "わたしは イタリアの りょうりが すきです。",
+            "example_sentence_english": "Watashi wa Itaria no ryouri ga suki desu. — I like Italian food.",
+            "image_url": "vocab_generated/vocab_8e545ffa.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "本",
+            "reading": "ほん",
+            "romaji": "hon",
+            "meaning": "book",
+            "meaning_de": "Buch",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "まいにち 本を 読みます。",
+            "example_sentence_english": "Mainichi hon o yomimasu. — I read a book every day.",
+            "image_url": "vocab_generated/vocab_a4fb8425.png"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln 2 — Sportarten und Adjektive",
+      "description": "Baseball, Fussball, gut/schlecht",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "野球",
+            "reading": "やきゅう",
+            "romaji": "yakyuu",
+            "meaning": "baseball",
+            "meaning_de": "Baseball",
+            "jlpt_level": 5,
+            "is_canonical_override": true,
+            "source_note": "Standard-N5 in MNN Lektion 18 — Japans Nationalsport. In jeder MNN-Anfänger-Lektion zur Hobby-Thematik.",
+            "example_sentence_japanese": "やきゅうの しあいを 見ました。",
+            "example_sentence_english": "Yakyuu no shiai o mimashita. — I watched a baseball game.",
+            "image_url": "vocab_generated/vocab_9e310246.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "サッカー",
+            "reading": "サッカー",
+            "romaji": "sakkaa",
+            "meaning": "soccer, football",
+            "meaning_de": "Fussball",
+            "jlpt_level": 5,
+            "is_canonical_override": true,
+            "source_note": "Standard-N5 in MNN Lektion 18 / Genki I — eines der häufigsten Sport-Lehnwörter weltweit.",
+            "example_sentence_japanese": "サッカーが すきですか。",
+            "example_sentence_english": "Sakkaa ga suki desu ka. — Do you like soccer?",
+            "image_url": "vocab_generated/vocab_1c070157.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "ゲーム",
+            "reading": "ゲーム",
+            "romaji": "geemu",
+            "meaning": "game (video game)",
+            "meaning_de": "Spiel, Videospiel",
+            "jlpt_level": 5,
+            "is_canonical_override": true,
+            "source_note": "Standard-N5 in MNN Lektion 18 / Genki I — Lehnwort, in jeder Hobby-Liste vertreten.",
+            "example_sentence_japanese": "おとうとは ゲームが すきです。",
+            "example_sentence_english": "Otouto wa geemu ga suki desu. — My younger brother likes video games.",
+            "image_url": "vocab_generated/vocab_a6dc8011.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "カラオケ",
+            "reading": "カラオケ",
+            "romaji": "karaoke",
+            "meaning": "karaoke",
+            "meaning_de": "Karaoke",
+            "jlpt_level": 5,
+            "is_canonical_override": true,
+            "source_note": "Standard-N5 in MNN Lektion 18 — das japanische Lehnwort schlechthin, weltweit bekannt.",
+            "example_sentence_japanese": "ともだちと カラオケに 行きます。",
+            "example_sentence_english": "Tomodachi to karaoke ni ikimasu. — I go to karaoke with a friend.",
+            "image_url": "vocab_generated/vocab_00330b84.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "好き",
+            "reading": "すき",
+            "romaji": "suki",
+            "meaning": "liked, favorite",
+            "meaning_de": "gemocht, beliebt",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "おんがくが すきです。",
+            "example_sentence_english": "Ongaku ga suki desu. — I like music.",
+            "image_url": "vocab_generated/vocab_d8af7f99.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "嫌い",
+            "reading": "きらい",
+            "romaji": "kirai",
+            "meaning": "disliked",
+            "meaning_de": "nicht gemocht, abgeneigt",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "わたしは スポーツが きらいです。",
+            "example_sentence_english": "Watashi wa supootsu ga kirai desu. — I dislike sports.",
+            "image_url": "vocab_generated/vocab_07e2cd80.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "上手",
+            "reading": "じょうず",
+            "romaji": "jouzu",
+            "meaning": "skilful, good at",
+            "meaning_de": "geschickt, gut sein in",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ははは りょうりが じょうずです。",
+            "example_sentence_english": "Haha wa ryouri ga jouzu desu. — My mother is good at cooking.",
+            "image_url": "vocab_generated/vocab_415b01e5.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "下手",
+            "reading": "へた",
+            "romaji": "heta",
+            "meaning": "unskilful, bad at",
+            "meaning_de": "ungeschickt, schlecht sein in",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "わたしは うたが へたです。",
+            "example_sentence_english": "Watashi wa uta ga heta desu. — I am bad at singing.",
+            "image_url": "vocab_generated/vocab_588ffa98.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "とても",
+            "reading": "とても",
+            "romaji": "totemo",
+            "meaning": "very",
+            "meaning_de": "sehr",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "えいがが とても すきです。",
+            "example_sentence_english": "Eiga ga totemo suki desu. — I like movies very much.",
+            "image_url": "vocab_generated/vocab_c109d6f5.png"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Grammatik — Mögen, können, fragen",
+      "description": "が-Partikel und na-Adjektive",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Vier Muster für Hobby-Gespräche",
+            "content_text": "## Wann nutze ich が, wann は?\n\n### Wichtige Falle\n\nIm Deutschen sagst du 'Ich mag Musik.' — Subjekt 'ich', direktes Objekt 'Musik'. Im Japanischen heisst das aber: 「わたしは おんがく**が** すきです。」 (Watashi wa ongaku **ga** suki desu.) — die Sache, die man **mag**, wird mit 「が」 (ga) markiert, **nicht** mit 「を」 (wo). Genauso bei 「きらい」 (kirai), 「じょうず」 (jouzu), 「へた」 (heta).\n\n### 1. Mögen — 「〜が すきです」\n\n- 「わたしは えいがが すきです。」 (Watashi wa eiga ga suki desu.) — 'Ich mag Filme.'\n- Verstärken: 「とても すきです」 (totemo suki desu, 'sehr gerne') oder 「だいすきです」 (daisuki desu, 'liebe ich').\n\n### 2. Nicht mögen — 「〜が きらいです」\n\n- 「わたしは うんどうが きらいです。」 (Watashi wa undou ga kirai desu.) — 'Ich mag Sport nicht.'\n- Verstärken: 「だいきらいです」 (daikirai desu, 'verabscheue ich').\n\n### 3. Gut/schlecht in etwas — 「〜が じょうず/へたです」\n\n- 「ははは うたが じょうずです。」 (Haha wa uta ga jouzu desu.) — 'Meine Mutter singt gut.'\n- 「わたしは サッカーが へたです。」 (Watashi wa sakkaa ga heta desu.) — 'Ich bin schlecht im Fussball.'\n\n> **Höflichkeits-Hinweis:** 「じょうず」 (jouzu) sagst du **nicht über dich selbst** — das wirkt arrogant. Lieber 「とくいです」 (tokui desu) oder bescheidenes 「すこし できます」 (sukoshi dekimasu, 'ich kann ein bisschen').\n\n### 4. Was für ein N? — 「どんな N が すきですか」\n\n- 「どんな おんがくが すきですか。」 (Donna ongaku ga suki desu ka.) — 'Was für Musik magst du?'\n- 「どんな えいがが すきですか。」 (Donna eiga ga suki desu ka.) — 'Was für Filme magst du?'\n\nDie Antwort kann konkret sein (「クラシックが すきです。」, kurashikku ga suki desu, 'Ich mag Klassik') oder breit (「とても いいおんがくが すきです。」, totemo ii ongaku ga suki desu, 'Ich mag sehr gute Musik')."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "〜が すきです / きらいです — mögen / nicht mögen",
+            "explanation": "Im Japanischen wird das gemochte Objekt mit 「が」 (ga) markiert, nicht mit 「を」 (wo). 「すき」 (suki) und 「きらい」 (kirai) sind na-Adjektive, daher steht 「です」 (desu) am Satzende. Verstärkungen: 「だいすき」 (daisuki, 'sehr liebgemocht'), 「だいきらい」 (daikirai, 'verabscheut').",
+            "structure": "[Person] + は + [Sache] + が + すき/きらいです",
+            "romaji": "[person] + wa + [thing] + ga + suki/kirai desu",
+            "jlpt_level": 5,
+            "example_sentences": "わたしは えいがが すきです。 (Watashi wa eiga ga suki desu.) — Ich mag Filme.\nわたしは スポーツが きらいです。 (Watashi wa supootsu ga kirai desu.) — Ich mag Sport nicht.\nおとうとは ゲームが だいすきです。 (Otouto wa geemu ga daisuki desu.) — Mein jüngerer Bruder liebt Videospiele.\nわたしは サッカーが きらいです。 (Watashi wa sakkaa ga kirai desu.) — Ich mag Fussball nicht."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "〜が じょうずです / へたです — gut / schlecht in",
+            "explanation": "Mit 「じょうず」 (jouzu) drückst du aus, dass jemand etwas gut kann. 「へた」 (heta) ist das Gegenteil — schlecht in etwas. Auch hier wird das Objekt mit 「が」 (ga) markiert. Wichtige Höflichkeits-Regel: 「じょうず」 NICHT über sich selbst sagen (wirkt arrogant). Stattdessen für sich selbst 「とくい」 (tokui) oder bescheidener Antwort.",
+            "structure": "[Person] + は + [Tätigkeit] + が + じょうず/へたです",
+            "romaji": "[person] + wa + [activity] + ga + jouzu/heta desu",
+            "jlpt_level": 5,
+            "example_sentences": "ははは りょうりが じょうずです。 (Haha wa ryouri ga jouzu desu.) — Meine Mutter kocht gut.\nわたしは うたが へたです。 (Watashi wa uta ga heta desu.) — Ich singe schlecht.\nたなかさんは サッカーが じょうずです。 (Tanaka-san wa sakkaa ga jouzu desu.) — Tanaka spielt gut Fussball.\nリサさんは にほんごが じょうずです。 (Risa-san wa nihongo ga jouzu desu.) — Lisa spricht gut Japanisch."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "どんな + Nomen + が すきですか — Was für ein N magst du?",
+            "explanation": "「どんな」 (donna) heisst 'was für ein/eine'. Steht direkt vor dem Nomen, ohne 「の」. Die Frage 「どんな X が すきですか」 (donna X ga suki desu ka) ist ein perfekter Smalltalk-Einstieg, um Hobbys zu vertiefen. Die Antwort kann ein konkretes Genre sein oder ein Adjektiv + Nomen.",
+            "structure": "どんな + [Nomen] + が + すきですか",
+            "romaji": "donna + [noun] + ga + suki desu ka",
+            "jlpt_level": 5,
+            "example_sentences": "どんな おんがくが すきですか。 (Donna ongaku ga suki desu ka.) — Was für Musik magst du?\nどんな えいがが すきですか。 (Donna eiga ga suki desu ka.) — Was für Filme magst du?\nどんな りょうりが すきですか。 (Donna ryouri ga suki desu ka.) — Welche Küche magst du?\nどんな スポーツが すきですか。 (Donna supootsu ga suki desu ka.) — Welche Sportarten magst du?"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Dialog — Pause im Sprachkurs",
+      "description": "Hobbys vergleichen",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Tanaka und Lisa entdecken gemeinsame Hobbys",
+            "content_text": "Tanaka: リサさん、しゅみは なんですか。\n  (Risa-san, shumi wa nan desu ka.)\n  -> Lisa, was sind deine Hobbys?\n\nLisa: わたしの しゅみは えいがです。とても すきです。\n  (Watashi no shumi wa eiga desu. Totemo suki desu.)\n  -> Mein Hobby sind Filme. Ich liebe sie sehr.\n\nTanaka: そうですか。どんな えいがが すきですか。\n  (Sou desu ka. Donna eiga ga suki desu ka.)\n  -> Ach so. Was für Filme magst du?\n\nLisa: にほんの えいがが だいすきです。たなかさんの しゅみは なんですか。\n  (Nihon no eiga ga daisuki desu. Tanaka-san no shumi wa nan desu ka.)\n  -> Ich liebe japanische Filme. Was sind deine Hobbys, Tanaka?\n\nTanaka: わたしは スポーツが すきです。やきゅうも サッカーも すきです。\n  (Watashi wa supootsu ga suki desu. Yakyuu mo sakkaa mo suki desu.)\n  -> Ich mag Sport. Ich mag sowohl Baseball als auch Fussball.\n\nLisa: たなかさんは サッカーが じょうずですか。\n  (Tanaka-san wa sakkaa ga jouzu desu ka.)\n  -> Bist du gut im Fussball?\n\nTanaka: いいえ、あまり じょうずじゃないです。でも、たのしいです。\n  (Iie, amari jouzu janai desu. Demo, tanoshii desu.)\n  -> Nein, ich bin nicht besonders gut. Aber es macht Spass.\n\nLisa: いっしょに スポーツを しましょうか。\n  (Issho ni supootsu o shimashou ka.)\n  -> Wollen wir mal zusammen Sport machen?\n\nTanaka: はい、ぜひ。こんしゅうの どようびは どうですか。\n  (Hai, zehi. Konshuu no doyoubi wa dou desu ka.)\n  -> Ja, sehr gerne. Wie wäre es Samstag dieser Woche?"
+          }
+        },
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "Verständnisfragen zum Dialog."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was ist Lisas Hobby?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Lisa sagt 「わたしの しゅみは えいがです」 (watashi no shumi wa eiga desu).",
+              "options": [
+                {
+                  "option_text": "Filme schauen.",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「えいが」 (eiga) = Film/Kino."
+                },
+                {
+                  "option_text": "Sport machen.",
+                  "is_correct": false,
+                  "feedback": "Das ist Tanakas Hobby, nicht Lisas."
+                },
+                {
+                  "option_text": "Musik hören.",
+                  "is_correct": false,
+                  "feedback": "Davon ist im Dialog nicht die Rede."
+                },
+                {
+                  "option_text": "Kochen.",
+                  "is_correct": false,
+                  "feedback": "Davon ist im Dialog nicht die Rede."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welche zwei Sportarten mag Tanaka?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Tanaka sagt 「やきゅうも サッカーも すきです」 (yakyuu mo sakkaa mo suki desu) — die Partikel 「も〜も」 (mo ~ mo) heisst 'sowohl ~ als auch ~'.",
+              "options": [
+                {
+                  "option_text": "Baseball und Fussball.",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「やきゅう」 (yakyuu) und 「サッカー」 (sakkaa)."
+                },
+                {
+                  "option_text": "Tennis und Volleyball.",
+                  "is_correct": false,
+                  "feedback": "Davon ist im Dialog keine Rede."
+                },
+                {
+                  "option_text": "Schwimmen und Laufen.",
+                  "is_correct": false,
+                  "feedback": "Davon ist im Dialog keine Rede."
+                },
+                {
+                  "option_text": "Karate und Judo.",
+                  "is_correct": false,
+                  "feedback": "Davon ist im Dialog keine Rede."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Tanaka sagt, dass er sehr gut im Fussball ist.",
+              "difficulty_level": 2,
+              "explanation": "Falsch — Tanaka sagt 「あまり じょうずじゃないです」 (amari jouzu janai desu, 'nicht besonders gut'). Bescheidenheit ist im japanischen Smalltalk Standard.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Falsch — Tanaka sagt 「あまり じょうずじゃないです」 (nicht besonders gut)."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt — er antwortet bescheiden."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was schlägt Tanaka am Ende vor?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Tanaka sagt 「こんしゅうの どようびは どうですか」 (konshuu no doyoubi wa dou desu ka) — Treffen am Samstag.",
+              "options": [
+                {
+                  "option_text": "Am Samstag dieser Woche zusammen Sport zu machen.",
+                  "is_correct": true,
+                  "feedback": "Richtig — Lisa fragt nach Sport, Tanaka schlägt Samstag vor."
+                },
+                {
+                  "option_text": "Ins Kino zu gehen.",
+                  "is_correct": false,
+                  "feedback": "Davon ist im Dialog keine Rede."
+                },
+                {
+                  "option_text": "Zusammen zu kochen.",
+                  "is_correct": false,
+                  "feedback": "Davon ist im Dialog keine Rede."
+                },
+                {
+                  "option_text": "Zur Karaoke zu gehen.",
+                  "is_correct": false,
+                  "feedback": "Davon ist im Dialog keine Rede."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Übung — Hobbys und Adjektive trainieren",
+      "description": "Quiz zu Vokabeln, が-Partikel und na-Adjektiven",
+      "page_type": "quiz_carousel",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "10 Aufgaben zur Lektion."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「しゅみ」 (shumi)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「しゅみ」 (shumi) = Hobby. Das Schlüsselwort jedes Hobby-Smalltalks.",
+              "options": [
+                {
+                  "option_text": "Hobby",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "Sport",
+                  "is_correct": false,
+                  "feedback": "Sport wäre 「スポーツ」."
+                },
+                {
+                  "option_text": "Beruf",
+                  "is_correct": false,
+                  "feedback": "Beruf wäre 「しごと」 (shigoto)."
+                },
+                {
+                  "option_text": "Musik",
+                  "is_correct": false,
+                  "feedback": "Musik wäre 「おんがく」 (ongaku)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welche Partikel markiert das, was man mag — bei 「すき」?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "「すき」 verlangt 「が」 (ga), nicht 「を」 (wo) — eine wichtige Falle für Anfänger aus europäischen Sprachen.",
+              "options": [
+                {
+                  "option_text": "が (ga)",
+                  "is_correct": true,
+                  "feedback": "Richtig — bei 「すき」 immer 「が」, nie 「を」."
+                },
+                {
+                  "option_text": "を (wo)",
+                  "is_correct": false,
+                  "feedback": "Falsch — 「を」 ist Objektmarker, aber 「すき」 verlangt 「が」."
+                },
+                {
+                  "option_text": "に (ni)",
+                  "is_correct": false,
+                  "feedback": "「に」 ist für Ziel/Zeit, nicht für das gemochte Objekt."
+                },
+                {
+                  "option_text": "で (de)",
+                  "is_correct": false,
+                  "feedback": "「で」 ist für Mittel/Ort der Handlung."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welcher Satz heisst 'Ich mag Filme'?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「えいがが すきです」 (eiga ga suki desu) — Standard-Pattern.",
+              "options": [
+                {
+                  "option_text": "えいがが すきです。",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "えいがを すきです。",
+                  "is_correct": false,
+                  "feedback": "Falsch — bei 「すき」 ist die Partikel 「が」, nicht 「を」."
+                },
+                {
+                  "option_text": "えいがに すきです。",
+                  "is_correct": false,
+                  "feedback": "「に」 passt hier nicht — Standard ist 「が」."
+                },
+                {
+                  "option_text": "えいがで すきです。",
+                  "is_correct": false,
+                  "feedback": "「で」 markiert kein gemochtes Objekt."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「じょうず」 sagt man im Japanischen oft auch über sich selbst.",
+              "difficulty_level": 3,
+              "explanation": "Falsch — 「じょうず」 (jouzu) über sich selbst zu sagen wirkt arrogant. Bescheidenheit ist Standard. Man nutzt eher 「とくい」 (tokui) oder 「すこし できます」 (sukoshi dekimasu).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Falsch — wirkt arrogant über sich selbst."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt — bescheidene Antwort ist Standard."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie verstärkst du 「すき」 zu 'sehr gerne / liebe'?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "「だいすき」 (daisuki) = 'liebe ich'. 「だい〜」 als Präfix verstärkt zu Maximum.",
+              "options": [
+                {
+                  "option_text": "だいすき (daisuki)",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「だい」 (Riesen-) verstärkt zu Liebe."
+                },
+                {
+                  "option_text": "とてもすき (totemo suki)",
+                  "is_correct": false,
+                  "feedback": "Hat denselben Sinn ('sehr gerne'), aber als feste Verstärkung gilt 「だいすき」 als stärker."
+                },
+                {
+                  "option_text": "じょうずすき (jouzu suki)",
+                  "is_correct": false,
+                  "feedback": "Das ist gar keine Form."
+                },
+                {
+                  "option_text": "へたすき (heta suki)",
+                  "is_correct": false,
+                  "feedback": "「へた」 (schlecht) und 「すき」 (mögen) — passt nicht zusammen."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「どんな おんがくが すきですか」 ist die typische Frage 'Was für Musik magst du?'.",
+              "difficulty_level": 1,
+              "explanation": "Korrekt — 「どんな」 (donna) heisst 'was für ein/eine'.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Genau!"
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — das ist die Standard-Smalltalk-Frage."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde jedes Hobby mit der deutschen Bedeutung.",
+              "difficulty_level": 1,
+              "options": [
+                {
+                  "option_text": "音楽 (おんがく, ongaku)",
+                  "feedback": "Musik",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "映画 (えいが, eiga)",
+                  "feedback": "Film, Kino",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "写真 (しゃしん, shashin)",
+                  "feedback": "Foto",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "旅行 (りょこう, ryokou)",
+                  "feedback": "Reise",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde jedes Adjektiv mit der deutschen Bedeutung.",
+              "difficulty_level": 2,
+              "options": [
+                {
+                  "option_text": "好き (すき, suki)",
+                  "feedback": "gemocht, beliebt",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "嫌い (きらい, kirai)",
+                  "feedback": "nicht gemocht",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "上手 (じょうず, jouzu)",
+                  "feedback": "geschickt, gut sein in",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "下手 (へた, heta)",
+                  "feedback": "ungeschickt, schlecht sein in",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welcher Satz drückt aus 'Ich bin schlecht im Fussball'?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "「わたしは サッカーが へたです」 (watashi wa sakkaa ga heta desu).",
+              "options": [
+                {
+                  "option_text": "わたしは サッカーが へたです。",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「へた」 (heta) = schlecht."
+                },
+                {
+                  "option_text": "わたしは サッカーが じょうずです。",
+                  "is_correct": false,
+                  "feedback": "Das ist das Gegenteil — 'gut im Fussball'."
+                },
+                {
+                  "option_text": "わたしは サッカーが きらいです。",
+                  "is_correct": false,
+                  "feedback": "Das heisst 'Ich mag Fussball nicht', nicht 'Ich bin schlecht'."
+                },
+                {
+                  "option_text": "わたしは サッカーを へたです。",
+                  "is_correct": false,
+                  "feedback": "Bei 「へた」 ist die Partikel 「が」, nicht 「を」."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie fragst du 'Was für Filme magst du?'",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "「どんな えいがが すきですか」 (donna eiga ga suki desu ka) — 「どんな + N + が すきですか」.",
+              "options": [
+                {
+                  "option_text": "どんな えいがが すきですか。",
+                  "is_correct": true,
+                  "feedback": "Richtig — perfektes Frage-Pattern."
+                },
+                {
+                  "option_text": "なに えいがが すきですか。",
+                  "is_correct": false,
+                  "feedback": "「なに」 (nani) ist 'was', aber für 'was für ein' braucht es 「どんな」."
+                },
+                {
+                  "option_text": "どこ えいがが すきですか。",
+                  "is_correct": false,
+                  "feedback": "「どこ」 (doko) heisst 'wo', nicht 'was für'."
+                },
+                {
+                  "option_text": "いつ えいがが すきですか。",
+                  "is_correct": false,
+                  "feedback": "「いつ」 (itsu) heisst 'wann', nicht 'was für'."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Zusammenfassung & Ausblick",
+      "description": "Was du heute gelernt hast",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Hobbys und Adjektive — Smalltalk-Werkzeug",
+            "content_text": "## Heute hast du gelernt\n\n### Vokabular\n\n- **Hobbys:** 「しゅみ」 (shumi, Hobby), 「スポーツ」 (supootsu), 「おんがく」 (ongaku, Musik), 「えいが」 (eiga, Film), 「しゃしん」 (shashin, Foto), 「りょこう」 (ryokou, Reise), 「りょうり」 (ryouri, Kochen).\n- **Sportarten:** 「やきゅう」 (yakyuu, Baseball), 「サッカー」 (sakkaa), 「ゲーム」 (geemu), 「カラオケ」 (karaoke).\n- **Adjektive:** 「すき」 (suki, gemocht), 「きらい」 (kirai, nicht gemocht), 「じょうず」 (jouzu, gut), 「へた」 (heta, schlecht).\n\n### Grammatik\n\n1. **「が すきです / きらいです」** — gemochte/nicht gemochte Sachen werden mit 「が」 markiert, nicht mit 「を」.\n2. **「が じょうず / へたです」** — 「じょうず」 nicht über sich selbst sagen (wirkt arrogant).\n3. **「どんな N が すきですか」** — der Smalltalk-Vertiefer für jede Hobby-Antwort.\n4. **「だい〜」 als Verstärkung** — 「だいすき」 (liebe), 「だいきらい」 (verabscheue).\n\n> **Lerntipp:** Notiere fünf Sätze über deine eigenen Hobbys. Lerne sie auswendig. Beim nächsten Smalltalk hast du die perfekte Antwort parat.\n\n### Was als Nächstes kommt\n\nIn der nächsten Lektion lernst du **Wegbeschreibungen** — wie du jemandem genau erklärst, wie er von A nach B kommt: rechts, links, geradeaus, an der Ampel abbiegen. Damit schliesst du die Reise & Ort-Linie ab und kannst dich in jeder japanischen Stadt zurechtfinden."
+          }
+        }
+      ]
+    }
+  ],
+  "thumbnail_url": "generated/thumbnail_hobbys_und_freizeit_20260426_083823.png"
+}

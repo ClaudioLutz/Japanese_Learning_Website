@@ -1,0 +1,762 @@
+{
+  "title": "N5 Reise & Ort — In der Stadt: Bahnhof, Bank, Park",
+  "description": "Lerne die wichtigsten Orte in einer japanischen Stadt — Bahnhof, Bank, Post, Restaurant, Park, Bibliothek — und wie du nach Wegen fragst und Verkehrsmittel benennst.",
+  "jlpt_level": 5,
+  "topic": "Stadt-Vokabular",
+  "instruction_language": "german",
+  "allow_guest_access": false,
+  "pages": [
+    {
+      "title": "Einführung — Eine japanische Stadt entdecken",
+      "description": "Was du in der Stadt brauchst",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Orientierung in der Stadt",
+            "content_text": "## In einer japanischen Stadt zurechtfinden\n\nWenn du in Tokio, Osaka oder Kyoto aussteigst, prasseln sofort viele neue Wörter auf dich ein: 「えき」 (eki, Bahnhof), 「ぎんこう」 (ginkou, Bank), 「としょかん」 (toshokan, Bibliothek). Diese Lektion gibt dir das Vokabular, mit dem du dich in jeder japanischen Stadt orientieren kannst.\n\n### Was du heute lernst\n\n- **18 Stadt-Vokabeln** — von 「えき」 (eki, Bahnhof) bis 「こうさてん」 (kousaten, Kreuzung).\n- **Verkehrsmittel** — 「でんしゃ」 (densha, Zug), 「バス」 (basu, Bus), 「ちかてつ」 (chikatetsu, U-Bahn).\n- **Drei Grammatik-Muster:** 「〜は どこですか」 (~ wa doko desu ka, 'Wo ist ~?'), 「〜で 行きます」 (~ de ikimasu, 'mit ~ fahren') und die Konjunktion 「や」 (ya, 'und (unter anderem)').\n\n### Praktischer Nutzen\n\nMit den heutigen Wörtern kannst du Folgendes:\n\n- Am Bahnhof nach dem nächsten Zug fragen.\n- Eine Bank, Post oder Bibliothek finden.\n- Erklären, wie du irgendwohin kommst — zu Fuss, mit dem Zug oder mit dem Bus.\n- Eine Wegbeschreibung verstehen, die du in Lektion 6 lernst.\n\n> **Lerntipp:** Schaue dir auf Google Maps eine echte japanische Stadt an (z.B. 「しんじゅくえき」 Shinjuku-eki) und übersetze die Beschriftungen. Du wirst überrascht sein, wie viele du nach dieser Lektion verstehst."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln 1 — Öffentliche Orte",
+      "description": "Bahnhof, Bank, Post, Restaurant, Park",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "駅",
+            "reading": "えき",
+            "romaji": "eki",
+            "meaning": "train station",
+            "meaning_de": "Bahnhof",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "えきは どこですか。",
+            "example_sentence_english": "Eki wa doko desu ka. — Where is the train station?",
+            "image_url": "vocab_generated/vocab_f9485cd4.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "銀行",
+            "reading": "ぎんこう",
+            "romaji": "ginkou",
+            "meaning": "bank",
+            "meaning_de": "Bank (Geldinstitut)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ぎんこうで おかねを とります。",
+            "example_sentence_english": "Ginkou de okane o torimasu. — I take out money at the bank.",
+            "image_url": "vocab_generated/vocab_bdf53fdf.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "郵便局",
+            "reading": "ゆうびんきょく",
+            "romaji": "yuubinkyoku",
+            "meaning": "post office",
+            "meaning_de": "Post, Postamt",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ゆうびんきょくは あそこです。",
+            "example_sentence_english": "Yuubinkyoku wa asoko desu. — The post office is over there.",
+            "image_url": "vocab_generated/vocab_93577ce8.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "レストラン",
+            "reading": "レストラン",
+            "romaji": "resutoran",
+            "meaning": "restaurant",
+            "meaning_de": "Restaurant",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あの レストランは おいしいです。",
+            "example_sentence_english": "Ano resutoran wa oishii desu. — That restaurant over there is delicious.",
+            "image_url": "vocab_generated/vocab_a5cb9a94.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "公園",
+            "reading": "こうえん",
+            "romaji": "kouen",
+            "meaning": "park",
+            "meaning_de": "Park",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "こどもは こうえんで あそびます。",
+            "example_sentence_english": "Kodomo wa kouen de asobimasu. — The children play in the park.",
+            "image_url": "vocab_generated/vocab_c572b7eb.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "図書館",
+            "reading": "としょかん",
+            "romaji": "toshokan",
+            "meaning": "library",
+            "meaning_de": "Bibliothek",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "としょかんで 本を 読みます。",
+            "example_sentence_english": "Toshokan de hon o yomimasu. — I read books at the library.",
+            "image_url": "vocab_generated/vocab_e50d5650.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "デパート",
+            "reading": "デパート",
+            "romaji": "depaato",
+            "meaning": "department store",
+            "meaning_de": "Kaufhaus",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "デパートで かいものを します。",
+            "example_sentence_english": "Depaato de kaimono o shimasu. — I shop at the department store.",
+            "image_url": "vocab_generated/vocab_0e294d6b.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "スーパー",
+            "reading": "スーパー",
+            "romaji": "suupaa",
+            "meaning": "supermarket",
+            "meaning_de": "Supermarkt",
+            "jlpt_level": 5,
+            "is_canonical_override": true,
+            "source_note": "Standard-N5 in MNN Lektion 6 / Genki I — Abkürzung von 「スーパーマーケット」, im Alltag fast immer in der Kurzform.",
+            "example_sentence_japanese": "スーパーで パンを かいます。",
+            "example_sentence_english": "Suupaa de pan o kaimasu. — I buy bread at the supermarket.",
+            "image_url": "vocab_generated/vocab_d704aa04.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "ホテル",
+            "reading": "ホテル",
+            "romaji": "hoteru",
+            "meaning": "hotel",
+            "meaning_de": "Hotel",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ホテルは えきの まえです。",
+            "example_sentence_english": "Hoteru wa eki no mae desu. — The hotel is in front of the station.",
+            "image_url": "vocab_generated/vocab_9d01e3e1.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "病院",
+            "reading": "びょういん",
+            "romaji": "byouin",
+            "meaning": "hospital",
+            "meaning_de": "Krankenhaus",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あした びょういんに 行きます。",
+            "example_sentence_english": "Ashita byouin ni ikimasu. — Tomorrow I will go to the hospital.",
+            "image_url": "vocab_generated/vocab_b5d2826d.png"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln 2 — Verkehrsmittel und Wege",
+      "description": "Zug, Bus, U-Bahn, Strasse",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "電車",
+            "reading": "でんしゃ",
+            "romaji": "densha",
+            "meaning": "train",
+            "meaning_de": "Zug",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "でんしゃで がっこうに 行きます。",
+            "example_sentence_english": "Densha de gakkou ni ikimasu. — I go to school by train.",
+            "image_url": "vocab_generated/vocab_41a2aca1.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "バス",
+            "reading": "バス",
+            "romaji": "basu",
+            "meaning": "bus",
+            "meaning_de": "Bus",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "バスは おそいです。",
+            "example_sentence_english": "Basu wa osoi desu. — The bus is slow.",
+            "image_url": "vocab_generated/vocab_19800da5.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "タクシー",
+            "reading": "タクシー",
+            "romaji": "takushii",
+            "meaning": "taxi",
+            "meaning_de": "Taxi",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あめですから、タクシーで かえります。",
+            "example_sentence_english": "Ame desu kara, takushii de kaerimasu. — Because it's raining, I will go home by taxi.",
+            "image_url": "vocab_generated/vocab_245cb61e.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "地下鉄",
+            "reading": "ちかてつ",
+            "romaji": "chikatetsu",
+            "meaning": "subway, underground",
+            "meaning_de": "U-Bahn",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "とうきょうの ちかてつは ふくざつです。",
+            "example_sentence_english": "Toukyou no chikatetsu wa fukuzatsu desu. — Tokyo's subway is complicated.",
+            "image_url": "vocab_generated/vocab_ea54bd59.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "町",
+            "reading": "まち",
+            "romaji": "machi",
+            "meaning": "town, city",
+            "meaning_de": "Stadt, Ort",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "この まちは しずかです。",
+            "example_sentence_english": "Kono machi wa shizuka desu. — This town is quiet.",
+            "image_url": "vocab_generated/vocab_82a1d77f.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "道",
+            "reading": "みち",
+            "romaji": "michi",
+            "meaning": "street, road, way",
+            "meaning_de": "Strasse, Weg",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "この みちは ひろいです。",
+            "example_sentence_english": "Kono michi wa hiroi desu. — This street is wide.",
+            "image_url": "vocab_generated/vocab_b39cecc6.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "家",
+            "reading": "いえ",
+            "romaji": "ie",
+            "meaning": "house, home",
+            "meaning_de": "Haus, Zuhause",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "わたしの いえは えきの ちかくです。",
+            "example_sentence_english": "Watashi no ie wa eki no chikaku desu. — My house is near the station.",
+            "image_url": "vocab_generated/vocab_a6cdd2a0.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "ちかく",
+            "reading": "ちかく",
+            "romaji": "chikaku",
+            "meaning": "near, vicinity",
+            "meaning_de": "Nähe, in der Nähe",
+            "jlpt_level": 5,
+            "is_canonical_override": true,
+            "source_note": "Standard-N5-Lokalitätswort in MNN Lektion 10 / Genki I — Adverb, das in jeder Wegbeschreibung gebraucht wird. JLPT-Liste enthält nur das verwandte 「近い」 (chikai, Adjektiv).",
+            "example_sentence_japanese": "コンビニは ホテルの ちかくです。",
+            "example_sentence_english": "Konbini wa hoteru no chikaku desu. — The convenience store is near the hotel.",
+            "image_url": "vocab_generated/vocab_c84dd30b.png"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Grammatik — Orte erfragen und beschreiben",
+      "description": "Wo ist X? Wie komme ich hin? Aufzählungen mit や",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Drei Muster für Stadt-Gespräche",
+            "content_text": "## Drei Strukturen, die du sofort brauchst\n\n### 1. Nach einem Ort fragen — 「〜は どこですか」 (~ wa doko desu ka)\n\nDer einfachste Weg, einen Ort zu finden: Fragenwort 「どこ」 (doko, 'wo') am Satzende. Die Antwort kommt meist mit 「〜です」 oder einer Richtungsangabe wie 「あそこ」 (asoko, 'dort drüben').\n\n- 「えきは どこですか。」 (Eki wa doko desu ka.) — 'Wo ist der Bahnhof?'\n- 「あそこです。」 (Asoko desu.) — 'Dort drüben.'\n\n### 2. Verkehrsmittel mit 「で」 — 「〜で 行きます」 (~ de ikimasu)\n\nDie Partikel 「で」 (de) markiert das **Mittel**, mit dem du etwas tust. Bei Fortbewegung heisst das: das Verkehrsmittel.\n\n- 「でんしゃで 行きます。」 (Densha de ikimasu.) — 'Ich fahre mit dem Zug.'\n- 「タクシーで かえりました。」 (Takushii de kaerimashita.) — 'Ich bin mit dem Taxi heimgefahren.'\n\n> **Ausnahme:** 「あるいて」 (aruite, 'zu Fuss') ist eine Te-Form — dort fällt 「で」 weg: 「あるいて 行きます」 (aruite ikimasu, 'Ich gehe zu Fuss').\n\n### 3. Aufzählung mit 「や」 — 'unter anderem A und B'\n\nDie Partikel 「や」 (ya) verbindet Wörter wie ein deutsches 'und', sagt aber zusätzlich: 'das sind nur Beispiele, es gibt noch mehr'. Im Gegensatz dazu verbindet 「と」 (to) abschliessende Aufzählungen.\n\n- 「ぎんこうや ゆうびんきょくが あります。」 (Ginkou ya yuubinkyoku ga arimasu.) — 'Es gibt eine Bank und (unter anderem) eine Post.'\n- 「ともだちと こうえんに 行きます。」 (Tomodachi to kouen ni ikimasu.) — 'Ich gehe mit meinem Freund in den Park.' (alle aufgezählt)"
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "〜は どこですか — Wo ist X?",
+            "explanation": "Die Standardfrage nach einem Ort. Themenmarker 「は」 (wa), Fragewort 「どこ」 (doko, 'wo'), Kopula 「です」 (desu) und Frage-Partikel 「か」 (ka). Die Antwort nutzt entweder einen Ort wie 「あそこ」 (asoko) oder eine ausführliche Beschreibung mit 「〜のまえ/うしろ/となり」 (no mae/ushiro/tonari, 'vor/hinter/neben').",
+            "structure": "[Ort] + は + どこ + ですか",
+            "romaji": "[place] + wa + doko + desu ka",
+            "jlpt_level": 5,
+            "example_sentences": "えきは どこですか。 (Eki wa doko desu ka.) — Wo ist der Bahnhof?\nぎんこうは どこですか。 (Ginkou wa doko desu ka.) — Wo ist die Bank?\nトイレは どこですか。 (Toire wa doko desu ka.) — Wo ist die Toilette?\nゆうびんきょくは えきの となりです。 (Yuubinkyoku wa eki no tonari desu.) — Die Post ist neben dem Bahnhof."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "〜で 行きます — Verkehrsmittel mit Partikel で",
+            "explanation": "Die Partikel 「で」 (de) markiert das Mittel oder Werkzeug einer Handlung. Bei Bewegungs-Verben wie 「行く」 (iku), 「来る」 (kuru), 「かえる」 (kaeru) bezeichnet 「で」 das Verkehrsmittel. Ausnahme: 「あるいて」 (aruite, 'zu Fuss') wird ohne 「で」 verwendet, weil es eine Te-Form ist.",
+            "structure": "[Verkehrsmittel] + で + [Bewegungs-Verb]",
+            "romaji": "[vehicle] + de + [motion verb]",
+            "jlpt_level": 5,
+            "example_sentences": "でんしゃで がっこうに 行きます。 (Densha de gakkou ni ikimasu.) — Ich fahre mit dem Zug zur Schule.\nバスで かいしゃに 行きます。 (Basu de kaisha ni ikimasu.) — Ich fahre mit dem Bus zur Arbeit.\nタクシーで ホテルに かえりました。 (Takushii de hoteru ni kaerimashita.) — Ich bin mit dem Taxi zum Hotel zurückgefahren.\nえきまで あるいて 行きます。 (Eki made aruite ikimasu.) — Ich gehe zu Fuss bis zum Bahnhof."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "〜や〜 — Aufzählung mit 'unter anderem'",
+            "explanation": "「や」 (ya) verbindet Substantive zu einer offenen Aufzählung — die Liste wird nicht als vollständig betrachtet. Im Deutschen kommt das oft als 'unter anderem A, B (und so weiter)'. Im Gegensatz dazu ist 「と」 (to) eine geschlossene Aufzählung: alle Elemente werden genannt.",
+            "structure": "[Nomen1] + や + [Nomen2] + (など)",
+            "romaji": "[noun1] + ya + [noun2] + (nado)",
+            "jlpt_level": 5,
+            "example_sentences": "この まちには ぎんこうや ゆうびんきょくが あります。 (Kono machi ni wa ginkou ya yuubinkyoku ga arimasu.) — In dieser Stadt gibt es unter anderem eine Bank und eine Post.\nスーパーで パンや ぎゅうにゅうを かいました。 (Suupaa de pan ya gyuunyuu o kaimashita.) — Im Supermarkt habe ich unter anderem Brot und Milch gekauft.\nこうえんで こどもや いぬが あそんでいます。 (Kouen de kodomo ya inu ga asonde imasu.) — Im Park spielen unter anderem Kinder und Hunde."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Dialog — Lisa sucht das Postamt",
+      "description": "Eine echte Stadt-Situation",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Vor dem Bahnhof — Lisa fragt Tanaka nach dem Weg",
+            "content_text": "Lisa: たなかさん、すみません。ゆうびんきょくは どこですか。\n  (Tanaka-san, sumimasen. Yuubinkyoku wa doko desu ka.)\n  -> Tanaka, entschuldige bitte. Wo ist die Post?\n\nTanaka: ゆうびんきょくは えきの となりです。あそこの ぎんこうの となりです。\n  (Yuubinkyoku wa eki no tonari desu. Asoko no ginkou no tonari desu.)\n  -> Die Post ist neben dem Bahnhof. Sie ist neben der Bank dort drüben.\n\nLisa: ありがとうございます。あの レストランも ちかいですか。\n  (Arigatou gozaimasu. Ano resutoran mo chikai desu ka.)\n  -> Vielen Dank. Ist das Restaurant dort auch in der Nähe?\n\nTanaka: はい、すぐ ちかくです。レストランや カフェが たくさん あります。\n  (Hai, sugu chikaku desu. Resutoran ya kafe ga takusan arimasu.)\n  -> Ja, ganz in der Nähe. Es gibt unter anderem viele Restaurants und Cafés.\n\nLisa: いいですね。じゃ、あとで いっしょに ばんごはんを 食べませんか。\n  (Ii desu ne. Ja, ato de issho ni bangohan o tabemasen ka.)\n  -> Schön. Wollen wir später zusammen zu Abend essen?\n\nTanaka: いいですよ。バスで 行きますか、あるいて 行きますか。\n  (Ii desu yo. Basu de ikimasu ka, aruite ikimasu ka.)\n  -> Gerne. Fahren wir mit dem Bus oder gehen wir zu Fuss?\n\nLisa: あるいて 行きましょう。この まちは きれいです。\n  (Aruite ikimashou. Kono machi wa kirei desu.)\n  -> Lass uns zu Fuss gehen. Diese Stadt ist schön."
+          }
+        },
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "Verständnisfragen zum Dialog."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wo ist die Post laut Tanaka?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Tanaka sagt 「ゆうびんきょくは えきの となりです」 (yuubinkyoku wa eki no tonari desu) — neben dem Bahnhof.",
+              "options": [
+                {
+                  "option_text": "Neben dem Bahnhof.",
+                  "is_correct": true,
+                  "feedback": "Richtig! 「えきの となり」 (eki no tonari) = 'neben dem Bahnhof'."
+                },
+                {
+                  "option_text": "Vor dem Park.",
+                  "is_correct": false,
+                  "feedback": "Vom Park ist im Dialog keine Rede."
+                },
+                {
+                  "option_text": "Hinter dem Hotel.",
+                  "is_correct": false,
+                  "feedback": "Vom Hotel ist im Dialog keine Rede."
+                },
+                {
+                  "option_text": "In der Bibliothek.",
+                  "is_correct": false,
+                  "feedback": "Davon ist im Dialog keine Rede."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was schlägt Lisa Tanaka am Ende vor?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Lisa sagt 「あとで いっしょに ばんごはんを 食べませんか」 (ato de issho ni bangohan o tabemasen ka) — gemeinsames Abendessen.",
+              "options": [
+                {
+                  "option_text": "Zusammen zu Abend essen.",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「ばんごはんを 食べませんか」 (bangohan o tabemasen ka)."
+                },
+                {
+                  "option_text": "In die Bank gehen.",
+                  "is_correct": false,
+                  "feedback": "Davon ist im Dialog keine Rede."
+                },
+                {
+                  "option_text": "Mit dem Zug nach Hause fahren.",
+                  "is_correct": false,
+                  "feedback": "Im Dialog wird zu Fuss gehen vorgeschlagen, nicht der Zug."
+                },
+                {
+                  "option_text": "Ein Hotel buchen.",
+                  "is_correct": false,
+                  "feedback": "Davon ist im Dialog keine Rede."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Lisa und Tanaka entscheiden sich, mit dem Bus zu fahren.",
+              "difficulty_level": 2,
+              "explanation": "Falsch — Lisa sagt 「あるいて 行きましょう」 (aruite ikimashou, 'lass uns zu Fuss gehen').",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Falsch — sie gehen zu Fuss."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt — sie gehen zu Fuss, weil die Stadt schön ist."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie beschreibt Tanaka die Gegend um den Bahnhof?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Tanaka sagt 「レストランや カフェが たくさん あります」 (resutoran ya kafe ga takusan arimasu) — unter anderem viele Restaurants und Cafés.",
+              "options": [
+                {
+                  "option_text": "Es gibt viele Restaurants und Cafés.",
+                  "is_correct": true,
+                  "feedback": "Richtig — die や-Konstruktion deutet eine offene Aufzählung an."
+                },
+                {
+                  "option_text": "Es ist sehr ruhig und leer.",
+                  "is_correct": false,
+                  "feedback": "Tanaka beschreibt die Gegend als belebt."
+                },
+                {
+                  "option_text": "Es gibt nur Banken.",
+                  "is_correct": false,
+                  "feedback": "Davon ist nicht die Rede — es geht um Restaurants und Cafés."
+                },
+                {
+                  "option_text": "Es ist gefährlich.",
+                  "is_correct": false,
+                  "feedback": "Davon ist im Dialog keine Rede."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Übung — Stadt-Vokabeln und Grammatik trainieren",
+      "description": "Quiz zu Orten, Verkehrsmitteln und や",
+      "page_type": "quiz_carousel",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "10 Aufgaben zur Lektion."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「えき」 (eki)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「えき」 (eki) = Bahnhof. Eines der wichtigsten Stadt-Wörter überhaupt.",
+              "options": [
+                {
+                  "option_text": "Bahnhof",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "Bank",
+                  "is_correct": false,
+                  "feedback": "Bank wäre 「ぎんこう」 (ginkou)."
+                },
+                {
+                  "option_text": "Park",
+                  "is_correct": false,
+                  "feedback": "Park wäre 「こうえん」 (kouen)."
+                },
+                {
+                  "option_text": "Krankenhaus",
+                  "is_correct": false,
+                  "feedback": "Krankenhaus wäre 「びょういん」 (byouin)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welche Übersetzung passt: 「ゆうびんきょくは どこですか。」",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「ゆうびんきょく」 (yuubinkyoku) = Post, 「どこですか」 (doko desu ka) = 'wo ist es?'.",
+              "options": [
+                {
+                  "option_text": "Wo ist die Post?",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "Wo ist die Bank?",
+                  "is_correct": false,
+                  "feedback": "Bank wäre 「ぎんこう」, nicht 「ゆうびんきょく」."
+                },
+                {
+                  "option_text": "Wann öffnet die Post?",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「ゆうびんきょくは いつ あきますか」."
+                },
+                {
+                  "option_text": "Was ist das?",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「これは なんですか」."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welcher Satz nutzt die Partikel 「で」 (de) für Verkehrsmittel korrekt?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "「バスで 行きます」 (basu de ikimasu) = 'Ich fahre mit dem Bus'. Die Partikel 「で」 markiert das Mittel.",
+              "options": [
+                {
+                  "option_text": "バスで がっこうに 行きます。",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「バスで」 (basu de) = 'mit dem Bus'."
+                },
+                {
+                  "option_text": "バスに がっこうに 行きます。",
+                  "is_correct": false,
+                  "feedback": "「に」 markiert das Ziel, nicht das Mittel — und doppelt 「に」 ist ungrammatisch."
+                },
+                {
+                  "option_text": "バスを がっこうに 行きます。",
+                  "is_correct": false,
+                  "feedback": "「を」 markiert das direkte Objekt, nicht das Verkehrsmittel."
+                },
+                {
+                  "option_text": "バスは がっこうに 行きます。",
+                  "is_correct": false,
+                  "feedback": "Mit 「は」 (wa) als Themenmarker bekommt der Satz die Bedeutung 'Was den Bus betrifft, geht er zur Schule' — nicht das, was du sagen willst."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「あるいて 行きます」 bedeutet 'Ich fahre mit dem Bus'.",
+              "difficulty_level": 1,
+              "explanation": "Falsch — 「あるいて」 (aruite) ist die Te-Form von 「あるく」 (aruku, 'gehen') und bedeutet 'zu Fuss'. Bus wäre 「バスで」 (basu de).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Falsch — 「あるいて」 heisst 'zu Fuss'."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt — 「あるいて 行きます」 = 'Ich gehe zu Fuss'."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welcher Satz drückt eine **offene** Aufzählung mit 'unter anderem' aus?",
+              "difficulty_level": 3,
+              "points": 1,
+              "explanation": "「や」 (ya) signalisiert offene Aufzählung ('A und B unter anderem'), 「と」 (to) ist abschliessend.",
+              "options": [
+                {
+                  "option_text": "ぎんこうや ゆうびんきょくが あります。",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「や」 (ya) = 'unter anderem'."
+                },
+                {
+                  "option_text": "ぎんこうと ゆうびんきょくが あります。",
+                  "is_correct": false,
+                  "feedback": "「と」 (to) ist abschliessend — nur diese beiden, nichts anderes."
+                },
+                {
+                  "option_text": "ぎんこうも ゆうびんきょくが あります。",
+                  "is_correct": false,
+                  "feedback": "「も」 (mo) heisst 'auch', nicht 'und'."
+                },
+                {
+                  "option_text": "ぎんこうの ゆうびんきょくが あります。",
+                  "is_correct": false,
+                  "feedback": "「の」 (no) ist Possessivmarker — ergibt 'die Post der Bank', sinnfrei."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「ちかてつ」 (chikatetsu) bedeutet 'U-Bahn'.",
+              "difficulty_level": 1,
+              "explanation": "Korrekt — 「ちかてつ」 setzt sich aus 「ちか」 (chika, 'unter') und 「てつ」 (tetsu, von 鉄道 tetsudou, 'Eisenbahn') zusammen.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Genau!"
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — 「ちかてつ」 ist die U-Bahn."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde jeden Ort mit der deutschen Bedeutung.",
+              "difficulty_level": 2,
+              "options": [
+                {
+                  "option_text": "公園 (こうえん, kouen)",
+                  "feedback": "Park",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "図書館 (としょかん, toshokan)",
+                  "feedback": "Bibliothek",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "病院 (びょういん, byouin)",
+                  "feedback": "Krankenhaus",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "銀行 (ぎんこう, ginkou)",
+                  "feedback": "Bank (Geldinstitut)",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde jedes Verkehrsmittel mit der deutschen Bedeutung.",
+              "difficulty_level": 1,
+              "options": [
+                {
+                  "option_text": "電車 (でんしゃ, densha)",
+                  "feedback": "Zug",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "バス (basu)",
+                  "feedback": "Bus",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "タクシー (takushii)",
+                  "feedback": "Taxi",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "地下鉄 (ちかてつ, chikatetsu)",
+                  "feedback": "U-Bahn",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Du fragst nach dem Krankenhaus. Welcher Satz ist korrekt?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Standardfrage: 「[Ort]は どこですか」.",
+              "options": [
+                {
+                  "option_text": "びょういんは どこですか。",
+                  "is_correct": true,
+                  "feedback": "Richtig — perfekte Standardfrage."
+                },
+                {
+                  "option_text": "びょういんは いつですか。",
+                  "is_correct": false,
+                  "feedback": "「いつ」 = 'wann', das fragst du nicht nach einem Ort."
+                },
+                {
+                  "option_text": "びょういんは だれですか。",
+                  "is_correct": false,
+                  "feedback": "「だれ」 = 'wer', das fragst du nicht nach einem Ort."
+                },
+                {
+                  "option_text": "びょういんは なんですか。",
+                  "is_correct": false,
+                  "feedback": "「なん」 = 'was', das fragt nach dem Inhalt, nicht nach dem Ort."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Du erklärst: 'Mein Haus ist in der Nähe des Bahnhofs.' Welcher Satz ist korrekt?",
+              "difficulty_level": 3,
+              "points": 1,
+              "explanation": "「わたしの いえは えきの ちかくです」 (watashi no ie wa eki no chikaku desu) — der Possessivmarker 「の」 verbindet 「えき」 mit 「ちかく」.",
+              "options": [
+                {
+                  "option_text": "わたしの いえは えきの ちかくです。",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「えきの ちかく」 (eki no chikaku) = 'Nähe des Bahnhofs'."
+                },
+                {
+                  "option_text": "わたしの いえは えきは ちかくです。",
+                  "is_correct": false,
+                  "feedback": "Doppelt 「は」 ist ungrammatisch — das verbindet keine Substantive."
+                },
+                {
+                  "option_text": "わたしの いえに えきの ちかくです。",
+                  "is_correct": false,
+                  "feedback": "「に」 markiert Ziel oder Zeit, nicht Themen."
+                },
+                {
+                  "option_text": "わたしの いえや えきの ちかくです。",
+                  "is_correct": false,
+                  "feedback": "「や」 ist Aufzählung, kein Themenmarker."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Zusammenfassung & Ausblick",
+      "description": "Das Wichtigste und der nächste Schritt",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Heute hast du gelernt",
+            "content_text": "## Stadt-Vokabular im Überblick\n\n- **Öffentliche Orte:** 「えき」 (eki, Bahnhof), 「ぎんこう」 (ginkou, Bank), 「ゆうびんきょく」 (yuubinkyoku, Post), 「こうえん」 (kouen, Park), 「としょかん」 (toshokan, Bibliothek), 「びょういん」 (byouin, Krankenhaus).\n- **Geschäfte und Verpflegung:** 「レストラン」 (resutoran), 「デパート」 (depaato, Kaufhaus), 「スーパー」 (suupaa), 「ホテル」 (hoteru).\n- **Verkehrsmittel:** 「でんしゃ」 (densha, Zug), 「バス」 (basu), 「タクシー」 (takushii), 「ちかてつ」 (chikatetsu, U-Bahn).\n- **Wege und Lage:** 「まち」 (machi, Stadt), 「みち」 (michi, Strasse), 「いえ」 (ie, Haus), 「ちかく」 (chikaku, Nähe).\n\n### Drei Grammatik-Bausteine\n\n1. 「[Ort]は どこですか」 ([place] wa doko desu ka) — die Standardfrage nach jedem Ort.\n2. 「[Verkehrsmittel]で 行きます」 ([vehicle] de ikimasu) — wie du irgendwohin fährst, ausser zu Fuss (das ist 「あるいて 行きます」 aruite ikimasu).\n3. 「A や B」 (A ya B) — offene Aufzählung 'unter anderem'. Im Gegensatz zu 「と」 (to), das geschlossen ist.\n\n> **Lerntipp:** Schaue dir Google Maps Street View einer japanischen Stadt an. Suche die Wörter dieser Lektion auf den Schildern. Du wirst überrascht sein, wie viel du erkennst.\n\n### Was als Nächstes kommt\n\nIn der nächsten Lektion lernst du **Wegbeschreibungen**: rechts, links, geradeaus, an der Ampel abbiegen — alles Vokabular, mit dem du den Antworten auf 「〜は どこですか」 folgen kannst."
+          }
+        }
+      ]
+    }
+  ],
+  "thumbnail_url": "generated/thumbnail_stadt-vokabular_20260426_080652.png"
+}

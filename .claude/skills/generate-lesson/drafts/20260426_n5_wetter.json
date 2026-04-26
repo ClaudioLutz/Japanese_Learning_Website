@@ -1,0 +1,758 @@
+{
+  "title": "N5 Wetter & Jahreszeiten — Über Wetter sprechen",
+  "description": "Lerne, wie du auf Japanisch über das Wetter und die vier Jahreszeiten redest. Wetter ist im japanischen Alltag ein Standard-Smalltalk-Thema — diese Lektion gibt dir das Rüstzeug für jedes Wetter-Gespräch.",
+  "jlpt_level": 5,
+  "topic": "Wetter und Jahreszeiten",
+  "instruction_language": "german",
+  "allow_guest_access": false,
+  "pages": [
+    {
+      "title": "Einführung — Wetter als Smalltalk-Thema",
+      "description": "Warum Wetter in Japan wichtig ist",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Wetter ist Standard-Smalltalk in Japan",
+            "content_text": "## In Japan startet jedes Gespräch mit dem Wetter\n\nIn Japan ist das Wetter (「てんき」 tenki) der häufigste Smalltalk-Einstieg. 「いい おてんきですね」 (ii o-tenki desu ne, 'Schönes Wetter, oder?') hörst du an der Bushaltestelle, im Aufzug, im Laden. Wer Wetter-Vokabular beherrscht, kann sich überall ins Gespräch einklinken.\n\n### Was du heute lernst\n\n- **Wetter-Vokabeln:** 「あめ」 (ame, Regen), 「ゆき」 (yuki, Schnee), 「はれ」 (hare, sonnig), 「くもり」 (kumori, bewölkt).\n- **Jahreszeiten:** 「はる」 (haru, Frühling), 「なつ」 (natsu, Sommer), 「あき」 (aki, Herbst), 「ふゆ」 (fuyu, Winter).\n- **Adjektive:** 「あつい」 (atsui, heiss), 「さむい」 (samui, kalt), 「すずしい」 (suzushii, kühl), 「あたたかい」 (atatakai, warm).\n- **Drei Grammatik-Muster:** das い-Adjektiv-Muster, der höfliche Smalltalk-Einstieg mit 「〜ですね」 (~ desu ne) und Vergangenheits-Adjektive 「あつかったです」 (atsukatta desu, 'es war heiss').\n\n### Warum sich das lohnt\n\n- Du verstehst die Wettervorhersage im Fernsehen.\n- Du kannst beim ersten Treffen mit Mayuko-sensei (oder einem Vermieter, einer Verkäuferin) sicher Smalltalk machen.\n- Adjektive, die du hier lernst, gelten weit über Wetter hinaus — 「あつい」 (atsui) sagt man auch über Suppe, 「さむい」 (samui) auch über Kinos.\n\n> **Lerntipp:** Erstelle dir eine Wetter-Routine. Jeden Morgen ein Satz auf Japanisch über das aktuelle Wetter. Das zwingt zur Wiederholung und festigt die Adjektiv-Konjugation."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln 1 — Wetter und Himmel",
+      "description": "Regen, Schnee, sonnig, bewölkt",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "天気",
+            "reading": "てんき",
+            "romaji": "tenki",
+            "meaning": "weather",
+            "meaning_de": "Wetter",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "きょうの てんきは いいです。",
+            "example_sentence_english": "Kyou no tenki wa ii desu. — Today's weather is good.",
+            "image_url": "vocab_generated/vocab_7203e705.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "雨",
+            "reading": "あめ",
+            "romaji": "ame",
+            "meaning": "rain",
+            "meaning_de": "Regen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あした 雨です。",
+            "example_sentence_english": "Ashita ame desu. — Tomorrow it will rain.",
+            "image_url": "vocab_generated/vocab_95433763.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "雪",
+            "reading": "ゆき",
+            "romaji": "yuki",
+            "meaning": "snow",
+            "meaning_de": "Schnee",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ほっかいどうは ゆきが おおいです。",
+            "example_sentence_english": "Hokkaidou wa yuki ga ooi desu. — Hokkaido has a lot of snow.",
+            "image_url": "vocab_generated/vocab_c4fccd8d.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "晴れ",
+            "reading": "はれ",
+            "romaji": "hare",
+            "meaning": "sunny, clear weather",
+            "meaning_de": "Sonnenschein, sonniges Wetter",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あしたは はれです。",
+            "example_sentence_english": "Ashita wa hare desu. — Tomorrow will be sunny.",
+            "image_url": "vocab_generated/vocab_1143bb50.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "曇り",
+            "reading": "くもり",
+            "romaji": "kumori",
+            "meaning": "cloudy",
+            "meaning_de": "bewölkt",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "きょうは くもりです。",
+            "example_sentence_english": "Kyou wa kumori desu. — Today is cloudy.",
+            "image_url": "vocab_generated/vocab_5bbb7ea2.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "風",
+            "reading": "かぜ",
+            "romaji": "kaze",
+            "meaning": "wind",
+            "meaning_de": "Wind",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "きょうは かぜが つよいです。",
+            "example_sentence_english": "Kyou wa kaze ga tsuyoi desu. — The wind is strong today.",
+            "image_url": "vocab_generated/vocab_bb425bdf.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "空",
+            "reading": "そら",
+            "romaji": "sora",
+            "meaning": "sky",
+            "meaning_de": "Himmel",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "そらが きれいです。",
+            "example_sentence_english": "Sora ga kirei desu. — The sky is beautiful.",
+            "image_url": "vocab_generated/vocab_b7612b71.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "暑い",
+            "reading": "あつい",
+            "romaji": "atsui",
+            "meaning": "hot (weather)",
+            "meaning_de": "heiss (Wetter)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "なつは とても あついです。",
+            "example_sentence_english": "Natsu wa totemo atsui desu. — Summer is very hot.",
+            "image_url": "vocab_generated/vocab_c2f48e1c.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "寒い",
+            "reading": "さむい",
+            "romaji": "samui",
+            "meaning": "cold (weather)",
+            "meaning_de": "kalt (Wetter)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ふゆは さむいです。",
+            "example_sentence_english": "Fuyu wa samui desu. — Winter is cold.",
+            "image_url": "vocab_generated/vocab_a1d2fc1e.png"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln 2 — Jahreszeiten und Temperatur",
+      "description": "Vier Jahreszeiten, kühl, warm",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "春",
+            "reading": "はる",
+            "romaji": "haru",
+            "meaning": "spring",
+            "meaning_de": "Frühling",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "はるは あたたかいです。",
+            "example_sentence_english": "Haru wa atatakai desu. — Spring is warm.",
+            "image_url": "vocab_generated/vocab_dd201928.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "夏",
+            "reading": "なつ",
+            "romaji": "natsu",
+            "meaning": "summer",
+            "meaning_de": "Sommer",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "なつ、うみに 行きます。",
+            "example_sentence_english": "Natsu, umi ni ikimasu. — In summer, I will go to the sea.",
+            "image_url": "vocab_generated/vocab_d4b37c9f.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "秋",
+            "reading": "あき",
+            "romaji": "aki",
+            "meaning": "autumn, fall",
+            "meaning_de": "Herbst",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あきは すずしいです。",
+            "example_sentence_english": "Aki wa suzushii desu. — Autumn is cool.",
+            "image_url": "vocab_generated/vocab_fdf31ff3.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "冬",
+            "reading": "ふゆ",
+            "romaji": "fuyu",
+            "meaning": "winter",
+            "meaning_de": "Winter",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ふゆは ゆきが ふります。",
+            "example_sentence_english": "Fuyu wa yuki ga furimasu. — In winter, snow falls.",
+            "image_url": "vocab_generated/vocab_5d6e3b1d.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "涼しい",
+            "reading": "すずしい",
+            "romaji": "suzushii",
+            "meaning": "cool, refreshing",
+            "meaning_de": "kühl, erfrischend",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "けさは すずしいですね。",
+            "example_sentence_english": "Kesa wa suzushii desu ne. — This morning is cool, isn't it?",
+            "image_url": "vocab_generated/vocab_30d9cce3.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "暖かい",
+            "reading": "あたたかい",
+            "romaji": "atatakai",
+            "meaning": "warm",
+            "meaning_de": "warm",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "きょうは あたたかいです。",
+            "example_sentence_english": "Kyou wa atatakai desu. — It's warm today.",
+            "image_url": "vocab_generated/vocab_0d3ed1b9.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "今日",
+            "reading": "きょう",
+            "romaji": "kyou",
+            "meaning": "today",
+            "meaning_de": "heute",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "きょうは いい てんきです。",
+            "example_sentence_english": "Kyou wa ii tenki desu. — Today the weather is good.",
+            "image_url": "vocab_generated/vocab_296304f1.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "明日",
+            "reading": "あした",
+            "romaji": "ashita",
+            "meaning": "tomorrow",
+            "meaning_de": "morgen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あしたは 雨ですか。",
+            "example_sentence_english": "Ashita wa ame desu ka. — Will it rain tomorrow?",
+            "image_url": "vocab_generated/vocab_2a7733d6.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "昨日",
+            "reading": "きのう",
+            "romaji": "kinou",
+            "meaning": "yesterday",
+            "meaning_de": "gestern",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "きのうは あつかったです。",
+            "example_sentence_english": "Kinou wa atsukatta desu. — Yesterday was hot.",
+            "image_url": "vocab_generated/vocab_23c9bc4d.png"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Grammatik — Adjektive und Smalltalk",
+      "description": "い-Adjektive konjugieren und Wetter-Smalltalk",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Wie i-Adjektive funktionieren",
+            "content_text": "## Drei Muster für Wetter-Sätze\n\n### 1. い-Adjektive — die einfache Form\n\nFast alle Wetter-Adjektive in dieser Lektion sind **い-Adjektive** (sie enden in der Wörterbuchform auf 「い」): 「あつい」 (atsui), 「さむい」 (samui), 「あたたかい」 (atatakai), 「すずしい」 (suzushii). Die Konjugation läuft nicht am Verb 「です」, sondern am Adjektiv selbst.\n\n- **Gegenwart:** 「きょうは あつい**です**。」 (Kyou wa atsui desu.) — 'Heute ist es heiss.'\n- **Verneinung:** das letzte 「い」 wird zu 「くない」: 「あつい → あつ**くない** です」 (atsui -> atsukunai desu).\n- **Vergangenheit:** das letzte 「い」 wird zu 「かった」: 「あつい → あつ**かった** です」 (atsui -> atsukatta desu).\n- **Verneinte Vergangenheit:** 「あつくない → あつくな**かった** です」 (atsukunakatta desu).\n\n> **Achtung:** 「いい」 (ii, gut) ist eine Sonderform — die Vergangenheit ist 「よかった」 (yokatta), nicht 「いかった」.\n\n### 2. Wetter-Smalltalk mit 「〜ですね」\n\nDie Endung 「〜ですね」 (~ desu ne) hängt an das Satzende und sucht Zustimmung. Im Wetter-Smalltalk fast immer dabei:\n\n- 「いい おてんきですね。」 (Ii o-tenki desu ne.) — 'Schönes Wetter, oder?'\n- 「さむいですね。」 (Samui desu ne.) — 'Kalt, oder?'\n\nDie typische Antwort ist 「そうですね」 (sou desu ne, 'das stimmt') oder 「そうですね、〜」 mit eigenem Kommentar.\n\n### 3. Vergleich von Jahreszeiten — 「〜より」 (~ yori)\n\nMit 「〜より」 (~ yori) drückst du 'als' im Vergleich aus.\n\n- 「なつは ふゆより あついです。」 (Natsu wa fuyu yori atsui desu.) — 'Der Sommer ist heisser als der Winter.'\n- 「とうきょうは おおさかより すずしいです。」 (Toukyou wa Oosaka yori suzushii desu.) — 'Tokio ist kühler als Osaka.'"
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "い-Adjektive konjugieren",
+            "explanation": "い-Adjektive haben eine eigene Konjugation, die nicht am Verb 「です」 (desu) hängt, sondern am Adjektiv selbst. Zur Verneinung wird das letzte 「い」 (i) durch 「くない」 (kunai) ersetzt; zur Vergangenheit durch 「かった」 (katta). Die Sonderform 「いい」 (ii, gut) wird in Vergangenheit und Verneinung wie 「よい」 (yoi) konjugiert: 「よくない」 (yokunai), 「よかった」 (yokatta).",
+            "structure": "[Adj.-stamm] + い/くない/かった/くなかった + です",
+            "romaji": "[adj-stem] + i/kunai/katta/kunakatta + desu",
+            "jlpt_level": 5,
+            "example_sentences": "きょうは あついです。 (Kyou wa atsui desu.) — Heute ist es heiss.\nきょうは あつくないです。 (Kyou wa atsukunai desu.) — Heute ist es nicht heiss.\nきのうは あつかったです。 (Kinou wa atsukatta desu.) — Gestern war es heiss.\nきのうは あつくなかったです。 (Kinou wa atsukunakatta desu.) — Gestern war es nicht heiss.\nきょうは いい てんきです。 (Kyou wa ii tenki desu.) — Heute ist schönes Wetter."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "〜ですね — Smalltalk mit Zustimmungs-Frage",
+            "explanation": "Die Endung 「〜ですね」 (~ desu ne) sucht Zustimmung beim Gegenüber, ähnlich dem deutschen 'oder?' oder 'nicht wahr?'. Im Wetter-Smalltalk fast obligatorisch — Japaner erwarten in dieser Situation einen Zustimmungs-Marker. Die übliche Antwort ist 「そうですね」 (sou desu ne, 'genau').",
+            "structure": "[Aussage] + ですね",
+            "romaji": "[statement] + desu ne",
+            "jlpt_level": 5,
+            "example_sentences": "いい おてんきですね。 (Ii o-tenki desu ne.) — Schönes Wetter, oder?\nさむいですね。 (Samui desu ne.) — Kalt, oder?\nあめですね。 (Ame desu ne.) — Es regnet, oder?\nそうですね、ほんとうに さむいです。 (Sou desu ne, hontou ni samui desu.) — Das stimmt, wirklich kalt.\nきょうは あたたかいですね。 (Kyou wa atatakai desu ne.) — Heute ist es warm, oder?"
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "〜より — Vergleich (als)",
+            "explanation": "Die Partikel 「〜より」 (~ yori) markiert den Vergleichsmassstab. Im Deutschen entspricht das 'als' im Komparativ. Die Reihenfolge ist: [A] は [B] より [Adjektiv]です ('A ist [adjektiv]er als B'). Wenn man die Frage 「AとBと、どちらが [Adj]ですか」 (A to B to, dochira ga [adj] desu ka, 'A oder B, was ist [adj]er?') stellt, antwortet man mit 「Aの ほうが Bより [Adj]です」 (A no hou ga B yori [adj] desu).",
+            "structure": "[A] + は + [B] + より + [Adjektiv]です",
+            "romaji": "[A] + wa + [B] + yori + [adj]desu",
+            "jlpt_level": 5,
+            "example_sentences": "なつは ふゆより あついです。 (Natsu wa fuyu yori atsui desu.) — Der Sommer ist heisser als der Winter.\nとうきょうは おおさかより すずしいです。 (Toukyou wa Oosaka yori suzushii desu.) — Tokio ist kühler als Osaka.\nきょうは きのうより あたたかいです。 (Kyou wa kinou yori atatakai desu.) — Heute ist es wärmer als gestern.\nふゆは あきより さむいです。 (Fuyu wa aki yori samui desu.) — Der Winter ist kälter als der Herbst."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Dialog — Smalltalk vor dem Sprachkurs",
+      "description": "Tanaka und Lisa machen Wetter-Smalltalk",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Kurz vor Unterrichtsbeginn — Wetter-Smalltalk",
+            "content_text": "Tanaka: リサさん、おはようございます。きょうは いい おてんきですね。\n  (Risa-san, ohayou gozaimasu. Kyou wa ii o-tenki desu ne.)\n  -> Lisa, guten Morgen. Schönes Wetter heute, oder?\n\nLisa: そうですね、たなかさん。きょうは あたたかいです。\n  (Sou desu ne, Tanaka-san. Kyou wa atatakai desu.)\n  -> Das stimmt, Tanaka. Heute ist es warm.\n\nTanaka: でも、きのうは さむかったですね。\n  (Demo, kinou wa samukatta desu ne.)\n  -> Aber gestern war es kalt, oder?\n\nLisa: ええ、ほんとうに さむかったです。あしたの てんきは どうですか。\n  (Ee, hontou ni samukatta desu. Ashita no tenki wa dou desu ka.)\n  -> Ja, wirklich kalt. Wie wird das Wetter morgen?\n\nTanaka: あしたは 雨です。あさってから あたたかくなります。\n  (Ashita wa ame desu. Asatte kara atatakaku narimasu.)\n  -> Morgen regnet es. Ab übermorgen wird es wärmer.\n\nLisa: あ、はるが きますね。\n  (A, haru ga kimasu ne.)\n  -> Ah, der Frühling kommt, oder?\n\nTanaka: そうですね。はるは ぼくの すきな きせつです。\n  (Sou desu ne. Haru wa boku no suki na kisetsu desu.)\n  -> Stimmt. Der Frühling ist meine Lieblingsjahreszeit."
+          }
+        },
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "Verständnisfragen zum Dialog."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie ist das Wetter heute laut Tanaka?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Tanaka beginnt mit 「いい おてんきですね」 (ii o-tenki desu ne) — schönes Wetter.",
+              "options": [
+                {
+                  "option_text": "Schönes, warmes Wetter.",
+                  "is_correct": true,
+                  "feedback": "Richtig — Tanaka sagt 「いい おてんき」 (ii o-tenki) und Lisa bestätigt mit 「あたたかい」 (atatakai)."
+                },
+                {
+                  "option_text": "Es regnet stark.",
+                  "is_correct": false,
+                  "feedback": "Davon ist im Dialog erst beim morgigen Wetter die Rede."
+                },
+                {
+                  "option_text": "Es schneit.",
+                  "is_correct": false,
+                  "feedback": "Davon ist im Dialog keine Rede."
+                },
+                {
+                  "option_text": "Es stürmt.",
+                  "is_correct": false,
+                  "feedback": "Davon ist im Dialog keine Rede."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie war das Wetter gestern?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Tanaka sagt 「きのうは さむかったですね」 (kinou wa samukatta desu ne) — Vergangenheits-Form von 「さむい」 (samui).",
+              "options": [
+                {
+                  "option_text": "Kalt.",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「さむかった」 (samukatta) ist die Vergangenheit von 「さむい」."
+                },
+                {
+                  "option_text": "Heiss.",
+                  "is_correct": false,
+                  "feedback": "Tanaka sagt 「さむかった」 (kalt war), nicht 「あつかった」 (heiss war)."
+                },
+                {
+                  "option_text": "Verschneit.",
+                  "is_correct": false,
+                  "feedback": "Davon ist im Dialog keine Rede."
+                },
+                {
+                  "option_text": "Sehr windig.",
+                  "is_correct": false,
+                  "feedback": "Davon ist im Dialog keine Rede."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Tanaka sagt, morgen wird es regnen.",
+              "difficulty_level": 1,
+              "explanation": "Korrekt — Tanaka sagt 「あしたは 雨です」 (ashita wa ame desu).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Genau — 「あしたは 雨です」 (ashita wa ame desu)."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — Tanaka sagt es eindeutig."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welche Jahreszeit nennt Tanaka als seine Lieblingsjahreszeit?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Tanaka sagt 「はるは ぼくの すきな きせつです」 (haru wa boku no suki na kisetsu desu).",
+              "options": [
+                {
+                  "option_text": "Frühling (はる, haru).",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "Sommer (なつ, natsu).",
+                  "is_correct": false,
+                  "feedback": "Davon ist im Dialog keine Rede."
+                },
+                {
+                  "option_text": "Herbst (あき, aki).",
+                  "is_correct": false,
+                  "feedback": "Davon ist im Dialog keine Rede."
+                },
+                {
+                  "option_text": "Winter (ふゆ, fuyu).",
+                  "is_correct": false,
+                  "feedback": "Davon ist im Dialog keine Rede."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Übung — Wetter und Adjektive trainieren",
+      "description": "Quiz zu Vokabeln, Adjektiv-Konjugation und Smalltalk",
+      "page_type": "quiz_carousel",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "10 Aufgaben zur Lektion."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「てんき」 (tenki)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「てんき」 (tenki) = Wetter. Setzt sich aus 「天」 (Himmel) und 「気」 (Luft/Stimmung) zusammen.",
+              "options": [
+                {
+                  "option_text": "Wetter",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "Himmel",
+                  "is_correct": false,
+                  "feedback": "Himmel wäre 「そら」 (sora)."
+                },
+                {
+                  "option_text": "Wind",
+                  "is_correct": false,
+                  "feedback": "Wind wäre 「かぜ」 (kaze)."
+                },
+                {
+                  "option_text": "Sonne",
+                  "is_correct": false,
+                  "feedback": "Sonnig (Wetter) wäre 「はれ」 (hare)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie sagt man 'Heute ist es heiss'?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「きょうは あついです」 (kyou wa atsui desu). 「あつい」 ist ein い-Adjektiv und steht in der Wörterbuchform vor 「です」.",
+              "options": [
+                {
+                  "option_text": "きょうは あついです。",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "きょうは あつくないです。",
+                  "is_correct": false,
+                  "feedback": "Das ist die Verneinung — 'heute ist es nicht heiss'."
+                },
+                {
+                  "option_text": "きょうは あつかったです。",
+                  "is_correct": false,
+                  "feedback": "Das ist die Vergangenheit — 'heute war es heiss' (sinnfrei)."
+                },
+                {
+                  "option_text": "きょうは あついでした。",
+                  "is_correct": false,
+                  "feedback": "Falsch — i-Adjektive konjugieren am Adjektiv selbst, nicht an 「です」."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welche Form ist die Vergangenheit von 「さむい」 (samui, kalt)?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Bei i-Adjektiven wird das letzte 「い」 zu 「かった」: 「さむい → さむかった」.",
+              "options": [
+                {
+                  "option_text": "さむかった",
+                  "is_correct": true,
+                  "feedback": "Richtig — typisches 「い → かった」-Muster."
+                },
+                {
+                  "option_text": "さむいでした",
+                  "is_correct": false,
+                  "feedback": "Falsch — i-Adjektive konjugieren NICHT an 「です」."
+                },
+                {
+                  "option_text": "さむくなかった",
+                  "is_correct": false,
+                  "feedback": "Das ist die verneinte Vergangenheit ('war nicht kalt')."
+                },
+                {
+                  "option_text": "さむくない",
+                  "is_correct": false,
+                  "feedback": "Das ist die Verneinung ('ist nicht kalt')."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Die Vergangenheit von 「いい」 (ii, gut) ist 「いかった」.",
+              "difficulty_level": 3,
+              "explanation": "Falsch — 「いい」 ist eine Sonderform und wird wie 「よい」 konjugiert: 「よかった」 (yokatta).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Falsch — 「いい」 ist eine Sonderform."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt — die richtige Form ist 「よかった」 (yokatta)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welcher Satz drückt einen Vergleich aus? ('Der Sommer ist heisser als der Winter.')",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "「なつは ふゆより あついです」 (Natsu wa fuyu yori atsui desu). Die Partikel 「より」 (yori) markiert den Vergleichsmassstab.",
+              "options": [
+                {
+                  "option_text": "なつは ふゆより あついです。",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "なつは ふゆで あついです。",
+                  "is_correct": false,
+                  "feedback": "「で」 (de) ist Mittel/Ort, nicht Vergleich."
+                },
+                {
+                  "option_text": "なつは ふゆに あついです。",
+                  "is_correct": false,
+                  "feedback": "「に」 (ni) markiert Ziel/Zeit, nicht Vergleich."
+                },
+                {
+                  "option_text": "なつは ふゆの あついです。",
+                  "is_correct": false,
+                  "feedback": "「の」 (no) ist Possessiv-/Verbindungspartikel, nicht Vergleich."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「いい おてんきですね」 ist ein typischer Smalltalk-Satz für gutes Wetter.",
+              "difficulty_level": 1,
+              "explanation": "Korrekt — 「いい おてんきですね」 (ii o-tenki desu ne, 'schönes Wetter, oder?') ist ein Standard-Einstieg.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Genau — der Smalltalk-Klassiker."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — das hörst du in Japan dauernd."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde jede Jahreszeit mit der deutschen Übersetzung.",
+              "difficulty_level": 1,
+              "options": [
+                {
+                  "option_text": "春 (はる, haru)",
+                  "feedback": "Frühling",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "夏 (なつ, natsu)",
+                  "feedback": "Sommer",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "秋 (あき, aki)",
+                  "feedback": "Herbst",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "冬 (ふゆ, fuyu)",
+                  "feedback": "Winter",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde jedes Wetter-Wort mit der deutschen Bedeutung.",
+              "difficulty_level": 2,
+              "options": [
+                {
+                  "option_text": "雨 (あめ, ame)",
+                  "feedback": "Regen",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "雪 (ゆき, yuki)",
+                  "feedback": "Schnee",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "晴れ (はれ, hare)",
+                  "feedback": "sonniges Wetter",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "曇り (くもり, kumori)",
+                  "feedback": "bewölkt",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie verneinst du den Satz 「きょうは あついです」?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Bei i-Adjektiven wird das letzte 「い」 durch 「くない」 ersetzt: 「あつい → あつくない」.",
+              "options": [
+                {
+                  "option_text": "きょうは あつくないです。",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「あつくない」 (atsukunai) = 'nicht heiss'."
+                },
+                {
+                  "option_text": "きょうは あついじゃないです。",
+                  "is_correct": false,
+                  "feedback": "「じゃない」 ist für Nomen/na-Adjektive — bei i-Adjektiven konjugiert man am Adjektiv selbst."
+                },
+                {
+                  "option_text": "きょうは あついでした。",
+                  "is_correct": false,
+                  "feedback": "Das ist eine ungrammatische Vergangenheits-Form (i-Adjektive konjugieren nicht an 「です」)."
+                },
+                {
+                  "option_text": "きょうは あついません。",
+                  "is_correct": false,
+                  "feedback": "Das ist gar keine korrekte Form — 「ません」 gehört nur an Verben."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welcher Satz heisst 'Gestern war es nicht heiss'?",
+              "difficulty_level": 3,
+              "points": 1,
+              "explanation": "Verneinte Vergangenheit von i-Adjektiven: 「い → くなかった」. 「あつい → あつくなかった」.",
+              "options": [
+                {
+                  "option_text": "きのうは あつくなかったです。",
+                  "is_correct": true,
+                  "feedback": "Richtig — perfekte verneinte Vergangenheit."
+                },
+                {
+                  "option_text": "きのうは あつくないでした。",
+                  "is_correct": false,
+                  "feedback": "Falsch — die Verneinung 「くない」 wird selbst zur Vergangenheit, nicht 「です」."
+                },
+                {
+                  "option_text": "きのうは あつかったではない。",
+                  "is_correct": false,
+                  "feedback": "Das ist eine ungrammatische Vermischung."
+                },
+                {
+                  "option_text": "きのうは あついなかったです。",
+                  "is_correct": false,
+                  "feedback": "Das ist gar keine korrekte Form."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Zusammenfassung & Ausblick",
+      "description": "Was du heute gelernt hast",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Wetter-Vokabular und i-Adjektive",
+            "content_text": "## Heute hast du gelernt\n\n### Vokabular\n\n- **Wetter:** 「てんき」 (tenki, Wetter), 「あめ」 (ame, Regen), 「ゆき」 (yuki, Schnee), 「はれ」 (hare, sonnig), 「くもり」 (kumori, bewölkt), 「かぜ」 (kaze, Wind), 「そら」 (sora, Himmel).\n- **Jahreszeiten:** 「はる」 (haru, Frühling), 「なつ」 (natsu, Sommer), 「あき」 (aki, Herbst), 「ふゆ」 (fuyu, Winter).\n- **Adjektive:** 「あつい」 (atsui, heiss), 「さむい」 (samui, kalt), 「あたたかい」 (atatakai, warm), 「すずしい」 (suzushii, kühl).\n- **Zeitwörter:** 「きょう」 (kyou, heute), 「あした」 (ashita, morgen), 「きのう」 (kinou, gestern).\n\n### Grammatik\n\n1. **i-Adjektive konjugieren** — nicht 「です」, sondern das Adjektiv selbst: 「あつい → あつくない → あつかった → あつくなかった」.\n2. **「〜ですね」 Smalltalk-Endung** — sucht Zustimmung, fast obligatorisch im Wetter-Smalltalk.\n3. **「〜より」 Vergleich** — markiert den Vergleichsmassstab im Komparativ.\n\n> **Lerntipp:** Übe die i-Adjektiv-Konjugation täglich an einem Wetter-Satz. Es kostet 30 Sekunden und festigt die Logik.\n\n### Was als Nächstes kommt\n\nIn der nächsten Lektion lernst du **Kanji 1: Zahlen**. Bisher hast du Zahlen nur in Hiragana geschrieben — jetzt lernst du die zehn Kanji 一二三四五六七八九十 inklusive Schreibreihenfolge und der typischen on-/kun-Lesungen."
+          }
+        }
+      ]
+    }
+  ],
+  "thumbnail_url": "generated/thumbnail_wetter_und_jahreszeiten_20260426_081646.png"
+}

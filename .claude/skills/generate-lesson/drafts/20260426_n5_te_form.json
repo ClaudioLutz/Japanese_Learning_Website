@@ -1,0 +1,791 @@
+{
+  "title": "N5 Erste Sätze 4 — Te-Form: Bitten, Verlauf und Sätze verbinden",
+  "description": "Vertiefe die Te-Form aller drei Verbgruppen. Lerne, höfliche Bitten zu formulieren (~てください), die Verlaufsform (~ています) zu verstehen und mehrere Handlungen in einem Satz zu verketten.",
+  "jlpt_level": 5,
+  "topic": "Te-Form",
+  "instruction_language": "german",
+  "allow_guest_access": false,
+  "pages": [
+    {
+      "title": "Einführung — Die Te-Form ist dein Schweizer Taschenmesser",
+      "description": "Warum die Te-Form so wichtig ist",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Warum die Te-Form?",
+            "content_text": "## Die Te-Form öffnet drei Türen\n\nIn Lektion 3 hast du die wichtigsten Tempora der ます-Form gelernt — Gegenwart, Vergangenheit, Verneinung. Heute kommt der nächste Baustein: die **Te-Form**. Sie wird in fast jedem japanischen Satz gebraucht und ist der Schlüssel zu drei häufigen Strukturen.\n\n### Was du heute lernst\n\n- Wie du **eine höfliche Bitte** formulierst — 「ちょっと まってください」 (chotto matte kudasai, 'Warten Sie bitte kurz').\n- Wie du **eine andauernde Handlung** beschreibst — 「いま たべています」 (ima tabete imasu, 'Ich esse gerade').\n- Wie du **mehrere Handlungen verkettest** — 「あさ おきて、ごはんを たべます」 (asa okite, gohan o tabemasu, 'Morgens stehe ich auf und esse Frühstück').\n\n### Drei Verbgruppen, drei Regeln\n\nDamit du die Te-Form bilden kannst, musst du wissen, zu welcher Gruppe ein Verb gehört. Japanisch hat drei Gruppen:\n\n1. **Gruppe 1 (う-Verben):** 「のむ」 (nomu), 「かう」 (kau), 「かく」 (kaku) — die Mehrheit aller Verben.\n2. **Gruppe 2 (る-Verben):** 「たべる」 (taberu), 「みる」 (miru), 「ねる」 (neru) — Verben, die auf -eru oder -iru enden.\n3. **Gruppe 3 (unregelmässig):** 「する」 (suru) und 「くる」 (kuru) — nur diese beiden.\n\n> **Lerntipp:** Lerne jedes Verb gleich mit seiner Te-Form. Karteikartensystem: Vorderseite Wörterbuchform, Rückseite ます-Form + Te-Form."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln 1 — Verben für den Alltag",
+      "description": "Bewegung, Konsum, Kommunikation",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "食べる",
+            "reading": "たべる",
+            "romaji": "taberu",
+            "meaning": "to eat",
+            "meaning_de": "essen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あさごはんを 食べて、コーヒーを のみます。",
+            "example_sentence_english": "Asagohan o tabete, koohii o nomimasu. — I eat breakfast and (then) drink coffee.",
+            "image_url": "vocab_generated/vocab_0e3e309b.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "飲む",
+            "reading": "のむ",
+            "romaji": "nomu",
+            "meaning": "to drink",
+            "meaning_de": "trinken",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "おちゃを のんで、本を 読みます。",
+            "example_sentence_english": "Ocha o nonde, hon o yomimasu. — I drink tea and (then) read a book."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "読む",
+            "reading": "よむ",
+            "romaji": "yomu",
+            "meaning": "to read",
+            "meaning_de": "lesen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "しんぶんを 読んでいます。",
+            "example_sentence_english": "Shinbun o yonde imasu. — I am reading the newspaper.",
+            "image_url": "vocab_generated/vocab_2f2115d2.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "書く",
+            "reading": "かく",
+            "romaji": "kaku",
+            "meaning": "to write",
+            "meaning_de": "schreiben",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ここに なまえを 書いてください。",
+            "example_sentence_english": "Koko ni namae o kaite kudasai. — Please write your name here.",
+            "image_url": "vocab_generated/vocab_066ec0a5.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "聞く",
+            "reading": "きく",
+            "romaji": "kiku",
+            "meaning": "to listen, to ask",
+            "meaning_de": "hören, fragen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "おんがくを 聞いています。",
+            "example_sentence_english": "Ongaku o kiite imasu. — I am listening to music.",
+            "image_url": "vocab_generated/vocab_082dacde.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "話す",
+            "reading": "はなす",
+            "romaji": "hanasu",
+            "meaning": "to speak, to talk",
+            "meaning_de": "sprechen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ゆっくり 話してください。",
+            "example_sentence_english": "Yukkuri hanashite kudasai. — Please speak slowly.",
+            "image_url": "vocab_generated/vocab_edca5e90.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "見る",
+            "reading": "みる",
+            "romaji": "miru",
+            "meaning": "to see, to watch",
+            "meaning_de": "sehen, anschauen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "テレビを 見て、ねます。",
+            "example_sentence_english": "Terebi o mite, nemasu. — I watch TV and (then) go to sleep.",
+            "image_url": "vocab_generated/vocab_7f98a12a.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "買う",
+            "reading": "かう",
+            "romaji": "kau",
+            "meaning": "to buy",
+            "meaning_de": "kaufen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "パンを かって、いえに かえります。",
+            "example_sentence_english": "Pan o katte, ie ni kaerimasu. — I buy bread and (then) go home.",
+            "image_url": "vocab_generated/vocab_3d70b012.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "待つ",
+            "reading": "まつ",
+            "romaji": "matsu",
+            "meaning": "to wait",
+            "meaning_de": "warten",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ちょっと まってください。",
+            "example_sentence_english": "Chotto matte kudasai. — Please wait a moment.",
+            "image_url": "vocab_generated/vocab_88456a23.png"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln 2 — Tagesablauf und Hilfswörter",
+      "description": "Aufstehen, gehen, kommen, Sätze verbinden",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "起きる",
+            "reading": "おきる",
+            "romaji": "okiru",
+            "meaning": "to get up, to wake up",
+            "meaning_de": "aufstehen, aufwachen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あさ 七時に おきて、シャワーを あびます。",
+            "example_sentence_english": "Asa shichi-ji ni okite, shawaa o abimasu. — I wake up at 7 in the morning and (then) take a shower.",
+            "image_url": "vocab_generated/vocab_a25fb9f6.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "寝る",
+            "reading": "ねる",
+            "romaji": "neru",
+            "meaning": "to sleep, to go to bed",
+            "meaning_de": "schlafen, ins Bett gehen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "十一時に ねます。",
+            "example_sentence_english": "Juu-ichi-ji ni nemasu. — I go to bed at 11.",
+            "image_url": "vocab_generated/vocab_f0932127.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "行く",
+            "reading": "いく",
+            "romaji": "iku",
+            "meaning": "to go",
+            "meaning_de": "gehen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "がっこうに 行って、ともだちに あいます。",
+            "example_sentence_english": "Gakkou ni itte, tomodachi ni aimasu. — I go to school and (then) meet a friend.",
+            "image_url": "vocab_generated/vocab_1f842513.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "来る",
+            "reading": "くる",
+            "romaji": "kuru",
+            "meaning": "to come",
+            "meaning_de": "kommen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あした わたしの いえに 来てください。",
+            "example_sentence_english": "Ashita watashi no ie ni kite kudasai. — Please come to my place tomorrow.",
+            "image_url": "vocab_generated/vocab_54088739.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "帰る",
+            "reading": "かえる",
+            "romaji": "kaeru",
+            "meaning": "to go home, to return",
+            "meaning_de": "nach Hause gehen, zurückkehren",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "六時に かえって、ばんごはんを たべます。",
+            "example_sentence_english": "Roku-ji ni kaette, bangohan o tabemasu. — I go home at 6 and (then) eat dinner.",
+            "image_url": "vocab_generated/vocab_d05410bf.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "する",
+            "reading": "する",
+            "romaji": "suru",
+            "meaning": "to do",
+            "meaning_de": "machen, tun",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "しゅくだいを して、ねます。",
+            "example_sentence_english": "Shukudai o shite, nemasu. — I do my homework and (then) go to bed.",
+            "image_url": "vocab_generated/vocab_fdb567ff.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "勉強する",
+            "reading": "べんきょうする",
+            "romaji": "benkyou suru",
+            "meaning": "to study",
+            "meaning_de": "lernen, studieren",
+            "jlpt_level": 5,
+            "is_canonical_override": true,
+            "source_note": "Standard-N5 in MNN Lektion 4 / Genki I — fehlt in der einzelwort-zentrierten JLPT-Liste, ist aber unverzichtbar für jede N5-Lektion mit Studien-/Lernkontext.",
+            "example_sentence_japanese": "まいにち にほんごを べんきょうしています。",
+            "example_sentence_english": "Mainichi nihongo o benkyou shite imasu. — I am studying Japanese every day.",
+            "image_url": "vocab_generated/vocab_c6aed85e.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "ちょっと",
+            "reading": "ちょっと",
+            "romaji": "chotto",
+            "meaning": "a little, a moment",
+            "meaning_de": "ein bisschen, einen Moment",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ちょっと まってください。",
+            "example_sentence_english": "Chotto matte kudasai. — Wait a moment, please.",
+            "image_url": "vocab_generated/vocab_8a3a9326.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "ゆっくり",
+            "reading": "ゆっくり",
+            "romaji": "yukkuri",
+            "meaning": "slowly",
+            "meaning_de": "langsam, in Ruhe",
+            "jlpt_level": 5,
+            "is_canonical_override": true,
+            "source_note": "Standard-N5-Adverb in MNN Lektion 14 / Genki I — wird in jeder Te-kudasai-Lektion gebraucht ('bitte langsam sprechen').",
+            "example_sentence_japanese": "ゆっくり 話してください。",
+            "example_sentence_english": "Yukkuri hanashite kudasai. — Please speak slowly.",
+            "image_url": "vocab_generated/vocab_10f6571e.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "もう一度",
+            "reading": "もういちど",
+            "romaji": "mou ichido",
+            "meaning": "one more time, again",
+            "meaning_de": "noch einmal",
+            "jlpt_level": 5,
+            "is_canonical_override": true,
+            "source_note": "Standard-N5-Phrase in MNN Lektion 14 / Genki I — Kombination aus N5-Vokabeln 「もう」 (mou) + 「いちど」 (ichido), aber als feste Wendung lernt man sie als Einheit.",
+            "example_sentence_japanese": "もういちど いってください。",
+            "example_sentence_english": "Mou ichido itte kudasai. — Please say it one more time.",
+            "image_url": "vocab_generated/vocab_57bb4a87.png"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Grammatik — Te-Form bilden und einsetzen",
+      "description": "Konjugationsregeln und drei Verwendungen",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Wie du die Te-Form bildest",
+            "content_text": "## Die drei Konjugationsregeln\n\nDie Te-Form leitet sich aus der Wörterbuchform ab — nicht aus der ます-Form. Du musst dafür wissen, in welche Gruppe ein Verb gehört.\n\n### Gruppe 2 (る-Verben) — die einfachste Regel\n\nVerben, die auf 「-える」 oder 「-いる」 enden: einfach 「る」 weglassen und 「て」 anhängen.\n\n- 「たべる」 (taberu, essen) → 「たべて」 (tabete)\n- 「みる」 (miru, sehen) → 「みて」 (mite)\n- 「おきる」 (okiru, aufstehen) → 「おきて」 (okite)\n- 「ねる」 (neru, schlafen) → 「ねて」 (nete)\n\n> **Achtung:** Nicht jedes Verb auf -iru/-eru ist Gruppe 2. 「かえる」 (kaeru, nach Hause gehen) ist trotz -eru ein **Gruppe-1-Verb** und wird zu 「かえって」.\n\n### Gruppe 1 (う-Verben) — die längste Regel\n\nDie Endung der Wörterbuchform entscheidet, welche Te-Form-Endung du brauchst:\n\n- 「-う」, 「-つ」, 「-る」 → 「-って」 (kau→katte, matsu→matte, kaeru→kaette)\n- 「-む」, 「-ぶ」, 「-ぬ」 → 「-んで」 (nomu→nonde, asobu→asonde, shinu→shinde)\n- 「-く」 → 「-いて」 (kaku→kaite) — Ausnahme: いく → いって\n- 「-ぐ」 → 「-いで」 (isogu→isoide)\n- 「-す」 → 「-して」 (hanasu→hanashite)\n\n### Gruppe 3 (unregelmässig) — auswendig lernen\n\nNur zwei Verben:\n\n- 「する」 (suru, machen) → 「して」 (shite)\n- 「くる」 (kuru, kommen) → 「きて」 (kite)\n\n### Drei zentrale Verwendungen\n\n1. **Höfliche Bitte:** Te-Form + 「ください」. Beispiel: 「ちょっと まってください」 (chotto matte kudasai, 'Warten Sie bitte einen Moment').\n2. **Verlaufsform:** Te-Form + 「います」. Beispiel: 「いま テレビを 見ています」 (ima terebi o mite imasu, 'Ich schaue gerade fern').\n3. **Sätze verketten:** Te-Form verbindet Handlungen wie ein Komma. Beispiel: 「あさ おきて、シャワーを あびて、コーヒーを のみます」 (asa okite, shawaa o abite, koohii o nomimasu, 'Morgens stehe ich auf, dusche und trinke Kaffee')."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "Te-Form bilden — drei Gruppen",
+            "explanation": "Die Te-Form hängt von der Verbgruppe ab. Gruppe-2-Verben (る-Verben wie 「たべる」 (taberu)) ersetzen einfach 「る」 durch 「て」. Gruppe-1-Verben (う-Verben wie 「のむ」 (nomu)) folgen Endungs-Regeln (siehe Grammatik-Block oben). Die unregelmässigen Verben 「する」 (suru) und 「くる」 (kuru) werden zu 「して」 (shite) und 「きて」 (kite).",
+            "structure": "[Wörterbuchform] → [Te-Form]",
+            "romaji": "[dictionary form] -> [te-form]",
+            "jlpt_level": 5,
+            "example_sentences": "たべる → たべて (taberu -> tabete) — essen -> essend\nのむ → のんで (nomu -> nonde) — trinken -> trinkend\nかく → かいて (kaku -> kaite) — schreiben -> schreibend\nする → して (suru -> shite) — machen -> machend\nくる → きて (kuru -> kite) — kommen -> kommend"
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "〜てください (te kudasai) — höfliche Bitte",
+            "explanation": "Mit der Te-Form + 「ください」 (kudasai) bittest du jemanden höflich, etwas zu tun. Es ist die Standardform, die du in der Schule, im Restaurant, am Bahnhof oder im Geschäft hörst und nutzt. Etwas weicher als ein Imperativ, aber direkter als 「〜ていただけませんか」 (te itadakemasen ka, 'Würden Sie bitte ...?').",
+            "structure": "[Verb in Te-Form] + ください",
+            "romaji": "[verb-te] + kudasai",
+            "jlpt_level": 5,
+            "example_sentences": "ちょっと まってください。 (Chotto matte kudasai.) — Warten Sie bitte einen Moment.\nゆっくり 話してください。 (Yukkuri hanashite kudasai.) — Sprechen Sie bitte langsam.\nここに なまえを 書いてください。 (Koko ni namae o kaite kudasai.) — Schreiben Sie bitte hier Ihren Namen.\nもういちど いってください。 (Mou ichido itte kudasai.) — Sagen Sie es bitte noch einmal."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "〜ています (te imasu) — Verlaufsform",
+            "explanation": "Die Te-Form + 「います」 (imasu) drückt aus, dass eine Handlung gerade abläuft (vergleichbar mit 'I am ~ing' im Englischen). Bei manchen Verben (wie 「すんでいます」 sunde imasu, 'wohnen') beschreibt sie auch einen Zustand, der dauerhaft anhält. Die Verneinung lautet 「〜ていません」 (te imasen).",
+            "structure": "[Verb in Te-Form] + います",
+            "romaji": "[verb-te] + imasu",
+            "jlpt_level": 5,
+            "example_sentences": "いま テレビを 見ています。 (Ima terebi o mite imasu.) — Ich schaue gerade fern.\nおんがくを 聞いています。 (Ongaku o kiite imasu.) — Ich höre gerade Musik.\nまいにち にほんごを べんきょうしています。 (Mainichi nihongo o benkyou shite imasu.) — Ich lerne jeden Tag Japanisch.\nリサさんは いま 食べていません。 (Risa-san wa ima tabete imasen.) — Lisa isst gerade nicht."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "Te-Form als Konjunktion — Sätze verketten",
+            "explanation": "Du kannst mehrere Handlungen in einem Satz verbinden, indem du alle Verben ausser dem letzten in die Te-Form setzt. Das letzte Verb steht in der ます-Form (oder Vergangenheit) und bestimmt das Tempus für den ganzen Satz. Im Deutschen entspricht das oft einem 'und dann'.",
+            "structure": "[Verb1-te] + [Verb2-te] + ... + [letztes Verb]ます",
+            "romaji": "[V1-te] + [V2-te] + ... + [Vlast]masu",
+            "jlpt_level": 5,
+            "example_sentences": "あさ おきて、コーヒーを のみます。 (Asa okite, koohii o nomimasu.) — Morgens stehe ich auf und trinke Kaffee.\nがっこうに 行って、にほんごを べんきょうしました。 (Gakkou ni itte, nihongo o benkyou shimashita.) — Ich bin zur Schule gegangen und habe Japanisch gelernt.\nテレビを 見て、ねました。 (Terebi o mite, nemashita.) — Ich habe ferngesehen und bin dann ins Bett gegangen.\nスーパーに 行って、パンを かって、いえに かえりました。 (Suupaa ni itte, pan o katte, ie ni kaerimashita.) — Ich bin in den Supermarkt gegangen, habe Brot gekauft und bin nach Hause zurückgekehrt."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Dialog — Tanaka bittet Lisa um Hilfe",
+      "description": "Te-Form im Alltag",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Im Klassenzimmer — Tanaka braucht Hilfe bei den Hausaufgaben",
+            "content_text": "Tanaka: リサさん、ちょっと まってください。\n  (Risa-san, chotto matte kudasai.)\n  -> Lisa, warte bitte einen Moment.\n\nLisa: はい、どうしましたか。\n  (Hai, dou shimashita ka.)\n  -> Ja, was ist los?\n\nTanaka: この もんだいが むずかしいです。せつめいを 聞いてください。\n  (Kono mondai ga muzukashii desu. Setsumei o kiite kudasai.)\n  -> Diese Aufgabe ist schwer. Hör dir bitte die Erklärung an.\n\nLisa: いま、ノートを 書いています。あとで みましょう。\n  (Ima, nooto o kaite imasu. Ato de mimashou.)\n  -> Ich schreibe gerade meine Notizen. Schauen wir es später an.\n\nTanaka: わかりました。じゃ、いっしょに じしょを 見て、こたえを 書きませんか。\n  (Wakarimashita. Ja, issho ni jisho o mite, kotae o kakimasen ka.)\n  -> Verstanden. Sollen wir zusammen ins Wörterbuch schauen und die Antwort aufschreiben?\n\nLisa: いいですね。ゆっくり 話してください。わたしは まだ にほんごを べんきょうしています。\n  (Ii desu ne. Yukkuri hanashite kudasai. Watashi wa mada nihongo o benkyou shite imasu.)\n  -> Gute Idee. Sprich aber bitte langsam. Ich lerne Japanisch ja noch.\n\nTanaka: もちろんです。じゃ、はじめましょう。\n  (Mochiron desu. Ja, hajimemashou.)\n  -> Natürlich. Dann fangen wir an."
+          }
+        },
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "Verständnisfragen zum Dialog."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bittet Tanaka Lisa zuerst?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Tanaka sagt 「ちょっと まってください」 (chotto matte kudasai) — eine höfliche Bitte mit Te-Form + ください.",
+              "options": [
+                {
+                  "option_text": "Sie möge einen Moment warten.",
+                  "is_correct": true,
+                  "feedback": "Richtig! 「まってください」 (matte kudasai) = 'Warten Sie bitte'."
+                },
+                {
+                  "option_text": "Sie möge die Tür schliessen.",
+                  "is_correct": false,
+                  "feedback": "Davon ist im Dialog keine Rede."
+                },
+                {
+                  "option_text": "Sie möge sich setzen.",
+                  "is_correct": false,
+                  "feedback": "Setzen wäre 「すわってください」 (suwatte kudasai)."
+                },
+                {
+                  "option_text": "Sie möge nach Hause gehen.",
+                  "is_correct": false,
+                  "feedback": "Heimgehen wäre 「かえってください」 (kaette kudasai)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was macht Lisa gerade, als Tanaka sie anspricht?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Lisa sagt 「ノートを 書いています」 (nooto o kaite imasu) — Verlaufsform mit Te-Form + います.",
+              "options": [
+                {
+                  "option_text": "Sie schreibt Notizen.",
+                  "is_correct": true,
+                  "feedback": "Richtig! Die Verlaufsform 「書いています」 (kaite imasu) zeigt, dass die Handlung gerade läuft."
+                },
+                {
+                  "option_text": "Sie isst zu Mittag.",
+                  "is_correct": false,
+                  "feedback": "Davon ist im Dialog keine Rede."
+                },
+                {
+                  "option_text": "Sie spricht mit dem Lehrer.",
+                  "is_correct": false,
+                  "feedback": "Sie spricht mit Tanaka."
+                },
+                {
+                  "option_text": "Sie schläft.",
+                  "is_correct": false,
+                  "feedback": "Im Klassenzimmer? Wohl kaum."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Lisa bittet Tanaka, langsam zu sprechen, weil sie noch Japanisch lernt.",
+              "difficulty_level": 1,
+              "explanation": "Korrekt — Lisa sagt 「ゆっくり 話してください。わたしは まだ にほんごを 勉強しています」 (yukkuri hanashite kudasai. Watashi wa mada nihongo o benkyou shite imasu).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Genau — und die Begründung steht in 「勉強しています」 (benkyou shite imasu, 'ich lerne')."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — Lisa nennt das Lernen ausdrücklich als Grund."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was schlägt Tanaka am Ende vor?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Tanaka sagt 「いっしょに じしょを 見て、こたえを 書きませんか」 (issho ni jisho o mite, kotae o kakimasen ka) — die Te-Form 「みて」 verkettet die beiden Handlungen.",
+              "options": [
+                {
+                  "option_text": "Zusammen ins Wörterbuch schauen und die Antwort aufschreiben.",
+                  "is_correct": true,
+                  "feedback": "Richtig — die Te-Form verbindet beide Handlungen in einem Satz."
+                },
+                {
+                  "option_text": "Ins Restaurant gehen und essen.",
+                  "is_correct": false,
+                  "feedback": "Davon ist im Dialog keine Rede."
+                },
+                {
+                  "option_text": "Nach Hause gehen und schlafen.",
+                  "is_correct": false,
+                  "feedback": "Tanaka will lernen, nicht heimgehen."
+                },
+                {
+                  "option_text": "Den Lehrer rufen.",
+                  "is_correct": false,
+                  "feedback": "Davon ist im Dialog keine Rede."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Übung — Te-Form trainieren",
+      "description": "Quiz zu Bildung, Bitte, Verlauf und Verkettung",
+      "page_type": "quiz_carousel",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "10 Aufgaben zur Te-Form."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie lautet die Te-Form von 「たべる」 (taberu, essen)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "Es ist ein Gruppe-2-Verb (る-Verb).",
+              "explanation": "「たべる」 ist Gruppe 2: 「る」 weglassen, 「て」 anhängen → 「たべて」 (tabete).",
+              "options": [
+                {
+                  "option_text": "たべて (tabete)",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "たべって (tabette)",
+                  "is_correct": false,
+                  "feedback": "Doppeltes 「っ」 wäre Gruppe-1-Muster — passt nicht zu る-Verben."
+                },
+                {
+                  "option_text": "たべんで (tabende)",
+                  "is_correct": false,
+                  "feedback": "Nicht möglich. Gruppe-2-Verben enden auf 「-て」, nicht 「-んで」."
+                },
+                {
+                  "option_text": "たべして (tabeshite)",
+                  "is_correct": false,
+                  "feedback": "Das ist gar keine echte Form."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie lautet die Te-Form von 「のむ」 (nomu, trinken)?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Gruppe 1, Endung 「-む」.",
+              "explanation": "Gruppe-1-Verben auf 「-む」 werden zu 「-んで」 → 「のんで」 (nonde).",
+              "options": [
+                {
+                  "option_text": "のんで (nonde)",
+                  "is_correct": true,
+                  "feedback": "Richtig — die 「-む/-ぶ/-ぬ」-Regel."
+                },
+                {
+                  "option_text": "のって (notte)",
+                  "is_correct": false,
+                  "feedback": "Das wäre die Te-Form von 「のる」 (noru, einsteigen) — 「-る」-Endung."
+                },
+                {
+                  "option_text": "のいて (noite)",
+                  "is_correct": false,
+                  "feedback": "Diese Endung gehört zu 「-く」-Verben wie 「かく → かいて」."
+                },
+                {
+                  "option_text": "のみて (nomite)",
+                  "is_correct": false,
+                  "feedback": "Das ist keine korrekte Te-Form."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie lautet die Te-Form von 「いく」 (iku, gehen)?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Vorsicht — das ist eine berüchtigte Ausnahme.",
+              "explanation": "「いく」 sieht aus wie ein normales 「-く」-Verb (das müsste zu 「いいて」 werden), ist aber eine Ausnahme: 「いく → いって」 (iku -> itte).",
+              "options": [
+                {
+                  "option_text": "いって (itte)",
+                  "is_correct": true,
+                  "feedback": "Richtig — die berühmte Ausnahme!"
+                },
+                {
+                  "option_text": "いいて (iite)",
+                  "is_correct": false,
+                  "feedback": "Wäre die regelmässige Form für 「-く」, ist hier aber falsch — Ausnahme!"
+                },
+                {
+                  "option_text": "いんで (inde)",
+                  "is_correct": false,
+                  "feedback": "「-んで」 ist für 「-む/-ぶ/-ぬ」-Verben."
+                },
+                {
+                  "option_text": "いきて (ikite)",
+                  "is_correct": false,
+                  "feedback": "Das ist die Te-Form von 「いきる」 (ikiru, leben), nicht von 「いく」."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welche Te-Form ist korrekt für die unregelmässigen Verben?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "「する」 → 「して」 (shite) und 「くる」 → 「きて」 (kite). Beides muss man auswendig lernen.",
+              "options": [
+                {
+                  "option_text": "する → して、くる → きて",
+                  "is_correct": true,
+                  "feedback": "Richtig — die einzigen beiden Sonderfälle!"
+                },
+                {
+                  "option_text": "する → すって、くる → くって",
+                  "is_correct": false,
+                  "feedback": "Das wären Gruppe-1-Muster — passt nicht zu unregelmässigen Verben."
+                },
+                {
+                  "option_text": "する → しって、くる → きって",
+                  "is_correct": false,
+                  "feedback": "Doppeltes 「っ」 ist falsch — die korrekten Formen sind 「して」 und 「きて」."
+                },
+                {
+                  "option_text": "する → すんで、くる → くんで",
+                  "is_correct": false,
+                  "feedback": "「-んで」 ist nur für 「-む/-ぶ/-ぬ」-Verben."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「かえる」 (kaeru, zurückkehren) ist ein Gruppe-2-Verb.",
+              "difficulty_level": 3,
+              "explanation": "Falsch! Trotz der Endung 「-える」 ist 「かえる」 ein Gruppe-1-Verb (Te-Form: 「かえって」 kaette). Eine berüchtigte Ausnahme.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nein — 「かえる」 ist eine Ausnahme und gehört zu Gruppe 1."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt — 「かえる」 ist Gruppe 1, daher 「かえって」 (kaette)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「ちょっと まってください」?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「ちょっと」 (chotto) = 'einen Moment / kurz', 「まって」 (matte) = Te-Form von 「まつ」, 「ください」 (kudasai) = 'bitte'. Zusammen: 'Warten Sie bitte einen Moment'.",
+              "options": [
+                {
+                  "option_text": "Warten Sie bitte einen Moment.",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "Sprechen Sie bitte langsam.",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「ゆっくり 話してください」 (yukkuri hanashite kudasai)."
+                },
+                {
+                  "option_text": "Bitte sehr (nach einer Bitte).",
+                  "is_correct": false,
+                  "feedback": "「どうぞ」 (douzo) wäre eher diese Bedeutung."
+                },
+                {
+                  "option_text": "Schreiben Sie bitte hier.",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「ここに 書いてください」 (koko ni kaite kudasai)."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Die Verlaufsform 「〜ています」 (te imasu) entspricht im Englischen ungefähr 'I am ~ing'.",
+              "difficulty_level": 1,
+              "explanation": "Korrekt — 「いま たべています」 (ima tabete imasu) = 'I am eating now'. Die Te-Form + 「います」 markiert eine gerade ablaufende Handlung.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Genau — Verlaufsform der Gegenwart."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — die Parallele zu 'I am ~ing' ist die typische Erklärung."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde jede Wörterbuchform mit ihrer Te-Form.",
+              "difficulty_level": 2,
+              "options": [
+                {
+                  "option_text": "書く (kaku)",
+                  "feedback": "書いて (kaite)",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "話す (hanasu)",
+                  "feedback": "話して (hanashite)",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "見る (miru)",
+                  "feedback": "見て (mite)",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "する (suru)",
+                  "feedback": "して (shite)",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welcher Satz nutzt die Te-Form korrekt zum Verketten von Handlungen?",
+              "difficulty_level": 3,
+              "points": 1,
+              "explanation": "「あさ おきて、コーヒーを 飲みます」 (asa okite, koohii o nomimasu) — die Te-Form 「おきて」 (okite) verkettet zwei Handlungen, das letzte Verb in 「ます」 trägt das Tempus für den ganzen Satz.",
+              "options": [
+                {
+                  "option_text": "あさ おきて、コーヒーを 飲みます。",
+                  "is_correct": true,
+                  "feedback": "Richtig — typisches Verkettungs-Muster."
+                },
+                {
+                  "option_text": "あさ おきます、コーヒーを 飲みます。",
+                  "is_correct": false,
+                  "feedback": "Beide Verben in 「ます」-Form ergibt zwei separate Sätze, keine Verkettung."
+                },
+                {
+                  "option_text": "あさ おきて、コーヒーを 飲んで。",
+                  "is_correct": false,
+                  "feedback": "Das letzte Verb darf nicht in Te-Form bleiben — der Satz endet ohne Tempus."
+                },
+                {
+                  "option_text": "あさ おきました、コーヒーを 飲みました。",
+                  "is_correct": false,
+                  "feedback": "Das sind zwei abgeschlossene Sätze, keine Verkettung."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde jeden japanischen Satz mit seiner deutschen Übersetzung.",
+              "difficulty_level": 2,
+              "options": [
+                {
+                  "option_text": "ちょっと まってください。 (chotto matte kudasai)",
+                  "feedback": "Warten Sie bitte einen Moment.",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "ゆっくり 話してください。 (yukkuri hanashite kudasai)",
+                  "feedback": "Sprechen Sie bitte langsam.",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "もう一度 言ってください。 (mou ichido itte kudasai)",
+                  "feedback": "Sagen Sie es bitte noch einmal.",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "ここに 書いてください。 (koko ni kaite kudasai)",
+                  "feedback": "Schreiben Sie bitte hier.",
+                  "is_correct": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Zusammenfassung & Ausblick",
+      "description": "Was du heute gelernt hast und was als Nächstes kommt",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Das Wichtigste in Kürze",
+            "content_text": "## Heute hast du gelernt\n\n- **Drei Bildungsregeln** für die Te-Form: る-Verben (`たべる → たべて`), う-Verben (mehrere Endungs-Muster) und die zwei Sonderverben 「する → して」 (suru -> shite) und 「くる → きて」 (kuru -> kite).\n- **Die berüchtigten Ausnahmen** 「いく → いって」 (iku -> itte) und 「かえる → かえって」 (kaeru -> kaette).\n- **Drei Hauptverwendungen:** höfliche Bitte mit 「〜てください」 (te kudasai), Verlaufsform mit 「〜ています」 (te imasu) und Satzverkettung mit Te-Form als 'und dann'.\n\n### Wo dir die Te-Form sofort hilft\n\n- Im Restaurant: 「メニューを 見せてください」 (menyuu o misete kudasai, 'Zeigen Sie mir bitte die Speisekarte').\n- Am Bahnhof: 「きっぷを かって、ホームに 行きます」 (kippu o katte, hoomu ni ikimasu, 'Ich kaufe ein Ticket und gehe dann zum Bahnsteig').\n- Im Sprachkurs: 「もういちど いってください」 (mou ichido itte kudasai, 'Sagen Sie es bitte noch einmal').\n\n> **Lerntipp:** Lege auf jeder Karteikarte für ein neues Verb gleich die Te-Form mit an. Innerhalb weniger Wochen sitzt das Schema automatisch.\n\n### Was als Nächstes kommt\n\nIm Modul **Reise & Ort** geht es weiter mit Stadt-Vokabular: Bahnhof, Bank, Restaurant, Park. Du wirst die Te-Form von heute direkt nutzen, um Wegbeschreibungen zu verstehen und höfliche Fragen an Passanten zu stellen."
+          }
+        }
+      ]
+    }
+  ],
+  "thumbnail_url": "generated/thumbnail_te-form_20260426_075518.png"
+}
