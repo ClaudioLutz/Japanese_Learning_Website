@@ -457,13 +457,15 @@ def admin_manage_approval():
 def lessons():
     """Browse available lessons.
 
-    SEO: Server-Rendering einer Kategorien-Uebersicht + Liste der neuesten
-    Lektionen, damit Googlebot indexierbaren Content sieht. Die dynamische
-    JS-UI darunter bleibt unveraendert.
+    Server-rendert Kategorien (mit Lektions-Anzahl) + alle publishten Lektionen
+    in voller Form. Der Client filtert/sortiert/toggled View-Modi rein per JS
+    auf den bereits gerenderten Cards (kein zusaetzlicher Fetch). Vorteile:
+    - SEO: alle Lessons + Categories sind im initialen HTML
+    - UX: instant filtern, keine Roundtrips
     """
     visible_langs = current_app.config.get('CONTENT_LANGUAGES', ['german'])
 
-    # Kategorien mit Lektions-Anzahl (nur publishte, nur sichtbare Sprachen)
+    # Kategorien mit Lektions-Anzahl
     all_categories = (
         LessonCategory.query
         .order_by(
@@ -473,7 +475,7 @@ def lessons():
         )
         .all()
     )
-    seo_categories = []
+    page_categories = []
     for cat in all_categories:
         count = sum(
             1 for l in cat.lessons
@@ -481,31 +483,57 @@ def lessons():
         )
         if count == 0:
             continue
-        seo_categories.append({
+        page_categories.append({
             'id': cat.id,
             'name': cat.name,
             'description': cat.description,
             'icon_emoji': cat.icon_emoji,
+            'color_code': cat.color_code,
             'jlpt_level': cat.jlpt_level,
             'lesson_count': count,
+            'slug': cat.slug,
         })
 
-    # Neueste 20 publishte Lektionen (sichtbare Sprachen)
-    seo_recent_lessons = (
+    # Alle publishten Lektionen (sichtbare Sprachen) — voller Datensatz fuer Client-Filter
+    lessons_q = (
         Lesson.query
         .filter(
             Lesson.is_published == True,  # noqa: E712
             Lesson.instruction_language.in_(visible_langs),
         )
         .order_by(Lesson.created_at.desc(), Lesson.id.desc())
-        .limit(20)
         .all()
+    )
+    page_lessons = []
+    for l in lessons_q:
+        is_free = (l.price or 0) == 0
+        page_lessons.append({
+            'id': l.id,
+            'title': l.title,
+            'description': l.description or '',
+            'thumbnail_url': l.get_thumbnail_url() if hasattr(l, 'get_thumbnail_url') else None,
+            'difficulty_level': l.difficulty_level,
+            'estimated_duration': l.estimated_duration,
+            'is_free': is_free,
+            'price': l.price or 0,
+            'allow_guest_access': l.allow_guest_access,
+            'category_id': l.category_id,
+            'category_name': l.category.name if l.category else None,
+            'category_jlpt_level': l.category.jlpt_level if l.category else None,
+            'created_at': l.created_at,
+        })
+
+    # JLPT-Levels die in den Kategorien tatsaechlich vorkommen — fuer Filter-Pills
+    jlpt_levels = sorted(
+        {c['jlpt_level'] for c in page_categories if c['jlpt_level']},
+        reverse=True,
     )
 
     return render_template(
         'lessons.html',
-        seo_categories=seo_categories,
-        seo_recent_lessons=seo_recent_lessons,
+        page_categories=page_categories,
+        page_lessons=page_lessons,
+        jlpt_levels=jlpt_levels,
     )
 
 
