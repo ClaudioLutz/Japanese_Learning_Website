@@ -256,6 +256,10 @@ def create_app():
     app.register_blueprint(seo_bp)
     csrf.exempt(seo_bp)
 
+    # Bundle-Verkauf (z.B. /n5-bundle) + Buy-API
+    from app.bundle_routes import bundle_bp
+    app.register_blueprint(bundle_bp)
+
     # current_year fuer den Footer + SEO-Default-Daten fuer base.html
     from datetime import datetime as _dt
     from flask import request as _flask_request

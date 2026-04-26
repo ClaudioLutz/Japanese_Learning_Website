@@ -21,7 +21,7 @@ Reihenfolge zählt: Wenn eine Idee (3) dient aber (1) nicht, zurückstellen. Wen
 
 Mayuko (Lehrerin) hat als pädagogische Anweisung gegeben: **„Lektionen nach JLPT machen."** Drei verbindliche harte Regeln:
 
-1. **N5 zuerst komplett, bevor N4 begonnen wird.** Keine N4-Lektionen, solange N5 nicht 100 % abgedeckt. Stand 2026-04-25: N5-Coverage **7.5 % Vokabeln (53/710), 2.5 % Kanji (2/80)** — viel zu tun.
+1. **N5 zuerst komplett, bevor N4 begonnen wird.** Keine N4-Lektionen, solange N5 nicht 100 % abgedeckt. Stand 2026-04-26: N5-Coverage **33.0 % Vokabeln (234/710), 2.5 % Kanji (2/80)** — Vokabel-Drittel da, Kanji ist der Engpass.
 2. **Offizielle JLPT-Wortlisten als Quelle**, nicht Minna no Nihongo. Canonical-Liste liegt in `.claude/skills/generate-lesson/sources/jlpt_n5_canonical.json` (718 Vokabeln + 80 Kanji, MIT-lizenziert von elzup/AnchorI, von Tanos abgeleitet — keine offizielle Liste seit JLPT-Reform 2010).
 3. **Strenger Niveau-Mix-Verbot.** Eine N5-Lektion enthält **null** N4+-Wörter. Validator (`pipeline.py validate`) bricht mit ERROR (nicht Warning) ab. Escape-Hatches: `data.is_proper_noun=true`, `data.is_canonical_override=true`.
 
@@ -53,7 +53,7 @@ Mayuko (Lehrerin) hat als pädagogische Anweisung gegeben: **„Lektionen nach J
 
 **Payrexx-KYC läuft** (eingereicht 2026-04-25, Antwort in 1-2 Werktagen). Während Wartezeit:
 
-1. **N5-Inhalte produzieren** — wichtigster Hebel. Coverage 7.5 %. Pro Generierungs-Sprint Coverage-Dashboard checken, dann gezielt fehlende Vokabeln/Kanji als Themen wählen. Validator ist streng (Niveau-Mix-Verbot), Escape-Hatches dokumentiert.
+1. **N5-Inhalte produzieren** — wichtigster Hebel. Vokabel-Coverage 33 %, Kanji-Coverage nur 2.5 %. Kanji-Themen priorisieren. Pro Generierungs-Sprint Coverage-Dashboard checken, dann gezielt fehlende Vokabeln/Kanji als Themen wählen. Validator ist streng (Niveau-Mix-Verbot), Escape-Hatches dokumentiert.
 2. **Mayuko Vor-Live-Review** — bevor Lektionen veröffentlicht werden, sollte Mayuko sie durchsehen. Workflow noch nicht etabliert. Pragmatisch: Lesson-URL teilen, Feedback einarbeiten, dann `is_published=True`.
 3. **Bestehende Lessons den Modulen feiner zuordnen** — 12 Lessons sind grob gemappt (Skript `scripts/assign_lessons_to_modules.py`), aber `order_in_module` könnte feingetunt werden (Hiragana-Lektion vor erster Vokabel-Lektion).
 4. **Hiragana / Katakana / Erste-Sätze-Module sind noch leer** — diese drei Module zeigen "Inhalte in Vorbereitung" auf der Startseite. Höchste Priorität für nächste Generierungen.
@@ -81,7 +81,7 @@ Organischer Traffic ist der einzige nicht-bezahlte Akquisitions-Kanal. Vor Payre
 - ✅ **Env-Schalter**: `SITE_URL`, `ROBOTS_INDEX` (Staging→`noindex,nofollow`), `GOOGLE_SITE_VERIFICATION` (Fallback ohne DNS-Zugriff), `SEO_DEFAULT_OG_IMAGE`.
 
 **Wo der Hebel jetzt liegt:**
-- **Content**: N5-Coverage 7.5 % heisst wenig öffentlicher Content für Google. Jede neue Lesson = neue indexierbare URL = mehr Long-Tail-Treffer ("hiragana lernen", "japanisch zahlen 1-10"). **Inhalte produzieren ist SEO-Hebel #1.** Sitemap regeneriert sich automatisch (DB-getrieben).
+- **Content**: N5-Vokabel-Coverage 33 % (Kanji 2.5 %) heisst noch wenig öffentlicher Content für Google. Jede neue Lesson = neue indexierbare URL = mehr Long-Tail-Treffer ("hiragana lernen", "japanisch zahlen 1-10"). **Inhalte produzieren ist SEO-Hebel #1.** Sitemap regeneriert sich automatisch (DB-getrieben).
 - Lessons-Detailseite zeigt für Gäste nur Marketing-Snippet, Hauptcontent hinter Login/Paywall → niedrige Indexierungs-Tiefe. Bei sehr beliebten Themen (Hiragana-Tabelle) ggf. Teil-Inhalt für Crawler erlauben.
 - Keine Blog-/Artikel-Sektion → keine breiten Keyword-Themen. Erst bauen, wenn N5 ≥80 %.
 
@@ -145,7 +145,7 @@ Kein A/B-Testing und keine Analytics-Obsession. Die Signale:
 
 - **Claudio kommt ohne Aufforderung wieder** und merkt echten Lernfortschritt (Retention ≠ Klickspass). Wichtigster Indikator.
 - **Mayuko's fachliches Urteil** — sie würde den Inhalt einer Schülerin guten Gewissens empfehlen.
-- **JLPT-N5-Coverage** (objektive Metrik): `pipeline.py coverage 5` — ZIEL: 100 %. Stand 2026-04-25: 7.5 % Vokabeln, 2.5 % Kanji.
+- **JLPT-N5-Coverage** (objektive Metrik): `pipeline.py coverage 5` — ZIEL: 100 %. Stand 2026-04-26: 33.0 % Vokabeln (234/710), 2.5 % Kanji (2/80).
 - **Erster fremder Nutzer** registriert sich und loggt am Folgetag wieder ein.
 - **Payrexx KYC durch** → erste echte CHF-Zahlung möglich. (Eingereicht 2026-04-25.)
 - **Hygiene:** `git status` sauber, alle Tests grün, Inkognito-Startseite fehlerfrei.
@@ -154,7 +154,7 @@ Kein A/B-Testing und keine Analytics-Obsession. Die Signale:
 
 | Claudio fragt / sagt | Reaktion |
 |----------------------|----------|
-| "Was soll ich als nächstes machen?" | §3 in Reihenfolge. **Wahrscheinlichste Antwort 2026-04: N5-Inhalte produzieren** (Hiragana-Modul ist leer, Coverage 7.5 %). |
+| "Was soll ich als nächstes machen?" | §3 in Reihenfolge. **Wahrscheinlichste Antwort 2026-04: N5-Inhalte produzieren** — Vokabel-Coverage bei 33 %, Kanji aber erst 2.5 % (Engpass), Hiragana-Modul noch leer. |
 | "Welches Thema generieren?" | Erst `coverage 5 --show-missing 30` laufen lassen, dann ein Thema mit vielen fehlenden Vokabeln wählen. NIE Bauch-Themen, NIE Wiederholung schon gedeckter Wörter. |
 | "Ich hätte eine Idee: [Feature X]" | Vier Fragen: (a) Verbessert das Bestehendes oder baut Neues? (b) Würde Claudio (oder ein fremder Anfänger) es bemerken/nutzen? (c) Wenn JP-Inhalt: würde Mayuko es freigeben? (d) Hilft es, N5 schneller auf 100 % zu bringen oder ist es Ablenkung davon? |
 | "Kannst du die UI reviewen?" | Auf Sprach-Konsistenz (CONTENT_LANGUAGES respektiert?), Mobile-Breakpoints (Top-Nav unter 992px, Pfad-Karten 1-Spalter unter 575px), Active-State der Top-Nav, Umlaut-Korrektheit, Pulsation auf nächstem Modul achten. |

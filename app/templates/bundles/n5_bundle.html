@@ -1,0 +1,329 @@
+{% extends "base.html" %}
+
+{% block title %}JLPT N5 Komplett — Bundle{% endblock %}
+
+{% block meta_description %}JLPT N5 Komplett — Vokabeln, Kanji, Grammatik und Schreibsystem nach offizieller JLPT-N5-Liste. Einmaliger Kauf, lifetime Zugriff. Schweizer Anbieter, Zahlung per TWINT oder Karte.{% endblock %}
+
+{% block og_type %}product{% endblock %}
+
+{% block styles %}
+<style>
+  .n5-bundle-page { background: linear-gradient(180deg, #f8fafc 0%, #ffffff 60%); padding-bottom: 4rem; }
+  .n5-hero { padding: 3.5rem 1.25rem 2rem; text-align: center; }
+  .n5-hero h1 { font-size: 2.25rem; font-weight: 800; margin: 0 0 0.5rem; color: #0f172a; }
+  .n5-hero p.lead { font-size: 1.15rem; color: #475569; margin: 0 auto 1.5rem; max-width: 640px; }
+  .n5-price-pill {
+    display: inline-flex; align-items: baseline; gap: 0.4rem;
+    background: #4f46e5; color: white; border-radius: 999px;
+    padding: 0.5rem 1.25rem; font-weight: 700; font-size: 1.4rem;
+    box-shadow: 0 6px 20px rgba(79,70,229,0.25);
+  }
+  .n5-price-pill .price-old { text-decoration: line-through; opacity: 0.55; font-size: 1rem; font-weight: 500; }
+  .n5-price-pill .price-label {
+    background: rgba(255,255,255,0.18); font-size: 0.7rem; padding: 0.15rem 0.5rem;
+    border-radius: 999px; text-transform: uppercase; letter-spacing: 0.05em;
+  }
+
+  .n5-card {
+    background: white; border: 1px solid #e2e8f0; border-radius: 14px;
+    padding: 1.5rem 1.25rem; margin: 1rem auto; max-width: 720px;
+    box-shadow: 0 2px 8px rgba(15,23,42,0.04);
+  }
+  .n5-card h2 { font-size: 1.25rem; font-weight: 700; margin: 0 0 1rem; color: #0f172a; }
+
+  .coverage-row { display: flex; align-items: center; gap: 0.75rem; margin: 0.6rem 0; font-size: 0.95rem; }
+  .coverage-row .label { width: 100px; color: #475569; font-weight: 500; }
+  .coverage-row .bar { flex: 1; height: 14px; background: #e2e8f0; border-radius: 999px; overflow: hidden; }
+  .coverage-row .fill { height: 100%; background: linear-gradient(90deg, #4f46e5, #7c3aed); transition: width 0.4s; }
+  .coverage-row .num { width: 110px; text-align: right; color: #0f172a; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .coverage-meta { color: #64748b; font-size: 0.85rem; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px dashed #e2e8f0; }
+
+  .feature-list { list-style: none; padding: 0; margin: 0; }
+  .feature-list li { padding: 0.4rem 0; padding-left: 1.6rem; position: relative; color: #1e293b; }
+  .feature-list li::before {
+    content: "✓"; position: absolute; left: 0; top: 0.4rem;
+    color: #16a34a; font-weight: 700;
+  }
+
+  .compare-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  .compare-table th, .compare-table td {
+    text-align: left; padding: 0.5rem 0.6rem; border-bottom: 1px solid #f1f5f9;
+  }
+  .compare-table th { color: #64748b; font-weight: 600; }
+  .compare-table tr.highlight { background: #f5f3ff; font-weight: 600; }
+
+  .faq-item { padding: 0.75rem 0; border-bottom: 1px solid #f1f5f9; }
+  .faq-item:last-child { border-bottom: none; }
+  .faq-item summary { cursor: pointer; font-weight: 600; color: #0f172a; }
+  .faq-item p { margin: 0.5rem 0 0; color: #475569; }
+
+  .terms-block {
+    background: #fef9c3; border: 1px solid #facc15; border-radius: 10px;
+    padding: 1rem; margin: 1rem 0;
+  }
+  .terms-block label { display: flex; gap: 0.6rem; cursor: pointer; align-items: flex-start; }
+  .terms-block input[type="checkbox"] { margin-top: 0.2rem; }
+  .terms-block a { color: #b45309; text-decoration: underline; }
+
+  .buy-cta { display: block; width: 100%; padding: 0.95rem 1.5rem; background: #4f46e5; color: white;
+            font-weight: 700; font-size: 1.05rem; border: none; border-radius: 12px;
+            cursor: pointer; transition: background 0.15s, transform 0.05s; }
+  .buy-cta:disabled { background: #cbd5e1; cursor: not-allowed; }
+  .buy-cta:not(:disabled):hover { background: #4338ca; }
+  .buy-cta:not(:disabled):active { transform: translateY(1px); }
+
+  .trust-row { color: #64748b; font-size: 0.85rem; text-align: center; margin-top: 0.75rem; }
+  .ehrlich { background: #f0fdf4; border-left: 4px solid #16a34a; padding: 1rem 1.1rem; border-radius: 0 10px 10px 0; }
+  .ehrlich strong { color: #166534; }
+
+  .owned-banner {
+    background: #ecfeff; border: 1px solid #06b6d4; border-radius: 12px;
+    padding: 1.25rem; text-align: center; margin: 1rem 0;
+  }
+  .owned-banner h2 { color: #0e7490; margin: 0 0 0.5rem; }
+
+  @media (max-width: 600px) {
+    .n5-hero h1 { font-size: 1.75rem; }
+    .coverage-row .label { width: 80px; }
+    .coverage-row .num { width: 90px; font-size: 0.85rem; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="n5-bundle-page">
+
+  {# ── Hero ── #}
+  <section class="n5-hero">
+    <h1>JLPT N5 Komplett</h1>
+    <p class="lead">
+      Lerne Japanisch bis JLPT-Niveau N5 — strukturiert nach offizieller Wortliste,
+      auf Deutsch, mit Lifetime-Zugriff und allen zukünftigen N5-Lektionen inklusive.
+    </p>
+    {% if not bundle_available %}
+      <div class="n5-card" style="background:#fef2f2; border-color:#fecaca;">
+        <p style="margin:0; color:#991b1b;">
+          Das Bundle wird gerade vorbereitet. Bitte später noch einmal vorbeischauen.
+        </p>
+      </div>
+    {% elif already_owned %}
+      <div class="n5-card owned-banner">
+        <h2>Du besitzt das Bundle bereits 🎉</h2>
+        <p style="margin:0 0 0.75rem; color:#0e7490;">Alle freigeschalteten N5-Lektionen warten auf dich.</p>
+        <a href="{{ url_for('routes.learn_path', level=5) }}" class="buy-cta" style="text-decoration:none; max-width:280px; margin: 0 auto;">
+          Zu den N5-Lektionen →
+        </a>
+      </div>
+    {% else %}
+      <div class="n5-price-pill">
+        {% if price_label == 'early_bird' %}
+          <span class="price-old">CHF {{ "%.2f"|format(regular_price) }}</span>
+        {% endif %}
+        <span>CHF {{ "%.2f"|format(price) }}</span>
+        <span class="price-label">{{ 'Early-Bird' if price_label == 'early_bird' else 'Regulär' }}</span>
+      </div>
+      <p style="color:#64748b; font-size:0.9rem; margin-top:0.5rem;">
+        Einmaliger Kauf · Kein Abo · Lifetime-Zugriff
+      </p>
+    {% endif %}
+  </section>
+
+  {% if bundle_available and not already_owned %}
+
+    {# ── Live-Coverage-Widget ── #}
+    <section class="n5-card">
+      <h2>Aktueller Stand der N5-Inhalte</h2>
+      <div class="coverage-row">
+        <span class="label">Vokabeln</span>
+        <div class="bar"><div class="fill" style="width: {{ coverage.vocab_pct }}%;"></div></div>
+        <span class="num">{{ coverage.vocab_covered }} / {{ coverage.vocab_total }} ({{ coverage.vocab_pct }} %)</span>
+      </div>
+      <div class="coverage-row">
+        <span class="label">Kanji</span>
+        <div class="bar"><div class="fill" style="width: {{ coverage.kanji_pct }}%;"></div></div>
+        <span class="num">{{ coverage.kanji_covered }} / {{ coverage.kanji_total }} ({{ coverage.kanji_pct }} %)</span>
+      </div>
+      <div class="coverage-meta">
+        <strong>{{ coverage.lessons_published_total }}</strong> Lektionen veröffentlicht
+        {% if coverage.lessons_published_recent_7d > 0 %}
+          · <strong>+{{ coverage.lessons_published_recent_7d }}</strong> in den letzten 7 Tagen
+        {% endif %}
+        · Du kaufst heute den vollen Weg bis 100 %.
+      </div>
+    </section>
+
+    {# ── Was drin ist ── #}
+    <section class="n5-card">
+      <h2>Was du bekommst</h2>
+      <ul class="feature-list">
+        <li>Hiragana und Katakana komplett (Schreibsystem)</li>
+        <li>{{ coverage.vocab_total }} N5-Vokabeln nach offizieller JLPT-Wortliste</li>
+        <li>{{ coverage.kanji_total }} N5-Kanji mit On-/Kun-Lesungen und Beispielsätzen</li>
+        <li>N5-Grammatik mit deutschen Erklärungen</li>
+        <li>SRS (Spaced Repetition) mit FSRS-Algorithmus</li>
+        <li>Audio von japanischer Native-Speaker-Stimme</li>
+        <li>Alle zukünftigen N5-Lektionen ohne Aufpreis</li>
+        <li>Lifetime-Zugriff — kein Abo, keine wiederkehrenden Kosten</li>
+      </ul>
+    </section>
+
+    {# ── Ehrlich-Sektion ── #}
+    <section class="n5-card">
+      <h2>Ehrlich gesagt</h2>
+      <div class="ehrlich">
+        <p style="margin:0 0 0.6rem;">
+          Aktuell sind <strong>{{ coverage.vocab_pct }} %</strong> der N5-Vokabeln und
+          <strong>{{ coverage.kanji_pct }} %</strong> der N5-Kanji im Bundle enthalten.
+          Geschätzte Fertigstellung: <strong>Q4 2026</strong>.
+        </p>
+        <p style="margin:0 0 0.6rem;">
+          Du kaufst Early-Access — günstiger als der reguläre Preis,
+          dafür wartest du auf den Rest. Sobald neue Lektionen live sind,
+          schaltet dein Account sie automatisch frei.
+        </p>
+        <p style="margin:0;">
+          <strong>Mein Versprechen:</strong> Sollte die Coverage länger als 6 Monate
+          ohne Fortschritt stagnieren, gibt es vollen Refund auf Anfrage.
+        </p>
+      </div>
+    </section>
+
+    {# ── Vergleichstabelle ── #}
+    <section class="n5-card">
+      <h2>Im Vergleich</h2>
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Anbieter</th>
+            <th>Modell</th>
+            <th>Kosten / Jahr</th>
+            <th>JLPT-N5-Fokus / DE</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Duolingo Super</td><td>Abo</td><td>~CHF 84</td><td>Nein / Teilweise DE</td></tr>
+          <tr><td>WaniKani</td><td>Abo</td><td>~CHF 108</td><td>Nur Kanji / Englisch</td></tr>
+          <tr><td>Bunpro</td><td>Abo</td><td>~CHF 60</td><td>Nur Grammatik / Englisch</td></tr>
+          <tr class="highlight"><td>JLPT N5 Komplett</td><td>Einmal</td><td>CHF {{ "%.2f"|format(price) }}</td><td>Ja / Deutsch</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    {# ── Über mich ── #}
+    <section class="n5-card">
+      <h2>Über das Projekt</h2>
+      <p style="margin:0; color:#475569;">
+        japanese-learning.ch ist ein Schweizer Solo-Projekt aus Rorschach. Kein
+        Venture-Capital, kein Subscription-Treadmill. Inhalte werden kontinuierlich
+        produziert, jede Lektion wird vor Veröffentlichung geprüft.
+      </p>
+    </section>
+
+    {# ── FAQ ── #}
+    <section class="n5-card">
+      <h2>Häufige Fragen</h2>
+      <details class="faq-item">
+        <summary>Was passiert, wenn N5 nicht 100 % erreicht wird?</summary>
+        <p>Sollte die Coverage länger als 6 Monate ohne Fortschritt stagnieren, gibt es vollen Refund auf Anfrage. Eine freiwillige Selbstverpflichtung — kein gesetzlicher Anspruch.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Bekomme ich auch N4?</summary>
+        <p>Nein, N4 wird ein separates Bundle. Wenn N5 ≥ 80 % erreicht ist, planen wir N4 als eigenes Early-Access-Bundle zu starten.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Welche Geräte werden unterstützt?</summary>
+        <p>Web, alle modernen Browser auf Desktop und Mobile. Keine App nötig.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Gibt es ein Abo?</summary>
+        <p>Nein. Einmaliger Kauf, lifetime Zugriff. Keine wiederkehrenden Kosten.</p>
+      </details>
+    </section>
+
+    {# ── Kauf-Sektion ── #}
+    {% if current_user.is_authenticated %}
+    <section class="n5-card" id="kaufBlock">
+      <h2>Bestellen</h2>
+
+      <div class="terms-block">
+        <label>
+          <input type="checkbox" id="acceptedTerms" />
+          <span>
+            Ich habe die <a href="{{ url_for('legal.agb') }}" target="_blank">AGB</a>
+            und die <a href="{{ url_for('legal.widerruf') }}" target="_blank">Widerrufsbelehrung</a>
+            gelesen und verzichte ausdrücklich auf mein Widerrufsrecht für sofort
+            bereitgestellte digitale Inhalte.
+          </span>
+        </label>
+      </div>
+
+      <button id="buyBtn" class="buy-cta" disabled>
+        Jetzt für CHF {{ "%.2f"|format(price) }} freischalten
+      </button>
+
+      <div id="buyError" style="color:#b91c1c; margin-top:0.6rem; display:none; text-align:center; font-size:0.9rem;"></div>
+
+      <div class="trust-row">
+        Schweizer Anbieter · Bezahlung mit TWINT, Visa, Mastercard, Apple/Google Pay über Payrexx
+      </div>
+    </section>
+    {% else %}
+    <section class="n5-card" style="text-align:center;">
+      <p style="margin:0 0 1rem; color:#475569;">
+        Du musst angemeldet sein, um das Bundle zu kaufen. Die Registrierung ist kostenlos.
+      </p>
+      <a href="{{ url_for('routes.register', next=request.path) }}" class="buy-cta" style="text-decoration:none; max-width:300px; margin: 0 auto 0.6rem; display:block;">
+        Kostenlos registrieren
+      </a>
+      <a href="{{ url_for('routes.login', next=request.path) }}" style="color:#4f46e5; font-size:0.9rem;">
+        oder anmelden, falls du schon ein Konto hast
+      </a>
+    </section>
+    {% endif %}
+
+  {% endif %}
+
+</div>
+
+{% if current_user.is_authenticated and bundle_available and not already_owned %}
+<script>
+  (function() {
+    const checkbox = document.getElementById('acceptedTerms');
+    const btn = document.getElementById('buyBtn');
+    const errBox = document.getElementById('buyError');
+
+    checkbox.addEventListener('change', () => {
+      btn.disabled = !checkbox.checked;
+    });
+
+    btn.addEventListener('click', async () => {
+      errBox.style.display = 'none';
+      btn.disabled = true;
+      btn.textContent = 'Wird vorbereitet ...';
+      try {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+        const resp = await fetch('/api/bundles/n5/purchase', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+          },
+          body: JSON.stringify({ accepted_terms: true }),
+        });
+        const data = await resp.json();
+        if (resp.ok && data.payment_url) {
+          window.location.href = data.payment_url;
+          return;
+        }
+        throw new Error(data.error || 'Unbekannter Fehler');
+      } catch (e) {
+        errBox.textContent = 'Fehler: ' + e.message;
+        errBox.style.display = 'block';
+        btn.disabled = !checkbox.checked;
+        btn.textContent = 'Erneut versuchen';
+      }
+    });
+  })();
+</script>
+{% endif %}
+{% endblock %}
