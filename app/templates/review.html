@@ -458,10 +458,11 @@
         const d = card.details || {};
         const isGerman = card.instruction_language === 'german';
 
-        // Romaji/Reading unter dem Haupttext auf der Vorderseite
+        // Hilfslesung unter dem Front-Text. Bei Kana (Hiragana/Katakana) NIE,
+        // sonst waere die Romanization der Antwort = Spoiler. Bei Vokabel/Grammatik
+        // bleibt reading bzw. romaji als Lesehilfe sichtbar.
         let subText = '';
-        if (card.content_type === 'kana' && d.romanization) subText = d.romanization;
-        else if (card.content_type === 'vocabulary' && d.reading) subText = d.reading;
+        if (card.content_type === 'vocabulary' && d.reading) subText = d.reading;
         else if (card.content_type === 'grammar' && d.romaji) subText = d.romaji;
 
         // Bild fuer die Rueckseite
