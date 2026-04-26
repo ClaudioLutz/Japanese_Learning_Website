@@ -92,6 +92,36 @@ PGPASSWORD="$DB_PASS" psql -h 34.65.56.56 -U app_user -d japanese_learning -t -A
 ```
 Falls unterschiedlich: Schema-Aenderungen auf Cloud SQL manuell anwenden.
 
+### 4b. Falle: lokale neue Lessons → Cloud→Lokal-Pull bricht (seit 2026-04-26)
+
+**Bekanntes Problem:** Wenn lokal Lessons erstellt wurden, deren ID **groesser**
+als die hoechste Cloud-Lesson-ID ist (typisch nach `/generate-lesson` Sessions),
+scheitert der `sync_from_cloud.py`-Pull mit:
+
+```
+FEHLER: update or delete on table "lesson" violates foreign key constraint
+"lesson_page_lesson_id_fkey" on table "lesson_page"
+DETAIL:  Key (id)=(156) is still referenced from table "lesson_page".
+```
+
+Ursache: `sync_from_cloud.py` betrachtet Cloud als Source-of-Truth und versucht,
+lokale Rows zu loeschen, die Cloud nicht hat — auch wenn das die soeben generierten
+Lessons sind.
+
+**Workaround:** Cloud→Lokal-Pull ueberspringen, direkt mit `--skip-drift-check`
+auf Push gehen. Nur OK, wenn kein Admin-Edit auf der Live-Seite zwischenzeitlich
+erfolgte. Wenn Cloud zuvor was geaendert wurde, gehen die Aenderungen verloren.
+
+```bash
+# Skip Schritt 5 (Cloud→Lokal-Pull) komplett.
+# Direkt:
+PYTHONIOENCODING=utf-8 PYTHONPATH=. python scripts/sync_content_upsert.py \
+  --cloud-host 34.65.56.56 --cloud-password "$DB_PASS" --skip-drift-check
+```
+
+TODO: scripts/sync_from_cloud.py Refactoring — beim Loesch-Schritt lokale Rows
+mit ID > Cloud-max-ID per Default behalten, optional via `--delete-newer-local`.
+
 ### 5. SCHRITT A: Cloud → Lokal (ZUERST!)
 
 ```bash
@@ -146,6 +176,16 @@ PYTHONIOENCODING=utf-8 PYTHONPATH=. python scripts/sync_assets_to_gcs.py
 Idempotent: rsync laedt nur neue/geaenderte Dateien hoch. Bei einer
 einzelnen neuen Lektion typisch ~30 Dateien (Thumb + Vokabel-Bilder +
 Conversation-MP3 + Slideshow-PNG/MP3 + Text-Audio-MP3s), ~5-15 MB.
+
+**Wichtig: ADC-Falle vermeiden.** Das Skript nutzt `gcloud storage rsync`
+mit `--account=`-Flag, NICHT die Python-`google.cloud.storage`-API.
+Grund: Application Default Credentials (ADC) sind oft mit einem alten
+Account registriert (z.B. `claudio.lutz86@gmail.com` statt
+`claudio.lutz.cv@gmail.com`) und werfen 403 `storage.objects.create
+denied`. Das `--account=`-Flag im rsync-Pfad nutzt die `gcloud config`
+direkt, ohne ADC-Verflechtung. Wenn doch Python-SDK genutzt werden soll:
+zuerst `gcloud auth application-default login` mit dem richtigen Account
+und `--billing-project=healthy-coil-466105-d7`.
 
 ### 7. ALWAYS close access
 

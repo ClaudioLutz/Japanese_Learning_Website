@@ -184,6 +184,8 @@ Verletzung ⇒ sofortiger Abbruch, keine Insertion:
 - **Bilder sind PFLICHT** — `thumbnail_url` muss vor Insert gesetzt sein. Pipeline-Schritt `images` (DALL-E) läuft vor `insert`, NICHT optional. Zusätzlich: **jede Vokabel** muss `image_url` haben (MNN-DE-Standard, siehe §4-Budget).
 - **`Vocabulary.image_url` muss relativ zu `UPLOAD_FOLDER` sein** (= `app/static/uploads/`), NICHT absolut. Das Template [lesson_view.html:859](../../app/templates/lesson_view.html#L859) ruft `url_for('routes.uploaded_file', filename=content_data.image_url)` auf — die Route [routes.py:3973 `/uploads/<path:filename>`](../../app/routes.py#L3973) dient aus `UPLOAD_FOLDER`. Richtige Werte: `vocab_generated/vocab_abc.png`, `vocabulary/images/vocab_124.png`. **Falsch**: `/static/uploads/vocab_generated/…`, `http://…`, `static/uploads/…`.
 - **Audio für die Konversation ist PFLICHT** — jede Dialog-Page bekommt ein eigenes `LessonContent(content_type='audio')` **vor** dem Dialog-Text (`order_index=1`, Text auf `order_index=2`). Der Pipeline-Schritt `audio {lesson_id}` rendert via Google Cloud TTS (Neural2-B, langsam=0.85) eine einzige MP3 mit allen japanischen Sprecher-Zeilen, 700ms-Pausen dazwischen. Speicherort: `app/static/uploads/lessons/audio/lesson_{id}/conversation.mp3`. Felder im LessonContent: `file_path="lessons/audio/lesson_{id}/conversation.mp3"` (relativ zu `UPLOAD_FOLDER`!), `file_type="audio/mpeg"`, `title="Konversation (Audio)"`. Das Template ([lesson_view.html:674](../../app/templates/lesson_view.html#L674)) nutzt `content.get_file_url()` — der GCS-aware Resolver im Model [models.py:463](../../app/models.py#L463). Benötigt `GOOGLE_API_KEY` oder `GOOGLE_TTS_API_KEY` in `.env`.
+- **JSON-Quoten-Disziplin im Draft** (Bug 2026-04-26 Lesson 160): NIE deutsche Anführungszeichen `„X"` in Draft-JSON-Strings verwenden. Das Schliesszeichen `"` ist ASCII-`"` und bricht den JSON-Parse mit `Expecting ',' delimiter`. Erlaubte Quoten innerhalb eines JSON-Strings: einfache `'...'`, spitze `«...»`, oder Kana-Eckklammern `「...」` (preferred fuer JP-Zitate). Beispiel-Fix: `"Tanaka sagt: „Yamada"."` → `"Tanaka sagt: 'Yamada'."` oder `"Tanaka sagt: 「Yamada」."`. Validator-Aufruf bricht mit Stack-Trace ab — Zeilennummer im JSONDecodeError nutzen, um die problematische Stelle zu finden.
+- **Asset-Pfade NIE mit `/static/uploads/` praefixen** (Bug 2026-04-26): `media_url`, `file_path` und `slide.image`/`slide.audio` in dialog_slideshow-JSON immer mit Prefix `/uploads/` (= uploaded_file-Route) oder ganz ohne Prefix (relativer Pfad, Template loest via `get_file_url()`). `/static/uploads/` funktioniert lokal aber bricht live, weil Cloud Run den Container ohne die generierten Assets ausliefert — kein 302-Fallback wie bei `/uploads/`. Skripte `gen_text_audio.py`, `gen_conversation_audio.py`, `gen_dialog_slideshow.py` sind 2026-04-26 fix; bei neuen Skripten beachten.
 
 ## 4. Lektions-Struktur (Zielbild) — erweitert 2026-04-24
 
@@ -682,4 +684,69 @@ mit den aktuellsten Templates/CSS/JS rendert. Wenn das Skill UI-Updates
 in den Lessons nutzt (z.B. Markdown-Rendering, text-audio-Player,
 neue Templates), MUSS auch deployed werden.
 
+**Lesson Learned 2026-04-26 (Multi-Step-Build-Falle)**: Bei Bug-Fix-Sessions
+mit mehreren Edits zuerst ALLE Code-Aenderungen abschliessen (`git status`
+clean), DANN ein einziger Build. Wenn ein Build waehrend laufender Edits
+gestartet wird, packt er den Code-Stand zum Build-Start in's Image —
+nicht den finalen Stand nach allen Edits. Resultat: Re-Build noetig
+(~10 min Verlust). Auch fuer Multi-Lesson-Drops gilt: alle Lessons fertig,
+DB-Sync, Asset-Sync, GCS pruefen, DANN Build + Deploy.
+
 **Nicht im Skill automatisiert** — Push auf Production bleibt explizite User-Aktion, damit kein Lerner eine halb-fertige Lektion sieht und Mayuko bei Bedarf vor dem Live-Gang ein Fachreview machen kann.
+
+## 12. Aufraeumen / Lesson-Sichtbarkeit (seit 2026-04-26)
+
+**Lessons werden NIE physisch geloescht**, sondern via `is_published=false`
+versteckt. Drei Gruende:
+
+1. **User-Fortschritt**: `user_lesson_progress`, `user_quiz_answer`, `card_review_state`
+   und `review_log` zeigen auf `lesson_id` / `quiz_question_id`. Loeschen wuerde
+   diese Daten ungueltig machen oder per CASCADE mit-loeschen.
+2. **Kaeufe**: `lesson_purchase` und `course_purchase` haben FK-RESTRICT (Migration
+   `d8e2c1a4f6b3`). DELETE auf einer gekauften Lesson wirft DB-Constraint-Fehler —
+   was der Schutz ist, aber zeigt: Loeschen ist sowieso nicht moeglich.
+3. **Reversibilitaet**: Wenn der Lerner spaeter wieder Zugang braucht (z.B. Refund-
+   Anfrage, Re-Approval einer Lesson nach Mayuko-Review), reicht ein einzelnes
+   `UPDATE lesson SET is_published=true WHERE id=X`.
+
+### Aufraeum-Sequenz (lokal + Cloud SYNCHRON)
+
+Aufraeum-Aktionen IMMER in der **gleichen Transaktion** auf lokaler UND Cloud-DB
+ausfuehren, sonst Drift beim naechsten Sync (UPSERT bringt Cloud-Stand wieder
+zurueck).
+
+```bash
+# Lokal
+PGPASSWORD="JapaneseApp2025!" psql -h localhost -U app_user -d japanese_learning << 'SQL'
+BEGIN;
+UPDATE lesson SET is_published=false WHERE <Bedingung>;
+UPDATE lesson SET title = '<neuer Titel>' WHERE id=X;
+COMMIT;
+SQL
+
+# Cloud (gleiche IP autorisieren wie sync-cloud-db)
+gcloud sql instances patch jpl-psql --authorized-networks=$(curl -s ifconfig.me)/32 ...
+DB_PASS=$(gcloud secrets versions access latest --secret=db-password ...)
+PGPASSWORD="$DB_PASS" psql -h 34.65.56.56 -U app_user -d japanese_learning << 'SQL'
+BEGIN;
+UPDATE lesson SET is_published=false WHERE <Bedingung>;
+UPDATE lesson SET title = '<neuer Titel>' WHERE id=X;
+COMMIT;
+SQL
+gcloud sql instances patch jpl-psql --clear-authorized-networks ...
+```
+
+### Was waehlen: verstecken vs. umbenennen
+
+- **Verstecken** (`is_published=false`): Lessons, deren Inhalt nicht mehr zum
+  aktuellen Skill-Standard passt (z.B. MNN-Imports von 2026-04-24 — andere
+  didaktische Linie, alte Charaktere, fehlende Markdown-Hierarchie).
+- **Umbenennen** (`title='N5 ' || title`): Lessons, deren Inhalt OK ist, aber
+  Titel-Format zur Linie passen muss. Beispiel 2026-04-26: Hiragana 1-5 +
+  Katakana 1-5 mit `N5 `-Praefix versehen — Inhalt blieb unveraendert.
+
+### Live-Verifikation
+
+Nach Aufraeum-Sequenz: Browser auf https://japanese-learning.ch/lessons. Versteckte
+Lessons antworten auf `/lessons/<id>` mit "nicht verfuegbar". Lessons-Uebersicht
+zeigt nur sichtbare Module/Lessons.
