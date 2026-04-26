@@ -52,7 +52,27 @@ gcloud run revisions list --service=japanese-learning-app \
   --account=claudio.lutz.cv@gmail.com --limit=1 --format="value(name,status.conditions[0].status)" 2>/dev/null
 ```
 
-### 5. Summary Table
+### 5. SEO Health (leichtgewichtig)
+
+Pruefe nur, dass die SEO-Basis erreichbar ist und der Live-Title aktuell ist —
+Search-Console-Daten brauchen Browser-Login und sind hier nicht skriptbar.
+
+```bash
+# robots.txt + sitemap.xml erreichbar?
+curl -s -o /dev/null -w "robots:%{http_code}\n" https://japanese-learning.ch/robots.txt
+curl -s -o /dev/null -w "sitemap:%{http_code}\n" https://japanese-learning.ch/sitemap.xml
+
+# Wie viele URLs in der Sitemap?
+curl -s https://japanese-learning.ch/sitemap.xml | grep -c '<url>'
+
+# Live-Title — Sanity-Check ob Deploy durchgekommen ist
+curl -s https://japanese-learning.ch/ | grep -oE '<title>[^<]+</title>'
+```
+
+Erwartung: HTTP 200 fuer beide, ~30-50 URLs in Sitemap, Title enthaelt "Japanisch lernen".
+Falls "Prototype" im Title erscheint → veralteter Build live, sofort `/deploy` triggern.
+
+### 6. Summary Table
 
 Present results as a compact table:
 
@@ -61,4 +81,5 @@ Present results as a compact table:
 | Git | branch, clean/dirty, pushed/unpushed |
 | Lokal | running/stopped, DB counts |
 | Production | HTTP status, aktive Revision |
+| SEO | robots.txt/sitemap.xml status, Sitemap-URL-Anzahl, Live-Title kurz |
 | Letzter Commit | message + hash |
