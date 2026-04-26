@@ -317,7 +317,11 @@ class Lesson(db.Model):
                 return True, "Accessible as guest"
             else:
                 return False, "Login required to access this lesson"
-        
+
+        # Admin-Bypass: Admins sehen alle Lessons (Dogfood + Content-Verwaltung)
+        if getattr(user, 'is_admin', False):
+            return True, "Admin"
+
         # For authenticated users, check pricing first
         if self.price == 0.0:
             # Free lesson - check prerequisites only

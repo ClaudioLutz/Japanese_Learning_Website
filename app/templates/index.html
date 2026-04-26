@@ -57,6 +57,9 @@
             Pfad ansehen
           </a>
         </div>
+        <a href="{{ url_for('bundle.n5_bundle') }}" class="hero-secondary-link" style="margin-top:1rem; display:inline-block;">
+          ⚡ Oder gleich N5 Komplett für CHF 9.90 ansehen →
+        </a>
         <div class="hero-meta">
           <span>📚 {{ german_lessons }} Lektionen auf Deutsch</span>
           <span>🆓 {{ german_guest_lessons }} Gratis-Einstieg ohne Login</span>
@@ -86,6 +89,18 @@
       <div class="alert alert-info">
         N5-Module sind noch nicht konfiguriert. <a href="{{ url_for('routes.lessons') }}">Alle Lektionen ansehen →</a>
       </div>
+    {% endif %}
+
+    {% if show_bundle_hint %}
+    <div class="bundle-hint" role="region" aria-label="N5 Komplett — Bundle-Hinweis">
+      <div class="bundle-hint-icon">⚡</div>
+      <div class="bundle-hint-text">
+        <strong>Tipp:</strong> Mit <a href="{{ url_for('bundle.n5_bundle') }}">N5 Komplett</a>
+        schaltest du alle Lektionen ab Tag 1 frei — einmalig <strong>CHF 9.90</strong>,
+        lifetime Zugriff, 30 Tage Geld zurück.
+      </div>
+      <a href="{{ url_for('bundle.n5_bundle') }}" class="bundle-hint-cta">Anschauen →</a>
+    </div>
     {% endif %}
 
     {% for group in n5_groups %}
@@ -299,6 +314,35 @@
    ──────────────────────────────────────── */
 .lernpfad-section { margin-bottom: 2.5rem; }
 .lernpfad-header { text-align: center; margin-bottom: 1.5rem; }
+
+/* Bundle-Hinweis als zentraler Banner zwischen Header und Pfad */
+.bundle-hint {
+    display: flex; align-items: center; gap: 1rem;
+    background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+    border: 1px solid #c4b5fd;
+    border-radius: 14px;
+    padding: 1rem 1.25rem;
+    margin: 0 auto 1.5rem;
+    max-width: 760px;
+    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.08);
+}
+.bundle-hint-icon { font-size: 1.5rem; flex-shrink: 0; }
+.bundle-hint-text { flex: 1; color: #4c1d95; font-size: 0.95rem; line-height: 1.4; }
+.bundle-hint-text a { color: #4f46e5; font-weight: 700; text-decoration: none; }
+.bundle-hint-text a:hover { text-decoration: underline; }
+.bundle-hint-cta {
+    background: #4f46e5; color: white;
+    padding: 0.55rem 1rem; border-radius: 8px;
+    font-weight: 700; font-size: 0.9rem; white-space: nowrap;
+    text-decoration: none; flex-shrink: 0;
+    transition: background 0.15s;
+}
+.bundle-hint-cta:hover { background: #4338ca; color: white; text-decoration: none; }
+@media (max-width: 600px) {
+    .bundle-hint { flex-direction: column; text-align: center; gap: 0.75rem; }
+    .bundle-hint-cta { align-self: stretch; text-align: center; }
+}
+
 .lernpfad-title {
     font-size: clamp(1.25rem, 3vw, 1.75rem);
     font-weight: 700;

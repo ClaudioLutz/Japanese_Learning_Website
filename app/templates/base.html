@@ -120,6 +120,11 @@
             <i class="fas fa-th-list"></i><span>Stöbern</span>
           </a>
           {% endif %}
+          <a href="{{ url_for('bundle.n5_bundle') }}"
+             class="topnav-link topnav-link-cta {% if request.endpoint == 'bundle.n5_bundle' %}is-active{% endif %}">
+            <i class="fas fa-bolt"></i><span>N5 Komplett</span>
+            <span class="topnav-cta-badge">CHF 9.90</span>
+          </a>
         </div>
 
         {# Right Group — Stats + User #}
@@ -259,6 +264,25 @@
         color: #0d6efd;
     }
     .topnav-link.is-active i { opacity: 1; }
+    .topnav-link-cta {
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        color: white;
+        margin-left: 0.4rem;
+    }
+    .topnav-link-cta:hover { background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%); color: white; }
+    .topnav-link-cta i { color: white; opacity: 1; }
+    .topnav-link-cta.is-active {
+        background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
+        color: white;
+        box-shadow: 0 0 0 2px rgba(79,70,229,0.3);
+    }
+    .topnav-cta-badge {
+        background: rgba(255, 255, 255, 0.22);
+        color: white;
+        font-size: 0.72rem; font-weight: 700;
+        padding: 0.1rem 0.45rem; border-radius: 999px;
+        margin-left: 0.3rem;
+    }
     .topnav-badge-dot {
         position: absolute; top: 6px; right: 6px;
         width: 7px; height: 7px;

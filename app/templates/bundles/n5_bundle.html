@@ -73,8 +73,20 @@
   .buy-cta:not(:disabled):active { transform: translateY(1px); }
 
   .trust-row { color: #64748b; font-size: 0.85rem; text-align: center; margin-top: 0.75rem; }
-  .ehrlich { background: #f0fdf4; border-left: 4px solid #16a34a; padding: 1rem 1.1rem; border-radius: 0 10px 10px 0; }
-  .ehrlich strong { color: #166534; }
+  .refund-line {
+    text-align: center; margin-top: 0.8rem; padding: 0.75rem 1rem;
+    background: #f0fdf4; border: 1px solid #86efac; border-radius: 10px;
+    color: #166534; font-size: 0.95rem;
+  }
+  .refund-line a { color: #166534; text-decoration: underline; }
+  .ehrlich { background: #f5f3ff; border-left: 4px solid #7c3aed; padding: 1rem 1.1rem; border-radius: 0 10px 10px 0; }
+  .ehrlich strong { color: #5b21b6; }
+  .early-access-pill {
+    display: inline-block; background: #fef3c7; color: #92400e;
+    padding: 0.25rem 0.75rem; border-radius: 999px;
+    font-size: 0.8rem; font-weight: 700; letter-spacing: 0.04em;
+    margin-bottom: 1rem; text-transform: uppercase;
+  }
 
   .owned-banner {
     background: #ecfeff; border: 1px solid #06b6d4; border-radius: 12px;
@@ -95,6 +107,9 @@
 
   {# ── Hero ── #}
   <section class="n5-hero">
+    {% if bundle_available and not already_owned %}
+      <div class="early-access-pill">⚡ Early Access</div>
+    {% endif %}
     <h1>JLPT N5 Komplett</h1>
     <p class="lead">
       Lerne Japanisch bis JLPT-Niveau N5 — strukturiert nach offizieller Wortliste,
@@ -167,23 +182,24 @@
       </ul>
     </section>
 
-    {# ── Ehrlich-Sektion ── #}
+    {# ── Early-Access-Sektion ── #}
     <section class="n5-card">
-      <h2>Ehrlich gesagt</h2>
+      <h2>So funktioniert Early Access</h2>
       <div class="ehrlich">
         <p style="margin:0 0 0.6rem;">
-          Aktuell sind <strong>{{ coverage.vocab_pct }} %</strong> der N5-Vokabeln und
-          <strong>{{ coverage.kanji_pct }} %</strong> der N5-Kanji im Bundle enthalten.
-          Geschätzte Fertigstellung: <strong>Q4 2026</strong>.
+          Du sicherst dir das Bundle früh, zum Early-Access-Preis CHF {{ "%.2f"|format(early_bird_price) }}
+          statt regulärer CHF {{ "%.2f"|format(regular_price) }}. Aktuell sind
+          <strong>{{ coverage.vocab_pct }} %</strong> der N5-Vokabeln und
+          <strong>{{ coverage.kanji_pct }} %</strong> der N5-Kanji bereits live.
+          Neue Lektionen kommen wöchentlich — geplante Fertigstellung <strong>Q4 2026</strong>.
         </p>
         <p style="margin:0 0 0.6rem;">
-          Du kaufst Early-Access — günstiger als der reguläre Preis,
-          dafür wartest du auf den Rest. Sobald neue Lektionen live sind,
-          schaltet dein Account sie automatisch frei.
+          Sobald neue N5-Lektionen veröffentlicht werden, schaltet dein Account sie
+          automatisch frei. Du musst nichts tun.
         </p>
         <p style="margin:0;">
-          <strong>Mein Versprechen:</strong> Sollte die Coverage länger als 6 Monate
-          ohne Fortschritt stagnieren, gibt es vollen Refund auf Anfrage.
+          <strong>Stagnations-Garantie:</strong> Sollte die Coverage länger als 6 Monate
+          ohne Fortschritt stillstehen, voller Refund auf Anfrage.
         </p>
       </div>
     </section>
@@ -260,6 +276,11 @@
       <button id="buyBtn" class="buy-cta" disabled>
         Jetzt für CHF {{ "%.2f"|format(price) }} freischalten
       </button>
+
+      <div class="refund-line">
+        <strong>30 Tage Geld zurück</strong> — ohne Begründung, eine E-Mail an
+        <a href="mailto:info@japanese-learning.ch">info@japanese-learning.ch</a> genügt.
+      </div>
 
       <div id="buyError" style="color:#b91c1c; margin-top:0.6rem; display:none; text-align:center; font-size:0.9rem;"></div>
 

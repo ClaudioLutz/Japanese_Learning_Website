@@ -211,6 +211,22 @@ def index():
          "modules": [e for e in n5_modules if e["module"].slug in GRAMMATIK_SLUGS]},
     ]
 
+    # Bundle-Hinweis nur fuer User die das Bundle NICHT haben (Admins zaehlen als 'haben').
+    show_bundle_hint = True
+    if current_user.is_authenticated:
+        if getattr(current_user, "is_admin", False):
+            show_bundle_hint = False
+        else:
+            from app.services.bundle_service import get_n5_bundle_course
+            bundle = get_n5_bundle_course()
+            if bundle:
+                from app.models import CoursePurchase
+                already = CoursePurchase.query.filter_by(
+                    user_id=current_user.id, course_id=bundle.id
+                ).first()
+                if already:
+                    show_bundle_hint = False
+
     return render_template('index.html',
                          total_lessons=total_lessons,
                          total_courses=total_courses,
@@ -223,6 +239,7 @@ def index():
                          n5_modules=n5_modules,
                          n5_groups=n5_groups,
                          next_module_id=next_module_id,
+                         show_bundle_hint=show_bundle_hint,
                          visible_languages=visible_langs)
 
 @bp.route('/register', methods=['GET', 'POST'])

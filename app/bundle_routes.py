@@ -39,13 +39,18 @@ def n5_bundle():
 
     bundle_course = get_n5_bundle_course()
     already_owned = False
+    is_admin_user = bool(getattr(current_user, "is_admin", False)) if current_user.is_authenticated else False
     if bundle_course and current_user.is_authenticated:
-        already_owned = (
-            db.session.query(CoursePurchase)
-            .filter_by(user_id=current_user.id, course_id=bundle_course.id)
-            .first()
-            is not None
-        )
+        if is_admin_user:
+            # Admins haben implizit Zugriff auf alle Lessons (Dogfood)
+            already_owned = True
+        else:
+            already_owned = (
+                db.session.query(CoursePurchase)
+                .filter_by(user_id=current_user.id, course_id=bundle_course.id)
+                .first()
+                is not None
+            )
 
     return render_template(
         "bundles/n5_bundle.html",
