@@ -455,8 +455,58 @@ def admin_manage_approval():
 # --- Lesson Routes for Users ---
 @bp.route('/lessons')
 def lessons():
-    """Browse available lessons"""
-    return render_template('lessons.html')
+    """Browse available lessons.
+
+    SEO: Server-Rendering einer Kategorien-Uebersicht + Liste der neuesten
+    Lektionen, damit Googlebot indexierbaren Content sieht. Die dynamische
+    JS-UI darunter bleibt unveraendert.
+    """
+    visible_langs = current_app.config.get('CONTENT_LANGUAGES', ['german'])
+
+    # Kategorien mit Lektions-Anzahl (nur publishte, nur sichtbare Sprachen)
+    all_categories = (
+        LessonCategory.query
+        .order_by(
+            LessonCategory.jlpt_level.desc().nullslast(),
+            LessonCategory.display_order.asc(),
+            LessonCategory.id.asc(),
+        )
+        .all()
+    )
+    seo_categories = []
+    for cat in all_categories:
+        count = sum(
+            1 for l in cat.lessons
+            if l.is_published and l.instruction_language in visible_langs
+        )
+        if count == 0:
+            continue
+        seo_categories.append({
+            'id': cat.id,
+            'name': cat.name,
+            'description': cat.description,
+            'icon_emoji': cat.icon_emoji,
+            'jlpt_level': cat.jlpt_level,
+            'lesson_count': count,
+        })
+
+    # Neueste 20 publishte Lektionen (sichtbare Sprachen)
+    seo_recent_lessons = (
+        Lesson.query
+        .filter(
+            Lesson.is_published == True,  # noqa: E712
+            Lesson.instruction_language.in_(visible_langs),
+        )
+        .order_by(Lesson.created_at.desc(), Lesson.id.desc())
+        .limit(20)
+        .all()
+    )
+
+    return render_template(
+        'lessons.html',
+        seo_categories=seo_categories,
+        seo_recent_lessons=seo_recent_lessons,
+    )
 
 
 @bp.route('/learn')

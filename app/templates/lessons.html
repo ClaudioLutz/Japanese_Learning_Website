@@ -16,8 +16,99 @@
 <div class="container mt-4">
     <div class="row">
         <div class="col-12">
-            <h1 class="page-title mb-4">Japanese Learning Lessons</h1>
-            
+            <h1 class="page-title mb-4">Japanisch lernen — Alle Lektionen</h1>
+
+            {# ════════════════════════════════════════════════════════
+               SEO-Overview — server-rendered (Googlebot-tauglich)
+               Kategorien mit Lektions-Anzahl + Liste der neuesten Lektionen.
+               Wird vor der dynamischen JS-UI gerendert; bietet Usern auch
+               ohne JavaScript sofort sichtbaren Content.
+               ════════════════════════════════════════════════════════ #}
+            {% if seo_categories or seo_recent_lessons %}
+            <section class="seo-overview mb-5" aria-label="Lektionen-Uebersicht">
+              {% if seo_categories %}
+              <h2 class="h4 mb-3">Kategorien</h2>
+              <ul class="seo-category-grid list-unstyled">
+                {% for cat in seo_categories %}
+                <li class="seo-category-item">
+                  <a href="{{ url_for('routes.lessons') }}?category={{ cat.id }}"
+                     class="seo-category-link">
+                    {% if cat.icon_emoji %}<span class="seo-category-icon" aria-hidden="true">{{ cat.icon_emoji }}</span>{% endif %}
+                    <span class="seo-category-body">
+                      <span class="seo-category-name">{{ cat.name }}</span>
+                      {% if cat.description %}
+                      <small class="seo-category-desc text-muted">{{ cat.description }}</small>
+                      {% endif %}
+                      <small class="seo-category-count">{{ cat.lesson_count }} Lektion{% if cat.lesson_count != 1 %}en{% endif %}</small>
+                    </span>
+                  </a>
+                </li>
+                {% endfor %}
+              </ul>
+              {% endif %}
+
+              {% if seo_recent_lessons %}
+              <h2 class="h4 mt-4 mb-3">Neueste Lektionen</h2>
+              <ul class="seo-recent-lessons list-unstyled">
+                {% for lesson in seo_recent_lessons %}
+                <li>
+                  <a href="{{ url_for('routes.view_lesson', lesson_id=lesson.id) }}">
+                    {{ lesson.title }}
+                    {% if lesson.category and lesson.category.name %}
+                    <small class="text-muted">— {{ lesson.category.name }}</small>
+                    {% endif %}
+                  </a>
+                </li>
+                {% endfor %}
+              </ul>
+              {% endif %}
+
+              <style>
+                .seo-overview {
+                  background: rgba(255,255,255,0.92);
+                  border-radius: 12px;
+                  padding: 1.25rem 1.5rem;
+                  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+                }
+                .seo-category-grid {
+                  display: grid;
+                  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+                  gap: 0.6rem;
+                  margin: 0;
+                }
+                .seo-category-link {
+                  display: flex;
+                  align-items: center;
+                  gap: 0.6rem;
+                  padding: 0.6rem 0.8rem;
+                  background: #f8f9fa;
+                  border-radius: 8px;
+                  text-decoration: none;
+                  color: #2c3e50;
+                  transition: background 0.15s, transform 0.15s;
+                }
+                .seo-category-link:hover {
+                  background: #e9ecef;
+                  transform: translateY(-1px);
+                  text-decoration: none;
+                  color: #2c3e50;
+                }
+                .seo-category-icon { font-size: 1.4rem; line-height: 1; }
+                .seo-category-body { display: flex; flex-direction: column; line-height: 1.25; }
+                .seo-category-name { font-weight: 600; font-size: 0.95rem; }
+                .seo-category-desc { font-size: 0.78rem; }
+                .seo-category-count { font-size: 0.75rem; color: #6c757d; margin-top: 0.15rem; }
+                .seo-recent-lessons { columns: 2; column-gap: 1.5rem; }
+                .seo-recent-lessons li { break-inside: avoid; padding: 0.2rem 0; }
+                .seo-recent-lessons a { color: #495057; text-decoration: none; font-size: 0.92rem; }
+                .seo-recent-lessons a:hover { color: #0d6efd; text-decoration: underline; }
+                @media (max-width: 575px) {
+                  .seo-recent-lessons { columns: 1; }
+                }
+              </style>
+            </section>
+            {% endif %}
+
             <!-- Category Pills (Mobile: horizontal scrollbar, Desktop: hidden — Grid stattdessen) -->
             <div class="category-pills-wrapper d-md-none mb-3" id="categoryPillsWrapper" style="display:none !important;">
                 <div class="category-pills" id="categoryPills">
