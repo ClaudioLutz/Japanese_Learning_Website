@@ -461,9 +461,33 @@
         // Hilfslesung unter dem Front-Text. Bei Kana (Hiragana/Katakana) NIE,
         // sonst waere die Romanization der Antwort = Spoiler. Bei Vokabel/Grammatik
         // bleibt reading bzw. romaji als Lesehilfe sichtbar.
+        // Spezialfall Vocabulary: bei Kana-only Word (word === reading) bringt
+        // das reading nichts (doppelt) — dann zeig Romaji als Lesehilfe.
         let subText = '';
-        if (card.content_type === 'vocabulary' && d.reading) subText = d.reading;
-        else if (card.content_type === 'grammar' && d.romaji) subText = d.romaji;
+        let kanaHint = '';  // Bei Kana-Karten: Romaji erst nach 'Hinweis'-Klick (kein Spoiler)
+        if (card.content_type === 'vocabulary') {
+            const isKanaWord = d.reading && frontText === d.reading;
+            if (isKanaWord && d.romaji) {
+                subText = d.romaji;
+            } else if (d.reading) {
+                subText = d.romaji ? `${d.reading}  ·  ${d.romaji}` : d.reading;
+            }
+        } else if (card.content_type === 'grammar' && d.romaji) {
+            subText = d.romaji;
+        } else if (card.content_type === 'kana' && d.romanization) {
+            // Hybrid: Hinweis-Button — User entscheidet aktiv ob er Romaji sehen will
+            kanaHint = `
+                <button type="button" class="kana-hint-btn" id="kanaHintBtn"
+                        style="margin-top:0.6rem;padding:0.35rem 0.85rem;border-radius:999px;
+                               background:#f1f5f9;color:#475569;border:1px solid #cbd5e1;
+                               font-size:0.85rem;font-weight:600;cursor:pointer;">
+                    💡 Romaji-Hinweis
+                </button>
+                <div id="kanaHintText"
+                     style="display:none;font-size:1rem;color:#64748b;margin-top:0.5rem;font-style:italic;">
+                    ${escapeHtml(d.romanization)}
+                </div>`;
+        }
 
         // Bild fuer die Rueckseite
         let imageHTML = '';
@@ -484,6 +508,7 @@
         } else if (card.content_type === 'vocabulary') {
             const vocabMeaning = (isGerman && d.meaning_de) ? d.meaning_de : d.meaning;
             backHTML = imageHTML + detailRow('Lesung', d.reading, true) +
+                       (d.romaji ? detailRow('Romaji', d.romaji) : '') +
                        detailRow('Bedeutung', vocabMeaning) +
                        (d.example_jp ? detailRow('Beispiel', d.example_jp, true) : '') +
                        (d.example_en ? detailRow('', d.example_en) : '');
@@ -500,6 +525,7 @@
                     <div class="review-card-face review-card-face--front">
                         <div class="review-card-front-text ${isLong ? 'small-text' : ''}">${escapeHtml(frontText)}</div>
                         ${subText ? `<div style="font-size:1rem;color:var(--text-muted,#8C8378);margin-top:0.5rem;">${escapeHtml(subText)}</div>` : ''}
+                        ${kanaHint}
                         <div class="review-card-hint">Klicken zum Umdrehen</div>
                     </div>
                     <div class="review-card-face review-card-face--back">
@@ -507,6 +533,17 @@
                     </div>
                 </div>
             </div>`;
+
+        // Kana-Hinweis-Button (Romaji-Spoiler nur auf User-Wunsch sichtbar)
+        const hintBtn = document.getElementById('kanaHintBtn');
+        if (hintBtn) {
+            hintBtn.addEventListener('click', (e) => {
+                e.stopPropagation();  // verhindert Card-Flip
+                const txt = document.getElementById('kanaHintText');
+                if (txt) txt.style.display = 'block';
+                hintBtn.style.display = 'none';
+            });
+        }
 
         // Flip handler
         const scene = document.getElementById('reviewScene');

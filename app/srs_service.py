@@ -363,6 +363,7 @@ def get_content_data_for_review(content_item):
         data['front'] = ref.word
         data['details'] = {
             'reading': ref.reading,
+            'romaji': ref.romaji or '',
             'meaning': ref.meaning,
             'meaning_de': ref.meaning_de or '',
             'example_jp': ref.example_sentence_japanese or '',
