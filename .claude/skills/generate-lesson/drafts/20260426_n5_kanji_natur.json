@@ -1,0 +1,750 @@
+{
+  "title": "N5 Kanji 4 — Natur (山川木雨) und Wetter",
+  "description": "Lerne die vier Natur-Kanji 山, 川, 木, 雨 plus die wichtigsten Wetter-Vokabeln. Mit Bonus-Kanji 田 und 空 sowie der Frage 「きょうの 天気は どうですか」.",
+  "jlpt_level": 5,
+  "topic": "Kanji Natur",
+  "instruction_language": "german",
+  "allow_guest_access": false,
+  "pages": [
+    {
+      "title": "Einführung — Berge, Flüsse, Bäume, Regen",
+      "description": "Warum Natur-Kanji als vierter Block",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Vier Kanji aus der Natur",
+            "content_text": "## Warum Natur-Kanji als vierter Block?\n\nNach Zahlen, Wochentagen und Menschen folgt jetzt die **Natur**. Diese Kanji sind besonders, weil sie **Piktogramme** sind — vereinfachte Bilder dessen, was sie bedeuten. Wer einmal sieht, wie 山 (yama) wie ein Berg mit drei Gipfeln aussieht oder 川 (kawa) wie ein fliessender Fluss, vergisst sie nie wieder.\n\n- **Visuell merkbar:** 山 (yama, Berg, 3 Striche), 川 (kawa, Fluss, 3 Striche), 木 (ki, Baum, 4 Striche), 雨 (ame, Regen, 8 Striche).\n- **Wetter-Smalltalk:** 「きょうの てんきは どうですか」 (kyou no tenki wa dou desu ka, 'Wie ist heute das Wetter?') — die Standard-Eröffnung in Japan.\n- **Reise-Vokabular:** Berge, Flüsse, Bäume, Wetter — alles, was du auf einer Wanderung oder Reise nach Japan beschreiben willst.\n\n### Die vier Haupt-Natur-Kanji + zwei Bonus\n\n- **山 (やま, yama / さん, san)** — Berg.\n- **川 (かわ, kawa / せん, sen)** — Fluss.\n- **木 (き, ki / もく, moku)** — Baum, Holz (kennst du bereits aus Lektion 2 — Donnerstag).\n- **雨 (あめ, ame / う, u)** — Regen.\n- **「た」 (ta) — Reisfeld** (Bonus, Kanji ist eigentlich N4, aber sehr häufig in Familiennamen wie やまだ, yamada).\n- **「そら」 (sora) — Himmel, Luft** (Bonus, im N5-Wortschatz für Wetter-Sätze unverzichtbar).\n\n### Was du heute lernst\n\n- **Vier Haupt-Kanji + zwei Bonus** — jeweils als Einzelwort und in Komposita.\n- **Wetter-Vokabular:** 天気 (てんき, tenki, Wetter), はれ (hare, klar), くもり (kumori, bewölkt), ゆき (yuki, Schnee), かぜ (kaze, Wind).\n- **Adjektive:** あつい (atsui, heiss), さむい (samui, kalt), あたたかい (atatakai, warm), すずしい (suzushii, kühl).\n- **Frage-Muster:** 「きょうの てんきは どうですか」 (kyou no tenki wa dou desu ka).\n\n> **Lerntipp:** Schau morgens kurz aus dem Fenster und sage laut auf Japanisch: きょうは はれです (kyou wa hare desu, heute ist es sonnig). あめが ふっています (ame ga futte imasu, es regnet). さむいです (samui desu, es ist kalt). Drei Sätze, jeden Tag — das festigt das Wetter-Vokabular in einer Woche."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln 1 — Natur-Kanji als Wörter",
+      "description": "Berg, Fluss, Baum, Regen, Himmel, Reisfeld",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "山",
+            "reading": "やま",
+            "romaji": "yama",
+            "meaning": "mountain",
+            "meaning_de": "Berg",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あの 山は たかいです。",
+            "example_sentence_english": "Ano yama wa takai desu. — That mountain is high.",
+            "image_url": "vocab_generated/vocab_86fa9c82.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "川",
+            "reading": "かわ",
+            "romaji": "kawa",
+            "meaning": "river",
+            "meaning_de": "Fluss",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "川の 水は つめたいです。",
+            "example_sentence_english": "Kawa no mizu wa tsumetai desu. — The river water is cold.",
+            "is_canonical_override": true,
+            "source_note": "Standard-N5-Kanji 川 als Einzelwort. Im Canonical nur als 川; 河 (mit Variante) gelistet — exakte Form fehlt.",
+            "image_url": "vocab_generated/vocab_e130dbe0.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "雨",
+            "reading": "あめ",
+            "romaji": "ame",
+            "meaning": "rain",
+            "meaning_de": "Regen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "今日は 雨です。",
+            "example_sentence_english": "Kyō wa ame desu. — Today it is rainy.",
+            "image_url": "vocab_generated/vocab_95433763.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "木",
+            "reading": "き",
+            "romaji": "ki",
+            "meaning": "tree, wood",
+            "meaning_de": "Baum, Holz",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "大きい 木が 一本 あります。",
+            "example_sentence_english": "Ōkii ki ga ippon arimasu. — There is one big tree.",
+            "image_url": "vocab_generated/vocab_e0a5e08a.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "空",
+            "reading": "そら",
+            "romaji": "sora",
+            "meaning": "sky",
+            "meaning_de": "Himmel",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "そらが あおいです。",
+            "example_sentence_english": "Sora ga aoi desu. — The sky is blue.",
+            "is_canonical_override": true,
+            "source_note": "Standard-N5-Vokabel (空), Kanji ist N4. In Beispielsätzen Hiragana.",
+            "image_url": "vocab_generated/vocab_b7612b71.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "田",
+            "reading": "た",
+            "romaji": "ta",
+            "meaning": "rice field",
+            "meaning_de": "Reisfeld",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "やまださんは 友だちです。",
+            "example_sentence_english": "Yamada-san wa tomodachi desu. — Yamada is a friend.",
+            "is_canonical_override": true,
+            "source_note": "Bonus-Kanji 田 (Reisfeld), N4-offiziell, aber häufig in Familiennamen wie 山田 — wird hier als Lese-Übung vorgestellt.",
+            "image_url": "vocab_generated/vocab_3db5087b.png"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln 2 — Wetter und Adjektive",
+      "description": "Wetter, Wind, Schnee, heiss, kalt",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "天気",
+            "reading": "てんき",
+            "romaji": "tenki",
+            "meaning": "weather",
+            "meaning_de": "Wetter",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "今日の 天気は いいです。",
+            "example_sentence_english": "Kyō no tenki wa ii desu. — Today's weather is good.",
+            "image_url": "vocab_generated/vocab_7203e705.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "晴れ",
+            "reading": "はれ",
+            "romaji": "hare",
+            "meaning": "clear sky, sunny weather",
+            "meaning_de": "klares Wetter, sonnig",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "今日は はれです。",
+            "example_sentence_english": "Kyō wa hare desu. — Today is sunny.",
+            "image_url": "vocab_generated/vocab_1143bb50.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "曇り",
+            "reading": "くもり",
+            "romaji": "kumori",
+            "meaning": "cloudy weather",
+            "meaning_de": "bewölkt",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あしたは くもりです。",
+            "example_sentence_english": "Ashita wa kumori desu. — Tomorrow will be cloudy.",
+            "image_url": "vocab_generated/vocab_5bbb7ea2.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "雪",
+            "reading": "ゆき",
+            "romaji": "yuki",
+            "meaning": "snow",
+            "meaning_de": "Schnee",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "山に ゆきが あります。",
+            "example_sentence_english": "Yama ni yuki ga arimasu. — There is snow on the mountain.",
+            "image_url": "vocab_generated/vocab_c4fccd8d.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "風",
+            "reading": "かぜ",
+            "romaji": "kaze",
+            "meaning": "wind",
+            "meaning_de": "Wind",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "今日は かぜが つよいです。",
+            "example_sentence_english": "Kyō wa kaze ga tsuyoi desu. — Today the wind is strong.",
+            "image_url": "vocab_generated/vocab_bb425bdf.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "海",
+            "reading": "うみ",
+            "romaji": "umi",
+            "meaning": "sea, ocean",
+            "meaning_de": "Meer, See",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "土ようびに うみに 行きます。",
+            "example_sentence_english": "Do-yōbi ni umi ni ikimasu. — On Saturday I will go to the sea.",
+            "image_url": "vocab_generated/vocab_9aa7f829.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "花",
+            "reading": "はな",
+            "romaji": "hana",
+            "meaning": "flower",
+            "meaning_de": "Blume",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "はなが きれいです。",
+            "example_sentence_english": "Hana ga kirei desu. — The flowers are beautiful.",
+            "image_url": "vocab_generated/vocab_22dbba75.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "暑い",
+            "reading": "あつい",
+            "romaji": "atsui",
+            "meaning": "hot (weather)",
+            "meaning_de": "heiss (Wetter)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "なつは あついです。",
+            "example_sentence_english": "Natsu wa atsui desu. — Summer is hot.",
+            "image_url": "vocab_generated/vocab_c2f48e1c.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "寒い",
+            "reading": "さむい",
+            "romaji": "samui",
+            "meaning": "cold (weather)",
+            "meaning_de": "kalt (Wetter)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ふゆは さむいです。",
+            "example_sentence_english": "Fuyu wa samui desu. — Winter is cold.",
+            "image_url": "vocab_generated/vocab_a1d2fc1e.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "暖かい",
+            "reading": "あたたかい",
+            "romaji": "atatakai",
+            "meaning": "warm",
+            "meaning_de": "warm",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "はるは あたたかいです。",
+            "example_sentence_english": "Haru wa atatakai desu. — Spring is warm.",
+            "image_url": "vocab_generated/vocab_0d3ed1b9.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "涼しい",
+            "reading": "すずしい",
+            "romaji": "suzushii",
+            "meaning": "cool, refreshing",
+            "meaning_de": "kühl, erfrischend",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "山は すずしいです。",
+            "example_sentence_english": "Yama wa suzushii desu. — It is cool in the mountains.",
+            "image_url": "vocab_generated/vocab_30d9cce3.png"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Grammatik — Wetter-Sätze, Element-Kombinationen, 「どう」",
+      "description": "Wie spricht man über Natur und Wetter",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Drei Konzepte für Natur-Sätze",
+            "content_text": "## Über Wetter und Natur sprechen\n\n### 1. Wetter-Aussage mit です\n\nDie einfachste Form, einen Wetter-Zustand zu beschreiben:\n\n> **`[Tag/Ort] + は + [Wetter] + です`**\n\n- 今日は はれです。 (Kyou wa hare desu.) — Heute ist es sonnig.\n- あしたは あめです。 (Ashita wa ame desu.) — Morgen regnet es.\n- 山は ゆきです。 (Yama wa yuki desu.) — In den Bergen liegt Schnee.\n\nMit i-Adjektiv (あつい, さむい, あたたかい, すずしい) genauso:\n\n- 今日は あついです。 (Kyou wa atsui desu.) — Heute ist es heiss.\n- 川の 水は つめたいです。 (Kawa no mizu wa tsumetai desu.) — Das Flusswasser ist kalt.\n\n### 2. Element-Kombinationen — N5 in Familiennamen\n\nDie Natur-Kanji erscheinen sehr häufig in **Familiennamen**. Wer in Japan unterwegs ist, liest sie an Klingelschildern und auf Türen:\n\n- **やまだ (やまだ, Yamada)** — Berg + Reisfeld.\n- **たなか (たなか, Tanaka)** — Reisfeld + Mitte.\n- **やまもと (やまもと, Yamamoto)** — Berg + Ursprung.\n- **きむら (きむら, Kimura)** — Baum + Dorf.\n\nDas hilft beim Lesen von Visitenkarten und Türschildern — gleich beim ersten Tag in Japan ein praktischer Vorteil.\n\n### 3. Frage 「どう」 — wie ist es?\n\nMit 「どう」 (dou, 'wie') fragst du nach Eindruck oder Zustand. Bei Wetter:\n\n- **Frage:** きょうの てんきは どうですか。 (Kyou no tenki wa dou desu ka.) — 'Wie ist heute das Wetter?'\n- **Antwort:** はれです。/ あめです。/ あついです。\n\n> **Lerntipp:** Wenn du japanische Bekannte triffst (oder mit deiner Frau Mayuko sprichst), starte das Gespräch mit der Wetter-Frage. Es ist die Standard-Eröffnung im japanischen Smalltalk."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "Wetter-Aussage: [Tag] + は + [Wetter] + です",
+            "explanation": "Wetter-Beschreibungen folgen im Japanischen dem einfachen Topic-Markierungs-Muster mit 「は」 (wa). Auf der linken Seite steht der Tag oder der Ort, in der Mitte 「は」 (wa), dann das Wetter-Wort (Substantiv oder i-Adjektiv) plus 「です」. Bei i-Adjektiven hängst du das 「です」 direkt an: 「あついです」 (atsui desu, 'es ist heiss'). Bei Substantiven (Wetterzustand wie はれ, あめ, ゆき) genauso: 「はれです」 (hare desu, 'es ist sonnig').",
+            "structure": "[Tag/Ort] + は + [Wetter] + です  ([day/place] + wa + [weather] + desu)",
+            "romaji": "[day/place] + wa + [weather] + desu",
+            "jlpt_level": 5,
+            "example_sentences": "今日は はれです。 (Kyō wa hare desu.) — Heute ist es sonnig.\nあしたは あめでしょう。 (Ashita wa ame deshō.) — Morgen wird es wohl regnen.\n山は さむいです。 (Yama wa samui desu.) — In den Bergen ist es kalt.\nうみは あたたかいです。 (Umi wa atatakai desu.) — Am Meer ist es warm."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "Verben für Wetter: ふる (fallen), ふく (wehen)",
+            "explanation": "Für Niederschlag (Regen, Schnee) nutzt du das Verb 「ふる」 (furu, fallen): あめが ふる (ame ga furu, 'es regnet'). Für Wind nutzt du 「ふく」 (fuku, wehen): かぜが ふく (kaze ga fuku, 'der Wind weht'). Im Alltag oft in der て-Form mit います: あめが ふって います (ame ga futte imasu, 'es regnet gerade'). Höfliche Vergangenheit: あめが ふりました (ame ga furimashita, 'es hat geregnet').",
+            "structure": "[あめ/ゆき] + が + ふる  /  [かぜ] + が + ふく",
+            "romaji": "[ame/yuki] + ga + furu  /  [kaze] + ga + fuku",
+            "jlpt_level": 5,
+            "example_sentences": "あめが ふって います。 (Ame ga futte imasu.) — Es regnet gerade.\nゆきが ふりました。 (Yuki ga furimashita.) — Es hat geschneit.\nつよい かぜが ふいて います。 (Tsuyoi kaze ga fuite imasu.) — Es weht ein starker Wind.\nきのうは あめが ふりませんでした。 (Kinō wa ame ga furimasen deshita.) — Gestern hat es nicht geregnet."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "Frage 「どうですか」 — wie ist es?",
+            "explanation": "「どう」 (dō) ist das japanische 'wie' für Eindruck und Zustand. Standard-Frageform: `[Topic] + は + どうですか`. Diese Frage funktioniert für Wetter, Geschmack, Eindruck, Zustand — eine universelle Smalltalk-Wendung. Variante: 「いかがですか」 (ikaga desu ka) ist die höfliche Form, vor allem in Geschäftssituationen oder mit älteren Personen.",
+            "structure": "[Topic] + は + どうですか  ([topic] + wa + dō desu ka)",
+            "romaji": "[topic] + wa + dō desu ka",
+            "jlpt_level": 5,
+            "example_sentences": "今日の てんきは どうですか。 (Kyō no tenki wa dō desu ka.) — Wie ist heute das Wetter?\n— はれで、あたたかいです。 (Hare de, atatakai desu.) — Sonnig und warm.\n日本の なつは どうですか。 (Nihon no natsu wa dō desu ka.) — Wie ist der Sommer in Japan?\n— とても あついです。 (Totemo atsui desu.) — Sehr heiss."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Dialog — Wanderung im Berg",
+      "description": "Tanaka und Lisa planen einen Wandertag",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Tanaka und Lisa reden über das Wetter",
+            "content_text": "Lisa: たなかさん、土ようびに やまださんと 山に 行きます。\n  (Tanaka-san, do-youbi ni Yamada-san to yama ni ikimasu.)\n  -> Tanaka, am Samstag gehe ich mit Yamada-san in die Berge.\n\nTanaka: いいですね。土ようびの てんきは どうですか。\n  (Ii desu ne. Do-youbi no tenki wa dou desu ka.)\n  -> Schön. Wie ist das Wetter am Samstag?\n\nLisa: はれの よていですが、山は すずしいでしょう。\n  (Hare no yotei desu ga, yama wa suzushii deshou.)\n  -> Es soll sonnig werden, aber in den Bergen wird es wohl kühl sein.\n\nTanaka: そうですね。山には まだ ゆきが あります。\n  (Sou desu ne. Yama ni wa mada yuki ga arimasu.)\n  -> Stimmt. Auf den Bergen liegt noch Schnee.\n\nLisa: あしたから あめが ふるそうです。山は きけんですか。\n  (Ashita kara ame ga furu sou desu. Yama wa kiken desu ka.)\n  -> Ab morgen soll es regnen. Sind die Berge gefährlich?\n\nTanaka: あめの 日は あぶないですが、土ようびは はれですから だいじょうぶです。川の そばに きれいな はなが あります。\n  (Ame no hi wa abunai desu ga, do-youbi wa hare desu kara daijoubu desu. Kawa no soba ni kirei na hana ga arimasu.)\n  -> An Regentagen ist es gefährlich, aber Samstag ist sonnig, also kein Problem. Am Fluss gibt es schöne Blumen.\n\nLisa: わあ、たのしみです。山と 川と はな、ぜんぶ 見たいです。\n  (Waa, tanoshimi desu. Yama to kawa to hana, zenbu mitai desu.)\n  -> Toll, ich freue mich. Berg, Fluss und Blumen — alles will ich sehen.\n\nTanaka: 木の したで おべんとうも たべましょう。\n  (Ki no shita de obentou mo tabemashou.)\n  -> Lass uns auch unter einem Baum eine Bento-Box essen."
+          }
+        },
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "Verständnisfragen zum Dialog."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wohin geht Lisa am Samstag?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Lisa sagt 「山に 行きます」 (Yama ni ikimasu.) — sie geht in die Berge.",
+              "options": [
+                {
+                  "option_text": "In die Berge (山, yama).",
+                  "is_correct": true,
+                  "feedback": "Richtig — gemeinsam mit Yamada-san."
+                },
+                {
+                  "option_text": "Ans Meer (うみ, umi).",
+                  "is_correct": false,
+                  "feedback": "Davon ist im Dialog keine Rede."
+                },
+                {
+                  "option_text": "An den Fluss (川, kawa).",
+                  "is_correct": false,
+                  "feedback": "Der Fluss wird als Teil der Wanderung erwähnt, aber das Hauptziel ist der Berg."
+                },
+                {
+                  "option_text": "In einen Park (公園, kōen).",
+                  "is_correct": false,
+                  "feedback": "Davon ist im Dialog keine Rede."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie ist das Wetter am Samstag laut Vorhersage?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Lisa sagt 「はれの よていですが、山は すずしいでしょう」 — sonnig, aber in den Bergen kühl.",
+              "options": [
+                {
+                  "option_text": "Sonnig (はれ, hare), in den Bergen kühl (すずしい, suzushii).",
+                  "is_correct": true,
+                  "feedback": "Richtig — beides aus dem Dialog."
+                },
+                {
+                  "option_text": "Regnerisch (あめ, ame).",
+                  "is_correct": false,
+                  "feedback": "Regen kommt erst ab dem Tag nach Samstag."
+                },
+                {
+                  "option_text": "Verschneit (ゆき, yuki).",
+                  "is_correct": false,
+                  "feedback": "Der Schnee liegt noch oben am Berg, nicht überall."
+                },
+                {
+                  "option_text": "Sehr heiss (あつい, atsui).",
+                  "is_correct": false,
+                  "feedback": "Davon ist im Dialog keine Rede."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Auf den Bergen liegt noch Schnee.",
+              "difficulty_level": 1,
+              "explanation": "Korrekt — Tanaka sagt 「山には まだ ゆきが あります」.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Genau — まだ (mada) = noch."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — im Dialog steht es eindeutig."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was wollen Tanaka und Lisa unter dem Baum machen?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Tanaka schlägt vor 「木の したで おべんとうも たべましょう」 — eine Bento-Box essen.",
+              "options": [
+                {
+                  "option_text": "Eine Bento-Box essen (おべんとうを たべる).",
+                  "is_correct": true,
+                  "feedback": "Richtig — klassischer japanischer Picknick-Standard."
+                },
+                {
+                  "option_text": "Ein Foto machen.",
+                  "is_correct": false,
+                  "feedback": "Davon ist im Dialog keine Rede."
+                },
+                {
+                  "option_text": "Schlafen.",
+                  "is_correct": false,
+                  "feedback": "Davon ist im Dialog keine Rede."
+                },
+                {
+                  "option_text": "Singen.",
+                  "is_correct": false,
+                  "feedback": "Davon ist im Dialog keine Rede."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Übung — Natur und Wetter trainieren",
+      "description": "Quiz zu Natur-Kanji und Wetter-Wörtern",
+      "page_type": "quiz_carousel",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "10 Aufgaben zu Natur-Kanji und Wetter."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie liest man 「山」?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「山」 = やま (yama, kun-Lesung) für 'Berg'. In Verbindungen wie 「富士山」 (Fuji-san) wird es 「さん」 (san, on-Lesung).",
+              "options": [
+                {
+                  "option_text": "やま (yama)",
+                  "is_correct": true,
+                  "feedback": "Richtig — die kun-Lesung, allein stehend."
+                },
+                {
+                  "option_text": "かわ (kawa)",
+                  "is_correct": false,
+                  "feedback": "Das ist 「川」 (Fluss)."
+                },
+                {
+                  "option_text": "き (ki)",
+                  "is_correct": false,
+                  "feedback": "Das ist 「木」 (Baum)."
+                },
+                {
+                  "option_text": "あめ (ame)",
+                  "is_correct": false,
+                  "feedback": "Das ist 「雨」 (Regen)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welches Kanji bedeutet 'Regen'?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「雨」 (あめ, ame) = Regen. Das Kanji zeigt die Tropfen, die aus einer Wolke fallen.",
+              "options": [
+                {
+                  "option_text": "雨",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "山",
+                  "is_correct": false,
+                  "feedback": "「山」 ist Berg."
+                },
+                {
+                  "option_text": "川",
+                  "is_correct": false,
+                  "feedback": "「川」 ist Fluss."
+                },
+                {
+                  "option_text": "木",
+                  "is_correct": false,
+                  "feedback": "「木」 ist Baum."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「天気」 (てんき)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「天気」 = てんき (tenki), Wetter. 天 (Himmel) + 気 (Geist/Energie) = 'Himmels-Stimmung'.",
+              "options": [
+                {
+                  "option_text": "Wetter",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "Himmel",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「そら」 (そら, sora)."
+                },
+                {
+                  "option_text": "Wind",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「かぜ」 (かぜ, kaze)."
+                },
+                {
+                  "option_text": "Schnee",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「ゆき」 (ゆき, yuki)."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Im Familiennamen 「やまだ」 wird 田 als 「だ」 (da) gelesen.",
+              "difficulty_level": 3,
+              "explanation": "Korrekt. 「やまだ」 = やまだ (Yamada) — 山 als やま, 田 als だ (verschliffene Form von た). Das ist typisch in Familiennamen.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Genau — やま + だ = やまだ."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — Familiennamen verschleifen oft die Lesungen."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welcher Satz bedeutet 'Heute regnet es'?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "「今日は あめです」 oder 「今日は あめが ふって います」 sind beide korrekt — die einfache Form mit です ist häufiger im Smalltalk.",
+              "options": [
+                {
+                  "option_text": "今日は あめです。 (Kyō wa ame desu.)",
+                  "is_correct": true,
+                  "feedback": "Richtig — die häufigste Form."
+                },
+                {
+                  "option_text": "今日は ゆきです。 (Kyō wa yuki desu.)",
+                  "is_correct": false,
+                  "feedback": "Das hiesse 'Heute schneit es'."
+                },
+                {
+                  "option_text": "今日は はれです。 (Kyō wa hare desu.)",
+                  "is_correct": false,
+                  "feedback": "Das hiesse 'Heute ist es sonnig'."
+                },
+                {
+                  "option_text": "今日は かぜです。 (Kyō wa kaze desu.)",
+                  "is_correct": false,
+                  "feedback": "Das hiesse 'Heute ist es windig'."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「あつい」 bedeutet 'kalt'.",
+              "difficulty_level": 1,
+              "explanation": "Falsch — 「あつい」 = heiss. 'Kalt' ist 「さむい」 (samui).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Falsch — 「あつい」 ist heiss."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt — 「あつい」 = heiss, 「さむい」 = kalt."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde jedes Natur-Kanji mit der Bedeutung.",
+              "difficulty_level": 1,
+              "options": [
+                {
+                  "option_text": "山 (yama)",
+                  "feedback": "Berg",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "川 (kawa)",
+                  "feedback": "Fluss",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "木 (ki)",
+                  "feedback": "Baum",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "雨 (ame)",
+                  "feedback": "Regen",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde jedes Wetter-Wort mit der Bedeutung.",
+              "difficulty_level": 2,
+              "options": [
+                {
+                  "option_text": "はれ (hare)",
+                  "feedback": "sonnig",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "くもり (kumori)",
+                  "feedback": "bewölkt",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "ゆき (yuki)",
+                  "feedback": "Schnee",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "かぜ (kaze)",
+                  "feedback": "Wind",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie sagst du 'Wie ist heute das Wetter?'?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "「今日の てんきは どうですか」 (Kyō no tenki wa dō desu ka.) — die Standard-Wetter-Frage.",
+              "options": [
+                {
+                  "option_text": "今日の てんきは どうですか。",
+                  "is_correct": true,
+                  "feedback": "Richtig — die häufigste Smalltalk-Eröffnung."
+                },
+                {
+                  "option_text": "今日の てんきは どこですか。",
+                  "is_correct": false,
+                  "feedback": "「どこ」 fragt nach 'wo', nicht nach Eindruck."
+                },
+                {
+                  "option_text": "今日の てんきは いつですか。",
+                  "is_correct": false,
+                  "feedback": "「いつ」 fragt nach 'wann'."
+                },
+                {
+                  "option_text": "今日の てんきは だれですか。",
+                  "is_correct": false,
+                  "feedback": "「だれ」 fragt nach Person."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welches Verb nutzt man für Regen?",
+              "difficulty_level": 3,
+              "points": 1,
+              "explanation": "Für Regen und Schnee nutzt man 「ふる」 (furu, fallen): あめが ふる (ame ga furu, 'es regnet'). Für Wind nutzt man 「ふく」 (fuku, wehen).",
+              "options": [
+                {
+                  "option_text": "ふる (furu) — fallen",
+                  "is_correct": true,
+                  "feedback": "Richtig — あめが ふる, ゆきが ふる."
+                },
+                {
+                  "option_text": "ふく (fuku) — wehen",
+                  "is_correct": false,
+                  "feedback": "「ふく」 nutzt man für Wind, nicht für Regen."
+                },
+                {
+                  "option_text": "たべる (taberu) — essen",
+                  "is_correct": false,
+                  "feedback": "Das hat nichts mit Wetter zu tun."
+                },
+                {
+                  "option_text": "のむ (nomu) — trinken",
+                  "is_correct": false,
+                  "feedback": "Das hat nichts mit Wetter zu tun."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Zusammenfassung & Ausblick",
+      "description": "Was du heute gelernt hast",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Vier Natur-Kanji + Wetter-Vokabular",
+            "content_text": "## Heute hast du gelernt\n\n### Vokabular\n\n- **Vier Haupt-Natur-Kanji:** 山 (やま, yama, Berg), 川 (かわ, kawa, Fluss), 木 (き, ki, Baum), 雨 (あめ, ame, Regen).\n- **Bonus-Kanji:** 「た」 (ta, Reisfeld) — N4-Kanji, aber zentral für Familiennamen wie やまだ (Yamada), たなか (Tanaka). そら (sora, Himmel) — N4-Kanji, aber für Wetter-Sätze unverzichtbar.\n- **Wetter-Wörter:** 天気 (てんき, tenki, Wetter), はれ (hare, sonnig), くもり (kumori, bewölkt), ゆき (yuki, Schnee), かぜ (kaze, Wind), うみ (umi, Meer), はな (hana, Blume).\n- **Adjektive:** あつい (atsui, heiss), さむい (samui, kalt), あたたかい (atatakai, warm), すずしい (suzushii, kühl).\n\n### Grammatik\n\n1. **Wetter-Aussage** — `[Tag] + は + [Wetter] + です` ([day] + wa + [weather] + desu).\n2. **Wetter-Verben** — あめが ふる (ame ga furu, regnen), ゆきが ふる (yuki ga furu, schneien), かぜが ふく (kaze ga fuku, wehen).\n3. **Frage 「どうですか」** (dou desu ka) — universelle Wie-Frage für Wetter, Eindruck, Zustand.\n\n> **Lerntipp:** Schau jeden Morgen aus dem Fenster und sage drei japanische Sätze über das Wetter. はれです (hare desu). あついです (atsui desu). かぜが つよいです (kaze ga tsuyoi desu). Drei Sekunden, jeden Tag — das festigt das Vokabular nachhaltig.\n\n### Was als Nächstes kommt\n\nIn der nächsten Lektion lernst du **Kanji 5 — Position und Grösse** (大, 小, 上, 下, 中, 右, 左). Damit kannst du Wegbeschreibungen geben, Dinge im Raum verorten und Grössen vergleichen — der direkt anwendbarste Kanji-Block für den Alltag in Japan."
+          }
+        }
+      ]
+    }
+  ],
+  "thumbnail_url": "generated/thumbnail_kanji_natur_20260426_130835.png"
+}
