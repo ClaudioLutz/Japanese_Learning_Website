@@ -10,7 +10,7 @@ from xml.sax.saxutils import escape
 from flask import Blueprint, Response, current_app, url_for
 
 from app import db
-from app.models import Lesson, Course
+from app.models import Course, Lesson, LessonCategory
 
 
 seo_bp = Blueprint('seo', __name__)
@@ -107,6 +107,28 @@ def sitemap_xml():
             'monthly',
             '0.7' if lesson.allow_guest_access else '0.5',
         ))
+
+    # JLPT-Modul-Detail-Seiten — eigene URL pro Modul, eigene Inhalte
+    modules = (
+        db.session.query(LessonCategory)
+        .filter(LessonCategory.jlpt_level.isnot(None))
+        .filter(LessonCategory.slug.isnot(None))
+        .all()
+    )
+    for mod in modules:
+        # Nur Module mit mind. 2 publizierten Lessons in den sichtbaren Sprachen
+        # — bei <=1 Lesson redirected die Route, eigene URL waere doppelter Content
+        published_count = sum(
+            1 for lesson in mod.lessons
+            if lesson.is_published and lesson.instruction_language in languages
+        )
+        if published_count >= 2:
+            entries.append(_url_entry(
+                f"{site_url}/learn/n{mod.jlpt_level}/{mod.slug}",
+                today,
+                'weekly',
+                '0.7',
+            ))
 
     # Veroeffentlichte Courses
     courses = db.session.query(Course).filter(Course.is_published.is_(True)).all()

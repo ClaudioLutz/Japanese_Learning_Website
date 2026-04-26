@@ -168,12 +168,15 @@
                 </ul>
               {% endif %}
 
-              {# CTA-Button am Card-Bottom — klar, je nach State #}
+              {# CTA-Button am Card-Bottom — klar, je nach State.
+                 'Beginnen' und 'Wiederholen' fuehren zur Modul-Uebersicht (auch fuer SEO).
+                 'Fortfahren' bleibt direkter Sprung in die letzte Lesson — keine Friction
+                 fuer Wiederkehrer. #}
               <div class="module-cta">
                 {% if not entry.unlocked %}
                   <span class="module-cta-disabled">🔒 Erst Vorgänger abschliessen</span>
                 {% elif entry.is_complete %}
-                  <a href="{{ url_for('routes.view_lesson', lesson_id=entry.first_lesson.id) }}"
+                  <a href="{{ url_for('routes.module_detail', level=5, slug=m.slug) }}"
                      class="module-cta-btn module-cta-done">
                     ✓ Abgeschlossen — wiederholen
                   </a>
@@ -181,6 +184,11 @@
                   <a href="{{ url_for('routes.view_lesson', lesson_id=entry.first_lesson.id) }}"
                      class="module-cta-btn module-cta-continue">
                     Fortfahren →
+                  </a>
+                {% elif entry.first_lesson and m.slug %}
+                  <a href="{{ url_for('routes.module_detail', level=5, slug=m.slug) }}"
+                     class="module-cta-btn module-cta-start">
+                    Beginnen →
                   </a>
                 {% elif entry.first_lesson %}
                   <a href="{{ url_for('routes.view_lesson', lesson_id=entry.first_lesson.id) }}"

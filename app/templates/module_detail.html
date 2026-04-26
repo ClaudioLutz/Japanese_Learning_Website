@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block title %}{{ module.name.split(' · ')[-1] if ' · ' in module.name else module.name }} — JLPT N{{ level }}{% endblock %}
+
+{% block meta_description %}{{ module.description }} JLPT-N{{ level }}-Modul mit {{ total }} Lektionen auf Deutsch.{% endblock %}
+
+{% block styles %}
+<style>
+  .mod-page { max-width: 880px; margin: 0 auto; padding: 1rem 1rem 3rem; }
+
+  .mod-breadcrumb { color: #64748b; font-size: 0.85rem; margin: 0.5rem 0 1rem; }
+  .mod-breadcrumb a { color: #64748b; text-decoration: none; }
+  .mod-breadcrumb a:hover { color: #4f46e5; text-decoration: underline; }
+
+  .mod-header {
+    background: white; border: 1px solid #e2e8f0; border-radius: 16px;
+    padding: 1.75rem 1.5rem; box-shadow: 0 2px 10px rgba(15,23,42,0.05);
+    border-top: 5px solid {{ module.color_code or '#4f46e5' }};
+    display: flex; gap: 1.25rem; align-items: flex-start;
+  }
+  .mod-icon { font-size: 3rem; line-height: 1; flex-shrink: 0; }
+  .mod-titles { flex: 1; }
+  .mod-titles h1 { font-size: 1.75rem; font-weight: 800; margin: 0 0 0.25rem; color: #0f172a; }
+  .mod-meta { color: #64748b; font-size: 0.85rem; margin-bottom: 0.75rem; }
+  .mod-desc { color: #334155; margin: 0 0 1rem; line-height: 1.5; }
+
+  .mod-progress {
+    margin-top: 1rem;
+    background: #f1f5f9; border-radius: 999px; height: 10px; overflow: hidden;
+  }
+  .mod-progress-fill {
+    height: 100%; background: linear-gradient(90deg, #4f46e5, #7c3aed);
+    transition: width 0.4s;
+  }
+  .mod-progress-text {
+    color: #64748b; font-size: 0.85rem; margin-top: 0.4rem;
+    display: flex; justify-content: space-between;
+  }
+
+  .lesson-list { margin: 1.5rem 0; }
+  .lesson-row {
+    display: flex; align-items: center; gap: 1rem;
+    background: white; border: 1px solid #e2e8f0; border-radius: 12px;
+    padding: 1rem 1.1rem; margin-bottom: 0.6rem;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    text-decoration: none; color: inherit;
+  }
+  .lesson-row:hover {
+    border-color: #c7d2fe; box-shadow: 0 4px 12px rgba(79,70,229,0.08);
+    text-decoration: none; color: inherit;
+  }
+  .lesson-row.is-locked { opacity: 0.85; background: #fafafa; }
+  .lesson-num {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: #e2e8f0; color: #475569;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.9rem; flex-shrink: 0;
+  }
+  .lesson-row.is-done .lesson-num { background: #16a34a; color: white; }
+  .lesson-row.is-paid .lesson-num { background: #fef3c7; color: #92400e; }
+  .lesson-info { flex: 1; min-width: 0; }
+  .lesson-title { font-weight: 600; color: #0f172a; margin: 0 0 0.15rem; }
+  .lesson-sub { color: #64748b; font-size: 0.85rem; }
+  .lesson-badge {
+    flex-shrink: 0; font-size: 0.75rem; font-weight: 700;
+    padding: 0.25rem 0.6rem; border-radius: 999px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .badge-done { background: #dcfce7; color: #15803d; }
+  .badge-free { background: #dbeafe; color: #1e40af; }
+  .badge-paid { background: #fef3c7; color: #92400e; }
+  .badge-progress { background: #e0e7ff; color: #4338ca; }
+
+  .start-btn {
+    display: block; padding: 0.95rem 1.5rem;
+    background: #4f46e5; color: white;
+    font-weight: 700; font-size: 1.05rem; text-align: center;
+    border-radius: 12px; text-decoration: none;
+    margin-top: 1rem;
+    transition: background 0.15s;
+  }
+  .start-btn:hover { background: #4338ca; color: white; text-decoration: none; }
+
+  .bundle-cta-bottom {
+    background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+    border: 1px solid #c4b5fd; border-radius: 14px;
+    padding: 1.25rem; margin-top: 2rem; text-align: center;
+  }
+  .bundle-cta-bottom h3 { color: #4c1d95; margin: 0 0 0.5rem; font-size: 1.1rem; }
+  .bundle-cta-bottom p { color: #6d28d9; margin: 0 0 1rem; font-size: 0.95rem; }
+  .bundle-cta-bottom a {
+    display: inline-block; background: #4f46e5; color: white;
+    padding: 0.6rem 1.2rem; border-radius: 10px; font-weight: 700;
+    text-decoration: none;
+  }
+  .bundle-cta-bottom a:hover { background: #4338ca; color: white; }
+
+  @media (max-width: 600px) {
+    .mod-header { flex-direction: column; gap: 0.75rem; padding: 1.25rem 1rem; }
+    .mod-icon { font-size: 2.5rem; }
+    .mod-titles h1 { font-size: 1.4rem; }
+    .lesson-row { padding: 0.85rem; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mod-page">
+
+  <nav class="mod-breadcrumb" aria-label="Brotkrumen">
+    <a href="{{ url_for('routes.index') }}">Start</a> ›
+    <a href="{{ url_for('routes.learn_path', level=level) }}">N{{ level }}-Pfad</a> ›
+    <span>{{ module.name.split(' · ')[-1] if ' · ' in module.name else module.name }}</span>
+  </nav>
+
+  <header class="mod-header">
+    <div class="mod-icon">{{ module.icon_emoji or '📖' }}</div>
+    <div class="mod-titles">
+      <h1>{{ module.name.split(' · ')[-1] if ' · ' in module.name else module.name }}</h1>
+      <div class="mod-meta">JLPT N{{ level }} · Modul {{ module.display_order or '?' }} · {{ total }} Lektionen</div>
+      <p class="mod-desc">{{ module.description }}</p>
+
+      {% if total > 0 and current_user.is_authenticated %}
+      <div class="mod-progress">
+        <div class="mod-progress-fill" style="width: {{ percent }}%;"></div>
+      </div>
+      <div class="mod-progress-text">
+        <span>{{ done }} / {{ total }} abgeschlossen</span>
+        <span>{{ percent }} %</span>
+      </div>
+      {% endif %}
+    </div>
+  </header>
+
+  <div class="lesson-list">
+    {% for entry in lesson_entries %}
+      {% set lesson = entry.lesson %}
+      {% set is_done = entry.progress and entry.progress.is_completed %}
+      {% set in_progress = entry.progress and not entry.progress.is_completed and (entry.progress.progress_percentage or 0) > 0 %}
+      <a href="{{ url_for('routes.view_lesson', lesson_id=lesson.id) }}"
+         class="lesson-row
+                {% if is_done %}is-done{% elif entry.is_paid and not entry.accessible %}is-paid is-locked{% endif %}">
+        <div class="lesson-num">{{ loop.index }}</div>
+        <div class="lesson-info">
+          <div class="lesson-title">{{ lesson.title }}</div>
+          {% if lesson.description %}
+            <div class="lesson-sub">{{ lesson.description[:100] }}{% if lesson.description|length > 100 %}…{% endif %}</div>
+          {% endif %}
+        </div>
+        {% if is_done %}
+          <span class="lesson-badge badge-done">✓ Fertig</span>
+        {% elif in_progress %}
+          <span class="lesson-badge badge-progress">{{ entry.progress.progress_percentage }} %</span>
+        {% elif entry.is_paid %}
+          <span class="lesson-badge badge-paid">🔒 Bundle</span>
+        {% else %}
+          <span class="lesson-badge badge-free">Gratis</span>
+        {% endif %}
+      </a>
+    {% endfor %}
+  </div>
+
+  {% if lesson_entries %}
+    {% set first_open = (lesson_entries | rejectattr('progress.is_completed') | list | first) or lesson_entries[0] %}
+    <a href="{{ url_for('routes.view_lesson', lesson_id=first_open.lesson.id) }}" class="start-btn">
+      {% if done == 0 %}Beginnen mit „{{ first_open.lesson.title }}"{% elif done < total %}Weiter mit „{{ first_open.lesson.title }}"{% else %}Erste Lektion wiederholen{% endif %}  →
+    </a>
+  {% endif %}
+
+  {% if paid_count > 0 and not bundle_owned %}
+  <div class="bundle-cta-bottom">
+    <h3>⚡ {{ paid_count }} {{ 'Lektion ist' if paid_count == 1 else 'Lektionen sind' }} Teil von N5 Komplett</h3>
+    <p>Ein einmaliger Kauf schaltet alle {{ paid_count }} Bundle-{{ 'Lektion' if paid_count == 1 else 'Lektionen' }} dieses Moduls und alle anderen N5-Inhalte frei.</p>
+    <a href="{{ url_for('bundle.n5_bundle') }}">N5 Komplett ansehen — CHF 9.90 →</a>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

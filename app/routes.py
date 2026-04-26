@@ -592,6 +592,77 @@ def learn_path(level: int = 5):
         modules=rendered_modules,
     )
 
+@bp.route('/learn/n<int:level>/<slug>')
+def module_detail(level: int, slug: str):
+    """Modul-Uebersicht: alle Lessons des Moduls mit Status, Coverage und Direkt-Start.
+
+    Bei nur einer Lesson redirect direkt zur Lesson — keine Klick-Friction.
+    Sonst rendert eine eigene Uebersichtsseite (auch SEO-Vorteil: eigene URL pro Modul).
+    """
+    if level not in (1, 2, 3, 4, 5):
+        from flask import abort
+        abort(404)
+    visible_langs = current_app.config.get('CONTENT_LANGUAGES', ['german'])
+    module = LessonCategory.query.filter_by(jlpt_level=level, slug=slug).first_or_404()
+    user = current_user if current_user.is_authenticated else None
+
+    published_lessons = sorted(
+        [l for l in module.lessons
+         if l.is_published and l.instruction_language in visible_langs],
+        key=lambda l: (l.order_index or 0, l.id),
+    )
+
+    # Skip-Optimierung: bei nur 1 Lesson direkt rein, keine Zwischenseite
+    if len(published_lessons) <= 1 and published_lessons:
+        return redirect(url_for('routes.view_lesson', lesson_id=published_lessons[0].id))
+
+    # Lesson-Status anreichern
+    lesson_entries = []
+    for lesson in published_lessons:
+        accessible, msg = lesson.is_accessible_to_user(user)
+        progress = None
+        if user:
+            progress = UserLessonProgress.query.filter_by(
+                user_id=user.id, lesson_id=lesson.id
+            ).first()
+        lesson_entries.append({
+            'lesson': lesson,
+            'accessible': accessible,
+            'access_msg': msg,
+            'progress': progress,
+            'is_paid': (lesson.price or 0) > 0,
+        })
+
+    done, total = module.completion_for_user(user, languages=visible_langs)
+    percent = round(100.0 * done / total) if total else 0
+
+    # Bundle-Status fuer den CTA-Banner unten (wer hat schon, wer nicht)
+    bundle_owned = False
+    if user and not getattr(user, 'is_admin', False):
+        from app.services.bundle_service import get_n5_bundle_course
+        bundle = get_n5_bundle_course()
+        if bundle:
+            bundle_owned = CoursePurchase.query.filter_by(
+                user_id=user.id, course_id=bundle.id
+            ).first() is not None
+    elif user and getattr(user, 'is_admin', False):
+        bundle_owned = True
+
+    paid_count = sum(1 for e in lesson_entries if e['is_paid'])
+
+    return render_template(
+        'module_detail.html',
+        level=level,
+        module=module,
+        lesson_entries=lesson_entries,
+        done=done,
+        total=total,
+        percent=percent,
+        paid_count=paid_count,
+        bundle_owned=bundle_owned,
+    )
+
+
 @bp.route('/courses')
 def courses():
     """Browse available courses"""
