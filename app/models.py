@@ -309,14 +309,15 @@ class Lesson(db.Model):
         return [prereq.prerequisite_lesson for prereq in self.prerequisites]
     
     def is_accessible_to_user(self, user):
-        """Check if user can access this lesson based on pricing, subscription and prerequisites"""
+        """Check if user can access this lesson based on pricing, subscription and prerequisites.
+        Messages auf Deutsch (User-facing — werden via flash() oder Template gerendert)."""
         # Handle guest users (not authenticated)
         if user is None or not hasattr(user, 'is_authenticated') or not user.is_authenticated:
             # Free lessons with guest access
             if self.price == 0.0 and self.allow_guest_access:
-                return True, "Accessible as guest"
+                return True, "Als Gast zugänglich"
             else:
-                return False, "Login required to access this lesson"
+                return False, "Login required to access this lesson"  # Trigger fuer Login-Redirect, bewusst englisch
 
         # Admin-Bypass: Admins sehen alle Lessons (Dogfood + Content-Verwaltung)
         if getattr(user, 'is_admin', False):
@@ -330,9 +331,9 @@ class Lesson(db.Model):
                     user_id=user.id, lesson_id=prereq.id
                 ).first()
                 if not progress or not progress.is_completed:
-                    return False, f"Must complete '{prereq.title}' first"
-            return True, "Free lesson"
-        
+                    return False, f"Schliesse zuerst „{prereq.title}\" ab"
+            return True, "Kostenlose Lektion"
+
         # Paid lesson - check if user purchased it
         if self.is_purchasable:
             purchase = LessonPurchase.query.filter_by(
@@ -346,8 +347,8 @@ class Lesson(db.Model):
                         user_id=user.id, lesson_id=prereq.id
                     ).first()
                     if not progress or not progress.is_completed:
-                        return False, f"Must complete '{prereq.title}' first"
-                return True, "Purchased"
+                        return False, f"Schliesse zuerst „{prereq.title}\" ab"
+                return True, "Gekauft"
 
             # Check if the lesson is part of a purchased course
             for course in self.courses:
@@ -362,24 +363,24 @@ class Lesson(db.Model):
                             user_id=user.id, lesson_id=prereq.id
                         ).first()
                         if not progress or not progress.is_completed:
-                            return False, f"Must complete '{prereq.title}' first"
-                    return True, f"Accessible through course '{course.title}'"
-            
-            return False, f"Purchase required (CHF {self.price:.2f})"
-        
+                            return False, f"Schliesse zuerst „{prereq.title}\" ab"
+                    return True, f"Zugriff über „{course.title}\""
+
+            return False, f"Kauf erforderlich (CHF {self.price:.2f})"
+
         # Legacy subscription check (for existing premium lessons)
         if self.lesson_type == 'premium' and user.subscription_level != 'premium':
-            return False, "Premium subscription required"
-        
+            return False, "Premium-Abo erforderlich"
+
         # Check prerequisites for other cases
         for prereq in self.get_prerequisites(): # type: ignore
             progress = UserLessonProgress.query.filter_by(
                 user_id=user.id, lesson_id=prereq.id
             ).first()
             if not progress or not progress.is_completed:
-                return False, f"Must complete '{prereq.title}' first"
-        
-        return True, "Accessible"
+                return False, f"Schliesse zuerst „{prereq.title}\" ab"
+
+        return True, "Zugänglich"
 
     @property
     def pages(self):

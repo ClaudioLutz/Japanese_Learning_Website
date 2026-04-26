@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+
+{% block title %}{{ lesson.title }} freischalten{% endblock %}
+
+{% block meta_description %}{{ lesson.title }} — Teil von JLPT N5 Komplett. Lifetime-Zugriff fuer CHF {{ "%.2f"|format(bundle_price) }} oder Einzelkauf fuer CHF {{ "%.2f"|format(lesson.price) }}.{% endblock %}
+
+{# Paywall-Seiten sollen nicht indexiert werden — kein duplicate content fuer jede Lesson #}
+{% block robots %}noindex,follow{% endblock %}
+
+{% block styles %}
+<style>
+  .paywall-page { max-width: 880px; margin: 0 auto; padding: 1rem 1rem 3rem; }
+  .paywall-breadcrumb { color: #64748b; font-size: 0.85rem; margin: 0.5rem 0 1rem; }
+  .paywall-breadcrumb a { color: #64748b; text-decoration: none; }
+  .paywall-breadcrumb a:hover { color: #4f46e5; text-decoration: underline; }
+
+  /* Tease-Block: zeigt was hinter der Paywall liegt */
+  .lesson-tease {
+    background: white; border: 1px solid #e2e8f0; border-radius: 16px;
+    padding: 1.75rem 1.5rem; margin-bottom: 1.5rem;
+    border-left: 5px solid #4f46e5;
+    box-shadow: 0 2px 10px rgba(15,23,42,0.05);
+    position: relative;
+  }
+  .tease-badge {
+    position: absolute; top: 1rem; right: 1.2rem;
+    background: #fef3c7; color: #92400e;
+    padding: 0.3rem 0.75rem; border-radius: 999px;
+    font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .tease-module {
+    color: #4f46e5; font-size: 0.85rem; font-weight: 600;
+    margin: 0 0 0.4rem; text-decoration: none;
+  }
+  .tease-module:hover { text-decoration: underline; }
+  .tease-title { font-size: 1.5rem; font-weight: 800; margin: 0 0 0.5rem; color: #0f172a; }
+  .tease-desc { color: #475569; line-height: 1.5; margin: 0; }
+
+  /* Zwei-CTA-Layout */
+  .paywall-options {
+    display: grid; grid-template-columns: 1.4fr 1fr; gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  @media (max-width: 700px) {
+    .paywall-options { grid-template-columns: 1fr; }
+  }
+
+  .opt-card {
+    background: white; border: 1px solid #e2e8f0; border-radius: 14px;
+    padding: 1.5rem 1.4rem; display: flex; flex-direction: column;
+  }
+  .opt-card.is-recommended {
+    border: 2px solid #4f46e5;
+    box-shadow: 0 8px 24px rgba(79,70,229,0.15);
+    position: relative;
+  }
+  .opt-recommended-pill {
+    position: absolute; top: -12px; left: 1rem;
+    background: #4f46e5; color: white;
+    padding: 0.25rem 0.85rem; border-radius: 999px;
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .opt-title { font-size: 1.1rem; font-weight: 700; color: #0f172a; margin: 0 0 0.25rem; }
+  .opt-sub { color: #64748b; font-size: 0.85rem; margin: 0 0 1rem; }
+  .opt-price-row { display: flex; align-items: baseline; gap: 0.5rem; margin-bottom: 0.75rem; }
+  .opt-price { font-size: 2rem; font-weight: 800; color: #0f172a; }
+  .opt-price-old { color: #94a3b8; text-decoration: line-through; font-size: 1rem; }
+  .opt-features { list-style: none; padding: 0; margin: 0 0 1.25rem; flex: 1; }
+  .opt-features li { padding: 0.3rem 0; padding-left: 1.4rem; position: relative; color: #1e293b; font-size: 0.9rem; }
+  .opt-features li::before {
+    content: "✓"; position: absolute; left: 0; color: #16a34a; font-weight: 700;
+  }
+  .opt-cta {
+    display: block; width: 100%; padding: 0.85rem 1rem;
+    border: none; border-radius: 10px;
+    font-weight: 700; font-size: 0.98rem; text-align: center;
+    cursor: pointer; text-decoration: none;
+    transition: background 0.15s, transform 0.05s;
+  }
+  .opt-cta-primary { background: #4f46e5; color: white; }
+  .opt-cta-primary:hover { background: #4338ca; color: white; text-decoration: none; }
+  .opt-cta-secondary {
+    background: white; color: #4f46e5; border: 1.5px solid #c7d2fe;
+  }
+  .opt-cta-secondary:hover { background: #eef2ff; color: #4338ca; text-decoration: none; }
+  .opt-cta:active { transform: translateY(1px); }
+
+  .calc-row {
+    background: #fef9c3; border: 1px solid #facc15; border-radius: 10px;
+    padding: 0.75rem 1rem; color: #854d0e; font-size: 0.88rem; margin-top: 0.6rem;
+  }
+
+  .trust-row {
+    color: #64748b; font-size: 0.85rem; text-align: center; margin: 1rem 0 0.5rem;
+  }
+  .refund-row {
+    background: #f0fdf4; border: 1px solid #86efac; border-radius: 10px;
+    padding: 0.75rem 1rem; color: #166534; font-size: 0.88rem; text-align: center;
+    margin: 1rem 0;
+  }
+  .refund-row a { color: #166534; text-decoration: underline; }
+
+  .paywall-back {
+    display: inline-block; margin-top: 0.5rem; color: #64748b; font-size: 0.9rem;
+    text-decoration: none;
+  }
+  .paywall-back:hover { color: #4f46e5; text-decoration: underline; }
+
+  .auth-required {
+    background: #f1f5f9; border-radius: 12px; padding: 1.25rem;
+    text-align: center; color: #475569; margin: 1.5rem 0;
+  }
+  .auth-required a { color: #4f46e5; font-weight: 700; text-decoration: none; }
+  .auth-required a:hover { text-decoration: underline; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="paywall-page">
+
+  <nav class="paywall-breadcrumb" aria-label="Brotkrumen">
+    <a href="{{ url_for('routes.index') }}">Start</a> ›
+    {% if lesson.category and lesson.category.slug %}
+      <a href="{{ url_for('routes.module_detail', level=lesson.category.jlpt_level or 5, slug=lesson.category.slug) }}">{{ lesson.category.name.split(' · ')[-1] if ' · ' in lesson.category.name else lesson.category.name }}</a> ›
+    {% endif %}
+    <span>{{ lesson.title }}</span>
+  </nav>
+
+  <section class="lesson-tease">
+    <span class="tease-badge">🔒 Premium-Lektion</span>
+    {% if lesson.category and lesson.category.slug %}
+      <a href="{{ url_for('routes.module_detail', level=lesson.category.jlpt_level or 5, slug=lesson.category.slug) }}" class="tease-module">
+        ← {{ lesson.category.name.split(' · ')[-1] if ' · ' in lesson.category.name else lesson.category.name }}
+      </a>
+    {% endif %}
+    <h1 class="tease-title">{{ lesson.title }}</h1>
+    {% if lesson.description %}
+      <p class="tease-desc">{{ lesson.description }}</p>
+    {% endif %}
+  </section>
+
+  {% if not current_user.is_authenticated %}
+    <div class="auth-required">
+      <p style="margin:0 0 0.75rem;">Um diese Lektion freizuschalten, brauchst du ein kostenloses Konto.</p>
+      <a href="{{ url_for('routes.register', next=request.path) }}">Kostenlos registrieren →</a>
+      <span style="margin: 0 0.5rem; color: #cbd5e1;">·</span>
+      <a href="{{ url_for('routes.login', next=request.path) }}">Anmelden</a>
+    </div>
+  {% else %}
+
+    <div class="paywall-options">
+      {# Linke Spalte: Bundle (empfohlen) #}
+      <div class="opt-card is-recommended">
+        <span class="opt-recommended-pill">⭐ Empfohlen</span>
+        <h2 class="opt-title">⚡ N5 Komplett — Bundle</h2>
+        <p class="opt-sub">Alle aktuellen + zukuenftigen N5-Lektionen, einmalig, lifetime.</p>
+
+        <div class="opt-price-row">
+          <span class="opt-price">CHF {{ "%.2f"|format(bundle_price) }}</span>
+          {% if bundle_price < bundle_regular_price %}
+            <span class="opt-price-old">CHF {{ "%.2f"|format(bundle_regular_price) }}</span>
+          {% endif %}
+        </div>
+
+        <ul class="opt-features">
+          <li>Diese Lektion freigeschaltet</li>
+          <li>{{ paid_total }} weitere paid N5-Lektionen freigeschaltet</li>
+          <li>Alle zukuenftigen N5-Updates inklusive</li>
+          <li>Lifetime-Zugriff, kein Abo</li>
+          <li>30 Tage Geld zurueck</li>
+        </ul>
+
+        <a href="{{ url_for('bundle.n5_bundle') }}" class="opt-cta opt-cta-primary">
+          Zum Bundle (CHF {{ "%.2f"|format(bundle_price) }}) →
+        </a>
+        <div class="calc-row">
+          💡 Schon ab <strong>2 gekauften Einzel-Lektionen</strong> bist du mit dem Bundle guenstiger.
+        </div>
+      </div>
+
+      {# Rechte Spalte: Einzel-Kauf #}
+      <div class="opt-card">
+        <h2 class="opt-title">Nur diese Lektion</h2>
+        <p class="opt-sub">Einmaliger Kauf nur fuer „{{ lesson.title }}".</p>
+
+        <div class="opt-price-row">
+          <span class="opt-price">CHF {{ "%.2f"|format(lesson.price) }}</span>
+        </div>
+
+        <ul class="opt-features">
+          <li>Diese Lektion freigeschaltet</li>
+          <li>Lifetime-Zugriff</li>
+          <li>30 Tage Geld zurueck</li>
+        </ul>
+
+        <a href="{{ url_for('routes.purchase_lesson_page', lesson_id=lesson.id) }}" class="opt-cta opt-cta-secondary">
+          Einzeln kaufen (CHF {{ "%.2f"|format(lesson.price) }}) →
+        </a>
+      </div>
+    </div>
+
+    <div class="refund-row">
+      <strong>30 Tage Geld zurueck</strong> — ohne Begruendung. E-Mail an
+      <a href="mailto:info@japanese-learning.ch">info@japanese-learning.ch</a> genuegt.
+    </div>
+
+    <div class="trust-row">
+      Schweizer Anbieter · Bezahlung mit TWINT, Visa, Mastercard, Apple/Google Pay ueber Payrexx
+    </div>
+
+  {% endif %}
+
+  <a href="{{ url_for('routes.index') }}#lernpfad" class="paywall-back">← Zurueck zum Lernpfad</a>
+
+</div>
+{% endblock %}

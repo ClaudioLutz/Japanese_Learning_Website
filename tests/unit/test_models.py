@@ -163,7 +163,7 @@ class TestLessonAccessControl:
         db.session.commit()
         accessible, msg = lesson.is_accessible_to_user(user)
         assert accessible is False
-        assert "Purchase required" in msg
+        assert "Kauf erforderlich" in msg
 
     def test_paid_lesson_accessible_with_purchase(self, app_context):
         """U-M08: Kostenpflichtige Lektion zugänglich nach Kauf."""
@@ -242,7 +242,7 @@ class TestLessonPrerequisites:
         db.session.expire(lesson)
         accessible, msg = lesson.is_accessible_to_user(user)
         assert accessible is False
-        assert "Must complete" in msg
+        assert "Schliesse zuerst" in msg
 
     def test_prerequisite_fulfilled(self, app_context):
         """U-M09: Erfüllte Voraussetzung erlaubt Zugang."""

@@ -22,6 +22,11 @@ EARLY_BIRD_PRICE_CHF = 9.90
 REGULAR_PRICE_CHF = 14.90
 EARLY_BIRD_THRESHOLD_PCT = 80.0  # ab Vokabel-Coverage >= 80% faellt Early-Bird
 
+# Einzel-Lesson-Preis: bewusst niedrig gehalten, damit das Bundle sofort als
+# No-Brainer wirkt — wer 2+ Lessons kaufen will, hat das Bundle (CHF 9.90)
+# ohnehin guenstiger als 2 Einzelkaeufe (2x CHF 5 = CHF 10).
+SINGLE_LESSON_PRICE_CHF = 5.00
+
 
 def get_n5_bundle_price() -> tuple[float, str]:
     """Liefert (price_chf, label) wo label in {'early_bird', 'regular'}.

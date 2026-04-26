@@ -787,16 +787,53 @@ def purchase_lesson_page(lesson_id):
 
 @bp.route('/lessons/<int:lesson_id>')
 def view_lesson(lesson_id):
-    """View a specific lesson"""
+    """View a specific lesson — bei Paywall-Trigger eigene Conversion-Seite statt Redirect."""
     lesson = Lesson.query.get_or_404(lesson_id)
-    
+
     # Check if user can access this lesson (supports both authenticated and guest users)
     user = current_user if current_user.is_authenticated else None
     accessible, message = lesson.is_accessible_to_user(user)
     if not accessible:
-        flash(message, 'warning')
+        # Paid Lesson + nicht zugaenglich → Paywall-Seite (Bundle-CTA + Single-Kauf)
+        # statt Flash-Redirect, das Frust ohne Aktion erzeugte.
+        if (lesson.price or 0) > 0 and lesson.is_purchasable:
+            from app.services.bundle_service import (
+                get_n5_bundle_price, EARLY_BIRD_PRICE_CHF, REGULAR_PRICE_CHF,
+            )
+            bundle_price, _ = get_n5_bundle_price()
+            # Anzahl paid Lessons im Modul (fuer Bundle-Tease)
+            paid_total = 0
+            if lesson.category:
+                paid_total = sum(
+                    1 for sibling in lesson.category.lessons
+                    if sibling.is_published and (sibling.price or 0) > 0
+                    and sibling.id != lesson.id
+                )
+                # Plus paid Lessons in anderen N5-Modulen — Bundle deckt N5 komplett
+                if lesson.category.jlpt_level == 5:
+                    other_paid = (
+                        db.session.query(Lesson)
+                        .join(LessonCategory, Lesson.category_id == LessonCategory.id)
+                        .filter(LessonCategory.jlpt_level == 5)
+                        .filter(LessonCategory.id != lesson.category.id)
+                        .filter(Lesson.is_published.is_(True))
+                        .filter(Lesson.price > 0)
+                        .count()
+                    )
+                    paid_total += other_paid
+            return render_template(
+                'lesson_paywall.html',
+                lesson=lesson,
+                bundle_price=bundle_price,
+                bundle_regular_price=REGULAR_PRICE_CHF,
+                bundle_early_bird_price=EARLY_BIRD_PRICE_CHF,
+                paid_total=paid_total,
+            )
+        # Login fehlt
         if not current_user.is_authenticated and 'Login required' in message:
             return redirect(url_for('routes.login', next=request.url))
+        # Restfaelle (Voraussetzungen, etc.) — Flash bleibt
+        flash(message, 'warning')
         return redirect(url_for('routes.lessons'))
     
     # Get or create user progress (only for authenticated users)

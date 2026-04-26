@@ -25,7 +25,7 @@ if hasattr(sys.stdout, "reconfigure"):
 
 from app import create_app, db  # noqa: E402
 from app.models import LessonCategory  # noqa: E402
-from app.services.bundle_service import REGULAR_PRICE_CHF  # noqa: E402
+from app.services.bundle_service import SINGLE_LESSON_PRICE_CHF  # noqa: E402
 
 JLPT_LEVEL = 5
 FREE_LESSONS_PER_MODULE = 1  # Duolingo-Style: nur erste 1 pro Modul gratis
@@ -61,7 +61,7 @@ def main() -> int:
                         new_price = 0.0
                         new_purchasable = False
                     else:
-                        new_price = REGULAR_PRICE_CHF
+                        new_price = SINGLE_LESSON_PRICE_CHF
                         new_purchasable = True
 
                 changed = (lesson.price != new_price) or (lesson.is_purchasable != new_purchasable)
@@ -86,7 +86,7 @@ def main() -> int:
         mode = "RESET" if reset else ("DRY-RUN" if dry_run else "COMMIT")
         print("=" * 90)
         print(f"  N5-Pricing Duolingo-Style ({mode})")
-        print(f"  Free pro Modul: {FREE_LESSONS_PER_MODULE}, Paid-Preis: CHF {REGULAR_PRICE_CHF:.2f}")
+        print(f"  Free pro Modul: {FREE_LESSONS_PER_MODULE}, Paid-Preis (Einzel): CHF {SINGLE_LESSON_PRICE_CHF:.2f}")
         print("=" * 90)
         last_module = None
         for module, lid, title, tag, changed in report:
