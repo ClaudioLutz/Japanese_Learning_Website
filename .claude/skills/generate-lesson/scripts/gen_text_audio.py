@@ -63,11 +63,14 @@ _MD_PATTERNS = [
     (re.compile(r"^---+\s*$", re.MULTILINE), ""),                 # --- hr → leer
 ]
 
-# Romaji direkt nach JP-Zeichen (oder JP-Bracket) wird vor TTS entfernt.
-# Heuristik: ` (latein-words-with-spaces-and-comma-and-apostroph)` direkt nach
-# JP-Klammer 」 oder JP-Zeichen.
+# Klammer direkt nach JP-Zeichen (oder JP-Bracket) wird vor TTS entfernt.
+# Logik: Alles was direkt hinter einem JP-Zeichen oder einer JP-Klammer 」
+# in runden Klammern steht, ist eine Lesehilfe (Romaji, Bedeutung, Hinweis)
+# und gehoert nicht ins Audio. Erlaubt eine Ebene Verschachtelung, damit
+# `(ya, 'und (unter anderem)')` und `(い**がつ**, ichi-gatsu, Januar)`
+# komplett verschwinden.
 _ROMAJI_AFTER_JP = re.compile(
-    r"(?<=[぀-ヿ㐀-鿿」])\s*\(([ -~À-ÿ~,\-'’\.]+)\)"
+    r"(?<=[぀-ヿ㐀-鿿」])\s*\((?:[^()]|\([^()]*\))*\)"
 )
 
 
