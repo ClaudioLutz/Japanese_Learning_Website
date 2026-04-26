@@ -121,9 +121,10 @@
           </a>
           {% endif %}
           <a href="{{ url_for('bundle.n5_bundle') }}"
-             class="topnav-link topnav-link-cta {% if request.endpoint == 'bundle.n5_bundle' %}is-active{% endif %}">
+             class="topnav-link topnav-link-cta {% if request.endpoint == 'bundle.n5_bundle' %}is-active{% endif %}"
+             title="N5 Komplett — alle Lektionen lifetime, CHF 9.90"
+             data-cta-tooltip="CHF 9.90 · Lifetime-Zugriff">
             <i class="fas fa-bolt"></i><span>N5 Komplett</span>
-            <span class="topnav-cta-badge">CHF 9.90</span>
           </a>
         </div>
 
@@ -264,25 +265,49 @@
         color: #0d6efd;
     }
     .topnav-link.is-active i { opacity: 1; }
+    /* Bundle-CTA: kompakter Outline-Button mit Hover-Tooltip statt Vollflaechen-Lila */
     .topnav-link-cta {
-        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-        color: white;
+        background: white;
+        color: #4f46e5;
+        border: 1.5px solid #c7d2fe;
         margin-left: 0.4rem;
+        white-space: nowrap;
+        position: relative;
     }
-    .topnav-link-cta:hover { background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%); color: white; }
-    .topnav-link-cta i { color: white; opacity: 1; }
+    .topnav-link-cta:hover {
+        background: #eef2ff;
+        color: #4338ca;
+        border-color: #a5b4fc;
+    }
+    .topnav-link-cta i { color: #4f46e5; opacity: 1; }
+    .topnav-link-cta:hover i { color: #4338ca; }
     .topnav-link-cta.is-active {
-        background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
+        background: #4f46e5;
         color: white;
-        box-shadow: 0 0 0 2px rgba(79,70,229,0.3);
+        border-color: #4f46e5;
     }
-    .topnav-cta-badge {
-        background: rgba(255, 255, 255, 0.22);
-        color: white;
-        font-size: 0.72rem; font-weight: 700;
-        padding: 0.1rem 0.45rem; border-radius: 999px;
-        margin-left: 0.3rem;
+    .topnav-link-cta.is-active i { color: white; }
+    /* Tooltip mit Preis-Detail bei Hover (data-cta-tooltip) */
+    .topnav-link-cta::after {
+        content: attr(data-cta-tooltip);
+        position: absolute;
+        top: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+        background: #1e293b; color: white;
+        padding: 0.35rem 0.7rem; border-radius: 6px;
+        font-size: 0.78rem; font-weight: 600; white-space: nowrap;
+        opacity: 0; pointer-events: none;
+        transition: opacity 0.15s ease 0.2s;
+        z-index: 100;
     }
+    .topnav-link-cta::before {
+        content: ""; position: absolute;
+        top: calc(100% + 2px); left: 50%; transform: translateX(-50%);
+        border: 4px solid transparent; border-bottom-color: #1e293b;
+        opacity: 0; pointer-events: none;
+        transition: opacity 0.15s ease 0.2s;
+    }
+    .topnav-link-cta:hover::after,
+    .topnav-link-cta:hover::before { opacity: 1; }
     .topnav-badge-dot {
         position: absolute; top: 6px; right: 6px;
         width: 7px; height: 7px;
