@@ -22,26 +22,26 @@ def _make_module(slug, jlpt_level, display_order, **kwargs):
 
 
 class TestLearnPathRoute:
-    def test_learn_path_default_n5(self, client, app_context):
-        """Default-Route /learn redirektet/rendert N5-Pfad."""
-        _make_module("test-n5-mod", jlpt_level=5, display_order=1, name="Test-Modul N5")
-        db.session.commit()
-        resp = client.get("/learn")
-        assert resp.status_code == 200
-        assert b"JLPT N5 Lernpfad" in resp.data
+    """Seit 2026-04-26 redirektet /learn/n5 auf /#lernpfad — der Pfad wird auf der
+    Startseite gerendert, nicht mehr in einem separaten Template. Die Pfad-Render-
+    Tests laufen daher gegen "/"."""
 
-    def test_learn_path_explicit_level(self, client, app_context):
-        """/learn/n5 zeigt N5-Module, /learn/n4 zeigt nur N4-Module."""
-        _make_module("test-n5-mod-a", jlpt_level=5, display_order=1, name="N5 Modul A")
-        _make_module("test-n4-mod-a", jlpt_level=4, display_order=1, name="N4 Modul A")
-        db.session.commit()
-        r5 = client.get("/learn/n5")
-        r4 = client.get("/learn/n4")
-        assert r5.status_code == 200
-        assert r4.status_code == 200
-        assert b"N5 Modul A" in r5.data
-        assert b"N5 Modul A" not in r4.data
-        assert b"N4 Modul A" in r4.data
+    def test_learn_default_redirects_to_home(self, client, app_context):
+        """/learn (ohne Level) redirektet auf /#lernpfad."""
+        resp = client.get("/learn")
+        assert resp.status_code == 301
+        assert resp.headers["Location"].endswith("#lernpfad")
+
+    def test_learn_n5_redirects_to_home(self, client, app_context):
+        """/learn/n5 redirektet 301 auf /#lernpfad — Pfad lebt auf der Startseite."""
+        resp = client.get("/learn/n5")
+        assert resp.status_code == 301
+        assert resp.headers["Location"].endswith("#lernpfad")
+
+    def test_learn_n4_returns_404(self, client, app_context):
+        """N4 ist noch nicht inhaltlich vorhanden — 404 statt leere Seite."""
+        resp = client.get("/learn/n4")
+        assert resp.status_code == 404
 
     def test_learn_path_invalid_level_404(self, client, app_context):
         """Ungueltige Level (z.B. 6) → 404."""
@@ -49,30 +49,23 @@ class TestLearnPathRoute:
         assert resp.status_code == 404
 
     def test_module_ordering(self, client, app_context):
-        """Module werden nach display_order sortiert."""
+        """Module werden nach display_order sortiert (gerendert auf der Startseite)."""
         _make_module("zzz-late", jlpt_level=5, display_order=10, name="ZLate Modul")
         _make_module("aaa-early", jlpt_level=5, display_order=1, name="AEarly Modul")
         db.session.commit()
-        resp = client.get("/learn/n5")
+        resp = client.get("/")
         body = resp.data.decode("utf-8")
         assert body.index("AEarly Modul") < body.index("ZLate Modul")
 
-    def test_module_with_no_lessons_shows_hint(self, client, app_context):
-        """Modul ohne Lektionen zeigt Fallback-Hinweis."""
-        _make_module("empty-mod", jlpt_level=5, display_order=1, name="Leer Modul")
-        db.session.commit()
-        resp = client.get("/learn/n5")
-        assert b"Noch keine Lektionen in diesem Modul" in resp.data
-
     def test_module_with_lesson_shows_link(self, client, app_context):
-        """Modul mit Lektion zeigt Lektions-Link."""
+        """Modul mit Lektion zeigt Lektions-Link auf der Startseite."""
         mod = _make_module("with-lesson", jlpt_level=5, display_order=1, name="Mit Lektion")
         db.session.flush()
         # CONTENT_LANGUAGES default = ['german'] — Test-Lesson muss German sein
         lesson = LessonFactory(category_id=mod.id, is_published=True,
                                 title="Mein Lernstoff", instruction_language="german")
         db.session.commit()
-        resp = client.get("/learn/n5")
+        resp = client.get("/")
         assert b"Mein Lernstoff" in resp.data
         assert f"/lessons/{lesson.id}".encode() in resp.data
 

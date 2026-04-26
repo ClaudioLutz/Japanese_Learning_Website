@@ -79,7 +79,6 @@ def sitemap_xml():
     # Statische, oeffentliche Seiten
     static_pages = [
         ('/', 'daily', '1.0'),
-        ('/learn/n5', 'weekly', '0.9'),
         ('/n5-bundle', 'weekly', '0.9'),
         ('/lessons', 'daily', '0.8'),
         ('/courses', 'weekly', '0.7'),

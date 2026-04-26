@@ -100,8 +100,8 @@
 
         {# Primary Nav — 3-4 essentielle Items, Active-State per request.endpoint #}
         <div class="topnav-primary" :class="mobileOpen && 'is-open'">
-          <a href="{{ url_for('routes.learn_path', level=5) }}"
-             class="topnav-link {% if request.endpoint == 'routes.learn_path' or request.endpoint == 'routes.index' %}is-active{% endif %}">
+          <a href="{{ url_for('routes.index') }}#lernpfad"
+             class="topnav-link {% if request.endpoint == 'routes.index' %}is-active{% endif %}">
             <i class="fas fa-route"></i><span>Lernpfad</span>
           </a>
           <a href="{{ url_for('routes.lessons') }}"

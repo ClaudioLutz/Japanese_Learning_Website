@@ -72,11 +72,11 @@ class TestHomepage:
         assert 'Kostenlos starten' not in body
 
     def test_homepage_includes_lernpfad_nav_link(self, client):
-        """Top-Nav enthaelt 'Lernpfad'-Link."""
+        """Top-Nav enthaelt 'Lernpfad'-Link (zeigt seit 2026-04-26 auf /#lernpfad)."""
         resp = client.get("/")
         body = resp.data.decode('utf-8')
         assert 'Lernpfad' in body
-        assert '/learn/n5' in body
+        assert '#lernpfad' in body
 
 
 # ── I-PR03: Lessons-Seite ───────────────────────────────────

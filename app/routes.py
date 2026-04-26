@@ -557,40 +557,18 @@ def lessons():
 @bp.route('/learn')
 @bp.route('/learn/n<int:level>')
 def learn_path(level: int = 5):
-    """JLPT-strukturierter Lernpfad — zeigt Module fuer ein Level mit Fortschritt
-    und Lock-Status. Mayuko-Direktive 2026-04-25: erst N5 komplett, dann N4."""
+    """JLPT-Lernpfad — N5 wird per 301 auf die Startseite umgeleitet, weil dort
+    der schoenere Pfad gerendert wird (drei Gruppen, Hero, Bundle-Hint).
+    Andere Levels (N4+) sind noch nicht inhaltlich vorhanden — 404.
+    """
     if level not in (1, 2, 3, 4, 5):
         from flask import abort
         abort(404)
-    visible_langs = current_app.config.get('CONTENT_LANGUAGES', ['german'])
-    modules = (
-        LessonCategory.query.filter_by(jlpt_level=level)
-        .order_by(LessonCategory.display_order.asc(), LessonCategory.id.asc())
-        .all()
-    )
-    user = current_user if current_user.is_authenticated else None
-    rendered_modules = []
-    for m in modules:
-        done, total = m.completion_for_user(user, languages=visible_langs)
-        unlocked = m.is_unlocked_for_user(user)
-        published_lessons = sorted(
-            [l for l in m.lessons
-             if l.is_published and l.instruction_language in visible_langs],
-            key=lambda l: (l.order_index or 0, l.id),
-        )
-        rendered_modules.append({
-            "module": m,
-            "done": done,
-            "total": total,
-            "percent": round(100.0 * done / total) if total else 0,
-            "unlocked": unlocked,
-            "lessons": published_lessons,
-        })
-    return render_template(
-        'learn_path.html',
-        level=level,
-        modules=rendered_modules,
-    )
+    if level == 5:
+        return redirect(url_for('routes.index') + '#lernpfad', code=301)
+    # Andere Levels haben noch keinen Content — Mayuko-Direktive: erst N5 komplett.
+    from flask import abort
+    abort(404)
 
 @bp.route('/learn/n<int:level>/<slug>')
 def module_detail(level: int, slug: str):

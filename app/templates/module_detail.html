@@ -109,7 +109,7 @@
 
   <nav class="mod-breadcrumb" aria-label="Brotkrumen">
     <a href="{{ url_for('routes.index') }}">Start</a> ›
-    <a href="{{ url_for('routes.learn_path', level=level) }}">N{{ level }}-Pfad</a> ›
+    <a href="{{ url_for('routes.index') }}#lernpfad">N{{ level }}-Pfad</a> ›
     <span>{{ module.name.split(' · ')[-1] if ' · ' in module.name else module.name }}</span>
   </nav>
 
