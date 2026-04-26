@@ -351,11 +351,28 @@ def api_browse_export():
 
     output = io.StringIO()
     writer = csv.writer(output)
-    writer.writerow(['Content-ID', 'Typ', 'Karte', 'Status', 'Stufe', 'Faellig', 'Reps', 'Lapses', 'Lektion'])
+    writer.writerow(['Content-ID', 'Typ', 'Karte', 'Lesung', 'Bedeutung', 'Status', 'Stufe', 'Faellig', 'Reps', 'Lapses', 'Lektion'])
 
     for card in result['cards']:
+        d = card.get('details') or {}
+        ct = card['content_type']
+        if ct == 'vocabulary':
+            reading = d.get('reading') or ''
+            meaning = d.get('meaning_de') or d.get('meaning') or ''
+        elif ct == 'kanji':
+            reading = ' / '.join(p for p in [d.get('onyomi'), d.get('kunyomi')] if p)
+            meaning = d.get('meaning') or ''
+        elif ct == 'kana':
+            reading = d.get('romanization') or ''
+            meaning = ''
+        elif ct == 'grammar':
+            reading = d.get('romaji') or ''
+            meaning = d.get('explanation') or ''
+        else:
+            reading = ''
+            meaning = ''
         writer.writerow([
-            card['content_id'], card['content_type'], card['front'],
+            card['content_id'], ct, card['front'], reading, meaning,
             card['status'], card['stage_name'], card.get('due_date', ''),
             card['reps'], card['lapses'], card.get('lesson_title', ''),
         ])

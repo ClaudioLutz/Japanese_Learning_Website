@@ -53,6 +53,8 @@
 
     .stage-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
     .card-front-text { font-weight: 600; }
+    .card-reading { color: var(--text-muted); font-size: 0.85rem; }
+    .card-meaning { color: var(--text-color); max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .leech-indicator { color: #dc3545; font-size: 0.75rem; }
 
     /* Mobile: Table → Card layout */
@@ -167,6 +169,8 @@
                     <tr>
                         <th style="width:30px;"><input type="checkbox" @change="toggleAll($event)"></th>
                         <th>Karte</th>
+                        <th>Lesung</th>
+                        <th>Bedeutung</th>
                         <th>Typ</th>
                         <th>Stufe</th>
                         <th>Faellig</th>
@@ -178,6 +182,8 @@
                         <tr :class="selectedIds.includes(card.content_id) && 'selected'" @click="showDetail(card.content_id)">
                             <td @click.stop><input type="checkbox" :value="card.content_id" x-model.number="selectedIds"></td>
                             <td data-label="Karte"><span class="card-front-text" x-text="card.front"></span></td>
+                            <td data-label="Lesung" class="card-reading" x-text="readingOf(card)"></td>
+                            <td data-label="Bedeutung" class="card-meaning" x-text="meaningOf(card)"></td>
                             <td data-label="Typ" x-text="typeLabel(card.content_type)"></td>
                             <td data-label="Stufe"><span class="stage-dot" :style="`background:${card.stage_color}`"></span><span x-text="card.stage_name" style="font-size:0.8rem;"></span></td>
                             <td data-label="Faellig" x-text="formatDate(card.due_date)"></td>
@@ -270,6 +276,29 @@ function cardBrowser() {
 
         typeLabel(t) {
             return {kana:'Kana', kanji:'Kanji', vocabulary:'Vokabel', grammar:'Grammatik'}[t] || t;
+        },
+
+        readingOf(card) {
+            const d = card.details || {};
+            if (card.content_type === 'vocabulary') return d.reading || '-';
+            if (card.content_type === 'kanji') {
+                const parts = [d.onyomi, d.kunyomi].filter(Boolean);
+                return parts.length ? parts.join(' / ') : '-';
+            }
+            if (card.content_type === 'kana') return d.romanization || '-';
+            if (card.content_type === 'grammar') return d.romaji || '-';
+            return '-';
+        },
+
+        meaningOf(card) {
+            const d = card.details || {};
+            let m = '';
+            if (card.content_type === 'vocabulary') m = d.meaning_de || d.meaning || '';
+            else if (card.content_type === 'kanji') m = d.meaning || '';
+            else if (card.content_type === 'grammar') m = d.explanation || '';
+            else if (card.content_type === 'kana') m = '';
+            if (!m) return '-';
+            return m.length > 60 ? m.slice(0, 57) + '…' : m;
         },
 
         formatDate(iso) {
