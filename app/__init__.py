@@ -48,8 +48,9 @@ def create_app():
     app.config['SITE_NAME'] = os.environ.get('SITE_NAME', 'Japanese Learning')
     app.config['SITE_DESCRIPTION'] = os.environ.get(
         'SITE_DESCRIPTION',
-        'Japanisch lernen für deutschsprachige Anfänger — strukturiert nach JLPT-Level. '
-        'Hiragana, Katakana, Kanji, Vokabeln, Grammatik und erste Dialoge in einem klaren Lernpfad.'
+        'Japanisch lernen online — JLPT-N5-Kurse mit Hiragana, Katakana, Kanji, Vokabeln, '
+        'Grammatik und Spaced-Repetition-Quiz. Strukturierte Lernplattform aus der Schweiz, '
+        'auf Deutsch erklärt, kostenlos starten.'
     )
     app.config['SEO_DEFAULT_OG_IMAGE'] = os.environ.get(
         'SEO_DEFAULT_OG_IMAGE',
