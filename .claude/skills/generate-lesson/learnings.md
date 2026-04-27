@@ -47,6 +47,50 @@ Selbstverbesserndes Log. Wird vor jedem Run gelesen, nach jedem Run angehängt.
 
 <!-- Neuste Einträge oben, älteste unten. -->
 
+## 2026-04-27 19:00 — Neues Modul `n5-kanji-grundlagen` + 3-er-Drop Lessons 171-173
+
+### Erstellte Lektionen (Modul 38, n5-kanji-grundlagen)
+
+- **171**: N5 Kanji 6 — Familie (父母兄姉弟妹) — order=6
+- **172**: N5 Kanji 7 — Grosse Zahlen, Geld & Zeit (百千万円半年時分) — order=7
+- **173**: N5 Kanji 8 — Eigenschaften & i-Adjektive (新古高安長短多少早) — order=8
+
+### Coverage-Sprung 2.5% → 55%
+
+- **Kanji**: 2/80 → **44/80 (55%)** — +52.5 Prozentpunkte in einer Session
+- **Vokabeln**: 252/710 → 261/710 (36.8%)
+- Backfill-Strategie: 31 fehlende N5-Kanji-Records direkt in `kanji`-Tabelle gepflegt für Kanji, die in den bestehenden Lessons 164/167-170 als Vokabeln referenziert sind, aber nie als eigene Karteikarten existierten. Plus 13 neue aus den 3 Lessons heute.
+
+### Befund: Modulare Kanji-Organisation fehlte
+
+Vor dieser Session waren 5 Kanji-Lessons (164, 167-170) auf 3 verschiedene Themen-Module verteilt: Zahlen-Zeit (164/167), Familie-Personen (168), Reise-Ort (169/170). Pädagogisch unscharf — Lerner sucht Kanji-Karten und findet sie unter "Zahlen". Lösung: Eigenes Schreibsystem-Modul `n5-kanji-grundlagen` (display_order=3, zwischen Katakana und Themen). Alle 5 bestehenden Kanji-Lessons umgezogen + 3 neue eingefügt → 8 Lessons im neuen Modul, klare Hierarchie Hiragana → Katakana → Kanji-Grundlagen → Themen.
+
+### Pipeline-Erweiterungen (committed)
+
+1. **`_get_or_create_kanji`-Funktion** in pipeline.py: bisher fehlte sie — Lessons konnten zwar `content_type='kanji'` enthalten, aber Insert hat content_id auf NULL gelassen. Jetzt deduppt über `character` (UNIQUE), erstellt sonst neuen Kanji-Record mit On/Kun/Strichzahl.
+2. **Lesson-Level-Override `additional_n5_kanji`**: erlaubt einer Kanji-Lesson, explizit Kanji als für sie OK zu markieren, die NICHT im elzup-canonical-Set sind (z.B. 兄/姉/弟/妹 — in Tanos-N5 Standard, in elzup nicht). Pflicht-Begleitfeld: `additional_n5_kanji_source_note` mit Begründung. Der Validator addiert sie zum n5_kanji_set für die Beispielsatz-Prüfung.
+
+### Probleme / Erkenntnisse
+
+1. **elzup-Canonical fehlt 兄姉弟妹** — die elzup-Liste hat nur 80 Kanji, weicht aber an mehreren Stellen von der "klassischen" Wikipedia/Tanos-N5-Liste ab. Auffälligste Lücken: 兄, 姉, 弟, 妹 (Geschwister-Kanji), 新, 古, 安, 短, 多, 少, 早 (Eigenschaft-Kanji). Workaround: `additional_n5_kanji`-Override am Lesson-Level. → **Regel: Bei neuer Kanji-Lesson immer zuerst `python -c "import json; canon=json.load(open('.claude/skills/generate-lesson/sources/jlpt_n5_canonical.json')); print(c['char'] in [k['char'] for k in canon['kanji']])` für jeden geplanten Kanji prüfen.**
+
+2. **`gcloud storage rsync` aus Python-Subprocess findet `gcloud.cmd` nicht** auf Windows. `scripts/sync_assets_to_gcs.py` schlägt fehl mit "'gcloud' nicht im PATH gefunden", obwohl `gcloud` in der Bash-Shell verfügbar ist. Workaround: rsync direkt in Bash-Loop aufrufen. → **Regel: Auf Windows `subprocess.run(["gcloud", ...])` braucht entweder `shell=True` oder den vollen Pfad zur `.cmd`-Datei.**
+
+3. **Bestehende Kanji-Lessons hatten 0 Kanji-Items** — alle 5 (164/167-170) referenzieren Kanji nur via Vocabulary-Items im Lesson-Content. Daher die "2/80"-Coverage trotz 33 thematisch abgedeckter Kanji. Backfill in einem SQL-INSERT bringt sofortigen Coverage-Sprung. → **Regel: Vor Generierung neuer Kanji-Lessons immer prüfen, welche Kanji bereits in bestehenden Lessons als Vocabulary-Word existieren — die kann man in einem Backfill-Schritt zu Kanji-Records erheben.**
+
+4. **`additional_n5_kanji_source_note` braucht Validierung** — wenn jemand `additional_n5_kanji` setzt aber keine Begründung schreibt, ist die Override-Praxis mit der Zeit nicht mehr nachvollziehbar. Validator schlägt jetzt fehl, wenn Source-Note fehlt.
+
+5. **Sitemap automatisch +8 URLs** durch Modul-Detail-Seite + 3 neue paid Lessons. War 42, jetzt 50. SEO-Hebel ohne Extra-Aufwand.
+
+### Aktuelle Regeln (Ergänzung ab diesem Run)
+
+47. **Kanji-Lessons gehören in `n5-kanji-grundlagen`** (Modul 38, display_order=3), NICHT in Themen-Module. Pädagogische Hierarchie: Hiragana → Katakana → Kanji-Grundlagen → Themen.
+48. **`additional_n5_kanji`-Override + source_note Pflicht** für Kanji ausserhalb elzup-canonical (z.B. 兄/姉/弟/妹/新/古/安/短/多/少/早). Validator akzeptiert nur mit Begründung.
+49. **Vor Generierung neuer Kanji-Lessons: Coverage-Backfill prüfen** — viele bestehende Lessons referenzieren Kanji nur als Vocabulary-Word, nicht als Kanji-Record. Direkter SQL-INSERT-Backfill ist effektivster Coverage-Hebel.
+50. **`gcloud storage rsync` auf Windows direkt aus Bash, nicht via Python-Subprocess** — sonst PATH-Probleme mit `.cmd`-Files.
+
+---
+
 ## 2026-04-26 09:00 — 6er-Drop N5-Lektionen 161-166
 
 ### Erstellte Lektionen

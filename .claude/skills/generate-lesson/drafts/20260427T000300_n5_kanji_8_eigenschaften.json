@@ -1,0 +1,904 @@
+{
+  "title": "N5 Kanji 8 — Eigenschaften & i-Adjektive (新古高安長短多少早)",
+  "description": "Lerne neun Kanji aus dem N5-Set für Eigenschaften: 新 (neu), 古 (alt), 高 (hoch/teuer), 安 (günstig/sicher), 長 (lang), 短 (kurz), 多 (viel), 少 (wenig), 早 (früh). Mit der vollständigen i-Adjektiv-Konjugation: positiv, negativ, vergangen.",
+  "jlpt_level": 5,
+  "topic": "Kanji Eigenschaften",
+  "instruction_language": "german",
+  "allow_guest_access": false,
+  "additional_n5_kanji": [
+    "新",
+    "古",
+    "安",
+    "短",
+    "多",
+    "少",
+    "早"
+  ],
+  "additional_n5_kanji_source_note": "In Tanos-N5-Liste und allen Standard-Anki-Decks enthalten — in der einzelwort-zentrierten elzup-Liste teils nur als Kompositum vorhanden. Diese sieben i-Adjektiv-Kanji sind didaktisch für N5 zentral (MNN L8, Genki L5).",
+  "pages": [
+    {
+      "title": "Einführung — Welt beschreiben mit i-Adjektiven",
+      "description": "Neun Kanji für die ersten echten Beschreibungssätze",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Neun Kanji, mit denen du die Welt beschreibst",
+            "content_text": "## Warum diese neun Kanji?\n\nMit Kanji kannst du **benennen**. Mit i-Adjektiven kannst du **beschreiben**. Und mit i-Adjektiv-Kanji bekommst du beides in einem: das Wort, das einen Gegenstand charakterisiert, und das Zeichen, das es schreibt.\n\n- **Auf dem Speiseplan:** これは たかい (kore wa takai, 'das ist teuer'), あれは やすい (are wa yasui, 'das ist günstig').\n- **Im Mietangebot:** あたらしい アパート (atarashii apaato, 'neue Wohnung'), ふるい アパート (furui apaato, 'alte Wohnung').\n- **Beim Rezept:** ながい パスタ (nagai pasuta, 'lange Pasta'), みじかい パスタ (mijikai pasuta, 'kurze Pasta').\n- **In der Konversation:** ひとが おおい (hito ga ooi, 'es sind viele Leute'), ひとが すくない (hito ga sukunai, 'es sind wenige Leute').\n\nDiese neun Kanji decken **fünf Gegensatzpaare** ab — und genau Gegensatzpaare sind didaktisch ideal: dein Gehirn merkt sich das Adjektiv viel schneller, wenn es das Antonym gleich mitlernt.\n\n### Die fünf Gegensatzpaare\n\n1. **新 (あたら, *atara*)** ↔ **古 (ふる, *furu*)** — neu ↔ alt.\n2. **高 (たか, *taka*)** ↔ **安 (やす, *yasu*)** — hoch/teuer ↔ niedrig/günstig.\n3. **長 (なが, *naga*)** ↔ **短 (みじか, *mijika*)** — lang ↔ kurz.\n4. **多 (おお, *oo*)** ↔ **少 (すく, *suku*)** — viel ↔ wenig.\n5. **早 (はや, *haya*)** — früh (Gegensatz wäre おそい (osoi, 'spät') — das Kanji ist erst N4).\n\n### Die wichtigste Grammatik der Lektion: i-Adjektiv-Konjugation\n\nAlle neun Wörter enden auf **〜い (i)** — sie heissen deshalb **i-Adjektive**. Sie konjugieren regelmässig:\n\n- **Positiv** (Gegenwart): `あたらしい (atarashii)` = 'es ist neu'.\n- **Negativ** (Gegenwart): `あたらしくない (atarashikunai)` = 'es ist nicht neu'. Stamm + ~くない.\n- **Positiv** (Vergangenheit): `あたらしかった (atarashikatta)` = 'es war neu'. Stamm + ~かった.\n- **Negativ** (Vergangenheit): `あたらしくなかった (atarashikunakatta)` = 'es war nicht neu'.\n\n> **Mayuko-Tipp:** Lerne i-Adjektive immer in **Paaren** und **mit allen vier Zeitformen**. Schreibe sie auf einen Karton: `あたらしい / あたらしくない / あたらしかった / あたらしくなかった`. Dieselbe Tabelle für alle neun. Wenn du das einmal gemacht hast, hast du alle N5-i-Adjektive im Griff.\n\n### Was du heute lernst\n\n- **Neun Kanji** mit On- und Kun-Lesungen, Strichzahlen.\n- **15 Vokabeln** als i-Adjektive in den fünf Gegensatzpaaren.\n- **i-Adjektiv-Konjugation** vollständig (positiv/negativ × Gegenwart/Vergangenheit).\n- **Adjektiv im Satz** mit です-Form und attributiv (vor dem Nomen).\n- **Dialog Wohnungsbesichtigung** — Tanaka zeigt Lisa zwei Apartments, sie vergleichen.\n\n> **Achtung:** Eine wichtige Ausnahme — `いい (ii)` ('gut') konjugiert unregelmässig: Negativ ist `よくない (yokunai)`, Vergangenheit `よかった (yokatta)`. Stamm wird zu `よ〜`. Das ist die einzige N5-Unregelmässigkeit; alle anderen sind brav."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln 1 — Neu, alt, hoch, günstig (新古高安)",
+      "description": "Vier Kanji für die häufigsten Beschreibungen",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "kanji",
+          "data": {
+            "character": "新",
+            "meaning": "neu / new",
+            "onyomi": "シン",
+            "kunyomi": "あたら.しい, あら.た, あ.ら",
+            "jlpt_level": 5,
+            "stroke_count": 13,
+            "radical": "斤"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "新しい",
+            "reading": "あたらしい",
+            "romaji": "atarashii",
+            "meaning": "new",
+            "meaning_de": "neu",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "新しい かばんを かいました。",
+            "example_sentence_english": "Atarashii kaban wo kaimashita. — I bought a new bag.",
+            "image_url": "vocab_generated/vocab_ad4b0bd5.png"
+          }
+        },
+        {
+          "content_type": "kanji",
+          "data": {
+            "character": "古",
+            "meaning": "alt / old",
+            "onyomi": "コ",
+            "kunyomi": "ふる.い, ふる-",
+            "jlpt_level": 5,
+            "stroke_count": 5,
+            "radical": "口"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "古い",
+            "reading": "ふるい",
+            "romaji": "furui",
+            "meaning": "old (object), antique",
+            "meaning_de": "alt (für Gegenstände, nicht Personen)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "この 古い 本は 父の 本です。",
+            "example_sentence_english": "Kono furui hon wa chichi no hon desu. — This old book is my father's book.",
+            "image_url": "vocab_generated/vocab_563414ed.png"
+          }
+        },
+        {
+          "content_type": "kanji",
+          "data": {
+            "character": "高",
+            "meaning": "hoch, teuer / high, expensive",
+            "onyomi": "コウ",
+            "kunyomi": "たか.い, たか, -だか, たか.まる, たか.める",
+            "jlpt_level": 5,
+            "stroke_count": 10,
+            "radical": "高"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "高い",
+            "reading": "たかい",
+            "romaji": "takai",
+            "meaning": "high, expensive, tall",
+            "meaning_de": "hoch, teuer, gross (Person)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "この とけいは 高いです。",
+            "example_sentence_english": "Kono tokei wa takai desu. — This watch is expensive.",
+            "image_url": "vocab_generated/vocab_15d03a86.png"
+          }
+        },
+        {
+          "content_type": "kanji",
+          "data": {
+            "character": "安",
+            "meaning": "günstig, sicher / cheap, safe",
+            "onyomi": "アン",
+            "kunyomi": "やす.い, やす.まる, やす, やす.らか",
+            "jlpt_level": 5,
+            "stroke_count": 6,
+            "radical": "宀"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "安い",
+            "reading": "やすい",
+            "romaji": "yasui",
+            "meaning": "cheap, inexpensive",
+            "meaning_de": "günstig, billig",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "この みせの パンは 安いです。",
+            "example_sentence_english": "Kono mise no pan wa yasui desu. — This shop's bread is cheap.",
+            "image_url": "vocab_generated/vocab_f612ce84.png"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln 2 — Lang, kurz, viel, wenig, früh (長短多少早)",
+      "description": "Fünf weitere i-Adjektiv-Kanji",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "kanji",
+          "data": {
+            "character": "長",
+            "meaning": "lang, Chef / long, leader",
+            "onyomi": "チョウ",
+            "kunyomi": "なが.い, おさ",
+            "jlpt_level": 5,
+            "stroke_count": 8,
+            "radical": "長"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "長い",
+            "reading": "ながい",
+            "romaji": "nagai",
+            "meaning": "long",
+            "meaning_de": "lang",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "母の かみは 長いです。",
+            "example_sentence_english": "Haha no kami wa nagai desu. — My mother's hair is long.",
+            "image_url": "vocab_generated/vocab_f05b1a18.png"
+          }
+        },
+        {
+          "content_type": "kanji",
+          "data": {
+            "character": "短",
+            "meaning": "kurz / short",
+            "onyomi": "タン",
+            "kunyomi": "みじか.い",
+            "jlpt_level": 5,
+            "stroke_count": 12,
+            "radical": "矢"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "短い",
+            "reading": "みじかい",
+            "romaji": "mijikai",
+            "meaning": "short (length, time)",
+            "meaning_de": "kurz (Länge oder Zeit)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "この えいがは 短いです。",
+            "example_sentence_english": "Kono eiga wa mijikai desu. — This movie is short.",
+            "image_url": "vocab_generated/vocab_6c09245e.png"
+          }
+        },
+        {
+          "content_type": "kanji",
+          "data": {
+            "character": "多",
+            "meaning": "viel / many",
+            "onyomi": "タ",
+            "kunyomi": "おお.い, まさ.に",
+            "jlpt_level": 5,
+            "stroke_count": 6,
+            "radical": "夕"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "多い",
+            "reading": "おおい",
+            "romaji": "ooi",
+            "meaning": "many, numerous",
+            "meaning_de": "viel(e), zahlreich",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "こうえんに 子どもが 多いです。",
+            "example_sentence_english": "Kouen ni kodomo ga ooi desu. — There are many children in the park.",
+            "image_url": "vocab_generated/vocab_438b41e7.png"
+          }
+        },
+        {
+          "content_type": "kanji",
+          "data": {
+            "character": "少",
+            "meaning": "wenig / few",
+            "onyomi": "ショウ",
+            "kunyomi": "すく.ない, すこ.し",
+            "jlpt_level": 5,
+            "stroke_count": 4,
+            "radical": "小"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "少ない",
+            "reading": "すくない",
+            "romaji": "sukunai",
+            "meaning": "few, scarce",
+            "meaning_de": "wenige, knapp",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "今日は ひとが 少ないです。",
+            "example_sentence_english": "Kyou wa hito ga sukunai desu. — There are few people today.",
+            "image_url": "vocab_generated/vocab_e670a528.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "少し",
+            "reading": "すこし",
+            "romaji": "sukoshi",
+            "meaning": "a little, a bit",
+            "meaning_de": "ein bisschen, ein wenig",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "少し まって ください。",
+            "example_sentence_english": "Sukoshi matte kudasai. — Please wait a little.",
+            "image_url": "vocab_generated/vocab_7f174275.png"
+          }
+        },
+        {
+          "content_type": "kanji",
+          "data": {
+            "character": "早",
+            "meaning": "früh, schnell / early, fast",
+            "onyomi": "ソウ, サッ",
+            "kunyomi": "はや.い, はや, はや-, はや.まる, はや.める, さ-",
+            "jlpt_level": 5,
+            "stroke_count": 6,
+            "radical": "日"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "早い",
+            "reading": "はやい",
+            "romaji": "hayai",
+            "meaning": "early, fast",
+            "meaning_de": "früh, schnell",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "毎日 早く おきます。",
+            "example_sentence_english": "Mainichi hayaku okimasu. — I get up early every day.",
+            "image_url": "vocab_generated/vocab_38373424.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "大きい",
+            "reading": "おおきい",
+            "romaji": "ookii",
+            "meaning": "big, large",
+            "meaning_de": "gross",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "この いえは 大きいです。",
+            "example_sentence_english": "Kono ie wa ookii desu. — This house is big.",
+            "image_url": "vocab_generated/vocab_019eb29e.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "小さい",
+            "reading": "ちいさい",
+            "romaji": "chiisai",
+            "meaning": "small, little",
+            "meaning_de": "klein",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "わたしの ねこは 小さいです。",
+            "example_sentence_english": "Watashi no neko wa chiisai desu. — My cat is small.",
+            "image_url": "vocab_generated/vocab_c74af4a0.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "いい",
+            "reading": "いい",
+            "romaji": "ii",
+            "meaning": "good (irregular)",
+            "meaning_de": "gut (unregelmässig konjugiert)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "この 本は いいです。",
+            "example_sentence_english": "Kono hon wa ii desu. — This book is good.",
+            "image_url": "vocab_generated/vocab_f8b138e6.png",
+            "is_canonical_override": true,
+            "source_note": "Standard-N5-i-Adjektiv. Im canonical typischerweise als よい (yoi), aber いい ist die alltägliche Form. Einzige N5-Unregelmässigkeit."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "暑い",
+            "reading": "あつい",
+            "romaji": "atsui",
+            "meaning": "hot (weather)",
+            "meaning_de": "heiss (Wetter)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "今日は あついです。",
+            "example_sentence_english": "Kyou wa atsui desu. — Today is hot.",
+            "image_url": "vocab_generated/vocab_c2f48e1c.png",
+            "is_canonical_override": true,
+            "source_note": "Standard-N5-Wetter-Adjektiv. Kanji 暑 ist N4, daher in Beispielsätzen als あつい geschrieben — Karteikarte zeigt Kanji-Form."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "寒い",
+            "reading": "さむい",
+            "romaji": "samui",
+            "meaning": "cold (weather)",
+            "meaning_de": "kalt (Wetter)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ふゆは とても さむいです。",
+            "example_sentence_english": "Fuyu wa totemo samui desu. — Winter is very cold.",
+            "image_url": "vocab_generated/vocab_a1d2fc1e.png",
+            "is_canonical_override": true,
+            "source_note": "Standard-N5-Wetter-Adjektiv. Kanji 寒 ist N4, daher in Beispielsätzen als さむい geschrieben."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Grammatik — i-Adjektiv-Konjugation komplett",
+      "description": "Wie i-Adjektive in allen vier Zeitformen funktionieren",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Drei Bausteine für i-Adjektiv-Sätze",
+            "content_text": "## Was du in dieser Page lernst\n\n1. **i-Adjektiv-Konjugation** — alle vier Zeitformen.\n2. **i-Adjektiv attributiv** — vor dem Nomen ohne weitere Änderung.\n3. **Ausnahme いい (ii)** — die einzige N5-Unregelmässigkeit.\n\n> **Mayukos Übungs-Tipp:** Vergleichssätze sind die natürlichste Übung. `この くるまは 高いです` (kono kuruma wa takai desu) → `あの くるまは 安いです` (ano kuruma wa yasui desu). Wenn du fünf Paare schreibst, sitzt die Form."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "i-Adjektiv-Konjugation — alle vier Zeitformen",
+            "structure": "[Stamm] + い (i, positiv Gegenwart)\n[Stamm] + くない (kunai, negativ Gegenwart)\n[Stamm] + かった (katta, positiv Vergangenheit)\n[Stamm] + くなかった (kunakatta, negativ Vergangenheit)",
+            "romaji": "[stem] + i  /  [stem] + kunai  /  [stem] + katta  /  [stem] + kunakatta",
+            "explanation": "**i-Adjektive** enden alle auf 〜い (-i). Den Stamm bekommst du, indem du das letzte 〜い weglässt: たかい (takai) → Stamm `taka-`. Dann hängst du an: 〜い (Gegenwart positiv), 〜くない (Gegenwart negativ), 〜かった (Vergangenheit positiv), 〜くなかった (Vergangenheit negativ). Beispiel mit たかい (teuer): たかい (takai, ist teuer), たかくない (takakunai, ist nicht teuer), たかかった (takakatta, war teuer), たかくなかった (takakunakatta, war nicht teuer). **Höflich** wird durch Anhängen von です: たかいです, たかくないです, たかかったです, たかくなかったです. Achtung: Anders als bei Verben ändert です selbst die Form nicht!",
+            "jlpt_level": 5,
+            "example_sentences": "この かばんは 新しいです。\n(Kono kaban wa atarashii desu.)\n→ Diese Tasche ist neu.\n\nこの かばんは 新しくないです。\n(Kono kaban wa atarashikunai desu.)\n→ Diese Tasche ist nicht neu.\n\nレストランは 安かったです。\n(Resutoran wa yasukatta desu.)\n→ Das Restaurant war günstig."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "i-Adjektiv attributiv — direkt vor dem Nomen",
+            "structure": "[i-Adjektiv positiv] + [Nomen]  ([adjective] + [noun])",
+            "romaji": "[i-adjective] + [noun]",
+            "explanation": "Steht ein i-Adjektiv vor einem Nomen, **bleibt die Grundform** mit 〜い erhalten — keine Partikel, keine Veränderung. `新しい かばん` (atarashii kaban) = 'neue Tasche'. `古い 本` (furui hon) = 'altes Buch'. `安い レストラン` (yasui resutoran) = 'günstiges Restaurant'. Bei Vergangenheit oder Negation **darf** man auch attributiv konjugieren — `新しかった かばん` (atarashikatta kaban) = 'die Tasche, die neu war' — aber im Anfänger-Alltag bleibst du bei der Grundform plus です-Satz.",
+            "jlpt_level": 5,
+            "example_sentences": "新しい くるまを かいました。\n(Atarashii kuruma wo kaimashita.)\n→ Ich habe ein neues Auto gekauft.\n\n長い えいがを みました。\n(Nagai eiga wo mimashita.)\n→ Ich habe einen langen Film gesehen.\n\n安い ホテルが いいです。\n(Yasui hoteru ga ii desu.)\n→ Ein günstiges Hotel ist gut."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "Die Ausnahme いい (ii) — Stamm wird zu よ",
+            "structure": "いい (ii, Gegenwart positiv)\nよくない (yokunai, Gegenwart negativ)\nよかった (yokatta, Vergangenheit positiv)\nよくなかった (yokunakatta, Vergangenheit negativ)",
+            "romaji": "ii  /  yokunai  /  yokatta  /  yokunakatta",
+            "explanation": "「いい」 (ii, 'gut') ist das **einzige unregelmässige i-Adjektiv** in N5. Bei Negation und Vergangenheit verwandelt sich der Stamm zu `よ-` (yo-): よくない (yokunai), よかった (yokatta), よくなかった (yokunakatta). **Nicht** *iikunai* oder *iikatta* — das wäre falsch. Historisch kommt das daher, dass いい aus 良い (よい, *yoi*) entstanden ist. Die Vergangenheitsform 「よかった」 ist umgangssprachlich auch ein eigener Ausruf für 'wie schön!' / 'da bin ich aber froh!'.",
+            "jlpt_level": 5,
+            "example_sentences": "この えいがは いいです。\n(Kono eiga wa ii desu.)\n→ Dieser Film ist gut.\n\nこの えいがは よくないです。\n(Kono eiga wa yokunai desu.)\n→ Dieser Film ist nicht gut.\n\nきのうの ばんごはんは よかったです。\n(Kinou no bangohan wa yokatta desu.)\n→ Das Abendessen gestern war gut."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Dialog — Wohnungsbesichtigung",
+      "description": "Tanaka zeigt Lisa zwei Apartments — sie vergleichen mit i-Adjektiven",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "audio",
+          "data": {
+            "title": "Konversation (Audio)",
+            "file_path": null,
+            "file_type": "audio/mpeg"
+          }
+        },
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Apartment A oder Apartment B? — Lisa entscheidet",
+            "content_text": "Tanaka: リサさん、これは アパートAです。新しいですが、たかいです。\n  (Risa-san, kore wa apaato-A desu. Atarashii desu ga, takai desu.)\n  -> Lisa, das ist Wohnung A. Sie ist neu, aber teuer.\n\nLisa: そうですか。へやは 大きいですか。\n  (Sou desu ka. Heya wa ookii desu ka?)\n  -> Aha. Ist das Zimmer gross?\n\nTanaka: はい、大きいです。でも、えきから 少し とおいです。\n  (Hai, ookii desu. Demo, eki kara sukoshi tooi desu.)\n  -> Ja, gross. Aber von der Station ist es etwas weit.\n\nLisa: アパートBは どうですか。\n  (Apaato-B wa dou desu ka?)\n  -> Wie ist Wohnung B?\n\nTanaka: アパートBは 古いですが、安いです。へやは 小さいです。\n  (Apaato-B wa furui desu ga, yasui desu. Heya wa chiisai desu.)\n  -> Wohnung B ist alt, aber günstig. Das Zimmer ist klein.\n\nLisa: えきから ちかいですか。\n  (Eki kara chikai desu ka?)\n  -> Ist sie nahe an der Station?\n\nTanaka: はい、とても ちかいです。あるいて 三分です。\n  (Hai, totemo chikai desu. Aruite san-pun desu.)\n  -> Ja, sehr nahe. Drei Minuten zu Fuss.\n\nLisa: いいですね。アパートBに します。\n  (Ii desu ne. Apaato-B ni shimasu.)\n  -> Klingt gut. Ich nehme Wohnung B."
+          }
+        },
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Verständnisfragen zum Dialog",
+            "content_text": "## Hast du den Wohnungsdialog verstanden?\n\nBeantworte die Fragen zu **Tanakas** Vorstellung der zwei Apartments und **Lisas** Entscheidung."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welche Wohnung ist teurer?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "Achte auf 「___ですが、たかいです」.",
+              "explanation": "Tanaka sagt 「アパートAは 新しいですが、たかいです」 — Apartment A ist neu UND teuer. Apartment B ist 安い (günstig).",
+              "options": [
+                {
+                  "option_text": "Apartment A",
+                  "is_correct": true,
+                  "feedback": "Richtig — A ist 新しい (neu) UND たかい (teuer)."
+                },
+                {
+                  "option_text": "Apartment B",
+                  "is_correct": false,
+                  "feedback": "B ist 古い (alt), aber 安い (günstig)."
+                },
+                {
+                  "option_text": "Beide gleich teuer",
+                  "is_correct": false,
+                  "feedback": "Tanaka kontrastiert sie explizit: A teuer, B günstig."
+                },
+                {
+                  "option_text": "Wird im Dialog nicht erwähnt",
+                  "is_correct": false,
+                  "feedback": "Doch — beide Wohnungen werden direkt verglichen."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie ist das Zimmer in Apartment B?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "「へやは ___ です」.",
+              "explanation": "Tanaka sagt 「へやは 小さいです」 (heya wa chiisai desu) — das Zimmer ist klein. Apartment A hingegen hat ein 大きい (grosses) Zimmer.",
+              "options": [
+                {
+                  "option_text": "Klein (小さい, chiisai)",
+                  "is_correct": true,
+                  "feedback": "Richtig — B hat ein kleines Zimmer."
+                },
+                {
+                  "option_text": "Gross (大きい, ookii)",
+                  "is_correct": false,
+                  "feedback": "Das ist Apartment A."
+                },
+                {
+                  "option_text": "Lang (長い, nagai)",
+                  "is_correct": false,
+                  "feedback": "Wird nicht im Dialog erwähnt."
+                },
+                {
+                  "option_text": "Neu (新しい, atarashii)",
+                  "is_correct": false,
+                  "feedback": "B ist 古い (alt), nicht neu."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Apartment B ist drei Minuten zu Fuss von der Station entfernt.",
+              "difficulty_level": 1,
+              "explanation": "Richtig — Tanaka sagt 「あるいて 三分です」 (aruite san-pun desu), also '3 Minuten zu Fuss'.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Genau — 三分 (san-pun) zu Fuss."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — Tanaka sagt あるいて 三分."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Lisa entscheidet sich für Apartment A.",
+              "difficulty_level": 1,
+              "explanation": "Falsch — Lisa sagt 「アパートBに します」 (apaato-B ni shimasu), also 'Ich nehme Apartment B'.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Lisa wählt B (alt + günstig + nahe), nicht A."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt — Lisa wählt B."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Übung — i-Adjektive trainieren",
+      "description": "Quiz zu Kanji, Konjugation und Vergleichen",
+      "page_type": "quiz_carousel",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "i-Adjektive in Aktion — Quiz",
+            "content_text": "## So trainierst du die neun i-Adjektiv-Kanji\n\nKombiniere **Kanji-Bedeutung**, **Konjugationsform** (Gegenwart/Vergangenheit, positiv/negativ) und **Vergleichs-Logik** (Gegensatzpaare). Jeder Fehler ist eine Chance — die Erklärung zeigt dir den Stamm und die richtige Endung.\n\n> **Mayuko-Tipp:** Wenn du bei der Negation unsicher bist, denke an die Regel: **Stamm + くない**. Beispiel: たかい → takai → Stamm `taka` → takakunai. Bei Vergangenheit: **Stamm + かった** = takakatta."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 高い (たかい)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "Drei Bedeutungen — Höhe, Preis, Körpergrösse.",
+              "explanation": "高い (takai) hat drei Bedeutungen: 'hoch' (ein Gebäude), 'teuer' (ein Preis), 'gross' (eine Person). Das Antonym fürs 'teuer' ist 安い (yasui), für 'hoch/gross' ist 低い (hikui, N4).",
+              "options": [
+                {
+                  "option_text": "hoch / teuer / gross",
+                  "is_correct": true,
+                  "feedback": "Richtig — alle drei zusammen."
+                },
+                {
+                  "option_text": "lang",
+                  "is_correct": false,
+                  "feedback": "Das wäre 長い (nagai)."
+                },
+                {
+                  "option_text": "neu",
+                  "is_correct": false,
+                  "feedback": "Das wäre 新しい (atarashii)."
+                },
+                {
+                  "option_text": "viel",
+                  "is_correct": false,
+                  "feedback": "Das wäre 多い (ooi)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was ist die Negativform von あたらしい (atarashii)?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Stamm + くない.",
+              "explanation": "Stamm `atarashi-` + くない = あたらしくない (atarashikunai). Negativ-Vergangenheit wäre あたらしくなかった.",
+              "options": [
+                {
+                  "option_text": "あたらしくない (atarashikunai)",
+                  "is_correct": true,
+                  "feedback": "Richtig — Stamm + くない."
+                },
+                {
+                  "option_text": "あたらしいない (atarashii nai)",
+                  "is_correct": false,
+                  "feedback": "Falsch — i-Adjektive verlieren das い vor くない."
+                },
+                {
+                  "option_text": "あたらしじゃない (atarashii janai)",
+                  "is_correct": false,
+                  "feedback": "じゃない ist für na-Adjektive und Nomen."
+                },
+                {
+                  "option_text": "あたらしませんでした (atarashimasen deshita)",
+                  "is_correct": false,
+                  "feedback": "ません ist die Verb-Negation."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was ist das Gegensatzpaar von 多い (ooi, 'viel')?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Es ist das Kanji für 'klein/wenig'.",
+              "explanation": "多い (ooi, viel) ↔ 少ない (sukunai, wenig). Beachte: 少 hat zwei wichtige Lesungen — 少ない (sukunai, wenig) und 少し (sukoshi, ein bisschen).",
+              "options": [
+                {
+                  "option_text": "少ない (すくない, sukunai)",
+                  "is_correct": true,
+                  "feedback": "Richtig — das ist das offizielle Gegensatzpaar."
+                },
+                {
+                  "option_text": "短い (みじかい, mijikai)",
+                  "is_correct": false,
+                  "feedback": "Das ist 'kurz' — Gegensatz zu 長い (nagai, lang)."
+                },
+                {
+                  "option_text": "安い (やすい, yasui)",
+                  "is_correct": false,
+                  "feedback": "Das ist 'günstig' — Gegensatz zu 高い (takai)."
+                },
+                {
+                  "option_text": "古い (ふるい, furui)",
+                  "is_correct": false,
+                  "feedback": "Das ist 'alt' — Gegensatz zu 新しい (atarashii)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie sagt man 'Der Film war gut' auf Japanisch?",
+              "difficulty_level": 3,
+              "points": 1,
+              "hint": "Ausnahme — いい konjugiert mit Stamm よ-.",
+              "explanation": "「えいがは よかったです」 (eiga wa yokatta desu). いい (ii) hat den Stamm よ-, also Vergangenheit よかった (yokatta), nicht *iikatta.",
+              "options": [
+                {
+                  "option_text": "えいがは よかったです (eiga wa yokatta desu)",
+                  "is_correct": true,
+                  "feedback": "Richtig — Ausnahme いい → よかった."
+                },
+                {
+                  "option_text": "えいがは いいかったです (eiga wa iikatta desu)",
+                  "is_correct": false,
+                  "feedback": "Falsch — いい ist die einzige Ausnahme, der Stamm wird よ-."
+                },
+                {
+                  "option_text": "えいがは いいでした (eiga wa ii deshita)",
+                  "is_correct": false,
+                  "feedback": "い-Adjektive konjugieren intern, でした ist für Nomen."
+                },
+                {
+                  "option_text": "えいがは よくないです (eiga wa yokunai desu)",
+                  "is_correct": false,
+                  "feedback": "Das ist die negative Gegenwart, nicht 'war gut'."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welches Kanji bedeutet 'früh' und 'schnell'?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "Lesung: はや (haya).",
+              "explanation": "早 (hayai/haya) bedeutet sowohl 'früh' (Tageszeit) als auch 'schnell' (Geschwindigkeit). Beachte: 早く (hayaku) ist die Adverb-Form ('früh', 'schnell').",
+              "options": [
+                {
+                  "option_text": "早",
+                  "is_correct": true,
+                  "feedback": "Richtig — 早い (hayai)."
+                },
+                {
+                  "option_text": "新",
+                  "is_correct": false,
+                  "feedback": "新 = neu (atarashii)."
+                },
+                {
+                  "option_text": "短",
+                  "is_correct": false,
+                  "feedback": "短 = kurz (mijikai)."
+                },
+                {
+                  "option_text": "高",
+                  "is_correct": false,
+                  "feedback": "高 = hoch/teuer (takai)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was ist die Vergangenheitsform von 安い (yasui)?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Stamm + かった.",
+              "explanation": "Stamm `yasu-` + かった = 安かった (yasukatta) — 'war günstig'. Mit です: 安かったです.",
+              "options": [
+                {
+                  "option_text": "安かった (yasukatta)",
+                  "is_correct": true,
+                  "feedback": "Richtig — Stamm + かった."
+                },
+                {
+                  "option_text": "安いでした (yasui deshita)",
+                  "is_correct": false,
+                  "feedback": "Nein — i-Adjektive konjugieren intern, でした ist für Nomen."
+                },
+                {
+                  "option_text": "安くなかった (yasukunakatta)",
+                  "is_correct": false,
+                  "feedback": "Das ist negativ-Vergangenheit ('war nicht günstig')."
+                },
+                {
+                  "option_text": "安くない (yasukunai)",
+                  "is_correct": false,
+                  "feedback": "Das ist negativ-Gegenwart ('ist nicht günstig')."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "「___ 本」 — wie heisst 'altes Buch' auf Japanisch?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Attributiv: i-Adjektiv bleibt in Grundform vor dem Nomen.",
+              "explanation": "Vor einem Nomen bleibt das i-Adjektiv in der Grundform: 古い 本 (furui hon) — 'altes Buch'. Keine Partikel dazwischen, kein です.",
+              "options": [
+                {
+                  "option_text": "古い 本 (furui hon)",
+                  "is_correct": true,
+                  "feedback": "Richtig — i-Adjektiv direkt vor dem Nomen."
+                },
+                {
+                  "option_text": "古いの 本 (furui no hon)",
+                  "is_correct": false,
+                  "feedback": "Kein の zwischen i-Adjektiv und Nomen — das ist nur bei na-Adjektiven mit な."
+                },
+                {
+                  "option_text": "古いです 本 (furui desu hon)",
+                  "is_correct": false,
+                  "feedback": "Kein です — das ist Satzende."
+                },
+                {
+                  "option_text": "古く 本 (furuku hon)",
+                  "is_correct": false,
+                  "feedback": "Das ist die Adverb-Form, nicht attributiv."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Alle i-Adjektive enden auf 〜い (-i).",
+              "difficulty_level": 1,
+              "explanation": "Richtig — das ist sogar das Definitionsmerkmal. Wörter wie きれい (kirei, 'schön') ENDEN zwar auf い, sind aber **na-Adjektive** mit anderer Konjugation. Bei den Wörtern dieser Lektion siehst du das い am Ende: たかい, やすい, ふるい, あたらしい, ながい, みじかい, おおい, すくない, はやい.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Genau — und das い ist Teil des Worts, kein Anhängsel."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — das ist die Definitions-Regel."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「いい」 ist das einzige i-Adjektiv mit unregelmässiger Konjugation in N5.",
+              "difficulty_level": 2,
+              "explanation": "Richtig — der Stamm wird zu よ-: よくない (yokunai), よかった (yokatta), よくなかった (yokunakatta). Alle anderen N5-i-Adjektive sind regelmässig.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt — die einzige N5-Ausnahme."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — alle anderen sind regelmässig."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde das Kanji mit der Bedeutung.",
+              "difficulty_level": 1,
+              "options": [
+                {
+                  "option_text": "新しい (atarashii)",
+                  "feedback": "neu",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "古い (furui)",
+                  "feedback": "alt",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "高い (takai)",
+                  "feedback": "teuer",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "安い (yasui)",
+                  "feedback": "günstig",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde das i-Adjektiv mit seinem Antonym.",
+              "difficulty_level": 2,
+              "options": [
+                {
+                  "option_text": "長い (nagai, lang)",
+                  "feedback": "短い (mijikai, kurz)",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "多い (ooi, viel)",
+                  "feedback": "少ない (sukunai, wenig)",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "新しい (atarashii, neu)",
+                  "feedback": "古い (furui, alt)",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "高い (takai, teuer)",
+                  "feedback": "安い (yasui, günstig)",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde das i-Adjektiv mit der korrekten Negativ-Form.",
+              "difficulty_level": 3,
+              "options": [
+                {
+                  "option_text": "高い (takai)",
+                  "feedback": "高くない (takakunai)",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "新しい (atarashii)",
+                  "feedback": "新しくない (atarashikunai)",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "早い (hayai)",
+                  "feedback": "早くない (hayakunai)",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "いい (ii)",
+                  "feedback": "よくない (yokunai)",
+                  "is_correct": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Zusammenfassung & Ausblick",
+      "description": "Was du heute gelernt hast und wie es weitergeht",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Heute hast du neun i-Adjektive gemeistert",
+            "content_text": "## Was du jetzt kannst\n\n- **Neun Kanji** lesen und schreiben: 新 (atarashii), 古 (furui), 高 (takai), 安 (yasui), 長 (nagai), 短 (mijikai), 多 (ooi), 少 (sukunai/sukoshi), 早 (hayai).\n- **Fünf Gegensatzpaare** als Sprach-Anker: neu↔alt, teuer↔günstig, lang↔kurz, viel↔wenig, plus früh.\n- **i-Adjektiv-Konjugation** vollständig: positiv/negativ × Gegenwart/Vergangenheit.\n- **Attributive Verwendung** vor Nomen: 新しい かばん (atarashii kaban, 'neue Tasche').\n- **Ausnahme いい (ii)** mit Stamm よ-: よくない (yokunai), よかった (yokatta).\n- **Vergleichssätze** mit が-Konnektor: `Aは ___ですが、Bは ___です` (A ist ..., aber B ist ...).\n\n### Selbstcheck-Übung für heute Abend\n\n1. Schreibe drei Vergleichssätze über Gegenstände in deiner Wohnung — `わたしの くつは あたらしいですが、ちちの くつは ふるいです` (watashi no kutsu wa atarashii desu ga, chichi no kutsu wa furui desu).\n2. Konjugiere たかい in allen vier Zeitformen (positiv-Gegenwart, negativ-Gegenwart, positiv-Vergangenheit, negativ-Vergangenheit) — laut.\n3. Bilde das Vergangenheits-Pendant zu deinem Lieblings-Beispielsatz aus dieser Lektion.\n\n> **Mayukos Anmerkung:** i-Adjektive sind das **Bindeglied zwischen Vokabel und Satz**. Wenn du sie in den vier Zeitformen automatisch konjugieren kannst, baust du sofort lebendige Sätze. Das ist genau der Schritt vom Vokabel-Auswendiglernen zum **echten Sprechen**. Übe sie laut — das Tempo ist beim Sprechen entscheidend.\n\n### Wie es weitergeht\n\n- **Lesson 9 — N5 Kanji 9 (geplant): Verben & Bewegung** — 行 (iku), 来 (kuru), 出 (deru), 入 (hairu), 見 (miru), 食 (taberu), いう (iu), はなす (hanasu), たつ (tatsu).\n- **Begrüssung & Höflichkeit Lesson 5+** — i-Adjektive in der höflichen Konversation: ごちそうさまでした (gochisousama deshita) als feste Phrase, よかったですね (yokatta desu ne) als typische Anteilnahme.\n- **Reise & Ort vertieft** — Wegbeschreibungen mit i-Adjektiven (ちかい chikai 'nahe', とおい tooi 'weit')."
+          }
+        }
+      ]
+    }
+  ],
+  "thumbnail_url": "generated/thumbnail_kanji_eigenschaften_20260427_191629.png"
+}

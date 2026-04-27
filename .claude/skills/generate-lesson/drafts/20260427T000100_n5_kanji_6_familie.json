@@ -1,0 +1,890 @@
+{
+  "title": "N5 Kanji 6 — Familie (父母兄姉弟妹)",
+  "description": "Lerne die sechs Familie-Kanji aus dem N5-Set: 父 (Vater), 母 (Mutter), 兄 (älterer Bruder), 姉 (ältere Schwester), 弟 (jüngerer Bruder), 妹 (jüngere Schwester). Mit der wichtigsten Höflichkeitsregel des Japanischen: eigene Familie kurz, fremde Familie höflich.",
+  "jlpt_level": 5,
+  "topic": "Kanji Familie",
+  "instruction_language": "german",
+  "allow_guest_access": false,
+  "additional_n5_kanji": [
+    "兄",
+    "姉",
+    "弟",
+    "妹"
+  ],
+  "additional_n5_kanji_source_note": "In Tanos-N5-Liste (klassische N5-Referenz) und in jeder Standard-Anki-N5-Deck enthalten — in elzup/jlpt-word-list-Variante nicht. Familie-Kanji sind didaktisch zentral für N5 und werden in MNN, Genki und allen N5-Lehrbüchern gelehrt.",
+  "pages": [
+    {
+      "title": "Einführung — Wer gehört zu deiner Familie?",
+      "description": "Warum Familie-Kanji jetzt — und die wichtigste Höflichkeitsregel",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Sechs Kanji für die nächsten Menschen in deinem Leben",
+            "content_text": "## Warum diese sechs Familie-Kanji jetzt?\n\nIn **Lesson 3** (Menschen 人男女子友) hast du 人 (hito, Mensch), 男 (otoko, Mann), 女 (onna, Frau), 子 (ko, Kind) und 友 (tomo, Freund) gelernt. Heute lernst du die **sechs Kanji für deine engste Familie**: Eltern und Geschwister.\n\nDiese Kanji begegnen dir in jeder echten Konversation — beim Smalltalk, beim Vorstellen, im Familienfoto, in jedem japanischen Drama. Sie sind die Karteikarten zu Wörtern, die du als Hiragana (ちち, はは, あに, あね, おとうと, いもうと) bereits aus früheren Lektionen kennst.\n\n### Die wichtigste Regel: **uchi (うち) vs soto (そと)**\n\nJapanisch unterscheidet streng zwischen der **eigenen Familie** (うち, *uchi*, 'innen') und der Familie **anderer Menschen** (そと, *soto*, 'aussen'). Du benutzt zwei komplett unterschiedliche Wortformen — und das ist nicht optional, sondern höfliches Pflichtprogramm.\n\n- **Über die eigene Familie sprechen:** kurze, bescheidene Form. 父 (ちち, *chichi*, Vater), 母 (はは, *haha*, Mutter), 兄 (あに, *ani*, älterer Bruder), 姉 (あね, *ane*, ältere Schwester), 弟 (おとうと, *otouto*, jüngerer Bruder), 妹 (いもうと, *imouto*, jüngere Schwester).\n- **Über die Familie anderer sprechen — oder direkt anreden:** höfliche Form mit お〜 und 〜さん. お父さん (おとうさん, *otou-san*), お母さん (おかあさん, *okaa-san*), お兄さん (おにいさん, *onii-san*), お姉さん (おねえさん, *onee-san*), 弟さん (おとうとさん, *otouto-san*), 妹さん (いもうとさん, *imouto-san*).\n\n> **Merksatz:** *Bei meiner Familie mache ich mich klein, bei deiner Familie mache ich sie gross.* Das ist Höflichkeit auf Japanisch.\n\n### Die sechs Familie-Kanji\n\n- **父 (ふ, *fu* / ちち, *chichi*)** — Vater. 4 Striche.\n- **母 (ぼ, *bo* / はは, *haha* / かあ, *kaa*)** — Mutter. 5 Striche.\n- **兄 (けい, *kei* / きょう, *kyou* / あに, *ani* / にい, *nii*)** — älterer Bruder. 5 Striche.\n- **姉 (し, *shi* / あね, *ane* / ねえ, *nee*)** — ältere Schwester. 8 Striche.\n- **弟 (てい, *tei* / だい, *dai* / おとうと, *otouto*)** — jüngerer Bruder. 7 Striche.\n- **妹 (まい, *mai* / いもうと, *imouto*)** — jüngere Schwester. 8 Striche.\n\n### Was du heute lernst\n\n- **Sechs Kanji** mit On- und Kun-Lesungen, Strichzahlen und Bedeutung.\n- **14 Vokabeln** in zwei Sets: eigene Familie (kurz) und höfliche Form (mit お〜さん).\n- **uchi/soto** als pädagogisches Leitprinzip — die wichtigste Höflichkeitsregel.\n- **Geschwister-Zähler** 〜人 (〜nin) — `兄弟が 三人 います` (kyoudai ga san-nin imasu, 'es sind drei Geschwister').\n- **Dialog Familienfoto** — Tanaka stellt seine Familie vor, Lisa stellt Fragen.\n\n> **Lerntipp von Mayuko:** Schreibe heute drei Mal einen Satz über deine eigene Familie auf — `わたしの ちちは 50さいです` (watashi no chichi wa 50-sai desu, 'mein Vater ist 50 Jahre alt'). Morgen schreibst du den gleichen Satz über die Familie deiner Schülerin: `たなかさんの お父さんは 50さいです` (Tanaka-san no otou-san wa 50-sai desu). Den Unterschied zwischen 父 und お父さん spürst du dann im Bauch."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln 1 — Eigene Familie (kurz, bescheiden)",
+      "description": "Die sechs zentralen Familie-Wörter für die eigene Familie",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "kanji",
+          "data": {
+            "character": "父",
+            "meaning": "Vater / father",
+            "onyomi": "フ",
+            "kunyomi": "ちち",
+            "jlpt_level": 5,
+            "stroke_count": 4,
+            "radical": "父"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "父",
+            "reading": "ちち",
+            "romaji": "chichi",
+            "meaning": "(my) father",
+            "meaning_de": "(mein) Vater (bescheidene Form)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "わたしの 父は 先生です。",
+            "example_sentence_english": "Watashi no chichi wa sensei desu. — My father is a teacher.",
+            "image_url": "vocab_generated/vocab_e7378bff.png"
+          }
+        },
+        {
+          "content_type": "kanji",
+          "data": {
+            "character": "母",
+            "meaning": "Mutter / mother",
+            "onyomi": "ボ",
+            "kunyomi": "はは, かあ",
+            "jlpt_level": 5,
+            "stroke_count": 5,
+            "radical": "母"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "母",
+            "reading": "はは",
+            "romaji": "haha",
+            "meaning": "(my) mother",
+            "meaning_de": "(meine) Mutter (bescheidene Form)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "母は うちで 本を 読みます。",
+            "example_sentence_english": "Haha wa uchi de hon wo yomimasu. — My mother reads books at home.",
+            "image_url": "vocab_generated/vocab_21e4bd76.png"
+          }
+        },
+        {
+          "content_type": "kanji",
+          "data": {
+            "character": "兄",
+            "meaning": "älterer Bruder / older brother",
+            "onyomi": "ケイ, キョウ",
+            "kunyomi": "あに, にい",
+            "jlpt_level": 5,
+            "stroke_count": 5,
+            "radical": "儿"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "兄",
+            "reading": "あに",
+            "romaji": "ani",
+            "meaning": "(my) older brother",
+            "meaning_de": "(mein) älterer Bruder (bescheidene Form)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "兄は 大学生です。",
+            "example_sentence_english": "Ani wa daigakusei desu. — My older brother is a university student.",
+            "image_url": "vocab_generated/vocab_63b9b59e.png"
+          }
+        },
+        {
+          "content_type": "kanji",
+          "data": {
+            "character": "姉",
+            "meaning": "ältere Schwester / older sister",
+            "onyomi": "シ",
+            "kunyomi": "あね, ねえ",
+            "jlpt_level": 5,
+            "stroke_count": 8,
+            "radical": "女"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "姉",
+            "reading": "あね",
+            "romaji": "ane",
+            "meaning": "(my) older sister",
+            "meaning_de": "(meine) ältere Schwester (bescheidene Form)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "姉は 二十五さいです。",
+            "example_sentence_english": "Ane wa nijuu-go-sai desu. — My older sister is 25 years old.",
+            "image_url": "vocab_generated/vocab_1c90c5dc.png"
+          }
+        },
+        {
+          "content_type": "kanji",
+          "data": {
+            "character": "弟",
+            "meaning": "jüngerer Bruder / younger brother",
+            "onyomi": "テイ, ダイ, デ",
+            "kunyomi": "おとうと",
+            "jlpt_level": 5,
+            "stroke_count": 7,
+            "radical": "弓"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "弟",
+            "reading": "おとうと",
+            "romaji": "otouto",
+            "meaning": "(my) younger brother",
+            "meaning_de": "(mein) jüngerer Bruder (bescheidene Form)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "弟は 中学生です。",
+            "example_sentence_english": "Otouto wa chuugakusei desu. — My younger brother is a middle school student.",
+            "image_url": "vocab_generated/vocab_10b8e3ca.png"
+          }
+        },
+        {
+          "content_type": "kanji",
+          "data": {
+            "character": "妹",
+            "meaning": "jüngere Schwester / younger sister",
+            "onyomi": "マイ",
+            "kunyomi": "いもうと",
+            "jlpt_level": 5,
+            "stroke_count": 8,
+            "radical": "女"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "妹",
+            "reading": "いもうと",
+            "romaji": "imouto",
+            "meaning": "(my) younger sister",
+            "meaning_de": "(meine) jüngere Schwester (bescheidene Form)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "妹は 八さいです。",
+            "example_sentence_english": "Imouto wa hassai desu. — My younger sister is eight years old.",
+            "image_url": "vocab_generated/vocab_aa809807.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "兄弟",
+            "reading": "きょうだい",
+            "romaji": "kyoudai",
+            "meaning": "siblings",
+            "meaning_de": "Geschwister (allgemein)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "兄弟が 三人 います。",
+            "example_sentence_english": "Kyoudai ga san-nin imasu. — I have three siblings.",
+            "image_url": "vocab_generated/vocab_c8b87810.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "姉妹",
+            "reading": "しまい",
+            "romaji": "shimai",
+            "meaning": "sisters",
+            "meaning_de": "Schwestern (Plural)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "わたしは 姉妹が 二人 います。",
+            "example_sentence_english": "Watashi wa shimai ga futari imasu. — I have two sisters.",
+            "image_url": "vocab_generated/vocab_8ee48dcc.png",
+            "is_canonical_override": true,
+            "source_note": "Standard-N5 in MNN/Genki, Komposita aus 姉+妹. Fehlt in elzup-Liste, weil dort einzelwort-zentriert; ist in Tanos und allen N5-Anki-Decks."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln 2 — Höfliche Form (für die Familie anderer)",
+      "description": "Die お~さん-Form für die Familie anderer Menschen oder zur direkten Anrede",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Wann höfliche Form, wann nicht?",
+            "content_text": "## Drei Regeln für die richtige Wahl\n\n1. **Über die eigene Familie sprechen** → kurze Form (父, 母, 兄, 姉, 弟, 妹).\n2. **Über die Familie eines anderen sprechen** → höfliche Form (お父さん, お母さん, お兄さん, お姉さん, 弟さん, 妹さん).\n3. **Mit dem eigenen Familienmitglied direkt sprechen** → höfliche Form (`お父さん、ありがとう` / *otou-san, arigatou*, 'Danke, Papa').\n\n> **Merksatz:** Wenn der Vater selbst zuhört, sagt das Kind 「お父さん」. Wenn das Kind über den Vater zu einem Lehrer spricht, sagt es 「父」.\n\n### Aussprache-Hinweis\n\n- **お父さん** (otou-san) — das う ist ein **langes o**, also etwa 'oto-osan'. Nicht 'otou-san' wie zwei Silben.\n- **お母さん** (okaa-san) — das あ ist **lang**, etwa 'oka-asan'.\n- **お兄さん** (onii-san) — das い ist **lang**, 'oni-isan'.\n- **お姉さん** (onee-san) — das え ist **lang**, 'one-esan'.\n\nDie Verlängerung ist hörbar — japanische Ohren unterscheiden klar zwischen *oto-san* (gibt's nicht) und *otou-san* (Papa, höflich)."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "お父さん",
+            "reading": "おとうさん",
+            "romaji": "otou-san",
+            "meaning": "father (polite)",
+            "meaning_de": "Vater (höflich, andere Familie oder Anrede)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "たなかさんの お父さんは いしゃです。",
+            "example_sentence_english": "Tanaka-san no otou-san wa isha desu. — Tanaka-san's father is a doctor.",
+            "image_url": "vocab_generated/vocab_dc9aa7e3.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "お母さん",
+            "reading": "おかあさん",
+            "romaji": "okaa-san",
+            "meaning": "mother (polite)",
+            "meaning_de": "Mutter (höflich, andere Familie oder Anrede)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "お母さんは どこに いますか。",
+            "example_sentence_english": "Okaa-san wa doko ni imasu ka? — Where is your mother?",
+            "image_url": "vocab_generated/vocab_bbe81368.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "お兄さん",
+            "reading": "おにいさん",
+            "romaji": "onii-san",
+            "meaning": "older brother (polite)",
+            "meaning_de": "älterer Bruder (höflich)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "リサさんの お兄さんは 何さいですか。",
+            "example_sentence_english": "Risa-san no onii-san wa nan-sai desu ka? — How old is Lisa's older brother?",
+            "image_url": "vocab_generated/vocab_3830b0e1.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "お姉さん",
+            "reading": "おねえさん",
+            "romaji": "onee-san",
+            "meaning": "older sister (polite)",
+            "meaning_de": "ältere Schwester (höflich)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "わたしの 友だちの お姉さんは 大学生です。",
+            "example_sentence_english": "Watashi no tomodachi no onee-san wa daigakusei desu. — My friend's older sister is a university student.",
+            "image_url": "vocab_generated/vocab_9bc8dd49.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "弟さん",
+            "reading": "おとうとさん",
+            "romaji": "otouto-san",
+            "meaning": "younger brother (polite)",
+            "meaning_de": "jüngerer Bruder (höflich)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "弟さんは 何さいですか。",
+            "example_sentence_english": "Otouto-san wa nan-sai desu ka? — How old is your younger brother?",
+            "image_url": "vocab_generated/vocab_034d0d26.png",
+            "is_canonical_override": true,
+            "source_note": "Höfliche Form von 弟. Standard-N5 in MNN/Genki, fehlt in einzelwort-zentrierter elzup-Liste."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "妹さん",
+            "reading": "いもうとさん",
+            "romaji": "imouto-san",
+            "meaning": "younger sister (polite)",
+            "meaning_de": "jüngere Schwester (höflich)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "たなかさんの 妹さんは こうこうせいです。",
+            "example_sentence_english": "Tanaka-san no imouto-san wa koukousei desu. — Tanaka-san's younger sister is a high school student.",
+            "image_url": "vocab_generated/vocab_369fa569.png",
+            "is_canonical_override": true,
+            "source_note": "Höfliche Form von 妹. Standard-N5 in MNN/Genki, fehlt in einzelwort-zentrierter elzup-Liste."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "両親",
+            "reading": "りょうしん",
+            "romaji": "ryoushin",
+            "meaning": "parents (polite/formal)",
+            "meaning_de": "Eltern (höflich, beide gemeinsam)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "わたしの りょうしんは げんきです。",
+            "example_sentence_english": "Watashi no ryoushin wa genki desu. — My parents are well.",
+            "image_url": "vocab_generated/vocab_178b2996.png",
+            "is_canonical_override": true,
+            "source_note": "Standard-N5 in MNN/Genki. Kanji 両 ist N3, daher hier in Hiragana — Vocabulary-Karte zeigt beide Schreibweisen."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "家族",
+            "reading": "かぞく",
+            "romaji": "kazoku",
+            "meaning": "family",
+            "meaning_de": "Familie (gesamt)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "わたしの かぞくは 五人です。",
+            "example_sentence_english": "Watashi no kazoku wa go-nin desu. — My family has five people.",
+            "image_url": "vocab_generated/vocab_cb1f7d20.png",
+            "is_canonical_override": true,
+            "source_note": "Klassisches N5-Wort (MNN L11, Genki L1). Kanji 家/族 sind N4, daher Hiragana im Beispielsatz."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Grammatik — uchi/soto, Possessiv の, Geschwister-Counter",
+      "description": "Die zentralen Strukturen für Familienbeschreibungen",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Drei Bausteine für Familien-Sätze",
+            "content_text": "## Was du in dieser Page lernst\n\n1. **uchi/soto** als praktische Wortwahl-Regel.\n2. **Possessiv mit の (no)** — `[Person] + の (no) + [Familienmitglied]` ('X's Y').\n3. **Geschwister-Counter 〜人 (-nin)** — `[Anzahl] + 人 (nin) + います (imasu)` ('Es sind ... Personen').\n\n> **Wichtig:** Die uchi/soto-Regel gilt nicht nur für Familie, sondern auch für Firma, Schulklasse, Verein. Aber Familie ist der häufigste Anwendungsfall — und der erste, den jeder Lerner trainiert."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "uchi/soto — Eigene Familie kurz, fremde Familie höflich",
+            "structure": "[eigene Familie] = 父/母/兄/姉/弟/妹  ([chichi/haha/ani/ane/otouto/imouto])  ↔  [fremde Familie / Anrede] = お父さん/お母さん/お兄さん/お姉さん/弟さん/妹さん  (otou-san/okaa-san/onii-san/onee-san/otouto-san/imouto-san)",
+            "romaji": "uchi: chichi/haha/ani/ane/otouto/imouto  vs  soto: otou-san/okaa-san/onii-san/onee-san/otouto-san/imouto-san",
+            "explanation": "Im Japanischen sprichst du über deine **eigene Familie** in der **bescheidenen Kurzform**: 父 (ちち, *chichi*, Vater), 母 (はは, *haha*, Mutter), 兄 (あに, *ani*, älterer Bruder), 姉 (あね, *ane*, ältere Schwester), 弟 (おとうと, *otouto*, jüngerer Bruder), 妹 (いもうと, *imouto*, jüngere Schwester). Wenn du über die Familie **anderer Personen** sprichst — oder dein eigenes Familienmitglied **direkt anredest** — wechselst du zur **höflichen Form** mit お〜 und 〜さん: お父さん (おとうさん, *otou-san*), お母さん (おかあさん, *okaa-san*) usw. Die kurze Form ist nicht 'unhöflich' — sie zeigt Bescheidenheit. Die lange Form ist nicht 'übertrieben' — sie zeigt Respekt vor dem anderen.",
+            "jlpt_level": 5,
+            "example_sentences": "わたしの 父は 50さいです。\n(Watashi no chichi wa 50-sai desu.)\n→ Mein Vater ist 50 Jahre alt. [über eigene Familie → kurz]\n\nたなかさんの お父さんは 55さいです。\n(Tanaka-san no otou-san wa 55-sai desu.)\n→ Tanaka-sans Vater ist 55 Jahre alt. [über fremde Familie → höflich]\n\nお父さん、おはようございます。\n(Otou-san, ohayou gozaimasu.)\n→ Guten Morgen, Papa. [Anrede der eigenen Familie → höflich]"
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "Possessiv mit の — [Person] + の + [Familienmitglied]",
+            "structure": "[Person] + の + [Familienmitglied]  ([person] + no + [family])",
+            "romaji": "[person] + no + [family member]",
+            "explanation": "Die Partikel 「の」 (no) verbindet zwei Nomen und drückt Besitz oder Zugehörigkeit aus. `わたしの 母` (watashi no haha, 'meine Mutter'), `たなかさんの お兄さん` (Tanaka-san no onii-san, 'Tanaka-sans älterer Bruder'). Die Reihenfolge ist immer: **Besitzer + の + Besitz**. Beachte die uchi/soto-Regel: wenn du über deine eigene Familie sprichst, kommt die kurze Form (`わたしの 父`), wenn über jemand anderes Familie, die höfliche (`先生の お父さん`).",
+            "jlpt_level": 5,
+            "example_sentences": "わたしの 妹は 学生です。\n(Watashi no imouto wa gakusei desu.)\n→ Meine jüngere Schwester ist Schülerin.\n\n友だちの お姉さんは 中国人です。\n(Tomodachi no onee-san wa chuugokujin desu.)\n→ Die ältere Schwester meines Freundes ist Chinesin.\n\nリサさんの お母さんは 日本語の 先生です。\n(Risa-san no okaa-san wa nihongo no sensei desu.)\n→ Lisas Mutter ist Japanisch-Lehrerin."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "Geschwister-Counter 〜人 — Wie viele Geschwister hast du?",
+            "structure": "[Anzahl] + 人 + います  ([number] + nin + imasu)",
+            "romaji": "[number] + -nin + imasu",
+            "explanation": "Personen werden mit dem Counter 「人」 (にん, *nin*) gezählt — mit zwei Sonderlesungen: 一人 (ひとり, *hitori*, 'eine Person') und 二人 (ふたり, *futari*, 'zwei Personen'). Ab drei wird regelmässig: 三人 (さんにん, *san-nin*), 四人 (よにん, *yo-nin*), 五人 (ごにん, *go-nin*). Die typische Frage `兄弟は 何人 いますか` (kyoudai wa nan-nin imasu ka) heisst 'wie viele Geschwister hast du?'. Wichtig: in Japan **zählt sich der Sprecher selbst nicht** mit. `兄弟が 二人 います` heisst 'ich habe zwei Geschwister' (also drei Kinder insgesamt mit dir).",
+            "jlpt_level": 5,
+            "example_sentences": "兄弟が 三人 います。\n(Kyoudai ga san-nin imasu.)\n→ Ich habe drei Geschwister.\n\n姉が 一人、弟が 二人 います。\n(Ane ga hitori, otouto ga futari imasu.)\n→ Ich habe eine ältere Schwester und zwei jüngere Brüder.\n\n兄弟は 何人 いますか。\n(Kyoudai wa nan-nin imasu ka?)\n→ Wie viele Geschwister hast du?"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Dialog — Familienfoto im Café",
+      "description": "Tanaka zeigt Lisa ein Familienfoto und antwortet auf ihre Fragen",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "audio",
+          "data": {
+            "title": "Konversation (Audio)",
+            "file_path": null,
+            "file_type": "audio/mpeg"
+          }
+        },
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Familienfoto im Café — Tanaka stellt seine Familie vor",
+            "content_text": "Tanaka: リサさん、これは わたしの かぞくの しゃしんです。\n  (Risa-san, kore wa watashi no kazoku no shashin desu.)\n  -> Lisa, das ist ein Foto meiner Familie.\n\nLisa: わあ、すてきですね。お父さんと お母さんは どんな 人ですか。\n  (Waa, suteki desu ne. Otou-san to okaa-san wa donna hito desu ka?)\n  -> Wow, wie schön. Was für Menschen sind dein Vater und deine Mutter?\n\nTanaka: 父は 先生です。母は いしゃです。とても いそがしい 人たちです。\n  (Chichi wa sensei desu. Haha wa isha desu. Totemo isogashii hito-tachi desu.)\n  -> Mein Vater ist Lehrer. Meine Mutter ist Ärztin. Beide sind sehr beschäftigt.\n\nLisa: 兄弟は 何人 いますか。\n  (Kyoudai wa nan-nin imasu ka?)\n  -> Wie viele Geschwister hast du?\n\nTanaka: 姉が 一人、弟が 一人 います。姉は 大学生で、弟は 中学生です。\n  (Ane ga hitori, otouto ga hitori imasu. Ane wa daigakusei de, otouto wa chuugakusei desu.)\n  -> Ich habe eine ältere Schwester und einen jüngeren Bruder. Meine Schwester ist Studentin, mein Bruder ist Mittelschüler.\n\nLisa: お姉さんは いくつですか。\n  (Onee-san wa ikutsu desu ka?)\n  -> Wie alt ist deine ältere Schwester?\n\nTanaka: 二十二さいです。リサさんは 兄弟が いますか。\n  (Nijuu-ni-sai desu. Risa-san wa kyoudai ga imasu ka?)\n  -> Sie ist 22. Hast du Geschwister, Lisa?\n\nLisa: はい、妹が 一人 います。妹は 十さいです。\n  (Hai, imouto ga hitori imasu. Imouto wa jus-sai desu.)\n  -> Ja, ich habe eine jüngere Schwester. Sie ist 10 Jahre alt."
+          }
+        },
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Verständnisfragen zum Dialog",
+            "content_text": "## Hast du den Dialog verstanden?\n\nBeantworte die folgenden Fragen zum Familienfoto-Gespräch zwischen **Tanaka** und **Lisa**. Die Antworten findest du im Dialog oben."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was ist Tanakas Vater von Beruf?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "Achte auf 「父は ___ です」 (chichi wa ___ desu).",
+              "explanation": "Im Dialog sagt Tanaka 「父は 先生です」 (Chichi wa sensei desu) — 'Mein Vater ist Lehrer'.",
+              "options": [
+                {
+                  "option_text": "Lehrer (せんせい, sensei)",
+                  "is_correct": true,
+                  "feedback": "Richtig! 「父は 先生です」 — Tanakas Vater ist Lehrer."
+                },
+                {
+                  "option_text": "Arzt (いしゃ, isha)",
+                  "is_correct": false,
+                  "feedback": "Das ist Tanakas Mutter — 「母は いしゃです」."
+                },
+                {
+                  "option_text": "Student (がくせい, gakusei)",
+                  "is_correct": false,
+                  "feedback": "Das ist Tanakas ältere Schwester — 「姉は 大学生」."
+                },
+                {
+                  "option_text": "Schüler (ちゅうがくせい, chuugakusei)",
+                  "is_correct": false,
+                  "feedback": "Das ist Tanakas jüngerer Bruder — 「弟は 中学生」."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie viele Geschwister hat Tanaka?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "「姉が 一人、弟が 一人」 (ane ga hitori, otouto ga hitori).",
+              "explanation": "Tanaka hat eine ältere Schwester und einen jüngeren Bruder — also zwei Geschwister.",
+              "options": [
+                {
+                  "option_text": "Eines",
+                  "is_correct": false,
+                  "feedback": "Lisa hat eines (妹が 一人), Tanaka mehr."
+                },
+                {
+                  "option_text": "Zwei",
+                  "is_correct": true,
+                  "feedback": "Richtig — eine ältere Schwester (姉) und ein jüngerer Bruder (弟)."
+                },
+                {
+                  "option_text": "Drei",
+                  "is_correct": false,
+                  "feedback": "Tanaka erwähnt nur Schwester und Bruder, also zwei."
+                },
+                {
+                  "option_text": "Keines",
+                  "is_correct": false,
+                  "feedback": "Tanaka nennt mehrere Geschwister im Dialog."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Tanakas ältere Schwester ist 22 Jahre alt.",
+              "difficulty_level": 1,
+              "explanation": "Tanaka antwortet 「二十二さいです」 (nijuu-ni-sai desu) — 22 Jahre alt.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt — 「二十二さいです」, also 22."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch, 22 Jahre — `二十二さい` (nijuu-ni-sai)."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Lisa hat zwei jüngere Schwestern.",
+              "difficulty_level": 1,
+              "explanation": "Lisa sagt 「妹が 一人 います」 (imouto ga hitori imasu) — eine jüngere Schwester.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Lisa hat nur eine jüngere Schwester — 「妹が 一人」."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Genau — Lisa hat eine, nicht zwei jüngere Schwestern."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Übung — Familie-Kanji trainieren",
+      "description": "Quiz zu Kanji, Lesungen, uchi/soto und Geschwister-Counter",
+      "page_type": "quiz_carousel",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Familie auf Japanisch — Quiz",
+            "content_text": "## So trainierst du die sechs Familie-Kanji\n\nMische **Kanji-Bedeutung**, **uchi/soto-Wahl** und **Geschwister-Counter** in einem Durchgang. Jeder Fehler ist eine Chance — die Erklärung führt dich zur richtigen Lesung zurück.\n\n> **Mayuko-Tipp:** Wenn du bei der Wahl 父 (chichi) vs お父さん (otou-san) unsicher bist, frag dich: 'Wessen Vater ist gerade gemeint — meiner oder ein anderer?' Bei eigener Familie immer kurz."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet das Kanji 母 (はは)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "Es ist die kurze Form für ein Familienmitglied.",
+              "explanation": "母 (はは, haha) bedeutet '(meine) Mutter' in der bescheidenen Form. Die höfliche Form ist お母さん (okaa-san).",
+              "options": [
+                {
+                  "option_text": "Mutter",
+                  "is_correct": true,
+                  "feedback": "Richtig! 母 (はは) = Mutter (eigene Familie, kurz)."
+                },
+                {
+                  "option_text": "Vater",
+                  "is_correct": false,
+                  "feedback": "Vater wäre 父 (ちち)."
+                },
+                {
+                  "option_text": "Schwester",
+                  "is_correct": false,
+                  "feedback": "Ältere Schwester wäre 姉 (あね), jüngere 妹 (いもうと)."
+                },
+                {
+                  "option_text": "Bruder",
+                  "is_correct": false,
+                  "feedback": "Älterer Bruder wäre 兄 (あに), jüngerer 弟 (おとうと)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welches Wort benutzt du, wenn du über deine eigene ältere Schwester sprichst?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Eigene Familie → kurze, bescheidene Form.",
+              "explanation": "Eigene Familie → kurze Form: 姉 (あね, ane). Die höfliche Form お姉さん (おねえさん, onee-san) nutzt du nur für die Schwester anderer Personen oder zur direkten Anrede.",
+              "options": [
+                {
+                  "option_text": "姉 (あね, ane)",
+                  "is_correct": true,
+                  "feedback": "Richtig — eigene Familie, kurz und bescheiden."
+                },
+                {
+                  "option_text": "お姉さん (おねえさん, onee-san)",
+                  "is_correct": false,
+                  "feedback": "Das ist die höfliche Form für die Schwester anderer."
+                },
+                {
+                  "option_text": "妹 (いもうと, imouto)",
+                  "is_correct": false,
+                  "feedback": "Das wäre eine **jüngere** Schwester."
+                },
+                {
+                  "option_text": "母 (はは, haha)",
+                  "is_correct": false,
+                  "feedback": "Das wäre die Mutter."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「兄弟が 三人 います」 (kyoudai ga san-nin imasu)?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "兄弟 = Geschwister, 三人 = drei Personen.",
+              "explanation": "「兄弟が 三人 います」 = 'Ich habe drei Geschwister'. 兄弟 (きょうだい) heisst 'Geschwister', 三人 (さんにん) ist der Personen-Counter für drei.",
+              "options": [
+                {
+                  "option_text": "Ich habe drei Geschwister.",
+                  "is_correct": true,
+                  "feedback": "Richtig! 兄弟 + 三人 + います."
+                },
+                {
+                  "option_text": "Drei Brüder leben im Haus.",
+                  "is_correct": false,
+                  "feedback": "兄弟 heisst Geschwister allgemein, nicht nur Brüder."
+                },
+                {
+                  "option_text": "Ich bin das dritte Kind.",
+                  "is_correct": false,
+                  "feedback": "Das wäre 三番目の 子供 (sanbanme no kodomo)."
+                },
+                {
+                  "option_text": "Wir sind drei Personen in der Familie.",
+                  "is_correct": false,
+                  "feedback": "Das wäre 家族は 三人です (kazoku wa san-nin desu)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Du sprichst mit deiner Lehrerin über deinen jüngeren Bruder. Welches Wort benutzt du?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Es geht um deine eigene Familie — bescheidene Form.",
+              "explanation": "Über die eigene Familie → kurze Form, auch wenn du mit einer Respektsperson sprichst. 「弟は 中学生です」 (otouto wa chuugakusei desu, 'mein jüngerer Bruder ist Mittelschüler').",
+              "options": [
+                {
+                  "option_text": "弟 (おとうと, otouto)",
+                  "is_correct": true,
+                  "feedback": "Richtig — eigene Familie bleibt kurz."
+                },
+                {
+                  "option_text": "弟さん (おとうとさん, otouto-san)",
+                  "is_correct": false,
+                  "feedback": "Das wäre der Bruder einer anderen Person."
+                },
+                {
+                  "option_text": "兄 (あに, ani)",
+                  "is_correct": false,
+                  "feedback": "Das wäre der **ältere** Bruder."
+                },
+                {
+                  "option_text": "お兄さん (おにいさん, onii-san)",
+                  "is_correct": false,
+                  "feedback": "Das wäre der ältere Bruder einer anderen Person."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie wird 父 als On-Lesung (Sino-japanisch) gelesen?",
+              "difficulty_level": 3,
+              "points": 1,
+              "hint": "On-Lesungen sind kurz und werden in Komposita genutzt.",
+              "explanation": "Die On-Lesung von 父 ist 「フ」 (fu) — kommt z.B. in 父母 (ふぼ, fubo, 'Eltern') vor. Die Kun-Lesung ちち (chichi) nutzt du für das eigenständige Wort.",
+              "options": [
+                {
+                  "option_text": "ふ (fu)",
+                  "is_correct": true,
+                  "feedback": "Richtig — 父 → フ (fu) als On-Lesung. 父母 = ふぼ."
+                },
+                {
+                  "option_text": "ちち (chichi)",
+                  "is_correct": false,
+                  "feedback": "Das ist die Kun-Lesung für das eigenständige Wort 'Vater'."
+                },
+                {
+                  "option_text": "とう (tou)",
+                  "is_correct": false,
+                  "feedback": "とう ist Teil von お父さん (おとうさん), aber nicht die On-Lesung."
+                },
+                {
+                  "option_text": "は (ha)",
+                  "is_correct": false,
+                  "feedback": "は ist Teil von 母 (はは), nicht 父."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie viele Striche hat das Kanji 妹?",
+              "difficulty_level": 3,
+              "points": 1,
+              "hint": "Es enthält links das Frau-Radikal 女 (3 Striche) und rechts 未 (5 Striche).",
+              "explanation": "妹 hat **8 Striche**: 女 (3) + 未 (5). Das Frau-Radikal 女 zeigt, dass es um eine weibliche Person geht.",
+              "options": [
+                {
+                  "option_text": "6 Striche",
+                  "is_correct": false,
+                  "feedback": "Etwas zu wenig."
+                },
+                {
+                  "option_text": "7 Striche",
+                  "is_correct": false,
+                  "feedback": "Das ist 弟 (jüngerer Bruder)."
+                },
+                {
+                  "option_text": "8 Striche",
+                  "is_correct": true,
+                  "feedback": "Richtig — 女 (3) + 未 (5) = 8."
+                },
+                {
+                  "option_text": "10 Striche",
+                  "is_correct": false,
+                  "feedback": "Etwas zu viel."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "「リサさんの ___ は 中学生です」 — welches Wort passt in die Lücke (Lisa spricht von ihrer eigenen Schwester)?",
+              "difficulty_level": 3,
+              "points": 1,
+              "hint": "Achtung: Wer spricht über wessen Familie? Lisa über ihre eigene → kurze Form.",
+              "explanation": "Wenn Lisa über ihre eigene jüngere Schwester spricht, sagt sie 妹 (kurze Form). Die Frage ist eine Falle: 「リサさんの」 könnte zu 妹さん locken — aber wenn Lisa selbst spricht, bleibt es 妹.",
+              "options": [
+                {
+                  "option_text": "妹 (いもうと, imouto)",
+                  "is_correct": true,
+                  "feedback": "Richtig — Lisa über ihre eigene jüngere Schwester → kurz."
+                },
+                {
+                  "option_text": "妹さん (いもうとさん, imouto-san)",
+                  "is_correct": false,
+                  "feedback": "Höflich wäre nur, wenn jemand anders über Lisas Schwester spräche."
+                },
+                {
+                  "option_text": "姉 (あね, ane)",
+                  "is_correct": false,
+                  "feedback": "Das wäre die ältere Schwester."
+                },
+                {
+                  "option_text": "母 (はは, haha)",
+                  "is_correct": false,
+                  "feedback": "Das wäre die Mutter."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Wenn du mit deinem eigenen Vater redest, sagst du 「父」 (chichi).",
+              "difficulty_level": 2,
+              "explanation": "Falsch — bei direkter Anrede der eigenen Familie nutzt du die höfliche Form. 「お父さん、おはよう」 (otou-san, ohayou, 'Guten Morgen, Papa'). 父 (chichi) nutzt du nur, wenn du **über** ihn zu Dritten sprichst.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Bei direkter Anrede → お父さん. 父 ist nur, wenn du über ihn zu anderen sprichst."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt — bei direkter Anrede sagst du お父さん, nicht 父."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Das Kanji 兄 (älterer Bruder) hat das Radikal 儿 (laufende Beine) unten.",
+              "difficulty_level": 3,
+              "explanation": "Richtig — 兄 besteht aus 口 (Mund) oben und 儿 (laufende Beine) unten. Das Radikal 儿 erscheint auch in anderen Kanji für Personen wie 先 (せん, vorher).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt — 口 oben + 儿 unten. Das ist 兄."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — 兄 hat 儿 als Radikal unten."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde das Kanji mit der richtigen Kun-Lesung.",
+              "difficulty_level": 2,
+              "options": [
+                {
+                  "option_text": "父 (Vater)",
+                  "feedback": "ちち (chichi)",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "母 (Mutter)",
+                  "feedback": "はは (haha)",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "兄 (älterer Bruder)",
+                  "feedback": "あに (ani)",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "妹 (jüngere Schwester)",
+                  "feedback": "いもうと (imouto)",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde die kurze Form mit der höflichen Form.",
+              "difficulty_level": 2,
+              "options": [
+                {
+                  "option_text": "父 (chichi)",
+                  "feedback": "お父さん (otou-san)",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "母 (haha)",
+                  "feedback": "お母さん (okaa-san)",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "姉 (ane)",
+                  "feedback": "お姉さん (onee-san)",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "弟 (otouto)",
+                  "feedback": "弟さん (otouto-san)",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde den Counter mit der richtigen Bedeutung.",
+              "difficulty_level": 2,
+              "options": [
+                {
+                  "option_text": "一人 (hitori)",
+                  "feedback": "eine Person / allein",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "二人 (futari)",
+                  "feedback": "zwei Personen",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "三人 (san-nin)",
+                  "feedback": "drei Personen",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "何人 (nan-nin)",
+                  "feedback": "wie viele Personen?",
+                  "is_correct": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Zusammenfassung & Ausblick",
+      "description": "Was du heute gelernt hast und wie es weitergeht",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Heute hast du sechs Familie-Kanji gemeistert",
+            "content_text": "## Was du jetzt kannst\n\n- **Sechs Kanji** schreiben und lesen: 父 (ちち, *chichi*), 母 (はは, *haha*), 兄 (あに, *ani*), 姉 (あね, *ane*), 弟 (おとうと, *otouto*), 妹 (いもうと, *imouto*).\n- **Höfliche Form** für die Familie anderer und zur direkten Anrede: お父さん, お母さん, お兄さん, お姉さん, 弟さん, 妹さん.\n- **uchi/soto-Regel** automatisch anwenden — bei eigener Familie kurz, bei fremder höflich.\n- **Possessiv mit の**: 「わたしの 母」 (watashi no haha, 'meine Mutter'), 「たなかさんの お父さん」 (Tanaka-san no otou-san, 'Tanaka-sans Vater').\n- **Geschwister-Counter 〜人**: 「兄弟が 三人 います」 (kyoudai ga san-nin imasu, 'ich habe drei Geschwister').\n- **Familienfoto-Dialog** verstehen und führen können.\n\n### Selbstcheck-Übung für heute Abend\n\n1. Schreibe drei Sätze über deine eigene Familie (mit kurzen Formen).\n2. Schreibe drei Sätze über die Familie deiner besten Freundin oder deines besten Freundes (mit höflichen Formen).\n3. Beantworte für dich selbst: 「兄弟は 何人 いますか」 (kyoudai wa nan-nin imasu ka?).\n\n> **Mayukos Anmerkung:** Die uchi/soto-Regel wirkt am Anfang umständlich, ist aber das **Skelett** japanischer Höflichkeit. Wer sie beherrscht, klingt nicht nur richtig — sondern bescheiden, respektvoll und natürlich. Genau das Bild, das du bei einer Japanerin oder einem Japaner hinterlassen willst.\n\n### Wie es weitergeht\n\n- **Lesson 7 — N5 Kanji 7: Grosse Zahlen & Zeit** (百 千 万 円 半 年 時 分): Geld, Preise, Datum und Uhrzeit mit Kanji.\n- **Lesson 8 — N5 Kanji 8: Eigenschaften** — neun i-Adjektiv-Kanji für gross/klein/neu/alt/hoch/günstig/lang/kurz/früh und ihre Konjugation.\n- **Begrüssung & Höflichkeit Lesson 5+** vertieft die uchi/soto-Logik weiter mit Verben (います (imasu) / おります (orimasu), いう (iu) / おっしゃる (ossharu), etc.)."
+          }
+        }
+      ]
+    }
+  ],
+  "thumbnail_url": "generated/thumbnail_kanji_familie_20260427_190347.png"
+}

@@ -354,7 +354,18 @@ def validate_draft(draft: dict) -> list[str]:
     if jlpt == 5 and kind != "kana":
         try:
             canon = load_canonical(5)
-            n5_kanji_set = canon["kanji_set"]
+            n5_kanji_set = set(canon["kanji_set"])
+            # Lesson-Level-Override fuer Kanji-Lessons, die explizit Zeichen
+            # ausserhalb des elzup-canonical-Sets lehren (z.B. 兄/姉/弟/妹 — in
+            # Tanos-Liste klassisch N5, in elzup-Liste nicht). Pflicht: source_note.
+            extra = draft.get("additional_n5_kanji") or []
+            if extra:
+                if not draft.get("additional_n5_kanji_source_note"):
+                    errors.append(
+                        "additional_n5_kanji gesetzt, aber additional_n5_kanji_source_note fehlt. "
+                        "Begruende Override (z.B. 'In Tanos-N5-Liste, in elzup nicht — Standard-Familie-Kanji')."
+                    )
+                n5_kanji_set |= set(extra)
             jp_text_blobs: list[tuple[str, str]] = []  # (location, text)
             for p_idx, page in enumerate(draft.get("pages", []), start=1):
                 for c_idx, item in enumerate(page.get("contents", []), start=1):
@@ -639,6 +650,32 @@ def _get_or_create_vocab(db, Vocabulary, data: dict) -> int:
     return v.id
 
 
+def _get_or_create_kanji(db, Kanji, data: dict) -> int:
+    """Duplicate-safe: gibt bestehende ID zurueck oder erstellt neu.
+
+    Match ueber `character` (UNIQUE constraint). Aktualisiert KEINE
+    bestehenden Eintraege.
+    """
+    existing = db.session.query(Kanji).filter_by(character=data["character"]).first()
+    if existing:
+        return existing.id
+    k = Kanji(
+        character=data["character"],
+        meaning=data["meaning"],
+        onyomi=data.get("onyomi"),
+        kunyomi=data.get("kunyomi"),
+        jlpt_level=data.get("jlpt_level"),
+        stroke_count=data.get("stroke_count"),
+        radical=data.get("radical"),
+        stroke_order_info=data.get("stroke_order_info"),
+        status="approved",
+        created_by_ai=True,
+    )
+    db.session.add(k)
+    db.session.flush()
+    return k.id
+
+
 def _get_or_create_grammar(db, Grammar, data: dict) -> int:
     existing = db.session.query(Grammar).filter_by(title=data["title"]).first()
     if existing:
@@ -669,7 +706,7 @@ def insert_draft(draft_path: Path) -> int:
 
     from app import create_app, db
     from app.models import (
-        Lesson, LessonPage, LessonContent, Vocabulary, Grammar, Kana,
+        Lesson, LessonPage, LessonContent, Vocabulary, Grammar, Kana, Kanji,
         QuizQuestion, QuizOption,
     )
 
@@ -719,6 +756,8 @@ def insert_draft(draft_path: Path) -> int:
                         content_id = _get_or_create_kana(db, Kana, item["data"])
                     elif ct == "vocabulary":
                         content_id = _get_or_create_vocab(db, Vocabulary, item["data"])
+                    elif ct == "kanji":
+                        content_id = _get_or_create_kanji(db, Kanji, item["data"])
                     elif ct == "grammar":
                         content_id = _get_or_create_grammar(db, Grammar, item["data"])
                     elif ct == "text":
