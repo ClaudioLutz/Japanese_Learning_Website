@@ -28,3 +28,6 @@ streamlit>=1.56
 fsrs>=6.3.0,<7.0
 markdown>=3.10
 bleach>=6.3
+
+# Dev/Lint
+ruff>=0.15

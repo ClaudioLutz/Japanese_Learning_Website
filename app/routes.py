@@ -3232,10 +3232,18 @@ def payrexx_webhook():
     txn_status = transaction.get('status', '')
     reference_id = transaction.get('referenceId', '')
     invoice = transaction.get('invoice', {}) or {}
-    gateway_id = invoice.get('paymentLinkId') or transaction.get('id')
+    # Unsere payment_transaction.transaction_id == Payrexx Gateway-/PaymentRequest-ID.
+    # transaction.id ist eine *Transaktions*-Instanz-ID, NICHT die Gateway-ID — daher zuletzt als Fallback.
+    gateway_id = (
+        invoice.get('paymentRequestId')
+        or invoice.get('paymentLinkId')
+        or transaction.get('paymentRequestId')
+        or transaction.get('id')
+    )
 
     current_app.logger.info(
-        f"Payrexx Webhook: Gateway {gateway_id}, Status '{txn_status}', Ref '{reference_id}'"
+        f"Payrexx Webhook: Gateway {gateway_id}, Status '{txn_status}', "
+        f"Ref '{reference_id}', TxnId '{transaction.get('id')}'"
     )
 
     # Status mappen
