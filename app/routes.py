@@ -650,48 +650,57 @@ def courses():
 @bp.route('/my-lessons')
 @login_required
 def my_lessons():
-    """Display all bought lessons for the current user"""
-    # Get all purchased lessons for the current user
+    """Display all bought lessons for the current user (incl. lessons unlocked via course purchases)."""
     user_purchases = LessonPurchase.query.filter_by(user_id=current_user.id).order_by(LessonPurchase.purchased_at.desc()).all()
-    
-    # Prepare lesson data with progress information
+    course_purchases = CoursePurchase.query.filter_by(user_id=current_user.id).order_by(CoursePurchase.purchased_at.desc()).all()
+
     purchased_lessons = []
-    total_spent = 0
+    total_spent = 0.0
     completed_count = 0
     total_time_spent = 0
-    
-    for purchase in user_purchases:
-        lesson = purchase.lesson
-        
-        # Get progress for this lesson
+    seen_lesson_ids: set[int] = set()
+
+    def _attach(lesson, purchase=None, via_course=None):
+        if lesson.id in seen_lesson_ids:
+            return
+        seen_lesson_ids.add(lesson.id)
         progress = UserLessonProgress.query.filter_by(
-            user_id=current_user.id, 
-            lesson_id=lesson.id
+            user_id=current_user.id,
+            lesson_id=lesson.id,
         ).first()
-        
-        # Calculate statistics
-        total_spent += purchase.price_paid
+        nonlocal completed_count, total_time_spent
         if progress and progress.is_completed:
             completed_count += 1
         if progress:
             total_time_spent += progress.time_spent or 0
-        
         purchased_lessons.append({
             'lesson': lesson,
             'purchase': purchase,
             'progress': progress,
             'category_name': lesson.category.name if lesson.category else 'Uncategorized',
-            'accessible': True,  # User owns the lesson
-            'access_message': 'Purchased'
+            'accessible': True,
+            'access_message': f"Im Kurs '{via_course.title}'" if via_course else 'Purchased',
+            'via_course': via_course,
         })
-    
-    # Calculate completion rate
-    completion_rate = (completed_count / len(user_purchases) * 100) if user_purchases else 0
-    
+
+    for purchase in user_purchases:
+        total_spent += purchase.price_paid or 0
+        _attach(purchase.lesson, purchase=purchase)
+
+    for cp in course_purchases:
+        total_spent += cp.price_paid or 0
+        for lesson in cp.course.lessons:
+            if not lesson.is_published:
+                continue
+            _attach(lesson, via_course=cp.course)
+
+    completion_rate = (completed_count / len(purchased_lessons) * 100) if purchased_lessons else 0
+
     return render_template('my_lessons.html',
                          purchased_lessons=purchased_lessons,
+                         purchased_courses=course_purchases,
                          total_spent=total_spent,
-                         total_purchased_lessons=len(user_purchases),
+                         total_purchased_lessons=len(purchased_lessons),
                          completed_count=completed_count,
                          completion_rate=completion_rate,
                          total_time_spent=total_time_spent)
