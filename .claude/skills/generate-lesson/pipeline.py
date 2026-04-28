@@ -25,6 +25,7 @@ Usage: python .claude/skills/generate-lesson/pipeline.py <subcommand> [args]
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 from datetime import datetime
@@ -120,6 +121,28 @@ def is_pure_kana(s: str) -> bool:
 def extract_kanji(text: str) -> set[str]:
     """Gibt Set aller Kanji-Zeichen im Text zurueck."""
     return set(KANJI_RE.findall(text or ""))
+
+
+_QUIZ_JP_RE = re.compile(r"[぀-ゟ゠-ヿｦ-ﾟ一-鿿]")
+_QUIZ_ASCII_RE = re.compile(r"[A-Za-z]")
+_QUIZ_BRACKET_RE = re.compile(r"[「」『』【】\[\]\s]")
+
+
+def _needs_romaji_in_quiz(text: str) -> bool:
+    """True, wenn Quiz-Text japanische Schrift enthaelt aber kein lateinisches
+    Alphabet (= kein Romaji). Skippt 1-2-Zeichen Kana-only (z.B. Partikel-
+    Optionen wie 「は」/「が」 — der Lerner kann sie selbst lesen)."""
+    if not text:
+        return False
+    if not _QUIZ_JP_RE.search(text):
+        return False
+    if _QUIZ_ASCII_RE.search(text):
+        return False
+    core = _QUIZ_BRACKET_RE.sub("", text)
+    has_kanji = bool(re.search(r"[一-鿿]", core))
+    if not has_kanji and len(core) <= 2:
+        return False
+    return True
 
 
 def validate_draft(draft: dict) -> list[str]:
@@ -300,6 +323,28 @@ def validate_draft(draft: dict) -> list[str]:
                         errors.append(
                             f"Page {p_idx}.{c_idx}.Q{q_idx}: multiple_choice braucht "
                             f"genau 1 richtige Option, hat {correct}"
+                        )
+
+                # Romaji-Pflicht in Quiz-Texten (User-Direktive 2026-04-28):
+                # Jeder japanische Quiz-Inhalt MUSS Romaji enthalten (Pattern:
+                # `JP-Text (romaji)` oder `Kanji (kana, romaji)`). Sonst ist die
+                # Aufgabe fuer N5/N4-Lerner nicht lesbar. Erkannt: japanisches
+                # Zeichen vorhanden, aber kein lateinisches Alphabet.
+                # Skipt 1-2-Zeichen-Kana-only (Particle-Fragen, sind selbsterklaerend).
+                qtxt = q.get("question_text") or ""
+                if _needs_romaji_in_quiz(qtxt):
+                    errors.append(
+                        f"Page {p_idx}.{c_idx}.Q{q_idx}: question_text enthaelt "
+                        f"japanischen Text aber kein Romaji. Pflicht: '... (romaji)' "
+                        f"oder '漢字 (kana, romaji)'. Text: {qtxt[:60]}"
+                    )
+                for o_idx, o in enumerate(q.get("options", []), start=1):
+                    otxt = o.get("option_text") or ""
+                    if _needs_romaji_in_quiz(otxt):
+                        errors.append(
+                            f"Page {p_idx}.{c_idx}.Q{q_idx}.O{o_idx}: option_text "
+                            f"enthaelt japanischen Text aber kein Romaji. "
+                            f"Text: {otxt[:60]}"
                         )
 
     # Budget-Checks aus SKILL.md §4 (angepasst 2026-04-24: groessere Lektionen).
