@@ -66,6 +66,20 @@
         if (!show) document.documentElement.classList.add('hide-front-romaji');
     } catch (e) { /* localStorage blocked */ }
 })();
+// Globale Toggle-Funktionen — werden vom Button im deck-header aufgerufen.
+window._romajiState = function () {
+    return !document.documentElement.classList.contains('hide-front-romaji');
+};
+window._renderRomajiToggle = function () {
+    var label = 'Romaji: ' + (window._romajiState() ? 'AN' : 'AUS');
+    document.querySelectorAll('.romaji-toggle-label').forEach(function (el) { el.textContent = label; });
+};
+window.toggleFrontRomaji = function () {
+    var hidden = document.documentElement.classList.toggle('hide-front-romaji');
+    try { localStorage.setItem('jpl_show_front_romaji', hidden ? '0' : '1'); } catch (e) {}
+    window._renderRomajiToggle();
+};
+document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
 </script>
 <style>
 [x-cloak] { display: none !important; }
@@ -811,7 +825,7 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                             <h1 class="card-title">{{ lesson.title }}</h1>
                             <p class="card-text">{{ lesson.description or 'No description available.' }}</p>
                             
-                            <div class="d-flex flex-wrap gap-2 mb-3 align-items-center">
+                            <div class="d-flex flex-wrap gap-2 mb-3">
                                 {% if lesson.category %}
                                 <span class="badge bg-info">{{ lesson.category.name }}</span>
                                 {% endif %}
@@ -821,30 +835,7 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                 {% if lesson.estimated_duration %}
                                 <span class="badge bg-dark">{{ lesson.estimated_duration }} Min.</span>
                                 {% endif %}
-                                {# User-Toggle fuer Romaji auf der Vorderseite — persistiert in localStorage. #}
-                                <button type="button"
-                                        id="romaji-toggle"
-                                        class="btn btn-sm btn-outline-secondary ms-auto"
-                                        title="Romaji auf der Vorderseite der Karten ein-/ausblenden"
-                                        onclick="toggleFrontRomaji()">
-                                    <span id="romaji-toggle-label">Romaji: …</span>
-                                </button>
                             </div>
-                            <script>
-                            function _romajiState() {
-                                return !document.documentElement.classList.contains('hide-front-romaji');
-                            }
-                            function _renderRomajiToggle() {
-                                var label = document.getElementById('romaji-toggle-label');
-                                if (label) label.textContent = 'Romaji: ' + (_romajiState() ? 'AN' : 'AUS');
-                            }
-                            function toggleFrontRomaji() {
-                                var hidden = document.documentElement.classList.toggle('hide-front-romaji');
-                                try { localStorage.setItem('jpl_show_front_romaji', hidden ? '0' : '1'); } catch (e) {}
-                                _renderRomajiToggle();
-                            }
-                            document.addEventListener('DOMContentLoaded', _renderRomajiToggle);
-                            </script>
                         </div>
                         <div class="col-md-4">
                             {% if lesson.get_thumbnail_url() %}
@@ -3032,7 +3023,13 @@ function createDeck(cardItems, page) {
     const deckEl = document.createElement('div');
     deckEl.className = 'deck-container';
     deckEl.innerHTML = `
-        <div class="deck-header">
+        <div class="deck-header" style="position:relative;">
+            <button type="button" class="btn btn-sm btn-outline-secondary romaji-toggle"
+                    style="position:absolute;top:0.6rem;right:0.6rem;font-size:0.75rem;padding:0.2rem 0.6rem;"
+                    title="Romaji auf der Vorderseite ein-/ausblenden"
+                    onclick="toggleFrontRomaji()">
+                <span class="romaji-toggle-label">Romaji: …</span>
+            </button>
             <div class="deck-stats">
                 <span class="badge bg-success deck-learned">0 / ${total} gelernt</span>
                 <span class="text-muted deck-remaining">${total} verbleibend</span>
@@ -3077,6 +3074,7 @@ function createDeck(cardItems, page) {
     // Find first content-item that's a card, insert deck before it
     const firstCardItem = cardItems[0].item;
     firstCardItem.parentNode.insertBefore(deckEl, firstCardItem);
+    if (window._renderRomajiToggle) window._renderRomajiToggle();
 
     const cardArea = deckEl.querySelector('.deck-card-area');
     const btnGroup = deckEl.querySelector('.confidence-buttons');

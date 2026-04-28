@@ -4,8 +4,36 @@
 
 {% block body_attributes %}class="redesign-page"{% endblock %}
 
+{# Romaji-Toggle: <html>-Klasse synchron VOR Body-Render setzen, um Flash zu vermeiden.
+   Default: Romaji AN (Review-Karten kommen aus mixed Lessons, kein einzelner Default). #}
+{% block extra_head %}
+<script>
+(function () {
+    try {
+        var stored = localStorage.getItem('jpl_show_front_romaji');
+        if (stored === '0') document.documentElement.classList.add('hide-front-romaji');
+    } catch (e) {}
+})();
+window._romajiState = function () {
+    return !document.documentElement.classList.contains('hide-front-romaji');
+};
+window._renderRomajiToggle = function () {
+    var label = 'Romaji: ' + (window._romajiState() ? 'AN' : 'AUS');
+    document.querySelectorAll('.romaji-toggle-label').forEach(function (el) { el.textContent = label; });
+};
+window.toggleFrontRomaji = function () {
+    var hidden = document.documentElement.classList.toggle('hide-front-romaji');
+    try { localStorage.setItem('jpl_show_front_romaji', hidden ? '0' : '1'); } catch (e) {}
+    window._renderRomajiToggle();
+};
+document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
+</script>
+{% endblock %}
+
 {% block styles %}
 <style>
+    /* Romaji-Toggle: blendet Front-Side-Romaji aus wenn html.hide-front-romaji */
+    html.hide-front-romaji .front-romaji { display: none !important; }
     .review-container {
         max-width: 600px;
         margin: 0 auto;
@@ -361,8 +389,16 @@
     </div>
 
     <!-- Card Area -->
-    <div class="review-card-area" id="reviewCardArea">
-        <!-- Filled by JavaScript -->
+    <div style="position:relative;">
+        <button type="button" class="btn btn-sm btn-outline-secondary romaji-toggle"
+                style="position:absolute;top:0.6rem;right:0.6rem;z-index:5;font-size:0.75rem;padding:0.2rem 0.6rem;"
+                title="Romaji auf der Vorderseite ein-/ausblenden"
+                onclick="toggleFrontRomaji()">
+            <span class="romaji-toggle-label">Romaji: …</span>
+        </button>
+        <div class="review-card-area" id="reviewCardArea">
+            <!-- Filled by JavaScript -->
+        </div>
     </div>
 
     <!-- Rating Buttons -->
@@ -609,7 +645,7 @@
                 <div class="review-card-scene" id="reviewScene">
                     <div class="review-card-face review-card-face--front">
                         <div class="review-card-front-text ${isLong ? 'small-text' : ''}">${escapeHtml(frontText)}</div>
-                        ${subText ? `<div style="font-size:1rem;color:var(--text-muted,#8C8378);margin-top:0.5rem;">${escapeHtml(subText)}</div>` : ''}
+                        ${subText ? `<div class="front-romaji" style="font-size:1rem;color:var(--text-muted,#8C8378);margin-top:0.5rem;">${escapeHtml(subText)}</div>` : ''}
                         ${kanaHint}
                         <div class="review-card-hint">Klicken zum Umdrehen</div>
                     </div>
