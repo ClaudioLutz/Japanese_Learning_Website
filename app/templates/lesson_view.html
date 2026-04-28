@@ -3023,13 +3023,15 @@ function createDeck(cardItems, page) {
     const deckEl = document.createElement('div');
     deckEl.className = 'deck-container';
     deckEl.innerHTML = `
-        <div class="deck-header" style="position:relative;">
-            <button type="button" class="btn btn-sm btn-outline-secondary romaji-toggle"
-                    style="position:absolute;top:0.6rem;right:0.6rem;font-size:0.75rem;padding:0.2rem 0.6rem;"
-                    title="Romaji auf der Vorderseite ein-/ausblenden"
-                    onclick="toggleFrontRomaji()">
-                <span class="romaji-toggle-label">Romaji: …</span>
-            </button>
+        <div class="deck-header">
+            <div style="display:flex;justify-content:flex-end;margin-bottom:0.5rem;">
+                <button type="button" class="btn btn-sm btn-outline-secondary romaji-toggle"
+                        style="font-size:0.75rem;padding:0.2rem 0.6rem;"
+                        title="Romaji auf der Vorderseite ein-/ausblenden"
+                        onclick="toggleFrontRomaji()">
+                    <span class="romaji-toggle-label">Romaji: …</span>
+                </button>
+            </div>
             <div class="deck-stats">
                 <span class="badge bg-success deck-learned">0 / ${total} gelernt</span>
                 <span class="text-muted deck-remaining">${total} verbleibend</span>
