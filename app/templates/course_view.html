@@ -4,7 +4,60 @@
 {% block title %}{{ course.title }}{% endblock %}
 {% block meta_description %}{% if course.description %}{{ course.description|striptags|truncate(160, killwords=True) }}{% else %}Japanisch-Kurs: {{ course.title }} — gebündelte Lektionen mit Vokabeln, Kanji, Grammatik und Quiz.{% endif %}{% endblock %}
 
+{% block body_attributes %}class="redesign-page"{% endblock %}
+
+{% block styles %}
+<style>
+  /* ── Course-View (Compass-Redesign Phase 4.5) ── Bootstrap-Overrides ── */
+  .course-page h1, .course-page h2, .course-page h3, .course-page h4 {
+    font-family: 'Geist', 'Inter', sans-serif;
+    color: var(--kon);
+  }
+  .course-page .card {
+    border: 1px solid var(--ink-200);
+    border-radius: 12px;
+    box-shadow: var(--shadow-subtle);
+  }
+  .course-page .card-header.bg-primary {
+    background: var(--kon) !important;
+    color: #fff !important;
+    border-bottom: 1px solid var(--kon-500);
+  }
+  .course-page .text-primary { color: var(--shu) !important; }
+  .course-page .btn-primary,
+  .course-page .btn.btn-primary {
+    background: linear-gradient(180deg, #EB6101, #D85700) !important;
+    border-color: var(--shu-deep) !important;
+    color: #fff;
+  }
+  .course-page .btn-primary:hover {
+    background: linear-gradient(180deg, #F37016, #E25C00) !important;
+    border-color: var(--shu-deep) !important;
+    color: #fff;
+  }
+  .course-page .btn-primary.disabled,
+  .course-page .btn-primary:disabled {
+    background: var(--ink-300) !important;
+    border-color: var(--ink-300) !important;
+    color: #fff;
+    opacity: 0.6;
+  }
+  .course-page .progress { background-color: var(--ink-100); }
+  .course-page .progress-bar.bg-primary { background-color: var(--shu) !important; }
+  .course-page .alert-success {
+    background: rgba(122,144,51,.08); border: 1px solid rgba(122,144,51,.25);
+    color: var(--matcha); border-radius: 8px;
+  }
+  .course-page .alert-info {
+    background: var(--kon-50); border: 1px solid var(--kon-100);
+    border-left: 3px solid var(--shu);
+    color: var(--ink-700); border-radius: 8px;
+  }
+</style>
+{% endblock %}
+
 {% block content %}
+<div class="course-page">
 <!-- Enhanced Course Header Banner -->
 <div class="enhanced-course-hero">
     <div class="course-hero-background" style="background-image: url('{{ course.background_image_url or "https://via.placeholder.com/1920x600?text=Japanese+Course" }}');"></div>
@@ -303,6 +356,7 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 {% endblock %}
 
