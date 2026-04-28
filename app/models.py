@@ -6,7 +6,7 @@ from datetime import datetime
 import json
 from typing import List
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey, Table, Column, Integer, String, Text, Boolean, DateTime, JSON, event, BigInteger
+from sqlalchemy import ForeignKey, Table, Column, Integer, String, Text, Boolean, DateTime, JSON, event, BigInteger, true as sa_true
 class User(UserMixin, db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     username: Mapped[str] = mapped_column(String(80), unique=True, nullable=False)
@@ -150,6 +150,7 @@ class Kanji(db.Model):
     stroke_order_info = db.Column(db.String(255), nullable=True)
     radical = db.Column(db.String(10), nullable=True)
     stroke_count = db.Column(db.Integer, nullable=True)
+    image_url = db.Column(db.String(500), nullable=True)
     status = db.Column(db.String(20), default='approved', nullable=False)  # 'approved', 'pending_approval'
     created_by_ai = db.Column(db.Boolean, default=False, nullable=False)
 
@@ -275,6 +276,7 @@ class Lesson(db.Model):
     is_published: Mapped[bool] = mapped_column(Boolean, default=False)
     allow_guest_access: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     instruction_language: Mapped[str] = mapped_column(String(10), default='english', nullable=False)
+    show_romaji_on_front: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False, server_default=sa_true())
     thumbnail_url: Mapped[str] = mapped_column(String(255), nullable=True)
     background_image_url: Mapped[str] = mapped_column(String(1000), nullable=True)
     background_image_path: Mapped[str] = mapped_column(String(500), nullable=True)

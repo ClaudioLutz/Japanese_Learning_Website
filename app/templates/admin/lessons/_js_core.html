@@ -271,6 +271,7 @@ document.getElementById('addLessonForm').addEventListener('submit', async functi
     const data = Object.fromEntries(formData.entries());
     data.is_published = document.getElementById('lessonPublished').checked;
     data.allow_guest_access = document.getElementById('lessonGuestAccess').checked;
+    data.show_romaji_on_front = document.getElementById('lessonShowRomaji').checked;
     data.is_purchasable = document.getElementById('lessonPurchasable').checked;
     ['category_id', 'difficulty_level', 'estimated_duration', 'thumbnail_url', 'video_intro_url'].forEach(field => {
         if (data[field] === '') data[field] = null;
@@ -316,6 +317,7 @@ async function editLesson(id) {
         document.getElementById('editLessonLanguage').value = lesson.instruction_language || 'english';
         document.getElementById('editLessonPublished').checked = lesson.is_published;
         document.getElementById('editLessonGuestAccess').checked = lesson.allow_guest_access || false;
+        document.getElementById('editLessonShowRomaji').checked = lesson.show_romaji_on_front !== false;
         document.getElementById('editLessonPrice').value = lesson.price || 0;
         document.getElementById('editLessonPurchasable').checked = lesson.is_purchasable || false;
 
@@ -335,6 +337,7 @@ document.getElementById('editLessonForm').addEventListener('submit', async funct
     delete data.id;
     data.is_published = document.getElementById('editLessonPublished').checked;
     data.allow_guest_access = document.getElementById('editLessonGuestAccess').checked;
+    data.show_romaji_on_front = document.getElementById('editLessonShowRomaji').checked;
     data.is_purchasable = document.getElementById('editLessonPurchasable').checked;
     ['category_id', 'difficulty_level', 'estimated_duration', 'thumbnail_url', 'video_intro_url'].forEach(field => {
         if (data[field] === '') data[field] = null;

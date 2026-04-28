@@ -1469,6 +1469,7 @@ def create_lesson():
         is_published=data.get('is_published', False),
         allow_guest_access=data.get('allow_guest_access', False),
         instruction_language=data.get('instruction_language', 'english'),
+        show_romaji_on_front=data.get('show_romaji_on_front', True),
         thumbnail_url=data.get('thumbnail_url'),
         video_intro_url=data.get('video_intro_url')
     )
@@ -1568,6 +1569,11 @@ def update_lesson(item_id):
     else:
         item.allow_guest_access = bool(allow_guest_access) if allow_guest_access is not None else item.allow_guest_access
     item.instruction_language = data.get('instruction_language', item.instruction_language)
+    show_romaji_on_front = data.get('show_romaji_on_front', item.show_romaji_on_front)
+    if isinstance(show_romaji_on_front, str):
+        item.show_romaji_on_front = show_romaji_on_front.lower() in ['true', 'on', '1', 'yes']
+    else:
+        item.show_romaji_on_front = bool(show_romaji_on_front) if show_romaji_on_front is not None else item.show_romaji_on_front
     item.thumbnail_url = data.get('thumbnail_url', item.thumbnail_url)
     item.video_intro_url = data.get('video_intro_url', item.video_intro_url)
 

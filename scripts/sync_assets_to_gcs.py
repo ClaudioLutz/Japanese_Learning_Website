@@ -30,6 +30,8 @@ from pathlib import Path
 ASSET_DIRECTORIES = {
     # Vokabel-Bilder (vocabulary.image_url -> "vocab_generated/vocab_xxx.png")
     "vocab": ("app/static/uploads/vocab_generated", "vocab_generated"),
+    # Kanji-Bilder (kanji.image_url -> "kanji_generated/kanji_xxx.png")
+    "kanji": ("app/static/uploads/kanji_generated", "kanji_generated"),
     # Lesson-Thumbnails (lesson.thumbnail_url -> "generated/thumbnail_*.png")
     "thumbnails": ("app/static/uploads/generated", "generated"),
     # Konversations-Audios (lesson_content.file_path -> "lessons/audio/lesson_X/conversation.mp3")

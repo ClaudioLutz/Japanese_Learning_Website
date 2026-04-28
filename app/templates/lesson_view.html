@@ -1082,14 +1082,14 @@
                                                                                 {% if content_data.reading and content_data.reading != content_data.word %}
                                                                                 <div class="vocab-reading">{{ content_data.reading }}</div>
                                                                                 {% endif %}
-                                                                                {% if content_data.romaji %}
+                                                                                {% if content_data.romaji and lesson.show_romaji_on_front %}
                                                                                 <div class="vocab-romaji">{{ content_data.romaji }}</div>
                                                                                 {% endif %}
                                                                             </div>
                                                                         {% elif content.content_type == 'grammar' %}
                                                                             <div class="grammar-front">
                                                                                 <div class="grammar-title">{{ content_data.title }}</div>
-                                                                                {% if content_data.romaji %}
+                                                                                {% if content_data.romaji and lesson.show_romaji_on_front %}
                                                                                 <div class="vocab-reading">{{ content_data.romaji }}</div>
                                                                                 {% endif %}
                                                                                 {% if content_data.structure %}
@@ -1100,8 +1100,12 @@
                                                                         <div class="flip-hint">Karte umdrehen</div>
                                                                     </div>
                                                                     
-                                                                    <div class="card-face card-face--back {% if content.content_type == 'vocabulary' and content_data.image_url %}has-image{% endif %}">
+                                                                    <div class="card-face card-face--back {% if content.content_type in ['vocabulary', 'kanji'] and content_data.image_url %}has-image{% endif %}">
                                                                         {% if content.content_type == 'vocabulary' and content_data.image_url %}
+                                                                        <div class="card-image">
+                                                                            <img src="{{ url_for('routes.uploaded_file', filename=content_data.image_url) }}" alt="{{ content_data.meaning }}">
+                                                                        </div>
+                                                                        {% elif content.content_type == 'kanji' and content_data.image_url %}
                                                                         <div class="card-image">
                                                                             <img src="{{ url_for('routes.uploaded_file', filename=content_data.image_url) }}" alt="{{ content_data.meaning }}">
                                                                         </div>
@@ -2851,16 +2855,12 @@ function enhanceFlipCard(flipCard) {
     const vocabEl = flipCard.querySelector('.vocab-word');
     const text = charEl ? charEl.textContent.trim() : (vocabEl ? vocabEl.textContent.trim() : '');
 
-    // Add image to card BACK
+    // Add image to card BACK — Kanji-/Vocabulary-Bilder kommen jetzt direkt aus
+    // der DB (Jinja). Diese JS-Map ist nur noch Fallback fuer die alte
+    // tokyo_wegbeschreibung-Lesson, in der Bilder noch nicht in DB sind.
     const back = flipCard.querySelector('.card-face--back');
     if (back && text && !back.querySelector('.card-image')) {
-        let fileName = null;
-        if (charEl && !vocabEl) {
-            fileName = kanjiImageMap[text] || imageFileMap[text];
-        } else {
-            fileName = imageFileMap[text];
-        }
-
+        const fileName = imageFileMap[text];
         if (fileName) {
             const imgDiv = document.createElement('div');
             imgDiv.className = 'card-image';
