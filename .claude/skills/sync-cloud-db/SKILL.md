@@ -109,6 +109,22 @@ physischen Migrationen fehlen, glaubt Alembic faelschlicherweise sie seien
 angewendet. Bei Tabellen, die physisch existieren aber alembic_version
 hinterherhinkt: `flask db stamp <revision>` setzt nur den Marker.
 
+⚠️ **Pull-Overwrite-Trap nach frischer Migration auf Cloud (Bug 2026-04-28):**
+Wenn die Migration neue Spalten anlegt (z.B. `kanji.image_url`), sind diese
+auf Cloud NULL — auch wenn lokal die Werte bereits gesetzt sind. Der Pull
+in Schritt 4 macht UPSERT auf den common columns und ueberschreibt damit
+die lokalen Werte mit Cloud-NULL. Konsequenz: nach Pull stehen die neuen
+Spalten lokal wieder leer, der Push schickt diese leeren Werte hoch und
+die Arbeit ist weg.
+
+**Mitigation:** Bei jeder neuen Migration die Spalten auf Cloud schon
+befuellt haben oder ein **Re-Apply-Script** vorbereiten, das die lokalen
+Werte aus den Quelldaten (Files, Hash-Tabellen, etc.) wiederherstellt.
+Beispiele in `scripts/`: `reapply_kanji_image_urls.py` (scannt
+`kanji_generated/` und mappt Filenames auf `kanji.image_url`),
+`backfill_quiz_romaji.py` (idempotenter Romaji-Backfill).
+Reihenfolge dann: Migration auf Cloud → Pull → **Re-Apply lokal** → Push.
+
 ### 4. SCHRITT A: Cloud → Lokal (ZUERST!)
 
 ```bash
