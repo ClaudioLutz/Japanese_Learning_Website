@@ -7,13 +7,24 @@ ohne UI-Logik dazwischen.
 from datetime import datetime
 from xml.sax.saxutils import escape
 
-from flask import Blueprint, Response, current_app, url_for
+from flask import Blueprint, Response, current_app, send_from_directory, url_for
 
 from app import db
 from app.models import Course, Lesson, LessonCategory
 
 
 seo_bp = Blueprint('seo', __name__)
+
+
+# ── favicon.ico an Root ────────────────────────────────────────────────
+# Google und viele Bots fragen /favicon.ico direkt ab — nicht über /static.
+@seo_bp.route('/favicon.ico')
+def favicon_ico():
+    return send_from_directory(
+        current_app.static_folder,
+        'favicon.ico',
+        mimetype='image/vnd.microsoft.icon',
+    )
 
 
 # ── robots.txt ─────────────────────────────────────────────────────────
