@@ -55,8 +55,22 @@
 {% endblock %}
 
 {% block extra_head %}
+{# Romaji-Toggle: <html>-Klasse synchron VOR Body-Render setzen, um Flash zu vermeiden.
+   Reihenfolge: localStorage > Lesson-Default > 'show'. #}
+<script>
+(function () {
+    try {
+        var stored = localStorage.getItem('jpl_show_front_romaji');
+        var lessonDefault = {{ 'true' if lesson.show_romaji_on_front else 'false' }};
+        var show = stored === null ? lessonDefault : stored === '1';
+        if (!show) document.documentElement.classList.add('hide-front-romaji');
+    } catch (e) { /* localStorage blocked */ }
+})();
+</script>
 <style>
 [x-cloak] { display: none !important; }
+/* Romaji-Toggle: blendet Front-Side-Romaji aus wenn html.hide-front-romaji */
+html.hide-front-romaji .front-romaji { display: none !important; }
 /* Quiz Carousel Slide Transitions */
 .quiz-slides-container { position: relative; overflow: hidden; min-height: 100px; }
 .quiz-slide { will-change: transform, opacity; }
@@ -797,7 +811,7 @@
                             <h1 class="card-title">{{ lesson.title }}</h1>
                             <p class="card-text">{{ lesson.description or 'No description available.' }}</p>
                             
-                            <div class="d-flex flex-wrap gap-2 mb-3">
+                            <div class="d-flex flex-wrap gap-2 mb-3 align-items-center">
                                 {% if lesson.category %}
                                 <span class="badge bg-info">{{ lesson.category.name }}</span>
                                 {% endif %}
@@ -807,7 +821,30 @@
                                 {% if lesson.estimated_duration %}
                                 <span class="badge bg-dark">{{ lesson.estimated_duration }} Min.</span>
                                 {% endif %}
+                                {# User-Toggle fuer Romaji auf der Vorderseite — persistiert in localStorage. #}
+                                <button type="button"
+                                        id="romaji-toggle"
+                                        class="btn btn-sm btn-outline-secondary ms-auto"
+                                        title="Romaji auf der Vorderseite der Karten ein-/ausblenden"
+                                        onclick="toggleFrontRomaji()">
+                                    <span id="romaji-toggle-label">Romaji: …</span>
+                                </button>
                             </div>
+                            <script>
+                            function _romajiState() {
+                                return !document.documentElement.classList.contains('hide-front-romaji');
+                            }
+                            function _renderRomajiToggle() {
+                                var label = document.getElementById('romaji-toggle-label');
+                                if (label) label.textContent = 'Romaji: ' + (_romajiState() ? 'AN' : 'AUS');
+                            }
+                            function toggleFrontRomaji() {
+                                var hidden = document.documentElement.classList.toggle('hide-front-romaji');
+                                try { localStorage.setItem('jpl_show_front_romaji', hidden ? '0' : '1'); } catch (e) {}
+                                _renderRomajiToggle();
+                            }
+                            document.addEventListener('DOMContentLoaded', _renderRomajiToggle);
+                            </script>
                         </div>
                         <div class="col-md-4">
                             {% if lesson.get_thumbnail_url() %}
@@ -1082,15 +1119,15 @@
                                                                                 {% if content_data.reading and content_data.reading != content_data.word %}
                                                                                 <div class="vocab-reading">{{ content_data.reading }}</div>
                                                                                 {% endif %}
-                                                                                {% if content_data.romaji and lesson.show_romaji_on_front %}
-                                                                                <div class="vocab-romaji">{{ content_data.romaji }}</div>
+                                                                                {% if content_data.romaji %}
+                                                                                <div class="vocab-romaji front-romaji">{{ content_data.romaji }}</div>
                                                                                 {% endif %}
                                                                             </div>
                                                                         {% elif content.content_type == 'grammar' %}
                                                                             <div class="grammar-front">
                                                                                 <div class="grammar-title">{{ content_data.title }}</div>
-                                                                                {% if content_data.romaji and lesson.show_romaji_on_front %}
-                                                                                <div class="vocab-reading">{{ content_data.romaji }}</div>
+                                                                                {% if content_data.romaji %}
+                                                                                <div class="vocab-reading front-romaji">{{ content_data.romaji }}</div>
                                                                                 {% endif %}
                                                                                 {% if content_data.structure %}
                                                                                 <div class="grammar-structure">{{ content_data.structure }}</div>
