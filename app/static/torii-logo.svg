@@ -1,9 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="#4f46e5" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-  <!-- Verspielt-handgezeichnetes Torii (Duolingo-Stil): leicht unregelmaessig,
-       weiche Pinselstrich-Optik durch round-caps + ganz minimal kurvige Pfade. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <!-- Verspielt-handgezeichnetes Torii: leicht unregelmaessig,
+       weiche Pinselstrich-Optik durch round-caps + minimal kurvige Pfade.
+       Erbt currentColor von der Topnav (Compass-Redesign Phase 4.1). -->
 
   <!-- Kasagi (oberer Querbalken) — leicht aufgebogen an den Enden -->
-  <path d="M 7 17 Q 32 12 57 17 L 56 21 Q 32 16 8 21 Z" fill="#4f46e5" stroke="#4f46e5" stroke-width="1.5"/>
+  <path d="M 7 17 Q 32 12 57 17 L 56 21 Q 32 16 8 21 Z" fill="currentColor" stroke="currentColor" stroke-width="1.5"/>
 
   <!-- Nuki (zweiter Querbalken) — gerade -->
   <path d="M 11 27 Q 32 25 53 27" stroke-width="3.4"/>

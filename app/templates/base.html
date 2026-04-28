@@ -103,10 +103,19 @@
          @keydown.escape.window="userMenuOpen = false; mobileOpen = false">
       <div class="topnav-inner">
 
-        {# Brand — handgezeichnetes SVG-Torii + Fraunces-Wordmark + Noto-Serif-JP-Tag #}
+        {# Brand — Inline-SVG-Torii (erbt currentColor von .topnav-brand-icon) #}
         <a href="{{ url_for('routes.index') }}" class="topnav-brand">
-          <img src="{{ url_for('static', filename='torii-logo.svg') }}"
-               alt="" class="topnav-brand-icon" width="36" height="36">
+          <svg class="topnav-brand-icon" viewBox="0 0 64 64" width="36" height="36"
+               fill="none" stroke="currentColor" stroke-width="3.6"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M 7 17 Q 32 12 57 17 L 56 21 Q 32 16 8 21 Z" fill="currentColor" stroke-width="1.5"/>
+            <path d="M 11 27 Q 32 25 53 27" stroke-width="3.4"/>
+            <path d="M 32 22 L 32 26.5" stroke-width="2.6"/>
+            <path d="M 14.5 22 Q 13.5 38 12.2 56" stroke-width="4.2"/>
+            <path d="M 49.5 22 Q 50.7 38 51.8 56" stroke-width="4.2"/>
+            <path d="M 8 56 Q 16 57 24 56" stroke-width="1.8" opacity="0.55"/>
+            <path d="M 40 56 Q 48 57 56 56" stroke-width="1.8" opacity="0.55"/>
+          </svg>
           <span class="topnav-brand-text">
             <span class="topnav-brand-name">Japanese Learning</span>
             <span class="topnav-brand-tag">日本語</span>
@@ -244,6 +253,7 @@
     .topnav-brand:hover { text-decoration: none; color: #1a1a1a; }
     .topnav-brand-icon {
         width: 36px; height: 36px;
+        color: var(--kon, #1F2A44);
         transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
         flex-shrink: 0;
     }
