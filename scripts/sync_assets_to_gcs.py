@@ -20,6 +20,7 @@ Verwendung:
   python scripts/sync_assets_to_gcs.py --dirs=vocab,thumbnails  # nur diese
 """
 import argparse
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -43,6 +44,12 @@ DEFAULT_BUCKET = "jpl-website-assets"
 DEFAULT_ACCOUNT = "claudio.lutz.cv@gmail.com"
 
 
+def _resolve_gcloud() -> str:
+    """Finde gcloud-Executable. Auf Windows ist es `gcloud.cmd` — `shutil.which`
+    beruecksichtigt PATHEXT, plain subprocess.run([\"gcloud\"]) tut das nicht."""
+    return shutil.which("gcloud") or "gcloud"
+
+
 def rsync_directory(local_dir: Path, gcs_uri: str, account: str, dry_run: bool) -> int:
     """Synchronisiere ein Verzeichnis nach GCS via `gcloud storage rsync -r`.
 
@@ -52,7 +59,7 @@ def rsync_directory(local_dir: Path, gcs_uri: str, account: str, dry_run: bool) 
         print(f"  [SKIP] Verzeichnis fehlt: {local_dir}")
         return 0
     cmd = [
-        "gcloud", "storage", "rsync", "-r",
+        _resolve_gcloud(), "storage", "rsync", "-r",
         str(local_dir), gcs_uri,
         f"--account={account}",
     ]
@@ -60,8 +67,6 @@ def rsync_directory(local_dir: Path, gcs_uri: str, account: str, dry_run: bool) 
         cmd.append("--dry-run")
     print(f"\n  rsync {local_dir}  ->  {gcs_uri}")
     try:
-        # Kein -q: gcloud zeigt Copy-Lines fuer hochgeladene Dateien (nichts fuer
-        # bereits-vorhandene). Stderr und stdout in eigenen Stream.
         result = subprocess.run(cmd, check=False)
         return result.returncode
     except FileNotFoundError:
