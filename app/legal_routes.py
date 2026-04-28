@@ -28,11 +28,11 @@ def _ctx() -> dict:
         "Juli", "August", "September", "Oktober", "November", "Dezember",
     ]
     return {
-        "legal_owner_name": os.environ.get("LEGAL_OWNER_NAME"),
-        "legal_owner_street": os.environ.get("LEGAL_OWNER_STREET"),
-        "legal_owner_zip": os.environ.get("LEGAL_OWNER_ZIP"),
-        "legal_owner_city": os.environ.get("LEGAL_OWNER_CITY"),
-        "legal_email": os.environ.get("LEGAL_EMAIL"),
+        "legal_owner_name": os.environ.get("LEGAL_OWNER_NAME", "Claudio Lutz"),
+        "legal_owner_street": os.environ.get("LEGAL_OWNER_STREET", "Promenadenstrasse 72"),
+        "legal_owner_zip": os.environ.get("LEGAL_OWNER_ZIP", "9400"),
+        "legal_owner_city": os.environ.get("LEGAL_OWNER_CITY", "Rorschach"),
+        "legal_email": os.environ.get("LEGAL_EMAIL", "info@japanese-learning.ch"),
         "legal_uid": os.environ.get("LEGAL_UID"),
         "today_de": f"{today.day}. {months_de[today.month]} {today.year}",
     }

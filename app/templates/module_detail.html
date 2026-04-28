@@ -4,99 +4,160 @@
 
 {% block meta_description %}{{ module.description }} JLPT-N{{ level }}-Modul mit {{ total }} Lektionen auf Deutsch.{% endblock %}
 
+{% block body_attributes %}class="redesign-page"{% endblock %}
+
 {% block styles %}
 <style>
-  .mod-page { max-width: 880px; margin: 0 auto; padding: 1rem 1rem 3rem; }
+  /* ── Module-Detail (Compass-Redesign Phase 4.2b) ── */
+  .mod-page { max-width: 880px; margin: 0 auto; padding: 2rem 1.5rem 3rem; }
 
-  .mod-breadcrumb { color: #64748b; font-size: 0.85rem; margin: 0.5rem 0 1rem; }
-  .mod-breadcrumb a { color: #64748b; text-decoration: none; }
-  .mod-breadcrumb a:hover { color: #4f46e5; text-decoration: underline; }
+  .mod-breadcrumb { color: var(--ink-500); font-size: 0.85rem; margin: 0 0 1.25rem; }
+  .mod-breadcrumb a { color: var(--ink-500); text-decoration: none; }
+  .mod-breadcrumb a:hover { color: var(--shu); text-decoration: underline; }
 
   .mod-header {
-    background: white; border: 1px solid #e2e8f0; border-radius: 16px;
-    padding: 1.75rem 1.5rem; box-shadow: 0 2px 10px rgba(15,23,42,0.05);
-    border-top: 5px solid {{ module.color_code or '#4f46e5' }};
+    background: #fff;
+    border: 1px solid var(--ink-200);
+    border-radius: 12px;
+    padding: 1.75rem 1.5rem;
+    box-shadow: var(--shadow-subtle);
+    border-top: 3px solid {{ module.color_code or '#1F2A44' }};
     display: flex; gap: 1.25rem; align-items: flex-start;
   }
-  .mod-icon { font-size: 3rem; line-height: 1; flex-shrink: 0; }
+  .mod-icon { font-size: 2.75rem; line-height: 1; flex-shrink: 0; }
   .mod-titles { flex: 1; }
-  .mod-titles h1 { font-size: 1.75rem; font-weight: 800; margin: 0 0 0.25rem; color: #0f172a; }
-  .mod-meta { color: #64748b; font-size: 0.85rem; margin-bottom: 0.75rem; }
-  .mod-desc { color: #334155; margin: 0 0 1rem; line-height: 1.5; }
+  .mod-titles h1 {
+    font-family: 'Geist', 'Inter', sans-serif;
+    font-size: 1.75rem; font-weight: 510;
+    letter-spacing: -0.02em;
+    margin: 0 0 0.3rem; color: var(--kon);
+  }
+  .mod-meta {
+    color: var(--ink-500); font-size: 0.82rem;
+    margin-bottom: 0.85rem;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .mod-desc { color: var(--ink-700); margin: 0 0 1rem; line-height: 1.6; }
 
   .mod-progress {
     margin-top: 1rem;
-    background: #f1f5f9; border-radius: 999px; height: 10px; overflow: hidden;
+    background: var(--ink-100);
+    border-radius: 999px; height: 8px; overflow: hidden;
   }
   .mod-progress-fill {
-    height: 100%; background: linear-gradient(90deg, #4f46e5, #7c3aed);
-    transition: width 0.4s;
+    height: 100%; background: var(--shu);
+    transition: width 0.4s; border-radius: 999px;
   }
   .mod-progress-text {
-    color: #64748b; font-size: 0.85rem; margin-top: 0.4rem;
+    color: var(--ink-500); font-size: 0.82rem; margin-top: 0.4rem;
     display: flex; justify-content: space-between;
+    font-family: 'Geist Mono', ui-monospace, monospace;
   }
 
-  .lesson-list { margin: 1.5rem 0; }
+  .lesson-list { margin: 1.75rem 0; }
   .lesson-row {
     display: flex; align-items: center; gap: 1rem;
-    background: white; border: 1px solid #e2e8f0; border-radius: 12px;
-    padding: 1rem 1.1rem; margin-bottom: 0.6rem;
-    transition: border-color 0.15s, box-shadow 0.15s;
+    background: #fff;
+    border: 1px solid var(--ink-200);
+    border-radius: 12px;
+    padding: 1rem 1.1rem; margin-bottom: 0.5rem;
+    transition: border-color 0.15s, box-shadow 0.2s, transform 0.15s;
     text-decoration: none; color: inherit;
   }
   .lesson-row:hover {
-    border-color: #c7d2fe; box-shadow: 0 4px 12px rgba(79,70,229,0.08);
+    border-color: var(--shu);
+    box-shadow: var(--shadow-card);
+    transform: translateY(-1px);
     text-decoration: none; color: inherit;
   }
-  .lesson-row.is-locked { opacity: 0.85; background: #fafafa; }
+  .lesson-row:hover .lesson-title { color: var(--shu); }
+  .lesson-row.is-locked { opacity: 0.7; }
   .lesson-num {
     width: 36px; height: 36px; border-radius: 50%;
-    background: #e2e8f0; color: #475569;
+    background: var(--ink-100); color: var(--ink-700);
     display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 0.9rem; flex-shrink: 0;
+    font-family: 'Geist', 'Inter', sans-serif;
+    font-weight: 600; font-size: 0.9rem; flex-shrink: 0;
   }
-  .lesson-row.is-done .lesson-num { background: #16a34a; color: white; }
-  .lesson-row.is-paid .lesson-num { background: #fef3c7; color: #92400e; }
+  .lesson-row.is-done .lesson-num { background: var(--matcha); color: #fff; }
+  .lesson-row.is-paid .lesson-num { background: var(--shu-soft); color: var(--shu-deep); }
   .lesson-info { flex: 1; min-width: 0; }
-  .lesson-title { font-weight: 600; color: #0f172a; margin: 0 0 0.15rem; }
-  .lesson-sub { color: #64748b; font-size: 0.85rem; }
-  .lesson-badge {
-    flex-shrink: 0; font-size: 0.75rem; font-weight: 700;
-    padding: 0.25rem 0.6rem; border-radius: 999px;
-    text-transform: uppercase; letter-spacing: 0.04em;
+  .lesson-title {
+    font-family: 'Geist', 'Inter', sans-serif;
+    font-weight: 600; color: var(--kon);
+    margin: 0 0 0.2rem;
+    transition: color 0.15s;
   }
-  .badge-done { background: #dcfce7; color: #15803d; }
-  .badge-free { background: #dbeafe; color: #1e40af; }
-  .badge-paid { background: #fef3c7; color: #92400e; }
-  .badge-progress { background: #e0e7ff; color: #4338ca; }
+  .lesson-sub { color: var(--ink-500); font-size: 0.85rem; }
+  .lesson-badge {
+    flex-shrink: 0;
+    font-family: 'Geist', sans-serif;
+    font-size: 0.7rem; font-weight: 600;
+    padding: 0.25rem 0.6rem; border-radius: 999px;
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .badge-done { background: rgba(122,144,51,.12); color: var(--matcha); }
+  .badge-free { background: rgba(31,42,68,.08); color: var(--kon); }
+  .badge-paid { background: var(--shu-soft); color: var(--shu-deep); }
+  .badge-progress { background: rgba(122,144,51,.10); color: var(--matcha); }
 
   .start-btn {
     display: block; padding: 0.95rem 1.5rem;
-    background: #4f46e5; color: white;
-    font-weight: 700; font-size: 1.05rem; text-align: center;
-    border-radius: 12px; text-decoration: none;
-    margin-top: 1rem;
-    transition: background 0.15s;
+    background: linear-gradient(180deg, #EB6101, #D85700);
+    color: #fff;
+    font-weight: 600; font-size: 1rem; text-align: center;
+    border-radius: 8px; text-decoration: none;
+    margin-top: 1.25rem;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.15),
+                0 1px 2px rgba(184,74,0,.30),
+                0 0 0 1px rgba(184,74,0,.40);
+    transition: background 0.15s, transform 0.15s;
   }
-  .start-btn:hover { background: #4338ca; color: white; text-decoration: none; }
+  .start-btn:hover {
+    background: linear-gradient(180deg, #F37016, #E25C00);
+    color: #fff; text-decoration: none;
+    transform: translateY(-1px);
+  }
 
   .bundle-cta-bottom {
-    background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
-    border: 1px solid #c4b5fd; border-radius: 14px;
-    padding: 1.25rem; margin-top: 2rem; text-align: center;
+    background: var(--kon-50);
+    border: 1px solid var(--kon-100);
+    border-left: 3px solid var(--shu);
+    border-radius: 12px;
+    padding: 1.5rem 1.5rem; margin-top: 2.5rem;
+    text-align: center;
   }
-  .bundle-cta-bottom h3 { color: #4c1d95; margin: 0 0 0.5rem; font-size: 1.1rem; }
-  .bundle-cta-bottom p { color: #6d28d9; margin: 0 0 1rem; font-size: 0.95rem; }
+  .bundle-cta-bottom h3 {
+    font-family: 'Geist', 'Inter', sans-serif;
+    color: var(--kon); margin: 0 0 0.5rem;
+    font-size: 1.1rem; font-weight: 600;
+  }
+  .bundle-cta-bottom p {
+    color: var(--ink-700);
+    margin: 0 0 1.25rem;
+    font-size: 0.95rem; line-height: 1.55;
+  }
   .bundle-cta-bottom a {
-    display: inline-block; background: #4f46e5; color: white;
-    padding: 0.6rem 1.2rem; border-radius: 10px; font-weight: 700;
+    display: inline-block;
+    background: linear-gradient(180deg, #EB6101, #D85700);
+    color: #fff;
+    padding: 0.7rem 1.4rem;
+    border-radius: 8px;
+    font-weight: 600;
     text-decoration: none;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.15),
+                0 1px 2px rgba(184,74,0,.30),
+                0 0 0 1px rgba(184,74,0,.40);
+    transition: background 0.15s;
   }
-  .bundle-cta-bottom a:hover { background: #4338ca; color: white; }
+  .bundle-cta-bottom a:hover {
+    background: linear-gradient(180deg, #F37016, #E25C00);
+    color: #fff;
+  }
 
   @media (max-width: 600px) {
-    .mod-header { flex-direction: column; gap: 0.75rem; padding: 1.25rem 1rem; }
+    .mod-header { flex-direction: column; gap: 0.85rem; padding: 1.25rem 1rem; }
     .mod-icon { font-size: 2.5rem; }
     .mod-titles h1 { font-size: 1.4rem; }
     .lesson-row { padding: 0.85rem; }
