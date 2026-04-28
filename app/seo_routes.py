@@ -7,7 +7,7 @@ ohne UI-Logik dazwischen.
 from datetime import datetime
 from xml.sax.saxutils import escape
 
-from flask import Blueprint, Response, current_app, send_from_directory, url_for
+from flask import Blueprint, Response, current_app, send_from_directory
 
 from app import db
 from app.models import Course, Lesson, LessonCategory
@@ -40,15 +40,15 @@ def robots_txt():
         body = "User-agent: *\nDisallow: /\n"
         return Response(body, mimetype='text/plain')
 
+    # /login und /register bleiben crawlbar — sie tragen meta robots noindex,follow,
+    # damit Google internen Links zu Lessons folgt, sie aber nicht selbst indexiert.
     lines = [
         "User-agent: *",
         "Disallow: /admin",
         "Disallow: /admin-panel",
         "Disallow: /api/",
         "Disallow: /auth/",
-        "Disallow: /login",
         "Disallow: /logout",
-        "Disallow: /register",
         "Disallow: /profile",
         "Disallow: /my-lessons",
         "Disallow: /srs/",
@@ -93,6 +93,8 @@ def sitemap_xml():
         ('/n5-bundle', 'weekly', '0.9'),
         ('/lessons', 'daily', '0.8'),
         ('/courses', 'weekly', '0.7'),
+        ('/ueber', 'monthly', '0.6'),
+        ('/lernmethode', 'monthly', '0.6'),
         ('/legal/impressum', 'yearly', '0.2'),
         ('/legal/datenschutz', 'yearly', '0.2'),
         ('/legal/agb', 'yearly', '0.2'),

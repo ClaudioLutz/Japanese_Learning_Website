@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% set admin_edit_url = url_for('routes.admin_manage_lessons') %}
 
-{% block title %}My Lessons{% endblock %}
+{% block title %}Meine Lektionen{% endblock %}
+{% block robots %}noindex,follow{% endblock %}
 
 {% block styles %}
 <style>
@@ -306,14 +307,14 @@
             <div class="col-md-8">
                 <h1 class="mb-2">
                     <i class="fas fa-graduation-cap me-2"></i>
-                    My Purchased Lessons
+                    Meine Lektionen
                 </h1>
-                <p class="mb-0">Track your progress and continue learning</p>
+                <p class="mb-0">Fortschritt verfolgen und weiterlernen</p>
             </div>
             <div class="col-md-4 text-md-end">
                 <div class="text-white">
                     <div class="h4 mb-1">CHF {{ "%.2f"|format(total_spent) }}</div>
-                    <small>Total Investment</small>
+                    <small>Gesamt investiert</small>
                 </div>
             </div>
         </div>
@@ -325,19 +326,19 @@
     <div class="lessons-stats">
         <div class="stat-card">
             <div class="stat-number">{{ total_purchased_lessons }}</div>
-            <div class="stat-label">Lessons Owned</div>
+            <div class="stat-label">Lektionen besessen</div>
         </div>
         <div class="stat-card">
             <div class="stat-number">{{ completed_count }}</div>
-            <div class="stat-label">Completed</div>
+            <div class="stat-label">Abgeschlossen</div>
         </div>
         <div class="stat-card">
             <div class="stat-number">{{ "%.1f"|format(completion_rate) }}%</div>
-            <div class="stat-label">Completion Rate</div>
+            <div class="stat-label">Abschlussquote</div>
         </div>
         <div class="stat-card">
             <div class="stat-number">{{ (total_time_spent // 60) if total_time_spent else 0 }}</div>
-            <div class="stat-label">Minutes Studied</div>
+            <div class="stat-label">Minuten gelernt</div>
         </div>
     </div>
 
@@ -352,15 +353,15 @@
             
             {% if progress and progress.is_completed %}
                 {% set status_class = "completed" %}
-                {% set status_text = "Completed" %}
+                {% set status_text = "Abgeschlossen" %}
                 {% set progress_percentage = 100 %}
             {% elif progress and progress.progress_percentage > 0 %}
                 {% set status_class = "in-progress" %}
-                {% set status_text = "In Progress" %}
+                {% set status_text = "Begonnen" %}
                 {% set progress_percentage = progress.progress_percentage %}
             {% else %}
                 {% set status_class = "not-started" %}
-                {% set status_text = "Not Started" %}
+                {% set status_text = "Noch nicht begonnen" %}
                 {% set progress_percentage = 0 %}
             {% endif %}
             
@@ -387,19 +388,19 @@
                     {% if lesson.difficulty_level %}
                     <div class="lesson-meta-item">
                         <i class="fas fa-signal"></i>
-                        <span>Level {{ lesson.difficulty_level }}</span>
+                        <span>Stufe {{ lesson.difficulty_level }}</span>
                     </div>
                     {% endif %}
                     {% if lesson.estimated_duration %}
                     <div class="lesson-meta-item">
                         <i class="fas fa-clock"></i>
-                        <span>{{ lesson.estimated_duration }} min</span>
+                        <span>{{ lesson.estimated_duration }} Min</span>
                     </div>
                     {% endif %}
                     {% if progress and progress.time_spent %}
                     <div class="lesson-meta-item">
                         <i class="fas fa-stopwatch"></i>
-                        <span class="time-spent">{{ (progress.time_spent // 60) }} min studied</span>
+                        <span class="time-spent">{{ (progress.time_spent // 60) }} Min gelernt</span>
                     </div>
                     {% endif %}
                 </div>
@@ -409,9 +410,9 @@
                         <div class="progress-bar {{ status_class }}" style="width: {{ progress_percentage }}%"></div>
                     </div>
                     <div class="progress-text">
-                        <span>{{ progress_percentage }}% complete</span>
+                        <span>{{ progress_percentage }}% abgeschlossen</span>
                         {% if progress and progress.last_accessed %}
-                        <span>Last accessed: {{ progress.last_accessed.strftime('%b %d') }}</span>
+                        <span>Zuletzt: {{ progress.last_accessed.strftime('%d.%m.') }}</span>
                         {% endif %}
                     </div>
                 </div>
@@ -420,7 +421,7 @@
                     {% if purchase %}
                     <div class="purchase-date">
                         <i class="fas fa-calendar-alt me-1"></i>
-                        Purchased {{ purchase.purchased_at.strftime('%B %d, %Y') }}
+                        Gekauft am {{ purchase.purchased_at.strftime('%d.%m.%Y') }}
                     </div>
                     <div class="purchase-price">
                         <i class="fas fa-tag me-1"></i>
@@ -437,15 +438,15 @@
                 <div class="lesson-actions">
                     {% if progress and progress.is_completed %}
                     <a href="{{ url_for('routes.view_lesson', lesson_id=lesson.id) }}" class="btn-lesson btn-outline">
-                        <i class="fas fa-eye me-1"></i>Review
+                        <i class="fas fa-eye me-1"></i>Wiederholen
                     </a>
                     {% elif progress and progress.progress_percentage > 0 %}
                     <a href="{{ url_for('routes.view_lesson', lesson_id=lesson.id) }}" class="btn-lesson btn-primary">
-                        <i class="fas fa-play me-1"></i>Continue
+                        <i class="fas fa-play me-1"></i>Fortfahren
                     </a>
                     {% else %}
                     <a href="{{ url_for('routes.view_lesson', lesson_id=lesson.id) }}" class="btn-lesson btn-primary">
-                        <i class="fas fa-play me-1"></i>Start Learning
+                        <i class="fas fa-play me-1"></i>Beginnen
                     </a>
                     {% endif %}
                 </div>
@@ -456,10 +457,10 @@
         <!-- Empty State -->
         <div class="empty-state">
             <i class="fas fa-shopping-cart"></i>
-            <h3>No Purchased Lessons Yet</h3>
-            <p>You haven't purchased any lessons yet. Browse our lesson catalog to find lessons that interest you!</p>
+            <h3>Noch keine gekauften Lektionen</h3>
+            <p>Du hast noch keine Lektionen gekauft. Stöbere im Katalog und entdecke, was dich interessiert!</p>
             <a href="{{ url_for('routes.lessons') }}" class="btn btn-primary btn-lg">
-                <i class="fas fa-search me-2"></i>Browse Lessons
+                <i class="fas fa-search me-2"></i>Lektionen durchstöbern
             </a>
         </div>
     {% endif %}

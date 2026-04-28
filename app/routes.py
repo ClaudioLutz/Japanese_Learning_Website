@@ -227,6 +227,10 @@ def index():
                 if already:
                     show_bundle_hint = False
 
+    # Live-Stats fuer Hero — gibt Konkretheit + Aktivitaetssignal
+    n5_vocab_count = Vocabulary.query.filter_by(jlpt_level=5).count()
+    n5_kanji_count = Kanji.query.filter_by(jlpt_level=5).count()
+
     return render_template('index.html',
                          total_lessons=total_lessons,
                          total_courses=total_courses,
@@ -240,7 +244,9 @@ def index():
                          n5_groups=n5_groups,
                          next_module_id=next_module_id,
                          show_bundle_hint=show_bundle_hint,
-                         visible_languages=visible_langs)
+                         visible_languages=visible_langs,
+                         n5_vocab_count=n5_vocab_count,
+                         n5_kanji_count=n5_kanji_count)
 
 @bp.route('/register', methods=['GET', 'POST'])
 @limiter.limit("5 per minute")
@@ -552,6 +558,27 @@ def lessons():
         page_lessons=page_lessons,
         jlpt_levels=jlpt_levels,
     )
+
+
+@bp.route('/ueber')
+def ueber():
+    """About-Seite — Founder-Story, Team, Begründung 'Warum Deutsch'.
+
+    Wichtig fuer Google E-E-A-T (Experience/Expertise/Authoritativeness/Trust)
+    bei einem bezahlten Bildungsprodukt. Stellt Autor + Motivation + Standort
+    transparent dar.
+    """
+    return render_template('ueber.html')
+
+
+@bp.route('/lernmethode')
+def lernmethode():
+    """SRS-/FSRS-Erklärseite — Differenzierungsfeature gegenüber Anki/Wettbewerb.
+
+    Rankt mittelfristig fuer 'Spaced Repetition Deutsch' und 'FSRS deutsch',
+    beides mit niedrigem Wettbewerb auf Deutsch.
+    """
+    return render_template('lernmethode.html')
 
 
 @bp.route('/learn')
@@ -885,8 +912,29 @@ def view_lesson(lesson_id):
         # Create a lookup dictionary: question_id -> UserQuizAnswer
         user_quiz_answers = {answer.question_id: answer for answer in answers}
     
+    # Internal Linking: vorherige + naechste Lesson im selben Modul finden,
+    # plus uebergeordnetes Modul. Boostet Topic-Cluster + UX (klickbar weiter).
+    prev_lesson = None
+    next_lesson = None
+    parent_module = lesson.category if lesson.category else None
+    if parent_module:
+        siblings = sorted(
+            [l for l in parent_module.lessons
+             if l.is_published and l.instruction_language == lesson.instruction_language],
+            key=lambda l: (l.order_index or 0, l.id)
+        )
+        try:
+            idx = siblings.index(lesson)
+            prev_lesson = siblings[idx - 1] if idx > 0 else None
+            next_lesson = siblings[idx + 1] if idx + 1 < len(siblings) else None
+        except ValueError:
+            pass
+
     form = CSRFTokenForm()
-    return render_template('lesson_view.html', lesson=lesson, progress=progress, form=form, user_quiz_answers=user_quiz_answers)
+    return render_template('lesson_view.html', lesson=lesson, progress=progress, form=form,
+                           user_quiz_answers=user_quiz_answers,
+                           prev_lesson=prev_lesson, next_lesson=next_lesson,
+                           parent_module=parent_module)
 
 # --- API Routes for Content Management ---
 

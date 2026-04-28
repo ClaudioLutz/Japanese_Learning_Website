@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
-{% block title %}Purchase Lesson - Japanese Learning{% endblock %}
+{% block title %}Lektion kaufen{% endblock %}
+{% block robots %}noindex,follow{% endblock %}
 
 {% block body_attributes %}
     style="background-image: url('{{ url_for('static', filename='images/Lesson_Background.png') }}'); background-size: cover; background-repeat: no-repeat; background-attachment: fixed;"
@@ -12,7 +13,7 @@
         <div class="col-md-8 col-lg-6">
             <div class="card shadow-lg">
                 <div class="card-header bg-primary text-white text-center">
-                    <h3><i class="fas fa-shopping-cart"></i> Purchase Lesson</h3>
+                    <h3><i class="fas fa-shopping-cart"></i> Lektion kaufen</h3>
                 </div>
                 <div class="card-body">
                     <!-- Lesson Information -->
@@ -33,13 +34,13 @@
                             </div>
                             <div class="col-md-8">
                                 <h4>{{ lesson.title }}</h4>
-                                <p class="text-muted">{{ lesson.description or 'No description available.' }}</p>
+                                <p class="text-muted">{{ lesson.description or 'Keine Beschreibung verfügbar.' }}</p>
                                 <div class="lesson-meta">
                                     <span class="badge bg-info me-2">
-                                        <i class="fas fa-signal"></i> Difficulty: {{ lesson.difficulty_level or 'N/A' }}/5
+                                        <i class="fas fa-signal"></i> Schwierigkeit: {{ lesson.difficulty_level or '–' }}/5
                                     </span>
                                     <span class="badge bg-secondary me-2">
-                                        <i class="fas fa-clock"></i> {{ lesson.estimated_duration or 'N/A' }} min
+                                        <i class="fas fa-clock"></i> {{ lesson.estimated_duration or '–' }} Min
                                     </span>
                                     {% if lesson.category %}
                                         <span class="badge bg-success">
@@ -55,8 +56,8 @@
                     <div class="price-section mb-4 p-3 bg-light rounded">
                         <div class="row align-items-center">
                             <div class="col">
-                                <h5 class="mb-0">Lesson Price</h5>
-                                <small class="text-muted">One-time purchase for lifetime access</small>
+                                <h5 class="mb-0">Preis dieser Lektion</h5>
+                                <small class="text-muted">Einmaliger Kauf — Lifetime-Zugriff</small>
                             </div>
                             <div class="col-auto">
                                 <h3 class="text-primary mb-0">CHF {{ "%.2f"|format(lesson.price) }}</h3>
@@ -66,12 +67,12 @@
 
                     <!-- Purchase Benefits -->
                     <div class="benefits-section mb-4">
-                        <h6><i class="fas fa-check-circle text-success"></i> What you get:</h6>
+                        <h6><i class="fas fa-check-circle text-success"></i> Das bekommst du:</h6>
                         <ul class="list-unstyled ms-3">
-                            <li><i class="fas fa-infinity text-primary"></i> Lifetime access to this lesson</li>
-                            <li><i class="fas fa-mobile-alt text-primary"></i> Access on all your devices</li>
-                            <li><i class="fas fa-redo text-primary"></i> Ability to retake and review anytime</li>
-                            <li><i class="fas fa-chart-line text-primary"></i> Progress tracking and completion certificates</li>
+                            <li><i class="fas fa-infinity text-primary"></i> Lifetime-Zugriff auf diese Lektion</li>
+                            <li><i class="fas fa-mobile-alt text-primary"></i> Zugriff auf allen Geräten</li>
+                            <li><i class="fas fa-redo text-primary"></i> Beliebig oft wiederholen und nachlesen</li>
+                            <li><i class="fas fa-chart-line text-primary"></i> Fortschrittsverfolgung inklusive</li>
                         </ul>
                     </div>
 
@@ -79,21 +80,15 @@
                     <form id="purchaseForm">
                         {{ form.hidden_tag() }}
                         
-                        <!-- Payment Method (Dummy for MVP) -->
+                        <!-- Payment Method -->
                         <div class="payment-method mb-4">
-                            <h6><i class="fas fa-credit-card"></i> Payment Method</h6>
-                            <div class="alert alert-info">
-                                <i class="fas fa-info-circle"></i>
-                                <strong>Demo Mode:</strong> This is a demonstration purchase. No real payment will be processed.
-                                Click "Complete Purchase" to simulate buying this lesson.
-                            </div>
-                            
+                            <h6><i class="fas fa-credit-card"></i> Zahlungsmethode</h6>
                             <div class="card border-primary">
                                 <div class="card-body">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="paymentMethod" id="demoPayment" checked>
-                                        <label class="form-check-label" for="demoPayment">
-                                            <i class="fas fa-play-circle text-primary"></i> Demo Payment (Free for testing)
+                                        <input class="form-check-input" type="radio" name="paymentMethod" id="payrexxPayment" checked>
+                                        <label class="form-check-label" for="payrexxPayment">
+                                            <i class="fas fa-credit-card text-primary"></i> TWINT, Visa, Mastercard, Apple/Google Pay (Payrexx)
                                         </label>
                                     </div>
                                 </div>
@@ -105,8 +100,8 @@
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="agreeTerms" required>
                                 <label class="form-check-label" for="agreeTerms">
-                                    I agree to the <a href="#" class="text-decoration-none">Terms of Service</a> and 
-                                    <a href="#" class="text-decoration-none">Privacy Policy</a>
+                                    Ich akzeptiere die <a href="{{ url_for('legal.agb') }}" class="text-decoration-none" target="_blank">AGB</a> und
+                                    die <a href="{{ url_for('legal.datenschutz') }}" class="text-decoration-none" target="_blank">Datenschutzerklärung</a>.
                                 </label>
                             </div>
                         </div>
@@ -114,10 +109,10 @@
                         <!-- Purchase Buttons -->
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-success btn-lg" id="purchaseBtn">
-                                <i class="fas fa-shopping-cart"></i> Complete Purchase - CHF {{ "%.2f"|format(lesson.price) }}
+                                <i class="fas fa-shopping-cart"></i> Jetzt kaufen — CHF {{ "%.2f"|format(lesson.price) }}
                             </button>
                             <a href="{{ url_for('routes.lessons') }}" class="btn btn-outline-secondary">
-                                <i class="fas fa-arrow-left"></i> Back to Lessons
+                                <i class="fas fa-arrow-left"></i> Zurück zu den Lektionen
                             </a>
                         </div>
                     </form>
@@ -127,8 +122,8 @@
             <!-- Security Notice -->
             <div class="text-center mt-3">
                 <small class="text-muted">
-                    <i class="fas fa-shield-alt"></i> Your purchase is secure and protected. 
-                    Questions? <a href="#" class="text-decoration-none">Contact Support</a>
+                    <i class="fas fa-shield-alt"></i> Sichere Zahlung über Payrexx —
+                    Fragen? <a href="mailto:info@japanese-learning.ch" class="text-decoration-none">info@japanese-learning.ch</a>
                 </small>
             </div>
         </div>
@@ -141,10 +136,10 @@
         <div class="modal-content">
             <div class="modal-body text-center p-4">
                 <div class="spinner-border text-primary mb-3" role="status">
-                    <span class="visually-hidden">Loading...</span>
+                    <span class="visually-hidden">Lädt …</span>
                 </div>
-                <h5>Processing your purchase...</h5>
-                <p class="text-muted mb-0">Please wait while we complete your transaction.</p>
+                <h5>Kauf wird vorbereitet …</h5>
+                <p class="text-muted mb-0">Einen Moment, wir leiten dich zur Zahlung weiter.</p>
             </div>
         </div>
     </div>
@@ -156,21 +151,21 @@
         <div class="modal-content">
             <div class="modal-header bg-success text-white">
                 <h5 class="modal-title">
-                    <i class="fas fa-check-circle"></i> Purchase Successful!
+                    <i class="fas fa-check-circle"></i> Kauf erfolgreich!
                 </h5>
             </div>
             <div class="modal-body text-center p-4">
                 <i class="fas fa-check-circle text-success fa-4x mb-3"></i>
-                <h4>Congratulations!</h4>
-                <p>You have successfully purchased <strong id="purchasedLessonTitle">{{ lesson.title }}</strong></p>
-                <p class="text-muted">You now have lifetime access to this lesson.</p>
+                <h4>Gratulation!</h4>
+                <p>Du hast <strong id="purchasedLessonTitle">{{ lesson.title }}</strong> erfolgreich freigeschaltet.</p>
+                <p class="text-muted">Du hast nun lifetime Zugriff auf diese Lektion.</p>
             </div>
             <div class="modal-footer">
                 <a href="{{ url_for('routes.view_lesson', lesson_id=lesson.id) }}" class="btn btn-primary">
-                    <i class="fas fa-play"></i> Start Lesson Now
+                    <i class="fas fa-play"></i> Lektion starten
                 </a>
                 <a href="{{ url_for('routes.lessons') }}" class="btn btn-outline-secondary">
-                    <i class="fas fa-list"></i> Browse More Lessons
+                    <i class="fas fa-list"></i> Weitere Lektionen
                 </a>
             </div>
         </div>
@@ -194,7 +189,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Disable button and show processing
         purchaseBtn.disabled = true;
-        purchaseBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        purchaseBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Wird verarbeitet …';
         processingModal.show();
 
         try {
@@ -218,14 +213,14 @@ document.addEventListener('DOMContentLoaded', function() {
             processingModal.hide();
             showPurchaseError(result.error || 'Kauf fehlgeschlagen. Bitte erneut versuchen.');
             purchaseBtn.disabled = false;
-            purchaseBtn.innerHTML = '<i class="fas fa-shopping-cart"></i> Complete Purchase - CHF {{ "%.2f"|format(lesson.price) }}';
+            purchaseBtn.innerHTML = '<i class="fas fa-shopping-cart"></i> Jetzt kaufen — CHF {{ "%.2f"|format(lesson.price) }}';
         } catch (error) {
             console.error('Purchase error:', error);
             processingModal.hide();
             showPurchaseError('Beim Kauf ist ein Fehler aufgetreten. Bitte erneut versuchen.');
 
             purchaseBtn.disabled = false;
-            purchaseBtn.innerHTML = '<i class="fas fa-shopping-cart"></i> Complete Purchase - CHF {{ "%.2f"|format(lesson.price) }}';
+            purchaseBtn.innerHTML = '<i class="fas fa-shopping-cart"></i> Jetzt kaufen — CHF {{ "%.2f"|format(lesson.price) }}';
         }
 
         function showPurchaseError(msg) {

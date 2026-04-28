@@ -2,7 +2,7 @@
 
 {% block title %}{{ lesson.title }} freischalten{% endblock %}
 
-{% block meta_description %}{{ lesson.title }} — Teil von JLPT N5 Komplett. Lifetime-Zugriff fuer CHF {{ "%.2f"|format(bundle_price) }} oder Einzelkauf fuer CHF {{ "%.2f"|format(lesson.price) }}.{% endblock %}
+{% block meta_description %}{{ lesson.title }} — Teil von JLPT N5 Komplett. Lifetime-Zugriff für CHF {{ "%.2f"|format(bundle_price) }} oder Einzelkauf für CHF {{ "%.2f"|format(lesson.price) }}.{% endblock %}
 
 {# Paywall-Seiten sollen nicht indexiert werden — kein duplicate content fuer jede Lesson #}
 {% block robots %}noindex,follow{% endblock %}
@@ -153,7 +153,7 @@
       <div class="opt-card is-recommended">
         <span class="opt-recommended-pill">⭐ Empfohlen</span>
         <h2 class="opt-title">⚡ N5 Komplett — Bundle</h2>
-        <p class="opt-sub">Alle aktuellen + zukuenftigen N5-Lektionen, einmalig, lifetime.</p>
+        <p class="opt-sub">Alle aktuellen + zukünftigen N5-Lektionen, einmalig, lifetime.</p>
 
         <div class="opt-price-row">
           <span class="opt-price">CHF {{ "%.2f"|format(bundle_price) }}</span>
@@ -181,7 +181,7 @@
       {# Rechte Spalte: Einzel-Kauf #}
       <div class="opt-card">
         <h2 class="opt-title">Nur diese Lektion</h2>
-        <p class="opt-sub">Einmaliger Kauf nur fuer „{{ lesson.title }}".</p>
+        <p class="opt-sub">Einmaliger Kauf nur für „{{ lesson.title }}".</p>
 
         <div class="opt-price-row">
           <span class="opt-price">CHF {{ "%.2f"|format(lesson.price) }}</span>

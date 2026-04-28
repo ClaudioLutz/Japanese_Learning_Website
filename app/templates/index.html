@@ -61,10 +61,16 @@
           ⚡ Oder gleich N5 Komplett für CHF 9.90 ansehen →
         </a>
         <div class="hero-meta">
-          <span>📚 {{ german_lessons }} Lektionen auf Deutsch</span>
-          <span>🆓 {{ german_guest_lessons }} Gratis-Einstieg ohne Login</span>
-          <span>🇨🇭 Made in Switzerland</span>
+          <span>✅ <strong>{{ german_guest_lessons }} Lektionen kostenlos</strong> ohne Anmeldung</span>
+          <span>📚 <strong>{{ german_lessons }} Lektionen</strong> verfügbar</span>
+          <span>🇨🇭 Aus Rorschach SG</span>
         </div>
+        {% if n5_vocab_count or n5_kanji_count %}
+        <p class="hero-live-stats">
+          Aktuell <strong>{{ n5_vocab_count }} Vokabeln</strong> und
+          <strong>{{ n5_kanji_count }} Kanji</strong> live · neue Lektionen wöchentlich · gestartet 2026 in der Ostschweiz.
+        </p>
+        {% endif %}
       </div>
     {% endif %}
   </section>
@@ -79,7 +85,7 @@
         {% if current_user.is_authenticated and next_module_id %}
           Pulsierend markiert: dein nächstes Modul.
         {% else %}
-          Acht Module, vom Schreibsystem bis zu deinen ersten Sätzen.
+          {{ n5_modules|length }} Module, vom Schreibsystem bis zu deinen ersten Sätzen.
           Module bauen aufeinander auf.
         {% endif %}
       </p>
@@ -307,6 +313,15 @@
     color: #6c757d;
     margin-top: 0.75rem;
 }
+.hero-meta strong { color: #2c3e50; }
+.hero-live-stats {
+    margin-top: 0.6rem;
+    font-size: 0.82rem;
+    color: #6c757d;
+    text-align: center;
+    line-height: 1.4;
+}
+.hero-live-stats strong { color: #2c3e50; }
 .hero-secondary-link {
     display: block;
     margin-top: 0.75rem;

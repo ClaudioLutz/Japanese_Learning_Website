@@ -1,15 +1,16 @@
 {% extends "base.html" %}
-{% block title %}Login{% endblock %}
+{% block title %}Anmelden{% endblock %}
+{% block robots %}noindex,follow{% endblock %}
 {% block content %}
-    <h2>Login</h2>
-    
+    <h2>Anmelden</h2>
+
     <!-- Google OAuth Login Button -->
     <div class="mb-4">
         <a href="{{ url_for('social.auth', backend='google-oauth2') }}" class="btn btn-danger btn-lg w-100 mb-3">
-            <i class="fab fa-google me-2"></i>Continue with Google
+            <i class="fab fa-google me-2"></i>Mit Google fortfahren
         </a>
         <div class="text-center">
-            <small class="text-muted">or</small>
+            <small class="text-muted">oder</small>
         </div>
     </div>
     
@@ -38,6 +39,6 @@
     </form>
     
     <div class="text-center mt-3">
-        <p>Don't have an account? <a href="{{ url_for('routes.register') }}">Sign up here</a></p>
+        <p>Noch kein Konto? <a href="{{ url_for('routes.register') }}">Hier registrieren</a></p>
     </div>
 {% endblock %}

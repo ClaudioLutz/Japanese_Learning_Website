@@ -4,6 +4,46 @@
 {% block title %}Japanisch-Lektionen N5/N4 — Vokabeln, Kanji, Grammatik & Quiz{% endblock %}
 {% block meta_description %}Alle Japanisch-Lektionen im Überblick — JLPT N5 und N4 strukturiert: Hiragana, Katakana, Kanji, Vokabeln, Grammatik und interaktive Quiz. Filter nach Level und Thema, auf Deutsch erklärt.{% endblock %}
 
+{% block structured_data %}
+{{ super() }}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "Japanisch-Lektionen — Alle Lektionen",
+  "url": "{{ site_url }}/lessons",
+  "numberOfItems": {{ page_lessons|length }},
+  "itemListElement": [
+    {% for lesson in page_lessons %}
+    {
+      "@type": "ListItem",
+      "position": {{ loop.index }},
+      "url": "{{ site_url }}/lessons/{{ lesson.id }}",
+      "item": {
+        "@type": "Course",
+        "name": {{ lesson.title|tojson }},
+        "url": "{{ site_url }}/lessons/{{ lesson.id }}",
+        "inLanguage": "de-DE",
+        "provider": { "@type": "Organization", "name": "{{ site_name }}" }{% if lesson.category_jlpt_level %},
+        "educationalLevel": "JLPT N{{ lesson.category_jlpt_level }}"{% endif %}
+      }
+    }{{ "," if not loop.last }}
+    {% endfor %}
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Start", "item": "{{ site_url }}/" },
+    { "@type": "ListItem", "position": 2, "name": "Lektionen", "item": "{{ site_url }}/lessons" }
+  ]
+}
+</script>
+{% endblock %}
+
 {% block styles %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/lessons.css') }}">
 {% endblock %}
@@ -64,7 +104,7 @@
     {% endif %}
 
     {# Free/Paid Toggle #}
-    <div class="lp-pills" role="group" aria-label="Verfuegbarkeit">
+    <div class="lp-pills" role="group" aria-label="Verfügbarkeit">
       <button type="button"
               class="lp-pill"
               :class="access === 'all' && 'is-active'"
@@ -115,7 +155,7 @@
             x-show="hasActiveFilters()"
             x-transition.opacity
             @click="reset()">
-      <i class="fas fa-times-circle"></i> Filter zuruecksetzen
+      <i class="fas fa-times-circle"></i> Filter zurücksetzen
     </button>
   </section>
 
@@ -232,8 +272,8 @@
     <div class="lp-empty" x-show="visibleLessonsCount() === 0" x-transition.opacity>
       <i class="far fa-folder-open lp-empty-icon"></i>
       <h3>Keine Lektionen gefunden</h3>
-      <p>Versuche andere Filter oder setze die Auswahl zurueck.</p>
-      <button type="button" class="btn btn-primary" @click="reset()">Filter zuruecksetzen</button>
+      <p>Versuche andere Filter oder setze die Auswahl zurück.</p>
+      <button type="button" class="btn btn-primary" @click="reset()">Filter zurücksetzen</button>
     </div>
   </section>
 

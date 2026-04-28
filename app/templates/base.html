@@ -557,22 +557,22 @@
             <i class="fas fa-home"></i><span>Home</span>
         </a>
         <a href="{{ url_for('routes.lessons') }}" class="bottom-nav-item{% if request.endpoint in ['routes.lessons', 'routes.view_lesson'] %} active{% endif %}">
-            <i class="fas fa-book-open"></i><span>Lessons</span>
+            <i class="fas fa-book-open"></i><span>Lektionen</span>
         </a>
         {% if current_user.is_authenticated %}
         <a href="{{ url_for('srs.review_page') }}" class="bottom-nav-item{% if request.endpoint == 'srs.review_page' %} active{% endif %}" id="reviewNavItem">
-            <i class="fas fa-brain"></i><span>Review</span>
+            <i class="fas fa-brain"></i><span>Wiederholen</span>
             <span class="review-badge" id="reviewBadge" style="display:none;"></span>
         </a>
         <a href="{{ url_for('routes.user_profile') }}" class="bottom-nav-item{% if request.endpoint == 'routes.user_profile' %} active{% endif %}">
-            <i class="fas fa-user-circle"></i><span>Profile</span>
+            <i class="fas fa-user-circle"></i><span>Profil</span>
         </a>
         {% else %}
         <a href="{{ url_for('routes.login') }}" class="bottom-nav-item{% if request.endpoint == 'routes.login' %} active{% endif %}">
-            <i class="fas fa-sign-in-alt"></i><span>Login</span>
+            <i class="fas fa-sign-in-alt"></i><span>Anmelden</span>
         </a>
         <a href="{{ url_for('routes.register') }}" class="bottom-nav-item{% if request.endpoint == 'routes.register' %} active{% endif %}">
-            <i class="fas fa-user-plus"></i><span>Register</span>
+            <i class="fas fa-user-plus"></i><span>Konto</span>
         </a>
         {% endif %}
     </nav>
@@ -654,12 +654,17 @@
     <footer class="site-footer mt-5 py-4 border-top text-center small text-muted">
         <div class="container">
             <nav class="footer-nav d-flex flex-wrap justify-content-center gap-3 mb-2">
+                <a href="{{ url_for('routes.ueber') }}">Über uns</a>
+                <a href="{{ url_for('routes.lernmethode') }}">Lernmethode (SRS)</a>
                 <a href="{{ url_for('legal.impressum') }}">Impressum</a>
                 <a href="{{ url_for('legal.datenschutz') }}">Datenschutz</a>
                 <a href="{{ url_for('legal.agb') }}">AGB</a>
                 <a href="{{ url_for('legal.widerruf') }}">Widerruf</a>
             </nav>
-            <div>© {{ current_year or 2026 }} Japanese Learning · <a href="https://japanese-learning.ch">japanese-learning.ch</a></div>
+            <div class="mb-1">
+                Kontakt: <a href="mailto:info@japanese-learning.ch">info@japanese-learning.ch</a>
+            </div>
+            <div>© {{ current_year or 2026 }} Japanese Learning · Rorschach SG · <a href="https://japanese-learning.ch">japanese-learning.ch</a></div>
         </div>
     </footer>
 

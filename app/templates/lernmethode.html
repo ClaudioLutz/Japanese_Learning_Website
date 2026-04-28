@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}Spaced Repetition (SRS) auf Deutsch — Lernmethode mit FSRS{% endblock %}
+{% block meta_description %}Wie Spaced Repetition (SRS) funktioniert — und warum FSRS nachweislich besser ist als der SM-2-Algorithmus von Anki. Die Lernmethode hinter Japanese Learning, auf Deutsch erklärt.{% endblock %}
+
+{% block content %}
+<div class="lernmethode-page">
+
+  <header class="lm-hero">
+    <h1>Lernmethode: Spaced Repetition mit FSRS</h1>
+    <p class="lm-lead">
+      Vokabeln und Kanji bleiben im Kopf, wenn du sie genau dann wiederholst,
+      bevor du sie vergisst — nicht früher, nicht später. Diese Plattform
+      verwaltet das automatisch für dich, mit dem FSRS-Algorithmus
+      (Free Spaced Repetition Scheduler).
+    </p>
+  </header>
+
+  <section class="lm-section">
+    <h2>Was ist Spaced Repetition?</h2>
+    <p>
+      Hermann Ebbinghaus hat 1885 die Vergessenskurve beschrieben:
+      Direkt nach dem Lernen sind Inhalte präsent. Innerhalb 24 Stunden
+      verlierst du ohne Wiederholung 50–70% wieder. Mit gezielten
+      Wiederholungen lässt sich diese Kurve „flachklopfen" — jede
+      Wiederholung verlängert das Intervall, in dem du den Inhalt sicher abrufen kannst.
+    </p>
+    <p>
+      <strong>Spaced Repetition</strong> ist die systematische Anwendung dieses Prinzips:
+      Statt jeden Tag stur alles zu wiederholen, präsentiert dir das System
+      genau die Karten, die kurz vor dem Vergessen stehen. Ergebnis:
+      <strong>kürzere Sessions bei besserer Retention</strong>.
+    </p>
+  </section>
+
+  <section class="lm-section">
+    <h2>FSRS vs. SM-2 (Anki-Standard)</h2>
+    <p>
+      Anki — das mit Abstand bekannteste SRS-Tool — verwendet seit den 90er-Jahren
+      einen Algorithmus namens SM-2. Funktioniert, ist aber konservativ:
+      Intervalle werden nach groben Heuristiken berechnet,
+      nicht datenbasiert pro Karte und User optimiert.
+    </p>
+    <p>
+      <strong>FSRS</strong> (Free Spaced Repetition Scheduler) ist ein 2023
+      veröffentlichter Algorithmus, der durch maschinelles Lernen
+      pro Karte modelliert, mit welcher Wahrscheinlichkeit du sie nach
+      X Tagen noch weisst. Daraus berechnet er das nächste Intervall so,
+      dass du im gewünschten Retention-Zielbereich bleibst (Standard: 90%).
+    </p>
+    <p>
+      In unabhängigen Vergleichsstudien zeigt FSRS gegenüber SM-2:
+    </p>
+    <ul class="lm-list">
+      <li><strong>20–30% weniger Wiederholungen</strong> bei gleicher Retention</li>
+      <li><strong>Bessere Vorhersagegenauigkeit</strong> — kein „Über-Lernen" einfacher Karten</li>
+      <li><strong>Personalisiert</strong> — der Algorithmus passt sich deinem Lerntempo an</li>
+    </ul>
+    <p>
+      Für dich heisst das praktisch: weniger Zeit pro Tag in der Wiederholung,
+      bei vergleichbarem Ergebnis.
+    </p>
+  </section>
+
+  <section class="lm-section">
+    <h2>Wie es bei Japanese Learning funktioniert</h2>
+    <ol class="lm-list">
+      <li>
+        <strong>Beim Lernen einer Lektion</strong> werden Vokabeln und Kanji,
+        die du das erste Mal siehst, automatisch in deinen SRS-Stapel aufgenommen.
+      </li>
+      <li>
+        <strong>Am nächsten Tag</strong> erscheinen sie zur Wiederholung.
+        Du markierst „leicht / gut / schwer / wieder" — der Algorithmus
+        berechnet daraus das nächste Intervall.
+      </li>
+      <li>
+        <strong>Du musst nichts manuell verwalten.</strong> Karten kommen
+        zurück, wenn sie zurückkommen sollen. Keine Karteikarten,
+        keine eigenen Decks bauen.
+      </li>
+      <li>
+        <strong>Anti-Overload:</strong> Maximal 20 neue Karten pro Tag
+        (anpassbar). So wird der Stapel nicht zur Last.
+      </li>
+    </ol>
+  </section>
+
+  <section class="lm-section lm-cta">
+    <h2>Selbst testen</h2>
+    <p>
+      Die SRS-Funktion ist mit dem N5-Bundle und allen Premium-Lektionen
+      enthalten. Sieben Gratis-Lektionen reichen, um das Prinzip auszuprobieren —
+      nach drei Tagen wirst du sehen, wie sich der Stapel anfühlt.
+    </p>
+    <div class="lm-cta-buttons">
+      <a href="{{ url_for('routes.index') }}#lernpfad" class="btn btn-primary btn-lg">
+        🚀 7 Gratis-Lektionen starten
+      </a>
+      <a href="{{ url_for('bundle.n5_bundle') }}" class="btn btn-outline-primary btn-lg">
+        ⚡ N5 Komplett für CHF 9.90
+      </a>
+    </div>
+  </section>
+
+</div>
+
+<style>
+.lernmethode-page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 4rem;
+  line-height: 1.65;
+}
+.lm-hero {
+  background: linear-gradient(135deg, #fff 0%, #eff6ff 100%);
+  border-radius: 14px;
+  padding: 2rem 1.75rem;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+  margin-bottom: 2rem;
+}
+.lm-hero h1 {
+  font-size: clamp(1.5rem, 4vw, 2.1rem);
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 0.6rem;
+}
+.lm-lead {
+  font-size: 1.05rem;
+  color: #4a4a4a;
+  margin: 0;
+}
+.lm-section {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem 1.6rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  margin-bottom: 1.25rem;
+}
+.lm-section h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 0.75rem;
+}
+.lm-section p { color: #2c3e50; margin: 0 0 0.75rem; }
+.lm-list { padding-left: 1.25rem; margin: 0.5rem 0; }
+.lm-list li { margin-bottom: 0.6rem; color: #2c3e50; }
+.lm-cta { text-align: center; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); }
+.lm-cta-buttons {
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: 0.75rem; margin-top: 1rem;
+}
+</style>
+{% endblock %}

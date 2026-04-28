@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block title %}Über Japanese Learning — Wer steht hinter der Plattform{% endblock %}
+{% block meta_description %}Japanese Learning ist ein Solo-Projekt aus Rorschach SG. Wer dahinter steht, warum Deutsch, wie ich Japanisch lerne — und warum diese Plattform anders ist als Duolingo oder WaniKani.{% endblock %}
+
+{% block content %}
+<div class="ueber-page">
+
+  <header class="ueber-hero">
+    <h1>Wer steht hinter Japanese Learning?</h1>
+    <p class="ueber-lead">
+      Eine ehrliche Antwort: Eine einzelne Person, die selbst Japanisch lernt,
+      die Tools die es gibt unbefriedigend fand, und es deshalb selbst gebaut hat.
+      Aus Rorschach am Bodensee — keine Firma, kein VC, kein Marketing-Team.
+    </p>
+  </header>
+
+  <section class="ueber-section">
+    <h2>Claudio Lutz — Gründer & Entwickler</h2>
+    <p>
+      Hauptberuflich arbeite ich als Datenanalyst bei einer Schweizer
+      Wirtschaftsauskunftei. Datenmodellierung, SQL, Python und das Bauen
+      von Lern-/Reporting-Systemen sind mein Alltag. Diese Plattform ist
+      mein Abendprojekt — getrieben aus zwei Motivationen heraus:
+    </p>
+    <ol class="ueber-list">
+      <li>
+        <strong>Ich lerne selbst Japanisch.</strong> Meine Frau Mayuko ist gebürtige
+        Japanerin und Japanisch-Lehrerin. Sie ist meine fachliche Reviewerin
+        für jede einzelne Lektion — Fehler, unnatürliche Formulierungen oder
+        kulturelle Schiefstände werden vor dem Veröffentlichen entfernt.
+      </li>
+      <li>
+        <strong>Die existierenden Tools sind nicht gut genug für deutschsprachige Lerner.</strong>
+        Duolingo? Auf Deutsch nur rudimentär für Japanisch verfügbar. WaniKani? Englisch.
+        Bunpro? Englisch. Anki? Großartiges Tool, aber Karten muss man selbst erstellen.
+        Auf Deutsch erklärtes, didaktisch durchdachtes Japanisch — Marktlücke.
+      </li>
+    </ol>
+  </section>
+
+  <section class="ueber-section">
+    <h2>Warum Deutsch?</h2>
+    <p>
+      Wer Japanisch über Englisch lernt, lernt eigentlich zwei Fremdsprachen
+      gleichzeitig. Das funktioniert für viele — aber nicht für alle.
+      Wer eine Konstruktion auf Deutsch erklärt bekommt, versteht sie schneller,
+      verbindet sie mit eigenem Sprachgefühl und behält sie länger.
+    </p>
+    <p>
+      Außerdem hat Deutsch grammatische Strukturen, die nah an Japanisch liegen
+      (Verben am Satzende sind im Deutschen kein Fremdkonzept), während Englisch
+      hier oft mehr verwirrt als hilft.
+    </p>
+  </section>
+
+  <section class="ueber-section">
+    <h2>Wie ich die Inhalte baue</h2>
+    <ul class="ueber-list">
+      <li>
+        <strong>Quelle:</strong> Offizielle JLPT-Vokabellisten (N5 zuerst), kombiniert mit
+        Minna no Nihongo und Genki — die etablierten Lehrwerke.
+      </li>
+      <li>
+        <strong>Didaktik:</strong> Jede Lektion folgt einem klaren Aufbau:
+        Einführung → neue Zeichen/Vokabeln → Beispielsätze → Quiz → Mini-Wörter zum direkten Lesen.
+      </li>
+      <li>
+        <strong>Spaced Repetition (SRS):</strong> Karten kommen automatisch zur
+        richtigen Zeit zurück. Ich nutze den FSRS-Algorithmus statt SM-2 (Anki-Standard) —
+        kürzere Sessions bei besserer Retention.
+        <a href="{{ url_for('routes.lernmethode') }}">Mehr zur Lernmethode →</a>
+      </li>
+      <li>
+        <strong>Review:</strong> Nichts wird publiziert, bevor Mayuko (Japanisch-Lehrerin) drüber gegangen ist.
+      </li>
+    </ul>
+  </section>
+
+  <section class="ueber-section">
+    <h2>Was mir wichtig ist</h2>
+    <ul class="ueber-list">
+      <li><strong>Keine Abos.</strong> Wer N5 Komplett kauft, hat lifetime Zugriff. Punkt.</li>
+      <li><strong>Faires Pricing.</strong> CHF 9.90 für N5 ist Pre-Order. Wer früh dabei ist, zahlt einmalig — egal wie viele Lektionen ich danach noch ergänze.</li>
+      <li><strong>Doppelte Geld-zurück-Garantie.</strong> 30 Tage volle Rückerstattung. Plus: wenn ich das N5-Bundle 6 Monate lang nicht aktiv erweitere, bekommst du dein Geld zurück, auch nach 30 Tagen.</li>
+      <li><strong>Keine Daten-Verkäufe.</strong> Keine Trackingscripts von Drittanbietern. Hosting in der Schweiz/EU bei Google Cloud Run.</li>
+      <li><strong>Echte Antworten.</strong> Schreib mir auf <a href="mailto:info@japanese-learning.ch">info@japanese-learning.ch</a> — ich antworte selbst, meist innerhalb 48h.</li>
+    </ul>
+  </section>
+
+  <section class="ueber-section">
+    <h2>Was als Nächstes kommt</h2>
+    <p>
+      Stand heute: 31 Lektionen N5 live, neue Lektionen wöchentlich.
+      Geplant bis Ende 2026: vollständiges N5-Curriculum (~50 Lektionen),
+      Konversations-Trainings mit MP3-Audio, plus erste N4-Lektionen
+      (Grammatik & Vokabeln) ab Q4 2026.
+    </p>
+    <p>
+      Der Roadmap-Stand ist transparent. Wenn du Themen vermisst,
+      <a href="mailto:info@japanese-learning.ch">schreib mir</a> —
+      Wünsche von zahlenden Lernern haben Vorrang.
+    </p>
+  </section>
+
+  <section class="ueber-section ueber-cta">
+    <h2>Loslegen</h2>
+    <div class="ueber-cta-buttons">
+      <a href="{{ url_for('routes.index') }}#lernpfad" class="btn btn-primary btn-lg">
+        🚀 Kostenlos starten — 7 Lektionen ohne Anmeldung
+      </a>
+      <a href="{{ url_for('bundle.n5_bundle') }}" class="btn btn-outline-primary btn-lg">
+        ⚡ N5 Komplett für CHF 9.90 ansehen
+      </a>
+    </div>
+  </section>
+
+</div>
+
+<style>
+.ueber-page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 4rem;
+  line-height: 1.65;
+}
+.ueber-hero {
+  background: linear-gradient(135deg, #fff 0%, #f5f3ff 100%);
+  border-radius: 14px;
+  padding: 2rem 1.75rem;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+  margin-bottom: 2rem;
+}
+.ueber-hero h1 {
+  font-size: clamp(1.5rem, 4vw, 2.1rem);
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 0.6rem;
+}
+.ueber-lead {
+  font-size: 1.05rem;
+  color: #4a4a4a;
+  margin: 0;
+}
+.ueber-section {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem 1.6rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  margin-bottom: 1.25rem;
+}
+.ueber-section h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 0.75rem;
+}
+.ueber-section p { color: #2c3e50; margin: 0 0 0.75rem; }
+.ueber-section p:last-child { margin-bottom: 0; }
+.ueber-list { padding-left: 1.25rem; margin: 0.5rem 0; }
+.ueber-list li { margin-bottom: 0.6rem; color: #2c3e50; }
+.ueber-list li:last-child { margin-bottom: 0; }
+.ueber-cta { text-align: center; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); }
+.ueber-cta-buttons {
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: 0.75rem; margin-top: 1rem;
+}
+</style>
+{% endblock %}

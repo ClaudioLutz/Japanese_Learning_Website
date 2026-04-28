@@ -1,18 +1,20 @@
 {% extends "base.html" %}
+{% block title %}Zahlung erfolgreich{% endblock %}
+{% block robots %}noindex,follow{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
     <div class="alert alert-success text-center">
-        <h2><i class="fa fa-check-circle"></i> Payment Successful!</h2>
-        <p>Your purchase has been completed successfully.</p>
+        <h2><i class="fa fa-check-circle"></i> Zahlung erfolgreich!</h2>
+        <p>Dein Kauf wurde erfolgreich abgeschlossen.</p>
     </div>
-    
+
     <div class="card">
         <div class="card-body text-center">
-            <h4>What's Next?</h4>
-            <p>You can now access your purchased content.</p>
+            <h4>Wie geht es weiter?</h4>
+            <p>Du hast nun Zugriff auf deine gekauften Inhalte.</p>
             <a href="{{ url_for('routes.my_lessons') }}" class="btn btn-primary">
-                View My Lessons
+                Zu meinen Lektionen
             </a>
         </div>
     </div>
@@ -28,7 +30,7 @@ window.addEventListener('load', function() {
         // Show loading indicator
         const loadingIndicator = document.createElement('div');
         loadingIndicator.className = 'alert alert-info';
-        loadingIndicator.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Verifying payment status...';
+        loadingIndicator.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Zahlungsstatus wird geprüft …';
         document.querySelector('.container').appendChild(loadingIndicator);
         
         // Verify payment status with enhanced error handling
@@ -49,36 +51,36 @@ window.addEventListener('load', function() {
                 const successDetails = document.createElement('div');
                 successDetails.className = 'alert alert-success mt-3';
                 successDetails.innerHTML = `
-                    <h5><i class="fa fa-check"></i> Payment Verified</h5>
-                    <p>Transaction ID: ${transactionId}</p>
+                    <h5><i class="fa fa-check"></i> Zahlung verifiziert</h5>
+                    <p>Transaktions-ID: ${transactionId}</p>
                     <p>Status: ${data.state}</p>
-                    <p>Item: ${data.item_type} (ID: ${data.item_id})</p>
-                    <p>Amount: CHF ${data.amount}</p>
+                    <p>Artikel: ${data.item_type} (ID: ${data.item_id})</p>
+                    <p>Betrag: CHF ${data.amount}</p>
                 `;
                 document.querySelector('.container').appendChild(successDetails);
-                
+
             } else if (data.success && data.state === 'PENDING') {
-                // Payment still processing
+                // Zahlung wird noch verarbeitet
                 const processingAlert = document.createElement('div');
                 processingAlert.className = 'alert alert-warning mt-3';
                 processingAlert.innerHTML = `
-                    <h5><i class="fa fa-clock-o"></i> Payment Processing</h5>
-                    <p>Your payment is still being processed. You will receive confirmation shortly.</p>
-                    <p>Transaction ID: ${transactionId}</p>
+                    <h5><i class="fa fa-clock-o"></i> Zahlung wird verarbeitet</h5>
+                    <p>Deine Zahlung wird noch verarbeitet. Du erhältst in Kürze eine Bestätigung.</p>
+                    <p>Transaktions-ID: ${transactionId}</p>
                 `;
                 document.querySelector('.container').appendChild(processingAlert);
-                
+
             } else {
                 console.warn('Payment status unclear:', data);
-                
-                // Show status unclear warning
+
+                // Status unklar — Hinweis anzeigen
                 const warningAlert = document.createElement('div');
                 warningAlert.className = 'alert alert-warning mt-3';
                 warningAlert.innerHTML = `
-                    <h5><i class="fa fa-exclamation-triangle"></i> Status Verification</h5>
-                    <p>We're unable to verify your payment status at this time.</p>
-                    <p>Transaction ID: ${transactionId}</p>
-                    <p>If you were charged, your purchase will be processed shortly.</p>
+                    <h5><i class="fa fa-exclamation-triangle"></i> Status-Prüfung</h5>
+                    <p>Der Zahlungsstatus konnte derzeit nicht eindeutig verifiziert werden.</p>
+                    <p>Transaktions-ID: ${transactionId}</p>
+                    <p>Falls dir der Betrag belastet wurde, wird dein Kauf in Kürze verarbeitet.</p>
                 `;
                 document.querySelector('.container').appendChild(warningAlert);
             }
@@ -86,15 +88,15 @@ window.addEventListener('load', function() {
         .catch(error => {
             console.error('Status check error:', error);
             loadingIndicator.remove();
-            
-            // Show error message
+
+            // Fehlermeldung anzeigen
             const errorAlert = document.createElement('div');
             errorAlert.className = 'alert alert-danger mt-3';
             errorAlert.innerHTML = `
-                <h5><i class="fa fa-exclamation-circle"></i> Verification Error</h5>
-                <p>Unable to verify payment status due to a technical issue.</p>
-                <p>Transaction ID: ${transactionId}</p>
-                <p>Please contact support if you have any concerns.</p>
+                <h5><i class="fa fa-exclamation-circle"></i> Verifizierungsfehler</h5>
+                <p>Der Zahlungsstatus kann derzeit aufgrund eines technischen Problems nicht geprüft werden.</p>
+                <p>Transaktions-ID: ${transactionId}</p>
+                <p>Bei Fragen: <a href="mailto:info@japanese-learning.ch">info@japanese-learning.ch</a>.</p>
             `;
             document.querySelector('.container').appendChild(errorAlert);
         });

@@ -6,6 +6,45 @@
 
 {% block og_type %}product{% endblock %}
 
+{% block structured_data %}
+{{ super() }}
+{% if bundle_available and not already_owned %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "JLPT N5 Komplett — Japanisch lernen auf Deutsch",
+  "description": "Vollständiger N5-Lernpfad: Vokabeln, Kanji, Grammatik, Hiragana und Katakana — auf Deutsch erklärt. Einmaliger Kauf, lifetime Zugriff.",
+  "brand": { "@type": "Brand", "name": "Japanese Learning" },
+  "category": "Educational Software",
+  "offers": {
+    "@type": "Offer",
+    "url": "{{ site_url }}{{ url_for('bundle.n5_bundle') }}",
+    "priceCurrency": "CHF",
+    "price": "{{ '%.2f'|format(price) }}",
+    "priceValidUntil": "2026-12-31",
+    "availability": "https://schema.org/InStock",
+    "seller": {
+      "@type": "Organization",
+      "name": "Japanese Learning",
+      "url": "{{ site_url }}"
+    }
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Start", "item": "{{ site_url }}/" },
+    { "@type": "ListItem", "position": 2, "name": "JLPT N5 Komplett", "item": "{{ site_url }}{{ url_for('bundle.n5_bundle') }}" }
+  ]
+}
+</script>
+{% endif %}
+{% endblock %}
+
 {% block styles %}
 <style>
   .n5-bundle-page { background: linear-gradient(180deg, #f8fafc 0%, #ffffff 60%); padding-bottom: 4rem; }
@@ -94,6 +133,20 @@
   }
   .owned-banner h2 { color: #0e7490; margin: 0 0 0.5rem; }
 
+  /* Garantie-Box: prominent unter dem Preis im Hero */
+  .guarantee-box {
+    display: inline-flex; gap: 0.75rem; align-items: flex-start;
+    background: #f0fdf4; border: 1px solid #86efac; border-radius: 12px;
+    padding: 0.85rem 1.1rem; margin: 1rem auto 0;
+    text-align: left; max-width: 480px;
+    box-shadow: 0 2px 8px rgba(34,197,94,0.08);
+  }
+  .guarantee-icon { font-size: 1.5rem; flex-shrink: 0; }
+  .guarantee-text { flex: 1; }
+  .guarantee-text strong { color: #166534; display: block; margin-bottom: 0.25rem; font-size: 0.95rem; }
+  .guarantee-text ul { margin: 0; padding-left: 1.1rem; color: #15803d; font-size: 0.85rem; line-height: 1.5; }
+  .guarantee-text li { margin: 0.15rem 0; }
+
   @media (max-width: 600px) {
     .n5-hero h1 { font-size: 1.75rem; }
     .coverage-row .label { width: 80px; }
@@ -140,6 +193,18 @@
       <p style="color:#64748b; font-size:0.9rem; margin-top:0.5rem;">
         Einmaliger Kauf · Kein Abo · Lifetime-Zugriff
       </p>
+
+      {# ── Garantie-Box: prominent direkt unter dem Preis ── #}
+      <div class="guarantee-box">
+        <div class="guarantee-icon">🛡️</div>
+        <div class="guarantee-text">
+          <strong>Doppelte Geld-zurück-Garantie</strong>
+          <ul>
+            <li>30 Tage volle Rückerstattung — ohne Fragen</li>
+            <li>Bei Stagnation des Bundles ≥ 6 Monate: voller Refund auf Anfrage</li>
+          </ul>
+        </div>
+      </div>
     {% endif %}
   </section>
 
@@ -206,23 +271,29 @@
 
     {# ── Vergleichstabelle ── #}
     <section class="n5-card">
-      <h2>Im Vergleich</h2>
+      <h2>Im Vergleich (5-Jahres-Kosten)</h2>
+      <p style="font-size:0.85rem; color:#64748b; margin: -0.5rem 0 0.75rem;">
+        Lifetime-Vergleich: Was kostet dich das Lernen über 5 Jahre?
+      </p>
       <table class="compare-table">
         <thead>
           <tr>
             <th>Anbieter</th>
             <th>Modell</th>
-            <th>Kosten / Jahr</th>
-            <th>JLPT-N5-Fokus / DE</th>
+            <th>Kosten 5 Jahre</th>
+            <th>JLPT-N5 / DE</th>
           </tr>
         </thead>
         <tbody>
-          <tr><td>Duolingo Super</td><td>Abo</td><td>~CHF 84</td><td>Nein / Teilweise DE</td></tr>
-          <tr><td>WaniKani</td><td>Abo</td><td>~CHF 108</td><td>Nur Kanji / Englisch</td></tr>
-          <tr><td>Bunpro</td><td>Abo</td><td>~CHF 60</td><td>Nur Grammatik / Englisch</td></tr>
+          <tr><td>Duolingo Super</td><td>Abo</td><td>~CHF 420</td><td>Nein / Teilweise DE</td></tr>
+          <tr><td>WaniKani</td><td>Abo</td><td>~CHF 540</td><td>Nur Kanji / Englisch</td></tr>
+          <tr><td>Bunpro</td><td>Abo</td><td>~CHF 300</td><td>Nur Grammatik / Englisch</td></tr>
           <tr class="highlight"><td>JLPT N5 Komplett</td><td>Einmal</td><td>CHF {{ "%.2f"|format(price) }}</td><td>Ja / Deutsch</td></tr>
         </tbody>
       </table>
+      <p style="font-size:0.78rem; color:#94a3b8; margin: 0.5rem 0 0;">
+        Abo-Schätzungen: durchschnittliche Listenpreise ohne Promotionen, Stand 2026.
+      </p>
     </section>
 
     {# ── Über mich ── #}

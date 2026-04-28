@@ -82,7 +82,7 @@
                             </div>
                             <div class="progress-labels">
                                 <span class="progress-start">Start</span>
-                                <span class="progress-end">Complete</span>
+                                <span class="progress-end">Abgeschlossen</span>
                             </div>
                         </div>
                     </div>
@@ -91,13 +91,13 @@
                     <div class="course-hero-actions mt-4">
                         {% if course.is_purchasable and not has_purchased %}
                             <a href="#" class="btn btn-primary btn-lg disabled" aria-disabled="true">
-                                <i class="fas fa-play-circle me-2"></i>Start Course
+                                <i class="fas fa-play-circle me-2"></i>Kurs starten
                             </a>
-                            <p class="text-white mt-2">Purchase required to start</p>
+                            <p class="text-white mt-2">Kauf erforderlich, um zu starten</p>
                         {% else %}
                             <a href="{{ url_for('routes.view_lesson', lesson_id=course.lessons[0].id) if course.lessons else '#' }}" class="btn btn-primary btn-lg">
                                 <i class="fas fa-play-circle me-2"></i>
-                                {% if has_started %}Continue Course{% else %}Start Course{% endif %}
+                                {% if has_started %}Kurs fortsetzen{% else %}Kurs starten{% endif %}
                             </a>
                         {% endif %}
                     </div>
@@ -114,9 +114,9 @@
             <section id="lessons">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2 class="mb-0">
-                        <i class="fas fa-list-ul me-2 text-primary"></i>Course Lessons
+                        <i class="fas fa-list-ul me-2 text-primary"></i>Lektionen im Kurs
                     </h2>
-                    <span class="badge bg-secondary fs-6">{{ total_lessons }} Lessons</span>
+                    <span class="badge bg-secondary fs-6">{{ total_lessons }} Lektionen</span>
                 </div>
                 
                 <div class="lessons-container">
@@ -154,22 +154,22 @@
                                                         {{ lesson.title }}
                                                     </h5>
                                                     <p class="lesson-description text-muted mb-2">
-                                                        {{ lesson.description or 'Learn essential Japanese concepts in this lesson.' }}
+                                                        {{ lesson.description or 'Wesentliche Japanisch-Konzepte in dieser Lektion.' }}
                                                     </p>
                                                     <div class="lesson-meta">
                                                         <small class="text-muted">
                                                             {% if lesson.estimated_duration %}
-                                                                <i class="fas fa-clock me-1"></i>{{ lesson.estimated_duration }} min
+                                                                <i class="fas fa-clock me-1"></i>{{ lesson.estimated_duration }} Min
                                                             {% endif %}
                                                             {% if lesson.difficulty_level %}
                                                                 <span class="ms-3">
                                                                     <i class="fas fa-signal me-1"></i>
-                                                                    {% if lesson.difficulty_level == 1 %}Beginner
-                                                                    {% elif lesson.difficulty_level == 2 %}Elementary
-                                                                    {% elif lesson.difficulty_level == 3 %}Intermediate
-                                                                    {% elif lesson.difficulty_level == 4 %}Advanced
-                                                                    {% elif lesson.difficulty_level == 5 %}Expert
-                                                                    {% else %}Level {{ lesson.difficulty_level }}
+                                                                    {% if lesson.difficulty_level == 1 %}Anfänger
+                                                                    {% elif lesson.difficulty_level == 2 %}Einsteiger
+                                                                    {% elif lesson.difficulty_level == 3 %}Mittelstufe
+                                                                    {% elif lesson.difficulty_level == 4 %}Fortgeschritten
+                                                                    {% elif lesson.difficulty_level == 5 %}Experte
+                                                                    {% else %}Stufe {{ lesson.difficulty_level }}
                                                                     {% endif %}
                                                                 </span>
                                                             {% endif %}
@@ -196,7 +196,7 @@
                                                 {% elif progress and progress_percent > 0 %}
                                                     <span class="badge bg-warning">{{ progress_percent }}%</span>
                                                 {% else %}
-                                                    <span class="badge bg-light text-dark">Not Started</span>
+                                                    <span class="badge bg-light text-dark">Noch nicht begonnen</span>
                                                 {% endif %}
                                             </div>
                                         </div>
@@ -216,52 +216,52 @@
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header bg-primary text-white">
                         <h5 class="mb-0">
-                            <i class="fas fa-chart-line me-2"></i>Course Overview
+                            <i class="fas fa-chart-line me-2"></i>Kursübersicht
                         </h5>
                     </div>
                     <div class="card-body">
                         <div class="course-stats">
                             <div class="stat-item mb-3">
                                 <div class="d-flex justify-content-between">
-                                    <span class="text-muted">Total Lessons:</span>
+                                    <span class="text-muted">Lektionen gesamt:</span>
                                     <strong>{{ total_lessons }}</strong>
                                 </div>
                             </div>
                             <div class="stat-item mb-3">
                                 <div class="d-flex justify-content-between">
-                                    <span class="text-muted">Completed:</span>
+                                    <span class="text-muted">Abgeschlossen:</span>
                                     <strong class="text-success">{{ completed_lessons }}</strong>
                                 </div>
                             </div>
                             {% if total_duration > 0 %}
                             <div class="stat-item mb-3">
                                 <div class="d-flex justify-content-between">
-                                    <span class="text-muted">Total Duration:</span>
-                                    <strong>{{ total_duration }} min</strong>
+                                    <span class="text-muted">Gesamtdauer:</span>
+                                    <strong>{{ total_duration }} Min</strong>
                                 </div>
                             </div>
                             {% endif %}
                             {% if average_difficulty > 0 %}
                             <div class="stat-item mb-3">
                                 <div class="d-flex justify-content-between">
-                                    <span class="text-muted">Difficulty:</span>
+                                    <span class="text-muted">Schwierigkeit:</span>
                                     <strong>
-                                        {% if average_difficulty <= 1.5 %}Beginner
-                                        {% elif average_difficulty <= 2.5 %}Elementary
-                                        {% elif average_difficulty <= 3.5 %}Intermediate
-                                        {% elif average_difficulty <= 4.5 %}Advanced
-                                        {% else %}Expert
+                                        {% if average_difficulty <= 1.5 %}Anfänger
+                                        {% elif average_difficulty <= 2.5 %}Einsteiger
+                                        {% elif average_difficulty <= 3.5 %}Mittelstufe
+                                        {% elif average_difficulty <= 4.5 %}Fortgeschritten
+                                        {% else %}Experte
                                         {% endif %}
                                     </strong>
                                 </div>
                             </div>
                             {% endif %}
                         </div>
-                        
+
                         <!-- Overall Progress -->
                         <div class="mt-4">
                             <div class="d-flex justify-content-between mb-2">
-                                <span class="text-muted">Overall Progress</span>
+                                <span class="text-muted">Gesamtfortschritt</span>
                                 <span class="fw-bold">{{ course_progress_percentage }}%</span>
                             </div>
                             <div class="progress" style="height: 10px;">
@@ -279,11 +279,11 @@
                 {% if course.is_purchasable and not has_purchased %}
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-body text-center">
-                        <h5 class="card-title">Purchase Course</h5>
-                        <p class="card-text">Get full access to all {{ total_lessons }} lessons in this course.</p>
+                        <h5 class="card-title">Kurs kaufen</h5>
+                        <p class="card-text">Vollzugriff auf alle {{ total_lessons }} Lektionen dieses Kurses.</p>
                         <h3 class="price mb-3">CHF {{ "%.2f"|format(course.price) }}</h3>
                         <button class="btn btn-success btn-lg w-100" id="purchase-course-btn" data-course-id="{{ course.id }}">
-                            <i class="fas fa-shopping-cart me-2"></i>Purchase Now
+                            <i class="fas fa-shopping-cart me-2"></i>Jetzt kaufen
                         </button>
                     </div>
                 </div>
@@ -296,7 +296,7 @@
                     <div class="card-body text-center">
                         <h6 class="card-title">{{ course.title }}</h6>
                         <p class="card-text text-muted small">
-                            Master Japanese with structured lessons and interactive content.
+                            Japanisch lernen — strukturierte Lektionen mit interaktiven Inhalten.
                         </p>
                     </div>
                 </div>
