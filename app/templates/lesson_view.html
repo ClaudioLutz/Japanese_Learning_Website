@@ -1153,6 +1153,23 @@
                                                                                 {% endif %}
                                                                             {% endif %}
                                                                         </div>
+                                                                        {# Audio-Button: liest das japanische Wort/Zeichen vor (Cloud TTS) #}
+                                                                        {% set _tts_text = '' %}
+                                                                        {% if content.content_type in ['kana', 'kanji'] %}
+                                                                            {% set _tts_text = content_data.character %}
+                                                                        {% elif content.content_type == 'vocabulary' %}
+                                                                            {% set _tts_text = content_data.word %}
+                                                                        {% elif content.content_type == 'grammar' %}
+                                                                            {% set _tts_text = content_data.title %}
+                                                                        {% endif %}
+                                                                        {% if _tts_text %}
+                                                                        <button type="button" class="card-audio-btn"
+                                                                                data-tts-text="{{ _tts_text }}"
+                                                                                title="Vorlesen"
+                                                                                aria-label="Vorlesen">
+                                                                            <i class="fas fa-volume-up"></i>
+                                                                        </button>
+                                                                        {% endif %}
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -2870,20 +2887,22 @@ function enhanceFlipCard(flipCard) {
         }
     }
 
-    // Add audio button to card back (positioned over image via CSS)
-    const backFace = back || flipCard.querySelector('.card-face--back');
-    if (backFace && text && !backFace.querySelector('.card-audio-btn')) {
-        const audioBtn = document.createElement('button');
-        audioBtn.className = 'card-audio-btn';
-        audioBtn.title = 'Vorlesen';
-        audioBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
-        audioBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            playCardAudio(text, audioBtn);
-        });
-        backFace.appendChild(audioBtn);
-    }
+    // Audio-Buttons werden jetzt direkt im Jinja-Template gerendert (mit
+    // data-tts-text). Hier nur noch sicherstellen, dass beim Deck-Klon der
+    // Click-Handler registriert ist (bubbling-Listener auf document deckt
+    // statisches HTML schon ab; bei Clones in deck-card-area greift
+    // delegateAudioButtons unten).
 }
+
+// Globaler Click-Delegator fuer alle .card-audio-btn (statisch + Deck-Clones).
+document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.card-audio-btn');
+    if (!btn) return;
+    e.stopPropagation();
+    const text = btn.dataset.ttsText || btn.closest('.flip-card')?.querySelector('.kana-char, .vocab-word, .grammar-title')?.textContent.trim();
+    if (!text) return;
+    playCardAudio(text, btn);
+});
 
 function shuffle(arr) {
     for (let i = arr.length - 1; i > 0; i--) {
