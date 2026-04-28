@@ -2,6 +2,8 @@
 
 {% block title %}Tägliche Wiederholung{% endblock %}
 
+{% block body_attributes %}class="redesign-page"{% endblock %}
+
 {% block styles %}
 <style>
     .review-container {
@@ -33,7 +35,8 @@
     }
     .stat-value {
         font-weight: 700;
-        color: var(--primary-color, #2B4C7E);
+        color: var(--kon, #1F2A44);
+        font-family: 'Geist Mono', ui-monospace, monospace;
     }
 
     /* ── Session Progress ── */
@@ -42,11 +45,11 @@
     }
     .session-progress .progress {
         height: 6px;
-        border-radius: 3px;
-        background: var(--border-color, #D4CFC5);
+        border-radius: 999px;
+        background: var(--ink-100, #F1EDE6);
     }
     .session-progress .progress-bar {
-        background: var(--zen-matcha, #7A9A5A);
+        background: var(--shu, #EB6101);
         transition: width 0.4s ease;
     }
     .session-info {
@@ -101,13 +104,13 @@
         position: absolute;
         inset: 0;
         backface-visibility: hidden;
-        border-radius: 18px;
+        border-radius: 12px;
         display: flex;
         flex-direction: column;
         padding: 1.75rem 1.5rem;
-        border: 1px solid var(--border-color, #e2e8f0);
-        background: var(--card-bg, #ffffff);
-        box-shadow: 0 4px 16px rgba(15,23,42,0.06);
+        border: 1px solid var(--ink-200, #E4DED4);
+        background: #fff;
+        box-shadow: var(--shadow-card, 0 4px 16px rgba(28,26,23,0.06));
     }
     .review-card-face--front {
         align-items: center;
@@ -122,9 +125,10 @@
         gap: 0.75rem;
     }
     .review-card-front-text {
+        font-family: 'Noto Sans JP', sans-serif;
         font-size: 3.5rem;
-        font-weight: 700;
-        color: #1e293b;
+        font-weight: 500;
+        color: var(--sumi, #1C1C1C);
         text-align: center;
         line-height: 1.1;
     }
@@ -148,26 +152,41 @@
     }
     .back-image img { max-width: 100%; max-height: 100%; object-fit: contain; }
     .back-meaning {
-        font-size: 1.6rem; font-weight: 700; color: #0f172a; line-height: 1.25;
-        text-align: center;
+        font-family: 'Geist', 'Inter', sans-serif;
+        font-size: 1.6rem; font-weight: 600; color: var(--kon, #1F2A44);
+        line-height: 1.25; text-align: center; letter-spacing: -0.01em;
     }
     .back-readings {
-        text-align: center; color: #64748b; font-size: 0.95rem;
+        text-align: center; color: var(--ink-500, #7A7368);
+        font-size: 0.95rem;
         display: flex; justify-content: center; gap: 0.6rem; flex-wrap: wrap;
     }
-    .back-readings .reading-jp { font-size: 1.05rem; color: #334155; font-weight: 500; }
-    .back-readings .romaji { font-style: italic; color: #94a3b8; }
+    .back-readings .reading-jp {
+        font-family: 'Noto Sans JP', sans-serif;
+        font-size: 1.05rem; color: var(--tetsu, #2C2C2C); font-weight: 500;
+    }
+    .back-readings .romaji {
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-style: normal; color: var(--ink-400, #A8A095);
+    }
     .back-section {
         margin-top: 0.4rem; padding-top: 0.6rem;
-        border-top: 1px solid #f1f5f9;
+        border-top: 1px solid var(--ink-100, #F1EDE6);
         font-size: 0.9rem;
     }
     .back-section-label {
-        font-size: 0.72rem; font-weight: 700; color: #94a3b8;
-        text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.2rem;
+        font-family: 'Geist', sans-serif;
+        font-size: 0.72rem; font-weight: 600; color: var(--ink-400, #A8A095);
+        text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.2rem;
     }
-    .back-jp-line { font-size: 1.1rem; color: #1e293b; }
-    .back-translation { color: #64748b; font-size: 0.88rem; margin-top: 0.2rem; }
+    .back-jp-line {
+        font-family: 'Noto Sans JP', sans-serif;
+        font-size: 1.1rem; color: var(--sumi, #1C1C1C);
+    }
+    .back-translation {
+        color: var(--ink-600, #5C564D);
+        font-size: 0.88rem; margin-top: 0.2rem;
+    }
 
     /* Legacy detail-row (kanji/grammar — noch nicht migriert) */
     .review-detail-row {
@@ -228,14 +247,15 @@
         opacity: 0.7;
         min-height: 0.85em;
     }
-    .review-btn[data-rating="1"] { color: #dc2626; border-color: #fecaca; }
-    .review-btn[data-rating="1"]:hover { background: #fef2f2; border-color: #fca5a5; }
-    .review-btn[data-rating="2"] { color: #ea580c; border-color: #fed7aa; }
-    .review-btn[data-rating="2"]:hover { background: #fff7ed; border-color: #fdba74; }
-    .review-btn[data-rating="3"] { color: #16a34a; border-color: #bbf7d0; }
-    .review-btn[data-rating="3"]:hover { background: #f0fdf4; border-color: #86efac; }
-    .review-btn[data-rating="4"] { color: #2563eb; border-color: #bfdbfe; }
-    .review-btn[data-rating="4"]:hover { background: #eff6ff; border-color: #93c5fd; }
+    /* SRS-Rating-Buttons (Compass-Token-Schema) */
+    .review-btn[data-rating="1"] { color: var(--shu-deep, #B84A00); border-color: rgba(184,74,0,0.30); }
+    .review-btn[data-rating="1"]:hover { background: rgba(184,74,0,0.06); border-color: var(--shu-deep, #B84A00); }
+    .review-btn[data-rating="2"] { color: var(--kincha, #C7802D); border-color: rgba(199,128,45,0.30); }
+    .review-btn[data-rating="2"]:hover { background: rgba(199,128,45,0.08); border-color: var(--kincha, #C7802D); }
+    .review-btn[data-rating="3"] { color: var(--matcha, #7A9033); border-color: rgba(122,144,51,0.30); }
+    .review-btn[data-rating="3"]:hover { background: rgba(122,144,51,0.08); border-color: var(--matcha, #7A9033); }
+    .review-btn[data-rating="4"] { color: var(--ai, #264F7E); border-color: rgba(38,79,126,0.30); }
+    .review-btn[data-rating="4"]:hover { background: rgba(38,79,126,0.06); border-color: var(--ai, #264F7E); }
 
     @media (max-width: 576px) {
         .review-btn { padding: 0.55rem 0.3rem; font-size: 0.78rem; max-width: none; }
@@ -254,7 +274,11 @@
         font-size: 3rem;
         margin-bottom: 1rem;
     }
-    .review-complete h4 { color: var(--primary-color, #2B4C7E); }
+    .review-complete h4 {
+        font-family: 'Geist', 'Inter', sans-serif;
+        font-weight: 510; letter-spacing: -0.02em;
+        color: var(--kon, #1F2A44);
+    }
 
     .session-summary {
         background: var(--card-bg, #FFFDF7);
