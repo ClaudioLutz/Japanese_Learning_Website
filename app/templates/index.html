@@ -3,79 +3,102 @@
 {% block title %}Japanisch lernen online — JLPT N5 Kurse mit Quiz & SRS{% endblock %}
 {% block meta_description %}Lerne Japanisch mit strukturierten JLPT-N5-Lektionen: Hiragana, Katakana, Kanji, Vokabeln, Grammatik und interaktive Quiz. Schweizer Lernplattform mit Spaced Repetition (SRS) — auf Deutsch, kostenlos starten.{% endblock %}
 
+{% block body_attributes %}class="redesign-page"{% endblock %}
+
 {% block content %}
 <div class="home-wrapper">
 
   {# ──────────────────────────────────────────────
-     HERO — Gast vs. Eingeloggt
+     HERO — Compass-Redesign Phase 2 (Linear-Pattern)
+     Eyebrow → 2-Zeilen-H1 → Subhead → Dual-CTA → Browser-Frame
      ────────────────────────────────────────────── #}
-  <section class="home-hero">
-    {% if current_user.is_authenticated %}
-      {# Eingeloggt: Continue-Learning + naechstes Modul #}
-      <div class="hero-card hero-card-auth">
-        <div class="hero-greeting">
-          こんにちは, <strong>{{ current_user.username }}</strong> 👋
+  <section class="home-hero hero-bg-jp">
+    <div class="home-hero-inner">
+
+      <div class="home-eyebrow-row">
+        <span class="eyebrow-chip">JLPT N5 · auf Deutsch · in der Schweiz gemacht</span>
+      </div>
+
+      {% if current_user.is_authenticated %}
+        {% if last_lesson %}
+          <h1 class="home-h1">Weiter lernen.<br>Wo du aufgehört hast.</h1>
+        {% else %}
+          <h1 class="home-h1">Bereit für<br>deine erste Lektion?</h1>
+        {% endif %}
+        <p class="home-sub">
+          こんにちは, <strong>{{ current_user.username }}</strong>
           {% if current_user.current_streak and current_user.current_streak > 0 %}
             · 🔥 {{ current_user.current_streak }} Tage Streak
-          {% endif %}
-        </div>
-        {% if last_lesson %}
-          <h1 class="hero-title">Weiter lernen</h1>
-          <p class="hero-sub">Du warst zuletzt hier — direkt weiter ohne Suchen.</p>
-          <a href="{{ url_for('routes.view_lesson', lesson_id=last_lesson.id) }}"
-             class="btn btn-primary btn-lg hero-cta">
-            ▶ {{ last_lesson.title }}
-          </a>
-        {% else %}
-          <h1 class="hero-title">Bereit für deine erste Lektion?</h1>
-          <p class="hero-sub">
-            Springe direkt in den N5-Pfad — Modul für Modul, von Hiragana bis zu deinen ersten Sätzen.
-          </p>
-          <a href="#lernpfad" class="btn btn-primary btn-lg hero-cta">
-            🚀 N5-Pfad starten
-          </a>
-        {% endif %}
-        <a href="{{ url_for('srs.review_page') }}" class="hero-secondary-link" id="homeReviewLink" style="display:none;">
-          🧠 <span id="homeReviewCount">0 Karten</span> wiederholen
-        </a>
-      </div>
-    {% else %}
-      {# Gast: Conversion-Hero #}
-      <div class="hero-card hero-card-guest">
-        <div class="hero-icon">⛩</div>
-        <h1 class="hero-title">Japanisch lernen — kostenlos starten</h1>
-        <p class="hero-sub">
-          Strukturiert nach JLPT-Level. Hiragana, Katakana, erste Kanji,
-          Vokabeln, Grammatik und Konversation — alles in einem klaren Pfad.
-          Auf Deutsch erklärt.
+          {% endif %}.
         </p>
-        <div class="hero-actions">
-          <a href="{{ url_for('routes.register') }}" class="btn btn-primary btn-lg hero-cta">
+        <div class="home-actions">
+          {% if last_lesson %}
+            <a href="{{ url_for('routes.view_lesson', lesson_id=last_lesson.id) }}" class="btn-shu">
+              ▶ {{ last_lesson.title }}
+            </a>
+          {% else %}
+            <a href="#lernpfad" class="btn-shu">N5-Pfad starten</a>
+          {% endif %}
+          <a href="{{ url_for('srs.review_page') }}"
+             class="btn-ghost-jp"
+             id="homeReviewLink" style="display:none;">
+            🧠 <span id="homeReviewCount">0 Karten</span> wiederholen
+          </a>
+        </div>
+      {% else %}
+        <h1 class="home-h1">Hiragana am Morgen.<br>Kanji am Abend.</h1>
+        <p class="home-sub">
+          Strukturiert nach JLPT-N5. {{ n5_vocab_count or 261 }} Vokabeln,
+          {{ n5_kanji_count or 44 }} Kanji, wöchentlich neu — auf Deutsch erklärt.
+        </p>
+        <div class="home-actions">
+          <a href="{{ url_for('routes.register') }}" class="btn-shu">
             Kostenlos starten
           </a>
-          <a href="#lernpfad" class="btn btn-outline-secondary btn-lg hero-cta">
-            Pfad ansehen
+          <a href="{{ url_for('bundle.n5_bundle') }}" class="btn-ghost-jp">
+            N5 Komplett · CHF 9.90
           </a>
         </div>
-        <a href="{{ url_for('bundle.n5_bundle') }}" class="hero-secondary-link" style="margin-top:1rem; display:inline-block;">
-          ⚡ Oder gleich N5 Komplett für CHF 9.90 ansehen →
-        </a>
-        <div class="hero-meta">
-          <span>✅ <strong>{{ german_guest_lessons }} Lektionen kostenlos</strong> ohne Anmeldung</span>
-          <span>📚 <strong>{{ german_lessons }} Lektionen</strong> verfügbar</span>
-          <span>🇨🇭 Aus Rorschach SG</span>
-        </div>
-        {% if n5_vocab_count or n5_kanji_count %}
-        <p class="hero-live-stats">
-          Aktuell <strong>{{ n5_vocab_count }} Vokabeln</strong> und
-          <strong>{{ n5_kanji_count }} Kanji</strong> live · neue Lektionen wöchentlich · gestartet 2026 in der Ostschweiz.
+        <p class="home-meta">
+          ✅ <strong>{{ german_guest_lessons }} Lektionen kostenlos</strong> ohne Anmeldung
+          · 🇨🇭 Aus Rorschach SG
         </p>
-        {% endif %}
-        <p class="hero-trust-link">
+        <p class="home-trust-link">
           <a href="{{ url_for('routes.ueber') }}">Wer steht hinter Japanese Learning? →</a>
         </p>
+      {% endif %}
+
+      {# Tella-Browser-Frame mit Lesson-Preview — ein "moment of design" unter dem Hero #}
+      <div class="home-browser-frame" aria-hidden="true">
+        <div class="home-browser-chrome">
+          <span></span><span></span><span></span>
+          <div class="home-browser-url">japanese-learning.ch / lessons / hiragana-1</div>
+        </div>
+        <div class="home-browser-stage">
+          <div class="hbs-card hbs-kana">
+            <div class="hbs-jp" lang="ja">あ</div>
+            <div class="hbs-romaji">a</div>
+          </div>
+          <div class="hbs-card hbs-kana">
+            <div class="hbs-jp" lang="ja">い</div>
+            <div class="hbs-romaji">i</div>
+          </div>
+          <div class="hbs-card hbs-kana">
+            <div class="hbs-jp" lang="ja">う</div>
+            <div class="hbs-romaji">u</div>
+          </div>
+          <div class="hbs-card hbs-kana">
+            <div class="hbs-jp" lang="ja">え</div>
+            <div class="hbs-romaji">e</div>
+          </div>
+          <div class="hbs-card hbs-kana">
+            <div class="hbs-jp" lang="ja">お</div>
+            <div class="hbs-romaji">o</div>
+          </div>
+        </div>
       </div>
-    {% endif %}
+
+    </div>
   </section>
 
   {# ──────────────────────────────────────────────
@@ -127,7 +150,7 @@
                         {% if entry.is_next %}is-next{% endif %}
                         {% if entry.is_complete %}is-complete{% endif %}"
                  id="module-{{ m.id }}"
-                 style="border-top: 4px solid {{ m.color_code or '#0d6efd' }};">
+                 style="border-top: 4px solid {{ m.color_code or '#1F2A44' }};">
 
               <div class="module-icon-row">
                 <div class="module-icon" aria-hidden="true">{{ m.icon_emoji or '📖' }}</div>
@@ -153,7 +176,7 @@
                 <div class="progress" style="height: 6px;">
                   <div class="progress-bar"
                        role="progressbar"
-                       style="width: {{ entry.percent }}%; background-color: {{ m.color_code or '#0d6efd' }};"
+                       style="width: {{ entry.percent }}%; background-color: {{ m.color_code or '#1F2A44' }};"
                        aria-valuenow="{{ entry.percent }}"
                        aria-valuemin="0"
                        aria-valuemax="100"></div>
@@ -250,143 +273,200 @@
 </div>
 
 <style>
-/* ────────────────────────────────────────
-   HOME WRAPPER + HERO
-   ──────────────────────────────────────── */
+/* ════════════════════════════════════════
+   COMPASS-REDESIGN — Homepage (Phase 2)
+   Linear-Hero + Tella-Browser-Frame + Nendo-Lernpfad-Cards
+   ════════════════════════════════════════ */
+
 .home-wrapper {
-    max-width: 1100px;
+    max-width: 1152px;
     margin: 0 auto;
-    padding: 1.5rem 1rem 3rem;
+    padding: 0;
 }
+
+/* ── Hero (Linear-Pattern) ── */
 .home-hero {
-    margin-bottom: 2.5rem;
-}
-.hero-card {
-    background: rgba(255, 255, 255, 0.97);
-    border-radius: 16px;
-    padding: 2rem 1.75rem;
-    box-shadow: 0 6px 28px rgba(0, 0, 0, 0.08);
+    padding: 5rem 1.5rem 4rem;
     text-align: center;
+    margin: -1rem -1rem 0;   /* zieht Hero zur Topnav, kompensiert .container.mt-4 */
 }
-.hero-card-guest {
-    background: linear-gradient(135deg, rgba(255,255,255,0.97), rgba(243,232,255,0.97));
+.home-hero-inner { max-width: 980px; margin: 0 auto; }
+
+.home-eyebrow-row { margin-bottom: 1.75rem; }
+
+.home-h1 {
+    font-family: 'Geist', 'Inter', sans-serif;
+    font-weight: 510;
+    font-size: clamp(2.25rem, 5vw + 1rem, 4.5rem);
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    color: var(--kon);
+    margin: 0 0 1.25rem;
 }
-.hero-card-auth {
-    background: linear-gradient(135deg, rgba(255,255,255,0.97), rgba(213,242,213,0.92));
+.home-sub {
+    font-size: 1.125rem;
+    color: var(--ink-600);
+    max-width: 560px;
+    line-height: 1.6;
+    margin: 0 auto 2rem;
 }
-.hero-greeting {
+.home-sub strong { color: var(--kon); font-weight: 600; }
+
+.home-actions {
+    display: flex; gap: 0.75rem;
+    justify-content: center; flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+
+.home-meta {
     font-size: 0.95rem;
-    color: #5a5a5a;
-    margin-bottom: 0.5rem;
+    color: var(--ink-500);
+    margin: 1.5rem auto 0;
+    max-width: 560px;
+    line-height: 1.6;
 }
-.hero-icon {
+.home-meta strong { color: var(--kon); font-weight: 600; }
+
+.home-trust-link {
+    margin-top: 0.75rem;
+    font-size: 0.9rem; text-align: center;
+}
+.home-trust-link a {
+    color: var(--ai); text-decoration: none; font-weight: 500;
+}
+.home-trust-link a:hover { text-decoration: underline; }
+
+/* ── Tella-Browser-Frame ── */
+.home-browser-frame {
+    margin: 4rem auto 0;
+    max-width: 880px;
+    background: #fff;
+    border: 1px solid var(--ink-200);
+    border-radius: 12px;
+    box-shadow: var(--shadow-lifted);
+    overflow: hidden;
+}
+.home-browser-chrome {
+    display: flex; align-items: center; gap: 0.4rem;
+    padding: 0.65rem 0.95rem;
+    background: var(--ink-100);
+    border-bottom: 1px solid var(--ink-200);
+}
+.home-browser-chrome > span {
+    width: 11px; height: 11px; border-radius: 50%;
+    background: var(--ink-300);
+}
+.home-browser-url {
+    margin-left: 0.85rem;
+    flex: 1;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 0.78rem;
+    color: var(--ink-500);
+    text-align: center;
+    padding: 0.2rem 0.6rem;
+    background: rgba(255,255,255,.6);
+    border-radius: 6px;
+}
+.home-browser-stage {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1rem;
+    padding: 2.5rem 2rem;
+    background: var(--washi);
+}
+.hbs-card {
+    background: #fff;
+    border: 1px solid var(--ink-200);
+    border-radius: 10px;
+    padding: 1.25rem 0.75rem;
+    text-align: center;
+    transition: border-color .2s, transform .2s;
+}
+.hbs-card:hover { border-color: var(--shu); transform: translateY(-2px); }
+.hbs-jp {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 500;
     font-size: 2.5rem;
-    margin-bottom: 0.5rem;
+    line-height: 1.1;
+    color: var(--sumi);
 }
-.hero-title {
-    font-size: clamp(1.5rem, 4vw, 2.25rem);
-    font-weight: 700;
-    color: #2c3e50;
+.hbs-romaji {
+    margin-top: 0.4rem;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 0.85rem;
+    color: var(--ink-500);
+    letter-spacing: 0.05em;
+}
+
+@media (max-width: 768px) {
+    .home-hero { padding: 3rem 1.25rem 2.5rem; }
+    .home-browser-frame { margin-top: 2.5rem; }
+    .home-browser-stage { grid-template-columns: repeat(5, 1fr); padding: 1.25rem 1rem; gap: 0.5rem; }
+    .hbs-card { padding: 0.75rem 0.4rem; }
+    .hbs-jp { font-size: 1.6rem; }
+    .hbs-romaji { font-size: 0.7rem; margin-top: 0.25rem; }
+}
+
+/* ════════════════════════════════════════
+   LERNPFAD — Nendo-Restraint, hairline-Cards
+   ════════════════════════════════════════ */
+.lernpfad-section {
+    padding: 4rem 1.5rem 2rem;
+    max-width: 1152px;
+    margin: 0 auto;
+}
+.lernpfad-header { text-align: center; margin-bottom: 2rem; }
+.lernpfad-title {
+    font-family: 'Geist', 'Inter', sans-serif;
+    font-weight: 510;
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    letter-spacing: -0.02em;
+    color: var(--kon);
     margin: 0 0 0.5rem;
 }
-.hero-sub {
-    color: #5a5a5a;
+.lernpfad-sub {
+    color: var(--ink-500);
     font-size: 1rem;
-    line-height: 1.5;
-    margin: 0 auto 1.25rem;
-    max-width: 640px;
+    margin: 0;
 }
-.hero-actions {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.75rem;
-    margin-bottom: 1rem;
-}
-.hero-cta {
-    min-width: 180px;
-    font-weight: 600;
-}
-.hero-meta {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 1rem 1.5rem;
-    font-size: 0.85rem;
-    color: #6c757d;
-    margin-top: 0.75rem;
-}
-.hero-meta strong { color: #2c3e50; }
-.hero-live-stats {
-    margin-top: 0.6rem;
-    font-size: 0.82rem;
-    color: #6c757d;
-    text-align: center;
-    line-height: 1.4;
-}
-.hero-live-stats strong { color: #2c3e50; }
-.hero-trust-link {
-    margin-top: 0.4rem;
-    font-size: 0.85rem;
-    text-align: center;
-}
-.hero-trust-link a {
-    color: #6366f1;
-    text-decoration: none;
-    font-weight: 500;
-}
-.hero-trust-link a:hover { text-decoration: underline; }
-.hero-secondary-link {
-    display: block;
-    margin-top: 0.75rem;
-    color: #dc3545;
-    text-decoration: none;
-    font-size: 0.95rem;
-    font-weight: 500;
-}
-.hero-secondary-link:hover { text-decoration: underline; }
 
-/* ────────────────────────────────────────
-   LERNPFAD-GRID
-   ──────────────────────────────────────── */
-.lernpfad-section { margin-bottom: 2.5rem; }
-.lernpfad-header { text-align: center; margin-bottom: 1.5rem; }
-
-/* Bundle-Hinweis als zentraler Banner zwischen Header und Pfad */
+/* Bundle-Hinweis — kon-50 Background mit shu-Stripe */
 .bundle-hint {
     display: flex; align-items: center; gap: 1rem;
-    background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
-    border: 1px solid #c4b5fd;
-    border-radius: 14px;
+    background: var(--kon-50);
+    border: 1px solid var(--kon-100);
+    border-left: 3px solid var(--shu);
+    border-radius: 12px;
     padding: 1rem 1.25rem;
-    margin: 0 auto 1.5rem;
+    margin: 0 auto 2rem;
     max-width: 760px;
-    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.08);
 }
-.bundle-hint-icon { font-size: 1.5rem; flex-shrink: 0; }
-.bundle-hint-text { flex: 1; color: #4c1d95; font-size: 0.95rem; line-height: 1.4; }
-.bundle-hint-text a { color: #4f46e5; font-weight: 700; text-decoration: none; }
+.bundle-hint-icon { font-size: 1.4rem; flex-shrink: 0; }
+.bundle-hint-text {
+    flex: 1; color: var(--ink-700);
+    font-size: 0.95rem; line-height: 1.5;
+}
+.bundle-hint-text a {
+    color: var(--shu); font-weight: 600; text-decoration: none;
+}
 .bundle-hint-text a:hover { text-decoration: underline; }
+.bundle-hint-text strong { color: var(--kon); }
 .bundle-hint-cta {
-    background: #4f46e5; color: white;
-    padding: 0.55rem 1rem; border-radius: 8px;
-    font-weight: 700; font-size: 0.9rem; white-space: nowrap;
-    text-decoration: none; flex-shrink: 0;
-    transition: background 0.15s;
+    color: var(--shu); font-weight: 600; font-size: 0.9rem;
+    white-space: nowrap; text-decoration: none; flex-shrink: 0;
+    padding: 0.5rem 0.85rem;
+    border: 1px solid var(--shu);
+    border-radius: 8px;
+    transition: background-color .15s;
 }
-.bundle-hint-cta:hover { background: #4338ca; color: white; text-decoration: none; }
+.bundle-hint-cta:hover {
+    background: rgba(235,97,1,.08);
+    color: var(--shu); text-decoration: none;
+}
 @media (max-width: 600px) {
-    .bundle-hint { flex-direction: column; text-align: center; gap: 0.75rem; }
+    .bundle-hint { flex-direction: column; text-align: center; }
     .bundle-hint-cta { align-self: stretch; text-align: center; }
 }
-
-.lernpfad-title {
-    font-size: clamp(1.25rem, 3vw, 1.75rem);
-    font-weight: 700;
-    color: #2c3e50;
-    margin: 0 0 0.25rem;
-}
-.lernpfad-sub { color: #6c757d; font-size: 0.95rem; margin: 0; }
 
 .lernpfad-grid {
     display: grid;
@@ -394,181 +474,166 @@
     gap: 1rem;
 }
 
+/* Lernpfad-Modul-Card — hairline statt Box-Shadow */
 .lernpfad-module {
     background: #fff;
+    border: 1px solid var(--ink-200);
     border-radius: 12px;
-    padding: 1rem 1.1rem 1.1rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
-    display: flex;
-    flex-direction: column;
+    padding: 1.1rem 1.2rem 1.2rem;
+    display: flex; flex-direction: column;
     gap: 0.5rem;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
 }
 .lernpfad-module:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    border-color: var(--ink-400);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-card);
 }
-.lernpfad-module.is-locked {
-    opacity: 0.6;
-}
+.lernpfad-module.is-locked { opacity: 0.55; }
 .lernpfad-module.is-complete {
-    background: linear-gradient(180deg, #fff 0%, #d8f5d8 100%);
+    background: rgba(122,144,51,.04);
+    border-color: var(--matcha);
 }
 .lernpfad-module.is-next {
-    box-shadow:
-      0 0 0 3px rgba(13, 110, 253, 0.4),
-      0 6px 20px rgba(13, 110, 253, 0.18);
+    border-color: var(--shu);
+    box-shadow: 0 0 0 3px rgba(235,97,1,.18), var(--shadow-card);
     animation: pulseNext 2.4s ease-in-out infinite;
 }
 @keyframes pulseNext {
-    0%, 100% { box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.4), 0 6px 20px rgba(13, 110, 253, 0.18); }
-    50%      { box-shadow: 0 0 0 6px rgba(13, 110, 253, 0.18), 0 6px 24px rgba(13, 110, 253, 0.25); }
+    0%, 100% { box-shadow: 0 0 0 3px rgba(235,97,1,.18), var(--shadow-card); }
+    50%      { box-shadow: 0 0 0 5px rgba(235,97,1,.10), var(--shadow-lifted); }
 }
 
-.module-icon-row {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-}
-.module-icon {
-    font-size: 2rem;
-    line-height: 1;
-}
+.module-icon-row { display: flex; align-items: center; gap: 0.65rem; }
+.module-icon { font-size: 1.85rem; line-height: 1; }
 .module-titles { flex: 1; min-width: 0; }
 .module-title {
-    font-size: 1.05rem;
-    font-weight: 600;
-    color: #2c3e50;
-    margin: 0;
-    line-height: 1.25;
+    font-family: 'Geist', 'Inter', sans-serif; font-weight: 600;
+    font-size: 1.05rem; color: var(--kon);
+    margin: 0; line-height: 1.25;
 }
 .module-meta {
-    color: #888;
-    font-size: 0.78rem;
+    color: var(--ink-500); font-size: 0.78rem;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    text-transform: uppercase; letter-spacing: 0.04em;
 }
-.module-lock, .module-check {
-    font-size: 1.25rem;
-}
+.module-lock, .module-check { font-size: 1.2rem; }
 .module-next-badge {
-    background: #0d6efd;
-    color: #fff;
-    font-size: 0.7rem;
-    font-weight: 700;
+    background: var(--shu); color: #fff;
+    font-family: 'Geist', sans-serif;
+    font-size: 0.7rem; font-weight: 700;
     letter-spacing: 0.05em;
-    padding: 0.2rem 0.55rem;
+    padding: 0.22rem 0.6rem;
     border-radius: 999px;
 }
 
 .module-desc {
-    color: #5a5a5a;
-    font-size: 0.85rem;
-    margin: 0;
-    line-height: 1.4;
+    color: var(--ink-600); font-size: 0.9rem;
+    margin: 0; line-height: 1.5;
 }
 
 .module-progress { margin-top: 0.4rem; }
 .module-progress-text {
-    display: block;
-    color: #6c757d;
-    font-size: 0.78rem;
-    margin-top: 0.25rem;
+    display: block; color: var(--ink-500);
+    font-size: 0.78rem; margin-top: 0.3rem;
     text-align: right;
+    font-family: 'Geist Mono', ui-monospace, monospace;
 }
 
 .module-lessons {
-    list-style: none;
-    padding: 0;
+    list-style: none; padding: 0;
     margin: 0.5rem 0 0;
-    border-top: 1px solid #f0f0f0;
+    border-top: 1px solid var(--ink-100);
     padding-top: 0.5rem;
 }
 .module-lessons li { font-size: 0.85rem; }
 .module-lessons a {
-    display: block;
-    padding: 0.2rem 0;
-    color: #495057;
-    text-decoration: none;
+    display: block; padding: 0.25rem 0;
+    color: var(--ink-700); text-decoration: none;
+    transition: color .15s;
 }
-.module-lessons a:hover { color: #0d6efd; text-decoration: underline; }
-.module-empty {
-    color: #888;
-    font-size: 0.82rem;
-    margin: 0.4rem 0 0;
+.module-lessons a:hover { color: var(--shu); text-decoration: none; }
+
+/* ── Module CTA-Button ── */
+.module-cta {
+    margin-top: auto;
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--ink-100);
+}
+.module-cta-btn {
+    display: block; text-align: center;
+    padding: 0.55rem 0.7rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600; font-size: 0.88rem;
+    transition: transform 0.1s, background-color 0.15s, color 0.15s;
+}
+.module-cta-btn:hover { transform: translateY(-1px); text-decoration: none; }
+.module-cta-start {
+    background: var(--kon); color: #fff;
+}
+.module-cta-start:hover { background: var(--kon-500); color: #fff; }
+.module-cta-continue {
+    background: linear-gradient(180deg, #EB6101, #D85700);
+    color: #fff;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.15);
+}
+.module-cta-continue:hover {
+    background: linear-gradient(180deg, #F37016, #E25C00);
+    color: #fff;
+}
+.module-cta-done {
+    background: rgba(122,144,51,.1); color: var(--matcha);
+}
+.module-cta-done:hover { background: rgba(122,144,51,.18); color: var(--matcha); }
+.module-cta-disabled {
+    display: block; text-align: center;
+    padding: 0.55rem 0.7rem;
+    color: var(--ink-400); font-size: 0.82rem;
     font-style: italic;
 }
 
 /* ── Group-Header ── */
-.lernpfad-group { margin-bottom: 2rem; }
-.lernpfad-group-header { margin: 0 0 0.75rem; }
+.lernpfad-group { margin-bottom: 2.5rem; }
+.lernpfad-group-header { margin: 0 0 1rem; }
 .lernpfad-group-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #2c3e50;
+    font-family: 'Geist', 'Inter', sans-serif; font-weight: 600;
+    font-size: 1.15rem; color: var(--kon);
     margin: 0;
 }
 .lernpfad-group-subtitle {
-    color: #6c757d;
-    font-size: 0.85rem;
-    margin: 0.1rem 0 0;
-}
-
-/* ── Module CTA-Button ── */
-.module-cta {
-    margin-top: auto;       /* schiebt Button ans Karten-Ende → einheitliche Hoehe */
-    padding-top: 0.6rem;
-    border-top: 1px solid #f0f0f0;
-}
-.module-cta-btn {
-    display: block;
-    text-align: center;
-    padding: 0.45rem 0.6rem;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.88rem;
-    transition: transform 0.1s, box-shadow 0.15s;
-}
-.module-cta-btn:hover { transform: translateY(-1px); text-decoration: none; }
-.module-cta-start {
-    background: #0d6efd;
-    color: #fff;
-}
-.module-cta-start:hover { background: #0b5ed7; color: #fff; box-shadow: 0 3px 10px rgba(13,110,253,0.25); }
-.module-cta-continue {
-    background: #198754;
-    color: #fff;
-}
-.module-cta-continue:hover { background: #157347; color: #fff; box-shadow: 0 3px 10px rgba(25,135,84,0.25); }
-.module-cta-done {
-    background: #f3f3f3;
-    color: #6c757d;
-}
-.module-cta-done:hover { background: #e7e7e7; color: #495057; }
-.module-cta-disabled {
-    display: block;
-    text-align: center;
-    padding: 0.45rem 0.6rem;
-    color: #999;
-    font-size: 0.82rem;
-    font-style: italic;
+    color: var(--ink-500); font-size: 0.9rem;
+    margin: 0.2rem 0 0;
 }
 
 .lernpfad-footer {
-    text-align: center;
-    margin-top: 1.5rem;
+    text-align: center; margin-top: 1.75rem;
+}
+.lernpfad-footer .btn {
+    color: var(--ink-700);
+    border-color: var(--ink-300);
+    background: transparent;
+    font-weight: 500;
+}
+.lernpfad-footer .btn:hover {
+    background: rgba(28,26,23,.04);
+    color: var(--sumi);
+    border-color: var(--ink-500);
 }
 
-/* ────────────────────────────────────────
-   SEKUNDÄR-SECTION
-   ──────────────────────────────────────── */
+/* ════════════════════════════════════════
+   SEKUNDÄR-SECTION (Sprachwahl)
+   ════════════════════════════════════════ */
 .secondary-section {
-    border-top: 1px solid rgba(0,0,0,0.08);
-    padding-top: 2rem;
+    max-width: 1152px;
+    margin: 3rem auto 0;
+    padding: 3rem 1.5rem 2rem;
+    border-top: 1px solid var(--ink-200);
     text-align: center;
 }
 .section-subtitle {
     font-size: 1rem;
-    color: #6c757d;
+    color: var(--ink-500);
     font-weight: 500;
     margin-bottom: 1rem;
 }
@@ -580,32 +645,31 @@
     margin: 0 auto;
 }
 .lang-mini {
-    display: flex;
-    align-items: center;
-    gap: 0.7rem;
-    padding: 0.7rem 1rem;
-    background: rgba(255,255,255,0.95);
-    border: 1px solid rgba(0,0,0,0.08);
+    display: flex; align-items: center; gap: 0.7rem;
+    padding: 0.85rem 1rem;
+    background: #fff;
+    border: 1px solid var(--ink-200);
     border-radius: 10px;
     text-decoration: none;
-    color: #2c3e50;
-    transition: transform 0.15s, box-shadow 0.15s;
+    color: var(--kon);
+    transition: border-color .15s, transform .15s;
 }
 .lang-mini:hover {
+    border-color: var(--shu);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    color: #2c3e50;
+    color: var(--kon);
     text-decoration: none;
 }
 .lang-mini-flag { font-size: 1.5rem; }
-.lang-mini-text { display: flex; flex-direction: column; text-align: left; line-height: 1.2; }
-.lang-mini-text small { color: #6c757d; font-size: 0.78rem; }
+.lang-mini-text { display: flex; flex-direction: column; text-align: left; line-height: 1.3; }
+.lang-mini-text small { color: var(--ink-500); font-size: 0.78rem; }
 
 @media (max-width: 575px) {
-    .home-wrapper { padding: 1rem 0.75rem 2rem; }
-    .hero-card { padding: 1.5rem 1.1rem; }
     .lernpfad-grid { grid-template-columns: 1fr; }
 }
+
+/* Container.mt-4 ueberschreiben fuer Hero-Edge-to-Edge auf Mobile */
+body.redesign-page .container.mt-4 { padding-left: 0; padding-right: 0; margin-top: 0 !important; }
 </style>
 
 <script>
