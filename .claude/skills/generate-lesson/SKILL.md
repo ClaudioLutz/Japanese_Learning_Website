@@ -146,6 +146,53 @@ Lesson (kind="kana", title="Hiragana 1 — …", jlpt_level=5,
 
 **Bestandsschutz:** `Kana.character` ist UNIQUE. Wenn ein Zeichen bereits existiert (z.B. die initialen 10 Hiragana あ-こ in der DB), wird die bestehende ID wiederverwendet — kein Update auf bestehende Eintragsdaten (schützt manuelle Edits).
 
+## 2c. Kanji-Lessons (eigenes Modul `n5-kanji-grundlagen`, seit 2026-04-27)
+
+Kanji-Lessons sind Vocabulary-Lessons (`kind: "vocabulary"`, default), die didaktisch ein **Kanji-Set** in den Mittelpunkt stellen. Sie bekommen aber eine **eigene Modul-Heimat**: `n5-kanji-grundlagen` (id=38, display_order=3, icon=漢) zwischen Katakana (2) und Zahlen-Zeit (4).
+
+**Warum eigenes Modul:**
+- Pädagogische Hierarchie: Hiragana → Katakana → **Kanji-Grundlagen** → Themen (Familie, Reise, Alltag, etc.).
+- Lerner findet alle Kanji-Karten an einer Stelle, nicht verstreut über Themen-Module.
+- Mayuko-Direktive (JLPT-Leitprinzip): Schreibsystem zuerst komplett, dann Themen.
+
+**Bestand 2026-04-27 — 8 Lessons im Modul:**
+- 164: Kanji 1 — Zahlen 一-十 (order=1)
+- 167: Kanji 2 — Tage und Wochentage 日月火水木金土 (order=2)
+- 168: Kanji 3 — Menschen 人男女子友 (order=3)
+- 169: Kanji 4 — Natur 山川木雨 (order=4)
+- 170: Kanji 5 — Position 大小上下中右左 (order=5)
+- 171: Kanji 6 — Familie 父母兄姉弟妹 (order=6)
+- 172: Kanji 7 — Grosse Zahlen, Geld & Zeit 百千万円半年時分 (order=7)
+- 173: Kanji 8 — Eigenschaften 新古高安長短多少早 (order=8)
+
+**Page-Struktur einer Kanji-Lesson:**
+
+Wie eine Vocabulary-Lesson, aber Vokabel-Pages enthalten **abwechselnd `kanji`- und `vocabulary`-Items**: erst die Kanji-Karte (mit On/Kun/Strichzahl/Bedeutung), dann eine oder mehrere Vokabeln, die das Kanji nutzen. Beispiel aus Lesson 171:
+
+```json
+{ "content_type": "kanji",
+  "data": {
+    "character": "父", "meaning": "Vater / father",
+    "onyomi": "フ", "kunyomi": "ちち",
+    "jlpt_level": 5, "stroke_count": 4, "radical": "父"
+  } },
+{ "content_type": "vocabulary",
+  "data": { "word": "父", "reading": "ちち", "romaji": "chichi", ... } }
+```
+
+**Pipeline-Schritt `_get_or_create_kanji`** (in pipeline.py seit 2026-04-27): deduppt über `character` (UNIQUE), erstellt sonst neuen Kanji-Record mit On/Kun/Strichzahl/Radikal/JLPT/status='approved'/created_by_ai=True. Bestehende Records werden **nicht** überschrieben.
+
+**Coverage-Backfill als schneller Hebel:** Bestehende Kanji-Lessons haben oft 0 Kanji-Items (nur Vocabulary mit Kanji-Word). Ein direkter SQL-INSERT in die `kanji`-Tabelle für die thematisch bereits abgedeckten Zeichen hebt die Coverage sprunghaft, ohne neue Lesson zu schreiben. Vor neuer Kanji-Lesson immer prüfen:
+```sql
+-- Welche Kanji existieren in der DB als Karteikarten?
+SELECT character FROM kanji WHERE jlpt_level=5 ORDER BY character;
+-- Welche Kanji werden in Lessons als Vocabulary-Word genutzt, fehlen aber als Kanji-Record?
+```
+
+**Modul-Zuweisung:** Nach `insert` IMMER `category_id=38`, nicht in Themen-Module einsortieren. Order-Index = max(order_index)+1 im Modul.
+
+**Override für Kanji ausserhalb elzup-canonical:** Siehe §3 "Lesson-Level-Kanji-Override" — die canonical-Liste fehlt 兄/姉/弟/妹/新/古/安/短/多/少/早, daher `additional_n5_kanji` + Source-Note Pflicht.
+
 ## 3. Harte Constraints (Nicht-Verhandelbar)
 
 Verletzung ⇒ sofortiger Abbruch, keine Insertion:
@@ -186,6 +233,16 @@ Verletzung ⇒ sofortiger Abbruch, keine Insertion:
 - **Audio für die Konversation ist PFLICHT** — jede Dialog-Page bekommt ein eigenes `LessonContent(content_type='audio')` **vor** dem Dialog-Text (`order_index=1`, Text auf `order_index=2`). Der Pipeline-Schritt `audio {lesson_id}` rendert via Google Cloud TTS (Neural2-B, langsam=0.85) eine einzige MP3 mit allen japanischen Sprecher-Zeilen, 700ms-Pausen dazwischen. Speicherort: `app/static/uploads/lessons/audio/lesson_{id}/conversation.mp3`. Felder im LessonContent: `file_path="lessons/audio/lesson_{id}/conversation.mp3"` (relativ zu `UPLOAD_FOLDER`!), `file_type="audio/mpeg"`, `title="Konversation (Audio)"`. Das Template ([lesson_view.html:674](../../app/templates/lesson_view.html#L674)) nutzt `content.get_file_url()` — der GCS-aware Resolver im Model [models.py:463](../../app/models.py#L463). Benötigt `GOOGLE_API_KEY` oder `GOOGLE_TTS_API_KEY` in `.env`.
 - **JSON-Quoten-Disziplin im Draft** (Bug 2026-04-26 Lesson 160): NIE deutsche Anführungszeichen `„X"` in Draft-JSON-Strings verwenden. Das Schliesszeichen `"` ist ASCII-`"` und bricht den JSON-Parse mit `Expecting ',' delimiter`. Erlaubte Quoten innerhalb eines JSON-Strings: einfache `'...'`, spitze `«...»`, oder Kana-Eckklammern `「...」` (preferred fuer JP-Zitate). Beispiel-Fix: `"Tanaka sagt: „Yamada"."` → `"Tanaka sagt: 'Yamada'."` oder `"Tanaka sagt: 「Yamada」."`. Validator-Aufruf bricht mit Stack-Trace ab — Zeilennummer im JSONDecodeError nutzen, um die problematische Stelle zu finden.
 - **Asset-Pfade NIE mit `/static/uploads/` praefixen** (Bug 2026-04-26): `media_url`, `file_path` und `slide.image`/`slide.audio` in dialog_slideshow-JSON immer mit Prefix `/uploads/` (= uploaded_file-Route) oder ganz ohne Prefix (relativer Pfad, Template loest via `get_file_url()`). `/static/uploads/` funktioniert lokal aber bricht live, weil Cloud Run den Container ohne die generierten Assets ausliefert — kein 302-Fallback wie bei `/uploads/`. Skripte `gen_text_audio.py`, `gen_conversation_audio.py`, `gen_dialog_slideshow.py` sind 2026-04-26 fix; bei neuen Skripten beachten.
+- **Lesson-Level-Kanji-Override `additional_n5_kanji`** (seit 2026-04-27): Die canonical-Liste in `sources/jlpt_n5_canonical.json` (von elzup, MIT) hat 80 Kanji, weicht aber an mehreren Stellen vom Tanos/Wikipedia/Anki-N5-Standard ab. **Fehlt in elzup, ist aber Standard-N5:** 兄, 姉, 弟, 妹 (Geschwister), 新, 古, 安, 短, 多, 少, 早 (i-Adjektive). Wenn eine Kanji-Lesson explizit eines dieser Zeichen lehrt, MUSS sie auf Lesson-Header-Ebene zwei Felder setzen:
+  ```json
+  "additional_n5_kanji": ["兄", "姉", "弟", "妹"],
+  "additional_n5_kanji_source_note": "In Tanos-N5 und allen Anki-N5-Decks Standard, in elzup nicht. ..."
+  ```
+  Der Validator (`pipeline.py` ab Zeile 355) addiert die Liste zum N5-Kanji-Set für die Beispielsatz-Prüfung. Pflicht: ohne `additional_n5_kanji_source_note` schlägt der Validator fehl. **Vor Verwendung prüfen, ob das Kanji wirklich nicht in canonical ist:**
+  ```bash
+  PYTHONIOENCODING=utf-8 python -c "import json; canon=json.load(open('.claude/skills/generate-lesson/sources/jlpt_n5_canonical.json')); print('兄' in [k['char'] for k in canon['kanji']])"
+  ```
+  Override-Kanji zaehlen NICHT in der `pipeline.py coverage`-Metrik (die misst gegen canonical), sind aber als Karteikarten in der DB vorhanden und didaktisch korrekt.
 
 ## 4. Lektions-Struktur (Zielbild) — erweitert 2026-04-24
 
@@ -415,6 +472,11 @@ Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
     → Transaktionaler INSERT in Postgres (docker-compose DB)
     → Bei Fehler: Rollback, keine Teil-Lektion
     → Gibt lesson_id zurück
+    → Unterstuetzte content_types: kana, vocabulary, kanji, grammar, text,
+       audio, image, video. Insert deduppt via _get_or_create_kana /
+       _get_or_create_vocab / _get_or_create_kanji / _get_or_create_grammar
+       (alle in pipeline.py) — bestehende Records werden per UNIQUE-Constraint
+       (character/word/title) wiederverwendet, NICHT ueberschrieben.
 
 [4b] python .claude/skills/generate-lesson/pipeline.py audio {lesson_id}
     → PFLICHT nach Insert. Findet die Dialog-Page automatisch (per Titel:
@@ -627,6 +689,13 @@ Nach jedem Run anhängen (siehe [learnings.md](learnings.md) für Template):
 - **pg_isready-Check:** `docker exec postgres_db pg_isready -U app_user -d japanese_learning` ist der zuverlässigste Readiness-Check.
 - **Windows-Shell-Encoding:** Python-Scripts, die japanische Zeichen (Hiragana/Katakana/Kanji) per `print()` ausgeben, brauchen `PYTHONIOENCODING=utf-8` als Env-Variable, sonst `UnicodeEncodeError: cp1252`. Beispiel: `PYTHONIOENCODING=utf-8 python script.py`. Alternativ beim Skript-Start: `sys.stdout.reconfigure(encoding='utf-8')`.
 - Bestehende `AILessonContentGenerator` in `app/ai_services.py` — **NICHT NUTZEN** (User-Entscheidung: Claude schreibt selbst)
+- **Coverage-Backfill als Hebel** (Lesson Learned 2026-04-27): Bestehende Kanji-Lessons (164/167-170 vor 2026-04-27) hatten 0 Kanji-Items in der `kanji`-Tabelle, obwohl die Zeichen thematisch in den Vocabulary-Words abgedeckt waren. Direkter SQL-INSERT in `kanji` mit On/Kun/Strichzahl ist der schnellste Coverage-Hebel — keine neue Lesson noetig. Vor jeder neuen Kanji-Lesson pruefen:
+  ```sql
+  -- Welche N5-Kanji existieren als Karteikarten?
+  SELECT character FROM kanji WHERE jlpt_level=5 ORDER BY character;
+  -- Welche fehlen laut canonical?
+  ```
+  Plus `python .claude/skills/generate-lesson/pipeline.py coverage 5 --show-missing 30`. Wenn ein Backfill moeglich ist, vor der naechsten Generierung machen — pro Run kann das +30%-Punkte Coverage bringen ohne Mehraufwand.
 
 ## 11. Deploy & Live-Schalten
 
@@ -652,6 +721,21 @@ Audios live. `/sync-cloud-db` ruft das mittlerweile selbst auf, aber bei
 Manuellem Push immer mit-erinnern. Symptom-Beispiele 2026-04-26:
 "die bilder werden auf der webseite nicht angezeigt aber lokal schon"
 + "das audio funktioniert auch nicht auf der deployten webseite".
+
+**Windows-Falle (2026-04-27):** Auf Windows scheitert `scripts/sync_assets_to_gcs.py`
+mit `[FEHLER] 'gcloud' nicht im PATH gefunden`, weil `gcloud` als `gcloud.cmd`
+installiert ist und Pythons `subprocess.run(["gcloud", ...])` ohne `shell=True`
+nur `.exe`-Dateien findet — selbst wenn `which gcloud` in der Bash-Shell den
+korrekten Pfad zeigt. Workaround bis Skript gefixt ist: rsync direkt aus
+Bash-Loop:
+```bash
+for src in vocab_generated generated lessons/audio lessons/text_audio lessons/dialog_slideshow; do
+  gcloud storage rsync -r "app/static/uploads/$src" "gs://jpl-website-assets/$src" \
+    --account=claudio.lutz.cv@gmail.com
+done
+```
+TODO Skript-Fix: `subprocess.run([..."gcloud.cmd", ...], shell=False)` ODER
+`shutil.which("gcloud") or shutil.which("gcloud.cmd")` im PATH-Check.
 
 ### 11b. Cloud Run Deploy (Code)
 **Nur noetig wenn seit dem letzten Deploy Code-Aenderungen gepusht wurden**
