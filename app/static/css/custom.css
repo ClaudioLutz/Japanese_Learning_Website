@@ -50,6 +50,134 @@
     --shadow-lg: 0 12px 40px rgba(0,0,0,0.12);
 }
 
+/* === Compass-Redesign-Tokens (Playbook 2026-04) ====================== */
+/* Washi/Sumi/Shu-Palette nach docs/compass_artifact_wf-... — strikt
+   additiv, Zen-Variablen oben bleiben fuer Rueckwaertskompatibilitaet. */
+:root {
+    --washi:    #FAF7F2;
+    --kinari:   #F5F0E8;
+    --sumi:     #1C1C1C;
+    --tetsu:    #2C2C2C;
+    --kon:      #1F2A44;
+    --kon-50:   #F2F4F8;
+    --kon-100:  #E1E5EE;
+    --kon-300:  #9AA6BD;
+    --kon-500:  #3F4E72;
+    --ai:       #264F7E;
+    --shu:      #EB6101;
+    --shu-soft: #F4D9C7;
+    --shu-deep: #B84A00;
+    --kincha:   #C7802D;
+    --matcha:   #7A9033;
+
+    --ink-50:  #FAF7F2; --ink-100: #F1EDE6; --ink-200: #E4DED4;
+    --ink-300: #D4CCBE; --ink-400: #A8A095; --ink-500: #7A7368;
+    --ink-600: #5C564D; --ink-700: #403B34; --ink-800: #2C2924;
+    --ink-900: #1C1A17; --ink-950: #0F0E0C;
+
+    --text-base: 1.0625rem;
+    --leading-base: 1.7;
+    --text-eyebrow: 0.75rem;
+    --tracking-tight: -0.03em;
+
+    --shadow-subtle: 0 1px 2px 0 rgba(28,26,23,.04), 0 1px 3px 0 rgba(28,26,23,.06);
+    --shadow-card:   0 2px 4px -1px rgba(28,26,23,.06), 0 4px 12px -2px rgba(28,26,23,.08);
+    --shadow-lifted: 0 8px 24px -4px rgba(28,26,23,.10), 0 2px 6px -2px rgba(28,26,23,.06);
+}
+
+/* === Redesign-Komponenten (opt-in via <body class="redesign-page">) === */
+
+.section-narrow { max-width: 1152px; margin: 0 auto; padding: 0 1.5rem; }
+.section-prose  { max-width: 68ch;   margin: 0 auto; padding: 0 1.25rem; }
+
+body.redesign-page {
+    background-color: var(--washi);
+    color: var(--tetsu);
+    font-family: 'Inter', 'Noto Sans JP', system-ui, sans-serif;
+    font-size: var(--text-base);
+    line-height: var(--leading-base);
+}
+body.redesign-page h1,
+body.redesign-page h2,
+body.redesign-page h3 {
+    font-family: 'Geist', 'Inter', system-ui, sans-serif;
+    font-weight: 510;
+    letter-spacing: var(--tracking-tight);
+    color: var(--kon);
+}
+
+.btn-shu {
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 0.5rem;
+    padding: 0.85rem 1.5rem;
+    border: none; border-radius: 8px;
+    font-weight: 600; font-size: 1rem; line-height: 1;
+    color: #fff; cursor: pointer; text-decoration: none;
+    background: linear-gradient(180deg, #EB6101, #D85700);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.15),
+                0 1px 2px rgba(184,74,0,.30),
+                0 0 0 1px rgba(184,74,0,.40);
+    transition: transform .15s, box-shadow .2s, background .2s;
+}
+.btn-shu:hover {
+    background: linear-gradient(180deg, #F37016, #E25C00);
+    transform: translateY(-1px);
+    color: #fff; text-decoration: none;
+}
+.btn-shu:disabled,
+.btn-shu[disabled] {
+    background: var(--ink-300); cursor: not-allowed; box-shadow: none;
+}
+
+.btn-ghost-jp {
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 0.5rem;
+    padding: 0.85rem 1.5rem;
+    border: 1px solid var(--ink-300); border-radius: 8px;
+    background: transparent; color: var(--sumi);
+    font-weight: 500; font-size: 1rem;
+    text-decoration: none; cursor: pointer;
+    transition: background-color .15s, border-color .15s;
+}
+.btn-ghost-jp:hover {
+    background: rgba(28,26,23,.04);
+    border-color: var(--ink-500); color: var(--sumi);
+    text-decoration: none;
+}
+
+.eyebrow-chip {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    padding: 0.3rem 0.75rem;
+    border: 1px solid var(--ink-200); border-radius: 999px;
+    font-family: 'Geist', 'Inter', sans-serif;
+    font-size: var(--text-eyebrow); font-weight: 510;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--ink-700); background: rgba(255,255,255,.6);
+}
+
+.hero-bg-jp {
+    background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(31,42,68,.18), transparent 60%),
+        radial-gradient(ellipse 60% 40% at 85% 10%, rgba(235,97,1,.08), transparent 55%),
+        linear-gradient(180deg, #FAF7F2 0%, #F5F0E8 100%);
+}
+
+.card-jp {
+    background: #fff;
+    border: 1px solid var(--ink-200);
+    border-radius: 12px;
+    box-shadow: var(--shadow-subtle);
+}
+
+.section-divider-jp {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(28,26,23,.18) 50%, transparent);
+    margin: 4rem 0;
+}
+
+.section-jp { padding: 6rem 0; }
+@media (max-width: 768px) { .section-jp { padding: 4rem 0; } }
+
 /* --- 3. Apply Global Styles --- */
 body {
     font-family: 'Noto Sans JP', sans-serif;
