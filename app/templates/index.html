@@ -71,6 +71,9 @@
           <strong>{{ n5_kanji_count }} Kanji</strong> live · neue Lektionen wöchentlich · gestartet 2026 in der Ostschweiz.
         </p>
         {% endif %}
+        <p class="hero-trust-link">
+          <a href="{{ url_for('routes.ueber') }}">Wer steht hinter Japanese Learning? →</a>
+        </p>
       </div>
     {% endif %}
   </section>
@@ -322,6 +325,17 @@
     line-height: 1.4;
 }
 .hero-live-stats strong { color: #2c3e50; }
+.hero-trust-link {
+    margin-top: 0.4rem;
+    font-size: 0.85rem;
+    text-align: center;
+}
+.hero-trust-link a {
+    color: #6366f1;
+    text-decoration: none;
+    font-weight: 500;
+}
+.hero-trust-link a:hover { text-decoration: underline; }
 .hero-secondary-link {
     display: block;
     margin-top: 0.75rem;

@@ -18,17 +18,24 @@
   <section class="ueber-section">
     <h2>Claudio Lutz — Gründer & Entwickler</h2>
     <p>
-      Hauptberuflich arbeite ich als Datenanalyst bei einer Schweizer
-      Wirtschaftsauskunftei. Datenmodellierung, SQL, Python und das Bauen
-      von Lern-/Reporting-Systemen sind mein Alltag. Diese Plattform ist
-      mein Abendprojekt — getrieben aus zwei Motivationen heraus:
+      Hauptberuflich arbeite ich als Data Scientist bei einer Schweizer
+      Wirtschaftsauskunftei. Mein Tagesgeschäft ist Datenmodellierung, SQL,
+      Python, Machine Learning und das Bauen von Reporting- und
+      Entscheidungssystemen aus großen Datenbeständen. Genau diese Werkzeuge
+      stecken auch in dieser Plattform — der Lernpfad, das Spaced-Repetition-System
+      und die Coverage-Tracker sind keine UI-Spielereien, sondern bewusst
+      datengetrieben aufgebaut.
+    </p>
+    <p>
+      Diese Plattform ist mein Abendprojekt, getrieben aus zwei Motivationen:
     </p>
     <ol class="ueber-list">
       <li>
-        <strong>Ich lerne selbst Japanisch.</strong> Meine Frau Mayuko ist gebürtige
-        Japanerin und Japanisch-Lehrerin. Sie ist meine fachliche Reviewerin
-        für jede einzelne Lektion — Fehler, unnatürliche Formulierungen oder
-        kulturelle Schiefstände werden vor dem Veröffentlichen entfernt.
+        <strong>Ich lerne selbst Japanisch.</strong> Beim Lernen habe ich
+        gemerkt: Was als Data Scientist trivial ist — etwa die Frage „welche
+        Vokabeln muss ich heute wirklich wiederholen, um in 30 Tagen
+        90 % Retention zu haben?" — beantwortet kein vorhandenes Tool sauber
+        auf Deutsch. Also habe ich angefangen, es selbst zu bauen.
       </li>
       <li>
         <strong>Die existierenden Tools sind nicht gut genug für deutschsprachige Lerner.</strong>
@@ -37,6 +44,45 @@
         Auf Deutsch erklärtes, didaktisch durchdachtes Japanisch — Marktlücke.
       </li>
     </ol>
+  </section>
+
+  <section class="ueber-section">
+    <h2>Was Data Science mit Sprachenlernen zu tun hat</h2>
+    <p>
+      Sprachenlernen ist im Kern ein Optimierungsproblem: Du hast begrenzte
+      Lernzeit pro Tag und willst maximale Retention pro investierter Minute.
+      Genau dort, wo viele Lernplattformen mit Bauchgefühl arbeiten, kann man
+      mit Daten messbar bessere Ergebnisse erzielen.
+    </p>
+    <ul class="ueber-list">
+      <li>
+        <strong>FSRS statt SM-2:</strong> Der Algorithmus hinter dem
+        Wiederholungssystem ist nicht der jahrzehntealte Anki-Standard,
+        sondern FSRS — datenbasiert, mit ~25 % weniger Wiederholungen bei
+        gleicher Retention.
+        <a href="{{ url_for('routes.lernmethode') }}">Mehr dazu →</a>
+      </li>
+      <li>
+        <strong>Coverage-Tracking:</strong> Statt einer schwammigen „N5-Versprechung"
+        siehst du auf der Bundle-Seite live, wie viel Prozent der offiziellen
+        N5-Wortliste und N5-Kanji bereits abgedeckt sind. Das Tracking läuft
+        automatisch gegen die offizielle JLPT-Liste.
+      </li>
+      <li>
+        <strong>Reproduzierbares Lektionsdesign:</strong> Jede Lektion hat
+        eine konsistente Struktur (Einführung → neue Items → Beispielsätze
+        → Quiz → Mini-Wörter). Diese Struktur ist nicht zufällig —
+        sie kommt aus einem Lerndesign, das ich gegen meinen eigenen
+        Lernfortschritt validiere.
+      </li>
+      <li>
+        <strong>Transparente Metriken:</strong> Du siehst nicht nur deine XP,
+        sondern auch deine echte Retention-Quote pro Item, durchschnittliche
+        Bearbeitungszeit, fällige Karten und prognostizierte Vergessensrate.
+        Das ist nichts, was eine Marketing-Plattform zeigt — das ist, was
+        ein Data Scientist von seinem eigenen Lernsystem erwartet.
+      </li>
+    </ul>
   </section>
 
   <section class="ueber-section">
@@ -72,7 +118,9 @@
         <a href="{{ url_for('routes.lernmethode') }}">Mehr zur Lernmethode →</a>
       </li>
       <li>
-        <strong>Review:</strong> Nichts wird publiziert, bevor Mayuko (Japanisch-Lehrerin) drüber gegangen ist.
+        <strong>Eigene Lerner-Validierung:</strong> Ich gehe jede Lektion vor dem
+        Veröffentlichen selbst durch und teste sie als Lerner. Was ich nicht
+        verstehe oder unklar formuliert finde, wird umgeschrieben.
       </li>
     </ul>
   </section>

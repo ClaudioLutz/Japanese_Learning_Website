@@ -200,17 +200,18 @@
     </div>
 
     <div class="refund-row">
-      <strong>30 Tage Geld zurueck</strong> — ohne Begruendung. E-Mail an
-      <a href="mailto:info@japanese-learning.ch">info@japanese-learning.ch</a> genuegt.
+      <strong>30 Tage Geld zurück</strong> — ohne Begründung. E-Mail an
+      <a href="mailto:info@japanese-learning.ch">info@japanese-learning.ch</a> genügt.
     </div>
 
     <div class="trust-row">
-      Schweizer Anbieter · Bezahlung mit TWINT, Visa, Mastercard, Apple/Google Pay ueber Payrexx
+      Schweizer Anbieter · Bezahlung mit TWINT, Visa, Mastercard, Apple/Google Pay über Payrexx ·
+      <a href="{{ url_for('routes.ueber') }}" style="color:#4f46e5;">Wer steht dahinter?</a>
     </div>
 
   {% endif %}
 
-  <a href="{{ url_for('routes.index') }}#lernpfad" class="paywall-back">← Zurueck zum Lernpfad</a>
+  <a href="{{ url_for('routes.index') }}#lernpfad" class="paywall-back">← Zurück zum Lernpfad</a>
 
 </div>
 {% endblock %}
