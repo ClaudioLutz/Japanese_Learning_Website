@@ -1,0 +1,742 @@
+{% extends "base.html" %}
+
+{% block title %}JLPT N5 Schweiz — Online-Vorbereitung auf Deutsch | CHF 9.90{% endblock %}
+{% block meta_description %}JLPT N5 in der Schweiz: Prüfung an der UZH Zürich, Vorbereitung online auf Deutsch. Hiragana, Katakana, 55 Kanji, 473 Vokabeln. Lifetime-Zugriff CHF 9.90.{% endblock %}
+{% block canonical %}{{ site_url }}/jlpt-n5-schweiz{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block og_title %}JLPT N5 Schweiz — Online-Vorbereitung auf Deutsch{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "EducationalOrganization",
+      "@id": "{{ site_url }}/#org",
+      "name": "{{ site_name }}",
+      "url": "{{ site_url }}",
+      "logo": "{{ site_url }}/static/favicon.png",
+      "description": "{{ site_description }}",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Promenadenstrasse 72",
+        "postalCode": "9400",
+        "addressLocality": "Rorschach",
+        "addressCountry": "CH"
+      },
+      "email": "info@japanese-learning.ch"
+    },
+    {
+      "@type": "WebSite",
+      "@id": "{{ site_url }}/#website",
+      "url": "{{ site_url }}",
+      "name": "{{ site_name }}",
+      "inLanguage": "de-DE",
+      "publisher": { "@id": "{{ site_url }}/#org" }
+    },
+    {
+      "@type": "Course",
+      "name": "JLPT N5 — Japanisch lernen auf Deutsch",
+      "description": "Strukturierter Online-Kurs zur Vorbereitung auf den Japanese Language Proficiency Test Niveau N5. Hiragana, Katakana, 55 Kanji, 473 Vokabeln, Grundgrammatik. Komplett auf Deutsch erklärt, mit Spaced-Repetition-System und Quiz.",
+      "provider": {
+        "@type": "Organization",
+        "name": "Japanese Learning",
+        "sameAs": "{{ site_url }}"
+      },
+      "inLanguage": "de",
+      "educationalLevel": "Beginner",
+      "teaches": "Japanisch JLPT N5",
+      "offers": {
+        "@type": "Offer",
+        "price": "9.90",
+        "priceCurrency": "CHF",
+        "availability": "https://schema.org/InStock",
+        "url": "{{ site_url }}/n5-bundle"
+      },
+      "hasCourseInstance": {
+        "@type": "CourseInstance",
+        "courseMode": "online",
+        "courseWorkload": "PT60H"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "{{ site_url }}/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "JLPT N5 Schweiz",
+          "item": "{{ site_url }}/jlpt-n5-schweiz"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Wie lange dauert die Vorbereitung auf JLPT N5?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Bei rund 30 Minuten täglichem Lernen rechnen die meisten Lernenden mit 4 bis 6 Monaten von null bis zur N5-Prüfungsreife. Wer schon Hiragana und Katakana beherrscht oder bereits ein Lehrbuch wie Genki I durchgearbeitet hat, kann es in 2 bis 3 Monaten schaffen. Entscheidend ist Konsistenz, nicht Sessiondauer — täglich 20 Minuten schlagen einmal pro Woche zwei Stunden."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Kann ich JLPT N5 ohne Vorkenntnisse bestehen?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ja, der N5 ist explizit für Anfänger konzipiert und setzt keinerlei Vorkenntnisse voraus. Du startest bei null mit Hiragana und Katakana, baust den Grundwortschatz auf und lernst die Basis-Grammatik. Das Curriculum auf japanese-learning.ch beginnt genau dort und führt strukturiert bis zum Prüfungsniveau."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Brauche ich Hiragana und Katakana für N5?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ja, beide Silbenschriften sind für N5 zwingend erforderlich. Hiragana wird für japanische Wörter und Grammatikpartikel verwendet, Katakana für Lehnwörter aus dem Englischen und für Eigennamen. Die Prüfung enthält keine Romaji (lateinische Umschrift) — alles ist in japanischer Schrift."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Wo kann ich JLPT N5 in der Schweiz ablegen?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Der einzige offizielle JLPT-Prüfungsort in der Schweiz ist die Universität Zürich, organisiert vom Asien-Orient-Institut. Die Prüfung findet einmal jährlich im Dezember statt. Im Juli wird in der Schweiz kein JLPT angeboten — wer früher prüfen will, muss ins Ausland (z. B. Deutschland, Österreich, Italien)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Was kostet der JLPT N5 in der Schweiz?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Die Prüfungsgebühr für N5 in Zürich beträgt CHF 130 (Stand 2026). Die Anmeldung erfolgt online im Sommer über die Website der Universität Zürich. Die Gebühr ist bei der Anmeldung zu zahlen und wird bei Nichterscheinen nicht erstattet."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Wann ist der nächste JLPT-Prüfungstermin in Zürich?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Der nächste JLPT-Termin in Zürich ist Sonntag, 6. Dezember 2026, in den Räumlichkeiten der Universität Zürich. Die Anmeldung öffnet typischerweise im Sommer 2026 — die genauen Fristen werden vom Asien-Orient-Institut der UZH veröffentlicht. Wer den Termin verpasst, hat erst im Dezember 2027 wieder die Möglichkeit in der Schweiz."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Wie viele Kanji muss ich für N5 können?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Offiziell werden für N5 etwa 80 Kanji erwartet, in der Praxis tauchen je nach Quelle zwischen 79 und 103 Zeichen auf. Auf japanese-learning.ch lernst du 55 zentrale N5-Kanji mit Strichreihenfolge, On-/Kun-Lesungen und Beispielwörtern — kombiniert mit dem Vokabelkurs deckst du damit den prüfungsrelevanten Bereich ab."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Lohnt sich N5 für Beruf, Studium oder Visum?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "N5 ist der erste sichtbare Beleg für Japanischkenntnisse, aber für Studium und Beruf in Japan reichen meist erst N3 oder N2. Für Hobbylerner, Reise-Vorbereitung oder als Etappenziel auf dem Weg zu höheren Stufen ist N5 ein motivierender Meilenstein. An der Universität St. Gallen wird der JLPT als externes Sprachzertifikat anerkannt — relevant für HSG-Studierende mit Japan-Bezug."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Was ist der Unterschied zwischen N5 und N4?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "N5 deckt grundlegende Alltagssituationen ab: einfache Sätze, langsam gesprochene Konversation, ca. 700 Vokabeln, ca. 80 Kanji. N4 verdoppelt den Wortschatz auf rund 1500 Vokabeln und 300 Kanji, fügt komplexere Grammatik (te-iru-Form, Konditionale, Passiv-Ansätze) hinzu und erwartet längere Texte. Wer N5 sicher hat, braucht für N4 typischerweise nochmal 4 bis 6 Monate."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Kann ich die Prüfung auch in Deutschland oder Österreich ablegen?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ja. In Deutschland wird der JLPT in Berlin, Frankfurt, Köln, München und Hamburg angeboten — anders als in der Schweiz teilweise zweimal jährlich (Juli und Dezember). In Österreich ist Wien der Standort. Die offizielle Liste aller Prüfungsorte weltweit findest du auf jlpt.jp/e/application/overseas_list.html."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="n5ch-page">
+
+  {# ── Breadcrumb ── #}
+  <nav class="n5ch-breadcrumb" aria-label="Breadcrumb">
+    <a href="{{ url_for('routes.index') }}">Home</a>
+    <span class="sep">›</span>
+    <span aria-current="page">JLPT N5 Schweiz</span>
+  </nav>
+
+  {# ─────────────────────────────────────────────────────────
+     HERO
+     ───────────────────────────────────────────────────────── #}
+  <header class="n5ch-hero">
+    <h1>JLPT N5 in der Schweiz — Online-Vorbereitung auf Deutsch</h1>
+    <p class="n5ch-lead">
+      Die offizielle JLPT-Prüfung findet einmal jährlich im Dezember an der
+      Universität Zürich statt. Bereite dich strukturiert darauf vor —
+      von Hiragana bis zu deinen ersten japanischen Sätzen.
+    </p>
+    <div class="n5ch-hero-cta">
+      <a href="{{ url_for('routes.register') }}" class="btn btn-primary btn-lg">
+        Kostenlos starten
+      </a>
+      <a href="{{ url_for('bundle.n5_bundle') }}" class="btn btn-outline-primary btn-lg">
+        N5 Komplett · CHF 9.90
+      </a>
+    </div>
+    <div class="n5ch-hero-badges">
+      <span>✅ 11 Lektionen kostenlos</span>
+      <span>🇨🇭 Aus Rorschach SG</span>
+    </div>
+  </header>
+
+  {# ─────────────────────────────────────────────────────────
+     SEKTION 1 — Was ist der JLPT N5?
+     ───────────────────────────────────────────────────────── #}
+  <section class="n5ch-section">
+    <h2>Was ist der JLPT N5?</h2>
+    <p>
+      Der <strong>Japanese Language Proficiency Test</strong> (JLPT, japanisch
+      日本語能力試験) ist die offizielle, international anerkannte
+      Standardprüfung für Japanisch als Fremdsprache. Er wird von der
+      <em>Japan Foundation</em> und <em>Japan Educational Exchanges and Services</em>
+      organisiert und in fünf Niveaustufen angeboten: N5 ist der Einstieg,
+      N1 das höchste Niveau.
+    </p>
+    <p>
+      <strong>N5 zertifiziert grundlegende Japanischkenntnisse.</strong>
+      Du kannst einfache Sätze in Hiragana und Katakana lesen und schreiben,
+      einen Grundwortschatz von rund 700 Wörtern verstehen, etwa 80 Basis-Kanji
+      erkennen und langsam gesprochene Alltagskonversation folgen.
+    </p>
+
+    <h3>Was wird geprüft?</h3>
+    <ul class="n5ch-list">
+      <li><strong>Vokabular &amp; Schrift</strong> (~30 Min.): Hiragana, Katakana, Kanji-Lesungen, Wortbedeutungen</li>
+      <li><strong>Grammatik &amp; Leseverständnis</strong> (~50 Min.): Partikel, Konjugationen, kurze Texte</li>
+      <li><strong>Hörverständnis</strong> (~30 Min.): langsam gesprochene Dialoge und kurze Mitteilungen</li>
+    </ul>
+
+    <h3>Was wird <em>nicht</em> geprüft?</h3>
+    <p>
+      Wichtig — viele unterschätzen das: Der JLPT prüft <strong>weder Sprechen
+      noch freies Schreiben</strong>. Es gibt keinen mündlichen Teil und keinen
+      Aufsatz. Alle Aufgaben sind <strong>Multiple-Choice</strong>. Das macht die
+      Prüfung gut planbar — du kannst gezielt mit Mock-Tests üben.
+    </p>
+
+    <h3>N5-Grammatik in Stichpunkten</h3>
+    <ul class="n5ch-list n5ch-grammar">
+      <li><strong>Höflichkeitsform</strong> (です / ます-Form)</li>
+      <li><strong>Partikel</strong> は, が, を, に, で, へ, と, も</li>
+      <li><strong>Adjektive</strong> i-Adjektive und na-Adjektive (Konjugation in Gegenwart und Vergangenheit)</li>
+      <li><strong>Verbformen</strong> Wörterbuchform, neutrale Form, te-Form, ta-Form</li>
+      <li><strong>Bitten und Aufforderungen</strong> ～てください</li>
+      <li><strong>Vergleiche</strong> ～より, ～のほうが, ～のなかで</li>
+      <li><strong>Existenz</strong> あります / います</li>
+    </ul>
+
+    <p>
+      Der Test dauert insgesamt rund <strong>105 Minuten</strong>, geprüft wird im
+      Multiple-Choice-Format. Bestehensgrenze: 80 von 180 Punkten, mit
+      Mindestpunktzahlen pro Sektion. International wird das Zertifikat von
+      Universitäten, Visa-Behörden und japanischen Arbeitgebern anerkannt.
+    </p>
+  </section>
+
+  {# ─────────────────────────────────────────────────────────
+     SEKTION 2 — JLPT in der Schweiz (Killer-Block)
+     ───────────────────────────────────────────────────────── #}
+  <section class="n5ch-section n5ch-section-highlight" id="schweiz">
+    <h2>JLPT in der Schweiz — Termine, Ort, Anmeldung</h2>
+    <p>
+      In der Schweiz wird der JLPT <strong>einmal jährlich im Dezember</strong>
+      angeboten. Anders als in Deutschland gibt es <strong>keinen Juli-Termin</strong> —
+      ein häufig übersehenes Detail bei der Planung.
+    </p>
+
+    <dl class="n5ch-deflist">
+      <dt>Prüfungsort</dt>
+      <dd>Universität Zürich, Asien-Orient-Institut (Räumlichkeiten je nach Anmeldezahl)</dd>
+
+      <dt>Nächster Termin</dt>
+      <dd>Sonntag, 6. Dezember 2026</dd>
+
+      <dt>Häufigkeit</dt>
+      <dd>1× jährlich, immer im Dezember (kein Juli-Termin in der Schweiz)</dd>
+
+      <dt>Prüfungsgebühr N5</dt>
+      <dd>CHF 130 (Stand 2026)</dd>
+
+      <dt>Anmeldung</dt>
+      <dd>
+        Online über die Universität Zürich, Anmeldung öffnet im Sommer 2026.
+        Genaue Fristen werden vom Asien-Orient-Institut der UZH veröffentlicht.
+      </dd>
+
+      <dt>Verpasst? Alternativen im Ausland</dt>
+      <dd>
+        Wer den Zürich-Termin verpasst, kann den JLPT auch in Deutschland
+        (Berlin, Frankfurt, Köln, München, Hamburg — teils auch Juli),
+        Österreich (Wien) oder anderen Ländern ablegen. Die offizielle
+        Standortliste:
+        <a href="https://www.jlpt.jp/e/application/overseas_list.html"
+           target="_blank" rel="noopener">jlpt.jp/e/application/overseas_list.html</a>
+      </dd>
+
+      <dt>Spezialfall HSG</dt>
+      <dd>
+        An der Universität St. Gallen (HSG) wird der JLPT als externes
+        Sprachzertifikat anerkannt — relevant für Studierende aus der Ostschweiz
+        mit Japan-Bezug.
+      </dd>
+    </dl>
+
+    <p class="n5ch-note">
+      <strong>Hinweis:</strong> Die Prüfungsgebühren und Termine werden jährlich
+      vom Veranstalter neu publiziert. Vor der Anmeldung immer die offizielle
+      UZH-Seite prüfen.
+    </p>
+  </section>
+
+  {# ─────────────────────────────────────────────────────────
+     SEKTION 3 — Wie wir dich vorbereiten
+     ───────────────────────────────────────────────────────── #}
+  <section class="n5ch-section">
+    <h2>Wie wir dich auf den JLPT N5 vorbereiten</h2>
+    <p>
+      Das Curriculum auf japanese-learning.ch ist <strong>strikt nach
+      JLPT-N5-Anforderungen aufgebaut</strong> — jede Vokabel, jedes Kanji,
+      jede Grammatikregel ist Teil des offiziellen N5-Korpus.
+    </p>
+    <ul class="n5ch-list">
+      <li><strong>9 Module mit 30+ Lektionen</strong>, strukturiert von Hiragana bis Te-Form</li>
+      <li><strong>473 N5-Vokabeln</strong> mit Beispielsätzen, Audio und Spaced-Repetition</li>
+      <li><strong>55 N5-Kanji</strong> mit Strichreihenfolge, On-/Kun-Lesungen und Beispielwörtern</li>
+      <li><strong>Spaced-Repetition-System (SRS)</strong> mit FSRS-Algorithmus —
+        bringt fällige Karten automatisch zur richtigen Zeit zurück.
+        <a href="{{ url_for('routes.lernmethode') }}">Mehr zur Lernmethode →</a></li>
+      <li><strong>Komplett auf Deutsch erklärt</strong> — der entscheidende
+        Unterschied zu englischsprachigen Apps wie Bunpo, Renshuu oder WaniKani.</li>
+      <li><strong>Quiz nach jeder Lektion</strong> zur Selbstkontrolle (Multiple-Choice, true/false, matching)</li>
+    </ul>
+
+    <h3>Vergleich: Sprachkurs vs. japanese-learning.ch</h3>
+    <div class="table-responsive">
+      <table class="n5ch-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>klassischer Sprachkurs</th>
+            <th>japanese-learning.ch</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Kosten</td><td>ab CHF 30/h</td><td><strong>CHF 9.90 lifetime</strong></td></tr>
+          <tr><td>Ort</td><td>Zürich, feste Adresse</td><td>überall online</td></tr>
+          <tr><td>Zeit</td><td>feste Termine</td><td>wann du willst</td></tr>
+          <tr><td>Tempo</td><td>Gruppentempo</td><td>dein Tempo</td></tr>
+          <tr><td>Sprache</td><td>je nach Schule</td><td>konsistent Deutsch</td></tr>
+          <tr><td>Sprechübung</td><td>✅ mit Lehrer-Feedback</td><td>❌ keine Konversation</td></tr>
+          <tr><td>Spaced Repetition</td><td>❌ meist nicht</td><td>✅ FSRS-basiert</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="n5ch-note">
+      Ehrlich: Sprachschulen bieten Sprechübungen und Lehrer-Feedback —
+      das gibt es bei uns nicht. Für strukturierten Vokabel-, Kanji- und
+      Grammatikaufbau auf Deutsch sind wir günstiger und flexibler.
+      Viele Lernende kombinieren beides.
+    </p>
+  </section>
+
+  {# ─────────────────────────────────────────────────────────
+     SEKTION 4 — Lernpfad-Übersicht
+     ───────────────────────────────────────────────────────── #}
+  <section class="n5ch-section">
+    <h2>Dein Lernpfad zum JLPT N5</h2>
+    <p>
+      Der Aufbau folgt der Reihenfolge, in der du das Wissen tatsächlich
+      anwenden musst — Schrift zuerst, dann Wortschatz, dann Grammatik.
+    </p>
+    <ol class="n5ch-pfad">
+      <li>
+        <span class="step">1️⃣</span>
+        <strong>Schreibsystem:</strong>
+        Hiragana und Katakana — die beiden Silbenschriften, ohne die im
+        japanischen Schriftbild nichts geht. <a href="{{ url_for('routes.index') }}#lernpfad">Zum Lernpfad →</a>
+      </li>
+      <li>
+        <span class="step">2️⃣</span>
+        <strong>Grundwortschatz &amp; Kanji:</strong>
+        Zahlen, Familie, Alltag, Reise, plus die ersten 55 N5-Kanji mit
+        Strichreihenfolge.
+      </li>
+      <li>
+        <span class="step">3️⃣</span>
+        <strong>Erste Sätze (Grammatik):</strong>
+        Partikel, Verb-Konjugation (te-Form, ta-Form), i- und na-Adjektive,
+        Bitten und Vergleiche.
+      </li>
+    </ol>
+    <p>
+      <a href="{{ url_for('routes.lessons') }}">Alle Lektionen ansehen →</a> ·
+      <a href="{{ url_for('bundle.n5_bundle') }}">N5 Komplett-Bundle →</a>
+    </p>
+  </section>
+
+  {# ─────────────────────────────────────────────────────────
+     SEKTION 5 — FAQ
+     ───────────────────────────────────────────────────────── #}
+  <section class="n5ch-section" id="faq">
+    <h2>Häufige Fragen zum JLPT N5 in der Schweiz</h2>
+
+    <details class="n5ch-faq">
+      <summary><h3>Wie lange dauert die Vorbereitung auf JLPT N5?</h3></summary>
+      <p>
+        Bei rund 30 Minuten täglichem Lernen rechnen die meisten Lernenden mit
+        4 bis 6 Monaten von null bis zur N5-Prüfungsreife. Wer schon Hiragana
+        und Katakana beherrscht oder bereits ein Lehrbuch wie Genki I durchgearbeitet
+        hat, kann es in 2 bis 3 Monaten schaffen. Entscheidend ist Konsistenz,
+        nicht Sessiondauer — täglich 20 Minuten schlagen einmal pro Woche zwei Stunden.
+      </p>
+    </details>
+
+    <details class="n5ch-faq">
+      <summary><h3>Kann ich JLPT N5 ohne Vorkenntnisse bestehen?</h3></summary>
+      <p>
+        Ja, der N5 ist explizit für Anfänger konzipiert und setzt keinerlei
+        Vorkenntnisse voraus. Du startest bei null mit Hiragana und Katakana,
+        baust den Grundwortschatz auf und lernst die Basis-Grammatik. Das
+        Curriculum auf japanese-learning.ch beginnt genau dort und führt
+        strukturiert bis zum Prüfungsniveau.
+      </p>
+    </details>
+
+    <details class="n5ch-faq">
+      <summary><h3>Brauche ich Hiragana und Katakana für N5?</h3></summary>
+      <p>
+        Ja, beide Silbenschriften sind für N5 zwingend erforderlich. Hiragana
+        wird für japanische Wörter und Grammatikpartikel verwendet, Katakana
+        für Lehnwörter aus dem Englischen und für Eigennamen. Die Prüfung
+        enthält keine Romaji (lateinische Umschrift) — alles ist in
+        japanischer Schrift.
+      </p>
+    </details>
+
+    <details class="n5ch-faq">
+      <summary><h3>Wo kann ich JLPT N5 in der Schweiz ablegen?</h3></summary>
+      <p>
+        Der einzige offizielle JLPT-Prüfungsort in der Schweiz ist die
+        Universität Zürich, organisiert vom Asien-Orient-Institut. Die Prüfung
+        findet einmal jährlich im Dezember statt. Im Juli wird in der Schweiz
+        kein JLPT angeboten — wer früher prüfen will, muss ins Ausland
+        (z. B. Deutschland, Österreich, Italien).
+      </p>
+    </details>
+
+    <details class="n5ch-faq">
+      <summary><h3>Was kostet der JLPT N5 in der Schweiz?</h3></summary>
+      <p>
+        Die Prüfungsgebühr für N5 in Zürich beträgt CHF 130 (Stand 2026). Die
+        Anmeldung erfolgt online im Sommer über die Website der Universität
+        Zürich. Die Gebühr ist bei der Anmeldung zu zahlen und wird bei
+        Nichterscheinen nicht erstattet.
+      </p>
+    </details>
+
+    <details class="n5ch-faq">
+      <summary><h3>Wann ist der nächste JLPT-Prüfungstermin in Zürich?</h3></summary>
+      <p>
+        Der nächste JLPT-Termin in Zürich ist Sonntag, 6. Dezember 2026, in
+        den Räumlichkeiten der Universität Zürich. Die Anmeldung öffnet
+        typischerweise im Sommer 2026 — die genauen Fristen werden vom
+        Asien-Orient-Institut der UZH veröffentlicht. Wer den Termin verpasst,
+        hat erst im Dezember 2027 wieder die Möglichkeit in der Schweiz.
+      </p>
+    </details>
+
+    <details class="n5ch-faq">
+      <summary><h3>Wie viele Kanji muss ich für N5 können?</h3></summary>
+      <p>
+        Offiziell werden für N5 etwa 80 Kanji erwartet, in der Praxis tauchen
+        je nach Quelle zwischen 79 und 103 Zeichen auf. Auf japanese-learning.ch
+        lernst du 55 zentrale N5-Kanji mit Strichreihenfolge, On-/Kun-Lesungen
+        und Beispielwörtern — kombiniert mit dem Vokabelkurs deckst du damit
+        den prüfungsrelevanten Bereich ab.
+      </p>
+    </details>
+
+    <details class="n5ch-faq">
+      <summary><h3>Lohnt sich N5 für Beruf, Studium oder Visum?</h3></summary>
+      <p>
+        N5 ist der erste sichtbare Beleg für Japanischkenntnisse, aber für
+        Studium und Beruf in Japan reichen meist erst N3 oder N2. Für
+        Hobbylerner, Reise-Vorbereitung oder als Etappenziel auf dem Weg zu
+        höheren Stufen ist N5 ein motivierender Meilenstein. An der Universität
+        St. Gallen wird der JLPT als externes Sprachzertifikat anerkannt —
+        relevant für HSG-Studierende mit Japan-Bezug.
+      </p>
+    </details>
+
+    <details class="n5ch-faq">
+      <summary><h3>Was ist der Unterschied zwischen N5 und N4?</h3></summary>
+      <p>
+        N5 deckt grundlegende Alltagssituationen ab: einfache Sätze, langsam
+        gesprochene Konversation, ca. 700 Vokabeln, ca. 80 Kanji. N4 verdoppelt
+        den Wortschatz auf rund 1500 Vokabeln und 300 Kanji, fügt komplexere
+        Grammatik (te-iru-Form, Konditionale, Passiv-Ansätze) hinzu und
+        erwartet längere Texte. Wer N5 sicher hat, braucht für N4 typischerweise
+        nochmal 4 bis 6 Monate.
+      </p>
+    </details>
+
+    <details class="n5ch-faq">
+      <summary><h3>Kann ich die Prüfung auch in Deutschland oder Österreich ablegen?</h3></summary>
+      <p>
+        Ja. In Deutschland wird der JLPT in Berlin, Frankfurt, Köln, München
+        und Hamburg angeboten — anders als in der Schweiz teilweise zweimal
+        jährlich (Juli und Dezember). In Österreich ist Wien der Standort.
+        Die offizielle Liste aller Prüfungsorte weltweit findest du auf
+        <a href="https://www.jlpt.jp/e/application/overseas_list.html"
+           target="_blank" rel="noopener">jlpt.jp/e/application/overseas_list.html</a>.
+      </p>
+    </details>
+  </section>
+
+  {# ─────────────────────────────────────────────────────────
+     SEKTION 6 — Über uns / Schweiz-Bezug (E-E-A-T)
+     ───────────────────────────────────────────────────────── #}
+  <section class="n5ch-section">
+    <h2>Wer steht hinter japanese-learning.ch?</h2>
+    <p>
+      Hinter der Plattform steht <strong>Claudio Lutz</strong>, Data Scientist
+      bei einer Schweizer Wirtschaftsauskunftei und selbst Japanisch-Lerner.
+      Sitz: Rorschach SG, Bodensee. Die Plattform ist ein Solo-Projekt — keine
+      Firma, kein VC, kein Marketing-Team.
+    </p>
+    <p>
+      Warum Deutsch? Wer Japanisch über Englisch lernt, lernt zwei Fremdsprachen
+      gleichzeitig. Eine deutsche Erklärung sitzt schneller und länger.
+      <a href="{{ url_for('routes.ueber') }}">Mehr über das Projekt →</a> ·
+      <a href="{{ url_for('routes.lernmethode') }}">Mehr zur Lernmethode (FSRS) →</a>
+    </p>
+  </section>
+
+  {# ─────────────────────────────────────────────────────────
+     CONVERSION-BLOCK
+     ───────────────────────────────────────────────────────── #}
+  <section class="n5ch-section n5ch-cta">
+    <h2>Bereit für N5?</h2>
+    <div class="n5ch-cta-buttons">
+      <a href="{{ url_for('routes.register') }}" class="btn btn-primary btn-lg">
+        🚀 Kostenlos starten
+      </a>
+      <a href="{{ url_for('bundle.n5_bundle') }}" class="btn btn-outline-primary btn-lg">
+        ⚡ N5 Komplett · CHF 9.90
+      </a>
+    </div>
+    <ul class="n5ch-trust">
+      <li>✅ 30 Tage Geld zurück</li>
+      <li>✅ 11 Lektionen ohne Anmeldung kostenlos</li>
+      <li>✅ Lifetime-Zugriff, kein Abo</li>
+    </ul>
+  </section>
+
+</div>
+
+<style>
+.n5ch-page {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 1rem 1rem 4rem;
+  line-height: 1.65;
+  color: #2c3e50;
+}
+.n5ch-breadcrumb {
+  font-size: 0.85rem; color: #6b7280;
+  margin: 0.25rem 0 1.25rem;
+}
+.n5ch-breadcrumb a { color: #6b7280; text-decoration: none; }
+.n5ch-breadcrumb a:hover { color: #4f46e5; text-decoration: underline; }
+.n5ch-breadcrumb .sep { margin: 0 0.4rem; color: #cbd5e1; }
+
+.n5ch-hero {
+  background: linear-gradient(135deg, #ffffff 0%, #eef2ff 100%);
+  border-radius: 14px;
+  padding: 2rem 1.75rem;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+.n5ch-hero h1 {
+  font-size: clamp(1.6rem, 4.5vw, 2.3rem);
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 0.75rem;
+  line-height: 1.25;
+}
+.n5ch-lead {
+  font-size: 1.05rem;
+  color: #4a4a4a;
+  margin: 0 auto 1.25rem;
+  max-width: 640px;
+}
+.n5ch-hero-cta {
+  display: flex; flex-wrap: wrap;
+  justify-content: center; gap: 0.6rem;
+  margin-bottom: 0.9rem;
+}
+.n5ch-hero-badges {
+  display: flex; flex-wrap: wrap;
+  justify-content: center; gap: 1rem;
+  font-size: 0.92rem; color: #6b7280; font-weight: 500;
+}
+
+.n5ch-section {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.75rem 1.6rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  margin-bottom: 1.25rem;
+}
+.n5ch-section h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 1rem;
+  border-bottom: 2px solid #e0e7ff;
+  padding-bottom: 0.4rem;
+}
+.n5ch-section h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 1.25rem 0 0.5rem;
+}
+.n5ch-section p { margin: 0 0 0.75rem; }
+.n5ch-section p:last-child { margin-bottom: 0; }
+
+.n5ch-list { padding-left: 1.25rem; margin: 0.5rem 0 0.75rem; }
+.n5ch-list li { margin-bottom: 0.55rem; }
+.n5ch-list li:last-child { margin-bottom: 0; }
+.n5ch-grammar li { font-size: 0.96rem; }
+
+/* Highlight-Block für Schweiz-Sektion */
+.n5ch-section-highlight {
+  background: linear-gradient(135deg, #fef3c7 0%, #fffbeb 100%);
+  border: 1px solid #fde68a;
+}
+.n5ch-section-highlight h2 { border-bottom-color: #fde68a; }
+
+.n5ch-deflist { margin: 1rem 0; }
+.n5ch-deflist dt {
+  font-weight: 700; color: #1a1a1a;
+  margin-top: 0.85rem;
+}
+.n5ch-deflist dt:first-child { margin-top: 0; }
+.n5ch-deflist dd {
+  margin: 0.15rem 0 0; padding-left: 0;
+  color: #2c3e50;
+}
+.n5ch-note {
+  font-size: 0.92rem; color: #6b7280;
+  background: rgba(255,255,255,0.6);
+  border-left: 3px solid #f59e0b;
+  padding: 0.6rem 0.85rem;
+  border-radius: 6px;
+  margin-top: 1rem;
+}
+
+/* Vergleichstabelle */
+.n5ch-table {
+  width: 100%; border-collapse: collapse;
+  font-size: 0.94rem;
+  margin: 0.75rem 0;
+}
+.n5ch-table th, .n5ch-table td {
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+.n5ch-table th {
+  background: #f9fafb;
+  font-weight: 700; color: #1a1a1a;
+}
+.n5ch-table tr:last-child td { border-bottom: none; }
+.n5ch-table td:first-child { font-weight: 600; color: #4b5563; }
+
+/* Lernpfad */
+.n5ch-pfad { list-style: none; padding: 0; margin: 1rem 0; }
+.n5ch-pfad li {
+  display: flex; gap: 0.85rem;
+  padding: 0.85rem 1rem;
+  background: #f9fafb;
+  border-radius: 8px;
+  margin-bottom: 0.6rem;
+  align-items: flex-start;
+}
+.n5ch-pfad .step { font-size: 1.5rem; flex-shrink: 0; }
+
+/* FAQ */
+.n5ch-faq {
+  border-top: 1px solid #e5e7eb;
+  padding: 0.85rem 0;
+}
+.n5ch-faq:first-of-type { border-top: none; padding-top: 0.25rem; }
+.n5ch-faq[open] { padding-bottom: 1rem; }
+.n5ch-faq summary {
+  cursor: pointer; list-style: none;
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.4rem 0;
+}
+.n5ch-faq summary::-webkit-details-marker { display: none; }
+.n5ch-faq summary::before {
+  content: "+"; font-size: 1.1rem; font-weight: 700; color: #4f46e5;
+  width: 1.2rem; flex-shrink: 0;
+}
+.n5ch-faq[open] summary::before { content: "−"; }
+.n5ch-faq summary h3 {
+  display: inline; margin: 0;
+  font-size: 1rem; font-weight: 600; color: #1a1a1a;
+  border: none; padding: 0;
+}
+.n5ch-faq p { margin: 0.5rem 0 0 1.7rem; color: #4a4a4a; }
+
+/* CTA-Block */
+.n5ch-cta {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border: 1px solid #bbf7d0;
+  text-align: center;
+}
+.n5ch-cta h2 { border-bottom-color: #bbf7d0; }
+.n5ch-cta-buttons {
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: 0.75rem; margin: 1rem 0;
+}
+.n5ch-trust {
+  list-style: none; padding: 0; margin: 1rem 0 0;
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 1.25rem;
+  font-size: 0.92rem; color: #15803d; font-weight: 500;
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .n5ch-section { padding: 1.25rem 1.1rem; }
+  .n5ch-section h2 { font-size: 1.2rem; }
+  .n5ch-table { font-size: 0.88rem; }
+  .n5ch-table th, .n5ch-table td { padding: 0.5rem 0.6rem; }
+}
+</style>
+{% endblock %}

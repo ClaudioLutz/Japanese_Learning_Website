@@ -91,6 +91,7 @@ def sitemap_xml():
     static_pages = [
         ('/', 'daily', '1.0'),
         ('/n5-bundle', 'weekly', '0.9'),
+        ('/jlpt-n5-schweiz', 'weekly', '0.9'),
         ('/lessons', 'daily', '0.8'),
         ('/courses', 'weekly', '0.7'),
         ('/ueber', 'monthly', '0.6'),

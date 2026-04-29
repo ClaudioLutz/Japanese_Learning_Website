@@ -630,6 +630,17 @@ def lernmethode():
     return render_template('lernmethode.html')
 
 
+@bp.route('/jlpt-n5-schweiz')
+def jlpt_n5_schweiz():
+    """SEO-Landing fuer "JLPT N5 Schweiz" — Schweiz-spezifische Pruefungs-Infos
+    (UZH-Termin, Gebuehr, Anmeldung) gebuendelt mit Curriculum-Vorstellung.
+
+    Ziel-Keywords: "JLPT N5 Schweiz", "JLPT Zürich", "Japanisch Prüfung Schweiz".
+    Strukturierte Daten: Course + FAQPage + BreadcrumbList.
+    """
+    return render_template('jlpt_n5_schweiz.html')
+
+
 @bp.route('/learn')
 @bp.route('/learn/n<int:level>')
 def learn_path(level: int = 5):
