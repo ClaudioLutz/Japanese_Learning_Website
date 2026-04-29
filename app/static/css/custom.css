@@ -3867,14 +3867,16 @@ button[onclick*="moveContentInPage"]:active {
         right: 0;
         z-index: 1040;
         background: rgba(255, 255, 255, 0.97);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
+        backdrop-filter: saturate(180%) blur(16px);
+        -webkit-backdrop-filter: saturate(180%) blur(16px);
         border-top: 1px solid rgba(0, 0, 0, 0.06);
         box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.04);
         padding: 0.2rem 0.5rem;
         padding-bottom: calc(0.2rem + env(safe-area-inset-bottom, 0px));
         gap: 0.25rem;
         border-radius: 18px 18px 0 0;
+        align-items: flex-end;
+        overflow: visible; /* Center-CTA ragt 22px nach oben */
     }
 
     .bottom-nav-item {
@@ -3914,9 +3916,9 @@ button[onclick*="moveContentInPage"]:active {
         transform: scale(0.95);
     }
 
-    /* Body padding-bottom fuer Bottom-Nav-Platz */
+    /* Body padding-bottom fuer Bottom-Nav-Platz (inkl. Center-CTA Überstand) */
     body {
-        padding-bottom: 56px !important;
+        padding-bottom: 72px !important;
     }
 
     /* Admin-FAB ueber die Bottom-Nav + ggf. Lesson-Nav schieben */

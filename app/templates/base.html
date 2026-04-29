@@ -565,7 +565,7 @@
     </style>
     {% endif %}
 
-    <!-- ══ Mobile Bottom Navigation Bar ═══════════════════════════════ -->
+    <!-- ══ Mobile Bottom Navigation Bar — Center-CTA für Reviews ═══════ -->
     <nav class="mobile-bottom-nav" id="mobileBottomNav">
         <a href="{{ url_for('routes.index') }}" class="bottom-nav-item{% if request.endpoint == 'routes.index' %} active{% endif %}">
             <i class="fas fa-home"></i><span>Home</span>
@@ -574,9 +574,12 @@
             <i class="fas fa-book-open"></i><span>Lektionen</span>
         </a>
         {% if current_user.is_authenticated %}
-        <a href="{{ url_for('srs.review_page') }}" class="bottom-nav-item{% if request.endpoint == 'srs.review_page' %} active{% endif %}" id="reviewNavItem">
-            <i class="fas fa-brain"></i><span>Wiederholen</span>
-            <span class="review-badge" id="reviewBadge" style="display:none;"></span>
+        <a href="{{ url_for('srs.review_page') }}" class="bottom-nav-item bottom-nav-cta{% if request.endpoint == 'srs.review_page' %} active{% endif %}" id="reviewNavItem" aria-label="Wiederholen">
+            <span class="bottom-nav-cta-bubble">
+                <i class="fas fa-brain"></i>
+                <span class="bottom-nav-cta-badge" id="reviewBadge" style="display:none;"></span>
+            </span>
+            <span class="bottom-nav-cta-label">Wiederholen</span>
         </a>
         <a href="{{ url_for('routes.user_profile') }}" class="bottom-nav-item{% if request.endpoint == 'routes.user_profile' %} active{% endif %}">
             <i class="fas fa-user-circle"></i><span>Profil</span>
@@ -592,6 +595,62 @@
     </nav>
 
     <style>
+    /* Center-CTA für Reviews in Mobile-Bottom-Nav (Strava/Duolingo-Pattern) */
+    .bottom-nav-cta {
+        position: relative;
+        flex: 0 0 auto !important;
+        padding-top: 0 !important;
+    }
+    .bottom-nav-cta-bubble {
+        position: relative;
+        width: 56px; height: 56px;
+        margin-top: -22px;
+        border-radius: 28px;
+        background: linear-gradient(180deg, #EB6101, #B84A00);
+        color: #fff;
+        display: inline-flex; align-items: center; justify-content: center;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.18),
+                    0 6px 16px rgba(184,74,0,.35),
+                    0 0 0 1px rgba(184,74,0,.4);
+        transition: transform 0.15s;
+    }
+    .bottom-nav-cta-bubble i {
+        font-size: 1.25rem !important;
+        transform: none !important;
+    }
+    .bottom-nav-cta:active .bottom-nav-cta-bubble {
+        transform: scale(0.96);
+    }
+    .bottom-nav-cta-label {
+        margin-top: 2px;
+        font-size: 0.6rem !important;
+        font-weight: 600;
+        color: #B84A00;
+    }
+    .bottom-nav-cta.active .bottom-nav-cta-label { color: #B84A00; }
+    .bottom-nav-cta.active .bottom-nav-cta-bubble {
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.25),
+                    0 8px 20px rgba(184,74,0,.45),
+                    0 0 0 1px rgba(184,74,0,.5);
+    }
+    /* Badge oben rechts auf der Bubble */
+    .bottom-nav-cta-badge {
+        position: absolute;
+        top: -2px; right: -4px;
+        min-width: 20px; height: 20px;
+        padding: 0 5px;
+        background: #1F2A44;
+        color: #fff;
+        border-radius: 10px;
+        font-size: 0.65rem;
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+        display: inline-flex; align-items: center; justify-content: center;
+        border: 2px solid #fff;
+        line-height: 1;
+    }
+    /* Legacy-Selektor: review-badge auf Desktop-Topnav (anderes Element) */
     .review-badge {
         position: absolute;
         top: 2px;
