@@ -7,7 +7,9 @@ from flask_login import login_user, logout_user, login_required, current_user
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError # Import specific exceptions
 from app import db, csrf, limiter
 from app.models import User, Kana, Kanji, Vocabulary, Grammar, LessonCategory, Lesson, LessonContent, LessonPrerequisite, UserLessonProgress, QuizQuestion, QuizOption, UserQuizAnswer, LessonPage, Course, LessonPurchase, CoursePurchase
-from app.forms import RegistrationForm, LoginForm, CSRFTokenForm
+from app.forms import RegistrationForm, LoginForm, CSRFTokenForm, RequestPasswordResetForm, ResetPasswordForm
+from app.auth_tokens import make_reset_token, verify_reset_token
+from app.mail_service import send_password_reset_email
 from app.ai_services import AILessonContentGenerator
 from app.lesson_export_import import (
     export_lesson_to_json, import_lesson_from_json, 
@@ -296,6 +298,53 @@ def login():
                 db.session.commit()
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html', form=form)
+
+@bp.route('/forgot-password', methods=['GET', 'POST'])
+@limiter.limit("3 per hour")
+def forgot_password():
+    if current_user.is_authenticated:
+        return redirect(url_for('routes.index'))
+    form = RequestPasswordResetForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data.strip().lower()).first()
+        if user:
+            token = make_reset_token(user.id)
+            link = url_for('routes.reset_password', token=token, _external=True)
+            send_password_reset_email(user.email, link, username=user.username)
+        # Gleiche Antwort, egal ob User existiert (Enumeration-Schutz)
+        flash(
+            'Falls ein Konto mit dieser E-Mail existiert, wurde ein Reset-Link versendet. '
+            'Pruefen Sie bitte auch Ihren Spam-Ordner.',
+            'info',
+        )
+        return redirect(url_for('routes.login'))
+    return render_template('forgot_password.html', form=form)
+
+
+@bp.route('/reset-password/<token>', methods=['GET', 'POST'])
+@limiter.limit("10 per hour")
+def reset_password(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('routes.index'))
+    user_id = verify_reset_token(token)
+    if not user_id:
+        flash('Der Reset-Link ist ungueltig oder abgelaufen. Bitte fordern Sie einen neuen an.', 'danger')
+        return redirect(url_for('routes.forgot_password'))
+    user = User.query.get(user_id)
+    if not user:
+        flash('Der Reset-Link ist ungueltig.', 'danger')
+        return redirect(url_for('routes.forgot_password'))
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        user.set_password(form.password.data)
+        # Lockout aufheben, falls aktiv
+        user.failed_login_count = 0
+        user.locked_until = None
+        db.session.commit()
+        flash('Passwort wurde erfolgreich gesetzt. Sie koennen sich jetzt anmelden.', 'success')
+        return redirect(url_for('routes.login'))
+    return render_template('reset_password.html', form=form)
+
 
 @bp.route('/logout')
 @login_required

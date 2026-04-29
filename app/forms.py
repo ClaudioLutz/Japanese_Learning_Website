@@ -39,6 +39,29 @@ class LoginForm(FlaskForm):
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
 
+class RequestPasswordResetForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    submit = SubmitField('Reset-Link senden')
+
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('Neues Passwort', validators=[DataRequired(), Length(min=8, max=128)])
+    password2 = PasswordField(
+        'Passwort wiederholen',
+        validators=[DataRequired(), EqualTo('password', message='Passwoerter stimmen nicht ueberein.')],
+    )
+    submit = SubmitField('Passwort speichern')
+
+    def validate_password(self, password):
+        val = password.data
+        if not re.search(r'[A-Z]', val):
+            raise ValidationError('Passwort muss mindestens einen Grossbuchstaben enthalten.')
+        if not re.search(r'[a-z]', val):
+            raise ValidationError('Passwort muss mindestens einen Kleinbuchstaben enthalten.')
+        if not re.search(r'\d', val):
+            raise ValidationError('Passwort muss mindestens eine Ziffer enthalten.')
+
+
 class CSRFTokenForm(FlaskForm):
     """A dummy form for generating a CSRF token."""
     pass

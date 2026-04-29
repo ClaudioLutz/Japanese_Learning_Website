@@ -127,6 +127,19 @@ def create_app():
         'audio': {'mp3', 'wav', 'ogg', 'aac', 'm4a', 'webm', 'opus'}
     }
 
+    # Mail-Konfiguration (Flask-Mail) — z.B. Hostpoint SMTP
+    app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER', 'asmtp.mail.hostpoint.ch')
+    app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT', '587'))
+    app.config['MAIL_USE_TLS'] = os.environ.get('MAIL_USE_TLS', 'true').lower() == 'true'
+    app.config['MAIL_USE_SSL'] = os.environ.get('MAIL_USE_SSL', 'false').lower() == 'true'
+    app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+    app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+    app.config['MAIL_DEFAULT_SENDER'] = os.environ.get(
+        'MAIL_DEFAULT_SENDER',
+        'Japanese Learning <info@japanese-learning.ch>',
+    )
+    app.config['MAIL_SUPPRESS_SEND'] = os.environ.get('MAIL_SUPPRESS_SEND', 'false').lower() == 'true'
+
     # Payment-Konfiguration (Payrexx)
     app.config['PAYMENT_PROVIDER'] = os.environ.get('PAYMENT_PROVIDER', 'mock')
     app.config['PAYREXX_INSTANCE'] = os.environ.get('PAYREXX_INSTANCE')
@@ -160,6 +173,8 @@ def create_app():
     login_manager.init_app(app)
     csrf.init_app(app)
     limiter.init_app(app)
+    from app.mail_service import mail
+    mail.init_app(app)
 
     # Security Headers via Talisman
     csp = {

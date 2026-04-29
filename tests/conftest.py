@@ -13,6 +13,7 @@ os.environ.setdefault("SECRET_KEY", "test-secret-key")
 os.environ.setdefault("WTF_CSRF_SECRET_KEY", "test-csrf-key")
 os.environ.setdefault("PAYMENT_PROVIDER", "mock")
 os.environ.setdefault("MOCK_PAYMENTS_ENABLED", "true")
+os.environ.setdefault("MAIL_SUPPRESS_SEND", "true")
 
 from app import create_app, db as _db
 
@@ -31,6 +32,8 @@ def app():
         "GCS_BUCKET_NAME": "",
         "SECRET_KEY": "test-secret-key",
         "WTF_CSRF_SECRET_KEY": "test-csrf-key",
+        "MAIL_SUPPRESS_SEND": True,
+        "MAIL_DEFAULT_SENDER": "test@japanese-learning.ch",
         "UPLOAD_FOLDER": os.path.join(os.path.dirname(__file__), "test_uploads"),
         "ALLOWED_EXTENSIONS": {
             "image": {"png", "jpg", "jpeg", "gif", "webp"},
