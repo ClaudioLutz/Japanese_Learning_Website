@@ -276,6 +276,15 @@ def create_app():
     from app.bundle_routes import bundle_bp
     app.register_blueprint(bundle_bp)
 
+    # Error-Handler — eigene Templates auf Deutsch (vorher: Default-Flask-HTML in Englisch)
+    from flask import render_template
+    @app.errorhandler(404)
+    def _not_found(_e):
+        return render_template('errors/404.html'), 404
+    @app.errorhandler(500)
+    def _server_error(_e):
+        return render_template('errors/500.html'), 500
+
     # current_year fuer den Footer + SEO-Default-Daten fuer base.html
     from datetime import datetime as _dt
     from flask import request as _flask_request

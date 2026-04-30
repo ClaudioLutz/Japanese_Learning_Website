@@ -6,12 +6,12 @@ import re
 
 
 class RegistrationForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired(), Length(min=3, max=80)])
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired(), Length(min=8, max=128)])
+    username = StringField('Benutzername', validators=[DataRequired(), Length(min=3, max=80)])
+    email = StringField('E-Mail', validators=[DataRequired(), Email()])
+    password = PasswordField('Passwort', validators=[DataRequired(), Length(min=8, max=128)])
     password2 = PasswordField(
-        'Repeat Password', validators=[DataRequired(), EqualTo('password')])
-    submit = SubmitField('Register')
+        'Passwort wiederholen', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Registrieren')
 
     def validate_password(self, password):
         """Mindestens 1 Grossbuchstabe, 1 Kleinbuchstabe und 1 Ziffer."""
@@ -26,21 +26,21 @@ class RegistrationForm(FlaskForm):
     def validate_username(self, username):
         user = User.query.filter_by(username=username.data).first()
         if user is not None:
-            raise ValidationError('Please use a different username.')
+            raise ValidationError('Bitte einen anderen Benutzernamen wählen.')
 
     def validate_email(self, email):
         user = User.query.filter_by(email=email.data).first()
         if user is not None:
-            raise ValidationError('Please use a different email address.')
+            raise ValidationError('Bitte eine andere E-Mail-Adresse verwenden.')
 
 class LoginForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    remember = BooleanField('Remember Me')
-    submit = SubmitField('Login')
+    email = StringField('E-Mail', validators=[DataRequired(), Email()])
+    password = PasswordField('Passwort', validators=[DataRequired()])
+    remember = BooleanField('Angemeldet bleiben')
+    submit = SubmitField('Anmelden')
 
 class RequestPasswordResetForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Email()])
+    email = StringField('E-Mail', validators=[DataRequired(), Email()])
     submit = SubmitField('Reset-Link senden')
 
 

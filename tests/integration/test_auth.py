@@ -35,7 +35,7 @@ class TestRegistration:
             "password": "StrongPass123!",
             "password2": "StrongPass123!",
         }, follow_redirects=True)
-        assert b"different username" in resp.data
+        assert "anderen Benutzernamen".encode("utf-8") in resp.data
 
     def test_register_duplicate_email(self, client, app_context):
         """I-AU03: Doppelte Email wird abgelehnt."""
@@ -47,7 +47,7 @@ class TestRegistration:
             "password": "StrongPass123!",
             "password2": "StrongPass123!",
         }, follow_redirects=True)
-        assert b"different email" in resp.data
+        assert "andere E-Mail-Adresse".encode("utf-8") in resp.data
 
     def test_register_password_mismatch(self, client, app_context):
         """I-AU04: Passwort-Mismatch wird abgelehnt."""
