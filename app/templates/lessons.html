@@ -598,23 +598,31 @@
 .lp-cat-mobile-toggle i { font-size: 0.7rem; transition: transform 0.15s; }
 
 @media (max-width: 640px) {
-  /* Maximal kompakte Cards: nur Emoji + Titel, eine Zeile pro Card.
-     Description, Lektions-Count und Toggle-Row sind ausgeblendet,
-     damit die Liste auf einen Blick scrollbar bleibt. */
+  /* Listenansicht statt Card-Grid: Emoji wirkt wie ein Bulletpoint,
+     Titel daneben. Eine Zeile pro Kategorie, kein Border/Shadow auf
+     den Karten — wirkt wie eine kompakte Navigation. */
   .lp-cat-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem;
+    grid-template-columns: 1fr;
+    gap: 0;
   }
   .lp-cat-desc,
   .lp-cat-count,
   .lp-cat-mobile-toggle { display: none !important; }
+  .lp-cat-card {
+    border: 0;
+    border-radius: 0;
+    border-top: 1px solid var(--ink-200) !important;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+  .lp-cat-card:last-child { border-bottom: 1px solid var(--ink-200); }
   .lp-cat-btn {
-    padding: 0.65rem 0.7rem;
-    gap: 0.5rem;
+    padding: 0.7rem 0.5rem;
+    gap: 0.75rem;
     align-items: center;
   }
-  .lp-cat-icon { font-size: 1.4rem; }
-  .lp-cat-name { font-size: 0.9rem; line-height: 1.2; }
+  .lp-cat-icon { font-size: 1.5rem; }
+  .lp-cat-name { font-size: 0.95rem; line-height: 1.2; }
 }
 @media (min-width: 641px) {
   .lp-cat-mobile-toggle { display: none !important; }
