@@ -1,0 +1,5 @@
+# Drafts sind Pipeline-Zwischenartefakte. Nach `pipeline.py insert` ist der
+# Inhalt in der DB (Single Source of Truth) — die JSON-Datei hat ihren Job
+# erledigt. Nicht ins Repo committen.
+*.json
+!.gitkeep
