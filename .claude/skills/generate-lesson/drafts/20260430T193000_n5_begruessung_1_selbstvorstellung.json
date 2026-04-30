@@ -1,0 +1,865 @@
+{
+  "title": "N5 Begrüssung 1 — Selbstvorstellung",
+  "description": "Wie man sich auf Japanisch höflich vorstellt: 「はじめまして」 (hajimemashite), 「わたしは ～です」 (watashi wa ~ desu), 「～から きました」 (~kara kimashita) und 「よろしく おねがいします」 (yoroshiku onegai shimasu). Du lernst Berufsbezeichnungen (Student, Lehrerin, Angestellter), Länder und einen vollständigen Selbstvorstellungs-Dialog.",
+  "jlpt_level": 5,
+  "topic": "Begrüssung & Höflichkeit",
+  "instruction_language": "german",
+  "allow_guest_access": true,
+  "pages": [
+    {
+      "title": "Einführung — はじめまして!",
+      "description": "Worum geht es in dieser Lektion?",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Willkommen in Japan",
+            "content_text": "## 「はじめまして」 (hajimemashite) — der erste Satz im Leben einer japanischen Beziehung\n\nWenn du in Japan zum **ersten Mal** jemandem begegnest, gibt es ein Wort, das alle anderen einleitet: **「はじめまして」** (hajimemashite). Es bedeutet wörtlich *zum ersten Mal* und entspricht dem deutschen *Freut mich, Sie kennenzulernen*. Es ist die **Eintrittskarte** in jedes japanische Gespräch.\n\nDanach folgt eine feste Choreografie: Du nennst deinen **Namen**, sagst woher du kommst, und beendest mit der höflichen Formel **「よろしく おねがいします」** (yoroshiku onegai shimasu — etwa *Bitte behandeln Sie mich freundlich*).\n\n### Was du nach dieser Lektion kannst\n\n- Dich auf Japanisch korrekt **vorstellen**: Name, Herkunft, Beruf.\n- Die Schlüssel-Konstruktion **「わたしは ～です」** (watashi wa ~ desu — *Ich bin ~*) sicher anwenden.\n- Die Negation **「～じゃ ありません」** (~ja arimasen — *Ich bin nicht ~*) bilden, um Missverständnisse zu klären.\n- Mit **「～から きました」** (~kara kimashita) deine **Herkunft** angeben.\n- Berufsbezeichnungen (がくせい, せんせい, かいしゃいん, いしゃ) und Länder (にほん, ドイツ, スイス) korrekt verwenden.\n\n> **Lerntipp:** Stelle dich heute Abend einmal **laut** auf Japanisch vor — vor dem Spiegel. Sag deinen Namen, dein Land, deinen Beruf. Diese eine Minute Übung pro Tag macht dich nach einer Woche flüssig.\n\nNach dieser Lektion kannst du in einer japanischen Gruppe einen kompletten Selbstvorstellungs-Block — von 「はじめまして」 bis 「よろしく おねがいします」 — selbständig sprechen."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln 1 — Begrüssung und Person",
+      "description": "Neun Wörter, mit denen du dich vorstellst",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Die ersten neun Vokabeln",
+            "content_text": "## Neun Wörter — die Grundbausteine deiner Selbstvorstellung\n\nDiese neun Wörter sind das **Skelett** jeder Vorstellungsrunde:\n\n- **はじめまして (hajimemashite)** — *Freut mich, Sie kennenzulernen*\n- **わたし (watashi)** — *ich* (höflich, neutral)\n- **～さん (~san)** — Höflichkeitssuffix für **Herr/Frau ~**\n- **なまえ (namae)** — *Name*\n- **おなまえ (o-namae)** — *Ihr Name* (höflich, mit ehrendem 「お」)\n- **よろしく (yoroshiku)** — *bitte freundlich (behandeln)*\n- **おねがいします (onegai shimasu)** — *bitte (höfliche Bitte)*\n- **どうぞ (douzo)** — *bitte (anbieten / vorausgehen)*\n- **にほん (Nihon)** — *Japan*\n\n> **Wichtig:** **「わたし」** ist die **neutrale, höfliche** Ich-Form, die du in jeder formellen Situation verwenden kannst. Es gibt im Japanischen weitere Varianten (z.B. 「ぼく」 (boku) für Männer im Alltag, 「あたし」 (atashi) für Frauen umgangssprachlich), aber als Anfänger nutzt du **immer** **「わたし」** — damit machst du nie etwas falsch.\n\nDas Suffix **「～さん」** ist Pflicht, wenn du den Namen einer anderen Person sagst — auch bei Freunden. Lass es nur weg, wenn du **deinen eigenen** Namen nennst."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "はじめまして",
+            "reading": "はじめまして",
+            "romaji": "hajimemashite",
+            "meaning": "Nice to meet you (first time)",
+            "meaning_de": "Freut mich, Sie kennenzulernen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "はじめまして。たなかです。",
+            "example_sentence_english": "Hajimemashite. Tanaka desu. — Nice to meet you. I am Tanaka.",
+            "is_canonical_override": true,
+            "source_note": "Standard-N5 in Minna no Nihongo Lektion 1, Genki I Lektion 1 und in jeder N5-Vorbereitung. In der einzelwort-zentrierten elzup-Liste fehlt es als Konjugationsform von はじめる.",
+            "image_url": "vocab_generated/vocab_9527cdc3.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "私",
+            "reading": "わたし",
+            "romaji": "watashi",
+            "meaning": "I (polite)",
+            "meaning_de": "ich (höflich, neutral)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "わたしは がくせいです。",
+            "example_sentence_english": "Watashi wa gakusei desu. — I am a student.",
+            "image_url": "vocab_generated/vocab_b511e681.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "～さん",
+            "reading": "～さん",
+            "romaji": "~san",
+            "meaning": "Mr., Ms. (honorific suffix)",
+            "meaning_de": "Herr, Frau (Höflichkeitssuffix)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "たなかさんは せんせいです。",
+            "example_sentence_english": "Tanaka-san wa sensei desu. — Mr. Tanaka is a teacher.",
+            "is_canonical_override": true,
+            "source_note": "Höflichkeitssuffix, Standard-N5 in MNN L1 und Genki L1. Wird in der elzup-Vokabelliste nicht als eigenes Lemma geführt.",
+            "image_url": "vocab_generated/vocab_23f12185.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "名前",
+            "reading": "なまえ",
+            "romaji": "namae",
+            "meaning": "name",
+            "meaning_de": "Name",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "なまえは リサです。",
+            "example_sentence_english": "Namae wa Risa desu. — My name is Lisa.",
+            "image_url": "vocab_generated/vocab_5b9e23e2.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "お名前",
+            "reading": "おなまえ",
+            "romaji": "o-namae",
+            "meaning": "your name (polite)",
+            "meaning_de": "Ihr Name (höfliche Form)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "おなまえは なんですか。",
+            "example_sentence_english": "O-namae wa nan desu ka. — What is your name?",
+            "is_canonical_override": true,
+            "source_note": "Höfliche Form mit Ehren-Präfix 「お」, Standard-N5 in MNN L1, Genki I. In elzup als Variante nicht separat aufgeführt.",
+            "image_url": "vocab_generated/vocab_604365c7.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "よろしく",
+            "reading": "よろしく",
+            "romaji": "yoroshiku",
+            "meaning": "best regards, kindly",
+            "meaning_de": "bitte freundlich (behandeln)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "よろしく おねがいします。",
+            "example_sentence_english": "Yoroshiku onegai shimasu. — Pleased to make your acquaintance.",
+            "is_canonical_override": true,
+            "source_note": "Höflichkeits-Adverb, Standard-N5 in jeder Begrüssungslektion. In elzup als Adverb-Form nicht als eigenes Lemma.",
+            "image_url": "vocab_generated/vocab_933ff7ec.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "お願いします",
+            "reading": "おねがいします",
+            "romaji": "onegai shimasu",
+            "meaning": "please (polite request)",
+            "meaning_de": "bitte (höfliche Bitte)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "おねがいします。",
+            "example_sentence_english": "Onegai shimasu. — Please.",
+            "is_canonical_override": true,
+            "source_note": "Standard-N5 in MNN L1, Genki I. Höflichkeits-Verbform von 願う, in elzup nicht als eigenes Lemma.",
+            "image_url": "vocab_generated/vocab_df829f0c.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "どうぞ",
+            "reading": "どうぞ",
+            "romaji": "douzo",
+            "meaning": "please (offering, go ahead)",
+            "meaning_de": "bitte (anbieten / vorausgehen)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "どうぞ よろしく。",
+            "example_sentence_english": "Douzo yoroshiku. — Pleased to meet you (kindly).",
+            "is_canonical_override": true,
+            "source_note": "Standard-N5-Begrüssungs-Adverb, in MNN L1 und Genki I. In elzup nicht eigens gelistet.",
+            "image_url": "vocab_generated/vocab_cf30ffeb.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "日本",
+            "reading": "にほん",
+            "romaji": "Nihon",
+            "meaning": "Japan",
+            "meaning_de": "Japan",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "わたしは にほんから きました。",
+            "example_sentence_english": "Watashi wa Nihon kara kimashita. — I came from Japan.",
+            "is_canonical_override": true,
+            "source_note": "Eigenname, Standard-N5 in MNN L1. Eigennamen sind in der elzup-Liste systematisch ausgespart.",
+            "image_url": "vocab_generated/vocab_4dbed2e6.png"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln 2 — Berufe und Länder",
+      "description": "Neun weitere Wörter — woher kommst du, was machst du?",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Berufe und Länder",
+            "content_text": "## Beruf + Land = vollständige Vorstellung\n\nIn einer japanischen Selbstvorstellung gehört **immer** der Beruf dazu — *Was machst du?* — und oft auch das **Heimatland** — *Woher kommst du?*. Diese neun Wörter decken die häufigsten Antworten ab:\n\n### Berufe\n\n- **がくせい (gakusei)** — *Student/in*\n- **せんせい (sensei)** — *Lehrer/in, Professor/in, Arzt/Ärztin*\n- **かいしゃいん (kaisha-in)** — *Angestellte/r, Mitarbeiter/in*\n- **いしゃ (isha)** — *Arzt/Ärztin*\n\n### Länder\n\n- **にほんじん (Nihon-jin)** — *Japaner/in*\n- **ドイツ (Doitsu)** — *Deutschland*\n- **スイス (Suisu)** — *Schweiz*\n- **アメリカ (Amerika)** — *USA*\n- **ちゅうごく (Chuugoku)** — *China*\n\n> **Achtung:** **「せんせい」** wird **nie** für sich selbst benutzt, auch wenn du Lehrer/in bist. Du sagst dann lieber **「きょうし です」** (kyōshi desu — *Ich bin Lehrkraft*). **「せんせい」** ist ein Höflichkeitswort, das andere über dich verwenden.\n\nDie Länderbezeichnungen folgen einem Muster: Land + 「じん」 (jin) ergibt die Bezeichnung der Bewohner. **にほん → にほんじん** (Japan → Japaner), **ドイツ → ドイツじん** (Deutschland → Deutsche/r). So funktioniert das mit jedem Land."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "学生",
+            "reading": "がくせい",
+            "romaji": "gakusei",
+            "meaning": "student",
+            "meaning_de": "Student/in",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "わたしは がくせいです。",
+            "example_sentence_english": "Watashi wa gakusei desu. — I am a student.",
+            "image_url": "vocab_generated/vocab_35d9969d.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "先生",
+            "reading": "せんせい",
+            "romaji": "sensei",
+            "meaning": "teacher, professor",
+            "meaning_de": "Lehrer/in, Professor/in",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "うえのせんせいは にほんじんです。",
+            "example_sentence_english": "Ueno-sensei wa Nihon-jin desu. — Professor Ueno is Japanese.",
+            "image_url": "vocab_generated/vocab_1f9820d2.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "会社員",
+            "reading": "かいしゃいん",
+            "romaji": "kaisha-in",
+            "meaning": "company employee",
+            "meaning_de": "Angestellte/r, Mitarbeiter/in",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ちちは かいしゃいんです。",
+            "example_sentence_english": "Chichi wa kaisha-in desu. — My father is a company employee.",
+            "is_canonical_override": true,
+            "source_note": "Standard-N5-Beruf in MNN L1 und Genki I. In elzup nicht als Compound aufgeführt, obwohl die Einzelteile (会社, 員) als N4 gelistet sind.",
+            "image_url": "vocab_generated/vocab_1f8f9f4e.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "医者",
+            "reading": "いしゃ",
+            "romaji": "isha",
+            "meaning": "doctor",
+            "meaning_de": "Arzt, Ärztin",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ははは いしゃじゃ ありません。",
+            "example_sentence_english": "Haha wa isha ja arimasen. — My mother is not a doctor.",
+            "image_url": "vocab_generated/vocab_19e64982.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "日本人",
+            "reading": "にほんじん",
+            "romaji": "Nihon-jin",
+            "meaning": "Japanese (person)",
+            "meaning_de": "Japaner/in",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "たなかさんは にほんじんです。",
+            "example_sentence_english": "Tanaka-san wa Nihon-jin desu. — Mr. Tanaka is Japanese.",
+            "is_canonical_override": true,
+            "source_note": "Compound aus Eigenname + Suffix, Standard-N5 in MNN L1. Eigennamen-Compounds fehlen in elzup.",
+            "image_url": "vocab_generated/vocab_903910d7.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "ドイツ",
+            "reading": "ドイツ",
+            "romaji": "Doitsu",
+            "meaning": "Germany",
+            "meaning_de": "Deutschland",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "リサさんは ドイツから きました。",
+            "example_sentence_english": "Risa-san wa Doitsu kara kimashita. — Lisa came from Germany.",
+            "is_canonical_override": true,
+            "source_note": "Eigenname (Land), Lehnwort. Standard-N5-Vokabel in MNN, in elzup nicht gelistet, weil Eigennamen ausgespart sind.",
+            "image_url": "vocab_generated/vocab_7acbade1.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "スイス",
+            "reading": "スイス",
+            "romaji": "Suisu",
+            "meaning": "Switzerland",
+            "meaning_de": "Schweiz",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "わたしは スイスじんです。",
+            "example_sentence_english": "Watashi wa Suisu-jin desu. — I am Swiss.",
+            "is_canonical_override": true,
+            "source_note": "Eigenname (Land), Lehnwort. Für deutschsprachige Lerner zentral, da Schweiz Hauptzielgruppe von japanese-learning.ch ist.",
+            "image_url": "vocab_generated/vocab_2bb18c3e.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "アメリカ",
+            "reading": "アメリカ",
+            "romaji": "Amerika",
+            "meaning": "America, USA",
+            "meaning_de": "USA, Amerika",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "アメリカから きました。",
+            "example_sentence_english": "Amerika kara kimashita. — I came from America.",
+            "is_canonical_override": true,
+            "source_note": "Eigenname (Land), Lehnwort. Standard-N5 in MNN L1.",
+            "image_url": "vocab_generated/vocab_5897b1bb.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "中国",
+            "reading": "ちゅうごく",
+            "romaji": "Chuugoku",
+            "meaning": "China",
+            "meaning_de": "China",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ちゅうごくは おおきいくにです。",
+            "example_sentence_english": "Chuugoku wa ookii kuni desu. — China is a big country.",
+            "is_canonical_override": true,
+            "source_note": "Eigenname, Standard-N5 in MNN L1. Eigennamen fehlen in elzup.",
+            "image_url": "vocab_generated/vocab_c13dceab.png"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Grammatik — わたしは ～です",
+      "description": "Drei Muster: Aussage, Negation und Herkunft",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Drei Schlüssel-Muster",
+            "content_text": "## Die drei Sätze, die du nach dieser Seite kannst\n\nDiese Lektion baut auf **drei** Grammatikmustern auf — jedes davon ist Teil einer vollständigen Selbstvorstellung:\n\n1. **わたしは ～です** (watashi wa ~ desu) — **Ich bin ~** (Aussage)\n2. **わたしは ～じゃ ありません** (watashi wa ~ ja arimasen) — **Ich bin nicht ~** (Negation)\n3. **～から きました** (~kara kimashita) — **Ich komme aus ~** (Herkunft)\n\n### Wie das Partikel 「は」 funktioniert\n\nDas Partikel **「は」** (wa, geschrieben als 「は」, ausgesprochen *wa*) markiert das **Thema** des Satzes. Es zeigt: *Worüber spreche ich gerade?* In **わたしは がくせいです** ist das Thema **「わたし」** (ich), und die Aussage ist **「がくせいです」** (bin Studentin).\n\n> **Merke:** Das Schriftzeichen 「は」 wird normalerweise *ha* gelesen — **aber** als Themen-Partikel **immer** *wa*. Ein Sonderfall, den jeder Anfänger zuerst lernt.\n\n### Die Höflichkeitsform 「です」 (desu)\n\nDas Wort **「です」** (desu) ist die **höfliche Kopula** und entspricht dem deutschen *bin/ist/sind*. Es steht **am Ende** des Satzes, nach einem Nomen, und macht den Satz höflich-formell. **わたしは リサです** ist also wörtlich: *Ich + (Thema) + Lisa + bin*. Auf Deutsch: *Ich bin Lisa.*"
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "わたしは ～です (watashi wa ~ desu — Ich bin ~)",
+            "structure": "わたしは [Nomen] です。  (watashi wa [Nomen] desu)",
+            "romaji": "watashi wa [noun] desu",
+            "explanation": "Das Grundmuster jeder Selbstvorstellung. **「わたしは」** (watashi wa — *Ich (Thema)*) leitet den Satz ein, **「です」** (desu — *bin*) schliesst ihn höflich ab. Dazwischen steht das Nomen, das dich beschreibt: ein Name, ein Beruf, eine Nationalität. Das Partikel 「は」 wird *wa* gelesen, nicht *ha*.",
+            "jlpt_level": 5,
+            "example_sentences": "わたしは リサです。 (Watashi wa Risa desu.) -> Ich bin Lisa.\nわたしは がくせいです。 (Watashi wa gakusei desu.) -> Ich bin Studentin.\nわたしは スイスじんです。 (Watashi wa Suisu-jin desu.) -> Ich bin Schweizerin."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "～じゃ ありません (~ja arimasen — bin nicht ~)",
+            "structure": "わたしは [Nomen] じゃ ありません。  (watashi wa [Nomen] ja arimasen)",
+            "romaji": "watashi wa [noun] ja arimasen",
+            "explanation": "Die **Negation** zur **「～です」**-Form. Statt **「です」** sagst du **「じゃ ありません」** (ja arimasen — *bin nicht*). In sehr formellem Kontext (Vortrag, Geschäftstreffen) hörst du auch **「では ありません」** (de wa arimasen) — gleiche Bedeutung, eine Stufe steifer. Für den Alltag reicht **「じゃ ありません」** vollkommen aus.",
+            "jlpt_level": 5,
+            "example_sentences": "わたしは せんせいじゃ ありません。 (Watashi wa sensei ja arimasen.) -> Ich bin keine Lehrerin.\nたなかさんは いしゃじゃ ありません。 (Tanaka-san wa isha ja arimasen.) -> Tanaka ist kein Arzt.\nリサさんは にほんじんじゃ ありません。 (Risa-san wa Nihon-jin ja arimasen.) -> Lisa ist keine Japanerin."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "～から きました (~kara kimashita — Ich komme aus ~)",
+            "structure": "[Land/Ort] から きました。  ([Land/Ort] kara kimashita)",
+            "romaji": "[country] kara kimashita",
+            "explanation": "Mit **「～から きました」** sagst du, woher du kommst. **「～から」** (~kara) heisst *aus / von*, **「きました」** (kimashita) ist die höfliche Vergangenheitsform von **「くる」** (kuru — *kommen*) und bedeutet wörtlich *bin gekommen*. Der ganze Satz steht im Präteritum, weil das *Kommen* (die Reise) bereits abgeschlossen ist — auch wenn du jetzt **gerade** in Japan stehst.",
+            "jlpt_level": 5,
+            "example_sentences": "ドイツから きました。 (Doitsu kara kimashita.) -> Ich komme aus Deutschland.\nスイスから きました。 (Suisu kara kimashita.) -> Ich komme aus der Schweiz.\nリサさんは ミュンヘンから きました。 (Risa-san wa Myunhen kara kimashita.) -> Lisa kommt aus München."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Dialog — Tanaka trifft Lisa",
+      "description": "Erste Begegnung an der Universität",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Willkommens-Empfang an der Tokio-Universität — Tanaka trifft Lisa",
+            "content_text": "Tanaka: はじめまして。たなかです。\n  (Hajimemashite. Tanaka desu.)\n  -> Freut mich, Sie kennenzulernen. Ich bin Tanaka.\n\nリサ: はじめまして。リサ・ヴェーバーです。\n  (Hajimemashite. Risa Vēbā desu.)\n  -> Freut mich. Ich bin Lisa Weber.\n\nTanaka: リサさんは どこから きましたか。\n  (Risa-san wa doko kara kimashita ka.)\n  -> Frau Lisa, woher kommen Sie?\n\nリサ: ドイツから きました。ミュンヘンです。\n  (Doitsu kara kimashita. Myunhen desu.)\n  -> Ich komme aus Deutschland. Aus München.\n\nTanaka: そうですか。リサさんは がくせいですか。\n  (Sou desu ka. Risa-san wa gakusei desu ka.)\n  -> Ach so. Sind Sie Studentin?\n\nリサ: はい、がくせいです。たなかさんも がくせいですか。\n  (Hai, gakusei desu. Tanaka-san mo gakusei desu ka.)\n  -> Ja, ich bin Studentin. Sind Sie auch Student?\n\nTanaka: いいえ、わたしは がくせいじゃ ありません。かいしゃいんです。\n  (Iie, watashi wa gakusei ja arimasen. Kaisha-in desu.)\n  -> Nein, ich bin kein Student. Ich bin Angestellter.\n\nリサ: そうですか。どうぞ よろしく おねがいします。\n  (Sou desu ka. Douzo yoroshiku onegai shimasu.)\n  -> Ach so. Sehr erfreut, freut mich Sie kennenzulernen.\n\nTanaka: こちらこそ、よろしく おねがいします。\n  (Kochira koso, yoroshiku onegai shimasu.)\n  -> Ganz meinerseits, freut mich auch."
+          }
+        },
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Verständnisfragen zum Dialog",
+            "content_text": "## Hast du den Dialog verstanden?\n\nVier kurze Fragen zum Gespräch zwischen **Tanaka** und **Lisa**. Achte auf die **Berufe**, das **Herkunftsland** und die **Eröffnung**.\n\n> **Tipp:** Lies den Dialog nochmal Zeile für Zeile, bevor du antwortest — die Antworten stehen alle direkt im Text."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Woher kommt Lisa?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "Sie nennt das Land und die Stadt.",
+              "explanation": "Lisa sagt 「ドイツから きました。ミュンヘンです。」 (Doitsu kara kimashita. Myunhen desu.) — sie kommt aus Deutschland, aus München.",
+              "options": [
+                {
+                  "option_text": "Aus Deutschland (München)",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「ドイツから きました」 (Doitsu kara kimashita)."
+                },
+                {
+                  "option_text": "Aus der Schweiz (Zürich)",
+                  "is_correct": false,
+                  "feedback": "Nein, das wäre 「スイス」 (Suisu) — Lisa sagt 「ドイツ」 (Doitsu)."
+                },
+                {
+                  "option_text": "Aus den USA (New York)",
+                  "is_correct": false,
+                  "feedback": "Nein, das wäre 「アメリカ」 (Amerika)."
+                },
+                {
+                  "option_text": "Aus China (Peking)",
+                  "is_correct": false,
+                  "feedback": "Nein, das wäre 「ちゅうごく」 (Chuugoku)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was ist Tanakas Beruf?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "Er sagt es im vorletzten Satz.",
+              "explanation": "Tanaka sagt 「わたしは がくせいじゃ ありません。かいしゃいんです。」 (Watashi wa gakusei ja arimasen. Kaisha-in desu.) — er ist kein Student, sondern Angestellter.",
+              "options": [
+                {
+                  "option_text": "Angestellter (かいしゃいん, kaisha-in)",
+                  "is_correct": true,
+                  "feedback": "Genau — er sagt 「かいしゃいんです」."
+                },
+                {
+                  "option_text": "Student (がくせい, gakusei)",
+                  "is_correct": false,
+                  "feedback": "Nein — Tanaka sagt explizit 「がくせいじゃ ありません」 (kein Student)."
+                },
+                {
+                  "option_text": "Lehrer (せんせい, sensei)",
+                  "is_correct": false,
+                  "feedback": "Lehrer wird im Dialog nicht erwähnt."
+                },
+                {
+                  "option_text": "Arzt (いしゃ, isha)",
+                  "is_correct": false,
+                  "feedback": "Auch das wird nicht erwähnt."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Lisa ist Studentin.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Lisa antwortet 「はい、がくせいです」 (Hai, gakusei desu) — *Ja, ich bin Studentin*.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt — Lisa bestätigt es mit 「はい、がくせいです」."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — Lisa sagt 「はい、がくせいです」 (Ja, ich bin Studentin)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Mit welchem Wort beginnen beide ihre Selbstvorstellung?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "Es ist das Standard-Eröffnungswort.",
+              "explanation": "Beide sagen 「はじめまして」 (hajimemashite) — *Freut mich, Sie kennenzulernen*. Es ist die feste Eröffnung jeder ersten Begegnung.",
+              "options": [
+                {
+                  "option_text": "「はじめまして」 (hajimemashite)",
+                  "is_correct": true,
+                  "feedback": "Richtig — die Standard-Eröffnung."
+                },
+                {
+                  "option_text": "「もしもし」 (moshi moshi)",
+                  "is_correct": false,
+                  "feedback": "Nein — das wäre nur am Telefon."
+                },
+                {
+                  "option_text": "「さようなら」 (sayounara)",
+                  "is_correct": false,
+                  "feedback": "Nein — das ist Abschied, nicht Begrüssung."
+                },
+                {
+                  "option_text": "「いただきます」 (itadakimasu)",
+                  "is_correct": false,
+                  "feedback": "Nein — das sagt man vor dem Essen."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Übung — Quiz zur Selbstvorstellung",
+      "description": "Vertiefe Vokabeln und Grammatik mit zwölf gemischten Fragen",
+      "page_type": "quiz_carousel",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Übung",
+            "content_text": "## Zeit zu üben!\n\nDie zwölf folgenden Fragen testen **alles** aus dieser Lektion:\n\n- **Vokabeln** — Erkennst du はじめまして (hajimemashite), よろしく (yoroshiku), がくせい (gakusei), かいしゃいん (kaisha-in), ドイツ (Doitsu), スイス (Suisu)?\n- **Grammatik** — Beherrschst du 「わたしは ～です」 (watashi wa ~ desu), die Negation 「～じゃ ありません」 (~ja arimasen) und 「～から きました」 (~kara kimashita)?\n- **Höflichkeit** — Wann benutzt du 「～さん」 (~san)? Wann nicht?\n\n> **Tipp:** Lies bei Unsicherheit zuerst nochmal die Grammatik-Seite — die drei Muster sind die Basis."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「はじめまして」 (hajimemashite)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "Es ist der erste Satz beim ersten Treffen.",
+              "explanation": "「はじめまして」 (hajimemashite) bedeutet wörtlich *zum ersten Mal* und entspricht dem deutschen *Freut mich, Sie kennenzulernen*. Es ist die feste Eröffnung jedes ersten Treffens.",
+              "options": [
+                {
+                  "option_text": "Freut mich, Sie kennenzulernen",
+                  "is_correct": true,
+                  "feedback": "Genau — die Standard-Eröffnung."
+                },
+                {
+                  "option_text": "Auf Wiedersehen",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「さようなら」 (sayounara)."
+                },
+                {
+                  "option_text": "Guten Morgen",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「おはよう」 (ohayou)."
+                },
+                {
+                  "option_text": "Entschuldigung",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「すみません」 (sumimasen)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie sagst du auf Japanisch *Ich bin Studentin*?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "Watashi + wa + Beruf + desu.",
+              "explanation": "「わたしは がくせいです」 (Watashi wa gakusei desu) — *Ich bin Studentin*. Das Themen-Partikel 「は」 wird *wa* ausgesprochen.",
+              "options": [
+                {
+                  "option_text": "わたしは がくせいです。 (Watashi wa gakusei desu.)",
+                  "is_correct": true,
+                  "feedback": "Richtig — Standard-Aussagesatz."
+                },
+                {
+                  "option_text": "わたしは がくせいから きました。 (Watashi wa gakusei kara kimashita.)",
+                  "is_correct": false,
+                  "feedback": "Nein — 「から」 (kara) bedeutet *aus*, das passt nicht zum Beruf."
+                },
+                {
+                  "option_text": "わたしは がくせいじゃ ありません。 (Watashi wa gakusei ja arimasen.)",
+                  "is_correct": false,
+                  "feedback": "Das ist die Verneinung — *bin keine Studentin*."
+                },
+                {
+                  "option_text": "がくせいは わたしです。 (Gakusei wa watashi desu.)",
+                  "is_correct": false,
+                  "feedback": "Wortstellung falsch — Thema und Aussage sind vertauscht."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welcher Satz heisst *Ich komme aus der Schweiz*?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Land + から + きました.",
+              "explanation": "「スイスから きました」 (Suisu kara kimashita) — wörtlich *Aus der Schweiz bin ich gekommen*. Das **「から」** markiert die Herkunft, **「きました」** ist die höfliche Vergangenheit von *kommen*.",
+              "options": [
+                {
+                  "option_text": "スイスから きました。 (Suisu kara kimashita.)",
+                  "is_correct": true,
+                  "feedback": "Korrekt!"
+                },
+                {
+                  "option_text": "ドイツから きました。 (Doitsu kara kimashita.)",
+                  "is_correct": false,
+                  "feedback": "Das wäre Deutschland — Schweiz ist 「スイス」 (Suisu)."
+                },
+                {
+                  "option_text": "スイスじんです。 (Suisu-jin desu.)",
+                  "is_correct": false,
+                  "feedback": "Das heisst *Ich bin Schweizer/in* — nicht *Ich komme aus der Schweiz*."
+                },
+                {
+                  "option_text": "スイスは くにです。 (Suisu wa kuni desu.)",
+                  "is_correct": false,
+                  "feedback": "Das heisst *Die Schweiz ist ein Land* — keine Selbstvorstellung."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Das Themen-Partikel 「は」 wird in der Aussprache *ha* gelesen.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Falsch — als **Partikel** wird 「は」 immer **wa** ausgesprochen. Nur als normales Schriftzeichen (z.B. in 「はな」 — *Blume*) liest man es *ha*. Das ist eine der ersten Sonderregeln, die jeder Anfänger lernt.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nein — als Partikel ist es **wa**, nicht *ha*."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt — als Partikel immer **wa**."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie verneinst du 「わたしは いしゃです」 (Watashi wa isha desu)?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Ersetze 「です」 durch die Negation.",
+              "explanation": "「わたしは いしゃじゃ ありません」 (Watashi wa isha ja arimasen) — *Ich bin keine Ärztin*. Das **「です」** wird durch **「じゃ ありません」** ersetzt.",
+              "options": [
+                {
+                  "option_text": "わたしは いしゃじゃ ありません。 (Watashi wa isha ja arimasen.)",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "わたしは いしゃですか。 (Watashi wa isha desu ka.)",
+                  "is_correct": false,
+                  "feedback": "Das ist eine **Frage**, keine Verneinung."
+                },
+                {
+                  "option_text": "わたしは いしゃでした。 (Watashi wa isha deshita.)",
+                  "is_correct": false,
+                  "feedback": "Das ist die **Vergangenheit** — *Ich war Arzt*."
+                },
+                {
+                  "option_text": "わたしは いしゃから きました。 (Watashi wa isha kara kimashita.)",
+                  "is_correct": false,
+                  "feedback": "Das ergibt keinen sinnvollen Satz — *aus dem Arzt gekommen*."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet das Höflichkeitssuffix 「～さん」 (~san)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "Es wird an Namen angehängt.",
+              "explanation": "「～さん」 (~san) ist das **neutrale Höflichkeitssuffix** und entspricht dem deutschen *Herr/Frau*. Es wird an den Namen anderer Personen angehängt — niemals an den eigenen.",
+              "options": [
+                {
+                  "option_text": "Herr / Frau (an den Namen anderer Personen)",
+                  "is_correct": true,
+                  "feedback": "Korrekt!"
+                },
+                {
+                  "option_text": "Mein/e (Possessiv)",
+                  "is_correct": false,
+                  "feedback": "Das wäre das Partikel 「の」 (no)."
+                },
+                {
+                  "option_text": "Sehr geehrte/r (Brief-Anrede)",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「拝啓」 (haikei) — viel formeller."
+                },
+                {
+                  "option_text": "Sensei (Lehrer/in)",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「せんせい」 (sensei) — ein anderes Suffix."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde den Beruf mit der deutschen Übersetzung.",
+              "difficulty_level": 2,
+              "points": 2,
+              "explanation": "Die vier Standard-Berufe: がくせい (Studentin/Student), せんせい (Lehrer/in), かいしゃいん (Angestellte/r), いしゃ (Arzt/Ärztin).",
+              "options": [
+                {
+                  "option_text": "がくせい (gakusei)",
+                  "feedback": "Student/in",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "せんせい (sensei)",
+                  "feedback": "Lehrer/in",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "かいしゃいん (kaisha-in)",
+                  "feedback": "Angestellte/r",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "いしゃ (isha)",
+                  "feedback": "Arzt/Ärztin",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde das Land mit dem japanischen Namen.",
+              "difficulty_level": 2,
+              "points": 2,
+              "explanation": "Vier Länder, die Du im Alltag oft brauchst: にほん (Japan), ドイツ (Deutschland), スイス (Schweiz), アメリカ (USA).",
+              "options": [
+                {
+                  "option_text": "にほん (Nihon)",
+                  "feedback": "Japan",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "ドイツ (Doitsu)",
+                  "feedback": "Deutschland",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "スイス (Suisu)",
+                  "feedback": "Schweiz",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "アメリカ (Amerika)",
+                  "feedback": "USA",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Du darfst 「～さん」 (~san) auch an deinen eigenen Namen anhängen.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Falsch — 「～さん」 ist ein **Respekt**-Suffix für **andere**. Wenn du es an deinen eigenen Namen anhängst, wirkt das überheblich. Du sagst: 「たなかです」 (Tanaka desu), nicht 「たなかさんです」.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nein — das wirkt überheblich."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt — den eigenen Namen ohne 「さん」."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet die Antwort 「こちらこそ」 (kochira koso) am Ende einer Selbstvorstellung?",
+              "difficulty_level": 3,
+              "points": 1,
+              "hint": "Es ist eine höfliche Erwiderung.",
+              "explanation": "「こちらこそ」 (kochira koso) bedeutet etwa *Ganz meinerseits* oder *Im Gegenteil, ich freue mich*. Es ist die höfliche Erwiderung, wenn die andere Person zuerst 「よろしく おねがいします」 gesagt hat.",
+              "options": [
+                {
+                  "option_text": "Ganz meinerseits / Im Gegenteil ich",
+                  "is_correct": true,
+                  "feedback": "Richtig — die übliche höfliche Erwiderung."
+                },
+                {
+                  "option_text": "Auf Wiedersehen",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「さようなら」 (sayounara)."
+                },
+                {
+                  "option_text": "Nein, danke",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「いいえ、けっこうです」 (Iie, kekkou desu)."
+                },
+                {
+                  "option_text": "Bitte sehr",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「どうぞ」 (douzo)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welcher Satz ist die korrekte höfliche Frage *Wie heissen Sie?*?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Höflich + Name + Frage-Partikel.",
+              "explanation": "「おなまえは なんですか」 (O-namae wa nan desu ka) — wörtlich *Was ist Ihr Name?*. Das **「お」**-Präfix macht 「なまえ」 zur höflichen Form (für die andere Person), 「なんですか」 ist die Frage *was ist es?*.",
+              "options": [
+                {
+                  "option_text": "おなまえは なんですか。 (O-namae wa nan desu ka.)",
+                  "is_correct": true,
+                  "feedback": "Richtig — die Standard-Höflichkeitsfrage."
+                },
+                {
+                  "option_text": "なまえは わたしです。 (Namae wa watashi desu.)",
+                  "is_correct": false,
+                  "feedback": "Wortstellung und Bedeutung passen nicht."
+                },
+                {
+                  "option_text": "わたしは なまえです。 (Watashi wa namae desu.)",
+                  "is_correct": false,
+                  "feedback": "Heisst wörtlich *Ich bin Name* — kein sinnvoller Satz."
+                },
+                {
+                  "option_text": "なまえから きました。 (Namae kara kimashita.)",
+                  "is_correct": false,
+                  "feedback": "Heisst *Ich komme aus dem Namen* — unsinnig."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「よろしく おねがいします」 (Yoroshiku onegai shimasu) sagst du am Ende einer Selbstvorstellung.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Richtig — es ist die feste **Schluss-Formel** jeder ersten Begegnung. Wörtlich heisst es etwa *Bitte behandeln Sie mich freundlich*, sinngemäss *Ich freue mich auf die Zusammenarbeit / Bekanntschaft*.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt — die Schluss-Formel."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — es ist die Standard-Schluss-Formel."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Zusammenfassung",
+      "description": "Was du jetzt kannst — und wie es weitergeht",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Du hast es geschafft!",
+            "content_text": "## Was du jetzt kannst\n\nDu kannst jetzt eine **vollständige Selbstvorstellung** auf Japanisch geben. Konkret beherrschst du:\n\n### Die 18 Vokabeln dieser Lektion\n\n- **Begrüssung:** はじめまして (hajimemashite), よろしく (yoroshiku), おねがいします (onegai shimasu), どうぞ (douzo)\n- **Person:** わたし (watashi), ～さん (~san), なまえ (namae), おなまえ (o-namae)\n- **Berufe:** がくせい (gakusei), せんせい (sensei), かいしゃいん (kaisha-in), いしゃ (isha)\n- **Länder:** にほん (Nihon), にほんじん (Nihon-jin), ドイツ (Doitsu), スイス (Suisu), アメリカ (Amerika), ちゅうごく (Chuugoku)\n\n### Die drei Grammatik-Muster\n\n1. **わたしは ～です** (watashi wa ~ desu) — *Ich bin ~* (Aussage)\n2. **わたしは ～じゃ ありません** (watashi wa ~ ja arimasen) — *Ich bin nicht ~* (Negation)\n3. **～から きました** (~kara kimashita) — *Ich komme aus ~* (Herkunft)\n\n> **Praxis-Tipp:** Stelle dich heute Abend einmal **laut** im Spiegel auf Japanisch vor — Name, Land, Beruf, Schluss-Formel. Wiederhole das eine Woche lang und du sprichst die Selbstvorstellung im Schlaf.\n\n### Wie es weitergeht\n\nIn der nächsten Lektion (**N5 Begrüssung 2 — Alltagsgrüsse rund um den Tag**) lernst du die Grüsse für **jeden Tagesabschnitt**: 「おはようございます」 (ohayou gozaimasu), 「こんにちは」 (konnichiwa), 「こんばんは」 (konbanwa), 「おやすみなさい」 (oyasumi nasai), 「ただいま」 (tadaima), 「おかえり」 (okaeri), 「いってきます」 (ittekimasu), 「いってらっしゃい」 (itterasshai). Damit deckst du jede typische Alltagssituation ab — vom Aufstehen bis zum Schlafengehen.\n\nWeiter geht es! 🇯🇵"
+          }
+        }
+      ]
+    }
+  ],
+  "thumbnail_url": "generated/thumbnail_begrüssung_&_höflichkeit_20260430_174625.png"
+}

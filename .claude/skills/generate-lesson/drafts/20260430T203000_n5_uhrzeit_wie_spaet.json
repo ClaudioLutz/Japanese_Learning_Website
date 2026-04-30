@@ -1,0 +1,822 @@
+{
+  "title": "N5 Uhrzeit — Wie spät ist es?",
+  "description": "Zeit auf Japanisch lesen und sagen: 「いまは なんじですか」 (Ima wa nan-ji desu ka — *Wie spät ist es?*). Du lernst die Stunden-Zähler 「時」 (ji) und Minuten-Zähler 「分」 (fun/pun), die Tageszeit-Markierungen 「午前」 (gozen — am) und 「午後」 (gogo — pm), die halbe Stunde 「半」 (han) und Tagesabschnitte 「朝」 (asa — Morgen), 「昼」 (hiru — Mittag), 「夜」 (yoru — Nacht).",
+  "jlpt_level": 5,
+  "topic": "Zahlen, Zeit und Datum",
+  "instruction_language": "german",
+  "allow_guest_access": false,
+  "pages": [
+    {
+      "title": "Einführung — die Uhr im Kopf",
+      "description": "Worum geht es in dieser Lektion?",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Wie spät ist es auf Japanisch?",
+            "content_text": "## **「なんじですか」** — die häufigste Smalltalk-Frage des Tages\n\nIm japanischen Alltag fragst du **mehrmals täglich** nach der Uhrzeit — am Bahnhof, im Restaurant, im Büro. Die Frage ist immer dieselbe: **「なんじですか」** (Nan-ji desu ka — *Wie spät ist es?*).\n\nIn dieser Lektion lernst du die **Bausteine**, mit denen du **jede Uhrzeit** lesen, sagen und verstehen kannst:\n\n### Was du nach dieser Lektion kannst\n\n- **Stunden** sagen: **「いちじ」** (ichi-ji — 1 Uhr), **「にじ」** (ni-ji — 2 Uhr), … **「じゅうにじ」** (juu-ni-ji — 12 Uhr).\n- **Minuten** sagen: **「ふん / ぷん」** (fun / pun), inkl. der **Aussprache-Wechsel** (1 Minute → いっぷん (ippun), 3 Minuten → さんぷん (sanpun), 4 Minuten → よんぷん (yonpun)).\n- **Halbe Stunden**: **「はん」** (han — halb), z.B. **「いちじはん」** (ichi-ji han — *halb zwei / 1:30 Uhr*).\n- **Tageszeit**: **「ごぜん」** (gozen — am), **「ごご」** (gogo — pm).\n- **Tagesabschnitte** unterscheiden: **あさ** (asa — Morgen), **ひる** (hiru — Mittag), **ばん / よる** (ban / yoru — Abend / Nacht).\n- Die **Frage stellen** und **antworten**: 「なんじですか」 (nan-ji desu ka) → 「いま、さんじです」 (ima, san-ji desu).\n\n> **Lerntipp:** Schau heute **alle zwei Stunden** auf die Uhr und sag die aktuelle Zeit **laut auf Japanisch**. Beispiel: 「いま、ごぜん じゅうじはんです」 (Ima, gozen juu-ji han desu — *Es ist jetzt 10:30 Uhr vormittags*). Eine Woche so durchziehen, und die Zahlen-Stunden-Kombinationen sitzen automatisch.\n\nNach dieser Lektion liest du **jede Bahnhofsanzeige** und **jeden Stundenplan** auf Japanisch — die Tür zu Reisen, Terminen und Alltag öffnet sich."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln 1 — Stunden, Minuten, Tageszeit",
+      "description": "Acht Schlüssel-Wörter rund um die Uhr",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Acht Wörter — die Bausteine der Uhr",
+            "content_text": "## Acht Vokabeln, mit denen du jede Uhrzeit baust\n\nDie japanische Uhr besteht aus wenigen Bausteinen, die du immer **gleich** kombinierst:\n\n### Zähler\n\n- **じ (ji)** — *Stunde* (Zähler-Suffix nach Zahl: 1 → いちじ).\n- **ふん / ぷん (fun / pun)** — *Minute* (mit Lautwechsel je nach Zahl).\n- **はん (han)** — *halb* (steht statt einer Minutenangabe: 「さんじはん」 = *halb vier*).\n- **じかん (jikan)** — *Stunde / Zeit* (allgemein, als Wort).\n\n### Tageszeit-Markierung\n\n- **ごぜん (gozen)** — *am, vormittags* (00:00 - 11:59).\n- **ごご (gogo)** — *pm, nachmittags / abends* (12:00 - 23:59).\n\n### Frage und Aktualität\n\n- **なんじ (nan-ji)** — *welche Uhrzeit / wie spät?*\n- **いま (ima)** — *jetzt*.\n\n> **Wichtig:** Die **Reihenfolge** ist immer **「ごぜん / ごご + Stunde + Minute」**: 「ごぜん じゅうじ じゅっぷん」 (gozen juu-ji juppun — *10:10 Uhr vormittags*). Anders als im Deutschen (*10 Uhr 10*) wird die **am/pm-Information** **vorangestellt**."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "時",
+            "reading": "じ",
+            "romaji": "ji",
+            "meaning": "o'clock (counter for hours)",
+            "meaning_de": "Uhr (Stundenzähler)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "いま、いちじです。",
+            "example_sentence_english": "Ima, ichi-ji desu. — It is now 1 o'clock.",
+            "is_canonical_override": true,
+            "source_note": "Stunden-Zähler, MNN L4. In elzup als 時 (とき, Zeit) mit anderer Lesung gelistet — die Zähler-Lesung じ ist der eigene Lemma-Eintrag.",
+            "image_url": "vocab_generated/vocab_267e2399.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "分",
+            "reading": "ふん",
+            "romaji": "fun",
+            "meaning": "minute (counter)",
+            "meaning_de": "Minute (Zähler)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "じゅうぷんです。",
+            "example_sentence_english": "Juppun desu. — It is 10 minutes.",
+            "is_canonical_override": true,
+            "source_note": "Minuten-Zähler, MNN L4. Fun/pun-Lautwechsel je nach vorangehender Zahl.",
+            "image_url": "vocab_generated/vocab_daf783c8.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "半",
+            "reading": "はん",
+            "romaji": "han",
+            "meaning": "half (in time: half-past)",
+            "meaning_de": "halb (in Zeit: halbe Stunde)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "さんじはんです。",
+            "example_sentence_english": "San-ji han desu. — It is half past three (3:30).",
+            "image_url": "vocab_generated/vocab_2475dea6.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "時間",
+            "reading": "じかん",
+            "romaji": "jikan",
+            "meaning": "time, hour (period)",
+            "meaning_de": "Zeit, Stunde (Dauer)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "なんじかん べんきょうしますか。",
+            "example_sentence_english": "Nan-jikan benkyou shimasu ka. — How many hours do you study?",
+            "is_canonical_override": true,
+            "source_note": "Standard-N5 Substantiv für Zeit/Dauer, MNN L4.",
+            "image_url": "vocab_generated/vocab_883b81c8.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "午前",
+            "reading": "ごぜん",
+            "romaji": "gozen",
+            "meaning": "a.m., morning",
+            "meaning_de": "vormittags, am",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ごぜん じゅうじです。",
+            "example_sentence_english": "Gozen juu-ji desu. — It is 10 a.m.",
+            "image_url": "vocab_generated/vocab_bb3b79ba.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "午後",
+            "reading": "ごご",
+            "romaji": "gogo",
+            "meaning": "p.m., afternoon",
+            "meaning_de": "nachmittags, pm",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ごご さんじです。",
+            "example_sentence_english": "Gogo san-ji desu. — It is 3 p.m.",
+            "image_url": "vocab_generated/vocab_b5cc30a8.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "何時",
+            "reading": "なんじ",
+            "romaji": "nan-ji",
+            "meaning": "what time, what o'clock",
+            "meaning_de": "wie spät, welche Uhrzeit",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "いまは なんじですか。",
+            "example_sentence_english": "Ima wa nan-ji desu ka. — What time is it now?",
+            "is_canonical_override": true,
+            "source_note": "Standard-N5 Frage, MNN L4. Compound aus 何 + 時, in elzup als Compound nicht gelistet.",
+            "image_url": "vocab_generated/vocab_d6bbae45.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "今",
+            "reading": "いま",
+            "romaji": "ima",
+            "meaning": "now",
+            "meaning_de": "jetzt",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "いま、なんじですか。",
+            "example_sentence_english": "Ima, nan-ji desu ka. — What time is it now?",
+            "image_url": "vocab_generated/vocab_ba4b5ed1.png"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln 2 — Tagesabschnitte und Aktivitäten",
+      "description": "Sieben Wörter für den Tagesablauf",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Tagesabschnitte und Termin-Wörter",
+            "content_text": "## Sieben Vokabeln für Termin-Smalltalk\n\nDie Uhrzeit allein bringt wenig — du brauchst auch die **Tagesabschnitte** und ein paar **Termin-Wörter**, um in einem Gespräch *Wann?* sinnvoll zu beantworten:\n\n### Tagesabschnitte\n\n- **あさ (asa)** — *Morgen* (von Aufstehen bis Mittag).\n- **ひる (hiru)** — *Mittag* (Mittagszeit, Lunch).\n- **ばん (ban)** — *Abend* (nach Sonnenuntergang).\n- **よる (yoru)** — *Nacht* (späte Stunden).\n\n### Termin-Wörter\n\n- **きょう (kyou)** — *heute*.\n- **あした (ashita)** — *morgen* (Tag).\n- **から (kara)** — *ab, von* (Partikel: 「さんじから」 — *ab 3 Uhr*).\n\n> **Wichtig:** **「ばん」** und **「よる」** überlappen sich. **「ばん」** ist eher der **frühe Abend** (Essen, Familie), **「よる」** der **späte Abend bis Nacht** (Schlafenszeit). Wenn du zur Smalltalk-Tageszeit fragst, nutze **「ばん」** für 18-21 Uhr, **「よる」** für 21 Uhr - Mitternacht.\n\nDas Partikel **「から」** (kara) — schon aus *「ドイツから きました」* (Doitsu kara kimashita — *aus Deutschland gekommen*) bekannt — funktioniert bei Zeit ähnlich: **「さんじから」** (san-ji kara — *ab 3 Uhr*)."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "朝",
+            "reading": "あさ",
+            "romaji": "asa",
+            "meaning": "morning",
+            "meaning_de": "Morgen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あさ、しちじに おきます。",
+            "example_sentence_english": "Asa, shichi-ji ni okimasu. — In the morning, I get up at 7.",
+            "image_url": "vocab_generated/vocab_1cfa3d28.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "昼",
+            "reading": "ひる",
+            "romaji": "hiru",
+            "meaning": "noon, daytime",
+            "meaning_de": "Mittag, Tag",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ひるは じゅうにじです。",
+            "example_sentence_english": "Hiru wa juu-ni-ji desu. — Noon is 12 o'clock.",
+            "image_url": "vocab_generated/vocab_fe4a27c0.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "晩",
+            "reading": "ばん",
+            "romaji": "ban",
+            "meaning": "evening",
+            "meaning_de": "Abend",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ばん、ろくじに かえります。",
+            "example_sentence_english": "Ban, roku-ji ni kaerimasu. — In the evening, I go home at 6.",
+            "is_canonical_override": true,
+            "source_note": "Standard-N5 Tageszeit-Wort, MNN L4.",
+            "image_url": "vocab_generated/vocab_ce32d370.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "夜",
+            "reading": "よる",
+            "romaji": "yoru",
+            "meaning": "night",
+            "meaning_de": "Nacht",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "よる、じゅういちじに ねます。",
+            "example_sentence_english": "Yoru, juu-ichi-ji ni nemasu. — At night, I sleep at 11.",
+            "image_url": "vocab_generated/vocab_7345a62e.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "今日",
+            "reading": "きょう",
+            "romaji": "kyou",
+            "meaning": "today",
+            "meaning_de": "heute",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "きょうは げつようびです。",
+            "example_sentence_english": "Kyou wa getsuyoubi desu. — Today is Monday.",
+            "is_canonical_override": true,
+            "source_note": "Standard-N5 Termin-Wort, MNN L4.",
+            "image_url": "vocab_generated/vocab_296304f1.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "明日",
+            "reading": "あした",
+            "romaji": "ashita",
+            "meaning": "tomorrow",
+            "meaning_de": "morgen (Tag)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あした、ごご さんじに あいましょう。",
+            "example_sentence_english": "Ashita, gogo san-ji ni aimashou. — Tomorrow, let's meet at 3 p.m.",
+            "image_url": "vocab_generated/vocab_2a7733d6.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "から",
+            "reading": "から",
+            "romaji": "kara",
+            "meaning": "from (time / place)",
+            "meaning_de": "ab, von (Zeit / Ort)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "くじから ごじまでです。",
+            "example_sentence_english": "Ku-ji kara go-ji made desu. — It is from 9 to 5.",
+            "is_canonical_override": true,
+            "source_note": "Standard-N5 Partikel, MNN L4. In elzup als Partikel nicht eigens gelistet.",
+            "image_url": "vocab_generated/vocab_0dbdaf80.png"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Grammatik — Stunden, Minuten und Frage-Antwort",
+      "description": "Drei Muster: Stundenzähler, Minutenzähler mit Lautwechsel, Frage-Antwort",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Drei Muster — die Uhr im Griff",
+            "content_text": "## Drei Muster — und du baust jede Uhrzeit\n\nDiese Lektion stützt sich auf **drei** Muster:\n\n1. **Zahl + 「じ」** (ji) — *X Uhr* (Stundenzähler).\n2. **Zahl + 「ふん / ぷん」** (fun / pun) — *X Minuten* (Minutenzähler mit Lautwechsel).\n3. **「いまは なんじですか」 → 「いまは ～じ ～ふんです」** (Frage-Antwort).\n\n### Der Stunden-Zähler 「じ」 (ji)\n\nFast alle Stunden bilden sich **regelmässig**: Zahl + **じ**. **Achtung-Sonderfälle:**\n\n- **4 Uhr** → **よじ** (yo-ji), **nicht** *yon-ji* oder *shi-ji*.\n- **7 Uhr** → **しちじ** (shichi-ji), nicht *nana-ji*.\n- **9 Uhr** → **くじ** (ku-ji), nicht *kyuu-ji*.\n\n### Der Minuten-Zähler 「ふん / ぷん」 (fun / pun)\n\nHier wird es spannender: Je nach Zahl **wechselt** das Suffix zwischen **ふん** und **ぷん** — und manchmal ändert sich auch die **Zahl-Lesung** selbst:\n\n- **1分** → **いっぷん** (ippun)\n- **3分** → **さんぷん** (sanpun)\n- **4分** → **よんぷん** (yonpun)\n- **6分** → **ろっぷん** (roppun)\n- **8分** → **はっぷん** (happun) oder **はちふん** (hachifun)\n- **10分** → **じゅっぷん** / **じっぷん** (juppun / jippun)\n\nDie meisten anderen Zahlen nehmen **ふん**: **にふん** (ni-fun, 2), **ごふん** (go-fun, 5), **ななふん** (nana-fun, 7), **きゅうふん** (kyuu-fun, 9).\n\n> **Lerntipp:** Diese Lautwechsel sind **mühsam zu lernen** — sag jeden Tag laut **alle zehn Minutenformen** der Reihe nach: 「いっぷん、にふん、さんぷん、よんぷん、ごふん、ろっぷん、ななふん、はっぷん、きゅうふん、じゅっぷん」. Nach einer Woche sitzt es."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "Stundenzähler 「じ」 (ji)",
+            "structure": "[Zahl] + じ。  ([number] + ji)",
+            "romaji": "[number] + ji",
+            "explanation": "Der Stundenzähler **「じ」** (ji) wird **direkt** an die Zahl angehängt. Achtung-Sonderfälle: **4 Uhr → よじ** (nicht *yon-ji*), **7 Uhr → しちじ** (nicht *nana-ji*), **9 Uhr → くじ** (nicht *kyuu-ji*). Diese drei werden im Stunden-Kontext **immer** mit den alten Lesungen ausgesprochen.",
+            "jlpt_level": 5,
+            "example_sentences": "いま、いちじです。 (Ima, ichi-ji desu.) -> Es ist jetzt 1 Uhr.\nごぜん よじです。 (Gozen yo-ji desu.) -> Es ist 4 Uhr morgens.\nごご しちじです。 (Gogo shichi-ji desu.) -> Es ist 7 Uhr abends.\nくじから ごじまでです。 (Ku-ji kara go-ji made desu.) -> Es ist von 9 bis 5."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "Minutenzähler 「ふん / ぷん」 (fun / pun)",
+            "structure": "[Zahl] + ふん / ぷん。  ([number] + fun/pun)",
+            "romaji": "[number] + fun/pun",
+            "explanation": "Der Minutenzähler **wechselt** je nach Zahl zwischen **ふん** und **ぷん**, und manche Zahlen werden im Mini-Kontext anders gelesen. Pflicht-Liste: **1=いっぷん**, **3=さんぷん**, **4=よんぷん**, **6=ろっぷん**, **8=はっぷん**, **10=じゅっぷん**. Andere meist mit **ふん**: 2=にふん, 5=ごふん, 7=ななふん, 9=きゅうふん.",
+            "jlpt_level": 5,
+            "example_sentences": "いっぷんです。 (Ippun desu.) -> Es ist 1 Minute.\nごふんです。 (Go-fun desu.) -> Es ist 5 Minuten.\nじゅっぷん おそいです。 (Juppun osoi desu.) -> 10 Minuten verspätet.\nさんじ よんぷんです。 (San-ji yonpun desu.) -> Es ist 3 Uhr 4."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "Frage-Antwort: いまは なんじですか → ～じ ～ふんです",
+            "structure": "[Frage]: いまは なんじですか。  →  [Antwort]: いま、(ごぜん / ごご) [じ] [ふん]です。",
+            "romaji": "[Frage]: ima wa nan-ji desu ka  ->  [Antwort]: ima (gozen/gogo) [hour] [minute] desu",
+            "explanation": "Die **Smalltalk-Frage** nach der Uhrzeit. **「いまは」** (ima wa) — *jetzt* + Themen-Partikel, **「なんじ」** (nan-ji) — *welche Uhr*, **「ですか」** — Frage. Antwort: **Tageszeit (gozen/gogo) + Stunde + Minute + です**. Die Reihenfolge ist immer dieselbe — anders als im Deutschen.",
+            "jlpt_level": 5,
+            "example_sentences": "いまは なんじですか。 (Ima wa nan-ji desu ka.) -> Wie spät ist es?\nいま、ごぜん じゅうじです。 (Ima, gozen juu-ji desu.) -> Es ist jetzt 10 Uhr morgens.\nごご いちじはんです。 (Gogo ichi-ji han desu.) -> Es ist 13:30 Uhr.\nしちじ じゅっぷんです。 (Shichi-ji juppun desu.) -> Es ist 7 Uhr 10."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Dialog — Auf dem Bahnhof",
+      "description": "Tanaka fragt Lisa nach der Abfahrtszeit",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Tokyo-Bahnhof — der nächste Zug fährt wann?",
+            "content_text": "Tanaka: リサさん、いまは なんじですか。\n  (Risa-san, ima wa nan-ji desu ka.)\n  -> Frau Lisa, wie spät ist es jetzt?\n\nLisa: ごご いちじ じゅっぷんです。\n  (Gogo ichi-ji juppun desu.)\n  -> Es ist 13:10 Uhr.\n\nTanaka: つぎの でんしゃは なんじからですか。\n  (Tsugi no densha wa nan-ji kara desu ka.)\n  -> Ab wann fährt der nächste Zug?\n\nLisa: いちじ にじゅうごふんからです。じゅうごふんあとです。\n  (Ichi-ji nijuu-go-fun kara desu. Juu-go-fun ato desu.)\n  -> Ab 13:25 Uhr. In 15 Minuten.\n\nTanaka: そうですか。じゃあ、コーヒーを いっぱい のみましょう。\n  (Sou desu ka. Jaa, koohii wo ippai nomimashou.)\n  -> Ach so. Dann lasst uns einen Kaffee trinken.\n\nLisa: いいですね。あの カフェは よじまでです。\n  (Ii desu ne. Ano kafe wa yo-ji made desu.)\n  -> Klingt gut. Das Café da drueben hat bis 16 Uhr offen.\n\nTanaka: あした、ともだちと あいます。なんじが いいですか。\n  (Ashita, tomodachi to aimasu. Nan-ji ga ii desu ka.)\n  -> Morgen treffe ich einen Freund. Wann passt es?\n\nLisa: ごご しちじはんは どうですか。\n  (Gogo shichi-ji han wa dou desu ka.)\n  -> Wie wäre es um halb acht abends?\n\nTanaka: いいですよ。じゃあ、あした しちじはんに!\n  (Ii desu yo. Jaa, ashita shichi-ji han ni!)\n  -> Klar. Dann morgen um halb acht!\n\nLisa: はい、また あした。\n  (Hai, mata ashita.)\n  -> Ja, bis morgen."
+          }
+        },
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Verständnisfragen zum Dialog",
+            "content_text": "## Hast du den Dialog verstanden?\n\nVier Fragen prüfen, ob du **Stunde, Minute und Tageszeit** korrekt zuordnen kannst.\n\n> **Tipp:** Achte auf die **gozen / gogo**-Markierungen und auf die Sonderlesungen 4=よ (yo), 7=しち (shichi), 9=く (ku)."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie spät ist es im Dialog, als Tanaka fragt?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "Lisa antwortet sofort.",
+              "explanation": "Lisa sagt 「ごご いちじ じゅっぷんです」 (Gogo ichi-ji juppun desu) — *13:10 Uhr*. **「ごご」** = pm, **「いちじ」** = 1 Uhr, **「じゅっぷん」** = 10 Minuten.",
+              "options": [
+                {
+                  "option_text": "13:10 Uhr (ごご いちじ じゅっぷん, gogo ichi-ji juppun)",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "1:10 Uhr morgens (ごぜん いちじ じゅっぷん, gozen ichi-ji juppun)",
+                  "is_correct": false,
+                  "feedback": "Nein — Lisa sagt 「ごご」 (pm), nicht 「ごぜん」 (am)."
+                },
+                {
+                  "option_text": "13:50 Uhr (ごご いちじ ごじゅっぷん, gogo ichi-ji gojuppun)",
+                  "is_correct": false,
+                  "feedback": "Falsche Minutenzahl."
+                },
+                {
+                  "option_text": "10:01 Uhr (ごご じゅうじ いっぷん, gogo juu-ji ippun)",
+                  "is_correct": false,
+                  "feedback": "Stunde und Minute vertauscht."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wann fährt der nächste Zug?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "13 Uhr + 25 Minuten.",
+              "explanation": "Lisa sagt 「いちじ にじゅうごふんからです」 (Ichi-ji nijuu-go-fun kara desu) — *Ab 13:25 Uhr*. **「にじゅうごふん」** = 25 Minuten.",
+              "options": [
+                {
+                  "option_text": "13:25 Uhr (いちじ にじゅうごふん, ichi-ji nijuu-go-fun)",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "13:15 Uhr (いちじ じゅうごふん, ichi-ji juu-go-fun)",
+                  "is_correct": false,
+                  "feedback": "Nein — *15 Minuten* wäre 「じゅうごふん」, nicht 「にじゅうごふん」."
+                },
+                {
+                  "option_text": "12:25 Uhr (じゅうにじ にじゅうごふん, juu-ni-ji nijuu-go-fun)",
+                  "is_correct": false,
+                  "feedback": "Stunde falsch."
+                },
+                {
+                  "option_text": "1:25 Uhr morgens (ごぜん いちじ にじゅうごふん, gozen ichi-ji nijuu-go-fun)",
+                  "is_correct": false,
+                  "feedback": "Tanaka spricht im pm-Kontext."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Bis wann hat das Café im Dialog offen?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Lisa sagt 「あの カフェは よじまでです」 (Ano kafe wa yo-ji made desu) — *bis 16 Uhr* (yo-ji im pm-Kontext). **「よじ」** ist die Sonderlesung für 4 Uhr.",
+              "options": [
+                {
+                  "option_text": "Richtig — bis 16 Uhr (よじ, yo-ji)",
+                  "is_correct": true,
+                  "feedback": "Korrekt!"
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — Lisa sagt 「よじまで」 (yo-ji made)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Um wieviel Uhr verabreden sich Tanaka und Lisa morgen?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Halb acht abends.",
+              "explanation": "Lisa schlägt vor: 「ごご しちじはんは どうですか」 (Gogo shichi-ji han wa dou desu ka) — *19:30 Uhr*. **「しちじはん」** = 7:30 Uhr (mit der Sonderlesung **しち** für 7).",
+              "options": [
+                {
+                  "option_text": "19:30 Uhr (ごご しちじはん, gogo shichi-ji han)",
+                  "is_correct": true,
+                  "feedback": "Richtig — halb acht abends."
+                },
+                {
+                  "option_text": "7:30 Uhr morgens (ごぜん しちじはん, gozen shichi-ji han)",
+                  "is_correct": false,
+                  "feedback": "Nein — Lisa sagt 「ごご」 (pm)."
+                },
+                {
+                  "option_text": "20:30 Uhr (ごご はちじはん, gogo hachi-ji han)",
+                  "is_correct": false,
+                  "feedback": "Stunde falsch — *halb acht*, nicht *halb neun*."
+                },
+                {
+                  "option_text": "18:30 Uhr (ごご ろくじはん, gogo roku-ji han)",
+                  "is_correct": false,
+                  "feedback": "Stunde falsch — *halb acht*, nicht *halb sieben*."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Übung — Stunden und Minuten trainieren",
+      "description": "Vierzehn Fragen zu Sonderlesungen, Lautwechsel und Tageszeit",
+      "page_type": "quiz_carousel",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Übung",
+            "content_text": "## Zeit zu üben!\n\nDie zwölf folgenden Fragen testen alle drei Muster:\n\n- **Stunden-Sonderlesungen** — **4 = よ** (yo), **7 = しち** (shichi), **9 = く** (ku).\n- **Minuten-Lautwechsel** — wann **ふん** (fun), wann **ぷん** (pun).\n- **Tageszeit** — **ごぜん** (gozen) vs. **ごご** (gogo).\n\n> **Tipp:** Bei jeder Frage zuerst die **Stunde** identifizieren, dann die **Minute**, dann die **Tageszeit**. So vermeidest du Verwechslungen."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie sagt man auf Japanisch *Es ist 4 Uhr*?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Sonderlesung — nicht *yon-ji*.",
+              "explanation": "「よじです」 (Yo-ji desu) — **「よじ」** ist die Sonderlesung. **「よんじ」** wäre falsch.",
+              "options": [
+                {
+                  "option_text": "よじです。 (Yo-ji desu.)",
+                  "is_correct": true,
+                  "feedback": "Richtig — Sonderlesung."
+                },
+                {
+                  "option_text": "よんじです。 (Yon-ji desu.)",
+                  "is_correct": false,
+                  "feedback": "Falsch — bei Stunden ist 4 immer *yo*, nicht *yon*."
+                },
+                {
+                  "option_text": "しじです。 (Shi-ji desu.)",
+                  "is_correct": false,
+                  "feedback": "Falsch — *shi* wird bei Stunden vermieden (klingt wie *Tod* 死)."
+                },
+                {
+                  "option_text": "よっじです。 (Yotsu-ji desu.)",
+                  "is_correct": false,
+                  "feedback": "Falsch — keine bekannte Form."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie sagt man *Es ist 9 Uhr morgens*?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "9 Uhr ist Sonderlesung; gozen am Anfang.",
+              "explanation": "「ごぜん くじです」 (Gozen ku-ji desu). **「くじ」** ist die Sonderlesung für 9 Uhr (nicht *kyuu-ji*).",
+              "options": [
+                {
+                  "option_text": "ごぜん くじです。 (Gozen ku-ji desu.)",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "ごぜん きゅうじです。 (Gozen kyuu-ji desu.)",
+                  "is_correct": false,
+                  "feedback": "Falsch — bei Stunden 9 = *ku*, nicht *kyuu*."
+                },
+                {
+                  "option_text": "ごご くじです。 (Gogo ku-ji desu.)",
+                  "is_correct": false,
+                  "feedback": "Das wäre 21 Uhr, nicht 9 Uhr morgens."
+                },
+                {
+                  "option_text": "くじごぜんです。 (Ku-ji gozen desu.)",
+                  "is_correct": false,
+                  "feedback": "Wortstellung falsch — gozen kommt vor der Stunde."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie spricht man **3 Minuten** auf Japanisch aus?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Lautwechsel: ふん oder ぷん?",
+              "explanation": "「さんぷん」 (sanpun) — **3** nimmt **ぷん** (pun), nicht **ふん** (fun). Lautwechsel-Regel.",
+              "options": [
+                {
+                  "option_text": "さんぷん (sanpun)",
+                  "is_correct": true,
+                  "feedback": "Richtig — 3 → ぷん."
+                },
+                {
+                  "option_text": "さんふん (sanfun)",
+                  "is_correct": false,
+                  "feedback": "Nein — bei 3 ist es ぷん (pun), nicht ふん."
+                },
+                {
+                  "option_text": "みっぷん (mippun)",
+                  "is_correct": false,
+                  "feedback": "Falsch — *3* wird nicht *mit-* gelesen, sondern *san*."
+                },
+                {
+                  "option_text": "さんじ (san-ji)",
+                  "is_correct": false,
+                  "feedback": "Das wäre 3 Uhr, nicht 3 Minuten."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "**「いちじはん」** (Ichi-ji han) bedeutet *halb zwei (1:30 Uhr)*.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Richtig — **「はん」** (han) = *halbe Stunde*, also **1:30 Uhr**. Im Deutschen sagen wir manchmal *halb zwei* (= 1:30), im Japanischen ist es immer *X Uhr halb*.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt — 1:30 Uhr."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — han = halb (Stunde plus 30 Minuten)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welche Antwort heisst *Es ist 19:45 Uhr*?",
+              "difficulty_level": 3,
+              "points": 1,
+              "hint": "gogo + 7 Uhr + 45 Minuten.",
+              "explanation": "「ごご しちじ よんじゅうごふんです」 (Gogo shichi-ji yonjuu-go-fun desu). **「しちじ」** = 7 Uhr (Sonderlesung), **「よんじゅうごふん」** = 45 Minuten.",
+              "options": [
+                {
+                  "option_text": "ごご しちじ よんじゅうごふんです。 (Gogo shichi-ji yonjuu-go-fun desu.)",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "ごご ななじ よんじゅうごふんです。 (Gogo nana-ji yonjuu-go-fun desu.)",
+                  "is_correct": false,
+                  "feedback": "Stunden-7 ist しち (shichi), nicht なな (nana)."
+                },
+                {
+                  "option_text": "ごぜん しちじ よんじゅうごふんです。 (Gozen shichi-ji yonjuu-go-fun desu.)",
+                  "is_correct": false,
+                  "feedback": "Das wäre 7:45 Uhr morgens — falsche Tageszeit."
+                },
+                {
+                  "option_text": "ごご しちじ よんじゅうごじです。 (Gogo shichi-ji yonjuu-go-ji desu.)",
+                  "is_correct": false,
+                  "feedback": "Doppeltes じ — Minute braucht ふん/ぷん."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie fragst du höflich *Wie spät ist es jetzt?*?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "Ima + wa + nan-ji + desu ka.",
+              "explanation": "「いまは なんじですか」 (Ima wa nan-ji desu ka). **「いま」** = jetzt, **「なんじ」** = welche Uhrzeit, **「ですか」** = Frage.",
+              "options": [
+                {
+                  "option_text": "いまは なんじですか。 (Ima wa nan-ji desu ka.)",
+                  "is_correct": true,
+                  "feedback": "Richtig — Standard-Frage."
+                },
+                {
+                  "option_text": "なんじまでですか。 (Nan-ji made desu ka.)",
+                  "is_correct": false,
+                  "feedback": "Das hiesse *Bis wann?*."
+                },
+                {
+                  "option_text": "いまは ごぜんですか。 (Ima wa gozen desu ka.)",
+                  "is_correct": false,
+                  "feedback": "Das hiesse *Ist es morgens?* — keine Uhrzeit-Frage."
+                },
+                {
+                  "option_text": "なんじでした。 (Nan-ji deshita.)",
+                  "is_correct": false,
+                  "feedback": "Das wäre Vergangenheit — *War es welche Uhrzeit?*."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde die Stundenzahl mit der korrekten japanischen Lesung.",
+              "difficulty_level": 2,
+              "points": 2,
+              "explanation": "Sonderlesungen: 4 → よじ (yo-ji), 7 → しちじ (shichi-ji), 9 → くじ (ku-ji). Regulär: 12 → じゅうにじ (juu-ni-ji).",
+              "options": [
+                {
+                  "option_text": "4 Uhr",
+                  "feedback": "よじ (yo-ji)",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "7 Uhr",
+                  "feedback": "しちじ (shichi-ji)",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "9 Uhr",
+                  "feedback": "くじ (ku-ji)",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "12 Uhr",
+                  "feedback": "じゅうにじ (juu-ni-ji)",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde die Tageszeit mit dem japanischen Wort.",
+              "difficulty_level": 2,
+              "points": 2,
+              "explanation": "Vier Tageszeiten: あさ (Morgen), ひる (Mittag), ばん (Abend), よる (Nacht).",
+              "options": [
+                {
+                  "option_text": "あさ (asa)",
+                  "feedback": "Morgen",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "ひる (hiru)",
+                  "feedback": "Mittag",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "ばん (ban)",
+                  "feedback": "Abend",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "よる (yoru)",
+                  "feedback": "Nacht",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "**「ごぜん」** (Gozen) bedeutet *nachmittags* (pm).",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Falsch — **「ごぜん」** ist **am (vormittags)**. **「ごご」** (gogo) ist pm.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nein — gozen ist am, gogo ist pm."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt — gozen = am, gogo = pm."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie sagt man auf Japanisch *Ab 9 Uhr*?",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Stunde + Partikel kara.",
+              "explanation": "「くじから」 (Ku-ji kara) — **「から」** als Partikel **nach** der Zeit, bedeutet *ab*. Sonderlesung **「くじ」** für 9 Uhr.",
+              "options": [
+                {
+                  "option_text": "くじから (ku-ji kara)",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "から くじ (kara ku-ji)",
+                  "is_correct": false,
+                  "feedback": "Wortstellung falsch — kara kommt nach der Zeit."
+                },
+                {
+                  "option_text": "くじまで (ku-ji made)",
+                  "is_correct": false,
+                  "feedback": "「まで」 heisst *bis*, nicht *ab*."
+                },
+                {
+                  "option_text": "きゅうじから (kyuu-ji kara)",
+                  "is_correct": false,
+                  "feedback": "Sonderlesung — 9 Uhr ist く (ku), nicht きゅう (kyuu)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welche Aussprache ist korrekt für **10 Minuten**?",
+              "difficulty_level": 3,
+              "points": 1,
+              "hint": "Lautwechsel — und Geminate.",
+              "explanation": "「じゅっぷん」 (juppun) — **10** nimmt **ぷん** mit Geminate (kleines っ). Alternative Form **「じっぷん」** (jippun) ist auch korrekt.",
+              "options": [
+                {
+                  "option_text": "じゅっぷん (juppun)",
+                  "is_correct": true,
+                  "feedback": "Richtig — Standard-Form."
+                },
+                {
+                  "option_text": "じゅうふん (juu-fun)",
+                  "is_correct": false,
+                  "feedback": "Falsch — 10 nimmt ぷん, nicht ふん."
+                },
+                {
+                  "option_text": "じゅうぷん (juu-pun)",
+                  "is_correct": false,
+                  "feedback": "Geminate fehlt — es ist じゅっぷん, nicht じゅうぷん."
+                },
+                {
+                  "option_text": "じゅうじ (juu-ji)",
+                  "is_correct": false,
+                  "feedback": "Das wäre 10 Uhr, nicht 10 Minuten."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welcher Satz heisst *Morgen um halb acht*?",
+              "difficulty_level": 3,
+              "points": 1,
+              "hint": "Ashita + 7-Uhr-Sonderlesung + han.",
+              "explanation": "「あした、しちじはん」 (Ashita, shichi-ji han). **「しちじ」** = 7 Uhr (Sonderlesung), **「はん」** = halb (also 7:30).",
+              "options": [
+                {
+                  "option_text": "あした、しちじはん (Ashita, shichi-ji han)",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "あした、ななじはん (Ashita, nana-ji han)",
+                  "is_correct": false,
+                  "feedback": "Stunde-7 ist しち (shichi), nicht なな (nana)."
+                },
+                {
+                  "option_text": "あさ、しちじはん (Asa, shichi-ji han)",
+                  "is_correct": false,
+                  "feedback": "Das hiesse *Morgen früh* (nicht der Tag morgen)."
+                },
+                {
+                  "option_text": "きょう、しちじはん (Kyou, shichi-ji han)",
+                  "is_correct": false,
+                  "feedback": "「きょう」 = heute, nicht morgen."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Zusammenfassung",
+      "description": "Was du jetzt kannst — und wie es weitergeht",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Du liest jetzt jede Uhr!",
+            "content_text": "## Was du jetzt kannst\n\nDu beherrschst jetzt die **Uhrzeit** auf Japanisch — der Schlüssel zu Verabredungen, Reisen und Stundenplänen:\n\n### Die drei Muster\n\n1. **Zahl + 「じ」** (ji) — *X Uhr* (mit Sonderlesungen 4 = よ, 7 = しち, 9 = く).\n2. **Zahl + 「ふん / ぷん」** (fun / pun) — *X Minuten* (mit Lautwechsel: 1=いっぷん, 3=さんぷん, 4=よんぷん, 6=ろっぷん, 8=はっぷん, 10=じゅっぷん).\n3. **「いまは なんじですか」** → **「(ごぜん / ごご) ～じ ～ふんです」** (Frage-Antwort).\n\n### Die 15 Vokabeln\n\n- **Zähler & Frage:** じ (ji), ふん/ぷん (fun/pun), はん (han), じかん (jikan), なんじ (nan-ji), いま (ima)\n- **Tageszeit-Marker:** ごぜん (gozen), ごご (gogo)\n- **Tagesabschnitte:** あさ (asa), ひる (hiru), ばん (ban), よる (yoru)\n- **Termin-Wörter:** きょう (kyou), あした (ashita), から (kara)\n\n> **Praxis-Tipp:** Schau **vier Mal heute** auf die Uhr und sage **laut** auf Japanisch: morgens, mittags, am Abend und vor dem Schlafen. Mit dem Format **「いま、(ごぜん / ごご) ～じ ～ふんです」**. Eine Woche so, und du baust jede Uhrzeit reflexiv.\n\n### Wie es weitergeht\n\nIn der Lektion **N5 Tagesablauf — Wann stehst du auf?** verbindest du diese Uhrzeiten mit **Verben des Alltags**: 「しちじに おきます」 (shichi-ji ni okimasu — *Ich stehe um 7 Uhr auf*), 「じゅうにじに ひるごはんを たべます」 (juu-ni-ji ni hirugohan wo tabemasu — *Ich esse um 12 Mittagessen*). Die Uhrzeit wird zur **Choreografie deines Tages**.\n\nWeiter geht es! ⏰"
+          }
+        }
+      ]
+    }
+  ],
+  "thumbnail_url": "generated/thumbnail_zahlen,_zeit_und_datum_20260430_181807.png"
+}
