@@ -92,6 +92,33 @@ SPEAKER_GENDER = {
     "Hiroshi": "male",
     "Ueno": "female",      # Ueno-sensei (default female-leaning)
     "Weber": "female",     # Nachname allein kein Indikator — konservativ female
+    # Katakana-Schreibweisen (von Claude in Dialogen genutzt)
+    "リサ": "female",       # Lisa
+    "ハルト": "male",       # Haruto
+    "マユコ": "female",     # Mayuko
+    "サクラ": "female",     # Sakura
+    "ハナコ": "female",     # Hanako
+    "ユキ": "female",       # Yuki
+    "ヤマダ": "male",       # Yamada
+    "タナカ": "male",       # Tanaka
+    "ウエノ": "female",     # Ueno-sensei
+    # Familienrollen (in Familien-Dialogen ohne Eigennamen)
+    "Mama": "female",
+    "Mutter": "female",
+    "Mami": "female",
+    "Papa": "male",
+    "Vater": "male",
+    "Papi": "male",
+    "Tochter": "female",
+    "Sohn": "male",
+    "Oma": "female",
+    "Opa": "male",
+    "ママ": "female",
+    "パパ": "male",
+    "おかあさん": "female",
+    "おとうさん": "male",
+    "ちち": "male",
+    "はは": "female",
 }
 
 

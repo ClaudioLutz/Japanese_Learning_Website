@@ -585,6 +585,31 @@ Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
        Generierung dauert ~5 min (synchron, sequenzielle DALL-E-Calls).
        Bei Background-Run: TaskOutput mit timeout >= 300000ms verwenden.
 
+       ⚠️ SPEAKER-GENDER-FALLE (Bug 2026-04-30, Lesson 174 + 176):
+       `gen_dialog_slideshow.py` weist Stimmen via `SPEAKER_GENDER`-Dict
+       in `scripts/generate_tts_audio.py` zu. Der Speaker-Name aus dem
+       Dialog (z.B. `Lisa:`, `リサ:`, `Mama:`) MUSS dort als Key existieren,
+       sonst greift ein **idx-basierter Fallback** (`idx % 2 == 0 ? female
+       : male`) — das fuehrt bei Frauen mit ungeraden idx zu einer
+       MAENNLICHEN Stimme. Symptom: Lisas/Mamas Dialog-Zeile klingt
+       maennlich. Pflicht-Vorlauf vor jeder neuen Lektion mit
+       Slideshow:
+         a) **Speaker-Namen im Dialog konsistent** halten — entweder
+            durchgaengig **Latein** (`Lisa:`, `Yamada:`) ODER konsistent
+            **Katakana** (`リサ:`, `ヤマダ:`). Nicht mischen.
+         b) **Vor Generierung pruefen:** ist der gewaehlte Speaker-Name
+            in `scripts/generate_tts_audio.py::SPEAKER_GENDER`? Wenn nein,
+            dort eintragen (mit korrektem Gender) und committen, BEVOR
+            du `pipeline.py slideshow {id}` aufrufst.
+         c) **Nach Generierung verifizieren:** SELECT der dialog_slideshow-
+            JSON, jede Zeile hat `voice` — Mapping pruefen
+            (Neural2-B + Wavenet-C = female, Neural2-D + Wavenet-D = male).
+       Fix bei falsch generierter Slideshow: SPEAKER_GENDER ergaenzen,
+       falsch gerenderte MP3s loeschen
+       (`rm app/static/uploads/lessons/dialog_slideshow/lesson_{id}/line_NN.mp3`),
+       dann `python .claude/skills/generate-lesson/scripts/gen_dialog_slideshow.py {id}`
+       erneut. Dann Asset-Sync GCS + ggf. Deploy.
+
        ⚠️ TEMPLATE-FALLE (lesson_view.html ~Z.945-961): Die Slides MUESSEN
        per CSS-Grid-Stacking gerendert werden, sonst doppeltes Bild waehrend
        der x-transition.opacity. Pflicht-Pattern:
