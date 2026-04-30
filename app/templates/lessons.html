@@ -598,14 +598,23 @@
 .lp-cat-mobile-toggle i { font-size: 0.7rem; transition: transform 0.15s; }
 
 @media (max-width: 640px) {
-  .lp-cat-desc { display: none; }
-  .lp-cat-desc.is-mobile-open {
-    display: -webkit-box;
-    margin-top: 0.4rem;
+  /* Maximal kompakte Cards: nur Emoji + Titel, eine Zeile pro Card.
+     Description, Lektions-Count und Toggle-Row sind ausgeblendet,
+     damit die Liste auf einen Blick scrollbar bleibt. */
+  .lp-cat-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
   }
-  .lp-cat-btn { padding: 0.85rem; gap: 0.6rem; }
-  .lp-cat-icon { font-size: 1.6rem; }
-  .lp-cat-name { font-size: 1rem; }
+  .lp-cat-desc,
+  .lp-cat-count,
+  .lp-cat-mobile-toggle { display: none !important; }
+  .lp-cat-btn {
+    padding: 0.65rem 0.7rem;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  .lp-cat-icon { font-size: 1.4rem; }
+  .lp-cat-name { font-size: 0.9rem; line-height: 1.2; }
 }
 @media (min-width: 641px) {
   .lp-cat-mobile-toggle { display: none !important; }
