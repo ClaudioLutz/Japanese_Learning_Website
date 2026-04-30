@@ -50,7 +50,13 @@ ALLOWED_PAGE_TYPES = {"normal", "quiz_carousel"}
 
 REQUIRED_LESSON_FIELDS = ["title", "description", "jlpt_level", "topic", "pages"]
 REQUIRED_VOCAB_FIELDS = ["word", "reading", "romaji", "meaning", "meaning_de", "jlpt_level"]
-REQUIRED_GRAMMAR_FIELDS = ["title", "explanation", "structure", "romaji", "jlpt_level"]
+REQUIRED_GRAMMAR_FIELDS = ["title", "explanation", "structure", "romaji", "jlpt_level", "tts_example_jp"]
+
+# Hiragana, Katakana, CJK Unified, Halfwidth Katakana — fuer tts_example_jp-Validierung.
+_JP_CHAR_RE = re.compile(r'[぀-ゟ゠-ヿ一-鿿ｦ-ﾟ]')
+# Lateinische Buchstaben — sollen NICHT in tts_example_jp vorkommen, sonst spricht
+# die ja-JP-Stimme den Romaji aus oder die Route lehnt mit 400 ab.
+_LATIN_LETTER_RE = re.compile(r'[A-Za-zĀ-ž]')
 REQUIRED_KANA_FIELDS = ["character", "romanization", "type"]
 
 # Lesson-Kind-Discriminator (default: vocabulary). 'kana' = Schreibsystem-Lektion
@@ -298,6 +304,28 @@ def validate_draft(draft: dict) -> list[str]:
                         f"Page {p_idx}.{c_idx} Grammar '{data.get('title')}': "
                         f"jlpt_level={g_jlpt} > Lesson-Level {jlpt}"
                     )
+                # tts_example_jp: rein Japanisch + Satzende — sonst lehnt
+                # /api/tts mit lang=ja den Text mit HTTP 400 ab.
+                tts = data.get("tts_example_jp", "")
+                if isinstance(tts, str) and tts.strip():
+                    if not _JP_CHAR_RE.search(tts):
+                        errors.append(
+                            f"Page {p_idx}.{c_idx} Grammar '{data.get('title')}': "
+                            f"tts_example_jp enthaelt keine japanischen Zeichen — "
+                            f"die ja-JP-Stimme kann das nicht vorlesen."
+                        )
+                    if _LATIN_LETTER_RE.search(tts):
+                        errors.append(
+                            f"Page {p_idx}.{c_idx} Grammar '{data.get('title')}': "
+                            f"tts_example_jp enthaelt lateinische Buchstaben "
+                            f"(Romaji/Uebersetzung). Erlaubt: nur reine JP-Schrift."
+                        )
+                    if not re.search(r'[。！？]', tts):
+                        errors.append(
+                            f"Page {p_idx}.{c_idx} Grammar '{data.get('title')}': "
+                            f"tts_example_jp muss mit 。 / ！ / ？ enden "
+                            f"(genau ein vollstaendiger Satz)."
+                        )
 
             # Quiz-Fragen (in quiz_carousel)
             for q_idx, q in enumerate(item.get("quiz_questions", []), start=1):
@@ -732,6 +760,10 @@ def _get_or_create_grammar(db, Grammar, data: dict) -> int:
         romaji=data.get("romaji"),
         jlpt_level=data.get("jlpt_level"),
         example_sentences=data.get("example_sentences"),
+        # Pflicht-Feld fuer den Audio-Button auf der Grammatik-Karte:
+        # genau EIN rein japanischer Satz, der von der ja-JP-Stimme
+        # vorgelesen wird (siehe SKILL.md "Grammar.tts_example_jp").
+        tts_example_jp=data.get("tts_example_jp"),
         status="approved",
         created_by_ai=True,
     )

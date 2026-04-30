@@ -191,6 +191,11 @@ class Grammar(db.Model):
     romaji = db.Column(db.String(500), nullable=True)
     jlpt_level = db.Column(db.Integer, nullable=True)
     example_sentences = db.Column(db.Text, nullable=True)
+    # Genau EIN japanischer Satz pro Grammatik-Karte fuer den Audio-Button.
+    # Pflicht-Format: rein japanisch (kein Romaji, keine Uebersetzung), so dass
+    # die ja-JP-Stimme niemals deutschen Text liest. Wenn leer, faellt der
+    # Audio-Button auf den Titel zurueck.
+    tts_example_jp = db.Column(db.Text, nullable=True)
     status = db.Column(db.String(20), default='approved', nullable=False)  # 'approved', 'pending_approval'
     created_by_ai = db.Column(db.Boolean, default=False, nullable=False)
 

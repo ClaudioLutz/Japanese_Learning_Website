@@ -1145,6 +1145,9 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                                                 {% if content_data.structure %}
                                                                                 <div class="grammar-structure">{{ content_data.structure }}</div>
                                                                                 {% endif %}
+                                                                                {% if content_data.tts_example_jp %}
+                                                                                <div class="grammar-tts-example">{{ content_data.tts_example_jp }}</div>
+                                                                                {% endif %}
                                                                             </div>
                                                                         {% endif %}
                                                                         <div class="flip-hint">Karte umdrehen</div>
@@ -1197,20 +1200,25 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                                                 {% if content_data.romaji %}
                                                                                 <p><strong>Romaji:</strong> {{ content_data.romaji }}</p>
                                                                                 {% endif %}
-                                                                                <p><strong>Explanation:</strong><br>{{ content_data.explanation }}</p>
+                                                                                {% if content_data.tts_example_jp %}
+                                                                                <p><strong>Beispielsatz:</strong><br>{{ content_data.tts_example_jp }}</p>
+                                                                                {% endif %}
+                                                                                <p><strong>Erklärung:</strong><br>{{ content_data.explanation }}</p>
                                                                                 {% if content_data.example_sentences %}
-                                                                                <p><strong>Examples:</strong><br>{{ content_data.example_sentences | nl2br }}</p>
+                                                                                <p><strong>Weitere Beispiele:</strong><br>{{ content_data.example_sentences | nl2br }}</p>
                                                                                 {% endif %}
                                                                             {% endif %}
                                                                         </div>
-                                                                        {# Audio-Button: liest das japanische Wort/Zeichen vor (Cloud TTS) #}
+                                                                        {# Audio-Button: liest das japanische Wort/Zeichen vor (Cloud TTS).
+                                                                           Bei Grammatik: kompletter JP-Beispielsatz, kein Titel
+                                                                           (Titel ist oft gemischt / mit Romaji in Klammern). #}
                                                                         {% set _tts_text = '' %}
                                                                         {% if content.content_type in ['kana', 'kanji'] %}
                                                                             {% set _tts_text = content_data.character %}
                                                                         {% elif content.content_type == 'vocabulary' %}
                                                                             {% set _tts_text = content_data.word %}
                                                                         {% elif content.content_type == 'grammar' %}
-                                                                            {% set _tts_text = content_data.title %}
+                                                                            {% set _tts_text = content_data.tts_example_jp or content_data.title %}
                                                                         {% endif %}
                                                                         {% if _tts_text %}
                                                                         <button type="button" class="card-audio-btn"

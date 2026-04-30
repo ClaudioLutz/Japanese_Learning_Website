@@ -1862,6 +1862,20 @@ button[onclick*="moveContentInPage"]:active {
     border-radius: 6px;
 }
 
+/* Beispielsatz auf der Vorderseite — der Satz, den der Audio-Button vorliest. */
+.flip-card .grammar-tts-example {
+    margin-top: 14px;
+    font-size: 20px;
+    line-height: 1.55;
+    color: var(--text-color);
+    font-weight: 500;
+    padding: 10px 14px;
+    border-left: 3px solid var(--primary-color);
+    background: rgba(74, 144, 226, 0.06);
+    border-radius: 4px;
+    text-align: center;
+}
+
 /* Flip instruction hint */
 .flip-hint {
     position: absolute;
