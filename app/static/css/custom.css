@@ -4052,3 +4052,123 @@ button[onclick*="moveContentInPage"]:active {
 .swipe-hint i {
     margin: 0 0.35rem;
 }
+
+/* ════════════════════════════════════════════════════
+   AUTH-SEITEN (Login + Register) — schmale Card,
+   zentriert, dezenter Schatten, Material-Google-Button
+   ════════════════════════════════════════════════════ */
+.auth-shell {
+    min-height: 60vh;
+    display: grid;
+    place-items: center;
+    padding: 2rem 1rem 3rem;
+}
+.auth-card {
+    width: 100%;
+    max-width: 420px;
+    background: #fff;
+    border: 1px solid var(--ink-200);
+    border-radius: 12px;
+    padding: 2rem 1.75rem;
+    box-shadow: var(--shadow-card);
+}
+.auth-card h2 {
+    font-size: 1.5rem;
+    margin: 0 0 1.25rem;
+    text-align: center;
+    color: var(--sumi);
+}
+.auth-card .form-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--ink-700);
+    margin-bottom: 0.35rem;
+}
+.auth-card .form-control {
+    border: 1px solid var(--ink-300);
+    border-radius: 8px;
+    padding: 0.55rem 0.75rem;
+    background: #fff;
+}
+.auth-card .form-control:focus {
+    border-color: var(--ai);
+    box-shadow: 0 0 0 3px rgba(38, 79, 126, 0.15);
+}
+.auth-card .btn-google {
+    background: #fff;
+    color: #3c4043;
+    border: 1px solid #dadce0;
+    font-weight: 500;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    transition: background 0.15s, box-shadow 0.15s;
+}
+.auth-card .btn-google:hover {
+    background: #f8f9fa;
+    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.1);
+    color: #202124;
+}
+.auth-card .btn-google i {
+    color: #4285F4;
+    font-size: 1.1rem;
+}
+.auth-card .auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 1rem 0;
+    color: var(--ink-500);
+    font-size: 0.8125rem;
+}
+.auth-card .auth-divider::before,
+.auth-card .auth-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--ink-200);
+}
+.auth-card .btn-primary {
+    background: var(--kon);
+    border-color: var(--kon);
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    font-weight: 500;
+}
+.auth-card .btn-primary:hover {
+    background: var(--ai);
+    border-color: var(--ai);
+}
+.auth-card .auth-foot {
+    text-align: center;
+    margin-top: 1.25rem;
+    margin-bottom: 0;
+    font-size: 0.9375rem;
+    color: var(--ink-700);
+}
+.auth-card .auth-foot a {
+    color: var(--ai);
+    font-weight: 500;
+}
+.auth-card .text-danger {
+    font-size: 0.8125rem;
+    margin-top: 0.25rem;
+}
+.auth-card .form-check-label {
+    font-size: 0.875rem;
+    color: var(--ink-700);
+}
+@media (max-width: 480px) {
+    .auth-card {
+        padding: 1.5rem 1.25rem;
+        border-radius: 10px;
+    }
+    .auth-card h2 {
+        font-size: 1.3rem;
+    }
+}
