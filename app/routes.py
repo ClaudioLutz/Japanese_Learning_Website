@@ -1,6 +1,7 @@
 # app/routes.py
 import json
 import os
+import re
 from datetime import datetime
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, current_app
 from flask_login import login_user, logout_user, login_required, current_user
@@ -80,30 +81,73 @@ def health_check():
             "timestamp": datetime.utcnow().isoformat()
         }), 503
 
+# Unicode-Range fuer japanische Schrift (Hiragana, Katakana, CJK, Halfwidth Katakana)
+_JAPANESE_CHAR_RE = re.compile(r'[぀-ゟ゠-ヿ一-鿿ｦ-ﾟ]')
+
+# Pro Sprache eine fest verdrahtete Stimme — keine multilingualen Voices,
+# damit nie eine japanische Stimme deutschen Text liest oder umgekehrt.
+_TTS_VOICES = {
+    'ja': {'languageCode': 'ja-JP', 'name': 'ja-JP-Neural2-B'},
+    'de': {'languageCode': 'de-DE', 'name': 'de-DE-Neural2-F'},
+}
+
+
+def _contains_japanese(text: str) -> bool:
+    return bool(_JAPANESE_CHAR_RE.search(text))
+
+
 @bp.route('/api/tts', methods=['POST'])
 @csrf.exempt
 @limiter.limit("30 per minute")
 def tts_synthesize():
-    """Google Cloud TTS Neural2 — hochwertige japanische Aussprache."""
+    """Google Cloud TTS Neural2 — pro Sprache eine native Stimme.
+
+    Pflicht-Body: { text, lang: 'ja'|'de' }. Server validiert das Skript:
+    lang=ja muss japanische Zeichen enthalten, lang=de darf keine enthalten.
+    Das verhindert peinliche Sprach-Mismatches (z.B. JP-Voice spricht DE).
+    """
     import base64
+    import hashlib
     import requests as http_requests
+    from pathlib import Path
 
     data = request.get_json(silent=True) or {}
     text = (data.get('text') or '').strip()
-    if not text or len(text) > 200:
-        return jsonify({"error": "Text fehlt oder zu lang (max 200 Zeichen)"}), 400
+    lang = (data.get('lang') or '').strip().lower()
+
+    if not text or len(text) > 500:
+        return jsonify({"error": "Text fehlt oder zu lang (max 500 Zeichen)"}), 400
+    if lang not in _TTS_VOICES:
+        return jsonify({"error": "lang muss 'ja' oder 'de' sein"}), 400
+
+    has_jp = _contains_japanese(text)
+    if lang == 'ja' and not has_jp:
+        return jsonify({"error": "lang=ja, aber Text enthaelt keine japanischen Zeichen"}), 400
+    if lang == 'de' and has_jp:
+        return jsonify({"error": "lang=de, aber Text enthaelt japanische Zeichen"}), 400
 
     api_key = current_app.config.get('GOOGLE_TTS_API_KEY') or os.environ.get('GOOGLE_TTS_API_KEY') or os.environ.get('GOOGLE_API_KEY')
     if not api_key:
         return jsonify({"error": "TTS nicht konfiguriert"}), 503
 
-    voice_name = "ja-JP-Neural2-B"
+    voice = _TTS_VOICES[lang]
     speed = float(data.get('speed', 0.85))
     speed = max(0.5, min(speed, 1.5))
 
+    # Cache-Key inkl. lang + voice — sonst koennte derselbe Text faelschlich
+    # in der falschen Sprache zurueckgegeben werden.
+    cache_key = hashlib.md5(f"{lang}_{voice['name']}_{speed}_{text}".encode('utf-8')).hexdigest()
+    cache_dir = Path(current_app.static_folder) / 'cache' / 'tts'
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    cache_file = cache_dir / f"{cache_key}.mp3"
+
+    if cache_file.exists():
+        from flask import send_file
+        return send_file(str(cache_file), mimetype='audio/mpeg', conditional=True)
+
     payload = {
         "input": {"ssml": f'<speak><prosody rate="{speed}">{text}</prosody></speak>'},
-        "voice": {"languageCode": "ja-JP", "name": voice_name},
+        "voice": voice,
         "audioConfig": {"audioEncoding": "MP3"},
     }
 
@@ -117,6 +161,8 @@ def tts_synthesize():
 
         audio_b64 = resp.json().get("audioContent", "")
         audio_bytes = base64.b64decode(audio_b64)
+        cache_file.write_bytes(audio_bytes)
+
         from flask import make_response
         response = make_response(audio_bytes)
         response.headers['Content-Type'] = 'audio/mpeg'
@@ -2704,53 +2750,6 @@ def get_public_categories():
     except Exception as e:
         current_app.logger.error(f"Error fetching public categories: {e}")
         return jsonify([]), 200  # Return empty array on error
-
-@bp.route('/api/tts', methods=['POST'])
-@login_required
-@limiter.limit("30 per minute")
-def text_to_speech():
-    """OpenAI TTS — eine Voice (nova) spricht alles, erkennt Sprache automatisch."""
-    import hashlib
-    from pathlib import Path
-    from openai import OpenAI
-
-    data = request.get_json()
-    if not data or not data.get('text'):
-        return jsonify({'error': 'text required'}), 400
-
-    text = data['text'].strip()[:500]  # Max 500 Zeichen
-
-    # Eine Voice fuer alles — nova ist multilingual (JP/EN/DE)
-    voice = 'nova'
-
-    # Cache-Key aus Text
-    cache_key = hashlib.md5(f"{text}_{voice}".encode()).hexdigest()
-    cache_dir = Path(current_app.static_folder) / 'cache' / 'tts'
-    cache_dir.mkdir(parents=True, exist_ok=True)
-    cache_file = cache_dir / f"{cache_key}.mp3"
-
-    # Aus Cache liefern falls vorhanden
-    if cache_file.exists():
-        return current_app.send_static_file(f'cache/tts/{cache_key}.mp3')
-
-    # OpenAI TTS API aufrufen
-    try:
-        api_key = os.environ.get('OPENAI_API_KEY')
-        if not api_key:
-            return jsonify({'error': 'OpenAI API key not configured'}), 500
-
-        client = OpenAI(api_key=api_key)
-        response = client.audio.speech.create(
-            model="tts-1",
-            voice=voice,
-            input=text,
-        )
-        response.write_to_file(str(cache_file))
-        return current_app.send_static_file(f'cache/tts/{cache_key}.mp3')
-    except Exception as e:
-        current_app.logger.error(f"TTS error: {e}")
-        return jsonify({'error': 'TTS generation failed'}), 500
-
 
 @bp.route('/api/lessons/<int:lesson_id>/reset', methods=['POST'])
 @login_required

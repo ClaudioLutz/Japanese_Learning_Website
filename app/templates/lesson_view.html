@@ -1215,6 +1215,7 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                                         {% if _tts_text %}
                                                                         <button type="button" class="card-audio-btn"
                                                                                 data-tts-text="{{ _tts_text }}"
+                                                                                data-tts-lang="ja"
                                                                                 title="Vorlesen"
                                                                                 aria-label="Vorlesen">
                                                                             <i class="fas fa-volume-up"></i>
@@ -2447,11 +2448,31 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ============================================================
-// Google Cloud TTS Neural2 — hochwertige japanische Aussprache
+// Google Cloud TTS Neural2 — pro Sprache eine native Stimme.
+// Kein Mischbetrieb: japanische Stimme spricht nie Deutsch und umgekehrt.
 // ============================================================
 let _cloudTTSAudio = null;
 
-function playCloudTTS(text, speed, onEnd) {
+// Hiragana, Katakana, CJK Unified, Halfwidth Katakana
+const _JAPANESE_RE = /[぀-ゟ゠-ヿ一-鿿ｦ-ﾟ]/;
+
+function detectTTSLang(text) {
+    return _JAPANESE_RE.test(text) ? 'ja' : 'de';
+}
+
+function playCloudTTS(text, lang, speed, onEnd) {
+    // Defensive: lang ist Pflicht. Falls nicht gesetzt → aus Text ableiten,
+    // damit ein vergessener Aufrufer nicht die falsche Stimme triggert.
+    if (!lang) lang = detectTTSLang(text);
+
+    // Plausibilitaetscheck am Client — der Server validiert nochmal hart.
+    const hasJp = _JAPANESE_RE.test(text);
+    if ((lang === 'ja' && !hasJp) || (lang === 'de' && hasJp)) {
+        console.error('[TTS] Sprach-Mismatch verhindert:', { lang, text });
+        if (onEnd) onEnd();
+        return;
+    }
+
     // Laufende Wiedergabe stoppen
     if (_cloudTTSAudio) { _cloudTTSAudio.pause(); _cloudTTSAudio = null; }
 
@@ -2462,7 +2483,7 @@ function playCloudTTS(text, speed, onEnd) {
             'Content-Type': 'application/json',
             'X-CSRFToken': csrfToken || '',
         },
-        body: JSON.stringify({ text: text, speed: speed || 0.85 }),
+        body: JSON.stringify({ text: text, lang: lang, speed: speed || 0.85 }),
     })
     .then(resp => {
         if (!resp.ok) throw new Error('TTS API Fehler');
@@ -2484,13 +2505,14 @@ function playCloudTTS(text, speed, onEnd) {
         _cloudTTSAudio.play();
     })
     .catch(() => {
-        // Fallback: Browser-TTS
+        // Fallback: Browser-TTS — Stimme zwingend zur Sprache passend.
         if ('speechSynthesis' in window) {
             speechSynthesis.cancel();
             const u = new SpeechSynthesisUtterance(text);
-            u.lang = 'ja-JP';
+            const langCode = lang === 'ja' ? 'ja-JP' : 'de-DE';
+            u.lang = langCode;
             u.rate = 0.7;
-            const v = speechSynthesis.getVoices().find(v => v.lang.startsWith('ja'));
+            const v = speechSynthesis.getVoices().find(v => v.lang.startsWith(lang === 'ja' ? 'ja' : 'de'));
             if (v) u.voice = v;
             u.addEventListener('end', () => { if (onEnd) onEnd(); });
             u.addEventListener('error', () => { if (onEnd) onEnd(); });
@@ -2639,6 +2661,10 @@ class MultilingualTextAudioSystem {
         element.classList.add('tts-playing');
         const done = () => { element.classList.remove('tts-playing'); this.currentAudio = null; };
 
+        // Sprache pro Zeile aus dem Text ableiten — hier sind Front (JP) und
+        // Rueckseite (DE) gemischt, also strikt pro Klick neu entscheiden.
+        const lang = detectTTSLang(text);
+
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
         fetch('/api/tts', {
             method: 'POST',
@@ -2646,7 +2672,7 @@ class MultilingualTextAudioSystem {
                 'Content-Type': 'application/json',
                 ...(csrfToken ? { 'X-CSRFToken': csrfToken } : {})
             },
-            body: JSON.stringify({ text: text })
+            body: JSON.stringify({ text: text, lang: lang })
         })
         .then(resp => {
             if (!resp.ok) throw new Error('TTS API error');
@@ -2660,11 +2686,14 @@ class MultilingualTextAudioSystem {
             this.currentAudio.play();
         })
         .catch(() => {
-            // Fallback: Browser Web Speech API
+            // Fallback: Browser Web Speech API mit korrekter Sprache.
             if ('speechSynthesis' in window) {
                 speechSynthesis.cancel();
                 const u = new SpeechSynthesisUtterance(text);
+                u.lang = lang === 'ja' ? 'ja-JP' : 'de-DE';
                 u.rate = 0.9;
+                const v = speechSynthesis.getVoices().find(v => v.lang.startsWith(lang === 'ja' ? 'ja' : 'de'));
+                if (v) u.voice = v;
                 u.addEventListener('end', done);
                 u.addEventListener('error', done);
                 speechSynthesis.speak(u);
@@ -2952,7 +2981,10 @@ document.addEventListener('click', (e) => {
     e.stopPropagation();
     const text = btn.dataset.ttsText || btn.closest('.flip-card')?.querySelector('.kana-char, .vocab-word, .grammar-title')?.textContent.trim();
     if (!text) return;
-    playCardAudio(text, btn);
+    // Karten-Buttons sprechen immer Japanisch (Front-Wort/-Zeichen/-Titel).
+    // dataset.ttsLang ueberschreibt das, falls explizit anders gesetzt.
+    const lang = btn.dataset.ttsLang || 'ja';
+    playCardAudio(text, btn, lang);
 });
 
 function shuffle(arr) {
@@ -3118,11 +3150,12 @@ function createDeck(cardItems, page) {
         card.querySelectorAll('.card-audio-btn').forEach(btn => {
             const charEl = card.querySelector('.kana-char');
             const vocabEl = card.querySelector('.vocab-word');
-            const text = charEl ? charEl.textContent : (vocabEl ? vocabEl.textContent : '');
+            const text = btn.dataset.ttsText || (charEl ? charEl.textContent : (vocabEl ? vocabEl.textContent : ''));
+            const lang = btn.dataset.ttsLang || 'ja';
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 e.preventDefault();
-                playCardAudio(text.trim(), btn);
+                playCardAudio(text.trim(), btn, lang);
             });
         });
 
@@ -3359,11 +3392,12 @@ let currentAudio = null;
 let audioQueue = [];
 let isPlayingQueue = false;
 
-function playCardAudio(text, btnElement) {
+function playCardAudio(text, btnElement, lang) {
     // Stop any currently playing audio
     stopAudioQueue();
 
     const trimmed = text.trim();
+    if (!lang) lang = 'ja';
 
     // Visual feedback
     if (btnElement) btnElement.classList.add('playing');
@@ -3388,8 +3422,8 @@ function playCardAudio(text, btnElement) {
         return;
     }
 
-    // Last fallback: Web Speech API
-    playCardAudioFallback(trimmed, btnElement);
+    // Last fallback: Cloud TTS in der explizit angegebenen Sprache.
+    playCardAudioFallback(trimmed, btnElement, lang);
 }
 
 function playAudioSequence(fileNames, btnElement) {
@@ -3432,9 +3466,10 @@ function stopAudioQueue() {
     document.querySelectorAll('.card-audio-btn.playing').forEach(b => b.classList.remove('playing'));
 }
 
-function playCardAudioFallback(text, btnElement) {
+function playCardAudioFallback(text, btnElement, lang) {
     if (btnElement) btnElement.classList.add('playing');
-    playCloudTTS(text, 0.80, () => { if (btnElement) btnElement.classList.remove('playing'); });
+    if (!lang) lang = 'ja';
+    playCloudTTS(text, lang, 0.80, () => { if (btnElement) btnElement.classList.remove('playing'); });
 }
 
 // ============================================================
