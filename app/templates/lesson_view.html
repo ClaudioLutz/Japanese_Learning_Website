@@ -1013,7 +1013,7 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                         </div>
                                                         {% elif question.question_type == 'matching' %}
                                                         <div class="matching-quiz">
-                                                            <p class="text-muted small">Match each Japanese term with its correct English meaning:</p>
+                                                            <p class="text-muted small">Verbinde jedes japanische Wort mit der passenden deutschen Bedeutung:</p>
                                                             <div class="matching-pairs">
                                                                 {% for option in question.options | sort(attribute='order_index') %}
                                                                 <div class="matching-pair mb-2 p-2 border rounded">
@@ -1034,7 +1034,7 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                                                     data-correct-answer="{{ option.feedback }}"
                                                                                     data-question-id="{{ question.id }}"
                                                                                     {% if user_answer and user_answer.is_correct %}disabled{% endif %}>
-                                                                                <option value="">Choose...</option>
+                                                                                <option value="">Bitte wählen …</option>
                                                                                 {% for answer_option in question.options | sort(attribute='order_index') %}
                                                                                 <option value="{{ answer_option.feedback }}" {% if display_answer == answer_option.feedback %}selected{% endif %}>{{ answer_option.feedback }}</option>
                                                                                 {% endfor %}
@@ -1049,7 +1049,7 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                         {% set max_att = content.max_attempts or 0 %}
                                                         {% set show_solution = user_answer and (user_answer.is_correct or (max_att > 0 and user_answer.attempts >= max_att)) %}
                                                         <div class="question-actions mt-3">
-                                                            <button class="btn btn-sm btn-primary" onclick="submitQuizAnswer('{{ lesson.id }}', '{{ question.id }}')" {% if show_solution %}disabled{% endif %}>Submit Answer</button>
+                                                            <button class="btn btn-sm btn-primary" onclick="submitQuizAnswer('{{ lesson.id }}', '{{ question.id }}')" {% if show_solution %}disabled{% endif %}>Antwort absenden</button>
                                                             <div class="quiz-feedback mt-2" id="feedback_{{ question.id }}"
                                                                  {% if user_answer %}style="display: block;"{% else %}style="display: none;"{% endif %}>
                                                                 {% if user_answer %}
@@ -1397,7 +1397,7 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="matching-instructions mb-3">
-                                                        <p class="text-muted">Match each Japanese term with its correct English meaning:</p>
+                                                        <p class="text-muted">Verbinde jedes japanische Wort mit der passenden deutschen Bedeutung:</p>
                                                     </div>
                                                     <div class="matching-pairs">
                                                         {% for option in question.options | sort(attribute='order_index') %}
@@ -1427,7 +1427,7 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                                             data-correct-answer="{{ option.feedback }}"
                                                                             data-question-id="{{ question.id }}"
                                                                             {% if q_solved %}disabled{% endif %}>
-                                                                        <option value="">Choose...</option>
+                                                                        <option value="">Bitte wählen …</option>
                                                                         {% for answer_option in question.options | sort(attribute='order_index') %}
                                                                         <option value="{{ answer_option.feedback }}" {% if display_answer == answer_option.feedback %}selected{% endif %}>{{ answer_option.feedback }}</option>
                                                                         {% endfor %}
@@ -1446,7 +1446,7 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                         {% set show_solution = user_answer and (user_answer.is_correct or (max_att > 0 and user_answer.attempts >= max_att)) %}
                                                         <div class="question-actions mt-3">
                                                             <button class="btn btn-primary" onclick="submitQuizAnswer('{{ lesson.id }}', '{{ question.id }}')" {% if show_solution %}disabled{% endif %}>
-                                                                Submit Answer
+                                                                Antwort absenden
                                                             </button>
                                                             <div class="quiz-feedback mt-2" id="feedback_{{ question.id }}"
                                                                  {% if user_answer %}style="display: block;"{% else %}style="display: none;"{% endif %}>
