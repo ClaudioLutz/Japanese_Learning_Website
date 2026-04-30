@@ -549,12 +549,14 @@ def lessons():
     )
     page_categories = []
     for cat in all_categories:
-        count = sum(
-            1 for l in cat.lessons
+        visible_lessons = [
+            l for l in cat.lessons
             if l.is_published and l.instruction_language in visible_langs
-        )
+        ]
+        count = len(visible_lessons)
         if count == 0:
             continue
+        free_count = sum(1 for l in visible_lessons if (l.price or 0) == 0)
         page_categories.append({
             'id': cat.id,
             'name': cat.name,
@@ -563,6 +565,7 @@ def lessons():
             'color_code': cat.color_code,
             'jlpt_level': cat.jlpt_level,
             'lesson_count': count,
+            'free_count': free_count,
             'slug': cat.slug,
         })
 
@@ -601,11 +604,16 @@ def lessons():
         reverse=True,
     )
 
+    total_free = sum(1 for l in page_lessons if l['is_free'])
+    total_paid = len(page_lessons) - total_free
+
     return render_template(
         'lessons.html',
         page_categories=page_categories,
         page_lessons=page_lessons,
         jlpt_levels=jlpt_levels,
+        total_free=total_free,
+        total_paid=total_paid,
     )
 
 

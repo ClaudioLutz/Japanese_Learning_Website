@@ -52,7 +52,7 @@
           {{ n5_kanji_count or 44 }} Kanji, wöchentlich neu — auf Deutsch erklärt.
         </p>
         <div class="home-actions">
-          <a href="{{ url_for('routes.register') }}" class="btn-shu">
+          <a href="{{ url_for('routes.lessons', access='free') }}" class="btn-shu">
             Kostenlos starten
           </a>
           <a href="{{ url_for('bundle.n5_bundle') }}" class="btn-ghost-jp">

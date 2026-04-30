@@ -193,7 +193,12 @@
             {% if cat.description %}
             <small class="lp-cat-desc">{{ cat.description }}</small>
             {% endif %}
-            <small class="lp-cat-count">{{ cat.lesson_count }} Lektion{% if cat.lesson_count != 1 %}en{% endif %}</small>
+            <small class="lp-cat-count"
+                   data-total="{{ cat.lesson_count }}"
+                   data-free="{{ cat.free_count }}"
+                   x-text="catCountLabel({{ cat.lesson_count }}, {{ cat.free_count }})">
+              {{ cat.lesson_count }} Lektion{% if cat.lesson_count != 1 %}en{% endif %}
+            </small>
           </span>
         </button>
       </li>
@@ -209,7 +214,7 @@
         <span x-show="!categoryId">Lektionen</span>
         <span x-show="categoryId" x-text="activeCategoryName()"></span>
       </h2>
-      <span class="lp-count" x-text="visibleLessonsCount() + ' / {{ page_lessons|length }} sichtbar'"></span>
+      <span class="lp-count" x-text="countLabel()"></span>
     </div>
 
     {% if page_lessons %}
@@ -835,6 +840,33 @@ function lessonsPage() {
         if (this.lessonVisible(el)) n++;
       });
       return n;
+    },
+
+    countLabel() {
+      const visible = this.visibleLessonsCount();
+      const total = {{ page_lessons|length }};
+      const totalFree = {{ total_free }};
+      const totalPaid = {{ total_paid }};
+      if (this.access === 'free') {
+        return `${visible} von ${total} Lektionen sind gratis`;
+      }
+      if (this.access === 'paid') {
+        return `${visible} von ${total} Premium`;
+      }
+      if (this.jlpt !== 'all') {
+        return `${visible} N${this.jlpt}-Lektionen`;
+      }
+      if (this.search || this.categoryId) {
+        return `${visible} von ${total} sichtbar`;
+      }
+      return `${total} Lektionen · ${totalFree} gratis`;
+    },
+
+    catCountLabel(total, free) {
+      const plural = total === 1 ? 'Lektion' : 'Lektionen';
+      if (this.access === 'free') return `${free} von ${total} gratis`;
+      if (this.access === 'paid') return `${total - free} von ${total} Premium`;
+      return `${total} ${plural}`;
     },
 
     activeCategoryName() {

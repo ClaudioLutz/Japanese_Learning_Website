@@ -198,7 +198,7 @@
           {% else %}
             <div class="topnav-auth">
               <a href="{{ url_for('routes.login') }}" class="topnav-btn topnav-btn-ghost">Anmelden</a>
-              <a href="{{ url_for('routes.register') }}" class="topnav-btn topnav-btn-primary">Kostenlos starten</a>
+              <a href="{{ url_for('routes.lessons', access='free') }}" class="topnav-btn topnav-btn-primary">Kostenlos starten</a>
             </div>
           {% endif %}
 
