@@ -3,6 +3,17 @@
 {% block robots %}noindex,follow{% endblock %}
 {% block content %}
     <h2>Konto erstellen</h2>
+
+    <!-- Google OAuth Register Button -->
+    <div class="mb-4">
+        <a href="{{ url_for('social.auth', backend='google-oauth2') }}" class="btn btn-danger btn-lg w-100 mb-3">
+            <i class="fab fa-google me-2"></i>Mit Google registrieren
+        </a>
+        <div class="text-center">
+            <small class="text-muted">oder</small>
+        </div>
+    </div>
+
     <form method="POST">
         {{ form.hidden_tag() }}
         <div class="mb-3">
@@ -33,6 +44,10 @@
                 <div class="text-danger">{{ error }}</div>
             {% endfor %}
         </div>
-        {{ form.submit(class="btn btn-primary") }}
+        {{ form.submit(class="btn btn-primary w-100") }}
     </form>
+
+    <div class="text-center mt-3">
+        <p>Schon ein Konto? <a href="{{ url_for('routes.login') }}">Hier anmelden</a></p>
+    </div>
 {% endblock %}
