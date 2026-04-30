@@ -492,13 +492,17 @@ Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
        (character/word/title) wiederverwendet, NICHT ueberschrieben.
 
 [4b] python .claude/skills/generate-lesson/pipeline.py audio {lesson_id}
-    → PFLICHT nach Insert. Findet die Dialog-Page automatisch (per Titel:
-       'Dialog' / 'Konversation' / 'Gespräch' / 'Conversation'), extrahiert
-       die japanischen Sprecher-Zeilen aus dem text-Content, rendert EINE
-       MP3 via Google Cloud TTS (SSML mit 700ms-Pausen) und legt einen
-       LessonContent(content_type='audio') auf order_index=1 vor dem Text
-       an. Idempotent: existierendes Audio wird übersprungen.
-    → Benoetigt GOOGLE_API_KEY in .env.
+    → ⛔ DEPRECATED seit 2026-04-30. Step ist No-Op und legt KEIN
+       LessonContent(content_type='audio') mehr an. Begruendung: der
+       dialog_slideshow-Player (Step [4c]) hat pro Zeile einen eigenen
+       <audio>-Tag — ein zusaetzliches "Konversation (Audio)"-Item rendert
+       redundant ueber der Slideshow (User-Direktive 2026-04-30, Lesson 157).
+    → Step kann uebersprungen werden. Skript existiert noch, gibt nur eine
+       Deprecated-Meldung aus und beendet sich mit exit 0 ohne DB-Insert.
+    → ALT-Bestand: Bestehende Lektionen mit redundantem audio-Item werden
+       vom Template (lesson_view.html ~Z.1078) automatisch unterdrueckt,
+       wenn auf derselben Page ein dialog_slideshow vorhanden ist. DB-Cleanup
+       optional, nicht zwingend.
 
 [4b2] python .claude/skills/generate-lesson/pipeline.py text-audio {lesson_id}
     → PFLICHT seit 2026-04-25 fuer jede Lesson mit text-Bloecken >=80 Zeichen.

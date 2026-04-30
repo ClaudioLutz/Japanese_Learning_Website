@@ -128,7 +128,20 @@ def main() -> int:
         return 2
     lesson_id = int(sys.argv[1])
 
-    app = create_app()
+    print(
+        "[DEPRECATED] Konversations-Audio-Step uebersprungen — die "
+        "dialog_slideshow-Komponente liefert pro Zeile bereits einen "
+        "eigenen Player. Ein zusaetzliches 'Konversation (Audio)'-LessonContent "
+        "wuerde redundant ueber der Slideshow rendern (User-Direktive 2026-04-30).\n"
+        f"[INFO] Lesson {lesson_id}: kein audio-Content erzeugt. Slideshow-Step "
+        "via 'pipeline.py slideshow' deckt die Tonspur ab."
+    )
+    return 0
+
+    # Kept for reference: if a merged MP3-Download wieder gebraucht wird,
+    # diese Funktion ohne den LessonContent-Insert wieder aktivieren und
+    # die Datei nur unter app/static/uploads/lessons/audio/ ablegen.
+    app = create_app()  # noqa: F841 (unreachable, intentional)
     with app.app_context():
         lesson = db.session.get(Lesson, lesson_id)
         if not lesson:

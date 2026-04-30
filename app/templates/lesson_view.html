@@ -1075,7 +1075,9 @@ html.hide-front-romaji .front-romaji { display: none !important; }
 
                                         {% else %}
                                         {# === Normal Page: Standard Content Loop === #}
+                                        {% set page_has_slideshow = page.content | selectattr('content_type', 'equalto', 'dialog_slideshow') | list | length > 0 %}
                                         {% for content in page.content %}
+                                        {% if not (page_has_slideshow and content.content_type == 'audio') %}
                                         <div class="content-item mb-4 p-3 border rounded bg-white shadow-sm" data-content-id="{{ content.id }}">
                                             <div class="d-flex justify-content-between align-items-start mb-2">
                                                 {% if content.title %}
@@ -1492,6 +1494,7 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                 {% endif %}
                                             </div>
                                         </div>
+                                        {% endif %}{# end skip-redundant-audio #}
                                         {% endfor %}
                                         {% endif %}{# end conversation vs normal page #}
 
