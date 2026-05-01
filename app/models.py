@@ -314,6 +314,25 @@ class Lesson(db.Model):
     def get_prerequisites(self) -> List['Lesson']:
         """Get list of prerequisite lessons"""
         return [prereq.prerequisite_lesson for prereq in self.prerequisites]
+
+    @property
+    def progress_visible_content_items(self) -> List['LessonContent']:
+        """Content-Items, die im Lesson-View tatsaechlich sichtbar gerendert
+        werden — und damit fuer den Fortschritt zaehlen.
+
+        Bisheriger Bug: audio-Items wurden ausgeblendet, wenn auf derselben
+        Page ein dialog_slideshow existiert (Slideshow hat eigenes Audio).
+        Der User konnte sie also nie als erledigt markieren, der Progress
+        blieb bei 96% statt 100%.
+        """
+        items = list(self.content_items)
+        slideshow_pages = {
+            c.page_number for c in items if c.content_type == 'dialog_slideshow'
+        }
+        return [
+            c for c in items
+            if not (c.content_type == 'audio' and c.page_number in slideshow_pages)
+        ]
     
     def is_accessible_to_user(self, user):
         """Check if user can access this lesson based on pricing, subscription and prerequisites.
@@ -668,15 +687,25 @@ class UserLessonProgress(db.Model):
         self.update_progress_percentage()
     
     def update_progress_percentage(self):
-        """Update overall progress percentage based on completed content"""
-        total_content = len(self.lesson.content_items) # type: ignore
+        """Update overall progress percentage based on completed content.
+
+        Zaehlt nur UI-sichtbare Items (siehe Lesson.progress_visible_content_items),
+        sonst koennen 'audio'-Eintraege auf Slideshow-Pages nie completed werden
+        und der Progress bleibt unter 100% trotz vollstaendiger Lektion.
+        """
+        visible_items = self.lesson.progress_visible_content_items  # type: ignore
+        total_content = len(visible_items)
         if total_content == 0:
             self.progress_percentage = 100
             return
-        
-        completed_content = len([k for k, v in self.get_content_progress().items() if v])
+
+        visible_ids = {str(c.id) for c in visible_items}
+        cp = self.get_content_progress()
+        completed_content = sum(
+            1 for cid in visible_ids if cp.get(cid)
+        )
         self.progress_percentage = int((completed_content / total_content) * 100)
-        
+
         if self.progress_percentage == 100 and not self.is_completed:
             self.is_completed = True
             self.completed_at = datetime.utcnow()
