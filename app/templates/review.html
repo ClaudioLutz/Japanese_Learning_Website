@@ -151,6 +151,39 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         justify-content: flex-start;
         text-align: left;
         gap: 0.75rem;
+        /* Audio-Button positioniert sich relativ zur Back-Face. */
+        position: relative;
+    }
+    /* Audio-Button auf der Backseite — analog .card-audio-btn im Lesson-View.
+       Spielt den JP-Front-Text (Kana/Kanji/Vokabel) oder den Beispielsatz
+       (Vocabulary/Grammar) via /api/tts mit lang=ja vor. */
+    .review-audio-btn {
+        position: absolute;
+        top: 10px; right: 10px;
+        width: 36px; height: 36px;
+        border-radius: 50%;
+        background: var(--card-bg, #FFFDF7);
+        border: 1px solid var(--ink-200, #E4DED4);
+        color: var(--primary-color, #2B4C7E);
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.15s ease, background 0.15s ease;
+        z-index: 2;
+    }
+    .review-audio-btn:hover {
+        transform: scale(1.08);
+        background: rgba(43,76,126,0.08);
+    }
+    .review-audio-btn.playing {
+        background: var(--primary-color, #2B4C7E);
+        color: #fff;
+        animation: pulse 1.2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.12); }
     }
     .review-card-front-text {
         font-family: 'Noto Sans JP', sans-serif;
@@ -691,15 +724,36 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         } else if (card.content_type === 'grammar') {
             backHTML = `<div class="back-meaning" style="font-size:1.2rem;">${escapeHtml(d.structure || '')}</div>` +
                        (d.romaji ? `<div class="back-readings"><span class="romaji">${escapeHtml(d.romaji)}</span></div>` : '') +
+                       (d.tts_example_jp ? `<div class="back-section">
+                            <div class="back-section-label">Beispielsatz</div>
+                            <div class="back-jp-line">${escapeHtml(d.tts_example_jp)}</div>
+                        </div>` : '') +
                        `<div class="back-section">
                             <div class="back-section-label">Erklärung</div>
                             <div style="font-size:0.92rem; line-height:1.45;">${escapeHtml(d.explanation || '').substring(0, 400)}</div>
                         </div>` +
                        (d.examples ? `<div class="back-section">
-                            <div class="back-section-label">Beispiele</div>
+                            <div class="back-section-label">Weitere Beispiele</div>
                             <div style="font-size:0.88rem; white-space:pre-line;">${escapeHtml(d.examples).substring(0, 500)}</div>
                         </div>` : '');
         }
+
+        // Audio-Text bestimmen: bei Vokabel/Grammatik vorzugsweise der
+        // Beispielsatz (kompletter Kontext), sonst das Front-Wort/-Zeichen.
+        // Bei Grammar OHNE tts_example_jp gibt es keinen sauberen JP-Text —
+        // dann lieber gar keinen Button (sonst wuerde /api/tts den Titel mit
+        // Romaji-in-Klammern ablehnen).
+        let ttsText = '';
+        if (card.content_type === 'kana' || card.content_type === 'kanji') {
+            ttsText = frontText;
+        } else if (card.content_type === 'vocabulary') {
+            ttsText = d.example_jp || frontText;
+        } else if (card.content_type === 'grammar') {
+            ttsText = d.tts_example_jp || '';
+        }
+        const audioBtn = ttsText
+            ? `<button type="button" class="review-audio-btn" data-tts-text="${escapeHtml(ttsText)}" title="Vorlesen" aria-label="Vorlesen"><i class="fas fa-volume-up"></i></button>`
+            : '';
 
         cardArea.innerHTML = `
             <div class="review-flip-card" id="activeReviewCard">
@@ -711,6 +765,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
                         <div class="review-card-hint">Klicken zum Umdrehen</div>
                     </div>
                     <div class="review-card-face review-card-face--back">
+                        ${audioBtn}
                         ${backHTML}
                     </div>
                 </div>
@@ -724,6 +779,17 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
                 const txt = document.getElementById('kanaHintText');
                 if (txt) txt.style.display = 'block';
                 hintBtn.style.display = 'none';
+            });
+        }
+
+        // Audio-Button auf der Backseite — verhindert Card-Flip und ruft
+        // /api/tts mit lang=ja. Inline-Player, kein Lesson-View-Sound-Stack
+        // notwendig (keine MP3-Maps wie kanjiReadoutMap auf dieser Seite).
+        const audioBtnEl = cardArea.querySelector('.review-audio-btn');
+        if (audioBtnEl) {
+            audioBtnEl.addEventListener('click', (e) => {
+                e.stopPropagation();
+                playReviewAudio(audioBtnEl.dataset.ttsText, audioBtnEl);
             });
         }
 
@@ -760,6 +826,46 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         const d = document.createElement('div');
         d.textContent = str;
         return d.innerHTML;
+    }
+
+    // ── Inline-TTS fuer den Audio-Button auf der Backseite ──
+    // Spielt JP-Text via /api/tts ab. Identische API wie lesson_view.html
+    // (POST mit text+lang+speed), aber ohne den dortigen MP3-Map-Stack.
+    let _reviewAudio = null;
+    function playReviewAudio(text, btn) {
+        if (!text || !text.trim()) return;
+        if (_reviewAudio) { _reviewAudio.pause(); _reviewAudio = null; }
+        if (btn) btn.classList.add('playing');
+
+        fetch('/api/tts', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+            body: JSON.stringify({ text: text.trim(), lang: 'ja', speed: 0.85 }),
+        })
+        .then(resp => {
+            if (!resp.ok) throw new Error('TTS HTTP ' + resp.status);
+            return resp.blob();
+        })
+        .then(blob => {
+            const url = URL.createObjectURL(blob);
+            const audio = new Audio(url);
+            _reviewAudio = audio;
+            audio.addEventListener('ended', () => {
+                if (btn) btn.classList.remove('playing');
+                URL.revokeObjectURL(url);
+                _reviewAudio = null;
+            });
+            audio.addEventListener('error', () => {
+                if (btn) btn.classList.remove('playing');
+                URL.revokeObjectURL(url);
+                _reviewAudio = null;
+            });
+            return audio.play();
+        })
+        .catch(err => {
+            console.warn('[Review] TTS fehlgeschlagen:', err);
+            if (btn) btn.classList.remove('playing');
+        });
     }
 
     // ── Fetch interval preview ──

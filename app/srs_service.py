@@ -377,6 +377,9 @@ def get_content_data_for_review(content_item):
             'structure': ref.structure or '',
             'romaji': ref.romaji or '',
             'examples': ref.example_sentences or '',
+            # Sauberer JP-Beispielsatz fuer den Audio-Button auf der Karte —
+            # /api/tts mit lang=ja akzeptiert nur reines Japanisch, sonst HTTP 400.
+            'tts_example_jp': ref.tts_example_jp or '',
         }
 
     return data
