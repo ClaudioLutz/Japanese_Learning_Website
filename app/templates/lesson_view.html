@@ -1194,17 +1194,30 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                                                 <p><strong>Bedeutung:</strong> {{ content_data.meaning }}</p>
                                                                                 {% endif %}
                                                                                 {% if content_data.example_sentence_japanese %}
-                                                                                <p><strong>Beispiel:</strong><br>{{ content_data.example_sentence_japanese }}</p>
-                                                                                {% if content_data.example_sentence_english %}
-                                                                                <p><strong>Übersetzung:</strong><br>{{ content_data.example_sentence_english }}</p>
-                                                                                {% endif %}
+                                                                                <p><strong>Beispiel:</strong><br>
+                                                                                    {{ content_data.example_sentence_japanese }}
+                                                                                    {% if content_data.example_sentence_romaji %}
+                                                                                    <br><span class="example-romaji">{{ content_data.example_sentence_romaji }}</span>
+                                                                                    {% endif %}
+                                                                                    {% if content_data.example_sentence_translation %}
+                                                                                    <br><span class="example-translation">{{ content_data.example_sentence_translation }}</span>
+                                                                                    {% endif %}
+                                                                                </p>
                                                                                 {% endif %}
                                                                             {% elif content.content_type == 'grammar' %}
                                                                                 {% if content_data.romaji %}
                                                                                 <p><strong>Romaji:</strong> {{ content_data.romaji }}</p>
                                                                                 {% endif %}
                                                                                 {% if content_data.tts_example_jp %}
-                                                                                <p><strong>Beispielsatz:</strong><br>{{ content_data.tts_example_jp }}</p>
+                                                                                <p><strong>Beispielsatz:</strong><br>
+                                                                                    {{ content_data.tts_example_jp }}
+                                                                                    {% if content_data.tts_example_romaji %}
+                                                                                    <br><span class="example-romaji">{{ content_data.tts_example_romaji }}</span>
+                                                                                    {% endif %}
+                                                                                    {% if content_data.tts_example_translation %}
+                                                                                    <br><span class="example-translation">{{ content_data.tts_example_translation }}</span>
+                                                                                    {% endif %}
+                                                                                </p>
                                                                                 {% endif %}
                                                                                 <p><strong>Erklärung:</strong><br>{{ content_data.explanation }}</p>
                                                                                 {% if content_data.example_sentences %}

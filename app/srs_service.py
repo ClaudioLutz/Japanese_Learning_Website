@@ -368,6 +368,11 @@ def get_content_data_for_review(content_item):
             'meaning_de': ref.meaning_de or '',
             'example_jp': ref.example_sentence_japanese or '',
             'example_en': ref.example_sentence_english or '',
+            # Aufgesplittet aus example_sentence_english ("Romaji — Uebersetzung"):
+            # Audio-Button liest example_jp, Karte zeigt Romaji + Uebersetzung
+            # darunter, damit der Lerner den Satz westlich mitlesen kann.
+            'example_romaji': ref.example_sentence_romaji or '',
+            'example_translation': ref.example_sentence_translation or '',
             'image_url': ref.image_url or '',
         }
     elif content_item.content_type == 'grammar':
@@ -380,6 +385,9 @@ def get_content_data_for_review(content_item):
             # Sauberer JP-Beispielsatz fuer den Audio-Button auf der Karte —
             # /api/tts mit lang=ja akzeptiert nur reines Japanisch, sonst HTTP 400.
             'tts_example_jp': ref.tts_example_jp or '',
+            # Geparst aus example_sentences-Block (Klammer-Romaji oder JSON).
+            'tts_example_romaji': ref.tts_example_romaji or '',
+            'tts_example_translation': ref.tts_example_translation or '',
         }
 
     return data

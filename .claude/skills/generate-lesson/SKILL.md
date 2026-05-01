@@ -210,7 +210,7 @@ Verletzung ⇒ sofortiger Abbruch, keine Insertion:
   - **`QuizQuestion.question_text`, `.hint`, `.explanation`**: wenn JP-Zeichen darin stehen, Rōmaji in Klammern. `Was bedeutet 「水」 (mizu)?` statt `Was bedeutet 「水」?`.
   - **`QuizOption.option_text`, `.feedback`**: wenn JP darin steht, Rōmaji in Klammern. In Matching-Optionen `肉 (niku) | Fleisch` statt `肉 | Fleisch`.
   - **`Vocabulary.romaji`** (Datenbankfeld, eigene Spalte): Hepburn-Rōmaji des Wortes.
-  - **`Vocabulary.example_sentence_english`** beginnt mit Rōmaji-Satz, Format `"Romaji — English"` (bereits in §5 beschrieben).
+  - **`Vocabulary.example_sentence_english`** beginnt mit Rōmaji-Satz, Format `"Romaji — Deutsche Übersetzung"` (Em-Dash). Die Übersetzung steht auf der Karten-Rückseite unter dem japanischen Beispielsatz und ist explizit auf Deutsch (Plattform-Sprache). Englisch ist nur als Übergangs-Fallback erlaubt, wenn alte Daten noch nicht migriert sind.
   - **`Vocabulary.example_sentence_japanese`** bleibt rein JP — dort ist Rōmaji redundant, weil `reading` + `romaji` in derselben Vokabel-Karte stehen.
   - Ziel: Ein deutschsprachiger Anfänger (inkl. Claudio) kann **jeden Satz** überall in der Lektion westlich aussprechen, selbst wenn er ein Kanji nicht kennt.
 - **Instruction-Language**: default `'german'` (deutschsprachige Anfänger sind die primäre Zielgruppe). Englisch nur auf explizite User-Anweisung.
@@ -363,7 +363,7 @@ Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
 - `romaji` Hepburn-Transkription des ganzen Wortes, Kleinschreibung, Trennstriche bei zusammengesetzten Lesungen (`yo-nin`, `o-cha`).
 - `example_sentence_japanese` ist **PFLICHT-Feld** (analog `Grammar.tts_example_jp`): genau EIN japanischer Satz, der vom Audio-Button auf der Karte mit der ja-JP-Stimme vorgelesen wird. **Validator lehnt ab**, wenn der Satz lateinische Buchstaben enthält oder nicht mit `。`/`！`/`？` endet. Klammer-Romaji am Satzende (`(watashi wa ... desu.)`) ist daher verboten — die `reading`-/`romaji`-Felder der Vokabel decken den Romaji-Bedarf bereits ab.
 - `example_sentence_japanese` nutzt Leerzeichen zwischen Wörtern bei N5 (Hiragana-Fokus).
-- `example_sentence_english` **muss Format `"Romaji-Satz — English translation"` haben** — so liest der Lerner den Satz auch westlich, nicht nur Hiragana.
+- `example_sentence_english` **muss Format `"Romaji-Satz — Deutsche Übersetzung"` haben** (Em-Dash ` — `). Plattform-Sprache ist Deutsch; die Karten-Rückseite zerlegt diesen String in zwei Zeilen (Romaji-Zeile + Deutsch-Zeile) und zeigt sie unter dem JP-Beispielsatz, der vom Audio-Button vorgelesen wird.
 - Beispielsatz max ~12 Silben / ca. 8 Wörter.
 - `image_url`: Bei Schlüsselvokabeln (≥3 pro Lektion) DALL-E-URL. Sonst null.
 

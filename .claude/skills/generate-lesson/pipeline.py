@@ -321,6 +321,26 @@ def validate_draft(draft: dict) -> list[str]:
                             f"(genau ein vollstaendiger Satz)."
                         )
 
+                # example_sentence_english: Format "Romaji — Deutsche Uebersetzung".
+                # Em-Dash (` — `) trennt Romaji-Praefix von der deutschen Uebersetzung.
+                # Die Karten-Rueckseite zerlegt den String in zwei Zeilen unter dem
+                # JP-Beispielsatz; ohne Trenner bleibt die Romaji-Zeile leer.
+                ex_en = data.get("example_sentence_english", "")
+                if isinstance(ex_en, str) and ex_en.strip():
+                    if ' — ' not in ex_en:
+                        errors.append(
+                            f"Page {p_idx}.{c_idx} Vocabulary '{data.get('word')}': "
+                            f"example_sentence_english muss Format 'Romaji — Deutsche Uebersetzung' "
+                            f"haben (Em-Dash ' — ' als Trenner). Sonst kann die Karten-Rueckseite "
+                            f"Romaji und Uebersetzung nicht getrennt anzeigen."
+                        )
+                    elif _JP_CHAR_RE.search(ex_en.split(' — ', 1)[0]):
+                        errors.append(
+                            f"Page {p_idx}.{c_idx} Vocabulary '{data.get('word')}': "
+                            f"Romaji-Teil von example_sentence_english enthaelt japanische "
+                            f"Zeichen — der Praefix vor ' — ' muss reines Hepburn-Romaji sein."
+                        )
+
             elif ct == "grammar":
                 data = item.get("data", {})
                 grammar_count += 1

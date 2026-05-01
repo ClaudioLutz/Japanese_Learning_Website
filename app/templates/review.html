@@ -248,6 +248,13 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         color: var(--ink-600, #5C564D);
         font-size: 0.88rem; margin-top: 0.2rem;
     }
+    /* Romaji-Zeile zwischen JP-Satz und Uebersetzung — leiser, monospaced. */
+    .back-romaji {
+        color: var(--ink-500, #7A7368);
+        font-size: 0.85rem;
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        margin-top: 0.15rem;
+    }
 
     /* Legacy detail-row (kanji/grammar — noch nicht migriert) */
     .review-detail-row {
@@ -718,7 +725,10 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
                 backHTML += `<div class="back-section">
                     <div class="back-section-label">Beispiel</div>
                     <div class="back-jp-line">${escapeHtml(d.example_jp)}</div>
-                    ${d.example_en ? `<div class="back-translation">${escapeHtml(d.example_en)}</div>` : ''}
+                    ${d.example_romaji ? `<div class="back-romaji">${escapeHtml(d.example_romaji)}</div>` : ''}
+                    ${d.example_translation
+                        ? `<div class="back-translation">${escapeHtml(d.example_translation)}</div>`
+                        : (d.example_en ? `<div class="back-translation">${escapeHtml(d.example_en)}</div>` : '')}
                 </div>`;
             }
         } else if (card.content_type === 'grammar') {
@@ -727,6 +737,8 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
                        (d.tts_example_jp ? `<div class="back-section">
                             <div class="back-section-label">Beispielsatz</div>
                             <div class="back-jp-line">${escapeHtml(d.tts_example_jp)}</div>
+                            ${d.tts_example_romaji ? `<div class="back-romaji">${escapeHtml(d.tts_example_romaji)}</div>` : ''}
+                            ${d.tts_example_translation ? `<div class="back-translation">${escapeHtml(d.tts_example_translation)}</div>` : ''}
                         </div>` : '') +
                        `<div class="back-section">
                             <div class="back-section-label">Erklärung</div>

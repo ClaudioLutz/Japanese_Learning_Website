@@ -170,6 +170,10 @@ class Vocabulary(db.Model):
     meaning_de = db.Column(db.Text, nullable=True)
     jlpt_level = db.Column(db.Integer, nullable=True)
     example_sentence_japanese = db.Column(db.Text, nullable=True)
+    # Format: "Romaji-Satz — Deutsche Uebersetzung". Wird auf der Backseite
+    # zerlegt in zwei Zeilen (Romaji, Deutsch). Felder mit altem englischem
+    # Inhalt werden weiterhin gerendert, gehoeren aber langfristig auf
+    # Deutsch umgestellt (instruction_language=german auf der Plattform).
     example_sentence_english = db.Column(db.Text, nullable=True)
     audio_url = db.Column(db.String(255), nullable=True)
     image_url = db.Column(db.String(500), nullable=True)
@@ -181,6 +185,32 @@ class Vocabulary(db.Model):
 
     def __repr__(self):
         return f'<Vocabulary {self.word}>'
+
+    def _split_example_translation(self) -> tuple[str | None, str | None]:
+        """Zerlegt example_sentence_english in (Romaji, Uebersetzung).
+
+        Pflicht-Format laut SKILL.md ist "Romaji — Translation" mit em-dash.
+        Tolerant gegenueber dem ASCII-Bindestrich " - " als Trenner. Wenn kein
+        Trenner gefunden, gilt der Inhalt komplett als Uebersetzung (Romaji = None).
+        """
+        raw = (self.example_sentence_english or '').strip()
+        if not raw:
+            return None, None
+        for sep in (' — ', ' – ', ' - '):
+            if sep in raw:
+                left, right = raw.split(sep, 1)
+                left = left.strip()
+                right = right.strip()
+                return (left or None), (right or None)
+        return None, raw or None
+
+    @property
+    def example_sentence_romaji(self) -> str | None:
+        return self._split_example_translation()[0]
+
+    @property
+    def example_sentence_translation(self) -> str | None:
+        return self._split_example_translation()[1]
 
 class Grammar(db.Model):
     __allow_unmapped__ = True
@@ -204,6 +234,86 @@ class Grammar(db.Model):
 
     def __repr__(self):
         return f'<Grammar {self.title}>'
+
+    def _extract_tts_example_parts(self) -> tuple[str | None, str | None]:
+        """Liefert (Romaji, Uebersetzung) zu tts_example_jp, geparst aus
+        dem unstrukturierten example_sentences-Block.
+
+        example_sentences hat zwei Formate:
+          1. JSON-Liste: `[{"japanese": "...", "english": "...",
+             "romanization": "..."}, ...]`
+          2. Plain-Text mit pro Eintrag JP-Zeile, " (Romaji)" und
+             " — Uebersetzung" (oder " -> Uebersetzung").
+
+        Heuristik: finde den Satz, der gleich tts_example_jp ist, und ziehe
+        die unmittelbar folgende Klammer-Romaji-Zeile + die Translation-Zeile.
+        Wenn nicht parsbar, return (None, None) — der Audio-Button funktioniert
+        weiterhin, nur Romaji/Uebersetzung fehlen auf der Karte.
+        """
+        if not self.tts_example_jp:
+            return None, None
+        target = self.tts_example_jp.strip().rstrip('。！？')
+        raw = (self.example_sentences or '').strip()
+        if not raw or not target:
+            return None, None
+
+        # JSON-Liste
+        if raw.startswith('['):
+            try:
+                data = json.loads(raw)
+                if isinstance(data, list):
+                    for entry in data:
+                        if not isinstance(entry, dict):
+                            continue
+                        jp = (entry.get('japanese') or '').strip().rstrip('。！？')
+                        if jp and (jp == target or target in jp or jp in target):
+                            romaji = (entry.get('romanization')
+                                      or entry.get('romaji') or '').strip() or None
+                            translation = (entry.get('german') or entry.get('de')
+                                           or entry.get('english')
+                                           or entry.get('translation') or '').strip() or None
+                            return romaji, translation
+            except (ValueError, TypeError):
+                pass
+
+        # Plain-Text: durchsuche Zeilen
+        import re as _re
+        lines = raw.splitlines()
+        for i, line in enumerate(lines):
+            stripped = line.strip()
+            if not stripped:
+                continue
+            cleaned = _re.sub(r'^[①②③④⑤⑥⑦⑧⑨⑩\d]+[\.\)\s]+', '', stripped)
+            cleaned = _re.sub(r'^[\-–—•\*]\s*', '', cleaned)
+            jp_part = cleaned.split('(', 1)[0].strip().rstrip('。！？')
+            if jp_part != target and target not in jp_part and jp_part not in target:
+                continue
+            # Inline-Form: "JP. (Romaji.) -> Uebersetzung"
+            paren_match = _re.search(r'\(([^)]+)\)', cleaned)
+            romaji = paren_match.group(1).strip() if paren_match else None
+            tail = cleaned[paren_match.end():].strip() if paren_match else ''
+            tail = _re.sub(r'^[—–\->>:\s]+', '', tail).strip()
+            translation = tail or None
+            # Multi-Line-Form: naechste Zeile = "(Romaji)", uebernaechste = "— Uebersetzung"
+            if not romaji and i + 1 < len(lines):
+                next_line = lines[i + 1].strip()
+                m = _re.match(r'^\(([^)]+)\)\s*$', next_line)
+                if m:
+                    romaji = m.group(1).strip()
+                    if i + 2 < len(lines):
+                        third = lines[i + 2].strip()
+                        third = _re.sub(r'^[—–\-]+\s*', '', third).strip()
+                        translation = third or None
+            return romaji, translation
+        return None, None
+
+    @property
+    def tts_example_romaji(self) -> str | None:
+        return self._extract_tts_example_parts()[0]
+
+    @property
+    def tts_example_translation(self) -> str | None:
+        return self._extract_tts_example_parts()[1]
 
 class LessonCategory(db.Model):
     __allow_unmapped__ = True
