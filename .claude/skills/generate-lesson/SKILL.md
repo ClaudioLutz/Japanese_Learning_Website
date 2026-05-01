@@ -358,9 +358,10 @@ Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
 ```
 
 **Regeln:**
-- `word` + `reading` + `romaji` + `meaning` + `meaning_de` sind alle Pflicht.
+- `word` + `reading` + `romaji` + `meaning` + `meaning_de` + `example_sentence_japanese` sind alle Pflicht.
 - `reading` in Hiragana (nie Katakana, ausser bei Lehnwörtern wie `メニュー`).
 - `romaji` Hepburn-Transkription des ganzen Wortes, Kleinschreibung, Trennstriche bei zusammengesetzten Lesungen (`yo-nin`, `o-cha`).
+- `example_sentence_japanese` ist **PFLICHT-Feld** (analog `Grammar.tts_example_jp`): genau EIN japanischer Satz, der vom Audio-Button auf der Karte mit der ja-JP-Stimme vorgelesen wird. **Validator lehnt ab**, wenn der Satz lateinische Buchstaben enthält oder nicht mit `。`/`！`/`？` endet. Klammer-Romaji am Satzende (`(watashi wa ... desu.)`) ist daher verboten — die `reading`-/`romaji`-Felder der Vokabel decken den Romaji-Bedarf bereits ab.
 - `example_sentence_japanese` nutzt Leerzeichen zwischen Wörtern bei N5 (Hiragana-Fokus).
 - `example_sentence_english` **muss Format `"Romaji-Satz — English translation"` haben** — so liest der Lerner den Satz auch westlich, nicht nur Hiragana.
 - Beispielsatz max ~12 Silben / ca. 8 Wörter.

@@ -49,7 +49,13 @@ ALLOWED_CONTENT_TYPES = {"kana", "kanji", "vocabulary", "grammar", "text", "imag
 ALLOWED_PAGE_TYPES = {"normal", "quiz_carousel"}
 
 REQUIRED_LESSON_FIELDS = ["title", "description", "jlpt_level", "topic", "pages"]
-REQUIRED_VOCAB_FIELDS = ["word", "reading", "romaji", "meaning", "meaning_de", "jlpt_level"]
+REQUIRED_VOCAB_FIELDS = [
+    "word", "reading", "romaji", "meaning", "meaning_de", "jlpt_level",
+    # Pflicht-Feld fuer den Audio-Button auf der Vokabel-Karte:
+    # genau EIN rein japanischer Satz, der von der ja-JP-Stimme vorgelesen
+    # wird (siehe SKILL.md "Vocabulary.example_sentence_japanese").
+    "example_sentence_japanese",
+]
 REQUIRED_GRAMMAR_FIELDS = ["title", "explanation", "structure", "romaji", "jlpt_level", "tts_example_jp"]
 
 # Hiragana, Katakana, CJK Unified, Halfwidth Katakana — fuer tts_example_jp-Validierung.
@@ -290,6 +296,30 @@ def validate_draft(draft: dict) -> list[str]:
                             )
                     except FileNotFoundError as e:
                         errors.append(f"Canonical-Liste fehlt: {e}")
+
+                # example_sentence_japanese: rein Japanisch + Satzende — sonst
+                # lehnt /api/tts mit lang=ja den Text ab und der Audio-Button
+                # auf der Karte bleibt stumm. Identische Regel wie Grammar.tts_example_jp.
+                ex_jp = data.get("example_sentence_japanese", "")
+                if isinstance(ex_jp, str) and ex_jp.strip():
+                    if not _JP_CHAR_RE.search(ex_jp):
+                        errors.append(
+                            f"Page {p_idx}.{c_idx} Vocabulary '{data.get('word')}': "
+                            f"example_sentence_japanese enthaelt keine japanischen Zeichen — "
+                            f"die ja-JP-Stimme kann das nicht vorlesen."
+                        )
+                    if _LATIN_LETTER_RE.search(ex_jp):
+                        errors.append(
+                            f"Page {p_idx}.{c_idx} Vocabulary '{data.get('word')}': "
+                            f"example_sentence_japanese enthaelt lateinische Buchstaben "
+                            f"(Romaji/Uebersetzung). Erlaubt: nur reine JP-Schrift."
+                        )
+                    if not re.search(r'[。！？]', ex_jp):
+                        errors.append(
+                            f"Page {p_idx}.{c_idx} Vocabulary '{data.get('word')}': "
+                            f"example_sentence_japanese muss mit 。 / ！ / ？ enden "
+                            f"(genau ein vollstaendiger Satz)."
+                        )
 
             elif ct == "grammar":
                 data = item.get("data", {})
