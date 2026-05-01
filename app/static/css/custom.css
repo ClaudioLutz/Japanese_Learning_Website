@@ -1863,7 +1863,8 @@ button[onclick*="moveContentInPage"]:active {
 }
 
 /* Beispielsatz auf der Vorderseite — der Satz, den der Audio-Button vorliest. */
-.flip-card .grammar-tts-example {
+.flip-card .grammar-tts-example,
+.flip-card .vocab-tts-example {
     margin-top: 14px;
     font-size: 20px;
     line-height: 1.55;
@@ -1874,6 +1875,21 @@ button[onclick*="moveContentInPage"]:active {
     background: rgba(74, 144, 226, 0.06);
     border-radius: 4px;
     text-align: center;
+}
+
+/* Vokabel-Beispielsatz: etwas kleiner, da das Wort selbst der Hauptanker ist. */
+.flip-card .vocab-tts-example {
+    margin-top: 10px;
+    font-size: 17px;
+    padding: 8px 12px;
+}
+
+/* Beispielsatz nicht ueber Vokabel-Hintergrundbild legen. */
+.flip-card .has-image .vocab-tts-example {
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(4px);
+    position: relative;
+    z-index: 2;
 }
 
 /* Flip instruction hint */
@@ -2930,7 +2946,12 @@ button[onclick*="moveContentInPage"]:active {
     .flip-card .vocab-reading {
         font-size: 16px;
     }
-    
+
+    .flip-card .vocab-tts-example {
+        font-size: 14px;
+        padding: 6px 10px;
+    }
+
     .flip-card .grammar-title {
         font-size: 20px;
     }

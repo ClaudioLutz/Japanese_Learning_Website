@@ -1135,6 +1135,9 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                                                 {% if content_data.romaji %}
                                                                                 <div class="vocab-romaji front-romaji">{{ content_data.romaji }}</div>
                                                                                 {% endif %}
+                                                                                {% if content_data.example_sentence_japanese %}
+                                                                                <div class="vocab-tts-example">{{ content_data.example_sentence_japanese }}</div>
+                                                                                {% endif %}
                                                                             </div>
                                                                         {% elif content.content_type == 'grammar' %}
                                                                             <div class="grammar-front">
@@ -1210,13 +1213,14 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                                             {% endif %}
                                                                         </div>
                                                                         {# Audio-Button: liest das japanische Wort/Zeichen vor (Cloud TTS).
-                                                                           Bei Grammatik: kompletter JP-Beispielsatz, kein Titel
+                                                                           Bei Vokabeln: kompletter JP-Beispielsatz, sonst das Wort.
+                                                                           Bei Grammatik: kompletter JP-Beispielsatz, sonst der Titel
                                                                            (Titel ist oft gemischt / mit Romaji in Klammern). #}
                                                                         {% set _tts_text = '' %}
                                                                         {% if content.content_type in ['kana', 'kanji'] %}
                                                                             {% set _tts_text = content_data.character %}
                                                                         {% elif content.content_type == 'vocabulary' %}
-                                                                            {% set _tts_text = content_data.word %}
+                                                                            {% set _tts_text = content_data.example_sentence_japanese or content_data.word %}
                                                                         {% elif content.content_type == 'grammar' %}
                                                                             {% set _tts_text = content_data.tts_example_jp or content_data.title %}
                                                                         {% endif %}
