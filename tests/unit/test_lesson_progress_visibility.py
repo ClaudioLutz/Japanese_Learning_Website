@@ -103,3 +103,53 @@ def test_progress_below_100_when_visible_item_missing(app_context):
 
     assert progress.progress_percentage == 50
     assert progress.is_completed is False
+
+
+def test_lesson_174_pattern_passive_outro_blocks_100(app_context):
+    """Lesson-174-Regression: 30 Items (Vokabeln + Grammatik + Slideshow +
+    interaktiver Text + Outro-Text). Wenn der User den Outro-Text NICHT
+    explizit auf erledigt setzt, bleibt der Backend-Progress bei 96%
+    (29/30). Das soll der Frontend-Auto-Complete-on-Page-Leave kuenftig
+    verhindern; der Backend-Test stellt sicher, dass die Mathematik
+    unveraendert ist und das Item korrekt zaehlt.
+    """
+    user = UserFactory()
+    lesson = LessonFactory()
+    db.session.flush()
+
+    items = []
+    for i in range(27):
+        items.append(_add(
+            lesson.id, 'vocabulary', page_number=(i // 9) + 1,
+            order_index=i, content_id=i + 1,
+        ))
+    slideshow = _add(lesson.id, 'dialog_slideshow', page_number=5, order_index=0, content_id=200)
+    interactive_quiz_text = _add(lesson.id, 'text', page_number=6, order_index=0, content_id=201)
+    outro = _add(lesson.id, 'text', page_number=7, order_index=0, content_id=202)
+    db.session.commit()
+
+    progress = UserLessonProgress(
+        user_id=user.id, lesson_id=lesson.id, content_progress='{}',
+    )
+    db.session.add(progress)
+
+    # Realistisches User-Verhalten: alle Vocab + Slideshow + Quiz-Text done,
+    # aber Outro nicht angeklickt.
+    cp = {str(i.id): True for i in items}
+    cp[str(slideshow.id)] = True
+    cp[str(interactive_quiz_text.id)] = True
+    progress.set_content_progress(cp)
+    progress.update_progress_percentage()
+
+    assert progress.progress_percentage == 96, (
+        f"Erwartet 96% (29/30 ohne Outro), bekam {progress.progress_percentage}%"
+    )
+    assert progress.is_completed is False
+
+    # Sobald Outro auch completed (sei es via User-Klick oder Auto-Complete
+    # beim Page-Verlassen), muss der Progress auf 100% springen.
+    cp[str(outro.id)] = True
+    progress.set_content_progress(cp)
+    progress.update_progress_percentage()
+    assert progress.progress_percentage == 100
+    assert progress.is_completed is True

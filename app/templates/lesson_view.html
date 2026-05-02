@@ -2103,14 +2103,51 @@ function initializeNavigation() {
     const carousel = document.getElementById('lessonCarousel');
     if (carousel) {
         carousel.addEventListener('slide.bs.carousel', function(event) {
+            // Passive Items (Text/Audio/Slideshow) der verlassenen Page automatisch
+            // als gesehen markieren — verhindert 96%-Bug, wenn User vergisst,
+            // den "Als erledigt markieren"-Button zu klicken.
+            autoCompletePassiveItemsOnPage(event.from);
             currentPage = event.to;
             updateNavigationUI();
             updateURLHash();
         });
     }
-    
+
+    // Letzte Page beim Verlassen der Seite auch noch mitnehmen
+    window.addEventListener('beforeunload', function() {
+        autoCompletePassiveItemsOnPage(currentPage);
+    });
+    // pagehide ist auf iOS/Safari zuverlaessiger als beforeunload
+    window.addEventListener('pagehide', function() {
+        autoCompletePassiveItemsOnPage(currentPage);
+    });
+
     // Update initial state
     updateNavigationUI();
+}
+
+// Auto-Complete aller passiven (non-interactive) Items auf einer Page.
+// Ein Item gilt als passiv und unerledigt, wenn ein .mark-complete-btn existiert
+// und noch sichtbar ist (sobald completed, wird er via display:none ausgeblendet).
+// Interactive Items (Quiz, Deck-Karten) haben keinen Mark-Button und werden
+// weiterhin durch ihre eigene Logik (korrekte Antwort / SRS-Rating) completed.
+function autoCompletePassiveItemsOnPage(pageIdx) {
+    if (!lessonData || !lessonData.id) return;
+    if (typeof pageIdx !== 'number' || pageIdx < 0) return;
+    const carouselItems = document.querySelectorAll('#lessonCarousel .carousel-item');
+    const pageEl = carouselItems[pageIdx];
+    if (!pageEl) return;
+    const items = pageEl.querySelectorAll('[data-content-id]');
+    items.forEach(el => {
+        const contentId = el.getAttribute('data-content-id');
+        if (!contentId) return;
+        const btn = el.querySelector('.mark-complete-btn');
+        const badge = el.querySelector('.completed-badge');
+        const alreadyCompleted = badge && badge.style.display !== 'none';
+        if (btn && btn.style.display !== 'none' && !alreadyCompleted) {
+            try { markContentComplete(parseInt(contentId, 10)); } catch (e) { /* noop */ }
+        }
+    });
 }
 
 function restorePageFromURL() {
