@@ -3,7 +3,7 @@ import json
 import os
 import re
 from datetime import datetime
-from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, current_app
+from flask import Blueprint, render_template, render_template_string, redirect, url_for, flash, request, jsonify, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError # Import specific exceptions
 from app import db, csrf, limiter
@@ -3761,12 +3761,17 @@ def submit_quiz_answer(lesson_id, question_id):
         }
 
         # Always show why the selected option is wrong/right
+        # Render Markdown to HTML so **bold**, *italic* etc. display correctly
         if selected_option and selected_option.feedback:
-            result['option_feedback'] = selected_option.feedback
+            result['option_feedback'] = render_template_string(
+                '{{ text | markdown_inline }}', text=selected_option.feedback
+            )
 
         # Only reveal the full explanation (correct answer) when solved
         if show_solution:
-            result['explanation'] = question.explanation
+            result['explanation'] = render_template_string(
+                '{{ text | markdown_safe }}', text=question.explanation
+            )
         
         current_app.logger.info(f"Answer for question {question_id} processed. Result: {result}")
         return jsonify(result)

@@ -361,6 +361,28 @@ def create_app():
         cleaned = _bleach.linkify(cleaned)
         return Markup(cleaned)
 
+    # Inline-Variante: rendert **fett**, *kursiv*, `code`, Backslash-Escapes
+    # ohne Block-Tags (kein <p>, <ul>, <h2>...). Fuer Quiz-Fragen, Antworten,
+    # Feedback, Hints — also Texte, die in <h4>/<label>/<div> inline stehen.
+    _MD_INLINE_TAGS = {'strong', 'em', 'b', 'i', 'code', 'span', 'br'}
+    _MD_INLINE_ATTRS = {'span': ['class']}
+    _MD_INLINE_INSTANCE = _md.Markdown(extensions=['extra'])
+
+    @app.template_filter('markdown_inline')
+    def markdown_inline_filter(text):
+        if not text:
+            return ''
+        _MD_INLINE_INSTANCE.reset()
+        html = _MD_INLINE_INSTANCE.convert(text)
+        cleaned = _bleach.clean(
+            html, tags=_MD_INLINE_TAGS, attributes=_MD_INLINE_ATTRS,
+            strip=True,
+        )
+        # Markdown wraps single paragraphs in <p>...</p>; strip for inline use
+        if cleaned.startswith('<p>') and cleaned.endswith('</p>'):
+            cleaned = cleaned[3:-4]
+        return Markup(cleaned)
+
     # Flask-Admin fuer Standard-CRUD registrieren
     from app.admin_views import init_admin
     init_admin(app, db.session)
