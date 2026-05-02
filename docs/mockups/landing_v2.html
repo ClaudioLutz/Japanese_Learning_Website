@@ -1,0 +1,1394 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mockup · Landing v2 · Japanese Learning</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Klee+One:wght@400;600&family=Noto+Serif+JP:wght@400;500;700&display=swap">
+<link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Noto+Sans+JP:wght@400;500;700&display=swap">
+
+<style>
+/* ════════════════════════════════════════════════════════════════
+   BRAND TOKENS (1:1 from app/static/css/custom.css)
+   ════════════════════════════════════════════════════════════════ */
+:root {
+  --washi:   #FAF7F2;
+  --kinari:  #F5F0E8;
+  --sumi:    #1C1C1C;
+  --kon:     #1F2A44;
+  --kon-50:  #F2F4F8;
+  --kon-100: #E1E5EE;
+  --kon-300: #9AA6BD;
+  --kon-500: #3F4E72;
+  --ai:      #264F7E;
+  --shu:     #EB6101;
+  --shu-soft:#F4D9C7;
+  --shu-deep:#B84A00;
+  --kincha:  #C7802D;
+  --matcha:  #7A9033;
+
+  --ink-50:  #FAF7F2;
+  --ink-100: #F1EDE6;
+  --ink-200: #E4DED4;
+  --ink-300: #D4CCBE;
+  --ink-400: #A8A095;
+  --ink-500: #7A7368;
+  --ink-600: #5C564D;
+  --ink-700: #403B34;
+  --ink-800: #2C2924;
+  --ink-900: #1C1A17;
+
+  --shadow-subtle: 0 1px 2px 0 rgba(28,26,23,.04), 0 1px 3px 0 rgba(28,26,23,.06);
+  --shadow-card:   0 2px 4px -1px rgba(28,26,23,.06), 0 4px 12px -2px rgba(28,26,23,.08);
+  --shadow-lifted: 0 8px 24px -4px rgba(28,26,23,.10), 0 2px 6px -2px rgba(28,26,23,.06);
+
+  --font-display:  'Geist', 'Inter', system-ui, sans-serif;
+  --font-body:     'Inter', system-ui, sans-serif;
+  --font-serif:    'Fraunces', Georgia, serif;
+  --font-jp:       'Noto Sans JP', sans-serif;
+  --font-jp-serif: 'Noto Serif JP', serif;
+  --font-mono:     'Geist Mono', ui-monospace, Menlo, monospace;
+  --font-brush:    'Klee One', 'Noto Serif JP', cursive;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--washi);
+  color: var(--ink-700);
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--ai); text-decoration: none; transition: color .15s; }
+a:hover { color: var(--shu); }
+
+/* ════════════════════════════════════════════════════════════════
+   TOPNAV (recreated from live)
+   ════════════════════════════════════════════════════════════════ */
+.topnav {
+  display: flex; align-items: center; gap: 1.25rem;
+  padding: 0.85rem 1.5rem;
+  border-bottom: 1px solid var(--ink-200);
+  background: var(--washi);
+  position: sticky; top: 0; z-index: 50;
+  backdrop-filter: saturate(140%) blur(8px);
+}
+.topnav-brand {
+  display: flex; align-items: center; gap: 0.6rem;
+  text-decoration: none;
+}
+.topnav-brand-glyph {
+  font-family: var(--font-brush);
+  font-weight: 600;
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--kon);
+}
+.topnav-brand-text { display: flex; flex-direction: column; line-height: 1.05; }
+.topnav-brand-name {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: var(--kon);
+  letter-spacing: -0.005em;
+}
+.topnav-brand-tag {
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: #8a7355;
+}
+.topnav-links { display: flex; gap: 0.4rem; margin-left: 1rem; }
+.topnav-link {
+  display: inline-flex; align-items: center; gap: 0.45rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--ink-700);
+  border: 1px solid transparent;
+}
+.topnav-link.is-active {
+  background: var(--shu-soft);
+  color: var(--shu-deep);
+  border-color: rgba(235,97,1,.18);
+}
+.topnav-link.is-bundle { color: var(--kon); border-color: var(--ink-200); }
+.topnav-spacer { flex: 1; }
+.topnav-cta-ghost { color: var(--ink-700); padding: 0.45rem 0.85rem; }
+.btn-shu {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 0.7rem 1.15rem;
+  background: linear-gradient(180deg, #EB6101, #D85700);
+  color: #fff !important;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: 0;
+  border-radius: 8px;
+  text-decoration: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.18),
+    0 1px 2px rgba(184,74,0,.30),
+    0 0 0 1px rgba(184,74,0,.32);
+  cursor: pointer;
+  transition: transform .12s, filter .15s;
+}
+.btn-shu:hover { filter: brightness(1.04); color:#fff !important; }
+.btn-shu:active { transform: scale(0.97); }
+.btn-ghost-jp {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 0.7rem 1.15rem;
+  background: transparent;
+  color: var(--kon) !important;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 0.95rem;
+  border: 1px solid var(--ink-300);
+  border-radius: 8px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color .15s, background-color .15s;
+}
+.btn-ghost-jp:hover { border-color: var(--kon); background: rgba(31,42,68,.04); color: var(--kon) !important; }
+
+/* ════════════════════════════════════════════════════════════════
+   HERO — ink-on-washi, painterly background
+   ════════════════════════════════════════════════════════════════ */
+.home-hero {
+  position: relative;
+  padding: 5.5rem 1.5rem 4rem;
+  text-align: center;
+  isolation: isolate;
+  overflow: hidden;
+  background:
+    radial-gradient(70% 90% at 12% 10%, rgba(199,128,45,.10), transparent 60%),
+    radial-gradient(60% 70% at 88% 18%, rgba(235,97,1,.08),  transparent 65%),
+    radial-gradient(120% 80% at 50% 110%, rgba(31,42,68,.05), transparent 70%),
+    linear-gradient(180deg, #F4EEE0 0%, #FAF7F2 92%);
+}
+/* Subtile washi grain — tiny CSS noise via repeated radial dots */
+.home-hero::before {
+  content: ""; position: absolute; inset: 0;
+  background-image:
+    radial-gradient(rgba(28,26,23,.022) 1px, transparent 1.2px);
+  background-size: 3px 3px;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  z-index: -1;
+}
+.home-hero-inner { max-width: 980px; margin: 0 auto; }
+
+.eyebrow-chip {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.32rem 0.85rem;
+  border: 1px solid var(--ink-200);
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 0.74rem;
+  font-weight: 510;
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  color: var(--ink-700);
+  background: rgba(255,255,255,.6);
+}
+.eyebrow-chip .seal {
+  display: inline-block; width: 7px; height: 7px;
+  border-radius: 50%; background: var(--shu);
+}
+
+.home-h1 {
+  font-family: var(--font-display);
+  font-weight: 510;
+  font-size: clamp(2.5rem, 5.5vw + 1rem, 5rem);
+  letter-spacing: -0.035em;
+  line-height: 1.02;
+  color: var(--kon);
+  margin: 1.5rem 0 1.25rem;
+}
+.home-sub {
+  font-size: 1.15rem;
+  color: var(--ink-600);
+  max-width: 600px;
+  line-height: 1.55;
+  margin: 0 auto 1.75rem;
+  min-height: 3.5rem; /* prevent layout shift on JS update */
+  transition: opacity .25s;
+}
+.home-sub strong { color: var(--kon); font-weight: 600; }
+
+.home-actions {
+  display: flex; gap: 0.75rem;
+  justify-content: center; flex-wrap: wrap;
+  margin-bottom: 0;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   EINGRIFF 3 — TRUST-BLOCK (Schweizer Handarbeit)
+   directly below CTA, hairline
+   ════════════════════════════════════════════════════════════════ */
+.trust-block {
+  margin: 2.25rem auto 0;
+  max-width: 640px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1.2rem;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  background: rgba(255,255,255,.55);
+  border: 1px solid var(--ink-200);
+  border-radius: 12px;
+  text-align: left;
+}
+.trust-hanko {
+  width: 78px; height: 78px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  background: var(--shu);
+  color: #fff;
+  border-radius: 50%;
+  font-family: var(--font-brush);
+  line-height: 1;
+  box-shadow:
+    inset 0 0 0 2px rgba(255,255,255,.30),
+    inset 0 0 0 3px var(--shu),
+    0 2px 8px rgba(184,74,0,.30);
+  transform: rotate(-3deg);
+  flex-shrink: 0;
+  position: relative;
+}
+.trust-hanko-jp {
+  font-weight: 600;
+  font-size: 1.6rem;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.05rem;
+}
+.trust-hanko-tag {
+  font-family: var(--font-mono);
+  font-size: 0.52rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: .92;
+}
+.trust-text {
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--ink-700);
+}
+.trust-text strong { color: var(--kon); font-weight: 600; }
+.trust-text-numbers {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--ink-500);
+  margin-top: 0.3rem;
+  letter-spacing: 0.01em;
+}
+.trust-text-numbers .dot {
+  display: inline-block; width: 3px; height: 3px;
+  background: var(--ink-400); border-radius: 50%;
+  margin: 0 0.6rem; vertical-align: 3px;
+}
+.trust-link {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  margin-top: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--ai);
+  font-weight: 500;
+}
+.trust-link:hover { color: var(--shu); }
+
+/* ════════════════════════════════════════════════════════════════
+   EINGRIFF 1 — INTERACTIVE HERO PROOF
+   Browser frame with clickable kana cards (flip + brush-fill)
+   ════════════════════════════════════════════════════════════════ */
+.home-browser-frame {
+  margin: 4rem auto 0;
+  max-width: 920px;
+  background: #fff;
+  border: 1px solid var(--ink-200);
+  border-radius: 14px;
+  box-shadow: var(--shadow-lifted);
+  overflow: hidden;
+}
+.home-browser-chrome {
+  display: flex; align-items: center; gap: 0.4rem;
+  padding: 0.65rem 0.95rem;
+  background: var(--ink-100);
+  border-bottom: 1px solid var(--ink-200);
+}
+.home-browser-chrome > .dot {
+  width: 11px; height: 11px; border-radius: 50%;
+  background: var(--ink-300);
+}
+.home-browser-url {
+  margin-left: 0.85rem;
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--ink-500);
+  text-align: center;
+  padding: 0.22rem 0.6rem;
+  background: rgba(255,255,255,.6);
+  border-radius: 6px;
+}
+.home-browser-stage {
+  display: flex; flex-direction: column; gap: 1.1rem;
+  padding: 1.6rem 1.6rem 1.4rem;
+  background: var(--washi);
+}
+.stage-prompt {
+  display: flex; align-items: center; justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--ink-500);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.stage-prompt .live-counter {
+  color: var(--shu);
+  font-weight: 500;
+}
+.stage-prompt .live-counter.is-done { color: var(--matcha); }
+.kana-stage {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.85rem;
+  perspective: 1400px;
+}
+
+/* Card-flip mechanics */
+.kana-card {
+  position: relative;
+  aspect-ratio: 1 / 1.18;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  font-family: inherit;
+  transform-style: preserve-3d;
+  transition: transform 0.7s cubic-bezier(.25,.8,.25,1);
+}
+.kana-card.is-flipped { transform: rotateY(180deg); }
+.kana-face {
+  position: absolute; inset: 0;
+  background: #fff;
+  border: 1px solid var(--ink-200);
+  border-radius: 12px;
+  padding: 0.85rem 0.6rem;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transition: border-color .2s, transform .2s, box-shadow .2s;
+  text-align: center;
+}
+.kana-card:hover:not(.is-flipped) .kana-face-front {
+  border-color: var(--shu);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card);
+}
+.kana-face-front .glyph {
+  font-family: var(--font-jp-serif);
+  font-weight: 500;
+  font-size: clamp(2.2rem, 4vw, 3rem);
+  line-height: 1;
+  color: var(--sumi);
+  margin-bottom: 0.6rem;
+}
+.kana-face-front .romaji {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--ink-500);
+  letter-spacing: 0.08em;
+}
+.kana-face-front .hint {
+  position: absolute; bottom: 0.45rem;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--ink-400);
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+}
+
+/* Back face — brush reveal */
+.kana-face-back {
+  transform: rotateY(180deg);
+  background: var(--kinari);
+  border-color: var(--ink-300);
+  padding: 0.6rem 0.5rem 0.55rem;
+  justify-content: space-between;
+}
+.kana-brush {
+  position: relative;
+  width: 100%; aspect-ratio: 1;
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 0.05rem;
+}
+.kana-brush .glyph-bg {
+  position: absolute;
+  font-family: var(--font-jp-serif);
+  font-weight: 700;
+  font-size: clamp(2.6rem, 5vw, 3.6rem);
+  line-height: 1;
+  color: var(--ink-200);
+  user-select: none;
+}
+.kana-brush .glyph-fg {
+  position: absolute;
+  font-family: var(--font-jp-serif);
+  font-weight: 700;
+  font-size: clamp(2.6rem, 5vw, 3.6rem);
+  line-height: 1;
+  color: var(--sumi);
+  user-select: none;
+  /* clip-path animates the "brush stroke" reveal */
+  clip-path: inset(0 100% 0 0);
+}
+.kana-card.is-flipped .kana-brush .glyph-fg {
+  animation: brushFill 1.05s cubic-bezier(.6,.2,.4,1) forwards;
+}
+@keyframes brushFill {
+  0%   { clip-path: inset(0 100% 0 0); }
+  100% { clip-path: inset(0 0% 0 0); }
+}
+/* Ink-dot tracer */
+.kana-brush .ink-dot {
+  position: absolute;
+  width: 6px; height: 6px;
+  background: var(--shu);
+  border-radius: 50%;
+  top: 50%; left: 12%;
+  opacity: 0;
+  box-shadow: 0 0 0 4px rgba(235,97,1,.16);
+}
+.kana-card.is-flipped .kana-brush .ink-dot {
+  animation: dotTrace 1.05s cubic-bezier(.6,.2,.4,1) forwards;
+}
+@keyframes dotTrace {
+  0%   { left: 12%;  opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { left: 88%;  opacity: 0; }
+}
+
+.kana-back-meta {
+  display: flex; flex-direction: column; gap: 0.2rem;
+  width: 100%;
+  align-items: center;
+}
+.kana-back-romaji {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--shu-deep);
+  letter-spacing: 0.10em;
+  text-transform: lowercase;
+}
+.kana-back-example {
+  display: flex; align-items: baseline; gap: 0.35rem;
+  font-family: var(--font-jp-serif);
+  font-size: 0.85rem;
+  color: var(--ink-700);
+  white-space: nowrap;
+}
+.kana-back-example .meaning {
+  font-family: var(--font-body);
+  color: var(--ink-500);
+  font-size: 0.7rem;
+}
+.kana-audio {
+  margin-top: 0.15rem;
+  display: inline-flex; align-items: center; gap: 0.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--ai);
+  background: rgba(255,255,255,.7);
+  padding: 0.18rem 0.45rem;
+  border-radius: 999px;
+  border: 1px solid var(--ink-200);
+  cursor: pointer;
+}
+.kana-audio:hover { color: var(--shu); border-color: var(--shu); }
+.kana-audio .speaker { font-size: 0.65rem; }
+
+/* Visual confirmation of progression */
+.stage-cta-row {
+  display: flex; align-items: center; justify-content: center;
+  gap: 1rem;
+  padding-top: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--ink-500);
+  font-family: var(--font-mono);
+}
+.stage-cta-row strong { color: var(--kon); font-weight: 600; }
+.stage-progress-bar {
+  flex: 0 0 120px;
+  height: 4px; border-radius: 999px;
+  background: var(--ink-200);
+  overflow: hidden;
+  position: relative;
+}
+.stage-progress-bar > span {
+  position: absolute; inset: 0 100% 0 0;
+  background: var(--shu);
+  transition: inset .35s cubic-bezier(.25,.8,.25,1);
+}
+.stage-progress-bar.is-done > span { background: var(--matcha); }
+
+/* ════════════════════════════════════════════════════════════════
+   EINGRIFF 2 — VERTICAL SUMI-INK PATH for N5 modules
+   ════════════════════════════════════════════════════════════════ */
+.lernpfad-section {
+  position: relative;
+  padding: 5rem 1.5rem 4rem;
+  max-width: 1152px;
+  margin: 0 auto;
+}
+.lernpfad-header { text-align: center; margin-bottom: 3.5rem; }
+.lernpfad-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 500;
+  color: var(--shu);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  margin-bottom: 0.85rem;
+}
+.lernpfad-title {
+  font-family: var(--font-display);
+  font-weight: 510;
+  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+  letter-spacing: -0.025em;
+  color: var(--kon);
+  margin: 0 0 0.6rem;
+}
+.lernpfad-sub {
+  color: var(--ink-500);
+  font-size: 1rem;
+  margin: 0 auto;
+  max-width: 540px;
+}
+
+/* Bundle hint — slipped between header and path */
+.bundle-hint {
+  display: flex; align-items: center; gap: 1rem;
+  background: var(--kon-50);
+  border: 1px solid var(--kon-100);
+  border-left: 3px solid var(--shu);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  margin: 0 auto 3rem;
+  max-width: 760px;
+}
+.bundle-hint-icon { font-size: 1.4rem; flex-shrink: 0; color: var(--shu); }
+.bundle-hint-text { flex: 1; color: var(--ink-700); font-size: 0.95rem; line-height: 1.5; }
+.bundle-hint-text a { color: var(--shu); font-weight: 600; }
+.bundle-hint-text strong { color: var(--kon); }
+.bundle-hint-cta {
+  color: var(--shu); font-weight: 600; font-size: 0.9rem;
+  white-space: nowrap;
+  padding: 0.5rem 0.85rem;
+  border: 1px solid var(--shu);
+  border-radius: 8px;
+}
+.bundle-hint-cta:hover { background: rgba(235,97,1,.08); }
+
+/* Path container */
+.path-wrap {
+  position: relative;
+  padding: 1rem 0 2rem;
+}
+.path-svg {
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 240px;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+.path-svg path.ink {
+  fill: none;
+  stroke: var(--ink-300);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-dasharray: 6 7;
+}
+
+.path-stations {
+  position: relative;
+  z-index: 1;
+  display: flex; flex-direction: column;
+  gap: 2.5rem;
+}
+.station {
+  display: grid;
+  grid-template-columns: 1fr 100px 1fr;
+  align-items: center;
+  gap: 0;
+  min-height: 130px;
+}
+.station-card {
+  background: #fff;
+  border: 1px solid var(--ink-200);
+  border-radius: 14px;
+  padding: 1.1rem 1.25rem;
+  box-shadow: var(--shadow-subtle);
+  transition: transform .15s, border-color .15s, box-shadow .2s;
+}
+.station-card:hover {
+  border-color: var(--ink-400);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-card);
+}
+.station--left  .station-card { grid-column: 1; text-align: right; }
+.station--right .station-card { grid-column: 3; text-align: left; }
+.station-axis  { grid-column: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+
+.station-node {
+  position: relative;
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--ink-200);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--ink-700);
+  z-index: 2;
+}
+/* Donut-Fortschrittsring — conic-gradient hinter dem Node */
+.station-node::before {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from -90deg,
+    var(--ring-color, var(--shu)) calc(var(--progress, 0) * 1%),
+    var(--ink-200) calc(var(--progress, 0) * 1%) 100%
+  );
+  z-index: -1;
+  transition: background .4s;
+}
+/* Kleines weisses Donut-Loch unter dem Node */
+.station-node::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  background: var(--washi);
+  z-index: -1;
+}
+.station-node-pct {
+  position: absolute;
+  bottom: -1.2rem;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--ink-500);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.station--complete .station-node {
+  background: var(--matcha);
+  border-color: var(--matcha);
+  color: #fff;
+  --progress: 100;
+  --ring-color: var(--matcha);
+}
+.station--complete .station-node::after { background: var(--matcha); }
+.station--complete .station-node-pct { color: var(--matcha); font-weight: 600; }
+.station--inprogress .station-node {
+  border-color: transparent; /* ring übernimmt die Aussenwirkung */
+}
+.station--next .station-node {
+  background: var(--shu);
+  border-color: var(--shu);
+  color: #fff;
+  font-family: var(--font-jp-serif);
+  font-weight: 700;
+  box-shadow:
+    0 0 0 4px rgba(235,97,1,.18),
+    0 4px 12px rgba(184,74,0,.30);
+  animation: pulseHanko 2.4s ease-in-out infinite;
+}
+.station--next .station-node::before,
+.station--next .station-node::after { display: none; }
+@keyframes pulseHanko {
+  0%, 100% { box-shadow: 0 0 0 4px rgba(235,97,1,.18), 0 4px 12px rgba(184,74,0,.30); }
+  50%      { box-shadow: 0 0 0 7px rgba(235,97,1,.10), 0 6px 16px rgba(184,74,0,.34); }
+}
+/* Empfohlen-Badge an Card */
+.station-recommend-badge {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  background: rgba(235,97,1,.10);
+  color: var(--shu-deep);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  padding: 0.18rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(235,97,1,.22);
+  margin-bottom: 0.5rem;
+}
+.station-meta {
+  display: flex; flex-direction: column; align-items: center;
+  margin-top: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  color: var(--ink-400);
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+}
+.station-card .module-icon-emoji { font-size: 1.5rem; line-height: 1; }
+.station-card-head {
+  display: flex; align-items: center; gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+.station--left .station-card-head { justify-content: flex-end; }
+.station-card h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--kon);
+  margin: 0;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+.station-card p {
+  font-size: 0.88rem;
+  color: var(--ink-600);
+  margin: 0 0 0.6rem;
+  line-height: 1.5;
+}
+.station-numbers {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--ink-500);
+  letter-spacing: 0.02em;
+  margin-bottom: 0.7rem;
+}
+.station-numbers .dot {
+  display: inline-block; width: 3px; height: 3px;
+  background: var(--ink-400); border-radius: 50%;
+  margin: 0 0.45rem; vertical-align: 3px;
+}
+.station-card .station-cta-row {
+  display: flex; gap: 0.4rem; align-items: center;
+}
+.station--left .station-card .station-cta-row { justify-content: flex-end; }
+.station-cta {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  padding: 0.45rem 0.75rem;
+  background: var(--kon);
+  color: #fff !important;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.82rem;
+  border-radius: 7px;
+  text-decoration: none;
+  transition: background-color .15s, transform .12s;
+}
+.station-cta:hover { background: var(--kon-500); }
+.station--complete .station-cta {
+  background: rgba(122,144,51,.12);
+  color: var(--matcha) !important;
+}
+.station--complete .station-cta:hover { background: rgba(122,144,51,.2); }
+.station--next .station-cta,
+.station-cta.is-continue {
+  background: linear-gradient(180deg, #EB6101, #D85700);
+  color: #fff !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.18);
+}
+/* Inline mini-progress under module description */
+.station-progress {
+  display: flex; align-items: center; gap: 0.5rem;
+  margin: 0.55rem 0 0.65rem;
+}
+.station--left .station-progress { flex-direction: row-reverse; }
+.station-progress-bar {
+  flex: 1;
+  height: 4px;
+  background: var(--ink-200);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+.station-progress-bar > span {
+  display: block; height: 100%;
+  background: var(--shu);
+  border-radius: 999px;
+  transition: width .4s;
+}
+.station--complete .station-progress-bar > span { background: var(--matcha); }
+.station-progress-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--ink-500);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.station--complete .station-progress-label { color: var(--matcha); font-weight: 600; }
+
+/* Group divider */
+.path-group-label {
+  position: relative;
+  display: flex; align-items: center; gap: 1rem;
+  margin: 1.5rem 0 0.75rem;
+  z-index: 1;
+}
+.path-group-label::before, .path-group-label::after {
+  content: ""; flex: 1; height: 1px; background: var(--ink-200);
+}
+.path-group-label span {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--ink-700);
+  background: var(--washi);
+  padding: 0 0.85rem;
+}
+
+/* Footer */
+.lernpfad-footer { text-align: center; margin-top: 3rem; }
+.lernpfad-footer .btn-ghost-jp { font-size: 0.88rem; padding: 0.55rem 1rem; }
+
+/* Mobile fallback */
+@media (max-width: 760px) {
+  .home-h1 { font-size: 2.4rem; }
+  .home-browser-stage { padding: 1rem 0.85rem 1.1rem; }
+  .kana-stage { gap: 0.5rem; }
+  .station {
+    grid-template-columns: 60px 1fr;
+    gap: 0.8rem;
+    min-height: 0;
+    margin-left: 0;
+  }
+  .station-axis { grid-column: 1; }
+  .station--left  .station-card,
+  .station--right .station-card { grid-column: 2; text-align: left; }
+  .station--left .station-card-head { justify-content: flex-start; }
+  .station--left .station-card .station-cta-row { justify-content: flex-start; }
+  .station--left .station-progress { flex-direction: row; }
+  .path-svg { display: none; }
+  /* Vertical dashed sumi line connecting all nodes on mobile */
+  .path-stations::before {
+    content: "";
+    position: absolute;
+    left: 30px;
+    top: 0; bottom: 0;
+    width: 0;
+    border-left: 1.5px dashed var(--ink-300);
+    z-index: 0;
+  }
+  .path-group-label { margin: 0.85rem 0 0.4rem; }
+  .path-group-label span { font-size: 0.88rem; padding: 0 0.65rem; }
+  .station-numbers { font-size: 0.68rem; }
+  .trust-block {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .trust-hanko {
+    margin: 0 auto;
+  }
+}
+
+/* Keyboard focus */
+.kana-card:focus-visible {
+  outline: 2px solid var(--shu);
+  outline-offset: 3px;
+  border-radius: 14px;
+}
+
+/* footer */
+.mockup-foot {
+  border-top: 1px solid var(--ink-200);
+  padding: 1.5rem;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--ink-500);
+}
+.mockup-foot strong { color: var(--ink-700); }
+</style>
+</head>
+<body>
+
+<!-- ─── TOPNAV ─────────────────────────────────────────── -->
+<nav class="topnav" aria-label="Hauptnavigation">
+  <a class="topnav-brand" href="#">
+    <span class="topnav-brand-glyph" aria-hidden="true">あ</span>
+    <span class="topnav-brand-text">
+      <span class="topnav-brand-name">Japanese Learning</span>
+      <span class="topnav-brand-tag">JLPT N5 · auf Deutsch</span>
+    </span>
+  </a>
+  <div class="topnav-links">
+    <a href="#lernpfad" class="topnav-link is-active">🧭 Lernpfad</a>
+    <a href="#" class="topnav-link">📖 Lektionen</a>
+    <a href="#" class="topnav-link is-bundle">⚡ N5 Komplett</a>
+  </div>
+  <div class="topnav-spacer"></div>
+  <a href="#" class="topnav-cta-ghost">Anmelden</a>
+  <a href="#" class="btn-shu">Kostenlos starten</a>
+</nav>
+
+<!-- ─── HERO ───────────────────────────────────────────── -->
+<section class="home-hero" id="hero">
+  <div class="home-hero-inner">
+
+    <span class="eyebrow-chip">
+      <span class="seal" aria-hidden="true"></span>
+      JLPT N5 · auf Deutsch · in der Schweiz gemacht
+    </span>
+
+    <h1 class="home-h1">Hiragana am Morgen.<br>Kanji am Abend.</h1>
+
+    <p class="home-sub" id="heroSub">
+      Strukturiert nach JLPT-N5. <strong>510 Vokabeln</strong>, <strong>55 Kanji</strong>,
+      wöchentlich neu — auf Deutsch erklärt.
+    </p>
+
+    <div class="home-actions">
+      <a href="#" class="btn-shu">Kostenlos starten</a>
+      <a href="#" class="btn-ghost-jp">N5 Komplett · CHF 9.90</a>
+    </div>
+
+    <!-- ─── EINGRIFF 3 — Trust-Block direkt unter CTA ─── -->
+    <div class="trust-block">
+      <div class="trust-hanko" aria-hidden="true">
+        <span class="trust-hanko-jp" lang="ja">N5</span>
+        <span class="trust-hanko-tag">JLPT</span>
+      </div>
+      <div class="trust-text">
+        <strong>Strikt nach offizieller JLPT-N5-Liste.</strong>
+        Aus Rorschach SG. Komplett auf Deutsch, mit Fokus auf Lerner aus der Schweiz.
+        <div class="trust-text-numbers">
+          510 Vokabeln <span class="dot"></span>
+          55 Kanji <span class="dot"></span>
+          92 Hiragana &amp; Katakana <span class="dot"></span>
+          gegen Tanos / MNN / Genki gegengeprüft
+        </div>
+        <a href="#" class="trust-link">Wer steht hinter Japanese Learning? →</a>
+      </div>
+    </div>
+
+    <!-- ─── EINGRIFF 1 — Interactive Hero Proof ─── -->
+    <div class="home-browser-frame" aria-label="Probe-Lektion: Vokale">
+      <div class="home-browser-chrome">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <div class="home-browser-url">japanese-learning.ch / lessons / hiragana-1 / vokale</div>
+      </div>
+      <div class="home-browser-stage">
+
+        <div class="stage-prompt">
+          <span>Probier es jetzt — klick eine Karte:</span>
+          <span class="live-counter" id="liveCounter">0 / 5 entdeckt</span>
+        </div>
+
+        <div class="kana-stage" id="kanaStage">
+          <!-- buttons populated by JS for keyboard a11y -->
+        </div>
+
+        <div class="stage-cta-row">
+          <span>Fortschritt</span>
+          <div class="stage-progress-bar" id="stageProgressBar"><span></span></div>
+          <span><strong id="liveCounterMini">0</strong> von 5 Vokalen</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─── EINGRIFF 2 — Vertical Sumi-Path with N5 modules ─── -->
+<section class="lernpfad-section" id="lernpfad">
+  <div class="lernpfad-header">
+    <div class="lernpfad-eyebrow">📚 Dein Lernpfad — JLPT N5</div>
+    <h2 class="lernpfad-title">Vom Schreibsystem zu deinen ersten Sätzen</h2>
+    <p class="lernpfad-sub">9 Module — empfohlene Reihenfolge, keine Pflicht. Du wählst, wo du startest.</p>
+  </div>
+
+  <div class="bundle-hint">
+    <div class="bundle-hint-icon">⚡</div>
+    <div class="bundle-hint-text">
+      <strong>Tipp:</strong> Mit <a href="#">N5 Komplett</a> schaltest du alle Lektionen ab Tag 1 frei —
+      einmalig <strong>CHF 9.90</strong>, Lifetime-Zugriff, 30 Tage Geld zurück.
+    </div>
+    <a href="#" class="bundle-hint-cta">Anschauen →</a>
+  </div>
+
+  <div class="path-wrap">
+    <!-- vertical curved sumi-line connecting all 9 nodes -->
+    <svg class="path-svg" viewBox="0 0 240 1480" preserveAspectRatio="none" aria-hidden="true">
+      <path class="ink"
+            d="M120 30
+               C 60 110, 60 180, 120 250
+               C 180 320, 180 390, 120 460
+               C 60 530, 60 600, 120 670
+               C 180 740, 180 810, 120 880
+               C 60 950, 60 1020, 120 1090
+               C 180 1160, 180 1230, 120 1300
+               C 60 1370, 60 1440, 120 1480"/>
+    </svg>
+
+    <div class="path-stations">
+
+      <!-- 1. Hiragana — komplett -->
+      <div class="station station--right station--complete">
+        <div class="station-axis">
+          <div class="station-node" style="--progress:100; --ring-color: var(--matcha);" aria-label="abgeschlossen">✓</div>
+          <div class="station-meta">Modul 1</div>
+        </div>
+        <div class="station-card">
+          <div class="station-card-head">
+            <span class="module-icon-emoji">あ</span>
+            <h3>Hiragana komplett</h3>
+          </div>
+          <p>Alle 46 Grund-Hiragana plus Dakuten/Handakuten/Yōon. Empfohlener Einstieg.</p>
+          <div class="station-progress">
+            <div class="station-progress-bar"><span style="width:100%"></span></div>
+            <span class="station-progress-label">5 / 5 Lektionen</span>
+          </div>
+          <div class="station-cta-row">
+            <a href="#" class="station-cta">✓ Wiederholen</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Katakana — empfohlen, angefangen 1/5 -->
+      <div class="station station--left station--next">
+        <div class="station-axis">
+          <div class="station-node" aria-label="nächstes empfohlenes Modul">次</div>
+          <div class="station-meta">Modul 2</div>
+        </div>
+        <div class="station-card">
+          <div class="station-card-head">
+            <span class="module-icon-emoji">カ</span>
+            <h3>Katakana komplett</h3>
+          </div>
+          <span class="station-recommend-badge">⚡ Empfohlen als nächstes</span>
+          <p>Die 46 Grund-Katakana plus Dakuten/Handakuten/Yōon und gängige Lehnwörter.</p>
+          <div class="station-progress">
+            <div class="station-progress-bar"><span style="width:20%"></span></div>
+            <span class="station-progress-label">1 / 5 Lektionen</span>
+          </div>
+          <div class="station-cta-row">
+            <a href="#" class="station-cta is-continue">Weiterlernen →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Kanji-Grundlagen — 0% -->
+      <div class="station station--right">
+        <div class="station-axis">
+          <div class="station-node" style="--progress:0;">3</div>
+          <div class="station-meta">Modul 3</div>
+        </div>
+        <div class="station-card">
+          <div class="station-card-head">
+            <span class="module-icon-emoji">漢</span>
+            <h3>Kanji-Grundlagen</h3>
+          </div>
+          <p>Die wichtigsten Kanji-Zeichen aus dem N5-Set. Schritt für Schritt mit Lesungen, Strichreihenfolge und Beispielen.</p>
+          <div class="station-progress">
+            <div class="station-progress-bar"><span style="width:0%"></span></div>
+            <span class="station-progress-label">0 / 8 Lektionen</span>
+          </div>
+          <div class="station-cta-row">
+            <a href="#" class="station-cta">Beginnen →</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="path-group-label"><span>Grundwortschatz</span></div>
+
+      <!-- 4. Zahlen, Zeit & Datum — 66% in progress -->
+      <div class="station station--left station--inprogress">
+        <div class="station-axis">
+          <div class="station-node" style="--progress:66;">4</div>
+          <div class="station-meta">Modul 4</div>
+        </div>
+        <div class="station-card">
+          <div class="station-card-head">
+            <span class="module-icon-emoji">🕐</span>
+            <h3>Zahlen, Zeit &amp; Datum</h3>
+          </div>
+          <p>Zahlen 0–10'000, Uhrzeit, Wochentage, Monate, Datum, Alter, Telefonnummern.</p>
+          <div class="station-progress">
+            <div class="station-progress-bar"><span style="width:66%"></span></div>
+            <span class="station-progress-label">2 / 3 Lektionen</span>
+          </div>
+          <div class="station-cta-row">
+            <a href="#" class="station-cta is-continue">Weiterlernen →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Begrüssung & Höflichkeit — 0% -->
+      <div class="station station--right">
+        <div class="station-axis">
+          <div class="station-node" style="--progress:0;">5</div>
+          <div class="station-meta">Modul 5</div>
+        </div>
+        <div class="station-card">
+          <div class="station-card-head">
+            <span class="module-icon-emoji">🍵</span>
+            <h3>Begrüssung &amp; Höflichkeit</h3>
+          </div>
+          <p>Tagesgrüsse, Vorstellung, Verabschiedung, Standardphrasen für höflichen Umgang.</p>
+          <div class="station-progress">
+            <div class="station-progress-bar"><span style="width:0%"></span></div>
+            <span class="station-progress-label">0 / 3 Lektionen</span>
+          </div>
+          <div class="station-cta-row">
+            <a href="#" class="station-cta">Beginnen →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. Familie & Personen — 33% in progress -->
+      <div class="station station--left station--inprogress">
+        <div class="station-axis">
+          <div class="station-node" style="--progress:33;">6</div>
+          <div class="station-meta">Modul 6</div>
+        </div>
+        <div class="station-card">
+          <div class="station-card-head">
+            <span class="module-icon-emoji">👪</span>
+            <h3>Familie &amp; Personen</h3>
+          </div>
+          <p>Familienmitglieder (eigene und andere), Berufe, Beschreibung von Personen.</p>
+          <div class="station-progress">
+            <div class="station-progress-bar"><span style="width:33%"></span></div>
+            <span class="station-progress-label">1 / 3 Lektionen</span>
+          </div>
+          <div class="station-cta-row">
+            <a href="#" class="station-cta is-continue">Weiterlernen →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7. Alltag & Essen — 0% -->
+      <div class="station station--right">
+        <div class="station-axis">
+          <div class="station-node" style="--progress:0;">7</div>
+          <div class="station-meta">Modul 7</div>
+        </div>
+        <div class="station-card">
+          <div class="station-card-head">
+            <span class="module-icon-emoji">🍱</span>
+            <h3>Alltag &amp; Essen</h3>
+          </div>
+          <p>Mahlzeiten, Lebensmittel, Restaurant, Alltagsgegenstände, einfache Aktivitäten.</p>
+          <div class="station-progress">
+            <div class="station-progress-bar"><span style="width:0%"></span></div>
+            <span class="station-progress-label">0 / 3 Lektionen</span>
+          </div>
+          <div class="station-cta-row">
+            <a href="#" class="station-cta">Beginnen →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8. Reise & Ort — 0%, frei -->
+      <div class="station station--left">
+        <div class="station-axis">
+          <div class="station-node" style="--progress:0;">8</div>
+          <div class="station-meta">Modul 8</div>
+        </div>
+        <div class="station-card">
+          <div class="station-card-head">
+            <span class="module-icon-emoji">🚉</span>
+            <h3>Reise &amp; Ort</h3>
+          </div>
+          <p>Verkehrsmittel, Wegbeschreibung, Orte (Bahnhof, Schule, Geschäft), Richtungsangaben.</p>
+          <div class="station-progress">
+            <div class="station-progress-bar"><span style="width:0%"></span></div>
+            <span class="station-progress-label">0 / 2 Lektionen</span>
+          </div>
+          <div class="station-cta-row">
+            <a href="#" class="station-cta">Beginnen →</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="path-group-label"><span>Erste Sätze</span></div>
+
+      <!-- 9. Erste Sätze (Grammatik) — 0%, frei -->
+      <div class="station station--right">
+        <div class="station-axis">
+          <div class="station-node" style="--progress:0;">9</div>
+          <div class="station-meta">Modul 9</div>
+        </div>
+        <div class="station-card">
+          <div class="station-card-head">
+            <span class="module-icon-emoji">📝</span>
+            <h3>Erste Sätze (Grammatik)</h3>
+          </div>
+          <p>Grundgrammatik: は/が/を, einfache Verben in Präsens und Vergangenheit, Partikel.</p>
+          <div class="station-progress">
+            <div class="station-progress-bar"><span style="width:0%"></span></div>
+            <span class="station-progress-label">0 / 4 Lektionen</span>
+          </div>
+          <div class="station-cta-row">
+            <a href="#" class="station-cta">Beginnen →</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="lernpfad-footer">
+    <a href="#" class="btn-ghost-jp">Alle Lektionen klassisch ansehen</a>
+  </div>
+
+</section>
+
+<footer class="mockup-foot">
+  <strong>MOCKUP · v2 · landing_v2.html</strong> — Eingriffe 1 (Hero-Probe), 2 (Sumi-Pfad), 3 (Trust-Block).
+  Klicke eine あいうえお-Karte zum Testen.
+</footer>
+
+<script>
+/* ════════════════════════════════════════════════════════════════
+   Eingriff 1 — Interactive Vowel Cards
+   ════════════════════════════════════════════════════════════════ */
+const VOWELS = [
+  { kana: 'あ', romaji: 'a', example: '朝',     reading: 'asa',    meaning: '· Morgen' },
+  { kana: 'い', romaji: 'i', example: 'いま',   reading: 'ima',    meaning: '· jetzt' },
+  { kana: 'う', romaji: 'u', example: 'うみ',   reading: 'umi',    meaning: '· Meer' },
+  { kana: 'え', romaji: 'e', example: 'えき',   reading: 'eki',    meaning: '· Bahnhof' },
+  { kana: 'お', romaji: 'o', example: 'おちゃ', reading: 'ocha',   meaning: '· Tee' },
+];
+
+const stage = document.getElementById('kanaStage');
+const heroSub = document.getElementById('heroSub');
+const heroSubDefault = heroSub.innerHTML;
+const liveCounter = document.getElementById('liveCounter');
+const liveCounterMini = document.getElementById('liveCounterMini');
+const progressBar = document.getElementById('stageProgressBar');
+
+const flipped = new Set();
+
+VOWELS.forEach((v, idx) => {
+  const card = document.createElement('button');
+  card.type = 'button';
+  card.className = 'kana-card';
+  card.setAttribute('aria-label', `Vokal ${v.romaji} — klick um zu lernen`);
+  card.dataset.idx = idx;
+  card.innerHTML = `
+    <div class="kana-face kana-face-front">
+      <div class="glyph" lang="ja">${v.kana}</div>
+      <div class="romaji">${v.romaji}</div>
+      <div class="hint">tap →</div>
+    </div>
+    <div class="kana-face kana-face-back">
+      <div class="kana-brush">
+        <span class="glyph-bg" lang="ja" aria-hidden="true">${v.kana}</span>
+        <span class="glyph-fg" lang="ja" aria-hidden="true">${v.kana}</span>
+        <span class="ink-dot" aria-hidden="true"></span>
+      </div>
+      <div class="kana-back-meta">
+        <div class="kana-back-romaji">${v.romaji}</div>
+        <div class="kana-back-example">
+          <span lang="ja">${v.example}</span>
+          <span class="meaning">${v.meaning}</span>
+        </div>
+        <button class="kana-audio" data-romaji="${v.romaji}" aria-label="${v.romaji} anhören">
+          <span class="speaker" aria-hidden="true">🔊</span> hören
+        </button>
+      </div>
+    </div>
+  `;
+  stage.appendChild(card);
+
+  card.addEventListener('click', (e) => {
+    if (e.target.closest('.kana-audio')) return; // let audio btn handle separately
+    onCardClick(card, idx, v);
+  });
+});
+
+function onCardClick(card, idx, v) {
+  const wasFlipped = card.classList.contains('is-flipped');
+  card.classList.toggle('is-flipped');
+  if (!wasFlipped) {
+    flipped.add(idx);
+    speak(v.romaji);
+    updateState(v);
+  }
+}
+
+function updateState(lastVowel) {
+  const n = flipped.size;
+  liveCounter.textContent = `${n} / 5 entdeckt`;
+  liveCounterMini.textContent = String(n);
+  progressBar.querySelector('span').style.inset = `0 ${100 - (n/5)*100}% 0 0`;
+  if (n === 5) {
+    liveCounter.classList.add('is-done');
+    progressBar.classList.add('is-done');
+  }
+
+  // Subtitle adapts
+  if (n === 0) {
+    heroSub.innerHTML = heroSubDefault;
+  } else if (n < 5) {
+    heroSub.innerHTML =
+      `<strong>${lastVowel.kana}</strong> ist drin. Genau so fühlen sich die ` +
+      `<strong>nächsten 87 Hiragana &amp; Katakana</strong> an — eins nach dem anderen.`;
+  } else {
+    heroSub.innerHTML =
+      `Die fünf Vokale sind erledigt. Bereit für <strong>か, き, く, け, こ?</strong> ` +
+      `In der ersten Lektion wartet der Rest.`;
+  }
+}
+
+/* ── Audio via Web Speech API (ja-JP voice if available) ─────── */
+let jaVoice = null;
+function pickVoice() {
+  const voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+  jaVoice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith('ja')) || null;
+}
+if (window.speechSynthesis) {
+  pickVoice();
+  window.speechSynthesis.onvoiceschanged = pickVoice;
+}
+function speak(text) {
+  if (!window.speechSynthesis) return;
+  try {
+    window.speechSynthesis.cancel();
+    const utt = new SpeechSynthesisUtterance(text);
+    utt.lang = 'ja-JP';
+    utt.rate = 0.85;
+    if (jaVoice) utt.voice = jaVoice;
+    window.speechSynthesis.speak(utt);
+  } catch (_) { /* silent */ }
+}
+document.addEventListener('click', (e) => {
+  const audioBtn = e.target.closest('.kana-audio');
+  if (audioBtn) {
+    e.stopPropagation();
+    speak(audioBtn.dataset.romaji);
+  }
+});
+</script>
+
+</body>
+</html>

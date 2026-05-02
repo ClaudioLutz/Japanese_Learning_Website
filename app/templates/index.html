@@ -48,8 +48,8 @@
       {% else %}
         <h1 class="home-h1">Hiragana am Morgen.<br>Kanji am Abend.</h1>
         <p class="home-sub">
-          Strukturiert nach JLPT-N5. {{ n5_vocab_count or 261 }} Vokabeln,
-          {{ n5_kanji_count or 44 }} Kanji, wöchentlich neu — auf Deutsch erklärt.
+          Strukturiert nach JLPT-N5. <strong>{{ n5_vocab_count or 510 }} Vokabeln</strong>,
+          <strong>{{ n5_kanji_count or 55 }} Kanji</strong>, wöchentlich neu — auf Deutsch erklärt.
         </p>
         <div class="home-actions">
           <a href="{{ url_for('routes.lessons', access='free') }}" class="btn-shu">
@@ -59,60 +59,67 @@
             N5 Komplett · CHF 9.90
           </a>
         </div>
-        <p class="home-meta">
-          ✅ <strong>{{ german_guest_lessons }} Lektionen kostenlos</strong> ohne Anmeldung
-          · 🇨🇭 Aus Rorschach SG
-        </p>
-        <p class="home-trust-link">
-          <a href="{{ url_for('routes.ueber') }}">Wer steht hinter Japanese Learning? →</a>
-        </p>
+
+        {# ── Trust-Block direkt unter CTA ── #}
+        <div class="trust-block">
+          <div class="trust-hanko" aria-hidden="true">
+            <span class="trust-hanko-jp" lang="ja">N5</span>
+            <span class="trust-hanko-tag">JLPT</span>
+          </div>
+          <div class="trust-text">
+            <strong>Strikt nach offizieller JLPT-N5-Liste.</strong>
+            Aus Rorschach SG. Komplett auf Deutsch, mit Fokus auf Lerner aus der Schweiz.
+            <div class="trust-text-numbers">
+              {{ n5_vocab_count or 510 }} Vokabeln <span class="dot"></span>
+              {{ n5_kanji_count or 55 }} Kanji <span class="dot"></span>
+              92 Hiragana &amp; Katakana <span class="dot"></span>
+              gegen Tanos / MNN / Genki gegengeprüft
+            </div>
+            <a href="{{ url_for('routes.ueber') }}" class="trust-link">
+              Wer steht hinter Japanese Learning? →
+            </a>
+          </div>
+        </div>
       {% endif %}
 
-      {# Tella-Browser-Frame mit Lesson-Preview — ein "moment of design" unter dem Hero #}
-      <div class="home-browser-frame" aria-hidden="true">
+      {# ── Interaktive Vokal-Probe — nur für Gäste, als "Probier-es-jetzt"-Element ── #}
+      {% if not current_user.is_authenticated %}
+      <div class="home-browser-frame" aria-label="Probe-Lektion: Vokale">
         <div class="home-browser-chrome">
-          <span></span><span></span><span></span>
-          <div class="home-browser-url">japanese-learning.ch / lessons / hiragana-1</div>
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          <div class="home-browser-url">japanese-learning.ch / lessons / hiragana-1 / vokale</div>
         </div>
         <div class="home-browser-stage">
-          <div class="hbs-card hbs-kana">
-            <div class="hbs-jp" lang="ja">あ</div>
-            <div class="hbs-romaji">a</div>
+          <div class="stage-prompt">
+            <span>Probier es jetzt — klick eine Karte:</span>
+            <span class="live-counter" id="liveCounter">0 / 5 entdeckt</span>
           </div>
-          <div class="hbs-card hbs-kana">
-            <div class="hbs-jp" lang="ja">い</div>
-            <div class="hbs-romaji">i</div>
-          </div>
-          <div class="hbs-card hbs-kana">
-            <div class="hbs-jp" lang="ja">う</div>
-            <div class="hbs-romaji">u</div>
-          </div>
-          <div class="hbs-card hbs-kana">
-            <div class="hbs-jp" lang="ja">え</div>
-            <div class="hbs-romaji">e</div>
-          </div>
-          <div class="hbs-card hbs-kana">
-            <div class="hbs-jp" lang="ja">お</div>
-            <div class="hbs-romaji">o</div>
+          <div class="kana-stage" id="kanaStage" aria-live="polite"></div>
+          <div class="stage-cta-row">
+            <span>Fortschritt</span>
+            <div class="stage-progress-bar" id="stageProgressBar"><span></span></div>
+            <span><strong id="liveCounterMini">0</strong> von 5 Vokalen</span>
           </div>
         </div>
       </div>
+      {% endif %}
 
     </div>
   </section>
 
   {# ──────────────────────────────────────────────
-     LERNPFAD N5 — die Module als Karten
+     LERNPFAD N5 — vertikaler Sumi-Pfad mit Donut-Fortschritt
+     Empfohlene Reihenfolge, keine Sperren
      ────────────────────────────────────────────── #}
   <section class="lernpfad-section" id="lernpfad">
     <div class="lernpfad-header">
-      <h2 class="lernpfad-title">📚 JLPT N5 — Dein Lernpfad</h2>
+      <div class="lernpfad-eyebrow">📚 Dein Lernpfad — JLPT N5</div>
+      <h2 class="lernpfad-title">Vom Schreibsystem zu deinen ersten Sätzen</h2>
       <p class="lernpfad-sub">
         {% if current_user.is_authenticated and next_module_id %}
-          Pulsierend markiert: dein nächstes Modul.
+          Empfohlen markiert mit Hanko 次 — du kannst aber jederzeit jedes Modul starten.
         {% else %}
-          {{ n5_modules|length }} Module, vom Schreibsystem bis zu deinen ersten Sätzen.
-          Module bauen aufeinander auf.
+          {{ n5_modules|length }} Module — empfohlene Reihenfolge, keine Pflicht. Du wählst, wo du startest.
         {% endif %}
       </p>
     </div>
@@ -136,111 +143,105 @@
     </div>
     {% endif %}
 
-    {% for group in n5_groups %}
-      {% if group.modules %}
-      <div class="lernpfad-group">
-        <div class="lernpfad-group-header">
-          <h3 class="lernpfad-group-title">{{ group.title }}</h3>
-          <p class="lernpfad-group-subtitle">{{ group.subtitle }}</p>
-        </div>
-        <div class="lernpfad-grid">
-          {% for entry in group.modules %}
-            {% set m = entry.module %}
-            <div class="lernpfad-module
-                        {% if not entry.unlocked %}is-locked{% endif %}
-                        {% if entry.is_next %}is-next{% endif %}
-                        {% if entry.is_complete %}is-complete{% endif %}"
-                 id="module-{{ m.id }}"
-                 style="border-top: 4px solid {{ m.color_code or '#1F2A44' }};">
+    <div class="path-wrap">
+      {# Vertikale geschwungene Sumi-Linie — Desktop only, Mobile via CSS-Pseudo #}
+      <svg class="path-svg" viewBox="0 0 240 1480" preserveAspectRatio="none" aria-hidden="true">
+        <path class="ink"
+              d="M120 30
+                 C 60 110, 60 180, 120 250
+                 C 180 320, 180 390, 120 460
+                 C 60 530, 60 600, 120 670
+                 C 180 740, 180 810, 120 880
+                 C 60 950, 60 1020, 120 1090
+                 C 180 1160, 180 1230, 120 1300
+                 C 60 1370, 60 1440, 120 1480"/>
+      </svg>
 
-              <div class="module-icon-row">
-                <div class="module-icon" aria-hidden="true">{{ m.icon_emoji or '📖' }}</div>
-                <div class="module-titles">
-                  <h4 class="module-title">
-                    {{ m.name.split(' · ')[-1] if ' · ' in m.name else m.name }}
-                  </h4>
-                  <small class="module-meta">Modul {{ m.display_order or '?' }}</small>
-                </div>
-                {% if not entry.unlocked %}
-                  <span class="module-lock" title="Voraussetzung noch nicht erfüllt (≥80 % des Vorgängers)">🔒</span>
-                {% elif entry.is_complete %}
-                  <span class="module-check" title="Modul abgeschlossen">✅</span>
-                {% elif entry.is_next %}
-                  <span class="module-next-badge">START</span>
-                {% endif %}
+      <div class="path-stations">
+        {% set ns = namespace(idx=0) %}
+        {% for group in n5_groups %}
+          {% if group.modules %}
+            {# Group-Divider zwischen den Gruppen — vor der ersten weglassen #}
+            {% if not loop.first %}
+              <div class="path-group-label" role="separator">
+                <span>{{ group.title.split('. ', 1)[-1] if '. ' in group.title else group.title }}</span>
               </div>
+            {% endif %}
 
-              <p class="module-desc">{{ m.description }}</p>
-
-              {% if entry.total > 0 %}
-              <div class="module-progress">
-                <div class="progress" style="height: 6px;">
-                  <div class="progress-bar"
-                       role="progressbar"
-                       style="width: {{ entry.percent }}%; background-color: {{ m.color_code or '#1F2A44' }};"
-                       aria-valuenow="{{ entry.percent }}"
-                       aria-valuemin="0"
-                       aria-valuemax="100"></div>
-                </div>
-                <small class="module-progress-text">{{ entry.done }} / {{ entry.total }} Lektionen</small>
-              </div>
-              {% endif %}
-
-              {% if entry.lessons %}
-                <ul class="module-lessons">
-                  {% for lesson in entry.lessons[:3] %}
-                    <li>
-                      <a href="{{ url_for('routes.view_lesson', lesson_id=lesson.id) }}">
-                        › {{ lesson.title }}
-                      </a>
-                    </li>
-                  {% endfor %}
-                  {% if entry.lessons|length > 3 %}
-                    <li class="text-muted small">… {{ entry.lessons|length - 3 }} weitere</li>
+            {% for entry in group.modules %}
+              {% set m = entry.module %}
+              {% set side = 'station--right' if ns.idx % 2 == 0 else 'station--left' %}
+              {% set state_cls = 'station--complete' if entry.is_complete
+                                  else ('station--next' if entry.is_next
+                                  else ('station--inprogress' if entry.percent and entry.percent > 0
+                                  else '')) %}
+              <div class="station {{ side }} {{ state_cls }}" id="module-{{ m.id }}">
+                <div class="station-axis">
+                  {% if entry.is_complete %}
+                    <div class="station-node"
+                         style="--progress:100; --ring-color: var(--matcha);"
+                         aria-label="abgeschlossen">✓</div>
+                  {% elif entry.is_next %}
+                    <div class="station-node" aria-label="empfohlenes nächstes Modul" lang="ja">次</div>
+                  {% else %}
+                    <div class="station-node" style="--progress:{{ entry.percent or 0 }};">
+                      {{ m.display_order or loop.index }}
+                    </div>
                   {% endif %}
-                </ul>
-              {% endif %}
+                  <div class="station-meta">Modul {{ m.display_order or loop.index }}</div>
+                </div>
 
-              {# CTA-Button am Card-Bottom — klar, je nach State.
-                 'Beginnen' und 'Wiederholen' fuehren zur Modul-Uebersicht (auch fuer SEO).
-                 'Fortfahren' bleibt direkter Sprung in die letzte Lesson — keine Friction
-                 fuer Wiederkehrer. #}
-              <div class="module-cta">
-                {% if not entry.unlocked %}
-                  <span class="module-cta-disabled">🔒 Erst Vorgänger abschliessen</span>
-                {% elif entry.is_complete %}
-                  <a href="{{ url_for('routes.module_detail', level=5, slug=m.slug) }}"
-                     class="module-cta-btn module-cta-done">
-                    ✓ Abgeschlossen — wiederholen
-                  </a>
-                {% elif entry.first_lesson and entry.done > 0 %}
-                  <a href="{{ url_for('routes.view_lesson', lesson_id=entry.first_lesson.id) }}"
-                     class="module-cta-btn module-cta-continue">
-                    Fortfahren →
-                  </a>
-                {% elif entry.first_lesson and m.slug %}
-                  <a href="{{ url_for('routes.module_detail', level=5, slug=m.slug) }}"
-                     class="module-cta-btn module-cta-start">
-                    Beginnen →
-                  </a>
-                {% elif entry.first_lesson %}
-                  <a href="{{ url_for('routes.view_lesson', lesson_id=entry.first_lesson.id) }}"
-                     class="module-cta-btn module-cta-start">
-                    Beginnen →
-                  </a>
-                {% else %}
-                  <span class="module-cta-disabled">Inhalte in Vorbereitung</span>
-                {% endif %}
+                <div class="station-card">
+                  <div class="station-card-head">
+                    <span class="module-icon-emoji" aria-hidden="true">{{ m.icon_emoji or '📖' }}</span>
+                    <h3>{{ m.name.split(' · ')[-1] if ' · ' in m.name else m.name }}</h3>
+                  </div>
+
+                  {% if entry.is_next %}
+                    <span class="station-recommend-badge">⚡ Empfohlen als nächstes</span>
+                  {% endif %}
+
+                  <p>{{ m.description }}</p>
+
+                  {% if entry.total > 0 %}
+                  <div class="station-progress">
+                    <div class="station-progress-bar">
+                      <span style="width: {{ entry.percent }}%"></span>
+                    </div>
+                    <span class="station-progress-label">
+                      {{ entry.done }} / {{ entry.total }} Lektionen
+                    </span>
+                  </div>
+                  {% endif %}
+
+                  <div class="station-cta-row">
+                    {% if entry.is_complete %}
+                      <a href="{{ url_for('routes.module_detail', level=5, slug=m.slug) if m.slug else url_for('routes.lessons') }}"
+                         class="station-cta">✓ Wiederholen</a>
+                    {% elif entry.percent and entry.percent > 0 and entry.first_lesson %}
+                      <a href="{{ url_for('routes.view_lesson', lesson_id=entry.first_lesson.id) }}"
+                         class="station-cta is-continue">Weiterlernen →</a>
+                    {% elif entry.first_lesson and m.slug %}
+                      <a href="{{ url_for('routes.module_detail', level=5, slug=m.slug) }}"
+                         class="station-cta">Beginnen →</a>
+                    {% elif entry.first_lesson %}
+                      <a href="{{ url_for('routes.view_lesson', lesson_id=entry.first_lesson.id) }}"
+                         class="station-cta">Beginnen →</a>
+                    {% else %}
+                      <span class="station-cta is-pending">Inhalte in Vorbereitung</span>
+                    {% endif %}
+                  </div>
+                </div>
               </div>
-            </div>
-          {% endfor %}
-        </div>
+              {% set ns.idx = ns.idx + 1 %}
+            {% endfor %}
+          {% endif %}
+        {% endfor %}
       </div>
-      {% endif %}
-    {% endfor %}
+    </div>
 
     <div class="lernpfad-footer">
-      <a href="{{ url_for('routes.lessons') }}" class="btn btn-outline-secondary btn-sm">
+      <a href="{{ url_for('routes.lessons') }}" class="btn-ghost-jp">
         Alle Lektionen klassisch ansehen
       </a>
     </div>
@@ -275,8 +276,9 @@
 
 <style>
 /* ════════════════════════════════════════
-   COMPASS-REDESIGN — Homepage (Phase 2)
-   Linear-Hero + Tella-Browser-Frame + Nendo-Lernpfad-Cards
+   HOMEPAGE — v2 (interaktive Probe + Sumi-Pfad)
+   Hero-Painterly-Background + interaktive Vokal-Karten
+   + Trust-Block (N5-Hanko) + vertikaler Lernpfad mit Donut-Fortschritt
    ════════════════════════════════════════ */
 
 .home-wrapper {
@@ -285,65 +287,140 @@
     padding: 0;
 }
 
-/* ── Hero (Linear-Pattern) ── */
+/* ── Hero ── */
 .home-hero {
-    padding: 5rem 1.5rem 4rem;
+    position: relative;
+    padding: 5.5rem 1.5rem 4rem;
     text-align: center;
     margin: -1rem -1rem 0;   /* zieht Hero zur Topnav, kompensiert .container.mt-4 */
+    isolation: isolate;
+    overflow: hidden;
+    background:
+      radial-gradient(70% 90% at 12% 10%, rgba(199,128,45,.10), transparent 60%),
+      radial-gradient(60% 70% at 88% 18%, rgba(235,97,1,.08),  transparent 65%),
+      radial-gradient(120% 80% at 50% 110%, rgba(31,42,68,.05), transparent 70%),
+      linear-gradient(180deg, #F4EEE0 0%, #FAF7F2 92%);
+}
+.home-hero::before {
+    content: ""; position: absolute; inset: 0;
+    background-image: radial-gradient(rgba(28,26,23,.022) 1px, transparent 1.2px);
+    background-size: 3px 3px;
+    pointer-events: none;
+    mix-blend-mode: multiply;
+    z-index: -1;
 }
 .home-hero-inner { max-width: 980px; margin: 0 auto; }
 
-.home-eyebrow-row { margin-bottom: 1.75rem; }
+.home-eyebrow-row { margin-bottom: 1.5rem; }
 
 .home-h1 {
     font-family: 'Geist', 'Inter', sans-serif;
     font-weight: 510;
-    font-size: clamp(2.25rem, 5vw + 1rem, 4.5rem);
-    letter-spacing: -0.03em;
-    line-height: 1.05;
+    font-size: clamp(2.5rem, 5.5vw + 1rem, 5rem);
+    letter-spacing: -0.035em;
+    line-height: 1.02;
     color: var(--kon);
     margin: 0 0 1.25rem;
 }
 .home-sub {
-    font-size: 1.125rem;
+    font-size: 1.15rem;
     color: var(--ink-600);
-    max-width: 560px;
-    line-height: 1.6;
-    margin: 0 auto 2rem;
+    max-width: 600px;
+    line-height: 1.55;
+    margin: 0 auto 1.75rem;
 }
 .home-sub strong { color: var(--kon); font-weight: 600; }
 
 .home-actions {
     display: flex; gap: 0.75rem;
     justify-content: center; flex-wrap: wrap;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0;
 }
 
-.home-meta {
-    font-size: 0.95rem;
-    color: var(--ink-500);
-    margin: 1.5rem auto 0;
-    max-width: 560px;
-    line-height: 1.6;
-}
-.home-meta strong { color: var(--kon); font-weight: 600; }
-
-.home-trust-link {
-    margin-top: 0.75rem;
-    font-size: 0.9rem; text-align: center;
-}
-.home-trust-link a {
-    color: var(--ai); text-decoration: none; font-weight: 500;
-}
-.home-trust-link a:hover { text-decoration: underline; }
-
-/* ── Tella-Browser-Frame ── */
-.home-browser-frame {
-    margin: 4rem auto 0;
-    max-width: 880px;
-    background: #fff;
+/* ════════════════════════════════════════
+   TRUST-BLOCK (Eingriff 3) — N5-Hanko + faktische Zahlen
+   ════════════════════════════════════════ */
+.trust-block {
+    margin: 2.25rem auto 0;
+    max-width: 640px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1.2rem;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    background: rgba(255,255,255,.55);
     border: 1px solid var(--ink-200);
     border-radius: 12px;
+    text-align: left;
+}
+.trust-hanko {
+    width: 78px; height: 78px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    background: var(--shu);
+    color: #fff;
+    border-radius: 50%;
+    font-family: 'Klee One', 'Noto Serif JP', cursive;
+    line-height: 1;
+    box-shadow:
+      inset 0 0 0 2px rgba(255,255,255,.30),
+      inset 0 0 0 3px var(--shu),
+      0 2px 8px rgba(184,74,0,.30);
+    transform: rotate(-3deg);
+    flex-shrink: 0;
+}
+.trust-hanko-jp {
+    font-weight: 600;
+    font-size: 1.6rem;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.05rem;
+}
+.trust-hanko-tag {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 0.52rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    opacity: .92;
+}
+.trust-text {
+    font-size: 0.92rem;
+    line-height: 1.55;
+    color: var(--ink-700);
+}
+.trust-text strong { color: var(--kon); font-weight: 600; }
+.trust-text-numbers {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 0.78rem;
+    color: var(--ink-500);
+    margin-top: 0.3rem;
+    letter-spacing: 0.01em;
+}
+.trust-text-numbers .dot {
+    display: inline-block; width: 3px; height: 3px;
+    background: var(--ink-400); border-radius: 50%;
+    margin: 0 0.6rem; vertical-align: 3px;
+}
+.trust-link {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    margin-top: 0.4rem;
+    font-size: 0.85rem;
+    color: var(--ai);
+    font-weight: 500;
+    text-decoration: none;
+}
+.trust-link:hover { color: var(--shu); text-decoration: none; }
+
+/* ════════════════════════════════════════
+   INTERAKTIVE VOKAL-PROBE (Eingriff 1)
+   Browser-Frame mit klickbaren Kana-Karten (3D-Flip + Brush-Reveal)
+   ════════════════════════════════════════ */
+.home-browser-frame {
+    margin: 4rem auto 0;
+    max-width: 920px;
+    background: #fff;
+    border: 1px solid var(--ink-200);
+    border-radius: 14px;
     box-shadow: var(--shadow-lifted);
     overflow: hidden;
 }
@@ -353,7 +430,7 @@
     background: var(--ink-100);
     border-bottom: 1px solid var(--ink-200);
 }
-.home-browser-chrome > span {
+.home-browser-chrome > .dot {
     width: 11px; height: 11px; border-radius: 50%;
     background: var(--ink-300);
 }
@@ -364,74 +441,230 @@
     font-size: 0.78rem;
     color: var(--ink-500);
     text-align: center;
-    padding: 0.2rem 0.6rem;
+    padding: 0.22rem 0.6rem;
     background: rgba(255,255,255,.6);
     border-radius: 6px;
 }
 .home-browser-stage {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 1rem;
-    padding: 2.5rem 2rem;
+    display: flex; flex-direction: column; gap: 1.1rem;
+    padding: 1.6rem 1.6rem 1.4rem;
     background: var(--washi);
 }
-.hbs-card {
+.stage-prompt {
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 0.78rem;
+    color: var(--ink-500);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+.stage-prompt .live-counter { color: var(--shu); font-weight: 500; }
+.stage-prompt .live-counter.is-done { color: var(--matcha); }
+.kana-stage {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.85rem;
+    perspective: 1400px;
+}
+.kana-card {
+    position: relative;
+    aspect-ratio: 1 / 1.18;
+    cursor: pointer;
+    background: transparent;
+    border: 0; padding: 0;
+    font-family: inherit;
+    transform-style: preserve-3d;
+    transition: transform 0.7s cubic-bezier(.25,.8,.25,1);
+}
+.kana-card.is-flipped { transform: rotateY(180deg); }
+.kana-face {
+    position: absolute; inset: 0;
     background: #fff;
     border: 1px solid var(--ink-200);
-    border-radius: 10px;
-    padding: 1.25rem 0.75rem;
+    border-radius: 12px;
+    padding: 0.85rem 0.6rem;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transition: border-color .2s, transform .2s, box-shadow .2s;
     text-align: center;
-    transition: border-color .2s, transform .2s;
 }
-.hbs-card:hover { border-color: var(--shu); transform: translateY(-2px); }
-.hbs-jp {
-    font-family: 'Noto Sans JP', sans-serif;
+.kana-card:hover:not(.is-flipped) .kana-face-front {
+    border-color: var(--shu);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card);
+}
+.kana-face-front .glyph {
+    font-family: 'Noto Serif JP', serif;
     font-weight: 500;
-    font-size: 2.5rem;
-    line-height: 1.1;
+    font-size: clamp(2.2rem, 4vw, 3rem);
+    line-height: 1;
     color: var(--sumi);
+    margin-bottom: 0.6rem;
 }
-.hbs-romaji {
-    margin-top: 0.4rem;
+.kana-face-front .romaji {
     font-family: 'Geist Mono', ui-monospace, monospace;
     font-size: 0.85rem;
     color: var(--ink-500);
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
 }
-
-@media (max-width: 768px) {
-    .home-hero { padding: 3rem 1.25rem 2.5rem; }
-    .home-browser-frame { margin-top: 2.5rem; }
-    .home-browser-stage { grid-template-columns: repeat(5, 1fr); padding: 1.25rem 1rem; gap: 0.5rem; }
-    .hbs-card { padding: 0.75rem 0.4rem; }
-    .hbs-jp { font-size: 1.6rem; }
-    .hbs-romaji { font-size: 0.7rem; margin-top: 0.25rem; }
+.kana-face-front .hint {
+    position: absolute; bottom: 0.45rem;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 0.62rem;
+    color: var(--ink-400);
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
 }
+.kana-face-back {
+    transform: rotateY(180deg);
+    background: var(--kinari);
+    border-color: var(--ink-300);
+    padding: 0.6rem 0.5rem 0.55rem;
+    justify-content: space-between;
+}
+.kana-brush {
+    position: relative;
+    width: 100%; aspect-ratio: 1;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 0.05rem;
+}
+.kana-brush .glyph-bg,
+.kana-brush .glyph-fg {
+    position: absolute;
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 700;
+    font-size: clamp(2.6rem, 5vw, 3.6rem);
+    line-height: 1;
+    user-select: none;
+}
+.kana-brush .glyph-bg { color: var(--ink-200); }
+.kana-brush .glyph-fg { color: var(--sumi); clip-path: inset(0 100% 0 0); }
+.kana-card.is-flipped .kana-brush .glyph-fg {
+    animation: brushFill 1.05s cubic-bezier(.6,.2,.4,1) forwards;
+}
+@keyframes brushFill {
+    0%   { clip-path: inset(0 100% 0 0); }
+    100% { clip-path: inset(0 0% 0 0); }
+}
+.kana-brush .ink-dot {
+    position: absolute;
+    width: 6px; height: 6px;
+    background: var(--shu);
+    border-radius: 50%;
+    top: 50%; left: 12%;
+    opacity: 0;
+    box-shadow: 0 0 0 4px rgba(235,97,1,.16);
+}
+.kana-card.is-flipped .kana-brush .ink-dot {
+    animation: dotTrace 1.05s cubic-bezier(.6,.2,.4,1) forwards;
+}
+@keyframes dotTrace {
+    0%   { left: 12%;  opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { left: 88%;  opacity: 0; }
+}
+.kana-back-meta {
+    display: flex; flex-direction: column; gap: 0.2rem;
+    width: 100%; align-items: center;
+}
+.kana-back-romaji {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 0.78rem; font-weight: 500;
+    color: var(--shu-deep);
+    letter-spacing: 0.10em;
+    text-transform: lowercase;
+}
+.kana-back-example {
+    display: flex; align-items: baseline; gap: 0.35rem;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.85rem;
+    color: var(--ink-700);
+    white-space: nowrap;
+}
+.kana-back-example .meaning {
+    font-family: 'Inter', sans-serif;
+    color: var(--ink-500);
+    font-size: 0.7rem;
+}
+.kana-audio {
+    margin-top: 0.15rem;
+    display: inline-flex; align-items: center; gap: 0.25rem;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 0.6rem;
+    color: var(--ai);
+    background: rgba(255,255,255,.7);
+    padding: 0.18rem 0.45rem;
+    border-radius: 999px;
+    border: 1px solid var(--ink-200);
+    cursor: pointer;
+}
+.kana-audio:hover { color: var(--shu); border-color: var(--shu); }
+.kana-card:focus-visible {
+    outline: 2px solid var(--shu);
+    outline-offset: 3px;
+    border-radius: 14px;
+}
+.stage-cta-row {
+    display: flex; align-items: center; justify-content: center;
+    gap: 1rem;
+    padding-top: 0.4rem;
+    font-size: 0.85rem;
+    color: var(--ink-500);
+    font-family: 'Geist Mono', ui-monospace, monospace;
+}
+.stage-cta-row strong { color: var(--kon); font-weight: 600; }
+.stage-progress-bar {
+    flex: 0 0 120px;
+    height: 4px; border-radius: 999px;
+    background: var(--ink-200);
+    overflow: hidden;
+    position: relative;
+}
+.stage-progress-bar > span {
+    position: absolute; inset: 0 100% 0 0;
+    background: var(--shu);
+    transition: inset .35s cubic-bezier(.25,.8,.25,1);
+}
+.stage-progress-bar.is-done > span { background: var(--matcha); }
 
 /* ════════════════════════════════════════
-   LERNPFAD — Nendo-Restraint, hairline-Cards
+   LERNPFAD (Eingriff 2) — vertikaler Sumi-Pfad mit Donut-Fortschritt
    ════════════════════════════════════════ */
 .lernpfad-section {
-    padding: 4rem 1.5rem 2rem;
+    position: relative;
+    padding: 5rem 1.5rem 4rem;
     max-width: 1152px;
     margin: 0 auto;
 }
-.lernpfad-header { text-align: center; margin-bottom: 2rem; }
+.lernpfad-header { text-align: center; margin-bottom: 3.5rem; }
+.lernpfad-eyebrow {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 0.74rem;
+    font-weight: 500;
+    color: var(--shu);
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    margin-bottom: 0.85rem;
+}
 .lernpfad-title {
     font-family: 'Geist', 'Inter', sans-serif;
     font-weight: 510;
-    font-size: clamp(1.5rem, 3vw, 2.25rem);
-    letter-spacing: -0.02em;
+    font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+    letter-spacing: -0.025em;
     color: var(--kon);
-    margin: 0 0 0.5rem;
+    margin: 0 0 0.6rem;
 }
 .lernpfad-sub {
     color: var(--ink-500);
     font-size: 1rem;
-    margin: 0;
+    margin: 0 auto;
+    max-width: 540px;
 }
 
-/* Bundle-Hinweis — kon-50 Background mit shu-Stripe */
+/* Bundle-Hint (unverändert von vorher, aber neu eingeordnet) */
 .bundle-hint {
     display: flex; align-items: center; gap: 1rem;
     background: var(--kon-50);
@@ -439,17 +672,12 @@
     border-left: 3px solid var(--shu);
     border-radius: 12px;
     padding: 1rem 1.25rem;
-    margin: 0 auto 2rem;
+    margin: 0 auto 3rem;
     max-width: 760px;
 }
-.bundle-hint-icon { font-size: 1.4rem; flex-shrink: 0; }
-.bundle-hint-text {
-    flex: 1; color: var(--ink-700);
-    font-size: 0.95rem; line-height: 1.5;
-}
-.bundle-hint-text a {
-    color: var(--shu); font-weight: 600; text-decoration: none;
-}
+.bundle-hint-icon { font-size: 1.4rem; flex-shrink: 0; color: var(--shu); }
+.bundle-hint-text { flex: 1; color: var(--ink-700); font-size: 0.95rem; line-height: 1.5; }
+.bundle-hint-text a { color: var(--shu); font-weight: 600; text-decoration: none; }
 .bundle-hint-text a:hover { text-decoration: underline; }
 .bundle-hint-text strong { color: var(--kon); }
 .bundle-hint-cta {
@@ -460,170 +688,268 @@
     border-radius: 8px;
     transition: background-color .15s;
 }
-.bundle-hint-cta:hover {
-    background: rgba(235,97,1,.08);
-    color: var(--shu); text-decoration: none;
-}
-@media (max-width: 600px) {
-    .bundle-hint { flex-direction: column; text-align: center; }
-    .bundle-hint-cta { align-self: stretch; text-align: center; }
-}
+.bundle-hint-cta:hover { background: rgba(235,97,1,.08); color: var(--shu); }
 
-.lernpfad-grid {
+/* Path-Wrap und Stations */
+.path-wrap {
+    position: relative;
+    padding: 1rem 0 2rem;
+}
+.path-svg {
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 240px;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+.path-svg path.ink {
+    fill: none;
+    stroke: var(--ink-300);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-dasharray: 6 7;
+}
+.path-stations {
+    position: relative;
+    z-index: 1;
+    display: flex; flex-direction: column;
+    gap: 2.5rem;
+}
+.station {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1rem;
+    grid-template-columns: 1fr 100px 1fr;
+    align-items: center;
+    min-height: 130px;
 }
-
-/* Lernpfad-Modul-Card — hairline statt Box-Shadow */
-.lernpfad-module {
+.station-card {
     background: #fff;
     border: 1px solid var(--ink-200);
-    border-radius: 12px;
-    padding: 1.1rem 1.2rem 1.2rem;
-    display: flex; flex-direction: column;
-    gap: 0.5rem;
-    transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+    border-radius: 14px;
+    padding: 1.1rem 1.25rem;
+    box-shadow: var(--shadow-subtle);
+    transition: transform .15s, border-color .15s, box-shadow .2s;
 }
-.lernpfad-module:hover {
+.station-card:hover {
     border-color: var(--ink-400);
     transform: translateY(-1px);
     box-shadow: var(--shadow-card);
 }
-.lernpfad-module.is-locked { opacity: 0.55; }
-.lernpfad-module.is-complete {
-    background: rgba(122,144,51,.04);
+.station--left  .station-card { grid-column: 1; text-align: right; }
+.station--right .station-card { grid-column: 3; text-align: left; }
+.station-axis  {
+    grid-column: 2;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    position: relative;
+}
+.station-node {
+    position: relative;
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid var(--ink-200);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Geist', 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: var(--ink-700);
+    z-index: 2;
+}
+.station-node::before {
+    content: "";
+    position: absolute;
+    inset: -5px;
+    border-radius: 50%;
+    background: conic-gradient(
+        from -90deg,
+        var(--ring-color, var(--shu)) calc(var(--progress, 0) * 1%),
+        var(--ink-200) calc(var(--progress, 0) * 1%) 100%
+    );
+    z-index: -1;
+    transition: background .4s;
+}
+.station-node::after {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    background: var(--washi);
+    z-index: -1;
+}
+.station-meta {
+    display: flex; flex-direction: column; align-items: center;
+    margin-top: 0.4rem;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 0.64rem;
+    color: var(--ink-400);
+    text-transform: uppercase;
+    letter-spacing: 0.10em;
+}
+.station--complete .station-node {
+    background: var(--matcha);
     border-color: var(--matcha);
+    color: #fff;
+    --progress: 100;
+    --ring-color: var(--matcha);
 }
-.lernpfad-module.is-next {
+.station--complete .station-node::after { background: var(--matcha); }
+.station--inprogress .station-node { border-color: transparent; }
+.station--next .station-node {
+    background: var(--shu);
     border-color: var(--shu);
-    box-shadow: 0 0 0 3px rgba(235,97,1,.18), var(--shadow-card);
-    animation: pulseNext 2.4s ease-in-out infinite;
+    color: #fff;
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 700;
+    box-shadow:
+      0 0 0 4px rgba(235,97,1,.18),
+      0 4px 12px rgba(184,74,0,.30);
+    animation: pulseHanko 2.4s ease-in-out infinite;
 }
-@keyframes pulseNext {
-    0%, 100% { box-shadow: 0 0 0 3px rgba(235,97,1,.18), var(--shadow-card); }
-    50%      { box-shadow: 0 0 0 5px rgba(235,97,1,.10), var(--shadow-lifted); }
+.station--next .station-node::before,
+.station--next .station-node::after { display: none; }
+@keyframes pulseHanko {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(235,97,1,.18), 0 4px 12px rgba(184,74,0,.30); }
+    50%      { box-shadow: 0 0 0 7px rgba(235,97,1,.10), 0 6px 16px rgba(184,74,0,.34); }
 }
 
-.module-icon-row { display: flex; align-items: center; gap: 0.65rem; }
-.module-icon { font-size: 1.85rem; line-height: 1; }
-.module-titles { flex: 1; min-width: 0; }
-.module-title {
-    font-family: 'Geist', 'Inter', sans-serif; font-weight: 600;
-    font-size: 1.05rem; color: var(--kon);
-    margin: 0; line-height: 1.25;
-}
-.module-meta {
-    color: var(--ink-500); font-size: 0.78rem;
+/* Empfohlen-Badge an Card */
+.station-recommend-badge {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    background: rgba(235,97,1,.10);
+    color: var(--shu-deep);
     font-family: 'Geist Mono', ui-monospace, monospace;
-    text-transform: uppercase; letter-spacing: 0.04em;
-}
-.module-lock, .module-check { font-size: 1.2rem; }
-.module-next-badge {
-    background: var(--shu); color: #fff;
-    font-family: 'Geist', sans-serif;
-    font-size: 0.7rem; font-weight: 700;
-    letter-spacing: 0.05em;
-    padding: 0.22rem 0.6rem;
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    padding: 0.18rem 0.5rem;
     border-radius: 999px;
+    border: 1px solid rgba(235,97,1,.22);
+    margin-bottom: 0.5rem;
 }
 
-.module-desc {
-    color: var(--ink-600); font-size: 0.9rem;
-    margin: 0; line-height: 1.5;
+.station-card .module-icon-emoji { font-size: 1.5rem; line-height: 1; }
+.station-card-head {
+    display: flex; align-items: center; gap: 0.5rem;
+    margin-bottom: 0.4rem;
+}
+.station--left .station-card-head { justify-content: flex-end; }
+.station-card h3 {
+    font-family: 'Geist', 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: var(--kon);
+    margin: 0;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+}
+.station-card p {
+    font-size: 0.88rem;
+    color: var(--ink-600);
+    margin: 0 0 0.6rem;
+    line-height: 1.5;
 }
 
-.module-progress { margin-top: 0.4rem; }
-.module-progress-text {
-    display: block; color: var(--ink-500);
-    font-size: 0.78rem; margin-top: 0.3rem;
-    text-align: right;
+/* Inline progress bar in card */
+.station-progress {
+    display: flex; align-items: center; gap: 0.5rem;
+    margin: 0.55rem 0 0.65rem;
+}
+.station--left .station-progress { flex-direction: row-reverse; }
+.station-progress-bar {
+    flex: 1;
+    height: 4px;
+    background: var(--ink-200);
+    border-radius: 999px;
+    overflow: hidden;
+    position: relative;
+}
+.station-progress-bar > span {
+    display: block; height: 100%;
+    background: var(--shu);
+    border-radius: 999px;
+    transition: width .4s;
+}
+.station--complete .station-progress-bar > span { background: var(--matcha); }
+.station-progress-label {
     font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 0.7rem;
+    color: var(--ink-500);
+    white-space: nowrap;
+    flex-shrink: 0;
 }
+.station--complete .station-progress-label { color: var(--matcha); font-weight: 600; }
 
-.module-lessons {
-    list-style: none; padding: 0;
-    margin: 0.5rem 0 0;
-    border-top: 1px solid var(--ink-100);
-    padding-top: 0.5rem;
+/* CTA */
+.station-card .station-cta-row {
+    display: flex; gap: 0.4rem; align-items: center;
 }
-.module-lessons li { font-size: 0.85rem; }
-.module-lessons a {
-    display: block; padding: 0.25rem 0;
-    color: var(--ink-700); text-decoration: none;
-    transition: color .15s;
-}
-.module-lessons a:hover { color: var(--shu); text-decoration: none; }
-
-/* ── Module CTA-Button ── */
-.module-cta {
-    margin-top: auto;
-    padding-top: 0.6rem;
-    border-top: 1px solid var(--ink-100);
-}
-.module-cta-btn {
-    display: block; text-align: center;
-    padding: 0.55rem 0.7rem;
-    border-radius: 8px;
+.station--left .station-card .station-cta-row { justify-content: flex-end; }
+.station-cta {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    padding: 0.45rem 0.75rem;
+    background: var(--kon);
+    color: #fff !important;
+    font-family: 'Geist', 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.82rem;
+    border-radius: 7px;
     text-decoration: none;
-    font-weight: 600; font-size: 0.88rem;
-    transition: transform 0.1s, background-color 0.15s, color 0.15s;
+    transition: background-color .15s, transform .12s;
 }
-.module-cta-btn:hover { transform: translateY(-1px); text-decoration: none; }
-.module-cta-start {
-    background: var(--kon); color: #fff;
+.station-cta:hover { background: var(--kon-500); color: #fff !important; text-decoration: none; }
+.station--complete .station-cta {
+    background: rgba(122,144,51,.12);
+    color: var(--matcha) !important;
 }
-.module-cta-start:hover { background: var(--kon-500); color: #fff; }
-.module-cta-continue {
+.station--complete .station-cta:hover { background: rgba(122,144,51,.2); color: var(--matcha) !important; }
+.station--next .station-cta,
+.station-cta.is-continue {
     background: linear-gradient(180deg, #EB6101, #D85700);
-    color: #fff;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.15);
+    color: #fff !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.18);
 }
-.module-cta-continue:hover {
+.station--next .station-cta:hover,
+.station-cta.is-continue:hover {
     background: linear-gradient(180deg, #F37016, #E25C00);
-    color: #fff;
+    color: #fff !important;
 }
-.module-cta-done {
-    background: rgba(122,144,51,.1); color: var(--matcha);
-}
-.module-cta-done:hover { background: rgba(122,144,51,.18); color: var(--matcha); }
-.module-cta-disabled {
-    display: block; text-align: center;
-    padding: 0.55rem 0.7rem;
-    color: var(--ink-400); font-size: 0.82rem;
+.station-cta.is-pending {
+    background: var(--ink-100);
+    color: var(--ink-500) !important;
+    cursor: not-allowed;
     font-style: italic;
 }
 
-/* ── Group-Header ── */
-.lernpfad-group { margin-bottom: 2.5rem; }
-.lernpfad-group-header { margin: 0 0 1rem; }
-.lernpfad-group-title {
-    font-family: 'Geist', 'Inter', sans-serif; font-weight: 600;
-    font-size: 1.15rem; color: var(--kon);
-    margin: 0;
+/* Group divider */
+.path-group-label {
+    position: relative;
+    display: flex; align-items: center; gap: 1rem;
+    margin: 1.5rem 0 0.75rem;
+    z-index: 1;
 }
-.lernpfad-group-subtitle {
-    color: var(--ink-500); font-size: 0.9rem;
-    margin: 0.2rem 0 0;
+.path-group-label::before, .path-group-label::after {
+    content: ""; flex: 1; height: 1px; background: var(--ink-200);
+}
+.path-group-label span {
+    font-family: 'Geist', 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--ink-700);
+    background: var(--washi);
+    padding: 0 0.85rem;
 }
 
-.lernpfad-footer {
-    text-align: center; margin-top: 1.75rem;
-}
-.lernpfad-footer .btn {
-    color: var(--ink-700);
-    border-color: var(--ink-300);
-    background: transparent;
-    font-weight: 500;
-}
-.lernpfad-footer .btn:hover {
-    background: rgba(28,26,23,.04);
-    color: var(--sumi);
-    border-color: var(--ink-500);
-}
+/* Footer */
+.lernpfad-footer { text-align: center; margin-top: 3rem; }
+.lernpfad-footer .btn-ghost-jp { font-size: 0.88rem; padding: 0.55rem 1rem; }
 
 /* ════════════════════════════════════════
-   SEKUNDÄR-SECTION (Sprachwahl)
+   SEKUNDÄR-SECTION (Sprachwahl) — unverändert
    ════════════════════════════════════════ */
 .secondary-section {
     max-width: 1152px;
@@ -665,8 +991,50 @@
 .lang-mini-text { display: flex; flex-direction: column; text-align: left; line-height: 1.3; }
 .lang-mini-text small { color: var(--ink-500); font-size: 0.78rem; }
 
-@media (max-width: 575px) {
-    .lernpfad-grid { grid-template-columns: 1fr; }
+/* ════════════════════════════════════════
+   MOBILE
+   ════════════════════════════════════════ */
+@media (max-width: 760px) {
+    .home-hero { padding: 3rem 1.25rem 2.5rem; }
+    .home-h1 { font-size: 2.4rem; }
+    .home-browser-frame { margin-top: 2.5rem; }
+    .home-browser-stage { padding: 1rem 0.85rem 1.1rem; }
+    .kana-stage { gap: 0.5rem; }
+
+    .station {
+        grid-template-columns: 60px 1fr;
+        gap: 0.8rem;
+        min-height: 0;
+    }
+    .station-axis { grid-column: 1; }
+    .station--left  .station-card,
+    .station--right .station-card { grid-column: 2; text-align: left; }
+    .station--left .station-card-head { justify-content: flex-start; }
+    .station--left .station-card .station-cta-row { justify-content: flex-start; }
+    .station--left .station-progress { flex-direction: row; }
+
+    .path-svg { display: none; }
+    /* Vertikale gestrichelte Linie auf Mobile */
+    .path-stations::before {
+        content: "";
+        position: absolute;
+        left: 30px; top: 0; bottom: 0;
+        width: 0;
+        border-left: 1.5px dashed var(--ink-300);
+        z-index: 0;
+    }
+    .path-group-label { margin: 0.85rem 0 0.4rem; }
+    .path-group-label span { font-size: 0.88rem; padding: 0 0.65rem; }
+
+    .trust-block {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+    .trust-hanko { margin: 0 auto; }
+}
+@media (max-width: 600px) {
+    .bundle-hint { flex-direction: column; text-align: center; }
+    .bundle-hint-cta { align-self: stretch; text-align: center; }
 }
 
 /* Container.mt-4 ueberschreiben fuer Hero-Edge-to-Edge auf Mobile */
@@ -675,7 +1043,7 @@ body.redesign-page .container.mt-4 { padding-left: 0; padding-right: 0; margin-t
 
 <script>
 (function() {
-  // SRS-Karten faellig (eingeloggt)
+  // ── SRS-Karten faellig (eingeloggt) ──────────────────────
   const reviewLink = document.getElementById('homeReviewLink');
   if (reviewLink) {
     fetch('/api/srs/stats').then(r => r.json()).then(data => {
@@ -686,19 +1054,132 @@ body.redesign-page .container.mt-4 { padding-left: 0; padding-right: 0; margin-t
     }).catch(() => {});
   }
 
-  // Auto-Scroll zum naechsten Modul (eingeloggt + Next-Modul vorhanden)
+  // ── Auto-Scroll zum naechsten Modul (eingeloggt) ─────────
   {% if current_user.is_authenticated and next_module_id %}
   const nextEl = document.getElementById('module-{{ next_module_id }}');
   if (nextEl) {
-    // Verzoegert leicht, damit der Scroll nicht den Hero ueberschreibt
     setTimeout(() => {
-      // Nur wenn der User noch nicht selbst gescrollt hat
       if (window.scrollY < 50) {
         nextEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     }, 800);
   }
   {% endif %}
+
+  // ── Interaktive Vokal-Karten (nur fuer Gaeste) ───────────
+  const stage = document.getElementById('kanaStage');
+  if (!stage) return;
+
+  const VOWELS = [
+    { kana: 'あ', romaji: 'a', example: '朝',     reading: 'asa',  meaning: '· Morgen' },
+    { kana: 'い', romaji: 'i', example: 'いま',   reading: 'ima',  meaning: '· jetzt' },
+    { kana: 'う', romaji: 'u', example: 'うみ',   reading: 'umi',  meaning: '· Meer' },
+    { kana: 'え', romaji: 'e', example: 'えき',   reading: 'eki',  meaning: '· Bahnhof' },
+    { kana: 'お', romaji: 'o', example: 'おちゃ', reading: 'ocha', meaning: '· Tee' }
+  ];
+
+  const heroSub = document.querySelector('.home-hero .home-sub');
+  const heroSubDefault = heroSub ? heroSub.innerHTML : '';
+  const liveCounter = document.getElementById('liveCounter');
+  const liveCounterMini = document.getElementById('liveCounterMini');
+  const progressBar = document.getElementById('stageProgressBar');
+  const flipped = new Set();
+
+  VOWELS.forEach((v, idx) => {
+    const card = document.createElement('button');
+    card.type = 'button';
+    card.className = 'kana-card';
+    card.setAttribute('aria-label', 'Vokal ' + v.romaji + ' — klick um zu lernen');
+    card.dataset.idx = idx;
+    card.innerHTML =
+      '<div class="kana-face kana-face-front">' +
+        '<div class="glyph" lang="ja">' + v.kana + '</div>' +
+        '<div class="romaji">' + v.romaji + '</div>' +
+        '<div class="hint">tap →</div>' +
+      '</div>' +
+      '<div class="kana-face kana-face-back">' +
+        '<div class="kana-brush">' +
+          '<span class="glyph-bg" lang="ja" aria-hidden="true">' + v.kana + '</span>' +
+          '<span class="glyph-fg" lang="ja" aria-hidden="true">' + v.kana + '</span>' +
+          '<span class="ink-dot" aria-hidden="true"></span>' +
+        '</div>' +
+        '<div class="kana-back-meta">' +
+          '<div class="kana-back-romaji">' + v.romaji + '</div>' +
+          '<div class="kana-back-example">' +
+            '<span lang="ja">' + v.example + '</span>' +
+            '<span class="meaning">' + v.meaning + '</span>' +
+          '</div>' +
+          '<button type="button" class="kana-audio" data-romaji="' + v.romaji + '" aria-label="' + v.romaji + ' anhoeren">' +
+            '<span aria-hidden="true">🔊</span> hören' +
+          '</button>' +
+        '</div>' +
+      '</div>';
+    stage.appendChild(card);
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('.kana-audio')) return;
+      const wasFlipped = card.classList.contains('is-flipped');
+      card.classList.toggle('is-flipped');
+      if (!wasFlipped) {
+        flipped.add(idx);
+        speak(v.romaji);
+        updateState(v);
+      }
+    });
+  });
+
+  function updateState(lastVowel) {
+    const n = flipped.size;
+    if (liveCounter) liveCounter.textContent = n + ' / 5 entdeckt';
+    if (liveCounterMini) liveCounterMini.textContent = String(n);
+    if (progressBar) {
+      progressBar.querySelector('span').style.inset = '0 ' + (100 - (n/5)*100) + '% 0 0';
+    }
+    if (n === 5) {
+      if (liveCounter) liveCounter.classList.add('is-done');
+      if (progressBar) progressBar.classList.add('is-done');
+    }
+    if (!heroSub) return;
+    if (n === 0) {
+      heroSub.innerHTML = heroSubDefault;
+    } else if (n < 5) {
+      heroSub.innerHTML =
+        '<strong>' + lastVowel.kana + '</strong> ist drin. Genau so fühlen sich die ' +
+        '<strong>nächsten 87 Hiragana &amp; Katakana</strong> an — eins nach dem anderen.';
+    } else {
+      heroSub.innerHTML =
+        'Die fünf Vokale sind erledigt. Bereit für <strong>か, き, く, け, こ?</strong> ' +
+        'In der ersten Lektion wartet der Rest.';
+    }
+  }
+
+  // Audio via Web Speech API (ja-JP voice if available)
+  let jaVoice = null;
+  function pickVoice() {
+    const voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+    jaVoice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith('ja')) || null;
+  }
+  if (window.speechSynthesis) {
+    pickVoice();
+    window.speechSynthesis.onvoiceschanged = pickVoice;
+  }
+  function speak(text) {
+    if (!window.speechSynthesis) return;
+    try {
+      window.speechSynthesis.cancel();
+      const utt = new SpeechSynthesisUtterance(text);
+      utt.lang = 'ja-JP';
+      utt.rate = 0.85;
+      if (jaVoice) utt.voice = jaVoice;
+      window.speechSynthesis.speak(utt);
+    } catch (_) { /* silent */ }
+  }
+  document.addEventListener('click', (e) => {
+    const audioBtn = e.target.closest('.kana-audio');
+    if (audioBtn) {
+      e.stopPropagation();
+      speak(audioBtn.dataset.romaji);
+    }
+  });
 })();
 </script>
 {% endblock %}
