@@ -72,8 +72,9 @@ class KanaAdmin(SecureModelView):
         'type': 'Typ (hiragana/katakana)',
         'stroke_order_info': 'Strichreihenfolge',
         'example_sound_url': 'Audio-URL',
+        'mnemonic': 'Merkhilfe (Mnemonic)',
     }
-    form_columns = ['character', 'romanization', 'type', 'stroke_order_info', 'example_sound_url']
+    form_columns = ['character', 'romanization', 'type', 'stroke_order_info', 'example_sound_url', 'mnemonic']
 
 
 class KanjiAdmin(SecureModelView):

@@ -132,6 +132,7 @@ class Kana(db.Model):
     type = db.Column(db.String(10), nullable=False)  # 'hiragana' or 'katakana'
     stroke_order_info = db.Column(db.String(255), nullable=True)
     example_sound_url = db.Column(db.String(255), nullable=True)
+    mnemonic = db.Column(db.Text, nullable=True)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

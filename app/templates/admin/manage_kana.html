@@ -57,6 +57,7 @@
                 <th class="!bg-gray-50 dark:!bg-slate-800/50">Romanization</th>
                 <th class="!bg-gray-50 dark:!bg-slate-800/50">Type</th>
                 <th class="!bg-gray-50 dark:!bg-slate-800/50">Stroke Order</th>
+                <th class="!bg-gray-50 dark:!bg-slate-800/50">Mnemonic</th>
                 <th class="!bg-gray-50 dark:!bg-slate-800/50">Sound URL</th>
                 <th class="!bg-gray-50 dark:!bg-slate-800/50 !text-center">Actions</th>
             </tr>
@@ -89,6 +90,9 @@
 
                 <label for="add-stroke_order_info">Stroke Order Info:</label>
                 <input type="text" id="add-stroke_order_info" name="stroke_order_info">
+
+                <label for="add-mnemonic">Merkhilfe (Mnemonic):</label>
+                <textarea id="add-mnemonic" name="mnemonic" rows="3" placeholder="Tofugu-inspirierte Bildmnemonic auf Deutsch, z.B.: あ sieht aus wie ein Apfel-Maennchen mit Hut und Apfel im Arm — sagt 'A!'"></textarea>
 
                 <label for="add-example_sound_url">Sound URL:</label>
                 <input type="text" id="add-example_sound_url" name="example_sound_url">
@@ -125,6 +129,9 @@
 
                 <label for="edit-stroke_order_info">Stroke Order Info:</label>
                 <input type="text" id="edit-stroke_order_info" name="stroke_order_info">
+
+                <label for="edit-mnemonic">Merkhilfe (Mnemonic):</label>
+                <textarea id="edit-mnemonic" name="mnemonic" rows="3"></textarea>
 
                 <label for="edit-example_sound_url">Sound URL:</label>
                 <input type="text" id="edit-example_sound_url" name="example_sound_url">
@@ -182,7 +189,7 @@
     function renderKanaTable(kanaList) {
         kanaTableBody.innerHTML = '';
         if (kanaList.length === 0) {
-            kanaTableBody.innerHTML = '<tr><td colspan="7" class="!text-center !py-8 !text-gray-400 dark:!text-slate-500">No kana found</td></tr>';
+            kanaTableBody.innerHTML = '<tr><td colspan="8" class="!text-center !py-8 !text-gray-400 dark:!text-slate-500">No kana found</td></tr>';
             return;
         }
         kanaList.forEach(kana => {
@@ -194,6 +201,7 @@
                 <td class="!font-medium">${escapeHtml(kana.romanization)}</td>
                 <td><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${kana.type === 'hiragana' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' : 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300'}">${escapeHtml(kana.type)}</span></td>
                 <td class="!text-sm !text-gray-500 dark:!text-slate-400 !truncate !max-w-[150px]">${escapeHtml(kana.stroke_order_info) || '<span class="text-gray-300 dark:text-slate-600">--</span>'}</td>
+                <td class="!text-sm !text-gray-500 dark:!text-slate-400 !truncate !max-w-[200px]" title="${escapeHtml(kana.mnemonic) || ''}">${escapeHtml(kana.mnemonic) || '<span class="text-gray-300 dark:text-slate-600">--</span>'}</td>
                 <td class="!text-sm !text-gray-500 dark:!text-slate-400 !truncate !max-w-[150px]">${escapeHtml(kana.example_sound_url) || '<span class="text-gray-300 dark:text-slate-600">--</span>'}</td>
                 <td class="!text-center">
                     <div class="flex items-center justify-center gap-1">
@@ -248,6 +256,7 @@
         document.getElementById('edit-romanization').value = kana.romanization;
         document.getElementById('edit-type').value = kana.type;
         document.getElementById('edit-stroke_order_info').value = kana.stroke_order_info || '';
+        document.getElementById('edit-mnemonic').value = kana.mnemonic || '';
         document.getElementById('edit-example_sound_url').value = kana.example_sound_url || '';
         openModal('editKanaModal');
     }

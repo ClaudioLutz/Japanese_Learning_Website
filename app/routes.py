@@ -1077,7 +1077,8 @@ def create_kana():
         romanization=data['romanization'],
         type=data['type'],
         stroke_order_info=data.get('stroke_order_info'),
-        example_sound_url=data.get('example_sound_url')
+        example_sound_url=data.get('example_sound_url'),
+        mnemonic=data.get('mnemonic')
     )
     try:
         db.session.add(new_item)
@@ -1114,6 +1115,7 @@ def update_kana(item_id):
     item.type = data.get('type', item.type)
     item.stroke_order_info = data.get('stroke_order_info', item.stroke_order_info)
     item.example_sound_url = data.get('example_sound_url', item.example_sound_url)
+    item.mnemonic = data.get('mnemonic', item.mnemonic)
 
     db.session.commit()
     return jsonify(model_to_dict(item))

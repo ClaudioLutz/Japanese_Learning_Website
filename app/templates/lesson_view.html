@@ -1170,6 +1170,9 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                                             {% if content.content_type == 'kana' %}
                                                                                 <p><strong>Lesung (Romaji):</strong> {{ content_data.romanization }}</p>
                                                                                 <p><strong>Schrifttyp:</strong> {{ content_data.type | title }}</p>
+                                                                                {% if content_data.mnemonic %}
+                                                                                <p class="mnemonic-tip"><strong>Merkhilfe:</strong> {{ content_data.mnemonic }}</p>
+                                                                                {% endif %}
                                                                                 {% if content_data.stroke_order_info %}
                                                                                 <p><strong>Strichreihenfolge:</strong> {{ content_data.stroke_order_info }}</p>
                                                                                 {% endif %}
