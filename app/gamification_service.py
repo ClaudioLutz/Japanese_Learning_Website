@@ -2,12 +2,21 @@
 """Gamification: XP-Berechnung, Karten-Stufen, DailyAggregate."""
 import json
 import logging
+import random
 from datetime import datetime
 
 from app import db
 from app.models import DailyReviewAggregate
 
 logger = logging.getLogger(__name__)
+
+# ── Variable Reward (Phase 2) ─────────────────────────────────
+# Wahrscheinlichkeit (0..1) fuer einen Bonus + Bonus-Spanne in XP.
+# Duolingo-Pattern: variable Rewards verstaerken Engagement. Bewusst niedrig
+# damit normale Reviews kalkulierbar bleiben.
+XP_BOOST_PROBABILITY = 0.08    # 8% Chance pro Review
+XP_BOOST_MIN = 5
+XP_BOOST_MAX = 25
 
 # ── XP-Tabelle ────────────────────────────────────────────────
 
@@ -41,6 +50,65 @@ def calculate_xp(rating_int, is_new_card=False):
     if is_new_card:
         xp += XP_NEW_CARD_BONUS
     return xp
+
+
+def compute_kana_mastery_context(user_id):
+    """Berechnet kana-spezifische Achievement-Flags fuer check_achievements.
+
+    Returns dict mit:
+        kana_vowels_mastered: alle 5 Hiragana-Vokale Stage >= Meister (Index >= 7)
+        kana_hiragana_50: 50+ Hiragana auf Stage >= Vertraut 1 (Index >= 4)
+        kana_katakana_50: 50+ Katakana auf Stage >= Vertraut 1 (Index >= 4)
+    """
+    from app.models import CardReviewState, Kana, LessonContent
+
+    states = (
+        db.session.query(CardReviewState, Kana)
+        .join(LessonContent, CardReviewState.content_id == LessonContent.id)
+        .join(Kana, LessonContent.content_id == Kana.id)
+        .filter(
+            CardReviewState.user_id == user_id,
+            LessonContent.content_type == 'kana',
+        )
+        .all()
+    )
+
+    VOWELS = set('あいうえお')
+    vowel_mastered = set()
+    hiragana_familiar = 0
+    katakana_familiar = 0
+
+    for state, kana in states:
+        idx, _name, _color = get_card_stage(state.fsrs_card_state)
+        # Stage-Index: 0=Neu, 4=Vertraut 1, 5=Vertraut 2, 6=Meister, 7=Erleuchtet, 8/9=Gemeistert
+        if idx >= 6 and kana.character in VOWELS:
+            vowel_mastered.add(kana.character)
+        if idx >= 4:
+            if kana.type == 'hiragana':
+                hiragana_familiar += 1
+            elif kana.type == 'katakana':
+                katakana_familiar += 1
+
+    return {
+        'kana_vowels_mastered': len(vowel_mastered) >= 5,
+        'kana_hiragana_50': hiragana_familiar >= 50,
+        'kana_katakana_50': katakana_familiar >= 50,
+    }
+
+
+def maybe_grant_random_xp_boost(rng=None):
+    """Mit XP_BOOST_PROBABILITY einen Bonus zwischen MIN und MAX zurueckgeben.
+
+    Gibt 0 zurueck wenn kein Bonus fiel. Der Aufrufer ist verantwortlich
+    fuer User.add_xp() und das Anzeigen der Animation.
+
+    Args:
+        rng: optional random.Random fuer deterministische Tests
+    """
+    r = rng if rng is not None else random
+    if r.random() >= XP_BOOST_PROBABILITY:
+        return 0
+    return r.randint(XP_BOOST_MIN, XP_BOOST_MAX)
 
 
 def get_card_stage(fsrs_card_json):

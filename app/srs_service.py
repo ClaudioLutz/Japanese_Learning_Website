@@ -11,7 +11,12 @@ from app.models import (
     CardReviewState, DailyReviewAggregate, Kana, Kanji, Grammar,
     LessonContent, ReviewLog, User, UserSRSSettings, Vocabulary,
 )
-from app.gamification_service import calculate_xp, get_card_stage, update_daily_aggregate
+from app.gamification_service import (
+    calculate_xp,
+    get_card_stage,
+    maybe_grant_random_xp_boost,
+    update_daily_aggregate,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -144,6 +149,12 @@ def rate_card(user_id, content_id, rating_int, time_taken_ms=None):
         user.total_mastered = 0
 
     old_level = user.level
+
+    # Variable Reward (Phase 2, Duolingo-Pattern): 8% Chance auf +5..+25 Bonus.
+    boost = maybe_grant_random_xp_boost()
+    if boost:
+        xp += boost
+
     user.add_xp(xp)
     user.total_reviews += 1
 
@@ -186,6 +197,7 @@ def rate_card(user_id, content_id, rating_int, time_taken_ms=None):
         'lapses': state.lapses,
         # Gamification
         'xp_earned': xp,
+        'xp_boost': boost,             # 0 wenn kein Boost, sonst Bonus-Anteil (5..25)
         'total_xp': user.total_xp,
         'level': user.level,
         'leveled_up': (user.level or 1) > old_level,

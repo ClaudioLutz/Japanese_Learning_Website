@@ -47,6 +47,143 @@
     .badge-item .badge-icon { font-size: 1.5rem; margin-bottom: 0.25rem; }
     .badge-item .badge-name { font-size: 0.7rem; font-weight: 600; }
     .badge-item .badge-desc { font-size: 0.6rem; color: var(--text-muted); }
+
+    /* Phase 2: Kana-Heatmap */
+    .kana-script-toggle {
+        display: inline-flex;
+        gap: 2px;
+        background: var(--background-color, #F5F0E8);
+        border-radius: 999px;
+        padding: 2px;
+    }
+    .kana-script-toggle button {
+        background: transparent;
+        border: 0;
+        padding: 0.2rem 0.65rem;
+        font-size: 0.72rem;
+        border-radius: 999px;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: all 0.18s ease;
+    }
+    .kana-script-toggle button.is-active {
+        background: var(--card-bg, #FFFDF7);
+        color: var(--shu, #EB6101);
+        font-weight: 600;
+    }
+    .kana-heatmap-grid {
+        margin-top: 0.75rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+    }
+    .kana-heatmap-row {
+        display: grid;
+        grid-template-columns: minmax(78px, 110px) repeat(5, 1fr);
+        gap: 0.3rem;
+        align-items: stretch;
+    }
+    .kana-heatmap-row-label {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding-right: 0.5rem;
+    }
+    .kana-heatmap-cell {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 0.3rem 0.2rem;
+        min-height: 44px;
+        border: 2px solid #ccc;
+        border-radius: 7px;
+        background: #FEE6CE;
+        cursor: help;
+        transition: transform 0.15s ease;
+    }
+    .kana-heatmap-cell:hover {
+        transform: scale(1.06);
+        z-index: 1;
+    }
+    .kana-heatmap-char {
+        font-family: 'Klee One', 'Noto Serif JP', serif;
+        font-size: 1.05rem;
+        font-weight: 600;
+        line-height: 1;
+        color: var(--kon, #1F2A44);
+    }
+    .kana-heatmap-rom {
+        font-size: 0.6rem;
+        color: var(--text-muted);
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        margin-top: 1px;
+    }
+    .kana-heatmap-legend {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        margin-top: 0.75rem;
+        flex-wrap: wrap;
+    }
+    .kana-heatmap-legend .kana-heatmap-cell {
+        width: 18px;
+        height: 18px;
+        min-height: 18px;
+        padding: 0;
+        border-width: 1px;
+    }
+    /* Schwache 5 Kana */
+    .weak-kana-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 0.6rem;
+    }
+    .weak-kana-item {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.6rem;
+        background: rgba(220, 53, 69, 0.05);
+        border: 1px solid rgba(220, 53, 69, 0.2);
+        border-radius: 10px;
+    }
+    .weak-kana-char {
+        font-family: 'Klee One', 'Noto Serif JP', serif;
+        font-size: 1.7rem;
+        font-weight: 600;
+        line-height: 1;
+        color: var(--kon, #1F2A44);
+    }
+    .weak-kana-meta { flex: 1; min-width: 0; }
+    .weak-kana-rom {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        font-family: 'Geist Mono', ui-monospace, monospace;
+    }
+    .weak-kana-stats {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        margin-top: 0.2rem;
+    }
+    .weak-kana-stats i { color: #dc3545; margin-right: 2px; }
+    @media (max-width: 640px) {
+        .kana-heatmap-row { grid-template-columns: 1fr; }
+        .kana-heatmap-row-label {
+            justify-content: flex-start;
+            padding: 0.25rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+    }
 </style>
 {% endblock %}
 
@@ -151,6 +288,76 @@
         </table>
     </div>
 
+    <!-- Phase 2: Kana-Heatmap (Gojuon-Tabelle, Accuracy + Stage) -->
+    <div class="chart-section" x-show="kanaHeatmap.length > 0">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
+            <h6 style="margin:0;"><i class="fas fa-th me-1"></i> Kana-Beherrschung
+                (<span x-text="kanaHeatmap.length"></span>)</h6>
+            <div class="kana-script-toggle" role="tablist">
+                <button type="button"
+                        :class="{ 'is-active': kanaScript === 'all' }"
+                        @click="kanaScript = 'all'">Beide</button>
+                <button type="button"
+                        :class="{ 'is-active': kanaScript === 'hiragana' }"
+                        @click="kanaScript = 'hiragana'">Hiragana</button>
+                <button type="button"
+                        :class="{ 'is-active': kanaScript === 'katakana' }"
+                        @click="kanaScript = 'katakana'">Katakana</button>
+            </div>
+        </div>
+        <div class="kana-heatmap-grid">
+            <template x-for="row in filteredKanaRows" :key="row.key + kanaScript">
+                <div class="kana-heatmap-row">
+                    <div class="kana-heatmap-row-label" x-text="row.label"></div>
+                    <template x-for="cell in row.cells" :key="cell.kana_id">
+                        <div class="kana-heatmap-cell"
+                             :title="cell.character + ' — ' + cell.accuracy + '% · ' + cell.total_reps + ' Reviews · ' + cell.stage_name"
+                             :style="`background: ${accuracyColor(cell.accuracy)}; border-color: ${cell.stage_color}`">
+                            <span class="kana-heatmap-char" x-text="cell.character"></span>
+                            <span class="kana-heatmap-rom" x-text="cell.romanization"></span>
+                        </div>
+                    </template>
+                </div>
+            </template>
+        </div>
+        <div class="kana-heatmap-legend">
+            <span>Schwach</span>
+            <span class="kana-heatmap-cell" style="background:#FEE6CE;border-color:#ccc;"></span>
+            <span class="kana-heatmap-cell" style="background:#FDD0A2;border-color:#ccc;"></span>
+            <span class="kana-heatmap-cell" style="background:#FDAE6B;border-color:#ccc;"></span>
+            <span class="kana-heatmap-cell" style="background:#FD8D3C;border-color:#ccc;"></span>
+            <span class="kana-heatmap-cell" style="background:#E6550D;border-color:#ccc;"></span>
+            <span>Stark</span>
+            <span style="margin-left:1rem;color:var(--text-muted);font-size:0.7rem;">
+                Rahmen = SRS-Stufe
+            </span>
+        </div>
+    </div>
+
+    <!-- Phase 2: Schwache 5 Kana -->
+    <div class="chart-section" x-show="weakKana.length > 0">
+        <h6><i class="fas fa-exclamation-triangle me-1"></i> Schwaechste Kana</h6>
+        <div class="weak-kana-list">
+            <template x-for="k in weakKana" :key="k.kana_id">
+                <div class="weak-kana-item">
+                    <div class="weak-kana-char" x-text="k.character"></div>
+                    <div class="weak-kana-meta">
+                        <div class="weak-kana-rom" x-text="k.romanization"></div>
+                        <div class="weak-kana-stats">
+                            <span><i class="fas fa-times-circle"></i> <span x-text="k.lapses"></span> Fehler</span>
+                            <span x-text="k.accuracy + '%'"></span>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+        <div style="margin-top:0.75rem;">
+            <a href="{{ url_for('routes.index') }}#lernpfad" class="btn btn-sm btn-outline-primary">
+                <i class="fas fa-play"></i> Diese Kana in der Lektion ueben
+            </a>
+        </div>
+    </div>
+
     <!-- JLPT Progress -->
     <div class="chart-section jlpt-section">
         <h6><i class="fas fa-flag me-1"></i> JLPT-Fortschritt</h6>
@@ -197,12 +404,16 @@ function statsPage() {
         allAchievements: [],
         achievementsUnlocked: 0,
         achievementsTotal: 0,
+        // Phase 2: Kana-Heatmap
+        kanaHeatmap: [],
+        weakKana: [],
+        kanaScript: 'all',  // 'all' | 'hiragana' | 'katakana'
 
         async loadAll() {
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
             // Parallel fetches
-            const [heatmap, retention, forecast, maturity, contentType, responseTimes, leechData, jlpt, achievements] = await Promise.all([
+            const [heatmap, retention, forecast, maturity, contentType, responseTimes, leechData, jlpt, achievements, kanaHm, kanaWeak] = await Promise.all([
                 fetch('/api/srs/stats/heatmap').then(r => r.json()).catch(() => ({data:[]})),
                 fetch('/api/srs/stats/retention').then(r => r.json()).catch(() => ({data:[], desired_retention:90})),
                 fetch('/api/srs/stats/forecast').then(r => r.json()).catch(() => ({data:[]})),
@@ -212,6 +423,8 @@ function statsPage() {
                 fetch('/api/srs/stats/leeches').then(r => r.json()).catch(() => ({data:[]})),
                 fetch('/api/srs/jlpt-progress').then(r => r.json()).catch(() => ({})),
                 fetch('/api/srs/achievements').then(r => r.json()).catch(() => ({unlocked:[], locked:[]})),
+                fetch('/api/srs/stats/kana-heatmap').then(r => r.json()).catch(() => ({data:[]})),
+                fetch('/api/srs/stats/kana-weak?limit=5').then(r => r.json()).catch(() => ({data:[]})),
             ]);
 
             this.leeches = leechData.data || [];
@@ -222,6 +435,8 @@ function statsPage() {
             ];
             this.achievementsUnlocked = (achievements.unlocked || []).length;
             this.achievementsTotal = this.allAchievements.length;
+            this.kanaHeatmap = kanaHm.data || [];
+            this.weakKana = kanaWeak.data || [];
 
             this.renderHeatmap(heatmap.data || []);
             this.renderRetention(retention.data || [], retention.desired_retention || 90);
@@ -229,6 +444,38 @@ function statsPage() {
             this.renderMaturity(maturity);
             this.renderContentType(contentType.data || []);
             this.renderResponseTimes(responseTimes.data || []);
+        },
+
+        /* Phase 2: Kana-Heatmap — Reihen-Gruppierung + Farbverlauf */
+        get filteredKanaRows() {
+            const ROW_ORDER = ['vowels','k','s','t','n','h','m','y','r','w','n_kons','g','z','d','b','p'];
+            const ROW_LABEL = {
+                vowels: 'Vokale', k: 'K-Reihe', s: 'S-Reihe', t: 'T-Reihe',
+                n: 'N-Reihe', h: 'H-Reihe', m: 'M-Reihe', y: 'Y-Reihe',
+                r: 'R-Reihe', w: 'W-Reihe', n_kons: 'N-Konsonant',
+                g: 'G-Reihe', z: 'Z-Reihe', d: 'D-Reihe', b: 'B-Reihe', p: 'P-Reihe',
+            };
+            const filtered = this.kanaHeatmap.filter(k =>
+                this.kanaScript === 'all' || k.type === this.kanaScript
+            );
+            const byRow = {};
+            filtered.forEach(c => {
+                const key = c.row || 'other';
+                if (!byRow[key]) byRow[key] = [];
+                byRow[key].push(c);
+            });
+            return ROW_ORDER
+                .filter(k => byRow[k] && byRow[k].length > 0)
+                .map(k => ({ key: k, label: ROW_LABEL[k] || k, cells: byRow[k] }));
+        },
+
+        accuracyColor(acc) {
+            // Sequenzielle Orange-Palette (kein Rot-Gruen wg. Farbenblindheit)
+            if (acc >= 95) return '#E6550D';
+            if (acc >= 85) return '#FD8D3C';
+            if (acc >= 70) return '#FDAE6B';
+            if (acc >= 50) return '#FDD0A2';
+            return '#FEE6CE';
         },
 
         renderHeatmap(data) {

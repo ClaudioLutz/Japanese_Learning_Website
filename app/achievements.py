@@ -158,6 +158,40 @@ ACHIEVEMENTS = {
         'check': lambda u, ctx: ctx.get('perfect_kana_grid', False),
     },
 
+    # ── Phase 2: Kana-spezifische Meisterschaft ──
+    'kana_vowels_mastered': {
+        'name': 'Vokale gemeistert',
+        'description': 'Alle 5 Hiragana-Vokale auf Stufe Meister oder hoeher',
+        'icon': 'fa-spa',
+        'category': 'meisterschaft',
+        'rarity': 'rare',
+        'check': lambda u, ctx: ctx.get('kana_vowels_mastered', False),
+    },
+    'kana_hiragana_50': {
+        'name': '50 Hiragana erlernt',
+        'description': '50 Hiragana mindestens auf Stufe "Vertraut 1"',
+        'icon': 'fa-feather',
+        'category': 'meisterschaft',
+        'rarity': 'uncommon',
+        'check': lambda u, ctx: ctx.get('kana_hiragana_50', False),
+    },
+    'kana_katakana_50': {
+        'name': '50 Katakana erlernt',
+        'description': '50 Katakana mindestens auf Stufe "Vertraut 1"',
+        'icon': 'fa-pen-fancy',
+        'category': 'meisterschaft',
+        'rarity': 'uncommon',
+        'check': lambda u, ctx: ctx.get('kana_katakana_50', False),
+    },
+    'kana_perfect_streak_5': {
+        'name': 'Tabellen-Champion',
+        'description': '5 Kana-Spiele in Folge ohne Fehler',
+        'icon': 'fa-medal',
+        'category': 'session',
+        'rarity': 'rare',
+        'check': lambda u, ctx: ctx.get('perfect_kana_grid_streak', 0) >= 5,
+    },
+
     # ── Level ──
     'level_5': {
         'name': 'Schüler',

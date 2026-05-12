@@ -4624,6 +4624,16 @@ function kanaGridGame(contentId) {
 
             const lcId = this._findLessonContentIdForKana(cell.kanaId);
             if (!lcId) return;  // Kana ohne LessonContent-Anbindung (sollte nicht passieren)
+
+            // Letzter Drop der Runde? Dann Kontext fuer Achievement-Trigger mitschicken.
+            const isFinal = (this.solvedCount + 1) >= this.totalCells;
+            const gridContext = isFinal ? {
+                perfect_kana_grid: this.totalErrors === 0,
+                perfect_kana_grid_streak: this.totalErrors === 0
+                    ? (this.perfectStreak + 1)
+                    : 0,
+            } : {};
+
             try {
                 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
                 const resp = await fetch('/api/srs/rate', {
@@ -4636,6 +4646,7 @@ function kanaGridGame(contentId) {
                         content_id: lcId,
                         rating: rating,
                         time_taken_ms: elapsed,
+                        grid_context: gridContext,
                     }),
                 });
                 if (resp.ok) {

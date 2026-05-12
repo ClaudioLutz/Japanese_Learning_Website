@@ -9,7 +9,7 @@ from flask_login import current_user, login_required
 
 from app import db, srs_service
 from app.achievements import ACHIEVEMENTS, check_achievements
-from app.gamification_service import XP_STREAK_DAY
+from app.gamification_service import XP_STREAK_DAY, compute_kana_mastery_context
 from app.models import UserAchievement
 
 logger = logging.getLogger(__name__)
@@ -31,6 +31,8 @@ def api_rate_card():
     content_id = data.get('content_id')
     rating = data.get('rating')
     time_taken_ms = data.get('time_taken_ms')
+    # Kana-Grid-Spiel-Kontext (optional, vom Frontend gesetzt)
+    grid_ctx = data.get('grid_context') or {}
 
     if not content_id or not rating:
         return jsonify({'error': 'content_id und rating erforderlich'}), 400
@@ -56,8 +58,12 @@ def api_rate_card():
         if new_streak > old_streak:
             current_user.add_xp(XP_STREAK_DAY)
 
-        # Achievement-Check
-        new_achievements = check_achievements(current_user)
+        # Achievement-Check inkl. Kana-Mastery + Grid-Spiel-Kontext
+        ach_ctx = {}
+        ach_ctx.update(compute_kana_mastery_context(current_user.id))
+        if isinstance(grid_ctx, dict):
+            ach_ctx.update(grid_ctx)
+        new_achievements = check_achievements(current_user, context=ach_ctx)
         db.session.commit()
 
         result['new_achievements'] = new_achievements
@@ -450,6 +456,134 @@ def api_jlpt_progress():
     """JLPT N5-N1 Fortschritt."""
     data = srs_service.get_jlpt_progress(current_user.id)
     return jsonify(data)
+
+
+# ── Kana-Statistik (Phase 2) ──────────────────────────────────
+
+
+@srs_bp.route('/api/srs/stats/kana-heatmap')
+@login_required
+def api_kana_heatmap():
+    """Pro-Zeichen-Statistik fuer Hiragana/Katakana.
+
+    Liefert fuer jeden Kana, fuer den der User mind. 1 Review hat:
+    {id, character, romanization, type, row, stage_idx, stage_name,
+     stage_color, accuracy (0-100), total_reps, lapses}
+    """
+    from app.models import CardReviewState, Kana, LessonContent, ReviewLog
+    from app.services.kana_rows import row_for_kana
+    from app.gamification_service import get_card_stage
+    from sqlalchemy import case, func
+
+    # 1) Alle CardReviewStates des Users zu kana-Content-Items
+    states = (
+        db.session.query(CardReviewState, LessonContent, Kana)
+        .join(LessonContent, CardReviewState.content_id == LessonContent.id)
+        .join(Kana, LessonContent.content_id == Kana.id)
+        .filter(
+            CardReviewState.user_id == current_user.id,
+            LessonContent.content_type == 'kana',
+        )
+        .all()
+    )
+
+    # 2) Accuracy pro content_id ueber ReviewLog (alle Ratings >=3 = correct)
+    accuracy_rows = (
+        db.session.query(
+            ReviewLog.content_id,
+            func.count(ReviewLog.id).label('total'),
+            func.sum(case((ReviewLog.rating >= 3, 1), else_=0)).label('correct'),
+        )
+        .filter(ReviewLog.user_id == current_user.id)
+        .group_by(ReviewLog.content_id)
+        .all()
+    )
+    accuracy_by_content = {
+        r.content_id: (int(r.correct or 0) / int(r.total or 1) * 100)
+        for r in accuracy_rows
+    }
+
+    result = []
+    for state, lc, kana in states:
+        stage_idx, stage_name, stage_color = get_card_stage(state.fsrs_card_state)
+        result.append({
+            'kana_id': kana.id,
+            'lesson_content_id': lc.id,
+            'character': kana.character,
+            'romanization': kana.romanization,
+            'type': kana.type,
+            'row': row_for_kana(kana.character),
+            'stage_idx': stage_idx,
+            'stage_name': stage_name,
+            'stage_color': stage_color,
+            'accuracy': round(accuracy_by_content.get(lc.id, 0), 1),
+            'total_reps': state.reps,
+            'lapses': state.lapses,
+        })
+
+    return jsonify({'data': result, 'count': len(result)})
+
+
+@srs_bp.route('/api/srs/stats/kana-weak')
+@login_required
+def api_kana_weak():
+    """Top-N schwaechste Kana (sortiert nach lapses DESC, accuracy ASC).
+
+    Query-Param: limit (default 5, max 20)
+    """
+    from app.models import CardReviewState, Kana, LessonContent, ReviewLog
+    from sqlalchemy import case, func
+
+    limit = min(request.args.get('limit', 5, type=int), 20)
+
+    # Subquery: Accuracy + Total Reviews pro content_id
+    acc_sub = (
+        db.session.query(
+            ReviewLog.content_id.label('content_id'),
+            func.count(ReviewLog.id).label('total'),
+            func.sum(case((ReviewLog.rating >= 3, 1), else_=0)).label('correct'),
+        )
+        .filter(ReviewLog.user_id == current_user.id)
+        .group_by(ReviewLog.content_id)
+        .subquery()
+    )
+
+    states = (
+        db.session.query(CardReviewState, LessonContent, Kana, acc_sub.c.total, acc_sub.c.correct)
+        .join(LessonContent, CardReviewState.content_id == LessonContent.id)
+        .join(Kana, LessonContent.content_id == Kana.id)
+        .outerjoin(acc_sub, acc_sub.c.content_id == CardReviewState.content_id)
+        .filter(
+            CardReviewState.user_id == current_user.id,
+            LessonContent.content_type == 'kana',
+            CardReviewState.reps > 0,
+        )
+        .all()
+    )
+
+    # Sortier-Score: (lapses, -accuracy, -reps)
+    def weakness(item):
+        state, _lc, _k, total, correct = item
+        acc = (int(correct or 0) / int(total or 1)) if total else 0
+        return (-state.lapses, acc, -state.reps)
+
+    states.sort(key=weakness)
+    weakest = states[:limit]
+
+    result = []
+    for state, lc, kana, total, correct in weakest:
+        acc = (int(correct or 0) / int(total or 1) * 100) if total else 0
+        result.append({
+            'kana_id': kana.id,
+            'lesson_content_id': lc.id,
+            'character': kana.character,
+            'romanization': kana.romanization,
+            'type': kana.type,
+            'lapses': state.lapses,
+            'reps': state.reps,
+            'accuracy': round(acc, 1),
+        })
+    return jsonify({'data': result, 'count': len(result)})
 
 
 # ── Kana-Grid-Spiel (Phase 1) ─────────────────────────────────
