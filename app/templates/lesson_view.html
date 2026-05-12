@@ -1162,6 +1162,14 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                                             <i class="fas fa-times-circle"></i>
                                                                             <span x-text="totalErrors"></span>
                                                                         </span>
+                                                                        <template x-if="maxHints > 0">
+                                                                            <span class="kana-grid-game__hints-counter"
+                                                                                  :class="{ 'is-empty': hintsRemaining === 0 }"
+                                                                                  :title="hintsRemaining > 0 ? 'Tippe nach einem Fehlversuch auf eine Zelle für einen Hinweis (zählt als Schwer)' : 'Keine Hinweise mehr'">
+                                                                                <i class="fas fa-lightbulb"></i>
+                                                                                <span x-text="hintsRemaining + '/' + maxHints"></span>
+                                                                            </span>
+                                                                        </template>
                                                                     </div>
                                                                 </div>
 
@@ -1174,11 +1182,18 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                                                      :class="{
                                                                                          'is-correct': cell.status === 'correct',
                                                                                          'is-incorrect': cell.shake,
-                                                                                         'is-empty': cell.status !== 'correct'
+                                                                                         'is-empty': cell.status !== 'correct',
+                                                                                         'is-hinted': cell.hintBadge,
+                                                                                         'is-hint-available': canHintCell(cell)
                                                                                      }"
-                                                                                     :data-cell-id="cell.id">
+                                                                                     :data-cell-id="cell.id"
+                                                                                     :title="canHintCell(cell) ? 'Klick fuer Hinweis (zaehlt als Schwer)' : ''"
+                                                                                     @click="canHintCell(cell) && useHintForCell(cell)">
                                                                                     <div class="kana-grid-game__cell-hint" x-show="cell.hint" x-text="cell.hint"></div>
                                                                                     <div class="kana-grid-game__cell-drop" x-text="cell.solved || ''"></div>
+                                                                                    <span class="kana-grid-game__cell-hint-badge" x-show="cell.hintBadge" title="Mit Hinweis geloest">
+                                                                                        <i class="fas fa-lightbulb"></i>
+                                                                                    </span>
                                                                                 </div>
                                                                             </template>
                                                                         </div>
@@ -1188,10 +1203,14 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                                 <div class="kana-grid-game__pool" x-ref="pool">
                                                                     <template x-for="card in pool" :key="card.token">
                                                                         <div class="kana-grid-game__pool-card"
+                                                                             :class="{ 'has-romaji-hint': showRomajiHint && card.kind === 'kana' }"
                                                                              :data-token="card.token"
                                                                              :data-kana-id="card.kanaId"
                                                                              :data-payload="card.payload">
                                                                             <span class="kana-grid-game__pool-text" x-text="card.label"></span>
+                                                                            <span class="kana-grid-game__pool-subtext"
+                                                                                  x-show="showRomajiHint && card.kind === 'kana'"
+                                                                                  x-text="card.romaji"></span>
                                                                         </div>
                                                                     </template>
                                                                 </div>
@@ -1213,6 +1232,15 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                                             <span><i class="fas fa-bolt"></i> <span x-text="totalXp"></span> XP</span>
                                                                             <span><i class="fas fa-clock"></i> <span x-text="formattedTime"></span></span>
                                                                             <span><i class="fas fa-times-circle"></i> <span x-text="totalErrors"></span> Fehler</span>
+                                                                            <template x-if="hintsUsed > 0">
+                                                                                <span><i class="fas fa-lightbulb"></i> <span x-text="hintsUsed"></span> Hinweis<span x-show="hintsUsed > 1">e</span></span>
+                                                                            </template>
+                                                                        </div>
+                                                                        <div class="kana-grid-game__complete-tip" x-show="hintsUsed > 0">
+                                                                            <i class="fas fa-info-circle"></i>
+                                                                            Die <span x-text="hintsUsed"></span> Karte<span x-show="hintsUsed > 1">n</span>
+                                                                            mit Hinweis kommt morgen häufiger zur Wiederholung —
+                                                                            so verankerst du sie ohne Hilfe.
                                                                         </div>
                                                                         <button type="button" class="btn btn-outline-primary btn-sm" @click="restart()">
                                                                             <i class="fas fa-redo"></i> Nochmal spielen

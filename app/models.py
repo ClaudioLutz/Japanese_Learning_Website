@@ -1081,6 +1081,18 @@ class KanaGridConfig(db.Model):
     timer_enabled = db.Column(
         db.Boolean, nullable=False, default=False, server_default=db.text('false')
     )
+    # Forschungsbasierte Anfaenger-Hilfe (Bjork Desirable Difficulties, Fading Scaffolding):
+    # - max_hints: Anzahl Hint-Klicks pro Runde. Pre-Testing-Gate: Hint erst nach 1 Fehlversuch.
+    #   Hint setzt Rating auf 2 (Hard) — sichtbare metakognitive Kosten.
+    # - show_romaji_hint_on_pool: Pool-Karten zeigen kleines Romaji unter Hiragana.
+    #   Beide Werte sinken ueber die Lesson-Reihenfolge (Fading-Scaffolding):
+    #   Lesson 1 → max_hints=3, romaji=True. Lesson 4+ → max_hints=0, romaji=False.
+    max_hints = db.Column(
+        db.Integer, nullable=False, default=0, server_default='0'
+    )
+    show_romaji_hint_on_pool = db.Column(
+        db.Boolean, nullable=False, default=False, server_default=db.text('false')
+    )
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

@@ -25,6 +25,12 @@ function kanaGridGame(contentId) {
         perfectStreak: 0,
         _sortables: [],
         _config: null,
+        // ── Phase 4: Forschungsbasierte Hilfen (Bjork, Pre-Testing-Gate, Fading) ──
+        maxHints: 0,            // 0 = keine Hilfen verfuegbar (ab Lesson 4+)
+        hintsRemaining: 0,
+        hintsUsed: 0,
+        cellsHinted: [],        // IDs der Zellen, die per Hint geloest wurden (Rating=Hard)
+        showRomajiHint: false,  // Pool-Karten zeigen Romaji-Subscript (nur Lesson 1)
 
         async init() {
             if (!this.contentId) {
@@ -45,6 +51,11 @@ function kanaGridGame(contentId) {
                 this._config = data.config || {};
                 this.mode = this._config.default_mode || 'schreiben';
                 this.modeSwitch = !!this._config.allow_mode_switch;
+                this.maxHints = this._config.max_hints || 0;
+                this.hintsRemaining = this.maxHints;
+                this.hintsUsed = 0;
+                this.cellsHinted = [];
+                this.showRomajiHint = !!this._config.show_romaji_hint_on_pool;
                 this.perfectStreak = parseInt(localStorage.getItem('kana_grid_perfect_streak') || '0', 10);
                 this.buildCellsAndPool();
                 this.loading = false;
@@ -102,12 +113,12 @@ function kanaGridGame(contentId) {
             const cards = [];
             this.kana.forEach((k, idx) => {
                 if (this.mode === 'schreiben') {
-                    cards.push({ token: 't-hira-' + idx, kanaId: k.id, label: k.character, payload: k.character, kind: 'kana' });
+                    cards.push({ token: 't-hira-' + idx, kanaId: k.id, label: k.character, payload: k.character, kind: 'kana', romaji: k.romanization });
                 } else if (this.mode === 'lesen') {
-                    cards.push({ token: 't-rom-' + idx, kanaId: k.id, label: k.romanization, payload: k.romanization, kind: 'romaji' });
+                    cards.push({ token: 't-rom-' + idx, kanaId: k.id, label: k.romanization, payload: k.romanization, kind: 'romaji', romaji: k.romanization });
                 } else {
-                    cards.push({ token: 't-hira-' + idx, kanaId: k.id, label: k.character, payload: k.character, kind: 'kana' });
-                    cards.push({ token: 't-rom-' + idx, kanaId: k.id, label: k.romanization, payload: k.romanization, kind: 'romaji' });
+                    cards.push({ token: 't-hira-' + idx, kanaId: k.id, label: k.character, payload: k.character, kind: 'kana', romaji: k.romanization });
+                    cards.push({ token: 't-rom-' + idx, kanaId: k.id, label: k.romanization, payload: k.romanization, kind: 'romaji', romaji: k.romanization });
                 }
             });
             if (!this._config || this._config.shuffle_pool !== false) {
@@ -225,14 +236,18 @@ function kanaGridGame(contentId) {
             } catch (e) {}
         },
 
-        async rateCell(cell) {
+        async rateCell(cell, forceRating) {
             const elapsed = (Date.now() - (this.cellTimes[cell.id] || this.startTime));
             const errs = cell.attempts;
             let rating;
-            if (errs === 0 && elapsed < 3000) rating = 4;
-            else if (errs === 0)              rating = 3;
-            else if (errs === 1)              rating = 2;
-            else                              rating = 1;
+            if (typeof forceRating === 'number') {
+                // Hint genutzt → fixes Rating (Hard = 2) gemaess wissenschaftlicher
+                // Empfehlung: sichtbare metakognitive Kosten fuer den Hilferuf.
+                rating = forceRating;
+            } else if (errs === 0 && elapsed < 3000) rating = 4;
+            else if (errs === 0)                     rating = 3;
+            else if (errs === 1)                     rating = 2;
+            else                                     rating = 1;
 
             const lcId = this._findLessonContentIdForKana(cell.kanaId);
             if (!lcId) return;
@@ -283,6 +298,61 @@ function kanaGridGame(contentId) {
             return k && k.lesson_content_id ? k.lesson_content_id : null;
         },
 
+        // ── Phase 4: Hint-Mechanik mit Pre-Testing-Gate ─────────────────────
+        // Hint ist nur verfuegbar, wenn (a) noch Hints uebrig, (b) Cell schon mind.
+        // einen Drop-Versuch hatte (Pre-Testing nach Bjork). Cell wird automatisch
+        // korrekt gefuellt, Rating = 2 (Hard) — sichtbare metakognitive Kosten.
+        canHintCell(cell) {
+            if (this.hintsRemaining <= 0) return false;
+            if (this.completed) return false;
+            if (cell.status === 'correct') return false;
+            if ((cell.attempts || 0) < 1) return false;   // Pre-Testing-Gate
+            return true;
+        },
+
+        useHintForCell(cell) {
+            if (!this.canHintCell(cell)) return;
+
+            this.hintsRemaining -= 1;
+            this.hintsUsed += 1;
+            this.cellsHinted.push(cell.id);
+
+            // Pool-Karte fuer diese Zelle finden, kurz hervorheben
+            const targetPayload = this.expectedForCell(cell);
+            const targetCard = this.pool.find(c =>
+                c.kanaId === cell.kanaId && c.payload === targetPayload
+            );
+            if (targetCard) {
+                const poolEl = this.$refs.pool;
+                const cardEl = poolEl && poolEl.querySelector(`[data-token="${targetCard.token}"]`);
+                if (cardEl) {
+                    cardEl.classList.add('kana-grid-game__pool-card--hinted');
+                    setTimeout(() => {
+                        cardEl.classList.remove('kana-grid-game__pool-card--hinted');
+                    }, 1500);
+                }
+            }
+
+            // Nach 1.5 s: Zelle automatisch als korrekt fuellen + ans SRS mit Rating=Hard
+            setTimeout(() => {
+                cell.status = 'correct';
+                cell.solved = cell.character;
+                cell.hintBadge = true;   // Visual marker im Template
+                this.solvedCount += 1;
+                if (!cell.rated) {
+                    cell.rated = true;
+                    this.rateCell(cell, /* forceRating= */ 2);
+                }
+                // Pool-Karte entfernen
+                if (targetCard) {
+                    this.pool = this.pool.filter(c => c.token !== targetCard.token);
+                }
+                if (this.solvedCount >= this.totalCells) {
+                    this.onComplete();
+                }
+            }, 1500);
+        },
+
         setMode(newMode) {
             if (!this.modeSwitch || this.mode === newMode) return;
             this.mode = newMode;
@@ -300,6 +370,9 @@ function kanaGridGame(contentId) {
             this.totalErrors = 0;
             this.totalXp = 0;
             this.completed = false;
+            this.hintsRemaining = this.maxHints;
+            this.hintsUsed = 0;
+            this.cellsHinted = [];
             this.startTime = Date.now();
             this.buildPool();
             this.$nextTick(() => this.initSortables());
@@ -310,11 +383,14 @@ function kanaGridGame(contentId) {
             const elapsed = (Date.now() - this.startTime) / 1000;
             this.formattedTime = elapsed < 60 ? `${elapsed.toFixed(0)}s`
                                               : `${Math.floor(elapsed/60)}m ${(elapsed%60).toFixed(0)}s`;
-            if (this.totalErrors === 0 && elapsed < 90)      this.stars = 3;
-            else if (this.totalErrors <= 3 || elapsed < 180) this.stars = 2;
-            else                                              this.stars = 1;
+            // Sterne-Formel: Hints zaehlen wie Fehler (sichtbare metakognitive Kosten).
+            const adjustedErrors = this.totalErrors + this.hintsUsed;
+            if (adjustedErrors === 0 && elapsed < 90)      this.stars = 3;
+            else if (adjustedErrors <= 3 || elapsed < 180) this.stars = 2;
+            else                                           this.stars = 1;
 
-            const wasPerfect = (this.totalErrors === 0);
+            // Perfekt = keine Fehler UND keine Hints (Bjork: nur autonomer Recall zaehlt)
+            const wasPerfect = (adjustedErrors === 0);
             if (wasPerfect) {
                 this.perfectStreak += 1;
                 localStorage.setItem('kana_grid_perfect_streak', this.perfectStreak);
@@ -334,11 +410,15 @@ function kanaGridGame(contentId) {
             this.totalXp = 0;
             this.totalErrors = 0;
             this.solvedCount = 0;
+            this.hintsRemaining = this.maxHints;
+            this.hintsUsed = 0;
+            this.cellsHinted = [];
             this.cells.forEach(c => {
                 c.status = 'empty';
                 c.solved = '';
                 c.attempts = 0;
                 c.rated = false;
+                c.hintBadge = false;
                 if (c._blindFilled) delete c._blindFilled;
             });
             this.buildPool();

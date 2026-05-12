@@ -4556,3 +4556,87 @@ button[onclick*="moveContentInPage"]:active {
         font-size: 1.3rem;
     }
 }
+
+/* Phase 4: Hint-UI (Pre-Testing-Gate + Fading Scaffolding) */
+.kana-grid-game__hints-counter {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    padding: 0.15rem 0.5rem;
+    background: rgba(241, 196, 15, 0.18);
+    border: 1px solid rgba(241, 196, 15, 0.4);
+    border-radius: 999px;
+    color: #b9870e;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+.kana-grid-game__hints-counter.is-empty {
+    background: rgba(120, 120, 120, 0.1);
+    border-color: rgba(120, 120, 120, 0.25);
+    color: var(--text-muted, #8C8378);
+    opacity: 0.6;
+}
+.kana-grid-game__hints-counter i {
+    font-size: 0.85rem;
+}
+/* Hint verfuegbar (Zelle wurde mind. 1x falsch beantwortet) — Cursor + dezenter Pulse */
+.kana-grid-game__cell.is-hint-available {
+    cursor: help;
+    border-color: rgba(241, 196, 15, 0.6);
+    box-shadow: 0 0 0 1px rgba(241, 196, 15, 0.25);
+    animation: kanaGridHintPulse 1.8s ease-in-out infinite;
+}
+@keyframes kanaGridHintPulse {
+    0%, 100% { box-shadow: 0 0 0 1px rgba(241, 196, 15, 0.25); }
+    50%      { box-shadow: 0 0 0 3px rgba(241, 196, 15, 0.45); }
+}
+.kana-grid-game__cell.is-hinted {
+    border-color: #f1c40f;
+    background: rgba(241, 196, 15, 0.08);
+    box-shadow: 0 0 0 2px rgba(241, 196, 15, 0.18);
+}
+.kana-grid-game__cell.is-hinted .kana-grid-game__cell-drop {
+    color: #b9870e;
+}
+.kana-grid-game__cell-hint-badge {
+    position: absolute;
+    top: 2px;
+    right: 4px;
+    font-size: 0.65rem;
+    color: #f1c40f;
+}
+/* Pool-Karte mit Romaji-Subscript (nur Lesson 1) */
+.kana-grid-game__pool-card.has-romaji-hint {
+    flex-direction: column;
+    padding: 0.4rem 0.6rem 0.25rem;
+}
+.kana-grid-game__pool-subtext {
+    font-size: 0.55rem;
+    color: var(--text-muted, #8C8378);
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    margin-top: -2px;
+    letter-spacing: 0.04em;
+}
+.kana-grid-game__pool-card--hinted {
+    animation: kanaGridPoolHint 1.5s ease-in-out;
+    box-shadow: 0 0 0 3px rgba(241, 196, 15, 0.6);
+    transform: scale(1.08);
+}
+@keyframes kanaGridPoolHint {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(241, 196, 15, 0.6); }
+    50%      { box-shadow: 0 0 0 6px rgba(241, 196, 15, 0.85); }
+}
+.kana-grid-game__complete-tip {
+    margin-top: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: rgba(241, 196, 15, 0.1);
+    border-left: 3px solid #f1c40f;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    color: var(--text-muted, #8C8378);
+    text-align: left;
+}
+.kana-grid-game__complete-tip i {
+    color: #b9870e;
+    margin-right: 0.3rem;
+}

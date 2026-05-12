@@ -924,5 +924,7 @@ def api_kana_grid_config(content_id):
             'grid_layout': config.grid_layout,
             'shuffle_pool': config.shuffle_pool,
             'timer_enabled': config.timer_enabled,
+            'max_hints': config.max_hints,
+            'show_romaji_hint_on_pool': config.show_romaji_hint_on_pool,
         },
     })

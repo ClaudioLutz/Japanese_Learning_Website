@@ -118,6 +118,22 @@ class TestKanaGridConfigEndpoint:
         # Config-Block korrekt
         assert data['config']['default_mode'] == 'schreiben'
         assert data['config']['allow_mode_switch'] is True
+        # Phase 4: Hint-Felder im Config-Block
+        assert 'max_hints' in data['config']
+        assert 'show_romaji_hint_on_pool' in data['config']
+
+    def test_max_hints_propagates_to_api(self, auth_client):
+        """P4: max_hints aus KanaGridConfig wird an Frontend durchgereicht."""
+        client, user = auth_client
+        lesson, game, kana = _setup_kana_grid_lesson(allow_guest=True)
+        # Config hochsetzen
+        cfg = KanaGridConfig.query.filter_by(lesson_content_id=game.id).first()
+        cfg.max_hints = 3
+        cfg.show_romaji_hint_on_pool = True
+        db.session.commit()
+        data = client.get(f'/api/kana-grid/{game.id}/config').get_json()
+        assert data['config']['max_hints'] == 3
+        assert data['config']['show_romaji_hint_on_pool'] is True
 
 
 class TestKanaGridAccessControl:
