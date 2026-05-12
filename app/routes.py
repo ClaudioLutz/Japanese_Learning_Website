@@ -87,24 +87,125 @@ _JAPANESE_CHAR_RE = re.compile(r'[぀-ゟ゠-ヿ一-鿿ｦ-ﾟ]')
 # Pro Sprache eine fest verdrahtete Stimme — keine multilingualen Voices,
 # damit nie eine japanische Stimme deutschen Text liest oder umgekehrt.
 _TTS_VOICES = {
-    'ja': {'languageCode': 'ja-JP', 'name': 'ja-JP-Neural2-B'},
+    'ja': {'languageCode': 'ja-JP', 'name': 'ja-JP-Chirp3-HD-Leda'},
     'de': {'languageCode': 'de-DE', 'name': 'de-DE-Neural2-F'},
 }
+# Chirp 3 HD unterstuetzt kein SSML — nur 'text' Input + speakingRate via audioConfig.
+_CHIRP_VOICE_PREFIX = 'Chirp3-HD'
+
+# Kana-Reihen fuer automatische Spell-Out-Heuristik. Wenn der TTS-Input
+# ausschliesslich aus Mora EINER Reihe besteht (z.B. さしすせそ), wird er mit
+# japanischen Kommas getrennt — Chirp 3 HD spricht das mit natuerlicher Pause
+# zwischen den Zeichen, was fuer Lerner besser ist als die zusammenhaengende
+# Variante. Echte Woerter wie こんにちは fallen durch (mehrere Reihen).
+_KANA_ROWS = [
+    set('あいうえお'), set('かきくけこ'), set('さしすせそ'),
+    set('たちつてと'), set('なにぬねの'), set('はひふへほ'),
+    set('まみむめも'), set('やゆよ'), set('らりるれろ'), set('わを'),
+    set('がぎぐげご'), set('ざじずぜぞ'), set('だぢづでど'),
+    set('ばびぶべぼ'), set('ぱぴぷぺぽ'),
+    set('アイウエオ'), set('カキクケコ'), set('サシスセソ'),
+    set('タチツテト'), set('ナニヌネノ'), set('ハヒフヘホ'),
+    set('マミムメモ'), set('ヤユヨ'), set('ラリルレロ'), set('ワヲ'),
+    set('ガギグゲゴ'), set('ザジズゼゾ'), set('ダヂヅデド'),
+    set('バビブベボ'), set('パピプペポ'),
+]
+
+
+# Schwelle 4-7: schuetzt Woerter aus EINER Reihe (z.B. `あおい` = 3 Vokale)
+# vor faelschlicher Pause-Trennung. Echte Reihen-Aufzaehlungen sind 5 Mora
+# (`あいうえお`), kuerzere Mini-Reihen wie `やゆよ` werden zugunsten der
+# Wort-Korrektheit nicht getrennt — Gemini liest sie natuerlich kurz.
+_KANA_BLOCK_RE = re.compile(r'[ぁ-ゖァ-ヺ]{4,7}')
+
+
+def _maybe_spell_out_kana_row(text: str, model: str = 'chirp') -> str:
+    """Trennt Kana-Reihen mit `、` (japanisches Komma) als Pause-Trennzeichen.
+
+    Findet zusammenhaengende Hiragana/Katakana-Sequenzen (4-7 Mora) im Text
+    und ersetzt sie durch eine mit `、` getrennte Version, sofern alle Mora
+    einer Reihe angehoeren. Funktioniert auch bei eingebettetem Kontext wie
+    `Die S-Reihe: 「さしすせそ」`. Woerter mit gemischten Konsonanten
+    (こんにちは, さくら) bleiben unangetastet.
+
+    Audio-Probe (2026-05): `、` funktioniert bei BEIDEN Modellen — Chirp wie
+    Gemini machen damit deutliche Pausen. `[short pause]`-Markup von Gemini
+    fuehrte sogar zu Truncation (nur erste Mora gesprochen). `model`-Parameter
+    bleibt fuer API-Kompatibilitaet, hat aber keinen Effekt mehr.
+    """
+    sep = '、'
+
+    def replace(match: re.Match) -> str:
+        block = match.group(0)
+        chars = set(block)
+        for row in _KANA_ROWS:
+            if chars.issubset(row):
+                return sep.join(block)
+        return block
+
+    return _KANA_BLOCK_RE.sub(replace, text)
 
 
 def _contains_japanese(text: str) -> bool:
     return bool(_JAPANESE_CHAR_RE.search(text))
 
 
+_GEMINI_TTS_MODEL = 'gemini-2.5-pro-preview-tts'
+_GEMINI_TTS_VOICE = 'Leda'  # gleiche Persoenlichkeit wie ja-JP-Chirp3-HD-Leda
+
+
+def _synthesize_gemini(text: str) -> bytes:
+    """Generiert WAV-Bytes (24kHz mono PCM mit WAV-Header) via Gemini 2.5 Pro TTS."""
+    import io
+    import wave
+    from google import genai
+    from google.genai import types
+
+    api_key = (
+        current_app.config.get('GOOGLE_AI_API_KEY')
+        or os.environ.get('GOOGLE_AI_API_KEY')
+        or os.environ.get('GOOGLE_API_KEY')
+    )
+    client = genai.Client(api_key=api_key)
+    resp = client.models.generate_content(
+        model=_GEMINI_TTS_MODEL,
+        contents=text,
+        config=types.GenerateContentConfig(
+            response_modalities=['AUDIO'],
+            speech_config=types.SpeechConfig(
+                voice_config=types.VoiceConfig(
+                    prebuilt_voice_config=types.PrebuiltVoiceConfig(voice_name=_GEMINI_TTS_VOICE)
+                ),
+            ),
+        ),
+    )
+    cand = resp.candidates[0] if resp.candidates else None
+    if cand is None or cand.content is None or not cand.content.parts:
+        raise RuntimeError(f"Gemini TTS leer (finish={getattr(cand, 'finish_reason', '?')})")
+    pcm = cand.content.parts[0].inline_data.data
+
+    buf = io.BytesIO()
+    with wave.open(buf, 'wb') as wf:
+        wf.setnchannels(1)
+        wf.setsampwidth(2)
+        wf.setframerate(24000)
+        wf.writeframes(pcm)
+    return buf.getvalue()
+
+
 @bp.route('/api/tts', methods=['POST'])
 @csrf.exempt
 @limiter.limit("30 per minute")
 def tts_synthesize():
-    """Google Cloud TTS Neural2 — pro Sprache eine native Stimme.
+    """TTS-Endpoint mit zwei Modellen.
 
-    Pflicht-Body: { text, lang: 'ja'|'de' }. Server validiert das Skript:
-    lang=ja muss japanische Zeichen enthalten, lang=de darf keine enthalten.
-    Das verhindert peinliche Sprach-Mismatches (z.B. JP-Voice spricht DE).
+    Body: { text, lang: 'ja'|'de', model?: 'chirp'|'gemini', speed? }
+    - model='chirp' (Default): Chirp 3 HD Leda — schnell (~300ms), MP3
+    - model='gemini': Gemini 2.5 Pro TTS Leda — studio-qualitaet (~3-5s), WAV
+      Nur fuer japanisch (lang=ja). Bei lang=de faellt es auf Chirp zurueck.
+
+    Server validiert das Skript: lang=ja muss japanische Zeichen enthalten,
+    lang=de darf keine enthalten. Verhindert Sprach-Mismatches.
     """
     import base64
     import hashlib
@@ -114,6 +215,9 @@ def tts_synthesize():
     data = request.get_json(silent=True) or {}
     text = (data.get('text') or '').strip()
     lang = (data.get('lang') or '').strip().lower()
+    model = (data.get('model') or 'chirp').strip().lower()
+    if model not in ('chirp', 'gemini'):
+        model = 'chirp'
 
     if not text or len(text) > 500:
         return jsonify({"error": "Text fehlt oder zu lang (max 500 Zeichen)"}), 400
@@ -126,30 +230,76 @@ def tts_synthesize():
     if lang == 'de' and has_jp:
         return jsonify({"error": "lang=de, aber Text enthaelt japanische Zeichen"}), 400
 
-    api_key = current_app.config.get('GOOGLE_TTS_API_KEY') or os.environ.get('GOOGLE_TTS_API_KEY') or os.environ.get('GOOGLE_API_KEY')
-    if not api_key:
-        return jsonify({"error": "TTS nicht konfiguriert"}), 503
+    # Gemini ist nur fuer Japanisch sinnvoll — fuer Deutsch immer Chirp/Neural2.
+    if model == 'gemini' and lang != 'ja':
+        model = 'chirp'
 
     voice = _TTS_VOICES[lang]
     speed = float(data.get('speed', 0.85))
     speed = max(0.5, min(speed, 1.5))
 
-    # Cache-Key inkl. lang + voice — sonst koennte derselbe Text faelschlich
-    # in der falschen Sprache zurueckgegeben werden.
-    cache_key = hashlib.md5(f"{lang}_{voice['name']}_{speed}_{text}".encode('utf-8')).hexdigest()
+    if lang == 'ja':
+        text = _maybe_spell_out_kana_row(text, model=model)
+
+    # Cache-Key inkl. lang + model + voice — sonst koennten alte Chirp-Audios
+    # statt neuer Gemini-Audios ausgeliefert werden (oder umgekehrt).
+    voice_id = _GEMINI_TTS_VOICE if model == 'gemini' else voice['name']
+    cache_key = hashlib.md5(f"{lang}_{model}_{voice_id}_{speed}_{text}".encode('utf-8')).hexdigest()
     cache_dir = Path(current_app.static_folder) / 'cache' / 'tts'
     cache_dir.mkdir(parents=True, exist_ok=True)
-    cache_file = cache_dir / f"{cache_key}.mp3"
+    ext = 'wav' if model == 'gemini' else 'mp3'
+    mime = 'audio/wav' if model == 'gemini' else 'audio/mpeg'
+    cache_file = cache_dir / f"{cache_key}.{ext}"
 
     if cache_file.exists():
         from flask import send_file
-        return send_file(str(cache_file), mimetype='audio/mpeg', conditional=True)
+        return send_file(str(cache_file), mimetype=mime, conditional=True)
 
-    payload = {
-        "input": {"ssml": f'<speak><prosody rate="{speed}">{text}</prosody></speak>'},
-        "voice": voice,
-        "audioConfig": {"audioEncoding": "MP3"},
-    }
+    # Gemini-Pfad ueber google-genai SDK
+    if model == 'gemini':
+        try:
+            audio_bytes = _synthesize_gemini(text)
+            cache_file.write_bytes(audio_bytes)
+            from flask import make_response
+            response = make_response(audio_bytes)
+            response.headers['Content-Type'] = mime
+            response.headers['Cache-Control'] = 'public, max-age=86400'
+            return response
+        except Exception as e:
+            current_app.logger.warning(f"Gemini TTS fehlgeschlagen, Fallback Chirp: {e}")
+            # Fallback auf Chirp damit der User trotzdem Audio hoert
+            model = 'chirp'
+            text = _maybe_spell_out_kana_row(
+                (data.get('text') or '').strip(),
+                model='chirp',
+            ) if lang == 'ja' else text
+            cache_key = hashlib.md5(
+                f"{lang}_chirp_{voice['name']}_{speed}_{text}".encode('utf-8')
+            ).hexdigest()
+            cache_file = cache_dir / f"{cache_key}.mp3"
+            mime = 'audio/mpeg'
+            if cache_file.exists():
+                from flask import send_file
+                return send_file(str(cache_file), mimetype=mime, conditional=True)
+
+    # Chirp-Pfad (Default oder Gemini-Fallback) ueber Cloud TTS REST-API
+    api_key = current_app.config.get('GOOGLE_TTS_API_KEY') or os.environ.get('GOOGLE_TTS_API_KEY') or os.environ.get('GOOGLE_API_KEY')
+    if not api_key:
+        return jsonify({"error": "TTS nicht konfiguriert"}), 503
+
+    is_chirp = _CHIRP_VOICE_PREFIX in voice['name']
+    if is_chirp:
+        payload = {
+            "input": {"text": text},
+            "voice": voice,
+            "audioConfig": {"audioEncoding": "MP3", "speakingRate": speed},
+        }
+    else:
+        payload = {
+            "input": {"ssml": f'<speak><prosody rate="{speed}">{text}</prosody></speak>'},
+            "voice": voice,
+            "audioConfig": {"audioEncoding": "MP3"},
+        }
 
     try:
         resp = http_requests.post(
@@ -165,7 +315,7 @@ def tts_synthesize():
 
         from flask import make_response
         response = make_response(audio_bytes)
-        response.headers['Content-Type'] = 'audio/mpeg'
+        response.headers['Content-Type'] = mime
         response.headers['Cache-Control'] = 'public, max-age=86400'
         return response
     except Exception:

@@ -168,6 +168,51 @@ Decorators: `@login_required`, `@admin_required`, `@premium_required`.
 - **Inline Reference Editing**: Content-Editor lädt referenzierte Daten (Vocabulary/Kanji/etc.) per API und speichert Änderungen beim Save zurück — Änderungen wirken global.
 - **Playwright MCP**: Konfiguriert in `.mcp.json` für Browser-basierte UI-Tests via Claude Code
 
+## Audio-Pipeline (Stand 2026-05-12)
+
+Zwei separate Audio-Systeme mit gemeinsamem Voice-Stack: **Gemini 2.5 Pro TTS Leda** für Japanisch, **Neural2-G** für Deutsch.
+
+### Zwei Systeme
+| System | Trigger | Output | Speicherort |
+|---|---|---|---|
+| **Inline-Audio** (Klick-Audio) | Klick auf `<p>`/`<li>` in `.rich-text-content` | WAV (Gemini) oder MP3 (Chirp-Fallback), Hash-basierter Dateiname | `app/static/uploads/lessons/inline_audio/<hash>.{wav,mp3}` |
+| **Block-Player** (▶ über Lesson) | `<audio>`-Element rendert `LessonContent.media_url` | WAV (24kHz PCM, DE+JP concatenated) | `app/static/uploads/lessons/text_audio/lesson_<id>/page_<n>_content_<cid>.wav` |
+
+### Voice-Stack
+- **JA**: `gemini-2.5-pro-preview-tts` Voice `Leda` — studio-nahe Qualität via `google-genai` SDK
+- **DE**: `de-DE-Neural2-G` Voice — via Cloud TTS REST API (Gemini hat keine deutsche Stimme)
+- **Fallback** bei Gemini-Safety-Block / Quota-Hit: `ja-JP-Chirp3-HD-Leda` (gleiche Stimm-Persönlichkeit, andere Engine)
+
+### Kana-Reihen-Pause-Heuristik (`app/routes.py::_maybe_spell_out_kana_row`)
+Findet Hiragana/Katakana-Sequenzen (4-7 Mora) und trennt sie mit `、` wenn alle Mora **EINER Reihe** angehören. Beispiele:
+- `さしすせそ` → `さ、し、す、せ、そ` ✓ getrennt (alle s-Reihe)
+- `あいうえお` → `あ、い、う、え、お` ✓ getrennt (alle Vokale)
+- `あおい` (blau, 3 Vokale) → `あおい` ✓ unverändert (Schwelle 4)
+- `こんにちは` → unverändert (gemischte Reihen)
+
+**Wichtig:** Trennzeichen ist `、` (japanisches Komma), NICHT `[short pause]`-Markup — letzteres führt bei Gemini zu Truncation (`さしすせそ`-Bug 2026-05-11: nur erste Mora gesprochen). Audio-Probe-validiert.
+
+### Skripte
+| Skript | Zweck |
+|---|---|
+| `scripts/pregenerate_inline_audio.py [lesson_id] [--all] [--force]` | Inline-Audio pro `<p>`/`<li>` rendern, augmented_html in DB schreiben |
+| `.claude/skills/generate-lesson/scripts/gen_text_audio.py <lesson_id>` | Block-Player pro LessonContent (DE+JP segmentiert) |
+| `scripts/regenerate_block_audio_all.py` | Bulk-Wrapper: ruft gen_text_audio für alle published Lessons mit Skip-Filter |
+| `scripts/prefer_wav_over_mp3.py` | Repariert augmented_html nach Quota-Hit-Phase (.mp3 → .wav wo verfügbar) |
+| `scripts/resume_audio_generation.ps1` | Windows-Resume nach Quota-Reset (via Scheduled Task `JPL_AudioResume`) |
+
+### Quota-Limit
+- **Gemini 2.5 Pro TTS**: 2'500 Calls/Tag (PaidTier2). Reset täglich um Pacific Midnight (= morgens ~09:00 CET).
+- Bei Hit: Chirp-Fallback greift automatisch. **Aber** Chirp-Output ist MP3 (kein WAV), Hash-basierte URLs zeigen dann auf `.mp3` statt `.wav` — nach Quota-Reset mit `prefer_wav_over_mp3.py` re-runnen.
+
+### Vor GCS-Deploy zu erledigen
+- **WAV → MP3 Konvertierung** zwingend: aktuell **~1.23 GB** lokal (897 MB Block-Player + 184 MB Inline-Audio). Nach MP3-Konvertierung: ~75 MB (16× Reduktion).
+- **GCS-Upload** der MP3s nach `gs://jpl-website-assets/lessons/{inline_audio,text_audio}/`.
+- **`get_file_url()`-Routing** in `LessonContent` verifizieren — `/uploads/`-Route hat GCS-Fallback, `/static/uploads/` NICHT (siehe `routes.py:4076`).
+
+### Disclaimer auf Lesson-Pages
+Unter jedem Block-Player steht: *"🤖 KI-Stimmen, wir verbessern laufend · Feedback: info@japanese-learning.ch"*. Zwei Stellen in `lesson_view.html` (Standard-Lesson + Conversation-Variante).
+
 ## GCP Deployment & Produktion
 
 ### Infrastruktur

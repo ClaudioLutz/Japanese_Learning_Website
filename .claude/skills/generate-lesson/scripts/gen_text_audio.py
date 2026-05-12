@@ -26,6 +26,7 @@ existiert bereits `pipeline.py audio` + `slideshow`.
 import argparse
 import base64
 import hashlib
+import os
 import re
 import sys
 from pathlib import Path
@@ -42,12 +43,15 @@ from app.ai_services import GoogleCloudTTS
 # ---------------------------------------------------------------------------
 # Voices
 # ---------------------------------------------------------------------------
-JA_VOICE = "ja-JP-Neural2-B"  # weiblich, klar; Mayuko-getestet
-# WICHTIG: de-DE Neural2 hat NUR G (weiblich) und H (maennlich) — F existiert
-# nicht (das ist en-US). Falscher Name liefert silently ja-Voice → "rassistisch"-
-# klingender deutscher Akzent (User-Bug 2026-04-25). Liste der validen Voices:
-# `curl https://texttospeech.googleapis.com/v1/voices?languageCode=de-DE&key=...`
-DE_VOICE = "de-DE-Neural2-G"  # weiblich, klar deutsch
+# JA: Gemini 2.5 Pro TTS Leda — Studio-Qualitaet, gleiche Stimme wie Klick-Audio
+#     (= konsistente Lerner-Erfahrung zwischen Block-Player und Klick-Audio)
+# DE: Google Cloud TTS Neural2-G — bleibt wie bisher (Gemini hat keine
+#     deutsche Stimme die natuerlich klingen wuerde)
+# Beide liefern 24 kHz mono 16-bit PCM, somit byte-konkatenierbar in WAV.
+GEMINI_MODEL = "gemini-2.5-pro-preview-tts"
+GEMINI_VOICE = "Leda"
+DE_VOICE = "de-DE-Neural2-G"
+SAMPLE_RATE = 24000
 
 # ---------------------------------------------------------------------------
 # Markdown-Strip + Romaji-Strip
@@ -161,24 +165,137 @@ def _xml_escape(s: str) -> str:
     )
 
 
-def synth_segment(tts: GoogleCloudTTS, lang: str, text: str, speed: float = 0.95) -> bytes | None:
-    """Ruft Google TTS REST API mit DE- oder JA-Voice auf, gibt MP3-Bytes."""
-    voice = JA_VOICE if lang == "ja" else DE_VOICE
-    lang_code = "ja-JP" if lang == "ja" else "de-DE"
+def synth_segment_de_pcm(tts: GoogleCloudTTS, text: str, speed: float = 0.95) -> bytes | None:
+    """Cloud TTS Neural2-G fuer Deutsch — liefert 24kHz LINEAR16 PCM (kein WAV-Header)."""
     ssml = f'<speak><prosody rate="{speed}">{_xml_escape(text)}<break time="200ms"/></prosody></speak>'
     payload = {
         "input": {"ssml": ssml},
-        "voice": {"languageCode": lang_code, "name": voice},
-        "audioConfig": {"audioEncoding": "MP3"},
+        "voice": {"languageCode": "de-DE", "name": DE_VOICE},
+        "audioConfig": {
+            "audioEncoding": "LINEAR16",
+            "sampleRateHertz": SAMPLE_RATE,
+        },
     }
     resp = tts.requests.post(
         f"{tts.TTS_URL}?key={tts.api_key}", json=payload, timeout=30,
     )
     if resp.status_code != 200:
-        print(f"      [TTS FEHLER] {resp.status_code} ({lang}): {resp.text[:160]}")
+        print(f"      [TTS FEHLER] {resp.status_code} (de): {resp.text[:160]}")
         return None
     audio_b64 = resp.json().get("audioContent")
-    return base64.b64decode(audio_b64) if audio_b64 else None
+    if not audio_b64:
+        return None
+    wav = base64.b64decode(audio_b64)
+    # Cloud TTS LINEAR16 liefert WAV mit 44-byte Header. Strip header → reines PCM.
+    if wav[:4] == b"RIFF":
+        # Suche "data"-Chunk-Header und nimm nur Payload
+        idx = wav.find(b"data")
+        if idx >= 0:
+            return wav[idx + 8:]
+    return wav
+
+
+def synth_segment_ja_pcm(text: str) -> bytes | None:
+    """Gemini 2.5 Pro TTS Leda fuer Japanisch — liefert 24kHz mono PCM raw.
+
+    Bei Safety-Block (FinishReason.OTHER) wird der Tutor-Prompt-Retry versucht,
+    bei nochmaligem Fail ein leerer Bytes-Buf returned (besser als Crash).
+    """
+    from google import genai
+    from google.genai import types
+
+    api_key = os.environ.get("GOOGLE_AI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+    client = genai.Client(api_key=api_key)
+
+    def _call(contents):
+        resp = client.models.generate_content(
+            model=GEMINI_MODEL,
+            contents=contents,
+            config=types.GenerateContentConfig(
+                response_modalities=["AUDIO"],
+                speech_config=types.SpeechConfig(
+                    voice_config=types.VoiceConfig(
+                        prebuilt_voice_config=types.PrebuiltVoiceConfig(voice_name=GEMINI_VOICE)
+                    ),
+                ),
+            ),
+        )
+        cand = resp.candidates[0] if resp.candidates else None
+        if cand is None or cand.content is None or not cand.content.parts:
+            return None
+        return cand.content.parts[0].inline_data.data
+
+    try:
+        pcm = _call(text)
+    except Exception as e:
+        print(f"      [GEMINI EXC] (ja): {text[:60]!r} — {e}")
+        pcm = None
+    if pcm is None:
+        # Tutor-Prompt-Retry fuer kurze Mora-Texte
+        try:
+            pcm = _call(f"Pronounce clearly for a Japanese learner: {text}")
+        except Exception:
+            pcm = None
+    if pcm is not None:
+        return pcm
+
+    # Fallback: Chirp 3 HD Leda LINEAR16 PCM (gleiche Persoenlichkeit, andere Engine)
+    print(f"      [GEMINI leer fuer {text[:30]!r}] — Fallback Chirp 3 HD")
+    return _synth_chirp_pcm_fallback(text)
+
+
+def _synth_chirp_pcm_fallback(text: str) -> bytes | None:
+    """Chirp 3 HD Leda als JP-PCM-Fallback wenn Gemini blockt."""
+    import requests as http_requests
+    api_key = os.environ.get("GOOGLE_TTS_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+    if not api_key:
+        return None
+    payload = {
+        "input": {"text": text},
+        "voice": {"languageCode": "ja-JP", "name": "ja-JP-Chirp3-HD-Leda"},
+        "audioConfig": {
+            "audioEncoding": "LINEAR16",
+            "sampleRateHertz": SAMPLE_RATE,
+            "speakingRate": 0.85,
+        },
+    }
+    try:
+        resp = http_requests.post(
+            f"https://texttospeech.googleapis.com/v1/text:synthesize?key={api_key}",
+            json=payload, timeout=15,
+        )
+        if resp.status_code != 200:
+            print(f"      [CHIRP FALLBACK FEHLER] {resp.status_code}: {resp.text[:120]}")
+            return None
+        wav = base64.b64decode(resp.json().get("audioContent", ""))
+        if wav[:4] == b"RIFF":
+            idx = wav.find(b"data")
+            if idx >= 0:
+                return wav[idx + 8:]
+        return wav
+    except Exception as e:
+        print(f"      [CHIRP FALLBACK EXC] {e}")
+        return None
+
+
+def synth_segment(tts: GoogleCloudTTS, lang: str, text: str, speed: float = 0.95) -> bytes | None:
+    """Dispatcher: liefert 24kHz mono 16-bit PCM (kein WAV-Header) je Sprache."""
+    if lang == "ja":
+        return synth_segment_ja_pcm(text)
+    return synth_segment_de_pcm(tts, text, speed)
+
+
+def wrap_pcm_as_wav(pcm: bytes) -> bytes:
+    """Verpackt rohe PCM-Daten in einen WAV-Container."""
+    import wave
+    import io
+    buf = io.BytesIO()
+    with wave.open(buf, "wb") as wf:
+        wf.setnchannels(1)
+        wf.setsampwidth(2)
+        wf.setframerate(SAMPLE_RATE)
+        wf.writeframes(pcm)
+    return buf.getvalue()
 
 
 # ---------------------------------------------------------------------------
@@ -285,35 +402,38 @@ def main() -> int:
             print(f"[INFO] LC {lc.id} (Page {lc.page_number}, '{lc.title or ''}'): "
                   f"{len(segments)} Segmente ({seg_summary}{'...' if len(segments) > 8 else ''})")
 
-            mp3_chunks: list[bytes] = []
+            pcm_chunks: list[bytes] = []
             for i, (lang, seg) in enumerate(segments, start=1):
-                mp3 = synth_segment(tts, lang, seg)
-                if mp3 is None:
-                    print(f"      [FEHLER] Segment {i} ({lang}) liefert kein MP3 — Abbruch.")
+                pcm = synth_segment(tts, lang, seg)
+                if pcm is None:
+                    print(f"      [FEHLER] Segment {i} ({lang}) liefert kein Audio — Abbruch.")
                     return 1
-                mp3_chunks.append(mp3)
+                pcm_chunks.append(pcm)
+                # 200ms Stille zwischen Segmenten fuer natuerliche Pause
+                pcm_chunks.append(b"\x00\x00" * int(SAMPLE_RATE * 0.2))
 
-            merged = b"".join(mp3_chunks)
-            out_name = f"page_{lc.page_number}_content_{lc.id}.mp3"
+            merged_pcm = b"".join(pcm_chunks)
+            wav_bytes = wrap_pcm_as_wav(merged_pcm)
+            out_name = f"page_{lc.page_number}_content_{lc.id}.wav"
             out_path = out_root / out_name
-            out_path.write_bytes(merged)
+            out_path.write_bytes(wav_bytes)
 
             rel = f"lessons/text_audio/lesson_{args.lesson_id}/{out_name}"
             # /uploads/-Route hat GCS-Fallback (routes.py:4076), /static/uploads/ nicht.
             lc.media_url = f"/uploads/{rel}"
             lc.file_path = rel
-            lc.file_type = "audio/mpeg"
-            lc.file_size = len(merged)
+            lc.file_type = "audio/wav"
+            lc.file_size = len(wav_bytes)
             lc.ai_generation_details = {
                 **existing_details,
-                "tts_generator": "google_cloud_tts_de_ja_split",
-                "ja_voice": JA_VOICE,
+                "tts_generator": "gemini_ja_neural2_de_split",
+                "ja_voice": f"{GEMINI_MODEL}:{GEMINI_VOICE}",
                 "de_voice": DE_VOICE,
                 "text_hash": new_hash,
                 "segments": len(segments),
             }
             db.session.commit()
-            print(f"      [OK] {out_name} ({len(merged)} bytes, {len(mp3_chunks)} Segmente).")
+            print(f"      [OK] {out_name} ({len(wav_bytes)} bytes, {len(segments)} Segmente).")
             rendered += 1
 
         print(f"\n[FERTIG] {rendered} MP3s neu gerendert, {skipped} uebersprungen.")

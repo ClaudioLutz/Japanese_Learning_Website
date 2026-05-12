@@ -506,27 +506,44 @@ Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
        wenn auf derselben Page ein dialog_slideshow vorhanden ist. DB-Cleanup
        optional, nicht zwingend.
 
-[4b2] python .claude/skills/generate-lesson/pipeline.py text-audio {lesson_id}
-    → PFLICHT seit 2026-04-25 fuer jede Lesson mit text-Bloecken >=80 Zeichen.
-       Rendert pro `LessonContent.text` eine MP3 (Google Cloud TTS, DE+JA
-       gemischt, Sprach-Splitter):
-       - JA-Segmente (Hira/Kata/Kanji)  → ja-JP-Neural2-B (weiblich)
+[4b2] python .claude/skills/generate-lesson/scripts/gen_text_audio.py {lesson_id}
+    → PFLICHT seit 2026-04-25, auf Gemini umgestellt 2026-05-12. Rendert pro
+       `LessonContent.text` eine **WAV** (24kHz PCM, DE+JA gemischt, Sprach-
+       Splitter):
+       - JA-Segmente (Hira/Kata/Kanji)  → Gemini 2.5 Pro TTS Leda (studio-Qualitaet)
        - DE-Segmente (Lateinschrift)    → de-DE-Neural2-G (weiblich)
-       ⚠️ **Voice-Namen NIE raten** — Google liefert silently eine Default-
-       Voice wenn der `name` nicht existiert (z.B. de-DE-Neural2-F existiert
-       nicht, F ist en-US). Vor jedem neuen Voice-Namen:
-       `curl 'https://texttospeech.googleapis.com/v1/voices?languageCode=de-DE&key=$GOOGLE_API_KEY'`
-       und Existenz prüfen, sonst geistert silent eine andere Stimme rein.
+       Bei Gemini-Safety-Block (FinishReason.OTHER) → Tutor-Prompt-Retry →
+       sonst Chirp 3 HD Leda PCM-Fallback (gleiche Stimm-Persoenlichkeit).
+       Quota-Limit Gemini: 2'500 Calls/Tag (PaidTier2) — bei Hit wartet das
+       Skript NICHT, Chirp-Fallback greift durchgaengig. Reset taeglich.
+       ⚠️ **Voice-Namen NIE raten** fuer Neural2/Chirp — Google liefert
+       silently eine Default-Voice wenn der `name` nicht existiert. Vor neuen
+       Voice-Namen via API verifizieren.
        Markdown wird vor TTS gestrippt: `**bold**`, `## H2`, Listen, `> quote`,
-       `code`, `(romaji)` direkt nach JP-Zeichen — Ohren brauchen sie nicht.
-       Skip-Heuristik: Dialog-Bloecke (Speaker-Format) werden uebersprungen
-       (sind durch `audio` + `slideshow` schon abgedeckt). Idempotent ueber
-       SHA1-Hash des content_text in `ai_generation_details.text_hash`.
-       MP3-Pfad: `app/static/uploads/lessons/text_audio/lesson_{id}/page_{n}_content_{cid}.mp3`
-       (geschrieben in `LessonContent.media_url` + `file_path` + `file_size`).
-       Das Template ([lesson_view.html:683/918](../../app/templates/lesson_view.html#L683))
-       rendert oberhalb des `rich-text-content` einen `<audio controls>`-Player
-       mit Label "🔊 Vorlesen — Deutsch + Japanisch (separate Stimmen)".
+       `code`, `(romaji)` direkt nach JP-Zeichen.
+       Skip-Heuristik: Dialog-Bloecke (Speaker-Format) werden uebersprungen.
+       Idempotent ueber SHA1-Hash des content_text in `ai_generation_details
+       .text_hash`. WAV-Pfad: `app/static/uploads/lessons/text_audio/lesson_{id}
+       /page_{n}_content_{cid}.wav` (geschrieben in `LessonContent.media_url`
+       + `file_path` + `file_type='audio/wav'` + `file_size`).
+       Template-Filter in `lesson_view.html` akzeptiert `audio/mpeg` UND
+       `audio/wav` (alte MP3s aus pre-2026-05 bleiben kompatibel).
+       Block-Player-Label: "🔊 Vorlesen — Deutsch + Japanisch (separate Stimmen)
+       · 🤖 KI-Stimmen, wir verbessern laufend".
+
+[4b3] python scripts/pregenerate_inline_audio.py {lesson_id}
+    → NEU seit 2026-05-11. Rendert pro `<p>`/`<li>` mit japanischem Anteil
+       in `content.content_text` eine separate Audio-Datei (Gemini WAV, Chirp
+       MP3 als Fallback). Frontend macht beim Klick instant playback statt
+       Live-TTS-Call (~5-10s Latenz). Hash-basierter Dateiname → identische
+       JP-Texte teilen Datei (z.B. `さしすせそ` aus mehreren Lessons).
+       Pause-Heuristik: `app/routes.py::_maybe_spell_out_kana_row` trennt
+       4-7 Mora aus EINER Reihe mit `、` (Audio-Probe-validiert, NICHT
+       `[short pause]`-Markup verwenden — fuehrt zu Truncation-Bugs).
+       Augmented HTML mit `data-audio-url`-Attributen wird in
+       `LessonContent.ai_generation_details.augmented_html` gespeichert.
+       Template rendert es via `| safe` statt `markdown_safe`.
+       Audio-Pfad: `app/static/uploads/lessons/inline_audio/{hash}.{wav,mp3}`.
        Optionen: `--page N` (nur eine Page rendern), `--force` (existierende
        MP3s neu erzeugen).
        Begruendung (User-Direktive 2026-04-25): Vorher las eine ja-JP-Stimme

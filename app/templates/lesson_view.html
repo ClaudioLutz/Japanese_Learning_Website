@@ -960,15 +960,16 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                             </div>
                                             {% elif content.content_type == 'text' %}
                                             <div class="conv-text-section" data-content-id="{{ content.id }}">
-                                                {% if (content.file_path or content.media_url) and content.file_type == 'audio/mpeg' %}
+                                                {% if (content.file_path or content.media_url) and content.file_type in ('audio/mpeg', 'audio/wav') %}
                                                 <div class="text-audio-player mb-3">
                                                   <audio controls preload="none" src="{{ content.get_file_url() if content.file_path else content.media_url }}" style="width:100%;max-width:540px;"></audio>
                                                   <div class="text-audio-meta small text-muted mt-1">
-                                                    🔊 Vorlesen — Deutsch + Japanisch (separate Stimmen)
+                                                    🔊 Vorlesen — Deutsch + Japanisch (separate Stimmen)<br>
+                                                    <span class="text-muted" style="opacity:0.75;">🤖 KI-Stimmen, wir verbessern laufend · Feedback: <a href="mailto:info@japanese-learning.ch" class="text-muted">info@japanese-learning.ch</a></span>
                                                   </div>
                                                 </div>
                                                 {% endif %}
-                                                <div class="rich-text-content">{{ content.content_text | markdown_safe }}</div>
+                                                <div class="rich-text-content">{% if content.ai_generation_details and content.ai_generation_details.augmented_html %}{{ content.ai_generation_details.augmented_html | safe }}{% else %}{{ content.content_text | markdown_safe }}{% endif %}</div>
                                                 {% if current_user.is_authenticated %}
                                                 <div class="text-end mt-2">
                                                     <button class="btn btn-sm btn-outline-success mark-complete-btn"
@@ -1259,16 +1260,17 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                 {% else %}
                                                     {% if content.content_type == 'text' %}
                                                     <div class="text-content-container">
-                                                        {% if (content.file_path or content.media_url) and content.file_type == 'audio/mpeg' %}
+                                                        {% if (content.file_path or content.media_url) and content.file_type in ('audio/mpeg', 'audio/wav') %}
                                                         <div class="text-audio-player mb-3" data-content-id="{{ content.id }}">
                                                           <audio controls preload="none" src="{{ content.get_file_url() if content.file_path else content.media_url }}" style="width:100%;max-width:540px;"></audio>
                                                           <div class="text-audio-meta small text-muted mt-1">
-                                                            🔊 Vorlesen — Deutsch + Japanisch (separate Stimmen)
+                                                            🔊 Vorlesen — Deutsch + Japanisch (separate Stimmen)<br>
+                                                            <span class="text-muted" style="opacity:0.75;">🤖 KI-Stimmen, wir verbessern laufend · Feedback: <a href="mailto:info@japanese-learning.ch" class="text-muted">info@japanese-learning.ch</a></span>
                                                           </div>
                                                         </div>
                                                         {% endif %}
                                                         <div class="rich-text-content">
-                                                            {{ content.content_text | markdown_safe }}
+                                                            {% if content.ai_generation_details and content.ai_generation_details.augmented_html %}{{ content.ai_generation_details.augmented_html | safe }}{% else %}{{ content.content_text | markdown_safe }}{% endif %}
                                                         </div>
                                                     </div>
                                                     {% else %}
@@ -2602,24 +2604,28 @@ class MultilingualTextAudioSystem {
 
     processAllContent() {
         // .details (Vocab/Kanji-Karten, nur JP) bleiben klickbar.
-        // .rich-text-content / .text-content-container bekommen die Klick-TTS NUR,
-        // wenn KEIN dedizierter DE/JA-Player oben steht (sonst spielt /api/tts
-        // den deutschen Teil mit ja-Voice → klingt nach japanischem Akzent).
+        // .rich-text-content / .text-content-container bekommen Klick-TTS auch
+        // wenn ein Block-Player oben steht — playText() ruft detectTTSLang()
+        // pro Klick neu auf, also ist das alte Sprach-Mismatch-Risiko weg.
+        // Vorteil: User kann gezielt einzelne JP-Phrasen anklicken (z.B.
+        // 「さしすせそ」 in einer Hiragana-Lesson) und mit Gemini hoeren.
         document.querySelectorAll('.details').forEach(area => this.processElement(area));
         document.querySelectorAll('.rich-text-content, .text-content-container').forEach(area => {
-            const container = area.closest('.content-item, .conv-text-section');
-            if (container && container.querySelector('.text-audio-player')) return;
             this.processElement(area);
         });
     }
 
     processElement(element) {
         if (element.dataset.ttsProcessed) return;
-        // Alle <p>-Absaetze im Element klickbar machen
-        const paragraphs = element.querySelectorAll('p');
-        if (paragraphs.length > 0) {
-            paragraphs.forEach(p => this.makeParagraphClickable(p));
-        }
+        // <p> und <li> klickbar machen. Markdown-Listen rendern oft als
+        // <li> ohne inneren <p> (z.B. "Die fünf Vokale: 「あいうえお」"),
+        // ohne diesen Fix bleiben sie stumm. <li> mit innerem <p>
+        // ueberspringen wir, damit nicht zwei Click-Handler greifen.
+        const candidates = element.querySelectorAll('p, li');
+        candidates.forEach(el => {
+            if (el.tagName === 'LI' && el.querySelector('p')) return;
+            this.makeParagraphClickable(el);
+        });
         element.dataset.ttsProcessed = 'true';
     }
 
@@ -2726,9 +2732,34 @@ class MultilingualTextAudioSystem {
         element.classList.add('tts-playing');
         const done = () => { element.classList.remove('tts-playing'); this.currentAudio = null; };
 
+        // Vorgenerierte Audio-URL direkt abspielen (instant) — wird via
+        // pregenerate_inline_audio.py erzeugt und ins augmented_html injiziert.
+        const preUrl = element.dataset?.audioUrl
+            || element.closest('[data-audio-url]')?.dataset?.audioUrl;
+        if (preUrl) {
+            this.currentAudio = new Audio(preUrl);
+            this.currentAudio.addEventListener('ended', done);
+            this.currentAudio.addEventListener('error', () => {
+                console.warn('[TTS] pre-generated audio failed, falling back to live:', preUrl);
+                this.currentAudio = null;
+                this._playLive(text, element, done);
+            });
+            this.currentAudio.play();
+            return;
+        }
+
+        this._playLive(text, element, done);
+    }
+
+    _playLive(text, element, done) {
         // Sprache pro Zeile aus dem Text ableiten — hier sind Front (JP) und
         // Rueckseite (DE) gemischt, also strikt pro Klick neu entscheiden.
         const lang = detectTTSLang(text);
+
+        // Lesson-Absatz-Klicks (Erklaerungen, Reihen, Beispielsaetze) nutzen
+        // Gemini 2.5 Pro TTS fuer studio-naehe Qualitaet. Erst-Klick ~3-5s,
+        // danach gecacht. Nur fuer JP — DE bleibt auf Chirp/Neural2.
+        const model = (lang === 'ja') ? 'gemini' : 'chirp';
 
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
         fetch('/api/tts', {
@@ -2737,7 +2768,7 @@ class MultilingualTextAudioSystem {
                 'Content-Type': 'application/json',
                 ...(csrfToken ? { 'X-CSRFToken': csrfToken } : {})
             },
-            body: JSON.stringify({ text: text, lang: lang })
+            body: JSON.stringify({ text: text, lang: lang, model: model })
         })
         .then(resp => {
             if (!resp.ok) throw new Error('TTS API error');
