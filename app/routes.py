@@ -93,30 +93,10 @@ _TTS_VOICES = {
 # Chirp 3 HD unterstuetzt kein SSML — nur 'text' Input + speakingRate via audioConfig.
 _CHIRP_VOICE_PREFIX = 'Chirp3-HD'
 
-# Kana-Reihen fuer automatische Spell-Out-Heuristik. Wenn der TTS-Input
-# ausschliesslich aus Mora EINER Reihe besteht (z.B. さしすせそ), wird er mit
-# japanischen Kommas getrennt — Chirp 3 HD spricht das mit natuerlicher Pause
-# zwischen den Zeichen, was fuer Lerner besser ist als die zusammenhaengende
-# Variante. Echte Woerter wie こんにちは fallen durch (mehrere Reihen).
-_KANA_ROWS = [
-    set('あいうえお'), set('かきくけこ'), set('さしすせそ'),
-    set('たちつてと'), set('なにぬねの'), set('はひふへほ'),
-    set('まみむめも'), set('やゆよ'), set('らりるれろ'), set('わを'),
-    set('がぎぐげご'), set('ざじずぜぞ'), set('だぢづでど'),
-    set('ばびぶべぼ'), set('ぱぴぷぺぽ'),
-    set('アイウエオ'), set('カキクケコ'), set('サシスセソ'),
-    set('タチツテト'), set('ナニヌネノ'), set('ハヒフヘホ'),
-    set('マミムメモ'), set('ヤユヨ'), set('ラリルレロ'), set('ワヲ'),
-    set('ガギグゲゴ'), set('ザジズゼゾ'), set('ダヂヅデド'),
-    set('バビブベボ'), set('パピプペポ'),
-]
-
-
-# Schwelle 4-7: schuetzt Woerter aus EINER Reihe (z.B. `あおい` = 3 Vokale)
-# vor faelschlicher Pause-Trennung. Echte Reihen-Aufzaehlungen sind 5 Mora
-# (`あいうえお`), kuerzere Mini-Reihen wie `やゆよ` werden zugunsten der
-# Wort-Korrektheit nicht getrennt — Gemini liest sie natuerlich kurz.
-_KANA_BLOCK_RE = re.compile(r'[ぁ-ゖァ-ヺ]{4,7}')
+# Kana-Reihen-Mapping ist in app/services/kana_rows.py zentralisiert (wird auch
+# vom Kana-Grid-Spiel verwendet). Hier nur re-importieren fuer die TTS-Pause-
+# Heuristik unten.
+from app.services.kana_rows import _KANA_ROWS, _KANA_BLOCK_RE  # noqa: E402
 
 
 def _maybe_spell_out_kana_row(text: str, model: str = 'chirp') -> str:

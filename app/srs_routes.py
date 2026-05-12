@@ -450,3 +450,89 @@ def api_jlpt_progress():
     """JLPT N5-N1 Fortschritt."""
     data = srs_service.get_jlpt_progress(current_user.id)
     return jsonify(data)
+
+
+# ── Kana-Grid-Spiel (Phase 1) ─────────────────────────────────
+
+
+@srs_bp.route('/api/kana-grid/<int:content_id>/config')
+def api_kana_grid_config(content_id):
+    """Liefert Konfiguration eines Kana-Grid-Spiels (Drag-Drop).
+
+    Bewusst NICHT @login_required — Lesson-Zugriff wird ueber
+    Lesson.is_accessible_to_user(current_user) geprueft. Gaeste auf
+    guest-zugaenglichen Lessons sollen das Spiel auch starten koennen
+    (Ratings via /api/srs/rate brauchen aber weiterhin Login).
+    """
+    from app.models import KanaGridConfig, Kana, Lesson, LessonContent
+    from app.services.kana_rows import kana_rows_for_lesson, ROMAJI_ROWS
+
+    content = LessonContent.query.get(content_id)
+    if not content or content.content_type != 'kana_grid_game':
+        return jsonify({'error': 'Spiel nicht gefunden'}), 404
+
+    lesson = Lesson.query.get(content.lesson_id)
+    if not lesson:
+        return jsonify({'error': 'Lektion nicht gefunden'}), 404
+
+    # current_user kann AnonymousUserMixin sein — is_accessible_to_user
+    # toleriert das (Guest-Pfad)
+    user_for_check = current_user if current_user.is_authenticated else None
+    accessible, _msg = lesson.is_accessible_to_user(user_for_check)
+    if not accessible:
+        return jsonify({'error': 'Kein Zugriff'}), 403
+
+    config = KanaGridConfig.query.filter_by(lesson_content_id=content_id).first()
+    if not config:
+        return jsonify({'error': 'Spiel-Konfiguration fehlt'}), 404
+
+    kana_ids = config.kana_ids or []
+    kana_objs = Kana.query.filter(Kana.id.in_(kana_ids)).all() if kana_ids else []
+    # Reihenfolge wie in config.kana_ids erhalten (Datenbank-Reihenfolge ist nicht garantiert)
+    id_to_obj = {k.id: k for k in kana_objs}
+    ordered = [id_to_obj[i] for i in kana_ids if i in id_to_obj]
+
+    # Mapping Kana-ID -> LessonContent-ID (fuer FSRS-Anbindung). Wir suchen
+    # innerhalb der Lesson nach kana-Items mit passender content_id.
+    lc_for_kana = {}
+    kana_contents = LessonContent.query.filter_by(
+        lesson_id=lesson.id, content_type='kana'
+    ).all()
+    for lc in kana_contents:
+        if lc.content_id in kana_ids and lc.content_id not in lc_for_kana:
+            lc_for_kana[lc.content_id] = lc.id
+
+    grouped = kana_rows_for_lesson(ordered)
+    rows_payload = []
+    for group in grouped:
+        rows_payload.append({
+            'key': group['key'],
+            'label': group['label'],
+            'romaji': ROMAJI_ROWS.get(group['key'], []),
+            'kana_ids': [k.id for k in group['kana']],
+        })
+
+    return jsonify({
+        'content_id': content.id,
+        'lesson_id': lesson.id,
+        'lesson_title': lesson.title,
+        'kana': [
+            {
+                'id': k.id,
+                'character': k.character,
+                'romanization': k.romanization,
+                'type': k.type,
+                'audio_url': k.example_sound_url,
+                'lesson_content_id': lc_for_kana.get(k.id),  # fuer /api/srs/rate
+            }
+            for k in ordered
+        ],
+        'rows': rows_payload,
+        'config': {
+            'default_mode': config.default_mode,
+            'allow_mode_switch': config.allow_mode_switch,
+            'grid_layout': config.grid_layout,
+            'shuffle_pool': config.shuffle_pool,
+            'timer_enabled': config.timer_enabled,
+        },
+    })

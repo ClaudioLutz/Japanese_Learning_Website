@@ -149,6 +149,14 @@ ACHIEVEMENTS = {
         'rarity': 'uncommon',
         'check': lambda u, ctx: ctx.get('perfect_session', False),
     },
+    'kana_first_perfect_grid': {
+        'name': 'Erste Kana-Tabelle',
+        'description': 'Drag-Drop-Spiel ohne Fehler abgeschlossen',
+        'icon': 'fa-th',
+        'category': 'session',
+        'rarity': 'common',
+        'check': lambda u, ctx: ctx.get('perfect_kana_grid', False),
+    },
 
     # ── Level ──
     'level_5': {

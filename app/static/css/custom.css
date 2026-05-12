@@ -4284,3 +4284,275 @@ button[onclick*="moveContentInPage"]:active {
         font-size: 1.3rem;
     }
 }
+
+/* ============================================================
+   Kana-Grid-Spiel (Drag-Drop) — Phase 1+2
+   ============================================================ */
+.kana-grid-game {
+    background: var(--card-bg, #FFFDF7);
+    border: 1px solid var(--border-color, #D4CFC5);
+    border-radius: 14px;
+    padding: 1rem;
+    margin: 0.5rem 0;
+}
+.kana-grid-game__loading,
+.kana-grid-game__error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 2rem;
+    color: var(--text-muted, #8C8378);
+    font-size: 0.95rem;
+}
+.kana-grid-game__error i {
+    color: #dc3545;
+}
+.kana-grid-game__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.75rem;
+}
+.kana-grid-game__mode-tabs {
+    display: inline-flex;
+    background: var(--background-color, #F5F0E8);
+    border-radius: 999px;
+    padding: 3px;
+    gap: 2px;
+}
+.kana-grid-game__mode-tabs .mode-tab {
+    background: transparent;
+    border: 0;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.8rem;
+    border-radius: 999px;
+    color: var(--text-muted, #8C8378);
+    cursor: pointer;
+    transition: all 0.18s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+.kana-grid-game__mode-tabs .mode-tab:hover {
+    color: var(--kon, #1F2A44);
+}
+.kana-grid-game__mode-tabs .mode-tab.is-active {
+    background: var(--card-bg, #FFFDF7);
+    color: var(--shu, #EB6101);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    font-weight: 600;
+}
+.kana-grid-game__progress {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 0.85rem;
+    color: var(--kon, #1F2A44);
+    font-weight: 600;
+}
+.kana-grid-game__separator {
+    color: var(--text-muted);
+    font-weight: 400;
+}
+.kana-grid-game__errors i {
+    color: #dc3545;
+    font-size: 0.75rem;
+    margin-right: 2px;
+}
+
+/* Grid (Reihen-Tabelle) */
+.kana-grid-game__grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+.kana-grid-game__row {
+    display: grid;
+    grid-template-columns: minmax(78px, 110px) repeat(5, 1fr);
+    gap: 0.4rem;
+    align-items: stretch;
+}
+.kana-grid-game__row-label {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 0.5rem;
+    color: var(--text-muted, #8C8378);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+.kana-grid-game__cell {
+    position: relative;
+    min-height: 60px;
+    border: 1.5px dashed var(--border-color, #D4CFC5);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 253, 247, 0.55);
+    transition: all 0.18s ease;
+    font-family: 'Klee One', 'Noto Serif JP', serif;
+}
+.kana-grid-game__cell.is-empty {
+    cursor: default;
+}
+.kana-grid-game__cell-hint {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted, #8C8378);
+    opacity: 0.45;
+    font-size: 1.25rem;
+    pointer-events: none;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    letter-spacing: 0.05em;
+}
+.kana-grid-game__cell-drop {
+    font-size: 1.6rem;
+    color: var(--kon, #1F2A44);
+    font-weight: 500;
+    line-height: 1;
+}
+.kana-grid-game__cell.is-correct {
+    border-style: solid;
+    border-color: #2ecc71;
+    background: rgba(46, 204, 113, 0.08);
+    box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.18);
+}
+.kana-grid-game__cell.is-correct .kana-grid-game__cell-hint {
+    opacity: 0;
+}
+.kana-grid-game__cell.is-incorrect {
+    animation: kanaGridShake 0.45s ease-in-out;
+    border-color: #dc3545;
+    background: rgba(220, 53, 69, 0.08);
+}
+@keyframes kanaGridShake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-5px); }
+    40% { transform: translateX(5px); }
+    60% { transform: translateX(-3px); }
+    80% { transform: translateX(3px); }
+}
+
+/* Pool (Drag-Quelle) */
+.kana-grid-game__pool {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: var(--background-color, #F5F0E8);
+    border-radius: 12px;
+    min-height: 70px;
+    margin-bottom: 0.5rem;
+}
+.kana-grid-game__pool-card {
+    min-width: 56px;
+    min-height: 56px;
+    padding: 0.5rem 0.75rem;
+    background: var(--card-bg, #FFFDF7);
+    border: 1px solid var(--border-color, #D4CFC5);
+    border-radius: 10px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    cursor: grab;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Klee One', 'Noto Serif JP', serif;
+    font-size: 1.5rem;
+    color: var(--kon, #1F2A44);
+    user-select: none;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.kana-grid-game__pool-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
+}
+.kana-grid-game__pool-card:active {
+    cursor: grabbing;
+}
+.kana-grid-game__pool-card--ghost {
+    opacity: 0.35;
+}
+.kana-grid-game__pool-text {
+    line-height: 1;
+}
+
+/* Complete-Screen */
+.kana-grid-game__complete {
+    text-align: center;
+    padding: 1.5rem 1rem 1rem;
+    border-top: 1px solid var(--border-color, #D4CFC5);
+    margin-top: 0.5rem;
+}
+.kana-grid-game__stars {
+    display: inline-flex;
+    gap: 0.4rem;
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+}
+.kana-grid-game__stars i {
+    color: #d6cfc2;
+}
+.kana-grid-game__stars i.is-earned {
+    color: #f1c40f;
+    text-shadow: 0 1px 3px rgba(241, 196, 15, 0.4);
+    animation: kanaGridStar 0.4s ease;
+}
+@keyframes kanaGridStar {
+    0%   { transform: scale(0.5); opacity: 0; }
+    60%  { transform: scale(1.2); }
+    100% { transform: scale(1); opacity: 1; }
+}
+.kana-grid-game__complete-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--kon, #1F2A44);
+    margin-bottom: 0.5rem;
+}
+.kana-grid-game__complete-stats {
+    display: inline-flex;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: var(--text-muted, #8C8378);
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    margin-bottom: 0.75rem;
+}
+.kana-grid-game__complete-stats i {
+    margin-right: 0.25rem;
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+    .kana-grid-game__row {
+        grid-template-columns: 1fr;
+        gap: 0.3rem;
+    }
+    .kana-grid-game__row-label {
+        justify-content: flex-start;
+        font-size: 0.7rem;
+        padding: 0.25rem 0;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 0.25rem;
+    }
+    .kana-grid-game__cell {
+        min-height: 50px;
+    }
+    .kana-grid-game__cell-drop {
+        font-size: 1.4rem;
+    }
+    .kana-grid-game__pool-card {
+        min-width: 48px;
+        min-height: 48px;
+        font-size: 1.3rem;
+    }
+}

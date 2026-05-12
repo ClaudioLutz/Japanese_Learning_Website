@@ -1042,6 +1042,55 @@ class DailyReviewAggregate(db.Model):
         return f'<DailyReviewAggregate user:{self.user_id} date:{self.review_date}>'
 
 
+class KanaGridConfig(db.Model):
+    """Konfiguration eines Kana-Grid-Spiels, gekoppelt an einen LessonContent.
+
+    1:1-Beziehung: jeder LessonContent mit content_type='kana_grid_game' hat
+    genau eine KanaGridConfig. Loeschen des LessonContents kaskadiert auf
+    die Config.
+    """
+    __tablename__ = 'kana_grid_config'
+
+    id = db.Column(db.Integer, primary_key=True)
+    lesson_content_id = db.Column(
+        db.Integer,
+        db.ForeignKey('lesson_content.id', ondelete='CASCADE'),
+        unique=True,
+        nullable=False,
+    )
+
+    # Welche Kana-IDs spielen mit (JSON-Array von Kana.id)
+    kana_ids = db.Column(db.JSON, nullable=False)
+
+    # Modus + Layout
+    default_mode = db.Column(
+        db.String(20), nullable=False, default='schreiben', server_default='schreiben'
+    )  # 'schreiben' | 'lesen' | 'blind'
+    allow_mode_switch = db.Column(
+        db.Boolean, nullable=False, default=True, server_default=sa_true()
+    )
+    grid_layout = db.Column(
+        db.String(20), nullable=False, default='rows', server_default='rows'
+    )  # 'rows' = 5xn nach Kana-Reihe, 'free' = flach
+    shuffle_pool = db.Column(
+        db.Boolean, nullable=False, default=True, server_default=sa_true()
+    )
+    timer_enabled = db.Column(
+        db.Boolean, nullable=False, default=False, server_default=db.text('false')
+    )
+
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    content = db.relationship(
+        'LessonContent',
+        backref=db.backref('kana_grid_config', uselist=False, cascade='all, delete-orphan'),
+    )
+
+    def __repr__(self):
+        return f'<KanaGridConfig content:{self.lesson_content_id} mode:{self.default_mode}>'
+
+
 class PaymentTransaction(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     # Use BigInteger for the transaction_id as per API documentation
