@@ -25,10 +25,15 @@ import psycopg2
 import psycopg2.extensions
 from psycopg2.extras import Json
 
-# psycopg2 kann dict-Werte nicht nativ in JSONB/JSON-Spalten schreiben.
-# lesson_content.ai_generation_details ist ein JSON-Feld; ohne Adapter
-# scheitert der UPSERT mit "can't adapt type 'dict'".
+# psycopg2 kann dict/list-Werte nicht nativ in JSONB/JSON-Spalten schreiben.
+# - lesson_content.ai_generation_details ist ein JSON-Feld (dict-Inhalt)
+# - kana_grid_config.kana_ids ist ein JSON-Array von Kana-IDs (list-Inhalt)
+# Ohne Adapter scheitert UPSERT mit "can't adapt type 'dict'" oder das
+# list wird als Postgres ARRAY[] geschrieben — was gegen den JSON-Spalten-
+# Typ erfolglos ist. Im Skript verwenden wir Tupel fuer composite-PKs,
+# nicht Listen, daher ist register_adapter(list, Json) sicher.
 psycopg2.extensions.register_adapter(dict, Json)
+psycopg2.extensions.register_adapter(list, Json)
 
 from scripts.sync_safety import (
     backup_user_tables,
@@ -52,6 +57,7 @@ CONTENT_TABLES = [
     {'name': 'course_lessons', 'pk': ['course_id', 'lesson_id']},  # Composite
     {'name': 'lesson_page', 'pk': 'id'},
     {'name': 'lesson_content', 'pk': 'id'},
+    {'name': 'kana_grid_config', 'pk': 'id'},  # FK auf lesson_content (nach lesson_content!)
     {'name': 'lesson_prerequisite', 'pk': 'id'},
     {'name': 'quiz_question', 'pk': 'id'},
     {'name': 'quiz_option', 'pk': 'id'},

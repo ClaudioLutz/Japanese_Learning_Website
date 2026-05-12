@@ -25,8 +25,10 @@ import psycopg2
 import psycopg2.extensions
 from psycopg2.extras import Json
 
-# Dict-Adapter fuer JSON-Felder (s. sync_content_upsert.py).
+# Dict + list Adapter fuer JSON-Felder (s. sync_content_upsert.py).
+# list wird gebraucht fuer kana_grid_config.kana_ids (JSON-Array).
 psycopg2.extensions.register_adapter(dict, Json)
+psycopg2.extensions.register_adapter(list, Json)
 
 from scripts.sync_safety import collect_snapshot, write_snapshot
 
@@ -45,6 +47,7 @@ CONTENT_TABLES = [
     {'name': 'course_lessons', 'pk': ['course_id', 'lesson_id']},
     {'name': 'lesson_page', 'pk': 'id'},
     {'name': 'lesson_content', 'pk': 'id'},
+    {'name': 'kana_grid_config', 'pk': 'id'},
     {'name': 'lesson_prerequisite', 'pk': 'id'},
     {'name': 'quiz_question', 'pk': 'id'},
     {'name': 'quiz_option', 'pk': 'id'},
