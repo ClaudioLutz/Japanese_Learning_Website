@@ -383,6 +383,31 @@ def create_app():
             cleaned = cleaned[3:-4]
         return Markup(cleaned)
 
+    # Vocab-Highlight: markiert das Zielwort im Beispielsatz.
+    # Strategie (best effort, scheitert leise): word -> reading -> reading[:-1]
+    # bei flektierten Verben (会う vs. あいました) bleibt das Highlight oft aus.
+    @app.template_filter('highlight_vocab')
+    def highlight_vocab_filter(sentence, word=None, reading=None):
+        if not sentence:
+            return ''
+        safe_sentence = escape(sentence)
+        candidates = []
+        for c in (word, reading):
+            if c and len(c) >= 2:
+                candidates.append(c)
+        if reading and len(reading) >= 3:
+            candidates.append(reading[:-1])
+        for cand in candidates:
+            safe_cand = escape(cand)
+            if safe_cand in safe_sentence:
+                highlighted = safe_sentence.replace(
+                    safe_cand,
+                    Markup('<span class="vocab-target-highlight">') + safe_cand + Markup('</span>'),
+                    1,
+                )
+                return Markup(highlighted)
+        return Markup(safe_sentence)
+
     # Flask-Admin fuer Standard-CRUD registrieren
     from app.admin_views import init_admin
     init_admin(app, db.session)

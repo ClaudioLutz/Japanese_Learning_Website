@@ -1904,6 +1904,53 @@ button[onclick*="moveContentInPage"]:active {
     z-index: 2;
 }
 
+/* Vorderseite: Beispielsatz als primaerer Lerntext, Zielwort hervorgehoben. */
+.flip-card .vocab-front-sentence {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 26px;
+    line-height: 1.55;
+    color: var(--text-color);
+    padding: 12px 20px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.flip-card .vocab-target-highlight {
+    color: var(--shu);
+    font-weight: 700;
+    border-bottom: 2px solid var(--shu-soft);
+    padding: 0 2px;
+}
+
+/* Rueckseite: Wort prominent oben (ersetzt die Vorderseite als Anker). */
+.flip-card .vocab-back-word {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 30px;
+    color: var(--primary-color);
+    font-weight: 500;
+    margin-bottom: 12px;
+    text-align: center;
+    line-height: 1.25;
+}
+
+.flip-card .vocab-back-word .vocab-back-reading {
+    display: inline-block;
+    margin-left: 10px;
+    font-size: 17px;
+    color: var(--text-light);
+    font-weight: 400;
+}
+
+.flip-card .vocab-back-word .vocab-back-romaji {
+    display: block;
+    font-size: 13px;
+    color: var(--text-light);
+    font-style: italic;
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+    font-weight: 400;
+}
+
 /* Flip instruction hint */
 .flip-hint {
     position: absolute;
@@ -2962,6 +3009,24 @@ button[onclick*="moveContentInPage"]:active {
     .flip-card .vocab-tts-example {
         font-size: 14px;
         padding: 6px 10px;
+    }
+
+    .flip-card .vocab-front-sentence {
+        font-size: 20px;
+        padding: 8px 12px;
+    }
+
+    .flip-card .vocab-back-word {
+        font-size: 24px;
+        margin-bottom: 8px;
+    }
+
+    .flip-card .vocab-back-word .vocab-back-reading {
+        font-size: 15px;
+    }
+
+    .flip-card .vocab-back-word .vocab-back-romaji {
+        font-size: 12px;
     }
 
     .flip-card .grammar-title {

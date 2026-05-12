@@ -1129,6 +1129,9 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                                             <span class="kana-char">{{ content_data.character }}</span>
                                                                         {% elif content.content_type == 'vocabulary' %}
                                                                             <div class="vocab-front">
+                                                                                {% if content_data.example_sentence_japanese %}
+                                                                                <div class="vocab-front-sentence">{{ content_data.example_sentence_japanese | highlight_vocab(content_data.word, content_data.reading) }}</div>
+                                                                                {% else %}
                                                                                 <div class="vocab-word">{{ content_data.word }}</div>
                                                                                 {% if content_data.reading and content_data.reading != content_data.word %}
                                                                                 <div class="vocab-reading">{{ content_data.reading }}</div>
@@ -1136,8 +1139,6 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                                                 {% if content_data.romaji %}
                                                                                 <div class="vocab-romaji front-romaji">{{ content_data.romaji }}</div>
                                                                                 {% endif %}
-                                                                                {% if content_data.example_sentence_japanese %}
-                                                                                <div class="vocab-tts-example">{{ content_data.example_sentence_japanese }}</div>
                                                                                 {% endif %}
                                                                             </div>
                                                                         {% elif content.content_type == 'grammar' %}
@@ -1189,8 +1190,16 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                                                 <p><strong>JLPT-Niveau:</strong> N{{ content_data.jlpt_level }}</p>
                                                                                 {% endif %}
                                                                             {% elif content.content_type == 'vocabulary' %}
+                                                                                {% if content_data.example_sentence_japanese %}
+                                                                                <div class="vocab-back-word">
+                                                                                    {{ content_data.word }}
+                                                                                    {% if content_data.reading and content_data.reading != content_data.word %}<span class="vocab-back-reading">{{ content_data.reading }}</span>{% endif %}
+                                                                                    {% if content_data.romaji %}<span class="vocab-back-romaji">{{ content_data.romaji }}</span>{% endif %}
+                                                                                </div>
+                                                                                {% else %}
                                                                                 {% if content_data.reading %}
                                                                                 <p><strong>Lesung:</strong> {{ content_data.reading }}</p>
+                                                                                {% endif %}
                                                                                 {% endif %}
                                                                                 {% if lesson.instruction_language == 'german' and content_data.meaning_de %}
                                                                                 <p><strong>Bedeutung:</strong> {{ content_data.meaning_de }}</p>
