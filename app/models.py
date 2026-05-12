@@ -30,6 +30,9 @@ class User(UserMixin, db.Model):
     total_reviews: Mapped[int] = mapped_column(Integer, default=0, nullable=False, server_default='0')
     total_mastered: Mapped[int] = mapped_column(Integer, default=0, nullable=False, server_default='0')
 
+    # Phase 3 (Kana-Spiel): Web-Push-Subscription (opt-in via Service Worker)
+    push_subscription: Mapped[dict] = mapped_column(JSON, nullable=True)
+
     lesson_progress: Mapped[List['UserLessonProgress']] = relationship('UserLessonProgress', backref='user', lazy=True, cascade='all, delete-orphan')
     course_purchases: Mapped[List['CoursePurchase']] = relationship('CoursePurchase', backref='user', lazy=True, cascade='all, delete-orphan')
 

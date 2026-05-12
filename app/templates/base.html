@@ -48,8 +48,22 @@
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Noto+Sans+JP:wght@400;500;700&display=swap">
 
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <script src="{{ url_for('static', filename='js/kana_grid_game.js') }}"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    {% if current_user.is_authenticated and (current_user.current_streak or 0) >= 3 %}
+    {# Phase 3: Service Worker Registration — nur ab Tag 3 (Duolingo-Pattern:
+       opt-in nach Investment, nicht beim ersten Besuch) #}
+    <script>
+    (function () {
+        if (!('serviceWorker' in navigator)) return;
+        if (sessionStorage.getItem('jpl_sw_attempted') === '1') return;
+        sessionStorage.setItem('jpl_sw_attempted', '1');
+        navigator.serviceWorker.register('/static/sw.js').catch(() => {});
+    })();
+    </script>
+    {% endif %}
 
     {# ── Structured Data (Schema.org JSON-LD) ── #}
     {% block structured_data %}
@@ -129,6 +143,10 @@
              style="position:relative;">
             <i class="fas fa-brain"></i><span>Wiederholen</span>
             <span class="topnav-badge-dot" id="reviewBadgeDesktop" style="display:none;"></span>
+          </a>
+          <a href="{{ url_for('srs.practice_kana_page') }}"
+             class="topnav-link {% if request.endpoint == 'srs.practice_kana_page' %}is-active{% endif %}">
+            <i class="fas fa-th"></i><span>Kana üben</span>
           </a>
           <a href="{{ url_for('srs.browse_page') }}"
              class="topnav-link {% if request.endpoint == 'srs.browse_page' %}is-active{% endif %}">

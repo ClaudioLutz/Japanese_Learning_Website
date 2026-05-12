@@ -104,9 +104,19 @@ def maybe_grant_random_xp_boost(rng=None):
 
     Args:
         rng: optional random.Random fuer deterministische Tests
+
+    App-Config 'XP_BOOST_PROBABILITY' (z.B. 0.0 in Tests) ueberschreibt
+    die Modul-Default-Wahrscheinlichkeit.
     """
+    # App-Config-Override (Tests setzen das auf 0)
+    try:
+        from flask import current_app
+        prob = current_app.config.get('XP_BOOST_PROBABILITY', XP_BOOST_PROBABILITY)
+    except RuntimeError:
+        prob = XP_BOOST_PROBABILITY
+
     r = rng if rng is not None else random
-    if r.random() >= XP_BOOST_PROBABILITY:
+    if r.random() >= prob:
         return 0
     return r.randint(XP_BOOST_MIN, XP_BOOST_MAX)
 

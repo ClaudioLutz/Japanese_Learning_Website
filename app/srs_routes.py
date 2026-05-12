@@ -586,6 +586,262 @@ def api_kana_weak():
     return jsonify({'data': result, 'count': len(result)})
 
 
+# ── Web Push Subscription (Phase 3, opt-in) ──────────────────
+
+
+@srs_bp.route('/api/user/push-subscribe', methods=['POST'])
+@login_required
+def api_push_subscribe():
+    """Speichert PushSubscription-JSON, das der Service Worker liefert."""
+    data = request.get_json(silent=True) or {}
+    sub = data.get('subscription')
+    if not sub or not isinstance(sub, dict) or 'endpoint' not in sub:
+        return jsonify({'error': 'Ungueltige Subscription'}), 400
+    current_user.push_subscription = sub
+    db.session.commit()
+    return jsonify({'success': True})
+
+
+@srs_bp.route('/api/user/push-unsubscribe', methods=['POST'])
+@login_required
+def api_push_unsubscribe():
+    """Loescht die gespeicherte PushSubscription."""
+    current_user.push_subscription = None
+    db.session.commit()
+    return jsonify({'success': True})
+
+
+# ── Practice / Daily Challenge (Phase 3) ─────────────────────
+
+
+def _user_unlocked_kana_ids(user_id, include_locked=False):
+    """Gibt die LessonContent-IDs aller Kana zurueck, die der User freigeschaltet hat.
+
+    Freigeschaltet = Lesson abgeschlossen (UserLessonProgress.is_completed=True).
+    Bei include_locked=True werden auch nicht abgeschlossene Lessons mitgezaehlt
+    — sinnvoll fuer Admin/Premium-User, die alles ueben duerfen.
+    """
+    from app.models import LessonContent, UserLessonProgress
+
+    if include_locked:
+        return (
+            db.session.query(LessonContent.id)
+            .filter(LessonContent.content_type == 'kana')
+            .all()
+        )
+
+    completed_lesson_ids = (
+        db.session.query(UserLessonProgress.lesson_id)
+        .filter(
+            UserLessonProgress.user_id == user_id,
+            UserLessonProgress.is_completed.is_(True),
+        )
+        .subquery()
+    )
+    return (
+        db.session.query(LessonContent.id)
+        .filter(
+            LessonContent.content_type == 'kana',
+            LessonContent.lesson_id.in_(completed_lesson_ids),
+        )
+        .all()
+    )
+
+
+@srs_bp.route('/practice/kana')
+@login_required
+def practice_kana_page():
+    """Zentrale Uebungs-Seite fuer Kana-Spiel."""
+    return render_template('practice_kana.html')
+
+
+@srs_bp.route('/api/practice/kana/session')
+@login_required
+def api_practice_session():
+    """Baut on-the-fly eine Spiel-Session aus den Filtern.
+
+    Query-Params:
+        mode: 'schreiben' | 'lesen' | 'blind' (default 'schreiben')
+        schrift: 'hiragana' | 'katakana' | 'both' (default 'both')
+        rows: comma-separated row-keys (z.B. 'vowels,k,s') — leer = alle
+        dakuten: 'true' | 'false' — Dakuten/Handakuten einschliessen
+        yoon: 'true' | 'false' (placeholder, Yoon noch nicht im Schema)
+        weak_only: 'true' — nur User-Leeches (lapses>0)
+        ids: comma-separated kana-IDs — explizite Auswahl ueberschreibt andere
+        limit: max Anzahl (default 20, max 50)
+    """
+    from app.models import CardReviewState, Kana, LessonContent
+
+    mode = request.args.get('mode', 'schreiben')
+    if mode not in ('schreiben', 'lesen', 'blind'):
+        mode = 'schreiben'
+    schrift = request.args.get('schrift', 'both')
+    if schrift not in ('hiragana', 'katakana', 'both'):
+        schrift = 'both'
+    rows_filter = [r.strip() for r in (request.args.get('rows', '') or '').split(',') if r.strip()]
+    include_dakuten = (request.args.get('dakuten', 'true').lower() == 'true')
+    weak_only = (request.args.get('weak_only', 'false').lower() == 'true')
+    ids_param = request.args.get('ids', '')
+    limit = min(request.args.get('limit', 20, type=int), 50)
+
+    if ids_param:
+        try:
+            wanted_kana_ids = [int(x) for x in ids_param.split(',') if x.strip()]
+        except ValueError:
+            wanted_kana_ids = []
+    else:
+        wanted_kana_ids = None  # via Filter herauskristallisieren
+
+    # Welche Kana darf der User ueben?
+    include_locked = bool(getattr(current_user, 'is_admin', False))
+    unlocked_lc_rows = _user_unlocked_kana_ids(current_user.id, include_locked=include_locked)
+    unlocked_lc_ids = [r[0] for r in unlocked_lc_rows]
+    if not unlocked_lc_ids and wanted_kana_ids is None:
+        return jsonify({
+            'kana': [], 'count': 0, 'mode': mode,
+            'message': 'Keine freigeschalteten Kana — bitte erst eine Lesson abschliessen.',
+        })
+
+    # Mapping LC-ID -> Kana
+    q = (
+        db.session.query(LessonContent.id, Kana)
+        .join(Kana, LessonContent.content_id == Kana.id)
+        .filter(LessonContent.content_type == 'kana')
+        .filter(LessonContent.id.in_(unlocked_lc_ids) if unlocked_lc_ids else False)
+    )
+    if schrift != 'both':
+        q = q.filter(Kana.type == schrift)
+    if wanted_kana_ids is not None:
+        q = q.filter(Kana.id.in_(wanted_kana_ids))
+    rows_data = q.all()
+
+    from app.services.kana_rows import row_for_kana
+    DAKUTEN_ROWS = {'g', 'z', 'd', 'b', 'p'}
+
+    items = []
+    for lc_id, kana in rows_data:
+        row_key = row_for_kana(kana.character)
+        if rows_filter and row_key not in rows_filter:
+            continue
+        if not include_dakuten and row_key in DAKUTEN_ROWS:
+            continue
+        items.append({
+            'kana_id': kana.id,
+            'lesson_content_id': lc_id,
+            'character': kana.character,
+            'romanization': kana.romanization,
+            'type': kana.type,
+            'row': row_key,
+        })
+
+    # weak_only-Filter: nur Kana mit lapses > 0
+    if weak_only and items:
+        lc_ids = [i['lesson_content_id'] for i in items]
+        states = (
+            db.session.query(CardReviewState.content_id, CardReviewState.lapses)
+            .filter(
+                CardReviewState.user_id == current_user.id,
+                CardReviewState.content_id.in_(lc_ids),
+                CardReviewState.lapses > 0,
+            )
+            .all()
+        )
+        weak_lc = {s.content_id for s in states}
+        items = [i for i in items if i['lesson_content_id'] in weak_lc]
+
+    # Deduplizieren auf Kana-ID (selber Kana kann in mehreren Lessons sein)
+    seen = set()
+    deduped = []
+    for it in items:
+        if it['kana_id'] in seen:
+            continue
+        seen.add(it['kana_id'])
+        deduped.append(it)
+    items = deduped
+
+    # Sortieren: faellige Karten zuerst, dann nach due_date asc
+    if items:
+        lc_ids = [i['lesson_content_id'] for i in items]
+        states = (
+            db.session.query(CardReviewState.content_id, CardReviewState.due_date)
+            .filter(
+                CardReviewState.user_id == current_user.id,
+                CardReviewState.content_id.in_(lc_ids),
+            )
+            .all()
+        )
+        due_map = {s.content_id: s.due_date for s in states}
+        from datetime import datetime
+        far_future = datetime(2999, 1, 1)
+        items.sort(key=lambda x: due_map.get(x['lesson_content_id'], far_future))
+
+    items = items[:limit]
+    return jsonify({
+        'kana': items,
+        'count': len(items),
+        'mode': mode,
+        'filters': {
+            'schrift': schrift,
+            'rows': rows_filter,
+            'dakuten': include_dakuten,
+            'weak_only': weak_only,
+        },
+    })
+
+
+@srs_bp.route('/api/practice/kana/daily-challenge')
+@login_required
+def api_practice_daily_challenge():
+    """Taegliche Challenge: 10 zufaellige Kana, deterministisch pro (user_id, date)."""
+    import hashlib
+    import random as _random
+    from datetime import date
+    from app.models import Kana, LessonContent
+
+    today = date.today().isoformat()
+    seed_raw = f'{current_user.id}-{today}-daily-kana'
+    seed = int(hashlib.sha256(seed_raw.encode()).hexdigest()[:16], 16)
+
+    include_locked = bool(getattr(current_user, 'is_admin', False))
+    unlocked_lc_rows = _user_unlocked_kana_ids(current_user.id, include_locked=include_locked)
+    unlocked_lc_ids = [r[0] for r in unlocked_lc_rows]
+    if not unlocked_lc_ids:
+        return jsonify({'kana': [], 'count': 0, 'bonus_xp': 0,
+                        'message': 'Keine freigeschalteten Kana — bitte erst eine Lesson abschliessen.'})
+
+    rows = (
+        db.session.query(LessonContent.id, Kana)
+        .join(Kana, LessonContent.content_id == Kana.id)
+        .filter(LessonContent.id.in_(unlocked_lc_ids))
+        .all()
+    )
+
+    # Deterministisch shufflen
+    rng = _random.Random(seed)
+    rows = list(rows)
+    rng.shuffle(rows)
+    picked = rows[:10]
+
+    from app.services.kana_rows import row_for_kana
+    items = []
+    for lc_id, kana in picked:
+        items.append({
+            'kana_id': kana.id,
+            'lesson_content_id': lc_id,
+            'character': kana.character,
+            'romanization': kana.romanization,
+            'type': kana.type,
+            'row': row_for_kana(kana.character),
+        })
+
+    return jsonify({
+        'kana': items,
+        'count': len(items),
+        'bonus_xp': 25,  # bei perfektem Abschluss
+        'date': today,
+    })
+
+
 # ── Kana-Grid-Spiel (Phase 1) ─────────────────────────────────
 
 

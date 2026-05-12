@@ -34,6 +34,8 @@ def app():
         "WTF_CSRF_SECRET_KEY": "test-csrf-key",
         "MAIL_SUPPRESS_SEND": True,
         "MAIL_DEFAULT_SENDER": "test@japanese-learning.ch",
+        # Phase 2: Variable XP-Boost in Tests deaktivieren (sonst non-deterministisch)
+        "XP_BOOST_PROBABILITY": 0.0,
         "UPLOAD_FOLDER": os.path.join(os.path.dirname(__file__), "test_uploads"),
         "ALLOWED_EXTENSIONS": {
             "image": {"png", "jpg", "jpeg", "gif", "webp"},
