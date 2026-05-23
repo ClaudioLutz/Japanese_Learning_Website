@@ -1,0 +1,56 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body{margin:0;padding:18px;background:var(--washi);font-family:var(--font-body)}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .card{background:#fff;border:1px solid var(--ink-200);border-radius:12px;padding:14px 16px 14px;display:flex;flex-direction:column;gap:6px;border-top:4px solid var(--kon)}
+  .card.next{border-color:var(--shu);box-shadow:0 0 0 3px rgba(235,97,1,.18),var(--shadow-card);border-top-color:var(--shu)}
+  .card.complete{background:rgba(122,144,51,.04);border-color:var(--matcha);border-top-color:var(--matcha)}
+  .row1{display:flex;align-items:center;gap:.65rem}
+  .ico{font-size:1.6rem;line-height:1}
+  .title{font-family:var(--font-display);font-weight:600;font-size:1rem;color:var(--kon);line-height:1.25;margin:0}
+  .meta{color:var(--fg-3);font-size:.74rem;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.04em}
+  .desc{color:var(--ink-600);font-size:.85rem;margin:0;line-height:1.5}
+  .badge{background:var(--shu);color:#fff;font-family:var(--font-display);font-size:.66rem;font-weight:700;letter-spacing:.05em;padding:.2rem .55rem;border-radius:9999px}
+  .check{font-size:1.1rem}
+  .progress{height:5px;background:var(--ink-100);border-radius:3px;overflow:hidden;margin-top:4px}
+  .progress > span{display:block;height:100%;background:var(--kon)}
+</style></head><body>
+<div class="grid">
+  <div class="card">
+    <div class="row1">
+      <div class="ico">📖</div>
+      <div style="flex:1"><h4 class="title">Hiragana Grundlagen</h4><div class="meta">Modul 01</div></div>
+    </div>
+    <p class="desc">あ–ん in 5 Tagen. Lesen, schreiben, hören.</p>
+    <div class="progress"><span style="width:62%;background:var(--kon)"></span></div>
+  </div>
+  <div class="card next">
+    <div class="row1">
+      <div class="ico">✏️</div>
+      <div style="flex:1"><h4 class="title">Katakana Lesen</h4><div class="meta">Modul 02</div></div>
+      <span class="badge">START</span>
+    </div>
+    <p class="desc">Loanwords entziffern: コーヒー, テレビ, パン.</p>
+    <div class="progress"><span style="width:0%"></span></div>
+  </div>
+  <div class="card complete">
+    <div class="row1">
+      <div class="ico">🈂️</div>
+      <div style="flex:1"><h4 class="title">Erste Sätze</h4><div class="meta">Modul 03</div></div>
+      <span class="check">✅</span>
+    </div>
+    <p class="desc">Subjekt + は + Prädikat — die Grundlogik.</p>
+    <div class="progress"><span style="width:100%;background:var(--matcha)"></span></div>
+  </div>
+  <div class="card" style="opacity:.55;border-top-color:#9AA6BD">
+    <div class="row1">
+      <div class="ico">📝</div>
+      <div style="flex:1"><h4 class="title">N5 Kanji Set 1</h4><div class="meta">Modul 04</div></div>
+      <span style="font-size:1rem">🔒</span>
+    </div>
+    <p class="desc">Erst Vorgänger ≥80 % abschliessen.</p>
+  </div>
+</div>
+</body></html>

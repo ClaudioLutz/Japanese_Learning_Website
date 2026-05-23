@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Learning App UI Kit · Japanese Learning</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../colors_and_type.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  body{margin:0;background:var(--washi);color:var(--fg-2);font-family:var(--font-body)}
+  .kit-shell{max-width:1280px;margin:0 auto;padding:32px 24px 96px}
+  .kit-header{padding:18px 0 28px;border-bottom:1px solid var(--ink-200);margin-bottom:32px}
+  .kit-header h1{font-family:var(--font-display);font-weight:600;font-size:22px;letter-spacing:-.02em;color:var(--kon);margin:0 0 4px}
+  .kit-header p{margin:0;color:var(--fg-3);font-size:14px;max-width:60ch;line-height:1.55}
+  .kit-section{margin-top:48px}
+  .kit-eyebrow{font-family:var(--font-mono);font-size:11px;color:var(--fg-3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px}
+  .kit-stage{background:var(--washi);border:1px dashed var(--ink-300);border-radius:14px;padding:32px}
+
+  /* ───── App nav (logged-in variant) ───── */
+  .appnav{background:rgba(255,255,255,.92);backdrop-filter:saturate(180%) blur(14px);border:1px solid rgba(0,0,0,.07);border-radius:12px}
+  .appnav-inner{max-width:1280px;margin:0 auto;height:62px;padding:0 1.1rem;display:flex;align-items:center;gap:.85rem}
+  .nav-brand{display:flex;align-items:center;gap:.55rem;color:#1a1a1a;text-decoration:none}
+  .nav-brand svg{width:30px;height:30px;color:var(--kon)}
+  .nav-brand .wm{font-family:var(--font-serif);font-weight:600;font-size:.98rem;letter-spacing:-.01em;font-variation-settings:'opsz' 14}
+  .nav-link{display:inline-flex;align-items:center;gap:.45rem;padding:.45rem .8rem;border-radius:8px;color:#4a4a4a;font-size:.88rem;font-weight:500;text-decoration:none}
+  .nav-link i{font-size:.78rem;opacity:.7}
+  .nav-link:hover{background:rgba(28,26,23,.04);color:#1a1a1a}
+  .nav-link.active{background:rgba(235,97,1,.08);color:var(--shu)}
+  .nav-spacer{flex:1}
+  .stat-pill{display:inline-flex;align-items:center;gap:.3rem;padding:.32rem .65rem;background:rgba(0,0,0,.04);border-radius:9999px;font-size:.8rem;font-weight:600;color:#4a4a4a}
+  .avatar-pill{display:inline-flex;align-items:center;gap:.4rem;padding:.3rem .65rem .3rem .3rem;border-radius:9999px;background:#fff;border:1px solid var(--ink-200);font-size:.84rem;font-weight:600;color:var(--fg-1);text-decoration:none}
+  .avatar-dot{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#4f46e5,#2563eb);color:#fff;font-size:.72rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center}
+
+  /* ───── Greeting + path overview ───── */
+  .greet-row{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1.4rem}
+  .greet h2{font-family:var(--font-display);font-weight:510;font-size:clamp(1.6rem,2.4vw + .5rem,2.2rem);letter-spacing:-.02em;color:var(--kon);margin:.4rem 0 .25rem}
+  .greet .ja{font-family:var(--font-jp-serif);color:var(--fg-3);font-size:.98rem}
+  .greet p{margin:0;color:var(--ink-600);font-size:.95rem}
+  .path-summary{display:flex;gap:1.4rem;align-items:center;background:#fff;border:1px solid var(--ink-200);border-radius:12px;padding:.85rem 1.1rem}
+  .path-summary .stat{font-family:var(--font-mono);font-size:.8rem;color:var(--fg-3);text-transform:uppercase;letter-spacing:.05em}
+  .path-summary .stat strong{display:block;font-family:var(--font-display);font-weight:600;font-size:1.4rem;color:var(--kon);letter-spacing:-.02em;text-transform:none;margin-top:2px}
+
+  /* ───── Review session card (the actual SRS surface) ───── */
+  .session{display:grid;grid-template-columns:1.4fr 1fr;gap:18px}
+  .review-card{background:#fff;border:1px solid var(--ink-200);border-radius:14px;padding:1.6rem;display:flex;flex-direction:column;gap:1rem;box-shadow:0 16px 40px -24px rgba(28,26,23,.18)}
+  .review-card .meta{display:flex;justify-content:space-between;align-items:center;font-family:var(--font-mono);font-size:.74rem;color:var(--fg-3);letter-spacing:.05em;text-transform:uppercase}
+  .review-card .progress{height:5px;background:var(--ink-100);border-radius:3px;overflow:hidden}
+  .review-card .progress > span{display:block;height:100%;background:var(--shu);width:48%}
+  .review-card .face{padding:2.2rem 1rem 1.6rem;text-align:center;border-radius:12px;background:var(--washi);border:1px solid var(--ink-100)}
+  .review-card .face .kanji{font-family:var(--font-jp-serif);font-weight:500;font-size:6.5rem;color:var(--sumi);line-height:1}
+  .review-card .face .reading{margin-top:.65rem;font-family:var(--font-jp);font-size:1.4rem;color:var(--kon)}
+  .review-card .face .meaning{margin-top:.35rem;font-size:.95rem;color:var(--fg-3);font-style:italic}
+  .review-card .grades{display:grid;grid-template-columns:repeat(4,1fr);gap:.55rem}
+  .grade-btn{display:flex;flex-direction:column;align-items:center;gap:.2rem;padding:.7rem .4rem;border:1px solid var(--ink-200);background:#fff;border-radius:10px;cursor:pointer;transition:transform .15s,border-color .15s,background .15s;font-family:var(--font-body)}
+  .grade-btn:hover{transform:translateY(-1px)}
+  .grade-btn .lbl{font-family:var(--font-display);font-weight:600;font-size:.92rem;color:var(--kon)}
+  .grade-btn .key{font-family:var(--font-mono);font-size:.68rem;color:var(--fg-3)}
+  .grade-btn .when{font-family:var(--font-mono);font-size:.7rem;color:var(--fg-3);margin-top:.15rem}
+  .grade-btn.again{border-color:rgba(209,75,61,.3)}
+  .grade-btn.again:hover{background:rgba(209,75,61,.06);border-color:#D14B3D}
+  .grade-btn.again .lbl{color:#D14B3D}
+  .grade-btn.hard:hover{background:rgba(199,128,45,.06);border-color:var(--kincha)}
+  .grade-btn.hard .lbl{color:var(--kincha)}
+  .grade-btn.good:hover{background:rgba(31,42,68,.04);border-color:var(--kon)}
+  .grade-btn.easy:hover{background:rgba(122,144,51,.06);border-color:var(--matcha)}
+  .grade-btn.easy .lbl{color:var(--matcha)}
+  .review-foot{display:flex;justify-content:space-between;align-items:center;font-size:.82rem;color:var(--fg-3)}
+  .review-foot a{color:var(--ai);text-decoration:none;font-weight:600}
+
+  /* ───── Lesson side panel ───── */
+  .side-panel{display:flex;flex-direction:column;gap:14px}
+  .panel-card{background:#fff;border:1px solid var(--ink-200);border-radius:12px;padding:1rem 1.15rem}
+  .panel-card h3{font-family:var(--font-display);font-weight:600;font-size:.95rem;color:var(--kon);margin:0 0 .55rem;letter-spacing:-.01em}
+  .panel-card p{margin:0;color:var(--ink-600);font-size:.88rem;line-height:1.5}
+  .queue-list{list-style:none;padding:0;margin:.6rem 0 0;display:flex;flex-direction:column;gap:.4rem}
+  .queue-list li{display:flex;align-items:center;gap:.55rem;font-size:.86rem;color:var(--ink-700)}
+  .queue-list .ja{font-family:var(--font-jp);font-weight:500;color:var(--sumi);min-width:1.6rem;text-align:center}
+  .queue-list .due{margin-left:auto;font-family:var(--font-mono);font-size:.74rem;color:var(--fg-3)}
+  .queue-list .due.soon{color:var(--shu)}
+
+  /* ───── Lesson view (kana drill grid) ───── */
+  .lesson-head{display:flex;align-items:center;gap:1rem;margin-bottom:1rem}
+  .lesson-head .crumb{font-family:var(--font-mono);font-size:.74rem;color:var(--fg-3);text-transform:uppercase;letter-spacing:.05em}
+  .lesson-head h2{margin:.25rem 0 0;font-family:var(--font-display);font-weight:510;font-size:1.7rem;letter-spacing:-.02em;color:var(--kon)}
+  .lesson-head .ja{font-family:var(--font-jp-serif);color:var(--fg-3);font-size:.95rem;margin-top:2px;display:block}
+  .lesson-progress{margin-left:auto;display:flex;align-items:center;gap:.6rem;color:var(--fg-3);font-family:var(--font-mono);font-size:.78rem}
+  .lesson-progress .bar{width:200px;height:6px;background:var(--ink-100);border-radius:3px;overflow:hidden}
+  .lesson-progress .bar > span{display:block;height:100%;background:var(--shu);width:33%}
+  .kana-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:.6rem}
+  .kana-card{background:#fff;border:1px solid var(--ink-200);border-radius:10px;padding:1rem .5rem .8rem;text-align:center;transition:transform .15s,box-shadow .15s,border-color .15s;cursor:pointer}
+  .kana-card:hover{transform:translateY(-1px);border-color:var(--ink-400);box-shadow:0 6px 16px -8px rgba(28,26,23,.18)}
+  .kana-card .ja{font-family:var(--font-jp);font-weight:500;font-size:2rem;color:var(--sumi);line-height:1}
+  .kana-card .ro{margin-top:.4rem;font-family:var(--font-mono);font-size:.7rem;color:var(--fg-3);letter-spacing:.05em}
+  .kana-card.is-known{background:rgba(122,144,51,.06);border-color:var(--matcha)}
+  .kana-card.is-known .ro{color:var(--matcha)}
+  .kana-card.is-next{border-color:var(--shu);box-shadow:0 0 0 3px rgba(235,97,1,.18)}
+  .kana-card.is-locked{opacity:.4}
+
+  /* ───── Streak & stats ───── */
+  .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .stat-card{background:#fff;border:1px solid var(--ink-200);border-radius:12px;padding:1.1rem 1.2rem;display:flex;flex-direction:column;gap:.35rem}
+  .stat-card .lbl{font-family:var(--font-mono);font-size:.72rem;color:var(--fg-3);text-transform:uppercase;letter-spacing:.06em}
+  .stat-card .val{font-family:var(--font-display);font-weight:600;font-size:2rem;color:var(--kon);letter-spacing:-.02em;line-height:1}
+  .stat-card .delta{font-size:.78rem;color:var(--matcha);font-weight:600}
+  .stat-card .delta.warn{color:var(--kincha)}
+  .heat{display:grid;grid-template-columns:repeat(20,1fr);gap:3px;margin-top:.6rem}
+  .heat span{aspect-ratio:1;background:var(--ink-100);border-radius:2px}
+  .heat .l1{background:rgba(122,144,51,.25)}
+  .heat .l2{background:rgba(122,144,51,.5)}
+  .heat .l3{background:rgba(122,144,51,.75)}
+  .heat .l4{background:var(--matcha)}
+
+  /* ───── Toast / inline feedback ───── */
+  .feedback{display:flex;align-items:center;gap:.7rem;padding:.85rem 1.1rem;border-radius:10px;font-size:.92rem}
+  .fb-ok{background:rgba(122,144,51,.08);border:1px solid rgba(122,144,51,.35);color:#3f4d1a}
+  .fb-warn{background:rgba(199,128,45,.08);border:1px solid rgba(199,128,45,.4);color:#6e4a18}
+  .fb-err{background:rgba(209,75,61,.06);border:1px solid rgba(209,75,61,.4);color:#7d2419}
+
+  /* ───── Mobile bottom nav ───── */
+  .bottom-nav{display:flex;align-items:stretch;background:#fff;border:1px solid var(--ink-200);border-radius:14px;padding:.4rem;max-width:380px}
+  .bn-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:.2rem;padding:.5rem 0;color:var(--fg-3);font-size:.7rem;font-weight:600;text-decoration:none;border-radius:10px}
+  .bn-item i{font-size:1.05rem}
+  .bn-item.active{background:rgba(235,97,1,.08);color:var(--shu)}
+
+  /* ───── Empty state ───── */
+  .empty{display:flex;flex-direction:column;align-items:center;text-align:center;padding:2.4rem 1.2rem;border:1px dashed var(--ink-300);border-radius:14px;background:#fff;gap:.4rem}
+  .empty .ja{font-family:var(--font-jp-serif);color:var(--fg-3);font-size:1.4rem;margin-bottom:.4rem}
+  .empty h3{font-family:var(--font-display);font-weight:600;font-size:1.15rem;color:var(--kon);margin:0;letter-spacing:-.01em}
+  .empty p{margin:.2rem auto 0;max-width:32ch;color:var(--fg-3);font-size:.92rem;line-height:1.5}
+  .empty a{margin-top:.7rem;display:inline-flex;align-items:center;gap:.4rem;padding:.55rem 1rem;border-radius:8px;background:linear-gradient(180deg,#EB6101,#D85700);color:#fff;font-weight:600;font-size:.9rem;text-decoration:none}
+
+  @media (max-width:780px){
+    .session{grid-template-columns:1fr}
+    .stats-grid{grid-template-columns:repeat(2,1fr)}
+    .review-card .face .kanji{font-size:5rem}
+  }
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="torii" viewBox="0 0 64 64">
+    <g fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M 7 17 Q 32 12 57 17 L 56 21 Q 32 16 8 21 Z" fill="currentColor" stroke-width="1.5"/>
+      <path d="M 11 27 Q 32 25 53 27" stroke-width="3.4"/>
+      <path d="M 14.5 22 Q 13.5 38 12.2 56" stroke-width="4.2"/>
+      <path d="M 49.5 22 Q 50.7 38 51.8 56" stroke-width="4.2"/>
+    </g>
+  </symbol>
+</svg>
+
+<div class="kit-shell">
+
+  <header class="kit-header">
+    <h1>Learning App UI Kit</h1>
+    <p>In-product surfaces — the SRS review card, lesson drill view, dashboard stats, mobile nav, and the quiet empty/feedback states. The review card is the workhorse: every other screen orbits around it.</p>
+  </header>
+
+  <!-- 1 · App nav -->
+  <section class="kit-section">
+    <div class="kit-eyebrow">01 · App nav (logged-in, with streak/level/avatar)</div>
+    <div class="kit-stage">
+      <nav class="appnav"><div class="appnav-inner">
+        <a class="nav-brand"><svg><use href="#torii"/></svg><span class="wm">Japanese Learning</span></a>
+        <a class="nav-link active" href="#"><i class="fas fa-route"></i>Pfad</a>
+        <a class="nav-link" href="#"><i class="fas fa-book-open"></i>Lektionen</a>
+        <a class="nav-link" href="#"><i class="fas fa-brain"></i>Wiederholen</a>
+        <a class="nav-link" href="#"><i class="fas fa-chart-bar"></i>Stats</a>
+        <span class="nav-spacer"></span>
+        <span class="stat-pill" title="Streak">🔥 14</span>
+        <span class="stat-pill" title="Level">⚡ Lv.4</span>
+        <span class="stat-pill" title="Karten heute">🧠 12</span>
+        <a class="avatar-pill" href="#"><span class="avatar-dot">C</span>claudio</a>
+      </div></nav>
+    </div>
+  </section>
+
+  <!-- 2 · Greeting + path summary -->
+  <section class="kit-section">
+    <div class="kit-eyebrow">02 · Greeting + path summary</div>
+    <div class="kit-stage">
+      <div class="greet-row">
+        <div class="greet">
+          <span class="ja">こんにちは, claudio</span>
+          <h2>Wo du aufgehört hast.</h2>
+          <p>12 Karten warten auf dich. Reicht für etwa 6 Minuten.</p>
+        </div>
+        <div class="path-summary">
+          <div class="stat"><strong>JLPT N5</strong>Lernpfad</div>
+          <div class="stat" style="border-left:1px solid var(--ink-200);padding-left:1.2rem"><strong>3 / 12</strong>Module</div>
+          <div class="stat" style="border-left:1px solid var(--ink-200);padding-left:1.2rem"><strong>14 d</strong>Streak</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · Review session (the heart of the app) -->
+  <section class="kit-section">
+    <div class="kit-eyebrow">03 · Review session (FSRS card · 4-grade response)</div>
+    <div class="kit-stage">
+      <div class="session">
+        <div class="review-card">
+          <div class="meta"><span>Wiederholen · Karte 6 / 12</span><span>00:42</span></div>
+          <div class="progress"><span></span></div>
+          <div class="face">
+            <div class="kanji">水</div>
+            <div class="reading">みず</div>
+            <div class="meaning">— Wasser —</div>
+          </div>
+          <div class="grades">
+            <button class="grade-btn again"><span class="lbl">Wieder</span><span class="key">1</span><span class="when">&lt; 10 min</span></button>
+            <button class="grade-btn hard"><span class="lbl">Schwer</span><span class="key">2</span><span class="when">8 h</span></button>
+            <button class="grade-btn good"><span class="lbl">Gut</span><span class="key">3</span><span class="when">2 d</span></button>
+            <button class="grade-btn easy"><span class="lbl">Leicht</span><span class="key">4</span><span class="when">5 d</span></button>
+          </div>
+          <div class="review-foot">
+            <span><i class="fas fa-keyboard" style="margin-right:.4rem;color:var(--fg-3)"></i>Tasten 1–4 oder Leertaste umdrehen</span>
+            <a href="#">Karte überspringen →</a>
+          </div>
+        </div>
+        <div class="side-panel">
+          <div class="panel-card">
+            <h3>Heute fällig</h3>
+            <p>Du arbeitest dich gerade durch <strong>Modul 03 · Katakana</strong>.</p>
+            <ul class="queue-list">
+              <li><span class="ja">水</span>Wasser <span class="due soon">jetzt</span></li>
+              <li><span class="ja">火</span>Feuer <span class="due">in 4 min</span></li>
+              <li><span class="ja">山</span>Berg <span class="due">in 12 min</span></li>
+              <li><span class="ja">川</span>Fluss <span class="due">heute</span></li>
+              <li><span class="ja">人</span>Mensch <span class="due">heute</span></li>
+            </ul>
+          </div>
+          <div class="panel-card" style="background:#F2F4F8;border-color:#E1E5EE">
+            <h3 style="display:flex;align-items:center;gap:.5rem"><i class="fas fa-lightbulb" style="color:var(--shu)"></i>FSRS-Tipp</h3>
+            <p>Drücke <strong>"Wieder"</strong> nur, wenn du die Karte gar nicht erkannt hast — sonst wird der Algorithmus pessimistisch und du kriegst sie zu oft.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · Lesson view -->
+  <section class="kit-section">
+    <div class="kit-eyebrow">04 · Lesson view (kana drill, status states)</div>
+    <div class="kit-stage">
+      <div class="lesson-head">
+        <div>
+          <span class="crumb">Modul 02 · Hiragana</span>
+          <h2>か, さ, た, な-Reihen</h2>
+          <span class="ja">行を覚える</span>
+        </div>
+        <div class="lesson-progress"><div class="bar"><span></span></div><span>4 / 12</span></div>
+      </div>
+      <div class="kana-grid">
+        <div class="kana-card is-known"><div class="ja">か</div><div class="ro">ka ✓</div></div>
+        <div class="kana-card is-known"><div class="ja">き</div><div class="ro">ki ✓</div></div>
+        <div class="kana-card is-known"><div class="ja">く</div><div class="ro">ku ✓</div></div>
+        <div class="kana-card is-known"><div class="ja">け</div><div class="ro">ke ✓</div></div>
+        <div class="kana-card is-next"><div class="ja">こ</div><div class="ro">ko</div></div>
+        <div class="kana-card"><div class="ja">さ</div><div class="ro">sa</div></div>
+        <div class="kana-card"><div class="ja">し</div><div class="ro">shi</div></div>
+        <div class="kana-card"><div class="ja">す</div><div class="ro">su</div></div>
+        <div class="kana-card is-locked"><div class="ja">せ</div><div class="ro">se</div></div>
+        <div class="kana-card is-locked"><div class="ja">そ</div><div class="ro">so</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · Dashboard stats -->
+  <section class="kit-section">
+    <div class="kit-eyebrow">05 · Dashboard stats (numeric, FSRS-honest)</div>
+    <div class="kit-stage">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="lbl">Streak</span><span class="val">14<small style="font-size:1rem;color:var(--fg-3);font-weight:500"> Tage</small></span>
+          <span class="delta">+1 seit gestern</span>
+        </div>
+        <div class="stat-card">
+          <span class="lbl">Karten heute</span><span class="val">12 / 12</span>
+          <span class="delta">geschafft</span>
+        </div>
+        <div class="stat-card">
+          <span class="lbl">Retention 30 d</span><span class="val">86 %</span>
+          <span class="delta warn">Ziel: 90 %</span>
+        </div>
+        <div class="stat-card">
+          <span class="lbl">Bekannt</span><span class="val">142<small style="font-size:1rem;color:var(--fg-3);font-weight:500"> / 305</small></span>
+          <span class="delta">N5 zu 47 %</span>
+        </div>
+      </div>
+      <div class="panel-card" style="margin-top:14px">
+        <h3>Aktivität · letzte 20 Tage</h3>
+        <div class="heat">
+          <span class="l3"></span><span class="l2"></span><span class="l4"></span><span class="l3"></span><span class="l1"></span>
+          <span></span><span class="l2"></span><span class="l4"></span><span class="l4"></span><span class="l3"></span>
+          <span class="l2"></span><span class="l3"></span><span class="l1"></span><span></span><span class="l2"></span>
+          <span class="l3"></span><span class="l4"></span><span class="l3"></span><span class="l2"></span><span class="l4"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · Inline feedback -->
+  <section class="kit-section">
+    <div class="kit-eyebrow">06 · Inline feedback &amp; toasts</div>
+    <div class="kit-stage" style="display:flex;flex-direction:column;gap:10px">
+      <div class="feedback fb-ok"><i class="fas fa-check-circle"></i><div><strong>Lektion abgeschlossen.</strong> 12 neue Karten in deiner Wiederholung — fällig in ~10 min.</div></div>
+      <div class="feedback fb-warn"><i class="fas fa-exclamation-triangle"></i><div><strong>Voraussetzung:</strong> Hiragana-Modul muss zu mindestens 80 % abgeschlossen sein.</div></div>
+      <div class="feedback fb-err"><i class="fas fa-times-circle"></i><div><strong>Zahlung fehlgeschlagen.</strong> Bitte versuche es erneut oder wähle TWINT.</div></div>
+    </div>
+  </section>
+
+  <!-- 7 · Empty state + bottom nav -->
+  <section class="kit-section">
+    <div class="kit-eyebrow">07 · Empty state &amp; mobile bottom nav</div>
+    <div class="kit-stage" style="display:grid;grid-template-columns:1.5fr 1fr;gap:14px">
+      <div class="empty">
+        <span class="ja">完了</span>
+        <h3>Keine Karten fällig.</h3>
+        <p>Du bist für heute durch — kein Grund, jetzt noch zu üben. Komm morgen wieder, der Algorithmus passt sich dann an.</p>
+        <a href="#"><i class="fas fa-book-open"></i>Neues Modul starten</a>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.6rem;align-items:center;justify-content:center">
+        <span class="kit-eyebrow" style="margin:0">Mobile · &lt; 992 px</span>
+        <nav class="bottom-nav">
+          <a class="bn-item"><i class="fas fa-home"></i>Pfad</a>
+          <a class="bn-item active"><i class="fas fa-book-open"></i>Lektionen</a>
+          <a class="bn-item"><i class="fas fa-brain"></i>Reviews</a>
+          <a class="bn-item"><i class="fas fa-user-circle"></i>Profil</a>
+        </nav>
+      </div>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

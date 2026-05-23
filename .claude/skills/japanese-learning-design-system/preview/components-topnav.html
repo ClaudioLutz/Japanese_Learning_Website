@@ -1,0 +1,39 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body{margin:0;padding:0;background:var(--washi);font-family:var(--font-body)}
+  .nav{background:rgba(255,255,255,.92);backdrop-filter:saturate(180%) blur(14px);border-bottom:1px solid rgba(0,0,0,.07)}
+  .inner{max-width:1280px;margin:0 auto;height:60px;padding:0 1.25rem;display:flex;align-items:center;gap:1rem}
+  .brand{display:flex;align-items:center;gap:.6rem;color:#1a1a1a;text-decoration:none}
+  .brand svg{width:32px;height:32px;color:var(--kon)}
+  .bn{font-family:var(--font-serif);font-weight:600;font-size:1rem;color:#1a1a1a;letter-spacing:-.01em;font-variation-settings:'opsz' 14}
+  .bt{font-family:var(--font-jp-serif);font-size:.7rem;color:#94a3b8;display:block;margin-top:1px}
+  .links{display:flex;align-items:center;gap:.15rem;flex:1;margin-left:1rem}
+  .link{display:inline-flex;align-items:center;gap:.5rem;padding:.5rem .85rem;border-radius:8px;color:#4a4a4a;font-size:.9rem;font-weight:500;text-decoration:none}
+  .link.active{background:rgba(235,97,1,.08);color:var(--shu)}
+  .cta{background:#fff;color:#4f46e5;border:1.5px solid #c7d2fe;padding:.4rem .85rem;border-radius:8px;font-size:.85rem;font-weight:600}
+  .right{display:flex;gap:.5rem}
+  .ghost{padding:.45rem .9rem;color:#4a4a4a;font-size:.85rem;font-weight:600;text-decoration:none}
+  .prim{padding:.45rem .95rem;border-radius:8px;font-size:.85rem;font-weight:600;color:#fff;background:linear-gradient(180deg,#EB6101,#D85700);box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 1px 2px rgba(184,74,0,.3),0 0 0 1px rgba(184,74,0,.4);text-decoration:none}
+</style></head><body>
+<nav class="nav"><div class="inner">
+  <a class="brand">
+    <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M 7 17 Q 32 12 57 17 L 56 21 Q 32 16 8 21 Z" fill="currentColor" stroke-width="1.5"/>
+      <path d="M 11 27 Q 32 25 53 27" stroke-width="3.4"/>
+      <path d="M 32 22 L 32 26.5" stroke-width="2.6"/>
+      <path d="M 14.5 22 Q 13.5 38 12.2 56" stroke-width="4.2"/>
+      <path d="M 49.5 22 Q 50.7 38 51.8 56" stroke-width="4.2"/>
+    </svg>
+    <span><span class="bn">Japanese Learning</span><span class="bt">日本語</span></span>
+  </a>
+  <div class="links">
+    <a class="link active">Lernpfad</a>
+    <a class="link">Lektionen</a>
+    <a class="link">Wiederholen</a>
+    <a class="link cta" style="margin-left:.4rem">⚡ N5 Komplett</a>
+  </div>
+  <div class="right"><a class="ghost">Anmelden</a><a class="prim">Kostenlos starten</a></div>
+</div></nav>
+</body></html>

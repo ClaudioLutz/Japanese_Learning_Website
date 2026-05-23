@@ -1,0 +1,43 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body{margin:0;padding:18px;background:var(--washi);font-family:var(--font-body)}
+  .grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+  .card{background:#fff;border:1px solid var(--ink-200);border-radius:10px;padding:12px}
+  .lbl{font-family:var(--font-mono);font-size:10px;color:var(--fg-3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+  i{font-size:1.1rem;color:var(--ink-700);margin-right:8px;width:20px;display:inline-block;text-align:center}
+  .row{display:flex;align-items:center;font-size:.78rem;color:var(--fg-2);margin-bottom:5px}
+  .em{display:flex;align-items:center;gap:.4rem;padding:6px 0;font-size:.78rem;color:var(--fg-2)}
+  .em > span:first-child{font-size:1.05rem;width:22px;text-align:center}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head><body>
+<div class="grid">
+  <div class="card">
+    <div class="lbl">Brand SVG · single, hand-drawn</div>
+    <svg viewBox="0 0 64 64" width="48" height="48" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" style="color:var(--kon)">
+      <path d="M 7 17 Q 32 12 57 17 L 56 21 Q 32 16 8 21 Z" fill="currentColor" stroke="currentColor" stroke-width="1.5"/>
+      <path d="M 11 27 Q 32 25 53 27" stroke-width="3.4"/>
+      <path d="M 14.5 22 Q 13.5 38 12.2 56" stroke-width="4.2"/>
+      <path d="M 49.5 22 Q 50.7 38 51.8 56" stroke-width="4.2"/>
+    </svg>
+  </div>
+  <div class="card">
+    <div class="lbl">Font Awesome 6 · UI</div>
+    <div class="row"><i class="fas fa-route"></i>Lernpfad</div>
+    <div class="row"><i class="fas fa-book-open"></i>Lektionen</div>
+    <div class="row"><i class="fas fa-brain"></i>Wiederholen</div>
+    <div class="row"><i class="fas fa-bolt"></i>N5 Bundle</div>
+    <div class="row"><i class="fas fa-user-circle"></i>Profil</div>
+  </div>
+  <div class="card">
+    <div class="lbl">Emoji · semantic only</div>
+    <div class="em"><span>🔥</span>streak</div>
+    <div class="em"><span>⚡</span>level</div>
+    <div class="em"><span>🔒</span>locked</div>
+    <div class="em"><span>✅</span>done</div>
+    <div class="em"><span>🧠</span>review</div>
+  </div>
+</div>
+</body></html>

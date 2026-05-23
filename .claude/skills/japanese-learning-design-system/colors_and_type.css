@@ -1,0 +1,263 @@
+/* ════════════════════════════════════════════════════════════════
+   Japanese Learning — Colors & Type Tokens
+   Source: app/static/css/custom.css (Compass-Redesign Phase 2)
+   Brand language: Japanese ink-on-washi — sumi (ink), kon (deep navy),
+   shu (vermillion), washi (paper), matcha, kincha. Hairline borders,
+   subtle shadows, no heavy gradients. German UI copy.
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── Webfonts (CDN) ──
+   Brand display:   Fraunces (serif wordmark, Topnav)
+   Japanese serif:  Noto Serif JP (subtitles, decorative)
+   Display/UI:      Geist (headlines, h1-h3)
+   Body:            Inter (paragraphs, UI labels)
+   Japanese sans:   Noto Sans JP (any kana / kanji)
+   Mono:            Geist Mono (code, URLs, meta) */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Noto+Serif+JP:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Noto+Sans+JP:wght@400;500;700&display=swap');
+
+:root {
+  /* ──────────────────────────────────────
+     COLOR — Brand (Japanese pigment names)
+     ────────────────────────────────────── */
+  --washi:    #FAF7F2;   /* page background — bone paper */
+  --kinari:   #F5F0E8;   /* warmer paper, panels */
+  --sumi:     #1C1C1C;   /* ink — primary text */
+  --tetsu:    #2C2C2C;   /* iron — body text */
+  --kon:      #1F2A44;   /* deep navy — headings, brand */
+  --kon-50:   #F2F4F8;
+  --kon-100:  #E1E5EE;
+  --kon-300:  #9AA6BD;
+  --kon-500:  #3F4E72;
+  --ai:       #264F7E;   /* indigo — links */
+  --shu:      #EB6101;   /* vermillion — primary CTA, active state */
+  --shu-soft: #F4D9C7;
+  --shu-deep: #B84A00;
+  --kincha:   #C7802D;   /* gold-brown — premium accent */
+  --matcha:   #7A9033;   /* tea green — success, completion */
+
+  /* ──────────────────────────────────────
+     COLOR — Ink scale (warm neutral, washi-tinted)
+     ────────────────────────────────────── */
+  --ink-50:   #FAF7F2;
+  --ink-100:  #F1EDE6;
+  --ink-200:  #E4DED4;   /* hairline borders */
+  --ink-300:  #D4CCBE;
+  --ink-400:  #A8A095;   /* disabled */
+  --ink-500:  #7A7368;   /* muted text */
+  --ink-600:  #5C564D;   /* secondary body */
+  --ink-700:  #403B34;
+  --ink-800:  #2C2924;
+  --ink-900:  #1C1A17;
+  --ink-950:  #0F0E0C;
+
+  /* ──────────────────────────────────────
+     COLOR — Semantic (foreground/background/state)
+     ────────────────────────────────────── */
+  --bg-page:        var(--washi);
+  --bg-elevated:    #FFFFFF;
+  --bg-panel:       var(--kinari);
+  --bg-subtle:      var(--kon-50);
+
+  --fg-1:           var(--kon);          /* headings, primary */
+  --fg-2:           var(--ink-700);      /* body */
+  --fg-3:           var(--ink-500);      /* muted, captions */
+  --fg-4:           var(--ink-400);      /* disabled */
+  --fg-on-dark:     #FFFFFF;
+
+  --border-hair:    var(--ink-200);
+  --border-strong:  var(--ink-300);
+
+  --accent:         var(--shu);          /* primary CTA */
+  --accent-hover:   #F37016;
+  --accent-deep:    var(--shu-deep);
+  --accent-soft:    var(--shu-soft);
+
+  --link:           var(--ai);
+  --link-hover:     var(--shu);
+
+  --success:        var(--matcha);
+  --warning:        var(--kincha);
+  --danger:         #D14B3D;            /* zen-vermillion (legacy) */
+  --premium:        #f5a623;
+
+  /* ──────────────────────────────────────
+     SHADOW (warm sumi tint, never bluish)
+     ────────────────────────────────────── */
+  --shadow-subtle: 0 1px 2px 0 rgba(28,26,23,.04), 0 1px 3px 0 rgba(28,26,23,.06);
+  --shadow-card:   0 2px 4px -1px rgba(28,26,23,.06), 0 4px 12px -2px rgba(28,26,23,.08);
+  --shadow-lifted: 0 8px 24px -4px rgba(28,26,23,.10), 0 2px 6px -2px rgba(28,26,23,.06);
+  --shadow-cta:    inset 0 1px 0 rgba(255,255,255,.15),
+                   0 1px 2px rgba(184,74,0,.30),
+                   0 0 0 1px rgba(184,74,0,.40);
+
+  /* ──────────────────────────────────────
+     RADIUS
+     ────────────────────────────────────── */
+  --radius-sm:    6px;     /* chips, inputs */
+  --radius-md:    8px;     /* buttons */
+  --radius-lg:    12px;    /* cards, panels */
+  --radius-xl:    16px;
+  --radius-2xl:   24px;
+  --radius-full:  9999px;
+
+  /* ──────────────────────────────────────
+     SPACING (8px base; named scale from custom.css)
+     ────────────────────────────────────── */
+  --space-1: 0.25rem;   /*  4 */
+  --space-2: 0.5rem;    /*  8 */
+  --space-3: 0.75rem;   /* 12 */
+  --space-4: 1rem;      /* 16 */
+  --space-6: 1.5rem;    /* 24 */
+  --space-8: 2rem;      /* 32 */
+  --space-12: 3rem;     /* 48 */
+  --space-16: 4rem;     /* 64 */
+
+  /* ──────────────────────────────────────
+     TYPE — Foundations
+     ────────────────────────────────────── */
+  --font-display:  'Geist', 'Inter', system-ui, sans-serif;
+  --font-body:     'Inter', 'Noto Sans JP', system-ui, sans-serif;
+  --font-serif:    'Fraunces', 'Noto Serif JP', Georgia, serif;
+  --font-jp:       'Noto Sans JP', sans-serif;
+  --font-jp-serif: 'Noto Serif JP', serif;
+  --font-mono:     'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --text-eyebrow:  0.75rem;    /* 12 — uppercase chip */
+  --text-xs:       0.78rem;
+  --text-sm:       0.88rem;
+  --text-base:     1.0625rem;  /* 17 — body default */
+  --text-md:       1.125rem;
+  --text-lg:       1.25rem;
+  --text-xl:       1.5rem;
+  --text-2xl:      1.875rem;
+  --text-3xl:      2.25rem;
+  --text-display:  clamp(2.25rem, 5vw + 1rem, 4.5rem); /* H1 hero */
+
+  --leading-tight: 1.15;
+  --leading-snug:  1.35;
+  --leading-base:  1.7;        /* body */
+  --leading-loose: 1.85;
+
+  --tracking-tight:   -0.03em;  /* large display */
+  --tracking-normal:   0;
+  --tracking-wide:     0.04em;
+  --tracking-eyebrow:  0.08em;  /* uppercase eyebrow */
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SEMANTIC ELEMENT STYLES
+   Apply directly via tag, or via .prose-jp class on a wrapper.
+   ════════════════════════════════════════════════════════════════ */
+
+html { color-scheme: light; }
+
+body {
+  background: var(--bg-page);
+  color: var(--fg-2);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  font-family: var(--font-display);
+  font-weight: 510;
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg-1);
+  line-height: var(--leading-tight);
+  margin: 0 0 0.5em;
+}
+
+h1, .h1 {
+  font-size: var(--text-display);
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+h2, .h2 {
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  letter-spacing: -0.02em;
+}
+h3, .h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+h4, .h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+p {
+  margin: 0 0 1em;
+  color: var(--fg-2);
+  line-height: var(--leading-base);
+  text-wrap: pretty;
+}
+
+a {
+  color: var(--link);
+  text-decoration: none;
+  transition: color .15s;
+}
+a:hover { color: var(--link-hover); text-decoration: underline; }
+
+small, .small { font-size: var(--text-sm); color: var(--fg-3); }
+
+code, kbd, pre, samp {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+}
+code {
+  background: var(--bg-subtle);
+  padding: 0.12em 0.4em;
+  border-radius: var(--radius-sm);
+  color: var(--fg-1);
+}
+
+/* Brand wordmark */
+.brand-wordmark {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  font-variation-settings: 'opsz' 14, 'SOFT' 30;
+  color: var(--fg-1);
+}
+.brand-tag-jp {
+  font-family: var(--font-jp-serif);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--fg-3);
+}
+
+/* Eyebrow chip — uppercase mini-label */
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.3rem 0.75rem;
+  border: 1px solid var(--border-hair);
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-size: var(--text-eyebrow);
+  font-weight: 510;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-eyebrow);
+  color: var(--ink-700);
+  background: rgba(255,255,255,.6);
+}
+
+/* Japanese text — mono-line glyphs deserve room */
+[lang="ja"], .jp {
+  font-family: var(--font-jp);
+  font-weight: 500;
+}
+.jp-serif { font-family: var(--font-jp-serif); }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

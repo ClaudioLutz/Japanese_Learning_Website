@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Marketing UI Kit · Japanese Learning</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../colors_and_type.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  body{margin:0;background:var(--washi);color:var(--fg-2);font-family:var(--font-body)}
+  .kit-shell{max-width:1280px;margin:0 auto;padding:32px 24px 96px}
+  .kit-header{padding:18px 0 28px;border-bottom:1px solid var(--ink-200);margin-bottom:32px}
+  .kit-header h1{font-family:var(--font-display);font-weight:600;font-size:22px;letter-spacing:-.02em;color:var(--kon);margin:0 0 4px}
+  .kit-header p{margin:0;color:var(--fg-3);font-size:14px;max-width:60ch;line-height:1.55}
+  .kit-section{margin-top:48px}
+  .kit-eyebrow{font-family:var(--font-mono);font-size:11px;color:var(--fg-3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px}
+  .kit-stage{background:var(--washi);border:1px dashed var(--ink-300);border-radius:14px;padding:32px;overflow:hidden}
+  .kit-stage--white{background:#fff}
+  .kit-stage--dark{background:var(--kon)}
+  .stage-row{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+
+  /* ───── Buttons (live recipes from custom.css) ───── */
+  .btn-shu{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.85rem 1.5rem;border:none;border-radius:8px;font-weight:600;font-size:1rem;font-family:var(--font-body);color:#fff;cursor:pointer;text-decoration:none;background:linear-gradient(180deg,#EB6101 0%,#D85700 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 1px 2px rgba(184,74,0,.30),0 0 0 1px rgba(184,74,0,.40);transition:transform .15s,box-shadow .15s,background .15s}
+  .btn-shu:hover{background:linear-gradient(180deg,#F37016,#E25C00);transform:translateY(-1px);box-shadow:inset 0 1px 0 rgba(255,255,255,.20),0 4px 10px rgba(184,74,0,.30),0 0 0 1px rgba(184,74,0,.50)}
+  .btn-shu:active{transform:scale(.96)}
+  .btn-ghost-jp{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.85rem 1.5rem;border:1px solid var(--ink-300);border-radius:8px;background:transparent;color:var(--sumi);font-weight:500;font-size:1rem;font-family:var(--font-body);cursor:pointer;text-decoration:none;transition:background .15s,border-color .15s,transform .15s}
+  .btn-ghost-jp:hover{background:rgba(28,26,23,.04);border-color:var(--ink-400);transform:translateY(-1px)}
+  .btn-ghost-jp:active{transform:scale(.96)}
+  .btn-kon{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;padding:.55rem .9rem;border-radius:8px;background:var(--kon);color:#fff;font-weight:600;font-size:.88rem;text-decoration:none;border:none;font-family:var(--font-body)}
+  .btn-kon:hover{background:#0F1A2C}
+  .btn-link{color:var(--ai);font-weight:600;text-decoration:none}
+  .btn-link:hover{color:var(--shu);text-decoration:underline;text-underline-offset:3px}
+
+  /* ───── Eyebrow chip ───── */
+  .eyebrow-chip{display:inline-flex;align-items:center;gap:.4rem;padding:.3rem .75rem;background:#fff;border:1px solid var(--ink-200);border-radius:9999px;color:var(--fg-3);font-family:var(--font-display);font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+  .eyebrow-chip--shu{border-color:var(--shu);color:var(--shu);background:rgba(235,97,1,.06)}
+
+  /* ───── Hero (full recipe) ───── */
+  .hero{padding:5rem 1.5rem 4rem;text-align:center;border-radius:14px;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(31,42,68,.18), transparent 60%),
+      radial-gradient(ellipse 60% 40% at 85% 10%, rgba(235,97,1,.08), transparent 55%),
+      linear-gradient(180deg,#FAF7F2 0%,#F5F0E8 100%);}
+  .hero h1{font-family:var(--font-display);font-weight:510;font-size:clamp(2.25rem,5vw + 1rem,4.5rem);letter-spacing:-.03em;line-height:1.05;color:var(--kon);margin:1rem auto .8rem;max-width:18ch}
+  .hero h1 .accent{color:var(--shu)}
+  .hero p.lead{margin:0 auto 1.6rem;max-width:34rem;color:var(--ink-600);font-size:1.0625rem;line-height:1.6}
+  .hero-ctas{display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap}
+  .hero-meta{display:flex;justify-content:center;gap:1.4rem;flex-wrap:wrap;margin-top:1.6rem;color:var(--fg-3);font-size:.85rem;font-family:var(--font-mono)}
+  .hero-meta i{color:var(--matcha);margin-right:.25rem}
+
+  /* ───── Browser frame "design moment" ───── */
+  .home-browser-frame{margin:1.4rem auto 0;max-width:780px;background:#fff;border:1px solid var(--ink-200);border-radius:12px;box-shadow:0 28px 70px -28px rgba(28,26,23,.28),0 8px 22px -10px rgba(28,26,23,.12);overflow:hidden}
+  .browser-chrome{display:flex;align-items:center;gap:.4rem;padding:.6rem .85rem;background:var(--ink-100);border-bottom:1px solid var(--ink-200)}
+  .browser-chrome > span{width:11px;height:11px;border-radius:50%;background:var(--ink-300)}
+  .browser-chrome > span:nth-child(1){background:#E07359}
+  .browser-chrome > span:nth-child(2){background:#E0C159}
+  .browser-chrome > span:nth-child(3){background:#7A9033}
+  .browser-url{margin-left:.5rem;flex:1;font-family:var(--font-mono);font-size:.74rem;color:var(--fg-3);text-align:center;padding:.22rem .5rem;background:rgba(255,255,255,.7);border-radius:6px;border:1px solid var(--ink-100)}
+  .browser-stage{padding:1.6rem 1.4rem;background:var(--washi)}
+  .kana-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:.75rem}
+  .kana-card{background:#fff;border:1px solid var(--ink-200);border-radius:10px;padding:1rem .5rem .75rem;text-align:center;transition:transform .15s,box-shadow .15s,border-color .15s}
+  .kana-card:hover{transform:translateY(-1px);border-color:var(--ink-400);box-shadow:0 6px 16px -8px rgba(28,26,23,.18)}
+  .kana-card .ja{font-family:var(--font-jp);font-weight:500;font-size:2rem;color:var(--sumi);line-height:1}
+  .kana-card .ro{margin-top:.45rem;font-family:var(--font-mono);font-size:.7rem;color:var(--fg-3);letter-spacing:.05em}
+  .kana-card.is-next{border-color:var(--shu);box-shadow:0 0 0 3px rgba(235,97,1,.18);animation:pulse-shu 2.4s cubic-bezier(.4,0,.6,1) infinite}
+  @keyframes pulse-shu{0%,100%{box-shadow:0 0 0 3px rgba(235,97,1,.18)}50%{box-shadow:0 0 0 5px rgba(235,97,1,.10)}}
+
+  /* ───── Top nav ───── */
+  .topnav{background:rgba(255,255,255,.85);backdrop-filter:saturate(180%) blur(14px);-webkit-backdrop-filter:saturate(180%) blur(14px);border-bottom:1px solid rgba(0,0,0,.07);border-radius:12px}
+  .topnav-inner{max-width:1280px;margin:0 auto;height:64px;padding:0 1.25rem;display:flex;align-items:center;gap:1rem}
+  .nav-brand{display:flex;align-items:center;gap:.65rem;color:#1a1a1a;text-decoration:none}
+  .nav-brand svg{width:34px;height:34px;color:var(--kon);transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+  .nav-brand:hover svg{transform:rotate(-6deg) scale(1.06);color:var(--shu)}
+  .nav-brand .wm{font-family:var(--font-serif);font-weight:600;font-size:1.05rem;color:#1a1a1a;letter-spacing:-.01em;font-variation-settings:'opsz' 14;line-height:1}
+  .nav-brand .ja{font-family:var(--font-jp-serif);font-size:.72rem;color:#94a3b8;display:block;margin-top:2px}
+  .nav-links{display:flex;align-items:center;gap:.15rem;flex:1;margin-left:1rem}
+  .nav-link{display:inline-flex;align-items:center;gap:.5rem;padding:.5rem .9rem;border-radius:8px;color:#4a4a4a;font-size:.92rem;font-weight:500;text-decoration:none;transition:background .15s,color .15s}
+  .nav-link i{font-size:.82rem;opacity:.7}
+  .nav-link:hover{background:rgba(28,26,23,.04);color:#1a1a1a}
+  .nav-link.active{background:rgba(235,97,1,.08);color:var(--shu)}
+  .nav-link.active i{opacity:1}
+  .nav-cta{padding:.45rem .85rem;border:1.5px solid #c7d2fe;color:#4f46e5;background:#fff;border-radius:8px;font-size:.85rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:.4rem}
+  .nav-cta:hover{background:#eef2ff;border-color:#a5b4fc}
+  .nav-right{display:flex;gap:.5rem;align-items:center}
+  .nav-ghost{padding:.5rem .9rem;color:#4a4a4a;font-size:.88rem;font-weight:600;text-decoration:none;border-radius:8px}
+  .nav-ghost:hover{color:#1a1a1a;background:rgba(28,26,23,.04)}
+  .nav-prim{padding:.5rem 1rem;border-radius:8px;font-size:.88rem;font-weight:600;color:#fff;background:linear-gradient(180deg,#EB6101,#D85700);text-decoration:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 1px 2px rgba(184,74,0,.30),0 0 0 1px rgba(184,74,0,.40)}
+
+  /* ───── Module cards ───── */
+  .module-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+  .module-card{position:relative;background:#fff;border:1px solid var(--ink-200);border-top:4px solid var(--kon);border-radius:12px;padding:1.1rem 1.2rem 1.15rem;display:flex;flex-direction:column;gap:.55rem;transition:transform .15s,box-shadow .15s,border-color .15s;text-decoration:none;color:inherit}
+  .module-card:hover{transform:translateY(-1px);border-color:var(--ink-300);box-shadow:0 10px 24px -14px rgba(28,26,23,.18)}
+  .module-card .mc-row{display:flex;align-items:center;gap:.6rem}
+  .module-card .mc-icon{font-size:1.55rem;line-height:1}
+  .module-card .mc-meta{font-family:var(--font-mono);font-size:.72rem;color:var(--fg-3);text-transform:uppercase;letter-spacing:.04em}
+  .module-card h3{font-family:var(--font-display);font-weight:600;font-size:1.05rem;color:var(--kon);margin:0;line-height:1.25;letter-spacing:-.01em}
+  .module-card p{margin:0;font-size:.88rem;color:var(--ink-600);line-height:1.5}
+  .module-card .mc-foot{display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:var(--fg-3);margin-top:.3rem}
+  .module-card .mc-progress{flex:1;height:4px;background:var(--ink-100);border-radius:3px;overflow:hidden}
+  .module-card .mc-progress > span{display:block;height:100%;background:var(--kon)}
+  .module-card.is-next{border-color:var(--shu);border-top-color:var(--shu);box-shadow:0 0 0 3px rgba(235,97,1,.18);animation:pulse-shu 2.4s cubic-bezier(.4,0,.6,1) infinite}
+  .module-card.is-complete{background:rgba(122,144,51,.04);border-color:var(--matcha);border-top-color:var(--matcha)}
+  .module-card.is-complete .mc-progress > span{background:var(--matcha)}
+  .module-card.is-locked{opacity:.55;border-top-color:var(--kon-300);pointer-events:none}
+  .mc-badge{margin-left:auto;background:var(--shu);color:#fff;font-family:var(--font-display);font-size:.66rem;font-weight:700;letter-spacing:.05em;padding:.22rem .55rem;border-radius:9999px}
+  .mc-badge--free{background:rgba(122,144,51,.12);color:var(--matcha)}
+  .mc-badge--prem{background:rgba(199,128,45,.15);color:#8a5618}
+
+  /* ───── Bundle hint banner ───── */
+  .bundle-hint{display:flex;align-items:center;gap:1rem;background:#F2F4F8;border:1px solid #E1E5EE;border-left:3px solid var(--shu);border-radius:12px;padding:1rem 1.25rem}
+  .bundle-hint .bh-ico{width:36px;height:36px;border-radius:8px;background:#fff;border:1px solid var(--ink-200);display:inline-flex;align-items:center;justify-content:center;font-size:1.1rem;color:var(--shu)}
+  .bundle-hint .bh-text{flex:1;color:var(--ink-700);font-size:.94rem;line-height:1.5}
+  .bundle-hint .bh-text strong{color:var(--kon)}
+  .bundle-hint .bh-text a{color:var(--shu);font-weight:600;text-decoration:none}
+  .bundle-hint .bh-cta{color:var(--shu);font-weight:600;font-size:.88rem;text-decoration:none;padding:.45rem .8rem;border:1px solid var(--shu);border-radius:8px;white-space:nowrap}
+  .bundle-hint .bh-cta:hover{background:var(--shu);color:#fff}
+
+  /* ───── Section header ───── */
+  .section-head{text-align:center;margin-bottom:28px}
+  .section-head h2{font-family:var(--font-display);font-weight:510;font-size:clamp(1.75rem,3vw + .5rem,2.5rem);letter-spacing:-.02em;color:var(--kon);margin:.5rem 0 .5rem}
+  .section-head p{margin:0 auto;max-width:36rem;color:var(--ink-600);font-size:1rem;line-height:1.6}
+
+  /* ───── Pricing card (single, honest) ───── */
+  .price-card{background:#fff;border:1px solid var(--ink-200);border-radius:14px;padding:1.6rem 1.8rem;max-width:420px;margin:0 auto;box-shadow:0 10px 30px -18px rgba(28,26,23,.2)}
+  .price-card .pc-tag{display:inline-block;background:rgba(235,97,1,.08);color:var(--shu);font-family:var(--font-display);font-weight:700;font-size:.7rem;letter-spacing:.08em;padding:.25rem .6rem;border-radius:9999px;text-transform:uppercase}
+  .price-card .pc-price{font-family:var(--font-display);font-weight:600;font-size:2.6rem;color:var(--kon);letter-spacing:-.02em;margin:.5rem 0 0}
+  .price-card .pc-price .currency{font-size:1.1rem;color:var(--fg-3);font-weight:500;margin-right:.2rem}
+  .price-card .pc-price .once{font-size:.9rem;color:var(--fg-3);font-weight:500;margin-left:.4rem}
+  .price-card ul{list-style:none;padding:0;margin:1.1rem 0 1.4rem;display:flex;flex-direction:column;gap:.5rem}
+  .price-card li{display:flex;gap:.55rem;font-size:.92rem;color:var(--ink-700);line-height:1.5}
+  .price-card li i{color:var(--matcha);margin-top:.2rem}
+  .price-card .pc-foot{margin:1rem 0 0;font-size:.78rem;color:var(--fg-3);text-align:center;font-family:var(--font-mono)}
+
+  /* ───── Footer ───── */
+  .ft{background:var(--kon);color:#cbd2dd;border-radius:14px;padding:2rem 2rem 1.4rem}
+  .ft a{color:#cbd2dd;text-decoration:none;font-size:.88rem;line-height:1.85}
+  .ft a:hover{color:#fff}
+  .ft-grid{display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:2rem}
+  .ft h4{font-family:var(--font-display);font-weight:600;font-size:.78rem;color:#fff;text-transform:uppercase;letter-spacing:.08em;margin:0 0 .65rem}
+  .ft .brand{display:flex;align-items:center;gap:.6rem;margin-bottom:.55rem}
+  .ft .brand svg{width:34px;height:34px;color:#fff}
+  .ft .brand .wm{font-family:var(--font-serif);font-weight:600;font-size:1.05rem;color:#fff;font-variation-settings:'opsz' 14}
+  .ft .brand .ja{font-family:var(--font-jp-serif);font-size:.72rem;color:#9aa6bd;display:block;margin-top:2px}
+  .ft p{margin:0;font-size:.84rem;line-height:1.55;color:#9aa6bd;max-width:30ch}
+  .ft-legal{margin-top:1.4rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.07);display:flex;justify-content:space-between;font-size:.78rem;color:#7a8398;font-family:var(--font-mono)}
+  .ft-legal .flags{display:flex;gap:.7rem}
+
+  /* utility */
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media (max-width:780px){
+    .module-grid{grid-template-columns:1fr 1fr}
+    .ft-grid{grid-template-columns:1fr 1fr;gap:1.4rem}
+    .nav-links .nav-link:not(.nav-cta):not(.active){display:none}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation:none!important;transition:none!important}
+  }
+</style>
+</head>
+<body>
+
+<!-- Inline torii used by nav + footer -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="torii" viewBox="0 0 64 64">
+    <g fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M 7 17 Q 32 12 57 17 L 56 21 Q 32 16 8 21 Z" fill="currentColor" stroke-width="1.5"/>
+      <path d="M 11 27 Q 32 25 53 27" stroke-width="3.4"/>
+      <path d="M 32 22 L 32 26.5" stroke-width="2.6"/>
+      <path d="M 14.5 22 Q 13.5 38 12.2 56" stroke-width="4.2"/>
+      <path d="M 49.5 22 Q 50.7 38 51.8 56" stroke-width="4.2"/>
+      <path d="M 8 56 Q 16 57 24 56" stroke-width="1.8" opacity="0.55"/>
+      <path d="M 40 56 Q 48 57 56 56" stroke-width="1.8" opacity="0.55"/>
+    </g>
+  </symbol>
+</svg>
+
+<div class="kit-shell">
+
+  <header class="kit-header">
+    <h1>Marketing UI Kit</h1>
+    <p>Logged-out / public surfaces — top nav, hero with browser-frame design moment, module grid, bundle hint, pricing card, footer. Lift any block straight into a new marketing page; class names mirror <code>app/static/css/custom.css</code> (Compass-Redesign Phase 2).</p>
+  </header>
+
+  <!-- ───── 1. TOP NAV ───── -->
+  <section class="kit-section">
+    <div class="kit-eyebrow">01 · Top nav (sticky, blurred)</div>
+    <div class="kit-stage">
+      <nav class="topnav">
+        <div class="topnav-inner">
+          <a class="nav-brand" href="#">
+            <svg><use href="#torii"/></svg>
+            <span><span class="wm">Japanese Learning</span><span class="ja">日本語</span></span>
+          </a>
+          <div class="nav-links">
+            <a class="nav-link active" href="#"><i class="fas fa-route"></i>Lernpfad</a>
+            <a class="nav-link" href="#"><i class="fas fa-book-open"></i>Lektionen</a>
+            <a class="nav-link" href="#"><i class="fas fa-brain"></i>Wiederholen</a>
+            <a class="nav-link nav-cta" href="#" style="margin-left:.4rem"><i class="fas fa-bolt"></i>N5 Komplett</a>
+          </div>
+          <div class="nav-right">
+            <a class="nav-ghost" href="#">Anmelden</a>
+            <a class="nav-prim" href="#">Kostenlos starten</a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </section>
+
+  <!-- ───── 2. HERO + BROWSER FRAME ───── -->
+  <section class="kit-section">
+    <div class="kit-eyebrow">02 · Hero + browser-frame design moment</div>
+    <div class="kit-stage" style="padding:0;border:none">
+      <div class="hero">
+        <span class="eyebrow-chip"><i class="fas fa-torii-gate" style="color:var(--shu)"></i>JLPT N5 · auf Deutsch · in der Schweiz gemacht</span>
+        <h1>Hiragana am Morgen.<br><span class="accent">Kanji</span> am Abend.</h1>
+        <p class="lead">Strukturiert nach JLPT-N5. 261 Vokabeln, 44 Kanji, wöchentlich neu — auf Deutsch erklärt, mit FSRS-basierter Wiederholung.</p>
+        <div class="hero-ctas">
+          <a class="btn-shu" href="#">Kostenlos starten <i class="fas fa-arrow-right" style="font-size:.82em"></i></a>
+          <a class="btn-ghost-jp" href="#">N5 Komplett · CHF 9.90</a>
+        </div>
+        <div class="hero-meta">
+          <span><i class="fas fa-check"></i>Keine Kreditkarte</span>
+          <span><i class="fas fa-check"></i>30 Tage Geld zurück</span>
+          <span><i class="fas fa-check"></i>Lifetime Zugriff</span>
+        </div>
+
+        <div class="home-browser-frame">
+          <div class="browser-chrome"><span></span><span></span><span></span>
+            <div class="browser-url">japanese-learning.ch / lessons / hiragana-1</div>
+          </div>
+          <div class="browser-stage">
+            <div class="kana-grid">
+              <div class="kana-card"><div class="ja">あ</div><div class="ro">a</div></div>
+              <div class="kana-card"><div class="ja">い</div><div class="ro">i</div></div>
+              <div class="kana-card is-next"><div class="ja">う</div><div class="ro">u</div></div>
+              <div class="kana-card"><div class="ja">え</div><div class="ro">e</div></div>
+              <div class="kana-card"><div class="ja">お</div><div class="ro">o</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───── 3. MODULE GRID ───── -->
+  <section class="kit-section">
+    <div class="kit-eyebrow">03 · Module grid (auto-fill, hairline borders, 4px top-stripe)</div>
+    <div class="kit-stage">
+      <div class="section-head">
+        <span class="eyebrow-chip">Lernpfad · 12 Module</span>
+        <h2>Vom ersten Strich bis zum ersten Satz.</h2>
+      </div>
+      <div class="module-grid">
+        <a class="module-card is-complete" href="#">
+          <div class="mc-row"><div class="mc-icon">📖</div>
+            <div style="flex:1"><div class="mc-meta">Modul 01 · Hiragana</div></div>
+            <i class="fas fa-check-circle" style="color:var(--matcha)"></i>
+          </div>
+          <h3>Schreibsystem &amp; あ-Reihe</h3>
+          <p>Die ersten fünf Vokale, Strichreihenfolge, Quiz.</p>
+          <div class="mc-foot"><div class="mc-progress"><span style="width:100%"></span></div><span>100 %</span></div>
+        </a>
+        <a class="module-card is-next" href="#">
+          <div class="mc-row"><div class="mc-icon">✏️</div>
+            <div style="flex:1"><div class="mc-meta">Modul 02 · Hiragana</div></div>
+            <span class="mc-badge">START</span>
+          </div>
+          <h3>か, さ, た, な-Reihen</h3>
+          <p>Die nächsten 20 Zeichen — gleicher Drill, neuer Klang.</p>
+          <div class="mc-foot"><div class="mc-progress"><span style="width:0%"></span></div><span>0 %</span></div>
+        </a>
+        <a class="module-card" href="#">
+          <div class="mc-row"><div class="mc-icon">🈂️</div>
+            <div style="flex:1"><div class="mc-meta">Modul 03 · Katakana</div></div>
+            <span class="mc-badge mc-badge--free">GRATIS</span>
+          </div>
+          <h3>Katakana lesen</h3>
+          <p>Loanwords entziffern: コーヒー, テレビ, パン.</p>
+          <div class="mc-foot"><div class="mc-progress"><span style="width:0%"></span></div><span>—</span></div>
+        </a>
+        <a class="module-card is-locked" href="#">
+          <div class="mc-row"><div class="mc-icon">📝</div>
+            <div style="flex:1"><div class="mc-meta">Modul 04 · Kanji</div></div>
+            <i class="fas fa-lock" style="color:var(--ink-400)"></i>
+          </div>
+          <h3>N5 Kanji Set 1</h3>
+          <p>Erst Vorgänger ≥ 80 % abschliessen.</p>
+          <div class="mc-foot"><div class="mc-progress"><span style="width:0%"></span></div><span>locked</span></div>
+        </a>
+        <a class="module-card is-locked" href="#">
+          <div class="mc-row"><div class="mc-icon">🗣️</div>
+            <div style="flex:1"><div class="mc-meta">Modul 05 · Grammatik</div></div>
+            <i class="fas fa-lock" style="color:var(--ink-400)"></i>
+          </div>
+          <h3>です / は / の</h3>
+          <p>Subjekt-Marker, Topic, Genitiv — die drei Säulen.</p>
+          <div class="mc-foot"><div class="mc-progress"><span style="width:0%"></span></div><span>locked</span></div>
+        </a>
+        <a class="module-card is-locked" href="#" style="border-top-color:var(--kincha)">
+          <div class="mc-row"><div class="mc-icon">🍵</div>
+            <div style="flex:1"><div class="mc-meta">Modul 06 · Vokabeln</div></div>
+            <span class="mc-badge mc-badge--prem">N5 BUNDLE</span>
+          </div>
+          <h3>Alltag &amp; Speisen</h3>
+          <p>72 Wörter rund ums Essen, Bestellen, Bezahlen.</p>
+          <div class="mc-foot"><div class="mc-progress"><span style="width:0%"></span></div><span>—</span></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───── 4. BUNDLE HINT ───── -->
+  <section class="kit-section">
+    <div class="kit-eyebrow">04 · Bundle hint banner (kon-50 + 3px shu left-border)</div>
+    <div class="kit-stage">
+      <div class="bundle-hint">
+        <div class="bh-ico"><i class="fas fa-bolt"></i></div>
+        <div class="bh-text"><strong>Tipp:</strong> Mit <a>N5 Komplett</a> schaltest du alle Lektionen ab Tag 1 frei — einmalig <strong>CHF 9.90</strong>, lifetime Zugriff. <span style="color:var(--fg-3)">30 Tage Geld zurück.</span></div>
+        <a class="bh-cta" href="#">Anschauen →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───── 5. PRICING CARD ───── -->
+  <section class="kit-section">
+    <div class="kit-eyebrow">05 · Pricing card (single, honest)</div>
+    <div class="kit-stage">
+      <div class="section-head">
+        <span class="eyebrow-chip eyebrow-chip--shu"><i class="fas fa-bolt"></i>N5 Komplett</span>
+        <h2>Eine Zahlung. Lifetime.</h2>
+        <p>Keine Abos, keine Stufen, kein Bullshit. Wenn es nichts für dich ist, gibt's das Geld innerhalb von 30 Tagen zurück.</p>
+      </div>
+      <div class="price-card">
+        <span class="pc-tag">N5 Bundle · einmalig</span>
+        <div class="pc-price"><span class="currency">CHF</span>9.90<span class="once">einmalig</span></div>
+        <ul>
+          <li><i class="fas fa-check-circle"></i>Alle 12 Module · Hiragana → N5-Grammatik</li>
+          <li><i class="fas fa-check-circle"></i>261 Vokabeln, 44 Kanji, wöchentlich neu</li>
+          <li><i class="fas fa-check-circle"></i>FSRS-Wiederholung — 20–30 % weniger Karten</li>
+          <li><i class="fas fa-check-circle"></i>Lifetime Zugriff, auch für N4-Updates</li>
+        </ul>
+        <a class="btn-shu" href="#" style="width:100%">N5 Komplett kaufen</a>
+        <p class="pc-foot">CHF · TWINT, Karte, PayPal · 30 Tage Geld zurück</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───── 6. FOOTER ───── -->
+  <section class="kit-section">
+    <div class="kit-eyebrow">06 · Footer (kon background, hairline divider)</div>
+    <div class="kit-stage" style="padding:0;border:none">
+      <footer class="ft">
+        <div class="ft-grid">
+          <div>
+            <div class="brand"><svg><use href="#torii"/></svg>
+              <span><span class="wm">Japanese Learning</span><span class="ja">日本語</span></span>
+            </div>
+            <p>Eine Schweizer Plattform für JLPT-N5 auf Deutsch. Gemacht von Claudio Lutz — kein VC, kein Marketing-Team.</p>
+          </div>
+          <div>
+            <h4>Lernen</h4>
+            <a>Lernpfad</a><br><a>Lektionen</a><br><a>Wiederholen (FSRS)</a><br><a>N5 Komplett</a>
+          </div>
+          <div>
+            <h4>Über</h4>
+            <a>Lernmethode</a><br><a>Über mich</a><br><a>Blog</a><br><a>Kontakt</a>
+          </div>
+          <div>
+            <h4>Rechtliches</h4>
+            <a>AGB</a><br><a>Datenschutz</a><br><a>Impressum</a>
+          </div>
+        </div>
+        <div class="ft-legal">
+          <span>© 2025 Japanese Learning · Rorschach SG, Schweiz</span>
+          <span class="flags">🇨🇭 DE · 🇩🇪 DE · 🇬🇧 EN</span>
+        </div>
+      </footer>
+    </div>
+  </section>
+
+</div>
+
+</body>
+</html>

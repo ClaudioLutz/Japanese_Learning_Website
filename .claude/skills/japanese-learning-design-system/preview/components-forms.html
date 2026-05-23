@@ -1,0 +1,35 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body{margin:0;padding:24px;background:var(--washi);font-family:var(--font-body)}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  label{display:block;font-size:.78rem;color:var(--fg-3);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+  input,select,textarea{width:100%;box-sizing:border-box;padding:.65rem .85rem;border:1px solid var(--ink-200);border-radius:6px;background:#fff;font-family:var(--font-body);font-size:.95rem;color:var(--fg-1)}
+  input:focus{outline:none;border-color:var(--shu);box-shadow:0 0 0 3px rgba(235,97,1,.18)}
+  .help{font-size:.78rem;color:var(--fg-3);margin-top:5px}
+  .err{font-size:.78rem;color:#D14B3D;margin-top:5px}
+  .check{display:flex;align-items:center;gap:.5rem;margin-top:6px;font-size:.92rem;color:var(--fg-2)}
+</style></head><body>
+<div class="row">
+  <div>
+    <label>E-Mail</label>
+    <input type="email" placeholder="dein@email.ch" value="claudio@example.ch">
+    <div class="help">Wird nur für Login & Wiederherstellung verwendet.</div>
+  </div>
+  <div>
+    <label>Passwort</label>
+    <input type="password" value="superSecret" style="border-color:#D14B3D;box-shadow:0 0 0 3px rgba(209,75,61,.15)">
+    <div class="err">Mindestens 8 Zeichen, davon eine Zahl.</div>
+  </div>
+  <div>
+    <label>JLPT-Ziel</label>
+    <select><option>N5 — Anfänger</option><option>N4</option></select>
+  </div>
+  <div>
+    <label>Lerntempo</label>
+    <select><option>Gemütlich (10 min/Tag)</option></select>
+  </div>
+</div>
+<div class="check"><input type="checkbox" checked style="width:auto"> Newsletter abonnieren — neue Lektionen & Tipps.</div>
+</body></html>
