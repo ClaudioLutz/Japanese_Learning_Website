@@ -318,6 +318,58 @@ def parse_example_sentences(raw: str | None) -> list[dict[str, str]]:
     return examples
 
 
+# Lauf japanischer Zeichen (Hiragana/Katakana/Kanji) — ein „Grammatik-Marker"
+# im structure-Feld ist genau so ein Lauf (Platzhalter wie N/S/V sind Latein).
+_CLOZE_JP_RUN = re.compile(r'[ぁ-んァ-ヶーゝゞ一-鿿々]+')
+# Satz-Endungen/Kopula, die nur Fallback-Lückenkandidaten sind (selten DER
+# Lernpunkt). Distinktive Marker (Partikeln wie は/が/を/に/で, Konjugations-
+# formen) haben Vorrang — sonst würde z.B. „N は N です" das です statt は testen.
+_CLOZE_COMMON_MARKERS = {'です', 'だ', 'ます', 'ません', 'ました', 'でした',
+                         'でしょう', 'だった', 'では', 'じゃ'}
+
+
+def make_grammar_cloze(examples: list[dict[str, str]],
+                       structure: str | None) -> dict[str, str] | None:
+    """Erzeugt eine Lückentext-Karte: blendet den für diese Grammatik typischen
+    Marker (Partikel/Form aus `structure`) im ersten passenden Beispielsatz aus.
+
+    Vorgehen: die japanischen Marker aus `structure` werden in zwei Stufen
+    gesucht — zuerst distinktive (Partikeln/Formen), dann erst Allerwelts-Kopula.
+    Das Matching ist leerzeichentolerant, weil der Datensatz Satzglieder mit
+    Leerzeichen trennt (z.B. „学生じゃ ありません").
+
+    Liefert ``{'before', 'after', 'answer', 'japanese', 'romaji', 'translation'}``
+    oder ``None``, wenn kein Marker in einem Beispiel vorkommt (z.B. reine
+    Konjugations-/Lesungstabellen) — dann faellt das UI auf den Titel zurueck.
+    """
+    markers = set(_CLOZE_JP_RUN.findall(
+        re.sub(r'[(（][^)）]*[)）]', '', structure or '')))
+    if not markers:
+        return None
+    tiers = (
+        sorted((m for m in markers if m not in _CLOZE_COMMON_MARKERS),
+               key=len, reverse=True),
+        sorted((m for m in markers if m in _CLOZE_COMMON_MARKERS),
+               key=len, reverse=True),
+    )
+    for tier in tiers:
+        for ex in examples:
+            jp = ex.get('japanese', '')
+            for marker in tier:
+                pattern = r'\s*'.join(re.escape(c) for c in marker)
+                m = re.search(pattern, jp)
+                if m:
+                    return {
+                        'before': jp[:m.start()],
+                        'after': jp[m.end():],
+                        'answer': jp[m.start():m.end()],
+                        'japanese': jp,
+                        'romaji': ex.get('romaji', ''),
+                        'translation': ex.get('translation', ''),
+                    }
+    return None
+
+
 class Grammar(db.Model):
     __allow_unmapped__ = True
     id = db.Column(db.Integer, primary_key=True)
@@ -365,6 +417,12 @@ class Grammar(db.Model):
         ``{'japanese', 'romaji', 'translation'}`` (siehe Modulfunktion
         :func:`parse_example_sentences`)."""
         return parse_example_sentences(self.example_sentences)
+
+    def cloze(self) -> dict[str, str] | None:
+        """Lückentext-Variante eines Beispielsatzes für den Cloze-Review —
+        der typische Marker (Partikel/Form) ist ausgeblendet. ``None``, wenn
+        kein Marker passt (siehe :func:`make_grammar_cloze`)."""
+        return make_grammar_cloze(self.parsed_examples(), self.structure)
 
     @property
     def tts_example_romaji(self) -> str | None:

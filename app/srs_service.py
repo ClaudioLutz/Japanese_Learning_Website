@@ -403,6 +403,9 @@ def get_content_data_for_review(content_item):
             # Alle Beispielsätze normalisiert ({japanese, romaji, translation})
             # für die Mehrfach-Anzeige auf der Karten-Rückseite.
             'examples_list': ref.parsed_examples(),
+            # Lückentext für den Cloze-Review (Vorderseite = Satz mit Lücke).
+            # None, wenn kein Marker passt → Frontend zeigt dann den Titel.
+            'cloze': ref.cloze(),
         }
 
     return data

@@ -9,7 +9,7 @@ nummerierter Plaintext) sowie Randfaelle abgedeckt.
 
 from __future__ import annotations
 
-from app.models import Grammar, parse_example_sentences
+from app.models import Grammar, make_grammar_cloze, parse_example_sentences
 
 
 class TestJsonFormat:
@@ -137,3 +137,67 @@ class TestGrammarMethod:
     def test_parsed_examples_empty_when_no_data(self):
         g = Grammar(title="x", explanation="x", example_sentences=None)
         assert g.parsed_examples() == []
+
+
+class TestClozeGeneration:
+    def test_distinctive_particle_preferred_over_copula(self):
+        # "N は N です": は (Partikel) hat Vorrang vor です (Kopula).
+        examples = [{"japanese": "わたしは 学生です。", "romaji": "Watashi wa gakusei desu.",
+                     "translation": "Ich bin Student."}]
+        cz = make_grammar_cloze(examples, "N1 は (wa) N2 です (desu)")
+        assert cz["answer"] == "は"
+        assert cz["before"] == "わたし"
+        assert cz["after"] == " 学生です。"
+        assert cz["translation"] == "Ich bin Student."
+
+    def test_de_particle_is_not_treated_as_common(self):
+        examples = [{"japanese": "電車で 行きます。", "romaji": "", "translation": ""}]
+        cz = make_grammar_cloze(examples, "乗り物 で (de) V ます (masu)")
+        assert cz["answer"] == "で"
+        assert cz["before"] == "電車"
+
+    def test_space_tolerant_matching(self):
+        # Datensatz trennt Satzglieder mit Leerzeichen: "学生じゃ ありません".
+        examples = [{"japanese": "サントスさんは 学生じゃ ありません。", "romaji": "", "translation": ""}]
+        cz = make_grammar_cloze(examples, "N1 は N2 じゃありません")
+        assert cz["answer"] == "じゃ ありません"
+        assert cz["after"] == "。"
+
+    def test_scans_later_examples_for_marker(self):
+        # も steht erst im zweiten Beispiel (erstes ist der は-Aufbausatz).
+        examples = [
+            {"japanese": "ミラーさんは 会社員です。", "romaji": "", "translation": ""},
+            {"japanese": "グプタさんも 会社員です。", "romaji": "", "translation": ""},
+        ]
+        cz = make_grammar_cloze(examples, "N も (mo)")
+        assert cz["answer"] == "も"
+        assert cz["japanese"] == "グプタさんも 会社員です。"
+
+    def test_copula_fallback_when_no_distinctive_marker(self):
+        examples = [{"japanese": "学生です。", "romaji": "", "translation": ""}]
+        cz = make_grammar_cloze(examples, "N です (desu)")
+        assert cz["answer"] == "です"
+        assert cz["before"] == "学生"
+
+    def test_none_when_marker_absent_from_examples(self):
+        examples = [{"japanese": "これは 本です。", "romaji": "", "translation": ""}]
+        assert make_grammar_cloze(examples, "N を (wo)") is None
+
+    def test_none_when_structure_has_no_japanese(self):
+        examples = [{"japanese": "テスト。", "romaji": "", "translation": ""}]
+        assert make_grammar_cloze(examples, "[Dictionary form] -> [Te-form]") is None
+
+    def test_none_for_empty_examples(self):
+        assert make_grammar_cloze([], "N は (wa)") is None
+
+    def test_grammar_cloze_method_integration(self):
+        g = Grammar(
+            title="x", explanation="x", structure="N も (mo)",
+            example_sentences=(
+                "① グプタさんも 会社員です。\n  (Guputa-san mo kaishain desu.)\n"
+                "  — Auch Herr Gupta ist Angestellter."
+            ),
+        )
+        cz = g.cloze()
+        assert cz["answer"] == "も"
+        assert cz["translation"] == "Auch Herr Gupta ist Angestellter."

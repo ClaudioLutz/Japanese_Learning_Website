@@ -67,6 +67,24 @@ def test_grammar_review_payload_includes_examples_list(app_context):
     assert examples[1]["japanese"] == "あれは 本です。"
 
 
+def test_grammar_review_payload_includes_cloze(app_context):
+    """Cloze-Review: Payload liefert Lückentext-Daten (Marker ausgeblendet)."""
+    lc = _content_for(
+        "grammar",
+        structure="N も (mo)",
+        tts_example_jp="グプタさんも 会社員です。",
+        example_sentences=(
+            "① グプタさんも 会社員です。\n  (Guputa-san mo kaishain desu.)\n"
+            "  — Auch Herr Gupta ist Angestellter."
+        ),
+    )
+    data = get_content_data_for_review(lc)
+    cloze = data["details"]["cloze"]
+    assert cloze is not None
+    assert cloze["answer"] == "も"
+    assert cloze["before"] == "グプタさん"
+
+
 def test_vocabulary_review_payload_includes_example_jp(app_context):
     """Audio-Button auf Vokabel-Karte nutzt example_jp wenn vorhanden,
     sonst das Wort selbst — beide Felder muessen im Payload sein."""
