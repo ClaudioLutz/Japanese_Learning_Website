@@ -4,6 +4,7 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import json
+import re
 from typing import List
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey, Table, Column, Integer, String, Text, Boolean, DateTime, JSON, event, BigInteger, true as sa_true
@@ -216,6 +217,107 @@ class Vocabulary(db.Model):
     def example_sentence_translation(self) -> str | None:
         return self._split_example_translation()[1]
 
+
+# Zeilen, die mit "(" bzw. einem Gedankenstrich beginnen, setzen den
+# vorherigen Beispiel-Eintrag fort (Romaji-Klammer- bzw. Uebersetzungszeile).
+_EXAMPLE_CONTINUATION_RE = re.compile(r'^[(（—–\-→:>]')
+# Fuehrende Aufzaehlungsmarker (①–⑩, "1." / "1)", Bullet) am Eintragsanfang.
+_EXAMPLE_MARKER_RE = re.compile(r'^(?:[①②③④⑤⑥⑦⑧⑨⑩]|[0-9]+[.)]|[•*])\s*')
+# Trennzeichen vor der Uebersetzung (—, –, ->, :, >).
+_TRANSLATION_LEAD_RE = re.compile(r'^[\s—–\-→:>]+')
+
+
+def parse_example_sentences(raw: str | None) -> list[dict[str, str]]:
+    """Normalisiert ``Grammar.example_sentences`` in eine Liste von
+    Beispielsaetzen ``{'japanese', 'romaji', 'translation'}``.
+
+    Unterstuetzt beide in der DB vorkommenden Formate:
+
+    1. **JSON-Liste**::
+
+         [{"japanese": "...", "romanization"/"romaji": "...",
+           "german"/"english"/"translation": "..."}, ...]
+
+    2. **Nummerierter Plaintext**::
+
+         ① わたしは マイク・ミラーです。
+           (Watashi wa Maiku Miraa desu.)
+           — Ich bin Mike Miller.
+
+       inklusive einzeiliger Inline-Variante ``JP。 (Romaji) — Uebersetzung``
+       und "…"-Antwortzeilen.
+
+    Fehlende Teile werden als leerer String geliefert (nie ``None``), damit
+    das Rendering ohne Sonderfaelle bleibt. Nicht parsebarer Input → ``[]``.
+    """
+    raw = (raw or '').strip()
+    if not raw:
+        return []
+
+    # --- Format 1: JSON-Liste ---
+    if raw.startswith('['):
+        try:
+            data = json.loads(raw)
+        except (ValueError, TypeError):
+            data = None
+        if isinstance(data, list):
+            examples: list[dict[str, str]] = []
+            for entry in data:
+                if not isinstance(entry, dict):
+                    continue
+                jp = str(entry.get('japanese') or '').strip()
+                if not jp:
+                    continue
+                examples.append({
+                    'japanese': jp,
+                    'romaji': str(entry.get('romanization')
+                                  or entry.get('romaji') or '').strip(),
+                    'translation': str(entry.get('german') or entry.get('de')
+                                       or entry.get('english')
+                                       or entry.get('translation') or '').strip(),
+                })
+            return examples
+
+    # --- Format 2: nummerierter / Inline-Plaintext ---
+    # Zeilen zu Eintraegen gruppieren: Fortsetzungszeilen (Romaji/Uebersetzung)
+    # haengen am aktuellen Eintrag, jede andere nicht-leere Zeile beginnt einen
+    # neuen Eintrag.
+    records: list[str] = []
+    current: list[str] = []
+    for line in raw.splitlines():
+        stripped = line.strip()
+        if not stripped:
+            continue
+        if current and not _EXAMPLE_CONTINUATION_RE.match(stripped):
+            records.append(' '.join(current))
+            current = []
+        current.append(stripped)
+    if current:
+        records.append(' '.join(current))
+
+    examples = []
+    for record in records:
+        record = _EXAMPLE_MARKER_RE.sub('', record).strip()
+        if not record:
+            continue
+        japanese, romaji, translation = record, '', ''
+        open_candidates = [i for i in (record.find('('), record.find('（')) if i != -1]
+        if open_candidates:
+            open_idx = min(open_candidates)
+            japanese = record[:open_idx].strip()
+            rest = record[open_idx + 1:]
+            close_candidates = [i for i in (rest.find(')'), rest.find('）')) if i != -1]
+            if close_candidates:
+                close_idx = min(close_candidates)
+                romaji = rest[:close_idx].strip()
+                translation = _TRANSLATION_LEAD_RE.sub('', rest[close_idx + 1:]).strip()
+            else:
+                romaji = rest.strip()  # unbalancierte/abgeschnittene Klammer
+        examples.append({'japanese': japanese, 'romaji': romaji,
+                         'translation': translation})
+    return examples
+
+
 class Grammar(db.Model):
     __allow_unmapped__ = True
     id = db.Column(db.Integer, primary_key=True)
@@ -240,76 +342,29 @@ class Grammar(db.Model):
         return f'<Grammar {self.title}>'
 
     def _extract_tts_example_parts(self) -> tuple[str | None, str | None]:
-        """Liefert (Romaji, Uebersetzung) zu tts_example_jp, geparst aus
-        dem unstrukturierten example_sentences-Block.
+        """Liefert (Romaji, Uebersetzung) zum Satz in ``tts_example_jp``.
 
-        example_sentences hat zwei Formate:
-          1. JSON-Liste: `[{"japanese": "...", "english": "...",
-             "romanization": "..."}, ...]`
-          2. Plain-Text mit pro Eintrag JP-Zeile, " (Romaji)" und
-             " — Uebersetzung" (oder " -> Uebersetzung").
-
-        Heuristik: finde den Satz, der gleich tts_example_jp ist, und ziehe
-        die unmittelbar folgende Klammer-Romaji-Zeile + die Translation-Zeile.
-        Wenn nicht parsbar, return (None, None) — der Audio-Button funktioniert
-        weiterhin, nur Romaji/Uebersetzung fehlen auf der Karte.
+        Sucht in :meth:`parsed_examples` den Eintrag, dessen japanischer Satz
+        ``tts_example_jp`` entspricht (exakt oder als Teilstring), und liefert
+        dessen Romaji + Uebersetzung. Findet sich nichts, kommt (None, None)
+        zurueck — der Audio-Button funktioniert weiterhin.
         """
         if not self.tts_example_jp:
             return None, None
         target = self.tts_example_jp.strip().rstrip('。！？')
-        raw = (self.example_sentences or '').strip()
-        if not raw or not target:
+        if not target:
             return None, None
-
-        # JSON-Liste
-        if raw.startswith('['):
-            try:
-                data = json.loads(raw)
-                if isinstance(data, list):
-                    for entry in data:
-                        if not isinstance(entry, dict):
-                            continue
-                        jp = (entry.get('japanese') or '').strip().rstrip('。！？')
-                        if jp and (jp == target or target in jp or jp in target):
-                            romaji = (entry.get('romanization')
-                                      or entry.get('romaji') or '').strip() or None
-                            translation = (entry.get('german') or entry.get('de')
-                                           or entry.get('english')
-                                           or entry.get('translation') or '').strip() or None
-                            return romaji, translation
-            except (ValueError, TypeError):
-                pass
-
-        # Plain-Text: durchsuche Zeilen
-        import re as _re
-        lines = raw.splitlines()
-        for i, line in enumerate(lines):
-            stripped = line.strip()
-            if not stripped:
-                continue
-            cleaned = _re.sub(r'^[①②③④⑤⑥⑦⑧⑨⑩\d]+[\.\)\s]+', '', stripped)
-            cleaned = _re.sub(r'^[\-–—•\*]\s*', '', cleaned)
-            jp_part = cleaned.split('(', 1)[0].strip().rstrip('。！？')
-            if jp_part != target and target not in jp_part and jp_part not in target:
-                continue
-            # Inline-Form: "JP. (Romaji.) -> Uebersetzung"
-            paren_match = _re.search(r'\(([^)]+)\)', cleaned)
-            romaji = paren_match.group(1).strip() if paren_match else None
-            tail = cleaned[paren_match.end():].strip() if paren_match else ''
-            tail = _re.sub(r'^[—–\->>:\s]+', '', tail).strip()
-            translation = tail or None
-            # Multi-Line-Form: naechste Zeile = "(Romaji)", uebernaechste = "— Uebersetzung"
-            if not romaji and i + 1 < len(lines):
-                next_line = lines[i + 1].strip()
-                m = _re.match(r'^\(([^)]+)\)\s*$', next_line)
-                if m:
-                    romaji = m.group(1).strip()
-                    if i + 2 < len(lines):
-                        third = lines[i + 2].strip()
-                        third = _re.sub(r'^[—–\-]+\s*', '', third).strip()
-                        translation = third or None
-            return romaji, translation
+        for ex in self.parsed_examples():
+            jp = ex['japanese'].strip().rstrip('。！？')
+            if jp and (jp == target or target in jp or jp in target):
+                return (ex['romaji'] or None), (ex['translation'] or None)
         return None, None
+
+    def parsed_examples(self) -> list[dict[str, str]]:
+        """Beispielsaetze dieser Karte als normalisierte Liste
+        ``{'japanese', 'romaji', 'translation'}`` (siehe Modulfunktion
+        :func:`parse_example_sentences`)."""
+        return parse_example_sentences(self.example_sentences)
 
     @property
     def tts_example_romaji(self) -> str | None:
