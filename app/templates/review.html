@@ -204,6 +204,29 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         text-transform: uppercase;
     }
 
+    /* Vorderseite Vokabel: Beispielsatz als Lese-Kontext unter dem Wort.
+       JP-Satz immer sichtbar; die Romaji-Zeile traegt .front-romaji und wird
+       darum vom Romaji-Toggle (html.hide-front-romaji) mit aus-/eingeblendet.
+       Die Uebersetzung bleibt der Rueckseite vorbehalten (kein Bedeutungs-Spoiler). */
+    .front-example {
+        margin-top: 1rem;
+        padding-top: 0.85rem;
+        border-top: 1px solid var(--ink-100, #F1EDE6);
+        max-width: 92%;
+    }
+    .front-example-jp {
+        font-family: 'Noto Sans JP', sans-serif;
+        font-size: 1.3rem;
+        line-height: 1.5;
+        color: var(--sumi, #1C1C1C);
+    }
+    .front-example-romaji {
+        margin-top: 0.3rem;
+        font-size: 0.9rem;
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        color: var(--ink-500, #7A7368);
+    }
+
     /* Neues Backside-Layout: Bild kompakt, Bedeutung gross, Lesung leise */
     .back-image {
         align-self: center; flex-shrink: 0;
@@ -327,6 +350,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
 
     @media (max-width: 576px) {
         .review-card-front-text { font-size: 2.75rem; }
+        .front-example-jp { font-size: 1.1rem; }
         .back-meaning { font-size: 1.35rem; }
 
         /* Mobile-Header: Page-Title + Stats-Bar einklappen, kompakte Top-Bar */
@@ -689,6 +713,17 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
                 </div>`;
         }
 
+        // Vorderseite Vokabel: Beispielsatz (JP + Romaji) als Lese-Kontext unter
+        // dem Wort. Nur bei vorhandenem example_jp. Die Uebersetzung bleibt der
+        // Rueckseite vorbehalten, damit die Bedeutung kein Spoiler ist.
+        let frontExample = '';
+        if (card.content_type === 'vocabulary' && d.example_jp) {
+            frontExample = `<div class="front-example">
+                <div class="front-example-jp">${escapeHtml(d.example_jp)}</div>
+                ${d.example_romaji ? `<div class="front-romaji front-example-romaji">${escapeHtml(d.example_romaji)}</div>` : ''}
+            </div>`;
+        }
+
         // Bild fuer die Rueckseite — kompakt 64x64, neuer Slot statt riesiger Top-Bereich
         let imageBlock = '';
         if (d.image_url) {
@@ -773,6 +808,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
                     <div class="review-card-face review-card-face--front">
                         <div class="review-card-front-text ${isLong ? 'small-text' : ''}">${escapeHtml(frontText)}</div>
                         ${subText ? `<div class="front-romaji" style="font-size:1rem;color:var(--text-muted,#8C8378);margin-top:0.5rem;">${escapeHtml(subText)}</div>` : ''}
+                        ${frontExample}
                         ${kanaHint}
                         <div class="review-card-hint">Klicken zum Umdrehen</div>
                     </div>
