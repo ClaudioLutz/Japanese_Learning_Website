@@ -290,6 +290,38 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         padding: 0 0.2rem; line-height: 1;
     }
     .review-example-audio.playing { color: #ef4444; }
+    /* Cloze-Vorderseite (Lückentext-Grammatik) */
+    .cloze-prompt {
+        font-size: 0.78rem; font-weight: 600; color: var(--ink-400, #A8A095);
+        text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.85rem;
+    }
+    .cloze-sentence {
+        font-family: 'Noto Sans JP', sans-serif; font-size: 1.35rem;
+        line-height: 1.7; color: var(--sumi, #1C1C1C); text-align: center;
+    }
+    .cloze-gap {
+        display: inline-block; min-width: 1.7em; margin: 0 0.1em;
+        border-bottom: 3px solid var(--primary-color, #6366f1);
+    }
+    .cloze-hints {
+        display: flex; gap: 0.5rem; justify-content: center;
+        margin-top: 1.1rem; flex-wrap: wrap;
+    }
+    .cloze-hint-btn {
+        padding: 0.32rem 0.8rem; border-radius: 999px; background: #f1f5f9;
+        color: #475569; border: 1px solid #cbd5e1; font-size: 0.8rem;
+        font-weight: 600; cursor: pointer;
+    }
+    .cloze-hint-btn.used { opacity: 0.5; }
+    .cloze-hint-text {
+        display: none; margin-top: 0.7rem; font-size: 0.95rem;
+        color: var(--ink-600, #5C564D); text-align: center; line-height: 1.4;
+    }
+    /* Cloze-Lösung auf der Rückseite — Antwort hervorgehoben */
+    .cloze-answer {
+        color: var(--primary-color, #6366f1); font-weight: 700;
+        padding: 0 0.12em; border-bottom: 2px solid var(--primary-color, #6366f1);
+    }
 
     /* Legacy detail-row (kanji/grammar — noch nicht migriert) */
     .review-detail-row {
@@ -779,12 +811,20 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
                 </div>`;
             }
         } else if (card.content_type === 'grammar') {
-            // Mehrere Beispielsätze (normalisiert) statt nur einem + Rohtext-Block.
-            const gExamples = Array.isArray(d.examples_list) ? d.examples_list : [];
-            const gShown = gExamples.slice(0, 3);
-            const examplesHTML = gShown.length ? `<div class="back-section">
-                            <div class="back-section-label">${gShown.length > 1 ? 'Beispielsätze' : 'Beispielsatz'}</div>
-                            ${gShown.map(ex => `<div class="back-example">
+            const cz = d.cloze;
+            // Cloze-Lösung zuerst: kompletter Satz mit hervorgehobener Antwort.
+            const solutionHTML = cz ? `<div class="back-section">
+                            <div class="back-section-label">Lösung</div>
+                            <div class="back-jp-line">${escapeHtml(cz.before)}<span class="cloze-answer">${escapeHtml(cz.answer)}</span>${escapeHtml(cz.after)}</div>
+                            ${cz.romaji ? `<div class="back-romaji">${escapeHtml(cz.romaji)}</div>` : ''}
+                            ${cz.translation ? `<div class="back-translation">${escapeHtml(cz.translation)}</div>` : ''}
+                        </div>` : '';
+            // Weitere Beispiele — den Cloze-Satz nicht doppelt zeigen.
+            const allEx = Array.isArray(d.examples_list) ? d.examples_list : [];
+            const otherEx = (cz ? allEx.filter(e => e.japanese !== cz.japanese) : allEx).slice(0, cz ? 2 : 3);
+            const examplesHTML = otherEx.length ? `<div class="back-section">
+                            <div class="back-section-label">${cz ? 'Weitere Beispiele' : (otherEx.length > 1 ? 'Beispielsätze' : 'Beispielsatz')}</div>
+                            ${otherEx.map(ex => `<div class="back-example">
                                 <div class="back-example-head">
                                     <span class="back-jp-line">${escapeHtml(ex.japanese)}</span>
                                     ${(ex.romaji || ex.translation) ? `<button type="button" class="review-example-audio" data-tts-text="${escapeHtml(ex.japanese)}" title="Vorlesen" aria-label="Vorlesen"><i class="fas fa-volume-up"></i></button>` : ''}
@@ -793,7 +833,8 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
                                 ${ex.translation ? `<div class="back-translation">${escapeHtml(ex.translation)}</div>` : ''}
                             </div>`).join('')}
                         </div>` : '';
-            backHTML = `<div class="back-meaning" style="font-size:1.2rem;">${escapeHtml(d.structure || '')}</div>` +
+            backHTML = solutionHTML +
+                       `<div class="back-meaning" style="font-size:1.05rem;">${escapeHtml(d.structure || '')}</div>` +
                        (d.romaji ? `<div class="back-readings"><span class="romaji">${escapeHtml(d.romaji)}</span></div>` : '') +
                        examplesHTML +
                        `<div class="back-section">
@@ -813,20 +854,38 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         } else if (card.content_type === 'vocabulary') {
             ttsText = d.example_jp || frontText;
         } else if (card.content_type === 'grammar') {
-            ttsText = d.tts_example_jp || '';
+            // Cloze: der komplette Satz wird vorgelesen, nicht der Lückentext.
+            ttsText = (d.cloze && d.cloze.japanese) || d.tts_example_jp || '';
         }
         const audioBtn = ttsText
             ? `<button type="button" class="review-audio-btn" data-tts-text="${escapeHtml(ttsText)}" title="Vorlesen" aria-label="Vorlesen"><i class="fas fa-volume-up"></i></button>`
             : '';
 
+        // Grammatik-Cloze-Vorderseite: Satz mit Lücke + progressive Hinweise
+        // (erst Bedeutung, dann Struktur). Ohne Cloze → normale Titel-Vorderseite.
+        let grammarClozeFront = '';
+        if (card.content_type === 'grammar' && d.cloze) {
+            const cz = d.cloze;
+            grammarClozeFront = `
+                        <div class="cloze-prompt">Welche Form / Partikel fehlt?</div>
+                        <div class="cloze-sentence">${escapeHtml(cz.before)}<span class="cloze-gap"></span>${escapeHtml(cz.after)}</div>
+                        <div class="cloze-hints">
+                            ${cz.translation ? `<button type="button" class="cloze-hint-btn" data-target="clozeHintT">💡 Bedeutung</button>` : ''}
+                            <button type="button" class="cloze-hint-btn" data-target="clozeHintS">🔧 Struktur</button>
+                        </div>
+                        ${cz.translation ? `<div class="cloze-hint-text" id="clozeHintT">${escapeHtml(cz.translation)}</div>` : ''}
+                        <div class="cloze-hint-text" id="clozeHintS">${escapeHtml(d.structure || '')}</div>`;
+        }
+
         cardArea.innerHTML = `
             <div class="review-flip-card" id="activeReviewCard">
                 <div class="review-card-scene" id="reviewScene">
                     <div class="review-card-face review-card-face--front">
+                        ${grammarClozeFront || `
                         <div class="review-card-front-text ${isLong ? 'small-text' : ''}">${escapeHtml(frontText)}</div>
                         ${subText ? `<div class="front-romaji" style="font-size:1rem;color:var(--text-muted,#8C8378);margin-top:0.5rem;">${escapeHtml(subText)}</div>` : ''}
                         ${frontExample}
-                        ${kanaHint}
+                        ${kanaHint}`}
                         <div class="review-card-hint">Klicken zum Umdrehen</div>
                     </div>
                     <div class="review-card-face review-card-face--back">
@@ -846,6 +905,16 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
                 hintBtn.style.display = 'none';
             });
         }
+
+        // Cloze-Hinweis-Buttons (progressiv: erst Bedeutung, dann Struktur)
+        cardArea.querySelectorAll('.cloze-hint-btn').forEach((cBtn) => {
+            cBtn.addEventListener('click', (e) => {
+                e.stopPropagation();  // verhindert Card-Flip
+                const tgt = document.getElementById(cBtn.dataset.target);
+                if (tgt) tgt.style.display = 'block';
+                cBtn.classList.add('used');
+            });
+        });
 
         // Audio-Button auf der Backseite — verhindert Card-Flip und ruft
         // /api/tts mit lang=ja. Inline-Player, kein Lesson-View-Sound-Stack
