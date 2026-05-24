@@ -8,7 +8,13 @@ import pytest
 import os
 
 # Umgebungsvariablen VOR dem App-Import setzen
-os.environ.setdefault("DATABASE_URL", "sqlite:///:memory:")
+# SICHERHEIT: Tests laufen gegen eine wegwerfbare In-Memory-SQLite. Ein in der
+# Shell gesetztes DATABASE_URL (z.B. versehentlich die Produktions-Postgres)
+# wird hier HART IGNORIERT — sonst löscht die `db`-Fixture per drop_all() echte
+# Produktionstabellen. Eine abweichende Test-DB nur über die ausdrückliche
+# Variable TEST_DATABASE_URL (deren Name 'test' enthalten muss, siehe Guard
+# in der db-Fixture).
+os.environ["DATABASE_URL"] = os.environ.get("TEST_DATABASE_URL", "sqlite:///:memory:")
 os.environ.setdefault("SECRET_KEY", "test-secret-key")
 os.environ.setdefault("WTF_CSRF_SECRET_KEY", "test-csrf-key")
 os.environ.setdefault("PAYMENT_PROVIDER", "mock")
@@ -50,6 +56,15 @@ def app():
 def db(app):
     """Frische Datenbank pro Test."""
     with app.app_context():
+        # Letzte Schutzlinie vor dem destruktiven drop_all(): die gebundene
+        # Engine MUSS eine SQLite- oder ausdrücklich als Test markierte DB sein.
+        # Verhindert, dass Tests jemals echte Tabellen löschen.
+        engine_url = str(_db.engine.url)
+        assert engine_url.startswith("sqlite") or "test" in engine_url, (
+            "SICHERHEITSABBRUCH: db-Fixture würde create_all/drop_all gegen "
+            f"'{engine_url}' ausführen — das ist keine Test-Datenbank. "
+            "Tests niemals gegen eine echte DB laufen lassen."
+        )
         _db.create_all()
         yield _db
         _db.session.rollback()
