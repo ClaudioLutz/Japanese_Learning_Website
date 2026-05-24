@@ -15,6 +15,10 @@ services:
       DATABASE_URL: "postgresql+psycopg2://app_user:JapaneseApp2025!@db:5432/japanese_learning"
     # Heimserver: Container nach Boot/Crash automatisch neu starten (Autostart)
     restart: unless-stopped
+    # Heimserver: Medien-Uploads aus Host-Verzeichnis serven — persistent ueber Container-
+    # Neustarts, kein Image-Rebuild bei neuen Bildern/Audio noetig. Host-UID 1000 == Container 'app'.
+    volumes:
+      - ./app/static/uploads:/app/app/static/uploads
 
   db:
     # Heimserver: DB ebenfalls automatisch neu starten
