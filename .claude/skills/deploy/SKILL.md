@@ -1,54 +1,58 @@
 ---
 name: deploy
 description: >
-  Deploy japanese-learning.ch to Google Cloud Run. Use this skill proactively
-  whenever the user says "deploy", "deployen", "live stellen", or after code
-  changes that should on production go live. Also use after the user confirms
-  that changes are ready for production.
+  Neue Code-Aenderungen auf den self-hosted japanese-learning.ch Heim-Server
+  bringen (Docker-Image neu bauen + Container neu starten). Use this skill
+  proactively whenever the user says "deploy", "deployen", "live stellen", or
+  after code changes that should go live in production. Also use after the user
+  confirms that changes are ready for production.
 disable-model-invocation: true
 ---
 
-# Deploy to japanese-learning.ch
+# Deploy auf japanese-learning.ch (Self-Hosted)
 
-Deploy the Japanese Learning Website to Google Cloud Run (europe-west1).
+Die Seite laeuft self-hosted auf diesem Rechner:
+**Internet → Cloudflare-Tunnel → `japanese_app` Docker-Container → lokale Postgres-DB.**
+Ein "Deploy" = Code committen, Image neu bauen, Container neu starten. **Kein GCloud mehr.**
+
+> DB-Daten (lokale Postgres-Volume) und Medien (Volume `app/static/uploads`) liegen
+> AUSSERHALB des Images und sind von einem Rebuild NICHT betroffen — nur der Code
+> wird ersetzt.
 
 ## Steps
 
-### 1. Git pruefen und pushen
+### 1. Git pruefen, committen, pushen
+1. `git status --short` — uncommitted Code-Aenderungen (.py/.html/.css/.js)?
+2. Bei uncommitted Aenderungen: User fragen, ob committen — dann committen (deutsche Message).
+3. `git log --oneline origin/main..HEAD` — unpushed commits? Falls ja: `git push`.
 
-1. Run `git status --short` — check for uncommitted code changes (.py, .html, .css, .js)
-2. If there are uncommitted code changes, warn the user and ask if they want to commit first
-3. Run `git log --oneline origin/main..HEAD` — check for unpushed commits
-4. If there are unpushed commits, run `git push`
-
-### 2. Docker Image bauen
-
+### 2. Image neu bauen
 ```bash
-gcloud builds submit --config=cloudbuild.yaml \
-  --project=healthy-coil-466105-d7 \
-  --account=claudio.lutz.cv@gmail.com .
+cd /home/hp-ubuntu/git/Japanese_Learning_Website
+sudo docker compose build web
+```
+Auf Erfolg warten. Bei Fehler: Ausgabe zeigen und stoppen.
+
+### 3. Container mit neuem Image neu starten
+```bash
+sudo docker compose up -d --no-deps web
+```
+Der Entrypoint fuehrt automatisch `flask db upgrade` (Migrationen) aus und startet Gunicorn.
+
+### 4. Auf Boot warten + verifizieren
+```bash
+# Boot dauert ~60s (Entrypoint wartet auf DB + Migrationen, dann Gunicorn)
+curl -sS --retry 150 --retry-delay 1 --retry-all-errors -o /dev/null -w "lokal: %{http_code}\n" http://localhost:5000/
+# Live ueber die Domain (durch Cloudflare):
+curl -s -o /dev/null -w "live: %{http_code} via %{remote_ip}\n" https://japanese-learning.ch/
+```
+Erwartung: beide **200**, live-IP ist eine Cloudflare-IP (104.x / 172.67.x).
+
+### 5. Health-Check
+```bash
+systemctl is-active cloudflared
+sudo docker ps --filter name=japanese_app --format '{{.Names}}: {{.Status}}'
 ```
 
-Wait for `STATUS: SUCCESS`. If it fails, show the error and stop.
-
-### 3. Deploy nach Cloud Run
-
-```bash
-gcloud run services update japanese-learning-app \
-  --image=europe-west6-docker.pkg.dev/healthy-coil-466105-d7/app-images/japanese-learning-app:latest \
-  --region=europe-west1 \
-  --project=healthy-coil-466105-d7 \
-  --account=claudio.lutz.cv@gmail.com
-```
-
-### 4. Verifizieren
-
-```bash
-curl -s -o /dev/null -w "%{http_code}" https://japanese-learning.ch/
-```
-
-Expected: 200.
-
-### 5. Zusammenfassung
-
-Report: Git status, Build duration, Revision name, HTTP status of https://japanese-learning.ch
+### 6. Zusammenfassung
+Report: Git-Status, Build-Erfolg, lokaler + Live-HTTP-Status, Tunnel/Container-Status.

@@ -1,63 +1,46 @@
 ---
 name: cloud-db
 description: >
-  Connect to the production Cloud SQL database to run queries. Use this skill
-  whenever the user wants to check production data, run a query on the live
-  database, verify data after a sync, or debug production issues. Also use
-  proactively when you need to verify that production data matches expectations
-  after a deployment or sync.
+  Connect to the production database to run queries. Use this skill whenever the
+  user wants to check production data, run a query on the live database, verify
+  data, or debug production issues. NOTE: Production is now the LOCAL Postgres on
+  this self-hosted machine — "cloud" in the name is historical (Cloud SQL was
+  deleted after the Self-Hosting-Umzug 2026-05).
 ---
 
-# Cloud SQL Access
+# Produktions-DB-Zugriff (lokal, self-hosted)
 
-Securely connect to the production Cloud SQL PostgreSQL database, run queries,
-and close the connection.
+Seit dem Self-Hosting-Umzug ist die **Produktions-DB die lokale Postgres** im
+Docker-Container `postgres_db` auf diesem Rechner. **Es gibt kein Cloud SQL mehr.**
+Diese DB ist die EINZIGE produktive Quelle der Wahrheit.
 
-## Connection Details
-
-- Instance: `jpl-psql` (europe-west6)
-- Public IP: `34.65.56.56`
+## Connection
+- Container: `postgres_db`
 - Database: `japanese_learning`
 - User: `app_user`
-- Password: Secret Manager `db-password`
-- Project: `healthy-coil-466105-d7`
+- Host-Port (gemappt): `localhost:5432`
 
-## Steps
+## Query ausfuehren
 
-### 1. Authorize local IP
-
+Bevorzugt direkt im Container (keine Host-psql noetig):
 ```bash
-gcloud sql instances patch jpl-psql \
-  --authorized-networks=$(curl -s ifconfig.me)/32 \
-  --project=healthy-coil-466105-d7 --quiet
+sudo docker exec postgres_db psql -U app_user -d japanese_learning -c "YOUR QUERY"
+```
+Alternativ ueber den gemappten Host-Port:
+```bash
+PGPASSWORD="JapaneseApp2025!" psql -h localhost -p 5432 -U app_user -d japanese_learning -c "YOUR QUERY"
 ```
 
-### 2. Get password and run query
-
-```bash
-DB_PASS=$(gcloud secrets versions access latest --secret=db-password \
-  --project=healthy-coil-466105-d7)
-PGPASSWORD="$DB_PASS" psql -h 34.65.56.56 -U app_user -d japanese_learning \
-  -c "YOUR QUERY HERE"
-```
-
-### 3. ALWAYS close access afterwards
-
-```bash
-gcloud sql instances patch jpl-psql --clear-authorized-networks \
-  --project=healthy-coil-466105-d7 --quiet
-```
-
-## Security Rules
-
-- NEVER leave the authorized network open after finishing
+## Security Rules (unveraendert wichtig!)
 - NEVER run UPDATE/DELETE without WHERE clause
 - NEVER modify these tables without explicit user confirmation:
-  - `user` — Registrierungen, Passwörter, Abos
-  - `user_lesson_progress` — Lernfortschritt
-  - `user_quiz_answer` — Quiz-Antworten
-  - `lesson_purchase` / `course_purchase` — Käufe
-  - `payment_transaction` — Zahlungen
+  - `user`, `user_lesson_progress`, `user_quiz_answer`, `card_review_state`,
+    `review_log`, `user_achievement`, `lesson_purchase`, `course_purchase`,
+    `payment_transaction`
 - For write operations: always SELECT first to verify affected rows
+- **Es gibt keinen Cloud-Fallback mehr.** Vor riskanten Schreib-Aktionen ein Backup ziehen:
+  ```bash
+  sudo /usr/local/bin/jpl-db-backup.sh    # → /home/hp-ubuntu/jpl-backups/jpl_<ts>.sql.gz
+  ```
 - Prefer READ-ONLY queries unless explicitly asked to modify data
 - Bei Zweifeln: lieber nachfragen als Daten verlieren
