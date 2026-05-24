@@ -4540,6 +4540,31 @@ button[onclick*="moveContentInPage"]:active {
     padding: 0 0.25rem;
 }
 
+/* Schrift-Kennzeichen pro Feld (nur im Schreib-Modus bei gemischten Schriften).
+   Macht sichtbar, ob ein "a"-Feld die Hiragana- (あ) oder Katakana-Lesung (ア)
+   erwartet — sonst sind zwei gleich beschriftete Felder nicht unterscheidbar. */
+.kana-grid-game__cell-script {
+    position: absolute;
+    top: 3px;
+    left: 5px;
+    z-index: 1;
+    font-size: 0.55rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    line-height: 1;
+    padding: 1px 4px;
+    border-radius: 5px;
+    pointer-events: none;
+}
+.kana-grid-game__cell-script.is-hira {
+    color: #1f6feb;
+    background: rgba(31, 111, 235, 0.12);
+}
+.kana-grid-game__cell-script.is-kata {
+    color: #8957e5;
+    background: rgba(137, 87, 229, 0.12);
+}
+
 /* Complete-Screen */
 .kana-grid-game__complete {
     text-align: center;

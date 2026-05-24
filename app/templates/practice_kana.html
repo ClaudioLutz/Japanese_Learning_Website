@@ -335,6 +335,10 @@
                                                  @click="onCellTap(cell)"
                                                  @keydown.enter.prevent="onCellTap(cell)"
                                                  @keydown.space.prevent="onCellTap(cell)">
+                                                <span class="kana-grid-game__cell-script"
+                                                      :class="cell.scriptType === 'katakana' ? 'is-kata' : 'is-hira'"
+                                                      x-show="bothScripts && mode === 'schreiben' && cell.status !== 'correct'"
+                                                      x-text="cell.scriptType === 'katakana' ? 'Kata' : 'Hira'"></span>
                                                 <div class="kana-grid-game__cell-hint" x-show="cell.hint" x-text="cell.hint"></div>
                                                 <div class="kana-grid-game__cell-drop" x-text="cell.solved || ''"></div>
                                                 <span class="kana-grid-game__cell-hint-badge" x-show="cell.hintBadge"

@@ -27,6 +27,7 @@ function kanaGridGame(contentId) {
         _config: null,
         _ttsDisabled: false,        // true, sobald Server-TTS in dieser Session fehlschlug
         selectedCardToken: null,    // Tap-to-Place: aktuell ausgewaehlte Pool-Karte
+        bothScripts: false,         // true, wenn Session Hiragana UND Katakana enthaelt
         // ── Phase 4: Forschungsbasierte Hilfen (Bjork, Pre-Testing-Gate, Fading) ──
         maxHints: 0,            // 0 = keine Hilfen verfuegbar (ab Lesson 4+)
         hintsRemaining: 0,
@@ -85,6 +86,7 @@ function kanaGridGame(contentId) {
                         kanaId: kid,
                         character: k.character,
                         romanization: k.romanization,
+                        scriptType: k.type || null,   // 'hiragana' | 'katakana' — fuer Schrift-Badge
                         hint: this.cellHint(k),
                         status: 'empty',
                         shake: false,
@@ -96,6 +98,12 @@ function kanaGridGame(contentId) {
                     this.cellsByRow[row.key].push(cell);
                 });
             });
+            // Enthaelt die Session beide Schriften? Dann brauchen die Felder im
+            // Schreib-Modus ein Hira/Kata-Kennzeichen (sonst sind z.B. zwei "a"-Felder
+            // optisch nicht unterscheidbar).
+            this.bothScripts = new Set(
+                (this.kana || []).map(k => k.type).filter(Boolean)
+            ).size > 1;
             this.totalCells = this.cells.length * (this.mode === 'blind' ? 2 : 1);
             this.solvedCount = 0;
             this.totalErrors = 0;
@@ -206,8 +214,22 @@ function kanaGridGame(contentId) {
         },
 
         handleDrop(cell, kanaId, payload, token) {
-            const expected = this.expectedForCell(cell);
-            const isCorrect = (expected === payload) && (cell.kanaId === kanaId);
+            // Korrektheit rein INHALTSBASIERT pruefen — nicht ueber die unsichtbare
+            // kanaId. Bei schrift='both' gibt es z.B. zwei "a"-Felder (あ + ア) bzw.
+            // im Lese-Modus zwei optisch identische "a"-Romaji-Karten. Eine kanaId-
+            // Bindung liesse die gleich aussehenden Karten/Felder NICHT austauschbar
+            // wirken ("mit der einen klappt's, mit der anderen nicht").
+            let isCorrect;
+            if (this.mode === 'lesen') {
+                // Feld zeigt das Zeichen, erwartet die Lesung: jede passende Romaji-Karte zaehlt.
+                isCorrect = (payload === cell.romanization);
+            } else if (this.mode === 'blind') {
+                // Blind unveraendert: exakte Kana-Zuordnung verlangt.
+                isCorrect = (this.expectedForCell(cell) === payload) && (cell.kanaId === kanaId);
+            } else {
+                // Schreiben: Feld zeigt die Lesung, erwartet das Zeichen (Zeichen sind eindeutig).
+                isCorrect = (payload === cell.character);
+            }
 
             if (!isCorrect) {
                 cell.attempts += 1;
