@@ -1,16 +1,16 @@
 # Japanese Learning Website — Projektanleitung
 
 ## Überblick
-Flask-basierte Japanisch-Lernplattform mit Lektions-/Kursverwaltung, Benutzerauthentifizierung, KI-generiertem Inhalt (OpenAI/Gemini), PostFinance-Zahlungsintegration und Google Cloud Deployment.
+Flask-basierte Japanisch-Lernplattform mit Lektions-/Kursverwaltung, Benutzerauthentifizierung, KI-generiertem Inhalt (OpenAI/Gemini), Payrexx-Zahlungsintegration. **Self-hosted** auf einem Heim-Server (Docker + Cloudflare Tunnel) — kein GCloud-Hosting mehr (seit 2026-05-24).
 
 ## Tech-Stack
 - **Backend**: Flask 2.0+, SQLAlchemy, Flask-Login, Flask-Migrate, Flask-WTF
-- **Datenbank**: PostgreSQL 15 (Docker lokal, Cloud SQL in Produktion)
+- **Datenbank**: PostgreSQL 15 (Docker) — die lokale Postgres ist die Produktions-DB (self-hosted)
 - **Auth**: Flask-Login (lokal) + Google OAuth2 (social-auth, Authlib)
 - **KI**: OpenAI GPT + Google Gemini für Lektions-/Quiz-Generierung
-- **Zahlungen**: PostFinance Checkout (CHF) — **noch nicht produktiv, MockPayment aktiv**
-- **Storage**: Google Cloud Storage (GCS) für Medien, lokaler Fallback
-- **Deployment**: Google Cloud Run, Docker, Gunicorn
+- **Zahlungen**: Payrexx Checkout (CHF) — **noch nicht produktiv, MockPayment aktiv**
+- **Storage**: lokales Volume `app/static/uploads` (GCS-Bucket `jpl-website-assets` nur noch als Offsite-Backup)
+- **Deployment**: Self-hosted (Docker + Gunicorn), öffentlich erreichbar via Cloudflare Tunnel
 - **Frontend**: Jinja2 Templates, Tailwind CSS (Play CDN), Alpine.js 3.14, HTMX 2.0
 - **Admin-UI**: Modulare Partials, Dark Mode, Command Palette (Ctrl+K), Toast-Notifications
 
@@ -22,7 +22,7 @@ app/
   routes.py              # Alle Routen + API-Endpoints
   utils.py               # FileUploadHandler, URL-Utils
   forms.py               # WTForms (Registration, Login, CSRF)
-  gcs_utils.py           # Google Cloud Storage Helpers
+  gcs_utils.py           # Google Cloud Storage Helpers (nur noch fuer Backup-Bucket relevant)
   ai_services.py         # KI-Content-Generierung (OpenAI/Gemini)
   social_auth_config.py  # Google OAuth Pipeline
   services/
@@ -55,45 +55,40 @@ app/
       manage_courses.html     # Kurse-Verwaltung (modernisiert)
       manage_approval.html    # KI-Approval Queue (modernisiert)
       admin_index.html        # Dashboard mit Statistiken
-  static/                # CSS, Bilder, Uploads
+  static/                # CSS, Bilder, Uploads (uploads/ ist Docker-Volume-gemountet)
 tests/                   # pytest Unit/Integration + Playwright E2E
 migrations/              # Alembic DB-Migrationen
-run.py                   # Entry Point
+run.py                   # Entry Point (Dev-Server)
 admin_dashboard.py       # Streamlit Analytics-Dashboard (Port 8501)
 .streamlit/              # Streamlit-Konfiguration
 requirements.txt         # Python Dependencies
-Dockerfile.cloudrun      # Produktions-Container
-docker-compose.yml       # Lokale Entwicklung (Flask + PostgreSQL 15)
-deploy-to-cloud-run.sh   # GCP Deployment-Automatisierung
-deploy-to-cloud-run.ps1  # PowerShell-Variante
+Dockerfile.cloudrun      # Produktions-Container (vom Heim-Server via docker compose gebaut)
+docker-compose.yml       # Basis-Compose (Flask + PostgreSQL 15)
+docker-compose.override.yml  # Heim-Server-Config (Dockerfile.cloudrun, .env, uploads-Volume, restart)
+deploy-to-cloud-run.sh   # OBSOLET (GCloud abgebaut)
+deploy-to-cloud-run.ps1  # OBSOLET (GCloud abgebaut)
 ```
 
-## Lokale Entwicklung
+## Lokale Entwicklung / Betrieb
 
-### Voraussetzungen
-- Python 3.12+
-- Docker Desktop (für PostgreSQL)
-- `.env`-Datei im Projektroot (nicht im Git, siehe Vorlage unten)
-
-### Starten
+### Produktion (Heim-Server) läuft via Docker Compose
 ```bash
-# 1. PostgreSQL starten
-docker compose up db -d
+cd /home/hp-ubuntu/git/Japanese_Learning_Website
+sudo docker compose up -d        # startet web (japanese_app) + db (postgres_db)
+# → öffentlich über https://japanese-learning.ch (Cloudflare-Tunnel)
+# → lokal über http://localhost:5000
+```
+Container haben `restart: unless-stopped` + Docker-Autostart → überstehen Reboots.
 
-# 2. Python venv aktivieren
-source venv/Scripts/activate   # Windows/Git Bash
-# oder: venv\Scripts\activate  # Windows CMD
-
-# 3. App starten
-python run.py
-# → http://localhost:5000
-
-# 4. (Optional) Analytics-Dashboard starten
-streamlit run admin_dashboard.py
-# → http://localhost:8501
+### Dev-Server (optional, ohne Container)
+```bash
+docker compose up db -d                  # nur PostgreSQL
+source venv/bin/activate                 # venv aktivieren
+python run.py                            # → http://localhost:5000
+streamlit run admin_dashboard.py         # (Optional) Analytics → http://localhost:8501
 ```
 
-### .env Vorlage (Pflichtfelder)
+### .env (Pflichtfelder + Produktions-Werte)
 ```
 DATABASE_URL="postgresql://app_user:JapaneseApp2025!@localhost:5432/japanese_learning"
 SECRET_KEY="<zufälliger Key>"
@@ -102,27 +97,28 @@ OPENAI_API_KEY="<OpenAI Key>"
 GOOGLE_AI_API_KEY="<Gemini Key>"
 GOOGLE_CLIENT_ID="<OAuth Client ID>"
 GOOGLE_CLIENT_SECRET="<OAuth Secret>"
+# Produktion (Heim-Server):
+SITE_URL="https://japanese-learning.ch"
+FLASK_ENV="production"
+ROBOTS_INDEX="index,follow"
+# GCS_BUCKET_NAME ist NICHT gesetzt → Medien werden lokal ausgeliefert (kein GCS-Fallback)
 ## Payment (Payrexx)
 PAYMENT_PROVIDER="payrexx"              # payrexx | postfinance | mock
-PAYREXX_INSTANCE="<instanzname>"        # z.B. "meinshop" bei meinshop.payrexx.com
+PAYREXX_INSTANCE="<instanzname>"
 PAYREXX_API_SECRET="<api-secret>"
 PAYREXX_WEBHOOK_SECRET="<webhook-signing-key>"
-
-## Legacy (PostFinance, nicht mehr aktiv)
-# POSTFINANCE_SPACE_ID="<Space ID>"
-# POSTFINANCE_USER_ID="<User ID>"
-# POSTFINANCE_API_SECRET="<API Secret>"
 ```
-
 **Wichtig:** `DATABASE_URL` ist Pflicht — es gibt keinen Fallback mehr in `__init__.py`.
+(`docker-compose.override.yml` setzt für den Container `DATABASE_URL` auf den Service-Host `db`.)
 
 ## Datenbank
 
-### Lokale Docker-DB
+### Postgres (Docker-Container `postgres_db`) = Produktions-DB
 - **User**: `app_user` / **Passwort**: `JapaneseApp2025!`
-- **Port**: 5432
+- **Port**: 5432 (Host-gemappt)
 - **DB**: `japanese_learning`
-- **Daten**: 8 User, 10 Lektionen (5 EN + 5 DE), 1 Kurs, 802 Content-Items, 250 Quiz-Fragen (Stand April 2026)
+- **Daten** (Stand Mai 2026, = ehemalige Produktion, lokal eingespielt): 9 User, 47 Lektionen (36 published), 3 Kurse, 1887 Content-Items, 790 Quiz-Fragen, 519 Vokabeln, 200 Kana, 127 Grammatik, 61 Kanji — inkl. Nutzer-Fortschritt/SRS/Käufe.
+- Query-Helfer: `/cloud-db` Skill (Name historisch — verbindet zur lokalen DB).
 
 ### Modelle (Hauptentitäten)
 - **User** — Auth, subscription_level (free/premium), is_admin
@@ -137,10 +133,11 @@ PAYREXX_WEBHOOK_SECRET="<webhook-signing-key>"
 
 ### Migrationen
 ```bash
-source venv/Scripts/activate
+source venv/bin/activate
 flask db migrate -m "Beschreibung"
 flask db upgrade
 ```
+Im Container läuft `flask db upgrade` automatisch beim Start (Entrypoint).
 
 ## Admin-Interfaces
 - **Custom Admin** (`/admin`) — Modernisiert mit Tailwind CSS, Alpine.js, HTMX
@@ -154,11 +151,11 @@ flask db upgrade
 - **Streamlit Dashboard** (`localhost:8501`) — Analytics: Benutzer, Lektionen, Content, Umsatz
 
 ## Zugriffskontrolle
-Lektion-Zugriff: Guest (kostenlos+allow_guest) → Free (Voraussetzungen prüfen) → Paid (Kauf prüfen) → Premium (Abo prüfen).
+Lektion-Zugriff: Guest (kostenlos+allow_guest_access) → Free (Voraussetzungen prüfen) → Paid (Kauf prüfen) → Premium (Abo prüfen).
 Decorators: `@login_required`, `@admin_required`, `@premium_required`.
 
 ## Wichtige Muster
-- **GCS-aware URLs**: Models lösen Datei-URLs via GCS auf wenn Bucket konfiguriert, sonst lokal
+- **Medien-URLs**: `/uploads/<path>`-Route (`routes.py:4530`) liefert lokale Dateien aus `app/static/uploads/`; nur falls `GCS_BUCKET_NAME` gesetzt ist (aktuell NICHT) gibt es einen GCS-Redirect-Fallback. Uploads sind als Docker-Volume gemountet (persistent, kein Image-Rebuild bei neuen Medien).
 - **KI-Genehmigung**: KI-generierte Items haben `generated_by_ai`-Flag, Admin-Genehmigung erforderlich
 - **Payment Factory**: `PAYMENT_PROVIDER` Env-Variable steuert Provider (payrexx/postfinance/mock)
 - **App Factory**: `create_app()` in `app/__init__.py`
@@ -199,95 +196,59 @@ Findet Hiragana/Katakana-Sequenzen (4-7 Mora) und trennt sie mit `、` wenn alle
 | `.claude/skills/generate-lesson/scripts/gen_text_audio.py <lesson_id>` | Block-Player pro LessonContent (DE+JP segmentiert) |
 | `scripts/regenerate_block_audio_all.py` | Bulk-Wrapper: ruft gen_text_audio für alle published Lessons mit Skip-Filter |
 | `scripts/prefer_wav_over_mp3.py` | Repariert augmented_html nach Quota-Hit-Phase (.mp3 → .wav wo verfügbar) |
-| `scripts/resume_audio_generation.ps1` | Windows-Resume nach Quota-Reset (via Scheduled Task `JPL_AudioResume`) |
 
 ### Quota-Limit
 - **Gemini 2.5 Pro TTS**: 2'500 Calls/Tag (PaidTier2). Reset täglich um Pacific Midnight (= morgens ~09:00 CET).
 - Bei Hit: Chirp-Fallback greift automatisch. **Aber** Chirp-Output ist MP3 (kein WAV), Hash-basierte URLs zeigen dann auf `.mp3` statt `.wav` — nach Quota-Reset mit `prefer_wav_over_mp3.py` re-runnen.
 
-### Vor GCS-Deploy zu erledigen
-- **WAV → MP3 Konvertierung** zwingend: aktuell **~1.23 GB** lokal (897 MB Block-Player + 184 MB Inline-Audio). Nach MP3-Konvertierung: ~75 MB (16× Reduktion).
-- **GCS-Upload** der MP3s nach `gs://jpl-website-assets/lessons/{inline_audio,text_audio}/`.
-- **`get_file_url()`-Routing** in `LessonContent` verifizieren — `/uploads/`-Route hat GCS-Fallback, `/static/uploads/` NICHT (siehe `routes.py:4076`).
+### Medien-Speicherung
+Audio + Bilder liegen **lokal** unter `app/static/uploads/` (als Docker-Volume gemountet) und werden direkt ausgeliefert. Der GCS-Bucket `jpl-website-assets` ist nur noch ein Offsite-Backup (Snapshot). WAV→MP3-Konvertierung ist nicht mehr zwingend (lokale Platte hat reichlich Platz; ~4.3 GB Medien total).
 
 ### Disclaimer auf Lesson-Pages
 Unter jedem Block-Player steht: *"🤖 KI-Stimmen, wir verbessern laufend · Feedback: info@japanese-learning.ch"*. Zwei Stellen in `lesson_view.html` (Standard-Lesson + Conversation-Variante).
 
-## GCP Deployment & Produktion
+## Produktion — Self-Hosting (Heim-Server, seit 2026-05-24)
 
-### Infrastruktur
-- **Projekt-ID**: `healthy-coil-466105-d7` (Name: "Japanese-Learning-Website")
-- **Account**: `claudio.lutz.cv@gmail.com`
-- **Domain**: https://japanese-learning.ch (SSL via Google-managed Zertifikat)
-- **Domain-Registrar**: Hostpoint (DNS-Zone dort verwaltet)
+Die Seite läuft **self-hosted** auf diesem Rechner (`hp-ubuntu`). **Kein GCloud-Hosting mehr.**
 
-### Cloud Run
-- **Service**: `japanese-learning-app`
-- **Region**: `europe-west1` (Belgien — Zürich unterstützt kein Domain Mapping)
-- **Image**: `europe-west6-docker.pkg.dev/healthy-coil-466105-d7/app-images/japanese-learning-app:latest`
-- **Ressourcen**: 1 CPU, 1Gi RAM, max 5 Instanzen, Timeout 300s
-- **Port**: 8080 (Gunicorn, 2 Workers)
-- **Build-Config**: `cloudbuild.yaml` (referenziert `Dockerfile.cloudrun`)
+### Architektur
+```
+Internet → Cloudflare (Edge Zürich, HTTPS) → cloudflared-Tunnel (systemd-Dienst)
+         → Docker-Container japanese_app (Gunicorn :5000)
+         → Docker-Container postgres_db (lokale Postgres = Produktions-DB)
+         → Medien: Volume-Mount app/static/uploads
+```
 
-### Cloud SQL
-- **Instanz**: `jpl-psql` (PostgreSQL 15, db-f1-micro, europe-west6)
-- **IP**: `34.65.56.56` (Public IP, standardmässig keine autorisierten Netzwerke)
-- **DB**: `japanese_learning`, User: `app_user`
-- **Passwort**: in Secret Manager unter `db-password`
-- **Verbindung von Cloud Run**: Unix Socket `/cloudsql/healthy-coil-466105-d7:europe-west6:jpl-psql`
+### Komponenten
+- **App + DB**: `docker compose` (Basis + `docker-compose.override.yml` mit Heim-Config: Dockerfile.cloudrun, `.env`, uploads-Volume, `restart: unless-stopped`).
+- **Tunnel**: `cloudflared` als systemd-Dienst (`/etc/cloudflared/config.yml`, Tunnel-UUID `1e02e58b-7c6a-45c7-87d7-ccbd5e685937`). Routet `japanese-learning.ch` + `www` → `localhost:5000`. Autostart, 4 Edge-Verbindungen. Status: `systemctl status cloudflared`.
+- **DNS**: läuft über **Cloudflare** (Nameserver `kip`/`noor.ns.cloudflare.com`; Domain bleibt bei Hostpoint registriert). Apex+www → Tunnel (proxied). MX/SPF/DMARC zeigen weiter auf Hostpoint-Mail → **E-Mail unverändert**. DNSSEC ist aus.
+- **HTTPS**: automatisch von Cloudflare (Universal SSL).
 
-### Cloud SQL Zugriff (lokal)
+### Deploy (Code live bringen) — `/deploy` Skill
 ```bash
-# Option A: Temporär IP autorisieren
-gcloud sql instances patch jpl-psql \
-  --authorized-networks=$(curl -s ifconfig.me)/32 \
-  --project=healthy-coil-466105-d7 --quiet
-DB_PASS=$(gcloud secrets versions access latest --secret=db-password --project=healthy-coil-466105-d7)
-PGPASSWORD="$DB_PASS" psql -h 34.65.56.56 -U app_user -d japanese_learning
-# WICHTIG: Danach wieder sperren!
-gcloud sql instances patch jpl-psql --clear-authorized-networks \
-  --project=healthy-coil-466105-d7 --quiet
-
-# Option B: Cloud SQL Proxy (sicherer, kein IP-Freigabe nötig)
-cloud-sql-proxy healthy-coil-466105-d7:europe-west6:jpl-psql --port=5433
-# Dann: psql -h localhost -p 5433 -U app_user -d japanese_learning
+cd /home/hp-ubuntu/git/Japanese_Learning_Website
+sudo docker compose build web              # Image mit neuem Code bauen
+sudo docker compose up -d --no-deps web    # Container neu starten (Entrypoint: flask db upgrade + Gunicorn)
+curl -s -o /dev/null -w "%{http_code}\n" https://japanese-learning.ch/   # 200 erwarten
 ```
+DB-Daten + Medien (Volumes) bleiben beim Rebuild erhalten.
 
-### Secret Manager
-- `db-password` — Cloud SQL Passwort
-- `flask-secret-key` — Flask SECRET_KEY
-- `wtf-csrf-secret-key` — CSRF Secret
+### Datenbank-Backups
+- **Täglich** via systemd-Timer `jpl-db-backup.timer` (03:30) → `/usr/local/bin/jpl-db-backup.sh` → `/home/hp-ubuntu/jpl-backups/jpl_<ts>.sql.gz` (14 Stück Rotation, Persistent).
+- Manuell: `sudo /usr/local/bin/jpl-db-backup.sh`
+- Restore: `gunzip -c <dump>.gz | sudo docker exec -i postgres_db psql -U app_user -d japanese_learning`
+- ⚠️ **Medien** (`app/static/uploads`, ~4.3 GB) sind NICHT im DB-Backup — Offsite-Kopie liegt im GCS-Bucket `jpl-website-assets`. Bei viel neuen Medien manuell nachsichern.
 
-### GCS (Google Cloud Storage)
-- **Bucket**: `jpl-website-assets` (öffentlich lesbar)
-- **Inhalt**: Audio-Dateien (144 MP3s, ~12 MB), Bilder
-- **Pfadstruktur**: `gs://jpl-website-assets/lessons/audio/{lektion}/datei.mp3`
-- **URL-Muster**: `https://storage.googleapis.com/jpl-website-assets/lessons/audio/...`
-- App nutzt `GCS_BUCKET_NAME` Env-Variable; Models lösen URLs via `get_file_url()` auf
+### GCS-Bucket (nur noch Backup)
+- `jpl-website-assets` (public) — seit dem Umzug **nur noch Offsite-Medien-Backup** (Snapshot). App liefert Medien lokal aus.
+- Zugriff: `gcloud storage ... --account=claudio.lutz.cv@gmail.com` (Default-Konto ist `billwilson...` und NICHT projektberechtigt → `--account` zwingend).
 
-### Deployment (Slash-Command)
-```
-/deploy
-```
-Oder manuell:
-```bash
-# 1. Image bauen
-gcloud builds submit --config=cloudbuild.yaml --project=healthy-coil-466105-d7 \
-  --account=claudio.lutz.cv@gmail.com .
-# 2. Deployen
-gcloud run services update japanese-learning-app \
-  --image=europe-west6-docker.pkg.dev/healthy-coil-466105-d7/app-images/japanese-learning-app:latest \
-  --region=europe-west1 --project=healthy-coil-466105-d7 \
-  --account=claudio.lutz.cv@gmail.com
-# 3. Verifizieren
-curl -s -o /dev/null -w "%{http_code}" https://japanese-learning.ch/
-```
-
-### Geschätzte Kosten (~12-15 CHF/Monat)
-- Cloud SQL db-f1-micro: ~8 CHF
-- Cloud Run (pay-per-use): ~2-5 CHF
-- Artifact Registry + Secrets: ~1 CHF
-- Domain (japanese-learning.ch): ~15 CHF/Jahr
+### 2026-05-24 GELÖSCHT (existiert nicht mehr)
+- ❌ **Cloud Run** `japanese-learning-app` (`deploy-to-cloud-run.sh/.ps1`, `cloudbuild.yaml` obsolet)
+- ❌ **Cloud SQL** `jpl-psql` (Produktions-DB ist jetzt lokal)
+- ❌ **Secret Manager** (Secrets leben in `.env`)
+- GCP-Projekt `healthy-coil-466105-d7` bleibt nur für den Backup-Bucket.
 
 ## SEO & Google Search Console
 
@@ -297,20 +258,20 @@ curl -s -o /dev/null -w "%{http_code}" https://japanese-learning.ch/
 - **`/robots.txt`** und **`/sitemap.xml`** als Routes in `app/seo_routes.py` (eigenes Blueprint, von CSRF exempt). Sitemap pullt alle `is_published` Lessons + Courses + statische Seiten dynamisch aus der DB.
 - **Steuer-Env-Variablen** (`__init__.py`):
   - `SITE_URL` (Default `https://japanese-learning.ch`)
-  - `ROBOTS_INDEX` — auf Staging/Preview auf `noindex,nofollow` setzen, dann sperrt robots.txt automatisch alles
+  - `ROBOTS_INDEX` — auf Staging/Preview auf `noindex,nofollow` setzen, dann sperrt robots.txt automatisch alles (Produktion: `index,follow`)
   - `GOOGLE_SITE_VERIFICATION` — optionaler Meta-Tag-Fallback, falls DNS-TXT nicht möglich
-  - `SEO_DEFAULT_OG_IMAGE` — empfohlen: 1200×630 PNG ins GCS hochladen, URL hier eintragen
+  - `SEO_DEFAULT_OG_IMAGE` — 1200×630 PNG (liegt lokal unter `app/static/uploads/`, URL hier eintragen)
 
 ### Google Search Console — Setup-Schritte
 1. **Search Console öffnen**: https://search.google.com/search-console — mit `claudio.lutz.cv@gmail.com` einloggen.
 2. **Property anlegen** → **Domain** (nicht URL-Prefix), Eingabe: `japanese-learning.ch`. Domain-Property erfasst beide Schemas (https/www) auf einmal.
 3. **Verifikations-TXT-Record** kopieren (Format `google-site-verification=…`).
-4. **Bei Hostpoint** (Domain-Registrar, siehe Memory): DNS-Zone von `japanese-learning.ch` → neuer **TXT-Record** mit Host `@`, Wert `google-site-verification=…`. Propagation: meist <1h, max 72h.
-5. **In Search Console** "Verify" klicken. (TXT-Record nach Verifikation drinlassen — entfernen invalidiert.)
-6. **Sitemap einreichen**: in Search Console links **Sitemaps** → URL `https://japanese-learning.ch/sitemap.xml` einreichen.
-7. **Indexing anfordern**: rechts oben "URL inspection" für `/`, `/learn/n5`, `/lessons` — "Request Indexing" klicken (initial einmalig).
+4. **DNS jetzt bei Cloudflare** (Nameserver `kip`/`noor.ns.cloudflare.com`): im Cloudflare-Dashboard → DNS → neuer **TXT-Record** mit Name `@`, Wert `google-site-verification=…`, DNS only. Propagation meist <1h.
+5. **In Search Console** "Verify" klicken. (TXT-Record drinlassen — entfernen invalidiert.)
+6. **Sitemap einreichen**: in Search Console links **Sitemaps** → URL `https://japanese-learning.ch/sitemap.xml`.
+7. **Indexing anfordern**: rechts oben "URL inspection" für `/`, `/learn/n5`, `/lessons` — "Request Indexing" (initial einmalig).
 
-**Fallback ohne DNS-Zugriff**: in Cloud Run die Env-Variable `GOOGLE_SITE_VERIFICATION=<token>` setzen → `<meta name="google-site-verification">` rendert automatisch in `<head>`. Dann in Search Console "HTML tag"-Methode wählen.
+**Fallback ohne DNS-Zugriff**: Env-Variable `GOOGLE_SITE_VERIFICATION=<token>` in `.env` setzen + Container neu starten → `<meta name="google-site-verification">` rendert automatisch. Dann in Search Console "HTML tag"-Methode wählen.
 
 ### Verification & Monitoring
 ```bash
@@ -319,7 +280,7 @@ curl -s http://localhost:5000/robots.txt | head -20
 curl -s http://localhost:5000/sitemap.xml | head -40
 # Live verifizieren:
 curl -sI https://japanese-learning.ch/sitemap.xml
-curl -s https://japanese-learning.ch/sitemap.xml | grep -c '<url>'
+curl -s https://japanese-learning.ch/sitemap.xml | grep -c '<loc>'
 ```
 - **Rich-Results-Test**: https://search.google.com/test/rich-results (JSON-LD validieren)
 - **PageSpeed / Core Web Vitals**: https://pagespeed.web.dev/?url=https://japanese-learning.ch
@@ -327,11 +288,10 @@ curl -s https://japanese-learning.ch/sitemap.xml | grep -c '<url>'
 ### Wenn neue oeffentliche Routen dazukommen
 Statische Seiten in `app/seo_routes.py::sitemap_xml()` ergänzen (`static_pages`-Liste). Lessons/Courses laufen automatisch mit, sobald `is_published=True`.
 
-## Datenbank-Sync — Pflicht-Reihenfolge
-- **IMMER Cloud→Lokal ZUERST** — Vor jedem Lokal→Cloud-Push muss der aktuelle Produktionsstand heruntergeladen werden. Der Admin kann auf japanese-learning.ch jederzeit Inhalte bearbeiten. Ein blindes Lokal→Cloud überschreibt diese Änderungen.
-- **Ablauf**: `/sync-cloud-db` Skill ausführen — der macht automatisch: (A) Cloud→Lokal, dann (B) Lokal→Cloud.
-- **Scripts**: `scripts/sync_from_cloud.py` (Cloud→Lokal) und `scripts/sync_content_upsert.py` (Lokal→Cloud)
-- **Geschützte Tabellen**: User-Daten, Fortschritt, SRS-States, Käufe werden NIEMALS synchronisiert.
+## Datenbank — lokale Produktions-DB (kein Cloud-Sync mehr)
+- Die lokale Postgres (`postgres_db`-Container) ist seit dem Self-Hosting-Umzug die **einzige produktive Datenquelle**. Es gibt **kein Cloud SQL und keinen Cloud-Sync mehr**.
+- ⚠️ Alte Sync-Skripte (`scripts/sync_from_cloud.py`, `scripts/sync_content_upsert.py`, `scripts/sync_assets_to_gcs.py`, `scripts/sync_safety.py`) sind **obsolet** (zielen auf gelöschtes Cloud SQL) — nicht mehr ausführen. (Bleiben als Dead-Code, da Tests sie referenzieren.)
+- Sicherung: täglicher `pg_dump` via systemd-Timer (siehe Produktions-Sektion).
 
 ## Arbeitsweise — Sauberer Git-Status
 - **Jede Änderung sofort committen und pushen** — nach jeder abgeschlossenen Teilaufgabe wird ein Git-Commit erstellt und auf den Remote gepusht. Das verbessert die Nachvollziehbarkeit und schützt vor Datenverlust.
@@ -352,4 +312,5 @@ Statische Seiten in `app/seo_routes.py::sitemap_xml()` ergänzen (`static_pages`
 1. **Payrexx-Zahlung integriert, noch nicht produktiv** — PayrexxPaymentService erstellt, Payrexx-Konto und API-Keys noch einzurichten
 2. **Playwright E2E-Tests** — 8 Spec-Dateien in `tests/`, benötigen `npm install` und laufenden Test-Server
 3. **Google OAuth Redirect-URI** — `https://japanese-learning.ch/auth/complete/google-oauth2/` muss in Google Cloud Console als Redirect-URI eingetragen sein (mit Trailing-Slash!)
-4. **Docker-Container `japanese_app`** — Alter Container belegt Port 5000 wenn Docker Desktop läuft. `docker stop japanese_app` vor lokalem Start nötig.
+4. **DNSSEC** — bei der Cloudflare-Migration deaktiviert; optional via Cloudflare wieder aktivierbar (Sicherheits-Plus)
+5. **Medien-Offsite-Backup** — `app/static/uploads` (~4.3 GB) wird nicht vom DB-Backup erfasst; GCS-Bucket ist Snapshot-Stand. Für echtes laufendes Offsite-Backup ggf. periodisch nachsichern (externe Platte/NAS).
