@@ -400,6 +400,9 @@ def get_content_data_for_review(content_item):
             # Geparst aus example_sentences-Block (Klammer-Romaji oder JSON).
             'tts_example_romaji': ref.tts_example_romaji or '',
             'tts_example_translation': ref.tts_example_translation or '',
+            # Alle Beispielsätze normalisiert ({japanese, romaji, translation})
+            # für die Mehrfach-Anzeige auf der Karten-Rückseite.
+            'examples_list': ref.parsed_examples(),
         }
 
     return data

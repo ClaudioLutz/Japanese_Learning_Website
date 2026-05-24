@@ -1378,21 +1378,20 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                                                 {% if content_data.romaji %}
                                                                                 <p><strong>Romaji:</strong> {{ content_data.romaji }}</p>
                                                                                 {% endif %}
-                                                                                {% if content_data.tts_example_jp %}
-                                                                                <p><strong>Beispielsatz:</strong><br>
-                                                                                    {{ content_data.tts_example_jp }}
-                                                                                    {% if content_data.tts_example_romaji %}
-                                                                                    <br><span class="example-romaji">{{ content_data.tts_example_romaji }}</span>
-                                                                                    {% endif %}
-                                                                                    {% if content_data.tts_example_translation %}
-                                                                                    <br><span class="example-translation">{{ content_data.tts_example_translation }}</span>
-                                                                                    {% endif %}
-                                                                                </p>
+                                                                                {% set grammar_examples = content_data.parsed_examples() %}
+                                                                                {% if grammar_examples %}
+                                                                                <div class="grammar-examples">
+                                                                                    <p class="examples-label"><strong>{% if grammar_examples|length > 1 %}Beispielsätze{% else %}Beispielsatz{% endif %}:</strong></p>
+                                                                                    {% for ex in grammar_examples[:4] %}
+                                                                                    <p class="grammar-example">
+                                                                                        {{ ex.japanese }}
+                                                                                        {% if ex.romaji %}<br><span class="example-romaji">{{ ex.romaji }}</span>{% endif %}
+                                                                                        {% if ex.translation %}<br><span class="example-translation">{{ ex.translation }}</span>{% endif %}
+                                                                                    </p>
+                                                                                    {% endfor %}
+                                                                                </div>
                                                                                 {% endif %}
                                                                                 <p><strong>Erklärung:</strong><br>{{ content_data.explanation }}</p>
-                                                                                {% if content_data.example_sentences %}
-                                                                                <p><strong>Weitere Beispiele:</strong><br>{{ content_data.example_sentences | nl2br }}</p>
-                                                                                {% endif %}
                                                                             {% endif %}
                                                                         </div>
                                                                         {# Audio-Button: liest das japanische Wort/Zeichen vor (Cloud TTS).

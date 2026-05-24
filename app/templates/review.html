@@ -278,6 +278,18 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         font-family: 'Geist Mono', ui-monospace, monospace;
         margin-top: 0.15rem;
     }
+    /* Mehrere Beispielsätze auf der Grammatik-Rückseite */
+    .back-example { margin-top: 0.55rem; }
+    .back-example:first-of-type { margin-top: 0.1rem; }
+    .back-example-head {
+        display: flex; align-items: baseline; gap: 0.35rem; justify-content: center;
+    }
+    .review-example-audio {
+        flex: none; background: none; border: none; cursor: pointer;
+        color: var(--primary-color, #6366f1); font-size: 0.8rem;
+        padding: 0 0.2rem; line-height: 1;
+    }
+    .review-example-audio.playing { color: #ef4444; }
 
     /* Legacy detail-row (kanji/grammar — noch nicht migriert) */
     .review-detail-row {
@@ -767,22 +779,27 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
                 </div>`;
             }
         } else if (card.content_type === 'grammar') {
+            // Mehrere Beispielsätze (normalisiert) statt nur einem + Rohtext-Block.
+            const gExamples = Array.isArray(d.examples_list) ? d.examples_list : [];
+            const gShown = gExamples.slice(0, 3);
+            const examplesHTML = gShown.length ? `<div class="back-section">
+                            <div class="back-section-label">${gShown.length > 1 ? 'Beispielsätze' : 'Beispielsatz'}</div>
+                            ${gShown.map(ex => `<div class="back-example">
+                                <div class="back-example-head">
+                                    <span class="back-jp-line">${escapeHtml(ex.japanese)}</span>
+                                    ${(ex.romaji || ex.translation) ? `<button type="button" class="review-example-audio" data-tts-text="${escapeHtml(ex.japanese)}" title="Vorlesen" aria-label="Vorlesen"><i class="fas fa-volume-up"></i></button>` : ''}
+                                </div>
+                                ${ex.romaji ? `<div class="back-romaji">${escapeHtml(ex.romaji)}</div>` : ''}
+                                ${ex.translation ? `<div class="back-translation">${escapeHtml(ex.translation)}</div>` : ''}
+                            </div>`).join('')}
+                        </div>` : '';
             backHTML = `<div class="back-meaning" style="font-size:1.2rem;">${escapeHtml(d.structure || '')}</div>` +
                        (d.romaji ? `<div class="back-readings"><span class="romaji">${escapeHtml(d.romaji)}</span></div>` : '') +
-                       (d.tts_example_jp ? `<div class="back-section">
-                            <div class="back-section-label">Beispielsatz</div>
-                            <div class="back-jp-line">${escapeHtml(d.tts_example_jp)}</div>
-                            ${d.tts_example_romaji ? `<div class="back-romaji">${escapeHtml(d.tts_example_romaji)}</div>` : ''}
-                            ${d.tts_example_translation ? `<div class="back-translation">${escapeHtml(d.tts_example_translation)}</div>` : ''}
-                        </div>` : '') +
+                       examplesHTML +
                        `<div class="back-section">
                             <div class="back-section-label">Erklärung</div>
                             <div style="font-size:0.92rem; line-height:1.45;">${escapeHtml(d.explanation || '').substring(0, 400)}</div>
-                        </div>` +
-                       (d.examples ? `<div class="back-section">
-                            <div class="back-section-label">Weitere Beispiele</div>
-                            <div style="font-size:0.88rem; white-space:pre-line;">${escapeHtml(d.examples).substring(0, 500)}</div>
-                        </div>` : '');
+                        </div>`;
         }
 
         // Audio-Text bestimmen: bei Vokabel/Grammatik vorzugsweise der
@@ -840,6 +857,13 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
                 playReviewAudio(audioBtnEl.dataset.ttsText, audioBtnEl);
             });
         }
+        // Pro-Satz-Audio-Buttons (Grammatik-Beispielsätze auf der Rückseite)
+        cardArea.querySelectorAll('.review-example-audio').forEach((exBtn) => {
+            exBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                playReviewAudio(exBtn.dataset.ttsText, exBtn);
+            });
+        });
 
         // Flip handler
         const scene = document.getElementById('reviewScene');

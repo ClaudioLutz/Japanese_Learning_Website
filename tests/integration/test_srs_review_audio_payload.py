@@ -45,6 +45,28 @@ def test_grammar_review_payload_empty_tts_when_unset(app_context):
     assert data["details"]["tts_example_jp"] == ""
 
 
+def test_grammar_review_payload_includes_examples_list(app_context):
+    """Karten-Rückseite zeigt mehrere Beispielsätze — das Payload liefert die
+    normalisierte Liste {japanese, romaji, translation} aus example_sentences."""
+    lc = _content_for(
+        "grammar",
+        tts_example_jp="わたしは 学生です。",
+        example_sentences=(
+            "① わたしは 学生です。\n  (Watashi wa gakusei desu.)\n  — Ich bin Student.\n"
+            "② あれは 本です。\n  (Are wa hon desu.)\n  — Das ist ein Buch.\n"
+        ),
+    )
+    data = get_content_data_for_review(lc)
+    examples = data["details"]["examples_list"]
+    assert isinstance(examples, list) and len(examples) == 2
+    assert examples[0] == {
+        "japanese": "わたしは 学生です。",
+        "romaji": "Watashi wa gakusei desu.",
+        "translation": "Ich bin Student.",
+    }
+    assert examples[1]["japanese"] == "あれは 本です。"
+
+
 def test_vocabulary_review_payload_includes_example_jp(app_context):
     """Audio-Button auf Vokabel-Karte nutzt example_jp wenn vorhanden,
     sonst das Wort selbst — beide Felder muessen im Payload sein."""
