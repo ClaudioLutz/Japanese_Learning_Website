@@ -17,17 +17,20 @@ wait_for_database() {
     for i in {1..30}; do
         if python -c "
 import os
+import re
 import psycopg2
 try:
-    # Use psycopg2 directly for connection test
-    conn = psycopg2.connect(os.environ['DATABASE_URL'])
+    # psycopg2 versteht das SQLAlchemy-Schema 'postgresql+psycopg2://' nicht —
+    # Treiber-Suffix entfernen, damit der Connection-Test wirklich greift.
+    url = re.sub(r'^postgresql\+\w+://', 'postgresql://', os.environ['DATABASE_URL'])
+    conn = psycopg2.connect(url)
     conn.close()
     print('✅ Database connection successful!')
     exit(0)
 except Exception as e:
-    print(f'⚠️  Database connection attempt {i}/30 failed: {e}')
+    print(f'⚠️  Database connection attempt $i/30 failed: {e}')
     exit(1)
-" 2>/dev/null; then
+"; then
             echo "✅ Database is ready!"
             return 0
         fi
