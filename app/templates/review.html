@@ -557,6 +557,9 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         </div>
     </div>
 
+    <!-- Karten-Typ-Filter (Mehrfachauswahl) — Styles aus custom.css (.deck-filter-*) -->
+    <div class="deck-filter-bar" id="reviewFilterBar" style="display:none;"></div>
+
     <!-- Romaji-Toggle ueber der Karte -->
     <div style="display:flex;justify-content:flex-end;margin-bottom:0.5rem;">
         <button type="button" class="btn btn-sm btn-outline-secondary romaji-toggle"
@@ -596,6 +599,15 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     <div class="card-context" id="cardContext" style="display: none;">
         <span class="lesson-tag" id="cardLesson"></span>
         <span id="cardType"></span>
+    </div>
+
+    <!-- Filter-Leer-Status (fällige Karten vorhanden, aber keine in der Auswahl) -->
+    <div class="review-empty" id="reviewFilterEmpty" style="display: none;">
+        <div class="review-empty-icon">
+            <i class="fas fa-filter" style="color: var(--zen-vermillion, #D14B3D);"></i>
+        </div>
+        <h5 id="reviewFilterEmptyTitle">Keine Karten für diese Auswahl</h5>
+        <p class="text-muted" id="reviewFilterEmptyText">Wähle oben mindestens einen Kartentyp.</p>
     </div>
 
     <!-- Empty State -->
@@ -673,46 +685,134 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     const progressEl = document.getElementById('sessionProgress');
 
     let cards = [];
+    let allCards = [];          // vollständige geladene Fällig-Liste (Filter-Quelle)
     let currentIdx = 0;
     let sessionStart = Date.now();
     let cardFlipTime = null;
     let sessionStats = { total: 0, reviewed: 0, good: 0, xpEarned: 0, stagesUp: 0, stagesDown: 0, achievements: [] };
     const intervalCache = {};
-    const TYPE_LABELS = { kana: 'Kana', kanji: 'Kanji', vocabulary: 'Vokabel', grammar: 'Grammatik' };
+    const TYPE_LABELS = { hiragana: 'Hiragana', katakana: 'Katakana', kana: 'Kana', kanji: 'Kanji', vocabulary: 'Vokabel', grammar: 'Grammatik' };
+
+    // ── Karten-Typ-Filter (Hiragana/Katakana/Kanji/Vokabeln/Grammatik) ──
+    const TYPE_ORDER = ['hiragana', 'katakana', 'kanji', 'vocabulary', 'grammar'];
+    const filterBar = document.getElementById('reviewFilterBar');
+    const filterEmptyEl = document.getElementById('reviewFilterEmpty');
+    const ratedIds = new Set();      // content_ids, die (Schwer/Gut/Einfach) bewertet wurden
+    let activeTypes = new Set();     // aktuell ausgewählte Typen
+    let presentTypes = [];           // im Fällig-Set vorhandene Typen (in TYPE_ORDER)
+
+    // Filter-Typ einer Karte: Kana → hiragana/katakana, sonst content_type
+    function ftype(card) {
+        if (card.content_type === 'kana') {
+            return (card.details && card.details.type === 'katakana') ? 'katakana' : 'hiragana';
+        }
+        return card.content_type;
+    }
+
+    function shuffle(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
 
     // ── Load due cards ──
     async function loadCards() {
         try {
             const resp = await fetch('/api/srs/due?limit=50');
             const data = await resp.json();
-            cards = data.cards || [];
-            sessionStats.total = cards.length;
+            allCards = data.cards || [];
 
-            if (cards.length === 0) {
+            if (allCards.length === 0) {
                 emptyEl.style.display = 'block';
                 cardArea.style.display = 'none';
                 return;
             }
 
-            // Shuffle
-            for (let i = cards.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [cards[i], cards[j]] = [cards[j], cards[i]];
-            }
+            // Vorhandene Typen ermitteln, alle standardmäßig aktiv, Pills rendern
+            presentTypes = TYPE_ORDER.filter(t => allCards.some(c => ftype(c) === t));
+            activeTypes = new Set(presentTypes);
+            renderFilterBar();
 
             progressEl.style.display = 'block';
-            currentIdx = 0;
-            showCard();
+            rebuildQueue();
+            refreshView();
         } catch (e) {
             console.error('[Review] Load failed:', e);
             cardArea.innerHTML = '<p class="text-muted">Fehler beim Laden der Karten.</p>';
         }
     }
 
+    // Arbeits-Queue aus aktiver Auswahl neu aufbauen (bereits bewertete raus)
+    function rebuildQueue() {
+        cards = shuffle(allCards.filter(c => activeTypes.has(ftype(c)) && !ratedIds.has(c.content_id)));
+        currentIdx = 0;
+        sessionStats.total = sessionStats.reviewed + cards.length;
+    }
+
+    function remainingUnrated() {
+        return allCards.filter(c => !ratedIds.has(c.content_id)).length;
+    }
+
+    // Entscheidet zwischen Karte / Filter-Leer / Session-Fertig
+    function refreshView() {
+        if (cards.length > 0) {
+            filterEmptyEl.style.display = 'none';
+            completeEl.style.display = 'none';
+            cardArea.style.display = '';
+            btnGroup.style.display = '';
+            showCard();
+        } else if (remainingUnrated() > 0) {
+            showFilterEmpty();   // fällige Karten da, aber keine in der Auswahl
+        } else {
+            showComplete();
+        }
+    }
+
+    function showFilterEmpty() {
+        cardArea.innerHTML = '';
+        cardArea.style.display = 'none';
+        btnGroup.style.display = 'none';
+        cardContext.style.display = 'none';
+        completeEl.style.display = 'none';
+        const title = document.getElementById('reviewFilterEmptyTitle');
+        const text = document.getElementById('reviewFilterEmptyText');
+        if (activeTypes.size === 0) {
+            title.textContent = 'Keine Karten für diese Auswahl';
+            text.textContent = 'Wähle oben mindestens einen Kartentyp.';
+        } else {
+            title.textContent = 'Auswahl durchgearbeitet';
+            text.textContent = 'Wähle oben weitere Kartentypen, um fortzufahren.';
+        }
+        filterEmptyEl.style.display = 'block';
+    }
+
+    // ── Filter-Pills rendern (nur bei >=2 verschiedenen Typen) ──
+    function renderFilterBar() {
+        if (!filterBar || presentTypes.length < 2) return;
+        filterBar.innerHTML = presentTypes.map(t =>
+            `<button type="button" class="deck-filter-pill is-active" data-type="${t}" aria-pressed="true">${TYPE_LABELS[t] || t}</button>`
+        ).join('');
+        filterBar.style.display = 'flex';
+        filterBar.querySelectorAll('.deck-filter-pill').forEach(pill => {
+            pill.addEventListener('click', () => {
+                const t = pill.dataset.type;
+                if (activeTypes.has(t)) activeTypes.delete(t); else activeTypes.add(t);
+                const on = activeTypes.has(t);
+                pill.classList.toggle('is-active', on);
+                pill.setAttribute('aria-pressed', on ? 'true' : 'false');
+                rebuildQueue();
+                refreshView();
+            });
+        });
+    }
+
     // ── Render a flip card ──
     function showCard() {
         if (currentIdx >= cards.length) {
-            showComplete();
+            if (remainingUnrated() > 0) showFilterEmpty();
+            else showComplete();
             return;
         }
 
@@ -1093,9 +1193,10 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
             cards.splice(currentIdx, 1);
             const insertAt = Math.min(currentIdx + 2 + Math.floor(Math.random() * 3), cards.length);
             cards.splice(insertAt, 0, card);
-            sessionStats.total = cards.length;
+            sessionStats.total = sessionStats.reviewed + cards.length;
         } else {
-            // Hard/Good/Easy: remove
+            // Hard/Good/Easy: aus dieser Session entfernen (auch bei Filter-Rebuild)
+            ratedIds.add(card.content_id);
             currentIdx++;
         }
 
@@ -1145,6 +1246,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
 
     // ── Complete ──
     function showComplete() {
+        cardArea.innerHTML = '';
         cardArea.style.display = 'none';
         btnGroup.style.display = 'none';
         cardContext.style.display = 'none';

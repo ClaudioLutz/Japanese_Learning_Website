@@ -66,3 +66,24 @@ def test_deck_filter_scaffolding_present(admin_client):
     assert "deck-filter-bar" in html
     assert "renderFilterBar" in html
     assert "TYPE_LABELS" in html
+
+
+def test_review_page_filter_scaffolding_present(admin_client):
+    """Die Wiederhol-Seite (/review) bindet die Typ-Filter-Logik ein.
+
+    Die Pills selbst werden client-seitig aus den geladenen Karten erzeugt;
+    serverseitig prüfen wir Container + JS-Funktionen.
+    """
+    client, _admin = admin_client
+
+    resp = client.get("/review", base_url=HTTPS)
+    assert resp.status_code == 200, resp.status_code
+    html = resp.get_data(as_text=True)
+
+    assert 'id="reviewFilterBar"' in html          # Filter-Leiste
+    assert 'id="reviewFilterEmpty"' in html         # Filter-Leer-Status
+    assert "function renderFilterBar" in html       # Pill-Rendering
+    assert "function rebuildQueue" in html          # gefilterte Queue
+    assert "function ftype" in html                 # Hiragana/Katakana-Split
+    # Filter-Pills nutzen dieselben Styles wie das Lektions-Deck
+    assert "deck-filter-pill" in html
