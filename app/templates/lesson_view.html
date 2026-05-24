@@ -1278,7 +1278,7 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                 {% elif content.content_type in ['kana', 'kanji', 'vocabulary', 'grammar'] %}
                                                     {% set content_data = content.get_content_data() %}
                                                     {% if content_data %}
-                                                        <div class="flip-card">
+                                                        <div class="flip-card" data-card-type="{% if content.content_type == 'kana' %}{{ content_data.type }}{% else %}{{ content.content_type }}{% endif %}">
                                                             <div class="card-scene" role="button"
                                                                     aria-label="Flip card for {% if content.content_type in ['kana', 'kanji'] %}{{ content_data.character }}{% elif content.content_type == 'vocabulary' %}{{ content_data.word }}{% else %}{{ content_data.title }}{% endif %} to see details"
                                                                     tabindex="0">
@@ -1396,6 +1396,9 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                                                 </div>
                                                                                 {% endif %}
                                                                                 <p><strong>Erklärung:</strong><br>{{ content_data.explanation }}</p>
+                                                                                {% if content_data.nuance %}
+                                                                                <p class="grammar-nuance"><strong>💡 Nuance / Achtung:</strong><br>{{ content_data.nuance }}</p>
+                                                                                {% endif %}
                                                                             {% endif %}
                                                                         </div>
                                                                         {# Audio-Button: liest das japanische Wort/Zeichen vor (Cloud TTS).
@@ -3278,63 +3281,43 @@ function createDeck(cardItems, page) {
         return clone;
     });
 
-    // Fortschritt laden: DB-First, localStorage als Fallback
-    let pending, learned, currentIdx;
+    // ── Karten-Typ-Filter (Hiragana/Katakana/Kanji/Vokabeln/Grammatik) ──
+    const TYPE_ORDER = ['hiragana', 'katakana', 'kanji', 'vocabulary', 'grammar'];
+    const TYPE_LABELS = {
+        hiragana: 'Hiragana', katakana: 'Katakana', kanji: 'Kanji',
+        vocabulary: 'Vokabeln', grammar: 'Grammatik'
+    };
+    const cardType = (idx) => allCards[idx].dataset.cardType || 'vocabulary';
+    const presentTypes = TYPE_ORDER.filter(t => allCards.some((_, i) => cardType(i) === t));
+    const activeTypes = new Set(presentTypes); // Standard: alle vorhandenen Typen aktiv
 
-    // Default: alle Karten pending
-    pending = shuffle([...Array(total).keys()]);
-    learned = 0;
-    currentIdx = 0;
-
-    // DB-Fortschritt laden (asynchron, aktualisiert Deck nach Antwort)
-    if (isAuthenticated) {
-        fetch(`/api/srs/reviewed-ids?lesson_id=${lessonData.id}`)
-            .then(r => r.json())
-            .then(data => {
-                const reviewedIds = new Set(data.reviewed_ids.map(String));
-                // Finde Karten-Indizes die bereits bewertet wurden
-                const reviewedIndices = new Set();
-                allCards.forEach((card, idx) => {
-                    if (reviewedIds.has(card.dataset.contentId)) {
-                        reviewedIndices.add(idx);
-                    }
-                });
-                if (reviewedIndices.size > 0 && reviewedIndices.size < total) {
-                    // Nur nicht-bewertete Karten als pending
-                    pending = shuffle([...Array(total).keys()].filter(i => !reviewedIndices.has(i)));
-                    learned = reviewedIndices.size;
-                    currentIdx = 0;
-                    console.log(`[Deck] DB-Fortschritt: ${learned}/${total} gelernt`);
-                    showCard(pending[currentIdx]);
-                    updateStats();
-                } else if (reviewedIndices.size >= total) {
-                    // Alle Karten gelernt
-                    learned = total;
-                    pending = [];
-                    cardArea.style.display = 'none';
-                    btnGroup.style.display = 'none';
-                    completeEl.style.display = 'block';
-                    updateStats();
-                }
-            })
-            .catch(e => console.warn('[Deck] DB-Fortschritt nicht ladbar:', e));
-    } else {
-        // Nicht eingeloggt: localStorage-Fallback
-        let saved = null;
-        try { saved = JSON.parse(localStorage.getItem(storageKey)); } catch(e) {}
-        if (saved && saved.total === total && saved.pending?.length > 0) {
-            pending = saved.pending;
-            learned = saved.learned || 0;
-            currentIdx = 0;
-            console.log(`[Deck] localStorage-Fortschritt: ${learned}/${total} gelernt`);
-        }
+    // reviewedIndices = kanonischer "gelernt"-Zustand (aus DB bzw. localStorage gespeist)
+    const reviewedIndices = new Set();
+    function seedReviewed(reviewedIdSet) {
+        allCards.forEach((card, idx) => {
+            if (reviewedIdSet.has(card.dataset.contentId)) reviewedIndices.add(idx);
+        });
     }
 
-    // Fortschritt speichern
+    // Abgeleiteter Zustand: berücksichtigt aktive Typen + bereits gelernte Karten
+    let pending = [];
+    let currentIdx = 0;
+    const isEligible = (idx) => activeTypes.has(cardType(idx));
+    const eligibleIndices = () => [...Array(total).keys()].filter(isEligible);
+    const filteredTotal = () => eligibleIndices().length;
+    const learnedCount = () => eligibleIndices().filter(i => reviewedIndices.has(i)).length;
+
+    function rebuildPending() {
+        pending = shuffle(eligibleIndices().filter(i => !reviewedIndices.has(i)));
+        currentIdx = 0;
+    }
+
+    // Fortschritt speichern (gelernte content-IDs — filter-robust)
     function saveProgress() {
         try {
+            const ids = [...reviewedIndices].map(i => allCards[i].dataset.contentId);
             localStorage.setItem(storageKey, JSON.stringify({
-                total, pending: [...pending], learned, timestamp: Date.now()
+                total, reviewed: ids, timestamp: Date.now()
             }));
         } catch(e) {}
     }
@@ -3344,6 +3327,7 @@ function createDeck(cardItems, page) {
     deckEl.className = 'deck-container';
     deckEl.innerHTML = `
         <div class="deck-header">
+            <div class="deck-filter-bar" style="display:none;"></div>
             <div style="display:flex;justify-content:flex-end;margin-bottom:0.5rem;">
                 <button type="button" class="btn btn-sm btn-outline-secondary romaji-toggle"
                         style="font-size:0.75rem;padding:0.2rem 0.6rem;"
@@ -3383,10 +3367,14 @@ function createDeck(cardItems, page) {
                 <span class="kbd-hint">4</span>
             </button>
         </div>
+        <div class="deck-empty" style="display: none;">
+            <div class="deck-empty-icon">🔍</div>
+            <p class="text-muted">Keine Karten für diese Auswahl.<br>Wähle oben mindestens einen Kartentyp.</p>
+        </div>
         <div class="deck-complete" style="display: none;">
             <div class="deck-complete-icon">🎉</div>
             <h4>Alle Karten gelernt!</h4>
-            <p class="text-muted">Du hast alle ${total} Karten in diesem Set gemeistert.</p>
+            <p class="text-muted">Du hast alle Karten dieser Auswahl gemeistert.</p>
             <button class="btn btn-outline-primary btn-sm deck-restart">
                 <i class="fas fa-redo"></i> Nochmal üben
             </button>
@@ -3401,6 +3389,55 @@ function createDeck(cardItems, page) {
     const cardArea = deckEl.querySelector('.deck-card-area');
     const btnGroup = deckEl.querySelector('.confidence-buttons');
     const completeEl = deckEl.querySelector('.deck-complete');
+    const emptyEl = deckEl.querySelector('.deck-empty');
+    const filterBar = deckEl.querySelector('.deck-filter-bar');
+
+    // Filter-Pills rendern (nur wenn mind. 2 verschiedene Kartentypen im Deck)
+    function renderFilterBar() {
+        if (!filterBar || presentTypes.length < 2) return;
+        filterBar.innerHTML = presentTypes.map(t => `
+            <button type="button" class="deck-filter-pill is-active" data-type="${t}" aria-pressed="true">
+                ${TYPE_LABELS[t]}
+            </button>`).join('');
+        filterBar.style.display = 'flex';
+        filterBar.querySelectorAll('.deck-filter-pill').forEach(pill => {
+            pill.addEventListener('click', () => {
+                const t = pill.dataset.type;
+                if (activeTypes.has(t)) activeTypes.delete(t); else activeTypes.add(t);
+                const on = activeTypes.has(t);
+                pill.classList.toggle('is-active', on);
+                pill.setAttribute('aria-pressed', on ? 'true' : 'false');
+                rebuildPending();
+                render();
+            });
+        });
+    }
+
+    // Zentraler Renderer: entscheidet zwischen Karte / Leer-Status / Fertig-Status
+    function render() {
+        if (filteredTotal() === 0) {
+            cardArea.innerHTML = '';
+            cardArea.style.display = 'none';
+            btnGroup.style.display = 'none';
+            completeEl.style.display = 'none';
+            emptyEl.style.display = 'block';
+        } else if (pending.length === 0) {
+            cardArea.innerHTML = '';
+            cardArea.style.display = 'none';
+            btnGroup.style.display = 'none';
+            emptyEl.style.display = 'none';
+            completeEl.style.display = 'block';
+        } else {
+            emptyEl.style.display = 'none';
+            completeEl.style.display = 'none';
+            cardArea.style.display = 'flex';
+            btnGroup.style.display = '';
+            btnGroup.classList.remove('visible');
+            if (currentIdx >= pending.length) currentIdx = 0;
+            showCard(pending[currentIdx]);
+        }
+        updateStats();
+    }
 
     // Show card function
     function showCard(idx) {
@@ -3490,11 +3527,13 @@ function createDeck(cardItems, page) {
         });
     }
 
-    // Update stats display
+    // Update stats display (gefilterte Anzahl)
     function updateStats() {
-        deckEl.querySelector('.deck-learned').textContent = `${learned} / ${total} gelernt`;
+        const ft = filteredTotal();
+        const lc = learnedCount();
+        deckEl.querySelector('.deck-learned').textContent = `${lc} / ${ft} gelernt`;
         deckEl.querySelector('.deck-remaining').textContent = `${pending.length} verbleibend`;
-        deckEl.querySelector('.deck-bar').style.width = `${(learned / total) * 100}%`;
+        deckEl.querySelector('.deck-bar').style.width = ft > 0 ? `${(lc / ft) * 100}%` : '0%';
     }
 
     // Rate card handler (SRS-integrated)
@@ -3534,7 +3573,6 @@ function createDeck(cardItems, page) {
                 if (currentIdx >= pending.length) currentIdx = 0;
                 showCard(pending[currentIdx]);
                 updateStats();
-                saveProgress();
             }, 450);
         } else {
             // Hard/Good/Easy: Slide out
@@ -3547,22 +3585,10 @@ function createDeck(cardItems, page) {
             }
 
             setTimeout(() => {
-                learned++;
+                reviewedIndices.add(cardIndex);
                 pending.splice(currentIdx, 1);
-
-                if (pending.length === 0) {
-                    cardArea.style.display = 'none';
-                    btnGroup.style.display = 'none';
-                    completeEl.style.display = 'block';
-                    updateStats();
-                    saveProgress();
-                    return;
-                }
-
-                if (currentIdx >= pending.length) currentIdx = 0;
-                showCard(pending[currentIdx]);
-                updateStats();
                 saveProgress();
+                render();
             }, 350);
         }
     }
@@ -3577,21 +3603,38 @@ function createDeck(cardItems, page) {
 
     // Restart button
     deckEl.querySelector('.deck-restart').addEventListener('click', () => {
-        pending = shuffle([...Array(total).keys()]);
-        learned = 0;
-        currentIdx = 0;
+        reviewedIndices.clear();
         try { localStorage.removeItem(storageKey); } catch(e) {}
-        cardArea.style.display = 'flex';
-        btnGroup.style.display = '';
-        btnGroup.classList.remove('visible');
-        completeEl.style.display = 'none';
-        showCard(pending[currentIdx]);
-        updateStats();
+        rebuildPending();
+        render();
     });
 
-    // Show first card
-    showCard(pending[currentIdx]);
-    updateStats();
+    // Filter-Pills + Fortschritt initialisieren
+    renderFilterBar();
+    rebuildPending();
+    render();
+
+    // Gelernt-Zustand laden: DB-First (eingeloggt), sonst localStorage-Fallback
+    if (isAuthenticated) {
+        fetch(`/api/srs/reviewed-ids?lesson_id=${lessonData.id}`)
+            .then(r => r.json())
+            .then(data => {
+                seedReviewed(new Set(data.reviewed_ids.map(String)));
+                console.log(`[Deck] DB-Fortschritt: ${learnedCount()} gelernt`);
+                rebuildPending();
+                render();
+            })
+            .catch(e => console.warn('[Deck] DB-Fortschritt nicht ladbar:', e));
+    } else {
+        let saved = null;
+        try { saved = JSON.parse(localStorage.getItem(storageKey)); } catch(e) {}
+        if (saved && saved.total === total && Array.isArray(saved.reviewed)) {
+            seedReviewed(new Set(saved.reviewed.map(String)));
+            rebuildPending();
+            render();
+            console.log(`[Deck] localStorage-Fortschritt: ${learnedCount()} gelernt`);
+        }
+    }
 
     return { rateCard, page, deckEl };
 }

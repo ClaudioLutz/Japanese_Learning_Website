@@ -85,6 +85,13 @@ def test_grammar_review_payload_includes_cloze(app_context):
     assert cloze["before"] == "グプタさん"
 
 
+def test_grammar_review_payload_includes_nuance(app_context):
+    """Kuratierte Nuance-Notiz fließt ins Review-Payload (oder leer)."""
+    lc = _content_for("grammar", nuance="は markiert das Thema, が das Subjekt.")
+    data = get_content_data_for_review(lc)
+    assert data["details"]["nuance"] == "は markiert das Thema, が das Subjekt."
+
+
 def test_vocabulary_review_payload_includes_example_jp(app_context):
     """Audio-Button auf Vokabel-Karte nutzt example_jp wenn vorhanden,
     sonst das Wort selbst — beide Felder muessen im Payload sein."""

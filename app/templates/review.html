@@ -322,6 +322,8 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         color: var(--primary-color, #6366f1); font-weight: 700;
         padding: 0 0.12em; border-bottom: 2px solid var(--primary-color, #6366f1);
     }
+    /* Nuance-/„Verwechselt-mit"-Hinweis */
+    .back-nuance .back-section-label { color: #b45309; }
 
     /* Legacy detail-row (kanji/grammar — noch nicht migriert) */
     .review-detail-row {
@@ -840,7 +842,11 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
                        `<div class="back-section">
                             <div class="back-section-label">Erklärung</div>
                             <div style="font-size:0.92rem; line-height:1.45;">${escapeHtml(d.explanation || '')}</div>
-                        </div>`;
+                        </div>` +
+                       (d.nuance ? `<div class="back-section back-nuance">
+                            <div class="back-section-label">💡 Nuance / Achtung</div>
+                            <div style="font-size:0.9rem; line-height:1.45;">${escapeHtml(d.nuance)}</div>
+                        </div>` : '');
         }
 
         // Audio-Text bestimmen: bei Vokabel/Grammatik vorzugsweise der

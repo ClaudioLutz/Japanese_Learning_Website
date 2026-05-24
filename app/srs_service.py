@@ -406,6 +406,8 @@ def get_content_data_for_review(content_item):
             # Lückentext für den Cloze-Review (Vorderseite = Satz mit Lücke).
             # None, wenn kein Marker passt → Frontend zeigt dann den Titel.
             'cloze': ref.cloze(),
+            # Kuratierte Nuance-/„Verwechselt-mit"-Notiz (oder leer).
+            'nuance': ref.nuance or '',
         }
 
     return data

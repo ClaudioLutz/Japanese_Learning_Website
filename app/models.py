@@ -386,6 +386,9 @@ class Grammar(db.Model):
     tts_example_jp = db.Column(db.Text, nullable=True)
     status = db.Column(db.String(20), default='approved', nullable=False)  # 'approved', 'pending_approval'
     created_by_ai = db.Column(db.Boolean, default=False, nullable=False)
+    # Kurze didaktische Notiz: Nuance/Formalität/„nicht verwechseln mit …".
+    # Kuratiert, v.a. für verwechselbare Punkte (は/が/も …). Optional.
+    nuance = db.Column(db.Text, nullable=True)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
