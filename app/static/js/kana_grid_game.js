@@ -25,6 +25,8 @@ function kanaGridGame(contentId) {
         perfectStreak: 0,
         _sortables: [],
         _config: null,
+        _ttsDisabled: false,        // true, sobald Server-TTS in dieser Session fehlschlug
+        selectedCardToken: null,    // Tap-to-Place: aktuell ausgewaehlte Pool-Karte
         // ── Phase 4: Forschungsbasierte Hilfen (Bjork, Pre-Testing-Gate, Fading) ──
         maxHints: 0,            // 0 = keine Hilfen verfuegbar (ab Lesson 4+)
         hintsRemaining: 0,
@@ -128,6 +130,7 @@ function kanaGridGame(contentId) {
                 }
             }
             this.pool = cards;
+            this.selectedCardToken = null;
         },
 
         initSortables() {
@@ -141,6 +144,43 @@ function kanaGridGame(contentId) {
                     sort: false,
                     animation: 150,
                     ghostClass: 'kana-grid-game__pool-card--ghost',
+                    // ── Touch-Support (SortableJS-Fallback statt nativer HTML5-DnD) ──
+                    // Native DnD feuert auf Touch nicht zuverlaessig; der Fallback nutzt
+                    // Pointer/Touch-Events und folgt dem Finger.
+                    forceFallback: true,
+                    fallbackOnBody: true,
+                    fallbackTolerance: 4,        // erst ab 4px Bewegung startet ein Drag
+                    // Kurzer Halte-Delay NUR auf Touch: trennt Drag von Scrollen/Tap,
+                    // ohne die Maus-Bedienung am Desktop zu verzoegern.
+                    delay: 80,
+                    delayOnTouchOnly: true,
+                    touchStartThreshold: 4,
+                    // Auto-Scroll, damit man auch zu Zellen ausserhalb des Sichtfelds ziehen kann.
+                    scroll: true,
+                    bubbleScroll: true,
+                    scrollSensitivity: 60,
+                    scrollSpeed: 12,
+                    // Ein Drag macht eine evtl. Tap-Auswahl gegenstandslos.
+                    onChoose: () => { this.selectedCardToken = null; },
+                    // ── Alpine/Sortable-Konflikt (P4) ──
+                    // SortableJS klont DOM-Knoten (pull:'clone' + Fallback-Ghost). Diese
+                    // Klone tragen die x-for-Bindings (card.*), haben aber keinen Alpine-Scope
+                    // → "card is not defined". x-ignore weist Alpine an, sie zu ueberspringen.
+                    onClone: (evt) => {
+                        if (evt && evt.clone) evt.clone.setAttribute('x-ignore', '');
+                    },
+                    onStart: () => {
+                        document.querySelectorAll('.sortable-fallback')
+                            .forEach(el => el.setAttribute('x-ignore', ''));
+                    },
+                    // pull:'clone' laesst eine Kopie in der Quelle zurueck. Den Pool-Bestand
+                    // verwaltet aber Alpine (this.pool); diese verwaiste DOM-Kopie daher
+                    // nach dem Drag entfernen, sonst bleibt eine tote Karte sichtbar.
+                    onEnd: (evt) => {
+                        if (evt && evt.clone && evt.clone.parentNode) {
+                            evt.clone.parentNode.removeChild(evt.clone);
+                        }
+                    },
                 }));
             }
 
@@ -211,6 +251,29 @@ function kanaGridGame(contentId) {
             }
         },
 
+        // ── Tap-to-Place (Single-Pointer-Alternative zu Drag, WCAG 2.2 SC 2.5.7) ──
+        // Erst eine Pool-Karte antippen (auswaehlen), dann ein Feld antippen (platzieren).
+        // Die Auswahl bleibt ueber Scrollen erhalten — Karte und Zielzelle muessen NICHT
+        // gleichzeitig sichtbar sein. Funktioniert mit Maus, Touch und Tastatur.
+        tapCard(card) {
+            if (this.completed || !card) return;
+            this.selectedCardToken = (this.selectedCardToken === card.token) ? null : card.token;
+        },
+
+        // Klick/Tap auf eine Zelle. Prioritaet:
+        //   1. Ist eine Karte ausgewaehlt → dort platzieren.
+        //   2. Sonst, falls Hinweis verfuegbar → Hinweis nutzen (bestehendes Verhalten).
+        onCellTap(cell) {
+            if (this.completed) return;
+            if (this.selectedCardToken) {
+                const card = this.pool.find(c => c.token === this.selectedCardToken);
+                this.selectedCardToken = null;
+                if (card) this.handleDrop(cell, card.kanaId, card.payload, card.token);
+                return;
+            }
+            if (this.canHintCell(cell)) this.useHintForCell(cell);
+        },
+
         expectedForCell(cell) {
             if (this.mode === 'schreiben') return cell.character;
             if (this.mode === 'lesen')     return cell.romanization;
@@ -219,7 +282,12 @@ function kanaGridGame(contentId) {
 
         playKanaAudio(cell) {
             if (typeof playCardAudio === 'function') {
-                playCardAudio(cell.character, null, 'ja');
+                try { playCardAudio(cell.character, null, 'ja'); return; } catch (e) {}
+            }
+            // Server-TTS war in dieser Session schon nicht verfuegbar (z.B. 503,
+            // TTS nicht konfiguriert) → direkt die Browser-Sprachausgabe nutzen.
+            if (this._ttsDisabled) {
+                this._speakKana(cell.character);
                 return;
             }
             try {
@@ -227,13 +295,39 @@ function kanaGridGame(contentId) {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ text: cell.character, lang: 'ja', model: 'chirp' }),
-                }).then(r => r.json()).then(data => {
+                }).then(r => {
+                    if (!r.ok) {
+                        // 503 (TTS nicht konfiguriert) o.ae. → Fallback merken
+                        this._ttsDisabled = true;
+                        return null;
+                    }
+                    return r.json();
+                }).then(data => {
                     if (data && data.audio) {
                         const audio = new Audio('data:audio/mpeg;base64,' + data.audio);
-                        audio.play();
+                        audio.play().catch(() => {});
+                    } else {
+                        this._speakKana(cell.character);
                     }
-                }).catch(() => {});
-            } catch (e) {}
+                }).catch(() => {
+                    this._ttsDisabled = true;
+                    this._speakKana(cell.character);
+                });
+            } catch (e) {
+                this._speakKana(cell.character);
+            }
+        },
+
+        // Fallback-Audio ueber die Web Speech API (offline, ohne Server-TTS).
+        _speakKana(text) {
+            try {
+                if (!('speechSynthesis' in window) || !text) return;
+                const u = new SpeechSynthesisUtterance(text);
+                u.lang = 'ja-JP';
+                u.rate = 0.9;
+                window.speechSynthesis.cancel();
+                window.speechSynthesis.speak(u);
+            } catch (e) { /* Sprachausgabe nicht verfuegbar — still ignorieren */ }
         },
 
         async rateCell(cell, forceRating) {
@@ -459,6 +553,10 @@ function practiceKana() {
         availableRows: Object.keys(PRACTICE_ROW_LABELS).map(k => ({ key: k, label: PRACTICE_ROW_LABELS[k] })),
 
         async init() {
+            // Auf kleinen Screens kleinere Default-Session → weniger Scrollen.
+            if (window.matchMedia && window.matchMedia('(max-width: 767px)').matches) {
+                this.limit = 10;
+            }
             this.load();
         },
 

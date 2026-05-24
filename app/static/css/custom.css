@@ -4471,6 +4471,10 @@ button[onclick*="moveContentInPage"]:active {
     font-size: 1.5rem;
     color: var(--kon, #1F2A44);
     user-select: none;
+    -webkit-user-select: none;
+    /* Touch-Geste gehoert dem Drag, nicht dem Browser-Scroll (verhindert
+       Scroll-Hijack beim Ziehen). Tap/Klick bleibt davon unberuehrt. */
+    touch-action: none;
     transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 .kana-grid-game__pool-card:hover {
@@ -4485,6 +4489,55 @@ button[onclick*="moveContentInPage"]:active {
 }
 .kana-grid-game__pool-text {
     line-height: 1;
+}
+
+/* Tap-to-Place: ausgewaehlte Karte */
+.kana-grid-game__pool-card.is-selected {
+    border-color: var(--shu, #EB6101);
+    box-shadow: 0 0 0 3px rgba(235, 97, 1, 0.3);
+    transform: translateY(-2px) scale(1.05);
+    background: rgba(235, 97, 1, 0.06);
+}
+.kana-grid-game__pool-card:focus-visible {
+    outline: 2px solid var(--shu, #EB6101);
+    outline-offset: 2px;
+}
+/* Tap-to-Place: bespielbares Zielfeld, solange eine Karte ausgewaehlt ist */
+.kana-grid-game__cell.is-tappable {
+    cursor: pointer;
+    border-style: solid;
+    border-color: rgba(235, 97, 1, 0.5);
+    box-shadow: 0 0 0 1px rgba(235, 97, 1, 0.2);
+}
+.kana-grid-game__cell.is-tappable:hover,
+.kana-grid-game__cell.is-tappable:focus-visible {
+    border-color: var(--shu, #EB6101);
+    box-shadow: 0 0 0 3px rgba(235, 97, 1, 0.25);
+    outline: none;
+}
+
+/* Tap-to-Place: Bedien-Hilfe */
+.kana-grid-game__taphint {
+    font-size: 0.8rem;
+    color: var(--text-muted, #8C8378);
+    margin: -0.25rem 0 0.75rem;
+    min-height: 1.2em;
+}
+.kana-grid-game__taphint i {
+    margin-right: 0.3rem;
+}
+.kana-grid-game__taphint .is-active {
+    color: var(--shu, #EB6101);
+    font-weight: 600;
+}
+.kana-grid-game__taphint-cancel {
+    background: transparent;
+    border: 0;
+    color: var(--text-muted, #8C8378);
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 0.75rem;
+    padding: 0 0.25rem;
 }
 
 /* Complete-Screen */
@@ -4531,29 +4584,48 @@ button[onclick*="moveContentInPage"]:active {
     margin-right: 0.25rem;
 }
 
-/* Mobile */
-@media (max-width: 640px) {
+/* Mobile: kompaktes Gojuon-Gitter (mehrspaltig statt 1 Zelle/Reihe) + sticky Pool.
+   Breakpoint 767px = passt zur mobilen Bottom-Nav (.mobile-bottom-nav). */
+@media (max-width: 767px) {
     .kana-grid-game__row {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(5, 1fr);
         gap: 0.3rem;
     }
+    /* Reihen-Label als schmale Kopfzeile ueber den 5 Zellen der Reihe */
     .kana-grid-game__row-label {
+        grid-column: 1 / -1;
         justify-content: flex-start;
-        font-size: 0.7rem;
-        padding: 0.25rem 0;
-        border-bottom: 1px solid var(--border-color);
-        margin-bottom: 0.25rem;
+        font-size: 0.68rem;
+        padding: 0.1rem 0;
+        margin-bottom: 0.1rem;
     }
     .kana-grid-game__cell {
-        min-height: 50px;
+        min-height: 48px;
+    }
+    .kana-grid-game__cell-hint {
+        font-size: 1rem;
     }
     .kana-grid-game__cell-drop {
-        font-size: 1.4rem;
+        font-size: 1.3rem;
+    }
+    /* Pool als immer sichtbares Tray am unteren Rand, knapp ueber der Bottom-Nav.
+       So bleibt die Kartenquelle beim Scrollen durch das Gitter stets erreichbar. */
+    .kana-grid-game__pool {
+        position: sticky;
+        bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+        z-index: 50;
+        gap: 0.35rem;
+        padding: 0.5rem;
+        max-height: 38vh;
+        overflow-y: auto;
+        box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+        border: 1px solid var(--border-color, #D4CFC5);
     }
     .kana-grid-game__pool-card {
         min-width: 48px;
         min-height: 48px;
-        font-size: 1.3rem;
+        padding: 0.4rem 0.5rem;
+        font-size: 1.25rem;
     }
 }
 

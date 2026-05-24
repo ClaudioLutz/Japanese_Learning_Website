@@ -1173,6 +1173,14 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                                     </div>
                                                                 </div>
 
+                                                                <div class="kana-grid-game__taphint" x-show="!completed">
+                                                                    <template x-if="!selectedCardToken">
+                                                                        <span><i class="fas fa-hand-pointer"></i> Karte antippen, dann Feld — oder per Drag ziehen.</span>
+                                                                    </template>
+                                                                    <template x-if="selectedCardToken">
+                                                                        <span class="is-active"><i class="fas fa-bullseye"></i> Jetzt das Zielfeld antippen <button type="button" class="kana-grid-game__taphint-cancel" @click="selectedCardToken = null">abbrechen</button></span>
+                                                                    </template>
+                                                                </div>
                                                                 <div class="kana-grid-game__grid">
                                                                     <template x-for="row in rows" :key="row.key">
                                                                         <div class="kana-grid-game__row">
@@ -1184,11 +1192,15 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                                                          'is-incorrect': cell.shake,
                                                                                          'is-empty': cell.status !== 'correct',
                                                                                          'is-hinted': cell.hintBadge,
-                                                                                         'is-hint-available': canHintCell(cell)
+                                                                                         'is-hint-available': canHintCell(cell),
+                                                                                         'is-tappable': selectedCardToken && cell.status !== 'correct'
                                                                                      }"
                                                                                      :data-cell-id="cell.id"
-                                                                                     :title="canHintCell(cell) ? 'Klick fuer Hinweis (zaehlt als Schwer)' : ''"
-                                                                                     @click="canHintCell(cell) && useHintForCell(cell)">
+                                                                                     :title="selectedCardToken ? 'Hier platzieren' : (canHintCell(cell) ? 'Klick fuer Hinweis (zaehlt als Schwer)' : '')"
+                                                                                     :tabindex="(selectedCardToken || canHintCell(cell)) && cell.status !== 'correct' ? 0 : -1"
+                                                                                     @click="onCellTap(cell)"
+                                                                                     @keydown.enter.prevent="onCellTap(cell)"
+                                                                                     @keydown.space.prevent="onCellTap(cell)">
                                                                                     <div class="kana-grid-game__cell-hint" x-show="cell.hint" x-text="cell.hint"></div>
                                                                                     <div class="kana-grid-game__cell-drop" x-text="cell.solved || ''"></div>
                                                                                     <span class="kana-grid-game__cell-hint-badge" x-show="cell.hintBadge" title="Mit Hinweis geloest">
@@ -1203,10 +1215,19 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                                 <div class="kana-grid-game__pool" x-ref="pool">
                                                                     <template x-for="card in pool" :key="card.token">
                                                                         <div class="kana-grid-game__pool-card"
-                                                                             :class="{ 'has-romaji-hint': showRomajiHint && card.kind === 'kana' }"
+                                                                             :class="{
+                                                                                 'has-romaji-hint': showRomajiHint && card.kind === 'kana',
+                                                                                 'is-selected': selectedCardToken === card.token
+                                                                             }"
                                                                              :data-token="card.token"
                                                                              :data-kana-id="card.kanaId"
-                                                                             :data-payload="card.payload">
+                                                                             :data-payload="card.payload"
+                                                                             role="button"
+                                                                             tabindex="0"
+                                                                             :aria-pressed="selectedCardToken === card.token"
+                                                                             @click="tapCard(card)"
+                                                                             @keydown.enter.prevent="tapCard(card)"
+                                                                             @keydown.space.prevent="tapCard(card)">
                                                                             <span class="kana-grid-game__pool-text" x-text="card.label"></span>
                                                                             <span class="kana-grid-game__pool-subtext"
                                                                                   x-show="showRomajiHint && card.kind === 'kana'"
