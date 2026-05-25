@@ -98,8 +98,15 @@ function kanaGridGame(contentId) {
                     this.cellsByRow[row.key].push(cell);
                 });
             });
-            // Reihenfolge innerhalb jeder Reihe einmischen (Felder bleiben in ihrer Gruppe).
-            this._shuffleGroups();
+            // Erste Runde einer frischen Session (erstes Mal bzw. nach >1 Std. Pause)
+            // bleibt in Gojuon-Reihenfolge zur Orientierung; sonst innerhalb jeder
+            // Gruppe mischen. Reihenfolge: Frische-Check VOR dem Zeitstempel-Update.
+            if (this._isFreshSession()) {
+                this._sortGroupsGojuon();   // Orientierung: erste Runde in Gojuon-Reihenfolge
+            } else {
+                this._shuffleGroups();
+            }
+            this._touchPlayTimestamp();
             // Enthaelt die Session beide Schriften? Dann brauchen die Felder im
             // Schreib-Modus ein Hira/Kata-Kennzeichen (sonst sind z.B. zwei "a"-Felder
             // optisch nicht unterscheidbar).
@@ -130,6 +137,44 @@ function kanaGridGame(contentId) {
                 shuffled[key] = arr;
             });
             this.cellsByRow = shuffled;
+        },
+
+        // Sortiert die Felder jeder Reihe in Gojuon-Reihenfolge: pro Schrift nach
+        // Vokal (a,i,u,e,o), Hiragana vor Katakana. Fuer die geordnete erste Runde —
+        // die Uebungs-Session selbst kommt in SRS-Reihenfolge, daher explizit sortieren.
+        _sortGroupsGojuon() {
+            const VOWEL = { a: 0, i: 1, u: 2, e: 3, o: 4 };
+            const sortKey = (cell) => {
+                const rom = (cell.romanization || '').toLowerCase();
+                let v = 5;  // ohne Vokal (z.B. "n"/ん) ans Ende
+                for (let i = rom.length - 1; i >= 0; i--) {
+                    if (VOWEL[rom[i]] !== undefined) { v = VOWEL[rom[i]]; break; }
+                }
+                const script = cell.scriptType === 'katakana' ? 1 : 0;  // Hiragana zuerst
+                return script * 10 + v;
+            };
+            const sorted = {};
+            Object.keys(this.cellsByRow).forEach(key => {
+                sorted[key] = this.cellsByRow[key].slice().sort((a, b) => sortKey(a) - sortKey(b));
+            });
+            this.cellsByRow = sorted;
+        },
+
+        // Frische Session = erstes Mal ueberhaupt oder >1 Std. seit der letzten Runde.
+        // Dann bleibt die erste Runde geordnet (Orientierung); sonst wird gemischt.
+        // localStorage → gilt pro Geraet/Browser.
+        _isFreshSession() {
+            try {
+                const last = parseInt(localStorage.getItem('kana_grid_last_play_ts') || '0', 10);
+                return !last || (Date.now() - last) > 3600000;  // 1 Std.
+            } catch (e) {
+                return true;
+            }
+        },
+        _touchPlayTimestamp() {
+            try {
+                localStorage.setItem('kana_grid_last_play_ts', String(Date.now()));
+            } catch (e) { /* localStorage nicht verfuegbar — dann immer "frisch" */ }
         },
 
         cellHint(k) {
@@ -556,8 +601,11 @@ function kanaGridGame(contentId) {
                 c.hintBadge = false;
                 if (c._blindFilled) delete c._blindFilled;
             });
-            // Felder innerhalb jeder Gruppe fuer die neue Runde neu mischen.
+            // Ab Runde 2 immer mischen (die geordnete erste Runde gibt's nur zu
+            // Session-Beginn). Aktivitaet festhalten, damit die Session "frisch"
+            // bleibt und nicht faelschlich als >1h-Pause gewertet wird.
             this._shuffleGroups();
+            this._touchPlayTimestamp();
             this.buildPool();
             this.startTime = Date.now();
             await this.$nextTick();
