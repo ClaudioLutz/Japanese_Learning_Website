@@ -321,6 +321,10 @@ class TestSRSPages:
         assert 'kanaSettings()' in html            # Einstellungs-Komponente
         assert 'Spiel starten' in html             # Haupt-CTA
         assert '/practice/kana/spiel' not in html  # Navigation passiert via JS, nicht als statischer Link
+        # Cache-Busting: das JS, das kanaSettings() definiert, MUSS versioniert
+        # eingebunden sein — sonst servieren Browser nach einem Deploy die alte
+        # Datei (ohne kanaSettings) und die Seite ist tot.
+        assert 'kana_grid_game.js?v=' in html
 
     def test_kana_game_page(self, auth_client):
         """I-SRS44: GET /practice/kana/spiel rendert die Spiel-Seite (Schritt 2).

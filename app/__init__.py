@@ -309,7 +309,22 @@ def create_app():
             'robots_index': app.config['ROBOTS_INDEX'],
             'default_canonical': canonical,
         }
-    
+
+    # Cache-Busting fuer eigene statische Assets: haengt die Datei-mtime als
+    # ?v=<mtime> an die URL. Nach einem Deploy aendert sich die mtime → der
+    # Browser laedt die neue Datei statt einer veralteten (Cache-Control:
+    # max-age). Busted gezielt nur geaenderte Dateien (mtime pro Datei).
+    import os as _os
+
+    @app.template_global()
+    def static_v(filename):
+        from flask import url_for as _url_for
+        try:
+            mtime = int(_os.path.getmtime(_os.path.join(app.static_folder, filename)))
+        except OSError:
+            mtime = 0
+        return _url_for('static', filename=filename, v=mtime)
+
     # Register social auth blueprint (for /auth/login/google-oauth2/ route only)
     from social_flask.routes import social_auth
     app.register_blueprint(social_auth, url_prefix='/auth')
