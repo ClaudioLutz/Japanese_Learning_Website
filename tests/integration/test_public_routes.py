@@ -80,6 +80,47 @@ class TestHomepage:
         assert '#lernpfad' in body
 
 
+# ── JLPT-N5-Schweiz SEO-Landingpage ─────────────────────────
+
+class TestJlptN5SchweizLanding:
+    def test_page_loads(self, client):
+        """SEO-Landing /jlpt-n5-schweiz lädt mit 200."""
+        resp = client.get("/jlpt-n5-schweiz")
+        assert resp.status_code == 200
+
+    def test_verified_exam_facts_present(self, client):
+        """Gegen offizielle UZH-Quelle verifizierte Fakten stehen auf der Seite.
+
+        Schützt die faktischen Kernangaben (Termin, Gebühren, offizielle Quelle)
+        vor versehentlicher Regression. Quelle Mai 2026:
+        aoi.uzh.ch/de/japanologie/fremdsprache/jlpt.html
+        """
+        body = client.get("/jlpt-n5-schweiz").data.decode("utf-8")
+        assert "6. Dezember 2026" in body
+        assert "CHF 130" in body                       # N5/N4
+        assert "CHF 140" in body                        # N3–N1
+        assert "aoi.uzh.ch/de/japanologie/fremdsprache/jlpt.html" in body
+
+    def test_jsonld_is_valid_and_has_faq(self, client):
+        """Strukturierte Daten sind valides JSON und enthalten eine FAQPage.
+
+        Die FAQ-Gebührenangabe im JSON-LD muss mit dem sichtbaren Text
+        übereinstimmen (Google-Anforderung an FAQ-Rich-Results)."""
+        import json
+        import re
+
+        body = client.get("/jlpt-n5-schweiz").data.decode("utf-8")
+        match = re.search(
+            r'<script type="application/ld\+json">\s*(\{.*?\})\s*</script>',
+            body, re.DOTALL,
+        )
+        assert match, "Kein JSON-LD-Block gefunden"
+        data = json.loads(match.group(1))  # wirft bei kaputtem JSON
+        types = {node.get("@type") for node in data["@graph"]}
+        assert "FAQPage" in types
+        assert "CHF 130 für N5 und N4" in match.group(1)
+
+
 # ── I-PR03: Lessons-Seite ───────────────────────────────────
 
 class TestLessonsPage:

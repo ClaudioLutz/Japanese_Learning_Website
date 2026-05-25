@@ -1,7 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}JLPT N5 Schweiz — Online-Vorbereitung auf Deutsch | CHF 9.90{% endblock %}
-{% block meta_description %}JLPT N5 in der Schweiz: Prüfung an der UZH Zürich, Vorbereitung online auf Deutsch. Hiragana, Katakana, 55 Kanji, 473 Vokabeln. Lifetime-Zugriff CHF 9.90.{% endblock %}
+{# WARTUNG (jährlich, nach UZH-Publikation aktualisieren): Prüfungsdatum,
+   -gebühren und Jahreszahl in Title/Meta/Hero/dl/FAQ + JSON-LD synchron halten.
+   Quelle: https://www.aoi.uzh.ch/de/japanologie/fremdsprache/jlpt.html
+   Stand zuletzt geprüft: Mai 2026 (Termin 6.12.2026, N5/N4 CHF 130, N3–N1 CHF 140). #}
+
+{% block title %}JLPT N5 Schweiz 2026 — Prüfung Zürich & Vorbereitung auf Deutsch{% endblock %}
+{% block meta_description %}JLPT N5 in der Schweiz: Prüfung am 6. Dezember 2026 an der Universität Zürich (Gebühr CHF 130). Strukturierte Online-Vorbereitung auf Deutsch — von Hiragana bis zu deinen ersten Sätzen. Lifetime-Zugriff CHF 9.90.{% endblock %}
 {% block canonical %}{{ site_url }}/jlpt-n5-schweiz{% endblock %}
 {% block og_type %}article{% endblock %}
 {% block og_title %}JLPT N5 Schweiz — Online-Vorbereitung auf Deutsch{% endblock %}
@@ -117,7 +122,7 @@
           "name": "Was kostet der JLPT N5 in der Schweiz?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Die Prüfungsgebühr für N5 in Zürich beträgt CHF 130 (Stand 2026). Die Anmeldung erfolgt online im Sommer über die Website der Universität Zürich. Die Gebühr ist bei der Anmeldung zu zahlen und wird bei Nichterscheinen nicht erstattet."
+            "text": "Die Prüfungsgebühr beträgt CHF 130 für N5 und N4 sowie CHF 140 für N3 bis N1 (Stand 2026). Die Anmeldung erfolgt online im Sommer über die Website der Universität Zürich. Die Gebühr ist bei der Anmeldung zu zahlen und wird bei Nichterscheinen nicht erstattet."
           }
         },
         {
@@ -184,8 +189,9 @@
     <h1>JLPT N5 in der Schweiz — Online-Vorbereitung auf Deutsch</h1>
     <p class="n5ch-lead">
       Die offizielle JLPT-Prüfung findet einmal jährlich im Dezember an der
-      Universität Zürich statt. Bereite dich strukturiert auf den JLPT N5 vor —
-      von Hiragana bis zu deinen ersten japanischen Sätzen, alles auf Deutsch erklärt.
+      Universität Zürich statt — der nächste Termin ist der 6. Dezember 2026.
+      Bereite dich strukturiert auf den JLPT N5 vor — von Hiragana bis zu deinen
+      ersten japanischen Sätzen, alles auf Deutsch erklärt.
     </p>
     <div class="n5ch-hero-cta">
       <a href="{{ url_for('routes.lessons', access='free') }}" class="btn btn-primary btn-lg">
@@ -268,16 +274,21 @@
 
     <dl class="n5ch-deflist">
       <dt>Prüfungsort</dt>
-      <dd>Universität Zürich, Asien-Orient-Institut (Räumlichkeiten je nach Anmeldezahl)</dd>
+      <dd>
+        Universität Zürich, Asien-Orient-Institut, Japanologie
+        (Räumlichkeiten je nach Anmeldezahl). Offizielle Infos:
+        <a href="https://www.aoi.uzh.ch/de/japanologie/fremdsprache/jlpt.html"
+           target="_blank" rel="noopener">aoi.uzh.ch › JLPT</a>
+      </dd>
 
       <dt>Nächster Termin</dt>
-      <dd>Sonntag, 6. Dezember 2026</dd>
+      <dd>Sonntag, 6. Dezember 2026 (alle Stufen N5–N1)</dd>
 
       <dt>Häufigkeit</dt>
       <dd>1× jährlich, immer im Dezember (kein Juli-Termin in der Schweiz)</dd>
 
-      <dt>Prüfungsgebühr N5</dt>
-      <dd>CHF 130 (Stand 2026)</dd>
+      <dt>Prüfungsgebühr</dt>
+      <dd>CHF 130 für N5 und N4, CHF 140 für N3 bis N1 (Stand 2026)</dd>
 
       <dt>Anmeldung</dt>
       <dd>
@@ -306,7 +317,9 @@
     <p class="n5ch-note">
       <strong>Hinweis:</strong> Die Prüfungsgebühren und Termine werden jährlich
       vom Veranstalter neu publiziert. Vor der Anmeldung immer die offizielle
-      UZH-Seite prüfen.
+      <a href="https://www.aoi.uzh.ch/de/japanologie/fremdsprache/jlpt.html"
+         target="_blank" rel="noopener">UZH-JLPT-Seite</a> prüfen.
+      <br><em>Angaben gegen die offizielle UZH-Quelle geprüft im Mai 2026.</em>
     </p>
   </section>
 
@@ -316,9 +329,11 @@
   <section class="n5ch-section">
     <h2>Wie wir dich auf den JLPT N5 vorbereiten</h2>
     <p>
-      Das Curriculum auf japanese-learning.ch ist <strong>strikt nach
-      JLPT-N5-Anforderungen aufgebaut</strong> — jede Vokabel, jedes Kanji,
-      jede Grammatikregel ist Teil des offiziellen N5-Korpus.
+      Statt eines festen JLPT-Vorbereitungskurses in Zürich lernst du online,
+      in deinem Tempo und auf Deutsch. Das Curriculum auf japanese-learning.ch
+      ist <strong>strikt nach JLPT-N5-Anforderungen aufgebaut</strong> — jede
+      Vokabel, jedes Kanji, jede Grammatikregel ist Teil des offiziellen
+      N5-Korpus.
     </p>
     <ul class="n5ch-list">
       <li><strong>9 Module mit 30+ Lektionen</strong>, strukturiert von Hiragana bis Te-Form</li>
@@ -449,10 +464,10 @@
     <details class="n5ch-faq">
       <summary><h3>Was kostet der JLPT N5 in der Schweiz?</h3></summary>
       <p>
-        Die Prüfungsgebühr für N5 in Zürich beträgt CHF 130 (Stand 2026). Die
-        Anmeldung erfolgt online im Sommer über die Website der Universität
-        Zürich. Die Gebühr ist bei der Anmeldung zu zahlen und wird bei
-        Nichterscheinen nicht erstattet.
+        Die Prüfungsgebühr beträgt CHF 130 für N5 und N4 sowie CHF 140 für N3
+        bis N1 (Stand 2026). Die Anmeldung erfolgt online im Sommer über die
+        Website der Universität Zürich. Die Gebühr ist bei der Anmeldung zu
+        zahlen und wird bei Nichterscheinen nicht erstattet.
       </p>
     </details>
 
