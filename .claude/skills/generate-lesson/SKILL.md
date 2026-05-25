@@ -146,6 +146,8 @@ Lesson (kind="kana", title="Hiragana 1 — …", jlpt_level=5,
 
 **Bestandsschutz:** `Kana.character` ist UNIQUE. Wenn ein Zeichen bereits existiert (z.B. die initialen 10 Hiragana あ-こ in der DB), wird die bestehende ID wiederverwendet — kein Update auf bestehende Eintragsdaten (schützt manuelle Edits).
 
+**Bestehende Kana-Lektion überarbeiten** (statt neu generieren): siehe [kana_refinement_pattern.md](kana_refinement_pattern.md) — 8-Punkte-Refinement-Pattern (Strichfolge, Mnemonics, Devoicing, Verwechslungspaare, Quiz-Ausbau), Recherche-Triangulation und Akzeptanzkriterien. Erprobt an Hiragana 1–5 (`scripts/refine_hiragana_*.sql`), direkt auf Katakana übertragbar.
+
 ## 2c. Kanji-Lessons (eigenes Modul `n5-kanji-grundlagen`, seit 2026-04-27)
 
 Kanji-Lessons sind Vocabulary-Lessons (`kind: "vocabulary"`, default), die didaktisch ein **Kanji-Set** in den Mittelpunkt stellen. Sie bekommen aber eine **eigene Modul-Heimat**: `n5-kanji-grundlagen` (id=38, display_order=3, icon=漢) zwischen Katakana (2) und Zahlen-Zeit (4).
