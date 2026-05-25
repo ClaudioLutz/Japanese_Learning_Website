@@ -87,3 +87,18 @@ def test_review_page_filter_scaffolding_present(admin_client):
     assert "function ftype" in html                 # Hiragana/Katakana-Split
     # Filter-Pills nutzen dieselben Styles wie das Lektions-Deck
     assert "deck-filter-pill" in html
+
+
+def test_review_page_lesson_filter_present(admin_client):
+    """Die Wiederhol-Seite bietet zusätzlich einen Lektions-Filter."""
+    client, _admin = admin_client
+
+    resp = client.get("/review", base_url=HTTPS)
+    assert resp.status_code == 200, resp.status_code
+    html = resp.get_data(as_text=True)
+
+    assert 'id="lessonSelect"' in html              # Lektions-Dropdown
+    assert 'id="reviewFilters"' in html             # gemeinsames Filter-Panel
+    assert "function renderLessonSelect" in html     # Optionen aus Fällig-Set
+    assert "function matchesFilter" in html          # Typ UND Lektion kombiniert
+    assert "lesson-select" in html                   # gestyltes Select

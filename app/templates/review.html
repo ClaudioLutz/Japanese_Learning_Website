@@ -88,6 +88,89 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         margin-top: 0.25rem;
     }
 
+    /* ── Filter-Panel (Lektion + Typ) ── */
+    .review-filters {
+        background: var(--card-bg, #FFFDF7);
+        border: 1px solid var(--border-color, #D4CFC5);
+        border-radius: 12px;
+        padding: 0.8rem 0.9rem;
+        margin-bottom: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    .review-filters__group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.45rem;
+    }
+    .review-filters__label {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-family: 'Geist', 'Inter', sans-serif;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--text-muted, #8C8378);
+    }
+    .review-filters__label i { color: var(--shu, #EB6101); font-size: 0.8rem; }
+
+    /* Lektions-Select — natives Picker-Verhalten auf Mobile, gestylter Trigger */
+    .lesson-select {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 100%;
+        min-height: 44px;
+        font-family: 'Geist', 'Inter', sans-serif;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--sumi, #1C1C1C);
+        background-color: var(--washi, #FAF7F2);
+        border: 1px solid var(--border-color, #D4CFC5);
+        border-radius: 10px;
+        padding: 0.55rem 2.25rem 0.55rem 0.85rem;
+        cursor: pointer;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='none' stroke='%231C1C1C' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round' d='M1 1.5 6 6.5 11 1.5'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.85rem center;
+        background-size: 0.7rem;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease, color 0.15s ease;
+    }
+    .lesson-select:focus {
+        outline: none;
+        border-color: var(--shu, #EB6101);
+        box-shadow: 0 0 0 3px rgba(235, 97, 1, 0.15);
+    }
+    .lesson-select.is-filtered {
+        border-color: var(--shu, #EB6101);
+        color: var(--shu, #EB6101);
+        font-weight: 700;
+    }
+
+    /* Typ-Pills im Review: auf Seiten-Akzent --shu harmonisiert, links ausgerichtet */
+    .review-filters .deck-filter-bar {
+        justify-content: flex-start;
+        gap: 0.4rem;
+        margin: 0;
+    }
+    .review-filters .deck-filter-pill {
+        border-color: var(--shu, #EB6101);
+        color: var(--shu, #EB6101);
+    }
+    .review-filters .deck-filter-pill:hover {
+        background: rgba(235, 97, 1, 0.08);
+    }
+    .review-filters .deck-filter-pill.is-active {
+        background: var(--shu, #EB6101);
+        color: #fff;
+        box-shadow: 0 2px 6px rgba(235, 97, 1, 0.28);
+    }
+    .review-filters .deck-filter-pill:focus-visible {
+        outline-color: var(--shu, #EB6101);
+    }
+
     /* ── Card Area ── */
     .review-card-area {
         min-height: 280px;
@@ -402,6 +485,14 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         /* Mobile-Header: Page-Title + Stats-Bar einklappen, kompakte Top-Bar */
         .review-container { padding: 0.5rem 0.75rem 80px; }
         .review-container > h5 { display: none; }
+        /* Filter-Panel kompakter, gut tippbares Select */
+        .review-filters {
+            padding: 0.65rem 0.7rem;
+            margin-bottom: 0.5rem;
+            border-radius: 10px;
+            gap: 0.6rem;
+        }
+        .lesson-select { font-size: 0.95rem; }
         .review-stats-bar {
             padding: 0.5rem 0.75rem;
             font-size: 0.75rem;
@@ -546,6 +637,18 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         </div>
     </div>
 
+    <!-- Filter-Panel: Lektion + Kartentyp (client-seitig über das geladene Fällig-Set) -->
+    <div class="review-filters" id="reviewFilters" style="display:none;">
+        <div class="review-filters__group" id="lessonFilterGroup" style="display:none;">
+            <span class="review-filters__label"><i class="fas fa-book-open"></i> Lektion</span>
+            <select class="lesson-select" id="lessonSelect" aria-label="Nach Lektion filtern"></select>
+        </div>
+        <div class="review-filters__group" id="typeFilterGroup" style="display:none;">
+            <span class="review-filters__label"><i class="fas fa-shapes"></i> Typ</span>
+            <div class="deck-filter-bar" id="reviewFilterBar"></div>
+        </div>
+    </div>
+
     <!-- Session Progress -->
     <div class="session-progress" id="sessionProgress" style="display: none;">
         <div class="progress">
@@ -556,9 +659,6 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
             <span id="sessionTime">0 Min</span>
         </div>
     </div>
-
-    <!-- Karten-Typ-Filter (Mehrfachauswahl) — Styles aus custom.css (.deck-filter-*) -->
-    <div class="deck-filter-bar" id="reviewFilterBar" style="display:none;"></div>
 
     <!-- Romaji-Toggle ueber der Karte -->
     <div style="display:flex;justify-content:flex-end;margin-bottom:0.5rem;">
@@ -693,13 +793,18 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     const intervalCache = {};
     const TYPE_LABELS = { hiragana: 'Hiragana', katakana: 'Katakana', kana: 'Kana', kanji: 'Kanji', vocabulary: 'Vokabel', grammar: 'Grammatik' };
 
-    // ── Karten-Typ-Filter (Hiragana/Katakana/Kanji/Vokabeln/Grammatik) ──
+    // ── Filter: Kartentyp (Hiragana/Katakana/Kanji/Vokabeln/Grammatik) + Lektion ──
     const TYPE_ORDER = ['hiragana', 'katakana', 'kanji', 'vocabulary', 'grammar'];
+    const filtersPanel = document.getElementById('reviewFilters');
     const filterBar = document.getElementById('reviewFilterBar');
+    const typeFilterGroup = document.getElementById('typeFilterGroup');
+    const lessonFilterGroup = document.getElementById('lessonFilterGroup');
+    const lessonSelect = document.getElementById('lessonSelect');
     const filterEmptyEl = document.getElementById('reviewFilterEmpty');
     const ratedIds = new Set();      // content_ids, die (Schwer/Gut/Einfach) bewertet wurden
-    let activeTypes = new Set();     // aktuell ausgewählte Typen
+    let activeTypes = new Set();     // aktuell ausgewählte Kartentypen
     let presentTypes = [];           // im Fällig-Set vorhandene Typen (in TYPE_ORDER)
+    let activeLesson = null;         // null = alle Lektionen, sonst lesson_id
 
     // Filter-Typ einer Karte: Kana → hiragana/katakana, sonst content_type
     function ftype(card) {
@@ -707,6 +812,12 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
             return (card.details && card.details.type === 'katakana') ? 'katakana' : 'hiragana';
         }
         return card.content_type;
+    }
+
+    // Erfüllt eine Karte die aktuelle Filterauswahl (Typ UND Lektion)?
+    function matchesFilter(card) {
+        return activeTypes.has(ftype(card))
+            && (activeLesson === null || card.lesson_id === activeLesson);
     }
 
     function shuffle(arr) {
@@ -730,10 +841,16 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
                 return;
             }
 
-            // Vorhandene Typen ermitteln, alle standardmäßig aktiv, Pills rendern
+            // Filter aufbauen: Typ-Pills + Lektions-Select (je nur bei >=2 Optionen)
             presentTypes = TYPE_ORDER.filter(t => allCards.some(c => ftype(c) === t));
             activeTypes = new Set(presentTypes);
             renderFilterBar();
+            renderLessonSelect();
+            // Panel nur zeigen, wenn mindestens ein Filter sinnvoll ist
+            if (filtersPanel
+                && (typeFilterGroup.style.display !== 'none' || lessonFilterGroup.style.display !== 'none')) {
+                filtersPanel.style.display = 'flex';
+            }
 
             progressEl.style.display = 'block';
             rebuildQueue();
@@ -746,7 +863,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
 
     // Arbeits-Queue aus aktiver Auswahl neu aufbauen (bereits bewertete raus)
     function rebuildQueue() {
-        cards = shuffle(allCards.filter(c => activeTypes.has(ftype(c)) && !ratedIds.has(c.content_id)));
+        cards = shuffle(allCards.filter(c => matchesFilter(c) && !ratedIds.has(c.content_id)));
         currentIdx = 0;
         sessionStats.total = sessionStats.reviewed + cards.length;
     }
@@ -760,6 +877,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         if (cards.length > 0) {
             filterEmptyEl.style.display = 'none';
             completeEl.style.display = 'none';
+            progressEl.style.display = 'block';
             cardArea.style.display = '';
             btnGroup.style.display = '';
             showCard();
@@ -776,14 +894,19 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         btnGroup.style.display = 'none';
         cardContext.style.display = 'none';
         completeEl.style.display = 'none';
+        progressEl.style.display = 'none';
         const title = document.getElementById('reviewFilterEmptyTitle');
         const text = document.getElementById('reviewFilterEmptyText');
+        const anyMatch = allCards.some(matchesFilter);
         if (activeTypes.size === 0) {
             title.textContent = 'Keine Karten für diese Auswahl';
             text.textContent = 'Wähle oben mindestens einen Kartentyp.';
+        } else if (!anyMatch) {
+            title.textContent = 'Keine Karten für diese Auswahl';
+            text.textContent = 'Diese Kombination aus Lektion und Typ hat keine fälligen Karten.';
         } else {
             title.textContent = 'Auswahl durchgearbeitet';
-            text.textContent = 'Wähle oben weitere Kartentypen, um fortzufahren.';
+            text.textContent = 'Wähle eine andere Lektion oder weitere Typen, um fortzufahren.';
         }
         filterEmptyEl.style.display = 'block';
     }
@@ -795,6 +918,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
             `<button type="button" class="deck-filter-pill is-active" data-type="${t}" aria-pressed="true">${TYPE_LABELS[t] || t}</button>`
         ).join('');
         filterBar.style.display = 'flex';
+        if (typeFilterGroup) typeFilterGroup.style.display = 'flex';
         filterBar.querySelectorAll('.deck-filter-pill').forEach(pill => {
             pill.addEventListener('click', () => {
                 const t = pill.dataset.type;
@@ -805,6 +929,38 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
                 rebuildQueue();
                 refreshView();
             });
+        });
+    }
+
+    // ── Lektions-Select rendern (nur bei >=2 verschiedenen Lektionen) ──
+    function renderLessonSelect() {
+        if (!lessonSelect) return;
+        // Lektionen + Fällig-Anzahl aus dem geladenen Set sammeln
+        const counts = new Map();   // lesson_id → { title, n }
+        allCards.forEach(c => {
+            if (c.lesson_id == null) return;
+            if (!counts.has(c.lesson_id)) {
+                counts.set(c.lesson_id, { title: c.lesson_title || 'Ohne Lektion', n: 0 });
+            }
+            counts.get(c.lesson_id).n++;
+        });
+        if (counts.size < 2) return;   // nur eine Lektion → Filter unnötig
+
+        // Nach Fällig-Anzahl absteigend (am meisten zu üben zuerst)
+        const lessons = [...counts.entries()].sort((a, b) => b[1].n - a[1].n);
+        const opts = [`<option value="">Alle Lektionen (${allCards.length})</option>`];
+        lessons.forEach(([id, info]) => {
+            opts.push(`<option value="${id}">${escapeHtml(info.title)} (${info.n})</option>`);
+        });
+        lessonSelect.innerHTML = opts.join('');
+        lessonFilterGroup.style.display = 'flex';
+
+        lessonSelect.addEventListener('change', () => {
+            const val = lessonSelect.value;
+            activeLesson = val === '' ? null : parseInt(val, 10);
+            lessonSelect.classList.toggle('is-filtered', activeLesson !== null);
+            rebuildQueue();
+            refreshView();
         });
     }
 
