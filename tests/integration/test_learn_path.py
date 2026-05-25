@@ -4,7 +4,6 @@ Mayuko-Direktive 2026-04-25: Lektionen sind in JLPT-Modulen organisiert.
 Pfad-Seite zeigt Module mit Fortschritt + Lock-Status.
 """
 from app import db
-from app.models import LessonCategory, UserLessonProgress
 from tests.factories import (
     LessonCategoryFactory, LessonFactory, UserLessonProgressFactory,
 )
@@ -57,17 +56,56 @@ class TestLearnPathRoute:
         body = resp.data.decode("utf-8")
         assert body.index("AEarly Modul") < body.index("ZLate Modul")
 
-    def test_module_with_lesson_shows_link(self, client, app_context):
-        """Modul mit Lektion zeigt Lektions-Link auf der Startseite."""
+    def test_module_with_lesson_links_to_module_detail(self, client, app_context):
+        """Modul mit Lektion + slug verlinkt auf der Startseite zur Modul-Detail-
+        seite. Architektur seit 2026-04: die Startseite zeigt Modul-Karten, die
+        einzelnen Lektionen (Titel + /lessons/<id>) leben auf /learn/n5/<slug>
+        (siehe TestModuleDetailRoute)."""
         mod = _make_module("with-lesson", jlpt_level=5, display_order=1, name="Mit Lektion")
         db.session.flush()
         # CONTENT_LANGUAGES default = ['german'] — Test-Lesson muss German sein
-        lesson = LessonFactory(category_id=mod.id, is_published=True,
-                                title="Mein Lernstoff", instruction_language="german")
+        LessonFactory(category_id=mod.id, is_published=True,
+                      title="Mein Lernstoff", instruction_language="german")
         db.session.commit()
-        resp = client.get("/")
-        assert b"Mein Lernstoff" in resp.data
-        assert f"/lessons/{lesson.id}".encode() in resp.data
+        body = client.get("/").data.decode("utf-8")
+        assert "Mit Lektion" in body                  # Modul-Name auf der Station-Karte
+        assert "/learn/n5/with-lesson" in body        # Link zur Modul-Detailseite
+
+
+class TestModuleDetailRoute:
+    """/learn/n<level>/<slug> — Modul-Detailseite. War bis 2026-05 ungetestet;
+    Coverage ergänzt, als die veralteten Startseiten-Assertions korrigiert wurden."""
+
+    def test_single_lesson_redirects_to_lesson(self, client, app_context):
+        """Skip-Optimierung: Modul mit genau 1 Lektion leitet direkt zur Lektion
+        (keine Zwischenseite)."""
+        mod = _make_module("solo", jlpt_level=5, display_order=1, name="Solo-Modul")
+        db.session.flush()
+        lesson = LessonFactory(category_id=mod.id, is_published=True,
+                               title="Einzige Lektion", instruction_language="german")
+        db.session.commit()
+        resp = client.get("/learn/n5/solo")
+        assert resp.status_code == 302
+        assert resp.headers["Location"].endswith(f"/lessons/{lesson.id}")
+
+    def test_multi_lesson_lists_lesson_links(self, client, app_context):
+        """Modul mit mehreren Lektionen rendert die Lektions-Titel + /lessons/<id>."""
+        mod = _make_module("multi", jlpt_level=5, display_order=1, name="Multi-Modul")
+        db.session.flush()
+        l1 = LessonFactory(category_id=mod.id, is_published=True,
+                           title="Erste Lektion", instruction_language="german")
+        l2 = LessonFactory(category_id=mod.id, is_published=True,
+                           title="Zweite Lektion", instruction_language="german")
+        db.session.commit()
+        body = client.get("/learn/n5/multi").data.decode("utf-8")
+        assert "Erste Lektion" in body
+        assert "Zweite Lektion" in body
+        assert f"/lessons/{l1.id}" in body
+        assert f"/lessons/{l2.id}" in body
+
+    def test_unknown_slug_returns_404(self, client, app_context):
+        """Unbekannter Slug → 404."""
+        assert client.get("/learn/n5/gibt-es-nicht").status_code == 404
 
 
 class TestModuleUnlockLogic:
@@ -130,8 +168,8 @@ class TestModuleUnlockLogic:
         m = _make_module("counter", jlpt_level=5, display_order=1, name="Zaehler")
         db.session.flush()
         l1 = LessonFactory(category_id=m.id, is_published=True)
-        l2 = LessonFactory(category_id=m.id, is_published=True)
-        l3_unpub = LessonFactory(category_id=m.id, is_published=False)  # zaehlt nicht
+        LessonFactory(category_id=m.id, is_published=True)          # zweite published Lektion
+        LessonFactory(category_id=m.id, is_published=False)        # unpubliziert, zaehlt nicht
         user = UserFactory()
         db.session.flush()
         UserLessonProgressFactory(user_id=user.id, lesson_id=l1.id, is_completed=True)

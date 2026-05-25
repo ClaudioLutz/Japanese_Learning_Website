@@ -41,8 +41,9 @@ def test_vocab_card_audio_button_uses_example_sentence(client, app_context):
     # Audio-Button traegt diesen Satz UND ist explizit als Japanisch markiert
     assert 'data-tts-text="せんせいは やさしいです。"' in html
     assert 'data-tts-lang="ja"' in html
-    # Front-Klasse fuer den TTS-Beispielsatz ist da (Hairline-Style)
-    assert 'class="vocab-tts-example"' in html
+    # Beispielsatz wird mit "Beispiel:"-Label gerendert (frueher Klasse
+    # vocab-tts-example; Template-Refactoring → jetzt <strong>Beispiel:</strong>)
+    assert '<strong>Beispiel:</strong>' in html
 
 
 def test_vocab_card_falls_back_to_word_when_example_empty(client, app_context):
@@ -53,5 +54,5 @@ def test_vocab_card_falls_back_to_word_when_example_empty(client, app_context):
     html = resp.get_data(as_text=True)
     assert 'data-tts-text="先生"' in html
     assert 'data-tts-lang="ja"' in html
-    # Beispielsatz-Container darf NICHT gerendert werden
-    assert 'class="vocab-tts-example"' not in html
+    # Ohne Beispielsatz wird kein "Beispiel:"-Block gerendert
+    assert '<strong>Beispiel:</strong>' not in html
