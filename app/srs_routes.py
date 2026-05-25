@@ -651,8 +651,23 @@ def _user_unlocked_kana_ids(user_id, include_locked=False):
 @srs_bp.route('/practice/kana')
 @login_required
 def practice_kana_page():
-    """Zentrale Uebungs-Seite fuer Kana-Spiel."""
+    """Schritt 1: Einstellungs-Seite fuer das Kana-Spiel (Viewport-gesperrt).
+
+    Sammelt die Filter und verlinkt mit den gewaehlten Werten als Query-Params
+    auf die Spiel-Seite (practice_kana_game_page).
+    """
     return render_template('practice_kana.html')
+
+
+@srs_bp.route('/practice/kana/spiel')
+@login_required
+def practice_kana_game_page():
+    """Schritt 2: Spiel-Seite (Viewport-gesperrt, sichtbarer Timer).
+
+    Liest die Einstellungen client-seitig aus den Query-Params und baut die
+    Session ueber /api/practice/kana/session bzw. /daily-challenge.
+    """
+    return render_template('practice_kana_game.html')
 
 
 @srs_bp.route('/api/practice/kana/session')

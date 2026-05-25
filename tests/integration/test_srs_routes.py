@@ -1,12 +1,10 @@
 # tests/integration/test_srs_routes.py
 """Integration-Tests fuer SRS-Endpoints (Phase 5 + Phase 6)."""
-import json
-
 from app import db
-from app.models import CardReviewState, ReviewLog, UserAchievement
+from app.models import CardReviewState, UserAchievement
 from tests.factories import (
     CardReviewStateFactory, LessonContentFactory, LessonFactory,
-    ReviewLogFactory, UserFactory, VocabularyFactory,
+    VocabularyFactory,
 )
 
 
@@ -308,6 +306,38 @@ class TestSRSPages:
         assert resp.status_code == 200
         assert b'Karten-Browser' in resp.data
 
+    def test_kana_settings_page(self, auth_client):
+        """I-SRS43: GET /practice/kana rendert die Einstellungs-Seite (Schritt 1).
+
+        Viewport-gesperrt, mit kanaSettings()-Komponente und Start-CTA, die zur
+        Spiel-Seite verlinkt.
+        """
+        client, user = auth_client
+        resp = client.get('/practice/kana')
+        assert resp.status_code == 200
+        html = resp.get_data(as_text=True)
+        assert 'kana-setup-locked' in html        # Viewport-Lock scharf
+        assert '100dvh' in html
+        assert 'kanaSettings()' in html            # Einstellungs-Komponente
+        assert 'Spiel starten' in html             # Haupt-CTA
+        assert '/practice/kana/spiel' not in html  # Navigation passiert via JS, nicht als statischer Link
+
+    def test_kana_game_page(self, auth_client):
+        """I-SRS44: GET /practice/kana/spiel rendert die Spiel-Seite (Schritt 2).
+
+        Viewport-gesperrt, mit sichtbarem Timer (kgame__timer), kanaGameView()-
+        Komponente und dem geerbten Kana-Gitter.
+        """
+        client, user = auth_client
+        resp = client.get('/practice/kana/spiel')
+        assert resp.status_code == 200
+        html = resp.get_data(as_text=True)
+        assert 'kana-game-locked' in html          # Viewport-Lock scharf
+        assert '100dvh' in html
+        assert 'kanaGameView()' in html            # Spiel-Komponente
+        assert 'kgame__timer' in html              # sichtbarer Timer
+        assert 'kana-grid-game__grid' in html      # geerbtes Gitter
+
 
 class TestSRSAuth:
     """I-SRS50: Unauthentifizierte Zugriffe werden abgelehnt."""
@@ -319,6 +349,7 @@ class TestSRSAuth:
             '/api/srs/stats/forecast', '/api/srs/stats/maturity',
             '/api/srs/browse', '/api/srs/achievements',
             '/review', '/review/stats', '/review/browse',
+            '/practice/kana', '/practice/kana/spiel',
         ]
         for ep in endpoints:
             resp = client.get(ep)

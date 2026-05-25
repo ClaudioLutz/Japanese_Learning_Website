@@ -627,101 +627,183 @@ const PRACTICE_ROW_LABELS = {
     g: 'G', z: 'Z', d: 'D', b: 'B', p: 'P',
 };
 
-function practiceKana() {
+// Modus-Beschriftungen (DE) — geteilt zwischen Einstellungs- und Spiel-Seite.
+const PRACTICE_MODE_LABELS = { schreiben: 'Schreiben', lesen: 'Lesen', blind: 'Blind' };
+
+// ── Schritt 1: Einstellungs-Seite (/practice/kana) ──────────────────────
+// Sammelt die Filter, persistiert sie in localStorage und navigiert mit den
+// gewaehlten Werten als Query-Params zur Spiel-Seite (/practice/kana/spiel).
+// Eine Live-Vorschau ("≈ N Kana") fetcht den Treffer-Count, damit man keine
+// leere Runde startet.
+function kanaSettings() {
+    const LS_KEY = 'kana_game_settings_v1';
     return {
         mode: 'schreiben',
         schrift: 'both',
-        selectedRows: [],
+        selectedRows: [],          // leer = alle Reihen
         includeDakuten: true,
         weakOnly: false,
         limit: 20,
-        sessionKana: [],
-        sessionKey: 0,
-        loading: false,
-        error: null,
-        dailyAvailable: true,
-        dailyBonusXp: 25,
         availableRows: Object.keys(PRACTICE_ROW_LABELS).map(k => ({ key: k, label: PRACTICE_ROW_LABELS[k] })),
+        previewCount: null,        // null = noch unbekannt / Fehler
+        previewLoading: false,
+        previewBlocked: null,      // Meldung, wenn keine Kana freigeschaltet sind
+        _previewTimer: null,
 
-        async init() {
-            // Auf kleinen Screens kleinere Default-Session → weniger Scrollen.
-            if (window.matchMedia && window.matchMedia('(max-width: 767px)').matches) {
-                this.limit = 10;
-            }
-            this.load();
-        },
-
-        toggleRow(key) {
-            if (this.selectedRows.includes(key)) {
-                this.selectedRows = this.selectedRows.filter(k => k !== key);
-            } else {
-                this.selectedRows.push(key);
-            }
-            this.load();
-        },
-
-        async load() {
-            this.loading = true;
-            this.error = null;
+        init() {
             try {
-                const params = new URLSearchParams({
-                    mode: this.mode,
-                    schrift: this.schrift,
-                    dakuten: this.includeDakuten ? 'true' : 'false',
-                    weak_only: this.weakOnly ? 'true' : 'false',
-                    limit: String(this.limit),
-                });
-                if (this.selectedRows.length > 0) {
-                    params.set('rows', this.selectedRows.join(','));
+                const saved = JSON.parse(localStorage.getItem(LS_KEY) || '{}');
+                if (saved && typeof saved === 'object') {
+                    if (['schreiben', 'lesen', 'blind'].includes(saved.mode)) this.mode = saved.mode;
+                    if (['hiragana', 'katakana', 'both'].includes(saved.schrift)) this.schrift = saved.schrift;
+                    if (Array.isArray(saved.selectedRows)) this.selectedRows = saved.selectedRows;
+                    if (typeof saved.includeDakuten === 'boolean') this.includeDakuten = saved.includeDakuten;
+                    if (typeof saved.weakOnly === 'boolean') this.weakOnly = saved.weakOnly;
+                    if (Number.isFinite(saved.limit)) this.limit = Math.min(50, Math.max(5, saved.limit));
+                } else if (window.matchMedia && window.matchMedia('(max-width: 767px)').matches) {
+                    this.limit = 10;   // kleinerer Default auf Mobile
                 }
-                const resp = await fetch('/api/practice/kana/session?' + params.toString());
-                const data = await resp.json();
-                if (data.message) this.error = data.message;
-                this.sessionKana = data.kana || [];
-                this.sessionKey += 1;
-            } catch (e) {
-                this.error = 'Session konnte nicht geladen werden.';
-            } finally {
-                this.loading = false;
-            }
+            } catch (e) { /* localStorage nicht verfuegbar — Defaults behalten */ }
+            this.refreshPreview();
         },
 
-        async loadDailyChallenge() {
-            this.loading = true;
-            this.error = null;
+        get modeLabel() { return PRACTICE_MODE_LABELS[this.mode] || ''; },
+        get allRowsActive() { return this.selectedRows.length === 0; },
+        get canStart() {
+            return !this.previewBlocked && (this.previewCount === null || this.previewCount > 0);
+        },
+
+        setMode(m) { this.mode = m; this.changed(); },
+        setSchrift(s) { this.schrift = s; this.changed(); },
+        selectAllRows() { this.selectedRows = []; this.changed(); },
+        toggleRow(key) {
+            this.selectedRows = this.selectedRows.includes(key)
+                ? this.selectedRows.filter(k => k !== key)
+                : [...this.selectedRows, key];
+            this.changed();
+        },
+
+        changed() { this.persist(); this.schedulePreview(); },
+
+        persist() {
             try {
-                const resp = await fetch('/api/practice/kana/daily-challenge');
+                localStorage.setItem(LS_KEY, JSON.stringify({
+                    mode: this.mode, schrift: this.schrift, selectedRows: this.selectedRows,
+                    includeDakuten: this.includeDakuten, weakOnly: this.weakOnly, limit: Number(this.limit),
+                }));
+            } catch (e) { /* still ignorieren */ }
+        },
+
+        buildParams() {
+            const params = new URLSearchParams({
+                mode: this.mode,
+                schrift: this.schrift,
+                dakuten: this.includeDakuten ? 'true' : 'false',
+                weak_only: this.weakOnly ? 'true' : 'false',
+                limit: String(this.limit),
+            });
+            if (this.selectedRows.length > 0) params.set('rows', this.selectedRows.join(','));
+            return params;
+        },
+
+        schedulePreview() {
+            if (this._previewTimer) clearTimeout(this._previewTimer);
+            this._previewTimer = setTimeout(() => this.refreshPreview(), 220);
+        },
+
+        async refreshPreview() {
+            this.previewLoading = true;
+            this.previewBlocked = null;
+            try {
+                const resp = await fetch('/api/practice/kana/session?' + this.buildParams().toString());
                 const data = await resp.json();
-                if (data.message) this.error = data.message;
-                this.sessionKana = data.kana || [];
-                this.dailyBonusXp = data.bonus_xp || 25;
-                this.sessionKey += 1;
+                if (data.message) {
+                    this.previewBlocked = data.message;
+                    this.previewCount = 0;
+                } else {
+                    this.previewCount = data.count || 0;
+                }
             } catch (e) {
-                this.error = 'Daily Challenge konnte nicht geladen werden.';
+                this.previewCount = null;
             } finally {
-                this.loading = false;
+                this.previewLoading = false;
             }
         },
 
-        loadWeakOnly() {
+        // ── Navigation zur Spiel-Seite ──
+        startGame() {
+            if (!this.canStart) return;
+            this.persist();
+            window.location.href = '/practice/kana/spiel?' + this.buildParams().toString();
+        },
+        startDaily() {
+            window.location.href = '/practice/kana/spiel?challenge=daily';
+        },
+        startWeak() {
             this.weakOnly = true;
             this.limit = 10;
-            this.load();
-        },
-
-        reload() {
-            this.load();
+            this.persist();
+            window.location.href = '/practice/kana/spiel?' + this.buildParams().toString();
         },
     };
 }
 
-function practiceGameWrapper(sessionKana, mode) {
-    return Object.assign(kanaGridGame(null), {
-        sessionKana,
-        modeOverride: mode,
+// ── Schritt 2: Spiel-Seite (/practice/kana/spiel) ───────────────────────
+// Erweitert das Basis-Spiel (kanaGridGame) um: Laden der Session aus den
+// URL-Query-Params (oder Tages-Challenge), Lade-/Leer-/Fehler-Phasen und
+// einen sichtbaren Live-Timer (zaehlt hoch, friert bei Abschluss ein).
+function kanaGameView() {
+    const game = kanaGridGame(null);
+    const baseOnComplete = game.onComplete;
+    const baseRestart = game.restart;
+    return Object.assign(game, {
+        phase: 'loading',          // 'loading' | 'error' | 'empty' | 'playing'
+        loadMessage: null,
+        isDaily: false,
+        liveElapsedMs: 0,
+        _timerId: null,
+        settingsUrl: '/practice/kana',
 
-        async initFromSession() {
-            this.kana = this.sessionKana.map(k => ({
+        async initView() {
+            const p = new URLSearchParams(window.location.search);
+            this.isDaily = (p.get('challenge') === 'daily');
+            let url;
+            if (this.isDaily) {
+                url = '/api/practice/kana/daily-challenge';
+                this.mode = 'schreiben';
+            } else {
+                const m = p.get('mode');
+                this.mode = ['schreiben', 'lesen', 'blind'].includes(m) ? m : 'schreiben';
+                const params = new URLSearchParams({
+                    mode: this.mode,
+                    schrift: p.get('schrift') || 'both',
+                    dakuten: p.get('dakuten') || 'true',
+                    weak_only: p.get('weak_only') || 'false',
+                    limit: p.get('limit') || '20',
+                });
+                if (p.get('rows')) params.set('rows', p.get('rows'));
+                url = '/api/practice/kana/session?' + params.toString();
+            }
+
+            let data;
+            try {
+                const resp = await fetch(url);
+                data = await resp.json();
+            } catch (e) {
+                this.phase = 'error';
+                this.loadMessage = 'Session konnte nicht geladen werden (Netzwerkfehler).';
+                return;
+            }
+
+            const kana = data.kana || [];
+            if (kana.length === 0) {
+                this.phase = 'empty';
+                this.loadMessage = data.message || 'Keine Karten für diese Auswahl gefunden.';
+                return;
+            }
+
+            // Grid + Pool aus der Session aufbauen (analog zum frueheren practiceGameWrapper)
+            this.kana = kana.map(k => ({
                 id: k.kana_id,
                 character: k.character,
                 romanization: k.romanization,
@@ -729,33 +811,78 @@ function practiceGameWrapper(sessionKana, mode) {
                 audio_url: null,
                 lesson_content_id: k.lesson_content_id,
             }));
-            const ROW_ORDER = ['vowels','k','s','t','n','h','m','y','r','w','n_kons','g','z','d','b','p'];
+            const ROW_ORDER = ['vowels', 'k', 's', 't', 'n', 'h', 'm', 'y', 'r', 'w', 'n_kons', 'g', 'z', 'd', 'b', 'p'];
             const byRow = {};
-            this.sessionKana.forEach(k => {
+            kana.forEach(k => {
                 const key = k.row || 'other';
                 if (!byRow[key]) byRow[key] = [];
                 byRow[key].push(k.kana_id);
             });
             this.rows = ROW_ORDER.filter(k => byRow[k])
                 .map(k => ({ key: k, label: PRACTICE_ROW_LABELS[k] || k, kana_ids: byRow[k] }));
+            if (byRow.other) this.rows.push({ key: 'other', label: '—', kana_ids: byRow.other });
+
             this._config = {
-                default_mode: this.modeOverride,
+                default_mode: this.mode,
                 allow_mode_switch: false,
                 grid_layout: 'rows',
                 shuffle_pool: true,
                 timer_enabled: false,
             };
-            this.mode = this.modeOverride;
             this.modeSwitch = false;
             this.perfectStreak = parseInt(localStorage.getItem('kana_grid_perfect_streak') || '0', 10);
             this.buildCellsAndPool();
             this.loading = false;
+            this.phase = 'playing';
             await this.$nextTick();
             this.initSortables();
             this.startTime = Date.now();
+            this.startLiveTimer();
         },
+
+        // WICHTIG: Methoden, KEINE getter. Diese Komponente wird via
+        // Object.assign(kanaGridGame(null), {...}) gebaut — Object.assign ruft
+        // getter der Quelle EINMAL auf und kopiert nur deren (eingefrorenen)
+        // Rückgabewert. Als getter wären Timer/Fortschritt statisch. Im Template
+        // daher mit () aufrufen: liveTimeLabel(), modeLabel(), progressPct().
+        modeLabel() {
+            return this.isDaily ? 'Tages-Challenge' : (PRACTICE_MODE_LABELS[this.mode] || '');
+        },
+        liveTimeLabel() {
+            const s = Math.max(0, Math.floor(this.liveElapsedMs / 1000));
+            return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+        },
+        progressPct() {
+            return this.totalCells > 0 ? Math.round((this.solvedCount / this.totalCells) * 100) : 0;
+        },
+
+        startLiveTimer() {
+            this.stopLiveTimer();
+            this.liveElapsedMs = Date.now() - this.startTime;
+            this._timerId = setInterval(() => {
+                if (this.completed) { this.stopLiveTimer(); return; }
+                this.liveElapsedMs = Date.now() - this.startTime;
+            }, 250);
+        },
+        stopLiveTimer() {
+            if (this._timerId) { clearInterval(this._timerId); this._timerId = null; }
+        },
+
+        // Timer bei Abschluss exakt einfrieren; bei Neustart wieder anwerfen.
+        onComplete() {
+            baseOnComplete.call(this);
+            this.liveElapsedMs = Date.now() - this.startTime;
+            this.stopLiveTimer();
+        },
+        async restart() {
+            await baseRestart.call(this);
+            this.liveElapsedMs = 0;
+            this.startLiveTimer();
+        },
+
+        goToSettings() { window.location.href = this.settingsUrl; },
     });
 }
 
-window.practiceKana = practiceKana;
-window.practiceGameWrapper = practiceGameWrapper;
+window.kanaSettings = kanaSettings;
+window.kanaGameView = kanaGameView;

@@ -1,0 +1,287 @@
+{% extends "base.html" %}
+
+{% block title %}Kana-Spiel{% endblock %}
+{% block meta_description %}Kana gegen die Uhr — Hiragana und Katakana spielerisch üben mit sichtbarem Timer.{% endblock %}
+{% block robots %}noindex,nofollow{% endblock %}
+
+{% block body_attributes %}class="redesign-page kana-game-locked"{% endblock %}
+
+{% block styles %}
+<style>
+    [x-cloak] { display: none !important; }
+
+    /* ══════════════════════════════════════════════════════════════════
+       VIEWPORT-LOCK — Immersive Spiel-Bühne ohne Page-Scroll.
+       Footer + Mobile-Bottom-Nav weg (der Back-Button ersetzt die Nav);
+       so steht die volle Höhe unter der Top-Nav (60px) dem Spiel zur
+       Verfügung. Das Gitter scrollt bei Bedarf INTERN, HUD + Pool bleiben
+       fixiert.
+       ══════════════════════════════════════════════════════════════════ */
+    body.kana-game-locked { overflow: hidden; padding-bottom: 0 !important; }
+    body.kana-game-locked .container.mt-4 {
+        max-width: 100%; margin: 0; padding: 0;
+        height: calc(100dvh - 60px);
+        display: flex; flex-direction: column; min-height: 0;
+    }
+    @supports not (height: 100dvh) {
+        body.kana-game-locked .container.mt-4 { height: calc(100vh - 60px); }
+    }
+    body.kana-game-locked .site-footer { display: none !important; }
+    body.kana-game-locked .mobile-bottom-nav { display: none !important; }
+
+    .kgame {
+        flex: 1 1 auto; min-height: 0; width: 100%; max-width: 640px; margin: 0 auto;
+        display: flex; flex-direction: column;
+        padding: 0.5rem 0.75rem calc(0.6rem + env(safe-area-inset-bottom, 0px));
+    }
+
+    /* ── HUD: Back · Timer (Hero) · Fortschritt ── */
+    .kgame__hud { flex: 0 0 auto; display: flex; align-items: center; gap: 0.6rem; padding: 0.15rem 0 0.4rem; }
+    .kgame__back {
+        flex: 0 0 auto; width: 40px; height: 40px; border-radius: 11px;
+        display: inline-flex; align-items: center; justify-content: center;
+        border: 1px solid var(--ink-200, #E4DED4); background: var(--card-bg, #FFFDF7);
+        color: var(--ink-600, #5C564D); font-size: 1rem; text-decoration: none;
+        transition: border-color .15s ease, color .15s ease;
+    }
+    .kgame__back:hover { border-color: var(--shu, #EB6101); color: var(--shu, #EB6101); text-decoration: none; }
+    .kgame__back:focus-visible { outline: 2px solid var(--shu, #EB6101); outline-offset: 2px; }
+
+    .kgame__timer { flex: 1 1 auto; display: flex; flex-direction: column; align-items: center; line-height: 1; }
+    .kgame__time {
+        font-family: 'Geist Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums;
+        font-size: 1.55rem; font-weight: 700; color: var(--kon, #1F2A44); letter-spacing: 0.01em;
+        display: inline-flex; align-items: center; gap: 0.4rem;
+    }
+    .kgame__time i { font-size: 0.95rem; color: var(--ink-400, #A8A095); }
+    .kgame__mode {
+        font: 600 0.62rem/1 'Geist', 'Inter', sans-serif; text-transform: uppercase; letter-spacing: 0.1em;
+        color: var(--text-muted, #8C8378); margin-top: 3px;
+    }
+    /* Läuft → dezenter Shu-Puls am Uhr-Icon (die einzige fortlaufende Animation) */
+    .kgame__timer.is-running .kgame__time i { color: var(--shu, #EB6101); animation: kgameTick 1s steps(2, end) infinite; }
+    @keyframes kgameTick { 50% { opacity: 0.3; } }
+
+    .kgame__meta {
+        flex: 0 0 auto; display: flex; align-items: center; gap: 0.6rem;
+        font-family: 'Geist Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums;
+    }
+    .kgame__count { font-size: 0.98rem; font-weight: 700; color: var(--kon, #1F2A44); }
+    .kgame__count .sep { color: var(--ink-300, #D4CCBE); margin: 0 1px; }
+    .kgame__errs { font-size: 0.85rem; color: var(--danger, #D14B3D); display: inline-flex; align-items: center; gap: 0.2rem; }
+    .kgame__errs i { font-size: 0.78rem; }
+    .kgame__hints { font-size: 0.82rem; color: #b9870e; display: inline-flex; align-items: center; gap: 0.2rem; }
+    .kgame__hints.is-empty { color: var(--ink-400, #A8A095); opacity: 0.7; }
+
+    /* Fortschrittsbalken */
+    .kgame__bar { flex: 0 0 auto; height: 5px; border-radius: 999px; background: var(--ink-100, #F1EDE6); overflow: hidden; margin-bottom: 0.5rem; }
+    .kgame__bar-fill { height: 100%; background: var(--shu, #EB6101); border-radius: 999px; transition: width .35s ease; }
+
+    /* ── Bühne ── */
+    .kgame__stage { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+
+    .kgame__state {
+        flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column;
+        align-items: center; justify-content: center; text-align: center; gap: 0.8rem;
+        padding: 1.5rem 1rem; color: var(--text-muted, #8C8378);
+    }
+    .kgame__spinner, .kgame__state-ico { font-size: 2.4rem; color: var(--shu, #EB6101); }
+    .kgame__state-ico--soft { color: var(--matcha, #7A9033); }
+    .kgame__state p { margin: 0; max-width: 34ch; }
+    .kgame__state-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; }
+    .kgame__state-btn {
+        display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.55rem 1.05rem;
+        border-radius: 11px; background: var(--shu, #EB6101); color: #fff;
+        font: 600 0.85rem 'Inter', sans-serif; text-decoration: none; border: 1px solid var(--shu, #EB6101);
+    }
+    .kgame__state-btn:hover { filter: brightness(1.05); color: #fff; text-decoration: none; }
+    .kgame__state-btn--ghost { background: #fff; color: var(--ink-700, #403B34); border-color: var(--border-color, #D4CFC5); }
+    .kgame__state-btn--ghost:hover { border-color: var(--shu, #EB6101); color: var(--shu, #EB6101); }
+
+    /* Spiel-Container: das geerbte Karten-Layout aufheben, in den Flex einpassen */
+    body.kana-game-locked .kana-grid-game.kgame__game {
+        background: transparent; border: 0; border-radius: 0; padding: 0; margin: 0;
+        flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column;
+    }
+    .kgame__game .kana-grid-game__taphint { flex: 0 0 auto; margin: 0 0 0.4rem; }
+    /* Gitter = der scrollende Teil */
+    .kgame__game .kgame__grid {
+        flex: 1 1 auto; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch;
+        margin: 0; padding: 0.15rem 0.15rem 0.5rem;
+    }
+    /* Pool als gepinntes Tray unten — im Flex-Layout statt sticky */
+    body.kana-game-locked .kana-grid-game__pool {
+        position: static; bottom: auto; flex: 0 0 auto;
+        max-height: 30vh; overflow-y: auto; margin: 0; box-shadow: none;
+    }
+
+    /* Ergebnis-Panel — ersetzt den Pool, Gitter bleibt als Merkhilfe sichtbar */
+    .kgame__result { flex: 0 0 auto; text-align: center; padding: 0.55rem 0.5rem 0.15rem; }
+    .kgame__stars { display: inline-flex; gap: 0.45rem; font-size: 1.8rem; margin-bottom: 0.35rem; }
+    .kgame__stars i { color: #d6cfc2; }
+    .kgame__stars i.is-earned { color: #f1c40f; text-shadow: 0 1px 3px rgba(241,196,15,.4); animation: kanaGridStar 0.4s ease; }
+    .kgame__result-stats {
+        display: inline-flex; gap: 1.1rem; font-family: 'Geist Mono', ui-monospace, monospace;
+        font-size: 0.92rem; color: var(--ink-600, #5C564D); margin-bottom: 0.6rem;
+    }
+    .kgame__result-stats i { margin-right: 0.25rem; color: var(--ink-400, #A8A095); }
+    .kgame__result-actions { display: flex; gap: 0.5rem; justify-content: center; }
+    .kgame__again, .kgame__settings {
+        display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.6rem 1.15rem;
+        border-radius: 12px; font: 600 0.9rem 'Inter', sans-serif; cursor: pointer; text-decoration: none; border: 1px solid transparent;
+    }
+    .kgame__again { background: var(--shu, #EB6101); color: #fff; border-color: var(--shu, #EB6101); }
+    .kgame__again:hover { filter: brightness(1.05); }
+    .kgame__settings { background: #fff; color: var(--ink-700, #403B34); border-color: var(--border-color, #D4CFC5); }
+    .kgame__settings:hover { border-color: var(--shu, #EB6101); color: var(--shu, #EB6101); text-decoration: none; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="kgame" x-data="kanaGameView()" x-init="initView()">
+
+    <!-- HUD: Back · Timer · Fortschritt -->
+    <header class="kgame__hud">
+        <a href="{{ url_for('srs.practice_kana_page') }}" class="kgame__back" aria-label="Zurück zu den Einstellungen">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="kgame__timer" :class="{ 'is-running': phase === 'playing' && !completed }">
+            <span class="kgame__time"><i class="far fa-clock"></i> <span x-text="liveTimeLabel()">0:00</span></span>
+            <span class="kgame__mode" x-text="modeLabel()"></span>
+        </div>
+        <div class="kgame__meta" x-show="phase === 'playing'" x-cloak>
+            <span class="kgame__count"><span x-text="solvedCount"></span><span class="sep">/</span><span x-text="totalCells"></span></span>
+            <span class="kgame__errs" x-show="totalErrors > 0"><i class="fas fa-times-circle"></i> <span x-text="totalErrors"></span></span>
+            <span class="kgame__hints" x-show="maxHints > 0" :class="{ 'is-empty': hintsRemaining === 0 }">
+                <i class="fas fa-lightbulb"></i> <span x-text="hintsRemaining + '/' + maxHints"></span>
+            </span>
+        </div>
+    </header>
+    <div class="kgame__bar" x-show="phase === 'playing'" x-cloak>
+        <div class="kgame__bar-fill" :style="`width: ${progressPct()}%`"></div>
+    </div>
+
+    <!-- Bühne -->
+    <div class="kgame__stage">
+
+        <!-- Laden -->
+        <div class="kgame__state" x-show="phase === 'loading'">
+            <div class="kgame__spinner"><i class="fas fa-spinner fa-spin"></i></div>
+            <p>Runde wird vorbereitet …</p>
+        </div>
+
+        <!-- Fehler -->
+        <div class="kgame__state" x-show="phase === 'error'" x-cloak>
+            <div class="kgame__state-ico"><i class="fas fa-triangle-exclamation"></i></div>
+            <p x-text="loadMessage"></p>
+            <a class="kgame__state-btn" href="{{ url_for('srs.practice_kana_page') }}"><i class="fas fa-arrow-left"></i> Einstellungen</a>
+        </div>
+
+        <!-- Leer -->
+        <div class="kgame__state" x-show="phase === 'empty'" x-cloak>
+            <div class="kgame__state-ico kgame__state-ico--soft"><i class="fas fa-seedling"></i></div>
+            <p x-text="loadMessage"></p>
+            <div class="kgame__state-actions">
+                <a class="kgame__state-btn" href="{{ url_for('srs.practice_kana_page') }}"><i class="fas fa-sliders-h"></i> Andere Auswahl</a>
+                <a class="kgame__state-btn kgame__state-btn--ghost" href="{{ url_for('routes.lessons') }}"><i class="fas fa-book-open"></i> Lektionen</a>
+            </div>
+        </div>
+
+        <!-- Spiel -->
+        <div class="kana-grid-game kgame__game" x-show="phase === 'playing'" x-cloak>
+            <div class="kana-grid-game__taphint" x-show="!completed">
+                <template x-if="!selectedCardToken">
+                    <span><i class="fas fa-hand-pointer"></i> Karte antippen, dann Feld — oder per Drag ziehen.</span>
+                </template>
+                <template x-if="selectedCardToken">
+                    <span class="is-active"><i class="fas fa-bullseye"></i> Jetzt das Zielfeld antippen
+                        <button type="button" class="kana-grid-game__taphint-cancel" @click="selectedCardToken = null">abbrechen</button>
+                    </span>
+                </template>
+            </div>
+
+            <div class="kana-grid-game__grid kgame__grid">
+                <template x-for="row in rows" :key="row.key">
+                    <div class="kana-grid-game__row">
+                        <div class="kana-grid-game__row-label" x-text="row.label"></div>
+                        <template x-for="cell in cellsByRow[row.key]" :key="cell.id">
+                            <div class="kana-grid-game__cell"
+                                 :class="{
+                                     'is-correct': cell.status === 'correct',
+                                     'is-incorrect': cell.shake,
+                                     'is-empty': cell.status !== 'correct',
+                                     'is-hinted': cell.hintBadge,
+                                     'is-hint-available': canHintCell(cell),
+                                     'is-tappable': selectedCardToken && cell.status !== 'correct',
+                                     'is-revealed': completed && mode === 'schreiben'
+                                 }"
+                                 :data-cell-id="cell.id"
+                                 :title="selectedCardToken ? 'Hier platzieren' : (canHintCell(cell) ? 'Tippen für Hinweis (zählt als Schwer)' : '')"
+                                 :tabindex="(selectedCardToken || canHintCell(cell)) && cell.status !== 'correct' ? 0 : -1"
+                                 @click="onCellTap(cell)"
+                                 @keydown.enter.prevent="onCellTap(cell)"
+                                 @keydown.space.prevent="onCellTap(cell)">
+                                <span class="kana-grid-game__cell-script"
+                                      :class="cell.scriptType === 'katakana' ? 'is-kata' : 'is-hira'"
+                                      x-show="bothScripts && mode === 'schreiben' && cell.status !== 'correct'"
+                                      x-text="cell.scriptType === 'katakana' ? 'Kata' : 'Hira'"></span>
+                                <div class="kana-grid-game__cell-hint" x-show="cell.hint" x-text="cell.hint"></div>
+                                <span class="kana-grid-game__cell-reveal"
+                                      x-show="completed && mode === 'schreiben'"
+                                      x-transition.opacity.duration.400ms
+                                      x-text="cell.romanization"></span>
+                                <div class="kana-grid-game__cell-drop" x-text="cell.solved || ''"></div>
+                                <span class="kana-grid-game__cell-hint-badge" x-show="cell.hintBadge" title="Mit Hinweis gelöst">
+                                    <i class="fas fa-lightbulb"></i>
+                                </span>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Pool (Drag-/Tap-Quelle) — beim Abschluss ausgeblendet -->
+            <div class="kana-grid-game__pool" x-ref="pool" x-show="!completed">
+                <template x-for="card in pool" :key="card.token">
+                    <div class="kana-grid-game__pool-card"
+                         :class="{
+                             'has-romaji-hint': showRomajiHint && card.kind === 'kana',
+                             'is-selected': selectedCardToken === card.token
+                         }"
+                         :data-token="card.token" :data-kana-id="card.kanaId" :data-payload="card.payload"
+                         role="button" tabindex="0" :aria-pressed="selectedCardToken === card.token"
+                         @click="tapCard(card)"
+                         @keydown.enter.prevent="tapCard(card)"
+                         @keydown.space.prevent="tapCard(card)">
+                        <span class="kana-grid-game__pool-text" x-text="card.label"></span>
+                        <span class="kana-grid-game__pool-subtext"
+                              x-show="showRomajiHint && card.kind === 'kana'" x-text="card.romaji"></span>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Ergebnis -->
+            <div class="kgame__result" x-show="completed" x-cloak x-transition>
+                <div class="kgame__stars">
+                    <template x-for="i in 3" :key="i">
+                        <i class="fas fa-star" :class="{ 'is-earned': i <= stars }"></i>
+                    </template>
+                </div>
+                <div class="kgame__result-stats">
+                    <span><i class="far fa-clock"></i> <span x-text="liveTimeLabel()"></span></span>
+                    <span><i class="fas fa-bolt"></i> <span x-text="totalXp"></span> XP</span>
+                    <span><i class="fas fa-times-circle"></i> <span x-text="totalErrors"></span> Fehler</span>
+                </div>
+                <div class="kgame__result-actions">
+                    <button type="button" class="kgame__again" @click="restart()"><i class="fas fa-redo"></i> Nochmal</button>
+                    <a class="kgame__settings" href="{{ url_for('srs.practice_kana_page') }}"><i class="fas fa-sliders-h"></i> Einstellungen</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- kanaGameView() ist in /static/js/kana_grid_game.js definiert (in base.html via defer geladen). -->
+{% endblock %}

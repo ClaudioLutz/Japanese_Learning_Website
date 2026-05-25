@@ -1,410 +1,285 @@
 {% extends "base.html" %}
 
-{% block title %}Kana üben{% endblock %}
-{% block meta_description %}Hiragana und Katakana spielerisch üben — drag-and-drop, Reihen-Filter, tägliche Challenge.{% endblock %}
+{% block title %}Kana-Spiel einrichten{% endblock %}
+{% block meta_description %}Stelle dein Kana-Spiel ein — Hiragana/Katakana, Reihen, Modus und Anzahl — und starte eine Runde mit sichtbarem Timer.{% endblock %}
+
+{% block body_attributes %}class="redesign-page kana-setup-locked"{% endblock %}
 
 {% block styles %}
 <style>
-    .practice-kana-page {
-        max-width: 1100px;
-        margin: 1rem auto;
-        padding: 0 1rem 80px;
+    /* ══════════════════════════════════════════════════════════════════
+       VIEWPORT-LOCK — Einstellungsseite passt ohne Page-Scroll zwischen
+       Top-Nav (60px, sticky) und Mobile-Bottom-Nav (fixed). Footer aus.
+       Nur der Steuerbereich scrollt bei Bedarf intern; Kopf + Start-CTA
+       bleiben fixiert.
+       ══════════════════════════════════════════════════════════════════ */
+    body.kana-setup-locked { overflow: hidden; padding-bottom: 0 !important; }
+    body.kana-setup-locked .container.mt-4 {
+        max-width: 100%; margin: 0; padding: 0;
+        height: calc(100dvh - 60px);
+        display: flex; flex-direction: column; min-height: 0;
     }
-    .practice-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 0.75rem;
-        margin-bottom: 1rem;
+    @supports not (height: 100dvh) {
+        body.kana-setup-locked .container.mt-4 { height: calc(100vh - 60px); }
     }
-    .practice-header h1 {
-        font-family: 'Fraunces', serif;
-        font-size: 1.6rem;
-        margin: 0;
-        color: var(--kon, #1F2A44);
+    body.kana-setup-locked .site-footer { display: none !important; }
+
+    .kana-setup {
+        flex: 1 1 auto; min-height: 0;
+        width: 100%; max-width: 560px; margin: 0 auto;
+        padding: clamp(0.6rem, 2vh, 1.25rem) 1rem 1rem;
+        display: flex; flex-direction: column;
+        position: relative;
     }
-    .practice-header h1 .practice-subtitle {
-        display: block;
-        font-family: 'Inter', sans-serif;
-        font-size: 0.85rem;
-        font-weight: 400;
-        color: var(--text-muted);
-        margin-top: 0.2rem;
+    .kana-setup > * { position: relative; z-index: 1; }
+
+    /* Atmosphäre: grosses, blasses Kana im Hintergrund */
+    .kana-setup__bg {
+        position: absolute; inset: 0; overflow: hidden;
+        pointer-events: none; z-index: 0;
     }
-    .practice-layout {
-        display: grid;
-        grid-template-columns: 280px 1fr;
-        gap: 1.25rem;
-        align-items: start;
-    }
-    @media (max-width: 900px) {
-        .practice-layout { grid-template-columns: 1fr; }
-    }
-    .practice-sidebar {
-        background: var(--card-bg, #FFFDF7);
-        border: 1px solid var(--border-color, #D4CFC5);
-        border-radius: 14px;
-        padding: 1rem;
-        position: sticky;
-        top: 1rem;
-    }
-    .practice-sidebar h2 {
-        font-size: 0.85rem;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        color: var(--text-muted);
-        margin: 0 0 0.5rem;
-    }
-    .practice-filter-group {
-        margin-bottom: 1rem;
-    }
-    .practice-filter-group label {
-        display: block;
-        font-size: 0.75rem;
-        color: var(--text-muted);
-        margin-bottom: 0.3rem;
-    }
-    .practice-toggle-row {
-        display: flex;
-        gap: 4px;
-        background: var(--background-color, #F5F0E8);
-        border-radius: 999px;
-        padding: 3px;
-    }
-    .practice-toggle-row button {
-        flex: 1;
-        background: transparent;
-        border: 0;
-        padding: 0.35rem 0.5rem;
-        font-size: 0.75rem;
-        border-radius: 999px;
-        color: var(--text-muted);
-        cursor: pointer;
-        transition: all 0.18s ease;
-    }
-    .practice-toggle-row button.is-active {
-        background: var(--card-bg, #FFFDF7);
-        color: var(--shu, #EB6101);
-        font-weight: 600;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-    }
-    .practice-rows-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 4px;
-    }
-    .practice-rows-grid button {
-        background: transparent;
-        border: 1px solid var(--border-color);
-        padding: 0.35rem 0.3rem;
-        font-size: 0.7rem;
-        border-radius: 6px;
-        color: var(--text-muted);
-        cursor: pointer;
-        transition: all 0.15s ease;
-    }
-    .practice-rows-grid button.is-active {
-        background: var(--shu, #EB6101);
-        color: #FFFDF7;
-        border-color: var(--shu, #EB6101);
-        font-weight: 600;
-    }
-    .practice-quickactions {
-        display: flex;
-        flex-direction: column;
-        gap: 0.4rem;
-        margin-top: 0.75rem;
-    }
-    .practice-quickactions button {
-        background: var(--background-color);
-        border: 1px solid var(--border-color);
-        padding: 0.4rem 0.6rem;
-        font-size: 0.75rem;
-        border-radius: 8px;
-        cursor: pointer;
-        text-align: left;
-    }
-    .practice-quickactions button:hover {
-        background: var(--card-bg);
-        border-color: var(--shu);
-        color: var(--shu);
-    }
-    .practice-quickactions button i {
-        margin-right: 0.4rem;
+    .kana-setup__bg span {
+        position: absolute; right: -4%; top: 2%;
+        font-family: 'Klee One', 'Noto Serif JP', serif;
+        font-size: min(56vw, 320px); line-height: 1; font-weight: 700;
+        color: rgba(31, 42, 68, 0.035);
+        user-select: none;
     }
 
-    .practice-main {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
+    /* ── Kopf ── */
+    .kana-setup__head { flex: 0 0 auto; text-align: center; margin-bottom: clamp(0.5rem, 1.6vh, 1rem); }
+    .kana-setup__eyebrow {
+        display: inline-flex; align-items: center; gap: 0.4rem;
+        padding: 0.28rem 0.7rem; border-radius: 999px;
+        border: 1px solid var(--border-color, #E4DED4);
+        background: rgba(255,255,255,0.6);
+        font: 600 0.68rem/1 'Geist', 'Inter', sans-serif;
+        letter-spacing: 0.1em; text-transform: uppercase;
+        color: var(--ink-700, #403B34);
     }
-    .practice-daily-card {
-        background: linear-gradient(135deg, #FFFDF7, #FCEFE0);
-        border: 1px solid var(--shu, #EB6101);
-        border-radius: 14px;
-        padding: 1rem 1.25rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 0.75rem;
+    .kana-setup__eyebrow .jp { font-family: 'Noto Sans JP', sans-serif; color: var(--shu, #EB6101); letter-spacing: 0; }
+    .kana-setup__head h1 {
+        font: 510 clamp(1.4rem, 5vw, 1.7rem)/1.05 'Geist', 'Inter', sans-serif;
+        letter-spacing: -0.02em; color: var(--kon, #1F2A44);
+        margin: 0.5rem 0 0.15rem;
     }
-    .practice-daily-card-text strong {
-        font-size: 1.05rem;
-        color: var(--shu, #EB6101);
-        display: block;
+    .kana-setup__head p { font-size: 0.85rem; color: var(--text-muted, #8C8378); margin: 0; }
+
+    /* ── Scrollender Steuerbereich ── */
+    .kana-setup__body { flex: 1 1 auto; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+    .kana-setup__group { margin-bottom: clamp(0.7rem, 1.8vh, 1.15rem); }
+    .kana-setup__label {
+        display: flex; align-items: center; gap: 0.4rem;
+        font: 700 0.7rem/1 'Geist', 'Inter', sans-serif;
+        letter-spacing: 0.08em; text-transform: uppercase;
+        color: var(--text-muted, #8C8378); margin: 0 0 0.45rem;
     }
-    .practice-daily-card-text small {
-        color: var(--text-muted);
-        font-size: 0.8rem;
+    .kana-setup__label i { color: var(--shu, #EB6101); font-size: 0.72rem; }
+    .kana-setup__label .count {
+        margin-left: auto; font-family: 'Geist Mono', ui-monospace, monospace;
+        color: var(--kon, #1F2A44); letter-spacing: 0;
     }
-    .practice-daily-card button {
-        background: var(--shu, #EB6101);
-        color: #FFFDF7;
-        border: 0;
-        border-radius: 999px;
-        padding: 0.5rem 1.1rem;
-        font-weight: 600;
-        cursor: pointer;
-        font-size: 0.85rem;
-        white-space: nowrap;
+
+    /* Segmented Control */
+    .seg { display: flex; gap: 4px; background: var(--background-color, #F1EDE6); border-radius: 999px; padding: 4px; }
+    .seg button {
+        flex: 1; border: 0; background: transparent; cursor: pointer;
+        padding: 0.5rem 0.35rem; border-radius: 999px;
+        font: 600 0.86rem/1.15 'Inter', sans-serif; color: var(--text-muted, #8C8378);
+        display: flex; flex-direction: column; align-items: center; gap: 2px;
+        transition: background .18s ease, color .18s ease, box-shadow .18s ease;
     }
-    .practice-daily-card button:hover {
-        background: #d35408;
+    .seg button .seg-sub {
+        font-size: 0.62rem; font-weight: 500; opacity: 0.85;
+        font-family: 'Noto Sans JP', 'Geist Mono', sans-serif;
     }
-    .practice-game-frame {
-        background: var(--card-bg, #FFFDF7);
-        border: 1px solid var(--border-color, #D4CFC5);
-        border-radius: 14px;
-        padding: 1rem;
+    .seg button.is-active {
+        background: #fff; color: var(--shu, #EB6101);
+        box-shadow: 0 1px 2px rgba(28,26,23,.10);
     }
-    .practice-empty {
-        text-align: center;
-        padding: 2rem;
-        color: var(--text-muted);
+    .seg button:focus-visible { outline: 2px solid var(--shu, #EB6101); outline-offset: 2px; }
+
+    /* Reihen-Chips */
+    .rows { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .chip {
+        border: 1px solid var(--border-color, #D4CFC5); background: #fff;
+        color: var(--ink-600, #5C564D); border-radius: 999px;
+        padding: 0.4rem 0.72rem; font: 600 0.8rem 'Inter', sans-serif;
+        cursor: pointer; transition: all .15s ease;
+    }
+    .chip:hover { border-color: var(--shu, #EB6101); color: var(--shu, #EB6101); }
+    .chip:focus-visible { outline: 2px solid var(--shu, #EB6101); outline-offset: 2px; }
+    .chip.is-active { background: var(--shu, #EB6101); border-color: var(--shu, #EB6101); color: #fff; }
+    .chip--all.is-active { background: var(--kon, #1F2A44); border-color: var(--kon, #1F2A44); }
+
+    /* Toggle-Switches */
+    .switch {
+        width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
+        padding: 0.6rem 0.8rem; border: 1px solid var(--border-color, #D4CFC5);
+        border-radius: 12px; background: #fff; cursor: pointer; text-align: left;
+        margin-bottom: 0.45rem;
+    }
+    .switch:last-child { margin-bottom: 0; }
+    .switch__text { font: 600 0.88rem 'Inter', sans-serif; color: var(--tetsu, #2C2C2C); }
+    .switch__text small { display: block; font-size: 0.72rem; color: var(--text-muted, #8C8378); font-weight: 400; margin-top: 1px; }
+    .switch__track { flex: 0 0 auto; width: 44px; height: 26px; border-radius: 999px; background: #D9D2C6; position: relative; transition: background .18s ease; }
+    .switch__track::after {
+        content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px;
+        border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.25); transition: transform .18s ease;
+    }
+    .switch.is-on .switch__track { background: var(--shu, #EB6101); }
+    .switch.is-on .switch__track::after { transform: translateX(18px); }
+    .switch:focus-visible { outline: 2px solid var(--shu, #EB6101); outline-offset: 2px; }
+
+    /* Anzahl-Slider */
+    .kana-setup__range { width: 100%; accent-color: var(--shu, #EB6101); height: 1.5rem; }
+
+    /* ── Fuss: Vorschau + Start ── */
+    .kana-setup__foot { flex: 0 0 auto; padding-top: 0.7rem; }
+    .kana-setup__preview {
+        text-align: center; font: 500 0.85rem 'Inter', sans-serif;
+        color: var(--text-muted, #8C8378); margin: 0 0 0.55rem; min-height: 1.25em;
+    }
+    .kana-setup__preview strong { color: var(--kon, #1F2A44); font-family: 'Geist Mono', ui-monospace, monospace; }
+    .kana-setup__preview.is-blocked { color: var(--shu-deep, #B84A00); }
+    .kana-setup__start {
+        width: 100%; border: 0; border-radius: 14px; padding: 0.95rem 1rem; cursor: pointer;
+        font: 600 1.05rem 'Geist', 'Inter', sans-serif; color: #fff;
+        background: linear-gradient(180deg, #F2740F, #EB6101);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 2px 6px rgba(184,74,0,.30), 0 0 0 1px rgba(184,74,0,.35);
+        display: flex; align-items: center; justify-content: center; gap: 0.55rem;
+        transition: transform .12s ease, filter .15s ease;
+    }
+    .kana-setup__start:hover { filter: brightness(1.05); }
+    .kana-setup__start:active { transform: scale(0.98); }
+    .kana-setup__start:disabled { opacity: 0.45; cursor: not-allowed; filter: grayscale(0.3); box-shadow: none; }
+    .kana-setup__quick { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
+    .kana-setup__quick button {
+        flex: 1; border: 1px solid var(--border-color, #D4CFC5); background: #fff; border-radius: 12px;
+        padding: 0.6rem 0.4rem; cursor: pointer;
+        font: 600 0.82rem 'Inter', sans-serif; color: var(--ink-700, #403B34);
+        display: flex; align-items: center; justify-content: center; gap: 0.4rem; transition: all .15s ease;
+    }
+    .kana-setup__quick button:hover { border-color: var(--shu, #EB6101); color: var(--shu, #EB6101); }
+    .kana-setup__quick button i { color: var(--shu, #EB6101); }
+
+    /* Mobile: Platz für die fixe Bottom-Nav unter dem Fuss reservieren */
+    @media (max-width: 767px) {
+        .kana-setup { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="practice-kana-page" x-data="practiceKana()" x-init="init()">
-    <div class="practice-header">
-        <h1>Kana üben
-            <span class="practice-subtitle">Drag-and-Drop · alle freigeschalteten Hiragana &amp; Katakana</span>
-        </h1>
-        <a href="{{ url_for('srs.stats_page') }}" class="btn btn-outline-secondary btn-sm">
-            <i class="fas fa-chart-bar"></i> Statistik
-        </a>
+<div class="kana-setup" x-data="kanaSettings()" x-init="init()">
+    <div class="kana-setup__bg" aria-hidden="true"><span>あ</span></div>
+
+    <div class="kana-setup__head">
+        <span class="kana-setup__eyebrow"><span class="jp">かな</span> · Übung</span>
+        <h1>Kana-Spiel</h1>
+        <p>Stell dir eine Runde zusammen — dann gegen die Uhr.</p>
     </div>
 
-    <div class="practice-layout">
-        <aside class="practice-sidebar">
-            <h2>Filter</h2>
-
-            <div class="practice-filter-group">
-                <label>Schrift</label>
-                <div class="practice-toggle-row">
-                    <button :class="{ 'is-active': schrift === 'both' }" @click="schrift = 'both'; load()">Beide</button>
-                    <button :class="{ 'is-active': schrift === 'hiragana' }" @click="schrift = 'hiragana'; load()">Hira</button>
-                    <button :class="{ 'is-active': schrift === 'katakana' }" @click="schrift = 'katakana'; load()">Kata</button>
-                </div>
+    <div class="kana-setup__body">
+        <!-- Schrift -->
+        <div class="kana-setup__group">
+            <div class="kana-setup__label"><i class="fas fa-pen-nib"></i> Schrift</div>
+            <div class="seg" role="group" aria-label="Schrift">
+                <button type="button" :class="{ 'is-active': schrift === 'hiragana' }" @click="setSchrift('hiragana')">
+                    Hiragana <span class="seg-sub">あ</span>
+                </button>
+                <button type="button" :class="{ 'is-active': schrift === 'katakana' }" @click="setSchrift('katakana')">
+                    Katakana <span class="seg-sub">ア</span>
+                </button>
+                <button type="button" :class="{ 'is-active': schrift === 'both' }" @click="setSchrift('both')">
+                    Beide <span class="seg-sub">あ・ア</span>
+                </button>
             </div>
+        </div>
 
-            <div class="practice-filter-group">
-                <label>Modus</label>
-                <div class="practice-toggle-row">
-                    <button :class="{ 'is-active': mode === 'schreiben' }" @click="mode = 'schreiben'; reload()">Schreiben</button>
-                    <button :class="{ 'is-active': mode === 'lesen' }" @click="mode = 'lesen'; reload()">Lesen</button>
-                    <button :class="{ 'is-active': mode === 'blind' }" @click="mode = 'blind'; reload()">Blind</button>
-                </div>
+        <!-- Modus -->
+        <div class="kana-setup__group">
+            <div class="kana-setup__label"><i class="fas fa-sliders-h"></i> Modus</div>
+            <div class="seg" role="group" aria-label="Modus">
+                <button type="button" :class="{ 'is-active': mode === 'schreiben' }" @click="setMode('schreiben')">
+                    Schreiben <span class="seg-sub">Romaji → Kana</span>
+                </button>
+                <button type="button" :class="{ 'is-active': mode === 'lesen' }" @click="setMode('lesen')">
+                    Lesen <span class="seg-sub">Kana → Romaji</span>
+                </button>
+                <button type="button" :class="{ 'is-active': mode === 'blind' }" @click="setMode('blind')">
+                    Blind <span class="seg-sub">beides</span>
+                </button>
             </div>
+        </div>
 
-            <div class="practice-filter-group">
-                <label>Reihen</label>
-                <div class="practice-rows-grid">
-                    <template x-for="row in availableRows" :key="row.key">
-                        <button :class="{ 'is-active': selectedRows.includes(row.key) }"
-                                @click="toggleRow(row.key)" x-text="row.label"></button>
-                    </template>
-                </div>
-                <div style="margin-top:0.4rem;display:flex;gap:0.3rem;">
-                    <button class="btn btn-link btn-sm" style="padding:0;font-size:0.7rem;" @click="selectedRows = []; load()">Alle</button>
-                    <button class="btn btn-link btn-sm" style="padding:0;font-size:0.7rem;" @click="selectedRows = availableRows.map(r => r.key); load()">Keine</button>
-                </div>
+        <!-- Reihen -->
+        <div class="kana-setup__group">
+            <div class="kana-setup__label">
+                <i class="fas fa-layer-group"></i> Reihen
+                <span class="count" x-text="allRowsActive ? 'alle' : selectedRows.length + ' gewählt'"></span>
             </div>
-
-            <div class="practice-filter-group">
-                <label style="display:flex;align-items:center;gap:0.4rem;cursor:pointer;">
-                    <input type="checkbox" x-model="includeDakuten" @change="load()">
-                    <span>Dakuten/Handakuten einschliessen</span>
-                </label>
-            </div>
-
-            <div class="practice-filter-group">
-                <label style="display:flex;align-items:center;gap:0.4rem;cursor:pointer;">
-                    <input type="checkbox" x-model="weakOnly" @change="load()">
-                    <span>Nur schwache Karten</span>
-                </label>
-            </div>
-
-            <div class="practice-filter-group">
-                <label>Anzahl: <strong x-text="limit"></strong></label>
-                <input type="range" min="5" max="50" step="5" x-model="limit" @change="load()" style="width:100%;">
-            </div>
-
-            <div class="practice-quickactions">
-                <button @click="loadDailyChallenge()"><i class="fas fa-bullseye"></i> Tages-Challenge</button>
-                <button @click="loadWeakOnly()"><i class="fas fa-exclamation-triangle"></i> Schwache 10</button>
-                <button @click="reload()"><i class="fas fa-redo"></i> Neue Runde</button>
-            </div>
-        </aside>
-
-        <main class="practice-main">
-            <div class="practice-daily-card" x-show="dailyAvailable">
-                <div class="practice-daily-card-text">
-                    <strong>🎯 Tages-Challenge</strong>
-                    <small>10 zufällige Kana — <span x-text="dailyBonusXp"></span> XP-Bonus bei perfekt</small>
-                </div>
-                <button @click="loadDailyChallenge()">Starten</button>
-            </div>
-
-            <div class="practice-game-frame">
-                <template x-if="loading">
-                    <div class="practice-empty">
-                        <i class="fas fa-spinner fa-spin"></i> Session wird geladen…
-                    </div>
-                </template>
-                <template x-if="!loading && error">
-                    <div class="practice-empty">
-                        <i class="fas fa-exclamation-triangle"></i> <span x-text="error"></span>
-                    </div>
-                </template>
-                <template x-if="!loading && !error && sessionKana.length === 0">
-                    <div class="practice-empty">
-                        <p>Keine Karten gefunden. Andere Filter wählen oder erst eine Lesson abschliessen.</p>
-                    </div>
-                </template>
-                <template x-if="!loading && !error && sessionKana.length > 0">
-                    <div class="kana-grid-game"
-                         x-data="practiceGameWrapper(sessionKana, mode)"
-                         x-init="initFromSession()"
-                         :key="sessionKey">
-                        <div class="kana-grid-game__inner">
-                            <div class="kana-grid-game__header">
-                                <div class="kana-grid-game__progress">
-                                    <span x-text="solvedCount + ' / ' + totalCells"></span>
-                                    <span class="kana-grid-game__separator">·</span>
-                                    <span class="kana-grid-game__errors">
-                                        <i class="fas fa-times-circle"></i>
-                                        <span x-text="totalErrors"></span>
-                                    </span>
-                                    <template x-if="maxHints > 0">
-                                        <span class="kana-grid-game__hints-counter"
-                                              :class="{ 'is-empty': hintsRemaining === 0 }">
-                                            <i class="fas fa-lightbulb"></i>
-                                            <span x-text="hintsRemaining + '/' + maxHints"></span>
-                                        </span>
-                                    </template>
-                                </div>
-                            </div>
-                            <div class="kana-grid-game__taphint" x-show="!completed">
-                                <template x-if="!selectedCardToken">
-                                    <span><i class="fas fa-hand-pointer"></i> Karte antippen, dann Feld — oder per Drag ziehen.</span>
-                                </template>
-                                <template x-if="selectedCardToken">
-                                    <span class="is-active"><i class="fas fa-bullseye"></i> Jetzt das Zielfeld antippen <button type="button" class="kana-grid-game__taphint-cancel" @click="selectedCardToken = null">abbrechen</button></span>
-                                </template>
-                            </div>
-                            <div class="kana-grid-game__grid">
-                                <template x-for="row in rows" :key="row.key">
-                                    <div class="kana-grid-game__row">
-                                        <div class="kana-grid-game__row-label" x-text="row.label"></div>
-                                        <template x-for="cell in cellsByRow[row.key]" :key="cell.id">
-                                            <div class="kana-grid-game__cell"
-                                                 :class="{
-                                                     'is-correct': cell.status === 'correct',
-                                                     'is-incorrect': cell.shake,
-                                                     'is-empty': cell.status !== 'correct',
-                                                     'is-hinted': cell.hintBadge,
-                                                     'is-hint-available': canHintCell(cell),
-                                                     'is-tappable': selectedCardToken && cell.status !== 'correct',
-                                                     'is-revealed': completed && mode === 'schreiben'
-                                                 }"
-                                                 :data-cell-id="cell.id"
-                                                 :title="selectedCardToken ? 'Hier platzieren' : (canHintCell(cell) ? 'Tippen für Hinweis (zählt als Schwer)' : '')"
-                                                 :tabindex="(selectedCardToken || canHintCell(cell)) && cell.status !== 'correct' ? 0 : -1"
-                                                 @click="onCellTap(cell)"
-                                                 @keydown.enter.prevent="onCellTap(cell)"
-                                                 @keydown.space.prevent="onCellTap(cell)">
-                                                <span class="kana-grid-game__cell-script"
-                                                      :class="cell.scriptType === 'katakana' ? 'is-kata' : 'is-hira'"
-                                                      x-show="bothScripts && mode === 'schreiben' && cell.status !== 'correct'"
-                                                      x-text="cell.scriptType === 'katakana' ? 'Kata' : 'Hira'"></span>
-                                                <div class="kana-grid-game__cell-hint" x-show="cell.hint" x-text="cell.hint"></div>
-                                                <span class="kana-grid-game__cell-reveal"
-                                                      x-show="completed && mode === 'schreiben'"
-                                                      x-transition.opacity.duration.400ms
-                                                      x-text="cell.romanization"></span>
-                                                <div class="kana-grid-game__cell-drop" x-text="cell.solved || ''"></div>
-                                                <span class="kana-grid-game__cell-hint-badge" x-show="cell.hintBadge"
-                                                      title="Mit Hinweis geloest">
-                                                    <i class="fas fa-lightbulb"></i>
-                                                </span>
-                                            </div>
-                                        </template>
-                                    </div>
-                                </template>
-                            </div>
-                            <div class="kana-grid-game__pool" x-ref="pool">
-                                <template x-for="card in pool" :key="card.token">
-                                    <div class="kana-grid-game__pool-card"
-                                         :class="{
-                                             'has-romaji-hint': showRomajiHint && card.kind === 'kana',
-                                             'is-selected': selectedCardToken === card.token
-                                         }"
-                                         :data-token="card.token"
-                                         :data-kana-id="card.kanaId"
-                                         :data-payload="card.payload"
-                                         role="button"
-                                         tabindex="0"
-                                         :aria-pressed="selectedCardToken === card.token"
-                                         @click="tapCard(card)"
-                                         @keydown.enter.prevent="tapCard(card)"
-                                         @keydown.space.prevent="tapCard(card)">
-                                        <span class="kana-grid-game__pool-text" x-text="card.label"></span>
-                                        <span class="kana-grid-game__pool-subtext"
-                                              x-show="showRomajiHint && card.kind === 'kana'"
-                                              x-text="card.romaji"></span>
-                                    </div>
-                                </template>
-                            </div>
-                            <template x-if="completed">
-                                <div class="kana-grid-game__complete">
-                                    <div class="kana-grid-game__stars">
-                                        <template x-for="i in 3">
-                                            <i class="fas fa-star" :class="{ 'is-earned': i <= stars }"></i>
-                                        </template>
-                                    </div>
-                                    <div class="kana-grid-game__complete-stats">
-                                        <span><i class="fas fa-bolt"></i> <span x-text="totalXp"></span> XP</span>
-                                        <span><i class="fas fa-clock"></i> <span x-text="formattedTime"></span></span>
-                                        <span><i class="fas fa-times-circle"></i> <span x-text="totalErrors"></span> Fehler</span>
-                                    </div>
-                                    <button type="button" class="btn btn-outline-primary btn-sm" @click="restart()">
-                                        <i class="fas fa-redo"></i> Neue Runde
-                                    </button>
-                                </div>
-                            </template>
-                        </div>
-                    </div>
+            <div class="rows">
+                <button type="button" class="chip chip--all" :class="{ 'is-active': allRowsActive }" @click="selectAllRows()">Alle</button>
+                <template x-for="row in availableRows" :key="row.key">
+                    <button type="button" class="chip"
+                            :class="{ 'is-active': selectedRows.includes(row.key) }"
+                            @click="toggleRow(row.key)" x-text="row.label"></button>
                 </template>
             </div>
-        </main>
+        </div>
+
+        <!-- Optionen -->
+        <div class="kana-setup__group">
+            <div class="kana-setup__label"><i class="fas fa-toggle-on"></i> Optionen</div>
+            <button type="button" class="switch" :class="{ 'is-on': includeDakuten }"
+                    :aria-pressed="includeDakuten.toString()"
+                    @click="includeDakuten = !includeDakuten; changed()">
+                <span class="switch__text">Dakuten / Handakuten
+                    <small>が・ざ・だ・ば・ぱ einschliessen</small>
+                </span>
+                <span class="switch__track" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="switch" :class="{ 'is-on': weakOnly }"
+                    :aria-pressed="weakOnly.toString()"
+                    @click="weakOnly = !weakOnly; changed()">
+                <span class="switch__text">Nur schwache Karten
+                    <small>die du schon mal verwechselt hast</small>
+                </span>
+                <span class="switch__track" aria-hidden="true"></span>
+            </button>
+        </div>
+
+        <!-- Anzahl -->
+        <div class="kana-setup__group">
+            <div class="kana-setup__label">
+                <i class="fas fa-hashtag"></i> Anzahl
+                <span class="count" x-text="limit"></span>
+            </div>
+            <input type="range" class="kana-setup__range" min="5" max="50" step="5"
+                   x-model="limit" @input="changed()" aria-label="Anzahl Kana">
+        </div>
+    </div>
+
+    <div class="kana-setup__foot">
+        <p class="kana-setup__preview" :class="{ 'is-blocked': previewBlocked }">
+            <template x-if="previewBlocked"><span x-text="previewBlocked"></span></template>
+            <template x-if="!previewBlocked && previewLoading"><span>wird gezählt …</span></template>
+            <template x-if="!previewBlocked && !previewLoading && previewCount !== null">
+                <span>≈ <strong x-text="previewCount"></strong> Kana · <span x-text="modeLabel"></span></span>
+            </template>
+        </p>
+        <button class="kana-setup__start" :disabled="!canStart" @click="startGame()">
+            <span>Spiel starten</span> <i class="fas fa-arrow-right"></i>
+        </button>
+        <div class="kana-setup__quick">
+            <button type="button" @click="startDaily()"><i class="fas fa-bullseye"></i> Tages-Challenge</button>
+            <button type="button" @click="startWeak()"><i class="fas fa-bolt"></i> Schwache 10</button>
+        </div>
     </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
-<!-- practiceKana() + practiceGameWrapper() sind in /static/js/kana_grid_game.js
-     definiert (in base.html via defer geladen). -->
+<!-- kanaSettings() ist in /static/js/kana_grid_game.js definiert (in base.html via defer geladen). -->
 {% endblock %}
