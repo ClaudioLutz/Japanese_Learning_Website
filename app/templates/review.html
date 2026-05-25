@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     .review-filters__label i { color: var(--shu, #EB6101); font-size: 0.8rem; }
 
     /* Lektions-Select — natives Picker-Verhalten auf Mobile, gestylter Trigger */
-    .lesson-select {
+    .category-select {
         appearance: none;
         -webkit-appearance: none;
         width: 100%;
@@ -138,12 +138,12 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         background-size: 0.7rem;
         transition: border-color 0.15s ease, box-shadow 0.15s ease, color 0.15s ease;
     }
-    .lesson-select:focus {
+    .category-select:focus {
         outline: none;
         border-color: var(--shu, #EB6101);
         box-shadow: 0 0 0 3px rgba(235, 97, 1, 0.15);
     }
-    .lesson-select.is-filtered {
+    .category-select.is-filtered {
         border-color: var(--shu, #EB6101);
         color: var(--shu, #EB6101);
         font-weight: 700;
@@ -492,7 +492,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
             border-radius: 10px;
             gap: 0.6rem;
         }
-        .lesson-select { font-size: 0.95rem; }
+        .category-select { font-size: 0.95rem; }
         .review-stats-bar {
             padding: 0.5rem 0.75rem;
             font-size: 0.75rem;
@@ -639,9 +639,9 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
 
     <!-- Filter-Panel: Lektion + Kartentyp (client-seitig über das geladene Fällig-Set) -->
     <div class="review-filters" id="reviewFilters" style="display:none;">
-        <div class="review-filters__group" id="lessonFilterGroup" style="display:none;">
-            <span class="review-filters__label"><i class="fas fa-book-open"></i> Lektion</span>
-            <select class="lesson-select" id="lessonSelect" aria-label="Nach Lektion filtern"></select>
+        <div class="review-filters__group" id="categoryFilterGroup" style="display:none;">
+            <span class="review-filters__label"><i class="fas fa-layer-group"></i> Gruppe</span>
+            <select class="category-select" id="categorySelect" aria-label="Nach Gruppe filtern"></select>
         </div>
         <div class="review-filters__group" id="typeFilterGroup" style="display:none;">
             <span class="review-filters__label"><i class="fas fa-shapes"></i> Typ</span>
@@ -793,18 +793,18 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     const intervalCache = {};
     const TYPE_LABELS = { hiragana: 'Hiragana', katakana: 'Katakana', kana: 'Kana', kanji: 'Kanji', vocabulary: 'Vokabel', grammar: 'Grammatik' };
 
-    // ── Filter: Kartentyp (Hiragana/Katakana/Kanji/Vokabeln/Grammatik) + Lektion ──
+    // ── Filter: Kartentyp (Hiragana/Katakana/Kanji/Vokabeln/Grammatik) + Gruppe ──
     const TYPE_ORDER = ['hiragana', 'katakana', 'kanji', 'vocabulary', 'grammar'];
     const filtersPanel = document.getElementById('reviewFilters');
     const filterBar = document.getElementById('reviewFilterBar');
     const typeFilterGroup = document.getElementById('typeFilterGroup');
-    const lessonFilterGroup = document.getElementById('lessonFilterGroup');
-    const lessonSelect = document.getElementById('lessonSelect');
+    const categoryFilterGroup = document.getElementById('categoryFilterGroup');
+    const categorySelect = document.getElementById('categorySelect');
     const filterEmptyEl = document.getElementById('reviewFilterEmpty');
     const ratedIds = new Set();      // content_ids, die (Schwer/Gut/Einfach) bewertet wurden
     let activeTypes = new Set();     // aktuell ausgewählte Kartentypen
     let presentTypes = [];           // im Fällig-Set vorhandene Typen (in TYPE_ORDER)
-    let activeLesson = null;         // null = alle Lektionen, sonst lesson_id
+    let activeCategory = null;       // null = alle Gruppen, sonst category_id
 
     // Filter-Typ einer Karte: Kana → hiragana/katakana, sonst content_type
     function ftype(card) {
@@ -814,10 +814,10 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         return card.content_type;
     }
 
-    // Erfüllt eine Karte die aktuelle Filterauswahl (Typ UND Lektion)?
+    // Erfüllt eine Karte die aktuelle Filterauswahl (Typ UND Gruppe)?
     function matchesFilter(card) {
         return activeTypes.has(ftype(card))
-            && (activeLesson === null || card.lesson_id === activeLesson);
+            && (activeCategory === null || card.category_id === activeCategory);
     }
 
     function shuffle(arr) {
@@ -845,10 +845,10 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
             presentTypes = TYPE_ORDER.filter(t => allCards.some(c => ftype(c) === t));
             activeTypes = new Set(presentTypes);
             renderFilterBar();
-            renderLessonSelect();
+            renderCategorySelect();
             // Panel nur zeigen, wenn mindestens ein Filter sinnvoll ist
             if (filtersPanel
-                && (typeFilterGroup.style.display !== 'none' || lessonFilterGroup.style.display !== 'none')) {
+                && (typeFilterGroup.style.display !== 'none' || categoryFilterGroup.style.display !== 'none')) {
                 filtersPanel.style.display = 'flex';
             }
 
@@ -903,10 +903,10 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
             text.textContent = 'Wähle oben mindestens einen Kartentyp.';
         } else if (!anyMatch) {
             title.textContent = 'Keine Karten für diese Auswahl';
-            text.textContent = 'Diese Kombination aus Lektion und Typ hat keine fälligen Karten.';
+            text.textContent = 'Diese Kombination aus Gruppe und Typ hat keine fälligen Karten.';
         } else {
             title.textContent = 'Auswahl durchgearbeitet';
-            text.textContent = 'Wähle eine andere Lektion oder weitere Typen, um fortzufahren.';
+            text.textContent = 'Wähle eine andere Gruppe oder weitere Typen, um fortzufahren.';
         }
         filterEmptyEl.style.display = 'block';
     }
@@ -932,33 +932,33 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         });
     }
 
-    // ── Lektions-Select rendern (nur bei >=2 verschiedenen Lektionen) ──
-    function renderLessonSelect() {
-        if (!lessonSelect) return;
-        // Lektionen + Fällig-Anzahl aus dem geladenen Set sammeln
-        const counts = new Map();   // lesson_id → { title, n }
+    // ── Gruppen-Select rendern (Kategorien, nur bei >=2 verschiedenen Gruppen) ──
+    function renderCategorySelect() {
+        if (!categorySelect) return;
+        // Gruppen + Fällig-Anzahl aus dem geladenen Set sammeln
+        const counts = new Map();   // category_id → { name, n }
         allCards.forEach(c => {
-            if (c.lesson_id == null) return;
-            if (!counts.has(c.lesson_id)) {
-                counts.set(c.lesson_id, { title: c.lesson_title || 'Ohne Lektion', n: 0 });
+            if (c.category_id == null) return;
+            if (!counts.has(c.category_id)) {
+                counts.set(c.category_id, { name: c.category_name || 'Ohne Gruppe', n: 0 });
             }
-            counts.get(c.lesson_id).n++;
+            counts.get(c.category_id).n++;
         });
-        if (counts.size < 2) return;   // nur eine Lektion → Filter unnötig
+        if (counts.size < 2) return;   // nur eine Gruppe → Filter unnötig
 
         // Nach Fällig-Anzahl absteigend (am meisten zu üben zuerst)
-        const lessons = [...counts.entries()].sort((a, b) => b[1].n - a[1].n);
-        const opts = [`<option value="">Alle Lektionen (${allCards.length})</option>`];
-        lessons.forEach(([id, info]) => {
-            opts.push(`<option value="${id}">${escapeHtml(info.title)} (${info.n})</option>`);
+        const groups = [...counts.entries()].sort((a, b) => b[1].n - a[1].n);
+        const opts = [`<option value="">Alle Gruppen (${allCards.length})</option>`];
+        groups.forEach(([id, info]) => {
+            opts.push(`<option value="${id}">${escapeHtml(info.name)} (${info.n})</option>`);
         });
-        lessonSelect.innerHTML = opts.join('');
-        lessonFilterGroup.style.display = 'flex';
+        categorySelect.innerHTML = opts.join('');
+        categoryFilterGroup.style.display = 'flex';
 
-        lessonSelect.addEventListener('change', () => {
-            const val = lessonSelect.value;
-            activeLesson = val === '' ? null : parseInt(val, 10);
-            lessonSelect.classList.toggle('is-filtered', activeLesson !== null);
+        categorySelect.addEventListener('change', () => {
+            const val = categorySelect.value;
+            activeCategory = val === '' ? null : parseInt(val, 10);
+            categorySelect.classList.toggle('is-filtered', activeCategory !== null);
             rebuildQueue();
             refreshView();
         });

@@ -345,12 +345,16 @@ def get_user_stats(user_id):
 
 def get_content_data_for_review(content_item):
     """Bereitet Content-Daten fuer die Review-API auf."""
+    lesson = content_item.lesson
+    category = lesson.category if lesson else None
     data = {
         'content_id': content_item.id,
         'content_type': content_item.content_type,
         'lesson_id': content_item.lesson_id,
-        'lesson_title': content_item.lesson.title if content_item.lesson else '',
-        'instruction_language': content_item.lesson.instruction_language if content_item.lesson else 'english',
+        'lesson_title': lesson.title if lesson else '',
+        'category_id': category.id if category else None,
+        'category_name': category.name if category else '',
+        'instruction_language': lesson.instruction_language if lesson else 'english',
     }
 
     ref = content_item.get_content_data()

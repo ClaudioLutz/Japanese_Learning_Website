@@ -89,16 +89,17 @@ def test_review_page_filter_scaffolding_present(admin_client):
     assert "deck-filter-pill" in html
 
 
-def test_review_page_lesson_filter_present(admin_client):
-    """Die Wiederhol-Seite bietet zusätzlich einen Lektions-Filter."""
+def test_review_page_category_filter_present(admin_client):
+    """Die Wiederhol-Seite bietet zusätzlich einen Gruppen-(Kategorie-)Filter."""
     client, _admin = admin_client
 
     resp = client.get("/review", base_url=HTTPS)
     assert resp.status_code == 200, resp.status_code
     html = resp.get_data(as_text=True)
 
-    assert 'id="lessonSelect"' in html              # Lektions-Dropdown
-    assert 'id="reviewFilters"' in html             # gemeinsames Filter-Panel
-    assert "function renderLessonSelect" in html     # Optionen aus Fällig-Set
-    assert "function matchesFilter" in html          # Typ UND Lektion kombiniert
-    assert "lesson-select" in html                   # gestyltes Select
+    assert 'id="categorySelect"' in html             # Gruppen-Dropdown
+    assert 'id="reviewFilters"' in html              # gemeinsames Filter-Panel
+    assert "function renderCategorySelect" in html    # Optionen aus Fällig-Set
+    assert "function matchesFilter" in html           # Typ UND Gruppe kombiniert
+    assert "category-select" in html                  # gestyltes Select
+    assert "card.category_id" in html                 # Karten-Filter nutzt Gruppen-ID
