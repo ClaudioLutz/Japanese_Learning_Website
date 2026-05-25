@@ -1194,7 +1194,7 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                                                          'is-hinted': cell.hintBadge,
                                                                                          'is-hint-available': canHintCell(cell),
                                                                                          'is-tappable': selectedCardToken && cell.status !== 'correct',
-                                                                                         'is-revealed': completed && mode === 'schreiben'
+                                                                                         'is-revealed': completed && mode !== 'blind'
                                                                                      }"
                                                                                      :data-cell-id="cell.id"
                                                                                      :title="selectedCardToken ? 'Hier platzieren' : (canHintCell(cell) ? 'Klick fuer Hinweis (zaehlt als Schwer)' : '')"
@@ -1208,10 +1208,10 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                                                           x-text="cell.scriptType === 'katakana' ? 'Kata' : 'Hira'"></span>
                                                                                     <div class="kana-grid-game__cell-hint" x-show="cell.hint" x-text="cell.hint"></div>
                                                                                     <span class="kana-grid-game__cell-reveal"
-                                                                                          x-show="completed && mode === 'schreiben'"
+                                                                                          x-show="completed && mode !== 'blind'"
                                                                                           x-transition.opacity.duration.400ms
                                                                                           x-text="cell.romanization"></span>
-                                                                                    <div class="kana-grid-game__cell-drop" x-text="cell.solved || ''"></div>
+                                                                                    <div class="kana-grid-game__cell-drop" x-text="(completed && mode !== 'blind') ? cell.character : (cell.solved || '')"></div>
                                                                                     <span class="kana-grid-game__cell-hint-badge" x-show="cell.hintBadge" title="Mit Hinweis geloest">
                                                                                         <i class="fas fa-lightbulb"></i>
                                                                                     </span>

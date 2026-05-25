@@ -4642,8 +4642,10 @@ button[onclick*="moveContentInPage"]:active {
     background: rgba(137, 87, 229, 0.12);
 }
 
-/* Nach Abschluss (Schreib-Modus): Romaji-Lesung ueber dem Kana einblenden, damit
-   das fertige Gitter als Kana+Lesung-Merkhilfe dient. Zelle wird zur Spalte. */
+/* Nach Abschluss (Schreib- UND Lesen-Modus): Kana gross + Romaji-Lesung klein
+   darueber einblenden, damit das fertige Gitter als Kana+Lesung-Merkhilfe dient.
+   Im Lesen-Modus wird das abgelegte Romaji nach Abschluss durch das Kana ersetzt
+   (cell.character) und die Lesung wandert in die Reveal-Zeile. Zelle wird zur Spalte. */
 .kana-grid-game__cell.is-revealed {
     flex-direction: column;
     gap: 1px;
