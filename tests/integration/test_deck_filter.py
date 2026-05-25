@@ -103,3 +103,29 @@ def test_review_page_category_filter_present(admin_client):
     assert "function matchesFilter" in html           # Typ UND Gruppe kombiniert
     assert "category-select" in html                  # gestyltes Select
     assert "card.category_id" in html                 # Karten-Filter nutzt Gruppen-ID
+
+
+def test_review_page_locked_viewport_layout(admin_client):
+    """Die Wiederhol-Seite ist auf die Bildschirmhöhe gesperrt (kein Page-Scroll).
+
+    Karte = flexibler Restplatz, Bewertungs-Buttons gepinnt, Stats + Filter im
+    Sheet hinter dem Einstellungs-Button, Footer/Impressum ausgeblendet.
+    """
+    client, _admin = admin_client
+
+    resp = client.get("/review", base_url=HTTPS)
+    assert resp.status_code == 200, resp.status_code
+    html = resp.get_data(as_text=True)
+
+    # Body-Klasse schaltet den Viewport-Lock scharf (overflow:hidden + 100dvh)
+    assert "review-locked" in html
+    assert "100dvh" in html
+    # Gesperrte Bühne + kompakte Kopfzeile statt gestapelter Blöcke
+    assert "review-screen" in html
+    assert "review-topbar" in html
+    # Übersicht (Stats) + Filter liegen im Slide-up-Sheet
+    assert 'id="reviewSheet"' in html
+    assert 'id="reviewSettingsBtn"' in html
+    assert "function openSheet" in html
+    # sessionTime-Element muss erhalten bleiben (JS schreibt hinein)
+    assert 'id="sessionTime"' in html

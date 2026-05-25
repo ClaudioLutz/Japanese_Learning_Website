@@ -2,7 +2,7 @@
 
 {% block title %}Tägliche Wiederholung{% endblock %}
 
-{% block body_attributes %}class="redesign-page"{% endblock %}
+{% block body_attributes %}class="redesign-page review-locked"{% endblock %}
 
 {# Romaji-Toggle: <html>-Klasse synchron VOR Body-Render setzen, um Flash zu vermeiden.
    Default: Romaji AN (Review-Karten kommen aus mixed Lessons, kein einzelner Default). #}
@@ -34,176 +34,160 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
 <style>
     /* Romaji-Toggle: blendet Front-Side-Romaji aus wenn html.hide-front-romaji */
     html.hide-front-romaji .front-romaji { display: none !important; }
-    .review-container {
-        max-width: 600px;
+
+    /* ══════════════════════════════════════════════════════════════════
+       VIEWPORT-LOCK
+       Die Lern-Ansicht passt ohne Page-Scroll in den Bereich zwischen
+       Top-Nav (60px, sticky) und Mobile-Bottom-Nav (fixed). Footer/Impressum
+       wird auf dieser Seite ausgeblendet — es gibt nur eine Bühne: die Karte.
+       ══════════════════════════════════════════════════════════════════ */
+    body.review-locked { overflow: hidden; }
+    body.review-locked .container.mt-4 {
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+        height: calc(100dvh - 60px);     /* 60px = sticky .topnav */
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+    }
+    @supports not (height: 100dvh) {
+        body.review-locked .container.mt-4 { height: calc(100vh - 60px); }
+    }
+    body.review-locked .site-footer { display: none !important; }
+    body.review-locked .container.mt-4 > .alert {
+        margin: 0.5rem 0.75rem 0;
+        flex: 0 0 auto;
+    }
+
+    /* ── Gesperrte Bühne ── */
+    .review-screen {
+        flex: 1 1 auto;
+        min-height: 0;
+        width: 100%;
+        max-width: 560px;
         margin: 0 auto;
-        padding: 1rem;
-        padding-bottom: 80px;
+        padding: 0.6rem 1rem 0.75rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.55rem;
     }
 
-    /* ── Stats Header ── */
-    .review-stats-bar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        padding: 0.75rem 1rem;
-        background: var(--card-bg, #FFFDF7);
-        border-radius: 12px;
-        border: 1px solid var(--border-color, #D4CFC5);
-        margin-bottom: 1rem;
-        font-size: 0.85rem;
-    }
-    .stat-item {
+    /* ── Kompakte Kopfzeile: Progress + Zähler + Romaji + Einstellungen ── */
+    .review-topbar {
+        flex: 0 0 auto;
         display: flex;
         align-items: center;
-        gap: 0.35rem;
-        white-space: nowrap;
+        gap: 0.55rem;
     }
-    .stat-value {
-        font-weight: 700;
-        color: var(--kon, #1F2A44);
-        font-family: 'Geist Mono', ui-monospace, monospace;
-    }
-
-    /* ── Session Progress ── */
     .session-progress {
-        margin-bottom: 1rem;
+        flex: 1 1 auto;
+        min-width: 0;
+        margin: 0;
     }
     .session-progress .progress {
         height: 6px;
         border-radius: 999px;
         background: var(--ink-100, #F1EDE6);
+        overflow: hidden;
     }
     .session-progress .progress-bar {
+        height: 100%;
         background: var(--shu, #EB6101);
         transition: width 0.4s ease;
     }
-    .session-info {
-        display: flex;
-        justify-content: space-between;
-        font-size: 0.75rem;
-        color: var(--text-muted, #8C8378);
-        margin-top: 0.25rem;
-    }
-
-    /* ── Filter-Panel (Lektion + Typ) ── */
-    .review-filters {
-        background: var(--card-bg, #FFFDF7);
-        border: 1px solid var(--border-color, #D4CFC5);
-        border-radius: 12px;
-        padding: 0.8rem 0.9rem;
-        margin-bottom: 1rem;
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-    .review-filters__group {
-        display: flex;
-        flex-direction: column;
-        gap: 0.45rem;
-    }
-    .review-filters__label {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        font-family: 'Geist', 'Inter', sans-serif;
-        font-size: 0.7rem;
-        font-weight: 700;
-        letter-spacing: 0.05em;
-        text-transform: uppercase;
-        color: var(--text-muted, #8C8378);
-    }
-    .review-filters__label i { color: var(--shu, #EB6101); font-size: 0.8rem; }
-
-    /* Lektions-Select — natives Picker-Verhalten auf Mobile, gestylter Trigger */
-    .category-select {
-        appearance: none;
-        -webkit-appearance: none;
-        width: 100%;
-        min-height: 44px;
-        font-family: 'Geist', 'Inter', sans-serif;
-        font-size: 0.9rem;
+    .review-progress-count {
+        flex: 0 0 auto;
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-variant-numeric: tabular-nums;
+        font-size: 0.78rem;
         font-weight: 600;
-        color: var(--sumi, #1C1C1C);
-        background-color: var(--washi, #FAF7F2);
-        border: 1px solid var(--border-color, #D4CFC5);
+        color: var(--ink-600, #5C564D);
+        white-space: nowrap;
+    }
+    .review-icon-btn {
+        flex: 0 0 auto;
+        width: 38px; height: 38px;
+        display: inline-flex; align-items: center; justify-content: center;
         border-radius: 10px;
-        padding: 0.55rem 2.25rem 0.55rem 0.85rem;
+        border: 1px solid var(--ink-200, #E4DED4);
+        background: var(--card-bg, #FFFDF7);
+        color: var(--ink-600, #5C564D);
+        font-size: 0.95rem;
         cursor: pointer;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='none' stroke='%231C1C1C' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round' d='M1 1.5 6 6.5 11 1.5'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 0.85rem center;
-        background-size: 0.7rem;
-        transition: border-color 0.15s ease, box-shadow 0.15s ease, color 0.15s ease;
+        position: relative;
+        transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
     }
-    .category-select:focus {
-        outline: none;
-        border-color: var(--shu, #EB6101);
-        box-shadow: 0 0 0 3px rgba(235, 97, 1, 0.15);
+    .review-icon-btn:hover { border-color: var(--shu, #EB6101); color: var(--shu, #EB6101); }
+    .review-icon-btn:focus-visible { outline: 2px solid var(--shu, #EB6101); outline-offset: 2px; }
+
+    /* Romaji-Toggle als あ-Glyph; AUS-Zustand visuell durchgestrichen + gedimmt */
+    .romaji-toggle.review-icon-btn {
+        font-family: 'Noto Sans JP', sans-serif;
+        font-weight: 600;
+        font-size: 1.15rem;
+        line-height: 1;
     }
-    .category-select.is-filtered {
-        border-color: var(--shu, #EB6101);
-        color: var(--shu, #EB6101);
-        font-weight: 700;
+    .romaji-toggle .romaji-toggle-label {
+        position: absolute; width: 1px; height: 1px;
+        overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+    }
+    html.hide-front-romaji .romaji-toggle.review-icon-btn { opacity: 0.55; }
+    html.hide-front-romaji .romaji-toggle.review-icon-btn::after {
+        content: ''; position: absolute; left: 7px; right: 7px; top: 50%;
+        height: 2px; background: currentColor; transform: rotate(-20deg);
     }
 
-    /* Typ-Pills im Review: auf Seiten-Akzent --shu harmonisiert, links ausgerichtet */
-    .review-filters .deck-filter-bar {
-        justify-content: flex-start;
-        gap: 0.4rem;
-        margin: 0;
-    }
-    .review-filters .deck-filter-pill {
-        border-color: var(--shu, #EB6101);
-        color: var(--shu, #EB6101);
-    }
-    .review-filters .deck-filter-pill:hover {
-        background: rgba(235, 97, 1, 0.08);
-    }
-    .review-filters .deck-filter-pill.is-active {
+    /* Aktiver Filter → Punkt am Einstellungs-Button */
+    .review-settings-btn.has-filter::after {
+        content: ''; position: absolute; top: 5px; right: 5px;
+        width: 8px; height: 8px; border-radius: 50%;
         background: var(--shu, #EB6101);
-        color: #fff;
-        box-shadow: 0 2px 6px rgba(235, 97, 1, 0.28);
-    }
-    .review-filters .deck-filter-pill:focus-visible {
-        outline-color: var(--shu, #EB6101);
+        border: 1.5px solid var(--card-bg, #FFFDF7);
     }
 
-    /* ── Card Area ── */
+    /* ── Bühne: Karte ODER ein Zustand (teilen sich den Restplatz) ── */
+    .review-card-area, .review-empty, .review-complete {
+        flex: 1 1 auto;
+        min-height: 0;
+        width: 100%;
+    }
     .review-card-area {
-        min-height: 280px;
         display: flex;
-        align-items: center;
+        flex-direction: column;
         justify-content: center;
-        margin-bottom: 0.5rem;
     }
-
-    /* ── Card Context (Lesson info) ── */
-    .card-context {
+    .review-empty, .review-complete {
+        display: none;                /* per JS auf block geschaltet */
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
         text-align: center;
-        font-size: 0.75rem;
-        color: var(--text-muted, #8C8378);
-        margin-top: 0.5rem;
+        padding: 1.5rem 1rem;
     }
-    .card-context .lesson-tag {
-        background: var(--background-color, #F5F0E8);
-        padding: 2px 8px;
-        border-radius: 8px;
-        margin: 0 4px;
+    .review-empty-icon, .review-complete-icon {
+        font-size: 2.6rem;
+        margin-bottom: 0.75rem;
+    }
+    .review-complete h4 {
+        font-family: 'Geist', 'Inter', sans-serif;
+        font-weight: 510; letter-spacing: -0.02em;
+        color: var(--kon, #1F2A44);
     }
 
-    /* ── Review Flip Card ── */
+    /* ── Review Flip Card — füllt die Bühne ── */
     .review-flip-card {
+        flex: 1 1 auto;
         width: 100%;
         max-width: 460px;
+        max-height: 540px;
+        min-height: 0;
+        margin: 0 auto;
         perspective: 1200px;
         cursor: pointer;
     }
     .review-card-scene {
         width: 100%;
-        min-height: 320px;
+        height: 100%;
         position: relative;
         transform-style: preserve-3d;
         transition: transform 0.55s cubic-bezier(0.4, 0.0, 0.2, 1);
@@ -215,10 +199,10 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         position: absolute;
         inset: 0;
         backface-visibility: hidden;
-        border-radius: 12px;
+        border-radius: 14px;
         display: flex;
         flex-direction: column;
-        padding: 1.75rem 1.5rem;
+        padding: 1.5rem 1.35rem;
         border: 1px solid var(--ink-200, #E4DED4);
         background: #fff;
         box-shadow: var(--shadow-card, 0 4px 16px rgba(28,26,23,0.06));
@@ -231,9 +215,11 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     .review-card-face--back {
         transform: rotateY(180deg);
         overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
         justify-content: flex-start;
         text-align: left;
-        gap: 0.75rem;
+        gap: 0.7rem;
+        padding-top: 1.6rem;
         /* Audio-Button positioniert sich relativ zur Back-Face. */
         position: relative;
     }
@@ -270,19 +256,19 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     }
     .review-card-front-text {
         font-family: 'Noto Sans JP', sans-serif;
-        font-size: 3.5rem;
+        font-size: clamp(2.4rem, 12vw, 3.5rem);
         font-weight: 500;
         color: var(--sumi, #1C1C1C);
         text-align: center;
         line-height: 1.1;
     }
     .review-card-front-text.small-text {
-        font-size: 1.75rem;
+        font-size: clamp(1.4rem, 7vw, 1.9rem);
     }
     .review-card-hint {
-        font-size: 0.78rem;
+        font-size: 0.72rem;
         color: var(--text-muted, #94a3b8);
-        margin-top: 1.5rem;
+        margin-top: clamp(0.8rem, 4vh, 1.5rem);
         letter-spacing: 0.04em;
         text-transform: uppercase;
     }
@@ -299,7 +285,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     }
     .front-example-jp {
         font-family: 'Noto Sans JP', sans-serif;
-        font-size: 1.3rem;
+        font-size: clamp(1.05rem, 4.5vw, 1.3rem);
         line-height: 1.5;
         color: var(--sumi, #1C1C1C);
     }
@@ -310,7 +296,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         color: var(--ink-500, #7A7368);
     }
 
-    /* Neues Backside-Layout: Bild kompakt, Bedeutung gross, Lesung leise */
+    /* Backside-Layout: Bild kompakt, Bedeutung gross, Lesung leise */
     .back-image {
         align-self: center; flex-shrink: 0;
         width: 64px; height: 64px;
@@ -320,7 +306,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     .back-image img { max-width: 100%; max-height: 100%; object-fit: contain; }
     .back-meaning {
         font-family: 'Geist', 'Inter', sans-serif;
-        font-size: 1.6rem; font-weight: 600; color: var(--kon, #1F2A44);
+        font-size: 1.5rem; font-weight: 600; color: var(--kon, #1F2A44);
         line-height: 1.25; text-align: center; letter-spacing: -0.01em;
     }
     .back-readings {
@@ -379,7 +365,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.85rem;
     }
     .cloze-sentence {
-        font-family: 'Noto Sans JP', sans-serif; font-size: 1.35rem;
+        font-family: 'Noto Sans JP', sans-serif; font-size: clamp(1.1rem, 5vw, 1.35rem);
         line-height: 1.7; color: var(--sumi, #1C1C1C); text-align: center;
     }
     .cloze-gap {
@@ -408,12 +394,13 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     /* Nuance-/„Verwechselt-mit"-Hinweis */
     .back-nuance .back-section-label { color: #b45309; }
 
-    /* Legacy detail-row (kanji/grammar — noch nicht migriert) */
+    /* Legacy detail-row (kana — Romaji/Typ auf der Rückseite) */
     .review-detail-row {
         display: flex;
         gap: 0.5rem;
         margin-bottom: 0.5rem;
         font-size: 0.9rem;
+        justify-content: center;
     }
     .review-detail-label {
         font-weight: 600;
@@ -428,44 +415,47 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         font-size: 1.1rem;
     }
 
-    /* ── SRS Rating Buttons (Pill-Style: weiss + farbiger Border, kein Vollflaechen-Block) ── */
+    /* ── SRS Rating Buttons (gepinnt, eine Reihe) ── */
     .review-buttons {
+        flex: 0 0 auto;
         display: none;
-        gap: 0.5rem;
-        justify-content: center;
-        margin: 1.25rem auto 0;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.4rem;
+        margin: 0;
         animation: fadeSlideUp 0.3s ease;
-        max-width: 600px;
     }
     .review-buttons.visible {
-        display: flex;
+        display: grid;
     }
     .review-btn {
-        flex: 1;
-        max-width: 140px;
-        padding: 0.7rem 0.6rem;
+        padding: 0.5rem 0.3rem;
         font-weight: 600;
-        font-size: 0.88rem;
+        font-size: 0.82rem;
         border-radius: 12px;
         background: white;
         border: 1.5px solid;
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 3px;
-        line-height: 1.2;
+        gap: 2px;
+        line-height: 1.15;
+        min-height: 54px;
         cursor: pointer;
         transition: all 0.18s ease;
     }
+    .review-btn span:first-child { display: inline-flex; align-items: center; gap: 4px; }
     .review-btn:hover {
         transform: translateY(-1px);
         box-shadow: 0 4px 12px rgba(15,23,42,0.08);
     }
+    .review-btn i { font-size: 0.82rem; opacity: 0.85; }
     .review-btn .interval-hint {
-        font-size: 0.7rem;
+        font-size: 0.66rem;
         font-weight: 500;
         opacity: 0.7;
-        min-height: 0.85em;
+        min-height: 0.8em;
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-variant-numeric: tabular-nums;
     }
     /* SRS-Rating-Buttons (Compass-Token-Schema) */
     .review-btn[data-rating="1"] { color: var(--shu-deep, #B84A00); border-color: rgba(184,74,0,0.30); }
@@ -474,105 +464,182 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     .review-btn[data-rating="2"]:hover { background: rgba(199,128,45,0.08); border-color: var(--kincha, #C7802D); }
     .review-btn[data-rating="3"] { color: var(--matcha, #7A9033); border-color: rgba(122,144,51,0.30); }
     .review-btn[data-rating="3"]:hover { background: rgba(122,144,51,0.08); border-color: var(--matcha, #7A9033); }
-    .review-btn[data-rating="4"] { color: var(--ai, #264F7E); border-color: rgba(38,79,126,0.30); }
-    .review-btn[data-rating="4"]:hover { background: rgba(38,79,126,0.06); border-color: var(--ai, #264F7E); }
-
-    @media (max-width: 576px) {
-        .review-card-front-text { font-size: 2.75rem; }
-        .front-example-jp { font-size: 1.1rem; }
-        .back-meaning { font-size: 1.35rem; }
-
-        /* Mobile-Header: Page-Title + Stats-Bar einklappen, kompakte Top-Bar */
-        .review-container { padding: 0.5rem 0.75rem 80px; }
-        .review-container > h5 { display: none; }
-        /* Filter-Panel kompakter, gut tippbares Select */
-        .review-filters {
-            padding: 0.65rem 0.7rem;
-            margin-bottom: 0.5rem;
-            border-radius: 10px;
-            gap: 0.6rem;
-        }
-        .category-select { font-size: 0.95rem; }
-        .review-stats-bar {
-            padding: 0.5rem 0.75rem;
-            font-size: 0.75rem;
-            margin-bottom: 0.5rem;
-            border-radius: 10px;
-            justify-content: space-around;
-            gap: 0.25rem;
-        }
-        .review-stats-bar .stat-item { font-size: 0.7rem; gap: 0.25rem; }
-        .review-stats-bar .stat-item span:not(.stat-value) {
-            display: inline-flex; flex-direction: column; line-height: 1;
-        }
-        /* Card bekommt mehr Höhe, weil Header verschlankt */
-        .review-card-area { min-height: 320px; }
-        .review-card-scene { min-height: 360px; }
-
-        /* SRS-Grade-Buttons: 2×2 Grid mit ≥64px Tap-Target (statt 36px-Reihe) */
-        .review-buttons {
-            grid-template-columns: 1fr 1fr;
-            gap: 0.6rem;
-            margin: 1rem auto 0;
-            max-width: none;
-        }
-        .review-buttons.visible {
-            display: grid;
-        }
-        .review-btn {
-            flex: none; max-width: none;
-            min-height: 64px;
-            padding: 0.7rem 0.5rem;
-            font-size: 0.95rem;
-            border-radius: 14px;
-            font-weight: 600;
-            gap: 4px;
-        }
-        .review-btn i { display: inline; font-size: 0.85rem; opacity: 0.85; }
-        .review-btn .interval-hint {
-            font-size: 0.72rem;
-            font-family: 'Geist Mono', ui-monospace, monospace;
-            font-variant-numeric: tabular-nums;
-            opacity: 0.75;
-        }
-        /* "Leicht" (4) gefüllt — schnellster Weg, häufigste Antwort (Spec-Pattern) */
-        .review-btn[data-rating="4"] {
-            background: var(--matcha, #7A9033);
-            color: #fff;
-            border-color: var(--matcha, #7A9033);
-        }
-        .review-btn[data-rating="4"]:hover {
-            background: #6B7F2D;
-            border-color: #6B7F2D;
-        }
-
-        /* Romaji-Toggle: kleiner positionieren, weniger prominent */
-        .romaji-toggle { font-size: 0.7rem !important; padding: 0.15rem 0.5rem !important; }
-
-        /* Session-Progress: Counter mit tabular-nums */
-        .session-info { font-variant-numeric: tabular-nums; }
+    /* "Leicht" (4) gefüllt — schnellster Weg, häufigste Antwort (Spec-Pattern) */
+    .review-btn[data-rating="4"] {
+        background: var(--matcha, #7A9033);
+        color: #fff;
+        border-color: var(--matcha, #7A9033);
     }
+    .review-btn[data-rating="4"]:hover { background: #6B7F2D; border-color: #6B7F2D; }
 
-    /* ── Empty / Complete States ── */
-    .review-empty, .review-complete {
+    /* ── Karten-Kontext (Gruppe + Typ) ── */
+    .card-context {
+        flex: 0 0 auto;
         text-align: center;
-        padding: 3rem 1rem;
+        font-size: 0.7rem;
+        color: var(--text-muted, #8C8378);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
-    .review-empty-icon, .review-complete-icon {
-        font-size: 3rem;
-        margin-bottom: 1rem;
-    }
-    .review-complete h4 {
-        font-family: 'Geist', 'Inter', sans-serif;
-        font-weight: 510; letter-spacing: -0.02em;
-        color: var(--kon, #1F2A44);
+    .card-context .lesson-tag {
+        background: var(--background-color, #F5F0E8);
+        padding: 2px 8px;
+        border-radius: 8px;
+        margin: 0 4px;
     }
 
+    /* ══════════════════════════════════════════════════════════════════
+       SHEET — Übersicht (Stats) + Filter, slide-up Drawer
+       ══════════════════════════════════════════════════════════════════ */
+    .review-sheet-backdrop {
+        position: fixed; inset: 0;
+        background: rgba(28,26,23,0.38);
+        opacity: 0; visibility: hidden;
+        transition: opacity 0.25s ease, visibility 0.25s ease;
+        z-index: 1090;
+    }
+    .review-sheet-backdrop.is-open { opacity: 1; visibility: visible; }
+    .review-sheet {
+        position: fixed;
+        left: 50%; bottom: 0;
+        transform: translate(-50%, 100%);
+        width: 100%; max-width: 560px;
+        background: var(--washi, #FAF7F2);
+        border: 1px solid var(--ink-200, #E4DED4);
+        border-bottom: none;
+        border-radius: 18px 18px 0 0;
+        box-shadow: 0 -8px 30px rgba(28,26,23,0.18);
+        padding: 0.5rem 1rem calc(1rem + env(safe-area-inset-bottom, 0px));
+        z-index: 1100;
+        transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+        max-height: 82dvh; overflow-y: auto;
+    }
+    .review-sheet.is-open { transform: translate(-50%, 0); }
+    .review-sheet__handle {
+        width: 40px; height: 4px; border-radius: 999px;
+        background: var(--ink-300, #D4CFC5);
+        margin: 0.2rem auto 0.7rem;
+    }
+    .review-sheet__head {
+        display: flex; align-items: center; justify-content: space-between;
+        font-family: 'Geist', 'Inter', sans-serif; font-weight: 600;
+        color: var(--kon, #1F2A44); margin-bottom: 0.7rem;
+    }
+    .review-sheet__close {
+        border: none; background: none; font-size: 1.4rem; line-height: 1;
+        color: var(--ink-500, #7A7368); cursor: pointer; padding: 0.1rem 0.4rem;
+    }
+    .review-sheet__close:hover { color: var(--shu, #EB6101); }
+
+    /* Stats im Sheet — 2-spaltiges Karten-Grid */
+    .review-stats-bar {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+        margin-bottom: 0.9rem;
+        font-size: 0.85rem;
+    }
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.55rem 0.7rem;
+        background: var(--card-bg, #FFFDF7);
+        border: 1px solid var(--ink-200, #E4DED4);
+        border-radius: 10px;
+        white-space: nowrap;
+    }
+    .stat-value {
+        font-weight: 700;
+        color: var(--kon, #1F2A44);
+        font-family: 'Geist Mono', ui-monospace, monospace;
+    }
+
+    /* Filter im Sheet */
+    .review-filters {
+        display: flex;
+        flex-direction: column;
+        gap: 0.85rem;
+    }
+    .review-filters__group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.45rem;
+    }
+    .review-filters__label {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-family: 'Geist', 'Inter', sans-serif;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--text-muted, #8C8378);
+    }
+    .review-filters__label i { color: var(--shu, #EB6101); font-size: 0.8rem; }
+
+    /* Gruppen-Select — natives Picker-Verhalten, gestylter Trigger */
+    .category-select {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 100%;
+        min-height: 44px;
+        font-family: 'Geist', 'Inter', sans-serif;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--sumi, #1C1C1C);
+        background-color: #fff;
+        border: 1px solid var(--border-color, #D4CFC5);
+        border-radius: 10px;
+        padding: 0.55rem 2.25rem 0.55rem 0.85rem;
+        cursor: pointer;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='none' stroke='%231C1C1C' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round' d='M1 1.5 6 6.5 11 1.5'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.85rem center;
+        background-size: 0.7rem;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease, color 0.15s ease;
+    }
+    .category-select:focus {
+        outline: none;
+        border-color: var(--shu, #EB6101);
+        box-shadow: 0 0 0 3px rgba(235, 97, 1, 0.15);
+    }
+    .category-select.is-filtered {
+        border-color: var(--shu, #EB6101);
+        color: var(--shu, #EB6101);
+        font-weight: 700;
+    }
+
+    /* Typ-Pills im Review: auf Seiten-Akzent --shu harmonisiert, links ausgerichtet */
+    .review-filters .deck-filter-bar {
+        justify-content: flex-start;
+        gap: 0.4rem;
+        margin: 0;
+    }
+    .review-filters .deck-filter-pill {
+        border-color: var(--shu, #EB6101);
+        color: var(--shu, #EB6101);
+    }
+    .review-filters .deck-filter-pill:hover {
+        background: rgba(235, 97, 1, 0.08);
+    }
+    .review-filters .deck-filter-pill.is-active {
+        background: var(--shu, #EB6101);
+        color: #fff;
+        box-shadow: 0 2px 6px rgba(235, 97, 1, 0.28);
+    }
+    .review-filters .deck-filter-pill:focus-visible {
+        outline-color: var(--shu, #EB6101);
+    }
+
+    /* ── Session-Summary (Complete-State) ── */
     .session-summary {
         background: var(--card-bg, #FFFDF7);
         border-radius: 12px;
         border: 1px solid var(--border-color, #D4CFC5);
-        padding: 1.5rem;
+        padding: 1.25rem;
         margin-top: 1rem;
         text-align: left;
     }
@@ -592,7 +659,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
 
     /* Achievement Toast */
     .achievement-toast {
-        position: fixed; top: 20px; right: 20px; z-index: 1100;
+        position: fixed; top: 20px; right: 20px; z-index: 1200;
         background: var(--card-bg, #FFFDF7); border: 1px solid #ffc107;
         border-radius: 12px; padding: 0.75rem 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.15);
         animation: toastIn 0.4s ease, toastOut 0.4s ease 3.5s forwards;
@@ -608,65 +675,40 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     .stage-changes { font-size: 0.8rem; margin-top: 0.3rem; }
     .stage-up { color: #28a745; }
     .stage-down { color: #dc3545; }
+
+    /* ── Mobile: Platz für die fixe Bottom-Nav reservieren ── */
+    @media (max-width: 767px) {
+        .review-screen {
+            padding-bottom: calc(58px + env(safe-area-inset-bottom, 0px));
+        }
+    }
+    @media (max-width: 576px) {
+        .review-screen { padding-left: 0.7rem; padding-right: 0.7rem; }
+        .review-btn { font-size: 0.78rem; }
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="review-container">
-    <h5 style="margin-bottom: 0.75rem; color: var(--primary-color, #2B4C7E);">
-        <i class="fas fa-brain me-1"></i> Tägliche Wiederholung
-    </h5>
+<div class="review-screen">
 
-    <!-- Stats Bar -->
-    <div class="review-stats-bar" id="reviewStatsBar">
-        <div class="stat-item">
-            <i class="fas fa-fire" style="color: #fd7e14;"></i>
-            <span>Streak: <span class="stat-value" id="statStreak">{{ stats.current_streak }}</span></span>
+    <!-- Kompakte Kopfzeile: Fortschritt + Zähler + Romaji + Einstellungen -->
+    <div class="review-topbar">
+        <div class="session-progress" id="sessionProgress" style="display: none;">
+            <div class="progress">
+                <div class="progress-bar" id="sessionBar" style="width: 0%;"></div>
+            </div>
         </div>
-        <div class="stat-item">
-            <i class="fas fa-inbox" style="color: #dc3545;"></i>
-            <span>Fällig: <span class="stat-value" id="statDue">{{ stats.due_count }}</span></span>
-        </div>
-        <div class="stat-item">
-            <i class="fas fa-check-circle" style="color: #28a745;"></i>
-            <span>Heute: <span class="stat-value" id="statToday">{{ stats.reviews_today }}</span></span>
-        </div>
-        <div class="stat-item">
-            <i class="fas fa-layer-group" style="color: #007bff;"></i>
-            <span>Gesamt: <span class="stat-value" id="statTotal">{{ stats.total_cards }}</span></span>
-        </div>
-    </div>
-
-    <!-- Filter-Panel: Lektion + Kartentyp (client-seitig über das geladene Fällig-Set) -->
-    <div class="review-filters" id="reviewFilters" style="display:none;">
-        <div class="review-filters__group" id="categoryFilterGroup" style="display:none;">
-            <span class="review-filters__label"><i class="fas fa-layer-group"></i> Gruppe</span>
-            <select class="category-select" id="categorySelect" aria-label="Nach Gruppe filtern"></select>
-        </div>
-        <div class="review-filters__group" id="typeFilterGroup" style="display:none;">
-            <span class="review-filters__label"><i class="fas fa-shapes"></i> Typ</span>
-            <div class="deck-filter-bar" id="reviewFilterBar"></div>
-        </div>
-    </div>
-
-    <!-- Session Progress -->
-    <div class="session-progress" id="sessionProgress" style="display: none;">
-        <div class="progress">
-            <div class="progress-bar" id="sessionBar" style="width: 0%;"></div>
-        </div>
-        <div class="session-info">
-            <span id="sessionCount">0 / 0</span>
-            <span id="sessionTime">0 Min</span>
-        </div>
-    </div>
-
-    <!-- Romaji-Toggle ueber der Karte -->
-    <div style="display:flex;justify-content:flex-end;margin-bottom:0.5rem;">
-        <button type="button" class="btn btn-sm btn-outline-secondary romaji-toggle"
-                style="font-size:0.75rem;padding:0.2rem 0.6rem;"
+        <span class="review-progress-count" id="sessionCount">0 / 0</span>
+        <button type="button" class="romaji-toggle review-icon-btn"
                 title="Romaji auf der Vorderseite ein-/ausblenden"
                 onclick="toggleFrontRomaji()">
+            <span aria-hidden="true">あ</span>
             <span class="romaji-toggle-label">Romaji: …</span>
+        </button>
+        <button type="button" class="review-icon-btn review-settings-btn" id="reviewSettingsBtn"
+                aria-label="Übersicht und Filter öffnen">
+            <i class="fas fa-sliders-h"></i>
         </button>
     </div>
 
@@ -675,34 +717,8 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         <!-- Filled by JavaScript -->
     </div>
 
-    <!-- Rating Buttons -->
-    <div class="review-buttons" id="reviewButtons">
-        <button class="review-btn" data-rating="1">
-            <span><i class="fas fa-redo"></i> Nochmal</span>
-            <span class="interval-hint"></span>
-        </button>
-        <button class="review-btn" data-rating="2">
-            <span><i class="fas fa-brain"></i> Schwer</span>
-            <span class="interval-hint"></span>
-        </button>
-        <button class="review-btn" data-rating="3">
-            <span><i class="fas fa-check"></i> Gut</span>
-            <span class="interval-hint"></span>
-        </button>
-        <button class="review-btn" data-rating="4">
-            <span><i class="fas fa-bolt"></i> Einfach</span>
-            <span class="interval-hint"></span>
-        </button>
-    </div>
-
-    <!-- Card Context -->
-    <div class="card-context" id="cardContext" style="display: none;">
-        <span class="lesson-tag" id="cardLesson"></span>
-        <span id="cardType"></span>
-    </div>
-
     <!-- Filter-Leer-Status (fällige Karten vorhanden, aber keine in der Auswahl) -->
-    <div class="review-empty" id="reviewFilterEmpty" style="display: none;">
+    <div class="review-empty" id="reviewFilterEmpty">
         <div class="review-empty-icon">
             <i class="fas fa-filter" style="color: var(--zen-vermillion, #D14B3D);"></i>
         </div>
@@ -711,7 +727,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     </div>
 
     <!-- Empty State -->
-    <div class="review-empty" id="reviewEmpty" style="display: none;">
+    <div class="review-empty" id="reviewEmpty">
         <div class="review-empty-icon">
             {% if stats.total_cards == 0 %}
             <i class="fas fa-seedling" style="color: var(--zen-matcha, #7A9A5A);"></i>
@@ -732,7 +748,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     </div>
 
     <!-- Session Complete -->
-    <div class="review-complete" id="reviewComplete" style="display: none;">
+    <div class="review-complete" id="reviewComplete">
         <div class="review-complete-icon">
             <i class="fas fa-trophy" style="color: #f59e0b;"></i>
         </div>
@@ -770,7 +786,79 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
             </a>
         </div>
     </div>
+
+    <!-- Card Context -->
+    <div class="card-context" id="cardContext" style="display: none;">
+        <span class="lesson-tag" id="cardLesson"></span>
+        <span id="cardType"></span>
+    </div>
+
+    <!-- Rating Buttons (gepinnt) -->
+    <div class="review-buttons" id="reviewButtons">
+        <button class="review-btn" data-rating="1">
+            <span><i class="fas fa-redo"></i> Nochmal</span>
+            <span class="interval-hint"></span>
+        </button>
+        <button class="review-btn" data-rating="2">
+            <span><i class="fas fa-brain"></i> Schwer</span>
+            <span class="interval-hint"></span>
+        </button>
+        <button class="review-btn" data-rating="3">
+            <span><i class="fas fa-check"></i> Gut</span>
+            <span class="interval-hint"></span>
+        </button>
+        <button class="review-btn" data-rating="4">
+            <span><i class="fas fa-bolt"></i> Einfach</span>
+            <span class="interval-hint"></span>
+        </button>
+    </div>
 </div>
+
+<!-- Sheet: Übersicht (Stats) + Filter -->
+<div class="review-sheet-backdrop" id="reviewSheetBackdrop"></div>
+<aside class="review-sheet" id="reviewSheet" aria-hidden="true" aria-label="Übersicht und Filter">
+    <div class="review-sheet__handle"></div>
+    <div class="review-sheet__head">
+        <span>Übersicht &amp; Filter</span>
+        <button type="button" class="review-sheet__close" id="reviewSheetClose" aria-label="Schließen">&times;</button>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="review-stats-bar" id="reviewStatsBar">
+        <div class="stat-item">
+            <i class="fas fa-fire" style="color: #fd7e14;"></i>
+            <span>Streak: <span class="stat-value" id="statStreak">{{ stats.current_streak }}</span></span>
+        </div>
+        <div class="stat-item">
+            <i class="fas fa-inbox" style="color: #dc3545;"></i>
+            <span>Fällig: <span class="stat-value" id="statDue">{{ stats.due_count }}</span></span>
+        </div>
+        <div class="stat-item">
+            <i class="fas fa-check-circle" style="color: #28a745;"></i>
+            <span>Heute: <span class="stat-value" id="statToday">{{ stats.reviews_today }}</span></span>
+        </div>
+        <div class="stat-item">
+            <i class="fas fa-layer-group" style="color: #007bff;"></i>
+            <span>Gesamt: <span class="stat-value" id="statTotal">{{ stats.total_cards }}</span></span>
+        </div>
+        <div class="stat-item">
+            <i class="fas fa-clock" style="color: #6366f1;"></i>
+            <span>Dauer: <span class="stat-value" id="sessionTime">0 Min</span></span>
+        </div>
+    </div>
+
+    <!-- Filter-Panel: Gruppe + Kartentyp (client-seitig über das geladene Fällig-Set) -->
+    <div class="review-filters" id="reviewFilters" style="display:none;">
+        <div class="review-filters__group" id="categoryFilterGroup" style="display:none;">
+            <span class="review-filters__label"><i class="fas fa-layer-group"></i> Gruppe</span>
+            <select class="category-select" id="categorySelect" aria-label="Nach Gruppe filtern"></select>
+        </div>
+        <div class="review-filters__group" id="typeFilterGroup" style="display:none;">
+            <span class="review-filters__label"><i class="fas fa-shapes"></i> Typ</span>
+            <div class="deck-filter-bar" id="reviewFilterBar"></div>
+        </div>
+    </div>
+</aside>
 {% endblock %}
 
 {% block scripts %}
@@ -841,12 +929,12 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
                 return;
             }
 
-            // Filter aufbauen: Typ-Pills + Lektions-Select (je nur bei >=2 Optionen)
+            // Filter aufbauen: Typ-Pills + Gruppen-Select (je nur bei >=2 Optionen)
             presentTypes = TYPE_ORDER.filter(t => allCards.some(c => ftype(c) === t));
             activeTypes = new Set(presentTypes);
             renderFilterBar();
             renderCategorySelect();
-            // Panel nur zeigen, wenn mindestens ein Filter sinnvoll ist
+            // Panel im Sheet nur zeigen, wenn mindestens ein Filter sinnvoll ist
             if (filtersPanel
                 && (typeFilterGroup.style.display !== 'none' || categoryFilterGroup.style.display !== 'none')) {
                 filtersPanel.style.display = 'flex';
@@ -928,6 +1016,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
                 pill.setAttribute('aria-pressed', on ? 'true' : 'false');
                 rebuildQueue();
                 refreshView();
+                refreshFilterIndicator();
             });
         });
     }
@@ -961,7 +1050,45 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
             categorySelect.classList.toggle('is-filtered', activeCategory !== null);
             rebuildQueue();
             refreshView();
+            refreshFilterIndicator();
         });
+    }
+
+    // ── Übersicht/Filter-Sheet (Drawer) ──
+    const sheet = document.getElementById('reviewSheet');
+    const sheetBackdrop = document.getElementById('reviewSheetBackdrop');
+    const settingsBtn = document.getElementById('reviewSettingsBtn');
+    const sheetClose = document.getElementById('reviewSheetClose');
+
+    function openSheet() {
+        if (!sheet) return;
+        sheet.classList.add('is-open');
+        sheet.setAttribute('aria-hidden', 'false');
+        if (sheetBackdrop) sheetBackdrop.classList.add('is-open');
+        refreshFilterIndicator();
+    }
+    function closeSheet() {
+        if (!sheet) return;
+        sheet.classList.remove('is-open');
+        sheet.setAttribute('aria-hidden', 'true');
+        if (sheetBackdrop) sheetBackdrop.classList.remove('is-open');
+    }
+    if (settingsBtn) settingsBtn.addEventListener('click', () => {
+        if (sheet && sheet.classList.contains('is-open')) closeSheet(); else openSheet();
+    });
+    if (sheetBackdrop) sheetBackdrop.addEventListener('click', closeSheet);
+    if (sheetClose) sheetClose.addEventListener('click', closeSheet);
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && sheet && sheet.classList.contains('is-open')) closeSheet();
+    });
+
+    // Punkt am Zahnrad, sobald nicht "alle Typen + alle Gruppen" aktiv sind
+    function refreshFilterIndicator() {
+        if (!settingsBtn) return;
+        const pills = filterBar ? [...filterBar.querySelectorAll('.deck-filter-pill')] : [];
+        const typeFiltered = pills.length > 0 && pills.some(p => !p.classList.contains('is-active'));
+        const categoryFiltered = !!(categorySelect && categorySelect.value !== '');
+        settingsBtn.classList.toggle('has-filter', typeFiltered || categoryFiltered);
     }
 
     // ── Render a flip card ──
@@ -1211,7 +1338,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
 
         // Context
         cardContext.style.display = 'block';
-        document.getElementById('cardLesson').textContent = card.lesson_title || '';
+        document.getElementById('cardLesson').textContent = card.category_name || card.lesson_title || '';
         document.getElementById('cardType').textContent = TYPE_LABELS[card.content_type] || card.content_type;
 
         updateProgress();
