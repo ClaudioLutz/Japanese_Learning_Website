@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
        Top-Nav (60px, sticky) und Mobile-Bottom-Nav (fixed). Footer/Impressum
        wird auf dieser Seite ausgeblendet — es gibt nur eine Bühne: die Karte.
        ══════════════════════════════════════════════════════════════════ */
-    body.review-locked { overflow: hidden; }
+    body.review-locked { overflow: hidden; padding-bottom: 0 !important; }
     body.review-locked .container.mt-4 {
         max-width: 100%;
         margin: 0;
@@ -415,17 +415,23 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         font-size: 1.1rem;
     }
 
-    /* ── SRS Rating Buttons (gepinnt, eine Reihe) ── */
+    /* ── SRS Rating Buttons (gepinnt, eine Reihe) ──
+       Wichtig: die Zeile reserviert IMMER ihren Platz (display:grid +
+       visibility:hidden), damit die Karte beim Umdrehen nicht schrumpft —
+       Vorder- und Rückseite sind so exakt gleich gross. Erst beim Flip
+       wird sie sichtbar. In den End-Zuständen blendet JS sie via
+       style.display='none' komplett aus (kein reservierter Platz). */
     .review-buttons {
         flex: 0 0 auto;
-        display: none;
+        display: grid;
         grid-template-columns: repeat(4, 1fr);
         gap: 0.4rem;
         margin: 0;
-        animation: fadeSlideUp 0.3s ease;
+        visibility: hidden;
     }
     .review-buttons.visible {
-        display: grid;
+        visibility: visible;
+        animation: fadeSlideUp 0.3s ease;
     }
     .review-btn {
         padding: 0.5rem 0.3rem;
@@ -676,10 +682,14 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     .stage-up { color: #28a745; }
     .stage-down { color: #dc3545; }
 
-    /* ── Mobile: Platz für die fixe Bottom-Nav reservieren ── */
+    /* ── Mobile: Platz für die fixe Bottom-Nav reservieren ──
+       Die hochragende Center-CTA ("Wiederholen"-Gehirn, 56px Bubble mit
+       margin-top:-22px) ragt ~80px über die Viewport-Unterkante. 96px hält
+       die gepinnten Buttons mit Komfort-Abstand darüber (mehr als das globale
+       body{padding-bottom:72px} in custom.css, das nur leeren Rand abdeckt). */
     @media (max-width: 767px) {
         .review-screen {
-            padding-bottom: calc(58px + env(safe-area-inset-bottom, 0px));
+            padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
         }
     }
     @media (max-width: 576px) {
