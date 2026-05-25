@@ -35,10 +35,11 @@ class TestHomepage:
         resp = client.get("/")
         assert resp.status_code == 200
 
-    def test_home_alias(self, client):
-        """I-PR02: /home funktioniert ebenfalls."""
+    def test_home_alias_redirects(self, client):
+        """I-PR02: /home leitet per 301 auf / (SEO: Duplikat vermeiden)."""
         resp = client.get("/home")
-        assert resp.status_code == 200
+        assert resp.status_code == 301
+        assert resp.headers["Location"].endswith("/")
 
     def test_homepage_shows_n5_path_section(self, client, app_context):
         """Homepage zeigt JLPT-N5-Lernpfad-Section (Mayuko-Direktive)."""

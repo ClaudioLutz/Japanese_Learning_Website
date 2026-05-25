@@ -302,8 +302,16 @@ def tts_synthesize():
         return jsonify({"error": "TTS Fehler"}), 502
 
 
-@bp.route('/')
 @bp.route('/home')
+def home_redirect():
+    # /home rendert frueher dieselbe Seite wie / → fuer Google ein Duplikat,
+    # das die Ranking-Signale der Startseite auf zwei URLs aufsplittete
+    # (GSC: / 72 Impr., /home 40 Impr.). 301 buendelt die Autoritaet auf der
+    # kanonischen Startseite (/).
+    return redirect(url_for('routes.index'), code=301)
+
+
+@bp.route('/')
 def index():
     # Get language-specific lesson counts
     english_lessons = Lesson.query.filter_by(is_published=True, instruction_language='english').count()

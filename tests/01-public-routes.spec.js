@@ -13,8 +13,10 @@ test.describe('Public Routes', () => {
     expect(cardCount).toBe(2);
   });
 
-  test('GET /home - Same as homepage', async ({ page }) => {
-    await page.goto('/home');
+  test('GET /home - 301 redirects to homepage', async ({ page }) => {
+    const response = await page.goto('/home');
+    // Browser folgt dem 301 → landet auf / mit gerenderter Homepage
+    expect(new URL(page.url()).pathname).toBe('/');
     await expect(page.locator('.language-card')).toHaveCount(2);
   });
 
