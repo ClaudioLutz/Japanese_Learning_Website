@@ -368,6 +368,11 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         font-family: 'Noto Sans JP', sans-serif; font-size: clamp(1.1rem, 5vw, 1.35rem);
         line-height: 1.7; color: var(--sumi, #1C1C1C); text-align: center;
     }
+    .cloze-romaji {
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-size: 0.9rem; color: var(--ink-500, #7A7368);
+        text-align: center; margin-top: 0.4rem;
+    }
     .cloze-gap {
         display: inline-block; min-width: 1.7em; margin: 0 0.1em;
         border-bottom: 3px solid var(--primary-color, #6366f1);
@@ -1268,6 +1273,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
             grammarClozeFront = `
                         <div class="cloze-prompt">Welche Form / Partikel fehlt?</div>
                         <div class="cloze-sentence">${escapeHtml(cz.before)}<span class="cloze-gap"></span>${escapeHtml(cz.after)}</div>
+                        ${cz.romaji_masked ? `<div class="cloze-romaji">${escapeHtml(cz.romaji_masked)}</div>` : ''}
                         <div class="cloze-hints">
                             ${cz.translation ? `<button type="button" class="cloze-hint-btn" data-target="clozeHintT">💡 Bedeutung</button>` : ''}
                             <button type="button" class="cloze-hint-btn" data-target="clozeHintS">🔧 Struktur</button>

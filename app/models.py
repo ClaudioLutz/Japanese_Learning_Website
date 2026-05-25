@@ -327,6 +327,91 @@ _CLOZE_JP_RUN = re.compile(r'[ぁ-んァ-ヶーゝゞ一-鿿々]+')
 _CLOZE_COMMON_MARKERS = {'です', 'だ', 'ます', 'ません', 'ました', 'でした',
                          'でしょう', 'だった', 'では', 'じゃ'}
 
+# Kompakte Hiragana→Romaji-Umschrift, um die Cloze-Antwort auch im Satz-Romaji
+# maskieren zu können (Lesehilfe ohne Spoiler).
+_KANA_DIGRAPHS = {
+    'きゃ': 'kya', 'きゅ': 'kyu', 'きょ': 'kyo', 'ぎゃ': 'gya', 'ぎゅ': 'gyu', 'ぎょ': 'gyo',
+    'しゃ': 'sha', 'しゅ': 'shu', 'しょ': 'sho', 'じゃ': 'ja', 'じゅ': 'ju', 'じょ': 'jo',
+    'ちゃ': 'cha', 'ちゅ': 'chu', 'ちょ': 'cho', 'にゃ': 'nya', 'にゅ': 'nyu', 'にょ': 'nyo',
+    'ひゃ': 'hya', 'ひゅ': 'hyu', 'ひょ': 'hyo', 'びゃ': 'bya', 'びゅ': 'byu', 'びょ': 'byo',
+    'ぴゃ': 'pya', 'ぴゅ': 'pyu', 'ぴょ': 'pyo', 'みゃ': 'mya', 'みゅ': 'myu', 'みょ': 'myo',
+    'りゃ': 'rya', 'りゅ': 'ryu', 'りょ': 'ryo',
+}
+_KANA_BASIC = {
+    'あ': 'a', 'い': 'i', 'う': 'u', 'え': 'e', 'お': 'o',
+    'か': 'ka', 'き': 'ki', 'く': 'ku', 'け': 'ke', 'こ': 'ko',
+    'が': 'ga', 'ぎ': 'gi', 'ぐ': 'gu', 'げ': 'ge', 'ご': 'go',
+    'さ': 'sa', 'し': 'shi', 'す': 'su', 'せ': 'se', 'そ': 'so',
+    'ざ': 'za', 'じ': 'ji', 'ず': 'zu', 'ぜ': 'ze', 'ぞ': 'zo',
+    'た': 'ta', 'ち': 'chi', 'つ': 'tsu', 'て': 'te', 'と': 'to',
+    'だ': 'da', 'ぢ': 'ji', 'づ': 'zu', 'で': 'de', 'ど': 'do',
+    'な': 'na', 'に': 'ni', 'ぬ': 'nu', 'ね': 'ne', 'の': 'no',
+    'は': 'ha', 'ひ': 'hi', 'ふ': 'fu', 'へ': 'he', 'ほ': 'ho',
+    'ば': 'ba', 'び': 'bi', 'ぶ': 'bu', 'べ': 'be', 'ぼ': 'bo',
+    'ぱ': 'pa', 'ぴ': 'pi', 'ぷ': 'pu', 'ぺ': 'pe', 'ぽ': 'po',
+    'ま': 'ma', 'み': 'mi', 'む': 'mu', 'め': 'me', 'も': 'mo',
+    'や': 'ya', 'ゆ': 'yu', 'よ': 'yo',
+    'ら': 'ra', 'り': 'ri', 'る': 'ru', 'れ': 're', 'ろ': 'ro',
+    'わ': 'wa', 'を': 'o', 'ん': 'n',
+}
+
+
+def _romanize_kana(text: str) -> str:
+    """Grobe Hiragana→Romaji-Umschrift für kurze Marker. Leerer String, sobald
+    ein Zeichen nicht abbildbar ist (z.B. Kanji/Katakana) → kein maskiertes Romaji."""
+    out: list[str] = []
+    i, n, geminate = 0, len(text), False
+    while i < n:
+        ch = text[i]
+        if ch in (' ', '　'):
+            out.append(' ')
+            i += 1
+            continue
+        if ch == 'ー':  # Langvokal-Zeichen überspringen
+            i += 1
+            continue
+        if ch == 'っ':  # kleiner tsu → nächsten Konsonanten verdoppeln
+            geminate = True
+            i += 1
+            continue
+        pair = text[i:i + 2]
+        if pair in _KANA_DIGRAPHS:
+            rom, i = _KANA_DIGRAPHS[pair], i + 2
+        elif ch in _KANA_BASIC:
+            rom, i = _KANA_BASIC[ch], i + 1
+        else:
+            return ''  # nicht abbildbar
+        if geminate and rom:
+            rom, geminate = rom[0] + rom, False
+        out.append(rom)
+    return ''.join(out)
+
+
+def _answer_romaji_candidates(answer: str) -> list[str]:
+    """Romaji-Kandidaten für die Cloze-Antwort inkl. Partikel-Sonderlesungen
+    (は=wa, へ=e, を=o/wo)."""
+    a = (answer or '').strip()
+    if a == 'は':
+        return ['wa', 'ha']
+    if a == 'へ':
+        return ['e', 'he']
+    if a == 'を':
+        return ['o', 'wo']
+    base = _romanize_kana(a)
+    return [base] if base else []
+
+
+def _mask_romaji(full: str, candidates: list[str], gap: str = '＿＿') -> str:
+    """Ersetzt das erste ganze-Wort-Vorkommen eines Kandidaten im Satz-Romaji
+    durch die Lücke. '' wenn nichts passt (dann zeigt die Karte kein Romaji)."""
+    if not full or not candidates:
+        return ''
+    for cand in candidates:
+        m = re.search(r'\b' + re.escape(cand) + r'\b', full, re.IGNORECASE)
+        if m:
+            return full[:m.start()] + gap + full[m.end():]
+    return ''
+
 
 def make_grammar_cloze(examples: list[dict[str, str]],
                        structure: str | None) -> dict[str, str] | None:
@@ -359,12 +444,18 @@ def make_grammar_cloze(examples: list[dict[str, str]],
                 pattern = r'\s*'.join(re.escape(c) for c in marker)
                 m = re.search(pattern, jp)
                 if m:
+                    answer = jp[m.start():m.end()]
+                    romaji = ex.get('romaji', '')
                     return {
                         'before': jp[:m.start()],
                         'after': jp[m.end():],
-                        'answer': jp[m.start():m.end()],
+                        'answer': answer,
                         'japanese': jp,
-                        'romaji': ex.get('romaji', ''),
+                        'romaji': romaji,
+                        # Satz-Romaji mit ebenfalls maskierter Antwort (Lesehilfe
+                        # ohne Spoiler); '' wenn die Antwort nicht romanisierbar ist.
+                        'romaji_masked': _mask_romaji(
+                            romaji, _answer_romaji_candidates(answer)),
                         'translation': ex.get('translation', ''),
                     }
     return None

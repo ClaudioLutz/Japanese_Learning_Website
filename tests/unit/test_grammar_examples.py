@@ -9,7 +9,12 @@ nummerierter Plaintext) sowie Randfaelle abgedeckt.
 
 from __future__ import annotations
 
-from app.models import Grammar, make_grammar_cloze, parse_example_sentences
+from app.models import (
+    Grammar,
+    _romanize_kana,
+    make_grammar_cloze,
+    parse_example_sentences,
+)
 
 
 class TestJsonFormat:
@@ -201,3 +206,43 @@ class TestClozeGeneration:
         cz = g.cloze()
         assert cz["answer"] == "も"
         assert cz["translation"] == "Auch Herr Gupta ist Angestellter."
+
+
+class TestMaskedRomaji:
+    def test_masked_romaji_topic_particle_wa(self):
+        # は wird als Partikel 'wa' romanisiert und im Satz-Romaji maskiert.
+        examples = [{"japanese": "わたしは 学生です。",
+                     "romaji": "Watashi wa gakusei desu.", "translation": "Ich bin Student."}]
+        cz = make_grammar_cloze(examples, "N1 は (wa) N2 です")
+        assert cz["answer"] == "は"
+        assert cz["romaji_masked"] == "Watashi ＿＿ gakusei desu."
+
+    def test_masked_romaji_mo(self):
+        examples = [{"japanese": "グプタさんも 会社員です。",
+                     "romaji": "Guputa-san mo kaishain desu.", "translation": "x"}]
+        cz = make_grammar_cloze(examples, "N も (mo)")
+        assert cz["romaji_masked"] == "Guputa-san ＿＿ kaishain desu."
+
+    def test_masked_romaji_does_not_match_inside_word(self):
+        # 'wa' darf NICHT in 'Watashi' maskiert werden (Wortgrenze).
+        examples = [{"japanese": "わたしは 元気です。",
+                     "romaji": "Watashi wa genki desu.", "translation": "x"}]
+        cz = make_grammar_cloze(examples, "N1 は (wa) N2 です")
+        assert cz["romaji_masked"].startswith("Watashi ＿＿")
+
+    def test_masked_romaji_empty_without_sentence_romaji(self):
+        examples = [{"japanese": "あれも 本です。", "romaji": "", "translation": "x"}]
+        cz = make_grammar_cloze(examples, "N も (mo)")
+        assert cz["answer"] == "も"
+        assert cz["romaji_masked"] == ""
+
+
+class TestRomanizeKana:
+    def test_basic_and_digraph(self):
+        assert _romanize_kana("です") == "desu"
+        assert _romanize_kana("じゃ ありません") == "ja arimasen"
+        assert _romanize_kana("か") == "ka"
+
+    def test_unmappable_returns_empty(self):
+        # Kanji nicht abbildbar → leerer String (→ kein maskiertes Romaji).
+        assert _romanize_kana("会社") == ""
