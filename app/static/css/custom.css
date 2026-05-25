@@ -4626,6 +4626,26 @@ button[onclick*="moveContentInPage"]:active {
     background: rgba(137, 87, 229, 0.12);
 }
 
+/* Nach Abschluss (Schreib-Modus): Romaji-Lesung ueber dem Kana einblenden, damit
+   das fertige Gitter als Kana+Lesung-Merkhilfe dient. Zelle wird zur Spalte. */
+.kana-grid-game__cell.is-revealed {
+    flex-direction: column;
+    gap: 1px;
+}
+.kana-grid-game__cell-reveal {
+    font-size: 0.62rem;
+    font-weight: 700;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    color: var(--shu, #EB6101);
+    pointer-events: none;
+}
+.kana-grid-game__cell.is-revealed .kana-grid-game__cell-drop {
+    font-size: 1.3rem;
+    line-height: 1.05;
+}
+
 /* Complete-Screen */
 .kana-grid-game__complete {
     text-align: center;
