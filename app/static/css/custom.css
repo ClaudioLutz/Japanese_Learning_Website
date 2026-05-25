@@ -4053,19 +4053,21 @@ button[onclick*="moveContentInPage"]:active {
     }
 
     .bottom-nav-item {
+        position: relative;            /* für den Aktiv-Indikator (::before) */
         flex: 1;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 0.1rem;
-        padding: 0.25rem 0.4rem;
+        gap: 0.12rem;
+        padding: 0.3rem 0.2rem;
         color: #6b7280;
         text-decoration: none;
-        font-size: 0.6rem;
+        font-size: 0.58rem;
         font-weight: 500;
+        white-space: nowrap;           /* 5 Tabs: Labels nicht umbrechen */
         transition: color 0.15s;
-        min-height: 40px;
+        min-height: 44px;              /* Touch-Target */
         border-radius: 12px;
         -webkit-tap-highlight-color: transparent;
     }
@@ -4075,23 +4077,37 @@ button[onclick*="moveContentInPage"]:active {
         transition: transform 0.15s;
     }
 
+    /* Aktiver Tab: ein einziger heißer Akzent (Shu) — Tönung + Indikator-Balken */
     .bottom-nav-item.active {
-        color: var(--zen-indigo, #2b4c7e);
-        background: rgba(43, 76, 126, 0.06);
+        color: var(--shu, #EB6101);
+        background: rgba(235, 97, 1, 0.07);
     }
 
-    .bottom-nav-item.active i {
+    .bottom-nav-item.active::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 22px;
+        height: 2.5px;
+        border-radius: 0 0 3px 3px;
+        background: var(--shu, #EB6101);
+    }
+
+    .bottom-nav-item.active i,
+    .bottom-nav-item.active .bottom-nav-kana {
         transform: scale(1.08);
     }
 
     .bottom-nav-item:active {
-        color: var(--zen-indigo, #2b4c7e);
+        color: var(--shu, #EB6101);
         transform: scale(0.95);
     }
 
-    /* Body padding-bottom fuer Bottom-Nav-Platz (inkl. Center-CTA Überstand) */
+    /* Body padding-bottom für den Platz der (flachen) Bottom-Nav */
     body {
-        padding-bottom: 72px !important;
+        padding-bottom: 60px !important;
     }
 
     /* Admin-FAB ueber die Bottom-Nav + ggf. Lesson-Nav schieben */
