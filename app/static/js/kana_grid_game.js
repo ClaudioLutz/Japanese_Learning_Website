@@ -98,6 +98,8 @@ function kanaGridGame(contentId) {
                     this.cellsByRow[row.key].push(cell);
                 });
             });
+            // Reihenfolge innerhalb jeder Reihe einmischen (Felder bleiben in ihrer Gruppe).
+            this._shuffleGroups();
             // Enthaelt die Session beide Schriften? Dann brauchen die Felder im
             // Schreib-Modus ein Hira/Kata-Kennzeichen (sonst sind z.B. zwei "a"-Felder
             // optisch nicht unterscheidbar).
@@ -111,6 +113,23 @@ function kanaGridGame(contentId) {
             this.completed = false;
             this.cellTimes = {};
             this.buildPool();
+        },
+
+        // Mischt die Reihenfolge der Felder INNERHALB jeder Reihe/Gruppe (a/i/u, K, …)
+        // neu durch — Felder bleiben in ihrer Gruppe, wandern nicht zwischen Gruppen.
+        // So lassen sich keine Positionen auswendig lernen; jeder Hinweis muss gelesen
+        // werden. Neuzuweisung von cellsByRow haelt Alpine's x-for reaktiv.
+        _shuffleGroups() {
+            const shuffled = {};
+            Object.keys(this.cellsByRow).forEach(key => {
+                const arr = this.cellsByRow[key].slice();
+                for (let i = arr.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                }
+                shuffled[key] = arr;
+            });
+            this.cellsByRow = shuffled;
         },
 
         cellHint(k) {
@@ -537,6 +556,8 @@ function kanaGridGame(contentId) {
                 c.hintBadge = false;
                 if (c._blindFilled) delete c._blindFilled;
             });
+            // Felder innerhalb jeder Gruppe fuer die neue Runde neu mischen.
+            this._shuffleGroups();
             this.buildPool();
             this.startTime = Date.now();
             await this.$nextTick();
