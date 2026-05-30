@@ -97,6 +97,38 @@ def convert_difficulty_to_int(difficulty):
     return 3  # Default to intermediate
 
 
+def build_jlpt_vocab_constraint(jlpt_level):
+    """Liefert ``(level_label, constraint_text)`` fuer Beispielsatz-Prompts.
+
+    Beschraenkt den Wortschatz eines Beispielsatzes auf das Niveau der Karte:
+    eine N5-Karte darf nur N5-Wortschatz/-Grammatik verwenden, eine N4-Karte
+    N5+N4, eine N3-Karte N5+N4+N3 usw. (N5 = leichtestes/breitestes Niveau,
+    N1 = schwerstes). Das Zielwort der Karte selbst ist von der Beschraenkung
+    ausgenommen, alle uebrigen Woerter, Partikel und Grammatikmuster nicht.
+    """
+    level = convert_jlpt_level_to_int(jlpt_level)  # 1..5, 5 = leichtestes
+    label = f"N{level}"
+    allowed = ", ".join(f"N{n}" for n in range(5, level - 1, -1))  # z.B. "N5, N4"
+    forbidden = [f"N{n}" for n in range(level - 1, 0, -1)]          # haerter als Karte
+    forbidden_str = ", ".join(forbidden) if forbidden else "(keine — N5 ist das Basisniveau)"
+    text = (
+        f"VOCABULARY CONSTRAINT — the sentence must stay within the card's JLPT level:\n"
+        f"- This card is JLPT {label}. Allowed vocabulary AND grammar: {allowed} "
+        f"(N5 is the most basic beginner level, N1 the most advanced).\n"
+        f"- Except for the target word itself, EVERY other word, particle and "
+        f"grammar pattern in the sentence MUST belong to one of these allowed "
+        f"levels. Do NOT use anything more advanced than JLPT {label} "
+        f"(forbidden levels: {forbidden_str}).\n"
+        f"- Prefer the most basic, high-frequency words. When in doubt whether a "
+        f"word or grammar pattern is within the allowed levels, choose a simpler "
+        f"synonym or simpler construction rather than risk something too advanced "
+        f"(e.g. for N5 prefer いい / やさしい over 親切).\n"
+        f"- Keep the sentence short and natural (about 4-12 words), in the "
+        f"Minna-no-Nihongo / Genki beginner style, using the polite ですます form."
+    )
+    return label, text
+
+
 class AILessonContentGenerator:
     """
     A service class to handle AI content generation using Gemini for text and OpenAI for all image generation.
@@ -946,13 +978,16 @@ class AILessonContentGenerator:
 
     def generate_vocabulary_data(self, word, jlpt_level):
         """Generates structured data for a single vocabulary word."""
+        level_label, vocab_constraint = build_jlpt_vocab_constraint(jlpt_level)
         system_prompt = (
             "You are a Japanese language data specialist. Generate detailed information for a single vocabulary word. "
             "Format the output as a single, valid JSON object."
         )
         user_prompt = f"""
         Vocabulary Word: {word}
-        JLPT Level: N{jlpt_level}
+        JLPT Level: {level_label}
+
+        {vocab_constraint}
 
         Generate a JSON object with the following structure:
         {{
@@ -960,8 +995,8 @@ class AILessonContentGenerator:
           "reading": "Reading of the word in Hiragana",
           "meaning": "Primary English meaning",
           "jlpt_level": {convert_jlpt_level_to_int(jlpt_level)},
-          "example_sentence_japanese": "Example sentence in Japanese using the word.",
-          "example_sentence_english": "English translation of the example sentence."
+          "example_sentence_japanese": "Example sentence in PURE Japanese using the word. Must end with 。, ！ or ？ and MUST NOT contain any romaji, latin letters or parentheses.",
+          "example_sentence_english": "The card-back line in the format 'Romaji — German translation': Hepburn romaji of the sentence, then space-emdash-space (' — '), then a short German translation."
         }}
         """
         content, error = self._generate_content(system_prompt, user_prompt, is_json=True)
@@ -972,6 +1007,58 @@ class AILessonContentGenerator:
                 return json.loads(content)
             else:
                 return {"error": "Empty response from AI"}
+        except json.JSONDecodeError as e:
+            current_app.logger.error(f"Failed to parse JSON from AI response: {e}\nResponse: {content}")
+            return {"error": "Failed to parse AI response as JSON."}
+
+    def generate_vocabulary_example_sentence(self, word, reading, meaning_de, jlpt_level):
+        """Erzeugt EINEN Beispielsatz fuer eine Vokabelkarte im Karten-Format.
+
+        Der Satz haelt sich an den Wortschatz des Karten-Levels
+        (siehe :func:`build_jlpt_vocab_constraint`): eine N5-Karte verwendet nur
+        N5-Wortschatz/-Grammatik, eine N4-Karte N5+N4 usw. — ausgenommen das
+        Zielwort selbst.
+
+        Rueckgabe (dict):
+            {"japanese": <reiner JP-Satz, endet auf 。/！/？, ohne Romaji/Latein>,
+             "romaji":   <Hepburn, Kleinschreibung>,
+             "german":   <kurze deutsche Uebersetzung>}
+        oder {"error": <Meldung>}.
+        """
+        level_label, vocab_constraint = build_jlpt_vocab_constraint(jlpt_level)
+        system_prompt = (
+            "You are a Japanese language teacher creating example sentences for "
+            "JLPT vocabulary flashcards used by German-speaking beginners. "
+            "Format the output as a single, valid JSON object."
+        )
+        user_prompt = f"""
+        Target word: {word}
+        Reading (hiragana): {reading or ''}
+        German meaning: {meaning_de or ''}
+        Card JLPT level: {level_label}
+
+        Write exactly ONE short, natural example sentence that uses the target word "{word}".
+
+        {vocab_constraint}
+
+        OUTPUT — a single JSON object with exactly these keys:
+        {{
+          "japanese": "The example sentence in PURE Japanese. It MUST contain the target word, end with 。, ！ or ？, and MUST NOT contain any romaji, latin letters or parentheses.",
+          "romaji": "Hepburn romanization of the japanese sentence, lower-case.",
+          "german": "A short, natural German translation suitable for beginners."
+        }}
+        """
+        content, error = self._generate_content(system_prompt, user_prompt, is_json=True)
+        if error:
+            return {"error": error}
+        try:
+            if not content:
+                return {"error": "Empty response from AI"}
+            data = json.loads(content)
+            for key in ("japanese", "romaji", "german"):
+                if isinstance(data.get(key), str):
+                    data[key] = data[key].strip()
+            return data
         except json.JSONDecodeError as e:
             current_app.logger.error(f"Failed to parse JSON from AI response: {e}\nResponse: {content}")
             return {"error": "Failed to parse AI response as JSON."}
