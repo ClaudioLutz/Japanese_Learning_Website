@@ -747,6 +747,8 @@ def api_practice_session():
             'romanization': kana.romanization,
             'type': kana.type,
             'row': row_key,
+            'stroke_order_info': kana.stroke_order_info,
+            'mnemonic': kana.mnemonic,
         })
 
     # weak_only-Filter: nur Kana mit lapses > 0
@@ -857,6 +859,216 @@ def api_practice_daily_challenge():
     })
 
 
+# ── Verwechslungs-Signal + Drill (Kana) ───────────────────────
+
+
+def _record_kana_confusions(user_id, pairs):
+    """Upsert des Verwechslungs-Zaehlers.
+
+    Args:
+        user_id: User-ID
+        pairs: Liste von (target_kana_id, confused_kana_id)-Tupeln.
+
+    Returns:
+        Anzahl verarbeiteter Paare. Self-Confusion (target == confused) wird
+        uebersprungen. Commit erfolgt durch den Aufrufer.
+    """
+    from datetime import datetime
+    from app.models import KanaConfusion
+
+    recorded = 0
+    for target_id, confused_id in pairs:
+        if not target_id or not confused_id or target_id == confused_id:
+            continue
+        row = KanaConfusion.query.filter_by(
+            user_id=user_id, target_kana_id=target_id, confused_kana_id=confused_id
+        ).first()
+        if row:
+            row.count = (row.count or 0) + 1
+            row.last_seen = datetime.utcnow()
+        else:
+            db.session.add(KanaConfusion(
+                user_id=user_id,
+                target_kana_id=target_id,
+                confused_kana_id=confused_id,
+                count=1,
+            ))
+        recorded += 1
+    return recorded
+
+
+@srs_bp.route('/api/srs/kana-confusion', methods=['POST'])
+@login_required
+def api_kana_confusion_log():
+    """Loggt, welche FALSCHEN Kana fuer ein Ziel-Kana platziert wurden
+    (Fehl-Drops im Kana-Grid). Body: {confusions: [{target_kana_id, confused_kana_id}, ...]}.
+
+    Speist den gezielten Verwechslungs-Drill (datengetriebene Distraktoren).
+    """
+    from app.models import Kana
+
+    data = request.get_json(silent=True) or {}
+    raw = data.get('confusions') or []
+    if not isinstance(raw, list):
+        return jsonify({'error': 'confusions muss eine Liste sein'}), 400
+
+    raw = raw[:200]  # Cap gegen Missbrauch
+    pairs = []
+    for item in raw:
+        if not isinstance(item, dict):
+            continue
+        try:
+            t = int(item.get('target_kana_id'))
+            c = int(item.get('confused_kana_id'))
+        except (TypeError, ValueError):
+            continue
+        pairs.append((t, c))
+
+    # FK-Schutz: nur existierende Kana-IDs (verhindert IntegrityError auf Postgres)
+    all_ids = {i for pair in pairs for i in pair}
+    if all_ids:
+        existing = {k.id for k in Kana.query.filter(Kana.id.in_(all_ids)).all()}
+        pairs = [(t, c) for (t, c) in pairs if t in existing and c in existing]
+
+    try:
+        n = _record_kana_confusions(current_user.id, pairs)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f'Fehler bei kana-confusion-log: {e}')
+        return jsonify({'error': 'Interner Fehler'}), 500
+    return jsonify({'recorded': n})
+
+
+@srs_bp.route('/api/practice/kana/confusion')
+@login_required
+def api_practice_confusion():
+    """Baut eine Verwechslungs-Drill-Session: optisch aehnliche Kana liegen
+    als Cluster ('Reihe') zusammen im Grid, sodass die bestehende Zuordnungs-
+    Mechanik die Diskrimination erzwingt.
+
+    Quelle: kanonische CONFUSION_SETS, eingeschraenkt auf freigeschaltete Kana,
+    priorisiert nach dem echten Per-User-Verwechslungssignal (KanaConfusion)
+    und Lapses. Pro Kana wird stroke_order_info fuer den Spot-the-difference-
+    Tooltip mitgeliefert.
+
+    Query-Params: mode ('schreiben'|'lesen'|'blind'), schrift, limit.
+    """
+    from collections import defaultdict
+    from app.models import CardReviewState, Kana, KanaConfusion, LessonContent
+    from app.services.kana_confusion import confusion_clusters
+
+    mode = request.args.get('mode', 'schreiben')
+    if mode not in ('schreiben', 'lesen', 'blind'):
+        mode = 'schreiben'
+    schrift = request.args.get('schrift', 'both')
+    if schrift not in ('hiragana', 'katakana', 'both'):
+        schrift = 'both'
+    limit = min(request.args.get('limit', 20, type=int), 50)
+
+    include_locked = bool(getattr(current_user, 'is_admin', False))
+    unlocked_lc_rows = _user_unlocked_kana_ids(current_user.id, include_locked=include_locked)
+    unlocked_lc_ids = [r[0] for r in unlocked_lc_rows]
+    if not unlocked_lc_ids:
+        return jsonify({
+            'kana': [], 'count': 0, 'mode': mode,
+            'message': 'Keine freigeschalteten Kana — bitte erst eine Lesson abschliessen.',
+        })
+
+    q = (
+        db.session.query(LessonContent.id, Kana)
+        .join(Kana, LessonContent.content_id == Kana.id)
+        .filter(LessonContent.content_type == 'kana')
+        .filter(LessonContent.id.in_(unlocked_lc_ids))
+    )
+    if schrift != 'both':
+        q = q.filter(Kana.type == schrift)
+
+    # char -> (lc_id, kana); dedup auf Zeichen (selbe Kana evtl. in mehreren Lessons)
+    by_char = {}
+    for lc_id, kana in q.all():
+        by_char.setdefault(kana.character, (lc_id, kana))
+
+    clusters = confusion_clusters(set(by_char.keys()))
+    if not clusters:
+        return jsonify({
+            'kana': [], 'count': 0, 'mode': mode,
+            'message': 'Noch keine verwechselbaren Paare freigeschaltet — ueb weiter, '
+                       'dann schalten sich Paare frei.',
+        })
+
+    kana_id_by_char = {ch: kana.id for ch, (lc_id, kana) in by_char.items()}
+    lc_id_by_char = {ch: lc_id for ch, (lc_id, kana) in by_char.items()}
+
+    # ── Priorisierung: echtes User-Signal (KanaConfusion) stark, Lapses schwach ──
+    conf_rows = (
+        db.session.query(
+            KanaConfusion.target_kana_id, KanaConfusion.confused_kana_id, KanaConfusion.count
+        )
+        .filter(KanaConfusion.user_id == current_user.id)
+        .all()
+    )
+    confusion_score_by_kana = defaultdict(int)
+    for tgt, conf, cnt in conf_rows:
+        confusion_score_by_kana[tgt] += (cnt or 0)
+        confusion_score_by_kana[conf] += (cnt or 0)
+
+    lapses_by_lc = {}
+    if lc_id_by_char:
+        states = (
+            db.session.query(CardReviewState.content_id, CardReviewState.lapses)
+            .filter(
+                CardReviewState.user_id == current_user.id,
+                CardReviewState.content_id.in_(list(lc_id_by_char.values())),
+            )
+            .all()
+        )
+        lapses_by_lc = {cid: (lap or 0) for cid, lap in states}
+
+    def cluster_score(members):
+        score = 0
+        for ch in members:
+            score += confusion_score_by_kana.get(kana_id_by_char.get(ch), 0) * 10
+            score += lapses_by_lc.get(lc_id_by_char.get(ch), 0)
+        return score
+
+    clusters.sort(key=cluster_score, reverse=True)
+
+    # Ganze Cluster auffuellen bis ~limit (keine zerschnittenen Cluster)
+    items = []
+    labels = {}
+    used_chars = set()
+    for idx, members in enumerate(clusters):
+        fresh = [c for c in members if c not in used_chars]
+        if len(fresh) < 2:
+            continue
+        if items and len(items) + len(fresh) > limit:
+            break
+        key = f'cf_{idx}'
+        labels[key] = '・'.join(fresh)
+        for ch in fresh:
+            lc_id, kana = by_char[ch]
+            used_chars.add(ch)
+            items.append({
+                'kana_id': kana.id,
+                'lesson_content_id': lc_id,
+                'character': kana.character,
+                'romanization': kana.romanization,
+                'type': kana.type,
+                'row': key,
+                'stroke_order_info': kana.stroke_order_info,
+                'mnemonic': kana.mnemonic,
+            })
+
+    return jsonify({
+        'kana': items,
+        'count': len(items),
+        'mode': mode,
+        'row_labels': labels,
+        'layout': 'confusion',
+    })
+
+
 # ── Kana-Grid-Spiel (Phase 1) ─────────────────────────────────
 
 
@@ -929,6 +1141,8 @@ def api_kana_grid_config(content_id):
                 'type': k.type,
                 'audio_url': k.example_sound_url,
                 'lesson_content_id': lc_for_kana.get(k.id),  # fuer /api/srs/rate
+                'stroke_order_info': k.stroke_order_info,
+                'mnemonic': k.mnemonic,
             }
             for k in ordered
         ],

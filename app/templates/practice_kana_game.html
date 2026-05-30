@@ -109,6 +109,28 @@
         justify-content: center;
     }
     .kgame__game .kana-grid-game__taphint { flex: 0 0 auto; margin: 0 0 0.4rem; }
+
+    /* #3: Spot-the-difference-Hinweis (erscheint nach dem 1. Fehler) */
+    .kana-grid-game__diffhint {
+        flex: 0 0 auto; position: relative;
+        display: flex; align-items: flex-start; gap: 0.5rem;
+        margin: 0 0 0.5rem; padding: 0.55rem 1.9rem 0.55rem 0.7rem;
+        background: #FFF8EC; border: 1px solid #F0D9A8;
+        border-left: 3px solid var(--shu, #EB6101); border-radius: 10px;
+        font: 500 0.78rem/1.35 'Inter', sans-serif; color: var(--ink-700, #403B34);
+        max-height: 5.5em; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    }
+    .kana-grid-game__diffhint-char {
+        flex: 0 0 auto; font-family: 'Klee One', 'Noto Serif JP', serif;
+        font-size: 1.3rem; line-height: 1; color: var(--shu, #EB6101);
+    }
+    .kana-grid-game__diffhint-text { flex: 1 1 auto; }
+    .kana-grid-game__diffhint-close {
+        position: absolute; top: 0.2rem; right: 0.35rem;
+        border: 0; background: transparent; cursor: pointer;
+        font-size: 1.1rem; line-height: 1; color: var(--text-muted, #8C8378); padding: 0.1rem 0.3rem;
+    }
+    .kana-grid-game__diffhint-close:hover { color: var(--shu, #EB6101); }
     /* Gitter = der scrollende Teil; passt sich dem Inhalt an (flex 0 1 auto) und
        scrollt nur bei Überlänge, statt den Restplatz zu füllen. */
     .kgame__game .kgame__grid {
@@ -204,6 +226,13 @@
                         <button type="button" class="kana-grid-game__taphint-cancel" @click="selectedCardToken = null">abbrechen</button>
                     </span>
                 </template>
+            </div>
+
+            <!-- #3: Spot-the-difference-Hinweis (erscheint nach dem 1. Fehler) -->
+            <div class="kana-grid-game__diffhint" x-show="activeHint" x-cloak x-transition.opacity>
+                <span class="kana-grid-game__diffhint-char" x-text="activeHint && activeHint.char"></span>
+                <span class="kana-grid-game__diffhint-text" x-text="activeHint && activeHint.text"></span>
+                <button type="button" class="kana-grid-game__diffhint-close" @click="activeHint = null" aria-label="Hinweis schliessen">×</button>
             </div>
 
             <div class="kana-grid-game__grid kgame__grid">

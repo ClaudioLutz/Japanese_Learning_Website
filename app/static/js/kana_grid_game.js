@@ -34,6 +34,10 @@ function kanaGridGame(contentId) {
         hintsUsed: 0,
         cellsHinted: [],        // IDs der Zellen, die per Hint geloest wurden (Rating=Hard)
         showRomajiHint: false,  // Pool-Karten zeigen Romaji-Subscript (nur Lesson 1)
+        // ── #2/#3: Verwechslungs-Signal + Diskriminations-Hinweis ──
+        sessionConfusions: [],  // gesammelte Fehl-Drops {target_kana_id, confused_kana_id}
+        activeHint: null,       // {char, text} — Spot-the-difference-Hinweis nach Fehler
+        _confusionFlushInstalled: false,
 
         async init() {
             if (!this.contentId) {
@@ -65,6 +69,7 @@ function kanaGridGame(contentId) {
                 await this.$nextTick();
                 this.initSortables();
                 this.startTime = Date.now();
+                this._installConfusionFlush();
             } catch (e) {
                 console.error('[KanaGrid] init error', e);
                 this.error = 'Spiel konnte nicht geladen werden (Netzwerkfehler).';
@@ -88,6 +93,7 @@ function kanaGridGame(contentId) {
                         romanization: k.romanization,
                         scriptType: k.type || null,   // 'hiragana' | 'katakana' — fuer Schrift-Badge
                         hint: this.cellHint(k),
+                        strokeInfo: k.stroke_order_info || '',  // Spot-the-difference-Hinweis (#3)
                         status: 'empty',
                         shake: false,
                         solved: '',
@@ -300,10 +306,22 @@ function kanaGridGame(contentId) {
                 this.totalErrors += 1;
                 cell.shake = true;
                 setTimeout(() => { cell.shake = false; }, 500);
+                // #2: welches FALSCHE Kana wurde abgelegt? — Signal fuer den Drill.
+                if (kanaId && cell.kanaId && kanaId !== cell.kanaId) {
+                    this.sessionConfusions.push({
+                        target_kana_id: cell.kanaId,
+                        confused_kana_id: kanaId,
+                    });
+                }
+                // #3: Spot-the-difference-Hinweis nach dem 1. Fehler (Pre-Testing-Gate).
+                if (cell.strokeInfo) {
+                    this.activeHint = { char: cell.character, text: cell.strokeInfo };
+                }
                 return;
             }
 
             if (cell.status === 'correct' && this.mode !== 'blind') return;
+            this.activeHint = null;
 
             if (this.mode === 'blind') {
                 cell._blindFilled = cell._blindFilled || { kana: false, romaji: false };
@@ -414,6 +432,32 @@ function kanaGridGame(contentId) {
                 window.speechSynthesis.cancel();
                 window.speechSynthesis.speak(u);
             } catch (e) { /* Sprachausgabe nicht verfuegbar — still ignorieren */ }
+        },
+
+        // ── #2: gesammeltes Verwechslungs-Signal an den Server flushen ──
+        flushConfusions(viaKeepalive) {
+            if (!this.sessionConfusions || this.sessionConfusions.length === 0) return;
+            const payload = JSON.stringify({ confusions: this.sessionConfusions.splice(0) });
+            const csrf = document.querySelector('meta[name="csrf-token"]')?.content || '';
+            try {
+                fetch('/api/srs/kana-confusion', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrf },
+                    body: payload,
+                    keepalive: !!viaKeepalive,
+                }).catch(() => {});
+            } catch (e) { /* still ignorieren — Signal ist best-effort */ }
+        },
+
+        // Flush auch bei Tab-/Seitenwechsel (Abandon-Fall) — sonst gehen die
+        // Verwechslungen einer nicht abgeschlossenen Runde verloren.
+        _installConfusionFlush() {
+            if (this._confusionFlushInstalled) return;
+            this._confusionFlushInstalled = true;
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'hidden') this.flushConfusions(true);
+            });
+            window.addEventListener('pagehide', () => this.flushConfusions(true));
         },
 
         async rateCell(cell, forceRating) {
@@ -582,6 +626,7 @@ function kanaGridGame(contentId) {
             if (this.stars === 3 && window.confetti) {
                 window.confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } });
             }
+            this.flushConfusions(false);
         },
 
         async restart() {
@@ -739,6 +784,10 @@ function kanaSettings() {
         startDaily() {
             window.location.href = '/practice/kana/spiel?challenge=daily';
         },
+        startConfusion() {
+            // Verwechslungs-Drill: aehnliche Kana als Cluster (Server waehlt sie).
+            window.location.href = '/practice/kana/spiel?challenge=confusion';
+        },
         startWeak() {
             this.weakOnly = true;
             this.limit = 10;
@@ -760,6 +809,7 @@ function kanaGameView() {
         phase: 'loading',          // 'loading' | 'error' | 'empty' | 'playing'
         loadMessage: null,
         isDaily: false,
+        isConfusion: false,
         liveElapsedMs: 0,
         _timerId: null,
         settingsUrl: '/practice/kana',
@@ -767,8 +817,18 @@ function kanaGameView() {
         async initView() {
             const p = new URLSearchParams(window.location.search);
             this.isDaily = (p.get('challenge') === 'daily');
+            this.isConfusion = (p.get('challenge') === 'confusion');
             let url;
-            if (this.isDaily) {
+            if (this.isConfusion) {
+                const m = p.get('mode');
+                this.mode = ['schreiben', 'lesen', 'blind'].includes(m) ? m : 'schreiben';
+                const params = new URLSearchParams({
+                    mode: this.mode,
+                    schrift: p.get('schrift') || 'both',
+                    limit: p.get('limit') || '20',
+                });
+                url = '/api/practice/kana/confusion?' + params.toString();
+            } else if (this.isDaily) {
                 url = '/api/practice/kana/daily-challenge';
                 this.mode = 'schreiben';
             } else {
@@ -810,6 +870,7 @@ function kanaGameView() {
                 type: k.type,
                 audio_url: null,
                 lesson_content_id: k.lesson_content_id,
+                stroke_order_info: k.stroke_order_info,
             }));
             const ROW_ORDER = ['vowels', 'k', 's', 't', 'n', 'h', 'm', 'y', 'r', 'w', 'n_kons', 'g', 'z', 'd', 'b', 'p'];
             const byRow = {};
@@ -818,8 +879,17 @@ function kanaGameView() {
                 if (!byRow[key]) byRow[key] = [];
                 byRow[key].push(k.kana_id);
             });
-            this.rows = ROW_ORDER.filter(k => byRow[k])
-                .map(k => ({ key: k, label: PRACTICE_ROW_LABELS[k] || k, kana_ids: byRow[k] }));
+            // Cluster-Keys (cf_*, Verwechslungs-Drill) sind nicht in ROW_ORDER —
+            // sie kommen nach den Gojuon-Reihen in ihrer Server-Reihenfolge dran.
+            // row_labels (vom /confusion-Endpoint) liefert die Cluster-Beschriftung.
+            const labelMap = data.row_labels || {};
+            const orderedKeys = ROW_ORDER.filter(k => byRow[k])
+                .concat(Object.keys(byRow).filter(k => !ROW_ORDER.includes(k) && k !== 'other'));
+            this.rows = orderedKeys.map(k => ({
+                key: k,
+                label: labelMap[k] || PRACTICE_ROW_LABELS[k] || k,
+                kana_ids: byRow[k],
+            }));
             if (byRow.other) this.rows.push({ key: 'other', label: '—', kana_ids: byRow.other });
 
             this._config = {
@@ -838,6 +908,7 @@ function kanaGameView() {
             this.initSortables();
             this.startTime = Date.now();
             this.startLiveTimer();
+            this._installConfusionFlush();
         },
 
         // WICHTIG: Methoden, KEINE getter. Diese Komponente wird via
@@ -846,6 +917,7 @@ function kanaGameView() {
         // Rückgabewert. Als getter wären Timer/Fortschritt statisch. Im Template
         // daher mit () aufrufen: liveTimeLabel(), modeLabel(), progressPct().
         modeLabel() {
+            if (this.isConfusion) return 'Verwechslungs-Paare';
             return this.isDaily ? 'Tages-Challenge' : (PRACTICE_MODE_LABELS[this.mode] || '');
         },
         liveTimeLabel() {

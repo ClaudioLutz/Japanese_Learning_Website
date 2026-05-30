@@ -1177,6 +1177,35 @@ class ReviewLog(db.Model):
         return f'<ReviewLog user:{self.user_id} content:{self.content_id} rating:{self.rating}>'
 
 
+class KanaConfusion(db.Model):
+    """Per-User-Verwechslungssignal: welches FALSCHE Kana wurde fuer ein
+    Ziel-Kana platziert (Fehl-Drop im Kana-Grid).
+
+    Heute wird beim Grid-Fehler nur die korrekte Zielkarte ans SRS bewertet —
+    *welches* falsche Zeichen der User ablegte, ging verloren. Diese Tabelle
+    sammelt genau dieses Signal und speist den gezielten Verwechslungs-Drill
+    (datengetriebene Distraktoren statt nur statischer Aehnlichkeitsmatrix).
+    """
+    __tablename__ = 'kana_confusion'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, index=True)
+    target_kana_id = db.Column(db.Integer, db.ForeignKey('kana.id'), nullable=False)
+    confused_kana_id = db.Column(db.Integer, db.ForeignKey('kana.id'), nullable=False)
+    count = db.Column(db.Integer, nullable=False, default=1, server_default='1')
+    last_seen = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    __table_args__ = (
+        db.UniqueConstraint(
+            'user_id', 'target_kana_id', 'confused_kana_id', name='uq_kana_confusion'
+        ),
+    )
+
+    def __repr__(self):
+        return (f'<KanaConfusion u:{self.user_id} '
+                f'{self.target_kana_id}<-{self.confused_kana_id} x{self.count}>')
+
+
 class UserSRSSettings(db.Model):
     """Persoenliche SRS-Einstellungen pro User."""
     __tablename__ = 'user_srs_settings'
