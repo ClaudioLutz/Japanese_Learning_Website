@@ -403,14 +403,21 @@ def _answer_romaji_candidates(answer: str) -> list[str]:
 
 def _mask_romaji(full: str, candidates: list[str], gap: str = '＿＿') -> str:
     """Ersetzt das erste ganze-Wort-Vorkommen eines Kandidaten im Satz-Romaji
-    durch die Lücke. '' wenn nichts passt (dann zeigt die Karte kein Romaji)."""
-    if not full or not candidates:
+    durch die Lücke.
+
+    Laesst sich die Antwort-Lesung nicht lokalisieren — etwa eine Kanji-Antwort
+    ohne Kana-Umschrift (今/時/分) oder eine Endung wie ます/です, die im Romaji als
+    Wortsuffix ohne linke Wortgrenze steht — kommt das VOLLE Satz-Romaji als
+    Lesehilfe zurueck. Eine fehlende Romaji-Zeile auf der Cloze-Vorderseite ist
+    schlimmer als der seltene Mini-Spoiler. Leer bleibt es nur, wenn gar kein
+    Satz-Romaji existiert."""
+    if not full:
         return ''
-    for cand in candidates:
+    for cand in (candidates or []):
         m = re.search(r'\b' + re.escape(cand) + r'\b', full, re.IGNORECASE)
         if m:
             return full[:m.start()] + gap + full[m.end():]
-    return ''
+    return full
 
 
 def make_grammar_cloze(examples: list[dict[str, str]],
@@ -452,8 +459,9 @@ def make_grammar_cloze(examples: list[dict[str, str]],
                         'answer': answer,
                         'japanese': jp,
                         'romaji': romaji,
-                        # Satz-Romaji mit ebenfalls maskierter Antwort (Lesehilfe
-                        # ohne Spoiler); '' wenn die Antwort nicht romanisierbar ist.
+                        # Satz-Romaji mit maskierter Antwort (Lesehilfe ohne
+                        # Spoiler); volles Romaji, wenn die Antwort nicht
+                        # lokalisierbar ist; '' nur ohne jedes Satz-Romaji.
                         'romaji_masked': _mask_romaji(
                             romaji, _answer_romaji_candidates(answer)),
                         'translation': ex.get('translation', ''),
