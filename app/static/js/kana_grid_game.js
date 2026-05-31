@@ -789,10 +789,14 @@ function kanaSettings() {
             window.location.href = '/practice/kana/spiel?challenge=confusion';
         },
         startWeak() {
-            this.weakOnly = true;
-            this.limit = 10;
-            this.persist();
-            window.location.href = '/practice/kana/spiel?' + this.buildParams().toString();
+            // Einmal-Schnellstart: Intent nur per URL uebergeben, NICHT die
+            // gespeicherten Einstellungen mutieren/persistieren (wie startDaily/
+            // startConfusion). Sonst bliebe weakOnly in localStorage haengen und
+            // die "Nur schwache Karten"-Option waere bei jedem Besuch wieder an.
+            const params = this.buildParams();
+            params.set('weak_only', 'true');
+            params.set('limit', '10');
+            window.location.href = '/practice/kana/spiel?' + params.toString();
         },
     };
 }
