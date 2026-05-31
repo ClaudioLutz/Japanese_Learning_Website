@@ -90,12 +90,12 @@
     <h2>Selbst testen</h2>
     <p>
       Die SRS-Funktion ist mit dem N5-Bundle und allen Premium-Lektionen
-      enthalten. Sieben Gratis-Lektionen reichen, um das Prinzip auszuprobieren —
+      enthalten. {{ n5_free_lesson_count }} Gratis-Lektionen reichen, um das Prinzip auszuprobieren —
       nach drei Tagen wirst du sehen, wie sich der Stapel anfühlt.
     </p>
     <div class="lm-cta-buttons">
       <a href="{{ url_for('routes.index') }}#lernpfad" class="btn btn-primary btn-lg">
-        🚀 7 Gratis-Lektionen starten
+        🚀 {{ n5_free_lesson_count }} Gratis-Lektionen starten
       </a>
       <a href="{{ url_for('bundle.n5_bundle') }}" class="btn btn-outline-primary btn-lg">
         ⚡ N5 Komplett für CHF 9.90

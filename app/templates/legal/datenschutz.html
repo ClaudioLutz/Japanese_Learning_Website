@@ -25,7 +25,10 @@
     <li><strong>Zahlungsdaten:</strong> Bei Käufen werden Vor-/Nachname und Rechnungsadresse an unseren Zahlungs-
       anbieter (Payrexx) übertragen. Wir speichern keine Kreditkartendaten.</li>
     <li><strong>Technische Daten:</strong> IP-Adresse, Browser-Typ, Zeitstempel der Zugriffe — zur Sicherheit und
-      Fehleranalyse, max. 90 Tage gespeichert.</li>
+      Fehleranalyse. In unseren eigenen Anwendungs-Logs werden solche Daten höchstens 90 Tage aufbewahrt.
+      Zusätzlich fallen auf Ebene unseres CDN-/Proxy-Dienstleisters Cloudflare technische Verbindungs- und
+      Edge-Logs (inkl. IP-Adresse) an, deren Aufbewahrung sich nach den Vorgaben von Cloudflare richtet
+      (in der Regel deutlich kürzer).</li>
     <li><strong>Cookies:</strong> ein Session-Cookie für die Anmeldung, ein CSRF-Cookie für die Sicherheit von Formularen.
       Keine Tracking-Cookies, keine Werbe-Cookies.</li>
   </ul>
@@ -43,8 +46,13 @@
     Wir geben deine Daten nur an die folgenden Dienstleister weiter, soweit für den Betrieb der Plattform nötig:
   </p>
   <ul>
-    <li><strong>Google Cloud Platform</strong> (Hosting, Datenbank, Cloud Storage) — Server in der EU
-      (europe-west1, europe-west6).</li>
+    <li><strong>Self-Hosting (Schweiz):</strong> Die Plattform läuft auf einem selbst betriebenen Server in der
+      Schweiz; die Datenbank wird lokal auf diesem Server gehalten.</li>
+    <li><strong>Cloudflare Inc.</strong> — Content-Delivery-Network und Reverse-Proxy. Sämtlicher Datenverkehr
+      wird über das Cloudflare-Netzwerk (Edge-Standort Zürich) geleitet; dabei verarbeitet Cloudflare technisch
+      bedingt IP-Adressen und Verbindungsmetadaten zur Auslieferung der Seite und zur Abwehr von Angriffen.</li>
+    <li><strong>Google Cloud Storage (EU)</strong> — ausschliesslich als verschlüsseltes Offsite-Backup der
+      Mediendateien.</li>
     <li><strong>Payrexx AG, Schweiz</strong> — Zahlungsabwicklung.</li>
     <li><strong>Google OAuth</strong> — wenn du dich per Google-Konto anmeldest.</li>
   </ul>

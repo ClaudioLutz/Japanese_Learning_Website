@@ -24,7 +24,7 @@
     "url": "{{ site_url }}{{ url_for('bundle.n5_bundle') }}",
     "priceCurrency": "CHF",
     "price": "{{ '%.2f'|format(price) }}",
-    "priceValidUntil": "2026-12-31",
+    "priceValidUntil": "{{ current_year + 1 }}-12-31",
     "availability": "https://schema.org/InStock",
     "seller": {
       "@type": "Organization",
@@ -244,8 +244,8 @@
 
       <h1 class="bnd-hero-title">JLPT N5 Komplett.</h1>
       <p class="bnd-hero-sub">
-        {{ coverage.vocab_total }} Vokabeln. {{ coverage.kanji_total }} Kanji.
-        Hiragana und Katakana. Auf Deutsch erklärt — Lifetime-Zugriff.
+        Der komplette N5-Wortschatz als Ziel: {{ coverage.vocab_total }} Vokabeln, {{ coverage.kanji_total }} Kanji —
+        laufend ausgebaut. Hiragana und Katakana. Auf Deutsch erklärt — Lifetime-Zugriff.
       </p>
 
       {% if not bundle_available %}
@@ -324,8 +324,8 @@
         <h2 class="bnd-section-title">Was drin ist</h2>
         <ul class="bnd-checklist">
           <li>Hiragana und Katakana — komplettes Schreibsystem</li>
-          <li>{{ coverage.vocab_total }} N5-Vokabeln nach offizieller JLPT-Wortliste</li>
-          <li>{{ coverage.kanji_total }} N5-Kanji mit On-/Kun-Lesungen und Beispielsätzen</li>
+          <li>Der komplette N5-Wortschatz nach offizieller JLPT-Wortliste — Ziel: {{ coverage.vocab_total }} Vokabeln, laufend ausgebaut</li>
+          <li>Alle N5-Kanji mit On-/Kun-Lesungen und Beispielsätzen — Ziel: {{ coverage.kanji_total }} Kanji, laufend ausgebaut</li>
           <li>N5-Grammatik mit deutschen Erklärungen</li>
           <li>Spaced Repetition mit FSRS-Algorithmus</li>
           <li>Audio von japanischer Native-Speaker-Stimme</li>

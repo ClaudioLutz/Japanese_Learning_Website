@@ -131,7 +131,7 @@
       <li><strong>Keine Abos.</strong> Wer N5 Komplett kauft, hat Lifetime-Zugriff. Punkt.</li>
       <li><strong>Faires Pricing.</strong> CHF 9.90 für N5 ist Pre-Order. Wer früh dabei ist, zahlt einmalig — egal wie viele Lektionen ich danach noch ergänze.</li>
       <li><strong>Doppelte Geld-zurück-Garantie.</strong> 30 Tage volle Rückerstattung. Plus: wenn ich das N5-Bundle 6 Monate lang nicht aktiv erweitere, bekommst du dein Geld zurück, auch nach 30 Tagen.</li>
-      <li><strong>Keine Daten-Verkäufe.</strong> Keine Trackingscripts von Drittanbietern. Hosting in der Schweiz/EU bei Google Cloud Run.</li>
+      <li><strong>Keine Daten-Verkäufe.</strong> Keine Trackingscripts von Drittanbietern. Self-hosted in der Schweiz, ausgeliefert über Cloudflare.</li>
       <li><strong>Echte Antworten.</strong> Schreib mir auf <a href="mailto:info@japanese-learning.ch">info@japanese-learning.ch</a> — ich antworte selbst, meist innerhalb 48h.</li>
     </ul>
   </section>
@@ -155,7 +155,7 @@
     <h2>Loslegen</h2>
     <div class="ueber-cta-buttons">
       <a href="{{ url_for('routes.index') }}#lernpfad" class="btn btn-primary btn-lg">
-        🚀 Kostenlos starten — 7 Lektionen ohne Anmeldung
+        🚀 Kostenlos starten — {{ n5_free_lesson_count }} Lektionen ohne Anmeldung
       </a>
       <a href="{{ url_for('bundle.n5_bundle') }}" class="btn btn-outline-primary btn-lg">
         ⚡ N5 Komplett für CHF 9.90 ansehen
