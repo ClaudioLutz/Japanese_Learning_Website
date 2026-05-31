@@ -1,13 +1,30 @@
 # Japanese Learning Website — Projektanleitung
 
 ## Überblick
-Flask-basierte Japanisch-Lernplattform mit Lektions-/Kursverwaltung, Benutzerauthentifizierung, KI-generiertem Inhalt (OpenAI/Gemini), Payrexx-Zahlungsintegration. **Self-hosted** auf einem Heim-Server (Docker + Cloudflare Tunnel) — kein GCloud-Hosting mehr (seit 2026-05-24).
+Flask-basierte Japanisch-Lernplattform mit Lektions-/Kursverwaltung, Benutzerauthentifizierung, Claude-verfasstem Inhalt, Payrexx-Zahlungsintegration. **Self-hosted** auf einem Heim-Server (Docker + Cloudflare Tunnel) — kein GCloud-Hosting mehr (seit 2026-05-24).
+
+## WICHTIG — Content-Generierung: immer Claude, nie ein LLM-API
+
+**NIEMALS Gemini oder OpenAI (oder ein anderes externes Text-LLM) verwenden, um neue japanische Inhalte zu erzeugen.** Das macht **IMMER Claude selbst** (du) — höhere Qualität und zuverlässig level-konform (z.B. N5-Beispielsätze nur mit N5-Wortschatz). Es ist nicht mehr „Claude oder Gemini, wer gerade passt", sondern ausschliesslich Claude.
+
+Gilt für alle **Text-/Sprach-Inhalte**:
+- Vokabeln und deren Beispielsätze
+- Lesungen (Hiragana/Furigana, Romaji)
+- Übersetzungen (Deutsch), Erklärungen, Lektions-, Quiz- und Grammatik-Texte
+
+Vorgehen, wenn neuer Inhalt gebraucht wird: Claude verfasst ihn direkt (bei Menge per Workflow-Fan-out mit adversarialer Level-Prüfung), und ein Skript schreibt nur noch das fertige, geprüfte Ergebnis in die DB (siehe `scripts/regenerate_vocab_examples.py` + `scripts/data/vocab_example_sentences.json`). **Keine Laufzeit-LLM-Calls für Content.**
+
+Ausnahmen (kein Text-Content, dürfen externe Dienste nutzen):
+- **TTS-Audio**: Google Cloud TTS
+- **Bildgenerierung**: OpenAI Images
+
+Die `generate_*`-Methoden in `ai_services.py` (Gemini) bleiben als Code bestehen, sollen für Content aber nicht mehr aufgerufen werden.
 
 ## Tech-Stack
 - **Backend**: Flask 2.0+, SQLAlchemy, Flask-Login, Flask-Migrate, Flask-WTF
 - **Datenbank**: PostgreSQL 15 (Docker) — die lokale Postgres ist die Produktions-DB (self-hosted)
 - **Auth**: Flask-Login (lokal) + Google OAuth2 (social-auth, Authlib)
-- **KI**: OpenAI GPT + Google Gemini für Lektions-/Quiz-Generierung
+- **Content**: von Claude verfasst (Vokabeln, Texte, Lesungen) — NICHT via Gemini/OpenAI (siehe Abschnitt „Content-Generierung" oben). Externe Dienste nur für TTS-Audio (Google) und Bilder (OpenAI).
 - **Zahlungen**: Payrexx Checkout (CHF) — **noch nicht produktiv, MockPayment aktiv**
 - **Storage**: lokales Volume `app/static/uploads` (GCS-Bucket `jpl-website-assets` nur noch als Offsite-Backup)
 - **Deployment**: Self-hosted (Docker + Gunicorn), öffentlich erreichbar via Cloudflare Tunnel
