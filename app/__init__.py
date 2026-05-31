@@ -24,7 +24,7 @@ csrf = CSRFProtect()
 limiter = Limiter(key_func=get_remote_address, default_limits=["200 per hour"])
 
 login_manager.login_view = 'routes.login' # type: ignore
-login_manager.login_message = 'Please log in to access this page.'
+login_manager.login_message = 'Bitte melden Sie sich an, um diese Seite zu sehen.'
 login_manager.login_message_category = 'info'
 
 def create_app():
@@ -63,6 +63,9 @@ def create_app():
 
     app.config.from_pyfile('config.py', silent=True) # Load config from instance folder
     app.config['TEMPLATES_AUTO_RELOAD'] = True
+    # Statische Assets 1 Jahr cachen — eigene Dateien sind per static_v() (mtime-?v=)
+    # cache-gebustet, daher kein Stale-Risiko (Cloudflare HIT statt REVALIDATED).
+    app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 31536000
 
     # Session-Cookie-Security
     is_production = (
@@ -299,6 +302,28 @@ def create_app():
         og_image = app.config['SEO_DEFAULT_OG_IMAGE']
         if og_image and og_image.startswith('/'):
             og_image = site_url + og_image
+        # Site-weit konsistente Gratis-Lektionszahl: spiegelt EXAKT die
+        # guest_accessible_lessons-Logik der Startseite (routes.py::index) —
+        # published + allow_guest_access + lesson_type='free', je Sprache
+        # gezaehlt und summiert. Single Source of Truth fuer Marketing-Texte.
+        try:
+            from app.models import Lesson
+            n5_free_lesson_count = (
+                Lesson.query.filter_by(
+                    is_published=True,
+                    allow_guest_access=True,
+                    lesson_type='free',
+                    instruction_language='english',
+                ).count()
+                + Lesson.query.filter_by(
+                    is_published=True,
+                    allow_guest_access=True,
+                    lesson_type='free',
+                    instruction_language='german',
+                ).count()
+            )
+        except Exception:
+            n5_free_lesson_count = 0
         return {
             'current_year': _dt.utcnow().year,
             'site_url': site_url,
@@ -308,6 +333,7 @@ def create_app():
             'google_site_verification': app.config['GOOGLE_SITE_VERIFICATION'],
             'robots_index': app.config['ROBOTS_INDEX'],
             'default_canonical': canonical,
+            'n5_free_lesson_count': n5_free_lesson_count,
         }
 
     # Cache-Busting fuer eigene statische Assets: haengt die Datei-mtime als
