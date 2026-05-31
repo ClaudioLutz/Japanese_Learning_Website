@@ -195,6 +195,15 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     .review-card-scene.is-flipped {
         transform: rotateY(180deg);
     }
+    /* Sichtbarer Fokus-Ring für die per Tastatur fokussierbare Karte
+       (tabindex/role="button"). Liegt auf der Flip-Card-Hülle, da die Szene
+       selbst rotiert (rotateY) und ein Outline dort mitkippen würde. */
+    .review-card-scene:focus { outline: none; }
+    .review-flip-card:has(.review-card-scene:focus-visible) {
+        outline: 2px solid var(--shu, #EB6101);
+        outline-offset: 4px;
+        border-radius: 16px;
+    }
     .review-card-face {
         position: absolute;
         inset: 0;
@@ -1284,7 +1293,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
 
         cardArea.innerHTML = `
             <div class="review-flip-card" id="activeReviewCard">
-                <div class="review-card-scene" id="reviewScene">
+                <div class="review-card-scene" id="reviewScene" tabindex="0" role="button" aria-label="Karte umdrehen">
                     <div class="review-card-face review-card-face--front">
                         ${grammarClozeFront || `
                         <div class="review-card-front-text ${isLong ? 'small-text' : ''}">${escapeHtml(frontText)}</div>
@@ -1438,68 +1447,79 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
 
     // ── Rate card ──
     async function rateCard(ratingInt) {
+        // Re-Entry-Guard: ein zweiter Klick/Tastendruck während des laufenden
+        // fetch-Calls würde dieselbe Karte doppelt bewerten (doppelte XP, 2 Reps,
+        // doppelter ReviewLog) — currentIdx/ratedIds werden erst NACH dem await
+        // aktualisiert. Guard sperrt die Funktion bis der Call abgeschlossen ist.
+        if (rateCard._busy) return;
+
         const card = cards[currentIdx];
         if (!card) return;
 
-        const timeTaken = cardFlipTime ? Date.now() - cardFlipTime : null;
-
-        // Send to backend
+        rateCard._busy = true;
         try {
-            const resp = await fetch('/api/srs/rate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
-                body: JSON.stringify({
-                    content_id: card.content_id,
-                    rating: ratingInt,
-                    time_taken_ms: timeTaken > 0 ? timeTaken : null
-                })
-            });
-            const result = await resp.json();
+            const timeTaken = cardFlipTime ? Date.now() - cardFlipTime : null;
 
-            // Gamification-Tracking
-            sessionStats.xpEarned += (result.xp_earned || 0);
-            if (result.stage_changed) {
-                if (result.card_stage > 0) sessionStats.stagesUp++;
-                else sessionStats.stagesDown++;
-            }
-
-            // Achievement-Toasts
-            if (result.new_achievements && result.new_achievements.length) {
-                result.new_achievements.forEach(a => {
-                    sessionStats.achievements.push(a);
-                    showAchievementToast(a);
+            // Send to backend
+            try {
+                const resp = await fetch('/api/srs/rate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+                    body: JSON.stringify({
+                        content_id: card.content_id,
+                        rating: ratingInt,
+                        time_taken_ms: timeTaken > 0 ? timeTaken : null
+                    })
                 });
+                const result = await resp.json();
+
+                // Gamification-Tracking
+                sessionStats.xpEarned += (result.xp_earned || 0);
+                if (result.stage_changed) {
+                    if (result.card_stage > 0) sessionStats.stagesUp++;
+                    else sessionStats.stagesDown++;
+                }
+
+                // Achievement-Toasts
+                if (result.new_achievements && result.new_achievements.length) {
+                    result.new_achievements.forEach(a => {
+                        sessionStats.achievements.push(a);
+                        showAchievementToast(a);
+                    });
+                }
+            } catch (e) {
+                console.warn('[Review] Rate failed:', e);
             }
-        } catch (e) {
-            console.warn('[Review] Rate failed:', e);
+
+            // Invalidate cache
+            delete intervalCache[String(card.content_id)];
+
+            // Update session stats
+            sessionStats.reviewed++;
+            if (ratingInt >= 3) sessionStats.good++;
+
+            // Update stat counters
+            const dueEl = document.getElementById('statDue');
+            const todayEl = document.getElementById('statToday');
+            if (dueEl) dueEl.textContent = Math.max(0, parseInt(dueEl.textContent) - 1);
+            if (todayEl) todayEl.textContent = parseInt(todayEl.textContent) + 1;
+
+            if (ratingInt === 1) {
+                // Again: move card to later in queue
+                cards.splice(currentIdx, 1);
+                const insertAt = Math.min(currentIdx + 2 + Math.floor(Math.random() * 3), cards.length);
+                cards.splice(insertAt, 0, card);
+                sessionStats.total = sessionStats.reviewed + cards.length;
+            } else {
+                // Hard/Good/Easy: aus dieser Session entfernen (auch bei Filter-Rebuild)
+                ratedIds.add(card.content_id);
+                currentIdx++;
+            }
+
+            showCard();
+        } finally {
+            rateCard._busy = false;
         }
-
-        // Invalidate cache
-        delete intervalCache[String(card.content_id)];
-
-        // Update session stats
-        sessionStats.reviewed++;
-        if (ratingInt >= 3) sessionStats.good++;
-
-        // Update stat counters
-        const dueEl = document.getElementById('statDue');
-        const todayEl = document.getElementById('statToday');
-        if (dueEl) dueEl.textContent = Math.max(0, parseInt(dueEl.textContent) - 1);
-        if (todayEl) todayEl.textContent = parseInt(todayEl.textContent) + 1;
-
-        if (ratingInt === 1) {
-            // Again: move card to later in queue
-            cards.splice(currentIdx, 1);
-            const insertAt = Math.min(currentIdx + 2 + Math.floor(Math.random() * 3), cards.length);
-            cards.splice(insertAt, 0, card);
-            sessionStats.total = sessionStats.reviewed + cards.length;
-        } else {
-            // Hard/Good/Easy: aus dieser Session entfernen (auch bei Filter-Rebuild)
-            ratedIds.add(card.content_id);
-            currentIdx++;
-        }
-
-        showCard();
     }
 
     // ── Button handlers ──
@@ -1519,9 +1539,15 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
 
         const isFlipped = scene.classList.contains('is-flipped');
 
-        if (e.code === 'Space' && !isFlipped) {
+        // Enter/Space drehen die fokussierbare Karte (role="button") um.
+        // Im geflippten Zustand nur reagieren, wenn die Szene selbst den Fokus
+        // hat — sonst würde Enter auf einem fokussierten Rating-Button doppelt
+        // feuern (Klick + Flip).
+        if ((e.code === 'Space' || e.key === 'Enter') &&
+            (!isFlipped || e.target === scene)) {
             e.preventDefault();
             scene.click();
+            return;
         }
 
         if (isFlipped && ['1', '2', '3', '4'].includes(e.key)) {
