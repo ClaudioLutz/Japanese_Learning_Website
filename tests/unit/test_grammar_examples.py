@@ -230,11 +230,16 @@ class TestMaskedRomaji:
         cz = make_grammar_cloze(examples, "N1 は (wa) N2 です")
         assert cz["romaji_masked"].startswith("Watashi ＿＿")
 
-    def test_masked_romaji_empty_without_sentence_romaji(self):
+    def test_masked_romaji_fallback_when_no_curated_romaji(self):
+        # Ohne kuratiertes Satz-Romaji wird die Zeile aus dem Japanischen
+        # (before/after) neu romanisiert — der Rest steht als Romaji, die Lücke
+        # bleibt ausgeblendet (kein Spoiler der Antwort 'mo').
         examples = [{"japanese": "あれも 本です。", "romaji": "", "translation": "x"}]
         cz = make_grammar_cloze(examples, "N も (mo)")
         assert cz["answer"] == "も"
-        assert cz["romaji_masked"] == ""
+        assert "＿＿" in cz["romaji_masked"]
+        assert "mo" not in cz["romaji_masked"].lower()
+        assert "hon desu" in cz["romaji_masked"].lower()
 
 
 class TestRomanizeKana:

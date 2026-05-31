@@ -387,37 +387,146 @@ def _romanize_kana(text: str) -> str:
     return ''.join(out)
 
 
+# Lange Vokale (Makron) im Satz-Romaji → Vokal-Verdopplung, damit die
+# Maskierung gegen die Kana-Umschrift der Antwort (die "ou"/"uu" liefert, nie
+# "ō"/"ū") matcht. Schreibweise "ou" passt zum Site-Stil ("Toukyou", "Kyou").
+_ROMAJI_MACRON = {
+    'ā': 'aa', 'ī': 'ii', 'ū': 'uu', 'ē': 'ee', 'ō': 'ou',
+    'â': 'aa', 'î': 'ii', 'û': 'uu', 'ê': 'ee', 'ô': 'ou',
+    'Ā': 'Aa', 'Ī': 'Ii', 'Ū': 'Uu', 'Ē': 'Ee', 'Ō': 'Ou',
+    'Â': 'Aa', 'Î': 'Ii', 'Û': 'Uu', 'Ê': 'Ee', 'Ô': 'Ou',
+}
+
+
+def _expand_macrons(s: str) -> str:
+    return ''.join(_ROMAJI_MACRON.get(ch, ch) for ch in s)
+
+
 def _answer_romaji_candidates(answer: str) -> list[str]:
-    """Romaji-Kandidaten für die Cloze-Antwort inkl. Partikel-Sonderlesungen
-    (は=wa, へ=e, を=o/wo)."""
+    """Romaji-Kandidaten für die Cloze-Antwort inkl. Partikel-Sonderlesungen.
+
+    Liefert für mehrteilige Antworten (z.B. ``わたしは``) zusätzlich die Variante
+    mit phonetischer Partikel-Lesung (は=wa, へ=e, を=o), damit ``Watashi wa`` im
+    Satz-Romaji gefunden wird und nicht das (kana-wörtliche) ``watashiha``.
+    Kanji-Antworten ohne Kana-Umschrift liefern ``[]`` → kein maskiertes Romaji.
+    """
     a = (answer or '').strip()
-    if a == 'は':
-        return ['wa', 'ha']
-    if a == 'へ':
-        return ['e', 'he']
-    if a == 'を':
-        return ['o', 'wo']
+    specials = {'は': ['wa', 'ha'], 'へ': ['e', 'he'], 'を': ['o', 'wo']}
+    if a in specials:
+        return specials[a]
+    cands: list[str] = []
     base = _romanize_kana(a)
-    return [base] if base else []
+    if base:
+        cands.append(base)
+        # Partikel-Variante: は→wa, へ→e (を ist im Kana-Mapping bereits 'o').
+        particle = _romanize_kana(a.replace('は', 'わ').replace('へ', 'え'))
+        if particle and particle != base:
+            cands.append(particle)
+    return cands
 
 
 def _mask_romaji(full: str, candidates: list[str], gap: str = '＿＿') -> str:
-    """Ersetzt das erste ganze-Wort-Vorkommen eines Kandidaten im Satz-Romaji
-    durch die Lücke.
+    """Ersetzt die Antwort-Lesung im Satz-Romaji durch die Lücke ``gap``.
 
-    Laesst sich die Antwort-Lesung nicht lokalisieren — etwa eine Kanji-Antwort
-    ohne Kana-Umschrift (今/時/分) oder eine Endung wie ます/です, die im Romaji als
-    Wortsuffix ohne linke Wortgrenze steht — kommt das VOLLE Satz-Romaji als
-    Lesehilfe zurueck. Eine fehlende Romaji-Zeile auf der Cloze-Vorderseite ist
-    schlimmer als der seltene Mini-Spoiler. Leer bleibt es nur, wenn gar kein
-    Satz-Romaji existiert."""
-    if not full:
+    Robust gegen die Unterschiede zwischen Kana-Umschrift und Satz-Romaji:
+    Makron (``dō``↔``dou``) und Leerzeichen (``desuka``↔``desu ka``) werden beim
+    Suchen ignoriert. Sehr kurze Lesungen (≤2 Zeichen, z.B. ``wa``/``mo``) nur an
+    Wortgrenzen, um Treffer mitten im Wort zu vermeiden.
+
+    Findet sich die Lesung NICHT (Kanji-Antwort ohne Umschrift o.ä.), kommt ``''``
+    zurück — die Karte zeigt dann keine Romaji-Zeile, aber die Lösung wird NIE
+    unmaskiert gespoilert. Leer auch ohne jedes Satz-Romaji.
+    """
+    if not full or not candidates:
         return ''
-    for cand in (candidates or []):
-        m = re.search(r'\b' + re.escape(cand) + r'\b', full, re.IGNORECASE)
-        if m:
-            return full[:m.start()] + gap + full[m.end():]
-    return full
+
+    def _skip(ch: str) -> bool:
+        return ch.isspace() or ch in '-‐'
+
+    # Normalisierte Suchform `s` (lowercase + Makron→Vokaldopplung) mit Rückbezug
+    # `m2o` jedes s-Zeichens auf seinen Index in `full`. Gesucht wird auf `s`,
+    # gerendert wird aus `full` — so bleibt der NICHT maskierte Rest exakt 1:1
+    # erhalten (inkl. Makron/Bindestrich), nur die Lücke wird ersetzt.
+    s_chars: list[str] = []
+    m2o: list[int] = []
+    for i, ch in enumerate(full):
+        frag = (_ROMAJI_MACRON.get(ch) or _ROMAJI_MACRON.get(ch.lower())
+                or ch).lower()
+        for c in frag:
+            s_chars.append(c)
+            m2o.append(i)
+    s = ''.join(s_chars)
+    # Kompaktform ohne Leerzeichen/Bindestriche (Romaji trennt Zähl-Lesungen
+    # mit '-': "nan-ji", "hachi-gatsu") + Rückbezug auf s-Indizes.
+    cidx = [k for k, c in enumerate(s) if not _skip(c)]
+    compact = ''.join(s[k] for k in cidx)
+
+    for cand in sorted({c for c in candidates if c}, key=len, reverse=True):
+        nc = ''.join(c for c in _expand_macrons(cand).lower() if not _skip(c))
+        if not nc:
+            continue
+        if len(nc) <= 2:
+            # Kurze Lesungen (wa/mo/ni/o …) nur an Wortgrenzen.
+            mt = re.search(r'\b' + re.escape(nc) + r'\b', s)
+            if mt:
+                o0, o1 = m2o[mt.start()], m2o[mt.end() - 1] + 1
+                return full[:o0] + gap + full[o1:]
+            continue
+        pos = compact.find(nc)
+        if pos != -1:
+            o0 = m2o[cidx[pos]]
+            o1 = m2o[cidx[pos + len(nc) - 1]] + 1
+            return full[:o0] + gap + full[o1:]
+    return ''
+
+
+def _pyk_romaji(text: str) -> str:
+    """Romanisiert beliebigen japanischen Text (inkl. Kanji) via pykakasi zu
+    Hepburn. Leerer String, wenn pykakasi fehlt oder nichts uebrig bleibt.
+
+    Wird nur fuer den Cloze-Fallback gebraucht, wenn die Antwort ein Kanji ist
+    und sich darum nicht im kuratierten Romaji lokalisieren laesst — dann wird
+    die Romaji-Zeile aus den Satzteilen vor/nach der Luecke neu gebaut.
+
+    Bewusst FRISCHE pykakasi-Instanz pro Aufruf: eine global wiederverwendete
+    Instanz lieferte nach vielen ``convert``-Aufrufen fuer denselben Satz
+    abgeschnittene Ergebnisse (z.B. nur ``desu`` statt des ganzen Satzes). Der
+    Pfad laeuft nur fuer die wenigen Kanji-Luecken-Karten, darum unkritisch."""
+    text = (text or '').strip()
+    if not text:
+        return ''
+    try:
+        import pykakasi
+        kks = pykakasi.kakasi()
+    except Exception:  # noqa: BLE001  (pykakasi optional → Fallback auf '')
+        return ''
+    parts = [(_t.get('hepburn') or '').strip() for _t in kks.convert(text)]
+    out = ' '.join(p for p in parts if p)
+    # Standalone-Partikel-Norm (は→wa, へ→e am Wort-/Satzanfang ohne Kontext)
+    out = re.sub(r'\bha\b', 'wa', out)
+    out = re.sub(r'\bhe\b', 'e', out)
+    # Japanische Satzzeichen + Whitespace glaetten
+    out = out.replace('、', ', ').replace('。', '.')
+    out = re.sub(r'\s+([,.!?])', r'\1', out)
+    out = re.sub(r'\s{2,}', ' ', out).strip(' ')
+    return out
+
+
+def _romaji_with_gap(before: str, after: str, gap: str = '＿＿') -> str:
+    """Baut die Satz-Romaji-Zeile aus den Teilen VOR und NACH der Luecke neu auf
+    und setzt ``gap`` dazwischen. Die Antwort selbst wird nie romanisiert →
+    garantiert spoilerfrei. Fuer Kanji-Luecken, die ``_mask_romaji`` nicht
+    auffindet. Leer nur, wenn beide Teile kein Romaji ergeben."""
+    rb = _pyk_romaji(before)
+    ra = _pyk_romaji(after)
+    if not rb and not ra:
+        return ''
+    out = ' '.join(p for p in (rb, gap, ra) if p)
+    out = re.sub(r'\s+([,.!?])', r'\1', out)
+    out = re.sub(r'\s{2,}', ' ', out).strip(' ')
+    if out and out[0].islower():
+        out = out[0].upper() + out[1:]
+    return out
 
 
 def make_grammar_cloze(examples: list[dict[str, str]],
@@ -452,18 +561,26 @@ def make_grammar_cloze(examples: list[dict[str, str]],
                 m = re.search(pattern, jp)
                 if m:
                     answer = jp[m.start():m.end()]
+                    before, after = jp[:m.start()], jp[m.end():]
                     romaji = ex.get('romaji', '')
+                    # 1) Antwort-Lesung im kuratierten Satz-Romaji maskieren.
+                    masked = _mask_romaji(
+                        romaji, _answer_romaji_candidates(answer))
+                    # 2) Fallback (z.B. Kanji-Lücke, im Romaji nicht auffindbar):
+                    #    Zeile aus before/after neu romanisieren — der Rest steht
+                    #    als Romaji, nur die Lücke bleibt leer (nie gespoilert).
+                    if not masked:
+                        masked = _romaji_with_gap(before, after)
                     return {
-                        'before': jp[:m.start()],
-                        'after': jp[m.end():],
+                        'before': before,
+                        'after': after,
                         'answer': answer,
                         'japanese': jp,
                         'romaji': romaji,
-                        # Satz-Romaji mit maskierter Antwort (Lesehilfe ohne
-                        # Spoiler); volles Romaji, wenn die Antwort nicht
-                        # lokalisierbar ist; '' nur ohne jedes Satz-Romaji.
-                        'romaji_masked': _mask_romaji(
-                            romaji, _answer_romaji_candidates(answer)),
+                        # Satz-Romaji mit ausgeblendeter Lücke (Lesehilfe ohne
+                        # Spoiler). Leer nur, wenn weder kuratiertes Romaji noch
+                        # der pykakasi-Fallback etwas liefern.
+                        'romaji_masked': masked,
                         'translation': ex.get('translation', ''),
                     }
     return None
