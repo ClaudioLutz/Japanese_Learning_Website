@@ -1400,9 +1400,9 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                                                     {% endfor %}
                                                                                 </div>
                                                                                 {% endif %}
-                                                                                <p><strong>Erklärung:</strong><br>{{ content_data.explanation }}</p>
+                                                                                <p><strong>Erklärung:</strong><br>{{ content_data.explanation | markdown_inline }}</p>
                                                                                 {% if content_data.nuance %}
-                                                                                <p class="grammar-nuance"><strong>💡 Nuance / Achtung:</strong><br>{{ content_data.nuance }}</p>
+                                                                                <p class="grammar-nuance"><strong>💡 Nuance / Achtung:</strong><br>{{ content_data.nuance | markdown_inline }}</p>
                                                                                 {% endif %}
                                                                             {% endif %}
                                                                         </div>
