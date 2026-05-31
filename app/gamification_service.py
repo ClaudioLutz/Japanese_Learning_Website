@@ -156,7 +156,11 @@ def get_card_stage(fsrs_card_json):
 def update_daily_aggregate(user_id, rating_int, time_taken_ms, xp_earned,
                            is_new=False, leveled_up=False, leveled_down=False):
     """Aktualisiert die taeglich aggregierten Review-Statistiken (inkrementell)."""
-    today = datetime.utcnow().date()
+    # Tagesgrenze in CH-Lokalzeit (Europe/Zurich) — konsistent mit User.update_streak.
+    # Bei UTC wuerden spaetabendliche CH-Reviews auf den Vortag aggregiert und damit
+    # von der Streak-Tagesgrenze abweichen (Heatmap/Streak driften auseinander).
+    from zoneinfo import ZoneInfo
+    today = datetime.now(ZoneInfo("Europe/Zurich")).date()
 
     agg = DailyReviewAggregate.query.filter_by(
         user_id=user_id, review_date=today

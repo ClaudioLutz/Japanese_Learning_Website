@@ -1,6 +1,47 @@
 {% extends "base.html" %}
 {% block title %}Konto erstellen{% endblock %}
 {% block robots %}noindex,follow{% endblock %}
+{% block styles %}
+<style>
+  /* Sichtbarer Passwort-Hinweis + Show/Hide-Toggle (stilkonform zur auth-card) */
+  .auth-card .pw-field {
+    position: relative;
+  }
+  .auth-card .pw-field .form-control {
+    /* Platz fuer den Augen-Button rechts */
+    padding-right: 2.75rem;
+  }
+  .auth-card .pw-toggle {
+    position: absolute;
+    top: 50%;
+    right: 0.6rem;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    color: var(--ink-500);
+    cursor: pointer;
+    padding: 0.35rem;
+    line-height: 1;
+    border-radius: 6px;
+    transition: color 0.15s, background 0.15s;
+  }
+  .auth-card .pw-toggle:hover {
+    color: var(--ai);
+    background: var(--ink-100, rgba(0, 0, 0, 0.04));
+  }
+  .auth-card .pw-toggle:focus-visible {
+    outline: 2px solid var(--ai);
+    outline-offset: 1px;
+  }
+  .auth-card .pw-hint {
+    font-size: 0.8125rem;
+    color: var(--ink-500);
+    margin-top: 0.4rem;
+    margin-bottom: 0;
+    line-height: 1.4;
+  }
+</style>
+{% endblock %}
 {% block content %}
 <div class="auth-shell">
   <div class="auth-card">
@@ -13,6 +54,7 @@
 
     <form method="POST">
       {{ form.hidden_tag() }}
+      <input type="hidden" name="next" value="{{ request.args.get('next', '') }}">
       <div class="mb-3">
         {{ form.username.label(class="form-label") }}
         {{ form.username(class="form-control", autocomplete="username") }}
@@ -27,16 +69,33 @@
           <div class="text-danger">{{ error }}</div>
         {% endfor %}
       </div>
-      <div class="mb-3">
+      <div class="mb-3" x-data="{ show: false }">
         {{ form.password.label(class="form-label") }}
-        {{ form.password(class="form-control", autocomplete="new-password") }}
+        <div class="pw-field">
+          {{ form.password(class="form-control", autocomplete="new-password", **{"x-ref": "pw"}) }}
+          <button type="button" class="pw-toggle"
+                  @click="show = !show; $refs.pw.type = show ? 'text' : 'password'"
+                  :aria-label="show ? 'Passwort verbergen' : 'Passwort anzeigen'"
+                  :aria-pressed="show">
+            <i class="fas" :class="show ? 'fa-eye-slash' : 'fa-eye'" aria-hidden="true"></i>
+          </button>
+        </div>
+        <p class="pw-hint">Mindestens 8 Zeichen, mit Gross- und Kleinbuchstabe sowie einer Ziffer.</p>
         {% for error in form.password.errors %}
           <div class="text-danger">{{ error }}</div>
         {% endfor %}
       </div>
-      <div class="mb-3">
+      <div class="mb-3" x-data="{ show: false }">
         {{ form.password2.label(class="form-label") }}
-        {{ form.password2(class="form-control", autocomplete="new-password") }}
+        <div class="pw-field">
+          {{ form.password2(class="form-control", autocomplete="new-password", **{"x-ref": "pw2"}) }}
+          <button type="button" class="pw-toggle"
+                  @click="show = !show; $refs.pw2.type = show ? 'text' : 'password'"
+                  :aria-label="show ? 'Passwort verbergen' : 'Passwort anzeigen'"
+                  :aria-pressed="show">
+            <i class="fas" :class="show ? 'fa-eye-slash' : 'fa-eye'" aria-hidden="true"></i>
+          </button>
+        </div>
         {% for error in form.password2.errors %}
           <div class="text-danger">{{ error }}</div>
         {% endfor %}

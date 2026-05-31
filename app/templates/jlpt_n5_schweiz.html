@@ -1,12 +1,15 @@
 {% extends "base.html" %}
 
-{# WARTUNG (jährlich, nach UZH-Publikation aktualisieren): Prüfungsdatum,
+{# WARTUNG (jährlich, nach UZH-Publikation aktualisieren): Prüfungsfenster,
    -gebühren und Jahreszahl in Title/Meta/Hero/dl/FAQ + JSON-LD synchron halten.
    Quelle: https://www.aoi.uzh.ch/de/japanologie/fremdsprache/jlpt.html
-   Stand zuletzt geprüft: Mai 2026 (Termin 6.12.2026, N5/N4 CHF 130, N3–N1 CHF 140). #}
+   Stand zuletzt geprüft: Mai 2026 (N5/N4 CHF 130, N3–N1 CHF 140).
+   HINWEIS: Bewusst KEIN fixes Prüfungsdatum hartkodiert — die UZH publiziert den
+   konkreten Dezember-Termin 2026 erst im Verlauf des Jahres. Daher nur das
+   typische Fenster (Juli/Dezember) nennen und auf die UZH-Quelle verlinken. #}
 
 {% block title %}JLPT N5 Schweiz 2026 — Prüfung Zürich & Vorbereitung auf Deutsch{% endblock %}
-{% block meta_description %}JLPT N5 in der Schweiz: Prüfung am 6. Dezember 2026 an der Universität Zürich (Gebühr CHF 130). Strukturierte Online-Vorbereitung auf Deutsch — von Hiragana bis zu deinen ersten Sätzen. Lifetime-Zugriff CHF 9.90.{% endblock %}
+{% block meta_description %}JLPT N5 in der Schweiz: Prüfung an der Universität Zürich (typischerweise im Dezember, Gebühr CHF 130). Strukturierte Online-Vorbereitung auf Deutsch — von Hiragana bis zu deinen ersten Sätzen. Lifetime-Zugriff CHF 9.90.{% endblock %}
 {% block canonical %}{{ site_url }}/jlpt-n5-schweiz{% endblock %}
 {% block og_type %}article{% endblock %}
 {% block og_title %}JLPT N5 Schweiz — Online-Vorbereitung auf Deutsch{% endblock %}
@@ -130,7 +133,7 @@
           "name": "Wann ist der nächste JLPT-Prüfungstermin in Zürich?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Der nächste JLPT-Termin in Zürich ist Sonntag, 6. Dezember 2026, in den Räumlichkeiten der Universität Zürich. Die Anmeldung öffnet typischerweise im Sommer 2026 — die genauen Fristen werden vom Asien-Orient-Institut der UZH veröffentlicht. Wer den Termin verpasst, hat erst im Dezember 2027 wieder die Möglichkeit in der Schweiz."
+            "text": "Der JLPT findet in der Schweiz typischerweise im Dezember an der Universität Zürich statt. Das konkrete Datum für 2026 wird vom Asien-Orient-Institut der UZH im Verlauf des Jahres publiziert; die Anmeldung öffnet voraussichtlich im Sommer 2026. Den aktuellen Stand findest du jederzeit auf der offiziellen UZH-JLPT-Seite (aoi.uzh.ch)."
           }
         },
         {
@@ -188,8 +191,9 @@
   <header class="n5ch-hero">
     <h1>JLPT N5 in der Schweiz — Online-Vorbereitung auf Deutsch</h1>
     <p class="n5ch-lead">
-      Die offizielle JLPT-Prüfung findet einmal jährlich im Dezember an der
-      Universität Zürich statt — der nächste Termin ist der 6. Dezember 2026.
+      Die offizielle JLPT-Prüfung findet in der Schweiz typischerweise im
+      Dezember an der Universität Zürich statt — den konkreten Termin für 2026
+      publiziert die UZH im Verlauf des Jahres.
       Bereite dich strukturiert auf den JLPT N5 vor — von Hiragana bis zu deinen
       ersten japanischen Sätzen, alles auf Deutsch erklärt.
     </p>
@@ -281,8 +285,13 @@
            target="_blank" rel="noopener">aoi.uzh.ch › JLPT</a>
       </dd>
 
-      <dt>Nächster Termin</dt>
-      <dd>Sonntag, 6. Dezember 2026 (alle Stufen N5–N1)</dd>
+      <dt>Termin</dt>
+      <dd>
+        Typischerweise im Dezember (alle Stufen N5–N1). Das genaue Datum für 2026
+        wird von der UZH im Verlauf des Jahres publiziert — aktueller Stand siehe
+        <a href="https://www.aoi.uzh.ch/de/japanologie/fremdsprache/jlpt.html"
+           target="_blank" rel="noopener">aoi.uzh.ch › JLPT</a>.
+      </dd>
 
       <dt>Häufigkeit</dt>
       <dd>1× jährlich, immer im Dezember (kein Juli-Termin in der Schweiz)</dd>
@@ -474,11 +483,15 @@
     <details class="n5ch-faq">
       <summary><h3>Wann ist der nächste JLPT-Prüfungstermin in Zürich?</h3></summary>
       <p>
-        Der nächste JLPT-Termin in Zürich ist Sonntag, 6. Dezember 2026, in
-        den Räumlichkeiten der Universität Zürich. Die Anmeldung öffnet
-        typischerweise im Sommer 2026 — die genauen Fristen werden vom
-        Asien-Orient-Institut der UZH veröffentlicht. Wer den Termin verpasst,
-        hat erst im Dezember 2027 wieder die Möglichkeit in der Schweiz.
+        Der JLPT findet in der Schweiz typischerweise im Dezember an der
+        Universität Zürich statt. Das konkrete Datum für 2026 wird vom
+        Asien-Orient-Institut der UZH im Verlauf des Jahres publiziert; die
+        Anmeldung öffnet voraussichtlich im Sommer 2026. Den aktuellen Stand
+        findest du jederzeit auf der offiziellen
+        <a href="https://www.aoi.uzh.ch/de/japanologie/fremdsprache/jlpt.html"
+           target="_blank" rel="noopener">UZH-JLPT-Seite</a>. Wer den
+        Dezember-Termin verpasst, hat in der Schweiz erst im Folgejahr wieder
+        Gelegenheit (im Ausland teils auch im Juli).
       </p>
     </details>
 

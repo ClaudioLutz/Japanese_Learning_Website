@@ -62,7 +62,12 @@ class User(UserMixin, db.Model):
 
     def update_streak(self):
         """Aktualisiert den Tages-Streak bei Aktivitaet mit Streak-Freeze-Unterstuetzung."""
-        today = datetime.utcnow().date()
+        # Tagesgrenze in CH-Lokalzeit (Europe/Zurich), NICHT UTC: bei UTC wuerde eine
+        # spaetabendliche Session (z.B. 23:30 CH = 22:30/21:30 UTC ist noch ok, aber
+        # 00:30 CH = 23:30 UTC des Vortags) auf den falschen Kalendertag fallen und den
+        # Streak faelschlich brechen. Europe/Zurich = der Tag, den der Nutzer sieht.
+        from zoneinfo import ZoneInfo
+        today = datetime.now(ZoneInfo("Europe/Zurich")).date()
         if self.last_activity_date == today:
             return  # Bereits heute aktiv
         from datetime import timedelta

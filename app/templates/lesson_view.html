@@ -40,6 +40,24 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
+  "@type": "Course",
+  "name": {{ lesson.title|tojson }},
+  "description": {{ (lesson.description or lesson.title)|striptags|truncate(300, killwords=True)|tojson }},
+  "url": "{{ site_url }}/lessons/{{ lesson.id }}",
+  "inLanguage": "de",
+  "isAccessibleForFree": {{ 'true' if lesson.allow_guest_access or lesson.lesson_type == 'free' else 'false' }},
+  {% if lesson.category and lesson.category.jlpt_level %}"educationalLevel": "JLPT N{{ lesson.category.jlpt_level }}",{% endif %}
+  "provider": {
+    "@type": "EducationalOrganization",
+    "@id": "{{ site_url }}/#org",
+    "name": "{{ site_name }}",
+    "sameAs": "{{ site_url }}"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
     { "@type": "ListItem", "position": 1, "name": "Start", "item": "{{ site_url }}/" },
@@ -1790,7 +1808,8 @@ html.hide-front-romaji .front-romaji { display: none !important; }
             </div>
 
             {# ── Was kommt als Nächstes — Internal Linking + UX ── #}
-            {% if prev_lesson or next_lesson or parent_module %}
+            {# Block rendert immer: mind. „Alle N5-Module" + Bundle-CTA sind ohne
+               Nachbar-Lektionen vorhanden, mit prev/next/Modul wenn im Kontext. #}
             <div class="next-up-block mt-4">
                 <h2 class="next-up-title">Was kommt als Nächstes</h2>
                 <div class="next-up-grid">
@@ -1812,7 +1831,19 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                         <span class="next-up-name">{{ parent_module.name }}</span>
                     </a>
                     {% endif %}
+                    {# Alle Module des Levels — defensiv: nur Level-Hub-Link, kein Routen-Eingriff #}
+                    <a href="{% if parent_module and parent_module.jlpt_level %}{{ site_url }}/learn/n{{ parent_module.jlpt_level }}{% else %}{{ url_for('routes.lessons') }}{% endif %}" class="next-up-card next-up-all">
+                        <span class="next-up-label">⊞ Alle Module</span>
+                        <span class="next-up-name">{% if parent_module and parent_module.jlpt_level %}Alle N{{ parent_module.jlpt_level }}-Module ansehen{% else %}Alle Lektionen ansehen{% endif %}</span>
+                    </a>
                 </div>
+                {# Dezenter Bundle-CTA — nur fuer Gaeste/Nicht-Premium relevant, aber
+                   bewusst zurueckhaltend (kein aggressiver Push am Lektionsende). #}
+                {% if not (current_user.is_authenticated and current_user.subscription_level == 'premium') %}
+                <a href="{{ url_for('bundle.n5_bundle') }}" class="next-up-bundle-cta">
+                    Den ganzen N5-Pfad freischalten — einmal zahlen, kein Abo →
+                </a>
+                {% endif %}
             </div>
             <style>
               .next-up-block {
@@ -1847,8 +1878,19 @@ html.hide-front-romaji .front-romaji { display: none !important; }
               .next-up-next .next-up-label { text-align: right; color: var(--matcha, #7A9033); }
               .next-up-next .next-up-name { text-align: right; }
               .next-up-parent .next-up-label { color: #94a3b8; }
+              .next-up-all .next-up-label { color: #64748b; }
+              .next-up-bundle-cta {
+                display: block; margin-top: 0.9rem; text-align: center;
+                font-size: 0.9rem; font-weight: 600; color: var(--shu, #EB6101);
+                text-decoration: none; padding: 0.55rem 0.75rem;
+                border: 1px dashed var(--shu, #EB6101); border-radius: 10px;
+                transition: background 0.15s;
+              }
+              .next-up-bundle-cta:hover {
+                background: rgba(235, 97, 1, 0.06); text-decoration: none;
+                color: var(--shu, #EB6101);
+              }
             </style>
-            {% endif %}
 
             <div class="mt-4 d-flex justify-content-between">
                 <a href="{{ url_for('routes.lessons') }}" class="btn btn-outline-secondary">
@@ -1891,6 +1933,9 @@ const lessonData = {
 
 let startTime = Date.now();
 const isAuthenticated = {{ 'true' if current_user.is_authenticated else 'false' }};
+
+// Analytics: Lektionsstart (Gast wie eingeloggt). Stub kommt aus base.html.
+try { window.plausible && window.plausible('lesson_start'); } catch (e) {}
 
 // 3D Flip Card JavaScript - Scalable Implementation
 document.addEventListener('DOMContentLoaded', () => {
@@ -2272,6 +2317,9 @@ function initializeNavigation() {
             currentPage = event.to;
             updateNavigationUI();
             updateURLHash();
+            // Gast-Celebration: Gaeste haben keinen Server-Progress, darum loest
+            // das Erreichen der LETZTEN Seite die clientseitige Feier aus.
+            maybeShowGuestCompletion();
         });
     }
 
@@ -2311,6 +2359,38 @@ function autoCompletePassiveItemsOnPage(pageIdx) {
         }
     });
 }
+
+// Gast-Celebration-Trigger: feuert die clientseitige Feier, sobald ein
+// ausgeloggter Gast das Ende der Lektion erreicht. Bei eingeloggten Nutzern
+// uebernimmt weiterhin der Server-Progress-Pfad (markContentComplete -> 100%).
+function maybeShowGuestCompletion() {
+    if (!isGuestUser()) return;
+    if (completionShown) return;
+    // Letzte Seite erreicht? (Bei Single-Page-Lektionen ist das sofort der Fall.)
+    if (totalPages <= 1 || currentPage >= totalPages - 1) {
+        showLessonComplete();
+    }
+}
+
+// Single-Page-Lektionen (kein Carousel-Slide-Event): Gast-Feier ans Scroll-Ende
+// bzw. an einen kurzen Verweil-Timer haengen, damit der Aha-Moment nicht fehlt.
+document.addEventListener('DOMContentLoaded', function() {
+    if (!isGuestUser()) return;
+    if (totalPages > 1) return; // Mehrseitige Lektionen feiern via Slide-Event.
+    const triggerOnScrollEnd = function() {
+        const nearBottom = (window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 80);
+        if (nearBottom) {
+            maybeShowGuestCompletion();
+            window.removeEventListener('scroll', triggerOnScrollEnd);
+        }
+    };
+    // Falls die Seite kuerzer als der Viewport ist, sofort als „durch" werten.
+    if (document.body.offsetHeight <= window.innerHeight + 80) {
+        setTimeout(maybeShowGuestCompletion, 1200);
+    } else {
+        window.addEventListener('scroll', triggerOnScrollEnd, { passive: true });
+    }
+});
 
 function restorePageFromURL() {
     // Check if there's a page hash in the URL
@@ -3115,9 +3195,30 @@ function updateNavbarXp(totalXp, streak) {
 
 let completionShown = false;
 
+// Gast-Erkennung: window.currentUser kommt aus base.html (null = ausgeloggt).
+function isGuestUser() {
+    return (typeof window.currentUser === 'undefined') || window.currentUser === null;
+}
+
 function showLessonComplete() {
     if (completionShown) return;
     completionShown = true;
+
+    // Analytics: Lektionsabschluss (Gast wie eingeloggt). Stub aus base.html.
+    try { window.plausible && window.plausible('lesson_complete'); } catch (e) {}
+
+    // Gast-Variante: Primaer-CTA auf „Fortschritt sichern -> Konto erstellen"
+    // umschreiben. Der eingeloggte Pfad bleibt unveraendert (Default-CTA).
+    if (isGuestUser()) {
+        const primaryCta = document.querySelector('#lessonCompleteModal .btn-primary');
+        if (primaryCta && !primaryCta.dataset.guestCta) {
+            primaryCta.dataset.guestCta = '1';
+            primaryCta.href = '/register?next=' + encodeURIComponent(window.location.pathname + window.location.search);
+            primaryCta.innerHTML = '<i class="fas fa-user-plus me-2"></i>Fortschritt sichern &rarr; Konto erstellen';
+        }
+        const secondaryCta = document.querySelector('#lessonCompleteModal [data-bs-dismiss="modal"]');
+        if (secondaryCta) secondaryCta.textContent = 'Lektion nochmal ansehen';
+    }
 
     // Calculate stats
     const totalContent = document.querySelectorAll('.content-item').length;

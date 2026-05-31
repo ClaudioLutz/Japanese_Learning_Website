@@ -65,6 +65,16 @@
     </p>
   </header>
 
+  {# ─────────── Bundle-Banner (C1) — persistenter No-Brainer-Anker ─────────── #}
+  <div class="lp-bundle-banner" role="region" aria-label="N5 Komplett — Bundle-Hinweis">
+    <span class="lp-bundle-icon" aria-hidden="true">⚡</span>
+    <p class="lp-bundle-text">
+      Alle Premium-Lektionen lifetime für einmalig <strong>CHF 9.90</strong>
+      — günstiger als zwei Einzelkäufe, kein Abo, 30 Tage Geld zurück.
+    </p>
+    <a href="{{ url_for('bundle.n5_bundle') }}" class="lp-bundle-cta">N5 Komplett ansehen →</a>
+  </div>
+
   {# ─────────── Filter Bar ─────────── #}
   <section class="lp-filterbar" aria-label="Filter und Sortierung">
     {# Suche #}
@@ -332,6 +342,36 @@
 }
 .lp-stats { display: inline-block; margin-left: 0.5rem; color: var(--ink-500); font-size: 0.95rem; }
 .lp-stats strong { color: var(--kon); }
+
+/* Bundle-Banner (C1) — Sumi/Shu, analog bundle-hint auf der Home */
+.lp-bundle-banner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--kon-50);
+  border: 1px solid var(--kon-100);
+  border-left: 3px solid var(--shu);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  margin: 0 auto 1.5rem;
+  max-width: 760px;
+}
+.lp-bundle-icon { font-size: 1.4rem; flex-shrink: 0; color: var(--shu); }
+.lp-bundle-text { flex: 1; margin: 0; color: var(--ink-700); font-size: 0.95rem; line-height: 1.5; }
+.lp-bundle-text strong { color: var(--kon); }
+.lp-bundle-cta {
+  color: var(--shu); font-weight: 600; font-size: 0.9rem;
+  white-space: nowrap; text-decoration: none; flex-shrink: 0;
+  padding: 0.5rem 0.85rem;
+  border: 1px solid var(--shu);
+  border-radius: 8px;
+  transition: background-color .15s;
+}
+.lp-bundle-cta:hover { background: rgba(235,97,1,.08); color: var(--shu); text-decoration: none; }
+@media (max-width: 600px) {
+  .lp-bundle-banner { flex-direction: column; text-align: center; }
+  .lp-bundle-cta { align-self: stretch; text-align: center; }
+}
 
 /* Filter Bar — hairline-only */
 .lp-filterbar {

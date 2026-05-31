@@ -45,18 +45,53 @@
             🧠 <span id="homeReviewCount">0 Karten</span> wiederholen
           </a>
         </div>
+
+        {# E6 (a) — „Dein Start"-Strip nur fuer eingeloggte Neulinge ohne Fortschritt #}
+        {% if not last_lesson %}
+        <ol class="home-start-strip" aria-label="Dein Start in 3 Schritten">
+          <li><span class="start-num">1</span> Vokal-Probe ausprobieren</li>
+          <li><span class="start-num">2</span> Erste Lektion starten</li>
+          <li><span class="start-num">3</span> Streak aufbauen</li>
+        </ol>
+        {% endif %}
       {% else %}
         <h1 class="home-h1">Hiragana am Morgen.<br>Kanji am Abend.</h1>
         <p class="home-sub">
-          Strukturiert nach JLPT-N5. <strong>{{ n5_vocab_count or 510 }} Vokabeln</strong>,
-          <strong>{{ n5_kanji_count or 55 }} Kanji</strong>, wöchentlich neu — auf Deutsch erklärt.
+          {# E4 — „heute / Ziel"-Sprache aus n5_coverage, mit Fallback auf bisherige Werte #}
+          {% if n5_coverage %}
+            Schon <strong>{{ n5_coverage.vocab_have }} von {{ n5_coverage.vocab_target }} N5-Vokabeln</strong>
+            und <strong>{{ n5_coverage.kanji_have }} Kanji</strong> — wöchentlich mehr, auf Deutsch erklärt.
+          {% else %}
+            Strukturiert nach JLPT-N5. <strong>{{ n5_vocab_count or 510 }} Vokabeln</strong>,
+            <strong>{{ n5_kanji_count or 55 }} Kanji</strong>, wöchentlich neu — auf Deutsch erklärt.
+          {% endif %}
         </p>
+
+        {# E1 — Differenzierung above-the-fold: „für wen / statt was" ohne Markennamen #}
+        <p class="home-pitch">
+          Für Erwachsene, die das <em>Warum</em> hinter jedem Satz verstehen wollen —
+          strukturierte Grammatik auf Deutsch, kein Abo, keine Lückentext-Raterei.
+        </p>
+        <ul class="home-usp-strip" aria-label="Was diese Plattform ausmacht">
+          <li><span aria-hidden="true">🇩🇪</span> Auf Deutsch erklärt</li>
+          <li><span aria-hidden="true">∞</span> Kein Abo, Lifetime</li>
+          <li><span aria-hidden="true">🧠</span> Spaced Repetition (SRS)</li>
+        </ul>
+
         <div class="home-actions">
-          <a href="{{ url_for('routes.lessons', access='free') }}" class="btn-shu">
+          {# E2 — Primär-CTA deep-linkt direkt in die erste Gast-Lektion (Fallback: Lektionsliste) #}
+          <a href="{% if first_guest_lesson %}{{ url_for('routes.view_lesson', lesson_id=first_guest_lesson.id) }}{% else %}{{ url_for('routes.lessons', access='free') }}{% endif %}"
+             class="btn-shu">
             Kostenlos starten
           </a>
           <a href="{{ url_for('bundle.n5_bundle') }}" class="btn-ghost-jp">
             N5 Komplett · CHF 9.90
+          </a>
+        </div>
+        {# E2 — Lektionsliste bleibt als sekundärer Link erhalten #}
+        <div class="home-actions-secondary">
+          <a href="{{ url_for('routes.lessons', access='free') }}" class="home-secondary-link">
+            Alle Lektionen ansehen →
           </a>
         </div>
 
@@ -70,8 +105,13 @@
             <strong>Strikt nach offizieller JLPT-N5-Liste.</strong>
             Aus Rorschach SG. Komplett auf Deutsch, mit Fokus auf Lerner aus der Schweiz.
             <div class="trust-text-numbers">
-              {{ n5_vocab_count or 510 }} Vokabeln <span class="dot"></span>
-              {{ n5_kanji_count or 55 }} Kanji <span class="dot"></span>
+              {% if n5_coverage %}
+                {{ n5_coverage.vocab_have }} / {{ n5_coverage.vocab_target }} Vokabeln <span class="dot"></span>
+                {{ n5_coverage.kanji_have }} / {{ n5_coverage.kanji_target }} Kanji <span class="dot"></span>
+              {% else %}
+                {{ n5_vocab_count or 510 }} Vokabeln <span class="dot"></span>
+                {{ n5_kanji_count or 55 }} Kanji <span class="dot"></span>
+              {% endif %}
               92 Hiragana &amp; Katakana <span class="dot"></span>
               gegen Tanos / MNN / Genki gegengeprüft
             </div>
@@ -99,6 +139,13 @@
             <span>Fortschritt</span>
             <div class="stage-progress-bar" id="stageProgressBar"><span></span></div>
             <span><strong id="liveCounterMini">0</strong> von 5 Vokalen</span>
+          </div>
+          {# E3 — bei 5/5 animiert eingeblendeter CTA in die erste Gast-Lektion (Fallback: Lektionsliste) #}
+          <div class="stage-cta-done" id="stageCtaDone" hidden>
+            <a href="{% if first_guest_lesson %}{{ url_for('routes.view_lesson', lesson_id=first_guest_lesson.id) }}{% else %}{{ url_for('routes.lessons', access='free') }}{% endif %}"
+               class="btn-shu stage-cta-done-btn">
+              → Erste Lektion starten
+            </a>
           </div>
         </div>
       </div>
@@ -221,6 +268,11 @@
                     {% elif entry.percent and entry.percent > 0 and entry.first_lesson %}
                       <a href="{{ url_for('routes.view_lesson', lesson_id=entry.first_lesson.id) }}"
                          class="station-cta is-continue">Weiterlernen →</a>
+                    {# D4 — Gaeste direkt in die erste frei zugaengliche Lektion des Moduls,
+                       damit sie nicht in eine gesperrte erste Lektion (z.B. Kanji) laufen #}
+                    {% elif not current_user.is_authenticated and entry.first_guest_lesson %}
+                      <a href="{{ url_for('routes.view_lesson', lesson_id=entry.first_guest_lesson.id) }}"
+                         class="station-cta">Beginnen →</a>
                     {% elif entry.first_lesson and m.slug %}
                       <a href="{{ url_for('routes.module_detail', level=5, slug=m.slug) }}"
                          class="station-cta">Beginnen →</a>
@@ -335,6 +387,72 @@
     display: flex; gap: 0.75rem;
     justify-content: center; flex-wrap: wrap;
     margin-bottom: 0;
+}
+
+/* E1 — Differenzierungs-Pitch + USP-Streifen */
+.home-pitch {
+    font-size: 1rem;
+    color: var(--ink-700);
+    max-width: 600px;
+    line-height: 1.5;
+    margin: -0.5rem auto 1.1rem;
+}
+.home-pitch em { font-style: normal; color: var(--shu); font-weight: 600; }
+.home-usp-strip {
+    display: flex; flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 1.4rem;
+    list-style: none;
+    margin: 0 auto 1.75rem;
+    padding: 0;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+    color: var(--ink-600);
+}
+.home-usp-strip li {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+}
+.home-usp-strip li span { font-size: 0.95rem; }
+
+/* E2 — sekundaerer „Alle Lektionen"-Link unter den CTAs */
+.home-actions-secondary { margin-top: 0.85rem; }
+.home-secondary-link {
+    font-size: 0.88rem;
+    color: var(--ink-500);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: color .15s, border-color .15s;
+}
+.home-secondary-link:hover {
+    color: var(--shu);
+    border-bottom-color: var(--shu);
+    text-decoration: none;
+}
+
+/* E6 (a) — „Dein Start"-3-Schritte-Strip fuer eingeloggte Neulinge */
+.home-start-strip {
+    display: flex; flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 1.5rem;
+    list-style: none;
+    margin: 1.4rem auto 0;
+    padding: 0;
+    font-size: 0.88rem;
+    color: var(--ink-600);
+}
+.home-start-strip li {
+    display: inline-flex; align-items: center; gap: 0.45rem;
+}
+.home-start-strip .start-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--shu);
+    color: #fff;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 0.7rem; font-weight: 600;
+    flex-shrink: 0;
 }
 
 /* ════════════════════════════════════════
@@ -629,6 +747,27 @@
     transition: inset .35s cubic-bezier(.25,.8,.25,1);
 }
 .stage-progress-bar.is-done > span { background: var(--matcha); }
+
+/* E3 — animiert eingeblendeter CTA bei 5/5 entdeckten Vokalen */
+.stage-cta-done {
+    display: flex; justify-content: center;
+    padding-top: 0.3rem;
+}
+.stage-cta-done.is-revealed .stage-cta-done-btn {
+    animation: ctaReveal .5s cubic-bezier(.2,.8,.3,1) forwards;
+}
+.stage-cta-done-btn {
+    opacity: 0;
+    transform: translateY(8px) scale(.96);
+}
+@keyframes ctaReveal {
+    0%   { opacity: 0; transform: translateY(8px) scale(.96); }
+    60%  { opacity: 1; transform: translateY(0) scale(1.03); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .stage-cta-done.is-revealed .stage-cta-done-btn { animation: none; opacity: 1; transform: none; }
+}
 
 /* ════════════════════════════════════════
    LERNPFAD (Eingriff 2) — vertikaler Sumi-Pfad mit Donut-Fortschritt
@@ -997,9 +1136,19 @@
 @media (max-width: 760px) {
     .home-hero { padding: 3rem 1.25rem 2.5rem; }
     .home-h1 { font-size: 2.4rem; }
-    .home-browser-frame { margin-top: 2.5rem; }
+    /* E6 (b) — Vokal-Probe naeher an den Hero-CTA ruecken: Reorder weiter unten */
     .home-browser-stage { padding: 1rem 0.85rem 1.1rem; }
     .kana-stage { gap: 0.5rem; }
+
+    /* E1/E6 — Pitch + USP-Streifen kompakter, damit die Probe frueher sichtbar wird */
+    .home-pitch { font-size: 0.95rem; margin: -0.25rem auto 0.85rem; }
+    .home-usp-strip { gap: 0.35rem 1rem; margin-bottom: 1.25rem; font-size: 0.72rem; }
+    /* Probe per Flex-Reorder direkt unter die CTAs ziehen (Default-order 0),
+       der ausfuehrliche Trust-Block rutscht darunter. Greift nur im Gast-Hero,
+       wo beide Elemente existieren — sonst sind die order-Regeln wirkungslos. */
+    .home-hero-inner { display: flex; flex-direction: column; }
+    .home-browser-frame { order: 2; margin-top: 1.4rem; }
+    .trust-block { order: 3; margin-top: 1.5rem; }
 
     .station {
         grid-template-columns: 60px 1fr;
@@ -1083,7 +1232,9 @@ body.redesign-page .container.mt-4 { padding-left: 0; padding-right: 0; margin-t
   const liveCounter = document.getElementById('liveCounter');
   const liveCounterMini = document.getElementById('liveCounterMini');
   const progressBar = document.getElementById('stageProgressBar');
+  const stageCtaDone = document.getElementById('stageCtaDone');  // E3 — CTA bei 5/5
   const flipped = new Set();
+  let vowelDemoTracked = false;  // E3 — Plausible-Event nur einmal feuern
 
   VOWELS.forEach((v, idx) => {
     const card = document.createElement('button');
@@ -1121,6 +1272,11 @@ body.redesign-page .container.mt-4 { padding-left: 0; padding-right: 0; margin-t
       card.classList.toggle('is-flipped');
       if (!wasFlipped) {
         flipped.add(idx);
+        // E3 — Plausible-Event beim ersten Flip (Stub kommt aus base.html)
+        if (!vowelDemoTracked) {
+          vowelDemoTracked = true;
+          if (window.plausible) window.plausible('vowel_demo_played');
+        }
         speak(v.romaji);
         updateState(v);
       }
@@ -1137,6 +1293,13 @@ body.redesign-page .container.mt-4 { padding-left: 0; padding-right: 0; margin-t
     if (n === 5) {
       if (liveCounter) liveCounter.classList.add('is-done');
       if (progressBar) progressBar.classList.add('is-done');
+      // E3 — animiert eingeblendeter CTA in die erste Lektion
+      if (stageCtaDone && stageCtaDone.hidden) {
+        stageCtaDone.hidden = false;
+        // reflow erzwingen, damit die Animation auch nach hidden->false greift
+        void stageCtaDone.offsetWidth;
+        stageCtaDone.classList.add('is-revealed');
+      }
     }
     if (!heroSub) return;
     if (n === 0) {

@@ -7,207 +7,365 @@
 
 {% block styles %}
 <style>
-  /* ── Purchase (Compass-Redesign Phase 4.5) ── Bootstrap-Overrides ── */
-  .purchase-page .card { box-shadow: var(--shadow-card) !important; border: 1px solid var(--ink-200); border-radius: 12px; }
-  .purchase-page .card-header.bg-primary {
-    background: linear-gradient(180deg, #EB6101, #D85700) !important;
-    border-bottom: none;
+  /* ── Single-Checkout (Sumi/Shu, konsistent mit lesson_paywall.html) ── */
+  .checkout-page { max-width: 620px; margin: 0 auto; padding: 2rem 1.5rem 3rem; }
+
+  .checkout-breadcrumb { color: var(--ink-500); font-size: 0.85rem; margin: 0 0 1.25rem; }
+  .checkout-breadcrumb a { color: var(--ink-500); text-decoration: none; }
+  .checkout-breadcrumb a:hover { color: var(--shu); text-decoration: underline; }
+
+  .checkout-card {
+    background: #fff;
+    border: 1px solid var(--ink-200);
+    border-radius: 12px;
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
   }
-  .purchase-page .card-header h3 { font-family: 'Geist', sans-serif; font-weight: 510; letter-spacing: -0.01em; }
-  .purchase-page h1, .purchase-page h2, .purchase-page h3, .purchase-page h4 {
+  .checkout-head {
+    background: linear-gradient(180deg, #EB6101, #D85700);
+    color: #fff;
+    padding: 1.1rem 1.4rem;
+    text-align: center;
+  }
+  .checkout-head h1 {
+    font-family: 'Geist', 'Inter', sans-serif;
+    font-weight: 510; letter-spacing: -0.01em;
+    font-size: 1.3rem; margin: 0; color: #fff;
+  }
+  .checkout-body { padding: 1.5rem 1.4rem; }
+
+  /* Lektions-Kopf */
+  .checkout-lesson { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
+  .checkout-thumb {
+    width: 96px; height: 96px; flex-shrink: 0;
+    border-radius: 10px; overflow: hidden;
+    background: linear-gradient(135deg, var(--washi), var(--kinari));
+    display: flex; align-items: center; justify-content: center;
+  }
+  .checkout-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .checkout-thumb .placeholder-icon { color: var(--ink-400); font-size: 1.8rem; }
+  .checkout-lesson-info { min-width: 0; flex: 1; }
+  .checkout-lesson-info h2 {
+    font-family: 'Geist', 'Inter', sans-serif;
+    font-size: 1.15rem; font-weight: 600; color: var(--kon);
+    margin: 0 0 0.35rem; line-height: 1.3;
+  }
+  .checkout-lesson-info p { color: var(--ink-600); font-size: 0.9rem; line-height: 1.5; margin: 0 0 0.6rem; }
+  .checkout-meta { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .checkout-chip {
+    display: inline-block;
+    font-family: 'Geist', 'Inter', sans-serif;
+    font-size: 0.7rem; font-weight: 600;
+    padding: 0.2rem 0.6rem; border-radius: 999px;
+    background: var(--ink-100); color: var(--ink-700);
+    letter-spacing: 0.03em;
+  }
+
+  /* Preis-Block */
+  .checkout-price {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 1rem;
+    background: var(--ink-50);
+    border: 1px solid var(--ink-200);
+    border-radius: 10px;
+    padding: 1rem 1.2rem; margin-bottom: 1.5rem;
+  }
+  .checkout-price-label { margin: 0; }
+  .checkout-price-label strong { display: block; color: var(--kon); font-size: 1rem; }
+  .checkout-price-label small { color: var(--ink-500); font-size: 0.85rem; }
+  .checkout-price-amount {
+    font-family: 'Geist', sans-serif; font-weight: 600;
+    font-size: 1.75rem; color: var(--shu);
+    letter-spacing: -0.02em; white-space: nowrap;
+  }
+
+  /* Benefits */
+  .checkout-benefits { list-style: none; padding: 0; margin: 0 0 1.5rem; }
+  .checkout-benefits li {
+    position: relative; padding: 0.35rem 0 0.35rem 1.5rem;
+    color: var(--tetsu); font-size: 0.92rem; line-height: 1.5;
+  }
+  .checkout-benefits li::before {
+    content: "✓"; position: absolute; left: 0; top: 0.35rem;
+    color: var(--matcha); font-weight: 700;
+  }
+
+  /* Bundle-Upsell (C2) */
+  .checkout-upsell {
+    display: flex; align-items: center; gap: 0.85rem;
+    background: var(--kon-50);
+    border: 1px solid var(--kon-100);
+    border-left: 3px solid var(--shu);
+    border-radius: 10px;
+    padding: 0.85rem 1rem; margin-bottom: 1.5rem;
+  }
+  .checkout-upsell-icon { font-size: 1.25rem; flex-shrink: 0; color: var(--shu); }
+  .checkout-upsell-text { flex: 1; margin: 0; color: var(--ink-700); font-size: 0.88rem; line-height: 1.5; }
+  .checkout-upsell-text strong { color: var(--kon); }
+  .checkout-upsell-cta {
+    color: var(--shu); font-weight: 600; font-size: 0.85rem;
+    white-space: nowrap; text-decoration: none; flex-shrink: 0;
+  }
+  .checkout-upsell-cta:hover { text-decoration: underline; color: var(--shu); }
+
+  /* Zahlungsmethode */
+  .checkout-payment { margin-bottom: 1.25rem; }
+  .checkout-payment h3 {
+    font-family: 'Geist', 'Inter', sans-serif;
+    font-size: 0.9rem; font-weight: 600; color: var(--kon);
+    margin: 0 0 0.5rem;
+  }
+  .checkout-payment-option {
+    display: flex; align-items: center; gap: 0.6rem;
+    border: 1px solid var(--shu);
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+    background: rgba(235,97,1,.04);
+    color: var(--tetsu); font-size: 0.9rem;
+  }
+  .checkout-payment-option input { accent-color: var(--shu); width: 1.05rem; height: 1.05rem; }
+  .checkout-payment-option i { color: var(--shu); }
+
+  /* Terms */
+  .checkout-terms {
+    display: flex; gap: 0.6rem; align-items: flex-start;
+    margin-bottom: 1.5rem;
+  }
+  .checkout-terms input { margin-top: 0.2rem; accent-color: var(--shu); width: 1.05rem; height: 1.05rem; flex-shrink: 0; }
+  .checkout-terms label { color: var(--ink-600); font-size: 0.85rem; line-height: 1.5; }
+  .checkout-terms a { color: var(--shu); text-decoration: none; }
+  .checkout-terms a:hover { text-decoration: underline; }
+
+  /* Buttons */
+  .checkout-actions { display: flex; flex-direction: column; gap: 0.6rem; }
+  .checkout-cta {
+    display: block; width: 100%; padding: 0.95rem 1rem;
+    border: none; border-radius: 8px;
+    font-family: 'Geist', 'Inter', sans-serif;
+    font-weight: 600; font-size: 1rem; text-align: center;
+    cursor: pointer; text-decoration: none;
+    background: linear-gradient(180deg, #EB6101, #D85700);
+    color: #fff;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.15),
+                0 1px 2px rgba(184,74,0,.30),
+                0 0 0 1px rgba(184,74,0,.40);
+    transition: background 0.15s, transform 0.05s;
+  }
+  .checkout-cta:hover { background: linear-gradient(180deg, #F37016, #E25C00); color: #fff; }
+  .checkout-cta:active { transform: translateY(1px); }
+  .checkout-cta:disabled { opacity: 0.7; cursor: default; }
+  .checkout-back {
+    display: block; width: 100%; padding: 0.7rem 1rem;
+    border: 1px solid var(--ink-200); border-radius: 8px;
+    background: transparent; color: var(--ink-600);
+    font-size: 0.92rem; text-align: center; text-decoration: none;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .checkout-back:hover { border-color: var(--shu); color: var(--shu); text-decoration: none; }
+
+  /* Fehler-Hinweis (von JS erzeugt: #purchaseError) */
+  #purchaseError {
+    background: rgba(184,74,0,.06);
+    border: 1px solid rgba(184,74,0,.25);
+    color: var(--shu-deep);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  /* Security-Notiz */
+  .checkout-security {
+    text-align: center; color: var(--ink-500);
+    font-size: 0.85rem; line-height: 1.5; margin: 1rem 0 0;
+  }
+  .checkout-security i { color: var(--matcha); }
+  .checkout-security strong { color: var(--matcha); }
+  .checkout-security a { color: var(--shu); text-decoration: none; }
+  .checkout-security a:hover { text-decoration: underline; }
+
+  /* Modals — dezent ins Sumi-System (Bootstrap-Modal-Struktur bleibt fuer JS intakt) */
+  .checkout-page .modal-content {
+    border: 1px solid var(--ink-200);
+    border-radius: 12px;
+    box-shadow: var(--shadow-card);
+  }
+  .checkout-page .modal-header.checkout-modal-success {
+    background: var(--matcha); color: #fff;
+    border-bottom: none; border-radius: 12px 12px 0 0;
+  }
+  .checkout-page .modal-content h2, .checkout-page .modal-content h3,
+  .checkout-page .modal-content .modal-title {
     font-family: 'Geist', 'Inter', sans-serif; color: var(--kon);
   }
-  .purchase-page .text-primary { color: var(--shu) !important; }
-  .purchase-page .btn-primary {
-    background: linear-gradient(180deg, #EB6101, #D85700) !important;
-    border-color: var(--shu-deep) !important;
-    color: #fff;
+  .checkout-page .modal-header.checkout-modal-success .modal-title { color: #fff; }
+  .checkout-page .checkout-spinner {
+    width: 2.5rem; height: 2.5rem;
+    border: 3px solid var(--ink-200);
+    border-top-color: var(--shu);
+    border-radius: 50%;
+    animation: checkout-spin 0.7s linear infinite;
+    margin: 0 auto 1rem;
   }
-  .purchase-page .btn-primary:hover {
-    background: linear-gradient(180deg, #F37016, #E25C00) !important;
-    border-color: var(--shu-deep) !important;
-    color: #fff;
-  }
-  .purchase-page .spinner-border.text-primary { color: var(--shu) !important; }
-  .purchase-page .alert-success {
-    background: rgba(122,144,51,.08); border: 1px solid rgba(122,144,51,.25);
-    color: var(--matcha); border-radius: 8px;
-  }
-  .purchase-page .alert-danger {
-    background: rgba(184,74,0,.06); border: 1px solid rgba(184,74,0,.25);
-    color: var(--shu-deep); border-radius: 8px;
-  }
+  @keyframes checkout-spin { to { transform: rotate(360deg); } }
+  .checkout-success-icon { color: var(--matcha); font-size: 3rem; margin-bottom: 0.75rem; }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container mt-4 purchase-page">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="card shadow-lg">
-                <div class="card-header bg-primary text-white text-center">
-                    <h3><i class="fas fa-shopping-cart"></i> Lektion kaufen</h3>
-                </div>
-                <div class="card-body">
-                    <!-- Lesson Information -->
-                    <div class="lesson-info mb-4">
-                        <div class="row">
-                            <div class="col-md-4">
-                                {% if lesson.background_image_path %}
-                                    <img src="{{ url_for('static', filename='uploads/' + lesson.background_image_path) }}" 
-                                         class="img-fluid rounded" alt="{{ lesson.title }}">
-                                {% elif lesson.background_image_url %}
-                                    <img src="{{ lesson.background_image_url }}" 
-                                         class="img-fluid rounded" alt="{{ lesson.title }}">
-                                {% else %}
-                                    <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 120px;">
-                                        <i class="fas fa-book fa-3x text-muted"></i>
-                                    </div>
-                                {% endif %}
-                            </div>
-                            <div class="col-md-8">
-                                <h4>{{ lesson.title }}</h4>
-                                <p class="text-muted">{{ lesson.description or 'Keine Beschreibung verfügbar.' }}</p>
-                                <div class="lesson-meta">
-                                    <span class="badge bg-info me-2">
-                                        <i class="fas fa-signal"></i> Schwierigkeit: {{ lesson.difficulty_level or '–' }}/5
-                                    </span>
-                                    <span class="badge bg-secondary me-2">
-                                        <i class="fas fa-clock"></i> {{ lesson.estimated_duration or '–' }} Min
-                                    </span>
-                                    {% if lesson.category %}
-                                        <span class="badge bg-success">
-                                            <i class="fas fa-tag"></i> {{ lesson.category.name }}
-                                        </span>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+<div class="checkout-page purchase-page">
 
-                    <!-- Price Information -->
-                    <div class="price-section mb-4 p-3 bg-light rounded">
-                        <div class="row align-items-center">
-                            <div class="col">
-                                <h5 class="mb-0">Preis dieser Lektion</h5>
-                                <small class="text-muted">Einmaliger Kauf — Lifetime-Zugriff</small>
-                            </div>
-                            <div class="col-auto">
-                                <h3 class="text-primary mb-0">CHF {{ "%.2f"|format(lesson.price) }}</h3>
-                            </div>
-                        </div>
-                    </div>
+  <nav class="checkout-breadcrumb" aria-label="Brotkrumen">
+    <a href="{{ url_for('routes.index') }}">Start</a> ›
+    <a href="{{ url_for('routes.lessons') }}">Lektionen</a> ›
+    <span>{{ lesson.title }}</span>
+  </nav>
 
-                    <!-- Purchase Benefits -->
-                    <div class="benefits-section mb-4">
-                        <h6><i class="fas fa-check-circle text-success"></i> Das bekommst du:</h6>
-                        <ul class="list-unstyled ms-3">
-                            <li><i class="fas fa-infinity text-primary"></i> Lifetime-Zugriff auf diese Lektion</li>
-                            <li><i class="fas fa-mobile-alt text-primary"></i> Zugriff auf allen Geräten</li>
-                            <li><i class="fas fa-redo text-primary"></i> Beliebig oft wiederholen und nachlesen</li>
-                            <li><i class="fas fa-chart-line text-primary"></i> Fortschrittsverfolgung inklusive</li>
-                            <li><i class="fas fa-undo text-primary"></i> <strong>30 Tage Geld zurück</strong> — ohne Begründung</li>
-                        </ul>
-                    </div>
-
-                    <!-- Purchase Form -->
-                    <form id="purchaseForm">
-                        {{ form.hidden_tag() }}
-                        
-                        <!-- Payment Method -->
-                        <div class="payment-method mb-4">
-                            <h6><i class="fas fa-credit-card"></i> Zahlungsmethode</h6>
-                            <div class="card border-primary">
-                                <div class="card-body">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="paymentMethod" id="payrexxPayment" checked>
-                                        <label class="form-check-label" for="payrexxPayment">
-                                            <i class="fas fa-credit-card text-primary"></i> TWINT, Visa, Mastercard, Apple/Google Pay (Payrexx)
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Terms and Conditions -->
-                        <div class="terms mb-4">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="agreeTerms" required>
-                                <label class="form-check-label" for="agreeTerms">
-                                    Ich akzeptiere die <a href="{{ url_for('legal.agb') }}" class="text-decoration-none" target="_blank">AGB</a> und
-                                    die <a href="{{ url_for('legal.datenschutz') }}" class="text-decoration-none" target="_blank">Datenschutzerklärung</a>.
-                                    Ich habe die <a href="{{ url_for('legal.widerruf') }}" class="text-decoration-none" target="_blank">Widerrufsbelehrung</a>
-                                    gelesen und verzichte ausdrücklich auf mein Widerrufsrecht für sofort
-                                    bereitgestellte digitale Inhalte.
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Purchase Buttons -->
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-success btn-lg" id="purchaseBtn">
-                                <i class="fas fa-shopping-cart"></i> Jetzt kaufen — CHF {{ "%.2f"|format(lesson.price) }}
-                            </button>
-                            <a href="{{ url_for('routes.lessons') }}" class="btn btn-outline-secondary">
-                                <i class="fas fa-arrow-left"></i> Zurück zu den Lektionen
-                            </a>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Security Notice -->
-            <div class="text-center mt-3">
-                <small class="text-muted">
-                    <i class="fas fa-shield-alt"></i> Sichere Zahlung über Payrexx —
-                    <strong>30 Tage Geld zurück</strong> ohne Begründung, eine E-Mail an
-                    <a href="mailto:info@japanese-learning.ch" class="text-decoration-none">info@japanese-learning.ch</a> genügt.
-                </small>
-            </div>
-        </div>
+  <div class="checkout-card">
+    <div class="checkout-head">
+      <h1><i class="fas fa-shopping-cart"></i> Lektion kaufen</h1>
     </div>
+
+    <div class="checkout-body">
+
+      {# ── Lektions-Information ── #}
+      <div class="checkout-lesson">
+        <div class="checkout-thumb">
+          {% if lesson.background_image_path %}
+            <img src="{{ url_for('static', filename='uploads/' + lesson.background_image_path) }}" alt="{{ lesson.title }}">
+          {% elif lesson.background_image_url %}
+            <img src="{{ lesson.background_image_url }}" alt="{{ lesson.title }}">
+          {% else %}
+            <i class="fas fa-book placeholder-icon" aria-hidden="true"></i>
+          {% endif %}
+        </div>
+        <div class="checkout-lesson-info">
+          <h2>{{ lesson.title }}</h2>
+          <p>{{ lesson.description or 'Keine Beschreibung verfügbar.' }}</p>
+          <div class="checkout-meta">
+            <span class="checkout-chip"><i class="fas fa-signal"></i> Schwierigkeit {{ lesson.difficulty_level or '–' }}/5</span>
+            <span class="checkout-chip"><i class="fas fa-clock"></i> {{ lesson.estimated_duration or '–' }} Min</span>
+            {% if lesson.category %}
+              <span class="checkout-chip"><i class="fas fa-tag"></i> {{ lesson.category.name }}</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      {# ── Preis ── #}
+      <div class="checkout-price">
+        <div class="checkout-price-label">
+          <strong>Preis dieser Lektion</strong>
+          <small>Einmaliger Kauf — Lifetime-Zugriff</small>
+        </div>
+        <div class="checkout-price-amount">CHF {{ "%.2f"|format(lesson.price) }}</div>
+      </div>
+
+      {# ── Das bekommst du ── #}
+      <ul class="checkout-benefits">
+        <li>Lifetime-Zugriff auf diese Lektion</li>
+        <li>Zugriff auf allen Geräten</li>
+        <li>Beliebig oft wiederholen und nachlesen</li>
+        <li>Fortschrittsverfolgung inklusive</li>
+        <li><strong>30 Tage Geld zurück</strong> — ohne Begründung</li>
+      </ul>
+
+      {# ── Bundle-Upsell (C2) ── #}
+      <div class="checkout-upsell" role="region" aria-label="Bundle-Hinweis">
+        <span class="checkout-upsell-icon" aria-hidden="true">⚡</span>
+        <p class="checkout-upsell-text">
+          Lieber alles? Das ganze <strong>N5-Bundle</strong> gibt es für einmalig
+          <strong>CHF 9.90</strong> — oft nur CHF 4.90 mehr als diese eine Lektion.
+        </p>
+        <a href="{{ url_for('bundle.n5_bundle') }}" class="checkout-upsell-cta">N5 Komplett →</a>
+      </div>
+
+      {# ── Kauf-Formular ── #}
+      <form id="purchaseForm">
+        {{ form.hidden_tag() }}
+
+        {# Zahlungsmethode #}
+        <div class="checkout-payment">
+          <h3><i class="fas fa-credit-card"></i> Zahlungsmethode</h3>
+          <label class="checkout-payment-option" for="payrexxPayment">
+            <input type="radio" name="paymentMethod" id="payrexxPayment" checked>
+            <span><i class="fas fa-credit-card"></i> TWINT, Visa, Mastercard, Apple/Google Pay (Payrexx)</span>
+          </label>
+        </div>
+
+        {# AGB / Widerruf #}
+        <div class="checkout-terms">
+          <input type="checkbox" id="agreeTerms" required>
+          <label for="agreeTerms">
+            Ich akzeptiere die <a href="{{ url_for('legal.agb') }}" target="_blank">AGB</a> und
+            die <a href="{{ url_for('legal.datenschutz') }}" target="_blank">Datenschutzerklärung</a>.
+            Ich habe die <a href="{{ url_for('legal.widerruf') }}" target="_blank">Widerrufsbelehrung</a>
+            gelesen und verzichte ausdrücklich auf mein Widerrufsrecht für sofort
+            bereitgestellte digitale Inhalte.
+          </label>
+        </div>
+
+        {# Buttons #}
+        <div class="checkout-actions">
+          <button type="submit" class="checkout-cta" id="purchaseBtn">
+            <i class="fas fa-shopping-cart"></i> Jetzt kaufen — CHF {{ "%.2f"|format(lesson.price) }}
+          </button>
+          <a href="{{ url_for('routes.lessons') }}" class="checkout-back">
+            <i class="fas fa-arrow-left"></i> Zurück zu den Lektionen
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  {# ── Security-Notiz ── #}
+  <p class="checkout-security">
+    <i class="fas fa-shield-alt"></i> Sichere Zahlung über Payrexx —
+    <strong>30 Tage Geld zurück</strong> ohne Begründung, eine E-Mail an
+    <a href="mailto:info@japanese-learning.ch">info@japanese-learning.ch</a> genügt.
+  </p>
 </div>
 
-<!-- Purchase Processing Modal -->
-<div class="modal fade" id="processingModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-body text-center p-4">
-                <div class="spinner-border text-primary mb-3" role="status">
-                    <span class="visually-hidden">Lädt …</span>
-                </div>
-                <h5>Kauf wird vorbereitet …</h5>
-                <p class="text-muted mb-0">Einen Moment, wir leiten dich zur Zahlung weiter.</p>
-            </div>
+{# ── Processing-Modal (Bootstrap-Struktur bleibt fuer JS intakt) ── #}
+<div class="modal fade purchase-page" id="processingModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body text-center p-4">
+        <div class="checkout-spinner" role="status" aria-live="polite">
+          <span class="visually-hidden">Lädt …</span>
         </div>
+        <h3 style="font-size:1.1rem;margin:0 0 0.4rem;">Kauf wird vorbereitet …</h3>
+        <p style="color:var(--ink-500);margin:0;">Einen Moment, wir leiten dich zur Zahlung weiter.</p>
+      </div>
     </div>
+  </div>
 </div>
 
-<!-- Success Modal -->
-<div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header bg-success text-white">
-                <h5 class="modal-title">
-                    <i class="fas fa-check-circle"></i> Kauf erfolgreich!
-                </h5>
-            </div>
-            <div class="modal-body text-center p-4">
-                <i class="fas fa-check-circle text-success fa-4x mb-3"></i>
-                <h4>Gratulation!</h4>
-                <p>Du hast <strong id="purchasedLessonTitle">{{ lesson.title }}</strong> erfolgreich freigeschaltet.</p>
-                <p class="text-muted">Du hast nun Lifetime-Zugriff auf diese Lektion.</p>
-            </div>
-            <div class="modal-footer">
-                <a href="{{ url_for('routes.view_lesson', lesson_id=lesson.id) }}" class="btn btn-primary">
-                    <i class="fas fa-play"></i> Lektion starten
-                </a>
-                <a href="{{ url_for('routes.lessons') }}" class="btn btn-outline-secondary">
-                    <i class="fas fa-list"></i> Weitere Lektionen
-                </a>
-            </div>
-        </div>
+{# ── Success-Modal (Bootstrap-Struktur bleibt fuer JS intakt) ── #}
+<div class="modal fade purchase-page" id="successModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header checkout-modal-success">
+        <h3 class="modal-title" style="font-size:1.1rem;margin:0;">
+          <i class="fas fa-check-circle"></i> Kauf erfolgreich!
+        </h3>
+      </div>
+      <div class="modal-body text-center p-4">
+        <i class="fas fa-check-circle checkout-success-icon" aria-hidden="true"></i>
+        <h3 style="font-size:1.25rem;margin:0 0 0.5rem;">Gratulation!</h3>
+        <p>Du hast <strong id="purchasedLessonTitle">{{ lesson.title }}</strong> erfolgreich freigeschaltet.</p>
+        <p style="color:var(--ink-500);">Du hast nun Lifetime-Zugriff auf diese Lektion.</p>
+      </div>
+      <div class="modal-footer" style="border-top:1px solid var(--ink-200);gap:0.6rem;">
+        <a href="{{ url_for('routes.view_lesson', lesson_id=lesson.id) }}" class="checkout-cta" style="width:auto;padding:0.7rem 1.2rem;">
+          <i class="fas fa-play"></i> Lektion starten
+        </a>
+        <a href="{{ url_for('routes.lessons') }}" class="checkout-back" style="width:auto;padding:0.7rem 1.2rem;">
+          <i class="fas fa-list"></i> Weitere Lektionen
+        </a>
+      </div>
     </div>
+  </div>
 </div>
 
 <script>
@@ -266,7 +424,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!alertEl) {
                 alertEl = document.createElement('div');
                 alertEl.id = 'purchaseError';
-                alertEl.className = 'alert alert-danger mt-3';
                 alertEl.setAttribute('role', 'alert');
                 form.parentElement.insertBefore(alertEl, form);
             }

@@ -311,6 +311,97 @@ def home_redirect():
     return redirect(url_for('routes.index'), code=301)
 
 
+def _first_guest_lesson(lessons):
+    """Erste gast-zugaengliche Gratis-Lektion aus einer (sortierten) Lesson-Liste.
+
+    Kriterium: price == 0 UND allow_guest_access == True. Wird fuer Deep-Link-CTAs
+    genutzt (Home/index, Modul-CTA, register-Fallback, /learn/n5-Hub), damit
+    "Kostenlos starten" direkt in Inhalt statt in eine Liste/Paywall fuehrt.
+    Erwartet bereits gefilterte/sortierte Lektionen; gibt None zurueck wenn keine passt.
+    """
+    for l in lessons:
+        if (l.price or 0) == 0 and l.allow_guest_access:
+            return l
+    return None
+
+
+def _build_n5_path_context(user, visible_langs):
+    """Baut die N5-Lernpfad-Struktur (Module + 3 didaktische Gruppen).
+
+    Gekapselt, weil sowohl die Startseite (index) als auch der /learn/n5-Hub (H1)
+    dieselbe Pfad-Logik rendern. Liefert (n5_modules, n5_groups, next_module_id,
+    first_guest_lesson) — pro Modul ist 'first_guest_lesson' die erste gratis+guest
+    Lektion (sonst die bisherige first_lesson als Fallback fuer den CTA).
+    """
+    n5_modules_raw = (
+        LessonCategory.query.filter_by(jlpt_level=5)
+        .order_by(LessonCategory.display_order.asc(), LessonCategory.id.asc())
+        .all()
+    )
+    n5_modules = []
+    next_module_id = None  # erstes nicht-vollendetes Modul fuer Auto-Scroll/Pulsation
+    for m in n5_modules_raw:
+        done, total = m.completion_for_user(user, languages=visible_langs)
+        unlocked = m.is_unlocked_for_user(user)
+        published_lessons = sorted(
+            [l for l in m.lessons
+             if l.is_published and l.instruction_language in visible_langs],
+            key=lambda l: (l.order_index or 0, l.id),
+        )
+        is_complete = total > 0 and done == total
+        if next_module_id is None and unlocked and total > 0 and not is_complete:
+            next_module_id = m.id
+        first_lesson = published_lessons[0] if published_lessons else None
+        # D4: CTA-Ziel fuer GAESTE = erste gratis+guest Lektion des Moduls (gegen
+        # Paywall-Sackgasse, z.B. wenn die erste Lektion paid ist). Bewusst KEIN
+        # first_lesson-Fallback: das Template nutzt 'first_guest_lesson' als Bedingung,
+        # ob ein Gast-Direktlink gerendert wird — hat das Modul keine echte Gast-Lektion,
+        # bleibt es None und der bisherige Modul-Detail-/first_lesson-Zweig greift.
+        module_guest_lesson = _first_guest_lesson(published_lessons)
+        n5_modules.append({
+            "module": m,
+            "done": done,
+            "total": total,
+            "percent": round(100.0 * done / total) if total else 0,
+            "unlocked": unlocked,
+            "is_complete": is_complete,
+            "is_next": False,  # gesetzt nach Loop
+            "lessons": published_lessons,
+            # Erste Lektion fuer Direkt-CTA
+            "first_lesson": first_lesson,
+            # D4: erste gratis+guest Lektion (sonst first_lesson) fuer den CTA
+            "first_guest_lesson": module_guest_lesson,
+        })
+    for entry in n5_modules:
+        if entry["module"].id == next_module_id:
+            entry["is_next"] = True
+
+    # Pfad in 3 didaktische Gruppen aufteilen (Schreibsystem / Wortschatz / Grammatik)
+    SCHREIB_SLUGS = {"n5-hiragana", "n5-katakana"}
+    GRAMMATIK_SLUGS = {"n5-erste-saetze"}
+    n5_groups = [
+        {"title": "1. Schreibsystem", "subtitle": "Hiragana und Katakana — Pflicht vor allem anderen.",
+         "modules": [e for e in n5_modules if e["module"].slug in SCHREIB_SLUGS]},
+        {"title": "2. Grundwortschatz", "subtitle": "Themen-Module mit Vokabeln, Beispielsätzen und Dialogen.",
+         "modules": [e for e in n5_modules
+                     if e["module"].slug not in SCHREIB_SLUGS
+                     and e["module"].slug not in GRAMMATIK_SLUGS]},
+        {"title": "3. Erste Sätze", "subtitle": "Grammatik, die alles zusammenbringt.",
+         "modules": [e for e in n5_modules if e["module"].slug in GRAMMATIK_SLUGS]},
+    ]
+
+    # Globale erste Gast-Lektion fuer den Top-of-Funnel "Kostenlos starten"-CTA:
+    # erste gratis+guest Lektion ueber alle N5-Module hinweg (i.d.R. Hiragana 1).
+    first_guest_lesson = None
+    for entry in n5_modules:
+        cand = _first_guest_lesson(entry["lessons"])
+        if cand is not None:
+            first_guest_lesson = cand
+            break
+
+    return n5_modules, n5_groups, next_module_id, first_guest_lesson
+
+
 @bp.route('/')
 def index():
     # Get language-specific lesson counts
@@ -349,53 +440,9 @@ def index():
     # JLPT-Lernpfad-Daten (Mayuko-Direktive 2026-04-25): Pfad als Startseiten-Inhalt
     visible_langs = current_app.config.get('CONTENT_LANGUAGES', ['german'])
     user = current_user if current_user.is_authenticated else None
-    n5_modules_raw = (
-        LessonCategory.query.filter_by(jlpt_level=5)
-        .order_by(LessonCategory.display_order.asc(), LessonCategory.id.asc())
-        .all()
+    n5_modules, n5_groups, next_module_id, first_guest_lesson = _build_n5_path_context(
+        user, visible_langs
     )
-    n5_modules = []
-    next_module_id = None  # erstes nicht-vollendetes Modul fuer Auto-Scroll/Pulsation
-    for m in n5_modules_raw:
-        done, total = m.completion_for_user(user, languages=visible_langs)
-        unlocked = m.is_unlocked_for_user(user)
-        published_lessons = sorted(
-            [l for l in m.lessons
-             if l.is_published and l.instruction_language in visible_langs],
-            key=lambda l: (l.order_index or 0, l.id),
-        )
-        is_complete = total > 0 and done == total
-        if next_module_id is None and unlocked and total > 0 and not is_complete:
-            next_module_id = m.id
-        n5_modules.append({
-            "module": m,
-            "done": done,
-            "total": total,
-            "percent": round(100.0 * done / total) if total else 0,
-            "unlocked": unlocked,
-            "is_complete": is_complete,
-            "is_next": False,  # gesetzt nach Loop
-            "lessons": published_lessons,
-            # Erste Lektion fuer Direkt-CTA
-            "first_lesson": published_lessons[0] if published_lessons else None,
-        })
-    for entry in n5_modules:
-        if entry["module"].id == next_module_id:
-            entry["is_next"] = True
-
-    # Pfad in 3 didaktische Gruppen aufteilen (Schreibsystem / Wortschatz / Grammatik)
-    SCHREIB_SLUGS = {"n5-hiragana", "n5-katakana"}
-    GRAMMATIK_SLUGS = {"n5-erste-saetze"}
-    n5_groups = [
-        {"title": "1. Schreibsystem", "subtitle": "Hiragana und Katakana — Pflicht vor allem anderen.",
-         "modules": [e for e in n5_modules if e["module"].slug in SCHREIB_SLUGS]},
-        {"title": "2. Grundwortschatz", "subtitle": "Themen-Module mit Vokabeln, Beispielsätzen und Dialogen.",
-         "modules": [e for e in n5_modules
-                     if e["module"].slug not in SCHREIB_SLUGS
-                     and e["module"].slug not in GRAMMATIK_SLUGS]},
-        {"title": "3. Erste Sätze", "subtitle": "Grammatik, die alles zusammenbringt.",
-         "modules": [e for e in n5_modules if e["module"].slug in GRAMMATIK_SLUGS]},
-    ]
 
     # Bundle-Hinweis nur fuer User die das Bundle NICHT haben (Admins zaehlen als 'haben').
     show_bundle_hint = True
@@ -417,6 +464,24 @@ def index():
     n5_vocab_count = Vocabulary.query.filter_by(jlpt_level=5).count()
     n5_kanji_count = Kanji.query.filter_by(jlpt_level=5).count()
 
+    # E4-Support: Coverage als einheitliche "heute X von Ziel Y"-Sprache fuer Home/Bundle.
+    # coverage_service liefert vocab_covered/vocab_total/kanji_covered/kanji_total/vocab_pct
+    # — hier auf den Kontrakt have/target gemappt, den index.html erwartet.
+    n5_coverage = None
+    try:
+        from app.services.coverage_service import get_jlpt_coverage
+        cov = get_jlpt_coverage(5)
+        n5_coverage = {
+            "vocab_have": cov["vocab_covered"],
+            "vocab_target": cov["vocab_total"],
+            "kanji_have": cov["kanji_covered"],
+            "kanji_target": cov["kanji_total"],
+            "vocab_pct": cov["vocab_pct"],
+        }
+    except Exception:
+        # Coverage darf die Startseite nie blockieren (z.B. fehlende canonical-Liste)
+        current_app.logger.warning("N5-Coverage konnte nicht geladen werden", exc_info=True)
+
     return render_template('index.html',
                          total_lessons=total_lessons,
                          total_courses=total_courses,
@@ -432,7 +497,9 @@ def index():
                          show_bundle_hint=show_bundle_hint,
                          visible_languages=visible_langs,
                          n5_vocab_count=n5_vocab_count,
-                         n5_kanji_count=n5_kanji_count)
+                         n5_kanji_count=n5_kanji_count,
+                         first_guest_lesson=first_guest_lesson,
+                         n5_coverage=n5_coverage)
 
 @bp.route('/register', methods=['GET', 'POST'])
 @limiter.limit("5 per minute")
@@ -445,8 +512,25 @@ def register():
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
-        flash('Ihr Konto wurde erstellt — Sie können sich jetzt anmelden.', 'success')
-        return redirect(url_for('routes.login'))
+        # D1: direkt einloggen statt auf /login zu schicken — kein Doppel-Login mehr,
+        # damit eine Registrierung von einer Paywall/Bundle-Seite eingeloggt zurueck
+        # auf das gewuenschte Ziel fuehrt.
+        login_user(user)
+        # next aus Query ODER Formular (hidden field) — Template liefert name="next".
+        next_page = request.values.get('next')
+        # Open-Redirect-Schutz, identisch zu login(): nur relative URLs, kein "//".
+        if next_page and next_page.startswith('/') and not next_page.startswith('//'):
+            flash('Willkommen — dein Konto ist erstellt und du bist angemeldet.', 'success')
+            return redirect(next_page)
+        # Fallback: direkt in die erste Gast-Lektion (Aha-Moment statt Liste);
+        # sonst auf den Lernpfad der Startseite.
+        visible_langs = current_app.config.get('CONTENT_LANGUAGES', ['german'])
+        _, _, _, first_guest_lesson = _build_n5_path_context(user, visible_langs)
+        if first_guest_lesson is not None:
+            flash('Willkommen — los geht\'s mit deiner ersten Lektion!', 'success')
+            return redirect(url_for('routes.view_lesson', lesson_id=first_guest_lesson.id))
+        flash('Willkommen — dein Konto ist erstellt und du bist angemeldet.', 'success')
+        return redirect(url_for('routes.index') + '#lernpfad')
     return render_template('register.html', form=form)
 
 @bp.route('/login', methods=['GET', 'POST'])
@@ -836,15 +920,64 @@ def jlpt_n5_schweiz():
 @bp.route('/learn')
 @bp.route('/learn/n<int:level>')
 def learn_path(level: int = 5):
-    """JLPT-Lernpfad — N5 wird per 301 auf die Startseite umgeleitet, weil dort
-    der schoenere Pfad gerendert wird (drei Gruppen, Hero, Bundle-Hint).
+    """JLPT-Lernpfad.
+
+    H1: /learn/n5 rendert eine eigene indexierbare 200-Hub-Seite (Module +
+    Lernpfad-Uebersicht + Bundle-CTA) mit Self-Canonical statt das alte
+    301-Fragment auf die Startseite — die generischste N5-URL soll eigene
+    Ranking-Autoritaet sammeln (war Pos. ~31).
     Andere Levels (N4+) sind noch nicht inhaltlich vorhanden — 404.
     """
     if level not in (1, 2, 3, 4, 5):
         from flask import abort
         abort(404)
     if level == 5:
-        return redirect(url_for('routes.index') + '#lernpfad', code=301)
+        visible_langs = current_app.config.get('CONTENT_LANGUAGES', ['german'])
+        user = current_user if current_user.is_authenticated else None
+        n5_modules, n5_groups, next_module_id, first_guest_lesson = _build_n5_path_context(
+            user, visible_langs
+        )
+
+        # Coverage fuer die "heute X von Ziel Y"-Sprache (gleicher Mapping-Kontrakt wie index).
+        n5_coverage = None
+        try:
+            from app.services.coverage_service import get_jlpt_coverage
+            cov = get_jlpt_coverage(5)
+            n5_coverage = {
+                "vocab_have": cov["vocab_covered"],
+                "vocab_target": cov["vocab_total"],
+                "kanji_have": cov["kanji_covered"],
+                "kanji_target": cov["kanji_total"],
+                "vocab_pct": cov["vocab_pct"],
+            }
+        except Exception:
+            current_app.logger.warning("N5-Coverage konnte nicht geladen werden", exc_info=True)
+
+        # Bundle-CTA nur fuer User, die das Bundle NICHT besitzen (Admins = besitzen).
+        show_bundle_hint = True
+        if current_user.is_authenticated:
+            if getattr(current_user, "is_admin", False):
+                show_bundle_hint = False
+            else:
+                from app.services.bundle_service import get_n5_bundle_course
+                bundle = get_n5_bundle_course()
+                if bundle:
+                    already = CoursePurchase.query.filter_by(
+                        user_id=current_user.id, course_id=bundle.id
+                    ).first()
+                    if already:
+                        show_bundle_hint = False
+
+        return render_template(
+            'learn_n5.html',
+            n5_modules=n5_modules,
+            n5_groups=n5_groups,
+            next_module_id=next_module_id,
+            first_guest_lesson=first_guest_lesson,
+            n5_coverage=n5_coverage,
+            show_bundle_hint=show_bundle_hint,
+            visible_languages=visible_langs,
+        )
     # Andere Levels haben noch keinen Content — Mayuko-Direktive: erst N5 komplett.
     from flask import abort
     abort(404)

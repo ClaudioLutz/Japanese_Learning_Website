@@ -96,8 +96,10 @@ class TestJlptN5SchweizLanding:
         aoi.uzh.ch/de/japanologie/fremdsprache/jlpt.html
         """
         body = client.get("/jlpt-n5-schweiz").data.decode("utf-8")
-        assert "6. Dezember 2026" in body
-        assert "CHF 130" in body                       # N5/N4
+        # Konkretes Pruefungsdatum bewusst weichgezeichnet (UZH publiziert den
+        # Dezember-Termin erst im Jahresverlauf) — nur stabile, verifizierte Fakten pruefen.
+        assert "Dezember" in body                       # typisches Pruefungsfenster
+        assert "CHF 130" in body                        # N5/N4
         assert "CHF 140" in body                        # N3–N1
         assert "aoi.uzh.ch/de/japanologie/fremdsprache/jlpt.html" in body
 

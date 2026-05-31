@@ -180,6 +180,28 @@
     color: var(--shu); font-weight: 600; text-decoration: none;
   }
   .auth-required a:hover { text-decoration: underline; color: var(--shu); }
+  /* Primaerer Konto-CTA (Gast-Variante) — als Button hervorgehoben */
+  .auth-required a.auth-cta {
+    display: inline-block;
+    background: linear-gradient(180deg, #EB6101, #D85700);
+    color: #fff; padding: 0.75rem 1.4rem; border-radius: 8px;
+    margin-bottom: 0.6rem;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.15),
+                0 1px 2px rgba(184,74,0,.30),
+                0 0 0 1px rgba(184,74,0,.40);
+  }
+  .auth-required a.auth-cta:hover {
+    background: linear-gradient(180deg, #F37016, #E25C00);
+    color: #fff; text-decoration: none;
+  }
+
+  /* Founder-Mini-Badge (B7) — Text, kein Foto */
+  .founder-badge {
+    text-align: center; color: var(--ink-500);
+    font-size: 0.85rem; margin: 0.75rem 0 0;
+  }
+  .founder-badge a { color: var(--shu); text-decoration: none; }
+  .founder-badge a:hover { text-decoration: underline; }
 </style>
 {% endblock %}
 
@@ -208,12 +230,81 @@
   </section>
 
   {% if not current_user.is_authenticated %}
+    {# Gast: Wert zuerst — Preisvergleich, Garantie, Payment-Signale; Login zuletzt (B1). #}
+    <div class="paywall-options">
+      {# Linke Spalte: Bundle (empfohlen) #}
+      <div class="opt-card is-recommended">
+        <span class="opt-recommended-pill">⭐ Empfohlen</span>
+        <h2 class="opt-title">⚡ N5 Komplett — Bundle</h2>
+        <p class="opt-sub">Alle aktuellen + zukünftigen N5-Lektionen, einmalig, lifetime.</p>
+
+        <div class="opt-price-row">
+          <span class="opt-price">CHF {{ "%.2f"|format(bundle_price) }}</span>
+          {% if bundle_price < bundle_regular_price %}
+            <span class="opt-price-old">CHF {{ "%.2f"|format(bundle_regular_price) }}</span>
+          {% endif %}
+        </div>
+
+        <ul class="opt-features">
+          <li>Diese Lektion freigeschaltet</li>
+          <li>{{ paid_total }} weitere paid N5-Lektionen freigeschaltet</li>
+          <li>Alle zukuenftigen N5-Updates inklusive</li>
+          <li>Lifetime-Zugriff, kein Abo</li>
+          <li>30 Tage Geld zurueck</li>
+        </ul>
+
+        <a href="{{ url_for('bundle.n5_bundle') }}" class="opt-cta opt-cta-primary">
+          Zum Bundle (CHF {{ "%.2f"|format(bundle_price) }}) →
+        </a>
+        <div class="calc-row">
+          💡 Schon ab <strong>2 gekauften Einzel-Lektionen</strong> bist du mit dem Bundle guenstiger.
+        </div>
+      </div>
+
+      {# Rechte Spalte: Einzel-Kauf #}
+      <div class="opt-card">
+        <h2 class="opt-title">Nur diese Lektion</h2>
+        <p class="opt-sub">Einmaliger Kauf nur für „{{ lesson.title }}".</p>
+
+        <div class="opt-price-row">
+          <span class="opt-price">CHF {{ "%.2f"|format(lesson.price) }}</span>
+        </div>
+
+        <ul class="opt-features">
+          <li>Diese Lektion freigeschaltet</li>
+          <li>Lifetime-Zugriff</li>
+          <li>30 Tage Geld zurueck</li>
+        </ul>
+
+        <span class="opt-cta opt-cta-secondary" style="opacity:.75; cursor:default;">
+          Einzeln für CHF {{ "%.2f"|format(lesson.price) }}
+        </span>
+      </div>
+    </div>
+
+    <div class="refund-row">
+      <strong>30 Tage Geld zurück</strong> — ohne Begründung, eine E-Mail an
+      <a href="mailto:info@japanese-learning.ch">info@japanese-learning.ch</a> genügt.
+    </div>
+
+    <div class="trust-row">
+      Schweizer Anbieter · Bezahlung mit TWINT, Visa, Mastercard, Apple/Google Pay über Payrexx ·
+      <a href="{{ url_for('routes.ueber') }}">Wer steht dahinter?</a>
+    </div>
+
+    {# Founder-Mini-Badge (B7) — Text, kein Foto #}
+    <p class="founder-badge">
+      Gebaut von Claudio aus Rorschach — <a href="{{ url_for('routes.ueber') }}">ich antworte selbst</a>.
+    </p>
+
+    {# Erst nach dem Wert: Konto-CTA #}
     <div class="auth-required">
-      <p style="margin:0 0 0.75rem;">Um diese Lektion freizuschalten, brauchst du ein kostenloses Konto.</p>
-      <a href="{{ url_for('routes.register', next=request.path) }}">Kostenlos registrieren →</a>
+      <p style="margin:0 0 0.75rem;">Zum Freischalten brauchst du nur ein kostenloses Konto.</p>
+      <a href="{{ url_for('routes.register', next=request.path) }}" class="auth-cta">Kostenlos registrieren &amp; freischalten →</a>
       <span style="margin: 0 0.5rem; color: #cbd5e1;">·</span>
       <a href="{{ url_for('routes.login', next=request.path) }}">Anmelden</a>
     </div>
+
   {% else %}
 
     <div class="paywall-options">
@@ -277,9 +368,21 @@
       <a href="{{ url_for('routes.ueber') }}">Wer steht dahinter?</a>
     </div>
 
+    {# Founder-Mini-Badge (B7) — Text, kein Foto #}
+    <p class="founder-badge">
+      Gebaut von Claudio aus Rorschach — <a href="{{ url_for('routes.ueber') }}">ich antworte selbst</a>.
+    </p>
+
   {% endif %}
 
   <a href="{{ url_for('routes.index') }}#lernpfad" class="paywall-back">← Zurück zum Lernpfad</a>
 
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Analytics: Paywall-Aufruf (sicherer Stub aus base.html)
+  window.plausible && window.plausible('paywall_view');
+</script>
 {% endblock %}

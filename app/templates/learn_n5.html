@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+
+{# H1 — /learn/n5 als eigene indexierbare 200-Hub-Seite (statt 301-Fragment auf /).
+   Sammelt eigene Ranking-Autoritaet fuer die generischste N5-URL. Self-Canonical. #}
+
+{% block title %}JLPT N5 lernen — der komplette Lernpfad auf Deutsch{% endblock %}
+{% block meta_description %}Der vollständige JLPT-N5-Lernpfad auf Deutsch: Hiragana, Katakana, Kanji, Wortschatz und Grammatik in {{ n5_modules|length }} Modulen — mit Quiz und Spaced Repetition. Schweizer Lernplattform, kostenlos starten.{% endblock %}
+{% block canonical %}{{ site_url }}/learn/n5{% endblock %}
+{% block og_type %}website{% endblock %}
+
+{% block body_attributes %}class="redesign-page"{% endblock %}
+
+{% block content %}
+<div class="home-wrapper">
+
+  {# ── HUB-HEADER ─────────────────────────────────────────── #}
+  <section class="n5hub-header">
+    <div class="n5hub-eyebrow">JLPT N5 · auf Deutsch · in der Schweiz gemacht</div>
+    <h1 class="n5hub-title">Japanisch bis JLPT N5 — der komplette Lernpfad</h1>
+    <p class="n5hub-sub">
+      Hiragana, Katakana, Kanji, Wortschatz und Grammatik in
+      {{ n5_modules|length }} Modulen — strukturiert statt Lückentext-Raten,
+      mit Quiz und Spaced Repetition. Empfohlene Reihenfolge, keine Pflicht.
+    </p>
+
+    {% if first_guest_lesson %}
+      <a href="{{ url_for('routes.view_lesson', lesson_id=first_guest_lesson.id) }}"
+         class="n5hub-cta-primary">Kostenlos starten →</a>
+    {% else %}
+      <a href="{{ url_for('routes.lessons', access='free') }}"
+         class="n5hub-cta-primary">Kostenlos starten →</a>
+    {% endif %}
+  </section>
+
+  {# ── COVERAGE — "heute X von Ziel Y"-Sprache (E4-Kontrakt) ── #}
+  {% if n5_coverage %}
+  <section class="n5hub-coverage" aria-label="N5-Lernstand-Abdeckung">
+    <div class="n5hub-coverage-row">
+      <div class="n5hub-coverage-item">
+        <span class="n5hub-coverage-num">{{ n5_coverage.vocab_have }}</span>
+        <span class="n5hub-coverage-of">von {{ n5_coverage.vocab_target }} N5-Vokabeln</span>
+        <div class="n5hub-bar"><span style="width: {{ n5_coverage.vocab_pct }}%"></span></div>
+      </div>
+      <div class="n5hub-coverage-item">
+        <span class="n5hub-coverage-num">{{ n5_coverage.kanji_have }}</span>
+        <span class="n5hub-coverage-of">von {{ n5_coverage.kanji_target }} N5-Kanji</span>
+      </div>
+    </div>
+    <p class="n5hub-coverage-note">
+      Der vollständige N5-Pfad wächst laufend — der Rest ist im Lifetime-Zugang inklusive.
+    </p>
+  </section>
+  {% endif %}
+
+  {# ── BUNDLE-CTA ─────────────────────────────────────────── #}
+  {% if show_bundle_hint %}
+  <div class="bundle-hint" role="region" aria-label="N5 Komplett — Bundle-Hinweis">
+    <div class="bundle-hint-icon">⚡</div>
+    <div class="bundle-hint-text">
+      <strong>Tipp:</strong> Mit <a href="{{ url_for('bundle.n5_bundle') }}">N5 Komplett</a>
+      schaltest du alle Lektionen ab Tag 1 frei — einmalig <strong>CHF 9.90</strong>,
+      Lifetime-Zugriff, 30 Tage Geld zurück.
+      <a href="{{ url_for('routes.jlpt_n5_schweiz') }}">JLPT N5 in der Schweiz ablegen? →</a>
+    </div>
+    <a href="{{ url_for('bundle.n5_bundle') }}" class="bundle-hint-cta">Anschauen →</a>
+  </div>
+  {% endif %}
+
+  {# ── MODUL-PFAD nach den 3 didaktischen Gruppen ─────────── #}
+  {% if not n5_modules %}
+    <div class="alert alert-info">
+      N5-Module sind noch nicht konfiguriert.
+      <a href="{{ url_for('routes.lessons') }}">Alle Lektionen ansehen →</a>
+    </div>
+  {% else %}
+  <section class="n5hub-path">
+    {% for group in n5_groups %}
+      {% if group.modules %}
+      <div class="n5hub-group">
+        <div class="n5hub-group-head">
+          <h2 class="n5hub-group-title">{{ group.title }}</h2>
+          <p class="n5hub-group-sub">{{ group.subtitle }}</p>
+        </div>
+
+        <div class="n5hub-module-grid">
+          {% for entry in group.modules %}
+            {% set m = entry.module %}
+            {% set state_cls = 'is-complete' if entry.is_complete
+                                else ('is-next' if entry.is_next
+                                else ('is-inprogress' if entry.percent and entry.percent > 0
+                                else '')) %}
+            <div class="n5hub-module {{ state_cls }}" id="module-{{ m.id }}">
+              <div class="n5hub-module-head">
+                <span class="n5hub-module-icon" aria-hidden="true">{{ m.icon_emoji or '📖' }}</span>
+                <h3>{{ m.name.split(' · ')[-1] if ' · ' in m.name else m.name }}</h3>
+                {% if entry.is_complete %}
+                  <span class="n5hub-badge n5hub-badge--done" aria-label="abgeschlossen">✓</span>
+                {% elif entry.is_next %}
+                  <span class="n5hub-badge n5hub-badge--next" lang="ja"
+                        title="empfohlenes nächstes Modul">次</span>
+                {% endif %}
+              </div>
+
+              {% if entry.is_next %}
+                <span class="n5hub-recommend">⚡ Empfohlen als nächstes</span>
+              {% endif %}
+
+              {% if m.description %}<p class="n5hub-module-desc">{{ m.description }}</p>{% endif %}
+
+              {% if entry.total > 0 %}
+              <div class="n5hub-progress">
+                <div class="n5hub-progress-bar"><span style="width: {{ entry.percent }}%"></span></div>
+                <span class="n5hub-progress-label">{{ entry.done }} / {{ entry.total }} Lektionen</span>
+              </div>
+              {% endif %}
+
+              <div class="n5hub-module-cta">
+                {% if entry.is_complete %}
+                  <a href="{{ url_for('routes.module_detail', level=5, slug=m.slug) if m.slug else url_for('routes.lessons') }}"
+                     class="n5hub-cta">✓ Wiederholen</a>
+                {% elif entry.percent and entry.percent > 0 and entry.first_lesson %}
+                  <a href="{{ url_for('routes.view_lesson', lesson_id=entry.first_lesson.id) }}"
+                     class="n5hub-cta is-continue">Weiterlernen →</a>
+                {# D4 — Gaeste direkt in die erste frei zugaengliche Lektion des Moduls #}
+                {% elif not current_user.is_authenticated and entry.first_guest_lesson %}
+                  <a href="{{ url_for('routes.view_lesson', lesson_id=entry.first_guest_lesson.id) }}"
+                     class="n5hub-cta">Beginnen →</a>
+                {% elif entry.first_lesson and m.slug %}
+                  <a href="{{ url_for('routes.module_detail', level=5, slug=m.slug) }}"
+                     class="n5hub-cta">Beginnen →</a>
+                {% elif entry.first_lesson %}
+                  <a href="{{ url_for('routes.view_lesson', lesson_id=entry.first_lesson.id) }}"
+                     class="n5hub-cta">Beginnen →</a>
+                {% else %}
+                  <span class="n5hub-cta is-pending">Inhalte in Vorbereitung</span>
+                {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+    {% endfor %}
+  </section>
+  {% endif %}
+
+  <div class="n5hub-footer">
+    <a href="{{ url_for('routes.lessons') }}" class="btn-ghost-jp">Alle Lektionen klassisch ansehen</a>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+  /* /learn/n5-Hub — Sumi-Designsystem (warmes Papier, Haarlinien, Shu-Akzent).
+     Eigenstaendig, weil die Lernpfad-CSS-Klassen der Startseite seitenlokal sind. */
+  .n5hub-header { max-width: 720px; margin: 2.5rem auto 1.5rem; padding: 0 1.25rem; text-align: center; }
+  .n5hub-eyebrow { display: inline-block; font-size: .8rem; letter-spacing: .04em;
+    color: var(--shu, #c8442b); border: 1px solid var(--hairline, #e3ddd2);
+    border-radius: 999px; padding: .25rem .8rem; margin-bottom: 1rem; }
+  .n5hub-title { font-size: clamp(1.6rem, 4vw, 2.4rem); line-height: 1.15; margin: 0 0 .75rem;
+    color: var(--sumi, #1f1b16); }
+  .n5hub-sub { font-size: 1.05rem; line-height: 1.6; color: var(--ink-soft, #5a544b); margin: 0 0 1.5rem; }
+  .n5hub-cta-primary { display: inline-block; background: var(--shu, #c8442b); color: #fff;
+    font-weight: 600; padding: .8rem 1.6rem; border-radius: 10px; text-decoration: none;
+    transition: filter .15s ease; }
+  .n5hub-cta-primary:hover { filter: brightness(1.07); }
+
+  .n5hub-coverage { max-width: 720px; margin: 0 auto 1.5rem; padding: 1.25rem;
+    background: var(--washi, #faf6ef); border: 1px solid var(--hairline, #e3ddd2); border-radius: 12px; }
+  .n5hub-coverage-row { display: flex; gap: 2rem; flex-wrap: wrap; }
+  .n5hub-coverage-item { flex: 1 1 200px; }
+  .n5hub-coverage-num { font-size: 1.8rem; font-weight: 700; color: var(--sumi, #1f1b16); }
+  .n5hub-coverage-of { display: inline-block; margin-left: .4rem; color: var(--ink-soft, #5a544b); }
+  .n5hub-bar { margin-top: .5rem; height: 8px; background: #ece6da; border-radius: 999px; overflow: hidden; }
+  .n5hub-bar > span { display: block; height: 100%; background: var(--shu, #c8442b); border-radius: 999px; }
+  .n5hub-coverage-note { margin: 1rem 0 0; font-size: .9rem; color: var(--ink-soft, #5a544b); }
+
+  .n5hub-path { max-width: 960px; margin: 1rem auto 0; padding: 0 1.25rem; }
+  .n5hub-group { margin-bottom: 2.5rem; }
+  .n5hub-group-head { margin-bottom: 1rem; }
+  .n5hub-group-title { font-size: 1.25rem; margin: 0 0 .25rem; color: var(--sumi, #1f1b16); }
+  .n5hub-group-sub { margin: 0; color: var(--ink-soft, #5a544b); font-size: .95rem; }
+  .n5hub-module-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+  .n5hub-module { background: #fff; border: 1px solid var(--hairline, #e3ddd2); border-radius: 12px;
+    padding: 1.1rem; display: flex; flex-direction: column; }
+  .n5hub-module.is-next { border-color: var(--shu, #c8442b); box-shadow: 0 0 0 1px var(--shu, #c8442b); }
+  .n5hub-module.is-complete { background: #f6faf3; }
+  .n5hub-module-head { display: flex; align-items: center; gap: .5rem; }
+  .n5hub-module-head h3 { font-size: 1.05rem; margin: 0; flex: 1; color: var(--sumi, #1f1b16); }
+  .n5hub-module-icon { font-size: 1.4rem; }
+  .n5hub-badge { font-size: .9rem; width: 1.6rem; height: 1.6rem; display: inline-flex;
+    align-items: center; justify-content: center; border-radius: 50%; }
+  .n5hub-badge--done { background: var(--matcha, #7a9a5b); color: #fff; }
+  .n5hub-badge--next { background: var(--shu, #c8442b); color: #fff; }
+  .n5hub-recommend { display: inline-block; margin-top: .5rem; font-size: .8rem; font-weight: 600;
+    color: var(--shu, #c8442b); }
+  .n5hub-module-desc { margin: .6rem 0; font-size: .9rem; color: var(--ink-soft, #5a544b); line-height: 1.5; }
+  .n5hub-progress { margin: .5rem 0 .8rem; }
+  .n5hub-progress-bar { height: 6px; background: #ece6da; border-radius: 999px; overflow: hidden; }
+  .n5hub-progress-bar > span { display: block; height: 100%; background: var(--matcha, #7a9a5b); }
+  .n5hub-progress-label { display: block; margin-top: .3rem; font-size: .8rem; color: var(--ink-soft, #5a544b); }
+  .n5hub-module-cta { margin-top: auto; padding-top: .5rem; }
+  .n5hub-cta { display: inline-block; background: var(--shu, #c8442b); color: #fff; font-weight: 600;
+    padding: .5rem 1rem; border-radius: 8px; text-decoration: none; font-size: .9rem; }
+  .n5hub-cta.is-continue { background: var(--matcha, #7a9a5b); }
+  .n5hub-cta.is-pending { background: transparent; color: var(--ink-soft, #5a544b);
+    border: 1px dashed var(--hairline, #e3ddd2); cursor: default; }
+  .n5hub-footer { text-align: center; margin: 2rem auto 3rem; }
+</style>
+{% endblock %}

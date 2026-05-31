@@ -107,6 +107,28 @@
     font-size: 0.85rem; color: var(--ink-500); text-align: center;
     line-height: 1.5;
   }
+  /* Gemeinsame Reassure-Zeile (Gast + Eingeloggt) — eigener Abstand, keine doppelte Trennlinie */
+  .bnd-reassure-shared {
+    max-width: 520px; margin: 1.25rem auto 0;
+    border-top: none; padding-top: 0;
+  }
+  /* Lokaler Klubschule-Anker (B3) */
+  .bnd-anchor {
+    max-width: 520px; margin: 1rem auto 0;
+    background: rgba(199,128,45,.10);
+    border: 1px solid rgba(199,128,45,.25);
+    border-radius: 8px; padding: 0.85rem 1rem;
+    font-size: 0.9rem; color: var(--kincha); text-align: center;
+    line-height: 1.5;
+  }
+  .bnd-anchor strong { color: var(--shu-deep); }
+  /* Founder-Mini-Badge (B7) — Text, kein Foto */
+  .bnd-founder-badge {
+    font-size: 0.85rem; color: var(--ink-500);
+    margin: 1rem 0 0;
+  }
+  .bnd-founder-badge a { color: var(--shu); text-decoration: none; }
+  .bnd-founder-badge a:hover { text-decoration: underline; }
   .bnd-error { color: var(--shu-deep); margin-top: 0.6rem; text-align: center; font-size: 0.9rem; }
 
   .bnd-coffee-line {
@@ -187,6 +209,16 @@
     margin-top: 1rem; padding-top: 1rem;
     border-top: 1px solid var(--ink-100); text-align: center;
   }
+  /* Coverage als Preis-Trigger (B2) */
+  .bnd-coverage-trigger {
+    margin-top: 0.85rem;
+    background: rgba(199,128,45,.10);
+    border: 1px solid rgba(199,128,45,.25);
+    border-radius: 8px; padding: 0.75rem 1rem;
+    color: var(--kincha); font-size: 0.85rem;
+    text-align: center; line-height: 1.5;
+  }
+  .bnd-coverage-trigger strong { color: var(--shu-deep); }
 
   .bnd-guarantee {
     max-width: 640px; margin: 0 auto; text-align: center;
@@ -196,6 +228,15 @@
     margin: 0 0 1rem;
   }
   .bnd-guarantee p strong { color: var(--kon); }
+  /* 30-Tage-Zeile optisch dominant (B5) */
+  .bnd-guarantee-primary {
+    font-size: 1.25rem; line-height: 1.5;
+  }
+  .bnd-guarantee-primary strong { color: var(--kon); }
+  .bnd-guarantee-secondary {
+    font-size: 0.95rem; color: var(--ink-500);
+  }
+  .bnd-guarantee-secondary strong { color: var(--ink-600); }
 
   .bnd-faq { max-width: 640px; margin: 0 auto; }
   .bnd-faq details {
@@ -238,7 +279,7 @@
 
       {% if bundle_available and not already_owned %}
         <div class="bnd-eyebrow-row">
-          <span class="eyebrow-chip">JLPT N5 · auf Deutsch · Schweizer Solo-Projekt</span>
+          <span class="eyebrow-chip">JLPT N5 · auf Deutsch · in der Schweiz gemacht</span>
         </div>
       {% endif %}
 
@@ -269,7 +310,10 @@
           {% endif %}
           <span class="bnd-price-figure">CHF {{ "%.2f"|format(price) }}</span>
         </div>
-        <p class="bnd-trust-triplet">einmalig · lebenslang · ohne Abo</p>
+        {# Anti-Abo-Frame (B3) — einmal zahlen, kein Abo, fuer immer #}
+        <p class="bnd-trust-triplet">
+          CHF {{ "%.2f"|format(price) }} — einmal zahlen, <strong>kein Abo</strong>, für immer
+        </p>
 
         {% if current_user.is_authenticated %}
         <div class="bnd-cta-block">
@@ -287,19 +331,14 @@
             Jetzt für CHF {{ "%.2f"|format(price) }} freischalten
           </button>
 
-          <div class="bnd-reassure">
-            TWINT · Visa · Mastercard · Apple/Google Pay über Payrexx<br>
-            <strong style="color: var(--matcha);">30 Tage Geld zurück</strong> · Schweizer Anbieter
-          </div>
-
           <div id="buyError" class="bnd-error" style="display:none;"></div>
         </div>
         {% else %}
         <div class="bnd-auth-block">
-          <p>Du musst angemeldet sein, um das Bundle zu kaufen. Die Registrierung ist kostenlos.</p>
+          <p>Zum Kaufen brauchst du nur ein kostenloses Konto — der Wert oben gilt für dich genauso.</p>
           <div class="bnd-auth-actions">
             <a href="{{ url_for('routes.register', next=request.path) }}" class="btn-shu">
-              Kostenlos registrieren
+              Kostenlos registrieren &amp; freischalten →
             </a>
             <a href="{{ url_for('routes.login', next=request.path) }}" class="btn-ghost-jp">
               Anmelden
@@ -307,6 +346,23 @@
           </div>
         </div>
         {% endif %}
+
+        {# Reassure-/Payment-Zeile (B1) — fuer Gaeste UND Eingeloggte sichtbar #}
+        <div class="bnd-reassure bnd-reassure-shared">
+          TWINT · Visa · Mastercard · Apple/Google Pay über Payrexx<br>
+          <strong style="color: var(--matcha);">30 Tage Geld zurück</strong> · Schweizer Anbieter
+        </div>
+
+        {# Lokaler Anker (B3) — faktischer Preisvergleich ohne abwertende Marken-Claims #}
+        <div class="bnd-anchor">
+          Ein Klubschule-Migros-Kurs (A1) kostet rund <strong>CHF 741</strong>.
+          Hier: <strong>CHF {{ "%.2f"|format(price) }}</strong> — lerne wann du willst.
+        </div>
+
+        {# Founder-Mini-Badge (B7) — Text, kein Foto #}
+        <p class="bnd-founder-badge">
+          Gebaut von Claudio aus Rorschach — <a href="{{ url_for('routes.ueber') }}">ich antworte selbst</a>.
+        </p>
 
         <p class="bnd-coffee-line">CHF {{ "%.2f"|format(price) }} ist weniger als ein Kaffee in Zürich.</p>
       {% endif %}
@@ -359,20 +415,31 @@
             {% endif %}
             · Du kaufst heute den vollen Weg bis 100&nbsp;%.
           </div>
+          {# Coverage als Preis-Trigger (B2) — Early-Bird endet bei Schwelle #}
+          {% if price_label == 'early_bird' %}
+          <div class="bnd-coverage-trigger">
+            Bei {{ threshold_pct|round|int }}% Vokabel-Coverage steigt der Preis auf
+            <strong>CHF {{ "%.2f"|format(regular_price) }}</strong> — aktuell erst
+            <strong>{{ coverage.vocab_pct|round|int }}%</strong>. Early-Bird-Preis gilt jetzt.
+          </div>
+          {% endif %}
         </div>
       </div>
     </section>
 
     <div class="section-narrow"><div class="section-divider-jp"></div></div>
 
-    {# ── Garantie ── #}
+    {# ── Garantie (B5: Wording entwirrt) ── #}
     <section class="section-jp">
       <div class="section-narrow">
-        <h2 class="bnd-section-title">Doppelte Geld-zurück-Garantie</h2>
+        <h2 class="bnd-section-title">Geld-zurück-Garantie — gleich zweifach abgesichert</h2>
         <div class="bnd-guarantee">
-          <p><strong>30 Tage volle Rückerstattung</strong> — ohne Begründung. Eine E-Mail an
-            <a href="mailto:info@japanese-learning.ch" style="color: var(--ai);">info@japanese-learning.ch</a> genügt.</p>
-          <p><strong>Stagnations-Garantie:</strong> Sollte das Bundle länger als 6 Monate
+          <p class="bnd-guarantee-primary">
+            <strong>30 Tage volle Rückerstattung — ohne Begründung, eine Mail genügt.</strong><br>
+            <a href="mailto:info@japanese-learning.ch" style="color: var(--ai);">info@japanese-learning.ch</a>
+            schreiben, fertig.
+          </p>
+          <p class="bnd-guarantee-secondary"><strong>Plus Stagnations-Garantie:</strong> Sollte das Bundle länger als 6 Monate
             ohne Fortschritt stillstehen, voller Refund auf Anfrage.</p>
         </div>
       </div>
@@ -409,6 +476,11 @@
 
 </div>
 
+<script>
+  // Analytics: Bundle-Seitenaufruf (sicherer Stub aus base.html)
+  window.plausible && window.plausible('bundle_view');
+</script>
+
 {% if current_user.is_authenticated and bundle_available and not already_owned %}
 <script>
   (function() {
@@ -421,6 +493,8 @@
     });
 
     btn.addEventListener('click', async () => {
+      // Analytics: Checkout gestartet (sicherer Stub aus base.html)
+      window.plausible && window.plausible('checkout_start');
       errBox.style.display = 'none';
       btn.disabled = true;
       btn.textContent = 'Wird vorbereitet ...';

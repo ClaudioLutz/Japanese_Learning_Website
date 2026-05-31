@@ -24,6 +24,22 @@ os.environ.setdefault("MAIL_SUPPRESS_SEND", "true")
 from app import create_app, db as _db
 
 
+@pytest.fixture(autouse=True)
+def _reset_rate_limits():
+    """Rate-Limiter global zwischen Tests zuruecksetzen (verhindert 429-Durchschlag,
+    z.B. bei mehreren /register- oder /login-POSTs innerhalb derselben Minute)."""
+    from app import limiter
+    try:
+        limiter.reset()
+    except Exception:
+        pass
+    yield
+    try:
+        limiter.reset()
+    except Exception:
+        pass
+
+
 @pytest.fixture(scope="session")
 def app():
     """Flask-App mit Test-Konfiguration."""

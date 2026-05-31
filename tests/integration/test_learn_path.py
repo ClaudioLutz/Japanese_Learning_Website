@@ -21,21 +21,27 @@ def _make_module(slug, jlpt_level, display_order, **kwargs):
 
 
 class TestLearnPathRoute:
-    """Seit 2026-04-26 redirektet /learn/n5 auf /#lernpfad — der Pfad wird auf der
-    Startseite gerendert, nicht mehr in einem separaten Template. Die Pfad-Render-
-    Tests laufen daher gegen "/"."""
+    """Seit H1 (2026-05-31) rendert /learn/n5 eine eigene indexierbare 200-Hub-Seite
+    (learn_n5.html) statt 301 auf /#lernpfad — die generischste N5-URL soll eigene
+    Ranking-Autoritaet sammeln. Die Modul-Pfad-Logik teilt sie sich mit der Startseite.
+    """
 
-    def test_learn_default_redirects_to_home(self, client, app_context):
-        """/learn (ohne Level) redirektet auf /#lernpfad."""
+    def test_learn_default_renders_n5_hub(self, client, app_context):
+        """/learn (ohne Level) rendert die N5-Hub-Seite (Default level=5)."""
         resp = client.get("/learn")
-        assert resp.status_code == 301
-        assert resp.headers["Location"].endswith("#lernpfad")
+        assert resp.status_code == 200
+        body = resp.data.decode("utf-8")
+        assert "Lernpfad" in body
 
-    def test_learn_n5_redirects_to_home(self, client, app_context):
-        """/learn/n5 redirektet 301 auf /#lernpfad — Pfad lebt auf der Startseite."""
+    def test_learn_n5_renders_hub_200(self, client, app_context):
+        """/learn/n5 ist eine eigene 200-Seite (kein 301 mehr) mit Lernpfad/Modul-Inhalt
+        und Self-Canonical auf /learn/n5."""
         resp = client.get("/learn/n5")
-        assert resp.status_code == 301
-        assert resp.headers["Location"].endswith("#lernpfad")
+        assert resp.status_code == 200
+        body = resp.data.decode("utf-8")
+        assert "Lernpfad" in body or "JLPT N5" in body
+        # Self-Canonical zeigt auf die Hub-URL selbst, nicht auf das Home-Fragment
+        assert "/learn/n5" in body
 
     def test_learn_n4_returns_404(self, client, app_context):
         """N4 ist noch nicht inhaltlich vorhanden — 404 statt leere Seite."""

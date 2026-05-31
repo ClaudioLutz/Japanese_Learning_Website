@@ -15,6 +15,16 @@
     {% endif %}
     <meta name="theme-color" content="#FAF7F2">
 
+    {# ── Analytics: Plausible (cookieless) ──
+       Sicherer Stub IMMER: window.plausible() schluckt Event-Calls anderer
+       Seiten, auch ohne Account → keine ReferenceErrors. Das echte Script
+       laedt nur, wenn PLAUSIBLE_DOMAIN gesetzt ist (Account/Domain-Setup ist
+       der einzige verbleibende externe Restschritt). #}
+    <script>window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)}</script>
+    {% if config.PLAUSIBLE_DOMAIN %}
+    <script defer data-domain="{{ config.PLAUSIBLE_DOMAIN }}" src="https://plausible.io/js/script.tagged-events.js"></script>
+    {% endif %}
+
     {# ── Open Graph / Twitter Card ── #}
     <meta property="og:site_name" content="{{ site_name }}">
     <meta property="og:type" content="{% block og_type %}website{% endblock %}">
@@ -119,7 +129,7 @@
           <span class="topnav-brand-mark" aria-hidden="true">あ</span>
           <span class="topnav-brand-text">
             <span class="topnav-brand-name">Japanese Learning</span>
-            <span class="topnav-brand-tag">JLPT N5 · auf Deutsch</span>
+            <span class="topnav-brand-tag">Japanisch lernen · auf Deutsch · aus der Schweiz</span>
           </span>
         </a>
 
@@ -323,26 +333,27 @@
         color: var(--shu, #EB6101);
     }
     .topnav-link.is-active i { opacity: 1; }
-    /* Bundle-CTA: kompakter Outline-Button mit Hover-Tooltip statt Vollflaechen-Lila */
+    /* Bundle-CTA: zuruecktretender Shu-Outline/Ghost (Marke), damit der primaere
+       gratis CTA dominant bleibt. Kein Indigo mehr. */
     .topnav-link-cta {
         background: white;
-        color: #4f46e5;
-        border: 1.5px solid #c7d2fe;
+        color: var(--shu, #EB6101);
+        border: 1.5px solid var(--shu-soft, #F4D9C7);
         margin-left: 0.4rem;
         white-space: nowrap;
         position: relative;
     }
     .topnav-link-cta:hover {
-        background: #eef2ff;
-        color: #4338ca;
-        border-color: #a5b4fc;
+        background: var(--shu-soft, #F4D9C7);
+        color: var(--shu-deep, #B84A00);
+        border-color: var(--shu, #EB6101);
     }
-    .topnav-link-cta i { color: #4f46e5; opacity: 1; }
-    .topnav-link-cta:hover i { color: #4338ca; }
+    .topnav-link-cta i { color: var(--shu, #EB6101); opacity: 1; }
+    .topnav-link-cta:hover i { color: var(--shu-deep, #B84A00); }
     .topnav-link-cta.is-active {
-        background: #4f46e5;
+        background: var(--shu, #EB6101);
         color: white;
-        border-color: #4f46e5;
+        border-color: var(--shu, #EB6101);
     }
     .topnav-link-cta.is-active i { color: white; }
     /* Tooltip mit Preis-Detail bei Hover (data-cta-tooltip) */
@@ -414,7 +425,7 @@
     .topnav-avatar {
         width: 28px; height: 28px;
         border-radius: 50%;
-        background: linear-gradient(135deg, #4f46e5, #2563eb);
+        background: linear-gradient(135deg, var(--shu, #EB6101), var(--kon, #1F2A44));
         color: #fff;
         font-weight: 700; font-size: 0.8rem;
         display: inline-flex; align-items: center; justify-content: center;
@@ -653,7 +664,7 @@
         border: 2px solid #fff;
         line-height: 1;
     }
-    /* あ-Glyph als Kana-Tab-Icon (Markenfont, Größe wie ein FA-Icon) */
+    /* あ-Glyph als Kana-Tab-Icon (Markenfont, Grösse wie ein FA-Icon) */
     .bottom-nav-kana {
         font-family: 'Klee One', 'Noto Serif JP', 'Yu Mincho', serif;
         font-size: 1.2rem;

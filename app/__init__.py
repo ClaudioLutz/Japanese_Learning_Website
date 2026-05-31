@@ -60,6 +60,9 @@ def create_app():
     app.config['GOOGLE_SITE_VERIFICATION'] = os.environ.get('GOOGLE_SITE_VERIFICATION', '')
     # Crawler-Steuerung: in Staging auf "noindex,nofollow" setzen, in Prod leer/Default lassen
     app.config['ROBOTS_INDEX'] = os.environ.get('ROBOTS_INDEX', 'index,follow')
+    # Analytics: Plausible (cookieless). Nur wenn gesetzt, laedt base.html das
+    # echte Script — sonst bleibt nur der window.plausible()-Stub aktiv (kein Tracking).
+    app.config['PLAUSIBLE_DOMAIN'] = os.getenv('PLAUSIBLE_DOMAIN')
 
     app.config.from_pyfile('config.py', silent=True) # Load config from instance folder
     app.config['TEMPLATES_AUTO_RELOAD'] = True
