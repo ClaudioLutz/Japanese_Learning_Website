@@ -54,7 +54,7 @@ def create_app():
     )
     app.config['SEO_DEFAULT_OG_IMAGE'] = os.environ.get(
         'SEO_DEFAULT_OG_IMAGE',
-        '/static/favicon.png'
+        '/static/images/og-image.png'
     )
     # Search-Console Meta-Verifikation (Fallback, falls DNS-TXT nicht möglich)
     app.config['GOOGLE_SITE_VERIFICATION'] = os.environ.get('GOOGLE_SITE_VERIFICATION', '')
