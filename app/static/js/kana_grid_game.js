@@ -703,7 +703,11 @@ function kanaSettings() {
                     if (['hiragana', 'katakana', 'both'].includes(saved.schrift)) this.schrift = saved.schrift;
                     if (Array.isArray(saved.selectedRows)) this.selectedRows = saved.selectedRows;
                     if (typeof saved.includeDakuten === 'boolean') this.includeDakuten = saved.includeDakuten;
-                    if (typeof saved.weakOnly === 'boolean') this.weakOnly = saved.weakOnly;
+                    // weakOnly wird BEWUSST NICHT aus localStorage geladen: der
+                    // "Nur schwache Karten"-Filter ist eine bewusste Einmal-Wahl
+                    // pro Sitzung und startet immer auf "aus". Sonst bliebe er
+                    // (z.B. nach dem "Schwache 10"-Schnellstart) dauerhaft an und
+                    // liesse sich auf Mobile kaum wiederfinden/abschalten.
                     if (Number.isFinite(saved.limit)) this.limit = Math.min(50, Math.max(5, saved.limit));
                 } else if (window.matchMedia && window.matchMedia('(max-width: 767px)').matches) {
                     this.limit = 10;   // kleinerer Default auf Mobile
@@ -732,9 +736,12 @@ function kanaSettings() {
 
         persist() {
             try {
+                // weakOnly wird bewusst NICHT persistiert (siehe init): so kann
+                // der Filter nicht dauerhaft "haengen". Ein evtl. alter Wert aus
+                // einer frueheren Version wird durch dieses Ueberschreiben entfernt.
                 localStorage.setItem(LS_KEY, JSON.stringify({
                     mode: this.mode, schrift: this.schrift, selectedRows: this.selectedRows,
-                    includeDakuten: this.includeDakuten, weakOnly: this.weakOnly, limit: Number(this.limit),
+                    includeDakuten: this.includeDakuten, limit: Number(this.limit),
                 }));
             } catch (e) { /* still ignorieren */ }
         },
