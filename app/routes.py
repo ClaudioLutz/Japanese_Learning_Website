@@ -445,7 +445,7 @@ def register():
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
-        flash('Your account has been created! You can now log in.', 'success')
+        flash('Ihr Konto wurde erstellt — Sie können sich jetzt anmelden.', 'success')
         return redirect(url_for('routes.login'))
     return render_template('register.html', form=form)
 
@@ -462,13 +462,13 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user and user.is_locked:
-            flash('Account temporarily locked due to too many failed attempts. Please try again later.', 'danger')
+            flash('Konto vorübergehend gesperrt (zu viele Fehlversuche). Bitte später erneut versuchen.', 'danger')
         elif user and user.check_password(form.password.data):
             user.record_successful_login()
             db.session.commit()
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next')
-            flash('Login successful!', 'success')
+            flash('Erfolgreich angemeldet.', 'success')
             # Open-Redirect-Schutz: nur relative URLs erlauben
             if not next_page or not next_page.startswith('/') or next_page.startswith('//'):
                 if user.is_admin:
@@ -480,7 +480,7 @@ def login():
             if user:
                 user.record_failed_login()
                 db.session.commit()
-            flash('Login Unsuccessful. Please check email and password', 'danger')
+            flash('Anmeldung fehlgeschlagen. Bitte E-Mail und Passwort prüfen.', 'danger')
     return render_template('login.html', form=form)
 
 @bp.route('/forgot-password', methods=['GET', 'POST'])
@@ -534,7 +534,7 @@ def reset_password(token):
 @login_required
 def logout():
     logout_user()
-    flash('You have been logged out.', 'info')
+    flash('Sie wurden abgemeldet.', 'info')
     return redirect(url_for('routes.index'))
 
 @bp.route('/profile')
