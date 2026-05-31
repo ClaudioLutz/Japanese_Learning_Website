@@ -315,6 +315,25 @@ Statische Seiten in `app/seo_routes.py::sitemap_xml()` ergänzen (`static_pages`
 - **Keine losen Dateien** — am Ende jeder Session muss `git status` sauber sein. Jede Datei muss entweder committed+gepusht, in `.gitignore` eingetragen, oder gelöscht werden falls nicht mehr gebraucht.
 - Commit-Messages auf Deutsch, aussagekräftig.
 
+## Parallel-Arbeit mit mehreren Sessions (Worktrees + Agent Teams)
+
+Auf diesem Workspace laufen oft mehrere Claude-Code-Sessions gleichzeitig (verschiedene Features). Damit sie sich nicht in die Quere kommen:
+
+### Grundregel: 1 Feature = 1 Worktree
+- Session pro Feature in eigenem Git-Worktree starten: `claude --worktree <feature>` (Kurzform `-w`). Liegt unter `.claude/worktrees/<feature>/` auf Branch `worktree-<feature>`, gebrancht von `origin/HEAD` (= aktueller Remote-Stand). So kollidieren Datei-Edits nie zwischen Sessions. (`.claude/worktrees/` ist gitignored.)
+- **Pro Worktree die Dev-Umgebung neu aufsetzen** (eigene venv + Deps: `pip install -r requirements.txt`). `.env`/`.env.local` werden automatisch via `.worktreeinclude` hineinkopiert.
+- Lineare Historie: **Rebase statt Merge**. Nach dem Merge den Worktree entfernen (`git worktree remove ...`) — keine Leichen liegen lassen.
+
+### Koordination geteilter Dateien (das eigentliche Konfliktrisiko)
+Mehrere Sessions an DERSELBEN Datei kollidieren. Besonders heikel (von vielen Features berührt): `app/static/css/custom.css`, `app/templates/lesson_view.html`, `app/templates/base.html`, `app/models.py`.
+- **Vor dem Editieren einer solchen geteilten Datei: `git fetch` + prüfen, was andere Branches/Sessions dort gerade tun.**
+- **Klein und oft committen + pushen** (ohnehin Projektregel) → andere Sessions `pull`/`rebase`en und sehen den Stand. Git ist das gemeinsame „schwarze Brett".
+
+### Native Cross-Session-Features (Stand Mai 2026, in `settings.json` aktiviert)
+- **Agent View** (`claude agents`, ab Claude Code v2.1.139): Dashboard über alle Background-Sessions — zeigt, welche auf Input warten; antworten/andocken. Isoliert jede Session automatisch in eigenem Worktree. Ideal für „mehrere unabhängige Features parallel abfeuern und später reinschauen".
+- **Agent Teams** (ab v2.1.32, **experimentell** — aktiviert via `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in `.claude/settings.json`): mehrere Sessions als Team mit direkter Agent-zu-Agent-Mailbox (`SendMessage`) + geteilter Task-Liste. **Nur** nutzen, wenn die Teilarbeiten sich gegenseitig abstimmen müssen (Research/Review, konkurrierende Hypothesen) — NICHT für unabhängige Features oder Edits an derselben Datei. Teammates isolieren NICHT automatisch in Worktrees → Dateien selbst partitionieren. Kosten ~linear (~7× Tokens) → Sonnet für Teammates, Team nach Gebrauch aufräumen.
+- **Windows-Hinweis:** Split-Pane-Modus braucht tmux/iTerm2 (Windows-Terminal nicht unterstützt) — In-Process-Modus läuft aber.
+
 ## Qualitätssicherung — Pflichtregeln
 - **Tests aktualisieren und ausführen** — Bei jeder Code-Änderung müssen betroffene Tests angepasst und alle Tests mit `pytest` ausgeführt werden. Kein Commit mit fehlschlagenden Tests.
 - **Coverage nicht senken** — `fail_under` in pyproject.toml darf nur erhöht, nie gesenkt werden.

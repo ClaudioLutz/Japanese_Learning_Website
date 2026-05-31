@@ -1,0 +1,6 @@
+# Dateien, die Claude Code beim Anlegen eines neuen Worktrees (`claude --worktree`)
+# automatisch hineinkopiert. Syntax = .gitignore. Es werden NUR Dateien kopiert,
+# die hier matchen UND gitignored sind (getrackte Dateien werden nie dupliziert).
+# Ohne .env startet die Flask-App im Worktree nicht (DATABASE_URL etc. fehlen).
+.env
+.env.local

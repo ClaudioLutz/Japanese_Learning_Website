@@ -132,6 +132,9 @@ uploads/
 # Claude Code skill internals (lock-files, runtime state)
 .claude/scheduled_tasks.lock
 
+# Claude Code Worktrees (parallele Sessions, `claude --worktree`) — lokal, nie committen
+.claude/worktrees/
+
 # Inspirations-Material (Lehrbuecher, PDFs — Copyright nicht committen)
 inspiration/
 
