@@ -51,7 +51,8 @@ def robots_txt():
         "Disallow: /logout",
         "Disallow: /profile",
         "Disallow: /my-lessons",
-        "Disallow: /srs/",
+        "Disallow: /review",
+        "Disallow: /practice",
         "Disallow: /payment/",
         "Disallow: /purchase/",
         "Disallow: /debug/",
@@ -87,13 +88,19 @@ def sitemap_xml():
 
     entries: list[str] = []
 
+    # /courses nur listen, wenn es mind. 1 publizierten Kurs gibt — sonst
+    # rendert die Seite nur einen leeren Container (Soft-404-Signal an Google).
+    has_published_course = (
+        db.session.query(Course).filter(Course.is_published.is_(True)).count() > 0
+    )
+
     # Statische, oeffentliche Seiten
     static_pages = [
         ('/', 'daily', '1.0'),
         ('/n5-bundle', 'weekly', '0.9'),
         ('/jlpt-n5-schweiz', 'weekly', '0.9'),
         ('/lessons', 'daily', '0.8'),
-        ('/courses', 'weekly', '0.7'),
+        *([('/courses', 'weekly', '0.7')] if has_published_course else []),
         ('/ueber', 'monthly', '0.6'),
         ('/lernmethode', 'monthly', '0.6'),
         ('/legal/impressum', 'yearly', '0.2'),
@@ -104,12 +111,14 @@ def sitemap_xml():
     for path, changefreq, priority in static_pages:
         entries.append(_url_entry(site_url + path, today, changefreq, priority))
 
-    # Veroeffentlichte Lessons (nur in aktivierter Sprache; Gast-zugaenglich
-    # bevorzugt, aber wir indexieren auch Paid-Lessons — die Detail-Seite
-    # rendert das Marketing-Snippet, der Hauptinhalt liegt hinter Paywall).
+    # Veroeffentlichte Lessons (nur in aktivierter Sprache). Nur Gast-zugaengliche
+    # Lessons listen: Paid-Lessons rendern fuer Gaeste/Googlebot die noindex-Paywall
+    # — sie in die Sitemap zu setzen, gibt ein widerspruechliches Signal und
+    # verbrennt Crawl-Budget. Jede gelistete URL liefert so index,follow.
     lessons = (
         db.session.query(Lesson)
         .filter(Lesson.is_published.is_(True))
+        .filter(Lesson.allow_guest_access.is_(True))
         .filter(Lesson.instruction_language.in_(languages))
         .all()
     )
@@ -118,7 +127,7 @@ def sitemap_xml():
             f"{site_url}/lessons/{lesson.id}",
             lesson.updated_at or lesson.created_at,
             'monthly',
-            '0.7' if lesson.allow_guest_access else '0.5',
+            '0.7',
         ))
 
     # JLPT-Modul-Detail-Seiten — eigene URL pro Modul, eigene Inhalte
