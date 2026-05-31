@@ -3444,6 +3444,63 @@ function createDeck(cardItems, page) {
         updateStats();
     }
 
+    // --- Auto-Fit: inhaltsschwere Rueckseiten in die fixe Karte einpassen ---
+    // Reihenfolge: 1) Weissraum straffen  2) Schrift bis Lesegrenze schrumpfen
+    //              3) nur im Extremfall scrollbar machen. ~98% der Karten passen
+    //              ohnehin und bleiben voellig unveraendert.
+    const FIT_FLOOR = 0.78; // nicht unter 78% der Basis-Schrift (sonst unleserlich)
+    function autofitDetails(card) {
+        const d = card && card.querySelector('.details');
+        if (!d) return;
+        // Immer erst zuruecksetzen, dann frisch messen (idempotent bei Mehrfachaufruf).
+        d.style.setProperty('--card-fit', '1');
+        d.classList.remove('details-compact', 'details-scroll');
+        // Bei verstecktem Deck (andere Seite) ist clientHeight 0 -> spaeter erneut messen.
+        if (d.clientHeight < 40) return;
+        const fits = () => d.scrollHeight <= d.clientHeight + 1;
+        if (fits()) return;                  // passt bereits -> nichts tun (Normalfall)
+        d.classList.add('details-compact');  // 1) Weissraum straffen
+        if (fits()) return;
+        // 2) groessten Schrift-Faktor in [FLOOR, 1] finden, der noch passt (Binaersuche)
+        let lo = FIT_FLOOR, hi = 1, best = FIT_FLOOR, found = false;
+        for (let i = 0; i < 8; i++) {
+            const mid = (lo + hi) / 2;
+            d.style.setProperty('--card-fit', mid.toFixed(3));
+            if (fits()) { best = mid; found = true; lo = mid; } else { hi = mid; }
+        }
+        d.style.setProperty('--card-fit', best.toFixed(3));
+        // 3) Extremfall: selbst an der Lesegrenze zu lang -> scrollbar mit Fade-Hinweis
+        if (!found || !fits()) {
+            d.classList.add('details-scroll');
+        }
+    }
+
+    // Hoehe der fixen unteren Leisten (Pager + Mobile-Bottom-Nav), die die Buttons verdecken.
+    function bottomObstructionPx() {
+        let top = window.innerHeight;
+        document.querySelectorAll('.lesson-navigation-bottom, .mobile-bottom-nav').forEach(el => {
+            const cs = getComputedStyle(el);
+            if (cs.position !== 'fixed' && cs.position !== 'sticky') return;
+            if (cs.display === 'none' || cs.visibility === 'hidden') return;
+            const r = el.getBoundingClientRect();
+            if (r.height > 4 && r.top > window.innerHeight * 0.4) top = Math.min(top, r.top);
+        });
+        return Math.max(0, window.innerHeight - top);
+    }
+    // Confidence-Buttons beim Umdrehen garantiert sichtbar machen: minimal scrollen,
+    // sodass sie oberhalb der fixen Bodenleisten und unterhalb der Top-Navi liegen.
+    function ensureButtonsVisible() {
+        const r = btnGroup.getBoundingClientRect();
+        if (r.height < 4) return;
+        const margin = 12, topSafe = 64;
+        const visibleBottom = window.innerHeight - bottomObstructionPx() - margin;
+        if (r.bottom > visibleBottom) {
+            window.scrollBy({ top: Math.ceil(r.bottom - visibleBottom), behavior: 'smooth' });
+        } else if (r.top < topSafe) {
+            window.scrollBy({ top: Math.floor(r.top - topSafe), behavior: 'smooth' });
+        }
+    }
+
     // Show card function
     function showCard(idx) {
         cardArea.innerHTML = '';
@@ -3472,6 +3529,14 @@ function createDeck(cardItems, page) {
             japaneseAudioSystem.reprocessElement(details);
         }
 
+        // Rueckseite einpassen: sofort + nach Layout-Frame + nach Font-Load
+        // (japanische Schrift veraendert die Messung, daher mehrfach).
+        autofitDetails(card);
+        requestAnimationFrame(() => autofitDetails(card));
+        if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(() => { if (card.isConnected) autofitDetails(card); });
+        }
+
         // Track flip time for time_taken_ms
         let cardFlipTime = null;
 
@@ -3485,6 +3550,8 @@ function createDeck(cardItems, page) {
                 flipper.classList.toggle('is-flipped');
                 if (flipper.classList.contains('is-flipped')) {
                     btnGroup.classList.add('visible');
+                    // Buttons garantiert in den sichtbaren Bereich holen (ueber den fixen Leisten).
+                    requestAnimationFrame(ensureButtonsVisible);
                     cardFlipTime = Date.now();
                     // Fetch interval preview when card is flipped
                     const contentId = allCards[idx].dataset.contentId;
@@ -3639,6 +3706,17 @@ function createDeck(cardItems, page) {
             render();
             console.log(`[Deck] localStorage-Fortschritt: ${learnedCount()} gelernt`);
         }
+    }
+
+    // Re-Fit, sobald die Kartenflaeche eine reale Groesse bekommt (versteckte
+    // Lektionsseite wird per Pager sichtbar) oder sich die Breite aendert.
+    if (window.ResizeObserver) {
+        const fitRO = new ResizeObserver(() => {
+            if (cardArea.getBoundingClientRect().height <= 50) return;
+            const c = cardArea.querySelector('.flip-card');
+            if (c) autofitDetails(c);
+        });
+        fitRO.observe(cardArea);
     }
 
     return { rateCard, page, deckEl };

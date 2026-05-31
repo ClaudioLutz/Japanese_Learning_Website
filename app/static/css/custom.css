@@ -1742,15 +1742,18 @@ button[onclick*="moveContentInPage"]:active {
 
 /* Style for the details on the back. */
 .flip-card .details {
+    /* Auto-Fit-Faktor: JS senkt ihn bei Inhalts-Ueberlauf, damit ALLES in die
+       fixe Karte passt (Default 1 = 98% der Karten unveraendert). */
+    --card-fit: 1;
     text-align: center;
-    padding: 20px;
+    padding: calc(20px * var(--card-fit));
     color: var(--text-color);
-    font-size: 16px;
+    font-size: calc(16px * var(--card-fit));
     width: 100%;
 }
 
 .flip-card .details p {
-    margin: 0 0 8px 0;
+    margin: 0 0 calc(8px * var(--card-fit)) 0;
     font-weight: 500;
 }
 
@@ -2113,14 +2116,14 @@ button[onclick*="moveContentInPage"]:active {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 20px 24px;
-    font-size: 14px;
+    padding: calc(20px * var(--card-fit)) calc(24px * var(--card-fit));
+    font-size: calc(14px * var(--card-fit));
     overflow-y: auto;
     text-align: center;
     position: relative;
 }
 .card-face--back.has-image .details p {
-    margin: 0 0 6px 0;
+    margin: 0 0 calc(6px * var(--card-fit)) 0;
     line-height: 1.5;
 }
 .card-face--back.has-image .card-audio-btn {
@@ -2135,6 +2138,46 @@ button[onclick*="moveContentInPage"]:active {
 .card-face--back:not(.has-image) .details {
     overflow-y: auto;
     max-height: 100%;
+}
+
+/* --- Auto-Fit fuer inhaltsschwere Karten-Rueckseiten ---
+   Wird von autofitDetails() (lesson_view.html) gesetzt, sobald .details ueberlaeuft.
+   1) .details-compact: strafft den Weissraum (Padding/Margins/Zeilenhoehe), bevor
+      die Schrift verkleinert wird — spart Hoehe, ohne die Lesbarkeit zu senken.
+   2) --card-fit < 1 (Inline-Style): verkleinert Schrift + Abstaende kaskadierend.
+   3) .details-scroll: Fallback nur fuer extrem lange Karten — macht die Rueckseite
+      zuverlaessig scrollbar (touch-action) mit Fade-Maske als "mehr unten"-Hinweis. */
+.flip-card .details.details-compact {
+    padding: calc(10px * var(--card-fit)) calc(14px * var(--card-fit));
+    line-height: 1.32;
+}
+.flip-card .details.details-compact p {
+    margin: 0 0 calc(3px * var(--card-fit)) 0;
+}
+.flip-card .details.details-compact .grammar-examples,
+.flip-card .details.details-compact .examples-label {
+    margin-top: 0;
+    margin-bottom: calc(3px * var(--card-fit));
+}
+.flip-card .details.details-compact .grammar-tts-example,
+.flip-card .details.details-compact .vocab-tts-example {
+    margin-top: calc(6px * var(--card-fit));
+    padding: calc(6px * var(--card-fit)) calc(10px * var(--card-fit));
+}
+
+.flip-card .details.details-scroll {
+    touch-action: pan-y;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    /* Untere Fade-Kante signalisiert: hier geht es weiter (nach unten scrollen). */
+    -webkit-mask-image: linear-gradient(to bottom, #000 86%, transparent 100%);
+            mask-image: linear-gradient(to bottom, #000 86%, transparent 100%);
+}
+/* Bei Bild-Karten (has-image) bleibt der Text in der rechten/unteren Haelfte;
+   Fade dort ebenso, aber ohne die linke Bildspalte anzutasten. */
+.card-face--back.has-image .details.details-scroll {
+    -webkit-mask-image: linear-gradient(to bottom, #000 88%, transparent 100%);
+            mask-image: linear-gradient(to bottom, #000 88%, transparent 100%);
 }
 
 /* Confidence buttons (SRS 4-level rating) */
@@ -3099,8 +3142,8 @@ button[onclick*="moveContentInPage"]:active {
     }
     
     .flip-card .details {
-        font-size: 14px;
-        padding: 15px;
+        font-size: calc(14px * var(--card-fit));
+        padding: calc(15px * var(--card-fit));
     }
 
     /* Mobile: stack image above text */
@@ -3117,8 +3160,8 @@ button[onclick*="moveContentInPage"]:active {
     .card-face--back.has-image .details {
         width: 100%;
         height: 50%;
-        padding: 10px 12px;
-        font-size: 12px;
+        padding: calc(10px * var(--card-fit)) calc(12px * var(--card-fit));
+        font-size: calc(12px * var(--card-fit));
     }
 
     /* Courses page mobile adjustments */
