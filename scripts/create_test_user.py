@@ -49,9 +49,16 @@ def _seed_due_cards(user_id: int, per_type: int) -> dict[str, int]:
                 break
             if item.id in existing:
                 continue
+            ref = item.get_content_data()
             # Nur Items mit auflösbarem Referenz-Datensatz (sonst leere Karte)
-            if item.get_content_data() is None:
+            if ref is None:
                 continue
+            # Grammar-Platzhalter/„Leichen" überspringen (z.B. structure/
+            # example_sentences == "＿＿") — sonst zeigt /review Müll-Romaji.
+            if ctype == "grammar":
+                es = (getattr(ref, "example_sentences", "") or "").strip()
+                if len(es) < 6 or es == "＿＿":
+                    continue
             db.session.add(CardReviewState(
                 user_id=user_id,
                 content_id=item.id,
