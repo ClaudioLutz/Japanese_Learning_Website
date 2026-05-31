@@ -23,11 +23,14 @@ function kanaGridGame(contentId) {
         stars: 0,
         formattedTime: '0s',
         perfectStreak: 0,
+        wasPerfect: false,          // H-3: keine Fehler UND keine Hints — Basis fuer Daily-Bonus-Anzeige
         _sortables: [],
         _config: null,
         _ttsDisabled: false,        // true, sobald Server-TTS in dieser Session fehlschlug
         selectedCardToken: null,    // Tap-to-Place: aktuell ausgewaehlte Pool-Karte
         bothScripts: false,         // true, wenn Session Hiragana UND Katakana enthaelt
+        ariaFeedback: '',           // H-1: DE-Ansage fuer Screenreader (aria-live-Region)
+        _hintTimer: null,           // H-2: Handle des Hint-setTimeout (zum Clearen bei restart/setMode)
         // ── Phase 4: Forschungsbasierte Hilfen (Bjork, Pre-Testing-Gate, Fading) ──
         maxHints: 0,            // 0 = keine Hilfen verfuegbar (ab Lesson 4+)
         hintsRemaining: 0,
@@ -283,6 +286,18 @@ function kanaGridGame(contentId) {
             });
         },
 
+        // H-1: kurze DE-Ansage in die aria-live-Region setzen. Wird derselbe Text
+        // zweimal hintereinander gesetzt (z.B. zweimal "Falsch, nochmal"), liest ein
+        // Screenreader ihn sonst nicht erneut vor — daher kurz leeren und neu setzen.
+        announce(msg) {
+            if (this.ariaFeedback === msg) {
+                this.ariaFeedback = '';
+                this.$nextTick(() => { this.ariaFeedback = msg; });
+            } else {
+                this.ariaFeedback = msg;
+            }
+        },
+
         handleDrop(cell, kanaId, payload, token) {
             // Korrektheit rein INHALTSBASIERT pruefen — nicht ueber die unsichtbare
             // kanaId. Bei schrift='both' gibt es z.B. zwei "a"-Felder (あ + ア) bzw.
@@ -306,6 +321,7 @@ function kanaGridGame(contentId) {
                 this.totalErrors += 1;
                 cell.shake = true;
                 setTimeout(() => { cell.shake = false; }, 500);
+                this.announce('Falsch, nochmal');   // H-1
                 // #2: welches FALSCHE Kana wurde abgelegt? — Signal fuer den Drill.
                 if (kanaId && cell.kanaId && kanaId !== cell.kanaId) {
                     this.sessionConfusions.push({
@@ -349,6 +365,8 @@ function kanaGridGame(contentId) {
 
             this.pool = this.pool.filter(c => c.token !== token);
             this.playKanaAudio(cell);
+            // H-1: Richtig-Ansage mit Zeichen + Lesung (z.B. "Richtig: あ a").
+            this.announce(`Richtig: ${cell.character} ${cell.romanization}`);
 
             if (this.solvedCount >= this.totalCells) {
                 this.onComplete();
@@ -557,8 +575,14 @@ function kanaGridGame(contentId) {
                 }
             }
 
-            // Nach 1.5 s: Zelle automatisch als korrekt fuellen + ans SRS mit Rating=Hard
-            setTimeout(() => {
+            // Nach 1.5 s: Zelle automatisch als korrekt fuellen + ans SRS mit Rating=Hard.
+            // H-2: Handle merken, damit restart()/setMode() den Timer abbrechen koennen —
+            // sonst mutiert ein "alter" Hint-Timer die frische Runde (Geister-Complete).
+            this._hintTimer = setTimeout(() => {
+                this._hintTimer = null;
+                // H-2: Guard — Zelle wurde inzwischen (durch restart/setMode) zurueckgesetzt
+                // oder anderweitig geloest; dann nichts mehr tun.
+                if (cell.status === 'correct') return;
                 cell.status = 'correct';
                 cell.solved = cell.character;
                 cell.hintBadge = true;   // Visual marker im Template
@@ -579,6 +603,8 @@ function kanaGridGame(contentId) {
 
         setMode(newMode) {
             if (!this.modeSwitch || this.mode === newMode) return;
+            // H-2: laufenden Hint-Timer abbrechen, damit er nicht die neue Runde mutiert.
+            if (this._hintTimer) { clearTimeout(this._hintTimer); this._hintTimer = null; }
             this.mode = newMode;
             this.cells.forEach(c => {
                 c.status = 'empty';
@@ -615,6 +641,7 @@ function kanaGridGame(contentId) {
 
             // Perfekt = keine Fehler UND keine Hints (Bjork: nur autonomer Recall zaehlt)
             const wasPerfect = (adjustedErrors === 0);
+            this.wasPerfect = wasPerfect;   // H-3: fuer Daily-Bonus-Anzeige im Template
             if (wasPerfect) {
                 this.perfectStreak += 1;
                 localStorage.setItem('kana_grid_perfect_streak', this.perfectStreak);
@@ -626,11 +653,16 @@ function kanaGridGame(contentId) {
             if (this.stars === 3 && window.confetti) {
                 window.confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } });
             }
+            // H-1: Abschluss-Ansage inkl. Sterne-Zahl (z.B. "Geschafft! 3 Sterne").
+            this.announce(`Geschafft! ${this.stars} ${this.stars === 1 ? 'Stern' : 'Sterne'}`);
             this.flushConfusions(false);
         },
 
         async restart() {
+            // H-2: laufenden Hint-Timer abbrechen, sonst zaehlt er in die frische Runde.
+            if (this._hintTimer) { clearTimeout(this._hintTimer); this._hintTimer = null; }
             this.completed = false;
+            this.wasPerfect = false;   // H-3: bis zum naechsten Abschluss neutral
             this.stars = 0;
             this.totalXp = 0;
             this.totalErrors = 0;
@@ -821,6 +853,7 @@ function kanaGameView() {
         loadMessage: null,
         isDaily: false,
         isConfusion: false,
+        dailyBonusXp: 0,           // H-3: vom Daily-Endpoint geliefert, bei perfektem Abschluss angezeigt
         liveElapsedMs: 0,
         _timerId: null,
         settingsUrl: '/practice/kana',
@@ -871,6 +904,11 @@ function kanaGameView() {
                 this.phase = 'empty';
                 this.loadMessage = data.message || 'Keine Karten für diese Auswahl gefunden.';
                 return;
+            }
+            // H-3: Bonus-XP der Tages-Challenge merken (Server liefert 25 bei
+            // perfektem Abschluss) — wird im Ergebnis-Screen nur angezeigt, nicht gutgeschrieben.
+            if (this.isDaily && typeof data.bonus_xp === 'number') {
+                this.dailyBonusXp = data.bonus_xp;
             }
 
             // Grid + Pool aus der Session aufbauen (analog zum frueheren practiceGameWrapper)
