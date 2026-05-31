@@ -843,7 +843,7 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                     <div class="row">
                         <div class="col-md-8">
                             <h1 class="card-title">{{ lesson.title }}</h1>
-                            <p class="card-text">{{ lesson.description or 'No description available.' }}</p>
+                            <p class="card-text">{{ lesson.description or 'Keine Beschreibung verfügbar.' }}</p>
                             
                             <div class="d-flex flex-wrap gap-2 mb-3">
                                 {% if lesson.category %}
@@ -881,17 +881,17 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                             <div class="row text-center">
                                 {% if progress.time_spent %}
                                 <div class="col">
-                                    <small class="text-muted">Time Spent: {{ progress.time_spent }} minutes</small>
+                                    <small class="text-muted">Zeit: {{ progress.time_spent }} Minuten</small>
                                 </div>
                                 {% endif %}
                                 {% if progress.started_at %}
                                 <div class="col">
-                                    <small class="text-muted">Started: {{ progress.started_at.strftime('%Y-%m-%d') }}</small>
+                                    <small class="text-muted">Gestartet: {{ progress.started_at.strftime('%Y-%m-%d') }}</small>
                                 </div>
                                 {% endif %}
                                 {% if progress.completed_at %}
                                 <div class="col">
-                                    <small class="text-success">Completed: {{ progress.completed_at.strftime('%Y-%m-%d') }}</small>
+                                    <small class="text-success">Abgeschlossen: {{ progress.completed_at.strftime('%Y-%m-%d') }}</small>
                                 </div>
                                 {% endif %}
                             </div>
@@ -1550,10 +1550,10 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                         <div class="question-header mb-3">
                                                             <h4 class="h5">{{ question.question_text | markdown_inline }}</h4>
                                                             {% if question.points > 1 %}
-                                                            <span class="badge bg-primary">{{ question.points }} points</span>
+                                                            <span class="badge bg-primary">{{ question.points }} Punkte</span>
                                                             {% endif %}
                                                             {% if user_answer and user_answer.is_correct %}
-                                                            <span class="badge bg-success ms-2">✓ Completed</span>
+                                                            <span class="badge bg-success ms-2">✓ Erledigt</span>
                                                             {% endif %}
                                                         </div>
                                                         
@@ -1570,19 +1570,6 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                                 </label>
                                                             </div>
                                                             {% endfor %}
-                                                        </div>
-
-                                                        {% elif question.question_type == 'fill_blank' %}
-                                                        <div class="fill-blank-input">
-                                                            <div class="question-text mb-3">
-                                                                {% if user_answer and user_answer.text_answer %}
-                                                                {% set input_html = '<input type="text" class="form-control d-inline-block" style="width: 200px;" id="blank_' ~ question.id ~ '" value="' ~ user_answer.text_answer ~ '"' ~ (' disabled' if q_solved else '') ~ '>' %}
-                                                                {{ question.question_text | replace('___', input_html) | safe }}
-                                                                {% else %}
-                                                                {% set input_html = '<input type="text" class="form-control d-inline-block" style="width: 200px;" id="blank_' ~ question.id ~ '">' %}
-                                                                {{ question.question_text | replace('___', input_html) | safe }}
-                                                                {% endif %}
-                                                            </div>
                                                         </div>
 
                                                         {% elif question.question_type == 'true_false' %}
@@ -1675,15 +1662,15 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                         
                                                         <div class="quiz-attempts mt-2">
                                                             <small class="text-muted">
-                                                                Attempts remaining: <span id="attempts_{{ question.id }}">
+                                                                Verbleibende Versuche: <span id="attempts_{{ question.id }}">
                                                                     {% if user_answer %}
                                                                         {% if content.max_attempts %}
                                                                             {{ content.max_attempts - user_answer.attempts }}
                                                                         {% else %}
-                                                                            Unlimited
+                                                                            Unbegrenzt
                                                                         {% endif %}
                                                                     {% else %}
-                                                                        {{ content.max_attempts or 'Unlimited' }}
+                                                                        {{ content.max_attempts or 'Unbegrenzt' }}
                                                                     {% endif %}
                                                                 </span>
                                                             </small>
@@ -1726,7 +1713,7 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                     {% else %}
                         <div class="text-center py-5">
                             <h2 class="text-muted h5">Noch keine Inhalte verfügbar</h2>
-                            <p class="text-muted">This lesson is still being prepared. Please check back later.</p>
+                            <p class="text-muted">Diese Lektion wird noch vorbereitet. Schauen Sie bald wieder vorbei.</p>
                         </div>
                     {% endif %}
                 </div>
@@ -2044,13 +2031,6 @@ async function submitQuizAnswer(lessonId, questionId) {
         }
         answerData.selected_option_id = selectedOption.value;
         console.log('Selected option ID:', answerData.selected_option_id);
-    } else if (questionType === 'fill_blank') {
-        const textInput = questionElement.querySelector(`#blank_${questionId}`);
-        if (!textInput || !textInput.value.trim()) {
-            showQuizWarning(questionId, 'Bitte gib eine Antwort ein.');
-            return;
-        }
-        answerData.text_answer = textInput.value.trim();
     } else if (questionType === 'matching') {
         const selects = questionElement.querySelectorAll('.matching-select');
         let allSelected = true;

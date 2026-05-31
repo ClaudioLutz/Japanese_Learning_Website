@@ -203,7 +203,7 @@ test.describe('Tokyo Lesson — Kompletter Durchlauf', () => {
     // Quiz questions should be present
     const quizQuestions = activeItem.locator('.quiz-question');
     const questionCount = await quizQuestions.count();
-    expect(questionCount).toBeGreaterThanOrEqual(3); // MC, T/F, fill_blank
+    expect(questionCount).toBeGreaterThanOrEqual(2); // MC, T/F, Matching (fill_blank entfernt)
 
     // Test Multiple Choice question (first question)
     const mcQuestion = activeItem.locator('[data-question-type="multiple_choice"]').first();
@@ -234,18 +234,6 @@ test.describe('Tokyo Lesson — Kompletter Durchlauf', () => {
       await radios.last().click();
 
       const submitBtn = tfQuestion.locator('button.btn-primary');
-      await submitBtn.click();
-      await page.waitForTimeout(1000);
-    }
-
-    // Test Fill-in-the-Blank question
-    const fillQuestion = activeItem.locator('[data-question-type="fill_blank"]').first();
-    if (await fillQuestion.count() > 0) {
-      // Type the answer
-      const input = fillQuestion.locator('input[type="text"]');
-      await input.fill('どこ');
-
-      const submitBtn = fillQuestion.locator('button.btn-primary');
       await submitBtn.click();
       await page.waitForTimeout(1000);
     }
@@ -286,7 +274,7 @@ test.describe('Tokyo Lesson — Kompletter Durchlauf', () => {
     expect(await flipped.count()).toBeGreaterThanOrEqual(1);
   });
 
-  test('Seite 6: Anwendung — Matching-Quiz + Lückentext', async ({ page }) => {
+  test('Seite 6: Anwendung — Matching-Quiz', async ({ page }) => {
     const resp = await page.goto('/api/lessons');
     const lessons = await resp.json();
     LESSON_ID = lessons.find(l => l.title && l.title.includes('Tokio')).id;
@@ -328,16 +316,6 @@ test.describe('Tokyo Lesson — Kompletter Durchlauf', () => {
         await submitBtn.click();
         await page.waitForTimeout(1000);
       }
-    }
-
-    // Fill-in-the-blank quiz
-    const fillQuestion = activeItem.locator('[data-question-type="fill_blank"]');
-    if (await fillQuestion.count() > 0) {
-      const input = fillQuestion.locator('input[type="text"]');
-      await input.fill('行って');
-      const submitBtn = fillQuestion.locator('button.btn-primary');
-      await submitBtn.click();
-      await page.waitForTimeout(1000);
     }
   });
 
@@ -381,16 +359,6 @@ test.describe('Tokyo Lesson — Kompletter Durchlauf', () => {
         await submitBtn2.click();
         await page.waitForTimeout(1000);
       }
-    }
-
-    // Fill-blank question
-    const fillQuestion = activeItem.locator('[data-question-type="fill_blank"]');
-    if (await fillQuestion.count() > 0) {
-      const input = fillQuestion.locator('input[type="text"]');
-      await input.fill('駅');
-      const submitBtn = fillQuestion.locator('button.btn-primary');
-      await submitBtn.click();
-      await page.waitForTimeout(1000);
     }
 
     // Matching question
