@@ -4,6 +4,20 @@
 {% block title %}Kurse{% endblock %}
 {% block meta_description %}Japanisch-Kurse für deutschsprachige Anfänger — gebündelte Lernpakete entlang JLPT-Levels. Mit Lektionen, Vokabel-Trainer und SRS-Wiederholung.{% endblock %}
 
+{% block styles %}
+<style>
+  /* Lokaler Gradient-Platzhalter (ersetzt externen via.placeholder.com-Dienst) */
+  .course-card-image-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-400, #9aa0a6);
+    font-size: 3rem;
+    background: linear-gradient(135deg, var(--washi, #f7f3ec), var(--kinari, #e8e0d2));
+  }
+</style>
+{% endblock %}
+
 {% block content %}
 <!-- Hero Section -->
 <div class="courses-hero-section">
@@ -160,14 +174,18 @@ function renderCourses() {
             const lessonCount = course.lessons ? course.lessons.length : 0;
             const estimatedDuration = lessonCount * 15; // Estimate 15 minutes per lesson
             
+            const imageMarkup = course.background_image_url
+                ? `<img src="${course.background_image_url}"
+                         class="course-card-image"
+                         alt="${course.title}"
+                         onerror="this.outerHTML='<div class=\\'course-card-image course-card-image-placeholder\\' aria-hidden=\\'true\\'><i class=\\'fas fa-graduation-cap\\'></i></div>'">`
+                : `<div class="course-card-image course-card-image-placeholder" aria-hidden="true"><i class="fas fa-graduation-cap"></i></div>`;
+
             const courseCard = `
                 <div class="col-lg-6 col-xl-4 mb-4">
                     <div class="enhanced-course-card" data-course-id="${course.id}">
                         <div class="course-card-image-container">
-                            <img src="${course.background_image_url || 'https://via.placeholder.com/600x400?text=Japanese+Course'}" 
-                                 class="course-card-image" 
-                                 alt="${course.title}"
-                                 onerror="this.src='https://via.placeholder.com/600x400?text=Japanese+Course'">
+                            ${imageMarkup}
                             <div class="course-card-overlay">
                                 <div class="course-level-badge">
                                     <i class="fas fa-star me-1"></i>
