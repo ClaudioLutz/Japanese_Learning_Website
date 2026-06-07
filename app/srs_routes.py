@@ -648,26 +648,103 @@ def _user_unlocked_kana_ids(user_id, include_locked=False):
     )
 
 
+# ── Gast-Modus (ohne Login) ───────────────────────────────────
+# Grund-Hiragana (Gojuon ohne Dakuten/Handakuten) — fixe, vollstaendige Quelle
+# fuer anonyme Besucher (Startseiten-Embed). Bewusst NICHT die freigeschalteten
+# Kana eines Users, sondern ein komplettes Anfaenger-Set, das ohne Konto
+# spielbar ist.
+_GUEST_HIRAGANA_ROW_KEYS = ('vowels', 'k', 's', 't', 'n', 'h', 'm', 'y', 'r', 'w', 'n_kons')
+
+
+def _guest_hiragana_chars():
+    """Liefert die 46 Grund-Hiragana-Zeichen in kanonischer Gojuon-Reihenfolge."""
+    from app.services.kana_rows import HIRAGANA_ROWS
+    chars = []
+    for key in _GUEST_HIRAGANA_ROW_KEYS:
+        chars.extend(HIRAGANA_ROWS[key])
+    return chars
+
+
+def _guest_kana_rows():
+    """(lesson_content_id, Kana)-Tupel fuer anonyme Gaeste — komplettes Grund-
+    Hiragana, unabhaengig von freigeschalteten Lessons.
+
+    lesson_content_id ist immer None: Gaeste raten nicht ans SRS, die ID wird
+    nur fuer Rating-Calls gebraucht (die fuer Gaeste ohnehin uebersprungen
+    werden). Reihenfolge folgt der Gojuon-Tabelle (didaktisch sinnvoll fuers
+    Gitter).
+    """
+    from app.models import Kana
+    chars = _guest_hiragana_chars()
+    kana_by_char = {
+        k.character: k
+        for k in Kana.query.filter(
+            Kana.type == 'hiragana', Kana.character.in_(chars)
+        ).all()
+    }
+    missing = len(chars) - len(kana_by_char)
+    if missing:
+        logger.warning(
+            'Gast-Kana: %d von %d Grund-Hiragana fehlen in der DB — '
+            'Gast-Spiel zeigt evtl. ein leeres/unvollstaendiges Set.',
+            missing, len(chars),
+        )
+    return [(None, kana_by_char[ch]) for ch in chars if ch in kana_by_char]
+
+
+def _kana_item(lesson_content_id, kana, row_key=None, *, with_extras=True):
+    """Baut das JSON-Item einer Kana-Karte fuer das Spiel.
+
+    row_key: vorgegebener Reihen-Schluessel (z.B. Confusion-Cluster 'cf_0');
+        None -> automatisch via row_for_kana bestimmt.
+    with_extras: stroke_order_info + mnemonic mitliefern (Daily braucht sie nicht).
+    """
+    from app.services.kana_rows import row_for_kana
+    item = {
+        'kana_id': kana.id,
+        'lesson_content_id': lesson_content_id,
+        'character': kana.character,
+        'romanization': kana.romanization,
+        'type': kana.type,
+        'row': row_key if row_key is not None else row_for_kana(kana.character),
+    }
+    if with_extras:
+        item['stroke_order_info'] = kana.stroke_order_info
+        item['mnemonic'] = kana.mnemonic
+    return item
+
+
 @srs_bp.route('/practice/kana')
-@login_required
 def practice_kana_page():
     """Schritt 1: Einstellungs-Seite fuer das Kana-Spiel (Viewport-gesperrt).
 
     Sammelt die Filter und verlinkt mit den gewaehlten Werten als Query-Params
-    auf die Spiel-Seite (practice_kana_game_page).
+    auf die Spiel-Seite (practice_kana_game_page). Auch fuer Gaeste offen — der
+    Score wird aber nur fuer eingeloggte User gespeichert (siehe /api/srs/rate).
     """
     return render_template('practice_kana.html')
 
 
 @srs_bp.route('/practice/kana/spiel')
-@login_required
 def practice_kana_game_page():
     """Schritt 2: Spiel-Seite (Viewport-gesperrt, sichtbarer Timer).
 
     Liest die Einstellungen client-seitig aus den Query-Params und baut die
-    Session ueber /api/practice/kana/session bzw. /daily-challenge.
+    Session ueber /api/practice/kana/session bzw. /daily-challenge. Auch fuer
+    Gaeste offen (Gast-Session via /api/practice/kana/session/public).
     """
     return render_template('practice_kana_game.html')
+
+
+@srs_bp.route('/practice/kana/embed')
+def practice_kana_embed():
+    """Schlanke Embed-Variante des Spiels fuer das <iframe> auf der Startseite.
+
+    Bewusst ohne base.html-Chrome (keine Top-Nav/Footer) und ohne Login: laeuft
+    immer im Gast-Modus (komplettes Grund-Hiragana, kein Score-Speichern). Die
+    Konto-CTA nach dem Spiel steuert die Eltern-Seite per postMessage.
+    """
+    return render_template('_kana_game_embed_layout.html')
 
 
 @srs_bp.route('/api/practice/kana/session')
@@ -806,55 +883,91 @@ def api_practice_session():
     })
 
 
+@srs_bp.route('/api/practice/kana/session/public')
+def api_practice_session_public():
+    """Gast-Variante der Kana-Session fuer das Startseiten-Embed (iframe).
+
+    Bewusst NICHT @login_required: anonyme Besucher sollen das Spiel ohne Konto
+    starten koennen. Liefert das komplette Grund-Hiragana (kein User-State, kein
+    weak_only/Faelligkeits-Sortierung) und schreibt NICHTS in die DB. Eingeloggte
+    nutzen weiterhin /api/practice/kana/session (mit ihren freigeschalteten
+    Kana). Score-Speichern laeuft ueber /api/srs/rate und bleibt login-pflichtig.
+
+    Query-Params:
+        mode: 'schreiben' | 'lesen' | 'blind' (default 'schreiben')
+        limit: max Anzahl (default 50, max 50 — deckt das komplette Grund-Hiragana)
+    """
+    mode = request.args.get('mode', 'schreiben')
+    if mode not in ('schreiben', 'lesen', 'blind'):
+        mode = 'schreiben'
+    limit = min(request.args.get('limit', 50, type=int), 50)
+
+    rows_data = _guest_kana_rows()
+    items = [_kana_item(lc_id, kana) for lc_id, kana in rows_data][:limit]
+    payload = {
+        'kana': items,
+        'count': len(items),
+        'mode': mode,
+        'guest': True,
+        'filters': {'schrift': 'hiragana', 'rows': [], 'dakuten': False, 'weak_only': False},
+    }
+    if not items:
+        # Sollte in Produktion nie passieren (46 Grund-Hiragana vorhanden) — aber
+        # bei leerer/uninitialisierter DB einen verstaendlichen Hinweis liefern,
+        # statt den Gast vor einer stummen leeren Buehne stehen zu lassen.
+        payload['message'] = ('Die Hiragana sind gerade nicht verfügbar — bitte lade '
+                              'die Seite neu oder versuche es später erneut.')
+    return jsonify(payload)
+
+
 @srs_bp.route('/api/practice/kana/daily-challenge')
-@login_required
 def api_practice_daily_challenge():
-    """Taegliche Challenge: 10 zufaellige Kana, deterministisch pro (user_id, date)."""
+    """Taegliche Challenge: 10 zufaellige Kana, deterministisch pro Tag.
+
+    Eingeloggt: Seed pro (user_id, date), Quelle = freigeschaltete Kana, Bonus-XP
+    bei perfektem Abschluss. Gast (ohne Login): Seed nur pro Datum, Quelle =
+    komplettes Grund-Hiragana, kein Bonus-XP (kein Konto zum Gutschreiben).
+    """
     import hashlib
     import random as _random
     from datetime import date
     from app.models import Kana, LessonContent
 
     today = date.today().isoformat()
-    seed_raw = f'{current_user.id}-{today}-daily-kana'
-    seed = int(hashlib.sha256(seed_raw.encode()).hexdigest()[:16], 16)
 
-    include_locked = bool(getattr(current_user, 'is_admin', False))
-    unlocked_lc_rows = _user_unlocked_kana_ids(current_user.id, include_locked=include_locked)
-    unlocked_lc_ids = [r[0] for r in unlocked_lc_rows]
-    if not unlocked_lc_ids:
-        return jsonify({'kana': [], 'count': 0, 'bonus_xp': 0,
-                        'message': 'Keine freigeschalteten Kana — bitte erst eine Lesson abschliessen.'})
-
-    rows = (
-        db.session.query(LessonContent.id, Kana)
-        .join(Kana, LessonContent.content_id == Kana.id)
-        .filter(LessonContent.id.in_(unlocked_lc_ids))
-        .all()
-    )
+    if current_user.is_authenticated:
+        seed_raw = f'{current_user.id}-{today}-daily-kana'
+        include_locked = bool(getattr(current_user, 'is_admin', False))
+        unlocked_lc_rows = _user_unlocked_kana_ids(current_user.id, include_locked=include_locked)
+        unlocked_lc_ids = [r[0] for r in unlocked_lc_rows]
+        if not unlocked_lc_ids:
+            return jsonify({'kana': [], 'count': 0, 'bonus_xp': 0,
+                            'message': 'Keine freigeschalteten Kana — bitte erst eine Lesson abschliessen.'})
+        rows = (
+            db.session.query(LessonContent.id, Kana)
+            .join(Kana, LessonContent.content_id == Kana.id)
+            .filter(LessonContent.id.in_(unlocked_lc_ids))
+            .all()
+        )
+        bonus_xp = 25  # bei perfektem Abschluss
+    else:
+        seed_raw = f'guest-{today}-daily-kana'
+        rows = _guest_kana_rows()
+        bonus_xp = 0
 
     # Deterministisch shufflen
+    seed = int(hashlib.sha256(seed_raw.encode()).hexdigest()[:16], 16)
     rng = _random.Random(seed)
     rows = list(rows)
     rng.shuffle(rows)
     picked = rows[:10]
 
-    from app.services.kana_rows import row_for_kana
-    items = []
-    for lc_id, kana in picked:
-        items.append({
-            'kana_id': kana.id,
-            'lesson_content_id': lc_id,
-            'character': kana.character,
-            'romanization': kana.romanization,
-            'type': kana.type,
-            'row': row_for_kana(kana.character),
-        })
+    items = [_kana_item(lc_id, kana, with_extras=False) for lc_id, kana in picked]
 
     return jsonify({
         'kana': items,
         'count': len(items),
-        'bonus_xp': 25,  # bei perfektem Abschluss
+        'bonus_xp': bonus_xp,
         'date': today,
     })
 
@@ -941,16 +1054,16 @@ def api_kana_confusion_log():
 
 
 @srs_bp.route('/api/practice/kana/confusion')
-@login_required
 def api_practice_confusion():
     """Baut eine Verwechslungs-Drill-Session: optisch aehnliche Kana liegen
     als Cluster ('Reihe') zusammen im Grid, sodass die bestehende Zuordnungs-
     Mechanik die Diskrimination erzwingt.
 
-    Quelle: kanonische CONFUSION_SETS, eingeschraenkt auf freigeschaltete Kana,
-    priorisiert nach dem echten Per-User-Verwechslungssignal (KanaConfusion)
-    und Lapses. Pro Kana wird stroke_order_info fuer den Spot-the-difference-
-    Tooltip mitgeliefert.
+    Quelle: kanonische CONFUSION_SETS, eingeschraenkt auf die verfuegbaren Kana.
+    Eingeloggt: nur freigeschaltete Kana, priorisiert nach dem echten Per-User-
+    Verwechslungssignal (KanaConfusion) und Lapses. Gast (ohne Login): komplettes
+    Grund-Hiragana, generische Cluster-Reihenfolge (kein Per-User-Signal). Pro
+    Kana wird stroke_order_info fuer den Spot-the-difference-Tooltip mitgeliefert.
 
     Query-Params: mode ('schreiben'|'lesen'|'blind'), schrift, limit.
     """
@@ -966,28 +1079,33 @@ def api_practice_confusion():
         schrift = 'both'
     limit = min(request.args.get('limit', 20, type=int), 50)
 
-    include_locked = bool(getattr(current_user, 'is_admin', False))
-    unlocked_lc_rows = _user_unlocked_kana_ids(current_user.id, include_locked=include_locked)
-    unlocked_lc_ids = [r[0] for r in unlocked_lc_rows]
-    if not unlocked_lc_ids:
-        return jsonify({
-            'kana': [], 'count': 0, 'mode': mode,
-            'message': 'Keine freigeschalteten Kana — bitte erst eine Lesson abschliessen.',
-        })
-
-    q = (
-        db.session.query(LessonContent.id, Kana)
-        .join(Kana, LessonContent.content_id == Kana.id)
-        .filter(LessonContent.content_type == 'kana')
-        .filter(LessonContent.id.in_(unlocked_lc_ids))
-    )
-    if schrift != 'both':
-        q = q.filter(Kana.type == schrift)
+    is_auth = current_user.is_authenticated
 
     # char -> (lc_id, kana); dedup auf Zeichen (selbe Kana evtl. in mehreren Lessons)
     by_char = {}
-    for lc_id, kana in q.all():
-        by_char.setdefault(kana.character, (lc_id, kana))
+    if is_auth:
+        include_locked = bool(getattr(current_user, 'is_admin', False))
+        unlocked_lc_rows = _user_unlocked_kana_ids(current_user.id, include_locked=include_locked)
+        unlocked_lc_ids = [r[0] for r in unlocked_lc_rows]
+        if not unlocked_lc_ids:
+            return jsonify({
+                'kana': [], 'count': 0, 'mode': mode,
+                'message': 'Keine freigeschalteten Kana — bitte erst eine Lesson abschliessen.',
+            })
+        q = (
+            db.session.query(LessonContent.id, Kana)
+            .join(Kana, LessonContent.content_id == Kana.id)
+            .filter(LessonContent.content_type == 'kana')
+            .filter(LessonContent.id.in_(unlocked_lc_ids))
+        )
+        if schrift != 'both':
+            q = q.filter(Kana.type == schrift)
+        for lc_id, kana in q.all():
+            by_char.setdefault(kana.character, (lc_id, kana))
+    else:
+        # Gast: komplettes Grund-Hiragana, kein User-State.
+        for lc_id, kana in _guest_kana_rows():
+            by_char.setdefault(kana.character, (lc_id, kana))
 
     clusters = confusion_clusters(set(by_char.keys()))
     if not clusters:
@@ -1000,30 +1118,33 @@ def api_practice_confusion():
     kana_id_by_char = {ch: kana.id for ch, (lc_id, kana) in by_char.items()}
     lc_id_by_char = {ch: lc_id for ch, (lc_id, kana) in by_char.items()}
 
-    # ── Priorisierung: echtes User-Signal (KanaConfusion) stark, Lapses schwach ──
-    conf_rows = (
-        db.session.query(
-            KanaConfusion.target_kana_id, KanaConfusion.confused_kana_id, KanaConfusion.count
-        )
-        .filter(KanaConfusion.user_id == current_user.id)
-        .all()
-    )
+    # ── Priorisierung: echtes User-Signal (KanaConfusion) stark, Lapses schwach.
+    #    Fuer Gaeste bleiben beide leer -> generische CONFUSION_SETS-Reihenfolge. ──
     confusion_score_by_kana = defaultdict(int)
-    for tgt, conf, cnt in conf_rows:
-        confusion_score_by_kana[tgt] += (cnt or 0)
-        confusion_score_by_kana[conf] += (cnt or 0)
-
     lapses_by_lc = {}
-    if lc_id_by_char:
-        states = (
-            db.session.query(CardReviewState.content_id, CardReviewState.lapses)
-            .filter(
-                CardReviewState.user_id == current_user.id,
-                CardReviewState.content_id.in_(list(lc_id_by_char.values())),
+    if is_auth:
+        conf_rows = (
+            db.session.query(
+                KanaConfusion.target_kana_id, KanaConfusion.confused_kana_id, KanaConfusion.count
             )
+            .filter(KanaConfusion.user_id == current_user.id)
             .all()
         )
-        lapses_by_lc = {cid: (lap or 0) for cid, lap in states}
+        for tgt, conf, cnt in conf_rows:
+            confusion_score_by_kana[tgt] += (cnt or 0)
+            confusion_score_by_kana[conf] += (cnt or 0)
+
+        valid_lc_ids = [v for v in lc_id_by_char.values() if v is not None]
+        if valid_lc_ids:
+            states = (
+                db.session.query(CardReviewState.content_id, CardReviewState.lapses)
+                .filter(
+                    CardReviewState.user_id == current_user.id,
+                    CardReviewState.content_id.in_(valid_lc_ids),
+                )
+                .all()
+            )
+            lapses_by_lc = {cid: (lap or 0) for cid, lap in states}
 
     def cluster_score(members):
         score = 0
@@ -1049,16 +1170,7 @@ def api_practice_confusion():
         for ch in fresh:
             lc_id, kana = by_char[ch]
             used_chars.add(ch)
-            items.append({
-                'kana_id': kana.id,
-                'lesson_content_id': lc_id,
-                'character': kana.character,
-                'romanization': kana.romanization,
-                'type': kana.type,
-                'row': key,
-                'stroke_order_info': kana.stroke_order_info,
-                'mnemonic': kana.mnemonic,
-            })
+            items.append(_kana_item(lc_id, kana, row_key=key))
 
     return jsonify({
         'kana': items,

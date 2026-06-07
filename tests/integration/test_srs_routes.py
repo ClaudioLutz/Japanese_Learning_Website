@@ -348,12 +348,15 @@ class TestSRSAuth:
 
     def test_stats_requires_auth(self, client):
         """I-SRS50: Stats-Endpoints erfordern Login."""
+        # Hinweis: /practice/kana(/spiel) sind seit dem Gast-Modus BEWUSST ohne
+        # Login erreichbar (Kana-Spiel fuer alle, Score-Speichern bleibt aber
+        # login-pflichtig) — sie stehen daher nicht mehr in dieser Liste.
+        # Abgedeckt in tests/integration/test_kana_practice_guest.py.
         endpoints = [
             '/api/srs/stats', '/api/srs/stats/heatmap', '/api/srs/stats/retention',
             '/api/srs/stats/forecast', '/api/srs/stats/maturity',
             '/api/srs/browse', '/api/srs/achievements',
             '/review', '/review/stats', '/review/browse',
-            '/practice/kana', '/practice/kana/spiel',
         ]
         for ep in endpoints:
             resp = client.get(ep)

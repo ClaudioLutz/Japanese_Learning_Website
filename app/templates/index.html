@@ -155,6 +155,147 @@
   </section>
 
   {# ──────────────────────────────────────────────
+     KANA-SPIEL ZUM AUSPROBIEREN — fuer Gaeste, ohne Login spielbar.
+     Das Spiel laeuft isoliert in einem <iframe> (eigener Body → der
+     Viewport-Lock des Spiels sperrt die Startseite NICHT). Desktop:
+     inline. Mobile: Tap → Vollbild-Overlay. Score nur clientseitig;
+     Speichern erfordert Login (Konto-CTA nach dem Spiel via postMessage).
+     ────────────────────────────────────────────── #}
+  {% if not current_user.is_authenticated %}
+  <section class="kana-embed-section" aria-labelledby="kanaEmbedTitle"
+           x-data="kanaEmbedHost('{{ url_for('srs.practice_kana_embed') }}')">
+    <div class="kana-embed-card">
+      <div class="kana-embed-head">
+        <span class="kana-embed-eyebrow"><span lang="ja">かな</span> · Spiel</span>
+        <h2 class="kana-embed-title" id="kanaEmbedTitle">Hiragana spielerisch — jetzt ausprobieren</h2>
+        <p class="kana-embed-sub">
+          Ordne die Silben gegen die Uhr — komplett ohne Konto.
+          <span class="kana-embed-note"><i class="fas fa-lock" aria-hidden="true"></i> Dein Punktestand wird nur gespeichert, wenn du eingeloggt bist.</span>
+        </p>
+      </div>
+
+      <div class="kana-embed-stage" :class="{ 'is-fullscreen': open }" x-cloak>
+        <!-- Mobile-Startkarte (solange das iframe nicht geladen ist) -->
+        <button type="button" class="kana-embed-launch" x-show="!loaded" @click="launch()">
+          <span class="kana-embed-launch-ico" aria-hidden="true"><i class="fas fa-play"></i></span>
+          <span class="kana-embed-launch-text" x-text="error ? 'Erneut versuchen' : 'Hiragana-Spiel starten'">Hiragana-Spiel starten</span>
+          <small x-text="error ? 'Das Spiel konnte nicht geladen werden.' : '46 Zeichen · gegen die Uhr'">46 Zeichen · gegen die Uhr</small>
+        </button>
+
+        <!-- Schliessen (nur im Vollbild-Overlay) -->
+        <button type="button" class="kana-embed-close" x-show="open" @click="close()" aria-label="Spiel schliessen"><i class="fas fa-xmark"></i></button>
+
+        <!-- Das Spiel -->
+        <iframe class="kana-embed-iframe" x-show="loaded"
+                :src="loaded ? src : ''"
+                title="Hiragana-Spiel zum Ausprobieren"
+                sandbox="allow-same-origin allow-scripts"
+                loading="lazy"></iframe>
+      </div>
+
+      <!-- Ergebnis + Konto-CTA (vom iframe per postMessage) -->
+      <div class="kana-embed-result" id="kanaEmbedResult" x-show="done" x-cloak x-transition>
+        <div class="kana-embed-stars" aria-hidden="true">
+          <template x-for="i in 3" :key="i">
+            <span :class="{ 'is-earned': done && i <= done.stars }">★</span>
+          </template>
+        </div>
+        <p class="kana-embed-result-line">
+          <strong x-text="done && done.perfect ? 'Perfekt gemacht!' : 'Stark!'"></strong>
+          <span x-text="done ? (' ' + done.solved + '/' + done.total + ' richtig · ' + done.timeLabel) : ''"></span>
+        </p>
+        <p class="kana-embed-result-pitch">Sichere XP, deine Tagesserie und deinen Lernfortschritt:</p>
+        <div class="kana-embed-result-actions">
+          <a class="kana-embed-cta" href="{{ url_for('routes.register', next=url_for('srs.practice_kana_page')) }}">
+            <i class="fas fa-user-plus" aria-hidden="true"></i> Kostenloses Konto erstellen
+          </a>
+          <button type="button" class="kana-embed-replay" @click="replay()">
+            <i class="fas fa-redo" aria-hidden="true"></i> Nochmal spielen
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+  <script>
+    /* Host-Komponente fuer das Kana-Spiel-iframe: Desktop inline, Mobile als
+       Vollbild-Overlay, plus Score-/Konto-CTA-Karte (gefuettert per postMessage
+       aus dem iframe). Globale Funktion (Projekt-Stil wie kanaGameView), synchron
+       definiert → vor dem defer-geladenen Alpine verfuegbar. */
+    function kanaEmbedHost(src) {
+      return {
+        src: src,
+        loaded: false,
+        open: false,
+        isMobile: false,
+        done: null,
+        error: false,
+        _safetyTimer: null,
+        init() {
+          const mq = window.matchMedia('(max-width: 640px)');
+          this.isMobile = mq.matches;
+          mq.addEventListener('change', (e) => { this.isMobile = e.matches; });
+          // Desktop: iframe sofort inline. Mobile: erst beim Tap (das winzige
+          // Inline-iframe waere fuer Drag-Drop ohnehin zu klein → Vollbild).
+          if (!this.isMobile) this.loaded = true;
+          window.addEventListener('message', (e) => this.onMessage(e));
+        },
+        // Sicherung gegen einen dauerhaft gesperrten Body-Scroll (WCAG 2.5.6):
+        // schliesst das Overlay automatisch, falls das iframe nie ein Ergebnis
+        // oder einen Fehler meldet.
+        _armSafety() {
+          if (this._safetyTimer) clearTimeout(this._safetyTimer);
+          this._safetyTimer = setTimeout(() => {
+            if (this.open && !this.done) this.close();
+          }, 90000);
+        },
+        launch() {
+          this.done = null; this.error = false;
+          this.loaded = true;
+          if (this.isMobile) { this.open = true; document.body.classList.add('kana-embed-noscroll'); this._armSafety(); }
+        },
+        replay() {
+          // frische Runde erzwingen (iframe neu laden)
+          this.done = null; this.error = false;
+          if (this.isMobile) { this.open = true; document.body.classList.add('kana-embed-noscroll'); this._armSafety(); }
+          this.loaded = false;
+          this.$nextTick(() => { this.loaded = true; });
+        },
+        close() {
+          this.open = false;
+          if (this._safetyTimer) { clearTimeout(this._safetyTimer); this._safetyTimer = null; }
+          document.body.classList.remove('kana-embed-noscroll');
+        },
+        onMessage(ev) {
+          if (ev.origin !== window.location.origin) return;
+          const d = ev.data || {};
+          if (d.type === 'kana-embed-complete') {
+            this.error = false;
+            this.done = d;
+            if (this.open) this.close();
+            this.$nextTick(() => {
+              const el = document.getElementById('kanaEmbedResult');
+              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+            if (window.plausible) window.plausible('kana-embed-complete');
+          } else if (d.type === 'kana-embed-restart') {
+            this.done = null; this.error = false;
+          } else if (d.type === 'kana-embed-error') {
+            // Das iframe konnte das Spiel nicht laden — Overlay schliessen
+            // (stellt den Body-Scroll wieder her) und die Startkarte als
+            // Retry-Knopf zurueckholen, statt eine leere Box zu hinterlassen.
+            this.error = true;
+            this.loaded = false;
+            if (this.open) this.close();
+          } else if (d.type === 'kana-embed-settings') {
+            if (this.open) this.close();
+          }
+        },
+      };
+    }
+  </script>
+  {% endif %}
+
+  {# ──────────────────────────────────────────────
      LERNPFAD N5 — vertikaler Sumi-Pfad mit Donut-Fortschritt
      Empfohlene Reihenfolge, keine Sperren
      ────────────────────────────────────────────── #}
@@ -1188,6 +1329,92 @@
 
 /* Container.mt-4 ueberschreiben fuer Hero-Edge-to-Edge auf Mobile */
 body.redesign-page .container.mt-4 { padding-left: 0; padding-right: 0; margin-top: 0 !important; }
+
+/* ── Kana-Spiel-Embed (Startseite, nur Gaeste) ──────────────────── */
+.kana-embed-section [x-cloak], .kana-embed-section[x-cloak] { display: none !important; }
+.kana-embed-section { padding: clamp(1.5rem, 4vw, 2.75rem) 1rem; }
+.kana-embed-card {
+    max-width: 760px; margin: 0 auto;
+    background: var(--card-bg, #FFFDF7); border: 1px solid var(--border-color, #E4DED4);
+    border-radius: 18px; padding: clamp(1rem, 3vw, 1.6rem);
+    box-shadow: 0 1px 3px rgba(28,26,23,.05);
+}
+.kana-embed-head { text-align: center; margin-bottom: 1rem; }
+.kana-embed-eyebrow {
+    display: inline-block; padding: 0.28rem 0.7rem; border-radius: 999px;
+    border: 1px solid var(--border-color, #E4DED4); background: rgba(255,255,255,0.6);
+    font: 600 0.68rem/1 'Geist','Inter',sans-serif; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--ink-700, #403B34);
+}
+.kana-embed-eyebrow [lang=ja] { color: var(--shu, #EB6101); letter-spacing: 0; }
+.kana-embed-title {
+    font: 510 clamp(1.3rem, 4vw, 1.6rem)/1.1 'Geist','Inter',sans-serif; letter-spacing: -0.02em;
+    color: var(--kon, #1F2A44); margin: 0.5rem 0 0.3rem;
+}
+.kana-embed-sub { font-size: 0.9rem; color: var(--text-muted, #8C8378); margin: 0; line-height: 1.5; }
+.kana-embed-note { display: block; margin-top: 0.4rem; font-size: 0.82rem; color: var(--ink-600, #5C564D); }
+.kana-embed-note i { color: var(--shu, #EB6101); margin-right: 0.2rem; }
+
+.kana-embed-stage {
+    position: relative; width: 100%;
+    border: 1px solid var(--border-color, #E4DED4); border-radius: 14px; overflow: hidden;
+    background: var(--background-color, #FAF7F2); min-height: 200px;
+}
+.kana-embed-iframe { display: block; width: 100%; height: min(78vh, 600px); border: 0; }
+
+.kana-embed-launch {
+    width: 100%; min-height: 200px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 0.45rem;
+    border: 0; background: transparent; cursor: pointer; color: var(--kon, #1F2A44);
+    padding: 2rem 1rem;
+}
+.kana-embed-launch-ico {
+    width: 56px; height: 56px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+    background: var(--shu, #EB6101); color: #fff; font-size: 1.2rem;
+    box-shadow: 0 4px 12px rgba(184,74,0,.3);
+}
+.kana-embed-launch-text { font: 600 1.05rem 'Geist','Inter',sans-serif; }
+.kana-embed-launch small { color: var(--text-muted, #8C8378); font-size: 0.8rem; }
+
+.kana-embed-close {
+    /* oben LINKS, ueber dem (leeren) Back-Spacer des iframe-HUDs — so verdeckt
+       der Button nicht die Fortschritts-Anzeige (0/46) oben rechts im Spiel. */
+    position: absolute; top: 0.55rem; left: 0.6rem; z-index: 5;
+    width: 38px; height: 38px; border-radius: 50%; border: 0; cursor: pointer;
+    background: rgba(28,26,23,.55); color: #fff; font-size: 1.05rem;
+    display: inline-flex; align-items: center; justify-content: center;
+}
+
+/* Vollbild-Overlay (Mobile): das iframe nimmt die volle Spielflaeche ein */
+.kana-embed-stage.is-fullscreen {
+    position: fixed; inset: 0; z-index: 1000; border: 0; border-radius: 0;
+    height: 100dvh; width: 100vw; min-height: 0;
+}
+.kana-embed-stage.is-fullscreen .kana-embed-iframe { height: 100dvh; }
+/* Im Vollbild-Overlay (Mobile) die Bottom-Nav der Startseite ausblenden —
+   sonst ueberlappt sie das Spiel am unteren Rand (analog zur Spielseite). */
+body.kana-embed-noscroll { overflow: hidden; }
+body.kana-embed-noscroll .mobile-bottom-nav { display: none !important; }
+
+.kana-embed-result { text-align: center; margin-top: 1rem; padding: 0.5rem 0.5rem 0; }
+.kana-embed-stars { font-size: 1.6rem; letter-spacing: 0.25rem; margin-bottom: 0.4rem; color: #d6cfc2; }
+.kana-embed-stars .is-earned { color: #f1c40f; text-shadow: 0 1px 3px rgba(241,196,15,.4); }
+.kana-embed-result-line { margin: 0 0 0.3rem; font-size: 1rem; color: var(--kon, #1F2A44); }
+.kana-embed-result-line strong { color: var(--shu-deep, #B84A00); }
+.kana-embed-result-pitch { margin: 0 0 0.7rem; font-size: 0.88rem; color: var(--text-muted, #8C8378); }
+.kana-embed-result-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; }
+.kana-embed-cta {
+    display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.7rem 1.3rem;
+    border-radius: 12px; background: var(--shu, #EB6101); color: #fff; text-decoration: none;
+    font: 600 0.95rem 'Geist','Inter',sans-serif; border: 1px solid var(--shu, #EB6101);
+}
+.kana-embed-cta:hover { filter: brightness(1.05); color: #fff; text-decoration: none; }
+.kana-embed-replay {
+    display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.7rem 1.2rem;
+    border-radius: 12px; background: #fff; color: var(--ink-700, #403B34); cursor: pointer;
+    font: 600 0.95rem 'Geist','Inter',sans-serif; border: 1px solid var(--border-color, #D4CFC5);
+}
+.kana-embed-replay:hover { border-color: var(--shu, #EB6101); color: var(--shu, #EB6101); }
 </style>
 
 <script>

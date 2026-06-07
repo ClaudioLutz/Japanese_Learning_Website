@@ -67,6 +67,16 @@
 
     /* ── Scrollender Steuerbereich ── */
     .kana-setup__body { flex: 1 1 auto; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+
+    /* Gast-Hinweis (nur ohne Login): erklaert den eingeschraenkten Umfang */
+    .kana-setup__guest {
+        display: flex; align-items: flex-start; gap: 0.6rem;
+        margin-bottom: clamp(0.7rem, 1.8vh, 1.15rem); padding: 0.7rem 0.85rem;
+        background: #FFF8EC; border: 1px solid #F0D9A8; border-left: 3px solid var(--shu, #EB6101);
+        border-radius: 12px; font: 500 0.82rem/1.4 'Inter', sans-serif; color: var(--ink-700, #403B34);
+    }
+    .kana-setup__guest i { color: var(--shu, #EB6101); margin-top: 0.15rem; }
+    .kana-setup__guest a { color: var(--shu-deep, #B84A00); font-weight: 600; }
     .kana-setup__group { margin-bottom: clamp(0.7rem, 1.8vh, 1.15rem); }
     .kana-setup__label {
         display: flex; align-items: center; gap: 0.4rem;
@@ -181,6 +191,18 @@
     </div>
 
     <div class="kana-setup__body">
+        {% if not current_user.is_authenticated %}
+        <div class="kana-setup__guest" role="note">
+            <i class="fas fa-circle-info" aria-hidden="true"></i>
+            <div>
+                <strong>Gast-Modus</strong> — du übst das komplette Hiragana.
+                <a href="{{ url_for('routes.login') }}">Melde dich an</a>, um Katakana,
+                Reihen-Auswahl, schwache Karten und deinen Fortschritt freizuschalten.
+            </div>
+        </div>
+        {% endif %}
+
+        {% if current_user.is_authenticated %}
         <!-- Schrift -->
         <div class="kana-setup__group">
             <div class="kana-setup__label"><i class="fas fa-pen-nib"></i> Schrift</div>
@@ -196,6 +218,7 @@
                 </button>
             </div>
         </div>
+        {% endif %}
 
         <!-- Modus -->
         <div class="kana-setup__group">
@@ -213,6 +236,7 @@
             </div>
         </div>
 
+        {% if current_user.is_authenticated %}
         <!-- Reihen -->
         <div class="kana-setup__group">
             <div class="kana-setup__label">
@@ -259,6 +283,7 @@
             <input type="range" class="kana-setup__range" min="5" max="50" step="5"
                    x-model="limit" @input="changed()" aria-label="Anzahl Kana">
         </div>
+        {% endif %}
     </div>
 
     <div class="kana-setup__foot">
@@ -274,7 +299,9 @@
         </button>
         <div class="kana-setup__quick">
             <button type="button" @click="startDaily()"><i class="fas fa-bullseye"></i> Tages-Challenge</button>
+            {% if current_user.is_authenticated %}
             <button type="button" @click="startWeak()"><i class="fas fa-bolt"></i> Schwache 10</button>
+            {% endif %}
             <button type="button" @click="startConfusion()" title="Verwechslungs-Paare üben"><i class="fas fa-clone"></i> Ähnliche</button>
         </div>
     </div>

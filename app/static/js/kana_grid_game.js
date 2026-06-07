@@ -454,6 +454,9 @@ function kanaGridGame(contentId) {
 
         // ── #2: gesammeltes Verwechslungs-Signal an den Server flushen ──
         flushConfusions(viaKeepalive) {
+            // Gaeste haben kein Konto, an das ein Verwechslungs-Signal gebunden
+            // werden koennte — Signal verwerfen statt einen 401-POST abzusetzen.
+            if (!window.currentUser) { this.sessionConfusions = []; return; }
             if (!this.sessionConfusions || this.sessionConfusions.length === 0) return;
             const payload = JSON.stringify({ confusions: this.sessionConfusions.splice(0) });
             const csrf = document.querySelector('meta[name="csrf-token"]')?.content || '';
@@ -799,7 +802,12 @@ function kanaSettings() {
             this.previewLoading = true;
             this.previewBlocked = null;
             try {
-                const resp = await fetch('/api/practice/kana/session?' + this.buildParams().toString());
+                // Gast: Vorschau ueber den public-Endpoint (komplettes Hiragana) —
+                // der login-pflichtige /session-Endpoint gaebe sonst 401.
+                const url = window.currentUser
+                    ? '/api/practice/kana/session?' + this.buildParams().toString()
+                    : '/api/practice/kana/session/public?mode=' + encodeURIComponent(this.mode);
+                const resp = await fetch(url);
                 const data = await resp.json();
                 if (data.message) {
                     this.previewBlocked = data.message;
@@ -878,15 +886,26 @@ function kanaGameView() {
             } else {
                 const m = p.get('mode');
                 this.mode = ['schreiben', 'lesen', 'blind'].includes(m) ? m : 'schreiben';
-                const params = new URLSearchParams({
-                    mode: this.mode,
-                    schrift: p.get('schrift') || 'both',
-                    dakuten: p.get('dakuten') || 'true',
-                    weak_only: p.get('weak_only') || 'false',
-                    limit: p.get('limit') || '20',
-                });
-                if (p.get('rows')) params.set('rows', p.get('rows'));
-                url = '/api/practice/kana/session?' + params.toString();
+                if (!window.currentUser) {
+                    // Gast (Startseiten-Embed ODER direkter Aufruf der Spielseite
+                    // ohne Login): komplettes Grund-Hiragana ueber den public-
+                    // Endpoint, ohne User-State. schrift/rows/weak_only entfallen.
+                    const params = new URLSearchParams({
+                        mode: this.mode,
+                        limit: p.get('limit') || '50',
+                    });
+                    url = '/api/practice/kana/session/public?' + params.toString();
+                } else {
+                    const params = new URLSearchParams({
+                        mode: this.mode,
+                        schrift: p.get('schrift') || 'both',
+                        dakuten: p.get('dakuten') || 'true',
+                        weak_only: p.get('weak_only') || 'false',
+                        limit: p.get('limit') || '20',
+                    });
+                    if (p.get('rows')) params.set('rows', p.get('rows'));
+                    url = '/api/practice/kana/session?' + params.toString();
+                }
             }
 
             let data;
@@ -896,6 +915,7 @@ function kanaGameView() {
             } catch (e) {
                 this.phase = 'error';
                 this.loadMessage = 'Session konnte nicht geladen werden (Netzwerkfehler).';
+                this._notifyEmbedError();
                 return;
             }
 
@@ -903,6 +923,7 @@ function kanaGameView() {
             if (kana.length === 0) {
                 this.phase = 'empty';
                 this.loadMessage = data.message || 'Keine Karten für diese Auswahl gefunden.';
+                this._notifyEmbedError();
                 return;
             }
             // H-3: Bonus-XP der Tages-Challenge merken (Server liefert 25 bei
@@ -994,6 +1015,7 @@ function kanaGameView() {
             baseOnComplete.call(this);
             this.liveElapsedMs = Date.now() - this.startTime;
             this.stopLiveTimer();
+            if (window.kgameEmbed) this._postEmbedResult();
         },
         async restart() {
             await baseRestart.call(this);
@@ -1001,7 +1023,44 @@ function kanaGameView() {
             this.startLiveTimer();
         },
 
-        goToSettings() { window.location.href = this.settingsUrl; },
+        // Embed: leere/fehlerhafte Runde an die Eltern-Seite melden, damit sie ein
+        // (Mobile-)Vollbild-Overlay schliesst (stellt den Body-Scroll wieder her)
+        // und einen Retry-Hinweis zeigt — statt den Gast vor einer leeren Box mit
+        // gesperrtem Body stehen zu lassen.
+        _notifyEmbedError() {
+            if (!window.kgameEmbed) return;
+            try {
+                window.parent.postMessage({ type: 'kana-embed-error' }, window.location.origin);
+            } catch (e) { /* Eltern-Seite evtl. nicht erreichbar */ }
+        },
+
+        // Embed: Ergebnis an die Eltern-Seite (Startseite) melden, damit sie die
+        // Score- + Konto-CTA-Karte zeigen kann. Gleiche Origin (iframe same-origin).
+        _postEmbedResult() {
+            try {
+                window.parent.postMessage({
+                    type: 'kana-embed-complete',
+                    stars: this.stars,
+                    solved: this.solvedCount,
+                    total: this.totalCells,
+                    errors: this.totalErrors,
+                    timeLabel: this.liveTimeLabel(),
+                    perfect: !!this.wasPerfect,
+                }, window.location.origin);
+            } catch (e) { /* Eltern-Seite evtl. nicht erreichbar */ }
+        },
+
+        goToSettings() {
+            if (window.kgameEmbed) {
+                // Im iframe nicht hart navigieren — die Eltern-Seite entscheidet
+                // (Overlay schliessen / zum Anmelden scrollen).
+                try {
+                    window.parent.postMessage({ type: 'kana-embed-settings' }, window.location.origin);
+                } catch (e) { /* noop */ }
+                return;
+            }
+            window.location.href = this.settingsUrl;
+        },
     });
 }
 
