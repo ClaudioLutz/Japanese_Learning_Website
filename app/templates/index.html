@@ -169,23 +169,33 @@
         <span class="kana-embed-eyebrow"><span lang="ja">かな</span> · Spiel</span>
         <h2 class="kana-embed-title" id="kanaEmbedTitle">Hiragana spielerisch — jetzt ausprobieren</h2>
         <p class="kana-embed-sub">
-          Ordne die Silben gegen die Uhr — komplett ohne Konto.
-          <span class="kana-embed-note"><i class="fas fa-lock" aria-hidden="true"></i> Dein Punktestand wird nur gespeichert, wenn du eingeloggt bist.</span>
+          {# #14: positiver Hook statt defensiver Lock-Note — die
+             "kein Speichern"-Reibung steht nur noch 1x nach dem Spiel
+             in der Ergebnis-Karte. #}
+          Schaffst du alle 46 Hiragana gegen die Uhr? Kein Login nötig.
         </p>
       </div>
 
-      <div class="kana-embed-stage" :class="{ 'is-fullscreen': open }" x-cloak>
+      {# #9: Im Mobile-Vollbild ist die Stage ein modaler Dialog —
+         role/aria-modal nur wenn 'open', Escape schliesst.
+         #5: bei fertigem Ergebnis kollabiert die ganze Buehne (statt nur das
+         iframe) — die Ergebnis-Karte tritt an ihre Stelle, keine leere 200px-Box. #}
+      <div class="kana-embed-stage" :class="{ 'is-fullscreen': open }" x-cloak
+           x-show="!done"
+           :role="open ? 'dialog' : null" :aria-modal="open ? 'true' : null"
+           aria-labelledby="kanaEmbedTitle"
+           @keydown.escape="open && close()">
         <!-- Mobile-Startkarte (solange das iframe nicht geladen ist) -->
-        <button type="button" class="kana-embed-launch" x-show="!loaded" @click="launch()">
+        <button type="button" class="kana-embed-launch" x-show="!loaded" @click="launch()" x-ref="launchBtn">
           <span class="kana-embed-launch-ico" aria-hidden="true"><i class="fas fa-play"></i></span>
           <span class="kana-embed-launch-text" x-text="error ? 'Erneut versuchen' : 'Hiragana-Spiel starten'">Hiragana-Spiel starten</span>
           <small x-text="error ? 'Das Spiel konnte nicht geladen werden.' : '46 Zeichen · gegen die Uhr'">46 Zeichen · gegen die Uhr</small>
         </button>
 
         <!-- Schliessen (nur im Vollbild-Overlay) -->
-        <button type="button" class="kana-embed-close" x-show="open" @click="close()" aria-label="Spiel schliessen"><i class="fas fa-xmark"></i></button>
+        <button type="button" class="kana-embed-close" x-show="open" @click="close()" x-ref="closeBtn" aria-label="Spiel schliessen"><i class="fas fa-xmark"></i></button>
 
-        <!-- Das Spiel -->
+        <!-- Das Spiel (#5: das done-Ausblenden uebernimmt die Stage oben). -->
         <iframe class="kana-embed-iframe" x-show="loaded"
                 :src="loaded ? src : ''"
                 title="Hiragana-Spiel zum Ausprobieren"
@@ -206,7 +216,9 @@
         </p>
         <p class="kana-embed-result-pitch">Sichere XP, deine Tagesserie und deinen Lernfortschritt:</p>
         <div class="kana-embed-result-actions">
-          <a class="kana-embed-cta" href="{{ url_for('routes.register', next=url_for('srs.practice_kana_page')) }}">
+          {# #10: nach Konto-Erstellung direkt in die Spiel-Seite (Score wird
+             eingeloggt gespeichert), nicht auf die Einstellungs-Seite. #}
+          <a class="kana-embed-cta" href="{{ url_for('routes.register', next=url_for('srs.practice_kana_game_page')) }}">
             <i class="fas fa-user-plus" aria-hidden="true"></i> Kostenloses Konto erstellen
           </a>
           <button type="button" class="kana-embed-replay" @click="replay()">
@@ -214,6 +226,11 @@
           </button>
         </div>
       </div>
+
+      {# #6: aria-live-Ansage vor einem etwaigen Safety-Auto-Close
+         (visuell versteckt, nur fuer Screenreader). #}
+      <div aria-live="assertive" x-text="liveMsg"
+           style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;"></div>
     </div>
   </section>
   <script>
@@ -229,6 +246,7 @@
         isMobile: false,
         done: null,
         error: false,
+        liveMsg: '',
         _safetyTimer: null,
         init() {
           const mq = window.matchMedia('(max-width: 640px)');
@@ -241,29 +259,90 @@
         },
         // Sicherung gegen einen dauerhaft gesperrten Body-Scroll (WCAG 2.5.6):
         // schliesst das Overlay automatisch, falls das iframe nie ein Ergebnis
-        // oder einen Fehler meldet.
+        // oder einen Fehler meldet. #6: Grosszuegiger Timeout (10 min), damit
+        // langsame Spieler nicht mitten im Spiel rausgeworfen werden; der Timer
+        // wird ohnehin beim ersten Spielzug (kana-embed-active) disarmt.
         _armSafety() {
           if (this._safetyTimer) clearTimeout(this._safetyTimer);
           this._safetyTimer = setTimeout(() => {
-            if (this.open && !this.done) this.close();
-          }, 90000);
+            if (this.open && !this.done) {
+              // aria-live-Ansage, bevor das Overlay automatisch schliesst.
+              this.liveMsg = 'Das Spiel wurde wegen Inaktivität geschlossen.';
+              this.close();
+            }
+          }, 600000);
+        },
+        _disarmSafety() {
+          if (this._safetyTimer) { clearTimeout(this._safetyTimer); this._safetyTimer = null; }
+        },
+        // #9: restlichen Seiteninhalt waehrend des Vollbild-Overlays inert/aria-
+        // hidden setzen, damit nur der Dialog (= unsere Section) fuer AT
+        // erreichbar ist. Wir maskieren auf zwei Ebenen: alle <body>-Kinder
+        // (Navbar/Footer) sowie die Geschwister der Section in ihrem Container
+        // (andere <section>s im <main>) — jeweils ausser dem Ast zur Stage.
+        _setInert(on) {
+          const section = this.$root; // x-data-Wurzel = <section.kana-embed-section>
+          const apply = (el) => {
+            if (on) { el.setAttribute('inert', ''); el.setAttribute('aria-hidden', 'true'); }
+            else { el.removeAttribute('inert'); el.removeAttribute('aria-hidden'); }
+          };
+          // 1) Geschwister der Section (z.B. weitere Sektionen im <main>)
+          if (section.parentElement) {
+            Array.from(section.parentElement.children).forEach((el) => {
+              if (el !== section && el.tagName !== 'SCRIPT') apply(el);
+            });
+          }
+          // 2) <body>-Kinder ausser dem Ast, der zur Section fuehrt (Navbar/Footer)
+          const bodyKeep = section.closest('body > *');
+          Array.from(document.body.children).forEach((el) => {
+            if (el !== bodyKeep && el.tagName !== 'SCRIPT') apply(el);
+          });
+        },
+        // #9: gemeinsamer Oeffnen-Pfad fuers Mobile-Overlay — Body-Lock,
+        // Inert-Maske, Safety-Timer, Fokus auf den Close-Button.
+        _openOverlay() {
+          this.open = true;
+          document.body.classList.add('kana-embed-noscroll');
+          this._setInert(true);
+          this._armSafety();
+          this.$nextTick(() => { if (this.$refs.closeBtn) this.$refs.closeBtn.focus(); });
         },
         launch() {
           this.done = null; this.error = false;
           this.loaded = true;
-          if (this.isMobile) { this.open = true; document.body.classList.add('kana-embed-noscroll'); this._armSafety(); }
+          if (this.isMobile) this._openOverlay();
         },
         replay() {
-          // frische Runde erzwingen (iframe neu laden)
+          // #11/#12: das iframe NICHT remounten — dem laufenden iframe ein
+          // kana-embed-replay posten (iframe-seitiger Listener ruft restart()).
+          // Full-Reload nur als Fallback, wenn zuvor ein Ladefehler auftrat.
+          const hadError = this.error;
           this.done = null; this.error = false;
-          if (this.isMobile) { this.open = true; document.body.classList.add('kana-embed-noscroll'); this._armSafety(); }
-          this.loaded = false;
-          this.$nextTick(() => { this.loaded = true; });
+          if (this.isMobile) this._openOverlay();
+          if (hadError) {
+            // Fallback: frisches iframe laden (vorher kam kein Spiel zustande).
+            this.loaded = false;
+            this.$nextTick(() => { this.loaded = true; });
+          } else {
+            this.loaded = true;
+            const ifr = this.$root.querySelector('.kana-embed-iframe');
+            if (ifr && ifr.contentWindow) {
+              ifr.contentWindow.postMessage({ type: 'kana-embed-replay' }, window.location.origin);
+            }
+          }
         },
         close() {
           this.open = false;
-          if (this._safetyTimer) { clearTimeout(this._safetyTimer); this._safetyTimer = null; }
+          this._disarmSafety();
+          this._setInert(false);
           document.body.classList.remove('kana-embed-noscroll');
+          // #9: Fokus zurueck auf den Launch-Button — aber nur, wenn er
+          // sichtbar ist (er ist via x-show="!loaded" verdeckt, sobald ein
+          // Ergebnis vorliegt; dann uebernimmt die Ergebnis-Karte den Fokus).
+          this.$nextTick(() => {
+            const btn = this.$refs.launchBtn;
+            if (btn && btn.offsetParent !== null) btn.focus();
+          });
         },
         onMessage(ev) {
           if (ev.origin !== window.location.origin) return;
@@ -277,8 +356,15 @@
               if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
             });
             if (window.plausible) window.plausible('kana-embed-complete');
+          } else if (d.type === 'kana-embed-active') {
+            // Erster echter Spielzug → der Safety-Auto-Close ist nicht mehr
+            // noetig, der Spieler ist aktiv. Timer disarmen.
+            this._disarmSafety();
           } else if (d.type === 'kana-embed-restart') {
+            // iframe hat sich selbst neu gestartet → Ergebnis-Karte einklappen
+            // und (Mobile) das Vollbild-Overlay erneut oeffnen.
             this.done = null; this.error = false;
+            if (this.isMobile && !this.open) this._openOverlay();
           } else if (d.type === 'kana-embed-error') {
             // Das iframe konnte das Spiel nicht laden — Overlay schliessen
             // (stellt den Body-Scroll wieder her) und die Startkarte als
@@ -1334,19 +1420,22 @@ body.redesign-page .container.mt-4 { padding-left: 0; padding-right: 0; margin-t
 .kana-embed-section [x-cloak], .kana-embed-section[x-cloak] { display: none !important; }
 .kana-embed-section { padding: clamp(1.5rem, 4vw, 2.75rem) 1rem; }
 .kana-embed-card {
-    max-width: 760px; margin: 0 auto;
+    /* #13: Desktop fuellt die Buehne mehr — bis ~900px statt 760px. */
+    max-width: clamp(760px, 88vw, 900px); margin: 0 auto;
     background: var(--card-bg, #FFFDF7); border: 1px solid var(--border-color, #E4DED4);
     border-radius: 18px; padding: clamp(1rem, 3vw, 1.6rem);
     box-shadow: 0 1px 3px rgba(28,26,23,.05);
 }
 .kana-embed-head { text-align: center; margin-bottom: 1rem; }
 .kana-embed-eyebrow {
-    display: inline-block; padding: 0.28rem 0.7rem; border-radius: 999px;
-    border: 1px solid var(--border-color, #E4DED4); background: rgba(255,255,255,0.6);
-    font: 600 0.68rem/1 'Geist','Inter',sans-serif; letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--ink-700, #403B34);
+    /* #15: an die Lernpfad-Eyebrow angeglichen — Geist Mono, shu, plain
+       (ohne umrandete Pill), damit die Sektion sich nahtlos einreiht. */
+    display: inline-block;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 0.74rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--shu, #EB6101);
 }
-.kana-embed-eyebrow [lang=ja] { color: var(--shu, #EB6101); letter-spacing: 0; }
+.kana-embed-eyebrow [lang=ja] { letter-spacing: 0.05em; }
 .kana-embed-title {
     font: 510 clamp(1.3rem, 4vw, 1.6rem)/1.1 'Geist','Inter',sans-serif; letter-spacing: -0.02em;
     color: var(--kon, #1F2A44); margin: 0.5rem 0 0.3rem;
@@ -1360,7 +1449,8 @@ body.redesign-page .container.mt-4 { padding-left: 0; padding-right: 0; margin-t
     border: 1px solid var(--border-color, #E4DED4); border-radius: 14px; overflow: hidden;
     background: var(--background-color, #FAF7F2); min-height: 200px;
 }
-.kana-embed-iframe { display: block; width: 100%; height: min(78vh, 600px); border: 0; }
+/* #2: etwas mehr Buehne auf Desktop (min(82vh, 640px)); Fullscreen bleibt 100dvh. */
+.kana-embed-iframe { display: block; width: 100%; height: min(82vh, 640px); border: 0; }
 
 .kana-embed-launch {
     width: 100%; min-height: 200px; display: flex; flex-direction: column;
@@ -1383,6 +1473,12 @@ body.redesign-page .container.mt-4 { padding-left: 0; padding-right: 0; margin-t
     width: 38px; height: 38px; border-radius: 50%; border: 0; cursor: pointer;
     background: rgba(28,26,23,.55); color: #fff; font-size: 1.05rem;
     display: inline-flex; align-items: center; justify-content: center;
+}
+/* #16: unsichtbare Hitbox auf >=44x44px erweitern (WCAG 2.5.5), ohne die
+   sichtbare Kreis-Optik (38px) zu vergroessern. */
+.kana-embed-close::before {
+    content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 44px; height: 44px;
 }
 
 /* Vollbild-Overlay (Mobile): das iframe nimmt die volle Spielflaeche ein */

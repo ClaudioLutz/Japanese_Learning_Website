@@ -4512,6 +4512,9 @@ button[onclick*="moveContentInPage"]:active {
 }
 .kana-grid-game__cell {
     position: relative;
+    /* #1: border-box, damit Border/Padding NICHT zur Spaltenbreite addiert werden
+       (sonst Overflow der 5. Spalte auf schmalen Viewports). */
+    box-sizing: border-box;
     min-height: 60px;
     border: 1.5px dashed var(--border-color, #D4CFC5);
     border-radius: 10px;
@@ -4531,8 +4534,10 @@ button[onclick*="moveContentInPage"]:active {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--text-muted, #8C8378);
-    opacity: 0.45;
+    /* #7: opacity:0.45 entfernt — auf hellem Zellhintergrund (~#FCFAF4) war der
+       Romaji-Platzhalter unleserlich. Dedizierte, dunkle Farbe (#6B6358) erreicht
+       >=4.5:1 statt eines transparenten Grau. */
+    color: #6B6358;
     font-size: 1.25rem;
     pointer-events: none;
     font-family: 'Geist Mono', ui-monospace, monospace;
@@ -4566,14 +4571,18 @@ button[onclick*="moveContentInPage"]:active {
     80% { transform: translateX(3px); }
 }
 
-/* Pool (Drag-Quelle) */
+/* Pool (Drag-Quelle) — als klar abgesetztes Tray UNTER dem Grid, nicht ueberlappend.
+   #2: Trennlinie oben + Schatten grenzen die Kartenquelle sichtbar vom Drop-Gitter ab. */
 .kana-grid-game__pool {
+    box-sizing: border-box;
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
     padding: 0.75rem;
     background: var(--background-color, #F5F0E8);
     border-radius: 12px;
+    border-top: 1px solid var(--border-color, #D4CFC5);
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
     min-height: 70px;
     margin-bottom: 0.5rem;
 }
@@ -4696,12 +4705,14 @@ button[onclick*="moveContentInPage"]:active {
     gap: 1px;
 }
 .kana-grid-game__cell-reveal {
-    font-size: 0.62rem;
+    /* #8: Groesse leicht angehoben (0.62 -> 0.68rem) und Farbe von --shu auf das
+       dunklere --shu-deep, das auf Washi ~4.6:1 erreicht (vorher zu hell). */
+    font-size: 0.68rem;
     font-weight: 700;
     font-family: 'Geist Mono', ui-monospace, monospace;
     letter-spacing: 0.04em;
     line-height: 1;
-    color: var(--shu, #EB6101);
+    color: var(--shu-deep, #B84A00);
     pointer-events: none;
 }
 .kana-grid-game__cell.is-revealed .kana-grid-game__cell-drop {
@@ -4756,8 +4767,12 @@ button[onclick*="moveContentInPage"]:active {
 /* Mobile: kompaktes Gojuon-Gitter (mehrspaltig statt 1 Zelle/Reihe) + sticky Pool.
    Breakpoint 767px = passt zur mobilen Bottom-Nav (.mobile-bottom-nav). */
 @media (max-width: 767px) {
+    /* #1: minmax(0, 1fr) statt 1fr — verhindert, dass der intrinsische
+       Mindestinhalt der Zellen die Spalten ueber die Containerbreite hinaus
+       aufblaeht (rechte 5. Spalte + HUD-Zaehler waren sonst abgeschnitten).
+       Zellen werden ueber min-height (nicht min-width) dimensioniert. */
     .kana-grid-game__row {
-        grid-template-columns: repeat(5, 1fr);
+        grid-template-columns: repeat(5, minmax(0, 1fr));
         gap: 0.3rem;
     }
     /* Reihen-Label als schmale Kopfzeile ueber den 5 Zellen der Reihe */
@@ -4769,16 +4784,19 @@ button[onclick*="moveContentInPage"]:active {
         margin-bottom: 0.1rem;
     }
     .kana-grid-game__cell {
+        min-width: 0;          /* #1: Grid-Item darf unter Inhaltsbreite schrumpfen */
         min-height: 48px;
     }
     .kana-grid-game__cell-hint {
-        font-size: 1rem;
+        font-size: 1rem;       /* #7: bleibt >= 0.9rem, lesbar */
     }
     .kana-grid-game__cell-drop {
         font-size: 1.3rem;
     }
-    /* Pool als immer sichtbares Tray am unteren Rand, knapp ueber der Bottom-Nav.
-       So bleibt die Kartenquelle beim Scrollen durch das Gitter stets erreichbar. */
+    /* #2: Pool als immer sichtbares, klar abgesetztes Tray am unteren Rand, knapp
+       ueber der Bottom-Nav. Es ueberlagert das Gitter NICHT mehr — das Grid scrollt
+       eigenstaendig im Container, der Pool sitzt als getrenntes Tray darunter
+       (Schatten + Border + leicht eingefaerbter Hintergrund grenzen ihn ab). */
     .kana-grid-game__pool {
         position: sticky;
         bottom: calc(64px + env(safe-area-inset-bottom, 0px));
@@ -4787,7 +4805,8 @@ button[onclick*="moveContentInPage"]:active {
         padding: 0.5rem;
         max-height: 38vh;
         overflow-y: auto;
-        box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+        background: var(--card-bg, #FFFDF7);
+        box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
         border: 1px solid var(--border-color, #D4CFC5);
     }
     .kana-grid-game__pool-card {
@@ -4795,6 +4814,32 @@ button[onclick*="moveContentInPage"]:active {
         min-height: 48px;
         padding: 0.4rem 0.5rem;
         font-size: 1.25rem;
+    }
+}
+
+/* #1: Sehr schmale Viewports (<=360px) — Seiten-/Grid-Padding-X reduzieren und Gap
+   weiter verkleinern, damit 5 Spalten + HUD garantiert ohne horizontalen Overflow
+   passen. */
+@media (max-width: 360px) {
+    .kana-grid-game {
+        padding-left: 0.4rem;
+        padding-right: 0.4rem;
+    }
+    .kana-grid-game__row {
+        gap: 0.25rem;
+    }
+    .kana-grid-game__cell {
+        min-height: 44px;
+    }
+    .kana-grid-game__pool {
+        padding-left: 0;
+        padding-right: 0;
+        gap: 0.25rem;
+    }
+    .kana-grid-game__pool-card {
+        min-width: 44px;
+        min-height: 44px;
+        padding: 0.35rem 0.4rem;
     }
 }
 

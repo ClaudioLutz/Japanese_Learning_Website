@@ -41,6 +41,11 @@ function kanaGridGame(contentId) {
         sessionConfusions: [],  // gesammelte Fehl-Drops {target_kana_id, confused_kana_id}
         activeHint: null,       // {char, text} — Spot-the-difference-Hinweis nach Fehler
         _confusionFlushInstalled: false,
+        // ── #3 Timer-Gate: Timer startet erst beim ERSTEN echten Spielzug ──
+        // (erster Drop/Tap, der eine Kachel platziert), nicht schon beim Laden.
+        // So misst die Sterne-Formel die echte Loesungszeit; HUD-Timer bleibt
+        // bis dahin 0:00. Idempotent ueber dieses Flag (nur der allererste Move zaehlt).
+        hasStarted: false,
 
         async init() {
             if (!this.contentId) {
@@ -71,7 +76,10 @@ function kanaGridGame(contentId) {
                 this.loading = false;
                 await this.$nextTick();
                 this.initSortables();
+                // #3 Timer-Gate: startTime hier nur als Fallback fuer rateCell()
+                // setzen; die echte Uhr startet _markStarted() beim ersten Spielzug.
                 this.startTime = Date.now();
+                this.hasStarted = false;
                 this._installConfusionFlush();
             } catch (e) {
                 console.error('[KanaGrid] init error', e);
@@ -298,7 +306,30 @@ function kanaGridGame(contentId) {
             }
         },
 
+        // #3 Timer-Gate: Der allererste echte Spielzug (egal ob korrekt oder falsch)
+        // startet die Uhr. Idempotent ueber hasStarted — spaetere Zuege sind No-Ops.
+        // Setzt startTime neu (verwirft Idle-Zeit seit dem Laden) und wirft, falls
+        // vorhanden (Spiel-Seite), den Live-Timer an. Gilt fuer Embed UND Vollbild.
+        _markStarted() {
+            if (this.hasStarted) return;
+            this.hasStarted = true;
+            this.startTime = Date.now();
+            // Spiel-Seite (kanaGameView) liefert startLiveTimer(); Lesson-Spiel nicht.
+            if (typeof this.startLiveTimer === 'function') this.startLiveTimer();
+            // #6 Heartbeat: dem Host signalisieren, dass wirklich gespielt wird —
+            // er disarmt/resettet dann seinen Safety-Timer. Nur im Embed-Pfad.
+            if (window.kgameEmbed) {
+                try {
+                    window.parent.postMessage(
+                        { type: 'kana-embed-active' }, window.location.origin
+                    );
+                } catch (e) { /* Eltern-Seite evtl. nicht erreichbar */ }
+            }
+        },
+
         handleDrop(cell, kanaId, payload, token) {
+            // #3 Timer-Gate: erster echter Spielzug startet die Uhr (idempotent).
+            this._markStarted();
             // Korrektheit rein INHALTSBASIERT pruefen — nicht ueber die unsichtbare
             // kanaId. Bei schrift='both' gibt es z.B. zwei "a"-Felder (あ + ア) bzw.
             // im Lese-Modus zwei optisch identische "a"-Romaji-Karten. Eine kanaId-
@@ -626,7 +657,9 @@ function kanaGridGame(contentId) {
             this.hintsRemaining = this.maxHints;
             this.hintsUsed = 0;
             this.cellsHinted = [];
+            // #3 Timer-Gate: neue Modus-Runde — Uhr erst beim ersten Spielzug.
             this.startTime = Date.now();
+            this.hasStarted = false;
             this.buildPool();
             this.$nextTick(() => this.initSortables());
         },
@@ -664,6 +697,16 @@ function kanaGridGame(contentId) {
         async restart() {
             // H-2: laufenden Hint-Timer abbrechen, sonst zaehlt er in die frische Runde.
             if (this._hintTimer) { clearTimeout(this._hintTimer); this._hintTimer = null; }
+            // #11 Embed: dem Host melden, dass eine frische Runde laeuft, damit er
+            // seinen Ergebnis-Zustand (done) zuruecksetzt und ggf. das Mobile-Overlay
+            // wieder oeffnet. Host-Receiver existiert in index.html (~Z280).
+            if (window.kgameEmbed) {
+                try {
+                    window.parent.postMessage(
+                        { type: 'kana-embed-restart' }, window.location.origin
+                    );
+                } catch (e) { /* Eltern-Seite evtl. nicht erreichbar */ }
+            }
             this.completed = false;
             this.wasPerfect = false;   // H-3: bis zum naechsten Abschluss neutral
             this.stars = 0;
@@ -687,7 +730,9 @@ function kanaGridGame(contentId) {
             this._shuffleGroups();
             this._touchPlayTimestamp();
             this.buildPool();
+            // #3 Timer-Gate: frische Runde — Uhr erst beim ersten Spielzug der Runde.
             this.startTime = Date.now();
+            this.hasStarted = false;
             await this.$nextTick();
             this.initSortables();
         },
@@ -864,6 +909,7 @@ function kanaGameView() {
         dailyBonusXp: 0,           // H-3: vom Daily-Endpoint geliefert, bei perfektem Abschluss angezeigt
         liveElapsedMs: 0,
         _timerId: null,
+        _embedReplayInstalled: false,   // #12: Guard gegen doppelten message-Listener
         settingsUrl: '/practice/kana',
 
         async initView() {
@@ -976,9 +1022,17 @@ function kanaGameView() {
             this.phase = 'playing';
             await this.$nextTick();
             this.initSortables();
-            this.startTime = Date.now();
-            this.startLiveTimer();
+            // #3 Timer-Gate: NICHT mehr sofort beim Laden starten. Der Live-Timer
+            // (und die echte startTime) werden erst beim ersten Spielzug ueber
+            // _markStarted() angeworfen — HUD steht bis dahin auf 0:00. So misst die
+            // Sterne-Formel die tatsaechliche Loesungszeit (Embed UND Vollbild).
+            this.startTime = Date.now();   // Fallback fuer rateCell(), bis 1. Zug
+            this.hasStarted = false;
+            this.liveElapsedMs = 0;
             this._installConfusionFlush();
+            // #12 Embed: auf Host-Replay hoeren — eine frische Runde ohne iframe-
+            // Remount anstossen koennen (Host sendet kana-embed-replay).
+            this._installEmbedReplayListener();
         },
 
         // WICHTIG: Methoden, KEINE getter. Diese Komponente wird via
@@ -1019,8 +1073,25 @@ function kanaGameView() {
         },
         async restart() {
             await baseRestart.call(this);
+            // #3 Timer-Gate: HUD bleibt 0:00, bis der erste Spielzug der neuen
+            // Runde _markStarted() (→ startLiveTimer) ausloest. baseRestart hat
+            // hasStarted bereits zurueckgesetzt und im Embed kana-embed-restart gesendet.
+            this.stopLiveTimer();
             this.liveElapsedMs = 0;
-            this.startLiveTimer();
+        },
+
+        // #12 Embed: auf das Host→iframe-Signal kana-embed-replay hoeren und damit
+        // lokal eine frische Runde starten — ohne das iframe neu zu laden (Remount).
+        // Origin-Check Pflicht (gleiche Origin, same-origin iframe). Nur im Embed-Pfad
+        // installiert; im Vollbild-Standalone passiert nichts. Idempotent.
+        _installEmbedReplayListener() {
+            if (!window.kgameEmbed || this._embedReplayInstalled) return;
+            this._embedReplayInstalled = true;
+            window.addEventListener('message', (ev) => {
+                if (ev.origin !== window.location.origin) return;
+                const d = ev.data || {};
+                if (d.type === 'kana-embed-replay') this.restart();
+            });
         },
 
         // Embed: leere/fehlerhafte Runde an die Eltern-Seite melden, damit sie ein

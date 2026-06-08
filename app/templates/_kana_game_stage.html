@@ -27,7 +27,9 @@
         {% endif %}
         <div class="kgame__timer" :class="{ 'is-running': phase === 'playing' && !completed }">
             <span class="kgame__time"><i class="far fa-clock"></i> <span x-text="liveTimeLabel()">0:00</span></span>
-            <span class="kgame__mode" x-text="modeLabel()"></span>
+            {# #17: Sprechendes Label fuer Screenreader — visuelles Erscheinungsbild
+               unveraendert (sr-only-Praefix ist unsichtbar). #}
+            <span class="kgame__mode"><span class="sr-only">Modus: </span><span x-text="modeLabel()"></span></span>
         </div>
         <div class="kgame__meta" x-show="phase === 'playing'" x-cloak>
             <span class="kgame__count"><span x-text="solvedCount"></span><span class="sep">/</span><span x-text="totalCells"></span></span>
@@ -154,6 +156,10 @@
             </div>
 
             <!-- Ergebnis -->
+            {# #4: Im Embed ist die Host-Ergebnis-Karte (Startseite) die EINZIGE End-UI.
+               Daher rendert dieses iframe-interne Ergebnis-Panel NUR im Vollbild
+               (kgame_embed=false) — im Embed komplett weggelassen, kein Doppel-Endscreen. #}
+            {% if not kgame_embed %}
             <div class="kgame__result" x-show="completed" x-cloak x-transition>
                 <div class="kgame__stars">
                     <template x-for="i in 3" :key="i">
@@ -183,6 +189,7 @@
                     {% endif %}
                 </div>
             </div>
+            {% endif %}
         </div>
     </div>
 </div>
