@@ -46,6 +46,15 @@ function kanaGridGame(contentId) {
         // So misst die Sterne-Formel die echte Loesungszeit; HUD-Timer bleibt
         // bis dahin 0:00. Idempotent ueber dieses Flag (nur der allererste Move zaehlt).
         hasStarted: false,
+        // ── Mobile: Haeppchen-Runden ──────────────────────────────────────────
+        // Auf schmalen Schirmen passen 46 Felder + 46 Kacheln nicht gleichzeitig
+        // drauf, und der Pool laesst sich wegen Sortable (touch-action:none) nicht
+        // scrollen. Daher spielt Mobile in Batches von ~6 Kana: pro Runde nur die
+        // Reihen + Kacheln EINES Batches; ist er geloest, schaltet das Spiel zur
+        // naechsten Reihe weiter. Desktop = EIN Batch = alle Reihen (unveraendert).
+        batchMode: false,
+        batches: [],
+        currentBatch: 0,
 
         async init() {
             if (!this.contentId) {
@@ -137,6 +146,7 @@ function kanaGridGame(contentId) {
             this.completed = false;
             this.cellTimes = {};
             this.buildPool();
+            this._buildBatches();
         },
 
         // Mischt die Reihenfolge der Felder INNERHALB jeder Reihe/Gruppe (a/i/u, K, …)
@@ -220,6 +230,78 @@ function kanaGridGame(contentId) {
             }
             this.pool = cards;
             this.selectedCardToken = null;
+        },
+
+        // ── Haeppchen-Runden (Mobile) ────────────────────────────────────────
+        // Teilt die Reihen in Batches von ~6 Kana. Wird bei jedem (Neu-)Aufbau
+        // aufgerufen und detektiert dabei frisch, ob ein schmaler Schirm vorliegt
+        // (z.B. nach Drehen). Desktop: ein einziger Batch ueber alle Reihen.
+        _buildBatches() {
+            this.batchMode = false;
+            try { this.batchMode = window.matchMedia('(max-width: 640px)').matches; } catch (e) {}
+            // 5 => i.d.R. eine Gojuon-Reihe pro Runde (kleine Reihen ya/wa/n werden
+            // zusammengelegt). Haelt auch im Blind-Modus (2 Kacheln/Kana) den Pool
+            // klein genug, dass nichts scrollen muss. Desktop: Infinity = ein Batch.
+            const TARGET = this.batchMode ? 5 : Infinity;
+            const batches = [];
+            let cur = null;
+            (this.rows || []).forEach(row => {
+                const cellsOfRow = (this.cellsByRow && this.cellsByRow[row.key]) || [];
+                if (!cellsOfRow.length) return;
+                if (!cur) cur = { rowKeys: [], kanaIds: new Set() };
+                cur.rowKeys.push(row.key);
+                cellsOfRow.forEach(c => cur.kanaIds.add(c.kanaId));
+                if (cur.kanaIds.size >= TARGET) { batches.push(cur); cur = null; }
+            });
+            if (cur) batches.push(cur);
+            if (!batches.length) {
+                batches.push({
+                    rowKeys: (this.rows || []).map(r => r.key),
+                    kanaIds: new Set((this.cells || []).map(c => c.kanaId)),
+                });
+            }
+            this.batches = batches;
+            this.currentBatch = 0;
+        },
+        // Aktuell sichtbare Reihen / Pool-Kacheln = nur der laufende Batch.
+        // Desktop (batchMode=false): alle Reihen / der ganze Pool — wie bisher.
+        visibleRows() {
+            const b = this.batches[this.currentBatch];
+            if (!b || !this.batchMode) return this.rows;
+            return this.rows.filter(r => b.rowKeys.indexOf(r.key) !== -1);
+        },
+        visiblePool() {
+            const b = this.batches[this.currentBatch];
+            if (!b || !this.batchMode) return this.pool;
+            return this.pool.filter(c => b.kanaIds.has(c.kanaId));
+        },
+        batchLabel() {
+            if (!this.batchMode || this.batches.length <= 1) return '';
+            return 'Reihe ' + (this.currentBatch + 1) + '/' + this.batches.length;
+        },
+        // Nach jedem geloesten Feld aufrufen: ist der aktuelle Batch fertig, zur
+        // naechsten Reihe weiterschalten — oder, beim letzten Batch, abschliessen.
+        // Desktop/Einzel-Batch: exakt das alte Verhalten (Ende bei allen geloest).
+        _advanceOrComplete() {
+            if (!this.batchMode || this.batches.length <= 1) {
+                if (this.solvedCount >= this.totalCells) this.onComplete();
+                return;
+            }
+            const b = this.batches[this.currentBatch];
+            const batchDone = !b || this.cells
+                .filter(c => b.kanaIds.has(c.kanaId))
+                .every(c => c.status === 'correct');
+            if (!batchDone) return;
+            if (this.currentBatch >= this.batches.length - 1) {
+                this.onComplete();
+                return;
+            }
+            this.currentBatch += 1;
+            this.selectedCardToken = null;
+            this.announce('Reihe geschafft! Weiter mit Reihe ' +
+                (this.currentBatch + 1) + ' von ' + this.batches.length + '.');
+            // Neue Pool-/Zell-Knoten → Sortable neu binden.
+            this.$nextTick(() => this.initSortables());
         },
 
         initSortables() {
@@ -399,9 +481,8 @@ function kanaGridGame(contentId) {
             // H-1: Richtig-Ansage mit Zeichen + Lesung (z.B. "Richtig: あ a").
             this.announce(`Richtig: ${cell.character} ${cell.romanization}`);
 
-            if (this.solvedCount >= this.totalCells) {
-                this.onComplete();
-            }
+            // Mobile: ggf. zur naechsten Reihe; sonst Abschluss bei allen geloest.
+            this._advanceOrComplete();
         },
 
         // ── Tap-to-Place (Single-Pointer-Alternative zu Drag, WCAG 2.2 SC 2.5.7) ──
@@ -629,9 +710,7 @@ function kanaGridGame(contentId) {
                 if (targetCard) {
                     this.pool = this.pool.filter(c => c.token !== targetCard.token);
                 }
-                if (this.solvedCount >= this.totalCells) {
-                    this.onComplete();
-                }
+                this._advanceOrComplete();
             }, 1500);
         },
 
@@ -661,6 +740,7 @@ function kanaGridGame(contentId) {
             this.startTime = Date.now();
             this.hasStarted = false;
             this.buildPool();
+            this._buildBatches();
             this.$nextTick(() => this.initSortables());
         },
 
@@ -733,6 +813,7 @@ function kanaGridGame(contentId) {
             // #3 Timer-Gate: frische Runde — Uhr erst beim ersten Spielzug der Runde.
             this.startTime = Date.now();
             this.hasStarted = false;
+            this._buildBatches();
             await this.$nextTick();
             this.initSortables();
         },

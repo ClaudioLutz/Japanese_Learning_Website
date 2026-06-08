@@ -30,6 +30,9 @@
             {# #17: Sprechendes Label fuer Screenreader — visuelles Erscheinungsbild
                unveraendert (sr-only-Praefix ist unsichtbar). #}
             <span class="kgame__mode"><span class="sr-only">Modus: </span><span x-text="modeLabel()"></span></span>
+            {# Mobile-Haeppchen: aktuelle Runde, z.B. "Reihe 3/8" (leer auf Desktop). #}
+            <span class="kgame__batch" x-show="batchLabel()" x-text="batchLabel()"
+                  style="font:700 0.62rem/1 'Geist Mono',ui-monospace,monospace;letter-spacing:0.06em;color:var(--shu,#EB6101);margin-top:3px;"></span>
         </div>
         <div class="kgame__meta" x-show="phase === 'playing'" x-cloak>
             <span class="kgame__count"><span x-text="solvedCount"></span><span class="sep">/</span><span x-text="totalCells"></span></span>
@@ -96,7 +99,9 @@
             </div>
 
             <div class="kana-grid-game__grid kgame__grid">
-                <template x-for="row in rows" :key="row.key">
+                {# Mobile: nur die Reihen des aktuellen Haeppchen-Batches (kein Scrollen).
+                   Desktop: visibleRows() liefert alle Reihen. #}
+                <template x-for="row in visibleRows()" :key="row.key">
                     <div class="kana-grid-game__row">
                         <div class="kana-grid-game__row-label" x-text="row.label"></div>
                         <template x-for="cell in cellsByRow[row.key]" :key="cell.id">
@@ -137,7 +142,8 @@
 
             <!-- Pool (Drag-/Tap-Quelle) — beim Abschluss ausgeblendet -->
             <div class="kana-grid-game__pool" x-ref="pool" x-show="!completed">
-                <template x-for="card in pool" :key="card.token">
+                {# Mobile: nur die Kacheln des aktuellen Batches; Desktop: ganzer Pool. #}
+                <template x-for="card in visiblePool()" :key="card.token">
                     <div class="kana-grid-game__pool-card"
                          :class="{
                              'has-romaji-hint': showRomajiHint && card.kind === 'kana',
