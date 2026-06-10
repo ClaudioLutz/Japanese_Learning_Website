@@ -392,6 +392,11 @@ html.hide-front-romaji .front-romaji { display: none !important; }
             background: rgba(255,255,255,0.98);
             backdrop-filter: blur(10px);
         }
+        /* Platz unter dem Inhalt, damit der fixe Pager (bottom:78px) + die
+           globale Bottom-Nav den Seitenfuss/letzten Content nicht verdecken. */
+        body {
+            padding-bottom: 150px;
+        }
         .nav-btn {
             padding: 0.55rem 0.9rem;
             font-size: 0.85rem;
@@ -1883,7 +1888,11 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                 display: block; margin-top: 0.9rem; text-align: center;
                 font-size: 0.9rem; font-weight: 600; color: var(--shu, #EB6101);
                 text-decoration: none; padding: 0.55rem 0.75rem;
-                border: 1px dashed var(--shu, #EB6101); border-radius: 10px;
+                /* Durchgezogener Rand + dezenter Fill: gestrichelt wirkte wie ein
+                   deaktivierter Platzhalter. Bleibt zurueckhaltend (Outline, kein
+                   Vollton), liest sich aber jetzt klar als klickbare Aktion. */
+                border: 1px solid var(--shu, #EB6101); border-radius: 10px;
+                background: rgba(235, 97, 1, 0.05);
                 transition: background 0.15s;
               }
               .next-up-bundle-cta:hover {
