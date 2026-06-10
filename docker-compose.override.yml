@@ -19,6 +19,9 @@ services:
     # Neustarts, kein Image-Rebuild bei neuen Bildern/Audio noetig. Host-UID 1000 == Container 'app'.
     volumes:
       - ./app/static/uploads:/app/app/static/uploads
+      # TTS-Cache persistent halten — sonst ephemer (jeder Rebuild loescht ihn).
+      # Betrifft ALLE Klick-Audios (Vokabeln/Kanji/Kana/Grammatik) via /api/tts.
+      - ./app/static/cache/tts:/app/app/static/cache/tts
 
   db:
     # Heimserver: DB ebenfalls automatisch neu starten
