@@ -396,6 +396,8 @@ function kanaGridGame(contentId) {
             if (this.hasStarted) return;
             this.hasStarted = true;
             this.startTime = Date.now();
+            // Analytics: erster echter Spielzug = Spielstart (Funnel-Eintritt).
+            kanaTrack('kana_start', { mode: this.mode, guest: !window.currentUser });
             // Spiel-Seite (kanaGameView) liefert startLiveTimer(); Lesson-Spiel nicht.
             if (typeof this.startLiveTimer === 'function') this.startLiveTimer();
             // #6 Heartbeat: dem Host signalisieren, dass wirklich gespielt wird —
@@ -772,6 +774,12 @@ function kanaGridGame(contentId) {
             // H-1: Abschluss-Ansage inkl. Sterne-Zahl (z.B. "Geschafft! 3 Sterne").
             this.announce(`Geschafft! ${this.stars} ${this.stars === 1 ? 'Stern' : 'Sterne'}`);
             this.flushConfusions(false);
+            // Analytics: Spielabschluss (Funnel-Ausgang) — guest-Flag fuer den
+            // Gast->Konto-Trichter, perfect/stars als Qualitaetssignal.
+            kanaTrack('kana_complete', {
+                mode: this.mode, stars: this.stars,
+                guest: !window.currentUser, perfect: !!this.wasPerfect,
+            });
         },
 
         async restart() {
@@ -987,6 +995,7 @@ function kanaGameView() {
         loadMessage: null,
         isDaily: false,
         isConfusion: false,
+        isGuest: !window.currentUser,   // steuert den Konto-CTA im Ergebnis-Screen
         dailyBonusXp: 0,           // H-3: vom Daily-Endpoint geliefert, bei perfektem Abschluss angezeigt
         liveElapsedMs: 0,
         _timerId: null,
@@ -1215,6 +1224,19 @@ function kanaGameView() {
         },
     });
 }
+
+// ── Analytics: best-effort Event ueber den Plausible-Stub ──
+// window.plausible ist in base.html IMMER als no-op-Stub vorhanden; real
+// gesendet wird nur, wenn PLAUSIBLE_DOMAIN gesetzt ist. Schluckt jeden Fehler
+// still — Tracking darf das Spiel nie blockieren.
+function kanaTrack(event, props) {
+    try {
+        if (typeof window.plausible === 'function') {
+            window.plausible(event, props ? { props: props } : undefined);
+        }
+    } catch (e) { /* best-effort */ }
+}
+window.kanaTrack = kanaTrack;
 
 window.kanaSettings = kanaSettings;
 window.kanaGameView = kanaGameView;

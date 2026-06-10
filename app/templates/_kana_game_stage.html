@@ -188,6 +188,21 @@
                     🔒 Im Gast-Modus wird dein Fortschritt nicht gespeichert.
                 </p>
                 {% endif %}
+                {# Gast (Vollbild): Konto-CTA nach dem Spiel — Fortschritt sichern +
+                   Katakana/Reihen/Drill freischalten. Eingeloggte sehen ihn nicht. #}
+                <template x-if="isGuest">
+                    <div class="kgame__guest-cta">
+                        <p class="kgame__guest-cta-text">
+                            Stark! <strong>Mit kostenlosem Konto</strong> bleibt dein Fortschritt gespeichert —
+                            plus Katakana, einzelne Reihen &amp; der Verwechslungs-Drill.
+                        </p>
+                        <a href="{{ url_for('routes.register', next=url_for('srs.practice_kana_page')) }}"
+                           class="kgame__guest-cta-btn"
+                           @click="window.kanaTrack && window.kanaTrack('kana_cta_click', { where: 'result' })">
+                            <i class="fas fa-user-plus" aria-hidden="true"></i> Kostenlos registrieren
+                        </a>
+                    </div>
+                </template>
                 <div class="kgame__result-actions">
                     <button type="button" class="kgame__again" @click="restart()"><i class="fas fa-redo"></i> Nochmal</button>
                     {% if not kgame_embed %}
