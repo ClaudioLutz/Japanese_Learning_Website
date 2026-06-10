@@ -207,13 +207,16 @@
         <div class="kana-setup__group">
             <div class="kana-setup__label"><i class="fas fa-pen-nib"></i> Schrift</div>
             <div class="seg" role="group" aria-label="Schrift">
-                <button type="button" :class="{ 'is-active': schrift === 'hiragana' }" @click="setSchrift('hiragana')">
+                <button type="button" :class="{ 'is-active': schrift === 'hiragana' }"
+                        :aria-pressed="(schrift === 'hiragana').toString()" @click="setSchrift('hiragana')">
                     Hiragana <span class="seg-sub">あ</span>
                 </button>
-                <button type="button" :class="{ 'is-active': schrift === 'katakana' }" @click="setSchrift('katakana')">
+                <button type="button" :class="{ 'is-active': schrift === 'katakana' }"
+                        :aria-pressed="(schrift === 'katakana').toString()" @click="setSchrift('katakana')">
                     Katakana <span class="seg-sub">ア</span>
                 </button>
-                <button type="button" :class="{ 'is-active': schrift === 'both' }" @click="setSchrift('both')">
+                <button type="button" :class="{ 'is-active': schrift === 'both' }"
+                        :aria-pressed="(schrift === 'both').toString()" @click="setSchrift('both')">
                     Beide <span class="seg-sub">あ・ア</span>
                 </button>
             </div>
@@ -224,13 +227,16 @@
         <div class="kana-setup__group">
             <div class="kana-setup__label"><i class="fas fa-sliders-h"></i> Modus</div>
             <div class="seg" role="group" aria-label="Modus">
-                <button type="button" :class="{ 'is-active': mode === 'schreiben' }" @click="setMode('schreiben')">
+                <button type="button" :class="{ 'is-active': mode === 'schreiben' }"
+                        :aria-pressed="(mode === 'schreiben').toString()" @click="setMode('schreiben')">
                     Schreiben <span class="seg-sub">Romaji → Kana</span>
                 </button>
-                <button type="button" :class="{ 'is-active': mode === 'lesen' }" @click="setMode('lesen')">
+                <button type="button" :class="{ 'is-active': mode === 'lesen' }"
+                        :aria-pressed="(mode === 'lesen').toString()" @click="setMode('lesen')">
                     Lesen <span class="seg-sub">Kana → Romaji</span>
                 </button>
-                <button type="button" :class="{ 'is-active': mode === 'blind' }" @click="setMode('blind')">
+                <button type="button" :class="{ 'is-active': mode === 'blind' }"
+                        :aria-pressed="(mode === 'blind').toString()" @click="setMode('blind')">
                     Blind <span class="seg-sub">beides</span>
                 </button>
             </div>

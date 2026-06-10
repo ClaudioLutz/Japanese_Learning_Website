@@ -1,3 +1,8 @@
+/* --- 0. Alpine.js: Elemente mit x-cloak bleiben verborgen, bis Alpine
+   hydratisiert hat. Global hier (statt nur inline auf einzelnen Spiel-Seiten),
+   damit jede Seite mit Alpine-Bindings FOUC vermeidet. --- */
+[x-cloak] { display: none !important; }
+
 /* --- 1. Schriften werden in base.html via gebuendeltem <link> geladen
    (ein Google-Fonts-Request inkl. Noto Sans JP 300–700) — kein
    render-blockierender @import mehr an dieser Stelle (Paket 7). --- */

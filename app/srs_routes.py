@@ -960,9 +960,22 @@ def api_practice_daily_challenge():
     rng = _random.Random(seed)
     rows = list(rows)
     rng.shuffle(rows)
-    picked = rows[:10]
+    # Auf kana_id deduplizieren: dieselbe Kana kann in mehreren Lessons liegen
+    # (mehrere lesson_content_ids). Zwei Felder mit derselben Kana teilen sich im
+    # Grid die cell-id (`cell-<kana_id>`) -> Alpine-:key-Kollision + DOM-Konflikt,
+    # eines der Doppelfelder ist dann nicht bespielbar. Vor dem Picken entdoppeln.
+    seen_kana = set()
+    deduped = []
+    for lc_id, kana in rows:
+        if kana.id in seen_kana:
+            continue
+        seen_kana.add(kana.id)
+        deduped.append((lc_id, kana))
+    picked = deduped[:10]
 
-    items = [_kana_item(lc_id, kana, with_extras=False) for lc_id, kana in picked]
+    # with_extras=True: mnemonic + stroke_order_info mitliefern, damit der
+    # korrektive Fehler-Hinweis auch in der taeglich beworbenen Mini-Runde greift.
+    items = [_kana_item(lc_id, kana, with_extras=True) for lc_id, kana in picked]
 
     return jsonify({
         'kana': items,
