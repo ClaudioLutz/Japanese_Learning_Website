@@ -2552,10 +2552,12 @@ button[onclick*="moveContentInPage"]:active {
 .rich-text-content blockquote {
     border-left: 4px solid #fbbf24;
     background: rgba(251, 191, 36, 0.08);
-    padding: 0.6rem 0.9rem;
-    margin: 0.9rem 0;
+    padding: 0.85rem 1.1rem;
+    margin: 1.2rem 0;
     border-radius: 0 6px 6px 0;
-    font-style: italic;
+    /* Kursiv entfernt: lange, mit JP-Zeichen gemischte Callouts sind aufrecht
+       deutlich besser lesbar. Hervorhebung bleibt über Rand/Hintergrund. */
+    font-style: normal;
     color: #334155;
 }
 .rich-text-content code {
@@ -2610,6 +2612,28 @@ button[onclick*="moveContentInPage"]:active {
     max-width: none !important;
     font-size: 1rem !important;
     line-height: 1.6 !important;
+}
+
+/* Lesebreite: Prosa-Blöcke auf ~68 Zeichen begrenzen, damit lange Fliesstext-
+   Seiten (Grammatik/Kanji/Vokabeln) nicht als 90+-Zeichen-Wand laufen.
+   Container bleibt voll (max-width:none oben) → Bilder, Audio-Player und das
+   Kana-Übungsraster behalten ihre volle Breite. Nur direkte Prosa-Kinder. */
+.rich-text-content > p,
+.rich-text-content > ul,
+.rich-text-content > ol,
+.rich-text-content > blockquote,
+.rich-text-content > h2,
+.rich-text-content > h3,
+.rich-text-content > h4 {
+    max-width: 68ch;
+}
+/* Bei zentrierten Bild-Items soll die Prosa-Begrenzung nicht links kleben */
+.content-item:has(img) .rich-text-content > p,
+.content-item:has(img) .rich-text-content > ul,
+.content-item:has(img) .rich-text-content > ol,
+.content-item:has(img) .rich-text-content > blockquote {
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* Center-align only content items that contain images */
