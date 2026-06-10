@@ -1,5 +1,6 @@
-/* --- 1. Import a Modern Font --- */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
+/* --- 1. Schriften werden in base.html via gebuendeltem <link> geladen
+   (ein Google-Fonts-Request inkl. Noto Sans JP 300–700) — kein
+   render-blockierender @import mehr an dieser Stelle (Paket 7). --- */
 
 /* --- 2. Zen Learning — Japanisch-inspirierte Farbpalette --- */
 :root {
@@ -69,6 +70,9 @@
     --shu-deep: #B84A00;
     --kincha:   #C7802D;
     --matcha:   #7A9033;
+    /* A11y: Sekundaertext-Ton — ersetzt den frueheren Fallback #8C8378 (3.5:1),
+       #6E675C erreicht auf Washi ~4.6:1 (WCAG AA fuer normalen Text). */
+    --text-muted: #6E675C;
 
     --ink-50:  #FAF7F2; --ink-100: #F1EDE6; --ink-200: #E4DED4;
     --ink-300: #D4CCBE; --ink-400: #A8A095; --ink-500: #7A7368;
@@ -113,16 +117,37 @@ body.redesign-page h3 {
     border: none; border-radius: 8px;
     font-weight: 600; font-size: 1rem; line-height: 1;
     color: #fff; cursor: pointer; text-decoration: none;
-    background: linear-gradient(180deg, #EB6101, #D85700);
+    /* A11y: weisser Text braucht >=4.5:1 — Default-Verlauf auf Shu-deep
+       (#B84A00 = 4.89:1) abgedunkelt; der Hover darf waermer/heller werden. */
+    background: linear-gradient(180deg, #B84A00, #A23F00);
     box-shadow: inset 0 1px 0 rgba(255,255,255,.15),
                 0 1px 2px rgba(184,74,0,.30),
                 0 0 0 1px rgba(184,74,0,.40);
     transition: transform .15s, box-shadow .2s, background .2s;
 }
 .btn-shu:hover {
-    background: linear-gradient(180deg, #F37016, #E25C00);
+    background: linear-gradient(180deg, #D2560A, #BE4F02);
     transform: translateY(-1px);
     color: #fff; text-decoration: none;
+}
+/* A11y: sichtbarer Fokusring fuer Tastatur-Nutzer auf allen Haupt-Interaktiven
+   (vorher nur Browser-Default, auf Shu kaum sichtbar). Kon-Ring + Offset ist
+   auf Washi UND auf Shu-Flaechen klar erkennbar. */
+.btn-shu:focus-visible,
+.btn-ghost-jp:focus-visible,
+.topnav-link:focus-visible,
+.topnav-btn:focus-visible,
+.topnav-user-btn:focus-visible,
+.bottom-nav-item:focus-visible,
+.home-secondary-link:focus-visible,
+.trust-link:focus-visible,
+.kana-embed-cta:focus-visible,
+.kana-embed-replay:focus-visible,
+.kana-embed-launch:focus-visible,
+.station-cta:focus-visible {
+    outline: 3px solid var(--kon, #1F2A44);
+    outline-offset: 2px;
+    border-radius: 8px;
 }
 .btn-shu:disabled,
 .btn-shu[disabled] {
@@ -4122,10 +4147,12 @@ button[onclick*="moveContentInPage"]:active {
         transition: transform 0.15s;
     }
 
-    /* Aktiver Tab: ein einziger heißer Akzent (Shu) — Tönung + Indikator-Balken */
+    /* Shu-Diaet: aktives Tab in Kon (Sumi-Navy) ohne Toenung — der einzige
+       Shu-Akzent bleibt der duenne Indikator-Balken (::before), damit der
+       Hero-Button die einzige Voll-Shu-Flaeche im Mobile-Fold ist. */
     .bottom-nav-item.active {
-        color: var(--shu, #EB6101);
-        background: rgba(235, 97, 1, 0.07);
+        color: var(--kon, #1F2A44);
+        background: transparent;
     }
 
     .bottom-nav-item.active::before {
@@ -4143,6 +4170,7 @@ button[onclick*="moveContentInPage"]:active {
     .bottom-nav-item.active i,
     .bottom-nav-item.active .bottom-nav-kana {
         transform: scale(1.08);
+        color: var(--kon, #1F2A44);
     }
 
     .bottom-nav-item:active {
