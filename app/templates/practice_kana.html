@@ -177,6 +177,31 @@
     @media (max-width: 767px) {
         .kana-setup { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
     }
+
+    /* ── Desktop: kein Mobile-Viewport-Lock ──
+       Der 100dvh-Lock + die 560px-Säule sind fürs Handy gedacht; auf Desktop
+       ergeben sie eine schmale Säule in viel Leerraum (im Gast-Modus mit wenig
+       Steuerung klafft ein grosses vertikales Loch). Stattdessen: normales
+       Page-Scrolling, Footer sichtbar, Inhalt als vertikal zentrierte Karte mit
+       Auto-Höhe. height:auto lässt den Container über die min-height hinaus
+       wachsen, sodass justify-content:center bei hohem Inhalt NICHT abschneidet. */
+    @media (min-width: 768px) {
+        body.kana-setup-locked { overflow: visible; }
+        body.kana-setup-locked .container.mt-4 {
+            height: auto; min-height: calc(100dvh - 60px);
+            justify-content: center; padding: 2rem 1rem;
+        }
+        body.kana-setup-locked .site-footer { display: block !important; }
+        .kana-setup {
+            flex: 0 0 auto; max-width: 600px; overflow: hidden;
+            background: var(--card-bg, #FFFDF7);
+            border: 1px solid var(--border-color, #E4DED4);
+            border-radius: 20px;
+            box-shadow: 0 6px 30px rgba(28, 26, 23, .07);
+            padding: 2rem 2rem 1.75rem;
+        }
+        .kana-setup__body { overflow: visible; }
+    }
 </style>
 {% endblock %}
 

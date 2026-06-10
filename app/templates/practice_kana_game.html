@@ -105,14 +105,14 @@
     .kgame__state-btn--ghost:hover { border-color: var(--shu, #EB6101); color: var(--shu, #EB6101); }
 
     /* Spiel-Container: das geerbte Karten-Layout aufheben, in den Flex einpassen.
-       justify-content:center hält Gitter + Pool als zusammenhängende Gruppe in der
-       Mitte — bei wenig Inhalt (z.B. nur eine Reihe) liegen Romaji-Felder und
-       Kana-Pool dicht beieinander statt oben/unten auseinandergerissen. Bei viel
-       Inhalt schrumpft das Gitter und scrollt intern (kein Auseinanderdriften). */
+       flex-start (statt center) packt den Inhalt von oben (HUD→Gitter→Pool) — bei
+       wenig Inhalt (z.B. nur eine Haeppchen-Reihe auf Mobile) klafft sonst ein
+       grosses Loch zwischen Timer und Spielfeld (center reisst die Gruppe
+       symmetrisch auseinander). Identisch zum bereits bewaehrten Embed-Layout. */
     body.kana-game-locked .kana-grid-game.kgame__game {
         background: transparent; border: 0; border-radius: 0; padding: 0; margin: 0;
         flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column;
-        justify-content: center;
+        justify-content: flex-start;
     }
     .kgame__game .kana-grid-game__taphint { flex: 0 0 auto; margin: 0 0 0.4rem; }
 
@@ -176,6 +176,23 @@
     .kgame__again:hover { filter: brightness(1.05); }
     .kgame__settings { background: #fff; color: var(--ink-700, #403B34); border-color: var(--border-color, #D4CFC5); }
     .kgame__settings:hover { border-color: var(--shu, #EB6101); color: var(--shu, #EB6101); text-decoration: none; }
+
+    /* ── Desktop: Spielbühne als zentrierte Karte auf Washi-Grund ──
+       Der Viewport-Lock bleibt (immersives Spiel ohne Page-Scroll), aber statt
+       einer randlosen 640px-Säule in viel Leerraum bekommt das Spiel eine
+       gerahmte Karte mit Schatten — visuell verankert statt "verloren". Die
+       Höhe kommt weiterhin vom Lock; das Container-Padding gibt der Karte Luft. */
+    @media (min-width: 768px) {
+        body.kana-game-locked .container.mt-4 { padding: 1.5rem 1rem; }
+        .kgame {
+            max-width: 680px;
+            background: var(--card-bg, #FFFDF7);
+            border: 1px solid var(--border-color, #E4DED4);
+            border-radius: 18px;
+            box-shadow: 0 6px 30px rgba(28, 26, 23, .07);
+            padding: 1rem 1.25rem calc(1rem + env(safe-area-inset-bottom, 0px));
+        }
+    }
 </style>
 {% endblock %}
 
