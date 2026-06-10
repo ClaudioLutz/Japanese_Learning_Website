@@ -179,7 +179,7 @@ def main() -> int:
                                or (k.radical or "") != e.get("radical", ""))
                     if not changed:
                         report["skipped"] += 1
-                    continue
+                        continue
                     backup["kanji"].append({"id": k.id, "character": ch,
                                             "old": {"onyomi": k.onyomi, "kunyomi": k.kunyomi,
                                                     "stroke_count": k.stroke_count, "radical": k.radical,
