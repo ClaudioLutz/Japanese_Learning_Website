@@ -114,6 +114,7 @@ function kanaGridGame(contentId) {
                         scriptType: k.type || null,   // 'hiragana' | 'katakana' — fuer Schrift-Badge
                         hint: this.cellHint(k),
                         strokeInfo: k.stroke_order_info || '',  // Spot-the-difference-Hinweis (#3)
+                        mnemonic: k.mnemonic || '',             // Eselsbruecke fuers Fehler-Feedback
                         status: 'empty',
                         shake: false,
                         solved: '',
@@ -436,7 +437,6 @@ function kanaGridGame(contentId) {
                 this.totalErrors += 1;
                 cell.shake = true;
                 setTimeout(() => { cell.shake = false; }, 500);
-                this.announce('Falsch, nochmal');   // H-1
                 // #2: welches FALSCHE Kana wurde abgelegt? — Signal fuer den Drill.
                 if (kanaId && cell.kanaId && kanaId !== cell.kanaId) {
                     this.sessionConfusions.push({
@@ -444,9 +444,24 @@ function kanaGridGame(contentId) {
                         confused_kana_id: kanaId,
                     });
                 }
-                // #3: Spot-the-difference-Hinweis nach dem 1. Fehler (Pre-Testing-Gate).
-                if (cell.strokeInfo) {
-                    this.activeHint = { char: cell.character, text: cell.strokeInfo };
+                // Korrektives Feedback, gestuft — erst Raum fuer eigenen Recall, dann
+                // lernt der Nutzer die Antwort, statt endlos zu raten:
+                //   1. Fehler   -> Spot-the-difference / Eselsbruecke (falls vorhanden)
+                //   ab 2. Fehler -> richtige Lesung explizit nennen + Laut abspielen
+                const hintText = cell.strokeInfo || cell.mnemonic || '';
+                if (cell.attempts >= 2) {
+                    this.activeHint = {
+                        char: cell.character,
+                        text: `Richtig: ${cell.character} = „${cell.romanization}“`
+                              + (hintText ? ' · ' + hintText : ''),
+                    };
+                    this.playKanaAudio(cell);   // den Laut hoeren staerkt die Verknuepfung
+                    this.announce(`Das richtige Zeichen ist ${cell.character}, gesprochen ${cell.romanization}`);
+                } else if (hintText) {
+                    this.activeHint = { char: cell.character, text: hintText };
+                    this.announce('Noch nicht — schau genau hin und versuch es nochmal');
+                } else {
+                    this.announce('Noch nicht — versuch es nochmal');
                 }
                 return;
             }
@@ -1077,6 +1092,7 @@ function kanaGameView() {
                 audio_url: null,
                 lesson_content_id: k.lesson_content_id,
                 stroke_order_info: k.stroke_order_info,
+                mnemonic: k.mnemonic,   // vom Server geliefert, bisher ungenutzt -> Fehler-Feedback
             }));
             const ROW_ORDER = ['vowels', 'k', 's', 't', 'n', 'h', 'm', 'y', 'r', 'w', 'n_kons', 'g', 'z', 'd', 'b', 'p'];
             const byRow = {};
