@@ -849,7 +849,7 @@ def api_practice_session():
     """Baut on-the-fly eine Spiel-Session aus den Filtern.
 
     Query-Params:
-        mode: 'schreiben' | 'lesen' | 'blind' (default 'schreiben')
+        mode: 'schreiben' | 'lesen' (default 'schreiben')
         schrift: 'hiragana' | 'katakana' | 'both' (default 'both')
         rows: comma-separated row-keys (z.B. 'vowels,k,s') — leer = alle
         dakuten: 'true' | 'false' — Dakuten/Handakuten einschliessen
@@ -861,7 +861,7 @@ def api_practice_session():
     from app.models import CardReviewState, Kana, LessonContent
 
     mode = request.args.get('mode', 'schreiben')
-    if mode not in ('schreiben', 'lesen', 'blind'):
+    if mode not in ('schreiben', 'lesen'):
         mode = 'schreiben'
     schrift = request.args.get('schrift', 'both')
     if schrift not in ('hiragana', 'katakana', 'both'):
@@ -1004,14 +1004,14 @@ def api_practice_session_public():
     /api/srs/rate und bleibt login-pflichtig.
 
     Query-Params:
-        mode: 'schreiben' | 'lesen' | 'blind' (default 'schreiben')
+        mode: 'schreiben' | 'lesen' (default 'schreiben')
         schrift: 'hiragana' | 'katakana' | 'both' (default 'hiragana')
         rows: comma-separated row-keys (z.B. 'vowels,k,s') — leer = alle
         dakuten: 'true' | 'false' (default 'false')
         limit: max Anzahl (default 50, max 50 — Parity mit der Login-API)
     """
     mode = request.args.get('mode', 'schreiben')
-    if mode not in ('schreiben', 'lesen', 'blind'):
+    if mode not in ('schreiben', 'lesen'):
         mode = 'schreiben'
     schrift = request.args.get('schrift', 'hiragana')
     if schrift not in ('hiragana', 'katakana', 'both'):
@@ -1190,14 +1190,14 @@ def api_practice_confusion():
     Grund-Hiragana, generische Cluster-Reihenfolge (kein Per-User-Signal). Pro
     Kana wird stroke_order_info fuer den Spot-the-difference-Tooltip mitgeliefert.
 
-    Query-Params: mode ('schreiben'|'lesen'|'blind'), schrift, limit.
+    Query-Params: mode ('schreiben'|'lesen'), schrift, limit.
     """
     from collections import defaultdict
     from app.models import CardReviewState, Kana, KanaConfusion, LessonContent
     from app.services.kana_confusion import confusion_clusters
 
     mode = request.args.get('mode', 'schreiben')
-    if mode not in ('schreiben', 'lesen', 'blind'):
+    if mode not in ('schreiben', 'lesen'):
         mode = 'schreiben'
     schrift = request.args.get('schrift', 'both')
     if schrift not in ('hiragana', 'katakana', 'both'):

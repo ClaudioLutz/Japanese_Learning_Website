@@ -75,6 +75,13 @@ class TestGuestPublicSession:
         types = {i['type'] for i in data['kana']}
         assert types == {'hiragana', 'katakana'}
 
+    def test_blind_mode_falls_back_to_schreiben(self, client, db):
+        # Blind ist als Practice-Option entfernt — alte URLs/localStorage-Werte
+        # fallen serverseitig sauber auf 'schreiben' zurueck.
+        _seed_hiragana(db, rows=('vowels',))
+        data = client.get('/api/practice/kana/session/public?mode=blind').get_json()
+        assert data['mode'] == 'schreiben'
+
     def test_invalid_schrift_falls_back_to_hiragana(self, client, db):
         _seed_hiragana(db, rows=('vowels',))
         _seed_katakana(db, rows=('vowels',))

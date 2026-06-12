@@ -88,7 +88,7 @@
              2. Reihen-Pills (Mehrfachauswahl; "Alle" = komplettes Grund-Set;
                 Dakuten-Reihen G-P sind direkt waehlbar — die Anzahl richtet
                 sich IMMER nach der Auswahl, es gibt keinen Anzahl-Regler)
-             3. Modus-Segment (Schreiben/Lesen/Blind) + "Alle Optionen"-Link
+             3. Modus-Segment (Schreiben/Lesen) + "Alle Optionen"-Link
              role=group + aria-pressed (Seg-Button-Muster wie practice_kana.html);
              statisches aria-pressed = SSR-Fallback bis Alpine initialisiert.
              Bei Tages-Challenge sind Reihen + Modus deaktiviert (fixes 10er-Brett). #}
@@ -143,11 +143,6 @@
                       :class="modeClass('lesen')" :disabled="spielart === 'daily'"
                       title="Kana lesen, Romaji legen"
                       @click="selectMode('lesen')">Lesen</button>
-              <button type="button" aria-pressed="false"
-                      :aria-pressed="(mode === 'blind').toString()"
-                      :class="modeClass('blind')" :disabled="spielart === 'daily'"
-                      title="Beides zuordnen — ohne Hinweise"
-                      @click="selectMode('blind')">Blind</button>
             </div>
             <a class="kana-chip-more" href="{{ url_for('srs.practice_kana_page') }}">Alle Optionen →</a>
           </div>
@@ -390,7 +385,7 @@
       return {
         srcBase: srcBase,
         spielart: 'hiragana',   // 'hiragana' | 'katakana' | 'both' | 'daily'
-        mode: 'schreiben',      // 'schreiben' | 'lesen' | 'blind' (daily: immer schreiben)
+        mode: 'schreiben',      // 'schreiben' | 'lesen' (daily: immer schreiben)
         selectedRows: [],       // leer = alle Grund-Reihen; G-P explizit waehlbar
         loaded: false,
         open: false,
@@ -421,7 +416,7 @@
           const saved = LS.get('kanaEmbedSpielart');
           if (['hiragana', 'katakana', 'both', 'daily'].includes(saved)) this.spielart = saved;
           const savedMode = LS.get('kanaEmbedMode');
-          if (['schreiben', 'lesen', 'blind'].includes(savedMode)) this.mode = savedMode;
+          if (['schreiben', 'lesen'].includes(savedMode)) this.mode = savedMode;
           try {
             const savedRows = JSON.parse(LS.get('kanaEmbedRows') || '[]');
             if (Array.isArray(savedRows)) {
@@ -500,7 +495,7 @@
         launchSub() {
           if (this.error) return 'Das Spiel konnte nicht geladen werden.';
           if (this.spielart === 'daily') return '10 Zeichen · heute neu · ohne Login';
-          const modeName = { schreiben: 'Schreiben', lesen: 'Lesen', blind: 'Blind' }[this.mode];
+          const modeName = { schreiben: 'Schreiben', lesen: 'Lesen' }[this.mode] || 'Schreiben';
           return this.countFor(this.spielart) + ' Zeichen · ' + modeName + ' · ohne Login';
         },
         nextVariant() {
@@ -1327,7 +1322,7 @@
 .kana-rowpill.is-confirm { background: #fff; border-color: var(--shu-deep); color: var(--shu-deep); font-weight: 700; }
 .kana-rowpill:disabled { opacity: .4; cursor: not-allowed; }
 
-/* Modus-Segment (Schreiben/Lesen/Blind) + "Alle Optionen"-Link */
+/* Modus-Segment (Schreiben/Lesen) + "Alle Optionen"-Link */
 .kana-mode-row {
     display: flex; align-items: center; justify-content: center;
     flex-wrap: wrap; gap: 0.5rem 1.1rem;
@@ -1809,16 +1804,13 @@
     .home-hero--game { padding-top: 2.25rem; }
     .home-h1--game { font-size: clamp(1.9rem, 8vw, 2.4rem); }
     .kana-hero-game { margin-top: 1.2rem; }
-    /* Chips + Reihen-Pills: je eine horizontal scrollbare Zeile statt Umbruch
-       (haelt den Fold kompakt — die Launch-Karte muss im ersten Viewport bleiben) */
-    .kana-chip-row, .kana-row-row {
-        flex-wrap: nowrap; justify-content: flex-start;
-        overflow-x: auto; -webkit-overflow-scrolling: touch;
-        padding-bottom: 2px;
-    }
-    .kana-chip, .kana-rowpill { white-space: nowrap; flex-shrink: 0; }
-    .kana-chip-more { flex-shrink: 0; white-space: nowrap; }
-    .kana-mode-row { flex-wrap: nowrap; gap: 0.5rem; min-height: 34px; }
+    /* Alle Options-Buttons SICHTBAR: Umbruch in mehrere Zeilen statt
+       Scrollbalken (User-Direktive) — die Basis-Regeln wrappen bereits,
+       hier nur kompaktere Masse, damit es nicht zu hoch wird. */
+    .kana-chip { padding: 0.38rem 0.7rem; font-size: 0.8rem; white-space: nowrap; }
+    .kana-rowpill { padding: 0.24rem 0.48rem; font-size: 0.68rem; white-space: nowrap; }
+    .kana-chip-more { white-space: nowrap; }
+    .kana-mode-row { gap: 0.45rem 0.9rem; min-height: 34px; }
     .kana-mode-seg button { padding: 0.26rem 0.6rem; font-size: 0.74rem; }
     .kana-bridge { flex-direction: column; align-items: flex-start; gap: 0.55rem; }
 

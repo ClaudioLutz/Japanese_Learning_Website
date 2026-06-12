@@ -857,7 +857,9 @@ const PRACTICE_ROW_LABELS = {
 };
 
 // Modus-Beschriftungen (DE) — geteilt zwischen Einstellungs- und Spiel-Seite.
-const PRACTICE_MODE_LABELS = { schreiben: 'Schreiben', lesen: 'Lesen', blind: 'Blind' };
+// 'blind' ist als Practice-Option entfernt (Spiel-Kernlogik kennt ihn noch
+// fuer alte Lesson-Grid-Configs).
+const PRACTICE_MODE_LABELS = { schreiben: 'Schreiben', lesen: 'Lesen' };
 
 // ── Schritt 1: Einstellungs-Seite (/practice/kana) ──────────────────────
 // Sammelt die Filter, persistiert sie in localStorage und navigiert mit den
@@ -884,7 +886,7 @@ function kanaSettings() {
             try {
                 const saved = JSON.parse(localStorage.getItem(LS_KEY) || '{}');
                 if (saved && typeof saved === 'object') {
-                    if (['schreiben', 'lesen', 'blind'].includes(saved.mode)) this.mode = saved.mode;
+                    if (['schreiben', 'lesen'].includes(saved.mode)) this.mode = saved.mode;
                     if (['hiragana', 'katakana', 'both'].includes(saved.schrift)) this.schrift = saved.schrift;
                     if (Array.isArray(saved.selectedRows)) this.selectedRows = saved.selectedRows;
                     if (typeof saved.includeDakuten === 'boolean') this.includeDakuten = saved.includeDakuten;
@@ -1026,7 +1028,7 @@ function kanaGameView() {
             let url;
             if (this.isConfusion) {
                 const m = p.get('mode');
-                this.mode = ['schreiben', 'lesen', 'blind'].includes(m) ? m : 'schreiben';
+                this.mode = ['schreiben', 'lesen'].includes(m) ? m : 'schreiben';
                 const params = new URLSearchParams({
                     mode: this.mode,
                     schrift: p.get('schrift') || 'both',
@@ -1038,7 +1040,7 @@ function kanaGameView() {
                 this.mode = 'schreiben';
             } else {
                 const m = p.get('mode');
-                this.mode = ['schreiben', 'lesen', 'blind'].includes(m) ? m : 'schreiben';
+                this.mode = ['schreiben', 'lesen'].includes(m) ? m : 'schreiben';
                 if (!window.currentUser) {
                     // Gast (Startseiten-Embed ODER direkter Aufruf der Spielseite
                     // ohne Login): voller Referenz-Scope ueber den public-Endpoint

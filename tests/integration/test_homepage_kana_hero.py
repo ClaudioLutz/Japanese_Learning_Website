@@ -26,7 +26,9 @@ class TestGuestHero:
         assert 'kana-row-row' in body
         assert "toggleRow('k')" in body
         assert 'kana-mode-seg' in body
-        assert "selectMode('blind')" in body
+        assert "selectMode('lesen')" in body
+        # Blind-Modus ist als Practice-Option entfernt (User-Direktive 2026-06-12)
+        assert "selectMode('blind')" not in body
         # H1 traegt den Query-Match "Hiragana lernen"
         assert 'Hiragana lernen' in body
 
