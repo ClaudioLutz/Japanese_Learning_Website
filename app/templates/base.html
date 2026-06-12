@@ -120,7 +120,7 @@
        Top-Nav v2 — minimal, sticky, backdrop-blur
        Pattern: Linear / Notion / Stripe / Duolingo Web 2024+
        ────────────────────────────────────────────────────────────── #}
-    <nav class="topnav" x-data="{ mobileOpen: false, userMenuOpen: false }"
+    <nav class="topnav" aria-label="Hauptnavigation" x-data="{ mobileOpen: false, userMenuOpen: false }"
          @click.away="userMenuOpen = false; mobileOpen = false"
          @keydown.escape.window="userMenuOpen = false; mobileOpen = false">
       <div class="topnav-inner">
@@ -130,102 +130,111 @@
           <span class="topnav-brand-mark" aria-hidden="true">あ</span>
           <span class="topnav-brand-text">
             <span class="topnav-brand-name">Japanese Learning</span>
-            <span class="topnav-brand-tag">Japanisch lernen · auf Deutsch · aus der Schweiz</span>
+            <span class="topnav-brand-tag">JLPT N5 · auf Deutsch</span>
           </span>
         </a>
 
-        {# Primary Nav — 3-4 essentielle Items, Active-State per request.endpoint #}
+        {# Primary Nav — max. 5 essentielle Items, Reihenfolge = taeglicher
+           Lern-Loop (Lernpfad → Wiederholen → Kana ueben), Katalog danach.
+           Active-State per request.endpoint + aria-current. #}
         <div class="topnav-primary" :class="mobileOpen && 'is-open'">
           <a href="{{ url_for('routes.index') }}#lernpfad"
-             class="topnav-link {% if request.endpoint == 'routes.index' %}is-active{% endif %}">
-            <i class="fas fa-route"></i><span>Lernpfad</span>
-          </a>
-          <a href="{{ url_for('routes.lessons') }}"
-             class="topnav-link {% if request.endpoint in ['routes.lessons', 'routes.view_lesson'] %}is-active{% endif %}">
-            <i class="fas fa-book-open"></i><span>Lektionen</span>
+             class="topnav-link {% if request.endpoint == 'routes.index' %}is-active{% endif %}"
+             {% if request.endpoint == 'routes.index' %}aria-current="page"{% endif %}>
+            <i class="fas fa-route" aria-hidden="true"></i><span>Lernpfad</span>
           </a>
           {% if current_user.is_authenticated %}
           <a href="{{ url_for('srs.review_page') }}"
              class="topnav-link {% if request.endpoint == 'srs.review_page' %}is-active{% endif %}"
-             style="position:relative;">
-            <i class="fas fa-brain"></i><span>Wiederholen</span>
-            <span class="topnav-badge-dot" id="reviewBadgeDesktop" style="display:none;"></span>
+             {% if request.endpoint == 'srs.review_page' %}aria-current="page"{% endif %}>
+            <i class="fas fa-brain" aria-hidden="true"></i><span>Wiederholen</span>
+            <span class="nav-due-badge" id="reviewBadgeDesktop" aria-hidden="true"></span>
           </a>
           <a href="{{ url_for('srs.practice_kana_page') }}"
-             class="topnav-link {% if request.endpoint == 'srs.practice_kana_page' %}is-active{% endif %}">
-            <i class="fas fa-th"></i><span>Kana üben</span>
-          </a>
-          <a href="{{ url_for('srs.browse_page') }}"
-             class="topnav-link {% if request.endpoint == 'srs.browse_page' %}is-active{% endif %}">
-            <i class="fas fa-th-list"></i><span>Stöbern</span>
+             class="topnav-link {% if request.endpoint in ['srs.practice_kana_page', 'srs.practice_kana_game_page'] %}is-active{% endif %}"
+             {% if request.endpoint == 'srs.practice_kana_page' %}aria-current="page"{% elif request.endpoint == 'srs.practice_kana_game_page' %}aria-current="true"{% endif %}>
+            <span class="topnav-kana-glyph" aria-hidden="true">あ</span><span>Kana üben</span>
           </a>
           {% endif %}
+          <a href="{{ url_for('routes.lessons') }}"
+             class="topnav-link {% if request.endpoint in ['routes.lessons', 'routes.view_lesson'] %}is-active{% endif %}"
+             {% if request.endpoint == 'routes.lessons' %}aria-current="page"{% elif request.endpoint == 'routes.view_lesson' %}aria-current="true"{% endif %}>
+            <i class="fas fa-book-open" aria-hidden="true"></i><span>Lektionen</span>
+          </a>
           {# Shu-Diaet: kein zweiter Shu-Brennpunkt in der Navbar — „N5 Komplett"
-             ist ein normaler Nav-Link; der einzige Shu-CTA bleibt „Kostenlos starten". #}
+             ist ein normaler Nav-Link; der einzige Shu-CTA bleibt „Kostenlos starten".
+             Nur fuer Nicht-Besitzer/Nicht-Admins (show_bundle_hint, Context-Processor). #}
+          {% if show_bundle_hint %}
           <a href="{{ url_for('bundle.n5_bundle') }}"
              class="topnav-link {% if request.endpoint == 'bundle.n5_bundle' %}is-active{% endif %}"
+             {% if request.endpoint == 'bundle.n5_bundle' %}aria-current="page"{% endif %}
              title="N5 Komplett — alle Lektionen lifetime, CHF 9.90">
-            <i class="fas fa-bolt"></i><span>N5 Komplett</span>
+            <i class="fas fa-bolt" aria-hidden="true"></i><span>N5 Komplett</span>
           </a>
+          {% endif %}
         </div>
 
         {# Right Group — Stats + User #}
         <div class="topnav-right">
           {% if current_user.is_authenticated %}
-            {# Stats: nur Streak + Level (XP raus, ist im Profil) #}
+            {# Stats: nur der Streak — handlungsrelevant. Level lebt im
+               Dropdown-Head + Profil (Mobile blendete es ohnehin aus). #}
+            {% if current_user.current_streak and current_user.current_streak > 0 %}
             <div class="topnav-stats">
-              {% if current_user.current_streak and current_user.current_streak > 0 %}
-              <div class="topnav-stat topnav-stat-streak" title="{{ current_user.current_streak }} Tage Streak">
-                <span class="topnav-stat-ico">🔥</span>
-                <span class="topnav-stat-val">{{ current_user.current_streak }}</span>
-              </div>
-              {% endif %}
-              <div class="topnav-stat topnav-stat-level" title="Level {{ current_user.level or 1 }} — {{ current_user.level_title }}">
-                <span class="topnav-stat-ico">⚡</span>
-                <span class="topnav-stat-val">Lv.{{ current_user.level or 1 }}</span>
+              <div class="topnav-stat topnav-stat-streak" role="img"
+                   aria-label="Streak: {{ current_user.current_streak }} Tage"
+                   title="{{ current_user.current_streak }} Tage Streak">
+                <span class="topnav-stat-ico" aria-hidden="true">🔥</span>
+                <span class="topnav-stat-val" aria-hidden="true">{{ current_user.current_streak }}</span>
               </div>
             </div>
+            {% endif %}
 
             {# User-Dropdown — alle anderen Aktionen hier hinein #}
             <div class="topnav-user" @click.stop="userMenuOpen = !userMenuOpen">
-              <button type="button" class="topnav-user-btn" :aria-expanded="userMenuOpen.toString()" aria-label="Benutzer-Menü">
+              <button type="button" class="topnav-user-btn" :aria-expanded="userMenuOpen.toString()"
+                      aria-haspopup="true" aria-controls="topnavUserDropdown"
+                      aria-label="{{ current_user.username }} – Benutzer-Menü">
                 <span class="topnav-avatar">{{ current_user.username[0].upper() }}</span>
                 <span class="topnav-user-name">{{ current_user.username }}</span>
-                <i class="fas fa-chevron-down topnav-user-chev"></i>
+                <i class="fas fa-chevron-down topnav-user-chev" aria-hidden="true"></i>
               </button>
-              <div class="topnav-dropdown" x-show="userMenuOpen" x-transition>
+              <div class="topnav-dropdown" id="topnavUserDropdown" x-show="userMenuOpen" x-transition>
                 <div class="topnav-dd-head">
                   <strong>{{ current_user.username }}</strong>
                   <small>{{ current_user.level_title }}</small>
                 </div>
                 <a href="{{ url_for('routes.user_profile') }}" class="topnav-dd-item">
-                  <i class="fas fa-user-circle"></i> Profil
+                  <i class="fas fa-user-circle" aria-hidden="true"></i> Profil
                 </a>
                 <a href="{{ url_for('routes.my_lessons') }}" class="topnav-dd-item">
-                  <i class="fas fa-shopping-bag"></i> Meine Lektionen
+                  <i class="fas fa-shopping-bag" aria-hidden="true"></i> Meine Lektionen
                 </a>
                 <a href="{{ url_for('routes.courses') }}" class="topnav-dd-item">
-                  <i class="fas fa-graduation-cap"></i> Kurse
+                  <i class="fas fa-graduation-cap" aria-hidden="true"></i> Kurse
                 </a>
                 <a href="{{ url_for('srs.stats_page') }}" class="topnav-dd-item">
-                  <i class="fas fa-chart-bar"></i> Statistik
+                  <i class="fas fa-chart-bar" aria-hidden="true"></i> Statistik
                 </a>
-                {# Sekundär-Links — auf Mobile hier (kein Burger mehr); Desktop hat sie in der Topnav #}
-                <a href="{{ url_for('srs.browse_page') }}" class="topnav-dd-item topnav-dd-mobile">
-                  <i class="fas fa-th-list"></i> Stöbern
+                {# Stöbern: Referenzfunktion, lebt hier statt in der Hauptnav (Desktop + Mobile) #}
+                <a href="{{ url_for('srs.browse_page') }}" class="topnav-dd-item">
+                  <i class="fas fa-th-list" aria-hidden="true"></i> Stöbern
                 </a>
+                {# N5 Komplett — auf Mobile hier (kein Burger fuer Eingeloggte); nur Nicht-Besitzer #}
+                {% if show_bundle_hint %}
                 <a href="{{ url_for('bundle.n5_bundle') }}" class="topnav-dd-item topnav-dd-mobile">
-                  <i class="fas fa-bolt"></i> N5 Komplett
+                  <i class="fas fa-bolt" aria-hidden="true"></i> N5 Komplett
                 </a>
+                {% endif %}
                 {% if current_user.is_admin %}
                 <div class="topnav-dd-divider"></div>
                 <a href="{{ url_for('routes.admin_index') }}" class="topnav-dd-item">
-                  <i class="fas fa-cog"></i> Admin
+                  <i class="fas fa-cog" aria-hidden="true"></i> Admin
                 </a>
                 {% endif %}
                 <div class="topnav-dd-divider"></div>
                 <a href="{{ url_for('routes.logout') }}" class="topnav-dd-item topnav-dd-danger">
-                  <i class="fas fa-sign-out-alt"></i> Abmelden
+                  <i class="fas fa-sign-out-alt" aria-hidden="true"></i> Abmelden
                 </a>
               </div>
             </div>
@@ -239,8 +248,10 @@
           {# Mobile-Hamburger — nur für Gäste (eingeloggt: alles im Konto-Menü,
              Primärnavigation lebt in der Bottom-Nav → kein Doppel-Menü) #}
           {% if not current_user.is_authenticated %}
-          <button class="topnav-burger" @click.stop="mobileOpen = !mobileOpen" aria-label="Menü öffnen">
-            <i class="fas" :class="mobileOpen ? 'fa-times' : 'fa-bars'"></i>
+          <button class="topnav-burger" @click.stop="mobileOpen = !mobileOpen"
+                  :aria-expanded="mobileOpen.toString()"
+                  :aria-label="mobileOpen ? 'Menü schliessen' : 'Menü öffnen'" aria-label="Menü öffnen">
+            <i class="fas" :class="mobileOpen ? 'fa-times' : 'fa-bars'" aria-hidden="true"></i>
           </button>
           {% endif %}
         </div>
@@ -258,7 +269,7 @@
         background: rgba(255, 255, 255, 0.85);
         backdrop-filter: saturate(180%) blur(14px);
         -webkit-backdrop-filter: saturate(180%) blur(14px);
-        border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+        border-bottom: 1px solid var(--ink-200, #E4DED4);
     }
     .topnav-inner {
         max-width: 1280px;
@@ -274,16 +285,16 @@
     .topnav-brand {
         display: flex; align-items: center; gap: 0.7rem;
         text-decoration: none;
-        color: #1a1a1a;
+        color: var(--sumi, #1C1C1C);
         flex-shrink: 0;
     }
-    .topnav-brand:hover { text-decoration: none; color: #1a1a1a; }
+    .topnav-brand:hover { text-decoration: none; color: var(--sumi, #1C1C1C); }
     .topnav-brand-mark {
         font-family: 'Klee One', 'Noto Serif JP', 'Yu Mincho', serif;
         font-weight: 600;
         font-size: 2.4rem;
         line-height: 1;
-        color: var(--kon, #1a2942);
+        color: var(--kon, #1F2A44);
         display: inline-block;
         transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
         flex-shrink: 0;
@@ -296,38 +307,42 @@
         font-family: 'Inter', system-ui, -apple-system, sans-serif;
         font-weight: 500;
         font-size: 1.05rem;
-        color: #1a2942;
+        color: var(--kon, #1F2A44);
         letter-spacing: -0.015em;
     }
     .topnav-brand-tag {
+        /* Bronze ist per Design-System (README Iconography §1) sanktioniert;
+           0.68rem statt 0.62rem fuer Lesbarkeit — Platz ist nach der
+           Tagline-Kuerzung auf den DS-Wortlaut da. */
         font-family: 'Inter', system-ui, -apple-system, sans-serif;
-        font-size: 0.62rem; color: #8a7355; font-weight: 500;
+        font-size: 0.68rem; color: #8a7355; font-weight: 500;
         letter-spacing: 0.18em;
         text-transform: uppercase;
         margin-top: 2px;
+        white-space: nowrap;
     }
 
     /* ── Primary Nav ── */
     .topnav-primary {
         display: flex; align-items: center; gap: 0.15rem;
         flex: 1;
-        margin-left: 1rem;
     }
     .topnav-link {
         display: inline-flex; align-items: center; gap: 0.5rem;
-        padding: 0.5rem 0.85rem;
+        padding: 0.5rem 0.7rem;
         border-radius: 8px;
-        color: #4a4a4a;
+        color: var(--ink-600, #5C564D);
         font-size: 0.92rem;
         font-weight: 500;
         text-decoration: none;
         transition: background-color 0.15s, color 0.15s;
         position: relative;
+        white-space: nowrap;
     }
     .topnav-link i { font-size: 0.85rem; opacity: 0.8; }
     .topnav-link:hover {
-        background: rgba(0, 0, 0, 0.04);
-        color: #1a1a1a;
+        background: rgba(28, 26, 23, 0.04);
+        color: var(--sumi, #1C1C1C);
         text-decoration: none;
     }
     .topnav-link.is-active {
@@ -338,57 +353,35 @@
         box-shadow: inset 0 -2px 0 var(--kon, #1F2A44);
     }
     .topnav-link.is-active i { opacity: 1; color: var(--kon, #1F2A44); }
-    /* Bundle-CTA: zuruecktretender Shu-Outline/Ghost (Marke), damit der primaere
-       gratis CTA dominant bleibt. Kein Indigo mehr. */
-    .topnav-link-cta {
-        background: white;
-        color: var(--shu, #EB6101);
-        border: 1.5px solid var(--shu-soft, #F4D9C7);
-        margin-left: 0.4rem;
-        white-space: nowrap;
-        position: relative;
+    /* あ-Markenglyph als Kana-Icon (wie Bottom-Nav) statt generischem fa-th */
+    .topnav-kana-glyph {
+        font-family: 'Klee One', 'Noto Serif JP', 'Yu Mincho', serif;
+        font-size: 0.95rem;
+        font-weight: 600;
+        line-height: 1;
+        opacity: 0.8;
     }
-    .topnav-link-cta:hover {
-        background: var(--shu-soft, #F4D9C7);
-        color: var(--shu-deep, #B84A00);
-        border-color: var(--shu, #EB6101);
-    }
-    .topnav-link-cta i { color: var(--shu, #EB6101); opacity: 1; }
-    .topnav-link-cta:hover i { color: var(--shu-deep, #B84A00); }
-    .topnav-link-cta.is-active {
-        background: var(--shu, #EB6101);
-        color: white;
-        border-color: var(--shu, #EB6101);
-    }
-    .topnav-link-cta.is-active i { color: white; }
-    /* Tooltip mit Preis-Detail bei Hover (data-cta-tooltip) */
-    .topnav-link-cta::after {
-        content: attr(data-cta-tooltip);
+    .topnav-link.is-active .topnav-kana-glyph { opacity: 1; color: var(--kon, #1F2A44); }
+    /* ── Faelligkeits-Badge (SRS-Review-Count) — EINE Klasse fuer Topnav +
+       Bottom-Nav; Positions-Offsets pro Kontext. JS toggelt .is-visible. ── */
+    .nav-due-badge {
         position: absolute;
-        top: calc(100% + 8px); left: 50%; transform: translateX(-50%);
-        background: #1e293b; color: white;
-        padding: 0.35rem 0.7rem; border-radius: 6px;
-        font-size: 0.78rem; font-weight: 600; white-space: nowrap;
-        opacity: 0; pointer-events: none;
-        transition: opacity 0.15s ease 0.2s;
-        z-index: 100;
+        min-width: 16px; height: 16px;
+        padding: 0 4px;
+        background: var(--shu-deep, #B84A00); /* A11y: weisse Zahl >=4.5:1 */
+        color: #fff;
+        border-radius: 8px;
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-weight: 500;
+        font-size: 0.6rem;
+        font-variant-numeric: tabular-nums;
+        line-height: 1;
+        display: none;
+        align-items: center; justify-content: center;
     }
-    .topnav-link-cta::before {
-        content: ""; position: absolute;
-        top: calc(100% + 2px); left: 50%; transform: translateX(-50%);
-        border: 4px solid transparent; border-bottom-color: #1e293b;
-        opacity: 0; pointer-events: none;
-        transition: opacity 0.15s ease 0.2s;
-    }
-    .topnav-link-cta:hover::after,
-    .topnav-link-cta:hover::before { opacity: 1; }
-    .topnav-badge-dot {
-        position: absolute; top: 6px; right: 6px;
-        width: 7px; height: 7px;
-        border-radius: 50%;
-        background: #dc3545;
-        box-shadow: 0 0 0 2px rgba(255,255,255,0.85);
-    }
+    .nav-due-badge.is-visible { display: inline-flex; }
+    .topnav-link .nav-due-badge { top: 0; right: 0; }
+    .bottom-nav-ico-wrap .nav-due-badge { top: -7px; right: -11px; border: 2px solid #fff; }
 
     /* ── Right Group ── */
     .topnav-right {
@@ -401,13 +394,18 @@
     .topnav-stat {
         display: inline-flex; align-items: center; gap: 0.3rem;
         padding: 0.3rem 0.6rem;
-        background: rgba(0, 0, 0, 0.04);
+        background: rgba(28, 26, 23, 0.04);
         border-radius: 999px;
         font-size: 0.8rem;
         font-weight: 600;
-        color: #4a4a4a;
+        color: var(--ink-600, #5C564D);
     }
     .topnav-stat-ico { font-size: 0.85rem; }
+    .topnav-stat-val {
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-weight: 500; /* Geist Mono ist nur 400/500 geladen — kein Faux-Bold */
+        font-variant-numeric: tabular-nums;
+    }
 
     /* ── User-Menu ── */
     .topnav-user { position: relative; }
@@ -415,17 +413,23 @@
         display: inline-flex; align-items: center; gap: 0.5rem;
         padding: 0.3rem 0.55rem 0.3rem 0.3rem;
         background: transparent;
-        border: 1px solid rgba(0, 0, 0, 0.08);
+        border: 1px solid var(--ink-200, #E4DED4);
         border-radius: 999px;
         cursor: pointer;
         transition: background-color 0.15s, border-color 0.15s;
-        color: #1a1a1a;
+        color: var(--sumi, #1C1C1C);
         font-size: 0.88rem;
         font-weight: 500;
     }
     .topnav-user-btn:hover {
-        background: rgba(0, 0, 0, 0.04);
-        border-color: rgba(0, 0, 0, 0.15);
+        background: rgba(28, 26, 23, 0.04);
+        border-color: var(--ink-400, #A8A095);
+    }
+    .topnav-user-name {
+        max-width: 12ch;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
     .topnav-avatar {
         width: 28px; height: 28px;
@@ -439,40 +443,42 @@
     .topnav-dropdown {
         position: absolute; top: calc(100% + 6px); right: 0;
         background: #fff;
-        border: 1px solid rgba(0, 0, 0, 0.08);
+        border: 1px solid var(--ink-200, #E4DED4);
         border-radius: 10px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+        box-shadow: var(--shadow-lifted, 0 8px 24px -4px rgba(28,26,23,.10), 0 2px 6px -2px rgba(28,26,23,.06));
         min-width: 220px;
         padding: 0.4rem;
         z-index: 1010;
     }
     .topnav-dd-head {
         padding: 0.55rem 0.75rem 0.5rem;
-        border-bottom: 1px solid rgba(0,0,0,0.06);
+        border-bottom: 1px solid var(--ink-100, #F1EDE6);
         margin-bottom: 0.3rem;
     }
-    .topnav-dd-head strong { display: block; font-size: 0.92rem; color: #1a1a1a; }
-    .topnav-dd-head small { font-size: 0.75rem; color: #888; }
+    .topnav-dd-head strong { display: block; font-size: 0.92rem; color: var(--sumi, #1C1C1C); }
+    .topnav-dd-head small { font-size: 0.75rem; color: var(--ink-600, #5C564D); }
     .topnav-dd-item {
         display: flex; align-items: center; gap: 0.6rem;
         padding: 0.5rem 0.75rem;
         border-radius: 6px;
-        color: #4a4a4a;
+        color: var(--ink-600, #5C564D);
         font-size: 0.88rem;
         text-decoration: none;
     }
     .topnav-dd-item i { width: 16px; font-size: 0.85rem; opacity: 0.7; }
     .topnav-dd-mobile { display: none; } /* nur <992px; Desktop hat diese Links in der Topnav */
     .topnav-dd-item:hover {
-        background: rgba(0, 0, 0, 0.05);
-        color: #1a1a1a;
+        background: rgba(28, 26, 23, 0.05);
+        color: var(--sumi, #1C1C1C);
         text-decoration: none;
     }
-    .topnav-dd-danger { color: #dc3545; }
-    .topnav-dd-danger:hover { background: rgba(220, 53, 69, 0.08); color: #b02a37; }
+    /* Danger: warmes Vermillion-Rot der Palette (kein Bootstrap-Rot); Ruhezustand
+       abgedunkelt fuer >=4.5:1 auf Weiss. Kein Shu — das bleibt der Kauf-CTA. */
+    .topnav-dd-danger { color: #C44536; }
+    .topnav-dd-danger:hover { background: rgba(209, 75, 61, 0.08); color: #B23A2E; }
     .topnav-dd-divider {
         height: 1px;
-        background: rgba(0,0,0,0.06);
+        background: var(--ink-100, #F1EDE6);
         margin: 0.3rem 0;
     }
 
@@ -487,10 +493,10 @@
         transition: background-color 0.15s, color 0.15s, border-color 0.15s;
     }
     .topnav-btn-ghost {
-        color: #4a4a4a;
+        color: var(--ink-600, #5C564D);
         background: transparent;
     }
-    .topnav-btn-ghost:hover { background: rgba(0,0,0,0.05); color: #1a1a1a; text-decoration: none; }
+    .topnav-btn-ghost:hover { background: rgba(28,26,23,0.05); color: var(--sumi, #1C1C1C); text-decoration: none; }
     .topnav-btn-primary {
         /* A11y: weisser Text braucht >=4.5:1 — Default-Verlauf auf Shu-deep
            (#B84A00 = 4.89:1) abgedunkelt; Hover darf waermer/heller werden. */
@@ -509,16 +515,28 @@
     .topnav-burger {
         display: none;
         background: transparent;
-        border: 1px solid rgba(0,0,0,0.08);
+        border: 1px solid var(--ink-200, #E4DED4);
         width: 38px; height: 38px;
         border-radius: 8px;
         cursor: pointer;
         font-size: 1rem;
-        color: #1a1a1a;
+        color: var(--sumi, #1C1C1C);
     }
-    .topnav-burger:hover { background: rgba(0,0,0,0.04); }
+    .topnav-burger:hover { background: rgba(28,26,23,0.04); }
 
     /* ── Responsive ── */
+    /* Desktop: einheitliche 36px-Kontrollzeile, ruhig zentriert in der 60px-Leiste.
+       Nicht global — im Burger-Dropdown (<992px) brauchen Links ~44px Tap-Targets. */
+    @media (min-width: 992px) {
+        .topnav-link, .topnav-stat, .topnav-user-btn { height: 36px; }
+        .topnav-stat { padding-top: 0; padding-bottom: 0; }
+        .topnav-user-btn { padding-top: 0.2rem; padding-bottom: 0.2rem; }
+    }
+    /* Zwischenstufe 992-1099px: eingeloggt wird es eng → Tagline + Username weichen */
+    @media (max-width: 1099px) {
+        .topnav-brand-tag { display: none; }
+        .topnav-user-name { display: none; }
+    }
     @media (max-width: 991px) {
         .topnav-primary {
             position: absolute;
@@ -528,17 +546,13 @@
             align-items: stretch;
             padding: 0.6rem;
             gap: 0.2rem;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
-            border-bottom: 1px solid rgba(0,0,0,0.06);
+            box-shadow: 0 6px 16px rgba(28,26,23,0.08);
+            border-bottom: 1px solid var(--ink-100, #F1EDE6);
             display: none;
         }
         .topnav-primary.is-open { display: flex; }
         .topnav-link { padding: 0.7rem 0.85rem; }
         .topnav-burger { display: inline-flex; align-items: center; justify-content: center; }
-        .topnav-stats { display: flex; }      /* nur noch der Streak-Chip */
-        .topnav-stat-level { display: none; } /* Level → Profil-Seite */
-        .topnav-user-name { display: none; }  /* nur Avatar zeigen */
-        .topnav-brand-tag { display: none; }
         .topnav-dd-mobile { display: flex; }  /* Sekundär-Links ins Konto-Menü */
     }
     @media (max-width: 480px) {
@@ -612,33 +626,40 @@
     {% endif %}
 
     <!-- ══ Mobile Bottom Navigation Bar — flache, gleichwertige Tabs ═══ -->
-    <nav class="mobile-bottom-nav" id="mobileBottomNav">
-        <a href="{{ url_for('routes.index') }}" class="bottom-nav-item{% if request.endpoint == 'routes.index' %} active{% endif %}">
-            <i class="fas fa-home"></i><span>Home</span>
+    <nav class="mobile-bottom-nav" id="mobileBottomNav" aria-label="Schnellnavigation">
+        <a href="{{ url_for('routes.index') }}" class="bottom-nav-item{% if request.endpoint == 'routes.index' %} active{% endif %}"
+           {% if request.endpoint == 'routes.index' %}aria-current="page"{% endif %}>
+            <i class="fas fa-home" aria-hidden="true"></i><span>Home</span>
         </a>
-        <a href="{{ url_for('routes.lessons') }}" class="bottom-nav-item{% if request.endpoint in ['routes.lessons', 'routes.view_lesson'] %} active{% endif %}">
-            <i class="fas fa-book-open"></i><span>Lektionen</span>
+        <a href="{{ url_for('routes.lessons') }}" class="bottom-nav-item{% if request.endpoint in ['routes.lessons', 'routes.view_lesson'] %} active{% endif %}"
+           {% if request.endpoint == 'routes.lessons' %}aria-current="page"{% elif request.endpoint == 'routes.view_lesson' %}aria-current="true"{% endif %}>
+            <i class="fas fa-book-open" aria-hidden="true"></i><span>Lektionen</span>
         </a>
         {% if current_user.is_authenticated %}
-        <a href="{{ url_for('srs.review_page') }}" class="bottom-nav-item{% if request.endpoint == 'srs.review_page' %} active{% endif %}" id="reviewNavItem" aria-label="Wiederholen">
+        <a href="{{ url_for('srs.review_page') }}" class="bottom-nav-item{% if request.endpoint == 'srs.review_page' %} active{% endif %}" id="reviewNavItem"
+           {% if request.endpoint == 'srs.review_page' %}aria-current="page"{% endif %}>
             <span class="bottom-nav-ico-wrap">
-                <i class="fas fa-brain"></i>
-                <span class="bottom-nav-badge" id="reviewBadge" style="display:none;"></span>
+                <i class="fas fa-brain" aria-hidden="true"></i>
+                <span class="nav-due-badge" id="reviewBadge" aria-hidden="true"></span>
             </span>
             <span>Wiederholen</span>
         </a>
-        <a href="{{ url_for('srs.practice_kana_page') }}" class="bottom-nav-item{% if request.endpoint in ['srs.practice_kana_page', 'srs.practice_kana_game_page'] %} active{% endif %}" aria-label="Kana üben">
+        <a href="{{ url_for('srs.practice_kana_page') }}" class="bottom-nav-item{% if request.endpoint in ['srs.practice_kana_page', 'srs.practice_kana_game_page'] %} active{% endif %}" aria-label="Kana üben"
+           {% if request.endpoint == 'srs.practice_kana_page' %}aria-current="page"{% elif request.endpoint == 'srs.practice_kana_game_page' %}aria-current="true"{% endif %}>
             <span class="bottom-nav-kana" aria-hidden="true">あ</span><span>Kana</span>
         </a>
-        <a href="{{ url_for('routes.user_profile') }}" class="bottom-nav-item{% if request.endpoint == 'routes.user_profile' %} active{% endif %}">
-            <i class="fas fa-user-circle"></i><span>Profil</span>
+        <a href="{{ url_for('routes.user_profile') }}" class="bottom-nav-item{% if request.endpoint == 'routes.user_profile' %} active{% endif %}"
+           {% if request.endpoint == 'routes.user_profile' %}aria-current="page"{% endif %}>
+            <i class="fas fa-user-circle" aria-hidden="true"></i><span>Profil</span>
         </a>
         {% else %}
-        <a href="{{ url_for('routes.login') }}" class="bottom-nav-item{% if request.endpoint == 'routes.login' %} active{% endif %}">
-            <i class="fas fa-sign-in-alt"></i><span>Anmelden</span>
+        <a href="{{ url_for('routes.login') }}" class="bottom-nav-item{% if request.endpoint == 'routes.login' %} active{% endif %}"
+           {% if request.endpoint == 'routes.login' %}aria-current="page"{% endif %}>
+            <i class="fas fa-sign-in-alt" aria-hidden="true"></i><span>Anmelden</span>
         </a>
-        <a href="{{ url_for('routes.register') }}" class="bottom-nav-item{% if request.endpoint == 'routes.register' %} active{% endif %}">
-            <i class="fas fa-user-plus"></i><span>Registrieren</span>
+        <a href="{{ url_for('routes.register') }}" class="bottom-nav-item{% if request.endpoint == 'routes.register' %} active{% endif %}"
+           {% if request.endpoint == 'routes.register' %}aria-current="page"{% endif %}>
+            <i class="fas fa-user-plus" aria-hidden="true"></i><span>Registrieren</span>
         </a>
         {% endif %}
     </nav>
@@ -646,30 +667,14 @@
     <style>
     /* ── Mobile-Bottom-Nav: flache Tabs ── Badge + Kana-Glyph ──────────
        Wiederholen ist ein gleichwertiger Tab (kein schwebender Center-CTA
-       mehr); das Fälligkeits-Badge bleibt als dezenter Shu-Akzent. Kana
-       bekommt einen eigenen Tab mit dem あ-Markenglyph. */
+       mehr); das Fälligkeits-Badge (.nav-due-badge, definiert im Topnav-
+       Style-Block, gemeinsam mit Desktop) bleibt als dezenter Shu-Akzent.
+       Kana bekommt einen eigenen Tab mit dem あ-Markenglyph. */
     .bottom-nav-ico-wrap {
         position: relative;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-    }
-    /* Fälligkeits-Badge oben rechts auf dem Brain-Icon */
-    .bottom-nav-badge {
-        position: absolute;
-        top: -7px; right: -11px;
-        min-width: 16px; height: 16px;
-        padding: 0 4px;
-        background: var(--shu-deep, #B84A00); /* A11y: weisse Zahl auf >=4.5:1 */
-        color: #fff;
-        border-radius: 8px;
-        font-size: 0.6rem;
-        font-family: 'Geist Mono', ui-monospace, monospace;
-        font-weight: 700;
-        font-variant-numeric: tabular-nums;
-        display: inline-flex; align-items: center; justify-content: center;
-        border: 2px solid #fff;
-        line-height: 1;
     }
     /* あ-Glyph als Kana-Tab-Icon (Markenfont, Grösse wie ein FA-Icon) */
     .bottom-nav-kana {
@@ -706,14 +711,20 @@
     
     {% if current_user.is_authenticated %}
     <script>
-    // Load SRS due-count badge (mobile + desktop)
+    // Load SRS due-count badge (mobile + desktop) — gemeinsame .nav-due-badge-Pill.
+    // Badge selbst ist aria-hidden; der Link bekommt ein sprechendes aria-label.
     (function() {
         fetch('/api/srs/stats').then(r => r.json()).then(data => {
             if (data.due_count > 0) {
                 const label = data.due_count > 99 ? '99+' : data.due_count;
                 ['reviewBadge', 'reviewBadgeDesktop'].forEach(id => {
                     const el = document.getElementById(id);
-                    if (el) { el.textContent = label; el.style.display = ''; }
+                    if (el) {
+                        el.textContent = label;
+                        el.classList.add('is-visible');
+                        const link = el.closest('a');
+                        if (link) link.setAttribute('aria-label', 'Wiederholen — ' + label + ' fällig');
+                    }
                 });
             }
         }).catch(() => {});
@@ -723,7 +734,7 @@
 
     <footer class="site-footer mt-5 py-4 border-top text-center small text-muted">
         <div class="container">
-            <nav class="footer-nav d-flex flex-wrap justify-content-center gap-3 mb-2">
+            <nav class="footer-nav d-flex flex-wrap justify-content-center gap-3 mb-2" aria-label="Rechtliches und Infos">
                 <a href="{{ url_for('routes.ueber') }}">Über uns</a>
                 <a href="{{ url_for('routes.lernmethode') }}">Lernmethode (SRS)</a>
                 <a href="{{ url_for('routes.jlpt_n5_schweiz') }}">JLPT N5 Schweiz</a>

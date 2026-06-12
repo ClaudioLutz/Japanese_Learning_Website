@@ -43,3 +43,27 @@ def get_n5_bundle_price() -> tuple[float, str]:
 def get_n5_bundle_course() -> Course | None:
     """Findet den Bundle-Course per Title. None wenn Setup-Skript noch nicht lief."""
     return db.session.query(Course).filter_by(title=N5_BUNDLE_TITLE).first()
+
+
+def user_needs_bundle_hint(user) -> bool:
+    """True, wenn dem User Bundle-Werbung gezeigt werden soll.
+
+    False fuer Admins (sehen ohnehin alles frei) und fuer User, die das
+    Bundle bereits gekauft haben — sonst penetriert der Hint Kaeufer mit
+    "Tipp: kauf das Bundle". Gaeste und alle anderen: True.
+
+    Single Source of Truth fuer Navbar (Context-Processor in __init__.py),
+    Startseiten-Banner und /learn/n5 — vorher duplizierte Logik in routes.py.
+    """
+    if not getattr(user, "is_authenticated", False):
+        return True
+    if getattr(user, "is_admin", False):
+        return False
+    bundle = get_n5_bundle_course()
+    if bundle is None:
+        return True
+    from app.models import CoursePurchase
+    already = CoursePurchase.query.filter_by(
+        user_id=user.id, course_id=bundle.id
+    ).first()
+    return already is None

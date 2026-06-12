@@ -122,7 +122,7 @@ Diese Punkte waren in §3 — sind erledigt:
 - ✅ **Container-Uptime** — `--min-instances=1` in Production aktiv (Revision 00023+, 2026-04-25). Cold-Start-Problem gemildert. Hintergrund: `project_cold_start_76_sekunden.md`.
 - ✅ **"Prototype" aus Title** — `<title>` ist jetzt `Japanisch lernen · Japanese Learning`.
 - ✅ **Sprach-Konsistenz Homepage** — index.html komplett neu gebaut, durchgehend Deutsch (`CONTENT_LANGUAGES=['german']`). Hero, Pfad, Top-Nav alles DE.
-- ✅ **Top-Nav v2** — Linear/Notion/Stripe-Pattern: schlanke transparente Bar mit Backdrop-Blur, Active-State, User-Dropdown. Komplett neue `topnav-*` CSS-Klassen in `base.html`. Alte `enhanced-navbar-*` in `custom.css` ungenutzt (kann später aufgeräumt werden).
+- ✅ **Top-Nav v2** — Linear/Notion/Stripe-Pattern: schlanke transparente Bar mit Backdrop-Blur, Active-State, User-Dropdown. Komplett neue `topnav-*` CSS-Klassen in `base.html`. **Navbar-Redesign 2026-06-12** (40-Finding-Review): gemeinsames `.nav-due-badge` (Shu-deep-Pill, Desktop+Mobile — fixt den „Wiederholen57"-Bug), `white-space:nowrap`, Tagline „JLPT N5 · auf Deutsch", Stöbern ins User-Dropdown, Level-Chip raus, あ-Glyph statt fa-th, warme Ink-Tokens statt kühler Graus, `show_bundle_hint` site-weit via Context-Processor, aria-current/Landmarks. Alte `enhanced-navbar-*` aus `custom.css` entfernt.
 - ✅ **Umlaute systemisch** — User.level_title liefert "Anfänger"/"Schüler" mit korrekten Umlauten, Tests entsprechend gefixt.
 - ✅ **Favicon** — SVG (⛩) und PNG-Fallback in `app/static/`.
 - ✅ **Legal-Pages** — `/legal/{impressum,agb,datenschutz,widerruf}` live mit echten Daten (Promenadenstrasse 72, 9400 Rorschach, info@japanese-learning.ch).
@@ -152,9 +152,9 @@ Diese Punkte waren in §3 — sind erledigt:
 - **`Lesson.is_accessible_to_user()` Cascade**: 1) Admin-Bypass, 2) Free-Lesson, 3) LessonPurchase, 4) **CoursePurchase (Bundle-Mechanismus)**, 5) Premium-Sub. Reihenfolge nicht ändern.
 - **`view_lesson()` rendert Paywall, kein Redirect**: Bei `not accessible AND price>0 AND is_purchasable` → `lesson_paywall.html`. Bei `Login required` → Login-Redirect. Bei prerequisite-Fail → Flash + Lessons-Liste.
 - **Modul-Detail mit Skip-Optimierung**: `/learn/n5/<slug>` redirected bei `len(published_lessons)<=1` direkt zur Lesson — keine Klick-Friction für Mini-Module.
-- **Funnel-Hint-Suppression**: `show_bundle_hint` ist `False` für Admins UND für User mit `CoursePurchase` auf Bundle-Course. Sonst penetriert der Hint Käufer mit „Tipp: kauf das Bundle".
+- **Funnel-Hint-Suppression**: `show_bundle_hint` ist `False` für Admins UND für User mit `CoursePurchase` auf Bundle-Course. Sonst penetriert der Hint Käufer mit „Tipp: kauf das Bundle". Seit 2026-06-12 site-weit via Context-Processor (`bundle_service.user_needs_bundle_hint`, fail-open True) — steuert auch den „N5 Komplett"-Link in der Navbar; Routes übergeben es nicht mehr einzeln.
 - **CONTENT_LANGUAGES Filter**: default `['german']`. Bilingual via Env.
-- **Top-Nav v2 Klassen** (`topnav-*`): `topnav-link-cta` ist Outline-Style mit `data-cta-tooltip` Pseudo-Element. Nicht mit Vollflächen-Buttons mischen.
+- **Top-Nav v2 Klassen** (`topnav-*`): „N5 Komplett" ist seit der Shu-Diät (Commit df9a134) ein normaler `topnav-link`; `topnav-link-cta` + `data-cta-tooltip` wurden 2026-06-12 als toter Code entfernt. Fälligkeits-Badge: gemeinsame `.nav-due-badge`-Klasse (Topnav + Bottom-Nav), JS toggelt `.is-visible` und setzt das `aria-label` des Links.
 - **Brand-Block:** SVG-Torii (`/static/torii-logo.svg`) + Fraunces (Wordmark) + Noto Serif JP (Tag). Hover dreht Torii via cubic-bezier. CSP erlaubt `fonts.googleapis.com` + `fonts.gstatic.com`.
 - **`/learn/n5` ist 301 auf `/#lernpfad`** — Single Source of Truth ist die Startseite. `/learn/n4` ist 404 (Mayuko-Direktive: erst N5).
 - **Snake-Path-Rendering** im Pfad: 3 Gruppen, `repeat(auto-fill, minmax(280px, 1fr))`, `is-next` für Pulsation. Lock-Icon nur falls `prerequisite_category_id` wieder gesetzt würde.

@@ -327,6 +327,16 @@ def create_app():
             )
         except Exception:
             n5_free_lesson_count = 0
+        # Navbar: Bundle-Kauf-Link nur fuer Nicht-Besitzer/Nicht-Admins zeigen.
+        # Fail-open auf True (= heutiges Verhalten), damit Error-Pages und
+        # Renders ausserhalb voller Request-Kontexte nicht brechen.
+        try:
+            from flask_login import current_user as _cu
+            from app.services.bundle_service import user_needs_bundle_hint
+            show_bundle_hint = user_needs_bundle_hint(_cu)
+        except Exception:
+            app.logger.warning("show_bundle_hint fail-open", exc_info=True)
+            show_bundle_hint = True
         return {
             'current_year': _dt.utcnow().year,
             'site_url': site_url,
@@ -337,6 +347,7 @@ def create_app():
             'robots_index': app.config['ROBOTS_INDEX'],
             'default_canonical': canonical,
             'n5_free_lesson_count': n5_free_lesson_count,
+            'show_bundle_hint': show_bundle_hint,
         }
 
     # Cache-Busting fuer eigene statische Assets: haengt die Datei-mtime als

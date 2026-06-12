@@ -444,21 +444,8 @@ def index():
         user, visible_langs
     )
 
-    # Bundle-Hinweis nur fuer User die das Bundle NICHT haben (Admins zaehlen als 'haben').
-    show_bundle_hint = True
-    if current_user.is_authenticated:
-        if getattr(current_user, "is_admin", False):
-            show_bundle_hint = False
-        else:
-            from app.services.bundle_service import get_n5_bundle_course
-            bundle = get_n5_bundle_course()
-            if bundle:
-                from app.models import CoursePurchase
-                already = CoursePurchase.query.filter_by(
-                    user_id=current_user.id, course_id=bundle.id
-                ).first()
-                if already:
-                    show_bundle_hint = False
+    # Bundle-Hinweis (show_bundle_hint) kommt jetzt site-weit aus dem
+    # Context-Processor (__init__.py → bundle_service.user_needs_bundle_hint).
 
     # Live-Stats fuer Hero — gibt Konkretheit + Aktivitaetssignal
     n5_vocab_count = Vocabulary.query.filter_by(jlpt_level=5).count()
@@ -494,7 +481,6 @@ def index():
                          n5_modules=n5_modules,
                          n5_groups=n5_groups,
                          next_module_id=next_module_id,
-                         show_bundle_hint=show_bundle_hint,
                          visible_languages=visible_langs,
                          n5_vocab_count=n5_vocab_count,
                          n5_kanji_count=n5_kanji_count,
@@ -953,21 +939,7 @@ def learn_path(level: int = 5):
         except Exception:
             current_app.logger.warning("N5-Coverage konnte nicht geladen werden", exc_info=True)
 
-        # Bundle-CTA nur fuer User, die das Bundle NICHT besitzen (Admins = besitzen).
-        show_bundle_hint = True
-        if current_user.is_authenticated:
-            if getattr(current_user, "is_admin", False):
-                show_bundle_hint = False
-            else:
-                from app.services.bundle_service import get_n5_bundle_course
-                bundle = get_n5_bundle_course()
-                if bundle:
-                    already = CoursePurchase.query.filter_by(
-                        user_id=current_user.id, course_id=bundle.id
-                    ).first()
-                    if already:
-                        show_bundle_hint = False
-
+        # Bundle-CTA (show_bundle_hint) kommt site-weit aus dem Context-Processor.
         return render_template(
             'learn_n5.html',
             n5_modules=n5_modules,
@@ -975,7 +947,6 @@ def learn_path(level: int = 5):
             next_module_id=next_module_id,
             first_guest_lesson=first_guest_lesson,
             n5_coverage=n5_coverage,
-            show_bundle_hint=show_bundle_hint,
             visible_languages=visible_langs,
         )
     # Andere Levels haben noch keinen Content — Mayuko-Direktive: erst N5 komplett.

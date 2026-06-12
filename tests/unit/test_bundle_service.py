@@ -11,6 +11,7 @@ from app.services.bundle_service import (
     REGULAR_PRICE_CHF,
     get_n5_bundle_course,
     get_n5_bundle_price,
+    user_needs_bundle_hint,
 )
 
 
@@ -70,3 +71,67 @@ def test_get_bundle_course_finds_existing(app_context):
     assert found is not None
     assert found.id == course.id
     assert found.title == N5_BUNDLE_TITLE
+
+
+def _make_bundle_course():
+    from app import db
+    from app.models import Course
+
+    course = Course(title=N5_BUNDLE_TITLE, description="x", is_published=False,
+                    is_purchasable=True, price=9.90)
+    db.session.add(course)
+    db.session.commit()
+    return course
+
+
+def test_bundle_hint_guest_sees_hint(app_context):
+    """Gaeste sehen den Bundle-Hint immer."""
+    from flask_login import AnonymousUserMixin
+
+    assert user_needs_bundle_hint(AnonymousUserMixin()) is True
+
+
+def test_bundle_hint_admin_suppressed(app_context):
+    """Admins sehen den Hint nie (Admin-Bypass: besitzen ohnehin alles)."""
+    from tests.factories import AdminUserFactory
+    from app import db
+
+    admin = AdminUserFactory()
+    db.session.commit()
+    assert user_needs_bundle_hint(admin) is False
+
+
+def test_bundle_hint_user_without_purchase(app_context):
+    """Normaler User ohne Bundle-Kauf sieht den Hint."""
+    from tests.factories import UserFactory
+    from app import db
+
+    _make_bundle_course()
+    user = UserFactory()
+    db.session.commit()
+    assert user_needs_bundle_hint(user) is True
+
+
+def test_bundle_hint_owner_suppressed(app_context):
+    """Bundle-Kaeufer sehen den Hint nicht mehr."""
+    from tests.factories import UserFactory
+    from app import db
+    from app.models import CoursePurchase
+
+    course = _make_bundle_course()
+    user = UserFactory()
+    db.session.commit()
+    db.session.add(CoursePurchase(user_id=user.id, course_id=course.id,
+                                  price_paid=9.90))
+    db.session.commit()
+    assert user_needs_bundle_hint(user) is False
+
+
+def test_bundle_hint_without_bundle_course(app_context):
+    """Ohne angelegten Bundle-Course (Setup-Skript lief nicht): fail-open True."""
+    from tests.factories import UserFactory
+    from app import db
+
+    user = UserFactory()
+    db.session.commit()
+    assert user_needs_bundle_hint(user) is True
