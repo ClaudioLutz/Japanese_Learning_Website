@@ -7,12 +7,19 @@ und `example_jp` fuer Vocabulary, sonst kann der Button nichts vorlesen.
 from app import db
 from app.models import LessonContent
 from app.srs_service import get_content_data_for_review
-from tests.factories import GrammarFactory, LessonFactory, VocabularyFactory
+from tests.factories import (
+    GrammarFactory,
+    KanaFactory,
+    LessonFactory,
+    VocabularyFactory,
+)
 
 
 def _content_for(content_type: str, **kwargs) -> LessonContent:
     if content_type == "grammar":
         ref = GrammarFactory(**kwargs)
+    elif content_type == "kana":
+        ref = KanaFactory(**kwargs)
     else:
         ref = VocabularyFactory(**kwargs)
     lesson = LessonFactory()
@@ -90,6 +97,28 @@ def test_grammar_review_payload_includes_nuance(app_context):
     lc = _content_for("grammar", nuance="は markiert das Thema, が das Subjekt.")
     data = get_content_data_for_review(lc)
     assert data["details"]["nuance"] == "は markiert das Thema, が das Subjekt."
+
+
+def test_kana_review_payload_includes_mnemonic_and_stroke_info(app_context):
+    """Merkhilfe-Sektion auf der Kana-Rückseite: mnemonic (Eselsbrücke) und
+    stroke_order_info (Strichfolge-Fallback) müssen im Payload sein."""
+    lc = _content_for(
+        "kana",
+        mnemonic="Sieht aus wie ein Apfel-Männchen.",
+        stroke_order_info="3 Striche: quer, senkrecht, Bogen.",
+    )
+    data = get_content_data_for_review(lc)
+    assert data["details"]["mnemonic"] == "Sieht aus wie ein Apfel-Männchen."
+    assert data["details"]["stroke_order_info"] == "3 Striche: quer, senkrecht, Bogen."
+
+
+def test_kana_review_payload_empty_memo_fields_when_unset(app_context):
+    """Ohne gepflegte Merkhilfe liefert das Service leere Strings — das
+    Frontend rendert die Sektion dann gar nicht."""
+    lc = _content_for("kana", mnemonic=None, stroke_order_info=None)
+    data = get_content_data_for_review(lc)
+    assert data["details"]["mnemonic"] == ""
+    assert data["details"]["stroke_order_info"] == ""
 
 
 def test_vocabulary_review_payload_includes_example_jp(app_context):

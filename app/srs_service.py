@@ -366,6 +366,11 @@ def get_content_data_for_review(content_item):
         data['details'] = {
             'romanization': ref.romanization,
             'type': ref.type,
+            # Merkhilfe auf der Rueckseite: mnemonic (Eselsbruecke, kuratiert)
+            # mit stroke_order_info (Strichfolge, ~185/200 gepflegt) als Fallback —
+            # gleiches Muster wie das korrektive Feedback im Kana-Spiel.
+            'mnemonic': ref.mnemonic or '',
+            'stroke_order_info': ref.stroke_order_info or '',
         }
     elif content_item.content_type == 'kanji':
         data['front'] = ref.character

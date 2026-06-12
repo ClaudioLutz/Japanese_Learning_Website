@@ -229,8 +229,10 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         text-align: left;
         gap: 0.7rem;
         padding-top: 1.6rem;
-        /* Audio-Button positioniert sich relativ zur Back-Face. */
-        position: relative;
+        /* KEIN position:relative hier — das wuerde das position:absolute der
+           Basisklasse ueberschreiben und die Rueckseite auf Inhaltshoehe
+           schrumpfen lassen (Karte wirkt beim Flip "halb leer"). Der
+           Audio-Button ankert auch an absolute. */
     }
     /* Audio-Button auf der Backseite — analog .card-audio-btn im Lesson-View.
        Spielt den JP-Front-Text (Kana/Kanji/Vokabel) oder den Beispielsatz
@@ -276,7 +278,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     }
     .review-card-hint {
         font-size: 0.72rem;
-        color: var(--text-muted, #94a3b8);
+        color: var(--ink-500, #7A7368);
         margin-top: clamp(0.8rem, 4vh, 1.5rem);
         letter-spacing: 0.04em;
         text-transform: uppercase;
@@ -329,7 +331,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     }
     .back-readings .romaji {
         font-family: 'Geist Mono', ui-monospace, monospace;
-        font-style: normal; color: var(--ink-400, #A8A095);
+        font-style: normal; color: var(--ink-500, #7A7368);
     }
     .back-section {
         margin-top: 0.4rem; padding-top: 0.6rem;
@@ -338,7 +340,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     }
     .back-section-label {
         font-family: 'Geist', sans-serif;
-        font-size: 0.72rem; font-weight: 600; color: var(--ink-400, #A8A095);
+        font-size: 0.72rem; font-weight: 600; color: var(--ink-500, #7A7368);
         text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.2rem;
     }
     .back-jp-line {
@@ -365,7 +367,10 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     .review-example-audio {
         flex: none; background: none; border: none; cursor: pointer;
         color: var(--primary-color, #6366f1); font-size: 0.8rem;
-        padding: 0 0.2rem; line-height: 1;
+        /* Touch-Target >= 24x24px (WCAG 2.5.8) — Fehl-Taps flippen sonst die Karte */
+        min-width: 28px; min-height: 28px;
+        display: inline-flex; align-items: center; justify-content: center;
+        padding: 0; line-height: 1;
     }
     .review-example-audio.playing { color: #ef4444; }
     /* Cloze-Vorderseite (Lückentext-Grammatik) */
@@ -470,9 +475,8 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     }
     .review-btn i { font-size: 0.82rem; opacity: 0.85; }
     .review-btn .interval-hint {
-        font-size: 0.66rem;
+        font-size: 0.7rem;
         font-weight: 500;
-        opacity: 0.7;
         min-height: 0.8em;
         font-family: 'Geist Mono', ui-monospace, monospace;
         font-variant-numeric: tabular-nums;
@@ -484,13 +488,15 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     .review-btn[data-rating="2"]:hover { background: rgba(199,128,45,0.08); border-color: var(--kincha, #C7802D); }
     .review-btn[data-rating="3"] { color: var(--matcha, #7A9033); border-color: rgba(122,144,51,0.30); }
     .review-btn[data-rating="3"]:hover { background: rgba(122,144,51,0.08); border-color: var(--matcha, #7A9033); }
-    /* "Leicht" (4) gefüllt — schnellster Weg, häufigste Antwort (Spec-Pattern) */
+    /* "Leicht" (4) gefüllt — schnellster Weg, häufigste Antwort (Spec-Pattern).
+       Dunkleres Matcha als das Token: weiss auf #5F7326 erreicht ~5.4:1 (AA),
+       auf --matcha #7A9033 wären es nur ~3.6:1. */
     .review-btn[data-rating="4"] {
-        background: var(--matcha, #7A9033);
+        background: #5F7326;
         color: #fff;
-        border-color: var(--matcha, #7A9033);
+        border-color: #5F7326;
     }
-    .review-btn[data-rating="4"]:hover { background: #6B7F2D; border-color: #6B7F2D; }
+    .review-btn[data-rating="4"]:hover { background: #546629; border-color: #546629; }
 
     /* ── Karten-Kontext (Gruppe + Typ) ── */
     .card-context {
@@ -532,10 +538,13 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         box-shadow: 0 -8px 30px rgba(28,26,23,0.18);
         padding: 0.5rem 1rem calc(1rem + env(safe-area-inset-bottom, 0px));
         z-index: 1100;
-        transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+        /* visibility verhindert, dass der -8px-Schatten des versteckten
+           Sheets als dunkle Kante am unteren Viewport-Rand durchscheint */
+        visibility: hidden;
+        transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1), visibility 0.3s;
         max-height: 82dvh; overflow-y: auto;
     }
-    .review-sheet.is-open { transform: translate(-50%, 0); }
+    .review-sheet.is-open { transform: translate(-50%, 0); visibility: visible; }
     .review-sheet__handle {
         width: 40px; height: 4px; border-radius: 999px;
         background: var(--ink-300, #D4CFC5);
@@ -710,19 +719,142 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         .review-screen { padding-left: 0.7rem; padding-right: 0.7rem; }
         .review-btn { font-size: 0.78rem; }
     }
+
+    /* ── Einzelzeichen (Kana/Kanji/Digraph) fuellen die Karte ── */
+    .review-card-front-text.single-char {
+        font-size: clamp(3.2rem, 20vw, 4.5rem);
+    }
+
+    /* ── Desktop: Karte als Buehne nutzen statt Phone-Layout zu strecken ── */
+    @media (min-width: 992px) {
+        .review-screen { max-width: 680px; }
+        .review-flip-card { max-width: 600px; max-height: 640px; }
+        .review-card-face { padding: 1.9rem 2rem; }
+        .review-card-front-text.single-char { font-size: 6rem; }
+        .review-card-front-text { font-size: 3.5rem; }
+        .review-card-front-text.small-text { font-size: 2.3rem; }
+        .front-example-jp { font-size: 1.35rem; }
+        .back-meaning { font-size: 1.7rem; }
+    }
+    /* Hohe Viewports: Karte+Kontext+Buttons als zentrierter Cluster.
+       margin:auto verteilt den Leerraum ober-/unterhalb des Clusters statt
+       ein Loch zwischen Karte und am Boden klebenden Tags zu lassen. */
+    @media (min-width: 992px) and (min-height: 760px) {
+        .review-card-area { flex: 0 1 auto; height: min(640px, 64dvh); margin-top: auto; }
+        .review-buttons { margin-bottom: auto; }
+    }
+
+    /* ── Tastatur-Hinweise: nur fuer Geraete mit Maus/Trackpad + Tastatur ── */
+    .review-btn { position: relative; }
+    .review-btn .key-badge {
+        display: none;
+        position: absolute; top: 4px; right: 6px;
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-size: 0.62rem; font-weight: 600; line-height: 1;
+        padding: 2px 4px; border-radius: 4px;
+        background: var(--ink-100, #F1EDE6);
+        border: 1px solid var(--ink-200, #E4DED4);
+        color: var(--ink-600, #5C564D);
+    }
+    .review-btn[data-rating="4"] .key-badge {
+        background: rgba(255,255,255,0.18);
+        border-color: rgba(255,255,255,0.35);
+        color: #fff;
+    }
+    .key-only { display: none; }
+    @media (hover: hover) and (pointer: fine) {
+        .review-btn .key-badge { display: block; }
+        .key-only { display: inline; }
+    }
+    /* Schmale Fenster: Badges wuerden die Button-Labels quetschen */
+    @media (max-width: 576px) {
+        .review-btn .key-badge { display: none !important; }
+    }
+
+    /* ── XP-Feedback: Float ueber den Rating-Buttons + Session-Zaehler ── */
+    .review-buttons { position: relative; }
+    .xp-float {
+        position: absolute; left: 50%; top: -0.5rem;
+        transform: translate(-50%, 0);
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-weight: 700; font-size: 0.95rem;
+        color: var(--kincha, #C7802D);
+        pointer-events: none; white-space: nowrap;
+        animation: xpFloat 0.9s ease forwards;
+        z-index: 5;
+    }
+    .xp-float.is-boost { font-size: 1.15rem; color: var(--shu, #EB6101); }
+    @keyframes xpFloat {
+        0% { opacity: 0; transform: translate(-50%, 8px); }
+        20% { opacity: 1; }
+        100% { opacity: 0; transform: translate(-50%, -28px) scale(1.06); }
+    }
+    .review-xp-counter {
+        flex: 0 0 auto;
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-variant-numeric: tabular-nums;
+        font-size: 0.78rem; font-weight: 700;
+        color: var(--kincha, #C7802D);
+        white-space: nowrap;
+    }
+
+    /* ── Screenreader-only Live-Region ── */
+    .sr-only-live {
+        position: absolute; width: 1px; height: 1px;
+        overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+    }
+
+    /* ── Sheet: Links zu Statistik + Browser ── */
+    .review-sheet__links {
+        display: flex; gap: 0.5rem; flex-wrap: wrap;
+        margin-top: 0.9rem; padding-top: 0.75rem;
+        border-top: 1px solid var(--ink-200, #E4DED4);
+    }
+    .review-sheet__links a {
+        flex: 1 1 auto;
+        display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+        padding: 0.5rem 0.7rem; border-radius: 10px;
+        background: var(--card-bg, #FFFDF7);
+        border: 1px solid var(--ink-200, #E4DED4);
+        color: var(--kon, #1F2A44); font-size: 0.82rem; font-weight: 600;
+        text-decoration: none;
+    }
+    .review-sheet__links a:hover { border-color: var(--shu, #EB6101); color: var(--shu, #EB6101); }
+
+    /* ── Rating-Fehler-Hinweis (Bewertung nicht gespeichert) ── */
+    .rate-error {
+        flex: 0 0 auto;
+        text-align: center; font-size: 0.78rem; font-weight: 600;
+        color: var(--shu-deep, #B84A00);
+        padding: 0.25rem 0;
+    }
+
+    /* ── Reduzierte Bewegung: Flip/Pulse/Float ohne Animation ── */
+    @media (prefers-reduced-motion: reduce) {
+        .review-card-scene { transition: none; }
+        .review-buttons.visible { animation: none; }
+        .review-audio-btn.playing { animation: none; }
+        .xp-float { animation: none; opacity: 1; }
+        .achievement-toast { animation: none; }
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="review-screen">
 
+    <!-- Screenreader-Ansagen: Bewertungsergebnis, Fortschritt, Session-Ende -->
+    <div class="sr-only-live" id="srAnnounce" aria-live="polite"></div>
+
     <!-- Kompakte Kopfzeile: Fortschritt + Zähler + Romaji + Einstellungen -->
     <div class="review-topbar">
         <div class="session-progress" id="sessionProgress" style="display: none;">
-            <div class="progress">
+            <div class="progress" role="progressbar" aria-label="Session-Fortschritt"
+                 aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="sessionProgressBar">
                 <div class="progress-bar" id="sessionBar" style="width: 0%;"></div>
             </div>
         </div>
+        <span class="review-xp-counter" id="sessionXpCounter" hidden>⚡ +0</span>
         <span class="review-progress-count" id="sessionCount">0 / 0</span>
         <button type="button" class="romaji-toggle review-icon-btn"
                 title="Romaji auf der Vorderseite ein-/ausblenden"
@@ -767,7 +899,18 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         </a>
         {% else %}
         <h5>Alles erledigt!</h5>
-        <p class="text-muted">Keine Karten fällig. Komm später wieder.</p>
+        <p class="text-muted" id="emptyForecast">Keine Karten fällig.</p>
+        <div class="mt-2" style="display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap;">
+            <a href="{{ url_for('srs.practice_kana_page') }}" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-keyboard me-1"></i> Kana üben
+            </a>
+            <a href="{{ url_for('routes.lessons') }}" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-book-open me-1"></i> Neue Lektion
+            </a>
+            <a href="{{ url_for('srs.stats_page') }}" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-chart-bar me-1"></i> Statistiken
+            </a>
+        </div>
         {% endif %}
     </div>
 
@@ -798,10 +941,17 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
                 <span class="summary-label">XP verdient</span>
                 <span class="summary-value xp-summary"><i class="fas fa-star"></i> <span id="summaryXP">0</span></span>
             </div>
+            <div class="summary-row" id="summaryForecastRow" hidden>
+                <span class="summary-label">Morgen fällig</span>
+                <span class="summary-value" id="summaryForecast">–</span>
+            </div>
             <div class="stage-changes" id="stageChanges"></div>
             <div id="sessionAchievements" style="margin-top:0.5rem;"></div>
         </div>
-        <div class="mt-3" style="display:flex;gap:0.5rem;justify-content:center;">
+        <div class="mt-3" style="display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap;">
+            <button type="button" class="btn btn-primary btn-sm" id="nextRoundBtn" hidden>
+                <i class="fas fa-forward me-1"></i> <span id="nextRoundLabel">Weitere Runde</span>
+            </button>
             <a href="{{ url_for('routes.lessons') }}" class="btn btn-outline-primary btn-sm">
                 <i class="fas fa-book-open me-1"></i> Weiter lernen
             </a>
@@ -817,21 +967,28 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         <span id="cardType"></span>
     </div>
 
+    <!-- Fehler-Hinweis: Bewertung konnte nicht gespeichert werden -->
+    <div class="rate-error" id="rateError" hidden>Bewertung nicht gespeichert — bitte erneut wählen.</div>
+
     <!-- Rating Buttons (gepinnt) -->
     <div class="review-buttons" id="reviewButtons">
         <button class="review-btn" data-rating="1">
+            <kbd class="key-badge" aria-hidden="true">1</kbd>
             <span><i class="fas fa-redo"></i> Nochmal</span>
             <span class="interval-hint"></span>
         </button>
         <button class="review-btn" data-rating="2">
+            <kbd class="key-badge" aria-hidden="true">2</kbd>
             <span><i class="fas fa-brain"></i> Schwer</span>
             <span class="interval-hint"></span>
         </button>
         <button class="review-btn" data-rating="3">
+            <kbd class="key-badge" aria-hidden="true">3</kbd>
             <span><i class="fas fa-check"></i> Gut</span>
             <span class="interval-hint"></span>
         </button>
         <button class="review-btn" data-rating="4">
+            <kbd class="key-badge" aria-hidden="true">4</kbd>
             <span><i class="fas fa-bolt"></i> Einfach</span>
             <span class="interval-hint"></span>
         </button>
@@ -881,6 +1038,12 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
             <span class="review-filters__label"><i class="fas fa-shapes"></i> Typ</span>
             <div class="deck-filter-bar" id="reviewFilterBar"></div>
         </div>
+    </div>
+
+    <!-- Vertiefung: Statistik + Karten-Browser -->
+    <div class="review-sheet__links">
+        <a href="{{ url_for('srs.stats_page') }}"><i class="fas fa-chart-bar"></i> Detaillierte Statistik</a>
+        <a href="{{ url_for('srs.browse_page') }}"><i class="fas fa-list"></i> Karten durchstöbern</a>
     </div>
 </aside>
 {% endblock %}
@@ -940,16 +1103,39 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         return arr;
     }
 
+    // ── Forecast-Hilfe: "Morgen fällig: X" in ein Element schreiben ──
+    // data[0] = heute, data[1] = morgen, data[2] = übermorgen.
+    function loadForecastInto(el) {
+        if (!el) return;
+        fetch('/api/srs/stats/forecast?days=3')
+            .then(r => r.ok ? r.json() : null)
+            .then(j => {
+                const days = (j && j.data) || [];
+                const morgen = days[1] ? days[1].count : 0;
+                const uebermorgen = days[2] ? days[2].count : 0;
+                if (morgen > 0) {
+                    el.textContent = `Morgen fällig: ${morgen} ${morgen === 1 ? 'Karte' : 'Karten'}. Dein Streak zählt weiter! 🔥`;
+                } else if (uebermorgen > 0) {
+                    el.textContent = `Morgen ist frei — übermorgen warten ${uebermorgen} Karten.`;
+                } else {
+                    el.textContent = 'In den nächsten Tagen ist nichts fällig — Zeit für eine neue Lektion!';
+                }
+            })
+            .catch(() => {});
+    }
+
     // ── Load due cards ──
     async function loadCards() {
         try {
             const resp = await fetch('/api/srs/due?limit=50');
+            if (!resp.ok) throw new Error('HTTP ' + resp.status);
             const data = await resp.json();
             allCards = data.cards || [];
 
             if (allCards.length === 0) {
                 emptyEl.style.display = 'block';
                 cardArea.style.display = 'none';
+                loadForecastInto(document.getElementById('emptyForecast'));
                 return;
             }
 
@@ -969,7 +1155,13 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
             refreshView();
         } catch (e) {
             console.error('[Review] Load failed:', e);
-            cardArea.innerHTML = '<p class="text-muted">Fehler beim Laden der Karten.</p>';
+            cardArea.innerHTML = `<div style="text-align:center;">
+                <p class="text-muted">Karten konnten nicht geladen werden.</p>
+                <button type="button" class="btn btn-outline-primary btn-sm" id="reviewRetryBtn">
+                    <i class="fas fa-rotate-right me-1"></i> Erneut versuchen
+                </button></div>`;
+            const retryBtn = document.getElementById('reviewRetryBtn');
+            if (retryBtn) retryBtn.addEventListener('click', loadCards);
         }
     }
 
@@ -1067,7 +1259,11 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         });
         categorySelect.innerHTML = opts.join('');
         categoryFilterGroup.style.display = 'flex';
+    }
 
+    // Change-Listener einmalig registrieren — renderCategorySelect() laeuft bei
+    // jeder weiteren Runde erneut und wuerde sonst Listener stapeln.
+    if (categorySelect) {
         categorySelect.addEventListener('change', () => {
             const val = categorySelect.value;
             activeCategory = val === '' ? null : parseInt(val, 10);
@@ -1132,6 +1328,10 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
 
         const frontText = card.front || '?';
         const isLong = frontText.length > 6;
+        // Einzelzeichen (Kana, Kanji, Digraphen wie きゃ) duerfen die Karte
+        // fuellen — laengere Woerter behalten die moderate Stufe, sonst
+        // laeuft ein 6-Zeichen-Wort auf Desktop aus der Karte.
+        const sizeClass = frontText.length <= 2 ? 'single-char' : (isLong ? 'small-text' : '');
         const d = card.details || {};
         const isGerman = card.instruction_language === 'german';
 
@@ -1172,7 +1372,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         let frontExample = '';
         if (card.content_type === 'vocabulary' && d.example_jp) {
             frontExample = `<div class="front-example">
-                <div class="front-example-jp">${escapeHtml(d.example_jp)}</div>
+                <div class="front-example-jp" lang="ja">${escapeHtml(d.example_jp)}</div>
                 ${d.example_romaji ? `<div class="front-romaji front-example-romaji">${escapeHtml(d.example_romaji)}</div>` : ''}
             </div>`;
         }
@@ -1188,12 +1388,29 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
 
         let backHTML = '';
         if (card.content_type === 'kana') {
-            backHTML = imageBlock + detailRow('Romaji', d.romanization) + detailRow('Typ', d.type);
+            // Merkhilfe: Eselsbruecke bevorzugt, sonst Strichfolge — genau beim
+            // Vergessen ist die Merkhilfe didaktisch am wertvollsten (Re-Encoding
+            // statt blossem Antwort-Ablesen, gleiches Muster wie im Kana-Spiel).
+            const memoHTML = d.mnemonic
+                ? `<div class="back-section">
+                        <div class="back-section-label">💡 Merkhilfe</div>
+                        <div style="font-size:0.92rem; line-height:1.45;">${escapeHtml(d.mnemonic)}</div>
+                    </div>`
+                : (d.stroke_order_info
+                    ? `<div class="back-section">
+                        <div class="back-section-label">✍️ Strichfolge</div>
+                        <div style="font-size:0.92rem; line-height:1.45;">${escapeHtml(d.stroke_order_info)}</div>
+                    </div>`
+                    : '');
+            backHTML = imageBlock +
+                       `<div class="back-meaning">${escapeHtml(d.romanization || '')}</div>` +
+                       `<div class="back-readings"><span>${d.type === 'katakana' ? 'Katakana' : 'Hiragana'}</span></div>` +
+                       memoHTML;
         } else if (card.content_type === 'kanji') {
             // Kanji: Bedeutung gross, Lesungen leise, neuer Layout
             const meaningParts = [];
-            if (d.onyomi) meaningParts.push(`<span class="reading-jp">音 ${escapeHtml(d.onyomi)}</span>`);
-            if (d.kunyomi) meaningParts.push(`<span class="reading-jp">訓 ${escapeHtml(d.kunyomi)}</span>`);
+            if (d.onyomi) meaningParts.push(`<span class="reading-jp" lang="ja">音 ${escapeHtml(d.onyomi)}</span>`);
+            if (d.kunyomi) meaningParts.push(`<span class="reading-jp" lang="ja">訓 ${escapeHtml(d.kunyomi)}</span>`);
             backHTML = imageBlock +
                        `<div class="back-meaning">${escapeHtml(d.meaning || '')}</div>` +
                        (meaningParts.length ? `<div class="back-readings">${meaningParts.join('')}</div>` : '');
@@ -1202,7 +1419,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
             const isKanaWord = d.reading && frontText === d.reading;
             const readingParts = [];
             // Bei Kana-only Word: reading == word, daher nur Romaji zeigen — sonst Lesung + Romaji
-            if (!isKanaWord && d.reading) readingParts.push(`<span class="reading-jp">${escapeHtml(d.reading)}</span>`);
+            if (!isKanaWord && d.reading) readingParts.push(`<span class="reading-jp" lang="ja">${escapeHtml(d.reading)}</span>`);
             if (d.romaji) readingParts.push(`<span class="romaji">${escapeHtml(d.romaji)}</span>`);
 
             backHTML = imageBlock +
@@ -1212,7 +1429,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
             if (d.example_jp) {
                 backHTML += `<div class="back-section">
                     <div class="back-section-label">Beispiel</div>
-                    <div class="back-jp-line">${escapeHtml(d.example_jp)}</div>
+                    <div class="back-jp-line" lang="ja">${escapeHtml(d.example_jp)}</div>
                     ${d.example_romaji ? `<div class="back-romaji">${escapeHtml(d.example_romaji)}</div>` : ''}
                     ${d.example_translation
                         ? `<div class="back-translation">${escapeHtml(d.example_translation)}</div>`
@@ -1224,7 +1441,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
             // Cloze-Lösung zuerst: kompletter Satz mit hervorgehobener Antwort.
             const solutionHTML = cz ? `<div class="back-section">
                             <div class="back-section-label">Lösung</div>
-                            <div class="back-jp-line">${escapeHtml(cz.before)}<span class="cloze-answer">${escapeHtml(cz.answer)}</span>${escapeHtml(cz.after)}</div>
+                            <div class="back-jp-line" lang="ja">${escapeHtml(cz.before)}<span class="cloze-answer">${escapeHtml(cz.answer)}</span>${escapeHtml(cz.after)}</div>
                             ${cz.romaji ? `<div class="back-romaji">${escapeHtml(cz.romaji)}</div>` : ''}
                             ${cz.translation ? `<div class="back-translation">${escapeHtml(cz.translation)}</div>` : ''}
                         </div>` : '';
@@ -1235,7 +1452,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
                             <div class="back-section-label">${cz ? 'Weitere Beispiele' : (otherEx.length > 1 ? 'Beispielsätze' : 'Beispielsatz')}</div>
                             ${otherEx.map(ex => `<div class="back-example">
                                 <div class="back-example-head">
-                                    <span class="back-jp-line">${escapeHtml(ex.japanese)}</span>
+                                    <span class="back-jp-line" lang="ja">${escapeHtml(ex.japanese)}</span>
                                     ${(ex.romaji || ex.translation) ? `<button type="button" class="review-example-audio" data-tts-text="${escapeHtml(ex.japanese)}" title="Vorlesen" aria-label="Vorlesen"><i class="fas fa-volume-up"></i></button>` : ''}
                                 </div>
                                 ${ex.romaji ? `<div class="back-romaji">${escapeHtml(ex.romaji)}</div>` : ''}
@@ -1281,7 +1498,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
             const cz = d.cloze;
             grammarClozeFront = `
                         <div class="cloze-prompt">Welche Form / Partikel fehlt?</div>
-                        <div class="cloze-sentence">${escapeHtml(cz.before)}<span class="cloze-gap"></span>${escapeHtml(cz.after)}</div>
+                        <div class="cloze-sentence" lang="ja">${escapeHtml(cz.before)}<span class="cloze-gap"></span>${escapeHtml(cz.after)}</div>
                         ${cz.romaji_masked ? `<div class="cloze-romaji">${escapeHtml(cz.romaji_masked)}</div>` : ''}
                         <div class="cloze-hints">
                             ${cz.translation ? `<button type="button" class="cloze-hint-btn" data-target="clozeHintT">💡 Bedeutung</button>` : ''}
@@ -1296,13 +1513,15 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
                 <div class="review-card-scene" id="reviewScene" tabindex="0" role="button" aria-label="Karte umdrehen">
                     <div class="review-card-face review-card-face--front">
                         ${grammarClozeFront || `
-                        <div class="review-card-front-text ${isLong ? 'small-text' : ''}">${escapeHtml(frontText)}</div>
+                        <div class="review-card-front-text ${sizeClass}"${card.content_type !== 'grammar' ? ' lang="ja"' : ''}>${escapeHtml(frontText)}</div>
                         ${subText ? `<div class="front-romaji" style="font-size:1rem;color:var(--text-muted,#8C8378);margin-top:0.5rem;">${escapeHtml(subText)}</div>` : ''}
                         ${frontExample}
                         ${kanaHint}`}
-                        <div class="review-card-hint">Klicken zum Umdrehen</div>
+                        <div class="review-card-hint">Klicken<span class="key-only"> oder Leertaste</span> zum Umdrehen</div>
                     </div>
-                    <div class="review-card-face review-card-face--back">
+                    <!-- inert bis zum Flip: Screenreader duerfen die Antwort nicht
+                         vor dem Umdrehen vorlesen (sonst ist die SRS-Uebung ausgehebelt) -->
+                    <div class="review-card-face review-card-face--back" inert>
                         ${audioBtn}
                         ${backHTML}
                     </div>
@@ -1348,11 +1567,18 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
             });
         });
 
-        // Flip handler
+        // Flip handler — toggelt zusaetzlich inert auf den Faces, damit
+        // Screenreader/Tab-Fokus immer nur die sichtbare Seite erreichen.
         const scene = document.getElementById('reviewScene');
         scene.addEventListener('click', () => {
             scene.classList.toggle('is-flipped');
-            if (scene.classList.contains('is-flipped')) {
+            const flipped = scene.classList.contains('is-flipped');
+            const frontFace = scene.querySelector('.review-card-face--front');
+            const backFace = scene.querySelector('.review-card-face--back');
+            if (frontFace) frontFace.toggleAttribute('inert', flipped);
+            if (backFace) backFace.toggleAttribute('inert', !flipped);
+            scene.setAttribute('aria-label', flipped ? 'Antwort verbergen' : 'Karte umdrehen');
+            if (flipped) {
                 btnGroup.classList.add('visible');
                 cardFlipTime = Date.now();
                 fetchPreview(card.content_id);
@@ -1423,6 +1649,76 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         });
     }
 
+    // ── Sichtbares Gamification- und Screenreader-Feedback ──
+    const RATING_DE = { 1: 'Nochmal', 2: 'Schwer', 3: 'Gut', 4: 'Einfach' };
+    let knownStreak = parseInt(document.getElementById('statStreak')?.textContent, 10) || 0;
+
+    function announce(text) {
+        const el = document.getElementById('srAnnounce');
+        if (el) el.textContent = text;
+    }
+
+    function intervalText(days, ratingInt) {
+        if (ratingInt === 1) return 'kommt gleich nochmal';
+        if (!days || days < 1) return 'nächste Wiederholung heute';
+        if (days === 1) return 'nächste Wiederholung morgen';
+        return `nächste Wiederholung in ${days} Tagen`;
+    }
+
+    // "+10 XP"-Float ueber den Rating-Buttons; Boost (Variable Reward,
+    // 8% Chance serverseitig) bekommt die auffaellige ✨-Variante.
+    function showXpFloat(xp, boost) {
+        if (!xp) return;
+        const el = document.createElement('div');
+        el.className = 'xp-float' + (boost ? ' is-boost' : '');
+        el.textContent = boost ? `✨ +${xp} XP — Bonus!` : `+${xp} XP`;
+        btnGroup.appendChild(el);
+        setTimeout(() => el.remove(), 950);
+    }
+
+    function updateXpCounter() {
+        const el = document.getElementById('sessionXpCounter');
+        if (!el) return;
+        el.hidden = sessionStats.xpEarned <= 0;
+        el.textContent = `⚡ +${sessionStats.xpEarned}`;
+    }
+
+    function fireConfetti() {
+        if (typeof confetti !== 'function') return;
+        confetti({ particleCount: 80, spread: 65, origin: { y: 0.35 }, disableForReducedMotion: true });
+    }
+
+    function showMomentToast(title, desc) {
+        const toast = document.createElement('div');
+        toast.className = 'achievement-toast';
+        toast.setAttribute('role', 'status');
+        toast.innerHTML = `<div class="toast-title">${title}</div><div class="toast-desc">${desc}</div>`;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 4000);
+    }
+
+    // Streak-Verlaengerung — der wichtigste Retention-Moment des Tages —
+    // passiert genau einmal pro Tag und verdient einen sichtbaren Moment.
+    function maybeCelebrateStreak(currentStreak) {
+        if (typeof currentStreak !== 'number' || currentStreak <= knownStreak) return;
+        knownStreak = currentStreak;
+        const navVal = document.querySelector('.topnav-stat-streak .topnav-stat-val');
+        if (navVal) navVal.textContent = currentStreak;
+        const sheetVal = document.getElementById('statStreak');
+        if (sheetVal) sheetVal.textContent = currentStreak;
+        showMomentToast('🔥 Streak verlängert!', `${currentStreak} ${currentStreak === 1 ? 'Tag' : 'Tage'} in Folge — weiter so!`);
+        fireConfetti();
+        announce(`Streak verlängert: ${currentStreak} Tage.`);
+    }
+
+    function celebrateLevelUp(level) {
+        sessionStats.levelUps = (sessionStats.levelUps || 0) + 1;
+        sessionStats.lastLevel = level;
+        showMomentToast('🏅 Level-Up!', `Du hast Level ${level} erreicht`);
+        fireConfetti();
+        announce(`Level ${level} erreicht.`);
+    }
+
     // ── Fetch interval preview ──
     async function fetchPreview(contentId) {
         const key = String(contentId);
@@ -1459,8 +1755,11 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         rateCard._busy = true;
         try {
             const timeTaken = cardFlipTime ? Date.now() - cardFlipTime : null;
+            const rateErrorEl = document.getElementById('rateError');
 
-            // Send to backend
+            // Send to backend — schlaegt der Call fehl, bleibt die Karte stehen
+            // (kein stiller Bewertungs-Verlust); der User waehlt einfach erneut.
+            let result;
             try {
                 const resp = await fetch('/api/srs/rate', {
                     method: 'POST',
@@ -1471,24 +1770,33 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
                         time_taken_ms: timeTaken > 0 ? timeTaken : null
                     })
                 });
-                const result = await resp.json();
-
-                // Gamification-Tracking
-                sessionStats.xpEarned += (result.xp_earned || 0);
-                if (result.stage_changed) {
-                    if (result.card_stage > 0) sessionStats.stagesUp++;
-                    else sessionStats.stagesDown++;
-                }
-
-                // Achievement-Toasts
-                if (result.new_achievements && result.new_achievements.length) {
-                    result.new_achievements.forEach(a => {
-                        sessionStats.achievements.push(a);
-                        showAchievementToast(a);
-                    });
-                }
+                if (!resp.ok) throw new Error('HTTP ' + resp.status);
+                result = await resp.json();
             } catch (e) {
                 console.warn('[Review] Rate failed:', e);
+                if (rateErrorEl) rateErrorEl.hidden = false;
+                announce('Bewertung nicht gespeichert. Bitte erneut wählen.');
+                return;
+            }
+            if (rateErrorEl) rateErrorEl.hidden = true;
+
+            // Gamification-Feedback — sichtbar, nicht nur stumm akkumuliert
+            sessionStats.xpEarned += (result.xp_earned || 0);
+            showXpFloat(result.xp_earned || 0, result.xp_boost || 0);
+            updateXpCounter();
+            maybeCelebrateStreak(result.current_streak);
+            if (result.leveled_up) celebrateLevelUp(result.level);
+            if (result.stage_changed) {
+                if (result.card_stage > 0) sessionStats.stagesUp++;
+                else sessionStats.stagesDown++;
+            }
+
+            // Achievement-Toasts
+            if (result.new_achievements && result.new_achievements.length) {
+                result.new_achievements.forEach(a => {
+                    sessionStats.achievements.push(a);
+                    showAchievementToast(a);
+                });
             }
 
             // Invalidate cache
@@ -1516,6 +1824,9 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
                 currentIdx++;
             }
 
+            announce(`${RATING_DE[ratingInt]} — ${intervalText(result.next_interval, ratingInt)}. ` +
+                     `Karte ${Math.min(sessionStats.reviewed + 1, sessionStats.total)} von ${sessionStats.total}.`);
+
             showCard();
         } finally {
             rateCard._busy = false;
@@ -1532,21 +1843,24 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
 
     // ── Keyboard shortcuts ──
     document.addEventListener('keydown', (e) => {
-        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+        if (e.target.closest && e.target.closest('input, textarea')) return;
+        // Offenes Sheet: dort gelten native Bedienung + Escape (eigener Handler)
+        if (sheet && sheet.classList.contains('is-open')) return;
 
         const scene = document.getElementById('reviewScene');
         if (!scene) return;
 
         const isFlipped = scene.classList.contains('is-flipped');
 
-        // Enter/Space drehen die fokussierbare Karte (role="button") um.
-        // Im geflippten Zustand nur reagieren, wenn die Szene selbst den Fokus
-        // hat — sonst würde Enter auf einem fokussierten Rating-Button doppelt
-        // feuern (Klick + Flip).
-        if ((e.code === 'Space' || e.key === 'Enter') &&
-            (!isFlipped || e.target === scene)) {
-            e.preventDefault();
-            scene.click();
+        // Enter/Space: fokussierte Buttons/Links/Selects behalten ihre native
+        // Aktion (Romaji-Hinweis, Cloze-Hints, Romaji-Toggle, Rating-Buttons) —
+        // nur Body oder die Szene selbst drehen die Karte um.
+        if (e.code === 'Space' || e.key === 'Enter') {
+            if (e.target !== scene && e.target.closest && e.target.closest('button, a, select')) return;
+            if (!isFlipped || e.target === scene) {
+                e.preventDefault();
+                scene.click();
+            }
             return;
         }
 
@@ -1564,6 +1878,8 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
 
         document.getElementById('sessionBar').style.width = pct + '%';
         document.getElementById('sessionCount').textContent = `${done} / ${total}`;
+        const barEl = document.getElementById('sessionProgressBar');
+        if (barEl) barEl.setAttribute('aria-valuenow', pct);
 
         const mins = Math.round((Date.now() - sessionStart) / 60000);
         document.getElementById('sessionTime').textContent = `${mins} Min`;
@@ -1571,6 +1887,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
 
     // ── Complete ──
     function showComplete() {
+        updateProgress();   // Zaehler auf finalen Stand (sonst bleibt "3 / 4" stehen)
         cardArea.innerHTML = '';
         cardArea.style.display = 'none';
         btnGroup.style.display = 'none';
@@ -1595,6 +1912,12 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         if (sessionStats.stagesDown > 0) parts.push(`<span class="stage-down">&#8595; ${sessionStats.stagesDown} zurueckgefallen</span>`);
         if (parts.length) stageEl.innerHTML = parts.join(' &middot; ');
 
+        // Level-Up(s) der Session in der Summary ausweisen
+        if (sessionStats.levelUps) {
+            parts.push(`<span class="stage-up">🏅 Level ${sessionStats.lastLevel} erreicht</span>`);
+            stageEl.innerHTML = parts.join(' &middot; ');
+        }
+
         // Session achievements
         const achEl = document.getElementById('sessionAchievements');
         if (sessionStats.achievements.length) {
@@ -1603,10 +1926,50 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
             ).join('');
         }
 
-        // Fetch updated streak
+        // Streak + "Weitere Runde": due_count kommt frisch vom Server — bei
+        // mehr als 50 faelligen Karten ist die Session sonst eine Sackgasse.
         fetch('/api/srs/stats').then(r => r.json()).then(data => {
-            document.getElementById('summaryStreak').textContent = (data.current_streak || 0) + ' Tage';
+            const s = data.current_streak || 0;
+            document.getElementById('summaryStreak').textContent = `${s} ${s === 1 ? 'Tag' : 'Tage'}`;
+            const due = data.due_count || 0;
+            const btn = document.getElementById('nextRoundBtn');
+            if (btn) {
+                if (due > 0) {
+                    document.getElementById('nextRoundLabel').textContent =
+                        `Noch ${due} fällige ${due === 1 ? 'Karte' : 'Karten'} — weitere Runde`;
+                    btn.hidden = false;
+                } else {
+                    btn.hidden = true;
+                }
+            }
         }).catch(() => {});
+
+        // Wiederkommens-Anker: was wartet morgen?
+        fetch('/api/srs/stats/forecast?days=3').then(r => r.ok ? r.json() : null).then(j => {
+            const days = (j && j.data) || [];
+            const morgen = days[1] ? days[1].count : 0;
+            const row = document.getElementById('summaryForecastRow');
+            const val = document.getElementById('summaryForecast');
+            if (row && val) {
+                val.textContent = morgen > 0
+                    ? `${morgen} ${morgen === 1 ? 'Karte' : 'Karten'}`
+                    : 'nichts — Tag frei 🎉';
+                row.hidden = false;
+            }
+        }).catch(() => {});
+
+        announce(`Session beendet. ${sessionStats.reviewed} Karten wiederholt, Erfolgsrate ${rate} Prozent, ${sessionStats.xpEarned} XP verdient.`);
+    }
+
+    // "Weitere Runde" laedt die naechsten faelligen Karten ohne Seiten-Reload;
+    // Session-Statistik laeuft kumulativ weiter (ratedIds bleiben erhalten).
+    const nextRoundBtn = document.getElementById('nextRoundBtn');
+    if (nextRoundBtn) {
+        nextRoundBtn.addEventListener('click', () => {
+            completeEl.style.display = 'none';
+            nextRoundBtn.hidden = true;
+            loadCards();
+        });
     }
 
     function showAchievementToast(achievement) {
