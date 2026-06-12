@@ -649,25 +649,47 @@ def _user_unlocked_kana_ids(user_id, include_locked=False):
 
 
 # ── Gast-Modus (ohne Login) ───────────────────────────────────
-# Grund-Hiragana (Gojuon ohne Dakuten/Handakuten) — fixe, vollstaendige Quelle
-# fuer anonyme Besucher (Startseiten-Embed). Bewusst NICHT die freigeschalteten
-# Kana eines Users, sondern ein komplettes Anfaenger-Set, das ohne Konto
-# spielbar ist.
-_GUEST_HIRAGANA_ROW_KEYS = ('vowels', 'k', 's', 't', 'n', 'h', 'm', 'y', 'r', 'w', 'n_kons')
+# Kana-Referenzdaten sind oeffentlich: Gaeste duerfen ALLES ueben (Hiragana,
+# Katakana, beide Schriften, einzelne Reihen, Dakuten/Handakuten, alle Modi).
+# Login-pflichtig bleiben nur Persistenz + Analysen (SRS/XP/Streak, "Nur
+# schwache Karten", Verwechslungs-Statistik). Quelle ist bewusst NICHT die
+# Freischaltung eines Users, sondern die kanonischen Gojuon-Reihen.
+_GUEST_BASE_ROW_KEYS = ('vowels', 'k', 's', 't', 'n', 'h', 'm', 'y', 'r', 'w', 'n_kons')
+_GUEST_DAKUTEN_ROW_KEYS = ('g', 'z', 'd', 'b', 'p')
 
 
-def _guest_hiragana_chars():
-    """Liefert die 46 Grund-Hiragana-Zeichen in kanonischer Gojuon-Reihenfolge."""
-    from app.services.kana_rows import HIRAGANA_ROWS
-    chars = []
-    for key in _GUEST_HIRAGANA_ROW_KEYS:
-        chars.extend(HIRAGANA_ROWS[key])
-    return chars
+def _guest_kana_chars(schrift='hiragana', rows_filter=None, include_dakuten=False):
+    """(zeichen, typ)-Tupel des Gast-Scopes in kanonischer Gojuon-Reihenfolge.
+
+    schrift: 'hiragana' | 'katakana' | 'both'
+    rows_filter: Iterable von Reihen-Keys (None/leer = alle erlaubten Reihen)
+    include_dakuten: Dakuten/Handakuten-Reihen (g/z/d/b/p) einschliessen
+    """
+    from app.services.kana_rows import HIRAGANA_ROWS, KATAKANA_ROWS
+    row_keys = list(_GUEST_BASE_ROW_KEYS)
+    if include_dakuten:
+        row_keys += list(_GUEST_DAKUTEN_ROW_KEYS)
+    if rows_filter:
+        wanted = set(rows_filter)
+        row_keys = [key for key in row_keys if key in wanted]
+    scripts = []
+    if schrift in ('hiragana', 'both'):
+        scripts.append(('hiragana', HIRAGANA_ROWS))
+    if schrift in ('katakana', 'both'):
+        scripts.append(('katakana', KATAKANA_ROWS))
+    pairs = []
+    for type_name, table in scripts:
+        for key in row_keys:
+            pairs.extend((ch, type_name) for ch in table[key])
+    return pairs
 
 
-def _guest_kana_rows():
-    """(lesson_content_id, Kana)-Tupel fuer anonyme Gaeste — komplettes Grund-
-    Hiragana, unabhaengig von freigeschalteten Lessons.
+def _guest_kana_rows(schrift='hiragana', rows_filter=None, include_dakuten=False):
+    """(lesson_content_id, Kana)-Tupel fuer anonyme Gaeste.
+
+    Default (ohne Argumente) = komplettes Grund-Hiragana — so nutzen es das
+    Startseiten-Embed und die Tages-Challenge. Mit Argumenten liefert sie den
+    vollen Gast-Scope (Katakana/beide, Reihen-Auswahl, Dakuten).
 
     lesson_content_id ist immer None: Gaeste raten nicht ans SRS, die ID wird
     nur fuer Rating-Calls gebraucht (die fuer Gaeste ohnehin uebersprungen
@@ -675,21 +697,24 @@ def _guest_kana_rows():
     Gitter).
     """
     from app.models import Kana
-    chars = _guest_hiragana_chars()
-    kana_by_char = {
-        k.character: k
+    pairs = _guest_kana_chars(schrift, rows_filter, include_dakuten)
+    if not pairs:
+        return []
+    types = {t for _ch, t in pairs}
+    kana_by_key = {
+        (k.character, k.type): k
         for k in Kana.query.filter(
-            Kana.type == 'hiragana', Kana.character.in_(chars)
+            Kana.type.in_(types), Kana.character.in_([ch for ch, _t in pairs])
         ).all()
     }
-    missing = len(chars) - len(kana_by_char)
+    missing = sum(1 for key in pairs if key not in kana_by_key)
     if missing:
         logger.warning(
-            'Gast-Kana: %d von %d Grund-Hiragana fehlen in der DB — '
+            'Gast-Kana: %d von %d Zeichen fehlen in der DB — '
             'Gast-Spiel zeigt evtl. ein leeres/unvollstaendiges Set.',
-            missing, len(chars),
+            missing, len(pairs),
         )
-    return [(None, kana_by_char[ch]) for ch in chars if ch in kana_by_char]
+    return [(None, kana_by_key[key]) for key in pairs if key in kana_by_key]
 
 
 def _kana_item(lesson_content_id, kana, row_key=None, *, with_extras=True):
@@ -885,38 +910,67 @@ def api_practice_session():
 
 @srs_bp.route('/api/practice/kana/session/public')
 def api_practice_session_public():
-    """Gast-Variante der Kana-Session fuer das Startseiten-Embed (iframe).
+    """Gast-Variante der Kana-Session (Startseiten-Embed + /practice/kana ohne Login).
 
     Bewusst NICHT @login_required: anonyme Besucher sollen das Spiel ohne Konto
-    starten koennen. Liefert das komplette Grund-Hiragana (kein User-State, kein
-    weak_only/Faelligkeits-Sortierung) und schreibt NICHTS in die DB. Eingeloggte
-    nutzen weiterhin /api/practice/kana/session (mit ihren freigeschalteten
-    Kana). Score-Speichern laeuft ueber /api/srs/rate und bleibt login-pflichtig.
+    starten koennen — mit dem vollen Uebungs-Scope (Hiragana/Katakana/beide,
+    Reihen, Dakuten, alle Modi). Kein User-State: weak_only und Faelligkeits-
+    Sortierung gibt es hier nicht, geschrieben wird NICHTS in die DB.
+    Eingeloggte nutzen weiterhin /api/practice/kana/session (mit ihren
+    freigeschalteten Kana + SRS-Sortierung). Score-Speichern laeuft ueber
+    /api/srs/rate und bleibt login-pflichtig.
 
     Query-Params:
         mode: 'schreiben' | 'lesen' | 'blind' (default 'schreiben')
-        limit: max Anzahl (default 50, max 50 — deckt das komplette Grund-Hiragana)
+        schrift: 'hiragana' | 'katakana' | 'both' (default 'hiragana')
+        rows: comma-separated row-keys (z.B. 'vowels,k,s') — leer = alle
+        dakuten: 'true' | 'false' (default 'false')
+        limit: max Anzahl (default 50, max 50 — Parity mit der Login-API)
     """
     mode = request.args.get('mode', 'schreiben')
     if mode not in ('schreiben', 'lesen', 'blind'):
         mode = 'schreiben'
+    schrift = request.args.get('schrift', 'hiragana')
+    if schrift not in ('hiragana', 'katakana', 'both'):
+        schrift = 'hiragana'
+    rows_filter = [r.strip() for r in (request.args.get('rows', '') or '').split(',') if r.strip()]
+    include_dakuten = (request.args.get('dakuten', 'false').lower() == 'true')
     limit = min(request.args.get('limit', 50, type=int), 50)
 
-    rows_data = _guest_kana_rows()
-    items = [_kana_item(lc_id, kana) for lc_id, kana in rows_data][:limit]
+    rows_data = _guest_kana_rows(
+        schrift=schrift, rows_filter=rows_filter or None, include_dakuten=include_dakuten
+    )
+    if len(rows_data) > limit:
+        # Zufaelliges Teilset statt stumpfem Gojuon-Prefix — sonst saehe ein Gast
+        # mit Limit 20 bei jeder Runde dieselben ersten 20 Zeichen (a- bis t-Reihe).
+        # Die Gojuon-REIHENFOLGE des gezogenen Teilsets bleibt erhalten (das Grid
+        # gruppiert didaktisch nach Reihen).
+        import random as _random
+        picked_idx = sorted(_random.sample(range(len(rows_data)), limit))
+        rows_data = [rows_data[i] for i in picked_idx]
+    items = [_kana_item(lc_id, kana) for lc_id, kana in rows_data]
     payload = {
         'kana': items,
         'count': len(items),
         'mode': mode,
         'guest': True,
-        'filters': {'schrift': 'hiragana', 'rows': [], 'dakuten': False, 'weak_only': False},
+        'filters': {
+            'schrift': schrift,
+            'rows': rows_filter,
+            'dakuten': include_dakuten,
+            'weak_only': False,
+        },
     }
     if not items:
-        # Sollte in Produktion nie passieren (46 Grund-Hiragana vorhanden) — aber
-        # bei leerer/uninitialisierter DB einen verstaendlichen Hinweis liefern,
-        # statt den Gast vor einer stummen leeren Buehne stehen zu lassen.
-        payload['message'] = ('Die Hiragana sind gerade nicht verfügbar — bitte lade '
-                              'die Seite neu oder versuche es später erneut.')
+        if rows_filter:
+            # Leere Auswahl (z.B. unbekannte Reihen-Keys) — kein DB-Problem.
+            payload['message'] = 'Keine Kana für diese Auswahl gefunden — wähle andere Reihen.'
+        else:
+            # Sollte in Produktion nie passieren (Gojuon-Kana vorhanden) — aber
+            # bei leerer/uninitialisierter DB einen verstaendlichen Hinweis liefern,
+            # statt den Gast vor einer stummen leeren Buehne stehen zu lassen.
+            payload['message'] = ('Die Kana sind gerade nicht verfügbar — bitte lade '
+                                  'die Seite neu oder versuche es später erneut.')
     return jsonify(payload)
 
 
@@ -1116,8 +1170,9 @@ def api_practice_confusion():
         for lc_id, kana in q.all():
             by_char.setdefault(kana.character, (lc_id, kana))
     else:
-        # Gast: komplettes Grund-Hiragana, kein User-State.
-        for lc_id, kana in _guest_kana_rows():
+        # Gast: voller Referenz-Scope (inkl. Dakuten — Paare wie ば/ぱ brauchen
+        # sie), Schrift-Filter wie bei Eingeloggten. Kein User-State.
+        for lc_id, kana in _guest_kana_rows(schrift=schrift, include_dakuten=True):
             by_char.setdefault(kana.character, (lc_id, kana))
 
     clusters = confusion_clusters(set(by_char.keys()))

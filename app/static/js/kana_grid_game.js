@@ -951,11 +951,12 @@ function kanaSettings() {
             this.previewLoading = true;
             this.previewBlocked = null;
             try {
-                // Gast: Vorschau ueber den public-Endpoint (komplettes Hiragana) —
-                // der login-pflichtige /session-Endpoint gaebe sonst 401.
+                // Gast: Vorschau ueber den public-Endpoint mit denselben Filtern
+                // (Schrift/Reihen/Dakuten/Anzahl) — der login-pflichtige
+                // /session-Endpoint gaebe sonst 401. weak_only ignoriert er.
                 const url = window.currentUser
                     ? '/api/practice/kana/session?' + this.buildParams().toString()
-                    : '/api/practice/kana/session/public?mode=' + encodeURIComponent(this.mode);
+                    : '/api/practice/kana/session/public?' + this.buildParams().toString();
                 const resp = await fetch(url);
                 const data = await resp.json();
                 if (data.message) {
@@ -1039,12 +1040,16 @@ function kanaGameView() {
                 this.mode = ['schreiben', 'lesen', 'blind'].includes(m) ? m : 'schreiben';
                 if (!window.currentUser) {
                     // Gast (Startseiten-Embed ODER direkter Aufruf der Spielseite
-                    // ohne Login): komplettes Grund-Hiragana ueber den public-
-                    // Endpoint, ohne User-State. schrift/rows/weak_only entfallen.
+                    // ohne Login): voller Referenz-Scope ueber den public-Endpoint
+                    // (Schrift/Reihen/Dakuten frei waehlbar), aber ohne User-State —
+                    // weak_only und SRS-Sortierung gibt es nur eingeloggt.
                     const params = new URLSearchParams({
                         mode: this.mode,
+                        schrift: p.get('schrift') || 'hiragana',
+                        dakuten: p.get('dakuten') || 'false',
                         limit: p.get('limit') || '50',
                     });
+                    if (p.get('rows')) params.set('rows', p.get('rows'));
                     url = '/api/practice/kana/session/public?' + params.toString();
                 } else {
                     const params = new URLSearchParams({

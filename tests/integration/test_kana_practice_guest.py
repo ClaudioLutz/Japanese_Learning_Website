@@ -6,7 +6,7 @@ die gast-faehige Tages-Challenge / Verwechslungs-Drill sowie die Absicherung,
 dass Score-Speichern (rate) login-pflichtig bleibt und die eingeloggte
 Session-API unveraendert funktioniert.
 """
-from app.services.kana_rows import HIRAGANA_ROWS
+from app.services.kana_rows import HIRAGANA_ROWS, KATAKANA_ROWS
 from tests.factories import KanaFactory
 
 GRUND_ROWS = tuple(HIRAGANA_ROWS.keys())[:11]  # vowels..n_kons (ohne Dakuten)
@@ -26,6 +26,16 @@ def _seed_hiragana(db, rows=('vowels', 'k', 's', 't')):
     return created
 
 
+def _seed_katakana(db, rows=('vowels', 'k')):
+    """Legt echte Gojuon-Katakana an (analog zu _seed_hiragana)."""
+    created = []
+    for key in rows:
+        for ch in KATAKANA_ROWS[key]:
+            created.append(KanaFactory(character=ch, romanization='x', type='katakana'))
+    db.session.commit()
+    return created
+
+
 class TestGuestPublicSession:
     """Die gast-offene Session-API (Startseiten-Embed)."""
 
@@ -37,15 +47,67 @@ class TestGuestPublicSession:
         assert data['guest'] is True
         assert data['count'] > 0
 
-    def test_only_hiragana_returned(self, client, db):
-        # Auch wenn Katakana existiert: der Gast-Endpoint liefert nur Hiragana.
-        KanaFactory(character='ア', romanization='a', type='katakana')
-        _seed_hiragana(db, rows=('vowels',))
+    def test_default_is_hiragana_without_dakuten(self, client, db):
+        # Ohne Params bleibt der Endpoint beim Grund-Hiragana (Startseiten-Embed):
+        # kein Katakana, keine Dakuten-Reihen — auch wenn beides in der DB liegt.
+        _seed_katakana(db, rows=('vowels',))
+        _seed_hiragana(db, rows=('vowels', 'g'))
         data = client.get('/api/practice/kana/session/public').get_json()
         chars = {i['character'] for i in data['kana']}
         assert 'あ' in chars
         assert 'ア' not in chars
+        assert 'が' not in chars
         assert all(i['type'] == 'hiragana' for i in data['kana'])
+
+    def test_katakana_via_param(self, client, db):
+        _seed_hiragana(db, rows=('vowels',))
+        _seed_katakana(db, rows=('vowels',))
+        data = client.get('/api/practice/kana/session/public?schrift=katakana').get_json()
+        chars = {i['character'] for i in data['kana']}
+        assert 'ア' in chars
+        assert 'あ' not in chars
+        assert all(i['type'] == 'katakana' for i in data['kana'])
+
+    def test_both_scripts_via_param(self, client, db):
+        _seed_hiragana(db, rows=('vowels',))
+        _seed_katakana(db, rows=('vowels',))
+        data = client.get('/api/practice/kana/session/public?schrift=both').get_json()
+        types = {i['type'] for i in data['kana']}
+        assert types == {'hiragana', 'katakana'}
+
+    def test_invalid_schrift_falls_back_to_hiragana(self, client, db):
+        _seed_hiragana(db, rows=('vowels',))
+        _seed_katakana(db, rows=('vowels',))
+        data = client.get('/api/practice/kana/session/public?schrift=klingonisch').get_json()
+        assert data['filters']['schrift'] == 'hiragana'
+        assert all(i['type'] == 'hiragana' for i in data['kana'])
+
+    def test_rows_filter(self, client, db):
+        _seed_hiragana(db, rows=('vowels', 'k', 's'))
+        data = client.get('/api/practice/kana/session/public?rows=k').get_json()
+        chars = {i['character'] for i in data['kana']}
+        assert chars == set(HIRAGANA_ROWS['k'])
+
+    def test_dakuten_param(self, client, db):
+        _seed_hiragana(db, rows=('vowels', 'g'))
+        data = client.get('/api/practice/kana/session/public?dakuten=true').get_json()
+        chars = {i['character'] for i in data['kana']}
+        assert 'が' in chars
+
+    def test_unknown_rows_yield_message(self, client, db):
+        _seed_hiragana(db, rows=('vowels',))
+        data = client.get('/api/practice/kana/session/public?rows=zz').get_json()
+        assert data['count'] == 0
+        assert 'Auswahl' in data['message']
+
+    def test_limit_subset_keeps_gojuon_order(self, client, db):
+        # Zufaelliges Teilset, aber in Gojuon-Reihenfolge (Grid gruppiert nach Reihen).
+        _seed_hiragana(db, rows=GRUND_ROWS)
+        full = [ch for key in GRUND_ROWS for ch in HIRAGANA_ROWS[key]]
+        data = client.get('/api/practice/kana/session/public?limit=10').get_json()
+        got = [i['character'] for i in data['kana']]
+        assert len(got) == 10
+        assert got == sorted(got, key=full.index)
 
     def test_no_lesson_content_id_for_guest(self, client, db):
         # Gaeste raten nicht ans SRS -> keine lesson_content_id (rateCell skippt).
