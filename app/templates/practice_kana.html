@@ -237,7 +237,10 @@
     <div class="kana-setup__head">
         <span class="kana-setup__eyebrow"><span class="jp">かな</span> · Übung</span>
         <h1>Kana-Spiel</h1>
-        <p>Stell dir eine Runde zusammen — dann gegen die Uhr.</p>
+        {# SSR-Substanz: die Seite ist via robots.txt-Allow crawlbar (Landing-
+           Kandidat fuer "Hiragana üben") — ein Satz Inhalt statt nur Controls. #}
+        <p>Hiragana und Katakana kostenlos üben — Reihen, Dakuten und Modi frei wählbar,
+           ohne Login. Stell dir eine Runde zusammen, dann gegen die Uhr.</p>
     </div>
 
     <div class="kana-setup__body">
@@ -309,10 +312,14 @@
                 <span class="count" x-text="allRowsActive ? 'alle' : selectedRows.length + ' gewählt'"></span>
             </div>
             <div class="rows">
-                <button type="button" class="chip chip--all" :class="{ 'is-active': allRowsActive }" @click="selectAllRows()">Alle</button>
+                {# aria-pressed: Auswahlzustand auch fuer Screenreader — die Chips
+                   sind seit der Gast-Oeffnung Teil der Erst-Besucher-Erfahrung. #}
+                <button type="button" class="chip chip--all" :class="{ 'is-active': allRowsActive }"
+                        :aria-pressed="allRowsActive.toString()" @click="selectAllRows()">Alle</button>
                 <template x-for="row in availableRows" :key="row.key">
                     <button type="button" class="chip"
                             :class="{ 'is-active': selectedRows.includes(row.key) }"
+                            :aria-pressed="selectedRows.includes(row.key).toString()"
                             @click="toggleRow(row.key)" x-text="row.label"></button>
                 </template>
             </div>

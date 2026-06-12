@@ -43,6 +43,19 @@ class TestGuestHero:
     def test_meta_description_hat_spiel_hook(self, client, db):
         body = client.get('/').get_data(as_text=True)
         assert 'Spiel dich durch alle 46 Hiragana' in body
+        # Head-Term muss in der Description bleiben (SERP-Bolding fuer die
+        # Haupt-Query "Japanisch lernen", Pos.-Experiment laeuft ueber die H1).
+        assert 'Japanisch lernen' in body
+
+    def test_practice_kana_in_sitemap_und_robots(self, client, db):
+        # /practice/kana ist seit dem Gast-Scope oeffentliches Feature und
+        # prominent vom Hero verlinkt — crawlbar + gelistet, das Spiel selbst
+        # (/practice/kana/spiel) bleibt gesperrt.
+        robots = client.get('/robots.txt').get_data(as_text=True)
+        assert 'Allow: /practice/kana$' in robots
+        assert 'Disallow: /practice' in robots
+        sitemap = client.get('/sitemap.xml').get_data(as_text=True)
+        assert '/practice/kana</loc>' in sitemap
 
     def test_result_card_branches_vorhanden(self, client, db):
         # Ergebnis-Weiche: alle drei Branch-Templates muessen im Markup liegen.

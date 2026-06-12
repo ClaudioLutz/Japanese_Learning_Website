@@ -1013,6 +1013,7 @@ function kanaGameView() {
         isConfusion: false,
         isGuest: !window.currentUser,   // steuert den Konto-CTA im Ergebnis-Screen
         dailyBonusXp: 0,           // H-3: vom Daily-Endpoint geliefert, bei perfektem Abschluss angezeigt
+        dailyDate: null,           // Server-Datum des Daily-Bretts (UTC) — fuer das Host-Haekchen
         liveElapsedMs: 0,
         _timerId: null,
         _embedReplayInstalled: false,   // #12: Guard gegen doppelten message-Listener
@@ -1086,6 +1087,12 @@ function kanaGameView() {
             // perfektem Abschluss) — wird im Ergebnis-Screen nur angezeigt, nicht gutgeschrieben.
             if (this.isDaily && typeof data.bonus_xp === 'number') {
                 this.dailyBonusXp = data.bonus_xp;
+            }
+            // Server-Datum des Daily-Bretts merken: der Embed-Host keyed sein
+            // Tages-Haekchen darauf (Client-Kalendertag kann um Mitternacht
+            // vom Server-Brett abweichen).
+            if (this.isDaily && data.date) {
+                this.dailyDate = data.date;
             }
 
             // Grid + Pool aus der Session aufbauen (analog zum frueheren practiceGameWrapper)
@@ -1228,6 +1235,7 @@ function kanaGameView() {
                     errors: this.totalErrors,
                     timeLabel: this.liveTimeLabel(),
                     perfect: !!this.wasPerfect,
+                    dailyDate: this.dailyDate,   // null ausser bei challenge=daily
                 }, window.location.origin);
             } catch (e) { /* Eltern-Seite evtl. nicht erreichbar */ }
         },

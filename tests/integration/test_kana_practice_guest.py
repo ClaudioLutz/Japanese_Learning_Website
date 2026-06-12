@@ -109,6 +109,68 @@ class TestGuestPublicSession:
         assert len(got) == 10
         assert got == sorted(got, key=full.index)
 
+    def test_negative_limit_does_not_crash(self, client, db):
+        # Regression: limit<0 lief in random.sample mit negativem k -> 500.
+        _seed_hiragana(db, rows=('vowels',))
+        resp = client.get('/api/practice/kana/session/public?limit=-1')
+        assert resp.status_code == 200
+        assert resp.get_json()['count'] > 0
+
+    def test_zero_limit_falls_back_to_default(self, client, db):
+        # limit=0 darf weder crashen noch die irrefuehrende Outage-Meldung liefern.
+        _seed_hiragana(db, rows=('vowels',))
+        data = client.get('/api/practice/kana/session/public?limit=0').get_json()
+        assert data['count'] > 0
+        assert 'message' not in data
+
+    def test_explicit_dakuten_row_overrides_dakuten_switch(self, client, db):
+        # Wer den G-Chip waehlt, will die G-Reihe ueben — auch wenn der
+        # Dakuten-Schalter (z.B. aus localStorage) auf aus steht.
+        _seed_hiragana(db, rows=('vowels', 'g'))
+        data = client.get('/api/practice/kana/session/public?rows=g&dakuten=false').get_json()
+        chars = {i['character'] for i in data['kana']}
+        assert chars == set(HIRAGANA_ROWS['g'])
+
+
+class TestFreshAccountFallback:
+    """Neukonto (0 abgeschlossene Lessons) bekommt den Gast-Referenz-Scope —
+    Registrieren (der Haupt-Conversion-Pfad der Startseite) darf den
+    spielbaren Umfang nie verkleinern."""
+
+    def test_session_falls_back_to_guest_scope(self, auth_client, db):
+        client, _user = auth_client
+        _seed_hiragana(db, rows=('vowels', 'k'))
+        data = client.get('/api/practice/kana/session').get_json()
+        assert data['count'] > 0
+        assert 'message' not in data
+        # Kein SRS-Rating fuer Fallback-Karten (kein Unlock dahinter).
+        assert all(i['lesson_content_id'] is None for i in data['kana'])
+
+    def test_session_fallback_respects_filters(self, auth_client, db):
+        client, _user = auth_client
+        _seed_hiragana(db, rows=('vowels',))
+        _seed_katakana(db, rows=('vowels',))
+        data = client.get('/api/practice/kana/session?schrift=katakana').get_json()
+        assert data['count'] > 0
+        assert all(i['type'] == 'katakana' for i in data['kana'])
+
+    def test_weak_only_still_explains_itself(self, auth_client, db):
+        # weak_only braucht User-State — ohne Reviews gibt es nichts Schwaches.
+        client, _user = auth_client
+        _seed_hiragana(db, rows=('vowels',))
+        data = client.get('/api/practice/kana/session?weak_only=true').get_json()
+        assert data['count'] == 0
+        assert 'schwachen' in data['message']
+
+    def test_daily_falls_back_without_bonus(self, auth_client, db):
+        client, _user = auth_client
+        _seed_hiragana(db, rows=GRUND_ROWS)
+        data = client.get('/api/practice/kana/daily-challenge').get_json()
+        assert data['count'] > 0
+        # Bonus-XP waere ein leeres Versprechen (Fallback-Karten haben kein
+        # lesson_content_id -> keine Gutschrift moeglich).
+        assert data['bonus_xp'] == 0
+
     def test_no_lesson_content_id_for_guest(self, client, db):
         # Gaeste raten nicht ans SRS -> keine lesson_content_id (rateCell skippt).
         _seed_hiragana(db, rows=('vowels',))

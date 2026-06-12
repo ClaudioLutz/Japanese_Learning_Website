@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% set admin_edit_url = url_for('routes.admin_index') %}
 {% block title %}Japanisch lernen online — JLPT N5 Kurse mit Quiz & SRS{% endblock %}
-{% block meta_description %}Spiel dich durch alle 46 Hiragana — gratis, ohne Login, direkt im Browser. Danach: strukturierte JLPT-N5-Lektionen auf Deutsch mit Quiz und Spaced Repetition.{% endblock %}
+{% block meta_description %}Japanisch lernen im Browser: Spiel dich durch alle 46 Hiragana — gratis, ohne Login. Danach strukturierte JLPT-N5-Lektionen auf Deutsch mit Quiz und SRS.{% endblock %}
 
 {% block body_attributes %}class="redesign-page"{% endblock %}
 
@@ -75,22 +75,27 @@
         <div class="kana-hero-game" x-data="kanaEmbedHost('{{ url_for('srs.practice_kana_embed') }}')">
           {# sr-only-H2 ersetzt den frueheren sichtbaren Embed-Titel als
              aria-labelledby-Ziel der Stage (SSR-Substanz liefert der
-             Begleitsatz unter der Buehne). #}
-          <h2 class="sr-only" id="kanaEmbedTitle">Kana-Spiel: 46 Zeichen gegen die Uhr</h2>
+             Begleitsatz unter der Buehne). Neutral formuliert — gilt fuer
+             Hiragana (46), Katakana (46) UND Tages-Challenge (10). #}
+          <h2 class="sr-only" id="kanaEmbedTitle">Kana-Spiel gegen die Uhr</h2>
 
           {# Spielart-Chips — die EINZIGE Steuer-Ebene auf der Startseite.
-             Tiefe (Reihen, Dakuten, Modi, Anzahl) liegt hinter "Alle Optionen". #}
-          <div class="kana-chip-row" role="radiogroup" aria-label="Spielart wählen">
-            <button type="button" class="kana-chip" role="radio"
-                    :aria-checked="(spielart === 'hiragana').toString()"
+             Tiefe (Reihen, Dakuten, Modi, Anzahl) liegt hinter "Alle Optionen".
+             role=group + aria-pressed (Seg-Button-Muster wie practice_kana.html)
+             statt role=radio: keine Pfeiltasten-Erwartung/Roving-Tabindex noetig,
+             und der "Alle Optionen"-Link darf in der Gruppe stehen. Statisches
+             aria-pressed = SSR-Fallback bis Alpine initialisiert. #}
+          <div class="kana-chip-row" role="group" aria-label="Spielart wählen">
+            <button type="button" class="kana-chip" aria-pressed="true"
+                    :aria-pressed="(spielart === 'hiragana').toString()"
                     :class="chipClass('hiragana')" @click="selectSpielart('hiragana')"
                     x-text="chipLabel('hiragana', 'Hiragana · 46')">Hiragana · 46</button>
-            <button type="button" class="kana-chip" role="radio"
-                    :aria-checked="(spielart === 'katakana').toString()"
+            <button type="button" class="kana-chip" aria-pressed="false"
+                    :aria-pressed="(spielart === 'katakana').toString()"
                     :class="chipClass('katakana')" @click="selectSpielart('katakana')"
                     x-text="chipLabel('katakana', 'Katakana · 46')">Katakana · 46</button>
-            <button type="button" class="kana-chip" role="radio"
-                    :aria-checked="(spielart === 'daily').toString()"
+            <button type="button" class="kana-chip" aria-pressed="false"
+                    :aria-pressed="(spielart === 'daily').toString()"
                     :class="chipClass('daily')" @click="selectSpielart('daily')"
                     x-text="chipLabel('daily', dailyDone ? 'Tages-Challenge ✓' : 'Tages-Challenge · 10')">Tages-Challenge · 10</button>
             <a class="kana-chip-more" href="{{ url_for('srs.practice_kana_page') }}">Alle Optionen →</a>
@@ -98,34 +103,44 @@
 
           {# Buehne — im Mobile-Vollbild ein modaler Dialog (role/aria-modal nur
              wenn 'open', Escape schliesst). Bei fertigem Ergebnis kollabiert die
-             Buehne, die Ergebnis-Karte tritt an ihre Stelle. #}
-          <div class="kana-embed-stage" :class="{ 'is-fullscreen': open }" x-cloak
+             Buehne, die Ergebnis-Karte tritt an ihre Stelle.
+             BEWUSST OHNE x-cloak: die Buehne ist der Hero — pre-Alpine soll sie
+             ab First Paint mit min-height + SSR-Launch-Karte stehen (sonst
+             springt beim Alpine-Init alles darunter um 210-560px = CLS). #}
+          <div class="kana-embed-stage" :class="{ 'is-fullscreen': open }"
                x-show="!done"
                :role="open ? 'dialog' : null" :aria-modal="open ? 'true' : null"
                aria-labelledby="kanaEmbedTitle"
                @keydown.escape="open && close()">
-            <!-- Mobile-Startkarte (solange das iframe nicht geladen ist) -->
+            <!-- Startkarte (solange das iframe nicht geladen ist) — SSR-sichtbar -->
             <button type="button" class="kana-embed-launch" x-show="!loaded" @click="launch()" x-ref="launchBtn">
               <span class="kana-embed-launch-ico" aria-hidden="true"><i class="fas fa-play"></i></span>
               <span class="kana-embed-launch-text" x-text="launchText()">Hiragana-Spiel starten</span>
               <small x-text="launchSub()">46 Zeichen · gegen die Uhr · ohne Login</small>
             </button>
 
-            <!-- Schliessen (nur im Vollbild-Overlay) -->
-            <button type="button" class="kana-embed-close" x-show="open" @click="close()" x-ref="closeBtn" aria-label="Spiel schliessen"><i class="fas fa-xmark"></i></button>
+            <!-- Schliessen (nur im Vollbild-Overlay; x-cloak gegen Pre-Alpine-Flackern) -->
+            <button type="button" class="kana-embed-close" x-show="open" x-cloak @click="close()" x-ref="closeBtn" aria-label="Spiel schliessen"><i class="fas fa-xmark"></i></button>
 
-            <!-- Das Spiel -->
-            <iframe class="kana-embed-iframe" x-show="loaded"
-                    :src="loaded ? src : ''"
-                    title="Kana-Spiel zum Ausprobieren"
-                    sandbox="allow-same-origin allow-scripts"
-                    loading="eager"></iframe>
+            <!-- Das Spiel. template-x-if statt x-show/:src-Toggle: jeder
+                 loaded-Wechsel ist ein echtes DOM-Remount in frischem
+                 Browsing-Context — die erste Navigation ersetzt about:blank,
+                 der Spielart-Wechsel erzeugt KEINE Session-History-Eintraege
+                 (Back-Button verlaesst die Seite mit einem Druck). Pre-Alpine
+                 existiert gar kein iframe (kein CLS durch die leere 560px-Box). -->
+            <template x-if="loaded">
+              <iframe class="kana-embed-iframe"
+                      :src="src"
+                      title="Kana-Spiel zum Ausprobieren"
+                      sandbox="allow-same-origin allow-scripts"
+                      loading="eager"></iframe>
+            </template>
           </div>
 
           <!-- Ergebnis-Karte: fixe 4-Slot-Struktur, Slot 1+2 wechseln per Branch
                (A: schwere Runde → Lektion · B: gute erste Runde → naechste
                Spielart · C: ab Runde 2 → Konto). Daten kommen per postMessage. -->
-          <div class="kana-embed-result" id="kanaEmbedResult" x-show="done" x-cloak x-transition>
+          <div class="kana-embed-result" id="kanaEmbedResult" tabindex="-1" x-show="done" x-cloak x-transition>
             <div class="kana-embed-stars" aria-hidden="true">
               <template x-for="i in 3" :key="i">
                 <span :class="{ 'is-earned': done && i <= done.stars }">★</span>
@@ -300,9 +315,12 @@
         set(k, v) { try { localStorage.setItem(k, String(v)); } catch (e) { /* Privatmodus */ } },
       };
       const todayKey = () => {
+        // UTC statt Lokalzeit: das Daily-Brett rotiert serverseitig mit
+        // date.today() im UTC-Container — derselbe Kalender vermeidet, dass
+        // Haekchen und Brett um Mitternacht auseinanderdriften.
         const d = new Date();
-        return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0')
-          + '-' + String(d.getDate()).padStart(2, '0');
+        return d.getUTCFullYear() + '-' + String(d.getUTCMonth() + 1).padStart(2, '0')
+          + '-' + String(d.getUTCDate()).padStart(2, '0');
       };
       return {
         srcBase: srcBase,
@@ -325,12 +343,23 @@
         init() {
           const mq = window.matchMedia('(max-width: 640px)');
           this.isMobile = mq.matches;
-          mq.addEventListener('change', (e) => { this.isMobile = e.matches; });
+          mq.addEventListener('change', (e) => {
+            this.isMobile = e.matches;
+            // Rotation Landscape→Portrait: ein offenes Desktop-Inline-Spiel
+            // waere im schmalen Hero unspielbar klein → zurueck zur Launch-Karte.
+            if (e.matches && !this.open && !this.done) { this.loaded = false; this.active = false; }
+          });
           // Wiederkehrer finden ihre Spielart vor (Privatmodus → Default).
           const saved = LS.get('kanaEmbedSpielart');
           if (['hiragana', 'katakana', 'daily'].includes(saved)) this.spielart = saved;
           this.plays = parseInt(LS.get('kanaEmbedPlays') || '0', 10) || 0;
-          this.dailyDone = LS.get('kanaDaily-' + todayKey()) === '1';
+          this._refreshDaily();
+          // Tab ueber Mitternacht offen: Haekchen beim naechsten Sichtbarwerden
+          // gegen den aktuellen Tages-Key pruefen (sonst zeigt der Chip das
+          // Vortags-✓, obwohl ein neues Brett wartet).
+          document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) this._refreshDaily();
+          });
           this._loadBest();
           // Desktop: die Buehne IST der Hero — eager mounten, aber erst nach dem
           // ersten Paint (SSR-H1 bleibt LCP-Kandidat): requestIdleCallback mit
@@ -376,24 +405,43 @@
           if (s === 'daily') return 'Tages-Challenge probieren';
           return s === 'katakana' ? 'Jetzt Katakana spielen' : 'Jetzt Hiragana spielen';
         },
+        // Screenreader-Ansage: erst leeren, dann im nextTick setzen — sonst
+        // wird ein identischer Wiederholungs-Text nicht erneut vorgelesen.
+        _announce(msg) {
+          this.liveMsg = '';
+          this.$nextTick(() => { this.liveMsg = msg; });
+        },
+        _clearConfirm() {
+          if (this._confirmTimer) { clearTimeout(this._confirmTimer); this._confirmTimer = null; }
+          this.confirmChip = null;
+        },
         selectSpielart(s) {
-          if (this.spielart === s && !this.done && this.confirmChip === null) return;
+          // Klick auf den AKTIVEN Chip: ohne pending Confirm ein No-Op; mit
+          // pending Confirm = "Abbruch verwerfen, Runde laeuft weiter" (sonst
+          // wuerde das Confirm auf den aktiven Chip wandern und der 2. Klick
+          // die laufende Runde wegwerfen, obwohl der Gast zurueck wollte).
+          if (this.spielart === s && !this.done) {
+            if (this.confirmChip !== null) {
+              this._clearConfirm();
+              this._announce('Abbruch verworfen — die Runde läuft weiter.');
+            }
+            return;
+          }
           // Mitten in der Runde: Inline-Confirm am Chip (2. Klick innert 4 s),
           // statt die laufende Runde kommentarlos wegzuwerfen.
           if (this.active && !this.done && this.confirmChip !== s) {
+            this._clearConfirm();
             this.confirmChip = s;
-            this.liveMsg = 'Laufende Runde abbrechen? Nochmals tippen zum Bestätigen.';
-            if (this._confirmTimer) clearTimeout(this._confirmTimer);
-            this._confirmTimer = setTimeout(() => { this.confirmChip = null; }, 4000);
+            this._announce('Laufende Runde abbrechen? Nochmals tippen zum Bestätigen.');
+            this._confirmTimer = setTimeout(() => { this.confirmChip = null; this.liveMsg = ''; }, 4000);
             return;
           }
-          if (this._confirmTimer) { clearTimeout(this._confirmTimer); this._confirmTimer = null; }
-          this.confirmChip = null;
           this._switchTo(s);
         },
         // Ergebnis-Karten-CTA: Wechsel ohne Confirm (Runde ist abgeschlossen).
         playVariant(s) { this._switchTo(s); },
         _switchTo(s) {
+          this._clearConfirm();   // pending "Runde abbrechen?" ist obsolet
           this.spielart = s;
           LS.set('kanaEmbedSpielart', s);
           this._loadBest();
@@ -415,6 +463,9 @@
           const v = parseInt(LS.get('kanaBest-' + this.spielart) || '0', 10);
           this.best = v > 0 ? v : null;
           this.newBest = false;
+        },
+        _refreshDaily() {
+          this.dailyDone = LS.get('kanaDaily-' + todayKey()) === '1';
         },
         fmtTime(sec) {
           const s = Math.max(0, Math.floor(sec || 0));
@@ -443,8 +494,14 @@
           const b = this.branch();
           if (b === 'A') {
             const n = (this.done && this.done.errors) || 0;
-            return n + (n === 1 ? ' Zeichen hat' : ' Zeichen haben') + ' dich gestolpert — '
-              + 'genau die nimmst du dir in der Hiragana-Lektion vor: Merkbild und '
+            const intro = n + (n === 1 ? ' Zeichen hat' : ' Zeichen haben') + ' dich gestolpert — ';
+            if (this.spielart === 'katakana') {
+              // Faktentreue: die Gratis-Lektion behandelt Hiragana, nicht die
+              // eben gestolperten Katakana — ehrlich verlinken statt behaupten.
+              return intro + 'mit System statt Raten: die gratis Hiragana-Lektion legt die '
+                + 'Basis (Merkbild und Schreibrichtung), die Katakana folgen direkt danach im N5-Pfad.';
+            }
+            return intro + 'genau die nimmst du dir in der Hiragana-Lektion vor: Merkbild und '
               + 'Schreibrichtung zu jedem Zeichen. Gratis, ohne Konto.';
           }
           if (b === 'C') {
@@ -479,26 +536,24 @@
         },
         // Restlichen Seiteninhalt waehrend des Vollbild-Overlays inert/aria-
         // hidden setzen, damit nur der Dialog (= der Spiel-Wrapper im Hero) fuer
-        // AT erreichbar ist. Maskiert auf zwei Ebenen: Geschwister der x-data-
-        // Wurzel in ihrem Container sowie alle <body>-Kinder ausser dem Ast,
-        // der zur Stage fuehrt (Navbar/Footer).
+        // AT erreichbar ist. Ancestor-Walk: auf JEDER Ebene von der Wurzel bis
+        // <body> die Geschwister maskieren — die Wurzel liegt seit dem Hero-
+        // Umzug zwei Ebenen tief (.home-hero > .home-hero-inner > Wurzel);
+        // sonst blieben die Geschwister des Heros (Vom-Spiel-/Lernpfad-Sektion)
+        // fuer Tab/Screenreader hinter dem Overlay erreichbar.
         _setInert(on) {
           const root = this.$root; // x-data-Wurzel = <div.kana-hero-game>
           const apply = (el) => {
             if (on) { el.setAttribute('inert', ''); el.setAttribute('aria-hidden', 'true'); }
             else { el.removeAttribute('inert'); el.removeAttribute('aria-hidden'); }
           };
-          // 1) Geschwister der Wurzel (H1/Sub/Bruecke im Hero)
-          if (root.parentElement) {
-            Array.from(root.parentElement.children).forEach((el) => {
-              if (el !== root && el.tagName !== 'SCRIPT') apply(el);
+          let node = root;
+          while (node.parentElement && node !== document.body) {
+            Array.from(node.parentElement.children).forEach((el) => {
+              if (el !== node && el.tagName !== 'SCRIPT') apply(el);
             });
+            node = node.parentElement;
           }
-          // 2) <body>-Kinder ausser dem Ast, der zur Wurzel fuehrt (Navbar/Footer)
-          const bodyKeep = root.closest('body > *');
-          Array.from(document.body.children).forEach((el) => {
-            if (el !== bodyKeep && el.tagName !== 'SCRIPT') apply(el);
-          });
         },
         // Gemeinsamer Oeffnen-Pfad fuers Mobile-Overlay — Body-Lock,
         // Inert-Maske, Safety-Timer, Fokus auf den Close-Button.
@@ -538,12 +593,21 @@
           this._disarmSafety();
           this._setInert(false);
           document.body.classList.remove('kana-embed-noscroll');
-          // Fokus zurueck auf den Launch-Button — aber nur, wenn er
-          // sichtbar ist (er ist via x-show="!loaded" verdeckt, sobald ein
-          // Ergebnis vorliegt; dann uebernimmt die Ergebnis-Karte den Fokus).
+          // Mobile + Runde NICHT fertig: zurueck zur Launch-Karte — sonst
+          // bliebe das Spiel als unspielbar kleines Inline-iframe (420-490px)
+          // im Hero stehen und der Timer liefe weiter. Im done-Pfad (close()
+          // aus dem complete-Handler) bleibt loaded=true: die Ergebnis-Karte
+          // ersetzt die Buehne und onMessage fokussiert sie.
+          if (this.isMobile && !this.done) { this.loaded = false; this.active = false; }
+          // Fokus zurueck auf den Launch-Button — aber nur, wenn er sichtbar
+          // ist (bei vorliegendem Ergebnis fokussiert onMessage die Ergebnis-Karte).
+          // rAF nach dem Tick: der x-show-Flush (loaded=false → Button sichtbar)
+          // ist sonst evtl. noch nicht gemalt und offsetParent noch null.
           this.$nextTick(() => {
-            const btn = this.$refs.launchBtn;
-            if (btn && btn.offsetParent !== null) btn.focus();
+            requestAnimationFrame(() => {
+              const btn = this.$refs.launchBtn;
+              if (btn && btn.offsetParent !== null) btn.focus();
+            });
           });
         },
         onMessage(ev) {
@@ -552,6 +616,7 @@
           if (d.type === 'kana-embed-complete') {
             this.error = false;
             this.active = false;
+            this._clearConfirm();   // pending "Runde abbrechen?" ist obsolet
             this.done = d;
             // Runden-Zaehler + Bestzeit + Tages-Haekchen (alles localStorage).
             this.plays += 1;
@@ -567,12 +632,23 @@
             }
             if (this.spielart === 'daily') {
               this.dailyDone = true;
-              LS.set('kanaDaily-' + todayKey(), '1');
+              // Server-Datum bevorzugen (das iframe liefert es aus der
+              // Daily-API mit) — so gilt das Haekchen exakt fuer das Brett,
+              // das gespielt wurde, nicht fuer den Client-Kalendertag.
+              LS.set('kanaDaily-' + (d.dailyDate || todayKey()), '1');
             }
             if (this.open) this.close();
+            // Screenreader: Ergebnis ansagen + Fokus auf die Karte (die Buehne
+            // samt fokussiertem iframe kollabiert — sonst faellt der Fokus
+            // kommentarlos auf <body> und die Branch-CTAs bleiben unentdeckt).
+            this._announce('Runde geschafft: ' + d.solved + ' von ' + d.total
+              + ' richtig in ' + d.timeLabel + '. Ergebnis und nächste Schritte unten.');
             this.$nextTick(() => {
               const el = document.getElementById('kanaEmbedResult');
-              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              if (el) {
+                el.focus({ preventScroll: true });
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }
             });
             if (window.plausible) window.plausible('kana-embed-complete', { props: { spielart: this.spielart } });
           } else if (d.type === 'kana-embed-active') {
@@ -784,9 +860,10 @@
 
 <style>
 /* ════════════════════════════════════════
-   HOMEPAGE — v2 (interaktive Probe + Sumi-Pfad)
-   Hero-Painterly-Background + interaktive Vokal-Karten
-   + Trust-Block (N5-Hanko) + vertikaler Lernpfad mit Donut-Fortschritt
+   HOMEPAGE — v3 (Kana-Spiel-Hero + Sumi-Pfad)
+   Hero-Painterly-Background + Spielbuehne (iframe) mit Spielart-Chips
+   + Bruecken-Leiste + Trust-Block (N5-Hanko, in "Vom Spiel zum System")
+   + vertikaler Lernpfad mit Donut-Fortschritt
    ════════════════════════════════════════ */
 
 .home-wrapper {
@@ -1048,7 +1125,9 @@
 .kana-chip-more {
     margin-left: 0.4rem;
     font-size: 0.82rem;
-    color: var(--ink-500);
+    /* ink-600 statt ink-500: auf dem getoenten Hero-Verlauf (#F4EEE0) faellt
+       ink-500-Kleintext unter 4.5:1 (AA) — ink-600 liegt bei ~6.3:1. */
+    color: var(--ink-600);
     text-decoration: none;
     border-bottom: 1px solid transparent;
     transition: color .15s, border-color .15s;
@@ -1622,7 +1701,8 @@ body.kana-embed-noscroll .mobile-bottom-nav { display: none !important; }
 body.kana-embed-noscroll .home-hero--game { isolation: auto; }
 
 /* Ergebnis-Karte: tritt an die Stelle der Buehne (4-Slot-Struktur).
-   min-height daempft den Kollaps-Sprung Buehne → Karte. */
+   Mobile: min-height 260px (ersetzt die 210px-Launch-Karte); Desktop bekommt
+   in der Media-Query oben die volle Buehnenhoehe (kein Kollaps-Sprung). */
 .kana-embed-result {
     text-align: center;
     padding: 1.4rem 1.1rem 1.2rem;
@@ -1633,6 +1713,9 @@ body.kana-embed-noscroll .home-hero--game { isolation: auto; }
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     gap: 0.4rem;
 }
+/* Programmatischer Fokus (tabindex=-1, von onMessage gesetzt) braucht keinen
+   sichtbaren Ring auf der ganzen Karte — die CTAs darin behalten ihre Ringe. */
+.kana-embed-result:focus { outline: none; }
 .kana-embed-stars { font-size: 1.6rem; letter-spacing: 0.25rem; color: #d6cfc2; }
 .kana-embed-stars .is-earned { color: #f1c40f; text-shadow: 0 1px 3px rgba(241,196,15,.4); }
 .kana-embed-result-line { margin: 0; font-size: 1rem; color: var(--kon, #1F2A44); }
@@ -1683,6 +1766,16 @@ body.kana-embed-noscroll .home-hero--game { isolation: auto; }
     color: var(--ink-500);
 }
 .kana-embed-replay-link:hover { color: var(--shu); }
+/* Desktop-Hoehen fuer Launch-/Ergebnis-Karte = Buehnenhoehe. WICHTIG: dieser
+   Block muss NACH den Basisregeln (.kana-embed-launch 210px / -result 260px)
+   stehen — bei gleicher Spezifitaet gewinnt sonst die spaetere Basisregel und
+   die min-heights waeren wirkungslos.
+   - Launch/Retry fuellt die Buehne (kein Leerraum-Loch im Fehler-/Pre-Mount-Fall)
+   - Ergebnis-Karte = Buehnenhoehe (eliminiert den Kollaps-Sprung beim done-Wechsel) */
+@media (min-width: 641px) {
+  .kana-embed-launch { min-height: var(--kana-stage-h, 560px); }
+  .kana-embed-result { min-height: var(--kana-stage-h, 560px); }
+}
 </style>
 
 <script>

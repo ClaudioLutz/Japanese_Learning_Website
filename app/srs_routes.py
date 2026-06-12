@@ -666,12 +666,17 @@ def _guest_kana_chars(schrift='hiragana', rows_filter=None, include_dakuten=Fals
     include_dakuten: Dakuten/Handakuten-Reihen (g/z/d/b/p) einschliessen
     """
     from app.services.kana_rows import HIRAGANA_ROWS, KATAKANA_ROWS
-    row_keys = list(_GUEST_BASE_ROW_KEYS)
-    if include_dakuten:
-        row_keys += list(_GUEST_DAKUTEN_ROW_KEYS)
     if rows_filter:
+        # Explizite Reihen-Wahl uebersteuert den Dakuten-Schalter — wer den
+        # G-Chip anklickt, will die G-Reihe ueben (sonst liefe die Auswahl bei
+        # ausgeschaltetem Dakuten-Schalter stumm ins Leere).
         wanted = set(rows_filter)
-        row_keys = [key for key in row_keys if key in wanted]
+        row_keys = [key for key in (*_GUEST_BASE_ROW_KEYS, *_GUEST_DAKUTEN_ROW_KEYS)
+                    if key in wanted]
+    else:
+        row_keys = list(_GUEST_BASE_ROW_KEYS)
+        if include_dakuten:
+            row_keys += list(_GUEST_DAKUTEN_ROW_KEYS)
     scripts = []
     if schrift in ('hiragana', 'both'):
         scripts.append(('hiragana', HIRAGANA_ROWS))
@@ -739,6 +744,56 @@ def _kana_item(lesson_content_id, kana, row_key=None, *, with_extras=True):
     return item
 
 
+def _subset_in_order(rows_data, limit):
+    """Zufaelliges Teilset der Groesse limit, Original-Reihenfolge erhalten.
+
+    Statt stumpfem Gojuon-Prefix (sonst saehe man bei Limit 20 immer dieselben
+    ersten 20 Zeichen, a- bis t-Reihe) — die Gojuon-REIHENFOLGE des gezogenen
+    Teilsets bleibt erhalten (das Grid gruppiert didaktisch nach Reihen).
+    """
+    if limit <= 0 or len(rows_data) <= limit:
+        return rows_data
+    import random as _random
+    picked_idx = sorted(_random.sample(range(len(rows_data)), limit))
+    return [rows_data[i] for i in picked_idx]
+
+
+def _guest_scope_payload(mode, schrift, rows_filter, include_dakuten, limit):
+    """Antwort-Payload aus dem Gast-Referenz-Scope (volle Gojuon-Tabelle).
+
+    Gemeinsamer Baustein fuer (a) anonyme Gaeste und (b) frisch registrierte
+    Konten ohne abgeschlossene Lessons — Registrieren darf den spielbaren
+    Umfang nie verkleinern (lesson_content_id=None -> kein SRS-Rating).
+    """
+    rows_data = _guest_kana_rows(
+        schrift=schrift, rows_filter=rows_filter or None, include_dakuten=include_dakuten
+    )
+    rows_data = _subset_in_order(rows_data, limit)
+    items = [_kana_item(lc_id, kana) for lc_id, kana in rows_data]
+    payload = {
+        'kana': items,
+        'count': len(items),
+        'mode': mode,
+        'filters': {
+            'schrift': schrift,
+            'rows': rows_filter or [],
+            'dakuten': include_dakuten,
+            'weak_only': False,
+        },
+    }
+    if not items:
+        if rows_filter:
+            # Leere Auswahl (z.B. unbekannte Reihen-Keys) — kein DB-Problem.
+            payload['message'] = 'Keine Kana für diese Auswahl gefunden — wähle andere Reihen.'
+        else:
+            # Sollte in Produktion nie passieren (Gojuon-Kana vorhanden) — aber
+            # bei leerer/uninitialisierter DB einen verstaendlichen Hinweis liefern,
+            # statt den Gast vor einer stummen leeren Buehne stehen zu lassen.
+            payload['message'] = ('Die Kana sind gerade nicht verfügbar — bitte lade '
+                                  'die Seite neu oder versuche es später erneut.')
+    return payload
+
+
 @srs_bp.route('/practice/kana')
 def practice_kana_page():
     """Schritt 1: Einstellungs-Seite fuer das Kana-Spiel (Viewport-gesperrt).
@@ -766,8 +821,10 @@ def practice_kana_embed():
     """Schlanke Embed-Variante des Spiels fuer das <iframe> auf der Startseite.
 
     Bewusst ohne base.html-Chrome (keine Top-Nav/Footer) und ohne Login: laeuft
-    immer im Gast-Modus (komplettes Grund-Hiragana, kein Score-Speichern). Die
-    Konto-CTA nach dem Spiel steuert die Eltern-Seite per postMessage.
+    immer im Gast-Modus (kein Score-Speichern). Die Spielart waehlt der Host
+    per Query-Param (?schrift=hiragana|katakana bzw. ?challenge=daily) — initView()
+    in kana_grid_game.js liest sie aus und nutzt den public- bzw. Daily-Endpoint.
+    Die Konto-CTA nach dem Spiel steuert die Eltern-Seite per postMessage.
     """
     return render_template('_kana_game_embed_layout.html')
 
@@ -799,7 +856,8 @@ def api_practice_session():
     include_dakuten = (request.args.get('dakuten', 'true').lower() == 'true')
     weak_only = (request.args.get('weak_only', 'false').lower() == 'true')
     ids_param = request.args.get('ids', '')
-    limit = min(request.args.get('limit', 20, type=int), 50)
+    limit = request.args.get('limit', 20, type=int)
+    limit = 20 if limit < 1 else min(limit, 50)
 
     if ids_param:
         try:
@@ -814,10 +872,18 @@ def api_practice_session():
     unlocked_lc_rows = _user_unlocked_kana_ids(current_user.id, include_locked=include_locked)
     unlocked_lc_ids = [r[0] for r in unlocked_lc_rows]
     if not unlocked_lc_ids and wanted_kana_ids is None:
-        return jsonify({
-            'kana': [], 'count': 0, 'mode': mode,
-            'message': 'Keine freigeschalteten Kana — bitte erst eine Lesson abschliessen.',
-        })
+        if weak_only:
+            # weak_only braucht User-State — ohne Reviews gibt es nichts Schwaches.
+            return jsonify({
+                'kana': [], 'count': 0, 'mode': mode,
+                'message': 'Noch keine schwachen Karten — spiel erst ein paar Runden.',
+            })
+        # Neukonto (0 abgeschlossene Lessons): voller Gast-Referenz-Scope statt
+        # leerer Buehne. Gaeste duerfen ALLES ueben — Registrieren (der Haupt-
+        # Conversion-Pfad der Startseite!) darf den spielbaren Umfang nie
+        # verkleinern. lesson_content_id=None -> rateCell() skippt, kein SRS.
+        payload = _guest_scope_payload(mode, schrift, rows_filter, include_dakuten, limit)
+        return jsonify(payload)
 
     # Mapping LC-ID -> Kana
     q = (
@@ -838,9 +904,12 @@ def api_practice_session():
     items = []
     for lc_id, kana in rows_data:
         row_key = row_for_kana(kana.character)
-        if rows_filter and row_key not in rows_filter:
-            continue
-        if not include_dakuten and row_key in DAKUTEN_ROWS:
+        if rows_filter:
+            # Explizite Reihen-Wahl uebersteuert den Dakuten-Schalter (Paritaet
+            # zu _guest_kana_chars): wer G waehlt, will die G-Reihe ueben.
+            if row_key not in rows_filter:
+                continue
+        elif not include_dakuten and row_key in DAKUTEN_ROWS:
             continue
         items.append({
             'kana_id': kana.id,
@@ -935,42 +1004,13 @@ def api_practice_session_public():
         schrift = 'hiragana'
     rows_filter = [r.strip() for r in (request.args.get('rows', '') or '').split(',') if r.strip()]
     include_dakuten = (request.args.get('dakuten', 'false').lower() == 'true')
-    limit = min(request.args.get('limit', 50, type=int), 50)
+    # Nach unten UND oben klemmen: limit<=0 (crafted URL) wuerde sonst in
+    # random.sample mit negativem k laufen -> 500 auf einem public Endpoint.
+    limit = request.args.get('limit', 50, type=int)
+    limit = 50 if limit < 1 else min(limit, 50)
 
-    rows_data = _guest_kana_rows(
-        schrift=schrift, rows_filter=rows_filter or None, include_dakuten=include_dakuten
-    )
-    if len(rows_data) > limit:
-        # Zufaelliges Teilset statt stumpfem Gojuon-Prefix — sonst saehe ein Gast
-        # mit Limit 20 bei jeder Runde dieselben ersten 20 Zeichen (a- bis t-Reihe).
-        # Die Gojuon-REIHENFOLGE des gezogenen Teilsets bleibt erhalten (das Grid
-        # gruppiert didaktisch nach Reihen).
-        import random as _random
-        picked_idx = sorted(_random.sample(range(len(rows_data)), limit))
-        rows_data = [rows_data[i] for i in picked_idx]
-    items = [_kana_item(lc_id, kana) for lc_id, kana in rows_data]
-    payload = {
-        'kana': items,
-        'count': len(items),
-        'mode': mode,
-        'guest': True,
-        'filters': {
-            'schrift': schrift,
-            'rows': rows_filter,
-            'dakuten': include_dakuten,
-            'weak_only': False,
-        },
-    }
-    if not items:
-        if rows_filter:
-            # Leere Auswahl (z.B. unbekannte Reihen-Keys) — kein DB-Problem.
-            payload['message'] = 'Keine Kana für diese Auswahl gefunden — wähle andere Reihen.'
-        else:
-            # Sollte in Produktion nie passieren (Gojuon-Kana vorhanden) — aber
-            # bei leerer/uninitialisierter DB einen verstaendlichen Hinweis liefern,
-            # statt den Gast vor einer stummen leeren Buehne stehen zu lassen.
-            payload['message'] = ('Die Kana sind gerade nicht verfügbar — bitte lade '
-                                  'die Seite neu oder versuche es später erneut.')
+    payload = _guest_scope_payload(mode, schrift, rows_filter, include_dakuten, limit)
+    payload['guest'] = True
     return jsonify(payload)
 
 
@@ -995,15 +1035,20 @@ def api_practice_daily_challenge():
         unlocked_lc_rows = _user_unlocked_kana_ids(current_user.id, include_locked=include_locked)
         unlocked_lc_ids = [r[0] for r in unlocked_lc_rows]
         if not unlocked_lc_ids:
-            return jsonify({'kana': [], 'count': 0, 'bonus_xp': 0,
-                            'message': 'Keine freigeschalteten Kana — bitte erst eine Lesson abschliessen.'})
-        rows = (
-            db.session.query(LessonContent.id, Kana)
-            .join(Kana, LessonContent.content_id == Kana.id)
-            .filter(LessonContent.id.in_(unlocked_lc_ids))
-            .all()
-        )
-        bonus_xp = 25  # bei perfektem Abschluss
+            # Neukonto (0 abgeschlossene Lessons): Gast-Referenz-Scope statt
+            # leerer Challenge — Registrieren darf nichts wegnehmen. Bonus-XP
+            # bleibt 0 (lesson_content_id=None -> Rating/Gutschrift entfaellt,
+            # ein angezeigter Bonus waere ein leeres Versprechen).
+            rows = _guest_kana_rows()
+            bonus_xp = 0
+        else:
+            rows = (
+                db.session.query(LessonContent.id, Kana)
+                .join(Kana, LessonContent.content_id == Kana.id)
+                .filter(LessonContent.id.in_(unlocked_lc_ids))
+                .all()
+            )
+            bonus_xp = 25  # bei perfektem Abschluss
     else:
         seed_raw = f'guest-{today}-daily-kana'
         rows = _guest_kana_rows()

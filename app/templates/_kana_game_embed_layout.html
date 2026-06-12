@@ -6,7 +6,9 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="robots" content="noindex,nofollow">
-    <title>Hiragana-Spiel</title>
+    {# Neutral — das Embed rendert je nach Query-Param Hiragana, Katakana
+       oder die Tages-Challenge. #}
+    <title>Kana-Spiel</title>
 
     {# Nur das Noetige fuers Spiel — bewusst ohne base.html-Chrome (Top-Nav,
        Footer, OG-Tags). Das Embed laeuft isoliert im iframe der Startseite. #}
@@ -188,10 +190,12 @@
     </style>
 
     <script>
-        /* Embed-Modus: das Spiel laeuft immer als Gast (komplettes Grund-Hiragana,
-           kein Score-Speichern). initView() in kana_grid_game.js liest dieses Flag
-           und nutzt den public-Endpoint; goToSettings/Abschluss melden sich per
-           postMessage bei der Eltern-Seite (Startseite). */
+        /* Embed-Modus: das Spiel laeuft immer als Gast (kein Score-Speichern);
+           die Spielart kommt als Query-Param vom Host (?schrift=hiragana|katakana
+           bzw. ?challenge=daily). initView() in kana_grid_game.js liest dieses
+           Flag, wertet die Params aus und nutzt den public- bzw. Daily-Endpoint;
+           goToSettings/Abschluss melden sich per postMessage bei der
+           Eltern-Seite (Startseite). */
         window.kgameEmbed = true;
         window.currentUser = null;
     </script>

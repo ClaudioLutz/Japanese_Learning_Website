@@ -188,8 +188,10 @@
                     🔒 Im Gast-Modus wird dein Fortschritt nicht gespeichert.
                 </p>
                 {% endif %}
-                {# Gast (Vollbild): Konto-CTA nach dem Spiel — Fortschritt sichern +
-                   Katakana/Reihen/Drill freischalten. Eingeloggte sehen ihn nicht. #}
+                {# Gast (Vollbild): Konto-CTA nach dem Spiel — wirbt mit Persistenz
+                   (Fortschritt/Streak/schwache Karten), NICHT mit Feature-Sperren:
+                   Katakana/Reihen/Drill sind fuer Gaeste frei. Eingeloggte sehen
+                   ihn nicht. #}
                 <template x-if="isGuest">
                     <div class="kgame__guest-cta">
                         <p class="kgame__guest-cta-text">

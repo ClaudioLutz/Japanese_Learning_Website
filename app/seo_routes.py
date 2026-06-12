@@ -52,6 +52,12 @@ def robots_txt():
         "Disallow: /profile",
         "Disallow: /my-lessons",
         "Disallow: /review",
+        # Kana-Spiel-Einstellungsseite ist seit dem Gast-Scope ein oeffentliches
+        # Feature und prominent von der Startseite verlinkt — Landing-Kandidat
+        # fuer "Hiragana ueben". Das $-Anker gibt NUR exakt /practice/kana frei;
+        # /practice/kana/spiel (noindex) und alle anderen /practice-Pfade
+        # bleiben gesperrt.
+        "Allow: /practice/kana$",
         "Disallow: /practice",
         "Disallow: /payment/",
         "Disallow: /purchase/",
@@ -100,6 +106,7 @@ def sitemap_xml():
         ('/n5-bundle', 'weekly', '0.9'),
         ('/jlpt-n5-schweiz', 'weekly', '0.9'),
         ('/lessons', 'daily', '0.8'),
+        ('/practice/kana', 'weekly', '0.8'),
         *([('/courses', 'weekly', '0.7')] if has_published_course else []),
         ('/ueber', 'monthly', '0.6'),
         ('/lernmethode', 'monthly', '0.6'),
