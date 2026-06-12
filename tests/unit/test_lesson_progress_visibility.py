@@ -14,7 +14,8 @@ from app.models import LessonContent, UserLessonProgress
 from tests.factories import LessonFactory, UserFactory
 
 
-def _add(lesson_id, content_type, page_number, order_index=0, content_id=1):
+def _add(lesson_id, content_type, page_number, order_index=0, content_id=1,
+         is_optional=False, media_url=None):
     """Hilfs-Helper fuer LessonContent ohne Referenz-Validation."""
     lc = LessonContent(
         lesson_id=lesson_id,
@@ -22,6 +23,8 @@ def _add(lesson_id, content_type, page_number, order_index=0, content_id=1):
         content_id=content_id,
         order_index=order_index,
         page_number=page_number,
+        is_optional=is_optional,
+        media_url=media_url,
     )
     db.session.add(lc)
     return lc
@@ -103,6 +106,36 @@ def test_progress_below_100_when_visible_item_missing(app_context):
 
     assert progress.progress_percentage == 50
     assert progress.is_completed is False
+
+
+def test_optional_items_excluded_from_progress(app_context):
+    """Dekorative Seitenbilder (image + is_optional) zaehlen nicht zum
+    Fortschritt: 100% muss ohne sie erreichbar sein (Lektionsbilder 2026-06)."""
+    user = UserFactory()
+    lesson = LessonFactory()
+    db.session.flush()
+    text = _add(lesson.id, 'text', page_number=1, content_id=1)
+    page_image = _add(
+        lesson.id, 'image', page_number=1, order_index=0, content_id=None,
+        is_optional=True,
+        media_url='/uploads/lessons/page_images/lesson_1/page_1.webp',
+    )
+    db.session.commit()
+
+    visible = lesson.progress_visible_content_items
+    assert text in visible
+    assert page_image not in visible, "optionales Seitenbild darf nicht zaehlen"
+
+    progress = UserLessonProgress(user_id=user.id, lesson_id=lesson.id, content_progress='{}')
+    db.session.add(progress)
+    db.session.flush()
+    progress.set_content_progress({str(text.id): True})  # Bild NICHT markiert
+    progress.update_progress_percentage()
+
+    assert progress.progress_percentage == 100, (
+        f"Erwartet 100% ohne Seitenbild-Klick, bekam {progress.progress_percentage}%"
+    )
+    assert progress.is_completed is True
 
 
 def test_lesson_174_pattern_passive_outro_blocks_100(app_context):

@@ -1102,6 +1102,16 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                         {% set page_has_slideshow = page.content | selectattr('content_type', 'equalto', 'dialog_slideshow') | list | length > 0 %}
                                         {% for content in page.content %}
                                         {% if not (page_has_slideshow and content.content_type == 'audio') %}
+                                        {% if content.content_type == 'image' and content.is_optional %}
+                                        {# Dekoratives Seitenbild: rahmenlos, ohne Fortschritts-Button (zaehlt nicht zum Fortschritt) #}
+                                        <div class="content-item mb-4" data-content-id="{{ content.id }}">
+                                            {% if content.file_path %}
+                                            <img src="{{ content.get_file_url() }}" class="img-fluid rounded shadow-sm w-100" alt="{{ content.title or 'Seitenbild' }}" loading="lazy">
+                                            {% elif content.media_url %}
+                                            <img src="{{ content.media_url }}" class="img-fluid rounded shadow-sm w-100" alt="{{ content.title or 'Seitenbild' }}" loading="lazy">
+                                            {% endif %}
+                                        </div>
+                                        {% else %}
                                         <div class="content-item mb-4 p-3 border rounded bg-white shadow-sm" data-content-id="{{ content.id }}">
                                             <div class="d-flex justify-content-between align-items-start mb-2">
                                                 {% if content.title %}
@@ -1712,6 +1722,7 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                 {% endif %}
                                             </div>
                                         </div>
+                                        {% endif %}{# end decorative page image #}
                                         {% endif %}{# end skip-redundant-audio #}
                                         {% endfor %}
                                         {% endif %}{# end conversation vs normal page #}

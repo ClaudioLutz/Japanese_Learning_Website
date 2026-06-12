@@ -775,6 +775,10 @@ class Lesson(db.Model):
         Page ein dialog_slideshow existiert (Slideshow hat eigenes Audio).
         Der User konnte sie also nie als erledigt markieren, der Progress
         blieb bei 96% statt 100%.
+
+        is_optional-Items (z.B. dekorative Seitenbilder) zaehlen nicht zum
+        Fortschritt — sie haben keinen Erledigt-Button und duerfen den
+        Lektionsabschluss nicht blockieren.
         """
         items = list(self.content_items)
         slideshow_pages = {
@@ -783,6 +787,7 @@ class Lesson(db.Model):
         return [
             c for c in items
             if not (c.content_type == 'audio' and c.page_number in slideshow_pages)
+            and not c.is_optional
         ]
     
     def is_accessible_to_user(self, user):
