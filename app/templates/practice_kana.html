@@ -166,9 +166,6 @@
     .switch.is-on .switch__track::after { transform: translateX(18px); }
     .switch:focus-visible { outline: 2px solid var(--shu, #EB6101); outline-offset: 2px; }
 
-    /* Anzahl-Slider */
-    .kana-setup__range { width: 100%; accent-color: var(--shu, #EB6101); height: 1.5rem; }
-
     /* ── Fuss: Vorschau + Start ── */
     .kana-setup__foot { flex: 0 0 auto; padding-top: 0.7rem; }
     .kana-setup__preview {
@@ -349,15 +346,8 @@
             {% endif %}
         </div>
 
-        <!-- Anzahl -->
-        <div class="kana-setup__group">
-            <div class="kana-setup__label">
-                <i class="fas fa-hashtag"></i> Anzahl
-                <span class="count" x-text="limit"></span>
-            </div>
-            <input type="range" class="kana-setup__range" min="5" max="50" step="5"
-                   x-model="limit" @input="changed()" aria-label="Anzahl Kana">
-        </div>
+        {# Kein Anzahl-Slider mehr: gespielt wird genau die Auswahl
+           (Reihen x Schrift) — die Vorschau unten zeigt die Anzahl live. #}
     </div>
 
     <div class="kana-setup__foot">
@@ -374,7 +364,7 @@
         <div class="kana-setup__quick">
             <button type="button" @click="startDaily()"><i class="fas fa-bullseye"></i> Tages-Challenge</button>
             {% if current_user.is_authenticated %}
-            <button type="button" @click="startWeak()"><i class="fas fa-bolt"></i> Schwache 10</button>
+            <button type="button" @click="startWeak()"><i class="fas fa-bolt"></i> Schwache Karten</button>
             {% endif %}
             <button type="button" @click="startConfusion()" title="Verwechslungs-Paare üben"><i class="fas fa-clone"></i> Ähnliche</button>
         </div>

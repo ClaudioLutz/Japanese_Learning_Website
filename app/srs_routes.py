@@ -744,14 +744,28 @@ def _kana_item(lesson_content_id, kana, row_key=None, *, with_extras=True):
     return item
 
 
+def _parse_limit(default=None, cap=200):
+    """limit-Query-Param lesen: None/fehlend/<1 = "alles Gewaehlte".
+
+    Die Anzahl richtet sich nach der Auswahl (Reihen x Schrift) — ein Limit
+    ist nur noch ein optionaler API-Parameter, kein UI-Konzept mehr. Cap als
+    Schutz gegen Unsinn (mehr als 142 Kana gibt es ohnehin nicht).
+    """
+    limit = request.args.get('limit', type=int)
+    if limit is None or limit < 1:
+        return default
+    return min(limit, cap)
+
+
 def _subset_in_order(rows_data, limit):
     """Zufaelliges Teilset der Groesse limit, Original-Reihenfolge erhalten.
 
-    Statt stumpfem Gojuon-Prefix (sonst saehe man bei Limit 20 immer dieselben
-    ersten 20 Zeichen, a- bis t-Reihe) — die Gojuon-REIHENFOLGE des gezogenen
-    Teilsets bleibt erhalten (das Grid gruppiert didaktisch nach Reihen).
+    limit=None = kein Teilset (alles Gewaehlte). Statt stumpfem Gojuon-Prefix
+    (sonst saehe man bei Limit 20 immer dieselben ersten 20 Zeichen, a- bis
+    t-Reihe) — die Gojuon-REIHENFOLGE des gezogenen Teilsets bleibt erhalten
+    (das Grid gruppiert didaktisch nach Reihen).
     """
-    if limit <= 0 or len(rows_data) <= limit:
+    if limit is None or limit <= 0 or len(rows_data) <= limit:
         return rows_data
     import random as _random
     picked_idx = sorted(_random.sample(range(len(rows_data)), limit))
@@ -856,8 +870,8 @@ def api_practice_session():
     include_dakuten = (request.args.get('dakuten', 'true').lower() == 'true')
     weak_only = (request.args.get('weak_only', 'false').lower() == 'true')
     ids_param = request.args.get('ids', '')
-    limit = request.args.get('limit', 20, type=int)
-    limit = 20 if limit < 1 else min(limit, 50)
+    # Kein Slider mehr im UI: die Anzahl richtet sich nach der Auswahl.
+    limit = _parse_limit()
 
     if ids_param:
         try:
@@ -1004,10 +1018,9 @@ def api_practice_session_public():
         schrift = 'hiragana'
     rows_filter = [r.strip() for r in (request.args.get('rows', '') or '').split(',') if r.strip()]
     include_dakuten = (request.args.get('dakuten', 'false').lower() == 'true')
-    # Nach unten UND oben klemmen: limit<=0 (crafted URL) wuerde sonst in
-    # random.sample mit negativem k laufen -> 500 auf einem public Endpoint.
-    limit = request.args.get('limit', 50, type=int)
-    limit = 50 if limit < 1 else min(limit, 50)
+    # Default None = alles Gewaehlte; <1/fehlend faellt sicher dorthin zurueck
+    # (random.sample mit negativem k waere sonst ein 500 auf public).
+    limit = _parse_limit()
 
     payload = _guest_scope_payload(mode, schrift, rows_filter, include_dakuten, limit)
     payload['guest'] = True
@@ -1189,7 +1202,9 @@ def api_practice_confusion():
     schrift = request.args.get('schrift', 'both')
     if schrift not in ('hiragana', 'katakana', 'both'):
         schrift = 'both'
-    limit = min(request.args.get('limit', 20, type=int), 50)
+    # Confusion-Drill behaelt einen Default (ganze Cluster bis ~20 Zeichen) —
+    # ein Drill ueber ALLE Cluster waere zu lang fuer eine Runde.
+    limit = _parse_limit(default=20, cap=50)
 
     is_auth = current_user.is_authenticated
 

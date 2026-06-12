@@ -177,15 +177,18 @@ class TestFreshAccountFallback:
         data = client.get('/api/practice/kana/session/public').get_json()
         assert all(i['lesson_content_id'] is None for i in data['kana'])
 
-    def test_respects_limit(self, client, db):
+    def test_respects_explicit_limit(self, client, db):
+        # limit bleibt als optionaler API-Param erhalten (z.B. Deep-Links).
         _seed_hiragana(db, rows=GRUND_ROWS)
         data = client.get('/api/practice/kana/session/public?limit=5').get_json()
         assert data['count'] == 5
 
-    def test_limit_capped_at_50(self, client, db):
+    def test_default_returns_full_selection(self, client, db):
+        # Kein limit-Param = die Anzahl richtet sich nach der Auswahl:
+        # komplettes Grund-Hiragana (46) — es gibt keinen Anzahl-Regler mehr.
         _seed_hiragana(db, rows=GRUND_ROWS)
-        data = client.get('/api/practice/kana/session/public?limit=999').get_json()
-        assert data['count'] <= 50
+        data = client.get('/api/practice/kana/session/public').get_json()
+        assert data['count'] == 46
 
     def test_does_not_write_to_db(self, client, db):
         from app.models import CardReviewState

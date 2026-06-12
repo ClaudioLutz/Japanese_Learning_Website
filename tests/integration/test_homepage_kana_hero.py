@@ -18,9 +18,15 @@ class TestGuestHero:
         # Host-Komponente + Embed-Route im Gast-Zweig
         assert 'kanaEmbedHost' in body
         assert '/practice/kana/embed' in body
-        # Spielart-Chips (einzige Steuer-Ebene auf der Startseite)
+        # Steuer-Ebenen ueber dem Spiel: Schrift-Chips (inkl. Beide),
+        # Reihen-Pills (SSR), Modus-Segment
         assert 'kana-chip-row' in body
+        assert 'Beide · 92' in body
         assert 'Tages-Challenge' in body
+        assert 'kana-row-row' in body
+        assert "toggleRow('k')" in body
+        assert 'kana-mode-seg' in body
+        assert "selectMode('blind')" in body
         # H1 traegt den Query-Match "Hiragana lernen"
         assert 'Hiragana lernen' in body
 

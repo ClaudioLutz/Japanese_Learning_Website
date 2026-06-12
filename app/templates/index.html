@@ -64,7 +64,11 @@
         <h1 class="home-h1 home-h1--game">Hiragana lernen —<br>fang mit einer Runde an.</h1>
         <p class="home-sub">
           Alle 46 Grund-Hiragana gegen die Uhr — direkt im Browser, ohne Login.
-          Danach führt dich der N5-Pfad Schritt für Schritt weiter, jede Regel auf Deutsch erklärt.
+          {# Zweiter Satz nur auf Desktop: auf Mobile kostet er ~2 Zeilen Fold
+             und die Launch-Karte muss im ersten Viewport bleiben. Inhaltlich
+             traegt ihn die Bruecken-Leiste darunter ohnehin. #}
+          <span class="home-sub-more">Danach führt dich der N5-Pfad Schritt für Schritt weiter,
+          jede Regel auf Deutsch erklärt.</span>
         </p>
 
         {# ── Kana-Spiel: Chips → Buehne (iframe) → Ergebnis-Karte ──
@@ -79,27 +83,81 @@
              Hiragana (46), Katakana (46) UND Tages-Challenge (10). #}
           <h2 class="sr-only" id="kanaEmbedTitle">Kana-Spiel gegen die Uhr</h2>
 
-          {# Spielart-Chips — die EINZIGE Steuer-Ebene auf der Startseite.
-             Tiefe (Reihen, Dakuten, Modi, Anzahl) liegt hinter "Alle Optionen".
-             role=group + aria-pressed (Seg-Button-Muster wie practice_kana.html)
-             statt role=radio: keine Pfeiltasten-Erwartung/Roving-Tabindex noetig,
-             und der "Alle Optionen"-Link darf in der Gruppe stehen. Statisches
-             aria-pressed = SSR-Fallback bis Alpine initialisiert. #}
-          <div class="kana-chip-row" role="group" aria-label="Spielart wählen">
+          {# ── Steuerung ueber dem Spiel (3 Ebenen, alle SSR-gerendert):
+             1. Schrift/Spielart-Chips (Zahl = Live-Summe der Auswahl)
+             2. Reihen-Pills (Mehrfachauswahl; "Alle" = komplettes Grund-Set;
+                Dakuten-Reihen G-P sind direkt waehlbar — die Anzahl richtet
+                sich IMMER nach der Auswahl, es gibt keinen Anzahl-Regler)
+             3. Modus-Segment (Schreiben/Lesen/Blind) + "Alle Optionen"-Link
+             role=group + aria-pressed (Seg-Button-Muster wie practice_kana.html);
+             statisches aria-pressed = SSR-Fallback bis Alpine initialisiert.
+             Bei Tages-Challenge sind Reihen + Modus deaktiviert (fixes 10er-Brett). #}
+          <div class="kana-chip-row" role="group" aria-label="Schrift wählen">
             <button type="button" class="kana-chip" aria-pressed="true"
                     :aria-pressed="(spielart === 'hiragana').toString()"
                     :class="chipClass('hiragana')" @click="selectSpielart('hiragana')"
-                    x-text="chipLabel('hiragana', 'Hiragana · 46')">Hiragana · 46</button>
+                    x-text="chipText('hiragana')">Hiragana · 46</button>
             <button type="button" class="kana-chip" aria-pressed="false"
                     :aria-pressed="(spielart === 'katakana').toString()"
                     :class="chipClass('katakana')" @click="selectSpielart('katakana')"
-                    x-text="chipLabel('katakana', 'Katakana · 46')">Katakana · 46</button>
+                    x-text="chipText('katakana')">Katakana · 46</button>
+            <button type="button" class="kana-chip" aria-pressed="false"
+                    :aria-pressed="(spielart === 'both').toString()"
+                    :class="chipClass('both')" @click="selectSpielart('both')"
+                    x-text="chipText('both')">Beide · 92</button>
             <button type="button" class="kana-chip" aria-pressed="false"
                     :aria-pressed="(spielart === 'daily').toString()"
                     :class="chipClass('daily')" @click="selectSpielart('daily')"
-                    x-text="chipLabel('daily', dailyDone ? 'Tages-Challenge ✓' : 'Tages-Challenge · 10')">Tages-Challenge · 10</button>
+                    x-text="chipText('daily')">Tages-Challenge · 10</button>
+          </div>
+
+          {# Reihen-Pills — statisch gerendert (SSR, kein CLS). Labels wie auf
+             /practice/kana; ん = Einzelkonsonant, G-P = Dakuten/Handakuten. #}
+          {% set kana_row_pills = [
+            ('vowels', 'a·i·u·e·o'), ('k', 'K'), ('s', 'S'), ('t', 'T'), ('n', 'N'),
+            ('h', 'H'), ('m', 'M'), ('y', 'Y'), ('r', 'R'), ('w', 'W'), ('n_kons', 'ん'),
+            ('g', 'G'), ('z', 'Z'), ('d', 'D'), ('b', 'B'), ('p', 'P')] %}
+          <div class="kana-row-row" role="group" aria-label="Reihen wählen">
+            <button type="button" class="kana-rowpill kana-rowpill--all" aria-pressed="true"
+                    :aria-pressed="(selectedRows.length === 0).toString()"
+                    :class="rowClass(null)" :disabled="spielart === 'daily'"
+                    @click="selectAllRows()">Alle</button>
+            {% for row_key, row_label in kana_row_pills %}
+            <button type="button" class="kana-rowpill" aria-pressed="false"
+                    :aria-pressed="selectedRows.includes('{{ row_key }}').toString()"
+                    :class="rowClass('{{ row_key }}')" :disabled="spielart === 'daily'"
+                    @click="toggleRow('{{ row_key }}')">{{ row_label }}</button>
+            {% endfor %}
+          </div>
+
+          {# Modus-Segment + Link in die volle Einstellungsseite #}
+          <div class="kana-mode-row">
+            <div class="kana-mode-seg" role="group" aria-label="Modus wählen">
+              <button type="button" aria-pressed="true"
+                      :aria-pressed="(mode === 'schreiben').toString()"
+                      :class="modeClass('schreiben')" :disabled="spielart === 'daily'"
+                      title="Romaji lesen, Kana legen"
+                      @click="selectMode('schreiben')">Schreiben</button>
+              <button type="button" aria-pressed="false"
+                      :aria-pressed="(mode === 'lesen').toString()"
+                      :class="modeClass('lesen')" :disabled="spielart === 'daily'"
+                      title="Kana lesen, Romaji legen"
+                      @click="selectMode('lesen')">Lesen</button>
+              <button type="button" aria-pressed="false"
+                      :aria-pressed="(mode === 'blind').toString()"
+                      :class="modeClass('blind')" :disabled="spielart === 'daily'"
+                      title="Beides zuordnen — ohne Hinweise"
+                      @click="selectMode('blind')">Blind</button>
+            </div>
             <a class="kana-chip-more" href="{{ url_for('srs.practice_kana_page') }}">Alle Optionen →</a>
           </div>
+
+          {# Gemeinsamer Confirm-Hinweis fuer alle drei Steuer-Ebenen: erster
+             Klick mitten in der Runde markiert das Element (is-confirm) und
+             blendet diese Zeile ein; zweiter Klick innert 4 s bestaetigt. #}
+          <p class="kana-confirm-hint" x-show="confirmKey" x-cloak>
+            Laufende Runde abbrechen? Nochmals tippen zum Bestätigen.
+          </p>
 
           {# Buehne — im Mobile-Vollbild ein modaler Dialog (role/aria-modal nur
              wenn 'open', Escape schliesst). Bei fertigem Ergebnis kollabiert die
@@ -322,9 +380,18 @@
         return d.getUTCFullYear() + '-' + String(d.getUTCMonth() + 1).padStart(2, '0')
           + '-' + String(d.getUTCDate()).padStart(2, '0');
       };
+      // Zeichen pro Gojuon-Reihe — fuer die Live-Anzahl in den Chips
+      // (die Anzahl richtet sich IMMER nach der Auswahl, kein Regler).
+      const ROW_SIZES = {
+        vowels: 5, k: 5, s: 5, t: 5, n: 5, h: 5, m: 5, y: 3, r: 5, w: 2, n_kons: 1,
+        g: 5, z: 5, d: 5, b: 5, p: 5,
+      };
+      const BASE_COUNT = 46;   // Grund-Set ohne Dakuten (Default bei "Alle")
       return {
         srcBase: srcBase,
-        spielart: 'hiragana',   // 'hiragana' | 'katakana' | 'daily'
+        spielart: 'hiragana',   // 'hiragana' | 'katakana' | 'both' | 'daily'
+        mode: 'schreiben',      // 'schreiben' | 'lesen' | 'blind' (daily: immer schreiben)
+        selectedRows: [],       // leer = alle Grund-Reihen; G-P explizit waehlbar
         loaded: false,
         open: false,
         isMobile: false,
@@ -332,10 +399,11 @@
         error: false,
         liveMsg: '',
         active: false,          // Runde laeuft (erster Zug getan, noch kein Ergebnis)
-        confirmChip: null,      // Chip wartet auf Bestaetigung ("Runde abbrechen?")
+        confirmKey: null,       // Steuer-Element wartet auf Bestaetigung ("Runde abbrechen?")
         _confirmTimer: null,
+        _remountTimer: null,    // Debounce: mehrere Reihen-Klicks = EIN Remount
         plays: 0,               // abgeschlossene Runden in diesem Browser
-        best: null,             // Bestzeit (Sekunden) der aktiven Spielart
+        best: null,             // Bestzeit (Sekunden) der aktiven Spielart+Modus
         newBest: false,
         dailyDone: false,       // Tages-Challenge heute geschafft (Haekchen am Chip)
         _startTracked: false,   // kana_start nur einmal pro Pageview
@@ -349,9 +417,17 @@
             // waere im schmalen Hero unspielbar klein → zurueck zur Launch-Karte.
             if (e.matches && !this.open && !this.done) { this.loaded = false; this.active = false; }
           });
-          // Wiederkehrer finden ihre Spielart vor (Privatmodus → Default).
+          // Wiederkehrer finden ihre Auswahl vor (Privatmodus → Defaults).
           const saved = LS.get('kanaEmbedSpielart');
-          if (['hiragana', 'katakana', 'daily'].includes(saved)) this.spielart = saved;
+          if (['hiragana', 'katakana', 'both', 'daily'].includes(saved)) this.spielart = saved;
+          const savedMode = LS.get('kanaEmbedMode');
+          if (['schreiben', 'lesen', 'blind'].includes(savedMode)) this.mode = savedMode;
+          try {
+            const savedRows = JSON.parse(LS.get('kanaEmbedRows') || '[]');
+            if (Array.isArray(savedRows)) {
+              this.selectedRows = savedRows.filter((k) => ROW_SIZES[k] !== undefined);
+            }
+          } catch (e) { /* kaputter Wert — Default "Alle" behalten */ }
           this.plays = parseInt(LS.get('kanaEmbedPlays') || '0', 10) || 0;
           this._refreshDaily();
           // Tab ueber Mitternacht offen: Haekchen beim naechsten Sichtbarwerden
@@ -372,37 +448,70 @@
           }
           window.addEventListener('message', (e) => this.onMessage(e));
         },
-        // ── Spielart → iframe-src. kana_grid_game.js liest die Query-Params des
-        //    iframes (challenge=daily → Daily-API, sonst schrift= → public-API). ──
+        // ── Auswahl → iframe-src. kana_grid_game.js liest die Query-Params des
+        //    iframes (challenge=daily → Daily-API, sonst schrift/mode/rows →
+        //    public-API). KEIN limit: gespielt wird genau die Auswahl. ──
         get src() { return this.srcFor(this.spielart); },
         srcFor(s) {
-          return s === 'daily' ? (this.srcBase + '?challenge=daily')
-                               : (this.srcBase + '?schrift=' + s);
+          if (s === 'daily') return this.srcBase + '?challenge=daily';
+          let url = this.srcBase + '?schrift=' + s + '&mode=' + this.mode;
+          if (this.selectedRows.length) url += '&rows=' + this.selectedRows.join(',');
+          return url;
+        },
+        // Live-Anzahl der Auswahl (Reihen x Schrift) — erscheint in den Chips
+        // und auf der Launch-Karte.
+        countFor(s) {
+          if (s === 'daily') return 10;
+          const base = this.selectedRows.length
+            ? this.selectedRows.reduce((sum, k) => sum + (ROW_SIZES[k] || 0), 0)
+            : BASE_COUNT;
+          return s === 'both' ? base * 2 : base;
+        },
+        chipText(s) {
+          if (s === 'daily') return this.dailyDone ? 'Tages-Challenge ✓' : 'Tages-Challenge · 10';
+          const names = { hiragana: 'Hiragana', katakana: 'Katakana', both: 'Beide' };
+          return names[s] + ' · ' + this.countFor(s);
         },
         chipClass(s) {
           return {
-            'is-active': this.spielart === s && this.confirmChip !== s,
-            'is-confirm': this.confirmChip === s,
+            'is-active': this.spielart === s && this.confirmKey !== ('sa:' + s),
+            'is-confirm': this.confirmKey === ('sa:' + s),
           };
         },
-        chipLabel(s, label) { return this.confirmChip === s ? 'Runde abbrechen?' : label; },
+        modeClass(m) {
+          return {
+            'is-active': this.mode === m && this.confirmKey !== ('mode:' + m),
+            'is-confirm': this.confirmKey === ('mode:' + m),
+          };
+        },
+        rowClass(key) {
+          const ck = 'row:' + (key === null ? 'all' : key);
+          const isActive = key === null
+            ? this.selectedRows.length === 0
+            : this.selectedRows.includes(key);
+          return { 'is-active': isActive && this.confirmKey !== ck, 'is-confirm': this.confirmKey === ck };
+        },
         launchText() {
           if (this.error) return 'Erneut versuchen';
           if (this.spielart === 'daily') return 'Tages-Challenge starten';
+          if (this.spielart === 'both') return 'Kana-Mix starten';
           return (this.spielart === 'katakana' ? 'Katakana' : 'Hiragana') + '-Spiel starten';
         },
         launchSub() {
           if (this.error) return 'Das Spiel konnte nicht geladen werden.';
           if (this.spielart === 'daily') return '10 Zeichen · heute neu · ohne Login';
-          return '46 Zeichen · gegen die Uhr · ohne Login';
+          const modeName = { schreiben: 'Schreiben', lesen: 'Lesen', blind: 'Blind' }[this.mode];
+          return this.countFor(this.spielart) + ' Zeichen · ' + modeName + ' · ohne Login';
         },
         nextVariant() {
           if (this.spielart === 'hiragana') return 'katakana';
-          if (this.spielart === 'katakana') return 'daily';
+          if (this.spielart === 'katakana') return 'both';
+          if (this.spielart === 'both') return 'daily';
           return 'hiragana';
         },
         variantLabel(s) {
           if (s === 'daily') return 'Tages-Challenge probieren';
+          if (s === 'both') return 'Jetzt beide mischen';
           return s === 'katakana' ? 'Jetzt Katakana spielen' : 'Jetzt Hiragana spielen';
         },
         // Screenreader-Ansage: erst leeren, dann im nextTick setzen — sonst
@@ -413,30 +522,64 @@
         },
         _clearConfirm() {
           if (this._confirmTimer) { clearTimeout(this._confirmTimer); this._confirmTimer = null; }
-          this.confirmChip = null;
+          this.confirmKey = null;
+        },
+        // Gemeinsames Confirm-Gate aller Steuer-Ebenen (Chips/Reihen/Modus):
+        // mitten in der Runde markiert der 1. Klick das Element (is-confirm)
+        // + blendet den Hinweis ein; der 2. Klick innert 4 s wendet an.
+        _confirmGate(key, apply) {
+          if (this.active && !this.done && this.confirmKey !== key) {
+            this._clearConfirm();
+            this.confirmKey = key;
+            this._announce('Laufende Runde abbrechen? Nochmals tippen zum Bestätigen.');
+            this._confirmTimer = setTimeout(() => { this.confirmKey = null; this.liveMsg = ''; }, 4000);
+            return;
+          }
+          this._clearConfirm();
+          apply();
+        },
+        // Klick auf das bereits AKTIVE Element: ohne pending Confirm No-Op;
+        // mit pending Confirm = "Abbruch verwerfen, Runde laeuft weiter".
+        _dismissIfActive() {
+          if (this.confirmKey !== null) {
+            this._clearConfirm();
+            this._announce('Abbruch verworfen — die Runde läuft weiter.');
+          }
+          return true;
         },
         selectSpielart(s) {
-          // Klick auf den AKTIVEN Chip: ohne pending Confirm ein No-Op; mit
-          // pending Confirm = "Abbruch verwerfen, Runde laeuft weiter" (sonst
-          // wuerde das Confirm auf den aktiven Chip wandern und der 2. Klick
-          // die laufende Runde wegwerfen, obwohl der Gast zurueck wollte).
-          if (this.spielart === s && !this.done) {
-            if (this.confirmChip !== null) {
-              this._clearConfirm();
-              this._announce('Abbruch verworfen — die Runde läuft weiter.');
-            }
-            return;
-          }
-          // Mitten in der Runde: Inline-Confirm am Chip (2. Klick innert 4 s),
-          // statt die laufende Runde kommentarlos wegzuwerfen.
-          if (this.active && !this.done && this.confirmChip !== s) {
-            this._clearConfirm();
-            this.confirmChip = s;
-            this._announce('Laufende Runde abbrechen? Nochmals tippen zum Bestätigen.');
-            this._confirmTimer = setTimeout(() => { this.confirmChip = null; this.liveMsg = ''; }, 4000);
-            return;
-          }
-          this._switchTo(s);
+          if (this.spielart === s && !this.done) { this._dismissIfActive(); return; }
+          this._confirmGate('sa:' + s, () => this._switchTo(s));
+        },
+        selectMode(m) {
+          if (this.spielart === 'daily') return;   // Daily ist immer "Schreiben"
+          if (this.mode === m && !this.done) { this._dismissIfActive(); return; }
+          this._confirmGate('mode:' + m, () => {
+            this.mode = m;
+            LS.set('kanaEmbedMode', m);
+            if (window.plausible) window.plausible('kana_mode_change', { props: { mode: m } });
+            this._applySelectionChange();
+          });
+        },
+        toggleRow(key) {
+          if (this.spielart === 'daily') return;
+          this._confirmGate('row:' + key, () => {
+            this.selectedRows = this.selectedRows.includes(key)
+              ? this.selectedRows.filter((k) => k !== key)
+              : [...this.selectedRows, key];
+            LS.set('kanaEmbedRows', JSON.stringify(this.selectedRows));
+            if (window.plausible) window.plausible('kana_rows_change', { props: { count: this.selectedRows.length || 'alle' } });
+            this._applySelectionChange(/* debounce= */ true);
+          });
+        },
+        selectAllRows() {
+          if (this.spielart === 'daily') return;
+          if (this.selectedRows.length === 0 && !this.done) { this._dismissIfActive(); return; }
+          this._confirmGate('row:all', () => {
+            this.selectedRows = [];
+            LS.set('kanaEmbedRows', '[]');
+            this._applySelectionChange(/* debounce= */ true);
+          });
         },
         // Ergebnis-Karten-CTA: Wechsel ohne Confirm (Runde ist abgeschlossen).
         playVariant(s) { this._switchTo(s); },
@@ -444,9 +587,14 @@
           this._clearConfirm();   // pending "Runde abbrechen?" ist obsolet
           this.spielart = s;
           LS.set('kanaEmbedSpielart', s);
+          if (window.plausible) window.plausible('kana_chip_change', { props: { spielart: s } });
+          this._applySelectionChange();
+        },
+        // Gemeinsamer Anwenden-Pfad nach jeder Auswahl-Aenderung: Ergebnis/
+        // Fehler/Runde verwerfen, Bestzeit neu laden, Buehne neu aufsetzen.
+        _applySelectionChange(debounce) {
           this._loadBest();
           this.done = null; this.error = false; this.active = false;
-          if (window.plausible) window.plausible('kana_chip_change', { props: { spielart: s } });
           if (this.isMobile) {
             // Mobile: zurueck zur Launch-Karte (frische src beim naechsten Tap) —
             // KEIN Auto-Vollbild, der Tap gehoert dem Gast.
@@ -454,13 +602,34 @@
             return;
           }
           if (!this.loaded) { this.loaded = true; return; }
-          // Remount mit neuer src (Assets nach dem Erstload im Cache — guenstig).
+          if (debounce) {
+            // Reihen werden oft im Mehrfach-Klick zusammengestellt — erst nach
+            // einer kurzen Ruhepause EIN Remount statt drei.
+            if (this._remountTimer) clearTimeout(this._remountTimer);
+            this._remountTimer = setTimeout(() => { this._remountTimer = null; this._remount(); }, 700);
+            return;
+          }
+          if (this._remountTimer) { clearTimeout(this._remountTimer); this._remountTimer = null; }
+          this._remount();
+        },
+        _remount() {
+          // Remount mit neuer src (Assets nach dem Erstload im Cache — guenstig;
+          // template-x-if macht daraus ein echtes DOM-Remount ohne History-Eintrag).
           this.loaded = false;
           this.$nextTick(() => { this.loaded = true; });
         },
-        // ── Bestzeit (nur dieser Browser; ein Konto uebernimmt serverseitig) ──
+        // ── Bestzeit (nur dieser Browser; ein Konto uebernimmt serverseitig).
+        //    Pro Spielart+Modus — und nur bei VOLLER Auswahl ("Alle"): Zeiten
+        //    ueber verschiedene Reihen-Teilmengen sind nicht vergleichbar. ──
+        _bestKey() {
+          return this.spielart === 'daily' ? 'daily' : (this.spielart + ':' + this.mode);
+        },
+        _bestEligible() {
+          return this.spielart === 'daily' || this.selectedRows.length === 0;
+        },
         _loadBest() {
-          const v = parseInt(LS.get('kanaBest-' + this.spielart) || '0', 10);
+          if (!this._bestEligible()) { this.best = null; this.newBest = false; return; }
+          const v = parseInt(LS.get('kanaBest-' + this._bestKey()) || '0', 10);
           this.best = v > 0 ? v : null;
           this.newBest = false;
         },
@@ -622,13 +791,15 @@
             this.plays += 1;
             LS.set('kanaEmbedPlays', this.plays);
             const sec = this._timeLabelToSec(d.timeLabel);
-            if (sec !== null) {
+            if (sec !== null && this._bestEligible()) {
               if (!this.best || sec < this.best) {
                 this.best = sec; this.newBest = true;
-                LS.set('kanaBest-' + this.spielart, sec);
+                LS.set('kanaBest-' + this._bestKey(), sec);
               } else {
                 this.newBest = false;
               }
+            } else {
+              this.newBest = false;
             }
             if (this.spielart === 'daily') {
               this.dailyDone = true;
@@ -650,7 +821,7 @@
                 el.scrollIntoView({ behavior: 'smooth', block: 'center' });
               }
             });
-            if (window.plausible) window.plausible('kana-embed-complete', { props: { spielart: this.spielart } });
+            if (window.plausible) window.plausible('kana-embed-complete', { props: { spielart: this.spielart, mode: this.mode } });
           } else if (d.type === 'kana-embed-active') {
             // Erster echter Spielzug → Safety-Timer disarmen, Runde laeuft.
             this.active = true;
@@ -1102,8 +1273,8 @@
 .kana-chip-row {
     display: flex; align-items: center; justify-content: center;
     flex-wrap: wrap; gap: 0.45rem;
-    min-height: 48px;                 /* CLS-Schutz: Zeile reserviert ihre Hoehe */
-    margin-bottom: 0.7rem;
+    min-height: 44px;                 /* CLS-Schutz: Zeile reserviert ihre Hoehe */
+    margin-bottom: 0.4rem;
 }
 .kana-chip {
     border: 1px solid var(--ink-300); background: #fff;
@@ -1133,6 +1304,63 @@
     transition: color .15s, border-color .15s;
 }
 .kana-chip-more:hover { color: var(--shu); border-bottom-color: var(--shu); text-decoration: none; }
+
+/* Reihen-Pills (Mehrfachauswahl; die Anzahl in den Chips folgt der Auswahl) */
+.kana-row-row {
+    display: flex; align-items: center; justify-content: center;
+    flex-wrap: wrap; gap: 0.3rem;
+    min-height: 34px;                 /* CLS-Schutz */
+    margin-bottom: 0.4rem;
+}
+.kana-rowpill {
+    border: 1px solid var(--ink-300); background: #fff;
+    color: var(--ink-600); border-radius: 999px;
+    padding: 0.26rem 0.55rem;
+    font: 600 0.72rem 'Geist Mono', ui-monospace, monospace;
+    cursor: pointer;
+    transition: background-color .15s, border-color .15s, color .15s;
+}
+.kana-rowpill:hover:not(:disabled) { border-color: var(--shu); color: var(--shu); }
+.kana-rowpill:focus-visible { outline: 2px solid var(--shu); outline-offset: 2px; }
+.kana-rowpill.is-active { background: var(--shu); border-color: var(--shu); color: #fff; }
+.kana-rowpill--all.is-active { background: var(--kon); border-color: var(--kon); color: #fff; }
+.kana-rowpill.is-confirm { background: #fff; border-color: var(--shu-deep); color: var(--shu-deep); font-weight: 700; }
+.kana-rowpill:disabled { opacity: .4; cursor: not-allowed; }
+
+/* Modus-Segment (Schreiben/Lesen/Blind) + "Alle Optionen"-Link */
+.kana-mode-row {
+    display: flex; align-items: center; justify-content: center;
+    flex-wrap: wrap; gap: 0.5rem 1.1rem;
+    min-height: 38px;                 /* CLS-Schutz */
+    margin-bottom: 0.6rem;
+}
+.kana-mode-seg {
+    display: inline-flex; gap: 3px;
+    background: rgba(255,255,255,.6);
+    border: 1px solid var(--ink-200);
+    border-radius: 999px;
+    padding: 3px;
+}
+.kana-mode-seg button {
+    border: 0; background: transparent; cursor: pointer;
+    padding: 0.3rem 0.8rem; border-radius: 999px;
+    font: 600 0.78rem 'Inter', sans-serif;
+    color: var(--ink-600);
+    transition: background-color .15s, color .15s, box-shadow .15s;
+}
+.kana-mode-seg button:hover:not(:disabled) { color: var(--shu); }
+.kana-mode-seg button:focus-visible { outline: 2px solid var(--shu); outline-offset: 2px; }
+.kana-mode-seg button.is-active { background: #fff; color: var(--shu-deep); box-shadow: 0 1px 2px rgba(28,26,23,.10); }
+.kana-mode-seg button.is-confirm { color: var(--shu-deep); font-weight: 700; }
+.kana-mode-seg button:disabled { opacity: .4; cursor: not-allowed; }
+
+/* Gemeinsamer Confirm-Hinweis (alle Steuer-Ebenen) */
+.kana-confirm-hint {
+    margin: -0.2rem 0 0.5rem;
+    text-align: center;
+    font: 600 0.8rem 'Inter', sans-serif;
+    color: var(--shu-deep);
+}
 
 /* SSR-Begleitsatz + Bestzeit unter der Buehne */
 .kana-hero-note {
@@ -1574,20 +1802,24 @@
     .home-h1 { font-size: clamp(2.4rem, 9vw, 3.1rem); line-height: 1.06; letter-spacing: -0.02em; }
 
     /* Gast-Hero (Spielbuehne): Fold maximieren — Eyebrow weg (~40px), H1
-       kompakter; so liegt die Launch-Karte auch auf 667px-Geraeten komplett
-       im ersten Viewport. */
+       kompakter, Sub auf den ersten Satz gekuerzt; so liegt die Launch-Karte
+       auch auf 667px-Geraeten im ersten Viewport. */
     .home-eyebrow-row--guest { display: none; }
+    .home-sub-more { display: none; }
     .home-hero--game { padding-top: 2.25rem; }
     .home-h1--game { font-size: clamp(1.9rem, 8vw, 2.4rem); }
     .kana-hero-game { margin-top: 1.2rem; }
-    /* Chips: eine horizontal scrollbare Zeile statt Umbruch */
-    .kana-chip-row {
+    /* Chips + Reihen-Pills: je eine horizontal scrollbare Zeile statt Umbruch
+       (haelt den Fold kompakt — die Launch-Karte muss im ersten Viewport bleiben) */
+    .kana-chip-row, .kana-row-row {
         flex-wrap: nowrap; justify-content: flex-start;
         overflow-x: auto; -webkit-overflow-scrolling: touch;
         padding-bottom: 2px;
     }
-    .kana-chip { white-space: nowrap; flex-shrink: 0; }
+    .kana-chip, .kana-rowpill { white-space: nowrap; flex-shrink: 0; }
     .kana-chip-more { flex-shrink: 0; white-space: nowrap; }
+    .kana-mode-row { flex-wrap: nowrap; gap: 0.5rem; min-height: 34px; }
+    .kana-mode-seg button { padding: 0.26rem 0.6rem; font-size: 0.74rem; }
     .kana-bridge { flex-direction: column; align-items: flex-start; gap: 0.55rem; }
 
     /* Prosa-Pitch mobil ausblenden (sein Inhalt steht im USP-Streifen und im

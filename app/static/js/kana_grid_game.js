@@ -872,7 +872,8 @@ function kanaSettings() {
         selectedRows: [],          // leer = alle Reihen
         includeDakuten: true,
         weakOnly: false,
-        limit: 20,
+        // KEIN limit mehr: die Anzahl richtet sich nach der Auswahl
+        // (Reihen x Schrift) — der Slider ist entfallen.
         availableRows: Object.keys(PRACTICE_ROW_LABELS).map(k => ({ key: k, label: PRACTICE_ROW_LABELS[k] })),
         previewCount: null,        // null = noch unbekannt / Fehler
         previewLoading: false,
@@ -890,11 +891,9 @@ function kanaSettings() {
                     // weakOnly wird BEWUSST NICHT aus localStorage geladen: der
                     // "Nur schwache Karten"-Filter ist eine bewusste Einmal-Wahl
                     // pro Sitzung und startet immer auf "aus". Sonst bliebe er
-                    // (z.B. nach dem "Schwache 10"-Schnellstart) dauerhaft an und
-                    // liesse sich auf Mobile kaum wiederfinden/abschalten.
-                    if (Number.isFinite(saved.limit)) this.limit = Math.min(50, Math.max(5, saved.limit));
-                } else if (window.matchMedia && window.matchMedia('(max-width: 767px)').matches) {
-                    this.limit = 10;   // kleinerer Default auf Mobile
+                    // (z.B. nach dem "Schwache Karten"-Schnellstart) dauerhaft an
+                    // und liesse sich auf Mobile kaum wiederfinden/abschalten.
+                    // (Ein evtl. altes saved.limit wird ignoriert — Slider entfallen.)
                 }
             } catch (e) { /* localStorage nicht verfuegbar — Defaults behalten */ }
             this.refreshPreview();
@@ -925,18 +924,19 @@ function kanaSettings() {
                 // einer frueheren Version wird durch dieses Ueberschreiben entfernt.
                 localStorage.setItem(LS_KEY, JSON.stringify({
                     mode: this.mode, schrift: this.schrift, selectedRows: this.selectedRows,
-                    includeDakuten: this.includeDakuten, limit: Number(this.limit),
+                    includeDakuten: this.includeDakuten,
                 }));
             } catch (e) { /* still ignorieren */ }
         },
 
         buildParams() {
+            // Bewusst OHNE limit: gespielt wird genau die Auswahl (Server
+            // liefert ohne limit-Param alles Gewaehlte).
             const params = new URLSearchParams({
                 mode: this.mode,
                 schrift: this.schrift,
                 dakuten: this.includeDakuten ? 'true' : 'false',
                 weak_only: this.weakOnly ? 'true' : 'false',
-                limit: String(this.limit),
             });
             if (this.selectedRows.length > 0) params.set('rows', this.selectedRows.join(','));
             return params;
@@ -990,9 +990,9 @@ function kanaSettings() {
             // gespeicherten Einstellungen mutieren/persistieren (wie startDaily/
             // startConfusion). Sonst bliebe weakOnly in localStorage haengen und
             // die "Nur schwache Karten"-Option waere bei jedem Besuch wieder an.
+            // Kein limit: geuebt werden ALLE schwachen Karten.
             const params = this.buildParams();
             params.set('weak_only', 'true');
-            params.set('limit', '10');
             window.location.href = '/practice/kana/spiel?' + params.toString();
         },
     };
@@ -1030,8 +1030,8 @@ function kanaGameView() {
                 const params = new URLSearchParams({
                     mode: this.mode,
                     schrift: p.get('schrift') || 'both',
-                    limit: p.get('limit') || '20',
                 });
+                if (p.get('limit')) params.set('limit', p.get('limit'));
                 url = '/api/practice/kana/confusion?' + params.toString();
             } else if (this.isDaily) {
                 url = '/api/practice/kana/daily-challenge';
@@ -1044,13 +1044,14 @@ function kanaGameView() {
                     // ohne Login): voller Referenz-Scope ueber den public-Endpoint
                     // (Schrift/Reihen/Dakuten frei waehlbar), aber ohne User-State —
                     // weak_only und SRS-Sortierung gibt es nur eingeloggt.
+                    // Kein limit-Default: gespielt wird genau die Auswahl.
                     const params = new URLSearchParams({
                         mode: this.mode,
                         schrift: p.get('schrift') || 'hiragana',
                         dakuten: p.get('dakuten') || 'false',
-                        limit: p.get('limit') || '50',
                     });
                     if (p.get('rows')) params.set('rows', p.get('rows'));
+                    if (p.get('limit')) params.set('limit', p.get('limit'));
                     url = '/api/practice/kana/session/public?' + params.toString();
                 } else {
                     const params = new URLSearchParams({
@@ -1058,9 +1059,9 @@ function kanaGameView() {
                         schrift: p.get('schrift') || 'both',
                         dakuten: p.get('dakuten') || 'true',
                         weak_only: p.get('weak_only') || 'false',
-                        limit: p.get('limit') || '20',
                     });
                     if (p.get('rows')) params.set('rows', p.get('rows'));
+                    if (p.get('limit')) params.set('limit', p.get('limit'));
                     url = '/api/practice/kana/session?' + params.toString();
                 }
             }
