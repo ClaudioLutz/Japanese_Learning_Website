@@ -32,8 +32,11 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
 
 {% block styles %}
 <style>
-    /* Romaji-Toggle: blendet Front-Side-Romaji aus wenn html.hide-front-romaji */
-    html.hide-front-romaji .front-romaji { display: none !important; }
+    /* Romaji-Toggle: blendet ALLE Front-Side-Romaji-Zeilen aus wenn html.hide-front-romaji.
+       Muss jede Romaji-Variante der Vorderseite treffen — sonst wirkt der Toggle auf
+       manchen Kartentypen scheinbar gar nicht (z.B. Grammatik-Cloze trug nur .cloze-romaji). */
+    html.hide-front-romaji .front-romaji,
+    html.hide-front-romaji .cloze-romaji { display: none !important; }
 
     /* ══════════════════════════════════════════════════════════════════
        VIEWPORT-LOCK
