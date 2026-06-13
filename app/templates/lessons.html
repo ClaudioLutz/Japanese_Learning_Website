@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% set admin_edit_url = url_for('routes.admin_manage_lessons') %}
 
-{% block title %}Japanisch-Lektionen N5/N4 — Vokabeln, Kanji, Grammatik & Quiz{% endblock %}
-{% block meta_description %}Alle Japanisch-Lektionen im Überblick — JLPT N5 und N4 strukturiert: Hiragana, Katakana, Kanji, Vokabeln, Grammatik und interaktive Quiz. Filter nach Level und Thema, auf Deutsch erklärt.{% endblock %}
+{% block title %}Japanisch-Lektionen N5 — Vokabeln, Kanji, Grammatik & Quiz{% endblock %}
+{% block meta_description %}Der JLPT-N5-Lehrplan auf einen Blick — Hiragana, Katakana, Kanji, Vokabeln, Grammatik und interaktive Quiz, nach Themen geordnet und auf Deutsch erklärt. Gratis starten.{% endblock %}
 
 {% block structured_data %}
 {{ super() }}
@@ -53,19 +53,84 @@
 {% block content %}
 <div class="lessons-page" x-data="lessonsPage()">
 
-  {# ─────────── Hero ─────────── #}
+  {% if show_status %}
+  {# ─────────── Weiter-lernen (eingeloggt) — Dashboard statt Katalog ─────────── #}
+  <section class="lp-continue" aria-label="Weiter lernen">
+    {% if continue_lesson %}
+    <div class="lp-continue-main">
+      <p class="lp-continue-eyebrow">{% if total_done == 0 %}Leg los{% else %}Weiter lernen{% endif %}</p>
+      <h1 class="lp-continue-title">{{ continue_lesson.title }}</h1>
+      <p class="lp-continue-cat">
+        {% if continue_category %}{{ continue_category }}{% endif %}
+        {% if continue_lesson.status == 'started' %} · {{ continue_lesson.progress_percentage }}% erledigt{% else %} · noch nicht begonnen{% endif %}
+      </p>
+      <div class="lp-continue-actions">
+        <a href="{{ url_for('routes.view_lesson', lesson_id=continue_lesson.id) }}" class="lp-continue-cta">
+          {% if continue_lesson.status == 'started' %}Weiterlernen{% else %}Lektion starten{% endif %} →
+        </a>
+        {% if due_count > 0 %}
+        <a href="{{ url_for('srs.review_page') }}" class="lp-continue-secondary">↻ {{ due_count }} fällig wiederholen</a>
+        {% endif %}
+      </div>
+    </div>
+    {% else %}
+    <div class="lp-continue-main">
+      <p class="lp-continue-eyebrow">Stark!</p>
+      <h1 class="lp-continue-title">Alle Lektionen abgeschlossen 🎉</h1>
+      <p class="lp-continue-cat">Halte dein Wissen mit Wiederholungen frisch.</p>
+      <div class="lp-continue-actions">
+        <a href="{{ url_for('srs.review_page') }}" class="lp-continue-cta">
+          {% if due_count > 0 %}↻ {{ due_count }} Wiederholungen{% else %}Zur Wiederholung{% endif %} →
+        </a>
+      </div>
+    </div>
+    {% endif %}
+
+    {# Stat-Schiene: Gesamtfortschritt, Streak, Fällig #}
+    <div class="lp-continue-stats">
+      <div class="lp-stat">
+        <span class="lp-stat-num">{{ total_done }}<span class="lp-stat-den">/{{ page_lessons|length }}</span></span>
+        <span class="lp-stat-label">Lektionen</span>
+        <div class="lp-progress" role="img" aria-label="{{ total_done }} von {{ page_lessons|length }} Lektionen abgeschlossen">
+          <div class="lp-progress-fill" style="width: {{ (100 * total_done / page_lessons|length)|round if page_lessons|length else 0 }}%;"></div>
+        </div>
+      </div>
+      <div class="lp-stat">
+        <span class="lp-stat-num">🔥 {{ current_streak }}</span>
+        <span class="lp-stat-label">{% if current_streak == 1 %}Tag{% else %}Tage{% endif %} Serie</span>
+      </div>
+      <div class="lp-stat">
+        <span class="lp-stat-num">↻ {{ due_count }}</span>
+        <span class="lp-stat-label">fällig</span>
+      </div>
+    </div>
+  </section>
+  {% else %}
+  {# ─────────── Gast-Hero — Gratis-Köder prominent ─────────── #}
   <header class="lp-hero">
-    <h1 class="lp-title">Japanisch lernen — Alle Lektionen</h1>
+    <h1 class="lp-title">Japanisch lernen — der N5-Lehrplan</h1>
     <p class="lp-sub">
-      JLPT-strukturiert: Hiragana, Katakana, Kanji, Vokabeln, Grammatik und Quiz.
+      Strukturiert von Hiragana bis zu ersten Sätzen, auf Deutsch erklärt.
       <span class="lp-stats">
-        <strong>{{ page_lessons|length }}</strong> Lektion{% if page_lessons|length != 1 %}en{% endif %} ·
-        <strong>{{ page_categories|length }}</strong> Kategorien
+        <strong>{{ page_lessons|length }}</strong> Lektion{% if page_lessons|length != 1 %}en{% endif %} in
+        <strong>{{ page_categories|length }}</strong> Themen
       </span>
     </p>
+    <div class="lp-hero-actions">
+      {% if first_free_lesson %}
+      <a href="{{ url_for('routes.view_lesson', lesson_id=first_free_lesson.id) }}" class="lp-continue-cta">
+        Gratis starten — {{ total_free }} Lektion{% if total_free != 1 %}en{% endif %} →
+      </a>
+      {% else %}
+      <a href="{{ url_for('routes.register') }}" class="lp-continue-cta">Kostenlos starten →</a>
+      {% endif %}
+      <a href="{{ url_for('bundle.n5_bundle') }}" class="lp-hero-secondary">Alles freischalten · CHF 9.90</a>
+    </div>
   </header>
+  {% endif %}
 
-  {# ─────────── Bundle-Banner (C1) — persistenter No-Brainer-Anker ─────────── #}
+  {# ─────────── Bundle-Anker (nur Nicht-Käufer / Gäste) ─────────── #}
+  {% if show_bundle_hint %}
   <div class="lp-bundle-banner" role="region" aria-label="N5 Komplett — Bundle-Hinweis">
     <span class="lp-bundle-icon" aria-hidden="true">⚡</span>
     <p class="lp-bundle-text">
@@ -74,10 +139,10 @@
     </p>
     <a href="{{ url_for('bundle.n5_bundle') }}" class="lp-bundle-cta">N5 Komplett ansehen →</a>
   </div>
+  {% endif %}
 
-  {# ─────────── Filter Bar ─────────── #}
-  <section class="lp-filterbar" aria-label="Filter und Sortierung">
-    {# Suche #}
+  {# ─────────── Filterleiste (abgespeckt) ─────────── #}
+  <section class="lp-filterbar" aria-label="Filter">
     <div class="lp-search">
       <i class="fas fa-search lp-search-icon" aria-hidden="true"></i>
       <input type="search"
@@ -95,236 +160,118 @@
       </button>
     </div>
 
-    {# JLPT Level Pills #}
-    {% if jlpt_levels %}
-    <div class="lp-pills" role="group" aria-label="JLPT Level">
-      <button type="button"
-              class="lp-pill"
-              :class="jlpt === 'all' && 'is-active'"
-              @click="jlpt='all'; apply();">Alle</button>
-      {% for level in jlpt_levels %}
-      <button type="button"
-              class="lp-pill"
-              :class="jlpt === '{{ level }}' && 'is-active'"
-              @click="jlpt='{{ level }}'; apply();">N{{ level }}</button>
-      {% endfor %}
-    </div>
-    {% endif %}
-
-    {# Free/Paid Toggle #}
     <div class="lp-pills" role="group" aria-label="Verfügbarkeit">
-      <button type="button"
-              class="lp-pill"
-              :class="access === 'all' && 'is-active'"
-              @click="access='all'; apply();">Alle</button>
-      <button type="button"
-              class="lp-pill lp-pill-free"
-              :class="access === 'free' && 'is-active'"
-              @click="access='free'; apply();">🆓 Gratis</button>
-      <button type="button"
-              class="lp-pill lp-pill-paid"
-              :class="access === 'paid' && 'is-active'"
-              @click="access='paid'; apply();">⭐ Premium</button>
+      <button type="button" class="lp-pill" :class="access === 'all' && 'is-active'" @click="access='all'; apply();">Alle</button>
+      <button type="button" class="lp-pill lp-pill-free" :class="access === 'free' && 'is-active'" @click="access='free'; apply();">🆓 Gratis</button>
+      <button type="button" class="lp-pill lp-pill-paid" :class="access === 'paid' && 'is-active'" @click="access='paid'; apply();">⭐ Premium</button>
     </div>
 
     {% if show_status %}
-    {# Lernstatus-Filter (nur eingeloggt) — macht "Noch offen" sofort auffindbar #}
     <div class="lp-pills" role="group" aria-label="Lernstatus">
-      <button type="button"
-              class="lp-pill"
-              :class="status === 'all' && 'is-active'"
-              @click="status='all'; apply();">Alle</button>
-      <button type="button"
-              class="lp-pill lp-pill-open"
-              :class="status === 'open' && 'is-active'"
-              @click="status='open'; apply();">📭 Noch offen <span class="lp-pill-num">{{ total_open }}</span></button>
-      <button type="button"
-              class="lp-pill lp-pill-done"
-              :class="status === 'done' && 'is-active'"
-              @click="status='done'; apply();">✅ Abgeschlossen <span class="lp-pill-num">{{ total_done }}</span></button>
+      <button type="button" class="lp-pill" :class="status === 'all' && 'is-active'" @click="status='all'; apply();">Alle</button>
+      <button type="button" class="lp-pill lp-pill-open" :class="status === 'open' && 'is-active'" @click="status='open'; apply();">📭 Noch offen <span class="lp-pill-num">{{ total_open }}</span></button>
+      <button type="button" class="lp-pill lp-pill-done" :class="status === 'done' && 'is-active'" @click="status='done'; apply();">✅ Abgeschlossen <span class="lp-pill-num">{{ total_done }}</span></button>
     </div>
     {% endif %}
 
-    {# Sort + View Toggle (rechts) #}
-    <div class="lp-controls">
-      <select class="lp-sort"
-              x-model="sort"
-              @change="apply()"
-              aria-label="Sortierung">
-        <option value="newest">Neueste zuerst</option>
-        <option value="alpha">A–Z</option>
-        <option value="category">Nach Kategorie</option>
-      </select>
-      <div class="lp-view" role="group" aria-label="Ansicht">
-        <button type="button"
-                class="lp-view-btn"
-                :class="view === 'grid' && 'is-active'"
-                @click="view='grid'"
-                aria-label="Raster-Ansicht"
-                title="Raster">
-          <i class="fas fa-th-large"></i>
-        </button>
-        <button type="button"
-                class="lp-view-btn"
-                :class="view === 'list' && 'is-active'"
-                @click="view='list'"
-                aria-label="Listen-Ansicht"
-                title="Liste">
-          <i class="fas fa-list"></i>
-        </button>
-      </div>
-    </div>
-
-    {# Reset (nur sichtbar wenn Filter aktiv) #}
-    <button type="button"
-            class="lp-reset"
-            x-show="hasActiveFilters()"
-            x-transition.opacity
-            @click="reset()">
+    <button type="button" class="lp-reset" x-show="hasActiveFilters()" x-transition.opacity @click="reset()">
       <i class="fas fa-times-circle"></i> Filter zurücksetzen
     </button>
   </section>
 
-  {# ─────────── Active Category Indicator ─────────── #}
-  <div class="lp-active-category"
-       x-show="categoryId"
-       x-transition.opacity>
-    <span>Gefiltert nach Kategorie:</span>
-    <strong x-text="activeCategoryName()"></strong>
-    <button type="button" @click="categoryId=null; apply();" aria-label="Kategorie-Filter entfernen">
-      <i class="fas fa-times"></i>
-    </button>
+  {# ─────────── Lehrplan — ein Browse-System, nach Thema gruppiert ─────────── #}
+  <div class="lp-section-head">
+    <h2 class="lp-h2">Lehrplan</h2>
+    <span class="lp-count" x-text="countLabel()"></span>
   </div>
 
-  {# ─────────── Kategorien ─────────── #}
-  {% if page_categories %}
-  <section class="lp-section" x-show="!categoryId" x-transition.opacity>
-    <h2 class="lp-h2">Kategorien</h2>
-    <ul class="lp-cat-grid list-unstyled">
-      {% for cat in page_categories %}
-      <li class="lp-cat-card"
-          x-data="{ open: false }"
-          data-cat-id="{{ cat.id }}"
-          data-jlpt="{{ cat.jlpt_level or '' }}"
-          data-name="{{ cat.name|lower }}"
-          x-show="catVisible({{ cat.id }}, '{{ cat.jlpt_level or '' }}', '{{ cat.name|lower }}')"
-          x-transition.opacity
-          style="border-top: 3px solid {{ cat.color_code or '#1F2A44' }};">
-        <button type="button"
-                class="lp-cat-btn"
-                @click="categoryId={{ cat.id }}; apply();"
-                aria-label="Lektionen in {{ cat.name }} anzeigen">
-          {% if cat.icon_emoji %}
-          <span class="lp-cat-icon" aria-hidden="true">{{ cat.icon_emoji }}</span>
-          {% endif %}
-          <span class="lp-cat-body">
-            <span class="lp-cat-name">{{ cat.name }}</span>
-            {% if cat.description %}
-            <small class="lp-cat-desc" :class="{'is-mobile-open': open}">{{ cat.description }}</small>
-            {% endif %}
-            <small class="lp-cat-count"
-                   :class="{'is-mobile-open': open}"
-                   data-total="{{ cat.lesson_count }}"
-                   data-free="{{ cat.free_count }}"
-                   x-text="catCountLabel({{ cat.lesson_count }}, {{ cat.free_count }})">
-              {{ cat.lesson_count }} Lektion{% if cat.lesson_count != 1 %}en{% endif %}
-            </small>
-          </span>
-        </button>
-        <button type="button"
-                class="lp-cat-mobile-toggle"
-                @click.stop="open = !open"
-                :aria-expanded="open"
-                aria-label="Details anzeigen">
-          <i class="fas" :class="open ? 'fa-chevron-up' : 'fa-chevron-down'" aria-hidden="true"></i>
-        </button>
-      </li>
-      {% endfor %}
-    </ul>
-  </section>
-  {% endif %}
-
-  {# ─────────── Lektionen ─────────── #}
-  <section class="lp-section">
-    <div class="lp-section-head">
-      <h2 class="lp-h2">
-        <span x-show="!categoryId">Lektionen</span>
-        <span x-show="categoryId" x-text="activeCategoryName()"></span>
-      </h2>
-      <span class="lp-count" x-text="countLabel()"></span>
-    </div>
-
-    {% if page_lessons %}
-    <ul class="lp-lesson-list list-unstyled" :class="'lp-' + view">
-      {% for lesson in page_lessons %}
-      <li class="lp-lesson"
-          data-id="{{ lesson.id }}"
-          data-title="{{ lesson.title|lower }}"
-          data-desc="{{ lesson.description|lower }}"
-          data-category-id="{{ lesson.category_id or '' }}"
-          data-category-name="{{ (lesson.category_name or '')|lower }}"
-          data-jlpt="{{ lesson.category_jlpt_level or '' }}"
-          data-free="{{ '1' if lesson.is_free else '0' }}"
-          data-created="{{ lesson.created_at.isoformat() if lesson.created_at else '' }}"
-          data-status="{{ lesson.status }}"
-          data-progress="{{ lesson.progress_percentage }}"
-          x-show="lessonVisible($el)"
-          x-transition.opacity>
-        <a href="{{ url_for('routes.view_lesson', lesson_id=lesson.id) }}" class="lp-lesson-card">
-          {% if lesson.thumbnail_url %}
-          <div class="lp-lesson-thumb">
-            <img src="{{ lesson.thumbnail_url }}" alt="" loading="lazy" decoding="async">
+  <div class="lp-curriculum">
+    {% for cat in page_categories %}
+    <section class="lp-cat-group"
+             data-cat-id="{{ cat.id }}"
+             x-show="catVisible($el)"
+             x-transition.opacity>
+      <header class="lp-cat-group-head" style="border-left: 3px solid {{ cat.color_code or 'var(--kon)' }};">
+        <div class="lp-cat-group-title">
+          {% if cat.icon_emoji %}<span class="lp-cat-group-icon" aria-hidden="true">{{ cat.icon_emoji }}</span>{% endif %}
+          <div>
+            <h2 class="lp-h2">{{ cat.name }}</h2>
+            {% if cat.description %}<p class="lp-cat-group-desc">{{ cat.description }}</p>{% endif %}
+          </div>
+        </div>
+        <div class="lp-cat-group-meta">
+          {% if show_status %}
+          <span class="lp-cat-group-count">{{ cat.done_count }}/{{ cat.lesson_count }} fertig</span>
+          <div class="lp-progress lp-progress-sm" role="img" aria-label="{{ cat.done_count }} von {{ cat.lesson_count }} abgeschlossen">
+            <div class="lp-progress-fill" style="width: {{ (100 * cat.done_count / cat.lesson_count)|round if cat.lesson_count else 0 }}%;"></div>
           </div>
           {% else %}
-          <div class="lp-lesson-thumb lp-lesson-thumb-placeholder" aria-hidden="true">
-            <i class="fas fa-book-open"></i>
-          </div>
+          <span class="lp-cat-group-count">{{ cat.lesson_count }} Lektion{% if cat.lesson_count != 1 %}en{% endif %}{% if cat.free_count %} · {{ cat.free_count }} gratis{% endif %}</span>
           {% endif %}
-          <div class="lp-lesson-body">
-            <div class="lp-lesson-meta">
-              {% if lesson.category_jlpt_level %}
-              <span class="lp-badge lp-badge-jlpt">N{{ lesson.category_jlpt_level }}</span>
-              {% endif %}
-              {% if lesson.category_name %}
-              <span class="lp-badge lp-badge-cat">{{ lesson.category_name }}</span>
-              {% endif %}
-              {% if lesson.is_free %}
-              <span class="lp-badge lp-badge-free">🆓 Gratis</span>
-              {% else %}
-              <span class="lp-badge lp-badge-paid">⭐ {{ "%.2f"|format(lesson.price) }} CHF</span>
-              {% endif %}
-              {% if show_status %}
-                {% if lesson.status == 'done' %}
-                <span class="lp-badge lp-badge-done">✅ Fertig</span>
-                {% elif lesson.status == 'started' %}
-                <span class="lp-badge lp-badge-progress">▸ {{ lesson.progress_percentage }}%</span>
-                {% endif %}
-              {% endif %}
-            </div>
-            <h3 class="lp-lesson-title">{{ lesson.title }}</h3>
-            {% if lesson.description %}
-            <p class="lp-lesson-desc">{{ lesson.description|truncate(140) }}</p>
-            {% endif %}
-            {% if lesson.estimated_duration %}
-            <div class="lp-lesson-foot">
-              <small><i class="far fa-clock"></i> {{ lesson.estimated_duration }} Min</small>
-            </div>
-            {% endif %}
-          </div>
-        </a>
-      </li>
-      {% endfor %}
-    </ul>
-    {% endif %}
+        </div>
+      </header>
 
-    {# Empty State #}
+      <ul class="lp-lesson-list list-unstyled">
+        {% for lesson in cat.lessons %}
+        <li class="lp-lesson"
+            data-id="{{ lesson.id }}"
+            data-title="{{ lesson.title|lower }}"
+            data-desc="{{ lesson.description|lower }}"
+            data-category-name="{{ (lesson.category_name or '')|lower }}"
+            data-free="{{ '1' if lesson.is_free else '0' }}"
+            data-status="{{ lesson.status }}"
+            x-show="lessonVisible($el)"
+            x-transition.opacity>
+          <a href="{{ url_for('routes.view_lesson', lesson_id=lesson.id) }}" class="lp-lesson-card">
+            {% if lesson.thumbnail_url %}
+            <div class="lp-lesson-thumb">
+              <img src="{{ lesson.thumbnail_url }}" alt="" loading="lazy" decoding="async">
+            </div>
+            {% else %}
+            <div class="lp-lesson-thumb lp-lesson-thumb-placeholder" aria-hidden="true">
+              <i class="fas fa-book-open"></i>
+            </div>
+            {% endif %}
+            <div class="lp-lesson-body">
+              <div class="lp-lesson-meta">
+                {% if lesson.is_free %}
+                <span class="lp-badge lp-badge-free">🆓 Gratis</span>
+                {% else %}
+                <span class="lp-badge lp-badge-locked" title="Im N5-Komplett enthalten">🔒 im Bundle</span>
+                {% endif %}
+                {% if show_status %}
+                  {% if lesson.status == 'done' %}
+                  <span class="lp-badge lp-badge-done">✅ Fertig</span>
+                  {% elif lesson.status == 'started' %}
+                  <span class="lp-badge lp-badge-progress">▸ {{ lesson.progress_percentage }}%</span>
+                  {% endif %}
+                {% endif %}
+              </div>
+              <h3 class="lp-lesson-title">{{ lesson.title }}</h3>
+              {% if lesson.description %}
+              <p class="lp-lesson-desc">{{ lesson.description|truncate(140) }}</p>
+              {% endif %}
+              {% if lesson.estimated_duration %}
+              <div class="lp-lesson-foot">
+                <small><i class="far fa-clock"></i> {{ lesson.estimated_duration }} Min</small>
+              </div>
+              {% endif %}
+            </div>
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+    </section>
+    {% endfor %}
+
+    {# Empty State (Filter blendet alles aus) #}
     <div class="lp-empty" x-show="visibleLessonsCount() === 0" x-transition.opacity>
       <i class="far fa-folder-open lp-empty-icon"></i>
       <h3>Keine Lektionen gefunden</h3>
       <p>Versuche andere Filter oder setze die Auswahl zurück.</p>
       <button type="button" class="btn btn-primary" @click="reset()">Filter zurücksetzen</button>
     </div>
-  </section>
+  </div>
 
   {# Back to Top #}
   <button id="backToTop"
@@ -337,7 +284,8 @@
 
 <style>
 /* ════════════════════════════════════════════════════
-   LESSONS PAGE — modern, SSR + Client-Filter
+   LESSONS PAGE — Dashboard (eingeloggt) + Lehrplan-Browse
+   Ink-on-Washi, SSR + Client-Filter (Alpine)
    ════════════════════════════════════════════════════ */
 .lessons-page {
   max-width: 1152px;
@@ -345,12 +293,8 @@
   padding: 2.5rem 1.5rem 4rem;
 }
 
-/* Hero — typografisch, kein Card-Background (Compass-Redesign Phase 3) */
-.lp-hero {
-  padding: 0 0 2rem;
-  margin-bottom: 2rem;
-  text-align: center;
-}
+/* ── Gast-Hero ── */
+.lp-hero { padding: 0 0 1.5rem; margin-bottom: 1.75rem; text-align: center; }
 .lp-title {
   font-family: 'Geist', 'Inter', sans-serif;
   font-size: clamp(2rem, 4vw + 1rem, 3rem);
@@ -360,28 +304,82 @@
   letter-spacing: -0.03em;
   line-height: 1.1;
 }
-.lp-sub {
-  color: var(--ink-600);
-  font-size: 1.0625rem;
-  margin: 0 auto;
-  max-width: 640px;
-  line-height: 1.6;
-}
+.lp-sub { color: var(--ink-600); font-size: 1.0625rem; margin: 0 auto; max-width: 640px; line-height: 1.6; }
 .lp-stats { display: inline-block; margin-left: 0.5rem; color: var(--ink-500); font-size: 0.95rem; }
 .lp-stats strong { color: var(--kon); }
+.lp-hero-actions { display: flex; flex-wrap: wrap; gap: 0.7rem; justify-content: center; margin-top: 1.4rem; }
+.lp-hero-secondary {
+  color: var(--kon); font-weight: 600; font-size: 0.95rem; text-decoration: none;
+  padding: 0.7rem 1.2rem; border: 1px solid var(--ink-200); border-radius: 10px;
+  transition: border-color .15s, color .15s;
+}
+.lp-hero-secondary:hover { border-color: var(--shu); color: var(--shu); text-decoration: none; }
 
-/* Bundle-Banner (C1) — Sumi/Shu, analog bundle-hint auf der Home */
-.lp-bundle-banner {
-  display: flex;
+/* ── Weiter-lernen Dashboard (eingeloggt) ── */
+.lp-continue {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1.5rem 2rem;
   align-items: center;
-  gap: 1rem;
-  background: var(--kon-50);
-  border: 1px solid var(--kon-100);
-  border-left: 3px solid var(--shu);
-  border-radius: 12px;
-  padding: 1rem 1.25rem;
-  margin: 0 auto 1.5rem;
-  max-width: 760px;
+  background: linear-gradient(135deg, var(--washi), #fff);
+  border: 1px solid var(--ink-200);
+  border-left: 4px solid var(--shu);
+  border-radius: 16px;
+  padding: 1.6rem 1.75rem;
+  margin-bottom: 1.75rem;
+}
+.lp-continue-eyebrow {
+  font-family: 'Geist Mono', ui-monospace, monospace;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  font-size: 0.72rem; font-weight: 600; color: var(--shu);
+  margin: 0 0 0.35rem;
+}
+.lp-continue-title {
+  font-family: 'Geist', 'Inter', sans-serif;
+  font-size: clamp(1.4rem, 2.5vw + 0.6rem, 2rem);
+  font-weight: 600; color: var(--kon); margin: 0 0 0.3rem;
+  letter-spacing: -0.02em; line-height: 1.15;
+}
+.lp-continue-cat { color: var(--ink-600); font-size: 0.95rem; margin: 0 0 1rem; }
+.lp-continue-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; }
+.lp-continue-cta {
+  display: inline-block; background: var(--shu); color: #fff;
+  font-weight: 600; font-size: 1rem; padding: 0.7rem 1.4rem;
+  border-radius: 10px; text-decoration: none;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.15), 0 4px 14px rgba(184,74,0,.25);
+  transition: transform .15s, background .15s;
+}
+.lp-continue-cta:hover { background: #D85700; color: #fff; text-decoration: none; transform: translateY(-1px); }
+.lp-continue-secondary {
+  color: var(--shu); font-weight: 600; font-size: 0.9rem; text-decoration: none;
+  padding: 0.6rem 0.9rem; border-radius: 10px; border: 1px solid rgba(235,97,1,.3);
+  transition: background .15s;
+}
+.lp-continue-secondary:hover { background: rgba(235,97,1,.08); color: var(--shu); text-decoration: none; }
+
+.lp-continue-stats { display: flex; gap: 1.5rem; align-items: flex-start; }
+.lp-stat { display: flex; flex-direction: column; gap: 0.2rem; min-width: 84px; }
+.lp-stat-num { font-family: 'Geist', 'Inter', sans-serif; font-size: 1.5rem; font-weight: 600; color: var(--kon); line-height: 1; }
+.lp-stat-den { color: var(--ink-400); font-size: 1rem; font-weight: 500; }
+.lp-stat-label { font-size: 0.78rem; color: var(--ink-500); font-weight: 500; }
+
+.lp-progress { height: 6px; background: var(--ink-100); border-radius: 999px; overflow: hidden; margin-top: 0.4rem; }
+.lp-progress-fill { height: 100%; background: var(--matcha); border-radius: 999px; transition: width .3s; }
+.lp-progress-sm { width: 120px; margin-top: 0.3rem; }
+
+@media (max-width: 720px) {
+  .lp-continue { grid-template-columns: 1fr; padding: 1.3rem 1.25rem; }
+  .lp-continue-stats { width: 100%; justify-content: space-between; gap: 0.75rem; }
+  .lp-stat { min-width: 0; }
+  .lp-progress-sm { width: 100px; }
+}
+
+/* ── Bundle-Banner ── */
+.lp-bundle-banner {
+  display: flex; align-items: center; gap: 1rem;
+  background: var(--kon-50); border: 1px solid var(--kon-100);
+  border-left: 3px solid var(--shu); border-radius: 12px;
+  padding: 1rem 1.25rem; margin: 0 auto 1.5rem; max-width: 760px;
 }
 .lp-bundle-icon { font-size: 1.4rem; flex-shrink: 0; color: var(--shu); }
 .lp-bundle-text { flex: 1; margin: 0; color: var(--ink-700); font-size: 0.95rem; line-height: 1.5; }
@@ -389,9 +387,7 @@
 .lp-bundle-cta {
   color: var(--shu); font-weight: 600; font-size: 0.9rem;
   white-space: nowrap; text-decoration: none; flex-shrink: 0;
-  padding: 0.5rem 0.85rem;
-  border: 1px solid var(--shu);
-  border-radius: 8px;
+  padding: 0.5rem 0.85rem; border: 1px solid var(--shu); border-radius: 8px;
   transition: background-color .15s;
 }
 .lp-bundle-cta:hover { background: rgba(235,97,1,.08); color: var(--shu); text-decoration: none; }
@@ -400,528 +396,132 @@
   .lp-bundle-cta { align-self: stretch; text-align: center; }
 }
 
-/* Filter Bar — hairline-only */
+/* ── Filterleiste ── */
 .lp-filterbar {
-  background: #fff;
-  border: 1px solid var(--ink-200);
-  border-radius: 12px;
-  padding: 0.85rem 1rem;
-  box-shadow: none;
-  margin-bottom: 1.5rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  align-items: center;
+  background: #fff; border: 1px solid var(--ink-200); border-radius: 12px;
+  padding: 0.85rem 1rem; box-shadow: none; margin-bottom: 1.5rem;
+  display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center;
 }
-.lp-search {
-  position: relative;
-  flex: 1 1 220px;
-  min-width: 200px;
-}
-.lp-search-icon {
-  position: absolute;
-  left: 0.85rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #9ca3af;
-  pointer-events: none;
-}
+.lp-search { position: relative; flex: 1 1 220px; min-width: 200px; }
+.lp-search-icon { position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); color: #9ca3af; pointer-events: none; }
 .lp-search-input {
-  width: 100%;
-  border: 1px solid var(--ink-200);
-  border-radius: 999px;
-  padding: 0.55rem 2.4rem 0.55rem 2.4rem;
-  font-size: 0.95rem;
-  background: var(--ink-50);
-  color: var(--tetsu);
-  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+  width: 100%; border: 1px solid var(--ink-200); border-radius: 999px;
+  padding: 0.55rem 2.4rem; font-size: 0.95rem; background: var(--ink-50);
+  color: var(--tetsu); transition: border-color .15s, background .15s, box-shadow .15s;
 }
-.lp-search-input:focus {
-  outline: none;
-  background: #fff;
-  border-color: var(--shu);
-  box-shadow: 0 0 0 3px rgba(235,97,1,0.12);
-}
-.lp-search-clear {
-  position: absolute;
-  right: 0.6rem;
-  top: 50%;
-  transform: translateY(-50%);
-  background: transparent;
-  border: 0;
-  color: #6c757d;
-  cursor: pointer;
-  padding: 0.2rem 0.4rem;
-}
+.lp-search-input:focus { outline: none; background: #fff; border-color: var(--shu); box-shadow: 0 0 0 3px rgba(235,97,1,0.12); }
+.lp-search-clear { position: absolute; right: 0.6rem; top: 50%; transform: translateY(-50%); background: transparent; border: 0; color: #6c757d; cursor: pointer; padding: 0.2rem 0.4rem; }
 .lp-search-clear:hover { color: #1a1a1a; }
 
-.lp-pills {
-  display: inline-flex;
-  align-items: center;
-  background: var(--ink-100);
-  border-radius: 999px;
-  padding: 0.2rem;
-  gap: 0.15rem;
-}
+.lp-pills { display: inline-flex; align-items: center; background: var(--ink-100); border-radius: 999px; padding: 0.2rem; gap: 0.15rem; }
 .lp-pill {
-  border: 0;
-  background: transparent;
-  padding: 0.4rem 0.85rem;
-  border-radius: 999px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--ink-600);
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-  white-space: nowrap;
+  border: 0; background: transparent; padding: 0.4rem 0.85rem; border-radius: 999px;
+  font-size: 0.85rem; font-weight: 600; color: var(--ink-600); cursor: pointer;
+  transition: background .15s, color .15s; white-space: nowrap;
 }
 .lp-pill:hover { color: var(--sumi); }
-.lp-pill.is-active {
-  background: var(--shu);
-  color: #fff;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.15);
-}
+.lp-pill.is-active { background: var(--shu); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,.15); }
 .lp-pill-free.is-active { background: var(--matcha); color: #fff; }
 .lp-pill-paid.is-active { background: var(--kincha); color: #fff; }
 .lp-pill-open.is-active { background: var(--shu); color: #fff; }
 .lp-pill-done.is-active { background: var(--matcha); color: #fff; }
-.lp-pill-num {
-  display: inline-block;
-  margin-left: 0.3rem;
-  padding: 0 0.32rem;
-  border-radius: 999px;
-  font-size: 0.72rem;
-  background: rgba(0,0,0,.10);
-}
+.lp-pill-num { display: inline-block; margin-left: 0.3rem; padding: 0 0.32rem; border-radius: 999px; font-size: 0.72rem; background: rgba(0,0,0,.10); }
 .lp-pill.is-active .lp-pill-num { background: rgba(255,255,255,.22); }
 
-.lp-controls {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  margin-left: auto;
-}
-.lp-sort {
-  border: 1px solid var(--ink-200);
-  border-radius: 999px;
-  padding: 0.4rem 0.9rem;
-  background: var(--ink-50);
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--ink-700);
-  cursor: pointer;
-}
-.lp-sort:focus { outline: none; border-color: var(--shu); }
-.lp-view {
-  display: inline-flex;
-  background: var(--ink-100);
-  border-radius: 999px;
-  padding: 0.2rem;
-}
-.lp-view-btn {
-  border: 0;
-  background: transparent;
-  padding: 0.4rem 0.7rem;
-  border-radius: 999px;
-  color: var(--ink-500);
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-}
-.lp-view-btn:hover { color: var(--sumi); }
-.lp-view-btn.is-active {
-  background: #fff;
-  color: var(--shu);
-  box-shadow: 0 1px 2px rgba(28,26,23,.08);
-}
-
-.lp-reset {
-  flex-basis: 100%;
-  background: transparent;
-  border: 0;
-  color: var(--ink-500);
-  cursor: pointer;
-  font-size: 0.82rem;
-  text-align: left;
-  padding: 0.2rem 0;
-}
+.lp-reset { flex-basis: 100%; background: transparent; border: 0; color: var(--ink-500); cursor: pointer; font-size: 0.82rem; text-align: left; padding: 0.2rem 0; }
 .lp-reset:hover { color: var(--shu); }
 
-.lp-active-category {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: rgba(235,97,1,0.08);
-  border: 1px solid rgba(235,97,1,0.25);
-  color: var(--shu);
-  border-radius: 999px;
-  padding: 0.4rem 0.9rem;
-  font-size: 0.88rem;
-  margin-bottom: 1.25rem;
-}
-.lp-active-category strong { color: var(--shu); }
-.lp-active-category button {
-  background: transparent;
-  border: 0;
-  color: var(--shu);
-  cursor: pointer;
-  padding: 0.1rem 0.3rem;
-  border-radius: 999px;
-}
-.lp-active-category button:hover { background: rgba(235,97,1,0.15); }
-
-/* Sektionen */
-.lp-section { margin-bottom: 2.5rem; }
-.lp-section-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-}
+/* ── Sektions-Kopf ── */
+.lp-section-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1.25rem; }
 .lp-h2 {
-  font-family: 'Geist', 'Inter', sans-serif;
-  font-size: 1.35rem;
-  font-weight: 600;
-  color: var(--kon);
-  margin: 0;
-  letter-spacing: -0.01em;
+  font-family: 'Geist', 'Inter', sans-serif; font-size: 1.35rem; font-weight: 600;
+  color: var(--kon); margin: 0; letter-spacing: -0.01em;
 }
-.lp-count {
-  font-family: 'Geist Mono', ui-monospace, monospace;
-  font-size: 0.85rem; color: var(--ink-500);
+.lp-count { font-family: 'Geist Mono', ui-monospace, monospace; font-size: 0.85rem; color: var(--ink-500); }
+
+/* ── Lehrplan-Gruppen (Kategorie als Rückgrat) ── */
+.lp-cat-group { margin-bottom: 2.25rem; }
+.lp-cat-group-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  padding: 0.35rem 0 0.6rem 0.85rem; margin-bottom: 1rem;
+  border-bottom: 1px solid var(--ink-200);
+}
+.lp-cat-group-title { display: flex; align-items: center; gap: 0.75rem; min-width: 0; }
+.lp-cat-group-icon { font-size: 1.6rem; line-height: 1; flex-shrink: 0; }
+.lp-cat-group-head .lp-h2 { font-size: 1.15rem; }
+.lp-cat-group-desc { margin: 0.15rem 0 0; font-size: 0.85rem; color: var(--ink-500); line-height: 1.4; }
+.lp-cat-group-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 0.1rem; flex-shrink: 0; }
+.lp-cat-group-count { font-family: 'Geist Mono', ui-monospace, monospace; font-size: 0.8rem; color: var(--ink-600); font-weight: 600; white-space: nowrap; }
+@media (max-width: 575px) {
+  .lp-cat-group-desc { display: none; }
+  .lp-cat-group-head { flex-wrap: wrap; gap: 0.5rem; }
 }
 
-/* Kategorien-Grid */
-.lp-cat-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 0.85rem;
-  margin: 0;
-}
-.lp-cat-card {
-  background: #fff;
-  border: 1px solid var(--ink-200);
-  border-radius: 12px;
-  box-shadow: none;
-  overflow: hidden;
-  transition: border-color 0.15s, transform 0.15s, box-shadow 0.2s;
-}
-.lp-cat-card:hover {
-  border-color: var(--shu);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-card);
-}
-.lp-cat-card:hover .lp-cat-name { color: var(--shu); }
-.lp-cat-btn {
-  width: 100%;
-  border: 0;
-  background: transparent;
-  padding: 1.1rem;
-  display: flex;
-  gap: 0.85rem;
-  align-items: flex-start;
-  text-align: left;
-  cursor: pointer;
-}
-.lp-cat-icon {
-  font-size: 1.85rem;
-  line-height: 1;
-  flex-shrink: 0;
-}
-.lp-cat-body { display: flex; flex-direction: column; gap: 0.25rem; min-width: 0; flex: 1; }
-.lp-cat-name {
-  font-family: 'Geist', 'Inter', sans-serif;
-  font-weight: 600;
-  font-size: 1rem;
-  color: var(--kon);
-  line-height: 1.25;
-  transition: color 0.15s;
-}
-.lp-cat-desc {
-  font-size: 0.85rem;
-  color: var(--ink-600);
-  line-height: 1.45;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.lp-cat-count {
-  font-family: 'Geist Mono', ui-monospace, monospace;
-  font-size: 0.78rem;
-  color: var(--ink-500);
-  font-weight: 600;
-  margin-top: 0.2rem;
-}
-
-/* Mobile-Toggle: nur < 640px sichtbar; auf Desktop versteckt. */
-.lp-cat-mobile-toggle {
-  display: none;
-  width: 100%;
-  background: transparent;
-  border: 0;
-  border-top: 1px solid var(--ink-200);
-  padding: 0.5rem 0.85rem;
-  font-size: 0.78rem;
-  color: var(--ink-600);
-  font-weight: 500;
-  text-align: left;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.lp-cat-mobile-toggle:hover { color: var(--shu); }
-.lp-cat-mobile-toggle i { font-size: 0.7rem; transition: transform 0.15s; }
-
-@media (max-width: 640px) {
-  /* Listenansicht: Emoji wirkt wie Bulletpoint, Titel daneben, Chevron
-     rechts zum Ausklappen. Beim Ausklappen erscheinen Anzahl Lektionen
-     und Beschreibung unter dem Titel. Card-Klick filtert weiterhin. */
-  .lp-cat-grid {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-  .lp-cat-card {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: stretch;
-    border: 0;
-    border-radius: 0;
-    border-top: 1px solid var(--ink-200) !important;
-    box-shadow: none !important;
-    transform: none !important;
-  }
-  .lp-cat-card:last-child { border-bottom: 1px solid var(--ink-200); }
-  .lp-cat-btn {
-    padding: 0.7rem 0.5rem;
-    gap: 0.75rem;
-    align-items: center;
-    min-width: 0;
-  }
-  .lp-cat-icon { font-size: 1.5rem; }
-  .lp-cat-name { font-size: 0.95rem; line-height: 1.2; }
-
-  /* Beschreibung + Count standardmaessig versteckt, nur beim Ausklappen */
-  .lp-cat-desc,
-  .lp-cat-count { display: none !important; }
-  .lp-cat-desc.is-mobile-open {
-    display: -webkit-box !important;
-    margin-top: 0.35rem;
-    -webkit-line-clamp: 3;
-  }
-  .lp-cat-count.is-mobile-open {
-    display: block !important;
-    margin-top: 0.25rem;
-  }
-
-  /* Chevron-Toggle rechts in der Zeile */
-  .lp-cat-mobile-toggle {
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    border: 0;
-    border-left: 1px solid var(--ink-200);
-    background: transparent;
-    color: var(--ink-500);
-    padding: 0;
-    cursor: pointer;
-  }
-  .lp-cat-mobile-toggle i { font-size: 0.85rem; }
-  .lp-cat-mobile-toggle:hover { color: var(--shu); background: rgba(235,97,1,0.04); }
-}
-@media (min-width: 641px) {
-  .lp-cat-mobile-toggle { display: none !important; }
-}
-
-/* Lessons-Grid (default) */
+/* ── Lektions-Karten ── */
 .lp-lesson-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1rem;
-  margin: 0;
-}
-.lp-lesson-list.lp-list {
-  grid-template-columns: 1fr;
-  gap: 0.6rem;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem; margin: 0;
 }
 .lp-lesson-card {
-  display: flex;
-  flex-direction: column;
-  background: #fff;
-  border: 1px solid var(--ink-200);
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: none;
-  text-decoration: none;
-  color: inherit;
-  transition: border-color 0.15s, transform 0.15s, box-shadow 0.2s;
-  height: 100%;
+  display: flex; flex-direction: column; background: #fff;
+  border: 1px solid var(--ink-200); border-radius: 12px; overflow: hidden;
+  box-shadow: none; text-decoration: none; color: inherit; height: 100%;
+  transition: border-color .15s, transform .15s, box-shadow .2s;
 }
 .lp-lesson-card:hover {
-  border-color: var(--shu);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-card);
-  text-decoration: none;
-  color: inherit;
+  border-color: var(--shu); transform: translateY(-1px);
+  box-shadow: var(--shadow-card); text-decoration: none; color: inherit;
 }
 .lp-lesson-card:hover .lp-lesson-title { color: var(--shu); }
-.lp-lesson-thumb {
-  position: relative;
-  aspect-ratio: 16 / 9;
-  background: var(--ink-100);
-  overflow: hidden;
-  flex-shrink: 0;
-}
-.lp-lesson-thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
+.lp-lesson-thumb { position: relative; aspect-ratio: 16 / 9; background: var(--ink-100); overflow: hidden; flex-shrink: 0; }
+.lp-lesson-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .lp-lesson-thumb-placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--ink-400);
-  font-size: 2.5rem;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--ink-400); font-size: 2.5rem;
   background: linear-gradient(135deg, var(--washi), var(--kinari));
 }
-.lp-lesson-body {
-  padding: 0.85rem 1rem 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  flex: 1;
-}
-.lp-lesson-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.3rem;
-}
+.lp-lesson-body { padding: 0.85rem 1rem 1rem; display: flex; flex-direction: column; gap: 0.4rem; flex: 1; }
+.lp-lesson-meta { display: flex; flex-wrap: wrap; gap: 0.3rem; }
 .lp-badge {
-  display: inline-block;
-  font-family: 'Geist', 'Inter', sans-serif;
-  font-size: 0.7rem;
-  font-weight: 600;
-  padding: 0.18rem 0.55rem;
-  border-radius: 999px;
-  background: var(--ink-100);
-  color: var(--ink-700);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  display: inline-block; font-family: 'Geist', 'Inter', sans-serif;
+  font-size: 0.7rem; font-weight: 600; padding: 0.18rem 0.55rem; border-radius: 999px;
+  background: var(--ink-100); color: var(--ink-700); letter-spacing: 0.04em; text-transform: uppercase;
 }
-.lp-badge-jlpt { background: rgba(31,42,68,.08); color: var(--kon); }
-.lp-badge-cat { background: var(--ink-100); color: var(--ink-700); }
 .lp-badge-free { background: rgba(122,144,51,.12); color: var(--matcha); }
-.lp-badge-paid { background: rgba(199,128,45,.12); color: var(--kincha); }
+.lp-badge-locked { background: var(--ink-100); color: var(--ink-500); }
 .lp-badge-done { background: var(--matcha); color: #fff; }
 .lp-badge-progress { background: rgba(235,97,1,.12); color: var(--shu); }
 .lp-lesson-title {
-  font-family: 'Geist', 'Inter', sans-serif;
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--kon);
-  margin: 0;
-  line-height: 1.3;
-  transition: color 0.15s;
+  font-family: 'Geist', 'Inter', sans-serif; font-size: 1rem; font-weight: 600;
+  color: var(--kon); margin: 0; line-height: 1.3; transition: color .15s;
 }
 .lp-lesson-desc {
-  font-size: 0.9rem;
-  color: var(--ink-600);
-  margin: 0;
-  line-height: 1.5;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  font-size: 0.9rem; color: var(--ink-600); margin: 0; line-height: 1.5;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
-.lp-lesson-foot {
-  margin-top: auto;
-  color: var(--ink-500);
-  font-size: 0.8rem;
-  font-family: 'Geist Mono', ui-monospace, monospace;
-}
+.lp-lesson-foot { margin-top: auto; color: var(--ink-500); font-size: 0.8rem; font-family: 'Geist Mono', ui-monospace, monospace; }
 
-/* Listen-Ansicht */
-.lp-lesson-list.lp-list .lp-lesson-card {
-  flex-direction: row;
-  align-items: stretch;
-}
-.lp-lesson-list.lp-list .lp-lesson-thumb {
-  width: 160px;
-  aspect-ratio: auto;
-  flex-shrink: 0;
-}
-.lp-lesson-list.lp-list .lp-lesson-body {
-  padding: 0.75rem 1rem;
-}
-@media (max-width: 575px) {
-  .lp-lesson-list.lp-list .lp-lesson-thumb { width: 110px; }
-  .lp-lesson-list.lp-list .lp-lesson-body { padding: 0.6rem 0.8rem; }
-  .lp-lesson-list.lp-list .lp-lesson-desc { display: none; }
-}
+/* ── Empty State ── */
+.lp-empty { background: #fff; border: 1px solid var(--ink-200); border-radius: 12px; padding: 2.5rem 1.5rem; text-align: center; box-shadow: none; }
+.lp-empty-icon { font-size: 2.5rem; color: var(--ink-400); margin-bottom: 0.75rem; display: block; }
+.lp-empty h3 { color: var(--kon); font-size: 1.1rem; margin: 0 0 0.4rem; }
+.lp-empty p { color: var(--ink-600); margin: 0 0 1rem; }
 
-/* Empty State */
-.lp-empty {
-  background: #fff;
-  border: 1px solid var(--ink-200);
-  border-radius: 12px;
-  padding: 2.5rem 1.5rem;
-  text-align: center;
-  box-shadow: none;
-}
-.lp-empty-icon {
-  font-size: 2.5rem;
-  color: var(--ink-400);
-  margin-bottom: 0.75rem;
-  display: block;
-}
-.lp-empty h3 {
-  color: var(--kon);
-  font-size: 1.1rem;
-  margin: 0 0 0.4rem;
-}
-.lp-empty p {
-  color: var(--ink-600);
-  margin: 0 0 1rem;
-}
-
-/* Back to Top */
+/* ── Back to Top ── */
 .lp-back-top {
-  position: fixed;
-  bottom: 80px;
-  right: 24px;
-  z-index: 90;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: linear-gradient(180deg, #EB6101, #D85700);
-  color: #fff;
-  border: 0;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.15),
-              0 4px 14px rgba(184,74,0,.30);
-  cursor: pointer;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s, transform 0.2s;
+  position: fixed; bottom: 80px; right: 24px; z-index: 90;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: linear-gradient(180deg, #EB6101, #D85700); color: #fff; border: 0;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.15), 0 4px 14px rgba(184,74,0,.30);
+  cursor: pointer; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s;
 }
-.lp-back-top.is-visible {
-  opacity: 1;
-  pointer-events: auto;
-}
-.lp-back-top:hover {
-  background: linear-gradient(180deg, #F37016, #E25C00);
-  transform: translateY(-2px);
-}
-@media (max-width: 768px) {
-  .lp-back-top { bottom: 90px; right: 14px; width: 40px; height: 40px; }
-}
+.lp-back-top.is-visible { opacity: 1; pointer-events: auto; }
+.lp-back-top:hover { background: linear-gradient(180deg, #F37016, #E25C00); transform: translateY(-2px); }
+@media (max-width: 768px) { .lp-back-top { bottom: 90px; right: 14px; width: 40px; height: 40px; } }
 
-/* Mobile-Anpassungen Filterbar */
+/* ── Mobile-Filterleiste ── */
 @media (max-width: 768px) {
   .lp-filterbar { padding: 0.7rem; }
-  .lp-controls { width: 100%; margin-left: 0; justify-content: space-between; }
   .lp-pills { width: 100%; justify-content: center; }
   .lp-pill { flex: 1; text-align: center; }
 }
@@ -932,71 +532,39 @@ function lessonsPage() {
   const params = new URLSearchParams(window.location.search);
   return {
     search: params.get('q') || '',
-    jlpt: params.get('jlpt') || 'all',
     access: params.get('access') || 'all',
     status: params.get('status') || 'all',
-    sort: params.get('sort') || 'newest',
-    view: params.get('view') || 'grid',
-    categoryId: params.get('category') ? parseInt(params.get('category'), 10) : null,
-    _categoryNames: null,
 
     init() {
-      // Cache Kategorie-Namen aus DOM
-      this._categoryNames = {};
-      document.querySelectorAll('.lp-cat-card').forEach(el => {
-        this._categoryNames[el.dataset.catId] = el.querySelector('.lp-cat-name').textContent.trim();
-      });
-      // Initial Sortierung anwenden
-      this.applySort();
       this.setupBackToTop();
     },
 
     hasActiveFilters() {
-      return this.search !== '' || this.jlpt !== 'all' || this.access !== 'all' || this.status !== 'all' || this.categoryId !== null;
+      return this.search !== '' || this.access !== 'all' || this.status !== 'all';
     },
 
     reset() {
       this.search = '';
-      this.jlpt = 'all';
       this.access = 'all';
       this.status = 'all';
-      this.categoryId = null;
-      this.sort = 'newest';
       this.apply();
     },
 
     apply() {
-      this.applySort();
       this.syncUrl();
     },
 
     syncUrl() {
       const p = new URLSearchParams();
       if (this.search) p.set('q', this.search);
-      if (this.jlpt !== 'all') p.set('jlpt', this.jlpt);
       if (this.access !== 'all') p.set('access', this.access);
       if (this.status !== 'all') p.set('status', this.status);
-      if (this.categoryId) p.set('category', String(this.categoryId));
-      if (this.sort !== 'newest') p.set('sort', this.sort);
-      if (this.view !== 'grid') p.set('view', this.view);
       const qs = p.toString();
       const newUrl = qs ? `${location.pathname}?${qs}` : location.pathname;
       history.replaceState(null, '', newUrl);
     },
 
-    catVisible(catId, jlpt, name) {
-      // Kategorien werden nicht durch Free/Paid gefiltert (nur durch Suche und JLPT)
-      if (this.jlpt !== 'all' && String(jlpt) !== this.jlpt) return false;
-      if (this.search) {
-        const q = this.search.toLowerCase();
-        if (!name.includes(q)) return false;
-      }
-      return true;
-    },
-
     lessonVisible(el) {
-      if (this.categoryId && parseInt(el.dataset.categoryId, 10) !== this.categoryId) return false;
-      if (this.jlpt !== 'all' && el.dataset.jlpt !== this.jlpt) return false;
       if (this.access === 'free' && el.dataset.free !== '1') return false;
       if (this.access === 'paid' && el.dataset.free === '1') return false;
       // "Noch offen" = alles ausser abgeschlossen (inkl. begonnen)
@@ -1010,6 +578,11 @@ function lessonsPage() {
       return true;
     },
 
+    catVisible(catEl) {
+      // Kategorie-Gruppe nur zeigen, wenn mindestens eine ihrer Lektionen sichtbar ist
+      return Array.from(catEl.querySelectorAll('.lp-lesson')).some(el => this.lessonVisible(el));
+    },
+
     visibleLessonsCount() {
       let n = 0;
       document.querySelectorAll('.lp-lesson').forEach(el => {
@@ -1019,58 +592,15 @@ function lessonsPage() {
     },
 
     countLabel() {
-      const visible = this.visibleLessonsCount();
       const total = {{ page_lessons|length }};
       const totalFree = {{ total_free }};
-      const totalPaid = {{ total_paid }};
-      if (this.access === 'free') {
-        return `${visible} von ${total} Lektionen sind gratis`;
-      }
-      if (this.access === 'paid') {
-        return `${visible} von ${total} Premium`;
-      }
-      if (this.jlpt !== 'all') {
-        return `${visible} N${this.jlpt}-Lektionen`;
-      }
-      if (this.search || this.categoryId) {
-        return `${visible} von ${total} sichtbar`;
-      }
+      const visible = this.visibleLessonsCount();
+      if (this.access === 'free') return `${visible} gratis`;
+      if (this.access === 'paid') return `${visible} Premium`;
+      if (this.status === 'open') return `${visible} offen`;
+      if (this.status === 'done') return `${visible} abgeschlossen`;
+      if (this.search) return `${visible} von ${total} sichtbar`;
       return `${total} Lektionen · ${totalFree} gratis`;
-    },
-
-    catCountLabel(total, free) {
-      const plural = total === 1 ? 'Lektion' : 'Lektionen';
-      if (this.access === 'free') return `${free} von ${total} gratis`;
-      if (this.access === 'paid') return `${total - free} von ${total} Premium`;
-      return `${total} ${plural}`;
-    },
-
-    activeCategoryName() {
-      if (!this.categoryId || !this._categoryNames) return '';
-      return this._categoryNames[this.categoryId] || '';
-    },
-
-    applySort() {
-      const list = document.querySelector('.lp-lesson-list');
-      if (!list) return;
-      const items = Array.from(list.querySelectorAll('.lp-lesson'));
-      let cmp;
-      if (this.sort === 'alpha') {
-        cmp = (a, b) => a.dataset.title.localeCompare(b.dataset.title, 'de');
-      } else if (this.sort === 'category') {
-        cmp = (a, b) => {
-          const ca = a.dataset.categoryName || 'zzz';
-          const cb = b.dataset.categoryName || 'zzz';
-          return ca.localeCompare(cb, 'de') || a.dataset.title.localeCompare(b.dataset.title, 'de');
-        };
-      } else { // newest (default)
-        cmp = (a, b) => (b.dataset.created || '').localeCompare(a.dataset.created || '');
-      }
-      items.sort(cmp);
-      // DocumentFragment vermeidet Re-Layouts
-      const frag = document.createDocumentFragment();
-      items.forEach(it => frag.appendChild(it));
-      list.appendChild(frag);
     },
 
     setupBackToTop() {
