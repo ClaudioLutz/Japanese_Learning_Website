@@ -1330,6 +1330,9 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                                             <div class="vocab-front">
                                                                                 {% if content_data.example_sentence_japanese %}
                                                                                 <div class="vocab-front-sentence">{{ content_data.example_sentence_japanese | highlight_vocab(content_data.word, content_data.reading) }}</div>
+                                                                                {% if content_data.example_sentence_romaji %}
+                                                                                <div class="vocab-front-romaji front-romaji">{{ content_data.example_sentence_romaji }}</div>
+                                                                                {% endif %}
                                                                                 {% else %}
                                                                                 <div class="vocab-word">{{ content_data.word }}</div>
                                                                                 {% if content_data.reading and content_data.reading != content_data.word %}

@@ -1537,6 +1537,19 @@ button[onclick*="moveContentInPage"]:active {
     font-weight: 500;
 }
 
+/* Romaji-Lesehilfe unter dem Beispielsatz auf der Vorderseite. Traegt
+   .front-romaji und wird darum vom Romaji-Toggle (html.hide-front-romaji)
+   ein-/ausgeblendet — wie schon im /review-Deck (front-example-romaji). */
+.flip-card .vocab-front-romaji {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 16px;
+    font-style: normal;
+    color: var(--text-light, #5A5A5A);
+    line-height: 1.4;
+    padding: 0 20px 4px;
+    text-align: center;
+}
+
 .flip-card .vocab-target-highlight {
     color: var(--shu);
     font-weight: 700;
@@ -2763,6 +2776,11 @@ button[onclick*="moveContentInPage"]:active {
     .flip-card .vocab-front-sentence {
         font-size: 20px;
         padding: 8px 12px;
+    }
+
+    .flip-card .vocab-front-romaji {
+        font-size: 14px;
+        padding: 0 12px 4px;
     }
 
     .flip-card .vocab-back-word {
