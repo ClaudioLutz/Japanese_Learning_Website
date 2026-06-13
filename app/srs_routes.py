@@ -830,6 +830,20 @@ def practice_kana_game_page():
     return render_template('practice_kana_game.html')
 
 
+@srs_bp.route('/practice/kana/storm')
+def practice_kana_storm_page():
+    """Kana Storm: endloser Arcade-Loop gegen die Uhr (keyboard-first).
+
+    Eigenstaendiger Spielmodus NEBEN dem Matching-Spiel (das unangetastet
+    bleibt). Vollbild-Seite, viewport-gesperrt; die Komponente kanaStormGame()
+    (static/js/kana_storm.js) laeuft inline (kein iframe) und zieht die Kana
+    ueber den bestehenden Gast-Endpoint /api/practice/kana/session/public —
+    also ohne Login spielbar, kein zweites Kana-Dataset. Bestscore lebt rein
+    im localStorage des Browsers.
+    """
+    return render_template('practice_kana_storm.html')
+
+
 @srs_bp.route('/practice/kana/embed')
 def practice_kana_embed():
     """Schlanke Embed-Variante des Spiels fuer das <iframe> auf der Startseite.

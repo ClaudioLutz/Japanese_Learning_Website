@@ -1,0 +1,160 @@
+{# ════════════════════════════════════════════════════════════════════════
+   Kana Storm — geteiltes Markup (Alpine-Komponente kanaStormGame).
+   Genutzt von:
+     • practice_kana_storm.html  (Vollbild-Seite — setzt kstorm_back_url)
+     • index.html                (Startseiten-Karte — kein Back-Link)
+   Eine Quelle → kein Drift. Inline, KEIN iframe.
+
+   Jinja-Variablen (optional):
+     kstorm_back_url      — Ziel des Zurück-Links (None/unset = kein Link)
+     kstorm_register_url  — Konto-CTA-Ziel (Default: register?next=storm-Seite)
+
+   x-cloak NUR auf den Nicht-Start-Screens: der Start-Screen ist bewusst
+   SSR-sichtbar (kein Layout-Sprung beim Alpine-Init, gut auf der Startseite).
+   ════════════════════════════════════════════════════════════════════════ #}
+{% set _kstorm_register = kstorm_register_url|default(url_for('routes.register', next=url_for('srs.practice_kana_storm_page'))) %}
+{% set _kstorm_back = kstorm_back_url|default(none) %}
+
+<div class="kstorm" x-data="kanaStormGame()" x-init="init()">
+
+    {# Screenreader-Ansage für Treffer/Fehler (visuell versteckt) #}
+    <div class="kstorm__sr" aria-live="polite" aria-atomic="true" x-text="fbText"></div>
+
+    {# ── START ── (SSR-sichtbar, ohne x-cloak) #}
+    <div class="kstorm__screen" x-show="phase === 'start'">
+        <div class="kstorm__eyebrow">Endlos · gegen die Uhr</div>
+        <h2 class="kstorm__title">Kana Storm</h2>
+        <p class="kstorm__lead">
+            So viele Kana wie möglich, bevor die Zeit abläuft. Jede richtige Antwort baut die
+            Combo aus — ein Fehler setzt sie zurück. Tippe das Romaji und drück Enter.
+        </p>
+        <div class="kstorm__segs">
+            <div class="kstorm__seg" role="group" aria-label="Schrift">
+                <button type="button" class="is-active" :class="{ 'is-active': schrift === 'hiragana' }"
+                        :aria-pressed="(schrift === 'hiragana').toString()" @click="setSchrift('hiragana')">
+                    Hiragana <span class="kstorm__seg-jp">あ</span>
+                </button>
+                <button type="button" :class="{ 'is-active': schrift === 'katakana' }"
+                        :aria-pressed="(schrift === 'katakana').toString()" @click="setSchrift('katakana')">
+                    Katakana <span class="kstorm__seg-jp">ア</span>
+                </button>
+                <button type="button" :class="{ 'is-active': schrift === 'both' }"
+                        :aria-pressed="(schrift === 'both').toString()" @click="setSchrift('both')">
+                    Beide <span class="kstorm__seg-jp">あ・ア</span>
+                </button>
+            </div>
+            <div class="kstorm__seg" role="group" aria-label="Dauer">
+                <button type="button" class="is-active" :class="{ 'is-active': duration === 60 }"
+                        :aria-pressed="(duration === 60).toString()" @click="setDuration(60)">60 Sek</button>
+                <button type="button" :class="{ 'is-active': duration === 120 }"
+                        :aria-pressed="(duration === 120).toString()" @click="setDuration(120)">120 Sek</button>
+            </div>
+        </div>
+        <button class="kstorm__start" @click="start()">
+            <span>Storm starten</span> <i class="fas fa-arrow-right" aria-hidden="true"></i>
+        </button>
+        <p class="kstorm__best" x-show="best > 0" x-cloak
+           x-text="'Dein Bestscore: ' + best + ' (' + schriftLabel() + ' · ' + duration + ' Sek)'"></p>
+        <p class="kstorm__upsell">
+            Der Bestscore lebt nur in diesem Browser — mit
+            <a href="{{ _kstorm_register }}">kostenlosem Konto</a> zählt er auf jedem Gerät.
+        </p>
+        {% if _kstorm_back %}
+        <a class="kstorm__backlink" href="{{ _kstorm_back }}">
+            <i class="fas fa-arrow-left" aria-hidden="true"></i> Zurück zum Kana-Spiel
+        </a>
+        {% endif %}
+    </div>
+
+    {# ── LADEN ── #}
+    <div class="kstorm__screen" x-show="phase === 'loading'" x-cloak>
+        <div class="kstorm__state-ico"><i class="fas fa-spinner fa-spin" aria-hidden="true"></i></div>
+        <p class="kstorm__lead">Runde wird vorbereitet …</p>
+    </div>
+
+    {# ── FEHLER ── #}
+    <div class="kstorm__screen" x-show="phase === 'error'" x-cloak>
+        <div class="kstorm__state-ico"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i></div>
+        <p class="kstorm__lead" x-text="loadError"></p>
+        <button class="kstorm__ghost" @click="toStart()">
+            <i class="fas fa-arrow-left" aria-hidden="true"></i> Zurück
+        </button>
+    </div>
+
+    {# ── SPIEL ── #}
+    <div class="kstorm__play" :class="{ 'is-ok': fb === 'ok', 'is-bad': fb === 'bad' }"
+         x-show="phase === 'playing'" x-cloak>
+        <div class="kstorm__timerbar" :class="{ 'is-low': timerPct() < 20 }">
+            <i :style="`right: ${100 - timerPct()}%`"></i>
+        </div>
+        <div class="kstorm__play-body">
+            <div class="kstorm__hud">
+                <div class="kstorm__stat">
+                    <span class="kstorm__label">Punkte</span>
+                    <span class="kstorm__num" x-text="score">0</span>
+                </div>
+                <div class="kstorm__combo" :class="{ pop: popCombo }" x-html="comboLabel()">×1</div>
+                <div class="kstorm__stat kstorm__stat--r">
+                    <span class="kstorm__label">Zeit</span>
+                    <span class="kstorm__num" x-text="liveTimeLabel()">0:60</span>
+                </div>
+            </div>
+            <div class="kstorm__main">
+                <div class="kstorm__kana" :class="{ in: kanaIn }" x-text="current ? current.character : ''">あ</div>
+                <div class="kstorm__feedback" :class="fb" aria-hidden="true" x-text="fbText">&nbsp;</div>
+            </div>
+            <div class="kstorm__answer">
+                <input x-ref="stormInput" x-model="inputVal" type="text" inputmode="latin"
+                       autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"
+                       :disabled="revealing" placeholder="romaji…" aria-label="Romaji eingeben"
+                       @keydown.enter.prevent="submit(inputVal)">
+                <div class="kstorm__hint">Tippen + <kbd>Enter</kbd> · oder unten antippen</div>
+            </div>
+            <div class="kstorm__choices">
+                <template x-for="c in choices" :key="c">
+                    <button type="button" class="kstorm__choice" :disabled="revealing"
+                            @click="submit(c)" x-text="c"></button>
+                </template>
+            </div>
+        </div>
+    </div>
+
+    {# ── ENDE ── #}
+    <div class="kstorm__screen" x-show="phase === 'ended'" x-cloak>
+        <div class="kstorm__eyebrow">Runde vorbei</div>
+        <h2 class="kstorm__title" x-text="endTitle()">Stark!</h2>
+        <div class="kstorm__endrow">
+            <div class="kstorm__endstat">
+                <span class="kstorm__big accent" x-text="score">0</span>
+                <span class="kstorm__cap">Punkte</span>
+            </div>
+            <div class="kstorm__endstat">
+                <span class="kstorm__big" x-text="'×' + bestCombo">×1</span>
+                <span class="kstorm__cap">Beste Combo</span>
+            </div>
+            <div class="kstorm__endstat">
+                <span class="kstorm__big" x-text="count">0</span>
+                <span class="kstorm__cap">Kana</span>
+            </div>
+        </div>
+        <p class="kstorm__best"
+           x-text="isNewBest ? ('🏆 Neuer Bestscore: ' + best + '!') : (best > 0 ? ('Bestscore: ' + best) : '')"></p>
+        <div class="kstorm__endactions">
+            <button class="kstorm__start" @click="again()">
+                <span>Nochmal</span> <i class="fas fa-redo" aria-hidden="true"></i>
+            </button>
+            <button class="kstorm__ghost" @click="toStart()">
+                <i class="fas fa-sliders-h" aria-hidden="true"></i> Einstellungen
+            </button>
+        </div>
+        <p class="kstorm__upsell">
+            Stark gespielt — mit <a href="{{ _kstorm_register }}">kostenlosem Konto</a>
+            zählen Bestscore und Serie auf jedem Gerät.
+        </p>
+        {% if _kstorm_back %}
+        <a class="kstorm__backlink" href="{{ _kstorm_back }}">
+            <i class="fas fa-arrow-left" aria-hidden="true"></i> Zurück zum Kana-Spiel
+        </a>
+        {% endif %}
+    </div>
+</div>

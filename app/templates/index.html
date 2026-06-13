@@ -313,6 +313,44 @@
   </section>
 
   {# ──────────────────────────────────────────────
+     KANA STORM — schneller Arcade-Modus NEBEN dem Matching-Hero.
+     Inline (kein iframe), eigenständige Komponente kanaStormGame()
+     (static/js/kana_storm.js); Daten über den Gast-Endpoint, ohne Login.
+     Das Matching-Spiel oben bleibt unverändert.
+     ────────────────────────────────────────────── #}
+  {% if not current_user.is_authenticated %}
+  {% include '_kana_storm_styles.html' %}
+  <style>
+    .kstorm-home { padding: 1.25rem 1rem 0.25rem; }
+    .kstorm-home-inner { max-width: 560px; margin: 0 auto; }
+    .kstorm-home-intro { font-size: 0.95rem; line-height: 1.55; color: var(--ink-600, #5C564D); text-align: center; margin: 0 0 1rem; }
+    .kstorm-home-eyebrow { display: inline-block; font: 700 0.68rem/1 'Geist', 'Inter', sans-serif; letter-spacing: 0.12em; text-transform: uppercase; color: var(--shu, #EB6101); margin-right: 0.5rem; }
+    .kstorm-home-intro strong { color: var(--kon, #1F2A44); }
+    .kstorm-home-card {
+        height: clamp(440px, 72vh, 560px);
+        background: var(--card-bg, #FFFDF7);
+        border: 1px solid var(--border-color, #E4DED4);
+        border-radius: 18px;
+        box-shadow: 0 6px 30px rgba(28, 26, 23, .07);
+        overflow: hidden;
+        display: flex; flex-direction: column;
+    }
+  </style>
+  <section class="kstorm-home" aria-label="Kana Storm — schneller Arcade-Modus">
+    <div class="kstorm-home-inner">
+      <p class="kstorm-home-intro">
+        <span class="kstorm-home-eyebrow">Auch ohne Login</span>
+        Lieber Tempo statt Zuordnen? <strong>Kana Storm</strong> ist der schnelle Arcade-Modus:
+        ein Zeichen, du tippst das Romaji, sofort das nächste — endlos gegen die Uhr.
+      </p>
+      <div class="kstorm-home-card">
+        {% include '_kana_storm_stage.html' %}
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+  {# ──────────────────────────────────────────────
      VOM SPIEL ZUM SYSTEM — Pitch + USP + Trust (SSR), nur Gaeste.
      Traegt das Keyword "Japanisch lernen" als H2 (der H1 gehoert dem Spiel);
      Inhalt 1:1 aus dem frueheren Text-Hero hierher verschoben.
