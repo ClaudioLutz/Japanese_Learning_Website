@@ -1,19 +1,28 @@
 """Recompute progress_percentage / is_completed fuer alle UserLessonProgress.
 
-Hintergrund: Bis 2026-05-01 zaehlte `update_progress_percentage` ALLE
-LessonContent-Items, auch UI-unsichtbare 'audio'-Eintraege auf Pages mit
-dialog_slideshow. Solche Items konnten nie als erledigt markiert werden
-und blockierten den 100%-Abschluss (User landete bei z.B. 96%).
+Hintergrund (zwei Stufen):
+1. Bis 2026-05-01 zaehlte `update_progress_percentage` ALLE LessonContent-Items,
+   auch UI-unsichtbare 'audio'-Eintraege auf Pages mit dialog_slideshow.
+2. 2026-06-13: Der Progress-Endpoint (POST /api/lessons/<id>/progress) rechnete
+   den Prozentsatz frueher mit EIGENEM Raw-SQL gegen ALLE LessonContent-Zeilen
+   (inkl. is_optional). Seit dem Lektionsbilder-Rollout hat jede Lektion viele
+   is_optional-Bilder -> der Nenner war zu gross, keine Lektion erreichte je
+   100%, is_completed wurde nie gesetzt -> kein "fertig" mehr angezeigt. Der
+   Endpoint delegiert jetzt an die Modell-Logik (progress_visible_content_items).
 
-Nach dem Code-Fix (Lesson.progress_visible_content_items) muss bestehender
-Progress neu berechnet werden, sonst bleibt er auf den alten Werten.
+Nach diesen Code-Fixes muss bestehender Progress EINMALIG neu berechnet werden,
+sonst bleiben Zeilen auf den alten (zu niedrigen) Werten haengen.
 
-Aufruf:
+Aufruf (auf hp-ubuntu gegen die Produktions-DB):
     python -m scripts.recompute_lesson_progress            # Dry-run, nur Report
     python -m scripts.recompute_lesson_progress --apply    # tatsaechlich schreiben
 
-Das Skript NIEMALS Progress senken — es kann eine Lektion nur von
-unter 100% auf 100% (oder 96 -> 100) heben, niemals umgekehrt.
+Das Skript NIEMALS Progress senken — es kann eine Lektion nur von unter 100%
+auf 100% (oder 96 -> 100) heben, niemals umgekehrt. Es rechnet ausschliesslich
+aus bereits gespeichertem content_progress: Lektionen, deren passive Inhalte nie
+gemeldet wurden (alte Slideshow-/Audio-/Einzelkarten-Faelle ohne Erledigt-Pfad),
+erreichen erst beim naechsten Durchgang 100% (neues End-of-Lesson-Sicherheitsnetz
+completeRemainingPassive im lesson_view).
 """
 
 from __future__ import annotations

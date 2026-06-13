@@ -2144,8 +2144,14 @@ async function submitQuizAnswer(lessonId, questionId) {
             showQuizFeedback(questionId, result);
             updateAttempts(questionId, result.attempts_remaining);
             
+            const quizContentId = questionElement.closest('[data-content-id]').dataset.contentId;
             if (result.is_correct) {
-                markContentComplete(questionElement.closest('[data-content-id]').dataset.contentId);
+                markContentComplete(quizContentId);
+            } else if (result.attempts_remaining === 0) {
+                // Alle Versuche aufgebraucht: Quiz ist bearbeitet (UI sperrt es +
+                // zeigt die Loesung). Item trotzdem als erledigt markieren, damit ein
+                // fehlgeschlagenes Quiz die Lektion nicht dauerhaft unter 100% haelt.
+                markContentComplete(quizContentId);
             }
         } else {
             alert('Error: ' + result.error);
@@ -2340,6 +2346,9 @@ function initializeNavigation() {
             // Gast-Celebration: Gaeste haben keinen Server-Progress, darum loest
             // das Erreichen der LETZTEN Seite die clientseitige Feier aus.
             maybeShowGuestCompletion();
+            // Eingeloggte Nutzer: am Lektions-Ende verbleibende passive Items
+            // serverseitig abschliessen (Slideshow/Audio/Einzelkarten etc.).
+            maybeCompleteForUser();
         });
     }
 
@@ -2381,8 +2390,7 @@ function autoCompletePassiveItemsOnPage(pageIdx) {
 }
 
 // Gast-Celebration-Trigger: feuert die clientseitige Feier, sobald ein
-// ausgeloggter Gast das Ende der Lektion erreicht. Bei eingeloggten Nutzern
-// uebernimmt weiterhin der Server-Progress-Pfad (markContentComplete -> 100%).
+// ausgeloggter Gast das Ende der Lektion erreicht.
 function maybeShowGuestCompletion() {
     if (!isGuestUser()) return;
     if (completionShown) return;
@@ -2392,21 +2400,81 @@ function maybeShowGuestCompletion() {
     }
 }
 
-// Single-Page-Lektionen (kein Carousel-Slide-Event): Gast-Feier ans Scroll-Ende
-// bzw. an einen kurzen Verweil-Timer haengen, damit der Aha-Moment nicht fehlt.
+// End-of-Lesson-Sicherheitsnetz fuer EINGELOGGTE Nutzer: schliesst serverseitig
+// alle sichtbaren passiven Items ab — auch Typen ohne eigenen Erledigt-Button
+// (dialog_slideshow, standalone audio, isolierte Einzelkarten). So fuehrt
+// "Lektion durchgearbeitet" zuverlaessig zu is_completed=True, unabhaengig davon,
+// welche Content-Typen die Lektion enthaelt. Interaktive Items (Quiz,
+// kana_grid_game) bleiben ausgenommen und melden sich ueber ihren eigenen Pfad.
+// Dedup pro Page-Load: ein einziger Bulk-Sweep genuegt (Endpoint ist idempotent).
+// Da Lektionen als Full-Page-Reload geoeffnet werden, wird das Flag bei jedem
+// Besuch frisch initialisiert -> Revisits triggern den Sweep erneut.
+let passiveCompletionRequested = false;
+async function completeRemainingPassive() {
+    if (isGuestUser()) return;
+    if (passiveCompletionRequested) return;
+    if (!lessonData || !lessonData.id) return;
+    passiveCompletionRequested = true;
+    try {
+        const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
+        const csrfToken = csrfTokenElement ? csrfTokenElement.getAttribute('content') : null;
+        const headers = { 'Content-Type': 'application/json' };
+        if (csrfToken) headers['X-CSRFToken'] = csrfToken;
+        const response = await fetch('/api/lessons/' + lessonData.id + '/complete-remaining', {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify({})
+        });
+        if (!response.ok) { passiveCompletionRequested = false; return; }
+        const progress = await response.json();
+        // Progress-Bar + Prozent-Label aktualisieren (analog markContentComplete).
+        const progressBar = document.querySelector('.progress-bar');
+        if (progressBar && typeof progress.progress_percentage === 'number') {
+            progressBar.style.width = progress.progress_percentage + '%';
+            progressBar.setAttribute('aria-valuenow', progress.progress_percentage);
+            const percentageText = document.querySelector('.progress')?.previousElementSibling?.querySelector('.text-muted');
+            if (percentageText) percentageText.textContent = progress.progress_percentage + '%';
+        }
+        if (progress.progress_percentage === 100) {
+            showLessonComplete();
+        }
+    } catch (e) {
+        passiveCompletionRequested = false; // bei naechstem Trigger erneut versuchen
+        console.warn('completeRemainingPassive error', e);
+    }
+}
+
+// Eingeloggtes Pendant zu maybeShowGuestCompletion: am Lektions-Ende verbleibende
+// passive Items abschliessen.
+function maybeCompleteForUser() {
+    if (isGuestUser()) return;
+    if (totalPages <= 1 || currentPage >= totalPages - 1) {
+        completeRemainingPassive();
+    }
+}
+
+// Single-Page-Lektionen (kein Carousel-Slide-Event): Abschluss-Trigger ans
+// Scroll-Ende bzw. an einen kurzen Verweil-Timer haengen. Gaeste sehen die Feier,
+// eingeloggte Nutzer schliessen die passiven Items serverseitig ab.
 document.addEventListener('DOMContentLoaded', function() {
-    if (!isGuestUser()) return;
-    if (totalPages > 1) return; // Mehrseitige Lektionen feiern via Slide-Event.
+    if (totalPages > 1) return; // Mehrseitige Lektionen via Slide-Event.
+    const onLessonEnd = function() {
+        if (isGuestUser()) {
+            maybeShowGuestCompletion();
+        } else {
+            completeRemainingPassive();
+        }
+    };
     const triggerOnScrollEnd = function() {
         const nearBottom = (window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 80);
         if (nearBottom) {
-            maybeShowGuestCompletion();
+            onLessonEnd();
             window.removeEventListener('scroll', triggerOnScrollEnd);
         }
     };
     // Falls die Seite kuerzer als der Viewport ist, sofort als „durch" werten.
     if (document.body.offsetHeight <= window.innerHeight + 80) {
-        setTimeout(maybeShowGuestCompletion, 1200);
+        setTimeout(onLessonEnd, 1200);
     } else {
         window.addEventListener('scroll', triggerOnScrollEnd, { passive: true });
     }

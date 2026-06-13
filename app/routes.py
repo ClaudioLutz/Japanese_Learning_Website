@@ -833,9 +833,26 @@ def lessons():
         .order_by(Lesson.created_at.desc(), Lesson.id.desc())
         .all()
     )
+    # Fortschritt des eingeloggten Nutzers fuer alle Lektionen in EINER Query laden
+    # -> erlaubt Status-Badge + "Noch offen"-Filter im Katalog (Discoverability:
+    # leicht finden, was noch nicht geloest wurde). Gaeste: leere Map -> Status 'open'.
+    progress_map = {}
+    show_status = bool(getattr(current_user, 'is_authenticated', False))
+    if show_status:
+        for pr in UserLessonProgress.query.filter_by(user_id=current_user.id).all():
+            progress_map[pr.lesson_id] = pr
+
     page_lessons = []
     for l in lessons_q:
         is_free = (l.price or 0) == 0
+        pr = progress_map.get(l.id)
+        pct = (pr.progress_percentage or 0) if pr else 0
+        if pr and pr.is_completed:
+            status = 'done'
+        elif pct > 0:
+            status = 'started'
+        else:
+            status = 'open'
         page_lessons.append({
             'id': l.id,
             'title': l.title,
@@ -850,6 +867,8 @@ def lessons():
             'category_name': l.category.name if l.category else None,
             'category_jlpt_level': l.category.jlpt_level if l.category else None,
             'created_at': l.created_at,
+            'status': status,
+            'progress_percentage': pct,
         })
 
     # JLPT-Levels die in den Kategorien tatsaechlich vorkommen — fuer Filter-Pills
@@ -860,6 +879,8 @@ def lessons():
 
     total_free = sum(1 for l in page_lessons if l['is_free'])
     total_paid = len(page_lessons) - total_free
+    total_open = sum(1 for l in page_lessons if l['status'] != 'done')
+    total_done = sum(1 for l in page_lessons if l['status'] == 'done')
 
     return render_template(
         'lessons.html',
@@ -868,6 +889,9 @@ def lessons():
         jlpt_levels=jlpt_levels,
         total_free=total_free,
         total_paid=total_paid,
+        show_status=show_status,
+        total_open=total_open,
+        total_done=total_done,
     )
 
 
@@ -3064,6 +3088,37 @@ def reset_lesson_progress_api(lesson_id):
         current_app.logger.error(f"Unexpected error resetting lesson progress for user {current_user.id}, lesson {lesson_id}: {e}", exc_info=True)
         return jsonify({"error": "Failed to reset progress. Please try again."}), 500
 
+def _get_or_create_lesson_progress(user_id, lesson_id):
+    """Liefert den UserLessonProgress-Datensatz fuer (user, lesson) — race-sicher.
+
+    Verwendet INSERT ... ON CONFLICT DO NOTHING, damit zwei gleichzeitige Requests
+    (z.B. zwei Progress-Posts beim schnellen Durchklicken) nicht an der
+    UNIQUE(user_id, lesson_id)-Constraint scheitern. Gibt das frisch geladene
+    ORM-Objekt zurueck (oder None, falls es trotz Insert nicht gefunden wird).
+    """
+    progress = UserLessonProgress.query.filter_by(
+        user_id=user_id, lesson_id=lesson_id
+    ).first()
+    if progress:
+        return progress
+
+    from sqlalchemy import text
+    insert_sql = text("""
+        INSERT INTO user_lesson_progress (user_id, lesson_id, started_at, last_accessed, progress_percentage, time_spent, content_progress, is_completed)
+        VALUES (:user_id, :lesson_id, :now, :now, 0, 0, '{}', false)
+        ON CONFLICT (user_id, lesson_id) DO NOTHING
+    """)
+    db.session.execute(insert_sql, {
+        'user_id': user_id,
+        'lesson_id': lesson_id,
+        'now': datetime.utcnow(),
+    })
+    db.session.commit()
+    return UserLessonProgress.query.filter_by(
+        user_id=user_id, lesson_id=lesson_id
+    ).first()
+
+
 @bp.route('/api/lessons/<int:lesson_id>/progress', methods=['POST'])
 @login_required
 def update_lesson_progress(lesson_id):
@@ -3104,118 +3159,32 @@ def update_lesson_progress(lesson_id):
                 pass
     
     try:
-        # Use a completely different approach: direct SQL updates to avoid session conflicts
-        from sqlalchemy import text
-        
-        # First, try to get existing progress record
-        progress = UserLessonProgress.query.filter_by(
-            user_id=current_user.id, lesson_id=lesson_id
-        ).first()
-        
+        progress = _get_or_create_lesson_progress(current_user.id, lesson_id)
         if not progress:
-            # Use INSERT ... ON CONFLICT to handle race conditions at database level
-            insert_sql = text("""
-                INSERT INTO user_lesson_progress (user_id, lesson_id, started_at, last_accessed, progress_percentage, time_spent, content_progress, is_completed)
-                VALUES (:user_id, :lesson_id, :now, :now, 0, 0, '{}', false)
-                ON CONFLICT (user_id, lesson_id) DO NOTHING
-                RETURNING id
-            """)
-            
-            result = db.session.execute(insert_sql, {
-                'user_id': current_user.id,
-                'lesson_id': lesson_id,
-                'now': datetime.utcnow()
-            })
-            
-            db.session.commit()
-            
-            # Now get the progress record (either newly created or existing)
-            progress = UserLessonProgress.query.filter_by(
-                user_id=current_user.id, lesson_id=lesson_id
-            ).first()
-            
-            if not progress:
-                return jsonify({"error": "Failed to create or find progress record"}), 500
-        
-        # Update progress fields using direct SQL to avoid session conflicts
+            return jsonify({"error": "Failed to create or find progress record"}), 500
+
+        # Fortschritt aktualisieren ueber die Modell-Logik (Single Source of Truth).
+        # WICHTIG: Frueher rechnete diese Route den Prozentsatz mit eigenem Raw-SQL
+        # gegen ALLE LessonContent-Zeilen (inkl. is_optional / Audio auf
+        # Slideshow-Pages). Seit dem Lektionsbilder-Rollout hat jede Lektion viele
+        # is_optional-Bilder -> der Nenner war zu gross, keine Lektion erreichte je
+        # 100%, is_completed wurde nie gesetzt und nichts wurde als "fertig" angezeigt.
+        # mark_content_completed()/update_progress_percentage() zaehlen dagegen nur
+        # progress_visible_content_items (optionale + Slideshow-Audio ausgeschlossen)
+        # und sind unit-getestet -> hier delegieren statt die Logik zu duplizieren.
+        additional_time = (data.get('time_spent', 0) if data else 0) or 0
         if data and 'content_id' in data:
-            # Get current content progress
-            content_progress = progress.get_content_progress()
-            content_progress[str(data['content_id'])] = True
-            
-            # Calculate progress percentage manually
-            total_content = db.session.query(db.func.count(LessonContent.id)).filter_by(lesson_id=lesson_id).scalar()
-            if total_content > 0:
-                completed_content = len([k for k, v in content_progress.items() if v])
-                new_progress_percentage = int((completed_content / total_content) * 100)
-                is_completed = new_progress_percentage == 100
-                completed_at = datetime.utcnow() if is_completed and not progress.is_completed else progress.completed_at
-            else:
-                new_progress_percentage = 0
-                is_completed = False
-                completed_at = progress.completed_at
-            
-            # Use direct SQL update to avoid session conflicts
-            update_sql = text("""
-                UPDATE user_lesson_progress 
-                SET content_progress = :content_progress,
-                    progress_percentage = :progress_percentage,
-                    is_completed = :is_completed,
-                    completed_at = :completed_at,
-                    last_accessed = :last_accessed,
-                    time_spent = time_spent + :additional_time
-                WHERE user_id = :user_id AND lesson_id = :lesson_id
-            """)
-            
-            additional_time = data.get('time_spent', 0) if data else 0
-            
-            db.session.execute(update_sql, {
-                'content_progress': json.dumps(content_progress),
-                'progress_percentage': new_progress_percentage,
-                'is_completed': is_completed,
-                'completed_at': completed_at,
-                'last_accessed': datetime.utcnow(),
-                'additional_time': additional_time,
-                'user_id': current_user.id,
-                'lesson_id': lesson_id
-            })
-            
-        elif data and 'time_spent' in data:
-            # Just update time spent and last accessed
-            update_sql = text("""
-                UPDATE user_lesson_progress 
-                SET time_spent = time_spent + :additional_time,
-                    last_accessed = :last_accessed
-                WHERE user_id = :user_id AND lesson_id = :lesson_id
-            """)
-            
-            db.session.execute(update_sql, {
-                'additional_time': data['time_spent'],
-                'last_accessed': datetime.utcnow(),
-                'user_id': current_user.id,
-                'lesson_id': lesson_id
-            })
-        else:
-            # Just update last accessed
-            update_sql = text("""
-                UPDATE user_lesson_progress 
-                SET last_accessed = :last_accessed
-                WHERE user_id = :user_id AND lesson_id = :lesson_id
-            """)
-            
-            db.session.execute(update_sql, {
-                'last_accessed': datetime.utcnow(),
-                'user_id': current_user.id,
-                'lesson_id': lesson_id
-            })
-        
+            progress.mark_content_completed(data['content_id'])
+            progress.time_spent = (progress.time_spent or 0) + additional_time
+        elif additional_time:
+            progress.time_spent = (progress.time_spent or 0) + additional_time
+        progress.last_accessed = datetime.utcnow()
+
         # Streak bei Lernaktivitaet aktualisieren
         current_user.update_streak()
 
         db.session.commit()
 
-        # Refresh the progress object and return it
-        db.session.refresh(progress)
         result = model_to_dict(progress)
         result['streak'] = current_user.current_streak or 0
         result['total_xp'] = current_user.total_xp or 0
@@ -3224,6 +3193,56 @@ def update_lesson_progress(lesson_id):
     except SQLAlchemyError as e:
         db.session.rollback()
         current_app.logger.error(f"Error updating lesson progress for user {current_user.id}, lesson {lesson_id}: {e}")
+        return jsonify({"error": "Failed to update progress"}), 500
+
+@bp.route('/api/lessons/<int:lesson_id>/complete-remaining', methods=['POST'])
+@login_required
+def complete_remaining_passive(lesson_id):
+    """Markiert am Lektions-Ende alle sichtbaren passiven Items als erledigt.
+
+    Robustes Sicherheitsnetz, damit "Lektion durchgearbeitet" zuverlaessig zu
+    is_completed=True fuehrt — unabhaengig davon, welche Content-Typen die Lektion
+    enthaelt. Deckt insbesondere Typen ab, die im Frontend keinen eigenen
+    "Als erledigt"-Button haben und sich darum bisher nie selbst meldeten
+    (dialog_slideshow, standalone audio, isolierte Einzel-Flipcards) und macht den
+    Abschluss zukunftssicher gegenueber neuen passiven Content-Typen.
+
+    Interaktive Items (Quiz, kana_grid_game) bleiben ausgenommen und muessen weiter
+    aktiv geloest werden (siehe UserLessonProgress.mark_passive_items_completed).
+    """
+    from flask_wtf.csrf import validate_csrf
+    try:
+        csrf_token = request.headers.get('X-CSRFToken') or request.form.get('csrf_token')
+        if not csrf_token:
+            return jsonify({"error": "CSRF token missing"}), 400
+        validate_csrf(csrf_token)
+    except Exception:
+        return jsonify({"error": "CSRF token invalid"}), 400
+
+    lesson = Lesson.query.get_or_404(lesson_id)
+
+    accessible, message = lesson.is_accessible_to_user(current_user)
+    if not accessible:
+        return jsonify({"error": message}), 403
+
+    try:
+        progress = _get_or_create_lesson_progress(current_user.id, lesson_id)
+        if not progress:
+            return jsonify({"error": "Failed to create or find progress record"}), 500
+
+        progress.mark_passive_items_completed()
+        progress.last_accessed = datetime.utcnow()
+        current_user.update_streak()
+        db.session.commit()
+
+        result = model_to_dict(progress)
+        result['streak'] = current_user.current_streak or 0
+        result['total_xp'] = current_user.total_xp or 0
+        return jsonify(result)
+
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error completing passive items for user {current_user.id}, lesson {lesson_id}: {e}")
         return jsonify({"error": "Failed to update progress"}), 500
 
 @bp.route('/lessons/<int:lesson_id>/reset', methods=['POST'])

@@ -1141,26 +1141,63 @@ class UserLessonProgress(db.Model):
         progress[str(content_id)] = True
         self.set_content_progress(progress)
         self.update_progress_percentage()
-    
+
+    def mark_passive_items_completed(self):
+        """Markiert alle sichtbaren, NICHT-interaktiven Content-Items als erledigt.
+
+        Robustes Sicherheitsnetz fuer den Lektionsabschluss: Wird am Lektions-Ende
+        ausgeloest (letzte Seite erreicht / Scroll-Ende / Single-Page-Verweildauer).
+        Damit zaehlen passive Inhalte ALLER Typen zuverlaessig zum 100%-Abschluss —
+        auch solche, die im Frontend keinen eigenen "Als erledigt"-Button haben und
+        sich darum bisher nie selbst melden konnten (dialog_slideshow, standalone
+        audio, isolierte Einzel-Flipcards).
+
+        Interaktive Items (Quiz via is_interactive, kana_grid_game) bleiben bewusst
+        ausgenommen — sie muessen weiterhin aktiv geloest werden und melden ihren
+        Abschluss ueber den jeweils eigenen Pfad (korrekte Antwort bzw. SRS-Rating).
+
+        Returns True, wenn mindestens ein Item neu als erledigt markiert wurde.
+        """
+        progress = self.get_content_progress()
+        changed = False
+        for c in self.lesson.progress_visible_content_items:  # type: ignore
+            if c.is_interactive or c.content_type == 'kana_grid_game':
+                continue
+            if not progress.get(str(c.id)):
+                progress[str(c.id)] = True
+                changed = True
+        if changed:
+            self.set_content_progress(progress)
+        # Immer neu berechnen — auch bei changed=False: heilt Altbestand-Zeilen,
+        # in denen content_progress bereits vollstaendig ist, is_completed wegen
+        # des alten Nenner-Bugs aber noch False steht (Self-Healing beim Revisit).
+        self.update_progress_percentage()
+        return changed
+
     def update_progress_percentage(self):
         """Update overall progress percentage based on completed content.
 
         Zaehlt nur UI-sichtbare Items (siehe Lesson.progress_visible_content_items),
         sonst koennen 'audio'-Eintraege auf Slideshow-Pages nie completed werden
         und der Progress bleibt unter 100% trotz vollstaendiger Lektion.
+
+        Eine Lektion ganz ohne sichtbare Items (z.B. nur dekorative is_optional-
+        Bilder) gilt als sofort 100% abgeschlossen. WICHTIG: Der is_completed-Block
+        unten MUSS in beiden Zweigen laufen — frueher gab es bei 0 Items ein
+        return VOR dem Setzen von is_completed, sodass solche Lektionen zwar 100%
+        zeigten, aber nie als "fertig" galten.
         """
         visible_items = self.lesson.progress_visible_content_items  # type: ignore
         total_content = len(visible_items)
         if total_content == 0:
             self.progress_percentage = 100
-            return
-
-        visible_ids = {str(c.id) for c in visible_items}
-        cp = self.get_content_progress()
-        completed_content = sum(
-            1 for cid in visible_ids if cp.get(cid)
-        )
-        self.progress_percentage = int((completed_content / total_content) * 100)
+        else:
+            visible_ids = {str(c.id) for c in visible_items}
+            cp = self.get_content_progress()
+            completed_content = sum(
+                1 for cid in visible_ids if cp.get(cid)
+            )
+            self.progress_percentage = int((completed_content / total_content) * 100)
 
         if self.progress_percentage == 100 and not self.is_completed:
             self.is_completed = True

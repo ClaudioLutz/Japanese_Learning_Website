@@ -186,3 +186,99 @@ def test_lesson_174_pattern_passive_outro_blocks_100(app_context):
     progress.update_progress_percentage()
     assert progress.progress_percentage == 100
     assert progress.is_completed is True
+
+
+def _add_interactive(lesson_id, content_type, page_number, order_index=0, content_id=1):
+    """LessonContent als interaktives Item (Quiz/Game) anlegen."""
+    lc = LessonContent(
+        lesson_id=lesson_id,
+        content_type=content_type,
+        content_id=content_id,
+        order_index=order_index,
+        page_number=page_number,
+        is_interactive=True,
+    )
+    db.session.add(lc)
+    return lc
+
+
+def test_mark_passive_items_completed_excludes_interactive(app_context):
+    """mark_passive_items_completed markiert passive Items ALLER Typen (auch
+    solche ohne Erledigt-Button: dialog_slideshow, standalone audio), laesst aber
+    interaktive Items (Quiz via is_interactive, kana_grid_game) unberuehrt."""
+    user = UserFactory()
+    lesson = LessonFactory()
+    db.session.flush()
+    text = _add(lesson.id, 'text', page_number=1, content_id=1)
+    slideshow = _add(lesson.id, 'dialog_slideshow', page_number=2, content_id=2)
+    audio = _add(lesson.id, 'audio', page_number=3, content_id=3)  # standalone -> sichtbar
+    quiz = _add_interactive(lesson.id, 'text', page_number=4, content_id=4)
+    game = _add(lesson.id, 'kana_grid_game', page_number=5, content_id=5)
+    db.session.commit()
+
+    progress = UserLessonProgress(user_id=user.id, lesson_id=lesson.id, content_progress='{}')
+    db.session.add(progress)
+    db.session.flush()
+
+    changed = progress.mark_passive_items_completed()
+    assert changed is True
+
+    cp = progress.get_content_progress()
+    # Passive Items markiert
+    assert cp.get(str(text.id)) is True
+    assert cp.get(str(slideshow.id)) is True
+    assert cp.get(str(audio.id)) is True
+    # Interaktive Items NICHT markiert
+    assert cp.get(str(quiz.id)) is not True
+    assert cp.get(str(game.id)) is not True
+    # Quiz + Game blockieren den Abschluss noch (3 von 5 sichtbar)
+    assert progress.progress_percentage == 60
+    assert progress.is_completed is False
+
+    # Quiz + Game ueber den interaktiven Pfad erledigen -> 100%
+    progress.mark_content_completed(quiz.id)
+    progress.mark_content_completed(game.id)
+    assert progress.progress_percentage == 100
+    assert progress.is_completed is True
+
+
+def test_mark_passive_items_completed_full_passive_lesson(app_context):
+    """Reine Passiv-Lektion (Slideshow + Text, kein Quiz) erreicht via
+    mark_passive_items_completed direkt 100% — solche Lektionen konnten frueher
+    NIE abgeschlossen werden (Slideshow ohne Erledigt-Pfad)."""
+    user = UserFactory()
+    lesson = LessonFactory()
+    db.session.flush()
+    _add(lesson.id, 'dialog_slideshow', page_number=1, content_id=1)
+    _add(lesson.id, 'text', page_number=1, order_index=1, content_id=2)
+    db.session.commit()
+
+    progress = UserLessonProgress(user_id=user.id, lesson_id=lesson.id, content_progress='{}')
+    db.session.add(progress)
+    db.session.flush()
+
+    progress.mark_passive_items_completed()
+    assert progress.progress_percentage == 100
+    assert progress.is_completed is True
+
+
+def test_zero_visible_items_marks_completed(app_context):
+    """Lektion ohne sichtbare Items (nur dekorative is_optional-Bilder) gilt als
+    100% UND is_completed=True. Regression: frueher setzte update_progress_percentage
+    bei 0 Items zwar 100%, kehrte aber VOR dem is_completed-Block zurueck."""
+    user = UserFactory()
+    lesson = LessonFactory()
+    db.session.flush()
+    _add(lesson.id, 'image', page_number=1, content_id=None, is_optional=True,
+         media_url='/uploads/deco.webp')
+    db.session.commit()
+
+    assert lesson.progress_visible_content_items == []
+
+    progress = UserLessonProgress(user_id=user.id, lesson_id=lesson.id, content_progress='{}')
+    db.session.add(progress)
+    db.session.flush()
+    progress.update_progress_percentage()
+
+    assert progress.progress_percentage == 100
+    assert progress.is_completed is True

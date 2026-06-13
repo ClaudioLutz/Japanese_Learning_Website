@@ -127,6 +127,24 @@
               @click="access='paid'; apply();">⭐ Premium</button>
     </div>
 
+    {% if show_status %}
+    {# Lernstatus-Filter (nur eingeloggt) — macht "Noch offen" sofort auffindbar #}
+    <div class="lp-pills" role="group" aria-label="Lernstatus">
+      <button type="button"
+              class="lp-pill"
+              :class="status === 'all' && 'is-active'"
+              @click="status='all'; apply();">Alle</button>
+      <button type="button"
+              class="lp-pill lp-pill-open"
+              :class="status === 'open' && 'is-active'"
+              @click="status='open'; apply();">📭 Noch offen <span class="lp-pill-num">{{ total_open }}</span></button>
+      <button type="button"
+              class="lp-pill lp-pill-done"
+              :class="status === 'done' && 'is-active'"
+              @click="status='done'; apply();">✅ Abgeschlossen <span class="lp-pill-num">{{ total_done }}</span></button>
+    </div>
+    {% endif %}
+
     {# Sort + View Toggle (rechts) #}
     <div class="lp-controls">
       <select class="lp-sort"
@@ -248,6 +266,8 @@
           data-jlpt="{{ lesson.category_jlpt_level or '' }}"
           data-free="{{ '1' if lesson.is_free else '0' }}"
           data-created="{{ lesson.created_at.isoformat() if lesson.created_at else '' }}"
+          data-status="{{ lesson.status }}"
+          data-progress="{{ lesson.progress_percentage }}"
           x-show="lessonVisible($el)"
           x-transition.opacity>
         <a href="{{ url_for('routes.view_lesson', lesson_id=lesson.id) }}" class="lp-lesson-card">
@@ -272,6 +292,13 @@
               <span class="lp-badge lp-badge-free">🆓 Gratis</span>
               {% else %}
               <span class="lp-badge lp-badge-paid">⭐ {{ "%.2f"|format(lesson.price) }} CHF</span>
+              {% endif %}
+              {% if show_status %}
+                {% if lesson.status == 'done' %}
+                <span class="lp-badge lp-badge-done">✅ Fertig</span>
+                {% elif lesson.status == 'started' %}
+                <span class="lp-badge lp-badge-progress">▸ {{ lesson.progress_percentage }}%</span>
+                {% endif %}
               {% endif %}
             </div>
             <h3 class="lp-lesson-title">{{ lesson.title }}</h3>
@@ -456,6 +483,17 @@
 }
 .lp-pill-free.is-active { background: var(--matcha); color: #fff; }
 .lp-pill-paid.is-active { background: var(--kincha); color: #fff; }
+.lp-pill-open.is-active { background: var(--shu); color: #fff; }
+.lp-pill-done.is-active { background: var(--matcha); color: #fff; }
+.lp-pill-num {
+  display: inline-block;
+  margin-left: 0.3rem;
+  padding: 0 0.32rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  background: rgba(0,0,0,.10);
+}
+.lp-pill.is-active .lp-pill-num { background: rgba(255,255,255,.22); }
 
 .lp-controls {
   display: flex;
@@ -777,6 +815,8 @@
 .lp-badge-cat { background: var(--ink-100); color: var(--ink-700); }
 .lp-badge-free { background: rgba(122,144,51,.12); color: var(--matcha); }
 .lp-badge-paid { background: rgba(199,128,45,.12); color: var(--kincha); }
+.lp-badge-done { background: var(--matcha); color: #fff; }
+.lp-badge-progress { background: rgba(235,97,1,.12); color: var(--shu); }
 .lp-lesson-title {
   font-family: 'Geist', 'Inter', sans-serif;
   font-size: 1rem;
@@ -894,6 +934,7 @@ function lessonsPage() {
     search: params.get('q') || '',
     jlpt: params.get('jlpt') || 'all',
     access: params.get('access') || 'all',
+    status: params.get('status') || 'all',
     sort: params.get('sort') || 'newest',
     view: params.get('view') || 'grid',
     categoryId: params.get('category') ? parseInt(params.get('category'), 10) : null,
@@ -911,13 +952,14 @@ function lessonsPage() {
     },
 
     hasActiveFilters() {
-      return this.search !== '' || this.jlpt !== 'all' || this.access !== 'all' || this.categoryId !== null;
+      return this.search !== '' || this.jlpt !== 'all' || this.access !== 'all' || this.status !== 'all' || this.categoryId !== null;
     },
 
     reset() {
       this.search = '';
       this.jlpt = 'all';
       this.access = 'all';
+      this.status = 'all';
       this.categoryId = null;
       this.sort = 'newest';
       this.apply();
@@ -933,6 +975,7 @@ function lessonsPage() {
       if (this.search) p.set('q', this.search);
       if (this.jlpt !== 'all') p.set('jlpt', this.jlpt);
       if (this.access !== 'all') p.set('access', this.access);
+      if (this.status !== 'all') p.set('status', this.status);
       if (this.categoryId) p.set('category', String(this.categoryId));
       if (this.sort !== 'newest') p.set('sort', this.sort);
       if (this.view !== 'grid') p.set('view', this.view);
@@ -956,6 +999,9 @@ function lessonsPage() {
       if (this.jlpt !== 'all' && el.dataset.jlpt !== this.jlpt) return false;
       if (this.access === 'free' && el.dataset.free !== '1') return false;
       if (this.access === 'paid' && el.dataset.free === '1') return false;
+      // "Noch offen" = alles ausser abgeschlossen (inkl. begonnen)
+      if (this.status === 'open' && el.dataset.status === 'done') return false;
+      if (this.status === 'done' && el.dataset.status !== 'done') return false;
       if (this.search) {
         const q = this.search.toLowerCase();
         const haystack = `${el.dataset.title} ${el.dataset.desc} ${el.dataset.categoryName}`;
