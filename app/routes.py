@@ -6,7 +6,7 @@ from datetime import datetime
 from flask import Blueprint, render_template, render_template_string, redirect, url_for, flash, request, jsonify, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError # Import specific exceptions
-from app import db, csrf, limiter
+from app import db, csrf, limiter, srs_service
 from app.models import User, Kana, Kanji, Vocabulary, Grammar, LessonCategory, Lesson, LessonContent, LessonPrerequisite, UserLessonProgress, QuizQuestion, QuizOption, UserQuizAnswer, LessonPage, Course, LessonPurchase, CoursePurchase
 from app.forms import RegistrationForm, LoginForm, CSRFTokenForm, RequestPasswordResetForm, ResetPasswordForm
 from app.auth_tokens import make_reset_token, verify_reset_token
@@ -791,7 +791,47 @@ def lessons():
     """
     visible_langs = current_app.config.get('CONTENT_LANGUAGES', ['german'])
 
-    # Kategorien mit Lektions-Anzahl
+    # Fortschritt des eingeloggten Nutzers fuer alle Lektionen in EINER Query laden
+    # -> erlaubt Status-Badge, "Noch offen"-Filter und den "Weiter lernen"-Block.
+    # Gaeste: leere Map -> Status 'open'.
+    progress_map = {}
+    show_status = bool(getattr(current_user, 'is_authenticated', False))
+    if show_status:
+        for pr in UserLessonProgress.query.filter_by(user_id=current_user.id).all():
+            progress_map[pr.lesson_id] = pr
+
+    def _lesson_dict(lsn):
+        is_free = (lsn.price or 0) == 0
+        pr = progress_map.get(lsn.id)
+        pct = (pr.progress_percentage or 0) if pr else 0
+        if pr and pr.is_completed:
+            status = 'done'
+        elif pct > 0:
+            status = 'started'
+        else:
+            status = 'open'
+        return {
+            'id': lsn.id,
+            'title': lsn.title,
+            'description': lsn.description or '',
+            'thumbnail_url': lsn.get_thumbnail_url() if hasattr(lsn, 'get_thumbnail_url') else None,
+            'difficulty_level': lsn.difficulty_level,
+            'estimated_duration': lsn.estimated_duration,
+            'is_free': is_free,
+            'price': lsn.price or 0,
+            'allow_guest_access': lsn.allow_guest_access,
+            'category_id': lsn.category_id,
+            'category_name': lsn.category.name if lsn.category else None,
+            'category_jlpt_level': lsn.category.jlpt_level if lsn.category else None,
+            'created_at': lsn.created_at,
+            'status': status,
+            'progress_percentage': pct,
+            'last_accessed': pr.last_accessed if pr else None,
+        }
+
+    # Kategorien als Lehrplan-Rueckgrat: jede Kategorie traegt ihre Lektionen
+    # in Lehrplan-Reihenfolge (order_index). Ein einziges Browse-System statt
+    # zweier paralleler Grids.
     all_categories = (
         LessonCategory.query
         .order_by(
@@ -802,15 +842,18 @@ def lessons():
         .all()
     )
     page_categories = []
+    page_lessons = []  # flach, in Lehrplan-Reihenfolge (fuer JSON-LD + JS-Zaehler)
     for cat in all_categories:
-        visible_lessons = [
-            l for l in cat.lessons
-            if l.is_published and l.instruction_language in visible_langs
-        ]
-        count = len(visible_lessons)
-        if count == 0:
+        visible_lessons = sorted(
+            [lsn for lsn in cat.lessons
+             if lsn.is_published and lsn.instruction_language in visible_langs],
+            key=lambda lsn: (lsn.order_index or 0, lsn.id),
+        )
+        if not visible_lessons:
             continue
-        free_count = sum(1 for l in visible_lessons if (l.price or 0) == 0)
+        lesson_dicts = [_lesson_dict(lsn) for lsn in visible_lessons]
+        free_count = sum(1 for d in lesson_dicts if d['is_free'])
+        done_count = sum(1 for d in lesson_dicts if d['status'] == 'done')
         page_categories.append({
             'id': cat.id,
             'name': cat.name,
@@ -818,69 +861,90 @@ def lessons():
             'icon_emoji': cat.icon_emoji,
             'color_code': cat.color_code,
             'jlpt_level': cat.jlpt_level,
-            'lesson_count': count,
+            'lesson_count': len(lesson_dicts),
             'free_count': free_count,
+            'done_count': done_count,
             'slug': cat.slug,
+            'lessons': lesson_dicts,
         })
+        page_lessons.extend(lesson_dicts)
 
-    # Alle publishten Lektionen (sichtbare Sprachen) — voller Datensatz fuer Client-Filter
-    lessons_q = (
-        Lesson.query
-        .filter(
+    # Auffang: publishte Lektionen ohne (sichtbare) Kategorie nicht verschlucken
+    # -> eigene Gruppe ans Ende, damit keine Lektion aus dem Katalog faellt.
+    seen_ids = {d['id'] for d in page_lessons}
+    orphan_lessons = sorted(
+        [lsn for lsn in Lesson.query.filter(
             Lesson.is_published == True,  # noqa: E712
             Lesson.instruction_language.in_(visible_langs),
-        )
-        .order_by(Lesson.created_at.desc(), Lesson.id.desc())
-        .all()
+         ).all()
+         if lsn.id not in seen_ids],
+        key=lambda lsn: (lsn.order_index or 0, lsn.id),
     )
-    # Fortschritt des eingeloggten Nutzers fuer alle Lektionen in EINER Query laden
-    # -> erlaubt Status-Badge + "Noch offen"-Filter im Katalog (Discoverability:
-    # leicht finden, was noch nicht geloest wurde). Gaeste: leere Map -> Status 'open'.
-    progress_map = {}
-    show_status = bool(getattr(current_user, 'is_authenticated', False))
-    if show_status:
-        for pr in UserLessonProgress.query.filter_by(user_id=current_user.id).all():
-            progress_map[pr.lesson_id] = pr
-
-    page_lessons = []
-    for l in lessons_q:
-        is_free = (l.price or 0) == 0
-        pr = progress_map.get(l.id)
-        pct = (pr.progress_percentage or 0) if pr else 0
-        if pr and pr.is_completed:
-            status = 'done'
-        elif pct > 0:
-            status = 'started'
-        else:
-            status = 'open'
-        page_lessons.append({
-            'id': l.id,
-            'title': l.title,
-            'description': l.description or '',
-            'thumbnail_url': l.get_thumbnail_url() if hasattr(l, 'get_thumbnail_url') else None,
-            'difficulty_level': l.difficulty_level,
-            'estimated_duration': l.estimated_duration,
-            'is_free': is_free,
-            'price': l.price or 0,
-            'allow_guest_access': l.allow_guest_access,
-            'category_id': l.category_id,
-            'category_name': l.category.name if l.category else None,
-            'category_jlpt_level': l.category.jlpt_level if l.category else None,
-            'created_at': l.created_at,
-            'status': status,
-            'progress_percentage': pct,
+    if orphan_lessons:
+        orphan_dicts = [_lesson_dict(lsn) for lsn in orphan_lessons]
+        page_categories.append({
+            'id': 0,
+            'name': 'Weitere Lektionen',
+            'description': None,
+            'icon_emoji': '📚',
+            'color_code': None,
+            'jlpt_level': None,
+            'lesson_count': len(orphan_dicts),
+            'free_count': sum(1 for d in orphan_dicts if d['is_free']),
+            'done_count': sum(1 for d in orphan_dicts if d['status'] == 'done'),
+            'slug': None,
+            'lessons': orphan_dicts,
         })
+        page_lessons.extend(orphan_dicts)
 
-    # JLPT-Levels die in den Kategorien tatsaechlich vorkommen — fuer Filter-Pills
+    # JLPT-Levels die in den Kategorien tatsaechlich vorkommen — fuer Filter-Pills.
+    # Bei nur einem Level (aktuell nur N5) blendet das Template die Pills aus.
     jlpt_levels = sorted(
         {c['jlpt_level'] for c in page_categories if c['jlpt_level']},
         reverse=True,
     )
 
-    total_free = sum(1 for l in page_lessons if l['is_free'])
+    total_free = sum(1 for d in page_lessons if d['is_free'])
     total_paid = len(page_lessons) - total_free
-    total_open = sum(1 for l in page_lessons if l['status'] != 'done')
-    total_done = sum(1 for l in page_lessons if l['status'] == 'done')
+    total_done = sum(1 for d in page_lessons if d['status'] == 'done')
+    total_open = len(page_lessons) - total_done
+
+    # ── Weiter-lernen-Dashboard (nur eingeloggt) ──────────────────────────
+    # "Mach weiter, wo du warst": bevorzugt die zuletzt begonnene, noch nicht
+    # abgeschlossene Lektion; sonst die naechste offene Lektion im Lehrplan.
+    continue_lesson = None
+    continue_category = None
+    due_count = 0
+    current_streak = 0
+    if show_status:
+        due_count = srs_service.get_due_count(current_user.id)
+        current_streak = current_user.current_streak or 0
+        resume = None  # (last_accessed, lesson_dict, category_name)
+        nxt = None      # (lesson_dict, category_name) — erste offene im Pfad
+        for cat in page_categories:
+            for d in cat['lessons']:
+                if d['status'] == 'done':
+                    continue
+                if d['status'] == 'started':
+                    la = d['last_accessed'] or datetime.min
+                    if resume is None or la > resume[0]:
+                        resume = (la, d, cat['name'])
+                if nxt is None:
+                    nxt = (d, cat['name'])
+        if resume is not None:
+            continue_lesson, continue_category = resume[1], resume[2]
+        elif nxt is not None:
+            continue_lesson, continue_category = nxt[0], nxt[1]
+
+    # Erste gratis + gastzugaengliche Lektion — Einstieg fuer Gaeste ("Gratis starten")
+    first_free_lesson = None
+    for cat in page_categories:
+        for d in cat['lessons']:
+            if d['is_free'] and d['allow_guest_access']:
+                first_free_lesson = d
+                break
+        if first_free_lesson:
+            break
 
     return render_template(
         'lessons.html',
@@ -892,6 +956,11 @@ def lessons():
         show_status=show_status,
         total_open=total_open,
         total_done=total_done,
+        continue_lesson=continue_lesson,
+        continue_category=continue_category,
+        due_count=due_count,
+        current_streak=current_streak,
+        first_free_lesson=first_free_lesson,
     )
 
 
