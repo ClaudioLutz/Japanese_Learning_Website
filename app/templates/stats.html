@@ -8,301 +8,464 @@
 
 {% block styles %}
 <style>
-    .srs-stats-page { max-width: 960px; margin: 0 auto; padding: 1rem; padding-bottom: 80px; }
-    .srs-stats-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
-    .srs-stats-header h5 { color: var(--primary-color, #2B4C7E); margin: 0; }
+    /* ════════════════════════════════════════════════════════════
+       Statistik-Seite — Ink-on-Washi
+       Tokens: --washi --kon --shu(+soft/deep) --kincha --matcha
+               --ink-100..500 --color-error --space-* --radius-*
+       Ein heisser Akzent (--shu) nur fuer Aktion/Fortschritt/Streak.
+       Daten-Semantik: matcha=gut, kincha=mittel, color-error=schwach.
+       ════════════════════════════════════════════════════════════ */
+    :root { --mono: ui-monospace, 'Geist Mono', SFMono-Regular, Menlo, monospace; }
 
-    .srs-stats-overview { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.75rem; margin-bottom: 1.5rem; }
-    .srs-stat-card { background: var(--card-bg, #FFFDF7); border: 1px solid var(--border-color, #D4CFC5); border-radius: 12px; padding: 0.75rem; text-align: center; }
-    .srs-stat-card .srs-stat-value { font-size: 1.5rem; font-weight: 700; color: var(--primary-color, #2B4C7E); }
-    .srs-stat-card .srs-stat-label { font-size: 0.75rem; color: var(--text-muted, #8C8378); text-transform: none; letter-spacing: 0; }
+    .srs-stats-page { max-width: 1152px; margin: 0 auto; padding: var(--space-6) var(--space-4) 96px; }
+    @media (max-width: 640px) { .srs-stats-page { padding: var(--space-4) var(--space-3) 88px; } }
 
-    .chart-section { background: var(--card-bg, #FFFDF7); border: 1px solid var(--border-color, #D4CFC5); border-radius: 12px; padding: 1rem; margin-bottom: 1rem; }
-    .chart-section h6 { color: var(--primary-color, #2B4C7E); margin-bottom: 0.75rem; font-size: 0.9rem; }
-    .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+    [x-cloak] { display: none !important; }
+    .sr-only {
+        position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+        overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+
+    /* ── Seitenkopf (Hero-Heading) ── */
+    .stats-pagehead { margin-bottom: var(--space-6); }
+    .stats-eyebrow {
+        display: inline-flex; align-items: center; gap: 0.4rem;
+        font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase;
+        letter-spacing: 0.12em; color: var(--ink-500); margin-bottom: 0.4rem;
+    }
+    .stats-pagehead h1 {
+        font-size: clamp(1.7rem, 3vw, 2.35rem); color: var(--kon);
+        margin: 0; letter-spacing: -0.02em; line-height: 1.1;
+    }
+
+    /* ── Karten-Grundform: Hairline zuerst, Schatten nur bei Hover ── */
+    .stat-card, .hero-card, .chart-section, .due-card {
+        background: #fff; border: 1px solid var(--ink-200);
+        border-radius: var(--radius-md);
+    }
+
+    /* ── Hero-Zone: Aktion + Streak + Level + Mastery ── */
+    .stats-hero { display: grid; grid-template-columns: 1fr; gap: var(--space-3); margin-bottom: var(--space-6); }
+    .stats-hero-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
+    @media (max-width: 760px) { .stats-hero-row { grid-template-columns: 1fr; } }
+
+    .hero-card { padding: var(--space-4); display: flex; flex-direction: column; gap: 0.2rem; }
+    .hero-label {
+        font-family: var(--mono); font-size: 0.68rem; text-transform: uppercase;
+        letter-spacing: 0.07em; color: var(--ink-500);
+    }
+
+    /* Aktion / Faellige Karten */
+    .due-card {
+        display: flex; align-items: center; justify-content: space-between;
+        gap: var(--space-4); padding: var(--space-4) var(--space-6); flex-wrap: wrap;
+    }
+    .due-card.has-due { border-left: 4px solid var(--shu); }
+    .due-card-num { font-size: 1.45rem; font-weight: 600; color: var(--kon); line-height: 1.2; }
+    .due-card-num .jp { font-family: 'Noto Serif JP', 'Klee One', serif; margin-right: 0.3rem; }
+    .due-card-sub { font-size: 0.85rem; color: var(--ink-500); margin-top: 0.25rem; max-width: 46ch; }
+
+    /* CTA-Buttons (lokal, token-basiert) */
+    .stats-cta, .stats-cta-ghost {
+        display: inline-flex; align-items: center; gap: 0.5rem; white-space: nowrap;
+        padding: 0.7rem 1.25rem; border-radius: var(--radius-md);
+        font-weight: 600; font-size: 0.95rem; cursor: pointer; text-decoration: none;
+        min-height: 44px; transition: background 0.15s, transform 0.1s;
+    }
+    .stats-cta {
+        background: linear-gradient(180deg, #F37016, var(--shu)); color: #fff; border: 0;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.15), 0 1px 2px rgba(184,74,0,.30);
+    }
+    .stats-cta:hover { background: linear-gradient(180deg, var(--shu), var(--shu-deep)); color: #fff; text-decoration: none; }
+    .stats-cta:active { transform: scale(0.97); }
+    .stats-cta-ghost { background: transparent; border: 1px solid var(--ink-300); color: var(--kon); }
+    .stats-cta-ghost:hover { background: var(--ink-100); color: var(--kon); text-decoration: none; }
+
+    /* Streak */
+    .streak-num { font-size: 2.5rem; font-weight: 700; color: var(--kon); line-height: 1; display: flex; align-items: center; gap: 0.4rem; margin-top: 0.2rem; }
+    .streak-num small { font-size: 1rem; color: var(--ink-500); font-weight: 500; }
+    .streak-flame { color: var(--shu); }
+    .streak-sub { font-size: 0.8rem; color: var(--ink-500); margin-top: 0.35rem; }
+    .streak-record {
+        display: inline-block; margin-top: 0.5rem; font-size: 0.7rem; font-weight: 600;
+        color: var(--shu-deep); background: var(--shu-soft);
+        padding: 0.15rem 0.55rem; border-radius: var(--radius-full);
+    }
+    .streak-keep { font-size: 0.75rem; color: var(--shu-deep); margin-top: 0.4rem; }
+
+    /* Level + Mastery (Fortschrittsbalken) */
+    .level-top { display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem; margin-top: 0.2rem; }
+    .level-num { font-size: 1.5rem; font-weight: 700; color: var(--kon); line-height: 1; }
+    .level-title { font-size: 0.74rem; color: var(--ink-500); text-align: right; }
+    .mastery-num { font-size: 2.1rem; font-weight: 700; color: var(--kon); line-height: 1; margin-top: 0.2rem; }
+    .mastery-num small { font-size: 1.1rem; color: var(--ink-500); font-weight: 500; }
+    .progress-track {
+        height: 8px; background: var(--ink-100); border-radius: var(--radius-full);
+        overflow: hidden; margin-top: 0.6rem;
+    }
+    .progress-fill { height: 100%; background: var(--shu); border-radius: var(--radius-full); transition: width 0.6s ease; }
+    .progress-label { font-size: 0.72rem; color: var(--ink-500); font-family: var(--mono); margin-top: 0.4rem; }
+
+    /* ── Sekundaere Stat-Kacheln ── */
+    .srs-stats-overview {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: var(--space-3); margin-bottom: var(--space-6);
+    }
+    .stat-card { padding: var(--space-4); display: flex; flex-direction: column; gap: 0.3rem; }
+    .stat-card .stat-label {
+        font-family: var(--mono); font-size: 0.68rem; text-transform: uppercase;
+        letter-spacing: 0.06em; color: var(--ink-500);
+    }
+    .stat-card .stat-value { font-size: 1.9rem; font-weight: 600; color: var(--kon); line-height: 1; letter-spacing: -0.02em; }
+    .stat-card .stat-value small { font-size: 1rem; color: var(--ink-500); font-weight: 500; }
+
+    /* ── Gruppen-Label (Abschnitts-Gliederung) ── */
+    .stats-group {
+        display: flex; align-items: center; gap: 0.7rem;
+        margin: var(--space-8) 0 var(--space-3);
+        font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase;
+        letter-spacing: 0.1em; color: var(--ink-500);
+    }
+    .stats-group::after { content: ""; flex: 1; height: 1px; background: var(--ink-200); }
+
+    /* ── Diagramm-Karten ── */
+    .chart-section { padding: var(--space-4); margin-bottom: var(--space-3); }
+    .chart-section h6 {
+        color: var(--kon); margin: 0 0 0.75rem; font-size: 0.95rem; font-weight: 600;
+        display: flex; align-items: center; gap: 0.45rem;
+    }
+    .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
     @media (max-width: 768px) { .chart-row { grid-template-columns: 1fr; } }
+    .chart-empty { font-size: 0.85rem; color: var(--ink-500); padding: 1.5rem 0; text-align: center; }
+    .chart-box { position: relative; height: 280px; }
+    @media (max-width: 768px) { .chart-box { height: 240px; } }
 
+    /* Aktivitaets-Heatmap (Matcha-Rampe, warm) */
     .heatmap-grid { display: flex; flex-wrap: wrap; gap: 2px; margin-top: 0.5rem; }
     .heatmap-cell { width: 12px; height: 12px; border-radius: 2px; }
-    .heatmap-legend { display: flex; align-items: center; gap: 4px; font-size: 0.7rem; color: var(--text-muted); margin-top: 0.5rem; }
+    .heatmap-legend { display: flex; align-items: center; gap: 4px; font-size: 0.7rem; color: var(--ink-500); margin-top: 0.6rem; flex-wrap: wrap; }
 
-    .leech-table { width: 100%; font-size: 0.85rem; }
-    .leech-table th { font-weight: 600; color: var(--text-muted); padding: 0.4rem; border-bottom: 1px solid var(--border-color); text-align: left; }
-    .leech-table td { padding: 0.4rem; border-bottom: 1px solid var(--border-color, #eee); }
-    .leech-table .leech-warning { color: #dc3545; }
-    .leech-action { background: none; border: 1px solid var(--border-color); border-radius: 6px; padding: 2px 8px; font-size: 0.75rem; cursor: pointer; }
-    .leech-action:hover { background: var(--background-color, #F5F0E8); }
-
-    .jlpt-section { margin-bottom: 1rem; }
-    .jlpt-level { margin-bottom: 0.75rem; }
-    .jlpt-level-header { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.25rem; }
-    .jlpt-level-header strong { color: var(--primary-color); }
-    .jlpt-bar { height: 20px; background: var(--border-color, #D4CFC5); border-radius: 10px; overflow: hidden; }
-    .jlpt-bar-fill { height: 100%; border-radius: 10px; transition: width 0.5s ease; }
-    .jlpt-detail { font-size: 0.7rem; color: var(--text-muted); margin-top: 2px; }
-
-    .badge-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 0.75rem; }
-    .badge-item { text-align: center; padding: 0.75rem 0.5rem; border-radius: 10px; border: 1px solid var(--border-color); background: var(--card-bg); }
-    .badge-item.locked { opacity: 0.4; }
-    .badge-item .badge-icon { font-size: 1.5rem; margin-bottom: 0.25rem; }
-    .badge-item .badge-name { font-size: 0.7rem; font-weight: 600; }
-    .badge-item .badge-desc { font-size: 0.6rem; color: var(--text-muted); }
-
-    /* Phase 2: Kana-Heatmap */
-    .kana-script-toggle {
-        display: inline-flex;
-        gap: 2px;
-        background: var(--background-color, #F5F0E8);
-        border-radius: 999px;
-        padding: 2px;
+    /* ── Detail-Tabelle (Leeches) ── */
+    .leech-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .leech-table { width: 100%; min-width: 480px; font-size: 0.85rem; border-collapse: collapse; }
+    .leech-table th { font-weight: 600; color: var(--ink-500); padding: 0.45rem; border-bottom: 1px solid var(--ink-200); text-align: left; white-space: nowrap; }
+    .leech-table td { padding: 0.5rem 0.45rem; border-bottom: 1px solid var(--ink-100); vertical-align: middle; }
+    .leech-front { font-weight: 600; color: var(--kon); max-width: 16ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .leech-warning { color: var(--color-error); font-weight: 600; }
+    .leech-actions { display: inline-flex; gap: var(--space-2); flex-wrap: wrap; }
+    .leech-action {
+        min-height: 40px; padding: var(--space-2) var(--space-3); border: 1px solid var(--ink-300);
+        border-radius: var(--radius-md); background: #fff; font-size: 0.78rem; color: var(--kon); cursor: pointer;
     }
+    .leech-action:hover { background: var(--ink-100); }
+    .leech-action.is-danger { border-color: rgba(209,75,61,.4); color: var(--color-error); }
+    .leech-action.is-danger:hover { background: rgba(209,75,61,.06); }
+    @media (max-width: 640px) {
+        .leech-table { min-width: 0; }
+        .leech-table thead { display: none; }
+        .leech-table tr { display: block; border: 1px solid var(--ink-200); border-radius: var(--radius-md); padding: var(--space-3); margin-bottom: var(--space-2); }
+        .leech-table td { display: flex; justify-content: space-between; align-items: center; gap: 1rem; border: 0; padding: 0.3rem 0; text-align: right; }
+        .leech-table td::before { content: attr(data-label); font-weight: 600; color: var(--ink-500); text-align: left; }
+        .leech-front { max-width: none; }
+        .leech-table td.leech-actions-cell { display: block; }
+        .leech-table td.leech-actions-cell::before { display: block; margin-bottom: 0.4rem; }
+        .leech-actions { width: 100%; }
+        .leech-action { flex: 1; min-height: 44px; }
+    }
+
+    /* ── JLPT-Fortschritt ── */
+    .jlpt-level { margin-bottom: 0.85rem; }
+    .jlpt-level-header { display: flex; justify-content: space-between; align-items: baseline; font-size: 0.9rem; margin-bottom: 0.3rem; gap: 0.5rem; }
+    .jlpt-level-header strong { color: var(--kon); font-size: 1rem; }
+    .jlpt-level-header .jlpt-stage { font-size: 0.72rem; color: var(--ink-500); margin-left: auto; }
+    .jlpt-bar { height: 20px; background: var(--ink-100); border-radius: var(--radius-full); overflow: hidden; }
+    .jlpt-bar-fill { height: 100%; border-radius: var(--radius-full); background: var(--shu); transition: width 0.6s ease; }
+    .jlpt-detail { font-size: 0.72rem; color: var(--ink-500); margin-top: 0.25rem; }
+
+    /* ── Achievements ── */
+    .badge-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: var(--space-3); }
+    .badge-item { text-align: center; padding: 0.85rem 0.5rem; border-radius: var(--radius-md); border: 1px solid var(--ink-200); background: #fff; }
+    .badge-item.locked { opacity: 0.45; }
+    .badge-item .badge-icon { font-size: 1.5rem; margin-bottom: 0.3rem; color: var(--ink-400); }
+    .badge-item.unlocked .badge-icon { color: var(--shu); }
+    .badge-item .badge-name { font-size: 0.72rem; font-weight: 600; color: var(--kon); }
+    .badge-item .badge-desc { font-size: 0.62rem; color: var(--ink-500); margin-top: 0.15rem; line-height: 1.3; }
+    .badge-item .badge-state { font-size: 0.62rem; font-weight: 600; color: var(--matcha); margin-top: 0.2rem; }
+
+    /* ── Detail-Analyse (einklappbar) ── */
+    .stats-details { border: 1px solid var(--ink-200); border-radius: var(--radius-md); background: #fff; margin-top: var(--space-4); overflow: hidden; }
+    .stats-details > summary {
+        cursor: pointer; padding: var(--space-4); font-weight: 600; color: var(--kon);
+        display: flex; align-items: center; gap: 0.5rem; list-style: none; font-size: 0.95rem;
+    }
+    .stats-details > summary::-webkit-details-marker { display: none; }
+    .stats-details > summary .chev { margin-left: auto; transition: transform 0.2s; color: var(--ink-500); }
+    .stats-details[open] > summary .chev { transform: rotate(180deg); }
+    .stats-details > summary .summary-hint { font-weight: 400; color: var(--ink-500); font-size: 0.8rem; }
+    .stats-details .details-body { padding: 0 var(--space-4) var(--space-4); }
+    .stats-details .chart-section:last-child { margin-bottom: 0; }
+
+    /* ── Empty-State ── */
+    .stats-empty {
+        text-align: center; padding: var(--space-12) var(--space-4);
+        border: 1px dashed var(--ink-300); border-radius: var(--radius-lg); background: #fff;
+        max-width: 640px; margin: 0 auto;
+    }
+    .stats-empty-jp { font-family: 'Noto Serif JP', 'Klee One', serif; font-size: 3rem; color: var(--shu); display: block; line-height: 1; margin-bottom: 0.75rem; }
+    .stats-empty h2 { color: var(--kon); font-size: 1.35rem; margin: 0 0 0.5rem; }
+    .stats-empty p { color: var(--ink-500); max-width: 44ch; margin: 0 auto 1.5rem; font-size: 0.95rem; }
+    .stats-empty-cta { display: flex; gap: var(--space-3); justify-content: center; flex-wrap: wrap; }
+
+    /* ── Kana-Beherrschung (Gojuon-Raster) ── */
+    .kana-script-toggle { display: inline-flex; gap: 2px; background: var(--ink-100); border-radius: var(--radius-full); padding: 2px; }
     .kana-script-toggle button {
-        background: transparent;
-        border: 0;
-        padding: 0.2rem 0.65rem;
-        font-size: 0.72rem;
-        border-radius: 999px;
-        color: var(--text-muted);
-        cursor: pointer;
-        transition: all 0.18s ease;
+        background: transparent; border: 0; padding: 0.25rem 0.7rem; font-size: 0.72rem;
+        border-radius: var(--radius-full); color: var(--ink-500); cursor: pointer; transition: all 0.18s ease; min-height: 38px;
     }
-    .kana-script-toggle button.is-active {
-        background: var(--card-bg, #FFFDF7);
-        color: var(--shu, #EB6101);
-        font-weight: 600;
-    }
-    .kana-heatmap-grid {
-        margin-top: 0.75rem;
-        display: flex;
-        flex-direction: column;
-        gap: 0.3rem;
-    }
-    .kana-heatmap-row {
-        display: grid;
-        grid-template-columns: minmax(78px, 110px) repeat(5, 1fr);
-        gap: 0.3rem;
-        align-items: stretch;
-    }
-    .kana-heatmap-row-label {
-        font-size: 0.7rem;
-        color: var(--text-muted);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        padding-right: 0.5rem;
-    }
+    .kana-script-toggle button.is-active { background: #fff; color: var(--shu); font-weight: 600; }
+    .kana-heatmap-grid { margin-top: 0.75rem; display: flex; flex-direction: column; gap: 0.3rem; }
+    .kana-heatmap-row { display: grid; grid-template-columns: minmax(78px, 110px) repeat(5, 1fr); gap: 0.3rem; align-items: stretch; }
+    .kana-heatmap-row-label { font-size: 0.7rem; color: var(--ink-500); text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; justify-content: flex-end; padding-right: 0.5rem; }
     .kana-heatmap-cell {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 0.3rem 0.2rem;
-        min-height: 44px;
-        border: 2px solid #ccc;
-        border-radius: 7px;
-        background: #FEE6CE;
-        cursor: help;
-        transition: transform 0.15s ease;
+        position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;
+        padding: 0.3rem 0.2rem; min-height: 44px; border: 2px solid var(--ink-200); border-radius: 7px;
+        background: #FEE6CE; cursor: help; transition: transform 0.15s ease;
     }
-    .kana-heatmap-cell:hover {
-        transform: scale(1.06);
-        z-index: 1;
-    }
-    .kana-heatmap-char {
-        font-family: 'Klee One', 'Noto Serif JP', serif;
-        font-size: 1.05rem;
-        font-weight: 600;
-        line-height: 1;
-        color: var(--kon, #1F2A44);
-    }
-    .kana-heatmap-rom {
-        font-size: 0.6rem;
-        color: var(--text-muted);
-        font-family: 'Geist Mono', ui-monospace, monospace;
-        margin-top: 1px;
-    }
-    .kana-heatmap-legend {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 0.7rem;
-        color: var(--text-muted);
-        margin-top: 0.75rem;
-        flex-wrap: wrap;
-    }
-    .kana-heatmap-legend .kana-heatmap-cell {
-        width: 18px;
-        height: 18px;
-        min-height: 18px;
-        padding: 0;
-        border-width: 1px;
-    }
-    /* Schwache 5 Kana */
-    .weak-kana-list {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-        gap: 0.6rem;
-    }
-    .weak-kana-item {
-        display: flex;
-        align-items: center;
-        gap: 0.6rem;
-        padding: 0.6rem;
-        background: rgba(220, 53, 69, 0.05);
-        border: 1px solid rgba(220, 53, 69, 0.2);
-        border-radius: 10px;
-    }
-    .weak-kana-char {
-        font-family: 'Klee One', 'Noto Serif JP', serif;
-        font-size: 1.7rem;
-        font-weight: 600;
-        line-height: 1;
-        color: var(--kon, #1F2A44);
-    }
+    .kana-heatmap-cell:hover { transform: scale(1.06); z-index: 1; }
+    .kana-heatmap-char { font-family: 'Klee One', 'Noto Serif JP', serif; font-size: 1.05rem; font-weight: 600; line-height: 1; color: var(--kon); }
+    .kana-heatmap-rom { font-size: 0.6rem; color: var(--ink-500); font-family: var(--mono); margin-top: 1px; }
+    .kana-heatmap-legend { display: flex; align-items: center; gap: 6px; font-size: 0.7rem; color: var(--ink-500); margin-top: 0.75rem; flex-wrap: wrap; }
+    .kana-heatmap-legend .kana-heatmap-cell { width: 18px; height: 18px; min-height: 18px; padding: 0; border-width: 1px; }
+
+    /* Schwaechste Kana */
+    .weak-kana-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.6rem; }
+    .weak-kana-item { display: flex; align-items: center; gap: 0.6rem; padding: 0.6rem; background: var(--shu-soft); border: 1px solid rgba(235,97,1,.2); border-radius: var(--radius-md); }
+    .weak-kana-char { font-family: 'Klee One', 'Noto Serif JP', serif; font-size: 1.7rem; font-weight: 600; line-height: 1; color: var(--kon); }
     .weak-kana-meta { flex: 1; min-width: 0; }
-    .weak-kana-rom {
-        font-size: 0.75rem;
-        color: var(--text-muted);
-        font-family: 'Geist Mono', ui-monospace, monospace;
-    }
-    .weak-kana-stats {
-        display: flex;
-        justify-content: space-between;
-        font-size: 0.7rem;
-        color: var(--text-muted);
-        margin-top: 0.2rem;
-    }
-    .weak-kana-stats i { color: #dc3545; margin-right: 2px; }
+    .weak-kana-rom { font-size: 0.75rem; color: var(--ink-600); font-family: var(--mono); }
+    .weak-kana-stats { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--ink-600); margin-top: 0.2rem; }
+    .weak-kana-stats i { color: var(--color-error); margin-right: 2px; }
+
     @media (max-width: 640px) {
         .kana-heatmap-row { grid-template-columns: 1fr; }
-        .kana-heatmap-row-label {
-            justify-content: flex-start;
-            padding: 0.25rem 0;
-            border-bottom: 1px solid var(--border-color);
-        }
+        .kana-heatmap-row-label { justify-content: flex-start; padding: 0.25rem 0; border-bottom: 1px solid var(--ink-200); }
+    }
+
+    /* Fokus-Sichtbarkeit (Tastatur) */
+    .stats-cta:focus-visible, .stats-cta-ghost:focus-visible, .leech-action:focus-visible,
+    .kana-script-toggle button:focus-visible, .stats-details > summary:focus-visible {
+        outline: 3px solid var(--kon); outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .progress-fill, .jlpt-bar-fill, .kana-heatmap-cell, .stats-details > summary .chev,
+        .stats-cta { transition: none !important; }
     }
 </style>
 {% endblock %}
 
 {% block content %}
+{% if stats.total_cards == 0 %}
+<div class="srs-stats-page">
+    <div class="stats-pagehead">
+        <span class="stats-eyebrow"><i class="fas fa-chart-line" aria-hidden="true"></i> Dein Fortschritt</span>
+        <h1>Statistiken</h1>
+    </div>
+    <div class="stats-empty">
+        <span class="stats-empty-jp" aria-hidden="true">始</span>
+        <h2>Noch keine Karten im Wiederholungssystem</h2>
+        <p>Sobald du eine Lektion abschliesst oder Kana übst, sammeln sich hier deine Karten —
+           dann zeigen wir dir Aktivität, Beherrschung und deinen Level-Fortschritt.</p>
+        <div class="stats-empty-cta">
+            <a href="{{ url_for('routes.index') }}#lernpfad" class="stats-cta"><i class="fas fa-play" aria-hidden="true"></i> Lernpfad öffnen</a>
+            <a href="{{ url_for('srs.practice_kana_page') }}" class="stats-cta-ghost"><span aria-hidden="true">あ</span> Kana üben</a>
+        </div>
+    </div>
+</div>
+{% else %}
 <div class="srs-stats-page" x-data="statsPage()" x-init="loadAll()">
-    <div class="srs-stats-header">
-        <h5><i class="fas fa-chart-bar me-1"></i> Statistiken</h5>
-        <div style="font-size:0.8rem; color:var(--text-muted);">
-            Level <strong x-text="stats.level">{{ stats.level }}</strong> — <span x-text="stats.level_title">{{ stats.level_title }}</span>
-            &nbsp;&middot;&nbsp; <span x-text="stats.total_xp">{{ stats.total_xp }}</span> XP
+
+    <!-- Seitenkopf -->
+    <div class="stats-pagehead">
+        <span class="stats-eyebrow"><i class="fas fa-chart-line" aria-hidden="true"></i> Dein Fortschritt</span>
+        <h1>Statistiken</h1>
+    </div>
+
+    <!-- HERO: Aktion + Streak + Level + Mastery -->
+    <div class="stats-hero">
+        {% if stats.due_count > 0 %}
+        <div class="due-card has-due">
+            <div>
+                <div class="due-card-num">
+                    <i class="fas fa-bolt streak-flame" aria-hidden="true"></i>
+                    {{ stats.due_count }} {{ 'Karte' if stats.due_count == 1 else 'Karten' }} fällig
+                </div>
+                <div class="due-card-sub">Wiederhole jetzt, solange der Algorithmus den besten Moment trifft.</div>
+            </div>
+            <a href="{{ url_for('srs.review_page') }}" class="stats-cta"><i class="fas fa-play" aria-hidden="true"></i> Jetzt wiederholen</a>
+        </div>
+        {% else %}
+        <div class="due-card">
+            <div>
+                <div class="due-card-num"><span class="jp" aria-hidden="true">完了</span> Für heute durch</div>
+                <div class="due-card-sub">Keine Karten fällig — komm morgen wieder, der Algorithmus passt sich an.</div>
+            </div>
+            <a href="{{ url_for('routes.index') }}#lernpfad" class="stats-cta-ghost"><i class="fas fa-book-open" aria-hidden="true"></i> Neues Modul</a>
+        </div>
+        {% endif %}
+
+        <div class="stats-hero-row">
+            <!-- Streak -->
+            <div class="hero-card streak-card">
+                <span class="hero-label">Serie</span>
+                <div class="streak-num"><i class="fas fa-fire streak-flame" aria-hidden="true"></i> {{ stats.current_streak }}<small> Tage</small></div>
+                <div class="streak-sub">Längste Serie: {{ stats.longest_streak }} {{ 'Tag' if stats.longest_streak == 1 else 'Tage' }}</div>
+                {% if stats.current_streak > 0 and stats.current_streak == stats.longest_streak %}
+                <span class="streak-record">Neuer Rekord!</span>
+                {% elif stats.due_count > 0 and stats.current_streak > 0 %}
+                <span class="streak-keep">Übe heute, um die Serie zu halten.</span>
+                {% endif %}
+            </div>
+
+            <!-- Level -->
+            <div class="hero-card level-card">
+                <span class="hero-label">Level</span>
+                <div class="level-top">
+                    <span class="level-num">Lv. {{ stats.level }}</span>
+                    <span class="level-title">{{ stats.level_title }}</span>
+                </div>
+                <div class="progress-track" role="progressbar"
+                     aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ stats.level_progress_pct }}"
+                     aria-label="Fortschritt zu Level {{ stats.level + 1 }}">
+                    <div class="progress-fill" style="width: {{ stats.level_progress_pct }}%"></div>
+                </div>
+                <div class="progress-label">{{ stats.total_xp }} XP · noch {{ stats.xp_to_next }} bis Lv. {{ stats.level + 1 }}</div>
+            </div>
+
+            <!-- N5-Beherrschung (Alpine, async) -->
+            <div class="hero-card mastery-card">
+                <span class="hero-label">N5 beherrscht</span>
+                <div class="mastery-num">
+                    <span x-text="n5 ? n5.mastered : '–'">–</span><small x-text="n5 ? (' / ' + n5.total) : ''"></small>
+                </div>
+                <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                     :aria-valuenow="n5 ? n5.percent : 0" aria-label="N5-Beherrschung">
+                    <div class="progress-fill" :style="`width: ${n5 ? n5.percent : 0}%`"></div>
+                </div>
+                <div class="progress-label"><span x-text="n5 ? n5.percent : 0">0</span>% des N5-Stoffs · Vokabeln &amp; Kanji</div>
+            </div>
         </div>
     </div>
 
-    <!-- Overview Cards -->
+    <!-- Sekundaere Kennzahlen -->
     <div class="srs-stats-overview">
-        <div class="srs-stat-card">
-            <div class="srs-stat-value">{{ stats.total_cards }}</div>
-            <div class="srs-stat-label">Karten gesamt</div>
+        <div class="stat-card">
+            <span class="stat-label">Karten gesamt</span>
+            <span class="stat-value">{{ stats.total_cards }}</span>
         </div>
-        <div class="srs-stat-card">
-            <div class="srs-stat-value">{{ stats.due_count }}</div>
-            <div class="srs-stat-label">Heute faellig</div>
+        <div class="stat-card">
+            <span class="stat-label">Reviews heute</span>
+            <span class="stat-value">{{ stats.reviews_today }}</span>
         </div>
-        <div class="srs-stat-card">
-            <div class="srs-stat-value">{{ stats.reviews_today }}</div>
-            <div class="srs-stat-label">Reviews heute</div>
+        <div class="stat-card">
+            <span class="stat-label">Erfolgsrate heute</span>
+            <span class="stat-value">{% if stats.reviews_today > 0 %}{{ stats.success_rate }}%{% else %}<small>noch keine</small>{% endif %}</span>
         </div>
-        <div class="srs-stat-card">
-            <div class="srs-stat-value">{{ stats.current_streak }}</div>
-            <div class="srs-stat-label"><i class="fas fa-fire" style="color:#fd7e14;"></i> Streak</div>
-        </div>
-        <div class="srs-stat-card">
-            <div class="srs-stat-value">{{ stats.success_rate }}%</div>
-            <div class="srs-stat-label">Erfolgsrate</div>
+        <div class="stat-card">
+            <span class="stat-label">Reife Karten</span>
+            <span class="stat-value">{{ stats.review_count }}</span>
         </div>
     </div>
 
-    <!-- Heatmap -->
+    <!-- ══ GRUPPE: Verlauf ══ -->
+    <div class="stats-group">Verlauf</div>
+
     <div class="chart-section">
-        <h6><i class="fas fa-calendar-alt me-1"></i> Review-Aktivitaet (letzte 365 Tage)</h6>
-        <div class="heatmap-grid" id="heatmapGrid"></div>
+        <h6><i class="fas fa-calendar-alt" aria-hidden="true"></i> Review-Aktivität (letzte 365 Tage)</h6>
+        <div class="heatmap-grid" id="heatmapGrid" role="img" aria-label="Review-Aktivität der letzten 365 Tage"></div>
         <div class="heatmap-legend">
             <span>Weniger</span>
-            <span class="heatmap-cell" style="background:#ebedf0;"></span>
-            <span class="heatmap-cell" style="background:#9be9a8;"></span>
-            <span class="heatmap-cell" style="background:#40c463;"></span>
-            <span class="heatmap-cell" style="background:#30a14e;"></span>
-            <span class="heatmap-cell" style="background:#216e39;"></span>
+            <span class="heatmap-cell" style="background:var(--ink-100);"></span>
+            <span class="heatmap-cell" style="background:rgba(122,144,51,.30);"></span>
+            <span class="heatmap-cell" style="background:rgba(122,144,51,.52);"></span>
+            <span class="heatmap-cell" style="background:rgba(122,144,51,.74);"></span>
+            <span class="heatmap-cell" style="background:var(--matcha);"></span>
             <span>Mehr</span>
         </div>
+        <div class="sr-only" id="heatmapSr"></div>
     </div>
 
-    <!-- Charts Row 1: Retention + Forecast -->
-    <div class="chart-row">
-        <div class="chart-section">
-            <h6><i class="fas fa-chart-line me-1"></i> Retention nach Intervall</h6>
-            <canvas id="retentionChart" height="200"></canvas>
-        </div>
-        <div class="chart-section">
-            <h6><i class="fas fa-chart-bar me-1"></i> Review-Forecast (30 Tage)</h6>
-            <canvas id="forecastChart" height="200"></canvas>
-        </div>
-    </div>
-
-    <!-- Charts Row 2: Maturity + Content Type -->
-    <div class="chart-row">
-        <div class="chart-section">
-            <h6><i class="fas fa-chart-pie me-1"></i> Karten-Verteilung</h6>
-            <canvas id="maturityChart" height="200"></canvas>
-        </div>
-        <div class="chart-section">
-            <h6><i class="fas fa-layer-group me-1"></i> Performance nach Typ</h6>
-            <canvas id="contentTypeChart" height="200"></canvas>
-        </div>
-    </div>
-
-    <!-- Response Time Histogram -->
     <div class="chart-section">
-        <h6><i class="fas fa-stopwatch me-1"></i> Antwortzeiten</h6>
-        <canvas id="responseTimeChart" height="180"></canvas>
+        <h6><i class="fas fa-chart-bar" aria-hidden="true"></i> Kommende Reviews (14 Tage)</h6>
+        <div class="chart-box"><canvas id="forecastChart" role="img" aria-label="Forecast der fälligen Reviews"></canvas></div>
+        <p class="chart-empty" id="forecastEmpty" style="display:none;">Noch keine geplanten Reviews.</p>
     </div>
 
-    <!-- Leeches -->
-    <div class="chart-section" x-show="leeches.length > 0">
-        <h6><i class="fas fa-bug me-1"></i> Problematische Karten (<span x-text="leeches.length"></span>)</h6>
-        <table class="leech-table">
-            <thead><tr><th>Karte</th><th>Typ</th><th>Fehler</th><th>Quote</th><th>Aktion</th></tr></thead>
-            <tbody>
-                <template x-for="l in leeches" :key="l.content_id">
-                    <tr>
-                        <td x-text="l.front" style="font-weight:600;"></td>
-                        <td x-text="l.content_type"></td>
-                        <td class="leech-warning" x-text="l.lapses"></td>
-                        <td x-text="l.failure_rate + '%'"></td>
-                        <td>
-                            <button class="leech-action" @click="suspendCard(l.content_id)">Suspendieren</button>
-                            <button class="leech-action" @click="resetCard(l.content_id)">Reset</button>
-                        </td>
-                    </tr>
-                </template>
-            </tbody>
-        </table>
+    <!-- ══ GRUPPE: Schwächen (nur wenn vorhanden) ══ -->
+    <div class="stats-group" x-show="weakKana.length > 0 || leeches.length > 0" x-cloak>Schwächen</div>
+
+    <!-- Schwaechste Kana -->
+    <div class="chart-section" x-show="weakKana.length > 0" x-cloak>
+        <h6><i class="fas fa-exclamation-triangle" aria-hidden="true"></i> Schwächste Kana</h6>
+        <div class="weak-kana-list">
+            <template x-for="k in weakKana" :key="k.kana_id">
+                <div class="weak-kana-item">
+                    <div class="weak-kana-char" x-text="k.character"></div>
+                    <div class="weak-kana-meta">
+                        <div class="weak-kana-rom" x-text="k.romanization"></div>
+                        <div class="weak-kana-stats">
+                            <span><i class="fas fa-times-circle" aria-hidden="true"></i> <span x-text="k.lapses"></span> Fehler</span>
+                            <span x-text="k.accuracy + '%'"></span>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+        <div style="margin-top:0.75rem;">
+            <a href="{{ url_for('routes.index') }}#lernpfad" class="stats-cta-ghost">
+                <i class="fas fa-play" aria-hidden="true"></i> Diese Kana üben
+            </a>
+        </div>
     </div>
 
-    <!-- Phase 2: Kana-Heatmap (Gojuon-Tabelle, Accuracy + Stage) -->
-    <div class="chart-section" x-show="kanaHeatmap.length > 0">
+    <!-- Problematische Karten (Leeches) -->
+    <div class="chart-section" x-show="leeches.length > 0" x-cloak>
+        <h6><i class="fas fa-bug" aria-hidden="true"></i> Problematische Karten (<span x-text="leeches.length"></span>)</h6>
+        <div class="leech-table-wrap">
+            <table class="leech-table">
+                <thead><tr><th>Karte</th><th>Typ</th><th>Fehler</th><th>Quote</th><th>Aktion</th></tr></thead>
+                <tbody>
+                    <template x-for="l in leeches" :key="l.content_id">
+                        <tr>
+                            <td data-label="Karte" class="leech-front" x-text="l.front"></td>
+                            <td data-label="Typ" x-text="l.content_type"></td>
+                            <td data-label="Fehler" class="leech-warning" x-text="l.lapses"></td>
+                            <td data-label="Quote" x-text="l.failure_rate + '%'"></td>
+                            <td data-label="Aktion" class="leech-actions-cell">
+                                <div class="leech-actions">
+                                    <button class="leech-action" @click="suspendCard(l.content_id)">Suspendieren</button>
+                                    <button class="leech-action is-danger" @click="resetCard(l.content_id)">Reset</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ══ GRUPPE: Beherrschung ══ -->
+    <div class="stats-group">Beherrschung</div>
+
+    <!-- Kana-Beherrschung (Gojuon, Accuracy + Stufe) -->
+    <div class="chart-section" x-show="kanaHeatmap.length > 0" x-cloak>
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
-            <h6 style="margin:0;"><i class="fas fa-th me-1"></i> Kana-Beherrschung
+            <h6 style="margin:0;"><i class="fas fa-th" aria-hidden="true"></i> Kana-Beherrschung
                 (<span x-text="kanaHeatmap.length"></span>)</h6>
-            <div class="kana-script-toggle" role="tablist">
-                <button type="button"
-                        :class="{ 'is-active': kanaScript === 'all' }"
-                        @click="kanaScript = 'all'">Beide</button>
-                <button type="button"
-                        :class="{ 'is-active': kanaScript === 'hiragana' }"
-                        @click="kanaScript = 'hiragana'">Hiragana</button>
-                <button type="button"
-                        :class="{ 'is-active': kanaScript === 'katakana' }"
-                        @click="kanaScript = 'katakana'">Katakana</button>
+            <div class="kana-script-toggle" role="tablist" aria-label="Schrift filtern">
+                <button type="button" :class="{ 'is-active': kanaScript === 'all' }" @click="kanaScript = 'all'">Beide</button>
+                <button type="button" :class="{ 'is-active': kanaScript === 'hiragana' }" @click="kanaScript = 'hiragana'">Hiragana</button>
+                <button type="button" :class="{ 'is-active': kanaScript === 'katakana' }" @click="kanaScript = 'katakana'">Katakana</button>
             </div>
         </div>
         <div class="kana-heatmap-grid">
@@ -315,6 +478,7 @@
                              :style="`background: ${accuracyColor(cell.accuracy)}; border-color: ${cell.stage_color}`">
                             <span class="kana-heatmap-char" x-text="cell.character"></span>
                             <span class="kana-heatmap-rom" x-text="cell.romanization"></span>
+                            <span class="sr-only" x-text="cell.character + ': ' + cell.accuracy + ' Prozent Treffer, ' + cell.total_reps + ' Wiederholungen, Stufe ' + cell.stage_name"></span>
                         </div>
                     </template>
                 </div>
@@ -322,53 +486,28 @@
         </div>
         <div class="kana-heatmap-legend">
             <span>Schwach</span>
-            <span class="kana-heatmap-cell" style="background:#FEE6CE;border-color:#ccc;"></span>
-            <span class="kana-heatmap-cell" style="background:#FDD0A2;border-color:#ccc;"></span>
-            <span class="kana-heatmap-cell" style="background:#FDAE6B;border-color:#ccc;"></span>
-            <span class="kana-heatmap-cell" style="background:#FD8D3C;border-color:#ccc;"></span>
-            <span class="kana-heatmap-cell" style="background:#E6550D;border-color:#ccc;"></span>
+            <span class="kana-heatmap-cell" style="background:#FEE6CE;"></span>
+            <span class="kana-heatmap-cell" style="background:#FDD0A2;"></span>
+            <span class="kana-heatmap-cell" style="background:#FDAE6B;"></span>
+            <span class="kana-heatmap-cell" style="background:#FD8D3C;"></span>
+            <span class="kana-heatmap-cell" style="background:#E6550D;"></span>
             <span>Stark</span>
-            <span style="margin-left:1rem;color:var(--text-muted);font-size:0.7rem;">
-                Rahmen = SRS-Stufe
-            </span>
+            <span style="margin-left:1rem;">Rahmen = SRS-Stufe</span>
         </div>
     </div>
 
-    <!-- Phase 2: Schwache 5 Kana -->
-    <div class="chart-section" x-show="weakKana.length > 0">
-        <h6><i class="fas fa-exclamation-triangle me-1"></i> Schwaechste Kana</h6>
-        <div class="weak-kana-list">
-            <template x-for="k in weakKana" :key="k.kana_id">
-                <div class="weak-kana-item">
-                    <div class="weak-kana-char" x-text="k.character"></div>
-                    <div class="weak-kana-meta">
-                        <div class="weak-kana-rom" x-text="k.romanization"></div>
-                        <div class="weak-kana-stats">
-                            <span><i class="fas fa-times-circle"></i> <span x-text="k.lapses"></span> Fehler</span>
-                            <span x-text="k.accuracy + '%'"></span>
-                        </div>
-                    </div>
-                </div>
-            </template>
-        </div>
-        <div style="margin-top:0.75rem;">
-            <a href="{{ url_for('routes.index') }}#lernpfad" class="btn btn-sm btn-outline-primary">
-                <i class="fas fa-play"></i> Diese Kana in der Lektion ueben
-            </a>
-        </div>
-    </div>
-
-    <!-- JLPT Progress -->
-    <div class="chart-section jlpt-section">
-        <h6><i class="fas fa-flag me-1"></i> JLPT-Fortschritt</h6>
+    <!-- JLPT-Fortschritt (N5 + Stufen mit Fortschritt) -->
+    <div class="chart-section">
+        <h6><i class="fas fa-flag" aria-hidden="true"></i> JLPT-Fortschritt</h6>
         <template x-for="(data, level) in jlptProgress" :key="level">
-            <div class="jlpt-level">
+            <div class="jlpt-level" x-show="level === 'N5' || data.mastered > 0">
                 <div class="jlpt-level-header">
                     <strong x-text="level"></strong>
                     <span x-text="data.percent + '%'"></span>
+                    <span class="jlpt-stage" x-text="data.percent > 80 ? 'fortgeschritten' : data.percent > 40 ? 'begonnen' : 'offen'"></span>
                 </div>
-                <div class="jlpt-bar">
-                    <div class="jlpt-bar-fill" :style="`width:${data.percent}%; background: ${data.percent > 80 ? '#28a745' : data.percent > 40 ? '#fd7e14' : '#dc3545'}`"></div>
+                <div class="jlpt-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" :aria-valuenow="data.percent" :aria-label="level + ' Fortschritt'">
+                    <div class="jlpt-bar-fill" :style="`width:${data.percent}%`"></div>
                 </div>
                 <div class="jlpt-detail">
                     Vokabeln: <span x-text="data.vocab_mastered + '/' + data.vocab_total"></span>
@@ -380,43 +519,89 @@
 
     <!-- Achievements -->
     <div class="chart-section">
-        <h6><i class="fas fa-trophy me-1"></i> Achievements (<span x-text="achievementsUnlocked"></span> / <span x-text="achievementsTotal"></span>)</h6>
+        <h6><i class="fas fa-trophy" aria-hidden="true"></i> Achievements (<span x-text="achievementsUnlocked"></span> / <span x-text="achievementsTotal"></span>)</h6>
         <div class="badge-gallery">
             <template x-for="a in allAchievements" :key="a.key">
-                <div class="badge-item" :class="a.unlocked ? '' : 'locked'" :title="a.description">
-                    <div class="badge-icon"><i :class="'fas ' + a.icon"></i></div>
+                <div class="badge-item" :class="a.unlocked ? 'unlocked' : 'locked'">
+                    <div class="badge-icon"><i :class="'fas ' + a.icon" aria-hidden="true"></i></div>
                     <div class="badge-name" x-text="a.name"></div>
-                    <div class="badge-desc" x-text="a.unlocked ? 'Freigeschaltet' : a.description"></div>
+                    <div class="badge-desc" x-text="a.description"></div>
+                    <div class="badge-state" x-show="a.unlocked" x-cloak>✓ Freigeschaltet</div>
                 </div>
             </template>
         </div>
     </div>
+
+    <!-- ══ Detail-Analyse (einklappbar, lazy) ══ -->
+    <details class="stats-details" @toggle="$event.target.open && renderDetailCharts()">
+        <summary>
+            <i class="fas fa-flask" aria-hidden="true"></i> Detail-Analyse
+            <span class="summary-hint">für Statistik-Fans</span>
+            <i class="fas fa-chevron-down chev" aria-hidden="true"></i>
+        </summary>
+        <div class="details-body">
+            <div class="chart-row">
+                <div class="chart-section">
+                    <h6><i class="fas fa-chart-line" aria-hidden="true"></i> Retention nach Intervall</h6>
+                    <div class="chart-box"><canvas id="retentionChart" role="img" aria-label="Retention nach Intervall"></canvas></div>
+                    <p class="chart-empty" id="retentionEmpty" style="display:none;">Noch keine Daten.</p>
+                    <div class="sr-only" id="retentionSr"></div>
+                </div>
+                <div class="chart-section">
+                    <h6><i class="fas fa-layer-group" aria-hidden="true"></i> Performance nach Typ</h6>
+                    <div class="chart-box"><canvas id="contentTypeChart" role="img" aria-label="Performance nach Content-Typ"></canvas></div>
+                    <p class="chart-empty" id="contentTypeEmpty" style="display:none;">Noch keine Daten.</p>
+                    <div class="sr-only" id="contentTypeSr"></div>
+                </div>
+            </div>
+            <div class="chart-row">
+                <div class="chart-section">
+                    <h6><i class="fas fa-chart-pie" aria-hidden="true"></i> Karten-Verteilung</h6>
+                    <div class="chart-box"><canvas id="maturityChart" role="img" aria-label="Verteilung der Karten nach Reifegrad"></canvas></div>
+                    <p class="chart-empty" id="maturityEmpty" style="display:none;">Noch keine Daten.</p>
+                </div>
+                <div class="chart-section">
+                    <h6><i class="fas fa-stopwatch" aria-hidden="true"></i> Antwortzeiten</h6>
+                    <div class="chart-box"><canvas id="responseTimeChart" role="img" aria-label="Antwortzeiten nach Bewertung"></canvas></div>
+                    <p class="chart-empty" id="responseTimeEmpty" style="display:none;">Noch keine Daten.</p>
+                </div>
+            </div>
+        </div>
+    </details>
 </div>
+{% endif %}
 {% endblock %}
 
 {% block scripts %}
 <script>
 function statsPage() {
     return {
-        stats: {{ stats | tojson }},
         leeches: [],
         jlptProgress: {},
         allAchievements: [],
         achievementsUnlocked: 0,
         achievementsTotal: 0,
-        // Phase 2: Kana-Heatmap
         kanaHeatmap: [],
         weakKana: [],
         kanaScript: 'all',  // 'all' | 'hiragana' | 'katakana'
 
-        async loadAll() {
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        // gecachte Daten fuer das Lazy-Rendering der Detail-Charts
+        _detailData: null,
+        _detailsRendered: false,
+        // Marken-Tokens (nach Hydration aus CSS gelesen)
+        C: {},
 
-            // Parallel fetches
+        get n5() {
+            return this.jlptProgress && this.jlptProgress.N5 ? this.jlptProgress.N5 : null;
+        },
+
+        async loadAll() {
+            this.C = this.readTokens();
+
             const [heatmap, retention, forecast, maturity, contentType, responseTimes, leechData, jlpt, achievements, kanaHm, kanaWeak] = await Promise.all([
                 fetch('/api/srs/stats/heatmap').then(r => r.json()).catch(() => ({data:[]})),
                 fetch('/api/srs/stats/retention').then(r => r.json()).catch(() => ({data:[], desired_retention:90})),
-                fetch('/api/srs/stats/forecast').then(r => r.json()).catch(() => ({data:[]})),
+                fetch('/api/srs/stats/forecast?days=14').then(r => r.json()).catch(() => ({data:[]})),
                 fetch('/api/srs/stats/maturity').then(r => r.json()).catch(() => ({})),
                 fetch('/api/srs/stats/content-type').then(r => r.json()).catch(() => ({data:[]})),
                 fetch('/api/srs/stats/response-times').then(r => r.json()).catch(() => ({data:[]})),
@@ -428,7 +613,7 @@ function statsPage() {
             ]);
 
             this.leeches = leechData.data || [];
-            this.jlptProgress = jlpt;
+            this.jlptProgress = jlpt || {};
             this.allAchievements = [
                 ...(achievements.unlocked || []).map(a => ({...a, unlocked: true})),
                 ...(achievements.locked || []).map(a => ({...a, unlocked: false})),
@@ -438,15 +623,42 @@ function statsPage() {
             this.kanaHeatmap = kanaHm.data || [];
             this.weakKana = kanaWeak.data || [];
 
+            // Detail-Daten cachen, aber erst beim Aufklappen rendern
+            // (Charts in display:none rendern sonst mit 0px Hoehe).
+            this._detailData = { retention, maturity, contentType, responseTimes };
+
+            // Sofort sichtbare Verlaufs-Charts
             this.renderHeatmap(heatmap.data || []);
-            this.renderRetention(retention.data || [], retention.desired_retention || 90);
             this.renderForecast(forecast.data || []);
-            this.renderMaturity(maturity);
-            this.renderContentType(contentType.data || []);
-            this.renderResponseTimes(responseTimes.data || []);
         },
 
-        /* Phase 2: Kana-Heatmap — Reihen-Gruppierung + Farbverlauf */
+        readTokens() {
+            const cs = getComputedStyle(document.documentElement);
+            const t = (n, fb) => (cs.getPropertyValue(n).trim() || fb);
+            return {
+                shu: t('--shu', '#EB6101'),
+                shuSoft: t('--shu-soft', '#F4D9C7'),
+                shuDeep: t('--shu-deep', '#B84A00'),
+                matcha: t('--matcha', '#7A9033'),
+                kincha: t('--kincha', '#C7802D'),
+                error: t('--color-error', '#D14B3D'),
+                kon: t('--kon', '#1F2A44'),
+                ink100: t('--ink-100', '#F1EDE6'),
+                ink200: t('--ink-200', '#E4DED4'),
+                ink300: t('--ink-300', '#D4CCBE'),
+                ink400: t('--ink-400', '#A8A095'),
+                ink500: t('--ink-500', '#7A7368'),
+            };
+        },
+
+        rgba(hex, a) {
+            const h = (hex || '').replace('#', '');
+            if (h.length < 6) return hex;
+            const n = parseInt(h, 16);
+            return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
+        },
+
+        /* ── Kana-Heatmap: Reihen-Gruppierung ── */
         get filteredKanaRows() {
             const ROW_ORDER = ['vowels','k','s','t','n','h','m','y','r','w','n_kons','g','z','d','b','p'];
             const ROW_LABEL = {
@@ -478,34 +690,131 @@ function statsPage() {
             return '#FEE6CE';
         },
 
+        showEmpty(canvasId, emptyId) {
+            const c = document.getElementById(canvasId);
+            const box = c ? c.closest('.chart-box') : null;
+            if (box) box.style.display = 'none';
+            else if (c) c.style.display = 'none';
+            const e = document.getElementById(emptyId);
+            if (e) e.style.display = 'block';
+        },
+
         renderHeatmap(data) {
             const grid = document.getElementById('heatmapGrid');
             if (!grid) return;
 
-            // Daten in Lookup umwandeln
             const lookup = {};
-            let maxCount = 1;
-            data.forEach(d => { lookup[d.date] = d.count; if (d.count > maxCount) maxCount = d.count; });
+            let maxCount = 1, activeDays = 0;
+            data.forEach(d => { lookup[d.date] = d.count; if (d.count > maxCount) maxCount = d.count; if (d.count > 0) activeDays++; });
 
-            const colors = ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'];
+            // Warme Matcha-Rampe (kein kuehles GitHub-Grau/Gruen)
+            const colors = [this.C.ink100, this.rgba(this.C.matcha, .30), this.rgba(this.C.matcha, .52), this.rgba(this.C.matcha, .74), this.C.matcha];
             const today = new Date();
             const html = [];
 
             for (let i = 364; i >= 0; i--) {
                 const d = new Date(today);
                 d.setDate(d.getDate() - i);
-                const key = d.toISOString().split('T')[0];
+                const key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
                 const count = lookup[key] || 0;
                 const level = count === 0 ? 0 : Math.min(4, Math.ceil(count / maxCount * 4));
-                const title = `${key}: ${count} Reviews`;
-                html.push(`<span class="heatmap-cell" style="background:${colors[level]}" title="${title}"></span>`);
+                html.push(`<span class="heatmap-cell" style="background:${colors[level]}" title="${key}: ${count} Reviews" aria-hidden="true"></span>`);
             }
             grid.innerHTML = html.join('');
+            grid.setAttribute('aria-label', `Review-Aktivität der letzten 365 Tage: ${activeDays} aktive Tage, stärkster Tag ${maxCount} Reviews.`);
+
+            const sr = document.getElementById('heatmapSr');
+            if (sr) {
+                const items = data.filter(d => d.count > 0).map(d => `${d.date}: ${d.count} Reviews`);
+                sr.textContent = items.length ? ('Aktive Tage — ' + items.join('; ')) : 'Noch keine Review-Aktivität.';
+            }
+        },
+
+        // Beschriftungs-Plugin: Wert ueber/­neben jeden Balken zeichnen (zweiter,
+        // farbunabhaengiger Kanal — WCAG 1.4.1).
+        valueLabelPlugin(horizontal) {
+            const kon = this.C.kon;
+            return {
+                afterDatasetsDraw(chart) {
+                    const { ctx } = chart;
+                    chart.data.datasets.forEach((ds, di) => {
+                        const meta = chart.getDatasetMeta(di);
+                        meta.data.forEach((el, i) => {
+                            const v = ds.data[i];
+                            if (v == null) return;
+                            ctx.save();
+                            ctx.fillStyle = kon;
+                            ctx.font = '600 10px Inter, system-ui, sans-serif';
+                            if (horizontal) {
+                                ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+                                ctx.fillText(v + '%', el.x + 6, el.y);
+                            } else {
+                                ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+                                ctx.fillText(v + '%', el.x, el.y - 3);
+                            }
+                            ctx.restore();
+                        });
+                    });
+                }
+            };
+        },
+
+        renderForecast(data) {
+            const ctx = document.getElementById('forecastChart');
+            if (!ctx) return;
+            if (!data.length) { this.showEmpty('forecastChart', 'forecastEmpty'); return; }
+            const C = this.C;
+            ctx.setAttribute('aria-label', 'Fällige Reviews der nächsten Tage: ' +
+                data.map(d => `${d.date.slice(5)} ${d.count}`).join(', '));
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.map(d => d.date.slice(5)),
+                    datasets: [{
+                        label: 'Fällige Reviews',
+                        data: data.map(d => d.count),
+                        backgroundColor: data.map((d, i) => i === 0 ? C.shu : C.ink300),
+                        borderRadius: 3,
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { x: { ticks: { maxTicksLimit: 10, font: { size: 10 } }, grid: { display: false } }, y: { beginAtZero: true, ticks: { precision: 0 } } }
+                }
+            });
+        },
+
+        renderDetailCharts() {
+            if (this._detailsRendered || !this._detailData) return;
+            this._detailsRendered = true;
+            const { retention, maturity, contentType, responseTimes } = this._detailData;
+            this.renderRetention(retention.data || [], retention.desired_retention || 90);
+            this.renderMaturity(maturity || {});
+            this.renderContentType(contentType.data || []);
+            this.renderResponseTimes(responseTimes.data || []);
         },
 
         renderRetention(data, desired) {
             const ctx = document.getElementById('retentionChart');
-            if (!ctx || !data.length) return;
+            if (!ctx) return;
+            if (!data.length) { this.showEmpty('retentionChart', 'retentionEmpty'); return; }
+            const C = this.C;
+            // Soll-Linie als neutrale Referenz (kein Alarm-Rot, kein zweiter Heiss-Akzent)
+            const targetLine = {
+                afterDatasetsDraw(c) {
+                    const y = c.scales.y.getPixelForValue(desired);
+                    const a = c.chartArea, cx = c.ctx;
+                    cx.save();
+                    cx.setLineDash([5,5]); cx.lineWidth = 1.5; cx.strokeStyle = C.ink400;
+                    cx.beginPath(); cx.moveTo(a.left, y); cx.lineTo(a.right, y); cx.stroke();
+                    cx.setLineDash([]); cx.fillStyle = C.ink500;
+                    cx.font = '600 10px Inter, system-ui, sans-serif';
+                    cx.textAlign = 'right'; cx.textBaseline = 'bottom';
+                    cx.fillText('Ziel ' + desired + '%', a.right - 4, y - 3);
+                    cx.restore();
+                }
+            };
             new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -513,61 +822,46 @@ function statsPage() {
                     datasets: [{
                         label: 'Retention %',
                         data: data.map(d => d.retention),
-                        backgroundColor: data.map(d => d.retention >= desired ? '#28a745' : '#fd7e14'),
+                        backgroundColor: data.map(d => d.retention >= desired ? C.matcha : C.kincha),
                         borderRadius: 4,
                     }]
                 },
                 options: {
-                    responsive: true,
-                    plugins: {
-                        legend: { display: false },
-                        annotation: { annotations: { line: { type: 'line', yMin: desired, yMax: desired, borderColor: '#dc3545', borderDash: [5,5] } } }
-                    },
-                    scales: { y: { min: 0, max: 100, title: { display: true, text: '%' } } }
-                }
-            });
-        },
-
-        renderForecast(data) {
-            const ctx = document.getElementById('forecastChart');
-            if (!ctx || !data.length) return;
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: data.map(d => d.date.slice(5)),
-                    datasets: [{
-                        label: 'Faellige Reviews',
-                        data: data.map(d => d.count),
-                        backgroundColor: data.map((d, i) => i === 0 ? '#2B4C7E' : '#6c9bd2'),
-                        borderRadius: 2,
-                    }]
-                },
-                options: {
-                    responsive: true,
+                    responsive: true, maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
-                    scales: { x: { ticks: { maxTicksLimit: 10, font: { size: 10 } } }, y: { beginAtZero: true } }
-                }
+                    scales: { y: { min: 0, max: 100, title: { display: true, text: '%' } }, x: { grid: { display: false } } }
+                },
+                plugins: [targetLine, this.valueLabelPlugin(false)]
             });
+            // Textalternative mit Klartext-Urteil
+            const sr = document.getElementById('retentionSr');
+            if (sr) sr.textContent = 'Retention nach Intervall (Ziel ' + desired + '%): ' +
+                data.map(d => `${d.interval} ${d.retention}% — ${d.retention >= desired ? 'Ziel erreicht' : 'unter Ziel'}`).join('; ');
         },
 
         renderMaturity(data) {
             const ctx = document.getElementById('maturityChart');
             if (!ctx) return;
+            const C = this.C;
             const labels = ['Neu', 'Lernen', 'Jung', 'Reif', 'Gemeistert', 'Suspendiert'];
-            const colors = ['#6c757d', '#dc3545', '#fd7e14', '#28a745', '#ffc107', '#adb5bd'];
+            // Ordinale Reife: hell (ink) -> Orange-Sequenz -> shu-deep; Suspendiert neutral
+            const colors = [C.ink300, '#FDD0A2', '#FDAE6B', '#FD8D3C', C.shuDeep, C.ink200];
             const values = labels.map(l => data[l] || 0);
-            if (values.every(v => v === 0)) return;
+            if (values.every(v => v === 0)) { this.showEmpty('maturityChart', 'maturityEmpty'); return; }
             new Chart(ctx, {
                 type: 'doughnut',
-                data: { labels, datasets: [{ data: values, backgroundColor: colors, borderWidth: 1 }] },
-                options: { responsive: true, plugins: { legend: { position: 'right', labels: { font: { size: 11 } } } } }
+                data: { labels, datasets: [{ data: values, backgroundColor: colors, borderWidth: 1, borderColor: '#fff' }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { font: { size: 11 }, color: C.kon } } } }
             });
         },
 
         renderContentType(data) {
             const ctx = document.getElementById('contentTypeChart');
-            if (!ctx || !data.length) return;
+            if (!ctx) return;
+            if (!data.length) { this.showEmpty('contentTypeChart', 'contentTypeEmpty'); return; }
+            const C = this.C;
             const typeLabels = { kana: 'Kana', kanji: 'Kanji', vocabulary: 'Vokabel', grammar: 'Grammatik' };
+            const colorFor = r => r >= 90 ? C.matcha : r >= 80 ? C.kincha : C.error;
             new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -575,37 +869,43 @@ function statsPage() {
                     datasets: [{
                         label: 'Retention %',
                         data: data.map(d => d.retention),
-                        backgroundColor: data.map(d => d.retention >= 90 ? '#28a745' : d.retention >= 80 ? '#fd7e14' : '#dc3545'),
+                        backgroundColor: data.map(d => colorFor(d.retention)),
                         borderRadius: 4,
                     }]
                 },
                 options: {
-                    indexAxis: 'y',
-                    responsive: true,
+                    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                    layout: { padding: { right: 28 } },
                     plugins: { legend: { display: false } },
-                    scales: { x: { min: 0, max: 100, title: { display: true, text: 'Retention %' } } }
-                }
+                    scales: { x: { min: 0, max: 100, title: { display: true, text: 'Retention %' } }, y: { grid: { display: false } } }
+                },
+                plugins: [this.valueLabelPlugin(true)]
             });
+            const sr = document.getElementById('contentTypeSr');
+            if (sr) sr.textContent = 'Retention nach Typ: ' +
+                data.map(d => `${typeLabels[d.type] || d.type} ${d.retention}% — ${d.retention >= 90 ? 'stark' : d.retention >= 80 ? 'solide' : 'schwach'}`).join('; ');
         },
 
         renderResponseTimes(data) {
             const ctx = document.getElementById('responseTimeChart');
-            if (!ctx || !data.length) return;
+            if (!ctx) return;
+            if (!data.length) { this.showEmpty('responseTimeChart', 'responseTimeEmpty'); return; }
+            const C = this.C;
             new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: data.map(d => d.range),
                     datasets: [
-                        { label: 'Nochmal', data: data.map(d => d.again), backgroundColor: '#dc3545' },
-                        { label: 'Schwer', data: data.map(d => d.hard), backgroundColor: '#fd7e14' },
-                        { label: 'Gut', data: data.map(d => d.good), backgroundColor: '#28a745' },
-                        { label: 'Einfach', data: data.map(d => d.easy), backgroundColor: '#007bff' },
+                        { label: 'Nochmal', data: data.map(d => d.again), backgroundColor: C.error },
+                        { label: 'Schwer', data: data.map(d => d.hard), backgroundColor: C.kincha },
+                        { label: 'Gut', data: data.map(d => d.good), backgroundColor: C.matcha },
+                        { label: 'Einfach', data: data.map(d => d.easy), backgroundColor: C.kon },
                     ]
                 },
                 options: {
-                    responsive: true,
-                    plugins: { legend: { position: 'top', labels: { font: { size: 10 } } } },
-                    scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } }
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top', labels: { font: { size: 10 }, color: C.kon, boxWidth: 12 } } },
+                    scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, beginAtZero: true, ticks: { precision: 0 } } }
                 }
             });
         },
@@ -620,6 +920,7 @@ function statsPage() {
         },
 
         async resetCard(contentId) {
+            if (!confirm('Diese Karte wirklich zurücksetzen? Der bisherige Lernfortschritt der Karte geht verloren.')) return;
             const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
             await fetch('/api/srs/card/reset', {
                 method: 'POST', headers: {'Content-Type':'application/json', 'X-CSRFToken': csrf},

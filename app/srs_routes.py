@@ -235,9 +235,23 @@ def stats_page():
     stats = srs_service.get_user_stats(current_user.id)
     stats['current_streak'] = current_user.current_streak or 0
     stats['longest_streak'] = current_user.longest_streak or 0
-    stats['level'] = current_user.level or 1
-    stats['total_xp'] = current_user.total_xp or 0
+    level = current_user.level or 1
+    total_xp = current_user.total_xp or 0
+    stats['level'] = level
+    stats['total_xp'] = total_xp
     stats['level_title'] = current_user.level_title
+
+    # Level-Fortschritt: total_xp ist KUMULATIV (wird beim Level-Up nicht
+    # zurueckgesetzt), xp_for_next_level ist die ABSOLUTE Schwelle des
+    # naechsten Levels. Fuer einen Pro-Level-Balken den Boden des aktuellen
+    # Levels abziehen, sonst uebertreibt der Anteil bei hoeheren Levels.
+    xp_next = current_user.xp_for_next_level
+    xp_floor = int(100 * ((level - 1) ** 1.5))
+    span = max(1, xp_next - xp_floor)
+    in_level = max(0, total_xp - xp_floor)
+    stats['xp_next_level'] = xp_next
+    stats['xp_to_next'] = max(0, xp_next - total_xp)
+    stats['level_progress_pct'] = max(0, min(100, round(in_level / span * 100)))
     return render_template('stats.html', stats=stats)
 
 
