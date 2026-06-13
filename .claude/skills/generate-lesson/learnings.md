@@ -94,6 +94,48 @@ Destillat der am häufigsten wiederkehrenden Erkenntnisse. Details + Historie in
 ### Reusable
 Saubere Sequenz für künftige Batches: Worktree off main + eigene venv → Workflow(Draft/Review/Fix) → setval(Dev=Prod-max) → images/insert/text-audio/slideshow → Playwright(Dev) → publish(Dev) → export → ASCII-Thumbnails + tar(ASCII-Liste, kein \r) → scp → extract(-k) → Modul anlegen → import → verify_prod.py (Asset-Pfad+Counts) → order_index(Prod-max+1) → publish(Prod) → public-curl(Seiten+Assets).
 
+---
+
+## 2026-06-13 — 5er-Kanji-Drop K9-K13 (Lessons 184-188) → N5-Kanji 100% 🎉
+
+### Erstellte Lektionen (Modul 38, n5-kanji-grundlagen, order 9-13)
+
+- **184**: N5 Kanji 9 — Verben des Alltags (行来入出見食休) — 20 Vokabeln, 3 Grammatik, 14 Quiz
+- **185**: N5 Kanji 10 — Sprechen, Lesen und Schreiben (話聞読書語名何) — 17 / 3 / 14
+- **186**: N5 Kanji 11 — Schule und Lernen (学校生先本白) — 18 / 3 / 14
+- **187**: N5 Kanji 12 — Wetter, Zeit und Tagesablauf (今前後間毎午天気) — 20 / 3 / 13
+- **188**: N5 Kanji 13 — Laender, Himmelsrichtungen und Verkehr (国外東西南北電車) — 20 / 3 / 14
+
+### Meilenstein: N5-Kanji-Coverage 55% → **100% (80/80)**, Vokabeln 38.5% → 44.4%
+
+Die 36 fehlenden canonical-N5-Kanji wurden auf 5 thematisch kohaerente Lektionen verteilt (starke Komposita zusammengehalten: 天気, 学校, 電車, 午前/午後, 東西南北). Mayuko-Direktive (N5-Kanji zuerst komplett) damit erfuellt.
+
+### Neues Vorgehen: Workflow-Fan-out + adversariale Pruefung (statt Einzel-Authoring)
+
+- **5 Autoren-Agenten parallel** (je 1 Lektion) → **5 adversariale Pruefer-Agenten** (Mayuko-Rolle, korrigieren + geben vollstaendigen Draft zurueck). Workflow-Tool, pipeline()-Stage author→review. ~771K Tokens, ~12 min.
+- **Deterministische Vorbereitung** ist der Schluessel zur Treffsicherheit: Vokabeln **vorab aus canonical extrahiert** (garantiert konform → eliminiert den #1-Fail „nicht-canonical Vocab"); Kanji-Stammdaten (On/Kun/Strichzahl/Radikal) **selbst verfasst und nach dem Workflow deterministisch in die Drafts injiziert** (eliminiert Lese-Halluzination). Agenten schreiben nur Beispielsaetze/Grammatik/Quiz/Text drumherum.
+- Der adversariale Pruefer fing echte Kanji-Disziplin-Verstoesse (家/明/口/堂), liess aber einzelne durch (週/京/面/好/元/病) → **der deterministische `pipeline.py validate` bleibt das harte Gate, die Agenten-Pruefung ist nur die erste Stufe.**
+
+### Bilder via Gemini Nano Banana (gemini-2.5-flash-image) statt DALL-E (User-Direktive)
+
+- Neues Skript **`scripts/gen_images_nanobanana.py`** (`draft <json>` = Thumbnail + Vokabel-Icons; `kanji <lesson_id>` = Kanji-Karten). REST-Call an `gemini-2.5-flash-image:generateContent` mit `GOOGLE_AI_API_KEY` (Muster aus `scripts/generate_lesson_images.py`), 1:1, strikte No-Text/No-People-Prompts, 4 Worker, idempotent. **0 Safety-Fails** ueber ~110 Vokabel/Thumbnail + 36 Kanji-Bilder (DALL-E hatte regelmaessig Verb-Bilder geblockt — Nano Banana nicht).
+- Pfade + Hash-Konvention identisch zu DALL-E (`vocab_generated/vocab_<md5[:8]>.png`, `kanji_generated/kanji_<id>_<md5[:8]>.png`).
+
+### Probleme / Erkenntnisse (→ Regeln)
+
+1. **Workflow-`args` kommen als JSON-STRING an** (nicht als Objekt) → `Array.from(args.x)` warf sofort. **Regel: im Workflow-Skript immer `const A = typeof args === 'string' ? JSON.parse(args) : (args||{})` + Guard.**
+2. **Agenten-Draft-Schluessel weichen ab**: Seiten-Item-Array hiess `content` bzw. `content_items` (nicht `contents`); Quiz lag unter `data.quiz_questions` statt item-level. Insert/Validator lesen `contents` + item-level `quiz_questions`. **Regel: Nach Agenten-Authoring IMMER normalisieren (`content/content_items/items → contents`, `data.quiz_questions → item.quiz_questions`), bevor validiert wird.**
+3. **Migrations-Drift auf der lokalen Dev-DB**: `column grammar.nuance does not exist`. DB war hinter HEAD (current 0a95e22ba15a vs head kana_confusion_table). **Regel: vor dem ersten Insert `flask db current` vs `db heads` pruefen; bei additiven (ADD column/table) Pending-Migrationen `flask db upgrade`.**
+4. **`Kanji.radical` ist `String(10)`** → Radikal MIT Lesungsannotation („彳 (ぎょうにんべん)" = 11 Zeichen) sprengt die Spalte (StringDataRightTruncation). **Regel: `radical` = NUR das Radikal-Zeichen (彳), keine Klammer-Lesung.**
+5. **`ADMIN_EMAIL`/`ADMIN_PASSWORD` in der .env sind Platzhalter** (`admin@example.com`) — Form-Login scheitert. **Regel fuer Verifikation: Flask-`test_client` + `session_transaction()['_user_id']=<admin.id>` (session-basiert, read-only, kein Passwort) statt Form-Login.** Den echten Admin via `User.query.filter_by(is_admin=True).first()` holen.
+6. **Umlaut-Validator-False-Positive bei der Render-Verifikation**: gerenderte HTML enthaelt Template-/JS-/CSS-Kommentare mit „fuer/ueber/hoeren" — das ist Seiten-Chrome, NICHT der Lektionsinhalt. **Regel: Umlaut-Check gegen das Draft-JSON laufen lassen (Validator tut das), nicht gegen die fertig gerenderte Seite.**
+
+### Akzeptanz
+
+5/5 Lektionen: `validate` clean (nur erwarteter Thumbnail-Hinweis vor `images`), inseriert, Modul 38 / order 9-13 / published, Render-Status 200 mit Titel + Kanji + Vokabel-/Kanji-Bildern + Quiz, echte Umlaute. Bilder: 5 Thumbnails + alle Vokabeln + 36/36 Kanji-Karten. **Verifikation ist render-/struktur-basiert (test_client), KEIN Playwright-Visual-Test — vor einem Production-Deploy weiterhin Visual-Check empfohlen (Memory `feedback_visual_test_vor_deploy`).**
+
+---
+
 ## 2026-04-27 19:00 — Neues Modul `n5-kanji-grundlagen` + 3-er-Drop Lessons 171-173
 
 ### Erstellte Lektionen (Modul 38, n5-kanji-grundlagen)
