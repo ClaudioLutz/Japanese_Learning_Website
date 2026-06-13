@@ -225,6 +225,43 @@ class TestGuestPages:
         assert 'window.currentUser = null' in body
 
 
+class TestKanaStorm:
+    """Kana Storm — eigenstaendiger Arcade-Modus (inline, kein iframe), ohne Login."""
+
+    def test_storm_page_open_for_guest(self, client, db):
+        resp = client.get('/practice/kana/storm')
+        assert resp.status_code == 200
+        body = resp.get_data(as_text=True)
+        # Eigenstaendige Inline-Komponente + Storm-Markup (kein iframe-Embed).
+        assert 'kanaStormGame()' in body
+        assert 'Kana Storm' in body
+        assert 'class="kstorm"' in body
+        assert '<iframe' not in body
+
+    def test_settings_page_links_to_storm(self, client, db):
+        # Die Einstellungsseite (/practice/kana) verweist auf den Storm-Modus.
+        resp = client.get('/practice/kana')
+        assert resp.status_code == 200
+        assert '/practice/kana/storm' in resp.get_data(as_text=True)
+
+    def test_homepage_shows_storm_card_for_guest(self, client, db):
+        # Storm ist als Inline-Karte auf der Gast-Startseite spielbar; das
+        # Storm-Skript ist global eingebunden.
+        resp = client.get('/')
+        assert resp.status_code == 200
+        body = resp.get_data(as_text=True)
+        assert 'kstorm-home' in body
+        assert 'kana_storm.js' in body
+
+    def test_storm_uses_existing_public_api(self, client, db):
+        # Kein zweites Kana-Dataset: Storm zieht die Kana ueber den bestehenden
+        # Gast-Endpoint (mit echten Gojuon-Hiragana liefert er > 0).
+        _seed_hiragana(db, rows=('vowels', 'k'))
+        data = client.get('/api/practice/kana/session/public?schrift=hiragana&dakuten=false').get_json()
+        assert data['count'] > 0
+        assert all(i['type'] == 'hiragana' for i in data['kana'])
+
+
 class TestGuestDailyConfusion:
     """Tages-Challenge + Verwechslungs-Drill sind gast-faehig (Scope 'Voll')."""
 

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Kana Storm{% endblock %}
+{% block meta_description %}Kana Storm — endloser Arcade-Modus gegen die Uhr. Hiragana und Katakana blitzschnell lesen, Combo halten, Bestscore knacken. Ohne Login.{% endblock %}
+{% block robots %}noindex,nofollow{% endblock %}
+
+{% block body_attributes %}class="redesign-page kstorm-locked"{% endblock %}
+
+{% block styles %}
+{% include '_kana_storm_styles.html' %}
+<style>
+    /* ══════════════════════════════════════════════════════════════════
+       VIEWPORT-LOCK — immersiver Arcade-Loop ohne Page-Scroll. Footer +
+       Mobile-Bottom-Nav weg; volle Höhe unter der Top-Nav (60px) gehört
+       dem Spiel (Muster wie practice_kana_game.html). Der Zurück-Link im
+       Storm-Markup ersetzt die Navigation.
+       ══════════════════════════════════════════════════════════════════ */
+    body.kstorm-locked { overflow: hidden; padding-bottom: 0 !important; }
+    body.kstorm-locked .container.mt-4 {
+        max-width: 100%; margin: 0; padding: 0;
+        height: calc(100dvh - 60px);
+        display: flex; flex-direction: column; min-height: 0;
+    }
+    @supports not (height: 100dvh) {
+        body.kstorm-locked .container.mt-4 { height: calc(100vh - 60px); }
+    }
+    body.kstorm-locked .site-footer { display: none !important; }
+    body.kstorm-locked .mobile-bottom-nav { display: none !important; }
+
+    .kstorm-page {
+        flex: 1 1 auto; min-height: 0; width: 100%; max-width: 560px; margin: 0 auto;
+        display: flex; flex-direction: column;
+        padding: 0.5rem 0.85rem calc(0.6rem + env(safe-area-inset-bottom, 0px));
+    }
+
+    /* Desktop: gerahmte Karte auf Washi-Grund (statt randloser Säule im Leerraum) */
+    @media (min-width: 768px) {
+        body.kstorm-locked .container.mt-4 { padding: 1.5rem 1rem; }
+        .kstorm-page {
+            max-width: 620px;
+            background: var(--card-bg, #FFFDF7);
+            border: 1px solid var(--border-color, #E4DED4);
+            border-radius: 18px;
+            box-shadow: 0 6px 30px rgba(28, 26, 23, .07);
+            padding: 1rem 1.5rem calc(1.25rem + env(safe-area-inset-bottom, 0px));
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+{% set kstorm_back_url = url_for('srs.practice_kana_page') %}
+<div class="kstorm-page">
+    {% include '_kana_storm_stage.html' %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- kanaStormGame() ist in /static/js/kana_storm.js definiert (in base.html via defer geladen). -->
+{% endblock %}

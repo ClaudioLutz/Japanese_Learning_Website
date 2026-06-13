@@ -195,6 +195,23 @@
     .kana-setup__quick button:hover { border-color: var(--shu, #EB6101); color: var(--shu, #EB6101); }
     .kana-setup__quick button i { color: var(--shu, #EB6101); }
 
+    /* Kana Storm — eigener Arcade-Modus (Verlinkung auf die Vollbild-Seite) */
+    .kana-setup__storm {
+        display: flex; align-items: center; gap: 0.65rem; margin-top: 0.55rem;
+        padding: 0.55rem 0.85rem; border-radius: 12px;
+        border: 1px solid var(--ink-200, #E4DED4);
+        background: linear-gradient(180deg, #FFF8EC, var(--card-bg, #FFFDF7));
+        text-decoration: none; transition: border-color .15s ease, transform .12s ease;
+    }
+    .kana-setup__storm:hover { border-color: var(--shu, #EB6101); text-decoration: none; }
+    .kana-setup__storm:active { transform: scale(0.99); }
+    .kana-setup__storm:focus-visible { outline: 2px solid var(--shu, #EB6101); outline-offset: 2px; }
+    .kana-setup__storm-ico { font-size: 1.2rem; line-height: 1; flex: 0 0 auto; }
+    .kana-setup__storm-text { flex: 1 1 auto; line-height: 1.25; text-align: left; }
+    .kana-setup__storm-text strong { display: block; font: 700 0.9rem 'Geist', 'Inter', sans-serif; color: var(--kon, #1F2A44); }
+    .kana-setup__storm-text small { font-size: 0.73rem; color: var(--text-muted, #8C8378); }
+    .kana-setup__storm > i.fa-arrow-right { color: var(--shu, #EB6101); flex: 0 0 auto; }
+
     /* Mobile: Platz für die fixe Bottom-Nav unter dem Fuss reservieren */
     @media (max-width: 767px) {
         .kana-setup { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
@@ -364,6 +381,16 @@
             {% endif %}
             <button type="button" @click="startConfusion()" title="Verwechslungs-Paare üben"><i class="fas fa-clone"></i> Ähnliche</button>
         </div>
+        {# Kana Storm: eigener Arcade-Modus neben dem Matching-Spiel — endlos
+           gegen die Uhr, Romaji tippen. Eigene Vollbild-Seite, ohne Login. #}
+        <a class="kana-setup__storm" href="{{ url_for('srs.practice_kana_storm_page') }}">
+            <span class="kana-setup__storm-ico" aria-hidden="true">⚡</span>
+            <span class="kana-setup__storm-text">
+                <strong>Kana Storm</strong>
+                <small>Endlos gegen die Uhr — Romaji tippen, Combo halten</small>
+            </span>
+            <i class="fas fa-arrow-right" aria-hidden="true"></i>
+        </a>
     </div>
 </div>
 {% endblock %}

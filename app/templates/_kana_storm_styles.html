@@ -1,0 +1,186 @@
+{# ════════════════════════════════════════════════════════════════════════
+   Kana Storm — Styles. Bewusst genamespacet unter .kstorm (kein Eingriff in
+   custom.css, deren Parsing fragil ist) und durchgängig auf die bestehenden
+   Design-Tokens gemappt (--shu/--kon/--washi/--ink-*/--matcha/--danger,
+   Fonts Geist/Inter/Noto Sans JP/Geist Mono). Der Prototyp diente nur als
+   Vorlage für Feel & Layout — keine eigene Palette übernommen.
+   Wird von practice_kana_storm.html (Vollbild) UND index.html (Startseiten-
+   Karte) inkludiert; pro Seite genau einmal gerendert.
+   ════════════════════════════════════════════════════════════════════════ #}
+<style>
+    /* [x-cloak] ist bereits global in custom.css definiert (auf jeder Seite via
+       base.html geladen) — hier bewusst NICHT wiederholt. */
+    .kstorm {
+        display: flex; flex-direction: column;
+        height: 100%; min-height: 0; width: 100%;
+        font-family: 'Inter', 'Noto Sans JP', system-ui, sans-serif;
+        color: var(--tetsu, #2C2C2C);
+        -webkit-font-smoothing: antialiased;
+    }
+    .kstorm__sr {
+        position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+        overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+    }
+
+    /* ── Start / Loading / Error / End: zentrierte Karte ── */
+    .kstorm__screen {
+        flex: 1 1 auto; min-height: 0;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        text-align: center; gap: 0.5rem; padding: clamp(1rem, 4vh, 2rem) 1rem;
+    }
+    .kstorm__eyebrow {
+        font: 700 0.7rem/1 'Geist', 'Inter', sans-serif;
+        letter-spacing: 0.14em; text-transform: uppercase;
+        color: var(--shu, #EB6101); margin-bottom: 0.15rem;
+    }
+    .kstorm__title {
+        font: 600 clamp(1.6rem, 6vw, 2rem)/1.05 'Fraunces', 'Geist', serif;
+        letter-spacing: -0.01em; color: var(--kon, #1F2A44); margin: 0;
+    }
+    .kstorm__lead {
+        max-width: 38ch; margin: 0.2rem auto 0.6rem;
+        font-size: 0.92rem; line-height: 1.5; color: var(--ink-600, #5C564D);
+    }
+    .kstorm__state-ico { font-size: 2.2rem; color: var(--shu, #EB6101); }
+
+    /* Segmented Controls (Schrift / Dauer) — Muster wie practice_kana.html */
+    .kstorm__segs { display: flex; flex-direction: column; align-items: center; gap: 0.6rem; margin: 0.3rem 0 0.9rem; width: 100%; }
+    .kstorm__seg {
+        display: inline-flex; gap: 4px;
+        background: var(--background-color, #F1EDE6); border-radius: 999px; padding: 4px;
+    }
+    .kstorm__seg button {
+        border: 0; background: transparent; cursor: pointer;
+        padding: 0.5rem 1rem; border-radius: 999px;
+        font: 600 0.86rem/1.1 'Inter', sans-serif; color: var(--text-muted, #8C8378);
+        display: inline-flex; align-items: center; gap: 0.35rem;
+        transition: background .18s ease, color .18s ease, box-shadow .18s ease;
+    }
+    .kstorm__seg button .kstorm__seg-jp { font-family: 'Noto Sans JP', sans-serif; font-size: 0.78rem; opacity: 0.85; }
+    .kstorm__seg button.is-active {
+        background: #fff; color: var(--shu, #EB6101);
+        box-shadow: 0 1px 2px rgba(28, 26, 23, .10);
+    }
+    .kstorm__seg button:focus-visible { outline: 2px solid var(--shu, #EB6101); outline-offset: 2px; }
+
+    /* Primär-Button (Shu) + Ghost */
+    .kstorm__start {
+        border: 0; border-radius: 14px; padding: 0.85rem 1.6rem; cursor: pointer;
+        font: 600 1.02rem 'Geist', 'Inter', sans-serif; color: #fff;
+        /* Shu-deep-Rezeptur wie .btn-shu/.kana-embed-cta: weisser Text braucht
+           >=4.5:1 — #B84A00 (5.2:1) / #A23F00 (6.5:1), nicht der hellere --shu. */
+        background: linear-gradient(180deg, var(--shu-deep, #B84A00), #A23F00);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .18), 0 2px 6px rgba(162, 63, 0, .32), 0 0 0 1px rgba(162, 63, 0, .38);
+        display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+        transition: transform .12s ease, filter .15s ease;
+    }
+    .kstorm__start:hover { filter: brightness(1.05); }
+    .kstorm__start:active { transform: scale(0.98); }
+    .kstorm__start:focus-visible { outline: 3px solid var(--kon, #1F2A44); outline-offset: 2px; }
+    .kstorm__ghost {
+        border: 1.5px solid var(--border-color, #D4CFC5); background: #fff; border-radius: 12px;
+        padding: 0.75rem 1.2rem; cursor: pointer;
+        font: 600 0.9rem 'Inter', sans-serif; color: var(--ink-700, #403B34);
+        display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem;
+        transition: border-color .15s ease, color .15s ease;
+        text-decoration: none;
+    }
+    .kstorm__ghost:hover { border-color: var(--shu, #EB6101); color: var(--shu, #EB6101); text-decoration: none; }
+    .kstorm__ghost:focus-visible { outline: 2px solid var(--shu, #EB6101); outline-offset: 2px; }
+
+    .kstorm__best { font: 600 0.86rem 'Geist Mono', ui-monospace, monospace; color: var(--kon, #1F2A44); margin: 0.5rem 0 0; min-height: 1.2em; }
+    .kstorm__upsell { font-size: 0.8rem; color: var(--text-muted, #8C8378); margin: 0.5rem auto 0; max-width: 40ch; }
+    .kstorm__upsell a { color: var(--shu-deep, #B84A00); font-weight: 600; }
+
+    /* ── Spielfläche ── */
+    .kstorm__play { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+    .kstorm__timerbar { flex: 0 0 auto; height: 6px; background: var(--ink-100, #F1EDE6); position: relative; border-radius: 999px; overflow: hidden; }
+    .kstorm__timerbar > i {
+        position: absolute; inset: 0 0 0 0; right: 0;
+        background: var(--shu, #EB6101); border-radius: 999px; transition: right .2s linear;
+    }
+    /* unter ~20 % der Zeit wird der Balken zur Warnung rot */
+    .kstorm__timerbar.is-low > i { background: var(--danger, #D14B3D); }
+
+    .kstorm__play-body {
+        flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column;
+        padding: 0.8rem 1rem 1rem; text-align: center;
+    }
+    .kstorm__hud { flex: 0 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+    .kstorm__stat { text-align: left; }
+    .kstorm__stat--r { text-align: right; }
+    .kstorm__label { display: block; font: 700 0.62rem/1 'Geist', 'Inter', sans-serif; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted, #8C8378); margin-bottom: 2px; }
+    .kstorm__num { font: 700 1.25rem/1.1 'Geist Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; color: var(--kon, #1F2A44); }
+    .kstorm__combo {
+        font: 700 1.35rem/1 'Geist Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums;
+        color: var(--shu, #EB6101); min-width: 64px; text-align: center;
+        transition: transform .12s ease;
+    }
+    .kstorm__combo.pop { transform: scale(1.28); }
+
+    .kstorm__main { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.35rem; }
+    .kstorm__kana {
+        font-family: 'Noto Sans JP', sans-serif; font-weight: 500;
+        font-size: clamp(4.5rem, 22vw, 7.5rem); line-height: 1; color: var(--kon, #1F2A44);
+        transition: transform .14s ease, color .14s ease;
+    }
+    .kstorm__kana.in { animation: kstormPop .18s ease; }
+    @keyframes kstormPop { 0% { transform: scale(.82); opacity: .35; } 100% { transform: scale(1); opacity: 1; } }
+    .kstorm__play.is-ok .kstorm__kana { color: var(--matcha, #7A9033); }
+    .kstorm__play.is-bad .kstorm__kana { color: var(--danger, #D14B3D); }
+    .kstorm__feedback { min-height: 1.3em; font: 600 0.86rem 'Inter', sans-serif; color: var(--text-muted, #8C8378); }
+    /* Dunklere Töne als --matcha/--danger: der kleine Feedback-Text (0.86rem) ist
+       Normaltext und braucht >=4.5:1 auf Washi (#556B2F ~5.6:1, #B23A2E ~5.6:1).
+       Die grosse Kana-Farbumschaltung unten bleibt als redundanter Kanal bei
+       --matcha/--danger (als "large text" mit 3:1 konform). */
+    .kstorm__feedback.ok { color: #556B2F; }
+    .kstorm__feedback.bad { color: #B23A2E; }
+
+    .kstorm__answer { flex: 0 0 auto; width: 100%; max-width: 340px; margin: 0.5rem auto 0; }
+    .kstorm__answer input {
+        width: 100%; text-align: center;
+        font: 600 1.3rem 'Inter', sans-serif; letter-spacing: 0.04em;
+        padding: 0.75rem 0.85rem; border: 2px solid var(--ink-300, #D4CCBE); border-radius: 14px;
+        background: var(--card-bg, #FFFDF7); color: var(--kon, #1F2A44);
+        transition: border-color .12s ease;
+    }
+    /* Fokus: Border-Wechsel + sichtbarer Shu-Ring (konsistent zu den übrigen
+       Controls, die :focus-visible-Ringe nutzen — outline:none allein wäre zu schwach). */
+    .kstorm__answer input:focus { outline: none; border-color: var(--shu, #EB6101); box-shadow: 0 0 0 3px rgba(235, 97, 1, 0.28); }
+    .kstorm__answer input:disabled { opacity: 0.7; }
+    .kstorm__hint { font-size: 0.74rem; color: var(--text-muted, #8C8378); margin-top: 0.5rem; }
+    .kstorm__hint kbd {
+        font: 600 0.7rem 'Geist Mono', ui-monospace, monospace;
+        background: var(--ink-100, #F1EDE6); border: 1px solid var(--ink-300, #D4CCBE);
+        border-bottom-width: 2px; border-radius: 5px; padding: 1px 6px;
+    }
+
+    .kstorm__choices { flex: 0 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; width: 100%; max-width: 340px; margin: 0.85rem auto 0; }
+    .kstorm__choice {
+        font: 600 1.05rem 'Inter', sans-serif; color: var(--ink-700, #403B34);
+        background: var(--card-bg, #FFFDF7); border: 2px solid var(--ink-300, #D4CCBE);
+        border-radius: 13px; padding: 0.8rem 0.5rem; cursor: pointer;
+        transition: border-color .12s ease, color .12s ease, background .12s ease;
+    }
+    .kstorm__choice:hover { border-color: var(--shu, #EB6101); color: var(--shu, #EB6101); }
+    .kstorm__choice:focus-visible { outline: 2px solid var(--shu, #EB6101); outline-offset: 2px; }
+    .kstorm__choice:disabled { opacity: 0.55; cursor: default; }
+
+    /* ── End-Screen-Statistik ── */
+    .kstorm__endrow { display: flex; gap: 1.2rem; justify-content: center; margin: 0.4rem 0 0.6rem; }
+    .kstorm__endstat { min-width: 88px; display: flex; flex-direction: column; gap: 0.2rem; }
+    .kstorm__big { font: 700 2.1rem/1 'Geist Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; color: var(--kon, #1F2A44); }
+    .kstorm__big.accent { color: var(--shu, #EB6101); }
+    .kstorm__cap { font: 700 0.66rem/1 'Geist', 'Inter', sans-serif; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted, #8C8378); }
+    .kstorm__endactions { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; margin-top: 0.3rem; }
+
+    .kstorm__backlink {
+        display: inline-flex; align-items: center; gap: 0.4rem; margin-top: 0.7rem;
+        font: 500 0.82rem 'Inter', sans-serif; color: var(--text-muted, #8C8378); text-decoration: none;
+    }
+    .kstorm__backlink:hover { color: var(--shu, #EB6101); text-decoration: none; }
+
+    @media (prefers-reduced-motion: reduce) {
+        .kstorm *, .kstorm *::before, .kstorm *::after { transition: none !important; animation: none !important; }
+    }
+</style>
