@@ -141,6 +141,7 @@ function kanaStormGame(opts) {
         dailyHasResult: false, // heutiges Ergebnis vorhanden (schon gespielt)?
         dailyResult: null,     // { date, number, grid, timeStr, greens, bestCombo, len, shareText }
         dailyCopied: false,
+        _dailyFetchedLocalDate: '', // lokaler Tag, an dem zuletzt geladen wurde (Rollover-Schutz)
 
         reduceMotion: false,
         _endAt: 0,
@@ -499,9 +500,28 @@ function kanaStormGame(opts) {
             return this.duration + ' Sek · ' + r;
         },
 
+        // Lokales Datum (YYYY-MM-DD) — Best-Effort-Schranke gegen ein gestriges
+        // gespeichertes Ergebnis, falls der (autoritative) Server-Fetch scheitert.
+        _todayIso() {
+            try {
+                const d = new Date();
+                const p = (n) => String(n).padStart(2, '0');
+                return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+            } catch (e) { return ''; }
+        },
+
         // ── Daily: Brett-Meta laden (Karten-Kopfzeile + ggf. heutiges Ergebnis) ──
         async loadDailyMeta() {
-            this._restoreDailyResult();           // gespeichertes Ergebnis (falls heute schon gespielt)
+            const todayLocal = this._todayIso();
+            // Über Mitternacht offene Seite: lokaler Tageswechsel seit dem letzten
+            // Laden → Brett (und day_number) neu holen, nicht das Vortagsbrett spielen.
+            if (this.dailyLoaded && todayLocal && this._dailyFetchedLocalDate
+                && todayLocal !== this._dailyFetchedLocalDate) {
+                this.dailyLoaded = false;
+            }
+            // Gespeichertes Ergebnis nur übernehmen, wenn es zum heutigen Tag gehört
+            // (verhindert „heute schon gespielt" mit gestrigem Grid — auch im Fehlerfall).
+            this._restoreDailyResult(todayLocal);
             if (this.dailyLoaded) return;
             this.dailyLoading = true; this.dailyError = '';
             let data;
@@ -523,8 +543,9 @@ function kanaStormGame(opts) {
             this.dailyNumber = (data && data.day_number) || 0;
             this.dailyLoading = false;
             this.dailyLoaded = true;
-            // Gespeichertes Ergebnis gehört zu einem anderen (alten) Tag → verwerfen.
-            if (this.dailyResult && this.dailyResult.date && this.dailyResult.date !== this.dailyDate) {
+            this._dailyFetchedLocalDate = todayLocal;
+            // Autoritatives Server-Datum: gespeichertes Ergebnis exakt dagegen prüfen.
+            if (this.dailyResult && this.dailyResult.date !== this.dailyDate) {
                 this.dailyHasResult = false; this.dailyResult = null;
             }
         },
@@ -534,13 +555,17 @@ function kanaStormGame(opts) {
             if (this.dailyHasResult && this.dailyResult) return this.dailyResult.grid;
             return '⬜'.repeat(this.dailyBoardLen());
         },
-        _restoreDailyResult() {
+        // validDate: nur ein Ergebnis dieses Tages übernehmen (leer = keine Schranke).
+        _restoreDailyResult(validDate) {
             try {
                 const raw = this._ls('kanaStormDailyLast');
-                if (!raw) return;
-                const r = JSON.parse(raw);
-                if (r && r.date && r.grid) { this.dailyResult = r; this.dailyHasResult = true; }
-            } catch (e) { /* kaputter Wert ignorieren */ }
+                const r = raw ? JSON.parse(raw) : null;
+                if (r && r.date && r.grid && (!validDate || r.date === validDate)) {
+                    this.dailyResult = r; this.dailyHasResult = true;
+                } else {
+                    this.dailyResult = null; this.dailyHasResult = false;
+                }
+            } catch (e) { this.dailyResult = null; this.dailyHasResult = false; }
         },
 
         // ── Daily starten: festes Brett, KEIN Timer, jedes Zeichen genau 1× ──

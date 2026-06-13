@@ -44,8 +44,7 @@
     }
     .kstorm__state-ico { font-size: 2.2rem; color: var(--shu, #EB6101); }
 
-    /* Segmented Controls (Schrift / Dauer) — Muster wie practice_kana.html */
-    .kstorm__segs { display: flex; flex-direction: column; align-items: center; gap: 0.6rem; margin: 0.3rem 0 0.9rem; width: 100%; }
+    /* Segment-Control (Dauer, im Optionen-Disclosure) — Muster wie practice_kana.html */
     .kstorm__seg {
         display: inline-flex; gap: 4px;
         background: var(--background-color, #F1EDE6); border-radius: 999px; padding: 4px;
@@ -57,20 +56,13 @@
         display: inline-flex; align-items: center; gap: 0.35rem;
         transition: background .18s ease, color .18s ease, box-shadow .18s ease;
     }
-    .kstorm__seg button .kstorm__seg-jp { font-family: 'Noto Sans JP', sans-serif; font-size: 0.78rem; opacity: 0.85; }
     .kstorm__seg button.is-active {
         background: #fff; color: var(--shu, #EB6101);
         box-shadow: 0 1px 2px rgba(28, 26, 23, .10);
     }
     .kstorm__seg button:focus-visible { outline: 2px solid var(--shu, #EB6101); outline-offset: 2px; }
 
-    /* Reihen-Auswahl (Pills) — Muster wie .rows/.chip auf practice_kana.html */
-    .kstorm__rows-group { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 0.4rem; }
-    .kstorm__rows-label {
-        display: inline-flex; align-items: center; gap: 0.4rem;
-        font: 700 0.62rem/1 'Geist', 'Inter', sans-serif; letter-spacing: 0.1em;
-        text-transform: uppercase; color: var(--text-muted, #8C8378);
-    }
+    /* Reihen-Auswahl (Pills, im Optionen-Disclosure) — Muster wie .rows/.chip */
     .kstorm__rows-count { font-family: 'Geist Mono', ui-monospace, monospace; letter-spacing: 0; text-transform: none; color: var(--kon, #1F2A44); }
     .kstorm__rows { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.35rem; max-width: 360px; }
     .kstorm__chip {
@@ -97,6 +89,8 @@
     .kstorm__start:hover { filter: brightness(1.05); }
     .kstorm__start:active { transform: scale(0.98); }
     .kstorm__start:focus-visible { outline: 3px solid var(--kon, #1F2A44); outline-offset: 2px; }
+    /* Prominentere Variante auf den Einstiegs-Screens (Storm-Start / "Heutiges Brett spielen"). */
+    .kstorm__start--big { padding: 0.95rem 2.1rem; font-size: 1.08rem; }
     .kstorm__ghost {
         border: 1.5px solid var(--border-color, #D4CFC5); background: #fff; border-radius: 12px;
         padding: 0.75rem 1.2rem; cursor: pointer;
@@ -187,9 +181,9 @@
     .kstorm__choice:disabled { opacity: 0.55; cursor: default; }
 
     /* ── End-Screen-Statistik ── */
-    .kstorm__endrow { display: flex; gap: 1.2rem; justify-content: center; margin: 0.4rem 0 0.6rem; }
+    .kstorm__endrow { display: flex; flex-wrap: wrap; gap: 1.2rem; justify-content: center; margin: 0.4rem 0 0.6rem; }
     .kstorm__endstat { min-width: 88px; display: flex; flex-direction: column; gap: 0.2rem; }
-    .kstorm__big { font: 700 2.1rem/1 'Geist Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; color: var(--kon, #1F2A44); }
+    .kstorm__big { font: 700 clamp(1.7rem, 9vw, 2.1rem)/1 'Geist Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; color: var(--kon, #1F2A44); }
     .kstorm__big.accent { color: var(--shu, #EB6101); }
     .kstorm__cap { font: 700 0.66rem/1 'Geist', 'Inter', sans-serif; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted, #8C8378); }
     .kstorm__endactions { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; margin-top: 0.3rem; }
@@ -271,7 +265,7 @@
     .kstorm__daily-day { font: 600 1.2rem 'Fraunces', 'Geist', serif; color: var(--kon, #1F2A44); }
     .kstorm__daily-day b { color: var(--shu-deep, #B84A00); }
     .kstorm__daily-tline { font: 600 0.95rem 'Geist Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; color: var(--ink-700, #403B34); margin-top: 0.1rem; }
-    .kstorm__daily-grid { font-size: 1.5rem; letter-spacing: 0.2rem; line-height: 1.5; margin: 0.55rem 0 0.3rem; word-break: break-word; }
+    .kstorm__daily-grid { font-size: clamp(1.15rem, 5.5vw, 1.5rem); letter-spacing: clamp(0.1rem, 1vw, 0.2rem); line-height: 1.5; margin: 0.55rem 0 0.3rem; word-break: break-word; }
     .kstorm__daily-meta { font: 600 0.8rem 'Inter', sans-serif; color: var(--text-muted, #8C8378); }
     .kstorm__daily-url { font-size: 0.75rem; color: var(--text-muted, #8C8378); margin-top: 0.5rem; letter-spacing: .02em; }
     .kstorm__daily-actions { display: flex; flex-direction: column; align-items: center; gap: 0.55rem; width: 100%; }

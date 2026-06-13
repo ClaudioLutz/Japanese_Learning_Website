@@ -1143,6 +1143,10 @@ def api_practice_storm_daily():
     bewusst GLOBAL — der Seed haengt nur am Datum (nie an user_id), Quelle ist
     immer das komplette Grund-Hiragana. Nur so ist der geteilte Wordle-Vergleich
     ("ein Brett, fuer alle gleich") sinnvoll. Kein Login noetig, kein DB-Write.
+
+    Tagesgrenze: date.today() = Kalendertag in Server-Zeit (Container ohne TZ =
+    UTC), konsistent mit /daily-challenge und dem Streak. Das Brett wechselt also
+    fuer alle gleichzeitig zu UTC-Mitternacht (~01-02 Uhr Schweizer Zeit).
     """
     import hashlib
     import random as _random
@@ -1164,7 +1168,8 @@ def api_practice_storm_daily():
     picked = deduped[:10]
     items = [_kana_item(lc_id, kana, with_extras=False) for lc_id, kana in picked]
     # Fortlaufende Nummer ("Kana Daily #N") ab einem fixen Stichtag — fuer alle gleich.
-    day_number = (today - date(2026, 6, 1)).days + 1
+    # max(1, ...) verhindert 0/negative Nummern vor dem Stichtag (Tests/Server-Uhr).
+    day_number = max(1, (today - date(2026, 6, 1)).days + 1)
     return jsonify({
         'kana': items,
         'count': len(items),

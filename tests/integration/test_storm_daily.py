@@ -74,3 +74,16 @@ class TestDailyLanding:
         # class="kstorm" kommt aus dem Storm-Stage-Partial (unabhaengig vom
         # Frontend-Stand des Daily-Tabs).
         assert 'class="kstorm"' in resp.get_data(as_text=True)
+
+    def test_opens_daily_tab(self, client, db):
+        # /daily reicht kstorm_initial_tab='daily' ins Partial -> Komponente
+        # startet auf dem Daily-Tab.
+        body = client.get('/daily').get_data(as_text=True)
+        assert "initialTab: 'daily'" in body
+
+    def test_is_noindex(self, client, db):
+        # Teilbare Share-URL: darf NICHT als Duplikat der Storm-Seite indexiert
+        # werden. noindex ist das einzige Signal dafuer (erbt von
+        # practice_kana_storm.html) — gegen versehentliches Entfernen absichern.
+        body = client.get('/daily').get_data(as_text=True)
+        assert 'noindex,nofollow' in body

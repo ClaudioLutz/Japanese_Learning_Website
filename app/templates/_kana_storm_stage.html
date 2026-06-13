@@ -38,16 +38,19 @@
     {# Screenreader-Ansage für Treffer/Fehler (visuell versteckt) #}
     <div class="kstorm__sr" aria-live="polite" aria-atomic="true" x-text="fbText"></div>
 
-    {# ── TAB-LEISTE (Storm | Daily) — auf den Ruhe-Screens sichtbar ── #}
-    <div class="kstorm__tabs" role="tablist" aria-label="Spielmodus" x-show="showTabs()">
-        <button type="button" role="tab" class="kstorm__tab {{ 'is-active' if _kstorm_tab != 'daily' else '' }}"
+    {# ── MODUS-UMSCHALTER (Storm | Daily) — auf den Ruhe-Screens sichtbar.
+       Bewusst KEIN role="tab"/tablist: die Phasen mappen nicht 1:1 auf
+       Panels (storm-Tab deckt start/ended/error ab). Pragmatisch = Toggle-
+       Buttons mit aria-pressed (wie der Schrift-Picker), in einer role=group. #}
+    <div class="kstorm__tabs" role="group" aria-label="Spielmodus" x-show="showTabs()">
+        <button type="button" class="kstorm__tab {{ 'is-active' if _kstorm_tab != 'daily' else '' }}"
                 :class="{ 'is-active': tabActive('storm') }"
-                :aria-selected="tabActive('storm').toString()" @click="goTab('storm')">
+                :aria-pressed="tabActive('storm').toString()" @click="goTab('storm')">
             <span class="kstorm__tab-jp" lang="ja" aria-hidden="true">かな</span> Kana Storm
         </button>
-        <button type="button" role="tab" class="kstorm__tab {{ 'is-active' if _kstorm_tab == 'daily' else '' }}"
+        <button type="button" class="kstorm__tab {{ 'is-active' if _kstorm_tab == 'daily' else '' }}"
                 :class="{ 'is-active': tabActive('daily') }"
-                :aria-selected="tabActive('daily').toString()" @click="goTab('daily')">
+                :aria-pressed="tabActive('daily').toString()" @click="goTab('daily')">
             Daily-Karte
         </button>
     </div>
@@ -150,11 +153,11 @@
         <template x-if="!dailyLoading && !dailyError">
             <div class="kstorm__daily-card">
                 <div class="kstorm__daily-day">Kana Daily <b x-text="'#' + dailyNumber"></b></div>
-                <div class="kstorm__daily-tline" x-show="dailyHasResult" x-cloak
+                <div class="kstorm__daily-tline" x-show="dailyHasResult"
                      x-text="dailyResult ? (dailyResult.timeStr + ' ⚡') : ''"></div>
                 <div class="kstorm__daily-grid" x-text="dailyGridDisplay()"
                      :aria-label="dailyHasResult ? 'Dein Ergebnis' : 'Heute noch nicht gespielt'"></div>
-                <div class="kstorm__daily-meta" x-show="dailyHasResult" x-cloak
+                <div class="kstorm__daily-meta" x-show="dailyHasResult"
                      x-text="dailyResult ? ('Beste Combo ×' + dailyResult.bestCombo + ' · ' + dailyResult.greens + '/' + dailyResult.len + ' auf Anhieb') : ''"></div>
                 <div class="kstorm__daily-url">japanese-learning.ch/daily</div>
             </div>
@@ -175,7 +178,7 @@
 
         {# Nach dem Spiel: teilen + nochmal #}
         <template x-if="dailyHasResult && !dailyLoading">
-            <div class="kstorm__daily-actions" x-cloak>
+            <div class="kstorm__daily-actions">
                 <div class="kstorm__endactions">
                     <button class="kstorm__start" @click="copyDaily()">
                         <i class="fas fa-copy" aria-hidden="true"></i>
