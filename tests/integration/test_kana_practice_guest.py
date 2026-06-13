@@ -245,13 +245,15 @@ class TestKanaStorm:
         assert '/practice/kana/storm' in resp.get_data(as_text=True)
 
     def test_homepage_shows_storm_card_for_guest(self, client, db):
-        # Storm ist als Inline-Karte auf der Gast-Startseite spielbar; das
-        # Storm-Skript ist global eingebunden.
+        # Storm ist der Gast-Hero der Startseite (inline, kein iframe); das
+        # Storm-Skript ist global eingebunden, das Matching-Embed ist raus.
         resp = client.get('/')
         assert resp.status_code == 200
         body = resp.get_data(as_text=True)
-        assert 'kstorm-home' in body
+        assert 'kstorm-hero' in body
+        assert 'kanaStormGame()' in body
         assert 'kana_storm.js' in body
+        assert 'x-data="kanaEmbedHost(' not in body
 
     def test_storm_uses_existing_public_api(self, client, db):
         # Kein zweites Kana-Dataset: Storm zieht die Kana ueber den bestehenden

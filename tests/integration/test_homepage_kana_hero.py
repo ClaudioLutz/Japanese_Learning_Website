@@ -1,10 +1,12 @@
 # tests/integration/test_homepage_kana_hero.py
 """Integration-Tests fuer den Gast-Hero der Startseite (Kana-Spiel als Hero).
 
-Der Umbau 2026-06: Das Kana-Spiel (iframe-Embed) ist fuer Gaeste das
-Hero-Element; die fruehere Vokal-Probe (5 Flip-Karten) ist entfernt.
-Pitch/USP/Trust sind SSR in die Sektion "Vom Spiel zum System" gewandert.
-Eingeloggte behalten ihren personalisierten Hero ohne Spiel-Embed.
+Stand 2026-06-13: **Kana Storm** (inline, KEIN iframe) ist fuer Gaeste das
+Hero-Spiel — es hat das fruehere Zuordnungs-Embed (kanaEmbedHost/iframe) als
+Hero ersetzt. Das Zuordnungs-Spiel bleibt unter /practice/kana erreichbar
+(Tages-Challenge / Lesen-Modus dort). Pitch/USP/Trust sind SSR in die Sektion
+"Vom Spiel zum System" gewandert. Eingeloggte behalten ihren personalisierten
+Hero ohne Spiel-Embed.
 """
 
 
@@ -13,23 +15,22 @@ class TestGuestHero:
         resp = client.get('/')
         assert resp.status_code == 200
 
-    def test_game_is_hero_element(self, client, db):
+    def test_storm_is_hero_element(self, client, db):
         body = client.get('/').get_data(as_text=True)
-        # Host-Komponente + Embed-Route im Gast-Zweig
-        assert 'kanaEmbedHost' in body
-        assert '/practice/kana/embed' in body
-        # Steuer-Ebenen ueber dem Spiel: Schrift-Chips (inkl. Beide),
-        # Reihen-Pills (SSR), Modus-Segment
-        assert 'kana-chip-row' in body
-        assert 'Beide · 92' in body
-        assert 'Tages-Challenge' in body
-        assert 'kana-row-row' in body
+        # Kana Storm ist der Gast-Hero — inline (kein iframe), eigene Komponente.
+        assert 'kanaStormGame()' in body
+        assert 'class="kstorm-hero"' in body
+        assert 'kana_storm.js' in body
+        # Storm-Steuerung im Hero: Schrift-Segmente + Reihen-Pills (SSR)
+        assert 'setSchrift(' in body
+        assert 'kstorm__chip' in body
         assert "toggleRow('k')" in body
-        assert 'kana-mode-seg' in body
-        assert "selectMode('lesen')" in body
-        # Blind-Modus ist als Practice-Option entfernt (User-Direktive 2026-06-12)
-        assert "selectMode('blind')" not in body
-        # H1 traegt den Query-Match "Hiragana lernen"
+        # Das fruehere Zuordnungs-Embed ist als Hero RAUS
+        assert 'x-data="kanaEmbedHost(' not in body
+        assert '/practice/kana/embed' not in body
+        # Zuordnungs-Spiel bleibt vom Hero aus verlinkt
+        assert 'Zum Zuordnungs-Spiel' in body
+        # H1 traegt weiter den Query-Match "Hiragana lernen"
         assert 'Hiragana lernen' in body
 
     def test_vokal_probe_removed(self, client, db):
@@ -65,16 +66,14 @@ class TestGuestHero:
         sitemap = client.get('/sitemap.xml').get_data(as_text=True)
         assert '/practice/kana</loc>' in sitemap
 
-    def test_result_card_branches_vorhanden(self, client, db):
-        # Ergebnis-Weiche: alle drei Branch-Templates muessen im Markup liegen.
+    def test_storm_hero_register_cta(self, client, db):
+        # Storm-Hero hat keine A/B/C-Ergebnis-Weiche mehr (matching-spezifisch);
+        # die Konto-CTA fuehrt nach der Registrierung in die Storm-Seite.
         body = client.get('/').get_data(as_text=True)
-        assert "branch() === 'A'" in body
-        assert "branch() === 'B'" in body
-        assert "branch() === 'C'" in body
-        # Konto-CTA fuehrt nach der Registrierung in die Spiel-Seite (next-Param;
-        # Flask laesst '/' im Query-String unkodiert).
-        assert ('next=/practice/kana/spiel' in body
-                or 'next=%2Fpractice%2Fkana%2Fspiel' in body)
+        assert ('next=/practice/kana/storm' in body
+                or 'next=%2Fpractice%2Fkana%2Fstorm' in body)
+        # Die alte Matching-Ergebnis-Weiche ist nicht mehr auf der Startseite.
+        assert "branch() === 'A'" not in body
 
 
 class TestAuthenticatedHero:
