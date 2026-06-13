@@ -3,65 +3,108 @@
    Genutzt von:
      • practice_kana_storm.html  (Vollbild-Seite — setzt kstorm_back_url)
      • index.html                (Startseiten-Karte — kein Back-Link)
+     • /daily                    (Vollbild-Seite mit aktivem Daily-Tab)
    Eine Quelle → kein Drift. Inline, KEIN iframe.
 
    Jinja-Variablen (optional):
      kstorm_back_url      — Ziel des Zurück-Links (None/unset = kein Link)
      kstorm_register_url  — Konto-CTA-Ziel (Default: register?next=storm-Seite)
+     kstorm_initial_tab   — 'storm' (Default) | 'daily' — welcher Tab startet
 
-   x-cloak NUR auf den Nicht-Start-Screens: der Start-Screen ist bewusst
-   SSR-sichtbar (kein Layout-Sprung beim Alpine-Init, gut auf der Startseite).
+   ZWEI Modi in einer Karte (Tabs oben):
+     • Kana Storm — endloser Loop gegen die Uhr (keyboard-first)
+     • Daily-Karte — Wordle-Mechanik: ein für ALLE gleiches Tagesbrett (10 Kana),
+       teilbarer Emoji-Block. Brett kommt global (login-unabhängig) vom Endpoint
+       /api/practice/kana/storm-daily.
+
+   x-cloak NUR auf den Nicht-initial sichtbaren Screens: der initial aktive
+   Heim-Screen (Storm-Start ODER Daily-Karte, je nach kstorm_initial_tab) ist
+   bewusst SSR-sichtbar (kein Layout-Sprung beim Alpine-Init).
    ════════════════════════════════════════════════════════════════════════ #}
 {% set _kstorm_register = kstorm_register_url|default(url_for('routes.register', next=url_for('srs.practice_kana_storm_page'))) %}
 {% set _kstorm_back = kstorm_back_url|default(none) %}
+{% set _kstorm_tab = kstorm_initial_tab|default('storm') %}
+{# Pre-Init-Cloak: nur den NICHT-initial sichtbaren Heim-Screen verstecken,
+   damit beim Laden kein falscher Screen aufblitzt. #}
+{% set _storm_cloak = 'x-cloak' if _kstorm_tab == 'daily' else '' %}
+{% set _daily_cloak = '' if _kstorm_tab == 'daily' else 'x-cloak' %}
+{% set kstorm_row_pills = [
+    ('vowels', 'あいうえお'), ('k', 'K'), ('s', 'S'), ('t', 'T'), ('n', 'N'),
+    ('h', 'H'), ('m', 'M'), ('y', 'Y'), ('r', 'R'), ('w', 'W'), ('n_kons', 'ん'),
+    ('g', 'G'), ('z', 'Z'), ('d', 'D'), ('b', 'B'), ('p', 'P')] %}
 
-<div class="kstorm" x-data="kanaStormGame()" x-init="init()">
+<div class="kstorm" x-data="kanaStormGame({ initialTab: '{{ _kstorm_tab }}' })" x-init="init()">
 
     {# Screenreader-Ansage für Treffer/Fehler (visuell versteckt) #}
     <div class="kstorm__sr" aria-live="polite" aria-atomic="true" x-text="fbText"></div>
 
-    {# ── START ── (SSR-sichtbar, ohne x-cloak) #}
-    <div class="kstorm__screen" x-show="phase === 'start'">
+    {# ── TAB-LEISTE (Storm | Daily) — auf den Ruhe-Screens sichtbar ── #}
+    <div class="kstorm__tabs" role="tablist" aria-label="Spielmodus" x-show="showTabs()">
+        <button type="button" role="tab" class="kstorm__tab {{ 'is-active' if _kstorm_tab != 'daily' else '' }}"
+                :class="{ 'is-active': tabActive('storm') }"
+                :aria-selected="tabActive('storm').toString()" @click="goTab('storm')">
+            <span class="kstorm__tab-jp" lang="ja" aria-hidden="true">かな</span> Kana Storm
+        </button>
+        <button type="button" role="tab" class="kstorm__tab {{ 'is-active' if _kstorm_tab == 'daily' else '' }}"
+                :class="{ 'is-active': tabActive('daily') }"
+                :aria-selected="tabActive('daily').toString()" @click="goTab('daily')">
+            Daily-Karte
+        </button>
+    </div>
+
+    {# ── START (Storm-Konfig) — SSR-sichtbar, wenn Storm der initiale Tab ist ── #}
+    <div class="kstorm__screen kstorm__screen--start" x-show="phase === 'start'" {{ _storm_cloak }}>
         <div class="kstorm__eyebrow">Endlos · gegen die Uhr</div>
         <h2 class="kstorm__title">Kana Storm</h2>
         <p class="kstorm__lead">
-            So viele Kana wie möglich, bevor die Zeit abläuft. Jede richtige Antwort baut die
-            Combo aus — ein Fehler setzt sie zurück. Tippe das Romaji und drück Enter.
+            So viele Kana wie möglich, bevor die Zeit abläuft. Tippe das Romaji und drück Enter —
+            das nächste Zeichen kommt sofort.
         </p>
-        <div class="kstorm__segs">
-            <div class="kstorm__seg" role="group" aria-label="Schrift">
-                <button type="button" class="is-active" :class="{ 'is-active': schrift === 'hiragana' }"
-                        :aria-pressed="(schrift === 'hiragana').toString()" @click="setSchrift('hiragana')">
-                    Hiragana <span class="kstorm__seg-jp">あ</span>
-                </button>
-                <button type="button" :class="{ 'is-active': schrift === 'katakana' }"
-                        :aria-pressed="(schrift === 'katakana').toString()" @click="setSchrift('katakana')">
-                    Katakana <span class="kstorm__seg-jp">ア</span>
-                </button>
-                <button type="button" :class="{ 'is-active': schrift === 'both' }"
-                        :aria-pressed="(schrift === 'both').toString()" @click="setSchrift('both')">
-                    Beide <span class="kstorm__seg-jp">あ・ア</span>
-                </button>
+
+        {# Glyph-forward Schrift-Picker: das Zeichen führt, das Label erklärt. #}
+        <div class="kstorm__pick" role="group" aria-label="Schrift">
+            <button type="button" class="kstorm__sp" :class="{ 'is-active': schrift === 'hiragana' }"
+                    :aria-pressed="(schrift === 'hiragana').toString()" @click="setSchrift('hiragana')">
+                <span class="kstorm__sp-g" lang="ja">あ</span>
+                <span class="kstorm__sp-l">Hiragana</span>
+            </button>
+            <button type="button" class="kstorm__sp" :class="{ 'is-active': schrift === 'katakana' }"
+                    :aria-pressed="(schrift === 'katakana').toString()" @click="setSchrift('katakana')">
+                <span class="kstorm__sp-g" lang="ja">ア</span>
+                <span class="kstorm__sp-l">Katakana</span>
+            </button>
+            <button type="button" class="kstorm__sp" :class="{ 'is-active': schrift === 'both' }"
+                    :aria-pressed="(schrift === 'both').toString()" @click="setSchrift('both')">
+                <span class="kstorm__sp-g" lang="ja">あ<small>ア</small></span>
+                <span class="kstorm__sp-l">Beide</span>
+            </button>
+        </div>
+
+        {# Optionen-Disclosure: Dauer + Reihen einklappbar (entrümpelt den Start). #}
+        <button type="button" class="kstorm__opt-toggle" :aria-expanded="optionsOpen.toString()"
+                aria-controls="kstorm-opt-panel" @click="toggleOptions()">
+            <span class="kstorm__opt-l">Optionen</span>
+            <span class="kstorm__opt-sum" x-text="optionsSummary()">60 Sek · alle Reihen</span>
+            <span class="kstorm__opt-chev" aria-hidden="true">⌄</span>
+        </button>
+        <div class="kstorm__opt-panel" id="kstorm-opt-panel" x-show="optionsOpen" x-cloak>
+            <div class="kstorm__opt-block">
+                <div class="kstorm__opt-label">Dauer</div>
+                <div class="kstorm__seg" role="group" aria-label="Dauer">
+                    <button type="button" :class="{ 'is-active': duration === 60 }"
+                            :aria-pressed="(duration === 60).toString()" @click="setDuration(60)">60 Sek</button>
+                    <button type="button" :class="{ 'is-active': duration === 120 }"
+                            :aria-pressed="(duration === 120).toString()" @click="setDuration(120)">120 Sek</button>
+                </div>
             </div>
-            <div class="kstorm__seg" role="group" aria-label="Dauer">
-                <button type="button" class="is-active" :class="{ 'is-active': duration === 60 }"
-                        :aria-pressed="(duration === 60).toString()" @click="setDuration(60)">60 Sek</button>
-                <button type="button" :class="{ 'is-active': duration === 120 }"
-                        :aria-pressed="(duration === 120).toString()" @click="setDuration(120)">120 Sek</button>
-            </div>
-            {# Reihen-Auswahl: nur die gewählten Gojuon-Gruppen spielen (z.B. nur
-               あいうえお + K). Leer/"Alle" = komplettes Grund-Set. SSR-gerendert
-               (Jinja-Loop, kein Pop-in); G–P sind Dakuten/Handakuten. #}
-            {% set kstorm_row_pills = [
-                ('vowels', 'あいうえお'), ('k', 'K'), ('s', 'S'), ('t', 'T'), ('n', 'N'),
-                ('h', 'H'), ('m', 'M'), ('y', 'Y'), ('r', 'R'), ('w', 'W'), ('n_kons', 'ん'),
-                ('g', 'G'), ('z', 'Z'), ('d', 'D'), ('b', 'B'), ('p', 'P')] %}
-            <div class="kstorm__rows-group">
-                <span class="kstorm__rows-label">
+            {# Reihen-Auswahl: nur die gewählten Gojuon-Gruppen spielen. Leer/"Alle"
+               = komplettes Grund-Set. G–P sind Dakuten/Handakuten. #}
+            <div class="kstorm__opt-block">
+                <div class="kstorm__opt-label">
                     Reihen <span class="kstorm__rows-count" x-text="selectedCount() + ' Kana'">46 Kana</span>
-                </span>
+                </div>
                 <div class="kstorm__rows" role="group" aria-label="Reihen wählen">
-                    <button type="button" class="kstorm__chip kstorm__chip--all is-active"
+                    <button type="button" class="kstorm__chip kstorm__chip--all"
                             :class="{ 'is-active': allRowsActive() }"
                             :aria-pressed="allRowsActive().toString()" @click="selectAllRows()">Alle</button>
                     {% for rk, rl in kstorm_row_pills %}
@@ -73,7 +116,8 @@
                 </div>
             </div>
         </div>
-        <button class="kstorm__start" @click="start()">
+
+        <button class="kstorm__start kstorm__start--big" @click="start()">
             <span>Storm starten</span> <i class="fas fa-arrow-right" aria-hidden="true"></i>
         </button>
         <p class="kstorm__best" x-show="best > 0" x-cloak
@@ -89,13 +133,79 @@
         {% endif %}
     </div>
 
-    {# ── LADEN ── #}
+    {# ── DAILY-KARTE (Heim + Ergebnis) — SSR-sichtbar, wenn Daily der initiale Tab ist ── #}
+    <div class="kstorm__screen kstorm__screen--daily" x-show="phase === 'daily'" {{ _daily_cloak }}>
+        <div class="kstorm__eyebrow">Jeden Tag · ein Brett für alle</div>
+        <h2 class="kstorm__title">Kana Daily</h2>
+
+        {# Lade-/Fehlerzustand #}
+        <template x-if="dailyLoading">
+            <p class="kstorm__lead"><i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Tagesbrett wird geladen …</p>
+        </template>
+        <template x-if="dailyError">
+            <p class="kstorm__lead kstorm__daily-err" x-text="dailyError"></p>
+        </template>
+
+        {# Share-Karte: vor dem Spiel Platzhalter (⬜), danach das echte Ergebnis. #}
+        <template x-if="!dailyLoading && !dailyError">
+            <div class="kstorm__daily-card">
+                <div class="kstorm__daily-day">Kana Daily <b x-text="'#' + dailyNumber"></b></div>
+                <div class="kstorm__daily-tline" x-show="dailyHasResult" x-cloak
+                     x-text="dailyResult ? (dailyResult.timeStr + ' ⚡') : ''"></div>
+                <div class="kstorm__daily-grid" x-text="dailyGridDisplay()"
+                     :aria-label="dailyHasResult ? 'Dein Ergebnis' : 'Heute noch nicht gespielt'"></div>
+                <div class="kstorm__daily-meta" x-show="dailyHasResult" x-cloak
+                     x-text="dailyResult ? ('Beste Combo ×' + dailyResult.bestCombo + ' · ' + dailyResult.greens + '/' + dailyResult.len + ' auf Anhieb') : ''"></div>
+                <div class="kstorm__daily-url">japanese-learning.ch/daily</div>
+            </div>
+        </template>
+
+        {# Vor dem Spiel: Erklärung + Brett starten #}
+        <template x-if="!dailyHasResult && !dailyLoading && !dailyError">
+            <div class="kstorm__daily-actions">
+                <p class="kstorm__lead kstorm__daily-intro">
+                    Dieselben 10 Kana für alle — heute. Tipp dich durch; am Ende gibt's einen
+                    teilbaren Block (🟩 auf Anhieb richtig, 🟥 vertippt).
+                </p>
+                <button class="kstorm__start kstorm__start--big" @click="startDaily()">
+                    <span>Heutiges Brett spielen</span> <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                </button>
+            </div>
+        </template>
+
+        {# Nach dem Spiel: teilen + nochmal #}
+        <template x-if="dailyHasResult && !dailyLoading">
+            <div class="kstorm__daily-actions" x-cloak>
+                <div class="kstorm__endactions">
+                    <button class="kstorm__start" @click="copyDaily()">
+                        <i class="fas fa-copy" aria-hidden="true"></i>
+                        <span x-text="dailyCopied ? 'Kopiert ✓' : 'Ergebnis kopieren'">Ergebnis kopieren</span>
+                    </button>
+                    <button class="kstorm__ghost" @click="startDaily()">
+                        <i class="fas fa-redo" aria-hidden="true"></i> Nochmal
+                    </button>
+                </div>
+                <p class="kstorm__upsell">
+                    Teilen lädt Freunde aufs gleiche Brett — mit
+                    <a href="{{ _kstorm_register }}">kostenlosem Konto</a> zählt deine Serie mit.
+                </p>
+            </div>
+        </template>
+
+        {% if _kstorm_back %}
+        <a class="kstorm__backlink" href="{{ _kstorm_back }}">
+            <i class="fas fa-arrow-left" aria-hidden="true"></i> Zurück zum Kana-Spiel
+        </a>
+        {% endif %}
+    </div>
+
+    {# ── LADEN (Storm) ── #}
     <div class="kstorm__screen" x-show="phase === 'loading'" x-cloak>
         <div class="kstorm__state-ico"><i class="fas fa-spinner fa-spin" aria-hidden="true"></i></div>
         <p class="kstorm__lead">Runde wird vorbereitet …</p>
     </div>
 
-    {# ── FEHLER ── #}
+    {# ── FEHLER (Storm) ── #}
     <div class="kstorm__screen" x-show="phase === 'error'" x-cloak>
         <div class="kstorm__state-ico"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i></div>
         <p class="kstorm__lead" x-text="loadError"></p>
@@ -104,11 +214,12 @@
         </button>
     </div>
 
-    {# ── SPIEL ── #}
+    {# ── SPIEL (Storm ODER Daily) ── #}
     <div class="kstorm__play" :class="{ 'is-ok': fb === 'ok', 'is-bad': fb === 'bad' }"
          x-show="phase === 'playing'" x-cloak>
-        <div class="kstorm__timerbar" :class="{ 'is-low': timerPct() < 20 }">
-            <i :style="`right: ${100 - timerPct()}%`"></i>
+        <div class="kstorm__timerbar"
+             :class="{ 'is-low': mode !== 'daily' && timerPct() < 20, 'is-daily': mode === 'daily' }">
+            <i :style="`right: ${100 - barPct()}%`"></i>
         </div>
         <div class="kstorm__play-body">
             <div class="kstorm__hud">
@@ -118,8 +229,8 @@
                 </div>
                 <div class="kstorm__combo" :class="{ pop: popCombo }" x-html="comboLabel()">×1</div>
                 <div class="kstorm__stat kstorm__stat--r">
-                    <span class="kstorm__label">Zeit</span>
-                    <span class="kstorm__num" x-text="liveTimeLabel()">0:60</span>
+                    <span class="kstorm__label" x-text="rightStatLabel()">Zeit</span>
+                    <span class="kstorm__num" x-text="rightStatValue()">0:60</span>
                 </div>
             </div>
             <div class="kstorm__main">
@@ -142,7 +253,7 @@
         </div>
     </div>
 
-    {# ── ENDE ── #}
+    {# ── ENDE (Storm) ── #}
     <div class="kstorm__screen" x-show="phase === 'ended'" x-cloak>
         <div class="kstorm__eyebrow">Runde vorbei</div>
         <h2 class="kstorm__title" x-text="endTitle()">Stark!</h2>

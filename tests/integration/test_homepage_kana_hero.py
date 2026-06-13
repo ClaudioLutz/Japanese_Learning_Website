@@ -18,13 +18,27 @@ class TestGuestHero:
     def test_storm_is_hero_element(self, client, db):
         body = client.get('/').get_data(as_text=True)
         # Kana Storm ist der Gast-Hero — inline (kein iframe), eigene Komponente.
-        assert 'kanaStormGame()' in body
+        # Die Komponente bekommt jetzt Optionen (initialTab) → 'kanaStormGame(' statt '()'.
+        assert 'kanaStormGame(' in body
         assert 'class="kstorm-hero"' in body
         assert 'kana_storm.js' in body
-        # Storm-Steuerung im Hero: Schrift-Segmente + Reihen-Pills (SSR)
+        # Storm-Steuerung im Hero: glyph-forward Schrift-Picker + Reihen-Pills (SSR)
         assert 'setSchrift(' in body
+        assert 'kstorm__pick' in body          # Glyph-Picker (あ/ア/あア)
         assert 'kstorm__chip' in body
         assert "toggleRow('k')" in body
+        # Optionen sind hinter einem Disclosure eingeklappt
+        assert 'kstorm__opt-toggle' in body
+
+    def test_daily_tab_in_hero(self, client, db):
+        # Der Daily-Tab (Wordle-artige Tageschallenge) ist im Hero erreichbar (SSR).
+        body = client.get('/').get_data(as_text=True)
+        assert 'kstorm__tabs' in body
+        assert 'Daily-Karte' in body
+        assert "goTab('daily')" in body
+        assert 'startDaily(' in body
+        # Storm bleibt der initial sichtbare Tab auf der Startseite.
+        assert 'Kana Storm' in body
         # Das fruehere Zuordnungs-Embed ist als Hero RAUS
         assert 'x-data="kanaEmbedHost(' not in body
         assert '/practice/kana/embed' not in body

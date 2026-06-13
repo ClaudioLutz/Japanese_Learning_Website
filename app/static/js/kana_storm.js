@@ -97,9 +97,14 @@ function kanaStormGame(opts) {
         selectedRows: [],      // gewählte Gojuon-Reihen (leer = alle Basis-Reihen)
         backUrl: opts.backUrl || null,         // Vollbild: Zurück-Link; Startseite: null
         registerUrl: opts.registerUrl || null, // Konto-CTA (optional, vom Template gesetzt)
+        initialTab: opts.initialTab === 'daily' ? 'daily' : 'storm',
+        mode: 'storm',         // 'storm' | 'daily' — Modus der laufenden Runde
+        optionsOpen: false,    // "Optionen"-Disclosure (Dauer + Reihen) im Start-Screen
 
         // ── Phasen / Daten ──
-        phase: 'start',        // 'start' | 'loading' | 'playing' | 'ended' | 'error'
+        // 'start' = Storm-Konfig (SSR-sichtbar) · 'daily' = Daily-Karte (Heim + Ergebnis)
+        // 'loading' · 'playing' (mode storm|daily) · 'ended' (Storm-Ergebnis) · 'error'
+        phase: opts.initialTab === 'daily' ? 'daily' : 'start',
         loadError: '',
         pool: [],              // [{ character, romanization, type, accepts:Set }]
         current: null,
@@ -121,6 +126,21 @@ function kanaStormGame(opts) {
         // ── Bestscore (localStorage, pro Schrift+Dauer) ──
         best: 0,
         isNewBest: false,
+
+        // ── Daily (Wordle-artige Tageschallenge: festes Brett für ALLE gleich) ──
+        dailyBoard: [],        // [{ character, romanization, accepts:Set }]
+        dailyIdx: 0,
+        dailyLog: [],          // bool[] — true = auf Anhieb richtig (🟩), false = vertippt (🟥)
+        dailyGreens: 0,
+        dailyStartMs: 0,
+        dailyDate: '',
+        dailyNumber: 0,
+        dailyLoaded: false,    // Brett-Meta schon vom Server geladen?
+        dailyLoading: false,
+        dailyError: '',
+        dailyHasResult: false, // heutiges Ergebnis vorhanden (schon gespielt)?
+        dailyResult: null,     // { date, number, grid, timeStr, greens, bestCombo, len, shareText }
+        dailyCopied: false,
 
         reduceMotion: false,
         _endAt: 0,
@@ -145,6 +165,8 @@ function kanaStormGame(opts) {
                 }
             } catch (e) { /* kaputter Wert → "Alle" behalten */ }
             this.loadBest();
+            // /daily landet mit aktivem Daily-Tab → Brett-Meta + ggf. Ergebnis laden.
+            if (this.initialTab === 'daily') { this.phase = 'daily'; this.loadDailyMeta(); }
         },
 
         // ── localStorage-Helfer (Privatmodus-sicher) ──
@@ -247,6 +269,7 @@ function kanaStormGame(opts) {
         },
 
         _beginRound() {
+            this.mode = 'storm';
             this.score = 0; this.combo = 1; this.bestCombo = 1; this.count = 0;
             this.isNewBest = false; this.revealing = false;
             this.timeLeft = this.duration;
@@ -287,7 +310,13 @@ function kanaStormGame(opts) {
         },
 
         nextKana() {
-            this.current = this._pickFromPool();
+            if (this.mode === 'daily') {
+                // Daily: festes Brett, jedes Zeichen genau einmal, der Reihe nach.
+                if (this.dailyIdx >= this.dailyBoard.length) { this.finishDaily(); return; }
+                this.current = this.dailyBoard[this.dailyIdx];
+            } else {
+                this.current = this._pickFromPool();
+            }
             this.inputVal = '';
             this.fb = ''; this.fbText = ' ';
             this._shownAt = Date.now();
@@ -355,6 +384,8 @@ function kanaStormGame(opts) {
                 this._popCombo();
                 this.fb = 'ok';
                 this.fbText = '✓ ' + this.current.character + ' = ' + this.current.romanization;
+                // Daily: 🟩 protokollieren + ein Brett-Feld weiterrücken (keine Requeue).
+                if (this.mode === 'daily') { this.dailyLog.push(true); this.dailyGreens++; this.dailyIdx++; }
                 // Kurze Erfolgs-Pause, DANN weiter: ohne sie würde nextKana() fb/
                 // fbText synchron im selben Tick zurücksetzen — Alpine flusht nur
                 // den Endwert, sodass der grüne Treffer-Flash UND die aria-live-
@@ -368,6 +399,8 @@ function kanaStormGame(opts) {
                 this.combo = 1;
                 this.fb = 'bad';
                 this.fbText = '✗ ' + this.current.character + ' = ' + this.current.romanization;
+                // Daily: 🟥 protokollieren + weiterrücken (das Zeichen kommt NICHT zurück).
+                if (this.mode === 'daily') { this.dailyLog.push(false); this.dailyIdx++; }
                 this._scheduleNext(this.reduceMotion
                     ? KANA_STORM_SCORING.REVEAL_MS_REDUCED
                     : KANA_STORM_SCORING.REVEAL_MS);
@@ -445,15 +478,156 @@ function kanaStormGame(opts) {
             return 'Solide!';
         },
 
-        /* ── NICHT-ZIEL (Stub, bewusst NICHT gebaut) ─────────────────────────
-           Daily-Modus: ein für ALLE Spieler identisches Tagesbrett + teilbarer
-           Emoji-Block (Wordle-Mechanik). WICHTIG fürs spätere Bauen: das Brett
-           MUSS serverseitig pro Tag fix und für alle Nutzer gleich erzeugt
-           werden (deterministischer Seed pro Datum, ohne user_id) — sonst ist
-           der geteilte Vergleich wertlos. Ein passender Endpoint existiert
-           bereits konzeptionell (/api/practice/kana/daily-challenge nutzt einen
-           datumsbasierten Gast-Seed); für Storm-Daily bräuchte es ein gleich
-           geseedetes, ZEITLICH gespieltes 10er-Brett statt eines Grid-Bretts.
-           Ebenfalls Nicht-Ziel: Wochen-Leaderboard + Account-XP (braucht Backend). */
+        // ── Tabs (Storm | Daily) ──────────────────────────────────────────
+        // Tab-Leiste nur auf den "Ruhe"-Screens (nicht während Laden/Spiel).
+        showTabs() { return ['start', 'ended', 'daily', 'error'].includes(this.phase); },
+        tabActive(t) {
+            const daily = this.phase === 'daily' || (this.phase === 'playing' && this.mode === 'daily');
+            return t === (daily ? 'daily' : 'storm');
+        },
+        goTab(t) {
+            if (this.phase === 'playing' || this.phase === 'loading') return;
+            if (t === 'daily') { this.phase = 'daily'; this.loadDailyMeta(); }
+            else { this.phase = 'start'; this.loadBest(); }
+        },
+
+        // ── "Optionen"-Disclosure (Dauer + Reihen) ────────────────────────
+        toggleOptions() { this.optionsOpen = !this.optionsOpen; },
+        optionsSummary() {
+            const n = this.selectedRows.length;
+            const r = n ? (n + ' Reihe' + (n > 1 ? 'n' : '')) : 'alle Reihen';
+            return this.duration + ' Sek · ' + r;
+        },
+
+        // ── Daily: Brett-Meta laden (Karten-Kopfzeile + ggf. heutiges Ergebnis) ──
+        async loadDailyMeta() {
+            this._restoreDailyResult();           // gespeichertes Ergebnis (falls heute schon gespielt)
+            if (this.dailyLoaded) return;
+            this.dailyLoading = true; this.dailyError = '';
+            let data;
+            try {
+                const resp = await fetch('/api/practice/kana/storm-daily');
+                data = await resp.json();
+            } catch (e) {
+                this.dailyLoading = false;
+                this.dailyError = 'Das Tagesbrett konnte nicht geladen werden — bitte später erneut versuchen.';
+                return;
+            }
+            const kana = ((data && data.kana) || []).filter((k) => (k.romanization || '').trim());
+            this.dailyBoard = kana.map((k) => ({
+                character: k.character,
+                romanization: (k.romanization || '').toLowerCase(),
+                accepts: buildAcceptSet(k),
+            }));
+            this.dailyDate = (data && data.date) || '';
+            this.dailyNumber = (data && data.day_number) || 0;
+            this.dailyLoading = false;
+            this.dailyLoaded = true;
+            // Gespeichertes Ergebnis gehört zu einem anderen (alten) Tag → verwerfen.
+            if (this.dailyResult && this.dailyResult.date && this.dailyResult.date !== this.dailyDate) {
+                this.dailyHasResult = false; this.dailyResult = null;
+            }
+        },
+        dailyBoardLen() { return this.dailyBoard.length || 10; },
+        // Platzhalter- bzw. Ergebnis-Raster für die Daily-Karte.
+        dailyGridDisplay() {
+            if (this.dailyHasResult && this.dailyResult) return this.dailyResult.grid;
+            return '⬜'.repeat(this.dailyBoardLen());
+        },
+        _restoreDailyResult() {
+            try {
+                const raw = this._ls('kanaStormDailyLast');
+                if (!raw) return;
+                const r = JSON.parse(raw);
+                if (r && r.date && r.grid) { this.dailyResult = r; this.dailyHasResult = true; }
+            } catch (e) { /* kaputter Wert ignorieren */ }
+        },
+
+        // ── Daily starten: festes Brett, KEIN Timer, jedes Zeichen genau 1× ──
+        async startDaily() {
+            if (!this.dailyLoaded) { await this.loadDailyMeta(); }
+            if (!this.dailyBoard.length) {
+                this.dailyError = 'Das Tagesbrett ist gerade nicht verfügbar — bitte später erneut versuchen.';
+                return;
+            }
+            this.mode = 'daily';
+            this.pool = this.dailyBoard;   // Distraktor-Quelle für die 4 Tap-Optionen
+            this.dailyIdx = 0; this.dailyLog = []; this.dailyGreens = 0;
+            this.score = 0; this.combo = 1; this.bestCombo = 1; this.count = 0;
+            this.revealing = false; this.dailyStartMs = Date.now();
+            this.current = null; this.inputVal = ''; this.fb = ''; this.fbText = ' ';
+            this.phase = 'playing';
+            this.nextKana();
+            if (window.kanaTrack) window.kanaTrack('kana_storm_daily_start', { date: this.dailyDate });
+        },
+
+        finishDaily() {
+            this._stopTimer();
+            if (this._revealTimer) { clearTimeout(this._revealTimer); this._revealTimer = null; }
+            this.revealing = false;
+            const secs = Math.round((Date.now() - this.dailyStartMs) / 1000);
+            const timeStr = Math.floor(secs / 60) + ':' + String(secs % 60).padStart(2, '0');
+            const grid = this.dailyLog.map((g) => (g ? '🟩' : '🟥')).join('');
+            const len = this.dailyBoard.length;
+            const shareText = 'Kana Daily #' + this.dailyNumber + ' · ' + timeStr + ' ⚡\n'
+                + grid + '\n'
+                + 'Beste Combo ×' + this.bestCombo + ' · ' + this.dailyGreens + '/' + len + ' auf Anhieb\n'
+                + 'japanese-learning.ch/daily';
+            this.dailyResult = {
+                date: this.dailyDate, number: this.dailyNumber, grid, timeStr,
+                greens: this.dailyGreens, bestCombo: this.bestCombo, len, shareText,
+            };
+            this.dailyHasResult = true;
+            this.dailyCopied = false;
+            this._lsSet('kanaStormDailyLast', JSON.stringify(this.dailyResult));
+            this.mode = 'storm';
+            this.phase = 'daily';
+            if (window.kanaTrack) {
+                window.kanaTrack('kana_storm_daily_done', {
+                    date: this.dailyDate, greens: this.dailyGreens, secs, combo: this.bestCombo,
+                });
+            }
+        },
+
+        async copyDaily() {
+            const txt = (this.dailyResult && this.dailyResult.shareText) || '';
+            if (!txt) return;
+            let ok = false;
+            try {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    await navigator.clipboard.writeText(txt); ok = true;
+                }
+            } catch (e) { ok = false; }
+            if (!ok) {
+                try {
+                    const ta = document.createElement('textarea');
+                    ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0';
+                    document.body.appendChild(ta); ta.select();
+                    document.execCommand('copy'); document.body.removeChild(ta); ok = true;
+                } catch (e) { ok = false; }
+            }
+            if (ok) {
+                this.dailyCopied = true;
+                setTimeout(() => { this.dailyCopied = false; }, 1800);
+                if (window.kanaTrack) window.kanaTrack('kana_storm_daily_copy', { date: this.dailyDate });
+            }
+        },
+
+        // ── Einheitliche Leiste + rechtes HUD-Feld: Storm schrumpft / zählt Zeit,
+        //    Daily füllt / zählt Brett-Fortschritt. ──
+        barPct() {
+            if (this.mode === 'daily') {
+                const len = this.dailyBoard.length || 1;
+                return Math.max(0, Math.min(100, (this.dailyIdx / len) * 100));
+            }
+            return this.timerPct();
+        },
+        rightStatLabel() { return this.mode === 'daily' ? 'Brett' : 'Zeit'; },
+        rightStatValue() {
+            if (this.mode === 'daily') {
+                return Math.min(this.dailyIdx + 1, this.dailyBoard.length) + '/' + this.dailyBoard.length;
+            }
+            return this.liveTimeLabel();
+        },
     };
 }

@@ -233,10 +233,13 @@ class TestKanaStorm:
         assert resp.status_code == 200
         body = resp.get_data(as_text=True)
         # Eigenstaendige Inline-Komponente + Storm-Markup (kein iframe-Embed).
-        assert 'kanaStormGame()' in body
+        assert 'kanaStormGame(' in body
         assert 'Kana Storm' in body
         assert 'class="kstorm"' in body
         assert '<iframe' not in body
+        # Zweiter Modus (Daily-Karte) ist als Tab erreichbar.
+        assert 'Daily-Karte' in body
+        assert "goTab('daily')" in body
 
     def test_settings_page_links_to_storm(self, client, db):
         # Die Einstellungsseite (/practice/kana) verweist auf den Storm-Modus.
@@ -251,7 +254,7 @@ class TestKanaStorm:
         assert resp.status_code == 200
         body = resp.get_data(as_text=True)
         assert 'kstorm-hero' in body
-        assert 'kanaStormGame()' in body
+        assert 'kanaStormGame(' in body
         assert 'kana_storm.js' in body
         assert 'x-data="kanaEmbedHost(' not in body
 

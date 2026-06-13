@@ -858,6 +858,16 @@ def practice_kana_storm_page():
     return render_template('practice_kana_storm.html')
 
 
+@srs_bp.route('/daily')
+def daily_landing():
+    """Teilbare Kurz-URL fuer die Kana-Daily (aus dem geteilten Wordle-Block).
+
+    Landet auf der Storm-Vollbildseite mit aktivem Daily-Tab. Die Frontend-
+    Komponente liest `kstorm_initial_tab` aus und oeffnet den Daily-Tab.
+    """
+    return render_template('practice_kana_storm.html', kstorm_initial_tab='daily')
+
+
 @srs_bp.route('/practice/kana/embed')
 def practice_kana_embed():
     """Schlanke Embed-Variante des Spiels fuer das <iframe> auf der Startseite.
@@ -1122,6 +1132,44 @@ def api_practice_daily_challenge():
         'count': len(items),
         'bonus_xp': bonus_xp,
         'date': today,
+    })
+
+
+@srs_bp.route('/api/practice/kana/storm-daily')
+def api_practice_storm_daily():
+    """Kana-Storm-Tagesbrett: 10 Kana, pro Tag fix und fuer ALLE identisch.
+
+    Anders als /daily-challenge (eingeloggt personalisiert) ist dieses Brett
+    bewusst GLOBAL — der Seed haengt nur am Datum (nie an user_id), Quelle ist
+    immer das komplette Grund-Hiragana. Nur so ist der geteilte Wordle-Vergleich
+    ("ein Brett, fuer alle gleich") sinnvoll. Kein Login noetig, kein DB-Write.
+    """
+    import hashlib
+    import random as _random
+    from datetime import date
+    today = date.today()
+    today_iso = today.isoformat()
+    seed = int(hashlib.sha256(f'storm-daily-{today_iso}'.encode()).hexdigest()[:16], 16)
+    rng = _random.Random(seed)
+    rows = list(_guest_kana_rows())  # komplettes Grund-Hiragana, global (kein user_id)
+    rng.shuffle(rows)
+    # Auf kana_id deduplizieren (dieselbe Kana kann in mehreren Lessons liegen).
+    seen_kana = set()
+    deduped = []
+    for lc_id, kana in rows:
+        if kana.id in seen_kana:
+            continue
+        seen_kana.add(kana.id)
+        deduped.append((lc_id, kana))
+    picked = deduped[:10]
+    items = [_kana_item(lc_id, kana, with_extras=False) for lc_id, kana in picked]
+    # Fortlaufende Nummer ("Kana Daily #N") ab einem fixen Stichtag — fuer alle gleich.
+    day_number = (today - date(2026, 6, 1)).days + 1
+    return jsonify({
+        'kana': items,
+        'count': len(items),
+        'date': today_iso,
+        'day_number': day_number,
     })
 
 

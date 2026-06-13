@@ -200,6 +200,89 @@
     }
     .kstorm__backlink:hover { color: var(--shu, #EB6101); text-decoration: none; }
 
+    /* ── Tab-Leiste (Storm | Daily) ── */
+    .kstorm__tabs {
+        flex: 0 0 auto;
+        display: flex; gap: 6px;
+        background: var(--background-color, #F1EDE6);
+        border: 1px solid var(--border-color, #E4DED4);
+        border-radius: 14px; padding: 5px; margin: 0 0 0.45rem;
+    }
+    .kstorm__tab {
+        flex: 1; border: 0; background: transparent; cursor: pointer;
+        font: 600 0.9rem 'Inter', sans-serif; color: var(--ink-600, #5C564D);
+        padding: 0.55rem 0.5rem; border-radius: 10px;
+        display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+        transition: background .15s ease, color .15s ease, box-shadow .15s ease;
+    }
+    .kstorm__tab .kstorm__tab-jp { font-family: 'Noto Sans JP', sans-serif; font-size: 0.82rem; opacity: 0.85; }
+    .kstorm__tab.is-active { background: #fff; color: var(--kon, #1F2A44); box-shadow: 0 1px 2px rgba(28, 26, 23, .09); }
+    .kstorm__tab:focus-visible { outline: 2px solid var(--shu, #EB6101); outline-offset: 2px; }
+
+    /* ── Glyph-forward Schrift-Picker ── */
+    .kstorm__pick { display: flex; gap: 0.5rem; margin: 0.3rem auto 0.85rem; width: 100%; max-width: 380px; }
+    .kstorm__sp {
+        flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
+        background: var(--card-bg, #FFFDF7); border: 1.5px solid var(--border-color, #E4DED4);
+        border-radius: 16px; padding: 0.8rem 0.4rem 0.65rem; cursor: pointer;
+        transition: border-color .15s ease, background .15s ease, box-shadow .15s ease;
+    }
+    .kstorm__sp-g { font-family: 'Noto Sans JP', sans-serif; font-size: 1.9rem; line-height: 1; color: var(--kon, #1F2A44); }
+    .kstorm__sp-g small { font-size: 1.1rem; margin-left: 1px; color: var(--text-muted, #8C8378); }
+    .kstorm__sp-l { font: 600 0.78rem 'Inter', sans-serif; color: var(--text-muted, #8C8378); }
+    .kstorm__sp:hover { border-color: var(--ink-300, #D4CCBE); }
+    .kstorm__sp:focus-visible { outline: 2px solid var(--shu, #EB6101); outline-offset: 2px; }
+    .kstorm__sp.is-active {
+        border-color: var(--shu, #EB6101); background: #FFF7EE;
+        box-shadow: 0 3px 12px -7px rgba(235, 97, 1, .55);
+    }
+    .kstorm__sp.is-active .kstorm__sp-l { color: var(--shu-deep, #B84A00); }
+
+    /* ── "Optionen"-Disclosure (Dauer + Reihen) ── */
+    .kstorm__opt-toggle {
+        display: flex; align-items: center; gap: 0.6rem; width: 100%; max-width: 380px;
+        margin: 0 auto 0.55rem; background: transparent; cursor: pointer;
+        border: 0; border-top: 1px solid var(--border-color, #E4DED4); border-bottom: 1px solid var(--border-color, #E4DED4);
+        padding: 0.65rem 0.15rem; color: var(--ink-600, #5C564D);
+    }
+    .kstorm__opt-l { font: 600 0.82rem 'Inter', sans-serif; }
+    .kstorm__opt-sum { margin-left: auto; font: 0.82rem 'Geist Mono', ui-monospace, monospace; color: var(--text-muted, #8C8378); }
+    .kstorm__opt-chev { font-size: 0.95rem; color: var(--text-muted, #8C8378); transition: transform .18s ease; line-height: 1; }
+    .kstorm__opt-toggle[aria-expanded="true"] .kstorm__opt-chev { transform: rotate(180deg); }
+    .kstorm__opt-toggle:hover { color: var(--kon, #1F2A44); }
+    .kstorm__opt-toggle:focus-visible { outline: 2px solid var(--shu, #EB6101); outline-offset: 2px; border-radius: 6px; }
+    .kstorm__opt-panel { width: 100%; max-width: 380px; margin: 0 auto 0.55rem; }
+    .kstorm__opt-block { margin-bottom: 0.75rem; display: flex; flex-direction: column; align-items: center; gap: 0.45rem; }
+    .kstorm__opt-block:last-child { margin-bottom: 0.15rem; }
+    .kstorm__opt-label {
+        font: 700 0.62rem/1 'Geist', 'Inter', sans-serif; letter-spacing: 0.1em; text-transform: uppercase;
+        color: var(--text-muted, #8C8378); display: inline-flex; align-items: center; gap: 0.4rem;
+    }
+
+    /* ── Daily-Karte (Wordle-Share) ── */
+    .kstorm__screen--daily { gap: 0.5rem; }
+    .kstorm__daily-card {
+        width: 100%; max-width: 380px; margin: 0.2rem auto;
+        background: linear-gradient(160deg, #FFFDF8, #FBF4E8);
+        border: 1px solid var(--border-color, #E4DED4); border-radius: 18px;
+        padding: 1.1rem 1rem; text-align: center;
+        box-shadow: 0 8px 30px -18px rgba(40, 30, 10, .35);
+    }
+    .kstorm__daily-day { font: 600 1.2rem 'Fraunces', 'Geist', serif; color: var(--kon, #1F2A44); }
+    .kstorm__daily-day b { color: var(--shu-deep, #B84A00); }
+    .kstorm__daily-tline { font: 600 0.95rem 'Geist Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; color: var(--ink-700, #403B34); margin-top: 0.1rem; }
+    .kstorm__daily-grid { font-size: 1.5rem; letter-spacing: 0.2rem; line-height: 1.5; margin: 0.55rem 0 0.3rem; word-break: break-word; }
+    .kstorm__daily-meta { font: 600 0.8rem 'Inter', sans-serif; color: var(--text-muted, #8C8378); }
+    .kstorm__daily-url { font-size: 0.75rem; color: var(--text-muted, #8C8378); margin-top: 0.5rem; letter-spacing: .02em; }
+    .kstorm__daily-actions { display: flex; flex-direction: column; align-items: center; gap: 0.55rem; width: 100%; }
+    .kstorm__daily-intro { margin: 0.1rem auto 0.15rem; }
+    .kstorm__daily-err { color: #B23A2E; }
+
+    /* Combo-Flamme (ab FLAME_AT) */
+    .kstorm__flame { filter: saturate(1.1); }
+    /* Daily-Leiste = Fortschritt (füllt sich, Matcha) statt Restzeit (Shu/rot). */
+    .kstorm__timerbar.is-daily > i { background: var(--matcha, #7A9033); }
+
     @media (prefers-reduced-motion: reduce) {
         .kstorm *, .kstorm *::before, .kstorm *::after { transition: none !important; animation: none !important; }
     }
