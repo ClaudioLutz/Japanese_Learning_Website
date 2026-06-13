@@ -1,5 +1,6 @@
 # app/__init__.py
 import logging
+import re
 logging.basicConfig(level=logging.INFO)
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
@@ -462,6 +463,34 @@ def create_app():
                 )
                 return Markup(highlighted)
         return Markup(safe_sentence)
+
+    # Romaji-Pendant zu highlight_vocab: markiert das Zielwort-Romaji im
+    # Satz-Romaji, damit dasselbe Wort in BEIDEN Schriften (Japanisch +
+    # Romaji) hervorgehoben/unterstrichen ist. Case-insensitiv, weil der
+    # Satz am Anfang grossgeschrieben ist. Wortgrenzen-Match (\b), damit nicht
+    # mitten in einem anderen Wort getroffen wird. Scheitert leise (z.B. bei
+    # flektierten Verben: "furu" vs. "furimasu") — dann bleibt der Satz roh,
+    # genau wie beim japanischen Highlight.
+    @app.template_filter('highlight_romaji')
+    def highlight_romaji_filter(sentence, word_romaji=None):
+        if not sentence:
+            return ''
+        safe_sentence = str(escape(sentence))
+        word = (word_romaji or '').strip()
+        if len(word) < 2:
+            return Markup(safe_sentence)
+        pattern = r'\b' + re.escape(str(escape(word))) + r'\b'
+        m = re.search(pattern, safe_sentence, re.IGNORECASE)
+        if not m:
+            return Markup(safe_sentence)
+        highlighted = (
+            safe_sentence[:m.start()]
+            + '<span class="vocab-target-highlight">'
+            + m.group(0)
+            + '</span>'
+            + safe_sentence[m.end():]
+        )
+        return Markup(highlighted)
 
     # Flask-Admin fuer Standard-CRUD registrieren
     from app.admin_views import init_admin

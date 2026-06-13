@@ -1346,7 +1346,7 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                                                 {% if content_data.example_sentence_japanese %}
                                                                                 <div class="vocab-front-sentence">{{ content_data.example_sentence_japanese | highlight_vocab(content_data.word, content_data.reading) }}</div>
                                                                                 {% if content_data.example_sentence_romaji %}
-                                                                                <div class="vocab-front-romaji front-romaji">{{ content_data.example_sentence_romaji }}</div>
+                                                                                <div class="vocab-front-romaji front-romaji">{{ content_data.example_sentence_romaji | highlight_romaji(content_data.romaji) }}</div>
                                                                                 {% endif %}
                                                                                 {% else %}
                                                                                 <div class="vocab-word">{{ content_data.word }}</div>
