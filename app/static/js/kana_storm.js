@@ -49,6 +49,23 @@ const KANA_STORM_ROMAJI_VARIANTS = {
     // wo / o       → siehe Zeichen-Sonderfall を・ヲ
 };
 
+/* Gojuon-Reihengrössen pro Schrift — für die Live-Anzahl der Auswahl (ohne
+   API-Call). Keys identisch zu kana_rows.py / der Reihen-Pills-Liste im Template. */
+const KANA_STORM_ROW_SIZES = {
+    vowels: 5, k: 5, s: 5, t: 5, n: 5, h: 5, m: 5, y: 3, r: 5, w: 2, n_kons: 1,
+    g: 5, z: 5, d: 5, b: 5, p: 5,
+};
+const KANA_STORM_BASE_COUNT = 46; // Grund-Set (alle Basis-Reihen, ohne Dakuten)
+
+/* Notnagel-Distraktoren, falls die gewählte Auswahl zu klein für 4 distinkte
+   Tap-Optionen ist (z.B. nur die ん-Reihe) — der Tipp-Modus bleibt davon
+   unberührt, hier geht es nur um genug Auswahlknöpfe. */
+const KANA_STORM_FALLBACK_ROMAJI = [
+    'a', 'i', 'u', 'e', 'o', 'ka', 'ki', 'ku', 'ke', 'ko', 'sa', 'shi', 'su',
+    'ta', 'chi', 'tsu', 'na', 'ni', 'ha', 'hi', 'fu', 'ma', 'mi', 'ya', 'yu',
+    'ra', 'ri', 'wa', 'wo', 'n',
+];
+
 /* Baut die Menge akzeptierter Eingaben für eine Kana-Karte aus der
    kanonischen romanization + Varianten + Zeichen-Sonderfällen. */
 function buildAcceptSet(item) {
@@ -77,6 +94,7 @@ function kanaStormGame(opts) {
         // ── Konfiguration (auf dem Start-Screen gewählt) ──
         schrift: 'hiragana',   // 'hiragana' | 'katakana' | 'both'
         duration: 60,          // 60 | 120 (Sekunden)
+        selectedRows: [],      // gewählte Gojuon-Reihen (leer = alle Basis-Reihen)
         backUrl: opts.backUrl || null,         // Vollbild: Zurück-Link; Startseite: null
         registerUrl: opts.registerUrl || null, // Konto-CTA (optional, vom Template gesetzt)
 
@@ -120,6 +138,12 @@ function kanaStormGame(opts) {
             if (['hiragana', 'katakana', 'both'].includes(s)) this.schrift = s;
             const d = parseInt(this._ls('kanaStormDur') || '', 10);
             if (d === 60 || d === 120) this.duration = d;
+            try {
+                const r = JSON.parse(this._ls('kanaStormRows') || '[]');
+                if (Array.isArray(r)) {
+                    this.selectedRows = r.filter((k) => KANA_STORM_ROW_SIZES[k] !== undefined);
+                }
+            } catch (e) { /* kaputter Wert → "Alle" behalten */ }
             this.loadBest();
         },
 
@@ -140,8 +164,43 @@ function kanaStormGame(opts) {
             return { hiragana: 'Hiragana', katakana: 'Katakana', both: 'Beide' }[this.schrift] || '';
         },
 
-        // ── Bestscore ──
-        _bestKey() { return 'kanaStormBest:' + this.schrift + ':' + this.duration; },
+        // ── Reihen-Auswahl (leer = alle Basis-Reihen) ──
+        allRowsActive() { return this.selectedRows.length === 0; },
+        toggleRow(key) {
+            if (this.phase === 'playing') return;
+            this.selectedRows = this.selectedRows.includes(key)
+                ? this.selectedRows.filter((k) => k !== key)
+                : [...this.selectedRows, key];
+            this._persistRows(); this.loadBest();
+        },
+        selectAllRows() {
+            if (this.phase === 'playing') return;
+            this.selectedRows = []; this._persistRows(); this.loadBest();
+        },
+        _persistRows() { this._lsSet('kanaStormRows', JSON.stringify(this.selectedRows)); },
+        // Live-Anzahl der Auswahl (Reihen x Schrift) — ohne API-Call.
+        selectedCount() {
+            const base = this.selectedRows.length
+                ? this.selectedRows.reduce((s, k) => s + (KANA_STORM_ROW_SIZES[k] || 0), 0)
+                : KANA_STORM_BASE_COUNT;
+            return this.schrift === 'both' ? base * 2 : base;
+        },
+        // Beschriftung des aktuellen Scopes (für die Bestscore-Zeile).
+        scopeLabel() {
+            let s = this.schriftLabel() + ' · ' + this.duration + ' Sek';
+            const n = this.selectedRows.length;
+            if (n) s += ' · ' + n + ' Reihe' + (n > 1 ? 'n' : '');
+            return s;
+        },
+
+        // ── Bestscore (pro Schrift+Dauer UND Reihen-Auswahl — verschiedene
+        //    Reihen-Teilmengen sind nicht vergleichbar; "Alle" behält den
+        //    reihenlosen Key, damit bestehende Bestscores erhalten bleiben). ──
+        _bestKey() {
+            let k = 'kanaStormBest:' + this.schrift + ':' + this.duration;
+            if (this.selectedRows.length) k += ':' + [...this.selectedRows].sort().join(',');
+            return k;
+        },
         loadBest() {
             const v = parseInt(this._ls(this._bestKey()) || '0', 10);
             this.best = v > 0 ? v : 0;
@@ -154,10 +213,12 @@ function kanaStormGame(opts) {
             this.loadError = '';
             let data;
             try {
-                // Gast-Endpoint (ohne Login): voller Referenz-Scope der gewählten
-                // Schrift. Storm bleibt fokussiert (Grund-Gojuon, kein Dakuten) —
-                // die Anzahl ist die Pool-Größe, gespielt wird endlos per Zufall.
+                // Gast-Endpoint (ohne Login): die gewählte Schrift, optional auf
+                // einzelne Reihen eingegrenzt (rows). Eine explizite Reihen-Wahl
+                // übersteuert serverseitig den Dakuten-Schalter (wer G wählt, übt
+                // G) — die Anzahl ist die Pool-Größe, gespielt wird endlos per Zufall.
                 const params = new URLSearchParams({ schrift: this.schrift, dakuten: 'false' });
+                if (this.selectedRows.length) params.set('rows', this.selectedRows.join(','));
                 const resp = await fetch('/api/practice/kana/session/public?' + params.toString());
                 data = await resp.json();
             } catch (e) {
@@ -196,7 +257,10 @@ function kanaStormGame(opts) {
             this.nextKana();
             this._startTimer();
             if (window.kanaTrack) {
-                window.kanaTrack('kana_storm_start', { schrift: this.schrift, dur: this.duration });
+                window.kanaTrack('kana_storm_start', {
+                    schrift: this.schrift, dur: this.duration,
+                    rows: this.selectedRows.length || 'alle',
+                });
             }
         },
 
@@ -243,6 +307,12 @@ function kanaStormGame(opts) {
             while (set.size < 4 && guard++ < 80) {
                 const r = this.pool[Math.floor(Math.random() * this.pool.length)].romanization;
                 if (r) set.add(r);
+            }
+            // Auswahl zu klein für 4 distinkte Optionen (z.B. nur eine Reihe) →
+            // mit gängigen Romaji auffüllen, damit immer 4 Knöpfe erscheinen.
+            guard = 0;
+            while (set.size < 4 && guard++ < 80) {
+                set.add(KANA_STORM_FALLBACK_ROMAJI[Math.floor(Math.random() * KANA_STORM_FALLBACK_ROMAJI.length)]);
             }
             this.choices = [...set].sort(() => Math.random() - 0.5);
         },

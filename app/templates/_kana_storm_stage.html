@@ -49,12 +49,35 @@
                 <button type="button" :class="{ 'is-active': duration === 120 }"
                         :aria-pressed="(duration === 120).toString()" @click="setDuration(120)">120 Sek</button>
             </div>
+            {# Reihen-Auswahl: nur die gewählten Gojuon-Gruppen spielen (z.B. nur
+               あいうえお + K). Leer/"Alle" = komplettes Grund-Set. SSR-gerendert
+               (Jinja-Loop, kein Pop-in); G–P sind Dakuten/Handakuten. #}
+            {% set kstorm_row_pills = [
+                ('vowels', 'あいうえお'), ('k', 'K'), ('s', 'S'), ('t', 'T'), ('n', 'N'),
+                ('h', 'H'), ('m', 'M'), ('y', 'Y'), ('r', 'R'), ('w', 'W'), ('n_kons', 'ん'),
+                ('g', 'G'), ('z', 'Z'), ('d', 'D'), ('b', 'B'), ('p', 'P')] %}
+            <div class="kstorm__rows-group">
+                <span class="kstorm__rows-label">
+                    Reihen <span class="kstorm__rows-count" x-text="selectedCount() + ' Kana'">46 Kana</span>
+                </span>
+                <div class="kstorm__rows" role="group" aria-label="Reihen wählen">
+                    <button type="button" class="kstorm__chip kstorm__chip--all is-active"
+                            :class="{ 'is-active': allRowsActive() }"
+                            :aria-pressed="allRowsActive().toString()" @click="selectAllRows()">Alle</button>
+                    {% for rk, rl in kstorm_row_pills %}
+                    <button type="button" class="kstorm__chip"
+                            :class="{ 'is-active': selectedRows.includes('{{ rk }}') }"
+                            :aria-pressed="selectedRows.includes('{{ rk }}').toString()"
+                            @click="toggleRow('{{ rk }}')">{{ rl }}</button>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
         <button class="kstorm__start" @click="start()">
             <span>Storm starten</span> <i class="fas fa-arrow-right" aria-hidden="true"></i>
         </button>
         <p class="kstorm__best" x-show="best > 0" x-cloak
-           x-text="'Dein Bestscore: ' + best + ' (' + schriftLabel() + ' · ' + duration + ' Sek)'"></p>
+           x-text="'Dein Bestscore: ' + best + ' (' + scopeLabel() + ')'"></p>
         <p class="kstorm__upsell">
             Der Bestscore lebt nur in diesem Browser — mit
             <a href="{{ _kstorm_register }}">kostenlosem Konto</a> zählt er auf jedem Gerät.

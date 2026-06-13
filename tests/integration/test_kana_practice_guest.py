@@ -261,6 +261,25 @@ class TestKanaStorm:
         assert data['count'] > 0
         assert all(i['type'] == 'hiragana' for i in data['kana'])
 
+    def test_storm_page_has_row_selection(self, client, db):
+        # Storm laesst nur die gewaehlten Gojuon-Reihen spielen (z.B. nur
+        # あいうえお + K) — die Reihen-Pills sind SSR gerendert.
+        body = client.get('/practice/kana/storm').get_data(as_text=True)
+        assert 'kstorm__chip' in body
+        assert 'toggleRow(' in body
+        assert 'selectAllRows()' in body
+        assert 'あいうえお' in body  # Vokal-Reihe-Pill
+
+    def test_storm_rows_param_limits_pool(self, client, db):
+        # Datenpfad fuer die Reihen-Auswahl: rows=vowels,k liefert NUR diese Reihen.
+        _seed_hiragana(db, rows=('vowels', 'k', 's', 't'))
+        data = client.get(
+            '/api/practice/kana/session/public?schrift=hiragana&dakuten=false&rows=vowels,k'
+        ).get_json()
+        chars = {i['character'] for i in data['kana']}
+        assert chars == set(HIRAGANA_ROWS['vowels']) | set(HIRAGANA_ROWS['k'])
+        assert data['count'] == 10
+
 
 class TestGuestDailyConfusion:
     """Tages-Challenge + Verwechslungs-Drill sind gast-faehig (Scope 'Voll')."""

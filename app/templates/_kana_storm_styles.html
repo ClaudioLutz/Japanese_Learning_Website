@@ -27,6 +27,7 @@
         flex: 1 1 auto; min-height: 0;
         display: flex; flex-direction: column; align-items: center; justify-content: center;
         text-align: center; gap: 0.5rem; padding: clamp(1rem, 4vh, 2rem) 1rem;
+        overflow-y: auto; -webkit-overflow-scrolling: touch; /* Reihen-Auswahl kann den Start-Screen verlängern */
     }
     .kstorm__eyebrow {
         font: 700 0.7rem/1 'Geist', 'Inter', sans-serif;
@@ -62,6 +63,25 @@
         box-shadow: 0 1px 2px rgba(28, 26, 23, .10);
     }
     .kstorm__seg button:focus-visible { outline: 2px solid var(--shu, #EB6101); outline-offset: 2px; }
+
+    /* Reihen-Auswahl (Pills) — Muster wie .rows/.chip auf practice_kana.html */
+    .kstorm__rows-group { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 0.4rem; }
+    .kstorm__rows-label {
+        display: inline-flex; align-items: center; gap: 0.4rem;
+        font: 700 0.62rem/1 'Geist', 'Inter', sans-serif; letter-spacing: 0.1em;
+        text-transform: uppercase; color: var(--text-muted, #8C8378);
+    }
+    .kstorm__rows-count { font-family: 'Geist Mono', ui-monospace, monospace; letter-spacing: 0; text-transform: none; color: var(--kon, #1F2A44); }
+    .kstorm__rows { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.35rem; max-width: 360px; }
+    .kstorm__chip {
+        border: 1px solid var(--border-color, #D4CFC5); background: #fff; color: var(--ink-600, #5C564D);
+        border-radius: 999px; padding: 0.3rem 0.62rem; font: 600 0.78rem 'Inter', sans-serif;
+        cursor: pointer; transition: background .15s ease, color .15s ease, border-color .15s ease;
+    }
+    .kstorm__chip:hover { border-color: var(--shu, #EB6101); color: var(--shu, #EB6101); }
+    .kstorm__chip:focus-visible { outline: 2px solid var(--shu, #EB6101); outline-offset: 2px; }
+    .kstorm__chip.is-active { background: var(--shu, #EB6101); border-color: var(--shu, #EB6101); color: #fff; }
+    .kstorm__chip--all.is-active { background: var(--kon, #1F2A44); border-color: var(--kon, #1F2A44); }
 
     /* Primär-Button (Shu) + Ghost */
     .kstorm__start {
