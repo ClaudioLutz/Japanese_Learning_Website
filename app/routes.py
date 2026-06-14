@@ -467,9 +467,11 @@ def index():
     # Live-Stats fuer Hero — gibt Konkretheit + Aktivitaetssignal
     n5_vocab_count = Vocabulary.query.filter_by(jlpt_level=5).count()
     n5_kanji_count = Kanji.query.filter_by(jlpt_level=5).count()
-    # Kana hat kein jlpt_level (Hiragana+Katakana sind das Schreibsystem, kein
-    # Level) → Gesamtzahl der Kana-Zeichen in der DB statt hartkodierter "92".
-    n5_kana_count = Kana.query.count()
+    # Kana NICHT live koppeln: Kana.query.count() liefert 200 (Tabelle enthaelt
+    # auch Dakuten/Handakuten/Yoon-Kombis fuer die Spiele), nicht die 92 Grund-
+    # Kana (46 Hiragana + 46 Katakana). Es gibt kein sauberes Flag, das exakt die
+    # 92 zaehlt. Die 92 ist eine Schriftsystem-Konstante (kein Content-Count) und
+    # bleibt darum literal im Template — passt zu H1/meta ("46 Grund-Hiragana").
 
     # E4-Support: Coverage als einheitliche "heute X von Ziel Y"-Sprache fuer Home/Bundle.
     # coverage_service liefert vocab_covered/vocab_total/kanji_covered/kanji_total/vocab_pct
@@ -504,7 +506,6 @@ def index():
                          visible_languages=visible_langs,
                          n5_vocab_count=n5_vocab_count,
                          n5_kanji_count=n5_kanji_count,
-                         n5_kana_count=n5_kana_count,
                          first_guest_lesson=first_guest_lesson,
                          n5_coverage=n5_coverage)
 

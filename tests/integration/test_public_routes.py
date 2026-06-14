@@ -81,20 +81,26 @@ class TestHomepage:
         assert 'Lernpfad' in body
         assert '#lernpfad' in body
 
-    def test_homepage_kana_count_is_live_db(self, client, app_context):
-        """10.7: Die Kana-Zahl im Trust-Block kommt aus der DB (Kana.query.count()),
-        nicht aus der hartkodierten '92'."""
+    def test_homepage_kana_count_is_writing_system_constant(self, client, app_context):
+        """10.7 (revertiert): Die Kana-Zahl im Trust-Block ist die Schriftsystem-
+        Konstante 92 (46 Grund-Hiragana + 46 Grund-Katakana), NICHT die DB-Zahl.
+
+        Kana.query.count() liefert 200 (Tabelle enthaelt Dakuten/Handakuten/Yoon
+        fuer die Spiele) und widerspraeche der H1 ('46 Grund-Hiragana') + meta.
+        Es gibt kein sauberes Flag, das exakt die 92 zaehlt → die Zahl bleibt
+        literal. Vokabeln/Kanji bleiben live (echt content-variabel).
+        """
         from app.models import Kana
-        # 7 Kana anlegen → Live-Zahl ist 7, nicht 92
+        # Selbst mit DB-Kana (z.B. 7) darf NICHT die DB-Zahl erscheinen.
         for _ in range(7):
             KanaFactory()
         db.session.commit()
         assert Kana.query.count() == 7
         resp = client.get("/")
         body = resp.data.decode('utf-8')
-        assert '7 Hiragana' in body
-        # Die alte hartkodierte 92 darf nicht mehr als Kana-Zahl erscheinen
-        assert '92 Hiragana' not in body
+        assert '92 Hiragana' in body          # Schriftsystem-Konstante
+        assert '7 Hiragana' not in body       # NICHT die DB-Zahl
+        assert '200 Hiragana' not in body     # erst recht nicht die volle Tabelle
 
 
 # ── JLPT-N5-Schweiz SEO-Landingpage ─────────────────────────
