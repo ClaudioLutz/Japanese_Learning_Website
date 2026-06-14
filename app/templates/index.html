@@ -71,44 +71,135 @@
           jede Regel auf Deutsch erklärt.</span>
         </p>
 
-        {# ── Kana Storm = Hero-Spiel (inline, KEIN iframe). Eigenstaendige
-           Komponente kanaStormGame() (static/js/kana_storm.js); Daten ueber den
-           Gast-Endpoint /api/practice/kana/session/public, ohne Login. Ersetzt das
-           fruehere Zuordnungs-Spiel als Hero — dieses bleibt unter /practice/kana
-           erreichbar (Link unter der Karte). #}
+        {# ── Kana-Spiele im Gast-Hero (inline, KEIN iframe): zwei gleichberechtigte
+           Spieltypen über einen Umschalter — Kana Storm (gegen die Uhr, tippen) und
+           Zuordnung (in Ruhe Karten zuordnen). Geteilter Scope (Schrift + Reihen)
+           via $store.kanaScope, genau wie /practice/kana. Daten über den Gast-
+           Endpoint /api/practice/kana/session/public, ohne Login. Storm spielt
+           inline; Zuordnung zeigt ein kompaktes Setup und startet das Spiel im
+           Vollbild (/practice/kana/spiel). #}
         {% include '_kana_storm_styles.html' %}
         <style>
-          .kstorm-hero { width: 100%; max-width: 600px; margin: 1.2rem auto 0; }
+          .kstorm-hero { width: 100%; max-width: 640px; margin: 1.2rem auto 0; }
           .kstorm-hero-card {
-              /* min-height statt fixer Höhe: beim Aufklappen von „Optionen" (Dauer
-                 + 17 Reihen-Pills) wuchs der Inhalt über die feste Karte hinaus und
-                 löste einen internen Scrollbalken aus, der den „Storm starten"-Button
-                 verdeckte. Mit min-height wächst die Karte mit und die Seite scrollt
-                 normal; im Spiel bleibt sie >= min-height (stabile Spielfläche). */
-              min-height: clamp(520px, 78vh, 640px);
+              /* min-height statt fixer Höhe: beim Aufklappen von „Optionen" wächst
+                 die Karte mit, die Seite scrollt normal; im Spiel bleibt sie
+                 >= min-height (stabile Spielfläche). */
+              min-height: clamp(560px, 82vh, 680px);
               background: var(--card-bg, #FFFDF7);
               border: 1px solid var(--border-color, #E4DED4);
               border-radius: 18px;
               box-shadow: 0 6px 30px rgba(28, 26, 23, .07);
               overflow: hidden; display: flex; flex-direction: column;
+              padding: 0.85rem 0.85rem 1rem;
           }
-          /* Das Storm-Partial nutzt height:100% — das braucht eine definite Eltern-
-             höhe, die min-height nicht liefert. Auf flex umstellen: .kstorm füllt die
-             Karte (>= min-height) UND wächst bei langem Inhalt mit. */
-          .kstorm-hero .kstorm { height: auto; flex: 1 1 auto; min-height: 0; }
-          .kstorm-hero-alt { margin: 0.7rem 0 0; font-size: 0.85rem; color: var(--ink-600, #5C564D); }
-          .kstorm-hero-alt a { color: var(--shu-deep, #B84A00); font-weight: 600; text-decoration: none; }
-          .kstorm-hero-alt a:hover { text-decoration: underline; }
+          /* Geteilter Scope (Schrift + Reihen) über dem Umschalter. */
+          .kana-hero-scope { flex: 0 0 auto; margin-bottom: 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color, #E4DED4); }
+          .kana-hero-scope .kana-chip-row { margin-bottom: 0.4rem; }
+          .kana-hero-scope .kana-row-row { margin-bottom: 0; }
+          /* Spiel-Umschalter [Storm | Zuordnung] (Optik wie der Storm-interne Tab). */
+          .kana-hero-tabs {
+              flex: 0 0 auto; display: flex; gap: 5px;
+              background: var(--background-color, #F1EDE6);
+              border: 1px solid var(--border-color, #E4DED4);
+              border-radius: 13px; padding: 4px; margin-bottom: 0.55rem;
+          }
+          .kana-hero-tabs button {
+              flex: 1; border: 0; background: transparent; cursor: pointer;
+              border-radius: 9px; padding: 0.5rem 0.4rem;
+              font: 600 0.9rem 'Inter', sans-serif; color: var(--ink-600, #5C564D);
+              display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem;
+              transition: background .15s, color .15s, box-shadow .15s;
+          }
+          .kana-hero-tabs button .jp { font-family: 'Noto Sans JP', sans-serif; color: var(--shu, #EB6101); }
+          .kana-hero-tabs button.is-active { background: #fff; color: var(--kon, #1F2A44); box-shadow: 0 1px 2px rgba(28,26,23,.1); }
+          .kana-hero-tabs button:focus-visible { outline: 2px solid var(--shu, #EB6101); outline-offset: 2px; }
+          /* Panels: genau eines sichtbar, beide füllen den Restraum. */
+          .kana-hero-panel { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+          /* Das Storm-Partial nutzt height:100% — im Panel-Flex auf auto/flex umstellen. */
+          .kstorm-hero .kana-hero-panel > .kstorm { height: auto; flex: 1 1 auto; min-height: 0; }
+          /* Kompaktes Matching-Setup im Hero (startet das Spiel im Vollbild). */
+          .kana-hero-match { align-items: center; justify-content: center; text-align: center; gap: 0.85rem; padding: 0.6rem; }
+          .kana-hero-match__lead { font-size: 0.92rem; color: var(--ink-600, #5C564D); max-width: 36ch; margin: 0; line-height: 1.5; }
+          .kana-hero-match__preview { font-size: 0.85rem; color: var(--text-muted, #8C8378); min-height: 1.2em; margin: 0; }
+          .kana-hero-match__preview strong { color: var(--kon, #1F2A44); font-family: 'Geist Mono', ui-monospace, monospace; }
+          .kana-hero-match__preview.is-blocked { color: var(--shu-deep, #B84A00); }
+          .kana-hero-match__start {
+              width: 100%; max-width: 320px; border: 0; border-radius: 14px; padding: 0.95rem 1rem; cursor: pointer;
+              font: 600 1.05rem 'Geist', 'Inter', sans-serif; color: #fff;
+              background: linear-gradient(180deg, #F2740F, #EB6101);
+              box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 2px 6px rgba(184,74,0,.3);
+              display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+              transition: filter .15s ease;
+          }
+          .kana-hero-match__start:hover { filter: brightness(1.05); }
+          .kana-hero-match__start:disabled { opacity: 0.5; cursor: not-allowed; }
+          .kana-hero-match__quick { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; }
+          .kana-hero-match__quick button {
+              border: 1px solid var(--border-color, #D4CFC5); background: #fff; border-radius: 11px;
+              padding: 0.55rem 0.8rem; cursor: pointer; font: 600 0.82rem 'Inter', sans-serif; color: var(--ink-700, #403B34);
+              display: inline-flex; align-items: center; gap: 0.4rem;
+          }
+          .kana-hero-match__quick button:hover { border-color: var(--shu, #EB6101); color: var(--shu, #EB6101); }
+          .kana-hero-match__quick i { color: var(--shu, #EB6101); }
         </style>
-        <div class="kstorm-hero">
+        <div class="kstorm-hero"
+             x-data="{ game: 'storm', stormPhase: 'start', get hideChrome() { return this.game === 'storm' && this.stormPhase !== 'start' && this.stormPhase !== 'daily'; } }"
+             @kana-storm-phase.window="stormPhase = $event.detail">
           <div class="kstorm-hero-card">
-            {% include '_kana_storm_stage.html' %}
+            {# Geteilter Scope: Schrift + Reihen ($store.kanaScope) — gilt für beide Spiele. #}
+            <div class="kana-hero-scope" x-show="!hideChrome">
+              <div class="kana-chip-row" role="group" aria-label="Schrift">
+                <button type="button" class="kana-chip" :class="{ 'is-active': $store.kanaScope.schrift === 'hiragana' }"
+                        :aria-pressed="($store.kanaScope.schrift === 'hiragana').toString()" @click="$store.kanaScope.setSchrift('hiragana')">Hiragana あ</button>
+                <button type="button" class="kana-chip" :class="{ 'is-active': $store.kanaScope.schrift === 'katakana' }"
+                        :aria-pressed="($store.kanaScope.schrift === 'katakana').toString()" @click="$store.kanaScope.setSchrift('katakana')">Katakana ア</button>
+                <button type="button" class="kana-chip" :class="{ 'is-active': $store.kanaScope.schrift === 'both' }"
+                        :aria-pressed="($store.kanaScope.schrift === 'both').toString()" @click="$store.kanaScope.setSchrift('both')">Beide</button>
+              </div>
+              <div class="kana-row-row" role="group" aria-label="Reihen">
+                <button type="button" class="kana-rowpill kana-rowpill--all" :class="{ 'is-active': $store.kanaScope.allRowsActive }"
+                        :aria-pressed="$store.kanaScope.allRowsActive.toString()" @click="$store.kanaScope.selectAll()">Alle</button>
+                <template x-for="row in $store.kanaScope.ROWS" :key="row.key">
+                  <button type="button" class="kana-rowpill" :class="{ 'is-active': $store.kanaScope.rows.includes(row.key) }"
+                          :aria-pressed="$store.kanaScope.rows.includes(row.key).toString()" @click="$store.kanaScope.toggleRow(row.key)" x-text="row.label"></button>
+                </template>
+              </div>
+            </div>
+            {# Umschalter — beide Spieltypen gleichberechtigt. #}
+            <div class="kana-hero-tabs" role="group" aria-label="Spiel wählen" x-show="!hideChrome">
+              <button type="button" :class="{ 'is-active': game === 'storm' }" :aria-pressed="(game === 'storm').toString()" @click="game = 'storm'">
+                <span class="jp" lang="ja" aria-hidden="true">かな</span> Kana Storm
+              </button>
+              <button type="button" :class="{ 'is-active': game === 'match' }" :aria-pressed="(game === 'match').toString()" @click="game = 'match'">
+                Zuordnung
+              </button>
+            </div>
+            {# Kana Storm (Default-Tab) — inline, Scope kommt vom geteilten Panel oben. #}
+            <div class="kana-hero-panel" x-show="game === 'storm'">
+              {% set kstorm_scope_external = true %}
+              {% include '_kana_storm_stage.html' %}
+            </div>
+            {# Zuordnung — kompaktes kanaSettings()-Setup, startet das Spiel im Vollbild. #}
+            <div class="kana-hero-panel kana-hero-match" x-show="game === 'match'" x-cloak x-data="kanaSettings()" x-init="init()">
+              <p class="kana-hero-match__lead">Ordne Kana ihren Romaji zu — in Ruhe, ohne Zeitdruck. Schrift &amp; Reihen wählst du oben.</p>
+              <div class="kana-mode-seg" role="group" aria-label="Modus">
+                <button type="button" :class="{ 'is-active': mode === 'schreiben' }" :aria-pressed="(mode === 'schreiben').toString()" @click="setMode('schreiben')">Schreiben</button>
+                <button type="button" :class="{ 'is-active': mode === 'lesen' }" :aria-pressed="(mode === 'lesen').toString()" @click="setMode('lesen')">Lesen</button>
+              </div>
+              <p class="kana-hero-match__preview" :class="{ 'is-blocked': previewBlocked }">
+                <template x-if="previewBlocked"><span x-text="previewBlocked"></span></template>
+                <template x-if="!previewBlocked && previewCount !== null"><span>≈ <strong x-text="previewCount"></strong> Kana · <span x-text="modeLabel"></span></span></template>
+              </p>
+              <button type="button" class="kana-hero-match__start" :disabled="!canStart" @click="startGame()">
+                <span>Spiel starten</span> <i class="fas fa-arrow-right" aria-hidden="true"></i>
+              </button>
+              <div class="kana-hero-match__quick">
+                <button type="button" @click="startDaily()"><i class="fas fa-bullseye" aria-hidden="true"></i> Tages-Challenge</button>
+                <button type="button" @click="startConfusion()"><i class="fas fa-clone" aria-hidden="true"></i> Ähnliche</button>
+              </div>
+            </div>
           </div>
-          {# Zuordnungs-Spiel bleibt erreichbar (Tages-Challenge / Lesen-Modus dort) #}
-          <p class="kstorm-hero-alt">
-            Lieber zuordnen statt tippen?
-            <a href="{{ url_for('srs.practice_kana_page') }}">Zum Zuordnungs-Spiel &rarr;</a>
-          </p>
         </div>
 
         {# ── Bruecken-Leiste: der rote Faden Spiel → Lektion → Pfad (SSR) ── #}
