@@ -113,6 +113,27 @@ class TestModuleDetailRoute:
         """Unbekannter Slug → 404."""
         assert client.get("/learn/n5/gibt-es-nicht").status_code == 404
 
+    def test_empty_module_shows_empty_state(self, client, app_context):
+        """10.11: Modul ohne veroeffentlichte Lektionen → 200 + freundlicher
+        Empty-State (KEIN 404, KEINE leere Lektionsliste)."""
+        _make_module("leer", jlpt_level=5, display_order=1, name="Leeres Modul")
+        db.session.commit()
+        resp = client.get("/learn/n5/leer")
+        assert resp.status_code == 200
+        body = resp.data.decode("utf-8")
+        assert "Dieses Modul wird gerade gestaltet" in body
+        # Kein Lektions-Listen-Container (leere lesson-list)
+        assert 'class="lesson-list"' not in body
+
+    def test_empty_module_admin_hint(self, admin_client):
+        """10.11: Admin sieht im Empty-State zusaetzlich den Veroeffentlichungs-Hinweis."""
+        client, admin = admin_client
+        _make_module("leer-admin", jlpt_level=5, display_order=1, name="Leer Admin")
+        db.session.commit()
+        body = client.get("/learn/n5/leer-admin").data.decode("utf-8")
+        assert "Dieses Modul wird gerade gestaltet" in body
+        assert "Du bist Admin" in body
+
 
 class TestModuleUnlockLogic:
     def test_module_without_prereq_always_unlocked(self, app_context):

@@ -120,6 +120,28 @@
     transform: translateY(-1px);
   }
 
+  /* 10.11: Empty-State fuer Module ohne veroeffentlichte Lektionen */
+  .mod-empty {
+    background: #fff;
+    border: 1px solid var(--ink-200, #e4ddd0);
+    border-radius: 12px;
+    padding: 2.5rem 1.5rem; margin-top: 1rem;
+    text-align: center;
+  }
+  .mod-empty-icon { font-size: 2.4rem; line-height: 1; margin-bottom: 0.6rem; }
+  .mod-empty-title {
+    font-family: 'Geist', 'Inter', sans-serif;
+    font-size: 1.2rem; font-weight: 600; color: var(--kon, #15233b);
+    margin: 0 0 0.4rem;
+  }
+  .mod-empty-text { color: var(--ink-600, #6b6052); margin: 0; }
+  .mod-empty-admin {
+    margin: 1rem auto 0; max-width: 420px;
+    padding: 0.6rem 0.9rem; border-radius: 8px;
+    background: var(--kon-50, #eef2f7); color: var(--kon, #15233b);
+    font-size: 0.88rem;
+  }
+
   .bundle-cta-bottom {
     background: var(--kon-50);
     border: 1px solid var(--kon-100);
@@ -193,6 +215,7 @@
     </div>
   </header>
 
+  {% if lesson_entries %}
   <div class="lesson-list">
     {% for entry in lesson_entries %}
       {% set lesson = entry.lesson %}
@@ -221,11 +244,24 @@
     {% endfor %}
   </div>
 
-  {% if lesson_entries %}
     {% set first_open = (lesson_entries | rejectattr('progress.is_completed') | list | first) or lesson_entries[0] %}
     <a href="{{ url_for('routes.view_lesson', lesson_id=first_open.lesson.id) }}" class="start-btn">
       {% if done == 0 %}Beginnen mit „{{ first_open.lesson.title }}"{% elif done < total %}Weiter mit „{{ first_open.lesson.title }}"{% else %}Erste Lektion wiederholen{% endif %}  →
     </a>
+  {% else %}
+  {# 10.11: Modul ohne veroeffentlichte Lektionen → freundlicher Empty-State
+     statt inhaltsleerer Liste (KEIN 404; N1–N4 werden separat in learn_path
+     per abort(404) gesperrt). #}
+  <div class="mod-empty">
+    <div class="mod-empty-icon" aria-hidden="true">🏗️</div>
+    <h2 class="mod-empty-title">Dieses Modul wird gerade gestaltet</h2>
+    <p class="mod-empty-text">Schau bald wieder vorbei — hier entstehen neue Lektionen.</p>
+    {% if current_user.is_authenticated and current_user.is_admin %}
+    <p class="mod-empty-admin">
+      Du bist Admin: veröffentliche Lektionen, damit sie hier erscheinen.
+    </p>
+    {% endif %}
+  </div>
   {% endif %}
 
   {# 10.3: zusaetzlich unter show_bundle_hint gaten — Besitzer/Admins sehen den
