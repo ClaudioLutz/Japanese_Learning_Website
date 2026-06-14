@@ -155,6 +155,25 @@ class TestCoursesPage:
         resp = client.get("/courses")
         assert resp.status_code == 200
 
+    def test_courses_page_renders_title_server_side(self, client, app_context):
+        """10.1 (SSR): Der Kurstitel steht serverseitig im HTML (kein JS noetig).
+
+        Vor dem SSR-Umbau kamen die Karten per $.get('/api/courses') aus JS —
+        der Titel fehlte im initialen HTML. Jetzt rendert Jinja die Karten.
+        """
+        CourseFactory(title="Mein Sichtbarer Kurs", is_published=True)
+        CourseFactory(title="Versteckter Kurs", is_published=False)
+        db.session.commit()
+        resp = client.get("/courses")
+        body = resp.get_data(as_text=True)
+        # Publizierter Kurs server-seitig sichtbar
+        assert "Mein Sichtbarer Kurs" in body
+        # Unpublizierter Kurs darf nicht durchsickern
+        assert "Versteckter Kurs" not in body
+        # Kein JS-Fetch mehr auf /api/courses
+        assert "/api/courses" not in body
+        assert "loadCourses" not in body
+
     def test_courses_noindex_when_empty(self, client, app_context):
         """I-PR04b: Ohne publizierten Kurs ist /courses ein leerer Container
         (Soft-404) → muss noindex tragen, damit Google die inhaltsleere Seite

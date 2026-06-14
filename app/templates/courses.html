@@ -3,11 +3,10 @@
 
 {% block title %}Kurse{% endblock %}
 {% block meta_description %}Japanisch-Kurse für deutschsprachige Anfänger — gebündelte Lernpakete entlang JLPT-Levels. Mit Lektionen, Vokabel-Trainer und SRS-Wiederholung.{% endblock %}
-{# Solange kein Kurs publiziert ist, rendert die Seite nur einen leeren
-   Container (Daten kommen per JS aus /api/courses, das fuer Googlebot
-   robots-blockiert ist) → das ist ein Soft-404. Dann noindex setzen, damit
-   Google die inhaltsleere Seite nicht als 200-Seite ohne Wert wertet.
-   Sobald >=1 Kurs publiziert ist, faellt es auf den index,follow-Default zurueck. #}
+{# Solange kein Kurs publiziert ist, rendert die Seite nur einen Empty-State
+   (Soft-404). Dann noindex setzen, damit Google die inhaltsleere Seite nicht
+   als 200-Seite ohne Wert wertet. Sobald >=1 Kurs publiziert ist, faellt es
+   auf den index,follow-Default zurueck. #}
 {% block robots %}{% if courses %}{{ robots_index }}{% else %}noindex,follow{% endif %}{% endblock %}
 
 {% block styles %}
@@ -37,14 +36,17 @@
                 <p class="courses-hero-subtitle">
                     Strukturierte Lernpakete für jedes Niveau — von Hiragana bis JLPT N5.
                 </p>
+                {# Statistiken server-seitig aus den DB-Daten (kein JS) #}
+                {% set total_lessons = namespace(count=0) %}
+                {% for course in courses %}{% set total_lessons.count = total_lessons.count + course.lessons|length %}{% endfor %}
                 <div class="courses-stats-bar">
                     <div class="stat-item">
-                        <span class="stat-number" id="totalCourses">-</span>
+                        <span class="stat-number" id="totalCourses">{{ courses|length }}</span>
                         <span class="stat-label">Kurse</span>
                     </div>
                     <div class="stat-divider"></div>
                     <div class="stat-item">
-                        <span class="stat-number" id="totalLessons">-</span>
+                        <span class="stat-number" id="totalLessons">{{ total_lessons.count }}</span>
                         <span class="stat-label">Lektionen</span>
                     </div>
                     <div class="stat-divider"></div>
@@ -60,21 +62,85 @@
 
 <!-- Main Content -->
 <div class="container courses-main-content">
-    <!-- Loading State -->
-    <div id="coursesLoading" class="text-center py-5">
-        <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Kurse werden geladen…</span>
+    {% if courses %}
+    {# ─────────── Kurs-Grid — server-seitig gerendert (SSR) ─────────── #}
+    <div id="coursesContainer" class="row">
+        {% for course in courses %}
+        {% set lesson_count = course.lessons|length %}
+        <div class="col-lg-6 col-xl-4 mb-4">
+            <div class="enhanced-course-card" data-course-id="{{ course.id }}">
+                <div class="course-card-image-container">
+                    {% if course.background_image_url %}
+                    <img src="{{ course.background_image_url }}"
+                         class="course-card-image"
+                         alt="{{ course.title }}"
+                         loading="lazy">
+                    {% else %}
+                    <div class="course-card-image course-card-image-placeholder" aria-hidden="true">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    {% endif %}
+                    <div class="course-card-overlay">
+                        <div class="course-level-badge">
+                            <i class="fas fa-star me-1"></i>
+                            {% if lesson_count <= 5 %}Anfänger{% elif lesson_count <= 10 %}Mittelstufe{% else %}Fortgeschritten{% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card-content">
+                    <div class="course-card-header">
+                        <h3 class="course-card-title">{{ course.title }}</h3>
+                        <div class="course-card-meta">
+                            <span class="course-meta-item">
+                                <i class="fas fa-book me-1"></i>
+                                {{ lesson_count }} Lektion{% if lesson_count != 1 %}en{% endif %}
+                            </span>
+                            <span class="course-meta-item">
+                                <i class="fas fa-clock me-1"></i>
+                                ~{{ lesson_count * 15 }} min
+                            </span>
+                            {% if course.is_purchasable and course.price and course.price > 0 %}
+                            <span class="course-meta-item">
+                                <i class="fas fa-tag me-1"></i>
+                                CHF {{ '%.2f'|format(course.price) }}
+                            </span>
+                            {% else %}
+                            <span class="course-meta-item">
+                                <i class="fas fa-box-open me-1"></i>
+                                im Bundle
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <p class="course-card-description">
+                        {{ course.description or 'Umfassender Japanisch-Kurs mit interaktiven Lektionen und praktischen Übungen.' }}
+                    </p>
+
+                    <div class="course-card-footer">
+                        <div class="course-progress-info">
+                            <div class="progress-bar-container">
+                                <div class="progress-bar-bg">
+                                    <div class="progress-bar-fill" style="width: 0%"></div>
+                                </div>
+                                <span class="progress-text">Bereit zum Start</span>
+                            </div>
+                        </div>
+
+                        <a href="{{ url_for('routes.view_course', course_id=course.id) }}" class="course-action-btn">
+                            <span class="btn-text">Kurs starten</span>
+                            <i class="fas fa-arrow-right btn-icon"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
-        <p class="mt-3 text-muted">Kurse werden geladen…</p>
+        {% endfor %}
     </div>
-
-    <!-- Courses Grid -->
-    <div id="coursesContainer" class="row" style="display: none;">
-        <!-- Courses will be populated by JavaScript -->
-    </div>
-
+    {% else %}
     <!-- Empty State -->
-    <div id="emptyState" class="text-center py-5" style="display: none;">
+    <div id="emptyState" class="text-center py-5">
         <div class="empty-state-icon">
             <i class="fas fa-book-open"></i>
         </div>
@@ -83,176 +149,6 @@
             Wir arbeiten an neuen Kursen — schau bald wieder vorbei!
         </p>
     </div>
-
-    <!-- Error State -->
-    <div id="errorState" class="text-center py-5" style="display: none;">
-        <div class="error-state-icon">
-            <i class="fas fa-exclamation-triangle"></i>
-        </div>
-        <h3 class="error-state-title">Kurse konnten nicht geladen werden</h3>
-        <p class="error-state-text">
-            Beim Laden der Kurse ist ein Fehler aufgetreten. Bitte aktualisiere die Seite oder versuche es später erneut.
-        </p>
-        <button class="btn btn-primary" onclick="loadCourses()">
-            <i class="fas fa-redo me-2"></i>Erneut versuchen
-        </button>
-    </div>
+    {% endif %}
 </div>
-{% endblock %}
-
-{% block scripts %}
-<script>
-let coursesData = [];
-
-$(document).ready(function() {
-    loadCourses();
-});
-
-function loadCourses() {
-    // Show loading state
-    $('#coursesLoading').show();
-    $('#coursesContainer').hide();
-    $('#emptyState').hide();
-    $('#errorState').hide();
-    
-    $.get('/api/courses')
-        .done(function(data) {
-            console.log('API response:', data);
-            coursesData = data || [];
-            
-            // Update statistics
-            updateStatistics();
-            
-            // Hide loading state
-            $('#coursesLoading').hide();
-            
-            if (coursesData.length > 0) {
-                renderCourses();
-                $('#coursesContainer').show();
-            } else {
-                $('#emptyState').show();
-            }
-        })
-        .fail(function(xhr, status, error) {
-            console.error('API request failed:', status, error);
-            console.error('Response:', xhr.responseText);
-            
-            // Hide loading state and show error
-            $('#coursesLoading').hide();
-            $('#errorState').show();
-        });
-}
-
-function updateStatistics() {
-    const publishedCourses = coursesData.filter(course => course.is_published);
-    const totalLessons = publishedCourses.reduce((sum, course) => {
-        return sum + (course.lessons ? course.lessons.length : 0);
-    }, 0);
-    
-    // Animate the numbers
-    animateNumber('totalCourses', publishedCourses.length);
-    animateNumber('totalLessons', totalLessons);
-}
-
-function animateNumber(elementId, targetNumber) {
-    const element = document.getElementById(elementId);
-    const duration = 1000; // 1 second
-    const steps = 30;
-    const increment = targetNumber / steps;
-    let current = 0;
-    
-    const timer = setInterval(() => {
-        current += increment;
-        if (current >= targetNumber) {
-            current = targetNumber;
-            clearInterval(timer);
-        }
-        element.textContent = Math.floor(current);
-    }, duration / steps);
-}
-
-function renderCourses() {
-    const container = $('#coursesContainer');
-    container.empty();
-    
-    coursesData.forEach(function(course, index) {
-        if (course.is_published) {
-            const lessonCount = course.lessons ? course.lessons.length : 0;
-            const estimatedDuration = lessonCount * 15; // Estimate 15 minutes per lesson
-            
-            const imageMarkup = course.background_image_url
-                ? `<img src="${course.background_image_url}"
-                         class="course-card-image"
-                         alt="${course.title}"
-                         onerror="this.outerHTML='<div class=\\'course-card-image course-card-image-placeholder\\' aria-hidden=\\'true\\'><i class=\\'fas fa-graduation-cap\\'></i></div>'">`
-                : `<div class="course-card-image course-card-image-placeholder" aria-hidden="true"><i class="fas fa-graduation-cap"></i></div>`;
-
-            const courseCard = `
-                <div class="col-lg-6 col-xl-4 mb-4">
-                    <div class="enhanced-course-card" data-course-id="${course.id}">
-                        <div class="course-card-image-container">
-                            ${imageMarkup}
-                            <div class="course-card-overlay">
-                                <div class="course-level-badge">
-                                    <i class="fas fa-star me-1"></i>
-                                    ${getCourseLevel(lessonCount)}
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="course-card-content">
-                            <div class="course-card-header">
-                                <h3 class="course-card-title">${course.title}</h3>
-                                <div class="course-card-meta">
-                                    <span class="course-meta-item">
-                                        <i class="fas fa-book me-1"></i>
-                                        ${lessonCount} Lektion${lessonCount !== 1 ? 'en' : ''}
-                                    </span>
-                                    <span class="course-meta-item">
-                                        <i class="fas fa-clock me-1"></i>
-                                        ~${estimatedDuration} min
-                                    </span>
-                                </div>
-                            </div>
-                            
-                            <p class="course-card-description">
-                                ${course.description || 'Umfassender Japanisch-Kurs mit interaktiven Lektionen und praktischen Übungen.'}
-                            </p>
-                            
-                            <div class="course-card-footer">
-                                <div class="course-progress-info">
-                                    <div class="progress-bar-container">
-                                        <div class="progress-bar-bg">
-                                            <div class="progress-bar-fill" style="width: 0%"></div>
-                                        </div>
-                                        <span class="progress-text">Bereit zum Start</span>
-                                    </div>
-                                </div>
-
-                                <a href="/course/${course.id}" class="course-action-btn">
-                                    <span class="btn-text">Kurs starten</span>
-                                    <i class="fas fa-arrow-right btn-icon"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            container.append(courseCard);
-            
-            // Add staggered animation
-            setTimeout(() => {
-                $(`.enhanced-course-card[data-course-id="${course.id}"]`).addClass('animate-in');
-            }, index * 100);
-        }
-    });
-}
-
-function getCourseLevel(lessonCount) {
-    if (lessonCount <= 5) return 'Anfänger';
-    if (lessonCount <= 10) return 'Mittelstufe';
-    return 'Fortgeschritten';
-}
-</script>
 {% endblock %}
