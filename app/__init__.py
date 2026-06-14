@@ -334,15 +334,16 @@ def create_app():
         except Exception:
             n5_free_lesson_count = 0
         # Navbar: Bundle-Kauf-Link nur fuer Nicht-Besitzer/Nicht-Admins zeigen.
-        # Fail-open auf True (= heutiges Verhalten), damit Error-Pages und
-        # Renders ausserhalb voller Request-Kontexte nicht brechen.
+        # Fail-closed auf False: kippt der bundle_service, zeigen wir KEINEN
+        # Kauf-CTA — sonst sehen zahlende Bundle-Besitzer weiter den
+        # CHF-9.90-Hinweis. Lieber kein Hint als ein falscher.
         try:
             from flask_login import current_user as _cu
             from app.services.bundle_service import user_needs_bundle_hint
             show_bundle_hint = user_needs_bundle_hint(_cu)
         except Exception:
-            app.logger.warning("show_bundle_hint fail-open", exc_info=True)
-            show_bundle_hint = True
+            app.logger.warning("show_bundle_hint fail-closed", exc_info=True)
+            show_bundle_hint = False
         # Kurse-Nav-Link nur zeigen, wenn es mind. 1 publizierten Kurs gibt —
         # sonst fuehrt der Link auf eine inhaltsleere /courses-Seite (Soft-404).
         # Fail-open auf True, damit Error-Pages ausserhalb voller Kontexte nicht brechen.
