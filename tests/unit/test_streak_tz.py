@@ -179,3 +179,88 @@ class TestDailyBoundaryConsistency:
         assert now_utc >= cap_start
         # Und der Cap-Fensterbeginn gehoert zum erwarteten CH-Tag.
         assert tu.ch_day_start_utc(expected_day) == cap_start
+
+
+class TestCallSiteCHBoundary:
+    """10.8: Die tatsaechlich geaenderten Konsumenten an der CH-Mitternacht.
+
+    Szenario _FrozenCrossMidnight: 00:30 CH am 3. Juni = 22:30 UTC am 2. Juni.
+    CH-Tag = 3. Juni, CH-Mitternacht = 2. Juni 22:00 UTC. Ein Ereignis vom
+    2. Juni mittags (UTC) ist CH-GESTERN (2. Juni nachmittags CH); mit der alten
+    UTC-Tagesgrenze (utcnow().replace(hour=0) = 2.6. 00:00 UTC) wuerde es
+    faelschlich als 'heute' zaehlen.
+    """
+
+    def test_get_user_stats_reviews_today_uses_ch_boundary(self, app_context, monkeypatch):
+        """reviews_today zaehlt nur Reviews seit CH-Mitternacht — ein Review von
+        CH-gestern (aber demselben UTC-Tag) wird NICHT als 'heute' gezaehlt."""
+        import app.time_utils as tu
+        from app import srs_service
+        from app.models import ReviewLog
+        from tests.factories import (
+            UserFactory, LessonFactory, LessonContentFactory,
+            CardReviewStateFactory,
+        )
+
+        monkeypatch.setattr(tu, "datetime", _FrozenCrossMidnight)
+
+        user = UserFactory()
+        lesson = LessonFactory()
+        content = LessonContentFactory(lesson_id=lesson.id)
+        db.session.commit()
+        # Eine Karte, damit die Empty-State-Logik nicht greift.
+        CardReviewStateFactory(user_id=user.id, content_id=content.id)
+        # Review CH-HEUTE: 2.6. 22:15 UTC (= 3.6. 00:15 CH), nach CH-Mitternacht.
+        db.session.add(ReviewLog(
+            user_id=user.id, content_id=content.id, rating=3,
+            reviewed_at=datetime(2026, 6, 2, 22, 15),
+        ))
+        # Review CH-GESTERN: 2.6. 12:00 UTC (= 2.6. 14:00 CH). Selber UTC-Tag,
+        # aber CH-Vortag → darf NICHT als heute zaehlen.
+        db.session.add(ReviewLog(
+            user_id=user.id, content_id=content.id, rating=3,
+            reviewed_at=datetime(2026, 6, 2, 12, 0),
+        ))
+        db.session.commit()
+
+        stats = srs_service.get_user_stats(user.id)
+        # Nur das CH-heutige Review zaehlt — NICHT beide (das waere die alte
+        # UTC-Grenze, die 2.6. 00:00 UTC als Tagesbeginn nimmt).
+        assert stats['reviews_today'] == 1
+
+    def test_storm_xp_cap_window_uses_ch_boundary(self, app_context, monkeypatch):
+        """Der Storm-XP-Tages-Cap zaehlt nur seit CH-Mitternacht vergebenes XP —
+        ein Score von CH-gestern (selber UTC-Tag) belastet den heutigen Cap NICHT."""
+        import app.time_utils as tu
+        from app.gamification_service import XP_STORM_DAILY_CAP
+        from app.models import KanaStormScore
+        from tests.factories import UserFactory
+
+        monkeypatch.setattr(tu, "datetime", _FrozenCrossMidnight)
+
+        user = UserFactory()
+        db.session.commit()
+        # Score CH-gestern (2.6. 12:00 UTC = 2.6. 14:00 CH) mit fast vollem Cap.
+        score_yesterday = KanaStormScore(
+            user_id=user.id, mode='storm', schrift='hiragana', duration=60,
+            score=100, best_combo=5, correct_count=10, miss_count=0,
+            xp_awarded=XP_STORM_DAILY_CAP - 1,
+        )
+        db.session.add(score_yesterday)
+        db.session.flush()
+        # created_at manuell auf CH-gestern setzen (Default ist utcnow()).
+        score_yesterday.created_at = datetime(2026, 6, 2, 12, 0)
+        db.session.commit()
+
+        # XP-Cap-Fenster ab CH-Mitternacht (2.6. 22:00 UTC). Der gestrige Score
+        # (2.6. 12:00 UTC) liegt DAVOR → zaehlt nicht ins heutige spent_today.
+        cap_start = tu.ch_day_start_utc()
+        spent_today = db.session.query(
+            db.func.coalesce(db.func.sum(KanaStormScore.xp_awarded), 0)
+        ).filter(
+            KanaStormScore.user_id == user.id,
+            KanaStormScore.created_at >= cap_start,
+        ).scalar() or 0
+        # Mit CH-Grenze: 0 (gestriger Score ausserhalb). Mit alter UTC-Grenze
+        # (2.6. 00:00 UTC) waere er drin und spent_today = CAP-1.
+        assert int(spent_today) == 0
