@@ -34,7 +34,10 @@ from app.models import Lesson  # noqa: E402
 
 PROMPTS_FILE = ROOT / "scripts" / "data" / "cover_image_prompts.json"
 BACKUP_DIR = ROOT / "backups" / "cover_thumbnails"
-URL_TPL = "/uploads/lessons/cover_images/cover_{id}.webp"
+# Relativ (ohne /uploads-Praefix, ohne fuehrenden Slash): get_thumbnail_url()
+# baut daraus via url_for('routes.uploaded_file', filename=...) die /uploads/-URL.
+# Ein gespeicherter /uploads-Praefix wuerde zu /uploads//uploads/... (404) fuehren.
+URL_TPL = "lessons/cover_images/cover_{id}.webp"
 
 
 def load_lesson_ids() -> list[int]:
