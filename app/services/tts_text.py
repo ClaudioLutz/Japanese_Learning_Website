@@ -41,11 +41,20 @@ _MD_PATTERNS = [
     (re.compile(r"^---+\s*$", re.MULTILINE), ""),                  # --- hr → leer
 ]
 
-# Klammer direkt nach JP-Zeichen (oder JP-Bracket 」) wird vor TTS entfernt —
-# das ist eine Lesehilfe (Romaji, Bedeutung) und gehört nicht ins Audio. Erlaubt
-# eine Ebene Verschachtelung, damit ``(ya, 'und (unter anderem)')`` und
+# Klammer direkt nach JP-Zeichen wird vor TTS entfernt — das ist eine Lesehilfe
+# (Romaji, Bedeutung) und gehört nicht ins Audio. Erlaubt eine Ebene
+# Verschachtelung, damit ``(ya, 'und (unter anderem)')`` und
 # ``(い**がつ**, ichi-gatsu, Januar)`` komplett verschwinden.
-_ROMAJI_AFTER_JP = re.compile(r"(?<=[぀-ヿ㐀-鿿」])\s*\((?:[^()]|\([^()]*\))*\)")
+#
+# Die Lookbehind-Klasse umfasst NEBEN den Schrift-Ranges auch japanische
+# Satzzeichen und Klammern (``。、！？…・「」 ...``). Hintergrund (Bug 2026-06-15,
+# Lektion 145): endet die japanische Zeile auf ``。`` bevor der Romaji folgt
+# (``…おきますか。 (Risa-san, … okimasu ka.)``), griff die alte Klasse nicht — der
+# Romaji blieb stehen und wurde von der DEUTSCHEN Neural2-Stimme als Latein
+# mitgelesen (klang wie „deutsche Stimme spricht japanisch"). ``。`` u.ä. liegen
+# im CJK-Punktuation-Block (U+3000–U+303F), der von ``぀-ヿ`` NICHT erfasst wird.
+_JP_LOOKBEHIND = "぀-ヿ㐀-鿿ｦ-ﾟ。、，！？…‥・「」『』【】〔〕《》〜～"
+_ROMAJI_AFTER_JP = re.compile(rf"(?<=[{_JP_LOOKBEHIND}])\s*\((?:[^()]|\([^()]*\))*\)")
 
 
 def strip_markdown(text: str) -> str:
@@ -86,8 +95,16 @@ def char_lang(ch: str) -> str | None:
 # ---------------------------------------------------------------------------
 # Segment-Reinigung (gegen vorgelesene Trennzeichen / „Minus" / „Pfeil")
 # ---------------------------------------------------------------------------
-# Japanische Anführungs-/Schmuckklammern: nie sprechbar → global entfernt.
-_DROP_GLOBAL_RE = re.compile(r"[「」『』【】〔〕《》]")
+# Global (an JEDER Position, nicht nur am Rand) entfernte, nie sprechbare Zeichen:
+#   - Japanische Anführungs-/Schmuckklammern  「」『』【】〔〕《》
+#   - Tilde / Wellenstrich  ~ (U+007E)  〜 (U+301C)  ～ (U+FF5E)
+# Hintergrund (Bug 2026-06-15, Lektion 145): die Tilde wird in den Lektionen als
+# PLATZHALTER benutzt (``～時 ～分``, ``～から ～まで``, ``～ます``). Landete sie in
+# einem deutschen Segment (``…enden auf ～``, ``(von ~ bis ~)``), las die Neural2-
+# Stimme sie wörtlich als „Tilde". Da sie reiner Platzhalter ist (nie Lautwert),
+# wird sie in BEIDEN Sprachen entfernt. Der Chōon ``ー`` (U+30FC, Vokaldehnung in
+# コーヒー) ist ein ANDERES Zeichen und bleibt unverändert sprechbar.
+_DROP_GLOBAL_RE = re.compile(r"[「」『』【】〔〕《》~〜～]")
 
 # Ein einzelnes Trenn-Symbol, das von Whitespace UMGEBEN ist (interner Trenner
 # zwischen zwei Begriffen). Wird durch eine Pause ersetzt, damit z.B.
@@ -101,7 +118,8 @@ _INTERNAL_SEP_RE = re.compile(
 # Bewusst NICHT enthalten (sprechbar / Prosodie / bedeutungstragend):
 #   - Buchstaben, Ziffern, japanische Schrift
 #   - Satz-Schluss-Zeichen  . , ! ? 。 、 ！ ？ …
-#   - ー (Chōon), 々 ヽ ヾ ゝ ゞ (Iteration), 〜 ～ (Wellenstrich)
+#   - ー (Chōon), 々 ヽ ヾ ゝ ゞ (Iteration)
+# (Die Tilde/Wellenstrich ~ 〜 ～ wird bereits durch _DROP_GLOBAL_RE entfernt.)
 _BOUNDARY_STRIP = (
     " \t\n\r\f\v　"
     "-‐‑‒–—―−－"   # - ‐ ‑ ‒ – — ― − －
@@ -129,8 +147,9 @@ def clean_tts_segment(text: str, lang: str = "ja") -> str:
     4. Bleibt danach kein sprechbares Zeichen übrig (reiner Satzzeichen-Rest),
        wird ein leerer String zurückgegeben → das Segment wird verworfen.
 
-    Sprechbare/bedeutungstragende japanische Zeichen (``ー``, ``々``, ``〜`` ...)
-    bleiben erhalten (z.B. ``コーヒー`` bleibt ``コーヒー``).
+    Sprechbare/bedeutungstragende japanische Zeichen (``ー`` Chōon, ``々`` ...)
+    bleiben erhalten (z.B. ``コーヒー`` bleibt ``コーヒー``). Die Tilde/Wellenstrich
+    (``~ 〜 ～``, reiner Platzhalter) wird dagegen entfernt.
     """
     if not text:
         return ""

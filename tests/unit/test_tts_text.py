@@ -91,6 +91,59 @@ class TestSegmentByLanguage:
         assert segment_by_language("これはペンです") == [("ja", "これはペンです")]
 
 
+class TestTildePlaceholder:
+    """Regression (Bug 2026-06-15, Lektion 145): die als Platzhalter genutzte
+    Tilde/Wellenstrich (``~ 〜 ～``) landete in deutschen Segmenten und wurde von
+    der Neural2-Stimme als „Tilde" vorgelesen."""
+
+    @pytest.mark.parametrize(
+        "text,lang,expected",
+        [
+            ("enden auf ～", "de", "enden auf"),       # nachgestellte Platzhalter-Tilde weg
+            ("Zeitspannen ～", "de", "Zeitspannen"),
+            ("von ~ bis ~", "de", "von  bis"),         # ASCII-Tilde weg (Doppel-Space toleriert)
+            ("～ます", "ja", "ます"),                    # führende Platzhalter-Tilde weg
+            ("今 ～時 ～分 です", "ja", "今 時 分 です"),  # interne Platzhalter-Tilden weg
+        ],
+    )
+    def test_tilde_removed(self, text, lang, expected):
+        assert clean_tts_segment(text, lang) == expected
+
+    def test_choon_not_affected(self):
+        # Der Chōon ー ist KEINE Tilde und bleibt (コーヒー).
+        assert clean_tts_segment("コーヒー", "ja") == "コーヒー"
+
+    def test_segment_no_tilde_in_de(self):
+        text = strip_romaji_after_jp(strip_markdown("enden auf ～ます"))
+        assert segment_by_language(text) == [("de", "enden auf"), ("ja", "ます")]
+
+
+class TestRomajiAfterJapanesePunctuation:
+    """Regression (Bug 2026-06-15, Lektion 145): endet die JP-Zeile auf ``。`` vor
+    dem Romaji-Klammerausdruck, wurde dieser nicht gestrippt und von der DEUTSCHEN
+    Stimme als Latein mitgelesen (klang wie „deutsche Stimme spricht japanisch")."""
+
+    @pytest.mark.parametrize(
+        "text,expected",
+        [
+            ("おきますか。 (Risa-san, okimasu ka.)", "おきますか。"),
+            ("七時です。 (Ima shichi-ji desu.)", "七時です。"),
+            ("いきます！ (ikimasu!)", "いきます！"),
+            ("そうですか？ (sou desu ka?)", "そうですか？"),
+        ],
+    )
+    def test_romaji_after_jp_punctuation_stripped(self, text, expected):
+        assert strip_romaji_after_jp(text).strip() == expected
+
+    def test_full_dialog_line_no_romaji_in_de(self):
+        line = "今 七時です。 (Ima shichi-ji desu.) — Es ist jetzt sieben Uhr."
+        text = strip_romaji_after_jp(strip_markdown(line))
+        assert segment_by_language(text) == [
+            ("ja", "今 七時です。"),
+            ("de", "Es ist jetzt sieben Uhr."),
+        ]
+
+
 class TestStripMarkdown:
     def test_link_url_not_spoken(self):
         # Markdown-Link: nur der Text bleibt, die URL wird NICHT vorgelesen
