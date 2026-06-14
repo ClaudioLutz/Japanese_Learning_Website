@@ -67,18 +67,9 @@
     <script defer src="{{ static_v('js/kana_storm.js') }}"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
-    {% if current_user.is_authenticated and (current_user.current_streak or 0) >= 3 %}
-    {# Phase 3: Service Worker Registration — nur ab Tag 3 (Duolingo-Pattern:
-       opt-in nach Investment, nicht beim ersten Besuch) #}
-    <script>
-    (function () {
-        if (!('serviceWorker' in navigator)) return;
-        if (sessionStorage.getItem('jpl_sw_attempted') === '1') return;
-        sessionStorage.setItem('jpl_sw_attempted', '1');
-        navigator.serviceWorker.register('/static/sw.js').catch(() => {});
-    })();
-    </script>
-    {% endif %}
+    {# 10.12: Service-Worker-Registrierung entfernt — sw.js war ein nur-Push-SW
+       ohne Caching/Offline, und der gesamte Web-Push-Pfad ist Totcode (keine
+       Subscribe-UI/VAPID/Versand). #}
 
     {# ── Structured Data (Schema.org JSON-LD) ── #}
     {% block structured_data %}

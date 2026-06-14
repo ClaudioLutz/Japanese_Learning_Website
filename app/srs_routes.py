@@ -622,29 +622,11 @@ def api_kana_weak():
     return jsonify({'data': result, 'count': len(result)})
 
 
-# ── Web Push Subscription (Phase 3, opt-in) ──────────────────
-
-
-@srs_bp.route('/api/user/push-subscribe', methods=['POST'])
-@login_required
-def api_push_subscribe():
-    """Speichert PushSubscription-JSON, das der Service Worker liefert."""
-    data = request.get_json(silent=True) or {}
-    sub = data.get('subscription')
-    if not sub or not isinstance(sub, dict) or 'endpoint' not in sub:
-        return jsonify({'error': 'Ungueltige Subscription'}), 400
-    current_user.push_subscription = sub
-    db.session.commit()
-    return jsonify({'success': True})
-
-
-@srs_bp.route('/api/user/push-unsubscribe', methods=['POST'])
-@login_required
-def api_push_unsubscribe():
-    """Loescht die gespeicherte PushSubscription."""
-    current_user.push_subscription = None
-    db.session.commit()
-    return jsonify({'success': True})
+# 10.12: Web-Push war kompletter Totcode (keine Subscribe-UI, keine VAPID-Keys,
+# kein Versandpfad, nur-Push-Service-Worker ohne Caching). Endpoints
+# /api/user/push-subscribe + /push-unsubscribe + die SW-Registrierung +
+# app/static/sw.js entfernt. Das Modellfeld User.push_subscription bleibt dormant
+# (harmlos, ungenutzt) und kann spaeter separat per Migration entfernt werden.
 
 
 # ── Practice / Daily Challenge (Phase 3) ─────────────────────

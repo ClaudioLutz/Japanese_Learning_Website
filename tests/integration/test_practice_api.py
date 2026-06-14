@@ -99,28 +99,21 @@ class TestDailyChallenge:
         assert data['count'] == 0
 
 
-class TestPushSubscription:
-    def test_subscribe_stores_subscription(self, auth_client):
-        client, user = auth_client
-        resp = client.post(
-            '/api/user/push-subscribe',
-            json={'subscription': {'endpoint': 'https://x/y', 'keys': {'p256dh': 'a', 'auth': 'b'}}},
-        )
-        assert resp.status_code == 200
-        db.session.refresh(user)
-        assert user.push_subscription is not None
-        assert user.push_subscription['endpoint'] == 'https://x/y'
+class TestWebPushRemoved:
+    """10.12: Web-Push-Totcode entfernt — Endpoints + Service-Worker weg."""
 
-    def test_subscribe_rejects_invalid(self, auth_client):
+    def test_push_endpoints_gone(self, auth_client):
+        """Die alten Push-Endpoints existieren nicht mehr (404)."""
         client, user = auth_client
-        resp = client.post('/api/user/push-subscribe', json={})
-        assert resp.status_code == 400
+        assert client.post('/api/user/push-subscribe', json={}).status_code == 404
+        assert client.post('/api/user/push-unsubscribe').status_code == 404
 
-    def test_unsubscribe_clears(self, auth_client):
+    def test_no_service_worker_registration_in_base(self, auth_client):
+        """base.html registriert keinen Service Worker mehr."""
         client, user = auth_client
-        user.push_subscription = {'endpoint': 'https://x', 'keys': {}}
+        # Streak >=3 war die alte Bedingung — selbst dann kein SW-Script.
+        user.current_streak = 5
         db.session.commit()
-        resp = client.post('/api/user/push-unsubscribe')
-        assert resp.status_code == 200
-        db.session.refresh(user)
-        assert user.push_subscription is None
+        body = client.get('/').get_data(as_text=True)
+        assert 'serviceWorker' not in body
+        assert '/static/sw.js' not in body
