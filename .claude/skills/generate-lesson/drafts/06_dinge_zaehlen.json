@@ -1,0 +1,792 @@
+{
+  "title": "N5 Dinge zählen & Zähler — ひとつ, ふたつ und die wichtigsten Zähleinheiten",
+  "description": "Lerne die allgemeinen Zähler ひとつ bis ここのつ und die wichtigsten Zähl-Suffixe, um beim Einkaufen Mengen anzugeben.",
+  "jlpt_level": 5,
+  "topic": "Dinge zählen und Zähler",
+  "instruction_language": "german",
+  "allow_guest_access": false,
+  "pages": [
+    {
+      "title": "Einführung",
+      "description": "Worum es in dieser Lektion geht",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Dinge zählen auf Japanisch",
+            "content_text": "## Dinge zählen auf Japanisch\n\nIm Japanischen sagt man nicht einfach 'drei Äpfel'. Man hängt an die Zahl einen **Zähler** (じょすうし, josuushi) an — und welcher Zähler richtig ist, hängt von der **Form** des Gegenstands ab.\n\nIn dieser Lektion lernst du zwei Dinge:\n\n- die **allgemeine Zählreihe** ひとつ (hitotsu), ふたつ (futatsu), みっつ (mittsu) … — die du fast immer verwenden kannst\n- die wichtigsten **Zähl-Suffixe** wie ～えん (en, Yen), ～まい (mai, flache Dinge) oder ～ひき (hiki, kleine Tiere)\n\nDas ist im Alltag besonders nützlich:\n\n- beim **Einkaufen** (かいもの, kaimono), wenn du Mengen bestellst\n- wenn du sagst, wie **viele** Personen ihr seid\n- wenn du Preise in **Yen** (えん, en) verstehst\n\n> Merke: Die allgemeine Reihe ひとつ (hitotsu) … ここのつ (kokonotsu) ist **unregelmässig** — du musst sie auswendig lernen. Ab zehn sagst du wieder regelmässig とお (too) und じゅう (juu)."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln Teil 1 — Die allgemeine Zählreihe",
+      "description": "Eins bis neun mit ～つ",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Teil 1 — Die allgemeine Zählreihe ～つ\n\nMit der Endung **～つ** (tsu) zählst du fast alles: Äpfel, Stühle, Ideen. Diese Reihe ist **unregelmässig**, darum lernst du sie am besten wie ein Lied.\n\n- ひとつ (hitotsu), ふたつ (futatsu), みっつ (mittsu) …\n- Höre dir die Beispielsätze an und sprich sie laut nach.\n\n> Tipp: 「ひとつ」 (hitotsu) heisst auch 'ein Stück' — sehr praktisch im Laden."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "一つ",
+            "reading": "ひとつ",
+            "romaji": "hitotsu",
+            "meaning": "one (thing)",
+            "meaning_de": "ein Ding",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "りんごを ひとつ かいます。",
+            "example_sentence_english": "Ringo wo hitotsu kaimasu. — Ich kaufe einen Apfel."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "二つ",
+            "reading": "ふたつ",
+            "romaji": "futatsu",
+            "meaning": "two (things)",
+            "meaning_de": "zwei Dinge",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "たまごを ふたつ ください。",
+            "example_sentence_english": "Tamago wo futatsu kudasai. — Zwei Eier, bitte."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "三つ",
+            "reading": "みっつ",
+            "romaji": "mittsu",
+            "meaning": "three (things)",
+            "meaning_de": "drei Dinge",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "みかんを みっつ たべました。",
+            "example_sentence_english": "Mikan wo mittsu tabemashita. — Ich habe drei Mandarinen gegessen."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "四つ",
+            "reading": "よっつ",
+            "romaji": "yottsu",
+            "meaning": "four (things)",
+            "meaning_de": "vier Dinge",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "いすが よっつ あります。",
+            "example_sentence_english": "Isu ga yottsu arimasu. — Es gibt vier Stühle."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "五つ",
+            "reading": "いつつ",
+            "romaji": "itsutsu",
+            "meaning": "five (things)",
+            "meaning_de": "fünf Dinge",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "パンを いつつ かいました。",
+            "example_sentence_english": "Pan wo itsutsu kaimashita. — Ich habe fünf Brötchen gekauft."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "六つ",
+            "reading": "むっつ",
+            "romaji": "muttsu",
+            "meaning": "six (things)",
+            "meaning_de": "sechs Dinge",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "おかしを むっつ ください。",
+            "example_sentence_english": "Okashi wo muttsu kudasai. — Sechs Süssigkeiten, bitte."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "七つ",
+            "reading": "ななつ",
+            "romaji": "nanatsu",
+            "meaning": "seven (things)",
+            "meaning_de": "sieben Dinge",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "いちごが ななつ あります。",
+            "example_sentence_english": "Ichigo ga nanatsu arimasu. — Es gibt sieben Erdbeeren."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "八つ",
+            "reading": "やっつ",
+            "romaji": "yattsu",
+            "meaning": "eight (things)",
+            "meaning_de": "acht Dinge",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "トマトを やっつ かいます。",
+            "example_sentence_english": "Tomato wo yattsu kaimasu. — Ich kaufe acht Tomaten."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "九つ",
+            "reading": "ここのつ",
+            "romaji": "kokonotsu",
+            "meaning": "nine (things)",
+            "meaning_de": "neun Dinge",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ボールが ここのつ あります。",
+            "example_sentence_english": "Booru ga kokonotsu arimasu. — Es gibt neun Bälle."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln Teil 2 — Spezifische Zähl-Suffixe",
+      "description": "Yen, Alter, Tiere, Bücher und mehr",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Teil 2 — Spezifische Zähl-Suffixe\n\nFür viele Dinge gibt es einen **eigenen Zähler**. Welcher passt, hängt von der Form oder Art ab: flach, lang, ein Tier, ein Mensch …\n\n- ～えん (en) für **Geld**, ～にん (nin) für **Personen**\n- ～まい (mai) für **flache** Dinge, ～ひき (hiki) für **kleine Tiere**\n\n> Wichtig: Manche Zähler verändern den Anlaut, z.B. 「いっぴき」 (ippiki) statt 「いちひき」. Das lernst du gleich in der Grammatik."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "～円",
+            "reading": "～えん",
+            "romaji": "en",
+            "meaning": "yen (counter for money)",
+            "meaning_de": "Yen (Geld-Zähler)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "これは ひゃくえんです。",
+            "example_sentence_english": "Kore wa hyaku en desu. — Das kostet hundert Yen."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "～歳",
+            "reading": "～さい",
+            "romaji": "sai",
+            "meaning": "years old (counter for age)",
+            "meaning_de": "Jahre alt (Alters-Zähler)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "わたしは じゅうはっさいです。",
+            "example_sentence_english": "Watashi wa juuhassai desu. — Ich bin achtzehn Jahre alt."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "～回",
+            "reading": "～かい",
+            "romaji": "kai",
+            "meaning": "times (counter for frequency)",
+            "meaning_de": "Mal (Häufigkeit)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "いっかい よみました。",
+            "example_sentence_english": "Ikkai yomimashita. — Ich habe es einmal gelesen."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "～冊",
+            "reading": "～さつ",
+            "romaji": "satsu",
+            "meaning": "counter for books and notebooks",
+            "meaning_de": "Zähler für Bücher/Hefte",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ほんを さんさつ かいました。",
+            "example_sentence_english": "Hon wo sansatsu kaimashita. — Ich habe drei Bücher gekauft."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "～台",
+            "reading": "～だい",
+            "romaji": "dai",
+            "meaning": "counter for machines and vehicles",
+            "meaning_de": "Zähler für Maschinen/Fahrzeuge",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "くるまが いちだい あります。",
+            "example_sentence_english": "Kuruma ga ichidai arimasu. — Es gibt ein Auto."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "～杯",
+            "reading": "～はい",
+            "romaji": "hai",
+            "meaning": "counter for cups and glasses",
+            "meaning_de": "Zähler für Tassen/Gläser",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "コーヒーを いっぱい のみます。",
+            "example_sentence_english": "Koohii wo ippai nomimasu. — Ich trinke eine Tasse Kaffee."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "～匹",
+            "reading": "～ひき",
+            "romaji": "hiki",
+            "meaning": "counter for small animals",
+            "meaning_de": "Zähler für kleine Tiere",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ねこが いっぴき います。",
+            "example_sentence_english": "Neko ga ippiki imasu. — Es gibt eine Katze."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "～枚",
+            "reading": "～まい",
+            "romaji": "mai",
+            "meaning": "counter for flat objects",
+            "meaning_de": "Zähler für flache Dinge",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "きっぷを にまい ください。",
+            "example_sentence_english": "Kippu wo nimai kudasai. — Zwei Tickets, bitte."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "～個",
+            "reading": "～こ",
+            "romaji": "ko",
+            "meaning": "counter for small objects",
+            "meaning_de": "Zähler für kleine Gegenstände",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "たまごを ごこ かいます。",
+            "example_sentence_english": "Tamago wo goko kaimasu. — Ich kaufe fünf Eier."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "～人",
+            "reading": "～にん",
+            "romaji": "nin",
+            "meaning": "counter for people",
+            "meaning_de": "Zähler für Personen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "がくせいが さんにん います。",
+            "example_sentence_english": "Gakusei ga sannin imasu. — Es gibt drei Studenten."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Grammatik — Richtig zählen",
+      "description": "Drei Bausteine für Mengen und Zähler",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Richtig zählen\n\nMit drei Bausteinen kannst du im Alltag schon viele Mengen ausdrücken. Achte auf die **Lautveränderungen** bei manchen Zählern.\n\n- die allgemeine Reihe **～つ** (tsu): ひとつ (hitotsu), ふたつ (futatsu) …\n- den **richtigen** Zähler je nach Form wählen\n- Mengen bestellen mit **「ください」** (kudasai)\n\n> Merke: 「いっぴき」 (ippiki) und 「さんびき」 (sanbiki) sehen anders aus als 「ひき」 (hiki) — das ist normal und gehört dazu."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "Der allgemeine Zähler ～つ — ひとつ, ふたつ, みっつ …",
+            "explanation": "Die Reihe 「～つ」 (tsu) zählt allgemeine Dinge, wenn du den genauen Zähler nicht kennst. Sie ist unregelmässig: ひとつ (hitotsu), ふたつ (futatsu), みっつ (mittsu), よっつ (yottsu), いつつ (itsutsu), むっつ (muttsu), ななつ (nanatsu), やっつ (yattsu), ここのつ (kokonotsu). Ab zehn sagst du 「とお」 (too) und danach regelmässig 「じゅう」 (juu) mit anderen Zählern.",
+            "structure": "[Nomen] を [ひとつ / ふたつ / みっつ …] ([noun] wo [hitotsu / futatsu / mittsu ...])",
+            "romaji": "[noun] wo hitotsu / futatsu / mittsu ...",
+            "jlpt_level": 5,
+            "example_sentences": "りんごを ひとつ ください。 (Ringo wo hitotsu kudasai.) — Einen Apfel, bitte.\nいすが みっつ あります。 (Isu ga mittsu arimasu.) — Es gibt drei Stühle.\nたまごを とお かいます。 (Tamago wo too kaimasu.) — Ich kaufe zehn Eier.",
+            "tts_example_jp": "りんごを ひとつ ください。"
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "Den richtigen Zähler wählen — ～まい (flach), ～ひき (Tiere), ～さつ (Bücher), ～はい (Tassen)",
+            "explanation": "Welcher Zähler passt, hängt von der Form ab: 「～まい」 (mai) für flache Dinge (Papier, Tickets), 「～ひき」 (hiki) für kleine Tiere, 「～さつ」 (satsu) für Bücher und Hefte, 「～はい」 (hai) für Tassen und Gläser. Achte auf die Lautveränderungen: bei 「～ひき」 (hiki) sagt man 「いっぴき」 (ippiki), 「さんびき」 (sanbiki), 「ろっぴき」 (roppiki); bei 「～はい」 (hai) sagt man 「いっぱい」 (ippai), 「さんばい」 (sanbai).",
+            "structure": "[Zahl] + [まい / ひき / さつ / はい] ([number] + [mai / hiki / satsu / hai])",
+            "romaji": "[number] + mai / hiki / satsu / hai",
+            "jlpt_level": 5,
+            "example_sentences": "きっぷを にまい ください。 (Kippu wo nimai kudasai.) — Zwei Tickets, bitte.\nねこが いっぴき います。 (Neko ga ippiki imasu.) — Es gibt eine Katze.\nコーヒーを さんばい のみました。 (Koohii wo sanbai nomimashita.) — Ich habe drei Tassen Kaffee getrunken.",
+            "tts_example_jp": "ねこが いっぴき います。"
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "Anzahl im Satz — [Nomen] を [Zahl + Zähler] ください",
+            "explanation": "Um eine Menge zu bestellen, nennst du zuerst das Nomen mit der Partikel 「を」 (wo), dann die Zahl mit Zähler, dann 「ください」 (kudasai, 'bitte'). Die Zahl mit Zähler steht direkt vor dem Verb und braucht keine eigene Partikel. So sagst du im Laden klar, wie viel du möchtest.",
+            "structure": "[Nomen] を [Zahl + Zähler] ください ([noun] wo [number + counter] kudasai)",
+            "romaji": "[noun] wo [number + counter] kudasai",
+            "jlpt_level": 5,
+            "example_sentences": "みずを いっぱい ください。 (Mizu wo ippai kudasai.) — Ein Glas Wasser, bitte.\nきっぷを にまい ください。 (Kippu wo nimai kudasai.) — Zwei Tickets, bitte.\nりんごを みっつ ください。 (Ringo wo mittsu kudasai.) — Drei Äpfel, bitte.",
+            "tts_example_jp": "りんごを みっつ ください。"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Dialog — Im Laden",
+      "description": "Ken und Mai bestellen Mengen ein",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Im Laden — Ken und Mai kaufen ein",
+            "content_text": "Ken: すみません、りんごは いくらですか。\n  (Sumimasen, ringo wa ikura desu ka.)\n  -> Entschuldigung, wie viel kostet ein Apfel?\n\nMai: いっこ ひゃくえんです。\n  (Ikko hyaku en desu.)\n  -> Einer kostet hundert Yen.\n\nKen: じゃあ、りんごを みっつ ください。\n  (Jaa, ringo wo mittsu kudasai.)\n  -> Dann hätte ich gern drei Äpfel.\n\nMai: はい。たまごも いりますか。\n  (Hai. Tamago mo irimasu ka.)\n  -> Gut. Brauchen Sie auch Eier?\n\nKen: はい、たまごを ろっこ ください。\n  (Hai, tamago wo rokko kudasai.)\n  -> Ja, sechs Eier bitte.\n\nMai: ぜんぶで ななひゃくえんです。\n  (Zenbu de nanahyaku en desu.)\n  -> Zusammen macht das siebenhundert Yen.\n\nKen: ありがとうございます。\n  (Arigatou gozaimasu.)\n  -> Vielen Dank."
+          }
+        },
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "### Verständnisfragen\n\nVier kurze Fragen zum **Dialog** im Laden. Achte auf die **Mengen** und die **Zähler**."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie viele Äpfel möchte Ken?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "Er nennt eine Zahl mit ～つ (tsu).",
+              "explanation": "Ken sagt 「りんごを みっつ ください」 (ringo wo mittsu kudasai) — drei Äpfel.",
+              "options": [
+                {
+                  "option_text": "Drei (みっつ, mittsu)",
+                  "is_correct": true,
+                  "feedback": "Richtig — みっつ (mittsu) = drei."
+                },
+                {
+                  "option_text": "Zwei (ふたつ, futatsu)",
+                  "is_correct": false,
+                  "feedback": "ふたつ (futatsu) wäre zwei."
+                },
+                {
+                  "option_text": "Fünf (いつつ, itsutsu)",
+                  "is_correct": false,
+                  "feedback": "いつつ (itsutsu) wäre fünf."
+                },
+                {
+                  "option_text": "Eins (ひとつ, hitotsu)",
+                  "is_correct": false,
+                  "feedback": "ひとつ (hitotsu) wäre eins."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welchen Zähler benutzt Ken für die Eier?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Ken sagt 「たまごを ろっこ ください」 (tamago wo rokko kudasai) — der Zähler ist ～こ (ko).",
+              "options": [
+                {
+                  "option_text": "～こ (ko)",
+                  "is_correct": true,
+                  "feedback": "Richtig — ろっこ (rokko) = sechs Stück."
+                },
+                {
+                  "option_text": "～まい (mai)",
+                  "is_correct": false,
+                  "feedback": "～まい (mai) ist für flache Dinge."
+                },
+                {
+                  "option_text": "～ひき (hiki)",
+                  "is_correct": false,
+                  "feedback": "～ひき (hiki) ist für kleine Tiere."
+                },
+                {
+                  "option_text": "～さつ (satsu)",
+                  "is_correct": false,
+                  "feedback": "～さつ (satsu) ist für Bücher."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie viel kostet ein Apfel?",
+              "difficulty_level": 1,
+              "explanation": "Mai sagt 「いっこ ひゃくえんです」 (ikko hyaku en desu) — hundert Yen.",
+              "options": [
+                {
+                  "option_text": "100 Yen (ひゃくえん, hyaku en)",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "200 Yen (にひゃくえん, nihyaku en)",
+                  "is_correct": false,
+                  "feedback": "Das sagt Mai nicht."
+                },
+                {
+                  "option_text": "700 Yen (ななひゃくえん, nanahyaku en)",
+                  "is_correct": false,
+                  "feedback": "Das ist der Gesamtpreis."
+                },
+                {
+                  "option_text": "50 Yen (ごじゅうえん, gojuu en)",
+                  "is_correct": false,
+                  "feedback": "Davon ist keine Rede."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Der Gesamtpreis ist 700 Yen (ななひゃくえん, nanahyaku en).",
+              "difficulty_level": 2,
+              "explanation": "Richtig — Mai sagt 「ぜんぶで ななひゃくえんです」 (zenbu de nanahyaku en desu), also 700 Yen.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt — ななひゃくえん (nanahyaku en)."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — Mai nennt 700 Yen."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Übung",
+      "description": "Quiz zu Zählern und Mengen",
+      "page_type": "quiz_carousel",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Übung\n\nElf Fragen zu **Zählern** und **Mengen**.\n\n- Lies jede Frage genau.\n- Achte auf den richtigen Zähler je nach Gegenstand."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「みっつ」 (mittsu)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「みっつ」 (mittsu) heisst 'drei (Dinge)'.",
+              "options": [
+                {
+                  "option_text": "drei Dinge",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "zwei Dinge",
+                  "is_correct": false,
+                  "feedback": "Zwei wäre ふたつ (futatsu)."
+                },
+                {
+                  "option_text": "vier Dinge",
+                  "is_correct": false,
+                  "feedback": "Vier wäre よっつ (yottsu)."
+                },
+                {
+                  "option_text": "fünf Dinge",
+                  "is_correct": false,
+                  "feedback": "Fünf wäre いつつ (itsutsu)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie zählt man 'ein Ding' allgemein?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「ひとつ」 (hitotsu) heisst 'ein Ding'.",
+              "options": [
+                {
+                  "option_text": "ひとつ (hitotsu)",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "ここのつ (kokonotsu)",
+                  "is_correct": false,
+                  "feedback": "Das heisst neun Dinge."
+                },
+                {
+                  "option_text": "やっつ (yattsu)",
+                  "is_correct": false,
+                  "feedback": "Das heisst acht Dinge."
+                },
+                {
+                  "option_text": "むっつ (muttsu)",
+                  "is_correct": false,
+                  "feedback": "Das heisst sechs Dinge."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welcher Zähler passt für eine Katze (ねこ, neko)?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Kleine Tiere zählt man mit 「～ひき」 (hiki) — eine Katze ist 「いっぴき」 (ippiki).",
+              "options": [
+                {
+                  "option_text": "～ひき (hiki)",
+                  "is_correct": true,
+                  "feedback": "Richtig — ねこが いっぴき (neko ga ippiki)."
+                },
+                {
+                  "option_text": "～まい (mai)",
+                  "is_correct": false,
+                  "feedback": "～まい (mai) ist für flache Dinge."
+                },
+                {
+                  "option_text": "～だい (dai)",
+                  "is_correct": false,
+                  "feedback": "～だい (dai) ist für Maschinen."
+                },
+                {
+                  "option_text": "～にん (nin)",
+                  "is_correct": false,
+                  "feedback": "～にん (nin) ist für Personen."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welcher Zähler passt für ein Ticket (きっぷ, kippu)?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Flache Dinge wie Tickets zählt man mit 「～まい」 (mai).",
+              "options": [
+                {
+                  "option_text": "～まい (mai)",
+                  "is_correct": true,
+                  "feedback": "Richtig — きっぷを にまい (kippu wo nimai)."
+                },
+                {
+                  "option_text": "～さつ (satsu)",
+                  "is_correct": false,
+                  "feedback": "～さつ (satsu) ist für Bücher."
+                },
+                {
+                  "option_text": "～はい (hai)",
+                  "is_correct": false,
+                  "feedback": "～はい (hai) ist für Tassen."
+                },
+                {
+                  "option_text": "～ひき (hiki)",
+                  "is_correct": false,
+                  "feedback": "～ひき (hiki) ist für Tiere."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「～にん」 (nin) ist der Zähler für Personen.",
+              "difficulty_level": 1,
+              "explanation": "Richtig — Personen zählt man mit 「～にん」 (nin), z.B. 「さんにん」 (sannin, drei Personen).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt — ～にん (nin) = Personen."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — ～にん (nin) zählt Personen."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Bei 「～ひき」 (hiki) sagt man für eins 「いっぴき」 (ippiki).",
+              "difficulty_level": 2,
+              "explanation": "Richtig — durch die Lautveränderung wird aus ひき (hiki) bei eins 「いっぴき」 (ippiki).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt — いっぴき (ippiki)."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — es heisst いっぴき (ippiki), nicht いちひき."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「ほんを さんさつ かいました」 (hon wo sansatsu kaimashita)?",
+              "difficulty_level": 2,
+              "explanation": "「ほんを さんさつ かいました」 (hon wo sansatsu kaimashita) heisst 'Ich habe drei Bücher gekauft'.",
+              "options": [
+                {
+                  "option_text": "Ich habe drei Bücher gekauft.",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "Ich habe drei Äpfel gekauft.",
+                  "is_correct": false,
+                  "feedback": "Das wäre りんごを みっつ (ringo wo mittsu)."
+                },
+                {
+                  "option_text": "Ich habe drei Tassen getrunken.",
+                  "is_correct": false,
+                  "feedback": "Das wäre さんばい のみました (sanbai nomimashita)."
+                },
+                {
+                  "option_text": "Ich habe drei Tickets gekauft.",
+                  "is_correct": false,
+                  "feedback": "Das wäre きっぷを さんまい (kippu wo sanmai)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie sagt man 'Ein Glas Wasser, bitte'?",
+              "difficulty_level": 2,
+              "explanation": "「みずを いっぱい ください」 (mizu wo ippai kudasai) — der Zähler für Gläser ist ～はい (hai), bei eins 「いっぱい」 (ippai).",
+              "options": [
+                {
+                  "option_text": "みずを いっぱい ください。 (Mizu wo ippai kudasai.)",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "みずを いちまい ください。 (Mizu wo ichimai kudasai.)",
+                  "is_correct": false,
+                  "feedback": "～まい (mai) ist für flache Dinge, nicht für Gläser."
+                },
+                {
+                  "option_text": "みずを いっぴき ください。 (Mizu wo ippiki kudasai.)",
+                  "is_correct": false,
+                  "feedback": "～ひき (hiki) ist für Tiere."
+                },
+                {
+                  "option_text": "みずを ひとり ください。 (Mizu wo hitori kudasai.)",
+                  "is_correct": false,
+                  "feedback": "ひとり (hitori) zählt Personen."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde die allgemeine Zählung mit der deutschen Zahl.",
+              "difficulty_level": 1,
+              "options": [
+                {
+                  "option_text": "一つ (hitotsu)",
+                  "feedback": "eins (ein Ding)",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "二つ (futatsu)",
+                  "feedback": "zwei (Dinge)",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "三つ (mittsu)",
+                  "feedback": "drei (Dinge)",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "四つ (yottsu)",
+                  "feedback": "vier (Dinge)",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde den Zähler mit dem, was er zählt.",
+              "difficulty_level": 2,
+              "options": [
+                {
+                  "option_text": "～まい (mai)",
+                  "feedback": "flache Dinge (Papier, Tickets)",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "～ひき (hiki)",
+                  "feedback": "kleine Tiere",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "～さつ (satsu)",
+                  "feedback": "Bücher und Hefte",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "～にん (nin)",
+                  "feedback": "Personen",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welcher Satz heisst 'Drei Äpfel, bitte'?",
+              "difficulty_level": 2,
+              "explanation": "「りんごを みっつ ください」 (ringo wo mittsu kudasai) — 'Drei Äpfel, bitte'.",
+              "options": [
+                {
+                  "option_text": "りんごを みっつ ください。 (Ringo wo mittsu kudasai.)",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "ねこが いっぴき います。 (Neko ga ippiki imasu.)",
+                  "is_correct": false,
+                  "feedback": "Das heisst 'Es gibt eine Katze'."
+                },
+                {
+                  "option_text": "コーヒーを いっぱい のみます。 (Koohii wo ippai nomimasu.)",
+                  "is_correct": false,
+                  "feedback": "Das heisst 'Ich trinke eine Tasse Kaffee'."
+                },
+                {
+                  "option_text": "がくせいが さんにん います。 (Gakusei ga sannin imasu.)",
+                  "is_correct": false,
+                  "feedback": "Das heisst 'Es gibt drei Studenten'."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Zusammenfassung",
+      "description": "Was du gelernt hast",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Das hast du gelernt\n\nGlückwunsch! Du kannst jetzt auf Japanisch zählen und im Laden Mengen bestellen.\n\n- die **allgemeine Reihe** ひとつ (hitotsu) bis ここのつ (kokonotsu)\n- die wichtigsten **Zähl-Suffixe**: ～えん (en), ～まい (mai), ～ひき (hiki), ～にん (nin) und mehr\n- die **Lautveränderungen** wie 「いっぴき」 (ippiki) und 「いっぱい」 (ippai)\n\n> Tipp: Zähle im Alltag laut auf Japanisch — die Tassen am Frühstückstisch, die Bücher im Regal. So sitzt die unregelmässige Reihe schnell.\n\nIn der nächsten Lektion geht es weiter mit neuen Themen — Schritt für Schritt zum **N5** (エヌご, enu go)!"
+          }
+        }
+      ]
+    }
+  ],
+  "thumbnail_url": "generated/thumbnail_dinge_zählen_und_zähler.webp"
+}

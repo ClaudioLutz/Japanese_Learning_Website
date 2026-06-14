@@ -1,0 +1,828 @@
+{
+  "title": "N5 Kleidung & Anziehen — Was ziehst du an?",
+  "description": "Lerne die wichtigsten Wörter für Kleidung und die richtigen Anzieh-Verben auf Japanisch — vom Hemd bis zu den Schuhen.",
+  "jlpt_level": 5,
+  "topic": "Kleidung",
+  "instruction_language": "german",
+  "allow_guest_access": false,
+  "pages": [
+    {
+      "title": "Einführung",
+      "description": "Worum es in dieser Lektion geht",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Kleidung auf Japanisch",
+            "content_text": "## Kleidung auf Japanisch\n\nIn dieser Lektion lernst du die wichtigsten Wörter für **Kleidung** (ふく, fuku) — vom Hemd (シャツ, shatsu) bis zu den Schuhen (くつ, kutsu). Besonders spannend: Im Japanischen gibt es **mehrere Verben für 'anziehen'**, je nachdem, welches Kleidungsstück du meinst.\n\nDas brauchst du im Alltag ständig:\n\n- beim **Einkaufen** im Kleidergeschäft\n- wenn du morgens sagst, was du heute **anziehst**\n- um zu beschreiben, was jemand gerade **trägt**\n\n> Merke: Für den Oberkörper sagst du **「きる」** (kiru), für Hosen und Schuhe **「はく」** (haku) und für den Kopf **「かぶる」** (kaburu). Das richtige Verb hängt vom Körperteil ab!"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln Teil 1 — Kleidungsstücke",
+      "description": "Die wichtigsten Kleidungsstücke",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Teil 1 — Kleidungsstücke\n\nWir beginnen mit den **Kleidungsstücken**, die du jeden Tag trägst. Höre dir die Beispielsätze an und sprich sie laut nach.\n\n- Viele Wörter sind **Lehnwörter** und werden in **Katakana** geschrieben, zum Beispiel シャツ (shatsu, Hemd).\n- Achte auf die Lesung in Klammern."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "服",
+            "reading": "ふく",
+            "romaji": "fuku",
+            "meaning": "clothes",
+            "meaning_de": "Kleidung",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あたらしい ふくを かいました。",
+            "example_sentence_english": "Atarashii fuku wo kaimashita. — Ich habe neue Kleidung gekauft.",
+            "image_url": "vocab_generated/vocab_7a4ec5e0.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "洋服",
+            "reading": "ようふく",
+            "romaji": "youfuku",
+            "meaning": "Western clothes",
+            "meaning_de": "westliche Kleidung",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ようふくが すきです。",
+            "example_sentence_english": "Youfuku ga suki desu. — Ich mag westliche Kleidung.",
+            "image_url": "vocab_generated/vocab_408108bb.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "上着",
+            "reading": "うわぎ",
+            "romaji": "uwagi",
+            "meaning": "jacket, coat",
+            "meaning_de": "Jacke",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "うわぎを きてください。",
+            "example_sentence_english": "Uwagi wo kite kudasai. — Zieh bitte die Jacke an.",
+            "image_url": "vocab_generated/vocab_df52f989.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "コート",
+            "reading": "コート",
+            "romaji": "kooto",
+            "meaning": "coat",
+            "meaning_de": "Mantel",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "さむいから コートを きます。",
+            "example_sentence_english": "Samui kara kooto wo kimasu. — Weil es kalt ist, ziehe ich einen Mantel an.",
+            "image_url": "vocab_generated/vocab_029ed237.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "シャツ",
+            "reading": "シャツ",
+            "romaji": "shatsu",
+            "meaning": "shirt",
+            "meaning_de": "Hemd",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "しろい シャツを きます。",
+            "example_sentence_english": "Shiroi shatsu wo kimasu. — Ich ziehe ein weisses Hemd an.",
+            "image_url": "vocab_generated/vocab_1e1abf59.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "ワイシャツ",
+            "reading": "ワイシャツ",
+            "romaji": "waishatsu",
+            "meaning": "dress shirt",
+            "meaning_de": "Business-Hemd",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ちちは ワイシャツを きます。",
+            "example_sentence_english": "Chichi wa waishatsu wo kimasu. — Mein Vater trägt ein Business-Hemd.",
+            "image_url": "vocab_generated/vocab_7972705a.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "セーター",
+            "reading": "セーター",
+            "romaji": "seetaa",
+            "meaning": "sweater",
+            "meaning_de": "Pullover",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あおい セーターを きました。",
+            "example_sentence_english": "Aoi seetaa wo kimashita. — Ich habe einen blauen Pullover angezogen.",
+            "image_url": "vocab_generated/vocab_64a5f507.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "スカート",
+            "reading": "スカート",
+            "romaji": "sukaato",
+            "meaning": "skirt",
+            "meaning_de": "Rock",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あかい スカートを はきます。",
+            "example_sentence_english": "Akai sukaato wo hakimasu. — Ich ziehe einen roten Rock an.",
+            "image_url": "vocab_generated/vocab_5f25e1f9.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "ズボン",
+            "reading": "ズボン",
+            "romaji": "zubon",
+            "meaning": "trousers, pants",
+            "meaning_de": "Hose",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "くろい ズボンを はきます。",
+            "example_sentence_english": "Kuroi zubon wo hakimasu. — Ich ziehe eine schwarze Hose an.",
+            "image_url": "vocab_generated/vocab_bd995579.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "背広",
+            "reading": "せびろ",
+            "romaji": "sebiro",
+            "meaning": "business suit",
+            "meaning_de": "Anzug",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "せびろを きて、かいしゃへ いきます。",
+            "example_sentence_english": "Sebiro wo kite, kaisha e ikimasu. — Ich ziehe einen Anzug an und gehe zur Firma.",
+            "image_url": "vocab_generated/vocab_251133af.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "靴",
+            "reading": "くつ",
+            "romaji": "kutsu",
+            "meaning": "shoes",
+            "meaning_de": "Schuhe",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あたらしい くつを はきます。",
+            "example_sentence_english": "Atarashii kutsu wo hakimasu. — Ich ziehe neue Schuhe an.",
+            "image_url": "vocab_generated/vocab_ce67cc73.webp"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln Teil 2 — Accessoires und Verben",
+      "description": "Accessoires und die Anzieh-Verben",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Teil 2 — Accessoires und Verben\n\nJetzt kommen **Accessoires** wie Socken, Hut und Brille — und die wichtigen **Anzieh-Verben**.\n\n> Wichtig: 「**きる**」 (kiru) für den Oberkörper, 「**はく**」 (haku) für unten, 「**かぶる**」 (kaburu) für den Kopf und 「**ぬぐ**」 (nugu) zum Ausziehen."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "靴下",
+            "reading": "くつした",
+            "romaji": "kutsushita",
+            "meaning": "socks",
+            "meaning_de": "Socken",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "しろい くつしたを はきます。",
+            "example_sentence_english": "Shiroi kutsushita wo hakimasu. — Ich ziehe weisse Socken an.",
+            "image_url": "vocab_generated/vocab_539351d9.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "帽子",
+            "reading": "ぼうし",
+            "romaji": "boushi",
+            "meaning": "hat, cap",
+            "meaning_de": "Hut, Mütze",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ぼうしを かぶります。",
+            "example_sentence_english": "Boushi wo kaburimasu. — Ich setze einen Hut auf.",
+            "image_url": "vocab_generated/vocab_5cb80710.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "眼鏡",
+            "reading": "めがね",
+            "romaji": "megane",
+            "meaning": "glasses",
+            "meaning_de": "Brille",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ははは めがねを かけます。",
+            "example_sentence_english": "Haha wa megane wo kakemasu. — Meine Mutter setzt eine Brille auf.",
+            "image_url": "vocab_generated/vocab_35bbdce2.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "傘",
+            "reading": "かさ",
+            "romaji": "kasa",
+            "meaning": "umbrella",
+            "meaning_de": "Regenschirm",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あめだから かさを もちます。",
+            "example_sentence_english": "Ame dakara kasa wo mochimasu. — Weil es regnet, nehme ich einen Regenschirm mit.",
+            "image_url": "vocab_generated/vocab_2cca6389.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "ボタン",
+            "reading": "ボタン",
+            "romaji": "botan",
+            "meaning": "button",
+            "meaning_de": "Knopf",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ボタンが ちいさいです。",
+            "example_sentence_english": "Botan ga chiisai desu. — Der Knopf ist klein.",
+            "image_url": "vocab_generated/vocab_7e64b368.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "ポケット",
+            "reading": "ポケット",
+            "romaji": "poketto",
+            "meaning": "pocket",
+            "meaning_de": "Tasche (an Kleidung)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ポケットに かぎが あります。",
+            "example_sentence_english": "Poketto ni kagi ga arimasu. — In der Tasche ist ein Schlüssel.",
+            "image_url": "vocab_generated/vocab_74ef4258.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "着る",
+            "reading": "きる",
+            "romaji": "kiru",
+            "meaning": "to wear (upper body)",
+            "meaning_de": "anziehen (Oberkörper)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "シャツを きます。",
+            "example_sentence_english": "Shatsu wo kimasu. — Ich ziehe ein Hemd an.",
+            "image_url": "vocab_generated/vocab_afb6e0d6.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "はく",
+            "reading": "はく",
+            "romaji": "haku",
+            "meaning": "to wear (lower body, shoes)",
+            "meaning_de": "anziehen (Hose, Schuhe)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ズボンを はきます。",
+            "example_sentence_english": "Zubon wo hakimasu. — Ich ziehe eine Hose an.",
+            "image_url": "vocab_generated/vocab_ed0921d2.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "かぶる",
+            "reading": "かぶる",
+            "romaji": "kaburu",
+            "meaning": "to put on (head)",
+            "meaning_de": "aufsetzen (Kopf)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ぼうしを かぶります。",
+            "example_sentence_english": "Boushi wo kaburimasu. — Ich setze einen Hut auf.",
+            "image_url": "vocab_generated/vocab_989f6549.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "脱ぐ",
+            "reading": "ぬぐ",
+            "romaji": "nugu",
+            "meaning": "to take off",
+            "meaning_de": "ausziehen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "くつを ぬぎます。",
+            "example_sentence_english": "Kutsu wo nugimasu. — Ich ziehe die Schuhe aus.",
+            "image_url": "vocab_generated/vocab_5ad9f79f.webp"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Grammatik — Anziehen und ausziehen",
+      "description": "Drei Bausteine rund ums Anziehen",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Anziehen und ausziehen\n\nMit drei Bausteinen kannst du sagen, was du anziehst, was jemand gerade trägt und was du ausziehst. Achte besonders auf das **richtige Verb** je nach Körperregion.\n\n- **「きる・はく・かぶる」** (kiru, haku, kaburu) — das passende Anzieh-Verb\n- **「～を きています」** (wo kite imasu) — etwas gerade tragen\n- **「～を ぬぎます」** (wo nugimasu) — etwas ausziehen"
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "きる・はく・かぶる — das richtige Anzieh-Verb wählen",
+            "explanation": "Im Japanischen hängt das Verb für 'anziehen' vom Körperteil ab. Für den **Oberkörper** (Hemd, Pullover, Jacke) nimmst du 「きる」 (kiru). Für den **Unterkörper** und die Füsse (Hose, Rock, Schuhe, Socken) nimmst du 「はく」 (haku). Für den **Kopf** (Hut, Mütze) nimmst du 「かぶる」 (kaburu). Eine Brille (めがね, megane) setzt man mit 「かける」 (kakeru) auf.",
+            "structure": "[Oberteil] + を + きます / [Unterteil] + を + はきます / [Kopf] + を + かぶります ([upper] wo kimasu / [lower] wo hakimasu / [head] wo kaburimasu)",
+            "romaji": "[upper] wo kimasu / [lower] wo hakimasu / [head] wo kaburimasu",
+            "jlpt_level": 5,
+            "example_sentences": "シャツを きます。 (Shatsu wo kimasu.) — Ich ziehe ein Hemd an.\nズボンを はきます。 (Zubon wo hakimasu.) — Ich ziehe eine Hose an.\nぼうしを かぶります。 (Boushi wo kaburimasu.) — Ich setze einen Hut auf.",
+            "tts_example_jp": "シャツを きます。"
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "～を きています — was jemand gerade trägt (Verlaufsform ています)",
+            "explanation": "Mit der Form 「～ています」 (~te imasu) beschreibst du einen **andauernden Zustand**. 「きています」 (kite imasu) heisst also nicht nur 'anziehen', sondern 'gerade tragen / anhaben'. So sagst du, was eine Person in diesem Moment anhat. Genauso: 「はいています」 (haite imasu) für unten und 「かぶっています」 (kabutte imasu) für den Kopf.",
+            "structure": "[Kleidung] + を + きています ([clothing] wo kite imasu)",
+            "romaji": "[clothing] wo kite imasu",
+            "jlpt_level": 5,
+            "example_sentences": "あねは あかい セーターを きています。 (Ane wa akai seetaa wo kite imasu.) — Meine ältere Schwester trägt einen roten Pullover.\nちちは ワイシャツを きています。 (Chichi wa waishatsu wo kite imasu.) — Mein Vater trägt ein Business-Hemd.\nともだちは ぼうしを かぶっています。 (Tomodachi wa boushi wo kabutte imasu.) — Mein Freund trägt einen Hut.",
+            "tts_example_jp": "ちちは ワイシャツを きています。"
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "～を ぬぎます — etwas ausziehen",
+            "explanation": "Das Gegenteil von 'anziehen' ist 「ぬぐ」 (nugu, 'ausziehen'). Es gilt für **alle** Kleidungsstücke — egal ob Hemd, Hose oder Schuhe. In der höflichen Form heisst es 「ぬぎます」 (nugimasu). In Japan zieht man am Eingang (げんかん, genkan) immer die Schuhe aus, bevor man das Haus betritt.",
+            "structure": "[Kleidung] + を + ぬぎます ([clothing] wo nugimasu)",
+            "romaji": "[clothing] wo nugimasu",
+            "jlpt_level": 5,
+            "example_sentences": "うちで くつを ぬぎます。 (Uchi de kutsu wo nugimasu.) — Zu Hause ziehe ich die Schuhe aus.\nあついから うわぎを ぬぎます。 (Atsui kara uwagi wo nugimasu.) — Weil es heiss ist, ziehe ich die Jacke aus.\nぼうしを ぬいでください。 (Boushi wo nuide kudasai.) — Nimm bitte den Hut ab.",
+            "tts_example_jp": "うちで くつを ぬぎます。"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Dialog — Im Kleidergeschäft",
+      "description": "Mai und Sora kaufen Kleidung",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Im Kleidergeschäft — Mai sucht einen Pullover",
+            "content_text": "Mai: この あおい セーターは かわいいですね。\n  (Kono aoi seetaa wa kawaii desu ne.)\n  -> Dieser blaue Pullover ist niedlich, oder?\n\nSora: そうですね。でも、ちょっと ちいさいですよ。\n  (Sou desu ne. Demo, chotto chiisai desu yo.)\n  -> Stimmt. Aber er ist ein bisschen klein.\n\nMai: じゃあ、しろい シャツは どうですか。\n  (Jaa, shiroi shatsu wa dou desu ka.)\n  -> Dann, wie wäre es mit dem weissen Hemd?\n\nSora: いいですね。それを きてみてください。\n  (Ii desu ne. Sore wo kite mite kudasai.)\n  -> Schön. Probier es bitte mal an.\n\nMai: はい。あ、ボタンが おおきいですね。\n  (Hai. A, botan ga ookii desu ne.)\n  -> Ja. Ah, die Knöpfe sind gross, oder?\n\nSora: ほんとうですね。この シャツを かいましょう。\n  (Hontou desu ne. Kono shatsu wo kaimashou.)\n  -> Wirklich. Lass uns dieses Hemd kaufen."
+          }
+        },
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "### Verständnisfragen\n\nVier kurze Fragen zum **Dialog** im Kleidergeschäft. Achte darauf, **wer** was sagt."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Warum kauft Mai den blauen Pullover (あおい セーター, aoi seetaa) nicht?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "Sora sagt etwas über die Grösse.",
+              "explanation": "Sora sagt 「ちょっと ちいさいですよ」 (chotto chiisai desu yo) — er ist ein bisschen klein.",
+              "options": [
+                {
+                  "option_text": "Er ist ein bisschen klein.",
+                  "is_correct": true,
+                  "feedback": "Richtig — ちいさい (chiisai) heisst 'klein'."
+                },
+                {
+                  "option_text": "Er ist zu teuer.",
+                  "is_correct": false,
+                  "feedback": "Vom Preis ist im Dialog keine Rede."
+                },
+                {
+                  "option_text": "Er ist zu gross.",
+                  "is_correct": false,
+                  "feedback": "Gross wäre おおきい (ookii) — gesagt wird ちいさい (chiisai)."
+                },
+                {
+                  "option_text": "Die Farbe gefällt ihr nicht.",
+                  "is_correct": false,
+                  "feedback": "Mai findet ihn sogar かわいい (kawaii, niedlich)."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Mai soll das weisse Hemd (しろい シャツ, shiroi shatsu) anprobieren.",
+              "difficulty_level": 1,
+              "explanation": "Richtig — Sora sagt 「それを きてみてください」 (sore wo kite mite kudasai, 'probier es bitte an').",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt — きてみてください (kite mite kudasai)."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — Sora bittet Mai, es anzuprobieren."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was fällt Mai am weissen Hemd auf?",
+              "difficulty_level": 2,
+              "explanation": "Mai sagt 「ボタンが おおきいですね」 (botan ga ookii desu ne) — die Knöpfe sind gross.",
+              "options": [
+                {
+                  "option_text": "Die Knöpfe (ボタン, botan) sind gross.",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "Die Tasche (ポケット, poketto) ist klein.",
+                  "is_correct": false,
+                  "feedback": "Von der Tasche ist keine Rede."
+                },
+                {
+                  "option_text": "Die Farbe ist schön.",
+                  "is_correct": false,
+                  "feedback": "Über die Knöpfe spricht sie, nicht über die Farbe."
+                },
+                {
+                  "option_text": "Es ist zu lang.",
+                  "is_correct": false,
+                  "feedback": "Von der Länge sagt sie nichts."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Am Ende wollen Mai und Sora nichts kaufen.",
+              "difficulty_level": 2,
+              "explanation": "Falsch — Sora sagt 「この シャツを かいましょう」 (kono shatsu wo kaimashou, 'lass uns dieses Hemd kaufen').",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nein — sie wollen das Hemd kaufen."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt — sie kaufen das weisse Hemd."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Übung",
+      "description": "Quiz zu Kleidung und Anzieh-Verben",
+      "page_type": "quiz_carousel",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Übung\n\nElf Fragen zu **Kleidung** und den **Anzieh-Verben**.\n\n- Lies jede Frage genau.\n- Achte besonders auf das **richtige Verb** je nach Körperteil."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「ふく」 (fuku)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「ふく」 (fuku) heisst 'Kleidung'.",
+              "options": [
+                {
+                  "option_text": "Kleidung",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "Schuhe",
+                  "is_correct": false,
+                  "feedback": "Schuhe wären くつ (kutsu)."
+                },
+                {
+                  "option_text": "Hut",
+                  "is_correct": false,
+                  "feedback": "Hut wäre ぼうし (boushi)."
+                },
+                {
+                  "option_text": "Brille",
+                  "is_correct": false,
+                  "feedback": "Brille wäre めがね (megane)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welches Verb benutzt man für eine Hose (ズボン, zubon)?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Für den Unterkörper und Schuhe nimmt man 「はく」 (haku).",
+              "options": [
+                {
+                  "option_text": "はく (haku)",
+                  "is_correct": true,
+                  "feedback": "Richtig — はく (haku) für unten."
+                },
+                {
+                  "option_text": "きる (kiru)",
+                  "is_correct": false,
+                  "feedback": "きる (kiru) ist für den Oberkörper."
+                },
+                {
+                  "option_text": "かぶる (kaburu)",
+                  "is_correct": false,
+                  "feedback": "かぶる (kaburu) ist für den Kopf."
+                },
+                {
+                  "option_text": "ぬぐ (nugu)",
+                  "is_correct": false,
+                  "feedback": "ぬぐ (nugu) heisst 'ausziehen'."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welches Verb benutzt man für einen Hut (ぼうし, boushi)?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Für den Kopf nimmt man 「かぶる」 (kaburu).",
+              "options": [
+                {
+                  "option_text": "かぶる (kaburu)",
+                  "is_correct": true,
+                  "feedback": "Richtig — かぶる (kaburu) für den Kopf."
+                },
+                {
+                  "option_text": "はく (haku)",
+                  "is_correct": false,
+                  "feedback": "はく (haku) ist für unten."
+                },
+                {
+                  "option_text": "きる (kiru)",
+                  "is_correct": false,
+                  "feedback": "きる (kiru) ist für den Oberkörper."
+                },
+                {
+                  "option_text": "ぬぐ (nugu)",
+                  "is_correct": false,
+                  "feedback": "ぬぐ (nugu) heisst 'ausziehen'."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「ぬぐ」 (nugu)?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "「ぬぐ」 (nugu) heisst 'ausziehen' — das Gegenteil von 'anziehen'.",
+              "options": [
+                {
+                  "option_text": "ausziehen",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "anziehen (Oberkörper)",
+                  "is_correct": false,
+                  "feedback": "Das wäre きる (kiru)."
+                },
+                {
+                  "option_text": "kaufen",
+                  "is_correct": false,
+                  "feedback": "Kaufen wäre かう (kau)."
+                },
+                {
+                  "option_text": "aufsetzen",
+                  "is_correct": false,
+                  "feedback": "Aufsetzen wäre かぶる (kaburu)."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「くつ」 (kutsu) bedeutet 'Socken'.",
+              "difficulty_level": 1,
+              "explanation": "Falsch — 「くつ」 (kutsu) heisst 'Schuhe'. 'Socken' sind 「くつした」 (kutsushita).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nein — くつ (kutsu) = Schuhe."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt — くつ (kutsu) = Schuhe, くつした (kutsushita) = Socken."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Für ein Hemd (シャツ, shatsu) benutzt man das Verb 「きる」 (kiru).",
+              "difficulty_level": 1,
+              "explanation": "Richtig — für den Oberkörper nimmt man 「きる」 (kiru).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt!"
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — シャツ (shatsu) trägt man mit きる (kiru)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「めがね」 (megane)?",
+              "difficulty_level": 2,
+              "explanation": "「めがね」 (megane) heisst 'Brille'.",
+              "options": [
+                {
+                  "option_text": "Brille",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "Regenschirm",
+                  "is_correct": false,
+                  "feedback": "Regenschirm wäre かさ (kasa)."
+                },
+                {
+                  "option_text": "Knopf",
+                  "is_correct": false,
+                  "feedback": "Knopf wäre ボタン (botan)."
+                },
+                {
+                  "option_text": "Mantel",
+                  "is_correct": false,
+                  "feedback": "Mantel wäre コート (kooto)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie sagt man 'Ich ziehe eine Hose an'?",
+              "difficulty_level": 2,
+              "explanation": "「ズボンを はきます」 (zubon wo hakimasu) — für die Hose nimmt man はく (haku).",
+              "options": [
+                {
+                  "option_text": "ズボンを はきます。 (Zubon wo hakimasu.)",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "ズボンを きます。 (Zubon wo kimasu.)",
+                  "is_correct": false,
+                  "feedback": "きる (kiru) ist für den Oberkörper, nicht für die Hose."
+                },
+                {
+                  "option_text": "ズボンを かぶります。 (Zubon wo kaburimasu.)",
+                  "is_correct": false,
+                  "feedback": "かぶる (kaburu) ist nur für den Kopf."
+                },
+                {
+                  "option_text": "ズボンを ぬぎます。 (Zubon wo nugimasu.)",
+                  "is_correct": false,
+                  "feedback": "Das heisst 'die Hose ausziehen'."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde das japanische Wort mit der deutschen Übersetzung.",
+              "difficulty_level": 2,
+              "options": [
+                {
+                  "option_text": "靴下 (kutsushita)",
+                  "feedback": "Socken",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "帽子 (boushi)",
+                  "feedback": "Hut, Mütze",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "傘 (kasa)",
+                  "feedback": "Regenschirm",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "眼鏡 (megane)",
+                  "feedback": "Brille",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde das japanische Wort mit der deutschen Übersetzung.",
+              "difficulty_level": 2,
+              "options": [
+                {
+                  "option_text": "服 (fuku)",
+                  "feedback": "Kleidung",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "靴 (kutsu)",
+                  "feedback": "Schuhe",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "上着 (uwagi)",
+                  "feedback": "Jacke",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "スカート (sukaato)",
+                  "feedback": "Rock",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welcher Satz heisst 'Ich setze einen Hut auf'?",
+              "difficulty_level": 2,
+              "explanation": "「ぼうしを かぶります」 (boushi wo kaburimasu) — für den Kopf nimmt man かぶる (kaburu).",
+              "options": [
+                {
+                  "option_text": "ぼうしを かぶります。 (Boushi wo kaburimasu.)",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "くつを はきます。 (Kutsu wo hakimasu.)",
+                  "is_correct": false,
+                  "feedback": "Das heisst 'Ich ziehe Schuhe an'."
+                },
+                {
+                  "option_text": "シャツを きます。 (Shatsu wo kimasu.)",
+                  "is_correct": false,
+                  "feedback": "Das heisst 'Ich ziehe ein Hemd an'."
+                },
+                {
+                  "option_text": "くつを ぬぎます。 (Kutsu wo nugimasu.)",
+                  "is_correct": false,
+                  "feedback": "Das heisst 'Ich ziehe die Schuhe aus'."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Zusammenfassung",
+      "description": "Was du gelernt hast",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Das hast du gelernt\n\nGlückwunsch! Du kennst jetzt die wichtigsten Wörter für **Kleidung** und weisst, welches **Anzieh-Verb** wann passt.\n\n- **21 neue Vokabeln** — von der Kleidung (ふく, fuku) bis zu den Schuhen (くつ, kutsu)\n- die drei Anzieh-Verben **「きる・はく・かぶる」** (kiru / haku / kaburu) je nach Körperteil\n- die Verlaufsform **「～を きています」** (~wo kite imasu, 'gerade tragen') und **「ぬぐ」** (nugu, 'ausziehen')\n\n> Tipp: Beschreibe morgens beim Anziehen jedes Kleidungsstück laut auf Japanisch und nenne das passende Verb — so sitzt der Unterschied zwischen きる (kiru), はく (haku) und かぶる (kaburu) schnell.\n\nIn der nächsten Lektion geht es um **Farben** — damit du auch sagen kannst, welche Farbe dein neues 「シャツ」 (shatsu, Hemd) hat!"
+          }
+        }
+      ]
+    }
+  ],
+  "thumbnail_url": "generated/thumbnail_kleidung.webp"
+}

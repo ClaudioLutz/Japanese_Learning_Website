@@ -1,0 +1,786 @@
+{
+  "title": "N5 Körper & Gesundheit — Vom Kopf bis zum Fuss",
+  "description": "Lerne die wichtigsten Körperteile auf Japanisch und wie du beim Arzt sagst, was dir weh tut.",
+  "jlpt_level": 5,
+  "topic": "Körper und Gesundheit",
+  "instruction_language": "german",
+  "allow_guest_access": false,
+  "pages": [
+    {
+      "title": "Einführung",
+      "description": "Worum es in dieser Lektion geht",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Dein Körper auf Japanisch",
+            "content_text": "## Dein Körper auf Japanisch\n\nIn dieser Lektion lernst du die wichtigsten Wörter für **Körperteile** — vom Kopf (**あたま**, atama) bis zum Fuss (**あし**, ashi). Ausserdem lernst du, wie du sagst, dass dir etwas weh tut.\n\nDas ist im Alltag besonders nützlich:\n\n- beim **Arzt** (いしゃ, isha), wenn du dich erkältet hast\n- wenn du einer Freundin sagen willst, dass du **müde** (つかれた, tsukareta) bist\n- um dein Aussehen zu beschreiben\n\n> Merke: Bei Schmerzen sagst du **「～が いたいです」** (~ga itai desu) — zum Beispiel 「あたまが いたいです」 (atama ga itai desu, 'mein Kopf tut weh')."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln Teil 1 — Kopf und Gesicht",
+      "description": "Körperteile von oben",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Teil 1 — Kopf und Gesicht\n\nWir beginnen oben: der **Kopf** und alles im Gesicht. Höre dir die Beispielsätze an und sprich sie laut nach.\n\n- Die meisten dieser Wörter schreibt man im Alltag in **Hiragana**.\n- Achte auf die Lesung in Klammern."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "頭",
+            "reading": "あたま",
+            "romaji": "atama",
+            "meaning": "head",
+            "meaning_de": "Kopf",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あたまが いたいです。",
+            "example_sentence_english": "Atama ga itai desu. — Mein Kopf tut weh.",
+            "image_url": "vocab_generated/vocab_2ce17249.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "顔",
+            "reading": "かお",
+            "romaji": "kao",
+            "meaning": "face",
+            "meaning_de": "Gesicht",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "かおを あらいます。",
+            "example_sentence_english": "Kao wo araimasu. — Ich wasche mein Gesicht.",
+            "image_url": "vocab_generated/vocab_90db765c.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "目",
+            "reading": "め",
+            "romaji": "me",
+            "meaning": "eye(s)",
+            "meaning_de": "Auge(n)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "めが おおきいですね。",
+            "example_sentence_english": "Me ga ookii desu ne. — Du hast grosse Augen.",
+            "image_url": "vocab_generated/vocab_4064560f.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "耳",
+            "reading": "みみ",
+            "romaji": "mimi",
+            "meaning": "ear(s)",
+            "meaning_de": "Ohr(en)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "みみが いたいです。",
+            "example_sentence_english": "Mimi ga itai desu. — Mein Ohr tut weh.",
+            "image_url": "vocab_generated/vocab_78e4f46b.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "鼻",
+            "reading": "はな",
+            "romaji": "hana",
+            "meaning": "nose",
+            "meaning_de": "Nase",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ぞうは はなが ながいです。",
+            "example_sentence_english": "Zou wa hana ga nagai desu. — Der Elefant hat eine lange Nase.",
+            "image_url": "vocab_generated/vocab_abf53f44.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "口",
+            "reading": "くち",
+            "romaji": "kuchi",
+            "meaning": "mouth",
+            "meaning_de": "Mund",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "くちを あけます。",
+            "example_sentence_english": "Kuchi wo akemasu. — Ich öffne den Mund.",
+            "image_url": "vocab_generated/vocab_c9417574.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "声",
+            "reading": "こえ",
+            "romaji": "koe",
+            "meaning": "voice",
+            "meaning_de": "Stimme",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "こえが おおきいです。",
+            "example_sentence_english": "Koe ga ookii desu. — Die Stimme ist laut.",
+            "image_url": "vocab_generated/vocab_52fe83e6.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "歯",
+            "reading": "は",
+            "romaji": "ha",
+            "meaning": "tooth, teeth",
+            "meaning_de": "Zahn, Zähne",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "はを みがきます。",
+            "example_sentence_english": "Ha wo migakimasu. — Ich putze mir die Zähne.",
+            "image_url": "vocab_generated/vocab_b49bf7df.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "背",
+            "reading": "せ",
+            "romaji": "se",
+            "meaning": "height, stature",
+            "meaning_de": "Körpergrösse, Statur",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "せが たかいです。",
+            "example_sentence_english": "Se ga takai desu. — Er ist gross (von Statur).",
+            "image_url": "vocab_generated/vocab_a6d91083.webp"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln Teil 2 — Körper und Gesundheit",
+      "description": "Restlicher Körper und Gesundheit",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Teil 2 — Körper und Gesundheit\n\nJetzt der **restliche Körper** und ein paar Wörter rund um **Gesundheit**: Erkältung, Medizin und wie du sagst, dass du müde bist.\n\n> Wichtig: 「**いたい**」 (itai) heisst 'schmerzhaft' und 「**つかれる**」 (tsukareru) heisst 'müde werden'."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "手",
+            "reading": "て",
+            "romaji": "te",
+            "meaning": "hand",
+            "meaning_de": "Hand",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "てを あらいます。",
+            "example_sentence_english": "Te wo araimasu. — Ich wasche meine Hände.",
+            "image_url": "vocab_generated/vocab_3c7d183f.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "足",
+            "reading": "あし",
+            "romaji": "ashi",
+            "meaning": "foot, leg",
+            "meaning_de": "Fuss, Bein",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あしが いたいです。",
+            "example_sentence_english": "Ashi ga itai desu. — Mein Bein tut weh.",
+            "image_url": "vocab_generated/vocab_fbb4674d.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "お腹",
+            "reading": "おなか",
+            "romaji": "onaka",
+            "meaning": "stomach, belly",
+            "meaning_de": "Bauch",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "おなかが すきました。",
+            "example_sentence_english": "Onaka ga sukimashita. — Ich habe Hunger.",
+            "image_url": "vocab_generated/vocab_fc6b8e7a.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "体",
+            "reading": "からだ",
+            "romaji": "karada",
+            "meaning": "body, health",
+            "meaning_de": "Körper",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "からだが じょうぶです。",
+            "example_sentence_english": "Karada ga joubu desu. — Mein Körper ist kräftig.",
+            "image_url": "vocab_generated/vocab_49dd5c7b.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "風邪",
+            "reading": "かぜ",
+            "romaji": "kaze",
+            "meaning": "cold, flu",
+            "meaning_de": "Erkältung",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "かぜを ひきました。",
+            "example_sentence_english": "Kaze wo hikimashita. — Ich habe mich erkältet.",
+            "image_url": "vocab_generated/vocab_705c3c24.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "薬",
+            "reading": "くすり",
+            "romaji": "kusuri",
+            "meaning": "medicine",
+            "meaning_de": "Medizin, Medikament",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "くすりを のみます。",
+            "example_sentence_english": "Kusuri wo nomimasu. — Ich nehme Medizin ein.",
+            "image_url": "vocab_generated/vocab_b0af76f5.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "痛い",
+            "reading": "いたい",
+            "romaji": "itai",
+            "meaning": "painful, sore",
+            "meaning_de": "schmerzhaft, weh",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "おなかが いたいです。",
+            "example_sentence_english": "Onaka ga itai desu. — Mein Bauch tut weh.",
+            "image_url": "vocab_generated/vocab_05829f0b.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "疲れる",
+            "reading": "つかれる",
+            "romaji": "tsukareru",
+            "meaning": "to get tired",
+            "meaning_de": "müde werden, ermüden",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "とても つかれました。",
+            "example_sentence_english": "Totemo tsukaremashita. — Ich bin sehr müde.",
+            "image_url": "vocab_generated/vocab_e7b2e086.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "丈夫",
+            "reading": "じょうぶ",
+            "romaji": "joubu",
+            "meaning": "healthy, sturdy, durable",
+            "meaning_de": "gesund, kräftig, robust (na-Adjektiv)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ちちは じょうぶです。",
+            "example_sentence_english": "Chichi wa joubu desu. — Mein Vater ist gesund und kräftig.",
+            "image_url": "vocab_generated/vocab_a583eae0.webp"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Grammatik — Sagen, dass etwas weh tut",
+      "description": "Drei Bausteine für den Arztbesuch",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Sagen, dass etwas weh tut\n\nMit drei kleinen Bausteinen kannst du beim Arzt schon viel ausdrücken. Achte besonders auf die Partikel **「が」** (ga) und das Adjektiv **「いたい」** (itai, 'schmerzhaft').\n\n- **「～が いたいです」** (~ga itai desu) — etwas tut weh\n- **「どうしましたか」** (dou shimashita ka) — Was fehlt Ihnen?\n- **「じょうぶ」** (joubu) — gesund, kräftig"
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "～が いたいです (~ga itai desu — etwas tut weh)",
+            "explanation": "Mit 「～が いたいです」 (~ga itai desu) sagst du, dass ein Körperteil weh tut. Vor der Partikel 「が」 (ga) steht der Körperteil, danach folgt 「いたいです」 (itai desu, 'tut weh'). Das ist der wichtigste Satz beim Arzt.",
+            "structure": "[Körperteil] + が + いたいです ([body part] + ga + itai desu)",
+            "romaji": "[body part] + ga + itai desu",
+            "jlpt_level": 5,
+            "example_sentences": "あたまが いたいです。 (Atama ga itai desu.) — Mein Kopf tut weh.\nおなかが いたいです。 (Onaka ga itai desu.) — Mein Bauch tut weh.\nはが いたいです。 (Ha ga itai desu.) — Mein Zahn tut weh.",
+            "tts_example_jp": "あたまが いたいです。"
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "どうしましたか (dou shimashita ka — Was fehlt Ihnen?)",
+            "explanation": "Mit 「どうしましたか」 (dou shimashita ka) fragt man 'Was ist passiert?' oder 'Was fehlt Ihnen?'. Der Arzt (いしゃ, isha) benutzt diese Frage, wenn du in die Praxis kommst. Du antwortest meist mit 「～が いたいです」 (~ga itai desu).",
+            "structure": "どうしましたか → ～が いたいです (dou shimashita ka → ~ga itai desu)",
+            "romaji": "dou shimashita ka",
+            "jlpt_level": 5,
+            "example_sentences": "いしゃ: どうしましたか。 (Isha: Dou shimashita ka.) — Arzt: Was fehlt Ihnen?\nわたし: のどが いたいです。 (Watashi: Nodo ga itai desu.) — Ich: Mein Hals tut weh.\nいしゃ: かぜですね。 (Isha: Kaze desu ne.) — Arzt: Das ist eine Erkältung.",
+            "tts_example_jp": "どうしましたか。"
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "～は じょうぶです (na-Adjektiv じょうぶ — gesund, kräftig)",
+            "explanation": "「じょうぶ」 (joubu) ist ein na-Adjektiv und bedeutet 'gesund, kräftig, robust'. Mit 「です」 (desu) am Satzende beschreibst du, dass eine Person gesund oder eine Sache stabil ist. Das Gegenteil ist 「よわい」 (yowai, 'schwach').",
+            "structure": "[Nomen] + は + じょうぶです ([noun] + wa + joubu desu)",
+            "romaji": "[noun] + wa + joubu desu",
+            "jlpt_level": 5,
+            "example_sentences": "ちちは じょうぶです。 (Chichi wa joubu desu.) — Mein Vater ist gesund und kräftig.\nこの くつは じょうぶです。 (Kono kutsu wa joubu desu.) — Diese Schuhe sind robust.\nからだが じょうぶです。 (Karada ga joubu desu.) — Mein Körper ist kräftig.",
+            "tts_example_jp": "ちちは じょうぶです。"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Dialog — Beim Arzt",
+      "description": "Haruto hat Kopfschmerzen",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Beim Arzt — Haruto hat Kopfschmerzen",
+            "content_text": "Haruto: せんせい、こんにちは。\n  (Sensei, konnichiwa.)\n  -> Herr Doktor, guten Tag.\n\nSensei: こんにちは。どうしましたか。\n  (Konnichiwa. Dou shimashita ka.)\n  -> Guten Tag. Was fehlt Ihnen?\n\nHaruto: あたまが いたいです。それから、おなかも いたいです。\n  (Atama ga itai desu. Sorekara, onaka mo itai desu.)\n  -> Mein Kopf tut weh. Und ausserdem tut mein Bauch weh.\n\nSensei: そうですか。かぜですね。\n  (Sou desu ka. Kaze desu ne.)\n  -> Ach so. Das ist eine Erkältung.\n\nHaruto: くすりを のみますか。\n  (Kusuri wo nomimasu ka.)\n  -> Soll ich Medizin nehmen?\n\nSensei: はい。この くすりを のんでください。\n  (Hai. Kono kusuri wo nonde kudasai.)\n  -> Ja. Nehmen Sie bitte diese Medizin.\n\nHaruto: ありがとうございます。\n  (Arigatou gozaimasu.)\n  -> Vielen Dank."
+          }
+        },
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "### Verständnisfragen\n\nVier kurze Fragen zum **Dialog** beim Arzt. Achte darauf, **wer** was sagt."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was tut Haruto weh?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "Er nennt zwei Körperteile.",
+              "explanation": "Haruto sagt 「あたまが いたいです」 (atama ga itai desu) und 「おなかも いたいです」 (onaka mo itai desu) — Kopf und Bauch.",
+              "options": [
+                {
+                  "option_text": "Kopf und Bauch",
+                  "is_correct": true,
+                  "feedback": "Richtig — あたま (atama) und おなか (onaka)."
+                },
+                {
+                  "option_text": "Ohr und Zahn",
+                  "is_correct": false,
+                  "feedback": "Das wären みみ (mimi) und は (ha)."
+                },
+                {
+                  "option_text": "Hand und Fuss",
+                  "is_correct": false,
+                  "feedback": "Das wären て (te) und あし (ashi)."
+                },
+                {
+                  "option_text": "Nase und Auge",
+                  "is_correct": false,
+                  "feedback": "Das wären はな (hana) und め (me)."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Der Arzt sagt, dass Haruto eine Erkältung (かぜ, kaze) hat.",
+              "difficulty_level": 1,
+              "explanation": "Ja — der Arzt sagt 「かぜですね」 (kaze desu ne, 'das ist eine Erkältung').",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt — かぜですね (kaze desu ne)."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — der Arzt nennt es かぜ (kaze)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was soll Haruto nehmen?",
+              "difficulty_level": 1,
+              "explanation": "Der Arzt sagt 「この くすりを のんでください」 (kono kusuri wo nonde kudasai) — Medizin.",
+              "options": [
+                {
+                  "option_text": "Medizin (くすり, kusuri)",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "Wasser (みず, mizu)",
+                  "is_correct": false,
+                  "feedback": "Wasser sagt der Arzt nicht."
+                },
+                {
+                  "option_text": "Tee (おちゃ, ocha)",
+                  "is_correct": false,
+                  "feedback": "Tee kommt im Dialog nicht vor."
+                },
+                {
+                  "option_text": "Essen (たべもの, tabemono)",
+                  "is_correct": false,
+                  "feedback": "Von Essen ist keine Rede."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Haruto geht es gut, ihm tut nichts weh.",
+              "difficulty_level": 2,
+              "explanation": "Falsch — Haruto tut der Kopf und der Bauch weh: 「あたまが いたいです」 (atama ga itai desu).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nein — ihm tut einiges weh."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt — Kopf und Bauch tun weh."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Übung",
+      "description": "Quiz zu Körper und Gesundheit",
+      "page_type": "quiz_carousel",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Übung\n\nElf Fragen zu **Körperteilen** und **Gesundheit**.\n\n- Lies jede Frage genau.\n- Achte auf die Lesung in Klammern."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「あたま」 (atama)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「あたま」 (atama) heisst 'Kopf'.",
+              "options": [
+                {
+                  "option_text": "Kopf",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "Hand",
+                  "is_correct": false,
+                  "feedback": "Hand wäre て (te)."
+                },
+                {
+                  "option_text": "Fuss",
+                  "is_correct": false,
+                  "feedback": "Fuss wäre あし (ashi)."
+                },
+                {
+                  "option_text": "Ohr",
+                  "is_correct": false,
+                  "feedback": "Ohr wäre みみ (mimi)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「て」 (te)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「て」 (te) heisst 'Hand'.",
+              "options": [
+                {
+                  "option_text": "Hand",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "Auge",
+                  "is_correct": false,
+                  "feedback": "Auge wäre め (me)."
+                },
+                {
+                  "option_text": "Mund",
+                  "is_correct": false,
+                  "feedback": "Mund wäre くち (kuchi)."
+                },
+                {
+                  "option_text": "Nase",
+                  "is_correct": false,
+                  "feedback": "Nase wäre はな (hana)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「あし」 (ashi)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「あし」 (ashi) heisst 'Fuss / Bein'.",
+              "options": [
+                {
+                  "option_text": "Fuss / Bein",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "Stimme",
+                  "is_correct": false,
+                  "feedback": "Stimme wäre こえ (koe)."
+                },
+                {
+                  "option_text": "Bauch",
+                  "is_correct": false,
+                  "feedback": "Bauch wäre おなか (onaka)."
+                },
+                {
+                  "option_text": "Zahn",
+                  "is_correct": false,
+                  "feedback": "Zahn wäre は (ha)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welches Wort heisst 'Zahn'?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "「は」 (ha) heisst 'Zahn'. Vorsicht: 「はな」 (hana) ist die Nase.",
+              "options": [
+                {
+                  "option_text": "歯 (は, ha)",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "鼻 (はな, hana)",
+                  "is_correct": false,
+                  "feedback": "Das ist die Nase."
+                },
+                {
+                  "option_text": "目 (め, me)",
+                  "is_correct": false,
+                  "feedback": "Das ist das Auge."
+                },
+                {
+                  "option_text": "耳 (みみ, mimi)",
+                  "is_correct": false,
+                  "feedback": "Das ist das Ohr."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「みみ」 (mimi) bedeutet 'Auge'.",
+              "difficulty_level": 1,
+              "explanation": "Falsch — 「みみ」 (mimi) heisst 'Ohr'. 'Auge' ist 「め」 (me).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nein — みみ (mimi) = Ohr."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt — みみ (mimi) = Ohr."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Bei einer 「かぜ」 (kaze) nimmt man oft 「くすり」 (kusuri).",
+              "difficulty_level": 1,
+              "explanation": "Richtig — bei einer Erkältung (かぜ, kaze) nimmt man Medizin (くすり, kusuri).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt!"
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — bei かぜ nimmt man くすり."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「おなかが すきました」 (onaka ga sukimashita)?",
+              "difficulty_level": 2,
+              "explanation": "「おなかが すきました」 (onaka ga sukimashita) ist die übliche Wendung für 'Ich habe Hunger'.",
+              "options": [
+                {
+                  "option_text": "Ich habe Hunger.",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "Mein Kopf tut weh.",
+                  "is_correct": false,
+                  "feedback": "Das wäre あたまが いたいです (atama ga itai desu)."
+                },
+                {
+                  "option_text": "Ich bin müde.",
+                  "is_correct": false,
+                  "feedback": "Das wäre つかれました (tsukaremashita)."
+                },
+                {
+                  "option_text": "Ich bin gesund.",
+                  "is_correct": false,
+                  "feedback": "Das wäre じょうぶです (joubu desu)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie sagt man 'Ich bin müde'?",
+              "difficulty_level": 2,
+              "explanation": "「つかれました」 (tsukaremashita) heisst 'Ich bin müde geworden / Ich bin müde'.",
+              "options": [
+                {
+                  "option_text": "つかれました (tsukaremashita)",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "いたいです (itai desu)",
+                  "is_correct": false,
+                  "feedback": "Das heisst 'es tut weh'."
+                },
+                {
+                  "option_text": "じょうぶです (joubu desu)",
+                  "is_correct": false,
+                  "feedback": "Das heisst 'gesund / kräftig'."
+                },
+                {
+                  "option_text": "かぜです (kaze desu)",
+                  "is_correct": false,
+                  "feedback": "Das heisst 'es ist eine Erkältung'."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde das japanische Wort mit der deutschen Übersetzung.",
+              "difficulty_level": 2,
+              "options": [
+                {
+                  "option_text": "目 (me)",
+                  "feedback": "Auge",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "鼻 (hana)",
+                  "feedback": "Nase",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "口 (kuchi)",
+                  "feedback": "Mund",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "耳 (mimi)",
+                  "feedback": "Ohr",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde das japanische Wort mit der deutschen Übersetzung.",
+              "difficulty_level": 2,
+              "options": [
+                {
+                  "option_text": "頭 (atama)",
+                  "feedback": "Kopf",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "手 (te)",
+                  "feedback": "Hand",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "足 (ashi)",
+                  "feedback": "Fuss / Bein",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "体 (karada)",
+                  "feedback": "Körper",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welcher Satz heisst 'Mein Kopf tut weh'?",
+              "difficulty_level": 2,
+              "explanation": "「あたまが いたいです」 (atama ga itai desu) — 'Mein Kopf tut weh'.",
+              "options": [
+                {
+                  "option_text": "あたまが いたいです。 (Atama ga itai desu.)",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "おなかが すきました。 (Onaka ga sukimashita.)",
+                  "is_correct": false,
+                  "feedback": "Das heisst 'Ich habe Hunger'."
+                },
+                {
+                  "option_text": "くすりを のみます。 (Kusuri wo nomimasu.)",
+                  "is_correct": false,
+                  "feedback": "Das heisst 'Ich nehme Medizin'."
+                },
+                {
+                  "option_text": "かぜを ひきました。 (Kaze wo hikimashita.)",
+                  "is_correct": false,
+                  "feedback": "Das heisst 'Ich habe mich erkältet'."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Zusammenfassung",
+      "description": "Was du gelernt hast",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Das hast du gelernt\n\nGlückwunsch! Du kennst jetzt die wichtigsten **Körperteile** und kannst beim Arzt sagen, was dir fehlt.\n\n- **18 neue Vokabeln** vom Kopf (あたま, atama) bis zum Fuss (あし, ashi)\n- die Wendung **「～が いたいです」** (~ga itai desu, 'etwas tut weh')\n- die Frage **「どうしましたか」** (dou shimashita ka, 'Was fehlt Ihnen?')\n\n> Tipp: Benenne morgens beim Waschen jedes Körperteil laut auf Japanisch — so sitzt der Wortschatz schnell.\n\nIn der nächsten Lektion geht es um **Essen und Lebensmittel** — damit deine 「おなか」 (onaka, Bauch) nie mehr knurrt!"
+          }
+        }
+      ]
+    }
+  ],
+  "thumbnail_url": "generated/thumbnail_körper_und_gesundheit.webp"
+}

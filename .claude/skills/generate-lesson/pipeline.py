@@ -146,11 +146,24 @@ def load_canonical(level: int) -> dict:
             f"Aktuell verfuegbar: nur N5. Andere Levels brauchen Manual-Import."
         )
     data = json.loads(path.read_text(encoding="utf-8"))
+
+    # Manche canonical-Eintraege listen Schreibvarianten in EINEM word-Feld,
+    # getrennt durch ';' / '；' / '/' / '・' (z.B. "足; 脚", "川; 河", "丸い; 円い",
+    # "いい; よい"). Beide Varianten sind gueltige N5-Woerter — daher splitten,
+    # damit eine Lesson '足' (statt '足; 脚') als Karteikarten-word nutzen kann.
+    def _word_variants(w: str) -> set[str]:
+        parts = re.split(r"[;；/・]", w or "")
+        return {p.strip() for p in parts if p.strip()}
+
+    vocab_set: set[str] = set()
+    for v in data.get("vocab", []):
+        vocab_set |= _word_variants(v["word"])
+
     cache = {
         "raw": data,
         "vocab_list": data.get("vocab", []),
         "kanji_list": data.get("kanji", []),
-        "vocab_set": {v["word"] for v in data.get("vocab", [])},
+        "vocab_set": vocab_set,
         "vocab_reading_set": {(v["word"], v["reading"]) for v in data.get("vocab", [])},
         "kanji_set": {k["char"] for k in data.get("kanji", [])},
     }

@@ -1,0 +1,772 @@
+{
+  "title": "N5 Farben & Beschreiben — Rot, Blau, Gelb und mehr",
+  "description": "Lerne die wichtigsten Farben auf Japanisch und wie du Dinge mit Adjektiven beschreibst — von rot und blau bis hell und dunkel.",
+  "jlpt_level": 5,
+  "topic": "Farben",
+  "instruction_language": "german",
+  "allow_guest_access": false,
+  "pages": [
+    {
+      "title": "Einführung",
+      "description": "Worum es in dieser Lektion geht",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Farben auf Japanisch",
+            "content_text": "## Farben auf Japanisch\n\nIn dieser Lektion lernst du die wichtigsten **Farben** — von Rot (**あか**, aka) und Blau (**あお**, ao) bis Gelb (**きいろ**, kiiro). Ausserdem lernst du, wie du Dinge mit Adjektiven **beschreibst**.\n\nDas ist im Alltag besonders nützlich:\n\n- beim **Einkaufen** (かいもの, kaimono), wenn du eine bestimmte Farbe suchst\n- um Gegenstände genauer zu beschreiben\n- um zu sagen, ob etwas **hell** (あかるい, akarui) oder **dunkel** (くらい, kurai) ist\n\n> Merke: Viele Farben gibt es als **Nomen** (z.B. あか, aka — 'das Rot') und als **i-Adjektiv** (z.B. あかい, akai — 'rot'). Vor einem Nomen steht das Adjektiv direkt: 「あかい くるま」 (akai kuruma, 'ein rotes Auto')."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln Teil 1 — Grundfarben",
+      "description": "Die wichtigsten Farben als Nomen und Adjektiv",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Teil 1 — Grundfarben\n\nWir beginnen mit den **Grundfarben**. Achte darauf, ob ein Wort ein **Nomen** (あか, aka) oder ein **Adjektiv** (あかい, akai) ist.\n\n- Das **Nomen** nutzt du allein: 「あかが すきです」 (aka ga suki desu, 'Ich mag Rot').\n- Das **Adjektiv** beschreibt ein Nomen: 「あかい はな」 (akai hana, 'eine rote Blume').\n\n> Tipp: Höre dir die Beispielsätze an und sprich sie laut nach."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "色",
+            "reading": "いろ",
+            "romaji": "iro",
+            "meaning": "color",
+            "meaning_de": "Farbe",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "すきな いろは なんですか。",
+            "example_sentence_english": "Suki na iro wa nan desu ka. — Welche Farbe magst du?",
+            "image_url": "vocab_generated/vocab_9122c537.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "青",
+            "reading": "あお",
+            "romaji": "ao",
+            "meaning": "blue (noun)",
+            "meaning_de": "Blau (Nomen)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あおが すきです。",
+            "example_sentence_english": "Ao ga suki desu. — Ich mag Blau.",
+            "image_url": "vocab_generated/vocab_1ca69c4b.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "青い",
+            "reading": "あおい",
+            "romaji": "aoi",
+            "meaning": "blue",
+            "meaning_de": "blau",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あおい そらですね。",
+            "example_sentence_english": "Aoi sora desu ne. — Was für ein blauer Himmel.",
+            "image_url": "vocab_generated/vocab_d0934067.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "赤",
+            "reading": "あか",
+            "romaji": "aka",
+            "meaning": "red (noun)",
+            "meaning_de": "Rot (Nomen)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あかが すきです。",
+            "example_sentence_english": "Aka ga suki desu. — Ich mag Rot.",
+            "image_url": "vocab_generated/vocab_489378dc.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "赤い",
+            "reading": "あかい",
+            "romaji": "akai",
+            "meaning": "red",
+            "meaning_de": "rot",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あかい くるまです。",
+            "example_sentence_english": "Akai kuruma desu. — Das ist ein rotes Auto.",
+            "image_url": "vocab_generated/vocab_9392de98.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "黄色",
+            "reading": "きいろ",
+            "romaji": "kiiro",
+            "meaning": "yellow (noun)",
+            "meaning_de": "Gelb (Nomen)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "きいろが すきです。",
+            "example_sentence_english": "Kiiro ga suki desu. — Ich mag Gelb.",
+            "image_url": "vocab_generated/vocab_ddb86dd3.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "黄色い",
+            "reading": "きいろい",
+            "romaji": "kiiroi",
+            "meaning": "yellow",
+            "meaning_de": "gelb",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "きいろい はなです。",
+            "example_sentence_english": "Kiiroi hana desu. — Das ist eine gelbe Blume.",
+            "image_url": "vocab_generated/vocab_0c84b27b.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "黒",
+            "reading": "くろ",
+            "romaji": "kuro",
+            "meaning": "black (noun)",
+            "meaning_de": "Schwarz (Nomen)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "くろが すきです。",
+            "example_sentence_english": "Kuro ga suki desu. — Ich mag Schwarz.",
+            "image_url": "vocab_generated/vocab_b399eac0.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "黒い",
+            "reading": "くろい",
+            "romaji": "kuroi",
+            "meaning": "black",
+            "meaning_de": "schwarz",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "くろい くるまです。",
+            "example_sentence_english": "Kuroi kuruma desu. — Das ist ein schwarzes Auto.",
+            "image_url": "vocab_generated/vocab_05140971.webp"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln Teil 2 — Weitere Farben und Beschreiben",
+      "description": "Restliche Farben und Beschreibungs-Adjektive",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Teil 2 — Weitere Farben und Beschreiben\n\nJetzt kommen ein paar **weitere Farben** und nützliche **Beschreibungs-Adjektive**: hell, dunkel, rund und niedlich.\n\n> Wichtig: 「**あかるい**」 (akarui) heisst 'hell' und 「**くらい**」 (kurai) heisst 'dunkel'. Diese beiden brauchst du oft, um Räume oder Farben zu beschreiben."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "茶色",
+            "reading": "ちゃいろ",
+            "romaji": "chairo",
+            "meaning": "brown",
+            "meaning_de": "Braun",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ちゃいろの かばんです。",
+            "example_sentence_english": "Chairo no kaban desu. — Das ist eine braune Tasche.",
+            "image_url": "vocab_generated/vocab_d2a7247d.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "緑",
+            "reading": "みどり",
+            "romaji": "midori",
+            "meaning": "green",
+            "meaning_de": "Grün",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "みどりが すきです。",
+            "example_sentence_english": "Midori ga suki desu. — Ich mag Grün.",
+            "image_url": "vocab_generated/vocab_c8f0492c.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "白い",
+            "reading": "しろい",
+            "romaji": "shiroi",
+            "meaning": "white",
+            "meaning_de": "weiss",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "しろい はなです。",
+            "example_sentence_english": "Shiroi hana desu. — Das ist eine weisse Blume.",
+            "image_url": "vocab_generated/vocab_70f14fd2.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "色々",
+            "reading": "いろいろ",
+            "romaji": "iroiro",
+            "meaning": "various, all kinds of",
+            "meaning_de": "verschieden, allerlei",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "いろいろな いろが あります。",
+            "example_sentence_english": "Iroiro na iro ga arimasu. — Es gibt verschiedene Farben.",
+            "image_url": "vocab_generated/vocab_760757ba.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "明るい",
+            "reading": "あかるい",
+            "romaji": "akarui",
+            "meaning": "bright, light",
+            "meaning_de": "hell",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "この へやは あかるいです。",
+            "example_sentence_english": "Kono heya wa akarui desu. — Dieses Zimmer ist hell.",
+            "image_url": "vocab_generated/vocab_eced2ea8.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "暗い",
+            "reading": "くらい",
+            "romaji": "kurai",
+            "meaning": "dark",
+            "meaning_de": "dunkel",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "そとは くらいです。",
+            "example_sentence_english": "Soto wa kurai desu. — Draussen ist es dunkel.",
+            "image_url": "vocab_generated/vocab_a0256100.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "丸い",
+            "reading": "まるい",
+            "romaji": "marui",
+            "meaning": "round",
+            "meaning_de": "rund",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "まるい つきですね。",
+            "example_sentence_english": "Marui tsuki desu ne. — Was für ein runder Mond.",
+            "image_url": "vocab_generated/vocab_38544129.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "可愛い",
+            "reading": "かわいい",
+            "romaji": "kawaii",
+            "meaning": "cute",
+            "meaning_de": "niedlich, süss",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "かわいい いぬですね。",
+            "example_sentence_english": "Kawaii inu desu ne. — Was für ein niedlicher Hund.",
+            "image_url": "vocab_generated/vocab_4b479631.webp"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Grammatik — Farben und Beschreibungen",
+      "description": "Drei Bausteine, um mit Farben zu beschreiben",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Farben und Beschreibungen\n\nMit drei kleinen Bausteinen kannst du Dinge schon genau beschreiben. Achte besonders auf den Unterschied zwischen **i-Adjektiv** und **Farb-Nomen + の** (no).\n\n- **「あかい + Nomen」** (akai + Nomen) — ein i-Adjektiv vor dem Nomen\n- **「Farbnomen + の + Nomen」** (no) — ein Farb-Nomen vor dem Nomen\n- **「あかるい ↔ くらい」** (akarui ↔ kurai) — hell und dunkel"
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "Farbe als i-Adjektiv vor dem Nomen — あかい くるま",
+            "explanation": "Farb-Adjektive wie 「あかい」 (akai, 'rot'), 「あおい」 (aoi, 'blau') und 「くろい」 (kuroi, 'schwarz') enden auf 「い」 (i). Sie stehen direkt vor dem Nomen, ohne weiteres Wort dazwischen. So beschreibst du, welche Farbe ein Gegenstand hat: 「あかい くるま」 (akai kuruma, 'ein rotes Auto').",
+            "structure": "[i-Adjektiv (...い)] + [Nomen] ([i-adjective] + [noun])",
+            "romaji": "[i-adjective] + [noun]",
+            "jlpt_level": 5,
+            "example_sentences": "あかい くるまです。 (Akai kuruma desu.) — Das ist ein rotes Auto.\nあおい そらが すきです。 (Aoi sora ga suki desu.) — Ich mag den blauen Himmel.\nくろい かばんですね。 (Kuroi kaban desu ne.) — Das ist eine schwarze Tasche.",
+            "tts_example_jp": "あかい くるまです。"
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "Farb-Nomen + の + Nomen — あおの ぼうし",
+            "explanation": "Manche Farben benutzt du als Nomen, zum Beispiel 「あお」 (ao, 'Blau') oder 「ちゃいろ」 (chairo, 'Braun'). Um damit ein Nomen zu beschreiben, hängst du die Partikel 「の」 (no) an: 「あおの ぼうし」 (ao no boushi, 'ein blauer Hut'). Bei 「ちゃいろ」 (chairo) und 「みどり」 (midori) geht nur dieser Weg, denn sie haben keine i-Form.",
+            "structure": "[Farb-Nomen] + の + [Nomen] ([color noun] + no + [noun])",
+            "romaji": "[color noun] + no + [noun]",
+            "jlpt_level": 5,
+            "example_sentences": "あおの ぼうしです。 (Ao no boushi desu.) — Das ist ein blauer Hut.\nちゃいろの かばんが すきです。 (Chairo no kaban ga suki desu.) — Ich mag die braune Tasche.\nみどりの くるまですね。 (Midori no kuruma desu ne.) — Das ist ein grünes Auto.",
+            "tts_example_jp": "あおの ぼうしです。"
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "明るい ↔ 暗い — Helligkeit beschreiben",
+            "explanation": "Mit 「あかるい」 (akarui, 'hell') und 「くらい」 (kurai, 'dunkel') beschreibst du, wie hell ein Ort oder eine Farbe ist. Beide sind i-Adjektive und stehen mit 「です」 (desu) am Satzende oder direkt vor einem Nomen: 「あかるい へや」 (akarui heya, 'ein helles Zimmer').",
+            "structure": "[Nomen] + は + あかるい / くらいです ([noun] + wa + akarui / kurai desu)",
+            "romaji": "[noun] + wa + akarui / kurai desu",
+            "jlpt_level": 5,
+            "example_sentences": "この へやは あかるいです。 (Kono heya wa akarui desu.) — Dieses Zimmer ist hell.\nそとは くらいです。 (Soto wa kurai desu.) — Draussen ist es dunkel.\nあかるい いろが すきです。 (Akarui iro ga suki desu.) — Ich mag helle Farben.",
+            "tts_example_jp": "この へやは あかるいです。"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Dialog — Beim Einkaufen",
+      "description": "Aoi und Riku suchen eine Tasche",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Beim Einkaufen — Aoi und Riku suchen eine Tasche",
+            "content_text": "Aoi: この かばん、かわいいですね。\n  (Kono kaban, kawaii desu ne.)\n  -> Diese Tasche ist niedlich, oder?\n\nRiku: そうですね。なにいろが すきですか。\n  (Sou desu ne. Nani iro ga suki desu ka.)\n  -> Stimmt. Welche Farbe magst du?\n\nAoi: あかが すきです。あかい かばんは ありますか。\n  (Aka ga suki desu. Akai kaban wa arimasu ka.)\n  -> Ich mag Rot. Gibt es eine rote Tasche?\n\nRiku: あかは ありません。あおの かばんは あります。\n  (Aka wa arimasen. Ao no kaban wa arimasu.)\n  -> Rot gibt es nicht. Eine blaue Tasche gibt es.\n\nAoi: あおも いいですね。これは あかるいです。\n  (Ao mo ii desu ne. Kore wa akarui desu.)\n  -> Blau ist auch schön. Die hier ist hell.\n\nRiku: はい。この あおい かばんに しましょう。\n  (Hai. Kono aoi kaban ni shimashou.)\n  -> Ja. Nehmen wir diese blaue Tasche.\n\nAoi: ありがとう。\n  (Arigatou.)\n  -> Danke."
+          }
+        },
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "### Verständnisfragen\n\nVier kurze Fragen zum **Dialog** beim Einkaufen. Achte darauf, **wer** was sagt."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welche Farbe mag Aoi am liebsten?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "Sie nennt diese Farbe zuerst.",
+              "explanation": "Aoi sagt 「あかが すきです」 (aka ga suki desu) — sie mag Rot.",
+              "options": [
+                {
+                  "option_text": "Rot (あか, aka)",
+                  "is_correct": true,
+                  "feedback": "Richtig — あかが すきです (aka ga suki desu)."
+                },
+                {
+                  "option_text": "Schwarz (くろ, kuro)",
+                  "is_correct": false,
+                  "feedback": "Schwarz nennt sie nicht."
+                },
+                {
+                  "option_text": "Gelb (きいろ, kiiro)",
+                  "is_correct": false,
+                  "feedback": "Gelb kommt im Dialog nicht vor."
+                },
+                {
+                  "option_text": "Grün (みどり, midori)",
+                  "is_correct": false,
+                  "feedback": "Grün nennt sie nicht."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Es gibt eine rote Tasche (あかい かばん, akai kaban) im Laden.",
+              "difficulty_level": 1,
+              "explanation": "Falsch — Riku sagt 「あかは ありません」 (aka wa arimasen, 'Rot gibt es nicht').",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nein — あかは ありません (aka wa arimasen)."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt — eine rote Tasche gibt es nicht."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welche Tasche nehmen die beiden am Ende?",
+              "difficulty_level": 1,
+              "explanation": "Riku sagt 「この あおい かばんに しましょう」 (kono aoi kaban ni shimashou) — die blaue Tasche.",
+              "options": [
+                {
+                  "option_text": "Die blaue Tasche (あおい かばん, aoi kaban)",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "Die rote Tasche (あかい かばん, akai kaban)",
+                  "is_correct": false,
+                  "feedback": "Eine rote gibt es ja nicht."
+                },
+                {
+                  "option_text": "Die schwarze Tasche (くろい かばん, kuroi kaban)",
+                  "is_correct": false,
+                  "feedback": "Schwarz kommt nicht vor."
+                },
+                {
+                  "option_text": "Die braune Tasche (ちゃいろの かばん, chairo no kaban)",
+                  "is_correct": false,
+                  "feedback": "Braun nennt niemand."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Aoi findet die blaue Tasche hell (あかるい, akarui).",
+              "difficulty_level": 2,
+              "explanation": "Richtig — Aoi sagt 「これは あかるいです」 (kore wa akarui desu, 'die hier ist hell').",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt — これは あかるいです (kore wa akarui desu)."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — sie findet sie あかるい (akarui)."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Übung",
+      "description": "Quiz zu Farben und Beschreiben",
+      "page_type": "quiz_carousel",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Übung\n\nElf Fragen zu **Farben** und **Beschreibungen**.\n\n- Lies jede Frage genau.\n- Achte auf die Lesung in Klammern."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「あか」 (aka)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「あか」 (aka) heisst 'Rot'.",
+              "options": [
+                {
+                  "option_text": "Rot",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "Blau",
+                  "is_correct": false,
+                  "feedback": "Blau wäre あお (ao)."
+                },
+                {
+                  "option_text": "Schwarz",
+                  "is_correct": false,
+                  "feedback": "Schwarz wäre くろ (kuro)."
+                },
+                {
+                  "option_text": "Grün",
+                  "is_correct": false,
+                  "feedback": "Grün wäre みどり (midori)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「あお」 (ao)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「あお」 (ao) heisst 'Blau'.",
+              "options": [
+                {
+                  "option_text": "Blau",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "Gelb",
+                  "is_correct": false,
+                  "feedback": "Gelb wäre きいろ (kiiro)."
+                },
+                {
+                  "option_text": "Braun",
+                  "is_correct": false,
+                  "feedback": "Braun wäre ちゃいろ (chairo)."
+                },
+                {
+                  "option_text": "Weiss",
+                  "is_correct": false,
+                  "feedback": "Weiss wäre しろ (shiro)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「きいろ」 (kiiro)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「きいろ」 (kiiro) heisst 'Gelb'.",
+              "options": [
+                {
+                  "option_text": "Gelb",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "Rot",
+                  "is_correct": false,
+                  "feedback": "Rot wäre あか (aka)."
+                },
+                {
+                  "option_text": "Schwarz",
+                  "is_correct": false,
+                  "feedback": "Schwarz wäre くろ (kuro)."
+                },
+                {
+                  "option_text": "Grün",
+                  "is_correct": false,
+                  "feedback": "Grün wäre みどり (midori)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welches Wort heisst 'hell'?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "「あかるい」 (akarui) heisst 'hell'. Das Gegenteil ist 「くらい」 (kurai, 'dunkel').",
+              "options": [
+                {
+                  "option_text": "明るい (あかるい, akarui)",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "暗い (くらい, kurai)",
+                  "is_correct": false,
+                  "feedback": "Das heisst 'dunkel'."
+                },
+                {
+                  "option_text": "丸い (まるい, marui)",
+                  "is_correct": false,
+                  "feedback": "Das heisst 'rund'."
+                },
+                {
+                  "option_text": "可愛い (かわいい, kawaii)",
+                  "is_correct": false,
+                  "feedback": "Das heisst 'niedlich'."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「くろい」 (kuroi) bedeutet 'weiss'.",
+              "difficulty_level": 1,
+              "explanation": "Falsch — 「くろい」 (kuroi) heisst 'schwarz'. 'Weiss' ist 「しろい」 (shiroi).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nein — くろい (kuroi) = schwarz."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt — くろい (kuroi) = schwarz."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「みどり」 (midori) und 「ちゃいろ」 (chairo) brauchen 「の」 (no) vor einem Nomen.",
+              "difficulty_level": 2,
+              "explanation": "Richtig — diese Farb-Nomen verbindet man mit 「の」 (no): 「みどりの くるま」 (midori no kuruma).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt — z.B. みどりの くるま (midori no kuruma)."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — sie brauchen の (no)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie sagt man 'ein rotes Auto'?",
+              "difficulty_level": 2,
+              "explanation": "「あかい くるま」 (akai kuruma) — das i-Adjektiv steht direkt vor dem Nomen.",
+              "options": [
+                {
+                  "option_text": "あかい くるま (akai kuruma)",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "あかの くるま (aka no kuruma)",
+                  "is_correct": false,
+                  "feedback": "あかい (akai) ist ein i-Adjektiv und braucht kein の (no)."
+                },
+                {
+                  "option_text": "くるま あかい (kuruma akai)",
+                  "is_correct": false,
+                  "feedback": "Das Adjektiv steht vor dem Nomen."
+                },
+                {
+                  "option_text": "あか くるま (aka kuruma)",
+                  "is_correct": false,
+                  "feedback": "Falsch — あか (aka) allein vor dem Nomen geht nicht; richtig ist das i-Adjektiv あかい くるま (akai kuruma)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「いろいろな いろ」 (iroiro na iro)?",
+              "difficulty_level": 2,
+              "explanation": "「いろいろな いろ」 (iroiro na iro) heisst 'verschiedene Farben'.",
+              "options": [
+                {
+                  "option_text": "verschiedene Farben",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "eine helle Farbe",
+                  "is_correct": false,
+                  "feedback": "Das wäre あかるい いろ (akarui iro)."
+                },
+                {
+                  "option_text": "eine runde Farbe",
+                  "is_correct": false,
+                  "feedback": "Das ergibt keinen Sinn — まるい (marui) heisst 'rund'."
+                },
+                {
+                  "option_text": "keine Farbe",
+                  "is_correct": false,
+                  "feedback": "いろいろ (iroiro) heisst 'verschieden'."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde die Farbe mit der deutschen Übersetzung.",
+              "difficulty_level": 2,
+              "options": [
+                {
+                  "option_text": "赤 (aka)",
+                  "feedback": "rot",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "青 (ao)",
+                  "feedback": "blau",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "黄色 (kiiro)",
+                  "feedback": "gelb",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "黒 (kuro)",
+                  "feedback": "schwarz",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde das Wort mit der deutschen Übersetzung.",
+              "difficulty_level": 2,
+              "options": [
+                {
+                  "option_text": "緑 (midori)",
+                  "feedback": "grün",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "茶色 (chairo)",
+                  "feedback": "braun",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "明るい (akarui)",
+                  "feedback": "hell",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "暗い (kurai)",
+                  "feedback": "dunkel",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welcher Satz heisst 'Der Himmel ist blau'?",
+              "difficulty_level": 2,
+              "explanation": "「そらは あおいです」 (sora wa aoi desu) — 'Der Himmel ist blau'.",
+              "options": [
+                {
+                  "option_text": "そらは あおいです。 (Sora wa aoi desu.)",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "くるまは あかいです。 (Kuruma wa akai desu.)",
+                  "is_correct": false,
+                  "feedback": "Das heisst 'Das Auto ist rot'."
+                },
+                {
+                  "option_text": "へやは あかるいです。 (Heya wa akarui desu.)",
+                  "is_correct": false,
+                  "feedback": "Das heisst 'Das Zimmer ist hell'."
+                },
+                {
+                  "option_text": "つきは まるいです。 (Tsuki wa marui desu.)",
+                  "is_correct": false,
+                  "feedback": "Das heisst 'Der Mond ist rund'."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Zusammenfassung",
+      "description": "Was du gelernt hast",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Das hast du gelernt\n\nGlückwunsch! Du kennst jetzt die wichtigsten **Farben** und kannst Dinge mit Adjektiven **beschreiben**.\n\n- **17 neue Vokabeln** von Rot (あか, aka) und Blau (あお, ao) bis hell (あかるい, akarui) und dunkel (くらい, kurai)\n- das **i-Adjektiv vor dem Nomen**: 「あかい くるま」 (akai kuruma, 'ein rotes Auto')\n- das **Farb-Nomen + の**: 「あおの ぼうし」 (ao no boushi, 'ein blauer Hut')\n\n> Tipp: Benenne im Alltag laut die Farbe von Dingen um dich herum auf Japanisch — so sitzt der Wortschatz schnell.\n\nIn der nächsten Lektion geht es um **Kleidung** — dann kannst du sagen, welche Farbe dein Lieblings-T-Shirt hat!"
+          }
+        }
+      ]
+    }
+  ],
+  "thumbnail_url": "generated/thumbnail_farben.webp"
+}

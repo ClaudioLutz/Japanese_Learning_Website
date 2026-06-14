@@ -1,0 +1,786 @@
+{
+  "title": "N5 Essen & Lebensmittel — Mahlzeiten und Geschmack",
+  "description": "Lerne die wichtigsten Wörter rund um Mahlzeiten, Lebensmittel und Geschmack auf Japanisch und wie du beim Kochen darüber sprichst.",
+  "jlpt_level": 5,
+  "topic": "Essen und Lebensmittel",
+  "instruction_language": "german",
+  "allow_guest_access": false,
+  "pages": [
+    {
+      "title": "Einführung",
+      "description": "Worum es in dieser Lektion geht",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Essen auf Japanisch",
+            "content_text": "## Essen auf Japanisch\n\nIn dieser Lektion lernst du die wichtigsten Wörter rund um **Mahlzeiten** und **Lebensmittel** — vom Frühstück (**あさごはん**, asagohan) bis zum Abendessen (**ばんごはん**, bangohan). Ausserdem lernst du, wie du den **Geschmack** beschreibst.\n\nDas ist im Alltag besonders nützlich:\n\n- beim **Kochen** (りょうり, ryouri) mit Freunden\n- wenn du im **Restaurant** (レストラン, resutoran) etwas bestellst\n- um zu sagen, ob etwas **süss** (あまい, amai) oder **scharf** (からい, karai) ist\n\n> Merke: Mit 「**～を たべます**」 (~wo tabemasu) sagst du, dass du etwas isst — zum Beispiel 「ごはんを たべます」 (gohan wo tabemasu, 'ich esse Reis')."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln Teil 1 — Mahlzeiten und Süsses",
+      "description": "Mahlzeiten und süsse Lebensmittel",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Teil 1 — Mahlzeiten und Süsses\n\nWir beginnen mit den **drei Mahlzeiten** und ein paar **süssen** Dingen. Höre dir die Beispielsätze an und sprich sie laut nach.\n\n- Das Wort **ごはん** (gohan) heisst sowohl 'Reis' als auch 'Mahlzeit'.\n- Achte auf die Lesung in Klammern."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "朝御飯",
+            "reading": "あさごはん",
+            "romaji": "asagohan",
+            "meaning": "breakfast",
+            "meaning_de": "Frühstück",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あさごはんを たべます。",
+            "example_sentence_english": "Asagohan wo tabemasu. — Ich esse Frühstück.",
+            "image_url": "vocab_generated/vocab_16503ffd.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "昼御飯",
+            "reading": "ひるごはん",
+            "romaji": "hirugohan",
+            "meaning": "lunch",
+            "meaning_de": "Mittagessen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ひるごはんは そばです。",
+            "example_sentence_english": "Hirugohan wa soba desu. — Das Mittagessen ist Soba.",
+            "image_url": "vocab_generated/vocab_c7ce0877.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "晩御飯",
+            "reading": "ばんごはん",
+            "romaji": "bangohan",
+            "meaning": "dinner",
+            "meaning_de": "Abendessen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ばんごはんを つくります。",
+            "example_sentence_english": "Bangohan wo tsukurimasu. — Ich koche das Abendessen.",
+            "image_url": "vocab_generated/vocab_3b655c02.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "御飯",
+            "reading": "ごはん",
+            "romaji": "gohan",
+            "meaning": "rice, meal",
+            "meaning_de": "Reis, Mahlzeit",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ごはんを たべます。",
+            "example_sentence_english": "Gohan wo tabemasu. — Ich esse Reis.",
+            "image_url": "vocab_generated/vocab_aec8a2f5.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "お菓子",
+            "reading": "おかし",
+            "romaji": "okashi",
+            "meaning": "sweets, snacks",
+            "meaning_de": "Süssigkeiten",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "おかしは あまいです。",
+            "example_sentence_english": "Okashi wa amai desu. — Süssigkeiten sind süss.",
+            "image_url": "vocab_generated/vocab_dfc4079c.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "飴",
+            "reading": "あめ",
+            "romaji": "ame",
+            "meaning": "candy",
+            "meaning_de": "Bonbon",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あめを たべます。",
+            "example_sentence_english": "Ame wo tabemasu. — Ich esse ein Bonbon.",
+            "image_url": "vocab_generated/vocab_2ae49977.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "お酒",
+            "reading": "おさけ",
+            "romaji": "osake",
+            "meaning": "alcohol, sake",
+            "meaning_de": "Alkohol, Sake",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ちちは おさけを のみます。",
+            "example_sentence_english": "Chichi wa osake wo nomimasu. — Mein Vater trinkt Sake.",
+            "image_url": "vocab_generated/vocab_311bf20c.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "砂糖",
+            "reading": "さとう",
+            "romaji": "satou",
+            "meaning": "sugar",
+            "meaning_de": "Zucker",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "さとうは あまいです。",
+            "example_sentence_english": "Satou wa amai desu. — Zucker ist süss.",
+            "image_url": "vocab_generated/vocab_079f0497.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "塩",
+            "reading": "しお",
+            "romaji": "shio",
+            "meaning": "salt",
+            "meaning_de": "Salz",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "しおを いれます。",
+            "example_sentence_english": "Shio wo iremasu. — Ich gebe Salz hinein.",
+            "image_url": "vocab_generated/vocab_62b5d415.webp"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln Teil 2 — Zutaten und Geschmack",
+      "description": "Zutaten, Fleisch und Geschmack",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Teil 2 — Zutaten und Geschmack\n\nJetzt kommen ein paar **Zutaten** zum Kochen, verschiedene **Fleischsorten** und zwei wichtige **Geschmacks-Adjektive**.\n\n> Wichtig: 「**あまい**」 (amai) heisst 'süss' und 「**からい**」 (karai) heisst 'scharf'."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "醤油",
+            "reading": "しょうゆ",
+            "romaji": "shouyu",
+            "meaning": "soy sauce",
+            "meaning_de": "Sojasauce",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "しょうゆを いれます。",
+            "example_sentence_english": "Shouyu wo iremasu. — Ich gebe Sojasauce hinein.",
+            "image_url": "vocab_generated/vocab_9945ff97.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "牛肉",
+            "reading": "ぎゅうにく",
+            "romaji": "gyuuniku",
+            "meaning": "beef",
+            "meaning_de": "Rindfleisch",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ぎゅうにくを たべます。",
+            "example_sentence_english": "Gyuuniku wo tabemasu. — Ich esse Rindfleisch.",
+            "image_url": "vocab_generated/vocab_282ddc87.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "豚肉",
+            "reading": "ぶたにく",
+            "romaji": "butaniku",
+            "meaning": "pork",
+            "meaning_de": "Schweinefleisch",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ぶたにくは おいしいです。",
+            "example_sentence_english": "Butaniku wa oishii desu. — Schweinefleisch ist lecker.",
+            "image_url": "vocab_generated/vocab_e115d0fa.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "鶏肉",
+            "reading": "とりにく",
+            "romaji": "toriniku",
+            "meaning": "chicken (meat)",
+            "meaning_de": "Hühnerfleisch",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "とりにくを かいます。",
+            "example_sentence_english": "Toriniku wo kaimasu. — Ich kaufe Hühnerfleisch.",
+            "image_url": "vocab_generated/vocab_3568fb9b.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "鳥",
+            "reading": "とり",
+            "romaji": "tori",
+            "meaning": "bird, chicken",
+            "meaning_de": "Vogel, Huhn",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "とりが います。",
+            "example_sentence_english": "Tori ga imasu. — Da ist ein Vogel.",
+            "image_url": "vocab_generated/vocab_62e09a03.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "バター",
+            "reading": "バター",
+            "romaji": "bataa",
+            "meaning": "butter",
+            "meaning_de": "Butter",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "パンに バターを ぬります。",
+            "example_sentence_english": "Pan ni bataa wo nurimasu. — Ich streiche Butter aufs Brot.",
+            "image_url": "vocab_generated/vocab_032085db.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "そば",
+            "reading": "そば",
+            "romaji": "soba",
+            "meaning": "soba, buckwheat noodles",
+            "meaning_de": "Soba (Buchweizennudeln)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "そばを たべます。",
+            "example_sentence_english": "Soba wo tabemasu. — Ich esse Soba.",
+            "image_url": "vocab_generated/vocab_ea88ab20.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "甘い",
+            "reading": "あまい",
+            "romaji": "amai",
+            "meaning": "sweet",
+            "meaning_de": "süss",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "この ケーキは あまいです。",
+            "example_sentence_english": "Kono keeki wa amai desu. — Dieser Kuchen ist süss.",
+            "image_url": "vocab_generated/vocab_33b65e59.webp"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "辛い",
+            "reading": "からい",
+            "romaji": "karai",
+            "meaning": "spicy, hot",
+            "meaning_de": "scharf",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "この りょうりは からいです。",
+            "example_sentence_english": "Kono ryouri wa karai desu. — Dieses Gericht ist scharf.",
+            "image_url": "vocab_generated/vocab_80e5e13a.webp"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Grammatik — Essen und Geschmack ausdrücken",
+      "description": "Drei Bausteine fürs Essen",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Essen und Geschmack ausdrücken\n\nMit drei kleinen Bausteinen kannst du übers Essen schon viel sagen. Achte besonders auf die Partikel **「を」** (wo) und die Geschmacks-Adjektive.\n\n- **「あまい・からい」** (amai / karai) — süss / scharf\n- **「～を たべます／のみます」** (~wo tabemasu / nomimasu) — etwas essen / trinken\n- **「あさ・ひる・ばん + ごはん」** (asa / hiru / ban + gohan) — die drei Mahlzeiten"
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "あまい・からい — Geschmack mit i-Adjektiven beschreiben",
+            "explanation": "Mit i-Adjektiven wie 「あまい」 (amai, 'süss') und 「からい」 (karai, 'scharf') beschreibst du den Geschmack. Du hängst einfach 「です」 (desu) an: 「あまいです」 (amai desu) oder 「からいです」 (karai desu). Vor einem Nomen stehen sie direkt davor, zum Beispiel 「あまい ケーキ」 (amai keeki, 'süsser Kuchen').",
+            "structure": "[Nomen] + は + あまいです／からいです ([noun] + wa + amai desu / karai desu)",
+            "romaji": "[noun] + wa + amai desu / karai desu",
+            "jlpt_level": 5,
+            "example_sentences": "この ケーキは あまいです。 (Kono keeki wa amai desu.) — Dieser Kuchen ist süss.\nこの りょうりは からいです。 (Kono ryouri wa karai desu.) — Dieses Gericht ist scharf.\nさとうは あまいです。 (Satou wa amai desu.) — Zucker ist süss.",
+            "tts_example_jp": "この ケーキは あまいです。"
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "～を たべます／のみます — Objekt mit を beim Essen",
+            "explanation": "Die Partikel 「を」 (wo) markiert das Objekt einer Handlung. Beim Essen benutzt du 「たべます」 (tabemasu, 'essen') und beim Trinken 「のみます」 (nomimasu, 'trinken'). Vor 「を」 (wo) steht, was du isst oder trinkst.",
+            "structure": "[Essen] + を + たべます ／ [Getränk] + を + のみます ([food] + wo + tabemasu / [drink] + wo + nomimasu)",
+            "romaji": "[food] + wo + tabemasu / [drink] + wo + nomimasu",
+            "jlpt_level": 5,
+            "example_sentences": "ごはんを たべます。 (Gohan wo tabemasu.) — Ich esse Reis.\nぎゅうにくを たべます。 (Gyuuniku wo tabemasu.) — Ich esse Rindfleisch.\nおさけを のみます。 (Osake wo nomimasu.) — Ich trinke Sake.",
+            "tts_example_jp": "ごはんを たべます。"
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "あさ・ひる・ばん + ごはん — die drei Mahlzeiten benennen",
+            "explanation": "Die drei Mahlzeiten bildest du, indem du 「あさ」 (asa, 'Morgen'), 「ひる」 (hiru, 'Mittag') oder 「ばん」 (ban, 'Abend') vor 「ごはん」 (gohan, 'Reis, Mahlzeit') setzt: 「あさごはん」 (asagohan, 'Frühstück'), 「ひるごはん」 (hirugohan, 'Mittagessen') und 「ばんごはん」 (bangohan, 'Abendessen').",
+            "structure": "あさ／ひる／ばん + ごはん (asa / hiru / ban + gohan)",
+            "romaji": "asa / hiru / ban + gohan",
+            "jlpt_level": 5,
+            "example_sentences": "あさごはんを たべます。 (Asagohan wo tabemasu.) — Ich esse Frühstück.\nひるごはんは そばです。 (Hirugohan wa soba desu.) — Das Mittagessen ist Soba.\nばんごはんを つくります。 (Bangohan wo tsukurimasu.) — Ich koche das Abendessen.",
+            "tts_example_jp": "あさごはんを たべます。"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Dialog — Abendessen kochen",
+      "description": "Yuki und Ken kochen zusammen",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Abendessen kochen — Yuki und Ken in der Küche",
+            "content_text": "Yuki: ケン、ばんごはんを つくりましょう。\n  (Ken, bangohan wo tsukurimashou.)\n  -> Ken, lass uns das Abendessen kochen.\n\nKen: いいですね。ぎゅうにくが ありますよ。\n  (Ii desu ne. Gyuuniku ga arimasu yo.)\n  -> Gute Idee. Wir haben Rindfleisch.\n\nYuki: じゃあ、しょうゆと さとうを いれます。\n  (Jaa, shouyu to satou wo iremasu.)\n  -> Dann gebe ich Sojasauce und Zucker hinein.\n\nKen: あまいですか。からいですか。\n  (Amai desu ka. Karai desu ka.)\n  -> Wird es süss? Oder scharf?\n\nYuki: ちょっと あまいです。とても おいしいですよ。\n  (Chotto amai desu. Totemo oishii desu yo.)\n  -> Ein bisschen süss. Es wird sehr lecker.\n\nKen: ごはんも たべますか。\n  (Gohan mo tabemasu ka.)\n  -> Essen wir auch Reis?\n\nYuki: はい、ごはんを たべましょう。\n  (Hai, gohan wo tabemashou.)\n  -> Ja, lass uns Reis essen."
+          }
+        },
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "### Verständnisfragen\n\nVier kurze Fragen zum **Dialog** in der Küche. Achte darauf, **wer** was sagt."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welches Fleisch haben Yuki und Ken zu Hause?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "Ken nennt es ganz am Anfang.",
+              "explanation": "Ken sagt 「ぎゅうにくが ありますよ」 (gyuuniku ga arimasu yo) — Rindfleisch.",
+              "options": [
+                {
+                  "option_text": "Rindfleisch (ぎゅうにく, gyuuniku)",
+                  "is_correct": true,
+                  "feedback": "Richtig — Ken nennt ぎゅうにく (gyuuniku)."
+                },
+                {
+                  "option_text": "Schweinefleisch (ぶたにく, butaniku)",
+                  "is_correct": false,
+                  "feedback": "Das wäre ぶたにく (butaniku), das sagt Ken nicht."
+                },
+                {
+                  "option_text": "Hühnerfleisch (とりにく, toriniku)",
+                  "is_correct": false,
+                  "feedback": "Das wäre とりにく (toriniku), kommt im Dialog nicht vor."
+                },
+                {
+                  "option_text": "Soba (そば, soba)",
+                  "is_correct": false,
+                  "feedback": "そば (soba) ist kein Fleisch."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Yuki gibt Sojasauce (しょうゆ, shouyu) und Zucker (さとう, satou) hinein.",
+              "difficulty_level": 1,
+              "explanation": "Ja — Yuki sagt 「しょうゆと さとうを いれます」 (shouyu to satou wo iremasu).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt — しょうゆと さとう (shouyu to satou)."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — Yuki nennt しょうゆ (shouyu) und さとう (satou)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie schmeckt das Gericht laut Yuki?",
+              "difficulty_level": 1,
+              "explanation": "Yuki sagt 「ちょっと あまいです」 (chotto amai desu) — ein bisschen süss.",
+              "options": [
+                {
+                  "option_text": "Ein bisschen süss (あまい, amai)",
+                  "is_correct": true,
+                  "feedback": "Richtig — ちょっと あまいです (chotto amai desu)."
+                },
+                {
+                  "option_text": "Sehr scharf (からい, karai)",
+                  "is_correct": false,
+                  "feedback": "Scharf (からい, karai) sagt Yuki nicht."
+                },
+                {
+                  "option_text": "Salzig",
+                  "is_correct": false,
+                  "feedback": "Davon ist im Dialog keine Rede."
+                },
+                {
+                  "option_text": "Bitter",
+                  "is_correct": false,
+                  "feedback": "Bitter kommt nicht vor."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Am Ende essen die beiden auch Reis (ごはん, gohan).",
+              "difficulty_level": 2,
+              "explanation": "Richtig — Yuki sagt 「ごはんを たべましょう」 (gohan wo tabemashou, 'lass uns Reis essen').",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt — ごはんを たべましょう (gohan wo tabemashou)."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — Yuki schlägt vor, ごはん (gohan) zu essen."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Übung",
+      "description": "Quiz zu Essen und Lebensmitteln",
+      "page_type": "quiz_carousel",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Übung\n\nElf Fragen zu **Essen** und **Geschmack**.\n\n- Lies jede Frage genau.\n- Achte auf die Lesung in Klammern."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「あさごはん」 (asagohan)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「あさごはん」 (asagohan) heisst 'Frühstück'.",
+              "options": [
+                {
+                  "option_text": "Frühstück",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "Mittagessen",
+                  "is_correct": false,
+                  "feedback": "Mittagessen wäre ひるごはん (hirugohan)."
+                },
+                {
+                  "option_text": "Abendessen",
+                  "is_correct": false,
+                  "feedback": "Abendessen wäre ばんごはん (bangohan)."
+                },
+                {
+                  "option_text": "Süssigkeiten",
+                  "is_correct": false,
+                  "feedback": "Süssigkeiten wären おかし (okashi)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「しお」 (shio)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「しお」 (shio) heisst 'Salz'.",
+              "options": [
+                {
+                  "option_text": "Salz",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "Zucker",
+                  "is_correct": false,
+                  "feedback": "Zucker wäre さとう (satou)."
+                },
+                {
+                  "option_text": "Sojasauce",
+                  "is_correct": false,
+                  "feedback": "Sojasauce wäre しょうゆ (shouyu)."
+                },
+                {
+                  "option_text": "Butter",
+                  "is_correct": false,
+                  "feedback": "Butter wäre バター (bataa)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「ぎゅうにく」 (gyuuniku)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「ぎゅうにく」 (gyuuniku) heisst 'Rindfleisch'.",
+              "options": [
+                {
+                  "option_text": "Rindfleisch",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "Schweinefleisch",
+                  "is_correct": false,
+                  "feedback": "Schweinefleisch wäre ぶたにく (butaniku)."
+                },
+                {
+                  "option_text": "Hühnerfleisch",
+                  "is_correct": false,
+                  "feedback": "Hühnerfleisch wäre とりにく (toriniku)."
+                },
+                {
+                  "option_text": "Bonbon",
+                  "is_correct": false,
+                  "feedback": "Bonbon wäre あめ (ame)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welches Wort heisst 'süss'?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "「あまい」 (amai) heisst 'süss'. Vorsicht: 「からい」 (karai) ist 'scharf'.",
+              "options": [
+                {
+                  "option_text": "甘い (あまい, amai)",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "辛い (からい, karai)",
+                  "is_correct": false,
+                  "feedback": "Das heisst 'scharf'."
+                },
+                {
+                  "option_text": "塩 (しお, shio)",
+                  "is_correct": false,
+                  "feedback": "Das ist 'Salz'."
+                },
+                {
+                  "option_text": "砂糖 (さとう, satou)",
+                  "is_correct": false,
+                  "feedback": "Das ist 'Zucker'."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「からい」 (karai) bedeutet 'süss'.",
+              "difficulty_level": 1,
+              "explanation": "Falsch — 「からい」 (karai) heisst 'scharf'. 'süss' ist 「あまい」 (amai).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nein — からい (karai) = scharf."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt — からい (karai) = scharf."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Mit der Partikel 「を」 (wo) markiert man, was man isst, zum Beispiel 「ごはんを たべます」 (gohan wo tabemasu).",
+              "difficulty_level": 1,
+              "explanation": "Richtig — 「を」 (wo) markiert das Objekt: 「ごはんを たべます」 (gohan wo tabemasu, 'ich esse Reis').",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt!"
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — を (wo) markiert das Objekt."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie sagt man 'Ich trinke Sake'?",
+              "difficulty_level": 2,
+              "explanation": "「おさけを のみます」 (osake wo nomimasu) heisst 'Ich trinke Sake'. Trinken ist のみます (nomimasu).",
+              "options": [
+                {
+                  "option_text": "おさけを のみます。 (Osake wo nomimasu.)",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "おさけを たべます。 (Osake wo tabemasu.)",
+                  "is_correct": false,
+                  "feedback": "たべます (tabemasu) ist 'essen', nicht 'trinken'."
+                },
+                {
+                  "option_text": "ごはんを たべます。 (Gohan wo tabemasu.)",
+                  "is_correct": false,
+                  "feedback": "Das heisst 'Ich esse Reis'."
+                },
+                {
+                  "option_text": "あめを たべます。 (Ame wo tabemasu.)",
+                  "is_correct": false,
+                  "feedback": "Das heisst 'Ich esse ein Bonbon'."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet der Satz 「この ケーキは あまいです」 (kono keeki wa amai desu)?",
+              "difficulty_level": 2,
+              "explanation": "「この ケーキは あまいです」 (kono keeki wa amai desu) heisst 'Dieser Kuchen ist süss'.",
+              "options": [
+                {
+                  "option_text": "Dieser Kuchen ist süss.",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "Dieses Gericht ist scharf.",
+                  "is_correct": false,
+                  "feedback": "Das wäre この りょうりは からいです (kono ryouri wa karai desu)."
+                },
+                {
+                  "option_text": "Ich esse Reis.",
+                  "is_correct": false,
+                  "feedback": "Das wäre ごはんを たべます (gohan wo tabemasu)."
+                },
+                {
+                  "option_text": "Ich koche das Abendessen.",
+                  "is_correct": false,
+                  "feedback": "Das wäre ばんごはんを つくります (bangohan wo tsukurimasu)."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde das japanische Wort mit der deutschen Übersetzung.",
+              "difficulty_level": 2,
+              "options": [
+                {
+                  "option_text": "牛肉 (gyuuniku)",
+                  "feedback": "Rindfleisch",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "豚肉 (butaniku)",
+                  "feedback": "Schweinefleisch",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "鶏肉 (toriniku)",
+                  "feedback": "Hühnerfleisch",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "鳥 (tori)",
+                  "feedback": "Vogel, Huhn",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde das japanische Wort mit der deutschen Übersetzung.",
+              "difficulty_level": 2,
+              "options": [
+                {
+                  "option_text": "砂糖 (satou)",
+                  "feedback": "Zucker",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "塩 (shio)",
+                  "feedback": "Salz",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "醤油 (shouyu)",
+                  "feedback": "Sojasauce",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "バター (bataa)",
+                  "feedback": "Butter",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welcher Satz heisst 'Ich koche das Abendessen'?",
+              "difficulty_level": 2,
+              "explanation": "「ばんごはんを つくります」 (bangohan wo tsukurimasu) — 'Ich koche das Abendessen'.",
+              "options": [
+                {
+                  "option_text": "ばんごはんを つくります。 (Bangohan wo tsukurimasu.)",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "あさごはんを たべます。 (Asagohan wo tabemasu.)",
+                  "is_correct": false,
+                  "feedback": "Das heisst 'Ich esse Frühstück'."
+                },
+                {
+                  "option_text": "そばを たべます。 (Soba wo tabemasu.)",
+                  "is_correct": false,
+                  "feedback": "Das heisst 'Ich esse Soba'."
+                },
+                {
+                  "option_text": "おさけを のみます。 (Osake wo nomimasu.)",
+                  "is_correct": false,
+                  "feedback": "Das heisst 'Ich trinke Sake'."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Zusammenfassung",
+      "description": "Was du gelernt hast",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Das hast du gelernt\n\nGlückwunsch! Du kennst jetzt die wichtigsten Wörter rund um **Essen** und kannst über **Mahlzeiten** und **Geschmack** sprechen.\n\n- **18 neue Vokabeln** vom Frühstück (あさごはん, asagohan) bis zum Geschmack (あまい, amai)\n- die Wendung **「～を たべます／のみます」** (~wo tabemasu / nomimasu, 'etwas essen / trinken')\n- die **drei Mahlzeiten** あさごはん・ひるごはん・ばんごはん (asagohan / hirugohan / bangohan)\n\n> Tipp: Sag beim nächsten Essen laut auf Japanisch, was du isst — 「ごはんを たべます」 (gohan wo tabemasu) — so sitzt der Wortschatz schnell.\n\nIn der nächsten Lektion geht es weiter — guten Appetit, 「いただきます」 (itadakimasu)!"
+          }
+        }
+      ]
+    }
+  ],
+  "thumbnail_url": "generated/thumbnail_essen_und_lebensmittel.webp"
+}
