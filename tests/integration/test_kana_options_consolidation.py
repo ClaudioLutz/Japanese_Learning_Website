@@ -37,7 +37,9 @@ class TestConsolidatedScopeOnPracticeKana:
 
 
 class TestOtherStormSurfacesUnchanged:
-    """Vollbild-Storm + Startseite behalten ihre EIGENEN Picker (kein Shared-Scope)."""
+    """Vollbild-Storm + /daily behalten ihre EIGENEN Picker (kein Shared-Scope).
+    Die Startseite teilt seit 2026-06-14 ebenfalls den Scope (beide Spiele via
+    Umschalter) — siehe test_homepage_storm_uses_shared_scope."""
 
     def test_fullscreen_storm_keeps_own_pickers(self, client, db):
         body = client.get('/practice/kana/storm').get_data(as_text=True)
@@ -46,10 +48,16 @@ class TestOtherStormSurfacesUnchanged:
         assert '@click="setSchrift(' in body
         assert 'kana-setup__scope' not in body
 
-    def test_homepage_storm_keeps_own_pickers(self, client, db):
+    def test_homepage_storm_uses_shared_scope(self, client, db):
+        # Die Startseite bietet jetzt BEIDE Spiele (Storm + Zuordnung) ueber einen
+        # Umschalter mit GETEILTEM Scope ($store.kanaScope) — der Storm-interne
+        # Schrift-Picker ist dort ausgeblendet (scope_external), wie /practice/kana.
         body = client.get('/').get_data(as_text=True)
-        assert '@click="setSchrift(' in body
-        assert 'kana-setup__scope' not in body
+        assert 'scopeExternal: true' in body
+        assert '$store.kanaScope' in body
+        # Kein Storm-interner Schrift-Picker auf der Startseite (der geteilte Scope
+        # nutzt @click="$store.kanaScope.setSchrift(, nicht @click="setSchrift().
+        assert '@click="setSchrift(' not in body
 
 
 class TestStormPlayHidesChrome:

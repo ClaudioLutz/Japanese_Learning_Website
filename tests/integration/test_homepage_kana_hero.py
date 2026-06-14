@@ -1,12 +1,13 @@
 # tests/integration/test_homepage_kana_hero.py
-"""Integration-Tests fuer den Gast-Hero der Startseite (Kana-Spiel als Hero).
+"""Integration-Tests fuer den Gast-Hero der Startseite (Kana-Spiele als Hero).
 
-Stand 2026-06-13: **Kana Storm** (inline, KEIN iframe) ist fuer Gaeste das
-Hero-Spiel — es hat das fruehere Zuordnungs-Embed (kanaEmbedHost/iframe) als
-Hero ersetzt. Das Zuordnungs-Spiel bleibt unter /practice/kana erreichbar
-(Tages-Challenge / Lesen-Modus dort). Pitch/USP/Trust sind SSR in die Sektion
-"Vom Spiel zum System" gewandert. Eingeloggte behalten ihren personalisierten
-Hero ohne Spiel-Embed.
+Stand 2026-06-14: Der Gast-Hero bietet BEIDE Kana-Spiele (inline, KEIN iframe)
+ueber einen Umschalter [Kana Storm | Zuordnung] mit GETEILTEM Scope
+($store.kanaScope), genau wie /practice/kana. Storm spielt inline; Zuordnung
+zeigt ein kompaktes Setup und startet das Spiel im Vollbild (/practice/kana/spiel).
+Das fruehere iframe-Embed (kanaEmbedHost) ist raus. Pitch/USP/Trust sind SSR in
+die Sektion "Vom Spiel zum System" gewandert. Eingeloggte behalten ihren
+personalisierten Hero ohne Spiel-Embed.
 """
 
 
@@ -17,18 +18,23 @@ class TestGuestHero:
 
     def test_storm_is_hero_element(self, client, db):
         body = client.get('/').get_data(as_text=True)
-        # Kana Storm ist der Gast-Hero — inline (kein iframe), eigene Komponente.
-        # Die Komponente bekommt jetzt Optionen (initialTab) → 'kanaStormGame(' statt '()'.
+        # Der Gast-Hero bietet BEIDE Kana-Spiele ueber einen Umschalter
+        # [Kana Storm | Zuordnung] mit GETEILTEM Scope ($store.kanaScope),
+        # genau wie /practice/kana. Storm spielt inline (kein iframe).
         assert 'kanaStormGame(' in body
         assert 'class="kstorm-hero"' in body
         assert 'kana_storm.js' in body
-        # Storm-Steuerung im Hero: glyph-forward Schrift-Picker + Reihen-Pills (SSR)
-        assert 'setSchrift(' in body
-        assert 'kstorm__pick' in body          # Glyph-Picker (あ/ア/あア)
-        assert 'kstorm__chip' in body
-        assert "toggleRow('k')" in body
-        # Optionen sind hinter einem Disclosure eingeklappt
-        assert 'kstorm__opt-toggle' in body
+        # Geteilter Scope (Schrift-Chips + Reihen-Pills), an den Store gebunden.
+        assert 'kana-hero-scope' in body
+        assert '$store.kanaScope.setSchrift(' in body
+        assert '$store.kanaScope.toggleRow(' in body
+        assert 'kana_scope_store.js' in body
+        # Spiel-Umschalter + kompaktes Matching-Setup (startet das Spiel im Vollbild).
+        assert 'kana-hero-tabs' in body
+        assert 'kana-hero-match' in body
+        assert 'kanaSettings()' in body
+        # Storm liest den geteilten Scope (interne Picker ausgeblendet).
+        assert 'scopeExternal: true' in body
 
     def test_daily_tab_in_hero(self, client, db):
         # Der Daily-Tab (Wordle-artige Tageschallenge) ist im Hero erreichbar (SSR).
@@ -42,8 +48,11 @@ class TestGuestHero:
         # Das fruehere Zuordnungs-Embed ist als Hero RAUS
         assert 'x-data="kanaEmbedHost(' not in body
         assert '/practice/kana/embed' not in body
-        # Zuordnungs-Spiel bleibt vom Hero aus verlinkt
-        assert 'Zum Zuordnungs-Spiel' in body
+        # Das Zuordnungs-Spiel ist jetzt ein gleichwertiger Tab im Hero (kein
+        # blosser "Zum Zuordnungs-Spiel"-Link mehr).
+        assert 'Zum Zuordnungs-Spiel' not in body
+        assert 'kana-hero-tabs' in body
+        assert 'Zuordnung' in body
         # H1 traegt weiter den Query-Match "Hiragana lernen"
         assert 'Hiragana lernen' in body
 
