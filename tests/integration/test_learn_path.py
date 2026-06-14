@@ -135,6 +135,71 @@ class TestModuleDetailRoute:
         assert "Du bist Admin" in body
 
 
+# ── 10.3: Bundle-CTA-Gating in module_detail ────────────────
+
+def _module_with_two_paid(slug):
+    """Modul mit 2 paid-Lektionen (>1 → keine Single-Lesson-Weiterleitung)."""
+    mod = _make_module(slug, jlpt_level=5, display_order=1, name=f"Modul {slug}")
+    db.session.flush()
+    LessonFactory(category_id=mod.id, is_published=True,
+                  instruction_language="german", price=5.0, is_purchasable=True,
+                  order_index=1, title=f"{slug}-1")
+    LessonFactory(category_id=mod.id, is_published=True,
+                  instruction_language="german", price=5.0, is_purchasable=True,
+                  order_index=2, title=f"{slug}-2")
+    db.session.commit()
+    return mod
+
+
+def _make_bundle_course():
+    from app.models import Course
+    from app.services.bundle_service import N5_BUNDLE_TITLE
+    course = Course(title=N5_BUNDLE_TITLE, description="x", is_published=False,
+                    is_purchasable=True, price=9.90)
+    db.session.add(course)
+    db.session.commit()
+    return course
+
+
+class TestModuleDetailBundleGating:
+    """10.3: Der Bundle-CTA in module_detail haengt an show_bundle_hint —
+    Nicht-Besitzer sehen ihn, Besitzer/Admins nicht."""
+
+    def test_guest_sees_bundle_cta(self, client, app_context):
+        """Gast (show_bundle_hint=True) sieht den Bundle-CTA bei paid-Lektionen."""
+        _module_with_two_paid("paid-mod-guest")
+        db.session.commit()
+        body = client.get("/learn/n5/paid-mod-guest").data.decode("utf-8")
+        assert "Teil von N5 Komplett" in body
+
+    def test_free_user_sees_bundle_cta(self, auth_client):
+        """Free-User ohne Bundle-Kauf (show_bundle_hint=True) sieht den CTA."""
+        client, user = auth_client
+        _module_with_two_paid("paid-mod-free")
+        db.session.commit()
+        body = client.get("/learn/n5/paid-mod-free").data.decode("utf-8")
+        assert "Teil von N5 Komplett" in body
+
+    def test_bundle_owner_does_not_see_cta(self, auth_client):
+        """Bundle-Besitzer (show_bundle_hint=False) sieht den CTA NICHT."""
+        from tests.factories import CoursePurchaseFactory
+        client, user = auth_client
+        _module_with_two_paid("paid-mod-owner")
+        course = _make_bundle_course()
+        CoursePurchaseFactory(user_id=user.id, course_id=course.id)
+        db.session.commit()
+        body = client.get("/learn/n5/paid-mod-owner").data.decode("utf-8")
+        assert "Teil von N5 Komplett" not in body
+
+    def test_admin_does_not_see_cta(self, admin_client):
+        """Admin (show_bundle_hint=False) sieht den CTA NICHT."""
+        client, admin = admin_client
+        _module_with_two_paid("paid-mod-admin")
+        db.session.commit()
+        body = client.get("/learn/n5/paid-mod-admin").data.decode("utf-8")
+        assert "Teil von N5 Komplett" not in body
+
+
 class TestModuleUnlockLogic:
     def test_module_without_prereq_always_unlocked(self, app_context):
         """Modul ohne prerequisite ist immer freigeschaltet."""

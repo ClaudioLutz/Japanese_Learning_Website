@@ -64,6 +64,12 @@ class TestGuestHero:
         # 10.3: Bundle-Link aus der Hero-Aktionszeile entfernt (Dublette des
         # Bundle-Banners weiter unten) — Hero traegt nur noch den Gratis-Einstieg.
         assert 'Kostenlos starten' in body                    # Aktionszeile (Gratis-CTA)
+        # NEGATIV: die entfernte Hero-Dublette darf NICHT mehr da sein. Der exakte
+        # Link-Text "N5 Komplett · CHF 9.90" stand nur in der Hero-Aktionszeile
+        # (das Bundle-Banner weiter unten formuliert anders), ebenso die direkt
+        # daran haengende "30 Tage Geld zurück · Lifetime"-Note (<p home-bundle-note>).
+        assert 'N5 Komplett · CHF 9.90' not in body
+        assert '<p class="home-bundle-note">' not in body
 
     def test_meta_description_hat_spiel_hook(self, client, db):
         body = client.get('/').get_data(as_text=True)
