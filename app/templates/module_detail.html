@@ -228,7 +228,10 @@
     </a>
   {% endif %}
 
-  {% if paid_count > 0 and not bundle_owned %}
+  {# 10.3: zusaetzlich unter show_bundle_hint gaten — Besitzer/Admins sehen den
+     Hinweis nicht (show_bundle_hint deckt das ab; not bundle_owned bleibt als
+     defensiver Zusatz-Guard). #}
+  {% if show_bundle_hint and paid_count > 0 and not bundle_owned %}
   <div class="bundle-cta-bottom">
     <h3>⚡ {{ paid_count }} {{ 'Lektion ist' if paid_count == 1 else 'Lektionen sind' }} Teil von N5 Komplett</h3>
     <p>Ein einmaliger Kauf schaltet alle {{ paid_count }} Bundle-{{ 'Lektion' if paid_count == 1 else 'Lektionen' }} dieses Moduls und alle anderen N5-Inhalte frei.</p>

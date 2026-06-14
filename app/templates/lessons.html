@@ -124,7 +124,8 @@
       {% else %}
       <a href="{{ url_for('routes.register') }}" class="lp-continue-cta">Kostenlos starten →</a>
       {% endif %}
-      <a href="{{ url_for('bundle.n5_bundle') }}" class="lp-hero-secondary">Alles freischalten · CHF 9.90</a>
+      {# 10.3: Bundle-Link im Hero entfernt — Dublette des lessons-Bundle-Banners
+         weiter unten (eine gegatete Bundle-Stelle pro Hauptflaeche). #}
     </div>
   </header>
   {% endif %}

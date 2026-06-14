@@ -52,19 +52,12 @@
   </section>
   {% endif %}
 
-  {# ── BUNDLE-CTA ─────────────────────────────────────────── #}
-  {% if show_bundle_hint %}
-  <div class="bundle-hint" role="region" aria-label="N5 Komplett — Bundle-Hinweis">
-    <div class="bundle-hint-icon">⚡</div>
-    <div class="bundle-hint-text">
-      <strong>Tipp:</strong> Mit <a href="{{ url_for('bundle.n5_bundle') }}">N5 Komplett</a>
-      schaltest du alle Lektionen ab Tag 1 frei — einmalig <strong>CHF 9.90</strong>,
-      Lifetime-Zugriff, 30 Tage Geld zurück.
-      <a href="{{ url_for('routes.jlpt_n5_schweiz') }}">JLPT N5 in der Schweiz ablegen? →</a>
-    </div>
-    <a href="{{ url_for('bundle.n5_bundle') }}" class="bundle-hint-cta">Anschauen →</a>
-  </div>
-  {% endif %}
+  {# 10.3: Bundle-Banner entfernt — Dublette des lessons-Katalog-Hinweises
+     (der N5-Hub verlinkt ohnehin auf /lessons, wo der gegatete Bundle-Hinweis
+     steht). Der interne SEO-Link auf die Schweiz-Landingpage bleibt erhalten. #}
+  <p class="n5-hub-seo-link">
+    <a href="{{ url_for('routes.jlpt_n5_schweiz') }}">JLPT N5 in der Schweiz ablegen? →</a>
+  </p>
 
   {# ── MODUL-PFAD nach den 3 didaktischen Gruppen ─────────── #}
   {% if not n5_modules %}

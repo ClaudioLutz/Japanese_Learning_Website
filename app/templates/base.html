@@ -226,12 +226,8 @@
                 <a href="{{ url_for('srs.browse_page') }}" class="topnav-dd-item">
                   <i class="fas fa-th-list" aria-hidden="true"></i> Stöbern
                 </a>
-                {# N5 Komplett — auf Mobile hier (kein Burger fuer Eingeloggte); nur Nicht-Besitzer #}
-                {% if show_bundle_hint %}
-                <a href="{{ url_for('bundle.n5_bundle') }}" class="topnav-dd-item topnav-dd-mobile">
-                  <i class="fas fa-bolt" aria-hidden="true"></i> N5 Komplett
-                </a>
-                {% endif %}
+                {# 10.3: Bundle-Link im Konto-Dropdown entfernt — Dublette des
+                   Top-Nav-Hinweises (eine gegatete Bundle-Stelle pro Flaeche). #}
                 {% if current_user.is_admin %}
                 <div class="topnav-dd-divider"></div>
                 <a href="{{ url_for('routes.admin_index') }}" class="topnav-dd-item">

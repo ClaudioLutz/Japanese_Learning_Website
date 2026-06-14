@@ -120,16 +120,12 @@
 
         {# ── Aktionszeile (unterhalb der Bruecke; im Fold bleibt das Spiel
              der einzige Shu-Traeger) ── #}
+        {# 10.3: Bundle-Link (+ zugehoerige Lifetime/Geld-zurueck-Note) aus der
+           Hero-Aktionszeile entfernt — Dublette des index-Bundle-Banners weiter
+           unten. Hero traegt nur noch den Gratis-Einstieg. #}
         <div class="home-actions home-actions--bridge">
           <a href="{{ guest_lesson_url }}" class="btn-shu">Kostenlos starten</a>
-          <a href="{{ url_for('bundle.n5_bundle') }}" class="btn-ghost-jp">
-            N5 Komplett · CHF 9.90
-          </a>
         </div>
-        <p class="home-bundle-note">
-          <i class="fas fa-rotate-left" aria-hidden="true"></i>
-          30 Tage Geld zurück · Lifetime-Zugriff, kein Abo
-        </p>
         <div class="home-actions-secondary">
           <a href="{{ url_for('routes.lessons', access='free') }}" class="home-secondary-link">
             Alle Lektionen ansehen →

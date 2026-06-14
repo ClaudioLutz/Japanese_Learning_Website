@@ -61,7 +61,9 @@ class TestGuestHero:
         assert 'Japanisch lernen mit System' in body          # H2 der Vom-Spiel-Sektion
         assert 'Strikt nach offizieller JLPT-N5-Liste' in body  # Trust-Block
         assert 'Dein Weg in 3 Schritten' in body              # Bruecken-Leiste
-        assert 'N5 Komplett · CHF 9.90' in body               # Aktionszeile
+        # 10.3: Bundle-Link aus der Hero-Aktionszeile entfernt (Dublette des
+        # Bundle-Banners weiter unten) — Hero traegt nur noch den Gratis-Einstieg.
+        assert 'Kostenlos starten' in body                    # Aktionszeile (Gratis-CTA)
 
     def test_meta_description_hat_spiel_hook(self, client, db):
         body = client.get('/').get_data(as_text=True)
