@@ -91,3 +91,91 @@ class TestStreakTimezone:
 
         expected = datetime.now(ZoneInfo("Europe/Zurich")).date()
         assert user.last_activity_date == expected
+
+
+# ── 10.8: Tagesgrenzen-Vereinheitlichung (Strategie C) ──────────
+
+class _FrozenLateEvening(datetime):
+    """Frozen-Clock fuer time_utils: 23:30 CH am 2. Juni 2026 (Sommer, UTC+2)
+    = 21:30 UTC am 2. Juni. CH-Datum und UTC-Datum sind hier GLEICH (2. Juni) —
+    die Tageskonsistenz muss trotzdem zwischen allen Grenzen halten. Zusaetzlich
+    deckt _FrozenDatetime (00:30 CH) den Fall ab, wo die Daten auseinanderfallen.
+
+    Subklasse von datetime, damit Konstruktor-Aufrufe (datetime(...)) in
+    ch_day_start_utc weiterhin funktionieren — nur now() ist eingefroren.
+    """
+    _ch = datetime(2026, 6, 2, 23, 30, tzinfo=ZoneInfo("Europe/Zurich"))
+
+    @classmethod
+    def now(cls, tz=None):
+        if tz is not None:
+            return cls._ch.astimezone(tz)
+        return cls._ch.replace(tzinfo=None)
+
+
+class _FrozenCrossMidnight(datetime):
+    """time_utils-Clock fuer 00:30 CH (3. Juni) = 22:30 UTC (2. Juni) — CH- und
+    UTC-Kalendertag fallen auseinander. ch_today muss den CH-Tag (3.) liefern."""
+    _ch = datetime(2026, 6, 3, 0, 30, tzinfo=ZoneInfo("Europe/Zurich"))
+
+    @classmethod
+    def now(cls, tz=None):
+        if tz is not None:
+            return cls._ch.astimezone(tz)
+        return cls._ch.replace(tzinfo=None)
+
+
+class TestTimeUtils:
+    def test_ch_today_uses_zurich_calendar_day(self, monkeypatch):
+        """ch_today liefert den CH-Kalendertag, auch wenn UTC schon/noch
+        auf einem anderen Tag steht."""
+        import app.time_utils as tu
+        monkeypatch.setattr(tu, "datetime", _FrozenCrossMidnight)
+        # 00:30 CH am 3.6. (= 22:30 UTC am 2.6.) → CH-Tag ist der 3.
+        assert tu.ch_today() == date(2026, 6, 3)
+
+    def test_ch_day_start_utc_is_ch_midnight_in_utc(self, monkeypatch):
+        """ch_day_start_utc liefert CH-Mitternacht als naiven UTC-Zeitstempel.
+        Sommer (UTC+2): CH-Mitternacht 3.6. = 1.6.→ 2.6. 22:00 UTC."""
+        import app.time_utils as tu
+        monkeypatch.setattr(tu, "datetime", _FrozenCrossMidnight)
+        start = tu.ch_day_start_utc()
+        # CH-Mitternacht des 3. Juni = 2. Juni 22:00 UTC (Sommerzeit UTC+2), naiv
+        assert start == datetime(2026, 6, 2, 22, 0)
+        assert start.tzinfo is None
+
+
+class TestDailyBoundaryConsistency:
+    """10.8: Streak, Daily-Challenge-Seed, Storm-Daily-Seed und XP-Cap-Fenster
+    nutzen an einem CH-Spaetabend-Zeitpunkt denselben Kalendertag."""
+
+    def test_all_daily_boundaries_agree_on_ch_day(self, app_context, monkeypatch):
+        import app.time_utils as tu
+        import app.models as models
+
+        # time_utils + models auf denselben CH-Spaetabend (23:30 CH, 2. Juni) frieren.
+        monkeypatch.setattr(tu, "datetime", _FrozenLateEvening)
+        monkeypatch.setattr(models, "datetime", _FrozenLateEvening)
+
+        expected_day = date(2026, 6, 2)
+
+        # 1) Streak (models.update_streak nutzt models.datetime.now(ZoneInfo))
+        user = UserFactory()
+        user.last_activity_date = None
+        db.session.commit()
+        user.update_streak()
+        assert user.last_activity_date == expected_day
+
+        # 2) Daily-Challenge-Seed + 3) Storm-Daily-Seed nutzen ch_today()
+        assert tu.ch_today() == expected_day
+
+        # 4) XP-Cap-Fenster = Beginn des CH-Tages, in UTC. Liegt auf demselben
+        #    Kalendertag-Anker (2. Juni) — 21:30 UTC liegt nach dem Tagesbeginn.
+        cap_start = tu.ch_day_start_utc()
+        # CH-Mitternacht 2.6. (Sommer UTC+2) = 1.6. 22:00 UTC
+        assert cap_start == datetime(2026, 6, 1, 22, 0)
+        # Der aktuelle Moment (21:30 UTC am 2.6.) liegt nach dem Cap-Fensterbeginn.
+        now_utc = _FrozenLateEvening.now(ZoneInfo("UTC")).replace(tzinfo=None)
+        assert now_utc >= cap_start
+        # Und der Cap-Fensterbeginn gehoert zum erwarteten CH-Tag.
+        assert tu.ch_day_start_utc(expected_day) == cap_start

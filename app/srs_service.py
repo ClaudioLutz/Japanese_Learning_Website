@@ -297,8 +297,11 @@ def get_interval_preview(user_id, content_id):
 
 def get_user_stats(user_id):
     """Basis-Statistiken fuer einen User."""
-    now = datetime.utcnow()
-    today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    from app.time_utils import ch_day_start_utc
+    now = datetime.utcnow()  # UTC: fuer den due-Vergleich (FSRS-Scheduling)
+    # 10.8: "heute reviewt" = Beginn des heutigen CH-Tages, in UTC ausgedrueckt
+    # (ReviewLog.reviewed_at wird in UTC gespeichert). Tagesgrenze in CH, nicht UTC.
+    today_start = ch_day_start_utc()
 
     total_cards = CardReviewState.query.filter_by(user_id=user_id).count()
 

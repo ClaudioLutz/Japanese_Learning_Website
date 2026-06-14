@@ -1097,10 +1097,13 @@ def api_practice_daily_challenge():
     """
     import hashlib
     import random as _random
-    from datetime import date
     from app.models import Kana, LessonContent
+    from app.time_utils import ch_today
 
-    today = date.today().isoformat()
+    # 10.8: Tagesgrenze in Europe/Zurich (der Tag, den der Nutzer sieht) —
+    # konsistent mit Streak/DailyAggregate/Storm-Daily/XP-Cap. FSRS-Scheduling
+    # bleibt UTC (hier irrelevant: reiner Kalendertag-Seed, kein due-Vergleich).
+    today = ch_today().isoformat()
 
     if current_user.is_authenticated:
         seed_raw = f'{current_user.id}-{today}-daily-kana'
@@ -1166,14 +1169,15 @@ def api_practice_storm_daily():
     immer das komplette Grund-Hiragana. Nur so ist der geteilte Wordle-Vergleich
     ("ein Brett, fuer alle gleich") sinnvoll. Kein Login noetig, kein DB-Write.
 
-    Tagesgrenze: date.today() = Kalendertag in Server-Zeit (Container ohne TZ =
-    UTC), konsistent mit /daily-challenge und dem Streak. Das Brett wechselt also
-    fuer alle gleichzeitig zu UTC-Mitternacht (~01-02 Uhr Schweizer Zeit).
+    Tagesgrenze: ch_today() = Kalendertag in Europe/Zurich, konsistent mit
+    /daily-challenge, dem Streak und dem XP-Cap. Das Brett wechselt fuer alle
+    gleichzeitig zu CH-Mitternacht (10.8).
     """
     import hashlib
     import random as _random
     from datetime import date
-    today = date.today()
+    from app.time_utils import ch_today
+    today = ch_today()
     today_iso = today.isoformat()
     seed = int(hashlib.sha256(f'storm-daily-{today_iso}'.encode()).hexdigest()[:16], 16)
     rng = _random.Random(seed)
@@ -1228,7 +1232,8 @@ def api_storm_finish():
     UND Tages-Cap (XP_STORM_*). KEIN update_daily_aggregate-Aufruf — der wuerde
     die review-semantischen Zaehler (Heatmap/Accuracy) verschmutzen.
     """
-    from datetime import date, datetime
+    from datetime import date
+    from app.time_utils import ch_day_start_utc, ch_today
 
     data = request.get_json(silent=True) or {}
 
@@ -1245,13 +1250,17 @@ def api_storm_finish():
     if mode == 'daily':
         raw = (data.get('daily_date') or '').strip()
         try:
-            daily_date = date.fromisoformat(raw) if raw else date.today()
+            # 10.8: Default = CH-Kalendertag (konsistent mit dem storm-daily-Brett)
+            daily_date = date.fromisoformat(raw) if raw else ch_today()
         except ValueError:
-            daily_date = date.today()
+            daily_date = ch_today()
 
     # ── XP: Basis + gedeckelter Hit-Bonus, dann harter Tages-Cap ──
     run_xp = XP_STORM_BASE + min(correct * XP_STORM_PER_HIT, XP_STORM_RUN_BONUS_CAP)
-    today_start = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+    # 10.8: Tages-Cap-Fenster = Beginn des heutigen CH-Tages, in UTC ausgedrueckt
+    # (KanaStormScore.created_at wird in UTC gespeichert). So zaehlt der Cap den
+    # Kalendertag, den der Nutzer sieht — nicht den UTC-Tag.
+    today_start = ch_day_start_utc()
     spent_today = db.session.query(
         db.func.coalesce(db.func.sum(KanaStormScore.xp_awarded), 0)
     ).filter(
