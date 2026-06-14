@@ -19,6 +19,8 @@ from app import db
 from app.models import LessonContent
 from tests.factories import (
     LessonFactory,
+    QuizOptionFactory,
+    QuizQuestionFactory,
     UserLessonProgressFactory,
 )
 
@@ -172,6 +174,94 @@ class TestCompleteRemaining:
         resp = client.post(f"/api/lessons/{lesson.id}/complete-remaining",
                            headers={"X-CSRFToken": token})
         assert resp.status_code == 403
+
+
+class TestMultiQuestionQuizGating:
+    """Regression Verfrueht-100%-Bug (2026-06-14): Ein Quiz-Content-Item mit
+    mehreren Fragen darf erst als erledigt gelten, wenn ALLE Fragen aufgeloest sind
+    (korrekt ODER Versuche aufgebraucht) — nicht schon nach der ersten Antwort."""
+
+    def _quiz_with_questions(self, lesson_id, n_questions, max_attempts=3):
+        """Interaktives Quiz-Item mit n Fragen (je 1 richtige + 1 falsche Option)."""
+        quiz = LessonContent(
+            lesson_id=lesson_id, content_type="text", page_number=1,
+            order_index=0, content_id=None, is_interactive=True,
+            max_attempts=max_attempts,
+        )
+        db.session.add(quiz)
+        db.session.flush()
+        questions = []
+        for i in range(n_questions):
+            q = QuizQuestionFactory(lesson_content_id=quiz.id,
+                                    question_type="multiple_choice")
+            db.session.flush()
+            correct = QuizOptionFactory(question_id=q.id, is_correct=True)
+            wrong = QuizOptionFactory(question_id=q.id, is_correct=False)
+            db.session.flush()
+            questions.append((q, correct, wrong))
+        db.session.commit()
+        return quiz, questions
+
+    def _answer(self, client, lesson_id, question_id, option_id, token):
+        return client.post(
+            f"/api/lessons/{lesson_id}/quiz/{question_id}/answer",
+            json={"selected_option_id": option_id},
+            headers={"X-CSRFToken": token},
+        )
+
+    def test_single_correct_answer_does_not_complete_multi_question_quiz(self, auth_client):
+        """Eine von drei Fragen richtig -> content_completed False (Kern des Bugs)."""
+        client, user = auth_client
+        lesson = LessonFactory(is_published=True, price=0.0, instruction_language="german")
+        db.session.flush()
+        _, questions = self._quiz_with_questions(lesson.id, 3)
+        lid = lesson.id
+        token = _csrf(client)
+
+        q0, correct0, _ = questions[0]
+        resp = self._answer(client, lid, q0.id, correct0.id, token)
+        assert resp.status_code == 200, resp.data
+        data = resp.get_json()
+        assert data["is_correct"] is True
+        assert data["content_completed"] is False, data
+
+    def test_all_questions_resolved_completes_quiz(self, auth_client):
+        """Alle drei Fragen richtig -> content_completed True beim letzten Antworten."""
+        client, user = auth_client
+        lesson = LessonFactory(is_published=True, price=0.0, instruction_language="german")
+        db.session.flush()
+        _, questions = self._quiz_with_questions(lesson.id, 3)
+        lid = lesson.id
+        token = _csrf(client)
+
+        last = None
+        for q, correct, _ in questions:
+            last = self._answer(client, lid, q.id, correct.id, token)
+            assert last.status_code == 200, last.data
+        assert last.get_json()["content_completed"] is True
+
+    def test_exhausted_attempts_count_as_resolved(self, auth_client):
+        """Falsch beantwortete Fragen mit aufgebrauchten Versuchen zaehlen als
+        aufgeloest -> ein durchgefallenes Quiz blockiert 100% nicht dauerhaft."""
+        client, user = auth_client
+        lesson = LessonFactory(is_published=True, price=0.0, instruction_language="german")
+        db.session.flush()
+        _, questions = self._quiz_with_questions(lesson.id, 2, max_attempts=2)
+        lid = lesson.id
+        token = _csrf(client)
+
+        # Frage 1 korrekt aufloesen
+        q0, correct0, _ = questions[0]
+        self._answer(client, lid, q0.id, correct0.id, token)
+
+        # Frage 2: beide Versuche falsch -> aufgebraucht
+        q1, _, wrong1 = questions[1]
+        self._answer(client, lid, q1.id, wrong1.id, token)
+        last = self._answer(client, lid, q1.id, wrong1.id, token)
+        assert last.status_code == 200, last.data
+        data = last.get_json()
+        assert data["attempts_remaining"] == 0
+        assert data["content_completed"] is True, data
 
 
 class TestCatalogStatus:

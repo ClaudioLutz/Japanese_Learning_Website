@@ -4180,12 +4180,20 @@ def submit_quiz_answer(lesson_id, question_id):
         # - No attempts remaining (last attempt used)
         show_solution = is_correct or attempts_remaining == 0
 
+        # Ein Quiz-Content-Item gilt erst als erledigt, wenn ALLE seine Fragen
+        # aufgeloest sind (korrekt ODER Versuche aufgebraucht) — nicht schon nach
+        # der ersten Frage. Das Frontend markiert das Item nur bei content_completed.
+        # (Fix Verfrueht-100%-Bug 2026-06-14: 14-Fragen-Uebung galt nach 1 Antwort
+        # als fertig -> Lektion sprang verfrueht auf 100%.)
+        content_completed = question.content.is_quiz_fully_resolved(current_user.id)
+
         result = {
             'is_correct': is_correct,
             'attempts_remaining': attempts_remaining,
             'xp_earned': xp_earned,
             'total_xp': current_user.total_xp or 0,
-            'streak': current_user.current_streak or 0
+            'streak': current_user.current_streak or 0,
+            'content_completed': content_completed,
         }
 
         # Always show why the selected option is wrong/right

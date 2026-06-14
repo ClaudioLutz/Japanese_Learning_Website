@@ -2162,13 +2162,14 @@ async function submitQuizAnswer(lessonId, questionId) {
             showQuizFeedback(questionId, result);
             updateAttempts(questionId, result.attempts_remaining);
             
-            const quizContentId = questionElement.closest('[data-content-id]').dataset.contentId;
-            if (result.is_correct) {
-                markContentComplete(quizContentId);
-            } else if (result.attempts_remaining === 0) {
-                // Alle Versuche aufgebraucht: Quiz ist bearbeitet (UI sperrt es +
-                // zeigt die Loesung). Item trotzdem als erledigt markieren, damit ein
-                // fehlgeschlagenes Quiz die Lektion nicht dauerhaft unter 100% haelt.
+            // Das ganze Quiz-Item erst als erledigt markieren, wenn der Server
+            // meldet, dass ALLE Fragen dieses Items aufgeloest sind
+            // (content_completed = jede Frage korrekt ODER Versuche aufgebraucht).
+            // Frueher wurde schon nach der ERSTEN richtigen/aufgebrauchten Frage
+            // markiert -> ein 14-Fragen-Quiz galt nach einer Antwort als fertig und
+            // die Lektion sprang verfrueht auf 100% (Bug 2026-06-14).
+            if (result.content_completed) {
+                const quizContentId = questionElement.closest('[data-content-id]').dataset.contentId;
                 markContentComplete(quizContentId);
             }
         } else {

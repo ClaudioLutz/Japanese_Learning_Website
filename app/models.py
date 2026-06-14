@@ -1223,6 +1223,42 @@ class LessonContent(db.Model):
             }
         return None
 
+    def is_quiz_fully_resolved(self, user_id) -> bool:
+        """True, wenn ALLE Quiz-Fragen dieses Items fuer den User aufgeloest sind —
+        jede Frage entweder korrekt beantwortet ODER alle Versuche aufgebraucht.
+
+        Verhindert den Verfrueht-100%-Bug (2026-06-14): Frueher markierte das
+        Frontend ein ganzes Quiz-Content-Item schon nach der ERSTEN beantworteten
+        Frage als erledigt. Eine 14-Fragen-Uebung galt damit nach einer Antwort als
+        fertig und die Lektion sprang verfrueht auf 100%.
+
+        Ein Item ohne Fragen (kein echtes Quiz) gilt als aufgeloest (nichts zu tun).
+        Bei unbegrenzten Versuchen (max_attempts None/0) ist eine falsch beantwortete
+        Frage NICHT aufgeloest — sie muss korrekt beantwortet werden.
+        """
+        question_ids = [q.id for q in self.quiz_questions]
+        if not question_ids:
+            return True
+        max_attempts = self.max_attempts or 0  # 0/None => unbegrenzt
+        answers = {
+            a.question_id: a
+            for a in UserQuizAnswer.query.filter(
+                UserQuizAnswer.user_id == user_id,
+                UserQuizAnswer.question_id.in_(question_ids),
+            ).all()
+        }
+        for qid in question_ids:
+            a = answers.get(qid)
+            if a is None:
+                return False  # nie beantwortet
+            if a.is_correct:
+                continue
+            # Falsch beantwortet: nur aufgeloest, wenn alle Versuche aufgebraucht
+            if max_attempts and a.attempts >= max_attempts:
+                continue
+            return False
+        return True
+
 class QuizQuestion(db.Model):
     __allow_unmapped__ = True
     id = db.Column(db.Integer, primary_key=True)
