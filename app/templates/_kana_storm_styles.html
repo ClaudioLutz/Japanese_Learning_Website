@@ -25,7 +25,13 @@
     /* ── Start / Loading / Error / End: zentrierte Karte ── */
     .kstorm__screen {
         flex: 1 1 auto; min-height: 0;
-        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        display: flex; flex-direction: column; align-items: center;
+        /* "safe center": zentriert bei Platz, fällt aber bei Überlauf auf oben-
+           bündig zurück (statt mittig zu zentrieren und oben/unten abzuschneiden
+           — das Bug-Muster auf niedrigen Mobile-Viewports, wo Eyebrow/Titel oben
+           und der Bestscore-Hinweis unten verschwanden). Nicht unterstützende
+           Browser ignorieren den Wert → Default flex-start = ebenfalls clipfrei. */
+        justify-content: safe center;
         text-align: center; gap: 0.5rem; padding: clamp(1rem, 4vh, 2rem) 1rem;
         overflow-y: auto; -webkit-overflow-scrolling: touch; /* Reihen-Auswahl kann den Start-Screen verlängern */
     }
@@ -282,6 +288,18 @@
     .kstorm__flame { filter: saturate(1.1); }
     /* Daily-Leiste = Fortschritt (füllt sich, Matcha) statt Restzeit (Shu/rot). */
     .kstorm__timerbar.is-daily > i { background: var(--matcha, #7A9033); }
+
+    /* ── Eingebettet in /practice/kana (.kstorm--scoped): auf Mobile passt der
+       Storm-Start sonst nicht ohne Scroll zwischen das geteilte Scope-Panel,
+       den Spiel-Umschalter und die Bottom-Nav. Eyebrow + Titel + Lead sind hier
+       ohnehin redundant ("Kana Storm" steht schon zweimal in den Tabs darüber) —
+       auf Mobile ausblenden, damit Optionen + Start + Bestscore clipfrei sichtbar
+       bleiben. Desktop (>=768px) behält den vollen Kopf. ── */
+    @media (max-width: 767px) {
+        .kstorm--scoped .kstorm__screen--start > .kstorm__eyebrow,
+        .kstorm--scoped .kstorm__screen--start > .kstorm__title,
+        .kstorm--scoped .kstorm__screen--start > .kstorm__lead { display: none; }
+    }
 
     @media (prefers-reduced-motion: reduce) {
         .kstorm *, .kstorm *::before, .kstorm *::after { transition: none !important; animation: none !important; }

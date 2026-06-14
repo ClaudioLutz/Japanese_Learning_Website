@@ -80,13 +80,22 @@
         <style>
           .kstorm-hero { width: 100%; max-width: 600px; margin: 1.2rem auto 0; }
           .kstorm-hero-card {
-              height: clamp(520px, 78vh, 640px);
+              /* min-height statt fixer Höhe: beim Aufklappen von „Optionen" (Dauer
+                 + 17 Reihen-Pills) wuchs der Inhalt über die feste Karte hinaus und
+                 löste einen internen Scrollbalken aus, der den „Storm starten"-Button
+                 verdeckte. Mit min-height wächst die Karte mit und die Seite scrollt
+                 normal; im Spiel bleibt sie >= min-height (stabile Spielfläche). */
+              min-height: clamp(520px, 78vh, 640px);
               background: var(--card-bg, #FFFDF7);
               border: 1px solid var(--border-color, #E4DED4);
               border-radius: 18px;
               box-shadow: 0 6px 30px rgba(28, 26, 23, .07);
               overflow: hidden; display: flex; flex-direction: column;
           }
+          /* Das Storm-Partial nutzt height:100% — das braucht eine definite Eltern-
+             höhe, die min-height nicht liefert. Auf flex umstellen: .kstorm füllt die
+             Karte (>= min-height) UND wächst bei langem Inhalt mit. */
+          .kstorm-hero .kstorm { height: auto; flex: 1 1 auto; min-height: 0; }
           .kstorm-hero-alt { margin: 0.7rem 0 0; font-size: 0.85rem; color: var(--ink-600, #5C564D); }
           .kstorm-hero-alt a { color: var(--shu-deep, #B84A00); font-weight: 600; text-decoration: none; }
           .kstorm-hero-alt a:hover { text-decoration: underline; }

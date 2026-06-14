@@ -242,6 +242,14 @@
     /* Mobile: Platz für die fixe Bottom-Nav unter dem Fuss reservieren */
     @media (max-width: 767px) {
         .kana-setup { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
+        /* mobile-improvements.css erzwingt global `.container > * { padding-inline:
+           0 !important }` und killt damit das 1rem-Padding der .kana-setup (direktes
+           .container-Kind) → Reihen-Label/Count („1 gewählt"/„Alle") klebten am
+           rechten Bildschirmrand und wurden abgeschnitten. Höhere Spezifität +
+           !important stellt den horizontalen Rand wieder her. */
+        body.kana-setup-locked .kana-setup {
+            padding-left: 1rem !important; padding-right: 1rem !important;
+        }
         /* Platz sparen, damit der Setup ohne Scroll passt: Intro-Absatz (SEO-/
            Desktop-Substanz) auf Mobile aus, Kopf + geteilter Scope kompakter. */
         .kana-setup__head { margin-bottom: 0.5rem; }

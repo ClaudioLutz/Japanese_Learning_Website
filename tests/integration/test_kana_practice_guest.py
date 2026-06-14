@@ -250,7 +250,9 @@ class TestKanaStorm:
         body = resp.get_data(as_text=True)
         assert 'kanaSettings()' in body          # Matching-Setup (Default-Tab)
         assert 'kanaStormGame(' in body          # Storm inline (kein iframe)
-        assert 'class="kstorm"' in body
+        # Eingebettet → Scope-Modifier (blendet auf Mobile redundantes Eyebrow/
+        # Titel/Lead aus, damit der Start-Screen clipfrei passt).
+        assert 'class="kstorm kstorm--scoped"' in body
         assert 'Kana Storm' in body
         assert 'Spiel wählen' in body            # aria-label des Top-Umschalters
         assert "game: 'match'" in body           # Default-Tab = Zuordnung

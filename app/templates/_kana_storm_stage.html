@@ -33,7 +33,7 @@
     ('h', 'H'), ('m', 'M'), ('y', 'Y'), ('r', 'R'), ('w', 'W'), ('n_kons', 'ん'),
     ('g', 'G'), ('z', 'Z'), ('d', 'D'), ('b', 'B'), ('p', 'P')] %}
 
-<div class="kstorm" x-data="kanaStormGame({ initialTab: '{{ _kstorm_tab }}', loggedIn: {{ 'true' if current_user.is_authenticated else 'false' }}, csrfToken: '{{ csrf_token() }}', scopeExternal: {{ 'true' if kstorm_scope_external else 'false' }} })" x-init="init()">
+<div class="kstorm{{ ' kstorm--scoped' if kstorm_scope_external else '' }}" x-data="kanaStormGame({ initialTab: '{{ _kstorm_tab }}', loggedIn: {{ 'true' if current_user.is_authenticated else 'false' }}, csrfToken: '{{ csrf_token() }}', scopeExternal: {{ 'true' if kstorm_scope_external else 'false' }} })" x-init="init()">
 
     {# Screenreader-Ansage für Treffer/Fehler (visuell versteckt) #}
     <div class="kstorm__sr" aria-live="polite" aria-atomic="true" x-text="fbText"></div>
