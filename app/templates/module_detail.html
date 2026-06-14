@@ -250,8 +250,9 @@
     </a>
   {% else %}
   {# 10.11: Modul ohne veroeffentlichte Lektionen → freundlicher Empty-State
-     statt inhaltsleerer Liste (KEIN 404; N1–N4 werden separat in learn_path
-     per abort(404) gesperrt). #}
+     statt inhaltsleerer Liste (KEIN 404). Hinweis: Nur der /learn/n<level>-Hub
+     (learn_path) sperrt N1–N4 per abort(404); diese Modul-Detailseite ist
+     selbst nicht level-gegated — praktisch existieren aber nur N5-Module. #}
   <div class="mod-empty">
     <div class="mod-empty-icon" aria-hidden="true">🏗️</div>
     <h2 class="mod-empty-title">Dieses Modul wird gerade gestaltet</h2>

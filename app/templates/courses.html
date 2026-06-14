@@ -74,7 +74,8 @@
                     <img src="{{ course.background_image_url }}"
                          class="course-card-image"
                          alt="{{ course.title }}"
-                         loading="lazy">
+                         loading="lazy"
+                         onerror="this.onerror=null;this.outerHTML='<div class=&quot;course-card-image course-card-image-placeholder&quot; aria-hidden=&quot;true&quot;><i class=&quot;fas fa-graduation-cap&quot;></i></div>';">
                     {% else %}
                     <div class="course-card-image course-card-image-placeholder" aria-hidden="true">
                         <i class="fas fa-graduation-cap"></i>

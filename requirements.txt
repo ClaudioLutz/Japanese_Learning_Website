@@ -32,6 +32,9 @@ markdown>=3.10
 bleach>=6.3
 # Kana/Kanji -> Hepburn-Romaji (Quiz-Backfill + Validator)
 pykakasi>=2.3
+# Zeitzonen-DB fuer ZoneInfo('Europe/Zurich') — deterministische Quelle fuer die
+# CH-Tagesgrenzen (Streak/Daily/XP-Cap), statt auf eine transitive OS-Quelle zu bauen.
+tzdata>=2024.1
 
 # Dev/Lint
 ruff>=0.15
