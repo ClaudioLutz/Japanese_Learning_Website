@@ -339,8 +339,19 @@ def _build_n5_path_context(user, visible_langs):
     first_guest_lesson) — pro Modul ist 'first_guest_lesson' die erste gratis+guest
     Lektion (sonst die bisherige first_lesson als Fallback fuer den CTA).
     """
+    # 10.10 (N+1): Module-Lessons + die fuer is_unlocked_for_user gebrauchten
+    # Vorgaenger-Module samt deren Lessons eager laden. Sonst feuert jede
+    # m.lessons- und m.prerequisite.completion_for_user-Iteration eine
+    # Einzel-Query (pro Modul). Verhalten bleibt identisch.
+    from sqlalchemy.orm import selectinload
     n5_modules_raw = (
         LessonCategory.query.filter_by(jlpt_level=5)
+        .options(
+            selectinload(LessonCategory.lessons),
+            selectinload(LessonCategory.prerequisite).selectinload(
+                LessonCategory.lessons
+            ),
+        )
         .order_by(LessonCategory.display_order.asc(), LessonCategory.id.asc())
         .all()
     )
@@ -1067,7 +1078,21 @@ def module_detail(level: int, slug: str):
         from flask import abort
         abort(404)
     visible_langs = current_app.config.get('CONTENT_LANGUAGES', ['german'])
-    module = LessonCategory.query.filter_by(jlpt_level=level, slug=slug).first_or_404()
+    # 10.10 (N+1): Lessons des Moduls samt der von is_accessible_to_user
+    # gebrauchten Beziehungen (Voraussetzungen + zugehoerige Lesson, Courses)
+    # eager laden — sonst feuert die Status-Schleife unten pro Lesson mehrere
+    # Lazy-Queries. Verhalten bleibt identisch.
+    from sqlalchemy.orm import selectinload
+    module = (
+        LessonCategory.query.filter_by(jlpt_level=level, slug=slug)
+        .options(
+            selectinload(LessonCategory.lessons).selectinload(
+                Lesson.prerequisites
+            ).joinedload(LessonPrerequisite.prerequisite_lesson),
+            selectinload(LessonCategory.lessons).selectinload(Lesson.courses),
+        )
+        .first_or_404()
+    )
     user = current_user if current_user.is_authenticated else None
 
     published_lessons = sorted(
@@ -1306,7 +1331,20 @@ def view_lesson(lesson_id):
     if lesson_id in GONE_LESSON_IDS:
         abort(410)
 
-    lesson = Lesson.query.get_or_404(lesson_id)
+    # 10.10 (N+1): Voraussetzungen (+ deren Lesson) und Courses eager laden,
+    # damit access_check() keine Lazy-Query je Schleifendurchlauf ausloest.
+    from sqlalchemy.orm import selectinload
+    lesson = db.session.get(
+        Lesson, lesson_id,
+        options=[
+            selectinload(Lesson.prerequisites).joinedload(
+                LessonPrerequisite.prerequisite_lesson
+            ),
+            selectinload(Lesson.courses),
+        ],
+    )
+    if lesson is None:
+        abort(404)
 
     # Unveroeffentlichte Lektionen sind fuer Nicht-Admins nicht oeffentlich:
     # kein Content-Leak und keine verwaiste, indexierbare Seite (Sitemap/Katalog
