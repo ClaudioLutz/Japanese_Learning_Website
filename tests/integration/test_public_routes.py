@@ -155,6 +155,27 @@ class TestCoursesPage:
         resp = client.get("/courses")
         assert resp.status_code == 200
 
+    def test_courses_noindex_when_empty(self, client, app_context):
+        """I-PR04b: Ohne publizierten Kurs ist /courses ein leerer Container
+        (Soft-404) → muss noindex tragen, damit Google die inhaltsleere Seite
+        nicht als wertlose 200-Seite indexiert."""
+        resp = client.get("/courses")
+        assert resp.status_code == 200
+        assert "noindex" in resp.get_data(as_text=True)
+
+    def test_courses_indexable_with_published_course(self, client, app_context):
+        """I-PR04c: Sobald >=1 Kurs publiziert ist, faellt /courses auf den
+        index,follow-Default zurueck (kein noindex)."""
+        CourseFactory(title="Visible Course", is_published=True)
+        db.session.commit()
+        resp = client.get("/courses")
+        body = resp.get_data(as_text=True)
+        # robots-Meta-Tag darf kein noindex enthalten
+        import re
+        m = re.search(r'<meta name="robots" content="([^"]*)"', body)
+        assert m is not None
+        assert "noindex" not in m.group(1)
+
 
 # ── I-PR05: Login-Seite ─────────────────────────────────────
 

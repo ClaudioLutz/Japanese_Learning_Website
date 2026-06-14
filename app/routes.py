@@ -1190,8 +1190,15 @@ def my_lessons():
 @bp.route('/course/<int:course_id>')
 def view_course(course_id):
     """View a specific course"""
+    from flask import abort
     course = Course.query.get_or_404(course_id)
-    
+
+    # Unveroeffentlichte Kurse sind fuer Nicht-Admins nicht oeffentlich (kein
+    # Leak, keine verwaiste indexierbare Seite). Admins sehen sie fuer Preview.
+    _is_admin = current_user.is_authenticated and getattr(current_user, 'is_admin', False)
+    if not course.is_published and not _is_admin:
+        abort(404)
+
     # Check if the user has purchased the course
     has_purchased = False
     if current_user.is_authenticated:
@@ -1276,10 +1283,34 @@ def purchase_lesson_page(lesson_id):
     form = CSRFTokenForm()
     return render_template('purchase.html', lesson=lesson, form=form)
 
+# Endgueltig getilgte Lektions-IDs (deprecated MNN-Reihe 131–141 + alte
+# "Essen im Restaurant" 142). Werden mit 410 Gone beantwortet, damit Google
+# die noch bekannten Alt-URLs schnell de-indexiert. Wird eine ID hier wieder
+# aktiv gebraucht, aus dem Set entfernen.
+GONE_LESSON_IDS = frozenset(range(131, 143))  # 131..142 inkl.
+
+
 @bp.route('/lessons/<int:lesson_id>')
 def view_lesson(lesson_id):
     """View a specific lesson — bei Paywall-Trigger eigene Conversion-Seite statt Redirect."""
+    from flask import abort
+
+    # Endgueltig entfernte Alt-Lektionen (deprecated MNN-Reihe 131–141 + alte
+    # "Essen im Restaurant" 142). Google kennt diese URLs noch aus alter
+    # Sitemap/Links → 410 Gone ist das praezise, schnelle De-Index-Signal
+    # (statt nacktem 404, das Google langsamer verwirft).
+    if lesson_id in GONE_LESSON_IDS:
+        abort(410)
+
     lesson = Lesson.query.get_or_404(lesson_id)
+
+    # Unveroeffentlichte Lektionen sind fuer Nicht-Admins nicht oeffentlich:
+    # kein Content-Leak und keine verwaiste, indexierbare Seite (Sitemap/Katalog
+    # listen sie ohnehin nicht — is_accessible_to_user prueft is_published nicht).
+    # Admins sehen sie weiter (Preview/Dogfood).
+    _is_admin = current_user.is_authenticated and getattr(current_user, 'is_admin', False)
+    if not lesson.is_published and not _is_admin:
+        abort(404)
 
     # Check if user can access this lesson (supports both authenticated and guest users)
     user = current_user if current_user.is_authenticated else None

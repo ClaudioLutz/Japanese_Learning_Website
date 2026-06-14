@@ -62,14 +62,28 @@ class TestLessonView:
         resp = client.get("/lessons/99999")
         assert resp.status_code == 404
 
-    def test_unpublished_lesson_still_accessible(self, auth_client):
-        """I-LR06: get_or_404 findet auch unpublizierte Lektionen (kein Filter)."""
+    def test_unpublished_lesson_not_public(self, auth_client):
+        """I-LR06: Unveroeffentlichte Lektion ist fuer Nicht-Admins NICHT oeffentlich
+        → 404 (kein Content-Leak, keine verwaiste indexierbare Seite)."""
         client, user = auth_client
         lesson = LessonFactory(is_published=False, price=0.0)
         db.session.commit()
         resp = client.get(f"/lessons/{lesson.id}")
-        # Hinweis: Route verwendet get_or_404 ohne is_published Filter
+        assert resp.status_code == 404
+
+    def test_unpublished_lesson_visible_to_admin(self, admin_client):
+        """I-LR06b: Admins sehen unveroeffentlichte Lektionen weiter (Preview/Dogfood)."""
+        client, admin = admin_client
+        lesson = LessonFactory(is_published=False, price=0.0)
+        db.session.commit()
+        resp = client.get(f"/lessons/{lesson.id}")
         assert resp.status_code == 200
+
+    def test_gone_lesson_returns_410(self, client):
+        """I-LR06c: Endgueltig getilgte Alt-Lektions-IDs (deprecated MNN-Reihe)
+        liefern 410 Gone — schnelles De-Index-Signal statt nacktem 404."""
+        resp = client.get("/lessons/131")
+        assert resp.status_code == 410
 
 
 # ── I-LR07: Course Detail ───────────────────────────────────

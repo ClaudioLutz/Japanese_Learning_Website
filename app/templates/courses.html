@@ -3,6 +3,12 @@
 
 {% block title %}Kurse{% endblock %}
 {% block meta_description %}Japanisch-Kurse für deutschsprachige Anfänger — gebündelte Lernpakete entlang JLPT-Levels. Mit Lektionen, Vokabel-Trainer und SRS-Wiederholung.{% endblock %}
+{# Solange kein Kurs publiziert ist, rendert die Seite nur einen leeren
+   Container (Daten kommen per JS aus /api/courses, das fuer Googlebot
+   robots-blockiert ist) → das ist ein Soft-404. Dann noindex setzen, damit
+   Google die inhaltsleere Seite nicht als 200-Seite ohne Wert wertet.
+   Sobald >=1 Kurs publiziert ist, faellt es auf den index,follow-Default zurueck. #}
+{% block robots %}{% if courses %}{{ robots_index }}{% else %}noindex,follow{% endif %}{% endblock %}
 
 {% block styles %}
 <style>

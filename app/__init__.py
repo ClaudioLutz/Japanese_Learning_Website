@@ -291,6 +291,11 @@ def create_app():
     @app.errorhandler(500)
     def _server_error(_e):
         return render_template('errors/500.html'), 500
+    @app.errorhandler(410)
+    def _gone(_e):
+        # 410 Gone fuer endgueltig entfernte URLs (deprecated Alt-Lektionen):
+        # praezises De-Index-Signal an Google statt nacktem 404.
+        return render_template('errors/410.html'), 410
 
     # current_year fuer den Footer + SEO-Default-Daten fuer base.html
     from datetime import datetime as _dt
@@ -338,6 +343,16 @@ def create_app():
         except Exception:
             app.logger.warning("show_bundle_hint fail-open", exc_info=True)
             show_bundle_hint = True
+        # Kurse-Nav-Link nur zeigen, wenn es mind. 1 publizierten Kurs gibt —
+        # sonst fuehrt der Link auf eine inhaltsleere /courses-Seite (Soft-404).
+        # Fail-open auf True, damit Error-Pages ausserhalb voller Kontexte nicht brechen.
+        try:
+            from app.models import Course
+            has_published_courses = (
+                Course.query.filter_by(is_published=True).first() is not None
+            )
+        except Exception:
+            has_published_courses = True
         return {
             'current_year': _dt.utcnow().year,
             'site_url': site_url,
@@ -349,6 +364,7 @@ def create_app():
             'default_canonical': canonical,
             'n5_free_lesson_count': n5_free_lesson_count,
             'show_bundle_hint': show_bundle_hint,
+            'has_published_courses': has_published_courses,
         }
 
     # Cache-Busting fuer eigene statische Assets: haengt die Datei-mtime als

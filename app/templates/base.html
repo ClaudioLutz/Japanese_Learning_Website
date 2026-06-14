@@ -211,9 +211,11 @@
                 <a href="{{ url_for('routes.my_lessons') }}" class="topnav-dd-item">
                   <i class="fas fa-shopping-bag" aria-hidden="true"></i> Meine Lektionen
                 </a>
+                {% if has_published_courses %}
                 <a href="{{ url_for('routes.courses') }}" class="topnav-dd-item">
                   <i class="fas fa-graduation-cap" aria-hidden="true"></i> Kurse
                 </a>
+                {% endif %}
                 <a href="{{ url_for('srs.stats_page') }}" class="topnav-dd-item">
                   <i class="fas fa-chart-bar" aria-hidden="true"></i> Statistik
                 </a>
