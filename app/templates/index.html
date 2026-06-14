@@ -684,18 +684,9 @@
 .trust-link:hover { color: var(--shu); text-decoration: none; }
 
 /* ════════════════════════════════════════
-   KANA-SPIEL IM HERO (Gast) — Chips, Begleitsatz, Bruecken-Leiste
-   (Buehnen-/Ergebnis-Styles stehen weiter unten beim Embed-Block.)
+   KANA-SCOPE-CONTROLS IM HERO (Gast) — Schrift-Chips, Reihen-Pills +
+   Modus-Segment (wiederverwendet vom Spiel-Umschalter), Bruecken-Leiste.
    ════════════════════════════════════════ */
-.kana-hero-game {
-    /* EINE Hoehen-Quelle fuer Buehne + iframe (CLS-Schutz, keine
-       duplizierten Magic Values). 58vh mit 420px-Untergrenze: auf 1366x768
-       schneidet der Fold bewusst durchs Spielgitter (staerkste
-       Scroll-Affordance), ab ~900px Viewport ist die Bruecke angeschnitten. */
-    --kana-stage-h: clamp(420px, 58vh, 560px);
-    max-width: 900px;
-    margin: 2.1rem auto 0;
-}
 
 /* Spielart-Chips */
 .kana-chip-row {
@@ -1236,7 +1227,6 @@
     .home-sub-more { display: none; }
     .home-hero--game { padding-top: 2.25rem; }
     .home-h1--game { font-size: clamp(1.9rem, 8vw, 2.4rem); }
-    .kana-hero-game { margin-top: 1.2rem; }
     /* Alle Options-Buttons SICHTBAR: Umbruch in mehrere Zeilen statt
        Scrollbalken (User-Direktive) — die Basis-Regeln wrappen bereits,
        hier nur kompaktere Masse, damit es nicht zu hoch wird. */
@@ -1292,147 +1282,6 @@
 /* Container.mt-4 ueberschreiben fuer Hero-Edge-to-Edge auf Mobile */
 body.redesign-page .container.mt-4 { padding-left: 0; padding-right: 0; margin-top: 0 !important; }
 
-/* ── Kana-Spiel: Buehne + Ergebnis-Karte (im Gast-Hero) ──────────── */
-.kana-embed-stage {
-    position: relative; width: 100%;
-    border: 1px solid var(--border-color, #E4DED4); border-radius: 14px; overflow: hidden;
-    background: var(--card-bg, #FFFDF7);
-    box-shadow: 0 1px 3px rgba(28,26,23,.05);
-    min-height: 210px;
-}
-/* Hoehe aus der EINEN Quelle --kana-stage-h (definiert an .kana-hero-game):
-   Stage-min-height UND iframe-Hoehe identisch → kein CLS beim Mount.
-   Mobile bleibt kompakt (210px Launch-Karte) — dort fuehrt der Tap ins
-   Vollbild, kein Inline-iframe. */
-.kana-embed-iframe { display: block; width: 100%; height: var(--kana-stage-h, 560px); border: 0; }
-@media (min-width: 641px) {
-  .kana-embed-stage { min-height: var(--kana-stage-h, 560px); }
-}
-
-.kana-embed-launch {
-    width: 100%; min-height: 210px; display: flex; flex-direction: column;
-    align-items: center; justify-content: center; gap: 0.45rem;
-    border: 0; background: transparent; cursor: pointer; color: var(--kon, #1F2A44);
-    padding: 2rem 1rem;
-}
-.kana-embed-launch-ico {
-    width: 56px; height: 56px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
-    background: var(--shu-deep, #B84A00); color: #fff; font-size: 1.2rem;
-    box-shadow: 0 4px 12px rgba(184,74,0,.3);
-}
-.kana-embed-launch-text { font: 600 1.05rem 'Geist','Inter',sans-serif; }
-.kana-embed-launch small { color: var(--text-muted, #8C8378); font-size: 0.8rem; }
-
-.kana-embed-close {
-    /* oben LINKS, ueber dem (leeren) Back-Spacer des iframe-HUDs — so verdeckt
-       der Button nicht die Fortschritts-Anzeige (0/46) oben rechts im Spiel. */
-    position: absolute; top: 0.55rem; left: 0.6rem; z-index: 5;
-    width: 38px; height: 38px; border-radius: 50%; border: 0; cursor: pointer;
-    background: rgba(28,26,23,.55); color: #fff; font-size: 1.05rem;
-    display: inline-flex; align-items: center; justify-content: center;
-}
-/* unsichtbare Hitbox auf >=44x44px erweitern (WCAG 2.5.5), ohne die
-   sichtbare Kreis-Optik (38px) zu vergroessern. */
-.kana-embed-close::before {
-    content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    width: 44px; height: 44px;
-}
-
-/* Vollbild-Overlay (Mobile): das iframe nimmt die volle Spielflaeche ein.
-   z-index ueber der sticky Topnav (z-index 1000), sonst verdeckt sie HUD +
-   Close-Button des Spiels. */
-.kana-embed-stage.is-fullscreen {
-    position: fixed; inset: 0; z-index: 1100; border: 0; border-radius: 0;
-    height: 100dvh; width: 100vw; min-height: 0;
-}
-.kana-embed-stage.is-fullscreen .kana-embed-iframe { height: 100dvh; }
-/* Im Vollbild-Overlay (Mobile) die Bottom-Nav der Startseite ausblenden —
-   sonst ueberlappt sie das Spiel am unteren Rand (analog zur Spielseite). */
-body.kana-embed-noscroll { overflow: hidden; }
-body.kana-embed-noscroll .mobile-bottom-nav { display: none !important; }
-/* Die Buehne lebt jetzt IM Hero — dessen isolation:isolate (fuer den
-   mix-blend-Punktraster) wuerde das fixed-Overlay im Hero-Stacking-Kontext
-   einsperren (Overlay laege UNTER der Topnav). Nur waehrend das Overlay offen
-   ist (Body-Lock-Klasse) die Isolation aufheben; der Hero ist dann ohnehin
-   vollflaechig verdeckt. */
-body.kana-embed-noscroll .home-hero--game { isolation: auto; }
-
-/* Ergebnis-Karte: tritt an die Stelle der Buehne (4-Slot-Struktur).
-   Mobile: min-height 260px (ersetzt die 210px-Launch-Karte); Desktop bekommt
-   in der Media-Query oben die volle Buehnenhoehe (kein Kollaps-Sprung). */
-.kana-embed-result {
-    text-align: center;
-    padding: 1.4rem 1.1rem 1.2rem;
-    background: var(--card-bg, #FFFDF7);
-    border: 1px solid var(--border-color, #E4DED4);
-    border-radius: 14px;
-    min-height: 260px;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 0.4rem;
-}
-/* Programmatischer Fokus (tabindex=-1, von onMessage gesetzt) braucht keinen
-   sichtbaren Ring auf der ganzen Karte — die CTAs darin behalten ihre Ringe. */
-.kana-embed-result:focus { outline: none; }
-.kana-embed-stars { font-size: 1.6rem; letter-spacing: 0.25rem; color: #d6cfc2; }
-.kana-embed-stars .is-earned { color: #f1c40f; text-shadow: 0 1px 3px rgba(241,196,15,.4); }
-.kana-embed-result-line { margin: 0; font-size: 1rem; color: var(--kon, #1F2A44); }
-.kana-embed-result-line strong { color: var(--shu-deep, #B84A00); }
-.kana-embed-best {
-    margin: 0;
-    font-family: 'Geist Mono', ui-monospace, monospace;
-    font-size: 0.85rem; font-weight: 600;
-    color: var(--shu-deep, #B84A00);
-}
-.kana-embed-daily-note { margin: 0; font-size: 0.85rem; font-weight: 600; color: var(--matcha, #7A9033); }
-.kana-embed-result-pitch {
-    margin: 0 0 0.5rem; max-width: 46ch;
-    font-size: 0.88rem; color: var(--text-muted, #8C8378); line-height: 1.45;
-}
-.kana-embed-result-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; }
-.kana-embed-cta {
-    display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.7rem 1.3rem;
-    border-radius: 12px; background: var(--shu-deep, #B84A00); color: #fff; text-decoration: none;
-    font: 600 0.95rem 'Geist','Inter',sans-serif; border: 1px solid var(--shu-deep, #B84A00);
-    cursor: pointer;
-}
-.kana-embed-cta:hover { filter: brightness(1.08); color: #fff; text-decoration: none; }
-.kana-embed-replay {
-    display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.7rem 1.2rem;
-    border-radius: 12px; background: #fff; color: var(--ink-700, #403B34); cursor: pointer;
-    font: 600 0.95rem 'Geist','Inter',sans-serif; border: 1px solid var(--border-color, #D4CFC5);
-    text-decoration: none;
-}
-.kana-embed-replay:hover { border-color: var(--shu, #EB6101); color: var(--shu, #EB6101); text-decoration: none; }
-.kana-embed-account-line {
-    margin: 0.3rem 0 0; max-width: 52ch;
-    font-size: 0.82rem; color: var(--text-muted, #8C8378);
-}
-.kana-embed-account-line a { color: var(--shu-deep, #B84A00); font-weight: 600; }
-.kana-embed-bridge-line {
-    margin: 0.55rem 0 0;
-    display: flex; flex-wrap: wrap; gap: 0.4rem 1.1rem; justify-content: center; align-items: center;
-    font-family: 'Geist Mono', ui-monospace, monospace;
-    font-size: 0.76rem;
-    color: var(--ink-500);
-}
-.kana-embed-bridge-line a { color: var(--ink-700); text-decoration: none; }
-.kana-embed-bridge-line a:hover { color: var(--shu); }
-.kana-embed-replay-link {
-    border: 0; background: transparent; cursor: pointer; padding: 0;
-    font: 500 0.76rem 'Geist Mono', ui-monospace, monospace;
-    color: var(--ink-500);
-}
-.kana-embed-replay-link:hover { color: var(--shu); }
-/* Desktop-Hoehen fuer Launch-/Ergebnis-Karte = Buehnenhoehe. WICHTIG: dieser
-   Block muss NACH den Basisregeln (.kana-embed-launch 210px / -result 260px)
-   stehen — bei gleicher Spezifitaet gewinnt sonst die spaetere Basisregel und
-   die min-heights waeren wirkungslos.
-   - Launch/Retry fuellt die Buehne (kein Leerraum-Loch im Fehler-/Pre-Mount-Fall)
-   - Ergebnis-Karte = Buehnenhoehe (eliminiert den Kollaps-Sprung beim done-Wechsel) */
-@media (min-width: 641px) {
-  .kana-embed-launch { min-height: var(--kana-stage-h, 560px); }
-  .kana-embed-result { min-height: var(--kana-stage-h, 560px); }
-}
 </style>
 
 <script>
