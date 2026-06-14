@@ -1,11 +1,14 @@
 {% extends "base.html" %}
 
-{% block title %}Kana-Spiel einrichten{% endblock %}
-{% block meta_description %}Stelle dein Kana-Spiel ein — Hiragana/Katakana, Reihen, Modus und Anzahl — und starte eine Runde mit sichtbarem Timer.{% endblock %}
+{% block title %}Kana üben — Zuordnen oder Kana Storm{% endblock %}
+{% block meta_description %}Hiragana und Katakana kostenlos üben — zwei Spiele zur Wahl: in Ruhe zuordnen oder im Kana Storm gegen die Uhr tippen. Reihen, Dakuten und Modus frei wählbar, ohne Login.{% endblock %}
 
 {% block body_attributes %}class="redesign-page kana-setup-locked"{% endblock %}
 
 {% block styles %}
+{# Storm-Styles (.kstorm*) — auf dieser Seite zusätzlich nötig, weil das
+   Storm-Partial jetzt inline als gleichberechtigter Tab eingebunden wird. #}
+{% include '_kana_storm_styles.html' %}
 <style>
     /* ══════════════════════════════════════════════════════════════════
        VIEWPORT-LOCK — Einstellungsseite passt ohne Page-Scroll zwischen
@@ -195,22 +198,36 @@
     .kana-setup__quick button:hover { border-color: var(--shu, #EB6101); color: var(--shu, #EB6101); }
     .kana-setup__quick button i { color: var(--shu, #EB6101); }
 
-    /* Kana Storm — eigener Arcade-Modus (Verlinkung auf die Vollbild-Seite) */
-    .kana-setup__storm {
-        display: flex; align-items: center; gap: 0.65rem; margin-top: 0.55rem;
-        padding: 0.55rem 0.85rem; border-radius: 12px;
-        border: 1px solid var(--ink-200, #E4DED4);
-        background: linear-gradient(180deg, #FFF8EC, var(--card-bg, #FFFDF7));
-        text-decoration: none; transition: border-color .15s ease, transform .12s ease;
+    /* ── Spiel-Umschalter (Zuordnung | Storm): beide Spieltypen gleichberechtigt.
+       Optik wie der Storm-interne Tab-Switcher (.kstorm__tabs), damit es nativ
+       wirkt. Fix unter dem Kopf — bleibt für beide Modi stehen. ── */
+    .kana-modes {
+        flex: 0 0 auto;
+        display: flex; gap: 6px;
+        background: var(--background-color, #F1EDE6);
+        border: 1px solid var(--border-color, #E4DED4);
+        border-radius: 14px; padding: 5px;
+        margin: 0 0 clamp(0.6rem, 1.6vh, 0.95rem);
     }
-    .kana-setup__storm:hover { border-color: var(--shu, #EB6101); text-decoration: none; }
-    .kana-setup__storm:active { transform: scale(0.99); }
-    .kana-setup__storm:focus-visible { outline: 2px solid var(--shu, #EB6101); outline-offset: 2px; }
-    .kana-setup__storm-ico { font-size: 1.2rem; line-height: 1; flex: 0 0 auto; }
-    .kana-setup__storm-text { flex: 1 1 auto; line-height: 1.25; text-align: left; }
-    .kana-setup__storm-text strong { display: block; font: 700 0.9rem 'Geist', 'Inter', sans-serif; color: var(--kon, #1F2A44); }
-    .kana-setup__storm-text small { font-size: 0.73rem; color: var(--text-muted, #8C8378); }
-    .kana-setup__storm > i.fa-arrow-right { color: var(--shu, #EB6101); flex: 0 0 auto; }
+    .kana-modes__tab {
+        flex: 1; min-height: 46px; border: 0; background: transparent; cursor: pointer;
+        border-radius: 10px;
+        font: 600 0.92rem/1.1 'Inter', sans-serif; color: var(--ink-600, #5C564D);
+        display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+        transition: background .15s ease, color .15s ease, box-shadow .15s ease;
+    }
+    .kana-modes__tab .kana-modes__sub { font-size: 0.64rem; font-weight: 500; color: var(--text-muted, #8C8378); }
+    .kana-modes__tab .jp { font-family: 'Noto Sans JP', sans-serif; color: var(--shu, #EB6101); }
+    .kana-modes__tab.is-active { background: #fff; color: var(--kon, #1F2A44); box-shadow: 0 1px 2px rgba(28, 26, 23, .10); }
+    .kana-modes__tab:focus-visible { outline: 2px solid var(--shu, #EB6101); outline-offset: 2px; }
+
+    /* ── Panels: genau eines sichtbar (x-show), beide füllen den Restraum. ── */
+    .kana-panel { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+    /* Glue: das Storm-Partial (.kstorm) ist height:100% + flex-column und braucht
+       einen höhendefinierten Eltern. Im Viewport-Lock liefert flex:1 1 auto diese
+       Höhe; wir entkoppeln .kstorm von height:100% und lassen es den Panel-Flex
+       füllen (sonst kollabiert die .kstorm__play-Kette). */
+    .kana-panel--storm > .kstorm { height: auto; flex: 1 1 auto; min-height: 0; }
 
     /* Mobile: Platz für die fixe Bottom-Nav unter dem Fuss reservieren */
     @media (max-width: 767px) {
@@ -240,23 +257,56 @@
             padding: 2rem 2rem 1.75rem;
         }
         .kana-setup__body { overflow: visible; }
+        /* Desktop: Lock gelöst → Matching-Panel wächst mit Inhalt … */
+        .kana-panel { flex: 0 0 auto; }
+        /* … das Storm-Panel braucht aber eine definierte Höhe, sonst kollabiert
+           die .kstorm-Flex-Kette (kein 100dvh-Lock zum Erben). */
+        .kana-panel--storm { height: min(70vh, 600px); }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="kana-setup" x-data="kanaSettings()" x-init="init()">
+{% set _initial_tab = 'storm' if request.args.get('tab') == 'storm' else 'match' %}
+{# Konto-CTA des Storm-Partials führt zurück auf diese Seite (Storm-Tab), nicht
+   auf die separate Vollbild-Storm-Seite. #}
+{% set kstorm_register_url = url_for('routes.register', next=url_for('srs.practice_kana_page', tab='storm')) %}
+<div class="kana-setup" x-data="{ game: '{{ _initial_tab }}' }">
     <div class="kana-setup__bg" aria-hidden="true"><span>あ</span></div>
 
     <div class="kana-setup__head">
         <span class="kana-setup__eyebrow"><span class="jp">かな</span> · Übung</span>
-        <h1>Kana-Spiel</h1>
+        <h1>Kana üben</h1>
         {# SSR-Substanz: die Seite ist via robots.txt-Allow crawlbar (Landing-
            Kandidat fuer "Hiragana üben") — ein Satz Inhalt statt nur Controls. #}
-        <p>Hiragana und Katakana kostenlos üben — Reihen, Dakuten und Modi frei wählbar,
-           ohne Login. Stell dir eine Runde zusammen, dann gegen die Uhr.</p>
+        <p>Hiragana und Katakana kostenlos üben — zwei Spiele zur Wahl: in Ruhe
+           <strong>zuordnen</strong> oder im <strong>Kana&nbsp;Storm</strong> gegen die Uhr tippen.
+           Reihen, Dakuten und Modus frei wählbar, ohne Login.</p>
     </div>
 
+    {# ── Spiel-Umschalter: beide Spieltypen gleichberechtigt im selben Top-Slot.
+       role=group + aria-pressed (KEIN role=tab — die Phasen mappen nicht 1:1 auf
+       Panels; gleiche Idiom wie der Storm-interne Umschalter). ── #}
+    <div class="kana-modes" role="group" aria-label="Spiel wählen">
+        <button type="button" class="kana-modes__tab {{ 'is-active' if _initial_tab == 'match' else '' }}"
+                :class="{ 'is-active': game === 'match' }"
+                :aria-pressed="(game === 'match').toString()"
+                @click="game = 'match'; history.replaceState(null, '', location.pathname)">
+            Zuordnung <span class="kana-modes__sub">Karten zuordnen</span>
+        </button>
+        <button type="button" class="kana-modes__tab {{ 'is-active' if _initial_tab == 'storm' else '' }}"
+                :class="{ 'is-active': game === 'storm' }"
+                :aria-pressed="(game === 'storm').toString()"
+                @click="game = 'storm'; history.replaceState(null, '', '?tab=storm')">
+            <span class="jp" lang="ja" aria-hidden="true">かな</span> Kana Storm
+            <span class="kana-modes__sub">Gegen die Uhr</span>
+        </button>
+    </div>
+
+    {# ── PANEL „Zuordnung" (Matching): Default-Tab, eigenes kanaSettings()-Scope.
+       x-cloak nur, wenn Storm der initiale Tab ist (Deep-Link ?tab=storm). ── #}
+    <div class="kana-panel" x-show="game === 'match'" x-data="kanaSettings()" x-init="init()"
+         {{ 'x-cloak' if _initial_tab == 'storm' else '' }}>
     <div class="kana-setup__body">
         {% if not current_user.is_authenticated %}
         <div class="kana-setup__guest" role="note">
@@ -381,20 +431,22 @@
             {% endif %}
             <button type="button" @click="startConfusion()" title="Verwechslungs-Paare üben"><i class="fas fa-clone"></i> Ähnliche</button>
         </div>
-        {# Kana Storm: eigener Arcade-Modus neben dem Matching-Spiel — endlos
-           gegen die Uhr, Romaji tippen. Eigene Vollbild-Seite, ohne Login. #}
-        <a class="kana-setup__storm" href="{{ url_for('srs.practice_kana_storm_page') }}">
-            <span class="kana-setup__storm-ico" aria-hidden="true">⚡</span>
-            <span class="kana-setup__storm-text">
-                <strong>Kana Storm</strong>
-                <small>Endlos gegen die Uhr — Romaji tippen, Combo halten</small>
-            </span>
-            <i class="fas fa-arrow-right" aria-hidden="true"></i>
-        </a>
+    </div>
+    </div>{# /.kana-panel (Zuordnung) #}
+
+    {# ── PANEL „Kana Storm": das fertige Shared-Partial inline (kein iframe,
+       kein Neubau → kein Drift). Eigenes kanaStormGame()-Scope, eigener
+       „Storm starten"-CTA + interner Storm/Daily-Umschalter. Kein
+       kstorm_back_url (der Tab IST die Navigation). x-cloak ausser bei
+       Deep-Link ?tab=storm. ── #}
+    <div class="kana-panel kana-panel--storm" x-show="game === 'storm'"
+         {{ 'x-cloak' if _initial_tab != 'storm' else '' }}>
+        {% include '_kana_storm_stage.html' %}
     </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
-<!-- kanaSettings() ist in /static/js/kana_grid_game.js definiert (in base.html via defer geladen). -->
+<!-- kanaSettings() (Matching) ist in /static/js/kana_grid_game.js, kanaStormGame()
+     (Storm-Tab) in /static/js/kana_storm.js — beide in base.html via defer geladen. -->
 {% endblock %}

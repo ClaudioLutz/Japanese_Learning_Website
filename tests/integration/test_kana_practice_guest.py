@@ -241,11 +241,25 @@ class TestKanaStorm:
         assert 'Daily-Karte' in body
         assert "goTab('daily')" in body
 
-    def test_settings_page_links_to_storm(self, client, db):
-        # Die Einstellungsseite (/practice/kana) verweist auf den Storm-Modus.
+    def test_settings_page_embeds_both_games(self, client, db):
+        # /practice/kana stellt beide Spieltypen GLEICHBERECHTIGT dar: das
+        # Matching-Setup UND den Kana-Storm-Modus inline als Tab (kein blosser
+        # Link mehr). Der Top-Umschalter [Zuordnung | Storm] ist SSR gerendert.
         resp = client.get('/practice/kana')
         assert resp.status_code == 200
-        assert '/practice/kana/storm' in resp.get_data(as_text=True)
+        body = resp.get_data(as_text=True)
+        assert 'kanaSettings()' in body          # Matching-Setup (Default-Tab)
+        assert 'kanaStormGame(' in body          # Storm inline (kein iframe)
+        assert 'class="kstorm"' in body
+        assert 'Kana Storm' in body
+        assert 'Spiel wählen' in body            # aria-label des Top-Umschalters
+        assert "game: 'match'" in body           # Default-Tab = Zuordnung
+
+    def test_settings_page_deeplink_opens_storm_tab(self, client, db):
+        # Deep-Link ?tab=storm öffnet direkt den Storm-Tab (teilbar/SEO), ohne
+        # die Kanon-URL zu zersplittern.
+        body = client.get('/practice/kana?tab=storm').get_data(as_text=True)
+        assert "game: 'storm'" in body
 
     def test_homepage_shows_storm_card_for_guest(self, client, db):
         # Storm ist der Gast-Hero der Startseite (inline, kein iframe); das
