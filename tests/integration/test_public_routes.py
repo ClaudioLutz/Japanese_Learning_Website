@@ -6,7 +6,9 @@ Testkonzept-IDs: I-PR01 bis I-PR11
 
 import pytest
 from app import db
-from tests.factories import LessonFactory, CourseFactory, LessonCategoryFactory
+from tests.factories import (
+    LessonFactory, CourseFactory, LessonCategoryFactory, KanaFactory,
+)
 
 
 # ── I-PR01: Health-Endpoints ─────────────────────────────────
@@ -78,6 +80,21 @@ class TestHomepage:
         body = resp.data.decode('utf-8')
         assert 'Lernpfad' in body
         assert '#lernpfad' in body
+
+    def test_homepage_kana_count_is_live_db(self, client, app_context):
+        """10.7: Die Kana-Zahl im Trust-Block kommt aus der DB (Kana.query.count()),
+        nicht aus der hartkodierten '92'."""
+        from app.models import Kana
+        # 7 Kana anlegen → Live-Zahl ist 7, nicht 92
+        for _ in range(7):
+            KanaFactory()
+        db.session.commit()
+        assert Kana.query.count() == 7
+        resp = client.get("/")
+        body = resp.data.decode('utf-8')
+        assert '7 Hiragana' in body
+        # Die alte hartkodierte 92 darf nicht mehr als Kana-Zahl erscheinen
+        assert '92 Hiragana' not in body
 
 
 # ── JLPT-N5-Schweiz SEO-Landingpage ─────────────────────────

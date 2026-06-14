@@ -170,7 +170,7 @@
             {{ n5_vocab_count or 510 }} Vokabeln <span class="dot"></span>
             {{ n5_kanji_count or 55 }} Kanji <span class="dot"></span>
           {% endif %}
-          92 Hiragana &amp; Katakana <span class="dot"></span>
+          {{ n5_kana_count or 92 }} Hiragana &amp; Katakana <span class="dot"></span>
           gegen die offizielle JLPT-N5-Wortliste &amp; gängige Lehrbücher (Genki, Minna no Nihongo) geprüft
         </div>
         <a href="{{ url_for('routes.ueber') }}" class="trust-link">
