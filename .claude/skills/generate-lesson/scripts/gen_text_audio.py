@@ -27,7 +27,6 @@ import argparse
 import base64
 import hashlib
 import os
-import re
 import sys
 from pathlib import Path
 
@@ -36,9 +35,9 @@ sys.stdout.reconfigure(encoding="utf-8")
 PROJECT_ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from app import create_app, db
-from app.models import Lesson, LessonContent
-from app.ai_services import GoogleCloudTTS
+from app import create_app, db  # noqa: E402
+from app.models import Lesson, LessonContent  # noqa: E402
+from app.ai_services import GoogleCloudTTS  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Voices
@@ -53,104 +52,11 @@ GEMINI_VOICE = "Leda"
 DE_VOICE = "de-DE-Neural2-G"
 SAMPLE_RATE = 24000
 
-# ---------------------------------------------------------------------------
-# Markdown-Strip + Romaji-Strip
-# ---------------------------------------------------------------------------
-_MD_PATTERNS = [
-    (re.compile(r"^\s{0,3}#{1,6}\s+", re.MULTILINE), ""),       # # Headings → Text
-    (re.compile(r"\*\*(.+?)\*\*"), r"\1"),                       # **bold** → bold
-    (re.compile(r"(?<!\*)\*(?!\*)([^*\n]+?)\*(?!\*)"), r"\1"),  # *italic* → italic
-    (re.compile(r"`([^`\n]+)`"), r"\1"),                          # `code` → code
-    (re.compile(r"^\s*>\s+", re.MULTILINE), ""),                  # > quote → quote
-    (re.compile(r"^\s*[-*+]\s+", re.MULTILINE), ""),              # - list → list
-    (re.compile(r"^\s*\d+\.\s+", re.MULTILINE), ""),              # 1. list → list
-    (re.compile(r"^---+\s*$", re.MULTILINE), ""),                 # --- hr → leer
-]
-
-# Klammer direkt nach JP-Zeichen (oder JP-Bracket) wird vor TTS entfernt.
-# Logik: Alles was direkt hinter einem JP-Zeichen oder einer JP-Klammer 」
-# in runden Klammern steht, ist eine Lesehilfe (Romaji, Bedeutung, Hinweis)
-# und gehoert nicht ins Audio. Erlaubt eine Ebene Verschachtelung, damit
-# `(ya, 'und (unter anderem)')` und `(い**がつ**, ichi-gatsu, Januar)`
-# komplett verschwinden.
-_ROMAJI_AFTER_JP = re.compile(
-    r"(?<=[぀-ヿ㐀-鿿」])\s*\((?:[^()]|\([^()]*\))*\)"
+from app.services.tts_text import (  # noqa: E402
+    segment_by_language,
+    strip_markdown,
+    strip_romaji_after_jp,
 )
-
-
-def strip_markdown(text: str) -> str:
-    out = text
-    for pat, repl in _MD_PATTERNS:
-        out = pat.sub(repl, out)
-    return out
-
-
-def strip_romaji_after_jp(text: str) -> str:
-    """Entfernt `(romaji)` direkt nach JP-Zeichen — Ohren brauchen sie nicht.
-
-    Heuristik: Klammer-Inhalt ist NUR ASCII (Lateinbuchstaben + ein paar
-    Satzzeichen) UND steht direkt (oder mit Leerzeichen) nach einem JP-Zeichen
-    oder einer JP-Klammer 」. Beispiele die GESTRIPPT werden:
-      - 「ちち」 (chichi) → 「ちち」
-      - 家族 (kazoku, Familie) → 家族   ← (kazoku, Familie) wird entfernt, weil ASCII-only
-    Beispiele die BLEIBEN:
-      - Eltern (beide zusammen) — keine JP davor → bleibt
-    """
-    return _ROMAJI_AFTER_JP.sub("", text)
-
-
-# ---------------------------------------------------------------------------
-# DE/JA Sprach-Segmenter
-# ---------------------------------------------------------------------------
-# Unicode-Bereiche
-_JP_RE = re.compile(r"[぀-ゟ゠-ヿ㐀-䶿一-鿿ｦ-ﾟ]")
-_LATIN_RE = re.compile(r"[A-Za-zÀ-ſ]")
-
-
-def char_lang(ch: str) -> str | None:
-    """Klassifiziert ein Zeichen als 'ja' / 'de' / None (neutral: digit, space, punct)."""
-    if _JP_RE.match(ch):
-        return "ja"
-    if _LATIN_RE.match(ch):
-        return "de"
-    return None  # Ziffern, Leerzeichen, Satzzeichen — folgt vorherigem Segment
-
-
-def segment_by_language(text: str) -> list[tuple[str, str]]:
-    """Splittet einen Text in `[(lang, segment)]`-Tupel.
-
-    Neutrale Zeichen (Ziffern, Leerzeichen, Satzzeichen) werden dem aktuellen
-    Segment angehängt. Wechsel von 'ja' nach 'de' (oder umgekehrt) startet ein
-    neues Segment. Wenn der Text mit neutralen Zeichen anfängt, wird das erste
-    JP- oder Latin-Zeichen die Sprache des ersten Segments setzen.
-    """
-    segments: list[tuple[str, str]] = []
-    current_lang: str | None = None
-    buf: list[str] = []
-
-    for ch in text:
-        lang = char_lang(ch)
-        if lang is None:
-            buf.append(ch)
-            continue
-        if current_lang is None:
-            current_lang = lang
-            buf.append(ch)
-        elif lang == current_lang:
-            buf.append(ch)
-        else:
-            # Sprach-Wechsel: bisheriges Segment abschliessen
-            seg = "".join(buf).strip()
-            if seg:
-                segments.append((current_lang, seg))
-            current_lang = lang
-            buf = [ch]
-    # Letzten Buf flushen
-    if buf and current_lang:
-        seg = "".join(buf).strip()
-        if seg:
-            segments.append((current_lang, seg))
-    return segments
 
 
 # ---------------------------------------------------------------------------
