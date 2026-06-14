@@ -9,8 +9,15 @@ from flask_login import current_user, login_required
 
 from app import db, srs_service
 from app.achievements import ACHIEVEMENTS, check_achievements
-from app.gamification_service import XP_STREAK_DAY, compute_kana_mastery_context
-from app.models import UserAchievement
+from app.gamification_service import (
+    XP_STREAK_DAY,
+    XP_STORM_BASE,
+    XP_STORM_PER_HIT,
+    XP_STORM_RUN_BONUS_CAP,
+    XP_STORM_DAILY_CAP,
+    compute_kana_mastery_context,
+)
+from app.models import KanaStormScore, UserAchievement
 
 logger = logging.getLogger(__name__)
 
@@ -252,6 +259,8 @@ def stats_page():
     stats['xp_next_level'] = xp_next
     stats['xp_to_next'] = max(0, xp_next - total_xp)
     stats['level_progress_pct'] = max(0, min(100, round(in_level / span * 100)))
+    # Persoenliche Kana-Storm-Statistik (nur fuer eingeloggte Spieler befuellt).
+    stats['storm'] = srs_service.get_kana_storm_stats(current_user.id)
     return render_template('stats.html', stats=stats)
 
 
@@ -1175,6 +1184,86 @@ def api_practice_storm_daily():
         'count': len(items),
         'date': today_iso,
         'day_number': day_number,
+    })
+
+
+# ── Kana Storm: Runden-Ergebnis speichern (eingeloggt) + XP ────
+
+_STORM_MODES = ('storm', 'daily')
+_STORM_SCHRIFT = ('hiragana', 'katakana', 'both')
+
+
+def _storm_clamp_int(value, lo, hi, default=0):
+    """Clamped einen (vom Client gelieferten) Int-Wert hart in [lo, hi]."""
+    try:
+        v = int(value)
+    except (TypeError, ValueError):
+        return default
+    return max(lo, min(hi, v))
+
+
+@srs_bp.route('/api/practice/kana/storm-finish', methods=['POST'])
+@login_required
+def api_storm_finish():
+    """Persistiert eine beendete Kana-Storm-Runde + vergibt grind-sichere XP.
+
+    Nur fuer eingeloggte Nutzer (das Frontend postet ausschliesslich, wenn
+    loggedIn) — @login_required ist die harte Absicherung; Gaeste bleiben rein
+    clientseitig (localStorage). score/combo/counts kommen vom Client und sind
+    NICHT vertrauenswuerdig: alles wird serverseitig geclamped, und die XP
+    haengen an der geclampten Trefferzahl (nicht am rohen Score), mit Per-Run-
+    UND Tages-Cap (XP_STORM_*). KEIN update_daily_aggregate-Aufruf — der wuerde
+    die review-semantischen Zaehler (Heatmap/Accuracy) verschmutzen.
+    """
+    from datetime import date, datetime
+
+    data = request.get_json(silent=True) or {}
+
+    mode = data.get('mode') if data.get('mode') in _STORM_MODES else 'storm'
+    schrift = data.get('schrift') if data.get('schrift') in _STORM_SCHRIFT else 'hiragana'
+    score = _storm_clamp_int(data.get('score'), 0, 100000)
+    correct = _storm_clamp_int(data.get('correct'), 0, 2000)
+    misses = _storm_clamp_int(data.get('misses'), 0, 2000)
+    # Combo kann nie groesser als Treffer + 1 sein.
+    best_combo = _storm_clamp_int(data.get('best_combo'), 1, correct + 1, default=1)
+    duration = _storm_clamp_int(data.get('duration'), 0, 7200)
+
+    daily_date = None
+    if mode == 'daily':
+        raw = (data.get('daily_date') or '').strip()
+        try:
+            daily_date = date.fromisoformat(raw) if raw else date.today()
+        except ValueError:
+            daily_date = date.today()
+
+    # ── XP: Basis + gedeckelter Hit-Bonus, dann harter Tages-Cap ──
+    run_xp = XP_STORM_BASE + min(correct * XP_STORM_PER_HIT, XP_STORM_RUN_BONUS_CAP)
+    today_start = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+    spent_today = db.session.query(
+        db.func.coalesce(db.func.sum(KanaStormScore.xp_awarded), 0)
+    ).filter(
+        KanaStormScore.user_id == current_user.id,
+        KanaStormScore.created_at >= today_start,
+    ).scalar() or 0
+    granted = max(0, min(run_xp, XP_STORM_DAILY_CAP - int(spent_today)))
+
+    db.session.add(KanaStormScore(
+        user_id=current_user.id, mode=mode, schrift=schrift, duration=duration,
+        score=score, best_combo=best_combo, correct_count=correct,
+        miss_count=misses, xp_awarded=granted, daily_date=daily_date,
+    ))
+    if granted > 0:
+        current_user.add_xp(granted)
+    db.session.commit()
+
+    storm_stats = srs_service.get_kana_storm_stats(current_user.id)
+    return jsonify({
+        'saved': True,
+        'xp_awarded': granted,
+        'total_xp': current_user.total_xp,
+        'level': current_user.level,
+        'best_score': storm_stats['best_score'],
+        'games': storm_stats['games'],
     })
 
 

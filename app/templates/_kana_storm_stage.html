@@ -33,7 +33,7 @@
     ('h', 'H'), ('m', 'M'), ('y', 'Y'), ('r', 'R'), ('w', 'W'), ('n_kons', 'ん'),
     ('g', 'G'), ('z', 'Z'), ('d', 'D'), ('b', 'B'), ('p', 'P')] %}
 
-<div class="kstorm" x-data="kanaStormGame({ initialTab: '{{ _kstorm_tab }}' })" x-init="init()">
+<div class="kstorm" x-data="kanaStormGame({ initialTab: '{{ _kstorm_tab }}', loggedIn: {{ 'true' if current_user.is_authenticated else 'false' }}, csrfToken: '{{ csrf_token() }}' })" x-init="init()">
 
     {# Screenreader-Ansage für Treffer/Fehler (visuell versteckt) #}
     <div class="kstorm__sr" aria-live="polite" aria-atomic="true" x-text="fbText"></div>
@@ -125,10 +125,16 @@
         </button>
         <p class="kstorm__best" x-show="best > 0" x-cloak
            x-text="'Dein Bestscore: ' + best + ' (' + scopeLabel() + ')'"></p>
+        {% if not current_user.is_authenticated %}
         <p class="kstorm__upsell">
             Der Bestscore lebt nur in diesem Browser — mit
             <a href="{{ _kstorm_register }}">kostenlosem Konto</a> zählt er auf jedem Gerät.
         </p>
+        {% else %}
+        <p class="kstorm__upsell">
+            <a href="{{ url_for('srs.stats_page') }}">Deine Storm-Statistik</a> sammelt Bestscore, Spiele und Genauigkeit.
+        </p>
+        {% endif %}
         {% if _kstorm_back %}
         <a class="kstorm__backlink" href="{{ _kstorm_back }}">
             <i class="fas fa-arrow-left" aria-hidden="true"></i> Zurück zum Kana-Spiel
@@ -188,10 +194,16 @@
                         <i class="fas fa-redo" aria-hidden="true"></i> Nochmal
                     </button>
                 </div>
+                {% if not current_user.is_authenticated %}
                 <p class="kstorm__upsell">
                     Teilen lädt Freunde aufs gleiche Brett — mit
                     <a href="{{ _kstorm_register }}">kostenlosem Konto</a> zählt deine Serie mit.
                 </p>
+                {% else %}
+                {# Eingeloggt: Daily gibt ebenfalls XP — kurz anzeigen (aria-live). #}
+                <p class="kstorm__xp" x-show="lastXp > 0" x-cloak aria-live="polite"
+                   x-text="'+' + lastXp + ' XP'"></p>
+                {% endif %}
             </div>
         </template>
 
@@ -274,8 +286,10 @@
                 <span class="kstorm__cap">Kana</span>
             </div>
         </div>
+        {% if not current_user.is_authenticated %}
         <p class="kstorm__best"
            x-text="isNewBest ? ('🏆 Neuer Bestscore: ' + best + '!') : (best > 0 ? ('Bestscore: ' + best) : '')"></p>
+        {% endif %}
         <div class="kstorm__endactions">
             <button class="kstorm__start" @click="again()">
                 <span>Nochmal</span> <i class="fas fa-redo" aria-hidden="true"></i>
@@ -284,10 +298,27 @@
                 <i class="fas fa-sliders-h" aria-hidden="true"></i> Einstellungen
             </button>
         </div>
+        {% if not current_user.is_authenticated %}
         <p class="kstorm__upsell">
             Stark gespielt — mit <a href="{{ _kstorm_register }}">kostenlosem Konto</a>
             zählen Bestscore und Serie auf jedem Gerät.
         </p>
+        {% else %}
+        {# Eingeloggt: KEIN Konto-Upsell. Serverseitige Bestmarke + Spiele + XP der
+           Runde (vom storm-finish-POST gefuellt) und Link auf die volle Statistik.
+           aria-live: die Werte kommen erst nach dem async POST — Screenreader ansagen. #}
+        <div class="kstorm__account" aria-live="polite">
+            <p class="kstorm__best" x-show="serverBest > 0" x-cloak
+               x-text="'🏆 Persönliche Bestmarke (Konto): ' + serverBest + ' · ' + serverGames + ' Spiele'"></p>
+            {# Fallback bei fehlgeschlagenem/ausstehendem POST (offline/Session weg):
+               wenigstens den lokalen Bestscore zeigen — nicht leerer als beim Gast. #}
+            <p class="kstorm__best" x-show="serverBest === 0 && best > 0" x-cloak
+               x-text="'Bestscore: ' + best"></p>
+            <p class="kstorm__xp" x-show="lastXp > 0" x-cloak
+               x-text="'+' + lastXp + ' XP'"></p>
+            <a class="kstorm__statslink" href="{{ url_for('srs.stats_page') }}">Deine Storm-Statistik ansehen</a>
+        </div>
+        {% endif %}
         {% if _kstorm_back %}
         <a class="kstorm__backlink" href="{{ _kstorm_back }}">
             <i class="fas fa-arrow-left" aria-hidden="true"></i> Zurück zum Kana-Spiel

@@ -25,6 +25,17 @@ XP_NEW_CARD_BONUS = 15
 XP_STREAK_DAY = 20
 XP_PERFECT_SESSION = 50
 
+# ── Kana Storm (Arcade) ───────────────────────────────────────
+# Storm-Runden geben XP wie der Review-Loop, aber grind-sicher gedeckelt:
+# Teilnahme-Basis + 1 XP je korrekt getippter Kana, pro Runde UND pro Tag
+# gekappt. So bleibt Arcade unter dem echten Review-Loop (Streak 20, Perfect-
+# Session 50) und kann ihn nicht ersetzen/entwerten. Tages-Cap zwingend, sonst
+# skaliert XP linear mit der Klick-Dauer.
+XP_STORM_BASE = 3            # Teilnahme-Basis pro beendeter Runde
+XP_STORM_PER_HIT = 1         # 1 XP je korrekt getippter Kana
+XP_STORM_RUN_BONUS_CAP = 15  # Hit-Bonus pro Runde gedeckelt (~ XP_NEW_CARD_BONUS)
+XP_STORM_DAILY_CAP = 60      # max. Storm-XP pro Tag (~3-4 gute Runden, dann 0)
+
 # ── Karten-Stufen (basierend auf FSRS Stability) ─────────────
 
 CARD_STAGES = [

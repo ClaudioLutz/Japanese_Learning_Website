@@ -1378,6 +1378,42 @@ class KanaConfusion(db.Model):
                 f'{self.target_kana_id}<-{self.confused_kana_id} x{self.count}>')
 
 
+class KanaStormScore(db.Model):
+    """Eine beendete Kana-Storm-Runde eines EINGELOGGTEN Nutzers.
+
+    Speist die persoenliche Storm-Statistik auf /review/stats (Bester Score,
+    Spiele, Beste Combo, Genauigkeit, Kana getippt) und die Konto-Bestmarke im
+    End-Screen. Gaeste spielen weiter rein clientseitig (localStorage) — diese
+    Tabelle existiert nur fuer eingeloggte Spieler. Bewusst EINE Zeile pro Runde
+    (kein Upsert), damit Aggregat UND spaeterer Verlauf moeglich bleiben.
+
+    mode = 'storm' (Arcade gegen die Uhr) | 'daily' (Wordle-Tagesbrett). Die
+    /review/stats-Sektion aggregiert NUR mode='storm'; Daily-Runden werden
+    mitgeschrieben (XP) und sind fuer spaetere Auswertungen da. score/combo/
+    counts kommen vom Client und werden im Endpoint hart geclamped (Anti-Cheat).
+    """
+    __tablename__ = 'kana_storm_score'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, index=True)
+    mode = db.Column(db.String(16), nullable=False, default='storm', server_default='storm')
+    schrift = db.Column(db.String(16), nullable=False, default='hiragana', server_default='hiragana')
+    duration = db.Column(db.Integer, nullable=False, default=0, server_default='0')
+    score = db.Column(db.Integer, nullable=False, default=0, server_default='0')
+    best_combo = db.Column(db.Integer, nullable=False, default=1, server_default='1')
+    correct_count = db.Column(db.Integer, nullable=False, default=0, server_default='0')
+    miss_count = db.Column(db.Integer, nullable=False, default=0, server_default='0')
+    xp_awarded = db.Column(db.Integer, nullable=False, default=0, server_default='0')
+    daily_date = db.Column(db.Date, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+
+    user = db.relationship('User', backref=db.backref('kana_storm_scores', lazy='dynamic'))
+
+    def __repr__(self):
+        return (f'<KanaStormScore u:{self.user_id} {self.mode} '
+                f'score:{self.score} combo:{self.best_combo}>')
+
+
 class UserSRSSettings(db.Model):
     """Persoenliche SRS-Einstellungen pro User."""
     __tablename__ = 'user_srs_settings'

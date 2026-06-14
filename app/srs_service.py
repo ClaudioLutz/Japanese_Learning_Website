@@ -343,6 +343,44 @@ def get_user_stats(user_id):
     }
 
 
+def get_kana_storm_stats(user_id):
+    """Persoenliche Kana-Storm-Statistik (nur Arcade-Modus 'storm').
+
+    Aggregiert die gespeicherten Runden eines Nutzers zu den Kennzahlen der
+    Storm-Sektion auf /review/stats. Daily-Runden zaehlen hier NICHT mit
+    (eigene Wordle-Mechanik, kein vergleichbarer Score). Liefert bei 0 Spielen
+    durchgaengig Nullen — das Template blendet die Sektion dann aus.
+    """
+    from app.models import KanaStormScore
+
+    row = db.session.query(
+        db.func.count(KanaStormScore.id),
+        db.func.max(KanaStormScore.score),
+        db.func.max(KanaStormScore.best_combo),
+        db.func.coalesce(db.func.sum(KanaStormScore.correct_count), 0),
+        db.func.coalesce(db.func.sum(KanaStormScore.miss_count), 0),
+    ).filter(
+        KanaStormScore.user_id == user_id,
+        KanaStormScore.mode == 'storm',
+    ).first()
+
+    games = (row[0] if row else 0) or 0
+    if not games:
+        return {'games': 0, 'best_score': 0, 'best_combo': 0,
+                'accuracy': 0, 'kana_typed': 0}
+
+    correct = int(row[3] or 0)
+    miss = int(row[4] or 0)
+    typed = correct + miss
+    return {
+        'games': games,
+        'best_score': row[1] or 0,
+        'best_combo': row[2] or 0,
+        'accuracy': round(correct / typed * 100) if typed else 0,
+        'kana_typed': typed,
+    }
+
+
 def get_content_data_for_review(content_item):
     """Bereitet Content-Daten fuer die Review-API auf."""
     lesson = content_item.lesson

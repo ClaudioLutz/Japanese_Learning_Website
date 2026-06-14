@@ -265,7 +265,10 @@
 {% endblock %}
 
 {% block content %}
-{% if stats.total_cards == 0 %}
+{# Empty-State NUR, wenn weder SRS-Karten NOCH Storm-Spiele vorliegen — sonst
+   landen reine Storm-Spieler (total_cards==0) in der leeren Seite und sehen ihre
+   Storm-Statistik nie, obwohl der Storm-End-Screen genau hierher verlinkt. #}
+{% if stats.total_cards == 0 and not (stats.storm and stats.storm.games > 0) %}
 <div class="srs-stats-page">
     <div class="stats-pagehead">
         <span class="stats-eyebrow"><i class="fas fa-chart-line" aria-hidden="true"></i> Dein Fortschritt</span>
@@ -376,6 +379,35 @@
             <span class="stat-value">{{ stats.review_count }}</span>
         </div>
     </div>
+
+    <!-- ══ GRUPPE: Kana Storm ══ -->
+    {# Nur sichtbar, wenn der Nutzer mindestens eine Storm-Runde gespielt hat
+       (eingeloggt → in kana_storm_score persistiert). Daily zaehlt hier nicht. #}
+    {% if stats.storm and stats.storm.games > 0 %}
+    <div class="stats-group">Kana Storm</div>
+    <div class="srs-stats-overview">
+        <div class="stat-card">
+            <span class="stat-label">Bester Score</span>
+            <span class="stat-value">{{ stats.storm.best_score|swiss_num }}</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Spiele</span>
+            <span class="stat-value">{{ stats.storm.games }}</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Beste Combo</span>
+            <span class="stat-value">×{{ stats.storm.best_combo }}</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Genauigkeit</span>
+            <span class="stat-value">{{ stats.storm.accuracy }}<small>%</small></span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Kana getippt</span>
+            <span class="stat-value">{{ stats.storm.kana_typed|swiss_num }}</span>
+        </div>
+    </div>
+    {% endif %}
 
     <!-- ══ GRUPPE: Verlauf ══ -->
     <div class="stats-group">Verlauf</div>

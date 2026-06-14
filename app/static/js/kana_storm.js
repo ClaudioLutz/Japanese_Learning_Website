@@ -114,6 +114,7 @@ function kanaStormGame(opts) {
         combo: 1,
         bestCombo: 1,
         count: 0,
+        misses: 0,             // Fehlversuche der Runde (für serverseitige Genauigkeit)
         timeLeft: 0,
         inputVal: '',
         choices: [],
@@ -126,6 +127,15 @@ function kanaStormGame(opts) {
         // ── Bestscore (localStorage, pro Schrift+Dauer) ──
         best: 0,
         isNewBest: false,
+
+        // ── Konto (eingeloggt): Server-Persistenz der Runde + XP ──
+        // loggedIn kommt vom Template (current_user.is_authenticated). Nur dann
+        // wird das Ergebnis ans Backend gepostet; Gäste bleiben rein lokal.
+        loggedIn: !!opts.loggedIn,
+        csrfToken: opts.csrfToken || '',
+        serverBest: 0,         // serverseitige Bestmarke (Antwort von storm-finish)
+        serverGames: 0,
+        lastXp: 0,             // XP der zuletzt gespeicherten Runde
 
         // ── Daily (Wordle-artige Tageschallenge: festes Brett für ALLE gleich) ──
         dailyBoard: [],        // [{ character, romanization, accepts:Set }]
@@ -271,8 +281,8 @@ function kanaStormGame(opts) {
 
         _beginRound() {
             this.mode = 'storm';
-            this.score = 0; this.combo = 1; this.bestCombo = 1; this.count = 0;
-            this.isNewBest = false; this.revealing = false;
+            this.score = 0; this.combo = 1; this.bestCombo = 1; this.count = 0; this.misses = 0;
+            this.isNewBest = false; this.revealing = false; this.lastXp = 0;
             this.timeLeft = this.duration;
             this._endAt = Date.now() + this.duration * 1000;
             this.current = null; this.inputVal = '';
@@ -398,6 +408,7 @@ function kanaStormGame(opts) {
                 // Fehler: Combo zurück, Lösung kurz zeigen, dann nächstes Zeichen.
                 // Das verfehlte Zeichen bleibt im Pool → kann (per Zufall) wiederkommen.
                 this.combo = 1;
+                this.misses++;
                 this.fb = 'bad';
                 this.fbText = '✗ ' + this.current.character + ' = ' + this.current.romanization;
                 // Daily: 🟥 protokollieren + weiterrücken (das Zeichen kommt NICHT zurück).
@@ -435,12 +446,43 @@ function kanaStormGame(opts) {
                 this._lsSet(this._bestKey(), this.score);
             }
             this.phase = 'ended';
+            // Eingeloggt: Runde serverseitig speichern (Bestmarke + XP).
+            if (this.loggedIn) {
+                this._postResult({
+                    mode: 'storm', schrift: this.schrift, duration: this.duration,
+                    score: this.score, best_combo: this.bestCombo,
+                    correct: this.count, misses: this.misses, daily_date: '',
+                });
+            }
             if (window.kanaTrack) {
                 window.kanaTrack('kana_storm_end', {
                     schrift: this.schrift, dur: this.duration,
                     score: this.score, combo: this.bestCombo, count: this.count,
                 });
             }
+        },
+
+        // ── Server-Persistenz (nur eingeloggt): Runde speichern + XP/Bestmarke ──
+        // Fire-and-forget: ein Fehler hier darf das Spiel NIE stören — die lokale
+        // Anzeige (localStorage-Bestscore) bleibt ohnehin erhalten. Gäste rufen
+        // das nie auf (loggedIn=false), der Endpoint ist zusätzlich @login_required.
+        async _postResult(payload) {
+            if (!this.loggedIn) return;
+            try {
+                const resp = await fetch('/api/practice/kana/storm-finish', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': this.csrfToken || '',
+                    },
+                    body: JSON.stringify(payload),
+                });
+                if (!resp.ok) return;
+                const d = await resp.json();
+                if (typeof d.best_score === 'number') this.serverBest = d.best_score;
+                if (typeof d.games === 'number') this.serverGames = d.games;
+                if (typeof d.xp_awarded === 'number') this.lastXp = d.xp_awarded;
+            } catch (e) { /* offline / Session weg → bleibt rein clientseitig */ }
         },
 
         // "Nochmal" — gleiche Konfig, frische Runde (Pool ist geladen).
@@ -578,7 +620,7 @@ function kanaStormGame(opts) {
             this.mode = 'daily';
             this.pool = this.dailyBoard;   // Distraktor-Quelle für die 4 Tap-Optionen
             this.dailyIdx = 0; this.dailyLog = []; this.dailyGreens = 0;
-            this.score = 0; this.combo = 1; this.bestCombo = 1; this.count = 0;
+            this.score = 0; this.combo = 1; this.bestCombo = 1; this.count = 0; this.misses = 0;
             this.revealing = false; this.dailyStartMs = Date.now();
             this.current = null; this.inputVal = ''; this.fb = ''; this.fbText = ' ';
             this.phase = 'playing';
@@ -605,6 +647,17 @@ function kanaStormGame(opts) {
             this.dailyHasResult = true;
             this.dailyCopied = false;
             this._lsSet('kanaStormDailyLast', JSON.stringify(this.dailyResult));
+            // Eingeloggt: Daily-Ergebnis serverseitig speichern (XP). correct =
+            // 🟩 auf Anhieb richtig, misses = Rest des Bretts.
+            if (this.loggedIn) {
+                this._postResult({
+                    mode: 'daily', schrift: this.schrift, duration: secs,
+                    score: this.score, best_combo: this.bestCombo,
+                    correct: this.dailyGreens,
+                    misses: Math.max(0, len - this.dailyGreens),
+                    daily_date: this.dailyDate,
+                });
+            }
             this.mode = 'storm';
             this.phase = 'daily';
             if (window.kanaTrack) {

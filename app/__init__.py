@@ -378,6 +378,18 @@ def create_app():
             return ''
         return Markup(escape(text).replace('\n', Markup('<br>')))
 
+    # Custom Jinja2 Filter: Schweizer Tausendertrennung (1'234'567)
+    # Bewusst additiv: nur dort genutzt, wo grosse Zahlen vorkommen (z.B. die
+    # Kana-Storm-Kennzahlen). Faellt bei Nicht-Zahlen unveraendert durch.
+    @app.template_filter('swiss_num')
+    def swiss_num_filter(value):
+        # Markup-safe: Ausgabe ist rein aus int abgeleitet (nur Ziffern +
+        # Apostroph), damit der Apostroph nicht zu &#39; escaped wird.
+        try:
+            return Markup(f"{int(value):,}".replace(',', "'"))
+        except (ValueError, TypeError):
+            return value
+
     # Custom Jinja2 Filter: JSON-String → dict (for dialog_slideshow content)
     import json as _json
     @app.template_filter('fromjson')
