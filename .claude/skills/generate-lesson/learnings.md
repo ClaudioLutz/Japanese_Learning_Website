@@ -47,6 +47,73 @@ Selbstverbesserndes Log. Wird vor jedem Run gelesen, nach jedem Run angehängt.
 
 <!-- Neuste Einträge oben, älteste unten. -->
 
+## 2026-06-14 — 6er-Drop N5-Vokabel-Lektionen 189-194 (Coverage 44.4% → 59.2%)
+
+### Erstellte Lektionen
+- **189**: N5 Körper & Gesundheit (Modul 34, order 3) — 18 Vokabeln
+- **190**: N5 Essen & Lebensmittel (Modul 35, order 3) — 18 Vokabeln
+- **191**: N5 Kleidung & Anziehen (Modul 35, order 4) — 21 Vokabeln
+- **192**: N5 Farben & Beschreiben (Modul 34, order 4) — 17 Vokabeln
+- **193**: N5 Tage des Monats & Zeitangaben (Modul 32, order 9) — 18 Vokabeln
+- **194**: N5 Dinge zählen & Zähler (Modul 32, order 10) — 19 Vokabeln
+
+Total: **111 Vokabeln, 18 Grammatik, 90 Quiz, 6 Dialoge**. N5-Vokabel-Coverage
+**315/710 (44.4%) → 428/723 (59.2%)**. Kanji bleibt 100%.
+
+### Erfolge / Vorgehen
+- **Fan-out via Agent-Tool (NICHT Workflow-Tool) funktioniert in Hintergrund-Sessions.**
+  Das Workflow-Tool stirbt in bg-Sessions (Memory), aber 5 parallele `Agent`-Subagenten
+  (Opus) haben sauber Lektionen 2-6 geschrieben + selbst validiert. Lektion 1 zuerst
+  selbst als Gold-Referenz geschrieben, dann die 5 anderen mit exakter Wortliste +
+  N5-Kanji-Set + allen §3-Constraints + Gold-Referenz fan-out. → **Regel: Bei Mengen-
+  Content in bg-Sessions Agent-Tool-Fan-out nutzen, eine geprüfte Gold-Lektion zuerst.**
+- **Adversariale Level-Prüfung mit 2 Reviewern** (JP-Korrektheit + Pädagogik/DE/Format).
+  7 echte Befunde gefixt: Sprecher-Verwechslung (Frage schrieb Aussage falscher Person zu),
+  2× ASCII-Umlaut in `description`-Feldern, 2 nicht-N5-Distraktoren (しおからい/にがい),
+  irreführendes Distraktor-Feedback (suggerierte あかの くるま sei korrekt — richtig ist
+  i-Adj. あかい くるま), unnatürlicher Beispielsatz, にじゅっさい→じゅうはっさい (はたち ist
+  Standardform für 20). → **Regel: Adversarial-Review fängt Dinge, die der mechanische
+  Validator nicht kann: Natürlichkeit, falsche Quiz-Person, didaktisch unkluge Beispiele.**
+
+### Validator-Verbesserungen (pipeline.py, committed)
+1. **`load_canonical` splittet jetzt Schreibvarianten** (`;`/`；`/`/`/`・`): canonical-
+   Einträge wie `足; 脚`, `川; 河`, `丸い; 円い`, `いい; よい` werden zu separaten vocab_set-
+   Einträgen. Vorher matchte `足` (als sauberes Karteikarten-word) nicht gegen `足; 脚`.
+2. **Dialog-Erkennung robust** statt hartcodiert auf `Tanaka:`/`Lisa:`. Jetzt: bekannte
+   Beispiel-Namen ODER >=3 Sprecher-Zeilen (`Name: ...`). Vorher fielen eigene Namen
+   (Haruto:, Sensei:, Yuki:, ...) durch und triggerten fälschlich den Markdown-Heading-
+   Check auf dem Dialog-Block. → §4 sagt eigene Namen nutzen, der Validator kannte sie nicht.
+
+### Bilder: Nano Banana statt DALL-E (User-Direktive)
+- Neues Skript **`.claude/skills/generate-lesson/scripts/nb_images.py`** (gemini-2.5-flash-image
+  via REST, GOOGLE_AI_API_KEY): Thumbnail (16:9) + Vokabel-Icons (1:1) → webp, schreibt
+  URLs in den Draft. `--no-vocab` für abstrakte Lektionen. Der Pipeline-`images`-Schritt
+  nutzt weiterhin DALL-E — für Lektionsbilder gilt aber die Nano-Banana-Direktive.
+  Konkrete Lektionen (Körper/Essen/Kleidung/Farben) voll bebildert (74 Vokabel-Icons),
+  abstrakte (Tage/Zähler) nur Thumbnail (Bilder von „der 3." / „～円" wären sinnlos).
+
+### Gemini-TTS-Quota
+- Bei 6 Lektionen × ~7 Prosa-Bloecke war die **Gemini-2.5-Pro-TTS-Tagesquota (2'500,
+  PaidTier2) nach ~3 Lektionen erschöpft** (429 RESOURCE_EXHAUSTED). Der **Chirp-3-HD-Leda-
+  Fallback hat alle 42 WAVs trotzdem fertiggestellt** (gleiche Stimm-Persönlichkeit), nur
+  langsamer. → **Regel: Bei >3 Lektionen text-audio am Stück die Quota einplanen; Chirp
+  zieht nach, kostet aber Zeit. Ggf. nach Quota-Reset (~09:00 CET) idempotent re-runnen.**
+
+### Verifikation
+- In-Process `test_client` mit programmatischer Admin-Session (`sess["_user_id"]`) umgeht
+  CSRF-/Login-Friktion und Zugriffskontrolle sauber — robuster als HTTP-Login für die
+  Render-Prüfung unpublished Lektionen. Plus Playwright-Visual auf L189 (Deck zeigt EINE
+  Karte, Bilder geladen, Audio 0:16, 0 Console-Errors).
+
+### Offen
+- **Produktions-Deploy (hp-ubuntu) ist separater, freizugebender Schritt** — die 6 Lektionen
+  liegen in der lokalen Windows-Dev-DB (publiziert) + als Drafts im Git (force-add, da
+  drafts/ gitignored). Für Prod: Drafts auf hp-ubuntu inserten (DB-Content-Apply-Muster).
+- Nächster Vokabel-Hebel Richtung N5-100%: ~295 Wörter offen (Verben, Adjektive, Haus/Räume,
+  Orte/Stadt, Position/Richtung, Verbindungs-/Fragewörter, Schule/Schreiben).
+
+---
+
 ## 2026-04-27 19:00 — Neues Modul `n5-kanji-grundlagen` + 3-er-Drop Lessons 171-173
 
 ### Erstellte Lektionen (Modul 38, n5-kanji-grundlagen)

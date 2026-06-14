@@ -113,11 +113,24 @@ def load_canonical(level: int) -> dict:
             f"Aktuell verfuegbar: nur N5. Andere Levels brauchen Manual-Import."
         )
     data = json.loads(path.read_text(encoding="utf-8"))
+
+    # Manche canonical-Eintraege listen Schreibvarianten in EINEM word-Feld,
+    # getrennt durch ';' / '；' / '/' / '・' (z.B. "足; 脚", "川; 河", "丸い; 円い",
+    # "いい; よい"). Beide Varianten sind gueltige N5-Woerter — daher splitten,
+    # damit eine Lesson '足' (statt '足; 脚') als Karteikarten-word nutzen kann.
+    def _word_variants(w: str) -> set[str]:
+        parts = re.split(r"[;；/・]", w or "")
+        return {p.strip() for p in parts if p.strip()}
+
+    vocab_set: set[str] = set()
+    for v in data.get("vocab", []):
+        vocab_set |= _word_variants(v["word"])
+
     cache = {
         "raw": data,
         "vocab_list": data.get("vocab", []),
         "kanji_list": data.get("kanji", []),
-        "vocab_set": {v["word"] for v in data.get("vocab", [])},
+        "vocab_set": vocab_set,
         "vocab_reading_set": {(v["word"], v["reading"]) for v in data.get("vocab", [])},
         "kanji_set": {k["char"] for k in data.get("kanji", [])},
     }
@@ -215,9 +228,16 @@ def validate_draft(draft: dict) -> list[str]:
                     )
                 # Markdown-Hierarchie-Pflicht (User-Direktive 2026-04-25):
                 # Skip Quiz-Intro (sehr kurz) und Dialog-Block (Speaker: ... Format).
-                is_dialog = "Tanaka:" in ctext or "Lisa:" in ctext or "Speaker:" in ctext.replace(":", ":")
                 speakers = sum(1 for line in ctext.split("\n") if line.strip() and ":" in line.split()[0] if line.strip())
-                # Heuristik: wenn >=4 Sprecher-Zeilen, ist es ein Dialog → keine Heading-Pflicht
+                # Dialog-Erkennung: bekannte Beispiel-Namen ODER >=3 Sprecher-Zeilen
+                # (Name: ...). Dialoge beginnen laut §4 direkt mit der Speaker-Zeile
+                # und brauchen daher keine Markdown-Hierarchie. Frueher waren nur
+                # "Tanaka:"/"Lisa:" hartcodiert — eigene Namen (Haruto:, Sensei:, ...)
+                # fielen durch und triggerten faelschlich den Heading-Check.
+                is_dialog = (
+                    "Tanaka:" in ctext or "Lisa:" in ctext or "Speaker:" in ctext
+                    or speakers >= 3
+                )
                 if not is_dialog and len(ctext) >= 200:
                     has_heading = bool(MD_HEADING_RE.search(ctext))
                     bold_count = len(MD_BOLD_RE.findall(ctext))
