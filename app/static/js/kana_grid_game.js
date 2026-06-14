@@ -870,13 +870,10 @@ function kanaSettings() {
     const LS_KEY = 'kana_game_settings_v1';
     return {
         mode: 'schreiben',
-        schrift: 'both',
-        selectedRows: [],          // leer = alle Reihen
-        includeDakuten: true,
         weakOnly: false,
-        // KEIN limit mehr: die Anzahl richtet sich nach der Auswahl
-        // (Reihen x Schrift) — der Slider ist entfallen.
-        availableRows: Object.keys(PRACTICE_ROW_LABELS).map(k => ({ key: k, label: PRACTICE_ROW_LABELS[k] })),
+        // Schrift + Reihen liegen jetzt im geteilten $store.kanaScope (EIN Picker
+        // für beide Spiele). Hier nur noch Modus/weakOnly + die Live-Vorschau.
+        // KEIN limit mehr: die Anzahl richtet sich nach der Auswahl (Reihen × Schrift).
         previewCount: null,        // null = noch unbekannt / Fehler
         previewLoading: false,
         previewBlocked: null,      // Meldung, wenn keine Kana freigeschaltet sind
@@ -885,62 +882,48 @@ function kanaSettings() {
         init() {
             try {
                 const saved = JSON.parse(localStorage.getItem(LS_KEY) || '{}');
-                if (saved && typeof saved === 'object') {
-                    if (['schreiben', 'lesen'].includes(saved.mode)) this.mode = saved.mode;
-                    if (['hiragana', 'katakana', 'both'].includes(saved.schrift)) this.schrift = saved.schrift;
-                    if (Array.isArray(saved.selectedRows)) this.selectedRows = saved.selectedRows;
-                    if (typeof saved.includeDakuten === 'boolean') this.includeDakuten = saved.includeDakuten;
-                    // weakOnly wird BEWUSST NICHT aus localStorage geladen: der
-                    // "Nur schwache Karten"-Filter ist eine bewusste Einmal-Wahl
-                    // pro Sitzung und startet immer auf "aus". Sonst bliebe er
-                    // (z.B. nach dem "Schwache Karten"-Schnellstart) dauerhaft an
-                    // und liesse sich auf Mobile kaum wiederfinden/abschalten.
-                    // (Ein evtl. altes saved.limit wird ignoriert — Slider entfallen.)
+                // Nur der Modus ist noch spiel-eigen; Schrift/Reihen kommen aus dem
+                // geteilten Store. weakOnly wird BEWUSST NICHT geladen (bewusste
+                // Einmal-Wahl pro Sitzung — sonst bliebe der Filter auf Mobile hängen).
+                if (saved && typeof saved === 'object' && ['schreiben', 'lesen'].includes(saved.mode)) {
+                    this.mode = saved.mode;
                 }
             } catch (e) { /* localStorage nicht verfuegbar — Defaults behalten */ }
+            // Vorschau ("≈ N Kana") neu zählen, wenn sich der geteilte Scope ändert.
+            this.$watch('$store.kanaScope.schrift', () => this.schedulePreview());
+            this.$watch('$store.kanaScope.rows', () => this.schedulePreview());
             this.refreshPreview();
         },
 
         get modeLabel() { return PRACTICE_MODE_LABELS[this.mode] || ''; },
-        get allRowsActive() { return this.selectedRows.length === 0; },
         get canStart() {
             return !this.previewBlocked && (this.previewCount === null || this.previewCount > 0);
         },
 
         setMode(m) { this.mode = m; this.changed(); },
-        setSchrift(s) { this.schrift = s; this.changed(); },
-        selectAllRows() { this.selectedRows = []; this.changed(); },
-        toggleRow(key) {
-            this.selectedRows = this.selectedRows.includes(key)
-                ? this.selectedRows.filter(k => k !== key)
-                : [...this.selectedRows, key];
-            this.changed();
-        },
 
         changed() { this.persist(); this.schedulePreview(); },
 
         persist() {
             try {
-                // weakOnly wird bewusst NICHT persistiert (siehe init): so kann
-                // der Filter nicht dauerhaft "haengen". Ein evtl. alter Wert aus
-                // einer frueheren Version wird durch dieses Ueberschreiben entfernt.
-                localStorage.setItem(LS_KEY, JSON.stringify({
-                    mode: this.mode, schrift: this.schrift, selectedRows: this.selectedRows,
-                    includeDakuten: this.includeDakuten,
-                }));
+                // Nur der Modus ist spiel-eigen (Schrift/Reihen → Store). weakOnly
+                // wird bewusst NICHT persistiert (siehe init).
+                localStorage.setItem(LS_KEY, JSON.stringify({ mode: this.mode }));
             } catch (e) { /* still ignorieren */ }
         },
 
         buildParams() {
-            // Bewusst OHNE limit: gespielt wird genau die Auswahl (Server
-            // liefert ohne limit-Param alles Gewaehlte).
+            // Schrift + Reihen aus dem geteilten Store. Explizite Reihen (inkl.
+            // G–P) übersteuern serverseitig den Dakuten-Schalter; "Alle" (rows=[])
+            // = Basis, darum dakuten='false'. KEIN limit: gespielt wird die Auswahl.
+            const sc = this.$store.kanaScope;
             const params = new URLSearchParams({
                 mode: this.mode,
-                schrift: this.schrift,
-                dakuten: this.includeDakuten ? 'true' : 'false',
+                schrift: sc.schrift,
+                dakuten: 'false',
                 weak_only: this.weakOnly ? 'true' : 'false',
             });
-            if (this.selectedRows.length > 0) params.set('rows', this.selectedRows.join(','));
+            if (sc.rows.length > 0) params.set('rows', sc.rows.join(','));
             return params;
         },
 

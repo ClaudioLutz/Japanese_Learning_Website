@@ -33,7 +33,7 @@
     ('h', 'H'), ('m', 'M'), ('y', 'Y'), ('r', 'R'), ('w', 'W'), ('n_kons', 'ん'),
     ('g', 'G'), ('z', 'Z'), ('d', 'D'), ('b', 'B'), ('p', 'P')] %}
 
-<div class="kstorm" x-data="kanaStormGame({ initialTab: '{{ _kstorm_tab }}', loggedIn: {{ 'true' if current_user.is_authenticated else 'false' }}, csrfToken: '{{ csrf_token() }}' })" x-init="init()">
+<div class="kstorm" x-data="kanaStormGame({ initialTab: '{{ _kstorm_tab }}', loggedIn: {{ 'true' if current_user.is_authenticated else 'false' }}, csrfToken: '{{ csrf_token() }}', scopeExternal: {{ 'true' if kstorm_scope_external else 'false' }} })" x-init="init()">
 
     {# Screenreader-Ansage für Treffer/Fehler (visuell versteckt) #}
     <div class="kstorm__sr" aria-live="polite" aria-atomic="true" x-text="fbText"></div>
@@ -64,7 +64,10 @@
             das nächste Zeichen kommt sofort.
         </p>
 
-        {# Glyph-forward Schrift-Picker: das Zeichen führt, das Label erklärt. #}
+        {# Glyph-forward Schrift-Picker: das Zeichen führt, das Label erklärt.
+           Bei externem Scope (/practice/kana) ausgeblendet — Schrift kommt vom
+           geteilten Scope-Panel oben. #}
+        {% if not kstorm_scope_external %}
         <div class="kstorm__pick" role="group" aria-label="Schrift">
             <button type="button" class="kstorm__sp" :class="{ 'is-active': schrift === 'hiragana' }"
                     :aria-pressed="(schrift === 'hiragana').toString()" @click="setSchrift('hiragana')">
@@ -82,6 +85,7 @@
                 <span class="kstorm__sp-l">Beide</span>
             </button>
         </div>
+        {% endif %}
 
         {# Optionen-Disclosure: Dauer + Reihen einklappbar (entrümpelt den Start). #}
         <button type="button" class="kstorm__opt-toggle" :aria-expanded="optionsOpen.toString()"
@@ -101,7 +105,10 @@
                 </div>
             </div>
             {# Reihen-Auswahl: nur die gewählten Gojuon-Gruppen spielen. Leer/"Alle"
-               = komplettes Grund-Set. G–P sind Dakuten/Handakuten. #}
+               = komplettes Grund-Set. G–P sind Dakuten/Handakuten. Bei externem
+               Scope (/practice/kana) ausgeblendet — Reihen kommen vom geteilten
+               Scope-Panel oben. #}
+            {% if not kstorm_scope_external %}
             <div class="kstorm__opt-block">
                 <div class="kstorm__opt-label">
                     Reihen <span class="kstorm__rows-count" x-text="selectedCount() + ' Kana'">46 Kana</span>
@@ -118,6 +125,7 @@
                     {% endfor %}
                 </div>
             </div>
+            {% endif %}
         </div>
 
         <button class="kstorm__start kstorm__start--big" @click="start()">

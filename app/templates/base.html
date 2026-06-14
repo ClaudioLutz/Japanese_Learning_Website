@@ -60,6 +60,9 @@
           href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Inter:wght@400;500;600;700&family=Klee+One:wght@400;600&family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@400;500&display=swap">
 
     <script defer src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    {# Geteilter Kana-Scope-Store (Schrift + Reihen) — VOR beiden Spiel-Skripten,
+       damit der alpine:init-Listener vor Alpines Init registriert ist. #}
+    <script defer src="{{ static_v('js/kana_scope_store.js') }}"></script>
     <script defer src="{{ static_v('js/kana_grid_game.js') }}"></script>
     <script defer src="{{ static_v('js/kana_storm.js') }}"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>

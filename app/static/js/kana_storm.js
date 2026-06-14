@@ -100,6 +100,9 @@ function kanaStormGame(opts) {
         initialTab: opts.initialTab === 'daily' ? 'daily' : 'storm',
         mode: 'storm',         // 'storm' | 'daily' — Modus der laufenden Runde
         optionsOpen: false,    // "Optionen"-Disclosure (Dauer + Reihen) im Start-Screen
+        // /practice/kana: Schrift + Reihen kommen vom geteilten $store.kanaScope
+        // (interne Picker ausgeblendet). Sonst (Vollbild/Startseite/daily) false.
+        scopeExternal: !!opts.scopeExternal,
 
         // ── Phasen / Daten ──
         // 'start' = Storm-Konfig (SSR-sichtbar) · 'daily' = Daily-Karte (Heim + Ergebnis)
@@ -164,17 +167,33 @@ function kanaStormGame(opts) {
             try {
                 this.reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
             } catch (e) { /* matchMedia evtl. nicht verfügbar */ }
-            // Letzte Auswahl wiederherstellen (Privatmodus → Defaults bleiben).
-            const s = this._ls('kanaStormSchrift');
-            if (['hiragana', 'katakana', 'both'].includes(s)) this.schrift = s;
-            const d = parseInt(this._ls('kanaStormDur') || '', 10);
-            if (d === 60 || d === 120) this.duration = d;
-            try {
-                const r = JSON.parse(this._ls('kanaStormRows') || '[]');
-                if (Array.isArray(r)) {
-                    this.selectedRows = r.filter((k) => KANA_STORM_ROW_SIZES[k] !== undefined);
+            if (this.scopeExternal) {
+                // Schrift + Reihen kommen vom geteilten Store (interne Picker
+                // sind ausgeblendet); reaktiv mitziehen, Bestscore neu laden.
+                const sc = this.$store && this.$store.kanaScope;
+                if (sc) {
+                    this.schrift = sc.schrift;
+                    this.selectedRows = [...sc.rows];
+                    this.$watch('$store.kanaScope.schrift', (v) => { this.schrift = v; this.loadBest(); });
+                    this.$watch('$store.kanaScope.rows', (v) => { this.selectedRows = [...(v || [])]; this.loadBest(); });
                 }
-            } catch (e) { /* kaputter Wert → "Alle" behalten */ }
+                // Dauer bleibt Storm-eigen.
+                const d = parseInt(this._ls('kanaStormDur') || '', 10);
+                if (d === 60 || d === 120) this.duration = d;
+            } else {
+                // Standalone (Vollbild/Startseite/daily): eigene Picker + Speicher.
+                // Letzte Auswahl wiederherstellen (Privatmodus → Defaults bleiben).
+                const s = this._ls('kanaStormSchrift');
+                if (['hiragana', 'katakana', 'both'].includes(s)) this.schrift = s;
+                const d = parseInt(this._ls('kanaStormDur') || '', 10);
+                if (d === 60 || d === 120) this.duration = d;
+                try {
+                    const r = JSON.parse(this._ls('kanaStormRows') || '[]');
+                    if (Array.isArray(r)) {
+                        this.selectedRows = r.filter((k) => KANA_STORM_ROW_SIZES[k] !== undefined);
+                    }
+                } catch (e) { /* kaputter Wert → "Alle" behalten */ }
+            }
             this.loadBest();
             // /daily landet mit aktivem Daily-Tab → Brett-Meta + ggf. Ergebnis laden.
             if (this.initialTab === 'daily') { this.phase = 'daily'; this.loadDailyMeta(); }
@@ -537,6 +556,8 @@ function kanaStormGame(opts) {
         // ── "Optionen"-Disclosure (Dauer + Reihen) ────────────────────────
         toggleOptions() { this.optionsOpen = !this.optionsOpen; },
         optionsSummary() {
+            // Bei externem Scope hat die Disclosure nur die Dauer (Reihen oben).
+            if (this.scopeExternal) return this.duration + ' Sek';
             const n = this.selectedRows.length;
             const r = n ? (n + ' Reihe' + (n > 1 ? 'n' : '')) : 'alle Reihen';
             return this.duration + ' Sek · ' + r;

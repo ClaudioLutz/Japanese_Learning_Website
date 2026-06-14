@@ -198,6 +198,16 @@
     .kana-setup__quick button:hover { border-color: var(--shu, #EB6101); color: var(--shu, #EB6101); }
     .kana-setup__quick button i { color: var(--shu, #EB6101); }
 
+    /* ── Geteilter Scope (Schrift + Reihen) ÜBER dem Spiel-Umschalter: fixer
+       Block, von beiden Spielen geteilt, mit dünner Trennlinie nach unten. ── */
+    .kana-setup__scope {
+        flex: 0 0 auto;
+        margin-bottom: clamp(0.5rem, 1.4vh, 0.85rem);
+        padding-bottom: clamp(0.45rem, 1.2vh, 0.75rem);
+        border-bottom: 1px solid var(--border-color, #E4DED4);
+    }
+    .kana-setup__scope .kana-setup__group:last-child { margin-bottom: 0; }
+
     /* ── Spiel-Umschalter (Zuordnung | Storm): beide Spieltypen gleichberechtigt.
        Optik wie der Storm-interne Tab-Switcher (.kstorm__tabs), damit es nativ
        wirkt. Fix unter dem Kopf — bleibt für beide Modi stehen. ── */
@@ -281,7 +291,47 @@
            Kandidat fuer "Hiragana üben") — ein Satz Inhalt statt nur Controls. #}
         <p>Hiragana und Katakana kostenlos üben — zwei Spiele zur Wahl: in Ruhe
            <strong>zuordnen</strong> oder im <strong>Kana&nbsp;Storm</strong> gegen die Uhr tippen.
-           Reihen, Dakuten und Modus frei wählbar, ohne Login.</p>
+           Schrift, Reihen und Modus frei wählbar, ohne Login.</p>
+    </div>
+
+    {# ── GETEILTER SCOPE (Schrift + Reihen) — gilt für BEIDE Spiele, an
+       $store.kanaScope gebunden. Einmal gewählt = übernommen, egal welcher Tab.
+       "Alle" = Basis-Reihen; Dakuten kommt über die G–P-Chips dazu (kein
+       separater Toggle), so bleibt Einzelreihen-Wahl in beiden Spielen möglich. ── #}
+    <div class="kana-setup__scope">
+        <div class="kana-setup__group">
+            <div class="kana-setup__label"><i class="fas fa-pen-nib"></i> Schrift</div>
+            <div class="seg" role="group" aria-label="Schrift">
+                <button type="button" :class="{ 'is-active': $store.kanaScope.schrift === 'hiragana' }"
+                        :aria-pressed="($store.kanaScope.schrift === 'hiragana').toString()" @click="$store.kanaScope.setSchrift('hiragana')">
+                    Hiragana <span class="seg-sub">あ</span>
+                </button>
+                <button type="button" :class="{ 'is-active': $store.kanaScope.schrift === 'katakana' }"
+                        :aria-pressed="($store.kanaScope.schrift === 'katakana').toString()" @click="$store.kanaScope.setSchrift('katakana')">
+                    Katakana <span class="seg-sub">ア</span>
+                </button>
+                <button type="button" :class="{ 'is-active': $store.kanaScope.schrift === 'both' }"
+                        :aria-pressed="($store.kanaScope.schrift === 'both').toString()" @click="$store.kanaScope.setSchrift('both')">
+                    Beide <span class="seg-sub">あ・ア</span>
+                </button>
+            </div>
+        </div>
+        <div class="kana-setup__group">
+            <div class="kana-setup__label">
+                <i class="fas fa-layer-group"></i> Reihen
+                <span class="count" x-text="$store.kanaScope.rowsLabel()"></span>
+            </div>
+            <div class="rows">
+                <button type="button" class="chip chip--all" :class="{ 'is-active': $store.kanaScope.allRowsActive }"
+                        :aria-pressed="$store.kanaScope.allRowsActive.toString()" @click="$store.kanaScope.selectAll()">Alle</button>
+                <template x-for="row in $store.kanaScope.ROWS" :key="row.key">
+                    <button type="button" class="chip"
+                            :class="{ 'is-active': $store.kanaScope.rows.includes(row.key) }"
+                            :aria-pressed="$store.kanaScope.rows.includes(row.key).toString()"
+                            @click="$store.kanaScope.toggleRow(row.key)" x-text="row.label"></button>
+                </template>
+            </div>
+        </div>
     </div>
 
     {# ── Spiel-Umschalter: beide Spieltypen gleichberechtigt im selben Top-Slot.
@@ -331,26 +381,7 @@
         </div>
         {% endif %}
 
-        <!-- Schrift (auch fuer Gaeste — Referenzdaten sind frei, nur Persistenz ist login-gated) -->
-        <div class="kana-setup__group">
-            <div class="kana-setup__label"><i class="fas fa-pen-nib"></i> Schrift</div>
-            <div class="seg" role="group" aria-label="Schrift">
-                <button type="button" :class="{ 'is-active': schrift === 'hiragana' }"
-                        :aria-pressed="(schrift === 'hiragana').toString()" @click="setSchrift('hiragana')">
-                    Hiragana <span class="seg-sub">あ</span>
-                </button>
-                <button type="button" :class="{ 'is-active': schrift === 'katakana' }"
-                        :aria-pressed="(schrift === 'katakana').toString()" @click="setSchrift('katakana')">
-                    Katakana <span class="seg-sub">ア</span>
-                </button>
-                <button type="button" :class="{ 'is-active': schrift === 'both' }"
-                        :aria-pressed="(schrift === 'both').toString()" @click="setSchrift('both')">
-                    Beide <span class="seg-sub">あ・ア</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Modus -->
+        <!-- Modus (spielspezifisch — Schrift + Reihen liegen im geteilten Scope oben) -->
         <div class="kana-setup__group">
             <div class="kana-setup__label"><i class="fas fa-sliders-h"></i> Modus</div>
             <div class="seg" role="group" aria-label="Modus">
@@ -365,39 +396,11 @@
             </div>
         </div>
 
-        <!-- Reihen -->
-        <div class="kana-setup__group">
-            <div class="kana-setup__label">
-                <i class="fas fa-layer-group"></i> Reihen
-                <span class="count" x-text="allRowsActive ? 'alle' : selectedRows.length + ' gewählt'"></span>
-            </div>
-            <div class="rows">
-                {# aria-pressed: Auswahlzustand auch fuer Screenreader — die Chips
-                   sind seit der Gast-Oeffnung Teil der Erst-Besucher-Erfahrung. #}
-                <button type="button" class="chip chip--all" :class="{ 'is-active': allRowsActive }"
-                        :aria-pressed="allRowsActive.toString()" @click="selectAllRows()">Alle</button>
-                <template x-for="row in availableRows" :key="row.key">
-                    <button type="button" class="chip"
-                            :class="{ 'is-active': selectedRows.includes(row.key) }"
-                            :aria-pressed="selectedRows.includes(row.key).toString()"
-                            @click="toggleRow(row.key)" x-text="row.label"></button>
-                </template>
-            </div>
-        </div>
-
-        <!-- Optionen -->
+        {# Optionen: nur noch der login-gated „Nur schwache Karten"-Schalter.
+           Dakuten ist in den geteilten Reihen-Scope (G–P-Chips) gewandert. #}
+        {% if current_user.is_authenticated %}
         <div class="kana-setup__group">
             <div class="kana-setup__label"><i class="fas fa-toggle-on"></i> Optionen</div>
-            <button type="button" class="switch" :class="{ 'is-on': includeDakuten }"
-                    :aria-pressed="includeDakuten.toString()"
-                    @click="includeDakuten = !includeDakuten; changed()">
-                <span class="switch__text">Dakuten / Handakuten
-                    <small>が・ざ・だ・ば・ぱ einschliessen</small>
-                </span>
-                <span class="switch__track" aria-hidden="true"></span>
-            </button>
-            {# "Nur schwache Karten" braucht User-State (Lapses) — bleibt login-gated. #}
-            {% if current_user.is_authenticated %}
             <button type="button" class="switch" :class="{ 'is-on': weakOnly }"
                     :aria-pressed="weakOnly.toString()"
                     @click="weakOnly = !weakOnly; changed()">
@@ -406,8 +409,8 @@
                 </span>
                 <span class="switch__track" aria-hidden="true"></span>
             </button>
-            {% endif %}
         </div>
+        {% endif %}
 
         {# Kein Anzahl-Slider mehr: gespielt wird genau die Auswahl
            (Reihen x Schrift) — die Vorschau unten zeigt die Anzahl live. #}
@@ -441,6 +444,9 @@
        Deep-Link ?tab=storm. ── #}
     <div class="kana-panel kana-panel--storm" x-show="game === 'storm'"
          {{ 'x-cloak' if _initial_tab != 'storm' else '' }}>
+        {# Scope (Schrift/Reihen) kommt vom geteilten Panel oben → Storm blendet
+           seine internen Picker aus und liest aus $store.kanaScope. #}
+        {% set kstorm_scope_external = true %}
         {% include '_kana_storm_stage.html' %}
     </div>
 </div>
