@@ -200,6 +200,44 @@
     .kstorm__cap { font: 700 0.66rem/1 'Geist', 'Inter', sans-serif; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted, #8C8378); }
     .kstorm__endactions { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; margin-top: 0.3rem; }
 
+    /* ── Per-Kana-Statistik (stärkste / schwächste) im End-/Daily-Screen ── */
+    .kstorm__stats { display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: center; margin: 0.2rem auto 0.5rem; max-width: 420px; }
+    .kstorm__statcol {
+        flex: 1 1 0; min-width: 8.5rem; text-align: left;
+        border: 1px solid var(--border-color, #E4DED4); border-radius: 12px;
+        padding: 0.5rem 0.6rem; background: var(--card-bg, #FFFDF7);
+    }
+    .kstorm__stath {
+        font: 700 0.62rem/1 'Geist', 'Inter', sans-serif; letter-spacing: 0.06em;
+        text-transform: uppercase; color: var(--text-muted, #8C8378); margin-bottom: 0.4rem;
+    }
+    .kstorm__statcol--weak .kstorm__stath i { color: var(--danger, #D14B3D); }
+    .kstorm__statcol--strong .kstorm__stath i { color: #556B2F; }
+    .kstorm__statlist { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+    .kstorm__statitem {
+        display: inline-flex; align-items: center; gap: 0.22rem;
+        padding: 0.15rem 0.42rem; border-radius: 8px; background: var(--background-color, #F1EDE6);
+    }
+    .kstorm__statitem b { font-family: 'Noto Sans JP', sans-serif; font-weight: 500; font-size: 1.05rem; line-height: 1; color: var(--kon, #1F2A44); }
+    .kstorm__statr { font: 0.7rem 'Geist Mono', ui-monospace, monospace; color: var(--ink-600, #5C564D); }
+    .kstorm__statn { font: 700 0.66rem 'Geist Mono', ui-monospace, monospace; color: var(--danger, #D14B3D); }
+
+    /* "Nur Schwächste" — Kon-Button (sekundär zum Shu-"Nochmal"); im Daily ein Link. */
+    .kstorm__weak {
+        background: linear-gradient(180deg, var(--kon, #1F2A44), #16203A) !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 2px 6px rgba(22,32,58,.3) !important;
+    }
+    .kstorm__weak i { color: #F2B705; }
+    .kstorm__weaklink {
+        border: 0; background: transparent; cursor: pointer;
+        font: 600 0.85rem 'Inter', sans-serif; color: var(--kon, #1F2A44);
+        display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.3rem 0.5rem;
+        text-decoration: underline; text-underline-offset: 3px;
+    }
+    .kstorm__weaklink i { color: var(--shu, #EB6101); }
+    .kstorm__weaklink:hover { color: var(--shu-deep, #B84A00); }
+    .kstorm__weaklink:focus-visible { outline: 2px solid var(--shu, #EB6101); outline-offset: 2px; border-radius: 6px; }
+
     .kstorm__backlink {
         display: inline-flex; align-items: center; gap: 0.4rem; margin-top: 0.7rem;
         font: 500 0.82rem 'Inter', sans-serif; color: var(--text-muted, #8C8378); text-decoration: none;

@@ -140,6 +140,14 @@ function kanaStormGame(opts) {
         serverGames: 0,
         lastXp: 0,             // XP der zuletzt gespeicherten Runde
 
+        // ── Per-Kana-Statistik der Runde (stärkste/schwächste) ──────────────
+        kanaStats: {},         // character -> { character, romanization, correct, wrong }
+        statStrong: [],        // [{character,romanization,correct}] ohne Fehler, meiste Treffer zuerst
+        statWeak: [],          // [{character,romanization,wrong}] mit Fehlern, meiste zuerst
+        weakChars: [],         // character[] mit Fehlern (für "nur Schwächste")
+        weakMode: false,       // läuft gerade eine reine Schwächsten-Runde?
+        _poolAll: [],          // ungefilterter Pool (zum Zurückfiltern auf die Schwächsten)
+
         // ── Daily (Wordle-artige Tageschallenge: festes Brett für ALLE gleich) ──
         dailyBoard: [],        // [{ character, romanization, accepts:Set }]
         dailyIdx: 0,
@@ -299,6 +307,8 @@ function kanaStormGame(opts) {
                 type: k.type,
                 accepts: buildAcceptSet(k),
             }));
+            this._poolAll = this.pool.slice();   // ungefilterte Quelle für "nur Schwächste"
+            this.weakMode = false;
             this._beginRound();
         },
 
@@ -306,6 +316,7 @@ function kanaStormGame(opts) {
             this.mode = 'storm';
             this.score = 0; this.combo = 1; this.bestCombo = 1; this.count = 0; this.misses = 0;
             this.isNewBest = false; this.revealing = false; this.lastXp = 0;
+            this.kanaStats = {};   // Per-Kana-Auswertung der neuen Runde
             this.timeLeft = this.duration;
             this._endAt = Date.now() + this.duration * 1000;
             this.current = null; this.inputVal = '';
@@ -413,6 +424,7 @@ function kanaStormGame(opts) {
                 );
                 this.score += Math.round((KANA_STORM_SCORING.BASE + speed) * mult);
                 this.count++;
+                this._trackKana(true);
                 this.combo++;
                 this.bestCombo = Math.max(this.bestCombo, this.combo);
                 this._popCombo();
@@ -432,6 +444,7 @@ function kanaStormGame(opts) {
                 // Das verfehlte Zeichen bleibt im Pool → kann (per Zufall) wiederkommen.
                 this.combo = 1;
                 this.misses++;
+                this._trackKana(false);
                 this.fb = 'bad';
                 this.fbText = '✗ ' + this.current.character + ' = ' + this.current.romanization;
                 // Daily: 🟥 protokollieren + weiterrücken (das Zeichen kommt NICHT zurück).
@@ -469,6 +482,7 @@ function kanaStormGame(opts) {
                 this._lsSet(this._bestKey(), this.score);
             }
             this.phase = 'ended';
+            this._computeStormStats();
             // Eingeloggt: Runde serverseitig speichern (Bestmarke + XP).
             if (this.loggedIn) {
                 this._postResult({
@@ -513,6 +527,44 @@ function kanaStormGame(opts) {
             if (!this.pool.length) { this.start(); return; }
             this._beginRound();
             this._focusInput();
+        },
+
+        // ── Per-Kana-Statistik (stärkste / schwächste) ─────────────────────
+        // Treffer/Fehler des aktuell gezeigten Zeichens festhalten.
+        _trackKana(ok) {
+            const c = this.current;
+            if (!c) return;
+            let e = this.kanaStats[c.character];
+            if (!e) {
+                e = this.kanaStats[c.character] = {
+                    character: c.character, romanization: c.romanization, correct: 0, wrong: 0,
+                };
+            }
+            if (ok) e.correct++; else e.wrong++;
+        },
+        // Stärkste = ohne Fehler, meiste Treffer zuerst; schwächste = mit Fehlern,
+        // meiste zuerst. Speist die Ergebnis-Statistik + "nur Schwächste üben".
+        _computeStormStats() {
+            const items = Object.values(this.kanaStats);
+            this.statWeak = items.filter((i) => i.wrong > 0)
+                .sort((a, b) => (b.wrong - a.wrong) || (a.correct - b.correct));
+            this.statStrong = items.filter((i) => i.wrong === 0 && i.correct > 0)
+                .sort((a, b) => b.correct - a.correct);
+            this.weakChars = this.statWeak.map((i) => i.character);
+        },
+        // "Nur Schwächste üben": Pool auf die Kana mit Fehlversuchen dieser Runde
+        // filtern und daraus eine frische Storm-Runde starten (rein clientseitig).
+        playWeakStorm() {
+            if (!this.weakChars.length) return;
+            const weak = new Set(this.weakChars);
+            const src = (this._poolAll && this._poolAll.length) ? this._poolAll : this.pool;
+            const filtered = src.filter((k) => weak.has(k.character));
+            if (!filtered.length) return;
+            this.pool = filtered;
+            this.weakMode = true;
+            this._beginRound();
+            this._focusInput();
+            if (window.kanaTrack) window.kanaTrack('kana_storm_weak', { count: filtered.length });
         },
         // Zurück zum Start-Screen (Konfig ändern).
         toStart() {
@@ -644,6 +696,9 @@ function kanaStormGame(opts) {
             }
             this.mode = 'daily';
             this.pool = this.dailyBoard;   // Distraktor-Quelle für die 4 Tap-Optionen
+            this._poolAll = this.dailyBoard.slice();  // Quelle für "nur Schwächste"
+            this.weakMode = false;
+            this.kanaStats = {};
             this.dailyIdx = 0; this.dailyLog = []; this.dailyGreens = 0;
             this.score = 0; this.combo = 1; this.bestCombo = 1; this.count = 0; this.misses = 0;
             this.revealing = false; this.dailyStartMs = Date.now();
@@ -671,6 +726,7 @@ function kanaStormGame(opts) {
             };
             this.dailyHasResult = true;
             this.dailyCopied = false;
+            this._computeStormStats();
             this._lsSet('kanaStormDailyLast', JSON.stringify(this.dailyResult));
             // Eingeloggt: Daily-Ergebnis serverseitig speichern (XP). correct =
             // 🟩 auf Anhieb richtig, misses = Rest des Bretts.

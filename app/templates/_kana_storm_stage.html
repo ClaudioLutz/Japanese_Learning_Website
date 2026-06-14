@@ -193,6 +193,31 @@
         {# Nach dem Spiel: teilen + nochmal #}
         <template x-if="dailyHasResult && !dailyLoading">
             <div class="kstorm__daily-actions">
+                {# Per-Kana-Auswertung des Tagesbretts: schwächste + stärkste. #}
+                <div class="kstorm__stats" x-show="statWeak.length || statStrong.length" x-cloak>
+                    <div class="kstorm__statcol kstorm__statcol--weak" x-show="statWeak.length">
+                        <div class="kstorm__stath"><i class="fas fa-arrow-trend-down" aria-hidden="true"></i> Schwächste</div>
+                        <div class="kstorm__statlist">
+                            <template x-for="it in statWeak.slice(0, 5)" :key="it.character">
+                                <span class="kstorm__statitem">
+                                    <b lang="ja" x-text="it.character"></b>
+                                    <span class="kstorm__statr" x-text="it.romanization"></span>
+                                </span>
+                            </template>
+                        </div>
+                    </div>
+                    <div class="kstorm__statcol kstorm__statcol--strong" x-show="statStrong.length">
+                        <div class="kstorm__stath"><i class="fas fa-arrow-trend-up" aria-hidden="true"></i> Stärkste</div>
+                        <div class="kstorm__statlist">
+                            <template x-for="it in statStrong.slice(0, 6)" :key="it.character">
+                                <span class="kstorm__statitem">
+                                    <b lang="ja" x-text="it.character"></b>
+                                    <span class="kstorm__statr" x-text="it.romanization"></span>
+                                </span>
+                            </template>
+                        </div>
+                    </div>
+                </div>
                 <div class="kstorm__endactions">
                     <button class="kstorm__start" @click="copyDaily()">
                         <i class="fas fa-copy" aria-hidden="true"></i>
@@ -202,6 +227,10 @@
                         <i class="fas fa-redo" aria-hidden="true"></i> Nochmal
                     </button>
                 </div>
+                <button class="kstorm__weaklink" x-show="weakChars.length" x-cloak @click="playWeakStorm()">
+                    <i class="fas fa-bolt" aria-hidden="true"></i>
+                    Schwächste üben (<span x-text="weakChars.length"></span>)
+                </button>
                 {% if not current_user.is_authenticated %}
                 <p class="kstorm__upsell">
                     Teilen lädt Freunde aufs gleiche Brett — mit
@@ -294,11 +323,41 @@
                 <span class="kstorm__cap">Kana</span>
             </div>
         </div>
+        {# Per-Kana-Auswertung der Runde: schwächste (meiste Fehler) + stärkste. #}
+        <div class="kstorm__stats" x-show="statWeak.length || statStrong.length" x-cloak>
+            <div class="kstorm__statcol kstorm__statcol--weak" x-show="statWeak.length">
+                <div class="kstorm__stath"><i class="fas fa-arrow-trend-down" aria-hidden="true"></i> Schwächste</div>
+                <div class="kstorm__statlist">
+                    <template x-for="it in statWeak.slice(0, 5)" :key="it.character">
+                        <span class="kstorm__statitem">
+                            <b lang="ja" x-text="it.character"></b>
+                            <span class="kstorm__statr" x-text="it.romanization"></span>
+                            <span class="kstorm__statn" x-text="it.wrong + '✗'"></span>
+                        </span>
+                    </template>
+                </div>
+            </div>
+            <div class="kstorm__statcol kstorm__statcol--strong" x-show="statStrong.length">
+                <div class="kstorm__stath"><i class="fas fa-arrow-trend-up" aria-hidden="true"></i> Stärkste</div>
+                <div class="kstorm__statlist">
+                    <template x-for="it in statStrong.slice(0, 6)" :key="it.character">
+                        <span class="kstorm__statitem">
+                            <b lang="ja" x-text="it.character"></b>
+                            <span class="kstorm__statr" x-text="it.romanization"></span>
+                        </span>
+                    </template>
+                </div>
+            </div>
+        </div>
         {% if not current_user.is_authenticated %}
         <p class="kstorm__best"
            x-text="isNewBest ? ('🏆 Neuer Bestscore: ' + best + '!') : (best > 0 ? ('Bestscore: ' + best) : '')"></p>
         {% endif %}
         <div class="kstorm__endactions">
+            <button class="kstorm__start kstorm__weak" x-show="weakChars.length" x-cloak @click="playWeakStorm()">
+                <i class="fas fa-bolt" aria-hidden="true"></i>
+                <span>Nur Schwächste (<span x-text="weakChars.length"></span>)</span>
+            </button>
             <button class="kstorm__start" @click="again()">
                 <span>Nochmal</span> <i class="fas fa-redo" aria-hidden="true"></i>
             </button>
