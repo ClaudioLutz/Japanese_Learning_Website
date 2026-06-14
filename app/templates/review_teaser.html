@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{# 10.6: Weiche Teaser-Landing fuer Gaeste auf /review, /review/stats,
+   /review/browse — statt hartem Login-Redirect. Erklaert den Nutzen und
+   fuehrt mit register/login + next zurueck auf die jeweilige Seite.
+   KEINE echten Nutzerdaten. #}
+
+{% set _pages = {
+  'review':  {'title': 'Tägliche Wiederholung', 'icon': '↻',
+              'lead': 'Hier erscheinen deine fälligen Karten — mit Spaced Repetition (FSRS) wiederholst du genau dann, wenn du etwas zu vergessen drohst.'},
+  'stats':   {'title': 'Dein Lernfortschritt', 'icon': '📈',
+              'lead': 'Hier siehst du deine Statistiken: Streak, gelernte Karten, Reifegrad und deinen Weg zur N5-Beherrschung.'},
+  'browse':  {'title': 'Karten stöbern', 'icon': '🗂️',
+              'lead': 'Hier durchsuchst und filterst du alle deine Lernkarten — nach Status, Typ und Fälligkeit.'}
+} %}
+{% set _p = _pages.get(teaser_page, _pages['review']) %}
+
+{% block title %}{{ _p.title }}{% endblock %}
+
+{# Thin-Content-Teaser nicht indexieren lassen. #}
+{% block robots %}noindex,follow{% endblock %}
+
+{% block content %}
+<div class="review-teaser">
+  <div class="review-teaser-card">
+    <div class="review-teaser-icon" aria-hidden="true">{{ _p.icon }}</div>
+    <h1 class="review-teaser-title">{{ _p.title }}</h1>
+    <p class="review-teaser-lead">{{ _p.lead }}</p>
+    <p class="review-teaser-sub">
+      Mit einem <strong>kostenlosen Konto</strong> speichern wir deinen Fortschritt
+      und merken uns, was du schon kannst.
+    </p>
+    <div class="review-teaser-actions">
+      <a href="{{ url_for('routes.register', next=request.path) }}" class="review-teaser-cta">
+        Kostenlos Konto erstellen →
+      </a>
+      <a href="{{ url_for('routes.login', next=request.path) }}" class="review-teaser-secondary">
+        Schon ein Konto? Anmelden
+      </a>
+    </div>
+  </div>
+</div>
+
+<style>
+.review-teaser {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 4rem;
+}
+.review-teaser-card {
+  background: linear-gradient(135deg, var(--washi, #f7f3ec), #fff);
+  border: 1px solid var(--ink-200, #e4ddd0);
+  border-left: 4px solid var(--shu, #EB6101);
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  text-align: center;
+}
+.review-teaser-icon { font-size: 2.6rem; line-height: 1; margin-bottom: 0.75rem; }
+.review-teaser-title {
+  font-family: 'Geist', 'Inter', sans-serif;
+  font-size: clamp(1.5rem, 3vw + 0.6rem, 2.1rem);
+  font-weight: 600; color: var(--kon, #15233b); margin: 0 0 0.75rem;
+  letter-spacing: -0.02em; line-height: 1.15;
+}
+.review-teaser-lead { color: var(--ink-700, #4a4034); font-size: 1.05rem; line-height: 1.6; margin: 0 0 0.9rem; }
+.review-teaser-sub { color: var(--ink-600, #6b6052); font-size: 0.95rem; line-height: 1.55; margin: 0 0 1.6rem; }
+.review-teaser-sub strong { color: var(--kon, #15233b); }
+.review-teaser-actions { display: flex; flex-direction: column; gap: 0.7rem; align-items: center; }
+.review-teaser-cta {
+  display: inline-block; background: var(--shu, #EB6101); color: #fff;
+  font-weight: 600; font-size: 1rem; padding: 0.8rem 1.6rem;
+  border-radius: 10px; text-decoration: none;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.15), 0 4px 14px rgba(184,74,0,.25);
+  transition: transform .15s, background .15s;
+}
+.review-teaser-cta:hover { background: #D85700; color: #fff; text-decoration: none; transform: translateY(-1px); }
+.review-teaser-secondary {
+  color: var(--shu, #EB6101); font-weight: 600; font-size: 0.92rem; text-decoration: none;
+  padding: 0.5rem 0.9rem; border-radius: 10px;
+}
+.review-teaser-secondary:hover { color: #D85700; text-decoration: underline; }
+</style>
+{% endblock %}

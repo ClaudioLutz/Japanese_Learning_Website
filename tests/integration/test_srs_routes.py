@@ -347,17 +347,62 @@ class TestSRSAuth:
     """I-SRS50: Unauthentifizierte Zugriffe werden abgelehnt."""
 
     def test_stats_requires_auth(self, client):
-        """I-SRS50: Stats-Endpoints erfordern Login."""
-        # Hinweis: /practice/kana(/spiel) sind seit dem Gast-Modus BEWUSST ohne
-        # Login erreichbar (Kana-Spiel fuer alle, Score-Speichern bleibt aber
-        # login-pflichtig) — sie stehen daher nicht mehr in dieser Liste.
-        # Abgedeckt in tests/integration/test_kana_practice_guest.py.
+        """I-SRS50: Stats-/Browse-API-Endpoints erfordern Login.
+
+        Hinweis: /practice/kana(/spiel) sind seit dem Gast-Modus BEWUSST ohne
+        Login erreichbar (Kana-Spiel fuer alle, Score-Speichern bleibt aber
+        login-pflichtig) — sie stehen daher nicht mehr in dieser Liste.
+        Abgedeckt in tests/integration/test_kana_practice_guest.py.
+        Die 3 SEITEN /review, /review/stats, /review/browse zeigen Gaesten seit
+        10.6 eine weiche Teaser-Landing (200) statt 302 — siehe TestReviewTeaser;
+        nur die /api/srs/...-Endpoints bleiben hart login-pflichtig.
+        """
         endpoints = [
             '/api/srs/stats', '/api/srs/stats/heatmap', '/api/srs/stats/retention',
             '/api/srs/stats/forecast', '/api/srs/stats/maturity',
             '/api/srs/browse', '/api/srs/achievements',
-            '/review', '/review/stats', '/review/browse',
         ]
         for ep in endpoints:
             resp = client.get(ep)
             assert resp.status_code in (302, 401), f'{ep} should require auth, got {resp.status_code}'
+
+
+class TestReviewTeaser:
+    """10.6: Gaeste sehen auf den 3 Review-SEITEN eine weiche Teaser-Landing
+    (200 + Register-CTA) statt eines harten Login-Redirects."""
+
+    PAGES = ['/review', '/review/stats', '/review/browse']
+
+    def test_guest_gets_teaser_not_redirect(self, client):
+        """Gast → HTTP 200 mit Teaser-Text + Register-CTA (kein 302 auf /login)."""
+        for path in self.PAGES:
+            resp = client.get(path)
+            assert resp.status_code == 200, f'{path} should be 200 for guest'
+            body = resp.get_data(as_text=True)
+            # Teaser-Nutzentext + kostenloses-Konto-Hinweis
+            assert 'kostenlosen Konto' in body or 'kostenloses Konto' in body
+            # Register-CTA fuehrt mit next zurueck auf die jeweilige Seite
+            assert 'Kostenlos Konto erstellen' in body
+            assert f'next={path}' in body
+            # noindex (Thin-Content)
+            assert 'noindex' in body
+
+    def test_teaser_shows_no_user_data(self, client):
+        """Teaser zeigt KEINE echten Nutzerdaten (kein Streak-/Stats-Zahlenblock)."""
+        body = client.get('/review/stats').get_data(as_text=True)
+        # Die echte stats.html-Seite haette die Storm-/Level-Sektion; der Teaser nicht.
+        assert 'Konto erstellen' in body
+
+    def test_authenticated_user_gets_real_page(self, auth_client):
+        """Eingeloggt → unveraenderte echte Seite (kein Teaser)."""
+        client, user = auth_client
+        for path in self.PAGES:
+            resp = client.get(path)
+            assert resp.status_code == 200, f'{path} should be 200 for user'
+            body = resp.get_data(as_text=True)
+            assert 'Kostenlos Konto erstellen' not in body
+
+    def test_api_endpoint_still_requires_auth(self, client):
+        """Die /api/srs/...-Endpoints bleiben hart login-pflichtig (302/401)."""
+        resp = client.get('/api/srs/stats')
+        assert resp.status_code in (302, 401)

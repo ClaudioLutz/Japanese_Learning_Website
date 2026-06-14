@@ -162,9 +162,14 @@ def api_stats():
 
 
 @srs_bp.route('/review')
-@login_required
 def review_page():
-    """Taegliche Wiederholungs-Seite."""
+    """Taegliche Wiederholungs-Seite.
+
+    10.6: Gaeste sehen eine weiche Teaser-Landing (Nutzen + Register/Login mit
+    next), keinen harten Login-Redirect. Eingeloggt = normale Seite.
+    """
+    if not current_user.is_authenticated:
+        return render_template('review_teaser.html', teaser_page='review')
     stats = srs_service.get_user_stats(current_user.id)
     stats['current_streak'] = current_user.current_streak or 0
     stats['longest_streak'] = current_user.longest_streak or 0
@@ -236,9 +241,13 @@ def api_stats_response_times():
 
 
 @srs_bp.route('/review/stats')
-@login_required
 def stats_page():
-    """Erweiterte Statistiken-Seite."""
+    """Erweiterte Statistiken-Seite.
+
+    10.6: Gaeste sehen die weiche Teaser-Landing statt eines Login-Redirects.
+    """
+    if not current_user.is_authenticated:
+        return render_template('review_teaser.html', teaser_page='stats')
     stats = srs_service.get_user_stats(current_user.id)
     stats['current_streak'] = current_user.current_streak or 0
     stats['longest_streak'] = current_user.longest_streak or 0
@@ -413,9 +422,13 @@ def api_browse_export():
 
 
 @srs_bp.route('/review/browse')
-@login_required
 def browse_page():
-    """Karten-Browser-Seite."""
+    """Karten-Browser-Seite.
+
+    10.6: Gaeste sehen die weiche Teaser-Landing statt eines Login-Redirects.
+    """
+    if not current_user.is_authenticated:
+        return render_template('review_teaser.html', teaser_page='browse')
     from app.models import Lesson
     lessons = Lesson.query.filter_by(is_published=True).order_by(Lesson.title).all()
     return render_template('browse.html', lessons=lessons)
