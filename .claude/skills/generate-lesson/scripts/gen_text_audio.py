@@ -111,7 +111,13 @@ def synth_segment_ja_pcm(text: str) -> bytes | None:
     from google.genai import types
 
     api_key = os.environ.get("GOOGLE_AI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
-    client = genai.Client(api_key=api_key)
+    # Hartes Timeout (60s): ohne dieses blockiert ein haengender Gemini-Request
+    # endlos (kein Default-Timeout im SDK) und legt den ganzen Batch lahm.
+    # Bei Timeout greift unten der Chirp-Fallback.
+    client = genai.Client(
+        api_key=api_key,
+        http_options=types.HttpOptions(timeout=60000),
+    )
 
     def _call(contents):
         resp = client.models.generate_content(
