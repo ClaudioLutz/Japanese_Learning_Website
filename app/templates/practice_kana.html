@@ -242,6 +242,17 @@
     /* Mobile: Platz für die fixe Bottom-Nav unter dem Fuss reservieren */
     @media (max-width: 767px) {
         .kana-setup { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
+        /* Platz sparen, damit der Setup ohne Scroll passt: Intro-Absatz (SEO-/
+           Desktop-Substanz) auf Mobile aus, Kopf + geteilter Scope kompakter. */
+        .kana-setup__head { margin-bottom: 0.5rem; }
+        .kana-setup__head p { display: none; }
+        .kana-setup__head h1 { margin: 0.3rem 0 0; }
+        .kana-setup__scope { margin-bottom: 0.55rem; padding-bottom: 0.5rem; }
+        .kana-setup__scope .kana-setup__group { margin-bottom: 0.55rem; }
+        .kana-setup__scope .rows { gap: 0.32rem; }
+        .kana-setup__scope .chip { padding: 0.34rem 0.6rem; }
+        .kana-modes { margin-bottom: 0.55rem; }
+        .kana-modes__tab { min-height: 42px; }
     }
 
     /* ── Desktop: kein Mobile-Viewport-Lock ──
@@ -281,10 +292,12 @@
 {# Konto-CTA des Storm-Partials führt zurück auf diese Seite (Storm-Tab), nicht
    auf die separate Vollbild-Storm-Seite. #}
 {% set kstorm_register_url = url_for('routes.register', next=url_for('srs.practice_kana_page', tab='storm')) %}
-<div class="kana-setup" x-data="{ game: '{{ _initial_tab }}' }">
+<div class="kana-setup"
+     x-data="{ game: '{{ _initial_tab }}', stormPhase: 'start', get hideChrome() { return this.game === 'storm' && this.stormPhase !== 'start' && this.stormPhase !== 'daily'; } }"
+     @kana-storm-phase.window="stormPhase = $event.detail">
     <div class="kana-setup__bg" aria-hidden="true"><span>あ</span></div>
 
-    <div class="kana-setup__head">
+    <div class="kana-setup__head" x-show="!hideChrome">
         <span class="kana-setup__eyebrow"><span class="jp">かな</span> · Übung</span>
         <h1>Kana üben</h1>
         {# SSR-Substanz: die Seite ist via robots.txt-Allow crawlbar (Landing-
@@ -298,7 +311,7 @@
        $store.kanaScope gebunden. Einmal gewählt = übernommen, egal welcher Tab.
        "Alle" = Basis-Reihen; Dakuten kommt über die G–P-Chips dazu (kein
        separater Toggle), so bleibt Einzelreihen-Wahl in beiden Spielen möglich. ── #}
-    <div class="kana-setup__scope">
+    <div class="kana-setup__scope" x-show="!hideChrome">
         <div class="kana-setup__group">
             <div class="kana-setup__label"><i class="fas fa-pen-nib"></i> Schrift</div>
             <div class="seg" role="group" aria-label="Schrift">
@@ -337,7 +350,7 @@
     {# ── Spiel-Umschalter: beide Spieltypen gleichberechtigt im selben Top-Slot.
        role=group + aria-pressed (KEIN role=tab — die Phasen mappen nicht 1:1 auf
        Panels; gleiche Idiom wie der Storm-interne Umschalter). ── #}
-    <div class="kana-modes" role="group" aria-label="Spiel wählen">
+    <div class="kana-modes" role="group" aria-label="Spiel wählen" x-show="!hideChrome">
         <button type="button" class="kana-modes__tab {{ 'is-active' if _initial_tab == 'match' else '' }}"
                 :class="{ 'is-active': game === 'match' }"
                 :aria-pressed="(game === 'match').toString()"
@@ -358,29 +371,9 @@
     <div class="kana-panel" x-show="game === 'match'" x-data="kanaSettings()" x-init="init()"
          {{ 'x-cloak' if _initial_tab == 'storm' else '' }}>
     <div class="kana-setup__body">
-        {% if not current_user.is_authenticated %}
-        <div class="kana-setup__guest" role="note">
-            <i class="fas fa-circle-info" aria-hidden="true"></i>
-            <div>
-                <strong>Sofort spielbar — ganz ohne Konto.</strong>
-                Hiragana, Katakana, alle Reihen und Modi — frei wählbar, gegen die Uhr.
-            </div>
-        </div>
-        <div class="kana-setup__unlock">
-            <div class="kana-setup__unlock-head">Mit kostenlosem Konto zusätzlich</div>
-            <ul class="kana-setup__unlock-list">
-                <li><i class="fas fa-chart-line" aria-hidden="true"></i> Fortschritt, Tagesserie &amp; XP werden gespeichert</li>
-                <li><i class="fas fa-bolt" aria-hidden="true"></i> Schwache Karten erkannt &amp; automatisch wiederholt</li>
-                <li><i class="fas fa-clone" aria-hidden="true"></i> Verwechslungs-Statistik für deinen persönlichen Drill</li>
-                <li><i class="fas fa-book-open" aria-hidden="true"></i> Dein Platz im N5-Lernpfad: Lektionen &amp; Quiz</li>
-            </ul>
-            <a href="{{ url_for('routes.register', next=url_for('srs.practice_kana_page')) }}"
-               class="kana-setup__unlock-cta" @click="window.kanaTrack && window.kanaTrack('kana_cta_click', { where: 'setup_teaser' })">
-                <i class="fas fa-user-plus" aria-hidden="true"></i> Kostenlos registrieren
-            </a>
-        </div>
-        {% endif %}
-
+        {# Modus zuerst — so ist er auf Mobile ohne Scroll erreichbar; die Gast-
+           Conversion (Teaser + Konto-Vorteile) folgt DARUNTER (scrollbar, nicht
+           spiel-kritisch). #}
         <!-- Modus (spielspezifisch — Schrift + Reihen liegen im geteilten Scope oben) -->
         <div class="kana-setup__group">
             <div class="kana-setup__label"><i class="fas fa-sliders-h"></i> Modus</div>
@@ -409,6 +402,31 @@
                 </span>
                 <span class="switch__track" aria-hidden="true"></span>
             </button>
+        </div>
+        {% endif %}
+
+        {% if not current_user.is_authenticated %}
+        {# Gast-Conversion NACH dem Modus: auf Mobile scrollbar, blockiert nicht die
+           spiel-kritischen Controls (Scope/Tabs/Modus/Start sind ohne Scroll da). #}
+        <div class="kana-setup__guest" role="note">
+            <i class="fas fa-circle-info" aria-hidden="true"></i>
+            <div>
+                <strong>Sofort spielbar — ganz ohne Konto.</strong>
+                Hiragana, Katakana, alle Reihen und Modi — frei wählbar, gegen die Uhr.
+            </div>
+        </div>
+        <div class="kana-setup__unlock">
+            <div class="kana-setup__unlock-head">Mit kostenlosem Konto zusätzlich</div>
+            <ul class="kana-setup__unlock-list">
+                <li><i class="fas fa-chart-line" aria-hidden="true"></i> Fortschritt, Tagesserie &amp; XP werden gespeichert</li>
+                <li><i class="fas fa-bolt" aria-hidden="true"></i> Schwache Karten erkannt &amp; automatisch wiederholt</li>
+                <li><i class="fas fa-clone" aria-hidden="true"></i> Verwechslungs-Statistik für deinen persönlichen Drill</li>
+                <li><i class="fas fa-book-open" aria-hidden="true"></i> Dein Platz im N5-Lernpfad: Lektionen &amp; Quiz</li>
+            </ul>
+            <a href="{{ url_for('routes.register', next=url_for('srs.practice_kana_page')) }}"
+               class="kana-setup__unlock-cta" @click="window.kanaTrack && window.kanaTrack('kana_cta_click', { where: 'setup_teaser' })">
+                <i class="fas fa-user-plus" aria-hidden="true"></i> Kostenlos registrieren
+            </a>
         </div>
         {% endif %}
 

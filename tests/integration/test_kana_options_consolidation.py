@@ -50,3 +50,23 @@ class TestOtherStormSurfacesUnchanged:
         body = client.get('/').get_data(as_text=True)
         assert '@click="setSchrift(' in body
         assert 'kana-setup__scope' not in body
+
+
+class TestStormPlayHidesChrome:
+    """Beim Storm-Spiel auf /practice/kana wird das Chrome (Kopf + geteilter Scope
+    + Tabs) ausgeblendet, damit das Spiel den vollen Screen bekommt (nicht nur die
+    untere Hälfte). Verdrahtung: Storm meldet seine Phase per Event nach oben, der
+    Wrapper blendet via hideChrome aus."""
+
+    def test_chrome_hide_wiring_present(self, client, db):
+        body = client.get('/practice/kana').get_data(as_text=True)
+        # Wrapper hört auf die Storm-Phase und berechnet hideChrome.
+        assert 'kana-storm-phase' in body
+        assert 'hideChrome' in body
+        # Kopf, geteilter Scope und Tabs sind an hideChrome gekoppelt.
+        assert body.count('x-show="!hideChrome"') >= 3
+
+    def test_storm_partial_dispatches_phase(self, client, db):
+        # Das Storm-Partial wird mit scope_external eingebunden (→ JS meldet Phase).
+        body = client.get('/practice/kana').get_data(as_text=True)
+        assert 'scopeExternal: true' in body

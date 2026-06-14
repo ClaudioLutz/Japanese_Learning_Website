@@ -180,6 +180,10 @@ function kanaStormGame(opts) {
                 // Dauer bleibt Storm-eigen.
                 const d = parseInt(this._ls('kanaStormDur') || '', 10);
                 if (d === 60 || d === 120) this.duration = d;
+                // Phasenwechsel nach oben melden: /practice/kana blendet das Chrome
+                // (Kopf + geteilter Scope + Tabs) aus, sobald Storm läuft, damit das
+                // Spiel den vollen Screen bekommt (sonst nur die untere Hälfte).
+                this.$watch('phase', (p) => { this.$dispatch('kana-storm-phase', p); });
             } else {
                 // Standalone (Vollbild/Startseite/daily): eigene Picker + Speicher.
                 // Letzte Auswahl wiederherstellen (Privatmodus → Defaults bleiben).
