@@ -3,11 +3,34 @@ from app import db, login_manager
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
+from dataclasses import dataclass
+import enum
 import json
 import re
 from typing import List
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey, Table, Column, Integer, String, Text, Boolean, DateTime, JSON, event, BigInteger, true as sa_true
+
+
+class AccessDenialReason(enum.Enum):
+    """Strukturierter Grund, warum eine Lektion (nicht) zugaenglich ist.
+
+    Ersetzt die fruehere String-als-Steuerlogik (Substring-Match auf
+    'Login required'). NONE bedeutet: Zugriff gewaehrt.
+    """
+    NONE = "none"
+    LOGIN_REQUIRED = "login_required"
+    PREREQUISITE = "prerequisite"
+    PURCHASE_REQUIRED = "purchase_required"
+    PREMIUM_REQUIRED = "premium_required"
+
+
+@dataclass(frozen=True)
+class AccessResult:
+    """Ergebnis von Lesson.access_check: Zugriff + User-Message + Grund."""
+    accessible: bool
+    message: str
+    reason: AccessDenialReason
 class User(UserMixin, db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     username: Mapped[str] = mapped_column(String(80), unique=True, nullable=False)
@@ -790,20 +813,30 @@ class Lesson(db.Model):
             and not c.is_optional
         ]
     
-    def is_accessible_to_user(self, user):
-        """Check if user can access this lesson based on pricing, subscription and prerequisites.
-        Messages auf Deutsch (User-facing — werden via flash() oder Template gerendert)."""
+    def access_check(self, user) -> 'AccessResult':
+        """Strukturierte Zugriffspruefung: liefert AccessResult(accessible,
+        message, reason).
+
+        Loest die fruehere String-als-Steuerlogik ab: statt im Aufrufer per
+        Substring auf 'Login required' zu matchen, liefert jeder Zweig den
+        passenden AccessDenialReason. Messages bleiben deutsch und
+        user-facing (flash()/Template).
+        """
         # Handle guest users (not authenticated)
         if user is None or not hasattr(user, 'is_authenticated') or not user.is_authenticated:
             # Free lessons with guest access
             if self.price == 0.0 and self.allow_guest_access:
-                return True, "Als Gast zugänglich"
+                return AccessResult(True, "Als Gast zugänglich", AccessDenialReason.NONE)
             else:
-                return False, "Login required to access this lesson"  # Trigger fuer Login-Redirect, bewusst englisch
+                return AccessResult(
+                    False,
+                    "Anmeldung erforderlich, um auf diese Lektion zuzugreifen.",
+                    AccessDenialReason.LOGIN_REQUIRED,
+                )
 
         # Admin-Bypass: Admins sehen alle Lessons (Dogfood + Content-Verwaltung)
         if getattr(user, 'is_admin', False):
-            return True, "Admin"
+            return AccessResult(True, "Admin", AccessDenialReason.NONE)
 
         # For authenticated users, check pricing first
         if self.price == 0.0:
@@ -813,8 +846,11 @@ class Lesson(db.Model):
                     user_id=user.id, lesson_id=prereq.id
                 ).first()
                 if not progress or not progress.is_completed:
-                    return False, f"Schliesse zuerst „{prereq.title}\" ab"
-            return True, "Kostenlose Lektion"
+                    return AccessResult(
+                        False, f"Schliesse zuerst „{prereq.title}\" ab",
+                        AccessDenialReason.PREREQUISITE,
+                    )
+            return AccessResult(True, "Kostenlose Lektion", AccessDenialReason.NONE)
 
         # Paid lesson - check if user purchased it
         if self.is_purchasable:
@@ -829,8 +865,11 @@ class Lesson(db.Model):
                         user_id=user.id, lesson_id=prereq.id
                     ).first()
                     if not progress or not progress.is_completed:
-                        return False, f"Schliesse zuerst „{prereq.title}\" ab"
-                return True, "Gekauft"
+                        return AccessResult(
+                            False, f"Schliesse zuerst „{prereq.title}\" ab",
+                            AccessDenialReason.PREREQUISITE,
+                        )
+                return AccessResult(True, "Gekauft", AccessDenialReason.NONE)
 
             # Check if the lesson is part of a purchased course
             for course in self.courses:
@@ -845,14 +884,26 @@ class Lesson(db.Model):
                             user_id=user.id, lesson_id=prereq.id
                         ).first()
                         if not progress or not progress.is_completed:
-                            return False, f"Schliesse zuerst „{prereq.title}\" ab"
-                    return True, f"Zugriff über „{course.title}\""
+                            return AccessResult(
+                                False, f"Schliesse zuerst „{prereq.title}\" ab",
+                                AccessDenialReason.PREREQUISITE,
+                            )
+                    return AccessResult(
+                        True, f"Zugriff über „{course.title}\"",
+                        AccessDenialReason.NONE,
+                    )
 
-            return False, f"Kauf erforderlich (CHF {self.price:.2f})"
+            return AccessResult(
+                False, f"Kauf erforderlich (CHF {self.price:.2f})",
+                AccessDenialReason.PURCHASE_REQUIRED,
+            )
 
         # Legacy subscription check (for existing premium lessons)
         if self.lesson_type == 'premium' and user.subscription_level != 'premium':
-            return False, "Premium-Abo erforderlich"
+            return AccessResult(
+                False, "Premium-Abo erforderlich",
+                AccessDenialReason.PREMIUM_REQUIRED,
+            )
 
         # Check prerequisites for other cases
         for prereq in self.get_prerequisites(): # type: ignore
@@ -860,9 +911,22 @@ class Lesson(db.Model):
                 user_id=user.id, lesson_id=prereq.id
             ).first()
             if not progress or not progress.is_completed:
-                return False, f"Schliesse zuerst „{prereq.title}\" ab"
+                return AccessResult(
+                    False, f"Schliesse zuerst „{prereq.title}\" ab",
+                    AccessDenialReason.PREREQUISITE,
+                )
 
-        return True, "Zugänglich"
+        return AccessResult(True, "Zugänglich", AccessDenialReason.NONE)
+
+    def is_accessible_to_user(self, user):
+        """Legacy-Wrapper: liefert das alte 2-Tupel (accessible, message).
+
+        Bestehende ~10 Aufrufer bleiben unveraendert. Neue Logik, die den
+        Ablehnungsgrund braucht, nutzt access_check() direkt.
+        Messages auf Deutsch (User-facing — via flash() oder Template).
+        """
+        result = self.access_check(user)
+        return result.accessible, result.message
 
     @property
     def pages(self):

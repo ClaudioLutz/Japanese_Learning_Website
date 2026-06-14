@@ -13,6 +13,7 @@ from app.models import (
     LessonPrerequisite, Course, LessonPurchase, CoursePurchase,
     PaymentTransaction, QuizQuestion, QuizOption, UserLessonProgress,
     UserQuizAnswer, course_lessons,
+    AccessDenialReason, AccessResult,
 )
 from tests.factories import (
     UserFactory, AdminUserFactory, PremiumUserFactory,
@@ -146,7 +147,8 @@ class TestLessonAccessControl:
         db.session.commit()
         accessible, msg = lesson.is_accessible_to_user(None)
         assert accessible is False
-        assert "Login required" in msg
+        # 10.5: Message ist jetzt deutsch (Steuerung laeuft ueber access_check.reason)
+        assert "Anmeldung erforderlich" in msg
 
     def test_free_lesson_accessible_to_authenticated(self, app_context):
         """U-M08: Eingeloggter User kann kostenlose Lektion öffnen."""
@@ -224,6 +226,108 @@ class TestLessonAccessControl:
         db.session.commit()
         accessible, msg = lesson.is_accessible_to_user(user)
         assert accessible is True
+
+
+# ── U-M08b: Lesson.access_check – strukturierter Grund (10.4) ──
+
+class TestLessonAccessCheck:
+    """access_check liefert AccessResult(accessible, message, reason).
+
+    Steuert den Login-Redirect ueber reason statt ueber Substring-Match.
+    """
+
+    def test_returns_access_result(self, app_context):
+        """access_check liefert ein AccessResult-Objekt (kein 2-Tupel)."""
+        lesson = LessonFactory(price=0.0, allow_guest_access=True)
+        db.session.commit()
+        res = lesson.access_check(None)
+        assert isinstance(res, AccessResult)
+
+    def test_guest_blocked_reason_login_required(self, app_context):
+        """Gast ohne Guest-Zugang → reason=LOGIN_REQUIRED."""
+        lesson = LessonFactory(price=0.0, allow_guest_access=False)
+        db.session.commit()
+        res = lesson.access_check(None)
+        assert res.accessible is False
+        assert res.reason == AccessDenialReason.LOGIN_REQUIRED
+
+    def test_guest_free_lesson_reason_none(self, app_context):
+        """Gast + kostenlose Guest-Lektion → accessible, reason=NONE."""
+        lesson = LessonFactory(price=0.0, allow_guest_access=True)
+        db.session.commit()
+        res = lesson.access_check(None)
+        assert res.accessible is True
+        assert res.reason == AccessDenialReason.NONE
+
+    def test_prerequisite_reason(self, app_context):
+        """Unerfuellte Voraussetzung → reason=PREREQUISITE."""
+        user = UserFactory()
+        prereq = LessonFactory(price=0.0)
+        lesson = LessonFactory(price=0.0)
+        db.session.commit()
+        db.session.add(LessonPrerequisite(
+            lesson_id=lesson.id, prerequisite_lesson_id=prereq.id
+        ))
+        db.session.commit()
+        db.session.expire(lesson)
+        res = lesson.access_check(user)
+        assert res.accessible is False
+        assert res.reason == AccessDenialReason.PREREQUISITE
+
+    def test_purchase_required_reason(self, app_context):
+        """Bezahlte Lektion, nicht gekauft → reason=PURCHASE_REQUIRED."""
+        user = UserFactory()
+        lesson = PaidLessonFactory()
+        db.session.commit()
+        res = lesson.access_check(user)
+        assert res.accessible is False
+        assert res.reason == AccessDenialReason.PURCHASE_REQUIRED
+
+    def test_premium_required_reason(self, app_context):
+        """Premium-Lektion fuer Free-User → reason=PREMIUM_REQUIRED."""
+        user = UserFactory(subscription_level="free")
+        lesson = LessonFactory(price=10.0, is_purchasable=False)
+        db.session.flush()
+        from sqlalchemy import update
+        db.session.execute(
+            update(Lesson).where(Lesson.id == lesson.id).values(lesson_type="premium")
+        )
+        db.session.expire(lesson)
+        db.session.commit()
+        res = lesson.access_check(user)
+        assert res.accessible is False
+        assert res.reason == AccessDenialReason.PREMIUM_REQUIRED
+
+    def test_success_reason_none(self, app_context):
+        """Zugriff gewaehrt (gekaufte Lektion) → reason=NONE."""
+        user = UserFactory()
+        lesson = PaidLessonFactory()
+        db.session.commit()
+        LessonPurchaseFactory(user_id=user.id, lesson_id=lesson.id)
+        db.session.commit()
+        res = lesson.access_check(user)
+        assert res.accessible is True
+        assert res.reason == AccessDenialReason.NONE
+
+    def test_admin_reason_none(self, app_context):
+        """Admin-Bypass → accessible, reason=NONE."""
+        admin = AdminUserFactory()
+        lesson = PaidLessonFactory()
+        db.session.commit()
+        res = lesson.access_check(admin)
+        assert res.accessible is True
+        assert res.reason == AccessDenialReason.NONE
+
+    def test_wrapper_returns_legacy_tuple(self, app_context):
+        """is_accessible_to_user bleibt das 2-Tupel (accessible, message)."""
+        lesson = LessonFactory(price=0.0, allow_guest_access=True)
+        db.session.commit()
+        result = lesson.is_accessible_to_user(None)
+        assert isinstance(result, tuple)
+        assert len(result) == 2
+        accessible, message = result
+        assert accessible is True
+        assert isinstance(message, str)
 
 
 # ── U-M09: Lesson – Voraussetzungen ─────────────────────────

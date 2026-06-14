@@ -7,7 +7,7 @@ from flask import Blueprint, render_template, render_template_string, redirect, 
 from flask_login import login_user, logout_user, login_required, current_user
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError # Import specific exceptions
 from app import db, csrf, limiter, srs_service
-from app.models import User, Kana, Kanji, Vocabulary, Grammar, LessonCategory, Lesson, LessonContent, LessonPrerequisite, UserLessonProgress, QuizQuestion, QuizOption, UserQuizAnswer, LessonPage, Course, LessonPurchase, CoursePurchase
+from app.models import User, Kana, Kanji, Vocabulary, Grammar, LessonCategory, Lesson, LessonContent, LessonPrerequisite, UserLessonProgress, QuizQuestion, QuizOption, UserQuizAnswer, LessonPage, Course, LessonPurchase, CoursePurchase, AccessDenialReason
 from app.forms import RegistrationForm, LoginForm, CSRFTokenForm, RequestPasswordResetForm, ResetPasswordForm
 from app.auth_tokens import make_reset_token, verify_reset_token
 from app.mail_service import send_password_reset_email
@@ -38,7 +38,7 @@ def premium_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not current_user.is_authenticated or current_user.subscription_level != 'premium':
-            flash('Premium membership required to access this content.', 'warning')
+            flash('Premium-Mitgliedschaft erforderlich, um auf diese Inhalte zuzugreifen.', 'warning')
             return redirect(url_for('routes.index')) # Or a subscribe page
         return f(*args, **kwargs)
     return decorated_function
@@ -47,7 +47,7 @@ def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not current_user.is_authenticated or not current_user.is_admin:
-            flash('Admin access required.', 'danger')
+            flash('Admin-Zugriff erforderlich.', 'danger')
             return redirect(url_for('routes.index'))
         return f(*args, **kwargs)
     return decorated_function
@@ -701,10 +701,10 @@ def upgrade_to_premium():
         # **PROTOTYPE ONLY**: Manually change subscription for testing
         current_user.subscription_level = 'premium'
         db.session.commit()
-        flash('Congratulations! Your account has been upgraded to Premium.', 'success')
+        flash('Glückwunsch! Dein Konto wurde auf Premium aktualisiert.', 'success')
         return redirect(url_for('routes.index')) # Changed to a valid route
     else:
-        flash('Invalid request for upgrade.', 'danger')
+        flash('Ungültige Anfrage für das Upgrade.', 'danger')
         return redirect(url_for('routes.index')) # Or a relevant page
 
 @bp.route('/downgrade_from_premium', methods=['POST']) # Changed to POST
@@ -715,10 +715,10 @@ def downgrade_from_premium():
         # **PROTOTYPE ONLY**: Manually change subscription for testing
         current_user.subscription_level = 'free'
         db.session.commit()
-        flash('Your account has been downgraded to Free.', 'info')
+        flash('Dein Konto wurde auf Free zurückgestuft.', 'info')
         return redirect(url_for('routes.index')) # Changed to a valid route
     else:
-        flash('Invalid request for downgrade.', 'danger')
+        flash('Ungültige Anfrage für die Rückstufung.', 'danger')
         return redirect(url_for('routes.index')) # Or a relevant page
 
 # --- Admin Routes ---
@@ -1261,7 +1261,7 @@ def purchase_lesson_page(lesson_id):
     
     # Check if lesson is purchasable
     if not lesson.is_purchasable or lesson.price <= 0:
-        flash('This lesson is not available for purchase.', 'warning')
+        flash('Diese Lektion ist nicht zum Kauf verfügbar.', 'warning')
         return redirect(url_for('routes.lessons'))
     
     # Check if user already owns this lesson
@@ -1271,13 +1271,13 @@ def purchase_lesson_page(lesson_id):
     ).first()
     
     if existing_purchase:
-        flash('You already own this lesson!', 'info')
+        flash('Du besitzt diese Lektion bereits!', 'info')
         return redirect(url_for('routes.view_lesson', lesson_id=lesson_id))
     
     # Check if user can access this lesson for free (shouldn't happen, but safety check)
     accessible, message = lesson.is_accessible_to_user(current_user)
     if accessible:
-        flash('This lesson is already accessible to you.', 'info')
+        flash('Diese Lektion ist dir bereits zugänglich.', 'info')
         return redirect(url_for('routes.view_lesson', lesson_id=lesson_id))
     
     form = CSRFTokenForm()
@@ -1314,7 +1314,8 @@ def view_lesson(lesson_id):
 
     # Check if user can access this lesson (supports both authenticated and guest users)
     user = current_user if current_user.is_authenticated else None
-    accessible, message = lesson.is_accessible_to_user(user)
+    access = lesson.access_check(user)
+    accessible, message = access.accessible, access.message
     if not accessible:
         # Paid Lesson + nicht zugaenglich → Paywall-Seite (Bundle-CTA + Single-Kauf)
         # statt Flash-Redirect, das Frust ohne Aktion erzeugte.
@@ -1351,8 +1352,8 @@ def view_lesson(lesson_id):
                 bundle_early_bird_price=EARLY_BIRD_PRICE_CHF,
                 paid_total=paid_total,
             )
-        # Login fehlt
-        if not current_user.is_authenticated and 'Login required' in message:
+        # Login fehlt — strukturierter Grund statt Substring-Match auf 'Login required'
+        if access.reason == AccessDenialReason.LOGIN_REQUIRED:
             return redirect(url_for('routes.login', next=request.url))
         # Restfaelle (Voraussetzungen, etc.) — Flash bleibt
         flash(message, 'warning')
