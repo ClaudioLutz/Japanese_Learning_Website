@@ -62,7 +62,7 @@
       <h1 class="lp-continue-title">{{ continue_lesson.title }}</h1>
       <p class="lp-continue-cat">
         {% if continue_category %}{{ continue_category }}{% endif %}
-        {% if continue_lesson.status == 'started' %} · {{ continue_lesson.progress_percentage }}% erledigt{% else %} · noch nicht begonnen{% endif %}
+        {% if continue_lesson.status == 'started' %} · <span class="lp-continue-lessonpct">{{ continue_lesson.progress_percentage }}% dieser Lektion</span>{% else %} · noch nicht begonnen{% endif %}
       </p>
       <div class="lp-continue-actions">
         <a href="{{ url_for('routes.view_lesson', lesson_id=continue_lesson.id) }}" class="lp-continue-cta">
@@ -86,8 +86,10 @@
     </div>
     {% endif %}
 
-    {# Stat-Schiene: Gesamtfortschritt, Streak, Fällig #}
-    <div class="lp-continue-stats">
+    {# Stat-Schiene: Gesamtkurs — bewusst von der Lektions-% oben abgesetzt #}
+    <div class="lp-continue-statwrap">
+      <span class="lp-continue-statlabel">Gesamtkurs</span>
+      <div class="lp-continue-stats">
       <div class="lp-stat">
         <span class="lp-stat-num">{{ total_done }}<span class="lp-stat-den">/{{ page_lessons|length }}</span></span>
         <span class="lp-stat-label">Lektionen</span>
@@ -102,6 +104,7 @@
       <div class="lp-stat">
         <span class="lp-stat-num">↻ {{ due_count }}</span>
         <span class="lp-stat-label">fällig</span>
+      </div>
       </div>
     </div>
   </section>
@@ -161,17 +164,23 @@
       </button>
     </div>
 
-    <div class="lp-pills" role="group" aria-label="Verfügbarkeit">
-      <button type="button" class="lp-pill" :class="access === 'all' && 'is-active'" @click="access='all'; apply();">Alle</button>
-      <button type="button" class="lp-pill lp-pill-free" :class="access === 'free' && 'is-active'" @click="access='free'; apply();">🆓 Gratis</button>
-      <button type="button" class="lp-pill lp-pill-paid" :class="access === 'paid' && 'is-active'" @click="access='paid'; apply();">⭐ Premium</button>
+    <div class="lp-filtergroup">
+      <span class="lp-filtergroup-label" aria-hidden="true">Zugang</span>
+      <div class="lp-pills" role="group" aria-label="Verfügbarkeit">
+        <button type="button" class="lp-pill" :class="access === 'all' && 'is-active'" @click="access='all'; apply();">Alle</button>
+        <button type="button" class="lp-pill lp-pill-free" :class="access === 'free' && 'is-active'" @click="access='free'; apply();">🆓 Gratis</button>
+        <button type="button" class="lp-pill lp-pill-paid" :class="access === 'paid' && 'is-active'" @click="access='paid'; apply();">⭐ Premium</button>
+      </div>
     </div>
 
     {% if show_status %}
-    <div class="lp-pills" role="group" aria-label="Lernstatus">
-      <button type="button" class="lp-pill" :class="status === 'all' && 'is-active'" @click="status='all'; apply();">Alle</button>
-      <button type="button" class="lp-pill lp-pill-open" :class="status === 'open' && 'is-active'" @click="status='open'; apply();">📭 Noch offen <span class="lp-pill-num">{{ total_open }}</span></button>
-      <button type="button" class="lp-pill lp-pill-done" :class="status === 'done' && 'is-active'" @click="status='done'; apply();">✅ Abgeschlossen <span class="lp-pill-num">{{ total_done }}</span></button>
+    <div class="lp-filtergroup">
+      <span class="lp-filtergroup-label" aria-hidden="true">Status</span>
+      <div class="lp-pills" role="group" aria-label="Lernstatus">
+        <button type="button" class="lp-pill" :class="status === 'all' && 'is-active'" @click="status='all'; apply();">Alle</button>
+        <button type="button" class="lp-pill lp-pill-open" :class="status === 'open' && 'is-active'" @click="status='open'; apply();">📭 Noch offen <span class="lp-pill-num">{{ total_open }}</span></button>
+        <button type="button" class="lp-pill lp-pill-done" :class="status === 'done' && 'is-active'" @click="status='done'; apply();">✅ Abgeschlossen <span class="lp-pill-num">{{ total_done }}</span></button>
+      </div>
     </div>
     {% endif %}
 
@@ -186,32 +195,59 @@
     <span class="lp-count" x-text="countLabel()"></span>
   </div>
 
+  {% if page_categories|length > 1 %}
+  {# Sticky Sektions-Navigation — Sprung zur Sektion + Scroll-Spy. Bei aktivem
+     Filter ausgeblendet (Sektionen klappen dann ohnehin alle auf). #}
+  <nav class="lp-secnav" aria-label="Lehrplan-Abschnitte" x-show="!hasActiveFilters()" x-transition.opacity>
+    <div class="lp-secnav-track">
+      {% for cat in page_categories %}
+      <button type="button"
+              class="lp-secnav-chip"
+              :class="activeNav === '{{ cat.id }}' && 'is-active'"
+              @click="scrollToCat('{{ cat.id }}')">
+        {% if cat.icon_emoji %}<span aria-hidden="true">{{ cat.icon_emoji }}</span> {% endif %}{{ cat.name }}{% if show_status %} <span class="lp-secnav-frac">{{ cat.done_count }}/{{ cat.lesson_count }}</span>{% endif %}
+      </button>
+      {% endfor %}
+    </div>
+  </nav>
+  {% endif %}
+
   <div class="lp-curriculum">
     {% for cat in page_categories %}
     <section class="lp-cat-group"
              data-cat-id="{{ cat.id }}"
+             data-open-default="{{ '1' if cat.open_default else '0' }}"
              x-show="catVisible($el)"
              x-transition.opacity>
-      <header class="lp-cat-group-head" style="border-left: 3px solid {{ cat.color_code or 'var(--kon)' }};">
-        <div class="lp-cat-group-title">
+      <h2 class="lp-cat-group-headwrap" style="border-left: 3px solid {{ cat.color_code or 'var(--kon)' }};">
+        <button type="button"
+                class="lp-cat-group-head"
+                @click="toggleCat('{{ cat.id }}')"
+                :aria-expanded="isCatOpen('{{ cat.id }}') ? 'true' : 'false'"
+                aria-controls="lp-cat-body-{{ cat.id }}">
+          <i class="fas fa-chevron-right lp-cat-caret{% if cat.open_default %} is-open{% endif %}" :class="{ 'is-open': isCatOpen('{{ cat.id }}') }" aria-hidden="true"></i>
           {% if cat.icon_emoji %}<span class="lp-cat-group-icon" aria-hidden="true">{{ cat.icon_emoji }}</span>{% endif %}
-          <div>
-            <h2 class="lp-h2">{{ cat.name }}</h2>
-            {% if cat.description %}<p class="lp-cat-group-desc">{{ cat.description }}</p>{% endif %}
-          </div>
-        </div>
-        <div class="lp-cat-group-meta">
-          {% if show_status %}
-          <span class="lp-cat-group-count">{{ cat.done_count }}/{{ cat.lesson_count }} fertig</span>
-          <div class="lp-progress lp-progress-sm" role="img" aria-label="{{ cat.done_count }} von {{ cat.lesson_count }} abgeschlossen">
-            <div class="lp-progress-fill" style="width: {{ (100 * cat.done_count / cat.lesson_count)|round if cat.lesson_count else 0 }}%;"></div>
-          </div>
-          {% else %}
-          <span class="lp-cat-group-count">{{ cat.lesson_count }} Lektion{% if cat.lesson_count != 1 %}en{% endif %}{% if cat.free_count %} · {{ cat.free_count }} gratis{% endif %}</span>
-          {% endif %}
-        </div>
-      </header>
+          <span class="lp-cat-group-titletext">
+            <span class="lp-cat-group-name">{{ cat.name }}</span>
+            {% if cat.description %}<span class="lp-cat-group-desc">{{ cat.description }}</span>{% endif %}
+          </span>
+          <span class="lp-cat-group-meta">
+            {% if show_status %}
+            <span class="lp-cat-group-count">{{ cat.done_count }}/{{ cat.lesson_count }} fertig</span>
+            <span class="lp-progress lp-progress-sm" role="img" aria-label="{{ cat.done_count }} von {{ cat.lesson_count }} abgeschlossen">
+              <span class="lp-progress-fill" style="width: {{ (100 * cat.done_count / cat.lesson_count)|round if cat.lesson_count else 0 }}%;"></span>
+            </span>
+            {% else %}
+            <span class="lp-cat-group-count">{{ cat.lesson_count }} Lektion{% if cat.lesson_count != 1 %}en{% endif %}{% if cat.free_count %} · {{ cat.free_count }} gratis{% endif %}</span>
+            {% endif %}
+          </span>
+        </button>
+      </h2>
 
+      <div class="lp-cat-body{% if cat.open_default %} is-open{% endif %}"
+           id="lp-cat-body-{{ cat.id }}"
+           :class="{ 'is-open': isCatOpen('{{ cat.id }}') }">
+        <div class="lp-cat-body-inner">
       <ul class="lp-lesson-list list-unstyled">
         {% for lesson in cat.lessons %}
         <li class="lp-lesson"
@@ -223,29 +259,32 @@
             data-status="{{ lesson.status }}"
             x-show="lessonVisible($el)"
             x-transition.opacity>
-          <a href="{{ url_for('routes.view_lesson', lesson_id=lesson.id) }}" class="lp-lesson-card">
-            {% if lesson.thumbnail_url %}
-            <div class="lp-lesson-thumb">
+          <a href="{{ url_for('routes.view_lesson', lesson_id=lesson.id) }}"
+             class="lp-lesson-card{% if show_status and lesson.status == 'done' %} is-done{% endif %}">
+            <div class="lp-lesson-thumb{% if not lesson.thumbnail_url %} lp-lesson-thumb-placeholder{% endif %}{% if not lesson.is_free %} is-locked{% endif %}"{% if not lesson.thumbnail_url %} aria-hidden="true"{% endif %}>
+              {% if lesson.thumbnail_url %}
               <img src="{{ lesson.thumbnail_url }}" alt="" loading="lazy" decoding="async">
-            </div>
-            {% else %}
-            <div class="lp-lesson-thumb lp-lesson-thumb-placeholder" aria-hidden="true">
+              {% else %}
               <i class="fas fa-book-open"></i>
+              {% endif %}
+              {% if not lesson.is_free %}
+              <span class="lp-thumb-lock" aria-hidden="true"><i class="fas fa-lock"></i></span>
+              {% endif %}
+              {% if show_status and lesson.status == 'done' %}
+              <span class="lp-thumb-done" aria-hidden="true"><i class="fas fa-check"></i></span>
+              {% endif %}
             </div>
-            {% endif %}
             <div class="lp-lesson-body">
               <div class="lp-lesson-meta">
+                {# Genau EIN Zugangs-Chip #}
                 {% if lesson.is_free %}
                 <span class="lp-badge lp-badge-free">🆓 Gratis</span>
                 {% else %}
                 <span class="lp-badge lp-badge-locked" title="Im N5-Komplett enthalten">🔒 im Bundle</span>
                 {% endif %}
-                {% if show_status %}
-                  {% if lesson.status == 'done' %}
-                  <span class="lp-badge lp-badge-done">✅ Fertig</span>
-                  {% elif lesson.status == 'started' %}
-                  <span class="lp-badge lp-badge-progress">▸ {{ lesson.progress_percentage }}%</span>
-                  {% endif %}
+                {# Fertig-Chip — nur abgeschlossen (Fortschritt sonst über den Balken) #}
+                {% if show_status and lesson.status == 'done' %}
+                <span class="lp-badge lp-badge-done">✅ Fertig</span>
                 {% endif %}
               </div>
               <h3 class="lp-lesson-title">{{ lesson.title }}</h3>
@@ -258,10 +297,23 @@
               </div>
               {% endif %}
             </div>
+            {# Fortschrittsbalken am Kartenfuss — nur begonnen/fertig; Zahl erst ab 10 % #}
+            {% if show_status and lesson.status in ('started', 'done') %}
+            <div class="lp-lesson-pbar" role="img"
+                 aria-label="{% if lesson.status == 'done' %}Abgeschlossen{% else %}{{ lesson.progress_percentage }}% erledigt{% endif %}">
+              <span class="lp-lesson-pbar-fill{% if lesson.status == 'done' %} is-done{% endif %}"
+                    style="width: {% if lesson.status == 'done' %}100{% else %}{{ lesson.progress_percentage }}{% endif %}%;"></span>
+              {% if lesson.status == 'started' and lesson.progress_percentage >= 10 %}
+              <span class="lp-lesson-pbar-pct">{{ lesson.progress_percentage }}%</span>
+              {% endif %}
+            </div>
+            {% endif %}
           </a>
         </li>
         {% endfor %}
       </ul>
+        </div>
+      </div>
     </section>
     {% endfor %}
 
@@ -364,6 +416,17 @@
 .lp-stat-den { color: var(--ink-400); font-size: 1rem; font-weight: 500; }
 .lp-stat-label { font-size: 0.78rem; color: var(--ink-500); font-weight: 500; }
 
+/* Scope-Trennung: „dieser Lektion" (oben) vs. „Gesamtkurs" (Stat-Schiene) */
+.lp-continue-lessonpct { color: var(--shu); font-weight: 600; }
+.lp-continue-statwrap { display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem; }
+.lp-continue-statlabel {
+  font-family: 'Geist Mono', ui-monospace, monospace; text-transform: uppercase;
+  letter-spacing: 0.1em; font-size: 0.66rem; font-weight: 600; color: var(--ink-400);
+}
+@media (max-width: 720px) {
+  .lp-continue-statwrap { align-items: stretch; }
+}
+
 .lp-progress { height: 6px; background: var(--ink-100); border-radius: 999px; overflow: hidden; margin-top: 0.4rem; }
 .lp-progress-fill { height: 100%; background: var(--matcha); border-radius: 999px; transition: width .3s; }
 .lp-progress-sm { width: 120px; margin-top: 0.3rem; }
@@ -432,6 +495,17 @@
 .lp-reset { flex-basis: 100%; background: transparent; border: 0; color: var(--ink-500); cursor: pointer; font-size: 0.82rem; text-align: left; padding: 0.2rem 0; }
 .lp-reset:hover { color: var(--shu); }
 
+/* Filter-Gruppen mit Achsen-Label — entwirrt das doppelte „Alle" */
+.lp-filtergroup { display: inline-flex; align-items: center; gap: 0.45rem; }
+.lp-filtergroup-label {
+  font-family: 'Geist Mono', ui-monospace, monospace; text-transform: uppercase;
+  letter-spacing: 0.08em; font-size: 0.66rem; font-weight: 600; color: var(--ink-400);
+}
+@media (max-width: 768px) {
+  .lp-filtergroup { width: 100%; flex-direction: column; align-items: stretch; gap: 0.3rem; }
+  .lp-filtergroup-label { padding-left: 0.2rem; }
+}
+
 /* ── Sektions-Kopf ── */
 .lp-section-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1.25rem; }
 .lp-h2 {
@@ -440,22 +514,67 @@
 }
 .lp-count { font-family: 'Geist Mono', ui-monospace, monospace; font-size: 0.85rem; color: var(--ink-500); }
 
-/* ── Lehrplan-Gruppen (Kategorie als Rückgrat) ── */
-.lp-cat-group { margin-bottom: 2.25rem; }
-.lp-cat-group-head {
-  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
-  padding: 0.35rem 0 0.6rem 0.85rem; margin-bottom: 1rem;
+/* ── Sticky Sektions-Navigation ── */
+.lp-secnav {
+  position: sticky; top: 60px; z-index: 50;
+  margin: 0 -1.5rem 1.25rem; padding: 0.5rem 1.5rem;
+  background: rgba(250,247,242,.92);
+  -webkit-backdrop-filter: saturate(180%) blur(10px);
+  backdrop-filter: saturate(180%) blur(10px);
   border-bottom: 1px solid var(--ink-200);
 }
-.lp-cat-group-title { display: flex; align-items: center; gap: 0.75rem; min-width: 0; }
-.lp-cat-group-icon { font-size: 1.6rem; line-height: 1; flex-shrink: 0; }
-.lp-cat-group-head .lp-h2 { font-size: 1.15rem; }
-.lp-cat-group-desc { margin: 0.15rem 0 0; font-size: 0.85rem; color: var(--ink-500); line-height: 1.4; }
-.lp-cat-group-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 0.1rem; flex-shrink: 0; }
-.lp-cat-group-count { font-family: 'Geist Mono', ui-monospace, monospace; font-size: 0.8rem; color: var(--ink-600); font-weight: 600; white-space: nowrap; }
+.lp-secnav-track { display: flex; gap: 0.4rem; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.lp-secnav-track::-webkit-scrollbar { display: none; }
+.lp-secnav-chip {
+  flex: none; display: inline-flex; align-items: center; gap: 0.35rem;
+  border: 1px solid var(--ink-200); background: #fff; color: var(--ink-600);
+  font-size: 0.82rem; font-weight: 600; padding: 0.32rem 0.7rem; border-radius: 999px;
+  white-space: nowrap; cursor: pointer; transition: border-color .15s, color .15s, background .15s;
+}
+.lp-secnav-chip:hover { border-color: var(--shu); color: var(--shu); }
+.lp-secnav-chip.is-active { background: var(--kon); border-color: var(--kon); color: #fff; }
+.lp-secnav-frac { font-family: 'Geist Mono', ui-monospace, monospace; font-size: 0.72rem; opacity: .75; }
+.lp-secnav-chip.is-active .lp-secnav-frac { opacity: .9; }
+
+/* ── Lehrplan-Gruppen (Kategorie als Rückgrat, einklappbar) ── */
+.lp-cat-group { margin-bottom: 0.75rem; scroll-margin-top: 124px; }
+.lp-cat-group-headwrap {
+  margin: 0; border-left: 3px solid var(--kon);
+  border-bottom: 1px solid var(--ink-200);
+}
+.lp-cat-group-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 0.85rem;
+  width: 100%; background: transparent; border: 0; text-align: left; cursor: pointer;
+  padding: 0.6rem 0.4rem 0.7rem 0.75rem; border-radius: 8px 8px 0 0;
+  transition: background .15s; font: inherit; color: inherit;
+}
+.lp-cat-group-head:hover { background: var(--ink-50); }
+.lp-cat-group-head:focus-visible { outline: 2px solid var(--shu); outline-offset: -2px; }
+.lp-cat-caret { font-size: 0.85rem; color: var(--ink-400); flex-shrink: 0; transition: transform .2s; width: 0.85em; }
+.lp-cat-caret.is-open { transform: rotate(90deg); color: var(--shu); }
+.lp-cat-group-icon { font-size: 1.45rem; line-height: 1; flex-shrink: 0; }
+.lp-cat-group-titletext { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; flex: 1; }
+.lp-cat-group-name {
+  font-family: 'Geist', 'Inter', sans-serif; font-size: 1.1rem; font-weight: 600;
+  color: var(--kon); letter-spacing: -0.01em; line-height: 1.2;
+}
+.lp-cat-group-desc { font-size: 0.82rem; color: var(--ink-500); line-height: 1.4; }
+.lp-cat-group-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 0.15rem; flex-shrink: 0; }
+.lp-cat-group-count { font-family: 'Geist Mono', ui-monospace, monospace; font-size: 0.78rem; color: var(--ink-600); font-weight: 600; white-space: nowrap; }
+.lp-cat-group-head .lp-progress { display: inline-block; width: 110px; height: 5px; margin: 0; vertical-align: middle; }
+.lp-cat-group-head .lp-progress-fill { display: block; }
+
+/* Accordion-Body — sanftes Auf-/Zuklappen via grid-template-rows */
+.lp-cat-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .28s ease; }
+.lp-cat-body.is-open { grid-template-rows: 1fr; }
+.lp-cat-body-inner { overflow: hidden; min-height: 0; }
+.lp-cat-body.is-open .lp-cat-body-inner { padding-top: 1rem; padding-bottom: 0.5rem; }
+@media (prefers-reduced-motion: reduce) { .lp-cat-body { transition: none; } }
+
 @media (max-width: 575px) {
   .lp-cat-group-desc { display: none; }
   .lp-cat-group-head { flex-wrap: wrap; gap: 0.5rem; }
+  .lp-cat-group-head .lp-progress { width: 90px; }
 }
 
 /* ── Lektions-Karten ── */
@@ -502,6 +621,32 @@
 }
 .lp-lesson-foot { margin-top: auto; color: var(--ink-500); font-size: 0.8rem; font-family: 'Geist Mono', ui-monospace, monospace; }
 
+/* ── Karten-Zustände: Premium-Gate + Fertig-Marke auf dem Thumbnail ── */
+.lp-lesson-thumb.is-locked img { filter: saturate(0.85) brightness(0.94); }
+.lp-lesson-thumb.is-locked::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(31,42,68,.04), rgba(31,42,68,.16)); pointer-events: none;
+}
+.lp-thumb-lock, .lp-thumb-done {
+  position: absolute; top: 8px; right: 8px; z-index: 1;
+  width: 26px; height: 26px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; font-size: 0.72rem;
+  box-shadow: 0 1px 3px rgba(28,26,23,.25);
+}
+.lp-thumb-lock { background: rgba(255,255,255,.94); color: var(--kincha); }
+.lp-thumb-done { background: var(--matcha); color: #fff; }
+
+/* ── Fortschrittsbalken am Kartenfuss (ersetzt die %-Badge) ── */
+.lp-lesson-pbar { position: relative; height: 5px; background: var(--ink-100); flex-shrink: 0; }
+.lp-lesson-pbar-fill { display: block; height: 100%; background: var(--shu); transition: width .3s; }
+.lp-lesson-pbar-fill.is-done { background: var(--matcha); }
+.lp-lesson-pbar-pct {
+  position: absolute; right: 6px; bottom: 6px;
+  font-family: 'Geist Mono', ui-monospace, monospace; font-size: 0.66rem; font-weight: 600;
+  color: var(--shu); background: rgba(255,255,255,.85); padding: 0 0.25rem; border-radius: 3px;
+}
+.lp-lesson-card.is-done { border-color: rgba(122,144,51,.4); }
+
 /* ── Empty State ── */
 .lp-empty { background: #fff; border: 1px solid var(--ink-200); border-radius: 12px; padding: 2.5rem 1.5rem; text-align: center; box-shadow: none; }
 .lp-empty-icon { font-size: 2.5rem; color: var(--ink-400); margin-bottom: 0.75rem; display: block; }
@@ -535,9 +680,54 @@ function lessonsPage() {
     search: params.get('q') || '',
     access: params.get('access') || 'all',
     status: params.get('status') || 'all',
+    catOpen: {},      // {catId(String): bool} — Accordion-Zustand
+    activeNav: null,  // catId der aktuell sichtbaren Sektion (Scroll-Spy)
 
     init() {
+      this.initCatOpen();
       this.setupBackToTop();
+      this.$nextTick(() => this.setupScrollSpy());
+    },
+
+    // ── Accordion: Server-Default (data-open-default) + Session-Overrides ──
+    initCatOpen() {
+      let stored = {};
+      try { stored = JSON.parse(sessionStorage.getItem('lp_catOpen') || '{}'); } catch (e) {}
+      document.querySelectorAll('.lp-cat-group').forEach(el => {
+        const id = String(el.dataset.catId);
+        const def = el.dataset.openDefault === '1';
+        this.catOpen[id] = (id in stored) ? !!stored[id] : def;
+      });
+    },
+    persistCatOpen() {
+      try { sessionStorage.setItem('lp_catOpen', JSON.stringify(this.catOpen)); } catch (e) {}
+    },
+    toggleCat(id) {
+      id = String(id);
+      this.catOpen[id] = !this.catOpen[id];
+      this.persistCatOpen();
+    },
+    isCatOpen(id) {
+      // Bei aktivem Filter alle (gefilterten) Sektionen offen, damit Treffer sichtbar sind.
+      if (this.hasActiveFilters()) return true;
+      return !!this.catOpen[String(id)];
+    },
+    scrollToCat(id) {
+      id = String(id);
+      if (!this.hasActiveFilters()) { this.catOpen[id] = true; this.persistCatOpen(); }
+      this.activeNav = id;
+      this.$nextTick(() => {
+        const el = document.querySelector('.lp-cat-group[data-cat-id="' + id + '"]');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    },
+    setupScrollSpy() {
+      const groups = Array.from(document.querySelectorAll('.lp-cat-group'));
+      if (!groups.length || !('IntersectionObserver' in window)) return;
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) this.activeNav = String(e.target.dataset.catId); });
+      }, { rootMargin: '-124px 0px -65% 0px', threshold: 0 });
+      groups.forEach(g => obs.observe(g));
     },
 
     hasActiveFilters() {

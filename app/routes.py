@@ -968,6 +968,26 @@ def lessons():
         if first_free_lesson:
             break
 
+    # ── Accordion: welche Kategorie-Gruppen initial aufgeklappt sind ──────
+    # Heuristik (eingeloggt): in Arbeit befindliche Sektionen offen, fertige
+    # und noch nicht begonnene zu — so scrollt man nicht taeglich an allem
+    # vorbei. Faellt nichts darunter (frischer Account / Gast), die erste(n)
+    # Sektion(en) oeffnen, damit die Seite nicht komplett eingeklappt wirkt.
+    continue_id = continue_lesson['id'] if continue_lesson else None
+    for cat in page_categories:
+        if show_status:
+            has_started = any(d['status'] == 'started' for d in cat['lessons'])
+            partial = 0 < cat['done_count'] < cat['lesson_count']
+            has_continue = continue_id is not None and any(
+                d['id'] == continue_id for d in cat['lessons']
+            )
+            cat['open_default'] = bool(has_started or partial or has_continue)
+        else:
+            cat['open_default'] = False
+    if page_categories and not any(c['open_default'] for c in page_categories):
+        for c in page_categories[: (1 if show_status else 2)]:
+            c['open_default'] = True
+
     return render_template(
         'lessons.html',
         page_categories=page_categories,
