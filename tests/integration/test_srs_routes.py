@@ -388,10 +388,23 @@ class TestReviewTeaser:
             assert 'noindex' in body
 
     def test_teaser_shows_no_user_data(self, client):
-        """Teaser zeigt KEINE echten Nutzerdaten (kein Streak-/Stats-Zahlenblock)."""
+        """Teaser zeigt KEINE echten Nutzerdaten — die stabilen Marker der echten
+        stats.html-Sektion (Hero/Streak/Storm) duerfen NICHT im Teaser stehen."""
         body = client.get('/review/stats').get_data(as_text=True)
-        # Die echte stats.html-Seite haette die Storm-/Level-Sektion; der Teaser nicht.
+        assert 'Konto erstellen' in body            # Teaser-CTA vorhanden
+        # Negativ-Assert gegen einen stabilen Marker der ECHTEN stats.html-Seite,
+        # der unabhaengig vom Datenstand IMMER rendert (auch fuer 0-Karten-User):
+        # die Hero-Zone. Im Teaser fehlt sie → kein echter Stats-Block geleakt.
+        assert 'stats-hero' not in body
+
+    def test_teaser_review_page_no_real_data(self, client):
+        """Auch /review (statt /review/stats): keine echten Review-Daten/Marker.
+        review-screen/review-topbar rendern auf der echten Seite immer."""
+        body = client.get('/review').get_data(as_text=True)
         assert 'Konto erstellen' in body
+        assert 'review-screen' not in body
+        assert 'review-topbar' not in body
+        assert 'review-locked' not in body
 
     def test_authenticated_user_gets_real_page(self, auth_client):
         """Eingeloggt → unveraenderte echte Seite (kein Teaser)."""
