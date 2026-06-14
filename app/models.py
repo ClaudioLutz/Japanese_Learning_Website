@@ -31,6 +31,96 @@ class AccessResult:
     accessible: bool
     message: str
     reason: AccessDenialReason
+
+
+@dataclass(frozen=True)
+class AccessContext:
+    """Vorberechnete Batch-Daten fuer Lesson.access_check (N+1-Vermeidung).
+
+    Bei Listen-Ansichten (z.B. module_detail mit vielen Lessons fuer denselben
+    User) loesen die Per-Row-Queries in access_check (LessonPurchase,
+    CoursePurchase, UserLessonProgress) eine echte, lesson-skalierende N+1 aus.
+    Diese Struktur traegt die drei Mengen vorab — in je EINER Query geladen —
+    und access_check liest nur noch daraus. Die ENTSCHEIDUNGSLOGIK bleibt
+    bit-identisch (Set-Membership ist aequivalent zur `... .first()`-Wahrheit).
+
+    Default-Pfad (access_ctx=None) bleibt das heutige Per-Row-Verhalten, damit
+    alle anderen Aufrufer von access_check/is_accessible_to_user unveraendert
+    und risikofrei bleiben.
+    """
+    purchased_lesson_ids: frozenset[int]
+    purchased_course_ids: frozenset[int]
+    completed_lesson_ids: frozenset[int]
+
+    @classmethod
+    def build_for_user(cls, user, lessons) -> 'AccessContext':
+        """Laedt die Batch-Mengen fuer `user` ueber die gegebenen Lessons.
+
+        - purchased_lesson_ids: gekaufte Lessons aus der Lesson-Menge
+        - purchased_course_ids: gekaufte Courses, die eine dieser Lessons
+          enthalten (deckt den Course-Kauf-Zweig ab)
+        - completed_lesson_ids: abgeschlossene Lessons des Users, die als
+          Lesson ODER als Voraussetzung einer dieser Lessons relevant sind
+        Drei Queries, unabhaengig von der Lesson-Anzahl.
+        """
+        lesson_list = list(lessons)
+        lesson_ids = {lsn.id for lsn in lesson_list}
+
+        # Voraussetzungs-Lesson-IDs einsammeln (deren Completion wird geprueft)
+        prereq_ids: set[int] = set()
+        course_ids: set[int] = set()
+        for lsn in lesson_list:
+            for prereq in lsn.get_prerequisites():
+                if prereq is not None:
+                    prereq_ids.add(prereq.id)
+            for course in lsn.courses:
+                course_ids.add(course.id)
+
+        relevant_lesson_ids = lesson_ids | prereq_ids
+
+        if not user or not getattr(user, 'is_authenticated', False):
+            return cls(frozenset(), frozenset(), frozenset())
+
+        purchased_lessons: frozenset[int] = frozenset()
+        if lesson_ids:
+            rows = (
+                db.session.query(LessonPurchase.lesson_id)
+                .filter(
+                    LessonPurchase.user_id == user.id,
+                    LessonPurchase.lesson_id.in_(lesson_ids),
+                )
+                .all()
+            )
+            purchased_lessons = frozenset(r[0] for r in rows)
+
+        purchased_courses: frozenset[int] = frozenset()
+        if course_ids:
+            rows = (
+                db.session.query(CoursePurchase.course_id)
+                .filter(
+                    CoursePurchase.user_id == user.id,
+                    CoursePurchase.course_id.in_(course_ids),
+                )
+                .all()
+            )
+            purchased_courses = frozenset(r[0] for r in rows)
+
+        completed_lessons: frozenset[int] = frozenset()
+        if relevant_lesson_ids:
+            rows = (
+                db.session.query(UserLessonProgress.lesson_id)
+                .filter(
+                    UserLessonProgress.user_id == user.id,
+                    UserLessonProgress.lesson_id.in_(relevant_lesson_ids),
+                    UserLessonProgress.is_completed.is_(True),
+                )
+                .all()
+            )
+            completed_lessons = frozenset(r[0] for r in rows)
+
+        return cls(purchased_lessons, purchased_courses, completed_lessons)
+
+
 class User(UserMixin, db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     username: Mapped[str] = mapped_column(String(80), unique=True, nullable=False)
@@ -813,7 +903,7 @@ class Lesson(db.Model):
             and not c.is_optional
         ]
     
-    def access_check(self, user) -> 'AccessResult':
+    def access_check(self, user, access_ctx=None) -> 'AccessResult':
         """Strukturierte Zugriffspruefung: liefert AccessResult(accessible,
         message, reason).
 
@@ -821,7 +911,42 @@ class Lesson(db.Model):
         Substring auf 'Login required' zu matchen, liefert jeder Zweig den
         passenden AccessDenialReason. Messages bleiben deutsch und
         user-facing (flash()/Template).
+
+        `access_ctx` (optional, AccessContext): vorberechnete Batch-Mengen fuer
+        Listen-Ansichten (N+1-Vermeidung). Default None = Per-Row-Queries wie
+        bisher. Die Entscheidungslogik ist in beiden Pfaden bit-identisch.
         """
+        # --- Per-Row vs. Batch: Helfer kapseln die einzige Datenquellen-Differenz ---
+        def _has_lesson_purchase(lesson_id):
+            if access_ctx is not None:
+                return lesson_id in access_ctx.purchased_lesson_ids
+            return LessonPurchase.query.filter_by(
+                user_id=user.id, lesson_id=lesson_id
+            ).first() is not None
+
+        def _has_course_purchase(course_id):
+            if access_ctx is not None:
+                return course_id in access_ctx.purchased_course_ids
+            return CoursePurchase.query.filter_by(
+                user_id=user.id, course_id=course_id
+            ).first() is not None
+
+        def _prereq_completed(prereq_id):
+            if access_ctx is not None:
+                return prereq_id in access_ctx.completed_lesson_ids
+            progress = UserLessonProgress.query.filter_by(
+                user_id=user.id, lesson_id=prereq_id
+            ).first()
+            return bool(progress and progress.is_completed)
+
+        def _first_unmet_prereq():
+            """Erste nicht erfuellte Voraussetzung (oder None) — identische
+            Reihenfolge wie zuvor (get_prerequisites)."""
+            for prereq in self.get_prerequisites():  # type: ignore
+                if not _prereq_completed(prereq.id):
+                    return prereq
+            return None
+
         # Handle guest users (not authenticated)
         if user is None or not hasattr(user, 'is_authenticated') or not user.is_authenticated:
             # Free lessons with guest access
@@ -841,53 +966,36 @@ class Lesson(db.Model):
         # For authenticated users, check pricing first
         if self.price == 0.0:
             # Free lesson - check prerequisites only
-            for prereq in self.get_prerequisites(): # type: ignore
-                progress = UserLessonProgress.query.filter_by(
-                    user_id=user.id, lesson_id=prereq.id
-                ).first()
-                if not progress or not progress.is_completed:
-                    return AccessResult(
-                        False, f"Schliesse zuerst „{prereq.title}\" ab",
-                        AccessDenialReason.PREREQUISITE,
-                    )
+            unmet = _first_unmet_prereq()
+            if unmet is not None:
+                return AccessResult(
+                    False, f"Schliesse zuerst „{unmet.title}\" ab",
+                    AccessDenialReason.PREREQUISITE,
+                )
             return AccessResult(True, "Kostenlose Lektion", AccessDenialReason.NONE)
 
         # Paid lesson - check if user purchased it
         if self.is_purchasable:
-            purchase = LessonPurchase.query.filter_by(
-                user_id=user.id,
-                lesson_id=self.id
-            ).first()
-            if purchase:
+            if _has_lesson_purchase(self.id):
                 # User owns the lesson - check prerequisites
-                for prereq in self.get_prerequisites(): # type: ignore
-                    progress = UserLessonProgress.query.filter_by(
-                        user_id=user.id, lesson_id=prereq.id
-                    ).first()
-                    if not progress or not progress.is_completed:
-                        return AccessResult(
-                            False, f"Schliesse zuerst „{prereq.title}\" ab",
-                            AccessDenialReason.PREREQUISITE,
-                        )
+                unmet = _first_unmet_prereq()
+                if unmet is not None:
+                    return AccessResult(
+                        False, f"Schliesse zuerst „{unmet.title}\" ab",
+                        AccessDenialReason.PREREQUISITE,
+                    )
                 return AccessResult(True, "Gekauft", AccessDenialReason.NONE)
 
             # Check if the lesson is part of a purchased course
             for course in self.courses:
-                course_purchase = CoursePurchase.query.filter_by(
-                    user_id=user.id,
-                    course_id=course.id
-                ).first()
-                if course_purchase:
+                if _has_course_purchase(course.id):
                     # User owns the course, so grant access to the lesson
-                    for prereq in self.get_prerequisites(): # type: ignore
-                        progress = UserLessonProgress.query.filter_by(
-                            user_id=user.id, lesson_id=prereq.id
-                        ).first()
-                        if not progress or not progress.is_completed:
-                            return AccessResult(
-                                False, f"Schliesse zuerst „{prereq.title}\" ab",
-                                AccessDenialReason.PREREQUISITE,
-                            )
+                    unmet = _first_unmet_prereq()
+                    if unmet is not None:
+                        return AccessResult(
+                            False, f"Schliesse zuerst „{unmet.title}\" ab",
+                            AccessDenialReason.PREREQUISITE,
+                        )
                     return AccessResult(
                         True, f"Zugriff über „{course.title}\"",
                         AccessDenialReason.NONE,
@@ -906,15 +1014,12 @@ class Lesson(db.Model):
             )
 
         # Check prerequisites for other cases
-        for prereq in self.get_prerequisites(): # type: ignore
-            progress = UserLessonProgress.query.filter_by(
-                user_id=user.id, lesson_id=prereq.id
-            ).first()
-            if not progress or not progress.is_completed:
-                return AccessResult(
-                    False, f"Schliesse zuerst „{prereq.title}\" ab",
-                    AccessDenialReason.PREREQUISITE,
-                )
+        unmet = _first_unmet_prereq()
+        if unmet is not None:
+            return AccessResult(
+                False, f"Schliesse zuerst „{unmet.title}\" ab",
+                AccessDenialReason.PREREQUISITE,
+            )
 
         return AccessResult(True, "Zugänglich", AccessDenialReason.NONE)
 

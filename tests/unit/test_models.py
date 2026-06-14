@@ -13,7 +13,7 @@ from app.models import (
     LessonPrerequisite, Course, LessonPurchase, CoursePurchase,
     PaymentTransaction, QuizQuestion, QuizOption, UserLessonProgress,
     UserQuizAnswer, course_lessons,
-    AccessDenialReason, AccessResult,
+    AccessDenialReason, AccessResult, AccessContext,
 )
 from tests.factories import (
     UserFactory, AdminUserFactory, PremiumUserFactory,
@@ -328,6 +328,128 @@ class TestLessonAccessCheck:
         accessible, message = result
         assert accessible is True
         assert isinstance(message, str)
+
+
+# ── U-M08c: access_check mit AccessContext (10.10 Batch) ──────
+
+class TestAccessContextEquivalence:
+    """Der Batch-Pfad (access_ctx) muss bit-identische AccessResults liefern wie
+    der Per-Row-Pfad (access_ctx=None) — die Zugriffsentscheidung darf sich durch
+    die Optimierung NICHT aendern."""
+
+    def _assert_same(self, lesson, user, lessons_scope):
+        ctx = AccessContext.build_for_user(user, lessons_scope)
+        per_row = lesson.access_check(user, access_ctx=None)
+        batch = lesson.access_check(user, access_ctx=ctx)
+        assert per_row == batch, (
+            f"Divergenz: per_row={per_row} vs batch={batch}"
+        )
+        return per_row
+
+    def test_paid_purchased_with_prereq_met(self, app_context):
+        """Gekauft + Voraussetzung erfuellt → beide Pfade: zugaenglich/NONE."""
+        user = UserFactory()
+        prereq = LessonFactory(price=0.0)
+        lesson = PaidLessonFactory()
+        db.session.commit()
+        db.session.add(LessonPrerequisite(
+            lesson_id=lesson.id, prerequisite_lesson_id=prereq.id))
+        LessonPurchaseFactory(user_id=user.id, lesson_id=lesson.id)
+        UserLessonProgressFactory(user_id=user.id, lesson_id=prereq.id, is_completed=True)
+        db.session.commit()
+        db.session.expire(lesson)
+        res = self._assert_same(lesson, user, [lesson, prereq])
+        assert res.accessible is True
+        assert res.reason == AccessDenialReason.NONE
+
+    def test_paid_purchased_with_prereq_unmet(self, app_context):
+        """Gekauft + Voraussetzung NICHT erfuellt → beide Pfade: PREREQUISITE."""
+        user = UserFactory()
+        prereq = LessonFactory(price=0.0)
+        lesson = PaidLessonFactory()
+        db.session.commit()
+        db.session.add(LessonPrerequisite(
+            lesson_id=lesson.id, prerequisite_lesson_id=prereq.id))
+        LessonPurchaseFactory(user_id=user.id, lesson_id=lesson.id)
+        db.session.commit()
+        db.session.expire(lesson)
+        res = self._assert_same(lesson, user, [lesson, prereq])
+        assert res.accessible is False
+        assert res.reason == AccessDenialReason.PREREQUISITE
+
+    def test_paid_not_purchased(self, app_context):
+        """Nicht gekauft, kein Course → beide Pfade: PURCHASE_REQUIRED."""
+        user = UserFactory()
+        lesson = PaidLessonFactory()
+        db.session.commit()
+        res = self._assert_same(lesson, user, [lesson])
+        assert res.accessible is False
+        assert res.reason == AccessDenialReason.PURCHASE_REQUIRED
+
+    def test_paid_via_course_purchase(self, app_context):
+        """Nicht gekauft, aber Course gekauft → beide Pfade: zugaenglich/NONE."""
+        user = UserFactory()
+        lesson = PaidLessonFactory()
+        course = PaidCourseFactory()
+        db.session.commit()
+        db.session.execute(
+            course_lessons.insert().values(course_id=course.id, lesson_id=lesson.id))
+        CoursePurchaseFactory(user_id=user.id, course_id=course.id)
+        db.session.commit()
+        db.session.expire(lesson)
+        res = self._assert_same(lesson, user, [lesson])
+        assert res.accessible is True
+        assert res.reason == AccessDenialReason.NONE
+
+    def test_paid_via_course_but_prereq_unmet(self, app_context):
+        """Course gekauft, aber Voraussetzung offen → beide Pfade: PREREQUISITE."""
+        user = UserFactory()
+        prereq = LessonFactory(price=0.0)
+        lesson = PaidLessonFactory()
+        course = PaidCourseFactory()
+        db.session.commit()
+        db.session.execute(
+            course_lessons.insert().values(course_id=course.id, lesson_id=lesson.id))
+        CoursePurchaseFactory(user_id=user.id, course_id=course.id)
+        db.session.add(LessonPrerequisite(
+            lesson_id=lesson.id, prerequisite_lesson_id=prereq.id))
+        db.session.commit()
+        db.session.expire(lesson)
+        res = self._assert_same(lesson, user, [lesson, prereq])
+        assert res.accessible is False
+        assert res.reason == AccessDenialReason.PREREQUISITE
+
+    def test_free_with_prereq_met_and_unmet(self, app_context):
+        """Kostenlose Lektion: Voraussetzung erfuellt vs. offen, beide Pfade gleich."""
+        user = UserFactory()
+        prereq = LessonFactory(price=0.0)
+        lesson = LessonFactory(price=0.0)
+        db.session.commit()
+        db.session.add(LessonPrerequisite(
+            lesson_id=lesson.id, prerequisite_lesson_id=prereq.id))
+        db.session.commit()
+        db.session.expire(lesson)
+        # Offen
+        res = self._assert_same(lesson, user, [lesson, prereq])
+        assert res.reason == AccessDenialReason.PREREQUISITE
+        # Erfuellt
+        UserLessonProgressFactory(user_id=user.id, lesson_id=prereq.id, is_completed=True)
+        db.session.commit()
+        db.session.expire(lesson)
+        res2 = self._assert_same(lesson, user, [lesson, prereq])
+        assert res2.accessible is True
+        assert res2.reason == AccessDenialReason.NONE
+
+    def test_admin_and_guest_paths_unaffected(self, app_context):
+        """Admin (NONE) und Gast (LOGIN_REQUIRED) — Batch == Per-Row."""
+        admin = AdminUserFactory()
+        lesson = PaidLessonFactory()
+        db.session.commit()
+        res_admin = self._assert_same(lesson, admin, [lesson])
+        assert res_admin.reason == AccessDenialReason.NONE
+        # Gast: build_for_user mit None liefert leere Mengen — Pfade identisch
+        res_guest = self._assert_same(lesson, None, [lesson])
+        assert res_guest.reason == AccessDenialReason.LOGIN_REQUIRED
 
 
 # ── U-M09: Lesson – Voraussetzungen ─────────────────────────

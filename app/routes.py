@@ -7,7 +7,7 @@ from flask import Blueprint, render_template, render_template_string, redirect, 
 from flask_login import login_user, logout_user, login_required, current_user
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError # Import specific exceptions
 from app import db, csrf, limiter, srs_service
-from app.models import User, Kana, Kanji, Vocabulary, Grammar, LessonCategory, Lesson, LessonContent, LessonPrerequisite, UserLessonProgress, QuizQuestion, QuizOption, UserQuizAnswer, LessonPage, Course, LessonPurchase, CoursePurchase, AccessDenialReason
+from app.models import User, Kana, Kanji, Vocabulary, Grammar, LessonCategory, Lesson, LessonContent, LessonPrerequisite, UserLessonProgress, QuizQuestion, QuizOption, UserQuizAnswer, LessonPage, Course, LessonPurchase, CoursePurchase, AccessDenialReason, AccessContext
 from app.forms import RegistrationForm, LoginForm, CSRFTokenForm, RequestPasswordResetForm, ResetPasswordForm
 from app.auth_tokens import make_reset_token, verify_reset_token
 from app.mail_service import send_password_reset_email
@@ -1079,10 +1079,11 @@ def module_detail(level: int, slug: str):
         from flask import abort
         abort(404)
     visible_langs = current_app.config.get('CONTENT_LANGUAGES', ['german'])
-    # 10.10 (N+1): Lessons des Moduls samt der von is_accessible_to_user
+    # 10.10 (N+1, Teil 1): Lessons des Moduls samt der von access_check
     # gebrauchten Beziehungen (Voraussetzungen + zugehoerige Lesson, Courses)
-    # eager laden — sonst feuert die Status-Schleife unten pro Lesson mehrere
-    # Lazy-Queries. Verhalten bleibt identisch.
+    # eager laden — sonst feuert das Iterieren der Relationships pro Lesson
+    # Lazy-Queries. Die Per-User-Kauf-/Fortschritts-Queries werden separat unten
+    # per AccessContext gebatcht (Teil 2). Verhalten bleibt identisch.
     from sqlalchemy.orm import selectinload
     module = (
         LessonCategory.query.filter_by(jlpt_level=level, slug=slug)
@@ -1106,15 +1107,29 @@ def module_detail(level: int, slug: str):
     if len(published_lessons) <= 1 and published_lessons:
         return redirect(url_for('routes.view_lesson', lesson_id=published_lessons[0].id))
 
+    # 10.10 (N+1, eingeloggter Pfad): Statt pro Lesson je eine LessonPurchase-/
+    # CoursePurchase-/UserLessonProgress-Query (access_check) zu feuern, die
+    # Batch-Mengen EINMAL vorberechnen und an access_check uebergeben. Die
+    # Zugriffsentscheidung bleibt bit-identisch (Set-Membership statt .first()).
+    access_ctx = AccessContext.build_for_user(user, published_lessons)
+    # Fortschritt der Modul-Lessons in EINER Query (statt pro Lesson) — fuer die
+    # Badge-Anzeige (progress.is_completed / progress_percentage).
+    progress_by_lesson = {}
+    if user:
+        progress_rows = (
+            UserLessonProgress.query.filter(
+                UserLessonProgress.user_id == user.id,
+                UserLessonProgress.lesson_id.in_([lsn.id for lsn in published_lessons]),
+            ).all()
+        )
+        progress_by_lesson = {p.lesson_id: p for p in progress_rows}
+
     # Lesson-Status anreichern
     lesson_entries = []
     for lesson in published_lessons:
-        accessible, msg = lesson.is_accessible_to_user(user)
-        progress = None
-        if user:
-            progress = UserLessonProgress.query.filter_by(
-                user_id=user.id, lesson_id=lesson.id
-            ).first()
+        res = lesson.access_check(user, access_ctx=access_ctx)
+        accessible, msg = res.accessible, res.message
+        progress = progress_by_lesson.get(lesson.id) if user else None
         lesson_entries.append({
             'lesson': lesson,
             'accessible': accessible,
