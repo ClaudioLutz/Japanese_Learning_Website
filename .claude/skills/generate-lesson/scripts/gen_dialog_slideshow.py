@@ -18,7 +18,6 @@ Usage: python gen_dialog_slideshow.py <lesson_id>
 from __future__ import annotations
 
 import base64
-import hashlib
 import json
 import sys
 from pathlib import Path
@@ -29,9 +28,10 @@ PROJECT_ROOT = Path(__file__).resolve().parents[4]
 SKILL_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from app import create_app, db
-from app.models import Lesson, LessonPage, LessonContent
-from app.ai_services import AILessonContentGenerator, GoogleCloudTTS
+from app import create_app, db  # noqa: E402
+from app.models import Lesson, LessonPage, LessonContent  # noqa: E402
+from app.ai_services import AILessonContentGenerator, GoogleCloudTTS  # noqa: E402
+from app.services.tts_text import clean_tts_segment  # noqa: E402
 
 _MNN_SCRIPT = PROJECT_ROOT / "scripts"
 if str(_MNN_SCRIPT) not in sys.path:
@@ -139,6 +139,10 @@ def parse_dialog_triplets(content_text: str) -> list[dict]:
 # --- Audio pro Zeile --------------------------------------------------------
 
 def _tts_line(tts: GoogleCloudTTS, text: str, voice_name: str, speed: float = 0.85) -> bytes | None:
+    # Nicht-sprechbare Trenn-/Klammerzeichen aus der Dialogzeile entfernen,
+    # damit die Stimme sie nicht mitliest (siehe app/services/tts_text.py).
+    text = clean_tts_segment(text, "ja") or text
+
     def esc(s: str) -> str:
         return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
     ssml = f'<speak><prosody rate="{speed}">{esc(text)}</prosody></speak>'

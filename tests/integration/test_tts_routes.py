@@ -88,6 +88,26 @@ def test_japanisch_korrekt(post_tts):
     assert captured["payload"]["voice"]["name"].startswith("ja-JP-")
 
 
+def test_trennzeichen_wird_nicht_vorgelesen(post_tts):
+    """lang=ja: ein Trennstrich am Rand wird vor dem TTS-Call entfernt.
+
+    Regression-Schutz fuer den „Minus"-Bug (2026-06-14): die JP-Stimme las
+    ``じ —`` als „Minus" vor. Der bereinigte Text darf den Strich nicht mehr
+    enthalten.
+    """
+    captured = {}
+
+    def fake_post(url, json=None, timeout=None):
+        captured["payload"] = json
+        return _FakeResponse(audio_b64=base64.b64encode(b"FAKEMP3").decode())
+
+    with patch("requests.post", side_effect=fake_post):
+        resp = post_tts({"text": "じ —", "lang": "ja"})
+
+    assert resp.status_code == 200
+    assert captured["payload"]["input"]["text"] == "じ"
+
+
 def test_deutsch_korrekt(post_tts):
     """lang=de + deutscher Text → 200, Voice ist de-DE."""
     captured = {}

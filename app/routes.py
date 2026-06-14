@@ -97,6 +97,7 @@ _CHIRP_VOICE_PREFIX = 'Chirp3-HD'
 # vom Kana-Grid-Spiel verwendet). Hier nur re-importieren fuer die TTS-Pause-
 # Heuristik unten.
 from app.services.kana_rows import _KANA_ROWS, _KANA_BLOCK_RE  # noqa: E402
+from app.services.tts_text import clean_tts_segment  # noqa: E402
 
 
 def _maybe_spell_out_kana_row(text: str, model: str = 'chirp') -> str:
@@ -218,6 +219,12 @@ def tts_synthesize():
     speed = float(data.get('speed', 0.85))
     speed = max(0.5, min(speed, 1.5))
 
+    # Nicht-sprechbare Trenn-/Klammerzeichen entfernen (siehe app/services/tts_text.py),
+    # damit die Stimme keine Striche/Pfeile/Klammern mitliest.
+    cleaned = clean_tts_segment(text, lang)
+    if cleaned:
+        text = cleaned
+
     if lang == 'ja':
         text = _maybe_spell_out_kana_row(text, model=model)
 
@@ -249,10 +256,9 @@ def tts_synthesize():
             current_app.logger.warning(f"Gemini TTS fehlgeschlagen, Fallback Chirp: {e}")
             # Fallback auf Chirp damit der User trotzdem Audio hoert
             model = 'chirp'
-            text = _maybe_spell_out_kana_row(
-                (data.get('text') or '').strip(),
-                model='chirp',
-            ) if lang == 'ja' else text
+            raw = (data.get('text') or '').strip()
+            raw = clean_tts_segment(raw, lang) or raw
+            text = _maybe_spell_out_kana_row(raw, model='chirp') if lang == 'ja' else text
             cache_key = hashlib.md5(
                 f"{lang}_chirp_{voice['name']}_{speed}_{text}".encode('utf-8')
             ).hexdigest()
