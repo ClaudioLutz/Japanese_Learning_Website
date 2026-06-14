@@ -9,7 +9,7 @@ from unittest.mock import patch
 from app import db
 from app.models import Course
 from app.services.bundle_service import N5_BUNDLE_TITLE
-from tests.factories import PaidLessonFactory
+from tests.factories import LessonFactory, PaidLessonFactory
 
 
 def _coverage(vocab_pct=33.0, lessons=10, recent=2):
@@ -72,3 +72,43 @@ def test_guest_bundle_page_shows_price(client):
     # Payment-/Garantie-Signale auch fuer Gast (B1: aus is_authenticated geloest)
     assert "Geld zurück" in body
     assert "Payrexx" in body
+
+
+def test_guest_login_required_lesson_redirects_to_login(client, app_context):
+    """10.4/10.5 E2E: Gast auf einer login-pflichtigen (gratis, NICHT gast-
+    zugaenglichen) Lektion wird auf /login?next=... umgeleitet — NICHT Paywall.
+
+    Sichert die reason-basierte Verzweigung end-to-end ab: access.reason ==
+    LOGIN_REQUIRED -> Login-Redirect. Mit dem frueheren fragilen Substring-Match
+    auf 'Login required' (jetzt deutsch) wuerde diese Verzweigung still brechen.
+    """
+    lesson = LessonFactory(
+        is_published=True, allow_guest_access=False, price=0.0,
+        is_purchasable=False,
+    )
+    db.session.commit()
+
+    resp = client.get(f"/lessons/{lesson.id}", follow_redirects=False)
+
+    assert resp.status_code == 302
+    location = resp.headers["Location"]
+    assert "/login" in location
+    assert "next=" in location
+
+
+def test_guest_paid_lesson_shows_paywall_not_login(client, app_context):
+    """10.4/10.5 E2E: Gast auf einer bezahlten Lektion sieht die Paywall (200),
+    NICHT den Login-Redirect — die paid-Verzweigung kommt VOR LOGIN_REQUIRED.
+    """
+    lesson = PaidLessonFactory(is_published=True, price=5.0, is_purchasable=True)
+    db.session.commit()
+
+    with patch(
+        "app.services.bundle_service.get_n5_bundle_price",
+        return_value=(9.90, "early_bird"),
+    ):
+        resp = client.get(f"/lessons/{lesson.id}", follow_redirects=False)
+
+    assert resp.status_code == 200
+    # Kein Login-Redirect (200 hat keinen Location-Header; defensiv geprueft)
+    assert "/login" not in (resp.headers.get("Location") or "")
