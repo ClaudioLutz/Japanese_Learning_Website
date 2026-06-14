@@ -99,11 +99,20 @@
             </div>
 
             <div class="kana-grid-game__grid kgame__grid">
+                {# Spalten-Kopf (a-i-u-e-o): macht die echte Gojuon-Struktur explizit.
+                   Nur bei einer Schrift (bei „Beide" stehen 10 Kana/Reihe → kein
+                   1:1-Vokalspalten-Mapping) und nur auf Desktop (CSS). Die Zellen
+                   sitzen via data-col in ihrer Vokalspalte; fehlende Kombinationen
+                   (や-Reihe) lassen die Spalte ehrlich leer. #}
+                <div class="kana-grid-game__colhead" x-show="!bothScripts" aria-hidden="true">
+                    <span class="kana-grid-game__row-label"></span>
+                    <span>a</span><span>i</span><span>u</span><span>e</span><span>o</span>
+                </div>
                 {# Mobile: nur die Reihen des aktuellen Haeppchen-Batches (kein Scrollen).
                    Desktop: visibleRows() liefert alle Reihen. #}
                 <template x-for="row in visibleRows()" :key="row.key">
                     <div class="kana-grid-game__row">
-                        <div class="kana-grid-game__row-label" x-text="row.label"></div>
+                        <div class="kana-grid-game__row-label" lang="ja" x-text="row.label"></div>
                         <template x-for="cell in cellsByRow[row.key]" :key="cell.id">
                             <div class="kana-grid-game__cell"
                                  :class="{
@@ -113,9 +122,10 @@
                                      'is-hinted': cell.hintBadge,
                                      'is-hint-available': canHintCell(cell),
                                      'is-tappable': selectedCardToken && cell.status !== 'correct',
-                                     'is-revealed': completed && mode !== 'blind'
+                                     'is-revealed': cell.status === 'correct' || (completed && mode !== 'blind')
                                  }"
                                  :data-cell-id="cell.id"
+                                 :data-col="bothScripts ? '' : (cell.vowel || '')"
                                  :title="selectedCardToken ? 'Hier platzieren' : (canHintCell(cell) ? 'Tippen für Hinweis (zählt als Schwer)' : '')"
                                  :tabindex="(selectedCardToken || canHintCell(cell)) && cell.status !== 'correct' ? 0 : -1"
                                  @click="onCellTap(cell)"
@@ -125,12 +135,16 @@
                                       :class="cell.scriptType === 'katakana' ? 'is-kata' : 'is-hira'"
                                       x-show="bothScripts && mode === 'schreiben' && cell.status !== 'correct'"
                                       x-text="cell.scriptType === 'katakana' ? 'Kata' : 'Hira'"></span>
-                                <div class="kana-grid-game__cell-hint" x-show="cell.hint" x-text="cell.hint"></div>
+                                {# Prompt (Romaji in „Schreiben", Kana in „Lesen") trägt die
+                                   Zelle, solange sie offen ist — kräftig + stabil (CSS). #}
+                                <div class="kana-grid-game__cell-hint" x-show="cell.hint && cell.status !== 'correct'" x-text="cell.hint"></div>
+                                {# Gelöst/aufgedeckt: bestätigtes Paar Kana (gross) + Romaji (klein). #}
                                 <span class="kana-grid-game__cell-reveal"
-                                      x-show="completed && mode !== 'blind'"
+                                      x-show="cell.status === 'correct' || (completed && mode !== 'blind')"
                                       x-transition.opacity.duration.400ms
                                       x-text="cell.romanization"></span>
-                                <div class="kana-grid-game__cell-drop" x-text="(completed && mode !== 'blind') ? cell.character : (cell.solved || '')"></div>
+                                <div class="kana-grid-game__cell-drop"
+                                     x-text="(cell.status === 'correct' || (completed && mode !== 'blind')) ? cell.character : (cell.solved || '')"></div>
                                 <span class="kana-grid-game__cell-hint-badge" x-show="cell.hintBadge" title="Mit Hinweis gelöst">
                                     <i class="fas fa-lightbulb"></i>
                                 </span>
@@ -179,6 +193,34 @@
                     {% endif %}
                     <span><i class="fas fa-times-circle"></i> <span x-text="totalErrors"></span> Fehler</span>
                 </div>
+
+                {# Per-Kana-Auswertung der Runde: schwächste (meiste Fehlversuche) +
+                   stärkste (auf Anhieb). Lenkt direkt zum „nur Schwächste üben". #}
+                <div class="kgame__statsbox" x-show="statWeak.length || statStrong.length" x-cloak>
+                    <div class="kgame__statcol kgame__statcol--weak" x-show="statWeak.length">
+                        <div class="kgame__statcol-h"><i class="fas fa-arrow-trend-down" aria-hidden="true"></i> Schwächste</div>
+                        <ul class="kgame__statlist">
+                            <template x-for="it in statWeak.slice(0, 5)" :key="it.kanaId">
+                                <li>
+                                    <span class="kgame__statk" lang="ja" x-text="it.character"></span>
+                                    <span class="kgame__statr" x-text="it.romanization"></span>
+                                    <span class="kgame__statn" x-text="it.attempts + '×'"></span>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                    <div class="kgame__statcol kgame__statcol--strong" x-show="statStrong.length">
+                        <div class="kgame__statcol-h"><i class="fas fa-arrow-trend-up" aria-hidden="true"></i> Stärkste</div>
+                        <ul class="kgame__statlist">
+                            <template x-for="it in statStrong.slice(0, 6)" :key="it.kanaId">
+                                <li>
+                                    <span class="kgame__statk" lang="ja" x-text="it.character"></span>
+                                    <span class="kgame__statr" x-text="it.romanization"></span>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                </div>
                 <!-- H-3: Daily-Bonus-XP nur bei perfektem Abschluss der Tages-Challenge anzeigen -->
                 <div class="kgame__bonus" x-show="isDaily && wasPerfect && dailyBonusXp > 0" x-cloak>
                     <i class="fas fa-gift"></i> +<span x-text="dailyBonusXp"></span> Bonus-XP
@@ -206,6 +248,9 @@
                     </div>
                 </template>
                 <div class="kgame__result-actions">
+                    <button type="button" class="kgame__weak" x-show="weakKanaIds && weakKanaIds.size" @click="playWeakOnly()">
+                        <i class="fas fa-bolt"></i> Nur Schwächste (<span x-text="weakKanaIds ? weakKanaIds.size : 0"></span>)
+                    </button>
                     <button type="button" class="kgame__again" @click="restart()"><i class="fas fa-redo"></i> Nochmal</button>
                     {% if not kgame_embed %}
                     <a class="kgame__settings" href="{{ url_for('srs.practice_kana_page') }}"><i class="fas fa-sliders-h"></i> Einstellungen</a>

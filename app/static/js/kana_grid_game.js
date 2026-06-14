@@ -55,6 +55,18 @@ function kanaGridGame(contentId) {
         batchMode: false,
         batches: [],
         currentBatch: 0,
+        // ── Variante 1 (echte Gojuon-Tabelle) + Per-Kana-Statistik ──────────────
+        // keepGojuonOrder: Ziel-Slots IMMER in Gojuon-Reihenfolge halten (Spalten
+        // a-i-u-e-o bleiben stabil) — der Zufall kommt aus dem gemischten Karten-
+        // Tray (buildPool), nicht aus den Slots. Nur die Practice-Seite
+        // (kanaGameView) setzt das; Lektions-Grids behalten ihr Frische-/Shuffle-
+        // Verhalten unveraendert.
+        keepGojuonOrder: false,
+        statStrong: [],         // [{kanaId,character,romanization,attempts}] auf Anhieb richtig
+        statWeak: [],           // [{...}] mit Fehlversuchen, meiste zuerst
+        weakKanaIds: null,      // Set der Kana-IDs mit Fehlversuchen (fuer "nur Schwaechste")
+        weakMode: false,        // laeuft gerade eine reine Schwaechsten-Runde?
+        _fullRows: null,        // unveraenderte Reihen (zum Zurueckfiltern auf die Schwaechsten)
 
         async init() {
             if (!this.contentId) {
@@ -112,6 +124,7 @@ function kanaGridGame(contentId) {
                         character: k.character,
                         romanization: k.romanization,
                         scriptType: k.type || null,   // 'hiragana' | 'katakana' — fuer Schrift-Badge
+                        vowel: this._vowelOf(k.romanization),  // a/i/u/e/o ('' bei ん) — Spalten-Ausrichtung
                         hint: this.cellHint(k),
                         strokeInfo: k.stroke_order_info || '',  // Spot-the-difference-Hinweis (#3)
                         mnemonic: k.mnemonic || '',             // Eselsbruecke fuers Fehler-Feedback
@@ -128,7 +141,16 @@ function kanaGridGame(contentId) {
             // Erste Runde einer frischen Session (erstes Mal bzw. nach >1 Std. Pause)
             // bleibt in Gojuon-Reihenfolge zur Orientierung; sonst innerhalb jeder
             // Gruppe mischen. Reihenfolge: Frische-Check VOR dem Zeitstempel-Update.
-            if (this._isFreshSession()) {
+            if (this.keepGojuonOrder) {
+                // Variante 1: die Ziel-Tabelle bleibt IMMER kanonisch geordnet
+                // (a-i-u-e-o pro Reihe) — sie soll das Gojuon-Layout staerken,
+                // nicht so tun als waere sie geordnet und dann doch mischen.
+                this._sortGroupsGojuon();
+                // Reihen-Label = erstes Kana der Reihe (あ・か・さ …) — durchgehend
+                // konsistent statt gemischter A/I/U-/K-Schemata (Cluster behalten
+                // ihr Server-Label).
+                if (!this.isConfusion) this._relabelRowsByFirstKana();
+            } else if (this._isFreshSession()) {
                 this._sortGroupsGojuon();   // Orientierung: erste Runde in Gojuon-Reihenfolge
             } else {
                 this._shuffleGroups();
@@ -186,6 +208,25 @@ function kanaGridGame(contentId) {
                 sorted[key] = this.cellsByRow[key].slice().sort((a, b) => sortKey(a) - sortKey(b));
             });
             this.cellsByRow = sorted;
+        },
+
+        // Vokal eines Romaji (letzter Vokal) — fuer die Spalten-Ausrichtung der
+        // echten Gojuon-Tabelle. '' bei vokallosen Kana (ん) → keine feste Spalte.
+        _vowelOf(rom) {
+            const r = (rom || '').toLowerCase();
+            for (let i = r.length - 1; i >= 0; i--) {
+                if (r[i] === 'a' || r[i] === 'i' || r[i] === 'u' || r[i] === 'e' || r[i] === 'o') return r[i];
+            }
+            return '';
+        },
+
+        // Reihen-Label = erstes Kana der (Gojuon-sortierten) Reihe: あ・か・さ …
+        // Konsistent ueber alle Reihen und trainiert nebenbei das Lesen.
+        _relabelRowsByFirstKana() {
+            (this.rows || []).forEach(row => {
+                const cells = this.cellsByRow[row.key] || [];
+                if (cells.length && cells[0].character) row.label = cells[0].character;
+            });
         },
 
         // Frische Session = erstes Mal ueberhaupt oder >1 Std. seit der letzten Runde.
@@ -788,6 +829,7 @@ function kanaGridGame(contentId) {
             }
             // H-1: Abschluss-Ansage inkl. Sterne-Zahl (z.B. "Geschafft! 3 Sterne").
             this.announce(`Geschafft! ${this.stars} ${this.stars === 1 ? 'Stern' : 'Sterne'}`);
+            this._computeKanaStats();
             this.flushConfusions(false);
             // Analytics: Spielabschluss (Funnel-Ausgang) — guest-Flag fuer den
             // Gast->Konto-Trichter, perfect/stars als Qualitaetssignal.
@@ -795,6 +837,22 @@ function kanaGridGame(contentId) {
                 mode: this.mode, stars: this.stars,
                 guest: !window.currentUser, perfect: !!this.wasPerfect,
             });
+        },
+
+        // Per-Kana-Auswertung der Runde aus den Zellen: attempts = Fehlversuche an
+        // diesem Feld. Schwaechste = meiste Fehlversuche zuerst; Staerkste = auf
+        // Anhieb richtig. Speist die Ergebnis-Statistik + "nur Schwaechste ueben".
+        _computeKanaStats() {
+            const items = (this.cells || []).map(c => ({
+                kanaId: c.kanaId,
+                character: c.character,
+                romanization: c.romanization,
+                attempts: c.attempts || 0,
+            }));
+            this.statStrong = items.filter(i => i.attempts === 0);
+            this.statWeak = items.filter(i => i.attempts > 0)
+                .sort((a, b) => b.attempts - a.attempts);
+            this.weakKanaIds = new Set(this.statWeak.map(i => i.kanaId));
         },
 
         async restart() {
@@ -827,10 +885,10 @@ function kanaGridGame(contentId) {
                 c.hintBadge = false;
                 if (c._blindFilled) delete c._blindFilled;
             });
-            // Ab Runde 2 immer mischen (die geordnete erste Runde gibt's nur zu
-            // Session-Beginn). Aktivitaet festhalten, damit die Session "frisch"
-            // bleibt und nicht faelschlich als >1h-Pause gewertet wird.
-            this._shuffleGroups();
+            // Variante 1 (Practice-Matching): Ziel-Tabelle bleibt geordnet, nicht
+            // mischen. Sonst (Lektions-Grid) ab Runde 2 mischen. Aktivitaet
+            // festhalten, damit die Session "frisch" bleibt (>1h-Pause-Logik).
+            if (!this.keepGojuonOrder) this._shuffleGroups();
             this._touchPlayTimestamp();
             this.buildPool();
             // #3 Timer-Gate: frische Runde — Uhr erst beim ersten Spielzug der Runde.
@@ -1003,6 +1061,9 @@ function kanaGameView() {
         _timerId: null,
         _embedReplayInstalled: false,   // #12: Guard gegen doppelten message-Listener
         settingsUrl: '/practice/kana',
+        // Practice-Matching: echte Gojuon-Tabelle (Slots bleiben geordnet, Zufall
+        // kommt aus dem Karten-Tray) — Lektions-Grids bleiben davon unberuehrt.
+        keepGojuonOrder: true,
 
         async initView() {
             const p = new URLSearchParams(window.location.search);
@@ -1111,6 +1172,9 @@ function kanaGameView() {
                 kana_ids: byRow[k],
             }));
             if (byRow.other) this.rows.push({ key: 'other', label: '—', kana_ids: byRow.other });
+            // Schnappschuss der vollen Reihen — fuer "nur Schwaechste ueben" wird
+            // hieraus rein clientseitig auf die Fehler-Kana zurueckgefiltert.
+            this._fullRows = this.rows.map(r => ({ ...r, kana_ids: [...r.kana_ids] }));
 
             this._config = {
                 default_mode: this.mode,
@@ -1182,6 +1246,33 @@ function kanaGameView() {
             // hasStarted bereits zurueckgesetzt und im Embed kana-embed-restart gesendet.
             this.stopLiveTimer();
             this.liveElapsedMs = 0;
+        },
+
+        // Ergebnis-Aktion „nur Schwaechste ueben": filtert die vollen Reihen auf die
+        // Kana mit Fehlversuchen dieser Runde und startet daraus eine frische Runde —
+        // rein clientseitig (die Kana sind bereits geladen, kein neuer Fetch).
+        async playWeakOnly() {
+            if (!this.weakKanaIds || !this.weakKanaIds.size || !this._fullRows) return;
+            const weak = this.weakKanaIds;
+            this.rows = this._fullRows
+                .map(r => ({ ...r, kana_ids: r.kana_ids.filter(id => weak.has(id)) }))
+                .filter(r => r.kana_ids.length);
+            this.weakMode = true;
+            this.activeHint = null;
+            this.hintsRemaining = this.maxHints;
+            this.hintsUsed = 0;
+            this.cellsHinted = [];
+            this.wasPerfect = false;
+            this.stars = 0;
+            // setzt cells/pool/batches + solved/errors/xp/completed zurueck.
+            this.buildCellsAndPool();
+            this.startTime = Date.now();
+            this.hasStarted = false;
+            this.stopLiveTimer();
+            this.liveElapsedMs = 0;
+            if (window.kanaTrack) window.kanaTrack('kana_play_weak', { count: weak.size });
+            await this.$nextTick();
+            this.initSortables();
         },
 
         // #12 Embed: auf das Host→iframe-Signal kana-embed-replay hoeren und damit
