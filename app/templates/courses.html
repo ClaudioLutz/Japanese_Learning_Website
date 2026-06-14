@@ -68,7 +68,10 @@
         {% for course in courses %}
         {% set lesson_count = course.lessons|length %}
         <div class="col-lg-6 col-xl-4 mb-4">
-            <div class="enhanced-course-card" data-course-id="{{ course.id }}">
+            {# SSR: Karten sofort sichtbar — `animate-in` (opacity:1) wurde frueher
+   per JS gesetzt; das JS ist mit dem SSR-Umbau entfallen, sonst blieben
+   die Karten auf der CSS-Default-Regel opacity:0 unsichtbar. #}
+            <div class="enhanced-course-card animate-in" data-course-id="{{ course.id }}">
                 <div class="course-card-image-container">
                     {% if course.background_image_url %}
                     <img src="{{ course.background_image_url }}"

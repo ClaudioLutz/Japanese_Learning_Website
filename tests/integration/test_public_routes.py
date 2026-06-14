@@ -196,6 +196,11 @@ class TestCoursesPage:
         # Kein JS-Fetch mehr auf /api/courses
         assert "/api/courses" not in body
         assert "loadCourses" not in body
+        # 10.1-Regression: SSR-Karten muessen sichtbar sein. Die CSS-Regel
+        # .enhanced-course-card hat opacity:0; erst .animate-in setzt sie auf
+        # opacity:1. Frueher per JS gesetzt — beim SSR-Umbau muss die Klasse
+        # im Markup stehen, sonst sind die Karten unsichtbar.
+        assert "enhanced-course-card animate-in" in body
 
     def test_courses_noindex_when_empty(self, client, app_context):
         """I-PR04b: Ohne publizierten Kurs ist /courses ein leerer Container
