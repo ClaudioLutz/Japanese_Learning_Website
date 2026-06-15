@@ -1,5 +1,5 @@
-"""Generate Kanji-Backside-Images (DALL-E) fuer alle Kanji ohne image_url
-die in mindestens einer Lesson verwendet werden.
+"""Generate Kanji-Backside-Images (Nano Banana / gemini-2.5-flash-image) fuer
+alle Kanji ohne image_url die in mindestens einer Lesson verwendet werden.
 
 Speichert PNGs unter app/static/uploads/kanji_generated/ und setzt
 kanji.image_url auf den relativen Pfad.
@@ -69,8 +69,8 @@ def main() -> int:
     app = create_app()
     with app.app_context():
         gen = AILessonContentGenerator()
-        if not gen.openai_client and not args.dry_run:
-            print("[FEHLER] OpenAI client nicht initialisiert (OPENAI_API_KEY?)")
+        if not gen.gemini_api_key and not args.dry_run:
+            print("[FEHLER] Nano Banana nicht konfiguriert (GOOGLE_AI_API_KEY?)")
             return 1
 
         rows = _candidates(args)
@@ -85,7 +85,7 @@ def main() -> int:
         for i, k in enumerate(todo, start=1):
             meaning = (k.meaning or k.character).split("/")[0].strip()
             print(f"  [{i:2d}/{len(todo)}] GEN {k.character} / {meaning} ...")
-            result = gen.generate_vocabulary_image(word=k.character, meaning=meaning)
+            result = gen.generate_vocabulary_image_nb(word=k.character, meaning=meaning)
             if not result or "image_bytes" not in result:
                 err = (result or {}).get("error", "unbekannt")
                 print(f"      [FEHLER] {err}")

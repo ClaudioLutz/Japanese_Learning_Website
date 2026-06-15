@@ -7,10 +7,10 @@ Dieses Script validiert, persistiert, und loggt.
 Subcommands:
   status                 # DB-Gap-Analyse: welche JLPT-Themen fehlen?
   validate <draft.json>  # Prüft Constraints (STRENG: Niveau-Mix-Verbot via canonical list)
-  images   <draft.json>  # Generiert DALL-E-Bilder für Thumbnail/Vokabeln
+  images   <draft.json>  # Generiert Nano-Banana-Bilder für Thumbnail/Vokabeln
   insert   <draft.json>  # Transaktionaler INSERT, gibt lesson_id zurück
-  audio    <lesson_id>   # Dialog-MP3 via Google Cloud TTS
-  slideshow <lesson_id>  # Pro-Zeile Slideshow (TTS + DALL-E)
+  audio    <lesson_id>   # DEPRECATED (No-Op seit 2026-04-30)
+  slideshow <lesson_id>  # Pro-Zeile Slideshow (TTS + Nano Banana)
   coverage [level]       # JLPT-Coverage-Dashboard: DB vs. canonical list (default: 5)
   commit   <lesson_id>   # Git-add/commit/push (nur Metadaten, kein App-Code)
 
@@ -466,7 +466,7 @@ def validate_draft(draft: dict) -> list[str]:
     if not draft.get("thumbnail_url"):
         errors.append(
             "thumbnail_url fehlt. Pipeline-Schritt `images` muss vor `insert` laufen "
-            "(DALL-E Thumbnail). Notfalls manuell URL setzen."
+            "(Nano-Banana-Thumbnail). Notfalls manuell URL setzen."
         )
 
     # Mayuko-Direktive 2026-04-25 (Kanji-Disziplin):
@@ -974,20 +974,20 @@ def git_commit(lesson_id: int):
 
 
 # ========================================================================
-# DALL-E Images (Stub — benoetigt OPENAI_API_KEY)
+# Nano Banana Images (Gemini 2.5 Flash Image — benoetigt GOOGLE_AI_API_KEY)
 # ========================================================================
 
 def generate_images(draft_path: Path):
-    """Erweitert den Draft mit DALL-E-Bild-URLs.
+    """Erweitert den Draft mit Bild-URLs (Thumbnail + Vokabel-Icons).
 
-    Diese Funktion ist explizit die einzige erlaubte Nutzung externer AI-APIs
-    im Skill, siehe SKILL.md §7.
+    Lektionsbilder laufen ueber gemini-2.5-flash-image ("Nano Banana"),
+    NICHT mehr ueber OpenAI/DALL-E (User-Direktive, siehe SKILL.md §7).
     """
-    if not os.environ.get("OPENAI_API_KEY"):
-        print("[SKIP] OPENAI_API_KEY nicht gesetzt — keine Bilder generiert.")
+    if not (os.environ.get("GOOGLE_AI_API_KEY") or os.environ.get("GEMINI_API_KEY")):
+        print("[SKIP] GOOGLE_AI_API_KEY/GEMINI_API_KEY nicht gesetzt — keine Bilder generiert.")
         return
 
-    # Bestehenden Service verwenden (der nutzt DALL-E)
+    # Bestehenden Service verwenden (Nano-Banana-Methoden generate_*_nb)
     from app.ai_services import AILessonContentGenerator
     from app import create_app
 
@@ -1006,7 +1006,7 @@ def generate_images(draft_path: Path):
                 f"minimalist flat illustration of '{topic}', "
                 f"soft pastels, no text, Japanese aesthetic"
             )
-            result = gen.generate_single_image(prompt=prompt)
+            result = gen.generate_single_image_nb(prompt=prompt, aspect_ratio="16:9")
             if result and result.get("image_bytes"):
                 thumb_dir = PROJECT_ROOT / "app" / "static" / "uploads" / "generated"
                 thumb_dir.mkdir(parents=True, exist_ok=True)
@@ -1043,7 +1043,7 @@ def generate_images(draft_path: Path):
             word = data.get("word", "")
             meaning = data.get("meaning") or data.get("meaning_de") or word
             print(f"  [{i:2d}/{len(vocab_items)}] {word} ({meaning[:35]})")
-            res = gen.generate_vocabulary_image(word=word, meaning=meaning)
+            res = gen.generate_vocabulary_image_nb(word=word, meaning=meaning)
             if not res or "image_bytes" not in res:
                 err = (res or {}).get("error", "unbekannt")
                 print(f"      [FEHLER] {err}")
@@ -1107,7 +1107,7 @@ def generate_text_audio(lesson_id: int, force: bool = False, page: int | None = 
 
 
 def generate_dialog_slideshow(lesson_id: int) -> int:
-    """Baut pro Dialog-Zeile ein Slide mit TTS-Audio und DALL-E-Bild.
+    """Baut pro Dialog-Zeile ein Slide mit TTS-Audio und Nano-Banana-Bild.
 
     Siehe scripts/gen_dialog_slideshow.py fuer die Details. Legt einen
     LessonContent(content_type='dialog_slideshow', content_text=JSON)
@@ -1136,13 +1136,13 @@ def main():
     p_val = sub.add_parser("validate", help="Draft validieren (ohne insert)")
     p_val.add_argument("draft", type=Path)
 
-    p_img = sub.add_parser("images", help="DALL-E-Bilder erzeugen")
+    p_img = sub.add_parser("images", help="Nano-Banana-Bilder erzeugen")
     p_img.add_argument("draft", type=Path)
 
     p_ins = sub.add_parser("insert", help="Draft in DB persistieren")
     p_ins.add_argument("draft", type=Path)
 
-    p_aud = sub.add_parser("audio", help="Dialog-MP3 via Google Cloud TTS generieren")
+    p_aud = sub.add_parser("audio", help="DEPRECATED (No-Op seit 2026-04-30)")
     p_aud.add_argument("lesson_id", type=int)
 
     p_taud = sub.add_parser("text-audio", help="Pro text-LessonContent eine MP3 (DE+JA gemischt)")
@@ -1150,7 +1150,7 @@ def main():
     p_taud.add_argument("--page", type=int, default=None)
     p_taud.add_argument("--force", action="store_true")
 
-    p_slide = sub.add_parser("slideshow", help="Dialog-Slideshow (TTS+DALL-E pro Zeile) bauen")
+    p_slide = sub.add_parser("slideshow", help="Dialog-Slideshow (TTS+Nano Banana pro Zeile) bauen")
     p_slide.add_argument("lesson_id", type=int)
 
     p_cov = sub.add_parser("coverage", help="JLPT-Coverage-Dashboard (DB vs. canonical list)")

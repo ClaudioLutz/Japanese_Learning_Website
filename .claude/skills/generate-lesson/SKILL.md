@@ -1,6 +1,6 @@
 ---
 name: generate-lesson
-description: Generiert eine vollständige Japanisch-Lektion (Lesson + LessonPages + LessonContent + QuizQuestions) für japanese-learning.ch. Claudio schreibt die Inhalte (Kana/Kanji/Vokabeln/Grammatik/Quiz) selbst — keine OpenAI/Gemini-API-Aufrufe ausser für Bilder (DALL-E). Auto-aktivieren, wenn Claudio "neue Lektion", "Lektion generieren", "Content für N5/N4", "Mayuko braucht eine Lektion über X", "erstelle eine Lektion zu Thema Y" sagt oder per `/generate-lesson` aufruft. Nutzt JLPT-Vokabellisten und Minna no Nihongo als Ausgangsquellen, schreibt direkt in die lokale Postgres-DB (docker-compose), verifiziert via Playwright, committet via Git.
+description: Generiert eine vollständige Japanisch-Lektion (Lesson + LessonPages + LessonContent + QuizQuestions) für japanese-learning.ch. Claudio schreibt die Inhalte (Kana/Kanji/Vokabeln/Grammatik/Quiz) selbst — keine externen Text-LLM-Aufrufe; externe APIs nur für Bilder (Nano Banana / gemini-2.5-flash-image) und TTS-Audio (Google). Auto-aktivieren, wenn Claudio "neue Lektion", "Lektion generieren", "Content für N5/N4", "Mayuko braucht eine Lektion über X", "erstelle eine Lektion zu Thema Y" sagt oder per `/generate-lesson` aufruft. Nutzt JLPT-Vokabellisten und Minna no Nihongo als Ausgangsquellen, schreibt direkt in die lokale Postgres-DB (docker-compose, self-hosted = Produktion), verifiziert via Playwright, committet via Git.
 ---
 
 # generate-lesson — Anfänger-Lektionen für japanese-learning.ch
@@ -9,7 +9,7 @@ description: Generiert eine vollständige Japanisch-Lektion (Lesson + LessonPage
 
 Erstelle eine **komplette, sofort nutzbare Lektion** für deutschsprachige Anfänger (inkl. Claudio selbst, der die Seite dogfoodet). **Du schreibst den gesamten Text-Content selbst** (keine OpenAI/Gemini-Calls). Der Skill ist der Orchestrator: Er gibt dir Schema, Guardrails und die Persistierungs-/Verifikations-/Git-Schritte vor; du produzierst den japanischen Content als strukturiertes JSON. Mayuko (Claudios Frau, japanische Lehrerin) prüft Inhalte fachlich — sie ist Reviewerin, nicht Lernerin. **Wichtig:** Mayuko wird intern als Fachreviewerin geführt, ist aber **öffentlich nicht erwähnt** (nicht auf der Website, nicht in Marketing-Texten, nicht in PR). Aktuell — kann sich später ändern.
 
-**Einzige Ausnahme: Bilder.** Für `thumbnail_url` und `Vocabulary.image_url` kannst du DALL-E per Script aufrufen (siehe §7).
+**Ausnahmen (kein Text-Content): Bilder und TTS-Audio.** Für `thumbnail_url`, `Vocabulary.image_url` und `Kanji.image_url` ruft die Pipeline **Nano Banana** (`gemini-2.5-flash-image`) per Script auf — **nicht** DALL-E/OpenAI (User-Direktive, siehe §7). Audio läuft über Google TTS (Gemini 2.5 Pro TTS Leda für JA, de-DE-Neural2-G für DE).
 
 ---
 
@@ -17,7 +17,7 @@ Erstelle eine **komplette, sofort nutzbare Lektion** für deutschsprachige Anfä
 
 Bevor du überhaupt Content schreibst:
 
-0. **Cloud-Sync-Status prüfen.** Liegt `.last_cloud_sync.json` vor und ist der `taken_at`-Timestamp <12h alt? Wenn nein (oder Datei fehlt): Empfehle dem User vor dem Generieren einen `/sync-cloud-db` Cloud→Lokal-Pull. Grund: Der spätere Push vergleicht den lokalen Stand gegen diesen Snapshot — ohne aktuellen Snapshot scheitert der Push am Drift-Check (seit Audit 2026-04-25). Wenn der User explizit ohne vorherigen Pull arbeiten will, OK — er weiss dann, dass beim Push ein Drift-Fehler kommen kann.
+0. **Ziel-DB klären (self-hosted seit 2026-05-24, KEIN Cloud-Sync mehr).** Es gibt **kein Cloud SQL und keinen `/sync-cloud-db`** mehr — die alten Sync-Skripte sind obsolet. Produktion ist die **lokale Postgres auf dem Heim-Server `hp-ubuntu`** (Docker-Container `postgres_db`). **Wichtig:** Die Postgres auf Claudios Windows-Dev-Maschine ist NICHT automatisch dieselbe wie die Prod-DB — sie driften (Stand kann Monate auseinanderliegen, weil nur Code, nicht Content gesynct wird). Konsequenz: Wenn du auf der Dev-Maschine generierst, ist die Lektion erst live, wenn ihr Content in die Prod-DB auf hp-ubuntu eingespielt wurde (siehe §11). Am saubersten: die Pipeline **direkt auf hp-ubuntu** gegen die Prod-DB laufen lassen (Repo + venv liegen dort), dann ist `insert` + publish sofort produktiv. Vor dem Generieren kurz prüfen, gegen welche DB du arbeitest (`DATABASE_URL`).
 1. **Lies [learnings.md](learnings.md).** Dort steht, was in vorherigen Runs geklappt hat und was nicht. Wende diese Regeln strikt an.
 2. **Lies [improve-jpl/SKILL.md](../improve-jpl/SKILL.md).** Die Produkt-Vision (Anfänger-First mit Mayuko-Fachreview, JLPT-Leitprinzip §1.5, Nicht-Ziele) gilt uneingeschränkt.
    - **Coverage prüfen** vor Themen-Wahl: `python .claude/skills/generate-lesson/pipeline.py coverage 5 --show-missing 30` zeigt fehlende N5-Vokabeln/Kanji. Themen so wählen, dass möglichst viele fehlende Items abgedeckt werden, statt schon vorhandene zu doppeln.
@@ -92,7 +92,7 @@ Hiragana- und Katakana-Lektionen sind eine **Sonderform**. Statt JLPT-Vokabeln u
 
 ```
 Lesson (kind="kana", title="Hiragana 1 — …", jlpt_level=5,
-        thumbnail_url=DALL-E-URL)
+        thumbnail_url=Nano-Banana-URL)
 
 ├─ LessonPage 1: "Einführung" (page_type='normal')
 │   └─ LessonContent: text — Was ist Hiragana? Warum lernen? Wie liest man die
@@ -237,11 +237,11 @@ Verletzung ⇒ sofortiger Abbruch, keine Insertion:
      - ❌ `バスで がっこうに 行きます。` ← Validator schlaegt fehl
      - Ausnahme: 1-2-Zeichen Kana-only Optionen (z.B. `「は」`, `「が」` bei Partikel-Quizzes) brauchen kein Romaji, sie sind selbsterklaerend.
      - Backfill fuer bestehende Lessons: `python scripts/backfill_quiz_romaji.py --jlpt 5 --apply` (idempotent, nutzt pykakasi). Validator (`_needs_romaji_in_quiz` in `pipeline.py`) prueft das automatisch beim `pipeline.py validate`-Schritt.
-- **Bilder sind PFLICHT** — `thumbnail_url` muss vor Insert gesetzt sein. Pipeline-Schritt `images` (DALL-E) läuft vor `insert`, NICHT optional. Zusätzlich: **jede Vokabel** muss `image_url` haben (MNN-DE-Standard, siehe §4-Budget). **Auch jedes Kanji** muss `image_url` haben — sonst bleibt die Karten-Rückseite leer (Bug-Klasse 2026-04-28: Kanji-Lessons 171-173 hatten 23 Kanji ohne Bild). Generierungs-Script: `python .claude/skills/generate-lesson/scripts/gen_kanji_images.py --jlpt 5` (idempotent, ueberspringt bestehende). Ablage: `app/static/uploads/kanji_generated/kanji_{id}_{hash}.png`.
+- **Bilder sind PFLICHT** — `thumbnail_url` muss vor Insert gesetzt sein. Pipeline-Schritt `images` (Nano Banana / gemini-2.5-flash-image) läuft vor `insert`, NICHT optional. Zusätzlich: **jede Vokabel** muss `image_url` haben (MNN-DE-Standard, siehe §4-Budget). **Auch jedes Kanji** muss `image_url` haben — sonst bleibt die Karten-Rückseite leer (Bug-Klasse 2026-04-28: Kanji-Lessons 171-173 hatten 23 Kanji ohne Bild). Generierungs-Script: `python .claude/skills/generate-lesson/scripts/gen_kanji_images.py --jlpt 5` (idempotent, ueberspringt bestehende). Ablage: `app/static/uploads/kanji_generated/kanji_{id}_{hash}.png`.
 - **`Vocabulary.image_url` und `Kanji.image_url` muessen relativ zu `UPLOAD_FOLDER` sein** (= `app/static/uploads/`), NICHT absolut. Das Template [lesson_view.html:859](../../app/templates/lesson_view.html#L859) ruft `url_for('routes.uploaded_file', filename=content_data.image_url)` auf — die Route [routes.py:3973 `/uploads/<path:filename>`](../../app/routes.py#L3973) dient aus `UPLOAD_FOLDER`. Richtige Werte: `vocab_generated/vocab_abc.png`, `kanji_generated/kanji_42_8f3a.png`, `vocabulary/images/vocab_124.png`. **Falsch**: `/static/uploads/vocab_generated/…`, `http://…`, `static/uploads/…`.
-- **Audio für die Konversation ist PFLICHT** — jede Dialog-Page bekommt ein eigenes `LessonContent(content_type='audio')` **vor** dem Dialog-Text (`order_index=1`, Text auf `order_index=2`). Der Pipeline-Schritt `audio {lesson_id}` rendert via Google Cloud TTS (Neural2-B, langsam=0.85) eine einzige MP3 mit allen japanischen Sprecher-Zeilen, 700ms-Pausen dazwischen. Speicherort: `app/static/uploads/lessons/audio/lesson_{id}/conversation.mp3`. Felder im LessonContent: `file_path="lessons/audio/lesson_{id}/conversation.mp3"` (relativ zu `UPLOAD_FOLDER`!), `file_type="audio/mpeg"`, `title="Konversation (Audio)"`. Das Template ([lesson_view.html:674](../../app/templates/lesson_view.html#L674)) nutzt `content.get_file_url()` — der GCS-aware Resolver im Model [models.py:463](../../app/models.py#L463). Benötigt `GOOGLE_API_KEY` oder `GOOGLE_TTS_API_KEY` in `.env`.
+- **Audio ist PFLICHT — aber NICHT mehr über den alten `audio`-Schritt** (der ist DEPRECATED seit 2026-04-30, No-Op, siehe Pipeline [4b]). Audio entsteht heute aus zwei aktiven Quellen: (1) **`gen_text_audio.py`** rendert pro Text-/Prosa-Block einen Block-Player (DE+JA segmentiert, Gemini 2.5 Pro TTS Leda für JA, de-DE-Neural2-G für DE) — siehe Pipeline [4b2]; (2) der **`dialog_slideshow`**-Schritt rendert pro Dialog-Zeile ein eigenes `<audio>` (Google TTS, Gender-korrekte Stimme) — siehe Pipeline [4c]. Ein separates „Konversation (Audio)"-Item wird NICHT mehr angelegt (rendert redundant über der Slideshow). Benötigt `GOOGLE_AI_API_KEY` (Gemini) bzw. `GOOGLE_API_KEY`/`GOOGLE_TTS_API_KEY` (Cloud TTS) in `.env`.
 - **JSON-Quoten-Disziplin im Draft** (Bug 2026-04-26 Lesson 160): NIE deutsche Anführungszeichen `„X"` in Draft-JSON-Strings verwenden. Das Schliesszeichen `"` ist ASCII-`"` und bricht den JSON-Parse mit `Expecting ',' delimiter`. Erlaubte Quoten innerhalb eines JSON-Strings: einfache `'...'`, spitze `«...»`, oder Kana-Eckklammern `「...」` (preferred fuer JP-Zitate). Beispiel-Fix: `"Tanaka sagt: „Yamada"."` → `"Tanaka sagt: 'Yamada'."` oder `"Tanaka sagt: 「Yamada」."`. Validator-Aufruf bricht mit Stack-Trace ab — Zeilennummer im JSONDecodeError nutzen, um die problematische Stelle zu finden.
-- **Asset-Pfade NIE mit `/static/uploads/` praefixen** (Bug 2026-04-26): `media_url`, `file_path` und `slide.image`/`slide.audio` in dialog_slideshow-JSON immer mit Prefix `/uploads/` (= uploaded_file-Route) oder ganz ohne Prefix (relativer Pfad, Template loest via `get_file_url()`). `/static/uploads/` funktioniert lokal aber bricht live, weil Cloud Run den Container ohne die generierten Assets ausliefert — kein 302-Fallback wie bei `/uploads/`. Skripte `gen_text_audio.py`, `gen_conversation_audio.py`, `gen_dialog_slideshow.py` sind 2026-04-26 fix; bei neuen Skripten beachten.
+- **Asset-Pfade NIE mit `/static/uploads/` praefixen** (Bug 2026-04-26): `media_url`, `file_path` und `slide.image`/`slide.audio` in dialog_slideshow-JSON immer mit Prefix `/uploads/` (= uploaded_file-Route) oder ganz ohne Prefix (relativer Pfad, Template loest via `get_file_url()`). Die `/uploads/<path>`-Route liefert aus dem gemounteten `UPLOAD_FOLDER`-Volume (`app/static/uploads/`); `/static/uploads/` ist fragil und inkonsistent (kein Resolver-Fallback). Skripte `gen_text_audio.py`, `gen_conversation_audio.py`, `gen_dialog_slideshow.py` sind 2026-04-26 fix; bei neuen Skripten beachten.
 - **Lesson-Level-Kanji-Override `additional_n5_kanji`** (seit 2026-04-27): Die canonical-Liste in `sources/jlpt_n5_canonical.json` (von elzup, MIT) hat 80 Kanji, weicht aber an mehreren Stellen vom Tanos/Wikipedia/Anki-N5-Standard ab. **Fehlt in elzup, ist aber Standard-N5:** 兄, 姉, 弟, 妹 (Geschwister), 新, 古, 安, 短, 多, 少, 早 (i-Adjektive). Wenn eine Kanji-Lesson explizit eines dieser Zeichen lehrt, MUSS sie auf Lesson-Header-Ebene zwei Felder setzen:
   ```json
   "additional_n5_kanji": ["兄", "姉", "弟", "妹"],
@@ -261,7 +261,7 @@ Eine Lektion muss substantiell sein, damit der Lerner echten Lernwert hat (und M
 Lesson (title, description, jlpt_level→difficulty_level 1-5, instruction_language='german',
         lesson_type='free', is_published=False (erst nach Sichtung True),
         allow_guest_access=True für erste Lektion pro Thema,
-        thumbnail_url=DALL-E-URL (Pflicht!))
+        thumbnail_url=Nano-Banana-URL (Pflicht!))
 
 ├─ LessonPage 1: "Einführung" (page_type='normal')
 │   └─ LessonContent: text — DE-Einleitung (4-8 Sätze, Plaintext!),
@@ -271,7 +271,7 @@ Lesson (title, description, jlpt_level→difficulty_level 1-5, instruction_langu
 │   └─ LessonContent: vocabulary ×8-12 — erste Hälfte der Wörter,
 │      thematisch homogen. Jede Vokabel: word + reading + romaji + meaning_de +
 │      example_sentence_japanese + example_sentence_english (mit Romaji-Prefix).
-│      Mind. 1 dieser Vokabeln hat image_url (DALL-E).
+│      Mind. 1 dieser Vokabeln hat image_url (Nano Banana).
 │
 ├─ LessonPage 3: "Vokabeln Teil 2" (page_type='normal')
 │   └─ LessonContent: vocabulary ×7-13 — zweite Hälfte.
@@ -333,8 +333,8 @@ Lesson (title, description, jlpt_level→difficulty_level 1-5, instruction_langu
 - Vokabel-Bilder: **ALLE Vokabeln** (nicht mehr nur 3 — angehoben 2026-04-24 nach
   Sichtung von MNN L1–L5 DE, wo ausnahmslos jede Vocabulary-Zeile ein `image_url`
   hat). Pipeline-Schritt `images` generiert per `AILessonContentGenerator.
-  generate_vocabulary_image()` für jede Vokabel ohne `image_url` ein Icon und
-  speichert es unter `app/static/uploads/vocab_generated/vocab_{id}_{hash}.png`.
+  generate_vocabulary_image_nb()` (Nano Banana) für jede Vokabel ohne `image_url`
+  ein Icon und speichert es unter `app/static/uploads/vocab_generated/vocab_{hash}.png`.
   Bestehende Vokabeln mit `image_url` werden übersprungen (idempotent).
 
 Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
@@ -367,7 +367,7 @@ Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
 - `example_sentence_japanese` nutzt Leerzeichen zwischen Wörtern bei N5 (Hiragana-Fokus).
 - `example_sentence_english` **muss Format `"Romaji-Satz — Deutsche Übersetzung"` haben** (Em-Dash ` — `). Plattform-Sprache ist Deutsch; die Karten-Rückseite zerlegt diesen String in zwei Zeilen (Romaji-Zeile + Deutsch-Zeile) und zeigt sie unter dem JP-Beispielsatz, der vom Audio-Button vorgelesen wird.
 - Beispielsatz max ~12 Silben / ca. 8 Wörter.
-- `image_url`: Bei Schlüsselvokabeln (≥3 pro Lektion) DALL-E-URL. Sonst null.
+- `image_url`: wird von der Pipeline (`images`-Schritt, Nano Banana) für JEDE Vokabel gefüllt. Im Draft `null` lassen.
 
 ### Grammar-Eintrag
 
@@ -464,9 +464,12 @@ Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
     → Fehler = Abbruch mit detaillierter Liste
 
 [3] python .claude/skills/generate-lesson/pipeline.py images {draft_path}
-    → PFLICHT (nicht mehr optional). Ruft DALL-E für thumbnail +
-       mind. 3 Schlüsselvokabel-Bilder. Ergänzt image_url/thumbnail_url
-       im Draft. Bei fehlendem OPENAI_API_KEY: User fragen, NICHT weitermachen.
+    → PFLICHT (nicht mehr optional). Ruft **Nano Banana** (gemini-2.5-flash-image)
+       für Thumbnail (16:9) + ein Icon für JEDE Vokabel (1:1). Ergänzt
+       image_url/thumbnail_url im Draft. Bei fehlendem GOOGLE_AI_API_KEY/
+       GEMINI_API_KEY: User fragen, NICHT weitermachen. (Methoden:
+       `AILessonContentGenerator.generate_single_image_nb` /
+       `generate_vocabulary_image_nb` in app/ai_services.py.)
 
 [3a] python .claude/skills/generate-lesson/scripts/gen_kanji_images.py --jlpt 5
     → PFLICHT bei Kanji-Lessons. Generiert Backside-Bilder fuer alle Kanji
@@ -474,16 +477,17 @@ Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
        werden. Idempotent (skipped bestehende). Speichert nach
        `app/static/uploads/kanji_generated/`. Ohne diesen Schritt bleibt
        die Karten-Rueckseite leer (Bug 2026-04-28).
-    ⚠️ **DALL-E Safety-Filter False-Positives** (Lesson 145, 食べる):
+    ⚠️ **Safety-Block False-Positives** (Lesson 145, 食べる):
        Vereinzelte Vokabeln (vor allem Verben mit körperlichem Bezug wie
-       essen/schlafen/baden) werden vom DALL-E-Filter als "self-harm" o.ä.
-       missdeutet (`safety_violations=[self-harm]`, HTTP 400). Pipeline
-       laeuft trotzdem weiter und ueberspringt nur dieses eine Bild.
-       Workaround nach Pipeline-Ende: `image_url` der betroffenen Vokabel
-       manuell mit objekt-fokussiertem Prompt nachgenerieren (z.B. "a bowl
-       of warm rice with chopsticks held above it, no people"), Datei in
-       `app/static/uploads/vocab_generated/vocab_<hash>.png` speichern und
-       im Draft-JSON setzen. Lektion ist mit 19/20 Bildern noch nutzbar.
+       essen/schlafen/baden) werden vom Bild-Safety-Filter blockiert — der
+       Call liefert dann keine Bilddaten zurück (`no image data (safety
+       block?)`). Die Pipeline laeuft trotzdem weiter und ueberspringt nur
+       dieses eine Bild. Workaround nach Pipeline-Ende: `image_url` der
+       betroffenen Vokabel manuell mit objekt-fokussiertem Prompt
+       nachgenerieren (z.B. "a bowl of warm rice with chopsticks held above
+       it, no people"), Datei in `app/static/uploads/vocab_generated/
+       vocab_<hash>.png` speichern und im Draft-JSON setzen. Lektion ist mit
+       19/20 Bildern noch nutzbar.
 
 [4] python .claude/skills/generate-lesson/pipeline.py insert {draft_path}
     → Transaktionaler INSERT in Postgres (docker-compose DB)
@@ -590,7 +594,7 @@ Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
 [4c] python .claude/skills/generate-lesson/pipeline.py slideshow {lesson_id}
     → PFLICHT nach audio. Baut pro Dialog-Zeile ein Slide mit:
        - 1 MP3 (Google TTS, Gender-korrekte Voice aus SPEAKER_GENDER)
-       - 1 PNG (OpenAI gpt-image-1-mini, Ghibli-Aquarell-Stil, quality='hd',
+       - 1 PNG (**Nano Banana** / gemini-2.5-flash-image,
          STRIKT ohne Text/Kanji/Ziffern — Charakter-Schablone bleibt konstant
          ueber alle Slides).
        Legt LessonContent(content_type='dialog_slideshow') auf order_index=2
@@ -602,8 +606,9 @@ Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
        Charaktere werden in scripts/gen_dialog_slideshow.py CHARACTER_SHEETS
        gepflegt — neue Charaktere dort hinzufuegen, sonst generisches
        Portrait-Fallback.
-       Kosten: ~50 Rappen pro Lektion (9 HD-Bilder + 9 TTS-Calls).
-       Generierung dauert ~5 min (synchron, sequenzielle DALL-E-Calls).
+       Kosten: ~Rappen-Bereich pro Lektion (9 Nano-Banana-Bilder à ~$0.039
+       + 9 TTS-Calls). Generierung dauert ~5 min (synchron, sequenzielle
+       Bild-Calls).
        Bei Background-Run: TaskOutput mit timeout >= 300000ms verwenden.
 
        ⚠️ SPEAKER-GENDER-FALLE (Bug 2026-04-30, Lesson 174 + 176):
@@ -629,7 +634,8 @@ Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
        falsch gerenderte MP3s loeschen
        (`rm app/static/uploads/lessons/dialog_slideshow/lesson_{id}/line_NN.mp3`),
        dann `python .claude/skills/generate-lesson/scripts/gen_dialog_slideshow.py {id}`
-       erneut. Dann Asset-Sync GCS + ggf. Deploy.
+       erneut. Assets liegen lokal im gemounteten uploads-Volume; ggf. `/deploy`
+       (siehe §11), falls auf der Dev-Maschine erzeugt.
 
        ⚠️ TEMPLATE-FALLE (lesson_view.html ~Z.945-961): Die Slides MUESSEN
        per CSS-Grid-Stacking gerendert werden, sonst doppeltes Bild waehrend
@@ -693,15 +699,23 @@ Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
 
 **Wichtig:** Kein Schritt 6 ohne erfolgreichen Schritt 5. Bei Verifikations-Fail: Lektion wird als `is_published=False` markiert und User bekommt Issue-Report.
 
-## 7. Bild-Generierung (Ausnahme: externe API)
+## 7. Bild-Generierung (Ausnahme: externe API — NUR Nano Banana)
 
-DALL-E wird **nur** für:
-- `Lesson.thumbnail_url` (1 Bild pro Lektion)
-- `Vocabulary.image_url` (optional, maximal 3 Schlüssel-Vokabeln pro Lektion)
+**Lektionsbilder laufen ausschliesslich über Nano Banana (`gemini-2.5-flash-image`), NICHT über DALL-E/OpenAI** (User-Direktive). Modell-Aufruf: REST-Endpoint `…/models/gemini-2.5-flash-image:generateContent` mit `responseModalities:["IMAGE"]` + `imageConfig.aspectRatio`. Key: `GOOGLE_AI_API_KEY` (alias `GEMINI_API_KEY`). Listenpreis ~$0.039/Bild.
 
-Prompts immer auf Englisch, Stil: `"minimalist flat illustration, soft pastels, no text, Japanese aesthetic"`. Kein Fotorealismus, kein Text im Bild, keine echten Personen.
+| Bildtyp | Wer generiert | Aspect | Ablage (relativ zu `app/static/uploads/`) |
+|---|---|---|---|
+| Thumbnail | `pipeline.py images` → `generate_single_image_nb` | 16:9 | `generated/thumbnail_<slug>_<ts>.png` |
+| Vokabel-Icon (jede Vokabel) | `pipeline.py images` → `generate_vocabulary_image_nb` | 1:1 | `vocab_generated/vocab_<hash>.png` |
+| Kanji-Icon (jedes Kanji) | `scripts/gen_kanji_images.py` → `generate_vocabulary_image_nb` | 1:1 | `kanji_generated/kanji_<id>_<hash>.png` |
+| Dialog-Slideshow-Slide | `scripts/gen_dialog_slideshow.py` → `generate_single_image_nb` | 1:1 | `lessons/dialog_slideshow/lesson_<id>/line_NN.png` |
+| Seiten-/Slideshow-Szene (Voll-Rollout) | `scripts/generate_lesson_images.py` (liest `scripts/data/page_image_prompts.json`) | 16:9 WebP | `lessons/page_images/…`, `lessons/dialog_slideshow/…_v2.webp` |
 
-Bilder werden in GCS hochgeladen via bestehende `gcs_utils.upload_file()`. Lokal-Mode (wenn `GCS_BUCKET_NAME` nicht gesetzt): Ablage in `app/static/uploads/generated/`.
+**Prompts** auf Englisch; Vokabel-/Kanji-Icons im Flat-Pictogram-Stil mit STRIKTER „no text/letters/numbers"-Regel; Szenen person- und textfrei (siehe `RULES` in `generate_lesson_images.py`). Kein Fotorealismus.
+
+**Ablage ist LOKAL** im gemounteten `app/static/uploads/`-Volume (kein GCS-Upload mehr — der Bucket `jpl-website-assets` ist nur noch Offsite-Backup). Die App liefert Bilder über die `/uploads/<path>`-Route direkt aus. `image_url`/`thumbnail_url` immer **relativ** zu `UPLOAD_FOLDER` setzen (z.B. `vocab_generated/vocab_abc.png`), NIE absolut oder mit `/static/`-Prefix.
+
+> ⚠️ Die OpenAI-Bildmethoden (`generate_single_image`, `generate_vocabulary_image`, …) in `ai_services.py` bleiben bestehen, werden aber NUR noch von den Admin-AI-Buttons (`routes.py`) genutzt — der Skill ruft sie nicht mehr. Beim Generieren neuer Lektionen NIE die OpenAI-Varianten verwenden.
 
 ## 8. Self-Improvement via learnings.md
 
@@ -751,7 +765,7 @@ Nach jedem Run anhängen (siehe [learnings.md](learnings.md) für Template):
 - **Admin-Credentials** stehen in `.env` als `ADMIN_EMAIL` (z.B. `admin@example.com`) und `ADMIN_PASSWORD`. Verify-Scripts MÜSSEN diese via `dotenv` laden. Niemals hardcoden.
 - **pg_isready-Check:** `docker exec postgres_db pg_isready -U app_user -d japanese_learning` ist der zuverlässigste Readiness-Check.
 - **Windows-Shell-Encoding:** Python-Scripts, die japanische Zeichen (Hiragana/Katakana/Kanji) per `print()` ausgeben, brauchen `PYTHONIOENCODING=utf-8` als Env-Variable, sonst `UnicodeEncodeError: cp1252`. Beispiel: `PYTHONIOENCODING=utf-8 python script.py`. Alternativ beim Skript-Start: `sys.stdout.reconfigure(encoding='utf-8')`.
-- Bestehende `AILessonContentGenerator` in `app/ai_services.py` — **NICHT NUTZEN** (User-Entscheidung: Claude schreibt selbst)
+- Bestehende `AILessonContentGenerator` in `app/ai_services.py` — für **Text-Content NICHT NUTZEN** (User-Entscheidung: Claude schreibt selbst). **Ausnahme: die Bildmethoden** `generate_single_image_nb` / `generate_vocabulary_image_nb` (Nano Banana) — die ruft die Pipeline für Lektionsbilder auf. Die OpenAI-Bildmethoden (ohne `_nb`) NICHT nutzen.
 - **Coverage-Backfill als Hebel** (Lesson Learned 2026-04-27): Bestehende Kanji-Lessons (164/167-170 vor 2026-04-27) hatten 0 Kanji-Items in der `kanji`-Tabelle, obwohl die Zeichen thematisch in den Vocabulary-Words abgedeckt waren. Direkter SQL-INSERT in `kanji` mit On/Kun/Strichzahl ist der schnellste Coverage-Hebel — keine neue Lesson noetig. Vor jeder neuen Kanji-Lesson pruefen:
   ```sql
   -- Welche N5-Kanji existieren als Karteikarten?
@@ -760,86 +774,30 @@ Nach jedem Run anhängen (siehe [learnings.md](learnings.md) für Template):
   ```
   Plus `python .claude/skills/generate-lesson/pipeline.py coverage 5 --show-missing 30`. Wenn ein Backfill moeglich ist, vor der naechsten Generierung machen — pro Run kann das +30%-Punkte Coverage bringen ohne Mehraufwand.
 
-## 11. Deploy & Live-Schalten
+## 11. Deploy & Live-Schalten (self-hosted, seit 2026-05-24)
 
-Nach erfolgreicher Verifikation ist die Lektion in der **lokalen** DB. Für Production sind ZWEI Schritte noetig:
+**Kein Cloud SQL, kein Cloud Run, kein GCS-Asset-Sync mehr** — die alten Sync-/Deploy-Skripte (`sync_assets_to_gcs.py`, `sync_from_cloud.py`, `sync_content_upsert.py`, `cloudbuild.yaml`, `deploy-to-cloud-run.*`) sind **obsolet** und dürfen nicht mehr ausgeführt werden. Produktion ist self-hosted auf `hp-ubuntu` (Docker Compose + Cloudflare Tunnel); Medien liegen im gemounteten `uploads`-Volume und werden lokal ausgeliefert.
 
-### 11a. DB-Sync (Inhalt)
+Was „live schalten" konkret heisst, hängt davon ab, WO du generiert hast (siehe §1 Schritt 0):
+
+### 11a. Direkt auf hp-ubuntu (gegen die Prod-DB) generiert
+Dann ist die Lektion nach `insert` + `UPDATE lesson SET is_published=true` **sofort produktiv** — die lokale Postgres dort IST die Produktions-DB. Kein DB-Push nötig, Medien liegen bereits im Volume. (Repo + venv + alle Skills liegen auf hp-ubuntu.)
+
+### 11b. Auf der Windows-Dev-Maschine generiert
+Dann sind Lektion + Medien nur in der Dev-DB. Um sie produktiv zu machen, müssen **Content UND Assets** auf hp-ubuntu:
+- **Content:** bewährtes Muster „Claude-JSON + Applier-Script" (`scripts/apply_*.py`: DRY-RUN → `--apply`, mit Backup), das auf hp-ubuntu gegen die Prod-DB läuft. Die `.env` dort zeigt auf den Service-Host `db` → vom Host aus mit `DATABASE_URL=postgresql://app_user:…@localhost:5432/japanese_learning` übersteuern. **Es gibt KEIN generisches `export_lessons`/`migrate_import_lessons`** — nicht erfinden; entweder direkt auf hp-ubuntu generieren oder das Apply-Muster nutzen.
+- **Assets:** die erzeugten Bilder/Audios (`app/static/uploads/…`) per scp/rsync ins gleichnamige Verzeichnis des hp-ubuntu-uploads-Volumes bringen. GCS (`jpl-website-assets`) ist NUR Offsite-Backup, kein Delivery-Pfad.
+
+### 11c. Code-Deploy (nur bei App-Code-Änderungen)
+Nur nötig, wenn seit dem letzten Deploy Templates/CSS/JS/Python gepusht wurden:
 ```bash
-/sync-cloud-db   # zuerst Cloud→Lokal pruefen, dann Lokal→Cloud
+/deploy   # ssh hp-ubuntu: docker compose build web && docker compose up -d --no-deps web
 ```
-Das pusht Lessons/Content/Quiz/Vocabulary auf Cloud SQL. User-Daten
-(Progress, Kaeufe, SRS) sind durch 4 Schutzschichten abgesichert (siehe
-sync-cloud-db SKILL.md).
+Der Container-Entrypoint führt `flask db upgrade` aus; DB-Daten + Volumes bleiben erhalten. Verifikation: `curl -s -o /dev/null -w "%{http_code}\n" https://japanese-learning.ch/` → 200 erwartet.
 
-### 11a-bis. GCS-Asset-Sync (Bilder, Audios, Slideshows) — PFLICHT
-```bash
-PYTHONIOENCODING=utf-8 PYTHONPATH=. python scripts/sync_assets_to_gcs.py
-```
-**Lesson Learned 2026-04-26**: DB-Sync transportiert nur die DB-Felder
-(image_url, file_path, media_url). Die referenzierten Dateien (PNG, MP3)
-liegen physisch in `app/static/uploads/...` — Production loest die URLs
-aber gegen den GCS-Bucket auf. Ohne Asset-Sync: 404 fuer Bilder und
-Audios live. `/sync-cloud-db` ruft das mittlerweile selbst auf, aber bei
-Manuellem Push immer mit-erinnern. Symptom-Beispiele 2026-04-26:
-"die bilder werden auf der webseite nicht angezeigt aber lokal schon"
-+ "das audio funktioniert auch nicht auf der deployten webseite".
+**Lesson Learned (gilt weiter):** Reine Content-Änderung ohne Code-Deploy zeigt neue Lessons an, rendert aber nicht mit neuen Templates/CSS/JS — bei UI-Abhängigkeiten (Markdown, text-audio-Player, neue Templates) MUSS deployed werden. Bei Multi-Edit-Sessions zuerst ALLE Edits abschliessen (`git status` clean), DANN ein einziger Build.
 
-**Windows-Falle (2026-04-27):** Auf Windows scheitert `scripts/sync_assets_to_gcs.py`
-mit `[FEHLER] 'gcloud' nicht im PATH gefunden`, weil `gcloud` als `gcloud.cmd`
-installiert ist und Pythons `subprocess.run(["gcloud", ...])` ohne `shell=True`
-nur `.exe`-Dateien findet — selbst wenn `which gcloud` in der Bash-Shell den
-korrekten Pfad zeigt. Workaround bis Skript gefixt ist: rsync direkt aus
-Bash-Loop:
-```bash
-for src in vocab_generated generated lessons/audio lessons/text_audio lessons/dialog_slideshow; do
-  gcloud storage rsync -r "app/static/uploads/$src" "gs://jpl-website-assets/$src" \
-    --account=claudio.lutz.cv@gmail.com
-done
-```
-TODO Skript-Fix: `subprocess.run([..."gcloud.cmd", ...], shell=False)` ODER
-`shutil.which("gcloud") or shutil.which("gcloud.cmd")` im PATH-Check.
-
-### 11b. Cloud Run Deploy (Code)
-**Nur noetig wenn seit dem letzten Deploy Code-Aenderungen gepusht wurden**
-(Templates, CSS, JS, Python). Pruefen mit:
-```bash
-LAST_DEPLOY=$(gcloud run services describe japanese-learning-app \
-  --region=europe-west1 --project=healthy-coil-466105-d7 \
-  --account=claudio.lutz.cv@gmail.com \
-  --format="value(status.conditions[0].lastTransitionTime)")
-git log --since="$LAST_DEPLOY" --oneline -- app/ scripts/ run.py
-```
-
-Wenn Commits >0:
-```bash
-/deploy
-```
-Oder manuell:
-```bash
-gcloud builds submit --config=cloudbuild.yaml \
-  --project=healthy-coil-466105-d7 --account=claudio.lutz.cv@gmail.com .
-gcloud run services update japanese-learning-app \
-  --image=europe-west6-docker.pkg.dev/healthy-coil-466105-d7/app-images/japanese-learning-app:latest \
-  --region=europe-west1 --project=healthy-coil-466105-d7 \
-  --account=claudio.lutz.cv@gmail.com
-```
-
-**Lesson Learned 2026-04-25**: Nur DB-Sync ohne Cloud-Run-Deploy fuehrt
-dazu, dass die Live-Seite die neuen Lessons zwar anzeigt, aber NICHT
-mit den aktuellsten Templates/CSS/JS rendert. Wenn das Skill UI-Updates
-in den Lessons nutzt (z.B. Markdown-Rendering, text-audio-Player,
-neue Templates), MUSS auch deployed werden.
-
-**Lesson Learned 2026-04-26 (Multi-Step-Build-Falle)**: Bei Bug-Fix-Sessions
-mit mehreren Edits zuerst ALLE Code-Aenderungen abschliessen (`git status`
-clean), DANN ein einziger Build. Wenn ein Build waehrend laufender Edits
-gestartet wird, packt er den Code-Stand zum Build-Start in's Image —
-nicht den finalen Stand nach allen Edits. Resultat: Re-Build noetig
-(~10 min Verlust). Auch fuer Multi-Lesson-Drops gilt: alle Lessons fertig,
-DB-Sync, Asset-Sync, GCS pruefen, DANN Build + Deploy.
-
-**Nicht im Skill automatisiert** — Push auf Production bleibt explizite User-Aktion, damit kein Lerner eine halb-fertige Lektion sieht und Mayuko bei Bedarf vor dem Live-Gang ein Fachreview machen kann.
+**Nicht im Skill automatisiert** — Live-Schalten bleibt explizite User-Aktion, damit kein Lerner eine halb-fertige Lektion sieht und Mayuko bei Bedarf vor dem Live-Gang ein Fachreview machen kann.
 
 ## 12. Aufraeumen / Lesson-Sichtbarkeit (seit 2026-04-26)
 
@@ -856,31 +814,18 @@ versteckt. Drei Gruende:
    Anfrage, Re-Approval einer Lesson nach Mayuko-Review), reicht ein einzelnes
    `UPDATE lesson SET is_published=true WHERE id=X`.
 
-### Aufraeum-Sequenz (lokal + Cloud SYNCHRON)
+### Aufraeum-Sequenz (eine DB — die Prod-Postgres auf hp-ubuntu)
 
-Aufraeum-Aktionen IMMER in der **gleichen Transaktion** auf lokaler UND Cloud-DB
-ausfuehren, sonst Drift beim naechsten Sync (UPSERT bringt Cloud-Stand wieder
-zurueck).
+Es gibt nur EINE produktive DB (self-hosted). Kein Cloud-Mirror, kein Drift-Risiko, keine doppelte Transaktion mehr. Aufräum-Aktionen laufen gegen die Prod-DB auf hp-ubuntu (vom Host aus mit `DATABASE_URL`/`-h localhost`, da `.env` auf den Service-Host `db` zeigt). **Vorher Backup ziehen** (`sudo /usr/local/bin/jpl-db-backup.sh` — der tägliche Timer läuft ohnehin):
 
 ```bash
-# Lokal
+# Auf hp-ubuntu, gegen die Prod-DB
 PGPASSWORD="JapaneseApp2025!" psql -h localhost -U app_user -d japanese_learning << 'SQL'
 BEGIN;
 UPDATE lesson SET is_published=false WHERE <Bedingung>;
 UPDATE lesson SET title = '<neuer Titel>' WHERE id=X;
 COMMIT;
 SQL
-
-# Cloud (gleiche IP autorisieren wie sync-cloud-db)
-gcloud sql instances patch jpl-psql --authorized-networks=$(curl -s ifconfig.me)/32 ...
-DB_PASS=$(gcloud secrets versions access latest --secret=db-password ...)
-PGPASSWORD="$DB_PASS" psql -h 34.65.56.56 -U app_user -d japanese_learning << 'SQL'
-BEGIN;
-UPDATE lesson SET is_published=false WHERE <Bedingung>;
-UPDATE lesson SET title = '<neuer Titel>' WHERE id=X;
-COMMIT;
-SQL
-gcloud sql instances patch jpl-psql --clear-authorized-networks ...
 ```
 
 ### Was waehlen: verstecken vs. umbenennen

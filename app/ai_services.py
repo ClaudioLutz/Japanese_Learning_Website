@@ -453,6 +453,90 @@ class AILessonContentGenerator:
             current_app.logger.error(f"Failed to generate vocab image for '{word}': {e}")
             return {"error": str(e)}
 
+    # ------------------------------------------------------------------
+    # Nano Banana (Gemini 2.5 Flash Image) — Lektionsbilder
+    # ------------------------------------------------------------------
+    # User-Direktive: Lektionsbilder (Thumbnail/Vokabel/Kanji/Slideshow) werden
+    # ueber gemini-2.5-flash-image ("Nano Banana") erzeugt, NICHT mehr ueber
+    # OpenAI/DALL-E. Die OpenAI-Methoden oben bleiben nur fuer die Admin-AI-
+    # Buttons (routes.py) bestehen. Listenpreis ~$0.039/Bild.
+    def _nano_banana_image(self, prompt: str, aspect_ratio: str = "1:1"):
+        """Erzeugt ein Bild via Gemini 2.5 Flash Image (Nano Banana, REST).
+
+        Returns ``{"image_bytes": bytes, "image": PIL.Image|None}`` oder
+        ``{"error": str}``. Nutzt denselben REST-Aufruf wie
+        ``scripts/generate_lesson_images.py`` (in Produktion erprobt).
+        """
+        import urllib.error
+        import urllib.request
+
+        if not self.gemini_api_key:
+            return {"error": "GEMINI_API_KEY/GOOGLE_AI_API_KEY not set"}
+
+        body = json.dumps({
+            "contents": [{"parts": [{"text": prompt}]}],
+            "generationConfig": {
+                "responseModalities": ["IMAGE"],
+                "imageConfig": {"aspectRatio": aspect_ratio},
+            },
+        }).encode()
+        url = (
+            "https://generativelanguage.googleapis.com/v1beta/models/"
+            f"gemini-2.5-flash-image:generateContent?key={self.gemini_api_key}"
+        )
+        req = urllib.request.Request(
+            url, data=body, headers={"Content-Type": "application/json"}
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=180) as resp:
+                data = json.load(resp)
+        except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError) as e:
+            current_app.logger.error(f"Nano Banana request failed: {e}")
+            return {"error": str(e)}
+
+        parts = (
+            data.get("candidates", [{}])[0]
+            .get("content", {})
+            .get("parts", [])
+        )
+        for part in parts:
+            if "inlineData" in part:
+                img_bytes = base64.b64decode(part["inlineData"]["data"])
+                try:
+                    image = Image.open(BytesIO(img_bytes))
+                except Exception:
+                    image = None
+                return {"image_bytes": img_bytes, "image": image}
+        return {"error": f"no image data (safety block?): {json.dumps(data)[:200]}"}
+
+    def generate_single_image_nb(self, prompt: str, aspect_ratio: str = "1:1"):
+        """Nano-Banana-Variante von ``generate_single_image`` (Thumbnail/Szene).
+
+        Anders als die OpenAI-Variante wird der Prompt NICHT mit einem
+        Anime/Manga-Zusatz angereichert — der Aufrufer liefert den finalen
+        Prompt (inkl. ``no text``-Regeln).
+        """
+        current_app.logger.info(f"Nano Banana image: {prompt[:100]}...")
+        return self._nano_banana_image(prompt, aspect_ratio=aspect_ratio)
+
+    def generate_vocabulary_image_nb(self, word: str, meaning: str, aspect_ratio: str = "1:1"):
+        """Nano-Banana-Variante von ``generate_vocabulary_image`` (Icon-Stil)."""
+        prompt = (
+            f"A single, centered icon representing the concept '{meaning}'. "
+            "STRICT RULE: absolutely NO text, NO letters, NO characters, NO writing, "
+            "NO symbols, NO numbers, NO words of any language anywhere in the image. "
+            "Only pure visual imagery. "
+            "Flat design, geometric simple shapes, minimal detail, soft muted pastel colors, "
+            "white background, no shadows, clean vector-style illustration, "
+            "modern minimalist pictogram, like a simple app icon."
+        )
+        current_app.logger.info(f"Nano Banana vocab image for '{word}' ({meaning})")
+        result = self._nano_banana_image(prompt, aspect_ratio=aspect_ratio)
+        if "image_bytes" in result:
+            result["word"] = word
+            result["prompt"] = prompt
+        return result
+
     def generate_lesson_tile_background(self, lesson_title: str, lesson_description: str, difficulty_level: int = 1):
         """Generate a background image specifically optimized for lesson tiles using OpenAI."""
         if not self.openai_client:

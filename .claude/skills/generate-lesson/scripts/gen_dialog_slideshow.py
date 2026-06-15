@@ -40,8 +40,8 @@ from generate_tts_audio import SPEAKER_GENDER, get_voice_for_speaker  # noqa: E4
 
 
 # --- Charakter-Schablonen (wird pro Lektion zentral gepflegt) ---------------
-# Die DALL-E-Prompts hängen eine Beschreibung der Dialog-Sprecher an,
-# damit Tanaka nicht auf jedem Slide anders aussieht.
+# Die Bild-Prompts (Nano Banana) hängen eine Beschreibung der Dialog-Sprecher
+# an, damit Tanaka nicht auf jedem Slide anders aussieht.
 CHARACTER_SHEETS: dict[str, str] = {
     "Tanaka": (
         "Tanaka: Japanese man in his early 30s, short neat black hair, "
@@ -229,8 +229,8 @@ def main() -> int:
             print("[FEHLER] Google TTS nicht konfiguriert")
             return 1
         gen = AILessonContentGenerator()
-        if not gen.openai_client:
-            print("[FEHLER] OpenAI nicht konfiguriert")
+        if not gen.gemini_api_key:
+            print("[FEHLER] Nano Banana nicht konfiguriert (GOOGLE_AI_API_KEY?)")
             return 1
 
         slides: list[dict] = []
@@ -261,7 +261,7 @@ def main() -> int:
                 print("      [SKIP image] bereits vorhanden")
             else:
                 prompt = _build_prompt(speaker, de or jp, speakers_ordered)
-                result = gen.generate_single_image(prompt=prompt, quality="hd")
+                result = gen.generate_single_image_nb(prompt=prompt, aspect_ratio="1:1")
                 if not result or not result.get("image_bytes"):
                     err = (result or {}).get("error", "unbekannt")
                     print(f"      [FEHLER image] {err}")
