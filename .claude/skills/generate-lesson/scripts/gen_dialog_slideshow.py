@@ -2,13 +2,13 @@
 
 Pro Dialog-Zeile:
   - 1 MP3 via Google Cloud TTS (Gender-korrekte Voice via SPEAKER_GENDER)
-  - 1 PNG via OpenAI gpt-image-1-mini im Ghibli-Aquarell-Stil mit
-    Charakter-Schablone und STRIKT ohne Text/Kanji/Ziffern
+  - 1 PNG via Nano Banana (gemini-2.5-flash-image) mit Charakter-Schablone
+    und STRIKT ohne Text/Kanji/Ziffern
   - JSON-Eintrag mit jp, romaji, de, audio_path, image_path
 
-Legt EIN LessonContent(content_type='dialog_slideshow') auf
-order_index=1 an. Der bestehende Dialog-Text (content_type='text')
-bleibt auf order_index=2 als Transcript-Fallback.
+Legt EIN LessonContent(content_type='dialog_slideshow') an und vergibt
+danach via renumber_dialog_page() deterministische order_index-Werte auf
+der Dialog-Page (slideshow zuerst, dann Text/Transcript).
 
 Idempotent: wenn bereits ein dialog_slideshow existiert, Refresh
 statt Doppel-Insert.
@@ -37,6 +37,26 @@ _MNN_SCRIPT = PROJECT_ROOT / "scripts"
 if str(_MNN_SCRIPT) not in sys.path:
     sys.path.insert(0, str(_MNN_SCRIPT))
 from generate_tts_audio import SPEAKER_GENDER, get_voice_for_speaker  # noqa: E402
+
+
+def renumber_dialog_page(lesson_id: int, page_number: int) -> None:
+    """Vergibt deterministische order_index-Werte auf der Dialog-Page.
+
+    Behebt die alte 1/1/1/2-Kollision (audio/slideshow ueberschrieben den
+    order_index bestehender Items, DB sortierte dann nicht-deterministisch).
+    Reihenfolge: dialog_slideshow zuerst, dann (deprecated) audio, dann
+    Text/Transcript, dann der Rest — innerhalb gleicher Prioritaet stabil
+    nach bisherigem order_index + id.
+    """
+    prio = {"dialog_slideshow": 0, "audio": 1, "text": 2}
+    items = (
+        db.session.query(LessonContent)
+        .filter_by(lesson_id=lesson_id, page_number=page_number)
+        .all()
+    )
+    items.sort(key=lambda lc: (prio.get(lc.content_type, 3), lc.order_index or 0, lc.id or 0))
+    for idx, lc in enumerate(items, start=1):
+        lc.order_index = idx
 
 
 # --- Charakter-Schablonen (wird pro Lektion zentral gepflegt) ---------------
@@ -305,32 +325,15 @@ def main() -> int:
                 "generator": "dialog_slideshow_v1",
                 "slides": len(slides),
             }
-            db.session.commit()
-            print(f"[OK] LessonContent {existing.id} aktualisiert (Slideshow refresh, {len(slides)} Slides)")
+            lc_id, action = existing.id, "aktualisiert"
         else:
-            # Bestehenden Text auf order_index=3 schieben (audio=1, slideshow=2, text=3)
-            # Aber vorheriger Audio-Step legte Audio auf order_index=1 und Text=2.
-            # Neue Reihenfolge: audio=1, slideshow=2, text=3.
-            text_lc.order_index = 3
-            audio_lc = (
-                db.session.query(LessonContent)
-                .filter_by(
-                    lesson_id=lesson_id,
-                    page_number=dialog_page.page_number,
-                    content_type="audio",
-                )
-                .first()
-            )
-            if audio_lc:
-                audio_lc.order_index = 1
-
             new_lc = LessonContent(
                 lesson_id=lesson_id,
                 content_type="dialog_slideshow",
                 title="Konversation (Slideshow)",
                 content_text=slideshow_json,
                 page_number=dialog_page.page_number,
-                order_index=2,
+                order_index=1,  # provisorisch — renumber_dialog_page() korrigiert
                 generated_by_ai=True,
                 ai_generation_details={
                     "generator": "dialog_slideshow_v1",
@@ -338,8 +341,14 @@ def main() -> int:
                 },
             )
             db.session.add(new_lc)
-            db.session.commit()
-            print(f"[OK] LessonContent {new_lc.id} angelegt ({len(slides)} Slides)")
+            db.session.flush()
+            lc_id, action = new_lc.id, "angelegt"
+
+        # Deterministische Reihenfolge auf der Dialog-Page (behebt 1/1/1/2-Bug):
+        # slideshow zuerst, dann Text/Transcript — kein manuelles SQL mehr noetig.
+        renumber_dialog_page(lesson_id, dialog_page.page_number)
+        db.session.commit()
+        print(f"[OK] LessonContent {lc_id} {action} ({len(slides)} Slides, order_index deterministisch)")
 
         return 0
 

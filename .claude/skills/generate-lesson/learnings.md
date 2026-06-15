@@ -22,6 +22,26 @@ Selbstverbesserndes Log. Wird vor jedem Run gelesen, nach jedem Run angehängt.
 
 ---
 
+## ⭐ Kern-Regeln (Digest, Stand 2026-06-15) — zuerst lesen
+
+Destillat der am häufigsten wiederkehrenden Erkenntnisse. Details + Historie in den datierten Einträgen unten; harte Constraints in SKILL.md §3.
+
+1. **Bilder = NUR Nano Banana** (`gemini-2.5-flash-image`), nie DALL-E/OpenAI. Pipeline-`images`-Schritt macht das automatisch (`generate_*_nb`). Safety-Block überspringt nur EIN Bild — Lektion bleibt mit N-1 Bildern nutzbar.
+2. **Content schreibt Claude selbst** — kein Text-LLM-Call. Nur Bilder (Nano Banana) + TTS (Google) sind externe APIs.
+3. **JLPT-Niveau-Disziplin** (Validator STRENG): jedes Vokabel-Wort in `jlpt_n5_canonical.json`, sonst ERROR. Kanji im Beispielsatz nur aus N5-Set (80) — sonst Hiragana schreiben. „N4-Kanji-in-N5-Vokabel"-Falle (兄姉弟妹家族親…) → Lesehilfe/Beispiel in Hiragana, Kanji nur im `word`-Feld.
+4. **Romaji überall** wo JP steht, das der Anfänger nicht lesen kann — ausser `example_sentence_japanese`/`tts_example_jp` (rein JP, sonst liest die ja-Stimme Romaji vor / Route 400).
+5. **Deutsche Umlaute echt** (ü/ö/ä/ß), nie ue/oe/ae/ss. UTF-8 durchgängig.
+6. **Markdown-Hierarchie pro text-Block** (≥1 H2/H3 + ≥2 **bold** + Liste/Quote), kein roher HTML. Dialog-Block beginnt direkt mit `Speaker:` (kein Prosa-Vorspann).
+7. **JSON-Quoten:** nie deutsche „…" in Draft-Strings (bricht JSON) — `'…'`, `«…»` oder `「…」`.
+8. **Asset-Pfade** relativ zu `UPLOAD_FOLDER` bzw. mit `/uploads/`-Prefix, NIE `/static/uploads/` oder absolut.
+9. **Quiz nur** multiple_choice / true_false / matching (kein fill_blank). Matching: `option_text`=Prompt (mit Romaji), `feedback`=Antwort, alle `is_correct=true`.
+10. **order_index auf der Dialog-Page ist automatisch** (`renumber_dialog_page()` im slideshow-Schritt) — kein manuelles UPDATE-SQL mehr.
+11. **Modul-Zuweisung per Slug-Lookup**, nie ID hardcoden (IDs driften Dev↔Prod).
+12. **Dev-DB ≠ Prod-DB (hp-ubuntu).** Auf Dev generiert = noch nicht live. Vor „fertig": gegen welche DB? Publishing/Deploy = SKILL.md §11.
+13. **Verifikation vor Commit** (Playwright/HTTP), Lektion bis dahin `is_published=False`.
+
+---
+
 ## Initial-Regeln (vor erstem Run, aus improve-jpl + CLAUDE.md abgeleitet)
 
 1. **Anfänger-First (Claudio dogfoodet):** Vor jeder Design-Entscheidung: "Würde Claudio bzw. ein deutschsprachiger Anfänger das bemerken, verstehen, wiederkommen?" Wenn nein → zurückstellen.

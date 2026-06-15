@@ -9,7 +9,7 @@ Subcommands:
   validate <draft.json>  # Prüft Constraints (STRENG: Niveau-Mix-Verbot via canonical list)
   images   <draft.json>  # Generiert Nano-Banana-Bilder für Thumbnail/Vokabeln
   insert   <draft.json>  # Transaktionaler INSERT, gibt lesson_id zurück
-  audio    <lesson_id>   # DEPRECATED (No-Op seit 2026-04-30)
+  text-audio <lesson_id> # Block-Player pro Text (DE+JA, Gemini/Neural2)
   slideshow <lesson_id>  # Pro-Zeile Slideshow (TTS + Nano Banana)
   coverage [level]       # JLPT-Coverage-Dashboard: DB vs. canonical list (default: 5)
   commit   <lesson_id>   # Git-add/commit/push (nur Metadaten, kein App-Code)
@@ -216,7 +216,7 @@ def validate_draft(draft: dict) -> list[str]:
                 # Markdown-Hierarchie-Pflicht (User-Direktive 2026-04-25):
                 # Skip Quiz-Intro (sehr kurz) und Dialog-Block (Speaker: ... Format).
                 is_dialog = "Tanaka:" in ctext or "Lisa:" in ctext or "Speaker:" in ctext.replace(":", ":")
-                speakers = sum(1 for line in ctext.split("\n") if line.strip() and ":" in line.split()[0] if line.strip())
+                sum(1 for line in ctext.split("\n") if line.strip() and ":" in line.split()[0] if line.strip())
                 # Heuristik: wenn >=4 Sprecher-Zeilen, ist es ein Dialog → keine Heading-Pflicht
                 if not is_dialog and len(ctext) >= 200:
                     has_heading = bool(MD_HEADING_RE.search(ctext))
@@ -573,7 +573,7 @@ def db_status():
     """Zeigt DB-Gaps fuer naechsten Lesson-Vorschlag."""
     try:
         from app import create_app, db
-        from app.models import Lesson, Vocabulary, Grammar, LessonCategory
+        from app.models import Lesson, Vocabulary, LessonCategory
     except ImportError as e:
         print(f"[FEHLER] App-Import fehlgeschlagen: {e}")
         print("Tipp: venv aktivieren und docker compose up db -d")
@@ -596,7 +596,7 @@ def db_status():
         print(f"  Lessons gesamt:       {total_lessons}")
         print(f"    davon N5 (diff 1-2): {n5_lessons}")
         print(f"    davon N4 (diff 3-4): {n4_lessons}")
-        print(f"  Vocabulary:")
+        print("  Vocabulary:")
         print(f"    N5:                  {n5_vocab}")
         print(f"    N4:                  {n4_vocab}")
 
@@ -679,7 +679,7 @@ def jlpt_coverage(level: int = 5, show_missing: int = 30):
         k_cov = len(covered_kanji)
         k_pct = (100.0 * k_cov / k_total) if k_total else 0.0
 
-        canon_grammar_count = canon["raw"].get("counts", {}).get("grammar", 0)
+        canon["raw"].get("counts", {}).get("grammar", 0)
 
         print("=" * 70)
         print(f"  JLPT-N{level} Coverage-Dashboard")
@@ -970,7 +970,7 @@ def git_commit(lesson_id: int):
     msg = f"Lektion generiert via Skill (Lesson ID {lesson_id})"
     subprocess.run(["git", "commit", "-m", msg], cwd=PROJECT_ROOT, check=True)
     subprocess.run(["git", "push"], cwd=PROJECT_ROOT, check=True)
-    print(f"[OK] Git push abgeschlossen.")
+    print("[OK] Git push abgeschlossen.")
 
 
 # ========================================================================
@@ -995,6 +995,7 @@ def generate_images(draft_path: Path):
     app = create_app()
 
     import hashlib
+    from concurrent.futures import ThreadPoolExecutor, as_completed
 
     with app.app_context():
         gen = AILessonContentGenerator()
@@ -1034,27 +1035,35 @@ def generate_images(draft_path: Path):
             for item in page.get("contents", [])
             if item.get("content_type") == "vocabulary"
         ]
-        print(f"[INFO] {len(vocab_items)} Vokabeln — generiere fehlende Icons")
+        todo = [it for it in vocab_items if not it.get("data", {}).get("image_url")]
+        print(f"[INFO] {len(vocab_items)} Vokabeln — generiere {len(todo)} fehlende Icons (4 Worker)")
 
-        for i, item in enumerate(vocab_items, start=1):
+        def _gen_vocab_icon(item):
             data = item.get("data", {})
-            if data.get("image_url"):
-                continue
             word = data.get("word", "")
             meaning = data.get("meaning") or data.get("meaning_de") or word
-            print(f"  [{i:2d}/{len(vocab_items)}] {word} ({meaning[:35]})")
-            res = gen.generate_vocabulary_image_nb(word=word, meaning=meaning)
+            # current_app.logger im Service braucht App-Kontext pro Worker-Thread.
+            with app.app_context():
+                res = gen.generate_vocabulary_image_nb(word=word, meaning=meaning)
             if not res or "image_bytes" not in res:
-                err = (res or {}).get("error", "unbekannt")
-                print(f"      [FEHLER] {err}")
-                continue
+                return item, None, (res or {}).get("error", "unbekannt")
             hash_suffix = hashlib.md5(word.encode()).hexdigest()[:8]
             filename = f"vocab_{hash_suffix}.png"
             (vocab_dir / filename).write_bytes(res["image_bytes"])
-            # IMPORTANT: Pfad relativ zu UPLOAD_FOLDER (app/static/uploads/),
-            # damit url_for('routes.uploaded_file', filename=...) passt.
-            # Siehe lesson_view.html:859 und routes.py:3973 /uploads/<path:filename>.
-            data["image_url"] = f"vocab_generated/{filename}"
+            # Pfad relativ zu UPLOAD_FOLDER (app/static/uploads/), damit
+            # url_for('routes.uploaded_file', filename=...) passt.
+            return item, f"vocab_generated/{filename}", None
+
+        with ThreadPoolExecutor(max_workers=4) as pool:
+            futures = [pool.submit(_gen_vocab_icon, it) for it in todo]
+            for done, fut in enumerate(as_completed(futures), start=1):
+                item, url, err = fut.result()
+                word = item.get("data", {}).get("word", "")
+                if err:
+                    print(f"  [{done:2d}/{len(todo)}] {word} [FEHLER] {err}")
+                    continue
+                item["data"]["image_url"] = url
+                print(f"  [{done:2d}/{len(todo)}] {word} -> {url}")
 
         # Draft ueberschreiben mit gefuellten URLs
         draft_path.write_text(
@@ -1066,23 +1075,6 @@ def generate_images(draft_path: Path):
 # ========================================================================
 # AUDIO (Google Cloud TTS fuer die Dialog-Page)
 # ========================================================================
-
-def generate_conversation_audio(lesson_id: int) -> int:
-    """Rendert die Dialog-Page einer Lesson als MP3 (Google Cloud TTS)
-    und legt ein LessonContent(content_type='audio') vor dem Dialog-Text an.
-
-    Idempotent: hat die Dialog-Page bereits ein audio-Content, kein Neu-Insert.
-    Gibt 0 = OK, 1 = Fehler, 2 = Skip (existiert) zurueck.
-    """
-    script = SKILL_DIR / "scripts" / "gen_conversation_audio.py"
-    env = os.environ.copy()
-    env["PYTHONIOENCODING"] = "utf-8"
-    result = subprocess.run(
-        [sys.executable, str(script), str(lesson_id)],
-        cwd=PROJECT_ROOT, env=env,
-    )
-    return result.returncode
-
 
 def generate_text_audio(lesson_id: int, force: bool = False, page: int | None = None) -> int:
     """Rendert pro text-LessonContent eine MP3 (DE+JA gemischt via Google TTS).
@@ -1142,9 +1134,6 @@ def main():
     p_ins = sub.add_parser("insert", help="Draft in DB persistieren")
     p_ins.add_argument("draft", type=Path)
 
-    p_aud = sub.add_parser("audio", help="DEPRECATED (No-Op seit 2026-04-30)")
-    p_aud.add_argument("lesson_id", type=int)
-
     p_taud = sub.add_parser("text-audio", help="Pro text-LessonContent eine MP3 (DE+JA gemischt)")
     p_taud.add_argument("lesson_id", type=int)
     p_taud.add_argument("--page", type=int, default=None)
@@ -1179,8 +1168,6 @@ def main():
         generate_images(args.draft)
     elif args.cmd == "insert":
         insert_draft(args.draft)
-    elif args.cmd == "audio":
-        sys.exit(generate_conversation_audio(args.lesson_id))
     elif args.cmd == "text-audio":
         sys.exit(generate_text_audio(args.lesson_id, force=args.force, page=args.page))
     elif args.cmd == "slideshow":

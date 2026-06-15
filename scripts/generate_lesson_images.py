@@ -12,21 +12,20 @@ Usage: python scripts/generate_lesson_images.py [--limit N] [--lesson ID]
 """
 from __future__ import annotations
 
-import base64
 import io
 import json
 import sys
-import time
-import urllib.error
-import urllib.request
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(PROJECT_ROOT))
 PROMPTS_FILE = PROJECT_ROOT / "scripts" / "data" / "page_image_prompts.json"
 UPLOADS = PROJECT_ROOT / "app" / "static" / "uploads" / "lessons"
+
+from nano_banana import NanoBananaError, generate_nano_banana_image_bytes  # noqa: E402
 
 RULES = (
     " STRICT RULES: absolutely no text of any kind (no letters, kanji, kana, "
@@ -50,25 +49,8 @@ def load_api_key() -> str:
 
 
 def generate(prompt: str, key: str) -> bytes:
-    body = json.dumps({
-        "contents": [{"parts": [{"text": prompt}]}],
-        "generationConfig": {
-            "responseModalities": ["IMAGE"],
-            "imageConfig": {"aspectRatio": "16:9"},
-        },
-    }).encode()
-    req = urllib.request.Request(
-        "https://generativelanguage.googleapis.com/v1beta/models/"
-        f"gemini-2.5-flash-image:generateContent?key={key}",
-        data=body,
-        headers={"Content-Type": "application/json"},
-    )
-    with urllib.request.urlopen(req, timeout=180) as resp:
-        data = json.load(resp)
-    for part in data.get("candidates", [{}])[0].get("content", {}).get("parts", []):
-        if "inlineData" in part:
-            return base64.b64decode(part["inlineData"]["data"])
-    raise RuntimeError(f"keine Bilddaten (safety-block?): {json.dumps(data)[:200]}")
+    # Zentraler REST-Call + Retry lebt in nano_banana (geteilt mit ai_services).
+    return generate_nano_banana_image_bytes(prompt, key, aspect_ratio="16:9")
 
 
 def to_webp(png_bytes: bytes) -> bytes:
@@ -106,17 +88,14 @@ def render(job: tuple[Path, str], key: str) -> str:
     out, prompt = job
     if out.exists():
         return f"skip {out.relative_to(UPLOADS)}"
-    for attempt in (1, 2):
-        try:
-            webp = to_webp(generate(prompt, key))
-            out.parent.mkdir(parents=True, exist_ok=True)
-            out.write_bytes(webp)
-            return f"OK   {out.relative_to(UPLOADS)} ({len(webp) // 1024} KB)"
-        except (urllib.error.HTTPError, urllib.error.URLError, RuntimeError, TimeoutError) as e:
-            if attempt == 2:
-                return f"FAIL {out.relative_to(UPLOADS)}: {e}"
-            time.sleep(5)
-    return f"FAIL {out.relative_to(UPLOADS)}: unreachable"
+    try:
+        # generate() (via nano_banana) wiederholt Netzwerkfehler bereits intern.
+        webp = to_webp(generate(prompt, key))
+    except NanoBananaError as e:
+        return f"FAIL {out.relative_to(UPLOADS)}: {e}"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_bytes(webp)
+    return f"OK   {out.relative_to(UPLOADS)} ({len(webp) // 1024} KB)"
 
 
 def main() -> None:

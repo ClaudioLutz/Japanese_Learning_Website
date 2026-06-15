@@ -4275,43 +4275,45 @@ def generate_ai_content():
 
     return jsonify(result)
 
+# Mapping OpenAI-Groessen -> Nano-Banana-aspectRatio (Lektionsbilder = Nano Banana).
+_NB_ASPECT = {"1024x1024": "1:1", "1536x1024": "4:3", "1024x1536": "3:4"}
+
+
 @bp.route('/api/admin/generate-ai-image', methods=['POST'])
 @login_required
 @admin_required
 def generate_ai_image():
-    """Generate AI images for lesson content using DALL-E."""
+    """Generate AI images for lesson content using Nano Banana (gemini-2.5-flash-image)."""
     data = request.json
     if not data:
         return jsonify({"error": "No data provided"}), 400
 
     generator = AILessonContentGenerator()
-    
+
     # Handle different types of image generation requests
     if 'prompt' in data:
         # Direct prompt generation
-        result = generator.generate_single_image(
+        result = generator.generate_single_image_nb(
             prompt=data['prompt'],
-            size=data.get('size', '1024x1024'),
-            quality=data.get('quality', 'standard')
+            aspect_ratio=_NB_ASPECT.get(data.get('size', '1024x1024'), '1:1'),
         )
     elif 'content_text' in data:
         # Generate prompt from content, then generate image
         lesson_topic = data.get('lesson_topic', 'Japanese Language Learning')
         difficulty = data.get('difficulty', 'Beginner')
-        
+
         # First generate optimized prompt
         prompt_result = generator.generate_image_prompt(
             data['content_text'], lesson_topic, difficulty
         )
-        
+
         if 'error' in prompt_result:
             return jsonify(prompt_result), 500
-        
+
         # Then generate image
-        result = generator.generate_single_image(
+        result = generator.generate_single_image_nb(
             prompt=prompt_result['image_prompt'],
-            size=data.get('size', '1024x1024'),
-            quality=data.get('quality', 'standard')
+            aspect_ratio=_NB_ASPECT.get(data.get('size', '1024x1024'), '1:1'),
         )
         result['generated_prompt'] = prompt_result['image_prompt']
     else:
@@ -4393,7 +4395,7 @@ def generate_vocabulary_images():
     os.makedirs(upload_dir, exist_ok=True)
 
     for vocab in vocabs:
-        result = generator.generate_vocabulary_image(vocab.word, vocab.meaning)
+        result = generator.generate_vocabulary_image_nb(vocab.word, vocab.meaning)
         if 'error' in result:
             errors.append({"id": vocab.id, "word": vocab.word, "error": result['error']})
             continue

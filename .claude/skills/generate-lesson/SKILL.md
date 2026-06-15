@@ -86,7 +86,7 @@ Hiragana- und Katakana-Lektionen sind eine **Sonderform**. Statt JLPT-Vokabeln u
 | N5-Canonical-Vokabel-Check | aktiv | übersprungen |
 | N5-Kanji-Disziplin-Check | aktiv | übersprungen (Kana-Lektion enthält per Definition keine Kanji-Beispielsätze) |
 | Romaji/Umlaut/Markdown-Hierarchie-Check | aktiv | bleibt aktiv |
-| Modul-Zuweisung | passendes N5-Themen-Modul | `n5-hiragana` (id=30) bzw. `n5-katakana` (id=31) |
+| Modul-Zuweisung | passendes N5-Themen-Modul | Slug `n5-hiragana` bzw. `n5-katakana` (id per Lookup, siehe unten) |
 
 **Page-Struktur einer Kana-Lektion (Zielbild):**
 
@@ -137,10 +137,11 @@ Lesson (kind="kana", title="Hiragana 1 — …", jlpt_level=5,
 1. `validate` — neuer Validator-Pfad (Vocab/Grammar verboten, kana-Budget aktiv).
 2. `images` — generiert nur Thumbnail (keine Vokabel-Icons, weil keine Vokabeln).
 3. `insert` — `_get_or_create_kana()` deduppt über `character` (UNIQUE-Constraint).
-4. `audio` — überspringen (kein Dialog).
-5. `text-audio` — laufen lassen für die Prosa-Markdown-Pages.
-6. `slideshow` — überspringen.
-7. Modul-Zuweisung: `category_id=30` für Hiragana, `31` für Katakana.
+4. `text-audio` — laufen lassen für die Prosa-Markdown-Pages.
+5. `slideshow` — überspringen (kein Dialog).
+7. Modul-Zuweisung: **per Slug-Lookup**, NIE Modul-ID hardcoden (IDs driften zwischen Dev/Prod):
+   `SELECT id FROM lesson_category WHERE slug='n5-hiragana';` (bzw. `n5-katakana`),
+   dann `UPDATE lesson SET category_id=<id> WHERE id=<lesson_id>;`.
 
 **Quiz-Distraktoren bei Kana:** ähnliche Zeichen wählen (ね/れ/わ/ぬ verwechselbar, さ/き/ち, シ/ツ, ソ/ン, etc.) — fördert echtes Lesen, nicht Raten.
 
@@ -150,7 +151,7 @@ Lesson (kind="kana", title="Hiragana 1 — …", jlpt_level=5,
 
 ## 2c. Kanji-Lessons (eigenes Modul `n5-kanji-grundlagen`, seit 2026-04-27)
 
-Kanji-Lessons sind Vocabulary-Lessons (`kind: "vocabulary"`, default), die didaktisch ein **Kanji-Set** in den Mittelpunkt stellen. Sie bekommen aber eine **eigene Modul-Heimat**: `n5-kanji-grundlagen` (id=38, display_order=3, icon=漢) zwischen Katakana (2) und Zahlen-Zeit (4).
+Kanji-Lessons sind Vocabulary-Lessons (`kind: "vocabulary"`, default), die didaktisch ein **Kanji-Set** in den Mittelpunkt stellen. Sie bekommen aber eine **eigene Modul-Heimat**: Slug `n5-kanji-grundlagen` (display_order=3, icon=漢) zwischen Katakana und Zahlen-Zeit. Modul-ID immer per Lookup (`SELECT id FROM lesson_category WHERE slug='n5-kanji-grundlagen';`), nie hardcoden.
 
 **Warum eigenes Modul:**
 - Pädagogische Hierarchie: Hiragana → Katakana → **Kanji-Grundlagen** → Themen (Familie, Reise, Alltag, etc.).
@@ -191,7 +192,7 @@ SELECT character FROM kanji WHERE jlpt_level=5 ORDER BY character;
 -- Welche Kanji werden in Lessons als Vocabulary-Word genutzt, fehlen aber als Kanji-Record?
 ```
 
-**Modul-Zuweisung:** Nach `insert` IMMER `category_id=38`, nicht in Themen-Module einsortieren. Order-Index = max(order_index)+1 im Modul.
+**Modul-Zuweisung:** Nach `insert` IMMER ins Kanji-Modul (Slug `n5-kanji-grundlagen` per Lookup, NICHT ID hardcoden), nicht in Themen-Module einsortieren. Order-Index = max(order_index)+1 im Modul.
 
 **Override für Kanji ausserhalb elzup-canonical:** Siehe §3 "Lesson-Level-Kanji-Override" — die canonical-Liste fehlt 兄/姉/弟/妹/新/古/安/短/多/少/早, daher `additional_n5_kanji` + Source-Note Pflicht.
 
@@ -241,7 +242,7 @@ Verletzung ⇒ sofortiger Abbruch, keine Insertion:
 - **`Vocabulary.image_url` und `Kanji.image_url` muessen relativ zu `UPLOAD_FOLDER` sein** (= `app/static/uploads/`), NICHT absolut. Das Template [lesson_view.html:859](../../app/templates/lesson_view.html#L859) ruft `url_for('routes.uploaded_file', filename=content_data.image_url)` auf — die Route [routes.py:3973 `/uploads/<path:filename>`](../../app/routes.py#L3973) dient aus `UPLOAD_FOLDER`. Richtige Werte: `vocab_generated/vocab_abc.png`, `kanji_generated/kanji_42_8f3a.png`, `vocabulary/images/vocab_124.png`. **Falsch**: `/static/uploads/vocab_generated/…`, `http://…`, `static/uploads/…`.
 - **Audio ist PFLICHT — aber NICHT mehr über den alten `audio`-Schritt** (der ist DEPRECATED seit 2026-04-30, No-Op, siehe Pipeline [4b]). Audio entsteht heute aus zwei aktiven Quellen: (1) **`gen_text_audio.py`** rendert pro Text-/Prosa-Block einen Block-Player (DE+JA segmentiert, Gemini 2.5 Pro TTS Leda für JA, de-DE-Neural2-G für DE) — siehe Pipeline [4b2]; (2) der **`dialog_slideshow`**-Schritt rendert pro Dialog-Zeile ein eigenes `<audio>` (Google TTS, Gender-korrekte Stimme) — siehe Pipeline [4c]. Ein separates „Konversation (Audio)"-Item wird NICHT mehr angelegt (rendert redundant über der Slideshow). Benötigt `GOOGLE_AI_API_KEY` (Gemini) bzw. `GOOGLE_API_KEY`/`GOOGLE_TTS_API_KEY` (Cloud TTS) in `.env`.
 - **JSON-Quoten-Disziplin im Draft** (Bug 2026-04-26 Lesson 160): NIE deutsche Anführungszeichen `„X"` in Draft-JSON-Strings verwenden. Das Schliesszeichen `"` ist ASCII-`"` und bricht den JSON-Parse mit `Expecting ',' delimiter`. Erlaubte Quoten innerhalb eines JSON-Strings: einfache `'...'`, spitze `«...»`, oder Kana-Eckklammern `「...」` (preferred fuer JP-Zitate). Beispiel-Fix: `"Tanaka sagt: „Yamada"."` → `"Tanaka sagt: 'Yamada'."` oder `"Tanaka sagt: 「Yamada」."`. Validator-Aufruf bricht mit Stack-Trace ab — Zeilennummer im JSONDecodeError nutzen, um die problematische Stelle zu finden.
-- **Asset-Pfade NIE mit `/static/uploads/` praefixen** (Bug 2026-04-26): `media_url`, `file_path` und `slide.image`/`slide.audio` in dialog_slideshow-JSON immer mit Prefix `/uploads/` (= uploaded_file-Route) oder ganz ohne Prefix (relativer Pfad, Template loest via `get_file_url()`). Die `/uploads/<path>`-Route liefert aus dem gemounteten `UPLOAD_FOLDER`-Volume (`app/static/uploads/`); `/static/uploads/` ist fragil und inkonsistent (kein Resolver-Fallback). Skripte `gen_text_audio.py`, `gen_conversation_audio.py`, `gen_dialog_slideshow.py` sind 2026-04-26 fix; bei neuen Skripten beachten.
+- **Asset-Pfade NIE mit `/static/uploads/` praefixen** (Bug 2026-04-26): `media_url`, `file_path` und `slide.image`/`slide.audio` in dialog_slideshow-JSON immer mit Prefix `/uploads/` (= uploaded_file-Route) oder ganz ohne Prefix (relativer Pfad, Template loest via `get_file_url()`). Die `/uploads/<path>`-Route liefert aus dem gemounteten `UPLOAD_FOLDER`-Volume (`app/static/uploads/`); `/static/uploads/` ist fragil und inkonsistent (kein Resolver-Fallback). Skripte `gen_text_audio.py` und `gen_dialog_slideshow.py` sind 2026-04-26 fix; bei neuen Skripten beachten.
 - **Lesson-Level-Kanji-Override `additional_n5_kanji`** (seit 2026-04-27): Die canonical-Liste in `sources/jlpt_n5_canonical.json` (von elzup, MIT) hat 80 Kanji, weicht aber an mehreren Stellen vom Tanos/Wikipedia/Anki-N5-Standard ab. **Fehlt in elzup, ist aber Standard-N5:** 兄, 姉, 弟, 妹 (Geschwister), 新, 古, 安, 短, 多, 少, 早 (i-Adjektive). Wenn eine Kanji-Lesson explizit eines dieser Zeichen lehrt, MUSS sie auf Lesson-Header-Ebene zwei Felder setzen:
   ```json
   "additional_n5_kanji": ["兄", "姉", "弟", "妹"],
@@ -499,18 +500,15 @@ Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
        (alle in pipeline.py) — bestehende Records werden per UNIQUE-Constraint
        (character/word/title) wiederverwendet, NICHT ueberschrieben.
 
-[4b] python .claude/skills/generate-lesson/pipeline.py audio {lesson_id}
-    → ⛔ DEPRECATED seit 2026-04-30. Step ist No-Op und legt KEIN
-       LessonContent(content_type='audio') mehr an. Begruendung: der
+[4b] (ENTFERNT 2026-06-15) Der frühere `audio`-Subcommand + das Skript
+       `gen_conversation_audio.py` wurden gelöscht. Begründung: der
        dialog_slideshow-Player (Step [4c]) hat pro Zeile einen eigenen
-       <audio>-Tag — ein zusaetzliches "Konversation (Audio)"-Item rendert
-       redundant ueber der Slideshow (User-Direktive 2026-04-30, Lesson 157).
-    → Step kann uebersprungen werden. Skript existiert noch, gibt nur eine
-       Deprecated-Meldung aus und beendet sich mit exit 0 ohne DB-Insert.
-    → ALT-Bestand: Bestehende Lektionen mit redundantem audio-Item werden
-       vom Template (lesson_view.html ~Z.1078) automatisch unterdrueckt,
-       wenn auf derselben Page ein dialog_slideshow vorhanden ist. DB-Cleanup
-       optional, nicht zwingend.
+       <audio>-Tag — ein zusätzliches "Konversation (Audio)"-Item rendert
+       redundant darüber (User-Direktive 2026-04-30, Lesson 157). Dialog-Audio
+       kommt heute ausschliesslich aus [4c] (Slideshow) + [4b2] (gen_text_audio).
+    → ALT-Bestand: Bestehende Lektionen mit redundantem audio-Item werden vom
+       Template (lesson_view.html ~Z.1078) automatisch unterdrückt, wenn auf
+       derselben Page ein dialog_slideshow vorhanden ist. DB-Cleanup optional.
 
 [4b2] python .claude/skills/generate-lesson/scripts/gen_text_audio.py {lesson_id}
     → PFLICHT seit 2026-04-25, auf Gemini umgestellt 2026-05-12. Rendert pro
@@ -574,25 +572,17 @@ Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
            JP-only) bleiben klickbar. Bei Template-/JS-Aenderungen NIE den
            Skip-Check entfernen.
 
-[4b3] **order_index-Kollision auf Dialog-Page pruefen** (PFLICHT seit 2026-04-25
-    nach Lesson 145):
-    Nach `insert` nummeriert Pipeline alle Items der Dialog-Page ab `order_index=1`
-    (Dialog-Text + Verstaendnis-Intro auf Page 5 -> beide bekommen 1+2). Dann
-    setzt `audio` einen LC mit `order_index=1`, `slideshow` einen mit
-    `order_index=2`, ohne die bestehenden zu verschieben. Resultat: 4 LCs mit
-    oi-Werten 1/1/1/2 -> DB sortiert nicht-deterministisch -> Frontend rendert
-    in zufaelliger Reihenfolge (z.B. Verstaendnisfragen vor Dialog-Text).
-    Pflicht-Check + Korrektur:
+[4b3] **order_index auf der Dialog-Page — jetzt AUTOMATISCH** (seit 2026-06-15):
+    Der `slideshow`-Schritt ruft am Ende `renumber_dialog_page()` auf und vergibt
+    deterministische order_index-Werte auf der ganzen Dialog-Page
+    (dialog_slideshow zuerst, dann Text/Transcript, dann Rest). Die alte
+    1/1/1/2-Kollision (manuelles UPDATE-SQL nötig) gibt es nicht mehr.
+    Optionaler Kontroll-SELECT:
        SELECT id, content_type, order_index, title FROM lesson_content
        WHERE lesson_id=<X> AND page_number=<dialog_page_n> ORDER BY order_index, id;
-    Soll-Reihenfolge auf der Dialog-Page:
-       audio=1, dialog_slideshow=2, text(dialog)=3, text(verstaendnisfragen)=4
-    Korrigieren mit `UPDATE lesson_content SET order_index=N WHERE id=X;`.
-    (TODO Skill-Verbesserung: `audio`/`slideshow` sollten bestehende LCs
-    automatisch verschieben statt zu ueberschreiben.)
 
 [4c] python .claude/skills/generate-lesson/pipeline.py slideshow {lesson_id}
-    → PFLICHT nach audio. Baut pro Dialog-Zeile ein Slide mit:
+    → PFLICHT nach insert. Baut pro Dialog-Zeile ein Slide mit:
        - 1 MP3 (Google TTS, Gender-korrekte Voice aus SPEAKER_GENDER)
        - 1 PNG (**Nano Banana** / gemini-2.5-flash-image,
          STRIKT ohne Text/Kanji/Ziffern — Charakter-Schablone bleibt konstant

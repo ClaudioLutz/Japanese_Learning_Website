@@ -4,8 +4,6 @@ import json
 import base64
 from openai import OpenAI
 from flask import current_app
-from openai.types.chat import ChatCompletionMessageParam
-from openai.types.chat.completion_create_params import ResponseFormat
 from typing import Literal
 from google import genai
 from pathlib import Path
@@ -314,52 +312,52 @@ class AILessonContentGenerator:
         return {"image_prompt": content.strip() if content else None}
 
     def generate_lesson_images(self, lesson_content_list, lesson_topic, difficulty):
-        """Generate multiple images for lesson content using DALL-E."""
-        if not self.client:
-            return {"error": "OpenAI client is not initialized"}
-        
+        """Generate multiple images for lesson content using Nano Banana.
+
+        Speichert die Bilder lokal unter UPLOAD_FOLDER/generated/ und liefert
+        relative `image_url`-Pfade (passend zur /uploads/<path>-Route).
+        """
+        import hashlib
+
+        if not self.gemini_api_key:
+            return {"error": "Nano Banana not configured (GOOGLE_AI_API_KEY)"}
+
+        out_dir = os.path.join(current_app.config['UPLOAD_FOLDER'], 'generated')
+        os.makedirs(out_dir, exist_ok=True)
         generated_images = []
-        
+
         for content_item in lesson_content_list:
             try:
-                # Generate optimized prompt
                 prompt_result = self.generate_image_prompt(
-                    content_item.get('text', ''), 
-                    lesson_topic, 
-                    difficulty
+                    content_item.get('text', ''), lesson_topic, difficulty
                 )
-                
                 if 'error' in prompt_result:
                     current_app.logger.error(f"Failed to generate image prompt: {prompt_result['error']}")
                     continue
-                
-                # Generate image using DALL-E
                 image_prompt = prompt_result.get('image_prompt')
                 if not image_prompt:
                     current_app.logger.error("Generated image prompt is empty.")
                     continue
 
-                response = self.client.images.generate(
-                    model="dall-e-3",
-                    prompt=image_prompt,
-                    size="1024x1024",
-                    quality="standard",
-                    n=1
-                )
-                
-                if response.data:
-                    image_url = response.data[0].url
-                    generated_images.append({
-                        'content_id': content_item.get('id'),
-                        'image_url': image_url,
-                        'prompt': prompt_result.get('image_prompt'),
-                        'content_text': content_item.get('text', '')
-                    })
-                
+                res = self._nano_banana_image(image_prompt, aspect_ratio="16:9")
+                if "image_bytes" not in res:
+                    current_app.logger.error(f"Nano Banana failed: {res.get('error')}")
+                    continue
+
+                digest = hashlib.md5(image_prompt.encode()).hexdigest()[:8]
+                filename = f"content_{content_item.get('id', digest)}_{digest}.png"
+                with open(os.path.join(out_dir, filename), 'wb') as fh:
+                    fh.write(res["image_bytes"])
+                generated_images.append({
+                    'content_id': content_item.get('id'),
+                    'image_url': f"generated/{filename}",
+                    'prompt': image_prompt,
+                    'content_text': content_item.get('text', ''),
+                })
             except Exception as e:
                 current_app.logger.error(f"Failed to generate image for content: {e}")
                 continue
-        
+
         return {"generated_images": generated_images}
 
     def generate_single_image(self, prompt: str, size: Literal["1024x1024", "1536x1024", "1024x1536"] = "1024x1024", quality: Literal["standard", "hd"] = "standard"):
@@ -461,53 +459,28 @@ class AILessonContentGenerator:
     # OpenAI/DALL-E. Die OpenAI-Methoden oben bleiben nur fuer die Admin-AI-
     # Buttons (routes.py) bestehen. Listenpreis ~$0.039/Bild.
     def _nano_banana_image(self, prompt: str, aspect_ratio: str = "1:1"):
-        """Erzeugt ein Bild via Gemini 2.5 Flash Image (Nano Banana, REST).
+        """Erzeugt ein Bild via Gemini 2.5 Flash Image (Nano Banana).
 
         Returns ``{"image_bytes": bytes, "image": PIL.Image|None}`` oder
-        ``{"error": str}``. Nutzt denselben REST-Aufruf wie
-        ``scripts/generate_lesson_images.py`` (in Produktion erprobt).
+        ``{"error": str}``. Der eigentliche REST-Call lebt zentral in
+        ``nano_banana.generate_nano_banana_image_bytes`` (inkl. Retry) —
+        gemeinsam mit ``scripts/generate_lesson_images.py``.
         """
-        import urllib.error
-        import urllib.request
+        from nano_banana import NanoBananaError, generate_nano_banana_image_bytes
 
-        if not self.gemini_api_key:
-            return {"error": "GEMINI_API_KEY/GOOGLE_AI_API_KEY not set"}
-
-        body = json.dumps({
-            "contents": [{"parts": [{"text": prompt}]}],
-            "generationConfig": {
-                "responseModalities": ["IMAGE"],
-                "imageConfig": {"aspectRatio": aspect_ratio},
-            },
-        }).encode()
-        url = (
-            "https://generativelanguage.googleapis.com/v1beta/models/"
-            f"gemini-2.5-flash-image:generateContent?key={self.gemini_api_key}"
-        )
-        req = urllib.request.Request(
-            url, data=body, headers={"Content-Type": "application/json"}
-        )
         try:
-            with urllib.request.urlopen(req, timeout=180) as resp:
-                data = json.load(resp)
-        except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError) as e:
-            current_app.logger.error(f"Nano Banana request failed: {e}")
+            img_bytes = generate_nano_banana_image_bytes(
+                prompt, self.gemini_api_key, aspect_ratio=aspect_ratio
+            )
+        except NanoBananaError as e:
+            current_app.logger.error(f"Nano Banana image failed: {e}")
             return {"error": str(e)}
 
-        parts = (
-            data.get("candidates", [{}])[0]
-            .get("content", {})
-            .get("parts", [])
-        )
-        for part in parts:
-            if "inlineData" in part:
-                img_bytes = base64.b64decode(part["inlineData"]["data"])
-                try:
-                    image = Image.open(BytesIO(img_bytes))
-                except Exception:
-                    image = None
-                return {"image_bytes": img_bytes, "image": image}
-        return {"error": f"no image data (safety block?): {json.dumps(data)[:200]}"}
+        try:
+            image = Image.open(BytesIO(img_bytes))
+        except Exception:
+            image = None
+        return {"image_bytes": img_bytes, "image": image}
 
     def generate_single_image_nb(self, prompt: str, aspect_ratio: str = "1:1"):
         """Nano-Banana-Variante von ``generate_single_image`` (Thumbnail/Szene).
@@ -538,7 +511,11 @@ class AILessonContentGenerator:
         return result
 
     def generate_lesson_tile_background(self, lesson_title: str, lesson_description: str, difficulty_level: int = 1):
-        """Generate a background image specifically optimized for lesson tiles using OpenAI."""
+        """LEGACY/UNGENUTZT — kein Aufrufer im Code. Nutzt noch OpenAI; NICHT
+        fuer Lektionsbilder verwenden (Direktive: Nano Banana). Bei Bedarf auf
+        ``_nano_banana_image`` umstellen, sonst kann die Methode entfernt werden.
+
+        Generate a background image specifically optimized for lesson tiles using OpenAI."""
         if not self.openai_client:
             return {"error": "OpenAI client is not initialized"}
             
