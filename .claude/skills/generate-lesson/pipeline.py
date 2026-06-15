@@ -37,6 +37,15 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 SKILL_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(PROJECT_ROOT))
+
+# .env laden, damit Subcommands (images/text-audio/slideshow) die API-Keys + DATABASE_URL
+# sehen, BEVOR der App-Kontext erstellt wird (cmd_images prueft GOOGLE_AI_API_KEY direkt,
+# noch vor create_app — ohne dies SKIP trotz gesetztem Key in der .env).
+try:
+    from dotenv import load_dotenv
+    load_dotenv(PROJECT_ROOT / ".env")
+except Exception:
+    pass
 # os.chdir(PROJECT_ROOT) passiert in main() — beim Import KEIN Seiteneffekt
 # (sonst nicht test-importierbar; Tests laufen aus dem Repo-Root).
 
@@ -218,8 +227,16 @@ def validate_draft(draft: dict) -> list[str]:
                     )
                 # Markdown-Hierarchie-Pflicht (User-Direktive 2026-04-25):
                 # Skip Quiz-Intro (sehr kurz) und Dialog-Block (Speaker: ... Format).
-                is_dialog = "Tanaka:" in ctext or "Lisa:" in ctext or "Speaker:" in ctext.replace(":", ":")
-                sum(1 for line in ctext.split("\n") if line.strip() and ":" in line.split()[0] if line.strip())
+                # Heuristik: >=4 Zeilen, die mit "Name:" beginnen, ist ein Dialog.
+                speaker_lines = sum(
+                    1 for line in ctext.split("\n")
+                    if line.strip() and ":" in line.split()[0]
+                )
+                # Dialog erkannt an bekannten Namen ODER >=4 Sprecher-Zeilen (beliebige Namen).
+                is_dialog = (
+                    "Tanaka:" in ctext or "Lisa:" in ctext or "Speaker:" in ctext
+                    or speaker_lines >= 4
+                )
                 # Heuristik: wenn >=4 Sprecher-Zeilen, ist es ein Dialog → keine Heading-Pflicht
                 if not is_dialog and len(ctext) >= 200:
                     has_heading = bool(MD_HEADING_RE.search(ctext))

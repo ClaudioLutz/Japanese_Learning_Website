@@ -92,6 +92,8 @@ SPEAKER_GENDER = {
     "Hiroshi": "male",
     "Ueno": "female",      # Ueno-sensei (default female-leaning)
     "Weber": "female",     # Nachname allein kein Indikator — konservativ female
+    "Mei": "female",
+    "Mori": "male",        # Dr. Mori (Arzt, Koerper-/Gesundheits-Lektion)
     # Katakana-Schreibweisen (von Claude in Dialogen genutzt)
     "リサ": "female",       # Lisa
     "ハルト": "male",       # Haruto
