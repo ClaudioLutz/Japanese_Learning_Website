@@ -742,6 +742,20 @@ CSS-Grid-Stacking: `slideshow-stage` auf `display:grid`, jede `slideshow-slide` 
 
 5. **pipeline.py nutzt `datetime.utcnow()`** — Python 3.12 DeprecationWarning. Niederpriorisierter Lint-Fix. → Nur Info, keine neue Regel.
 
+## 2026-06-15 — 6 N5-Vokabel-Lektionen (Adjektive/Verben/Wetter/Körper/Wohnen) — Prod 201–206
+
+### Erfolge
+- **Workflow-Fan-out** (6 Draft-Agenten + je 3 adversariale Reviewer) lief in der Vordergrund-Session voll durch (24 Agenten, 3,23 M Tokens, ~14 Min). Reviewer fanden echte Befunde (早い 'früh'≠'schnell'-Konflation, あかるい im Quiz aber nicht als Vokabel gelehrt, Nicht-N5-Kanji 好/雪/風/空 im Prosa-`content_text`).
+- **6 Fix-Agenten parallel** arbeiteten Befunde ab + verifizierten selbst per `validate` (Ziel: nur noch `thumbnail_url` offen).
+- Prod-Deploy via `export`/`import` + Asset-tar: **Coverage 59,2 % → 64,1 %** (+34 eindeutige N5-Wörter), Kanji 100 %.
+
+### Probleme / Erkenntnisse
+- **Dev/Prod-Lesson-ID-Kollision (WICHTIG):** Asset-Pfade tragen die Lesson-ID (`lessons/text_audio/lesson_<id>`, `thumbnail_lesson_<id>.png`). Dev-IDs 195–200 kollidierten mit Prod-IDs 195–200 (Vorgänger-Batch) → blindes Extrahieren haette Prod-Assets ueberschrieben. **Regel:** vor scp Kollision pruefen; bei Ueberschneidung Asset-Pfade auf Offset remappen (`lesson_<id>`→`lesson_9<id>`) in JSON + Dateinamen, `cp -n` als Schutz. Der Offset entkoppelt Storage-Pfad von der neuen Prod-Lesson-ID (media_url/Slide-Pfade sind verbatim gespeichert).
+- **Windows-`tar` verstuemmelt Nicht-ASCII-Dateinamen** in der `-T`-Liste (ます/Umlaute → nur 2/6 Thumbnails im Archiv). **Regel:** Thumbnails vor Deploy auf ASCII-Namen umbenennen (`thumbnail_lesson_<id>.png`).
+- **`pipeline.py` lud `.env` nicht** vor dem `images`-SKIP-Check (`cmd_images` prueft `GOOGLE_AI_API_KEY` direkt, vor `create_app`) → `load_dotenv()` beim Import ergaenzt.
+- **Validator-Dialog-Heuristik** erkannte Dialoge nur an Tanaka/Lisa/Speaker → eigener Cast (Mei/Ken) loeste faelschlich die Markdown-Hierarchie-Pflicht aus. Fix: Erkennung an `>=4` Sprecherzeilen.
+- **Gemini-2.5-Pro-TTS-Quota (2500/Tag) abends erschoepft** → Block-Audio-JA fiel auf Chirp zurueck. Re-Render auf Gemini-Leda nach Reset (~09:00 CET) + Asset-scp ausstehend.
+
 ### Aktuelle Regeln (kumulativ, wichtigste zuerst)
 
 1. **Anfänger-First (Claudio dogfoodet)** + **Mayuko-Fachreview** (Lehrerin gibt JP-Inhalt frei) + **JLPT-Leitprinzip** (Niveau-Disziplin, Vollständigkeit, offizielle Listen).
