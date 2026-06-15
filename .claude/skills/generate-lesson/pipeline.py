@@ -13,6 +13,8 @@ Subcommands:
   slideshow <lesson_id>  # Pro-Zeile Slideshow (TTS + Nano Banana)
   coverage [level]       # JLPT-Coverage-Dashboard: DB vs. canonical list (default: 5)
   commit   <lesson_id>   # Git-add/commit/push (nur Metadaten, kein App-Code)
+  export <lesson_id> <out.json>  # Lektion (komplett) aus DB ins Migrations-JSON
+  import <in.json>       # Migrations-JSON in die (Ziel-)DB importieren (Dev->Prod)
 
 JLPT-Leitprinzip (Mayuko-Direktive 2026-04-25, siehe improve-jpl §1.5):
   Eine N5-Lektion enthaelt NUR N5-Inhalte. Vokabel-Wort nicht in canonical
@@ -34,8 +36,9 @@ from pathlib import Path
 # --- Projekt-Setup ---
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 SKILL_DIR = Path(__file__).resolve().parent
-os.chdir(PROJECT_ROOT)
 sys.path.insert(0, str(PROJECT_ROOT))
+# os.chdir(PROJECT_ROOT) passiert in main() — beim Import KEIN Seiteneffekt
+# (sonst nicht test-importierbar; Tests laufen aus dem Repo-Root).
 
 
 # ========================================================================
@@ -822,6 +825,246 @@ def _get_or_create_grammar(db, Grammar, data: dict) -> int:
     return g.id
 
 
+# ========================================================================
+# EXPORT / IMPORT — Dev->Prod Lektions-Migration (siehe SKILL.md §11)
+# ========================================================================
+# Vollstaendige Migration EINER Lektion zwischen DBs (z.B. Windows-Dev ->
+# hp-ubuntu-Prod). Erfasst ALLE LessonContent-Typen (inkl. generierter
+# audio/slideshow/image mit content_text/media_url) + referenzierte
+# Vocab/Kanji/Kana/Grammar (dedupt) + Quiz. NICHT nur die Draft-Typen, die
+# insert_draft kennt. Beide Funktionen laufen IN einem App-Kontext.
+
+_EXPORT_SCHEMA = "jpl-lesson-export/1"
+_REF_FIELDS = {
+    "vocabulary": ["word", "reading", "romaji", "meaning", "meaning_de", "jlpt_level",
+                   "example_sentence_japanese", "example_sentence_english", "image_url"],
+    "kanji": ["character", "meaning", "onyomi", "kunyomi", "jlpt_level", "stroke_count",
+              "radical", "stroke_order_info", "image_url"],
+    "kana": ["character", "romanization", "type", "stroke_order_info", "example_sound_url"],
+    "grammar": ["title", "explanation", "structure", "romaji", "jlpt_level",
+                "example_sentences", "tts_example_jp"],
+}
+
+
+def _jlpt_from_difficulty(diff: int | None) -> int:
+    return 5 if (diff or 1) <= 2 else 4
+
+
+def export_lesson(lesson_id: int) -> dict:
+    """Liest eine komplette Lektion aus der DB ins Migrations-JSON.
+
+    Muss in einem App-Kontext laufen. Wirft ValueError, wenn die Lektion fehlt.
+    """
+    from app import db
+    from app.models import (
+        Lesson, LessonPage, LessonContent, LessonCategory, Vocabulary, Grammar,
+        Kana, Kanji, QuizQuestion, QuizOption,
+    )
+
+    lesson = db.session.get(Lesson, lesson_id)
+    if not lesson:
+        raise ValueError(f"Lesson {lesson_id} nicht gefunden")
+
+    cat_slug = None
+    if lesson.category_id:
+        cat = db.session.get(LessonCategory, lesson.category_id)
+        cat_slug = cat.slug if cat else None
+
+    ref_models = {"vocabulary": Vocabulary, "kanji": Kanji, "kana": Kana, "grammar": Grammar}
+
+    pages_out = []
+    pages = (db.session.query(LessonPage)
+             .filter_by(lesson_id=lesson_id).order_by(LessonPage.page_number).all())
+    for page in pages:
+        contents_out = []
+        lcs = (db.session.query(LessonContent)
+               .filter_by(lesson_id=lesson_id, page_number=page.page_number)
+               .order_by(LessonContent.order_index, LessonContent.id).all())
+        for lc in lcs:
+            item = {"content_type": lc.content_type, "is_interactive": bool(lc.is_interactive)}
+            if lc.content_type in ref_models and lc.content_id:
+                row = db.session.get(ref_models[lc.content_type], lc.content_id)
+                item["data"] = (
+                    {f: getattr(row, f, None) for f in _REF_FIELDS[lc.content_type]} if row else {}
+                )
+            else:
+                item["data"] = {
+                    "title": lc.title,
+                    "content_text": lc.content_text,
+                    "media_url": lc.media_url,
+                    "file_path": lc.file_path,
+                    "file_type": lc.file_type,
+                    "file_size": lc.file_size,
+                    "ai_generation_details": lc.ai_generation_details,
+                }
+            qs = (db.session.query(QuizQuestion)
+                  .filter_by(lesson_content_id=lc.id).order_by(QuizQuestion.order_index).all())
+            if qs:
+                item["quiz_questions"] = []
+                for q in qs:
+                    opts = (db.session.query(QuizOption)
+                            .filter_by(question_id=q.id).order_by(QuizOption.order_index).all())
+                    item["quiz_questions"].append({
+                        "question_type": q.question_type,
+                        "question_text": q.question_text,
+                        "explanation": q.explanation,
+                        "hint": q.hint,
+                        "difficulty_level": q.difficulty_level,
+                        "points": q.points,
+                        "options": [
+                            {"option_text": o.option_text, "is_correct": bool(o.is_correct),
+                             "feedback": o.feedback}
+                            for o in opts
+                        ],
+                    })
+            contents_out.append(item)
+        pages_out.append({
+            "title": page.title, "description": page.description,
+            "page_type": page.page_type, "contents": contents_out,
+        })
+
+    return {
+        "schema": _EXPORT_SCHEMA,
+        "title": lesson.title,
+        "description": lesson.description,
+        "jlpt_level": _jlpt_from_difficulty(lesson.difficulty_level),
+        "difficulty_level": lesson.difficulty_level,
+        "thumbnail_url": lesson.thumbnail_url,
+        "allow_guest_access": bool(lesson.allow_guest_access),
+        "instruction_language": lesson.instruction_language,
+        "lesson_type": lesson.lesson_type,
+        "category_slug": cat_slug,
+        "pages": pages_out,
+    }
+
+
+def import_lesson(data: dict) -> int:
+    """Schreibt eine via export_lesson() exportierte Lektion in die (Ziel-)DB.
+
+    Dedupt Vocab/Kanji/Kana/Grammar via _get_or_create_*; generierte
+    Content-Typen (text/audio/image/dialog_slideshow) werden mit
+    content_text/media_url/file_* 1:1 uebernommen. Lektion wird mit
+    is_published=False angelegt. Muss in einem App-Kontext laufen.
+    """
+    from app import db
+    from app.models import (
+        Lesson, LessonPage, LessonContent, LessonCategory, Vocabulary, Grammar,
+        Kana, Kanji, QuizQuestion, QuizOption,
+    )
+
+    creators = {
+        "kana": (Kana, _get_or_create_kana),
+        "vocabulary": (Vocabulary, _get_or_create_vocab),
+        "kanji": (Kanji, _get_or_create_kanji),
+        "grammar": (Grammar, _get_or_create_grammar),
+    }
+
+    category_id = None
+    if data.get("category_slug"):
+        cat = db.session.query(LessonCategory).filter_by(slug=data["category_slug"]).first()
+        category_id = cat.id if cat else None
+
+    difficulty = data.get("difficulty_level") or (1 if data.get("jlpt_level") == 5 else 3)
+    lesson = Lesson(
+        title=data["title"],
+        description=data.get("description"),
+        lesson_type=data.get("lesson_type", "free"),
+        difficulty_level=difficulty,
+        is_published=False,
+        allow_guest_access=bool(data.get("allow_guest_access", False)),
+        instruction_language=data.get("instruction_language", "german"),
+        thumbnail_url=data.get("thumbnail_url"),
+        category_id=category_id,
+        price=0.0,
+        is_purchasable=False,
+    )
+    db.session.add(lesson)
+    db.session.flush()
+
+    for page_num, page in enumerate(data.get("pages", []), start=1):
+        lp = LessonPage(
+            lesson_id=lesson.id, page_number=page_num,
+            title=page.get("title"), description=page.get("description"),
+            page_type=page.get("page_type", "normal"),
+        )
+        db.session.add(lp)
+        db.session.flush()
+
+        for order_idx, item in enumerate(page.get("contents", []), start=1):
+            ct = item["content_type"]
+            d = item.get("data", {}) or {}
+            is_interactive = bool(item.get("is_interactive") or item.get("quiz_questions"))
+            if ct in creators:
+                Model, creator = creators[ct]
+                lc = LessonContent(
+                    lesson_id=lesson.id, content_type=ct,
+                    content_id=creator(db, Model, d),
+                    order_index=order_idx, page_number=page_num,
+                    is_interactive=is_interactive, quiz_type="standard",
+                    generated_by_ai=True,
+                    ai_generation_details={"generator": "import_lesson"},
+                )
+            else:
+                lc = LessonContent(
+                    lesson_id=lesson.id, content_type=ct, content_id=None,
+                    title=d.get("title"), content_text=d.get("content_text"),
+                    media_url=d.get("media_url"), file_path=d.get("file_path"),
+                    file_type=d.get("file_type"), file_size=d.get("file_size"),
+                    order_index=order_idx, page_number=page_num,
+                    is_interactive=is_interactive, quiz_type="standard",
+                    generated_by_ai=True,
+                    ai_generation_details=d.get("ai_generation_details") or {"generator": "import_lesson"},
+                )
+            db.session.add(lc)
+            db.session.flush()
+
+            for q_idx, q in enumerate(item.get("quiz_questions", []), start=1):
+                qq = QuizQuestion(
+                    lesson_content_id=lc.id,
+                    question_type=q["question_type"],
+                    question_text=q["question_text"],
+                    explanation=q.get("explanation"),
+                    hint=q.get("hint"),
+                    difficulty_level=q.get("difficulty_level", 1),
+                    points=q.get("points", 1),
+                    order_index=q_idx,
+                )
+                db.session.add(qq)
+                db.session.flush()
+                for o_idx, opt in enumerate(q.get("options", []), start=1):
+                    db.session.add(QuizOption(
+                        question_id=qq.id,
+                        option_text=opt["option_text"],
+                        is_correct=bool(opt.get("is_correct", False)),
+                        order_index=o_idx,
+                        feedback=opt.get("feedback"),
+                    ))
+
+    db.session.commit()
+    return lesson.id
+
+
+def cmd_export(lesson_id: int, out_path: Path) -> None:
+    from app import create_app
+    app = create_app()
+    with app.app_context():
+        data = export_lesson(lesson_id)
+    out_path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"[OK] Lesson {lesson_id} exportiert -> {out_path} ({len(data['pages'])} Pages)")
+
+
+def cmd_import(json_path: Path) -> int:
+    from app import create_app
+    app = create_app()
+    data = json.loads(json_path.read_text(encoding="utf-8"))
+    if data.get("schema") != _EXPORT_SCHEMA:
+        print(f"[WARN] unerwartetes schema={data.get('schema')!r} (erwartet {_EXPORT_SCHEMA})")
+    with app.app_context():
+        new_id = import_lesson(data)
+    print(f"[OK] Lesson importiert -> id={new_id} (is_published=False, vor Publish verifizieren)")
+    return new_id
+
+
 def insert_draft(draft_path: Path) -> int:
     """Transaktionaler INSERT einer Lektion. Gibt lesson_id zurueck."""
     errors = validate_draft(json.loads(draft_path.read_text(encoding="utf-8")))
@@ -1120,6 +1363,7 @@ def generate_dialog_slideshow(lesson_id: int) -> int:
 # ========================================================================
 
 def main():
+    os.chdir(PROJECT_ROOT)
     parser = argparse.ArgumentParser(description="generate-lesson pipeline")
     sub = parser.add_subparsers(dest="cmd", required=True)
 
@@ -1151,6 +1395,13 @@ def main():
     p_cmt = sub.add_parser("commit", help="Git-commit Skill-Metadata")
     p_cmt.add_argument("lesson_id", type=int)
 
+    p_exp = sub.add_parser("export", help="Lektion (komplett) aus DB ins Migrations-JSON")
+    p_exp.add_argument("lesson_id", type=int)
+    p_exp.add_argument("out", type=Path)
+
+    p_imp = sub.add_parser("import", help="Migrations-JSON in die (Ziel-)DB importieren")
+    p_imp.add_argument("json_path", type=Path)
+
     args = parser.parse_args()
 
     if args.cmd == "status":
@@ -1176,6 +1427,10 @@ def main():
         jlpt_coverage(args.level, show_missing=args.show_missing)
     elif args.cmd == "commit":
         git_commit(args.lesson_id)
+    elif args.cmd == "export":
+        cmd_export(args.lesson_id, args.out)
+    elif args.cmd == "import":
+        cmd_import(args.json_path)
 
 
 if __name__ == "__main__":

@@ -775,8 +775,16 @@ Dann ist die Lektion nach `insert` + `UPDATE lesson SET is_published=true` **sof
 
 ### 11b. Auf der Windows-Dev-Maschine generiert
 Dann sind Lektion + Medien nur in der Dev-DB. Um sie produktiv zu machen, müssen **Content UND Assets** auf hp-ubuntu:
-- **Content:** bewährtes Muster „Claude-JSON + Applier-Script" (`scripts/apply_*.py`: DRY-RUN → `--apply`, mit Backup), das auf hp-ubuntu gegen die Prod-DB läuft. Die `.env` dort zeigt auf den Service-Host `db` → vom Host aus mit `DATABASE_URL=postgresql://app_user:…@localhost:5432/japanese_learning` übersteuern. **Es gibt KEIN generisches `export_lessons`/`migrate_import_lessons`** — nicht erfinden; entweder direkt auf hp-ubuntu generieren oder das Apply-Muster nutzen.
-- **Assets:** die erzeugten Bilder/Audios (`app/static/uploads/…`) per scp/rsync ins gleichnamige Verzeichnis des hp-ubuntu-uploads-Volumes bringen. GCS (`jpl-website-assets`) ist NUR Offsite-Backup, kein Delivery-Pfad.
+- **Content (bevorzugt seit 2026-06-15): `export`/`import`-Befehle.** Auf Dev exportieren, JSON committen/scp'en, auf hp-ubuntu gegen die Prod-DB importieren:
+  ```bash
+  # Dev (Windows): komplette Lektion -> Migrations-JSON (alle Content-Typen + Quiz + Refs)
+  python .claude/skills/generate-lesson/pipeline.py export <lesson_id> lesson_<id>.json
+  # hp-ubuntu (gegen Prod-DB; .env zeigt auf Service-Host `db`, daher Override):
+  DATABASE_URL=postgresql://app_user:…@localhost:5432/japanese_learning \
+    python .claude/skills/generate-lesson/pipeline.py import lesson_<id>.json
+  ```
+  Import legt die Lektion mit `is_published=False` an (vor Publish verifizieren), dedupt Vokabeln/Kanji/Kana/Grammatik per UNIQUE und übernimmt generierte audio/slideshow/image-Items 1:1. Alternativ das ältere „Claude-JSON + apply_*.py"-Muster.
+- **Assets:** die erzeugten Bilder/Audios (`app/static/uploads/…`) per scp/rsync ins gleichnamige Verzeichnis des hp-ubuntu-uploads-Volumes bringen (die `export`/`import`-Befehle übertragen nur die DB-Pfade, nicht die Dateien). GCS (`jpl-website-assets`) ist NUR Offsite-Backup, kein Delivery-Pfad.
 
 ### 11c. Code-Deploy (nur bei App-Code-Änderungen)
 Nur nötig, wenn seit dem letzten Deploy Templates/CSS/JS/Python gepusht wurden:
