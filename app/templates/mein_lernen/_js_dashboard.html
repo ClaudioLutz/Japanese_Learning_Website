@@ -430,15 +430,11 @@ function dashboard(){
     },
 
     init(){
-      this.heatmap=Array.from({length:365},(_,i)=>{
-        const dow=i%7;
-        let base=(dow===0)? (Math.random()*9+4) : (dow===6? Math.random()*3 : Math.random()*9);
-        if(Math.random()<0.16) base=0;
-        if(i>335) base=Math.random()*14+3;
-        return Math.round(base);
-      });
+      this.heatmap=[];                 // echte Heatmap kommt aus dem Stats-Bundle
       this.computeReadiness();
       this.recalc();
+      // Glyph-Grid der initial offenen Saeule sofort laden (default: kanji)
+      if(this.openPillar==='kana'||this.openPillar==='kanji') this.loadGlyphs(this.openPillar);
       this.$nextTick(()=>{
         const rn=this.$refs.readinessNum;
         if(rn){rn.dataset.suffix='%'; this.countUp(rn,this.readiness,reduceMotion()?0:900);}

@@ -28,7 +28,7 @@
 
 <section class="card today reveal" aria-labelledby="today-h">
   <span class="eyebrow"><i class="fas fa-sun" aria-hidden="true"></i> Heute · dein ~<span x-text="planMinutes"></span>-Minuten-Plan</span>
-  <h2 id="today-h" x-text="planDone < plan.length ? 'Drei Schritte, dann ist Schluss.' : 'Tagesziel erreicht — schön.'"></h2>
+  <h2 id="today-h" x-text="planDone >= plan.length ? 'Tagesziel erreicht — schön.' : (plan.length===1 ? 'Ein Schritt, dann ist Schluss.' : plan.length + ' Schritte, dann ist Schluss.')"></h2>
   <div class="plan-meta">Adaptiv aus deinen fälligen Karten, deinem Kurs und deinen Schwächen zusammengestellt.</div>
 
   <ul class="plan-steps">
