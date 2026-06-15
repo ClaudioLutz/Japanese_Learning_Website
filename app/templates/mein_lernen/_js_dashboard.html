@@ -181,7 +181,27 @@ function dashboard(){
       {k:'schwaechen',label:'Schwächen'},{k:'reife',label:'Reife'},{k:'tempo',label:'Tempo'},
       {k:'genauigkeit',label:'Genauigkeit'},{k:'verlauf',label:'Verlauf'},{k:'beherrschung',label:'Beherrschung'},
     ],
-    toggleStats(){this.statsOpen=!this.statsOpen; if(this.statsOpen) this.renderTab(this.tab);},
+    statsLoaded:false, statsLoading:false,
+    toggleStats(){this.statsOpen=!this.statsOpen; if(this.statsOpen) this.loadStats();},
+    loadStats(){
+      if(this.statsLoaded){ this.renderTab(this.tab); return; }
+      if(this.statsLoading) return;
+      this.statsLoading=true;
+      fetch('/api/dashboard/stats',{headers:{'Accept':'application/json'}})
+        .then(r=>r.ok?r.json():null)
+        .then(d=>{
+          if(d){
+            this.kpi=d.kpi; this.reviewsByWeek=d.reviewsByWeek; this.accuracyByWeek=d.accuracyByWeek;
+            this.reviewsByWeekday=d.reviewsByWeekday; this.accByStage=d.accByStage; this.retention=d.retention;
+            this.accBySkill=d.accBySkill; this.maturity=d.maturity; this.heatmap=d.heatmap; this.cumulative=d.cumulative;
+            this.weakKana=d.weakKana; this.leeches=d.leeches; this.confusionPairs=d.confusionPairs;
+            this.kanaRows=d.kanaRows; this.jlptDetail=d.jlptDetail; this.milestones=d.milestones; this.records=d.records;
+            this.statsLoaded=true;
+          }
+        })
+        .catch(()=>{})
+        .finally(()=>{ this.statsLoading=false; this.renderTab(this.tab); });
+    },
     scrollStats(){this.$nextTick(()=>this.$refs.statsCard&&this.$refs.statsCard.scrollIntoView({behavior:reduceMotion()?'auto':'smooth',block:'start'}));},
     setTab(k){this.tab=k; this.renderTab(k); this.$nextTick(()=>{const el=document.getElementById('ml-tab-'+k); el&&el.focus();});},
     onTabKey(e){
@@ -369,7 +389,7 @@ function dashboard(){
       if(ctx.offsetParent===null && !_tmpRev) return;
       const kincha=cssVar('--kincha'),ink=cssVar('--ink-300'),ai=cssVar('--ai');
       const bars=this.reviewsByWeek,acc=this.accuracyByWeek;
-      if(_tmpRev){_tmpRev.update();return;}
+      if(_tmpRev){_tmpRev.data.datasets[0].data=bars;_tmpRev.data.datasets[1].data=acc;_tmpRev.update();return;}
       _tmpRev=new Chart(ctx,{type:'bar',
         data:{labels:['KW18','KW19','KW20','KW21','KW22','KW23','KW24','KW25'],datasets:[
           {label:'Reviews/Woche',data:bars,backgroundColor:bars.map((_,i)=>i===bars.length-1?kincha:ink),borderRadius:3,order:2,yAxisID:'y'},
@@ -387,7 +407,7 @@ function dashboard(){
       if(ctx.offsetParent===null && !_tmpWd) return;
       const kincha=cssVar('--kincha'),ink=cssVar('--ink-300');
       const d=this.reviewsByWeekday,mx=Math.max(...d);
-      if(_tmpWd){_tmpWd.update();return;}
+      if(_tmpWd){_tmpWd.data.datasets[0].data=d;_tmpWd.data.datasets[0].backgroundColor=d.map(v=>v===mx?kincha:ink);_tmpWd.update();return;}
       _tmpWd=new Chart(ctx,{type:'bar',
         data:{labels:['Mo','Di','Mi','Do','Fr','Sa','So'],datasets:[{data:d,backgroundColor:d.map(v=>v===mx?kincha:ink),borderRadius:3}]},
         options:{responsive:true,maintainAspectRatio:false,
@@ -400,7 +420,7 @@ function dashboard(){
       if(ctx.offsetParent===null && !_accSk) return;
       const col=v=>v>=80?'#7A9033':v>=60?'#C7802D':'#D14B3D';
       const labels=this.accBySkill.map(s=>s.k),data=this.accBySkill.map(s=>s.v);
-      if(_accSk){_accSk.update();return;}
+      if(_accSk){_accSk.data.labels=labels;_accSk.data.datasets[0].data=data;_accSk.data.datasets[0].backgroundColor=data.map(col);_accSk.update();return;}
       _accSk=new Chart(ctx,{type:'bar',
         data:{labels,datasets:[{data,backgroundColor:data.map(col),borderRadius:3}]},
         options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
@@ -411,7 +431,7 @@ function dashboard(){
     _renderAccStage(){
       const ctx=document.getElementById('mlAccByStage'); if(!ctx||!window.Chart) return;
       if(ctx.offsetParent===null && !_accSt) return;
-      if(_accSt){_accSt.update();return;}
+      if(_accSt){_accSt.data.datasets[0].data=this.accByStage;_accSt.update();return;}
       _accSt=new Chart(ctx,{type:'bar',
         data:{labels:this.stageLabels,datasets:[{data:this.accByStage,backgroundColor:this.stageColors,borderRadius:3}]},
         options:{responsive:true,maintainAspectRatio:false,

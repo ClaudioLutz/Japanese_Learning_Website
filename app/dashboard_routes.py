@@ -78,3 +78,14 @@ def api_compass_glyphs():
         return jsonify({'data': [], 'count': 0})
     data = dashboard_service.compass_glyphs(current_user.id, content_type)
     return jsonify({'data': data, 'count': len(data)})
+
+
+@dashboard_bp.route('/api/dashboard/stats')
+@login_required
+def api_stats_bundle():
+    """Alle Statistik-Tab-Daten in einem Lazy-Fetch (Disclosure „Statistiken ansehen").
+
+    Bündelt Tempo/Genauigkeit/Reife/Verlauf/Schwächen/Beherrschung in einem
+    Roundtrip — Form siehe docs/dashboard_contract.md.
+    """
+    return jsonify(dashboard_service.stats_bundle(current_user.id))
