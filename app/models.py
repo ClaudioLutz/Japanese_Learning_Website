@@ -1545,6 +1545,10 @@ class ReviewLog(db.Model):
     # Denormalisiert fuer Statistiken
     scheduled_days = db.Column(db.Integer)
     elapsed_days = db.Column(db.Integer)
+    # SRS-Stufe (0..9 aus get_card_stage) VOR diesem Review — fuer „Genauigkeit
+    # nach Reife"-Statistik (/api/dashboard/acc-by-stage). Nullable: Altdaten vor
+    # Einfuehrung haben keinen Wert, fuellt sich ab Einfuehrung pro Review.
+    stage_at_review = db.Column(db.Integer, nullable=True)
 
     # Beziehungen
     user = db.relationship('User', backref=db.backref('review_logs', lazy='dynamic'))

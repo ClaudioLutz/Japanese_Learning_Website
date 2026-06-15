@@ -187,6 +187,7 @@ def rate_card(user_id, content_id, rating_int, time_taken_ms=None):
         fsrs_review_log=fsrs_log.to_json(),
         scheduled_days=scheduled_days,
         elapsed_days=elapsed_days,
+        stage_at_review=old_stage_idx,
     )
     db.session.add(log_entry)
     db.session.commit()
