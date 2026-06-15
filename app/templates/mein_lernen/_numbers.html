@@ -1,0 +1,13 @@
+{# ░░ Mein Japanisch in Zahlen ░░ #}
+<div class="group-label">Mein Japanisch</div>
+<section class="card numbers reveal">
+  <span class="eyebrow"><span class="jp">塵も積もれば山となる</span> — Staubkörner werden zum Berg</span>
+  <div class="big">
+    <button class="num countup" data-to="47" @click="openPillar='kanji';scrollTop()"><span class="n">0</span><small>Kanji</small><span class="act">auffrischen →</span></button>
+    <button class="num countup" data-to="210" @click="openPillar='vocab';scrollTop()"><span class="n">0</span><small>Wörter</small><span class="act">nach Thema ansehen →</span></button>
+    <button class="num countup" data-to="18" @click="openPillar='grammar';scrollTop()"><span class="n">0</span><small>Grammatik</small><span class="act">Muster üben →</span></button>
+    <button class="num countup" data-to="200" @click="openPillar='kana';scrollTop()"><span class="n">0</span><small>Kana</small><span class="act">komplett ✓</span></button>
+  </div>
+  <p class="can">Damit liest du schon <strong>eine einfache Speisekarte</strong> und <strong>Bahnhofsschilder</strong> — und stellst dich auf <span class="jp">日本語</span> vor.</p>
+  <button class="cta-ghost" @click="toast('Würde dein Sumi-Wrapped öffnen — dein Quartals-Rückblick')"><i class="fas fa-scroll" aria-hidden="true"></i> Mein Sumi-Wrapped (Quartal)</button>
+</section>

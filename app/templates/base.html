@@ -199,6 +199,10 @@
                   <strong>{{ current_user.username }}</strong>
                   <small>{{ current_user.level_title }}</small>
                 </div>
+                <a href="{{ url_for('dashboard.index') }}" class="topnav-dd-item{% if request.endpoint == 'dashboard.index' %} is-active{% endif %}"
+                   {% if request.endpoint == 'dashboard.index' %}aria-current="page"{% endif %}>
+                  <i class="fas fa-compass" aria-hidden="true"></i> Mein Lernen
+                </a>
                 <a href="{{ url_for('routes.user_profile') }}" class="topnav-dd-item">
                   <i class="fas fa-user-circle" aria-hidden="true"></i> Profil
                 </a>

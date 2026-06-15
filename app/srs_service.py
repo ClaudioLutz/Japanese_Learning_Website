@@ -12,8 +12,10 @@ from app.models import (
     LessonContent, ReviewLog, User, UserSRSSettings, Vocabulary,
 )
 from app.gamification_service import (
+    MATURITY_BUCKETS,
     calculate_xp,
     get_card_stage,
+    maturity_bucket,
     maybe_grant_random_xp_boost,
     update_daily_aggregate,
 )
@@ -638,19 +640,10 @@ def get_maturity_distribution(user_id):
         if s.status == 'suspended':
             distribution['Suspendiert'] += 1
             continue
-        if s.status in ('learning', 'relearning'):
-            distribution['Lernen'] += 1
-            continue
-
         stage_idx, _, _ = get_card_stage(s.fsrs_card_state)
-        if stage_idx <= 0:
-            distribution['Neu'] += 1
-        elif stage_idx <= 4:
-            distribution['Jung'] += 1
-        elif stage_idx <= 6:
-            distribution['Reif'] += 1
-        else:
-            distribution['Gemeistert'] += 1
+        bucket = maturity_bucket(s.status, stage_idx)
+        # maturity_bucket() liefert hier nie None (suspended oben abgefangen).
+        distribution[MATURITY_BUCKETS[bucket]] += 1
 
     return distribution
 

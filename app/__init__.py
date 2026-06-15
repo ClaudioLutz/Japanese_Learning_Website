@@ -265,6 +265,10 @@ def create_app():
     from app.srs_routes import srs_bp
     app.register_blueprint(srs_bp)
 
+    # Register learner dashboard ("Mein Lernen") blueprint
+    from app.dashboard_routes import dashboard_bp
+    app.register_blueprint(dashboard_bp)
+
     # Register debug routes blueprint for troubleshooting
     from app.debug_routes import debug_bp
     app.register_blueprint(debug_bp)

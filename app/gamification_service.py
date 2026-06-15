@@ -164,6 +164,40 @@ def get_card_stage(fsrs_card_json):
     return (0, 'Neu', '#6c757d')
 
 
+# ── 5-Bucket-Reife-Skala (Lernenden-Dashboard / Kompass) ─────
+# EINZIGE Quelle fuer die Einteilung [Neu, Lernen, Jung, Reif, Gemeistert].
+# Sowohl der N5-Kompass-Ring als auch der Reife-Tab des Dashboards leiten ihre
+# Verteilung hieraus ab — so koennen Ring-Mathe und Reife-Tab nie auseinander
+# driften (vgl. srs_service.get_maturity_distribution).
+MATURITY_BUCKETS = ('Neu', 'Lernen', 'Jung', 'Reif', 'Gemeistert')
+
+
+def maturity_bucket(status, stage_idx):
+    """Kanonisches Mapping (Karten-Status, FSRS-stage_idx) -> 5-Bucket-Index.
+
+    Args:
+        status: CardReviewState.status ('learning'/'relearning'/'review'/
+            'suspended' etc.)
+        stage_idx: Stufe aus get_card_stage (0=Neu .. 9=Gemeistert)
+
+    Returns:
+        int 0..4 (0=Neu, 1=Lernen, 2=Jung, 3=Reif, 4=Gemeistert),
+        oder None falls die Karte suspendiert ist (der Aufrufer entscheidet,
+        ob suspendierte Karten separat gezaehlt oder ausgeschlossen werden).
+    """
+    if status == 'suspended':
+        return None
+    if status in ('learning', 'relearning'):
+        return 1  # Lernen
+    if stage_idx <= 0:
+        return 0  # Neu
+    if stage_idx <= 4:
+        return 2  # Jung
+    if stage_idx <= 6:
+        return 3  # Reif
+    return 4  # Gemeistert
+
+
 def update_daily_aggregate(user_id, rating_int, time_taken_ms, xp_earned,
                            is_new=False, leveled_up=False, leveled_down=False):
     """Aktualisiert die taeglich aggregierten Review-Statistiken (inkrementell)."""

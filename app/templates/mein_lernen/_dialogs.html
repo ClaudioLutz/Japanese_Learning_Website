@@ -1,0 +1,73 @@
+{# ░░ Item-Dialog + Einstellungs-Dialog + Toast + Feier-Stempel ░░
+   Eigene Klassen-Praefixe (.mein-lernen-modal/-toast/-stamp), um Kollision
+   mit Bootstrap (.modal/.toast/.modal-backdrop) zu vermeiden. Bleibt INNERHALB
+   des x-data-Wrappers, damit die Alpine-Bindings (item/settingsOpen/…) greifen.
+   position:fixed loest die Elemente visuell aus dem Wrapper. #}
+
+{# Item-Dialog (echtes role=dialog mit Fokus-Falle) #}
+<template x-if="item">
+  <div class="mein-lernen-modal-backdrop" @click.self="closeItem()" @keydown.tab="trapFocus($event)" x-transition.opacity>
+    <div class="mein-lernen-modal" role="dialog" aria-modal="true" aria-labelledby="ml-dlg-title" x-ref="dialog" x-transition>
+      <button class="modal-close" @click="closeItem()" aria-label="Schliessen" x-ref="dlgFirst">×</button>
+      <div class="modal-head">
+        <div class="modal-glyph" x-text="item.c"></div>
+        <div class="meta">
+          <div class="read" x-text="item.on + (item.kun?(' · '+item.kun):'')"></div>
+          <div class="mean" id="ml-dlg-title" x-text="item.mean"></div>
+          <div class="sub" x-text="itemKind==='kanji'?'N5-Kanji':'Kana'"></div>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="pop-stat"><span>Status</span><span class="v" x-text="statusLabel(item.acc)"></span></div>
+        <div class="pop-stat"><span>Abruf-Wahrscheinlichkeit</span><span class="v" x-text="item.acc+'%'"></span></div>
+        <div class="pop-stat"><span>Wiederholungen</span><span class="v" x-text="item.reps||'–'"></span></div>
+        <div class="confused" x-show="confusedWith(item)" x-cloak>
+          <i class="fas fa-shuffle" aria-hidden="true"></i> Häufig verwechselt mit <span class="jp" x-text="confusedWith(item)"></span> — beim Drill bewusst gegenüberstellen.
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="cta-ghost" @click="toast('🔊 Würde Audio abspielen')"><i class="fas fa-volume-high" aria-hidden="true"></i> Anhören</button>
+        <button class="cta" @click="toast('Würde diese Karte üben');closeItem()">Jetzt üben</button>
+      </div>
+    </div>
+  </div>
+</template>
+
+{# Einstellungs-Dialog (Autonomie: Gamification abschaltbar) #}
+<template x-if="settingsOpen">
+  <div class="mein-lernen-modal-backdrop" @click.self="settingsOpen=false" @keydown.tab="trapFocus($event)" x-transition.opacity>
+    <div class="mein-lernen-modal" role="dialog" aria-modal="true" aria-labelledby="ml-set-title" x-ref="dialog" x-transition>
+      <button class="modal-close" @click="settingsOpen=false" aria-label="Schliessen" x-ref="dlgFirst">×</button>
+      <div class="modal-head"><div class="meta"><div class="mean" id="ml-set-title">Einstellungen</div><div class="sub">Du entscheidest, wie das Dashboard tickt.</div></div></div>
+      <div class="modal-body">
+        <div class="settings-row">
+          <div><div class="lbl">Spielerische Elemente</div><div class="desc">Streak, Schoner, Meilensteine, Feier-Momente</div></div>
+          <label class="switch"><input type="checkbox" x-model="settings.gamify"><span class="track"></span><span class="knob"></span></label>
+        </div>
+        <div class="settings-row">
+          <div><div class="lbl">Lern-Rhythmus</div><div class="desc">Wie oft willst du dran sein? Kein Tageszwang.</div></div>
+          <div class="seg">
+            <button :class="{on:settings.freq==='daily'}" @click="settings.freq='daily'">täglich</button>
+            <button :class="{on:settings.freq==='5w'}" @click="settings.freq='5w'">5×/Wo</button>
+            <button :class="{on:settings.freq==='3w'}" @click="settings.freq='3w'">3×/Wo</button>
+          </div>
+        </div>
+        <div class="settings-row" style="border-bottom:0">
+          <div><div class="lbl">Bilanz-Bezug</div><div class="desc">Vergleich immer nur mit dir selbst — nie mit anderen.</div></div>
+          <span class="pill-stat"><i class="fas fa-lock" aria-hidden="true"></i> kein Leaderboard</span>
+        </div>
+      </div>
+      <div class="modal-actions"><button class="cta block" @click="settingsOpen=false">Fertig</button></div>
+    </div>
+  </div>
+</template>
+
+{# Toast #}
+<div class="mein-lernen-toast" x-show="toastMsg" x-transition x-cloak>
+  <span class="ic"><i class="fas fa-check-circle" aria-hidden="true"></i></span> <span x-text="toastMsg"></span>
+</div>
+
+{# Feier-Stempel #}
+<template x-if="celebrating">
+  <div class="mein-lernen-stamp" aria-hidden="true"><div class="seal jp">完</div></div>
+</template>

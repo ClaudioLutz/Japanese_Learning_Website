@@ -1,0 +1,46 @@
+{
+  "_comment": "Mock-Fixture fuer den eingefrorenen Daten-Vertrag (docs/dashboard_contract.md). NUR fuer FE-Entwicklung in Phase 1 — nicht in Produktion ausgeliefert. Spiegelt die Dummy-Werte aus _js_dashboard.html.",
+  "context": {
+    "name": "Claudio",
+    "streak": 7,
+    "longest_streak": 14,
+    "due_count": 12,
+    "freezes": 1,
+    "week_goal": {"done": 5, "total": 7},
+    "plan_minutes": 12,
+    "plan": [
+      {"title": "<b>12 Karten</b> wiederholen", "desc": "Faellig laut Algorithmus", "why": "Genau jetzt faellig — Wiederholen am Reife-Punkt festigt am staerksten.", "dur": "~6 Min", "kind": "review", "href": "/review"},
+      {"title": "Lektion 7 weiterlernen", "desc": "Da wo du aufgehoert hast", "why": "Haelt dein Wochenziel und bringt 5 neue Woerter.", "dur": "~4 Min", "kind": "lesson", "href": "/lessons"},
+      {"title": "Verwechslungs-Drill", "desc": "Aus deinen Schwaechen", "why": "Deine haeufigste Fehlerquelle — gezielt gegenueberstellen loest sie.", "dur": "~2 Min", "kind": "drill", "href": "/practice/kana"}
+    ],
+    "pillars": [
+      {"key": "kana", "name": "Kana", "icon": "fa-spell-check", "started": 200, "total": 200, "target_pct": 95, "dist": [0, 8, 24, 60, 108], "sowhat": "Solide — Feinschliff bei し/シ", "cta": "Drill"},
+      {"key": "kanji", "name": "Kanji", "icon": "fa-pen-nib", "started": 32, "total": 80, "target_pct": 80, "dist": [58, 8, 8, 4, 2], "sowhat": "Schwaechste Saeule — groesster Hebel", "cta": "Weiterlernen"},
+      {"key": "vocab", "name": "Vokabeln", "icon": "fa-book", "started": 168, "total": 600, "target_pct": 80, "dist": [472, 38, 50, 30, 10], "sowhat": "Auf Kurs, aber viel offen", "cta": "Thema ueben"},
+      {"key": "grammar", "name": "Grammatik", "icon": "fa-diagram-project", "started": 19, "total": 80, "target_pct": 80, "dist": [67, 5, 5, 2, 1], "sowhat": "Frueh dran — Basis-Partikel sitzen", "cta": "Muster ueben"}
+    ],
+    "numbers": {"kanji": 47, "vocab": 210, "grammar": 18, "kana": 200},
+    "can_do": [
+      {"t": "Mich vorstellen — Name, Land, Beruf", "s": "done"},
+      {"t": "Im Cafe etwas von der Karte bestellen", "s": "prog"},
+      {"t": "Einfache Wegbeschreibungen verstehen", "s": "open"}
+    ]
+  },
+  "endpoints": {
+    "/api/dashboard/compass-glyphs?type=kanji": [
+      {"c": "日", "on": "nichi", "kun": "hi", "mean": "Tag / Sonne", "acc": 98, "reps": 42},
+      {"c": "円", "on": "en", "kun": "—", "mean": "Yen / rund", "acc": 22, "reps": 2}
+    ],
+    "/api/dashboard/confusion-pairs": [
+      {"id": 1, "a": "し", "b": "シ", "aAcc": 54, "bAcc": 41, "note": "Hira vs Kata — Strichrichtung"}
+    ],
+    "/api/dashboard/tempo": {
+      "kpi": {"avgReviews": 31, "avgSession": 9, "longestStreak": 14, "wordsPerWeek": 18},
+      "reviewsByWeek": [182, 168, 205, 142, 231, 198, 247, 171],
+      "accuracyByWeek": [74, 76, 75, 79, 80, 78, 82, 84],
+      "reviewsByWeekday": [28, 22, 31, 26, 24, 17, 39]
+    },
+    "/api/dashboard/retention-maturity": {"value": 84, "neu": 71, "jung": 83, "reif": 96},
+    "/api/dashboard/acc-by-stage": [52, 64, 78, 91, 98]
+  }
+}

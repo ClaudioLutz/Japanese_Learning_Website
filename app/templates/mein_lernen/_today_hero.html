@@ -1,0 +1,67 @@
+{# ░░ Begruessung + HEUTE-Hero + Sticky-CTA (Mobile) ░░ #}
+<div class="greet reveal">
+  <div>
+    <div class="ja-sub" x-text="greetingJa"></div>
+    <h1 x-text="greeting + ', ' + name + '.'"></h1>
+    <div class="sub" x-text="todayLabel + ' · ' + dueLabel"></div>
+  </div>
+  <div class="greet-side">
+    <div class="greet-tools">
+      <span class="pill-stat" x-show="settings.gamify" x-cloak title="Karten heute fällig"><i class="fas fa-layer-group" aria-hidden="true"></i> <span x-text="dueCount"></span></span>
+      <button class="icon-btn" @click="openSettings()" aria-label="Einstellungen"><i class="fas fa-gear" aria-hidden="true"></i></button>
+    </div>
+    <div x-show="settings.gamify" x-cloak style="display:flex;flex-direction:column;align-items:flex-end;gap:.5rem;">
+      <span class="streak-pill">
+        <i class="fas fa-fire" aria-hidden="true"></i>
+        <span><span x-text="streak"></span> Tage dran</span>
+        <span class="freeze" title="Streak-Schutz — durch Lernen verdient, nicht gekauft">· <i class="fas fa-shield-halved" aria-hidden="true"></i> <span x-text="freezes"></span> Schoner</span>
+      </span>
+      <div class="week-goal">
+        <span x-text="weekGoal.done + '/' + weekGoal.total + ' diese Woche'"></span>
+        <span class="dots" aria-hidden="true">
+          <template x-for="n in weekGoal.total" :key="n"><span class="dot" :class="{on:n<=weekGoal.done}"></span></template>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="card today reveal" aria-labelledby="today-h">
+  <span class="eyebrow"><i class="fas fa-sun" aria-hidden="true"></i> Heute · dein ~<span x-text="planMinutes"></span>-Minuten-Plan</span>
+  <h2 id="today-h" x-text="planDone < plan.length ? 'Drei Schritte, dann ist Schluss.' : 'Tagesziel erreicht — schön.'"></h2>
+  <div class="plan-meta">Adaptiv aus deinen fälligen Karten, deinem Kurs und deinen Schwächen zusammengestellt.</div>
+
+  <ul class="plan-steps">
+    <template x-for="(s,i) in plan" :key="i">
+      <li>
+        <button class="plan-step" :class="{done:s.done}" @click="toggleStep(i)" :aria-pressed="s.done">
+          <span class="num" aria-hidden="true" x-text="s.done ? '✓' : (i+1)"></span>
+          <span class="body">
+            <span class="t" x-html="s.title"></span>
+            <span class="d" x-text="s.desc"></span>
+            <span class="why"><i class="fas fa-seedling" aria-hidden="true"></i> <span x-text="s.why"></span></span>
+          </span>
+          <span class="dur" x-text="s.dur"></span>
+        </button>
+      </li>
+    </template>
+  </ul>
+
+  <div class="today-foot">
+    <div class="goal">
+      <div class="bar"><div :style="`width:${plan.length?planDone/plan.length*100:0}%`" role="progressbar" :aria-valuenow="planDone" aria-valuemin="0" :aria-valuemax="plan.length" aria-label="Tagesziel-Fortschritt"></div></div>
+      <div class="lab"><span x-text="planDone"></span> / <span x-text="plan.length"></span> erledigt
+        <template x-if="settings.gamify"><span> · 🔥 <span x-text="streak"></span> Tage</span></template>
+      </div>
+    </div>
+    <button class="cta" @click="startToday()">
+      <i class="fas fa-play" aria-hidden="true"></i>
+      <span x-text="planDone===0 ? 'Los geht\'s' : (planDone<plan.length ? 'Weiter' : 'Fertig für heute')"></span>
+    </button>
+  </div>
+</section>
+
+{# Sticky-CTA (Mobile, Daumenzone) #}
+<div class="sticky-cta" x-show="planDone<plan.length" x-cloak>
+  <button class="cta block" @click="startToday()"><i class="fas fa-play" aria-hidden="true"></i> <span x-text="planDone===0?'Los geht\'s — '+planMinutes+' Min':'Weiter ('+(plan.length-planDone)+' offen)'"></span></button>
+</div>
