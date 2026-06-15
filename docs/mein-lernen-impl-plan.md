@@ -74,12 +74,17 @@ Readiness-Ring/Band/Gate/Zonen (clientseitig aus `pillars.dist`) · Item-Dialog 
 | `app/gamification_service.py` | nur S6 | Mapper, danach read-only |
 | `migrations/` | nur falls accByStage/vocabThemes Migration | genau 1 Alembic-Head |
 
-## Entscheidungspunkte (Default-Empfehlung)
-1. **Hören-Säule/listen** — keine Datenbasis → **V1 ausblenden** (Ring rein aus axisA).
-2. **vocabThemes** — kein Themenfeld → **V1 aus `LessonCategory` ableiten**; echtes Feld = Phase 2.
-3. **freezes** — Backend max. 1 → **Anzeige 0/1 cappen**.
-4. **accByStage** — keine Stufe pro Log → **V1 Approximation über `elapsed_days`** (als „geschätzt" labeln).
-5. **canDo** — kein Modell → kuratierte, von **Claude** verfasste statische Liste (kein LLM-API).
+## Entscheidungspunkte — VERRIEGELT (User, 2026-06-15)
+1. **Hören-Säule/listen** → **V1 ausblenden.** `listen` raus aus `pillars`, `listenSkills`,
+   maturity-Hören, JLPT-Hören-Balken. Readiness-Mathe anpassen: ohne axisB ist
+   `readiness = axisA` (kein `gateWarning`, kein `.3*axisB`-Term). Später eigenes Feature.
+2. **vocabThemes** → **aus `LessonCategory` ableiten** (echt, gröber; keine erfundenen Etappenziele).
+3. **accByStage** → **Migration: Stufe pro Review mitloggen.** Neue Spalte an `ReviewLog`
+   (Stufe zum Review-Zeitpunkt), füllt sich ab jetzt; Altdaten fehlen → Chart zeigt nur
+   Daten seit Einführung (entsprechend labeln). = der eine serielle Migrations-Punkt.
+4. **canDo** → **kuratierte Claude-Liste + Status aus `UserLessonProgress`** (done/prog/open
+   abgeleitet). Kein LLM-API.
+5. **freezes** → **Anzeige auf 0/1 cappen** (kein Logik-Umbau).
 
 ## Top-Fallstricke
 - Alpine-Plugin-Reihenfolge (gelöst, nicht auf `defer` umstellen).
