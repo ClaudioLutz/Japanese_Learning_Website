@@ -21,7 +21,7 @@
       </div>
       <div class="ring-cefr">
         <span>entspricht etwa <b>CEFR A1</b></span>
-        <button class="ring-info" @click="toast('Schätzung aus deiner Reife (nur sicher Beherrschtes zählt voll) + Hör-Achse. Kein offizieller JLPT-Score.')" aria-label="Wie wird das berechnet?"><i class="fas fa-circle-info" aria-hidden="true"></i></button>
+        <button class="ring-info" @click="toast('Schätzung aus deiner Reife — nur sicher Beherrschtes zählt voll. Kein offizieller JLPT-Score.')" aria-label="Wie wird das berechnet?"><i class="fas fa-circle-info" aria-hidden="true"></i></button>
       </div>
       <div class="exam">
         <i class="fas fa-flag-checkered" aria-hidden="true"></i> Ziel:
@@ -62,11 +62,6 @@
         </template>
       </div>
 
-      <div class="gate-warn" x-show="gateWarning" x-cloak>
-        <i class="fas fa-triangle-exclamation" aria-hidden="true"></i>
-        <div x-html="gateWarning"></div>
-      </div>
-
       <div class="pillar-detail" x-show="openPillar" x-collapse x-cloak>
 
         {# KANJI #}
@@ -80,8 +75,8 @@
               <span class="it">✓ gemeistert</span>
             </div>
           </div>
-          <div class="glyph-grid">
-            <template x-for="k in kanji" :key="k.c">
+          <div class="glyph-grid" x-show="glyphs.kanji.length">
+            <template x-for="k in glyphs.kanji" :key="k.c">
               <button class="glyph-cell" :style="cellStyle(k.acc)" @click="openItem(k,'kanji',$event)" :aria-label="`${k.c}, ${k.mean}, ${statusLabel(k.acc)}, ${k.acc}%`">
                 <span class="sym" :style="`color:${symColor(k.acc)}`" x-text="cellSym(k.acc)" aria-hidden="true"></span>
                 <span class="c" x-text="k.c"></span>
@@ -89,20 +84,21 @@
               </button>
             </template>
           </div>
-          <div class="grid-note">
-            <span>48 weitere N5-Kanji noch nicht begonnen.</span>
-            <button class="cta-ghost sm" @click="toast('Würde gezielte Übung mit deinen 7 schwächsten Kanji starten')"><i class="fas fa-bolt" aria-hidden="true"></i> 7 schwache Kanji üben</button>
+          <div class="hint" x-show="glyphsLoading && !glyphsLoaded.kanji" x-cloak><i class="fas fa-spinner fa-spin" aria-hidden="true"></i> lädt …</div>
+          <div class="hint" x-show="glyphsLoaded.kanji && !glyphs.kanji.length" x-cloak>Noch keine Kanji begonnen — starte mit einer Kanji-Lektion.</div>
+          <div class="grid-note" x-show="glyphs.kanji.length">
+            <span x-text="Math.max(0, (pillarByKey('kanji').total||0) - (pillarByKey('kanji').started||0)) + ' weitere N5-Kanji noch nicht begonnen.'"></span>
           </div>
         </div>
 
         {# KANA #}
         <div x-show="openPillar==='kana'">
           <div class="detail-head">
-            <h3>Kana — alle 200 gelernt, Beherrschung variiert</h3>
+            <h3>Kana — Beherrschung pro Zeichen</h3>
             <div class="legend"><span class="it">Tipp: antippen für Detail</span></div>
           </div>
-          <div class="glyph-grid">
-            <template x-for="k in kanaSample" :key="k.c">
+          <div class="glyph-grid" x-show="glyphs.kana.length">
+            <template x-for="k in glyphs.kana" :key="k.c">
               <button class="glyph-cell" :style="cellStyle(k.acc)" @click="openItem(k,'kana',$event)" :aria-label="`${k.c}, gelesen ${k.on}, ${statusLabel(k.acc)}, ${k.acc}%`">
                 <span class="sym" :style="`color:${symColor(k.acc)}`" x-text="cellSym(k.acc)" aria-hidden="true"></span>
                 <span class="c" x-text="k.c"></span>
@@ -110,8 +106,9 @@
               </button>
             </template>
           </div>
-          <div class="grid-note">
-            <span><span class="jp">し·シ</span> und <span class="jp">ね·れ·わ</span> wackeln aktuell.</span>
+          <div class="hint" x-show="glyphsLoading && !glyphsLoaded.kana" x-cloak><i class="fas fa-spinner fa-spin" aria-hidden="true"></i> lädt …</div>
+          <div class="hint" x-show="glyphsLoaded.kana && !glyphs.kana.length" x-cloak>Noch keine Kana geübt — leg im Kana-Spiel los.</div>
+          <div class="grid-note" x-show="glyphs.kana.length">
             <button class="cta-ghost sm" @click="tab='schwaechen';statsOpen=true;scrollStats()"><i class="fas fa-shuffle" aria-hidden="true"></i> Verwechslungs-Drill</button>
           </div>
         </div>
@@ -155,27 +152,6 @@
                 <span class="st" x-text="['offen','wackelig','solide','sicher'][g.level]"></span>
               </button>
             </template>
-          </div>
-        </div>
-
-        {# HOEREN #}
-        <div x-show="openPillar==='listen'">
-          <div class="detail-head">
-            <h3>Hören — eigenes Prüfungs-Gate (聴解)</h3>
-            <div class="legend"><span class="it">1/3 der echten Prüfung · eigene Bestehensgrenze</span></div>
-          </div>
-          <div class="listen-list">
-            <template x-for="l in listenSkills" :key="l.t">
-              <div class="listen-row">
-                <span class="ic" aria-hidden="true"><i class="fas" :class="l.icon"></i></span>
-                <span class="t" x-text="l.t"></span>
-                <span class="bar" :title="l.pct+'%'"><div :style="`width:${l.pct}%;background:${zoneColor(l.pct)}`"></div></span>
-              </div>
-            </template>
-          </div>
-          <div class="grid-note">
-            <span>Hören ist dein grösster Hebel zum Bestehen.</span>
-            <button class="cta-ghost sm" @click="toast('Würde eine kurze Hörübung (Zahlen & Uhrzeit) starten')"><i class="fas fa-headphones" aria-hidden="true"></i> Hörübung starten</button>
           </div>
         </div>
 

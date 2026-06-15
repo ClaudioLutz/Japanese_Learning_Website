@@ -61,17 +61,26 @@ function dashboard(){
       setTimeout(()=>this.celebrating=false, reduceMotion()?900:1500);
     },
 
-    // ── Kompass / Saeulen (dist = [neu, lernen, jung, reif, gemeistert]) ──
-    pillars:[
-      {key:'kana',  name:'Kana',     icon:'fa-spell-check', started:200,total:200,targetPct:95,dist:[0,8,24,60,108],  sowhat:'Solide — Feinschliff bei し/シ',          cta:'Drill'},
-      {key:'kanji', name:'Kanji',    icon:'fa-pen-nib',     started:32, total:80, targetPct:80,dist:[58,8,8,4,2],      sowhat:'Schwächste Säule — grösster Hebel',       cta:'Weiterlernen'},
-      {key:'vocab', name:'Vokabeln', icon:'fa-book',        started:168,total:600,targetPct:80,dist:[472,38,50,30,10], sowhat:'Auf Kurs, aber viel offen',               cta:'Thema üben'},
-      {key:'grammar',name:'Grammatik',icon:'fa-diagram-project',started:19,total:80,targetPct:80,dist:[67,5,5,2,1],   sowhat:'Früh dran — Basis-Partikel sitzen',       cta:'Muster üben'},
-      {key:'listen',name:'Hören',    icon:'fa-headphones',  started:12, total:40, targetPct:50,dist:[28,6,4,2,0],      sowhat:'Engpass fürs Bestehen — jetzt starten',   cta:'Hörübung'},
-    ],
+    // ── Kompass / Saeulen (ECHT, server-gerendert; dist = [neu,lernen,jung,reif,gemeistert]) ──
+    pillars: {{ pillars|tojson }},
     pillarByKey(k){return this.pillars.find(p=>p.key===k)||{};},
     openPillar:'kanji',
-    togglePillar(k){this.openPillar = this.openPillar===k ? null : k;},
+    togglePillar(k){
+      this.openPillar = this.openPillar===k ? null : k;
+      if(this.openPillar && (k==='kana'||k==='kanji')) this.loadGlyphs(k);
+    },
+
+    // ── Glyph-Grids (lazy aus /api/dashboard/compass-glyphs) ──
+    glyphs:{kana:[],kanji:[]}, glyphsLoaded:{kana:false,kanji:false}, glyphsLoading:false,
+    loadGlyphs(type){
+      if(this.glyphsLoaded[type] || this.glyphsLoading) return;
+      this.glyphsLoading=true;
+      fetch('/api/dashboard/compass-glyphs?type='+type,{headers:{'Accept':'application/json'}})
+        .then(r=>r.ok?r.json():{data:[]})
+        .then(j=>{ this.glyphs[type]=j.data||[]; this.glyphsLoaded[type]=true; })
+        .catch(()=>{ this.glyphsLoaded[type]=true; })
+        .finally(()=>{ this.glyphsLoading=false; });
+    },
     masteryPct(p){
       const w=[0,.35,.65,.9,1];
       const s=(p.dist||[]).reduce((a,c,i)=>a+c*w[i],0);
@@ -81,13 +90,13 @@ function dashboard(){
     zoneLabel(m){return m>=66?'stark':m>=33?'mittel':'schwach';},
     zoneColor(m){return m>=66?cssVar('--matcha'):m>=33?cssVar('--kincha'):cssVar('--error');},
 
-    // ── Readiness (clientseitig aus Reife + Hör-Gate) ──
+    // ── Readiness (clientseitig aus Reife der 4 Saeulen; Hören-Gate raus) ──
     readiness:0, band:[0,0], ringCirc:2*Math.PI*66,
     get axisA(){
+      // Gewichte summieren auf 1.0 -> 0..100. (Hören bewusst nicht enthalten.)
       const m=k=>this.masteryPct(this.pillarByKey(k));
       return .35*m('vocab') + .20*m('kanji') + .30*m('grammar') + .15*m('kana');
     },
-    get axisB(){ return this.masteryPct(this.pillarByKey('listen')); },
     get readinessLabel(){
       const r=this.readiness;
       return r<25?'Grundlagen im Aufbau':r<50?'auf gutem Weg':r<75?'fast bereit':'prüfungsreif';
@@ -96,13 +105,9 @@ function dashboard(){
       const r=this.readiness;
       return r<25?cssVar('--error'):r<50?cssVar('--kincha'):cssVar('--matcha');
     },
-    get gateWarning(){
-      const gate=32;
-      if(this.axisB<gate) return '<b>Hören ist aktuell dein Engpass für N5.</b> Es ist ein eigenes Prüfungs-Gate (1/3 der Punkte) — selbst mit starkem Wortschatz fällt man ohne Hören durch.';
-      return '';
-    },
+    get gateWarning(){ return ''; },  // Hören-Gate entfernt (keine Datenbasis)
     computeReadiness(){
-      const r = .7*this.axisA + .3*this.axisB;
+      const r = this.axisA;
       this.readiness = Math.round(r);
       this.band = [Math.max(0,Math.round(r-6)), Math.min(100,Math.round(r+9))];
     },
@@ -117,33 +122,11 @@ function dashboard(){
       this.updateForecast();
     },
 
-    // ── Detail-Daten (Dummy bis Phase 1) ──
-    kanji:[
-      {c:'日',on:'nichi',kun:'hi',mean:'Tag / Sonne',acc:98,reps:42},{c:'一',on:'ichi',kun:'hito',mean:'eins',acc:100,reps:50},
-      {c:'二',on:'ni',kun:'futa',mean:'zwei',acc:100,reps:48},{c:'三',on:'san',kun:'mit',mean:'drei',acc:96,reps:40},
-      {c:'月',on:'getsu',kun:'tsuki',mean:'Monat / Mond',acc:88,reps:33},{c:'人',on:'jin',kun:'hito',mean:'Mensch',acc:92,reps:38},
-      {c:'大',on:'dai',kun:'ō',mean:'gross',acc:85,reps:30},{c:'山',on:'san',kun:'yama',mean:'Berg',acc:82,reps:26},
-      {c:'水',on:'sui',kun:'mizu',mean:'Wasser',acc:80,reps:24},{c:'中',on:'chū',kun:'naka',mean:'Mitte / in',acc:78,reps:22},
-      {c:'木',on:'moku',kun:'ki',mean:'Baum / Holz',acc:76,reps:21},{c:'子',on:'shi',kun:'ko',mean:'Kind',acc:75,reps:20},
-      {c:'火',on:'ka',kun:'hi',mean:'Feuer',acc:72,reps:19},{c:'土',on:'do',kun:'tsuchi',mean:'Erde',acc:70,reps:18},
-      {c:'何',on:'ka',kun:'nani',mean:'was',acc:68,reps:17},{c:'金',on:'kin',kun:'kane',mean:'Gold / Geld',acc:65,reps:16},
-      {c:'上',on:'jō',kun:'ue',mean:'oben',acc:64,reps:15},{c:'学',on:'gaku',kun:'mana',mean:'lernen',acc:62,reps:15},
-      {c:'下',on:'ka',kun:'shita',mean:'unten',acc:60,reps:14},{c:'小',on:'shō',kun:'chii',mean:'klein',acc:58,reps:13},
-      {c:'女',on:'jo',kun:'onna',mean:'Frau',acc:55,reps:12},{c:'川',on:'sen',kun:'kawa',mean:'Fluss',acc:52,reps:11},
-      {c:'先',on:'sen',kun:'saki',mean:'vorher / Spitze',acc:50,reps:10},{c:'男',on:'dan',kun:'otoko',mean:'Mann',acc:48,reps:9},
-      {c:'口',on:'kō',kun:'kuchi',mean:'Mund',acc:45,reps:8},{c:'生',on:'sei',kun:'i',mean:'Leben / geboren',acc:42,reps:7},
-      {c:'田',on:'den',kun:'ta',mean:'Reisfeld',acc:40,reps:6},{c:'年',on:'nen',kun:'toshi',mean:'Jahr',acc:38,reps:5},
-      {c:'目',on:'moku',kun:'me',mean:'Auge',acc:35,reps:5},{c:'時',on:'ji',kun:'toki',mean:'Zeit / Stunde',acc:32,reps:4},
-      {c:'力',on:'ryoku',kun:'chikara',mean:'Kraft',acc:28,reps:3},{c:'円',on:'en',kun:'—',mean:'Yen / rund',acc:22,reps:2},
-    ],
-    kanaSample:[
-      {c:'あ',on:'a',mean:'a',acc:100,reps:60},{c:'い',on:'i',mean:'i',acc:100,reps:58},
-      {c:'う',on:'u',mean:'u',acc:98,reps:55},{c:'し',on:'shi',mean:'shi',acc:54,reps:30},
-      {c:'シ',on:'shi',mean:'shi (Kata)',acc:41,reps:22},{c:'ね',on:'ne',mean:'ne',acc:58,reps:20},
-      {c:'れ',on:'re',mean:'re',acc:52,reps:18},{c:'わ',on:'wa',mean:'wa',acc:60,reps:19},
-      {c:'ソ',on:'so',mean:'so (Kata)',acc:47,reps:14},{c:'ン',on:'n',mean:'n (Kata)',acc:50,reps:16},
-      {c:'き',on:'ki',mean:'ki',acc:85,reps:28},{c:'さ',on:'sa',mean:'sa',acc:80,reps:26},
-    ],
+    // ── Detail-Daten ──
+    // kanji/kana-Glyph-Grids kommen LIVE aus /api/dashboard/compass-glyphs
+    // (this.glyphs.kana / this.glyphs.kanji, lazy beim Aufklappen geladen).
+    // kanaRows (Beherrschung-Tab), vocabThemes + grammar sind noch Dummy
+    // (eigene Folge-Tracks).
     kanaRows:[
       {lab:'Vokale',cells:[{c:'あ',on:'a',mean:'a',acc:100,reps:60},{c:'い',on:'i',mean:'i',acc:100,reps:58},{c:'う',on:'u',mean:'u',acc:98,reps:55},{c:'え',on:'e',mean:'e',acc:96,reps:50},{c:'お',on:'o',mean:'o',acc:94,reps:48}]},
       {lab:'K-Reihe',cells:[{c:'か',on:'ka',mean:'ka',acc:90,reps:40},{c:'き',on:'ki',mean:'ki',acc:85,reps:28},{c:'く',on:'ku',mean:'ku',acc:88,reps:30},{c:'け',on:'ke',mean:'ke',acc:82,reps:26},{c:'こ',on:'ko',mean:'ko',acc:86,reps:27}]},
@@ -165,12 +148,9 @@ function dashboard(){
       {pat:'で',ex:'Ort / Mittel',level:2},{pat:'〜ます',ex:'höfliche Verbform',level:2},
       {pat:'〜て',ex:'Te-Form (Verbindung)',level:1},{pat:'〜ない',ex:'Verneinung',level:1},
     ],
-    listenSkills:[
-      {t:'Zahlen & Preise heraushören',icon:'fa-coins',pct:22},
-      {t:'Uhrzeit & Datum verstehen',icon:'fa-clock',pct:18},
-      {t:'Kurze Dialoge (wer/was/wo)',icon:'fa-comments',pct:14},
-      {t:'Wegbeschreibungen folgen',icon:'fa-location-arrow',pct:8},
-    ],
+
+    // „Mein Japanisch in Zahlen" — begonnene Items je Typ (ECHT, server-gerendert)
+    numbers: {{ numbers|tojson }},
 
     // ── Can-do ──
     canDo:[
@@ -226,13 +206,12 @@ function dashboard(){
     accByStage:[52,64,78,91,98],
     stageLabels:['Neu','Lernen','Jung','Reif','Gemeistert'],
     stageColors:['#E4DED4','#EAD2AE','#D8A55A','#A9BC6B','#7A9033'],
-    jlptDetail:'Vokabeln 168/600 · Kanji 32/80 · Grammatik 19/80 · Hören 12/40',
+    jlptDetail:'Vokabeln 168/600 · Kanji 32/80 · Grammatik 19/80',
     maturity:[
       {k:'Kana',dist:[0,8,24,60,108]},
       {k:'Kanji',dist:[58,8,8,4,2]},
       {k:'Vokabeln',dist:[472,38,50,30,10]},
       {k:'Grammatik',dist:[67,5,5,2,1]},
-      {k:'Hören',dist:[28,6,4,2,0]},
     ],
 
     // ── Heatmap ──

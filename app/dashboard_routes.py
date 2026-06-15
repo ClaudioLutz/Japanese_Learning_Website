@@ -13,10 +13,10 @@ in diesen Context, teils lazy per /api/dashboard/* gefetcht.
 """
 import logging
 
-from flask import Blueprint, render_template
-from flask_login import current_user
+from flask import Blueprint, jsonify, render_template, request
+from flask_login import current_user, login_required
 
-from app import srs_service
+from app import dashboard_service, srs_service
 
 logger = logging.getLogger(__name__)
 
@@ -54,4 +54,27 @@ def index():
     stats['xp_to_next'] = max(0, xp_next - total_xp)
     stats['level_progress_pct'] = max(0, min(100, round(in_level / span * 100)))
 
-    return render_template('learner_dashboard.html', stats=stats)
+    # N5-Kompass (server-gerendert): 4 echte Saeulen + Zahlen-Kacheln.
+    pillars = dashboard_service.compass_pillars(current_user.id)
+    numbers = dashboard_service.learner_numbers(current_user.id)
+
+    return render_template(
+        'learner_dashboard.html',
+        stats=stats,
+        pillars=pillars,
+        numbers=numbers,
+    )
+
+
+@dashboard_bp.route('/api/dashboard/compass-glyphs')
+@login_required
+def api_compass_glyphs():
+    """Per-Glyph-Detail (Lern-Landkarte) fuer kana/kanji.
+
+    Query: type = kana | kanji. Lazy gefetcht, wenn die Saeule aufgeklappt wird.
+    """
+    content_type = request.args.get('type', 'kana')
+    if content_type not in ('kana', 'kanji'):
+        return jsonify({'data': [], 'count': 0})
+    data = dashboard_service.compass_glyphs(current_user.id, content_type)
+    return jsonify({'data': data, 'count': len(data)})
