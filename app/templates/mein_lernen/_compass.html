@@ -119,11 +119,11 @@
             <h3>Vokabeln — nach Thema</h3>
             <div class="legend"><span class="it">Tipp: Thema anklicken zum Üben</span></div>
           </div>
-          <div class="theme-list">
+          <div class="theme-list" x-show="vocabThemes.length">
             <template x-for="t in vocabThemes" :key="t.name">
               <button class="theme-row" @click="toast('Würde Thema „'+t.name+'“ üben')">
-                <span class="nm" x-html="t.name + ' <span class=jp>'+t.jp+'</span>'"></span>
-                <span class="bar"><div :style="`width:${t.have/t.total*100}%;background:${zoneColor(t.have/t.total*100)}`"></div></span>
+                <span class="nm" x-text="t.name"></span>
+                <span class="bar"><div :style="`width:${t.total?t.have/t.total*100:0}%;background:${zoneColor(t.total?t.have/t.total*100:0)}`"></div></span>
                 <span class="frac">
                   <span x-text="t.have+'/'+t.total"></span>
                   <span class="milestone" x-show="t.total-t.have>0 && t.total-t.have<=8" x-text="' · noch '+(t.total-t.have)"></span>
@@ -131,10 +131,7 @@
               </button>
             </template>
           </div>
-          <div class="grid-note">
-            <span>Nächstes erreichbares Etappenziel: <b>Thema „Zahlen" komplett</b> — noch 6 Wörter.</span>
-            <button class="cta-ghost sm" @click="toast('Würde die 6 fehlenden Zahlen-Vokabeln üben')"><i class="fas fa-flag" aria-hidden="true"></i> Etappe abschliessen</button>
-          </div>
+          <div class="hint" x-show="!vocabThemes.length" x-cloak>Noch keine Vokabel-Themen begonnen — leg mit einer Vokabel-Lektion los.</div>
         </div>
 
         {# GRAMMATIK #}
@@ -143,7 +140,7 @@
             <h3>Grammatik — N5-Muster</h3>
             <div class="legend"><span class="it">●●● sicher · ○○○ offen</span></div>
           </div>
-          <div class="gram-list">
+          <div class="gram-list" x-show="grammar.length">
             <template x-for="g in grammar" :key="g.pat">
               <button class="gram-row" @click="toast('Würde Grammatik „'+g.pat+'“ wiederholen')">
                 <span class="dots" aria-hidden="true"><template x-for="n in 3"><span class="dot" :style="n<=g.level?'background:var(--matcha)':''"></span></template></span>
@@ -153,6 +150,7 @@
               </button>
             </template>
           </div>
+          <div class="hint" x-show="!grammar.length" x-cloak>Noch keine Grammatik begonnen — startet in den N5-Lektionen.</div>
         </div>
 
       </div>

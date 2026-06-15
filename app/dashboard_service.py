@@ -645,3 +645,214 @@ def stats_bundle(user_id):
         'milestones': _milestones(user_id),
         'records': records(user_id),
     }
+
+
+# ════════════════════════════════════════════════════════════════════
+#  Heute-Hero (adaptiver Plan) + Wochenziel + Freezes + Can-do
+#  + Kompass-Detailmaps Vokabel-Themen / Grammatik (Server-Context)
+# ════════════════════════════════════════════════════════════════════
+
+def week_goal(user_id, target=7):
+    """Aktive CH-Tage der laufenden Woche (Mo–heute) / Zielwert."""
+    from app.time_utils import ch_today
+    today = ch_today()
+    monday = today - timedelta(days=today.weekday())
+    done = DailyReviewAggregate.query.filter(
+        DailyReviewAggregate.user_id == user_id,
+        DailyReviewAggregate.review_date >= monday,
+        DailyReviewAggregate.review_date <= today,
+        DailyReviewAggregate.total_reviews > 0,
+    ).count()
+    return {'done': min(done, target), 'total': target}
+
+
+def streak_freezes(user_id):
+    """Verfuegbare Streak-Schoner (Anzeige auf 0/1 gecappt — Backend fuehrt max. 1)."""
+    from app.models import UserSRSSettings
+    s = UserSRSSettings.query.filter_by(user_id=user_id).first()
+    n = s.streak_freezes_available if (s and s.streak_freezes_available is not None) else 0
+    return max(0, min(1, int(n)))
+
+
+def next_lesson(user_id):
+    """Resume- (zuletzt begonnene, offene) oder naechste offene Lektion im Lehrplan."""
+    from app.models import Lesson, UserLessonProgress
+    resume = (
+        UserLessonProgress.query
+        .join(Lesson, UserLessonProgress.lesson_id == Lesson.id)
+        .filter(
+            UserLessonProgress.user_id == user_id,
+            UserLessonProgress.is_completed.is_(False),
+            Lesson.is_published.is_(True),
+        )
+        .order_by(UserLessonProgress.last_accessed.desc())
+        .first()
+    )
+    if resume and resume.lesson:
+        return {'title': resume.lesson.title, 'lesson_id': resume.lesson_id, 'kind': 'resume'}
+
+    started_ids = [p.lesson_id for p in UserLessonProgress.query.filter_by(user_id=user_id).all()]
+    q = Lesson.query.filter(Lesson.is_published.is_(True))
+    if started_ids:
+        q = q.filter(~Lesson.id.in_(started_ids))
+    nxt = q.order_by(Lesson.order_index.asc(), Lesson.id.asc()).first()
+    if nxt:
+        return {'title': nxt.title, 'lesson_id': nxt.id, 'kind': 'next'}
+    return None
+
+
+def build_plan(user_id, due_count):
+    """Adaptiver ~Tagesplan: faellige Reviews + Resume/Next-Lektion + Schwaechen-Drill.
+
+    Returns (plan_steps, plan_minutes). Jeder Schritt: {title(HTML), desc, why,
+    dur, kind, href, done}.
+    """
+    from flask import url_for
+    steps = []
+    minutes = 0
+
+    if due_count > 0:
+        m = max(1, round(due_count * 0.5))
+        minutes += m
+        steps.append({
+            'title': f'<b>{due_count} Karten</b> wiederholen',
+            'desc': 'Fällig laut Algorithmus',
+            'why': 'Genau jetzt fällig — Wiederholen am Reife-Punkt festigt am stärksten.',
+            'dur': f'~{m} Min', 'kind': 'review', 'href': url_for('srs.review_page'), 'done': False,
+        })
+
+    nl = next_lesson(user_id)
+    if nl:
+        minutes += 4
+        verb = 'weiterlernen' if nl['kind'] == 'resume' else 'starten'
+        desc = 'Da wo du aufgehört hast' if nl['kind'] == 'resume' else 'Nächste im Lehrplan'
+        steps.append({
+            'title': f'„{nl["title"]}" {verb}',
+            'desc': desc,
+            'why': 'Bringt neue Wörter und hält dein Wochenziel.',
+            'dur': '~4 Min', 'kind': 'lesson',
+            'href': url_for('routes.view_lesson', lesson_id=nl['lesson_id']), 'done': False,
+        })
+
+    weak = weak_kana(user_id, limit=2)
+    if weak:
+        chars = ' · '.join(w['c'] for w in weak)
+        minutes += 2
+        steps.append({
+            'title': f'Verwechslungs-Drill <span class="jp">{chars}</span>',
+            'desc': 'Aus deinen Schwächen',
+            'why': 'Deine wackeligsten Zeichen — gezielt gegenüberstellen löst sie.',
+            'dur': '~2 Min', 'kind': 'drill', 'href': url_for('srs.practice_kana_page'), 'done': False,
+        })
+
+    if not steps:
+        minutes = 5
+        steps.append({
+            'title': 'Eine neue Lektion entdecken',
+            'desc': 'Keine fälligen Karten — guter Moment für Neues',
+            'why': 'Dranbleiben schlägt Aufholen.',
+            'dur': '~5 Min', 'kind': 'lesson', 'href': url_for('routes.lessons'), 'done': False,
+        })
+
+    return steps, minutes
+
+
+# Kuratierte N5-Can-do-Statements (von Claude verfasst, kein LLM-API).
+# threshold = Anzahl abgeschlossener Lektionen, ab der das Statement „erreicht" ist.
+_CAN_DO = [
+    (1, 'Hiragana lesen und schreiben'),
+    (1, 'Mich vorstellen — Name, Land, Beruf'),
+    (2, 'Jemanden begrüssen und mich verabschieden'),
+    (2, 'Zahlen verstehen und sagen'),
+    (3, 'Eine kurze Notiz auf Hiragana lesen'),
+    (4, 'Im Café etwas von der Karte bestellen'),
+    (5, 'Nach dem Preis fragen und ihn verstehen'),
+    (6, 'Uhrzeit und Datum sagen'),
+    (8, 'Sagen, was ich mag und nicht mag'),
+    (10, 'Über meine Familie sprechen'),
+    (12, 'Bahnhofsschilder & eine Speisekarte lesen'),
+    (14, 'Einen einfachen Tagesablauf beschreiben'),
+]
+
+
+def can_do(user_id):
+    """Kuratierte Kann-Liste; Status (done/prog/open) aus abgeschlossenen Lektionen."""
+    from app.models import UserLessonProgress
+    completed = UserLessonProgress.query.filter_by(user_id=user_id, is_completed=True).count()
+    out = []
+    for threshold, text in _CAN_DO:
+        if completed >= threshold:
+            status = 'done'
+        elif completed >= threshold - 1:
+            status = 'prog'
+        else:
+            status = 'open'
+        out.append({'t': text, 's': status})
+    return out
+
+
+def grammar_list(user_id, limit=12):
+    """Grammatik-Muster mit Reife-Level (0–3) aus den Karten des Users."""
+    from app.models import Grammar
+    rows = (
+        db.session.query(CardReviewState, Grammar)
+        .join(LessonContent, CardReviewState.content_id == LessonContent.id)
+        .join(Grammar, LessonContent.content_id == Grammar.id)
+        .filter(
+            CardReviewState.user_id == user_id,
+            LessonContent.content_type == 'grammar',
+        )
+        .all()
+    )
+    out = []
+    for state, g in rows:
+        stage = get_card_stage(state.fsrs_card_state)[0]
+        level = 0 if stage <= 0 else 1 if stage <= 3 else 2 if stage <= 6 else 3
+        out.append({
+            'pat': g.title,
+            'ex': (g.structure or g.explanation or '')[:50],
+            'level': level,
+        })
+    out.sort(key=lambda x: -x['level'])
+    return out[:limit]
+
+
+def vocab_themes(user_id):
+    """Vokabeln nach Thema (= LessonCategory), have/total fuer den User."""
+    from app.models import Lesson, LessonCategory
+    rows = (
+        db.session.query(LessonCategory.name, LessonContent.id)
+        .join(Lesson, Lesson.category_id == LessonCategory.id)
+        .join(LessonContent, db.and_(
+            LessonContent.lesson_id == Lesson.id,
+            LessonContent.content_type == 'vocabulary',
+        ))
+        .filter(Lesson.is_published.is_(True))
+        .all()
+    )
+    started = {
+        cid for (cid,) in (
+            db.session.query(CardReviewState.content_id)
+            .join(LessonContent, CardReviewState.content_id == LessonContent.id)
+            .filter(
+                CardReviewState.user_id == user_id,
+                LessonContent.content_type == 'vocabulary',
+            ).all()
+        )
+    }
+    themes = {}
+    seen = set()
+    for name, content_id in rows:
+        if (name, content_id) in seen:
+            continue
+        seen.add((name, content_id))
+        t = themes.setdefault(name, {'have': 0, 'total': 0})
+        t['total'] += 1
+        if content_id in started:
+            t['have'] += 1
+    result = [
+        {'name': name, 'jp': '', 'have': v['have'], 'total': v['total']}
+        for name, v in themes.items() if v['total'] > 0
+    ]
+    result.sort(key=lambda x: -x['total'])
+    return result[:8]

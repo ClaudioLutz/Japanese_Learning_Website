@@ -25,20 +25,16 @@ function dashboard(){
     dueCount: {{ (stats.due_count if stats and stats.due_count is not none else 0)|tojson }},
     get dueLabel(){ return this.dueCount===0 ? 'keine Karten fällig' : (this.dueCount + ' Karten fällig (~' + Math.max(1,Math.round(this.dueCount*0.5)) + ' Min)'); },
     streak: {{ (stats.current_streak or 0)|tojson }},
-    freezes: 1,
-    weekGoal:{done:5,total:7},
+    freezes: {{ freezes|tojson }},
+    weekGoal: {{ week_goal|tojson }},
     settings:{gamify:true, freq:'daily'},
     settingsOpen:false,
     openSettings(){this.settingsOpen=true; this.$nextTick(()=>this.$refs.dlgFirst&&this.$refs.dlgFirst.focus());},
 
-    // ── Heute-Plan (Dummy bis Plan-Builder/Phase 1) ──
-    plan:[
-      {title:'<b>12 Karten</b> wiederholen',desc:'Fällig laut Algorithmus',why:'Genau jetzt fällig — Wiederholen am Reife-Punkt festigt am stärksten.',dur:'~6 Min',done:false},
-      {title:'Lektion 7 — <span class="jp">カフェで</span> weiterlernen',desc:'Da wo du aufgehört hast',why:'Hält dein Wochenziel und bringt 5 neue Wörter.',dur:'~4 Min',done:false},
-      {title:'Verwechslungs-Drill <span class="jp">し</span> vs <span class="jp">シ</span>',desc:'Aus deinen Schwächen',why:'Deine häufigste Fehlerquelle — gezielt gegenüberstellen löst sie.',dur:'~2 Min',done:false},
-    ],
+    // ── Heute-Plan (ECHT, server-gerendert: due + Resume/Next-Lektion + Schwaechen-Drill) ──
+    plan: {{ plan|tojson }},
+    planMinutes: {{ plan_minutes|tojson }},
     get planDone(){return this.plan.filter(s=>s.done).length;},
-    get planMinutes(){return 12;},
     toggleStep(i){
       this.plan[i].done=!this.plan[i].done;
       if(this.plan[i].done){
@@ -48,11 +44,9 @@ function dashboard(){
       }
     },
     startToday(){
-      const next=this.plan.findIndex(s=>!s.done);
-      if(next<0){this.toast('Alles erledigt — bis morgen! 🎐');return;}
-      this.plan[next].done=true;
-      this.toast('▶ Würde Schritt '+(next+1)+' starten');
-      if(this.planDone===this.plan.length) this.celebrate();
+      const next=this.plan.find(s=>!s.done) || this.plan[0];
+      if(next && next.href){ window.location.href=next.href; return; }
+      this.toast('Alles erledigt — bis morgen! 🎐');
     },
     celebrating:false,
     celebrate(){
@@ -134,42 +128,15 @@ function dashboard(){
       {lab:'T-Reihe',cells:[{c:'た',on:'ta',mean:'ta',acc:76,reps:21},{c:'ち',on:'chi',mean:'chi',acc:62,reps:16},{c:'つ',on:'tsu',mean:'tsu',acc:58,reps:14},{c:'て',on:'te',mean:'te',acc:72,reps:18},{c:'と',on:'to',mean:'to',acc:74,reps:19}]},
       {lab:'N-Reihe',cells:[{c:'な',on:'na',mean:'na',acc:68,reps:15},{c:'に',on:'ni',mean:'ni',acc:70,reps:16},{c:'ぬ',on:'nu',mean:'nu',acc:48,reps:9},{c:'ね',on:'ne',mean:'ne',acc:58,reps:12},{c:'の',on:'no',mean:'no',acc:66,reps:14}]},
     ],
-    vocabThemes:[
-      {name:'Begrüssungen',jp:'あいさつ',have:18,total:18},
-      {name:'Zahlen',jp:'すうじ',have:24,total:30},
-      {name:'Familie',jp:'かぞく',have:14,total:24},
-      {name:'Essen & Trinken',jp:'たべもの',have:22,total:48},
-      {name:'Zeit & Datum',jp:'じかん',have:12,total:40},
-      {name:'Alltagsverben',jp:'どうし',have:16,total:64},
-    ],
-    grammar:[
-      {pat:'〜です',ex:'höfliche Kopula („ist")',level:3},{pat:'は',ex:'Themenpartikel',level:3},
-      {pat:'を',ex:'Objektpartikel',level:2},{pat:'に',ex:'Ziel / Zeitpunkt',level:2},
-      {pat:'で',ex:'Ort / Mittel',level:2},{pat:'〜ます',ex:'höfliche Verbform',level:2},
-      {pat:'〜て',ex:'Te-Form (Verbindung)',level:1},{pat:'〜ない',ex:'Verneinung',level:1},
-    ],
+    // Vokabel-Themen (ECHT, aus LessonCategory) + Grammatik-Liste (ECHT, Level aus Reife)
+    vocabThemes: {{ vocab_themes|tojson }},
+    grammar: {{ grammar_list|tojson }},
 
     // „Mein Japanisch in Zahlen" — begonnene Items je Typ (ECHT, server-gerendert)
     numbers: {{ numbers|tojson }},
 
-    // ── Can-do ──
-    canDo:[
-      {t:'Mich vorstellen — Name, Land, Beruf',s:'done'},
-      {t:'Jemanden begrüssen und mich verabschieden',s:'done'},
-      {t:'Zahlen verstehen und sagen',s:'done'},
-      {t:'Eine kurze Notiz auf Hiragana lesen',s:'done'},
-      {t:'Im Café etwas von der Karte bestellen',s:'prog'},
-      {t:'Nach dem Preis fragen und ihn verstehen',s:'prog'},
-      {t:'Uhrzeit und Datum sagen',s:'prog'},
-      {t:'Sagen, was ich mag und nicht mag',s:'prog'},
-      {t:'Über meine Familie sprechen',s:'prog'},
-      {t:'Bahnhofsschilder & eine Speisekarte lesen',s:'prog'},
-      {t:'Einfache Wegbeschreibungen verstehen',s:'open'},
-      {t:'Im Laden einkaufen (Mengen, „dieses hier")',s:'open'},
-      {t:'Einen einfachen Tagesablauf beschreiben',s:'open'},
-      {t:'Über das Wetter sprechen',s:'open'},
-      {t:'Einfache Fragen zu Hobbys stellen & beantworten',s:'open'},
-    ],
+    // ── Can-do (ECHT: kuratierte Liste, Status aus abgeschlossenen Lektionen) ──
+    canDo: {{ can_do|tojson }},
     canDoAll:false,
     get canDoVisible(){return this.canDoAll?this.canDo:this.canDo.slice(0,9);},
     get canDoDone(){return this.canDo.filter(c=>c.s==='done').length;},

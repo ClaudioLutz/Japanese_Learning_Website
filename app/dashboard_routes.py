@@ -58,11 +58,21 @@ def index():
     pillars = dashboard_service.compass_pillars(current_user.id)
     numbers = dashboard_service.learner_numbers(current_user.id)
 
+    # Heute-Hero + Detailmaps (server-gerendert).
+    plan, plan_minutes = dashboard_service.build_plan(current_user.id, stats.get('due_count', 0))
+
     return render_template(
         'learner_dashboard.html',
         stats=stats,
         pillars=pillars,
         numbers=numbers,
+        plan=plan,
+        plan_minutes=plan_minutes,
+        week_goal=dashboard_service.week_goal(current_user.id),
+        freezes=dashboard_service.streak_freezes(current_user.id),
+        can_do=dashboard_service.can_do(current_user.id),
+        vocab_themes=dashboard_service.vocab_themes(current_user.id),
+        grammar_list=dashboard_service.grammar_list(current_user.id),
     )
 
 
