@@ -26,6 +26,7 @@ function kanaGridGame(contentId) {
         wasPerfect: false,          // H-3: keine Fehler UND keine Hints — Basis fuer Daily-Bonus-Anzeige
         _sortables: [],
         _config: null,
+        _lastDropPlaced: false,     // hat der laufende/letzte Drag eine Karte ins Feld gesetzt?
         _ttsDisabled: false,        // true, sobald Server-TTS in dieser Session fehlschlug
         selectedCardToken: null,    // Tap-to-Place: aktuell ausgewaehlte Pool-Karte
         bothScripts: false,         // true, wenn Session Hiragana UND Katakana enthaelt
@@ -383,6 +384,9 @@ function kanaGridGame(contentId) {
                         if (evt && evt.clone) evt.clone.setAttribute('x-ignore', '');
                     },
                     onStart: () => {
+                        // Jeder neue Drag gilt zunaechst als "nichts platziert" —
+                        // onAdd/handleDrop setzt das Flag nur bei einem TREFFER.
+                        this._lastDropPlaced = false;
                         document.querySelectorAll('.sortable-fallback')
                             .forEach(el => el.setAttribute('x-ignore', ''));
                     },
@@ -393,6 +397,13 @@ function kanaGridGame(contentId) {
                         if (evt && evt.clone && evt.clone.parentNode) {
                             evt.clone.parentNode.removeChild(evt.clone);
                         }
+                        // Bug-Fix „daneben gezogene Karte verschwindet": Bei einem
+                        // Fehl-Drop (falsches Feld) hat onAdd das gezogene Original
+                        // bereits aus dem DOM entfernt, aber handleDrop laesst this.pool
+                        // unveraendert (return) — Alpine rendert die Karte daher nicht
+                        // neu. Wurde nichts platziert, den Pool-DOM aus dem Alpine-State
+                        // hart neu aufbauen, damit die Karte zurueck in den Pool kommt.
+                        if (!this._lastDropPlaced) this._rebuildPoolDom();
                     },
                 }));
             }
@@ -535,12 +546,28 @@ function kanaGridGame(contentId) {
             }
 
             this.pool = this.pool.filter(c => c.token !== token);
+            // Treffer: Pool wurde gefiltert -> Alpine rendert ohnehin neu, kein
+            // onEnd-Rebuild noetig (sonst kollidiert er mit Batch-Advance/Complete).
+            this._lastDropPlaced = true;
             this.playKanaAudio(cell);
             // H-1: Richtig-Ansage mit Zeichen + Lesung (z.B. "Richtig: あ a").
             this.announce(`Richtig: ${cell.character} ${cell.romanization}`);
 
             // Mobile: ggf. zur naechsten Reihe; sonst Abschluss bei allen geloest.
             this._advanceOrComplete();
+        },
+
+        // Baut den Pool-DOM aus dem Alpine-State (this.pool) neu auf. Noetig, wenn
+        // SortableJS bei einem Fehl-Drop DOM-Knoten entfernt hat, ohne dass sich
+        // this.pool aenderte: Alpine's x-for wuerde die unveraenderte Liste mit
+        // identischen Keys NICHT neu rendern und der entfernte Knoten bliebe weg.
+        // Kurzes Leeren + Zuruecksetzen im naechsten Tick erzwingt das Neu-Erstellen
+        // aller Karten. Laeuft als Microtask-Sequenz vor dem naechsten Paint -> kein
+        // Flackern; Sortable haengt am Pool-Container (Delegation) -> kein Re-Init.
+        _rebuildPoolDom() {
+            const saved = this.pool;
+            this.pool = [];
+            this.$nextTick(() => { this.pool = saved; });
         },
 
         // ── Tap-to-Place (Single-Pointer-Alternative zu Drag, WCAG 2.2 SC 2.5.7) ──
