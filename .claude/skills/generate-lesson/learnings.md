@@ -755,6 +755,7 @@ CSS-Grid-Stacking: `slideshow-stage` auf `display:grid`, jede `slideshow-slide` 
 - **`pipeline.py` lud `.env` nicht** vor dem `images`-SKIP-Check (`cmd_images` prueft `GOOGLE_AI_API_KEY` direkt, vor `create_app`) → `load_dotenv()` beim Import ergaenzt.
 - **Validator-Dialog-Heuristik** erkannte Dialoge nur an Tanaka/Lisa/Speaker → eigener Cast (Mei/Ken) loeste faelschlich die Markdown-Hierarchie-Pflicht aus. Fix: Erkennung an `>=4` Sprecherzeilen.
 - **Gemini-2.5-Pro-TTS-Quota (2500/Tag) abends erschoepft** → Block-Audio-JA fiel auf Chirp zurueck. Re-Render auf Gemini-Leda nach Reset (~09:00 CET) + Asset-scp ausstehend.
+- **ZWEI Pipeline-Luecken (User-Review 2026-06-16):** (a) **Kategorie-`description`** wird beim Modul-Anlegen nicht gesetzt → kahle /lessons-Gruppen. **Regel:** neues Modul IMMER mit `description` anlegen. (b) **Per-Seite-Szenenbilder** erzeugt die Pipeline NICHT (nur Thumbnail+Vokabel-Icons+Slideshow) — Bestand hat je Seite ein `content_type='image'`-Item (is_optional, order_index=0, generated_by_ai=False, `lessons/page_images/lesson_<id>/page_<n>.webp`). **Regel:** nach insert den Seitenbild-Rollout fahren (Prompts pro Seite, Stil-Rotation, personen-/textfrei → WEBP → image-Item), sonst wirken neue Lektionen kahl neben den 36 Bestandslektionen.
 
 ### Aktuelle Regeln (kumulativ, wichtigste zuerst)
 
