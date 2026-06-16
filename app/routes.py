@@ -1858,7 +1858,8 @@ def create_category():
     new_item = LessonCategory(
         name=data['name'],
         description=data.get('description'),
-        color_code=data.get('color_code', '#007bff')
+        color_code=data.get('color_code', '#007bff'),
+        image_url=(data.get('image_url') or None),
     )
     try:
         db.session.add(new_item)
@@ -1890,6 +1891,8 @@ def update_category(item_id):
     item.name = data.get('name', item.name)
     item.description = data.get('description', item.description)
     item.color_code = data.get('color_code', item.color_code)
+    if 'image_url' in data:
+        item.image_url = (data.get('image_url') or None)
 
     db.session.commit()
     return jsonify(model_to_dict(item))

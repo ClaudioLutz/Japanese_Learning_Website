@@ -172,6 +172,30 @@ class TestAdminCategoriesAPI:
         resp = client.delete(f"/api/admin/categories/{cat.id}/delete")
         assert resp.status_code == 200
 
+    def test_create_and_edit_category_image_url(self, admin_client):
+        """Modul-Banner: image_url wird beim Erstellen + Bearbeiten persistiert
+        und get_image_url() liefert eine servierbare URL."""
+        from app.models import LessonCategory
+        client, admin = admin_client
+        resp = client.post("/api/admin/categories/new", json={
+            "name": "Modul mit Bild",
+            "image_url": "modules/module_n5-hiragana.webp",
+        })
+        assert resp.status_code == 201
+        cid = resp.get_json()["id"]
+        cat = db.session.get(LessonCategory, cid)
+        assert cat.image_url == "modules/module_n5-hiragana.webp"
+        # get_image_url() reicht relativen Pfad als lokale Upload-URL durch
+        assert cat.get_image_url().endswith("modules/module_n5-hiragana.webp")
+
+        # Bearbeiten: Bild austauschen
+        resp = client.put(f"/api/admin/categories/{cid}/edit", json={
+            "image_url": "modules/module_n5-katakana.webp",
+        })
+        assert resp.status_code == 200
+        assert db.session.get(LessonCategory, cid).image_url == \
+            "modules/module_n5-katakana.webp"
+
 
 # ── Courses API ─────────────────────────────────────────────
 

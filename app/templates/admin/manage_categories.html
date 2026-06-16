@@ -50,6 +50,8 @@
                     <input type="color" id="categoryColor" name="color_code" value="#4f46e5" class="!w-12 !h-10 !p-0.5 !mb-0 !rounded-lg !cursor-pointer">
                     <span id="colorPreview" class="px-3 py-1.5 rounded-lg text-white text-sm font-medium" style="background-color: #4f46e5;">Preview</span>
                 </div>
+                <label for="categoryImageUrl">Modul-Bild (16:9-Banner, uploads-Pfad)</label>
+                <input type="text" id="categoryImageUrl" name="image_url" placeholder="modules/module_n5-hiragana.webp">
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn-secondary" onclick="closeModal('addCategoryModal')">Cancel</button>
@@ -79,6 +81,8 @@
                     <input type="color" id="editCategoryColor" name="color_code" class="!w-12 !h-10 !p-0.5 !mb-0 !rounded-lg !cursor-pointer">
                     <span id="editColorPreview" class="px-3 py-1.5 rounded-lg text-white text-sm font-medium">Preview</span>
                 </div>
+                <label for="editCategoryImageUrl">Modul-Bild (16:9-Banner, uploads-Pfad)</label>
+                <input type="text" id="editCategoryImageUrl" name="image_url" placeholder="modules/module_n5-hiragana.webp">
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn-secondary" onclick="closeModal('editCategoryModal')">Cancel</button>
@@ -127,7 +131,12 @@ async function loadCategories() {
             row.className = 'hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors';
             row.innerHTML = `
                 <td class="!text-gray-400 dark:!text-slate-500 !text-sm">${category.id}</td>
-                <td class="!font-medium">${escapeHtml(category.name)}</td>
+                <td class="!font-medium">
+                    <div class="flex items-center gap-2.5">
+                        ${category.image_url ? `<img src="/uploads/${escapeHtml(category.image_url)}" alt="" class="w-14 h-8 object-cover rounded-md border border-gray-200 dark:border-slate-700" loading="lazy">` : '<span class="w-14 h-8 rounded-md bg-gray-100 dark:bg-slate-800 inline-flex items-center justify-center text-gray-300 dark:text-slate-600"><i class="fas fa-image"></i></span>'}
+                        <span>${escapeHtml(category.name)}</span>
+                    </div>
+                </td>
                 <td class="!text-sm !text-gray-600 dark:!text-slate-400">${escapeHtml(category.description) || '<span class="text-gray-300 dark:text-slate-600">--</span>'}</td>
                 <td><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium text-white" style="background-color: ${category.color_code};">${category.color_code}</span></td>
                 <td class="!text-sm">${lessonCount}</td>
@@ -184,6 +193,7 @@ async function editCategory(id) {
         document.getElementById('editCategoryDescription').value = category.description || '';
         document.getElementById('editCategoryColor').value = category.color_code;
         document.getElementById('editColorPreview').style.backgroundColor = category.color_code;
+        document.getElementById('editCategoryImageUrl').value = category.image_url || '';
         openModal('editCategoryModal');
     } catch (error) {
         showToast('Error loading category', 'error');

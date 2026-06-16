@@ -1,0 +1,19 @@
+{# Gemeinsames Modul-Banner (16:9) fuer die Lernpfad-Karten der Startseite
+   (index.html) UND des /learn/n5-Hubs (learn_n5.html). Eine Definition, damit
+   beide Seiten konsistent bleiben.
+
+   Rendert das froehliche Modul-Bild als randvolles Banner oben in der Karte.
+   Faellt still aus, wenn das Modul (LessonCategory) kein image_url hat — dann
+   greift im aufrufenden Template weiterhin das Emoji-Icon in der Card-Kopfzeile.
+
+   Aufruf:  {% from "_module_banner.html" import module_banner %}
+            {{ module_banner(m) }}
+#}
+{% macro module_banner(m) %}
+  {% set _img = m.get_image_url() %}
+  {% if _img %}
+  <div class="module-banner">
+    <img src="{{ _img }}" alt="" loading="lazy" decoding="async">
+  </div>
+  {% endif %}
+{% endmacro %}

@@ -783,6 +783,7 @@ class LessonCategory(db.Model):
     jlpt_level = db.Column(db.Integer, nullable=True)             # 5, 4, 3, 2, 1
     display_order = db.Column(db.Integer, default=0, nullable=False)  # Reihenfolge innerhalb Level
     icon_emoji = db.Column(db.String(8), nullable=True)           # z.B. 'あ' oder '🔢'
+    image_url = db.Column(db.String(500), nullable=True)          # Modul-Banner (16:9), z.B. 'modules/module_n5-hiragana.webp'
     prerequisite_category_id = db.Column(
         db.Integer, db.ForeignKey('lesson_category.id'), nullable=True
     )
@@ -832,6 +833,21 @@ class LessonCategory(db.Model):
         if total == 0:
             return True
         return (done / total) >= threshold
+
+    def get_image_url(self):
+        """URL zum Modul-Banner (16:9). Analog Lesson.get_thumbnail_url:
+        http(s) wird durchgereicht, sonst lokal via routes.uploaded_file
+        (bzw. GCS-Redirect falls GCS_BUCKET_NAME gesetzt ist)."""
+        from flask import url_for, current_app
+        if not self.image_url:
+            return None
+        if self.image_url.startswith('http'):
+            return self.image_url
+        bucket_name = current_app.config.get('GCS_BUCKET_NAME')
+        if bucket_name:
+            clean_path = self.image_url.lstrip('/')
+            return f"https://storage.googleapis.com/{bucket_name}/{clean_path}"
+        return url_for('routes.uploaded_file', filename=self.image_url)
 
 class Lesson(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)

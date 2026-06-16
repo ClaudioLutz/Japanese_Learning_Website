@@ -6,6 +6,7 @@
 {% block body_attributes %}class="redesign-page"{% endblock %}
 
 {% block content %}
+{% from "_module_banner.html" import module_banner %}
 {# Deep-Link-Ziel fuer alle "Lektion starten"-CTAs: erste gratis+guest Lektion,
    Fallback Lektionsliste (gefiltert auf gratis). #}
 {% set guest_lesson_url = url_for('routes.view_lesson', lesson_id=first_guest_lesson.id) if first_guest_lesson else url_for('routes.lessons', access='free') %}
@@ -367,6 +368,7 @@
                 </div>
 
                 <div class="station-card">
+                  {{ module_banner(m) }}
                   <div class="station-card-head">
                     <span class="module-icon-emoji" aria-hidden="true">{{ m.icon_emoji or '📖' }}</span>
                     <h3>{{ m.name.split(' · ')[-1] if ' · ' in m.name else m.name }}</h3>
@@ -956,6 +958,20 @@
     transform: translateY(-1px);
     box-shadow: var(--shadow-card);
 }
+/* Froehliches Modul-Banner (16:9) randvoll oben in der Karte */
+.module-banner {
+    margin: -1.1rem -1.25rem 0.85rem;   /* bleed bis an die Card-Raender (padding 1.1/1.25) */
+    border-radius: 14px 14px 0 0;        /* obere Ecken wie die Card */
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    background: var(--ink-100, #f3eee4);
+}
+.module-banner img {
+    width: 100%; height: 100%;
+    object-fit: cover; display: block;
+}
+/* Bei Hover die Card-Bewegung dezent aufnehmen */
+.station-card:hover .module-banner img { transform: scale(1.015); transition: transform .25s ease; }
 .station--left  .station-card { grid-column: 1; text-align: right; }
 .station--right .station-card { grid-column: 3; text-align: left; }
 .station-axis  {
