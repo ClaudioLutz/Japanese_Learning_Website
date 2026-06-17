@@ -337,110 +337,78 @@
     </div>
     {% endif %}
 
-    <div class="path-wrap">
-      {# Vertikale geschwungene Sumi-Linie — Desktop only, Mobile via CSS-Pseudo #}
-      <svg class="path-svg" viewBox="0 0 240 1480" preserveAspectRatio="none" aria-hidden="true">
-        <path class="ink"
-              d="M120 30
-                 C 60 110, 60 180, 120 250
-                 C 180 320, 180 390, 120 460
-                 C 60 530, 60 600, 120 670
-                 C 180 740, 180 810, 120 880
-                 C 60 950, 60 1020, 120 1090
-                 C 180 1160, 180 1230, 120 1300
-                 C 60 1370, 60 1440, 120 1480"/>
-      </svg>
-
-      <div class="path-stations">
-        {% set ns = namespace(idx=0) %}
-        {% for group in n5_groups %}
-          {% if group.modules %}
-            {# Group-Divider zwischen den Gruppen — vor der ersten weglassen #}
-            {% if not loop.first %}
-              <div class="path-group-label" role="separator">
-                <span>{{ group.title.split('. ', 1)[-1] if '. ' in group.title else group.title }}</span>
-              </div>
-            {% endif %}
-
-            {% for entry in group.modules %}
-              {% set m = entry.module %}
-              {% set side = 'station--right' if ns.idx % 2 == 0 else 'station--left' %}
-              {% set state_cls = 'station--complete' if entry.is_complete
-                                  else ('station--next' if entry.is_next
-                                  else ('station--inprogress' if entry.percent and entry.percent > 0
-                                  else '')) %}
-              <div class="station {{ side }} {{ state_cls }}" id="module-{{ m.id }}">
-                <div class="station-axis">
-                  {% if entry.is_complete %}
-                    <div class="station-node"
-                         style="--progress:100; --ring-color: var(--matcha);"
-                         aria-label="abgeschlossen">✓</div>
-                  {% elif entry.is_next %}
-                    <div class="station-node" aria-label="empfohlenes nächstes Modul" lang="ja">次</div>
-                  {% else %}
-                    <div class="station-node" style="--progress:{{ entry.percent or 0 }};">
-                      {{ m.display_order or loop.index }}
-                    </div>
-                  {% endif %}
-                  <div class="station-meta">Modul {{ m.display_order or loop.index }}</div>
-                </div>
-
-                <div class="station-card">
-                  {{ module_banner(m) }}
-                  <div class="station-card-head">
-                    <span class="module-icon-emoji" aria-hidden="true">{{ m.icon_emoji or '📖' }}</span>
-                    <h3>{{ m.name.split(' · ')[-1] if ' · ' in m.name else m.name }}</h3>
-                  </div>
-
-                  {% if entry.is_next %}
-                    <span class="station-recommend-badge">⚡ Empfohlen als nächstes</span>
-                  {% elif not current_user.is_authenticated and m.slug == 'n5-hiragana' %}
-                    {# Echo der Hero-Bruecke: Spiel (Schritt 1) → dieses Modul (Schritt 2) #}
-                    <span class="station-recommend-badge">Schritt 2 nach dem Spiel</span>
-                  {% endif %}
-
-                  <p>{{ m.description }}</p>
-
-                  {% if entry.total > 0 %}
-                  <div class="station-progress">
-                    <div class="station-progress-bar">
-                      <span style="width: {{ entry.percent }}%"></span>
-                    </div>
-                    <span class="station-progress-label">
-                      {{ entry.done }} / {{ entry.total }} Lektionen
-                    </span>
-                  </div>
-                  {% endif %}
-
-                  <div class="station-cta-row">
-                    {% if entry.is_complete %}
-                      <a href="{{ url_for('routes.module_detail', level=5, slug=m.slug) if m.slug else url_for('routes.lessons') }}"
-                         class="station-cta">✓ Wiederholen</a>
-                    {% elif entry.percent and entry.percent > 0 and entry.first_lesson %}
-                      <a href="{{ url_for('routes.view_lesson', lesson_id=entry.first_lesson.id) }}"
-                         class="station-cta is-continue">Weiterlernen →</a>
-                    {# D4 — Gaeste direkt in die erste frei zugaengliche Lektion des Moduls,
-                       damit sie nicht in eine gesperrte erste Lektion (z.B. Kanji) laufen #}
-                    {% elif not current_user.is_authenticated and entry.first_guest_lesson %}
-                      <a href="{{ url_for('routes.view_lesson', lesson_id=entry.first_guest_lesson.id) }}"
-                         class="station-cta">Beginnen →</a>
-                    {% elif entry.first_lesson and m.slug %}
-                      <a href="{{ url_for('routes.module_detail', level=5, slug=m.slug) }}"
-                         class="station-cta">Beginnen →</a>
-                    {% elif entry.first_lesson %}
-                      <a href="{{ url_for('routes.view_lesson', lesson_id=entry.first_lesson.id) }}"
-                         class="station-cta">Beginnen →</a>
-                    {% else %}
-                      <span class="station-cta is-pending">Inhalte in Vorbereitung</span>
-                    {% endif %}
-                  </div>
-                </div>
-              </div>
-              {% set ns.idx = ns.idx + 1 %}
-            {% endfor %}
+    {# Modul-Grid (Mockup): 3 Spalten, Gruppen-Trennlinien, „Empfohlen"-Karte mit
+       Shu-Puls-Ring. Reihenfolge = Lehrplan; keine Sperren. #}
+    <div class="lp-grid">
+      {% for group in n5_groups %}
+        {% if group.modules %}
+          {# Gruppen-Trennlinie zwischen den Gruppen — vor der ersten weglassen #}
+          {% if not loop.first %}
+            <div class="lp-group-label" role="separator">
+              <span>{{ group.title.split('. ', 1)[-1] if '. ' in group.title else group.title }}</span>
+            </div>
           {% endif %}
-        {% endfor %}
-      </div>
+
+          {% for entry in group.modules %}
+            {% set m = entry.module %}
+            {% set state_cls = 'lp-card--complete' if entry.is_complete
+                                else ('lp-card--next' if entry.is_next else '') %}
+            <div class="station-card lp-card {{ state_cls }}" id="module-{{ m.id }}">
+              {% if m.get_image_url() %}
+              <span class="lp-modnum">Modul {{ m.display_order or loop.index }}</span>
+              {% endif %}
+              {{ module_banner(m) }}
+              <div class="station-card-head">
+                <span class="module-icon-emoji" aria-hidden="true">{{ m.icon_emoji or '📖' }}</span>
+                <h3>{{ m.name.split(' · ')[-1] if ' · ' in m.name else m.name }}</h3>
+              </div>
+
+              {% if entry.is_next %}
+                <span class="station-recommend-badge">⚡ Empfohlen als nächstes</span>
+              {% elif not current_user.is_authenticated and m.slug == 'n5-hiragana' %}
+                {# Echo der Hero-Bruecke: Spiel (Schritt 1) → dieses Modul (Schritt 2) #}
+                <span class="station-recommend-badge">Schritt 2 nach dem Spiel</span>
+              {% endif %}
+
+              <p>{{ m.description }}</p>
+
+              {% if entry.total > 0 %}
+              <div class="station-progress">
+                <div class="station-progress-bar">
+                  <span style="width: {{ entry.percent }}%"></span>
+                </div>
+                <span class="station-progress-label">
+                  {{ entry.done }} / {{ entry.total }} Lektionen
+                </span>
+              </div>
+              {% endif %}
+
+              <div class="station-cta-row">
+                {% if entry.is_complete %}
+                  <a href="{{ url_for('routes.module_detail', level=5, slug=m.slug) if m.slug else url_for('routes.lessons') }}"
+                     class="station-cta">✓ Wiederholen</a>
+                {% elif entry.percent and entry.percent > 0 and entry.first_lesson %}
+                  <a href="{{ url_for('routes.view_lesson', lesson_id=entry.first_lesson.id) }}"
+                     class="station-cta is-continue">Weiterlernen →</a>
+                {# D4 — Gaeste direkt in die erste frei zugaengliche Lektion des Moduls,
+                   damit sie nicht in eine gesperrte erste Lektion (z.B. Kanji) laufen #}
+                {% elif not current_user.is_authenticated and entry.first_guest_lesson %}
+                  <a href="{{ url_for('routes.view_lesson', lesson_id=entry.first_guest_lesson.id) }}"
+                     class="station-cta">Beginnen →</a>
+                {% elif entry.first_lesson and m.slug %}
+                  <a href="{{ url_for('routes.module_detail', level=5, slug=m.slug) }}"
+                     class="station-cta">Beginnen →</a>
+                {% elif entry.first_lesson %}
+                  <a href="{{ url_for('routes.view_lesson', lesson_id=entry.first_lesson.id) }}"
+                     class="station-cta">Beginnen →</a>
+                {% else %}
+                  <span class="station-cta is-pending">Inhalte in Vorbereitung</span>
+                {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endfor %}
     </div>
 
     <div class="lernpfad-footer">
@@ -1197,6 +1165,57 @@
     background: var(--washi);
     padding: 0 0.85rem;
 }
+
+/* ════════════════════════════════════════
+   LERNPFAD-GRID (Mockup) — 3 Spalten, Gruppen-Trenner, „Empfohlen"-Ring.
+   Karten erben .station-card (Banner-Bleed, Kopf, h3, p, Progress, CTA).
+   ════════════════════════════════════════ */
+.lp-grid {
+    position: relative; z-index: 1;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem;
+}
+.lp-card { position: relative; display: flex; flex-direction: column; }
+/* Gleiche Kartenhöhe: Beschreibung dehnt sich, CTA sitzt unten bündig. */
+.lp-card > p { flex: 1 1 auto; }
+.lp-card .station-cta-row { margin-top: auto; }
+
+/* „Modul N"-Pille über dem Banner (oben links). */
+.lp-modnum {
+    position: absolute; top: 10px; left: 10px; z-index: 2;
+    font: 500 0.62rem 'Geist Mono', ui-monospace, monospace;
+    color: var(--kon, #1F2A44); background: rgba(250,247,242,.92);
+    padding: 3px 9px; border-radius: 999px;
+}
+
+/* Gruppen-Trennlinie über die volle Gridbreite. */
+.lp-group-label {
+    grid-column: 1 / -1;
+    display: flex; align-items: center; gap: 1rem;
+    margin: 1.4rem 0 0.2rem;
+}
+.lp-group-label::before, .lp-group-label::after { content: ""; flex: 1; height: 1px; background: var(--ink-200); }
+.lp-group-label span {
+    font-family: 'Geist', 'Inter', sans-serif; font-weight: 600; font-size: 0.95rem;
+    text-transform: uppercase; letter-spacing: 0.16em; color: var(--ink-700);
+}
+
+/* Empfohlene Karte: Shu-Rahmen + sanfter Puls-Ring. */
+.lp-card--next { border-color: var(--shu); box-shadow: 0 0 0 3px rgba(235,97,1,.18); animation: lpNextPulse 2.4s ease-in-out infinite; }
+@keyframes lpNextPulse {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(235,97,1,.18); }
+    50%      { box-shadow: 0 0 0 6px rgba(235,97,1,.08); }
+}
+.lp-card--next .station-cta { background: linear-gradient(180deg, #EB6101, #D85700); color: #fff !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.18); }
+.lp-card--next .station-cta:hover { background: linear-gradient(180deg, #F37016, #E25C00); color: #fff !important; }
+
+/* Abgeschlossene Karte: Matcha-Akzente. */
+.lp-card--complete .station-progress-bar > span { background: var(--matcha); }
+.lp-card--complete .station-progress-label { color: var(--matcha); font-weight: 600; }
+.lp-card--complete .station-cta { background: rgba(122,144,51,.12); color: var(--matcha) !important; }
+.lp-card--complete .station-cta:hover { background: rgba(122,144,51,.2); color: var(--matcha) !important; }
+
+@media (max-width: 980px) { .lp-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 620px) { .lp-grid { grid-template-columns: 1fr; gap: 1.1rem; } }
 
 /* Footer */
 .lernpfad-footer { text-align: center; margin-top: 3rem; }
