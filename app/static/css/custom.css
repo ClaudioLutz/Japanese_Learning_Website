@@ -4792,3 +4792,18 @@ button[onclick*="moveContentInPage"]:active {
 [data-theme="dark"] .lesson-action-btn {
     color: var(--washi);
 }
+
+/* Bootstrap-Formularfelder: standardmaessig weiss → im Dark dunkle Flaeche.
+   Zentral (greift auf alle public Formulare: login, register, forgot-password …). */
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select {
+    background-color: var(--card-background);
+    color: var(--text-color);
+    border-color: var(--border-color);
+}
+[data-theme="dark"] .form-control::placeholder { color: var(--text-muted); }
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .form-select:focus {
+    background-color: var(--card-background);
+    color: var(--text-color);
+}
