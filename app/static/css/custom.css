@@ -278,7 +278,7 @@ body.redesign-page h3 {
 }
 
 .card-jp {
-    background: #fff;
+    background: var(--card-background);
     border: 1px solid var(--ink-200);
     border-radius: 12px;
     box-shadow: var(--shadow-subtle);
@@ -1716,7 +1716,7 @@ button[onclick*="moveContentInPage"]:active {
 .deck-header .progress {
     height: 10px;
     border-radius: 5px;
-    background-color: #e9ecef;
+    background-color: var(--border-color);
 }
 .deck-stats {
     display: flex;
@@ -2014,9 +2014,9 @@ button[onclick*="moveContentInPage"]:active {
     gap: 6px;
     margin-top: 8px;
     padding: 6px 10px;
-    background: #f0f4f8;
+    background: var(--kinari);
     border-radius: 8px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-color);
 }
 .read-aloud-btn {
     display: inline-flex;
@@ -2055,7 +2055,7 @@ button[onclick*="moveContentInPage"]:active {
 }
 .read-aloud-label {
     font-size: 0.75rem;
-    color: #64748b;
+    color: var(--text-muted);
     margin-left: 4px;
 }
 
@@ -2126,7 +2126,7 @@ button[onclick*="moveContentInPage"]:active {
     background-clip: text;
 }
 .stat-card {
-    background: #f8f9fa;
+    background: var(--kinari);
     border-radius: 12px;
     padding: 1rem 0.5rem;
 }
@@ -2137,7 +2137,7 @@ button[onclick*="moveContentInPage"]:active {
 }
 .stat-label {
     font-size: 0.8rem;
-    color: #6c757d;
+    color: var(--text-muted);
     text-transform: uppercase;
 }
 @keyframes bounceIn {
@@ -2157,12 +2157,12 @@ button[onclick*="moveContentInPage"]:active {
 .kbd-hint {
     display: inline-block;
     background: #e9ecef;
-    border: 1px solid #ced4da;
+    border: 1px solid var(--border-color);
     border-radius: 4px;
     padding: 0 6px;
     font-size: 0.75rem;
     font-family: monospace;
-    color: #495057;
+    color: var(--text-color);
     margin-left: 4px;
     line-height: 1.6;
 }
@@ -2214,23 +2214,23 @@ button[onclick*="moveContentInPage"]:active {
     line-height: 1.35 !important;
     margin: 1.25rem 0 0.5rem !important;
     font-weight: 600 !important;
-    color: #334155 !important;
+    color: var(--text-color) !important;
 }
 .rich-text-content h4 {
     font-size: 1.05rem !important;
     line-height: 1.4 !important;
     margin: 1rem 0 0.4rem !important;
     font-weight: 600 !important;
-    color: #475569 !important;
+    color: var(--text-light) !important;
     text-transform: uppercase;
     letter-spacing: 0.04em;
 }
 .rich-text-content strong, .rich-text-content b {
-    color: #0f172a;
+    color: var(--text-color);
     font-weight: 700;
 }
 .rich-text-content em, .rich-text-content i {
-    color: #475569;
+    color: var(--text-light);
     font-style: italic;
 }
 .rich-text-content ul, .rich-text-content ol {
@@ -2250,7 +2250,7 @@ button[onclick*="moveContentInPage"]:active {
     /* Kursiv entfernt: lange, mit JP-Zeichen gemischte Callouts sind aufrecht
        deutlich besser lesbar. Hervorhebung bleibt über Rand/Hintergrund. */
     font-style: normal;
-    color: #334155;
+    color: var(--text-color);
 }
 .rich-text-content code {
     background: #f1f5f9;
@@ -2265,7 +2265,7 @@ button[onclick*="moveContentInPage"]:active {
 }
 .rich-text-content hr {
     border: none;
-    border-top: 1px dashed #cbd5e1;
+    border-top: 1px dashed var(--border-color);
     margin: 1.25rem 0;
 }
 
@@ -3448,7 +3448,7 @@ button[onclick*="moveContentInPage"]:active {
 
 .stat-item {
     padding: 8px 0;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .stat-item:last-child {
@@ -3546,7 +3546,7 @@ button[onclick*="moveContentInPage"]:active {
 
 /* Default lesson cards (no background image) */
 .lesson-card-default {
-    background: white;
+    background: var(--card-background);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     border-radius: 16px;
     border: 1px solid var(--border-color);
@@ -3560,7 +3560,7 @@ button[onclick*="moveContentInPage"]:active {
 
 /* Split layout lesson cards (with background image) */
 .lesson-card-split {
-    background: white;
+    background: var(--card-background);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     border-radius: 16px;
     border: none;
@@ -3623,7 +3623,7 @@ button[onclick*="moveContentInPage"]:active {
     flex-direction: column;
     justify-content: space-between;
     min-height: 200px;
-    background: white;
+    background: var(--card-background);
 }
 
 .lesson-card-header {
@@ -3852,7 +3852,7 @@ button[onclick*="moveContentInPage"]:active {
         justify-content: center;
         gap: 0.12rem;
         padding: 0.3rem 0.2rem;
-        color: #6b7280;
+        color: var(--text-muted);
         text-decoration: none;
         font-size: 0.58rem;
         font-weight: 500;
@@ -4042,7 +4042,7 @@ button[onclick*="moveContentInPage"]:active {
 .auth-card {
     width: 100%;
     max-width: 420px;
-    background: #fff;
+    background: var(--card-background);
     border: 1px solid var(--ink-200);
     border-radius: 12px;
     padding: 2rem 1.75rem;
@@ -4064,7 +4064,7 @@ button[onclick*="moveContentInPage"]:active {
     border: 1px solid var(--ink-300);
     border-radius: 8px;
     padding: 0.55rem 0.75rem;
-    background: #fff;
+    background: var(--card-background);
 }
 .auth-card .form-control:focus {
     border-color: var(--ai);
@@ -4667,4 +4667,114 @@ button[onclick*="moveContentInPage"]:active {
 .kana-grid-game__complete-tip i {
     color: #b9870e;
     margin-right: 0.3rem;
+}
+
+/* === DARK MODE — hardcoded Overrides ===================================
+   Literale Farbwerte, die NICHT ueber Tokens laufen und im Dark Mode hell
+   durchschlagen wuerden. Light-Mode bleibt bit-identisch (Original-Regeln
+   oben unveraendert). Spezifitaet jeweils >= Original. Kana-/Storm-/Admin-
+   Flaechen sind bewusst ausgespart (eigene Dark-Behandlung / Sperrzone). */
+
+/* Completion-Modal: heller Honig→Weiss-Verlauf → dunkler Panel-Verlauf */
+[data-theme="dark"] .completion-modal {
+    background: linear-gradient(180deg, var(--kinari) 0%, var(--card-background) 30%);
+}
+
+/* Rich-Text Blockquote: heller Amber-Scrim → tiefe warme Toenung, heller Text */
+[data-theme="dark"] .rich-text-content blockquote {
+    border-left-color: var(--kincha);
+    background: rgba(214, 162, 78, 0.10);
+}
+
+/* Rich-Text Inline-Code: heller Slate-Chip → dunkles Panel + Shu-Akzenttext */
+[data-theme="dark"] .rich-text-content code {
+    background: var(--ink-100);
+    color: var(--accent);
+}
+
+/* Rich-Text H2 Hairline-Border: kalter Indigo-Tint → warme Token-Border */
+[data-theme="dark"] .rich-text-content h2 {
+    border-bottom-color: var(--border-color);
+}
+
+/* Eyebrow-Chip: weisser .6-Scrim → dunkle Indigo-Toenung */
+[data-theme="dark"] .eyebrow-chip {
+    background: var(--kon-50);
+}
+
+/* Hero-Hintergrund: helle Washi-Stops → dunkle Token-Stops, radiale Tints bleiben */
+[data-theme="dark"] .hero-bg-jp {
+    background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(31,42,68,.18), transparent 60%),
+        radial-gradient(ellipse 60% 40% at 85% 10%, rgba(235,97,1,.08), transparent 55%),
+        linear-gradient(180deg, var(--washi) 0%, var(--kinari) 100%);
+}
+
+/* Audio-Knopf auf Karten-Rueckseite: weisser .92-Fond → dunkle Panel-Flaeche */
+[data-theme="dark"] .card-audio-btn {
+    background: rgba(30, 27, 21, 0.92);
+}
+[data-theme="dark"] .card-face--back.has-image .card-audio-btn {
+    background: rgba(30, 27, 21, 0.9);
+}
+
+/* Keyboard-Hint: heller Grau-Chip → dunkles Ink-Panel (Border/Text laufen schon ueber Tokens) */
+[data-theme="dark"] .kbd-hint {
+    background: var(--ink-100);
+}
+
+/* Course-Level-Badge: weisser .95-Scrim + weisse Border → dunkles Glas + helle Haarlinie */
+[data-theme="dark"] .course-level-badge {
+    background: rgba(20, 18, 14, 0.55);
+    border-color: rgba(244, 239, 230, 0.18);
+}
+
+/* Lesson-Status-Pillen: Pastell-Toene → dunkle getoente Flaechen + heller Text */
+[data-theme="dark"] .lesson-status.completed {
+    background-color: rgba(166, 193, 88, 0.16);
+}
+[data-theme="dark"] .lesson-status.in-progress {
+    background-color: rgba(214, 162, 78, 0.16);
+}
+[data-theme="dark"] .lesson-status.not-started {
+    background-color: var(--kinari);
+    border-color: var(--border-color);
+    color: var(--text-muted);
+}
+
+/* Skeleton-Loader: helles Grau + heller Shimmer → dunkles Ink + dezenter Shimmer */
+[data-theme="dark"] .skeleton {
+    background: var(--ink-200);
+}
+[data-theme="dark"] .skeleton::after {
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+}
+
+/* Flip-Hint: weisser .75-Scrim → dunkler Glas-Fond */
+[data-theme="dark"] .flip-hint {
+    background: rgba(20, 18, 14, 0.75);
+}
+
+/* Deck-Header: heller f8f9fa→Weiss-Verlauf + helle Border → dunkle Tokens */
+[data-theme="dark"] .deck-header {
+    background: linear-gradient(135deg, var(--kinari), var(--card-background));
+    border-color: var(--border-color);
+}
+
+/* Course-Primary-Btn: weisser Fond auf dunklem Hero → dunkle Karten-Flaeche.
+   Niedrige Prio, sitzt auf dunklem Hero; Text-Token (--primary-color) traegt im Dark. */
+[data-theme="dark"] .course-primary-btn {
+    background: var(--card-background);
+}
+[data-theme="dark"] .course-primary-btn:hover {
+    background: var(--kinari);
+}
+
+/* Mobile-Bottom-Nav: weisse .97-Surface + dunkle Border → dunkle Surface + helle Border.
+   Im @media-Kontext, da das Original nur unter (max-width: 767px) existiert. */
+@media (max-width: 767px) {
+    [data-theme="dark"] .mobile-bottom-nav {
+        background: rgba(20, 18, 14, 0.97);
+        border-top-color: rgba(244, 239, 230, 0.08);
+    }
 }

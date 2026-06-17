@@ -633,7 +633,7 @@
 }
 
 .n5ch-section {
-  background: #fff;
+  background: var(--card-background);
   border-radius: 12px;
   padding: 1.75rem 1.6rem;
   box-shadow: 0 2px 10px rgba(0,0,0,0.05);
@@ -695,11 +695,11 @@
 }
 .n5ch-table th, .n5ch-table td {
   padding: 0.65rem 0.85rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border-color);
   text-align: left;
 }
 .n5ch-table th {
-  background: #f9fafb;
+  background: var(--kinari);
   font-weight: 700; color: #1a1a1a;
 }
 .n5ch-table tr:last-child td { border-bottom: none; }
@@ -710,7 +710,7 @@
 .n5ch-pfad li {
   display: flex; gap: 0.85rem;
   padding: 0.85rem 1rem;
-  background: #f9fafb;
+  background: var(--kinari);
   border-radius: 8px;
   margin-bottom: 0.6rem;
   align-items: flex-start;
@@ -719,7 +719,7 @@
 
 /* FAQ */
 .n5ch-faq {
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--border-color);
   padding: 0.85rem 0;
 }
 .n5ch-faq:first-of-type { border-top: none; padding-top: 0.25rem; }
@@ -749,6 +749,40 @@
   text-align: center;
 }
 .n5ch-cta h2 { border-bottom-color: #bbf7d0; }
+
+/* === DARK MODE — hardcoded Overrides ===
+   Diese SEO-Landingpage hat eine eigene helle Palette (Indigo/Amber/Gruen).
+   Light bleibt unveraendert; im Dark wuerde der #1a1a1a-Text sonst unsichtbar. */
+[data-theme="dark"] .n5ch-hero {
+  background: linear-gradient(135deg, var(--card-background) 0%, #1A2030 100%);
+}
+[data-theme="dark"] .n5ch-hero h1,
+[data-theme="dark"] .n5ch-section h2,
+[data-theme="dark"] .n5ch-section h3,
+[data-theme="dark"] .n5ch-deflist dt,
+[data-theme="dark"] .n5ch-table th,
+[data-theme="dark"] .n5ch-faq summary h3 { color: var(--text-color); }
+[data-theme="dark"] .n5ch-lead,
+[data-theme="dark"] .n5ch-faq p,
+[data-theme="dark"] .n5ch-deflist dd,
+[data-theme="dark"] .n5ch-table td:first-child { color: var(--text-light); }
+[data-theme="dark"] .n5ch-hero-badges,
+[data-theme="dark"] .n5ch-note,
+[data-theme="dark"] .n5ch-breadcrumb a { color: var(--text-muted); }
+[data-theme="dark"] .n5ch-section h2 { border-bottom-color: var(--border-color); }
+[data-theme="dark"] .n5ch-section-highlight {
+  background: linear-gradient(135deg, rgba(214,162,78,0.12) 0%, rgba(214,162,78,0.05) 100%);
+  border-color: rgba(214,162,78,0.35);
+}
+[data-theme="dark"] .n5ch-section-highlight h2 { border-bottom-color: rgba(214,162,78,0.35); }
+[data-theme="dark"] .n5ch-note { background: rgba(255,255,255,0.04); }
+[data-theme="dark"] .n5ch-cta {
+  background: linear-gradient(135deg, rgba(166,193,88,0.12) 0%, rgba(166,193,88,0.05) 100%);
+  border-color: rgba(166,193,88,0.35);
+}
+[data-theme="dark"] .n5ch-cta h2 { border-bottom-color: rgba(166,193,88,0.35); }
+[data-theme="dark"] .n5ch-faq summary::before,
+[data-theme="dark"] .n5ch-breadcrumb a:hover { color: var(--ai); }
 .n5ch-cta-buttons {
   display: flex; flex-wrap: wrap; justify-content: center;
   gap: 0.75rem; margin: 1rem 0;

@@ -40,7 +40,7 @@
 
     /* ── Karten-Grundform: Hairline zuerst, Schatten nur bei Hover ── */
     .stat-card, .hero-card, .chart-section, .due-card {
-        background: #fff; border: 1px solid var(--ink-200);
+        background: var(--card-background); border: 1px solid var(--ink-200);
         border-radius: var(--radius-md);
     }
 
@@ -155,7 +155,7 @@
     .leech-actions { display: inline-flex; gap: var(--space-2); flex-wrap: wrap; }
     .leech-action {
         min-height: 40px; padding: var(--space-2) var(--space-3); border: 1px solid var(--ink-300);
-        border-radius: var(--radius-md); background: #fff; font-size: 0.78rem; color: var(--kon); cursor: pointer;
+        border-radius: var(--radius-md); background: var(--card-background); font-size: 0.78rem; color: var(--kon); cursor: pointer;
     }
     .leech-action:hover { background: var(--ink-100); }
     .leech-action.is-danger { border-color: rgba(209,75,61,.4); color: var(--color-error); }
@@ -184,7 +184,7 @@
 
     /* ── Achievements ── */
     .badge-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: var(--space-3); }
-    .badge-item { text-align: center; padding: 0.85rem 0.5rem; border-radius: var(--radius-md); border: 1px solid var(--ink-200); background: #fff; }
+    .badge-item { text-align: center; padding: 0.85rem 0.5rem; border-radius: var(--radius-md); border: 1px solid var(--ink-200); background: var(--card-background); }
     .badge-item.locked { opacity: 0.45; }
     .badge-item .badge-icon { font-size: 1.5rem; margin-bottom: 0.3rem; color: var(--ink-400); }
     .badge-item.unlocked .badge-icon { color: var(--shu); }
@@ -193,7 +193,7 @@
     .badge-item .badge-state { font-size: 0.62rem; font-weight: 600; color: var(--matcha); margin-top: 0.2rem; }
 
     /* ── Detail-Analyse (einklappbar) ── */
-    .stats-details { border: 1px solid var(--ink-200); border-radius: var(--radius-md); background: #fff; margin-top: var(--space-4); overflow: hidden; }
+    .stats-details { border: 1px solid var(--ink-200); border-radius: var(--radius-md); background: var(--card-background); margin-top: var(--space-4); overflow: hidden; }
     .stats-details > summary {
         cursor: pointer; padding: var(--space-4); font-weight: 600; color: var(--kon);
         display: flex; align-items: center; gap: 0.5rem; list-style: none; font-size: 0.95rem;
@@ -208,7 +208,7 @@
     /* ── Empty-State ── */
     .stats-empty {
         text-align: center; padding: var(--space-12) var(--space-4);
-        border: 1px dashed var(--ink-300); border-radius: var(--radius-lg); background: #fff;
+        border: 1px dashed var(--ink-300); border-radius: var(--radius-lg); background: var(--card-background);
         max-width: 640px; margin: 0 auto;
     }
     .stats-empty-jp { font-family: 'Noto Serif JP', 'Klee One', serif; font-size: 3rem; color: var(--shu); display: block; line-height: 1; margin-bottom: 0.75rem; }

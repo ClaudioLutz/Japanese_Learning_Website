@@ -131,14 +131,14 @@ html.hide-front-romaji .front-romaji { display: none !important; }
 /* Quiz Carousel Dots */
 .quiz-dot {
     width: 8px; height: 8px; border-radius: 50%; border: none;
-    background: #d1d5db; cursor: pointer; transition: all 0.25s ease;
+    background: var(--ink-300); cursor: pointer; transition: all 0.25s ease;
     display: inline-block; padding: 0; font-size: 0; line-height: 0;
     margin: 0 4px;
 }
 .quiz-dot:hover { transform: scale(1.2); }
 .quiz-dot-completed { background: var(--zen-matcha, #7A9A5A); }
 .quiz-dot-completed:hover { background: var(--zen-matcha-light, #C5D5A8); }
-.quiz-dot-open { background: #d1d5db; }
+.quiz-dot-open { background: var(--ink-300); }
 .quiz-dot-active { transform: scale(1.3); background: var(--shu, #EB6101); box-shadow: 0 0 0 2px rgba(235,97,1,0.25); }
 .quiz-dot-completed.quiz-dot-active { background: var(--matcha, #7A9033); box-shadow: 0 0 0 2px rgba(122,144,51,0.25); }
 </style>
@@ -169,7 +169,7 @@ html.hide-front-romaji .front-romaji { display: none !important; }
         width: 4px;
     }
     .lesson-sidebar::-webkit-scrollbar-thumb {
-        background: #ccc;
+        background: var(--ink-300);
         border-radius: 2px;
     }
 
@@ -326,7 +326,7 @@ html.hide-front-romaji .front-romaji { display: none !important; }
 
     /* Bottom Navigation (compact, inside content area) */
     .lesson-navigation-bottom {
-        background-color: #ffffff;
+        background-color: var(--card-background);
         border: 1px solid var(--border-color, #D4CFC5);
         border-radius: 12px;
         padding: 0.6rem 1rem;
@@ -502,7 +502,7 @@ html.hide-front-romaji .front-romaji { display: none !important; }
     }
     
     #lessonCarousel .carousel-indicators [data-bs-target] {
-        background-color: #a0a0a0;
+        background-color: var(--ink-300);
         width: 8px;
         height: 8px;
         border-radius: 50%;
@@ -725,7 +725,7 @@ html.hide-front-romaji .front-romaji { display: none !important; }
     body.lesson-view-redesign .lesson-header-card,
     body.lesson-view-redesign .lesson-content-card,
     body.lesson-view-redesign .filter-card {
-        background: #fff;
+        background: var(--card-background);
         border: 1px solid var(--ink-200, #E4DED4);
         box-shadow: var(--shadow-subtle, 0 1px 3px rgba(28,26,23,.06));
     }
@@ -814,6 +814,18 @@ html.hide-front-romaji .front-romaji { display: none !important; }
     body.lesson-view-redesign .text-success { color: var(--matcha, #7A9033) !important; }
     body.lesson-view-redesign .text-primary { color: var(--shu, #EB6101) !important; }
     body.lesson-view-redesign .text-info { color: var(--ai, #264F7E) !important; }
+
+    /* === DARK MODE — hardcoded Overrides === */
+    /* Bootstrap-Utility .bg-white auf Content-Item-Karten (HTML-Markup, #fff !important) */
+    [data-theme="dark"] body.lesson-view-redesign .content-item.bg-white {
+        background: var(--card-background) !important;
+    }
+    /* Mobile fixe Pager-Leiste: weisses Glas-Scrim -> dunkles Glas */
+    @media (max-width: 767px) {
+        [data-theme="dark"] .lesson-navigation-bottom {
+            background: rgba(20, 18, 14, 0.98);
+        }
+    }
 </style>
 <!-- Mobile sidebar overlay -->
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
@@ -1881,11 +1893,11 @@ html.hide-front-romaji .front-romaji { display: none !important; }
             </div>
             <style>
               .next-up-block {
-                background: #f8fafc; border: 1px solid #e2e8f0;
+                background: var(--kinari); border: 1px solid var(--border-color);
                 border-radius: 12px; padding: 1.25rem 1.4rem;
               }
               .next-up-title {
-                font-size: 1rem; font-weight: 700; color: #0f172a;
+                font-size: 1rem; font-weight: 700; color: var(--kon);
                 margin: 0 0 0.85rem; text-transform: uppercase; letter-spacing: 0.04em;
               }
               .next-up-grid {
@@ -1894,7 +1906,7 @@ html.hide-front-romaji .front-romaji { display: none !important; }
               }
               .next-up-card {
                 display: flex; flex-direction: column; gap: 0.2rem;
-                background: #fff; border: 1px solid #e2e8f0; border-radius: 10px;
+                background: var(--card-background); border: 1px solid var(--border-color); border-radius: 10px;
                 padding: 0.85rem 1rem; text-decoration: none;
                 transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
               }
@@ -1911,8 +1923,8 @@ html.hide-front-romaji .front-romaji { display: none !important; }
               .next-up-name { font-size: 0.95rem; color: var(--kon, #1F2A44); font-weight: 500; line-height: 1.35; }
               .next-up-next .next-up-label { text-align: right; color: var(--matcha, #7A9033); }
               .next-up-next .next-up-name { text-align: right; }
-              .next-up-parent .next-up-label { color: #94a3b8; }
-              .next-up-all .next-up-label { color: #64748b; }
+              .next-up-parent .next-up-label { color: var(--text-muted); }
+              .next-up-all .next-up-label { color: var(--text-muted); }
               .next-up-bundle-cta {
                 display: block; margin-top: 0.9rem; text-align: center;
                 font-size: 0.9rem; font-weight: 600; color: var(--shu, #EB6101);
@@ -4249,7 +4261,7 @@ document.addEventListener('DOMContentLoaded', function() {
     padding: 16px 20px;
     background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
     border-radius: 16px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-color);
     width: 100%;
 }
 .custom-audio-player .audio-play-btn {
@@ -4301,7 +4313,7 @@ document.addEventListener('DOMContentLoaded', function() {
     flex: 1; display: flex; flex-direction: column; gap: 6px;
 }
 .custom-audio-player .audio-progress-wrap {
-    width: 100%; height: 6px; background: #cbd5e1;
+    width: 100%; height: 6px; background: var(--border-color);
     border-radius: 3px; cursor: pointer; position: relative;
     transition: height 0.15s;
 }
@@ -4325,16 +4337,22 @@ document.addEventListener('DOMContentLoaded', function() {
     display: flex; justify-content: space-between; align-items: center;
 }
 .custom-audio-player .audio-time {
-    font-size: 0.75rem; color: #64748b; font-variant-numeric: tabular-nums;
+    font-size: 0.75rem; color: var(--text-muted); font-variant-numeric: tabular-nums;
 }
 .custom-audio-player .audio-speed-btn {
     font-size: 0.7rem; padding: 2px 8px;
-    border-radius: 10px; border: 1px solid #cbd5e1;
-    background: white; color: #475569; cursor: pointer;
+    border-radius: 10px; border: 1px solid var(--border-color);
+    background: var(--card-background); color: var(--text-color); cursor: pointer;
     transition: all 0.15s; font-weight: 600;
 }
 .custom-audio-player .audio-speed-btn:hover {
     background: var(--primary-color, #4a90e2); color: white; border-color: transparent;
+}
+
+/* === DARK MODE — hardcoded Overrides === */
+/* Heller Verlauf der Audio-Player-Flaeche -> dunkle Tokens */
+[data-theme="dark"] .custom-audio-player {
+    background: linear-gradient(135deg, var(--card-background) 0%, var(--kinari) 100%);
 }
 </style>
 <script>
@@ -4483,7 +4501,7 @@ document.addEventListener('DOMContentLoaded', function() {
     position: fixed;
     bottom: 0; left: 0; right: 0;
     z-index: 1070;
-    background: #fff;
+    background: var(--card-background);
     border-radius: 16px 16px 0 0;
     box-shadow: 0 -4px 24px rgba(0,0,0,0.12);
     max-height: 60vh;
@@ -4507,7 +4525,7 @@ document.addEventListener('DOMContentLoaded', function() {
     width: 36px;
     height: 4px;
     border-radius: 2px;
-    background: #d1d5db;
+    background: var(--border-color);
 }
 
 .page-sheet-header {

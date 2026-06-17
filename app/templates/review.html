@@ -216,7 +216,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         flex-direction: column;
         padding: 1.5rem 1.35rem;
         border: 1px solid var(--ink-200, #E4DED4);
-        background: #fff;
+        background: var(--card-background);
         box-shadow: var(--shadow-card, 0 4px 16px rgba(28,26,23,0.06));
     }
     .review-card-face--front {
@@ -315,7 +315,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         align-self: center; flex-shrink: 0;
         width: 64px; height: 64px;
         border-radius: 10px; overflow: hidden;
-        background: #f1f5f9; display: flex; align-items: center; justify-content: center;
+        background: var(--kinari); display: flex; align-items: center; justify-content: center;
     }
     .back-image img { max-width: 100%; max-height: 100%; object-fit: contain; }
     .back-meaning {
@@ -399,8 +399,8 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         margin-top: 1.1rem; flex-wrap: wrap;
     }
     .cloze-hint-btn {
-        padding: 0.32rem 0.8rem; border-radius: 999px; background: #f1f5f9;
-        color: #475569; border: 1px solid #cbd5e1; font-size: 0.8rem;
+        padding: 0.32rem 0.8rem; border-radius: 999px; background: var(--kinari);
+        color: var(--text-light); border: 1px solid var(--border-color); font-size: 0.8rem;
         font-weight: 600; cursor: pointer;
     }
     .cloze-hint-btn.used { opacity: 0.5; }
@@ -460,7 +460,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         font-weight: 600;
         font-size: 0.82rem;
         border-radius: 12px;
-        background: white;
+        background: var(--card-background);
         border: 1.5px solid;
         display: flex;
         flex-direction: column;
@@ -622,7 +622,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         font-size: 0.9rem;
         font-weight: 600;
         color: var(--sumi, #1C1C1C);
-        background-color: #fff;
+        background-color: var(--card-background);
         border: 1px solid var(--border-color, #D4CFC5);
         border-radius: 10px;
         padding: 0.55rem 2.25rem 0.55rem 0.85rem;
@@ -839,6 +839,13 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         .review-audio-btn.playing { animation: none; }
         .xp-float { animation: none; opacity: 1; }
         .achievement-toast { animation: none; }
+    }
+
+    /* === DARK MODE — hardcoded Overrides === */
+    /* Gruppen-Select Pfeil-SVG: Stroke ist als Data-URL eingebrannt (kein Token).
+       Im Dark heller Pfeil, damit er auf dunkler Fläche sichtbar bleibt. */
+    [data-theme="dark"] .category-select {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='none' stroke='%23F4EFE6' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round' d='M1 1.5 6 6.5 11 1.5'/%3E%3C/svg%3E");
     }
 </style>
 {% endblock %}

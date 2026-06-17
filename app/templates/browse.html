@@ -21,7 +21,7 @@
     .filter-toggle { display: flex; align-items: center; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.3rem; }
     .filter-toggle input[type="checkbox"] { width: 36px; height: 20px; appearance: none; background: #ccc; border-radius: 10px; position: relative; cursor: pointer; transition: background 0.2s; }
     .filter-toggle input[type="checkbox"]:checked { background: var(--primary-color, #2B4C7E); }
-    .filter-toggle input[type="checkbox"]::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: #fff; border-radius: 50%; transition: transform 0.2s; }
+    .filter-toggle input[type="checkbox"]::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: var(--card-background); border-radius: 50%; transition: transform 0.2s; }
     .filter-toggle input[type="checkbox"]:checked::after { transform: translateX(16px); }
     .filter-select { width: 100%; padding: 0.35rem; border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.85rem; background: var(--card-bg); }
     .filter-btn { width: 100%; padding: 0.4rem; border: none; border-radius: 8px; background: var(--primary-color, #2B4C7E); color: #fff; font-size: 0.8rem; cursor: pointer; }
@@ -46,7 +46,7 @@
     /* Table */
     .browse-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
     .browse-table th { padding: 0.5rem; text-align: left; font-weight: 600; color: var(--text-muted); border-bottom: 2px solid var(--border-color); font-size: 0.75rem; }
-    .browse-table td { padding: 0.5rem; border-bottom: 1px solid var(--border-color, #eee); }
+    .browse-table td { padding: 0.5rem; border-bottom: 1px solid var(--border-color); }
     .browse-table tr { cursor: pointer; transition: background 0.15s; }
     .browse-table tr:hover { background: var(--background-color, #F5F0E8); }
     .browse-table tr.selected { background: rgba(43, 76, 126, 0.08); }
