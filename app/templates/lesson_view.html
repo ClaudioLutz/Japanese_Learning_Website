@@ -837,6 +837,254 @@ html.hide-front-romaji .front-romaji { display: none !important; }
         background-color: var(--ink-300);
         color: var(--text-color);
     }
+
+    /* ════════════════════════════════════════════════════
+       Hi-Fi Reskin — Lektions-Leseansicht (Claude Design, 2026-06-17)
+       Verfeinert Phase 4.3 auf den abgenommenen Hi-Fi-Entwurf:
+       ink-on-washi durchgezogen, Shu (朱) als einzige Primäraktion,
+       Haarlinien statt Boxen. Alles scoped via body.lesson-view-redesign,
+       JS-Hooks/Klassen unberührt; nur flippende Tokens für Dark-Parität.
+       ════════════════════════════════════════════════════ */
+
+    /* — Meta-Pills im Lesson-Header: Geist-Mono-Outline statt Füllung — */
+    body.lesson-view-redesign .lesson-header-card .badge.bg-info,
+    body.lesson-view-redesign .lesson-header-card .badge.bg-secondary,
+    body.lesson-view-redesign .lesson-header-card .badge.bg-dark {
+        background: transparent !important;
+        color: var(--ink-700, #403B34) !important;
+        border: 1px solid var(--ink-200, #E4DED4);
+        border-radius: 999px;
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-weight: 500;
+        font-size: 0.7rem;
+        letter-spacing: .02em;
+        padding: 5px 11px;
+    }
+
+    /* — Gast-Banner: einladende Gold/Kincha-Tönung statt Info-Blau — */
+    body.lesson-view-redesign #lessonGuestNudge .alert-info {
+        background: var(--gold-bg);
+        border: 1px solid var(--gold-line);
+        border-left: 1px solid var(--gold-line);
+        color: var(--gold-text);
+        border-radius: 12px;
+    }
+    body.lesson-view-redesign #lessonGuestNudge .alert-info i { color: var(--kincha, #C7802D); }
+    body.lesson-view-redesign #lessonGuestNudge .alert-info strong { color: var(--kon, #1F2A44); }
+    body.lesson-view-redesign #lessonGuestNudge .alert-link {
+        color: var(--shu-deep, #B84A00);
+        font-weight: 600;
+    }
+
+    /* — Sidebar: aktive Seite = Shu (statt Indigo-Gradient), Balken = Matcha — */
+    body.lesson-view-redesign .sidebar-progress-fill { background: var(--matcha, #7A9033); }
+    body.lesson-view-redesign .sidebar-page-item.active {
+        background-color: rgba(235,97,1,.07);
+        color: var(--kon, #1F2A44);
+        border-left-color: var(--shu, #EB6101);
+    }
+    body.lesson-view-redesign .sidebar-page-item.active .sidebar-page-num {
+        background: var(--shu, #EB6101);
+        color: #fff;
+    }
+    body.lesson-view-redesign .sidebar-page-item:hover {
+        background-color: rgba(235,97,1,.05);
+        color: var(--kon, #1F2A44);
+        border-left-color: var(--ink-300, #D4CCBE);
+    }
+    body.lesson-view-redesign .sidebar-page-item:hover .sidebar-page-num {
+        background-color: var(--ink-200, #E4DED4);
+        color: var(--ink-700, #403B34);
+    }
+    body.lesson-view-redesign .sidebar-nav-btn:hover:not(:disabled) {
+        background-color: var(--shu, #EB6101);
+        border-color: var(--shu, #EB6101);
+        color: #fff;
+    }
+
+    /* — Flip-Card: Glyphe in Kon-Tinte, Lesung/Romaji im Shu-Akzent, Haarlinie — */
+    body.lesson-view-redesign .flip-card .kana-char,
+    body.lesson-view-redesign .flip-card .vocab-word { color: var(--kon, #1F2A44); }
+    body.lesson-view-redesign .flip-card .vocab-romaji,
+    body.lesson-view-redesign .flip-card .front-romaji {
+        color: var(--shu, #EB6101);
+        font-style: normal;
+    }
+    body.lesson-view-redesign .card-face--front,
+    body.lesson-view-redesign .card-face--back { border-left: 1px solid var(--ink-200, #E4DED4); }
+    body.lesson-view-redesign .card-scene:hover .card-face { box-shadow: var(--shadow-card); }
+
+    /* — Karten-Audio-Button: Shu-Füllung beim Aktivieren — */
+    body.lesson-view-redesign .card-audio-btn {
+        border-color: var(--shu, #EB6101);
+        color: var(--shu, #EB6101);
+    }
+    body.lesson-view-redesign .card-audio-btn:hover,
+    body.lesson-view-redesign .card-audio-btn.playing {
+        background: var(--shu, #EB6101);
+        color: #fff;
+    }
+
+    /* — Übungs-Deck-Kopf: Gold-Tönung + Shu-Soft-Haarlinie — */
+    body.lesson-view-redesign .deck-header {
+        background: var(--gold-bg);
+        border: 1px solid var(--shu-soft, #F4D9C7);
+        border-radius: 14px;
+    }
+    body.lesson-view-redesign .deck-header .progress { background: var(--ink-100, #F1EDE6); }
+    body.lesson-view-redesign .deck-learned,
+    body.lesson-view-redesign .deck-stats .text-success { color: var(--matcha, #7A9033) !important; }
+
+    /* — Deck-Filter-Pills: ink/shu statt Vermillion — */
+    body.lesson-view-redesign .deck-filter-pill {
+        border: 1px solid var(--ink-300, #D4CCBE);
+        color: var(--ink-700, #403B34);
+    }
+    body.lesson-view-redesign .deck-filter-pill:hover { background: rgba(235,97,1,.06); }
+    body.lesson-view-redesign .deck-filter-pill.is-active {
+        background: var(--shu, #EB6101);
+        border-color: var(--shu, #EB6101);
+        color: #fff;
+        box-shadow: 0 2px 6px rgba(235,97,1,.25);
+    }
+    body.lesson-view-redesign .deck-filter-pill:focus-visible { outline-color: var(--shu, #EB6101); }
+
+    /* — Flip-Hint: dezente Washi-Tönung (flippt im Dark via --kinari) — */
+    body.lesson-view-redesign .flip-hint {
+        background: var(--kinari);
+        border: 1px solid var(--ink-200, #E4DED4);
+        color: var(--ink-500, #7A7368);
+    }
+
+    /* — FSRS-Bewertungsknöpfe: Haarlinien-Outline mit farbigem Text
+         (statt Bootstrap-Vollfarben) — ink-on-washi, Farbe nur als Signal — */
+    body.lesson-view-redesign .confidence-btn {
+        background: var(--card-background, #fff) !important;
+        border: 1px solid var(--ink-300, #D4CCBE) !important;
+        color: var(--ink-700, #403B34) !important;
+        box-shadow: none;
+    }
+    body.lesson-view-redesign .confidence-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-subtle);
+        border-color: var(--ink-400, #A8A095) !important;
+    }
+    body.lesson-view-redesign .confidence-btn .interval-hint {
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        color: var(--ink-500, #7A7368);
+        opacity: 1;
+    }
+    body.lesson-view-redesign .btn-srs-again,
+    body.lesson-view-redesign .btn-srs-again:hover { color: var(--color-error, #D14B3D) !important; border-color: rgba(209,75,61,.40) !important; }
+    body.lesson-view-redesign .btn-srs-hard,
+    body.lesson-view-redesign .btn-srs-hard:hover { color: var(--kincha, #C7802D) !important; }
+    body.lesson-view-redesign .btn-srs-good,
+    body.lesson-view-redesign .btn-srs-good:hover { color: var(--kon, #1F2A44) !important; }
+    body.lesson-view-redesign .btn-srs-easy,
+    body.lesson-view-redesign .btn-srs-easy:hover { color: var(--matcha, #7A9033) !important; }
+
+    /* — Matching-Dropdown: Shu-Fokus — */
+    body.lesson-view-redesign .matching-select:focus {
+        border-color: var(--shu, #EB6101);
+        box-shadow: 0 0 0 3px rgba(235,97,1,.14);
+    }
+
+    /* — Conversation-Textblock: Shu-Akzentkante statt Indigo — */
+    body.lesson-view-redesign .conv-text-section { border-left-color: var(--shu, #EB6101); }
+
+    /* — „Merke"-Callout (Markdown-Blockquote): Kincha-Kante + Gold-Grund — */
+    body.lesson-view-redesign .rich-text-content blockquote {
+        border-left: 3px solid var(--kincha, #C7802D);
+        background: var(--gold-bg);
+        border-radius: 0 10px 10px 0;
+        color: var(--ink-700, #403B34);
+        padding: 0.9rem 1.15rem;
+    }
+
+    /* — Abschluss-Modal: Matcha-Ring-Icon, solider Kon-Titel, 完-Wasserzeichen — */
+    body.lesson-view-redesign .completion-modal {
+        background: var(--card-background);
+        position: relative;
+    }
+    body.lesson-view-redesign .completion-modal .modal-body { position: relative; z-index: 1; }
+    body.lesson-view-redesign .completion-icon {
+        width: 66px;
+        height: 66px;
+        background: transparent;
+        border: 2px solid var(--matcha, #7A9033);
+    }
+    body.lesson-view-redesign .completion-icon i { color: var(--matcha, #7A9033); font-size: 1.8rem; }
+    body.lesson-view-redesign .completion-title {
+        background: none;
+        -webkit-text-fill-color: var(--kon, #1F2A44);
+        color: var(--kon, #1F2A44);
+        font-family: 'Geist', 'Inter', sans-serif;
+        letter-spacing: -0.02em;
+    }
+    body.lesson-view-redesign .completion-eyebrow {
+        font-family: 'Noto Serif JP', serif;
+        color: var(--ink-500, #7A7368);
+        font-size: .85rem;
+        margin-bottom: .35rem;
+    }
+    body.lesson-view-redesign .completion-watermark {
+        position: absolute;
+        right: -8px;
+        top: -38px;
+        font: 500 200px/1 'Noto Serif JP', serif;
+        color: rgba(122,144,51,.07);
+        pointer-events: none;
+        z-index: 0;
+        user-select: none;
+    }
+    body.lesson-view-redesign .stat-card {
+        background: var(--card-background, #fff);
+        border: 1px solid var(--ink-200, #E4DED4);
+        box-shadow: var(--shadow-subtle);
+    }
+    body.lesson-view-redesign .stat-value { color: var(--kon, #1F2A44); font-family: 'Geist', sans-serif; }
+    body.lesson-view-redesign .stat-label {
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        color: var(--ink-500, #7A7368);
+    }
+
+    /* — „Was kommt als Nächstes": Bundle-Hinweis als gestrichelter Link — */
+    body.lesson-view-redesign .next-up-bundle-cta {
+        background: transparent;
+        border: 1px dashed var(--shu, #EB6101);
+        color: var(--shu, #EB6101);
+    }
+    body.lesson-view-redesign .next-up-bundle-cta:hover {
+        background: rgba(235,97,1,.06);
+        text-decoration: underline;
+    }
+
+    /* — Block-Audio-Player: ink-on-washi (Play-Kreis Kon, Fortschritt Shu).
+         Höhere Spezifität (body.class .custom-audio-player ...) schlägt die
+         Default-Player-Regeln; Tokens flippen im Dark automatisch. — */
+    body.lesson-view-redesign .custom-audio-player {
+        background: var(--kon-50, #F2F4F8);
+        border: 1px solid var(--ink-200, #E4DED4);
+    }
+    body.lesson-view-redesign .custom-audio-player .audio-play-btn {
+        background: var(--kon, #1F2A44);
+        box-shadow: var(--shadow-subtle);
+    }
+    body.lesson-view-redesign .custom-audio-player .audio-progress-wrap {
+        background: var(--ink-100, #F1EDE6);
+    }
+    body.lesson-view-redesign .custom-audio-player .audio-progress-bar,
+    body.lesson-view-redesign .custom-audio-player .audio-progress-bar::after {
+        background: var(--shu, #EB6101);
+    }
+    body.lesson-view-redesign .custom-audio-player .audio-speed-btn {
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        border-color: var(--ink-300, #D4CCBE);
+    }
+    body.lesson-view-redesign .custom-audio-player .audio-speed-btn:hover {
+        background: var(--kon, #1F2A44);
+        border-color: var(--kon, #1F2A44);
+    }
 </style>
 <!-- Mobile sidebar overlay -->
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
@@ -1814,9 +2062,11 @@ html.hide-front-romaji .front-romaji { display: none !important; }
               <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content completion-modal">
                   <div class="modal-body text-center py-5">
+                    <span class="completion-watermark" aria-hidden="true">完</span>
                     <div class="completion-icon mb-3">
-                      <i class="fas fa-trophy"></i>
+                      <i class="fas fa-check"></i>
                     </div>
+                    <div class="completion-eyebrow">完了 · abgeschlossen</div>
                     <h2 class="completion-title">おめでとう!</h2>
                     <p class="text-muted mb-0">{{ lesson.title }}</p>
                     <div class="row g-3 my-4">
