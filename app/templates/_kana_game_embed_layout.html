@@ -54,46 +54,46 @@
             padding: 0.5rem 0.75rem calc(0.6rem + env(safe-area-inset-bottom, 0px));
         }
 
-        /* ── HUD: Back-Spacer · Timer (Hero) · Fortschritt ── */
-        .kgame__hud { flex: 0 0 auto; display: flex; align-items: center; gap: 0.6rem; padding: 0.15rem 0 0.4rem; }
+        /* ── Top-Bar: Back-Spacer · Titel+Modus · Spacer ── */
+        .kgame__hud { flex: 0 0 auto; display: flex; align-items: center; gap: 0.6rem; padding: 0.1rem 0 0.5rem; }
         .kgame__back {
             flex: 0 0 auto; width: 40px; height: 40px; border-radius: 11px;
             display: inline-flex; align-items: center; justify-content: center;
             border: 1px solid var(--ink-200, #E4DED4); background: var(--card-bg, #FFFDF7);
-            color: var(--ink-600, #5C564D); font-size: 1rem; text-decoration: none;
+            color: var(--ink-600, #5C564D); font-size: 0.95rem; text-decoration: none;
             transition: border-color .15s ease, color .15s ease;
         }
-        /* Embed: Back-Button entfaellt, Spacer haelt den Timer mittig. */
+        /* Embed: Back-/Settings-Buttons entfallen, Spacer halten den Titel mittig. */
         .kgame__back--spacer { visibility: hidden; border: 0; background: transparent; pointer-events: none; }
+        .kgame__title { flex: 1 1 auto; min-width: 0; text-align: center; line-height: 1.2; }
+        .kgame__title-main {
+            font: 700 0.72rem/1 'Geist', 'Inter', sans-serif; letter-spacing: 0.14em; text-transform: uppercase;
+            color: var(--kon, #1F2A44);
+        }
+        .kgame__title-sub { font: 400 0.78rem/1.2 'Inter', sans-serif; color: var(--text-muted, #8C8378); margin-top: 3px; }
 
-        .kgame__timer { flex: 1 1 auto; display: flex; flex-direction: column; align-items: center; line-height: 1; }
+        /* ── Fortschritts-Rail: Balken · Zähler · Zeit ── */
+        .kgame__rail { flex: 0 0 auto; display: flex; align-items: center; gap: 0.7rem; margin-bottom: 0.5rem; }
+        .kgame__bar { flex: 1 1 auto; height: 5px; border-radius: 999px; background: var(--ink-100, #F1EDE6); overflow: hidden; }
+        .kgame__bar-fill { height: 100%; background: var(--shu, #EB6101); border-radius: 999px; transition: width .35s ease; }
+        .kgame__count { flex: 0 0 auto; font: 700 0.95rem 'Geist Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; color: var(--kon, #1F2A44); }
+        .kgame__count .sep { color: var(--ink-300, #D4CCBE); margin: 0 1px; }
+        .kgame__timer { flex: 0 0 auto; }
         .kgame__time {
             font-family: 'Geist Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums;
-            font-size: 1.55rem; font-weight: 700; color: var(--kon, #1F2A44); letter-spacing: 0.01em;
-            display: inline-flex; align-items: center; gap: 0.4rem;
+            font-size: 0.92rem; font-weight: 600; color: var(--ink-600, #5C564D);
+            display: inline-flex; align-items: center; gap: 0.3rem;
         }
-        .kgame__time i { font-size: 0.95rem; color: var(--ink-400, #A8A095); }
-        .kgame__mode {
-            font: 600 0.62rem/1 'Geist', 'Inter', sans-serif; text-transform: uppercase; letter-spacing: 0.1em;
-            color: var(--text-muted, #8C8378); margin-top: 3px;
-        }
+        .kgame__time i { font-size: 0.82rem; color: var(--ink-400, #A8A095); }
         .kgame__timer.is-running .kgame__time i { color: var(--shu, #EB6101); animation: kgameTick 1s steps(2, end) infinite; }
         @keyframes kgameTick { 50% { opacity: 0.3; } }
-
-        .kgame__meta {
-            flex: 0 0 auto; display: flex; align-items: center; gap: 0.6rem;
-            font-family: 'Geist Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums;
-        }
-        .kgame__count { font-size: 0.98rem; font-weight: 700; color: var(--kon, #1F2A44); }
-        .kgame__count .sep { color: var(--ink-300, #D4CCBE); margin: 0 1px; }
-        .kgame__errs { font-size: 0.85rem; color: var(--danger, #D14B3D); display: inline-flex; align-items: center; gap: 0.2rem; }
+        .kgame__errs { flex: 0 0 auto; font: 0.85rem 'Geist Mono', ui-monospace, monospace; color: var(--danger, #D14B3D); display: inline-flex; align-items: center; gap: 0.2rem; }
         .kgame__errs i { font-size: 0.78rem; }
-        .kgame__hints { font-size: 0.82rem; color: #b9870e; display: inline-flex; align-items: center; gap: 0.2rem; }
+        .kgame__hints { flex: 0 0 auto; font: 0.82rem 'Geist Mono', ui-monospace, monospace; color: #b9870e; display: inline-flex; align-items: center; gap: 0.2rem; }
         .kgame__hints.is-empty { color: var(--ink-400, #A8A095); opacity: 0.7; }
 
-        /* Fortschrittsbalken */
-        .kgame__bar { flex: 0 0 auto; height: 5px; border-radius: 999px; background: var(--ink-100, #F1EDE6); overflow: hidden; margin-bottom: 0.5rem; }
-        .kgame__bar-fill { height: 100%; background: var(--shu, #EB6101); border-radius: 999px; transition: width .35s ease; }
+        /* Batch-Label (Mobile): aktuelle Reihe (leer auf Desktop) */
+        .kgame__batchline { flex: 0 0 auto; margin: 0 0 0.4rem; font: 700 0.62rem/1 'Geist Mono', ui-monospace, monospace; letter-spacing: 0.06em; color: var(--shu, #EB6101); }
 
         /* ── Bühne ── */
         .kgame__stage { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }

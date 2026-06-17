@@ -280,8 +280,17 @@ function kanaGridGame(contentId) {
         // aufgerufen und detektiert dabei frisch, ob ein schmaler Schirm vorliegt
         // (z.B. nach Drehen). Desktop: ein einziger Batch ueber alle Reihen.
         _buildBatches() {
-            this.batchMode = false;
-            try { this.batchMode = window.matchMedia('(max-width: 640px)').matches; } catch (e) {}
+            let narrow = false;
+            try { narrow = window.matchMedia('(max-width: 640px)').matches; } catch (e) {}
+            // Gesamtzahl Kana der aktuellen Auswahl.
+            let totalKana = 0;
+            (this.rows || []).forEach(row => {
+                totalKana += ((this.cellsByRow && this.cellsByRow[row.key]) || []).length;
+            });
+            // Häppchen-Batching nur bei GROSSER Auswahl (z.B. ganze Tabelle). Die
+            // kleine Default-Auswahl (5 Reihen / 25 Kana) passt mit interner
+            // Scroll-Reserve auf einen Schirm — dort erzeugte Batching nur Leerraum.
+            this.batchMode = narrow && totalKana > 30;
             // 5 => i.d.R. eine Gojuon-Reihe pro Runde (kleine Reihen ya/wa/n werden
             // zusammengelegt). Haelt auch im Blind-Modus (2 Kacheln/Kana) den Pool
             // klein genug, dass nichts scrollen muss. Desktop: Infinity = ein Batch.
@@ -1112,6 +1121,21 @@ function kanaGameView() {
             } else {
                 const m = p.get('mode');
                 this.mode = ['schreiben', 'lesen'].includes(m) ? m : 'schreiben';
+                // Reihen: explizit aus der URL; sonst die gespeicherte Scope-Auswahl
+                // (localStorage 'kanaScope'); für frische Besucher = erste 5 Hiragana-
+                // Reihen (die volle Tabelle wirkt überladen). Leere gespeicherte
+                // Auswahl (= "Alle") -> '' -> der Server liefert alle Reihen.
+                let rowsParam = p.get('rows');
+                if (rowsParam === null) {
+                    rowsParam = 'vowels,k,s,t,n';
+                    try {
+                        const raw = localStorage.getItem('kanaScope');
+                        if (raw) {
+                            const o = JSON.parse(raw);
+                            if (o && Array.isArray(o.rows)) rowsParam = o.rows.join(',');
+                        }
+                    } catch (e) { /* Default behalten */ }
+                }
                 if (!window.currentUser) {
                     // Gast (Startseiten-Embed ODER direkter Aufruf der Spielseite
                     // ohne Login): voller Referenz-Scope ueber den public-Endpoint
@@ -1123,7 +1147,7 @@ function kanaGameView() {
                         schrift: p.get('schrift') || 'hiragana',
                         dakuten: p.get('dakuten') || 'false',
                     });
-                    if (p.get('rows')) params.set('rows', p.get('rows'));
+                    if (rowsParam) params.set('rows', rowsParam);
                     if (p.get('limit')) params.set('limit', p.get('limit'));
                     url = '/api/practice/kana/session/public?' + params.toString();
                 } else {
@@ -1133,7 +1157,7 @@ function kanaGameView() {
                         dakuten: p.get('dakuten') || 'true',
                         weak_only: p.get('weak_only') || 'false',
                     });
-                    if (p.get('rows')) params.set('rows', p.get('rows'));
+                    if (rowsParam) params.set('rows', rowsParam);
                     if (p.get('limit')) params.set('limit', p.get('limit'));
                     url = '/api/practice/kana/session?' + params.toString();
                 }

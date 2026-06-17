@@ -36,6 +36,10 @@
         g: 5, z: 5, d: 5, b: 5, p: 5,
     };
     const BASE_COUNT = 46;
+    // Anfänger-Default: die ersten 5 Hiragana-Reihen (あ・か・さ・た・な).
+    // Die volle Tabelle (alle 46) wirkt überladen — "Alle" bleibt per Chip
+    // explizit wählbar (rows = []).
+    const FIRST_FIVE = ['vowels', 'k', 's', 't', 'n'];
 
     function read(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
 
@@ -46,18 +50,21 @@
             const cur = JSON.parse(read(LS) || 'null');
             if (cur && typeof cur === 'object') return cur;
         } catch (e) { /* fall through */ }
+        // Frische Besucher: erste 5 Hiragana-Reihen. Rückkehrer behalten ihre
+        // (migrierte) Auswahl aus den alten getrennten Keys.
         let schrift = 'hiragana';
-        let rows = [];
+        let rows = FIRST_FIVE.slice();
         try {
-            const m = JSON.parse(read('kana_game_settings_v1') || 'null');
+            const mRaw = read('kana_game_settings_v1');
+            const m = mRaw ? JSON.parse(mRaw) : null;
             if (m && typeof m === 'object') {
                 if (SCHRIFT.includes(m.schrift)) schrift = m.schrift;
                 if (Array.isArray(m.selectedRows)) rows = m.selectedRows;
             } else {
                 const ss = read('kanaStormSchrift');
                 if (SCHRIFT.includes(ss)) schrift = ss;
-                const sr = JSON.parse(read('kanaStormRows') || '[]');
-                if (Array.isArray(sr)) rows = sr;
+                const srRaw = read('kanaStormRows');
+                if (srRaw) { const sr = JSON.parse(srRaw); if (Array.isArray(sr)) rows = sr; }
             }
         } catch (e) { /* Defaults behalten */ }
         return { schrift, rows };

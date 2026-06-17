@@ -14,37 +14,45 @@
     <!-- H-1: Screenreader-Ansage fuer Drop-Ergebnis / Abschluss (visuell versteckt) -->
     <div class="sr-only" aria-live="polite" aria-atomic="true" x-text="ariaFeedback"></div>
 
-    <!-- HUD: Back · Timer · Fortschritt -->
+    <!-- Top-Bar: Back · Titel+Modus · Einstellungen -->
     <header class="kgame__hud">
         {% if kgame_embed %}
-        {# Embed: kein Navigations-Back (iframe). Spacer haelt den Timer zentriert;
-           geschlossen/neu wird ueber den Ergebnis-Screen + die Eltern-Seite. #}
+        {# Embed: keine Navigation (iframe). Spacer halten den Titel zentriert. #}
         <span class="kgame__back kgame__back--spacer" aria-hidden="true"></span>
         {% else %}
         <a href="{{ url_for('srs.practice_kana_page') }}" class="kgame__back" aria-label="Zurück zu den Einstellungen">
             <i class="fas fa-arrow-left"></i>
         </a>
         {% endif %}
-        <div class="kgame__timer" :class="{ 'is-running': phase === 'playing' && !completed }">
-            <span class="kgame__time"><i class="far fa-clock"></i> <span x-text="liveTimeLabel()">0:00</span></span>
-            {# #17: Sprechendes Label fuer Screenreader — visuelles Erscheinungsbild
-               unveraendert (sr-only-Praefix ist unsichtbar). #}
-            <span class="kgame__mode"><span class="sr-only">Modus: </span><span x-text="modeLabel()"></span></span>
-            {# Mobile-Haeppchen: aktuelle Runde, z.B. "Reihe 3/8" (leer auf Desktop). #}
-            <span class="kgame__batch" x-show="batchLabel()" x-text="batchLabel()"
-                  style="font:700 0.62rem/1 'Geist Mono',ui-monospace,monospace;letter-spacing:0.06em;color:var(--shu,#EB6101);margin-top:3px;"></span>
+        <div class="kgame__title">
+            <div class="kgame__title-main">Zuordnung</div>
+            {# #17: Sprechendes Label fuer Screenreader (sr-only-Praefix unsichtbar). #}
+            <div class="kgame__title-sub"><span class="sr-only">Modus: </span><span x-text="modeLabel()"></span></div>
         </div>
-        <div class="kgame__meta" x-show="phase === 'playing'" x-cloak>
-            <span class="kgame__count"><span x-text="solvedCount"></span><span class="sep">/</span><span x-text="totalCells"></span></span>
-            <span class="kgame__errs" x-show="totalErrors > 0"><i class="fas fa-times-circle"></i> <span x-text="totalErrors"></span></span>
-            <span class="kgame__hints" x-show="maxHints > 0" :class="{ 'is-empty': hintsRemaining === 0 }">
-                <i class="fas fa-lightbulb"></i> <span x-text="hintsRemaining + '/' + maxHints"></span>
-            </span>
-        </div>
+        {% if kgame_embed %}
+        <span class="kgame__back kgame__back--spacer" aria-hidden="true"></span>
+        {% else %}
+        <a href="{{ url_for('srs.practice_kana_page') }}" class="kgame__back" aria-label="Einstellungen ändern">
+            <i class="fas fa-sliders-h"></i>
+        </a>
+        {% endif %}
     </header>
-    <div class="kgame__bar" x-show="phase === 'playing'" x-cloak>
-        <div class="kgame__bar-fill" :style="`width: ${progressPct()}%`"></div>
+    <!-- Fortschritts-Rail: Balken · Zähler · Zeit (+ Fehler/Hinweise) -->
+    <div class="kgame__rail" x-show="phase === 'playing'" x-cloak>
+        <div class="kgame__bar">
+            <div class="kgame__bar-fill" :style="`width: ${progressPct()}%`"></div>
+        </div>
+        <span class="kgame__count"><span x-text="solvedCount"></span><span class="sep">/</span><span x-text="totalCells"></span></span>
+        <span class="kgame__timer" :class="{ 'is-running': phase === 'playing' && !completed }">
+            <span class="kgame__time"><i class="far fa-clock"></i> <span x-text="liveTimeLabel()">0:00</span></span>
+        </span>
+        <span class="kgame__errs" x-show="totalErrors > 0"><i class="fas fa-times-circle"></i> <span x-text="totalErrors"></span></span>
+        <span class="kgame__hints" x-show="maxHints > 0" :class="{ 'is-empty': hintsRemaining === 0 }">
+            <i class="fas fa-lightbulb"></i> <span x-text="hintsRemaining + '/' + maxHints"></span>
+        </span>
     </div>
+    {# Mobile-Haeppchen: aktuelle Reihe, z.B. "Reihe 2/5" (leer auf Desktop). #}
+    <div class="kgame__batchline" x-show="batchLabel()" x-cloak><span x-text="batchLabel()"></span></div>
 
     <!-- Bühne -->
     <div class="kgame__stage">
