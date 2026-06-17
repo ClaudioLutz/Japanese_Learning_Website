@@ -17,13 +17,12 @@
      eingeloggt: personalisierter Weiterlern-Hero (unveraendert).
      ────────────────────────────────────────────── #}
   <section class="home-hero hero-bg-jp{% if not current_user.is_authenticated %} home-hero--game{% endif %}">
-    <div class="home-hero-inner">
-
-      <div class="home-eyebrow-row{% if not current_user.is_authenticated %} home-eyebrow-row--guest{% endif %}">
-        <span class="eyebrow-chip">JLPT N5 · auf Deutsch · in der Schweiz gemacht</span>
-      </div>
+    <div class="home-hero-inner{% if not current_user.is_authenticated %} home-hero-inner--split{% endif %}">
 
       {% if current_user.is_authenticated %}
+      <div class="home-eyebrow-row">
+        <span class="eyebrow-chip">JLPT N5 · auf Deutsch · in der Schweiz gemacht</span>
+      </div>
         {% if last_lesson %}
           <h1 class="home-h1">Weiter lernen.<br>Wo du aufgehört hast.</h1>
         {% else %}
@@ -59,51 +58,64 @@
         </ol>
         {% endif %}
       {% else %}
-        {# Gast-Hero = Spielbuehne. H1 traegt den Query-Match "Hiragana lernen"
-           (Schweiz-Nische, Pos.-Hebel) — der <title> bleibt bewusst unveraendert
-           (nur EIN SEO-Signal pro Deploy). #}
-        <h1 class="home-h1 home-h1--game">Hiragana lernen —<br>fang mit einer Runde an.</h1>
-        <p class="home-sub">
-          Alle 46 Grund-Hiragana gegen die Uhr — direkt im Browser, ohne Login.
-          {# Zweiter Satz nur auf Desktop: auf Mobile kostet er ~2 Zeilen Fold
-             und die Launch-Karte muss im ersten Viewport bleiben. Inhaltlich
-             traegt ihn die Bruecken-Leiste darunter ohnehin. #}
-          <span class="home-sub-more">Danach führt dich der N5-Pfad Schritt für Schritt weiter,
-          jede Regel auf Deutsch erklärt.</span>
-        </p>
+        {# ── Gast: editorialer Split-Hero — links Pitch + Brücke, rechts Spiel-Launcher ── #}
+        <div class="home-hero-masthead">
+          <span class="eyebrow-chip">JLPT N5 · auf Deutsch · in der Schweiz gemacht</span>
+          {# H1 traegt den Query-Match "Hiragana lernen" (Schweiz-Nische, Pos.-Hebel) —
+             der <title> bleibt bewusst unveraendert (nur EIN SEO-Signal pro Deploy). #}
+          <h1 class="home-h1 home-h1--game">Hiragana lernen —<br>fang mit einer Runde an.</h1>
+          <p class="home-sub">
+            Alle 46 Grund-Hiragana, direkt im Browser — ohne Login.
+            <span class="home-sub-more">Danach führt dich der N5-Pfad Schritt für Schritt weiter, jede Regel auf Deutsch erklärt.</span>
+          </p>
+        </div>
 
-        {# ── Kana-Spiele im Gast-Hero (inline, KEIN iframe): zwei gleichberechtigte
-           Spieltypen über einen Umschalter — Kana Storm (gegen die Uhr, tippen) und
-           Zuordnung (in Ruhe Karten zuordnen). Geteilter Scope (Schrift + Reihen)
-           via $store.kanaScope, genau wie /practice/kana. Daten über den Gast-
-           Endpoint /api/practice/kana/session/public, ohne Login. Storm spielt
-           inline; Zuordnung zeigt ein kompaktes Setup und startet das Spiel im
-           Vollbild (/practice/kana/spiel). #}
-        {% include '_kana_storm_styles.html' %}
+        {# Spiel-Launcher (kein Inline-Spiel): geteilter Scope ($store.kanaScope) +
+           Umschalter [Zuordnung | Kana Storm]. Beide starten das Spiel im Vollbild
+           (/practice/kana/spiel bzw. /practice/kana/storm). #}
         <style>
-          .kstorm-hero { width: 100%; max-width: 640px; margin: 1.2rem auto 0; }
-          .kstorm-hero-card {
-              /* min-height statt fixer Höhe: beim Aufklappen von „Optionen" wächst
-                 die Karte mit, die Seite scrollt normal; im Spiel bleibt sie
-                 >= min-height (stabile Spielfläche). */
-              min-height: clamp(560px, 82vh, 680px);
+          /* ── Gast: editorialer Split-Hero ── */
+          .home-hero--game { padding-top: 3rem; }
+          .home-hero--game .home-hero-inner--split {
+              max-width: 1080px; text-align: left;
+              display: grid; align-items: start;
+              grid-template-columns: 1.02fr 0.98fr;
+              grid-template-areas: "mast card" "bridge card";
+              column-gap: 3.5rem; row-gap: 1.3rem;
+          }
+          .home-hero-masthead { grid-area: mast; align-self: end; }
+          .home-hero-right { grid-area: card; align-self: center; }
+          .home-hero-bridge { grid-area: bridge; align-self: start; }
+          .home-hero-masthead .eyebrow-chip { display: inline-flex; margin-bottom: 1.1rem; }
+          .home-hero--game .home-h1--game { margin: 0 0 1rem; }
+          .home-hero--game .home-sub { margin: 0; max-width: 42ch; }
+
+          /* Brücken-Rail (vertikal, nummeriert) */
+          .kana-bridge--rail {
+              flex-direction: column; align-items: stretch; gap: 0;
+              background: transparent; border: 0; border-left: 1px solid var(--ink-200);
+              border-radius: 0; padding: 0; margin: 0 0 0.9rem; max-width: none;
+          }
+          .kana-bridge--rail li { position: relative; padding: 0.55rem 0 0.55rem 1.3rem; gap: 0.5rem; }
+          .kana-bridge--rail .kana-bridge__num { position: absolute; left: -10px; }
+          .home-hero-bridge .home-secondary-link { display: inline-block; }
+
+          /* ── Spiel-Launcher-Karte (rechte Spalte) ── */
+          .kana-hero-card {
               background: var(--card-bg, #FFFDF7);
               border: 1px solid var(--border-color, #E4DED4);
               border-radius: 18px;
-              box-shadow: 0 6px 30px rgba(28, 26, 23, .07);
-              overflow: hidden; display: flex; flex-direction: column;
-              padding: 0.85rem 0.85rem 1rem;
+              box-shadow: 0 12px 40px -12px rgba(28, 26, 23, .16);
+              padding: 0.9rem 0.9rem 1rem; display: flex; flex-direction: column;
           }
-          /* Geteilter Scope (Schrift + Reihen) über dem Umschalter. */
-          .kana-hero-scope { flex: 0 0 auto; margin-bottom: 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color, #E4DED4); }
-          .kana-hero-scope .kana-chip-row { margin-bottom: 0.4rem; }
-          .kana-hero-scope .kana-row-row { margin-bottom: 0; }
-          /* Spiel-Umschalter [Storm | Zuordnung] (Optik wie der Storm-interne Tab). */
+          .kana-hero-scope { flex: 0 0 auto; margin-bottom: 0.6rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--border-color, #E4DED4); }
+          .kana-hero-scope .kana-chip-row { margin-bottom: 0.4rem; min-height: 0; }
+          .kana-hero-scope .kana-row-row { margin-bottom: 0; min-height: 0; }
           .kana-hero-tabs {
               flex: 0 0 auto; display: flex; gap: 5px;
               background: var(--background-color, #F1EDE6);
               border: 1px solid var(--border-color, #E4DED4);
-              border-radius: 13px; padding: 4px; margin-bottom: 0.55rem;
+              border-radius: 13px; padding: 4px; margin-bottom: 0.85rem;
           }
           .kana-hero-tabs button {
               flex: 1; border: 0; background: transparent; cursor: pointer;
@@ -115,24 +127,22 @@
           .kana-hero-tabs button .jp { font-family: 'Noto Sans JP', sans-serif; color: var(--shu, #EB6101); }
           .kana-hero-tabs button.is-active { background: #fff; color: var(--kon, #1F2A44); box-shadow: 0 1px 2px rgba(28,26,23,.1); }
           .kana-hero-tabs button:focus-visible { outline: 2px solid var(--shu, #EB6101); outline-offset: 2px; }
-          /* Panels: genau eines sichtbar, beide füllen den Restraum. */
-          .kana-hero-panel { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
-          /* Das Storm-Partial nutzt height:100% — im Panel-Flex auf auto/flex umstellen. */
-          .kstorm-hero .kana-hero-panel > .kstorm { height: auto; flex: 1 1 auto; min-height: 0; }
-          /* Kompaktes Matching-Setup im Hero (startet das Spiel im Vollbild). */
-          .kana-hero-match { align-items: center; justify-content: center; text-align: center; gap: 0.85rem; padding: 0.6rem; }
-          .kana-hero-match__lead { font-size: 0.92rem; color: var(--ink-600, #5C564D); max-width: 36ch; margin: 0; line-height: 1.5; }
+          .kana-hero-panel { flex: 1 1 auto; min-height: 0; }
+          /* Kompakte Launcher-Panels (Zuordnung-Setup bzw. Storm-Start). */
+          .kana-hero-match, .kana-hero-launch { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 0.9rem; padding: 1.2rem 0.6rem; }
+          .kana-hero-match__lead { font-size: 0.92rem; color: var(--ink-600, #5C564D); max-width: 34ch; margin: 0; line-height: 1.5; }
           .kana-hero-match__preview { font-size: 0.85rem; color: var(--text-muted, #8C8378); min-height: 1.2em; margin: 0; }
           .kana-hero-match__preview strong { color: var(--kon, #1F2A44); font-family: 'Geist Mono', ui-monospace, monospace; }
           .kana-hero-match__preview.is-blocked { color: var(--shu-deep, #B84A00); }
           .kana-hero-match__start {
-              width: 100%; max-width: 320px; border: 0; border-radius: 14px; padding: 0.95rem 1rem; cursor: pointer;
+              width: 100%; max-width: 300px; border: 0; border-radius: 14px; padding: 0.95rem 1rem; cursor: pointer;
               font: 600 1.05rem 'Geist', 'Inter', sans-serif; color: #fff;
               background: linear-gradient(180deg, #F2740F, #EB6101);
               box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 2px 6px rgba(184,74,0,.3);
               display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
               transition: filter .15s ease;
           }
+          .kana-hero-match__start .jp { font-family: 'Noto Sans JP', sans-serif; }
           .kana-hero-match__start:hover { filter: brightness(1.05); }
           .kana-hero-match__start:disabled { opacity: 0.5; cursor: not-allowed; }
           .kana-hero-match__quick { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; }
@@ -143,13 +153,26 @@
           }
           .kana-hero-match__quick button:hover { border-color: var(--shu, #EB6101); color: var(--shu, #EB6101); }
           .kana-hero-match__quick i { color: var(--shu, #EB6101); }
+
+          @media (max-width: 860px) {
+              .home-hero--game .home-hero-inner--split {
+                  grid-template-columns: 1fr;
+                  grid-template-areas: "mast" "card" "bridge";
+                  column-gap: 0; row-gap: 1.2rem; text-align: center; max-width: 460px;
+              }
+              .home-hero-masthead .eyebrow-chip { display: none; }
+              .home-hero--game .home-sub { max-width: none; margin: 0 auto; }
+              .kana-bridge--rail { border-left: 0; }
+              .kana-bridge--rail li { padding-left: 0; justify-content: center; }
+              .kana-bridge--rail .kana-bridge__num { position: static; }
+              .home-hero-bridge { text-align: center; }
+          }
         </style>
-        <div class="kstorm-hero"
-             x-data="{ game: 'storm', stormPhase: 'start', get hideChrome() { return this.game === 'storm' && this.stormPhase !== 'start' && this.stormPhase !== 'daily'; } }"
-             @kana-storm-phase.window="stormPhase = $event.detail">
-          <div class="kstorm-hero-card">
+        <div class="home-hero-right">
+          <div class="kana-hero-card"
+               x-data="{ game: 'match', startStorm() { try { const s = this.$store.kanaScope; localStorage.setItem('kanaStormSchrift', s.schrift); localStorage.setItem('kanaStormRows', JSON.stringify(s.rows)); } catch (e) {} window.location.href = '{{ url_for('srs.practice_kana_storm_page') }}'; } }">
             {# Geteilter Scope: Schrift + Reihen ($store.kanaScope) — gilt für beide Spiele. #}
-            <div class="kana-hero-scope" x-show="!hideChrome">
+            <div class="kana-hero-scope">
               <div class="kana-chip-row" role="group" aria-label="Schrift">
                 <button type="button" class="kana-chip" :class="{ 'is-active': $store.kanaScope.schrift === 'hiragana' }"
                         :aria-pressed="($store.kanaScope.schrift === 'hiragana').toString()" @click="$store.kanaScope.setSchrift('hiragana')">Hiragana あ</button>
@@ -167,22 +190,17 @@
                 </template>
               </div>
             </div>
-            {# Umschalter — beide Spieltypen gleichberechtigt. #}
-            <div class="kana-hero-tabs" role="group" aria-label="Spiel wählen" x-show="!hideChrome">
-              <button type="button" :class="{ 'is-active': game === 'storm' }" :aria-pressed="(game === 'storm').toString()" @click="game = 'storm'">
-                <span class="jp" lang="ja" aria-hidden="true">かな</span> Kana Storm
-              </button>
+            {# Umschalter — Zuordnung (Default) | Kana Storm. #}
+            <div class="kana-hero-tabs" role="group" aria-label="Spiel wählen">
               <button type="button" :class="{ 'is-active': game === 'match' }" :aria-pressed="(game === 'match').toString()" @click="game = 'match'">
                 Zuordnung
               </button>
+              <button type="button" :class="{ 'is-active': game === 'storm' }" :aria-pressed="(game === 'storm').toString()" @click="game = 'storm'">
+                <span class="jp" lang="ja" aria-hidden="true">かな</span> Kana Storm
+              </button>
             </div>
-            {# Kana Storm (Default-Tab) — inline, Scope kommt vom geteilten Panel oben. #}
-            <div class="kana-hero-panel" x-show="game === 'storm'">
-              {% set kstorm_scope_external = true %}
-              {% include '_kana_storm_stage.html' %}
-            </div>
-            {# Zuordnung — kompaktes kanaSettings()-Setup, startet das Spiel im Vollbild. #}
-            <div class="kana-hero-panel kana-hero-match" x-show="game === 'match'" x-cloak x-data="kanaSettings()" x-init="init()">
+            {# Zuordnung (Default) — kompaktes kanaSettings()-Setup, startet das Spiel im Vollbild. #}
+            <div class="kana-hero-panel kana-hero-match" x-show="game === 'match'" x-data="kanaSettings()" x-init="init()">
               <p class="kana-hero-match__lead">Ordne Kana ihren Romaji zu — in Ruhe, ohne Zeitdruck. Schrift &amp; Reihen wählst du oben.</p>
               <div class="kana-mode-seg" role="group" aria-label="Modus">
                 <button type="button" :class="{ 'is-active': mode === 'schreiben' }" :aria-pressed="(mode === 'schreiben').toString()" @click="setMode('schreiben')">Schreiben</button>
@@ -200,34 +218,34 @@
                 <button type="button" @click="startConfusion()"><i class="fas fa-clone" aria-hidden="true"></i> Ähnliche</button>
               </div>
             </div>
+            {# Kana Storm — Launcher (Vollbild); der geteilte Scope wird übernommen. #}
+            <div class="kana-hero-panel kana-hero-launch" x-show="game === 'storm'" x-cloak>
+              <p class="kana-hero-match__lead">Lies Kana blitzschnell gegen die Uhr — Combo halten, Bestscore knacken. Schrift &amp; Reihen wählst du oben.</p>
+              <button type="button" class="kana-hero-match__start" @click="startStorm()">
+                <span><span class="jp" lang="ja" aria-hidden="true">かな</span> Storm starten</span> <i class="fas fa-arrow-right" aria-hidden="true"></i>
+              </button>
+            </div>
           </div>
         </div>
 
-        {# ── Bruecken-Leiste: der rote Faden Spiel → Lektion → Pfad (SSR) ── #}
-        <ol class="kana-bridge" aria-label="Dein Weg in 3 Schritten">
-          <li class="is-here">
-            <span class="kana-bridge__num">1</span>
-            <span><strong>Spielen</strong> — du bist hier</span>
-          </li>
-          <li>
-            <span class="kana-bridge__num">2</span>
-            <a href="{{ guest_lesson_url }}">Hiragana-Lektion · gratis →</a>
-          </li>
-          <li>
-            <span class="kana-bridge__num">3</span>
-            <a href="#lernpfad">N5-Pfad: vom Schreibsystem zu ersten Sätzen →</a>
-          </li>
-        </ol>
-
-        {# ── Aktionszeile (unterhalb der Bruecke; im Fold bleibt das Spiel
-             der einzige Shu-Traeger) ── #}
-        {# 10.3: Bundle-Link (+ zugehoerige Lifetime/Geld-zurueck-Note) aus der
-           Hero-Aktionszeile entfernt — Dublette des index-Bundle-Banners weiter
-           unten. Hero traegt nur noch den Gratis-Einstieg. #}
-        <div class="home-actions home-actions--bridge">
-          <a href="{{ guest_lesson_url }}" class="btn-shu">Kostenlos starten</a>
-        </div>
-        <div class="home-actions-secondary">
+        {# ── Brücken-Rail: roter Faden Spiel → Lektion → Pfad (linke Spalte, SSR) ── #}
+        <div class="home-hero-bridge">
+          <ol class="kana-bridge kana-bridge--rail" aria-label="Dein Weg in 3 Schritten">
+            <li class="is-here">
+              <span class="kana-bridge__num">1</span>
+              <span><strong>Spielen</strong> — du bist hier</span>
+            </li>
+            <li>
+              <span class="kana-bridge__num">2</span>
+              <a href="{{ guest_lesson_url }}">Hiragana-Lektion · gratis →</a>
+            </li>
+            <li>
+              <span class="kana-bridge__num">3</span>
+              <a href="#lernpfad">N5-Pfad: vom Schreibsystem zu ersten Sätzen →</a>
+            </li>
+          </ol>
+          {# Einziger Shu-Akzent im Hero ist die Spiel-Taste; „Kostenlos starten"
+             trägt die Topnav. Hier nur der dezente Katalog-Link. #}
           <a href="{{ url_for('routes.lessons', access='free') }}" class="home-secondary-link">
             Alle Lektionen ansehen →
           </a>
