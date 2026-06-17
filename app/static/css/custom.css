@@ -108,6 +108,7 @@
     --kinari:           #1B1813;   /* waermere Paneele */
     --background-color: #14120E;
     --card-background:  #1E1B15;   /* Karten, erhoehte Flaechen */
+    --card-bg:          #1E1B15;   /* Alias: einige Regeln nutzen var(--card-bg,#FFFDF7) — sonst bliebe cremeweiss */
     --zen-washi:        #14120E;
 
     /* ── Ink-Skala UMGEKEHRT: 50 = dunkelste Flaeche, 950 = hellster Text.
@@ -4777,4 +4778,17 @@ button[onclick*="moveContentInPage"]:active {
         background: rgba(20, 18, 14, 0.97);
         border-top-color: rgba(244, 239, 230, 0.08);
     }
+}
+
+/* Akzent-gefuellte Buttons (Indigo/Kon): im Dark ist die Fuellung aufgehellt
+   (--primary-color #8AAEDD, --kon #C6D0E4) → weisser Text bricht. Loesung:
+   dunkler Text (var(--washi) kippt im Dark auf #14120E) = "tonaler" Button,
+   ~7:1. Der Shu-CTA bleibt der einzige sattfarbige Button mit weissem Text. */
+[data-theme="dark"] .btn-primary,
+[data-theme="dark"] .read-aloud-play,
+[data-theme="dark"] .card-audio-btn:hover,
+[data-theme="dark"] .card-audio-btn.playing,
+[data-theme="dark"] .course-action-btn,
+[data-theme="dark"] .lesson-action-btn {
+    color: var(--washi);
 }

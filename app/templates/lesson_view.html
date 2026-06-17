@@ -826,6 +826,17 @@ html.hide-front-romaji .front-romaji { display: none !important; }
             background: rgba(20, 18, 14, 0.98);
         }
     }
+    /* Akzent-gefuellte Buttons: heller Indigo-bg im Dark -> dunkler Text (var(--washi)) */
+    [data-theme="dark"] .nav-btn-primary,
+    [data-theme="dark"] .sidebar-page-item:hover .sidebar-page-num,
+    [data-theme="dark"] .sidebar-nav-btn:hover:not(:disabled) {
+        color: var(--washi);
+    }
+    /* Sekundaer-Button nutzt --zen-sumi-light als FLAECHE (hell im Dark) -> dunkle Flaeche + heller Text */
+    [data-theme="dark"] .nav-btn-secondary {
+        background-color: var(--ink-300);
+        color: var(--text-color);
+    }
 </style>
 <!-- Mobile sidebar overlay -->
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
@@ -4206,7 +4217,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <button class="btn btn-outline-secondary btn-sm" @click="prev()" :disabled="current === 0" :class="current === 0 ? 'opacity-50' : ''">
                         <i class="fas fa-chevron-left me-1"></i> Zurück
                     </button>
-                    <button class="btn btn-sm" style="background: var(--zen-indigo, #2B4C7E); color: white;" @click="next()" x-show="current < total - 1">
+                    <button class="btn btn-sm" style="background: var(--zen-indigo, #2B4C7E); color: var(--washi, #fff);" @click="next()" x-show="current < total - 1">
                         Weiter <i class="fas fa-chevron-right ms-1"></i>
                     </button>
                     <span x-show="current === total - 1" class="badge bg-success py-2 px-3">Quiz abgeschlossen</span>
@@ -4353,6 +4364,11 @@ document.addEventListener('DOMContentLoaded', function() {
 /* Heller Verlauf der Audio-Player-Flaeche -> dunkle Tokens */
 [data-theme="dark"] .custom-audio-player {
     background: linear-gradient(135deg, var(--card-background) 0%, var(--kinari) 100%);
+}
+/* Akzent-gefuellte Audio-Buttons: heller bg im Dark -> dunkler Text */
+[data-theme="dark"] .custom-audio-player .audio-play-btn,
+[data-theme="dark"] .custom-audio-player .audio-speed-btn:hover {
+    color: var(--washi);
 }
 </style>
 <script>
