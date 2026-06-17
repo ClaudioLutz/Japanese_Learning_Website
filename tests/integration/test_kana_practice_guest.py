@@ -263,15 +263,18 @@ class TestKanaStorm:
         body = client.get('/practice/kana?tab=storm').get_data(as_text=True)
         assert "game: 'storm'" in body
 
-    def test_homepage_shows_storm_card_for_guest(self, client, db):
-        # Storm ist der Gast-Hero der Startseite (inline, kein iframe); das
-        # Storm-Skript ist global eingebunden, das Matching-Embed ist raus.
+    def test_homepage_shows_game_launcher_for_guest(self, client, db):
+        # Redesign: Der Gast-Hero ist ein Spiel-LAUNCHER (Zuordnung-Default +
+        # Storm-Launcher), KEIN Inline-Storm mehr. Beide starten im Vollbild;
+        # das Matching-iframe-Embed bleibt raus.
         resp = client.get('/')
         assert resp.status_code == 200
         body = resp.get_data(as_text=True)
-        assert 'kstorm-hero' in body
-        assert 'kanaStormGame(' in body
-        assert 'kana_storm.js' in body
+        assert 'kana-hero-card' in body
+        assert 'kana-hero-tabs' in body
+        assert 'startStorm()' in body
+        assert '/practice/kana/storm' in body
+        assert 'class="kstorm-hero"' not in body
         assert 'x-data="kanaEmbedHost(' not in body
 
     def test_storm_uses_existing_public_api(self, client, db):

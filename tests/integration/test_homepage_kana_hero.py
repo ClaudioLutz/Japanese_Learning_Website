@@ -1,13 +1,14 @@
 # tests/integration/test_homepage_kana_hero.py
-"""Integration-Tests fuer den Gast-Hero der Startseite (Kana-Spiele als Hero).
+"""Integration-Tests fuer den Gast-Hero der Startseite (Spiel-Launcher).
 
-Stand 2026-06-14: Der Gast-Hero bietet BEIDE Kana-Spiele (inline, KEIN iframe)
-ueber einen Umschalter [Kana Storm | Zuordnung] mit GETEILTEM Scope
-($store.kanaScope), genau wie /practice/kana. Storm spielt inline; Zuordnung
-zeigt ein kompaktes Setup und startet das Spiel im Vollbild (/practice/kana/spiel).
-Das fruehere iframe-Embed (kanaEmbedHost) ist raus. Pitch/USP/Trust sind SSR in
-die Sektion "Vom Spiel zum System" gewandert. Eingeloggte behalten ihren
-personalisierten Hero ohne Spiel-Embed.
+Stand 2026-06-17 (Redesign): Der Gast-Hero ist ein editorialer Split — links
+Pitch + nummerierte Bruecken-Rail, rechts eine Spiel-Launcher-Karte mit
+GETEILTEM Scope ($store.kanaScope) und einem Umschalter [Zuordnung | Kana Storm].
+Beide Spiele starten im VOLLBILD (kein Inline-Spiel mehr im Hero): Zuordnung ueber
+kanaSettings().startGame() -> /practice/kana/spiel, Storm ueber startStorm() ->
+/practice/kana/storm. Das fruehere iframe-Embed (kanaEmbedHost) bleibt raus.
+Pitch/USP/Trust sind SSR in der Sektion "Vom Spiel zum System". Eingeloggte
+behalten ihren personalisierten Hero ohne Spiel-Embed.
 """
 
 
@@ -16,45 +17,43 @@ class TestGuestHero:
         resp = client.get('/')
         assert resp.status_code == 200
 
-    def test_storm_is_hero_element(self, client, db):
+    def test_guest_hero_has_game_launcher(self, client, db):
         body = client.get('/').get_data(as_text=True)
-        # Der Gast-Hero bietet BEIDE Kana-Spiele ueber einen Umschalter
-        # [Kana Storm | Zuordnung] mit GETEILTEM Scope ($store.kanaScope),
-        # genau wie /practice/kana. Storm spielt inline (kein iframe).
-        assert 'kanaStormGame(' in body
-        assert 'class="kstorm-hero"' in body
-        assert 'kana_storm.js' in body
+        # Gast-Hero = editorialer Split mit einer Spiel-Launcher-Karte (KEIN
+        # Inline-Spiel mehr): geteilter Scope + Umschalter [Zuordnung | Kana Storm].
+        assert 'home-hero-inner--split' in body
+        assert 'kana-hero-card' in body
         # Geteilter Scope (Schrift-Chips + Reihen-Pills), an den Store gebunden.
         assert 'kana-hero-scope' in body
         assert '$store.kanaScope.setSchrift(' in body
         assert '$store.kanaScope.toggleRow(' in body
         assert 'kana_scope_store.js' in body
-        # Spiel-Umschalter + kompaktes Matching-Setup (startet das Spiel im Vollbild).
+        # Spiel-Umschalter + beide Spiele.
         assert 'kana-hero-tabs' in body
-        assert 'kana-hero-match' in body
+        assert 'kana-hero-match' in body      # Zuordnung-Launcher
         assert 'kanaSettings()' in body
-        # Storm liest den geteilten Scope (interne Picker ausgeblendet).
-        assert 'scopeExternal: true' in body
-
-    def test_daily_tab_in_hero(self, client, db):
-        # Der Daily-Tab (Wordle-artige Tageschallenge) ist im Hero erreichbar (SSR).
-        body = client.get('/').get_data(as_text=True)
-        assert 'kstorm__tabs' in body
-        assert 'Daily-Karte' in body
-        assert "goTab('daily')" in body
-        assert 'startDaily(' in body
-        # Storm bleibt der initial sichtbare Tab auf der Startseite.
         assert 'Kana Storm' in body
-        # Das fruehere Zuordnungs-Embed ist als Hero RAUS
-        assert 'x-data="kanaEmbedHost(' not in body
-        assert '/practice/kana/embed' not in body
-        # Das Zuordnungs-Spiel ist jetzt ein gleichwertiger Tab im Hero (kein
-        # blosser "Zum Zuordnungs-Spiel"-Link mehr).
-        assert 'Zum Zuordnungs-Spiel' not in body
+        # Storm-Launcher (Vollbild) statt Inline-Storm-Engine im Hero.
+        assert 'startStorm()' in body
+        assert 'class="kstorm-hero"' not in body
+        assert 'scopeExternal: true' not in body
+
+    def test_hero_switcher_no_inline_storm(self, client, db):
+        # Umschalter [Zuordnung | Kana Storm] im Hero; KEIN Inline-Storm mehr,
+        # daher auch kein Storm-Daily-Tab-Markup auf der Startseite.
+        body = client.get('/').get_data(as_text=True)
         assert 'kana-hero-tabs' in body
         assert 'Zuordnung' in body
-        # H1 traegt weiter den Query-Match "Hiragana lernen"
+        assert 'Kana Storm' in body
+        # H1 traegt weiter den Query-Match "Hiragana lernen".
         assert 'Hiragana lernen' in body
+        # Kein Inline-Storm → kein Storm-Tab-/Daily-Markup im Hero.
+        assert 'kstorm__tabs' not in body
+        assert 'Daily-Karte' not in body
+        assert "goTab('daily')" not in body
+        # Das fruehere Zuordnungs-iframe-Embed bleibt RAUS.
+        assert 'x-data="kanaEmbedHost(' not in body
+        assert '/practice/kana/embed' not in body
 
     def test_vokal_probe_removed(self, client, db):
         body = client.get('/').get_data(as_text=True)
@@ -97,13 +96,11 @@ class TestGuestHero:
         sitemap = client.get('/sitemap.xml').get_data(as_text=True)
         assert '/practice/kana</loc>' in sitemap
 
-    def test_storm_hero_register_cta(self, client, db):
-        # Storm-Hero hat keine A/B/C-Ergebnis-Weiche mehr (matching-spezifisch);
-        # die Konto-CTA fuehrt nach der Registrierung in die Storm-Seite.
+    def test_storm_launcher_targets_fullscreen(self, client, db):
+        # Der Storm-Tab im Hero ist ein Launcher: startStorm() navigiert in die
+        # Vollbild-Storm-Seite (kein Inline-Spiel, keine Matching-Ergebnis-Weiche).
         body = client.get('/').get_data(as_text=True)
-        assert ('next=/practice/kana/storm' in body
-                or 'next=%2Fpractice%2Fkana%2Fstorm' in body)
-        # Die alte Matching-Ergebnis-Weiche ist nicht mehr auf der Startseite.
+        assert '/practice/kana/storm' in body
         assert "branch() === 'A'" not in body
 
 
