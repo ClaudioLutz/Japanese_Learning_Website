@@ -15,6 +15,37 @@
     {% endif %}
     <meta name="theme-color" content="#FAF7F2">
 
+    {# ── Dark Mode: data-theme synchron VOR dem CSS setzen → kein FOUC.
+       Eigener localStorage-Key 'jpl-theme' (entkoppelt vom Admin-Dark-Mode,
+       der eine .dark-Klasse + eigenes CSS nutzt). Ohne gespeicherte Wahl
+       folgt der Modus der System-Praeferenz (prefers-color-scheme). ── #}
+    <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('jpl-theme');            // 'dark' | 'light' | null
+        var sys = window.matchMedia &&
+          window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var dark = t ? t === 'dark' : sys;
+        document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+        var m = document.querySelector('meta[name="theme-color"]');
+        if (m) m.setAttribute('content', dark ? '#14120E' : '#FAF7F2');
+      } catch (e) {}
+    })();
+    document.addEventListener('alpine:init', function () {
+      Alpine.store('theme', {
+        dark: document.documentElement.getAttribute('data-theme') === 'dark',
+        toggle: function () {
+          this.dark = !this.dark;
+          var v = this.dark ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-theme', v);
+          try { localStorage.setItem('jpl-theme', v); } catch (e) {}
+          var m = document.querySelector('meta[name="theme-color"]');
+          if (m) m.setAttribute('content', this.dark ? '#14120E' : '#FAF7F2');
+        }
+      });
+    });
+    </script>
+
     {# ── Analytics: Plausible (cookieless) ──
        Sicherer Stub IMMER: window.plausible() schluckt Event-Calls anderer
        Seiten, auch ohne Account → keine ReferenceErrors. Das echte Script
@@ -171,6 +202,14 @@
 
         {# Right Group — Stats + User #}
         <div class="topnav-right">
+          {# Hell/Dunkel-Umschalter — fuer Gaeste UND eingeloggte Nutzer #}
+          <button type="button" class="topnav-theme-toggle"
+                  @click="$store.theme.toggle()"
+                  :aria-pressed="$store.theme.dark.toString()"
+                  :aria-label="$store.theme.dark ? 'Zu hellem Modus wechseln' : 'Zu dunklem Modus wechseln'"
+                  title="Hell/Dunkel umschalten">
+            <i class="fas" :class="$store.theme.dark ? 'fa-sun' : 'fa-moon'" aria-hidden="true"></i>
+          </button>
           {% if current_user.is_authenticated %}
             {# Stats: nur der Streak — handlungsrelevant. Level lebt im
                Dropdown-Head + Profil (Mobile blendete es ohnehin aus). #}
@@ -561,6 +600,63 @@
 
     /* Print: Nav weg */
     @media print { .topnav { display: none; } }
+
+    /* ── Theme-Umschalter (Hell/Dunkel) ── runder Icon-Button im Topnav-Stil */
+    .topnav-theme-toggle {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 36px; height: 36px;
+        background: transparent;
+        border: 1px solid var(--ink-200, #E4DED4);
+        border-radius: 999px;
+        color: var(--ink-600, #5C564D);
+        cursor: pointer;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+        transition: background-color .15s, color .15s, border-color .15s;
+    }
+    .topnav-theme-toggle:hover {
+        background: rgba(28, 26, 23, 0.04);
+        color: var(--sumi, #1C1C1C);
+        border-color: var(--ink-400, #A8A095);
+    }
+
+    /* ════════════════════════════════════════════════════════════
+       DARK MODE — Overrides der base.html-LOKALEN Nav-Styles.
+       Diese muessen HIER stehen (nicht in custom.css): die obigen
+       Topnav-Regeln sind inline und gewinnen sonst den Kaskaden-Kampf.
+       Token-basierte Werte (Borders via --ink-*, Text via --kon etc.)
+       laufen ueber den [data-theme=dark]-Token-Block in custom.css
+       automatisch mit; hier nur die HARTcodierten Literale.
+       ════════════════════════════════════════════════════════════ */
+    [data-theme="dark"] .topnav {
+        background: rgba(20, 18, 14, 0.85);     /* warmes Sumi-Dunkel, Blur bleibt */
+    }
+    [data-theme="dark"] .topnav-dropdown {
+        background: var(--card-background);
+    }
+    /* Helle Hover-Tints (rgba(28,26,23,…)) sind auf Dunkel unsichtbar → invertieren */
+    [data-theme="dark"] .topnav-link:hover,
+    [data-theme="dark"] .topnav-stat,
+    [data-theme="dark"] .topnav-user-btn:hover,
+    [data-theme="dark"] .topnav-dd-item:hover,
+    [data-theme="dark"] .topnav-btn-ghost:hover,
+    [data-theme="dark"] .topnav-burger:hover,
+    [data-theme="dark"] .topnav-theme-toggle:hover {
+        background: rgba(255, 255, 255, 0.07);
+    }
+    /* Bronze-Tagline auf Dunkel aufhellen (Kontrast >=4.5:1) */
+    [data-theme="dark"] .topnav-brand-tag { color: #C2A87E; }
+    /* Bottom-Nav-Badge-Ring spiegelt die (dunkle) Bottom-Nav-Flaeche */
+    [data-theme="dark"] .bottom-nav-ico-wrap .nav-due-badge { border-color: var(--card-background); }
+    /* Footer: Bootstrap-Hairline + Muted-Text fuer Dunkel angleichen */
+    [data-theme="dark"] .site-footer {
+        color: var(--text-muted);
+        border-top-color: var(--border-color) !important;
+    }
+    /* Mobile-Drawer: nur im selben Breakpoint wie die Original-Regel (#fff) */
+    @media (max-width: 991px) {
+        [data-theme="dark"] .topnav-primary { background: var(--card-background); }
+    }
     </style>
     <main id="main-content" class="container mt-4">
         {% with messages = get_flashed_messages(with_categories=true) %}
