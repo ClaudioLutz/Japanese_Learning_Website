@@ -92,6 +92,17 @@
     --shadow-subtle: 0 1px 2px 0 rgba(28,26,23,.04), 0 1px 3px 0 rgba(28,26,23,.06);
     --shadow-card:   0 2px 4px -1px rgba(28,26,23,.06), 0 4px 12px -2px rgba(28,26,23,.08);
     --shadow-lifted: 0 8px 24px -4px rgba(28,26,23,.10), 0 2px 6px -2px rgba(28,26,23,.06);
+
+    /* Hi-Fi Reskin (Lektions-Redesign 2026-06-17): Paper-Surface + Toenungs-Tokens
+       fuer Callout/Gast-Banner/Quiz-Feedback. Komposit (kein Alias) -> Light hier,
+       Dark im [data-theme="dark"]-Block. */
+    --paper:       #FFFFFF;
+    --gold-bg:     rgba(199,128,45,.08);
+    --gold-line:   rgba(199,128,45,.40);
+    --gold-text:   #6E4A18;
+    --matcha-bg:   rgba(122,144,51,.08);
+    --matcha-line: rgba(122,144,51,.35);
+    --matcha-text: #3F4D1A;
 }
 
 /* === DARK MODE — zweiter Token-Satz ===================================
@@ -170,6 +181,15 @@
     --shadow-lifted: 0 8px 24px -4px rgba(0,0,0,.6), 0 2px 6px -2px rgba(0,0,0,.5);
 
     color-scheme: dark;
+
+    /* Hi-Fi Reskin (2026-06-17) — Dark-Varianten der Toenungs-Tokens */
+    --paper:       #1E1B15;
+    --gold-bg:     rgba(214,162,78,.12);
+    --gold-line:   rgba(214,162,78,.32);
+    --gold-text:   #D6A24E;
+    --matcha-bg:   rgba(166,193,88,.12);
+    --matcha-line: rgba(166,193,88,.30);
+    --matcha-text: #A6C158;
 }
 
 /* Body-Default-bg im Dark Mode: deckt die ~20 Templates OHNE .redesign-page
