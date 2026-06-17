@@ -128,6 +128,36 @@
     /* unter ~20 % der Zeit wird der Balken zur Warnung rot */
     .kstorm__timerbar.is-low > i { background: var(--danger, #D14B3D); }
 
+    /* ── Immersive Top-Bar (nur im aktiven Spiel): zurück · Titel+Scope · Optionen ── */
+    .kstorm__topbar {
+        flex: 0 0 auto; display: flex; align-items: center; gap: 0.75rem;
+        padding: 0.1rem 0 0.7rem;
+    }
+    .kstorm__iconbtn {
+        flex: 0 0 auto; width: 40px; height: 40px; border-radius: 11px;
+        display: inline-flex; align-items: center; justify-content: center;
+        border: 1px solid var(--border-color, #E4DED4); background: var(--card-bg, #FFFDF7);
+        color: var(--ink-600, #5C564D); font-size: 0.95rem; cursor: pointer; text-decoration: none;
+        transition: border-color .15s ease, color .15s ease;
+    }
+    .kstorm__iconbtn:hover { border-color: var(--shu, #EB6101); color: var(--shu, #EB6101); text-decoration: none; }
+    .kstorm__iconbtn:focus-visible { outline: 2px solid var(--shu, #EB6101); outline-offset: 2px; }
+    .kstorm__topttl { flex: 1 1 auto; min-width: 0; text-align: center; line-height: 1.2; }
+    .kstorm__topttl-main {
+        font: 700 0.72rem/1 'Geist', 'Inter', sans-serif; letter-spacing: 0.14em; text-transform: uppercase;
+        color: var(--kon, #1F2A44);
+    }
+    .kstorm__topttl-jp { font-family: 'Noto Sans JP', sans-serif; font-weight: 500; color: var(--shu, #EB6101); letter-spacing: 0; }
+    .kstorm__topttl-sub { font: 400 0.78rem/1.2 'Inter', sans-serif; color: var(--text-muted, #8C8378); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* ── Timer-Rail: dünner Balken + Restzeit/Fortschritt rechts ── */
+    .kstorm__timerrail { flex: 0 0 auto; display: flex; align-items: center; gap: 0.75rem; }
+    .kstorm__timerrail > .kstorm__timerbar { flex: 1 1 auto; }
+    .kstorm__timerval {
+        flex: 0 0 auto; font: 700 0.95rem/1 'Geist Mono', ui-monospace, monospace;
+        font-variant-numeric: tabular-nums; color: var(--kon, #1F2A44);
+    }
+
     .kstorm__play-body {
         flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column;
         padding: 0.8rem 1rem 1rem; text-align: center;
@@ -137,17 +167,25 @@
     .kstorm__stat--r { text-align: right; }
     .kstorm__label { display: block; font: 700 0.62rem/1 'Geist', 'Inter', sans-serif; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted, #8C8378); margin-bottom: 2px; }
     .kstorm__num { font: 700 1.25rem/1.1 'Geist Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; color: var(--kon, #1F2A44); }
+    .kstorm__combowrap { display: flex; flex-direction: column; align-items: center; gap: 0.32rem; }
     .kstorm__combo {
-        font: 700 1.35rem/1 'Geist Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums;
-        color: var(--shu, #EB6101); min-width: 64px; text-align: center;
+        width: 68px; height: 68px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font: 700 1.5rem/1 'Geist Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums;
+        color: var(--shu, #EB6101);
+        background: rgba(235, 97, 1, .08); border: 1px solid rgba(235, 97, 1, .22);
         transition: transform .12s ease;
     }
-    .kstorm__combo.pop { transform: scale(1.28); }
+    .kstorm__combo.pop { transform: scale(1.16); }
+    .kstorm__combocap {
+        font: 700 0.6rem/1 'Geist', 'Inter', sans-serif; letter-spacing: 0.1em; text-transform: uppercase;
+        color: var(--text-muted, #8C8378);
+    }
 
     .kstorm__main { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.35rem; }
     .kstorm__kana {
         font-family: 'Noto Sans JP', sans-serif; font-weight: 500;
-        font-size: clamp(4.5rem, 22vw, 7.5rem); line-height: 1; color: var(--kon, #1F2A44);
+        font-size: clamp(6.25rem, 30vw, 9.375rem); line-height: 1; color: var(--kon, #1F2A44);
         transition: transform .14s ease, color .14s ease;
     }
     .kstorm__kana.in { animation: kstormPop .18s ease; }
@@ -166,7 +204,7 @@
     .kstorm__answer input {
         width: 100%; text-align: center;
         font: 600 1.3rem 'Inter', sans-serif; letter-spacing: 0.04em;
-        padding: 0.75rem 0.85rem; border: 2px solid var(--ink-300, #D4CCBE); border-radius: 14px;
+        padding: 0.75rem 0.85rem; border: 2px solid var(--shu, #EB6101); border-radius: 14px;
         background: var(--card-bg, #FFFDF7); color: var(--kon, #1F2A44);
         transition: border-color .12s ease;
     }
@@ -182,6 +220,10 @@
     }
 
     .kstorm__choices { flex: 0 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; width: 100%; max-width: 340px; margin: 0.85rem auto 0; }
+    /* Desktop: vier Antwortkacheln in einer Reihe (Mockup), Mobile bleibt 2×2. */
+    @media (min-width: 600px) {
+        .kstorm__choices { grid-template-columns: repeat(4, 1fr); max-width: 460px; }
+    }
     .kstorm__choice {
         font: 600 1.05rem 'Inter', sans-serif; color: var(--ink-700, #403B34);
         background: var(--card-bg, #FFFDF7); border: 2px solid var(--ink-300, #D4CCBE);

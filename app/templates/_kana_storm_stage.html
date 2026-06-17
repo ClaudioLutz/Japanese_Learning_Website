@@ -269,9 +269,36 @@
     {# ── SPIEL (Storm ODER Daily) ── #}
     <div class="kstorm__play" :class="{ 'is-ok': fb === 'ok', 'is-bad': fb === 'bad' }"
          x-show="phase === 'playing'" x-cloak>
-        <div class="kstorm__timerbar"
-             :class="{ 'is-low': mode !== 'daily' && timerPct() < 20, 'is-daily': mode === 'daily' }">
-            <i :style="`right: ${100 - barPct()}%`"></i>
+        {# Immersive Top-Bar (nur im Spiel): zurück · Titel+Scope · Optionen.
+           Back-Pfeil verlässt das Spiel (Hub-Link, falls gesetzt), sonst zurück
+           zu den Optionen; das Schieberegler-Icon öffnet ebenfalls die Optionen. #}
+        <div class="kstorm__topbar">
+            {% if _kstorm_back %}
+            <a class="kstorm__iconbtn" href="{{ _kstorm_back }}" aria-label="Zurück zum Kana-Spiel">
+                <i class="fas fa-arrow-left" aria-hidden="true"></i>
+            </a>
+            {% else %}
+            <button type="button" class="kstorm__iconbtn" @click="toStart()" aria-label="Runde beenden">
+                <i class="fas fa-arrow-left" aria-hidden="true"></i>
+            </button>
+            {% endif %}
+            <div class="kstorm__topttl">
+                <div class="kstorm__topttl-main">
+                    <span class="kstorm__topttl-jp" lang="ja" aria-hidden="true" x-show="mode !== 'daily'">かな</span>
+                    <span x-text="mode === 'daily' ? 'Kana Daily' : 'Kana Storm'">Kana Storm</span>
+                </div>
+                <div class="kstorm__topttl-sub" x-text="scopeLabel()">Hiragana · alle Reihen</div>
+            </div>
+            <button type="button" class="kstorm__iconbtn" @click="toStart()" aria-label="Einstellungen">
+                <i class="fas fa-sliders-h" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div class="kstorm__timerrail">
+            <div class="kstorm__timerbar"
+                 :class="{ 'is-low': mode !== 'daily' && timerPct() < 20, 'is-daily': mode === 'daily' }">
+                <i :style="`right: ${100 - barPct()}%`"></i>
+            </div>
+            <span class="kstorm__timerval" x-text="rightStatValue()" :aria-label="rightStatLabel()">0:41</span>
         </div>
         <div class="kstorm__play-body">
             <div class="kstorm__hud">
@@ -279,10 +306,13 @@
                     <span class="kstorm__label">Punkte</span>
                     <span class="kstorm__num" x-text="score">0</span>
                 </div>
-                <div class="kstorm__combo" :class="{ pop: popCombo }" x-html="comboLabel()">×1</div>
+                <div class="kstorm__combowrap">
+                    <div class="kstorm__combo" :class="{ pop: popCombo }" x-html="comboLabel()">×1</div>
+                    <span class="kstorm__combocap">Combo</span>
+                </div>
                 <div class="kstorm__stat kstorm__stat--r">
-                    <span class="kstorm__label" x-text="rightStatLabel()">Zeit</span>
-                    <span class="kstorm__num" x-text="rightStatValue()">0:60</span>
+                    <span class="kstorm__label">Kana</span>
+                    <span class="kstorm__num" x-text="count">0</span>
                 </div>
             </div>
             <div class="kstorm__main">
