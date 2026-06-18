@@ -837,6 +837,14 @@ html.hide-front-romaji .front-romaji { display: none !important; }
         background-color: var(--ink-300);
         color: var(--text-color);
     }
+    /* Bootstrap .card setzt --bs-body-color (#212529) auf ALLEN nackten
+       Inhalt der Inhaltskarte → im Dark dunkel-auf-dunkel (Prosa, Quiz-Frage/
+       -Optionen, Grammatik-Erklaerung). Theme-Textfarbe erzwingen; Komponenten
+       mit eigener Farbe (Badges, Buttons, Vokabel-Front, Akzent-Headings,
+       em/strong) ueberschreiben das weiterhin. */
+    [data-theme="dark"] body.lesson-view-redesign .lesson-content-card {
+        color: var(--text-color);
+    }
 </style>
 <!-- Mobile sidebar overlay -->
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
