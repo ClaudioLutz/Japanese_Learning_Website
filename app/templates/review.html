@@ -310,11 +310,18 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         color: var(--ink-500, #7A7368);
     }
 
-    /* Backside-Layout: Bild kompakt, Bedeutung gross, Lesung leise */
+    /* Backside-Layout: Bild gross by default, Bedeutung gross, Lesung leise.
+       Das Bild fuellt den (meist reichlichen) Leerraum der Rueckseite. Reicht
+       der Platz nicht — langes Beispiel + Uebersetzung auf schmalem Viewport —
+       schrumpft es per flex-shrink, statt die Karte zum Scrollen zu zwingen.
+       aspect-ratio haelt die Box quadratisch waehrend die Hoehe schrumpft;
+       min-height ist der Boden (nie kleiner als das alte 64px-Format). */
     .back-image {
-        align-self: center; flex-shrink: 0;
-        width: 64px; height: 64px;
-        border-radius: 10px; overflow: hidden;
+        align-self: center; flex: 0 1 auto;
+        height: clamp(120px, 42vw, 200px);
+        aspect-ratio: 1 / 1;
+        min-height: 64px;
+        border-radius: 12px; overflow: hidden;
         background: var(--kinari); display: flex; align-items: center; justify-content: center;
     }
     .back-image img { max-width: 100%; max-height: 100%; object-fit: contain; }
