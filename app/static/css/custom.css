@@ -4361,6 +4361,18 @@ button[onclick*="moveContentInPage"]:active {
 .kana-grid-game__pool-card--ghost {
     opacity: 0.35;
 }
+/* Drag-Flüssigkeit: SortableJS (forceFallback) klont die gezogene Karte per
+   cloneNode(true) und schreibt bei JEDEM pointermove ein Inline-transform. Der
+   Klon behält dabei die Klasse .kana-grid-game__pool-card — und damit deren
+   `transition: transform 0.15s` (s.o.). SortableJS setzt am Ghost nur ein
+   Inline-`transition:''` (NICHT `none`), die Klassen-Regel bleibt also aktiv →
+   jede Bewegung wird über 150 ms geeast und die Karte zieht sichtbar hinter dem
+   Finger her. Hier kappen wir das Easing am Ghost gezielt (kombinierter Selektor
+   schlägt die Basis-Spezifität), damit das Drag-Bild 1:1 unter dem Finger sitzt. */
+.kana-grid-game__pool-card.sortable-fallback {
+    transition: none;
+    will-change: transform;
+}
 .kana-grid-game__pool-text {
     line-height: 1;
 }
