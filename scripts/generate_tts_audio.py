@@ -94,6 +94,13 @@ SPEAKER_GENDER = {
     "Weber": "female",     # Nachname allein kein Indikator — konservativ female
     "Mei": "female",
     "Mori": "male",        # Dr. Mori (Arzt, Koerper-/Gesundheits-Lektion)
+    # Casts der N5-Vokabel-Lektionen (Batch 2026-06-18)
+    "Nina": "female",      # Schuelerin (Schule & Lernen)
+    "Hana": "female",      # Tiere/Natur-Lektion
+    "Leon": "male",        # Tiere/Natur-Lektion
+    "Aya": "female",       # Freizeit/Medien-Lektion
+    "Saki": "female",      # Verben-Lektion
+    "Markus": "male",      # Verben-Lektion
     # Katakana-Schreibweisen (von Claude in Dialogen genutzt)
     "リサ": "female",       # Lisa
     "ハルト": "male",       # Haruto

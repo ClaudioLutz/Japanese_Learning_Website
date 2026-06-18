@@ -67,6 +67,33 @@ Destillat der am häufigsten wiederkehrenden Erkenntnisse. Details + Historie in
 
 <!-- Neuste Einträge oben, älteste unten. -->
 
+## 2026-06-18 — 5 N5-Vokabel-Lektionen (Schule/Haushalt/Tiere/Freizeit/Verben) — Prod 207–211 LIVE
+
+### Erstellte Lektionen (alle live auf japanese-learning.ch, end-to-end verifiziert)
+- **207** Schule & Lernen — Im Unterricht → NEUES Modul `n5-schule-lernen` (id Dev 44 / Prod 44)
+- **208** Zuhause & Haushalt → `n5-wohnen-haus` (order 2)
+- **209** Tiere, Natur & Draussen → `n5-wetter-natur` (order 2)
+- **210** Freizeit, Musik & Medien → `n5-familie-personen` (order 5)
+- **211** Verben 2 — Geben, Nehmen und Handeln → `n5-alltag-verben` (order 2)
+- **Coverage N5-Vokabeln 64,1% → ~78,7%** (+104 eindeutige Wörter). Kanji bleibt 100%.
+
+### Erfolge
+- **Workflow-Fan-out (1 Workflow-Aufruf, 25 Agenten, 2,5 M Tokens, ~32 Min):** 5 Drafter → je 3 adversariale Reviewer (3 benannte Linsen: JLPT-Disziplin / Pädagogik+Korrektheit / Form) → je 1 Fix-Agent mit `validate`-Selbstcheck. Alle 5 Drafts danach validator-clean (nur erwarteter thumbnail_url-Fehler). Workflow lief in **Vordergrund**-Session stabil durch (vgl. bg-Unzuverlässigkeit früher).
+- **Reviewer-Linsen genau auf die 2026-06-15-Failure-Modes geschärft** (Advisor): (1) jedes im Quiz getestete Wort wird auch gelehrt, (2) meaning_de-Genauigkeit (keine Konflation), (3) JEDES Kanji in JEDEM Feld ∈ N5-80 oder Hiragana — Reviewer bekamen das 80er-Set explizit mit.
+- **Pipeline pro Lektion im Hauptloop** (seriell wo nötig, parallel wo möglich): images → insert → text-audio → slideshow (5 parallel). 0 Bild-Safety-Blocks (auch Verben-Lektion sauber).
+- **Playwright-Verifikation** auf lokalem Dev-Server (origin/main-Code, = Prod): Deck-Invariante (1 Karte), N5-Kanji-Disziplin im Beispielsatz (じゅぎょう/ごぜん Hiragana, 九時 als N5-Kanji), Slideshow (gender-korrekte Stimmen), Quiz, 0 Konsolen-Fehler über alle 5.
+
+### Probleme / Erkenntnisse (Regeln fürs nächste Mal)
+1. **Dev-DB war HINTER Prod (Dev max 200 vs Prod 206).** Neue Dev-Inserts hätten IDs 201–205 bekommen → Asset-Dir-Kollision (`lesson_201..206` existieren auf Prod). **Fix: VOR dem ersten Insert `SELECT setval('lesson_id_seq', <prod_max>, true)` auf Dev** → Dev-IDs 207–211 > Prod-max → kollisionsfrei, und Prod vergibt beim Import dieselben IDs (Sequenzen aligned) → Asset-Pfade matchen verbatim, KEIN Offset-Remap nötig. → **Regel: vor Insert IMMER Prod-max-Lesson-ID prüfen und Dev-Sequenz darüber setzen.**
+2. **`topic`-Feld mit `/` bricht den images-Schritt** — der Slash wird im Thumbnail-Dateinamen als Pfadtrenner interpretiert (`.../öffnen\schliessen.png` → FileNotFoundError, Lektion bekommt 0 Bilder). → **Regel: keine `/` (und keine `:`) im `topic`/Slug; Thumbnails ohnehin vor Deploy auf ASCII `thumbnail_lesson_<id>.png` umbenennen (umgeht zusätzlich die Windows-tar-UTF8-Falle).**
+3. **`docker exec` ohne `-i` leitet STDIN nicht weiter** → Heredoc-SQL lief ins Leere (kein Fehler!). → **Regel: für Heredoc/Pipe-SQL immer `docker exec -i`.**
+4. **Pipe maskiert Exit-Codes** (`cmd | tail` → exit 0 trotz Fehler im cmd). venv-Setup schien zu klappen, war aber leer. → **Regel: kritische Schritte ohne Pipe prüfen oder explizite Erfolgs-Marker (`&& echo OK`) verwenden; `py` existiert in Git-Bash nicht → vollen Python-Pfad nutzen.**
+5. **Login-Friktion bei der Verifikation:** Dev-Admin-Passwort ≠ .env (alte Dev-DB) → 5 Fehlversuche → Account-Lockout (`failed_login_count`/`locked_until`, Schwelle 5 / 15 Min). **Fix: Passwort dev-seitig via `User.set_password` setzen + Lockout-Felder per SQL zurücksetzen.** Advisor-Lehre: NIE das Prod-Admin-Konto so aussperren — Prod-Verifikation per publish→public-curl (Lektions-URL + echte Asset-URLs 200), nicht per Prod-Login.
+6. **Prod-Deploy-Gates (Advisor, alle eingebaut):** Prod-Backup vorab (`docker exec pg_dump`), Port-5432-Check, Modul VOR Import anlegen (Import weist Kategorie per `category_slug` zu, setzt aber KEIN `order_index`), nach Import **Asset-Pfad-Auflösungs-Check** (jeder thumbnail/vocab.image_url/media_url/slideshow-Pfad existiert auf Platte — fing 0 Fehlende) + Ist-Zustand-Check (pages/vocab/quiz == Dev, statt Versionsannahme), `order_index` = Prod-max+1 (nicht Dev), Publish erst nach all dem.
+
+### Reusable
+Saubere Sequenz für künftige Batches: Worktree off main + eigene venv → Workflow(Draft/Review/Fix) → setval(Dev=Prod-max) → images/insert/text-audio/slideshow → Playwright(Dev) → publish(Dev) → export → ASCII-Thumbnails + tar(ASCII-Liste, kein \r) → scp → extract(-k) → Modul anlegen → import → verify_prod.py (Asset-Pfad+Counts) → order_index(Prod-max+1) → publish(Prod) → public-curl(Seiten+Assets).
+
 ## 2026-04-27 19:00 — Neues Modul `n5-kanji-grundlagen` + 3-er-Drop Lessons 171-173
 
 ### Erstellte Lektionen (Modul 38, n5-kanji-grundlagen)
