@@ -2325,6 +2325,11 @@ button[onclick*="moveContentInPage"]:active {
     max-width: none !important;
     font-size: 1rem !important;
     line-height: 1.6 !important;
+    /* CJK-Anfuehrungsklammern (「」) tragen halbbreites Aki → grosse optische
+       Luecke vor fettem JP in deutschem Fliesstext (z.B. "mit 「〜がいたいです」").
+       'palt' trimmt CJK-Glyphen auf proportionale Breite und schliesst die
+       Luecke. Lateinische Glyphen haben kein palt-Alternate → unveraendert. */
+    font-feature-settings: 'palt' 1;
 }
 
 /* Lesebreite: Prosa-Blöcke auf ~68 Zeichen begrenzen, damit lange Fliesstext-
