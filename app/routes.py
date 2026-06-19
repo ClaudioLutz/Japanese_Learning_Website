@@ -1277,12 +1277,13 @@ def view_course(course_id):
     completed_lessons = 0
     total_duration = 0
     
+    _uid = current_user.id if current_user.is_authenticated else None
     for lesson in course.lessons:
-        # Get user progress for this lesson
+        # Get user progress for this lesson (Gaeste haben keinen current_user.id -> None)
         progress = UserLessonProgress.query.filter_by(
-            user_id=current_user.id, lesson_id=lesson.id
-        ).first()
-        
+            user_id=_uid, lesson_id=lesson.id
+        ).first() if _uid is not None else None
+
         lesson_progress[lesson.id] = progress
         
         # Count completed lessons for course progress
