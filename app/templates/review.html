@@ -247,7 +247,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         border-radius: 50%;
         background: var(--card-bg, #FFFDF7);
         border: 1px solid var(--ink-200, #E4DED4);
-        color: var(--primary-color, #2B4C7E);
+        color: var(--shu, #EB6101);
         cursor: pointer;
         display: inline-flex;
         align-items: center;
@@ -257,10 +257,10 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     }
     .review-audio-btn:hover {
         transform: scale(1.08);
-        background: rgba(43,76,126,0.08);
+        background: rgba(235,97,1,0.08);
     }
     .review-audio-btn.playing {
-        background: var(--primary-color, #2B4C7E);
+        background: var(--shu, #EB6101);
         color: #fff;
         animation: pulse 1.2s ease-in-out infinite;
     }
@@ -376,7 +376,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     }
     .review-example-audio {
         flex: none; background: none; border: none; cursor: pointer;
-        color: var(--primary-color, #6366f1); font-size: 0.8rem;
+        color: var(--shu, #EB6101); font-size: 0.8rem;
         /* Touch-Target >= 24x24px (WCAG 2.5.8) — Fehl-Taps flippen sonst die Karte */
         min-width: 28px; min-height: 28px;
         display: inline-flex; align-items: center; justify-content: center;
@@ -399,7 +399,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     }
     .cloze-gap {
         display: inline-block; min-width: 1.7em; margin: 0 0.1em;
-        border-bottom: 3px solid var(--primary-color, #6366f1);
+        border-bottom: 3px solid var(--shu, #EB6101);
     }
     .cloze-hints {
         display: flex; gap: 0.5rem; justify-content: center;
@@ -417,8 +417,8 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     }
     /* Cloze-Lösung auf der Rückseite — Antwort hervorgehoben */
     .cloze-answer {
-        color: var(--primary-color, #6366f1); font-weight: 700;
-        padding: 0 0.12em; border-bottom: 2px solid var(--primary-color, #6366f1);
+        color: var(--shu, #EB6101); font-weight: 700;
+        padding: 0 0.12em; border-bottom: 2px solid var(--shu, #EB6101);
     }
     /* Nuance-/„Verwechselt-mit"-Hinweis */
     .back-nuance .back-section-label { color: #b45309; }
@@ -704,7 +704,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         animation: toastIn 0.4s ease, toastOut 0.4s ease 3.5s forwards;
         max-width: 300px;
     }
-    .achievement-toast .toast-title { font-weight: 700; font-size: 0.85rem; color: var(--primary-color); }
+    .achievement-toast .toast-title { font-weight: 700; font-size: 0.85rem; color: var(--shu, #EB6101); }
     .achievement-toast .toast-desc { font-size: 0.75rem; color: var(--text-muted); }
     @keyframes toastIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
     @keyframes toastOut { from { opacity: 1; } to { opacity: 0; transform: translateY(-10px); } }
@@ -853,6 +853,23 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
        Im Dark heller Pfeil, damit er auf dunkler Fläche sichtbar bleibt. */
     [data-theme="dark"] .category-select {
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='none' stroke='%23F4EFE6' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round' d='M1 1.5 6 6.5 11 1.5'/%3E%3C/svg%3E");
+    }
+    /* Aktiver Audio-Button: Shu-Fläche braucht im Dark dunklen Text — washi
+       (#14120E) auf Shu erreicht 5.56:1 (Light bleibt weiss-auf-Shu). */
+    [data-theme="dark"] .review-audio-btn.playing { color: var(--washi, #14120E); }
+    /* Nuance-/„Verwechselt-mit"-Label: Light hart #b45309 (Amber) → im Dark zu
+       dunkel (3.42:1). Shu-Text-Ton --accent (#FB7A2B) hält den Akzent lesbar. */
+    [data-theme="dark"] .back-nuance .back-section-label { color: var(--accent, #FB7A2B); }
+    /* Leise Nebentexte (Romaji/Hinweis/Lesungen) nutzen --ink-500, das im Dark
+       auf nur 4.06:1 fällt → auf das hellere --text-muted heben (AA-konform). */
+    [data-theme="dark"] .review-card-hint,
+    [data-theme="dark"] .front-example-romaji,
+    [data-theme="dark"] .back-readings,
+    [data-theme="dark"] .back-readings .romaji,
+    [data-theme="dark"] .back-section-label,
+    [data-theme="dark"] .back-romaji,
+    [data-theme="dark"] .cloze-romaji {
+        color: var(--text-muted, #8C8378);
     }
 </style>
 {% endblock %}
@@ -1040,7 +1057,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
             <span>Gesamt: <span class="stat-value" id="statTotal">{{ stats.total_cards }}</span></span>
         </div>
         <div class="stat-item">
-            <i class="fas fa-clock" style="color: #6366f1;"></i>
+            <i class="fas fa-clock" style="color: var(--shu, #EB6101);"></i>
             <span>Dauer: <span class="stat-value" id="sessionTime">0 Min</span></span>
         </div>
     </div>

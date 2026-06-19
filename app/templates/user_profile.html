@@ -37,11 +37,11 @@
     .stat-number {
         font-size: 2rem;
         font-weight: bold;
-        color: #667eea;
+        color: var(--kon);
     }
     
     .stat-label {
-        color: #666;
+        color: var(--text-muted);
         font-size: 0.9rem;
         text-transform: uppercase;
         letter-spacing: 0.5px;
@@ -74,7 +74,7 @@
     
     .lesson-meta {
         font-size: 0.85rem;
-        color: #666;
+        color: var(--text-muted);
         margin-bottom: 0.5rem;
     }
     
@@ -130,7 +130,7 @@
     
     .category-percentage {
         font-weight: bold;
-        color: #667eea;
+        color: var(--kon);
         min-width: 50px;
         text-align: right;
     }
@@ -162,7 +162,7 @@
         align-items: center;
         justify-content: center;
         margin-right: 1rem;
-        color: #667eea;
+        color: var(--kon);
     }
     
     .activity-content {
@@ -177,13 +177,13 @@
     
     .activity-time {
         font-size: 0.8rem;
-        color: #666;
+        color: var(--text-muted);
     }
     
     .empty-state {
         text-align: center;
         padding: 3rem 1rem;
-        color: #666;
+        color: var(--text-muted);
     }
     
     .empty-state i {
@@ -203,7 +203,7 @@
     }
     
     .time-spent {
-        color: #28a745;
+        color: var(--shu-deep);
         font-weight: 500;
     }
     
@@ -260,7 +260,18 @@
     
     .purchase-price {
         font-weight: bold;
-        color: #28a745;
+        color: var(--shu-deep);
+    }
+
+    /* Lektions-/Aktivitaets-Titel-Links: Bootstrap-Default-Blau (#0d6efd) ueberschreiben */
+    .lesson-title a,
+    .activity-title a {
+        color: var(--text-color);
+    }
+
+    .lesson-title a:hover,
+    .activity-title a:hover {
+        color: var(--shu);
     }
 
     /* === DARK MODE — hardcoded Overrides === */
@@ -274,6 +285,18 @@
 
     [data-theme="dark"] .lessons-in-progress-container::-webkit-scrollbar-thumb:hover {
         background: var(--ink-400);
+    }
+
+    /* --shu-deep (#B84A00) bleibt im Dark identisch und faellt auf der dunklen Karte
+       unter 4.5:1 -> heller Akzent fuer Text. */
+    [data-theme="dark"] .time-spent,
+    [data-theme="dark"] .purchase-price {
+        color: var(--accent);
+    }
+
+    /* Bootstrap-Utility .text-success (gruener Status-/Preis-Text) im Dark anheben */
+    [data-theme="dark"] .text-success {
+        color: var(--accent) !important;
     }
 </style>
 {% endblock %}

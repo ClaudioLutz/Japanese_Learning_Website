@@ -261,6 +261,22 @@
         .progress-fill, .jlpt-bar-fill, .kana-heatmap-cell, .stats-details > summary .chev,
         .stats-cta { transition: none !important; }
     }
+
+    /* ── Dark-Mode-Kontrastkorrekturen (theme-scoped, Light unveraendert) ── */
+    /* Streak-„weiter so" + Rekord-Pille: --shu-deep (#B84A00) erreicht auf Sumi-Dunkel
+       nur ~3.29:1 → helleres Akzent-Orange fuer AA. */
+    [data-theme="dark"] .streak-keep { color: var(--accent); }
+    [data-theme="dark"] .streak-record { color: var(--accent); }
+    /* Kana-Heatmap-Glyphen: --kon kippt im Dark auf HELL und liegt auf der hellen
+       Orange-Rampe (#FEE6CE…#E6550D) → unlesbar. Navy --kon-100 als dunkler Text. */
+    [data-theme="dark"] .kana-heatmap-char { color: var(--kon-100); }
+    [data-theme="dark"] .kana-heatmap-rom { color: var(--kon-100); }
+    /* Schluessel-Labels/Eyebrows auf --ink-500 (~4:1) im Dark auf --ink-600 anheben. */
+    [data-theme="dark"] .stats-eyebrow,
+    [data-theme="dark"] .stats-group,
+    [data-theme="dark"] .hero-label,
+    [data-theme="dark"] .stat-card .stat-label,
+    [data-theme="dark"] .kana-heatmap-row-label { color: var(--ink-600); }
 </style>
 {% endblock %}
 
@@ -494,10 +510,10 @@
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
             <h6 style="margin:0;"><i class="fas fa-th" aria-hidden="true"></i> Kana-Beherrschung
                 (<span x-text="kanaHeatmap.length"></span>)</h6>
-            <div class="kana-script-toggle" role="tablist" aria-label="Schrift filtern">
-                <button type="button" :class="{ 'is-active': kanaScript === 'all' }" @click="kanaScript = 'all'">Beide</button>
-                <button type="button" :class="{ 'is-active': kanaScript === 'hiragana' }" @click="kanaScript = 'hiragana'">Hiragana</button>
-                <button type="button" :class="{ 'is-active': kanaScript === 'katakana' }" @click="kanaScript = 'katakana'">Katakana</button>
+            <div class="kana-script-toggle" role="group" aria-label="Schrift filtern">
+                <button type="button" :class="{ 'is-active': kanaScript === 'all' }" :aria-pressed="kanaScript === 'all'" @click="kanaScript = 'all'">Beide</button>
+                <button type="button" :class="{ 'is-active': kanaScript === 'hiragana' }" :aria-pressed="kanaScript === 'hiragana'" @click="kanaScript = 'hiragana'">Hiragana</button>
+                <button type="button" :class="{ 'is-active': kanaScript === 'katakana' }" :aria-pressed="kanaScript === 'katakana'" @click="kanaScript = 'katakana'">Katakana</button>
             </div>
         </div>
         <div class="kana-heatmap-grid">
