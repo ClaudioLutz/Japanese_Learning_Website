@@ -16,7 +16,7 @@
   .mod-breadcrumb a:hover { color: var(--shu); text-decoration: underline; }
 
   .mod-header {
-    background: #fff;
+    background: var(--card-background);
     border: 1px solid var(--ink-200);
     border-radius: 12px;
     padding: 1.75rem 1.5rem;
@@ -58,7 +58,7 @@
   .lesson-list { margin: 1.75rem 0; }
   .lesson-row {
     display: flex; align-items: center; gap: 1rem;
-    background: #fff;
+    background: var(--card-background);
     border: 1px solid var(--ink-200);
     border-radius: 12px;
     padding: 1rem 1.1rem; margin-bottom: 0.5rem;
@@ -122,7 +122,7 @@
 
   /* 10.11: Empty-State fuer Module ohne veroeffentlichte Lektionen */
   .mod-empty {
-    background: #fff;
+    background: var(--card-background);
     border: 1px solid var(--ink-200, #e4ddd0);
     border-radius: 12px;
     padding: 2.5rem 1.5rem; margin-top: 1rem;
@@ -183,6 +183,55 @@
     .mod-icon { font-size: 2.5rem; }
     .mod-titles h1 { font-size: 1.4rem; }
     .lesson-row { padding: 0.85rem; }
+  }
+
+  /* ── Dark Mode (additiv, Light unverändert) — Ink-on-Washi ── */
+  [data-theme="dark"] .mod-header,
+  [data-theme="dark"] .lesson-row,
+  [data-theme="dark"] .mod-empty {
+    border-color: var(--border-color);
+  }
+  /* --kon kippt im Dark auf HELL → Titel/Beschreibungen explizit auf Text-Token */
+  [data-theme="dark"] .mod-titles h1,
+  [data-theme="dark"] .lesson-title,
+  [data-theme="dark"] .mod-empty-title {
+    color: var(--text-color);
+  }
+  [data-theme="dark"] .mod-desc,
+  [data-theme="dark"] .mod-empty-text {
+    color: var(--text-muted);
+  }
+  /* --ink-500 (#837A6C) verfehlt 4.5 auf Dunkel → helleres --text-muted */
+  [data-theme="dark"] .mod-meta,
+  [data-theme="dark"] .lesson-sub,
+  [data-theme="dark"] .mod-breadcrumb,
+  [data-theme="dark"] .mod-breadcrumb a {
+    color: var(--text-muted);
+  }
+  /* badge-free nutzt --kon (hell-auf-hell-Tint) → lesbar machen */
+  [data-theme="dark"] .badge-free {
+    background: rgba(198,208,228,.12);
+    color: var(--text-color);
+  }
+  /* badge-paid: --shu-deep (#B84A00) zu dunkel auf Dunkel-Tint → helleres --accent */
+  [data-theme="dark"] .badge-paid {
+    color: var(--accent);
+  }
+  /* mod-empty-admin: --kon-50-Tint flippt hell → navy halten */
+  [data-theme="dark"] .mod-empty-admin {
+    background: var(--kon-100);
+    color: var(--text-color);
+  }
+  /* Bundle-CTA: --kon-50-BG + --kon-Text flippen beide hell → navy/Text-Token */
+  [data-theme="dark"] .bundle-cta-bottom {
+    background: var(--kon-100);
+    border-color: var(--border-color);
+  }
+  [data-theme="dark"] .bundle-cta-bottom h3 {
+    color: var(--text-color);
+  }
+  [data-theme="dark"] .bundle-cta-bottom p {
+    color: var(--text-muted);
   }
 </style>
 {% endblock %}

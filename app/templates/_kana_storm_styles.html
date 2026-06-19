@@ -384,4 +384,67 @@
     @media (prefers-reduced-motion: reduce) {
         .kstorm *, .kstorm *::before, .kstorm *::after { transition: none !important; animation: none !important; }
     }
+
+    /* ════════════════════════════════════════════════════════════════════
+       Dark Mode — nur die HARDCODED hellen Literale neutralisieren. Alle
+       token-gestützten Flächen (var(--card-bg)/var(--background-color)/
+       var(--border-color)) kippen schon korrekt; --kon als TEXTfarbe wird
+       im Dark hell → bleibt lesbar und wird NICHT überschrieben. Override
+       nur dort, wo (a) ein #fff/#FFF…-Literal eine weisse Insel erzeugt,
+       (b) --kon/--shu als FÜLLUNG mit weissem Text steht (Falle: --kon
+       kippt hell → weisser Text unsichtbar → mit --kon-100 navy halten).
+       ════════════════════════════════════════════════════════════════════ */
+    [data-theme="dark"] .kstorm__seg button.is-active {
+        background: var(--card-background); color: var(--text-color);
+        box-shadow: inset 0 0 0 1px var(--shu);
+    }
+    [data-theme="dark"] .kstorm__chip {
+        background: var(--card-background); color: var(--text-color);
+        border-color: var(--border-color);
+    }
+    /* .kstorm__chip.is-active bleibt: shu-Füllung + weisser Text (hält). */
+    [data-theme="dark"] .kstorm__chip--all.is-active {
+        background: var(--kon-100); border-color: var(--kon-100); color: #fff;
+    }
+    [data-theme="dark"] .kstorm__ghost {
+        background: var(--card-background); color: var(--text-muted);
+        border-color: var(--border-color);
+    }
+    [data-theme="dark"] .kstorm__tab.is-active {
+        background: var(--card-background); color: var(--text-color);
+        box-shadow: inset 0 0 0 1px var(--shu);
+    }
+    [data-theme="dark"] .kstorm__sp.is-active {
+        background: var(--card-background); border-color: var(--shu);
+    }
+    /* .kstorm__weak: --kon-Gradient mit weissem Label → im Dark kippt --kon
+       hell; Gradient + box-shadow tragen !important → Override braucht es auch. */
+    [data-theme="dark"] .kstorm__weak {
+        background: linear-gradient(180deg, var(--kon-100), #16203A) !important;
+    }
+    /* Daily-Karte: Creme-Gradient-Insel → Washi-Dunkel. */
+    [data-theme="dark"] .kstorm__daily-card {
+        background: var(--card-background); border-color: var(--border-color);
+    }
+    /* XP-Olive (#556B2F) ist auf #1E1B15 zu dunkel (~3:1 bei Normaltext) →
+       hellerer Matcha für AA. */
+    [data-theme="dark"] .kstorm__xp { color: #9CB36A; }
+    /* Feedback "ok"-Olive ebenfalls aufhellen (gleiche Logik, 0.86rem Normaltext). */
+    [data-theme="dark"] .kstorm__feedback.ok { color: #9CB36A; }
+    /* "stärkste"-Statistik-Icon nutzt dasselbe Olive — Icon, aber konsistent. */
+    [data-theme="dark"] .kstorm__statcol--strong .kstorm__stath i { color: #9CB36A; }
+    /* --shu-deep (#B84A00) ist eine Light-Mode-Tiefe (für weissen Grund) und
+       fällt auf #1E1B15 auf 3.29:1 (Normaltext). Im Dark der hellere --shu
+       (#EB6101 → 5.11:1, AA). Betrifft aktiven Picker-Label + Upsell/Stats-Links. */
+    [data-theme="dark"] .kstorm__sp.is-active .kstorm__sp-l,
+    [data-theme="dark"] .kstorm__upsell a,
+    [data-theme="dark"] .kstorm__statslink,
+    [data-theme="dark"] .kstorm__daily-day b { color: var(--shu); }
+    /* Rote Zwillinge zur Olive-Aufhellung oben: --danger (#D14B3D → 3.91:1)
+       und #B23A2E (2.89:1) sind als kleiner Normaltext auf #1E1B15 zu dunkel →
+       hellerer Rot-Ton #E07A6E (5.87:1, AA). Betrifft Feedback "bad",
+       schwächste-Icon, Daily-Fehler. */
+    [data-theme="dark"] .kstorm__feedback.bad,
+    [data-theme="dark"] .kstorm__statcol--weak .kstorm__stath i,
+    [data-theme="dark"] .kstorm__daily-err { color: #E07A6E; }
 </style>

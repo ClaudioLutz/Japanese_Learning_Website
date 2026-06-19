@@ -207,5 +207,29 @@
   .n5hub-cta.is-pending { background: transparent; color: var(--ink-soft, #5a544b);
     border: 1px dashed var(--hairline, #e3ddd2); cursor: default; }
   .n5hub-footer { text-align: center; margin: 2rem auto 3rem; }
+
+  /* ── Dark Mode (additiv, Design-Review 2026-06-19) ──
+     Karten waren #fff; Titel/Texte nutzen undefinierte Tokens (--sumi/--ink-soft)
+     mit dunklen Fallbacks → dunkel-auf-dunkel. Hier explizit auf Theme-Token. */
+  [data-theme="dark"] .n5hub-module { background: var(--card-background); border-color: var(--border-color); }
+  [data-theme="dark"] .n5hub-module.is-complete { background: var(--ink-100); }
+  [data-theme="dark"] .n5hub-module .module-banner { background: var(--ink-200); }
+  [data-theme="dark"] .n5hub-coverage,
+  [data-theme="dark"] .n5hub-eyebrow { border-color: var(--border-color); }
+  [data-theme="dark"] .n5hub-title,
+  [data-theme="dark"] .n5hub-coverage-num,
+  [data-theme="dark"] .n5hub-group-title,
+  [data-theme="dark"] .n5hub-module-head h3 { color: var(--text-color); }
+  [data-theme="dark"] .n5hub-sub,
+  [data-theme="dark"] .n5hub-coverage-of,
+  [data-theme="dark"] .n5hub-coverage-note,
+  [data-theme="dark"] .n5hub-group-sub,
+  [data-theme="dark"] .n5hub-module-desc,
+  [data-theme="dark"] .n5hub-progress-label { color: var(--text-muted); }
+  [data-theme="dark"] .n5hub-bar,
+  [data-theme="dark"] .n5hub-progress-bar { background: var(--ink-200); }
+  [data-theme="dark"] .n5hub-eyebrow,
+  [data-theme="dark"] .n5hub-recommend { color: var(--accent); }
+  [data-theme="dark"] .n5hub-cta.is-pending { color: var(--text-muted); border-color: var(--border-color); }
 </style>
 {% endblock %}

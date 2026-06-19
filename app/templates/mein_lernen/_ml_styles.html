@@ -412,4 +412,61 @@
   .mein-lernen-stamp .seal{animation:none;transform:rotate(-8deg) scale(1);opacity:1;}
   .mein-lernen *{transition-duration:.01ms!important;}
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   DARK MODE (Design-Review 2026-06-19). Das Dashboard re-deklariert Tokens
+   HERMETISCH auf .mein-lernen (oben) → der globale [data-theme=dark]-Block
+   greift hier NICHT. Daher: (1) die Farb-Tokens explizit flippen (Radius/
+   Spacing/Schatten bleiben), (2) die hartcodierten #fff-Flaechen ueberschreiben.
+   ════════════════════════════════════════════════════════════════════ */
+[data-theme="dark"] .mein-lernen{
+  --washi:#14120E; --kinari:#1E1B15; --sumi:#F4EFE6; --kon:#C6D0E4; --ai:#9DB8E0;
+  --shu:#EB6101; --shu-soft:#3A2415; --shu-deep:#FB7A2B;
+  --kincha:#D6A24E; --kincha-soft:#332813; --kincha-deep:#E6B868;
+  --matcha:#A6C158; --matcha-soft:#26301A; --matcha-deep:#A6C158;
+  --error:#ED8475; --error-soft:#3A1E1A;
+  --ink-50:#14120E; --ink-100:#1C1813; --ink-200:#2A251D; --ink-300:#3A342A;
+  --ink-400:#6B6356; --ink-500:#9A9082; --ink-600:#BDB3A4; --ink-700:#D7CFC2; --ink-800:#EDE7DC;
+  color:var(--ink-700);
+}
+/* hartcodierte #fff-Flaechen → erhoehte Sumi-Karte (--kinari = #1E1B15 im Dark) */
+[data-theme="dark"] .mein-lernen .card,
+[data-theme="dark"] .mein-lernen .icon-btn,
+[data-theme="dark"] .mein-lernen .cta-ghost,
+[data-theme="dark"] .mein-lernen .plan-step,
+[data-theme="dark"] .mein-lernen .pillar,
+[data-theme="dark"] .mein-lernen .cando-item,
+[data-theme="dark"] .mein-lernen .scn,
+[data-theme="dark"] .mein-lernen .conf-pair,
+[data-theme="dark"] .mein-lernen .listen-row,
+[data-theme="dark"] .mein-lernen .badge,
+[data-theme="dark"] .mein-lernen .exam select{ background:var(--kinari); }
+/* aktive Tab-/Toggle-Pille: #fff → Karte (Text --kon ist jetzt hell) */
+[data-theme="dark"] .mein-lernen .tabs button[aria-selected="true"],
+[data-theme="dark"] .mein-lernen .range-toggle button.active{ background:var(--kinari); }
+/* "Zahlen"-Panel: weisser Gradient → flacher Sumi */
+[data-theme="dark"] .mein-lernen .numbers{ background:var(--kinari); }
+/* Mobile-Sticky-CTA: helle Frost-Leiste → Sumi-Frost */
+[data-theme="dark"] .mein-lernen .sticky-cta{ background:rgba(20,18,14,.92); border-top-color:var(--ink-200); }
+/* dunkelrote Hardcode-Texte auf (jetzt dunklem) error-soft → helle Error-Tinte */
+[data-theme="dark"] .mein-lernen .gate-warn,
+[data-theme="dark"] .mein-lernen .gate-warn b,
+[data-theme="dark"] .mein-lernen .zone-weak,
+[data-theme="dark"] .mein-lernen .weak-item .m .s,
+[data-theme="dark"] .mein-lernen .leech .warn{ color:var(--error); }
+/* Detail-Dialog (.mein-lernen-modal, ausserhalb .mein-lernen → globale Tokens) */
+[data-theme="dark"] .mein-lernen-modal{ background:var(--card-background); color:var(--text-color); }
+[data-theme="dark"] .mein-lernen-modal .modal-head{ border-bottom-color:var(--border-color); }
+[data-theme="dark"] .mein-lernen-modal .modal-glyph,
+[data-theme="dark"] .mein-lernen-modal .modal-head .meta .mean,
+[data-theme="dark"] .mein-lernen-modal .pop-stat .v,
+[data-theme="dark"] .mein-lernen-modal .settings-row .lbl{ color:var(--text-color); }
+[data-theme="dark"] .mein-lernen-modal .modal-head .meta .sub,
+[data-theme="dark"] .mein-lernen-modal .settings-row .desc{ color:var(--text-muted); }
+[data-theme="dark"] .mein-lernen-modal .pop-stat,
+[data-theme="dark"] .mein-lernen-modal .settings-row{ border-bottom-color:var(--border-color); }
+[data-theme="dark"] .mein-lernen-modal .confused{ background:var(--shu-soft); color:var(--text-color); }
+[data-theme="dark"] .mein-lernen-modal .seg{ background:var(--card-background); }
+[data-theme="dark"] .mein-lernen-modal .seg button.on{ background:var(--background-color); color:var(--text-color); }
+[data-theme="dark"] .mein-lernen-modal .cta-ghost{ background:var(--card-background); border-color:var(--border-color); color:var(--text-color); }
 </style>

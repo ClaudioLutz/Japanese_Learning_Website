@@ -19,8 +19,8 @@
 
   /* Tease-Block — hairline + shu-Stripe */
   .lesson-tease {
-    background: #fff;
-    border: 1px solid var(--ink-200);
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
     border-left: 3px solid var(--shu);
     border-radius: 12px;
     padding: 1.75rem 1.5rem; margin-bottom: 1.75rem;
@@ -59,8 +59,8 @@
   }
 
   .opt-card {
-    background: #fff;
-    border: 1px solid var(--ink-200);
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 1.5rem 1.4rem;
     display: flex; flex-direction: column;
@@ -170,8 +170,8 @@
   .paywall-back:hover { color: var(--shu); text-decoration: underline; }
 
   .auth-required {
-    background: #fff;
-    border: 1px solid var(--ink-200);
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 1.5rem; text-align: center;
     color: var(--ink-700); margin: 1.5rem 0;
@@ -202,6 +202,44 @@
   }
   .founder-badge a { color: var(--shu); text-decoration: none; }
   .founder-badge a:hover { text-decoration: underline; }
+
+  /* ── Dark-Mode-Overrides (Ink-on-Washi) ──
+     Karten nutzen --card-background/--border-color (oben), hier nur Text/Token-Korrekturen.
+     UNVERÄNDERT bleiben: Shu-CTA (.opt-cta-primary/.auth-cta), grüne Haken (--matcha),
+     Shu-Border (.is-recommended), recommended-pill — funktionieren im Dark korrekt. */
+  [data-theme="dark"] .paywall-breadcrumb,
+  [data-theme="dark"] .paywall-breadcrumb a,
+  [data-theme="dark"] .paywall-back { color: var(--text-muted); }
+
+  /* Tease-Block: Titel (--kon kippt hell → unlesbar), Beschreibung */
+  [data-theme="dark"] .tease-title { color: var(--text-color); }
+  [data-theme="dark"] .tease-desc { color: var(--text-muted); }
+
+  /* Optionskarten: Titel, Subtext, Preis, Feature-Listen */
+  [data-theme="dark"] .opt-title { color: var(--text-color); }
+  [data-theme="dark"] .opt-sub { color: var(--text-muted); }
+  [data-theme="dark"] .opt-price { color: var(--text-color); }
+  [data-theme="dark"] .opt-price-old { color: var(--text-muted); }
+  [data-theme="dark"] .opt-features li { color: var(--text-color); }
+
+  /* Getönte Info-Boxen lesbar halten (helle --kincha/--matcha-Texte auf dunklem Grund ok,
+     aber Hintergründe/Ränder an Dark anpassen) */
+  [data-theme="dark"] .calc-row {
+    background: rgba(251,122,43,.10);
+    border-color: rgba(251,122,43,.30);
+    color: var(--text-color);
+  }
+  [data-theme="dark"] .calc-row strong { color: var(--accent); }
+  [data-theme="dark"] .trust-row,
+  [data-theme="dark"] .founder-badge { color: var(--text-muted); }
+  [data-theme="dark"] .refund-row {
+    background: rgba(122,144,51,.14);
+    border-color: rgba(122,144,51,.35);
+    color: var(--text-color);
+  }
+
+  /* Konto-CTA-Box (Gast): Fliesstext lesbar */
+  [data-theme="dark"] .auth-required { color: var(--text-color); }
 </style>
 {% endblock %}
 

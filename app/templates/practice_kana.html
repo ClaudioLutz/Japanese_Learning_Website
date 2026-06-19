@@ -292,6 +292,108 @@
            die .kstorm-Flex-Kette (kein 100dvh-Lock zum Erben). */
         .kana-panel--storm { height: min(70vh, 600px); }
     }
+
+    /* ══════════════════════════════════════════════════════════════════
+       DARK MODE — Ink-on-Washi
+       Diese Seite hatte 0 Dark-Regeln → alle Steuer-Inseln waren als
+       hartes #fff / #FFF8EC codiert und brachen grellweiss auf dem
+       Sumi-Hintergrund. Zwei Fallen liegen in --kon: im Dark kippt
+       --kon auf HELL (#C6D0E4), deshalb taugt es weder als Textfarbe
+       (Tab) noch als CTA-Füllung unter weissem Text. Auswahl markieren
+       wir mit dem Shu-Akzent (朱) statt mit --kon.
+       Light bleibt unverändert (gesamter Block ist [data-theme=dark]).
+       ══════════════════════════════════════════════════════════════════ */
+    [data-theme="dark"] .kana-setup__eyebrow {
+        border-color: var(--border-color);
+        background: var(--ink-200, #2A251D);
+        color: var(--text-muted);
+    }
+    [data-theme="dark"] .kana-setup__head h1 {
+        /* --kon kippt im Dark auf hell → bewusst, gibt hellen Titel auf Sumi */
+        color: var(--text-color);
+    }
+    [data-theme="dark"] .kana-setup__label .count,
+    [data-theme="dark"] .kana-setup__preview strong { color: var(--text-color); }
+
+    /* Gast-Hinweis-Box: war cremeweiss (#FFF8EC) → leicht getöntes Sumi */
+    [data-theme="dark"] .kana-setup__guest {
+        background: var(--ink-200, #2A251D);
+        border-color: var(--border-color);
+        border-left-color: var(--shu);
+        color: var(--text-color);
+    }
+    [data-theme="dark"] .kana-setup__guest strong { color: var(--text-color); }
+
+    /* Gast-Freischalt-Teaser */
+    [data-theme="dark"] .kana-setup__unlock {
+        background: var(--card-background);
+        border-color: var(--border-color);
+    }
+    [data-theme="dark"] .kana-setup__unlock-list li { color: var(--text-color); }
+    /* CTA: --kon kippt hell → weisser Text bräche (1.55:1). Navy-Token
+       --kon-100 bleibt dunkel, weisser Text hält den Kontrast. */
+    [data-theme="dark"] .kana-setup__unlock-cta {
+        background: var(--kon-100, #222B40);
+        color: #fff;
+    }
+    [data-theme="dark"] .kana-setup__unlock-cta:hover { color: #fff; }
+
+    /* Segmented Control (Schrift / Modus) — Track + aktiver Knopf */
+    [data-theme="dark"] .seg { background: var(--ink-200, #2A251D); }
+    [data-theme="dark"] .seg button.is-active {
+        background: var(--card-background);
+        color: var(--shu);
+        box-shadow: 0 0 0 1px var(--shu), 0 1px 2px rgba(0,0,0,.4);
+    }
+
+    /* Reihen-Chips: inaktiv war #fff → Sumi-Karte */
+    [data-theme="dark"] .chip {
+        background: var(--card-background);
+        border-color: var(--border-color);
+        color: var(--text-color);
+    }
+    /* aktive Chips: Shu-Füllung markenkonform halten. Wichtig — die generische
+       [data-theme=dark] .chip-Regel oben hat dieselbe Spezifität wie die Light
+       .chip.is-active und steht später → sie würde die Shu-Füllung mit
+       --card-background überschreiben. Daher hier explizit Shu zurückholen.
+       --washi kippt im Dark auf #14120E (dunkel) → dunkler Text auf Shu (>4.5:1). */
+    [data-theme="dark"] .chip.is-active {
+        background: var(--shu);
+        border-color: var(--shu);
+        color: var(--washi, #14120E);
+    }
+    /* „Alle" navy halten (hell-kippendes --kon vermeiden), weisser Text */
+    [data-theme="dark"] .chip--all.is-active {
+        background: var(--kon-100, #222B40);
+        border-color: var(--kon-100, #222B40);
+        color: #fff;
+    }
+
+    /* Toggle-Switch-Zeile (login-gated) */
+    [data-theme="dark"] .switch {
+        background: var(--card-background);
+        border-color: var(--border-color);
+    }
+    [data-theme="dark"] .switch__track { background: var(--ink-300, #3A342A); }
+
+    /* Spiel-Umschalter (Zuordnung | Storm): aktiver Tab war #fff + --kon-Text
+       (hell auf weiss = 1.55) → Sumi-Karte, heller Text, Shu-Auswahlrahmen. */
+    [data-theme="dark"] .kana-modes {
+        background: var(--ink-200, #2A251D);
+        border-color: var(--border-color);
+    }
+    [data-theme="dark"] .kana-modes__tab.is-active {
+        background: var(--card-background);
+        color: var(--text-color);
+        box-shadow: 0 0 0 1px var(--shu), 0 1px 2px rgba(0,0,0,.4);
+    }
+
+    /* „Schnellstart"-Knöpfe (Tages-Challenge / Schwache / Ähnliche): #fff */
+    [data-theme="dark"] .kana-setup__quick button {
+        background: var(--card-background);
+        border-color: var(--border-color);
+        color: var(--text-color);
+    }
 </style>
 {% endblock %}
 
