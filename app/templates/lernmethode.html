@@ -140,16 +140,36 @@
 .lm-section h2 {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--text-color);
   margin: 0 0 0.75rem;
 }
-.lm-section p { color: #2c3e50; margin: 0 0 0.75rem; }
+.lm-section p { color: var(--text-color); margin: 0 0 0.75rem; }
 .lm-list { padding-left: 1.25rem; margin: 0.5rem 0; }
-.lm-list li { margin-bottom: 0.6rem; color: #2c3e50; }
+.lm-list li { margin-bottom: 0.6rem; color: var(--text-color); }
 .lm-cta { text-align: center; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); }
 .lm-cta-buttons {
   display: flex; flex-wrap: wrap; justify-content: center;
   gap: 0.75rem; margin-top: 1rem;
 }
+
+/* === Dark Mode — Ink-on-Washi ======================================
+   Hero + CTA waren bewusst helle Farbverlaeufe (weiss / mintgruen) und
+   blieben im Dark off-theme bzw. die Prosa unsichtbar. Die .lm-section-
+   Karten gehen schon via var(--card-background) korrekt dunkel; hier nur
+   die zwei Sonder-Flaechen auf ruhiges Sumi-Dunkel ziehen. */
+[data-theme="dark"] .lm-hero {
+  background: var(--card-background);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 18px rgba(0,0,0,0.30);
+}
+[data-theme="dark"] .lm-hero h1 { color: var(--text-color); }
+[data-theme="dark"] .lm-lead   { color: var(--text-color); }
+
+[data-theme="dark"] .lm-cta {
+  background: var(--card-background);
+  border: 1px solid var(--border-color);
+}
+[data-theme="dark"] .lm-cta h2,
+[data-theme="dark"] .lm-cta p { color: var(--text-color); }
 </style>
 {% endblock %}
