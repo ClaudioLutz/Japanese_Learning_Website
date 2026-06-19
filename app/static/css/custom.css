@@ -150,6 +150,7 @@
     --zen-indigo-light: #A9C4E8;
     --zen-indigo-dark:  #6B92C4;
     --primary-color:    #8AAEDD;
+    --secondary-color:  #B5728A;   /* gedaempftes Sakura fuer Dunkel (Light: #E8A0B4 blieb sonst hell) */
 
     /* ── Akzent: 朱 Shu bleibt Marke ── */
     --shu:        #EB6101;         /* Fuellungen */
@@ -4842,5 +4843,70 @@ button[onclick*="moveContentInPage"]:active {
 [data-theme="dark"] .form-control:focus,
 [data-theme="dark"] .form-select:focus {
     background-color: var(--card-background);
+    color: var(--text-color);
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   DARK-MODE SAMMEL-FIXES (Design-Review 2026-06-19)
+   Schliessen wiederkehrende Luecken: bare Bootstrap-.card, Footer-Links,
+   btn-outline-primary, Alerts, Courses-Hero. Pro-Template-Partials mit
+   eigenem <style>-Scope tragen weiterhin eigene [data-theme=dark]-Bloecke.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* B8 — bare Bootstrap-.card: definiert nur Radius/Border, kein bg/color →
+   im Dark weisse Karte auf Sumi. Global themen (deckt Payment-Success/-Failed
+   u.a.). Komponenten mit eigenem, spezifischerem Dark-Scope ueberschreiben. */
+[data-theme="dark"] .card {
+    background-color: var(--card-background);
+    color: var(--text-color);
+    border-color: var(--border-color);
+}
+[data-theme="dark"] .card-header {
+    background-color: var(--card-background);
+    border-bottom-color: var(--border-color);
+}
+
+/* Footer-Links: klassenlose <a> erben Bootstrap-#0d6efd (off-palette, sub-AA
+   in beiden Themes). Auf Tinten-/Akzent-Tokens umstellen. */
+.site-footer a:not(.btn) {
+    color: var(--text-muted);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+.site-footer a:not(.btn):hover,
+.site-footer a:not(.btn):focus { color: var(--shu-deep); }
+[data-theme="dark"] .site-footer a:not(.btn) { color: var(--text-color); }
+[data-theme="dark"] .site-footer a:not(.btn):hover,
+[data-theme="dark"] .site-footer a:not(.btn):focus { color: var(--accent); }
+
+/* btn-outline-primary: Bootstrap-Blau → tonaler Tinten-Umriss, Hover Shu. */
+.btn-outline-primary {
+    color: var(--kon-500);
+    border-color: var(--border-color);
+}
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
+    background-color: var(--shu);
+    border-color: var(--shu);
+    color: #fff;
+}
+[data-theme="dark"] .btn-outline-primary { color: var(--text-color); }
+
+/* Bootstrap-Alerts: Pastell-Fuellungen auf Sumi → toenen + farbige Haarlinie. */
+[data-theme="dark"] .alert {
+    background-color: var(--card-background);
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+[data-theme="dark"] .alert-success { border-left: 3px solid var(--matcha); }
+[data-theme="dark"] .alert-danger  { border-left: 3px solid var(--color-error); }
+[data-theme="dark"] .alert-warning { border-left: 3px solid var(--kincha); }
+[data-theme="dark"] .alert-info    { border-left: 3px solid var(--primary-color); }
+
+/* Courses-Hero: Verlauf aus --primary-color + --secondary-color; im Dark blieb
+   --secondary-color (Sakura) hell → heller Pastell-Hero, weisser Text sub-AA.
+   Im Dark auf eine ruhige Sumi-Navy-zu-Shu-Toenung mit hellem Text. */
+[data-theme="dark"] .courses-hero-section {
+    background: linear-gradient(135deg, var(--kon-100) 0%, var(--shu-soft) 100%);
     color: var(--text-color);
 }
