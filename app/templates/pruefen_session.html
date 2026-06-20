@@ -254,6 +254,14 @@
     .pf-q { font-size: 1.15rem; }
     .pf-match { gap: .5rem; }
     .pf-bd-name { width: 90px; }
+    /* Mobile-Erreichbarkeit der Aktions-Leiste: die Buehne NICHT kuenstlich auf
+       ~Viewport-Hoehe aufblaehen und den Button NICHT per margin-top:auto ans
+       ferne Buehnen-Ende pinnen — sonst rutscht er unter die Falz und ist mit
+       body{overflow:hidden} unerreichbar (iOS-Safari-Toolbar/dvh-Falle). Button
+       folgt dem Inhalt; langer Inhalt darf scrollen. Desktop bleibt unveraendert. */
+    body.pruefung-locked { overflow-y: auto; }
+    .pf-stage { min-height: 0; }
+    .pf-actions { margin-top: var(--space-4, 1rem); }
   }
 </style>
 {% endblock %}
