@@ -74,16 +74,18 @@ Reihenfolge nach Abhängigkeit: erst gemeinsame Baseline, dann Fundament (Tokens
 **Workstreams:** `learner_dashboard`-Prototyp-Ideen (Reife-Skala `--mat-*`, Audio-Player) in /mein-lernen einarbeiten; `lesson_card_states` + `kana-storm`-Prototyp nur **nach** Token-/FA-/Schrift-Übersetzung (1:1: `--color-*`→Pigment, `ti`→`fas`, `--cream`→`--washi`, `--orange`→`--shu`, Iowan→Geist/Fraunces) · Dead-Code (lessons.css, /embed, learn_path.html, index:902-1039, .welcome-card, fill_blank, Web-Push-Stub) entfernen · 3 untracked Prototypen löschen · Sub-AA-Kontrast-Resterunde (IC-07) · Sprachmix-Reste → Deutsch (IC-12) · Inline-Monolith-Diät + Lint (IC-11) · Klee-One-Import.
 **Gate:** + Playwright-Vollrundgang (~16 Seiten light+dark) + `git status` sauber.
 
-### P5 · Backend-Schuld (separat, optional, am Ende — nach Freigabe)
-**Ziel:** benannte Backend-/Sicherheitsschuld abbauen, Frontend unverändert. Siehe offene Entscheidung 1.
+### P5 · Backend-Schuld (IN SCOPE — User-Entscheid 2026-06-20, Sicherheit zuerst)
+**Ziel:** benannte Backend-/Sicherheitsschuld abbauen, Frontend unverändert. **Voll in Scope** (nicht mehr optional) — läuft nach der Frontend-Konsolidierung, Sicherheits-Teil darf vorgezogen werden.
 **Reihenfolge:** (1) **Sicherheit zuerst** — Payrexx-Webhook fail-closed (IC-16), premium-up/downgrade-Proto entfernen, Reset-Token-Einmal-Invalidierung; (2) Doppelpfade — OAuth (zwei → einer, ORM statt Raw-SQL), drei Payment-Factories → eine, PostFinance-Legacy raus; (3) `evaluate_answer` als alleinige Quelle; (4) Gott-Dateien per Blueprint/Service-Schicht entzerren, N+1; (5) Zeitzonen vereinheitlichen, CSP härten, Tailwind-Build statt Play-CDN.
 **Gate:** pytest grün · ruff clean · (bei Payment-Reaktivierung) Webhook-Signaturtest · keine Frontend-Visual-Regression.
 
-## Offene Entscheidungen (User)
+## Entscheidungen (getroffen 2026-06-20)
 
-| # | Frage | Empfehlung |
+> Der User hat per Auswahl-Menü entschieden: **#1 Backend voll in Scope** · **#2 /mein-lernen = Lern-Heimat** · **Nächster Schritt: P0+P1 jetzt umsetzen.** #3–#5 wie empfohlen.
+
+| # | Frage | Entscheidung |
 |---|---|---|
-| 1 | **Backend-Schuld in Scope?** | **Separat/später (P5 optional)** — Frontend/UX/IA im Kern. **Ausnahme:** die 3 reinen Sicherheitspunkte (Webhook fail-closed, Reset-Token, premium-Proto) vorziehen — billig + vor jeder Payment-Reaktivierung Pflicht. |
+| 1 | **Backend-Schuld in Scope?** | ✅ **Voll in Scope** (P5, nach Frontend-Konsolidierung). **Sicherheits-Teil** (Webhook fail-closed, Reset-Token, premium-Proto) darf vorgezogen werden — billig + vor jeder Payment-Reaktivierung Pflicht. |
 | 2 | **Kanonische eingeloggte Lern-Heimat?** | **`/mein-lernen`** = Lern-Heimat (eine Resume-Quelle), `/lessons` = reiner Katalog, index-Hero/`/lessons`-lp-continue → Teaser. `/mein-lernen` in Primary-/Bottom-Nav heben. Alle 3 Render-Inhalte bleiben erhalten. |
 | 3 | **/pruefen eigenständig oder in /review?** | **Eigenständig** (risikofreier Zweck: Fragen erneut testen ohne `UserQuizAnswer`-Schreibung), aber prominent von /review + /mein-lernen verlinkt; teilt Matching + `evaluate_answer`. |
 | 4 | **Bezahl-Flächen unter FREE_MODE pflegen?** | **Latent markieren, nicht löschen** (reversibel). Token-Migration mitnehmen (billig), aber **kein** dedizierter Dark-Audit solange FREE_MODE aktiv; vor Reaktivierung nachholen. |
