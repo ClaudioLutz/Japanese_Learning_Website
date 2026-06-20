@@ -5,6 +5,14 @@
 <div class="container py-5" style="max-width:800px;">
   <h1 class="mb-4">Widerrufsbelehrung</h1>
 
+  {% if free_mode %}
+  <p>
+    Derzeit sind alle Inhalte von japanese-learning.ch kostenlos zugänglich. Es kommt kein Kaufvertrag zustande,
+    daher besteht kein Widerrufsrecht und keine Zahlung, die widerrufen werden könnte. Diese Widerrufsbelehrung
+    gilt wieder, sobald kostenpflichtige Inhalte angeboten werden.
+  </p>
+  {% else %}
+
   <h2 class="h4 mt-4">Widerrufsrecht für Verbraucher</h2>
   <p>
     Du hast das Recht, binnen 14 Tagen ohne Angabe von Gründen vom Kaufvertrag zurückzutreten.
@@ -74,6 +82,8 @@ E-Mail-Konto:       ___________________________
 Datum:              ___________________________
 Unterschrift:       ___________________________
   </pre>
+
+  {% endif %}
 
   <p class="text-muted small mt-5">Stand: {{ today_de }}</p>
 </div>

@@ -2155,7 +2155,7 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                 </div>
                 {# Dezenter Bundle-CTA — nur fuer Gaeste/Nicht-Premium relevant, aber
                    bewusst zurueckhaltend (kein aggressiver Push am Lektionsende). #}
-                {% if not (current_user.is_authenticated and current_user.subscription_level == 'premium') %}
+                {% if not free_mode and not (current_user.is_authenticated and current_user.subscription_level == 'premium') %}
                 <a href="{{ url_for('bundle.n5_bundle') }}" class="next-up-bundle-cta">
                     Den ganzen N5-Pfad freischalten — einmal zahlen, kein Abo →
                 </a>

@@ -65,6 +65,14 @@ def create_app():
     # echte Script — sonst bleibt nur der window.plausible()-Stub aktiv (kein Tracking).
     app.config['PLAUSIBLE_DOMAIN'] = os.getenv('PLAUSIBLE_DOMAIN')
 
+    # FREE_MODE: schaltet die berechnete Bezahl-Schicht (Bundle-Verkauf/-Hinweise,
+    # hartkodierte CHF-CTAs, Kauf-Rechtstexte, Sitemap-Verkaufsseiten) ab. Die
+    # eigentliche Lesson-/Course-Freischaltung laeuft ueber price==0 in der DB;
+    # dieses Flag deckt nur die Flaechen, die NICHT aus price abgeleitet sind.
+    # Reversibel: Flag aus + Preis-Restore -> Monetarisierung lebt wieder.
+    # Default AUS, damit Tests den monetarisierten Pfad weiter exerzieren.
+    app.config['FREE_MODE'] = os.environ.get('FREE_MODE', 'false').lower() == 'true'
+
     app.config.from_pyfile('config.py', silent=True) # Load config from instance folder
     app.config['TEMPLATES_AUTO_RELOAD'] = True
     # Statische Assets 1 Jahr cachen — eigene Dateien sind per static_v() (mtime-?v=)
@@ -370,6 +378,7 @@ def create_app():
             'n5_free_lesson_count': n5_free_lesson_count,
             'show_bundle_hint': show_bundle_hint,
             'has_published_courses': has_published_courses,
+            'free_mode': app.config.get('FREE_MODE', False),
         }
 
     # Cache-Busting fuer eigene statische Assets: haengt die Datei-mtime als

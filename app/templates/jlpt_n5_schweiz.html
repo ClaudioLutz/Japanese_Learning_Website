@@ -9,7 +9,7 @@
    typische Fenster (Juli/Dezember) nennen und auf die UZH-Quelle verlinken. #}
 
 {% block title %}JLPT N5 Schweiz 2026 — Prüfung Zürich & Vorbereitung auf Deutsch{% endblock %}
-{% block meta_description %}JLPT N5 in der Schweiz: Prüfung an der Universität Zürich (typischerweise im Dezember, Gebühr CHF 130). Strukturierte Online-Vorbereitung auf Deutsch — von Hiragana bis zu deinen ersten Sätzen. Lifetime-Zugriff CHF 9.90.{% endblock %}
+{% block meta_description %}JLPT N5 in der Schweiz: Prüfung an der Universität Zürich (typischerweise im Dezember, Gebühr CHF 130). Strukturierte Online-Vorbereitung auf Deutsch — von Hiragana bis zu deinen ersten Sätzen.{% if not free_mode %} Lifetime-Zugriff CHF 9.90.{% else %} Komplett kostenlos.{% endif %}{% endblock %}
 {% block canonical %}{{ site_url }}/jlpt-n5-schweiz{% endblock %}
 {% block og_type %}article{% endblock %}
 {% block og_title %}JLPT N5 Schweiz — Online-Vorbereitung auf Deutsch{% endblock %}
@@ -57,10 +57,10 @@
       "teaches": "Japanisch JLPT N5",
       "offers": {
         "@type": "Offer",
-        "price": "9.90",
+        "price": "{% if not free_mode %}9.90{% else %}0{% endif %}",
         "priceCurrency": "CHF",
         "availability": "https://schema.org/InStock",
-        "url": "{{ site_url }}/n5-bundle"
+        "url": "{% if not free_mode %}{{ site_url }}/n5-bundle{% else %}{{ site_url }}/lessons{% endif %}"
       },
       "hasCourseInstance": {
         "@type": "CourseInstance",
@@ -201,9 +201,15 @@
       <a href="{{ url_for('routes.lessons', access='free') }}" class="btn btn-primary btn-lg">
         Kostenlos starten
       </a>
+      {% if not free_mode %}
       <a href="{{ url_for('bundle.n5_bundle') }}" class="btn btn-outline-primary btn-lg">
         N5 Komplett · CHF 9.90
       </a>
+      {% else %}
+      <a href="{{ url_for('routes.lessons') }}" class="btn btn-outline-primary btn-lg">
+        Alle Lektionen ansehen
+      </a>
+      {% endif %}
     </div>
     <div class="n5ch-hero-badges">
       <span>✅ {{ n5_free_lesson_count }} Lektionen kostenlos</span>
@@ -367,7 +373,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr><td>Kosten</td><td>ab CHF 30/h</td><td><strong>CHF 9.90 lifetime</strong></td></tr>
+          <tr><td>Kosten</td><td>ab CHF 30/h</td><td><strong>{% if not free_mode %}CHF 9.90 lifetime{% else %}komplett kostenlos{% endif %}</strong></td></tr>
           <tr><td>Ort</td><td>Zürich, feste Adresse</td><td>überall online</td></tr>
           <tr><td>Zeit</td><td>feste Termine</td><td>wann du willst</td></tr>
           <tr><td>Tempo</td><td>Gruppentempo</td><td>dein Tempo</td></tr>
@@ -415,8 +421,8 @@
       </li>
     </ol>
     <p>
-      <a href="{{ url_for('routes.lessons') }}">Alle Lektionen ansehen →</a> ·
-      <a href="{{ url_for('bundle.n5_bundle') }}">N5 Komplett-Bundle →</a>
+      <a href="{{ url_for('routes.lessons') }}">Alle Lektionen ansehen →</a>{% if not free_mode %} ·
+      <a href="{{ url_for('bundle.n5_bundle') }}">N5 Komplett-Bundle →</a>{% endif %}
     </p>
   </section>
 
@@ -571,14 +577,20 @@
       <a href="{{ url_for('routes.lessons', access='free') }}" class="btn btn-primary btn-lg">
         🚀 Kostenlos starten
       </a>
+      {% if not free_mode %}
       <a href="{{ url_for('bundle.n5_bundle') }}" class="btn btn-outline-primary btn-lg">
         ⚡ N5 Komplett · CHF 9.90
       </a>
+      {% else %}
+      <a href="{{ url_for('routes.lessons') }}" class="btn btn-outline-primary btn-lg">
+        ⚡ Alle Lektionen ansehen
+      </a>
+      {% endif %}
     </div>
     <ul class="n5ch-trust">
-      <li>✅ 30 Tage Geld zurück</li>
+      {% if not free_mode %}<li>✅ 30 Tage Geld zurück</li>{% endif %}
       <li>✅ {{ n5_free_lesson_count }} Lektionen ohne Anmeldung kostenlos</li>
-      <li>✅ Lifetime-Zugriff, kein Abo</li>
+      <li>✅ {% if not free_mode %}Lifetime-Zugriff, kein Abo{% else %}Komplett kostenlos, kein Abo{% endif %}</li>
     </ul>
   </section>
 

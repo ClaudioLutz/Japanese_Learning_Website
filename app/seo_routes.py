@@ -100,10 +100,15 @@ def sitemap_xml():
         db.session.query(Course).filter(Course.is_published.is_(True)).count() > 0
     )
 
+    # FREE_MODE: die Bundle-Verkaufsseite redirected auf /lessons — sie aus der
+    # Sitemap nehmen, sonst zeigt sie auf einen Redirect (widerspruechliches Signal).
+    free_mode = current_app.config.get('FREE_MODE')
+    bundle_pages = [] if free_mode else [('/n5-bundle', 'weekly', '0.9')]
+
     # Statische, oeffentliche Seiten
     static_pages = [
         ('/', 'daily', '1.0'),
-        ('/n5-bundle', 'weekly', '0.9'),
+        *bundle_pages,
         ('/jlpt-n5-schweiz', 'weekly', '0.9'),
         ('/lessons', 'daily', '0.8'),
         ('/practice/kana', 'weekly', '0.8'),

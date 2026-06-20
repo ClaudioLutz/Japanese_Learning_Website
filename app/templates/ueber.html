@@ -134,9 +134,13 @@
   <section class="ueber-section">
     <h2>Was mir wichtig ist</h2>
     <ul class="ueber-list">
+      {% if not free_mode %}
       <li><strong>Keine Abos.</strong> Wer N5 Komplett kauft, hat Lifetime-Zugriff. Punkt.</li>
       <li><strong>Faires Pricing.</strong> CHF 9.90 für N5 ist Pre-Order. Wer früh dabei ist, zahlt einmalig — egal wie viele Lektionen ich danach noch ergänze.</li>
       <li><strong>Doppelte Geld-zurück-Garantie.</strong> 30 Tage volle Rückerstattung. Plus: wenn ich das N5-Bundle 6 Monate lang nicht aktiv erweitere, bekommst du dein Geld zurück, auch nach 30 Tagen.</li>
+      {% else %}
+      <li><strong>Komplett kostenlos.</strong> Alle Inhalte sind frei zugänglich — kein Kauf, kein Abo, keine Paywall.</li>
+      {% endif %}
       <li><strong>Keine Daten-Verkäufe.</strong> Keine Trackingscripts von Drittanbietern. Self-hosted in der Schweiz, ausgeliefert über Cloudflare.</li>
       <li><strong>Echte Antworten.</strong> Schreib mir auf <a href="mailto:info@japanese-learning.ch">info@japanese-learning.ch</a> — ich antworte selbst, meist innerhalb 48h.</li>
     </ul>
@@ -153,7 +157,7 @@
     <p>
       Der Roadmap-Stand ist transparent. Wenn du Themen vermisst,
       <a href="mailto:info@japanese-learning.ch">schreib mir</a> —
-      Wünsche von zahlenden Lernern haben Vorrang.
+      Wünsche von {% if not free_mode %}zahlenden{% else %}aktiven{% endif %} Lernern haben Vorrang.
     </p>
   </section>
 
@@ -163,9 +167,11 @@
       <a href="{{ url_for('routes.index') }}#lernpfad" class="btn btn-primary btn-lg">
         🚀 Kostenlos starten — {{ n5_free_lesson_count }} Lektionen ohne Anmeldung
       </a>
+      {% if not free_mode %}
       <a href="{{ url_for('bundle.n5_bundle') }}" class="btn btn-outline-primary btn-lg">
         ⚡ N5 Komplett für CHF 9.90 ansehen
       </a>
+      {% endif %}
     </div>
   </section>
 

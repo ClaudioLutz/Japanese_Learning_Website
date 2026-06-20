@@ -54,7 +54,14 @@ def user_needs_bundle_hint(user) -> bool:
 
     Single Source of Truth fuer Navbar (Context-Processor in __init__.py),
     Startseiten-Banner und /learn/n5 — vorher duplizierte Logik in routes.py.
+
+    FREE_MODE: Ist die Plattform auf "alles gratis" geschaltet, gibt es kein
+    Bundle zu bewerben — hart False (Single Source, schaltet Navbar/Startseite/
+    /lessons/module_detail in einem Zug ab).
     """
+    from flask import current_app
+    if current_app.config.get("FREE_MODE"):
+        return False
     if not getattr(user, "is_authenticated", False):
         return True
     if getattr(user, "is_admin", False):

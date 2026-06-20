@@ -34,6 +34,12 @@ logger = logging.getLogger(__name__)
 @bundle_bp.route("/n5-bundle")
 def n5_bundle():
     """Verkaufsseite fuer 'JLPT N5 Komplett'."""
+    # FREE_MODE: Es gibt nichts zu verkaufen — auf den Lektionskatalog leiten.
+    # Gaten statt loeschen: Flag aus -> Verkaufsseite lebt wieder (reversibel).
+    if current_app.config.get("FREE_MODE"):
+        from flask import redirect, url_for
+        return redirect(url_for("routes.lessons"))
+
     coverage = get_jlpt_coverage(5)
     price, price_label = get_n5_bundle_price()
 
@@ -74,6 +80,15 @@ def n5_bundle_purchase():
     den dynamischen Preis vor dem Aufruf — die DB bleibt mit regulaerem
     Anker-Preis unveraendert.
     """
+    # FREE_MODE: Kauf-Endpoint stilllegen — die berechnete Bundle-Preis-Logik
+    # umgeht price==0 in der DB, daher hier ein expliziter Kill-Switch. Kein
+    # Payrexx-Call, keine PaymentTransaction. Reversibel via Flag.
+    if current_app.config.get("FREE_MODE"):
+        return jsonify({
+            "error": "Alle Inhalte sind kostenlos — ein Kauf ist nicht noetig.",
+            "error_type": "FREE_MODE",
+        }), 410
+
     # CSRF-Pruefung analog routes.py:2750 — in Tests deaktiviert
     if current_app.config.get("WTF_CSRF_ENABLED", True):
         csrf_token = request.headers.get("X-CSRFToken")

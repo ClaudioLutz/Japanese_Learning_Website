@@ -14,17 +14,25 @@
 
   <h2 class="h4 mt-4">2. Leistungen</h2>
   <p>
-    Die Plattform bietet Lerninhalte zur japanischen Sprache (Lektionen, Vokabeln, Quiz, Audio, Lernkarten). Ein Teil
-    der Inhalte ist kostenlos zugänglich. Kostenpflichtige Inhalte werden im Vorfeld klar als solche gekennzeichnet.
+    Die Plattform bietet Lerninhalte zur japanischen Sprache (Lektionen, Vokabeln, Quiz, Audio, Lernkarten).
+    {% if not free_mode %}Ein Teil der Inhalte ist kostenlos zugänglich. Kostenpflichtige Inhalte werden im Vorfeld klar als solche gekennzeichnet.{% else %}Alle Inhalte sind derzeit kostenlos zugänglich.{% endif %}
   </p>
 
   <h2 class="h4 mt-4">3. Registrierung und Konto</h2>
   <p>
-    Für die Nutzung kostenpflichtiger Inhalte ist eine Registrierung mit gültiger E-Mail-Adresse erforderlich. Du
+    {% if not free_mode %}Für die Nutzung kostenpflichtiger Inhalte ist eine Registrierung mit gültiger E-Mail-Adresse erforderlich.{% else %}Für das Speichern deines Lernfortschritts ist eine Registrierung mit gültiger E-Mail-Adresse erforderlich.{% endif %} Du
     versicherst, dass deine Angaben wahrheitsgemäss sind und dass du mindestens 16 Jahre alt bist (oder eine
     Einverständniserklärung deiner Erziehungsberechtigten vorliegt).
   </p>
 
+  {% if free_mode %}
+  <h2 class="h4 mt-4">4. Kosten</h2>
+  <p>
+    Derzeit sind alle Inhalte von japanese-learning.ch kostenlos zugänglich. Es findet keine Zahlung statt, und es
+    kommt kein kostenpflichtiger Vertrag zustande. Sollten künftig kostenpflichtige Inhalte angeboten werden, gelten
+    die dann auf der jeweiligen Seite veröffentlichten Bedingungen zu Preisen, Zahlung und Widerruf.
+  </p>
+  {% else %}
   <h2 class="h4 mt-4">4. Preise und Zahlung</h2>
   <p>
     Alle Preise sind in Schweizer Franken (CHF) und enthalten — soweit gesetzlich anwendbar — die Mehrwertsteuer.
@@ -82,9 +90,11 @@
     gesetzlicher Anspruch.
   </p>
 
+  {% endif %}
+
   <h2 class="h4 mt-4">6. Nutzungsrechte</h2>
   <p>
-    Mit dem Kauf erhältst du das Recht, die Inhalte für deine persönliche, nicht-kommerzielle Lerntätigkeit zu nutzen.
+    Mit {% if not free_mode %}dem Kauf{% else %}der Nutzung{% endif %} erhältst du das Recht, die Inhalte für deine persönliche, nicht-kommerzielle Lerntätigkeit zu nutzen.
     Eine Weitergabe, Vervielfältigung oder kommerzielle Verwertung ist ohne schriftliche Zustimmung des Anbieters nicht
     gestattet.
   </p>
