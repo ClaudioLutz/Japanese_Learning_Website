@@ -92,9 +92,17 @@ dezenter Zähler, wenn der Falsch-Filter Treffer hat.
 ### Seiten-Flow (spiegelt `/practice/kana` + `/review`)
 
 ```
-/pruefen (Konfig + Quick-Starts)  →  Session (Vollbild, gesperrt)  →  Ergebnis-Screen
-   wie practice_kana.html              wie review.html (X/Y, Tasten)     wie review-Summary
+/pruefen (schlanker Start-Screen)  →  Frage-Screens             →  Ergebnis-Screen
+   Quick-Starts + Modus,               1 Frage = 1 integrierter     wie review-Summary
+   Detail-Filter eingeklappt           Vollbild-Screen (Client-
+   wie practice_kana.html              Schritt, kein Reload), X/Y
+                                       wie review.html
 ```
+
+> **Festgelegt:** Die Session ist **eine Frage pro integriertem Vollbild-Screen** —
+> Frage + Antwort + (in Übung) Feedback an einem Ort, als Client-Schritt ohne
+> Seiten-Reload und ohne eigene Route pro Frage. Details + Wireframe-Callout in
+> [`01-wireframes-und-flows.md`](01-wireframes-und-flows.md) §1.
 
 Details + Wireframes in [`01-wireframes-und-flows.md`](01-wireframes-und-flows.md).
 

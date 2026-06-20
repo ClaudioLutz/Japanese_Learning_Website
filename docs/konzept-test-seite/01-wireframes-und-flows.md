@@ -12,25 +12,48 @@ keine pixelgenauen Mockups. Token-Mapping pro Element in
 ## 1. Der Flow in einem Bild
 
 ```
-   ┌─────────────┐      ┌──────────────────┐      ┌──────────────┐
-   │  /pruefen   │  ──▶ │   Test-Session    │ ──▶ │  Ergebnis-   │
-   │  Konfig +   │      │  Vollbild, X/Y,   │      │  Screen      │
-   │ Quick-Starts│      │  Tasten, Timer?   │      │  Score-Ring  │
-   └─────────────┘      └──────────────────┘      └──────┬───────┘
-        ▲   wie practice_kana.html    wie review.html     │
-        └──────────── „Nur Falsche nochmal" / „Neuer Test" ┘
+   ┌─────────────┐      ┌──────────────────────────┐      ┌──────────────┐
+   │  /pruefen   │  ──▶ │   Frage-Screens          │ ──▶ │  Ergebnis-   │
+   │ Start-Screen│      │   1 Frage = 1 Screen      │      │  Screen      │
+   │ + Quick-Start│     │   (Client-Schritt, kein   │      │  Score-Ring  │
+   │             │      │    Reload), X/Y, Tasten   │      │              │
+   └─────────────┘      └──────────────────────────┘      └──────┬───────┘
+        ▲   wie practice_kana.html    wie review.html            │
+        └──────────────── „Nur Falsche nochmal" / „Neuer Test" ──┘
 ```
 
 Drei Bildschirme, beide Übergänge spiegeln bestehende Muster:
-`/practice/kana` (Konfig→Spiel→Ergebnis) und `/review` (Session-Loop X/Y + Summary).
+`/practice/kana` (Start→Spiel→Ergebnis) und `/review` (Session-Loop X/Y + Summary).
+
+> **🔒 Festgelegt (Variante „integrierte Frage-Seite", entschieden 2026-06-20):**
+> Die Test-Session ist **eine Frage pro integriertem Vollbild-Screen** — Frage,
+> Antwortoptionen und (im Übungsmodus) das Feedback/die Erklärung liegen alle auf
+> *demselben* Screen, kein Sprung auf eine separate Auflösungs-Seite. Technisch ist
+> jeder Frage-Screen ein **Client-Schritt innerhalb einer gesperrten Bühne**
+> (`body.pruefung-locked`), **kein** echter Seiten-Reload und **keine** eigene Route
+> pro Frage. Begründung: behält Timer, Fortschritt „X / Y", Tastatur-Steuerung und die
+> bereits gegebenen Antworten; vermeidet Flash/verlorene Antworten bei Reload; ist
+> exakt das Muster von `review.html` und `practice_kana_game.html`. Der große
+> Konfigurations-Block wird dadurch zu einem **schlanken Start-Screen** (siehe §2):
+> Quick-Starts + minimale Auswahl, Detail-Filter eingeklappt.
+>
+> **Verworfen:** eigene URL + Reload pro Frage (`/pruefen/frage/<id>`) — bricht
+> Timer/Fortschritt/Antwort-State bei jedem Reload, fühlt sich stockend an.
+> Banner-/Horizontal-Scroll-Layout ist damit ebenfalls vom Tisch: der Einstieg ist
+> ein Start-Screen, nicht ein Banner oder Scroll-Streifen (ein Banner bleibt nur als
+> optionaler *Zubringer* von Startseite/Lektionsende denkbar, §11).
 
 ---
 
-## 2. Einstiegs-/Konfig-Seite `/pruefen` (Desktop, Light)
+## 2. Schlanker Start-Screen `/pruefen` (Desktop, Light)
 
-Quick-Starts oben (1-Tap, kein Scrollen nötig), darunter freie Konfiguration über
-Segment-Tabs + Chips (Kana-Muster). Der **Modus-Toggle** steht prominent, weil er den
-ganzen Rest umfärbt.
+Da die Session jetzt „eine Frage = ein Screen" ist (§1), ist der Einstieg **kein
+großer Konfigurator**, sondern ein schlanker Start-Screen: **Quick-Starts oben**
+(1-Tap, sofort in den ersten Frage-Screen) plus der **Modus-Toggle**. Die detaillierte
+Auswahl („Gezielt prüfen": Scope-/Typ-/Schwierigkeits-Chips) ist **standardmäßig
+eingeklappt** hinter `▸ aufklappen` — wer einfach loslegen will, tippt eine Kachel und
+ist in der ersten Frage; wer feinjustieren will, klappt auf. So bleibt der Start-Screen
+ruhig und der Detail-Filter trotzdem erreichbar.
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
@@ -50,8 +73,9 @@ ganzen Rest umfärbt.
 │  │ └──────────────────────────────────────────────┘         │ │
 │  └──────────────────────────────────────────────────────────┘ │
 │                                                                │
-│  ── Gezielt prüfen ───────────────────────────────────────    │
+│  ── Gezielt prüfen ──────────────────────  [ ▸ aufklappen ]   │ ◀ eingeklappt
 │  WAS?      [ Lektion ] [•Modul ] [ JLPT-Level ] [ Alles ]      │
+│   ▲ erst nach Aufklappen sichtbar:                             │
 │  Auswahl:  [✓ Familie] [ Restaurant ] [ Zahlen ] [ Zeit ] …   │  ◀ Chips wie Kana-Reihen
 │  WELCHE?   [•Alle ] [ Nur falsche · 12 ] [ Nur neue ]         │
 │  TYP:      [✓ Multiple Choice] [✓ Wahr/Falsch] [✓ Zuordnung]  │
@@ -80,10 +104,12 @@ ganzen Rest umfärbt.
 
 ---
 
-## 3. Test-Session — Multiple Choice (Übungsmodus, vor Antwort)
+## 3. Frage-Screen — Multiple Choice (Übungsmodus, vor Antwort)
 
-Vollbild, viewport-gesperrt (`body.pruefung-locked`, 1:1 wie `body.review-locked`),
-Chrome aus, Fortschritt „X / Y" oben, Tastatur-Steuerung.
+**Ein** integrierter Vollbild-Screen pro Frage (Client-Schritt, siehe §1-Callout),
+viewport-gesperrt (`body.pruefung-locked`, 1:1 wie `body.review-locked`), Chrome aus,
+Fortschritt „X / Y" oben, Tastatur-Steuerung. „Weiter" tauscht den Frage-Inhalt
+in-place gegen die nächste Frage — **kein Seiten-Reload**.
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
@@ -117,11 +143,13 @@ Gewählte Option (vor Submit): Rahmen tonal-indigo (`--kon-300`), **nicht** Verm
 
 ---
 
-## 4. Sofort-Feedback-Panel (Übung, nach „Antwort prüfen")
+## 4. Sofort-Feedback — gleicher Screen wie §3 (Übung, nach „Antwort prüfen")
 
-Richtige Option grün (`--matcha`), gewählte falsche rot (`--color-error`), darunter
-`question.explanation` + (falls vorhanden) `QuizOption.feedback` der gewählten Antwort
-— der distraktorspezifische Lernmoment.
+**Kein Screen-Wechsel:** das Feedback expandiert **in-place** unter den Optionen
+desselben Frage-Screens — das ist der Kern der „integrierte Frage-Seite"-Idee (Frage +
+Auflösung an einem Ort). Richtige Option grün (`--matcha`), gewählte falsche rot
+(`--color-error`), darunter `question.explanation` + (falls vorhanden)
+`QuizOption.feedback` der gewählten Antwort — der distraktorspezifische Lernmoment.
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
@@ -147,7 +175,7 @@ Richtige Option grün (`--matcha`), gewählte falsche rot (`--color-error`), dar
 
 ---
 
-## 5. Test-Session — Wahr/Falsch (`true_false`)
+## 5. Frage-Screen — Wahr/Falsch (`true_false`)
 
 Zwei grosse Buttons, farb-neutral bis zur Wahl (kein Bias). Auf Mobile side-by-side,
 daumenfreundlich.
@@ -171,7 +199,7 @@ daumenfreundlich.
 
 ---
 
-## 6. Test-Session — Zuordnung (`matching`)
+## 6. Frage-Screen — Zuordnung (`matching`)
 
 **Empfehlung: Tap-to-pair als Primär-Interaktion** (funktioniert identisch auf
 Mobile & Desktop), Drag nur als Desktop-Zusatz. Begründung: Drag ist auf Mobile heikel
@@ -206,7 +234,7 @@ bekommen dasselbe Nummer-Badge ①②③) → erneuter Tap löst das Paar.
 
 ---
 
-## 7. Test-Session — Prüfungsmodus (kein Feedback, Soft-Timer)
+## 7. Frage-Screen — Prüfungsmodus (kein Feedback, Soft-Timer)
 
 Identisches Frage-Markup wie Übung, aber: **kein** „Hinweis", **kein** Zwischen-
 Feedback, **kein** Zurück, Soft-Timer läuft mit. „Weiter" committet direkt.
