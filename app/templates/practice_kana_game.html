@@ -34,6 +34,10 @@
     }
     body.kana-game-locked .site-footer { display: none !important; }
     body.kana-game-locked .mobile-bottom-nav { display: none !important; }
+    /* Gratis-Band (free_mode, base.html) ist Marketing-Chrome — im immersiven
+       Vollbild-Spiel weg, sonst frisst es ~40px, die `calc(100dvh - 60px)`
+       NICHT abzieht → unterer Spiel-/Ergebnis-Rand wird abgeschnitten. */
+    body.kana-game-locked .free-ribbon { display: none !important; }
 
     .kgame {
         flex: 1 1 auto; min-height: 0; width: 100%; max-width: 640px; margin: 0 auto;
@@ -150,7 +154,12 @@
     }
 
     /* Ergebnis-Panel — ersetzt den Pool, Gitter bleibt als Merkhilfe sichtbar */
-    .kgame__result { flex: 0 0 auto; text-align: center; padding: 0.55rem 0.5rem 0.15rem; }
+    /* max-height:100% + overflow-y:auto: bei sehr kurzem Viewport (z.B. Laptop
+       quer mit wenig Hoehe) ist der Ergebnis-Inhalt (Sterne + Stats + Gast-CTA +
+       Aktionen) hoeher als die gesperrte Buehne (body:overflow:hidden) → ohne
+       Scroll waeren „Nochmal/Einstellungen" unerreichbar. Fuellt die Buehne und
+       scrollt intern statt unten abzuschneiden. */
+    .kgame__result { flex: 0 0 auto; min-height: 0; max-height: 100%; overflow-y: auto; text-align: center; padding: 0.55rem 0.5rem 0.15rem; }
     .kgame__stars { display: inline-flex; gap: 0.45rem; font-size: 1.8rem; margin-bottom: 0.35rem; }
     .kgame__stars i { color: #d6cfc2; }
     .kgame__stars i.is-earned { color: #f1c40f; text-shadow: 0 1px 3px rgba(241,196,15,.4); animation: kanaGridStar 0.4s ease; }
