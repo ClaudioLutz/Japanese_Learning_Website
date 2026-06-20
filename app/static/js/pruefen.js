@@ -175,10 +175,15 @@ function pruefenGame() {
     typeRows() {
       const bt = (this.grade && this.grade.by_type) || {};
       const names = { multiple_choice: 'Multiple Choice', true_false: 'Wahr/Falsch', matching: 'Zuordnung' };
-      return Object.keys(bt).map(k => ({ name: names[k] || k, correct: bt[k].correct, total: bt[k].total }));
+      return Object.keys(bt).map(k => ({ name: names[k] || k, correct: bt[k].correct, total: bt[k].total, earned: bt[k].earned }));
     },
     lessonRows() { return Object.values((this.grade && this.grade.by_lesson) || {}); },
-    pct(row) { return row.total ? Math.round((100 * row.correct) / row.total) : 0; },
+    // Balken nutzt Teilkredit (earned/total) -> gleiche Basis wie score_pct;
+    // der Zaehler 'x/y' zeigt weiter ganze, voll-richtige Fragen.
+    pct(row) {
+      const val = (row.earned != null) ? row.earned : row.correct;
+      return row.total ? Math.round((100 * val) / row.total) : 0;
+    },
 
     // ── Infrastruktur ───────────────────────────────────────
     _post(url, body) {

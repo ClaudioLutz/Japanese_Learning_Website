@@ -32,7 +32,7 @@
 
     <main class="pf-card">
       <p class="pf-meta" x-text="metaLine"></p>
-      <h2 class="pf-q" x-text="current.question_text"></h2>
+      <h2 class="pf-q" x-html="current.question_text"></h2>
 
       <!-- Multiple Choice / Wahr-Falsch -->
       <div class="pf-options" :class="{'pf-options--tf': current.type==='true_false'}"
@@ -141,7 +141,7 @@
       <p class="pf-errors-title" x-text="'Zum Nachlesen (' + wrongDetails().length + ')'"></p>
       <template x-for="d in wrongDetails()" :key="d.question_id">
         <details class="pf-error">
-          <summary x-text="d.question_text"></summary>
+          <summary x-html="d.question_text"></summary>
           <div class="pf-explain" x-html="d.explanation"></div>
         </details>
       </template>

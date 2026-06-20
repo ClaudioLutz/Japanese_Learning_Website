@@ -118,7 +118,8 @@
         </div>
 
         <div class="pruefen-start-row">
-          <button type="button" class="pruefen-btn pruefen-btn--primary" @click="startCustom()">Prüfung starten</button>
+          <button type="button" class="pruefen-btn pruefen-btn--primary" @click="startCustom()"
+                  x-text="mode==='pruefung' ? 'Prüfung starten' : 'Übung starten'">Übung starten</button>
         </div>
       </div>
     </section>
