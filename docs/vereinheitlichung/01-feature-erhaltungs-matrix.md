@@ -256,3 +256,221 @@ _Generiert aus Workflow `vereinheitlichung-plan` (Run wf_7f2820ea-119) · 199 in
 | `FM-motion-clamp` | prefers-reduced-motion-Clamp | custom.css |
 | `FM-icons` | FA6-Solid-Icon-Layer (44 Templates) + funktionale Emoji | Font Awesome 6 Solid (fas) — einzige UI-Icon-Quelle |
 | `FM-admin-shell` | Admin-Shell (Tailwind) + Command Palette (Ctrl+K) + Toast-Notifications | admin/* (paralleles System, separater Track) |
+
+
+---
+
+## Coverage-Audit — No-Loss literal verifiziert
+
+_Separater Audit-Workflow (Run `wf_fd5c512a-a4e`, 5 parallele Mapping-Agenten): jede der **199 Inventar-Feature-IDs** wurde **sinngemäss** einer Matrix-Zeile zugeordnet (die Matrix zitiert Quell-IDs nicht systematisch → inhaltliches Matching)._
+
+**Ergebnis: 197 covered · 2 partial · 0 MISSING (von 199).** Keine Feature ist heimatlos. Die 2 `partial`-Fälle waren *nicht explizit als erhalten benannt* (nur sinngemäss mitgetragen) — sie sind hier explizit geschlossen:
+
+### Lückenschluss (die 2 partials → explizit keep)
+
+- **A1-f15 · Per-Lektion-Status-Badges (done/started/open) auf `/lessons`** → **keep, ungegated** (auch unter FREE_MODE sichtbar). FM-catalog enumerierte nur Gruppen-Aggregate (lesson_count/free_count/done_count); der **Per-Lektion-Status-Badge-Render bleibt ausdrücklich erhalten**. Nur das separate „im Bundle"-Lock-Badge wandert ins gegatete `_bundle_cta`-Makro.
+- **A1-f19 · Heute-Hero Tagesplan (`build_plan` / `plan_minutes`) auf `/mein-lernen`** → **keep**. Die adaptive 3-Schritte-Tagesplan-**Render-Fläche** (Plan-Liste + geschätzte Minuten) bleibt als eigene erhaltene Fläche auf der kanonischen Lern-Heimat — nicht nur die Resume-/Streak-Teile aus FM-resume.
+
+### Vollständige Zuordnung (199 Inventar-IDs → FM-Zeile)
+
+| Inventar-ID | → FM-id(s) | Status |
+|---|---|---|
+| `A1-marketing-ia-f01` | `FM-home` | covered |
+| `A1-marketing-ia-f02` | `FM-kana-storm-hero` | covered |
+| `A1-marketing-ia-f03` | `FM-bridge-bar` | covered |
+| `A1-marketing-ia-f04` | `FM-pitch` | covered |
+| `A1-marketing-ia-f05` | `FM-resume` | covered |
+| `A1-marketing-ia-f06` | `FM-n5-path` | covered |
+| `A1-marketing-ia-f07` | `FM-home-redirect` | covered |
+| `A1-marketing-ia-f08` | `FM-n5-path` | covered |
+| `A1-marketing-ia-f09` | `FM-module-detail` `FM-n5-path` | covered |
+| `A1-marketing-ia-f10` | `FM-catalog` | covered |
+| `A1-marketing-ia-f11` | `FM-catalog-filter` | covered |
+| `A1-marketing-ia-f12` | `FM-resume` | covered |
+| `A1-marketing-ia-f13` | `FM-guest-hero-lessons` | covered |
+| `A1-marketing-ia-f14` | `FM-bundle-cta` | covered |
+| `A1-marketing-ia-f15` | `FM-bundle-cta` `FM-catalog` | partial |
+| `A1-marketing-ia-f16` | `FM-courses` | covered |
+| `A1-marketing-ia-f17` | `FM-course-detail` | covered |
+| `A1-marketing-ia-f18` | `FM-my-lessons` | covered |
+| `A1-marketing-ia-f19` | `FM-resume` `FM-dashboard-stats` | partial |
+| `A1-marketing-ia-f20` | `FM-dashboard-compass` | covered |
+| `A1-marketing-ia-f21` | `FM-dashboard-stats` | covered |
+| `A1-marketing-ia-f22` | `FM-dashboard-cando` | covered |
+| `A1-marketing-ia-f23` | `FM-ueber` | covered |
+| `A1-marketing-ia-f24` | `FM-lernmethode` | covered |
+| `A1-marketing-ia-f25` | `FM-jlpt-landing` | covered |
+| `A1-marketing-ia-f26` | `FM-legal` | covered |
+| `A1-marketing-ia-f27` | `FM-errors` | covered |
+| `A1-marketing-ia-f28` | `FM-seo-endpoints` | covered |
+| `A1-marketing-ia-f29` | `FM-topnav` | covered |
+| `A1-marketing-ia-f30` | `FM-user-dropdown` | covered |
+| `A1-marketing-ia-f31` | `FM-bottomnav` | covered |
+| `A1-marketing-ia-f32` | `FM-footer` | covered |
+| `A1-marketing-ia-f33` | `FM-darkmode` | covered |
+| `A1-marketing-ia-f34` | `FM-due-badge` | covered |
+| `A1-marketing-ia-f35` | `FM-admin-edit` | covered |
+| `A1-marketing-ia-f36` | `FM-plausible` | covered |
+| `A1-marketing-ia-f37` | `FM-free-mode` | covered |
+| `A1-marketing-ia-f38` | `FM-bundle-hint-cp` | covered |
+| `A1-marketing-ia-f39` | `FM-free-count-cp` | covered |
+| `A1-marketing-ia-f40` | `FM-guest-teaser` | covered |
+| `A2-dash-f01` | `FM-resume` `FM-dashboard-compass` `FM-dashboard-stats` `FM-dashboard-cando` `FM-dashboard-numbers` `FM-guest-teaser` | covered |
+| `A2-gate-f01` | `FM-access-cascade` | covered |
+| `A2-lv-f01` | `FM-lesson-view` `FM-access-cascade` `FM-paywall` `FM-access-string` | covered |
+| `A2-lv-f02` | `FM-lesson-view` | covered |
+| `A2-lv-f03` | `FM-conversation-page` | covered |
+| `A2-lv-f04` | `FM-flip-cards` | covered |
+| `A2-lv-f05` | `FM-deck-carousel` | covered |
+| `A2-lv-f06` | `FM-text-block` | covered |
+| `A2-lv-f07` | `FM-media` | covered |
+| `A2-lv-f08` | `FM-dialog-slideshow` | covered |
+| `A2-lv-f09` | `FM-kana-grid-lesson` | covered |
+| `A2-nav-f01` | `FM-lesson-nav` | covered |
+| `A2-nav-f02` | `FM-bundle-cta` | covered |
+| `A2-pay-f01` | `FM-single-checkout` | covered |
+| `A2-pay-f02` | `FM-bundle-sale` `FM-payment-tracking` `FM-course-detail` | covered |
+| `A2-pay-f03` | `FM-payrexx` | covered |
+| `A2-pay-f04` | `FM-payment-result` `FM-purchases-api` `FM-payment-tracking` | covered |
+| `A2-prog-f01` | `FM-progress-complete` | covered |
+| `A2-prog-f02` | `FM-progress-complete` | covered |
+| `A2-prog-f03` | `FM-complete-remaining` | covered |
+| `A2-prog-f04` | `FM-progress-reset` | covered |
+| `A2-prog-f05` | `FM-time-tracking` | covered |
+| `A2-pruefen-f01` | `FM-pruefen-session` | covered |
+| `A2-pruefen-f02` | `FM-quiz-eval` `FM-pruefen-session` | covered |
+| `A2-pruefen-f03` | `FM-pruefen-session` | covered |
+| `A2-pruefen-f04` | `FM-pruefen-session` | covered |
+| `A2-pruefen-f05` | `FM-pruefen-session` `FM-matching` | covered |
+| `A2-pruefen-f06` | `FM-pruefen-session` | covered |
+| `A2-quiz-f01` | `FM-quiz-markup` `FM-quiz-eval` | covered |
+| `A2-quiz-f02` | `FM-quiz-markup` `FM-quiz-eval` | covered |
+| `A2-quiz-f03` | `FM-quiz-markup` `FM-matching` | covered |
+| `A2-quiz-f04` | `FM-quiz-carousel` | covered |
+| `A2-quiz-f05` | `FM-quiz-eval` | covered |
+| `A2-quiz-f06` | `FM-fill-blank-dead` | covered |
+| `A2-tts-f01` | `FM-tts` | covered |
+| `A3-browse-f19` | `FM-browse` | covered |
+| `A3-browse-f20` | `FM-browse` | covered |
+| `A3-browse-f21` | `FM-browse` | covered |
+| `A3-browse-f22` | `FM-bulk-export` | covered |
+| `A3-browse-f23` | `FM-bulk-export` | covered |
+| `A3-dash-f43` | `FM-resume` | covered |
+| `A3-dash-f44` | `FM-dashboard-compass` | covered |
+| `A3-dash-f45` | `FM-dashboard-compass` | covered |
+| `A3-dash-f46` | `FM-dashboard-stats` | covered |
+| `A3-dash-f47` | `FM-dashboard-numbers` | covered |
+| `A3-dash-f48` | `FM-dashboard-cando` | covered |
+| `A3-dash-f49` | `FM-dashboard-cando` `FM-streak-level` | covered |
+| `A3-dash-f50` | `FM-dashboard-cando` | covered |
+| `A3-gam-f24` | `FM-gamification` | covered |
+| `A3-gam-f25` | `FM-gamification` | covered |
+| `A3-gam-f26` | `FM-gamification` | covered |
+| `A3-gam-f27` | `FM-streak-level` | covered |
+| `A3-gam-f28` | `FM-streak-level` | covered |
+| `A3-gam-f29` | `FM-gamification` | covered |
+| `A3-gam-f30` | `FM-gamification` | covered |
+| `A3-gam-f31` | `FM-streak-level` | covered |
+| `A3-kana-f32` | `FM-kana-matching` | covered |
+| `A3-kana-f33` | `FM-kana-matching` | covered |
+| `A3-kana-f34` | `FM-kana-drills` | covered |
+| `A3-kana-f35` | `FM-kana-drills` | covered |
+| `A3-kana-f36` | `FM-kana-drills` | covered |
+| `A3-kana-f37` | `FM-kana-matching` `FM-matching` | covered |
+| `A3-kana-f38` | `FM-kana-grid-lesson` `FM-kana-matching` | covered |
+| `A3-kana-f39` | `FM-kana-drills` | covered |
+| `A3-kana-f40` | `FM-kana-storm-game` `FM-kana-storm-hero` | covered |
+| `A3-kana-f41` | `FM-kana-storm-game` `FM-kana-storm-hero` | covered |
+| `A3-kana-f42` | `FM-kana-matching` | covered |
+| `A3-push-f51` | `FM-push-dead` | covered |
+| `A3-srs-f01` | `FM-srs-loop` | covered |
+| `A3-srs-f02` | `FM-srs-loop` | covered |
+| `A3-srs-f03` | `FM-srs-loop` | covered |
+| `A3-srs-f04` | `FM-srs-loop` | covered |
+| `A3-srs-f05` | `FM-srs-loop` | covered |
+| `A3-srs-f06` | `FM-front-romaji` | covered |
+| `A3-srs-f07` | `FM-tts` | covered |
+| `A3-stats-f08` | `FM-stats-deepdive` `FM-dashboard-stats` | covered |
+| `A3-stats-f09` | `FM-stats-deepdive` `FM-dashboard-stats` | covered |
+| `A3-stats-f10` | `FM-stats-deepdive` `FM-dashboard-stats` | covered |
+| `A3-stats-f11` | `FM-stats-deepdive` `FM-dashboard-stats` | covered |
+| `A3-stats-f12` | `FM-stats-deepdive` `FM-dashboard-stats` | covered |
+| `A3-stats-f13` | `FM-stats-deepdive` `FM-dashboard-stats` | covered |
+| `A3-stats-f14` | `FM-stats-deepdive` `FM-dashboard-stats` | covered |
+| `A3-stats-f15` | `FM-stats-deepdive` `FM-dashboard-stats` | covered |
+| `A3-stats-f16` | `FM-stats-deepdive` `FM-dashboard-stats` | covered |
+| `A3-stats-f17` | `FM-stats-deepdive` `FM-dashboard-stats` | covered |
+| `A3-stats-f18` | `FM-stats-deepdive` `FM-dashboard-stats` | covered |
+| `A4-design-system-f01` | `FM-tokens` | covered |
+| `A4-design-system-f02` | `FM-tokens` | covered |
+| `A4-design-system-f03` | `FM-tokens` | covered |
+| `A4-design-system-f04` | `FM-tokens` | covered |
+| `A4-design-system-f05` | `FM-tokens` | covered |
+| `A4-design-system-f06` | `FM-brandmark` | covered |
+| `A4-design-system-f07` | `FM-buttons` | covered |
+| `A4-design-system-f08` | `FM-buttons` | covered |
+| `A4-design-system-f09` | `FM-buttons` | covered |
+| `A4-design-system-f10` | `FM-module-card` | covered |
+| `A4-design-system-f11` | `FM-module-card` `FM-bundle-hint-cp` | covered |
+| `A4-design-system-f12` | `FM-module-card` `FM-due-badge` | covered |
+| `A4-design-system-f13` | `FM-deck-carousel` | covered |
+| `A4-design-system-f14` | `FM-front-romaji` | covered |
+| `A4-design-system-f15` | `FM-flip-cards` `FM-kana-matching` | covered |
+| `A4-design-system-f16` | `FM-darkmode` | covered |
+| `A4-design-system-f17` | `FM-darkmode` | covered |
+| `A4-design-system-f18` | `FM-bottomnav` | covered |
+| `A4-design-system-f19` | `FM-hero-visuals` | covered |
+| `A4-design-system-f20` | `FM-hero-visuals` | covered |
+| `A4-design-system-f21` | `FM-tts` `FM-text-block` `FM-media` | covered |
+| `A4-design-system-f22` | `FM-quiz-feedback` | covered |
+| `A4-design-system-f23` | `FM-admin-shell` | covered |
+| `A4-design-system-f24` | `FM-admin-shell` | covered |
+| `A4-design-system-f25` | `FM-quiz-feedback` `FM-stats-deepdive` | covered |
+| `A4-design-system-f26` | `FM-motion-clamp` | covered |
+| `A4-design-system-f27` | `FM-icons` | covered |
+| `A4-design-system-f28` | `FM-hero-visuals` | covered |
+| `A5-backend-track-f01` | `FM-auth-local` | covered |
+| `A5-backend-track-f02` | `FM-auth-security` | covered |
+| `A5-backend-track-f03` | `FM-auth-security` | covered |
+| `A5-backend-track-f04` | `FM-auth-local` | covered |
+| `A5-backend-track-f05` | `FM-auth-security` | covered |
+| `A5-backend-track-f06` | `FM-auth-local` | covered |
+| `A5-backend-track-f07` | `FM-password-reset` | covered |
+| `A5-backend-track-f08` | `FM-password-reset` | covered |
+| `A5-backend-track-f09` | `FM-auth-security` | covered |
+| `A5-backend-track-f10` | `FM-auth-local` | covered |
+| `A5-backend-track-f11` | `FM-oauth` | covered |
+| `A5-backend-track-f12` | `FM-oauth` | covered |
+| `A5-backend-track-f13` | `FM-oauth` | covered |
+| `A5-backend-track-f14` | `FM-decorators` | covered |
+| `A5-backend-track-f15` | `FM-decorators` | covered |
+| `A5-backend-track-f16` | `FM-decorators` | covered |
+| `A5-backend-track-f17` | `FM-access-cascade` | covered |
+| `A5-backend-track-f18` | `FM-access-cascade` | covered |
+| `A5-backend-track-f19` | `FM-access-cascade` | covered |
+| `A5-backend-track-f20` | `FM-access-string` `FM-paywall` | covered |
+| `A5-backend-track-f21` | `FM-payment-factory` | covered |
+| `A5-backend-track-f22` | `FM-payrexx` | covered |
+| `A5-backend-track-f23` | `FM-payrexx` | covered |
+| `A5-backend-track-f24` | `FM-payrexx` | covered |
+| `A5-backend-track-f25` | `FM-payrexx` | covered |
+| `A5-backend-track-f26` | `FM-mock-payment` | covered |
+| `A5-backend-track-f27` | `FM-postfinance-dead` | covered |
+| `A5-backend-track-f28` | `FM-payrexx` `FM-payment-tracking` | covered |
+| `A5-backend-track-f29` | `FM-single-checkout` | covered |
+| `A5-backend-track-f30` | `FM-payment-tracking` | covered |
+| `A5-backend-track-f31` | `FM-access-cascade` | covered |
+| `A5-backend-track-f32` | `FM-payment-tracking` | covered |
+| `A5-backend-track-f33` | `FM-payment-result` | covered |
+| `A5-backend-track-f34` | `FM-payment-tracking` | covered |
+| `A5-backend-track-f35` | `FM-purchases-api` `FM-profile` | covered |
+| `A5-backend-track-f36` | `FM-purchases-api` | covered |
+| `A5-backend-track-f37` | `FM-bundle-sale` | covered |
+| `A5-backend-track-f38` | `FM-bundle-sale` | covered |
+| `A5-backend-track-f39` | `FM-bundle-cta` `FM-bundle-hint-cp` | covered |
+| `A5-backend-track-f40` | `FM-terms-gating` `FM-single-checkout` | covered |
+| `A5-backend-track-f41` | `FM-premium-proto` | covered |
+| `A5-backend-track-f42` | `FM-debug-payment` | covered |
+| `A5-backend-track-f43` | `FM-free-mode` | covered |
+| `A5-backend-track-f44` | `FM-free-mode` | covered |
+| `A5-backend-track-f45` | `FM-lesson-type` | covered |
