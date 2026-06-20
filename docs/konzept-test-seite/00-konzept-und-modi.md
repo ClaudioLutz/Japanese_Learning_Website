@@ -142,7 +142,7 @@ Upgrade · 🔧 neues Feld/Tabelle nötig.
 |---|---|---|---|---|
 | A1 | **Nach Lektion** | `lesson_content_id → lesson_id` | ✅ | Rückgrat |
 | A2 | **Nach Modul/Thema** | `→ Lesson.category_id` | ✅ | Rückgrat (Chips wie Kana-Reihen) |
-| A3 | **JLPT-Level / Voll-N5-Mock** | `Lesson.jlpt_level` (Int, N5 = `5`; `models.py:714`) + Zugriff | ✅ | **Flaggschiff** |
+| A3 | **JLPT-Level / Voll-N5-Mock** | `LessonCategory.jlpt_level` (Int, N5 = `5`; `models.py:783`) via `Lesson.category` + Zugriff | ✅ | **Flaggschiff** |
 | A4 | **Nach Fragetyp** | `question_type` ∈ {mc, true_false, matching} | ✅ | Facette |
 | A5 | **Nach Schwierigkeit** | `difficulty_level` 1–5 | ✅\* | Facette (\*Datenqualität prüfen) |
 | A6 | **Gemischt / Zufall** | `ORDER BY random()` + Zugriff | ✅ | Rückgrat (Default-Schnellstart) |
