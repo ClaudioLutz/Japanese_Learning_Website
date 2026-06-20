@@ -6,7 +6,7 @@ in den Lernstand (Test ist risikofrei). Konzept: docs/konzept-test-seite/.
 """
 from flask import (
     Blueprint, render_template, request, jsonify, redirect, url_for,
-    render_template_string,
+    current_app,
 )
 from flask_login import login_required, current_user
 
@@ -17,11 +17,13 @@ pruefen_bp = Blueprint("pruefen", __name__)
 
 
 def _md(text, inline=False):
-    """Markdown -> HTML, gleiche Filter wie der Lektions-Quiz (markdown_safe/-inline)."""
+    """Markdown -> HTML ueber die App-Filter (markdown_safe/-inline, bleach-sanitisiert,
+    XSS-sicher). Direkter Filter-Call statt render_template_string — kein Template-
+    Compile pro Item (wichtig beim Vollpruefungs-Pool mit ~900 Fragen)."""
     if not text:
         return ""
-    flt = "markdown_inline" if inline else "markdown_safe"
-    return render_template_string("{{ t | " + flt + " }}", t=text)
+    name = "markdown_inline" if inline else "markdown_safe"
+    return current_app.jinja_env.filters[name](text)
 
 
 def _scope_from_args():
@@ -62,6 +64,12 @@ def api_overview():
 @pruefen_bp.route("/api/pruefen/pool")
 @login_required
 def api_pool():
+    scope = _scope_from_args()
+    # lesson/module brauchen eine gueltige id; fehlt/ungueltig -> 400 statt still
+    # einen leeren Pool zu liefern (sonst sieht der Nutzer faelschlich "keine Fragen").
+    if scope["kind"] in ("lesson", "module") and scope.get("id") is None:
+        return jsonify({"error": "invalid scope id"}), 400
+
     mode = request.args.get("mode", "uebung")
     selection = request.args.get("selection", "all")
     q_types = request.args.getlist("type") or None
@@ -72,15 +80,20 @@ def api_pool():
 
     questions = svc.build_question_pool(
         current_user,
-        scope=_scope_from_args(),
+        scope=scope,
         selection=selection,
         q_types=q_types,
         limit=limit,
     )
+    payload = [svc.serialize_question(q, mode=mode) for q in questions]
+    # question_text als Markdown rendern (wie der Lektions-Quiz, markdown_inline) —
+    # sonst erscheinen **fett** etc. roh. Client bindet es per x-html.
+    for qd in payload:
+        qd["question_text"] = _md(qd.get("question_text"), inline=True)
     return jsonify({
-        "count": len(questions),
+        "count": len(payload),
         "mode": mode,
-        "questions": [svc.serialize_question(q, mode=mode) for q in questions],
+        "questions": payload,
     })
 
 
@@ -94,7 +107,13 @@ def _load_accessible_question(question_id):
         return None, (jsonify({"error": "invalid question_id"}), 400)
     if not question or not question.content or not question.content.lesson:
         return None, (jsonify({"error": "unknown question"}), 404)
-    accessible, _ = question.content.lesson.is_accessible_to_user(current_user)
+    lesson = question.content.lesson
+    # Der Pool liefert nur veroeffentlichte Lektionen — check/grade muessen das
+    # spiegeln, sonst liesse sich per beliebiger question_id die Loesung einer
+    # unveroeffentlichten (Draft-)Frage abgreifen. Draft = wie nicht existent.
+    if not lesson.is_published:
+        return None, (jsonify({"error": "unknown question"}), 404)
+    accessible, _ = lesson.is_accessible_to_user(current_user)
     if not accessible:
         return None, (jsonify({"error": "forbidden"}), 403)
     return question, None
@@ -157,7 +176,8 @@ def api_grade():
             q = qmap.get(int(a.get("question_id")))
         except (TypeError, ValueError):
             q = None
-        if not q or not q.content or not q.content.lesson:
+        if (not q or not q.content or not q.content.lesson
+                or not q.content.lesson.is_published):
             continue
         accessible, _ = q.content.lesson.is_accessible_to_user(current_user)
         if not accessible:
@@ -172,20 +192,25 @@ def api_grade():
         if res["is_correct"]:
             correct_n += 1
 
-        bt = by_type.setdefault(q.question_type, {"correct": 0, "total": 0})
+        # 'correct'/'total' = ganze Fragen (Mastery-Zaehler), 'earned' = Teilkredit
+        # (Summe der Bruchteile). Der Fortschrittsbalken nutzt earned/total und
+        # liegt damit auf derselben Basis wie score_pct (kein Headline-Widerspruch).
+        bt = by_type.setdefault(q.question_type, {"correct": 0, "total": 0, "earned": 0.0})
         bt["total"] += 1
         bt["correct"] += 1 if res["is_correct"] else 0
+        bt["earned"] += frac
 
         lid = q.content.lesson_id
         bl = by_lesson.setdefault(
-            lid, {"title": q.content.lesson.title, "correct": 0, "total": 0}
+            lid, {"title": q.content.lesson.title, "correct": 0, "total": 0, "earned": 0.0}
         )
         bl["total"] += 1
         bl["correct"] += 1 if res["is_correct"] else 0
+        bl["earned"] += frac
 
         details.append({
             "question_id": q.id,
-            "question_text": q.question_text,
+            "question_text": _md(q.question_text, inline=True),
             "is_correct": res["is_correct"],
             "correct": res["correct"],
             "total": res["total"],
