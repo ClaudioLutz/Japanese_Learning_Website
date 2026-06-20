@@ -406,6 +406,12 @@
             <span class="stat-label">Bester Score</span>
             <span class="stat-value">{{ stats.storm.best_score|swiss_num }}</span>
         </div>
+        {# Kana/min = dauer-unabhaengig vergleichbar (anders als der rohe Score,
+           der mit der Spieldauer skaliert). #}
+        <div class="stat-card">
+            <span class="stat-label">Schnellste</span>
+            <span class="stat-value">{{ stats.storm.best_kpm }}<small> Kana/min</small></span>
+        </div>
         <div class="stat-card">
             <span class="stat-label">Spiele</span>
             <span class="stat-value">{{ stats.storm.games }}</span>

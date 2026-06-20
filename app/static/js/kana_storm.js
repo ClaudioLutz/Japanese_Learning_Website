@@ -127,9 +127,18 @@ function kanaStormGame(opts) {
         kanaIn: false,         // Einblend-Animation des Zeichens
         popCombo: false,       // Combo-Pop-Animation
 
-        // ── Bestscore (localStorage, pro Schrift+Dauer) ──
+        // ── Bestscore (localStorage, pro Schrift+Dauer+Reihen) ──
         best: 0,
         isNewBest: false,
+        firstBaseline: false,  // diese Runde setzte den ERSTEN Bestscore dieser Konfig (kein „neuer" Rekord)
+
+        // ── Kana/Minute: einzige dauer-unabhängig VERGLEICHBARE Kennzahl
+        //    (richtige Kana / Dauer × 60) — ein 120-Sek-Score schlägt einen
+        //    60-Sek-Score sonst automatisch. Best wie der Score in localStorage. ──
+        lastKpm: 0,            // KPM der zuletzt beendeten Runde
+        bestKpm: 0,            // beste KPM dieser Konfig
+        isNewKpmBest: false,   // KPM-Rekord (mit Vorgänger) in dieser Runde?
+        serverKpm: 0,          // serverseitige beste KPM (Antwort von storm-finish)
 
         // ── Konto (eingeloggt): Server-Persistenz der Runde + XP ──
         // loggedIn kommt vom Template (current_user.is_authenticated). Nur dann
@@ -265,10 +274,24 @@ function kanaStormGame(opts) {
             if (this.selectedRows.length) k += ':' + [...this.selectedRows].sort().join(',');
             return k;
         },
+        // KPM-Bestmarke: gleicher Scope-Schlüssel wie der Score, eigener Namespace.
+        _bestKpmKey() {
+            let k = 'kanaStormKpm:' + this.schrift + ':' + this.duration;
+            if (this.selectedRows.length) k += ':' + [...this.selectedRows].sort().join(',');
+            return k;
+        },
+        // Kana/Minute der laufenden Runde (Storm hat immer duration > 0).
+        _computeKpm() {
+            return this.duration > 0 ? Math.round((this.count / this.duration) * 60) : 0;
+        },
         loadBest() {
             const v = parseInt(this._ls(this._bestKey()) || '0', 10);
             this.best = v > 0 ? v : 0;
+            const k = parseInt(this._ls(this._bestKpmKey()) || '0', 10);
+            this.bestKpm = k > 0 ? k : 0;
             this.isNewBest = false;
+            this.isNewKpmBest = false;
+            this.firstBaseline = false;
         },
 
         // ── Runde starten: Pool laden, dann Loop ──
@@ -315,7 +338,8 @@ function kanaStormGame(opts) {
         _beginRound() {
             this.mode = 'storm';
             this.score = 0; this.combo = 1; this.bestCombo = 1; this.count = 0; this.misses = 0;
-            this.isNewBest = false; this.revealing = false; this.lastXp = 0;
+            this.isNewBest = false; this.isNewKpmBest = false; this.firstBaseline = false;
+            this.lastKpm = 0; this.revealing = false; this.lastXp = 0;
             this.kanaStats = {};   // Per-Kana-Auswertung der neuen Runde
             this.timeLeft = this.duration;
             this._endAt = Date.now() + this.duration * 1000;
@@ -476,11 +500,28 @@ function kanaStormGame(opts) {
             this.revealing = false;
             this.timeLeft = 0;
             this.fb = ''; this.fbText = ' ';
-            if (this.score > this.best) {
+            // KPM dieser Runde (dauer-unabhängig vergleichbar).
+            this.lastKpm = this._computeKpm();
+            // „Neuer Bestscore" braucht einen VORGÄNGER: das erste Spiel einer
+            // Konfig (best === 0) setzt nur die Basislinie und ist KEIN Rekord —
+            // sonst feuert der Glückwunsch bei jedem ersten bzw. neu eingestellten
+            // Spiel (der gemeldete „immer neuer Bestscore"-Bug, da der Best-Key
+            // Schrift × Dauer × Reihen-Auswahl kombiniert → fast jede Konfig fängt
+            // bei 0 an).
+            const priorBest = this.best;
+            if (this.score > priorBest) {
                 this.best = this.score;
-                this.isNewBest = true;
                 this._lsSet(this._bestKey(), this.score);
             }
+            this.isNewBest = priorBest > 0 && this.score > priorBest;
+            this.firstBaseline = priorBest === 0 && this.score > 0;
+            // Dieselbe Vorgänger-Logik für die KPM-Bestmarke.
+            const priorKpm = this.bestKpm;
+            if (this.lastKpm > priorKpm) {
+                this.bestKpm = this.lastKpm;
+                this._lsSet(this._bestKpmKey(), this.lastKpm);
+            }
+            this.isNewKpmBest = priorKpm > 0 && this.lastKpm > priorKpm;
             this.phase = 'ended';
             this._computeStormStats();
             // Eingeloggt: Runde serverseitig speichern (Bestmarke + XP).
@@ -517,6 +558,7 @@ function kanaStormGame(opts) {
                 if (!resp.ok) return;
                 const d = await resp.json();
                 if (typeof d.best_score === 'number') this.serverBest = d.best_score;
+                if (typeof d.best_kpm === 'number') this.serverKpm = d.best_kpm;
                 if (typeof d.games === 'number') this.serverGames = d.games;
                 if (typeof d.xp_awarded === 'number') this.lastXp = d.xp_awarded;
             } catch (e) { /* offline / Session weg → bleibt rein clientseitig */ }
@@ -594,6 +636,23 @@ function kanaStormGame(opts) {
             if (this.score >= 400) return 'Sturm-Meister!';
             if (this.score >= 150) return 'Stark!';
             return 'Solide!';
+        },
+        // Ehrliche Bestscore-Zeile (Gast-End-Screen): Rekord nur MIT Vorgänger,
+        // sonst „gesetzt"/„Bestscore" — IMMER mit Scope, weil Scores nur innerhalb
+        // identischer Einstellungen vergleichbar sind (Dauer/Reihen/Schrift).
+        bestLine() {
+            if (this.best <= 0) return '';
+            const scope = ' · ' + this.scopeLabel();
+            if (this.isNewBest) return '🏆 Neuer Bestscore: ' + this.best + scope;
+            if (this.firstBaseline) return 'Bestscore gesetzt: ' + this.best + scope;
+            return 'Bestscore: ' + this.best + scope;
+        },
+        // Vergleichbare Tempo-Zeile (Kana/min). „Schnellste Runde" feiert den
+        // KPM-Rekord, sonst zeigt sie die bestehende beste KPM dieses Scopes.
+        kpmLine() {
+            if (this.bestKpm <= 0) return '';
+            return (this.isNewKpmBest ? '⚡ Schnellste Runde: ' : '⚡ Schnellste: ')
+                + this.bestKpm + ' Kana/min';
         },
 
         // ── Tabs (Storm | Daily) ──────────────────────────────────────────
