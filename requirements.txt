@@ -36,5 +36,8 @@ pykakasi>=2.3
 # CH-Tagesgrenzen (Streak/Daily/XP-Cap), statt auf eine transitive OS-Quelle zu bauen.
 tzdata>=2024.1
 
+# Anki-Export (Tooling)
+genanki>=0.13
+
 # Dev/Lint
 ruff>=0.15
