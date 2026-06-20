@@ -11,6 +11,7 @@ from __future__ import annotations
 import random
 
 from sqlalchemy import or_
+from sqlalchemy.orm import joinedload, selectinload
 
 from app import db
 from app.models import (
@@ -19,6 +20,7 @@ from app.models import (
     LessonContent,
     Lesson,
     LessonCategory,
+    AccessContext,
 )
 
 # fill_blank ist Legacy/verboten und wird ueberall hart ausgeschlossen.
@@ -28,19 +30,49 @@ PASS_THRESHOLD = 0.6  # 60 % — bewusst ueber der echten JLPT-N5-Schwelle (~44 
 
 
 def _accessible_lesson_ids(user, lesson_ids):
-    """Map lesson_id -> bool (zugaenglich fuer user). Einmal pro Pool-Build, batch
-    geladen, um N+1 ueber is_accessible_to_user zu vermeiden."""
+    """Map lesson_id -> bool (zugaenglich fuer user). Einmal pro Pool-Build.
+
+    Nutzt AccessContext (3 Queries, lektions-zahl-unabhaengig) statt pro Lektion
+    eine Per-Row-Pruefung — vermeidet die N+1 ueber access_check. Die
+    Entscheidungslogik ist bit-identisch zum Per-Row-Pfad (siehe models.py)."""
     result = {}
     ids = [i for i in lesson_ids if i is not None]
     if not ids:
         return result
-    for lesson in Lesson.query.filter(Lesson.id.in_(ids)).all():
+    lessons = Lesson.query.filter(Lesson.id.in_(ids)).all()
+    ctx = AccessContext.build_for_user(user, lessons)
+    for lesson in lessons:
         try:
-            accessible, _ = lesson.is_accessible_to_user(user)
+            accessible = lesson.access_check(user, access_ctx=ctx).accessible
         except Exception:
             accessible = False
         result[lesson.id] = bool(accessible)
     return result
+
+
+def _is_well_formed(question):
+    """True, wenn die Frage serverseitig eindeutig bewertbar ist.
+
+    MC/true_false: genau EINE korrekt markierte Option (sonst ist die Bewertung
+    mehrdeutig oder unmoeglich). matching: >=2 Optionen, alle option_text/feedback
+    nicht leer, keine doppelten Prompts (Text-Mapping waere mehrdeutig).
+    Schuetzt den Pool vor degenerierten Daten — real aktuell 0 Treffer."""
+    qtype = question.question_type
+    opts = question.options
+    if qtype in ("multiple_choice", "true_false"):
+        return sum(1 for o in opts if o.is_correct) == 1
+    if qtype == "matching":
+        if len(opts) < 2:
+            return False
+        texts = [o.option_text for o in opts]
+        if any(t is None or str(t).strip() == "" for t in texts):
+            return False
+        if len(set(texts)) != len(texts):  # doppelte Prompts -> mehrdeutig
+            return False
+        if any(o.feedback is None or str(o.feedback).strip() == "" for o in opts):
+            return False
+        return True
+    return False
 
 
 def build_question_pool(user, scope=None, selection="all", q_types=None,
@@ -61,6 +93,13 @@ def build_question_pool(user, scope=None, selection="all", q_types=None,
         db.session.query(QuizQuestion)
         .join(LessonContent, LessonContent.id == QuizQuestion.lesson_content_id)
         .join(Lesson, Lesson.id == LessonContent.lesson_id)
+        # Eager-Load: content+lesson (many-to-one) und options (selectin), damit
+        # Access-Filter, serialize und Wohlgeformtheits-Pruefung kein N+1 ausloesen.
+        # Rein additiv — die Filter-/WHERE-Joins oben bleiben unveraendert.
+        .options(
+            joinedload(QuizQuestion.content).joinedload(LessonContent.lesson),
+            selectinload(QuizQuestion.options),
+        )
         .filter(QuizQuestion.question_type.in_(types))
         .filter(Lesson.is_published.is_(True))
     )
@@ -97,6 +136,12 @@ def build_question_pool(user, scope=None, selection="all", q_types=None,
     questions = [
         qq for qq in questions if qq.content and access.get(qq.content.lesson_id)
     ]
+
+    # Degenerierte Fragen ausschliessen: was serverseitig nicht eindeutig
+    # bewertbar ist, wuerde sonst immer als 'falsch' zaehlen und den Score
+    # verfaelschen. Real aktuell 0 Treffer — reine Absicherung gegen kuenftige
+    # kaputte Daten (verifiziert per Prod-Pool-Zaehlung: 899 unveraendert).
+    questions = [qq for qq in questions if _is_well_formed(qq)]
 
     if shuffle:
         random.shuffle(questions)
@@ -170,8 +215,14 @@ def evaluate_answer(question, payload):
 
     if qtype == "matching":
         # option_text = Prompt, feedback = korrekte Zuordnung (wie routes.py:4159).
-        correct_map = {o.option_text: o.feedback for o in question.options}
-        total = len(correct_map)
+        # total = Zahl der Slots (Optionen), NICHT der Dict-Keys — sonst zaehlen
+        # doppelte Prompt-Texte zu niedrig und verfaelschen den Score (M1).
+        options = question.options
+        total = len(options)
+        correct_map = {}
+        for o in options:
+            if o.feedback is not None and o.option_text not in correct_map:
+                correct_map[o.option_text] = o.feedback
         correct = 0
         for pair in payload.get("pairs") or []:
             prompt = pair.get("prompt")
@@ -200,8 +251,18 @@ def overview(user):
     """Daten fuer den Start-Screen: zugaengliche Module + Lektionen mit Fragenzahl,
     Gesamt-Zahl und Falsch-Zahl (Proxy)."""
     pool = build_question_pool(user, scope={"kind": "all"}, shuffle=False)
-    wrong = build_question_pool(user, scope={"kind": "all"}, selection="wrong",
-                                shuffle=False)
+    # Falsch-Zahl aus EINER Query ableiten statt den ganzen Pool ein zweites Mal
+    # (inkl. Access- + Wohlgeformtheits-Filter) zu bauen. Aequivalent: ein Frage
+    # ist 'falsch', wenn sie im Pool liegt UND eine falsche/wiederholte Antwort hat.
+    wrong_ids = {
+        row[0]
+        for row in db.session.query(UserQuizAnswer.question_id)
+        .filter(UserQuizAnswer.user_id == user.id)
+        .filter(or_(UserQuizAnswer.is_correct.is_(False), UserQuizAnswer.attempts > 1))
+        .distinct()
+        .all()
+    }
+    wrong_count = sum(1 for q in pool if q.id in wrong_ids)
 
     lessons = {}
     modules = {}
@@ -228,7 +289,7 @@ def overview(user):
 
     return {
         "total": len(pool),
-        "wrong_count": len(wrong),
+        "wrong_count": wrong_count,
         "modules": sorted(modules.values(), key=lambda m: m["name"]),
         "lessons": sorted(lessons.values(), key=lambda x: x["title"]),
     }

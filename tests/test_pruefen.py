@@ -87,7 +87,11 @@ def test_pool_respects_access(app_context, monkeypatch):
     user = UserFactory()
     lesson = LessonFactory(is_published=True)
     q, _ = _question(lesson)
-    monkeypatch.setattr(Lesson, "is_accessible_to_user", lambda self, u: (False, "nope"))
+    # Der Pool batcht den Zugriff jetzt ueber access_check(access_ctx=...) statt
+    # is_accessible_to_user (N+1-Vermeidung) -> hier access_check stubben.
+    denied = type("Denied", (), {"accessible": False, "message": "nope", "reason": None})()
+    monkeypatch.setattr(Lesson, "access_check",
+                        lambda self, u, access_ctx=None: denied)
     ids = [x.id for x in svc.build_question_pool(user, scope={"kind": "all"})]
     assert q.id not in ids
 
@@ -190,3 +194,160 @@ def test_overview_endpoint(auth_client):
     d = r.get_json()
     assert d["total"] >= 1
     assert "wrong_count" in d and "modules" in d and "lessons" in d
+
+
+# ── Pool-Guards (degenerierte Daten ausschliessen) ──────────
+
+def test_pool_excludes_mc_multiple_correct(app_context):
+    """M3: MC mit mehr als einer korrekten Option ist mehrdeutig -> raus."""
+    user = UserFactory()
+    lesson = LessonFactory(price=0.0, allow_guest_access=True)
+    q, opts = _question(lesson, n=3, correct_idx=0)
+    opts[1].is_correct = True  # zweite korrekte Option
+    db.session.flush()
+    ids = [x.id for x in svc.build_question_pool(user, scope={"kind": "all"})]
+    assert q.id not in ids
+
+
+def test_pool_excludes_mc_no_correct(app_context):
+    """N1: MC ohne markierte korrekte Option ist nie loesbar -> raus."""
+    user = UserFactory()
+    lesson = LessonFactory(price=0.0, allow_guest_access=True)
+    q, _ = _question(lesson, n=3, correct_idx=99)  # keine Option korrekt
+    db.session.flush()
+    ids = [x.id for x in svc.build_question_pool(user, scope={"kind": "all"})]
+    assert q.id not in ids
+
+
+def test_pool_excludes_matching_without_mapping(app_context):
+    """M2: matching mit leerem/NULL feedback ist serverseitig unloesbar -> raus."""
+    user = UserFactory()
+    lesson = LessonFactory(price=0.0, allow_guest_access=True)
+    content = LessonContentFactory(lesson_id=lesson.id, content_type="quiz",
+                                   is_interactive=True)
+    q = QuizQuestionFactory(lesson_content_id=content.id, question_type="matching")
+    QuizOptionFactory(question_id=q.id, option_text="水", feedback=None)
+    QuizOptionFactory(question_id=q.id, option_text="火", feedback="ひ")
+    db.session.flush()
+    ids = [x.id for x in svc.build_question_pool(user, scope={"kind": "all"})]
+    assert q.id not in ids
+
+
+def test_pool_excludes_matching_duplicate_prompt(app_context):
+    """M1-Guard: doppelte Prompt-Texte machen das Text-Mapping mehrdeutig -> raus."""
+    user = UserFactory()
+    lesson = LessonFactory(price=0.0, allow_guest_access=True)
+    content = LessonContentFactory(lesson_id=lesson.id, content_type="quiz",
+                                   is_interactive=True)
+    q = QuizQuestionFactory(lesson_content_id=content.id, question_type="matching")
+    QuizOptionFactory(question_id=q.id, option_text="水", feedback="みず")
+    QuizOptionFactory(question_id=q.id, option_text="水", feedback="ひ")  # Dublette
+    db.session.flush()
+    ids = [x.id for x in svc.build_question_pool(user, scope={"kind": "all"})]
+    assert q.id not in ids
+
+
+def test_pool_wrong_filter_attempts_proxy(app_context):
+    """attempts>1-Ast des Falsch-Proxys: auch eine 'richtig' beantwortete Frage
+    mit Mehrfachversuch zaehlt als falsch (or_(is_correct=False, attempts>1))."""
+    user = UserFactory()
+    lesson = LessonFactory(price=0.0, allow_guest_access=True)
+    q, _ = _question(lesson)
+    db.session.add(UserQuizAnswer(user_id=user.id, question_id=q.id,
+                                  is_correct=True, attempts=2))
+    db.session.flush()
+    ids = [x.id for x in svc.build_question_pool(user, scope={"kind": "all"},
+                                                 selection="wrong")]
+    assert q.id in ids
+
+
+def test_evaluate_matching_total_is_option_count(app_context):
+    """M1: total = Anzahl Optionen, nicht der (kollabierenden) Dict-Keys."""
+    lesson = LessonFactory()
+    content = LessonContentFactory(lesson_id=lesson.id, content_type="quiz",
+                                   is_interactive=True)
+    q = QuizQuestionFactory(lesson_content_id=content.id, question_type="matching")
+    QuizOptionFactory(question_id=q.id, option_text="水", feedback="みず")
+    QuizOptionFactory(question_id=q.id, option_text="水", feedback="ひ")
+    db.session.flush()
+    res = svc.evaluate_answer(q, {"pairs": [{"prompt": "水", "answer": "みず"}]})
+    assert res["total"] == 2  # zwei Slots, nicht ein kollabierter Key
+    assert not res["is_correct"]
+
+
+# ── Endpoint-Sicherheit + Edge Cases ────────────────────────
+
+def test_check_unpublished_question_404(auth_client):
+    """S1: check auf eine Frage einer unveroeffentlichten Lektion -> 404 (kein Leak)."""
+    client, user = auth_client
+    lesson = LessonFactory(is_published=False, price=0.0, allow_guest_access=True)
+    q, opts = _question(lesson)
+    db.session.commit()
+    r = client.post("/api/pruefen/check",
+                    json={"question_id": q.id, "selected_option_id": opts[0].id})
+    assert r.status_code == 404
+
+
+def test_grade_excludes_unpublished(auth_client):
+    """S1: grade ueberspringt unveroeffentlichte Fragen (nicht mitgewertet)."""
+    client, user = auth_client
+    lesson = LessonFactory(is_published=False, price=0.0, allow_guest_access=True)
+    q, opts = _question(lesson)
+    db.session.commit()
+    r = client.post("/api/pruefen/grade",
+                    json={"answers": [{"question_id": q.id,
+                                       "selected_option_id": opts[0].id}]})
+    assert r.status_code == 200
+    assert r.get_json()["graded"] == 0
+
+
+def test_grade_empty_answers(auth_client):
+    """Leerer Antwortsatz -> 200, score 0, kein 500 (Division-Guard, possible=0)."""
+    client, user = auth_client
+    r = client.post("/api/pruefen/grade", json={"answers": []})
+    assert r.status_code == 200
+    d = r.get_json()
+    assert d["graded"] == 0 and d["score_pct"] == 0 and d["passed"] is False
+
+
+def test_grade_partial_matching_score(auth_client):
+    """1 von 2 Zuordnungen richtig -> Teilkredit fliesst in score_pct (50%) und
+    die Aufschluesselung fuehrt earned (N2: Balken == Headline-Basis)."""
+    client, user = auth_client
+    lesson = LessonFactory(price=0.0, allow_guest_access=True)
+    q = _matching(lesson, {"水": "みず", "火": "ひ"})
+    db.session.commit()
+    r = client.post("/api/pruefen/grade", json={"answers": [
+        {"question_id": q.id, "pairs": [
+            {"prompt": "水", "answer": "みず"},
+            {"prompt": "火", "answer": "みず"}]}]})
+    assert r.status_code == 200
+    d = r.get_json()
+    assert d["score_pct"] == 50
+    assert d["by_type"]["matching"]["earned"] == 0.5
+    assert d["by_type"]["matching"]["total"] == 1
+
+
+def test_pool_invalid_scope_id_400(auth_client):
+    """N3: lesson/module-Scope ohne gueltige id -> 400 statt stiller Leer-Pool."""
+    client, user = auth_client
+    assert client.get("/api/pruefen/pool?scope=lesson").status_code == 400
+    assert client.get("/api/pruefen/pool?scope=module&id=abc").status_code == 400
+
+
+def test_pool_renders_markdown(auth_client):
+    """Mi1: question_text wird als Markdown gerendert (wie der Lektions-Quiz),
+    sonst erschienen **fett** etc. roh."""
+    client, user = auth_client
+    lesson = LessonFactory(price=0.0, allow_guest_access=True)
+    content = LessonContentFactory(lesson_id=lesson.id, content_type="quiz",
+                                   is_interactive=True)
+    q = QuizQuestionFactory(lesson_content_id=content.id, question_type="true_false",
+                            question_text="Die **G-Reihe** ist nasaliert")
+    QuizOptionFactory(question_id=q.id, option_text="Wahr", is_correct=True)
+    QuizOptionFactory(question_id=q.id, option_text="Falsch", is_correct=False)
+    db.session.commit()
+    r = client.get("/api/pruefen/pool")
+    assert r.status_code == 200
+    texts = [x["question_text"] for x in r.get_json()["questions"]]
+    assert any("<strong>G-Reihe</strong>" in t for t in texts)
