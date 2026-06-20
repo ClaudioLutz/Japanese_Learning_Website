@@ -1795,6 +1795,145 @@ class PaymentTransaction(db.Model):
         return f'<PaymentTransaction {self.transaction_id} - {self.state}>'
 
 
+# ════════════════════════════════════════════════════════════════════════
+# Forum (Benutzer-Forum) — leichtgewichtig, login-pflichtig zum Lesen.
+# Kategorie → Topic → Post. Der erste Post (is_op=True) ist der Thread-Body.
+# Soft-Delete ueberall (Zeile bleibt, is_deleted-Flag). Siehe docs/forum-konzept.md.
+# ════════════════════════════════════════════════════════════════════════
+
+def _forum_slugify(text: str) -> str:
+    """Dependency-freier Slugifier (kein python-slugify im Stack).
+
+    Transliteriert deutsche Umlaute, reduziert alles Uebrige auf ASCII-
+    Wortzeichen + Bindestriche. Rein-japanische Titel ergeben '' → der
+    Aufrufer faellt auf 'thema' zurueck; die angehaengte ID macht den Slug
+    eindeutig.
+    """
+    if not text:
+        return ''
+    s = text.lower()
+    for a, b in (
+        ('ä', 'ae'), ('ö', 'oe'), ('ü', 'ue'), ('ß', 'ss'),
+        ('é', 'e'), ('è', 'e'), ('ê', 'e'), ('à', 'a'), ('â', 'a'),
+    ):
+        s = s.replace(a, b)
+    s = re.sub(r'[^a-z0-9]+', '-', s)
+    return s.strip('-')[:60]
+
+
+class ForumCategory(db.Model):
+    __tablename__ = 'forum_category'
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
+    slug: Mapped[str] = mapped_column(String(80), unique=True, nullable=False)
+    description: Mapped[str] = mapped_column(String(300), nullable=True)
+    # FontAwesome-Klasse (z.B. 'fa-bullhorn') oder Emoji — rein dekorativ.
+    icon: Mapped[str] = mapped_column(String(40), nullable=True)
+    display_order: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    # Ankuendigungen: nur Admins duerfen Topics anlegen (serverseitig erzwungen).
+    admin_only_post: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+    topics: Mapped[List['ForumTopic']] = relationship(
+        'ForumTopic', backref='category', lazy=True,
+    )
+
+    def __repr__(self):
+        return f'<ForumCategory {self.slug}>'
+
+    def can_post(self, user) -> bool:
+        """Darf `user` in dieser Kategorie ein Topic anlegen?"""
+        if not user or not getattr(user, 'is_authenticated', False):
+            return False
+        if self.admin_only_post and not getattr(user, 'is_admin', False):
+            return False
+        return True
+
+
+class ForumTopic(db.Model):
+    __tablename__ = 'forum_topic'
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    category_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey('forum_category.id'), nullable=False, index=True,
+    )
+    author_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey('user.id'), nullable=False, index=True,
+    )
+    title: Mapped[str] = mapped_column(String(200), nullable=False)
+    slug: Mapped[str] = mapped_column(String(255), nullable=True, index=True)
+    is_pinned: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    is_locked: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    is_deleted: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    view_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    # Denormalisiert: Anzahl sichtbarer Antworten (ohne OP, ohne geloeschte).
+    reply_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, index=True)
+    last_activity_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow, index=True,
+    )
+    deleted_at: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    deleted_by_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey('user.id'), nullable=True,
+    )
+
+    author = relationship('User', foreign_keys=[author_id])
+    posts: Mapped[List['ForumPost']] = relationship(
+        'ForumPost', backref='topic', lazy=True,
+        order_by='ForumPost.created_at',
+        cascade='all, delete-orphan',
+        foreign_keys='ForumPost.topic_id',
+    )
+
+    def __repr__(self):
+        return f'<ForumTopic {self.id} {self.slug}>'
+
+    def build_slug(self) -> str:
+        """Slug aus Titel + ID (ID macht ihn eindeutig). Nach flush() aufrufen."""
+        base = _forum_slugify(self.title) or 'thema'
+        return f'{base}-{self.id}'
+
+    @property
+    def op_post(self):
+        """Eroeffnungsbeitrag (erster Post). None falls (noch) keiner existiert."""
+        for p in self.posts:
+            if p.is_op:
+                return p
+        return self.posts[0] if self.posts else None
+
+
+class ForumPost(db.Model):
+    __tablename__ = 'forum_post'
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    topic_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey('forum_topic.id'), nullable=False, index=True,
+    )
+    author_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey('user.id'), nullable=False, index=True,
+    )
+    body: Mapped[str] = mapped_column(Text, nullable=False)
+    # Eroeffnungsbeitrag des Topics (= Thread-Body). Genau einer pro Topic.
+    is_op: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    is_deleted: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, index=True)
+    edited_at: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    deleted_at: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    deleted_by_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey('user.id'), nullable=True,
+    )
+
+    author = relationship('User', foreign_keys=[author_id])
+
+    def __repr__(self):
+        return f'<ForumPost {self.id} topic={self.topic_id}>'
+
+    def can_edit(self, user) -> bool:
+        """Autor oder Admin darf editieren/loeschen."""
+        if not user or not getattr(user, 'is_authenticated', False):
+            return False
+        return self.author_id == user.id or getattr(user, 'is_admin', False)
+
+
 # SQLAlchemy event listeners to automatically maintain lesson type consistency
 @event.listens_for(Lesson, 'before_insert')
 @event.listens_for(Lesson, 'before_update')

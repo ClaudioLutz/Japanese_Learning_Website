@@ -1,0 +1,30 @@
+{# Server-seitige Pagination — nutzt das uebergebene `pagination`-Objekt
+   (Flask-SQLAlchemy) + den aktuellen Endpoint/view_args, damit Pfad-Parameter
+   (category_slug, topic_id) erhalten bleiben. #}
+{% if pagination and pagination.pages > 1 %}
+<nav class="forum-pagination" aria-label="Seitennavigation">
+  {% if pagination.has_prev %}
+    <a href="{{ url_for(request.endpoint, page=pagination.prev_num, **request.view_args) }}" aria-label="Vorherige Seite">‹</a>
+  {% else %}
+    <span class="disabled" aria-hidden="true">‹</span>
+  {% endif %}
+
+  {% for p in pagination.iter_pages(left_edge=1, left_current=2, right_current=2, right_edge=1) %}
+    {% if p %}
+      {% if p == pagination.page %}
+        <span class="current" aria-current="page">{{ p }}</span>
+      {% else %}
+        <a href="{{ url_for(request.endpoint, page=p, **request.view_args) }}">{{ p }}</a>
+      {% endif %}
+    {% else %}
+      <span class="disabled">…</span>
+    {% endif %}
+  {% endfor %}
+
+  {% if pagination.has_next %}
+    <a href="{{ url_for(request.endpoint, page=pagination.next_num, **request.view_args) }}" aria-label="Nächste Seite">›</a>
+  {% else %}
+    <span class="disabled" aria-hidden="true">›</span>
+  {% endif %}
+</nav>
+{% endif %}

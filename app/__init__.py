@@ -299,6 +299,10 @@ def create_app():
     from app.bundle_routes import bundle_bp
     app.register_blueprint(bundle_bp)
 
+    # Benutzer-Forum (/forum) — login-pflichtig zum Lesen, NICHT csrf-exempt.
+    from app.forum_routes import forum_bp
+    app.register_blueprint(forum_bp)
+
     # Error-Handler — eigene Templates auf Deutsch (vorher: Default-Flask-HTML in Englisch)
     from flask import render_template
     @app.errorhandler(404)
@@ -483,6 +487,32 @@ def create_app():
         # Markdown wraps single paragraphs in <p>...</p>; strip for inline use
         if cleaned.startswith('<p>') and cleaned.endswith('</p>'):
             cleaned = cleaned[3:-4]
+        return Markup(cleaned)
+
+    # Forum-Markdown: eigener, strengerer Filter als markdown_safe.
+    # Unterschiede: KEIN <span> (verhindert injizierte CSS-Klassen wie eine
+    # gefakte "admin-badge") und linkify mit nofollow + target_blank
+    # (Spam-Hygiene; nutzergenerierte Links oeffnen extern, ohne SEO-Wert zu
+    # vererben). Bewusst getrennt von markdown_safe, damit das Lesson-Rendering
+    # unveraendert bleibt.
+    from bleach.callbacks import nofollow as _bleach_nofollow, target_blank as _bleach_target_blank
+    _FORUM_ALLOWED_TAGS = _MD_ALLOWED_TAGS - {'span'}
+    _FORUM_ALLOWED_ATTRS = {'a': ['href', 'title', 'rel', 'target']}
+    _MD_FORUM_INSTANCE = _md.Markdown(extensions=['extra', 'sane_lists', 'nl2br'])
+
+    @app.template_filter('forum_markdown')
+    def forum_markdown_filter(text):
+        if not text:
+            return ''
+        _MD_FORUM_INSTANCE.reset()
+        html = _MD_FORUM_INSTANCE.convert(text)
+        cleaned = _bleach.clean(
+            html, tags=_FORUM_ALLOWED_TAGS, attributes=_FORUM_ALLOWED_ATTRS,
+            strip=True,
+        )
+        cleaned = _bleach.linkify(
+            cleaned, callbacks=[_bleach_nofollow, _bleach_target_blank],
+        )
         return Markup(cleaned)
 
     # Vocab-Highlight: markiert das Zielwort im Beispielsatz.

@@ -271,6 +271,12 @@
                 <a href="{{ url_for('srs.browse_page') }}" class="topnav-dd-item">
                   <i class="fas fa-th-list" aria-hidden="true"></i> Stöbern
                 </a>
+                {# Forum: kein Daily-Loop-Item → lebt im Dropdown (Desktop + Mobile),
+                   nicht in der Primary-Nav (max. 5 essenzielle Items). #}
+                <a href="{{ url_for('forum.index') }}" class="topnav-dd-item{% if request.blueprint == 'forum' %} is-active{% endif %}"
+                   {% if request.blueprint == 'forum' %}aria-current="page"{% endif %}>
+                  <i class="fas fa-comments" aria-hidden="true"></i> Forum
+                </a>
                 {# 10.3: Bundle-Link im Konto-Dropdown entfernt — Dublette des
                    Top-Nav-Hinweises (eine gegatete Bundle-Stelle pro Flaeche). #}
                 {% if current_user.is_admin %}
