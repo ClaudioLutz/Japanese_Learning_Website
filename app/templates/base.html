@@ -658,6 +658,24 @@
         [data-theme="dark"] .topnav-primary { background: var(--card-background); }
     }
     </style>
+    {# ── Gratis-Band: site-weiter Hinweis, dass alles kostenlos ist.
+         Gegated auf free_mode → verschwindet automatisch, falls Monetarisierung
+         je reaktiviert wird (FREE_MODE=false). Bewusst nicht-sticky (scrollt mit). #}
+    {% if free_mode %}
+    <div class="free-ribbon" role="note">
+      <p class="free-ribbon__inner">
+        <span class="free-ribbon__check" aria-hidden="true">✓</span>
+        <strong>Alles kostenlos</strong> — alle Lektionen, Spiele &amp; Übungen. Kein Abo, kein Kauf.
+      </p>
+    </div>
+    <style>
+      .free-ribbon{background:var(--kinari,#F3EEE3);border-bottom:1px solid var(--border-color,#E4DED4);color:var(--text-color,#1C1A17)}
+      .free-ribbon__inner{margin:0;padding:.5rem 1rem;text-align:center;font-size:.92rem;line-height:1.45;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.45rem}
+      .free-ribbon__check{color:var(--shu,#EB6101);font-weight:700;font-size:1.02em}
+      .free-ribbon strong{color:var(--text-color,#1C1A17);font-weight:600}
+      [data-theme="dark"] .free-ribbon{background:var(--card-background);border-bottom-color:var(--border-color)}
+    </style>
+    {% endif %}
     <main id="main-content" class="container mt-4">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
