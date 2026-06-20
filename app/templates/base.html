@@ -176,6 +176,11 @@
             <i class="fas fa-brain" aria-hidden="true"></i><span>Wiederholen</span>
             <span class="nav-due-badge" id="reviewBadgeDesktop" aria-hidden="true"></span>
           </a>
+          <a href="{{ url_for('pruefen.pruefen_start') }}"
+             class="topnav-link {% if request.endpoint in ['pruefen.pruefen_start', 'pruefen.pruefen_session'] %}is-active{% endif %}"
+             {% if request.endpoint == 'pruefen.pruefen_start' %}aria-current="page"{% elif request.endpoint == 'pruefen.pruefen_session' %}aria-current="true"{% endif %}>
+            <i class="fas fa-clipboard-check" aria-hidden="true"></i><span>Prüfen</span>
+          </a>
           <a href="{{ url_for('srs.practice_kana_page') }}"
              class="topnav-link {% if request.endpoint in ['srs.practice_kana_page', 'srs.practice_kana_game_page'] %}is-active{% endif %}"
              {% if request.endpoint == 'srs.practice_kana_page' %}aria-current="page"{% elif request.endpoint == 'srs.practice_kana_game_page' %}aria-current="true"{% endif %}>
