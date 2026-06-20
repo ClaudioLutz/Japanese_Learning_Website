@@ -1,0 +1,39 @@
+{% extends "forum/_forum_base.html" %}
+{% block title %}Neues Thema · {{ category.name }}{% endblock %}
+{% block robots %}noindex,nofollow{% endblock %}
+
+{% block forum_content %}
+<nav class="forum-breadcrumb" aria-label="Brotkrumen">
+  <a href="{{ url_for('forum.index') }}">Forum</a>
+  <span class="sep">/</span>
+  <a href="{{ url_for('forum.category', category_slug=category.slug) }}">{{ category.name }}</a>
+  <span class="sep">/</span>
+  <span>Neues Thema</span>
+</nav>
+
+<div class="forum-head">
+  <h1>Neues Thema</h1>
+  <p>in {{ category.name }}</p>
+</div>
+
+<div class="forum-card">
+  <form method="POST" action="{{ url_for('forum.new_topic', category_slug=category.slug) }}" class="forum-form">
+    {{ form.csrf_token }}
+
+    <label for="topic-title">Titel</label>
+    <input type="text" id="topic-title" name="title" maxlength="200"
+           value="{{ form.title.data or '' }}" placeholder="Worum geht es?" required>
+    {% for err in form.title.errors %}<p class="field-error">{{ err }}</p>{% endfor %}
+
+    <label for="topic-body">Beitrag</label>
+    <textarea id="topic-body" name="body" placeholder="Beschreibe dein Anliegen … (Markdown wird unterstützt)" required>{{ form.body.data or '' }}</textarea>
+    {% for err in form.body.errors %}<p class="field-error">{{ err }}</p>{% endfor %}
+    <p class="hint">Tipp: **fett**, *kursiv*, Listen und Links per Markdown.</p>
+
+    <div class="forum-form-actions">
+      <button type="submit" class="forum-btn forum-btn-primary"><i class="fas fa-paper-plane" aria-hidden="true"></i> Thema erstellen</button>
+      <a class="forum-btn forum-btn-ghost" href="{{ url_for('forum.category', category_slug=category.slug) }}">Abbrechen</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -15,6 +15,7 @@ from app.models import (
     PaymentTransaction, QuizQuestion, QuizOption, UserLessonProgress,
     UserQuizAnswer, CardReviewState, ReviewLog, UserSRSSettings,
     UserAchievement, DailyReviewAggregate,
+    ForumCategory, ForumTopic, ForumPost,
 )
 
 
@@ -316,3 +317,44 @@ class DailyReviewAggregateFactory(BaseFactory):
     review_date = LazyFunction(lambda: datetime.utcnow().date())
     total_reviews = 0
     correct_reviews = 0
+
+
+# ── Forum Factories ───────────────────────────────────────
+
+class ForumCategoryFactory(BaseFactory):
+    class Meta:
+        model = ForumCategory
+
+    name = Sequence(lambda n: f"Kategorie {n}")
+    slug = Sequence(lambda n: f"kategorie-{n}")
+    description = "Testkategorie"
+    icon = "fa-comments"
+    display_order = Sequence(lambda n: n)
+    admin_only_post = False
+    is_active = True
+
+
+class ForumTopicFactory(BaseFactory):
+    class Meta:
+        model = ForumTopic
+
+    category_id = None
+    author_id = None
+    title = Sequence(lambda n: f"Testthema {n}")
+    slug = Sequence(lambda n: f"testthema-{n}")
+    is_pinned = False
+    is_locked = False
+    is_deleted = False
+    reply_count = 0
+    view_count = 0
+
+
+class ForumPostFactory(BaseFactory):
+    class Meta:
+        model = ForumPost
+
+    topic_id = None
+    author_id = None
+    body = Sequence(lambda n: f"Beitragstext {n} mit genug Inhalt.")
+    is_op = False
+    is_deleted = False

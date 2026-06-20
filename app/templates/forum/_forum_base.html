@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+{#
+  Forum-Basis-Template. Erbt base.html, liefert das gemeinsame Geruest +
+  isoliertes Forum-CSS (im styles-Block, NICHT in custom.css → kein Risiko
+  fuers Deck-Karussell). Kinder fuellen nur {% block forum_content %}.
+  Design: ink-on-washi via Tokens (Dark-Mode automatisch), EIN shu-Akzent
+  fuer den Primaer-CTA, kein Bootstrap .card.
+#}
+{% block styles %}
+<style>
+  .forum-wrap { max-width: 900px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+  .forum-breadcrumb {
+    display: flex; flex-wrap: wrap; gap: .4rem; align-items: center;
+    font-size: .85rem; color: var(--text-muted); margin-bottom: 1rem;
+  }
+  .forum-breadcrumb a { color: var(--text-muted); text-decoration: none; }
+  .forum-breadcrumb a:hover { color: var(--shu); }
+  .forum-breadcrumb .sep { opacity: .5; }
+
+  .forum-head { margin-bottom: 1.5rem; }
+  .forum-head h1 {
+    font-family: 'Fraunces', 'Noto Serif JP', Georgia, serif;
+    font-size: clamp(1.5rem, 4vw, 2rem); color: var(--kon); margin: 0 0 .3rem;
+  }
+  .forum-head p { color: var(--text-muted); margin: 0; font-size: .95rem; }
+
+  .forum-toolbar {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 1rem; margin-bottom: 1.25rem; flex-wrap: wrap;
+  }
+
+  /* Karten/Zeilen — eigene Klassen, Token-basiert, dark-safe */
+  .forum-card {
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1rem 1.15rem;
+    margin-bottom: .75rem;
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+  a.forum-card { display: block; text-decoration: none; color: inherit; }
+  a.forum-card:hover { border-color: var(--shu); box-shadow: 0 2px 12px rgba(0,0,0,.06); }
+
+  .forum-cat-row { display: flex; gap: .9rem; align-items: flex-start; }
+  .forum-cat-icon {
+    flex: 0 0 auto; width: 42px; height: 42px; border-radius: 10px;
+    display: grid; place-items: center; font-size: 1.2rem;
+    background: var(--kon-50); color: var(--kon);
+  }
+  .forum-cat-main { flex: 1 1 auto; min-width: 0; }
+  .forum-cat-main h2 {
+    font-size: 1.08rem; margin: 0 0 .15rem; color: var(--kon);
+    font-family: 'Fraunces', 'Noto Serif JP', Georgia, serif;
+  }
+  .forum-cat-main .desc { color: var(--text-muted); font-size: .9rem; margin: 0; }
+  .forum-cat-meta {
+    flex: 0 0 auto; text-align: right; color: var(--text-muted);
+    font-size: .8rem; min-width: 90px;
+  }
+  .forum-cat-meta .count { font-size: 1.1rem; font-weight: 700; color: var(--text-color); display: block; }
+  .forum-cat-latest { font-size: .78rem; color: var(--text-muted); margin-top: .15rem; }
+
+  /* Topic-Zeile */
+  .forum-topic-row { display: flex; align-items: center; gap: .75rem; }
+  .forum-topic-main { flex: 1 1 auto; min-width: 0; }
+  .forum-topic-title {
+    font-size: 1.02rem; font-weight: 600; color: var(--kon); margin: 0;
+    display: flex; align-items: center; gap: .45rem; flex-wrap: wrap;
+  }
+  .forum-topic-meta { color: var(--text-muted); font-size: .8rem; margin-top: .2rem; }
+  .forum-topic-stats { flex: 0 0 auto; text-align: center; color: var(--text-muted); font-size: .78rem; min-width: 64px; }
+  .forum-topic-stats b { display: block; color: var(--text-color); font-size: 1rem; }
+
+  .forum-badge {
+    display: inline-flex; align-items: center; gap: .25rem;
+    font-size: .68rem; font-weight: 700; letter-spacing: .02em;
+    padding: .12rem .45rem; border-radius: 999px; text-transform: uppercase;
+  }
+  .forum-badge--pin { background: var(--shu-soft); color: var(--shu-deep); }
+  .forum-badge--lock { background: var(--ink-200); color: var(--ink-700); }
+  .forum-badge--admin { background: var(--kon-100); color: var(--kon-500); }
+
+  /* Beitraege */
+  .forum-post {
+    background: var(--card-background); border: 1px solid var(--border-color);
+    border-radius: 12px; padding: 1.1rem 1.2rem; margin-bottom: 1rem;
+  }
+  .forum-post--op { border-color: var(--kon-300); }
+  .forum-post--deleted { opacity: .65; }
+  .forum-post-head {
+    display: flex; align-items: center; gap: .6rem; margin-bottom: .6rem;
+    font-size: .85rem; color: var(--text-muted);
+  }
+  .forum-avatar {
+    width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
+    background: var(--kon); color: var(--washi); font-weight: 700; font-size: .85rem; flex: 0 0 auto;
+  }
+  .forum-post-author { font-weight: 600; color: var(--text-color); }
+  .forum-post-body { color: var(--text-color); line-height: 1.65; word-wrap: break-word; overflow-wrap: anywhere; }
+  .forum-post-body p { margin: 0 0 .7rem; }
+  .forum-post-body :last-child { margin-bottom: 0; }
+  .forum-post-body pre {
+    background: var(--ink-100); border: 1px solid var(--border-color);
+    border-radius: 8px; padding: .6rem .8rem; overflow-x: auto; font-size: .85rem;
+  }
+  .forum-post-body code { background: var(--ink-100); padding: .1rem .35rem; border-radius: 5px; font-size: .9em; }
+  .forum-post-body blockquote {
+    border-left: 3px solid var(--shu-soft); margin: .5rem 0; padding: .2rem 0 .2rem .8rem; color: var(--text-muted);
+  }
+  .forum-post-foot { margin-top: .7rem; display: flex; gap: .9rem; font-size: .8rem; }
+  .forum-post-foot a, .forum-post-foot button {
+    background: none; border: none; padding: 0; cursor: pointer;
+    color: var(--text-muted); text-decoration: none; font-size: .8rem;
+  }
+  .forum-post-foot a:hover, .forum-post-foot button:hover { color: var(--shu); }
+  .forum-post-foot .danger:hover { color: var(--color-error, #c0392b); }
+  .forum-edited { font-style: italic; opacity: .8; }
+
+  /* Buttons */
+  .forum-btn {
+    display: inline-flex; align-items: center; gap: .4rem;
+    padding: .55rem 1.1rem; border-radius: 999px; font-weight: 600;
+    font-size: .9rem; cursor: pointer; text-decoration: none; border: 1px solid transparent;
+    transition: background .15s ease, color .15s ease, border-color .15s ease;
+  }
+  .forum-btn-primary { background: var(--shu); color: #fff; }
+  .forum-btn-primary:hover { background: var(--shu-deep); color: #fff; }
+  .forum-btn-ghost { background: transparent; border-color: var(--border-color); color: var(--text-color); }
+  .forum-btn-ghost:hover { border-color: var(--shu); color: var(--shu); }
+
+  /* Formular */
+  .forum-form label { display: block; font-weight: 600; margin-bottom: .35rem; color: var(--text-color); }
+  .forum-form input[type=text], .forum-form textarea {
+    width: 100%; padding: .65rem .8rem; border: 1px solid var(--border-color);
+    border-radius: 10px; background: var(--card-background); color: var(--text-color);
+    font: inherit; margin-bottom: 1rem;
+  }
+  .forum-form textarea { min-height: 180px; resize: vertical; line-height: 1.6; }
+  .forum-form input:focus, .forum-form textarea:focus {
+    outline: none; border-color: var(--shu); box-shadow: 0 0 0 3px var(--shu-soft);
+  }
+  .forum-form .hint { font-size: .8rem; color: var(--text-muted); margin: -.6rem 0 1rem; }
+  .forum-form .field-error { color: var(--color-error, #c0392b); font-size: .82rem; margin: -.6rem 0 1rem; }
+  .forum-form-actions { display: flex; gap: .75rem; align-items: center; }
+
+  /* Empty + Pagination */
+  .forum-empty {
+    text-align: center; padding: 2.5rem 1rem; color: var(--text-muted);
+    border: 1px dashed var(--border-color); border-radius: 12px;
+  }
+  .forum-empty .ico { font-size: 1.8rem; opacity: .5; display: block; margin-bottom: .5rem; }
+  .forum-pagination { display: flex; justify-content: center; gap: .4rem; margin-top: 1.5rem; flex-wrap: wrap; }
+  .forum-pagination a, .forum-pagination span {
+    min-width: 38px; text-align: center; padding: .4rem .6rem; border-radius: 8px;
+    border: 1px solid var(--border-color); color: var(--text-color); text-decoration: none; font-size: .85rem;
+  }
+  .forum-pagination a:hover { border-color: var(--shu); color: var(--shu); }
+  .forum-pagination .current { background: var(--shu); color: #fff; border-color: var(--shu); }
+  .forum-pagination .disabled { opacity: .4; pointer-events: none; }
+
+  .forum-mod-bar { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .forum-inline-form { display: inline; }
+
+  @media (max-width: 575px) {
+    .forum-cat-meta { display: none; }
+    .forum-topic-stats { min-width: 48px; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="forum-wrap">
+  {% block forum_content %}{% endblock %}
+</div>
+{% endblock %}

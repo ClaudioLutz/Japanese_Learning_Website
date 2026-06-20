@@ -1,0 +1,35 @@
+{% extends "forum/_forum_base.html" %}
+{% block title %}Beitrag bearbeiten · Forum{% endblock %}
+{% block robots %}noindex,nofollow{% endblock %}
+
+{% block forum_content %}
+<nav class="forum-breadcrumb" aria-label="Brotkrumen">
+  <a href="{{ url_for('forum.index') }}">Forum</a>
+  <span class="sep">/</span>
+  <a href="{{ url_for('forum.category', category_slug=topic.category.slug) }}">{{ topic.category.name }}</a>
+  <span class="sep">/</span>
+  <a href="{{ url_for('forum.view_topic', topic_id=topic.id, slug=topic.slug) }}">{{ topic.title }}</a>
+  <span class="sep">/</span>
+  <span>Bearbeiten</span>
+</nav>
+
+<div class="forum-head">
+  <h1>Beitrag bearbeiten</h1>
+</div>
+
+<div class="forum-card">
+  <form method="POST" action="{{ url_for('forum.edit_post', post_id=post.id) }}" class="forum-form">
+    {{ form.csrf_token }}
+
+    <label for="edit-body">Beitrag</label>
+    <textarea id="edit-body" name="body" required>{{ form.body.data or post.body }}</textarea>
+    {% for err in form.body.errors %}<p class="field-error">{{ err }}</p>{% endfor %}
+    <p class="hint">Markdown wird unterstützt.</p>
+
+    <div class="forum-form-actions">
+      <button type="submit" class="forum-btn forum-btn-primary"><i class="fas fa-check" aria-hidden="true"></i> Speichern</button>
+      <a class="forum-btn forum-btn-ghost" href="{{ url_for('forum.view_topic', topic_id=topic.id, slug=topic.slug) }}">Abbrechen</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
