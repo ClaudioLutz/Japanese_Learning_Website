@@ -352,6 +352,11 @@
                 <span class="kstorm__big" x-text="count">0</span>
                 <span class="kstorm__cap">Kana</span>
             </div>
+            {# Kana/min = dauer-unabhängig vergleichbar (60- vs. 120-Sek-Runden). #}
+            <div class="kstorm__endstat">
+                <span class="kstorm__big" x-text="lastKpm">0</span>
+                <span class="kstorm__cap">Kana/min</span>
+            </div>
         </div>
         {# Per-Kana-Auswertung der Runde: schwächste (meiste Fehler) + stärkste. #}
         <div class="kstorm__stats" x-show="statWeak.length || statStrong.length" x-cloak>
@@ -380,8 +385,8 @@
             </div>
         </div>
         {% if not current_user.is_authenticated %}
-        <p class="kstorm__best"
-           x-text="isNewBest ? ('🏆 Neuer Bestscore: ' + best + '!') : (best > 0 ? ('Bestscore: ' + best) : '')"></p>
+        <p class="kstorm__best" x-show="best > 0" x-cloak x-text="bestLine()"></p>
+        <p class="kstorm__compare" x-show="bestKpm > 0" x-cloak x-text="kpmLine()"></p>
         {% endif %}
         <div class="kstorm__endactions">
             <button class="kstorm__start kstorm__weak" x-show="weakChars.length" x-cloak @click="playWeakStorm()">
@@ -407,6 +412,11 @@
         <div class="kstorm__account" aria-live="polite">
             <p class="kstorm__best" x-show="serverBest > 0" x-cloak
                x-text="'🏆 Persönliche Bestmarke (Konto): ' + serverBest + ' · ' + serverGames + ' Spiele'"></p>
+            {# Vergleichbare Tempo-Kennzahl (Kana/min): serverseitige beste KPM,
+               offline/ausstehend → lokale beste KPM dieses Scopes. #}
+            <p class="kstorm__compare" x-show="serverKpm > 0" x-cloak
+               x-text="'⚡ Schnellste: ' + serverKpm + ' Kana/min'"></p>
+            <p class="kstorm__compare" x-show="serverKpm === 0 && bestKpm > 0" x-cloak x-text="kpmLine()"></p>
             {# Fallback bei fehlgeschlagenem/ausstehendem POST (offline/Session weg):
                wenigstens den lokalen Bestscore zeigen — nicht leerer als beim Gast. #}
             <p class="kstorm__best" x-show="serverBest === 0 && best > 0" x-cloak

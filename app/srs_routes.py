@@ -1267,6 +1267,7 @@ def api_storm_finish():
         'total_xp': current_user.total_xp,
         'level': current_user.level,
         'best_score': storm_stats['best_score'],
+        'best_kpm': storm_stats['best_kpm'],
         'games': storm_stats['games'],
     })
 

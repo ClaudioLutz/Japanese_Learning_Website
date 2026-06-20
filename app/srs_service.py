@@ -359,12 +359,20 @@ def get_kana_storm_stats(user_id):
     """
     from app.models import KanaStormScore
 
+    # Kana/Minute = einzige dauer-unabhaengig VERGLEICHBARE Kennzahl
+    # (correct_count / duration * 60) — ein 120-Sek-Score schlaegt einen
+    # 60-Sek-Score sonst automatisch. nullif schuetzt vor Division durch 0
+    # (Alt-Runden mit duration=0 zaehlen nicht in die beste KPM).
+    kpm_expr = KanaStormScore.correct_count * 60.0 / db.func.nullif(
+        KanaStormScore.duration, 0
+    )
     row = db.session.query(
         db.func.count(KanaStormScore.id),
         db.func.max(KanaStormScore.score),
         db.func.max(KanaStormScore.best_combo),
         db.func.coalesce(db.func.sum(KanaStormScore.correct_count), 0),
         db.func.coalesce(db.func.sum(KanaStormScore.miss_count), 0),
+        db.func.max(kpm_expr),
     ).filter(
         KanaStormScore.user_id == user_id,
         KanaStormScore.mode == 'storm',
@@ -373,7 +381,7 @@ def get_kana_storm_stats(user_id):
     games = (row[0] if row else 0) or 0
     if not games:
         return {'games': 0, 'best_score': 0, 'best_combo': 0,
-                'accuracy': 0, 'kana_typed': 0}
+                'accuracy': 0, 'kana_typed': 0, 'best_kpm': 0}
 
     correct = int(row[3] or 0)
     miss = int(row[4] or 0)
@@ -384,6 +392,7 @@ def get_kana_storm_stats(user_id):
         'best_combo': row[2] or 0,
         'accuracy': round(correct / typed * 100) if typed else 0,
         'kana_typed': typed,
+        'best_kpm': round(row[5]) if row[5] is not None else 0,
     }
 
 

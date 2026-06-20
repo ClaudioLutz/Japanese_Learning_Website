@@ -33,6 +33,8 @@ class TestStormFinishEndpoint:
         # XP = Basis + min(correct, RunCap) = 3 + min(18, 15) = 18
         assert data['xp_awarded'] == XP_STORM_BASE + XP_STORM_RUN_BONUS_CAP
         assert data['best_score'] == 240
+        # KPM = 18 richtige / 60s * 60 = 18 (dauer-unabhaengig vergleichbar).
+        assert data['best_kpm'] == 18
         assert data['games'] == 1
         # Persistiert + XP auf dem User.
         row = KanaStormScore.query.filter_by(user_id=user.id).first()
@@ -119,12 +121,15 @@ class TestGetKanaStormStats:
         db.session.commit()
         db.session.add_all([
             KanaStormScore(user_id=user.id, mode='storm', score=100,
-                           best_combo=10, correct_count=20, miss_count=5),
+                           best_combo=10, correct_count=20, miss_count=5,
+                           duration=60),
             KanaStormScore(user_id=user.id, mode='storm', score=250,
-                           best_combo=15, correct_count=30, miss_count=0),
+                           best_combo=15, correct_count=30, miss_count=0,
+                           duration=120),
             # Daily wird NICHT mitgezaehlt.
             KanaStormScore(user_id=user.id, mode='daily', score=0,
-                           best_combo=8, correct_count=10, miss_count=0),
+                           best_combo=8, correct_count=10, miss_count=0,
+                           duration=60),
         ])
         db.session.commit()
         s = get_kana_storm_stats(user.id)
@@ -133,13 +138,39 @@ class TestGetKanaStormStats:
         assert s['best_combo'] == 15
         assert s['kana_typed'] == 55            # (20+5) + (30+0)
         assert s['accuracy'] == round(50 / 55 * 100)
+        # KPM: 20/60*60 = 20 vs. 30/120*60 = 15 -> beste KPM = 20 (Daily zaehlt nicht).
+        assert s['best_kpm'] == 20
+
+    def test_best_kpm_duration_normalized(self, app_context, db):
+        # KPM macht 60- und 120-Sek-Runden vergleichbar: die Runde mit dem
+        # HOEHEREN rohen Score kann die NIEDRIGERE KPM haben.
+        user = UserFactory()
+        db.session.commit()
+        db.session.add_all([
+            # 30 richtige in 60s = 30 KPM
+            KanaStormScore(user_id=user.id, mode='storm', score=300,
+                           best_combo=10, correct_count=30, miss_count=0,
+                           duration=60),
+            # 40 richtige in 120s = 20 KPM (hoeherer Score, langsameres Tempo)
+            KanaStormScore(user_id=user.id, mode='storm', score=500,
+                           best_combo=12, correct_count=40, miss_count=0,
+                           duration=120),
+            # Alt-Runde ohne Dauer (duration=0) darf NICHT durch 0 teilen.
+            KanaStormScore(user_id=user.id, mode='storm', score=80,
+                           best_combo=4, correct_count=10, miss_count=0,
+                           duration=0),
+        ])
+        db.session.commit()
+        s = get_kana_storm_stats(user.id)
+        assert s['best_score'] == 500           # roher Hoechstwert
+        assert s['best_kpm'] == 30              # bestes Tempo (60-Sek-Runde)
 
     def test_empty(self, app_context, db):
         user = UserFactory()
         db.session.commit()
         assert get_kana_storm_stats(user.id) == {
             'games': 0, 'best_score': 0, 'best_combo': 0,
-            'accuracy': 0, 'kana_typed': 0,
+            'accuracy': 0, 'kana_typed': 0, 'best_kpm': 0,
         }
 
 
@@ -154,13 +185,17 @@ class TestStatsPageStormSection:
         CardReviewStateFactory(user_id=user.id, content_id=content.id)
         db.session.add(KanaStormScore(
             user_id=user.id, mode='storm', score=1240,
-            best_combo=24, correct_count=50, miss_count=4,
+            best_combo=24, correct_count=50, miss_count=4, duration=60,
         ))
         db.session.commit()
         body = client.get('/review/stats').get_data(as_text=True)
         assert 'Kana Storm' in body
         assert 'Bester Score' in body
         assert "1'240" in body                  # swiss_num-Filter angewandt
+        # Vergleichbare Tempo-Kennzahl (Kana/min) als eigene Karte sichtbar.
+        assert 'Schnellste' in body
+        assert 'Kana/min' in body
+        assert '>50<' in body                    # best_kpm = 50/60*60 = 50
 
     def test_section_shown_for_storm_only_player(self, auth_client, db):
         # Reiner Storm-Spieler OHNE SRS-Karten (total_cards==0) muss die
