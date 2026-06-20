@@ -247,6 +247,12 @@
                    {% if request.endpoint == 'dashboard.index' %}aria-current="page"{% endif %}>
                   <i class="fas fa-compass" aria-hidden="true"></i> Mein Lernen
                 </a>
+                {# Pruefen lebt im Desktop-Topnav als Primaer-Link; hier zusaetzlich,
+                   damit eingeloggte Mobile-Nutzer (Primaernav ausgeblendet) es erreichen. #}
+                <a href="{{ url_for('pruefen.pruefen_start') }}" class="topnav-dd-item{% if request.endpoint in ['pruefen.pruefen_start', 'pruefen.pruefen_session'] %} is-active{% endif %}"
+                   {% if request.endpoint == 'pruefen.pruefen_start' %}aria-current="page"{% endif %}>
+                  <i class="fas fa-clipboard-check" aria-hidden="true"></i> Prüfen
+                </a>
                 <a href="{{ url_for('routes.user_profile') }}" class="topnav-dd-item">
                   <i class="fas fa-user-circle" aria-hidden="true"></i> Profil
                 </a>
