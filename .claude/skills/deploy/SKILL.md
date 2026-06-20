@@ -27,7 +27,9 @@ Ein "Deploy" = Code committen, Image neu bauen, Container neu starten. **Kein GC
 
 ### 1. Git pruefen, committen, pushen
 1. `git status --short` — uncommitted Code-Aenderungen (.py/.html/.css/.js)?
-2. Bei uncommitted Aenderungen: User fragen, ob committen — dann committen (deutsche Message).
+2. Bei uncommitted Aenderungen: **autonom committen** (aussagekraeftige deutsche Message) — NICHT fragen.
+   (Solo-Phase, keine echten Nutzer; siehe CLAUDE.md „Autonomes Arbeiten & Deployment".)
+   Ausnahme: Blocker (siehe CLAUDE.md) — dann stoppen und klaeren.
 3. `git log --oneline origin/main..HEAD` — unpushed commits? Falls ja: `git push`.
 
 ### 2. Server-Checkout auf Repo-Stand bringen (Sync-Check)

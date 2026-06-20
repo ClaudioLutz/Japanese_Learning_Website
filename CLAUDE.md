@@ -310,6 +310,25 @@ Statische Seiten in `app/seo_routes.py::sitemap_xml()` ergänzen (`static_pages`
 - ⚠️ Alte Sync-Skripte (`scripts/sync_from_cloud.py`, `scripts/sync_content_upsert.py`, `scripts/sync_assets_to_gcs.py`, `scripts/sync_safety.py`) sind **obsolet** (zielen auf gelöschtes Cloud SQL) — nicht mehr ausführen. (Bleiben als Dead-Code, da Tests sie referenzieren.)
 - Sicherung: täglicher `pg_dump` via systemd-Timer (siehe Produktions-Sektion).
 
+## Autonomes Arbeiten & Deployment (Solo-Phase, keine echten Nutzer) — gilt in JEDER Session
+
+Solange es **keine echten Nutzer** gibt, ist Tempo das Ziel. Diese Regel gilt verbindlich in jeder Session und ist mit dem Automode-Classifier kompatibel (siehe `.claude/settings.local.json`).
+
+- **„Umsetzen" = selbständig bis und mit Deployment.** Sagt der User „umsetzen" (oder gleichbedeutend), wird die Aufgabe ohne weitere Rückfragen autonom erledigt — inklusive committen, pushen, mergen und **live deployen** (`/deploy`-Skill). Der User kontrolliert immer auf der **Live-Seite** (https://japanese-learning.ch).
+- **Deploy ohne Rückfrage — aber nur durch das QA-Gate.** Autonom deployen ist erlaubt, **wenn alle gelten**:
+  1. `pytest` grün (kein fehlschlagender Test),
+  2. `ruff check` clean,
+  3. **Visuelle Prüfung** mit Playwright durchgeführt und gut (mobil + desktop, light + dark wo relevant; bei CSS-Änderungen Deck-Karussell prüfen — siehe QS-Regeln).
+  Ist das Gate grün → durchziehen, nicht fragen. Schlägt etwas fehl → das ist ein Blocker (siehe unten).
+- **Blocker = stoppen und klären** (nicht durchziehen). Konkret:
+  - Fehlschlagende Tests / Lint / visuelle Defekte (QA-Gate rot),
+  - Mehrdeutige oder widersprüchliche Anforderung,
+  - Irreversibles/Destruktives: `--force`/`--force-with-lease`, `git reset --hard`, `git clean -fd`, datenlöschende oder nicht-reversible DB-Migration, Remote-Branch-Löschung,
+  - Server-Drift / fehlgeschlagener `git pull --ff-only` beim Deploy (deploy-Skill Schritt 2 — Server-Edits nie blind überschreiben),
+  - Sensible Daten im Commit (Keys/Secrets).
+  Alles andere → autonom durchziehen.
+- **Immer mit Git-Worktrees arbeiten.** Feature-/Code-Arbeit läuft in einem eigenen Worktree (`claude --worktree <feature>`, Branch von `origin/main`), nie direkt im Haupt-Checkout — siehe „Parallel-Arbeit". **Scope-Ausnahme:** triviale Doku-/Config-/Memory-Edits oder ein einzelner Hotfix dürfen direkt erfolgen, müssen aber denselben sauberen Commit-/Push-Flow einhalten. Nach Merge in `main`: **rebasen** (main bewegt sich parallel), dann Worktree entfernen.
+
 ## Arbeitsweise — Sauberer Git-Status
 - **Jede Änderung sofort committen und pushen** — nach jeder abgeschlossenen Teilaufgabe wird ein Git-Commit erstellt und auf den Remote gepusht. Das verbessert die Nachvollziehbarkeit und schützt vor Datenverlust.
 - **Keine losen Dateien** — am Ende jeder Session muss `git status` sauber sein. Jede Datei muss entweder committed+gepusht, in `.gitignore` eingetragen, oder gelöscht werden falls nicht mehr gebraucht.
