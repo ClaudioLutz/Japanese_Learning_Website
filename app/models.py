@@ -1893,20 +1893,18 @@ class ForumTopic(db.Model):
         base = _forum_slugify(self.title) or 'thema'
         return f'{base}-{self.id}'
 
-    @property
-    def op_post(self):
-        """Eroeffnungsbeitrag (erster Post). None falls (noch) keiner existiert."""
-        for p in self.posts:
-            if p.is_op:
-                return p
-        return self.posts[0] if self.posts else None
-
 
 class ForumPost(db.Model):
     __tablename__ = 'forum_post'
+    # Composite-Index (topic_id, created_at): deckt den Hot-Path ab (Filter
+    # topic_id + Sort created_at in view_topic) und zugleich reine
+    # topic_id-Prefix-Lookups (reply-count) — ein Index statt zwei.
+    __table_args__ = (
+        db.Index('ix_forum_post_topic_created', 'topic_id', 'created_at'),
+    )
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     topic_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey('forum_topic.id'), nullable=False, index=True,
+        Integer, ForeignKey('forum_topic.id'), nullable=False,
     )
     author_id: Mapped[int] = mapped_column(
         Integer, ForeignKey('user.id'), nullable=False, index=True,
@@ -1915,7 +1913,7 @@ class ForumPost(db.Model):
     # Eroeffnungsbeitrag des Topics (= Thread-Body). Genau einer pro Topic.
     is_op: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     is_deleted: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     edited_at: Mapped[datetime] = mapped_column(DateTime, nullable=True)
     deleted_at: Mapped[datetime] = mapped_column(DateTime, nullable=True)
     deleted_by_id: Mapped[int] = mapped_column(
