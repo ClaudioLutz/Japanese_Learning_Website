@@ -91,13 +91,16 @@
       </div>
     </main>
 
-    <footer class="pf-actions">
+    <!-- Aktions-Leiste: bewusst <div>, NICHT <footer> — die Lock-CSS
+         (body.pruefung-locked footer{display:none}) wuerde einen <footer>
+         hier mit ausblenden und den Submit-/Weiter-Button unsichtbar machen. -->
+    <div class="pf-actions">
       <button type="button" class="pruefen-btn pruefen-btn--primary" x-show="phase==='question'"
               :disabled="!canSubmit" @click="submit()"
               x-text="mode==='uebung' ? 'Antwort prüfen' : (isLast ? 'Abschliessen' : 'Weiter →')"></button>
       <button type="button" class="pruefen-btn pruefen-btn--primary" x-show="phase==='feedback'"
               @click="next()" x-text="isLast ? 'Auswerten' : 'Weiter →'"></button>
-    </footer>
+    </div>
   </div>
 
   <!-- Ergebnis -->
