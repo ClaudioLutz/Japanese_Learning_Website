@@ -21,7 +21,7 @@ _Aus Workflow `vereinheitlichung-plan` · 16 konsolidierte Inkonsistenzen über 
 
 **[IC-06] (blocker)** Dark-Mode-Luecken in Flaechen mit hartem #fff/Hex ohne [data-theme=dark]-Gegenpart: learn_n5 .n5hub-module=#fff (B2); module_detail .mod-header/.lesson-row=#fff (B3); lernmethode h2{#1a1a1a}/Prosa-Hex (B5); practice_kana Setup 0 Dark-Regeln (B6); kana_storm 0 wirksame Dark-Regeln (B7). lesson_view .lesson-header-card .card-text Bootstrap-#212529 1.11:1 (B9).
 - *Betrifft:* learn_n5.html, module_detail.html, lernmethode.html, practice_kana.html, practice_kana_game.html, _kana_storm_styles.html, lesson_view.html
-- *Sammel-Fix:* Pro <style>-Block eigenen [data-theme=dark]-Gegenpart liefern ODER hartes #fff→var(--card-background). Sammel-Fix pro Seite; --kon-Flip-Falle (Navy→hell, weisser Text via --kon-100). Lint-Regel: jeder verbleibende <style>-Block liefert sein Dark-Pendant.
+- *Sammel-Fix:* Hartes #fff/Hex → Tokens (`var(--card-background)` etc.). --kon-Flip-Falle (Navy→hell, weisser Text via --kon-100). ⚠ **Lint-Priorität korrigiert (siehe Ziel-Spec › Dark-Regel unten):** Primärregel = „keine Hardcodes, nur Tokens" → der EINE globale `[data-theme=dark]`-Flip deckt dann automatisch. Per-Block-`[data-theme=dark]`-Gegenpart nur als schmale Ausnahme (--kon-Fälle), NICHT als Gesetz — sonst wird das fragmentierende One-by-one-Muster institutionalisiert. Auch `register.html` einbeziehen.
 
 **[IC-07] (major)** Sub-AA-Kontraste sitewide (auch im Light): --ink-500 Labels 4.06:1 (40+ Knoten in stats), Shu/Shu-deep-Akzenttext ~3.0-3.6:1 (Bundle/global), Nuance-Label #b45309 3.42:1, .filter-btn 1.7-2.29:1, .streak-keep 3.29:1, aktiver Tab/CTA --kon+#fff 1.55:1 (Flip-Falle).
 - *Betrifft:* stats.html, review.html, browse.html, practice_kana.html, _kana_storm_styles.html, bundles/n5_bundle.html
@@ -41,7 +41,7 @@ _Aus Workflow `vereinheitlichung-plan` · 16 konsolidierte Inkonsistenzen über 
 
 **[IC-05] (major)** Ungethemte Bootstrap-Defaults konkurrieren sitewide: Footer-Links klassenlos → #0d6efd (Root-Cause); bare .card ohne bg/color (B8); btn-outline-primary; .alert nie dark-themed; me-1-Utilities in courses; Bootstrap-Modal-Markup in purchase.
 - *Betrifft:* base.html, custom.css, payment_success.html, payment_failed.html, courses.html, purchase.html
-- *Sammel-Fix:* EIN zentraler Bootstrap-Bridge-Block in custom.css: --bs-link-color/-hover auf Tokens; .site-footer a / .card / .alert-* / .btn-outline-primary gescopt themen (Light+Dark). Globaler [data-theme=dark] .card-Fix (B8) auf diese Branch bringen (fehlt — auf main vorhanden).
+- *Sammel-Fix:* EIN zentraler Bootstrap-Bridge-Block in custom.css: --bs-link-color/-hover auf Tokens; .site-footer a / .card / .alert-* / .btn-outline-primary gescopt themen (Light+Dark). ⚠ **Korrektur:** Der globale `[data-theme=dark] .card`-Fix (B8) ist **bereits auf diesem Branch** (`custom.css:4859`, Kommentar nennt B8 + Payment-Success/-Failed) — der Bridge-Block **baut darauf auf** (Footer-Links #0d6efd ab Z. 4869, .alert, btn-outline-primary), führt ihn NICHT neu ein.
 
 ### Dimension: icons
 
@@ -63,7 +63,7 @@ _Aus Workflow `vereinheitlichung-plan` · 16 konsolidierte Inkonsistenzen über 
 
 **[IC-11] (major)** 39 <style>-Bloecke in 31 Templates (lesson_view 5 + ~2100 Z. Inline-JS, base 3, index 2). Pro-Surface-Inline statt zentraler Klassen → Dark-Luecken entstehen genau dort. lesson_view.html (4'900 Z.) groesster Monolith (Markup+CSS+JS).
 - *Betrifft:* lesson_view.html, index.html, base.html, review.html, stats.html
-- *Sammel-Fix:* Wiederkehrende Muster nach custom.css heben; Stage-Stil (Kana-Storm) aus index in Partial/custom.css; verbleibende <style>-Bloecke MUESSEN eigenen [data-theme=dark]-Block mitliefern (Lint-Regel). lesson_view schrittweise entflechten (Frontend-Kern).
+- *Sammel-Fix:* Wiederkehrende Muster nach custom.css heben; Stage-Stil (Kana-Storm) aus index in Partial/custom.css. ⚠ **Lint-Priorität (siehe Ziel-Spec › Dark-Regel):** verbleibende <style>-Blöcke nutzen NUR Tokens (`var(--…)`), keine Hardcodes → der globale Flip deckt Dark automatisch; ein eigener `[data-theme=dark]`-Block nur als schmale Ausnahme, nicht als Pflicht. lesson_view schrittweise entflechten (Frontend-Kern).
 
 ### Dimension: copy-language
 
