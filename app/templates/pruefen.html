@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+{% block title %}Prüfen{% endblock %}
+{% block meta_description %}Teste dein JLPT-N5-Wissen mit den Quizfragen aus den Lektionen — Übungs- und Prüfungsmodus.{% endblock %}
+
+{% block content %}
+<div class="pruefen-start">
+  <header class="pruefen-head">
+    <h1>Prüfen</h1>
+    <p>Teste dein N5-Wissen mit den Quizfragen aus den Lektionen — verändert deinen Wiederhol-Plan nicht.</p>
+  </header>
+
+  {% if not current_user.is_authenticated %}
+  <div class="pruefen-card pruefen-guest">
+    <p>Quizfragen aus den Lektionen, mit Sofort-Feedback und Erklärung. Melde dich an, um deine Fragen zu testen.</p>
+    <div class="pruefen-guest-cta">
+      <a class="pruefen-btn pruefen-btn--primary" href="{{ url_for('routes.register', next=url_for('pruefen.pruefen_start')) }}">Kostenlos anmelden &amp; loslegen</a>
+      <a class="pruefen-btn pruefen-btn--ghost" href="{{ url_for('routes.login', next=url_for('pruefen.pruefen_start')) }}">Einloggen</a>
+    </div>
+  </div>
+  {% else %}
+  <div x-data="pruefenStart()" x-init="load()">
+    <!-- Schnellstart -->
+    <section class="pruefen-quick">
+      <h2>Schnellstart</h2>
+      <div class="pruefen-quick-grid">
+        <button type="button" class="pruefen-tile" @click="go({scope:'level', id:5, mode:'pruefung'})">
+          <span class="pruefen-tile-icon">🎯</span>
+          <span class="pruefen-tile-title">Voll-N5-Probeprüfung</span>
+          <span class="pruefen-tile-sub" x-text="ov ? (ov.total + ' Fragen · Prüfungsmodus') : '…'"></span>
+        </button>
+        <button type="button" class="pruefen-tile" @click="go({scope:'all', mode:'uebung', limit:20})">
+          <span class="pruefen-tile-icon">🎲</span>
+          <span class="pruefen-tile-title">Zufallsmix</span>
+          <span class="pruefen-tile-sub">20 Fragen · Übung</span>
+        </button>
+        <button type="button" class="pruefen-tile"
+                :class="{'is-disabled': ov && ov.wrong_count === 0}"
+                :disabled="ov && ov.wrong_count === 0"
+                @click="go({scope:'all', selection:'wrong', mode:'uebung'})">
+          <span class="pruefen-tile-icon">🔁</span>
+          <span class="pruefen-tile-title">Nur falsch beantwortete</span>
+          <span class="pruefen-tile-sub" x-text="ov ? (ov.wrong_count > 0 ? (ov.wrong_count + ' offen') : 'Noch keine Fehler') : '…'"></span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Gezielt prüfen (eingeklappt) -->
+    <section class="pruefen-card pruefen-config">
+      <button type="button" class="pruefen-config-toggle" @click="open = !open" :aria-expanded="open">
+        <span>Gezielt prüfen</span>
+        <span x-text="open ? '▾' : '▸'"></span>
+      </button>
+
+      <div x-show="open" x-cloak class="pruefen-config-body">
+        <div class="pruefen-row">
+          <span class="pruefen-label">Was?</span>
+          <div class="pruefen-chips">
+            <button type="button" class="pruefen-chip" :class="{'is-on': scope==='all'}" @click="scope='all'">Alles</button>
+            <button type="button" class="pruefen-chip" :class="{'is-on': scope==='module'}" @click="scope='module'">Modul</button>
+            <button type="button" class="pruefen-chip" :class="{'is-on': scope==='lesson'}" @click="scope='lesson'">Lektion</button>
+          </div>
+        </div>
+
+        <div class="pruefen-row" x-show="scope==='module'">
+          <span class="pruefen-label">Modul</span>
+          <div class="pruefen-chips">
+            <template x-for="m in (ov ? ov.modules : [])" :key="m.id">
+              <button type="button" class="pruefen-chip" :class="{'is-on': scopeId===m.id}" @click="scopeId=m.id"
+                      x-text="m.name + ' · ' + m.count"></button>
+            </template>
+          </div>
+        </div>
+
+        <div class="pruefen-row" x-show="scope==='lesson'">
+          <span class="pruefen-label">Lektion</span>
+          <div class="pruefen-chips pruefen-chips--scroll">
+            <template x-for="l in (ov ? ov.lessons : [])" :key="l.id">
+              <button type="button" class="pruefen-chip" :class="{'is-on': scopeId===l.id}" @click="scopeId=l.id"
+                      x-text="l.title + ' · ' + l.count"></button>
+            </template>
+          </div>
+        </div>
+
+        <div class="pruefen-row">
+          <span class="pruefen-label">Welche?</span>
+          <div class="pruefen-chips">
+            <button type="button" class="pruefen-chip" :class="{'is-on': selection==='all'}" @click="selection='all'">Alle</button>
+            <button type="button" class="pruefen-chip" :class="{'is-on': selection==='wrong'}" @click="selection='wrong'"
+                    x-text="ov ? ('Nur falsche · ' + ov.wrong_count) : 'Nur falsche'"></button>
+            <button type="button" class="pruefen-chip" :class="{'is-on': selection==='unseen'}" @click="selection='unseen'">Noch nie</button>
+          </div>
+        </div>
+
+        <div class="pruefen-row">
+          <span class="pruefen-label">Typ</span>
+          <div class="pruefen-chips">
+            <button type="button" class="pruefen-chip" :class="{'is-on': types.multiple_choice}" @click="types.multiple_choice = !types.multiple_choice">Multiple Choice</button>
+            <button type="button" class="pruefen-chip" :class="{'is-on': types.true_false}" @click="types.true_false = !types.true_false">Wahr/Falsch</button>
+            <button type="button" class="pruefen-chip" :class="{'is-on': types.matching}" @click="types.matching = !types.matching">Zuordnung</button>
+          </div>
+        </div>
+
+        <div class="pruefen-row">
+          <span class="pruefen-label">Modus</span>
+          <div class="pruefen-chips">
+            <button type="button" class="pruefen-chip" :class="{'is-on': mode==='uebung'}" @click="mode='uebung'">Übung · Sofort-Feedback</button>
+            <button type="button" class="pruefen-chip" :class="{'is-on': mode==='pruefung'}" @click="mode='pruefung'">Prüfung · Score</button>
+          </div>
+        </div>
+
+        <div class="pruefen-row">
+          <span class="pruefen-label">Anzahl</span>
+          <div class="pruefen-chips">
+            <button type="button" class="pruefen-chip" :class="{'is-on': limit===10}" @click="limit=10">10</button>
+            <button type="button" class="pruefen-chip" :class="{'is-on': limit===20}" @click="limit=20">20</button>
+            <button type="button" class="pruefen-chip" :class="{'is-on': limit===0}" @click="limit=0">Alle</button>
+          </div>
+        </div>
+
+        <div class="pruefen-start-row">
+          <button type="button" class="pruefen-btn pruefen-btn--primary" @click="startCustom()">Prüfung starten</button>
+        </div>
+      </div>
+    </section>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+  [x-cloak] { display: none !important; }
+  .pruefen-start { max-width: 760px; margin: 0 auto; padding: var(--space-6, 1.5rem) var(--space-4, 1rem) var(--space-12, 3rem); }
+  .pruefen-head h1 { color: var(--kon); margin: 0 0 .25rem; }
+  .pruefen-head p { color: var(--ink-600); margin: 0 0 var(--space-6, 1.5rem); }
+  .pruefen-card { background: var(--kinari); border: 1px solid var(--ink-200); border-radius: var(--radius-lg, 16px); box-shadow: var(--shadow-card); padding: var(--space-5, 1.25rem); margin-bottom: var(--space-5, 1.25rem); }
+  .pruefen-guest p { color: var(--ink-700); margin: 0 0 var(--space-4, 1rem); }
+  .pruefen-guest-cta { display: flex; gap: var(--space-3, .75rem); flex-wrap: wrap; }
+
+  .pruefen-quick { margin-bottom: var(--space-6, 1.5rem); }
+  .pruefen-quick h2, .pruefen-config-toggle { font-size: 1rem; color: var(--kon); }
+  .pruefen-quick h2 { margin: 0 0 var(--space-3, .75rem); }
+  .pruefen-quick-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--space-3, .75rem); }
+  .pruefen-tile { text-align: left; background: var(--kinari); border: 1px solid var(--ink-200); border-radius: var(--radius-lg, 16px); box-shadow: var(--shadow-card); padding: var(--space-4, 1rem); cursor: pointer; display: flex; flex-direction: column; gap: .35rem; transition: border-color .15s, transform .1s; }
+  .pruefen-tile:hover { border-color: var(--shu); transform: translateY(-1px); }
+  .pruefen-tile.is-disabled { opacity: .55; cursor: default; }
+  .pruefen-tile.is-disabled:hover { border-color: var(--ink-200); transform: none; }
+  .pruefen-tile-icon { font-size: 1.5rem; }
+  .pruefen-tile-title { font-weight: 600; color: var(--kon); }
+  .pruefen-tile-sub { font-size: .85rem; color: var(--ink-600); }
+
+  .pruefen-config-toggle { width: 100%; display: flex; justify-content: space-between; align-items: center; background: none; border: none; padding: 0; cursor: pointer; font-weight: 600; }
+  .pruefen-config-body { margin-top: var(--space-4, 1rem); display: flex; flex-direction: column; gap: var(--space-4, 1rem); }
+  .pruefen-row { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+  .pruefen-label { width: 72px; min-width: 72px; font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-600); }
+  .pruefen-chips { display: flex; flex-wrap: wrap; gap: .4rem; flex: 1; }
+  .pruefen-chips--scroll { max-height: 160px; overflow-y: auto; }
+  .pruefen-chip { background: var(--kinari); border: 1px solid var(--ink-200); border-radius: var(--radius-full, 999px); padding: .35rem .75rem; font-size: .85rem; color: var(--ink-700); cursor: pointer; }
+  .pruefen-chip.is-on { background: var(--kon-50); border-color: var(--kon-300); color: var(--kon); font-weight: 600; }
+  .pruefen-start-row { margin-top: var(--space-2, .5rem); }
+
+  .pruefen-btn { display: inline-block; border: none; border-radius: var(--radius-md, 10px); padding: .65rem 1.1rem; font-weight: 600; cursor: pointer; text-decoration: none; }
+  .pruefen-btn--primary { background: var(--shu); color: var(--washi); }
+  .pruefen-btn--primary:hover { background: var(--shu-deep); }
+  .pruefen-btn--ghost { background: transparent; border: 1px solid var(--ink-200); color: var(--ink-700); }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function pruefenStart() {
+    return {
+      ov: null,
+      open: false,
+      scope: 'all',
+      scopeId: null,
+      selection: 'all',
+      mode: 'uebung',
+      limit: 20,
+      types: { multiple_choice: true, true_false: true, matching: true },
+      load() {
+        fetch('/api/pruefen/overview', { headers: { 'X-Requested-With': 'fetch' } })
+          .then(r => r.ok ? r.json() : null)
+          .then(d => { this.ov = d; })
+          .catch(() => {});
+      },
+      go(opts) {
+        const p = new URLSearchParams();
+        p.set('scope', opts.scope || 'all');
+        if (opts.id != null) p.set('id', opts.id);
+        if (opts.selection) p.set('selection', opts.selection);
+        p.set('mode', opts.mode || 'uebung');
+        if (opts.limit) p.set('limit', opts.limit);
+        window.location.href = '/pruefen/test?' + p.toString();
+      },
+      startCustom() {
+        const p = new URLSearchParams();
+        p.set('scope', this.scope);
+        if (this.scope !== 'all' && this.scopeId != null) p.set('id', this.scopeId);
+        if (this.selection !== 'all') p.set('selection', this.selection);
+        p.set('mode', this.mode);
+        if (this.limit && this.limit > 0) p.set('limit', this.limit);
+        Object.keys(this.types).forEach(t => { if (this.types[t]) p.append('type', t); });
+        window.location.href = '/pruefen/test?' + p.toString();
+      },
+    };
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+{% block title %}Prüfen — Session{% endblock %}
+{% block robots %}noindex,nofollow{% endblock %}
+{% block body_attributes %}class="pruefung-locked"{% endblock %}
+
+{% block content %}
+<div class="pf-stage" x-data="pruefenGame()" x-cloak>
+
+  <!-- Laden -->
+  <div x-show="phase==='loading'" class="pf-center">Lädt …</div>
+
+  <!-- Leer -->
+  <div x-show="phase==='empty'" class="pf-center pf-empty">
+    <p class="pf-empty-title">Keine passenden Fragen</p>
+    <p class="pf-empty-sub">Für diese Auswahl gibt es gerade nichts zu testen — probier eine andere.</p>
+    <div class="pf-empty-cta">
+      <a class="pruefen-btn pruefen-btn--primary" href="/pruefen/test?scope=level&id=5&mode=pruefung">Voll-N5-Probeprüfung</a>
+      <a class="pruefen-btn pruefen-btn--ghost" href="/pruefen">Zurück</a>
+    </div>
+  </div>
+
+  <!-- Frage-Screen (Frage + Feedback an einem Ort) -->
+  <div x-show="phase==='question' || phase==='feedback'" class="pf-session">
+    <header class="pf-top">
+      <button type="button" class="pf-quit" @click="quit()">✕ Beenden</button>
+      <div class="pf-progress" role="progressbar" :aria-valuenow="idx" :aria-valuemax="questions.length">
+        <div class="pf-progress-bar" :style="`width:${progressPct}%`"></div>
+      </div>
+      <span class="pf-count" x-text="(idx+1)+' / '+questions.length"></span>
+      <span class="pf-timer" x-show="mode==='pruefung'" x-text="timerLabel"></span>
+    </header>
+
+    <main class="pf-card">
+      <p class="pf-meta" x-text="metaLine"></p>
+      <h2 class="pf-q" x-text="current.question_text"></h2>
+
+      <!-- Multiple Choice / Wahr-Falsch -->
+      <div class="pf-options" :class="{'pf-options--tf': current.type==='true_false'}"
+           x-show="current.type==='multiple_choice' || current.type==='true_false'">
+        <template x-for="(o,i) in (current.options || [])" :key="o.id">
+          <button type="button" class="pf-option" :class="optionClass(o)"
+                  :disabled="phase==='feedback'" @click="selectOption(o.id)">
+            <span class="pf-option-key" x-show="current.type==='multiple_choice'" x-text="i+1"></span>
+            <span class="pf-option-text" x-text="o.text"></span>
+          </button>
+        </template>
+      </div>
+
+      <!-- Zuordnung (Tap-to-pair) -->
+      <div class="pf-match" x-show="current.type==='matching'">
+        <div class="pf-match-col">
+          <template x-for="(p,i) in (current.matching ? current.matching.prompts : [])" :key="'p'+i">
+            <button type="button" class="pf-match-item" :class="matchPromptClass(i)"
+                    :disabled="phase==='feedback'" @click="tapPrompt(i)">
+              <span class="pf-badge" x-show="pairOf(i)!=null" x-text="pairBadge(i)"></span>
+              <span x-text="p"></span>
+            </button>
+          </template>
+        </div>
+        <div class="pf-match-col">
+          <template x-for="(a,j) in (current.matching ? current.matching.answers : [])" :key="'a'+j">
+            <button type="button" class="pf-match-item" :class="matchAnswerClass(j)"
+                    :disabled="phase==='feedback'" @click="tapAnswer(j)">
+              <span class="pf-badge" x-show="answerPaired(j)!=null" x-text="answerBadge(j)"></span>
+              <span x-text="a"></span>
+            </button>
+          </template>
+        </div>
+      </div>
+      <p class="pf-match-hint" x-show="current.type==='matching' && phase==='question'">Tippe links, dann rechts zum Verbinden. Erneut tippen löst das Paar.</p>
+
+      <!-- Hinweis (nur Übung) -->
+      <div class="pf-hint" x-show="mode==='uebung' && current.hint && phase==='question'">
+        <button type="button" class="pf-link" @click="showHint=!showHint">💡 Hinweis</button>
+        <p x-show="showHint" x-text="current.hint"></p>
+      </div>
+
+      <!-- Sofort-Feedback (Übung, gleicher Screen) -->
+      <div class="pf-feedback" x-show="phase==='feedback'" aria-live="polite">
+        <p class="pf-verdict" :class="(lastResult && lastResult.is_correct) ? 'is-correct' : 'is-wrong'"
+           x-text="(lastResult && lastResult.is_correct) ? '✓ Richtig' : '✗ Nicht ganz'"></p>
+        <div class="pf-explain" x-show="lastResult && lastResult.explanation" x-html="lastResult ? lastResult.explanation : ''"></div>
+        <div class="pf-explain pf-explain--opt" x-show="lastResult && lastResult.option_feedback" x-html="lastResult ? lastResult.option_feedback : ''"></div>
+        <template x-if="current.type==='matching' && lastResult && lastResult.correct_pairs">
+          <ul class="pf-correct-pairs">
+            <template x-for="(ans, prompt) in lastResult.correct_pairs" :key="prompt">
+              <li><span x-text="prompt"></span> → <span x-text="ans"></span></li>
+            </template>
+          </ul>
+        </template>
+      </div>
+    </main>
+
+    <footer class="pf-actions">
+      <button type="button" class="pruefen-btn pruefen-btn--primary" x-show="phase==='question'"
+              :disabled="!canSubmit" @click="submit()"
+              x-text="mode==='uebung' ? 'Antwort prüfen' : (isLast ? 'Abschliessen' : 'Weiter →')"></button>
+      <button type="button" class="pruefen-btn pruefen-btn--primary" x-show="phase==='feedback'"
+              @click="next()" x-text="isLast ? 'Auswerten' : 'Weiter →'"></button>
+    </footer>
+  </div>
+
+  <!-- Ergebnis -->
+  <div x-show="phase==='result'" class="pf-result">
+    <h2 class="pf-result-title" x-text="mode==='pruefung' ? 'Prüfung — Ergebnis' : 'Geschafft!'"></h2>
+
+    <div class="pf-ring">
+      <svg viewBox="0 0 120 120" width="140" height="140" aria-hidden="true">
+        <circle cx="60" cy="60" r="52" fill="none" stroke="var(--ink-200)" stroke-width="12"></circle>
+        <circle cx="60" cy="60" r="52" fill="none" :stroke="ringColor" stroke-width="12"
+                stroke-linecap="round" :stroke-dasharray="ringDash" transform="rotate(-90 60 60)"></circle>
+      </svg>
+      <div class="pf-ring-label">
+        <span class="pf-ring-pct" x-text="scorePct + '%'"></span>
+        <span class="pf-ring-sub" x-text="(grade ? grade.correct : 0) + ' richtig'"></span>
+      </div>
+    </div>
+
+    <p class="pf-pass" x-show="mode==='pruefung'"
+       :class="(grade && grade.passed) ? 'is-pass' : 'is-fail'"
+       x-text="(grade && grade.passed) ? ('✓ Bestanden (Schwelle '+ (grade?grade.pass_threshold:60) +' %)') : ('Noch nicht bestanden (Schwelle '+ (grade?grade.pass_threshold:60) +' %)')"></p>
+    <p class="pf-result-headline" x-text="resultHeadline"></p>
+    <p class="pf-pass-note" x-show="mode==='pruefung'">Wir setzen die Latte bewusst über der echten JLPT-N5-Schwelle (~44 %).</p>
+
+    <!-- Aufschlüsselung nach Typ -->
+    <div class="pf-breakdown" x-show="typeRows().length">
+      <template x-for="row in typeRows()" :key="row.name">
+        <div class="pf-bd-row">
+          <span class="pf-bd-name" x-text="row.name"></span>
+          <span class="pf-bd-bar"><span class="pf-bd-fill" :style="`width:${pct(row)}%`"></span></span>
+          <span class="pf-bd-val" x-text="row.correct + '/' + row.total"></span>
+        </div>
+      </template>
+    </div>
+
+    <!-- Fehler-Review -->
+    <div class="pf-errors" x-show="wrongDetails().length">
+      <p class="pf-errors-title" x-text="'Zum Nachlesen (' + wrongDetails().length + ')'"></p>
+      <template x-for="d in wrongDetails()" :key="d.question_id">
+        <details class="pf-error">
+          <summary x-text="d.question_text"></summary>
+          <div class="pf-explain" x-html="d.explanation"></div>
+        </details>
+      </template>
+    </div>
+
+    <div class="pf-result-cta">
+      <button type="button" class="pruefen-btn pruefen-btn--primary" x-show="wrongDetails().length"
+              @click="retryWrong()" x-text="'🔁 Nur die ' + wrongDetails().length + ' Falschen nochmal'"></button>
+      <a class="pruefen-btn pruefen-btn--ghost" href="/pruefen">Neuen Test</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+  [x-cloak] { display: none !important; }
+  /* Gesperrte Buehne — Muster von body.review-locked */
+  body.pruefung-locked { overflow: hidden; }
+  body.pruefung-locked .site-footer,
+  body.pruefung-locked .mobile-bottom-nav,
+  body.pruefung-locked footer { display: none !important; }
+
+  .pf-stage { max-width: 720px; margin: 0 auto; padding: var(--space-4, 1rem); min-height: calc(100vh - 70px); display: flex; flex-direction: column; }
+  .pf-center { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .75rem; color: var(--ink-600); text-align: center; }
+  .pf-empty-title { font-size: 1.2rem; color: var(--kon); font-weight: 600; margin: 0; }
+  .pf-empty-sub { color: var(--ink-600); margin: 0; }
+  .pf-empty-cta { display: flex; gap: .6rem; flex-wrap: wrap; justify-content: center; margin-top: .5rem; }
+
+  .pf-session { flex: 1; display: flex; flex-direction: column; gap: var(--space-4, 1rem); }
+  .pf-top { display: flex; align-items: center; gap: .75rem; }
+  .pf-quit { background: none; border: none; color: var(--ink-600); cursor: pointer; font-size: .9rem; }
+  .pf-progress { flex: 1; height: 8px; background: var(--ink-100); border: 1px solid var(--ink-200); border-radius: 999px; overflow: hidden; }
+  .pf-progress-bar { height: 100%; background: var(--shu); transition: width .25s; }
+  .pf-count { color: var(--ink-600); font-size: .85rem; min-width: 56px; text-align: right; }
+  .pf-timer { color: var(--ink-600); font-variant-numeric: tabular-nums; font-size: .85rem; }
+
+  .pf-card { background: var(--kinari); border: 1px solid var(--ink-200); border-radius: var(--radius-lg, 16px); box-shadow: var(--shadow-card); padding: var(--space-5, 1.25rem); }
+  .pf-meta { color: var(--ink-600); font-size: .8rem; margin: 0 0 .5rem; }
+  .pf-q { color: var(--kon); font-size: 1.35rem; margin: 0 0 var(--space-5, 1.25rem); line-height: 1.5; }
+
+  .pf-options { display: flex; flex-direction: column; gap: .6rem; }
+  .pf-options--tf { flex-direction: row; }
+  .pf-options--tf .pf-option { flex: 1; justify-content: center; font-size: 1.1rem; padding: 1.1rem; }
+  .pf-option { display: flex; align-items: center; gap: .6rem; width: 100%; text-align: left; background: var(--washi); border: 1px solid var(--ink-200); border-radius: var(--radius-md, 12px); padding: .85rem 1rem; color: var(--ink-700); cursor: pointer; font-size: 1rem; transition: border-color .12s, background .12s; }
+  .pf-option:hover:not(:disabled) { border-color: var(--kon-300); }
+  .pf-option.is-selected { border-color: var(--kon-300); background: var(--kon-50); }
+  .pf-option.is-correct { border-color: var(--matcha-line); background: var(--matcha-bg); color: var(--matcha); font-weight: 600; }
+  .pf-option.is-wrong { border-color: var(--color-error); color: var(--color-error); }
+  .pf-option-key { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 999px; background: var(--ink-100); color: var(--ink-600); font-size: .8rem; flex: none; }
+
+  .pf-match { display: flex; gap: .75rem; }
+  .pf-match-col { flex: 1; display: flex; flex-direction: column; gap: .5rem; }
+  .pf-match-item { display: flex; align-items: center; gap: .5rem; background: var(--washi); border: 1px solid var(--ink-200); border-radius: var(--radius-md, 12px); padding: .7rem .8rem; color: var(--ink-700); cursor: pointer; font-size: 1rem; text-align: left; }
+  .pf-match-item.is-active { border-color: var(--shu); background: var(--kon-50); }
+  .pf-match-item.is-done { border-color: var(--kon-300); }
+  .pf-badge { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 999px; background: var(--kon); color: var(--washi); font-size: .72rem; flex: none; }
+  .pf-match-hint { color: var(--ink-600); font-size: .82rem; margin: .6rem 0 0; }
+
+  .pf-hint { margin-top: var(--space-4, 1rem); }
+  .pf-link { background: none; border: none; color: var(--ink-600); cursor: pointer; padding: 0; }
+  .pf-hint p { color: var(--ink-700); margin: .4rem 0 0; }
+
+  .pf-feedback { margin-top: var(--space-4, 1rem); border-top: 1px solid var(--ink-200); padding-top: var(--space-4, 1rem); }
+  .pf-verdict { font-weight: 600; margin: 0 0 .5rem; }
+  .pf-verdict.is-correct { color: var(--matcha); }
+  .pf-verdict.is-wrong { color: var(--color-error); }
+  .pf-explain { color: var(--ink-700); background: var(--kon-50); border-left: 3px solid var(--kon-300); border-radius: 6px; padding: .6rem .8rem; margin-top: .4rem; }
+  .pf-explain--opt { background: transparent; border-left-color: var(--ink-200); }
+  .pf-correct-pairs { margin: .6rem 0 0; padding-left: 1.1rem; color: var(--ink-700); }
+
+  .pf-actions { margin-top: auto; padding-top: var(--space-3, .75rem); }
+  .pf-actions .pruefen-btn { width: 100%; }
+
+  /* CTA-Buttons (gleiche Optik wie Start-Screen) */
+  .pruefen-btn { display: inline-block; border: none; border-radius: var(--radius-md, 10px); padding: .8rem 1.1rem; font-weight: 600; cursor: pointer; text-decoration: none; text-align: center; }
+  .pruefen-btn--primary { background: var(--shu); color: var(--washi); }
+  .pruefen-btn--primary:hover { background: var(--shu-deep); }
+  .pruefen-btn--primary:disabled { opacity: .5; cursor: default; }
+  .pruefen-btn--ghost { background: transparent; border: 1px solid var(--ink-200); color: var(--ink-700); }
+
+  /* Ergebnis */
+  .pf-result { flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; gap: .6rem; padding-top: var(--space-4, 1rem); }
+  .pf-result-title { color: var(--kon); margin: 0; }
+  .pf-ring { position: relative; width: 140px; height: 140px; }
+  .pf-ring-label { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .pf-ring-pct { font-size: 1.8rem; font-weight: 700; color: var(--kon); }
+  .pf-ring-sub { font-size: .8rem; color: var(--ink-600); }
+  .pf-pass { font-weight: 600; margin: 0; }
+  .pf-pass.is-pass { color: var(--matcha); }
+  .pf-pass.is-fail { color: var(--ink-600); }
+  .pf-result-headline { color: var(--ink-700); margin: 0; }
+  .pf-pass-note { color: var(--ink-600); font-size: .8rem; margin: 0; }
+
+  .pf-breakdown { width: 100%; max-width: 440px; margin-top: var(--space-3, .75rem); display: flex; flex-direction: column; gap: .4rem; }
+  .pf-bd-row { display: flex; align-items: center; gap: .6rem; font-size: .9rem; }
+  .pf-bd-name { width: 120px; text-align: left; color: var(--ink-700); }
+  .pf-bd-bar { flex: 1; height: 8px; background: var(--ink-100); border-radius: 999px; overflow: hidden; }
+  .pf-bd-fill { display: block; height: 100%; background: var(--matcha); }
+  .pf-bd-val { color: var(--ink-600); min-width: 46px; text-align: right; }
+
+  .pf-errors { width: 100%; max-width: 480px; margin-top: var(--space-3, .75rem); text-align: left; }
+  .pf-errors-title { color: var(--kon); font-weight: 600; margin: 0 0 .4rem; }
+  .pf-error { border: 1px solid var(--ink-200); border-radius: var(--radius-md, 12px); padding: .5rem .75rem; margin-bottom: .4rem; background: var(--kinari); }
+  .pf-error summary { cursor: pointer; color: var(--ink-700); }
+
+  .pf-result-cta { display: flex; gap: .6rem; flex-wrap: wrap; justify-content: center; margin-top: var(--space-4, 1rem); }
+
+  @media (max-width: 560px) {
+    .pf-q { font-size: 1.15rem; }
+    .pf-match { gap: .5rem; }
+    .pf-bd-name { width: 90px; }
+  }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/pruefen.js') }}"></script>
+{% endblock %}
