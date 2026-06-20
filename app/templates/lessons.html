@@ -208,6 +208,16 @@
       </button>
       {% endfor %}
     </div>
+    {# Global „alles auf-/zuklappen" — bleibt als sticky Element immer erreichbar #}
+    <button type="button"
+            class="lp-secnav-collapse"
+            x-cloak
+            @click="toggleAll()"
+            :title="anyCatOpen() ? 'Alle Abschnitte zuklappen' : 'Alle Abschnitte aufklappen'"
+            :aria-label="anyCatOpen() ? 'Alle Abschnitte zuklappen' : 'Alle Abschnitte aufklappen'">
+      <i class="fas" :class="anyCatOpen() ? 'fa-angles-up' : 'fa-angles-down'" aria-hidden="true"></i>
+      <span class="lp-secnav-collapse-label" x-text="anyCatOpen() ? 'Alle zu' : 'Alle auf'"></span>
+    </button>
   </nav>
   {% endif %}
 
@@ -245,7 +255,8 @@
 
       <div class="lp-cat-body{% if cat.open_default %} is-open{% endif %}"
            id="lp-cat-body-{{ cat.id }}"
-           :class="{ 'is-open': isCatOpen('{{ cat.id }}') }">
+           :class="{ 'is-open': isCatOpen('{{ cat.id }}') }"
+           :inert="!isCatOpen('{{ cat.id }}')">
         <div class="lp-cat-body-inner">
       <ul class="lp-lesson-list list-unstyled">
         {% for lesson in cat.lessons %}
@@ -516,13 +527,14 @@
 /* ── Sticky Sektions-Navigation ── */
 .lp-secnav {
   position: sticky; top: 60px; z-index: 50;
+  display: flex; align-items: center; gap: 0.6rem;
   margin: 0 -1.5rem 1.25rem; padding: 0.5rem 1.5rem;
   background: rgba(250,247,242,.92);
   -webkit-backdrop-filter: saturate(180%) blur(10px);
   backdrop-filter: saturate(180%) blur(10px);
   border-bottom: 1px solid var(--ink-200);
 }
-.lp-secnav-track { display: flex; gap: 0.4rem; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.lp-secnav-track { flex: 1 1 auto; min-width: 0; display: flex; gap: 0.4rem; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
 .lp-secnav-track::-webkit-scrollbar { display: none; }
 .lp-secnav-chip {
   flex: none; display: inline-flex; align-items: center; gap: 0.35rem;
@@ -534,6 +546,19 @@
 .lp-secnav-chip.is-active { background: var(--kon); border-color: var(--kon); color: #fff; }
 .lp-secnav-frac { font-family: 'Geist Mono', ui-monospace, monospace; font-size: 0.72rem; opacity: .75; }
 .lp-secnav-chip.is-active .lp-secnav-frac { opacity: .9; }
+
+/* Global „alles zuklappen"-Schalter — rechts in der sticky Sektions-Nav gepinnt */
+.lp-secnav-collapse {
+  flex: none; display: inline-flex; align-items: center; gap: 0.35rem;
+  border: 1px solid var(--ink-200); background: var(--card-background); color: var(--ink-600);
+  font-size: 0.8rem; font-weight: 600; padding: 0.32rem 0.7rem; border-radius: 999px;
+  white-space: nowrap; cursor: pointer; transition: border-color .15s, color .15s, background .15s;
+}
+/* Hover wie bei den Chips: nur Rahmen/Text (kein Hintergrund-Wechsel — der wäre
+   im Dark Mode auf dem dunklen Sticky-Scrim ohnehin unsichtbar). */
+.lp-secnav-collapse:hover { border-color: var(--shu); color: var(--shu); }
+.lp-secnav-collapse:focus-visible { outline: 2px solid var(--shu); outline-offset: 2px; }
+.lp-secnav-collapse i { font-size: 0.75rem; }
 
 /* ── Lehrplan-Gruppen (Kategorie als Rückgrat, einklappbar) ── */
 .lp-cat-group { margin-bottom: 0.75rem; scroll-margin-top: 124px; }
@@ -695,6 +720,7 @@ function lessonsPage() {
     status: params.get('status') || 'all',
     catOpen: {},      // {catId(String): bool} — Accordion-Zustand
     activeNav: null,  // catId der aktuell sichtbaren Sektion (Scroll-Spy)
+    _scrollTimer: null, // anstehender Scroll nach exklusivem Kollaps (abbrechbar)
 
     init() {
       this.initCatOpen();
@@ -725,14 +751,52 @@ function lessonsPage() {
       if (this.hasActiveFilters()) return true;
       return !!this.catOpen[String(id)];
     },
+
+    // ── Alle Sektionen auf-/zuklappen (globaler Schalter in der Sektions-Nav) ──
+    anyCatOpen() {
+      return Object.values(this.catOpen).some(Boolean);
+    },
+    collapseAll() {
+      Object.keys(this.catOpen).forEach(k => { this.catOpen[k] = false; });
+      this.persistCatOpen();
+    },
+    expandAll() {
+      Object.keys(this.catOpen).forEach(k => { this.catOpen[k] = true; });
+      this.persistCatOpen();
+    },
+    toggleAll() {
+      if (this.anyCatOpen()) this.collapseAll();
+      else this.expandAll();
+    },
     scrollToCat(id) {
       id = String(id);
-      if (!this.hasActiveFilters()) { this.catOpen[id] = true; this.persistCatOpen(); }
+      let collapsedOthers = false;
+      // Chip-Klick = Akkordeon-Sprung: nur die Zielsektion offen, alle anderen zu.
+      // (Bei aktivem Filter sind ohnehin alle Treffer-Sektionen zwangsoffen.)
+      if (!this.hasActiveFilters()) {
+        Object.keys(this.catOpen).forEach(k => {
+          const next = (k === id);
+          if (this.catOpen[k] !== next) collapsedOthers = true;
+          this.catOpen[k] = next;
+        });
+        this.persistCatOpen();
+      }
       this.activeNav = id;
-      this.$nextTick(() => {
+      const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const scrollToTarget = () => {
         const el = document.querySelector('.lp-cat-group[data-cat-id="' + id + '"]');
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
+        if (el) el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+      };
+      // Vorher geplanten Scroll abbrechen, sonst springt schnelles Chip-Wechseln
+      // zuerst zum veralteten Ziel (Doppel-Scroll-Race).
+      clearTimeout(this._scrollTimer);
+      // Klappen Sektionen darüber zu, schrumpft der Inhalt während der 0.28s-Höhen-
+      // animation — erst danach scrollen, sonst landet das Ziel daneben.
+      if (collapsedOthers && !reduce) {
+        this._scrollTimer = setTimeout(scrollToTarget, 320);
+      } else {
+        this.$nextTick(scrollToTarget);
+      }
     },
     setupScrollSpy() {
       const groups = Array.from(document.querySelectorAll('.lp-cat-group'));
