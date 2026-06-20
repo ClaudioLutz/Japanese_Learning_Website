@@ -26,6 +26,9 @@
     }
     body.kstorm-locked .site-footer { display: none !important; }
     body.kstorm-locked .mobile-bottom-nav { display: none !important; }
+    /* Gratis-Band (free_mode, base.html) im immersiven Vollbild weg — sonst frisst
+       es ~40px, die `calc(100dvh - 60px)` nicht abzieht → unterer Rand abgeschnitten. */
+    body.kstorm-locked .free-ribbon { display: none !important; }
 
     .kstorm-page {
         flex: 1 1 auto; min-height: 0; width: 100%; max-width: 560px; margin: 0 auto;
