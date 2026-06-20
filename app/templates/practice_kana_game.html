@@ -271,29 +271,15 @@
     body.kana-game-locked .kana-grid-game__cell.is-correct .kana-grid-game__cell-drop { color: var(--kon, #1F2A44); }
     body.kana-game-locked .kana-grid-game__cell.is-correct .kana-grid-game__cell-reveal { color: var(--ink-500, #8C8378); }
 
-    /* — Spaltenkopf (a-i-u-e-o) + Vokal-Ausrichtung: nur Desktop + eine Schrift — */
-    .kana-grid-game__colhead { display: none; }
+    /* — Vokal-Ausrichtung der Zellen (a-i-u-e-o-Spalten): nur Desktop + eine Schrift.
+       Reihen-/Spalten-Labels entfernt (Spoiler) → Spalte 1 ist jetzt die a-Spalte.
+       Fehlende Kombinationen lassen die Spalte leer → ehrliche Gojuon-Tabelle. */
     @media (min-width: 768px) {
-        body.kana-game-locked .kana-grid-game__colhead {
-            display: grid;
-            grid-template-columns: minmax(78px, 110px) repeat(5, 1fr);
-            gap: 0.4rem;
-            margin: 0 0 0.2rem;
-            padding: 0 0.15rem;
-        }
-        body.kana-game-locked .kana-grid-game__colhead > span + span {
-            text-align: center;
-            font: 700 0.72rem/1 'Geist Mono', ui-monospace, monospace;
-            letter-spacing: 0.04em;
-            color: var(--ink-400, #A8A095);
-        }
-        /* Zelle sitzt in ihrer Vokalspalte (Spalte 1 = Reihen-Label, daher +1).
-           Fehlende Kombinationen lassen die Spalte leer → ehrliche Tabelle. */
-        body.kana-game-locked .kana-grid-game__cell[data-col="a"] { grid-column: 2; }
-        body.kana-game-locked .kana-grid-game__cell[data-col="i"] { grid-column: 3; }
-        body.kana-game-locked .kana-grid-game__cell[data-col="u"] { grid-column: 4; }
-        body.kana-game-locked .kana-grid-game__cell[data-col="e"] { grid-column: 5; }
-        body.kana-game-locked .kana-grid-game__cell[data-col="o"] { grid-column: 6; }
+        body.kana-game-locked .kana-grid-game__cell[data-col="a"] { grid-column: 1; }
+        body.kana-game-locked .kana-grid-game__cell[data-col="i"] { grid-column: 2; }
+        body.kana-game-locked .kana-grid-game__cell[data-col="u"] { grid-column: 3; }
+        body.kana-game-locked .kana-grid-game__cell[data-col="e"] { grid-column: 4; }
+        body.kana-game-locked .kana-grid-game__cell[data-col="o"] { grid-column: 5; }
     }
 
     /* — Desktop ≥1024px: side-by-side (Ziele links, Karten rechts) — */

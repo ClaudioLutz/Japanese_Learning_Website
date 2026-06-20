@@ -107,20 +107,14 @@
             </div>
 
             <div class="kana-grid-game__grid kgame__grid">
-                {# Spalten-Kopf (a-i-u-e-o): macht die echte Gojuon-Struktur explizit.
-                   Nur bei einer Schrift (bei „Beide" stehen 10 Kana/Reihe → kein
-                   1:1-Vokalspalten-Mapping) und nur auf Desktop (CSS). Die Zellen
-                   sitzen via data-col in ihrer Vokalspalte; fehlende Kombinationen
-                   (や-Reihe) lassen die Spalte ehrlich leer. #}
-                <div class="kana-grid-game__colhead" x-show="!bothScripts" aria-hidden="true">
-                    <span class="kana-grid-game__row-label"></span>
-                    <span>a</span><span>i</span><span>u</span><span>e</span><span>o</span>
-                </div>
-                {# Mobile: nur die Reihen des aktuellen Haeppchen-Batches (kein Scrollen).
-                   Desktop: visibleRows() liefert alle Reihen. #}
+                {# Keine Reihen-/Spalten-Labels: あ/か/さ + a-i-u-e-o verraten die
+                   Lösung. Die Vokalspalten-Ausrichtung bleibt rein über data-col
+                   (CSS, Desktop) erhalten — fehlende Kombinationen (や-Reihe)
+                   lassen die Spalte weiterhin ehrlich leer.
+                   Mobile: nur die Reihen des aktuellen Haeppchen-Batches (kein
+                   Scrollen). Desktop: visibleRows() liefert alle Reihen. #}
                 <template x-for="row in visibleRows()" :key="row.key">
                     <div class="kana-grid-game__row">
-                        <div class="kana-grid-game__row-label" lang="ja" x-text="row.label"></div>
                         <template x-for="cell in cellsByRow[row.key]" :key="cell.id">
                             <div class="kana-grid-game__cell"
                                  :class="{
