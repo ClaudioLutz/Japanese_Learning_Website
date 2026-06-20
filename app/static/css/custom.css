@@ -4268,6 +4268,13 @@ button[onclick*="moveContentInPage"]:active {
     gap: 0.4rem;
     align-items: stretch;
 }
+/* Spiel-Stage (Vollbild + Homepage-Embed): keine Reihen-Label-Spalte mehr —
+   die あ/か/さ-Labels waren ein Lösungs-Spoiler. Nur 5 Vokalspalten. Greift
+   über `.kgame` gezielt nur im Spiel; das Lektions-Grid (ohne .kgame) behält
+   seine Label-Spalte über die Basis-Regel oben. */
+.kgame .kana-grid-game__row {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+}
 .kana-grid-game__row-label {
     display: flex;
     align-items: center;
