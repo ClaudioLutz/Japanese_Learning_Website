@@ -1,0 +1,98 @@
+{% extends "forum/_forum_base.html" %}
+{% block title %}{{ topic.title }} · Forum{% endblock %}
+{% block robots %}noindex,nofollow{% endblock %}
+
+{% block forum_content %}
+<nav class="forum-breadcrumb" aria-label="Brotkrumen">
+  <a href="{{ url_for('forum.index') }}">Forum</a>
+  <span class="sep">/</span>
+  <a href="{{ url_for('forum.category', category_slug=category.slug) }}">{{ category.name }}</a>
+  <span class="sep">/</span>
+  <span>{{ topic.title }}</span>
+</nav>
+
+<div class="forum-head">
+  <h1>
+    {% if topic.is_pinned %}<span class="forum-badge forum-badge--pin"><i class="fas fa-thumbtack" aria-hidden="true"></i> Angepinnt</span>{% endif %}
+    {% if topic.is_locked %}<span class="forum-badge forum-badge--lock"><i class="fas fa-lock" aria-hidden="true"></i> Gesperrt</span>{% endif %}
+    {{ topic.title }}
+  </h1>
+  <p>{{ topic.reply_count }} {{ 'Antwort' if topic.reply_count == 1 else 'Antworten' }}
+     · {{ topic.view_count }} {{ 'Aufruf' if topic.view_count == 1 else 'Aufrufe' }}</p>
+</div>
+
+{% if current_user.is_admin %}
+<div class="forum-mod-bar">
+  <form class="forum-inline-form" method="POST" action="{{ url_for('forum.pin_topic', topic_id=topic.id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="forum-btn forum-btn-ghost" type="submit">
+      <i class="fas fa-thumbtack" aria-hidden="true"></i> {{ 'Loslösen' if topic.is_pinned else 'Anpinnen' }}
+    </button>
+  </form>
+  <form class="forum-inline-form" method="POST" action="{{ url_for('forum.lock_topic', topic_id=topic.id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="forum-btn forum-btn-ghost" type="submit">
+      <i class="fas fa-lock" aria-hidden="true"></i> {{ 'Entsperren' if topic.is_locked else 'Sperren' }}
+    </button>
+  </form>
+  <form class="forum-inline-form" method="POST" action="{{ url_for('forum.delete_topic', topic_id=topic.id) }}"
+        onsubmit="return confirm('Dieses Thema wirklich löschen?');">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="forum-btn forum-btn-ghost" type="submit">
+      <i class="fas fa-trash" aria-hidden="true"></i> Thema löschen
+    </button>
+  </form>
+</div>
+{% endif %}
+
+<div id="beitraege">
+{% for post in posts %}
+  <article id="post-{{ post.id }}"
+           class="forum-post{% if post.is_op %} forum-post--op{% endif %}{% if post.is_deleted %} forum-post--deleted{% endif %}">
+    {% if post.is_deleted %}
+      <p class="forum-post-body"><em>[Dieser Beitrag wurde gelöscht.]</em></p>
+    {% else %}
+      <div class="forum-post-head">
+        <span class="forum-avatar" aria-hidden="true">{{ (post.author.username[0] | upper) if post.author else '?' }}</span>
+        <span class="forum-post-author">{{ post.author.username if post.author else 'Unbekannt' }}</span>
+        {% if post.is_op %}<span class="forum-badge forum-badge--admin">Thema</span>{% endif %}
+        <span>· {{ post.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
+        {% if post.edited_at %}<span class="forum-edited">· bearbeitet</span>{% endif %}
+      </div>
+      <div class="forum-post-body">{{ post.body | forum_markdown }}</div>
+      {% if post.can_edit(current_user) %}
+      <div class="forum-post-foot">
+        <a href="{{ url_for('forum.edit_post', post_id=post.id) }}"><i class="fas fa-pen" aria-hidden="true"></i> Bearbeiten</a>
+        <form class="forum-inline-form" method="POST" action="{{ url_for('forum.delete_post', post_id=post.id) }}"
+              onsubmit="return confirm('Beitrag wirklich löschen?');">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="danger"><i class="fas fa-trash" aria-hidden="true"></i> Löschen</button>
+        </form>
+      </div>
+      {% endif %}
+    {% endif %}
+  </article>
+{% endfor %}
+</div>
+
+{% include "forum/_pagination.html" with context %}
+
+{# Antwort-Formular — gesperrte Themen: nur Admin darf antworten #}
+{% if not topic.is_locked or current_user.is_admin %}
+<div class="forum-card" style="margin-top:1.5rem;">
+  <form method="POST" action="{{ url_for('forum.reply', topic_id=topic.id) }}" class="forum-form">
+    {{ form.csrf_token }}
+    <label for="reply-body">Antwort schreiben</label>
+    <textarea id="reply-body" name="body" placeholder="Dein Beitrag … (Markdown wird unterstützt)" required>{{ form.body.data or '' }}</textarea>
+    <div class="forum-form-actions">
+      <button type="submit" class="forum-btn forum-btn-primary"><i class="fas fa-paper-plane" aria-hidden="true"></i> Antworten</button>
+    </div>
+  </form>
+</div>
+{% else %}
+<div class="forum-empty" style="margin-top:1.5rem;">
+  <span class="ico"><i class="fas fa-lock" aria-hidden="true"></i></span>
+  Dieses Thema ist gesperrt. Es können keine neuen Antworten geschrieben werden.
+</div>
+{% endif %}
+{% endblock %}

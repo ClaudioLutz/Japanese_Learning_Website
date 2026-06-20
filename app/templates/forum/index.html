@@ -1,0 +1,47 @@
+{% extends "forum/_forum_base.html" %}
+{% block title %}Forum{% endblock %}
+{% block meta_description %}Community-Forum für Lernende von japanese-learning.ch — Vorschläge, Fragen und Austausch.{% endblock %}
+{% block robots %}noindex,nofollow{% endblock %}
+
+{% block forum_content %}
+<div class="forum-head">
+  <h1>Forum</h1>
+  <p>Stelle Fragen, teile Vorschläge und tausch dich mit anderen Lernenden aus.</p>
+</div>
+
+{% if categories %}
+  {% for cat in categories %}
+  <a class="forum-card" href="{{ url_for('forum.category', category_slug=cat.slug) }}">
+    <div class="forum-cat-row">
+      <div class="forum-cat-icon">
+        {% if cat.icon and cat.icon.startswith('fa-') %}<i class="fas {{ cat.icon }}" aria-hidden="true"></i>
+        {% elif cat.icon %}{{ cat.icon }}
+        {% else %}<i class="fas fa-comments" aria-hidden="true"></i>{% endif %}
+      </div>
+      <div class="forum-cat-main">
+        <h2>
+          {{ cat.name }}
+          {% if cat.admin_only_post %}<span class="forum-badge forum-badge--admin">Team</span>{% endif %}
+        </h2>
+        {% if cat.description %}<p class="desc">{{ cat.description }}</p>{% endif %}
+        {% set last = latest.get(cat.id) %}
+        {% if last %}
+          <div class="forum-cat-latest">
+            Zuletzt: {{ last.title }} · {{ last.last_activity_at.strftime('%d.%m.%Y') }}
+          </div>
+        {% endif %}
+      </div>
+      <div class="forum-cat-meta">
+        <span class="count">{{ topic_counts.get(cat.id, 0) }}</span>
+        Themen
+      </div>
+    </div>
+  </a>
+  {% endfor %}
+{% else %}
+  <div class="forum-empty">
+    <span class="ico"><i class="fas fa-comments" aria-hidden="true"></i></span>
+    Es gibt noch keine Forum-Kategorien.
+  </div>
+{% endif %}
+{% endblock %}

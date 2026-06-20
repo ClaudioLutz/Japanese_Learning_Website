@@ -1,0 +1,59 @@
+{% extends "forum/_forum_base.html" %}
+{% block title %}{{ category.name }} · Forum{% endblock %}
+{% block robots %}noindex,nofollow{% endblock %}
+
+{% block forum_content %}
+<nav class="forum-breadcrumb" aria-label="Brotkrumen">
+  <a href="{{ url_for('forum.index') }}">Forum</a>
+  <span class="sep">/</span>
+  <span>{{ category.name }}</span>
+</nav>
+
+<div class="forum-toolbar">
+  <div class="forum-head" style="margin-bottom:0">
+    <h1>{{ category.name }}</h1>
+    {% if category.description %}<p>{{ category.description }}</p>{% endif %}
+  </div>
+  {% if can_post %}
+  <a class="forum-btn forum-btn-primary" href="{{ url_for('forum.new_topic', category_slug=category.slug) }}">
+    <i class="fas fa-plus" aria-hidden="true"></i> Neues Thema
+  </a>
+  {% elif category.admin_only_post %}
+  <span class="forum-badge forum-badge--admin" title="Nur das Team kann hier Themen erstellen">
+    <i class="fas fa-lock" aria-hidden="true"></i> Nur Team
+  </span>
+  {% endif %}
+</div>
+
+{% if topics %}
+  {% for topic in topics %}
+  <a class="forum-card" href="{{ url_for('forum.view_topic', topic_id=topic.id, slug=topic.slug) }}">
+    <div class="forum-topic-row">
+      <div class="forum-topic-main">
+        <p class="forum-topic-title">
+          {% if topic.is_pinned %}<span class="forum-badge forum-badge--pin"><i class="fas fa-thumbtack" aria-hidden="true"></i> Angepinnt</span>{% endif %}
+          {% if topic.is_locked %}<span class="forum-badge forum-badge--lock"><i class="fas fa-lock" aria-hidden="true"></i> Gesperrt</span>{% endif %}
+          {{ topic.title }}
+        </p>
+        <div class="forum-topic-meta">
+          von {{ topic.author.username if topic.author else 'Unbekannt' }}
+          · {{ topic.last_activity_at.strftime('%d.%m.%Y') }}
+        </div>
+      </div>
+      <div class="forum-topic-stats">
+        <b>{{ topic.reply_count }}</b>
+        Antw.
+      </div>
+    </div>
+  </a>
+  {% endfor %}
+
+  {% include "forum/_pagination.html" with context %}
+{% else %}
+  <div class="forum-empty">
+    <span class="ico"><i class="fas fa-feather-pointed" aria-hidden="true"></i></span>
+    Noch keine Themen in dieser Kategorie.
+    {% if can_post %}<br>Sei die erste Person, die hier etwas schreibt!{% endif %}
+  </div>
+{% endif %}
+{% endblock %}
