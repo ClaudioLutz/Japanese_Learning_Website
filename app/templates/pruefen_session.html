@@ -160,12 +160,18 @@
 <style>
   [x-cloak] { display: none !important; }
   /* Gesperrte Buehne — Muster von body.review-locked */
-  body.pruefung-locked { overflow: hidden; }
+  /* KEIN Scroll-Lock: der locked-Stage-Inhalt (Frage + Aktions-Leiste) muss
+     immer erreichbar bleiben — overflow:hidden sperrte sonst den Weg zum Button,
+     wenn die Buehne den Viewport ueberlaeuft (Navbar + Gratis-Band + Header). */
+  body.pruefung-locked { overflow-y: auto; }
   body.pruefung-locked .site-footer,
   body.pruefung-locked .mobile-bottom-nav,
   body.pruefung-locked footer { display: none !important; }
 
-  .pf-stage { max-width: 720px; margin: 0 auto; padding: var(--space-4, 1rem); min-height: calc(100vh - 70px); display: flex; flex-direction: column; }
+  /* Keine kuenstliche Viewport-Hoehe: die Buehne ist so hoch wie ihr Inhalt.
+     Sonst pinnt margin-top:auto den Button ans (ueberlaufende) Buehnen-Ende und
+     er liegt unter der Falz (Desktop wie Mobile). */
+  .pf-stage { max-width: 720px; margin: 0 auto; padding: var(--space-4, 1rem); display: flex; flex-direction: column; }
   .pf-center { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .75rem; color: var(--ink-600); text-align: center; }
   .pf-empty-title { font-size: 1.2rem; color: var(--kon); font-weight: 600; margin: 0; }
   .pf-empty-sub { color: var(--ink-600); margin: 0; }
@@ -213,7 +219,8 @@
   .pf-explain--opt { background: transparent; border-left-color: var(--ink-200); }
   .pf-correct-pairs { margin: .6rem 0 0; padding-left: 1.1rem; color: var(--ink-700); }
 
-  .pf-actions { margin-top: auto; padding-top: var(--space-3, .75rem); }
+  /* Button folgt dem Inhalt (nicht ans Buehnen-Ende gepinnt) -> immer sichtbar. */
+  .pf-actions { margin-top: var(--space-4, 1rem); padding-top: var(--space-3, .75rem); }
   .pf-actions .pruefen-btn { width: 100%; }
 
   /* CTA-Buttons (gleiche Optik wie Start-Screen) */
@@ -254,14 +261,6 @@
     .pf-q { font-size: 1.15rem; }
     .pf-match { gap: .5rem; }
     .pf-bd-name { width: 90px; }
-    /* Mobile-Erreichbarkeit der Aktions-Leiste: die Buehne NICHT kuenstlich auf
-       ~Viewport-Hoehe aufblaehen und den Button NICHT per margin-top:auto ans
-       ferne Buehnen-Ende pinnen — sonst rutscht er unter die Falz und ist mit
-       body{overflow:hidden} unerreichbar (iOS-Safari-Toolbar/dvh-Falle). Button
-       folgt dem Inhalt; langer Inhalt darf scrollen. Desktop bleibt unveraendert. */
-    body.pruefung-locked { overflow-y: auto; }
-    .pf-stage { min-height: 0; }
-    .pf-actions { margin-top: var(--space-4, 1rem); }
   }
 </style>
 {% endblock %}
