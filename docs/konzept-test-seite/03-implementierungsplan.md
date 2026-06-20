@@ -58,8 +58,8 @@ CSRF bleibt aktiv (kein `csrf.exempt`); die JSON-POSTs senden den CSRF-Token im 
 - `filters`: `question_type[]`, `difficulty[min,max]`, `selection ∈ {all, wrong, unseen}`,
   `limit`, `shuffle`.
 - **Beziehungskette:** `QuizQuestion.lesson_content_id → LessonContent.lesson_id →
-  Lesson` (für Modul `Lesson.category_id` `:857`, für Level `Lesson.jlpt_level` Int=5
-  `:714`).
+  Lesson` (für Modul `Lesson.category_id` `:857`, für Level
+  `LessonCategory.jlpt_level` Int=5 `:783` via `Lesson.category`).
 - **Falsch-Filter (B1, Proxy):**
   ```python
   # selection == 'wrong'
