@@ -124,12 +124,12 @@
 .lm-hero h1 {
   font-size: clamp(1.5rem, 4vw, 2.1rem);
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--text-color);
   margin: 0 0 0.6rem;
 }
 .lm-lead {
   font-size: 1.05rem;
-  color: #4a4a4a;
+  color: var(--text-light);
   margin: 0;
 }
 .lm-section {
@@ -149,6 +149,9 @@
 .lm-list { padding-left: 1.25rem; margin: 0.5rem 0; }
 .lm-list li { margin-bottom: 0.6rem; color: var(--text-color); }
 .lm-cta { text-align: center; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); }
+/* Dark-Mode: dekorative Hero-/CTA-Gradienten themen (Token-Text war sonst hell-auf-hell) */
+[data-theme="dark"] .lm-hero { background: linear-gradient(135deg, var(--card-background) 0%, var(--kon-50) 100%); }
+[data-theme="dark"] .lm-cta { background: linear-gradient(135deg, var(--card-background) 0%, #16271c 100%); }
 .lm-cta-buttons {
   display: flex; flex-wrap: wrap; justify-content: center;
   gap: 0.75rem; margin-top: 1rem;
