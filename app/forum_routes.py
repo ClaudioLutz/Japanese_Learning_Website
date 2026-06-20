@@ -220,7 +220,11 @@ def reply(topic_id):
                 flash(err, 'danger')
 
     # Auf die letzte Seite springen, damit die neue Antwort sichtbar ist.
-    last_page = max(1, ((topic.reply_count or 0) + POSTS_PER_PAGE) // POSTS_PER_PAGE)
+    # Aus DERSELBEN Menge ableiten, die view_topic paginiert (alle Posts inkl.
+    # OP + Soft-Delete-Tombstones) — reply_count allein weicht ab, sobald
+    # geloeschte Beitraege Seitenplaetze belegen.
+    total_posts = ForumPost.query.filter_by(topic_id=topic.id).count()
+    last_page = max(1, (total_posts + POSTS_PER_PAGE - 1) // POSTS_PER_PAGE)
     return redirect(
         url_for('forum.view_topic', topic_id=topic.id, slug=topic.slug, page=last_page)
         + '#beitraege'
@@ -259,6 +263,10 @@ def delete_post(post_id):
     """Beitrag soft-loeschen (Autor oder Admin). Zeile bleibt, Flag gesetzt."""
     post = ForumPost.query.filter_by(id=post_id, is_deleted=False).first_or_404()
     _require_post_author_or_admin(post)
+
+    # In gesperrtem Thema kann nur ein Admin loeschen (symmetrisch zu edit_post).
+    if post.topic.is_locked and not current_user.is_admin:
+        abort(403)
 
     topic = post.topic
     post.is_deleted = True

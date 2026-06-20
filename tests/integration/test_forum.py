@@ -245,6 +245,16 @@ class TestForumEditDelete:
         db.session.refresh(op)
         assert op.is_deleted is False
 
+    def test_delete_in_locked_topic_blocked_for_user(self, auth_client):
+        # Symmetrisch zu edit_post: in gesperrtem Thema kein Loeschen (ausser Admin)
+        client, user = auth_client
+        c = _category(slug='vorschlaege')
+        t, op = _topic_with_op(c, user, is_locked=True)
+        resp = client.post(f'/forum/post/{op.id}/delete')
+        assert resp.status_code == 403
+        db.session.refresh(op)
+        assert op.is_deleted is False
+
     def test_deleted_post_renders_placeholder(self, auth_client):
         client, user = auth_client
         c = _category(slug='vorschlaege')

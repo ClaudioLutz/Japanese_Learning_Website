@@ -81,15 +81,15 @@ def upgrade():
         sa.ForeignKeyConstraint(['deleted_by_id'], ['user.id']),
         sa.PrimaryKeyConstraint('id'),
     )
-    op.create_index('ix_forum_post_topic_id', 'forum_post', ['topic_id'])
+    # Zusammengesetzter Index deckt den Hot-Path ab: Filter topic_id + Sort
+    # created_at (view_topic) UND topic_id-Prefix-Lookups (reply-count) in einem.
+    op.create_index('ix_forum_post_topic_created', 'forum_post', ['topic_id', 'created_at'])
     op.create_index('ix_forum_post_author_id', 'forum_post', ['author_id'])
-    op.create_index('ix_forum_post_created_at', 'forum_post', ['created_at'])
 
 
 def downgrade():
-    op.drop_index('ix_forum_post_created_at', table_name='forum_post')
     op.drop_index('ix_forum_post_author_id', table_name='forum_post')
-    op.drop_index('ix_forum_post_topic_id', table_name='forum_post')
+    op.drop_index('ix_forum_post_topic_created', table_name='forum_post')
     op.drop_table('forum_post')
     op.drop_index('ix_forum_topic_last_activity_at', table_name='forum_topic')
     op.drop_index('ix_forum_topic_created_at', table_name='forum_topic')
