@@ -18,6 +18,7 @@ Konsistenz).
 | [`00-konzept-und-modi.md`](00-konzept-und-modi.md) | Vision, **die Datenrealität** (warum „1× falsch" heute baubar ist), Informationsarchitektur, die **zwei Modi** (Übung/Prüfung), vollständiger **Modus-/Filter-Katalog**, N5-Mock-Design, Zugriffskontrolle, didaktische Leitplanken, Roadmap, offene Entscheidungen |
 | [`01-wireframes-und-flows.md`](01-wireframes-und-flows.md) | Der Flow Konfig→Session→Ergebnis + **alle ASCII-Wireframes** (Einstieg, Session pro Fragetyp inkl. `matching` mobil, Sofort-Feedback, Ergebnis-Screen mit Score-Ring, Empty-/Gast-/Locked-States, Mobile, Tastatur, Dark-Mode-Hinweise) |
 | [`02-inspiration-design-microcopy.md`](02-inspiration-design-microcopy.md) | Wettbewerbs-Inspiration (Anki · Quizlet · Bunpro · WaniKani · Duolingo · Kahoot · JLPT-Mock) + **„Das übernehmen wir"**, Design-System-Token-Mapping (Wiederverwendung aus `/review`, `/practice/kana`), deutscher Microcopy-Katalog |
+| [`03-implementierungsplan.md`](03-implementierungsplan.md) | **Konkreter Bauplan** für `/pruefen`: neuer Blueprint, Service-Layer (`build_question_pool` + `evaluate_answer`-Refactor), Endpoints (pool/check/grade), Alpine-Komponente `pruefenGame()`, Templates, Nav, Tests, Reihenfolge, Risiken — alles code-verankert, ohne Schema-Änderung in v1 |
 
 ## Die drei Kern-Erkenntnisse in einem Absatz
 
