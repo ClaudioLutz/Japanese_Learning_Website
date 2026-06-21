@@ -293,6 +293,13 @@
     transition: background-color .15s, transform .12s;
 }
 .station-cta:hover { background: var(--kon-500); color: #fff !important; text-decoration: none; }
+/* Dark Mode: --kon kippt hell (#C6D0E4) → Default-CTA bekam hellen Grund mit
+   weissem Text (unlesbar). Hier auf Navy (--kon-100) halten. BEWUSST vor den
+   .lp-card--next/--complete-CTA-Regeln platziert: gleiche Spezifitaet (0,2,0),
+   also gewinnt der Shu-/Matcha-Akzent per spaeterer Source-Order — nur der
+   neutrale Default-Button wird navy. */
+[data-theme="dark"] .station-cta { background: var(--kon-100); color: #fff !important; }
+[data-theme="dark"] .station-cta:hover { background: var(--kon-300); color: #fff !important; }
 .station--complete .station-cta {
     background: rgba(122,144,51,.12);
     color: var(--matcha) !important;
