@@ -1,0 +1,2643 @@
+[
+ {
+  "id": 269,
+  "word": "朝",
+  "reading": "あさ",
+  "romaji": "asa",
+  "meaning_de": "Morgen",
+  "shared_cue": "morgen",
+  "example": "Maiasa roku-ji ni okimasu. — Jeden Morgen stehe ich um sechs Uhr auf.",
+  "collision_mates": [
+   {
+    "word": "あした",
+    "reading": "あした",
+    "meaning_de": "morgen"
+   },
+   {
+    "word": "明日",
+    "reading": "あした",
+    "meaning_de": "morgen (der Tag)"
+   }
+  ]
+ },
+ {
+  "id": 156,
+  "word": "あした",
+  "reading": "あした",
+  "romaji": "ashita",
+  "meaning_de": "morgen",
+  "shared_cue": "morgen",
+  "example": "Ashita tomodachi to umi e ikimasu. — Morgen fahre ich mit einem Freund ans Meer.",
+  "collision_mates": [
+   {
+    "word": "朝",
+    "reading": "あさ",
+    "meaning_de": "Morgen"
+   },
+   {
+    "word": "あさ",
+    "reading": "あさ",
+    "meaning_de": "Morgen"
+   }
+  ]
+ },
+ {
+  "id": 149,
+  "word": "あさ",
+  "reading": "あさ",
+  "romaji": "asa",
+  "meaning_de": "Morgen",
+  "shared_cue": "morgen",
+  "example": "Asa kōhī o nomimasu. — Am Morgen trinke ich Kaffee.",
+  "collision_mates": [
+   {
+    "word": "あした",
+    "reading": "あした",
+    "meaning_de": "morgen"
+   },
+   {
+    "word": "明日",
+    "reading": "あした",
+    "meaning_de": "morgen (der Tag)"
+   }
+  ]
+ },
+ {
+  "id": 277,
+  "word": "明日",
+  "reading": "あした",
+  "romaji": "ashita",
+  "meaning_de": "morgen (der Tag)",
+  "shared_cue": "morgen",
+  "example": "Ashita Tōkyō e ikimasu. — Morgen fahre ich nach Tokio.",
+  "collision_mates": [
+   {
+    "word": "朝",
+    "reading": "あさ",
+    "meaning_de": "Morgen"
+   },
+   {
+    "word": "あさ",
+    "reading": "あさ",
+    "meaning_de": "Morgen"
+   }
+  ]
+ },
+ {
+  "id": 453,
+  "word": "子",
+  "reading": "こ",
+  "romaji": "ko",
+  "meaning_de": "Kind",
+  "shared_cue": "kind",
+  "example": "Kōen de ko ga asonde imasu. — Im Park spielt ein Kind.",
+  "collision_mates": [
+   {
+    "word": "子供",
+    "reading": "こども",
+    "meaning_de": "Kind, Kinder"
+   }
+  ]
+ },
+ {
+  "id": 259,
+  "word": "子供",
+  "reading": "こども",
+  "romaji": "kodomo",
+  "meaning_de": "Kind, Kinder",
+  "shared_cue": "kind",
+  "example": "Kōen de kodomo ga asonde imasu. — Im Park spielen Kinder.",
+  "collision_mates": [
+   {
+    "word": "子",
+    "reading": "こ",
+    "meaning_de": "Kind"
+   }
+  ]
+ },
+ {
+  "id": 460,
+  "word": "大きな",
+  "reading": "おおきな",
+  "romaji": "ookina",
+  "meaning_de": "gross (vor Substantiv)",
+  "shared_cue": "gross",
+  "example": "Ōkina inu ga imasu. — Da ist ein grosser Hund.",
+  "collision_mates": [
+   {
+    "word": "大きい",
+    "reading": "おおきい",
+    "meaning_de": "gross (i-Adj.)"
+   }
+  ]
+ },
+ {
+  "id": 304,
+  "word": "大きい",
+  "reading": "おおきい",
+  "romaji": "ookii",
+  "meaning_de": "gross (i-Adj.)",
+  "shared_cue": "gross",
+  "example": "Watashi no ie wa ōkii desu. — Mein Haus ist gross.",
+  "collision_mates": [
+   {
+    "word": "大きな",
+    "reading": "おおきな",
+    "meaning_de": "gross (vor Substantiv)"
+   }
+  ]
+ },
+ {
+  "id": 462,
+  "word": "下さい",
+  "reading": "ください",
+  "romaji": "kudasai",
+  "meaning_de": "bitte (geben/tun)",
+  "shared_cue": "bitte",
+  "example": "Mizu o ippai kudasai. — Bitte ein Glas Wasser.",
+  "collision_mates": [
+   {
+    "word": "お願いします",
+    "reading": "おねがいします",
+    "meaning_de": "bitte (höfliche Bitte)"
+   },
+   {
+    "word": "どうぞ",
+    "reading": "どうぞ",
+    "meaning_de": "bitte (anbietend)"
+   }
+  ]
+ },
+ {
+  "id": 485,
+  "word": "お願いします",
+  "reading": "おねがいします",
+  "romaji": "onegai shimasu",
+  "meaning_de": "bitte (höfliche Bitte)",
+  "shared_cue": "bitte",
+  "example": "Kōhī o onegai shimasu. — Einen Kaffee, bitte.",
+  "collision_mates": [
+   {
+    "word": "下さい",
+    "reading": "ください",
+    "meaning_de": "bitte (geben/tun)"
+   },
+   {
+    "word": "どうぞ",
+    "reading": "どうぞ",
+    "meaning_de": "bitte (anbietend)"
+   }
+  ]
+ },
+ {
+  "id": 94,
+  "word": "どうぞ",
+  "reading": "どうぞ",
+  "romaji": "douzo",
+  "meaning_de": "bitte (anbietend)",
+  "shared_cue": "bitte",
+  "example": "Kōhī o dōzo. — Hier, bitte, ein Kaffee.",
+  "collision_mates": [
+   {
+    "word": "下さい",
+    "reading": "ください",
+    "meaning_de": "bitte (geben/tun)"
+   },
+   {
+    "word": "お願いします",
+    "reading": "おねがいします",
+    "meaning_de": "bitte (höfliche Bitte)"
+   }
+  ]
+ },
+ {
+  "id": 464,
+  "word": "弟さん",
+  "reading": "おとうとさん",
+  "romaji": "otouto-san",
+  "meaning_de": "jüngerer Bruder (höflich)",
+  "shared_cue": "jüngerer bruder",
+  "example": "Otōto-san wa oikutsu desu ka. — Wie alt ist Ihr jüngerer Bruder?",
+  "collision_mates": [
+   {
+    "word": "弟",
+    "reading": "おとうと",
+    "meaning_de": "(mein) jüngerer Bruder"
+   }
+  ]
+ },
+ {
+  "id": 250,
+  "word": "弟",
+  "reading": "おとうと",
+  "romaji": "otouto",
+  "meaning_de": "(mein) jüngerer Bruder",
+  "shared_cue": "jüngerer bruder",
+  "example": "Otōto wa sakkā ga suki desu. — Mein jüngerer Bruder mag Fussball.",
+  "collision_mates": [
+   {
+    "word": "弟さん",
+    "reading": "おとうとさん",
+    "meaning_de": "jüngerer Bruder (höflich)"
+   }
+  ]
+ },
+ {
+  "id": 507,
+  "word": "おかえりなさい",
+  "reading": "おかえりなさい",
+  "romaji": "okaeri nasai",
+  "meaning_de": "Willkommen zurück (höflich)",
+  "shared_cue": "willkommen zurück",
+  "example": "Otōsan, okaerinasai. — Willkommen zurück, Papa.",
+  "collision_mates": [
+   {
+    "word": "おかえり",
+    "reading": "おかえり",
+    "meaning_de": "Willkommen zurück (vertraut)"
+   }
+  ]
+ },
+ {
+  "id": 506,
+  "word": "おかえり",
+  "reading": "おかえり",
+  "romaji": "okaeri",
+  "meaning_de": "Willkommen zurück (vertraut)",
+  "shared_cue": "willkommen zurück",
+  "example": "Okaeri, gohan o tabemasu ka. — Willkommen zurück, isst du etwas?",
+  "collision_mates": [
+   {
+    "word": "おかえりなさい",
+    "reading": "おかえりなさい",
+    "meaning_de": "Willkommen zurück (höflich)"
+   }
+  ]
+ },
+ {
+  "id": 515,
+  "word": "辞書",
+  "reading": "じしょ",
+  "romaji": "jisho",
+  "meaning_de": "Wörterbuch",
+  "shared_cue": "wörterbuch",
+  "example": "Watashi wa jisho ga hoshii desu. — Ich möchte ein Wörterbuch.",
+  "collision_mates": [
+   {
+    "word": "字引",
+    "reading": "じびき",
+    "meaning_de": "Wörterbuch"
+   }
+  ]
+ },
+ {
+  "id": 63,
+  "word": "じしょ",
+  "reading": "じしょ",
+  "romaji": "jisho",
+  "meaning_de": "Wörterbuch",
+  "shared_cue": "wörterbuch",
+  "example": "Kore wa eigo no jisho desu. — Das hier ist ein Englisch-Wörterbuch.",
+  "collision_mates": [
+   {
+    "word": "字引",
+    "reading": "じびき",
+    "meaning_de": "Wörterbuch"
+   }
+  ]
+ },
+ {
+  "id": 874,
+  "word": "字引",
+  "reading": "じびき",
+  "romaji": "jibiki",
+  "meaning_de": "Wörterbuch",
+  "shared_cue": "wörterbuch",
+  "example": "Jibiki de kotoba o shirabemasu. — Ich schlage Wörter im Wörterbuch nach.",
+  "collision_mates": [
+   {
+    "word": "辞書",
+    "reading": "じしょ",
+    "meaning_de": "Wörterbuch"
+   },
+   {
+    "word": "じしょ",
+    "reading": "じしょ",
+    "meaning_de": "Wörterbuch"
+   }
+  ]
+ },
+ {
+  "id": 181,
+  "word": "いきます",
+  "reading": "いきます",
+  "romaji": "ikimasu",
+  "meaning_de": "gehen",
+  "shared_cue": "gehen",
+  "example": "Ashita gakkō e ikimasu. — Morgen gehe ich zur Schule.",
+  "collision_mates": [
+   {
+    "word": "行く",
+    "reading": "いく",
+    "meaning_de": "gehen, fahren"
+   },
+   {
+    "word": "歩く",
+    "reading": "あるく",
+    "meaning_de": "gehen, laufen"
+   }
+  ]
+ },
+ {
+  "id": 353,
+  "word": "行く",
+  "reading": "いく",
+  "romaji": "iku",
+  "meaning_de": "gehen, fahren",
+  "shared_cue": "gehen",
+  "example": "Ashita, watashi wa Tōkyō e ikimasu. — Morgen fahre ich nach Tokyo.",
+  "collision_mates": [
+   {
+    "word": "いきます",
+    "reading": "いきます",
+    "meaning_de": "gehen"
+   },
+   {
+    "word": "歩く",
+    "reading": "あるく",
+    "meaning_de": "gehen, laufen"
+   }
+  ]
+ },
+ {
+  "id": 435,
+  "word": "歩く",
+  "reading": "あるく",
+  "romaji": "aruku",
+  "meaning_de": "gehen, laufen",
+  "shared_cue": "gehen",
+  "example": "Maiasa eki made arukimasu. — Jeden Morgen gehe ich zu Fuss zum Bahnhof.",
+  "collision_mates": [
+   {
+    "word": "いきます",
+    "reading": "いきます",
+    "meaning_de": "gehen"
+   },
+   {
+    "word": "行く",
+    "reading": "いく",
+    "meaning_de": "gehen, fahren"
+   }
+  ]
+ },
+ {
+  "id": 182,
+  "word": "きます",
+  "reading": "きます",
+  "romaji": "kimasu",
+  "meaning_de": "kommen",
+  "shared_cue": "kommen",
+  "example": "Tomodachi ga uchi e kimasu. — Ein Freund kommt zu mir nach Hause.",
+  "collision_mates": [
+   {
+    "word": "来る",
+    "reading": "くる",
+    "meaning_de": "kommen (unregelmässig)"
+   }
+  ]
+ },
+ {
+  "id": 354,
+  "word": "来る",
+  "reading": "くる",
+  "romaji": "kuru",
+  "meaning_de": "kommen (unregelmässig)",
+  "shared_cue": "kommen",
+  "example": "Tomodachi ga uchi e kimashita. — Ein Freund ist zu mir nach Hause gekommen.",
+  "collision_mates": [
+   {
+    "word": "きます",
+    "reading": "きます",
+    "meaning_de": "kommen"
+   }
+  ]
+ },
+ {
+  "id": 183,
+  "word": "かえります",
+  "reading": "かえります",
+  "romaji": "kaerimasu",
+  "meaning_de": "nach Hause gehen, zurückkehren",
+  "shared_cue": "nach hause gehen",
+  "example": "Watashi wa roku-ji ni ie ni kaerimasu. — Ich gehe um sechs Uhr nach Hause.",
+  "collision_mates": [
+   {
+    "word": "帰る",
+    "reading": "かえる",
+    "meaning_de": "nach Hause gehen, zurückkehren"
+   }
+  ]
+ },
+ {
+  "id": 287,
+  "word": "帰る",
+  "reading": "かえる",
+  "romaji": "kaeru",
+  "meaning_de": "nach Hause gehen, zurückkehren",
+  "shared_cue": "nach hause gehen",
+  "example": "Watashi wa rokuji ni ie e kaerimasu. — Ich gehe um sechs Uhr nach Hause.",
+  "collision_mates": [
+   {
+    "word": "かえります",
+    "reading": "かえります",
+    "meaning_de": "nach Hause gehen, zurückkehren"
+   }
+  ]
+ },
+ {
+  "id": 394,
+  "word": "寒い",
+  "reading": "さむい",
+  "romaji": "samui",
+  "meaning_de": "kalt (Wetter)",
+  "shared_cue": "kalt",
+  "example": "Kyō wa totemo samui desu. — Heute ist es sehr kalt.",
+  "collision_mates": [
+   {
+    "word": "冷たい",
+    "reading": "つめたい",
+    "meaning_de": "kalt (Sache, i-Adj.)"
+   }
+  ]
+ },
+ {
+  "id": 322,
+  "word": "冷たい",
+  "reading": "つめたい",
+  "romaji": "tsumetai",
+  "meaning_de": "kalt (Sache, i-Adj.)",
+  "shared_cue": "kalt",
+  "example": "Kono mizu wa tsumetai desu. — Dieses Wasser ist kalt.",
+  "collision_mates": [
+   {
+    "word": "寒い",
+    "reading": "さむい",
+    "meaning_de": "kalt (Wetter)"
+   }
+  ]
+ },
+ {
+  "id": 415,
+  "word": "円",
+  "reading": "えん",
+  "romaji": "en",
+  "meaning_de": "Yen (japanische Währung)",
+  "shared_cue": "yen",
+  "example": "Kono kaban wa gosen'en desu. — Diese Tasche kostet fünftausend Yen.",
+  "collision_mates": [
+   {
+    "word": "～円",
+    "reading": "～えん",
+    "meaning_de": "Yen (Geld-Zähler)"
+   }
+  ]
+ },
+ {
+  "id": 122,
+  "word": "えん",
+  "reading": "えん",
+  "romaji": "en",
+  "meaning_de": "Yen (japanische Währung)",
+  "shared_cue": "yen",
+  "example": "Kono hon wa sen'en desu. — Dieses Buch kostet tausend Yen.",
+  "collision_mates": [
+   {
+    "word": "～円",
+    "reading": "～えん",
+    "meaning_de": "Yen (Geld-Zähler)"
+   }
+  ]
+ },
+ {
+  "id": 814,
+  "word": "～円",
+  "reading": "～えん",
+  "romaji": "en",
+  "meaning_de": "Yen (Geld-Zähler)",
+  "shared_cue": "yen",
+  "example": "Kore wa hyaku en desu. — Das kostet hundert Yen.",
+  "collision_mates": [
+   {
+    "word": "円",
+    "reading": "えん",
+    "meaning_de": "Yen (japanische Währung)"
+   },
+   {
+    "word": "えん",
+    "reading": "えん",
+    "meaning_de": "Yen (japanische Währung)"
+   }
+  ]
+ },
+ {
+  "id": 461,
+  "word": "小さな",
+  "reading": "ちいさな",
+  "romaji": "chiisana",
+  "meaning_de": "klein (vor Substantiv)",
+  "shared_cue": "klein",
+  "example": "Chiisana mise de pan o kaimashita. — In einem kleinen Laden habe ich Brot gekauft.",
+  "collision_mates": [
+   {
+    "word": "小さい",
+    "reading": "ちいさい",
+    "meaning_de": "klein (i-Adj.)"
+   }
+  ]
+ },
+ {
+  "id": 305,
+  "word": "小さい",
+  "reading": "ちいさい",
+  "romaji": "chiisai",
+  "meaning_de": "klein (i-Adj.)",
+  "shared_cue": "klein",
+  "example": "Kono inu wa totemo chiisai desu. — Dieser Hund ist sehr klein.",
+  "collision_mates": [
+   {
+    "word": "小さな",
+    "reading": "ちいさな",
+    "meaning_de": "klein (vor Substantiv)"
+   }
+  ]
+ },
+ {
+  "id": 57,
+  "word": "それ",
+  "reading": "それ",
+  "romaji": "sore",
+  "meaning_de": "das (bei dir)",
+  "shared_cue": "das",
+  "example": "Sore wa anata no kasa desu ka. — Ist das (bei dir) dein Regenschirm?",
+  "collision_mates": [
+   {
+    "word": "あれ",
+    "reading": "あれ",
+    "meaning_de": "das (dort drüben)"
+   }
+  ]
+ },
+ {
+  "id": 58,
+  "word": "あれ",
+  "reading": "あれ",
+  "romaji": "are",
+  "meaning_de": "das (dort drüben)",
+  "shared_cue": "das",
+  "example": "Are wa watashi no gakkō desu. — Das dort drüben ist meine Schule.",
+  "collision_mates": [
+   {
+    "word": "それ",
+    "reading": "それ",
+    "meaning_de": "das (bei dir)"
+   }
+  ]
+ },
+ {
+  "id": 260,
+  "word": "男",
+  "reading": "おとこ",
+  "romaji": "otoko",
+  "meaning_de": "Mann, männlich",
+  "shared_cue": "mann",
+  "example": "Ano otoko no hito wa sensei desu. — Jener Mann ist Lehrer.",
+  "collision_mates": [
+   {
+    "word": "男の人",
+    "reading": "おとこの ひと",
+    "meaning_de": "Mann"
+   }
+  ]
+ },
+ {
+  "id": 493,
+  "word": "男の人",
+  "reading": "おとこの ひと",
+  "romaji": "otoko no hito",
+  "meaning_de": "Mann",
+  "shared_cue": "mann",
+  "example": "Asoko ni otoko no hito ga imasu. — Dort drüben ist ein Mann.",
+  "collision_mates": [
+   {
+    "word": "男",
+    "reading": "おとこ",
+    "meaning_de": "Mann, männlich"
+   }
+  ]
+ },
+ {
+  "id": 367,
+  "word": "机",
+  "reading": "つくえ",
+  "romaji": "tsukue",
+  "meaning_de": "Tisch, Schreibtisch",
+  "shared_cue": "tisch",
+  "example": "Tsukue no ue ni hon ga arimasu. — Auf dem Tisch liegt ein Buch.",
+  "collision_mates": [
+   {
+    "word": "テーブル",
+    "reading": "テーブル",
+    "meaning_de": "Tisch"
+   }
+  ]
+ },
+ {
+  "id": 855,
+  "word": "テーブル",
+  "reading": "テーブル",
+  "romaji": "teeburu",
+  "meaning_de": "Tisch",
+  "shared_cue": "tisch",
+  "example": "Teeburu no ue ni o-cha ga arimasu. — Auf dem Tisch steht Tee.",
+  "collision_mates": [
+   {
+    "word": "机",
+    "reading": "つくえ",
+    "meaning_de": "Tisch, Schreibtisch"
+   }
+  ]
+ },
+ {
+  "id": 257,
+  "word": "お兄さん",
+  "reading": "おにいさん",
+  "romaji": "oniisan",
+  "meaning_de": "älterer Bruder (einer anderen Person, höflich)",
+  "shared_cue": "älterer bruder",
+  "example": "Tanaka-san no oniisan wa sensei desu. — Herrn Tanakas älterer Bruder ist Lehrer.",
+  "collision_mates": [
+   {
+    "word": "兄",
+    "reading": "あに",
+    "meaning_de": "(mein) älterer Bruder (bescheidene Form)"
+   }
+  ]
+ },
+ {
+  "id": 248,
+  "word": "兄",
+  "reading": "あに",
+  "romaji": "ani",
+  "meaning_de": "(mein) älterer Bruder (bescheidene Form)",
+  "shared_cue": "älterer bruder",
+  "example": "Ani wa ginkō de hataraite imasu. — Mein älterer Bruder arbeitet bei einer Bank.",
+  "collision_mates": [
+   {
+    "word": "お兄さん",
+    "reading": "おにいさん",
+    "meaning_de": "älterer Bruder (einer anderen Person, höflich)"
+   }
+  ]
+ },
+ {
+  "id": 258,
+  "word": "お姉さん",
+  "reading": "おねえさん",
+  "romaji": "oneesan",
+  "meaning_de": "ältere Schwester (einer anderen Person, höflich)",
+  "shared_cue": "ältere schwester",
+  "example": "Anata no onēsan wa doko ni imasu ka. — Wo ist Ihre ältere Schwester?",
+  "collision_mates": [
+   {
+    "word": "姉",
+    "reading": "あね",
+    "meaning_de": "(meine) ältere Schwester (bescheidene Form)"
+   }
+  ]
+ },
+ {
+  "id": 249,
+  "word": "姉",
+  "reading": "あね",
+  "romaji": "ane",
+  "meaning_de": "(meine) ältere Schwester (bescheidene Form)",
+  "shared_cue": "ältere schwester",
+  "example": "Ane wa Tōkyō ni sunde imasu. — Meine ältere Schwester wohnt in Tokyo.",
+  "collision_mates": [
+   {
+    "word": "お姉さん",
+    "reading": "おねえさん",
+    "meaning_de": "ältere Schwester (einer anderen Person, höflich)"
+   }
+  ]
+ },
+ {
+  "id": 261,
+  "word": "女",
+  "reading": "おんな",
+  "romaji": "onna",
+  "meaning_de": "Frau, weiblich",
+  "shared_cue": "frau",
+  "example": "Ano onna no hito wa sensei desu. — Jene Frau ist Lehrerin.",
+  "collision_mates": [
+   {
+    "word": "女の人",
+    "reading": "おんなの ひと",
+    "meaning_de": "Frau"
+   }
+  ]
+ },
+ {
+  "id": 494,
+  "word": "女の人",
+  "reading": "おんなの ひと",
+  "romaji": "onna no hito",
+  "meaning_de": "Frau",
+  "shared_cue": "frau",
+  "example": "Ano onna no hito wa sensei desu. — Diese Frau dort ist Lehrerin.",
+  "collision_mates": [
+   {
+    "word": "女",
+    "reading": "おんな",
+    "meaning_de": "Frau, weiblich"
+   }
+  ]
+ },
+ {
+  "id": 724,
+  "word": "足",
+  "reading": "あし",
+  "romaji": "ashi",
+  "meaning_de": "Fuss, Bein",
+  "shared_cue": "fuss",
+  "example": "Ashi ga itai desu. — Mein Bein tut weh.",
+  "collision_mates": [
+   {
+    "word": "あるいて",
+    "reading": "あるいて",
+    "meaning_de": "zu Fuss"
+   }
+  ]
+ },
+ {
+  "id": 193,
+  "word": "あるいて",
+  "reading": "あるいて",
+  "romaji": "aruite",
+  "meaning_de": "zu Fuss",
+  "shared_cue": "fuss",
+  "example": "Aruite eki e ikimasu. — Ich gehe zu Fuss zum Bahnhof.",
+  "collision_mates": [
+   {
+    "word": "足",
+    "reading": "あし",
+    "meaning_de": "Fuss, Bein"
+   }
+  ]
+ },
+ {
+  "id": 251,
+  "word": "妹",
+  "reading": "いもうと",
+  "romaji": "imouto",
+  "meaning_de": "(meine) jüngere Schwester",
+  "shared_cue": "jüngere schwester",
+  "example": "Imōto wa mainichi benkyō shimasu. — Meine jüngere Schwester lernt jeden Tag.",
+  "collision_mates": [
+   {
+    "word": "妹さん",
+    "reading": "いもうとさん",
+    "meaning_de": "jüngere Schwester (höflich)"
+   }
+  ]
+ },
+ {
+  "id": 465,
+  "word": "妹さん",
+  "reading": "いもうとさん",
+  "romaji": "imouto-san",
+  "meaning_de": "jüngere Schwester (höflich)",
+  "shared_cue": "jüngere schwester",
+  "example": "Imōto-san wa totemo kawaii desu. — Ihre jüngere Schwester ist sehr niedlich.",
+  "collision_mates": [
+   {
+    "word": "妹",
+    "reading": "いもうと",
+    "meaning_de": "(meine) jüngere Schwester"
+   }
+  ]
+ },
+ {
+  "id": 282,
+  "word": "働く",
+  "reading": "はたらく",
+  "romaji": "hataraku",
+  "meaning_de": "arbeiten",
+  "shared_cue": "arbeiten",
+  "example": "Chichi wa ginkō de hataraite imasu. — Mein Vater arbeitet bei einer Bank.",
+  "collision_mates": [
+   {
+    "word": "はたらきます",
+    "reading": "はたらきます",
+    "meaning_de": "arbeiten"
+   }
+  ]
+ },
+ {
+  "id": 138,
+  "word": "はたらきます",
+  "reading": "はたらきます",
+  "romaji": "hatarakimasu",
+  "meaning_de": "arbeiten",
+  "shared_cue": "arbeiten",
+  "example": "Chichi wa ginkō de hatarakimasu. — Mein Vater arbeitet in einer Bank.",
+  "collision_mates": [
+   {
+    "word": "働く",
+    "reading": "はたらく",
+    "meaning_de": "arbeiten"
+   }
+  ]
+ },
+ {
+  "id": 283,
+  "word": "休む",
+  "reading": "やすむ",
+  "romaji": "yasumu",
+  "meaning_de": "ausruhen, Pause machen",
+  "shared_cue": "ausruhen",
+  "example": "Kyō wa uchi de yasumimasu. — Heute ruhe ich mich zu Hause aus.",
+  "collision_mates": [
+   {
+    "word": "やすみます",
+    "reading": "やすみます",
+    "meaning_de": "sich ausruhen, frei nehmen"
+   }
+  ]
+ },
+ {
+  "id": 139,
+  "word": "やすみます",
+  "reading": "やすみます",
+  "romaji": "yasumimasu",
+  "meaning_de": "sich ausruhen, frei nehmen",
+  "shared_cue": "ausruhen",
+  "example": "Ashita kaisha o yasumimasu. — Morgen nehme ich mir bei der Firma frei.",
+  "collision_mates": [
+   {
+    "word": "休む",
+    "reading": "やすむ",
+    "meaning_de": "ausruhen, Pause machen"
+   }
+  ]
+ },
+ {
+  "id": 436,
+  "word": "地図",
+  "reading": "ちず",
+  "romaji": "chizu",
+  "meaning_de": "Karte (Stadtplan)",
+  "shared_cue": "karte",
+  "example": "Kono chizu wa atarashii desu. — Diese Karte ist neu.",
+  "collision_mates": [
+   {
+    "word": "カード",
+    "reading": "カード",
+    "meaning_de": "Karte"
+   }
+  ]
+ },
+ {
+  "id": 69,
+  "word": "カード",
+  "reading": "カード",
+  "romaji": "kaado",
+  "meaning_de": "Karte",
+  "shared_cue": "karte",
+  "example": "Kore wa toshokan no kādo desu. — Das hier ist die Bibliothekskarte.",
+  "collision_mates": [
+   {
+    "word": "地図",
+    "reading": "ちず",
+    "meaning_de": "Karte (Stadtplan)"
+   }
+  ]
+ },
+ {
+  "id": 469,
+  "word": "時",
+  "reading": "じ",
+  "romaji": "ji",
+  "meaning_de": "Uhr (bei Uhrzeit-Angabe)",
+  "shared_cue": "uhr",
+  "example": "Ima, shichi-ji desu. — Es ist jetzt sieben Uhr.",
+  "collision_mates": [
+   {
+    "word": "時計",
+    "reading": "とけい",
+    "meaning_de": "Uhr (Wand-/Armband-)"
+   },
+   {
+    "word": "とけい",
+    "reading": "とけい",
+    "meaning_de": "Uhr"
+   }
+  ]
+ },
+ {
+  "id": 144,
+  "word": "じ",
+  "reading": "じ",
+  "romaji": "ji",
+  "meaning_de": "Uhr (Zähler)",
+  "shared_cue": "uhr",
+  "example": "Ima nanji desu ka. — Wie viel Uhr ist es jetzt?",
+  "collision_mates": [
+   {
+    "word": "時計",
+    "reading": "とけい",
+    "meaning_de": "Uhr (Wand-/Armband-)"
+   },
+   {
+    "word": "とけい",
+    "reading": "とけい",
+    "meaning_de": "Uhr"
+   }
+  ]
+ },
+ {
+  "id": 513,
+  "word": "時計",
+  "reading": "とけい",
+  "romaji": "tokei",
+  "meaning_de": "Uhr (Wand-/Armband-)",
+  "shared_cue": "uhr",
+  "example": "Ano tokei wa takai desu. — Jene Uhr ist teuer.",
+  "collision_mates": [
+   {
+    "word": "時",
+    "reading": "じ",
+    "meaning_de": "Uhr (bei Uhrzeit-Angabe)"
+   },
+   {
+    "word": "じ",
+    "reading": "じ",
+    "meaning_de": "Uhr (Zähler)"
+   }
+  ]
+ },
+ {
+  "id": 74,
+  "word": "とけい",
+  "reading": "とけい",
+  "romaji": "tokei",
+  "meaning_de": "Uhr",
+  "shared_cue": "uhr",
+  "example": "Kono tokei wa takai desu. — Diese Uhr ist teuer.",
+  "collision_mates": [
+   {
+    "word": "時",
+    "reading": "じ",
+    "meaning_de": "Uhr (bei Uhrzeit-Angabe)"
+   },
+   {
+    "word": "じ",
+    "reading": "じ",
+    "meaning_de": "Uhr (Zähler)"
+   }
+  ]
+ },
+ {
+  "id": 255,
+  "word": "お父さん",
+  "reading": "おとうさん",
+  "romaji": "otousan",
+  "meaning_de": "Vater (einer anderen Person, höflich)",
+  "shared_cue": "vater",
+  "example": "Anata no otōsan wa doko ni imasu ka. — Wo ist Ihr Vater?",
+  "collision_mates": [
+   {
+    "word": "父",
+    "reading": "ちち",
+    "meaning_de": "(mein) Vater (bescheidene Form)"
+   }
+  ]
+ },
+ {
+  "id": 246,
+  "word": "父",
+  "reading": "ちち",
+  "romaji": "chichi",
+  "meaning_de": "(mein) Vater (bescheidene Form)",
+  "shared_cue": "vater",
+  "example": "Chichi wa kaisha de hataraite imasu. — Mein Vater arbeitet in einer Firma.",
+  "collision_mates": [
+   {
+    "word": "お父さん",
+    "reading": "おとうさん",
+    "meaning_de": "Vater (einer anderen Person, höflich)"
+   }
+  ]
+ },
+ {
+  "id": 362,
+  "word": "ある",
+  "reading": "ある",
+  "romaji": "aru",
+  "meaning_de": "da sein, existieren (für Sachen)",
+  "shared_cue": "da sein",
+  "example": "Tsukue no ue ni hon ga arimasu. — Auf dem Tisch ist ein Buch.",
+  "collision_mates": [
+   {
+    "word": "いる",
+    "reading": "いる",
+    "meaning_de": "da sein, existieren (für Lebewesen)"
+   }
+  ]
+ },
+ {
+  "id": 361,
+  "word": "いる",
+  "reading": "いる",
+  "romaji": "iru",
+  "meaning_de": "da sein, existieren (für Lebewesen)",
+  "shared_cue": "da sein",
+  "example": "Kōen ni neko ga imasu. — Im Park ist eine Katze.",
+  "collision_mates": [
+   {
+    "word": "ある",
+    "reading": "ある",
+    "meaning_de": "da sein, existieren (für Sachen)"
+   }
+  ]
+ },
+ {
+  "id": 518,
+  "word": "晩",
+  "reading": "ばん",
+  "romaji": "ban",
+  "meaning_de": "Abend",
+  "shared_cue": "abend",
+  "example": "Konban, tomodachi to tabemasu. — Heute Abend esse ich mit Freunden.",
+  "collision_mates": [
+   {
+    "word": "夜",
+    "reading": "よる",
+    "meaning_de": "Abend, Nacht"
+   },
+   {
+    "word": "夕方",
+    "reading": "ゆうがた",
+    "meaning_de": "(früher) Abend"
+   }
+  ]
+ },
+ {
+  "id": 151,
+  "word": "ばん",
+  "reading": "ばん",
+  "romaji": "ban",
+  "meaning_de": "Abend, Nacht",
+  "shared_cue": "abend",
+  "example": "Ban ie de hon o yomimasu. — Am Abend lese ich zu Hause ein Buch.",
+  "collision_mates": [
+   {
+    "word": "夜",
+    "reading": "よる",
+    "meaning_de": "Abend, Nacht"
+   },
+   {
+    "word": "夕方",
+    "reading": "ゆうがた",
+    "meaning_de": "(früher) Abend"
+   }
+  ]
+ },
+ {
+  "id": 271,
+  "word": "夜",
+  "reading": "よる",
+  "romaji": "yoru",
+  "meaning_de": "Abend, Nacht",
+  "shared_cue": "abend",
+  "example": "Yoru wa uchi de hon o yomimasu. — Abends lese ich zu Hause ein Buch.",
+  "collision_mates": [
+   {
+    "word": "晩",
+    "reading": "ばん",
+    "meaning_de": "Abend"
+   },
+   {
+    "word": "ばん",
+    "reading": "ばん",
+    "meaning_de": "Abend, Nacht"
+   },
+   {
+    "word": "夕方",
+    "reading": "ゆうがた",
+    "meaning_de": "(früher) Abend"
+   }
+  ]
+ },
+ {
+  "id": 801,
+  "word": "夕方",
+  "reading": "ゆうがた",
+  "romaji": "yuugata",
+  "meaning_de": "(früher) Abend",
+  "shared_cue": "abend",
+  "example": "Yuugata ni tomodachi to aimasu. — Am Abend treffe ich einen Freund.",
+  "collision_mates": [
+   {
+    "word": "晩",
+    "reading": "ばん",
+    "meaning_de": "Abend"
+   },
+   {
+    "word": "ばん",
+    "reading": "ばん",
+    "meaning_de": "Abend, Nacht"
+   },
+   {
+    "word": "夜",
+    "reading": "よる",
+    "meaning_de": "Abend, Nacht"
+   }
+  ]
+ },
+ {
+  "id": 265,
+  "word": "人",
+  "reading": "ひと",
+  "romaji": "hito",
+  "meaning_de": "Person, Mensch",
+  "shared_cue": "person",
+  "example": "Ano hito wa dare desu ka. — Wer ist diese Person?",
+  "collision_mates": [
+   {
+    "word": "一人",
+    "reading": "ひとり",
+    "meaning_de": "eine Person; allein"
+   }
+  ]
+ },
+ {
+  "id": 266,
+  "word": "一人",
+  "reading": "ひとり",
+  "romaji": "hitori",
+  "meaning_de": "eine Person; allein",
+  "shared_cue": "person",
+  "example": "Watashi wa hitori de bangohan o tabemasu. — Ich esse allein zu Abend.",
+  "collision_mates": [
+   {
+    "word": "人",
+    "reading": "ひと",
+    "meaning_de": "Person, Mensch"
+   },
+   {
+    "word": "ひと",
+    "reading": "ひと",
+    "meaning_de": "Person, Mensch"
+   }
+  ]
+ },
+ {
+  "id": 194,
+  "word": "ひと",
+  "reading": "ひと",
+  "romaji": "hito",
+  "meaning_de": "Person, Mensch",
+  "shared_cue": "person",
+  "example": "Ano hito wa sensei desu. — Die Person dort ist Lehrer.",
+  "collision_mates": [
+   {
+    "word": "一人",
+    "reading": "ひとり",
+    "meaning_de": "eine Person; allein"
+   }
+  ]
+ },
+ {
+  "id": 420,
+  "word": "映画",
+  "reading": "えいが",
+  "romaji": "eiga",
+  "meaning_de": "Film, Kino",
+  "shared_cue": "film",
+  "example": "Kinō eiga o mimashita. — Gestern habe ich einen Film gesehen.",
+  "collision_mates": [
+   {
+    "word": "フィルム",
+    "reading": "フィルム",
+    "meaning_de": "Film (Rolle)"
+   }
+  ]
+ },
+ {
+  "id": 936,
+  "word": "フィルム",
+  "reading": "フィルム",
+  "romaji": "firumu",
+  "meaning_de": "Film (Rolle)",
+  "shared_cue": "film",
+  "example": "Atarashii firumu o kaimashita. — Ich habe einen neuen Film gekauft.",
+  "collision_mates": [
+   {
+    "word": "映画",
+    "reading": "えいが",
+    "meaning_de": "Film, Kino"
+   }
+  ]
+ },
+ {
+  "id": 481,
+  "word": "少し",
+  "reading": "すこし",
+  "romaji": "sukoshi",
+  "meaning_de": "ein bisschen, ein wenig",
+  "shared_cue": "bisschen",
+  "example": "Sukoshi nihongo o hanashimasu. — Ich spreche ein bisschen Japanisch.",
+  "collision_mates": [
+   {
+    "word": "ちょっと",
+    "reading": "ちょっと",
+    "meaning_de": "ein bisschen, etwas"
+   }
+  ]
+ },
+ {
+  "id": 331,
+  "word": "ちょっと",
+  "reading": "ちょっと",
+  "romaji": "chotto",
+  "meaning_de": "ein bisschen, etwas",
+  "shared_cue": "bisschen",
+  "example": "Chotto matte kudasai. — Warten Sie bitte einen Moment.",
+  "collision_mates": [
+   {
+    "word": "少し",
+    "reading": "すこし",
+    "meaning_de": "ein bisschen, ein wenig"
+   }
+  ]
+ },
+ {
+  "id": 497,
+  "word": "おはよう",
+  "reading": "おはよう",
+  "romaji": "ohayou",
+  "meaning_de": "Guten Morgen (vertraut)",
+  "shared_cue": "guten morgen",
+  "example": "Okāsan, ohayō. — Guten Morgen, Mama.",
+  "collision_mates": [
+   {
+    "word": "おはようございます",
+    "reading": "おはようございます",
+    "meaning_de": "Guten Morgen (höflich)"
+   }
+  ]
+ },
+ {
+  "id": 498,
+  "word": "おはようございます",
+  "reading": "おはようございます",
+  "romaji": "ohayou gozaimasu",
+  "meaning_de": "Guten Morgen (höflich)",
+  "shared_cue": "guten morgen",
+  "example": "Sensei, ohayō gozaimasu. — Guten Morgen, Frau Lehrerin.",
+  "collision_mates": [
+   {
+    "word": "おはよう",
+    "reading": "おはよう",
+    "meaning_de": "Guten Morgen (vertraut)"
+   }
+  ]
+ },
+ {
+  "id": 110,
+  "word": "トイレ",
+  "reading": "トイレ",
+  "romaji": "toire",
+  "meaning_de": "Toilette",
+  "shared_cue": "toilette",
+  "example": "Toire wa doko desu ka. — Wo ist die Toilette?",
+  "collision_mates": [
+   {
+    "word": "おてあらい",
+    "reading": "おてあらい",
+    "meaning_de": "Toilette (höflich)"
+   },
+   {
+    "word": "お手洗い",
+    "reading": "おてあらい",
+    "meaning_de": "Toilette, WC"
+   }
+  ]
+ },
+ {
+  "id": 114,
+  "word": "おてあらい",
+  "reading": "おてあらい",
+  "romaji": "otearai",
+  "meaning_de": "Toilette (höflich)",
+  "shared_cue": "toilette",
+  "example": "Otearai wa asoko desu. — Die Toilette ist dort drüben.",
+  "collision_mates": [
+   {
+    "word": "トイレ",
+    "reading": "トイレ",
+    "meaning_de": "Toilette"
+   }
+  ]
+ },
+ {
+  "id": 888,
+  "word": "お手洗い",
+  "reading": "おてあらい",
+  "romaji": "o-tearai",
+  "meaning_de": "Toilette, WC",
+  "shared_cue": "toilette",
+  "example": "O-tearai wa doko desu ka. — Wo ist die Toilette?",
+  "collision_mates": [
+   {
+    "word": "トイレ",
+    "reading": "トイレ",
+    "meaning_de": "Toilette"
+   }
+  ]
+ },
+ {
+  "id": 288,
+  "word": "先生",
+  "reading": "せんせい",
+  "romaji": "sensei",
+  "meaning_de": "Lehrer/in (auch: Arzt-Titel)",
+  "shared_cue": "lehrer",
+  "example": "Ano sensei wa totemo yasashii desu. — Diese Lehrerin ist sehr nett.",
+  "collision_mates": [
+   {
+    "word": "きょうし",
+    "reading": "きょうし",
+    "meaning_de": "Lehrer (Beruf)"
+   }
+  ]
+ },
+ {
+  "id": 26,
+  "word": "せんせい",
+  "reading": "せんせい",
+  "romaji": "sensei",
+  "meaning_de": "Lehrer, Meister",
+  "shared_cue": "lehrer",
+  "example": "Sensei wa totemo yasashii desu. — Der Lehrer ist sehr nett.",
+  "collision_mates": [
+   {
+    "word": "きょうし",
+    "reading": "きょうし",
+    "meaning_de": "Lehrer (Beruf)"
+   }
+  ]
+ },
+ {
+  "id": 27,
+  "word": "きょうし",
+  "reading": "きょうし",
+  "romaji": "kyoushi",
+  "meaning_de": "Lehrer (Beruf)",
+  "shared_cue": "lehrer",
+  "example": "Watashi no ani wa kyōshi desu. — Mein älterer Bruder ist Lehrer.",
+  "collision_mates": [
+   {
+    "word": "先生",
+    "reading": "せんせい",
+    "meaning_de": "Lehrer/in (auch: Arzt-Titel)"
+   },
+   {
+    "word": "せんせい",
+    "reading": "せんせい",
+    "meaning_de": "Lehrer, Meister"
+   }
+  ]
+ },
+ {
+  "id": 289,
+  "word": "学生",
+  "reading": "がくせい",
+  "romaji": "gakusei",
+  "meaning_de": "Schüler/in, Student/in",
+  "shared_cue": "schüler",
+  "example": "Watashi wa daigaku no gakusei desu. — Ich bin Student an der Universität.",
+  "collision_mates": [
+   {
+    "word": "生徒",
+    "reading": "せいと",
+    "meaning_de": "Schüler (in der Schule)"
+   }
+  ]
+ },
+ {
+  "id": 690,
+  "word": "生徒",
+  "reading": "せいと",
+  "romaji": "seito",
+  "meaning_de": "Schüler (in der Schule)",
+  "shared_cue": "schüler",
+  "example": "kono gakkou no seito wa ookii desu. — Die Schüler dieser Schule sind gross.",
+  "collision_mates": [
+   {
+    "word": "学生",
+    "reading": "がくせい",
+    "meaning_de": "Schüler/in, Student/in"
+   }
+  ]
+ },
+ {
+  "id": 500,
+  "word": "おやすみ",
+  "reading": "おやすみ",
+  "romaji": "oyasumi",
+  "meaning_de": "Gute Nacht (vertraut)",
+  "shared_cue": "gute nacht",
+  "example": "Jā, oyasumi. — Also dann, gute Nacht.",
+  "collision_mates": [
+   {
+    "word": "おやすみなさい",
+    "reading": "おやすみなさい",
+    "meaning_de": "Gute Nacht (höflich)"
+   }
+  ]
+ },
+ {
+  "id": 501,
+  "word": "おやすみなさい",
+  "reading": "おやすみなさい",
+  "romaji": "oyasumi nasai",
+  "meaning_de": "Gute Nacht (höflich)",
+  "shared_cue": "gute nacht",
+  "example": "Okāsan, oyasuminasai. — Gute Nacht, Mama.",
+  "collision_mates": [
+   {
+    "word": "おやすみ",
+    "reading": "おやすみ",
+    "meaning_de": "Gute Nacht (vertraut)"
+   }
+  ]
+ },
+ {
+  "id": 766,
+  "word": "ポケット",
+  "reading": "ポケット",
+  "romaji": "poketto",
+  "meaning_de": "Tasche (an Kleidung)",
+  "shared_cue": "tasche",
+  "example": "Poketto ni kagi ga arimasu. — In der Tasche ist ein Schlüssel.",
+  "collision_mates": [
+   {
+    "word": "かばん",
+    "reading": "かばん",
+    "meaning_de": "Tasche, Aktentasche"
+   }
+  ]
+ },
+ {
+  "id": 76,
+  "word": "かばん",
+  "reading": "かばん",
+  "romaji": "kaban",
+  "meaning_de": "Tasche, Aktentasche",
+  "shared_cue": "tasche",
+  "example": "Watashi no kaban wa kuroi desu. — Meine Tasche ist schwarz.",
+  "collision_mates": [
+   {
+    "word": "ポケット",
+    "reading": "ポケット",
+    "meaning_de": "Tasche (an Kleidung)"
+   }
+  ]
+ },
+ {
+  "id": 767,
+  "word": "着る",
+  "reading": "きる",
+  "romaji": "kiru",
+  "meaning_de": "anziehen (Oberkörper)",
+  "shared_cue": "anziehen",
+  "example": "Shatsu wo kimasu. — Ich ziehe ein Hemd an.",
+  "collision_mates": [
+   {
+    "word": "はく",
+    "reading": "はく",
+    "meaning_de": "anziehen (Hose, Schuhe)"
+   }
+  ]
+ },
+ {
+  "id": 768,
+  "word": "はく",
+  "reading": "はく",
+  "romaji": "haku",
+  "meaning_de": "anziehen (Hose, Schuhe)",
+  "shared_cue": "anziehen",
+  "example": "Zubon wo hakimasu. — Ich ziehe eine Hose an.",
+  "collision_mates": [
+   {
+    "word": "着る",
+    "reading": "きる",
+    "meaning_de": "anziehen (Oberkörper)"
+   }
+  ]
+ },
+ {
+  "id": 772,
+  "word": "青",
+  "reading": "あお",
+  "romaji": "ao",
+  "meaning_de": "Blau (Nomen)",
+  "shared_cue": "blau",
+  "example": "Ao ga suki desu. — Ich mag Blau.",
+  "collision_mates": [
+   {
+    "word": "青い",
+    "reading": "あおい",
+    "meaning_de": "blau"
+   }
+  ]
+ },
+ {
+  "id": 773,
+  "word": "青い",
+  "reading": "あおい",
+  "romaji": "aoi",
+  "meaning_de": "blau",
+  "shared_cue": "blau",
+  "example": "Aoi sora desu ne. — Was für ein blauer Himmel.",
+  "collision_mates": [
+   {
+    "word": "青",
+    "reading": "あお",
+    "meaning_de": "Blau (Nomen)"
+   }
+  ]
+ },
+ {
+  "id": 774,
+  "word": "赤",
+  "reading": "あか",
+  "romaji": "aka",
+  "meaning_de": "Rot (Nomen)",
+  "shared_cue": "rot",
+  "example": "Aka ga suki desu. — Ich mag Rot.",
+  "collision_mates": [
+   {
+    "word": "赤い",
+    "reading": "あかい",
+    "meaning_de": "rot"
+   }
+  ]
+ },
+ {
+  "id": 775,
+  "word": "赤い",
+  "reading": "あかい",
+  "romaji": "akai",
+  "meaning_de": "rot",
+  "shared_cue": "rot",
+  "example": "Akai kuruma desu. — Das ist ein rotes Auto.",
+  "collision_mates": [
+   {
+    "word": "赤",
+    "reading": "あか",
+    "meaning_de": "Rot (Nomen)"
+   }
+  ]
+ },
+ {
+  "id": 316,
+  "word": "作る",
+  "reading": "つくる",
+  "romaji": "tsukuru",
+  "meaning_de": "machen, zubereiten",
+  "shared_cue": "machen",
+  "example": "Haha wa oishii ryōri o tsukurimasu. — Meine Mutter kocht leckeres Essen.",
+  "collision_mates": [
+   {
+    "word": "する",
+    "reading": "する",
+    "meaning_de": "machen, tun"
+   },
+   {
+    "word": "撮る",
+    "reading": "とる",
+    "meaning_de": "(ein Foto) machen, aufnehmen"
+   },
+   {
+    "word": "やる",
+    "reading": "やる",
+    "meaning_de": "machen, tun; geben"
+   }
+  ]
+ },
+ {
+  "id": 372,
+  "word": "する",
+  "reading": "する",
+  "romaji": "suru",
+  "meaning_de": "machen, tun",
+  "shared_cue": "machen",
+  "example": "Nichiyōbi ni nani o shimasu ka. — Was machst du am Sonntag?",
+  "collision_mates": [
+   {
+    "word": "作る",
+    "reading": "つくる",
+    "meaning_de": "machen, zubereiten"
+   },
+   {
+    "word": "撮る",
+    "reading": "とる",
+    "meaning_de": "(ein Foto) machen, aufnehmen"
+   },
+   {
+    "word": "やる",
+    "reading": "やる",
+    "meaning_de": "machen, tun; geben"
+   }
+  ]
+ },
+ {
+  "id": 937,
+  "word": "撮る",
+  "reading": "とる",
+  "romaji": "toru",
+  "meaning_de": "(ein Foto) machen, aufnehmen",
+  "shared_cue": "machen",
+  "example": "Niwa de shashin o torimasu. — Im Garten mache ich Fotos.",
+  "collision_mates": [
+   {
+    "word": "作る",
+    "reading": "つくる",
+    "meaning_de": "machen, zubereiten"
+   },
+   {
+    "word": "する",
+    "reading": "する",
+    "meaning_de": "machen, tun"
+   },
+   {
+    "word": "やる",
+    "reading": "やる",
+    "meaning_de": "machen, tun; geben"
+   }
+  ]
+ },
+ {
+  "id": 946,
+  "word": "やる",
+  "reading": "やる",
+  "romaji": "yaru",
+  "meaning_de": "machen, tun; geben",
+  "shared_cue": "machen",
+  "example": "Mainichi shukudai o yarimasu. — Jeden Tag mache ich die Hausaufgaben.",
+  "collision_mates": [
+   {
+    "word": "作る",
+    "reading": "つくる",
+    "meaning_de": "machen, zubereiten"
+   },
+   {
+    "word": "する",
+    "reading": "する",
+    "meaning_de": "machen, tun"
+   },
+   {
+    "word": "撮る",
+    "reading": "とる",
+    "meaning_de": "(ein Foto) machen, aufnehmen"
+   }
+  ]
+ },
+ {
+  "id": 492,
+  "word": "誰",
+  "reading": "だれ",
+  "romaji": "dare",
+  "meaning_de": "wer",
+  "shared_cue": "wer",
+  "example": "Ano hito wa dare desu ka. — Wer ist diese Person dort?",
+  "collision_mates": [
+   {
+    "word": "どなた",
+    "reading": "どなた",
+    "meaning_de": "wer (höflich)"
+   }
+  ]
+ },
+ {
+  "id": 38,
+  "word": "だれ",
+  "reading": "だれ",
+  "romaji": "dare",
+  "meaning_de": "wer",
+  "shared_cue": "wer",
+  "example": "Ano hito wa dare desu ka. — Wer ist diese Person dort?",
+  "collision_mates": [
+   {
+    "word": "どなた",
+    "reading": "どなた",
+    "meaning_de": "wer (höflich)"
+   }
+  ]
+ },
+ {
+  "id": 39,
+  "word": "どなた",
+  "reading": "どなた",
+  "romaji": "donata",
+  "meaning_de": "wer (höflich)",
+  "shared_cue": "wer",
+  "example": "Ano kata wa donata desu ka. — Wer ist die Person dort (höflich)?",
+  "collision_mates": [
+   {
+    "word": "誰",
+    "reading": "だれ",
+    "meaning_de": "wer"
+   },
+   {
+    "word": "だれ",
+    "reading": "だれ",
+    "meaning_de": "wer"
+   }
+  ]
+ },
+ {
+  "id": 776,
+  "word": "黄色",
+  "reading": "きいろ",
+  "romaji": "kiiro",
+  "meaning_de": "Gelb (Nomen)",
+  "shared_cue": "gelb",
+  "example": "Kiiro ga suki desu. — Ich mag Gelb.",
+  "collision_mates": [
+   {
+    "word": "黄色い",
+    "reading": "きいろい",
+    "meaning_de": "gelb"
+   }
+  ]
+ },
+ {
+  "id": 777,
+  "word": "黄色い",
+  "reading": "きいろい",
+  "romaji": "kiiroi",
+  "meaning_de": "gelb",
+  "shared_cue": "gelb",
+  "example": "Kiiroi hana desu. — Das ist eine gelbe Blume.",
+  "collision_mates": [
+   {
+    "word": "黄色",
+    "reading": "きいろ",
+    "meaning_de": "Gelb (Nomen)"
+   }
+  ]
+ },
+ {
+  "id": 778,
+  "word": "黒",
+  "reading": "くろ",
+  "romaji": "kuro",
+  "meaning_de": "Schwarz (Nomen)",
+  "shared_cue": "schwarz",
+  "example": "Kuro ga suki desu. — Ich mag Schwarz.",
+  "collision_mates": [
+   {
+    "word": "黒い",
+    "reading": "くろい",
+    "meaning_de": "schwarz"
+   }
+  ]
+ },
+ {
+  "id": 779,
+  "word": "黒い",
+  "reading": "くろい",
+  "romaji": "kuroi",
+  "meaning_de": "schwarz",
+  "shared_cue": "schwarz",
+  "example": "Kuroi kuruma desu. — Das ist ein schwarzes Auto.",
+  "collision_mates": [
+   {
+    "word": "黒",
+    "reading": "くろ",
+    "meaning_de": "Schwarz (Nomen)"
+   }
+  ]
+ },
+ {
+  "id": 59,
+  "word": "この",
+  "reading": "この",
+  "romaji": "kono",
+  "meaning_de": "diese/r/s ~ (Bestimmungswort)",
+  "shared_cue": "diese",
+  "example": "Kono hon wa totemo omoshiroi desu. — Dieses Buch ist sehr interessant.",
+  "collision_mates": [
+   {
+    "word": "その",
+    "reading": "その",
+    "meaning_de": "diese/r/s ~ (bei dir, Bestimmungswort)"
+   }
+  ]
+ },
+ {
+  "id": 60,
+  "word": "その",
+  "reading": "その",
+  "romaji": "sono",
+  "meaning_de": "diese/r/s ~ (bei dir, Bestimmungswort)",
+  "shared_cue": "diese",
+  "example": "Sono kaban wa dare no desu ka. — Wem gehört diese Tasche (bei dir)?",
+  "collision_mates": [
+   {
+    "word": "この",
+    "reading": "この",
+    "meaning_de": "diese/r/s ~ (Bestimmungswort)"
+   }
+  ]
+ },
+ {
+  "id": 136,
+  "word": "おきます",
+  "reading": "おきます",
+  "romaji": "okimasu",
+  "meaning_de": "aufstehen, aufwachen",
+  "shared_cue": "aufstehen",
+  "example": "Maiasa rokuji ni okimasu. — Ich stehe jeden Morgen um sechs Uhr auf.",
+  "collision_mates": [
+   {
+    "word": "起きる",
+    "reading": "おきる",
+    "meaning_de": "aufstehen"
+   },
+   {
+    "word": "立つ",
+    "reading": "たつ",
+    "meaning_de": "aufstehen, stehen"
+   }
+  ]
+ },
+ {
+  "id": 278,
+  "word": "起きる",
+  "reading": "おきる",
+  "romaji": "okiru",
+  "meaning_de": "aufstehen",
+  "shared_cue": "aufstehen",
+  "example": "Watashi wa asa roku-ji ni okimasu. — Ich stehe morgens um sechs Uhr auf.",
+  "collision_mates": [
+   {
+    "word": "おきます",
+    "reading": "おきます",
+    "meaning_de": "aufstehen, aufwachen"
+   },
+   {
+    "word": "立つ",
+    "reading": "たつ",
+    "meaning_de": "aufstehen, stehen"
+   }
+  ]
+ },
+ {
+  "id": 954,
+  "word": "立つ",
+  "reading": "たつ",
+  "romaji": "tatsu",
+  "meaning_de": "aufstehen, stehen",
+  "shared_cue": "aufstehen",
+  "example": "Sensei ga mae ni tachimasu. — Der Lehrer steht vorne.",
+  "collision_mates": [
+   {
+    "word": "おきます",
+    "reading": "おきます",
+    "meaning_de": "aufstehen, aufwachen"
+   },
+   {
+    "word": "起きる",
+    "reading": "おきる",
+    "meaning_de": "aufstehen"
+   }
+  ]
+ },
+ {
+  "id": 137,
+  "word": "ねます",
+  "reading": "ねます",
+  "romaji": "nemasu",
+  "meaning_de": "schlafen, ins Bett gehen",
+  "shared_cue": "schlafen",
+  "example": "Watashi wa jūichiji ni nemasu. — Ich gehe um elf Uhr ins Bett.",
+  "collision_mates": [
+   {
+    "word": "寝る",
+    "reading": "ねる",
+    "meaning_de": "schlafen, zu Bett gehen"
+   }
+  ]
+ },
+ {
+  "id": 279,
+  "word": "寝る",
+  "reading": "ねる",
+  "romaji": "neru",
+  "meaning_de": "schlafen, zu Bett gehen",
+  "shared_cue": "schlafen",
+  "example": "Kinō no yoru jūichi-ji ni nemashita. — Gestern Nacht bin ich um elf Uhr ins Bett gegangen.",
+  "collision_mates": [
+   {
+    "word": "ねます",
+    "reading": "ねます",
+    "meaning_de": "schlafen, ins Bett gehen"
+   }
+  ]
+ },
+ {
+  "id": 140,
+  "word": "べんきょうします",
+  "reading": "べんきょうします",
+  "romaji": "benkyoushimasu",
+  "meaning_de": "lernen, studieren",
+  "shared_cue": "lernen",
+  "example": "Maiban nihongo o benkyō shimasu. — Ich lerne jeden Abend Japanisch.",
+  "collision_mates": [
+   {
+    "word": "勉強する",
+    "reading": "べんきょうする",
+    "meaning_de": "lernen, studieren"
+   },
+   {
+    "word": "勉強",
+    "reading": "べんきょう",
+    "meaning_de": "Lernen, Studium"
+   },
+   {
+    "word": "習う",
+    "reading": "ならう",
+    "meaning_de": "lernen (von jemandem)"
+   }
+  ]
+ },
+ {
+  "id": 373,
+  "word": "勉強する",
+  "reading": "べんきょうする",
+  "romaji": "benkyou suru",
+  "meaning_de": "lernen, studieren",
+  "shared_cue": "lernen",
+  "example": "Mainichi nihongo o benkyō shimasu. — Jeden Tag lerne ich Japanisch.",
+  "collision_mates": [
+   {
+    "word": "べんきょうします",
+    "reading": "べんきょうします",
+    "meaning_de": "lernen, studieren"
+   },
+   {
+    "word": "勉強",
+    "reading": "べんきょう",
+    "meaning_de": "Lernen, Studium"
+   },
+   {
+    "word": "習う",
+    "reading": "ならう",
+    "meaning_de": "lernen (von jemandem)"
+   }
+  ]
+ },
+ {
+  "id": 284,
+  "word": "勉強",
+  "reading": "べんきょう",
+  "romaji": "benkyou",
+  "meaning_de": "Lernen, Studium",
+  "shared_cue": "lernen",
+  "example": "Mainichi nihongo o benkyō shimasu. — Jeden Tag lerne ich Japanisch.",
+  "collision_mates": [
+   {
+    "word": "べんきょうします",
+    "reading": "べんきょうします",
+    "meaning_de": "lernen, studieren"
+   },
+   {
+    "word": "勉強する",
+    "reading": "べんきょうする",
+    "meaning_de": "lernen, studieren"
+   },
+   {
+    "word": "習う",
+    "reading": "ならう",
+    "meaning_de": "lernen (von jemandem)"
+   }
+  ]
+ },
+ {
+  "id": 865,
+  "word": "習う",
+  "reading": "ならう",
+  "romaji": "narau",
+  "meaning_de": "lernen (von jemandem)",
+  "shared_cue": "lernen",
+  "example": "Sensei ni nihongo o naraimasu. — Ich lerne Japanisch bei der Lehrerin.",
+  "collision_mates": [
+   {
+    "word": "べんきょうします",
+    "reading": "べんきょうします",
+    "meaning_de": "lernen, studieren"
+   },
+   {
+    "word": "勉強する",
+    "reading": "べんきょうする",
+    "meaning_de": "lernen, studieren"
+   },
+   {
+    "word": "勉強",
+    "reading": "べんきょう",
+    "meaning_de": "Lernen, Studium"
+   }
+  ]
+ },
+ {
+  "id": 8,
+  "word": "ありがとう",
+  "reading": "ありがとう",
+  "romaji": "arigatou",
+  "meaning_de": "Danke",
+  "shared_cue": "danke",
+  "example": "Purezento o arigatō. — Danke für das Geschenk.",
+  "collision_mates": [
+   {
+    "word": "どうも",
+    "reading": "どうも",
+    "meaning_de": "danke (informell)"
+   }
+  ]
+ },
+ {
+  "id": 93,
+  "word": "どうも",
+  "reading": "どうも",
+  "romaji": "doumo",
+  "meaning_de": "danke (informell)",
+  "shared_cue": "danke",
+  "example": "Dōmo arigatō gozaimasu. — Vielen herzlichen Dank.",
+  "collision_mates": [
+   {
+    "word": "ありがとう",
+    "reading": "ありがとう",
+    "meaning_de": "Danke"
+   }
+  ]
+ },
+ {
+  "id": 6,
+  "word": "はじめまして",
+  "reading": "はじめまして",
+  "romaji": "hajimemashite",
+  "meaning_de": "Freut mich (bei erster Begegnung)",
+  "shared_cue": "freut mich",
+  "example": "Hajimemashite, Tanaka desu. — Freut mich, ich bin Tanaka.",
+  "collision_mates": [
+   {
+    "word": "どうぞよろしく",
+    "reading": "どうぞよろしく",
+    "meaning_de": "Freut mich, Sie kennenzulernen"
+   }
+  ]
+ },
+ {
+  "id": 44,
+  "word": "どうぞよろしく",
+  "reading": "どうぞよろしく",
+  "romaji": "douzo yoroshiku",
+  "meaning_de": "Freut mich, Sie kennenzulernen",
+  "shared_cue": "freut mich",
+  "example": "Watashi wa Tanaka desu. Dōzo yoroshiku. — Ich bin Tanaka. Freut mich, Sie kennenzulernen.",
+  "collision_mates": [
+   {
+    "word": "はじめまして",
+    "reading": "はじめまして",
+    "meaning_de": "Freut mich (bei erster Begegnung)"
+   }
+  ]
+ },
+ {
+  "id": 10,
+  "word": "はい",
+  "reading": "はい",
+  "romaji": "hai",
+  "meaning_de": "Ja",
+  "shared_cue": "ja",
+  "example": "Hai, watashi wa gakusei desu. — Ja, ich bin Student.",
+  "collision_mates": [
+   {
+    "word": "ええ",
+    "reading": "ええ",
+    "meaning_de": "ja (informell)"
+   }
+  ]
+ },
+ {
+  "id": 220,
+  "word": "ええ",
+  "reading": "ええ",
+  "romaji": "ee",
+  "meaning_de": "ja (informell)",
+  "shared_cue": "ja",
+  "example": "Ē, watashi mo ikimasu. — Ja, ich gehe auch.",
+  "collision_mates": [
+   {
+    "word": "はい",
+    "reading": "はい",
+    "meaning_de": "Ja"
+   }
+  ]
+ },
+ {
+  "id": 11,
+  "word": "いいえ",
+  "reading": "いいえ",
+  "romaji": "iie",
+  "meaning_de": "Nein / Keine Ursache",
+  "shared_cue": "nein",
+  "example": "Iie, sore wa watashi no hon dewa arimasen. — Nein, das ist nicht mein Buch.",
+  "collision_mates": [
+   {
+    "word": "ちがいます",
+    "reading": "ちがいます",
+    "meaning_de": "Nein, das stimmt nicht / Es ist anders"
+   }
+  ]
+ },
+ {
+  "id": 89,
+  "word": "ちがいます",
+  "reading": "ちがいます",
+  "romaji": "chigaimasu",
+  "meaning_de": "Nein, das stimmt nicht / Es ist anders",
+  "shared_cue": "nein",
+  "example": "Iie, chigaimasu. — Nein, das stimmt nicht.",
+  "collision_mates": [
+   {
+    "word": "いいえ",
+    "reading": "いいえ",
+    "meaning_de": "Nein / Keine Ursache"
+   }
+  ]
+ },
+ {
+  "id": 23,
+  "word": "あのひと",
+  "reading": "あのひと",
+  "romaji": "ano hito",
+  "meaning_de": "diese Person, er, sie",
+  "shared_cue": "diese person",
+  "example": "Ano hito wa watashi no sensei desu. — Diese Person ist mein Lehrer.",
+  "collision_mates": [
+   {
+    "word": "あのかた",
+    "reading": "あのかた",
+    "meaning_de": "diese Person (höflich)"
+   }
+  ]
+ },
+ {
+  "id": 24,
+  "word": "あのかた",
+  "reading": "あのかた",
+  "romaji": "ano kata",
+  "meaning_de": "diese Person (höflich)",
+  "shared_cue": "diese person",
+  "example": "Ano kata wa ginkō no hito desu. — Diese Person ist von der Bank.",
+  "collision_mates": [
+   {
+    "word": "あのひと",
+    "reading": "あのひと",
+    "meaning_de": "diese Person, er, sie"
+   }
+  ]
+ },
+ {
+  "id": 141,
+  "word": "おわります",
+  "reading": "おわります",
+  "romaji": "owarimasu",
+  "meaning_de": "enden, aufhören",
+  "shared_cue": "enden",
+  "example": "Tesuto wa sanji ni owarimasu. — Der Test endet um drei Uhr.",
+  "collision_mates": [
+   {
+    "word": "終る",
+    "reading": "おわる",
+    "meaning_de": "enden, aufhören"
+   }
+  ]
+ },
+ {
+  "id": 286,
+  "word": "終る",
+  "reading": "おわる",
+  "romaji": "owaru",
+  "meaning_de": "enden, aufhören",
+  "shared_cue": "enden",
+  "example": "Eiga wa jū-ji ni owarimasu. — Der Film endet um zehn Uhr.",
+  "collision_mates": [
+   {
+    "word": "おわります",
+    "reading": "おわります",
+    "meaning_de": "enden, aufhören"
+   }
+  ]
+ },
+ {
+  "id": 247,
+  "word": "母",
+  "reading": "はは",
+  "romaji": "haha",
+  "meaning_de": "(meine) Mutter (bescheidene Form)",
+  "shared_cue": "mutter",
+  "example": "Haha wa ryōri ga jōzu desu. — Meine Mutter kocht gut.",
+  "collision_mates": [
+   {
+    "word": "お母さん",
+    "reading": "おかあさん",
+    "meaning_de": "Mutter (einer anderen Person, höflich)"
+   }
+  ]
+ },
+ {
+  "id": 256,
+  "word": "お母さん",
+  "reading": "おかあさん",
+  "romaji": "okaasan",
+  "meaning_de": "Mutter (einer anderen Person, höflich)",
+  "shared_cue": "mutter",
+  "example": "Anata no okāsan wa yasashii desu ka. — Ist Ihre Mutter nett?",
+  "collision_mates": [
+   {
+    "word": "母",
+    "reading": "はは",
+    "meaning_de": "(meine) Mutter (bescheidene Form)"
+   }
+  ]
+ },
+ {
+  "id": 280,
+  "word": "食べる",
+  "reading": "たべる",
+  "romaji": "taberu",
+  "meaning_de": "essen",
+  "shared_cue": "essen",
+  "example": "Asagohan o takusan tabemashita. — Ich habe viel gefrühstückt.",
+  "collision_mates": [
+   {
+    "word": "食べ物",
+    "reading": "たべもの",
+    "meaning_de": "Essen, Speise"
+   }
+  ]
+ },
+ {
+  "id": 229,
+  "word": "食べ物",
+  "reading": "たべもの",
+  "romaji": "tabemono",
+  "meaning_de": "Essen, Speise",
+  "shared_cue": "essen",
+  "example": "Nihon no tabemono wa oishii desu. — Japanisches Essen ist lecker.",
+  "collision_mates": [
+   {
+    "word": "食べる",
+    "reading": "たべる",
+    "meaning_de": "essen"
+   }
+  ]
+ },
+ {
+  "id": 676,
+  "word": "入口",
+  "reading": "いりぐち",
+  "romaji": "iriguchi",
+  "meaning_de": "Eingang",
+  "shared_cue": "eingang",
+  "example": "Iriguchi wa migi da. — Der Eingang ist rechts.",
+  "collision_mates": [
+   {
+    "word": "玄関",
+    "reading": "げんかん",
+    "meaning_de": "Eingang, Hausflur"
+   }
+  ]
+ },
+ {
+  "id": 848,
+  "word": "玄関",
+  "reading": "げんかん",
+  "romaji": "genkan",
+  "meaning_de": "Eingang, Hausflur",
+  "shared_cue": "eingang",
+  "example": "Genkan ni kagi ga arimasu. — Im Eingang ist ein Schlüssel.",
+  "collision_mates": [
+   {
+    "word": "入口",
+    "reading": "いりぐち",
+    "meaning_de": "Eingang"
+   }
+  ]
+ },
+ {
+  "id": 696,
+  "word": "白",
+  "reading": "しろ",
+  "romaji": "shiro",
+  "meaning_de": "Weiss (die Farbe)",
+  "shared_cue": "weiss",
+  "example": "shiro ga suki desu. — Ich mag Weiss.",
+  "collision_mates": [
+   {
+    "word": "白い",
+    "reading": "しろい",
+    "meaning_de": "weiss (Adjektiv)"
+   }
+  ]
+ },
+ {
+  "id": 697,
+  "word": "白い",
+  "reading": "しろい",
+  "romaji": "shiroi",
+  "meaning_de": "weiss (Adjektiv)",
+  "shared_cue": "weiss",
+  "example": "shiroi kuruma ga kimashita. — Ein weisses Auto ist gekommen.",
+  "collision_mates": [
+   {
+    "word": "白",
+    "reading": "しろ",
+    "meaning_de": "Weiss (die Farbe)"
+   }
+  ]
+ },
+ {
+  "id": 824,
+  "word": "広い",
+  "reading": "ひろい",
+  "romaji": "hiroi",
+  "meaning_de": "weit, geräumig",
+  "shared_cue": "weit",
+  "example": "Kono heya wa hiroi desu. — Dieses Zimmer ist geräumig.",
+  "collision_mates": [
+   {
+    "word": "遠い",
+    "reading": "とおい",
+    "meaning_de": "weit, fern"
+   }
+  ]
+ },
+ {
+  "id": 922,
+  "word": "遠い",
+  "reading": "とおい",
+  "romaji": "tooi",
+  "meaning_de": "weit, fern",
+  "shared_cue": "weit",
+  "example": "Yama wa eki kara tooi desu. — Der Berg ist weit vom Bahnhof entfernt.",
+  "collision_mates": [
+   {
+    "word": "広い",
+    "reading": "ひろい",
+    "meaning_de": "weit, geräumig"
+   }
+  ]
+ },
+ {
+  "id": 838,
+  "word": "簡単",
+  "reading": "かんたん",
+  "romaji": "kantan",
+  "meaning_de": "einfach, leicht, simpel",
+  "shared_cue": "einfach",
+  "example": "Kono hon wa kantan desu. — Dieses Buch ist einfach.",
+  "collision_mates": [
+   {
+    "word": "易しい",
+    "reading": "やさしい",
+    "meaning_de": "einfach, leicht"
+   }
+  ]
+ },
+ {
+  "id": 879,
+  "word": "易しい",
+  "reading": "やさしい",
+  "romaji": "yasashii",
+  "meaning_de": "einfach, leicht",
+  "shared_cue": "einfach",
+  "example": "Kono shitsumon wa yasashii desu. — Diese Frage ist einfach.",
+  "collision_mates": [
+   {
+    "word": "簡単",
+    "reading": "かんたん",
+    "meaning_de": "einfach, leicht, simpel"
+   }
+  ]
+ },
+ {
+  "id": 853,
+  "word": "ドア",
+  "reading": "ドア",
+  "romaji": "doa",
+  "meaning_de": "Tür",
+  "shared_cue": "tür",
+  "example": "Doa o akete kudasai. — Bitte öffne die Tür.",
+  "collision_mates": [
+   {
+    "word": "戸",
+    "reading": "と",
+    "meaning_de": "Tür (japanischer Stil)"
+   }
+  ]
+ },
+ {
+  "id": 886,
+  "word": "戸",
+  "reading": "と",
+  "romaji": "to",
+  "meaning_de": "Tür (japanischer Stil)",
+  "shared_cue": "tür",
+  "example": "To o shimete kudasai. — Bitte schliesse die Tür.",
+  "collision_mates": [
+   {
+    "word": "ドア",
+    "reading": "ドア",
+    "meaning_de": "Tür"
+   }
+  ]
+ },
+ {
+  "id": 890,
+  "word": "掃除",
+  "reading": "そうじ",
+  "romaji": "souji",
+  "meaning_de": "Putzen, Reinigung",
+  "shared_cue": "putzen",
+  "example": "Mainichi heya no souji o shimasu. — Jeden Tag putze ich mein Zimmer.",
+  "collision_mates": [
+   {
+    "word": "磨く",
+    "reading": "みがく",
+    "meaning_de": "putzen, polieren (Zähne)"
+   }
+  ]
+ },
+ {
+  "id": 896,
+  "word": "磨く",
+  "reading": "みがく",
+  "romaji": "migaku",
+  "meaning_de": "putzen, polieren (Zähne)",
+  "shared_cue": "putzen",
+  "example": "Neru mae ni ha o migakimasu. — Vor dem Schlafen putze ich mir die Zähne.",
+  "collision_mates": [
+   {
+    "word": "掃除",
+    "reading": "そうじ",
+    "meaning_de": "Putzen, Reinigung"
+   }
+  ]
+ },
+ {
+  "id": 898,
+  "word": "開ける",
+  "reading": "あける",
+  "romaji": "akeru",
+  "meaning_de": "öffnen (transitiv)",
+  "shared_cue": "öffnen",
+  "example": "Mado o akemasu. — Ich öffne das Fenster.",
+  "collision_mates": [
+   {
+    "word": "開く",
+    "reading": "あく",
+    "meaning_de": "sich öffnen (intransitiv)"
+   }
+  ]
+ },
+ {
+  "id": 899,
+  "word": "開く",
+  "reading": "あく",
+  "romaji": "aku",
+  "meaning_de": "sich öffnen (intransitiv)",
+  "shared_cue": "öffnen",
+  "example": "Mado ga akimasu. — Das Fenster öffnet sich.",
+  "collision_mates": [
+   {
+    "word": "開ける",
+    "reading": "あける",
+    "meaning_de": "öffnen (transitiv)"
+   }
+  ]
+ },
+ {
+  "id": 900,
+  "word": "閉める",
+  "reading": "しめる",
+  "romaji": "shimeru",
+  "meaning_de": "schliessen (transitiv)",
+  "shared_cue": "schliessen",
+  "example": "To o shimemasu. — Ich schliesse die Tür.",
+  "collision_mates": [
+   {
+    "word": "閉まる",
+    "reading": "しまる",
+    "meaning_de": "sich schliessen (intransitiv)"
+   }
+  ]
+ },
+ {
+  "id": 901,
+  "word": "閉まる",
+  "reading": "しまる",
+  "romaji": "shimaru",
+  "meaning_de": "sich schliessen (intransitiv)",
+  "shared_cue": "schliessen",
+  "example": "To ga shimarimasu. — Die Tür schliesst sich.",
+  "collision_mates": [
+   {
+    "word": "閉める",
+    "reading": "しめる",
+    "meaning_de": "schliessen (transitiv)"
+   }
+  ]
+ },
+ {
+  "id": 920,
+  "word": "遊ぶ",
+  "reading": "あそぶ",
+  "romaji": "asobu",
+  "meaning_de": "spielen, sich vergnügen",
+  "shared_cue": "spielen",
+  "example": "Kodomo ga soto de asonde imasu. — Die Kinder spielen draussen.",
+  "collision_mates": [
+   {
+    "word": "弾く",
+    "reading": "ひく",
+    "meaning_de": "(ein Instrument) spielen"
+   }
+  ]
+ },
+ {
+  "id": 927,
+  "word": "弾く",
+  "reading": "ひく",
+  "romaji": "hiku",
+  "meaning_de": "(ein Instrument) spielen",
+  "shared_cue": "spielen",
+  "example": "Mainichi gitaa o hikimasu. — Ich spiele jeden Tag Gitarre.",
+  "collision_mates": [
+   {
+    "word": "遊ぶ",
+    "reading": "あそぶ",
+    "meaning_de": "spielen, sich vergnügen"
+   }
+  ]
+ },
+ {
+  "id": 942,
+  "word": "貸す",
+  "reading": "かす",
+  "romaji": "kasu",
+  "meaning_de": "(ver)leihen",
+  "shared_cue": "leihen",
+  "example": "Tomodachi ni hon o kashimasu. — Ich leihe meinem Freund ein Buch.",
+  "collision_mates": [
+   {
+    "word": "借りる",
+    "reading": "かりる",
+    "meaning_de": "(aus)leihen, borgen"
+   }
+  ]
+ },
+ {
+  "id": 943,
+  "word": "借りる",
+  "reading": "かりる",
+  "romaji": "kariru",
+  "meaning_de": "(aus)leihen, borgen",
+  "shared_cue": "leihen",
+  "example": "Tomodachi ni o-kane o karimasu. — Ich leihe mir Geld von meinem Freund.",
+  "collision_mates": [
+   {
+    "word": "貸す",
+    "reading": "かす",
+    "meaning_de": "(ver)leihen"
+   }
+  ]
+ }
+]
