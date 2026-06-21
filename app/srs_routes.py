@@ -169,6 +169,8 @@ def api_stats():
     stats = srs_service.get_user_stats(current_user.id)
     stats['current_streak'] = current_user.current_streak or 0
     stats['longest_streak'] = current_user.longest_streak or 0
+    # Produktions-Faelligkeit (DE->JP) fuers Nav-Segment-Badge (eigener Zaehler).
+    stats['production_due_count'] = srs_service.get_production_due_count(current_user.id)
     return jsonify(stats)
 
 
