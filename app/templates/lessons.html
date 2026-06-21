@@ -424,8 +424,11 @@
 .lp-continue-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .lp-continue-media-placeholder { background: linear-gradient(135deg, var(--ink-100), var(--ink-200)); }
 @media (max-width: 640px) {
-  .lp-continue-main { gap: 0.9rem; }
-  .lp-continue-media { width: 96px; border-radius: 10px; }
+  /* Stapeln statt Quetschen: Thumbnail als kompakter Full-Width-Banner oben,
+     Text darunter mit voller Breite (sonst zwängt das Bild den Titel in harte
+     Umbrüche und schwebt vertikal zentriert neben den Buttons). */
+  .lp-continue-main { flex-direction: column; align-items: stretch; gap: 0.9rem; }
+  .lp-continue-media { width: 100%; aspect-ratio: auto; height: 140px; border-radius: 10px; }
 }
 .lp-continue-eyebrow {
   font-family: 'Geist Mono', ui-monospace, monospace;
