@@ -75,20 +75,8 @@
     }
     .prod-cue-img img { width: 100%; height: 100%; object-fit: cover; }
     /* Vorderseite: deutscher Satz als Produktions-Ziel (reines Deutsch → kein JP-Leak) */
-    .prod-sentence {
-        margin-top: 1.1rem; padding: 0.7rem 0.95rem; border-radius: 12px;
-        background: var(--kinari, #F3EDE1); border: 1px dashed var(--border-color, #E7E0D4);
-        max-width: 32rem;
-    }
-    .prod-sentence-label {
-        font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
-        color: var(--shu, #EB6101); margin-bottom: 0.25rem;
-    }
-    .prod-sentence-de { font-size: 1.15rem; font-weight: 600; color: var(--text-color, #1C1A17); line-height: 1.35; }
-    .prod-task {
-        margin-top: 0.9rem; font-size: 0.8rem; color: var(--text-muted, #8C8378); line-height: 1.45; opacity: 0.85;
-    }
-    .prod-task strong { font-weight: 600; color: var(--text-muted, #8C8378); }
+    .prod-sentence { margin-top: 1.1rem; max-width: 32rem; }
+    .prod-sentence-de { font-size: 1.25rem; font-weight: 600; color: var(--text-color, #1C1A17); line-height: 1.4; }
     .prod-flip-hint { position: absolute; bottom: 12px; left: 0; right: 0; font-size: 0.78rem; color: var(--text-muted, #8C8378); }
 
     /* Rückseite: japanische Antwort */
@@ -293,11 +281,8 @@
         const sentenceDe = (d.example_translation && d.example_translation.trim())
             || (d.example_en && d.example_en.trim()) || '';
         const sentenceBlock = sentenceDe
-            ? `<div class="prod-sentence"><div class="prod-sentence-label">Und bilde den Satz</div><div class="prod-sentence-de">${escapeHtml(sentenceDe)}</div></div>`
+            ? `<div class="prod-sentence"><div class="prod-sentence-de">${escapeHtml(sentenceDe)}</div></div>`
             : '';
-        const taskText = sentenceDe
-            ? `<strong>Sag das Wort + die Lesung</strong> und bilde dann den Satz laut auf Japanisch —<br>danach aufdecken und prüfen.`
-            : `<strong>Sag das Wort + die Lesung</strong> laut auf Japanisch —<br>dann aufdecken und prüfen.`;
 
         // ── Rückseite: japanische Antwort ──
         const word = card.front || '';
@@ -325,7 +310,6 @@
                         <div class="prod-cue ${cueLong ? 'long' : ''}">${escapeHtml(cue)}</div>
                         ${imgBlock}
                         ${sentenceBlock}
-                        <div class="prod-task">${taskText}</div>
                         <div class="prod-flip-hint">Klicken<span class="key-only"> oder Leertaste</span> zum Aufdecken</div>
                     </div>
                     <div class="prod-face prod-face--back" inert>
