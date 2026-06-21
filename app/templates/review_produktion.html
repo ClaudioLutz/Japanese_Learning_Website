@@ -92,7 +92,6 @@
     .prod-answer-ex .jp { color: var(--text-color, #1C1A17); }
     .prod-answer-ex .romaji { color: var(--text-muted, #8C8378); font-style: italic; }
     .prod-answer-ex .tr { color: var(--text-muted, #8C8378); }
-    .prod-synonym-note { margin-top: 0.7rem; font-size: 0.8rem; color: var(--text-muted, #8C8378); font-style: italic; }
 
     .prod-audio-btn {
         position: absolute; top: 10px; right: 12px; width: 40px; height: 40px; border-radius: 50%;
@@ -320,7 +319,6 @@
                         ${d.romaji ? `<div class="prod-answer-romaji">${escapeHtml(d.romaji)}</div>` : ''}
                         <div class="prod-answer-meaning">${escapeHtml(d.meaning_de || d.meaning || '')}</div>
                         ${exBlock}
-                        <div class="prod-synonym-note">Andere Schreibweise oder ein Synonym mit gleicher Bedeutung zählt auch.</div>
                     </div>
                 </div>
             </div>`;
