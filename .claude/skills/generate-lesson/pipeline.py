@@ -12,6 +12,7 @@ Subcommands:
   text-audio <lesson_id> # Block-Player pro Text (DE+JA, Gemini/Neural2)
   slideshow <lesson_id>  # Pro-Zeile Slideshow (TTS + Nano Banana)
   coverage [level]       # JLPT-Coverage-Dashboard: DB vs. canonical list (default: 5)
+  used-words             # Report: welche Vokabeln werden ueber wie viele Lektionen genutzt
   commit   <lesson_id>   # Git-add/commit/push (nur Metadaten, kein App-Code)
   export <lesson_id> <out.json>  # Lektion (komplett) aus DB ins Migrations-JSON
   import <in.json>       # Migrations-JSON in die (Ziel-)DB importieren (Dev->Prod)
@@ -82,6 +83,26 @@ REQUIRED_KANA_FIELDS = ["character", "romanization", "type"]
 # uebersprungen; statt dessen werden Kana-Eintraege validiert und inseriert.
 ALLOWED_LESSON_KINDS = {"vocabulary", "kana"}
 ALLOWED_KANA_TYPES = {"hiragana", "katakana"}
+
+# Kern-Funktionswoerter, deren Wiederverwendung ueber mehrere Lektionen
+# paedagogisch ERWUENSCHT ist (Spaced Repetition struktureller Bausteine).
+# Diese loesen KEINE Wiederverwendungs-Warnung aus (siehe reused_words_warning).
+# Bewusst konservativ gehalten: Inhaltswoerter (Nomen/Verben/Adjektive) sollen
+# weiterhin als "schon in anderer Lektion unterrichtet" gemeldet werden, damit
+# neue Lektionen primaer NEUE Lern-Vokabeln einfuehren (User-Direktive 2026-06-21).
+CORE_FUNCTION_WORDS = {
+    # Personalpronomen
+    "わたし", "私", "あなた", "かれ", "彼", "かのじょ", "彼女", "わたしたち",
+    # Demonstrativa (kosoado)
+    "これ", "それ", "あれ", "この", "その", "あの", "どれ", "どの",
+    "ここ", "そこ", "あそこ", "どこ", "こちら", "そちら", "あちら", "どちら",
+    # Kopula / Hilfsverben / strukturelle Verben
+    "です", "ます", "でした", "だ", "ある", "いる", "する", "なる",
+    # Frageworte
+    "なに", "何", "だれ", "誰", "いつ", "いくつ", "いくら", "どう", "どうして",
+    # Bejahung / Verneinung
+    "はい", "いいえ",
+}
 
 # Roher HTML in content_text ist verboten (auch wenn Bleach in markdown_safe
 # strippt — Verschwendung). Markdown-Bausteine sind erlaubt: ## Headlines, **bold**,
@@ -742,6 +763,143 @@ def jlpt_coverage(level: int = 5, show_missing: int = 30):
         print()
         print("  Mayuko-Direktive: N5 zuerst auf 100%, bevor N4 begonnen wird.")
         print("=" * 70)
+
+
+# ========================================================================
+# WORT-WIEDERVERWENDUNG (used-words Report + validate-Warnung)
+# ========================================================================
+# Das Datenmodell dedupliziert Vokabeln global (Vocabulary.word ist Schluessel);
+# eine Lektion referenziert ueber LessonContent.content_id. Dadurch kann dasselbe
+# Wort von beliebig vielen Lektionen unterrichtet werden — ungeprueft. Diese
+# Helfer machen die Wiederverwendung SICHTBAR (Report) und WARNEN beim validate,
+# damit neue Lektionen primaer neue Lern-Vokabeln einfuehren (User-Direktive
+# 2026-06-21). Bewusste Wiederholung bleibt erlaubt — es ist eine Warnung, kein
+# Abbruch; Kern-Funktionswoerter (CORE_FUNCTION_WORDS) sind ausgenommen.
+
+def _load_used_vocab_map():
+    """Liest aus der DB, welche Vokabel-Woerter bereits in Lektionen vorkommen.
+
+    Gibt {word: {'lessons': set[int], 'published': set[int]}} zurueck, oder
+    None wenn die DB nicht erreichbar ist (z.B. `validate` offline) — dann
+    wird der Check sauber uebersprungen statt zu crashen.
+    """
+    try:
+        from app import create_app, db
+        from app.models import Lesson, LessonContent, Vocabulary
+    except ImportError:
+        return None
+    try:
+        app = create_app()
+        with app.app_context():
+            rows = (
+                db.session.query(
+                    Vocabulary.word, LessonContent.lesson_id, Lesson.is_published
+                )
+                .join(LessonContent, LessonContent.content_id == Vocabulary.id)
+                .filter(LessonContent.content_type == "vocabulary")
+                .join(Lesson, Lesson.id == LessonContent.lesson_id)
+                .all()
+            )
+    except Exception:
+        return None
+    used: dict[str, dict] = {}
+    for word, lesson_id, is_published in rows:
+        entry = used.setdefault(word, {"lessons": set(), "published": set()})
+        entry["lessons"].add(lesson_id)
+        if is_published:
+            entry["published"].add(lesson_id)
+    return used
+
+
+def compute_reused_words(draft: dict, used_map: dict, allowlist=CORE_FUNCTION_WORDS):
+    """Reiner Kern (testbar ohne DB).
+
+    Gibt (reused, distinct) zurueck:
+      reused   = nach Lektions-Zahl absteigend sortierte Liste (word, n_lessons)
+                 der Draft-Lern-Vokabeln, die bereits in anderen Lektionen
+                 unterrichtet werden — Allowlist (Kern-Funktionswoerter) raus.
+      distinct = alle distinkten Vokabel-Woerter des Drafts (Reihenfolge erhalten).
+    """
+    distinct: list[str] = []
+    seen: set[str] = set()
+    for page in draft.get("pages", []):
+        for item in page.get("contents", []):
+            if item.get("content_type") == "vocabulary":
+                word = (item.get("data") or {}).get("word")
+                if word and word not in seen:
+                    seen.add(word)
+                    distinct.append(word)
+    reused: list[tuple[str, int]] = []
+    for word in distinct:
+        if word in allowlist:
+            continue
+        info = used_map.get(word)
+        if info:
+            n = len(info["lessons"]) if isinstance(info, dict) else int(info)
+            reused.append((word, n))
+    reused.sort(key=lambda t: (-t[1], t[0]))
+    return reused, distinct
+
+
+def reused_words_warning(draft: dict) -> None:
+    """Druckt beim `validate` eine Wiederverwendungs-Warnung (kein Abbruch)."""
+    used_map = _load_used_vocab_map()
+    if used_map is None:
+        print("[HINWEIS] Wort-Wiederverwendungs-Check uebersprungen "
+              "(DB nicht erreichbar — venv aktiv? `docker compose up db -d`?).")
+        return
+    reused, distinct = compute_reused_words(draft, used_map)
+    total = len(distinct)
+    if total == 0:
+        return
+    if not reused:
+        print(f"[OK] Wort-Neuheit: alle {total} Lern-Vokabeln sind neu "
+              "(in keiner anderen Lektion bereits unterrichtet).")
+        return
+    print(f"[WARNUNG] Wort-Wiederverwendung: {len(reused)}/{total} Lern-Vokabeln "
+          "werden bereits in anderen Lektionen unterrichtet "
+          "(Kern-Funktionswoerter ausgenommen):")
+    for word, n in reused:
+        print(f"  - {word}  (in {n} Lektion{'en' if n != 1 else ''})")
+    print("  Tipp: Wo moeglich NEUE Lern-Vokabeln waehlen, statt vorhandene zu "
+          "doppeln. Bewusste Wiederholung ist OK — diese Warnung blockiert nicht.")
+
+
+def used_words_report(top: int = 30, min_lessons: int = 2):
+    """Report (read-only): welche Vokabeln werden ueber wie viele Lektionen genutzt."""
+    used_map = _load_used_vocab_map()
+    if used_map is None:
+        print("[FEHLER] DB nicht erreichbar. Tipp: venv aktivieren und "
+              "`docker compose up db -d`.")
+        return
+    items = [
+        (word, len(info["lessons"]), len(info["published"]))
+        for word, info in used_map.items()
+    ]
+    total_words = len(items)
+    multi = sorted(
+        (it for it in items if it[1] >= min_lessons),
+        key=lambda t: (-t[1], t[0]),
+    )
+    print("=" * 70)
+    print("  Vokabel-Wiederverwendung ueber Lektionen")
+    print("=" * 70)
+    print(f"  Distinkte Vokabeln in Lektionen genutzt:  {total_words}")
+    print(f"  davon in >= {min_lessons} Lektionen:            {len(multi)}")
+    if total_words:
+        avg = sum(it[1] for it in items) / total_words
+        print(f"  Schnitt Lektionen pro Wort:               {avg:.2f}")
+    print()
+    if not multi:
+        print(f"  Keine Vokabel wird in >= {min_lessons} Lektionen genutzt. 🎉")
+        print("=" * 70)
+        return
+    print(f"  Meist-wiederverwendete Woerter (Top {top}):")
+    for word, n, npub in multi[:top]:
+        print(f"    {word}\t{n:>2} Lektionen  ({npub} publiziert)")
+    if len(multi) > top:
+        print(f"    ... ({len(multi) - top} weitere mit >= {min_lessons} Lektionen)")
+    print("=" * 70)
 
 
 # ========================================================================
@@ -1409,6 +1567,14 @@ def main():
     p_cov.add_argument("--show-missing", type=int, default=30,
                        help="Anzahl fehlender Items zu zeigen (default: 30)")
 
+    p_used = sub.add_parser("used-words",
+                            help="Vokabel-Wiederverwendung ueber Lektionen (Report)")
+    p_used.add_argument("--top", type=int, default=30,
+                        help="Top-N meist-wiederverwendete Woerter (default: 30)")
+    p_used.add_argument("--min-lessons", type=int, default=2,
+                        help="Schwelle: ab wievielen Lektionen gilt ein Wort als "
+                             "wiederverwendet (default: 2)")
+
     p_cmt = sub.add_parser("commit", help="Git-commit Skill-Metadata")
     p_cmt.add_argument("lesson_id", type=int)
 
@@ -1432,6 +1598,11 @@ def main():
                 print(f"  - {e}")
             sys.exit(1)
         print("[OK] Draft valide.")
+        # Weiche Wiederverwendungs-Warnung (kein Abbruch, DB-optional).
+        try:
+            reused_words_warning(draft)
+        except Exception as exc:  # nie validate wegen des Checks scheitern lassen
+            print(f"[HINWEIS] Wiederverwendungs-Check fehlgeschlagen: {exc}")
     elif args.cmd == "images":
         generate_images(args.draft)
     elif args.cmd == "insert":
@@ -1442,6 +1613,8 @@ def main():
         sys.exit(generate_dialog_slideshow(args.lesson_id))
     elif args.cmd == "coverage":
         jlpt_coverage(args.level, show_missing=args.show_missing)
+    elif args.cmd == "used-words":
+        used_words_report(top=args.top, min_lessons=args.min_lessons)
     elif args.cmd == "commit":
         git_commit(args.lesson_id)
     elif args.cmd == "export":
