@@ -12,6 +12,16 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey, Table, Column, Integer, String, Text, Boolean, DateTime, JSON, event, BigInteger, true as sa_true
 
 
+# Referenz-Kartentypen, die im Lesson-View als Flip-Card gerendert werden
+# (lesson_view.html: content_type in ['kana','kanji','vocabulary','grammar']).
+# Sie haben einen EIGENEN Abschluss-Pfad: im Deck (>=2 Karten pro Seite) ueber
+# das SRS-Rating (rating>=2 -> markContentComplete). Darum duerfen sie NICHT vom
+# passiven End-of-Lesson-Sicherheitsnetz abgeraeumt werden — sonst gilt eine
+# Lektion als fertig, obwohl der User die Karten nie durchgearbeitet hat
+# ("zu frueh"-Abschluss, Grammatik-/Vokabel-Deck-Bug 2026-06-21).
+FLIP_CARD_CONTENT_TYPES = ('kana', 'kanji', 'vocabulary', 'grammar')
+
+
 class AccessDenialReason(enum.Enum):
     """Strukturierter Grund, warum eine Lektion (nicht) zugaenglich ist.
 
@@ -1364,18 +1374,30 @@ class UserLessonProgress(db.Model):
         self.update_progress_percentage()
 
     def mark_passive_items_completed(self):
-        """Markiert alle sichtbaren, NICHT-interaktiven Content-Items als erledigt.
+        """Markiert sichtbare, rein passive Content-Items als erledigt.
 
         Robustes Sicherheitsnetz fuer den Lektionsabschluss: Wird am Lektions-Ende
         ausgeloest (letzte Seite erreicht / Scroll-Ende / Single-Page-Verweildauer).
-        Damit zaehlen passive Inhalte ALLER Typen zuverlaessig zum 100%-Abschluss —
-        auch solche, die im Frontend keinen eigenen "Als erledigt"-Button haben und
-        sich darum bisher nie selbst melden konnten (dialog_slideshow, standalone
-        audio, isolierte Einzel-Flipcards).
+        Deckt die Inhalte ab, die im Frontend keinen eigenen Abschluss-Pfad haben
+        und sich darum nie selbst melden koennen (dialog_slideshow, standalone
+        audio, Text ohne geklickten Erledigt-Button).
 
-        Interaktive Items (Quiz via is_interactive, kana_grid_game) bleiben bewusst
-        ausgenommen — sie muessen weiterhin aktiv geloest werden und melden ihren
-        Abschluss ueber den jeweils eigenen Pfad (korrekte Antwort bzw. SRS-Rating).
+        BEWUSST AUSGENOMMEN — Items mit eigenem Abschluss-Pfad, die der User aktiv
+        durcharbeiten muss; das Netz wuerde sie sonst "zu frueh" als erledigt
+        verbuchen:
+          - Interaktive Items (Quiz via is_interactive, kana_grid_game): melden
+            sich ueber korrekte Antwort bzw. eigenes Spiel-Ende.
+          - Flip-Card-Referenztypen (FLIP_CARD_CONTENT_TYPES): melden sich ueber
+            das Deck-SRS-Rating (rating>=2 -> markContentComplete). Katalogweit
+            liegt jede Flip-Card in einem Deck (>=2 pro Seite). Ohne diesen
+            Ausschluss galt eine Lektion als fertig, sobald der User die letzte
+            Seite erreichte, obwohl er die Grammatik-/Vokabel-Karten nie bewertet
+            hatte (Deck-Bug 2026-06-21).
+
+        Hinweis: Eine theoretische EINZELNE Flip-Card auf einer eigenen Seite
+        haette aktuell keinen Abschluss-Pfad (kein Deck-Rating). Solche Seiten
+        existieren katalogweit nicht; falls eine entsteht, braucht sie eine eigene
+        Flip->Complete-Erledigung statt einer Reaktivierung dieses Netzes.
 
         Returns True, wenn mindestens ein Item neu als erledigt markiert wurde.
         """
@@ -1383,6 +1405,8 @@ class UserLessonProgress(db.Model):
         changed = False
         for c in self.lesson.progress_visible_content_items:  # type: ignore
             if c.is_interactive or c.content_type == 'kana_grid_game':
+                continue
+            if c.content_type in FLIP_CARD_CONTENT_TYPES:
                 continue
             if not progress.get(str(c.id)):
                 progress[str(c.id)] = True
