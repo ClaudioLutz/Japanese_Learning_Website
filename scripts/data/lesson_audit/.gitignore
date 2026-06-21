@@ -1,0 +1,7 @@
+# Transiente Audit-Dumps (jederzeit aus der Prod-DB reproduzierbar via scripts/dump_lessons_for_audit.sql)
+*
+!.gitignore
+!confirmed_factual.json
+!confirmed_naturalness.json
+!_det_consistency.json
+!_det_fill_blank.json

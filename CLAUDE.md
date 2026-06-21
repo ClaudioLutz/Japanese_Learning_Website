@@ -134,7 +134,7 @@ PAYREXX_WEBHOOK_SECRET="<webhook-signing-key>"
 - **User**: `app_user` / **Passwort**: `JapaneseApp2025!`
 - **Port**: 5432 (Host-gemappt)
 - **DB**: `japanese_learning`
-- **Daten** (Stand Mai 2026, = ehemalige Produktion, lokal eingespielt): 9 User, 47 Lektionen (36 published), 3 Kurse, 1887 Content-Items, 790 Quiz-Fragen, 519 Vokabeln, 200 Kana, 127 Grammatik, 61 Kanji — inkl. Nutzer-Fortschritt/SRS/Käufe.
+- **Daten** (Lektions-/Kurszahlen Stand 2026-06-21 aus Prod-DB verifiziert): **59 Lektionen (58 published)**, alle JLPT N5, 15 Module/Kategorien; übrige Zahlen Stand Mai 2026: 9 User, 3 Kurse, ~1887 Content-Items, 790 Quiz-Fragen, 519 Vokabeln, 200 Kana, 127 Grammatik, 61 Kanji — inkl. Nutzer-Fortschritt/SRS/Käufe.
 - Query-Helfer: `/cloud-db` Skill (Name historisch — verbindet zur lokalen DB).
 
 ### Modelle (Hauptentitäten)
