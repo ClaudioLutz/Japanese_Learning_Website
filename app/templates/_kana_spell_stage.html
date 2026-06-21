@@ -19,6 +19,10 @@
         font-variant-numeric: tabular-nums; display: block; margin-bottom: 0.1rem;
     }
     .kspell__counter.is-zero strong { color: var(--text-muted, #8C8378); }
+    /* Aktive Reihen — macht sichtbar, dass die Wortwahl der geteilten Auswahl folgt */
+    .kspell__rows { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem; justify-content: center; margin: -0.5rem 0 0.9rem; }
+    .kspell__rows-label { font: 700 0.66rem/1 'Geist', 'Inter', sans-serif; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted, #8C8378); }
+    .kspell__rowchip { font: 600 0.78rem 'Noto Sans JP', 'Inter', sans-serif; color: var(--shu-deep, #B84A00); background: rgba(235,97,1,.08); border: 1px solid rgba(235,97,1,.22); border-radius: 999px; padding: 0.1rem 0.5rem; }
     .kspell__group { margin-bottom: 0.9rem; }
     .kspell__label {
         display: flex; align-items: center; gap: 0.4rem;
@@ -164,6 +168,7 @@
     /* ── Dark Mode (Ink-on-Washi) — --kon kippt hell → Auswahl/Score über Shu
        bzw. --text-color halten, navy nur via --kon-100. ── */
     [data-theme="dark"] .kspell__counter strong { color: var(--shu); }
+    [data-theme="dark"] .kspell__rowchip { color: var(--shu); background: rgba(235,97,1,.14); border-color: rgba(235,97,1,.32); }
     [data-theme="dark"] .kspell__seg { background: var(--ink-200, #2A251D); }
     [data-theme="dark"] .kspell__seg button.is-active { background: var(--card-background); color: var(--shu); box-shadow: 0 0 0 1px var(--shu), 0 1px 2px rgba(0,0,0,.4); }
     [data-theme="dark"] .kspell__cue-text { color: var(--text-color); }
@@ -186,7 +191,15 @@
             <template x-if="countLoading"><span>wird gezählt …</span></template>
             <template x-if="!countLoading">
                 <span><strong x-text="wordCount"></strong>
-                    <span x-text="wordCount === 1 ? 'Wort schreibbar' : 'Wörter schreibbar'"></span></span>
+                    <span x-text="countNoun()"></span></span>
+            </template>
+        </div>
+
+        {# Aktive Reihen sichtbar machen — die Wortwahl folgt der geteilten Auswahl. #}
+        <div class="kspell__rows" x-show="rowsActive" x-cloak>
+            <span class="kspell__rows-label">Reihen:</span>
+            <template x-for="(lab, i) in activeRowLabels()" :key="i">
+                <span class="kspell__rowchip" x-text="lab"></span>
             </template>
         </div>
 
@@ -198,8 +211,9 @@
                     Alle Wörter <span class="sub">ganzes N5</span>
                 </button>
                 <button type="button" :class="{ 'is-active': source === 'unlocked' }"
+                        :disabled="!rowsModeAvailable"
                         :aria-pressed="(source === 'unlocked').toString()" @click="setSource('unlocked')">
-                    Nur freigeschaltete <span class="sub">aus deinen Reihen</span>
+                    Aus deinen Reihen <span class="sub">gezielt üben</span>
                 </button>
             </div>
             <p class="kspell__hint" x-text="sourceHint()"></p>
@@ -270,8 +284,11 @@
             </div>
 
             {# Antwort-Slots #}
+            {# Slot-/Tile-Keys tragen roundIdx → bei jedem Wortwechsel baut Alpine
+               frische Knoten (Index-Keys liessen sonst Kana stehen, wenn das naechste
+               Wort kuerzer ist — empirisch reproduziert 2026-06-21). #}
             <div class="kspell__slots" role="group" aria-label="Antwort">
-                <template x-for="(slot, i) in slots" :key="i">
+                <template x-for="(slot, i) in slots" :key="roundIdx + ':' + i">
                     <button type="button" class="kspell__slot" :class="{ 'is-filled': slot !== null }"
                             @click="tapSlot(i)"
                             x-text="revealing ? (current ? current.word[i] : '') : (slot ? slot.char : '')"></button>
@@ -280,7 +297,7 @@
 
             {# Tile-Ablage #}
             <div class="kspell__tray" role="group" aria-label="Buchstaben">
-                <template x-for="(tile, i) in tray" :key="tile.id">
+                <template x-for="(tile, i) in tray" :key="roundIdx + ':' + tile.id">
                     <button type="button" class="kspell__tile" :class="{ 'is-used': tile.used }"
                             @click="tapTray(i)" x-text="tile.char"></button>
                 </template>

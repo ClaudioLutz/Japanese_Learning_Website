@@ -40,7 +40,8 @@ function kanaSpellGame(opts) {
         schrift: 'hiragana',          // vom geteilten Scope
         selectedRows: [],             // vom geteilten Scope
         scopeExternal: !!opts.scopeExternal,
-        source: 'all',                // 'all' | 'unlocked' (Default alle Woerter)
+        source: 'all',                // effektiv genutzte Quelle: 'all' | 'unlocked'
+        _autoMode: true,              // true = Quelle folgt automatisch der Reihen-Auswahl
         cue: 'bedeutung',             // 'bedeutung' | 'romaji' | 'audio'
 
         // ── Wort-Pool ──
@@ -86,18 +87,29 @@ function kanaSpellGame(opts) {
         lastXp: 0,
 
         reduceMotion: false,
+        isMobile: false,              // Mobile (<768px): ab >4 Reihen Zufall statt Reihen
         _audio: null,
         _revealTimer: null,
+        _mqMobile: null,
 
         // ────────────────────────────────────────────────────────────────
         init() {
             try {
                 this.reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
             } catch (e) { /* noop */ }
+            // Mobile-Erkennung (gleiche Schwelle wie die Seite: 767px). Reaktiv, falls
+            // gedreht/skaliert wird — der Mobile-Cap (>4 Reihen → Zufall) haengt davon ab.
+            try {
+                this._mqMobile = window.matchMedia('(max-width: 767px)');
+                this.isMobile = this._mqMobile.matches;
+                const onMq = () => { this.isMobile = this._mqMobile.matches; this._applyAutoSource(); this.refreshCount(); };
+                if (this._mqMobile.addEventListener) this._mqMobile.addEventListener('change', onMq);
+                else if (this._mqMobile.addListener) this._mqMobile.addListener(onMq);
+            } catch (e) { /* noop */ }
 
-            // Quelle + Cue aus localStorage (Privatmodus-sicher).
-            const src = this._ls('kanaSpellSource');
-            if (src === 'all' || src === 'unlocked') this.source = src;
+            // Nur den Cue persistieren — die QUELLE folgt automatisch der Reihen-Auswahl
+            // (Auto-Modus), damit gewaehlte Reihen nicht von alter Persistenz ueber-
+            // stimmt werden.
             const cue = this._ls('kanaSpellCue');
             if (['bedeutung', 'romaji', 'audio'].includes(cue)) this.cue = cue;
 
@@ -106,12 +118,15 @@ function kanaSpellGame(opts) {
                 if (sc) {
                     this.schrift = sc.schrift;
                     this.selectedRows = [...sc.rows];
-                    // Scope-Aenderungen reaktiv mitziehen → Zaehler + Pool neu laden.
+                    // Scope-Aenderungen reaktiv mitziehen → Auto-Quelle + Zaehler neu.
                     this.$watch('$store.kanaScope.schrift', (v) => {
-                        this.schrift = v; this.refreshCount();
+                        this.schrift = v; this._applyAutoSource(); this.refreshCount();
                     });
                     this.$watch('$store.kanaScope.rows', (v) => {
-                        this.selectedRows = [...(v || [])]; this.refreshCount();
+                        this.selectedRows = [...(v || [])];
+                        this._autoMode = true;        // neue Reihen-Auswahl → wieder Auto
+                        this._applyAutoSource();
+                        this.refreshCount();
                     });
                 }
             }
@@ -119,6 +134,7 @@ function kanaSpellGame(opts) {
             // (Kopf + geteilter Scope + Tabs) aus, sobald gespielt wird.
             this.$watch('phase', (p) => { this.$dispatch('kana-spell-phase', p); });
 
+            this._applyAutoSource();
             this.loadBest();
             this.refreshCount();
         },
@@ -127,10 +143,45 @@ function kanaSpellGame(opts) {
         _ls(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
         _lsSet(k, v) { try { localStorage.setItem(k, String(v)); } catch (e) { /* noop */ } },
 
+        // ── Reihen-Auswahl & Mobile-Cap ───────────────────────────────────
+        // Sind einzelne Reihen gewaehlt? (geteilter Scope: rows=[] = „Alle" → nein)
+        get rowsActive() { return this.selectedRows.length > 0; },
+        // Mobile-Regel: ab >4 Reihen ist reihengesteuertes Spielen NICHT nutzbar
+        // → Rueckfall auf eine Zufalls-Auswahl (wie bisher „alle Wörter").
+        get mobileRowCapHit() { return this.isMobile && this.selectedRows.length > 4; },
+        // Kann gerade reihengesteuert gespielt werden?
+        get rowsModeAvailable() { return this.rowsActive && !this.mobileRowCapHit; },
+        // Labels der aktiven Reihen — exakt die Chips des geteilten Scopes
+        // (K, S, あいうえお …), damit Auswahl oben und Anzeige hier uebereinstimmen.
+        activeRowLabels() {
+            const sc = this.$store && this.$store.kanaScope;
+            const rows = (sc && sc.ROWS) || [];
+            const byKey = {};
+            rows.forEach((r) => { byKey[r.key] = r.label; });
+            return this.selectedRows.map((k) => byKey[k] || k);
+        },
+
+        // Quelle automatisch aus der Reihen-Auswahl ableiten (sofern der Nutzer sie
+        // nicht manuell ueberstimmt hat): Reihen gewaehlt + nutzbar → reihengesteuert;
+        // sonst alle Woerter (Zufall). Best-Wert bei Quellen-Wechsel mitziehen.
+        _applyAutoSource() {
+            const prev = this.source;
+            if (!this._autoMode) {
+                // Manuelle Wahl „aus deinen Reihen", die der Mobile-Cap unmoeglich
+                // macht, faellt sicher auf „alle" zurueck.
+                if (this.source === 'unlocked' && !this.rowsModeAvailable) this.source = 'all';
+            } else {
+                this.source = this.rowsModeAvailable ? 'unlocked' : 'all';
+            }
+            if (this.source !== prev) this.loadBest();
+        },
+
         // ── Konfig-Setter ──
         setSource(s) {
             if (this.phase === 'playing' || (s !== 'all' && s !== 'unlocked')) return;
-            this.source = s; this._lsSet('kanaSpellSource', s);
+            if (s === 'unlocked' && !this.rowsModeAvailable) return;   // nicht waehlbar
+            this._autoMode = false;       // ab jetzt manuelle Wahl (bis Reihen wechseln)
+            this.source = s;
             this.loadBest(); this.refreshCount();
         },
         setCue(c) {
@@ -142,15 +193,28 @@ function kanaSpellGame(opts) {
         },
         scopeLabel() {
             let s = this.schriftLabel();
-            s += this.source === 'all' ? ' · alle Wörter' : ' · freigeschaltete';
+            s += this.source === 'all' ? ' · alle Wörter' : ' · aus deinen Reihen';
             return s;
         },
-        // In "alle Wörter" wirkt die Reihen-Auswahl NICHT — nur die Schrift. Das
-        // sagen wir offen, damit die geteilten Reihen-Chips nicht „kaputt" wirken.
+        // Counter-Beschriftung passt sich der effektiven Quelle an.
+        countNoun() {
+            if (this.source === 'unlocked') {
+                return this.wordCount === 1 ? 'Wort aus deinen Reihen' : 'Wörter aus deinen Reihen';
+            }
+            return this.wordCount === 1 ? 'Wort schreibbar' : 'Wörter schreibbar';
+        },
+        // Kontext-Hinweis je nach Lage (Mobile-Cap > Reihen-Modus > Reihen-Tipp > alle).
         sourceHint() {
-            return this.source === 'all'
-                ? 'Reihen-Auswahl wirkt nur im Modus „nur freigeschaltete".'
-                : 'Nur Wörter, die sich mit den gewählten Reihen schreiben lassen.';
+            if (this.mobileRowCapHit) {
+                return 'Auf dem Handy ab 5 Reihen Zufalls-Auswahl — wähle ≤ 4 Reihen fürs gezielte Üben.';
+            }
+            if (this.source === 'unlocked') {
+                return 'Nur Wörter, die sich mit deinen gewählten Reihen schreiben lassen.';
+            }
+            if (this.rowsActive) {
+                return 'Tippe „Aus deinen Reihen", um gezielt deine gewählten Reihen zu üben.';
+            }
+            return 'Alle schreibbaren N5-Wörter dieser Schrift.';
         },
 
         // ── Live-Wortzaehler (debounced) — laedt zugleich den Spiel-Pool ──
@@ -313,13 +377,22 @@ function kanaSpellGame(opts) {
                 this._scheduleNext(this.reduceMotion
                     ? KANA_SPELL_SCORING.OK_BEAT_MS_REDUCED : KANA_SPELL_SCORING.OK_BEAT_MS);
             } else {
-                this.misses++;
+                // FALSCH → NICHT weiterspringen: Serie zuruecksetzen, kurz rot
+                // melden, dann wieder zum Korrigieren freigeben (Kästchen antippen →
+                // Tile zurueck in die Ablage → richtige setzen → erneut „Prüfen").
+                // Die korrekte Loesung wird NICHT gezeigt — dafuer ist „Auflösen" da,
+                // das das Wort als verfehlt wertet und weitergeht.
                 this.streak = 0;
-                this.revealing = true;   // korrekte Schreibung zeigen
                 this.fb = 'bad';
-                this.fbText = '✗ richtig: ' + this.current.word;
-                this._scheduleNext(this.reduceMotion
-                    ? KANA_SPELL_SCORING.REVEAL_MS_REDUCED : KANA_SPELL_SCORING.REVEAL_MS);
+                this.fbText = 'Noch nicht ganz — tippe ein Kästchen an, um es zu korrigieren.';
+                const hold = this.reduceMotion
+                    ? KANA_SPELL_SCORING.OK_BEAT_MS_REDUCED : KANA_SPELL_SCORING.OK_BEAT_MS;
+                if (this._revealTimer) clearTimeout(this._revealTimer);
+                this._revealTimer = setTimeout(() => {
+                    if (this.phase !== 'playing') return;
+                    this.fb = '';            // roten Flash wegnehmen
+                    this.locked = false;     // wieder editierbar
+                }, hold);
             }
         },
 
