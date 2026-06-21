@@ -107,6 +107,14 @@
     }
     .prod-audio-btn:hover { background: rgba(235,97,1,0.08); }
     .prod-audio-btn.playing { background: var(--shu, #EB6101); color: #fff; }
+    /* "Fehler melden" fuer genau diese Karte (oeffentliches Feedback-Board),
+       neuer Tab -> Review-Session bleibt erhalten. Backseite oben links. */
+    .prod-report-link {
+        position: absolute; top: 14px; left: 14px;
+        font-size: 0.72rem; color: var(--text-muted, #8C8378); opacity: 0.6;
+        text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem; z-index: 2;
+    }
+    .prod-report-link:hover { opacity: 1; color: var(--shu, #EB6101); }
 
     /* Rating-Buttons */
     .prod-buttons {
@@ -309,6 +317,7 @@
                     </div>
                     <div class="prod-face prod-face--back" inert>
                         ${audioBtn}
+                        <a class="prod-report-link" href="/feedback/new?content_type=lesson_content&content_id=${card.content_id}" target="_blank" rel="noopener" title="Fehler auf dieser Karte melden" onclick="event.stopPropagation()"><i class="fas fa-flag" aria-hidden="true"></i> melden</a>
                         <div class="prod-answer-word ${isKanaWord ? 'kana-only' : ''}" lang="ja">${escapeHtml(word)}</div>
                         ${!isKanaWord && reading ? `<div class="prod-answer-reading" lang="ja">${escapeHtml(reading)}</div>` : ''}
                         ${d.romaji ? `<div class="prod-answer-romaji">${escapeHtml(d.romaji)}</div>` : ''}

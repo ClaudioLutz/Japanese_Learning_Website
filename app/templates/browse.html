@@ -276,6 +276,7 @@
                     <div class="detail-actions">
                         <button @click="cardAction('suspend', detailCard.content_id)"><i class="fas fa-pause me-1"></i>Suspendieren</button>
                         <button @click="if(confirm('FSRS-State zuruecksetzen?')) cardAction('reset', detailCard.content_id)"><i class="fas fa-undo me-1"></i>Reset</button>
+                        <button @click="window.open(`/feedback/new?content_type=lesson_content&content_id=${detailCard.content_id}`, '_blank')"><i class="fas fa-flag me-1"></i>Melden</button>
                     </div>
                 </div>
             </template>
