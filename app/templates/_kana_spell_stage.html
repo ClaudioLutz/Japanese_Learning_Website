@@ -1,0 +1,330 @@
+{# ════════════════════════════════════════════════════════════════════════
+   Kana-Schreibspiel — Stage (dritter Tab auf /practice/kana).
+   Eigenes kanaSpellGame()-Scope (static/js/kana_spell.js). Schrift + Reihen
+   kommen vom geteilten $store.kanaScope (scopeExternal=true). Buchstabieren per
+   Tap-to-Place. CSS scoped im <style> hier (NICHT custom.css) → umgeht die
+   Deck-Karten-Invariante strukturell.
+   ════════════════════════════════════════════════════════════════════════ #}
+<style>
+    .kspell { display: flex; flex-direction: column; min-height: 0; flex: 1 1 auto; }
+
+    /* ── Start-Screen ── */
+    .kspell__start { display: flex; flex-direction: column; min-height: 0; }
+    .kspell__counter {
+        text-align: center; margin: 0.2rem 0 0.9rem;
+        font: 500 0.92rem 'Inter', sans-serif; color: var(--text-muted, #8C8378);
+    }
+    .kspell__counter strong {
+        font: 700 1.6rem/1 'Geist', 'Inter', sans-serif; color: var(--shu, #EB6101);
+        font-variant-numeric: tabular-nums; display: block; margin-bottom: 0.1rem;
+    }
+    .kspell__counter.is-zero strong { color: var(--text-muted, #8C8378); }
+    .kspell__group { margin-bottom: 0.9rem; }
+    .kspell__label {
+        display: flex; align-items: center; gap: 0.4rem;
+        font: 700 0.7rem/1 'Geist', 'Inter', sans-serif; letter-spacing: 0.08em;
+        text-transform: uppercase; color: var(--text-muted, #8C8378); margin: 0 0 0.45rem;
+    }
+    .kspell__label i { color: var(--shu, #EB6101); font-size: 0.72rem; }
+    .kspell__hint {
+        font: 500 0.76rem/1.4 'Inter', sans-serif; color: var(--text-muted, #8C8378);
+        margin: 0.4rem 0 0;
+    }
+
+    /* Segmented Controls (Quelle + Cue) — gleiche Optik wie .seg der Seite */
+    .kspell__seg { display: flex; gap: 4px; background: var(--background-color, #F1EDE6); border-radius: 999px; padding: 4px; }
+    .kspell__seg button {
+        flex: 1; border: 0; background: transparent; cursor: pointer;
+        padding: 0.5rem 0.35rem; border-radius: 999px;
+        font: 600 0.84rem/1.15 'Inter', sans-serif; color: var(--text-muted, #8C8378);
+        display: flex; flex-direction: column; align-items: center; gap: 2px;
+        transition: background .18s ease, color .18s ease, box-shadow .18s ease;
+    }
+    .kspell__seg button .sub { font-size: 0.6rem; font-weight: 500; opacity: 0.85; }
+    .kspell__seg button.is-active { background: #fff; color: var(--shu, #EB6101); box-shadow: 0 1px 2px rgba(28,26,23,.10); }
+    .kspell__seg button:disabled { opacity: 0.4; cursor: not-allowed; }
+    .kspell__seg button:focus-visible { outline: 2px solid var(--shu, #EB6101); outline-offset: 2px; }
+
+    .kspell__startbtn {
+        width: 100%; border: 0; border-radius: 14px; padding: 0.95rem 1rem; cursor: pointer;
+        font: 600 1.05rem 'Geist', 'Inter', sans-serif; color: #fff;
+        background: linear-gradient(180deg, #F2740F, #EB6101);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 2px 6px rgba(184,74,0,.30), 0 0 0 1px rgba(184,74,0,.35);
+        display: flex; align-items: center; justify-content: center; gap: 0.55rem;
+        transition: transform .12s ease, filter .15s ease; margin-top: 0.4rem;
+    }
+    .kspell__startbtn:hover { filter: brightness(1.05); }
+    .kspell__startbtn:active { transform: scale(0.98); }
+    .kspell__startbtn:disabled { opacity: 0.45; cursor: not-allowed; filter: grayscale(0.3); box-shadow: none; }
+    .kspell__guestnote {
+        text-align: center; font: 500 0.78rem 'Inter', sans-serif;
+        color: var(--text-muted, #8C8378); margin: 0.6rem 0 0;
+    }
+    .kspell__guestnote a { color: var(--shu-deep, #B84A00); font-weight: 600; }
+
+    /* ── Play-Screen ── */
+    .kspell__play { display: flex; flex-direction: column; min-height: 0; flex: 1 1 auto; }
+    .kspell__hud {
+        flex: 0 0 auto; display: flex; align-items: center; justify-content: space-between;
+        gap: 0.5rem; margin-bottom: 0.6rem;
+        font: 600 0.82rem 'Geist Mono', ui-monospace, monospace; color: var(--ink-700, #403B34);
+    }
+    .kspell__hud .prog { color: var(--text-muted, #8C8378); }
+    .kspell__hud .score { color: var(--kon, #1F2A44); }
+    .kspell__hud .streak { color: var(--shu, #EB6101); }
+
+    .kspell__stage {
+        flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column;
+        align-items: center; justify-content: center; gap: clamp(0.8rem, 3vh, 1.5rem);
+        text-align: center;
+    }
+    /* Cue-Box (Bedeutung / Romaji / Audio) */
+    .kspell__cue { max-width: 100%; }
+    .kspell__cue-label {
+        font: 700 0.68rem/1 'Geist', 'Inter', sans-serif; letter-spacing: 0.1em;
+        text-transform: uppercase; color: var(--text-muted, #8C8378); margin-bottom: 0.4rem;
+    }
+    .kspell__cue-text {
+        font: 600 clamp(1.3rem, 6vw, 1.9rem)/1.2 'Geist', 'Inter', sans-serif;
+        color: var(--kon, #1F2A44); letter-spacing: -0.01em;
+    }
+    .kspell__cue-text.romaji { font-family: 'Geist Mono', ui-monospace, monospace; color: var(--shu-deep, #B84A00); }
+    .kspell__audio-btn {
+        width: 84px; height: 84px; border-radius: 50%; border: 1px solid var(--border-color, #D4CFC5);
+        background: #fff; cursor: pointer; color: var(--shu, #EB6101); font-size: 2rem;
+        display: inline-flex; align-items: center; justify-content: center;
+        transition: transform .12s ease, border-color .15s ease;
+    }
+    .kspell__audio-btn:hover { border-color: var(--shu, #EB6101); transform: scale(1.04); }
+    .kspell__audio-btn:focus-visible { outline: 2px solid var(--shu, #EB6101); outline-offset: 3px; }
+    .kspell__say {
+        margin-top: 0.1rem; border: 0; background: transparent; cursor: pointer;
+        color: var(--text-muted, #8C8378); font: 600 0.78rem 'Inter', sans-serif;
+        display: inline-flex; align-items: center; gap: 0.35rem;
+    }
+    .kspell__say:hover { color: var(--shu, #EB6101); }
+
+    /* Antwort-Slots */
+    .kspell__slots { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; }
+    .kspell__slot {
+        width: clamp(46px, 13vw, 60px); height: clamp(54px, 15vw, 70px);
+        border: 2px dashed var(--border-color, #D4CFC5); border-radius: 12px;
+        background: var(--card-bg, #FFFDF7); cursor: pointer;
+        font: 600 clamp(1.5rem, 6vw, 2rem) 'Noto Sans JP', sans-serif; color: var(--tetsu, #2C2C2C);
+        display: flex; align-items: center; justify-content: center;
+        transition: border-color .12s ease, background .12s ease, transform .1s ease;
+    }
+    .kspell__slot.is-filled { border-style: solid; border-color: var(--kon, #1F2A44); }
+    .kspell__slot.is-filled:active { transform: scale(0.96); }
+    .kspell__stage.fb-ok .kspell__slot.is-filled { border-color: var(--matcha, #6F8F3E); background: rgba(111,143,62,.12); }
+    .kspell__stage.fb-bad .kspell__slot { border-color: var(--color-error, #C0392B); border-style: solid; background: rgba(192,57,43,.08); color: var(--color-error, #C0392B); }
+
+    /* Tile-Ablage */
+    .kspell__tray { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; }
+    .kspell__tile {
+        min-width: clamp(46px, 13vw, 58px); height: clamp(50px, 14vw, 64px); padding: 0 0.4rem;
+        border: 1px solid var(--border-color, #D4CFC5); border-radius: 12px; background: #fff;
+        cursor: pointer; font: 600 clamp(1.4rem, 5.5vw, 1.9rem) 'Noto Sans JP', sans-serif;
+        color: var(--tetsu, #2C2C2C);
+        box-shadow: 0 1px 2px rgba(28,26,23,.08); transition: transform .1s ease, opacity .12s ease, border-color .12s ease;
+    }
+    .kspell__tile:hover { border-color: var(--shu, #EB6101); }
+    .kspell__tile:active { transform: translateY(1px) scale(0.97); }
+    .kspell__tile:focus-visible { outline: 2px solid var(--shu, #EB6101); outline-offset: 2px; }
+    .kspell__tile.is-used { opacity: 0.28; pointer-events: none; }
+
+    /* Aktionen */
+    .kspell__actions { flex: 0 0 auto; display: flex; gap: 0.5rem; margin-top: 0.8rem; }
+    .kspell__btn {
+        flex: 1; border: 1px solid var(--border-color, #D4CFC5); background: #fff; border-radius: 12px;
+        padding: 0.7rem 0.5rem; cursor: pointer; font: 600 0.86rem 'Inter', sans-serif;
+        color: var(--ink-700, #403B34); display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+        transition: all .15s ease;
+    }
+    .kspell__btn:hover { border-color: var(--shu, #EB6101); color: var(--shu, #EB6101); }
+    .kspell__btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .kspell__btn--primary {
+        flex: 1.6; border: 0; color: #fff; background: linear-gradient(180deg, #F2740F, #EB6101);
+        box-shadow: 0 2px 6px rgba(184,74,0,.25);
+    }
+    .kspell__btn--primary:hover { filter: brightness(1.05); color: #fff; }
+    .kspell__btn--primary:disabled { box-shadow: none; filter: grayscale(0.3); }
+
+    .kspell__live { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+    /* ── End-Screen ── */
+    .kspell__end { flex: 1 1 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; text-align: center; padding: 1rem 0; }
+    .kspell__end h2 { font: 600 1.5rem 'Geist', 'Inter', sans-serif; color: var(--kon, #1F2A44); margin: 0; }
+    .kspell__end-score { font: 700 2.6rem/1 'Geist', 'Inter', sans-serif; color: var(--shu, #EB6101); font-variant-numeric: tabular-nums; }
+    .kspell__end-row { font: 500 0.9rem 'Inter', sans-serif; color: var(--ink-700, #403B34); }
+    .kspell__end-best { font: 600 0.85rem 'Inter', sans-serif; color: var(--text-muted, #8C8378); min-height: 1.2em; }
+    .kspell__end-xp { font: 600 0.85rem 'Inter', sans-serif; color: var(--matcha, #6F8F3E); }
+    .kspell__end-actions { display: flex; gap: 0.5rem; width: 100%; margin-top: 0.6rem; }
+
+    /* ── Dark Mode (Ink-on-Washi) — --kon kippt hell → Auswahl/Score über Shu
+       bzw. --text-color halten, navy nur via --kon-100. ── */
+    [data-theme="dark"] .kspell__counter strong { color: var(--shu); }
+    [data-theme="dark"] .kspell__seg { background: var(--ink-200, #2A251D); }
+    [data-theme="dark"] .kspell__seg button.is-active { background: var(--card-background); color: var(--shu); box-shadow: 0 0 0 1px var(--shu), 0 1px 2px rgba(0,0,0,.4); }
+    [data-theme="dark"] .kspell__cue-text { color: var(--text-color); }
+    [data-theme="dark"] .kspell__audio-btn,
+    [data-theme="dark"] .kspell__tile { background: var(--card-background); border-color: var(--border-color); color: var(--text-color); }
+    [data-theme="dark"] .kspell__slot { background: var(--card-background); }
+    [data-theme="dark"] .kspell__slot.is-filled { border-color: var(--text-color); color: var(--text-color); }
+    [data-theme="dark"] .kspell__btn { background: var(--card-background); border-color: var(--border-color); color: var(--text-color); }
+    [data-theme="dark"] .kspell__hud .score { color: var(--text-color); }
+    [data-theme="dark"] .kspell__end h2 { color: var(--text-color); }
+</style>
+
+<div class="kspell"
+     x-data="kanaSpellGame({ scopeExternal: {{ 'true' if kspell_scope_external|default(true) else 'false' }}, loggedIn: {{ 'true' if current_user.is_authenticated else 'false' }}, csrfToken: '{{ csrf_token() }}' })"
+     x-init="init()">
+
+    {# ── START ── #}
+    <div class="kspell__start" x-show="phase === 'start' || phase === 'error'" x-cloak>
+        <div class="kspell__counter" :class="{ 'is-zero': wordCount === 0 }">
+            <template x-if="countLoading"><span>wird gezählt …</span></template>
+            <template x-if="!countLoading">
+                <span><strong x-text="wordCount"></strong>
+                    <span x-text="wordCount === 1 ? 'Wort schreibbar' : 'Wörter schreibbar'"></span></span>
+            </template>
+        </div>
+
+        <div class="kspell__group">
+            <div class="kspell__label"><i class="fas fa-database"></i> Wort-Auswahl</div>
+            <div class="kspell__seg" role="group" aria-label="Wort-Auswahl">
+                <button type="button" :class="{ 'is-active': source === 'all' }"
+                        :aria-pressed="(source === 'all').toString()" @click="setSource('all')">
+                    Alle Wörter <span class="sub">ganzes N5</span>
+                </button>
+                <button type="button" :class="{ 'is-active': source === 'unlocked' }"
+                        :aria-pressed="(source === 'unlocked').toString()" @click="setSource('unlocked')">
+                    Nur freigeschaltete <span class="sub">aus deinen Reihen</span>
+                </button>
+            </div>
+            <p class="kspell__hint" x-text="sourceHint()"></p>
+        </div>
+
+        <div class="kspell__group">
+            <div class="kspell__label"><i class="fas fa-eye"></i> Hinweis</div>
+            <div class="kspell__seg" role="group" aria-label="Hinweis-Modus">
+                <button type="button" :class="{ 'is-active': cue === 'bedeutung' }" :disabled="!cueAvailable('bedeutung')"
+                        :aria-pressed="(cue === 'bedeutung').toString()" @click="setCue('bedeutung')">
+                    Bedeutung <span class="sub">deutsch</span>
+                </button>
+                <button type="button" :class="{ 'is-active': cue === 'romaji' }" :disabled="!cueAvailable('romaji')"
+                        :aria-pressed="(cue === 'romaji').toString()" @click="setCue('romaji')">
+                    Romaji <span class="sub">Lautschrift</span>
+                </button>
+                <button type="button" :class="{ 'is-active': cue === 'audio' }" :disabled="!cueAvailable('audio')"
+                        :aria-pressed="(cue === 'audio').toString()" @click="setCue('audio')">
+                    <i class="fas fa-volume-up" aria-hidden="true"></i> Audio <span class="sub">hören</span>
+                </button>
+            </div>
+        </div>
+
+        <template x-if="loadError">
+            <p class="kspell__hint" style="color: var(--shu-deep, #B84A00);" x-text="loadError"></p>
+        </template>
+
+        <button class="kspell__startbtn" :disabled="!canStart" @click="start()">
+            <span>Schreiben starten</span> <i class="fas fa-pen-nib"></i>
+        </button>
+        {% if not current_user.is_authenticated %}
+        <p class="kspell__guestnote">
+            Sofort spielbar — ohne Konto.
+            <a href="{{ url_for('routes.register', next=url_for('srs.practice_kana_page', tab='spell')) }}"
+               @click="window.kanaTrack && window.kanaTrack('kana_cta_click', { where: 'spell_guestnote' })">Konto</a>
+            speichert Fortschritt &amp; XP.
+        </p>
+        {% endif %}
+    </div>
+
+    {# ── PLAY ── #}
+    <div class="kspell__play" x-show="phase === 'playing'" x-cloak>
+        <div class="kspell__hud">
+            <span class="prog" x-text="progressLabel()"></span>
+            <span class="score" x-text="score + ' Pkt'"></span>
+            <span class="streak" x-show="streak > 1" x-text="'Serie ×' + streak"></span>
+        </div>
+
+        <div class="kspell__stage" :class="{ 'fb-ok': fb === 'ok', 'fb-bad': fb === 'bad' }">
+            {# Cue #}
+            <div class="kspell__cue" x-show="current">
+                <template x-if="cue === 'audio'">
+                    <div>
+                        <button type="button" class="kspell__audio-btn" @click="playWord()" aria-label="Wort anhören">
+                            <i class="fas fa-volume-up" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </template>
+                <template x-if="cue !== 'audio'">
+                    <div>
+                        <div class="kspell__cue-label" x-text="promptLabel()"></div>
+                        <div class="kspell__cue-text" :class="{ 'romaji': cue === 'romaji' }" x-text="promptText()"></div>
+                        <button type="button" class="kspell__say" @click="playWord()">
+                            <i class="fas fa-volume-up" aria-hidden="true"></i> anhören
+                        </button>
+                    </div>
+                </template>
+            </div>
+
+            {# Antwort-Slots #}
+            <div class="kspell__slots" role="group" aria-label="Antwort">
+                <template x-for="(slot, i) in slots" :key="i">
+                    <button type="button" class="kspell__slot" :class="{ 'is-filled': slot !== null }"
+                            @click="tapSlot(i)"
+                            x-text="revealing ? (current ? current.word[i] : '') : (slot ? slot.char : '')"></button>
+                </template>
+            </div>
+
+            {# Tile-Ablage #}
+            <div class="kspell__tray" role="group" aria-label="Buchstaben">
+                <template x-for="(tile, i) in tray" :key="tile.id">
+                    <button type="button" class="kspell__tile" :class="{ 'is-used': tile.used }"
+                            @click="tapTray(i)" x-text="tile.char"></button>
+                </template>
+            </div>
+        </div>
+
+        <div class="kspell__actions">
+            <button type="button" class="kspell__btn" @click="clearSlots()" :disabled="locked || filledCount === 0">
+                <i class="fas fa-eraser"></i> Leeren
+            </button>
+            <button type="button" class="kspell__btn kspell__btn--primary" @click="check()" :disabled="locked || !isComplete">
+                <i class="fas fa-check"></i> Prüfen
+            </button>
+            <button type="button" class="kspell__btn" @click="reveal()" :disabled="locked">
+                <i class="fas fa-lightbulb"></i> Auflösen
+            </button>
+        </div>
+        <p class="kspell__live" aria-live="polite" x-text="fbText"></p>
+    </div>
+
+    {# ── END ── #}
+    <div class="kspell__end" x-show="phase === 'ended'" x-cloak>
+        <h2 x-text="endTitle()"></h2>
+        <div class="kspell__end-score" x-text="score + ' Pkt'"></div>
+        <div class="kspell__end-row">
+            <span x-text="correct"></span> von <span x-text="correct + misses"></span> richtig
+            · <span x-text="accuracy()"></span>% · beste Serie ×<span x-text="bestStreak"></span>
+        </div>
+        <div class="kspell__end-best" x-text="bestLine()"></div>
+        {% if current_user.is_authenticated %}
+        <div class="kspell__end-xp" x-show="lastXp > 0" x-text="'+' + lastXp + ' XP'"></div>
+        {% else %}
+        <p class="kspell__guestnote">
+            <a href="{{ url_for('routes.register', next=url_for('srs.practice_kana_page', tab='spell')) }}">Kostenlos registrieren</a>,
+            um Fortschritt &amp; XP zu speichern.
+        </p>
+        {% endif %}
+        <div class="kspell__end-actions">
+            <button type="button" class="kspell__btn kspell__btn--primary" @click="again()">
+                <i class="fas fa-rotate-right"></i> Nochmal
+            </button>
+            <button type="button" class="kspell__btn" @click="toStart()">
+                <i class="fas fa-sliders-h"></i> Einstellungen
+            </button>
+        </div>
+    </div>
+</div>

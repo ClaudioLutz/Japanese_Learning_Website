@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
-{% block title %}Kana üben — Zuordnen oder Kana Storm{% endblock %}
-{% block meta_description %}Hiragana und Katakana kostenlos üben — zwei Spiele zur Wahl: in Ruhe zuordnen oder im Kana Storm gegen die Uhr tippen. Reihen, Dakuten und Modus frei wählbar, ohne Login.{% endblock %}
+{% block title %}Kana üben — Zuordnen, Kana Storm oder Wörter schreiben{% endblock %}
+{% block meta_description %}Hiragana und Katakana kostenlos üben — drei Spiele zur Wahl: in Ruhe zuordnen, im Kana Storm gegen die Uhr tippen oder ganze Wörter Buchstabe für Buchstabe schreiben. Reihen, Dakuten und Modus frei wählbar, ohne Login.{% endblock %}
 
 {% block body_attributes %}class="redesign-page kana-setup-locked"{% endblock %}
 
@@ -291,6 +291,7 @@
         /* … das Storm-Panel braucht aber eine definierte Höhe, sonst kollabiert
            die .kstorm-Flex-Kette (kein 100dvh-Lock zum Erben). */
         .kana-panel--storm { height: min(70vh, 600px); }
+        .kana-panel--spell { height: min(70vh, 600px); }
     }
 
     /* ══════════════════════════════════════════════════════════════════
@@ -398,13 +399,15 @@
 {% endblock %}
 
 {% block content %}
-{% set _initial_tab = 'storm' if request.args.get('tab') == 'storm' else 'match' %}
+{% set _tab_arg = request.args.get('tab') %}
+{% set _initial_tab = _tab_arg if _tab_arg in ['storm', 'spell'] else 'match' %}
 {# Konto-CTA des Storm-Partials führt zurück auf diese Seite (Storm-Tab), nicht
    auf die separate Vollbild-Storm-Seite. #}
 {% set kstorm_register_url = url_for('routes.register', next=url_for('srs.practice_kana_page', tab='storm')) %}
 <div class="kana-setup"
-     x-data="{ game: '{{ _initial_tab }}', stormPhase: 'start', get hideChrome() { return this.game === 'storm' && this.stormPhase !== 'start' && this.stormPhase !== 'daily'; } }"
-     @kana-storm-phase.window="stormPhase = $event.detail">
+     x-data="{ game: '{{ _initial_tab }}', stormPhase: 'start', spellPhase: 'start', get hideChrome() { return (this.game === 'storm' && this.stormPhase !== 'start' && this.stormPhase !== 'daily') || (this.game === 'spell' && this.spellPhase === 'playing'); } }"
+     @kana-storm-phase.window="stormPhase = $event.detail"
+     @kana-spell-phase.window="spellPhase = $event.detail">
     <div class="kana-setup__bg" aria-hidden="true"><span>あ</span></div>
 
     <div class="kana-setup__head" x-show="!hideChrome">
@@ -412,9 +415,10 @@
         <h1>Kana üben</h1>
         {# SSR-Substanz: die Seite ist via robots.txt-Allow crawlbar (Landing-
            Kandidat fuer "Hiragana üben") — ein Satz Inhalt statt nur Controls. #}
-        <p>Hiragana und Katakana kostenlos üben — zwei Spiele zur Wahl: in Ruhe
-           <strong>zuordnen</strong> oder im <strong>Kana&nbsp;Storm</strong> gegen die Uhr tippen.
-           Schrift, Reihen und Modus frei wählbar, ohne Login.</p>
+        <p>Hiragana und Katakana kostenlos üben — drei Spiele zur Wahl: in Ruhe
+           <strong>zuordnen</strong>, im <strong>Kana&nbsp;Storm</strong> gegen die Uhr tippen
+           oder ganze <strong>Wörter schreiben</strong>. Schrift, Reihen und Modus frei
+           wählbar, ohne Login.</p>
     </div>
 
     {# ── GETEILTER SCOPE (Schrift + Reihen) — gilt für BEIDE Spiele, an
@@ -474,12 +478,19 @@
             <span class="jp" lang="ja" aria-hidden="true">かな</span> Kana Storm
             <span class="kana-modes__sub">Gegen die Uhr</span>
         </button>
+        <button type="button" class="kana-modes__tab {{ 'is-active' if _initial_tab == 'spell' else '' }}"
+                :class="{ 'is-active': game === 'spell' }"
+                :aria-pressed="(game === 'spell').toString()"
+                @click="game = 'spell'; history.replaceState(null, '', '?tab=spell')">
+            <span class="jp" lang="ja" aria-hidden="true">かく</span> Schreiben
+            <span class="kana-modes__sub">Wörter tippen</span>
+        </button>
     </div>
 
     {# ── PANEL „Zuordnung" (Matching): Default-Tab, eigenes kanaSettings()-Scope.
        x-cloak nur, wenn Storm der initiale Tab ist (Deep-Link ?tab=storm). ── #}
     <div class="kana-panel" x-show="game === 'match'" x-data="kanaSettings()" x-init="init()"
-         {{ 'x-cloak' if _initial_tab == 'storm' else '' }}>
+         {{ 'x-cloak' if _initial_tab != 'match' else '' }}>
     <div class="kana-setup__body">
         {# Modus zuerst — so ist er auf Mobile ohne Scroll erreichbar; die Gast-
            Conversion (Teaser + Konto-Vorteile) folgt DARUNTER (scrollbar, nicht
@@ -576,6 +587,15 @@
            seine internen Picker aus und liest aus $store.kanaScope. #}
         {% set kstorm_scope_external = true %}
         {% include '_kana_storm_stage.html' %}
+    </div>
+
+    {# ── PANEL „Schreiben" (Wörter buchstabieren): eigenes kanaSpellGame()-Scope.
+       Schrift/Reihen kommen vom geteilten Panel oben (kspell_scope_external).
+       x-cloak ausser bei Deep-Link ?tab=spell. ── #}
+    <div class="kana-panel kana-panel--spell" x-show="game === 'spell'"
+         {{ 'x-cloak' if _initial_tab != 'spell' else '' }}>
+        {% set kspell_scope_external = true %}
+        {% include '_kana_spell_stage.html' %}
     </div>
 </div>
 {% endblock %}
