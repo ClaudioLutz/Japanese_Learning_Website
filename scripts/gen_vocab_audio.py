@@ -57,24 +57,30 @@ def collect_raw_texts(args) -> list[str]:
     return out
 
 
-def synth_one(canon: str, force: bool) -> tuple[str, str]:
-    """Erzeugt eine WAV (mit Retry bei transienten Fehlern). Gibt (status, canon)."""
-    path = pregenerated_ja_audio_file(canon)
-    if path.exists() and not force:
-        return ('skip', canon)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    last = None
-    for attempt in range(4):
-        try:
-            wav = _synthesize_gemini(canon)
-            tmp = path.with_suffix('.wav.tmp')
-            tmp.write_bytes(wav)
-            tmp.replace(path)  # atomar -> nie halbe Datei im Store
-            return ('ok', canon)
-        except Exception as e:  # noqa: BLE001 — transient (429/529/safety) -> backoff
-            last = e
-            time.sleep(2 * (attempt + 1) + attempt * 3)
-    return (f'FAIL: {last}', canon)
+def synth_one(app, canon: str, force: bool) -> tuple[str, str]:
+    """Erzeugt eine WAV (mit Retry bei transienten Fehlern). Gibt (status, canon).
+
+    Pusht einen eigenen App-Context — der ThreadPool laeuft in Worker-Threads,
+    und Flasks current_app (von pregenerated_ja_audio_file + _synthesize_gemini
+    genutzt) ist thread-lokal.
+    """
+    with app.app_context():
+        path = pregenerated_ja_audio_file(canon)
+        if path.exists() and not force:
+            return ('skip', canon)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        last = None
+        for attempt in range(4):
+            try:
+                wav = _synthesize_gemini(canon)
+                tmp = path.with_suffix('.wav.tmp')
+                tmp.write_bytes(wav)
+                tmp.replace(path)  # atomar -> nie halbe Datei im Store
+                return ('ok', canon)
+            except Exception as e:  # noqa: BLE001 — transient (429/529/safety) -> backoff
+                last = e
+                time.sleep(2 * (attempt + 1) + attempt * 3)
+        return (f'FAIL: {last}', canon)
 
 
 def main():
@@ -101,7 +107,7 @@ def main():
         ok = skip = fail = 0
         done = 0
         with ThreadPoolExecutor(max_workers=max(1, args.workers)) as ex:
-            futs = {ex.submit(synth_one, t, args.force): t for t in todo}
+            futs = {ex.submit(synth_one, app, t, args.force): t for t in todo}
             for fut in as_completed(futs):
                 status, canon = fut.result()
                 done += 1
