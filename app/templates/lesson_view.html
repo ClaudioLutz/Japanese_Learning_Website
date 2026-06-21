@@ -2979,11 +2979,20 @@ function setupKeyboardNavigation() {
                 showKeyboardHint();
                 break;
             case 'ArrowRight':
-            case ' ':
                 event.preventDefault();
                 nextPage();
                 showKeyboardHint();
                 break;
+            case ' ': {
+                // Auf Karten-Seiten besitzt die Leertaste das Umdrehen der Karte
+                // (Deck- bzw. Einzel-Flip-Handler) — dann NICHT zusaetzlich blaettern.
+                const cardPage = document.querySelector('.carousel-item.active');
+                if (cardPage && cardPage.querySelector('.flip-card')) break;
+                event.preventDefault();
+                nextPage();
+                showKeyboardHint();
+                break;
+            }
             case 'Home':
                 event.preventDefault();
                 goToPage(0);
@@ -3009,7 +3018,7 @@ function showKeyboardHint() {
     if (!hint) {
         hint = document.createElement('div');
         hint.className = 'keyboard-hint';
-        hint.innerHTML = '← → Space: Navigieren | O: Sidebar | Home/End: Erste/Letzte';
+        hint.innerHTML = '← →: Blättern | Space/Enter: Karte umdrehen | 1–4: Bewerten | O: Sidebar';
         document.body.appendChild(hint);
     }
     
@@ -4384,11 +4393,15 @@ document.addEventListener('keydown', (e) => {
 
     const isFlipped = btnGroup && btnGroup.classList.contains('visible');
 
-    // Space: flip current card
-    if (e.code === 'Space' && !isFlipped) {
-        e.preventDefault();
-        const scene = currentCard.querySelector('.card-scene');
-        if (scene) scene.click();
+    // Space/Enter: aktuelle Karte umdrehen. Fokussierte Bedienelemente
+    // (Audio-Button, Bewerten-Buttons, Links) behalten ihre native Aktion.
+    if (e.code === 'Space' || e.key === 'Enter') {
+        if (e.target.closest && e.target.closest('button, a, select')) return;
+        e.preventDefault(); // kein Seiten-Scroll, kein Doppel-Trigger
+        if (!isFlipped) {
+            const scene = currentCard.querySelector('.card-scene');
+            if (scene) scene.click();
+        }
         return;
     }
 
