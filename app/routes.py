@@ -3390,14 +3390,15 @@ def complete_remaining_passive(lesson_id):
     """Markiert am Lektions-Ende alle sichtbaren passiven Items als erledigt.
 
     Robustes Sicherheitsnetz, damit "Lektion durchgearbeitet" zuverlaessig zu
-    is_completed=True fuehrt — unabhaengig davon, welche Content-Typen die Lektion
-    enthaelt. Deckt insbesondere Typen ab, die im Frontend keinen eigenen
-    "Als erledigt"-Button haben und sich darum bisher nie selbst meldeten
-    (dialog_slideshow, standalone audio, isolierte Einzel-Flipcards) und macht den
-    Abschluss zukunftssicher gegenueber neuen passiven Content-Typen.
+    is_completed=True fuehrt. Deckt die rein passiven Typen ab, die im Frontend
+    keinen eigenen Abschluss-Pfad haben und sich darum nie selbst meldeten
+    (dialog_slideshow, standalone audio, Text ohne geklickten Erledigt-Button).
 
-    Interaktive Items (Quiz, kana_grid_game) bleiben ausgenommen und muessen weiter
-    aktiv geloest werden (siehe UserLessonProgress.mark_passive_items_completed).
+    AUSGENOMMEN (eigener Abschluss-Pfad, muss aktiv durchgearbeitet werden):
+    interaktive Items (Quiz, kana_grid_game) sowie Flip-Card-Referenztypen
+    (kana/kanji/vocabulary/grammar), die ueber das Deck-SRS-Rating abschliessen —
+    sonst gilt eine Lektion als fertig, obwohl die Deck-Karten nie bewertet wurden
+    (siehe UserLessonProgress.mark_passive_items_completed).
     """
     from flask_wtf.csrf import validate_csrf
     try:

@@ -262,6 +262,50 @@ def test_mark_passive_items_completed_full_passive_lesson(app_context):
     assert progress.is_completed is True
 
 
+def test_mark_passive_items_completed_excludes_flip_cards(app_context):
+    """Regression Deck-Bug 2026-06-21 (Lektion 205): Flip-Card-Referenztypen
+    (grammar/vocabulary/kanji/kana) haben einen EIGENEN Abschluss-Pfad (Deck-SRS-
+    Rating) und duerfen vom passiven End-of-Lesson-Netz NICHT abgeraeumt werden —
+    sonst gilt die Lektion als fertig, obwohl der User die Karten nie bewertet hat.
+
+    Passive Items (Text/Slideshow) werden weiterhin abgeraeumt.
+    """
+    user = UserFactory()
+    lesson = LessonFactory()
+    db.session.flush()
+    text = _add(lesson.id, 'text', page_number=1, content_id=1)
+    # Grammatik-Deck (2 Karten auf einer Seite) — wie Lektion 205 Seite 4
+    gram1 = _add(lesson.id, 'grammar', page_number=2, order_index=0, content_id=2)
+    gram2 = _add(lesson.id, 'grammar', page_number=2, order_index=1, content_id=3)
+    # Vokabel-Deck
+    vocab = _add(lesson.id, 'vocabulary', page_number=3, content_id=4)
+    db.session.commit()
+
+    progress = UserLessonProgress(user_id=user.id, lesson_id=lesson.id, content_progress='{}')
+    db.session.add(progress)
+    db.session.flush()
+
+    progress.mark_passive_items_completed()
+
+    cp = progress.get_content_progress()
+    # Passives Text-Item: abgeraeumt
+    assert cp.get(str(text.id)) is True
+    # Flip-Card-Deck-Karten: NICHT abgeraeumt
+    assert cp.get(str(gram1.id)) is not True
+    assert cp.get(str(gram2.id)) is not True
+    assert cp.get(str(vocab.id)) is not True
+    # Deck-Karten blockieren den Abschluss (1 von 4 sichtbar)
+    assert progress.progress_percentage == 25
+    assert progress.is_completed is False
+
+    # Deck-Karten ueber ihren eigenen Pfad (Rating>=2 -> markContentComplete) erledigen
+    progress.mark_content_completed(gram1.id)
+    progress.mark_content_completed(gram2.id)
+    progress.mark_content_completed(vocab.id)
+    assert progress.progress_percentage == 100
+    assert progress.is_completed is True
+
+
 def test_zero_visible_items_marks_completed(app_context):
     """Lektion ohne sichtbare Items (nur dekorative is_optional-Bilder) gilt als
     100% UND is_completed=True. Regression: frueher setzte update_progress_percentage
