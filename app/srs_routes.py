@@ -350,6 +350,8 @@ def stats_page():
     stats['level_progress_pct'] = max(0, min(100, round(in_level / span * 100)))
     # Persoenliche Kana-Storm-Statistik (nur fuer eingeloggte Spieler befuellt).
     stats['storm'] = srs_service.get_kana_storm_stats(current_user.id)
+    # Produktions-Spur (DE->JP, reverse) — Sektion erscheint erst ab 1 Karte.
+    stats['production'] = srs_service.get_production_stats(current_user.id)
     return render_template('stats.html', stats=stats)
 
 

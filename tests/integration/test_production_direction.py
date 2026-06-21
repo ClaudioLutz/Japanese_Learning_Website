@@ -185,6 +185,38 @@ class TestRateApi:
         assert resp.status_code == 400
 
 
+class TestProductionStats:
+    def test_empty_when_no_reverse(self, auth_client):
+        client, user = auth_client
+        stats = srs_service.get_production_stats(user.id)
+        assert stats['total'] == 0 and stats['reviews'] == 0
+
+    def test_counts_reverse_cards(self, auth_client):
+        client, user = auth_client
+        lc = _vocab_content()
+        _forward_state(user.id, lc.id)
+        db.session.commit()
+        srs_service.rate_card(user.id, lc.id, 3, direction='reverse')
+        db.session.commit()
+        stats = srs_service.get_production_stats(user.id)
+        assert stats['total'] == 1
+        assert stats['reviews'] >= 1
+
+    def test_stats_excludes_forward_from_reviews(self, auth_client):
+        """reverse-Reviews-Zaehler darf forward-Reviews NICHT mitzaehlen."""
+        client, user = auth_client
+        lc = _vocab_content()
+        srs_service.rate_card(user.id, lc.id, 3, direction='forward')  # nur forward
+        db.session.commit()
+        stats = srs_service.get_production_stats(user.id)
+        assert stats['reviews'] == 0  # kein reverse-Review
+
+    def test_stats_page_renders(self, auth_client):
+        client, user = auth_client
+        resp = client.get('/review/stats')
+        assert resp.status_code == 200
+
+
 class TestProductionPage:
     def test_page_loads_for_auth(self, auth_client):
         client, user = auth_client

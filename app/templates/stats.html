@@ -431,6 +431,44 @@
     </div>
     {% endif %}
 
+    <!-- ══ GRUPPE: Produktion (Deutsch → Japanisch) ══ -->
+    {# Reverse-Spur: erscheint erst, sobald der Nutzer mindestens eine Vokabel
+       produktiv geuebt hat. Getrennt vom rezeptiven JLPT-Kern gezaehlt. #}
+    {% if stats.production and stats.production.total > 0 %}
+    <div class="stats-group">Produktion · Deutsch → Japanisch</div>
+    <div class="srs-stats-overview">
+        <div class="stat-card">
+            <span class="stat-label">Produktiv gemeistert</span>
+            <span class="stat-value">{{ stats.production.mastered }}<small> / {{ stats.production.total }}</small></span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">In Arbeit</span>
+            <span class="stat-value">{{ stats.production.learning }}</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Fällig</span>
+            <span class="stat-value">{{ stats.production.due }}</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Genauigkeit</span>
+            <span class="stat-value">{{ stats.production.accuracy }}<small>%</small></span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Reviews</span>
+            <span class="stat-value">{{ stats.production.reviews|swiss_num }}</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Neu bereit</span>
+            <span class="stat-value">{{ stats.production.new_ready }}</span>
+        </div>
+    </div>
+    <p style="margin:0.4rem 0 0;font-size:0.85rem;">
+        <a href="{{ url_for('srs.production_page') }}" style="color:var(--shu,#EB6101);text-decoration:none;font-weight:600;">
+            <i class="fas fa-pen-fancy" aria-hidden="true"></i> Produktion üben →
+        </a>
+    </p>
+    {% endif %}
+
     <!-- ══ GRUPPE: Verlauf ══ -->
     <div class="stats-group">Verlauf</div>
 

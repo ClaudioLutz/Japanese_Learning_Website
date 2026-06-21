@@ -356,6 +356,48 @@ def get_production_overview(user_id):
     return {'due_count': due, 'new_ready': new_ready, 'total_cards': total}
 
 
+def get_production_stats(user_id):
+    """Statistik der Produktions-Spur (reverse) fuer /review/stats.
+
+    Liefert bei 0 begonnenen Produktions-Karten durchgaengig Nullen — das
+    Template blendet die Sektion dann aus (Empty-State-Gate wie bei Kana-Storm).
+    """
+    states = CardReviewState.query.filter_by(
+        user_id=user_id, direction='reverse').all()
+    if not states:
+        return {'total': 0, 'due': 0, 'mastered': 0, 'learning': 0,
+                'new_ready': len(get_production_new_cards(user_id, limit=1000)),
+                'reviews': 0, 'accuracy': 0}
+
+    now = datetime.utcnow()
+    total = len(states)
+    due = sum(1 for s in states
+              if s.status != 'suspended' and s.due_date and s.due_date <= now)
+    mastered = sum(1 for s in states
+                   if get_card_stage(s.fsrs_card_state)[0] >= 5)  # Vertraut 1+
+    learning = total - mastered
+
+    row = db.session.query(
+        db.func.count(ReviewLog.id),
+        db.func.coalesce(db.func.sum(db.case((ReviewLog.rating >= 3, 1), else_=0)), 0),
+    ).filter(
+        ReviewLog.user_id == user_id,
+        ReviewLog.direction == 'reverse',
+    ).first()
+    reviews = int(row[0] or 0)
+    correct = int(row[1] or 0)
+
+    return {
+        'total': total,
+        'due': due,
+        'mastered': mastered,
+        'learning': learning,
+        'new_ready': len(get_production_new_cards(user_id, limit=1000)),
+        'reviews': reviews,
+        'accuracy': round(correct / reviews * 100) if reviews else 0,
+    }
+
+
 def get_interval_preview(user_id, content_id, direction='forward'):
     """
     Zeigt die voraussichtlichen Intervalle fuer alle 4 Ratings.
