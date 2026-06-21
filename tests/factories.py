@@ -16,6 +16,7 @@ from app.models import (
     UserQuizAnswer, CardReviewState, ReviewLog, UserSRSSettings,
     UserAchievement, DailyReviewAggregate,
     ForumCategory, ForumTopic, ForumPost,
+    ContentIssue, ContentIssueComment,
 )
 
 
@@ -357,4 +358,30 @@ class ForumPostFactory(BaseFactory):
     author_id = None
     body = Sequence(lambda n: f"Beitragstext {n} mit genug Inhalt.")
     is_op = False
+    is_deleted = False
+
+
+# ── Content-Issue / Feedback-Board Factories ──────────────
+
+class ContentIssueFactory(BaseFactory):
+    class Meta:
+        model = ContentIssue
+
+    author_id = None
+    title = Sequence(lambda n: f"Hinweis {n}")
+    body = "Da stimmt etwas nicht mit diesem Inhalt."
+    status = "open"
+    content_type = None
+    content_id = None
+    is_deleted = False
+
+
+class ContentIssueCommentFactory(BaseFactory):
+    class Meta:
+        model = ContentIssueComment
+
+    issue_id = None
+    author_id = None
+    body = Sequence(lambda n: f"Antwort {n} zum Hinweis.")
+    is_maintainer_reply = False
     is_deleted = False
