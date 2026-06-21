@@ -268,6 +268,22 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         0%, 100% { transform: scale(1); }
         50% { transform: scale(1.12); }
     }
+    /* "Fehler melden"-Link auf der Backseite — oeffnet ein Issue fuer genau
+       diese Karte (oeffentliches Feedback-Board), in neuem Tab (Review-Session
+       bleibt erhalten). Spiegelt den Audio-Button (oben links statt rechts). */
+    .review-report-link {
+        position: absolute;
+        top: 14px; left: 12px;
+        font-size: 0.72rem;
+        color: var(--text-muted, #8C8378);
+        opacity: 0.6;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        z-index: 2;
+    }
+    .review-report-link:hover { opacity: 1; color: var(--shu, #EB6101); }
     .review-card-front-text {
         font-family: 'Noto Sans JP', sans-serif;
         font-size: clamp(2.4rem, 12vw, 3.5rem);
@@ -1558,6 +1574,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
                          vor dem Umdrehen vorlesen (sonst ist die SRS-Uebung ausgehebelt) -->
                     <div class="review-card-face review-card-face--back" inert>
                         ${audioBtn}
+                        <a class="review-report-link" href="/feedback/new?content_type=lesson_content&content_id=${card.content_id}" target="_blank" rel="noopener" title="Fehler auf dieser Karte melden" onclick="event.stopPropagation()"><i class="fas fa-flag" aria-hidden="true"></i> melden</a>
                         ${backHTML}
                     </div>
                 </div>
