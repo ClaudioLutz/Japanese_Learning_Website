@@ -518,7 +518,51 @@ html.hide-front-romaji .front-romaji { display: none !important; }
         background-color: var(--zen-matcha, #7A9A5A);
         transform: scale(1.1);
     }
-    
+
+    /* "Melden"-Bruecken zum Issue-Board (KI-Stimmen-Disclaimer + Per-Seite-Link).
+       Dezent gehalten, Shu beim Hover — Light + Dark (Shu bleibt). Die erhoehte
+       Spezifitaet beim Disclaimer-Link schlaegt die generische
+       `.text-content-container a`-Regel (sonst waere er dort link-blau). */
+    .lesson-audio-report-link,
+    .lesson-page-report-link,
+    body.lesson-view-redesign .text-audio-meta .lesson-audio-report-link {
+        color: var(--text-muted, #8C8378);
+        text-decoration: none;
+    }
+    .lesson-audio-report-link:hover,
+    .lesson-page-report-link:hover,
+    body.lesson-view-redesign .text-audio-meta .lesson-audio-report-link:hover {
+        color: var(--shu, #EB6101);
+        text-decoration: underline;
+    }
+    .lesson-page-report { opacity: 0.7; }
+    .lesson-page-report-link {
+        font-size: 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    /* Deep-Link-Hervorhebung: kurzer Shu-Puls auf dem angesprungenen Container
+       (#content-<id> aus Disclaimer / Melden-Links / Issue-Board-Rueckweg). */
+    @keyframes jplContentFlash {
+        0%   { box-shadow: 0 0 0 3px rgba(235, 97, 1, 0); background-color: rgba(235, 97, 1, 0); }
+        15%  { box-shadow: 0 0 0 3px rgba(235, 97, 1, 0.45); background-color: rgba(235, 97, 1, 0.10); }
+        100% { box-shadow: 0 0 0 3px rgba(235, 97, 1, 0); background-color: rgba(235, 97, 1, 0); }
+    }
+    .content-deeplink-flash {
+        animation: jplContentFlash 2.4s ease-out 1;
+        border-radius: 12px;
+        scroll-margin-top: 80px;
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .content-deeplink-flash {
+            animation: none;
+            outline: 2px solid var(--shu, #EB6101);
+            outline-offset: 3px;
+        }
+    }
+
     /* Keyboard navigation indicator */
     .keyboard-hint {
         position: fixed;
@@ -1288,7 +1332,7 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                   <audio controls preload="none" src="{{ content.get_file_url() if content.file_path else content.media_url }}" style="width:100%;max-width:540px;"></audio>
                                                   <div class="text-audio-meta small text-muted mt-1">
                                                     🔊 Vorlesen — Deutsch + Japanisch (separate Stimmen)<br>
-                                                    <span class="text-muted" style="opacity:0.75;">🤖 KI-Stimmen, wir verbessern laufend · Feedback: <a href="mailto:info@japanese-learning.ch" class="text-muted">info@japanese-learning.ch</a></span>
+                                                    <span class="text-muted" style="opacity:0.75;">🤖 KI-Stimmen, wir verbessern laufend · <a href="{{ url_for('issues.new_issue', content_type='lesson_content', content_id=content.id) }}" class="lesson-audio-report-link"><i class="fas fa-flag" aria-hidden="true"></i> Aussprache melden</a> · <a href="mailto:info@japanese-learning.ch" class="text-muted">info@japanese-learning.ch</a></span>
                                                   </div>
                                                 </div>
                                                 {% endif %}
@@ -1786,7 +1830,7 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                           <audio controls preload="none" src="{{ content.get_file_url() if content.file_path else content.media_url }}" style="width:100%;max-width:540px;"></audio>
                                                           <div class="text-audio-meta small text-muted mt-1">
                                                             🔊 Vorlesen — Deutsch + Japanisch (separate Stimmen)<br>
-                                                            <span class="text-muted" style="opacity:0.75;">🤖 KI-Stimmen, wir verbessern laufend · Feedback: <a href="mailto:info@japanese-learning.ch" class="text-muted">info@japanese-learning.ch</a></span>
+                                                            <span class="text-muted" style="opacity:0.75;">🤖 KI-Stimmen, wir verbessern laufend · <a href="{{ url_for('issues.new_issue', content_type='lesson_content', content_id=content.id) }}" class="lesson-audio-report-link"><i class="fas fa-flag" aria-hidden="true"></i> Aussprache melden</a> · <a href="mailto:info@japanese-learning.ch" class="text-muted">info@japanese-learning.ch</a></span>
                                                           </div>
                                                         </div>
                                                         {% endif %}
@@ -2050,6 +2094,18 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                             </form>
                                         </div>
                                         {% endif %}
+
+                                        {# Per-Seite-Feedback: Fehler auf genau dieser Lektionsseite melden
+                                           (oeffentliches Issue-Board). Auf JEDER Seite sichtbar (mobil + desktop) —
+                                           der Hero-Melden-Link oben verschwindet ab Seite 2. ?page liefert die
+                                           Seitennummer mit, damit der Hinweis die Fundstelle (Lektion › Seite) kennt. #}
+                                        {% set _report_page = (page.content[0].page_number if page.content else loop.index) %}
+                                        <div class="lesson-page-report text-center mt-4">
+                                            <a href="{{ url_for('issues.new_issue', content_type='lesson', content_id=lesson.id, page=_report_page) }}"
+                                               class="lesson-page-report-link">
+                                                <i class="fas fa-flag" aria-hidden="true"></i> Fehler auf dieser Seite melden
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                                 {% endfor %}
@@ -2635,11 +2691,15 @@ document.addEventListener('DOMContentLoaded', function() {
         initializeNavigation();
         setupKeyboardNavigation();
         showKeyboardHint();
-        
+
         // Restore page from URL hash
         restorePageFromURL();
+    } else {
+        // Einseitige Lektion: kein Carousel/Navigation, aber #content-Deep-Link
+        // (Disclaimer/Melden-Links) trotzdem honorieren.
+        deepLinkToContentFromHash();
     }
-    
+
     // Initialize page overview completion counts on page load
     // This ensures the server-side calculated values are preserved
     initializePageOverviewCompletionCounts();
@@ -2794,9 +2854,68 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+// Deep-Link auf einen bestimmten Inhalts-Container (#content-<id>): aktiviert die
+// richtige Carousel-Seite, scrollt zum Container und hebt ihn kurz hervor. Wird
+// vom KI-Stimmen-Disclaimer und den "melden"-Links genutzt, damit ein Klick (und
+// der Rueckweg aus dem Issue-Board) genau bei Seite + Container landet.
+function highlightContentEl(el) {
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    el.classList.add('content-deeplink-flash');
+    setTimeout(() => el.classList.remove('content-deeplink-flash'), 2600);
+}
+
+function deepLinkToContentFromHash() {
+    const hash = window.location.hash;
+    if (!hash || hash.indexOf('#content-') !== 0) return false;
+    const cid = hash.slice('#content-'.length);
+    if (!cid) return false;
+    let el = null;
+    try {
+        const sel = '[data-content-id="' + ((window.CSS && CSS.escape) ? CSS.escape(cid) : cid) + '"]';
+        el = document.querySelector(sel);
+    } catch (e) { el = null; }
+    if (!el) return false;
+    const carouselEl = document.getElementById('lessonCarousel');
+    const item = el.closest('.carousel-item');
+    const items = carouselEl ? Array.from(carouselEl.querySelectorAll('.carousel-item')) : [];
+    const idx = item ? items.indexOf(item) : -1;
+    const flash = () => setTimeout(() => highlightContentEl(el), 80);
+
+    if (carouselEl && idx >= 0 && typeof totalPages === 'number' && totalPages > 1) {
+        const goThere = function() {
+            if (currentPage === idx) { flash(); return; }
+            currentPage = idx;
+            updateHeaderForPage();
+            // Erst nach Abschluss des Slides scrollen — vorher misst scrollIntoView falsch.
+            carouselEl.addEventListener('slid.bs.carousel', function once() {
+                carouselEl.removeEventListener('slid.bs.carousel', once);
+                flash();
+            });
+            goToPage(idx);
+        };
+        // Warm-Load: sofort springen (kein Aufblitzen von Seite 1). Zusaetzlich ein
+        // Sicherheitsnetz nach window.load gegen den Cold-Load-Race (Carousel beim
+        // allerersten Lektionsaufruf der Session noch nicht initialisiert).
+        if (window.bootstrap && bootstrap.Carousel) goThere();
+        window.addEventListener('load', function safety() {
+            window.removeEventListener('load', safety);
+            setTimeout(() => { if (currentPage !== idx) goThere(); }, 80);
+        });
+        return true;
+    }
+    // Bereits auf der richtigen Seite (oder einseitige Lektion ohne Carousel).
+    flash();
+    return true;
+}
+
 function restorePageFromURL() {
     // Check if there's a page hash in the URL
     const hash = window.location.hash;
+    // Container-Deep-Link (#content-<id>) hat Vorrang vor #page-N.
+    if (hash && hash.indexOf('#content-') === 0 && deepLinkToContentFromHash()) {
+        return;
+    }
     if (hash && hash.startsWith('#page-')) {
         const pageNum = parseInt(hash.replace('#page-', ''), 10);
         if (pageNum >= 1 && pageNum <= totalPages) {

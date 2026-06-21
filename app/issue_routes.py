@@ -22,7 +22,7 @@ from app import db, limiter
 from app.forms import ContentIssueForm, IssueCommentForm
 from app.mail_service import send_issue_resolved_email, send_new_issue_admin_email
 from app.models import (
-    ContentIssue, ContentIssueComment, Lesson, LessonContent, User,
+    ContentIssue, ContentIssueComment, Lesson, LessonContent, LessonPage, User,
 )
 from app.routes import admin_required
 
@@ -42,9 +42,32 @@ def _user_or_ip() -> str:
     return get_remote_address()
 
 
+def _clip(text, limit):
+    """String hart auf `limit` Zeichen begrenzen (mit Auslassungszeichen)."""
+    if text is None or len(text) <= limit:
+        return text
+    return text[:limit - 1].rstrip() + '…'
+
+
+def _page_descriptor(lesson_id, page_number):
+    """Seiten-Teil des Fundstellen-Pfads: 'Seite N' bzw. 'Seite N: «Titel»'.
+    Der Seitentitel ist optional — LessonPage-Metadaten koennen fehlen."""
+    if not page_number:
+        return None
+    page = LessonPage.query.filter_by(
+        lesson_id=lesson_id, page_number=page_number,
+    ).first()
+    title = (page.title or '').strip() if page else ''
+    if title:
+        return f'Seite {page_number}: {title}'
+    return f'Seite {page_number}'
+
+
 def _resolve_content_ref(content_type, content_id):
     """(label, url) fuer den Rueckverweis auf den verankerten Inhalt — oder
-    (None, None), wenn nicht verankert / Ziel nicht (mehr) vorhanden."""
+    (None, None), wenn nicht verankert / Ziel nicht (mehr) vorhanden. Das Label
+    ist ein lesbarer Pfad (Lektion › Seite › Container); die URL deep-linkt
+    direkt auf Seite + Container (#content-<id>) bzw. auf die Lektion."""
     if not content_type or not content_id:
         return None, None
     if content_type == 'lesson':
@@ -55,8 +78,30 @@ def _resolve_content_ref(content_type, content_id):
         lc = LessonContent.query.get(content_id)
         if lc:
             label = lc.title or (lc.content_type or 'Inhalt')
-            return f'Karte/Inhalt: {label}', f'/lessons/{lc.lesson_id}#content-{lc.id}'
+            lesson = Lesson.query.get(lc.lesson_id)
+            lesson_title = lesson.title if lesson else f'Lektion {lc.lesson_id}'
+            parts = [f'Lektion: {lesson_title}']
+            page_part = _page_descriptor(lc.lesson_id, lc.page_number)
+            if page_part:
+                parts.append(page_part)
+            parts.append(f'Karte/Inhalt: {label}')
+            return ' › '.join(parts), f'/lessons/{lc.lesson_id}#content-{lc.id}'
     return None, None
+
+
+def _location_descriptor(content_type, content_id, page=None):
+    """Lesbarer Fundstellen-Pfad fuer die Vorbefuellung des Formulars. Bei
+    lesson_content ist die Seite bereits Teil des Labels; bei einem reinen
+    Lesson-Anker wird die optional uebergebene Seite (?page=N) ergaenzt, damit
+    auch ein Seiten-Hinweis genau verortet ist ('Lektion › Seite N')."""
+    label, _ = _resolve_content_ref(content_type, content_id)
+    if content_type == 'lesson' and content_id and page and page >= 1:
+        lesson = Lesson.query.get(content_id)
+        if lesson:
+            page_part = _page_descriptor(content_id, page)
+            base = f'Lektion: {lesson.title}'
+            return f'{base} › {page_part}' if page_part else base
+    return label
 
 
 def _valid_anchor(content_type, content_id):
@@ -137,11 +182,19 @@ def new_issue():
     form = ContentIssueForm()
     raw_type = (request.values.get('content_type') or '').strip() or None
     raw_id = request.values.get('content_id', type=int)
+    raw_page = request.values.get('page', type=int)
     anchor_type, anchor_id = _valid_anchor(raw_type, raw_id)
-    anchor_label, _ = _resolve_content_ref(anchor_type, anchor_id)
+    # Lesbarer Fundstellen-Pfad (Lektion › Seite › Container) fuer Vorbefuellung
+    # + Anzeige. Bei reinem Lesson-Anker fliesst die optionale ?page=N ein.
+    location = _location_descriptor(anchor_type, anchor_id, raw_page)
 
-    if request.method == 'GET' and not form.title.data and anchor_label:
-        form.title.data = f'Hinweis zu {anchor_label}'
+    if request.method == 'GET' and location:
+        if not form.title.data:
+            form.title.data = _clip(f'Hinweis zu {location}', 150)
+        if not form.body.data:
+            # Pfad in den (editierbaren) Text uebernehmen — bleibt erhalten,
+            # auch wenn der verankerte Inhalt spaeter veraendert/geloescht wird.
+            form.body.data = f'📍 Fundstelle: {location}\n\n'
 
     if form.validate_on_submit():
         issue = ContentIssue(
@@ -160,7 +213,7 @@ def new_issue():
 
     return render_template(
         'issues/new.html', form=form,
-        content_type=anchor_type, content_id=anchor_id, anchor_label=anchor_label,
+        content_type=anchor_type, content_id=anchor_id, anchor_label=location,
     )
 
 

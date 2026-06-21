@@ -7,10 +7,13 @@ Resolve (admin-only, Toggle, Notify nur open->resolved), Soft-Delete.
 """
 import app.issue_routes as issue_routes
 from app import db
+from app.issue_routes import (
+    _location_descriptor, _page_descriptor, _resolve_content_ref,
+)
 from app.models import ContentIssue, ContentIssueComment
 from tests.factories import (
     AdminUserFactory, ContentIssueCommentFactory, ContentIssueFactory,
-    LessonFactory, UserFactory,
+    LessonContentFactory, LessonFactory, LessonPageFactory, UserFactory,
 )
 
 
@@ -296,3 +299,128 @@ class TestIssueDelete:
         body = client.get(f'/feedback/{iss.id}').get_data(as_text=True)
         assert 'gelöscht' in body
         assert 'geheim' not in body
+
+
+# ── Fundstellen-Pfad: Lektion › Seite › Container ──────────────────────────
+
+class TestIssueLocationPath:
+    def test_resolve_lesson_content_includes_lesson_page_container(self, app, db):
+        lesson = LessonFactory(title="Begruessungen")
+        db.session.flush()
+        LessonPageFactory(lesson_id=lesson.id, page_number=2, title="Vokabeln")
+        lc = LessonContentFactory(
+            lesson_id=lesson.id, page_number=2, title="おはよう",
+        )
+        db.session.commit()
+        label, url = _resolve_content_ref('lesson_content', lc.id)
+        assert 'Lektion: Begruessungen' in label
+        assert 'Seite 2' in label
+        assert 'Vokabeln' in label        # Seitentitel im Pfad
+        assert 'おはよう' in label          # Container im Pfad
+        # URL deep-linkt auf Seite + Container (vom Frontend gehandhabt)
+        assert url == f'/lessons/{lesson.id}#content-{lc.id}'
+
+    def test_page_descriptor_without_metadata_no_none(self, app, db):
+        """Fehlende LessonPage-Metadaten -> nur 'Seite N', niemals 'None'."""
+        lesson = LessonFactory()
+        db.session.flush()
+        lc = LessonContentFactory(lesson_id=lesson.id, page_number=3, title="X")
+        db.session.commit()
+        assert _page_descriptor(lesson.id, 3) == 'Seite 3'
+        label, _ = _resolve_content_ref('lesson_content', lc.id)
+        assert 'Seite 3' in label
+        assert 'None' not in label
+
+    def test_location_descriptor_lesson_with_page(self, app, db):
+        lesson = LessonFactory(title="Zahlen")
+        db.session.flush()
+        LessonPageFactory(lesson_id=lesson.id, page_number=2, title="Übung")
+        db.session.commit()
+        assert _location_descriptor('lesson', lesson.id, 2) == \
+            'Lektion: Zahlen › Seite 2: Übung'
+
+    def test_location_descriptor_lesson_without_page(self, app, db):
+        lesson = LessonFactory(title="Zahlen")
+        db.session.commit()
+        assert _location_descriptor('lesson', lesson.id, None) == 'Lektion: Zahlen'
+
+
+# ── Vorbefuellung: Fundstelle wird in Titel + Text mitgegeben ──────────────
+
+class TestIssuePrefill:
+    def test_new_issue_prefills_path_for_lesson_content(self, auth_client, db):
+        client, user = auth_client
+        lesson = LessonFactory(title="Begruessungen")
+        db.session.flush()
+        LessonPageFactory(lesson_id=lesson.id, page_number=1, title="Einstieg")
+        lc = LessonContentFactory(
+            lesson_id=lesson.id, page_number=1, title="こんにちは",
+        )
+        db.session.commit()
+        body = client.get(
+            f'/feedback/new?content_type=lesson_content&content_id={lc.id}'
+        ).get_data(as_text=True)
+        assert 'Fundstelle' in body          # editierbarer Pfad im Textfeld
+        assert 'Seite 1' in body
+        assert 'Begruessungen' in body
+
+    def test_new_issue_prefills_page_for_lesson_anchor(self, auth_client, db):
+        client, user = auth_client
+        lesson = LessonFactory(title="Zahlen")
+        db.session.flush()
+        LessonPageFactory(lesson_id=lesson.id, page_number=2, title="Übung")
+        db.session.commit()
+        body = client.get(
+            f'/feedback/new?content_type=lesson&content_id={lesson.id}&page=2'
+        ).get_data(as_text=True)
+        assert 'Seite 2' in body
+        assert 'Zahlen' in body
+
+    def test_new_issue_invalid_page_ignored(self, auth_client, db):
+        """Nicht-numerische ?page darf nicht crashen und wird ignoriert."""
+        client, user = auth_client
+        lesson = LessonFactory(title="Zahlen")
+        db.session.commit()
+        resp = client.get(
+            f'/feedback/new?content_type=lesson&content_id={lesson.id}&page=abc'
+        )
+        assert resp.status_code == 200
+        assert 'Zahlen' in resp.get_data(as_text=True)
+
+
+# ── Lektionsansicht: Melden-Bruecken zum Issue-Board ───────────────────────
+
+class TestLessonViewReportLinks:
+    def test_per_page_report_link_rendered(self, auth_client, db):
+        """Jede Lektionsseite hat einen 'Fehler auf dieser Seite melden'-Link
+        (auch mobil sichtbar — der Hero-Link verschwindet ab Seite 2)."""
+        client, user = auth_client
+        lesson = LessonFactory(is_published=True, price=0.0)
+        db.session.flush()
+        LessonContentFactory(
+            lesson_id=lesson.id, page_number=1, content_type='text',
+            content_text='Hallo Welt',
+        )
+        db.session.commit()
+        body = client.get(f'/lessons/{lesson.id}').get_data(as_text=True)
+        assert 'Fehler auf dieser Seite melden' in body
+        assert 'content_type=lesson' in body
+        assert 'page=1' in body
+
+    def test_audio_disclaimer_links_to_issue_board(self, auth_client, db):
+        """Der KI-Stimmen-Disclaimer verweist aufs Issue-Board, verankert am
+        Container (content_id) — damit Lektion+Seite+Container mitgehen."""
+        client, user = auth_client
+        lesson = LessonFactory(is_published=True, price=0.0)
+        db.session.flush()
+        lc = LessonContentFactory(
+            lesson_id=lesson.id, page_number=1, content_type='text',
+            content_text='Hallo Welt', media_url='http://example.test/a.wav',
+            file_type='audio/wav',
+        )
+        db.session.commit()
+        body = client.get(f'/lessons/{lesson.id}').get_data(as_text=True)
+        assert 'KI-Stimmen' in body
+        assert 'Aussprache melden' in body
+        assert 'content_type=lesson_content' in body
+        assert f'content_id={lc.id}' in body
