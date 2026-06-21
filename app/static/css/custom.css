@@ -54,12 +54,12 @@
     --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
     --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
     --shadow-lg: 0 12px 40px rgba(0,0,0,0.12);
-}
 
-/* === Compass-Redesign-Tokens (Playbook 2026-04) ====================== */
-/* Washi/Sumi/Shu-Palette nach docs/compass_artifact_wf-... — strikt
-   additiv, Zen-Variablen oben bleiben fuer Rueckwaertskompatibilitaet. */
-:root {
+    /* === Compass-Redesign-Tokens (Playbook 2026-04) — in EINEN :root zusammengefuehrt (IC-01,
+       Vereinheitlichung). Die zwei frueheren :root-Bloecke waren disjunkt (0 Duplikat-Keys),
+       Merge ist daher reine Konkatenation = wert-erhaltend (per scripts/_tokendiff.js verifiziert). */
+    /* Washi/Sumi/Shu-Palette nach docs/compass_artifact_wf-... — strikt
+       additiv, Zen-Variablen oben bleiben fuer Rueckwaertskompatibilitaet. */
     --washi:    #FAF7F2;
     --kinari:   #F5F0E8;
     --sumi:     #1C1C1C;
