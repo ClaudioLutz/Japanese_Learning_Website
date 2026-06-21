@@ -284,11 +284,12 @@
             </div>
 
             {# Antwort-Slots #}
-            {# Slot-/Tile-Keys tragen roundIdx → bei jedem Wortwechsel baut Alpine
-               frische Knoten (Index-Keys liessen sonst Kana stehen, wenn das naechste
-               Wort kuerzer ist — empirisch reproduziert 2026-06-21). #}
+            {# Slot-/Tile-Keys tragen roundIdx + boardNonce → bei jedem Wortwechsel UND
+               jedem Board-Reset (Retry-Clear, revealing→leer im selben Wort) baut Alpine
+               frische Knoten (Index-Keys liessen sonst Kana stehen — empirisch
+               reproduziert 2026-06-21). #}
             <div class="kspell__slots" role="group" aria-label="Antwort">
-                <template x-for="(slot, i) in slots" :key="roundIdx + ':' + i">
+                <template x-for="(slot, i) in slots" :key="roundIdx + '-' + boardNonce + ':' + i">
                     <button type="button" class="kspell__slot" :class="{ 'is-filled': slot !== null }"
                             @click="tapSlot(i)"
                             x-text="revealing ? (current ? current.word[i] : '') : (slot ? slot.char : '')"></button>
@@ -297,7 +298,7 @@
 
             {# Tile-Ablage #}
             <div class="kspell__tray" role="group" aria-label="Buchstaben">
-                <template x-for="(tile, i) in tray" :key="roundIdx + ':' + tile.id">
+                <template x-for="(tile, i) in tray" :key="roundIdx + '-' + boardNonce + ':' + tile.id">
                     <button type="button" class="kspell__tile" :class="{ 'is-used': tile.used }"
                             @click="tapTray(i)" x-text="tile.char"></button>
                 </template>

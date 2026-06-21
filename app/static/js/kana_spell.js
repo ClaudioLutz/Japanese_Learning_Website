@@ -26,8 +26,10 @@ const KANA_SPELL_SCORING = {
     STREAK_BONUS_MAX: 20, // Deckel des Serien-Bonus
     OK_BEAT_MS: 650,     // Erfolg kurz stehen lassen (gruener Flash + Ansage)
     OK_BEAT_MS_REDUCED: 350,
-    REVEAL_MS: 1400,     // nach Fehler die korrekte Schreibung zeigen
+    REVEAL_MS: 1400,     // nach „Auflösen" die korrekte Schreibung zeigen, dann weiter
     REVEAL_MS_REDUCED: 800,
+    RETRY_REVEAL_MS: 2200,        // nach Fehleingabe die Loesung laenger zeigen, dann Retry
+    RETRY_REVEAL_MS_REDUCED: 1200,
 };
 const KANA_SPELL_ROUND_LEN = 10;   // Woerter pro Runde
 const KANA_SPELL_MIN_TRAY = 5;     // mind. so viele Tiles in der Ablage
@@ -59,6 +61,9 @@ function kanaSpellGame(opts) {
         // ── Runde ──
         roundWords: [],
         roundIdx: 0,
+        boardNonce: 0,                // erhoeht bei jedem Board-Reset (Retry-Clear) →
+                                      // erzwingt frische Slot/Tray-Knoten auch im selben
+                                      // Wort (Alpine Index-Key-Stale beim revealing→leer)
         current: null,                // aktuelles Wort-Objekt
         slots: [],                    // [{ id, char } | null] — Antwort-Reihe
         tray: [],                     // [{ id, char, used }] — Tile-Ablage
@@ -377,21 +382,27 @@ function kanaSpellGame(opts) {
                 this._scheduleNext(this.reduceMotion
                     ? KANA_SPELL_SCORING.OK_BEAT_MS_REDUCED : KANA_SPELL_SCORING.OK_BEAT_MS);
             } else {
-                // FALSCH → NICHT weiterspringen: Serie zuruecksetzen, kurz rot
-                // melden, dann wieder zum Korrigieren freigeben (Kästchen antippen →
-                // Tile zurueck in die Ablage → richtige setzen → erneut „Prüfen").
-                // Die korrekte Loesung wird NICHT gezeigt — dafuer ist „Auflösen" da,
-                // das das Wort als verfehlt wertet und weitergeht.
+                // FALSCH → NICHT weiterspringen: Serie zuruecksetzen, die korrekte
+                // Schreibung deutlich (rot) in den Slots einblenden und LAENGER stehen
+                // lassen (zum Einpraegen). Danach Loesung ausblenden, Slots leeren und
+                // zum erneuten Tippen freigeben (Retry). „Auflösen" bleibt der Ausweg,
+                // der das Wort als verfehlt wertet und weitergeht.
                 this.streak = 0;
+                this.revealing = true;   // korrekte Schreibung in den Slots zeigen
                 this.fb = 'bad';
-                this.fbText = 'Noch nicht ganz — tippe ein Kästchen an, um es zu korrigieren.';
+                this.fbText = '✗ Richtig: ' + this.current.word
+                    + (this.current.romaji ? ' (' + this.current.romaji + ')' : '')
+                    + ' — nochmal versuchen';
                 const hold = this.reduceMotion
-                    ? KANA_SPELL_SCORING.OK_BEAT_MS_REDUCED : KANA_SPELL_SCORING.OK_BEAT_MS;
+                    ? KANA_SPELL_SCORING.RETRY_REVEAL_MS_REDUCED : KANA_SPELL_SCORING.RETRY_REVEAL_MS;
                 if (this._revealTimer) clearTimeout(this._revealTimer);
                 this._revealTimer = setTimeout(() => {
                     if (this.phase !== 'playing') return;
-                    this.fb = '';            // roten Flash wegnehmen
-                    this.locked = false;     // wieder editierbar
+                    this.revealing = false;  // Loesung wieder ausblenden
+                    this.fb = '';            // roten Zustand wegnehmen
+                    this.locked = false;     // wieder editierbar (vor clearSlots!)
+                    this.boardNonce++;       // frische Slot/Tray-Knoten erzwingen
+                    this.clearSlots();       // frisch nochmal tippen (Tiles zurueck)
                 }, hold);
             }
         },
