@@ -198,15 +198,18 @@
   {# Sticky Sektions-Navigation — Sprung zur Sektion + Scroll-Spy. Bei aktivem
      Filter ausgeblendet (Sektionen klappen dann ohnehin alle auf). #}
   <nav class="lp-secnav" aria-label="Lehrplan-Abschnitte" x-show="!hasActiveFilters()" x-transition.opacity>
-    <div class="lp-secnav-track">
-      {% for cat in page_categories %}
-      <button type="button"
-              class="lp-secnav-chip"
-              :class="activeNav === '{{ cat.id }}' && 'is-active'"
-              @click="scrollToCat('{{ cat.id }}')">
-        {% if cat.icon_emoji %}<span aria-hidden="true">{{ cat.icon_emoji }}</span> {% endif %}{{ cat.name }}{% if show_status %} <span class="lp-secnav-frac">{{ cat.done_count }}/{{ cat.lesson_count }}</span>{% endif %}
-      </button>
-      {% endfor %}
+    <div class="lp-secnav-trackwrap"
+         :class="{ 'can-scroll-left': canScrollLeft, 'can-scroll-right': canScrollRight }">
+      <div class="lp-secnav-track" x-ref="secnavTrack" @scroll.passive="updateScrollHints()">
+        {% for cat in page_categories %}
+        <button type="button"
+                class="lp-secnav-chip"
+                :class="activeNav === '{{ cat.id }}' && 'is-active'"
+                @click="scrollToCat('{{ cat.id }}')">
+          {% if cat.icon_emoji %}<span aria-hidden="true">{{ cat.icon_emoji }}</span> {% endif %}{{ cat.name }}{% if show_status %} <span class="lp-secnav-frac">{{ cat.done_count }}/{{ cat.lesson_count }}</span>{% endif %}
+        </button>
+        {% endfor %}
+      </div>
     </div>
     {# Global „alles auf-/zuklappen" — bleibt als sticky Element immer erreichbar #}
     <button type="button"
@@ -530,12 +533,28 @@
   display: flex; align-items: center; gap: 0.6rem;
   margin: 0 -1.5rem 1.25rem; padding: 0.5rem 1.5rem;
   background: rgba(250,247,242,.92);
+  --secnav-fade-from: rgba(250,247,242,.97);
+  --secnav-fade-to: rgba(250,247,242,0);
   -webkit-backdrop-filter: saturate(180%) blur(10px);
   backdrop-filter: saturate(180%) blur(10px);
   border-bottom: 1px solid var(--ink-200);
 }
-.lp-secnav-track { flex: 1 1 auto; min-width: 0; display: flex; gap: 0.4rem; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+/* Wrapper trägt jetzt das flex/min-width (vom Track verschoben) und positioniert
+   die Rand-Fades relativ — der Track darunter scrollt frei. */
+.lp-secnav-trackwrap { position: relative; flex: 1 1 auto; min-width: 0; }
+.lp-secnav-track { display: flex; gap: 0.4rem; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
 .lp-secnav-track::-webkit-scrollbar { display: none; }
+/* Rand-Fades = Affordanz, dass es links/rechts weiter scrollbar ist (auf Desktop
+   ist die Scrollbar versteckt). pointer-events:none → Chips bleiben klick-/tapbar. */
+.lp-secnav-trackwrap::before,
+.lp-secnav-trackwrap::after {
+  content: ""; position: absolute; top: 0; bottom: 0; width: 2.25rem;
+  pointer-events: none; opacity: 0; transition: opacity .15s; z-index: 2;
+}
+.lp-secnav-trackwrap::before { left: 0;  background: linear-gradient(to right, var(--secnav-fade-from), var(--secnav-fade-to)); }
+.lp-secnav-trackwrap::after  { right: 0; background: linear-gradient(to left,  var(--secnav-fade-from), var(--secnav-fade-to)); }
+.lp-secnav-trackwrap.can-scroll-left::before  { opacity: 1; }
+.lp-secnav-trackwrap.can-scroll-right::after  { opacity: 1; }
 .lp-secnav-chip {
   flex: none; display: inline-flex; align-items: center; gap: 0.35rem;
   border: 1px solid var(--ink-200); background: var(--card-background); color: var(--ink-600);
@@ -704,6 +723,8 @@
 /* Sticky Sektions-Nav: heller Washi-rgba-Scrim → dunkler getönter Scrim */
 [data-theme="dark"] .lp-secnav {
   background: rgba(20,18,14,.92);
+  --secnav-fade-from: rgba(20,18,14,.97);
+  --secnav-fade-to: rgba(20,18,14,0);
 }
 /* Aktiver Chip: --kon-Fuellung ist im Dark hell (#C6D0E4) → dunkler Text statt weiss */
 [data-theme="dark"] .lp-secnav-chip.is-active {
@@ -720,12 +741,17 @@ function lessonsPage() {
     status: params.get('status') || 'all',
     catOpen: {},      // {catId(String): bool} — Accordion-Zustand
     activeNav: null,  // catId der aktuell sichtbaren Sektion (Scroll-Spy)
+    canScrollLeft: false,  // Rand-Fade der Sektions-Nav links/rechts
+    canScrollRight: false,
     _scrollTimer: null, // anstehender Scroll nach exklusivem Kollaps (abbrechbar)
 
     init() {
       this.initCatOpen();
       this.setupBackToTop();
-      this.$nextTick(() => this.setupScrollSpy());
+      this.$nextTick(() => {
+        this.setupScrollSpy();
+        this.setupSecnavScroll();
+      });
     },
 
     // ── Accordion: Server-Default (data-open-default) + Session-Overrides ──
@@ -807,6 +833,40 @@ function lessonsPage() {
       groups.forEach(g => obs.observe(g));
     },
 
+    // ── Sektions-Nav horizontal bedienbar machen ──
+    // Auf Desktop ist die Scrollbar versteckt, es gibt kein Touch und das Mausrad
+    // scrollt vertikal → die überlaufenden Chips rechts wären unerreichbar.
+    // Lösung: vertikales Mausrad in horizontales Scrollen übersetzen.
+    setupSecnavScroll() {
+      const track = this.$refs.secnavTrack;
+      if (!track) return;
+      track.addEventListener('wheel', (e) => {
+        const max = track.scrollWidth - track.clientWidth;
+        if (max <= 0) return;                                 // kein Overflow → nichts kapern
+        if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;  // horizontale Trackpad-Geste → nativ lassen
+        const atStart = track.scrollLeft <= 0;
+        const atEnd = track.scrollLeft >= max - 1;
+        // Am Rand in Scrollrichtung NICHT kapern → Seite scrollt normal weiter (kein „Kleben").
+        if ((e.deltaY > 0 && atEnd) || (e.deltaY < 0 && atStart)) return;
+        e.preventDefault();
+        track.scrollLeft += e.deltaY;
+        this.updateScrollHints();
+      }, { passive: false });
+      window.addEventListener('resize', () => this.updateScrollHints(), { passive: true });
+      // Web-Fonts ändern die Chip-Breiten nach dem ersten Render → Hints nachziehen.
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(() => this.updateScrollHints());
+      }
+      this.updateScrollHints();
+    },
+    updateScrollHints() {
+      const track = this.$refs.secnavTrack;
+      if (!track) return;
+      const max = track.scrollWidth - track.clientWidth;
+      this.canScrollLeft = track.scrollLeft > 1;
+      this.canScrollRight = track.scrollLeft < max - 1;
+    },
+
     hasActiveFilters() {
       return this.search !== '' || this.access !== 'all' || this.status !== 'all';
     },
@@ -820,6 +880,9 @@ function lessonsPage() {
 
     apply() {
       this.syncUrl();
+      // Nav wird per x-show bei aktivem Filter aus-/wieder eingeblendet → erst dann
+      // sind clientWidth/scrollWidth wieder messbar.
+      this.$nextTick(() => this.updateScrollHints());
     },
 
     syncUrl() {
