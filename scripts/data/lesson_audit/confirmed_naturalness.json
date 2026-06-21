@@ -1,0 +1,389 @@
+[
+  {
+    "lesson_id": 164,
+    "satz_jp": "あ、すみません、五分後に 来ます。トイレに 行きます。",
+    "kontext": "text/dialog_slideshow (Im Restaurant, Tanaka), page_number 5, order_index 2 (auch order_index 3 im Lese-Text)",
+    "einstufung": "unnatuerlich",
+    "problem": "「五分後に来ます」 für 'ich bin in fünf Minuten zurück' ist ein Calque aus dem Deutschen/Englischen: 来ます heisst 'kommen/herkommen' — ein Muttersprachler sagt beim Weggehen 戻ります oder 行ってきます, nicht 来ます (man 'kommt' nicht zu sich selbst zurück). Auch 「五分後に」 ('in genau fünf Minuten') und der getrennte Satz 「トイレに行きます」 wirken roboterhaft präzise und gestelzt; für einen kurzen Toilettengang sagt niemand eine exakte Minutenangabe an.",
+    "natuerliche_alternative": "あ、すみません、ちょっとトイレに行ってきます。",
+    "schwere": "hoch",
+    "group_id": "kanji-grundlagen-1",
+    "module": "N5 · Kanji-Grundlagen",
+    "verdict": {
+      "wirklich_unnatuerlich": true,
+      "begruendung": "来ます ist hier tatsächlich unnatürlich: Tanaka geht vom Tisch weg, und 来ます (herkommen) bezeichnet Bewegung ZUM aktuellen Ort — man \"kommt\" nicht zu sich selbst zurück. Beim Weggehen sagt ein Muttersprachler 行ってきます oder 戻ります. 「五分後に来ます」 ist ein erkennbarer Calque aus \"in 5 Minuten komme ich (zurück)\". Zusätzlich wirkt die exakte Minutenangabe für einen kurzen Toilettengang übergenau/roboterhaft, und die zwei kurzen getrennten Sätze klingen gestelzt. Ein Muttersprachler würde hier die Stirn runzeln — kein bloss simpler, sondern ein hölzerner Satz.",
+      "alternative_ist_n5_und_natuerlich": true,
+      "bessere_alternative": "あ、すみません、ちょっとトイレに行ってきます。"
+    }
+  },
+  {
+    "lesson_id": 171,
+    "satz_jp": "あなたのお母さんは やさしいですか。",
+    "kontext": "vocab (お母さん), page_number 3, order_index 3",
+    "einstufung": "unnatuerlich",
+    "problem": "Gleiches Problem wie beim お父さん-Satz: 「あなたの」 + höfliches Verwandtschaftswort ist kein natürliches Japanisch, sondern ein Kalk aus dem Deutschen ('Ihre Mutter'). Muttersprachler nennen den Namen (リサさんの お母さんは…) oder lassen das Pronomen weg.",
+    "natuerliche_alternative": "リサさんの お母さんは やさしいですか。 (Risa-san no okaa-san wa yasashii desu ka.) — oder ohne Pronomen: 「お母さんは やさしいですか。」",
+    "schwere": "hoch",
+    "group_id": "kanji-grundlagen-2",
+    "module": "N5 · Kanji-Grundlagen",
+    "verdict": {
+      "wirklich_unnatuerlich": true,
+      "begruendung": "あなた als Anrede an eine konkrete Person ist im echten Japanisch unüblich (Muttersprachler nehmen Name+さん oder lassen das Pronomen weg); zusammen mit dem höflichen Verwandtschaftswort お母さん wirkt 「あなたのお母さん」 wie eine direkte Lehnübersetzung von „Ihre Mutter\" und damit hölzern. Verschärfend: Die Lektion 171 lehrt selbst explizit die uchi/soto-Regel und führt als Vorbild durchgehend リサさんの お母さんは… / たなかさんの お父さんは… / 先生の お父さん an — der zu prüfende Satz widerspricht also dem eigenen Lehrstoff. Kein bloßer Fehlalarm.",
+      "alternative_ist_n5_und_natuerlich": true,
+      "bessere_alternative": "リサさんの お母さんは やさしいですか。 (deckt sich 1:1 mit dem Vorbildsatz der Grammatik-Sektion derselben Lektion); ebenso natürlich und N5: お母さんは やさしいですか。"
+    }
+  },
+  {
+    "lesson_id": 170,
+    "satz_jp": "あの 右に あります。",
+    "kontext": "text (Grammatik-Prosa 'Wegfrage', Beispielantwort), page_number 4, order_index 1",
+    "einstufung": "unnatuerlich",
+    "problem": "「あの 右」 ist grammatisch/idiomatisch schief: 「あの」 ist ein vorangestelltes Demonstrativ und braucht ein Substantiv dahinter (あの しんごうの 右…). Allein stehend sagt das kein Muttersprachler; für 'rechts da drüben' nutzt man 「あちらの ほう」 oder bezieht sich auf einen Landmark. (Die spätere Grammatik-Karte macht es mit 「あの しんごうの 右に あります」 korrekt — die Prosa-Antwort hier ist die unsaubere Variante.)",
+    "natuerliche_alternative": "あの しんごうの 右に あります。 (Ano shingou no migi ni arimasu.) — oder 「みぎの ほうに あります。」 (Migi no hou ni arimasu.), beides N5.",
+    "schwere": "mittel",
+    "group_id": "kanji-grundlagen-2",
+    "module": "N5 · Kanji-Grundlagen",
+    "verdict": {
+      "wirklich_unnatuerlich": true,
+      "begruendung": "「あの」 ist ein prä-nominales Demonstrativ (rentaishi) und braucht zwingend ein folgendes Substantiv (あの しんごう / あの たてもの). Es kann weder direkt vor das Positionsnomen 右 treten noch selbständig stehen. 「あの 右に あります」 ist daher idiomatisch/grammatisch schief — ein Muttersprachler würde stutzen. Verstärkend: Dieselbe Lektion formuliert es an drei anderen Stellen korrekt mit 「あの しんごうの 右に あります」 (Grammatik-Karte order 4 + Dialog page 5), die Prosa-Antwort ist die einzige fehlerhafte Variante und widerspricht dem eigenen Lektionsstandard. Der Auditor liegt richtig.",
+      "alternative_ist_n5_und_natuerlich": true,
+      "bessere_alternative": "あの しんごうの 右に あります。 — beste Wahl, da sie den Landmark しんごう aus dem unmittelbaren Lektionskontext aufgreift und wortgleich mit der Grammatik-Karte und dem Dialog derselben Lektion ist (Konsistenz). Strikt N5. Alternativ ebenfalls korrekt und N5: 「みぎの ほうに あります。」 oder 「あちらに あります。」"
+    }
+  },
+  {
+    "lesson_id": 192,
+    "satz_jp": "この学校のせいとは大きいです。",
+    "kontext": "vocab (生徒), page_number 2, order_index 8",
+    "einstufung": "unnatuerlich",
+    "problem": "Kein Muttersprachler beschreibt Schueler mit 大きい — das klaenge, als waeren die Kinder koerperlich gross gewachsen. Es ist eine Wort-fuer-Wort-Konstruktion ('die Schueler sind gross'), die im Japanischen keinen sinnvollen Inhalt traegt. Wenn ueberhaupt, meint man 'es gibt viele Schueler', und das sagt man ganz anders.",
+    "natuerliche_alternative": "この学校は生徒が多いです。 (Diese Schule hat viele Schueler.) — 多い ist N5 und natuerlich.",
+    "schwere": "hoch",
+    "group_id": "kanji-grundlagen-4",
+    "module": "N5 · Kanji-Grundlagen",
+    "verdict": {
+      "wirklich_unnatuerlich": true,
+      "begruendung": "大きい beschreibt physische Grösse; auf 生徒 (Schüler) angewendet heisst der Satz wörtlich „die Schüler dieser Schule sind körperlich gross gewachsen\" — ein Muttersprachler stutzt sofort, weil diese Aussage keinen sinnvollen Inhalt trägt. Es ist eine künstliche Wort-für-Wort-Konstruktion. (Zum Vergleich: この学校は大きいです mit 学校 als Subjekt wäre natürlich.) Die Alternative この学校は生徒が多いです。 ist idiomatisch und drückt die tatsächlich gemeinte Aussage aus.",
+      "alternative_ist_n5_und_natuerlich": true,
+      "bessere_alternative": "この学校は生徒が多いです。"
+    }
+  },
+  {
+    "lesson_id": 192,
+    "satz_jp": "ほんだなに本が十あります。",
+    "kontext": "vocab (本棚), page_number 3, order_index 8",
+    "einstufung": "steif",
+    "problem": "Buecher zaehlt man im Japanischen mit dem Zaehler 冊 (satsu). Eine blanke Zahl 十 ohne Zaehler direkt am Verあります wirkt hoelzern/unvollstaendig, fast wie eine Auslassung. Ein Muttersprachler sagt automatisch 十冊.",
+    "natuerliche_alternative": "ほんだなに本が十冊あります。 (冊 ist ein N5-Zaehler und gehoert hier zwingend dazu.)",
+    "schwere": "mittel",
+    "group_id": "kanji-grundlagen-4",
+    "module": "N5 · Kanji-Grundlagen",
+    "verdict": {
+      "wirklich_unnatuerlich": true,
+      "begruendung": "Als Muttersprachler stolpert man hier: Bücher werden mit dem Zähler 冊 (さつ) gezählt. Eine blanke Zahl 十 direkt an あります wirkt unvollständig, fast wie eine vergessene Klassifikator-Angabe — ein Muttersprachler sagt reflexhaft 十冊あります. Es geht nicht um Simplizität, sondern um eine fehlende, idiomatisch zwingende Zählerangabe. 冊 ist ein Standard-N5-Zähler und gehört genau in diesen Kontext (本棚 + 本). Die vorgeschlagene Korrektur ist treffend und niveaukonform.",
+      "alternative_ist_n5_und_natuerlich": true
+    }
+  },
+  {
+    "lesson_id": 192,
+    "satz_jp": "父は北で生まれました。",
+    "kontext": "grammar (～で生まれる), page_number 4, order_index 3",
+    "einstufung": "unnatuerlich",
+    "problem": "北 (Norden) ist eine Himmelsrichtung, kein Geburtsort. 'Im Norden geboren' klingt als Wort-fuer-Wort-Uebertragung gekuenstelt; ein Muttersprachler nennt einen konkreten Ort (Stadt/Land) oder formuliert anders. Als Lehrbeispiel fuer で生まれる ist es ein unidiomatischer Fueller.",
+    "natuerliche_alternative": "父は日本で生まれました。 (Mein Vater ist in Japan geboren.) — konkreter Ort, sonst identische N5-Struktur.",
+    "schwere": "mittel",
+    "group_id": "kanji-grundlagen-4",
+    "module": "N5 · Kanji-Grundlagen",
+    "verdict": {
+      "wirklich_unnatuerlich": true,
+      "begruendung": "北 (kita) ist eine reine Himmelsrichtung und bezeichnet keinen Ort, an dem man geboren werden kann. 「北で生まれました」 klingt für einen Muttersprachler unvollständig und hölzern — erwartet würde ein konkreter Ortsname (z. B. 北海道 Hokkaidō, 東北 Tōhoku-Region) oder eine Stadt/Land. So allein ist es ein unidiomatischer Lückenfüller, nicht bloss simpel. Der Auditor hat recht.",
+      "alternative_ist_n5_und_natuerlich": true,
+      "bessere_alternative": "父は日本で生まれました。（chichi wa nihon de umaremashita.）— alternativ ebenso gut: 父は北海道で生まれました。 (konkreter, falls man bei 北 bleiben will)."
+    }
+  },
+  {
+    "lesson_id": 191,
+    "satz_jp": "日本語は何語ですか。",
+    "kontext": "vocab (～語), page_number 3, order_index 3",
+    "einstufung": "unnatuerlich",
+    "problem": "Der Satz ist zirkulaer und sinnlos: Japanisch IST eine Sprache, die Frage 'welche Sprache ist Japanisch?' hat keine sinnvolle Antwort ausser 日本語. Niemand wuerde das real fragen — es untergraebt sogar seinen eigenen Lehrzweck (das Suffix ～語 'erfragen').",
+    "natuerliche_alternative": "これは何語ですか。 (Welche Sprache ist das? — z.B. auf einen Text gezeigt.) Bleibt N5 und demonstriert ～語 sinnvoll.",
+    "schwere": "mittel",
+    "group_id": "kanji-grundlagen-4",
+    "module": "N5 · Kanji-Grundlagen",
+    "verdict": {
+      "wirklich_unnatuerlich": true,
+      "begruendung": "Der Satz 「日本語は何語ですか。」 ist semantisch zirkulär und würde real nie gestellt: 日本語 trägt das Antwort-Suffix ～語 bereits in sich, sodass die Frage \"Welche Sprache ist Japanisch?\" nur die triviale Antwort 日本語 zulässt. Grammatisch ist der Satz zwar korrekt und ein Muttersprachler würde ihn parsen können, aber er ist als Aussage sinnlos/künstlich und untergräbt seinen eigenen Lehrzweck (das Erfragen einer Sprache mit ～語). Genau die Art von hölzernem, nur fürs Lehrbuch konstruiertem Satz, der einem Muttersprachler die Stirn runzeln lässt — kein bloß \"simpler\" Satz. Die vorgeschlagene Alternative これは何語ですか。 ist natürlich (man zeigt auf einen Text/Schrift), strikt N5 (これ + 何 + 語 + ですか, alles im Lektionswortschatz) und demonstriert das ～語-Suffix sinnvoll. Sie ist klar besser.",
+      "alternative_ist_n5_und_natuerlich": true
+    }
+  },
+  {
+    "lesson_id": 192,
+    "satz_jp": "川に木が六本あります。",
+    "kontext": "grammar (Zaehler ～本), page_number 4, order_index 4",
+    "einstufung": "unnatuerlich",
+    "problem": "川に木があります klingt, als staenden die Baeume IM Wasser. Baeume wachsen am Ufer (川岸/川沿い), nicht 'im Fluss'. Die Szene ist unstimmig, und die deutsche Glosse verraet die Verwirrung sogar (uebersetzt 木 'Baum' faelschlich als 'Baumstaemme'). Ein Muttersprachler waehlt einen klaren Ort.",
+    "natuerliche_alternative": "公園に木が六本あります。 (Im Park stehen sechs Baeume.) — Zaehler 木+本 bleibt erhalten, die Szene wird natuerlich.",
+    "schwere": "mittel",
+    "group_id": "kanji-grundlagen-4",
+    "module": "N5 · Kanji-Grundlagen",
+    "verdict": {
+      "wirklich_unnatuerlich": true,
+      "begruendung": "「川に木が六本あります」 ist für einen Muttersprachler tatsächlich unstimmig: 川に...あります verortet die Bäume IM Fluss, lebende 木 wachsen aber am Ufer (川岸/川沿い), nicht im Wasser. Entscheidend ist die zweisprachige Inkonsistenz: dieselbe Zeile glossiert 木が三本あります korrekt als 'drei Bäume', doch beim Flussbeispiel wird 木 still zu 'Baumstämme' umgedeutet, um 川に plausibel zu machen — der Autor hat die Verwirrung selbst kaschiert. JP (lebender Baum) und DE (Baumstamm) passen nicht zusammen. Das ist kein bloss simpler Lehrbuchsatz, sondern ein echter Ortswahl-/Glossen-Defekt. Mittlere Schwere ist angemessen.",
+      "alternative_ist_n5_und_natuerlich": true,
+      "bessere_alternative": "公園に木が六本あります。 (Im Park stehen sechs Bäume.) — Alternativ ebenfalls natürlich und N5: 道に車が三本… nein; bei 木 ist 公園 die klarste Wahl. Falls Flussszene erwünscht: 川の近くに木が六本あります (近く ist N5), aber 公園 bleibt die einfachste, reibungslose Lösung."
+    }
+  },
+  {
+    "lesson_id": 178,
+    "satz_jp": "いちじ にじゅうごふんからです。じゅうごふんあとです。",
+    "kontext": "text / page 5, order_index 2 (Dialog-Slideshow, Lisa, line_04)",
+    "einstufung": "unnatuerlich",
+    "problem": "「じゅうごふんあとです」 (15-Minuten-danach) hat falsche Wortstellung. Kein Muttersprachler stellt 「あと」 hinter die Zeitangabe. Natürlich ist 「あと15分です」 (あと vorangestellt) für 'in 15 Minuten'. Die jetzige Form klingt wie wörtlich aus dem Deutschen ('15 Minuten später/danach') übersetzt.",
+    "natuerliche_alternative": "いちじ にじゅうごふんからです。あと じゅうごふんです。",
+    "schwere": "hoch",
+    "group_id": "zahlen-zeit-datum-1",
+    "module": "N5 · Zahlen, Zeit und Datum",
+    "verdict": {
+      "wirklich_unnatuerlich": true,
+      "begruendung": "「じゅうごふんあとです」 ist für einen Muttersprachler hölzern und wirkt wie eine Wort-für-Wort-Übersetzung aus dem Deutschen ('15 Minuten später/danach'). Natürlich für 'in 15 Minuten' ist 「あと15分です」 mit vorangestelltem 「あと」. Das nachgestellte 「あと」 als Prädikat (〜ふんあとです) sagt so niemand; 「あと」 steht hier idiomatisch VOR der Zeitangabe. Im Kontext (Lisa antwortet, wie lange es bis zum nächsten Zug dauert) ist 「あと15分です」 die selbstverständliche Formulierung. Auditor-Diagnose und Schwere (hoch) sind berechtigt.",
+      "alternative_ist_n5_und_natuerlich": true,
+      "bessere_alternative": "いちじ にじゅうごふんからです。あと じゅうごふんです。"
+    }
+  },
+  {
+    "lesson_id": 143,
+    "satz_jp": "あには二十さい です。",
+    "kontext": "vocabulary / page 3, order_index 2 (Vokabel にじゅう, example_sentence_japanese)",
+    "einstufung": "unnatuerlich",
+    "problem": "Für das Alter '20 Jahre' einer Person sagt man はたち, nicht にじゅっさい. Das ist nicht nur unnatürlich, sondern auch selbstwidersprüchlich: Die Grammatik-Seite 4 derselben Lektion lehrt はたち ausdrücklich als Sonderlesung für 20. Ein Muttersprachler würde 「あには二十さいです」 sofort als Lehrbuch-Fehler hören.",
+    "natuerliche_alternative": "あにははたちです。",
+    "schwere": "hoch",
+    "group_id": "zahlen-zeit-datum-1",
+    "module": "N5 · Zahlen, Zeit und Datum",
+    "verdict": {
+      "wirklich_unnatuerlich": true,
+      "begruendung": "Für das Alter '20 Jahre' einer Person sagt ein Muttersprachler immer はたち, nicht にじゅっさい/二十さい. 二十さい als Altersangabe einer Person klingt für Muttersprachler falsch. Verschärfend: Die Lektion lehrt sich selbst widersprechend — Grammatik-Seite 4 nennt はたち ausdrücklich als Sonderlesung für 20, die Beispielsätze dort verwenden いもうとは はたちです, und eine true/false-Quizfrage markiert die Behauptung 'nicht はたち' explizit als falsch ('Doch — 20 Jahre alt ist immer はたち'). Der Originalsatz ist somit ein klarer Lehrbuch-Fehler, kein bloss simpler Satz.",
+      "alternative_ist_n5_und_natuerlich": true,
+      "bessere_alternative": "あにははたちです。"
+    }
+  },
+  {
+    "lesson_id": 176,
+    "satz_jp": "おかえり、ごはんを食べますか。",
+    "kontext": "vocab (おかえり), page_number 3, order_index 5",
+    "einstufung": "steif",
+    "problem": "Register-Bruch: Das beilaeufige, familieninterne おかえり steht direkt neben der hoeflich-distanzierten Lehrbuchform 〜を食べますか (mit explizitem を-Partikel). Eine Mutter/ein Familienmitglied, das おかえり sagt, wuerde nie im selben Atemzug so foermlich 食べますか fragen — das klingt wie zwei zusammengeklebte Lehrbuchbausteine, nicht wie eine echte Aeusserung an der Tuer.",
+    "natuerliche_alternative": "おかえり。ごはん、食べる?",
+    "schwere": "gering",
+    "group_id": "begruessung-1",
+    "module": "N5 · Begrüssung & Höflichkeit",
+    "verdict": {
+      "wirklich_unnatuerlich": true,
+      "begruendung": "Der Register-Bruch ist real: おかえり ist die verkürzte, familieninterne Casual-Form (im Gegensatz zu おかえりなさい). Wer an der Tür おかえり sagt, fährt natürlich casual fort (ごはん食べる?) — nicht mit dem distanziert-höflichen 〜を食べますか. Ein Muttersprachler merkt diesen Stilmix (おかえり + ますか + explizites を) als „zwei zusammengeklebte Lehrbuchbausteine\". Schwere aber gering: grammatisch korrekt, verständlich, im Lehrbuchkontext nur leichtes Stirnrunzeln. Die Alternative おかえり。ごはん、食べる? ist natürlich, registerkonsistent (durchgehend casual: Wörterbuchform 食べる + Frage per steigender Intonation, Partikel-Drop) und bleibt strikt N5. Geringfügig idiomatischer ohne Komma.",
+      "alternative_ist_n5_und_natuerlich": true,
+      "bessere_alternative": "おかえり。ごはん食べる?"
+    }
+  },
+  {
+    "lesson_id": 159,
+    "satz_jp": "まいにち やすく かいます。",
+    "kontext": "grammar (Adverb-Form い→く), page_number 4, order_index 2 — aus dem Feld example_sentences des Grammatik-Items (3. Beispielsatz)",
+    "einstufung": "steif",
+    "problem": "Inhaltsleerer Lehrbuch-Satz, der nur die Adverb-Form 「やすく」 vorführt, ohne etwas Reales zu kommunizieren. Was kauft man bitte 'jeden Tag günstig'? Ein Muttersprachler merkt sofort, dass der Satz konstruiert ist — gerade weil die beiden anderen Beispiele desselben Items (おそく なりました / はやく きて ください) echte Aussagen sind, die jemand wirklich sagen würde. 安く買う als Kollokation ist korrekt, aber die まいにち-Rahmung macht ihn künstlich.",
+    "natuerliche_alternative": "この本を やすく かいました。 (Kono hon o yasuku kaimashita. — Ich habe dieses Buch günstig gekauft.) — まいにち streichen, konkretes Objekt + Vergangenheit machen daraus eine reale Aussage. Bleibt vollständig N5.",
+    "schwere": "gering",
+    "group_id": "begruessung-2",
+    "module": "N5 · Begrüssung & Höflichkeit",
+    "verdict": {
+      "wirklich_unnatuerlich": true,
+      "begruendung": "安く買う ist als Kollokation korrekt, aber 「まいにち やすく かいます」 ist semantisch schief: やすく markiert einen besonders günstigen Einzelkauf (Schnäppchen), was sich mit der Routine-Rahmung まいにち beisst — etwas täglich Gekauftes ist gerade kein Schnäppchen. Zusätzlich fehlt das Objekt, sodass der Satz inhaltsleer schwebt (Was kauft man?). Ein Muttersprachler stutzt klar, zumal direkt daneben zwei echte Aussagen stehen (おそく なりました / はやく きて ください). Das ist nicht nur simpel, sondern konstruiert.",
+      "alternative_ist_n5_und_natuerlich": true,
+      "bessere_alternative": "この本を やすく かいました。 (Kono hon o yasuku kaimashita.) — passt; alternativ noch konkreter/idiomatischer: このシャツを やすく かいました。 — beide bleiben strikt N5."
+    }
+  },
+  {
+    "lesson_id": 144,
+    "satz_jp": "あなたのお父さんは どこに いますか。",
+    "kontext": "vocab (お父さん), page_number 3, order_index 1",
+    "einstufung": "unnatuerlich",
+    "problem": "あなた wird im natürlichen Japanisch fast nie verwendet, um das Gegenüber direkt anzusprechen — besonders nicht in Verbindung mit Familienmitgliedern. Es ist eine Wort-für-Wort-Übersetzung des deutschen 'Ihr Vater'. Ein Muttersprachler sagt entweder den Namen (z.B. 田中さんの) oder lässt das Pronomen ganz weg, weil der Bezug aus dem Kontext klar ist. Beweis in derselben Lektion: order_index 3 macht es richtig (たなかさんのお兄さんは…), und der Dialog auf Seite 5 sagt 'おとうさんと おかあさんは どこに いますか' OHNE あなた.",
+    "natuerliche_alternative": "お父さんは どこに いますか。",
+    "schwere": "mittel",
+    "group_id": "familie-personen-1",
+    "module": "N5 · Familie & Personen",
+    "verdict": {
+      "wirklich_unnatuerlich": true,
+      "begruendung": "あなた zur direkten Anrede des Gegenübers wird im natürlichen Japanisch tatsächlich vermieden — es klingt distanziert/anmassend (bis hin zum Ehepartner-„Schatz\"-Beigeschmack) und ist hier eine Wort-für-Wort-Wiedergabe von „Ihr Vater\". Bei Familienmitgliedern einer anderen Person nennt man entweder den Namen + の oder lässt den Possessor weg, da der Bezug aus dem Kontext klar ist. Die Lektion selbst belegt die korrekte Konvention: order_index 3 (たなかさんのお兄さんは…) und die Grammatik-Note (リサさんの おとうさん…), und der Seite-5-Dialog fragt おとうさんと おかあさんは どこに いますか OHNE あなた. Damit widerspricht 「あなたのお父さんは…」 sogar der eigenen Lektions-Praxis — kein blosser Lehrbuch-Simpel-Satz, sondern ein echter Natürlichkeitsfehler.",
+      "alternative_ist_n5_und_natuerlich": true,
+      "bessere_alternative": "お父さんは どこに いますか。"
+    }
+  },
+  {
+    "lesson_id": 144,
+    "satz_jp": "あなたのお母さんは やさしいですか。",
+    "kontext": "vocab (お母さん), page_number 3, order_index 2",
+    "einstufung": "unnatuerlich",
+    "problem": "Gleiches Muster: あなたの als direkte Anrede klingt wie aus dem Deutschen übersetzt ('Ist Ihre Mutter nett?'). Kein Muttersprachler stellt diese Frage mit あなたの; das Pronomen entfällt oder wird durch einen Namen ersetzt. Die höfliche Form おかあさん signalisiert ohnehin schon, dass es um die Familie des Gegenübers geht — あなたの ist redundant und wirkt steif/lehrbuchhaft.",
+    "natuerliche_alternative": "お母さんは やさしいですか。",
+    "schwere": "mittel",
+    "group_id": "familie-personen-1",
+    "module": "N5 · Familie & Personen",
+    "verdict": {
+      "wirklich_unnatuerlich": true,
+      "begruendung": "あなたの als direkte Anrede an eine konkrete Gesprächsperson ist im Japanischen markiert und klingt steif/distanziert — im echten Gespräch fragt man \"お母さんは やさしいですか。\" oder ersetzt あなた durch den Namen (z.B. たなかさんのお母さんは…). Die höfliche Form おかあさん signalisiert ohnehin schon, dass es um die Familie des Gegenübers geht, daher ist あなたの redundant und lehrbuchhaft. Nicht falsch, aber als spontane Frage hölzern. Konsistent mit der Lektion selbst, die für die direkte Anrede korrekt 「お母さん、ごはんは。」 ohne あなたの verwendet.",
+      "alternative_ist_n5_und_natuerlich": true
+    }
+  },
+  {
+    "lesson_id": 165,
+    "satz_jp": "とても いいおんがくが すきです。",
+    "kontext": "text (Grammatik 'Vier Muster für Hobby-Gespräche', Antwortbeispiel zu どんな), page_number 4, order_index 1",
+    "einstufung": "steif",
+    "problem": "Als reale Antwort auf 'Was für Musik magst du?' ist 'Ich mag sehr gute Musik' inhaltlich leer und klingt künstlich — niemand antwortet so auf eine Genre-Frage. Es ist ein konstruierter Lehrbuchsatz, der nur existiert, um とても + いい zu zeigen, aber als echte Gesprächsäusserung hölzern wirkt. (Der Text rahmt es zwar als 'breite Antwort', der Satz selbst bleibt aber unidiomatisch.)",
+    "natuerliche_alternative": "しずかな おんがくが すきです。",
+    "schwere": "gering",
+    "group_id": "familie-personen-1",
+    "module": "N5 · Familie & Personen",
+    "verdict": {
+      "wirklich_unnatuerlich": true,
+      "begruendung": "Grammatisch und isoliert ist 「とても いい音楽が好きです」 einwandfrei — 「いい音楽」 + 「とても」 ist normale, idiomatische Verstärkung. Im konkreten Frage-Antwort-Kontext aber, in dem der Satz steht (Antwort auf 「どんな音楽が好きですか」 = 'Was für Musik magst du?'), wirkt er als reale Gesprächsäusserung künstlich/hölzern: 'Ich mag sehr gute Musik' ist tautologisch und beantwortet die Genre-Frage nicht — niemand mag absichtlich schlechte Musik. Der Text rahmt ihn als 'breite Antwort', aber eine echte breite Antwort wäre inhaltlich gefüllt (z.B. 「いろいろな音楽が好きです」). Ein Muttersprachler stutzt hier. Schwere=gering ist angemessen, der Befund des Auditors ist berechtigt (kein Fehlalarm).",
+      "alternative_ist_n5_und_natuerlich": true,
+      "bessere_alternative": "しずかな おんがくが すきです。 (alternativ ebenso gut und passender als 'breite' Antwort: いろいろな おんがくが すきです。 oder あかるい おんがくが すきです。) — alle strikt N5."
+    }
+  },
+  {
+    "lesson_id": 157,
+    "satz_jp": "いいですね。わたしは つめたい ぎゅうにゅうと カレーが たべたいです。",
+    "kontext": "dialog_slideshow / Dialog-Text (Im Cafe bestellen), page_number 5, order_index 2 und 3 (Tanakas Zeile 3)",
+    "einstufung": "unnatuerlich",
+    "problem": "つめたい ぎゅうにゅうと カレーが たべたいです koppelt Milch und Curry an EIN たべたい (essen). Milch trinkt man (飲む), man isst sie nicht — durch das gemeinsame 食べたい wird die kalte Milch mit ins Essen gezogen, was schief klingt. Ein Muttersprachler wuerde Getraenk und Speise trennen oder fuer die Milch のみたい sagen.",
+    "natuerliche_alternative": "いいですね。わたしは つめたい ぎゅうにゅうが のみたいです。カレーも たべたいです。 (Getraenk mit のみたい, Speise mit たべたい getrennt — bleibt N5.)",
+    "schwere": "gering",
+    "group_id": "alltag-essen-1",
+    "module": "N5 · Alltag & Essen",
+    "verdict": {
+      "wirklich_unnatuerlich": true,
+      "begruendung": "Der Satz koppelt 牛乳 (Getränk) und カレー (Speise) an EIN gemeinsames 食べたいです. 牛乳 trinkt man (飲む), nicht isst man (食べる) — durch das geteilte 食べたい wird die kalte Milch sprachlich mit ins Essen gezogen, was ein Muttersprachler klar als schief empfindet, nicht nur als simpel. Verstärkt wird der Eindruck, weil die unmittelbar vorangehende Lisa-Zeile genau das Vorbild liefert (のみたい für こうちゃ, getrennt von たべたい für Sandwich); Tanakas Zeile bricht dieses in der Lektion selbst gelehrte Muster. Der Auditor liegt richtig.",
+      "alternative_ist_n5_und_natuerlich": true,
+      "bessere_alternative": "いいですね。わたしは つめたい ぎゅうにゅうが のみたいです。カレーも たべたいです。"
+    }
+  },
+  {
+    "lesson_id": 197,
+    "satz_jp": "せびろを きて、かいしゃへ いきます。",
+    "kontext": "vocab (背広/せびろ), page_number 2, order_index 11",
+    "einstufung": "unnatuerlich",
+    "problem": "Grammatik und das Verb 着る sind korrekt, aber 背広 (sebiro) ist veraltetes Showa-Zeit-Vokabular. Moderne Muttersprachler — und erst recht die junge Lernzielgruppe — sagen heute fast ausschliesslich スーツ. Viele junge Japaner kennen 背広 kaum noch oder benutzen es nie. Der Satz klingt dadurch altmodisch, wie aus einem alten Salaryman-Kontext.",
+    "natuerliche_alternative": "スーツを きて、かいしゃへ いきます。 (Suutsu wo kite, kaisha e ikimasu.) — スーツ ist ein N5-taugliches Lehnwort und das, was heute tatsächlich gesagt wird.",
+    "schwere": "mittel",
+    "group_id": "alltag-essen-2",
+    "module": "N5 · Alltag & Essen",
+    "verdict": {
+      "wirklich_unnatuerlich": true,
+      "begruendung": "Grammatik und Verb 着る sind einwandfrei und natürlich (きて＋へ＋いきます). Das Problem liegt allein im Vokabel 背広/せびろ: Das ist veraltetes Showa-Salaryman-Vokabular, das heutige Muttersprachler — und erst recht die junge Lernzielgruppe — praktisch nie spontan benutzen; man sagt durchgängig スーツ. せびろ klingt daher altmodisch (\"Grossvater-Sprache\"), also über reine Simplizität hinaus tatsächlich unzeitgemäss. Der Auditor liegt richtig.",
+      "alternative_ist_n5_und_natuerlich": true,
+      "bessere_alternative": "スーツを きて、かいしゃへ いきます。"
+    }
+  },
+  {
+    "lesson_id": 197,
+    "satz_jp": "ちちは ワイシャツを きます。",
+    "kontext": "vocab (ワイシャツ/waishatsu), page_number 2, order_index 7",
+    "einstufung": "steif",
+    "problem": "Die deutsche Übersetzung ('Mein Vater trägt ein Business-Hemd') meint eine Beschreibung/Gewohnheit, aber das schlichte 着ます (Nicht-Vergangenheit) liest sich als zukünftige/einmalige Handlung ('wird anziehen'). Zur Beschreibung dessen, was jemand gewöhnlich/gerade trägt, verwenden Muttersprachler 着ています — was die Lektion auf Seite 4 selbst lehrt. So wie es steht, wirkt der Satz lehrbuchhaft-mechanisch zur gemeinten Bedeutung.",
+    "natuerliche_alternative": "ちちは ワイシャツを きています。 (Chichi wa waishatsu wo kite imasu.) — ています-Form für 'trägt (gerade/gewohnheitsmässig)', identisch zur in der Lektion gelehrten Verlaufsform.",
+    "schwere": "gering",
+    "group_id": "alltag-essen-2",
+    "module": "N5 · Alltag & Essen",
+    "verdict": {
+      "wirklich_unnatuerlich": true,
+      "begruendung": "Der Satz 「ちちは ワイシャツを きます。」 ist isoliert grammatisch korrekt, aber die falsche Form für die gemeinte Bedeutung: きます (Nicht-Vergangenheit) liest sich für einen Muttersprachler als Handlung 'zieht an / wird anziehen', NICHT als Zustand 'trägt/hat an'. Die deutsche Übersetzung 'Mein Vater trägt ein Business-Hemd' meint aber einen andauernden Zustand, der im Japanischen 着ています verlangt. Also keine blosse Simplizität, sondern eine Form-Bedeutung-Fehlpaarung. Entscheidend: Die Lektion lehrt auf Seite 4 (Grammatik 'Verlaufsform ています') genau diesen Punkt und führt dort den IDENTISCHEN Satz mit der richtigen Form an: 「ちちは ワイシャツを きています。」 Der Vokabel-Beispielsatz widerspricht damit der eigenen Lektion. Kein Fehlalarm; Schwere 'gering' ist angemessen, da nicht ungrammatisch, nur bedeutungs-inkonsistent.",
+      "alternative_ist_n5_und_natuerlich": true
+    }
+  },
+  {
+    "lesson_id": 162,
+    "satz_jp": "わたしは銀行へお金を取りに行きます。",
+    "kontext": "vocab (銀行), page_number 2, order_index 2",
+    "einstufung": "unnatuerlich",
+    "problem": "「お金を取りに行く」 ist eine Wort-für-Wort-Übersetzung von dt. 'Geld holen/abheben'. Für einen Muttersprachler klingt 取りに行く so, als ginge man Geld abholen, das irgendwo für einen bereitliegt (z.B. das man jemandem geliehen hat) — NICHT 'eigenes Geld vom Konto abheben'. Für Abheben sagt man おろす / 引き出す. Eine Vokabelkarte sollte nicht die falsche Kollokation einprägen.",
+    "natuerliche_alternative": "銀行でお金を出します。(Ginkou de okane o dashimasu. — 'Ich hebe bei der Bank Geld ab.' 出す ist N5; das natürlichere おろす wäre N4. わたしは entfällt.)",
+    "schwere": "mittel",
+    "group_id": "reise-ort-1",
+    "module": "N5 · Reise & Ort",
+    "verdict": {
+      "wirklich_unnatuerlich": true,
+      "begruendung": "「お金を取りに行く」 ist grammatisch korrekt, aber als Kollokation für \"Geld abheben\" semantisch falsch. 取りに行く impliziert für Muttersprachler, Geld ABZUHOLEN, das schon irgendwo für einen bereitliegt (zurückbekommen, jemandem abnehmen) — nicht eigenes Geld vom Konto abheben. Da die Karten-Übersetzung explizit \"um Geld abzuheben\" lehrt, prägt der Satz eine falsche Kollokation ein (Lehr-Mismatch). Ein Muttersprachler stutzt im Kontext \"Bank + abheben\". Idiomatisch wäre おろす/引き出す, aber beide sind N4. Echter Treffer, nicht nur Lehrbuch-Simplizität.",
+      "alternative_ist_n5_und_natuerlich": true,
+      "bessere_alternative": "銀行でお金をおろします。(おろす = das natürliche Verb für \"abheben\") — falls strikt N5 verlangt: 銀行へお金を出しに行きます。(出す bleibt N5; mit へ行く als Wegbewegung wie im Original, aber ohne die falsche 取りに行く-Kollokation). Der Auditor-Vorschlag 銀行でお金を出します ist akzeptabel, aber お金を出す ist etwas mehrdeutig (kann auch \"bezahlen/herausnehmen\" heissen); im Bankkontext mit 銀行で wird es aber hinreichend eindeutig auf \"abheben\" gelesen."
+    }
+  },
+  {
+    "lesson_id": 160,
+    "satz_jp": "きのうは でませんでした。",
+    "kontext": "grammar (Vier Tempus-Formen), page_number 4, order_index 2 (im Feld example_sentences)",
+    "einstufung": "unnatuerlich",
+    "problem": "出る allein für 'gestern bin ich nicht ausgegangen / war nicht draussen' ist eine unidiomatische Kollokation. 出る heisst 'hinausgehen/austreten' (aus einem Raum/Ort) — für 'ausgehen / das Haus für den Tag verlassen' benutzt ein Muttersprachler 出かける. So wie es steht (きのうは でませんでした) klingt es unvollständig/seltsam, weil das Ziel oder der Ort fehlt und でる nicht den gemeinten Alltagssinn trägt.",
+    "natuerliche_alternative": "きのうは でかけませんでした。 (出かける ist N5 und drückt 'gestern bin ich nicht ausgegangen' natürlich aus.)",
+    "schwere": "gering",
+    "group_id": "erste-saetze-1",
+    "module": "N5 · Erste Sätze (Grammatik)",
+    "verdict": {
+      "wirklich_unnatuerlich": true,
+      "begruendung": "Der Auditor hat im Kern recht. 出る (でる) bedeutet \"(aus einem Raum/Ort) hinaustreten/herauskommen\" und braucht für den Alltagssinn \"ausgehen / das Haus verlassen\" normalerweise einen Bezugspunkt — typischerweise mit を (家を出る, \"das Haus verlassen\") oder einem Ziel/Kontext. Isoliert als 「きのうは でませんでした。」 wirkt der Satz für einen Muttersprachler unvollständig und kontextlos: でる allein trägt hier nicht eindeutig die gemeinte Bedeutung \"ich bin (den Tag über) nicht ausgegangen/war nicht draussen\". Ein Muttersprachler würde stutzen und sich fragen \"woraus nicht hinaus?\". Für \"ausgehen/nicht aus dem Haus gehen\" ist 出かける (でかける) das idiomatische Verb. Das ist allerdings ein leichter, nicht grober Mangel (Einstufung \"gering\" passt) — innerhalb eines vollständigen Kontexts (z.B. 家を出る) wäre でる völlig in Ordnung; problematisch ist hier nur die kontextlose Verkürzung. Zusätzlicher didaktischer Haken: 出かける steht NICHT im Vokabelteil dieser Lektion (gelernt wurde でる = \"hinausgehen\"), wohingegen でる bewusst als Lektionsvokabel verwendet wurde. Inhaltlich bleibt der Auditor-Punkt dennoch berechtigt.",
+      "alternative_ist_n5_und_natuerlich": true,
+      "bessere_alternative": "Da 出かける zwar N5 ist, aber in dieser Lektion nicht eingeführt wurde, ist sauberer ein Beispiel, das das gelernte でる korrekt mit Bezugspunkt zeigt ODER ein anderes Lektionsverb nutzt: 「きのうは いえに いました。」 (Gestern war ich zu Hause — verwendet います aus derselben Lektion) oder, wenn でる erhalten bleiben soll, mit Ort: 「きのうは いえを でませんでした。」 (Gestern habe ich das Haus nicht verlassen — idiomatisch korrekt, でる + を + いえ, alles N5 und alles in der Lektion vorhanden). Letzteres ist die beste Lösung, weil es den Tempus-Punkt ませんでした demonstriert UND das Lektionsvokabular でる korrekt einbettet, ohne neues Vokabel (でかける) einzuführen."
+    }
+  },
+  {
+    "lesson_id": 204,
+    "satz_jp": "秋は寒いです。秋が好きです。",
+    "kontext": "vocab (秋/aki), page_number 3, order_index 8",
+    "einstufung": "unnatuerlich",
+    "problem": "Doppelter Fehler. (1) Falsche Kollokation: Für den Herbst sagt ein Muttersprachler 秋は涼しい (kühl/angenehm), NICHT 秋は寒い — 寒い gehört zum Winter. 秋＝涼しい ist das feststehende Sprachbild (auch die Lektion selbst lehrt 涼しい für den Herbst). (2) Die zwei kurzen Sätze 「秋は…。秋が…。」 mit zweimal 秋 am Satzanfang klingen roboterhaft/lehrbuchhaft aneinandergereiht, so spricht niemand.",
+    "natuerliche_alternative": "秋は涼しいです。秋が好きです。 (Aki wa suzushii desu. Aki ga suki desu. — Der Herbst ist kühl. Ich mag den Herbst.)",
+    "schwere": "hoch",
+    "group_id": "wetter-jahreszeiten-1",
+    "module": "N5 · Wetter & Jahreszeiten",
+    "verdict": {
+      "wirklich_unnatuerlich": true,
+      "begruendung": "siehe oben",
+      "alternative_ist_n5_und_natuerlich": true,
+      "bessere_alternative": "秋は涼しいです。秋が好きです。 (Vorschlag des Auditors ist bereits gut und strikt N5. Eine flüssigere, aber leicht über reinem N5 liegende Variante wäre 秋は涼しくて好きです — wegen der て-Form des i-Adjektivs hier NICHT bevorzugt.)"
+    }
+  },
+  {
+    "lesson_id": 206,
+    "satz_jp": "ほんだなに本が十あります。",
+    "kontext": "vocab (本棚/ほんだな), page_number 3, order_index 7",
+    "einstufung": "unnatuerlich",
+    "problem": "Bücher werden im Japanischen nicht als nacktes 十 gezählt — sie brauchen zwingend den Zähler 冊 (satsu). 「本が十あります」 ohne Zählwort klingt für einen Muttersprachler wie fehlerhaftes Lerner-/Kinderjapanisch. So sagt das niemand. (Per Web verifiziert: Bücher = 冊, nicht zählerlos.)",
+    "natuerliche_alternative": "ほんだなに本が十冊（じっさつ）あります。 — Der Zähler 冊 ist N5-Niveau (Minna no Nihongo L11), bleibt also level-konform. Wer den Zähler ganz vermeiden will: ほんだなに本が たくさん あります。 (verliert „zehn“, ist aber 100% N5 und natürlich.)",
+    "schwere": "hoch",
+    "group_id": "wohnen-zuhause-1",
+    "module": "N5 · Wohnen & Zuhause",
+    "verdict": {
+      "wirklich_unnatuerlich": true,
+      "begruendung": "Bücher sind ein konkretes, zählbares Objekt mit einem fest etablierten Zählwort (冊／さつ). Das nackte 「本が十あります」 ohne Zähler klingt für einen Muttersprachler nach unvollständigem Lerner-Japanisch — ein Native sagt das so nicht. Das ist nicht bloss „simpel\", sondern wirkt fehlerhaft, daher Treffer (kein Fehlalarm). Die Schwere „hoch\" ist gerechtfertigt. Die Lesung じっさつ ist korrekt (じゅっさつ heute ebenfalls verbreitet).",
+      "alternative_ist_n5_und_natuerlich": true,
+      "bessere_alternative": "ほんだなに本が十冊（じっさつ）あります。"
+    }
+  },
+  {
+    "lesson_id": 207,
+    "satz_jp": "わたしの クラスは大きいです。",
+    "kontext": "vocab (クラス), page_number 2, order_index 3",
+    "einstufung": "unnatuerlich",
+    "problem": "クラスが大きい klingt nach einer Wort-für-Wort-Übersetzung aus dem Deutschen ('Klasse ist gross'). Eine Schulklasse beschreibt ein Muttersprachler nicht mit 大きい, sondern über die Personenzahl. 大きいクラス hört man höchstens für einen grossen Raum/eine Abteilung, aber 'meine Klasse ist gross' im Sinne von 'wir sind viele' sagt man so nicht.",
+    "natuerliche_alternative": "わたしの クラスは ひとが おおいです。 (Watashi no kurasu wa hito ga ooi desu. — In meiner Klasse sind viele Leute.) — 人 und 多い sind beide N5.",
+    "schwere": "gering",
+    "group_id": "schule-lernen-1",
+    "module": "N5 · Schule & Lernen",
+    "verdict": {
+      "wirklich_unnatuerlich": true,
+      "begruendung": "Im Lektionskontext ist クラス eine Lerngruppe/Schulklasse. 「クラスは大きいです」 im Sinne von \"wir sind viele Leute\" ist unidiomatisch und wirkt wie eine Wort-für-Wort-Übersetzung aus dem Deutschen ('Klasse ist gross'). Ein Muttersprachler beschreibt die Teilnehmerzahl einer Klasse nicht mit 大きい, sondern über die Personenzahl (人が多い/少ない). 大きいクラス könnte allenfalls einen grossen Raum oder eine höhere Stufe meinen, aber nicht \"viele Schüler\". Der Auditor stuft die Schwere zu Recht als gering ein — der Satz ist grammatisch korrekt und verständlich, aber er löst bei einem Muttersprachler ein leichtes Stirnrunzeln aus. Berechtigter, milder Treffer.",
+      "alternative_ist_n5_und_natuerlich": true,
+      "bessere_alternative": "わたしの クラスは ひとが おおいです。 (Die Auditor-Alternative ist bereits ideal — natürliches XはYが-Muster, 人 und 多い beide N5, idiomatisch.)"
+    }
+  }
+]

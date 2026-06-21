@@ -1,0 +1,1026 @@
+[
+  {
+    "lesson_id": 147,
+    "severity": "gering",
+    "kategorie": "progression",
+    "konfidenz": "hoch",
+    "fundstelle": "Seite 2, order_index 7 (Text 'Die N-Reihe (na, ni, nu, ne, no)'), Abschnitt 'Mini-Wörter': 「のむ」 (nomu, 'trinken')",
+    "problem": "Das Beispielwort 「のむ」 enthält das Zeichen 「む」 (mu) aus der M-Reihe, die erst in Lektion 148 (Hiragana 3) eingeführt wird. Die Lektion präsentiert es jedoch als Wort, das der Lerner mit dem bisher Gelernten (Vokale + K/S/T/N/H) bereits lesen können soll — das kann er nicht. Im selben Lektionskontext wird 「ほん」 korrekt als 'kommt mit ん in Hiragana 3 dazu' gekennzeichnet, 「のむ」 ist also ein Versehen, kein Konzept.",
+    "vorschlag": "「のむ」 entfernen oder durch ein Wort ersetzen, das nur aus bereits eingeführten Zeichen (Vokale, K-, S-, T-, N-, H-Reihe) besteht, z.B. 「ぬの」 (nuno, 'Stoff/Tuch') oder 「にく」 (niku, 'Fleisch').",
+    "beleg": "む (mu) wird laut Lektion 148 (order_index 4 auf Seite 2) erst dort als Kana-Karte eingeführt; in Lektion 147 ist es noch unbekannt. Die N-Reihe in L147 umfasst nur な/に/ぬ/ね/の.",
+    "group_id": "hiragana-komplett-1",
+    "module": "N5 · Hiragana komplett",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Fundstelle bestätigt: Seite 2, order_index 7 (N-Reihen-Text), Abschnitt \"Mini-Wörter\" enthält wörtlich 「のむ」 (nomu, 'trinken'). Unabhängige Herleitung: Bis hierher eingeführt sind Vokale + K/S (Hiragana 1) und T/N/H (diese Lektion 147). 「む」 (mu) gehört zur M-Reihe, die laut Lektion selbst (Seite 5, \"Was kommt als Nächstes?: M-Reihe まみむめも\") erst in Hiragana 3 (148) kommt. 「のむ」 = の(no, bekannt) + む(mu, NICHT bekannt) → das Wort ist mit dem bisher Gelernten nicht lesbar, steht aber in einer \"Mini-Wörter\"-Liste, die genau das suggeriert. Dass es ein Versehen und kein Konzept ist, belegt die interne Konsistenz: derselbe Autor flaggt 「ほん」 explizit mit \"(kommt mit ん in Hiragana 3 dazu)\" (Seite 5), während 「のむ」 ungeflaggt bleibt; alle übrigen Mini-Wörter dieser Liste (なに, ねこ, いぬ) nutzen nur eingeführte Zeichen. Eine Japanisch-Lehrkraft würde das ohne Zögern bestätigen. Severity 'gering' angemessen (ein einzelnes Mini-Wort, geringe Auswirkung).",
+      "korrigierte_severity": "gering",
+      "vorschlag_korrekt": true
+    }
+  },
+  {
+    "lesson_id": 146,
+    "severity": "gering",
+    "kategorie": "konsistenz",
+    "konfidenz": "mittel",
+    "fundstelle": "Seite 2, order_index 1 (Text 'Die Vokale'): '**お (o)** wie in *Onkel*, *Opa* — ein kurzes \"o\", **nicht** so lang wie in *Boot*' VS. Seite 4, order_index 1, Quiz-Frage 'Welche Romaji-Lesung passt zu 「お」?', explanation: '「お」 ist der Vokal **o**, ähnlich wie 'Boot' (kurz).'",
+    "problem": "Dasselbe Wort 'Boot' wird innerhalb derselben Lektion einmal als Gegenbeispiel ('nicht so lang wie in Boot') und einmal als positives Aussprache-Beispiel ('ähnlich wie Boot (kurz)') für den Vokal お verwendet. Das widerspricht sich und verwirrt den Lerner. Sachlich ist die Lehrtext-Aussage richtig (das deutsche 'oo' in Boot ist lang, das japanische お kurz), die Quiz-Erklärung untergräbt sie.",
+    "vorschlag": "In der Quiz-Erklärung das Beispiel 'Boot' streichen und an die Lehrtext-Linie angleichen, z.B. '「お」 ist der kurze Vokal o (wie in 'Onkel', nicht gedehnt wie in 'Boot').'",
+    "beleg": "Konsistente Linie: japanisches お ist ein KURZER Vokal; 'Boot' hat im Deutschen ein langes o und taugt daher nur als Gegenbeispiel, nicht als positives Beispiel.",
+    "group_id": "hiragana-komplett-1",
+    "module": "N5 · Hiragana komplett",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Beide Fundstellen existieren wortgenau: Lehrtext Seite 2 (\"お ... nicht so lang wie in Boot\", Zeile 59) und Quiz-Erklärung Seite 4 (\"「お」 ist der Vokal o, ähnlich wie 'Boot' (kurz)\", Zeile 460). Sachlich verifiziert: Japanisches お ist ein KURZER Vokal; das deutsche 'Boot' hat ein langes /oː/. Der Lehrtext nutzt 'Boot' daher korrekt als Gegenbeispiel und etabliert 'Onkel'/'Opa' als positives Modell. Die Quiz-Erklärung kippt dasselbe Wort 'Boot' in ein positives Beispiel und muss es zugleich mit '(kurz)' korrigieren — dieser Zusatz verrät die innere Spannung. Innerhalb EINER Lektion dasselbe Referenzwort einmal als Negativ- und einmal als Positivbeispiel für denselben Vokal zu verwenden ist eine echte, verteidigbare Inkonsistenz, die genau die Länge-Distinktion untergräbt, die die Lektion lehren will. Severity 'gering' ist angemessen (Formulierungs-/Konsistenzproblem, kein faktischer Lesefehler — beide Aussagen sind je für sich zur Vokal-QUALITÄT vertretbar; der Konflikt liegt in der Länge-Rahmung).",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "gering"
+    }
+  },
+  {
+    "lesson_id": 148,
+    "severity": "gering",
+    "kategorie": "konsistenz",
+    "konfidenz": "mittel",
+    "fundstelle": "Seite 3, order_index 1 (Text 'Verwechslungsgefahr'): 're = kleiner **Haken** nach oben links' VS. Seite 4, order_index 1, Quiz-Frage 'Welches Zeichen ist **wa**?', Feedback zur Option 「れ」: '「れ」 ist re — hat einen Haken nach oben rechts.'",
+    "problem": "Die Richtung des Hakens von 「れ」 (re) wird innerhalb derselben Lektion einmal als 'nach oben links' und einmal als 'nach oben rechts' beschrieben. Da das Zeichen gerade als Verwechslungs-Unterscheidungsmerkmal gegen ね/わ dienen soll, ist die widersprüchliche Richtungsangabe didaktisch schädlich.",
+    "vorschlag": "Beide Stellen auf dieselbe Richtungsangabe vereinheitlichen. (Der nach rechts auslaufende, leicht hochgezogene Schlussstrich von れ ist die geläufigere Beschreibung — beide Stellen entsprechend angleichen.)",
+    "beleg": "Widerspruch ist rein lektionsintern (links vs. rechts für dasselbe Merkmal desselben Zeichens); unabhängig davon, welche Richtung man als 'korrekt' ansieht, dürfen die zwei Stellen nicht entgegengesetzt sein.",
+    "group_id": "hiragana-komplett-1",
+    "module": "N5 · Hiragana komplett",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Beide Fundstellen existieren wortwörtlich. Seite 3 (order_index 1, 'Verwechslungsgefahr') beschreibt: 're = kleiner Haken nach oben links'. Seite 4 (Quiz 'Welches Zeichen ist wa?', Feedback zu 「れ」): '「れ」 ist re — hat einen Haken nach oben rechts.' Das ist ein direkter, rein lektionsinterner Widerspruch (links vs. rechts) zum selben Zeichen れ — und zwar genau auf dem Unterscheidungsmerkmal, mit dem れ gegen ね/わ abgegrenzt werden soll. Unabhängige Herleitung der Zeichenform: れ hat links einen Senkrechtstrich, rechts einen Bogen, der unten in einen nach oben/rechts auslaufenden Schwung (Haken) mündet — die geläufige und geometrisch korrekte Beschreibung ist 'nach (oben) rechts'. Die Aussage 'nach oben links' auf Seite 3 ist also die fehlerhafte. Ein/e Japanisch-Lehrer/in würde den Widerspruch ohne Zögern bestätigen, gerade weil er auf der zentralen Verwechslungsachse ね/れ/わ liegt und didaktisch verwirrt.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "gering"
+    }
+  },
+  {
+    "lesson_id": 150,
+    "severity": "mittel",
+    "kategorie": "faktischer_fehler",
+    "konfidenz": "hoch",
+    "fundstelle": "Seite 3, order_index 1 (Text \"Worauf du achten musst\"), Mora-Tabelle: Zeile \"| 「びよういん」 | bi-you-in | 4 | Schönheitssalon (美容院) |\" und Zeile \"| 「びょういん」 | byou-in | 3 | Krankenhaus (病院) |\"",
+    "problem": "Die Mora-Zahlen in beiden Zeilen sind um eins zu niedrig. びよういん hat 5 Mora (bi-yo-u-i-n), nicht 4. びょういん hat 4 Mora (byo-u-i-n), nicht 3. Der finale Moraic Nasal ん wird in der Tabelle offenbar nicht mitgezählt, obwohl er eine eigene Mora ist.",
+    "vorschlag": "びよういん auf 5 Mora korrigieren, びょういん auf 4 Mora korrigieren (analog wie die Zeilen じゆう=3 / じゅう=2 vollständig zählen).",
+    "beleg": "Korrekt: びょういん = byo(1)+u(1)+i(1)+n(1) = 4 Mora; びよういん = bi(1)+yo(1)+u(1)+i(1)+n(1) = 5 Mora. ん ist eine eigene Mora (Moraic Nasal).",
+    "group_id": "hiragana-komplett-2",
+    "module": "N5 · Hiragana komplett",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Fundstelle existiert wörtlich (Seite 3, order_index 1, Mora-Tabelle). Unabhängige Herleitung: びょういん = びょ(1 Yōon-Mora)+う(1)+い(1)+ん(1, moraischer Nasal) = 4 Mora; びよういん = び+よ+う+い+ん = 5 Mora. Die Tabelle gibt 3 bzw. 4 an — beide um genau eine Mora zu niedrig, weil das finale ん nicht gezählt wird. Klarer, unstrittiger Fehler: (a) ん ist gesichert eine eigene Mora; (b) interne Inkonsistenz — dieselbe Tabelle zählt じゆう=3/じゅう=2 vollständig (inkl. う), nur bei den いん-Wörtern fehlt das ん; (c) das lektionseigene Quiz (true_false) nennt explizit びょういん=4 / びよういん=5 mit Breakdown \"n (1, Moraic Nasal)\" und widerspricht damit der Tabelle direkt. Ein Lehrer bestätigt das ohne Zögern.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "mittel"
+    }
+  },
+  {
+    "lesson_id": 150,
+    "severity": "mittel",
+    "kategorie": "konsistenz",
+    "konfidenz": "hoch",
+    "fundstelle": "Widerspruch innerhalb L150: Seite 3 (Mora-Tabelle, びょういん=3, びよういん=4) vs. Seite 4, order_index 1, letzte true_false-Frage: \"Das Wort 「びょういん」 (byouin, \\\"Krankenhaus\\\") besteht aus 4 Mora — und ist damit ein Mora kürzer als 「びよういん」 (biyouin, \\\"Schönheitssalon\\\", 5 Mora).\"",
+    "problem": "Die Quiz-Frage auf Seite 4 nennt die KORREKTEN Mora-Zahlen (びょういん=4, びよういん=5), während die Lehrtabelle auf Seite 3 dieselben Wörter mit 3 bzw. 4 angibt. Die Lektion widerspricht sich also selbst — ein Lerner, der beide Stellen vergleicht, wird verwirrt.",
+    "vorschlag": "Seite-3-Tabelle an die korrekten Werte der Seite-4-Frage angleichen (byouin=4, biyouin=5).",
+    "beleg": "Seite 4 Erklärung führt es selbst korrekt vor: \"びょういん = bjo (1) + u (1) + i (1) + n (1, Moraic Nasal) = 4 Mora. びよういん = bi (1) + yo (1) + u (1) + i (1) + n (1) = 5 Mora.\"",
+    "group_id": "hiragana-komplett-2",
+    "module": "N5 · Hiragana komplett",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Echter, eindeutiger Widerspruch innerhalb L150. Beide Fundstellen existieren wörtlich: Die Tabelle auf Seite 3 (text-Block \"Worauf du achten musst\") nennt びょういん=3 und びよういん=4; die letzte true_false-Frage auf Seite 4 (order_index 1) nennt korrekt びょういん=4 und びよういん=5. Unabhängig hergeleitet: びょ(1)+う(1)+い(1)+ん(1)=4 Mora; び(1)+よ(1)+う(1)+い(1)+ん(1)=5 Mora — also ist Seite 4 richtig, Seite 3 falsch. Der Fehler lokalisiert sauber auf Seite 3: beide びょ/びよ-Zeilen sind um genau eine Mora zu niedrig (der moraische Nasal ん wurde unterschlagen), während die ん-freien Zeilen derselben Tabelle korrekt sind (きや=2, きゃ=1, じゆう=3, じゅう=2). Severity \"mittel\" ist gerechtfertigt, da der Widerspruch genau auf dem zentralen Lehrpunkt sitzt (das びょういん-Paar ist das wiederkehrende Mora-Beispiel auf den Seiten 1, 3, 4, 5) und einen vergleichenden Lerner direkt in die Irre führt. Kategorie konsistenz (lektionsintern) — keine Curriculum-Index-Prüfung nötig.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "mittel"
+    }
+  },
+  {
+    "lesson_id": 150,
+    "severity": "gering",
+    "kategorie": "konsistenz",
+    "konfidenz": "hoch",
+    "fundstelle": "Seite 4, order_index 1, multiple_choice \"Was bedeutet 「ぎゅうにゅう」?\", Feld hint: \"Fünf Schriftzeichen, zwei davon Yōon: ぎゅう + にゅう. Hochfrequentes Alltagswort.\"",
+    "problem": "ぎゅうにゅう besteht aus 6 Kana-Zeichen (ぎ・ゅ・う・に・ゅ・う), nicht aus fünf. Der Hint sagt \"Fünf Schriftzeichen\", die Erklärung derselben Frage sagt korrekt, es seien \"4 Mora ... nicht 6\" (und zählt damit implizit 6 Zeichen).",
+    "vorschlag": "Im Hint \"Fünf\" auf \"Sechs\" ändern (sechs Kana, davon zwei Yōon-Paare = 4 Mora).",
+    "beleg": "ぎゅうにゅう = ぎ + ゅ + う + に + ゅ + う = 6 Kana-Zeichen, gegliedert in ぎゅ-う-にゅ-う = 4 Mora.",
+    "group_id": "hiragana-komplett-2",
+    "module": "N5 · Hiragana komplett",
+    "verdict": {
+      "ist_echt": true,
+      "korrigierte_severity": "gering",
+      "vorschlag_korrekt": true,
+      "begruendung": "Fundstelle existiert exakt (Seite 4, Frage \"Was bedeutet 「ぎゅうにゅう」?\", hint Zeile 973: \"Fünf Schriftzeichen, zwei davon Yōon: ぎゅう + にゅう\"). Unabhängige Auszählung: ぎゅうにゅう = ぎ・ゅ・う・に・ゅ・う = 6 Kana-Zeichen, gegliedert in ぎゅ-う-にゅ-う = 4 Mora. Der Hint behauptet \"Fünf Schriftzeichen\" — das ist unter jeder Lesart falsch (weder 5 Kana noch 5 Mora; es sind 6 Kana / 4 Mora). Zudem interner Widerspruch: die explanation derselben Frage (Zeile 972) nennt korrekt \"4 Mora ... nicht 6\" und zählt damit implizit 6 Zeichen, während der Hint 5 sagt. Klarer, von jeder Lehrkraft zweifelsfrei bestätigbarer Faktfehler. Vorschlag (Fünf→Sechs) ist korrekt. Severity gering ist angemessen, da im sekundären Hint-Feld und didaktisch nicht antwortentscheidend."
+    }
+  },
+  {
+    "lesson_id": 150,
+    "severity": "gering",
+    "kategorie": "faktischer_fehler",
+    "konfidenz": "mittel",
+    "fundstelle": "Seite 3, order_index 1 (Text \"Worauf du achten musst\"), Mora-Tabelle, Zeile: \"| 「きや」 | ki-ya | 2 | Mädchenname, oder \\\"(Schreib-)Tisch\\\" |\"",
+    "problem": "Die Glosse \"(Schreib-)Tisch\" für 「きや」 ist sachlich falsch. Das japanische Wort für (Schreib-)Tisch ist つくえ (机). きや ist kein gebräuchliches Standardwort mit dieser Bedeutung.",
+    "vorschlag": "Die Bedeutungs-Glosse \"(Schreib-)Tisch\" streichen; es genügt der Kontrast kya (1 Mora) vs. ki-ya (2 Mora). Falls ein Beispiel gewünscht ist, ein klar belegbares 2-Mora-Wort wählen.",
+    "beleg": "Schreibtisch = つくえ (机). きや trägt diese Bedeutung im Standard-Japanisch nicht.",
+    "group_id": "hiragana-komplett-2",
+    "module": "N5 · Hiragana komplett",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Die Fundstelle existiert verbatim: Seite 3, order_index 1 (\"Worauf du achten musst\"), Mora-Tabelle, Zeile \"| 「きや」 | ki-ya | 2 | Mädchenname, oder \\\"(Schreib-)Tisch\\\" |\". Unabhängig hergeleitet: Das Standardwort für (Schreib-)Tisch ist つくえ (机) — unstrittig. Eine 2-Mora-Lesung きや trägt im Standard-Japanisch KEINE Bedeutung \"Schreibtisch\" (き=木 + や ergibt kein gebräuchliches Nomen mit dieser Bedeutung). Die Glosse ist also sachlich falsch. Ein/e Japanisch-Lehrer/in würde \"きや = Schreibtisch\" ohne Zögern zurückweisen. Der Tabellenzweck (Kontrast きや 2 Mora vs. きゃ 1 Mora) braucht ohnehin keine Bedeutungsangabe. Severity \"gering\" ist korrekt: nur eine beiläufige Beispiel-Glosse, kein Kern-Lehrpunkt; der \"Mädchenname\"-Teil bleibt vertretbar.",
+      "korrigierte_severity": "gering",
+      "vorschlag_korrekt": true
+    }
+  },
+  {
+    "lesson_id": 151,
+    "severity": "mittel",
+    "kategorie": "faktischer_fehler",
+    "konfidenz": "hoch",
+    "fundstelle": "Seite 3 (page_number 3), order_index 1, Abschnitt 'Vokal-Entstummung': «「スキ」 (suki, 'Ski') klingt fast wie \"ski\"». Dieselbe Gleichsetzung wiederholt sich auf Seite 4 (quiz true_false: «In 「スキ」 (suki, \"Ski\")…») und Seite 5 (Lerntipp: «「スキ」 klingt wie \"ski\"»).",
+    "problem": "「スキ」 (suki) wird durchgehend als das Wort für 'Ski' ausgegeben. Das ist falsch: Das japanische Wort für Ski ist 「スキー」 (sukī) MIT Längungsstrich. 「スキ」 ohne ー ist ein anderes, real existierendes Wort — 好き (suki, 'mögen/Vorliebe'). Das stiftet doppelte Verwirrung, zumal dieselbe Lektion an anderer Stelle (Seite 5 Vokabelliste + Matching-Quiz) korrekt 「スキー」 (sukī) als 'Ski' führt.",
+    "vorschlag": "In allen Entstummungs-Beispielen 「スキ」 durch ein wirklich mit スキ beginnendes, devoicing-taugliches Wort ersetzen oder das Beispiel auf 「スキー」 (sukī, 'Ski') umstellen und klarstellen, dass das u zwischen s und k entstummt. Auf keinen Fall 「スキ」 (ohne ー) als 'Ski' glossieren.",
+    "beleg": "Ski = スキー (sukī). スキ (suki) = 好き ('mögen'). Korrekt: «「スキー」 (sukī) klingt wie 'skī' — das u zwischen s und k wird entstummt».",
+    "group_id": "katakana-komplett-1",
+    "module": "N5 · Katakana komplett",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Fundstelle verifiziert: 「スキ」 (suki) wird als 'Ski' glossiert auf Seite 3 (Vokal-Entstummung), Seite 4 (true_false-Quiz) und Seite 5 (Lerntipp) — dreifach. Faktencheck unabhängig: Das japanische Lehnwort für 'Ski' ist スキー (sukī) MIT Chōonpu 「ー」. 「スキ」 ohne ー ist 好き (suki, 'mögen/Vorliebe'), ein hochfrequentes echtes N5-Wort. Die Gleichsetzung スキ='Ski' ist damit faktisch falsch. Verschärfend: Dieselbe Lektion führt korrekt スキー (sukī) als 'Ski' (mit Längungsstrich!) in der Vokabelliste (Seite 5) UND im Matching-Quiz (Seite 4) — die Lektion widerspricht sich also selbst (スキ='Ski' vs. スキー='Ski'). Da スキ/スキー ein echtes phonemisches Minimalpaar ist und die Lektion gerade den Chōonpu lehrt, untergräbt der falsche Gloss das eigene Lernziel. Eine Japanischlehrkraft bestätigt das ohne Zögern. Severity 'mittel' verteidigbar: echter, mehrfach wiederholter Faktenfehler mit Verwirrungspotenzial, aber kein verständnisblockierender Schaden (der Entstummungs-Punkt selbst stimmt).",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "mittel"
+    }
+  },
+  {
+    "lesson_id": 151,
+    "severity": "gering",
+    "kategorie": "konsistenz",
+    "konfidenz": "hoch",
+    "fundstelle": "Seite 4 (page_number 4), order_index 1, Quiz-Frage «Welche Romaji-Lesung passt zu 「オ」?», explanation: «「オ」 ist der Vokal o, kurz wie in 'Boot'.»",
+    "problem": "Die Quiz-Erklärung sagt, das o sei 'kurz wie in Boot'. Das widerspricht direkt dem Lehrtext derselben Lektion auf Seite 2 (order_index 1), wo ausdrücklich steht: «オ (o) … ein kurzes 'o', NICHT so lang wie in Boot». Zudem ist es phonetisch irreführend, weil das deutsche 'Boot' ein langes o [oː] hat — kein Vorbild für das kurze japanische o.",
+    "vorschlag": "explanation angleichen, z.B.: «「オ」 ist der Vokal o, kurz wie in 'Onkel'/'Opa' — nicht so lang wie in 'Boot'.»",
+    "beleg": "Japanisches kurzes o ≈ deutsches o in 'Onkel', NICHT das lange o in 'Boot'. Der Lehrtext der Lektion sagt selbst 'nicht so lang wie in Boot'.",
+    "group_id": "katakana-komplett-1",
+    "module": "N5 · Katakana komplett",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Die Fundstelle existiert exakt: Seite 4 (page_number 4), order_index 1, MC-Frage «Welche Romaji-Lesung passt zu 「オ」?», explanation: «「オ」 ist der Vokal o, kurz wie in 'Boot'.» Der Kern der Findung ist ein klarer interner SELBSTWIDERSPRUCH innerhalb derselben Lektion: Auf Seite 2 (order_index 1) wird 'Boot' ausdrücklich als NEGATIV-Beispiel verwendet («オ (o) … ein kurzes 'o', NICHT so lang wie in Boot»), auf Seite 4 dagegen als POSITIV-Beispiel («kurz wie in 'Boot'»). Dieselbe Lektion sagt also das Gegenteil von sich selbst — das allein trägt ist_echt=true für die Kategorie konsistenz. Zusätzlich ist 'Boot' phonetisch ungeeignet, weil deutsches 'Boot' ein langes [oː] hat (Widerspruch in sich: «kurz wie in 'Boot'»), während japanisches kurzes /o/ einem kurzen o entspricht. Ein Lehrer würde diesen Widerspruch ohne Zögern bestätigen.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "gering"
+    }
+  },
+  {
+    "lesson_id": 153,
+    "severity": "mittel",
+    "kategorie": "vorwissen_sprung",
+    "konfidenz": "mittel",
+    "fundstelle": "Seite 4 (page_number 4), order_index 1, zwei Quiz-Fragen: «Wie liest man das Wort 「ラジオ」?» (verlangt 「ジ」, ji) und «Wie liest man 「ヨガ」?» (verlangt 「ガ」, ga). Die explanations sagen selbst «Dakuten-Form aus Katakana 4».",
+    "problem": "Das Quiz testet das Lesen von Dakuten-Zeichen (ジ in ラジオ, ガ in ヨガ), die laut Curriculum erst in der NÄCHSTEN Lektion 154 ('N5 Katakana 4 — Dakuten, Handakuten und Längungsstrich') eingeführt werden. Die Erklärungen verweisen ausdrücklich nach vorne auf 'Katakana 4' — die Lektion gibt damit selbst zu, hier noch nicht gelehrten Stoff abzuprüfen. Die Lernenden können ジ/ガ an dieser Stelle noch nicht regelkonform lesen.",
+    "vorschlag": "ラジオ und ヨガ durch Lehnwörter ersetzen, die nur aus den in K1–K3 (Lektionen 151–153) bereits gelehrten, dakuten-freien Grundzeichen bestehen (z.B. メニュー, マイク, レストラン, ミルク, ロボット). Dakuten-Wörter erst im Quiz von Lektion 154 verwenden.",
+    "beleg": "_curriculum.md: L153 (Grundzeichen) steht VOR L154 (Dakuten/Handakuten: ガ, ザ, ダ, バ, パ). ジ und ガ sind Dakuten-Formen → erst ab L154 eingeführt.",
+    "group_id": "katakana-komplett-1",
+    "module": "N5 · Katakana komplett",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Fundstelle existiert wörtlich: Seite 4 (page_number 4), order_index 1, enthält die zwei Multiple-Choice-Fragen «Wie liest man das Wort 「ラジオ」?» (korrekt rajio) und «Wie liest man 「ヨガ」?» (korrekt yoga). Beide explanations sagen selbst «(ji, Dakuten-Form aus Katakana 4)» bzw. «(ga, Dakuten-Form)». Unabhängige Herleitung: ジ = シ+Dakuten = ji, ガ = カ+Dakuten = ga — beides sind Dakuten-Zeichen. Harter Index-Beleg aus _curriculum.md: L153 (M/Y/R/W-Reihen + ン = die 46 dakuten-freien Grundzeichen) steht VOR L154 (Dakuten, Handakuten, Längungsstrich: ガ, ザ, ダ, バ, パ). Dakuten wird erst in L154 eingeführt. Die Lektion testet also das regelkonforme Lesen von ジ/ガ, deren Stimmhaftmachungs-Regel der Lernende am Ende von L153 noch nicht kennt — und gibt das in ihren eigenen Erklärungen ausdrücklich zu («aus Katakana 4»). Klarer, aus dem Index belegbarer vorwissen_sprung; eine Japanisch-Lehrkraft würde das ohne Zögern bestätigen. Schweregrad höchstens mittel (nur 2 von ~16 Quizfragen, Kontext ist Romaji-Lesung, nicht produktives Schreiben), passt zu Severity «mittel».",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "mittel"
+    }
+  },
+  {
+    "lesson_id": 153,
+    "severity": "gering",
+    "kategorie": "klarheit",
+    "konfidenz": "hoch",
+    "fundstelle": "Seite 1 (page_number 1), order_index 1, Abschnitt 'Achtung — die zweite grosse Verwechslungsfalle': «… kommt jetzt **ハer Twin-Falle Nr. 2**: 「ン」 (n) und 「ソ」 (so, aus K1) …»",
+    "problem": "Im Fliesstext steht das fehlplatzierte Katakana-Zeichen 「ハ」 mitten im deutschen Wort ('ハer' statt 'der') und das englische 'Twin-Falle' mischt sich unmotiviert ein. Der Satz ist dadurch sprachlich defekt und für Anfänger irritierend (ausgerechnet in einer Kana-Lektion, wo 「ハ」 als Glyphe verwirrt).",
+    "vorschlag": "Korrigieren zu: «… kommt jetzt die zweite Verwechslungsfalle: 「ン」 (n) und 「ソ」 (so, aus K1) sehen sich extrem ähnlich.»",
+    "beleg": "Tippfehler/Textkorruption: 「ハ」 (ha) gehört nicht in den deutschen Satz; gemeint ist 'der'.",
+    "group_id": "katakana-komplett-1",
+    "module": "N5 · Katakana komplett",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Die Fundstelle existiert verbatim auf Seite 1 (order_index 1), Abschnitt 'Achtung — die zweite grosse Verwechslungsfalle': «… kommt jetzt **ハer Twin-Falle Nr. 2**: 「ン」 (n) und 「ソ」 (so, aus K1) …». Es ist eine klare Textkorruption: das Katakana 「ハ」 (ha) klebt mitten im deutschen Wort ('ハer' = verstümmeltes 'der'), und 'Twin' ist unmotiviertes Englisch in der deutschen Prosa. Ein/e Lehrer/in würde das ohne Zögern als sprachlich defekt bestätigen — besonders heikel, weil 「ハ」 in einer Katakana-Lektion selbst eine zu lesende Glyphe ist (verwirrt Anfänger). Severity 'gering' passt, da inhaltlich nichts Falsches gelehrt wird (ン/ソ als 'Falle Nr. 2' ist korrekt und wird im Rest der Lektion mehrfach so bestätigt) — es ist ein reiner Klarheits-/Tippfehler-Defekt.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "gering"
+    }
+  },
+  {
+    "lesson_id": 167,
+    "severity": "gering",
+    "kategorie": "klarheit",
+    "konfidenz": "mittel",
+    "fundstelle": "Seite 4, order_index 3, Grammatik 'On- und Kun-Lesung am Beispiel 月 (Mond, Monat)', im explanation-Feld: 'In Mengenangaben für Monate ist es 「げつ」 (kagetsu = ein Monat).'",
+    "problem": "Die Glosse 'kagetsu = ein Monat' ist irreführend/sachlich ungenau. かげつ (〜か月) ist ein Zähl-Suffix für eine Anzahl von Monaten und steht NIE allein für 'ein Monat'; es braucht zwingend eine Zahl davor. 'Ein Monat' heisst 一か月 (いっかげつ, ikkagetsu), nicht 'kagetsu'. Das eigene Beispiel der Lektion (三か月, san-kagetsu = drei Monate) widerspricht der Glosse sogar.",
+    "vorschlag": "Formulierung korrigieren, z.B.: 'In Mengenangaben für Monate ist es 「げつ」 (z.B. 一か月 = いっかげつ, ein Monat; 三か月 = さんかげつ, drei Monate).'",
+    "beleg": "Korrekt: 〜か月 ist ein Counter, der eine Zahl voraussetzt. 一か月 = いっかげつ = ein Monat. かげつ allein ist keine eigenständige Bedeutung 'ein Monat'.",
+    "group_id": "kanji-grundlagen-1",
+    "module": "N5 · Kanji-Grundlagen",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Fundstelle existiert wörtlich (Seite 4, order_index 3, Grammatik 'On- und Kun-Lesung am Beispiel 月', explanation: \"In Mengenangaben für Monate ist es 「げつ」 (kagetsu = ein Monat).\"). Die Glosse \"kagetsu = ein Monat\" ist sachlich falsch: 〜か月 (かげつ) ist ein gebundenes Zähl-Suffix (月 wird darin korrekt げつ gelesen, か ist das separate Counter-Morphem). か月 steht NIE allein und bedeutet nicht \"ein Monat\" — \"ein Monat\" = 一か月 (いっかげつ). Entscheidend ist die interne Widersprüchlichkeit: dasselbe Grammatik-Item führt unter example_sentences 三か月 = \"drei Monate\" auf. Wäre かげつ \"ein Monat\", ergäbe さんかげつ keinen Sinn. Eine Lehrperson markiert das ohne Zögern als verwirrenden Fehler. Severity gering ist korrekt: Kategorie klarheit, die gelehrte Lesung げつ stimmt; falsch ist nur die parenthetische Glosse, kein Kern-Lehrfehler.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "gering"
+    }
+  },
+  {
+    "lesson_id": 168,
+    "severity": "gering",
+    "kategorie": "konsistenz",
+    "konfidenz": "hoch",
+    "fundstelle": "Seite 1, order_index 1, Text 'Sieben Kanji über Menschen', Abschnitt 'Warum Menschen-Kanji als dritter Block?': 'Wenig Striche: 人 (2), 子 (3), 女 (3), 大 (3) — alle sehr machbar.'",
+    "problem": "In der Strichzahl-Aufzählung der Lektions-Kanji wird 大 mitgezählt, obwohl 大 KEIN Kanji dieser Lektion ist. Die sieben Kanji der Lektion sind laut Titel/Einführung 人, 男, 女, 子, 友, 父, 母. 大 erscheint hier nirgends als Kanji-Karte und wird laut Einführungsindex erst in L170 eingeführt. Das verwirrt den Lerner, weil 大 wie ein zu lernendes Lektions-Kanji wirkt.",
+    "vorschlag": "大 (3) aus der Strichzahl-Aufzählung streichen und stattdessen ein tatsächliches Lektions-Kanji nennen (z.B. 友 (4)) oder die Liste auf die sieben Lektions-Kanji beschränken.",
+    "beleg": "Lektions-Kanji laut Titel/Einführung: 人男女子友父母. 大 ist nicht dabei; Einführungsindex (_det_intro_index.txt): 大=L170.",
+    "group_id": "kanji-grundlagen-1",
+    "module": "N5 · Kanji-Grundlagen",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Fundstelle verifiziert: Seite 1, order_index 1, Text 'Sieben Kanji über Menschen' enthält wörtlich 'Wenig Striche: 人 (2), 子 (3), 女 (3), 大 (3) — alle sehr machbar.' Die sieben Lektions-Kanji sind laut Titel, Einführung und Kanji-Karten (S.2-3) 人男女子友父母 — 大 ist NICHT dabei (es erscheint nur als Komponente des Vokabels 大人/otona auf S.3, hat keine Kanji-Karte, fehlt in der Kanji-Liste der Einführung). Der Absatz ist explizit als Strichzahl-Übersicht der Lektions-Kanji gerahmt ('alle sehr machbar', gefolgt von 男/友/父/母), wodurch 大 wie ein zu lernendes Lektions-Kanji wirkt. Das ist eine echte, wenn auch kleine Inkonsistenz (Severity gering korrekt). Strichzahlen stimmen faktisch (人=2, 子=3, 女=3, 大=3, 友=4). Ein Japanisch-Lehrer würde bestätigen, dass 大 hier didaktisch fehl am Platz ist.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "gering"
+    }
+  },
+  {
+    "lesson_id": 191,
+    "severity": "mittel",
+    "kategorie": "klarheit",
+    "konfidenz": "mittel",
+    "fundstelle": "Lektion 191, Seite 4 (Grammatik), order_index 4, Grammatik-Item Titel: \"～が + できます / Verb der Fähigkeit (ga)\" — explanation: \"Um zu sagen, was man kann, markierst du das Können mit が (ga). Sehr häufig ist 日本語が分かります (nihongo ga wakarimasu, ich verstehe Japanisch).\" example_sentences: \"日本語が分かります。 ... えいごが分かりますか。\"",
+    "problem": "Der Titel kündigt できます (Potential-/Fähigkeitsform) an, doch im gesamten Grammatik-Item taucht できます kein einziges Mal auf — gelehrt wird ausschliesslich 分かります (wakarimasu = verstehen). 分かる ist KEIN Fähigkeitsverb/Potentialverb, sondern bedeutet 'verstehen'. Die Gleichsetzung von 「日本語が分かります」mit dem Muster '～が + できます / Verb der Fähigkeit' vermischt zwei verschiedene N5-Grammatikpunkte (Potential できる vs. 分かる) und ist sachlich irreführend.",
+    "vorschlag": "Entweder den Titel auf das tatsächlich gelehrte Muster korrigieren (z. B. \"～が + 分かります (ga — etwas verstehen)\"), oder mindestens ein echtes できます-Beispiel ergänzen (z. B. 日本語が話せます / 日本語ができます) und 分かります nicht als 'Verb der Fähigkeit' bezeichnen.",
+    "beleg": "分かる/分かります = 'verstehen' (Verb des Verstehens), nicht das Potential/Fähigkeitsverb できる. Das im Titel angekündigte できます kommt in Erklärung und Beispielen nicht vor.",
+    "group_id": "kanji-grundlagen-4",
+    "module": "N5 · Kanji-Grundlagen",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Fundstelle existiert exakt wie beschrieben (Seite 4, Grammatik-Item order_index 4, lesson_191.json Z. 537-545): Titel \"～が + できます / Verb der Fähigkeit (ga)\", structure \"[Nomen] + が (ga) + [Verb der Fähigkeit]\", Erklärung und beide Beispielsätze (日本語が分かります / えいごが分かりますか) lehren ausschliesslich 分かります. できます kommt im gesamten Item KEIN EINZIGES MAL vor — verifiziert durch vollständiges Lesen. Sachlich korrekt: 分かる/分かります bedeutet 'verstehen' (intransitives Zustandsverb, nimmt が als Subjektmarker), ist aber NICHT die Potential-/Fähigkeitsform できる. が+わかる (Verständnis) und が+できる (Fähigkeit/Potential) sind zwei getrennte N5-Grammatikpunkte (in Minna no Nihongo gehört わかる zur が-Subjekt-Gruppe mit すき/じょうず, できる/Potential wird separat behandelt). Die Gleichsetzung von 分かります mit 'できます / Verb der Fähigkeit' im Titel ist daher irreführend: Der Titel verspricht ein Muster (できます), das gar nicht gelehrt wird, und etikettiert 'verstehen' fälschlich als 'Fähigkeitsverb'. Ein Japanisch-Lehrer würde diesen Titel-Inhalt-Widerspruch ohne Zögern bestätigen. Severity 'mittel' passend: das vermittelte が-Markierungs-Konzept selbst ist nicht falsch, nur die Etikettierung/Ankündigung ist defekt.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "mittel"
+    }
+  },
+  {
+    "lesson_id": 191,
+    "severity": "gering",
+    "kategorie": "klarheit",
+    "konfidenz": "mittel",
+    "fundstelle": "Lektion 191, Seite 3 (Die Kanji — Teil 2), order_index 3, Vokabel \"～語\" (～ご): example_sentence_japanese \"日本語は何語ですか。\", example_sentence_english \"Nihongo wa nanigo desu ka. — Welche Sprache ist Japanisch?\"",
+    "problem": "Der Beispielsatz ist semantisch zirkulär/sinnlos: 日本語 IST bereits die japanische Sprache, daher beantwortet die Frage 'Japanisch ist welche Sprache?' sich selbst. Ein natürlicher Gebrauch von 何語 (welche/was für eine Sprache) verlangt ein noch unbestimmtes Objekt (z. B. einen Text/eine Schrift), nicht 日本語 selbst.",
+    "vorschlag": "Beispiel durch einen sinnvollen 何語-Satz ersetzen, z. B. 「これは何語ですか。」(Kore wa nanigo desu ka. — In welcher Sprache ist das?) oder 「あの本は何語で書いてありますか。」",
+    "beleg": "何語 fragt nach einer noch unbekannten Sprache; mit dem Subjekt 日本語 ist die Antwort tautologisch ('Japanisch'). Korrekter Lehrsatz: これは何語ですか。 — Was/welche Sprache ist das?",
+    "group_id": "kanji-grundlagen-4",
+    "module": "N5 · Kanji-Grundlagen",
+    "verdict": {
+      "ist_echt": true,
+      "korrigierte_severity": "gering",
+      "vorschlag_korrekt": true,
+      "begruendung": "Fundstelle verifiziert: Lektion 191, Seite 3, order_index 3, Vokabel \"～語\"(～ご), example_sentence_japanese \"日本語は何語ですか。\" / English \"Nihongo wa nanigo desu ka. — Welche Sprache ist Japanisch?\" existiert exakt so. Der Satz ist tatsächlich tautologisch/zirkulär: 何語 fragt nach einer noch UNBEKANNTEN Sprache, aber das Subjekt 日本語 enthält die Antwort bereits (\"Japanisch ist welche Sprache?\" → \"Japanisch\"). Ein Muttersprachler stellt diese Frage nicht; sie ist semantisch leer und didaktisch verwirrend, gerade weil die Karte den Suffix ～語 natürlich illustrieren soll. Der vorgeschlagene Fix これは何語ですか。 (Kore wa nanigo desu ka.) ist korrektes, natürliches Japanisch und nutzt 何語 sinnvoll mit einem unbestimmten Objekt; ebenso あの本は何語で書いてありますか。 — beide grammatikalisch und idiomatisch einwandfrei. Severity \"gering\" angemessen: kein Grammatik-/Lesungs-Fehler, sondern unnatürlicher/unsinniger Beispielsatz, der ein/e Lehrer/in ohne Zögern bemängeln würde."
+    }
+  },
+  {
+    "lesson_id": 159,
+    "severity": "gering",
+    "kategorie": "konsistenz",
+    "konfidenz": "mittel",
+    "fundstelle": "Seite 7, order_index 1 (Text 'Geschafft!'): \"In der nächsten Lektion (N5 Erste Sätze 3) lernst du die wichtigsten Verb-Formen: ます/ました/ません/ませんでした (Gegenwart, Vergangenheit, Negation) und die Existenz-Verben います/あります.\"",
+    "problem": "Der 'Was kommt als Nächstes?'-Verweis nennt 'N5 Erste Sätze 3' (= Lektion 160) als nächste Lektion. Laut Curriculum ist nach L159 (Begrüssung & Höflichkeit 4) jedoch NICHT L160 die nächste Lektion — L160 'Erste Sätze 3' steht im Modul 'Erste Sätze (Grammatik)' weit später in der Lernreihenfolge, nach Familie/Alltag/Reise. Der Ausblick führt den Lernenden auf eine falsche Folge-Lektion.",
+    "vorschlag": "Verweis an die tatsächliche Curriculum-Reihenfolge anpassen (nach L159 folgt das Modul 'Familie & Personen', beginnend mit L144 'N5 Familie — Wer gehört zu dir?'), oder den konkreten Lektionsnamen entfernen und neutral auf 'die nächste Lektion' verweisen.",
+    "beleg": "Curriculum-Datei: L159 steht im Modul 'N5 · Begrüssung & Höflichkeit' (letzte Lektion des Moduls); 'L160 N5 Erste Sätze 3 — Vergangenheit, Existenz und höfliche Bitten' liegt im späteren Modul 'N5 · Erste Sätze (Grammatik)'. Korrekte Folge laut Reihenfolge wäre das Modul 'Familie & Personen' (L144 ff.).",
+    "group_id": "begruessung-2",
+    "module": "N5 · Begrüssung & Höflichkeit",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Die Fundstelle existiert wortwörtlich (Seite 7, order_index 1, \"Geschafft!\"): \"In der nächsten Lektion (N5 Erste Sätze 3) lernst du die wichtigsten Verb-Formen: ます/ました/ません/ませんでした … und die Existenz-Verben います/あります.\" Die Curriculum-Datei bestätigt unabhängig den Widerspruch: L159 ist die LETZTE Lektion des Moduls \"N5 · Begrüssung & Höflichkeit\"; das unmittelbar folgende Modul ist \"N5 · Familie & Personen\", beginnend mit [144] N5 Familie. L160 \"Erste Sätze 3\" steht dagegen viele Module später im Block \"N5 · Erste Sätze (Grammatik)\". \"Die nächste Lektion = Erste Sätze 3\" ist damit nach der Curriculum-Reihenfolge nachweislich falsch — ein Lernender, der auf \"Weiter\" klickt, landet bei L144 (Familie), nicht bei der versprochenen Verb-Formen-Lektion. Das ist ein klarer, belegbarer Konsistenz-/Cross-Reference-Fehler (kein Sprachfehler), Severity \"gering\" ist passend, da der Japanisch-Inhalt unberührt bleibt und nur der Navigations-Ausblick irreführt.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "gering"
+    }
+  },
+  {
+    "lesson_id": 204,
+    "severity": "mittel",
+    "kategorie": "konsistenz",
+    "konfidenz": "hoch",
+    "fundstelle": "Seite 3 (Vokabeln Teil 2), order_index 8, Vokabel 秋 (あき): example_sentence_japanese \"秋は寒いです。秋が好きです。\" / example_sentence_english \"Aki wa samui desu. Aki ga suki desu. — Der Herbst ist kalt. Ich mag den Herbst.\"",
+    "problem": "Der Beispielsatz beschreibt den Herbst als 寒い (samui = kalt, Winterkälte). Das widerspricht der eigenen Lehre derselben Lektion: Auf Seite 4 (Grammatik 〜くなる) heisst es \"あきは すずしくなります\" (im Herbst wird es kühl), auf Seite 6 (Übung) wird per True/False explizit gelehrt \"あきは すずしいです\" = \"Im Herbst ist es kühl\", und die Lektion vermittelt gezielt die Unterscheidung すずしい (kühl) vs. さむい (kalt). Den Herbst hier als 寒い/kalt zu bezeichnen ist sowohl sachlich unpassend (Herbst = すずしい) als auch ein interner Widerspruch, der die zentrale すずしい/さむい-Lektion für Anfänger untergräbt.",
+    "vorschlag": "Beispielsatz ändern zu \"秋は涼しいです。秋が好きです。\" (Aki wa suzushii desu. Aki ga suki desu. — Der Herbst ist kühl. Ich mag den Herbst.). Damit stimmt das Beispiel mit der Grammatik- und Quiz-Aussage der Lektion überein.",
+    "beleg": "秋 (あき) = Herbst ist als Vokabel korrekt; falsch/inkonsistent ist nur das Beispiel. Korrekt im Sinne der Lektion: 秋は涼しいです (Aki wa suzushii desu — Der Herbst ist kühl). Belegt durch dieselbe Lektion: Seite 4 order_index 3 \"あきは すずしくなります\" und Seite 6 True/False \"あきは すずしいです = Im Herbst ist es kühl (is_correct: Richtig)\".",
+    "group_id": "wetter-jahreszeiten-1",
+    "module": "N5 · Wetter & Jahreszeiten",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Fundstelle verbatim bestätigt (Seite 3, order_index 8, 秋/あき): example_sentence_japanese \"秋は寒いです。秋が好きです。\" mit Übersetzung \"Der Herbst ist kalt.\" Das ist ein echter, klarer Fehler auf zwei Ebenen. (1) Sachlich/kollokativ: Im Japanischen ist 秋 prototypisch mit 涼しい (kühl) assoziiert, 寒い/さむい dagegen mit 冬 (Winter) — 秋は寒い ist für N5 unnatürlich und falsch. (2) Interner Widerspruch innerhalb derselben Lektion, unabhängig verifiziert: Seite 4 Grammatik order_index 3 lehrt \"あきは すずしくなります — Im Herbst wird es kühl\"; Seite 6 Übung True/False (is_correct=Richtig) lehrt explizit \"あきは すずしいです = Im Herbst ist es kühl\"; und die Lektion baut gezielt den Kontrast 涼しい (kühl) vs. 寒い/さむい (kalt) auf (Vokabeln order_index 2 und 4, MC \"すずしい... typisch für den Herbst\"). Der Beispielsatz untergräbt damit die zentrale Lehraussage und steht im direkten Konflikt zu einer benoteten Quizfrage. Ein Japanischlehrer würde 秋は寒い ohne Zögern als falsch markieren. Severity \"mittel\" ist angemessen: Die Vokabel 秋=Herbst selbst ist korrekt, fehlerhaft ist nur der Beispielsatz.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "mittel"
+    }
+  },
+  {
+    "lesson_id": 206,
+    "severity": "mittel",
+    "kategorie": "faktischer_fehler",
+    "konfidenz": "hoch",
+    "fundstelle": "Seite 3 (Vokabeln Teil 2), order_index 7 — Vokabel 本棚 (ほんだな), example_sentence_japanese: \"ほんだなに本が十あります。\" / example_sentence_english: \"hondana ni hon ga juu arimasu. — Im Bücherregal stehen zehn Bücher.\"",
+    "problem": "Der Beispielsatz \"本が十あります\" ist ungrammatisches Japanisch. Eine blosse Kardinalzahl (十) kann im Japanischen nicht direkt mit einem Nomen + あります eine Anzahl ausdrücken — zum Zählen von Büchern ist der Zähler 〜冊 (satsu) zwingend. Korrekt muss es 本が十冊あります heissen. Auch das Romaji \"juu\" steht ohne Zähler da.",
+    "vorschlag": "Satz zu \"ほんだなに本が十冊あります。\" ändern, Romaji \"hondana ni hon ga jussatsu arimasu.\", Übersetzung \"Im Bücherregal stehen zehn Bücher.\" bleibt. Alternativ den Satz vereinfachen: \"ほんだなに本があります。\" (Im Bücherregal stehen Bücher.), wenn der Zähler 冊 hier didaktisch vermieden werden soll.",
+    "beleg": "Zähleinheit für gebundene Schriftstücke ist 〜冊 (さつ): 「本が十冊あります」 (hon ga jussatsu arimasu). 「本が十あります」 ohne Zähler ist im Japanischen nicht korrekt; der allgemeine Zähler ～つ (とお für 10) wäre für Bücher ebenfalls unüblich.",
+    "group_id": "wohnen-zuhause-1",
+    "module": "N5 · Wohnen & Zuhause",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Fundstelle verifiziert: Seite 3, order_index 7, Vokabel 本棚 (ほんだな), Beispielsatz \"ほんだなに本が十あります。 / hondana ni hon ga juu arimasu.\" existiert wortwörtlich. Der Satz ist ungrammatisch: Eine blosse sino-japanische Kardinalzahl 十 (juu) kann im Japanischen NICHT direkt als Quantor zu 本 stehen — zum Zählen gebundener Bücher ist der Zähler 〜冊 (さつ) obligatorisch. Korrekt heisst es 本が十冊あります (jussatsu/jissatsu arimasu). Auch das Romaji \"juu\" lässt den Zähler weg. Counter sind Pflicht-N5-Stoff (MNN L11); eine Lehrkraft bestätigt den Fehler ohne Zögern. Severity \"mittel\" passt: klarer Grammatikfehler in einem Content-Beispielsatz. Vorschlag korrekt: \"ほんだなに本が十冊あります。 / jussatsu arimasu\" ist grammatisch richtig (Lautwandl 十冊→jussatsu/jissatsu, gängiges Romaji jussatsu akzeptabel), und die Vereinfachungs-Alternative \"ほんだなに本があります。\" ist ebenfalls korrekt. Übersetzung \"zehn Bücher\" bleibt gültig.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "mittel"
+    }
+  },
+  {
+    "lesson_id": 206,
+    "severity": "gering",
+    "kategorie": "konsistenz",
+    "konfidenz": "hoch",
+    "fundstelle": "Seite 3 (Vokabeln Teil 2), order_index 3 — Vokabel 机 (つくえ), example_sentence: \"机の上に本があります。 — Auf dem Tisch liegt ein Buch.\" vs. Seite 4 (Grammatik), order_index 1+2 — derselbe Satz \"つくえの うえに ほんが あります。 — Auf dem Schreibtisch liegt ein Buch.\"",
+    "problem": "Derselbe Beispielsatz (つくえの うえに ほんが あります) wird innerhalb der Lektion zweimal unterschiedlich übersetzt: einmal als 'Tisch' (Vokabelkarte 机), einmal als 'Schreibtisch' (Grammatik-Text und Grammatik-Karte). 机 ist spezifisch der Schreibtisch; die Zusammenfassung (Seite 7) listet 机 ebenfalls nur als 'Schreibtisch'. Die uneinheitliche Übersetzung kann Lernende verwirren.",
+    "vorschlag": "Übersetzung vereinheitlichen — durchgehend 'Schreibtisch' verwenden (oder die Vokabel-meaning_de auf 'Schreibtisch (auch: Tisch)' präzisieren) und den Vokabel-Beispielsatz auf \"Auf dem Schreibtisch liegt ein Buch.\" angleichen.",
+    "beleg": "机 = Schreibtisch (desk). In der Grammatik-Karte (order_index 2) und im Grammatik-Text wird derselbe Satz korrekt mit 'Schreibtisch' übersetzt; die Vokabelkarte und Zusammenfassung sind die abweichenden Stellen.",
+    "group_id": "wohnen-zuhause-1",
+    "module": "N5 · Wohnen & Zuhause",
+    "verdict": {
+      "ist_echt": true,
+      "korrigierte_severity": "gering",
+      "vorschlag_korrekt": true,
+      "begruendung": "Fundstelle bestätigt: Derselbe Satz 机の上に本があります／つくえの うえに ほんが あります wird in der Vokabelkarte (Seite 3, order_index 3) mit \"Auf dem Tisch liegt ein Buch\" übersetzt, an allen anderen Stellen aber mit \"Schreibtisch\" — Grammatik-Text (Seite 4, order_index 1), Grammatik-Karte (Seite 4, order_index 4), Quiz-Frage 6 (Seite 6) und Zusammenfassung (Seite 7, führt つくえ nur als \"Schreibtisch\"). 机 ist fachlich der Schreibtisch (desk); die Lektion standardisiert klar auf \"Schreibtisch\", nur die Vokabel-Beispielübersetzung weicht ab. Das ist eine echte, wenn auch geringfügige Inkonsistenz für IDENTISCHEN Satz — verwirrend für Lernende. Kein Faktenfehler (meaning_de der Karte lautet ohnehin \"Tisch, Schreibtisch\", und \"Tisch\" ist umgangssprachlich nicht falsch), daher Severity \"gering\" korrekt. Der Vorschlag, den Vokabel-Beispielsatz auf \"Auf dem Schreibtisch liegt ein Buch\" anzugleichen, ist sachlich richtig und stellt die geringfügig sauberere der beiden Optionen dar."
+    }
+  },
+  {
+    "lesson_id": 170,
+    "severity": "mittel",
+    "kategorie": "quiz_defekt",
+    "konfidenz": "hoch",
+    "fundstelle": "page_number 6, order_index 1, Frage \"Wie negierst du 大きい (gross)?\" — Option \"大きくありません (ookiku arimasen)\" (is_correct: false)",
+    "problem": "Single-Select-Frage mit zwei faktisch richtigen Antworten. Als korrekt markiert ist nur \"大きくない (ookikunai)\". Die als falsch markierte Option \"大きくありません\" ist aber ebenfalls eine grammatisch korrekte (höfliche) Verneinung von 大きい. Das eigene Feedback gibt das sogar zu: \"Das ist die höfliche Form — ist auch korrekt, aber die Standardform ist 大きくない.\" Eine als falsch gewertete, aber faktisch richtige Antwort macht die Frage defekt.",
+    "vorschlag": "Entweder die Option \"大きくありません\" durch einen eindeutig falschen Distraktor ersetzen (z.B. 大きいくない), oder den Fragetext auf die schlichte/Plain-Form einschränken (\"Wie negierst du 大きい in der einfachen Form?\") und das Feedback der Option entsprechend anpassen, sodass nur eine Antwort richtig ist.",
+    "beleg": "大きくありません ist eine korrekte höfliche Verneinung von 大きい (= 大きくないです). Single-Select darf nur eine richtige Antwort haben.",
+    "group_id": "kanji-grundlagen-2",
+    "module": "N5 · Kanji-Grundlagen",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Fundstelle verifiziert: Seite 6, order_index 1, MC-Frage \"Wie negierst du 大きい (gross)?\". Option \"大きくありません (ookiku arimasen)\" ist is_correct:false, einzig korrekt markiert ist \"大きくない (ookikunai)\". Eigene Herleitung der Negation von 大きい (i-Adjektiv): einfache Form 大きくない; höfliche Form gleichwertig 大きくないです ODER 大きくありません. 大きくありません ist eine standardmässige, grammatisch einwandfreie (höfliche) Verneinung von 大きい (Genki/MNN). Der Fragetext ist UNeingeschränkt (\"Wie negierst du …?\") — unter dieser Formulierung sind also zwei der vier Optionen faktisch korrekt, nur eine ist als richtig gewertet. Das Feedback der falsch gewerteten Option gibt das wörtlich zu (\"ist auch korrekt\"). Single-Select mit zwei wahren Antworten = echter Defekt. Die übrigen Distraktoren (大きいじゃない, 大きいない) sind korrekt als falsch markiert. Severity mittel passend: Frage bleibt mit der einfachen Form beantwortbar, aber wer die legitime höfliche Form wählt, wird zu Unrecht als falsch bewertet — irreführend, jedoch nicht funktionsbrechend.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "mittel"
+    }
+  },
+  {
+    "lesson_id": 169,
+    "severity": "gering",
+    "kategorie": "level_verstoss",
+    "konfidenz": "hoch",
+    "fundstelle": "page_number 3, order_index 4, Kanji-Karte \"雪\" (Schnee), Feld \"jlpt_level\": 4",
+    "problem": "In einer als N5 deklarierten Lektion (category_jlpt_level 5) erscheint die Kanji-Karte 雪 mit dem eigenen Metadaten-Feld jlpt_level: 4. Das Zeichen 雪 ist tatsächlich kein offizielles N5-Kanji. Es wird hier ungekennzeichnet als reguläre Lernkarte präsentiert (anders als 田/空, die im Lauftext ausdrücklich als Bonus markiert sind), obwohl das Wort ゆき (Schnee) selbst N5 ist.",
+    "vorschlag": "雪 entweder ausdrücklich als Bonus/N4-Kanji kennzeichnen (wie bei 田 und 空 im Lauftext) und das Vokabel ゆき in Kana belassen, oder die Kanji-Karte entfernen und nur die Kana-Form ゆき lehren.",
+    "beleg": "雪 ist ein JLPT-N4-Kanji (im JSON selbst als jlpt_level: 4 hinterlegt); das Wort ゆき/Schnee ist N5, das Kanji nicht.",
+    "group_id": "kanji-grundlagen-2",
+    "module": "N5 · Kanji-Grundlagen",
+    "verdict": {
+      "ist_echt": true,
+      "korrigierte_severity": "gering",
+      "vorschlag_korrekt": true,
+      "begruendung": "Fundstelle bestätigt: page_number 3, order_index 4 (Zeilen 226-240) ist exakt die Kanji-Karte 雪 (Schnee) mit \"jlpt_level\": 4. Faktisch korrekt: 雪 gehört NICHT zu den ~80 offiziellen JLPT-N5-Kanji, sondern ist N4 — die DB-Metadaten (jlpt_level:4) bestätigen das selbst. Das Wort ゆき/雪 (Schnee) ist dagegen N5-Wortschatz, das Kanji nicht. Die Asymmetrie ist real: 田 und 空 werden im Lauftext (S.1, Z.32) und in der Zusammenfassung (S.7, Z.915) ausdrücklich als \"Bonus\"/N4 markiert; 雪 erscheint hingegen ungekennzeichnet als reguläre Kanji-Lernkarte zwischen den Wetter-Vokabeln, ohne jede Bonus-/N4-Notiz im Begleittext. Es liegt KEIN faktischer Fehler vor (das Kanji ist korrekt attribuiert), sondern eine echte didaktische Inkonsistenz — daher Severity \"gering\" zutreffend. Der Vorschlag (entweder 雪 wie 田/空 als N4-Bonus kennzeichnen und ゆき in Kana belassen, oder die Karte entfernen und nur die Kana-Form lehren) ist korrekt und löst die Inkonsistenz sauber."
+    }
+  },
+  {
+    "lesson_id": 169,
+    "severity": "gering",
+    "kategorie": "konsistenz",
+    "konfidenz": "mittel",
+    "fundstelle": "page_number 1, order_index 1 (\"「た」 (ta) — Reisfeld (Bonus, Kanji ist eigentlich N4 ...\") + page_number 7, order_index 1 (\"そら (sora, Himmel) — N4-Kanji\") vs. Kanji-Karten page_number 2: 田 (order_index 6) und 空 (order_index 5), beide \"jlpt_level\": 5",
+    "problem": "Innerer Widerspruch zwischen Lauftext und Kanji-Metadaten. Der Einführungstext (Seite 1) und die Zusammenfassung (Seite 7) bezeichnen 田 und そら/空 als N4-Kanji, während die zugehörigen Kanji-Karten auf Seite 2 beide jlpt_level: 5 tragen. Zusätzlich ist die Sachaussage falsch: 空 (sora) ist ein offizielles N5-Kanji, nicht N4 — hier ist die Karte richtig und der Lauftext falsch. (田 wird je nach Liste N4/N5 geführt; der Widerspruch zur Karte bleibt.)",
+    "vorschlag": "Lauftext und Karten-Metadaten angleichen: 空 als N5 darstellen (Aussage \"N4-Kanji\" auf Seite 1 und 7 streichen). Für 田 eine einheitliche Level-Angabe in Karte und Text festlegen.",
+    "beleg": "空 (sora) ist JLPT N5 (Kanji-Karte korrekt mit jlpt_level 5); die Lauftext-Aussage \"そら … N4-Kanji\" ist falsch und widerspricht der eigenen Karte.",
+    "group_id": "kanji-grundlagen-2",
+    "module": "N5 · Kanji-Grundlagen",
+    "verdict": {
+      "ist_echt": true,
+      "vorschlag_korrekt": false,
+      "korrigierte_severity": "gering",
+      "begruendung": "Die Fundstelle existiert und ein echter innerer Widerspruch liegt vor: Die Zusammenfassung (Seite 7, order_index 1) bezeichnet sowohl 「た」(田) als auch そら/空 ausdrücklich als „N4-Kanji\", während die Kanji-Karten auf Seite 2 für 空 (order_index 5) und 田 (order_index 6) je „jlpt_level\": 5 tragen. Auf Seite 1 wird allerdings NUR 田 als N4 bezeichnet; そら wird dort nur als „im N5-Wortschatz\" erwähnt (die Auditor-Behauptung, Seite 1 nenne そら N4, ist eine kleine Überzeichnung, kippt das Finding aber nicht). Inkonsistenz vorhanden → ist_echt=true. Severity „gering\" bleibt: es geht um Metadaten/Etikettierung, und die Lektion rahmt 田/空 ohnehin explizit als „Bonus\"-Kanji. ABER: Der zentrale FAKTEN-Anspruch des Auditors ist falsch und damit der Vorschlag verkehrt herum. Gegen die projekteigene kanonische N5-Quelle (sources/jlpt_n5_canonical.json, 80 Kanji, Tanos-abgeleitet) verifiziert: 空 ist NICHT im N5-Set (=> N4+), 田 ebenfalls NICHT (=> N4+); die vier Kern-Kanji 山川木雨 sowie 天・気 sind N5. Folglich ist der LAUFTEXT („N4-Kanji\") KORREKT und die KARTEN-Metadaten (jlpt_level 5) sind der Fehler — exakt umgekehrt zur Auditor-Aussage „die Karte ist richtig, der Lauftext falsch\". Der vorgeschlagene Fix (空 als N5 darstellen, „N4\"-Aussage streichen) würde einen faktischen Fehler einbauen und gegen das JLPT-Leitprinzip verstoßen. Korrekt wäre stattdessen, die Karten-jlpt_level von 空/田 auf 4 zu setzen (bzw. konsistent als N4-Bonus zu kennzeichnen). Zusatzbeleg für unzuverlässige Karten-Metadaten: 雪 ist mit jlpt_level 4 getaggt, aber 海・風・花・空 mit 5 — alle vier sind laut kanonischer Liste in Wahrheit N4. Daher vorschlag_korrekt=false."
+    }
+  },
+  {
+    "lesson_id": 170,
+    "severity": "gering",
+    "kategorie": "klarheit",
+    "konfidenz": "mittel",
+    "fundstelle": "page_number 4, order_index 4, Grammar \"Wegfrage 「どこですか」\", example_sentences: \"あの ドアの 中に あります。 (Ano doa no naka ni arimasu.) — Hinter dieser Tür.\"",
+    "problem": "Die deutsche Übersetzung untergräbt das gerade gelehrte Kanji. 中 (なか) bedeutet \"in/innen\", und der Satz heisst wörtlich \"Es ist in/hinter dieser Tür\" im Sinne von \"hinter der Tür (drinnen)\". Übersetzt wird er aber mit \"Hinter dieser Tür\" — \"hinter\" entspricht im Japanischen うしろ, nicht 中. In einer Lektion, die 中 = Mitte/innen einführt, verwirrt die Übersetzung die Kanji-Bedeutung.",
+    "vorschlag": "Übersetzung an 中 angleichen, z.B. \"Drinnen hinter dieser Tür\" bzw. \"In dem Raum hinter dieser Tür\" — oder ein eindeutigeres Beispiel mit klarer \"in\"-Bedeutung wählen (z.B. \"In diesem Raum\").",
+    "beleg": "中 (なか) = innen/in; \"hinter\" wäre うしろ. Die Übersetzung \"Hinter dieser Tür\" passt nicht zur Bedeutung von 中.",
+    "group_id": "kanji-grundlagen-2",
+    "module": "N5 · Kanji-Grundlagen",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Fundstelle existiert wörtlich (Seite 4, order_index 4, Grammatik \"Wegfrage 「どこですか」\"): 「あの ドアの 中に あります。」 — \"Hinter dieser Tür.\" Unabhängige Herleitung bestätigt: 中 (なか) = innen/in, nicht \"hinter\" (=うしろ/ushiro). Wörtlich heisst der Satz \"Es ist drinnen/im Bereich dieser Tür\". Die deutsche Übersetzung \"Hinter dieser Tür\" gibt うしろ wieder, nicht das gelehrte 中. Der Befund ist besonders verteidigbar, weil DIESELBE Lektion 中 sonst korrekt als \"in\" übersetzt: Grammatik-Item 1 auf derselben Seite hat 「かばんの 中に かさが あります」= \"In der Tasche ist ein Schirm\". Die Inkonsistenz untergräbt in einer Kanji-Einführungslektion gezielt die Bedeutung von 中. Severity \"gering\" und Konfidenz \"mittel\" sind angemessen: Es ist ein didaktischer Konsistenz-/Klarheitsmangel, kein grober Fehler — die deutsche Übertragung ist idiomatisch sinngemäss richtig, vermittelt dem Lerner aber 中≠innen.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "gering"
+    }
+  },
+  {
+    "lesson_id": 170,
+    "severity": "gering",
+    "kategorie": "quiz_defekt",
+    "konfidenz": "mittel",
+    "fundstelle": "page_number 6, order_index 1, Frage \"Wie liest man 「じょうず」 (gut können)?\" — korrekte Option \"じょうず (jouzu)\"",
+    "problem": "Die Frage enthält die korrekte Antwort bereits wörtlich im Fragetext. Es wird nach der Lesung von 「じょうず」 gefragt, und die richtige Antwortoption lautet exakt じょうず (jouzu). Damit prüft die Frage nicht die Lesung des Kanji-Kompositums 上手, sondern lässt sich durch reines Abschreiben aus der Frage lösen.",
+    "vorschlag": "Im Fragetext das Kanji-Kompositum statt der Lesung zeigen: \"Wie liest man 「上手」 (gut können)?\" — so wird tatsächlich die Lesung じょうず geprüft.",
+    "beleg": "Korrekt: 上手 = じょうず (jouzu). Der Fragetext darf die zu prüfende Lesung nicht selbst nennen.",
+    "group_id": "kanji-grundlagen-2",
+    "module": "N5 · Kanji-Grundlagen",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Die Fundstelle existiert exakt: Seite 6 (quiz_carousel), order_index 1, dritte Quiz-Frage. question_text = \"Wie liest man 「じょうず」 (gut können)?\", korrekte Option = \"じょうず (jouzu)\". Der Fragetext nennt die Lesung selbst (じょうず steht bereits in Hiragana = die zu prüfende Lesung), und die richtige Antwort ist wortwörtlich identisch. Damit ist die Aufgabe durch reines Abschreiben aus der Frage lösbar; sie prüft NICHT die Lesung des Kanji-Kompositums 上手, obwohl die Erklärung (\"上 als じょう, 手 als ず\") klar diese Absicht zeigt. Verifiziert: 上手 = じょうず (jouzu) ist korrekt, der vorgeschlagene Fix (im Fragetext 「上手」 statt 「じょうず」 zeigen) testet die Lesung tatsächlich und ist sachlich richtig. Severity \"gering\" angemessen: kein faktischer Fehler, die Distraktoren (へた, falsche Lesungen) bleiben sinnvoll — nur die Aufgabe ist trivial lösbar.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "gering"
+    }
+  },
+  {
+    "lesson_id": 190,
+    "severity": "mittel",
+    "kategorie": "konsistenz",
+    "konfidenz": "hoch",
+    "fundstelle": "Seite 4 (Grammatik), order_index 1, Text: \"Bei Bewegungsverben wie 行く (iku) und 来る (kuru) benutzt du に für den Zielort.\" — im Widerspruch zu Seite 2, order_index 2 Beispielsatz \"あした、わたしは東京へ行きます。\" und Seite 2, order_index 4 Beispielsatz \"ともだちがうちへ来ました。\"",
+    "problem": "Die Lektion lehrt explizit, dass man bei den Bewegungsverben 行く und 来る die Partikel に für den Zielort benutzt (Grammatikpunkt 'Ziel mit に' ist der einzige zu Bewegungszielen). Genau diese beiden Verben werden in ihren Vokabel-Beispielsätzen aber mit へ konstruiert (東京へ行きます, うちへ来ました), während andere Beispiele derselben Lektion に nutzen (来月日本に行く, 来年大学に行く, 学校に行く). Für einen N5-Anfänger ist dieser unkommentierte Wechsel zwischen に und へ genau bei den gerade gelehrten Verben verwirrend und steht im direkten Widerspruch zur eigenen Erklärung.",
+    "vorschlag": "Entweder die beiden へ-Beispielsätze auf に umstellen (東京に行きます / うちに来ました), um zur Lektions-Grammatik konsistent zu sein, oder im Grammatik-Text einen kurzen Satz ergänzen, dass へ und に bei Bewegungszielen austauschbar sind (へ wird aber erst L194 eingeführt — daher ist Vereinheitlichen auf に hier didaktisch sauberer).",
+    "beleg": "Konsistente Variante: 東京に行きます。 / うちに来ました。 (に für Bewegungsziel, wie im Grammatikpunkt gelehrt)",
+    "group_id": "kanji-grundlagen-3",
+    "module": "N5 · Kanji-Grundlagen",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Fundstelle verifiziert: Seite 4 (Grammatik), order_index 1 enthält wörtlich \"Bei Bewegungsverben wie 行く (iku) und 来る (kuru) benutzt du に für den Zielort.\", und der Grammatikpunkt order_index 2 lehrt explizit \"Ziel mit に\" für 行く/来る (gehen/kommen). Die beiden Vokabel-Beispielsätze für genau diese Verben verwenden jedoch へ: \"あした、わたしは東京へ行きます。\" (Seite 2, oi 2) und \"ともだちがうちへ来ました。\" (Seite 2, oi 4). Entscheidend für die Konsistenz-Bewertung: へ taucht in der GESAMTEN Lektion NUR in diesen zwei Vorzeige-Sätzen auf; jedes andere Bewegungsziel nutzt に (来月日本に行く, 来年大学に行く, 学校に行く im Grammatikpunkt, なつやすみに日本に行く). Es ist also nicht \"die Lektion mischt beide Partikeln durchgängig\", sondern \"に überall — ausser ausgerechnet bei den zwei Showcase-Sätzen der gerade gelehrten Verben\". Sprachlich sind へ行きます / へ来ました korrektes, idiomatisches Japanisch (へ = Richtung, mit Bewegungsverben weitgehend austauschbar mit に) — es ist KEIN faktischer Fehler. Aber die Kategorie ist konsistenz, nicht faktisch: Für einen N5-Anfänger, dem soeben に eingeschärft wurde, ist das unkommentierte へ (eine Partikel, die in der Lektion nirgends eingeführt oder erklärt wird) ein realer, verteidigbarer interner Widerspruch zur eigenen Lehre. Severity \"mittel\" bewusst beibehalten: trifft den zentralen Grammatikpunkt der Lektion und konfrontiert einen Absoluten Anfänger mit einer unerklärten Partikel, die der gerade gegebenen Regel widerspricht.",
+      "vorschlag_korrekt": true
+    }
+  },
+  {
+    "lesson_id": 190,
+    "severity": "gering",
+    "kategorie": "vorwissen_sprung",
+    "konfidenz": "mittel",
+    "fundstelle": "Seite 2, order_index 2, Beispielsatz \"あした、わたしは東京へ行きます。\" und Seite 2, order_index 4, Beispielsatz \"ともだちがうちへ来ました。\" (Partikel へ)",
+    "problem": "Die Richtungspartikel へ (e) wird laut Einführungsindex erst in L194 eingeführt ('L194: Richtungspartikel へ (e) — das Ziel angeben'). In L190 (order 9) taucht sie unerklärt in zwei Vokabel-Beispielsätzen auf, während die Lektion selbst nur に für Bewegungsziele lehrt. Der Lerner sieht ein noch nicht eingeführtes Zeichen/eine Partikel ohne Erklärung.",
+    "vorschlag": "へ in den Beispielsätzen durch das in dieser Lektion gelehrte に ersetzen (東京に行きます / うちに来ました). Damit löst sich zugleich der Konsistenz-Konflikt auf.",
+    "beleg": "_det_intro_index: 'L194: Richtungspartikel へ (e) — das Ziel angeben' (Erst-Einführung von へ liegt nach L190).",
+    "group_id": "kanji-grundlagen-3",
+    "module": "N5 · Kanji-Grundlagen",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Fundstelle bestätigt: Seite 2 enthält in den Vokabel-Beispielsätzen zu 行く (\"あした、わたしは東京へ行きます。\", order 2) und zu 来る (\"ともだちがうちへ来ました。\", order 4) die Richtungspartikel へ. Harter Beleg aus _det_intro_index.txt Zeile 41: \"L194: Richtungspartikel へ (e) — das Ziel angeben\" — へ wird erst nach L190 eingeführt. L190 lehrt selbst ausschliesslich に für Bewegungsziele (Seite 4 Grammatik: \"[Ort] + に + [Bewegungsverb]\", inkl. Tipp \"Bei Bewegungsverben wie 行く und 来る benutzt du に für den Zielort\"). Damit liegt nicht nur ein Vorwissens-Sprung vor (unerklärte Partikel), sondern zugleich ein Widerspruch zur selbst gelehrten Regel. Zusatzbefund: 東 (in 東京) erscheint laut Index ebenfalls erst in L194 als Kanji — der Satz häuft sogar zwei nicht eingeführte Elemente, was den Befund stützt (aber bereits Furigana/Romaji entschärft ist). Severity \"gering\" ist angemessen: へ und に sind als Zielpartikel praktisch austauschbar, der Lerner wird nicht falsch geführt, sondern nur einem nicht erklärten Zeichen ausgesetzt.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "gering"
+    }
+  },
+  {
+    "lesson_id": 190,
+    "severity": "gering",
+    "kategorie": "konsistenz",
+    "konfidenz": "hoch",
+    "fundstelle": "Seite 3 (Die Kanji — Teil 2), order_index 3, Vokabel 出口: \"reading\": \"でぐち (deguchi)\", \"romaji\": null, \"meaning_de\": null, \"jlpt_level\": 4",
+    "problem": "Der Vokabeleintrag 出口 ist gegenüber allen anderen Vokabeln dieser Lektion defekt/inkonsistent angelegt: jlpt_level steht auf 4 (alle anderen Einträge und die gesamte Lektion sind N5), meaning_de ist null (Bedeutung steht nur im englischen Feld), romaji ist null, und das Romaji '(deguchi)' ist zusätzlich ins reading-Feld gequetscht. Das Gegenstück 入口 (order_index 11 auf Seite 2) ist dagegen vollständig und korrekt mit jlpt_level 5 erfasst. 出口 ist echtes N5-Vokabular — der Fehler ist das Datenschema des Eintrags, NICHT das Wort selbst.",
+    "vorschlag": "Eintrag normalisieren: jlpt_level auf 5 setzen, reading auf 'でぐち', romaji auf 'deguchi', meaning_de auf 'Ausgang' — analog zum korrekt erfassten 入口-Eintrag.",
+    "beleg": "Korrekt: reading=でぐち, romaji=deguchi, meaning_de=Ausgang, jlpt_level=5 (N5, wie das Paar 入口/いりぐち, jlpt 5).",
+    "group_id": "kanji-grundlagen-3",
+    "module": "N5 · Kanji-Grundlagen",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Fundstelle exakt bestätigt (Seite 3, order_index 3, 出口): reading=\"でぐち (deguchi)\" (Romaji ins reading-Feld gequetscht), romaji=null, meaning_de=null (Bedeutung nur im englischen meaning-Feld \"Ausgang / Exit\"), jlpt_level=4. Alle 19 anderen Vokabeln der Lektion sind sauber: reading nur Kana, romaji gefüllt, meaning_de gefüllt, jlpt_level=5. Der Eintrag ist also gegenüber sämtlichen Geschwistern strukturell defekt. Unabhängige Wahrheits-Herleitung: 出口 liest sich でぐち/deguchi, bedeutet \"Ausgang\", besteht aus den N5-Kanji 出+口 und ist das direkte Gegenstück zum korrekt erfassten 入口 (いりぐち, jlpt_level=5, order_index 11) — also klar N5 (Level 5), Level 4 ist die Anomalie. Die Zusammenfassung auf Seite 6 nennt zudem ausdrücklich \"でぐち (deguchi, Ausgang)\" und bestätigt die Sollwerte. Severity \"gering\" ist angemessen: reiner Daten-/Schema-Inkonsistenz-Fehler, kein fachlicher Lern-/Inhaltsfehler.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "gering"
+    }
+  },
+  {
+    "lesson_id": 172,
+    "severity": "gering",
+    "kategorie": "konsistenz",
+    "konfidenz": "hoch",
+    "fundstelle": "Seite 7 (Zusammenfassung & Ausblick), order_index 1, Abschnitt 'Wie es weitergeht': \"Lesson 8 — N5 Kanji 8: Eigenschaften — neun i-Adjektiv-Kanji (gross, klein, neu, alt, hoch, günstig, lang, kurz, früh)\"",
+    "problem": "Die Vorschau auf die Folgelektion (L173) listet die abgedeckten Kanji-Bedeutungen falsch auf: Sie nennt 'gross, klein' (= 大小), L173 deckt laut Titel und Inhalt aber 多少 (viel/wenig) ab, NICHT 大小. Die tatsächlichen fünf Gegensatzpaare von L173 sind neu/alt, hoch/günstig, lang/kurz, viel/wenig, früh — die Vorschau ersetzt 'viel/wenig' irrtümlich durch 'gross/klein'.",
+    "vorschlag": "Liste korrigieren zu: 'neu, alt, hoch, günstig, lang, kurz, viel, wenig, früh' (entsprechend 新古高安長短多少早).",
+    "beleg": "L173-Titel: '新古高安長短多少早' = neu/alt/hoch/günstig/lang/kurz/viel/wenig/früh — 多 (viel) und 少 (wenig), nicht 大 (gross) / 小 (klein).",
+    "group_id": "kanji-grundlagen-3",
+    "module": "N5 · Kanji-Grundlagen",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Fundstelle verifiziert: Seite 7 ('Wie es weitergeht') listet wörtlich \"Lesson 8 — N5 Kanji 8: Eigenschaften — neun i-Adjektiv-Kanji (gross, klein, neu, alt, hoch, günstig, lang, kurz, früh)\". Die Folgelektion L173 trägt den Titel '新古高安長短多少早' = neu/alt/hoch/günstig/lang/kurz/viel/wenig/früh und behandelt 多 (viel) und 少 (wenig), NICHT 大 (gross) / 小 (klein). Die Vorschau ersetzt also fälschlich 'viel, wenig' durch 'gross, klein' — ein klarer, verteidigbarer Konsistenzfehler (Vorschau widerspricht dem tatsächlichen Inhalt der verlinkten Folgelektion). Severity 'gering' ist passend, da es nur eine vorausschauende Ausblicks-Zeile betrifft, nicht den Kerninhalt. Der Vorschlag 'neu, alt, hoch, günstig, lang, kurz, viel, wenig, früh' (= 新古高安長短多少早) stimmt exakt mit Titel und Inhalt von L173 überein und bleibt bei neun Kanji.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "gering"
+    }
+  },
+  {
+    "lesson_id": 178,
+    "severity": "mittel",
+    "kategorie": "konsistenz",
+    "konfidenz": "hoch",
+    "fundstelle": "Seite 6 (page_number 6), order_index 1, letzte Quiz-Frage (true_false): Frage 'Der Minutenzähler 分 wird immer „ふん“ gelesen, niemals „ぷん“.' — im explanation-Feld: 'aber よんふん (4 Minuten)'",
+    "problem": "Die explanation der letzten True/False-Frage gibt 4 Minuten als 「よんふん」 (yonfun) an. Das ist falsch und widerspricht direkt dem, was dieselbe Lektion an drei anderen Stellen lehrt: Einführung (S.1) '4 Minuten → よんぷん (yonpun)', Grammatik (S.4) '4分 → よんぷん (yonpun)' und Zusammenfassung (S.7) '4=よんぷん'. Innerhalb der Lektion entsteht so ein direkter Widerspruch, und der Lerner erhält im Quiz-Feedback eine falsche Lesung.",
+    "vorschlag": "In der explanation 「よんふん」 durch 「よんぷん」 ersetzen, z.B.: 'z.B. さんぷん (3 Minuten) oder ろっぷん (6 Minuten), aber にふん (2 Minuten) bzw. ごふん (5 Minuten).' (ein echtes ふん-Beispiel wählen, da 4分 gerade KEIN ふん-Fall ist).",
+    "beleg": "4分 = よんぷん (yonpun), nicht よんふん",
+    "group_id": "zahlen-zeit-datum-1",
+    "module": "N5 · Zahlen, Zeit und Datum",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Fundstelle exakt bestätigt: Seite 6 (page_number 6), order_index 1, letzte true_false-Frage ('Der Minutenzähler 分 wird immer „ふん\" gelesen, niemals „ぷん\".'). Im explanation-Feld steht wörtlich „...aber よんふん (4 Minuten)\". Unabhängig hergeleitet: 4分 = よんぷん (yonpun) mit ぷん — Standardlesung, keine ふん-Form. Die Erläuterung ist damit faktisch falsch UND didaktisch verwirrend, weil sie 4分 ausgerechnet als ふん-Beispiel anführt, obwohl 4分 ein ぷん-Fall ist. Direkter interner Widerspruch zu drei anderen Stellen derselben Lektion, die korrekt よんぷん lehren: S.1 (Einführung), S.4 (Grammatik: „4=よんぷん\" + Beispiel „さんじ よんぷんです\") und S.7 (Zusammenfassung „4=よんぷん\"). Der Lerner erhält im Quiz-Feedback eine falsche Lesung. Severity „mittel\" passend: Die true/false-Antwort selbst (Falsch) ist korrekt, der Fehler steckt nur im erläuternden Feedback, schadet aber dem Lernziel der Lektion (Minuten-Lautwechsel).",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "mittel"
+    }
+  },
+  {
+    "lesson_id": 143,
+    "severity": "gering",
+    "kategorie": "klarheit",
+    "konfidenz": "mittel",
+    "fundstelle": "Seite 1 (page_number 1), order_index 1, Text 'Warum Zahlen zuerst?': 'Am Ende der Lektion wirst du verstehen, wieso vier verschiedene Aussprachen für die Ziffer 4 existieren (よん / yon und し / shi) und wann du welche nutzt.'",
+    "problem": "Der Text behauptet 'vier verschiedene Aussprachen für die Ziffer 4', nennt in der Klammer aber nur ZWEI (よん und し). Die Zahl 'vier' ist sachlich nicht gedeckt — die Ziffer 4 hat im N5-Kontext drei relevante Lesungen (よん, し und よ wie in よじ/よっつ), nicht vier. Die genannte Zahl widerspricht der eigenen Aufzählung und verwirrt.",
+    "vorschlag": "Auf 'mehrere verschiedene Aussprachen' oder konkret 'die Lesungen よん (yon), し (shi) und よ (yo, z.B. in よじ)' korrigieren — die Zahl 'vier' streichen, da sie nicht stimmt und nicht belegt wird.",
+    "beleg": "Ziffer 4 hat die Lesungen よん, し, よ (drei), nicht vier; Klammer nennt nur zwei",
+    "group_id": "zahlen-zeit-datum-1",
+    "module": "N5 · Zahlen, Zeit und Datum",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Die Fundstelle existiert exakt so (Seite 1, order_index 1, 'Warum Zahlen zuerst?'): 'wieso vier verschiedene Aussprachen für die Ziffer 4 existieren (よん / yon und し / shi)'. Die Behauptung 'vier verschiedene Aussprachen' ist ein klarer innerer Widerspruch und sachlich falsch: (1) die eigene Klammer nennt nur ZWEI Lesungen (よん, し); (2) die Ziffer 4 hat im Japanischen drei relevante Lesungen (よん yon, し shi, よ yo wie in よじ/よっか), nicht vier. Keine sinnvolle Zählweise ergibt 'vier'. Das verwirrt und ist objektiv (nicht Geschmackssache). Severity 'gering' ist angemessen, weil es ein Lapsus in einem Motivations-Absatz ist und keine falsche Lesung im Lernkern eingeprägt wird. Der Vorschlag ist korrekt: 'vier' streichen bzw. auf 'mehrere' oder konkret よん/し/よ (z.B. in よじ) ändern — drei Lesungen sind N5-relevant, da よじ in der Folgelektion (Uhrzeit) gebraucht wird.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "gering"
+    }
+  },
+  {
+    "lesson_id": 145,
+    "severity": "gering",
+    "kategorie": "faktischer_fehler",
+    "konfidenz": "mittel",
+    "fundstelle": "Seite 3 (page_number 3), order_index 9, Vokabel: word '終る', reading 'おわる', meaning_de 'enden, aufhören'; Beispielsatz '映画は十時に終ります。'",
+    "problem": "Die Kanji-Schreibung 終る mit Okurigana ist nicht die moderne Standard-Orthografie. Standardmässig wird das Verb owaru als 終わる geschrieben (Okurigana わ + る). 終る ist eine veraltete/verkürzte Schreibweise. Da N5-Lerner gerade die korrekte Schreibung einprägen, sollte hier die Standardform stehen.",
+    "vorschlag": "word auf '終わる' und example_sentence_japanese auf '映画は十時に終わります。' korrigieren (reading おわる und Bedeutung bleiben unverändert).",
+    "beleg": "Standard-Schreibung: 終わる (owaru), nicht 終る",
+    "group_id": "zahlen-zeit-datum-1",
+    "module": "N5 · Zahlen, Zeit und Datum",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Fundstelle verifiziert: Seite 3, order_index 9 enthält tatsächlich word '終る' (reading おわる, meaning_de 'enden, aufhören') mit Beispielsatz 'えいがは十時に終ります。'. Linguistisch unabhängig hergeleitet: Die moderne Standard-Orthografie für owaru ist nach den Okurigana-Regeln (送り仮名の付け方, Jōyō-Standard, in Minna no Nihongo/Genki und allen N5-Lehrwerken) 終わる — Okurigana beginnt bei わ. 終る (nur る) ist eine zulässige verkürzte/許容-Schreibung, aber NICHT die Standardform, die N5-Anfänger einprägen sollen. Verstärkend: Das Schwesterverb 始まる (hajimaru) auf derselben Seite, order_index 8, nutzt korrekt das volle Okurigana — 終る ist also auch lektionsintern inkonsistent. Severity 'gering' passt: Lesung und Bedeutung sind korrekt, es ist nur eine nicht-standardkonforme Kanji-Schreibung, kein Übersetzungs-/Faktenfehler.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "gering"
+    }
+  },
+  {
+    "lesson_id": 156,
+    "severity": "mittel",
+    "kategorie": "quiz_defekt",
+    "konfidenz": "hoch",
+    "fundstelle": "page_number 6, order_index 1, Quiz-Frage 'Wie sagt man Dieses Buch ist nicht interessant auf Japanisch?', Option 'この ほんは おもしろくありません (Kono hon wa omoshiroku arimasen)' (is_correct=false), Feedback: 'Diese Form ist im N4-Bereich höflicher, im N5 nutzen wir くないです.'",
+    "problem": "Die Frage hat zwei korrekte Antworten. 「おもしろくありません」 ist vollkommen korrektes, standard-N5-Japanisch für 'ist nicht interessant' — die höfliche い-Adjektiv-Negation wird im N5 regulär gelehrt (Minna no Nihongo Lektion 8, Genki Lektion 5), gleichberechtigt neben 「おもしろくないです」. Sie ist also genauso richtig wie die als korrekt markierte Option. Zusätzlich enthält das Distraktor-Feedback eine sachlich falsche Behauptung: 〜くありません ist NICHT 'im N4-Bereich', sondern Kern-N5.",
+    "vorschlag": "Den Distraktor 「おもしろくありません」 durch eine echte Falschform ersetzen, z.B. 「おもしろいくないです」 (ungrammatisch, weil das い nicht entfällt) oder 「おもしろじゃありません」. Falls beide höflichen Negationen bewusst gelehrt werden sollen, die Frage so umformulieren, dass nur EINE Antwort eindeutig korrekt ist. Das Feedback 'im N4-Bereich' streichen.",
+    "beleg": "Korrekt ist sowohl 「おもしろくないです」 als auch 「おもしろくありません」 (beide N5, beide gültige höfliche Negation eines い-Adjektivs).",
+    "group_id": "familie-personen-1",
+    "module": "N5 · Familie & Personen",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Die Fundstelle existiert exakt wie beschrieben (Seite 6, order_index 1, 4. Quiz-Frage, Zeilen 800-804): Frage 'Wie sagt man Dieses Buch ist nicht interessant auf Japanisch?', Distraktor 「この ほんは おもしろくありません」 (is_correct=false) mit Feedback 'Diese Form ist im N4-Bereich höflicher, im N5 nutzen wir くないです.'\n\nUnabhängige Herleitung: Die höfliche Verneinung eines い-Adjektivs (おもしろい → 'nicht interessant') hat ZWEI gleichberechtigte Standardformen: 〜くないです (おもしろくないです) UND 〜くありません (おもしろくありません). Beide sind grammatikalisch korrekt und beide sind Kern-N5, nicht N4 — die 〜くありません-Form ist das direkte Parallel-Muster zur ません-Verneinung und wird in Minna no Nihongo L8 sowie Genki L5 zusammen mit der くない-Form eingeführt. Die Behauptung 'im N4-Bereich' ist somit sachlich falsch.\n\nEntscheidend für die Defekt-Einstufung: Der Fragestamm ist eine offene Übersetzungsfrage ('Wie sagt man X?'), nicht 'Welche Form haben wir gelernt?'. Ein offener Stamm lässt beide Formen als richtig zu → die Frage hat zwei korrekte Antworten, und die als korrekt markierte Option ist nicht eindeutiger als der falsch markierte Distraktor. Doppelter Schaden: eine korrekte Antwort wird als falsch gewertet UND das Feedback vermittelt eine falsche grammatische Information (〜くありません sei N4). Klarer, verteidigbarer Quiz-Defekt.\n\nDer Vorschlag ist korrekt: 「おもしろいくないです」 (い fällt nicht weg → ungrammatisch) und 「おもしろじゃありません」 (じゃありません an い-Adjektiv-Stamm → ungrammatisch) sind beide echte Falschformen; das Streichen des 'im N4-Bereich'-Feedbacks bzw. Umformulieren auf eindeutig eine Antwort ist sachgerecht. (Anmerkung: 「おもしろじゃありません」 überschneidet sich teilweise mit dem bereits vorhandenen Distraktor 「おもしろいじゃありません」; 「おもしろいくないです」 ist die sauberere Wahl — beeinträchtigt die Korrektheit des Vorschlags aber nicht.)\n\nSeverity 'mittel' bleibt angemessen: realer Defekt, der einen korrekt antwortenden Lerner bestraft und Fehlinformation lehrt, aber nicht katastrophal.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "mittel"
+    }
+  },
+  {
+    "lesson_id": 165,
+    "severity": "gering",
+    "kategorie": "konsistenz",
+    "konfidenz": "hoch",
+    "fundstelle": "page_number 1, order_index 1, Text 'Hobbys sind die schnellste Brücke...' — Aufzählung 'Sportarten: やきゅう (yakyuu, Baseball), サッカー (sakkaa), ダンス (dansu).' vs. page_number 3 (Vokabelkarten ゲーム, カラオケ statt ダンス) vs. page_number 7, order_index 1, Zusammenfassung 'Sportarten: やきゅう, サッカー, ゲーム, カラオケ.'",
+    "problem": "Innerer Widerspruch in der Lektion: Die Einführung (Seite 1) kündigt ダンス (Tanz) als zu lernende Sportart an, doch ダンス kommt nirgends als Vokabelkarte vor. Stattdessen werden auf Seite 3 ゲーム (Videospiel) und カラオケ (Karaoke) gelehrt. Die Zusammenfassung (Seite 7) etikettiert ゲーム und カラオケ wiederum als 'Sportarten', was sachlich unzutreffend ist (Videospiel und Karaoke sind keine Sportarten).",
+    "vorschlag": "Seite-1-Ankündigung an die tatsächlich gelehrten Vokabeln angleichen (ダンス durch ゲーム/カラオケ ersetzen oder die Aufzählung neutral als 'Freizeitaktivitäten' fassen). In der Seite-7-Zusammenfassung ゲーム/カラオケ nicht unter 'Sportarten' führen, sondern z.B. unter 'Freizeitaktivitäten / Spiele'.",
+    "beleg": "Gelehrte Vokabeln Seite 3: 野球 (やきゅう), サッカー, ゲーム (Videospiel), カラオケ — kein ダンス. ゲーム/カラオケ sind Freizeitaktivitäten, keine Sportarten.",
+    "group_id": "familie-personen-1",
+    "module": "N5 · Familie & Personen",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Alle drei Fundstellen existieren verbatim. Seite 1 kündigt 「ダンス」 (dansu) als zu lernende Sportart an, doch auf Seite 3 (Titel \"Sportarten und Adjektive\") gibt es KEINE ダンス-Karte — stattdessen ゲーム (Videospiel) und カラオケ (Karaoke). Seite 7 listet 「ゲーム」 und 「カラオケ」 dann unter \"Sportarten\" auf. Zwei verteidigbare Inkonsistenzen: (1) Phantom-Vokabel ダンス (angekündigt, nie gelehrt → Lerner-Verwirrung); (2) sachlich falsche Etikettierung — Videospiel und Karaoke sind unstrittig keine Sportarten, weder im Deutschen noch im Japanischen. Severity \"gering\" ist korrekt: das gelehrte Japanisch selbst (Vokabelkarten, Lesungen, Grammatik) ist durchweg richtig; nur das deutsche Kategorien-Framing/die Ankündigung sind inkonsistent — es wird kein falsches Japanisch vermittelt, daher nicht \"mittel\". Kategorie ist konsistenz (kein Curriculum-Index nötig).",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "gering"
+    }
+  },
+  {
+    "lesson_id": 165,
+    "severity": "gering",
+    "kategorie": "vorwissen_sprung",
+    "konfidenz": "mittel",
+    "fundstelle": "page_number 5, order_index 2, dialog_slideshow, Slide 8 (Lisa): 'いっしょに スポーツを しましょうか。' (Issho ni supootsu o shimashou ka.)",
+    "problem": "Die Grammatik 〜ましょうか ('Wollen wir ...?') wird laut Einführungsindex erst in L210 ('〜ましょう / 〜ましょうか') eingeführt, die im selben Modul N5 · Familie & Personen NACH L165 kommt. Der Dialog verwendet die Form also vor ihrer Einführung. Mildernd: Es handelt sich um einen Hör-/Lese-Dialog (rezeptiver Input, nicht prüfungsrelevanter Lehrstoff), und Dialoge greifen didaktisch oft leicht vor.",
+    "vorschlag": "Entweder eine kurze Randglosse zur しましょうか-Form ergänzen (so dass der Lerner die Wendung als Chunk versteht) oder den Vorschlag-Satz auf bereits eingeführte Mittel umformulieren. Da rein rezeptiv im Dialog, ist eine Glosse ausreichend.",
+    "beleg": "Einführungsindex: '〜ましょう / 〜ましょうか' wird erstmals in L210 eingeführt; L165 steht im Curriculum vor L210.",
+    "group_id": "familie-personen-1",
+    "module": "N5 · Familie & Personen",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Unabhängig verifiziert. (1) Die Fundstelle existiert wortwörtlich: lesson_165.json, page_number 5, order_index 2 (dialog_slideshow), Slide 8 (Lisa): 「いっしょに スポーツを しましょうか。」 (Issho ni supootsu o shimashou ka.). (2) Harter Index-Beleg: Der Einführungsindex (_det_intro_index.txt) listet 「〜ましょう / 〜ましょうか」 erstmals in L210; in L165 selbst werden nur 〜が すきです/きらいです, 〜が じょうずです/へたです und どんな N が すきですか eingeführt — die Volitionalform しましょうか kommt dort nicht als Lehrstoff vor. (3) Curriculum-Reihenfolge bestätigt: im Modul „N5 · Familie & Personen\" steht L165 (Position 3) vor L210 (Position 6) — selbes Modul, L210 später. Damit ist es ein echter vorwissen_sprung. Severity „gering\" ist korrekt kalibriert: Die Form erscheint rein rezeptiv in einem Hör-/Lese-Dialog mit vollständigem Romaji + deutscher Übersetzung (als Chunk parsbar) und wird in KEINER der Quizfragen auf Seite 5 oder 6 abgefragt (alle Quiz-Items geprüft) — kein prüfungsrelevanter Lehrstoff, Dialoge dürfen didaktisch leicht vorgreifen.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "gering"
+    }
+  },
+  {
+    "lesson_id": 144,
+    "severity": "gering",
+    "kategorie": "konsistenz",
+    "konfidenz": "hoch",
+    "fundstelle": "description ('... 14 interaktiven Quiz-Fragen') und page_number 6, order_index 1, Text 'Teste dein Familien-Wissen' ('**Vierzehn Fragen** zu Familienvokabeln ...') vs. tatsächliche Anzahl der Quiz-Items auf page_number 6",
+    "problem": "Die Lektionsbeschreibung und das Übungs-Intro sprechen von 14 Fragen, doch die Übungsseite (page 6) enthält tatsächlich 16 Quiz-Items (7 multiple_choice, 4 true_false, 4 matching, plus die abschliessende uchi/soto-true_false-Frage). Die angegebene Zahl stimmt nicht mit dem Inhalt überein. Zusätzlich dupliziert die letzte true_false-Frage (uchi/soto, 父=ちち / 母=はは) thematisch bereits abgedeckten Stoff (vgl. Quiz-Frage 2).",
+    "vorschlag": "Die Zahl im Intro und in der Lektionsbeschreibung an die tatsächliche Anzahl anpassen (16), oder den Fragenkatalog auf 14 kürzen (z.B. die redundante abschliessende uchi/soto-Frage entfernen).",
+    "beleg": "page 6 enthält 16 Quiz-Items; Beschreibung/Intro nennen 14.",
+    "group_id": "familie-personen-1",
+    "module": "N5 · Familie & Personen",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Unabhängig nachgezählt: Seite 6 (page_number 6, order_index 1) enthält im quiz-Array 16 Items — 7 multiple_choice, 5 true_false (あね, eigene Mutter anreden, ともだち, 両親, abschliessende uchi/soto-Frage 父=ちち/母=はは) und 4 matching. Sowohl die description (Zeile 4: '14 interaktiven Quiz-Fragen') als auch das Übungs-Intro (Zeile 770-771: '**Vierzehn Fragen**') nennen 14. Mismatch 14 vs. 16 ist verifiziert; die Fundstellen existieren wortwörtlich. Klarer, nachprüfbarer Konsistenzfehler ohne fachlichen Japanisch-Fehler — Severity 'gering' passt. Anmerkung: Der Auditor zählt die true_false-Items als '4 + abschliessende' (faktisch 5), das Gesamtergebnis 16 ist aber korrekt. Vorschlag (Zahl auf 16 anpassen ODER auf 14 kürzen) ist sachlich korrekt; das didaktische Duplikat-Argument (Item 16 vs. Frage 2) ist eine plausible Nebenbemerkung, aber nicht tragend für die Hauptfindung.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "gering"
+    }
+  },
+  {
+    "lesson_id": 198,
+    "severity": "mittel",
+    "kategorie": "konsistenz",
+    "konfidenz": "hoch",
+    "fundstelle": "Seite 4 (Grammatik), order_index 3, grammar-Item «Farb-Nomen + の + Nomen — あおの ぼうし», im explanation-Feld: «Bei 「ちゃいろ」 (chairo) und 「みどり」 (midori) geht nur dieser Weg, denn sie haben keine i-Form.»",
+    "problem": "Die Erklärung behauptet, 茶色 (ちゃいろ) habe keine i-Adjektiv-Form. Das ist sachlich falsch: 茶色い (ちゃいろい) ist ein gängiges, reguläres i-Adjektiv (z.B. 茶色い かみ 'braune Haare', 茶色い ふく 'braune Kleidung'). Verschärfend widerspricht sich die Lektion selbst: Genau die parallele 〜色い-Bildung wird eine Seite vorher gelehrt — Seite 2, order_index 8 lehrt 黄色 → 黄色い (きいろい). 黄色→黄色い und 茶色→茶色い sind dieselbe Wortbildung; die Pauschalaussage «keine i-Form» trifft auf 茶色 also nicht zu. (Nur für みどり stimmt die Aussage; 緑い existiert nicht standardsprachlich.)",
+    "vorschlag": "Aussage trennen, statt 茶色 und みどり in einen Topf zu werfen. Z.B.: «Bei 「みどり」 (midori) geht nur dieser Weg, denn es hat keine i-Form.» — und 茶色 entweder weglassen oder korrekt einordnen («茶色 hat zwar auch die Form 茶色い, wird aber als Farbe oft als Nomen mit の verwendet»). So bleibt es konsistent mit dem auf Seite 2 gelehrten 黄色い.",
+    "beleg": "茶色い (ちゃいろい) ist ein Standard-i-Adjektiv (parallel zum in derselben Lektion gelehrten 黄色い/きいろい). Die Behauptung «茶色 hat keine i-Form» ist falsch; korrekt ist die Aussage nur für 緑/みどり.",
+    "group_id": "familie-personen-2",
+    "module": "N5 · Familie & Personen",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Fundstelle verifiziert: Seite 4, order_index 3, grammar-Item «Farb-Nomen + の + Nomen — あおの ぼうし». Das explanation-Feld enthält wörtlich «Bei 「ちゃいろ」 (chairo) und 「みどり」 (midori) geht nur dieser Weg, denn sie haben keine i-Form.» Die Aussage ist für 茶色 sachlich falsch: 茶色い (ちゃいろい) ist ein gängiges, reguläres Standard-i-Adjektiv (z.B. 茶色い髪 'braune Haare', wörterbuchbelegt). Verschärfend: Dieselbe 〜色い-Bildung wird eine Seite vorher gelehrt — Seite 2, order_index 8 lehrt 黄色 → 黄色い (きいろい). 黄色→黄色い und 茶色→茶色い sind morphologisch identisch, die Lektion widerspricht sich also selbst. Nur für みどり stimmt die Aussage (緑い existiert standardsprachlich nicht; みどり ist reines Nomen und braucht の). Damit ist die Pauschalaussage ein klarer, verteidigbarer Sachfehler in einer Grammatik-Erklärung. Severity «mittel» ist angemessen: kein falscher Quiz-Schlüssel (das wäre kritisch), aber eine falsche Regel, die der Lerner übernehmen könnte.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "mittel"
+    }
+  },
+  {
+    "lesson_id": 197,
+    "severity": "gering",
+    "kategorie": "vorwissen_sprung",
+    "konfidenz": "mittel",
+    "fundstelle": "page_number 4, order_index 3, Grammatik-Karte '～を きています — was jemand gerade trägt (Verlaufsform ています)': 'Mit der Form 「～ています」 (~te imasu) beschreibst du einen andauernden Zustand. … Genauso: 「はいています」 (haite imasu) für unten und 「かぶっています」 (kabutte imasu) für den Kopf.'",
+    "problem": "Die Lektion benutzt und konjugiert die ています-Verlaufsform (きています / はいています / かぶっています) als bekannten Baustein, obwohl die eigentliche te-Form-Bildung (drei Verbgruppen) sowie die ています-Verlaufsform erst in L161 ('Te-Form bilden — drei Gruppen', '〜ています (te imasu) — Verlaufsform') eingeführt werden. Laut _curriculum.md steht L197 in Sektion 'N5 · Alltag & Essen', L161 jedoch in der späteren Sektion 'N5 · Erste Sätze (Grammatik)' — die Verlaufsform/te-Form-Konjugation wird hier also vor ihrer regulären Einführung verwendet. (Konfidenz nur mittel, da L197 im Einführungsindex selbst als Einführer von ています gelistet ist und das Muster inline mit Beispielen erklärt, also als Chunk self-contained lernbar wäre.)",
+    "vorschlag": "Entweder einen kurzen Hinweis ergänzen, dass die te-Form/ています ausführlich in einer späteren Grammatik-Lektion (L161) behandelt wird und hier nur als feste Wendung pro Kleidungs-Verb gelernt werden soll, oder die konjugierten Nebenformen はいています/かぶっています entschlacken und den Fokus auf die im Index zugewiesene ています-Einführung legen, damit kein unausgesprochener Vorgriff auf die te-Form-Bildung entsteht.",
+    "beleg": "_det_intro_index: 'L161: Te-Form bilden — drei Gruppen' und 'L161: 〜ています (te imasu) — Verlaufsform'; _curriculum.md: L197 in Sektion 'N5 · Alltag & Essen', L161 in der nachfolgenden Sektion 'N5 · Erste Sätze (Grammatik)'.",
+    "group_id": "alltag-essen-2",
+    "module": "N5 · Alltag & Essen",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Fundstelle verifiziert: L197, page_number 4, order_index 3, Grammatik-Karte '～を きています — was jemand gerade trägt (Verlaufsform ています)' enthält wortwörtlich die konjugierten Verlaufsformen きています / はいています / かぶっています. Der strukturelle Beleg ist HART und index-gestützt: _det_intro_index führt 'L161: Te-Form bilden — drei Gruppen' und 'L161: 〜ています (te imasu) — Verlaufsform' als reguläre Einführung der te-Form-Bildung + Verlaufsform-Systematik; _curriculum.md ordnet L197 der Sektion 'N5 · Alltag & Essen' zu, L161 jedoch der NACHFOLGENDEN Sektion 'N5 · Erste Sätze (Grammatik)'. In Lernreihenfolge kommt L197 also klar vor L161 → die ています-Verlaufsform und konjugierte te-iru-Formen werden hier vor ihrer regulären Einführung verwendet. Damit ist die Bedingung 'ohne harten Index-Beleg -> false' erfüllt (Beleg liegt vor). Severity 'gering' ist korrekt: Der Index listet L197 SELBST als Einführer von '～を きています', das Muster wird inline self-contained als feste Wendung pro Kleidungs-Verb erklärt, und die eigentliche te-Form-Bildung (drei Gruppen) wird hier NICHT verlangt — die Formen werden nur als fertige Chunks gegeben. Es ist also eine reale, aber niederschwellige Progressions-Reibung, kein blockierender Vorwissens-Sprung.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "gering"
+    }
+  },
+  {
+    "lesson_id": 166,
+    "severity": "mittel",
+    "kategorie": "vorwissen_sprung",
+    "konfidenz": "mittel",
+    "fundstelle": "page_number 4, order_index 4 (Grammatik-Karte 'Te-Form-Verkettung für Wegbeschreibungen') + order_index 1 ('Drei Bausteine für jede Wegbeschreibung', Zitat: 'Du hast die Te-Form bereits in Lektion 4 gelernt.')",
+    "problem": "Lektion 166 lehrt die Te-Form-Verkettung als eigene Kern-Grammatik und benutzt durchgehend 〜てください (まがってください, わたってください, 行ってください). Laut Einführungsindex wird die Te-Form aber erst in L161 ('Te-Form bilden — drei Gruppen') und 〜てください erst in L160 eingeführt. Im Curriculum (Header: 'in Lernreihenfolge') steht 166 im Modul 'Reise & Ort' VOR dem Modul 'Erste Sätze (Grammatik)' mit L160/L161. Damit wird die Te-Form genutzt und unterrichtet, bevor sie laut Reihenfolge eingeführt wurde. (Die Lektion verweist intern auf 'Lektion 4', was zur tatsächlichen Reihenfolge im Curriculum nicht passt.)",
+    "vorschlag": "Reihenfolge prüfen: Entweder die Te-Form-Lektionen (L160/L161) im Curriculum VOR die Wegbeschreibungs-Lektion 166 ziehen, oder die internen Querverweise ('bereits in Lektion 4 gelernt') und die Te-Form-Voraussetzung explizit korrekt verlinken. Voraussetzungskette (prerequisites) in der Lektion auf die Te-Form-Lektion setzen.",
+    "beleg": "Einführungsindex: 'L161: Te-Form bilden — drei Gruppen', 'L160: Höfliche Bitte: [Verb-て-Form] + ください'. Curriculum-Reihenfolge: Modul 'N5 · Reise & Ort' (162, 166) steht vor Modul 'N5 · Erste Sätze (Grammatik)' (175, 177, 160, 161).",
+    "group_id": "reise-ort-1",
+    "module": "N5 · Reise & Ort",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Fundstelle verifiziert: Page 4 order_index 1 enthält wörtlich \"Du hast die Te-Form bereits in Lektion 4 gelernt\", und order_index 4 ist die Grammatik-Karte \"Te-Form-Verkettung für Wegbeschreibungen\" (Erklärung: \"dafür ist die Te-Form perfekt (siehe Lektion 4)\"). Die Lektion lehrt die Te-Form-Verkettung als Kern-Grammatik und benutzt durchgehend 〜てください (まがってください, わたってください, 行ってください). Harter Index-Beleg: _det_intro_index.txt führt die Te-Form-Bildung erst in L161 (\"Te-Form bilden — drei Gruppen\") und 〜てください erst in L160 (\"Höfliche Bitte: [Verb-て-Form] + ください\") ein; L166 selbst führt \"Te-Form-Verkettung für Wegbeschreibungen\" ein. Curriculum (_curriculum.md, Header \"alle 58 Lektionen in Lernreihenfolge\"): Modul \"N5 · Reise & Ort\" mit L166 steht VOR dem Modul \"N5 · Erste Sätze (Grammatik)\" mit L160/L161. Damit wird die Te-Form genutzt und unterrichtet, bevor sie laut Lernreihenfolge eingeführt ist — ein klarer, index-belegter vorwissen_sprung. Der interne Verweis auf \"Lektion 4\" passt zudem nicht zur tatsächlichen Reihenfolge (Te-Form = L160/L161). Das Japanisch selbst ist korrekt; das Problem ist rein didaktische Sequenzierung, daher Severity \"mittel\" angemessen.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "mittel"
+    }
+  },
+  {
+    "lesson_id": 166,
+    "severity": "gering",
+    "kategorie": "konsistenz",
+    "konfidenz": "hoch",
+    "fundstelle": "page_number 2 — Vokabel-Karten order_index 6 (信号/しんごう), order_index 7 (交差点/こうさてん), order_index 8 (橋/はし)",
+    "problem": "In einer als N5 deklarierten Lektion (category_jlpt_level 5, jede Vokabel sonst jlpt_level 5) tragen drei Vokabeln im Datenfeld explizit jlpt_level 4: 信号 (しんごう), 交差点 (こうさてん) und 橋 (はし). Das ist ein interner Widerspruch zwischen dem jlpt_level-Feld der Items und der N5-Einstufung der Lektion/Plattform. 信号 und 交差点 sind in den Standard-JLPT-Listen tatsächlich N4 — die Lektion stuft sie selbst (Feld) ebenfalls als 4 ein.",
+    "vorschlag": "jlpt_level der drei Items auf den korrekten Wert vereinheitlichen bzw. konsistent zur Lektion machen. Wenn die Wörter thematisch nötig sind (Wegbeschreibung), als 'über-N5-Hilfsvokabel' kennzeichnen, statt sie widersprüchlich mal als 4, mal implizit als N5-Lektionsinhalt zu führen.",
+    "beleg": "lesson_166 page 2: 信号 \"jlpt_level\": 4, 交差点 \"jlpt_level\": 4, 橋 \"jlpt_level\": 4 — bei category_jlpt_level 5 und allen übrigen Vokabeln \"jlpt_level\": 5.",
+    "group_id": "reise-ort-1",
+    "module": "N5 · Reise & Ort",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Fundstelle exakt bestätigt: In lesson_166.json page_number 2 tragen order_index 6 (信号/しんごう, Zeile 163), 7 (交差点/こうさてん, Zeile 182) und 8 (橋/はし, Zeile 201) jeweils \"jlpt_level\": 4, während die Lektion category_jlpt_level 5 hat und ALLE übrigen Vokabeln \"jlpt_level\": 5 tragen. Das ist ein realer interner Widerspruch zwischen dem Item-Feld und der N5-Einstufung der Lektion. Unabhängige JLPT-Prüfung stützt den Auditor: 信号 (shingou) und 交差点 (kousaten) sind in den Standard-Listen (Tanos/JLPT) tatsächlich N4, nicht N5; 橋 ist mindestens N4-Kanji und nicht eindeutig N5. Die Wörter selbst (Lesungen/Bedeutungen) sind korrekt und thematisch sinnvoll für eine Wegbeschreibungs-Lektion. Severity \"gering\" ist angemessen — reine Metadaten-/Konsistenzfrage, kein faktischer Inhalts- oder Quizfehler.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "gering"
+    }
+  },
+  {
+    "lesson_id": 162,
+    "severity": "gering",
+    "kategorie": "konsistenz",
+    "konfidenz": "hoch",
+    "fundstelle": "page_number 1, order_index 1 ('Orientierung in der Stadt'), Zitat: '18 Stadt-Vokabeln — von 「えき」 (eki, Bahnhof) bis 「こうさてん」 (kousaten, Kreuzung).'",
+    "problem": "Die Einführung verspricht 18 Stadt-Vokabeln 'bis こうさてん (kousaten, Kreuzung)'. こうさてん (交差点) kommt in Lektion 162 jedoch gar nicht vor — das Wort wird erst in Lektion 166 (Wegbeschreibung) eingeführt. Der Lerner sucht das angekündigte Wort vergeblich.",
+    "vorschlag": "Ankündigung korrigieren: das Bis-Beispiel auf ein tatsächlich in 162 enthaltenes Wort ändern (z.B. '… bis 「ちかく」 (chikaku, Nähe)' oder '… bis 「びょういん」 (byouin, Krankenhaus)').",
+    "beleg": "Die 18 Vokabeln von 162 (page 2 + page 3) enthalten kein 交差点/こうさてん; こうさてん erscheint erst in lesson_166 page 2 (order_index 7).",
+    "group_id": "reise-ort-1",
+    "module": "N5 · Reise & Ort",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Fundstelle verifiziert: page 1, order_index 1 ('Orientierung in der Stadt') enthält wörtlich '**18 Stadt-Vokabeln** — von 「えき」 (eki, Bahnhof) bis 「こうさてん」 (kousaten, Kreuzung).'. Ich habe die Vokabeln unabhängig durchgezählt: Seite 2 hat 10 (駅, 銀行, 郵便局, レストラン, 公園, 図書館, デパート, スーパー, ホテル, 病院), Seite 3 hat 8 (電車, バス, タクシー, 地下鉄, 町, 道, 家, ちかく) = exakt 18. こうさてん/交差点 kommt in keiner davon vor; das letzte Vokabel ist ちかく (chikaku, Nähe). Auch in Grammatik-, Dialog- und Zusammenfassungs-Seiten taucht こうさてん nirgends auf. Die Ankündigung nennt also ein Endpunkt-Wort, das die Lektion nicht lehrt — ein echter, leicht verifizierbarer Konsistenzfehler. Die Zahl 18 selbst stimmt; nur das Bis-Beispiel ist falsch. Severity 'gering' ist angemessen (kosmetisch-didaktisch, kein faktischer/sprachlicher Fehler).",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "gering"
+    }
+  },
+  {
+    "lesson_id": 177,
+    "severity": "mittel",
+    "kategorie": "konsistenz",
+    "konfidenz": "hoch",
+    "fundstelle": "Seite 5 (page_number 5), order_index 2 (dialog_slideshow) sowie identisch order_index 3 (Text-Transkript), Slide 2 / 2. Zeile: Sprecher = \"Yamada\", jp = \"それは ぼくの かばんじゃ ありません。やまださんの ですか。\" (de: \"Das ist nicht meine Tasche. Ist das deine, Yamada?\")",
+    "problem": "Diese Zeile ist im JSON dem Sprecher \"Yamada\" zugeordnet, der Inhalt fragt aber \"やまださんの ですか\" (= \"Ist das Yamadas (Tasche)?\") und die deutsche Übersetzung lautet \"Ist das deine, Yamada?\". Yamada spricht sich also selbst in der dritten Person an und fragt, ob die Tasche ihm (Yamada) gehört — das ist inhaltlich/erzählerisch unmöglich. Die Zeile muss von Lisa gesprochen werden (sie fragt Yamada), oder der genannte Name ist falsch. Im selben Dialog gibt es nur zwei Sprecher (Lisa, Yamada), aber drei genannte Personen (Yamada, Yuki, Tanaka); die Sprecher-Zuordnung von Slide 2 ist in sich widersprüchlich.",
+    "vorschlag": "Slide 2 dem Sprecher \"Lisa\" zuweisen (Lisa: \"それは わたしの かばんじゃ ありません。やまださんの ですか。\") ODER, wenn Yamada sprechen soll, den Namen ändern, sodass er nach einer dritten Person fragt (z. B. \"ゆきさんの ですか\"). Slideshow-JSON und Text-Transkript (order_index 3) müssen identisch korrigiert werden; auch das line_02-Audio passt nicht zur logischen Sprecherrolle.",
+    "beleg": "Korrekt z. B.: Sprecher Lisa — \"それは わたしの かばんじゃ ありません。やまださんの ですか。\" (Das ist nicht meine Tasche. Ist das deine, Yamada?). Yamada kann nicht selbst fragen, ob die Tasche \"やまださんの\" (= seine eigene) ist.",
+    "group_id": "erste-saetze-1",
+    "module": "N5 · Erste Sätze (Grammatik)",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Fundstelle existiert exakt: Seite 5, dialog_slideshow (order_index 2) und Text-Transkript (order_index 3) enthalten identisch Slide/Zeile 2, Sprecher \"Yamada\": jp \"それは ぼくの かばんじゃ ありません。やまださんの ですか。\", de \"Das ist nicht meine Tasche. Ist das deine, Yamada?\". Der Befund ist echt: Yamada verneint zuerst Besitz (ぼくの … じゃ ありません = es ist NICHT meine) und fragt dann \"やまださんの ですか\" (= Ist es Yamadas?) — er fragt also, ob die Tasche ihm selbst gehört, direkt nachdem er das verneint hat. Logisch unmöglich. Zudem adressiert die deutsche Übersetzung \"Ist das deine, Yamada?\" Yamada als Angesprochenen, was nur passt, wenn jemand anderes (Lisa) spricht. Reine Konsistenz-/Erzähllogik-Fehler, JLPT-Grammatik selbst (の/ぼく/じゃ ありません) ist korrekt. Severity \"mittel\" angemessen: echter Verständnis-/Logikdefekt, aber lokal auf eine Dialogzeile begrenzt, bricht die Grammatikvermittlung nicht.\n\nABER beide Auditor-Vorschläge sind FALSCH (vorschlag_korrekt=false). Die Sprecher wechseln strikt Lisa/Yamada/Lisa/Yamada über alle 9 Zeilen. (1) Vorschlag \"Slide 2 → Lisa\": bricht die Alternation (Lisa-Lisa für Zeile 2-3), lässt Lisa ihre eigene Frage beantworten, und das 「も」 in Zeile 3 (\"わたしのも ちがいます\" = meine ist AUCH nicht es) verliert seinen Bezugspunkt (das 「も」 braucht eine vorausgehende Verneinung — Yamadas \"ぼくの … じゃ ありません\"). (2) Vorschlag \"Yamada fragt ゆきさんの ですか\": Zeile 4 hat Yamada bereits \"この かばんは ゆきさんのですか\" — doppelte Yuki-Frage, redundant.\n\nKORREKTER FIX: Sprecher Yamada beibehalten, nur 「やまださんの」 → 「リサさんの」 (oder 「あなたの」) und im Deutschen \"Yamada\" → \"Lisa\" ändern. Dann verneint Yamada Besitz und fragt Lisa \"Ist es deine?\"; Lisas 「も」 in Zeile 3 hat seinen Bezug; Alternation bleibt; kein Konflikt mit Zeile 4. Slideshow-JSON und Text-Transkript (order_index 3) identisch korrigieren; line_02-Audio entsprechend.",
+      "vorschlag_korrekt": false,
+      "korrigierte_severity": "mittel"
+    }
+  },
+  {
+    "lesson_id": 160,
+    "severity": "gering",
+    "kategorie": "klarheit",
+    "konfidenz": "mittel",
+    "fundstelle": "Seite 4 (page_number 4), order_index 2 (grammar, Titel \"Vier Tempus-Formen: ます / ました / ません / ませんでした\"), explanation: \"Diese Formen entstehen vom Verb-Stamm (z.B. たべ aus たべる, der die Endung 「る」 wegnimmt).\"",
+    "problem": "Die Stammbildung wird mit der ichidan-Regel \"die Endung 「る」 wegnehmen\" als allgemeine Regel dargestellt. Für die godan-Verben derselben Lektion (よむ→よみます, かく→かきます, いく→いきます, あう→あいます) stimmt das nicht: deren ます-Stamm endet auf einen i-Laut (よみ, かき, いき, あい), und mehrere dieser Verben enden nicht einmal auf る. Ein Lernender, der \"る wegnehmen\" auf よむ anwendet, kommt zu einem falschen Ergebnis. Die Lektion mischt ichidan- und godan-Verben, gibt aber nur die ichidan-Stammregel.",
+    "vorschlag": "Formulierung relativieren, z. B.: \"... vom Verb-Stamm (bei る-Verben wie たべる fällt る weg → たべ; bei u-Verben wie よむ ändert sich der Endvokal zu i → よみ). Die genauen Verbgruppen lernst du in der nächsten Lektion.\" Alternativ den Halbsatz \"der die Endung 「る」 wegnimmt\" streichen, da die Lektion die Konjugationsregeln ohnehin auf später verschiebt.",
+    "beleg": "よむ → よみます (Stamm よみ, kein \"る\"-Wegfall); かく → かきます; いく → いきます — die generische Regel \"る wegnehmen\" ist nur für ichidan/る-Verben korrekt.",
+    "group_id": "erste-saetze-1",
+    "module": "N5 · Erste Sätze (Grammatik)",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Fundstelle verifiziert: Seite 4, order_index 2 (grammar), explanation enthält wörtlich \"Diese Formen entstehen vom Verb-Stamm (z.B. たべ aus たべる, der die Endung 「る」 wegnimmt).\" Die Aussage präsentiert das Weglassen von 「る」 als allgemeines Stammbildungs-Prinzip, ist aber nur für ichidan-/る-Verben korrekt. Die Lektion mischt nachweislich Verbklassen: Seite 2 listet die godan-Verben いく, よむ, かく, あう sowie die godan-る-Verben はいる, かえる neben den ichidan-Verben みる, でる, おきる, ねる. Eigene Herleitung des ます-Stamms (連用形): よむ→よみ(ます), かく→かき(ます), いく→いき(ます), あう→あい(ます) — Endvokal wird zu i, kein 「る」-Wegfall (mehrere enden gar nicht auf る). Besonders gravierend bei den godan-る-Verben: はいる→はいり (nicht はい), かえる→かえり (nicht かえ) — hier liefert \"る wegnehmen\" sogar einen falschen Stamm. Ein Lernender, der die einzige gegebene Regel anwendet, kommt zu falschen Ergebnissen. Klarer, verteidigbarer didaktischer Präzisionsfehler. Severity \"gering\" passt: betrifft eine geklammerte Beispielangabe, keine falsche Tabelle/Quiz-Antwort, und die Lektion verschiebt die Konjugationsregeln ohnehin auf später — der Halbsatz übergeneralisiert lediglich.",
+      "vorschlag_korrekt": true
+    }
+  },
+  {
+    "lesson_id": 175,
+    "severity": "gering",
+    "kategorie": "konsistenz",
+    "konfidenz": "mittel",
+    "fundstelle": "Seite 1 (page_number 1), order_index 1 (text, \"Die fünf Bausteine\"): aufgezählt werden です, は, じゃ ありません, ですか, も — im Vergleich zu Seite 4 (order_index 1, \"Fünf Muster\"), Seite 6 (order_index 1) und Seite 7 (order_index 1), die jeweils です, じゃ ありません, でした, ですか, も auflisten.",
+    "problem": "Die Lektion definiert die \"fünf Bausteine\" auf der Einführungsseite anders als auf allen späteren Seiten. Seite 1 nennt 「は」 als Baustein und lässt 「でした」 (Vergangenheit) weg; Seiten 4/6/7 nennen 「でした」 und lassen 「は」 weg. 「でした」 wird tatsächlich gelehrt (Vokabel Seite 2, Grammatik-Pattern Seite 4 #3, zwei Quizfragen auf Seite 6) — es als Kern-Baustein auf der Einführungsseite zu unterschlagen ist inkonsistent und irritiert beim Wiedererkennen.",
+    "vorschlag": "Die fünf Bausteine über alle Seiten vereinheitlichen. Empfohlen: です, じゃ ありません, でした, ですか, も (deckt die vier auf Seite 4 gezeigten Muster + も ab), und 「は」 separat als Themen-Partikel beschreiben statt es als einen der fünf Bausteine zu zählen — so wie es Seiten 4/6/7 bereits handhaben.",
+    "beleg": "Seite 1: \"です … は … じゃ ありません … ですか … も\" (kein でした) vs. Seite 7 Zusammenfassung: \"AはBでした (A wa B deshita)\" als Muster 3 von 5 — でした ist also fester Lehrstoff.",
+    "group_id": "erste-saetze-1",
+    "module": "N5 · Erste Sätze (Grammatik)",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Die Fundstelle existiert exakt wie beschrieben. Seite 1 (page 1, order_index 1, \"Die fünf Bausteine\") listet です, は, じゃ ありません, ですか, も — ohne でした. Seite 4 (\"Fünf Muster\"), Seite 6 (\"die fünf Bausteine\" im Übungstext) und Seite 7 (\"Die fünf Muster\") listen dagegen alle です, じゃ ありません, でした, ですか, も und behandeln は als das in den Mustern eingebettete Themen-Partikel, nicht als einen der fünf Bausteine. でした wird tatsächlich gelehrt: Vokabel auf Seite 2 (でした/deshita), Grammatik-Muster 3 auf Seite 4, Quiz-Frage 6 (きのうは どようびでした) und Matching-Frage auf Seite 6. Damit trifft die Einführungsseite eine andere Definition der \"fünf Bausteine\" als drei spätere Seiten, und unterschlägt mit でした einen Baustein, der echter Lehrstoff ist und später als \"fünftes Muster\" auftaucht — das ist eine reale, verteidigbare Konsistenz-/Wiedererkennungsschwäche. Faktisch ist auf keiner Seite etwas falsch (alle Lesungen/Übersetzungen korrekt geprüft: は=wa, でした=war, も ersetzt は etc.), daher ist Severity \"gering\" angemessen — es ist ein Framing-/Etikett-Widerspruch, kein Sachfehler.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "gering"
+    }
+  },
+  {
+    "lesson_id": 201,
+    "severity": "gering",
+    "kategorie": "faktischer_fehler",
+    "konfidenz": "niedrig",
+    "fundstelle": "Seite 3 (Vokabeln Teil 2 — Wetter, Gefühl, Zeit), order_index 5: Vokabel 早い / はやい / hayai, meaning_de = 'früh, schnell (i-Adj.)'",
+    "problem": "Das Kanji 早い (はやい) bedeutet 'früh' (zeitlich). Die Bedeutung 'schnell' (Geschwindigkeit) wird im Japanischen mit dem gleich gelesenen, aber anders geschriebenen 速い (はやい) ausgedrückt. Die meaning_de '...schnell' vermischt die beiden Homophone — bei der Schreibung 早い ist 'schnell' im Sinne von Geschwindigkeit nicht die übliche Bedeutung. Der Beispielsatz selbst nutzt das Wort korrekt zeitlich ('Heute bist du früh dran').",
+    "vorschlag": "meaning_de auf 'früh (i-Adj.)' beschränken (ggf. mit Hinweis, dass 'schnell' i.S.v. Geschwindigkeit als 速い geschrieben wird), um die Verwechslung 早い (früh/zeitlich) vs. 速い (schnell/Geschwindigkeit) zu vermeiden.",
+    "beleg": "早い = 'früh' (zeitlich); 'schnell' (Geschwindigkeit) = 速い. Beide werden はやい / hayai gelesen, sind aber unterschiedliche Kanji mit unterschiedlicher Bedeutung.",
+    "group_id": "adjektive-1",
+    "module": "N5 · Adjektive",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Fundstelle existiert exakt (Seite 3, order_index 5): 早い/はやい/hayai mit meaning_de='früh, schnell (i-Adj.)'. Unabhängige Herleitung: 早い (はやい) = 'früh' (zeitlich/zügig), 速い (はやい) = 'schnell' (Geschwindigkeit eines bewegten Objekts) — Homophone, verschiedene Kanji, verschiedene Kernbedeutung. Die undifferenzierte Glosse 'schnell' bei der Schreibung 早い ist für N5-Anfänger irreführend, weil sie die Erwartung weckt, 早い decke Geschwindigkeit ab (schneller Zug = 速い, nicht 早い). Der Beispielsatz selbst nutzt das Wort korrekt zeitlich. Damit ist es ein realer, verteidigbarer didaktischer Mangel — kein erfundenes Finding, kein struktureller Trugschluss. Severity 'gering' bleibt angemessen: keine grobe Falschaussage (早い trägt eine 'zügig'-Nuance, Wörterbücher führen 'fast' überlappend), nur unpräzise. Einschränkung: Der Vorschlag ist minimal überspitzt — 'schnell' könnte mit Präzisierung '(zügig/zeitlich)' bleiben — aber die empfohlene Stossrichtung (auf 'früh' fokussieren bzw. 速い-Hinweis ergänzen) ist fachlich korrekt.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "gering"
+    }
+  },
+  {
+    "lesson_id": 203,
+    "severity": "gering",
+    "kategorie": "konsistenz",
+    "konfidenz": "hoch",
+    "fundstelle": "Seite 2 (Vokabeln Teil 1), order_index 11, Vokabel 出かける: example_sentence_japanese \"母は今出かける。\" / example_sentence_english \"Haha wa ima dekakeru. — Meine Mutter geht jetzt aus.\"",
+    "problem": "Diese Lektion lehrt durchgehend die höfliche ます-Form (masu-kei) und ALLE übrigen ~23 Vokabel-Beispielsätze stehen konsequent in der höflichen Form (起きます, 寝ました, 食べました, 飲みます, 行きます, 来ました, 帰ります, 歩きます, 待ちます ...). Nur dieses eine Beispiel steht in der schlichten Wörterbuch-/Plain-Form (出かける statt 出かけます). Das widerspricht dem Lernziel der Lektion und wirkt für den Lernenden, der gerade die ます-Form übt, inkonsistent und verwirrend.",
+    "vorschlag": "Beispielsatz an die ます-Form angleichen, z. B. \"母は今出かけます。\" (Haha wa ima dekakemasu. — Meine Mutter geht jetzt aus.). Optional ein alltagsnäheres Subjekt/Adverb (z. B. これから), aber zentral ist die Vereinheitlichung auf 出かけます.",
+    "beleg": "Korrekte, lektionskonforme Form: 出かけます (でかけます, dekakemasu).",
+    "group_id": "alltag-verben-1",
+    "module": "N5 · Alltag & Verben",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Fundstelle exakt bestätigt: Seite 2, order_index 11, Vokabel 出かける mit example_sentence_japanese \"母は今出かける。\" (Plain-/Wörterbuchform, Romaji \"dekakeru\"). Die Lektion heisst explizit \"Tagesablauf — Verben (ます-Form, masu-kei)\" und ihr Lernziel ist durchgehend die höfliche ます-Form. Ich habe alle übrigen ~23 Vokabel-Beispielsätze geprüft: ausnahmslos höfliche Form (起きます, 寝ました, 食べました, 飲みます, 行きます, 来ました, 帰ります, 歩きます, はしります, 待ちます, 勉強します, 見ます, 聞きます, 読みます, 話します, 買いました, つかいます, 作ります, あらいます, 働いています sowie höfliches 書いてください). Nur dieser eine Satz steht in der schlichten Plain-Form — ein klarer, verteidigbarer didaktischer Konsistenz-Bruch, der einen Lernenden, der gerade masu-kei übt, verwirrt. Die Lektion selbst verwendet でかけます andernorts korrekt (Grammatik-Karte: はちじはんに でかけます; Dialog: しちじに でかけます), was bestätigt, dass die höfliche Form die intendierte Zielform ist. Severity 'gering' passt, da 出かける an sich korrektes Japanisch ist (kein Faktenfehler), nur lektionsinkonsistent. Der Fix-Vorschlag 出かけます (母は今出かけます。) ist grammatisch korrekt und stellt die Konsistenz her.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "gering"
+    }
+  },
+  {
+    "lesson_id": 205,
+    "severity": "gering",
+    "kategorie": "konsistenz",
+    "konfidenz": "mittel",
+    "fundstelle": "page_number 7, order_index 1, Text 'Das hast du gelernt' / Abschnitt 'Lerntipp & Ausblick': \"In der nächsten Lektion geht es um das Wetter und die Jahreszeiten — perfekt, um zu verstehen, warum man sich manchmal eine かぜ (kaze, Erkältung) holt.\"",
+    "problem": "Die Zusammenfassung kündigt als 'nächste Lektion' das Thema Wetter & Jahreszeiten an. Laut Curriculum (_curriculum.md, ausdrücklich 'in Lernreihenfolge') steht die Lektion 'N5 · Wetter & Jahreszeiten' (L204) jedoch VOR L205 'Körper & Gesundheit — Beim Arzt'. Der Ausblick verweist damit auf eine Lektion, die in der Lernreihenfolge bereits davor liegt, statt auf die tatsächlich folgende.",
+    "vorschlag": "Den Ausblick auf die tatsächlich nachfolgende Lektion korrigieren (laut Curriculum-Reihenfolge L206 'Wohnen — Haus & es gibt') oder den thematischen Vorwärtsverweis ganz entfernen, damit die Lernenden nicht auf eine bereits absolvierte Lektion verwiesen werden.",
+    "beleg": "Curriculum-Reihenfolge: Sektion 'N5 · Wetter & Jahreszeiten' mit [204] Wetter & Jahreszeiten steht vor Sektion 'N5 · Körper & Gesundheit' mit [205]; danach folgt [206] Wohnen.",
+    "group_id": "koerper-gesundheit-1",
+    "module": "N5 · Körper & Gesundheit",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Die Fundstelle existiert wortgenau: page 7, Abschnitt \"Lerntipp & Ausblick\" sagt \"In der nächsten Lektion geht es um das Wetter und die Jahreszeiten — perfekt, um zu verstehen, warum man sich manchmal eine かぜ (kaze, Erkältung) holt.\" (Punkt 1 erfüllt). Harter Beleg aus dem Index: _curriculum.md ist laut Kopfzeile explizit \"in Lernreihenfolge\". Dort steht Sektion \"N5 · Wetter & Jahreszeiten\" mit [204] DIREKT VOR Sektion \"N5 · Körper & Gesundheit\" mit [205]; danach folgt [206] Wohnen. Der Vorwärtsverweis \"nächste Lektion = Wetter & Jahreszeiten\" zeigt damit auf die unmittelbar VORANGEHENDE Lektion L204, nicht auf die tatsächlich folgende (L206 Wohnen). Das ist ein klarer, anhand des Index verifizierbarer Konsistenzfehler — kein vager Struktur-Verdacht, sondern durch die ausdrücklich als Lernreihenfolge deklarierte Liste belegt. Severity \"gering\" passt, da es nur ein narrativer Ausblicks-Verweis ist (keine fachliche/sprachliche Falschaussage).",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "gering"
+    }
+  },
+  {
+    "lesson_id": 155,
+    "severity": "mittel",
+    "kategorie": "klarheit",
+    "konfidenz": "hoch",
+    "fundstelle": "page_number 2, order_index 14, Text 'Lehnwort-Spezialitäten — was es nur in Katakana gibt', Abschnitt 'V-Familie — der Sonderfall': \"Es nutzt 「ヴ」 — ein U mit Dakuten (von フ + ゛ inspiriert) — plus Vokale\"",
+    "problem": "Der Klammerzusatz '(von フ + ゛ inspiriert)' ist sachlich falsch und widerspricht der Aussage im selben Satz. Korrekt ist 「ヴ」 = ウ (u) + Dakuten. フ (fu) + Dakuten ergibt 「ブ」 (bu), NICHT 「ヴ」 (vu). Der Satz nennt zuerst richtig 'ein U mit Dakuten', leitet dann aber fälschlich von フ ab — das verwechselt vu mit bu und untergräbt genau die Unterscheidung, die die Lektion lehren will.",
+    "vorschlag": "Klammer korrigieren zu '(ウ + ゛, also U mit Dakuten)' bzw. den falschen Hinweis 'von フ + ゛ inspiriert' streichen.",
+    "beleg": "「ヴ」 = ウ (u) + Dakuten. フ + Dakuten = 「ブ」 (bu), nicht 「ヴ」 (vu).",
+    "group_id": "katakana-komplett-2",
+    "module": "N5 · Katakana komplett",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Fundstelle existiert wortwörtlich (Seite 2, order_index 14, Abschnitt 'V-Familie — der Sonderfall'): \"Es nutzt 「ヴ」 — ein U mit Dakuten (von フ + ゛ inspiriert) — plus Vokale\". Unabhängige Herleitung bestätigt den Fehler: Das Grundzeichen von 「ヴ」 ist die Katakana ウ (u) plus Dakuten — das ist Standard und steht im Satz auch zuerst korrekt da (\"ein U mit Dakuten\"). Der Klammerzusatz \"von フ + ゛ inspiriert\" ist sachlich falsch: フ (fu) + Dakuten ergibt 「ブ」 (bu), nicht 「ヴ」 (vu). Der Zusatz widerspricht somit direkt der korrekten Aussage im selben Satz und reproduziert genau die b/v-Verwechslung, die die Lektion auflösen will (vgl. Praxis-Hinweis und true_false-Quizfrage zur B-Reihen-Ersetzung). Klarer, verteidigbarer Fachfehler. Severity 'mittel' angemessen (irreführender Klammerzusatz, kein katastrophaler Inhalt). Vorgeschlagener Fix ist korrekt: ウ + ゛ = ヴ.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "mittel"
+    }
+  },
+  {
+    "lesson_id": 154,
+    "severity": "gering",
+    "kategorie": "konsistenz",
+    "konfidenz": "mittel",
+    "fundstelle": "Widerspruch zwischen page_number 2, order_index 7 (Z-Reihe-Text, Tofugu-Stolperfalle) und page_number 4, order_index 1, Quiz-Frage 2 ('Wie liest man 「ジ」?') explanation",
+    "problem": "Der Lektionstext warnt ausdrücklich, 「ジ」 (ji) NICHT mit dem englischen 'j' gleichzusetzen ('Verwechsle 「ジ」 (ji) nicht mit dem englischen \"j\" wie in jet — das japanische ji ist weicher, fast wie Dschungel'). Die Quiz-Erklärung zu derselben Silbe sagt aber genau das Gegenteil: '「ジ」 (ji), wie englisches j in Jeans'. Das ist ein interner Widerspruch in der Lernanweisung innerhalb derselben Lektion und verwirrt Lernende.",
+    "vorschlag": "Quiz-Erklärung an die Lektion angleichen, z.B. '「ジ」 (ji), gesprochen wie ein weiches dsch in Dschungel' — nicht 'wie englisches j in Jeans'.",
+    "beleg": "L154 S.2: 'das japanische ji ist weicher, fast wie Dschungel' vs. L154 S.4 Q2-explanation: 'wie englisches j in Jeans'.",
+    "group_id": "katakana-komplett-2",
+    "module": "N5 · Katakana komplett",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Beide Fundstellen existieren wortgenau: S.2 (order_index 7, Z-Reihe) warnt ausdrücklich \"Verwechsle 「ジ」 (ji) nicht mit dem englischen 'j' wie in jet — das japanische ji ist weicher, fast wie Dschungel\". Die Quiz-Erklärung S.4 Q2 (\"Wie liest man 「ジ」?\") sagt jedoch \"「ジ」 (ji), wie englisches j in 'Jeans'\" — also genau das Gegenteil. Phonetisch hat S.2 sogar recht: japanisches 「ジ」 [(d)ʑi] ist palataler/weicher als englisches j [dʒ]; die Gleichsetzung im Quiz untergräbt die explizite Lernanweisung der Lektion. Echter interner Konsistenz-Widerspruch in der Aussprache-Anweisung derselben Lektion; Severity 'gering' angemessen. (Frage 13 nutzt 'Jeans' nur als Wort-Beispiel, kein Widerspruch.)",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "gering"
+    }
+  },
+  {
+    "lesson_id": 154,
+    "severity": "gering",
+    "kategorie": "konsistenz",
+    "konfidenz": "hoch",
+    "fundstelle": "description (Lektions-Beschreibung): \"Lerne die 25 Katakana mit Diakritika (ガ-ぱ-Reihen) ...\"",
+    "problem": "In der Reihen-Spanne '(ガ-ぱ-Reihen)' ist das letzte Zeichen 「ぱ」 ein HIRAGANA-pa, nicht das Katakana 「パ」. In einer reinen Katakana-Lektion sollte hier das Katakana stehen (der Titel verwendet korrekt 「パ」).",
+    "vorschlag": "'(ガ-ぱ-Reihen)' korrigieren zu '(ガ–パ-Reihen)'.",
+    "beleg": "ぱ = Hiragana pa; korrekt für diese Lektion ist das Katakana パ.",
+    "group_id": "katakana-komplett-2",
+    "module": "N5 · Katakana komplett",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Fundstelle bestätigt: In description (Zeile 4) steht wörtlich \"(ガ-ぱ-Reihen)\". Das letzte Zeichen 「ぱ」 ist U+3071 HIRAGANA pa, nicht das Katakana 「パ」 (U+30D1). 「ガ」 ist korrektes Katakana. In einer reinen Katakana-Lektion (Titel verwendet korrekt 「パ」) ist das Hiragana in der Reihen-Spanne ein klarer Schrift-Inkonsistenzfehler. Severity \"gering\" ist passend: betrifft nur ein Zeichen in der Beschreibung, kein Inhalts-/Faktenfehler im Lehrstoff, aber für eine Schrift-Lektion relevant. Der Vorschlag ersetzt 「ぱ」 korrekt durch 「パ」 (zusätzlich Hyphen→En-Dash, stilistisch, schadet nicht).",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "gering"
+    }
+  },
+  {
+    "lesson_id": 155,
+    "severity": "gering",
+    "kategorie": "progression",
+    "konfidenz": "niedrig",
+    "fundstelle": "page_number 4, order_index 1, Quiz-Frage 'Wie liest man 「シェフ」?' (Antwort 'shefu')",
+    "problem": "Die Frage prüft die Spezialsilbe 「シェ」 (she). Diese Kombination wird im Lektionstext (page 2 order_index 14, page 3 order_index 1) nirgends eingeführt oder erklärt — die Lehnwort-Spezialitäten-Übersicht listet T-/F-/W-/V-Familie, aber nicht die SH-/CH-/J-Vokal-Specials (シェ/チェ/ジェ). Das Quiz testet damit Stoff, der nicht explizit gelehrt wurde.",
+    "vorschlag": "Entweder 「シェ」 (und ggf. 「チェ」/「ジェ」) kurz in der Lehnwort-Spezialitäten-Übersicht ergänzen, oder die Frage durch eine ersetzen, die eine im Text behandelte Silbe (ティ/ファ/ウィ ...) prüft.",
+    "beleg": "シェ erscheint im Text nur als Beispielwort 「シェフ」, ohne eigene Einführung der Silbe she.",
+    "group_id": "katakana-komplett-2",
+    "module": "N5 · Katakana komplett",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Fundstelle verifiziert: page 4, order_index 1 enthält die Quiz-Frage \"Wie liest man 「シェフ」?\" mit korrekter Antwort \"shefu\". Die Lesung shefu (シェ=she + フ=fu) ist faktisch richtig. Die Frage drillt jedoch explizit die Spezialsilbe シェ (she) (\"Klein vs. gross beachten: シェ ist eine Silbe, nicht シエ\"). Ich habe alle Textblöcke und Kana-Karten unabhängig durchgesehen: Die Lehnwort-Spezialitäten-Übersicht (page 2, order 14) führt nur T-Familie (ティ/ディ), F-Familie (ファ–フォ), W-Familie (ウィ–ウォ) und V-Familie (ヴァ–ヴォ) ein; die SH/CH/J-Vokal-Specials (シェ/チェ/ジェ) fehlen komplett, ebenso unter den Kana-Karten order 2–27 (キャ…ヴォ, kein シェ). シェ erscheint nur als unerklärtes Beispielwort 「シェフ」 (Seiten 1 und 5). Das ist ein harter, textbelegter Progressions-Gap (kein bloss spekulativer struktureller Verdacht), korrekt als Severity \"gering\" eingestuft, da das Wort+Lesung als Beispiel zweimal auftaucht.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "gering"
+    }
+  },
+  {
+    "lesson_id": 157,
+    "severity": "gering",
+    "kategorie": "klarheit",
+    "konfidenz": "hoch",
+    "fundstelle": "page_number 2, order_index 1, Text 'Lebensmittel und Getränke': Abschnitt 'Und fünf **Getränke und kleine Gerichte**:' mit Aufzählung ぎゅうにゅう / こうちゃ / コーヒー / カレー / ちゃわん (chawan) — *Reisschale*",
+    "problem": "ちゃわん (chawan) wird im einleitenden Text unter der Überschrift 'fünf Getränke und kleine Gerichte' aufgezählt, zusammen mit Milch, Schwarztee, Kaffee und Curry. ちゃわん ist aber weder ein Getränk noch ein Gericht, sondern Geschirr (Reis-/Teeschale). Die Vokabelkarte selbst (order_index 11) übersetzt es korrekt als 'Reisschale' — der einleitende Text kategorisiert das Wort jedoch sachlich falsch und ist für Lernende irreführend.",
+    "vorschlag": "ちゃわん aus der Kategorie 'Getränke und kleine Gerichte' herausnehmen und separat als Geschirr/Esswerkzeug einordnen (z.B. zusammen mit はし auf der nächsten Seite), oder die Überschrift so anpassen, dass Geschirr klar abgegrenzt ist. Die Zählung 'fünf' entsprechend korrigieren.",
+    "beleg": "ちゃわん (茶碗) = Reisschale/Teeschale = Geschirr, kein Getränk und kein Gericht.",
+    "group_id": "alltag-essen-1",
+    "module": "N5 · Alltag & Essen",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Fundstelle exakt bestätigt (Seite 2, order_index 1): Unter der Überschrift \"Und fünf **Getränke und kleine Gerichte**:\" werden ぎゅうにゅう/こうちゃ/コーヒー/カレー/ちゃわん aufgezählt. Unabhängig hergeleitet: ちゃわん (茶碗) = Reis-/Teeschale = Geschirr, weder Getränk noch Gericht. Die anderen vier passen zur Überschrift (Milch, Schwarztee, Kaffee = Getränke; Curry = Gericht), ちゃわん fällt heraus — echte sachliche Fehlkategorisierung im Einleitungstext. Die Vokabelkarte (order_index 11) übersetzt korrekt \"Reisschale\", es entsteht also kein faktischer Lernfehler, nur eine kurzzeitige Irritation durch die falsche Gruppierung → Severity \"gering\" ist korrekt. Vorschlag (ちゃわん als Geschirr abgrenzen bzw. Überschrift anpassen + Zählung korrigieren) ist sachlich richtig; einzig \"auf der nächsten Seite zu はし\" ist nicht ganz präzise (はし steht auf Seite 3, nicht unmittelbar danach), aber die alternative Lösung \"Überschrift abgrenzen\" ist valide, daher Fix insgesamt korrekt.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "gering"
+    }
+  },
+  {
+    "lesson_id": 174,
+    "severity": "gering",
+    "kategorie": "konsistenz",
+    "konfidenz": "hoch",
+    "fundstelle": "page_number 3, order_index 1 (Text 'Berufe und Länder'), unter der Überschrift '### Länder': '- **にほんじん (Nihon-jin)** — *Japaner/in*' — und ebenso page_number 7, order_index 1 (Zusammenfassung) unter 'Länder:' 'にほん (Nihon), にほんじん (Nihon-jin), ...'",
+    "problem": "にほんじん (Japaner/in) wird unter der Rubrik 'Länder' aufgeführt, obwohl es eine Nationalitäts-/Personenbezeichnung ist, kein Land. Das Land ist にほん (steht in derselben Liste). Dadurch stehen Land (にほん) und Bewohner (にほんじん) vermischt unter einer falschen Überschrift; die Vokabelkarte selbst ist korrekt mit 'Japaner(in)' beschriftet, nur die Sektions-Überschrift kategorisiert falsch.",
+    "vorschlag": "にほんじん entweder unter eine eigene Rubrik 'Nationalitäten/Personen' verschieben oder die Überschrift zu 'Länder & Nationalitäten' erweitern. In der Zusammenfassung (Seite 7) konsequent gleich behandeln. Alternativ direkt nach にほん als Beispiel für das じん-Muster ausweisen statt als Länder-Eintrag.",
+    "beleg": "にほん = Japan (Land); にほんじん = Japaner/in (Nationalität/Person). Das im selben Text erklärte Muster 'Land + じん = Bewohner' (にほん → にほんじん) belegt, dass にほんじん gerade KEIN Land ist.",
+    "group_id": "begruessung-1a",
+    "module": "N5 · Begrüssung & Höflichkeit",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Fundstelle verifiziert. Seite 3 (order_index 1, Text \"Berufe und Länder\") führt unter \"### Länder\" tatsächlich \"にほんじん (Nihon-jin) — Japaner/in\" als ersten Eintrag — eine Nationalitäts-/Personenbezeichnung, kein Land. Seite 7 (Zusammenfassung) listet unter \"Länder:\" wörtlich \"にほん (Nihon), にほんじん (Nihon-jin), ...\" nebeneinander. Eigene Herleitung bestätigt: にほん = Japan (Land), にほんじん = Japaner/in (Person, Land + じん). Die Lektion erklärt dieses Muster (にほん → にほんじん) auf Seite 3 selbst, womit klar belegt ist, dass にほんじん gerade KEIN Land ist. Die Kategorisierung unter der Überschrift \"Länder\" ist also ein echter, verteidigbarer Konsistenzfehler. Severity \"gering\" passt: die Vokabelkarte ist korrekt mit \"Japaner(in)\" beschriftet, nur die Sektions-Überschrift kategorisiert falsch; lernschädlich nur am Rand, da das じん-Muster ohnehin erklärt wird. Kleine Ungenauigkeit im Auditor-Beleg: Auf Seite 3 steht にほん NICHT in derselben Länder-Liste (es wurde auf Seite 2 eingeführt) — nur auf Seite 7 stehen Land und Bewohner direkt nebeneinander. Das ändert den Kern nicht.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "gering"
+    }
+  },
+  {
+    "lesson_id": 176,
+    "severity": "mittel",
+    "kategorie": "quiz_defekt",
+    "konfidenz": "hoch",
+    "fundstelle": "page_number 6, order_index 1, Quiz-Frage 14: \"Welche Form benutzt du gegenüber deinem Chef abends beim Verlassen des Büros?\" — korrekte Option \"おさきに しつれいします。 (Osaki ni shitsurei shimasu.)\"",
+    "problem": "Die als korrekt markierte Antwort 「おさきに しつれいします」 (Osaki ni shitsurei shimasu) wird in der gesamten Lektion an keiner Stelle eingeführt oder erklärt. Die in der Lektion gelehrten Abschieds-/Tagesgrüsse sind さようなら, また あした, おやすみ(なさい). Die Frage prüft damit Stoff, der nie vermittelt wurde — ein Lerner kann sie nur raten.",
+    "vorschlag": "Frage entfernen oder so umformulieren, dass sie auf gelehrtem Stoff basiert (z.B. abfragen, dass 「おやすみなさい」 hier falsch wäre, weil es Gute Nacht zu Hause ist, ohne eine nie gelehrte Büro-Floskel als korrekte Lösung zu verlangen). Falls 「おさきにしつれいします」 gewünscht ist, müsste es vorher als Vokabel/Floskel eingeführt werden.",
+    "beleg": "In der Lektion gelehrte Abschiede: さようなら (Seite 2), また あした, おやすみ / おやすみなさい. 「おさきに しつれいします」 kommt ausschliesslich in dieser Quiz-Option vor.",
+    "group_id": "begruessung-1b",
+    "module": "N5 · Begrüssung & Höflichkeit",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Fundstelle verifiziert: Seite 6, order_index 1, Quiz-Frage 14 (Zeilen 968-995) lautet exakt \"Welche Form benutzt du gegenüber deinem Chef abends beim Verlassen des Büros?\" mit der korrekt markierten Option 「おさきに しつれいします」 (is_correct=true, Zeile 975). Unabhängige Prüfung des gesamten Lektionsinhalts: Alle gelehrten Vokabeln (おはよう, おはようございます, こんにちは, こんばんは, おやすみ, おやすみなさい, さようなら, いってきます, いってらっしゃい, ただいま, おかえり, おかえりなさい, 元気, また, 明日) und alle drei Grammatik-Blöcke (Aufbruch/Heimkehr/Befindlichkeit) enthalten 「おさきにしつれいします」 NICHT. Der Ausdruck taucht ausschliesslich in dieser einen Quiz-Option samt Erklärung/Feedback auf; auch die Übungs-Intro (Zeile 629) nennt nur Tageszeit-Grüsse, Tür-Rituale und Höflichkeitsstufen. Sachlich ist 「お先に失礼します」 zwar die korrekte Büro-Abschiedsfloskel, doch sie wird nie eingeführt und ist über dem Lektions-/N5-Lernziel — die Frage prüft nicht vermittelten Stoff. Mildernd: die drei Distraktoren (おやすみなさい/ただいま/おかえりなさい) sind alle als falsch erklärbar, sodass ein aufmerksamer Lerner per Ausschluss zur Lösung kommt — das stützt Severity \"mittel\" (kein Faktenfehler, aber didaktische Lücke), nicht \"kritisch\".",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "mittel"
+    }
+  },
+  {
+    "lesson_id": 176,
+    "severity": "gering",
+    "kategorie": "konsistenz",
+    "konfidenz": "hoch",
+    "fundstelle": "page_number 6, order_index 1, Einleitungstext \"Übung\": \"Die vierzehn folgenden Fragen testen alle vier Tageszeit-Grüsse ...\"",
+    "problem": "Der Text kündigt \"vierzehn\" Fragen an, tatsächlich enthält die Übungsseite 16 Quizfragen (10 multiple_choice, 3 true_false zusätzlich zu den hier nicht gezählten, 3 matching). Die Zahl stimmt nicht mit dem tatsächlichen Quiz überein.",
+    "vorschlag": "Zahl auf \"sechzehn\" korrigieren oder die generische Formulierung \"Die folgenden Fragen ...\" ohne Zahl verwenden, damit der Text robust gegen spätere Änderungen der Fragenzahl ist.",
+    "beleg": "Gezählte Quizfragen auf Seite 6: 16 (u.a. Frage 1 Guten Morgen höflich, ... Frage 16 Aufbruch-Ritual true_false). Angekündigt: \"vierzehn\".",
+    "group_id": "begruessung-1b",
+    "module": "N5 · Begrüssung & Höflichkeit",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Fundstelle verifiziert: Page 6 (quiz_carousel \"Übung – Tag und Nacht im Test\"), text-Item order_index 1, content_text beginnt mit \"Die vierzehn folgenden Fragen testen alle vier Tageszeit-Grüsse, die Heimkehr- und Aufbruch-Rituale und die Höflichkeitsstufen\". Das zugehörige quiz-Array auf demselben Item enthält jedoch unabhängig nachgezählt genau 16 Fragen. Damit ist die angekündigte Zahl \"vierzehn\" faktisch falsch — klare, verteidigbare Inkonsistenz zwischen Einleitungstext und tatsächlichem Quiz. (Kleine Ungenauigkeit im Auditor-Beleg: die Typverteilung ist 9 multiple_choice / 4 true_false / 3 matching, nicht 10/3/3 — aber die Gesamtzahl 16 und der Kernbefund 14≠16 stimmen exakt.) Severity \"gering\" passt: rein kosmetische Konsistenz, kein japanisch-fachlicher Fehler.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "gering"
+    }
+  },
+  {
+    "lesson_id": 176,
+    "severity": "gering",
+    "kategorie": "quiz_defekt",
+    "konfidenz": "mittel",
+    "fundstelle": "page_number 5, order_index 4, Quiz-Frage 4: \"Warum nutzt Yuki gegenüber Mama 「おはよう」 (kurz), aber gegenüber dem Vater abends 「おやすみなさい」 (lang)?\" — korrekte Option \"Höherer Respekt gegenüber dem Vater (Familienoberhaupt)\"",
+    "problem": "Die Frage verlangt vom Lerner, eine Status-Hierarchie (Vater höflicher als Mutter) aus dem Dialog abzuleiten, doch der Dialog stützt diesen Schluss nicht: Yuki sagt zur Mutter ausschliesslich am Morgen (おはよう) und zum Vater ausschliesslich am Abend (おやすみなさい). Adressat und Tageszeit sind konfundiert — die kurze Form gegenüber der Mutter MORGENS und die lange Form gegenüber dem Vater ABENDS lassen sich nicht eindeutig auf einen Status-Unterschied zurückführen. Es gibt im Dialog keine Stelle, an der Yuki Mutter und Vater zur gleichen Tageszeit unterschiedlich höflich anspricht. Der als 'falsch' verworfene Distraktor \"Weil es Abend ist\" ist somit nicht sauber ausgeschlossen.",
+    "vorschlag": "Frage entschärfen: entweder den Dialog so ergänzen, dass Yuki dieselbe Person/Tageszeit unterschiedlich höflich anspricht (sodass der Status-Schluss belegbar wird), oder die Frage in eine reine Faktfrage umbauen (z.B. \"Welche Form ist höflicher: おやすみ oder おやすみなさい?\"), die nicht auf einer aus dem Dialog nicht ableitbaren Hierarchie-Behauptung beruht.",
+    "beleg": "Dialog Seite 5: Yuki→Mama nur morgens (\"おかあさん、おはよう!\"), Yuki→Vater nur abends (\"おとうさん、おやすみなさい。\"). Kein gleichzeitiger Höflichkeitsvergleich derselben Tageszeit.",
+    "group_id": "begruessung-1b",
+    "module": "N5 · Begrüssung & Höflichkeit",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Fundstelle bestätigt: Seite 5, order_index 4, 4. Quizfrage (\"Warum nutzt Yuki gegenüber Mama 「おはよう」 (kurz), aber gegenüber dem Vater abends 「おやすみなさい」 (lang)?\"), korrekte Option \"Höherer Respekt gegenüber dem Vater (Familienoberhaupt)\", Distraktor \"Weil es Abend ist und nicht Morgen\" als falsch markiert. Der Befund ist verteidigbar. Tragend ist der Konfundierungs-Fehler: おはよう (Morgengruss) und おやすみ(なさい) (Nachtgruss) sind VERSCHIEDENE Grüsse, die durch die Tageszeit bestimmt werden — nicht nur kurze vs. lange Form derselben Floskel. Der als falsch verworfene Distraktor \"Weil es Abend ist\" erklärt also durchaus korrekt, warum überhaupt おやすみ statt おはよう gesagt wird; er ist damit nicht sauber ausschliessbar. Im Dialog spricht Yuki die Mutter ausschliesslich morgens (おはよう) und den Vater ausschliesslich abends (おやすみなさい) an — Adressat und Tageszeit sind perfekt vermischt. Es gibt keine Stelle, an der dieselbe Person bzw. dieselbe Tageszeit mit unterschiedlicher Höflichkeit angesprochen wird, sodass der vom Quiz verlangte Status-Schluss aus dem Dialog NICHT belegbar ist. Verstärkend (sekundär): Die Behauptung, Kinder sprächen den Vater höflicher an als die Mutter, ist eine fragwürdige/veraltete soziolinguistische Pauschalisierung — im realen modernen Familiengebrauch nutzen Kinder gegenüber beiden Elternteilen meist die vertraute Form (おやすみ). Severity \"gering\" ist angemessen: lokalisiert auf ein einzelnes Comprehension-Item, kein Faktfehler im Kernvokabular.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "gering"
+    }
+  },
+  {
+    "lesson_id": 158,
+    "severity": "gering",
+    "kategorie": "konsistenz",
+    "konfidenz": "mittel",
+    "fundstelle": "page_number 4, order_index 1, Text 'Drei Bausteine für jedes Telefongespräch': \"Bei Gegenständen wird stattdessen 「あります」 (arimasu) verwendet — das siehst du in der nächsten Lektion.\" (auch im Grammatik-Item order_index 2 wiederholt)",
+    "problem": "Der Vorwärtsverweis ist sachlich falsch. Die laut Curriculum unmittelbar nächste Lektion ist L159 (Entschuldigen & Geschenke übergeben), die あります nicht behandelt (Themen: Adverb-Form, どうぞ-Geschenkübergabe, もう/まだ). あります wird erst in L160 (Erste Sätze 3 — 'Existenz: ～が あります') eingeführt. Der Lerner sucht den Inhalt also in der falschen Lektion.",
+    "vorschlag": "Formulierung neutralisieren, z.B. 'das lernst du in einer späteren Lektion' statt 'in der nächsten Lektion' — oder konkret auf die Existenz-Lektion (L160) verweisen.",
+    "beleg": "Curriculum: L158 → L159 (nächste Lektion). Grammatik-Index: 'L160: Existenz: ～が います (Lebewesen) / ～が あります (Sachen)' — あります wird erst in L160 eingeführt, nicht in L159.",
+    "group_id": "begruessung-1c",
+    "module": "N5 · Begrüssung & Höflichkeit",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Fundstelle bestätigt: Seite 4, Text-Item order_index 1 enthält wörtlich \"Bei Gegenständen wird stattdessen 「あります」 (arimasu) verwendet — das siehst du in der nächsten Lektion.\" Curriculum belegt L158 → L159 (\"Entschuldigen und Geschenke übergeben\"); der det_intro_index zeigt für L159 nur Adverb-Form, どうぞ-Geschenkübergabe und もう/まだ — KEIN あります. あります wird laut Index erst in L160 eingeführt (\"L160: Existenz: ～が います / ～が あります\"). Der Vorwärtsverweis \"in der nächsten Lektion\" ist also sachlich falsch (zielt auf L159, Inhalt liegt in L160). Zusätzlich bestätigt durch die lektioneneigene Seite 7 (\"Zusammenfassung\"), die die nächste Lektion korrekt als Entschuldigen/Geschenke beschreibt — interner Widerspruch zur Seite 4. Harter Index-Beleg vorhanden, daher trotz Kategorie konsistenz/struktur klar verteidigbar. Kleine Ungenauigkeit der Findung: das Grammatik-Item order_index 2 erwähnt zwar あります, wiederholt aber NICHT den Phrasen-Verweis \"nächste Lektion\" — die Falschaussage steht nur im Text-Item. Severity \"gering\" stimmt: Navigationsfehler, kein Sprach-/Inhaltsfehler.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "gering"
+    }
+  },
+  {
+    "lesson_id": 158,
+    "severity": "gering",
+    "kategorie": "konsistenz",
+    "konfidenz": "mittel",
+    "fundstelle": "page_number 1, order_index 1, Text 'Willkommen', Abschnitt 'Was du nach dieser Lektion kannst': \"Höflich um Wiederholung bitten: 「もう いちど おねがいします」 (mō ichido onegai shimasu — Bitte noch einmal).\" sowie der Lerntipp zu Telefonnummern (「ーの」, ぜろ/まる)",
+    "problem": "Die Einführung verspricht zwei Lernergebnisse, die im Lektionskörper nie gelehrt werden: (1) 「もう いちど おねがいします」 als Wiederholungsbitte taucht im gesamten Stoff (Vokabeln, Grammatik, Dialog) nicht auf — nur als Quiz-DISTRAKTOR 「もう いちど」 (p5 Q2, p6 Q7), wo es als FALSCH markiert ist, ohne je eingeführt worden zu sein. (2) Das Lesen/Sprechen von Telefonnummern im Telefon-Stil (「ーの」, ぜろ/まる für 0) wird im Lerntipp und in der Beschreibung angekündigt, aber nirgends vermittelt. Versprechen und Inhalt klaffen auseinander.",
+    "vorschlag": "Entweder ein kurzes Vokabel-/Grammatik-Element zu 「もう いちど おねがいします」 und zur Telefonnummern-Lesung ergänzen, oder beide Versprechen aus der Einführung/Beschreibung streichen, damit der angekündigte Lernumfang dem tatsächlichen Inhalt entspricht.",
+    "beleg": "Einführungstext nennt 「もう いちど おねがいします」 als Lernziel; im Lektionskörper kommt es nur als (falscher) Quiz-Distraktor 「もう いちど」 vor. Telefonnummern-Lesung (ぜろ/まる) wird nur im Lerntipp erwähnt, nie gelehrt.",
+    "group_id": "begruessung-1c",
+    "module": "N5 · Begrüssung & Höflichkeit",
+    "verdict": {
+      "ist_echt": true,
+      "begruendung": "Beide Fundstellen sind verbatim verifiziert. (1) Die Einführung (Seite 1, order_index 1, 'Was du nach dieser Lektion kannst') verspricht 「もう いちど おねがいします」 als Lernziel; im gesamten Lektionskörper (Vokabeln S.2/S.3, Grammatik S.4, Dialog S.5) kommt es nie als Lernstoff vor — nur 「もう いちど」 als FALSCHER Quiz-Distraktor (S.5 Q2 is_correct=false 'wäre eine Bitte um Wiederholung'; S.6 Q7 is_correct=false 'hiesse Noch einmal'). Die vollständige Phrase 「もう いちど おねがいします」 erscheint ausschliesslich im Versprechen. (2) Der Lerntipp (S.1) und die Beschreibung ('Telefonnummern verstehen') kündigen die Telefonnummern-Lesung an (「ーの」, ぜろ/まる für 0); tatsächlich wird kein einziger Ziffer-/Zahl-Lesungs-Inhalt vermittelt — ばんごう ist nur das Vokabel 'Nummer', die Lesung selbst fehlt überall, obwohl 'Am Telefon' das Kernthema ist und sogar S.7 nochmals zum Telefonnummern-Üben auffordert. Es handelt sich um eine echte, verteidigbare Versprechen-vs.-Inhalt-Inkonsistenz; das Japanische der versprochenen Phrasen ist korrekt, es ist also kein Faktenfehler, sondern eine Konsistenzlücke. Severity 'gering' ist vertretbar (eher untere Grenze; 'mittel' wäre wegen des phonenahen Kernthemas und der unschönen Distraktor-Nutzung einer ungelehrten Phrase ebenfalls argumentierbar), aber nicht falsch angesetzt.",
+      "vorschlag_korrekt": true,
+      "korrigierte_severity": "gering"
+    }
+  }
+]
