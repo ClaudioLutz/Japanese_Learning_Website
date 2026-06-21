@@ -301,6 +301,11 @@ class Vocabulary(db.Model):
     romaji = db.Column(db.String(200), nullable=True)
     meaning = db.Column(db.Text, nullable=False)
     meaning_de = db.Column(db.Text, nullable=True)
+    # Disambiguierungs-Hinweis fuer die Produktions-Richtung (DE->JP): kurzer
+    # deutscher Cue (Wortart-/Register-/Sinn-Tag), der das Zielwort von
+    # Bedeutungs-Gleichen abgrenzt, OHNE die japanische Antwort zu verraten.
+    # Von Claude verfasst (kein Laufzeit-LLM). NULL = Fallback auf meaning_de.
+    production_cue_de = db.Column(db.Text, nullable=True)
     jlpt_level = db.Column(db.Integer, nullable=True)
     example_sentence_japanese = db.Column(db.Text, nullable=True)
     # Format: "Romaji-Satz — Deutsche Uebersetzung". Wird auf der Backseite
@@ -1538,6 +1543,10 @@ class CardReviewState(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, index=True)
     content_id = db.Column(db.Integer, db.ForeignKey('lesson_content.id'), nullable=False)
+    # Lernrichtung: 'forward' = Rezeption (JP->DE, Standard), 'reverse' = Produktion
+    # (DE->JP). Jede Richtung ist eine EIGENE FSRS-Spur (eigene due_date/Stage) —
+    # Teil des Unique-Keys. Reverse existiert nur fuer content_type='vocabulary'.
+    direction = db.Column(db.String(8), nullable=False, default='forward', server_default='forward')
 
     # FSRS Card State (kompletter State als JSON via Card.to_json())
     fsrs_card_state = db.Column(db.Text, nullable=False)
@@ -1559,7 +1568,7 @@ class CardReviewState(db.Model):
     content = db.relationship('LessonContent', backref=db.backref('review_states', lazy='dynamic'))
 
     __table_args__ = (
-        db.UniqueConstraint('user_id', 'content_id', name='uq_user_content_review'),
+        db.UniqueConstraint('user_id', 'content_id', 'direction', name='uq_user_content_direction'),
         db.Index('ix_card_review_due', 'user_id', 'due_date', 'status'),
     )
 
@@ -1576,6 +1585,9 @@ class ReviewLog(db.Model):
     content_id = db.Column(db.Integer, db.ForeignKey('lesson_content.id'), nullable=False)
 
     rating = db.Column(db.Integer, nullable=False)  # 1=Again, 2=Hard, 3=Good, 4=Easy
+    # Lernrichtung dieses Reviews ('forward'|'reverse') — fuer richtungsgetrennte
+    # Statistik/Optimizer. Default 'forward' (Altdaten + Rezeptions-Reviews).
+    direction = db.Column(db.String(8), nullable=False, default='forward', server_default='forward')
     reviewed_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, index=True)
     time_taken_ms = db.Column(db.Integer)
 

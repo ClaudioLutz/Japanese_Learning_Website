@@ -38,6 +38,8 @@ def api_rate_card():
     content_id = data.get('content_id')
     rating = data.get('rating')
     time_taken_ms = data.get('time_taken_ms')
+    # Lernrichtung (Default forward) — Deck + Kana-Grid senden keine, bleiben forward.
+    direction = data.get('direction', 'forward')
     # Kana-Grid-Spiel-Kontext (optional, vom Frontend gesetzt)
     grid_ctx = data.get('grid_context') or {}
 
@@ -47,6 +49,9 @@ def api_rate_card():
     if rating not in (1, 2, 3, 4):
         return jsonify({'error': 'rating muss 1-4 sein'}), 400
 
+    if direction not in ('forward', 'reverse'):
+        return jsonify({'error': "direction muss 'forward' oder 'reverse' sein"}), 400
+
     try:
         old_streak = current_user.current_streak or 0
 
@@ -55,6 +60,7 @@ def api_rate_card():
             content_id=int(content_id),
             rating_int=int(rating),
             time_taken_ms=int(time_taken_ms) if time_taken_ms else None,
+            direction=direction,
         )
 
         # Streak aktualisieren
@@ -74,7 +80,12 @@ def api_rate_card():
         db.session.commit()
 
         result['new_achievements'] = new_achievements
-        result['cards_remaining'] = srs_service.get_due_count(current_user.id)
+        # Rest-Zaehler der jeweiligen Queue (Produktion hat eigenen Zaehler).
+        result['cards_remaining'] = (
+            srs_service.get_production_due_count(current_user.id)
+            if direction == 'reverse'
+            else srs_service.get_due_count(current_user.id)
+        )
         result['current_streak'] = new_streak
 
         return jsonify(result)
@@ -126,7 +137,10 @@ def api_interval_preview():
     if not content_id:
         return jsonify({'error': 'content_id erforderlich'}), 400
 
-    previews = srs_service.get_interval_preview(current_user.id, content_id)
+    direction = request.args.get('direction', 'forward')
+    if direction not in ('forward', 'reverse'):
+        direction = 'forward'
+    previews = srs_service.get_interval_preview(current_user.id, content_id, direction=direction)
     return jsonify(previews)
 
 
@@ -174,6 +188,72 @@ def review_page():
     stats['current_streak'] = current_user.current_streak or 0
     stats['longest_streak'] = current_user.longest_streak or 0
     return render_template('review.html', stats=stats)
+
+
+# ── Produktion (DE->JP): eigene Seite + Queue ────────────────
+
+
+@srs_bp.route('/review/produktion')
+def production_page():
+    """Produktions-Seite (DE->JP): eigene, immer verfuegbare Queue.
+
+    Zeigt rezeptiv gefestigte Vokabeln (forward-Stage>=3) in umgekehrter Richtung —
+    deutscher Cue vorne, japanisches Wort + Lesung als Antwort. Die reverse-Karte
+    entsteht on-the-fly beim ersten Rating. Gaeste: weiche Teaser-Landing.
+    """
+    if not current_user.is_authenticated:
+        return render_template('review_teaser.html', teaser_page='review')
+    overview = srs_service.get_production_overview(current_user.id)
+    overview['current_streak'] = current_user.current_streak or 0
+    overview['longest_streak'] = current_user.longest_streak or 0
+    return render_template('review_produktion.html', overview=overview)
+
+
+@srs_bp.route('/api/srs/production/queue')
+@login_required
+def api_production_queue():
+    """Produktions-Queue: faellige reverse-Karten + produktiv neue Vokabeln.
+
+    Beide werden identisch gerendert (Front = deutscher Cue). Neue Items haben
+    noch keinen reverse-State (is_new=True) — er entsteht beim ersten Rating.
+    """
+    limit = request.args.get('limit', 30, type=int)
+    limit = max(1, min(limit, 50))
+    cards = []
+    seen = set()
+
+    for state in srs_service.get_production_due_cards(current_user.id, limit=limit):
+        content = state.content
+        if not content or content.id in seen:
+            continue
+        seen.add(content.id)
+        cd = srs_service.get_content_data_for_review(content)
+        cd['direction'] = 'reverse'
+        cd['is_new'] = False
+        cd['due_date'] = state.due_date.isoformat()
+        cd['status'] = state.status
+        cd['reps'] = state.reps
+        cd['lapses'] = state.lapses
+        cards.append(cd)
+
+    remaining = max(0, limit - len(cards))
+    if remaining:
+        for lc in srs_service.get_production_new_cards(current_user.id, limit=remaining):
+            if lc.id in seen:
+                continue
+            seen.add(lc.id)
+            cd = srs_service.get_content_data_for_review(lc)
+            cd['direction'] = 'reverse'
+            cd['is_new'] = True
+            cd['status'] = 'new'
+            cd['reps'] = 0
+            cd['lapses'] = 0
+            cards.append(cd)
+
+    return jsonify({
+        'cards': cards,
+        'overview': srs_service.get_production_overview(current_user.id),
+    })
 
 
 # ── Phase 6: Statistik-Endpoints ─────────────────────────────

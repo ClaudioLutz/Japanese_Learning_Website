@@ -86,6 +86,7 @@ def maturity_by_type(user_id):
         .join(LessonContent, CardReviewState.content_id == LessonContent.id)
         .filter(
             CardReviewState.user_id == user_id,
+            CardReviewState.direction == 'forward',  # Produktion zaehlt nicht doppelt
             LessonContent.content_type.in_(PILLAR_CONTENT_TYPES),
         )
         .all()
@@ -214,6 +215,7 @@ def compass_glyphs(user_id, content_type):
         .join(ref, LessonContent.content_id == ref.id)
         .filter(
             CardReviewState.user_id == user_id,
+            CardReviewState.direction == 'forward',
             LessonContent.content_type == content_type,
         )
         .all()
@@ -552,6 +554,7 @@ def _kana_acc_by_id(user_id):
         .join(CardReviewState, db.and_(
             CardReviewState.content_id == LessonContent.id,
             CardReviewState.user_id == user_id,
+            CardReviewState.direction == 'forward',
         ))
         .all()
     )
@@ -836,6 +839,7 @@ def vocab_themes(user_id):
             .join(LessonContent, CardReviewState.content_id == LessonContent.id)
             .filter(
                 CardReviewState.user_id == user_id,
+                CardReviewState.direction == 'forward',
                 LessonContent.content_type == 'vocabulary',
             ).all()
         )

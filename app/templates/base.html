@@ -267,6 +267,10 @@
                 <a href="{{ url_for('srs.stats_page') }}" class="topnav-dd-item">
                   <i class="fas fa-chart-bar" aria-hidden="true"></i> Statistik
                 </a>
+                {# Produktion: eigene DE→JP-Übungsfläche (Reverse-Karten), lebt im Dropdown #}
+                <a href="{{ url_for('srs.production_page') }}" class="topnav-dd-item">
+                  <i class="fas fa-pen-fancy" aria-hidden="true"></i> Produktion (DE→JP)
+                </a>
                 {# Stöbern: Referenzfunktion, lebt hier statt in der Hauptnav (Desktop + Mobile) #}
                 <a href="{{ url_for('srs.browse_page') }}" class="topnav-dd-item">
                   <i class="fas fa-th-list" aria-hidden="true"></i> Stöbern
