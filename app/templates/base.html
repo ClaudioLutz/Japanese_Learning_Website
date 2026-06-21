@@ -160,21 +160,24 @@
           </span>
         </a>
 
-        {# Primary Nav — max. 5 essentielle Items, Reihenfolge = taeglicher
-           Lern-Loop (Lernpfad → Wiederholen → Kana ueben), Katalog danach.
+        {# Primary Nav — essentielle Items, Reihenfolge = taeglicher Lern-Loop
+           (Wiederholen → Produktion → Prüfen → Kana), Katalog danach.
+           Lernpfad hat keinen eigenen Eintrag mehr — er lebt fusioniert oben
+           in /lektionen (Pfad-Block über dem Katalog).
            Active-State per request.endpoint + aria-current. #}
         <div class="topnav-primary" :class="mobileOpen && 'is-open'">
-          <a href="{{ url_for('routes.index') }}#lernpfad"
-             class="topnav-link {% if request.endpoint == 'routes.index' %}is-active{% endif %}"
-             {% if request.endpoint == 'routes.index' %}aria-current="page"{% endif %}>
-            <i class="fas fa-route" aria-hidden="true"></i><span>Lernpfad</span>
-          </a>
           {% if current_user.is_authenticated %}
           <a href="{{ url_for('srs.review_page') }}"
              class="topnav-link {% if request.endpoint == 'srs.review_page' %}is-active{% endif %}"
              {% if request.endpoint == 'srs.review_page' %}aria-current="page"{% endif %}>
             <i class="fas fa-brain" aria-hidden="true"></i><span>Wiederholen</span>
             <span class="nav-due-badge" id="reviewBadgeDesktop" aria-hidden="true"></span>
+          </a>
+          <a href="{{ url_for('srs.production_page') }}"
+             class="topnav-link {% if request.endpoint == 'srs.production_page' %}is-active{% endif %}"
+             {% if request.endpoint == 'srs.production_page' %}aria-current="page"{% endif %}
+             title="Produktion — Deutsch → Japanisch (Sätze selbst bilden)">
+            <i class="fas fa-pen-nib" aria-hidden="true"></i><span>DE&#8594;JP</span>
           </a>
           <a href="{{ url_for('pruefen.pruefen_start') }}"
              class="topnav-link {% if request.endpoint in ['pruefen.pruefen_start', 'pruefen.pruefen_session'] %}is-active{% endif %}"

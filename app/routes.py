@@ -988,6 +988,14 @@ def lessons():
         for c in page_categories[: (1 if show_status else 2)]:
             c['open_default'] = True
 
+    # Lernpfad-Fusion (2026-06-21): denselben N5-Modulpfad wie die Startseite
+    # auch hier über dem Katalog rendern. Gilt für Gaeste UND eingeloggte Nutzer
+    # (Lernpfad hat keinen eigenen Nav-Eintrag mehr — er lebt jetzt in /lektionen).
+    user = current_user if current_user.is_authenticated else None
+    n5_modules, n5_groups, next_module_id, _lp_first_guest = _build_n5_path_context(
+        user, visible_langs
+    )
+
     return render_template(
         'lessons.html',
         page_categories=page_categories,
@@ -1003,6 +1011,9 @@ def lessons():
         due_count=due_count,
         current_streak=current_streak,
         first_free_lesson=first_free_lesson,
+        n5_modules=n5_modules,
+        n5_groups=n5_groups,
+        next_module_id=next_module_id,
     )
 
 
