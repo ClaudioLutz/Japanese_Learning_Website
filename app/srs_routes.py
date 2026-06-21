@@ -910,6 +910,95 @@ def _guest_scope_payload(mode, schrift, rows_filter, include_dakuten, limit):
     return payload
 
 
+# ── Kana-Schreibspiel (Tile-fuer-Tile Woerter buchstabieren) ──────────────────
+# Drittes Kana-Spiel auf /practice/kana: aus dem gewaehlten Reihen-Scope werden
+# REINE Kana-Woerter (Schriftform komplett Kana, KEIN Kanji) freigeschaltet und
+# einzeln zufaellig abgefragt. Schreibspiel-spezifisch: Dakuten-Reihen werden MIT
+# ihrer Grundreihe freigeschaltet (wer か lernt, kann auch が schreiben) — sonst
+# stauten sich ~40% der Woerter erst am Schluss ("Dakuten-Klippe").
+_SPELL_DAKUTEN_OF = {'k': ('g',), 's': ('z',), 't': ('d',), 'h': ('b', 'p')}
+_SPELL_MIN_LEN = 2   # Ein-Mora-Woerter sind trivial
+_SPELL_MAX_LEN = 6   # laengere Gruss-/Setzphrasen ueberladen die Tile-Reihe
+_SPELL_WORDS_CAP = 200  # Antwort-Obergrenze (count meldet die WAHRE Gesamtzahl)
+
+
+def _spell_tables(schrift):
+    """Reihen-Tabellen (HIRAGANA/KATAKANA) fuer die gewaehlte Schrift."""
+    from app.services.kana_rows import HIRAGANA_ROWS, KATAKANA_ROWS
+    tables = []
+    if schrift in ('hiragana', 'both'):
+        tables.append(HIRAGANA_ROWS)
+    if schrift in ('katakana', 'both'):
+        tables.append(KATAKANA_ROWS)
+    return tables
+
+
+def _spell_allowed_chars(schrift, rows_filter):
+    """Menge erlaubter Kana-Tiles fuer den Scope — mit Dakuten-Buendelung.
+
+    rows_filter leer = alle Basis-Reihen. Fuer jede gewaehlte Grundreihe kommt
+    ihre Dakuten-/Handakuten-Reihe automatisch dazu (k->g, s->z, t->d, h->b,p),
+    damit die Freischalt-Kurve glatt waechst statt am Schluss zu klippen.
+    """
+    base = list(rows_filter) if rows_filter else list(_GUEST_BASE_ROW_KEYS)
+    keys = set(base)
+    for r in base:
+        keys.update(_SPELL_DAKUTEN_OF.get(r, ()))
+    chars = set()
+    for table in _spell_tables(schrift):
+        for key in keys:
+            chars.update(table.get(key, ()))
+    return chars
+
+
+def _spell_typeable_chars(schrift):
+    """Alle mit der Schrift tippbaren Kana (alle Reihen inkl. Dakuten) — fuer den
+    'alle Woerter'-Modus (Reihen-Auswahl ignoriert, nur die Schrift zaehlt)."""
+    chars = set()
+    for table in _spell_tables(schrift):
+        for chs in table.values():
+            chars.update(chs)
+    return chars
+
+
+def _spell_word_pool(schrift, source, rows_filter):
+    """Reine Kana-Woerter (N5, approved), deren SCHRIFTFORM komplett aus den
+    erlaubten Kana besteht.
+
+    Gefiltert auf `word` (NICHT `reading`): so fallen Kanji-Woerter (私) UND
+    Woerter mit Klein-Kana/Chōonpu (ょ/っ/ー — nicht in den Reihen-Tabellen) in
+    EINEM Praedikat raus. Fuer reine Kana-Woerter ist `word` zugleich das
+    Buchstabier-Ziel.
+    """
+    from app.models import Vocabulary
+    allowed = (_spell_typeable_chars(schrift) if source == 'all'
+               else _spell_allowed_chars(schrift, rows_filter))
+    if not allowed:
+        return []
+    rows = (
+        Vocabulary.query
+        .filter(Vocabulary.jlpt_level == 5, Vocabulary.status == 'approved')
+        .with_entities(Vocabulary.word, Vocabulary.reading, Vocabulary.romaji,
+                       Vocabulary.meaning_de, Vocabulary.audio_url)
+        .all()
+    )
+    pool = []
+    for word, reading, romaji, meaning_de, audio_url in rows:
+        w = (word or '').strip()
+        if not (_SPELL_MIN_LEN <= len(w) <= _SPELL_MAX_LEN):
+            continue
+        if any(ch not in allowed for ch in w):
+            continue
+        pool.append({
+            'word': w,
+            'reading': (reading or '').strip(),
+            'romaji': (romaji or '').strip(),
+            'meaning_de': (meaning_de or '').strip(),
+            'audio_url': audio_url or '',
+        })
+    return pool
+
+
 @srs_bp.route('/practice/kana')
 def practice_kana_page():
     """Schritt 1: Einstellungs-Seite fuer das Kana-Spiel (Viewport-gesperrt).
@@ -1153,6 +1242,49 @@ def api_practice_session_public():
     return jsonify(payload)
 
 
+@srs_bp.route('/api/practice/kana/spell/words')
+def api_practice_spell_words():
+    """Wort-Pool fuers Kana-Schreibspiel (dritter Tab, ohne Login spielbar).
+
+    Liefert reine Kana-Woerter, deren Schriftform mit den erlaubten Kana
+    schreibbar ist. `source=all` (Default) = alle tippbaren Woerter der Schrift
+    (Reihen-Auswahl ignoriert, nur Schrift zaehlt); `source=unlocked` = nur die
+    mit den gewaehlten Reihen schreibbaren. `count` ist immer die WAHRE Gesamt-
+    zahl (fuer den Live-Wortzaehler), `words` ein gedeckeltes Zufalls-Sample.
+    Geschrieben wird NICHTS in die DB — Persistenz laeuft ueber /spell-finish.
+    """
+    import random as _random
+    schrift = request.args.get('schrift', 'hiragana')
+    if schrift not in ('hiragana', 'katakana', 'both'):
+        schrift = 'hiragana'
+    source = request.args.get('source', 'all')
+    if source not in ('all', 'unlocked'):
+        source = 'all'
+    rows_filter = [r.strip() for r in (request.args.get('rows', '') or '').split(',') if r.strip()]
+
+    pool = _spell_word_pool(schrift, source, rows_filter)
+    total = len(pool)
+    words = pool
+    if total > _SPELL_WORDS_CAP:
+        words = _random.sample(pool, _SPELL_WORDS_CAP)
+
+    payload = {
+        'words': words,
+        'count': total,
+        'source': source,
+        'schrift': schrift,
+        'guest': not current_user.is_authenticated,
+    }
+    if not pool:
+        if source == 'unlocked':
+            payload['message'] = ('Mit diesen Reihen lässt sich noch kein Wort '
+                                  'schreiben — wähle mehr Reihen oder „alle Wörter".')
+        else:
+            payload['message'] = ('Gerade sind keine Wörter verfügbar — bitte '
+                                  'später erneut versuchen.')
+    return jsonify(payload)
+
+
 @srs_bp.route('/api/practice/kana/daily-challenge')
 def api_practice_daily_challenge():
     """Taegliche Challenge: 10 zufaellige Kana, deterministisch pro Tag.
@@ -1353,6 +1485,65 @@ def api_storm_finish():
         'best_score': storm_stats['best_score'],
         'best_kpm': storm_stats['best_kpm'],
         'games': storm_stats['games'],
+    })
+
+
+_SPELL_SOURCES = ('all', 'unlocked')
+_SPELL_CUES = ('bedeutung', 'romaji', 'audio')
+
+
+@srs_bp.route('/api/practice/kana/spell-finish', methods=['POST'])
+@login_required
+def api_spell_finish():
+    """Persistiert eine beendete Kana-Schreibspiel-Runde + vergibt grind-sichere XP.
+
+    Nur eingeloggt (das Frontend postet nur dann; @login_required ist die harte
+    Absicherung). score/streak/counts kommen vom Client und werden geclamped; die
+    XP haengen an der geclampten Trefferzahl mit Per-Run- UND Tages-Cap (eigenes
+    Budget ueber KanaSpellScore — getrennt vom Storm-Budget). KEIN
+    update_daily_aggregate — Heatmap/Accuracy + DE->JP-Produktion bleiben unberuehrt.
+    """
+    from app.time_utils import ch_day_start_utc
+    from app.models import KanaSpellScore
+
+    data = request.get_json(silent=True) or {}
+    schrift = data.get('schrift') if data.get('schrift') in _STORM_SCHRIFT else 'hiragana'
+    source = data.get('source') if data.get('source') in _SPELL_SOURCES else 'all'
+    cue = data.get('cue') if data.get('cue') in _SPELL_CUES else 'bedeutung'
+    score = _storm_clamp_int(data.get('score'), 0, 100000)
+    correct = _storm_clamp_int(data.get('correct'), 0, 2000)
+    misses = _storm_clamp_int(data.get('misses'), 0, 2000)
+    best_streak = _storm_clamp_int(data.get('best_streak'), 0, correct, default=0)
+
+    # ── XP: Basis + gedeckelter Hit-Bonus, dann harter Tages-Cap (eigene Summe) ──
+    run_xp = XP_STORM_BASE + min(correct * XP_STORM_PER_HIT, XP_STORM_RUN_BONUS_CAP)
+    today_start = ch_day_start_utc()
+    spent_today = db.session.query(
+        db.func.coalesce(db.func.sum(KanaSpellScore.xp_awarded), 0)
+    ).filter(
+        KanaSpellScore.user_id == current_user.id,
+        KanaSpellScore.created_at >= today_start,
+    ).scalar() or 0
+    granted = max(0, min(run_xp, XP_STORM_DAILY_CAP - int(spent_today)))
+
+    db.session.add(KanaSpellScore(
+        user_id=current_user.id, schrift=schrift, source=source, cue=cue,
+        score=score, best_streak=best_streak, correct_count=correct,
+        miss_count=misses, xp_awarded=granted,
+    ))
+    if granted > 0:
+        current_user.add_xp(granted)
+    db.session.commit()
+
+    spell_stats = srs_service.get_kana_spell_stats(current_user.id)
+    return jsonify({
+        'saved': True,
+        'xp_awarded': granted,
+        'total_xp': current_user.total_xp,
+        'level': current_user.level,
+        'best_score': spell_stats['best_score'],
+        'best_streak': spell_stats['best_streak'],
+        'games': spell_stats['games'],
     })
 
 

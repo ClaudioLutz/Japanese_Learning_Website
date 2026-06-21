@@ -546,6 +546,42 @@ def get_kana_storm_stats(user_id):
     }
 
 
+def get_kana_spell_stats(user_id):
+    """Persoenliche Kana-Schreibspiel-Statistik (alle Runden).
+
+    Aggregiert die gespeicherten Schreibspiel-Runden eines Nutzers zu wenigen
+    Kennzahlen (bestes Ergebnis, Spiele, Genauigkeit, beste Serie, gebuchstabierte
+    Woerter). Liefert bei 0 Spielen durchgaengig Nullen.
+    """
+    from app.models import KanaSpellScore
+
+    row = db.session.query(
+        db.func.count(KanaSpellScore.id),
+        db.func.max(KanaSpellScore.score),
+        db.func.max(KanaSpellScore.best_streak),
+        db.func.coalesce(db.func.sum(KanaSpellScore.correct_count), 0),
+        db.func.coalesce(db.func.sum(KanaSpellScore.miss_count), 0),
+    ).filter(
+        KanaSpellScore.user_id == user_id,
+    ).first()
+
+    games = (row[0] if row else 0) or 0
+    if not games:
+        return {'games': 0, 'best_score': 0, 'best_streak': 0,
+                'accuracy': 0, 'words_spelled': 0}
+
+    correct = int(row[3] or 0)
+    miss = int(row[4] or 0)
+    attempts = correct + miss
+    return {
+        'games': games,
+        'best_score': row[1] or 0,
+        'best_streak': row[2] or 0,
+        'accuracy': round(correct / attempts * 100) if attempts else 0,
+        'words_spelled': correct,
+    }
+
+
 def get_content_data_for_review(content_item):
     """Bereitet Content-Daten fuer die Review-API auf."""
     lesson = content_item.lesson

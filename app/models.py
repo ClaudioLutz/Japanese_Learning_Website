@@ -1675,6 +1675,43 @@ class KanaStormScore(db.Model):
                 f'score:{self.score} combo:{self.best_combo}>')
 
 
+class KanaSpellScore(db.Model):
+    """Eine beendete Runde des Kana-Schreibspiels eines EINGELOGGTEN Nutzers.
+
+    Drittes Kana-Spiel auf /practice/kana (neben Zuordnung + Storm): aus dem
+    gewaehlten Kana-Scope freigeschaltete reine Kana-Woerter werden Tile-fuer-
+    Tile buchstabiert. Eigenstaendige, leichte Wertung NACH dem Storm-Muster —
+    bewusst KEIN FSRS-Eingriff (kein CardReviewState, kein update_daily_aggregate),
+    damit die DE->JP-Produktionsspur + Heatmap/Accuracy unberuehrt bleiben.
+    Gaeste spielen rein clientseitig (localStorage); diese Tabelle existiert nur
+    fuer eingeloggte Spieler. Eine Zeile pro Runde (kein Upsert).
+
+    source = 'all' (alle tippbaren Woerter der Schrift) | 'unlocked' (nur die mit
+    den gewaehlten Reihen schreibbaren). score/streak/counts kommen vom Client und
+    werden im Endpoint hart geclamped (Anti-Cheat); die XP haengen an der
+    geclampten Trefferzahl mit Per-Run- UND Tages-Cap.
+    """
+    __tablename__ = 'kana_spell_score'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, index=True)
+    schrift = db.Column(db.String(16), nullable=False, default='hiragana', server_default='hiragana')
+    source = db.Column(db.String(16), nullable=False, default='all', server_default='all')
+    cue = db.Column(db.String(16), nullable=False, default='bedeutung', server_default='bedeutung')
+    score = db.Column(db.Integer, nullable=False, default=0, server_default='0')
+    best_streak = db.Column(db.Integer, nullable=False, default=0, server_default='0')
+    correct_count = db.Column(db.Integer, nullable=False, default=0, server_default='0')
+    miss_count = db.Column(db.Integer, nullable=False, default=0, server_default='0')
+    xp_awarded = db.Column(db.Integer, nullable=False, default=0, server_default='0')
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+
+    user = db.relationship('User', backref=db.backref('kana_spell_scores', lazy='dynamic'))
+
+    def __repr__(self):
+        return (f'<KanaSpellScore u:{self.user_id} {self.source} '
+                f'score:{self.score} streak:{self.best_streak}>')
+
+
 class UserSRSSettings(db.Model):
     """Persoenliche SRS-Einstellungen pro User."""
     __tablename__ = 'user_srs_settings'
