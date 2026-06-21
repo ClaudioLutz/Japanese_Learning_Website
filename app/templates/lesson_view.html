@@ -1764,6 +1764,14 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                                             <i class="fas fa-volume-up"></i>
                                                                         </button>
                                                                         {% endif %}
+                                                                        {# Karten-Feedback: Fehler auf dieser Karte melden (oeffentliches Issue-Board).
+                                                                           Innerhalb der Rueckseite; stopPropagation -> Klick dreht die Karte nicht um. #}
+                                                                        <a href="{{ url_for('issues.new_issue', content_type='lesson_content', content_id=content.id) }}"
+                                                                           class="card-report-link" title="Fehler auf dieser Karte melden"
+                                                                           onclick="event.stopPropagation();"
+                                                                           style="display:block; margin-top:.55rem; font-size:.72rem; color:inherit; opacity:.5; text-decoration:none;">
+                                                                            <i class="fas fa-flag" aria-hidden="true"></i> melden
+                                                                        </a>
                                                                     </div>
                                                                 </div>
                                                             </div>
