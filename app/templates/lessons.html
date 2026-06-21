@@ -144,6 +144,13 @@
   </div>
   {% endif %}
 
+  {# ─────────── Lernpfad (fusioniert aus der Startseite) — Modulpfad mit
+       Fortschritt über dem klassischen Katalog. Gilt für Gäste UND eingeloggte
+       Nutzer (Kontext aus _build_n5_path_context in routes.lessons). ─────────── #}
+  {% if n5_groups %}
+  {% include "_lernpfad_path.html" %}
+  {% endif %}
+
   {# ─────────── Filterleiste (abgespeckt) ─────────── #}
   <section class="lp-filterbar" aria-label="Filter">
     <div class="lp-search">
