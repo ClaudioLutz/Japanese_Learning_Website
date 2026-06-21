@@ -904,6 +904,7 @@ def lessons():
             'name': cat.name,
             'description': cat.description,
             'icon_emoji': cat.icon_emoji,
+            'image_url': cat.get_image_url(),
             'color_code': cat.color_code,
             'jlpt_level': cat.jlpt_level,
             'lesson_count': len(lesson_dicts),
