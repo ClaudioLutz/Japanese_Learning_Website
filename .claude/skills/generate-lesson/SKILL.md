@@ -336,8 +336,19 @@ Lesson (title, description, jlpt_level→difficulty_level 1-5, instruction_langu
   Sichtung von MNN L1–L5 DE, wo ausnahmslos jede Vocabulary-Zeile ein `image_url`
   hat). Pipeline-Schritt `images` generiert per `AILessonContentGenerator.
   generate_vocabulary_image_nb()` (Nano Banana) für jede Vokabel ohne `image_url`
-  ein Icon und speichert es unter `app/static/uploads/vocab_generated/vocab_{hash}.png`.
+  ein Bild und speichert es unter `app/static/uploads/vocab_generated/vocab_{hash}.png`.
   Bestehende Vokabeln mit `image_url` werden übersprungen (idempotent).
+  - **Bild zum BEISPIELSATZ, nicht zum Wort** (Direktive 2026-06-21): Die
+    Pipeline (`_scene_from_vocab` in `pipeline.py`) zieht die **deutsche
+    Übersetzung** aus `example_sentence_english` (Format `Romaji — Deutsch`,
+    Em-Dash) und übergibt sie als `scene` an `generate_vocabulary_image_nb`. Das
+    Bild zeigt dann die **Szene des Satzes** (z.B. „Im Kühlschrank sind Eier" →
+    offener Kühlschrank mit Eiern), **personen- und textfrei** wie die übrigen
+    Lektionsbilder (zugleich Mitigation gegen Safety-Blocks bei körperbezogenen
+    Verben). Fehlt der Satz/die Übersetzung (`scene=None`), fällt die Methode auf
+    den alten **Icon-Stil zum `meaning`** zurück. Damit gute Bilder entstehen,
+    ist ein **aussagekräftiger, konkreter `example_sentence_japanese` + dessen
+    deutsche Übersetzung Pflicht** (abstrakte Sätze ergeben schwächere Bilder).
 
 Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
 
@@ -467,7 +478,8 @@ Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
 
 [3] python .claude/skills/generate-lesson/pipeline.py images {draft_path}
     → PFLICHT (nicht mehr optional). Ruft **Nano Banana** (gemini-2.5-flash-image)
-       für Thumbnail (16:9) + ein Icon für JEDE Vokabel (1:1). Ergänzt
+       für Thumbnail (16:9) + ein **Szenenbild zum Beispielsatz** für JEDE Vokabel
+       (1:1, personen-/textfrei; Icon-Fallback ohne Satz — siehe §4). Ergänzt
        image_url/thumbnail_url im Draft. Bei fehlendem GOOGLE_AI_API_KEY/
        GEMINI_API_KEY: User fragen, NICHT weitermachen. (Methoden:
        `AILessonContentGenerator.generate_single_image_nb` /

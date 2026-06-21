@@ -1395,6 +1395,22 @@ def git_commit(lesson_id: int):
 # Nano Banana Images (Gemini 2.5 Flash Image — benoetigt GOOGLE_AI_API_KEY)
 # ========================================================================
 
+def _scene_from_vocab(data: dict) -> str | None:
+    """Szenen-Beschreibung fuers Karten-Bild aus dem Beispielsatz (Direktive
+    2026-06-21: Bild zum SATZ statt zum Wort).
+
+    `example_sentence_english` hat das Format 'Romaji — Deutsche Uebersetzung'
+    (Em-Dash ` — `). Wir nehmen die deutsche Seite als Szene. Gibt None zurueck,
+    wenn kein Satz / keine Uebersetzung vorhanden ist (dann Icon-Fallback).
+    """
+    ex = (data.get("example_sentence_english") or "").strip()
+    if " — " in ex:
+        de = ex.split(" — ", 1)[1].strip()
+        if de:
+            return de
+    return None
+
+
 def generate_images(draft_path: Path):
     """Erweitert den Draft mit Bild-URLs (Thumbnail + Vokabel-Icons).
 
@@ -1460,9 +1476,13 @@ def generate_images(draft_path: Path):
             data = item.get("data", {})
             word = data.get("word", "")
             meaning = data.get("meaning") or data.get("meaning_de") or word
+            # Bild zum SATZ statt zum Wort (Direktive 2026-06-21): die deutsche
+            # Uebersetzung des Beispielsatzes treibt das Szenenbild. Fallback auf
+            # Icon-Stil (scene=None), wenn kein Satz/keine Uebersetzung vorhanden.
+            scene = _scene_from_vocab(data)
             # current_app.logger im Service braucht App-Kontext pro Worker-Thread.
             with app.app_context():
-                res = gen.generate_vocabulary_image_nb(word=word, meaning=meaning)
+                res = gen.generate_vocabulary_image_nb(word=word, meaning=meaning, scene=scene)
             if not res or "image_bytes" not in res:
                 return item, None, (res or {}).get("error", "unbekannt")
             hash_suffix = hashlib.md5(word.encode()).hexdigest()[:8]
