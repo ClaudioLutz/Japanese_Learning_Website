@@ -284,6 +284,13 @@ def get_new_cards(user_id, lesson_id, limit=20):
 # Recognition-first — kein Produzieren gerade erst gesehener Woerter.
 PRODUCTION_FORWARD_MIN_STAGE = 3
 
+# Tageslimit fuer NEU eingefuehrte Produktions-Karten. Wenn viele forward-Karten
+# auf einmal reif werden (z.B. nach intensivem Rezeptions-Training), wuerden sonst
+# hunderte DE->JP-Karten gleichzeitig hereinbrechen. Gedrosselt wird nur das
+# Hinzukommen NEUER Karten — der faellige Backlog (bereits gestartete reverse-
+# Karten) bleibt unbegrenzt abarbeitbar.
+DAILY_NEW_PRODUCTION_LIMIT = 15
+
 
 def get_production_due_cards(user_id, limit=50):
     """Faellige Produktions-Karten (reverse) fuer die DE->JP-Queue."""
@@ -347,13 +354,45 @@ def get_production_new_cards(user_id, limit=20):
     return out[:limit]
 
 
+def get_production_new_today_count(user_id):
+    """Wie viele NEUE Produktions-Karten heute schon eingefuehrt wurden.
+
+    Eine reverse-Karte entsteht on-the-fly beim ersten Rating → ihr created_at
+    markiert die Einfuehrung. Tagesgrenze ist UTC-Mitternacht (wie der Rest der
+    SRS-Logik). Dient dem Tageslimit (DAILY_NEW_PRODUCTION_LIMIT).
+    """
+    start = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+    return (CardReviewState.query
+            .filter(CardReviewState.user_id == user_id,
+                    CardReviewState.direction == 'reverse',
+                    CardReviewState.created_at >= start)
+            .count())
+
+
+def get_production_new_allowance(user_id):
+    """Wie viele NEUE Produktions-Karten heute noch eingefuehrt werden duerfen."""
+    return max(0, DAILY_NEW_PRODUCTION_LIMIT - get_production_new_today_count(user_id))
+
+
 def get_production_overview(user_id):
-    """Kennzahlen fuer den Kopf der Produktions-Seite (eigene Zaehler)."""
+    """Kennzahlen fuer den Kopf der Produktions-Seite (eigene Zaehler).
+
+    new_ready = wie viele NEUE Karten heute noch angeboten werden (durch das
+    Tageslimit gedeckelt), NICHT der gesamte reife Vorrat — sonst wuerde der
+    Kopf bei grossem Backlog eine irrefuehrend hohe Zahl zeigen.
+    """
     due = get_production_due_count(user_id)
-    new_ready = len(get_production_new_cards(user_id, limit=1000))
-    total = CardReviewState.query.filter_by(
-        user_id=user_id, direction='reverse').count()
-    return {'due_count': due, 'new_ready': new_ready, 'total_cards': total}
+    ready_total = len(get_production_new_cards(user_id, limit=1000))
+    allowance = get_production_new_allowance(user_id)
+    return {
+        'due_count': due,
+        'new_ready': min(ready_total, allowance),
+        'new_ready_total': ready_total,
+        'new_today': get_production_new_today_count(user_id),
+        'daily_new_limit': DAILY_NEW_PRODUCTION_LIMIT,
+        'total_cards': CardReviewState.query.filter_by(
+            user_id=user_id, direction='reverse').count(),
+    }
 
 
 def get_production_stats(user_id):

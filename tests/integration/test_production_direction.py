@@ -118,6 +118,47 @@ class TestProductionQueue:
         assert data['overview']['new_ready'] >= 1
 
 
+class TestDailyNewLimit:
+    """Tageslimit fuer NEU eingefuehrte Produktions-Karten (Backlog-Flut bremsen)."""
+
+    def test_allowance_full_when_none_introduced(self, auth_client):
+        """Ohne heute eingefuehrte reverse-Karte ist das volle Tageskontingent frei."""
+        client, user = auth_client
+        assert srs_service.get_production_new_today_count(user.id) == 0
+        assert (srs_service.get_production_new_allowance(user.id)
+                == srs_service.DAILY_NEW_PRODUCTION_LIMIT)
+
+    def test_allowance_decreases_after_introduction(self, auth_client):
+        """Erstes reverse-Rating zaehlt als heutige Einfuehrung => Kontingent -1."""
+        client, user = auth_client
+        lc = _vocab_content()
+        _forward_state(user.id, lc.id)
+        db.session.commit()
+        srs_service.rate_card(user.id, lc.id, 3, direction='reverse')
+        db.session.commit()
+        assert srs_service.get_production_new_today_count(user.id) == 1
+        assert (srs_service.get_production_new_allowance(user.id)
+                == srs_service.DAILY_NEW_PRODUCTION_LIMIT - 1)
+
+    def test_queue_caps_new_cards_at_daily_limit(self, auth_client):
+        """Mehr reife NEUE Vokabeln als das Limit => Queue bietet nur das Limit an."""
+        client, user = auth_client
+        surplus = 5
+        for i in range(srs_service.DAILY_NEW_PRODUCTION_LIMIT + surplus):
+            lc = _vocab_content(meaning_de=f'Wort{i}')
+            _forward_state(user.id, lc.id)
+        db.session.commit()
+
+        resp = client.get('/api/srs/production/queue?limit=50')
+        assert resp.status_code == 200
+        data = resp.get_json()
+        new_cards = [c for c in data['cards'] if c['is_new']]
+        assert len(new_cards) == srs_service.DAILY_NEW_PRODUCTION_LIMIT
+        assert data['overview']['new_ready'] == srs_service.DAILY_NEW_PRODUCTION_LIMIT
+        assert (data['overview']['new_ready_total']
+                >= srs_service.DAILY_NEW_PRODUCTION_LIMIT + surplus)
+
+
 class TestReceptiveIsolation:
     def test_due_queue_forward_only(self, auth_client):
         """Eine faellige REVERSE-Karte darf NICHT in /api/srs/due (forward) erscheinen."""

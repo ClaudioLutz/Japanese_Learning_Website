@@ -421,9 +421,19 @@
                 const res = await resp.json();
                 if (res.xp_earned) { sessionXp += res.xp_earned; showXpFloat(res.xp_earned, res.xp_boost); }
                 const RATING_DE = { 1: 'Nochmal', 2: 'Schwer', 3: 'Gut', 4: 'Einfach' };
-                announce(`${RATING_DE[ratingInt]} — nächste Karte.`);
+                announce(ratingInt === 1
+                    ? 'Nochmal — die Karte kommt gleich nochmal.'
+                    : `${RATING_DE[ratingInt]} — nächste Karte.`);
             }
         } catch (e) { console.warn('[Produktion] Rating fehlgeschlagen:', e); }
+        // In-Session-Lernqueue: „Nochmal" → Karte ein paar Plätze weiter erneut
+        // einreihen, statt sie hinter den ganzen fälligen Backlog zu schicken.
+        // So kommt sie in DERSELBEN Runde wieder, bis sie einmal ≥ „Gut" sitzt.
+        if (ratingInt === 1) {
+            const RELEARN_GAP = 6;
+            const insertAt = Math.min(cards.length, currentIdx + 1 + RELEARN_GAP);
+            cards.splice(insertAt, 0, card);
+        }
         currentIdx += 1;
         _rating = false;
         showCard();

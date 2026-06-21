@@ -238,9 +238,12 @@ def api_production_queue():
         cd['lapses'] = state.lapses
         cards.append(cd)
 
+    # Neue Karten nur bis zum Tageslimit nachfuellen (Backlog-Flut bremsen).
     remaining = max(0, limit - len(cards))
-    if remaining:
-        for lc in srs_service.get_production_new_cards(current_user.id, limit=remaining):
+    allowance = srs_service.get_production_new_allowance(current_user.id)
+    new_to_fetch = min(remaining, allowance)
+    if new_to_fetch:
+        for lc in srs_service.get_production_new_cards(current_user.id, limit=new_to_fetch):
             if lc.id in seen:
                 continue
             seen.add(lc.id)
