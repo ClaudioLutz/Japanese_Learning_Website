@@ -15,6 +15,13 @@ Die Seite laeuft self-hosted auf diesem Rechner:
 **Internet → Cloudflare-Tunnel → `japanese_app` Docker-Container → lokale Postgres-DB.**
 Ein "Deploy" = Code committen, Image neu bauen, Container neu starten. **Kein GCloud mehr.**
 
+> **AUTO-DEPLOY aktiv (seit 2026-06-21):** Ein systemd-Timer `jpl-autodeploy.timer`
+> pollt `origin/main` alle 60s und deployt jeden neuen Stand selbst (nur Fast-Forward,
+> per `flock` serialisiert, Health-Check + automatischer Rollback aufs vorige Image).
+> **Im Normalfall genügt also `git push` auf `main` — der Server deployt sich selbst
+> (≤60s).** Die manuellen Schritte unten nur noch für Debug/Sonderfälle. Logs:
+> `ssh hp-ubuntu 'journalctl -u jpl-autodeploy.service -n 30 --no-pager'`.
+
 > DB-Daten (lokale Postgres-Volume) und Medien (Volume `app/static/uploads`) liegen
 > AUSSERHALB des Images und sind von einem Rebuild NICHT betroffen — nur der Code
 > wird ersetzt.
