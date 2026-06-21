@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% set admin_edit_url = url_for('routes.admin_manage_courses') + '?edit=' + course.id|string %}
 
 {% block title %}{{ course.title }}{% endblock %}
 {% block meta_description %}{% if course.description %}{{ course.description|striptags|truncate(160, killwords=True) }}{% else %}Japanisch-Kurs: {{ course.title }} — gebündelte Lektionen mit Vokabeln, Kanji, Grammatik und Quiz.{% endif %}{% endblock %}
