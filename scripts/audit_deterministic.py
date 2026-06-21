@@ -38,14 +38,17 @@ for o in lessons:
         if c["content_type"] == "vocabulary" and r:
             w = (r.get("word") or "").strip()
             if w:
-                if r.get("reading"): vocab_map[w][r["reading"].strip()].add(lid)
-                if r.get("meaning_de"): vocab_mean[w][r["meaning_de"].strip()].add(lid)
+                if r.get("reading"):
+                    vocab_map[w][r["reading"].strip()].add(lid)
+                if r.get("meaning_de"):
+                    vocab_mean[w][r["meaning_de"].strip()].add(lid)
         elif c["content_type"] == "kanji" and r:
             ch = (r.get("character") or "").strip()
             if ch:
                 key = f"on:{(r.get('onyomi') or '').strip()}|kun:{(r.get('kunyomi') or '').strip()}"
                 kanji_read[ch][key].add(lid)
-                if r.get("meaning"): kanji_mean[ch][r["meaning"].strip()].add(lid)
+                if r.get("meaning"):
+                    kanji_mean[ch][r["meaning"].strip()].add(lid)
 
 consistency = []
 for w, readings in vocab_map.items():
