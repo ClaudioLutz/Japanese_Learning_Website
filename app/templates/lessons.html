@@ -176,15 +176,6 @@
       </button>
     </div>
 
-    <div class="lp-filtergroup">
-      <span class="lp-filtergroup-label" aria-hidden="true">Zugang</span>
-      <div class="lp-pills" role="group" aria-label="Verfügbarkeit">
-        <button type="button" class="lp-pill" :class="access === 'all' && 'is-active'" @click="access='all'; apply();">Alle</button>
-        <button type="button" class="lp-pill lp-pill-free" :class="access === 'free' && 'is-active'" @click="access='free'; apply();">🆓 Gratis</button>
-        <button type="button" class="lp-pill lp-pill-paid" :class="access === 'paid' && 'is-active'" @click="access='paid'; apply();">⭐ Premium</button>
-      </div>
-    </div>
-
     {% if show_status %}
     <div class="lp-filtergroup">
       <span class="lp-filtergroup-label" aria-hidden="true">Status</span>
@@ -540,8 +531,6 @@
 }
 .lp-pill:hover { color: var(--sumi); }
 .lp-pill.is-active { background: var(--shu); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,.15); }
-.lp-pill-free.is-active { background: var(--matcha); color: #fff; }
-.lp-pill-paid.is-active { background: var(--kincha); color: #fff; }
 .lp-pill-open.is-active { background: var(--shu); color: #fff; }
 .lp-pill-done.is-active { background: var(--matcha); color: #fff; }
 .lp-pill-num { display: inline-block; margin-left: 0.3rem; padding: 0 0.32rem; border-radius: 999px; font-size: 0.72rem; background: rgba(0,0,0,.10); }
@@ -807,7 +796,6 @@ function lessonsPage() {
   const params = new URLSearchParams(window.location.search);
   return {
     search: params.get('q') || '',
-    access: params.get('access') || 'all',
     status: params.get('status') || 'all',
     catOpen: {},      // {catId(String): bool} — Accordion-Zustand
     activeNav: null,  // catId der aktuell sichtbaren Sektion (Scroll-Spy)
@@ -979,12 +967,11 @@ function lessonsPage() {
     },
 
     hasActiveFilters() {
-      return this.search !== '' || this.access !== 'all' || this.status !== 'all';
+      return this.search !== '' || this.status !== 'all';
     },
 
     reset() {
       this.search = '';
-      this.access = 'all';
       this.status = 'all';
       this.apply();
     },
@@ -999,7 +986,6 @@ function lessonsPage() {
     syncUrl() {
       const p = new URLSearchParams();
       if (this.search) p.set('q', this.search);
-      if (this.access !== 'all') p.set('access', this.access);
       if (this.status !== 'all') p.set('status', this.status);
       const qs = p.toString();
       const newUrl = qs ? `${location.pathname}?${qs}` : location.pathname;
@@ -1007,8 +993,6 @@ function lessonsPage() {
     },
 
     lessonVisible(el) {
-      if (this.access === 'free' && el.dataset.free !== '1') return false;
-      if (this.access === 'paid' && el.dataset.free === '1') return false;
       // "Noch offen" = alles ausser abgeschlossen (inkl. begonnen)
       if (this.status === 'open' && el.dataset.status === 'done') return false;
       if (this.status === 'started' && el.dataset.status !== 'started') return false;
@@ -1036,15 +1020,12 @@ function lessonsPage() {
 
     countLabel() {
       const total = {{ page_lessons|length }};
-      const totalFree = {{ total_free }};
       const visible = this.visibleLessonsCount();
-      if (this.access === 'free') return `${visible} gratis`;
-      if (this.access === 'paid') return `${visible} Premium`;
       if (this.status === 'open') return `${visible} offen`;
       if (this.status === 'started') return `${visible} begonnen`;
       if (this.status === 'done') return `${visible} abgeschlossen`;
       if (this.search) return `${visible} von ${total} sichtbar`;
-      return `${total} Lektionen · ${totalFree} gratis`;
+      return `${total} Lektionen`;
     },
 
     setupBackToTop() {
