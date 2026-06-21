@@ -1174,6 +1174,12 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                 <span class="badge bg-dark">{{ lesson.estimated_duration }} Min.</span>
                                 {% endif %}
                             </div>
+                            {# Hinweis-/Feedback-Bruecke: Fehler in dieser Lektion melden (oeffentliches Issue-Board) #}
+                            <a href="{{ url_for('issues.new_issue', content_type='lesson', content_id=lesson.id) }}"
+                               class="text-muted small d-inline-flex align-items-center gap-1"
+                               style="text-decoration:none;">
+                              <i class="fas fa-flag" aria-hidden="true"></i> Fehler in dieser Lektion melden
+                            </a>
                         </div>
                         <div class="col-md-4">
                             {% if lesson.get_thumbnail_url() %}

@@ -1,0 +1,41 @@
+{% extends "issues/_issue_base.html" %}
+{% block title %}Hinweis melden · Hinweise &amp; Korrekturen{% endblock %}
+
+{% block issue_content %}
+<nav class="issue-breadcrumb" aria-label="Brotkrumen">
+  <a href="{{ url_for('issues.index') }}">Hinweise &amp; Korrekturen</a>
+  <span class="sep">/</span>
+  <span>Neuer Hinweis</span>
+</nav>
+
+<div class="issue-head">
+  <h1>Hinweis melden</h1>
+  <p>Danke, dass du mithilfst, die Inhalte besser zu machen.</p>
+</div>
+
+{% if anchor_label %}
+<div class="issue-anchor-link" style="cursor:default;"><i class="fas fa-link" aria-hidden="true"></i> Bezieht sich auf: {{ anchor_label }}</div>
+<div style="height:1rem"></div>
+{% endif %}
+
+<div class="issue-card">
+  <form class="issue-form" method="POST" action="{{ url_for('issues.new_issue') }}">
+    {{ form.csrf_token }}
+    {% if content_type %}<input type="hidden" name="content_type" value="{{ content_type }}">{% endif %}
+    {% if content_id %}<input type="hidden" name="content_id" value="{{ content_id }}">{% endif %}
+
+    <label for="issue-title">Titel</label>
+    <input type="text" id="issue-title" name="title" value="{{ form.title.data or '' }}" maxlength="150" required>
+    {% for e in form.title.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+
+    <label for="issue-body">Beschreibung</label>
+    <textarea id="issue-body" name="body" placeholder="Was stimmt nicht? Optional: dein Korrekturvorschlag. (Markdown wird unterstützt)" required>{{ form.body.data or '' }}</textarea>
+    {% for e in form.body.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+
+    <div class="issue-form-actions">
+      <button type="submit" class="issue-btn issue-btn-primary"><i class="fas fa-paper-plane" aria-hidden="true"></i> Hinweis senden</button>
+      <a class="issue-btn issue-btn-ghost" href="{{ url_for('issues.index') }}">Abbrechen</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

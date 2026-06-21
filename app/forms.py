@@ -92,3 +92,30 @@ class PostForm(FlaskForm):
                message='Der Beitrag muss zwischen 2 und 10 000 Zeichen lang sein.'),
     ])
     submit = SubmitField('Antworten')
+
+
+# ── Content-Feedback / Issue-Board ───────────────────────────────────────────
+
+class ContentIssueForm(FlaskForm):
+    """Neuer Hinweis/Feedback-Eintrag (Issue)."""
+    title = StringField('Titel', validators=[
+        DataRequired(message='Bitte einen kurzen Titel eingeben.'),
+        Length(min=5, max=150,
+               message='Der Titel muss zwischen 5 und 150 Zeichen lang sein.'),
+    ])
+    body = TextAreaField('Beschreibung', validators=[
+        DataRequired(message='Bitte beschreibe deinen Hinweis.'),
+        Length(min=10, max=5000,
+               message='Die Beschreibung muss zwischen 10 und 5000 Zeichen lang sein.'),
+    ])
+    submit = SubmitField('Hinweis senden')
+
+
+class IssueCommentForm(FlaskForm):
+    """Antwort/Kommentar zu einem Issue."""
+    body = TextAreaField('Antwort', validators=[
+        DataRequired(message='Bitte einen Text eingeben.'),
+        Length(min=2, max=5000,
+               message='Die Antwort muss zwischen 2 und 5000 Zeichen lang sein.'),
+    ])
+    submit = SubmitField('Antworten')
