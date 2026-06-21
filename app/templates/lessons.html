@@ -200,7 +200,9 @@
   <nav class="lp-secnav" aria-label="Lehrplan-Abschnitte" x-show="!hasActiveFilters()" x-transition.opacity>
     <div class="lp-secnav-trackwrap"
          :class="{ 'can-scroll-left': canScrollLeft, 'can-scroll-right': canScrollRight }">
-      <div class="lp-secnav-track" x-ref="secnavTrack" @scroll.passive="updateScrollHints()">
+      <div class="lp-secnav-track" x-ref="secnavTrack"
+           :class="{ 'is-grab': canScrollLeft || canScrollRight }"
+           @scroll.passive="updateScrollHints()">
         {% for cat in page_categories %}
         <button type="button"
                 class="lp-secnav-chip"
@@ -210,6 +212,18 @@
         </button>
         {% endfor %}
       </div>
+      {# Scroll-Pfeile (über den Fades): erscheinen nur, wenn in der Richtung noch
+         Inhalt da ist. Geschwister des Tracks — NICHT darin (würden sonst mitscrollen). #}
+      <button type="button" class="lp-secnav-arrow lp-secnav-arrow--left"
+              x-show="canScrollLeft" x-cloak x-transition.opacity
+              @click="scrollByPage(-1)" aria-label="Abschnitte nach links scrollen">
+        <i class="fas fa-angles-left" aria-hidden="true"></i>
+      </button>
+      <button type="button" class="lp-secnav-arrow lp-secnav-arrow--right"
+              x-show="canScrollRight" x-cloak x-transition.opacity
+              @click="scrollByPage(1)" aria-label="Abschnitte nach rechts scrollen">
+        <i class="fas fa-angles-right" aria-hidden="true"></i>
+      </button>
     </div>
     {# Global „alles auf-/zuklappen" — bleibt als sticky Element immer erreichbar #}
     <button type="button"
@@ -555,6 +569,23 @@
 .lp-secnav-trackwrap::after  { right: 0; background: linear-gradient(to left,  var(--secnav-fade-from), var(--secnav-fade-to)); }
 .lp-secnav-trackwrap.can-scroll-left::before  { opacity: 1; }
 .lp-secnav-trackwrap.can-scroll-right::after  { opacity: 1; }
+/* Drag-to-scroll (nur Maus): grab-Cursor signalisiert „greifbar". */
+.lp-secnav-track.is-grab { cursor: grab; }
+.lp-secnav-track.is-dragging { cursor: grabbing; user-select: none; }
+/* Scroll-Pfeile — schweben über den Fades am jeweiligen Rand (z-index > Fade). */
+.lp-secnav-arrow {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 3;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 1.9rem; height: 1.9rem; border-radius: 999px;
+  border: 1px solid var(--ink-200); background: var(--card-background); color: var(--ink-600);
+  cursor: pointer; box-shadow: 0 1px 5px rgba(0,0,0,.16);
+  transition: border-color .15s, color .15s, background .15s;
+}
+.lp-secnav-arrow:hover { border-color: var(--shu); color: var(--shu); }
+.lp-secnav-arrow:focus-visible { outline: 2px solid var(--shu); outline-offset: 2px; }
+.lp-secnav-arrow i { font-size: 0.72rem; }
+.lp-secnav-arrow--left  { left: 0.1rem; }
+.lp-secnav-arrow--right { right: 0.1rem; }
 .lp-secnav-chip {
   flex: none; display: inline-flex; align-items: center; gap: 0.35rem;
   border: 1px solid var(--ink-200); background: var(--card-background); color: var(--ink-600);
@@ -852,6 +883,40 @@ function lessonsPage() {
         track.scrollLeft += e.deltaY;
         this.updateScrollHints();
       }, { passive: false });
+
+      // Drag-to-scroll (nur Maus; Touch scrollt ohnehin nativ). Bewegungsschwelle
+      // trennt Klick von Drag; nach echtem Drag wird der folgende Chip-Klick geschluckt.
+      let down = false, startX = 0, startLeft = 0, moved = false;
+      const THRESHOLD = 5;
+      track.addEventListener('pointerdown', (e) => {
+        if (e.pointerType !== 'mouse' || e.button !== 0) return;
+        if (track.scrollWidth <= track.clientWidth) return;
+        down = true; moved = false;  // moved bei JEDEM pointerdown zurücksetzen → kein Stale-Flag
+        startX = e.clientX; startLeft = track.scrollLeft;
+      });
+      track.addEventListener('pointermove', (e) => {
+        if (!down) return;
+        const dx = e.clientX - startX;
+        if (!moved && Math.abs(dx) < THRESHOLD) return;
+        if (!moved) { moved = true; track.classList.add('is-dragging'); track.setPointerCapture(e.pointerId); }
+        track.scrollLeft = startLeft - dx;
+      });
+      const endDrag = (e) => {
+        if (!down) return;
+        down = false;
+        if (moved) {
+          track.classList.remove('is-dragging');
+          try { track.releasePointerCapture(e.pointerId); } catch (_) {}
+        }
+      };
+      track.addEventListener('pointerup', endDrag);
+      track.addEventListener('pointercancel', endDrag);
+      // Nach echtem Drag den nachfolgenden Maus-Klick unterdrücken (sonst springt ein Chip).
+      // e.detail > 0 = echter Maus-Klick; Tastatur-Aktivierung (detail 0) bleibt funktionsfähig.
+      track.addEventListener('click', (e) => {
+        if (moved && e.detail > 0) { e.stopPropagation(); e.preventDefault(); }
+      }, true);
+
       window.addEventListener('resize', () => this.updateScrollHints(), { passive: true });
       // Web-Fonts ändern die Chip-Breiten nach dem ersten Render → Hints nachziehen.
       if (document.fonts && document.fonts.ready) {
@@ -865,6 +930,13 @@ function lessonsPage() {
       const max = track.scrollWidth - track.clientWidth;
       this.canScrollLeft = track.scrollLeft > 1;
       this.canScrollRight = track.scrollLeft < max - 1;
+    },
+    // Pfeil-Klick: ~80% der sichtbaren Breite weiterscrollen (Hints folgen via @scroll).
+    scrollByPage(dir) {
+      const track = this.$refs.secnavTrack;
+      if (!track) return;
+      const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      track.scrollBy({ left: dir * Math.round(track.clientWidth * 0.8), behavior: reduce ? 'auto' : 'smooth' });
     },
 
     hasActiveFilters() {
