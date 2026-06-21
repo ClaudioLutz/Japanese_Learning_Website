@@ -167,39 +167,15 @@
            in /lektionen (Pfad-Block über dem Katalog).
            Active-State per request.endpoint + aria-current. #}
         <div class="topnav-primary" :class="mobileOpen && 'is-open'">
+          {# Drei Lern-Verben statt fünf flacher Modi: Mein Lernen (Hub) ·
+             Lektionen · Üben. „Üben" bündelt Wiederholen (JP→DE/DE→JP), Kana
+             und Prüfen unter /ueben — jeder Modus bleibt dort + in der Bottom-Nav
+             direkt erreichbar (keine Funktion versteckt, nur gruppiert). #}
           {% if current_user.is_authenticated %}
-          {# Wiederholen = Gruppe mit Richtungs-Umschalter (Segmented Control):
-             JP→DE (Erkennen, /review) + DE→JP (Produktion, /review/produktion).
-             Beide sind SRS-Review, nur die Richtung unterscheidet sich → ein
-             Label, zwei Segmente, je eigenes Faelligkeits-Badge. #}
-          <div class="topnav-review-group" role="group" aria-label="Wiederholen — Richtung wählen">
-            <span class="topnav-review-label"><i class="fas fa-brain" aria-hidden="true"></i><span>Wiederholen</span></span>
-            <div class="topnav-review-seg">
-              <a href="{{ url_for('srs.review_page') }}"
-                 class="topnav-seg {% if request.endpoint == 'srs.review_page' %}is-active{% endif %}"
-                 {% if request.endpoint == 'srs.review_page' %}aria-current="page"{% endif %}
-                 title="Erkennen — Japanisch → Deutsch">
-                JP&#8594;DE
-                <span class="nav-due-badge" id="reviewBadgeDesktop" aria-hidden="true"></span>
-              </a>
-              <a href="{{ url_for('srs.production_page') }}"
-                 class="topnav-seg {% if request.endpoint == 'srs.production_page' %}is-active{% endif %}"
-                 {% if request.endpoint == 'srs.production_page' %}aria-current="page"{% endif %}
-                 title="Produktion — Deutsch → Japanisch (Sätze selbst bilden)">
-                DE&#8594;JP
-                <span class="nav-due-badge" id="prodBadgeDesktop" aria-hidden="true"></span>
-              </a>
-            </div>
-          </div>
-          <a href="{{ url_for('pruefen.pruefen_start') }}"
-             class="topnav-link {% if request.endpoint in ['pruefen.pruefen_start', 'pruefen.pruefen_session'] %}is-active{% endif %}"
-             {% if request.endpoint == 'pruefen.pruefen_start' %}aria-current="page"{% elif request.endpoint == 'pruefen.pruefen_session' %}aria-current="true"{% endif %}>
-            <i class="fas fa-clipboard-check" aria-hidden="true"></i><span>Prüfen</span>
-          </a>
-          <a href="{{ url_for('srs.practice_kana_page') }}"
-             class="topnav-link {% if request.endpoint in ['srs.practice_kana_page', 'srs.practice_kana_game_page'] %}is-active{% endif %}"
-             {% if request.endpoint == 'srs.practice_kana_page' %}aria-current="page"{% elif request.endpoint == 'srs.practice_kana_game_page' %}aria-current="true"{% endif %}>
-            <span class="topnav-kana-glyph" aria-hidden="true">あ</span><span>Kana üben</span>
+          <a href="{{ url_for('dashboard.index') }}"
+             class="topnav-link {% if request.endpoint == 'dashboard.index' %}is-active{% endif %}"
+             {% if request.endpoint == 'dashboard.index' %}aria-current="page"{% endif %}>
+            <i class="fas fa-compass" aria-hidden="true"></i><span>Mein Lernen</span>
           </a>
           {% endif %}
           <a href="{{ url_for('routes.lessons') }}"
@@ -207,6 +183,16 @@
              {% if request.endpoint == 'routes.lessons' %}aria-current="page"{% elif request.endpoint == 'routes.view_lesson' %}aria-current="true"{% endif %}>
             <i class="fas fa-book-open" aria-hidden="true"></i><span>Lektionen</span>
           </a>
+          {% if current_user.is_authenticated %}
+          {# Üben-Hub: aktiv auch auf allen Unterseiten (review/produktion/kana/pruefen).
+             Aggregat-Fälligkeits-Badge (JP→DE + DE→JP), per JS gefüllt. #}
+          <a href="{{ url_for('srs.ueben_page') }}"
+             class="topnav-link {% if request.endpoint in ['srs.ueben_page', 'srs.review_page', 'srs.production_page', 'srs.practice_kana_page', 'srs.practice_kana_game_page', 'srs.practice_kana_storm_page', 'pruefen.pruefen_start', 'pruefen.pruefen_session'] %}is-active{% endif %}"
+             {% if request.endpoint == 'srs.ueben_page' %}aria-current="page"{% elif request.endpoint in ['srs.review_page', 'srs.production_page', 'srs.practice_kana_page', 'srs.practice_kana_game_page', 'srs.practice_kana_storm_page', 'pruefen.pruefen_start', 'pruefen.pruefen_session'] %}aria-current="true"{% endif %}>
+            <i class="fas fa-brain" aria-hidden="true"></i><span>Üben</span>
+            <span class="nav-due-badge" id="uebenBadgeDesktop" aria-hidden="true"></span>
+          </a>
+          {% endif %}
           {# Shu-Diaet: kein zweiter Shu-Brennpunkt in der Navbar — „N5 Komplett"
              ist ein normaler Nav-Link; der einzige Shu-CTA bleibt „Kostenlos starten".
              Nur fuer Nicht-Besitzer/Nicht-Admins (show_bundle_hint, Context-Processor). #}
@@ -258,16 +244,8 @@
                   <strong>{{ current_user.username }}</strong>
                   <small>{{ current_user.level_title }}</small>
                 </div>
-                <a href="{{ url_for('dashboard.index') }}" class="topnav-dd-item{% if request.endpoint == 'dashboard.index' %} is-active{% endif %}"
-                   {% if request.endpoint == 'dashboard.index' %}aria-current="page"{% endif %}>
-                  <i class="fas fa-compass" aria-hidden="true"></i> Mein Lernen
-                </a>
-                {# Pruefen lebt im Desktop-Topnav als Primaer-Link; hier zusaetzlich,
-                   damit eingeloggte Mobile-Nutzer (Primaernav ausgeblendet) es erreichen. #}
-                <a href="{{ url_for('pruefen.pruefen_start') }}" class="topnav-dd-item{% if request.endpoint in ['pruefen.pruefen_start', 'pruefen.pruefen_session'] %} is-active{% endif %}"
-                   {% if request.endpoint == 'pruefen.pruefen_start' %}aria-current="page"{% endif %}>
-                  <i class="fas fa-clipboard-check" aria-hidden="true"></i> Prüfen
-                </a>
+                {# „Mein Lernen" + „Üben" leben jetzt in der Primär-/Bottom-Nav;
+                   Prüfen + Produktion im Üben-Hub → hier nicht mehr doppelt. #}
                 <a href="{{ url_for('routes.user_profile') }}" class="topnav-dd-item">
                   <i class="fas fa-user-circle" aria-hidden="true"></i> Profil
                 </a>
@@ -281,10 +259,6 @@
                 {% endif %}
                 <a href="{{ url_for('srs.stats_page') }}" class="topnav-dd-item">
                   <i class="fas fa-chart-bar" aria-hidden="true"></i> Statistik
-                </a>
-                {# Produktion: eigene DE→JP-Übungsfläche (Reverse-Karten), lebt im Dropdown #}
-                <a href="{{ url_for('srs.production_page') }}" class="topnav-dd-item">
-                  <i class="fas fa-pen-fancy" aria-hidden="true"></i> Produktion (DE→JP)
                 </a>
                 {# Stöbern: Referenzfunktion, lebt hier statt in der Hauptnav (Desktop + Mobile) #}
                 <a href="{{ url_for('srs.browse_page') }}" class="topnav-dd-item">
@@ -761,26 +735,32 @@
 
     <!-- ══ Mobile Bottom Navigation Bar — flache, gleichwertige Tabs ═══ -->
     <nav class="mobile-bottom-nav" id="mobileBottomNav" aria-label="Schnellnavigation">
+        {% if current_user.is_authenticated %}
+        {# Eingeloggt: 3 Lern-Verben + Profil (Primär-Nav ist auf Mobile ausgeblendet,
+           daher trägt die Bottom-Nav hier den vollen Loop). #}
+        <a href="{{ url_for('dashboard.index') }}" class="bottom-nav-item{% if request.endpoint == 'dashboard.index' %} active{% endif %}"
+           {% if request.endpoint == 'dashboard.index' %}aria-current="page"{% endif %}>
+            <i class="fas fa-compass" aria-hidden="true"></i><span>Mein Lernen</span>
+        </a>
+        {% else %}
         <a href="{{ url_for('routes.index') }}" class="bottom-nav-item{% if request.endpoint == 'routes.index' %} active{% endif %}"
            {% if request.endpoint == 'routes.index' %}aria-current="page"{% endif %}>
             <i class="fas fa-home" aria-hidden="true"></i><span>Home</span>
         </a>
+        {% endif %}
         <a href="{{ url_for('routes.lessons') }}" class="bottom-nav-item{% if request.endpoint in ['routes.lessons', 'routes.view_lesson'] %} active{% endif %}"
            {% if request.endpoint == 'routes.lessons' %}aria-current="page"{% elif request.endpoint == 'routes.view_lesson' %}aria-current="true"{% endif %}>
             <i class="fas fa-book-open" aria-hidden="true"></i><span>Lektionen</span>
         </a>
         {% if current_user.is_authenticated %}
-        <a href="{{ url_for('srs.review_page') }}" class="bottom-nav-item{% if request.endpoint == 'srs.review_page' %} active{% endif %}" id="reviewNavItem"
-           {% if request.endpoint == 'srs.review_page' %}aria-current="page"{% endif %}>
+        {# Üben-Hub: Wiederholen/Kana/Prüfen gebündelt; Aggregat-Fälligkeits-Badge. #}
+        <a href="{{ url_for('srs.ueben_page') }}" class="bottom-nav-item{% if request.endpoint in ['srs.ueben_page', 'srs.review_page', 'srs.production_page', 'srs.practice_kana_page', 'srs.practice_kana_game_page', 'srs.practice_kana_storm_page', 'pruefen.pruefen_start', 'pruefen.pruefen_session'] %} active{% endif %}" id="uebenNavItem"
+           {% if request.endpoint == 'srs.ueben_page' %}aria-current="page"{% endif %}>
             <span class="bottom-nav-ico-wrap">
                 <i class="fas fa-brain" aria-hidden="true"></i>
-                <span class="nav-due-badge" id="reviewBadge" aria-hidden="true"></span>
+                <span class="nav-due-badge" id="uebenBadge" aria-hidden="true"></span>
             </span>
-            <span>Wiederholen</span>
-        </a>
-        <a href="{{ url_for('srs.practice_kana_page') }}" class="bottom-nav-item{% if request.endpoint in ['srs.practice_kana_page', 'srs.practice_kana_game_page'] %} active{% endif %}" aria-label="Kana üben"
-           {% if request.endpoint == 'srs.practice_kana_page' %}aria-current="page"{% elif request.endpoint == 'srs.practice_kana_game_page' %}aria-current="true"{% endif %}>
-            <span class="bottom-nav-kana" aria-hidden="true">あ</span><span>Kana</span>
+            <span>Üben</span>
         </a>
         <a href="{{ url_for('routes.user_profile') }}" class="bottom-nav-item{% if request.endpoint == 'routes.user_profile' %} active{% endif %}"
            {% if request.endpoint == 'routes.user_profile' %}aria-current="page"{% endif %}>
@@ -862,9 +842,10 @@
                     }
                 });
             };
-            // JP→DE (Rezeption): Bottom-Nav + Desktop-Segment. DE→JP (Produktion): Desktop-Segment.
-            setBadge(['reviewBadge', 'reviewBadgeDesktop'], data.due_count, 'Wiederholen JP→DE');
-            setBadge(['prodBadgeDesktop'], data.production_due_count, 'Produktion DE→JP');
+            // Üben-Hub trägt ein Aggregat-Badge: JP→DE (Rezeption) + DE→JP (Produktion)
+            // fällige Karten zusammen — Desktop-Primärnav + Mobile-Bottom-Nav.
+            const dueTotal = (data.due_count || 0) + (data.production_due_count || 0);
+            setBadge(['uebenBadge', 'uebenBadgeDesktop'], dueTotal, 'Üben');
         }).catch(() => {});
     })();
     </script>

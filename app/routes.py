@@ -568,11 +568,12 @@ def register():
 @limiter.limit("10 per minute")
 def login():
     if current_user.is_authenticated:
-        # Redirect based on user role
+        # Redirect based on user role — eingeloggte Nutzer landen auf der
+        # Lern-Heimat „Mein Lernen" (Hub mit Heute-Plan), nicht auf der Startseite.
         if current_user.is_admin:
             return redirect(url_for('routes.admin_index'))
         else:
-            return redirect(url_for('routes.index'))
+            return redirect(url_for('dashboard.index'))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
@@ -589,7 +590,8 @@ def login():
                 if user.is_admin:
                     return redirect(url_for('routes.admin_index'))
                 else:
-                    return redirect(url_for('routes.index'))
+                    # Lern-Heimat „Mein Lernen" statt Startseite (next hat Vorrang).
+                    return redirect(url_for('dashboard.index'))
             return redirect(next_page)
         else:
             if user:
@@ -953,6 +955,7 @@ def lessons():
     total_free = sum(1 for d in page_lessons if d['is_free'])
     total_paid = len(page_lessons) - total_free
     total_done = sum(1 for d in page_lessons if d['status'] == 'done')
+    total_started = sum(1 for d in page_lessons if d['status'] == 'started')
     total_open = len(page_lessons) - total_done
 
     # ── Weiter-lernen-Dashboard (nur eingeloggt) ──────────────────────────
@@ -1029,6 +1032,7 @@ def lessons():
         total_paid=total_paid,
         show_status=show_status,
         total_open=total_open,
+        total_started=total_started,
         total_done=total_done,
         continue_lesson=continue_lesson,
         continue_category=continue_category,

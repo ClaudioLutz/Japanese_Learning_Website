@@ -210,6 +210,10 @@
         Alle Lektionen ansehen
       </a>
       {% endif %}
+      {# Examenssimulation: direkter Einstieg in die Probeprüfung (Mock-Test). #}
+      <a href="{{ url_for('pruefen.pruefen_start') }}" class="btn btn-outline-primary btn-lg">
+        Probeprüfung machen
+      </a>
     </div>
     <div class="n5ch-hero-badges">
       <span>✅ {{ n5_free_lesson_count }} Lektionen kostenlos</span>

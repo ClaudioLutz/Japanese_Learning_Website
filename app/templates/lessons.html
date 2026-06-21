@@ -181,6 +181,7 @@
       <div class="lp-pills" role="group" aria-label="Lernstatus">
         <button type="button" class="lp-pill" :class="status === 'all' && 'is-active'" @click="status='all'; apply();">Alle</button>
         <button type="button" class="lp-pill lp-pill-open" :class="status === 'open' && 'is-active'" @click="status='open'; apply();">📭 Noch offen <span class="lp-pill-num">{{ total_open }}</span></button>
+        <button type="button" class="lp-pill" :class="status === 'started' && 'is-active'" @click="status='started'; apply();">📖 Begonnen <span class="lp-pill-num">{{ total_started }}</span></button>
         <button type="button" class="lp-pill lp-pill-done" :class="status === 'done' && 'is-active'" @click="status='done'; apply();">✅ Abgeschlossen <span class="lp-pill-num">{{ total_done }}</span></button>
       </div>
     </div>
@@ -987,6 +988,7 @@ function lessonsPage() {
       if (this.access === 'paid' && el.dataset.free === '1') return false;
       // "Noch offen" = alles ausser abgeschlossen (inkl. begonnen)
       if (this.status === 'open' && el.dataset.status === 'done') return false;
+      if (this.status === 'started' && el.dataset.status !== 'started') return false;
       if (this.status === 'done' && el.dataset.status !== 'done') return false;
       if (this.search) {
         const q = this.search.toLowerCase();
@@ -1016,6 +1018,7 @@ function lessonsPage() {
       if (this.access === 'free') return `${visible} gratis`;
       if (this.access === 'paid') return `${visible} Premium`;
       if (this.status === 'open') return `${visible} offen`;
+      if (this.status === 'started') return `${visible} begonnen`;
       if (this.status === 'done') return `${visible} abgeschlossen`;
       if (this.search) return `${visible} von ${total} sichtbar`;
       return `${total} Lektionen · ${totalFree} gratis`;

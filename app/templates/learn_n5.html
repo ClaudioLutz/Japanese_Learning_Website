@@ -59,6 +59,10 @@
   <p class="n5-hub-seo-link">
     <a href="{{ url_for('routes.jlpt_n5_schweiz') }}">JLPT N5 in der Schweiz ablegen? →</a>
   </p>
+  {# Examenssimulation: Wissen mit einer Probeprüfung testen (Mock-Test). #}
+  <p class="n5-hub-seo-link">
+    <a href="{{ url_for('pruefen.pruefen_start') }}">Wissen testen: Probeprüfung machen →</a>
+  </p>
 
   {# ── MODUL-PFAD nach den 3 didaktischen Gruppen ─────────── #}
   {% if not n5_modules %}

@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{# ── Übungs-Hub ──────────────────────────────────────────────────────────
+   Bündelt die drei Übungs-Modi (Wiederholen JP→DE/DE→JP, Kana, Prüfen) unter
+   einem Dach, damit die Primär-Nav nur ein „Üben"-Verb braucht. KEINE Funktion
+   wird versteckt: jeder Modus ist hier UND weiterhin per Bottom-Nav/Deep-Link
+   direkt erreichbar. Styles nur über Tokens (var(--…)) → der globale Dark-Flip
+   greift automatisch, kein eigener [data-theme=dark]-Block nötig. #}
+
+{% block title %}Üben{% endblock %}
+{% block meta_description %}Üben auf japanese-learning.ch — Vokabeln & Kanji wiederholen (SRS), Kana-Spiele und JLPT-N5-Prüfungen an einem Ort.{% endblock %}
+
+{% block content %}
+<div class="ueben-hub">
+  <header class="ueben-head">
+    <span class="ueben-eyebrow"><i class="fas fa-brain" aria-hidden="true"></i> Üben</span>
+    <h1>Wie willst du heute üben?</h1>
+    <p>Alle Übungsmodi an einem Ort — wähle einen aus oder folge deinem Tagesplan in
+      <a href="{{ url_for('dashboard.index') }}">Mein Lernen</a>.</p>
+  </header>
+
+  <div class="ueben-grid">
+
+    {# Wiederholen — der tägliche SRS-Loop, prominent zuerst #}
+    <section class="ueben-card ueben-card--primary" aria-labelledby="ueben-wdh">
+      <div class="ueben-card__ico" aria-hidden="true"><i class="fas fa-brain"></i></div>
+      <h2 id="ueben-wdh">Wiederholen</h2>
+      <p>Deine fälligen Karten mit Spaced Repetition — wähle die Richtung.</p>
+      <div class="ueben-dirs">
+        <a href="{{ url_for('srs.review_page') }}" class="ueben-btn ueben-btn--shu">
+          <span><strong>JP&#8594;DE</strong> · Erkennen</span>
+          {% if due_count %}<span class="ueben-due" aria-label="{{ due_count }} fällig">{{ due_count if due_count <= 99 else '99+' }}</span>{% endif %}
+        </a>
+        <a href="{{ url_for('srs.production_page') }}" class="ueben-btn ueben-btn--ghost">
+          <span><strong>DE&#8594;JP</strong> · Produktion</span>
+          {% if production_due %}<span class="ueben-due" aria-label="{{ production_due }} fällig">{{ production_due if production_due <= 99 else '99+' }}</span>{% endif %}
+        </a>
+      </div>
+    </section>
+
+    {# Kana üben — Zuordnung / Storm / Schreiben (eigene Tab-Seite) #}
+    <section class="ueben-card" aria-labelledby="ueben-kana">
+      <div class="ueben-card__ico ueben-card__ico--jp" aria-hidden="true">あ</div>
+      <h2 id="ueben-kana">Kana üben</h2>
+      <p>Hiragana &amp; Katakana spielerisch: Zuordnung, Storm und Schreiben.</p>
+      <a href="{{ url_for('srs.practice_kana_page') }}" class="ueben-btn ueben-btn--ghost ueben-btn--block">Kana starten</a>
+    </section>
+
+    {# Prüfen — eigenständige Examens-Identität (Übung + JLPT-Simulation) #}
+    <section class="ueben-card" aria-labelledby="ueben-pruefen">
+      <div class="ueben-card__ico" aria-hidden="true"><i class="fas fa-clipboard-check"></i></div>
+      <h2 id="ueben-pruefen">Prüfen</h2>
+      <p>Quiz-Fragen erneut testen — als lockere Übung oder als JLPT-N5-Examenssimulation.</p>
+      <a href="{{ url_for('pruefen.pruefen_start') }}" class="ueben-btn ueben-btn--ghost ueben-btn--block">Zur Prüfung</a>
+    </section>
+
+  </div>
+
+  <p class="ueben-foot">
+    Mehr:
+    <a href="{{ url_for('srs.browse_page') }}">Karten verwalten</a>
+    <span aria-hidden="true">·</span>
+    <a href="{{ url_for('srs.stats_page') }}">Statistik</a>
+    <span aria-hidden="true">·</span>
+    <a href="{{ url_for('routes.lessons') }}">Neue Lektionen</a>
+  </p>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+  .ueben-hub { max-width: 920px; margin: 0 auto; padding: 0.5rem 0 2rem; }
+  .ueben-head { text-align: center; margin-bottom: 1.75rem; }
+  .ueben-eyebrow {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    font-size: 0.78rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--ink-600, #5C564D); margin-bottom: 0.4rem;
+  }
+  .ueben-head h1 { font-size: clamp(1.5rem, 3.2vw, 2.1rem); color: var(--kon, #1F2A44); margin: 0.1rem 0; }
+  .ueben-head p { color: var(--text-muted, #5C564D); max-width: 46ch; margin: 0.35rem auto 0; }
+
+  .ueben-grid {
+    display: grid; gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+  /* Wiederholen-Karte spannt im Zwei-/Drei-Spalten-Layout die volle Breite (Daily-Loop zuerst). */
+  .ueben-card--primary { grid-column: 1 / -1; }
+
+  .ueben-card {
+    background: var(--card-background, #FFFDF7);
+    border: 1px solid var(--border-color, #E4DED4);
+    border-radius: 16px;
+    padding: 1.25rem 1.25rem 1.4rem;
+    display: flex; flex-direction: column;
+    box-shadow: 0 1px 2px rgba(28,26,23,.04), 0 1px 3px rgba(28,26,23,.06);
+  }
+  .ueben-card--primary { border-left: 4px solid var(--shu, #EB6101); }
+  .ueben-card__ico {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: rgba(235,97,1,0.10); color: var(--shu-deep, #B84A00);
+    font-size: 1.2rem; margin-bottom: 0.6rem;
+  }
+  .ueben-card__ico--jp {
+    font-family: 'Klee One', 'Noto Serif JP', serif; font-weight: 600; font-size: 1.5rem;
+  }
+  .ueben-card h2 { font-size: 1.15rem; color: var(--text-color, #1C1A17); margin: 0 0 0.25rem; }
+  .ueben-card p { color: var(--text-muted, #5C564D); font-size: 0.92rem; margin: 0 0 1rem; flex: 1; }
+
+  .ueben-dirs { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+  .ueben-dirs .ueben-btn { flex: 1; min-width: 180px; }
+
+  .ueben-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+    padding: 0.7rem 1.1rem; border-radius: 10px;
+    font-weight: 600; font-size: 0.95rem; text-decoration: none;
+    border: 1px solid transparent; transition: background-color .15s, color .15s, border-color .15s;
+  }
+  .ueben-btn--block { width: 100%; }
+  .ueben-btn--shu {
+    background: linear-gradient(180deg, #B84A00, #A23F00); color: #fff;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.15), 0 1px 2px rgba(184,74,0,.30);
+  }
+  .ueben-btn--shu:hover { background: linear-gradient(180deg, #D2560A, #BE4F02); color: #fff; text-decoration: none; }
+  .ueben-btn--ghost {
+    background: transparent; color: var(--kon, #1F2A44);
+    border-color: var(--border-color, #E4DED4);
+  }
+  .ueben-btn--ghost:hover { background: rgba(28,26,23,0.05); color: var(--kon, #1F2A44); text-decoration: none; }
+
+  .ueben-due {
+    min-width: 20px; padding: 0 6px; height: 20px; border-radius: 10px;
+    background: var(--shu-deep, #B84A00); color: #fff;
+    font-size: 0.72rem; font-weight: 700; font-variant-numeric: tabular-nums;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .ueben-btn--shu .ueben-due { background: rgba(255,255,255,0.25); }
+
+  .ueben-foot { text-align: center; margin-top: 1.5rem; color: var(--text-muted, #5C564D); font-size: 0.9rem; }
+  .ueben-foot a { color: var(--kon, #1F2A44); font-weight: 600; }
+
+  /* Dark: helle Hover-Tints invertieren (alles andere läuft über Tokens). */
+  [data-theme="dark"] .ueben-btn--ghost:hover { background: rgba(255,255,255,0.07); }
+  [data-theme="dark"] .ueben-card__ico { background: rgba(235,97,1,0.16); }
+</style>
+{% endblock %}

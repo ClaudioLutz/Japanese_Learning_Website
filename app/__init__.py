@@ -114,7 +114,7 @@ def create_app():
         'SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE': ['openid', 'email', 'profile'],
         'SOCIAL_AUTH_GOOGLE_OAUTH2_USE_PKCE': True,
         'SOCIAL_AUTH_GOOGLE_OAUTH2_USER_ID_KEY': 'sub',  # Use Google's 'sub' field as the uid instead of email
-        'SOCIAL_AUTH_LOGIN_REDIRECT_URL': '/',
+        'SOCIAL_AUTH_LOGIN_REDIRECT_URL': '/mein-lernen',
         'SOCIAL_AUTH_LOGIN_ERROR_URL': '/login',
         'SOCIAL_AUTH_AUTHENTICATION_BACKENDS': [
             'social_core.backends.google.GoogleOAuth2',
