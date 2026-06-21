@@ -243,7 +243,7 @@
 
   <div class="lp-curriculum">
     {% for cat in page_categories %}
-    <section class="lp-cat-group{% if loop.index is even %} lp-cat-group--img-right{% endif %}"
+    <section class="lp-cat-group"
              data-cat-id="{{ cat.id }}"
              data-open-default="{{ '1' if cat.open_default else '0' }}"
              x-show="catVisible($el)"
@@ -633,8 +633,7 @@
 .lp-cat-group-icon { font-size: 1.45rem; line-height: 1; flex-shrink: 0; }
 /* Gruppenbild (16:9 Mini-Banner) in der Ausklapp-Leiste — der Lernpfad steckt
    in der Reihenfolge der Leisten, das Bild macht jede Gruppe erkennbar.
-   Abwechselnd links/rechts (Zebra): gerade Leisten tragen das Bild rechts,
-   die Beschreibung füllt den Raum dazwischen. */
+   Immer links, die Beschreibung füllt den Raum daneben. */
 .lp-cat-group-img {
   flex-shrink: 0; width: 72px; aspect-ratio: 16 / 9;
   border-radius: 8px; overflow: hidden;
@@ -642,8 +641,6 @@
 }
 .lp-cat-group-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .lp-cat-group-head:hover .lp-cat-group-img img { transform: scale(1.03); transition: transform .25s ease; }
-/* Zebra: Bild ans rechte Ende der Leiste schieben (nach Titel + Meta). */
-.lp-cat-group--img-right .lp-cat-group-img { order: 5; }
 @media (max-width: 600px) { .lp-cat-group-img { width: 56px; } }
 .lp-cat-group-titletext { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; flex: 1; }
 .lp-cat-group-name {
