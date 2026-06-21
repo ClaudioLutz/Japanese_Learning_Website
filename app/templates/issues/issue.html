@@ -1,0 +1,99 @@
+{% extends "issues/_issue_base.html" %}
+{% block title %}{{ issue.title }} · Hinweise &amp; Korrekturen{% endblock %}
+
+{% block issue_content %}
+<nav class="issue-breadcrumb" aria-label="Brotkrumen">
+  <a href="{{ url_for('issues.index') }}">Hinweise &amp; Korrekturen</a>
+  <span class="sep">/</span>
+  <span>{{ issue.title }}</span>
+</nav>
+
+<div class="issue-detail{% if issue.is_resolved %} is-resolved{% endif %}">
+  <div class="issue-row-title" style="font-size:1.3rem; margin-bottom:.6rem;">
+    {% if issue.is_resolved %}<span class="issue-badge issue-badge--resolved"><i class="fas fa-check" aria-hidden="true"></i> Erledigt</span>
+    {% else %}<span class="issue-badge issue-badge--open"><i class="fas fa-circle-dot" aria-hidden="true"></i> Offen</span>{% endif %}
+    {{ issue.title }}
+  </div>
+
+  {% if content_url %}
+  <a class="issue-anchor-link" href="{{ content_url }}"><i class="fas fa-link" aria-hidden="true"></i> {{ content_label }}</a>
+  {% endif %}
+
+  <div class="issue-post-head">
+    <span class="issue-avatar" aria-hidden="true">{{ (issue.author.username[0] | upper) if issue.author else '?' }}</span>
+    <span class="issue-author">{{ issue.author.username if issue.author else 'Unbekannt' }}</span>
+    <span>· {{ issue.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
+    {% if issue.is_resolved and issue.resolved_at %}
+      <span>· erledigt am {{ issue.resolved_at.strftime('%d.%m.%Y') }}{% if issue.resolver %} von {{ issue.resolver.username }}{% endif %}</span>
+    {% endif %}
+  </div>
+  <div class="issue-body">{{ issue.body | forum_markdown }}</div>
+
+  {% if issue.can_edit(current_user) or current_user.is_admin %}
+  <div class="issue-modbar">
+    {% if current_user.is_admin %}
+    <form class="issue-inline-form" method="POST" action="{{ url_for('issues.resolve_issue', issue_id=issue.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="issue-btn issue-btn-ghost" type="submit">
+        {% if issue.is_resolved %}<i class="fas fa-rotate-left" aria-hidden="true"></i> Wieder öffnen{% else %}<i class="fas fa-check" aria-hidden="true"></i> Als erledigt markieren{% endif %}
+      </button>
+    </form>
+    {% endif %}
+    {% if issue.can_edit(current_user) %}
+    <form class="issue-inline-form" method="POST" action="{{ url_for('issues.delete_issue', issue_id=issue.id) }}"
+          onsubmit="return confirm('Diesen Hinweis wirklich löschen?');">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="issue-btn issue-btn-ghost" type="submit"><i class="fas fa-trash" aria-hidden="true"></i> Löschen</button>
+    </form>
+    {% endif %}
+  </div>
+  {% endif %}
+</div>
+
+<h2 class="h6" id="comments" style="color:var(--kon); margin:1.5rem 0 .75rem;">Antworten</h2>
+{% for c in comments %}
+  <div class="issue-comment{% if c.is_maintainer_reply %} issue-comment--team{% endif %}{% if c.is_deleted %} issue-comment--deleted{% endif %}" id="comment-{{ c.id }}">
+    {% if c.is_deleted %}
+      <p class="issue-body"><em>[Diese Antwort wurde gelöscht.]</em></p>
+    {% else %}
+      <div class="issue-post-head">
+        <span class="issue-avatar" aria-hidden="true">{{ (c.author.username[0] | upper) if c.author else '?' }}</span>
+        <span class="issue-author">{{ c.author.username if c.author else 'Unbekannt' }}</span>
+        {% if c.is_maintainer_reply %}<span class="issue-badge issue-badge--team">Team</span>{% endif %}
+        <span>· {{ c.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
+        {% if c.edited_at %}<span class="issue-edited">· bearbeitet</span>{% endif %}
+      </div>
+      <div class="issue-body">{{ c.body | forum_markdown }}</div>
+      {% if c.can_edit(current_user) %}
+      <div class="issue-post-foot">
+        <form class="issue-inline-form" method="POST" action="{{ url_for('issues.delete_comment', comment_id=c.id) }}"
+              onsubmit="return confirm('Antwort wirklich löschen?');">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="danger"><i class="fas fa-trash" aria-hidden="true"></i> Löschen</button>
+        </form>
+      </div>
+      {% endif %}
+    {% endif %}
+  </div>
+{% else %}
+  <div class="issue-empty"><span class="ico"><i class="fas fa-comments" aria-hidden="true"></i></span>Noch keine Antworten.</div>
+{% endfor %}
+
+{% if current_user.is_authenticated %}
+<div class="issue-card" style="margin-top:1.25rem;">
+  <form class="issue-form" method="POST" action="{{ url_for('issues.comment', issue_id=issue.id) }}">
+    {{ form.csrf_token }}
+    <label for="comment-body">Antwort schreiben</label>
+    <textarea id="comment-body" name="body" placeholder="Deine Antwort … (Markdown wird unterstützt)" required>{{ form.body.data or '' }}</textarea>
+    <div class="issue-form-actions">
+      <button type="submit" class="issue-btn issue-btn-primary"><i class="fas fa-paper-plane" aria-hidden="true"></i> Antworten</button>
+    </div>
+  </form>
+</div>
+{% else %}
+<div class="issue-login-note">
+  Zum Antworten bitte <a href="{{ url_for('routes.login', next=request.path) }}">anmelden</a>
+  oder <a href="{{ url_for('routes.register', next=request.path) }}">Konto erstellen</a>.
+</div>
+{% endif %}
+{% endblock %}

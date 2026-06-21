@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{#
+  Issue-Board-Basis. Erbt base.html, liefert isoliertes issue-*-CSS im
+  styles-Block (NICHT custom.css -> kein Deck-Karussell-Risiko). Lesen ist
+  oeffentlich; ALLE Issue-Seiten tragen noindex (crawlbar lassen, damit Google
+  das noindex sieht — kein robots-Disallow). Design ink-on-washi via Tokens.
+#}
+{% block robots %}noindex,nofollow{% endblock %}
+{% block styles %}
+<style>
+  .issue-wrap { max-width: 880px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+  .issue-breadcrumb { display:flex; flex-wrap:wrap; gap:.4rem; align-items:center; font-size:.85rem; color:var(--text-muted); margin-bottom:1rem; }
+  .issue-breadcrumb a { color:var(--text-muted); text-decoration:none; }
+  .issue-breadcrumb a:hover { color:var(--shu); }
+  .issue-breadcrumb .sep { opacity:.5; }
+
+  .issue-head { margin-bottom:1.25rem; }
+  .issue-head h1 { font-family:'Fraunces','Noto Serif JP',Georgia,serif; font-size:clamp(1.5rem,4vw,2rem); color:var(--kon); margin:0 0 .3rem; }
+  .issue-head p { color:var(--text-muted); margin:0; font-size:.95rem; }
+
+  .issue-toolbar { display:flex; justify-content:space-between; align-items:center; gap:1rem; margin-bottom:1rem; flex-wrap:wrap; }
+  .issue-filters { display:flex; gap:.4rem; flex-wrap:wrap; }
+  .issue-filter { padding:.35rem .8rem; border-radius:999px; border:1px solid var(--border-color); color:var(--text-color); text-decoration:none; font-size:.85rem; }
+  .issue-filter:hover { border-color:var(--shu); color:var(--shu); }
+  .issue-filter.is-active { background:var(--kon); color:var(--washi); border-color:var(--kon); }
+
+  .issue-card { background:var(--card-background); border:1px solid var(--border-color); border-radius:12px; padding:1rem 1.15rem; margin-bottom:.75rem; transition:border-color .15s ease, box-shadow .15s ease; }
+  a.issue-card { display:block; text-decoration:none; color:inherit; }
+  a.issue-card:hover { border-color:var(--shu); box-shadow:0 2px 12px rgba(0,0,0,.06); }
+  .issue-row { display:flex; align-items:flex-start; gap:.75rem; }
+  .issue-row-main { flex:1 1 auto; min-width:0; }
+  .issue-row-title { font-size:1.02rem; font-weight:600; color:var(--kon); margin:0; display:flex; align-items:center; gap:.45rem; flex-wrap:wrap; }
+  .issue-row-meta { color:var(--text-muted); font-size:.8rem; margin-top:.25rem; }
+  .issue-row-anchor { color:var(--text-muted); font-size:.78rem; margin-top:.15rem; }
+
+  .issue-badge { display:inline-flex; align-items:center; gap:.25rem; font-size:.68rem; font-weight:700; letter-spacing:.02em; padding:.12rem .5rem; border-radius:999px; text-transform:uppercase; }
+  .issue-badge--open { background:var(--shu-soft); color:var(--shu-deep); }
+  .issue-badge--resolved { background:var(--kon-100); color:var(--kon-500); }
+  .issue-badge--team { background:var(--kon); color:var(--washi); }
+
+  .issue-detail { background:var(--card-background); border:1px solid var(--border-color); border-radius:12px; padding:1.2rem 1.3rem; margin-bottom:1.25rem; }
+  .issue-detail.is-resolved { border-color:var(--kon-300); }
+  .issue-anchor-link { display:inline-flex; align-items:center; gap:.4rem; font-size:.85rem; background:var(--kon-50); color:var(--kon); padding:.4rem .7rem; border-radius:8px; text-decoration:none; margin-bottom:.9rem; }
+  .issue-anchor-link:hover { color:var(--shu); }
+
+  .issue-post-head { display:flex; align-items:center; gap:.6rem; margin-bottom:.6rem; font-size:.85rem; color:var(--text-muted); flex-wrap:wrap; }
+  .issue-avatar { width:30px; height:30px; border-radius:50%; display:grid; place-items:center; background:var(--kon); color:var(--washi); font-weight:700; font-size:.85rem; flex:0 0 auto; }
+  .issue-author { font-weight:600; color:var(--text-color); }
+  .issue-body { color:var(--text-color); line-height:1.65; word-wrap:break-word; overflow-wrap:anywhere; }
+  .issue-body p { margin:0 0 .7rem; }
+  .issue-body :last-child { margin-bottom:0; }
+  .issue-body pre { background:var(--ink-100); border:1px solid var(--border-color); border-radius:8px; padding:.6rem .8rem; overflow-x:auto; font-size:.85rem; }
+  .issue-body code { background:var(--ink-100); padding:.1rem .35rem; border-radius:5px; font-size:.9em; }
+  .issue-body blockquote { border-left:3px solid var(--shu-soft); margin:.5rem 0; padding:.2rem 0 .2rem .8rem; color:var(--text-muted); }
+
+  .issue-comment { background:var(--card-background); border:1px solid var(--border-color); border-radius:12px; padding:1rem 1.15rem; margin-bottom:.85rem; }
+  .issue-comment--team { border-color:var(--kon-300); background:var(--kon-50); }
+  .issue-comment--deleted { opacity:.65; }
+  .issue-post-foot { margin-top:.7rem; display:flex; gap:.9rem; font-size:.8rem; }
+  .issue-post-foot a, .issue-post-foot button { background:none; border:none; padding:0; cursor:pointer; color:var(--text-muted); text-decoration:none; font-size:.8rem; }
+  .issue-post-foot a:hover, .issue-post-foot button:hover { color:var(--shu); }
+  .issue-post-foot .danger:hover { color:var(--color-error,#c0392b); }
+  .issue-edited { font-style:italic; opacity:.8; }
+
+  .issue-modbar { display:flex; gap:.5rem; flex-wrap:wrap; margin:.9rem 0 0; }
+  .issue-inline-form { display:inline; }
+
+  .issue-btn { display:inline-flex; align-items:center; gap:.4rem; padding:.55rem 1.1rem; border-radius:999px; font-weight:600; font-size:.9rem; cursor:pointer; text-decoration:none; border:1px solid transparent; transition:background .15s ease,color .15s ease,border-color .15s ease; }
+  .issue-btn-primary { background:var(--shu); color:#fff; }
+  .issue-btn-primary:hover { background:var(--shu-deep); color:#fff; }
+  .issue-btn-ghost { background:transparent; border-color:var(--border-color); color:var(--text-color); }
+  .issue-btn-ghost:hover { border-color:var(--shu); color:var(--shu); }
+
+  .issue-form label { display:block; font-weight:600; margin-bottom:.35rem; color:var(--text-color); }
+  .issue-form input[type=text], .issue-form textarea { width:100%; padding:.65rem .8rem; border:1px solid var(--border-color); border-radius:10px; background:var(--card-background); color:var(--text-color); font:inherit; margin-bottom:1rem; }
+  .issue-form textarea { min-height:160px; resize:vertical; line-height:1.6; }
+  .issue-form input:focus, .issue-form textarea:focus { outline:none; border-color:var(--shu); box-shadow:0 0 0 3px var(--shu-soft); }
+  .issue-form .field-error { color:var(--color-error,#c0392b); font-size:.82rem; margin:-.6rem 0 1rem; }
+  .issue-form-actions { display:flex; gap:.75rem; align-items:center; }
+
+  .issue-empty { text-align:center; padding:2.5rem 1rem; color:var(--text-muted); border:1px dashed var(--border-color); border-radius:12px; }
+  .issue-empty .ico { font-size:1.8rem; opacity:.5; display:block; margin-bottom:.5rem; }
+  .issue-login-note { text-align:center; padding:1.25rem; color:var(--text-muted); border:1px dashed var(--border-color); border-radius:12px; margin-top:1rem; }
+  .issue-login-note a { color:var(--shu); font-weight:600; }
+
+  .issue-pagination { display:flex; justify-content:center; gap:.4rem; margin-top:1.5rem; flex-wrap:wrap; }
+  .issue-pagination a, .issue-pagination span { min-width:38px; text-align:center; padding:.4rem .6rem; border-radius:8px; border:1px solid var(--border-color); color:var(--text-color); text-decoration:none; font-size:.85rem; }
+  .issue-pagination a:hover { border-color:var(--shu); color:var(--shu); }
+  .issue-pagination .current { background:var(--shu); color:#fff; border-color:var(--shu); }
+  .issue-pagination .disabled { opacity:.4; pointer-events:none; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="issue-wrap">
+  {% block issue_content %}{% endblock %}
+</div>
+{% endblock %}

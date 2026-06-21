@@ -1,0 +1,55 @@
+{% extends "issues/_issue_base.html" %}
+{% block title %}Hinweise & Korrekturen{% endblock %}
+{% block meta_description %}Hinweise & Korrekturen zu den Lektionen von japanese-learning.ch — Fehler melden und gemeinsam verbessern.{% endblock %}
+
+{% block issue_content %}
+<div class="issue-toolbar">
+  <div class="issue-head" style="margin-bottom:0">
+    <h1>Hinweise &amp; Korrekturen</h1>
+    <p>Fehler in einer Lektion oder auf einer Karte gefunden? Melde ihn — wir korrigieren ihn und antworten dir.</p>
+  </div>
+  <a class="issue-btn issue-btn-primary" href="{{ url_for('issues.new_issue') }}">
+    <i class="fas fa-flag" aria-hidden="true"></i> Hinweis melden
+  </a>
+</div>
+
+<div class="issue-filters" role="group" aria-label="Status-Filter">
+  <a class="issue-filter{% if status == 'open' %} is-active{% endif %}" href="{{ url_for('issues.index', status='open') }}">Offen ({{ open_count }})</a>
+  <a class="issue-filter{% if status == 'resolved' %} is-active{% endif %}" href="{{ url_for('issues.index', status='resolved') }}">Erledigt ({{ resolved_count }})</a>
+  <a class="issue-filter{% if status == 'all' %} is-active{% endif %}" href="{{ url_for('issues.index', status='all') }}">Alle</a>
+</div>
+<div style="height:1rem"></div>
+
+{% if issues %}
+  {% for issue in issues %}
+  <a class="issue-card" href="{{ url_for('issues.view_issue', issue_id=issue.id, slug=issue.build_slug()) }}">
+    <div class="issue-row">
+      <div class="issue-row-main">
+        <p class="issue-row-title">
+          {% if issue.is_resolved %}<span class="issue-badge issue-badge--resolved"><i class="fas fa-check" aria-hidden="true"></i> Erledigt</span>
+          {% else %}<span class="issue-badge issue-badge--open"><i class="fas fa-circle-dot" aria-hidden="true"></i> Offen</span>{% endif %}
+          {{ issue.title }}
+        </p>
+        {% if issue.content_type %}
+        <div class="issue-row-anchor"><i class="fas fa-link" aria-hidden="true"></i>
+          {% if issue.content_type == 'lesson' %}Lektion{% else %}Karte/Inhalt{% endif %}
+        </div>
+        {% endif %}
+        <div class="issue-row-meta">
+          von {{ issue.author.username if issue.author else 'Unbekannt' }}
+          · {{ issue.created_at.strftime('%d.%m.%Y') }}
+        </div>
+      </div>
+    </div>
+  </a>
+  {% endfor %}
+
+  {% include "issues/_pagination.html" with context %}
+{% else %}
+  <div class="issue-empty">
+    <span class="ico"><i class="fas fa-clipboard-check" aria-hidden="true"></i></span>
+    {% if status == 'resolved' %}Noch nichts als erledigt markiert.
+    {% else %}Noch keine offenen Hinweise. Hast du einen gefunden?{% endif %}
+  </div>
+{% endif %}
+{% endblock %}

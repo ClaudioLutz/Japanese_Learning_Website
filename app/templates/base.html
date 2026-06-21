@@ -281,6 +281,12 @@
                    {% if request.blueprint == 'forum' %}aria-current="page"{% endif %}>
                   <i class="fas fa-comments" aria-hidden="true"></i> Forum
                 </a>
+                {# Hinweise & Korrekturen: oeffentliches Issue-/Feedback-Board (Lesen
+                   offen, Schreiben mit Konto) — lebt im Dropdown, nicht in der Primary-Nav. #}
+                <a href="{{ url_for('issues.index') }}" class="topnav-dd-item{% if request.blueprint == 'issues' %} is-active{% endif %}"
+                   {% if request.blueprint == 'issues' %}aria-current="page"{% endif %}>
+                  <i class="fas fa-flag" aria-hidden="true"></i> Hinweise &amp; Korrekturen
+                </a>
                 {# 10.3: Bundle-Link im Konto-Dropdown entfernt — Dublette des
                    Top-Nav-Hinweises (eine gegatete Bundle-Stelle pro Flaeche). #}
                 {% if current_user.is_admin %}

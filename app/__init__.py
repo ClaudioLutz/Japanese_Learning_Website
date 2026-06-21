@@ -303,6 +303,12 @@ def create_app():
     from app.forum_routes import forum_bp
     app.register_blueprint(forum_bp)
 
+    # Content-Feedback / Issue-Board (/feedback) — Lesen OEFFENTLICH, Schreiben
+    # nur mit Konto. NICHT csrf-exempt. Seiten tragen noindex (kein robots-
+    # Disallow, sonst saehe Google das noindex nie).
+    from app.issue_routes import issue_bp
+    app.register_blueprint(issue_bp)
+
     # Error-Handler — eigene Templates auf Deutsch (vorher: Default-Flask-HTML in Englisch)
     from flask import render_template
     @app.errorhandler(404)
