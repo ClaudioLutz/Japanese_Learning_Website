@@ -2,6 +2,8 @@
 
 *Stand: 2026-06-21 · Status: FINAL (abgabefertig) · Autor: Produkt-/Lern-Architektur · Review: 3 Linsen (Pädagogik, Engineering/Migration, UX/Leak/Frontend) eingearbeitet*
 
+> **REVISION 2026-06-21:** Alle 8 offenen Fragen sind entschieden und die Datenfragen empirisch gegen die DB geklärt. **Architektur-Pivot:** Produktion läuft über eine **eigene, immer verfügbare Seite `/review/produktion`** (eigene Queue) statt eines Opt-in-Toggles in `/review`. Der Abschnitt **„Entscheidungen — festgelegt 2026-06-21"** (am Ende) ist maßgeblich und hat Vorrang vor dem ursprünglichen Opt-in-Entwurf in 6.5 / 7.1 / 9.4 (die als Begründung/Alternative stehen bleiben).
+
 ---
 
 ## TL;DR / Empfehlung in 5 Sätzen
@@ -9,7 +11,7 @@
 1. Wir führen **Produktion (DE→JP)** als **eigenständige FSRS-Spur pro Vokabel** ein (Option A: neue `direction`-Spalte auf `CardReviewState`/`ReviewLog`, Unique von `(user,content)` auf `(user,content,direction)` umgestellt) — nicht als umgedrehte Anzeige, weil FSRS genau eine Gedächtnisspur pro Karte modelliert und Rezeption schneller reift als Produktion.
 2. **Primärer Disambiguierer ist der autorierte `production_cue_de`** (Wortart-/Register-/Sinn-Tag), **nicht** der deutsche Lückensatz — denn das deutsche Lemma steht nur in ~70 % der N5-Sätze verbatim und löst die Kern-Härtefälle (私/僕/俺, 行く, 大きい/大きな) gerade *nicht*; der Lückensatz ist nur opportunistischer Zusatz auf einer verifizierten Whitelist.
 3. **Leak-Vermeidung ist Frontend-Sache** im `reverse`-Render-Zweig von `review.html`: unterdrückt werden Front die **reading+romaji-Zeile** (der schärfste Leak), der **JP-Beispielsatz** und das **Bild-`alt` wird leer** (ARIA-Leak); der Audio-Button liegt bereits back-only — kein zu lösendes Problem. Das Bild bleibt als sprachneutraler Cue vorne (neu platziert, vergrößert, dekoratives `alt`).
-4. **MVP (Phase 1)** = echtes SRS pro Richtung für *eine* per-Lektion-aktivierte Lektion, inklusive kuratierter `production_cue_de` für die Homonym-/Register-Härtefälle (vorgezogen, sonst startet das Feature ohne funktionierende Disambiguierung) und einem **sichtbaren Reife-Nudge** (statt nur stillem Lesson-Boolean).
+4. **MVP (Phase 1)** = echtes SRS pro Richtung auf einer **eigenen, immer verfügbaren Seite `/review/produktion`** (eigene Queue, **kein** Opt-in-Flag); eine Vokabel erscheint dort automatisch, sobald ihre JP→DE-Karte **Stage ≥ 3** erreicht (Recognition-first). Inklusive kuratierter `production_cue_de` für die **~19 % echten Härtefälle** (Homonyme/Register) + Wortart-Tag für den Rest. *(Revision 2026-06-21 — ersetzt den ursprünglichen per-Lektion-Opt-in.)*
 5. Drei Engineering-Blocker sind gelöst: `downgrade()` löscht zuerst die `reverse`-Zeilen (dokumentierter Trade-off: Daten*verlust* beim Downgrade), der INSERT-Pfad in `rate_card` setzt `direction` **explizit** (sonst Unique-Crash bei der ersten Reverse-Bewertung), und die komplette Route-Schicht (`srs_routes.py`) + die dritte Rate-Oberfläche (`kana_grid_game.js`) führen `direction` **default-`forward`** end-to-end.
 
 ---
@@ -434,16 +436,51 @@ Inflationär bei aktiver Produktion sind **nicht nur** `get_due_count`, sondern 
 
 ---
 
-## Offene Fragen vor Phase 1 (Mensch entscheidet)
+## Entscheidungen — festgelegt 2026-06-21 (lösen die offenen Fragen ab)
 
-1. **Lückensatz-Whitelist:** An einer N5-Stichprobe von `example_translation` durchspielen — bei wie vielen `content_id`s steht das Zielwort **wörtlich und sauber maskierbar** im deutschen Satz? Ergebnis bestimmt die Größe der opportunistischen Whitelist (Erwartung: deutlich unter 70 %).
-2. **`production_cue_de`-Backlog-Umfang:** Für welche Homonym-/Register-Klassen wird in Phase 1 kuratiert? Mindestens: 私/僕/俺, 熱い/暑い, 大きい/大きな, „gehen"-Synonyme — vollständige Härtefall-Liste festlegen.
-3. **Coverage-Re-Verifikation:** Coverage-Query (6.2) real gegen Prod-DB laufen lassen, Ergebnis mit Datum im Doc fixieren.
-4. **Opt-in-Granularität:** per-Lektion ausreichend, oder pro-Modul gewünscht?
-5. **Reife-Schwelle** für Phase-2-Auto-Anlegen: Stage ≥ 5 oder höher (Stabilität in Tagen)?
-6. **Kalibrierungs-Modus-Timing:** getippten Kana/Romaji-Anker (8.2b) in Phase 2 als Default-Option oder rein opt-in?
-7. **Produktions-Mastery auf `/review/stats`:** eigener Block oder in N5-Mastery integriert (aber getrennt gezählt)?
-8. **Satz-Produktion (Phase 3):** überhaupt im Roadmap-Horizont, oder Einzelwort-Produktion als bewusster Endzustand für N5?
+Alle vor Phase 1 offenen Punkte sind entschieden; die Datenfragen wurden empirisch gegen die DB (lokale Dev = an diesem Tag aus Prod angeglichen) geklärt. **Dieser Abschnitt ist maßgeblich** und hat bei Konflikten Vorrang vor dem ursprünglichen Entwurf in 6.5 / 7.1 / 9.4.
+
+### A. Architektur-Pivot — eigene Produktions-Seite statt Opt-in-Toggle (löst die frühere „Opt-in-Granularität")
+
+Produktion bekommt eine **eigene, immer verfügbare Seite `/review/produktion`** mit **eigener Queue** — statt eines Richtungs-Toggles in `/review` und statt eines per-Lektion-Opt-in-Flags. **Weiterhin auf Basis der `direction`-Schema-Spalte (Option A bleibt** — die Seite ist eine Darstellungs-/Queue-Wahl, **kein** Ersatz für die getrennte FSRS-Spur).
+
+Damit **entfallen** aus dem ursprünglichen Entwurf:
+- per-Lektion-Flag `Lesson.production_cards_enabled` + Reife-Nudge (6.5) → ersetzt durch Auto-Population nach Reife (B).
+- Modus-Schalter „JP→DE · DE→JP · Gemischt" in `/review` (7.1) → `/review` bleibt reine Rezeptions-Queue.
+- Same-day-Sibling-Suppression + Interleaving (6.4) → **nicht mehr nötig**: beide Richtungen teilen nie eine Session, also kann eine Karte ihre Gegenrichtung nicht innerhalb der Session verraten.
+- Due-Count-Verdopplung im `/review`-Badge (9.4) → das `/review`-Badge bleibt **forward-only**; die Produktions-Seite führt einen **eigenen** Zähler. Selbst-getaktete Last (man zieht Produktion, wenn man will).
+
+`lesson_view`-Deck bleibt **forward** (7.3 unverändert). Die Karten-/Rating-Logik der Produktions-Seite teilt sich `showCard()`/Rating-JS mit `review.html` (direction-Param + eigener Queue-Endpoint), kein Voll-Neubau.
+
+### B. Population der Produktions-Queue (Q5): erst bei rezeptiver Festigung
+
+Eine Vokabel betritt die DE→JP-Queue **automatisch, sobald ihre JP→DE-Karte Stage ≥ 3** („Lernphase überstanden") erreicht hat — Recognition-first ohne Opt-in, kein Produzieren gerade erst gesehener Wörter. Schwelle kalibrierbar; Start mit ≥ 3. (Das ist die frühere Phase-2-„Reife-Auto-Anlegen"-Idee, hier zur MVP-Populationsregel der Seite gemacht.)
+
+### C. Daten — verifiziert 2026-06-21 (lokale DB = an diesem Tag aus Prod angeglichen)
+
+| Befund | Wert | Konsequenz |
+|---|---|---|
+| `meaning_de`-Coverage N5 | **799/799 = 100 %** (N4 33 %, gesamt 99,3 %) | N5 reverse-fähig; N4 zuerst Daten-Pflege |
+| Lückensatz-Maskierbarkeit N5 | **64 %** sauber maskierbar (loose 77 %) | besser als befürchtet, **aber** maskierbar ≠ disambiguierend |
+| Kollidierende dt. Cues (roh) | 142 Cues / 303 Vok (38 %) | inkl. 76 reiner Kanji/Kana-Dubletten |
+| **Echte Homonyme/Synonyme** | **66 Cues / 151 Vok = 19 % von N5** | das ist der sicherheitskritische `production_cue_de`-Backlog |
+
+### D. Restliche Beschlüsse
+
+- **Lückensatz-Whitelist (Q1):** empirisch ermittelt (64 % maskierbar). Whitelisted Cloze nur dort, wo das Zielwort **sauber maskierbar UND disambiguierend** ist (Teilmenge). Bleibt **sekundär** hinter `production_cue_de`.
+- **`production_cue_de`-Backlog (Q2): ganzer N5-Bestand**, gestaffelt — die **~19 % echten Härtefälle** (semantischer/Register-Cue) **zwingend in Phase 1**; die übrigen ~81 % bekommen einen leichten **Wortart-Tag** (Verb / i-Adj / na-Adj / Nomen …).
+- **Kalibrierung (Q6):** getippter Kana/Romaji-Modus als **Opt-in in Phase 2**; Self-Assess-Flip bleibt Default (mit Disziplin-Copy 8.3).
+- **Produktions-Stats (Q7): eigener Block** „Produktiv gemeistert" auf `/review/stats`, getrennt vom JLPT-Kern (forward bleibt kanonisch, keine Doppelzählung — 9.2).
+- **Satz-Produktion (Q8):** als **Phase-3-Ziel eingeplant** (deutscher Cue → JP-Mini-Satz, TAP-konsequenter). Einzelwort-Produktion ist der MVP, **nicht** der Endzustand.
+
+### E. Neuer Pre-Phase-1-Task (aus der Analyse aufgetaucht)
+
+Die **76 Kanji/Kana-Dubletten** (dieselbe Vokabel als 時 *und* じ usw., gleiche Lesung) **vor Phase 1 deduplizieren/zusammenführen** — sonst entstehen zwei Reverse-Karten fürs selbe Wort, und der Cue-Backlog wird künstlich aufgebläht.
+
+### F. Verbleibende Mikro-Stellschrauben (nicht blockierend)
+
+- Genaue Reife-Schwelle (Stage ≥ 3 vs. Stabilität-in-Tagen) — Start mit ≥ 3, nach Gefühl justieren.
+- Default-Sortierung der Produktions-Queue (fällige zuerst vs. neu-nach-Reife gemischt).
 
 ---
 
