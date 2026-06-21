@@ -56,19 +56,29 @@
   <section class="lp-continue" aria-label="Weiter lernen">
     {% if continue_lesson %}
     <div class="lp-continue-main">
-      <p class="lp-continue-eyebrow">{% if total_done == 0 %}Leg los{% else %}Weiter lernen{% endif %}</p>
-      <h1 class="lp-continue-title">{{ continue_lesson.title }}</h1>
-      <p class="lp-continue-cat">
-        {% if continue_category %}{{ continue_category }}{% endif %}
-        {% if continue_lesson.status == 'started' %} · <span class="lp-continue-lessonpct">{{ continue_lesson.progress_percentage }}% dieser Lektion</span>{% else %} · noch nicht begonnen{% endif %}
-      </p>
-      <div class="lp-continue-actions">
-        <a href="{{ url_for('routes.view_lesson', lesson_id=continue_lesson.id) }}" class="lp-continue-cta">
-          {% if continue_lesson.status == 'started' %}Weiterlernen{% else %}Lektion starten{% endif %} →
-        </a>
-        {% if due_count > 0 %}
-        <a href="{{ url_for('srs.review_page') }}" class="lp-continue-secondary">↻ {{ due_count }} fällig wiederholen</a>
+      {# Lektions-Thumbnail der „Weiter lernen"-Lektion (gleiches Bildmuster wie die Katalog-Karten). #}
+      <a href="{{ url_for('routes.view_lesson', lesson_id=continue_lesson.id) }}"
+         class="lp-continue-media{% if not continue_lesson.thumbnail_url %} lp-continue-media-placeholder{% endif %}"
+         tabindex="-1" aria-hidden="true">
+        {% if continue_lesson.thumbnail_url %}
+        <img src="{{ continue_lesson.thumbnail_url }}" alt="" loading="lazy" decoding="async">
         {% endif %}
+      </a>
+      <div class="lp-continue-body">
+        <p class="lp-continue-eyebrow">{% if total_done == 0 %}Leg los{% else %}Weiter lernen{% endif %}</p>
+        <h1 class="lp-continue-title">{{ continue_lesson.title }}</h1>
+        <p class="lp-continue-cat">
+          {% if continue_category %}{{ continue_category }}{% endif %}
+          {% if continue_lesson.status == 'started' %} · <span class="lp-continue-lessonpct">{{ continue_lesson.progress_percentage }}% dieser Lektion</span>{% else %} · noch nicht begonnen{% endif %}
+        </p>
+        <div class="lp-continue-actions">
+          <a href="{{ url_for('routes.view_lesson', lesson_id=continue_lesson.id) }}" class="lp-continue-cta">
+            {% if continue_lesson.status == 'started' %}Weiterlernen{% else %}Lektion starten{% endif %} →
+          </a>
+          {% if due_count > 0 %}
+          <a href="{{ url_for('srs.review_page') }}" class="lp-continue-secondary">↻ {{ due_count }} fällig wiederholen</a>
+          {% endif %}
+        </div>
       </div>
     </div>
     {% else %}
@@ -412,6 +422,19 @@
   border-radius: 16px;
   padding: 1.6rem 1.75rem;
   margin-bottom: 1.75rem;
+}
+.lp-continue-main { display: flex; align-items: center; gap: 1.25rem; min-width: 0; }
+.lp-continue-body { min-width: 0; }
+.lp-continue-media {
+  width: 190px; flex: none; aspect-ratio: 16 / 9;
+  border-radius: 12px; overflow: hidden; display: block;
+  background: var(--ink-100); border: 1px solid var(--ink-200);
+}
+.lp-continue-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.lp-continue-media-placeholder { background: linear-gradient(135deg, var(--ink-100), var(--ink-200)); }
+@media (max-width: 640px) {
+  .lp-continue-main { gap: 0.9rem; }
+  .lp-continue-media { width: 96px; border-radius: 10px; }
 }
 .lp-continue-eyebrow {
   font-family: 'Geist Mono', ui-monospace, monospace;
