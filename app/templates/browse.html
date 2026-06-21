@@ -4,279 +4,666 @@
 
 {% block styles %}
 <style>
-    .browse-container { max-width: 1100px; margin: 0 auto; padding: 1rem; padding-bottom: 80px; }
-    .browse-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
-    .browse-header h5 { color: var(--primary-color, #2B4C7E); margin: 0; }
-    .browse-total { font-size: 0.85rem; color: var(--text-muted); }
+    /* ════════════════════════════════════════════════════════════
+       Karten-Browser  /review/browse  — Ink-on-Washi
+       Tokens: --washi --kon --shu(+soft/deep) --ai --kincha --matcha
+               --ink-50..800 --color-error --space-* --radius-* --shadow-*
+       Ein heisser Akzent (--shu) fuer Aktion. Alles andere warme Neutrale.
+       --shu ist im Dark stabil; --kon/--primary-color kippen → nie als
+       Fuellung mit weissem Text. Alles gescopt unter .cb-* (kein custom.css).
+       ════════════════════════════════════════════════════════════ */
+    :root { --cb-mono: ui-monospace, 'Geist Mono', SFMono-Regular, Menlo, monospace; }
 
-    .browse-layout { display: grid; grid-template-columns: 220px 1fr; gap: 1rem; }
-    @media (max-width: 768px) { .browse-layout { grid-template-columns: 1fr; } }
+    .cb-page { max-width: 1152px; margin: 0 auto; padding: var(--space-6) var(--space-4) 96px; }
+    @media (max-width: 640px) { .cb-page { padding: var(--space-4) var(--space-3) 92px; } }
 
-    /* Sidebar */
-    .browse-sidebar { background: var(--card-bg, #FFFDF7); border: 1px solid var(--border-color, #D4CFC5); border-radius: 12px; padding: 1rem; height: fit-content; }
-    .filter-group { margin-bottom: 1rem; }
-    .filter-group label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.3rem; text-transform: uppercase; letter-spacing: 0.5px; }
-    .filter-checkbox { display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; margin-bottom: 0.2rem; cursor: pointer; }
-    .filter-checkbox input { accent-color: var(--primary-color, #2B4C7E); }
-    .filter-toggle { display: flex; align-items: center; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.3rem; }
-    .filter-toggle input[type="checkbox"] { width: 36px; height: 20px; appearance: none; background: #ccc; border-radius: 10px; position: relative; cursor: pointer; transition: background 0.2s; }
-    .filter-toggle input[type="checkbox"]:checked { background: var(--primary-color, #2B4C7E); }
-    .filter-toggle input[type="checkbox"]::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: var(--card-background); border-radius: 50%; transition: transform 0.2s; }
-    .filter-toggle input[type="checkbox"]:checked::after { transform: translateX(16px); }
-    .filter-select { width: 100%; padding: 0.35rem; border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.85rem; background: var(--card-bg); }
-    .filter-btn { width: 100%; padding: 0.4rem; border: none; border-radius: 8px; background: var(--primary-color, #2B4C7E); color: #fff; font-size: 0.8rem; cursor: pointer; }
-    .filter-btn:hover { opacity: 0.9; }
-    .filter-btn-outline { background: transparent; border: 1px solid var(--border-color); color: var(--text-color); }
-
-    @media (max-width: 768px) {
-        .browse-sidebar { display: none; }
-        .browse-sidebar.open { display: block; }
-        .mobile-filter-toggle { display: block; margin-bottom: 0.75rem; }
-    }
-    @media (min-width: 769px) { .mobile-filter-toggle { display: none; } }
-
-    /* Main content */
-    .browse-search { position: relative; margin-bottom: 0.75rem; }
-    .browse-search input { width: 100%; padding: 0.5rem 0.5rem 0.5rem 2rem; border: 1px solid var(--border-color); border-radius: 10px; font-size: 0.9rem; background: var(--card-bg); }
-    .browse-search i { position: absolute; left: 0.7rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
-
-    .browse-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; font-size: 0.8rem; }
-    .sort-select { padding: 0.3rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.8rem; }
-
-    /* Table */
-    .browse-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-    .browse-table th { padding: 0.5rem; text-align: left; font-weight: 600; color: var(--text-muted); border-bottom: 2px solid var(--border-color); font-size: 0.75rem; }
-    .browse-table td { padding: 0.5rem; border-bottom: 1px solid var(--border-color); }
-    .browse-table tr { cursor: pointer; transition: background 0.15s; }
-    .browse-table tr:hover { background: var(--background-color, #F5F0E8); }
-    .browse-table tr.selected { background: rgba(43, 76, 126, 0.08); }
-
-    .stage-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
-    .card-front-text { font-weight: 600; }
-    .card-reading { color: var(--text-muted); font-size: 0.85rem; }
-    .card-meaning { color: var(--text-color); max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .leech-indicator { color: #dc3545; font-size: 0.75rem; }
-
-    /* Mobile: Table → Card layout */
-    @media (max-width: 768px) {
-        .browse-table thead { display: none; }
-        .browse-table tr { display: block; border: 1px solid var(--border-color); border-radius: 10px; margin-bottom: 0.5rem; padding: 0.75rem; }
-        .browse-table td { display: block; padding: 0.15rem 0; border: none; }
-        .browse-table td::before { content: attr(data-label); font-weight: 600; color: var(--text-muted); margin-right: 0.5rem; font-size: 0.75rem; }
+    [x-cloak] { display: none !important; }
+    .cb-sr-only {
+        position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+        overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
     }
 
-    /* Pagination */
-    .browse-pagination { display: flex; justify-content: center; align-items: center; gap: 0.5rem; margin-top: 1rem; font-size: 0.85rem; }
-    .browse-pagination button { padding: 0.3rem 0.7rem; border: 1px solid var(--border-color); border-radius: 6px; background: var(--card-bg); cursor: pointer; }
-    .browse-pagination button:disabled { opacity: 0.5; cursor: default; }
-    .browse-pagination button:hover:not(:disabled) { background: var(--background-color); }
+    /* ── Seitenkopf ── */
+    .cb-head { margin-bottom: var(--space-6); }
+    .cb-eyebrow {
+        display: inline-flex; align-items: center; gap: 0.4rem;
+        font-family: var(--cb-mono); font-size: 0.72rem; text-transform: uppercase;
+        letter-spacing: 0.12em; color: var(--ink-600); margin-bottom: 0.45rem;
+    }
+    .cb-eyebrow i { color: var(--shu); }
+    .cb-title-row { display: flex; align-items: baseline; gap: 0.85rem; flex-wrap: wrap; }
+    .cb-title-row h1 {
+        font-size: clamp(1.7rem, 3vw, 2.35rem); color: var(--kon);
+        margin: 0; letter-spacing: -0.02em; line-height: 1.1;
+    }
+    .cb-total {
+        font-family: var(--cb-mono); font-size: 0.82rem; color: var(--ink-600);
+        background: var(--ink-100); border: 1px solid var(--ink-200);
+        border-radius: var(--radius-full); padding: 0.2rem 0.7rem;
+    }
+    .cb-total strong { color: var(--kon); font-weight: 600; }
 
-    /* Floating Action Bar */
-    .floating-action-bar { position: fixed; bottom: 70px; left: 50%; transform: translateX(-50%); background: var(--primary-color, #2B4C7E); color: #fff; border-radius: 12px; padding: 0.5rem 1rem; display: flex; align-items: center; gap: 0.75rem; font-size: 0.85rem; box-shadow: 0 4px 20px rgba(0,0,0,0.2); z-index: 1000; animation: slideUp 0.3s ease; }
-    .floating-action-bar button { padding: 0.3rem 0.6rem; border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; background: transparent; color: #fff; font-size: 0.75rem; cursor: pointer; }
-    .floating-action-bar button:hover { background: rgba(255,255,255,0.15); }
-    @keyframes slideUp { from { transform: translateX(-50%) translateY(20px); opacity: 0; } to { transform: translateX(-50%) translateY(0); opacity: 1; } }
+    /* ── Layout ── */
+    .cb-layout { display: grid; grid-template-columns: 248px 1fr; gap: var(--space-6); align-items: start; }
+    @media (max-width: 860px) { .cb-layout { grid-template-columns: 1fr; gap: var(--space-4); } }
 
-    /* Detail Modal */
-    .detail-modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1100; display: flex; align-items: center; justify-content: center; }
-    .detail-modal { background: var(--card-bg, #fff); border-radius: 16px; max-width: 500px; width: 90%; max-height: 85vh; overflow-y: auto; padding: 1.5rem; }
-    .detail-modal h5 { color: var(--primary-color); margin-bottom: 1rem; }
-    .detail-row { display: flex; gap: 0.5rem; margin-bottom: 0.4rem; font-size: 0.85rem; }
-    .detail-label { font-weight: 600; color: var(--text-muted); min-width: 80px; }
-    .detail-history { margin-top: 0.75rem; }
-    .detail-history-item { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin: 2px; }
-    .detail-history-item.r1 { background: #dc354520; color: #dc3545; }
-    .detail-history-item.r2 { background: #fd7e1420; color: #fd7e14; }
-    .detail-history-item.r3 { background: #28a74520; color: #28a745; }
-    .detail-history-item.r4 { background: #007bff20; color: #007bff; }
-    .detail-actions { display: flex; gap: 0.5rem; margin-top: 1rem; }
-    .detail-actions button { flex: 1; padding: 0.4rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--card-bg); cursor: pointer; font-size: 0.8rem; }
-    .detail-actions button:hover { background: var(--background-color); }
+    /* ── Sidebar / Filter ── */
+    .cb-mobile-filter-toggle {
+        display: none; width: 100%; align-items: center; justify-content: center; gap: 0.5rem;
+        padding: 0.6rem; margin-bottom: var(--space-3);
+        background: var(--card-background); border: 1px solid var(--ink-200);
+        border-radius: var(--radius-md); color: var(--text-color);
+        font-size: 0.9rem; font-weight: 600; cursor: pointer;
+    }
+    @media (max-width: 860px) {
+        .cb-mobile-filter-toggle { display: flex; }
+        .cb-sidebar { display: none; }
+        .cb-sidebar.is-open { display: block; }
+    }
 
-    /* ── Dark-Mode-Themung (gescopt, Light unveraendert) ─────────────────────
-       F26/F27: --primary-color kippt im Dark hell → weiss-auf-hell unlesbar.
-       Primaeraktionen auf --shu (Shu) + --washi-Text; native UA-Controls
-       (Selects/Checkboxen/Toggles) on-theme bringen. */
-    [data-theme="dark"] .filter-btn:not(.filter-btn-outline) {
-        background: var(--shu);
-        color: var(--washi);
+    .cb-sidebar {
+        background: var(--card-background); border: 1px solid var(--ink-200);
+        border-radius: var(--radius-lg); padding: var(--space-4);
+        position: sticky; top: var(--space-4);
     }
-    /* Selects: appearance-Reset + Theme-Farben + eigener Dropdown-Pfeil
-       (appearance:none strippt den nativen ▼). */
-    [data-theme="dark"] .filter-select,
-    [data-theme="dark"] .sort-select {
-        appearance: none;
-        -webkit-appearance: none;
-        background-color: var(--card-background);
-        color: var(--text-color);
-        border-color: var(--border-color);
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='none' stroke='%23A39A8B' stroke-width='1.5' d='M3 4.5 6 7.5 9 4.5'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 0.5rem center;
-        padding-right: 1.6rem;
+    @media (max-width: 860px) { .cb-sidebar { position: static; } }
+    .cb-fgroup { margin-bottom: var(--space-4); }
+    .cb-fgroup:last-of-type { margin-bottom: 0; }
+    .cb-flabel {
+        display: block; font-family: var(--cb-mono); font-size: 0.68rem; font-weight: 500;
+        text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-600);
+        margin-bottom: 0.55rem;
     }
-    /* Native Checkboxen (Status / Content-Typ) on-theme. */
-    [data-theme="dark"] .filter-checkbox input[type="checkbox"] {
-        accent-color: var(--shu);
+
+    /* Filter-Chips (Status + Content-Typ): native Checkbox bleibt fuer A11y,
+       Label wird zur klickbaren Kapsel; :has() hebt den aktiven Zustand hervor. */
+    .cb-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .cb-chip {
+        display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer;
+        padding: 0.32rem 0.65rem; border-radius: var(--radius-full);
+        border: 1px solid var(--ink-200); background: var(--card-background);
+        font-size: 0.82rem; color: var(--text-color); user-select: none;
+        transition: background 0.15s, border-color 0.15s, transform 0.1s;
     }
-    /* Custom-Toggle-Switches ("Nur Leeches" / "Heute faellig"): ON-Fuellung
-       nutzte --primary-color → im Dark hellblau. Auf --shu umstellen. */
-    [data-theme="dark"] .filter-toggle input[type="checkbox"]:checked {
-        background: var(--shu);
+    .cb-chip:hover { border-color: var(--ink-400); }
+    .cb-chip:active { transform: scale(0.97); }
+    .cb-chip input { position: absolute; opacity: 0; width: 0; height: 0; }
+    .cb-chip .cb-chip-tick {
+        width: 14px; height: 14px; border-radius: 4px; flex: none;
+        border: 1.5px solid var(--ink-400); display: inline-flex;
+        align-items: center; justify-content: center; color: transparent;
+        font-size: 0.6rem; transition: all 0.15s;
     }
+    .cb-chip:has(input:checked) {
+        background: var(--shu-soft); border-color: var(--shu);
+        color: var(--shu-deep); font-weight: 600;
+    }
+    .cb-chip:has(input:checked) .cb-chip-tick {
+        background: var(--shu); border-color: var(--shu); color: #fff;
+    }
+    /* Tastatur-Fokus sichtbar (nativer Input ist visuell versteckt) */
+    .cb-chip:has(input:focus-visible) { outline: 2px solid var(--shu); outline-offset: 2px; }
+    /* Fallback ohne :has — Checkbox bleibt sichtbar bedienbar */
+    @supports not (selector(:has(*))) {
+        .cb-chip input { position: static; opacity: 1; width: auto; height: auto; accent-color: var(--shu); }
+        .cb-chip .cb-chip-tick { display: none; }
+    }
+
+    /* Lektion-Select + alle Selects on-theme (Light + Dark) */
+    .cb-select {
+        width: 100%; padding: 0.45rem 1.8rem 0.45rem 0.6rem;
+        border: 1px solid var(--ink-200); border-radius: var(--radius-md);
+        font-size: 0.85rem; background-color: var(--card-background); color: var(--text-color);
+        appearance: none; -webkit-appearance: none; cursor: pointer;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='none' stroke='%238A8175' stroke-width='1.5' d='M3 4.5 6 7.5 9 4.5'/%3E%3C/svg%3E");
+        background-repeat: no-repeat; background-position: right 0.6rem center;
+    }
+    .cb-select:focus-visible { outline: 2px solid var(--shu); outline-offset: 1px; }
+
+    /* Toggle-Switches */
+    .cb-toggle { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.5rem; font-size: 0.85rem; color: var(--text-color); cursor: pointer; }
+    .cb-toggle:last-child { margin-bottom: 0; }
+    .cb-toggle .cb-switch {
+        position: relative; width: 38px; height: 22px; flex: none;
+        appearance: none; -webkit-appearance: none; background: var(--ink-300);
+        border-radius: var(--radius-full); cursor: pointer; transition: background 0.2s;
+    }
+    .cb-toggle .cb-switch:checked { background: var(--shu); }
+    .cb-toggle .cb-switch::after {
+        content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px;
+        background: #fff; border-radius: 50%; transition: transform 0.2s;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.25);
+    }
+    .cb-toggle .cb-switch:checked::after { transform: translateX(16px); }
+    .cb-switch:focus-visible { outline: 2px solid var(--shu); outline-offset: 2px; }
+
+    .cb-fbtns { display: flex; flex-direction: column; gap: 0.45rem; margin-top: var(--space-4); }
+    .cb-btn {
+        display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem;
+        padding: 0.55rem 0.8rem; border-radius: var(--radius-md); font-size: 0.85rem;
+        font-weight: 600; cursor: pointer; border: 1px solid transparent;
+        transition: background 0.15s, border-color 0.15s, transform 0.1s, box-shadow 0.15s;
+    }
+    .cb-btn:active { transform: scale(0.97); }
+    .cb-btn-primary { background: linear-gradient(180deg, var(--shu), var(--shu-deep)); color: #fff; }
+    .cb-btn-primary:hover { box-shadow: var(--shadow-card); filter: brightness(1.05); }
+    .cb-btn-ghost { background: var(--card-background); border-color: var(--ink-300); color: var(--text-color); }
+    .cb-btn-ghost:hover { border-color: var(--ink-400); background: var(--ink-50); }
+
+    /* ── Main: Suche ── */
+    .cb-search { position: relative; margin-bottom: var(--space-3); }
+    .cb-search i { position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); color: var(--ink-600); pointer-events: none; }
+    .cb-search input {
+        width: 100%; padding: 0.7rem 0.85rem 0.7rem 2.35rem;
+        border: 1px solid var(--ink-200); border-radius: var(--radius-md);
+        font-size: 0.95rem; background: var(--card-background); color: var(--text-color);
+    }
+    .cb-search input::placeholder { color: var(--ink-600); }
+    .cb-search input:focus-visible { outline: 2px solid var(--shu); outline-offset: 0; border-color: var(--shu); }
+    .cb-search kbd {
+        position: absolute; right: 0.7rem; top: 50%; transform: translateY(-50%);
+        font-family: var(--cb-mono); font-size: 0.68rem; color: var(--ink-600);
+        border: 1px solid var(--ink-200); border-radius: 4px; padding: 0.05rem 0.35rem;
+        background: var(--ink-50);
+    }
+    @media (max-width: 640px) { .cb-search kbd { display: none; } }
+
+    /* Aktive-Filter-Chips */
+    .cb-active { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; margin-bottom: var(--space-3); }
+    .cb-active-chip {
+        display: inline-flex; align-items: center; gap: 0.4rem;
+        padding: 0.25rem 0.3rem 0.25rem 0.6rem; border-radius: var(--radius-full);
+        background: var(--shu-soft); border: 1px solid var(--shu);
+        color: var(--shu-deep); font-size: 0.78rem; font-weight: 600;
+    }
+    .cb-active-chip button {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 16px; height: 16px; border-radius: 50%; border: none;
+        background: rgba(184,74,0,0.15); color: var(--shu-deep);
+        font-size: 0.7rem; cursor: pointer; line-height: 1;
+    }
+    .cb-active-chip button:hover { background: var(--shu); color: #fff; }
+    .cb-active-clear {
+        background: none; border: none; color: var(--ai); font-size: 0.78rem;
+        font-weight: 600; cursor: pointer; padding: 0.25rem 0.4rem;
+    }
+    .cb-active-clear:hover { color: var(--shu); }
+
+    /* Steuerleiste (Seite + Sortierung) */
+    .cb-controls { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; margin-bottom: var(--space-3); flex-wrap: wrap; }
+    .cb-pageinfo { font-family: var(--cb-mono); font-size: 0.76rem; color: var(--ink-600); text-transform: uppercase; letter-spacing: 0.04em; }
+    .cb-sort { display: inline-flex; align-items: center; gap: 0.4rem; }
+    .cb-sort label { font-size: 0.78rem; color: var(--ink-600); }
+    .cb-sort .cb-select { width: auto; padding-block: 0.35rem; }
+    .cb-sortdir {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 32px; height: 32px; border: 1px solid var(--ink-200);
+        border-radius: var(--radius-md); background: var(--card-background);
+        color: var(--text-color); cursor: pointer; font-size: 0.85rem;
+    }
+    .cb-sortdir:hover { border-color: var(--ink-400); }
+
+    /* ── Tabelle ── */
+    .cb-tablewrap {
+        background: var(--card-background); border: 1px solid var(--ink-200);
+        border-radius: var(--radius-lg); overflow: hidden;
+    }
+    .cb-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; table-layout: fixed; }
+    .cb-table thead th {
+        padding: 0.7rem 0.85rem; text-align: left; font-family: var(--cb-mono);
+        font-weight: 500; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em;
+        color: var(--ink-600); border-bottom: 1px solid var(--ink-200);
+        background: var(--ink-100); white-space: nowrap;
+    }
+    .cb-table tbody td { padding: 0.7rem 0.85rem; border-bottom: 1px solid var(--ink-100); vertical-align: middle; }
+    .cb-table tbody tr { cursor: pointer; transition: background 0.12s; }
+    .cb-table tbody tr:last-child td { border-bottom: none; }
+    .cb-table tbody tr:hover { background: var(--ink-50); }
+    .cb-table tbody tr:focus-visible { outline: 2px solid var(--shu); outline-offset: -2px; }
+    .cb-table tbody tr.is-selected { background: var(--shu-soft); }
+    .cb-table tbody tr:hover .cb-front { color: var(--shu-deep); }
+
+    .cb-check { width: 16px; height: 16px; accent-color: var(--shu); cursor: pointer; }
+    .cb-front {
+        font-family: 'Noto Sans JP', var(--font-body, sans-serif); font-weight: 500;
+        font-size: 1.18rem; color: var(--text-color); line-height: 1.25;
+        display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .cb-reading { display: block; font-family: 'Noto Sans JP', var(--cb-mono); color: var(--ink-600); font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cb-meaning { display: block; color: var(--text-color); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .cb-typechip {
+        display: inline-flex; align-items: center; gap: 0.35rem;
+        padding: 0.18rem 0.55rem; border-radius: var(--radius-full);
+        background: var(--ink-100); color: var(--ink-700);
+        font-size: 0.75rem; font-weight: 500; white-space: nowrap;
+    }
+    .cb-typechip .cb-typeglyph { font-family: 'Noto Sans JP', serif; font-size: 0.85rem; color: var(--kon); }
+
+    .cb-stage { display: inline-flex; align-items: center; gap: 0.4rem; white-space: nowrap; }
+    .cb-stage-dot { width: 9px; height: 9px; border-radius: 50%; flex: none; box-shadow: 0 0 0 2px var(--card-background); }
+    .cb-stage-name { font-size: 0.8rem; color: var(--ink-700); }
+
+    .cb-due { font-size: 0.83rem; color: var(--ink-600); white-space: nowrap; }
+    .cb-due.is-due { color: var(--shu); font-weight: 600; }
+
+    .cb-lapses { font-variant-numeric: tabular-nums; color: var(--ink-700); }
+    .cb-leech {
+        display: inline-flex; align-items: center; gap: 0.25rem; margin-left: 0.35rem;
+        padding: 0.05rem 0.4rem; border-radius: var(--radius-full);
+        background: rgba(237,132,117,0.16); color: var(--color-error);
+        font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+
+    /* Skeleton-Lade-Zeilen */
+    .cb-skel { height: 1rem; border-radius: 4px; background: linear-gradient(90deg, var(--ink-100) 25%, var(--ink-200) 37%, var(--ink-100) 63%); background-size: 400% 100%; animation: cb-shimmer 1.2s ease infinite; }
+    @keyframes cb-shimmer { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
+
+    /* ── Leerstaat ── */
+    .cb-empty {
+        display: flex; flex-direction: column; align-items: center; text-align: center;
+        gap: 0.3rem; padding: 3rem 1.5rem; color: var(--ink-600);
+    }
+    .cb-empty .cb-empty-ja { font-family: 'Noto Serif JP', serif; font-size: 1.6rem; color: var(--ink-400); margin-bottom: 0.4rem; }
+    .cb-empty h3 { font-size: 1.1rem; color: var(--kon); margin: 0; }
+    .cb-empty p { margin: 0.1rem 0 0; max-width: 36ch; font-size: 0.9rem; }
+    .cb-empty button { margin-top: 0.8rem; }
+
+    /* ── Pagination ── */
+    .cb-pager { display: flex; justify-content: center; align-items: center; gap: 0.5rem; margin-top: var(--space-4); }
+    .cb-pager button {
+        display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+        min-width: 36px; height: 36px; padding: 0 0.7rem; border: 1px solid var(--ink-200);
+        border-radius: var(--radius-md); background: var(--card-background);
+        color: var(--text-color); cursor: pointer; font-size: 0.85rem;
+    }
+    .cb-pager button:hover:not(:disabled) { border-color: var(--ink-400); background: var(--ink-50); }
+    .cb-pager button:disabled { opacity: 0.4; cursor: default; }
+    .cb-pager .cb-pager-cur { font-family: var(--cb-mono); font-size: 0.82rem; color: var(--ink-600); padding: 0 0.4rem; }
+
+    /* ── Floating Action Bar ── */
+    .cb-actionbar {
+        position: fixed; bottom: 76px; left: 50%; transform: translateX(-50%);
+        display: flex; align-items: center; gap: 0.6rem; z-index: 1000;
+        background: var(--card-background); border: 1px solid var(--ink-300);
+        border-radius: var(--radius-full); padding: 0.45rem 0.45rem 0.45rem 0.9rem;
+        box-shadow: var(--shadow-lifted); max-width: calc(100vw - 1.5rem); flex-wrap: wrap; justify-content: center;
+    }
+    @media (max-width: 640px) { .cb-actionbar { bottom: calc(70px + env(safe-area-inset-bottom, 0px)); } }
+    .cb-actionbar .cb-ab-count { font-size: 0.85rem; font-weight: 600; color: var(--kon); white-space: nowrap; }
+    .cb-actionbar .cb-ab-count b { color: var(--shu); }
+    .cb-ab-btn {
+        display: inline-flex; align-items: center; gap: 0.35rem;
+        padding: 0.4rem 0.7rem; border: 1px solid var(--ink-200); border-radius: var(--radius-full);
+        background: var(--card-background); color: var(--text-color);
+        font-size: 0.78rem; font-weight: 600; cursor: pointer;
+    }
+    .cb-ab-btn:hover { border-color: var(--ink-400); background: var(--ink-50); }
+    .cb-ab-btn.is-danger:hover { border-color: var(--color-error); color: var(--color-error); background: rgba(237,132,117,0.08); }
+    .cb-ab-close { background: none; border: none; color: var(--ink-600); cursor: pointer; font-size: 1rem; padding: 0 0.3rem; }
+    .cb-ab-close:hover { color: var(--text-color); }
+
+    /* ── Detail-Modal ── */
+    .cb-modal-backdrop { position: fixed; inset: 0; background: rgba(28,26,23,0.55); z-index: 1100; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+    .cb-modal {
+        background: var(--card-background); border: 1px solid var(--ink-200);
+        border-radius: var(--radius-lg); max-width: 520px; width: 100%;
+        max-height: 86vh; overflow-y: auto; box-shadow: var(--shadow-lifted);
+    }
+    .cb-modal-head {
+        display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem;
+        padding: var(--space-4) var(--space-4) var(--space-3);
+        border-bottom: 1px solid var(--ink-100);
+    }
+    .cb-modal-front { font-family: 'Noto Sans JP', serif; font-size: 1.7rem; font-weight: 500; color: var(--text-color); line-height: 1.2; }
+    .cb-modal-sub { font-family: 'Noto Sans JP', var(--cb-mono); font-size: 0.95rem; color: var(--ink-600); margin-top: 0.15rem; }
+    .cb-modal-meaning { font-size: 0.9rem; color: var(--ink-700); margin-top: 0.2rem; }
+    .cb-modal-close { background: none; border: none; font-size: 1.5rem; line-height: 1; color: var(--ink-600); cursor: pointer; }
+    .cb-modal-close:hover { color: var(--text-color); }
+    .cb-modal-body { padding: var(--space-4); }
+
+    .cb-statgrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.6rem; margin-bottom: var(--space-4); }
+    .cb-stat { background: var(--ink-50); border: 1px solid var(--ink-100); border-radius: var(--radius-md); padding: 0.55rem 0.7rem; }
+    .cb-stat .k { font-family: var(--cb-mono); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-600); }
+    .cb-stat .v { font-size: 0.92rem; color: var(--text-color); font-weight: 500; margin-top: 0.15rem; }
+
+    .cb-hist-title { font-family: var(--cb-mono); font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-600); margin-bottom: 0.45rem; }
+    .cb-hist { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-bottom: var(--space-4); }
+    .cb-hist-item { font-family: var(--cb-mono); font-size: 0.7rem; padding: 0.15rem 0.45rem; border-radius: var(--radius-sm); white-space: nowrap; }
+    .cb-hist-item.r1 { background: rgba(237,132,117,0.16); color: var(--color-error); }
+    .cb-hist-item.r2 { background: rgba(214,162,78,0.18); color: var(--kincha); }
+    .cb-hist-item.r3 { background: var(--matcha-bg); color: var(--matcha-text); }
+    .cb-hist-item.r4 { background: rgba(132,173,221,0.18); color: var(--ai); }
+
+    .cb-modal-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .cb-modal-actions .cb-btn { flex: 1 1 auto; }
+    .cb-btn-danger { background: var(--card-background); border-color: var(--ink-300); color: var(--text-color); }
+    .cb-btn-danger:hover { border-color: var(--color-error); color: var(--color-error); background: rgba(237,132,117,0.08); }
+
+    /* ── Mobile: Tabelle → Karten ── */
+    @media (max-width: 720px) {
+        .cb-tablewrap { background: transparent; border: none; overflow: visible; }
+        .cb-table thead { display: none; }
+        .cb-table, .cb-table tbody { display: block; }
+        .cb-table tbody tr {
+            display: grid; grid-template-columns: auto 1fr; gap: 0.2rem 0.6rem;
+            background: var(--card-background); border: 1px solid var(--ink-200);
+            border-radius: var(--radius-md); padding: 0.8rem; margin-bottom: 0.6rem;
+        }
+        .cb-table tbody tr:hover { background: var(--card-background); }
+        .cb-table tbody tr.is-selected { background: var(--shu-soft); }
+        .cb-table tbody td { display: flex; align-items: center; gap: 0.5rem; padding: 0.12rem 0; border: none; }
+        .cb-table tbody td.cb-cell-check { grid-row: 1 / 3; grid-column: 1; align-self: start; }
+        .cb-table tbody td.cb-cell-front { grid-column: 2; }
+        .cb-table tbody td:not(.cb-cell-check):not(.cb-cell-front) { grid-column: 2; }
+        .cb-table tbody td:not(.cb-cell-check)::before {
+            content: attr(data-label); font-family: var(--cb-mono); font-size: 0.62rem;
+            text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-600);
+            min-width: 4.5rem; flex: none;
+        }
+        .cb-table tbody td.cb-cell-front::before { display: none; }
+        .cb-front { font-size: 1.35rem; -webkit-line-clamp: 3; }
+        .cb-meaning { white-space: normal; max-width: none; }
+        .cb-statgrid { grid-template-columns: 1fr; }
+        /* Skeleton-Zeilen als einfache gestapelte Balken statt Grid-Karte */
+        .cb-table tbody tr.cb-skelrow { display: block; }
+        .cb-table tbody tr.cb-skelrow td { display: block; padding: 0.3rem 0; }
+        .cb-table tbody tr.cb-skelrow td::before { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .cb-skel { animation: none; }
+        .cb-chip, .cb-btn, .cb-switch::after { transition: none; }
+    }
+
+    /* ── Dark-Mode-Korrekturen ──────────────────────────────────────────
+       --shu-soft kippt im Dark auf tiefes Braun (#3A2415) → --shu-deep-Text
+       (#B84A00) erreicht nur ~2.8:1. Auf --accent (#FB7A2B, helles Shu,
+       nur im Dark definiert) heben → ~5.5:1. Light-Zweig unverändert. */
+    [data-theme="dark"] .cb-chip:has(input:checked),
+    [data-theme="dark"] .cb-active-chip,
+    [data-theme="dark"] .cb-active-chip button { color: var(--accent); }
+    [data-theme="dark"] .cb-table tbody tr:hover .cb-front { color: var(--accent); }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="browse-container" x-data="cardBrowser()" x-init="loadCards()" @keydown.slash.prevent="$refs.searchInput.focus()" @keydown.escape="selectedIds = []; detailCard = null; filtersOpen = false">
-    <div class="browse-header">
-        <h5><i class="fas fa-th-list me-1"></i> Karten-Browser</h5>
-        <span class="browse-total"><span x-text="total"></span> Karten</span>
+<div class="cb-page" x-data="cardBrowser()" x-init="loadCards()"
+     @keydown.slash.prevent="$refs.searchInput.focus()"
+     @keydown.escape="selectedIds = []; detailCard = null; filtersOpen = false">
+
+    <!-- Kopf -->
+    <div class="cb-head">
+        <div class="cb-eyebrow"><i class="fas fa-layer-group"></i> Deine SRS-Sammlung</div>
+        <div class="cb-title-row">
+            <h1>Karten-Browser</h1>
+            <span class="cb-total"><strong x-text="total"></strong> <span x-text="total === 1 ? 'Karte' : 'Karten'"></span></span>
+        </div>
     </div>
 
-    <!-- Mobile Filter Toggle -->
-    <button class="mobile-filter-toggle filter-btn" @click="filtersOpen = !filtersOpen">
-        <i class="fas fa-filter me-1"></i> Filter <span x-show="filtersOpen">ausblenden</span><span x-show="!filtersOpen">anzeigen</span>
+    <!-- Screenreader-Live-Region: kündigt Lade-/Ergebnisstatus an -->
+    <div class="cb-sr-only" aria-live="polite" x-text="loading ? 'Karten werden geladen…' : (total + (total === 1 ? ' Karte gefunden' : ' Karten gefunden'))"></div>
+
+    <!-- Mobile Filter-Toggle -->
+    <button class="cb-mobile-filter-toggle" @click="filtersOpen = !filtersOpen" :aria-expanded="filtersOpen">
+        <i class="fas fa-sliders-h"></i>
+        <span x-text="filtersOpen ? 'Filter ausblenden' : 'Filter & Suche'"></span>
     </button>
 
-    <div class="browse-layout">
-        <!-- Sidebar Filters -->
-        <div class="browse-sidebar" :class="filtersOpen && 'open'">
-            <div class="filter-group">
-                <label>Status</label>
-                <label class="filter-checkbox"><input type="checkbox" value="new" x-model="filters.status"> Neu</label>
-                <label class="filter-checkbox"><input type="checkbox" value="learning" x-model="filters.status"> Lernen</label>
-                <label class="filter-checkbox"><input type="checkbox" value="review" x-model="filters.status"> Review</label>
-                <label class="filter-checkbox"><input type="checkbox" value="relearning" x-model="filters.status"> Relearning</label>
-                <label class="filter-checkbox"><input type="checkbox" value="suspended" x-model="filters.status"> Suspendiert</label>
+    <div class="cb-layout">
+        <!-- Sidebar -->
+        <aside class="cb-sidebar" :class="filtersOpen && 'is-open'" aria-label="Filter">
+            <div class="cb-fgroup">
+                <span class="cb-flabel">Status</span>
+                <div class="cb-chips">
+                    <template x-for="opt in statusOptions" :key="opt.v">
+                        <label class="cb-chip">
+                            <input type="checkbox" :value="opt.v" x-model="filters.status">
+                            <span class="cb-chip-tick" aria-hidden="true">✓</span>
+                            <span x-text="opt.l"></span>
+                        </label>
+                    </template>
+                </div>
             </div>
-            <div class="filter-group">
-                <label>Content-Typ</label>
-                <label class="filter-checkbox"><input type="checkbox" value="kana" x-model="filters.contentType"> Kana</label>
-                <label class="filter-checkbox"><input type="checkbox" value="kanji" x-model="filters.contentType"> Kanji</label>
-                <label class="filter-checkbox"><input type="checkbox" value="vocabulary" x-model="filters.contentType"> Vokabel</label>
-                <label class="filter-checkbox"><input type="checkbox" value="grammar" x-model="filters.contentType"> Grammatik</label>
+
+            <div class="cb-fgroup">
+                <span class="cb-flabel">Content-Typ</span>
+                <div class="cb-chips">
+                    <template x-for="opt in typeOptions" :key="opt.v">
+                        <label class="cb-chip">
+                            <input type="checkbox" :value="opt.v" x-model="filters.contentType">
+                            <span class="cb-chip-tick" aria-hidden="true">✓</span>
+                            <span class="cb-typeglyph" x-text="opt.g" aria-hidden="true"></span>
+                            <span x-text="opt.l"></span>
+                        </label>
+                    </template>
+                </div>
             </div>
-            <div class="filter-group">
-                <label>Lektion</label>
-                <select class="filter-select" x-model="filters.lessonId">
-                    <option value="">Alle</option>
+
+            <div class="cb-fgroup">
+                <label class="cb-flabel" for="cb-lesson">Lektion</label>
+                <select id="cb-lesson" class="cb-select" x-model="filters.lessonId" x-ref="lessonSelect">
+                    <option value="">Alle Lektionen</option>
                     {% for lesson in lessons %}
                     <option value="{{ lesson.id }}">{{ lesson.title }}</option>
                     {% endfor %}
                 </select>
             </div>
-            <div class="filter-group">
-                <div class="filter-toggle"><span>Nur Leeches</span><input type="checkbox" x-model="filters.leech"></div>
-                <div class="filter-toggle"><span>Heute faellig</span><input type="checkbox" x-model="filters.dueToday"></div>
-            </div>
-            <button class="filter-btn" @click="page = 1; loadCards()">Filter anwenden</button>
-            <button class="filter-btn filter-btn-outline" style="margin-top:0.3rem;" @click="resetFilters()">Zuruecksetzen</button>
-        </div>
 
-        <!-- Main Content -->
+            <div class="cb-fgroup">
+                <span class="cb-flabel">Weitere</span>
+                <label class="cb-toggle">
+                    <span><i class="fas fa-bug" style="color:var(--color-error);margin-right:.35rem;"></i>Nur Leeches</span>
+                    <input type="checkbox" class="cb-switch" x-model="filters.leech">
+                </label>
+                <label class="cb-toggle">
+                    <span><i class="fas fa-clock" style="color:var(--shu);margin-right:.35rem;"></i>Heute fällig</span>
+                    <input type="checkbox" class="cb-switch" x-model="filters.dueToday">
+                </label>
+            </div>
+
+            <div class="cb-fbtns">
+                <button class="cb-btn cb-btn-primary" @click="page = 1; loadCards(); filtersOpen = false">
+                    <i class="fas fa-filter"></i> Filter anwenden
+                </button>
+                <button class="cb-btn cb-btn-ghost" @click="resetFilters()">
+                    <i class="fas fa-rotate-left"></i> Zurücksetzen
+                </button>
+            </div>
+        </aside>
+
+        <!-- Hauptbereich -->
         <div>
-            <div class="browse-search">
-                <i class="fas fa-search"></i>
-                <input type="text" x-ref="searchInput" x-model="searchQuery" @input.debounce.300ms="page = 1; loadCards()" placeholder="Suche: Wort, Bedeutung, Lesung...">
+            <!-- Suche -->
+            <div class="cb-search">
+                <i class="fas fa-search" aria-hidden="true"></i>
+                <input type="search" x-ref="searchInput" x-model="searchQuery"
+                       @input.debounce.350ms="page = 1; loadCards()"
+                       placeholder="Suche: Wort, Bedeutung, Lesung…"
+                       aria-label="Karten durchsuchen">
+                <kbd>/</kbd>
             </div>
 
-            <div class="browse-controls">
-                <span x-text="`Seite ${page} von ${pages}`" style="color:var(--text-muted);"></span>
-                <div>
-                    <label style="font-size:0.75rem; color:var(--text-muted);">Sortieren:</label>
-                    <select class="sort-select" x-model="sortField" @change="loadCards()">
-                        <option value="due_date">Faellig</option>
+            <!-- Aktive Filter -->
+            <div class="cb-active" x-show="activeChips.length" x-cloak>
+                <template x-for="chip in activeChips" :key="chip.id">
+                    <span class="cb-active-chip">
+                        <span x-text="chip.label"></span>
+                        <button type="button" @click="removeChip(chip)" :aria-label="`Filter ${chip.label} entfernen`">&times;</button>
+                    </span>
+                </template>
+                <button type="button" class="cb-active-clear" @click="resetFilters()">Alle löschen</button>
+            </div>
+
+            <!-- Steuerung -->
+            <div class="cb-controls">
+                <span class="cb-pageinfo" x-text="`Seite ${page} / ${pages}`"></span>
+                <div class="cb-sort">
+                    <label for="cb-sort">Sortieren</label>
+                    <select id="cb-sort" class="cb-select" x-model="sortField" @change="loadCards()">
+                        <option value="due_date">Fälligkeit</option>
                         <option value="lapses">Fehler</option>
                         <option value="reps">Reviews</option>
                         <option value="created_at">Erstellt</option>
                     </select>
-                    <button style="border:1px solid var(--border-color);border-radius:4px;padding:2px 6px;cursor:pointer;background:var(--card-bg);" @click="sortDir = sortDir === 'asc' ? 'desc' : 'asc'; loadCards()" x-text="sortDir === 'asc' ? '↑' : '↓'"></button>
+                    <button class="cb-sortdir" @click="sortDir = sortDir === 'asc' ? 'desc' : 'asc'; loadCards()"
+                            :aria-label="sortDir === 'asc' ? 'Aufsteigend, klicken für absteigend' : 'Absteigend, klicken für aufsteigend'">
+                        <i class="fas" :class="sortDir === 'asc' ? 'fa-arrow-up-short-wide' : 'fa-arrow-down-wide-short'"></i>
+                    </button>
                 </div>
             </div>
 
-            <!-- Table -->
-            <table class="browse-table">
-                <thead>
-                    <tr>
-                        <th style="width:30px;"><input type="checkbox" @change="toggleAll($event)"></th>
-                        <th>Karte</th>
-                        <th>Lesung</th>
-                        <th>Bedeutung</th>
-                        <th>Typ</th>
-                        <th>Stufe</th>
-                        <th>Faellig</th>
-                        <th>Lapses</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <template x-for="card in cards" :key="card.content_id">
-                        <tr :class="selectedIds.includes(card.content_id) && 'selected'" @click="showDetail(card.content_id)">
-                            <td @click.stop><input type="checkbox" :value="card.content_id" x-model.number="selectedIds"></td>
-                            <td data-label="Karte"><span class="card-front-text" x-text="card.front"></span></td>
-                            <td data-label="Lesung" class="card-reading" x-text="readingOf(card)"></td>
-                            <td data-label="Bedeutung" class="card-meaning" x-text="meaningOf(card)"></td>
-                            <td data-label="Typ" x-text="typeLabel(card.content_type)"></td>
-                            <td data-label="Stufe"><span class="stage-dot" :style="`background:${card.stage_color}`"></span><span x-text="card.stage_name" style="font-size:0.8rem;"></span></td>
-                            <td data-label="Faellig" x-text="formatDate(card.due_date)"></td>
-                            <td data-label="Lapses"><span x-text="card.lapses"></span><span x-show="card.is_leech" class="leech-indicator"> !</span></td>
+            <!-- Tabelle -->
+            <div class="cb-tablewrap">
+                <table class="cb-table" :aria-busy="loading">
+                    <colgroup>
+                        <col style="width:44px;"><col style="width:17%;"><col style="width:11%;"><col style="width:24%;">
+                        <col style="width:12%;"><col style="width:15%;"><col style="width:9%;"><col style="width:9%;">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th scope="col">
+                                <input type="checkbox" class="cb-check" @change="toggleAll($event)"
+                                       :checked="cards.length && selectedIds.length === cards.length"
+                                       aria-label="Alle auswählen">
+                            </th>
+                            <th scope="col">Karte</th>
+                            <th scope="col">Lesung</th>
+                            <th scope="col">Bedeutung</th>
+                            <th scope="col">Typ</th>
+                            <th scope="col">Stufe</th>
+                            <th scope="col">Fällig</th>
+                            <th scope="col">Fehler</th>
                         </tr>
-                    </template>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <!-- Skeleton beim Laden -->
+                        <template x-if="loading">
+                            <template x-for="i in 8" :key="'skel' + i">
+                                <tr class="cb-skelrow" style="cursor:default;" aria-hidden="true">
+                                    <td><span class="cb-skel" style="width:16px;display:block;"></span></td>
+                                    <td><span class="cb-skel" style="width:60%;"></span></td>
+                                    <td><span class="cb-skel" style="width:50%;"></span></td>
+                                    <td><span class="cb-skel" style="width:80%;"></span></td>
+                                    <td><span class="cb-skel" style="width:60%;"></span></td>
+                                    <td><span class="cb-skel" style="width:70%;"></span></td>
+                                    <td><span class="cb-skel" style="width:50%;"></span></td>
+                                    <td><span class="cb-skel" style="width:30%;"></span></td>
+                                </tr>
+                            </template>
+                        </template>
 
-            <div x-show="cards.length === 0" style="text-align:center;padding:2rem;color:var(--text-muted);">
-                <i class="fas fa-inbox" style="font-size:2rem;"></i>
-                <p>Keine Karten gefunden.</p>
+                        <template x-if="!loading">
+                            <template x-for="card in cards" :key="card.content_id">
+                                <tr tabindex="0" role="button" :aria-label="`${card.front} – Details öffnen`"
+                                    :class="selectedIds.includes(card.content_id) && 'is-selected'"
+                                    @click="showDetail(card.content_id)"
+                                    @keydown.enter.self.prevent="showDetail(card.content_id)"
+                                    @keydown.space.self.prevent="showDetail(card.content_id)">
+                                    <td class="cb-cell-check" @click.stop>
+                                        <input type="checkbox" class="cb-check" :value="card.content_id" x-model.number="selectedIds"
+                                               :aria-label="`${card.front} auswählen`">
+                                    </td>
+                                    <td class="cb-cell-front" data-label="Karte"><span class="cb-front" x-text="card.front"></span></td>
+                                    <td data-label="Lesung"><span class="cb-reading" x-text="readingOf(card)"></span></td>
+                                    <td data-label="Bedeutung"><span class="cb-meaning" x-text="meaningOf(card)"></span></td>
+                                    <td data-label="Typ">
+                                        <span class="cb-typechip">
+                                            <span class="cb-typeglyph" x-text="typeGlyph(card.content_type)" aria-hidden="true"></span>
+                                            <span x-text="typeLabel(card.content_type)"></span>
+                                        </span>
+                                    </td>
+                                    <td data-label="Stufe">
+                                        <span class="cb-stage">
+                                            <span class="cb-stage-dot" :style="`background:${card.stage_color}`"></span>
+                                            <span class="cb-stage-name" x-text="card.stage_name"></span>
+                                        </span>
+                                    </td>
+                                    <td data-label="Fällig"><span class="cb-due" :class="isDue(card.due_date) && 'is-due'" x-text="formatDate(card.due_date)"></span></td>
+                                    <td data-label="Fehler">
+                                        <span class="cb-lapses" x-text="card.lapses"></span>
+                                        <span x-show="card.is_leech" class="cb-leech" title="Leech – häufige Fehler"><i class="fas fa-bug" aria-hidden="true"></i><span class="cb-sr-only">Leech</span></span>
+                                    </td>
+                                </tr>
+                            </template>
+                        </template>
+                    </tbody>
+                </table>
+
+                <!-- Leerstaat -->
+                <div class="cb-empty" x-show="!loading && cards.length === 0" x-cloak>
+                    <span class="cb-empty-ja">該当なし</span>
+                    <h3>Keine Karten gefunden.</h3>
+                    <p>Passe die Filter oder die Suche an — oder starte erst eine Wiederholung, damit Karten entstehen.</p>
+                    <button class="cb-btn cb-btn-ghost" @click="resetFilters()" x-show="activeChips.length">
+                        <i class="fas fa-rotate-left"></i> Filter zurücksetzen
+                    </button>
+                </div>
             </div>
 
             <!-- Pagination -->
-            <div class="browse-pagination" x-show="pages > 1">
-                <button @click="page = Math.max(1, page - 1); loadCards()" :disabled="page <= 1"><i class="fas fa-chevron-left"></i></button>
-                <span x-text="`${page} / ${pages}`"></span>
-                <button @click="page = Math.min(pages, page + 1); loadCards()" :disabled="page >= pages"><i class="fas fa-chevron-right"></i></button>
+            <div class="cb-pager" x-show="!loading && pages > 1" x-cloak>
+                <button @click="page = 1; loadCards()" :disabled="page <= 1" aria-label="Erste Seite"><i class="fas fa-angles-left"></i></button>
+                <button @click="page = Math.max(1, page - 1); loadCards()" :disabled="page <= 1" aria-label="Vorherige Seite"><i class="fas fa-chevron-left"></i></button>
+                <span class="cb-pager-cur" x-text="`${page} / ${pages}`"></span>
+                <button @click="page = Math.min(pages, page + 1); loadCards()" :disabled="page >= pages" aria-label="Nächste Seite"><i class="fas fa-chevron-right"></i></button>
+                <button @click="page = pages; loadCards()" :disabled="page >= pages" aria-label="Letzte Seite"><i class="fas fa-angles-right"></i></button>
             </div>
         </div>
     </div>
 
-    <!-- Floating Action Bar -->
-    <div class="floating-action-bar" x-show="selectedIds.length > 0" x-transition>
-        <span x-text="selectedIds.length + ' ausgewaehlt'"></span>
-        <button @click="bulkAction('suspend')"><i class="fas fa-pause me-1"></i>Suspendieren</button>
-        <button @click="bulkAction('unsuspend')"><i class="fas fa-play me-1"></i>Aktivieren</button>
-        <button @click="if(confirm('Wirklich zuruecksetzen?')) bulkAction('reset')"><i class="fas fa-undo me-1"></i>Reset</button>
-        <button @click="exportCSV()"><i class="fas fa-download me-1"></i>CSV</button>
+    <!-- Auswahl-Aktionsleiste -->
+    <div class="cb-actionbar" x-show="selectedIds.length > 0" x-transition x-cloak role="region" aria-label="Aktionen für ausgewählte Karten">
+        <span class="cb-ab-count"><b x-text="selectedIds.length"></b> ausgewählt</span>
+        <button class="cb-ab-btn" @click="bulkAction('suspend')"><i class="fas fa-pause"></i> Suspendieren</button>
+        <button class="cb-ab-btn" @click="bulkAction('unsuspend')"><i class="fas fa-play"></i> Aktivieren</button>
+        <button class="cb-ab-btn is-danger" @click="if(confirm(`${selectedIds.length} Karten wirklich zurücksetzen? Der Lernfortschritt geht verloren.`)) bulkAction('reset')"><i class="fas fa-undo"></i> Reset</button>
+        <button class="cb-ab-btn" @click="exportCSV()"><i class="fas fa-download"></i> CSV</button>
+        <button class="cb-ab-close" @click="selectedIds = []" aria-label="Auswahl aufheben"><i class="fas fa-times"></i></button>
     </div>
 
-    <!-- Detail Modal -->
-    <div class="detail-modal-backdrop" x-show="detailCard" @click.self="detailCard = null" x-transition>
-        <div class="detail-modal" x-show="detailCard">
-            <div style="display:flex;justify-content:space-between;align-items:center;">
-                <h5 x-text="detailCard?.front || ''"></h5>
-                <button style="background:none;border:none;font-size:1.2rem;cursor:pointer;" @click="detailCard = null">&times;</button>
-            </div>
+    <!-- Detail-Modal -->
+    <div class="cb-modal-backdrop" x-show="detailCard" @click.self="detailCard = null" x-transition x-cloak>
+        <div class="cb-modal" x-show="detailCard" role="dialog" aria-modal="true" aria-labelledby="cb-modal-title" @keydown.escape.window="detailCard = null">
             <template x-if="detailCard">
                 <div>
-                    <div class="detail-row"><span class="detail-label">Typ</span><span x-text="typeLabel(detailCard.content_type)"></span></div>
-                    <div class="detail-row"><span class="detail-label">Lektion</span><span x-text="detailCard.lesson_title"></span></div>
-                    <div class="detail-row"><span class="detail-label">Stufe</span><span><span class="stage-dot" :style="`background:${detailCard.stage_color}`"></span><span x-text="detailCard.stage_name"></span></span></div>
-                    <div class="detail-row"><span class="detail-label">Faellig</span><span x-text="detailCard.due_date"></span></div>
-                    <div class="detail-row"><span class="detail-label">Stability</span><span x-text="detailCard.stability + ' Tage'"></span></div>
-                    <div class="detail-row"><span class="detail-label">Difficulty</span><span x-text="detailCard.difficulty"></span></div>
-                    <div class="detail-row"><span class="detail-label">Reviews</span><span x-text="detailCard.reps"></span></div>
-                    <div class="detail-row"><span class="detail-label">Fehler</span><span x-text="detailCard.lapses"></span></div>
-
-                    <div class="detail-history" x-show="detailCard.review_history && detailCard.review_history.length">
-                        <div style="font-weight:600;font-size:0.8rem;margin-bottom:0.3rem;">Review-Verlauf</div>
-                        <template x-for="h in (detailCard.review_history || [])" :key="h.date">
-                            <span class="detail-history-item" :class="'r' + h.rating" x-text="h.date.slice(5,10) + ' ' + h.rating_label"></span>
-                        </template>
+                    <div class="cb-modal-head">
+                        <div>
+                            <div class="cb-modal-front" id="cb-modal-title" x-text="detailCard.front"></div>
+                            <div class="cb-modal-sub" x-show="readingOf(detailCard) !== '-'" x-text="readingOf(detailCard)"></div>
+                            <div class="cb-modal-meaning" x-show="meaningOf(detailCard) !== '-'" x-text="meaningOf(detailCard)"></div>
+                        </div>
+                        <button class="cb-modal-close" x-ref="modalClose" @click="detailCard = null" aria-label="Schliessen">&times;</button>
                     </div>
+                    <div class="cb-modal-body">
+                        <div class="cb-statgrid">
+                            <div class="cb-stat"><div class="k">Typ</div><div class="v" x-text="typeLabel(detailCard.content_type)"></div></div>
+                            <div class="cb-stat"><div class="k">Lektion</div><div class="v" x-text="detailCard.lesson_title || '–'"></div></div>
+                            <div class="cb-stat"><div class="k">Stufe</div><div class="v"><span class="cb-stage"><span class="cb-stage-dot" :style="`background:${detailCard.stage_color}`"></span><span x-text="detailCard.stage_name"></span></span></div></div>
+                            <div class="cb-stat"><div class="k">Fällig</div><div class="v" x-text="formatDate(detailCard.due_date)"></div></div>
+                            <div class="cb-stat"><div class="k">Stabilität</div><div class="v" x-text="detailCard.stability + ' Tage'"></div></div>
+                            <div class="cb-stat"><div class="k">Schwierigkeit</div><div class="v" x-text="detailCard.difficulty"></div></div>
+                            <div class="cb-stat"><div class="k">Reviews</div><div class="v" x-text="detailCard.reps"></div></div>
+                            <div class="cb-stat"><div class="k">Fehler</div><div class="v"><span x-text="detailCard.lapses"></span><span x-show="detailCard.lapses >= 8" class="cb-leech"><i class="fas fa-bug"></i> Leech</span></div></div>
+                        </div>
 
-                    <div class="detail-actions">
-                        <button @click="cardAction('suspend', detailCard.content_id)"><i class="fas fa-pause me-1"></i>Suspendieren</button>
-                        <button @click="if(confirm('FSRS-State zuruecksetzen?')) cardAction('reset', detailCard.content_id)"><i class="fas fa-undo me-1"></i>Reset</button>
-                        <button @click="window.open(`/feedback/new?content_type=lesson_content&content_id=${detailCard.content_id}`, '_blank')"><i class="fas fa-flag me-1"></i>Melden</button>
+                        <template x-if="detailCard.review_history && detailCard.review_history.length">
+                            <div>
+                                <div class="cb-hist-title">Review-Verlauf (neueste zuerst)</div>
+                                <div class="cb-hist">
+                                    <template x-for="(h, i) in detailCard.review_history" :key="i">
+                                        <span class="cb-hist-item" :class="'r' + h.rating" x-text="h.date.slice(5,10) + ' · ' + h.rating_label"></span>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+
+                        <div class="cb-modal-actions">
+                            <button class="cb-btn cb-btn-ghost" x-show="detailCard.status !== 'suspended'" @click="cardAction('suspend', detailCard.content_id)"><i class="fas fa-pause"></i> Suspendieren</button>
+                            <button class="cb-btn cb-btn-ghost" x-show="detailCard.status === 'suspended'" @click="cardAction('unsuspend', detailCard.content_id)"><i class="fas fa-play"></i> Aktivieren</button>
+                            <button class="cb-btn cb-btn-danger" @click="if(confirm('FSRS-Lernfortschritt dieser Karte zurücksetzen?')) cardAction('reset', detailCard.content_id)"><i class="fas fa-undo"></i> Reset</button>
+                            <button class="cb-btn cb-btn-ghost" @click="window.open(`/feedback/new?content_type=lesson_content&content_id=${detailCard.content_id}`, '_blank')"><i class="fas fa-flag"></i> Melden</button>
+                        </div>
                     </div>
                 </div>
             </template>
@@ -293,6 +680,7 @@ function cardBrowser() {
         total: 0,
         page: 1,
         pages: 1,
+        loading: true,
         searchQuery: '',
         sortField: 'due_date',
         sortDir: 'asc',
@@ -307,8 +695,25 @@ function cardBrowser() {
             dueToday: false,
         },
 
+        statusOptions: [
+            { v: 'new', l: 'Neu' },
+            { v: 'learning', l: 'Lernen' },
+            { v: 'review', l: 'Review' },
+            { v: 'relearning', l: 'Relearning' },
+            { v: 'suspended', l: 'Suspendiert' },
+        ],
+        typeOptions: [
+            { v: 'kana', l: 'Kana', g: 'あ' },
+            { v: 'kanji', l: 'Kanji', g: '漢' },
+            { v: 'vocabulary', l: 'Vokabel', g: '語' },
+            { v: 'grammar', l: 'Grammatik', g: '文' },
+        ],
+
         typeLabel(t) {
-            return {kana:'Kana', kanji:'Kanji', vocabulary:'Vokabel', grammar:'Grammatik'}[t] || t;
+            return { kana: 'Kana', kanji: 'Kanji', vocabulary: 'Vokabel', grammar: 'Grammatik' }[t] || t;
+        },
+        typeGlyph(t) {
+            return { kana: 'あ', kanji: '漢', vocabulary: '語', grammar: '文' }[t] || '·';
         },
 
         readingOf(card) {
@@ -331,7 +736,12 @@ function cardBrowser() {
             else if (card.content_type === 'grammar') m = d.explanation || '';
             else if (card.content_type === 'kana') m = '';
             if (!m) return '-';
-            return m.length > 60 ? m.slice(0, 57) + '…' : m;
+            return m.length > 80 ? m.slice(0, 77) + '…' : m;
+        },
+
+        isDue(iso) {
+            if (!iso) return false;
+            return (new Date(iso) - new Date()) < 0;
         },
 
         formatDate(iso) {
@@ -339,34 +749,81 @@ function cardBrowser() {
             const d = new Date(iso);
             const now = new Date();
             const diff = Math.floor((d - now) / 86400000);
-            if (diff < 0) return 'Faellig';
+            if (diff < 0) return 'Fällig';
             if (diff === 0) return 'Heute';
             if (diff === 1) return 'Morgen';
             return `${diff} Tage`;
         },
 
-        async loadCards() {
+        // Aktive-Filter-Chips (entfernbar) — rein clientseitig abgeleitet
+        get activeChips() {
+            const chips = [];
+            this.filters.status.forEach(v => {
+                const o = this.statusOptions.find(s => s.v === v);
+                chips.push({ id: 'st_' + v, kind: 'status', value: v, label: o ? o.l : v });
+            });
+            this.filters.contentType.forEach(v => {
+                const o = this.typeOptions.find(s => s.v === v);
+                chips.push({ id: 'ct_' + v, kind: 'contentType', value: v, label: o ? o.l : v });
+            });
+            if (this.filters.lessonId) {
+                chips.push({ id: 'le_' + this.filters.lessonId, kind: 'lessonId', value: this.filters.lessonId, label: this.lessonLabel(this.filters.lessonId) });
+            }
+            if (this.filters.leech) chips.push({ id: 'leech', kind: 'leech', label: 'Nur Leeches' });
+            if (this.filters.dueToday) chips.push({ id: 'due', kind: 'dueToday', label: 'Heute fällig' });
+            if (this.searchQuery.trim()) chips.push({ id: 'q', kind: 'search', label: `„${this.searchQuery.trim()}"` });
+            return chips;
+        },
+
+        lessonLabel(id) {
+            const sel = this.$refs.lessonSelect;
+            if (!sel) return 'Lektion';
+            const opt = sel.querySelector(`option[value="${id}"]`);
+            return opt ? opt.textContent : 'Lektion';
+        },
+
+        removeChip(chip) {
+            if (chip.kind === 'status') this.filters.status = this.filters.status.filter(v => v !== chip.value);
+            else if (chip.kind === 'contentType') this.filters.contentType = this.filters.contentType.filter(v => v !== chip.value);
+            else if (chip.kind === 'lessonId') this.filters.lessonId = '';
+            else if (chip.kind === 'leech') this.filters.leech = false;
+            else if (chip.kind === 'dueToday') this.filters.dueToday = false;
+            else if (chip.kind === 'search') this.searchQuery = '';
+            this.page = 1;
+            this.loadCards();
+        },
+
+        buildParams(withPaging = true) {
             const params = new URLSearchParams({
                 q: this.searchQuery,
                 sort: this.sortField,
                 order: this.sortDir,
-                page: this.page,
-                per_page: 50,
             });
+            if (withPaging) {
+                params.set('page', this.page);
+                params.set('per_page', 50);
+            }
             if (this.filters.status.length) params.set('status', this.filters.status.join(','));
             if (this.filters.contentType.length) params.set('content_type', this.filters.contentType.join(','));
             if (this.filters.lessonId) params.set('lesson_id', this.filters.lessonId);
             if (this.filters.leech) params.set('leech', 'true');
             if (this.filters.dueToday) params.set('due_today', 'true');
+            return params;
+        },
 
+        async loadCards() {
+            this.loading = true;
             try {
-                const resp = await fetch(`/api/srs/browse?${params}`);
+                const resp = await fetch(`/api/srs/browse?${this.buildParams()}`);
                 const data = await resp.json();
                 this.cards = data.cards || [];
                 this.total = data.total || 0;
                 this.pages = data.pages || 1;
             } catch (e) {
                 console.error('[Browse] Load failed:', e);
+                this.cards = [];
+            } finally {
+                this.loading = false;
             }
         },
 
@@ -378,17 +835,14 @@ function cardBrowser() {
         },
 
         toggleAll(event) {
-            if (event.target.checked) {
-                this.selectedIds = this.cards.map(c => c.content_id);
-            } else {
-                this.selectedIds = [];
-            }
+            this.selectedIds = event.target.checked ? this.cards.map(c => c.content_id) : [];
         },
 
         async showDetail(contentId) {
             try {
                 const resp = await fetch(`/api/srs/card/${contentId}/detail`);
                 this.detailCard = await resp.json();
+                this.$nextTick(() => this.$refs.modalClose?.focus());
             } catch (e) {
                 console.error('[Browse] Detail failed:', e);
             }
@@ -398,8 +852,8 @@ function cardBrowser() {
             const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
             await fetch(`/api/srs/card/${action}`, {
                 method: 'POST',
-                headers: {'Content-Type':'application/json', 'X-CSRFToken': csrf},
-                body: JSON.stringify({content_id: contentId})
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrf },
+                body: JSON.stringify({ content_id: contentId })
             });
             this.detailCard = null;
             this.loadCards();
@@ -409,7 +863,7 @@ function cardBrowser() {
             const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
             await fetch('/api/srs/bulk-action', {
                 method: 'POST',
-                headers: {'Content-Type':'application/json', 'X-CSRFToken': csrf},
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrf },
                 body: JSON.stringify({ action, content_ids: this.selectedIds })
             });
             this.selectedIds = [];
@@ -417,13 +871,7 @@ function cardBrowser() {
         },
 
         exportCSV() {
-            const params = new URLSearchParams({ q: this.searchQuery, sort: this.sortField, order: this.sortDir });
-            if (this.filters.status.length) params.set('status', this.filters.status.join(','));
-            if (this.filters.contentType.length) params.set('content_type', this.filters.contentType.join(','));
-            if (this.filters.lessonId) params.set('lesson_id', this.filters.lessonId);
-            if (this.filters.leech) params.set('leech', 'true');
-            if (this.filters.dueToday) params.set('due_today', 'true');
-            window.location.href = `/api/srs/browse/export?${params}`;
+            window.location.href = `/api/srs/browse/export?${this.buildParams(false)}`;
         },
     };
 }
