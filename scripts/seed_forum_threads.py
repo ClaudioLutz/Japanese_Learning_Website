@@ -62,7 +62,7 @@ THREADS = [
     },
     {
         "category": "hilfe-fragen",
-        "author": "claudio.lutz.cv",
+        "author": "claudio",
         "days_ago": 9,
         "title": "は (wa) vs が (ga) — der Merksatz, der bei mir endlich klickte",
         "body": (
@@ -85,7 +85,7 @@ THREADS = [
     },
     {
         "category": "hilfe-fragen",
-        "author": "claudio.lutz.cv",
+        "author": "claudio",
         "days_ago": 6,
         "title": "Zählwörter: 〜つ, 〜こ, 〜にん, 〜まい — wann nehme ich was?",
         "body": (
@@ -107,7 +107,7 @@ THREADS = [
     },
     {
         "category": "vorschlaege",
-        "author": "claudio.lutz.cv",
+        "author": "claudio",
         "days_ago": 5,
         "title": "Was wünscht ihr euch als Nächstes? (Roadmap-Input)",
         "body": (
@@ -124,7 +124,7 @@ THREADS = [
     },
     {
         "category": "off-topic",
-        "author": "claudio.lutz.cv",
+        "author": "claudio",
         "days_ago": 4,
         "title": "Womit übt ihr Hören? (Anime, Podcasts, YouTube)",
         "body": (
@@ -141,7 +141,7 @@ THREADS = [
     },
     {
         "category": "off-topic",
-        "author": "claudio.lutz.cv",
+        "author": "claudio",
         "days_ago": 1,
         "title": "Vokabel der Woche: たいへん (taihen)",
         "body": (
