@@ -174,6 +174,21 @@ def _synthesize_gemini(text: str) -> bytes:
     return buf.getvalue()
 
 
+def pregenerated_ja_audio_file(text: str):
+    """Pfad zur vorgenerierten Gemini-WAV fuer einen (bereits transformierten) ja-Text.
+
+    Liegt im persistenten uploads-Volume (ueberlebt Image-Rebuilds), Schluessel =
+    SHA-1 ueber den final transformierten Text (nach clean_tts_segment +
+    _maybe_spell_out_kana_row). So liefert /api/tts fuer Japanisch IMMER das
+    vorgenerierte Gemini-Audio, wenn vorhanden — sonst greift der schnelle
+    Chirp-Pfad. Erzeugt wird der Store von scripts/gen_vocab_audio.py.
+    """
+    import hashlib
+    from pathlib import Path
+    key = hashlib.sha1(text.encode('utf-8')).hexdigest()
+    return Path(current_app.static_folder) / 'uploads' / 'tts_gemini' / f"{key}.wav"
+
+
 @bp.route('/api/tts', methods=['POST'])
 @csrf.exempt
 @limiter.limit("30 per minute")
@@ -227,6 +242,14 @@ def tts_synthesize():
 
     if lang == 'ja':
         text = _maybe_spell_out_kana_row(text, model=model)
+        # Vorgeneriertes Gemini-Audio hat IMMER Vorrang (Karten-Beispielsaetze,
+        # Vokabeln, Grammatik). So ist Japanisch garantiert Gemini-Qualitaet,
+        # ohne Request-Zeit-Latenz/Quota — Chirp bleibt nur schneller Fallback
+        # fuer noch nicht vorgeneriertes Audio.
+        pregen = pregenerated_ja_audio_file(text)
+        if pregen.exists():
+            from flask import send_file
+            return send_file(str(pregen), mimetype='audio/wav', conditional=True)
 
     # Cache-Key inkl. lang + model + voice — sonst koennten alte Chirp-Audios
     # statt neuer Gemini-Audios ausgeliefert werden (oder umgekehrt).

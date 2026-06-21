@@ -130,6 +130,33 @@ def test_text_zu_lang(post_tts):
     assert resp.status_code == 400
 
 
+def test_pregeneriertes_gemini_hat_vorrang(client, tts_app):
+    """Existiert eine vorgenerierte Gemini-WAV, liefert /api/tts sie aus — auch
+    ohne model=gemini und ohne Chirp-Call. So ist JP-Karten-Audio garantiert
+    Gemini, ohne Request-Zeit-Latenz (siehe gen_vocab_audio.py)."""
+    from app.routes import pregenerated_ja_audio_file, _maybe_spell_out_kana_row
+    from app.services.tts_text import clean_tts_segment
+
+    text = "これはほんです。"
+    with tts_app.app_context():
+        canon = _maybe_spell_out_kana_row(clean_tts_segment(text, "ja") or text, model="gemini")
+        path = pregenerated_ja_audio_file(canon)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(b"PREGENERATED_GEMINI_WAV")
+
+    # Default-Request (model=chirp) — darf trotzdem die Gemini-WAV liefern,
+    # ohne requests.post (Chirp) ueberhaupt aufzurufen.
+    def _boom(*a, **k):  # pragma: no cover - darf nicht aufgerufen werden
+        raise AssertionError("Chirp/requests.post haette nicht aufgerufen werden duerfen")
+
+    with patch("requests.post", side_effect=_boom):
+        resp = client.post("/api/tts", json={"text": text, "lang": "ja"})
+
+    assert resp.status_code == 200
+    assert resp.headers["Content-Type"] == "audio/wav"
+    assert resp.data == b"PREGENERATED_GEMINI_WAV"
+
+
 def test_kein_api_key(client, app, monkeypatch):
     """Wenn kein Google-Key konfiguriert → 503."""
     monkeypatch.delenv("GOOGLE_TTS_API_KEY", raising=False)
