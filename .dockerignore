@@ -10,6 +10,12 @@ node_modules/
 data/
 datasets/
 uploads/
+# Medien (~5 GB) liegen als Bind-Volume gemountet (override.yml:
+# ./app/static/uploads:/app/app/static/uploads) und werden zur Laufzeit
+# bereitgestellt — NICHT ins Image kopieren. Bloßes "uploads/" matcht den
+# verschachtelten Pfad nicht, daher explizit. Spart ~5 GB Image + Build-Zeit.
+app/static/uploads/
+**/uploads/
 instance/app.db
 logs/
 deprecated/
