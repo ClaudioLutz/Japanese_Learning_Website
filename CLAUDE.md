@@ -343,6 +343,15 @@ Auf diesem Workspace laufen oft mehrere Claude-Code-Sessions gleichzeitig (versc
 - **Pro Worktree die Dev-Umgebung neu aufsetzen** (eigene venv + Deps: `pip install -r requirements.txt`). `.env`/`.env.local` werden automatisch via `.worktreeinclude` hineinkopiert.
 - Lineare Historie: **Rebase statt Merge**. Nach dem Merge den Worktree entfernen (`git worktree remove ...`) — keine Leichen liegen lassen.
 
+### `main` ist geschützt: FF-only, NIEMALS force-pushen (seit 2026-06-21)
+Auf GitHub ist **Branch Protection für `main` aktiv**: Force-Push gesperrt, lineare Historie erzwungen, Löschen gesperrt, gilt auch für Admins. Grund: Am 2026-06-21 hat ein **Force-Push einer Parallel-Session einen bereits gepushten Commit von `main` gelöscht** (Arbeit verschwand spurlos). Worktrees allein verhindern das NICHT — `main` ist geteilt, egal wie viele Worktrees.
+- **NIEMALS** `git push --force`/`--force-with-lease`, `git rebase`, `git reset` auf `main`. (GitHub lehnt es ohnehin ab — gar nicht erst versuchen.)
+- **Push-Flow auf `main`** (kein Branch-Wechsel im Haupt-Checkout): im Feature-Worktree `git fetch origin` → `git rebase origin/main` → `git push origin <feature>:main` (Fast-Forward). Bei Reject (jemand war schneller): nochmal `fetch`+`rebase`+`push` — **nie** forcen.
+- **Nach JEDEM `main`-Push sofort verifizieren**, dass der Commit hält, BEVOR du deployst: `git fetch origin && git merge-base --is-ancestor <commit> origin/main` (Exit 0 = drin). Erst dann `/deploy`.
+- **Divergierter lokaler Branch** („X voraus / Y hinter", weil eine Parallel-Session den geteilten Branch rebased hat) → den messy Branch NICHT pushen. Stattdessen den einen gewünschten Commit per **Cherry-Pick in einem frischen Worktree von `origin/main`** landen: `git worktree add --detach <tmp> origin/main && git -C <tmp> cherry-pick <commit> && git -C <tmp> push origin HEAD:main && git worktree remove --force <tmp>`.
+- **Nur EINE Session deployt gleichzeitig.** Deploys serialisieren auf dem einen Server/Container (sonst Container-Namens-Konflikt + `git pull`-Race). Vor dem Deploy kurz prüfen, ob gerade eine andere Session deployt.
+- **Deploy ist schnell** (seit 2026-06-21): `.dockerignore` schließt `app/static/uploads` (5 GB Bind-Volume) aus → Image 1.67 GB statt 10 GB, Build ~Sekunden statt ~8 Min. Nichts Volume-Großes ins Image kopieren.
+
 ### Koordination geteilter Dateien (das eigentliche Konfliktrisiko)
 Mehrere Sessions an DERSELBEN Datei kollidieren. Besonders heikel (von vielen Features berührt): `app/static/css/custom.css`, `app/templates/lesson_view.html`, `app/templates/base.html`, `app/models.py`.
 - **Vor dem Editieren einer solchen geteilten Datei: `git fetch` + prüfen, was andere Branches/Sessions dort gerade tun.**
