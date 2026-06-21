@@ -893,6 +893,10 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
 {% block content %}
 <div class="review-screen">
 
+    {# Mobile/Tablet-Richtungs-Umschalter (≤991px) — Desktop hat ihn im Header #}
+    {% set active_dir = 'jpde' %}
+    {% include '_review_dir_toggle.html' %}
+
     <!-- Screenreader-Ansagen: Bewertungsergebnis, Fortschritt, Session-Ende -->
     <div class="sr-only-live" id="srAnnounce" aria-live="polite"></div>
 
