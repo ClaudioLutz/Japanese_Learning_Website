@@ -4,8 +4,8 @@
    Bündelt die drei Übungs-Modi (Wiederholen JP→DE/DE→JP, Kana, Prüfen) unter
    einem Dach, damit die Primär-Nav nur ein „Üben"-Verb braucht. KEINE Funktion
    wird versteckt: jeder Modus ist hier UND weiterhin per Bottom-Nav/Deep-Link
-   direkt erreichbar. Styles nur über Tokens (var(--…)) → der globale Dark-Flip
-   greift automatisch, kein eigener [data-theme=dark]-Block nötig. #}
+   direkt erreichbar. Karten-Banner = Nano-Banana-Bilder (app/static/img/ueben/).
+   Styles nur über Tokens (var(--…)) → der globale Dark-Flip greift automatisch. #}
 
 {% block title %}Üben{% endblock %}
 {% block meta_description %}Üben auf japanese-learning.ch — Vokabeln & Kanji wiederholen (SRS), Kana-Spiele und JLPT-N5-Prüfungen an einem Ort.{% endblock %}
@@ -23,35 +23,47 @@
 
     {# Wiederholen — der tägliche SRS-Loop, prominent zuerst #}
     <section class="ueben-card ueben-card--primary" aria-labelledby="ueben-wdh">
-      <div class="ueben-card__ico" aria-hidden="true"><i class="fas fa-brain"></i></div>
-      <h2 id="ueben-wdh">Wiederholen</h2>
-      <p>Deine fälligen Karten mit Spaced Repetition — wähle die Richtung.</p>
-      <div class="ueben-dirs">
-        <a href="{{ url_for('srs.review_page') }}" class="ueben-btn ueben-btn--shu">
-          <span><strong>JP&#8594;DE</strong> · Erkennen</span>
-          {% if due_count %}<span class="ueben-due" aria-label="{{ due_count }} fällig">{{ due_count if due_count <= 99 else '99+' }}</span>{% endif %}
-        </a>
-        <a href="{{ url_for('srs.production_page') }}" class="ueben-btn ueben-btn--ghost">
-          <span><strong>DE&#8594;JP</strong> · Produktion</span>
-          {% if production_due %}<span class="ueben-due" aria-label="{{ production_due }} fällig">{{ production_due if production_due <= 99 else '99+' }}</span>{% endif %}
-        </a>
+      <div class="ueben-card__media">
+        <img src="{{ url_for('static', filename='img/ueben/wiederholen.webp') }}" alt="" loading="lazy" decoding="async">
+      </div>
+      <div class="ueben-card__body">
+        <h2 id="ueben-wdh">Wiederholen</h2>
+        <p>Deine fälligen Karten mit Spaced Repetition — wähle die Richtung.</p>
+        <div class="ueben-dirs">
+          <a href="{{ url_for('srs.review_page') }}" class="ueben-btn ueben-btn--shu">
+            <span><strong>JP&#8594;DE</strong> · Erkennen</span>
+            {% if due_count %}<span class="ueben-due" aria-label="{{ due_count }} fällig">{{ due_count if due_count <= 99 else '99+' }}</span>{% endif %}
+          </a>
+          <a href="{{ url_for('srs.production_page') }}" class="ueben-btn ueben-btn--ghost">
+            <span><strong>DE&#8594;JP</strong> · Produktion</span>
+            {% if production_due %}<span class="ueben-due" aria-label="{{ production_due }} fällig">{{ production_due if production_due <= 99 else '99+' }}</span>{% endif %}
+          </a>
+        </div>
       </div>
     </section>
 
     {# Kana üben — Zuordnung / Storm / Schreiben (eigene Tab-Seite) #}
     <section class="ueben-card" aria-labelledby="ueben-kana">
-      <div class="ueben-card__ico ueben-card__ico--jp" aria-hidden="true">あ</div>
-      <h2 id="ueben-kana">Kana üben</h2>
-      <p>Hiragana &amp; Katakana spielerisch: Zuordnung, Storm und Schreiben.</p>
-      <a href="{{ url_for('srs.practice_kana_page') }}" class="ueben-btn ueben-btn--ghost ueben-btn--block">Kana starten</a>
+      <div class="ueben-card__media">
+        <img src="{{ url_for('static', filename='img/ueben/kana.webp') }}" alt="" loading="lazy" decoding="async">
+      </div>
+      <div class="ueben-card__body">
+        <h2 id="ueben-kana">Kana üben</h2>
+        <p>Hiragana &amp; Katakana spielerisch: Zuordnung, Storm und Schreiben.</p>
+        <a href="{{ url_for('srs.practice_kana_page') }}" class="ueben-btn ueben-btn--ghost ueben-btn--block">Kana starten</a>
+      </div>
     </section>
 
     {# Prüfen — eigenständige Examens-Identität (Übung + JLPT-Simulation) #}
     <section class="ueben-card" aria-labelledby="ueben-pruefen">
-      <div class="ueben-card__ico" aria-hidden="true"><i class="fas fa-clipboard-check"></i></div>
-      <h2 id="ueben-pruefen">Prüfen</h2>
-      <p>Quiz-Fragen erneut testen — als lockere Übung oder als JLPT-N5-Examenssimulation.</p>
-      <a href="{{ url_for('pruefen.pruefen_start') }}" class="ueben-btn ueben-btn--ghost ueben-btn--block">Zur Prüfung</a>
+      <div class="ueben-card__media">
+        <img src="{{ url_for('static', filename='img/ueben/pruefen.webp') }}" alt="" loading="lazy" decoding="async">
+      </div>
+      <div class="ueben-card__body">
+        <h2 id="ueben-pruefen">Prüfen</h2>
+        <p>Quiz-Fragen erneut testen — als lockere Übung oder als JLPT-N5-Examenssimulation.</p>
+        <a href="{{ url_for('pruefen.pruefen_start') }}" class="ueben-btn ueben-btn--ghost ueben-btn--block">Zur Prüfung</a>
+      </div>
     </section>
 
   </div>
@@ -90,22 +102,29 @@
     background: var(--card-background, #FFFDF7);
     border: 1px solid var(--border-color, #E4DED4);
     border-radius: 16px;
-    padding: 1.25rem 1.25rem 1.4rem;
+    overflow: hidden;            /* Banner-Ecken an den Karten-Radius clippen */
     display: flex; flex-direction: column;
     box-shadow: 0 1px 2px rgba(28,26,23,.04), 0 1px 3px rgba(28,26,23,.06);
   }
   .ueben-card--primary { border-left: 4px solid var(--shu, #EB6101); }
-  .ueben-card__ico {
-    width: 44px; height: 44px; border-radius: 12px;
-    display: inline-flex; align-items: center; justify-content: center;
-    background: rgba(235,97,1,0.10); color: var(--shu-deep, #B84A00);
-    font-size: 1.2rem; margin-bottom: 0.6rem;
+
+  /* Banner-Bild (Nano Banana, 16:9) als Full-Bleed-Streifen oben */
+  .ueben-card__media {
+    height: 150px; flex: none;
+    background: var(--kinari, #F5F0E8);
+    border-bottom: 1px solid var(--border-color, #E4DED4);
   }
-  .ueben-card__ico--jp {
-    font-family: 'Klee One', 'Noto Serif JP', serif; font-weight: 600; font-size: 1.5rem;
+  .ueben-card--primary .ueben-card__media { height: 170px; }
+  .ueben-card__media img {
+    width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;
   }
-  .ueben-card h2 { font-size: 1.15rem; color: var(--text-color, #1C1A17); margin: 0 0 0.25rem; }
-  .ueben-card p { color: var(--text-muted, #5C564D); font-size: 0.92rem; margin: 0 0 1rem; flex: 1; }
+
+  .ueben-card__body {
+    padding: 1.1rem 1.25rem 1.35rem;
+    display: flex; flex-direction: column; flex: 1;
+  }
+  .ueben-card__body h2 { font-size: 1.15rem; color: var(--text-color, #1C1A17); margin: 0 0 0.25rem; }
+  .ueben-card__body p { color: var(--text-muted, #5C564D); font-size: 0.92rem; margin: 0 0 1rem; flex: 1; }
 
   .ueben-dirs { display: flex; gap: 0.6rem; flex-wrap: wrap; }
   .ueben-dirs .ueben-btn { flex: 1; min-width: 180px; }
@@ -141,6 +160,5 @@
 
   /* Dark: helle Hover-Tints invertieren (alles andere läuft über Tokens). */
   [data-theme="dark"] .ueben-btn--ghost:hover { background: rgba(255,255,255,0.07); }
-  [data-theme="dark"] .ueben-card__ico { background: rgba(235,97,1,0.16); }
 </style>
 {% endblock %}
