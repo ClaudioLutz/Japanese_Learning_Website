@@ -758,55 +758,6 @@
         {% block content %}{% endblock %}
     </main>
 
-    {# ── Floating Admin-Edit-Button (nur für Admins) ── #}
-    {% if current_user.is_authenticated and current_user.is_admin %}
-    <a href="{{ admin_edit_url or url_for('routes.admin_index') }}"
-       class="admin-floating-edit"
-       title="Diese Seite im Admin bearbeiten"
-       aria-label="Diese Seite im Admin bearbeiten">
-        <i class="fas fa-pencil-alt"></i>
-    </a>
-    <style>
-    .admin-floating-edit {
-        position: fixed;
-        bottom: 24px;
-        right: 24px;
-        z-index: 1050;
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        background: #f59e0b;
-        color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.2rem;
-        box-shadow: 0 4px 14px rgba(245,158,11,0.4);
-        transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
-        text-decoration: none;
-    }
-    .admin-floating-edit:hover {
-        background: #d97706;
-        transform: scale(1.12);
-        box-shadow: 0 6px 20px rgba(217,119,6,0.5);
-        color: #fff;
-        text-decoration: none;
-    }
-    .admin-floating-edit:active {
-        transform: scale(0.95);
-    }
-    @media (max-width: 768px) {
-        .admin-floating-edit {
-            width: 42px;
-            height: 42px;
-            bottom: 16px;
-            right: 16px;
-            font-size: 1rem;
-        }
-    }
-    </style>
-    {% endif %}
-
     <!-- ══ Mobile Bottom Navigation Bar — flache, gleichwertige Tabs ═══ -->
     <nav class="mobile-bottom-nav" id="mobileBottomNav" aria-label="Schnellnavigation">
         <a href="{{ url_for('routes.index') }}" class="bottom-nav-item{% if request.endpoint == 'routes.index' %} active{% endif %}"

@@ -3931,11 +3931,6 @@ button[onclick*="moveContentInPage"]:active {
         padding-bottom: 60px !important;
     }
 
-    /* Admin-FAB ueber die Bottom-Nav + ggf. Lesson-Nav schieben */
-    .admin-floating-edit {
-        bottom: 110px !important;
-    }
-
     /* Back-to-Top ueber die Bottom-Nav schieben */
     .back-to-top,
     #backToTop {
