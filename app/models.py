@@ -1968,6 +1968,106 @@ class ForumPost(db.Model):
         return self.author_id == user.id or getattr(user, 'is_admin', False)
 
 
+# ── Content-Feedback / Issue-Board ──────────────────────────────────────────
+# Oeffentlich lesbares, content-verankertes Hinweis-/Feedback-Board ("Issues").
+# Bewusst EIGENES Modell, NICHT das Forum: anderes Zugriffsmodell (Lesen
+# oeffentlich, Schreiben nur mit Konto) + Resolve-Status (open/resolved), den
+# das Forum nicht kennt. Maintainer (Admin) beantwortet + setzt erledigt.
+# Konzept/Entscheidungen: Memory project_forum_gap_analyse.
+
+class ContentIssue(db.Model):
+    """Ein Hinweis/Feedback-Eintrag, optional an eine Lektion/Karte verankert."""
+    __tablename__ = 'content_issue'
+    __table_args__ = (
+        db.Index('ix_content_issue_status_created', 'status', 'created_at'),
+        db.Index('ix_content_issue_content', 'content_type', 'content_id'),
+    )
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    # Verankerung an konkretem Inhalt; nullable -> generelles Feedback moeglich.
+    # content_type: 'lesson' | 'lesson_content' (erweiterbar).
+    content_type: Mapped[str] = mapped_column(String(20), nullable=True)
+    content_id: Mapped[int] = mapped_column(Integer, nullable=True)
+    title: Mapped[str] = mapped_column(String(200), nullable=False)
+    body: Mapped[str] = mapped_column(Text, nullable=False)
+    status: Mapped[str] = mapped_column(String(20), default='open', nullable=False)
+    author_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey('user.id'), nullable=False, index=True,
+    )
+    is_deleted: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    resolved_at: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    resolved_by_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey('user.id'), nullable=True,
+    )
+    deleted_at: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    deleted_by_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey('user.id'), nullable=True,
+    )
+
+    author = relationship('User', foreign_keys=[author_id])
+    resolver = relationship('User', foreign_keys=[resolved_by_id])
+    comments: Mapped[List['ContentIssueComment']] = relationship(
+        'ContentIssueComment', backref='issue', lazy=True,
+        order_by='ContentIssueComment.created_at',
+        cascade='all, delete-orphan',
+        foreign_keys='ContentIssueComment.issue_id',
+    )
+
+    def __repr__(self):
+        return f'<ContentIssue {self.id} {self.status}>'
+
+    @property
+    def is_resolved(self) -> bool:
+        return self.status == 'resolved'
+
+    def build_slug(self) -> str:
+        """Slug aus Titel + ID (ID macht ihn eindeutig). Nach flush() aufrufen."""
+        base = _forum_slugify(self.title) or 'hinweis'
+        return f'{base}-{self.id}'
+
+    def can_edit(self, user) -> bool:
+        """Autor oder Admin darf bearbeiten/loeschen."""
+        if not user or not getattr(user, 'is_authenticated', False):
+            return False
+        return self.author_id == user.id or getattr(user, 'is_admin', False)
+
+
+class ContentIssueComment(db.Model):
+    """Antwort/Kommentar zu einem ContentIssue. Admin-Antworten sind via
+    is_maintainer_reply als offizielle Stimme markiert."""
+    __tablename__ = 'content_issue_comment'
+    __table_args__ = (
+        db.Index('ix_content_issue_comment_issue_created', 'issue_id', 'created_at'),
+    )
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    issue_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey('content_issue.id'), nullable=False,
+    )
+    author_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey('user.id'), nullable=False, index=True,
+    )
+    body: Mapped[str] = mapped_column(Text, nullable=False)
+    is_maintainer_reply: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    is_deleted: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    edited_at: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    deleted_at: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    deleted_by_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey('user.id'), nullable=True,
+    )
+
+    author = relationship('User', foreign_keys=[author_id])
+
+    def __repr__(self):
+        return f'<ContentIssueComment {self.id} issue={self.issue_id}>'
+
+    def can_edit(self, user) -> bool:
+        """Autor oder Admin darf bearbeiten/loeschen."""
+        if not user or not getattr(user, 'is_authenticated', False):
+            return False
+        return self.author_id == user.id or getattr(user, 'is_admin', False)
+
+
 # SQLAlchemy event listeners to automatically maintain lesson type consistency
 @event.listens_for(Lesson, 'before_insert')
 @event.listens_for(Lesson, 'before_update')
