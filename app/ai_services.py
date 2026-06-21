@@ -492,18 +492,42 @@ class AILessonContentGenerator:
         current_app.logger.info(f"Nano Banana image: {prompt[:100]}...")
         return self._nano_banana_image(prompt, aspect_ratio=aspect_ratio)
 
-    def generate_vocabulary_image_nb(self, word: str, meaning: str, aspect_ratio: str = "1:1"):
-        """Nano-Banana-Variante von ``generate_vocabulary_image`` (Icon-Stil)."""
-        prompt = (
-            f"A single, centered icon representing the concept '{meaning}'. "
-            "STRICT RULE: absolutely NO text, NO letters, NO characters, NO writing, "
-            "NO symbols, NO numbers, NO words of any language anywhere in the image. "
-            "Only pure visual imagery. "
-            "Flat design, geometric simple shapes, minimal detail, soft muted pastel colors, "
-            "white background, no shadows, clean vector-style illustration, "
-            "modern minimalist pictogram, like a simple app icon."
+    def generate_vocabulary_image_nb(self, word: str, meaning: str, aspect_ratio: str = "1:1",
+                                     scene: str | None = None):
+        """Nano-Banana-Variante von ``generate_vocabulary_image``.
+
+        Wenn ``scene`` (die deutsche Uebersetzung des Beispielsatzes) gesetzt ist,
+        wird ein **Szenenbild zum Satz** erzeugt statt eines Icons zum Wort
+        (Direktive 2026-06-21). Personen- und textfrei wie die uebrigen
+        Lektionsbilder (zugleich Mitigation gegen Bild-Safety-Blocks bei
+        koerperbezogenen Verben). Ohne ``scene`` bleibt der bisherige Icon-Stil
+        (rueckwaerts-kompatibel fuer andere Aufrufer / Legacy-Daten ohne Satz).
+        """
+        if scene:
+            prompt = (
+                f"A simple, clean illustration of this scene: '{scene}'. "
+                "Show the objects, place and setting the sentence describes. "
+                "STRICT RULE: NO people, no faces, no hands, no figures. "
+                "STRICT RULE: absolutely NO text, NO letters, NO characters, NO writing, "
+                "NO symbols, NO numbers, NO words of any language anywhere in the image. "
+                "Only pure visual imagery. "
+                "Flat design, soft muted pastel colors, gentle Japanese aesthetic, "
+                "very light/white background, minimal detail, clean vector-style illustration."
+            )
+        else:
+            prompt = (
+                f"A single, centered icon representing the concept '{meaning}'. "
+                "STRICT RULE: absolutely NO text, NO letters, NO characters, NO writing, "
+                "NO symbols, NO numbers, NO words of any language anywhere in the image. "
+                "Only pure visual imagery. "
+                "Flat design, geometric simple shapes, minimal detail, soft muted pastel colors, "
+                "white background, no shadows, clean vector-style illustration, "
+                "modern minimalist pictogram, like a simple app icon."
+            )
+        current_app.logger.info(
+            f"Nano Banana vocab image for '{word}' ({meaning})"
+            + (f" [scene: {scene}]" if scene else " [icon]")
         )
-        current_app.logger.info(f"Nano Banana vocab image for '{word}' ({meaning})")
         result = self._nano_banana_image(prompt, aspect_ratio=aspect_ratio)
         if "image_bytes" in result:
             result["word"] = word
