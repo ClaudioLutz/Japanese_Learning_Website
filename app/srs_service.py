@@ -70,7 +70,7 @@ def _card_from_state(state):
         return Card()
 
 
-def rate_card(user_id, content_id, rating_int, time_taken_ms=None):
+def rate_card(user_id, content_id, rating_int, time_taken_ms=None, direction='forward'):
     """
     Bewertet eine Karte und berechnet den neuen FSRS-State.
 
@@ -79,6 +79,10 @@ def rate_card(user_id, content_id, rating_int, time_taken_ms=None):
         content_id: LessonContent-ID
         rating_int: 1=Again, 2=Hard, 3=Good, 4=Easy
         time_taken_ms: Antwortzeit in Millisekunden
+        direction: 'forward' (Rezeption JP->DE) | 'reverse' (Produktion DE->JP).
+            Jede Richtung ist eine EIGENE FSRS-Spur (eigener State pro
+            (user, content, direction)). Reverse entsteht on-the-fly beim ersten
+            Rating ueber den bestehenden Insert-Pfad (kein Vorab-Seeding).
 
     Returns:
         dict mit next_interval, due_date, status, reps, lapses
@@ -87,7 +91,7 @@ def rate_card(user_id, content_id, rating_int, time_taken_ms=None):
     rating = RATING_MAP[rating_int]
 
     state = CardReviewState.query.filter_by(
-        user_id=user_id, content_id=content_id
+        user_id=user_id, content_id=content_id, direction=direction
     ).first()
 
     if state:
@@ -96,9 +100,12 @@ def rate_card(user_id, content_id, rating_int, time_taken_ms=None):
     else:
         card = Card()
         is_new = True
+        # direction EXPLIZIT setzen — sonst Unique-Crash (uq_user_content_direction)
+        # gegen die forward-Zeile beim ersten reverse-Rating.
         state = CardReviewState(
             user_id=user_id,
             content_id=content_id,
+            direction=direction,
             fsrs_card_state=card.to_json(),
             due_date=datetime.utcnow(),
             status='new',
@@ -160,11 +167,13 @@ def rate_card(user_id, content_id, rating_int, time_taken_ms=None):
     user.add_xp(xp)
     user.total_reviews += 1
 
-    # Karte neu gemeistert?
-    if new_stage_idx == 9 and old_stage_idx != 9:
-        user.total_mastered = (user.total_mastered or 0) + 1
-    elif old_stage_idx == 9 and new_stage_idx != 9:
-        user.total_mastered = max(0, (user.total_mastered or 0) - 1)
+    # Karte neu gemeistert? Mastery ist KANONISCH die Rezeptions-Spur (forward) —
+    # reverse zaehlt nicht zusaetzlich, sonst doppelt pro Vokabel.
+    if direction == 'forward':
+        if new_stage_idx == 9 and old_stage_idx != 9:
+            user.total_mastered = (user.total_mastered or 0) + 1
+        elif old_stage_idx == 9 and new_stage_idx != 9:
+            user.total_mastered = max(0, (user.total_mastered or 0) - 1)
 
     # DailyReviewAggregate aktualisieren
     update_daily_aggregate(
@@ -181,6 +190,7 @@ def rate_card(user_id, content_id, rating_int, time_taken_ms=None):
     log_entry = ReviewLog(
         user_id=user_id,
         content_id=content_id,
+        direction=direction,
         rating=rating_int,
         reviewed_at=datetime.utcnow(),
         time_taken_ms=time_taken_ms,
@@ -211,12 +221,18 @@ def rate_card(user_id, content_id, rating_int, time_taken_ms=None):
     }
 
 
-def get_due_cards(user_id, limit=50, lesson_id=None, content_type=None):
-    """Holt alle faelligen Karten fuer einen User."""
+def get_due_cards(user_id, limit=50, lesson_id=None, content_type=None, direction='forward'):
+    """Holt alle faelligen Karten fuer einen User.
+
+    direction='forward' (Default): die normale /review-Queue (Rezeption). Die
+    Produktions-Richtung (reverse) hat eine EIGENE Queue (get_production_due_cards)
+    und darf NICHT in /review oder das Nav-Badge einlaufen.
+    """
     now = datetime.utcnow()
 
     query = CardReviewState.query.filter(
         CardReviewState.user_id == user_id,
+        CardReviewState.direction == direction,
         CardReviewState.due_date <= now,
         CardReviewState.status != 'suspended',
     )
@@ -232,21 +248,27 @@ def get_due_cards(user_id, limit=50, lesson_id=None, content_type=None):
 
 
 def get_due_count(user_id):
-    """Zaehlt faellige Karten fuer einen User (fuer Badge)."""
+    """Zaehlt faellige Karten fuer das Nav-Badge — NUR Rezeption (forward).
+
+    Die Produktions-Queue (reverse) zaehlt separat (get_production_due_count),
+    damit das /review-Badge sich nicht stillschweigend verdoppelt.
+    """
     now = datetime.utcnow()
     return CardReviewState.query.filter(
         CardReviewState.user_id == user_id,
+        CardReviewState.direction == 'forward',
         CardReviewState.due_date <= now,
         CardReviewState.status != 'suspended',
     ).count()
 
 
 def get_new_cards(user_id, lesson_id, limit=20):
-    """Holt Content-Items einer Lektion, die der User noch nie bewertet hat."""
+    """Holt Content-Items einer Lektion, die der User (forward) noch nie bewertet hat."""
     card_types = ['kana', 'kanji', 'vocabulary', 'grammar']
 
     existing = db.session.query(CardReviewState.content_id).filter(
-        CardReviewState.user_id == user_id
+        CardReviewState.user_id == user_id,
+        CardReviewState.direction == 'forward',
     ).subquery()
 
     return LessonContent.query.filter(
@@ -256,7 +278,85 @@ def get_new_cards(user_id, lesson_id, limit=20):
     ).order_by(LessonContent.page_number, LessonContent.order_index).limit(limit).all()
 
 
-def get_interval_preview(user_id, content_id):
+# ── Produktion (DE->JP): eigene Reverse-Spur ──────────────────────────────
+# Schwelle, ab der eine rezeptiv (forward) gelernte Vokabel produktiv (reverse)
+# angeboten wird: Forward-Stage >= 3 ('Anfaenger 3' = Stability >= 3 Tage).
+# Recognition-first — kein Produzieren gerade erst gesehener Woerter.
+PRODUCTION_FORWARD_MIN_STAGE = 3
+
+
+def get_production_due_cards(user_id, limit=50):
+    """Faellige Produktions-Karten (reverse) fuer die DE->JP-Queue."""
+    now = datetime.utcnow()
+    return (CardReviewState.query
+            .filter(CardReviewState.user_id == user_id,
+                    CardReviewState.direction == 'reverse',
+                    CardReviewState.due_date <= now,
+                    CardReviewState.status != 'suspended')
+            .order_by(CardReviewState.due_date.asc())
+            .limit(limit).all())
+
+
+def get_production_due_count(user_id):
+    """Zaehlt faellige Produktions-Karten (eigener Zaehler der DE->JP-Seite)."""
+    now = datetime.utcnow()
+    return (CardReviewState.query
+            .filter(CardReviewState.user_id == user_id,
+                    CardReviewState.direction == 'reverse',
+                    CardReviewState.due_date <= now,
+                    CardReviewState.status != 'suspended')
+            .count())
+
+
+def get_production_new_cards(user_id, limit=20):
+    """Produktiv NEUE Vokabeln: forward-Karte ist reif (Stage>=3) UND es gibt
+    noch keine reverse-Karte. On-the-fly berechnet (KEIN Vorab-Seeding) — die
+    reverse-Karte entsteht erst beim ersten Rating. Nur Vokabeln mit gepflegtem
+    meaning_de (sonst kein fairer deutscher Cue).
+
+    Liefert LessonContent-Items (wie get_new_cards). Dedupliziert auf content_id.
+    """
+    from app.gamification_service import get_card_stage
+
+    rows = (db.session.query(CardReviewState, LessonContent, Vocabulary)
+            .join(LessonContent, CardReviewState.content_id == LessonContent.id)
+            .join(Vocabulary, db.and_(LessonContent.content_id == Vocabulary.id,
+                                      LessonContent.content_type == 'vocabulary'))
+            .filter(CardReviewState.user_id == user_id,
+                    CardReviewState.direction == 'forward',
+                    CardReviewState.status != 'suspended')
+            .all())
+
+    existing_rev = {r[0] for r in db.session.query(CardReviewState.content_id)
+                    .filter(CardReviewState.user_id == user_id,
+                            CardReviewState.direction == 'reverse').all()}
+
+    out, seen = [], set()
+    for state, lc, vocab in rows:
+        if lc.id in existing_rev or lc.id in seen:
+            continue
+        if not (vocab.meaning_de or '').strip():
+            continue
+        stage_idx, _, _ = get_card_stage(state.fsrs_card_state)
+        if stage_idx < PRODUCTION_FORWARD_MIN_STAGE:
+            continue
+        seen.add(lc.id)
+        out.append(lc)
+
+    out.sort(key=lambda x: x.id)
+    return out[:limit]
+
+
+def get_production_overview(user_id):
+    """Kennzahlen fuer den Kopf der Produktions-Seite (eigene Zaehler)."""
+    due = get_production_due_count(user_id)
+    new_ready = len(get_production_new_cards(user_id, limit=1000))
+    total = CardReviewState.query.filter_by(
+        user_id=user_id, direction='reverse').count()
+    return {'due_count': due, 'new_ready': new_ready, 'total_cards': total}
+
+
+def get_interval_preview(user_id, content_id, direction='forward'):
     """
     Zeigt die voraussichtlichen Intervalle fuer alle 4 Ratings.
     Returns: dict {1: "<1 Min", 2: "<10 Min", 3: "4 Tage", 4: "12 Tage"}
@@ -264,7 +364,7 @@ def get_interval_preview(user_id, content_id):
     scheduler = _get_scheduler(user_id)
 
     state = CardReviewState.query.filter_by(
-        user_id=user_id, content_id=content_id
+        user_id=user_id, content_id=content_id, direction=direction
     ).first()
 
     if state:
@@ -306,23 +406,31 @@ def get_user_stats(user_id):
     # (ReviewLog.reviewed_at wird in UTC gespeichert). Tagesgrenze in CH, nicht UTC.
     today_start = ch_day_start_utc()
 
-    total_cards = CardReviewState.query.filter_by(user_id=user_id).count()
+    # Karten-Zaehler sind KANONISCH die Rezeptions-Spur (forward) — sonst
+    # zaehlt jede Vokabel mit Produktions-Karte doppelt. Die Produktions-Seite
+    # hat eigene Zaehler (get_production_overview).
+    total_cards = CardReviewState.query.filter_by(
+        user_id=user_id, direction='forward').count()
 
     due_count = CardReviewState.query.filter(
         CardReviewState.user_id == user_id,
+        CardReviewState.direction == 'forward',
         CardReviewState.due_date <= now,
         CardReviewState.status != 'suspended',
     ).count()
 
+    # reviews_today/success_rate zaehlen ALLE Review-Ereignisse (auch Produktion)
+    # — das ist ehrliche Tagesaktivitaet, keine Karten-Doppelzaehlung.
     reviews_today = ReviewLog.query.filter(
         ReviewLog.user_id == user_id,
         ReviewLog.reviewed_at >= today_start,
     ).count()
 
-    # Karten nach Status zaehlen
+    # Karten nach Status zaehlen (nur forward — Status-Verteilung des /review)
     status_counts = dict(
         db.session.query(CardReviewState.status, db.func.count(CardReviewState.id))
-        .filter(CardReviewState.user_id == user_id)
+        .filter(CardReviewState.user_id == user_id,
+                CardReviewState.direction == 'forward')
         .group_by(CardReviewState.status)
         .all()
     )
@@ -440,6 +548,9 @@ def get_content_data_for_review(content_item):
             'romaji': ref.romaji or '',
             'meaning': ref.meaning,
             'meaning_de': ref.meaning_de or '',
+            # Disambiguierungs-Cue fuer die Produktions-Richtung (DE->JP). Leer ->
+            # Frontend faellt auf meaning_de zurueck.
+            'production_cue_de': ref.production_cue_de or '',
             'example_jp': ref.example_sentence_japanese or '',
             'example_en': ref.example_sentence_english or '',
             # Aufgesplittet aus example_sentence_english ("Romaji — Uebersetzung"):
@@ -627,6 +738,7 @@ def get_review_forecast(user_id, days=30):
 
         count = CardReviewState.query.filter(
             CardReviewState.user_id == user_id,
+            CardReviewState.direction == 'forward',
             CardReviewState.due_date >= start,
             CardReviewState.due_date <= end,
             CardReviewState.status != 'suspended',
@@ -638,8 +750,8 @@ def get_review_forecast(user_id, days=30):
 
 
 def get_maturity_distribution(user_id):
-    """Zaehlt Karten nach SRS-Stufe (Donut-Chart)."""
-    states = CardReviewState.query.filter_by(user_id=user_id).all()
+    """Zaehlt Karten nach SRS-Stufe (Donut-Chart) — kanonisch forward."""
+    states = CardReviewState.query.filter_by(user_id=user_id, direction='forward').all()
 
     distribution = {
         'Neu': 0, 'Lernen': 0, 'Jung': 0,
@@ -670,6 +782,7 @@ def get_performance_by_type(user_id):
         LessonContent, ReviewLog.content_id == LessonContent.id
     ).filter(
         ReviewLog.user_id == user_id,
+        ReviewLog.direction == 'forward',
     ).group_by(LessonContent.content_type).all()
 
     return [{
@@ -681,10 +794,11 @@ def get_performance_by_type(user_id):
     } for r in rows]
 
 
-def get_leeches(user_id, threshold=8, limit=50):
-    """Karten mit hohen Lapses (Leeches)."""
+def get_leeches(user_id, threshold=8, limit=50, direction='forward'):
+    """Karten mit hohen Lapses (Leeches). Default forward (kanonisch)."""
     states = CardReviewState.query.filter(
         CardReviewState.user_id == user_id,
+        CardReviewState.direction == direction,
         CardReviewState.lapses >= threshold,
         CardReviewState.status != 'suspended',
     ).order_by(CardReviewState.lapses.desc()).limit(limit).all()
@@ -747,9 +861,11 @@ def get_response_time_histogram(user_id):
 
 def get_jlpt_progress(user_id):
     """JLPT N5-N1 Fortschritt basierend auf gemeisterten Karten (Stufe >= 5)."""
-    # Alle Karten des Users mit Stufe >= Vertraut 1 (Stufe 5)
+    # Alle Karten des Users mit Stufe >= Vertraut 1 (Stufe 5). KANONISCH forward —
+    # JLPT-Fortschritt = Rezeption, sonst zaehlt eine Vokabel doppelt.
     states = CardReviewState.query.filter(
         CardReviewState.user_id == user_id,
+        CardReviewState.direction == 'forward',
         CardReviewState.status != 'suspended',
     ).all()
 
@@ -825,7 +941,8 @@ def browse_cards(user_id, filters):
     """
     query = db.session.query(CardReviewState, LessonContent).join(
         LessonContent, CardReviewState.content_id == LessonContent.id
-    ).filter(CardReviewState.user_id == user_id)
+    ).filter(CardReviewState.user_id == user_id,
+             CardReviewState.direction == 'forward')
 
     # ── Filter ──
     status_filter = filters.get('status')
@@ -973,10 +1090,10 @@ def browse_cards(user_id, filters):
     }
 
 
-def get_card_detail(user_id, content_id):
+def get_card_detail(user_id, content_id, direction='forward'):
     """Detaillierte Karten-Info inkl. Review-History."""
     state = CardReviewState.query.filter_by(
-        user_id=user_id, content_id=content_id
+        user_id=user_id, content_id=content_id, direction=direction
     ).first()
 
     if not state:
@@ -999,9 +1116,9 @@ def get_card_detail(user_id, content_id):
         stability = 0
         difficulty = 0
 
-    # Review-History (letzte 20)
+    # Review-History (letzte 20) — derselben Richtung
     history = ReviewLog.query.filter_by(
-        user_id=user_id, content_id=content_id,
+        user_id=user_id, content_id=content_id, direction=direction,
     ).order_by(ReviewLog.reviewed_at.desc()).limit(20).all()
 
     review_history = [{
@@ -1027,9 +1144,10 @@ def get_card_detail(user_id, content_id):
     }
 
 
-def suspend_card(user_id, content_id):
-    """Suspendiert eine Karte."""
-    state = CardReviewState.query.filter_by(user_id=user_id, content_id=content_id).first()
+def suspend_card(user_id, content_id, direction='forward'):
+    """Suspendiert eine Karte (der angegebenen Richtung)."""
+    state = CardReviewState.query.filter_by(
+        user_id=user_id, content_id=content_id, direction=direction).first()
     if not state:
         return False
     state.status = 'suspended'
@@ -1037,9 +1155,10 @@ def suspend_card(user_id, content_id):
     return True
 
 
-def unsuspend_card(user_id, content_id):
-    """Reaktiviert eine suspendierte Karte."""
-    state = CardReviewState.query.filter_by(user_id=user_id, content_id=content_id).first()
+def unsuspend_card(user_id, content_id, direction='forward'):
+    """Reaktiviert eine suspendierte Karte (der angegebenen Richtung)."""
+    state = CardReviewState.query.filter_by(
+        user_id=user_id, content_id=content_id, direction=direction).first()
     if not state or state.status != 'suspended':
         return False
     state.status = 'review'
@@ -1048,9 +1167,10 @@ def unsuspend_card(user_id, content_id):
     return True
 
 
-def reset_card(user_id, content_id):
-    """Setzt den FSRS-State einer Karte zurueck."""
-    state = CardReviewState.query.filter_by(user_id=user_id, content_id=content_id).first()
+def reset_card(user_id, content_id, direction='forward'):
+    """Setzt den FSRS-State einer Karte zurueck (der angegebenen Richtung)."""
+    state = CardReviewState.query.filter_by(
+        user_id=user_id, content_id=content_id, direction=direction).first()
     if not state:
         return False
     new_card = Card()
