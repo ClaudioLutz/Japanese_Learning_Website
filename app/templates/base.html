@@ -147,9 +147,9 @@
        Top-Nav v2 — minimal, sticky, backdrop-blur
        Pattern: Linear / Notion / Stripe / Duolingo Web 2024+
        ────────────────────────────────────────────────────────────── #}
-    <nav class="topnav" aria-label="Hauptnavigation" x-data="{ mobileOpen: false, userMenuOpen: false }"
-         @click.away="userMenuOpen = false; mobileOpen = false"
-         @keydown.escape.window="userMenuOpen = false; mobileOpen = false">
+    <nav class="topnav" aria-label="Hauptnavigation" x-data="{ mobileOpen: false, userMenuOpen: false, uebenMenuOpen: false }"
+         @click.away="userMenuOpen = false; mobileOpen = false; uebenMenuOpen = false"
+         @keydown.escape.window="userMenuOpen = false; mobileOpen = false; uebenMenuOpen = false">
       <div class="topnav-inner">
 
         {# Brand — あ-Hiragana-Glyph (Mincho-Serif, erbt currentColor) #}
@@ -168,9 +168,9 @@
            Active-State per request.endpoint + aria-current. #}
         <div class="topnav-primary" :class="mobileOpen && 'is-open'">
           {# Drei Lern-Verben statt fünf flacher Modi: Mein Lernen (Hub) ·
-             Lektionen · Üben. „Üben" bündelt Wiederholen (JP→DE/DE→JP), Kana
-             und Prüfen unter /ueben — jeder Modus bleibt dort + in der Bottom-Nav
-             direkt erreichbar (keine Funktion versteckt, nur gruppiert). #}
+             Lektionen · Üben. „Üben" ist ein Dropdown (Desktop) bzw. Bottom-Sheet
+             (Mobile) mit Verstehen (JP→DE), Sprechen (DE→JP), Kana und Prüfen —
+             keine eigene Seite mehr, keine Funktion versteckt. #}
           {% if current_user.is_authenticated %}
           <a href="{{ url_for('dashboard.index') }}"
              class="topnav-link {% if request.endpoint == 'dashboard.index' %}is-active{% endif %}"
@@ -184,14 +184,44 @@
             <i class="fas fa-book-open" aria-hidden="true"></i><span>Lektionen</span>
           </a>
           {% if current_user.is_authenticated %}
-          {# Üben-Hub: aktiv auch auf allen Unterseiten (review/produktion/kana/pruefen).
-             Aggregat-Fälligkeits-Badge (JP→DE + DE→JP), per JS gefüllt. #}
-          <a href="{{ url_for('srs.ueben_page') }}"
-             class="topnav-link {% if request.endpoint in ['srs.ueben_page', 'srs.review_page', 'srs.production_page', 'srs.practice_kana_page', 'srs.practice_kana_game_page', 'srs.practice_kana_storm_page', 'pruefen.pruefen_start', 'pruefen.pruefen_session'] %}is-active{% endif %}"
-             {% if request.endpoint == 'srs.ueben_page' %}aria-current="page"{% elif request.endpoint in ['srs.review_page', 'srs.production_page', 'srs.practice_kana_page', 'srs.practice_kana_game_page', 'srs.practice_kana_storm_page', 'pruefen.pruefen_start', 'pruefen.pruefen_session'] %}aria-current="true"{% endif %}>
-            <i class="fas fa-brain" aria-hidden="true"></i><span>Üben</span>
-            <span class="nav-due-badge" id="uebenBadgeDesktop" aria-hidden="true"></span>
-          </a>
+          {# Üben — Dropdown statt eigener Seite: die vier Übungs-Modi direkt
+             erreichbar. Trigger ist aktiv auf allen Unterseiten (review/produktion/
+             kana/pruefen). Aggregat-Fälligkeits-Badge (Verstehen JP→DE + Sprechen
+             DE→JP) am Trigger; die beiden Richtungs-Items tragen eigene Zähler. #}
+          <div class="topnav-ueben" @click.stop="uebenMenuOpen = !uebenMenuOpen; userMenuOpen = false">
+            <button type="button"
+                    class="topnav-link topnav-ueben-trigger {% if request.endpoint in ['srs.review_page', 'srs.production_page', 'srs.practice_kana_page', 'srs.practice_kana_game_page', 'srs.practice_kana_storm_page', 'pruefen.pruefen_start', 'pruefen.pruefen_session'] %}is-active{% endif %}"
+                    :aria-expanded="uebenMenuOpen.toString()" aria-haspopup="true" aria-controls="topnavUebenMenu">
+              <i class="fas fa-brain" aria-hidden="true"></i><span>Üben</span>
+              <span class="nav-due-badge" id="uebenBadgeDesktop" aria-hidden="true"></span>
+              <i class="fas fa-chevron-down topnav-ueben-chev" aria-hidden="true"></i>
+            </button>
+            <div class="topnav-dropdown topnav-dropdown--left" id="topnavUebenMenu" x-show="uebenMenuOpen" x-transition x-cloak>
+              <a href="{{ url_for('srs.review_page') }}" class="topnav-dd-item {% if request.endpoint == 'srs.review_page' %}is-active{% endif %}"
+                 {% if request.endpoint == 'srs.review_page' %}aria-current="page"{% endif %}>
+                <i class="fas fa-arrow-down-long" aria-hidden="true"></i>
+                <span class="topnav-dd-grow">Verstehen <small>JP→DE</small></span>
+                <span class="topnav-dd-count" id="uebenVerstehenBadge" aria-hidden="true"></span>
+              </a>
+              <a href="{{ url_for('srs.production_page') }}" class="topnav-dd-item {% if request.endpoint == 'srs.production_page' %}is-active{% endif %}"
+                 {% if request.endpoint == 'srs.production_page' %}aria-current="page"{% endif %}>
+                <i class="fas fa-arrow-up-long" aria-hidden="true"></i>
+                <span class="topnav-dd-grow">Sprechen <small>DE→JP</small></span>
+                <span class="topnav-dd-count" id="uebenSprechenBadge" aria-hidden="true"></span>
+              </a>
+              <div class="topnav-dd-divider"></div>
+              <a href="{{ url_for('srs.practice_kana_page') }}" class="topnav-dd-item {% if request.endpoint in ['srs.practice_kana_page', 'srs.practice_kana_game_page', 'srs.practice_kana_storm_page'] %}is-active{% endif %}"
+                 {% if request.endpoint in ['srs.practice_kana_page', 'srs.practice_kana_game_page', 'srs.practice_kana_storm_page'] %}aria-current="page"{% endif %}>
+                <span class="topnav-kana-glyph" aria-hidden="true">あ</span>
+                <span class="topnav-dd-grow">Kana</span>
+              </a>
+              <a href="{{ url_for('pruefen.pruefen_start') }}" class="topnav-dd-item {% if request.endpoint in ['pruefen.pruefen_start', 'pruefen.pruefen_session'] %}is-active{% endif %}"
+                 {% if request.endpoint in ['pruefen.pruefen_start', 'pruefen.pruefen_session'] %}aria-current="page"{% endif %}>
+                <i class="fas fa-clipboard-check" aria-hidden="true"></i>
+                <span class="topnav-dd-grow">Prüfen</span>
+              </a>
+            </div>
+          </div>
           {% endif %}
           {# Shu-Diaet: kein zweiter Shu-Brennpunkt in der Navbar — „N5 Komplett"
              ist ein normaler Nav-Link; der einzige Shu-CTA bleibt „Kostenlos starten".
@@ -231,7 +261,7 @@
             {% endif %}
 
             {# User-Dropdown — alle anderen Aktionen hier hinein #}
-            <div class="topnav-user" @click.stop="userMenuOpen = !userMenuOpen">
+            <div class="topnav-user" @click.stop="userMenuOpen = !userMenuOpen; uebenMenuOpen = false">
               <button type="button" class="topnav-user-btn" :aria-expanded="userMenuOpen.toString()"
                       aria-haspopup="true" aria-controls="topnavUserDropdown"
                       aria-label="{{ current_user.username }} – Benutzer-Menü">
@@ -244,8 +274,9 @@
                   <strong>{{ current_user.username }}</strong>
                   <small>{{ current_user.level_title }}</small>
                 </div>
-                {# „Mein Lernen" + „Üben" leben jetzt in der Primär-/Bottom-Nav;
-                   Prüfen + Produktion im Üben-Hub → hier nicht mehr doppelt. #}
+                {# „Mein Lernen" + „Üben" leben in der Primär-/Bottom-Nav;
+                   Verstehen/Sprechen/Kana/Prüfen im Üben-Dropdown bzw. -Sheet
+                   → hier nicht mehr doppelt. #}
                 <a href="{{ url_for('routes.user_profile') }}" class="topnav-dd-item">
                   <i class="fas fa-user-circle" aria-hidden="true"></i> Profil
                 </a>
@@ -435,35 +466,34 @@
     .topnav-link .nav-due-badge { top: 0; right: 0; }
     .bottom-nav-ico-wrap .nav-due-badge { top: -7px; right: -11px; border: 2px solid #fff; }
 
-    /* ── Wiederholen-Richtungs-Segmented-Control (JP→DE | DE→JP) ──
-       Label + Pillen-Track; aktives Segment = angehobene Karte (mode-aware
-       via --card-background, kein Shu). Badge sitzt inline im Segment. */
-    .topnav-review-group { display: inline-flex; align-items: center; gap: 0.5rem; }
-    .topnav-review-label {
-        display: inline-flex; align-items: center; gap: 0.4rem;
-        color: var(--ink-600, #5C564D); font-size: 0.92rem; font-weight: 500; white-space: nowrap;
+    /* ── Üben-Dropdown (Desktop) ── Trigger = Nav-Link als <button>; Panel
+       spiegelt das User-Menü (.topnav-dropdown), aber links verankert. */
+    .topnav-ueben { position: relative; display: inline-flex; }
+    .topnav-ueben-trigger {
+        /* Chrome-Reset: Schriftgröße/-gewicht/Farbe/Padding kommen von .topnav-link
+           — hier NUR Button-Default neutralisieren (kein font-size, sonst Größenfalle). */
+        background: transparent; border: 0; cursor: pointer; font-family: inherit;
     }
-    .topnav-review-label i { font-size: 0.85rem; opacity: 0.8; }
-    .topnav-review-seg {
-        display: inline-flex; align-items: center; gap: 2px; padding: 3px;
-        border: 1px solid var(--border-color, #E4DED4); border-radius: 999px;
+    .topnav-ueben-chev { font-size: 0.62rem; opacity: 0.5; margin-left: -0.1rem; }
+    /* Aggregat-Badge sitzt inline (zwischen Label und Chevron), nicht absolut. */
+    .topnav-ueben-trigger .nav-due-badge { position: static; }
+    .topnav-dropdown--left { left: 0; right: auto; }
+    .topnav-dd-grow { flex: 1; }
+    .topnav-dd-grow small {
+        font-size: 0.72rem; opacity: 0.6; margin-left: 0.25rem; font-weight: 500;
     }
-    .topnav-seg {
-        display: inline-flex; align-items: center; gap: 0.3rem;
-        padding: 0.3rem 0.7rem; border-radius: 999px;
-        color: var(--ink-600, #5C564D); font-size: 0.85rem; font-weight: 600;
-        text-decoration: none; white-space: nowrap; position: relative;
-        transition: background-color 0.15s, color 0.15s;
+    .topnav-dd-item.is-active {
+        /* theme-sicher: --kon kippt im Dark auf hell (wie .topnav-link.is-active). */
+        background: rgba(28, 26, 23, 0.05); color: var(--kon, #1F2A44); font-weight: 600;
     }
-    .topnav-seg:hover { color: var(--kon, #1F2A44); background: rgba(28,26,23,0.05); text-decoration: none; }
-    .topnav-seg.is-active {
-        background: var(--card-background, #FFFDF7); color: var(--kon, #1F2A44);
-        /* Ring statt nur Schatten: im Dark ist card-background ~ Header-Farbe und
-           der Schatten unsichtbar — die Haarlinie haelt das aktive Segment in
-           BEIDEN Modi klar abgegrenzt. */
-        box-shadow: 0 1px 3px rgba(28,26,23,0.14), inset 0 0 0 1px var(--border-color, #E4DED4);
+    .topnav-dd-count {
+        min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px;
+        background: var(--shu-deep, #B84A00); color: #fff;
+        font-size: 0.66rem; font-weight: 700; font-variant-numeric: tabular-nums;
+        line-height: 1; display: none; align-items: center; justify-content: center;
+        flex: none;
     }
-    .topnav-seg .nav-due-badge { position: static; margin-left: 0.15rem; }
+    .topnav-dd-count.is-visible { display: inline-flex; }
 
     /* ── Right Group ── */
     .topnav-right {
@@ -685,6 +715,7 @@
     [data-theme="dark"] .topnav-stat,
     [data-theme="dark"] .topnav-user-btn:hover,
     [data-theme="dark"] .topnav-dd-item:hover,
+    [data-theme="dark"] .topnav-dd-item.is-active,
     [data-theme="dark"] .topnav-btn-ghost:hover,
     [data-theme="dark"] .topnav-burger:hover,
     [data-theme="dark"] .topnav-theme-toggle:hover {
@@ -734,6 +765,10 @@
     </main>
 
     <!-- ══ Mobile Bottom Navigation Bar — flache, gleichwertige Tabs ═══ -->
+    {# Wrapper trägt den Alpine-State fürs Üben-Bottom-Sheet — die Bottom-Nav liegt
+       ausserhalb der Topnav, braucht also einen eigenen Scope. #}
+    <div x-data="{ uebenSheet: false }" @keydown.escape.window="uebenSheet = false"
+         x-effect="document.body.style.overflow = uebenSheet ? 'hidden' : ''">
     <nav class="mobile-bottom-nav" id="mobileBottomNav" aria-label="Schnellnavigation">
         {% if current_user.is_authenticated %}
         {# Eingeloggt: 3 Lern-Verben + Profil (Primär-Nav ist auf Mobile ausgeblendet,
@@ -754,14 +789,14 @@
         </a>
         {% if current_user.is_authenticated %}
         {# Üben-Hub: Wiederholen/Kana/Prüfen gebündelt; Aggregat-Fälligkeits-Badge. #}
-        <a href="{{ url_for('srs.ueben_page') }}" class="bottom-nav-item{% if request.endpoint in ['srs.ueben_page', 'srs.review_page', 'srs.production_page', 'srs.practice_kana_page', 'srs.practice_kana_game_page', 'srs.practice_kana_storm_page', 'pruefen.pruefen_start', 'pruefen.pruefen_session'] %} active{% endif %}" id="uebenNavItem"
-           {% if request.endpoint == 'srs.ueben_page' %}aria-current="page"{% endif %}>
+        <button type="button" class="bottom-nav-item{% if request.endpoint in ['srs.review_page', 'srs.production_page', 'srs.practice_kana_page', 'srs.practice_kana_game_page', 'srs.practice_kana_storm_page', 'pruefen.pruefen_start', 'pruefen.pruefen_session'] %} active{% endif %}" id="uebenNavItem"
+           @click.stop="uebenSheet = true" :aria-expanded="uebenSheet.toString()" aria-haspopup="dialog" aria-controls="uebenSheet">
             <span class="bottom-nav-ico-wrap">
                 <i class="fas fa-brain" aria-hidden="true"></i>
                 <span class="nav-due-badge" id="uebenBadge" aria-hidden="true"></span>
             </span>
             <span>Üben</span>
-        </a>
+        </button>
         <a href="{{ url_for('routes.user_profile') }}" class="bottom-nav-item{% if request.endpoint == 'routes.user_profile' %} active{% endif %}"
            {% if request.endpoint == 'routes.user_profile' %}aria-current="page"{% endif %}>
             <i class="fas fa-user-circle" aria-hidden="true"></i><span>Profil</span>
@@ -777,6 +812,39 @@
         </a>
         {% endif %}
     </nav>
+
+    {% if current_user.is_authenticated %}
+    {# Üben-Bottom-Sheet (Mobile) — dieselben vier Modi wie das Desktop-Dropdown.
+       Trigger ist der Üben-Tab oben; Schliessen via Backdrop, ✕, Escape oder Link. #}
+    <div class="ueben-sheet-backdrop" x-show="uebenSheet" x-transition.opacity @click="uebenSheet = false" x-cloak></div>
+    <div class="ueben-sheet" id="uebenSheet" x-show="uebenSheet" x-transition role="dialog" aria-label="Üben" x-cloak>
+      <div class="ueben-sheet__head">
+        <span><i class="fas fa-brain" aria-hidden="true"></i> Üben</span>
+        <button type="button" class="ueben-sheet__close" @click="uebenSheet = false" aria-label="Schliessen">
+          <i class="fas fa-times" aria-hidden="true"></i>
+        </button>
+      </div>
+      <a href="{{ url_for('srs.review_page') }}" class="ueben-sheet__item">
+        <i class="fas fa-arrow-down-long" aria-hidden="true"></i>
+        <span class="ueben-sheet__grow">Verstehen <small>JP→DE</small></span>
+        <span class="topnav-dd-count" id="uebenVerstehenBadgeM" aria-hidden="true"></span>
+      </a>
+      <a href="{{ url_for('srs.production_page') }}" class="ueben-sheet__item">
+        <i class="fas fa-arrow-up-long" aria-hidden="true"></i>
+        <span class="ueben-sheet__grow">Sprechen <small>DE→JP</small></span>
+        <span class="topnav-dd-count" id="uebenSprechenBadgeM" aria-hidden="true"></span>
+      </a>
+      <a href="{{ url_for('srs.practice_kana_page') }}" class="ueben-sheet__item">
+        <span class="topnav-kana-glyph" aria-hidden="true">あ</span>
+        <span class="ueben-sheet__grow">Kana</span>
+      </a>
+      <a href="{{ url_for('pruefen.pruefen_start') }}" class="ueben-sheet__item">
+        <i class="fas fa-clipboard-check" aria-hidden="true"></i>
+        <span class="ueben-sheet__grow">Prüfen</span>
+      </a>
+    </div>
+    {% endif %}
+    </div>
 
     <style>
     /* ── Mobile-Bottom-Nav: flache Tabs ── Badge + Kana-Glyph ──────────
@@ -798,6 +866,48 @@
         font-weight: 600;
         display: inline-block;
     }
+    /* Üben-Tab ist ein <button> (öffnet das Sheet): Button-Chrome zurücksetzen,
+       aber font-size NICHT — sie kommt von .bottom-nav-item (0.58rem), sonst
+       rendert das Label in Body-Grösse. */
+    button.bottom-nav-item { background: none; border: 0; cursor: pointer; font-family: inherit; }
+
+    /* ── Üben-Bottom-Sheet (nur Mobile sichtbar; Trigger lebt in der Bottom-Nav) ── */
+    .ueben-sheet-backdrop { position: fixed; inset: 0; z-index: 1045; background: rgba(28, 26, 23, 0.45); }
+    .ueben-sheet {
+        position: fixed; left: 0; right: 0; bottom: 0; z-index: 1046;
+        background: var(--card-background, #FFFDF7);
+        border-top-left-radius: 18px; border-top-right-radius: 18px;
+        border-top: 1px solid var(--border-color, #E4DED4);
+        box-shadow: 0 -8px 24px rgba(28, 26, 23, 0.18);
+        padding: 0.4rem 0.75rem calc(0.6rem + env(safe-area-inset-bottom, 0px));
+    }
+    .ueben-sheet__head {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 0.65rem 0.4rem 0.55rem; font-weight: 700; color: var(--text-color, #1C1A17);
+        border-bottom: 1px solid var(--border-color, #E4DED4); margin-bottom: 0.3rem;
+    }
+    .ueben-sheet__head i { color: var(--shu, #EB6101); margin-right: 0.35rem; }
+    .ueben-sheet__close {
+        background: none; border: 0; cursor: pointer; font-size: 1.05rem;
+        color: var(--text-muted, #5C564D); width: 40px; height: 40px; border-radius: 999px;
+    }
+    .ueben-sheet__item {
+        display: flex; align-items: center; gap: 0.8rem;
+        padding: 0.85rem 0.5rem; border-radius: 10px;
+        color: var(--text-color, #1C1A17); font-size: 1rem; font-weight: 600; text-decoration: none;
+    }
+    .ueben-sheet__item:active { background: rgba(28, 26, 23, 0.06); }
+    .ueben-sheet__item > i, .ueben-sheet__item > .topnav-kana-glyph {
+        width: 24px; text-align: center; color: var(--ink-600, #5C564D); font-size: 1.05rem; flex: none;
+    }
+    .ueben-sheet__grow { flex: 1; }
+    .ueben-sheet__grow small { font-size: 0.8rem; opacity: 0.6; margin-left: 0.35rem; font-weight: 500; }
+    [data-theme="dark"] .ueben-sheet__item:active { background: rgba(255, 255, 255, 0.08); }
+    /* Resize-Schutz: über dem Mobile-Breakpoint Sheet + Backdrop hart ausblenden.
+       Der Trigger (Bottom-Nav) verschwindet ≥768px; ohne diesen Guard bliebe ein
+       offenes Sheet bei Tablet-Rotation auf Desktop hängen. !important schlägt das
+       inline display:none/'' das x-show setzt. */
+    @media (min-width: 768px) { .ueben-sheet, .ueben-sheet-backdrop { display: none !important; } }
     </style>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -837,15 +947,19 @@
                     if (el) {
                         el.textContent = label;
                         el.classList.add('is-visible');
-                        const link = el.closest('a');
+                        const link = el.closest('a,button');
                         if (link) link.setAttribute('aria-label', aria + ' — ' + label + ' fällig');
                     }
                 });
             };
-            // Üben-Hub trägt ein Aggregat-Badge: JP→DE (Rezeption) + DE→JP (Produktion)
-            // fällige Karten zusammen — Desktop-Primärnav + Mobile-Bottom-Nav.
-            const dueTotal = (data.due_count || 0) + (data.production_due_count || 0);
-            setBadge(['uebenBadge', 'uebenBadgeDesktop'], dueTotal, 'Üben');
+            // Üben trägt ein Aggregat-Badge (Trigger + Bottom-Nav-Tab): Verstehen
+            // (JP→DE) + Sprechen (DE→JP) zusammen. Die Richtungs-Items im Dropdown
+            // bzw. Bottom-Sheet tragen zusätzlich ihren eigenen Zähler.
+            const verstehen = data.due_count || 0;
+            const sprechen = data.production_due_count || 0;
+            setBadge(['uebenBadge', 'uebenBadgeDesktop'], verstehen + sprechen, 'Üben');
+            setBadge(['uebenVerstehenBadge', 'uebenVerstehenBadgeM'], verstehen, 'Verstehen');
+            setBadge(['uebenSprechenBadge', 'uebenSprechenBadgeM'], sprechen, 'Sprechen');
         }).catch(() => {});
     })();
     </script>

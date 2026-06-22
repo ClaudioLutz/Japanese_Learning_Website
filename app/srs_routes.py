@@ -4,7 +4,7 @@ import csv
 import io
 import logging
 
-from flask import Blueprint, jsonify, make_response, render_template, request
+from flask import Blueprint, jsonify, make_response, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
 from app import db, srs_service
@@ -1004,22 +1004,11 @@ def _spell_word_pool(schrift, source, rows_filter):
 
 @srs_bp.route('/ueben')
 def ueben_page():
-    """Uebungs-Hub: buendelt Wiederholen (JP->DE / DE->JP), Kana und Pruefen
-    unter EINEM Dach. Reduziert die flache Primaer-Nav, ohne einen Modus zu
-    verstecken — jeder Modus bleibt weiterhin einzeln direkt erreichbar (Karten
-    hier + Bottom-Nav + Deep-Links). Gaeste sehen die Karten ebenfalls; die
-    Faelligkeitszahlen werden nur fuer eingeloggte Nutzer server-gerendert.
-    """
-    due_count = 0
-    production_due = 0
-    if current_user.is_authenticated:
-        due_count = srs_service.get_user_stats(current_user.id).get('due_count', 0)
-        production_due = srs_service.get_production_due_count(current_user.id)
-    return render_template(
-        'ueben.html',
-        due_count=due_count,
-        production_due=production_due,
-    )
+    """Frueher der eigenstaendige Uebungs-Hub. Die vier Modi (Verstehen JP->DE,
+    Sprechen DE->JP, Kana, Pruefen) leben jetzt direkt im „Üben"-Dropdown
+    (Desktop) bzw. Bottom-Sheet (Mobile) der Navigation — keine eigene Seite mehr.
+    Alte Links/Bookmarks landen per 301 auf der primaeren Wiederholung."""
+    return redirect(url_for('srs.review_page'), code=301)
 
 
 @srs_bp.route('/practice/kana')

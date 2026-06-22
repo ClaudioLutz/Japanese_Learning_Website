@@ -263,7 +263,8 @@ class TestProductionPage:
         client, user = auth_client
         resp = client.get('/review/produktion')
         assert resp.status_code == 200
-        assert b'Produktion' in resp.data or b'produktion' in resp.data
+        # Nach dem Rename Produktion→Sprechen: das sichtbare Label der DE→JP-Seite.
+        assert b'Sprechen' in resp.data
 
     def test_page_guest_sees_teaser(self, client):
         resp = client.get('/review/produktion')

@@ -4,19 +4,19 @@
    Segmented-Control das ab; ≤991px kollabiert die Topnav und ist für
    eingeloggte Nutzer (kein Burger) nicht erreichbar → hier on-page.
    Parameter: active_dir = 'jpde' (= /review) | 'dejp' (= /review/produktion).
-   Optik gespiegelt vom Header (.topnav-seg): aktiv = angehobene Karte via
+   Optik: aktiv = angehobene Karte via
    --card-background + Haarlinien-Ring (hell + dunkel lesbar).
    ─────────────────────────────────────────────────────────────── #}
-<nav class="review-dir-toggle" role="group" aria-label="Lernrichtung wählen — Erkennen (JP→DE) oder Produzieren (DE→JP)">
+<nav class="review-dir-toggle" role="group" aria-label="Lernrichtung wählen — Verstehen (JP→DE) oder Sprechen (DE→JP)">
   <div class="rdt-seg">
     <a href="{{ url_for('srs.review_page') }}"
        class="rdt-btn {% if active_dir == 'jpde' %}is-active{% endif %}"
        {% if active_dir == 'jpde' %}aria-current="page"{% endif %}
-       title="Erkennen — Japanisch → Deutsch">JP&#8594;DE</a>
+       title="Verstehen — Japanisch → Deutsch">JP&#8594;DE</a>
     <a href="{{ url_for('srs.production_page') }}"
        class="rdt-btn {% if active_dir == 'dejp' %}is-active{% endif %}"
        {% if active_dir == 'dejp' %}aria-current="page"{% endif %}
-       title="Produktion — Deutsch → Japanisch">DE&#8594;JP</a>
+       title="Sprechen — Deutsch → Japanisch">DE&#8594;JP</a>
   </div>
 </nav>
 <style>

@@ -1,8 +1,10 @@
-"""Integrationstests fuer den Uebungs-Hub (/ueben) + Login-Landing auf „Mein Lernen".
+"""Integrationstests fuer die Üben-Navigation (Dropdown + Bottom-Sheet) statt der
+frueheren eigenstaendigen /ueben-Hub-Seite, plus Login-Landing auf „Mein Lernen".
 
-Der Hub buendelt Wiederholen (JP->DE / DE->JP), Kana und Pruefen unter einem Dach,
-OHNE einen Modus zu verstecken — jeder bleibt einzeln direkt verlinkt. Muster
-gespiegelt von TestDashboardPage (test_dashboard_page.py).
+Der Hub ist zu einem Dropdown (Desktop) bzw. Bottom-Sheet (Mobile) in der
+Navigation geworden; /ueben selbst leitet jetzt 301 auf die primaere Wiederholung.
+Kein Modus ist versteckt — alle vier sind direkt in der Nav verlinkt. Die zwei
+Richtungen heissen jetzt „Verstehen" (JP->DE) und „Sprechen" (DE->JP).
 """
 from flask import url_for
 
@@ -10,30 +12,44 @@ from app import db
 from tests.factories import UserFactory
 
 
-class TestUebenHub:
+class TestUebenRedirect:
     def test_route_resolves(self, app):
-        """url_for('srs.ueben_page') loest auf /ueben auf."""
+        """url_for('srs.ueben_page') loest weiterhin auf /ueben auf (Redirect-Stub)."""
         with app.test_request_context():
             assert url_for('srs.ueben_page') == '/ueben'
 
-    def test_guest_renders(self, client):
-        """Hub ist auch fuer Gaeste erreichbar (Kana/Pruefen offen) — kein 500."""
+    def test_ueben_redirects_to_review(self, client):
+        """/ueben ist keine Seite mehr → 301 auf die primaere Wiederholung."""
         resp = client.get('/ueben')
-        assert resp.status_code == 200
+        assert resp.status_code == 301
+        assert resp.headers['Location'].endswith('/review')
 
-    def test_authenticated_links_all_modes(self, auth_client):
-        """Eingeloggt -> alle vier Uebungs-Modi sind direkt verlinkt (keine Funktion versteckt)."""
+
+class TestUebenNav:
+    """Die Nav (base.html) verlinkt eingeloggt alle Modi direkt — Dropdown/Sheet."""
+
+    def test_nav_links_all_modes(self, auth_client):
         client, _user = auth_client
-        resp = client.get('/ueben')
+        resp = client.get('/mein-lernen')
         assert resp.status_code == 200
         html = resp.get_data(as_text=True)
-        assert '/review' in html             # Wiederholen JP->DE
-        assert '/review/produktion' in html  # Produktion DE->JP
-        assert '/practice/kana' in html      # Kana
-        assert '/pruefen' in html            # Pruefen
-        # Sekundaer-Wege bleiben vom Hub aus erreichbar (re-home, nicht loeschen):
-        assert '/review/browse' in html      # Karten verwalten
-        assert '/review/stats' in html       # Statistik
+        assert '/review' in html              # Verstehen JP->DE
+        assert '/review/produktion' in html   # Sprechen DE->JP
+        assert '/practice/kana' in html       # Kana
+        assert '/pruefen' in html             # Pruefen
+
+    def test_nav_uses_new_labels(self, auth_client):
+        """Richtungs-Labels heissen jetzt „Verstehen" / „Sprechen"."""
+        client, _user = auth_client
+        html = client.get('/mein-lernen').get_data(as_text=True)
+        assert 'Verstehen' in html
+        assert 'Sprechen' in html
+
+    def test_no_standalone_hub_link(self, auth_client):
+        """Kein Nav-Link mehr direkt auf die abgeschaffte /ueben-Seite."""
+        client, _user = auth_client
+        html = client.get('/mein-lernen').get_data(as_text=True)
+        assert 'href="/ueben"' not in html
 
 
 class TestLoginLandsOnHub:

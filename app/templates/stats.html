@@ -435,7 +435,7 @@
     {# Reverse-Spur: erscheint erst, sobald der Nutzer mindestens eine Vokabel
        produktiv geuebt hat. Getrennt vom rezeptiven JLPT-Kern gezaehlt. #}
     {% if stats.production and stats.production.total > 0 %}
-    <div class="stats-group">Produktion · Deutsch → Japanisch</div>
+    <div class="stats-group">Sprechen · Deutsch → Japanisch</div>
     <div class="srs-stats-overview">
         <div class="stat-card">
             <span class="stat-label">Produktiv gemeistert</span>
@@ -464,7 +464,7 @@
     </div>
     <p style="margin:0.4rem 0 0;font-size:0.85rem;">
         <a href="{{ url_for('srs.production_page') }}" style="color:var(--shu,#EB6101);text-decoration:none;font-weight:600;">
-            <i class="fas fa-pen-fancy" aria-hidden="true"></i> Produktion üben →
+            <i class="fas fa-pen-fancy" aria-hidden="true"></i> Sprechen üben →
         </a>
     </p>
     {% endif %}

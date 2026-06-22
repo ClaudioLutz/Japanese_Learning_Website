@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Produktion · Deutsch → Japanisch{% endblock %}
+{% block title %}Sprechen · Deutsch → Japanisch{% endblock %}
 {% block body_attributes %}class="redesign-page review-locked"{% endblock %}
 
 {% block styles %}
@@ -181,7 +181,7 @@
             <i class="fas fa-arrow-left"></i> Wiederholung
         </a>
         <div class="prod-counts">
-            <span class="prod-count-pill" id="prodDueCount" title="Fällige Produktions-Karten">⏰ {{ overview.due_count }}</span>
+            <span class="prod-count-pill" id="prodDueCount" title="Fällige Karten">⏰ {{ overview.due_count }}</span>
             <span class="prod-count-pill" id="prodNewCount" title="Neu bereit (rezeptiv gefestigt)">🌱 {{ overview.new_ready }}</span>
         </div>
     </div>
@@ -435,9 +435,9 @@
         btnGroup.classList.remove('visible'); discipline.hidden = true;
         cardArea.innerHTML = `<div class="prod-msg">
             <div class="prod-msg-emoji">🌱</div>
-            <h2>Noch keine Vokabel reif für Produktion</h2>
+            <h2>Noch keine Vokabel reif zum Sprechen</h2>
             <p>Eine Vokabel erscheint hier, sobald du sie in der normalen Wiederholung
-            (Japanisch → Deutsch) gefestigt hast. Lern erst rezeptiv — die Produktion
+            (Japanisch → Deutsch) gefestigt hast. Lern erst rezeptiv — das Sprechen
             (Deutsch → Japanisch) kommt dann automatisch dazu.</p>
             <a href="{{ url_for('srs.review_page') }}" class="btn-shu">Zur Wiederholung</a>
         </div>`;
@@ -448,12 +448,12 @@
         btnGroup.classList.remove('visible'); discipline.hidden = true;
         cardArea.innerHTML = `<div class="prod-msg">
             <div class="prod-msg-emoji">🎉</div>
-            <h2>Produktion erledigt!</h2>
+            <h2>Sprechen erledigt!</h2>
             <p>${sessionXp > 0 ? `Du hast in dieser Runde <strong>+${sessionXp} XP</strong> verdient. ` : ''}
             Komm später wieder — neue Karten werden fällig, sobald sich ihre Intervalle erfüllen.</p>
             <a href="{{ url_for('srs.review_page') }}" class="btn-shu">Zur Wiederholung</a>
         </div>`;
-        announce('Produktion erledigt.');
+        announce('Sprechen erledigt.');
     }
 
     // Rating-Buttons + Tastatur
