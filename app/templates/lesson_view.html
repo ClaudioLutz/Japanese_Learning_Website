@@ -5471,7 +5471,11 @@ window.dialogSlideshow = function(contentId) {
             clearTimeout(this._advTimer); this._advTimer = null;
             this.current = 0;
             this._loadAudio();
-            this.$nextTick(() => this.playCurrent());
+            this.$nextTick(() => {
+                this.playCurrent();
+                // Der "Von vorne"-Button blendet sich per x-show selbst aus -> Fokus retten.
+                if (this.$root) { const p = this.$root.querySelector('.sc-play'); if (p) p.focus(); }
+            });
         },
         onEnded() {
             this.playing = false;
