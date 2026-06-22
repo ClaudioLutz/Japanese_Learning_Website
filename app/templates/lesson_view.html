@@ -375,11 +375,16 @@ html.hide-front-romaji .front-romaji { display: none !important; }
         font-weight: 600;
     }
 
-    /* Mobile: Lesson-Navigation ueber der Bottom-Nav (inkl. Center-CTA-Bubble) */
+    /* Mobile: Lesson-Navigation buendig ueber der globalen Bottom-Nav.
+       Die Bottom-Nav ist ~51px hoch (flache Tabs, KEIN schwebender Center-CTA
+       mehr — siehe base.html) + Safe-Area-Inset auf Geraeten mit Notch. Der
+       fruehere Wert 78px rechnete mit einem 22px-CTA-Ueberstand, den es nicht
+       mehr gibt -> 27px Leerraum zwischen Pager und Bottom-Nav (Issue
+       2026-06-22, Lektion 147). */
     @media (max-width: 767px) {
         .lesson-navigation-bottom {
             position: fixed;
-            bottom: 78px; /* ueber Bottom-Nav (~56px) + Center-CTA-Ueberstand (22px) */
+            bottom: calc(51px + env(safe-area-inset-bottom, 0px));
             left: 0; right: 0;
             margin: 0;
             border-radius: 0;

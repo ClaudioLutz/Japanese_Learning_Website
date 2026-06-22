@@ -22,7 +22,8 @@ if sys.platform == "win32" and getattr(sys.stdout, "encoding", "").lower() != "u
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from dotenv import load_dotenv
+from dotenv import load_dotenv  # noqa: E402
+
 load_dotenv(PROJECT_ROOT / ".env")
 
 # Umgebungsvariablen setzen bevor App importiert wird
@@ -38,15 +39,16 @@ VOICE_NAME = "ja-JP-Neural2-B"
 SPEAKING_RATE = 0.85  # Langsamer für Lernende
 
 # Stimmen für Multi-Voice Konversation
-# WICHTIG (korrigiert 2026-04-24): ja-JP-Neural2-C ist laut Google Cloud
-# TTS-Dokumentation WEIBLICH, nicht männlich — vorherige Kommentare waren
-# falsch und fuehrten dazu, dass Maenner weiblich klangen. Offizielles
-# Gender-Mapping: Neural2-B=FEMALE, Neural2-C=FEMALE, Neural2-D=MALE.
-# Es gibt nur EINE maennliche Neural2-Stimme; fuer zweiten Mann nehmen
-# wir Wavenet-D (anderes Modell, damit sich die beiden Maenner
-# unterscheiden).
+# WICHTIG (korrigiert 2026-06-22, verifiziert via texttospeech.googleapis.com
+# /v1/voices): das offizielle ssmlGender-Mapping ist
+#   Neural2-B=FEMALE, Neural2-C=MALE, Neural2-D=MALE, Wavenet-D=MALE.
+# Der vorherige Kommentar (2026-04-24) behauptete faelschlich Neural2-C=FEMALE
+# und benutzte es als zweite Frauenstimme -> jede 2. Sprecherin klang maennlich
+# (User-Issue 2026-06-22, Lektion 204 "Mei"). Es gibt nur EINE weibliche
+# Neural2-Stimme (B); fuer die zweite Frau nehmen wir Wavenet-B (FEMALE, anderes
+# Modell -> klanglich unterscheidbar), analog zu Wavenet-D beim zweiten Mann.
 VOICE_FEMALE = "ja-JP-Neural2-B"    # Weiblich 1 (Neural2)
-VOICE_FEMALE_2 = "ja-JP-Neural2-C"  # Weiblich 2 (Neural2)
+VOICE_FEMALE_2 = "ja-JP-Wavenet-B"  # Weiblich 2 (Wavenet — FEMALE, klar anders als Neural2-B)
 VOICE_MALE_1 = "ja-JP-Neural2-D"    # Maennlich 1 (Neural2)
 VOICE_MALE_2 = "ja-JP-Wavenet-D"    # Maennlich 2 (Wavenet — klar anders als Neural2-D)
 
@@ -166,7 +168,7 @@ def generate_audio(client, text: str, output_path: Path, speaking_rate: float = 
     from google.cloud import texttospeech
 
     # SSML mit Pausen zwischen Zeilen
-    lines = [l.strip() for l in text.strip().split("\n") if l.strip()]
+    lines = [ln.strip() for ln in text.strip().split("\n") if ln.strip()]
     ssml_parts = []
     for line in lines:
         ssml_parts.append(f"<s>{line}</s><break time='700ms'/>")
