@@ -199,7 +199,7 @@ def review_page():
 def production_page():
     """Produktions-Seite (DE->JP): eigene, immer verfuegbare Queue.
 
-    Zeigt rezeptiv gefestigte Vokabeln (forward-Stage>=3) in umgekehrter Richtung —
+    Zeigt rezeptiv gefestigte Vokabeln (forward-Stage>=4) in umgekehrter Richtung —
     deutscher Cue vorne, japanisches Wort + Lesung als Antwort. Die reverse-Karte
     entsteht on-the-fly beim ersten Rating. Gaeste: weiche Teaser-Landing.
     """

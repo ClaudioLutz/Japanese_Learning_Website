@@ -2,7 +2,7 @@
 """Integration-Tests fuer die Produktions-Richtung (DE->JP, reverse-Spur).
 
 Deckt ab: Koexistenz forward/reverse pro (user,content), on-the-fly-Population
-der Produktions-Queue (forward-Stage>=3 + meaning_de), Isolation der
+der Produktions-Queue (forward-Stage>=4 + meaning_de), Isolation der
 Rezeptions-Queue/Zaehler (forward-only) und die direction-Validierung der API.
 """
 from datetime import datetime, timedelta
@@ -14,12 +14,15 @@ from tests.factories import (
     LessonFactory, LessonContentFactory, VocabularyFactory, CardReviewStateFactory,
 )
 
-# Forward-Stage >= 3 (Stability >= 3 Tage) => produktiv freischaltbar
+# Forward-Stage >= 4 (Stability >= 7 Tage) => produktiv freischaltbar
 MATURE_FSRS = ('{"stability":12.0,"difficulty":5.0,"due":"2026-04-20T00:00:00+00:00",'
                '"last_review":"2026-04-13T00:00:00+00:00","reps":4,"lapses":0,"state":2,"step":null}')
-# Forward-Stage < 3 (Stability ~1 Tag) => noch nicht produktiv
+# Forward-Stage < 4 (Stability ~1 Tag) => noch nicht produktiv
 IMMATURE_FSRS = ('{"stability":1.0,"difficulty":5.0,"due":"2026-04-14T00:00:00+00:00",'
                  '"last_review":"2026-04-13T00:00:00+00:00","reps":1,"lapses":0,"state":2,"step":null}')
+# Forward-Stage 3 (Stability ~5 Tage, 'Anfaenger 3') => UNTER der Schwelle (>=7 Tage)
+STAGE3_FSRS = ('{"stability":5.0,"difficulty":5.0,"due":"2026-04-18T00:00:00+00:00",'
+               '"last_review":"2026-04-13T00:00:00+00:00","reps":3,"lapses":0,"state":2,"step":null}')
 
 
 def _vocab_content(meaning_de='Wasser', word=None, reading=None):
@@ -66,7 +69,7 @@ class TestDirectionCoexistence:
 
 class TestProductionQueue:
     def test_includes_mature_vocab_with_meaning_de(self, auth_client):
-        """Forward-Stage>=3 + meaning_de => taucht als produktiv NEU auf."""
+        """Forward-Stage>=4 + meaning_de => taucht als produktiv NEU auf."""
         client, user = auth_client
         lc = _vocab_content(meaning_de='Hund')
         _forward_state(user.id, lc.id)
@@ -75,10 +78,19 @@ class TestProductionQueue:
         assert lc.id in [c.id for c in new]
 
     def test_excludes_immature_forward(self, auth_client):
-        """Forward-Stage<3 => nicht produktiv freigeschaltet."""
+        """Forward-Stage<4 => nicht produktiv freigeschaltet."""
         client, user = auth_client
         lc = _vocab_content()
         _forward_state(user.id, lc.id, fsrs=IMMATURE_FSRS)
+        db.session.commit()
+        new = srs_service.get_production_new_cards(user.id)
+        assert lc.id not in [c.id for c in new]
+
+    def test_excludes_stage3_below_seven_days(self, auth_client):
+        """Forward-Stage 3 (Stability ~5 Tage) liegt UNTER der 7-Tage-Schwelle."""
+        client, user = auth_client
+        lc = _vocab_content(meaning_de='Berg')
+        _forward_state(user.id, lc.id, fsrs=STAGE3_FSRS)
         db.session.commit()
         new = srs_service.get_production_new_cards(user.id)
         assert lc.id not in [c.id for c in new]

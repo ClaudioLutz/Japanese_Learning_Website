@@ -280,9 +280,10 @@ def get_new_cards(user_id, lesson_id, limit=20):
 
 # ── Produktion (DE->JP): eigene Reverse-Spur ──────────────────────────────
 # Schwelle, ab der eine rezeptiv (forward) gelernte Vokabel produktiv (reverse)
-# angeboten wird: Forward-Stage >= 3 ('Anfaenger 3' = Stability >= 3 Tage).
-# Recognition-first — kein Produzieren gerade erst gesehener Woerter.
-PRODUCTION_FORWARD_MIN_STAGE = 3
+# angeboten wird: Forward-Stage >= 4 ('Anfaenger 4' = Stability >= 7 Tage).
+# Recognition-first — kein Produzieren gerade erst gesehener Woerter; erst wenn
+# die Vokabel rezeptiv gut sitzt (>= 7 Tage Stabilitaet), kommt sie ins DE->JP.
+PRODUCTION_FORWARD_MIN_STAGE = 4
 
 # Tageslimit fuer NEU eingefuehrte Produktions-Karten. Wenn viele forward-Karten
 # auf einmal reif werden (z.B. nach intensivem Rezeptions-Training), wuerden sonst
@@ -316,7 +317,7 @@ def get_production_due_count(user_id):
 
 
 def get_production_new_cards(user_id, limit=20):
-    """Produktiv NEUE Vokabeln: forward-Karte ist reif (Stage>=3) UND es gibt
+    """Produktiv NEUE Vokabeln: forward-Karte ist reif (Stage>=4) UND es gibt
     noch keine reverse-Karte. On-the-fly berechnet (KEIN Vorab-Seeding) — die
     reverse-Karte entsteht erst beim ersten Rating. Nur Vokabeln mit gepflegtem
     meaning_de (sonst kein fairer deutscher Cue).
