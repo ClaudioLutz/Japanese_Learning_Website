@@ -671,13 +671,14 @@ html.hide-front-romaji .front-romaji { display: none !important; }
     }
     .dialog-slideshow .slideshow-controls {
         display: flex;
+        flex-wrap: wrap;
         align-items: center;
         gap: .5rem;
         margin-top: .6rem;
         padding: .45rem .55rem;
         background: var(--background-color, #F5F0E8);
         border: 1px solid var(--border-color, #D4CFC5);
-        border-radius: 999px;
+        border-radius: 18px;
     }
     .dialog-slideshow .sc-nav {
         flex: 0 0 auto;
@@ -724,6 +725,14 @@ html.hide-front-romaji .front-romaji { display: none !important; }
         flex: 0 0 auto;
         font-variant-numeric: tabular-nums;
         color: var(--ink-500, #7A7368);
+    }
+    @media (max-width: 480px) {
+        .dialog-slideshow .sc-play {
+            min-width: 0;
+            flex: 1 1 auto;   /* Play fuellt die erste Zeile, Nav-Buttons daneben */
+            padding: 0 .85rem;
+        }
+        .dialog-slideshow .sc-auto { margin-left: 0; }  /* Auto-weiter umbricht in Zeile 2 */
     }
 
     /* Quiz Micro-Interactions */
