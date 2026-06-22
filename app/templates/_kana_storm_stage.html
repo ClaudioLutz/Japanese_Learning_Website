@@ -104,6 +104,19 @@
                             :aria-pressed="(duration === 120).toString()" @click="setDuration(120)">120 Sek</button>
                 </div>
             </div>
+            {# Schwach-Filter: nur die Kana, die du im SRS schon mal verwechselt hast
+               (lapses>0). Braucht User-State → nur eingeloggt. #}
+            {% if current_user.is_authenticated %}
+            <div class="kstorm__opt-block">
+                <button type="button" class="kstorm__switch" :class="{ 'is-on': weakOnly }"
+                        :aria-pressed="weakOnly.toString()" @click="toggleWeakOnly()">
+                    <span class="kstorm__switch-text">Nur schwache Karten
+                        <small>die du schon mal verwechselt hast</small>
+                    </span>
+                    <span class="kstorm__switch-track" aria-hidden="true"></span>
+                </button>
+            </div>
+            {% endif %}
             {# Reihen-Auswahl: nur die gewählten Gojuon-Gruppen spielen. Leer/"Alle"
                = komplettes Grund-Set. G–P sind Dakuten/Handakuten. Bei externem
                Scope (/practice/kana) ausgeblendet — Reihen kommen vom geteilten
@@ -127,6 +140,14 @@
             </div>
             {% endif %}
         </div>
+
+        {# Sanfter Hinweis, wenn "nur schwache Karten" nichts ergab — kein Fehler:
+           "noch nichts verwechselt" ist ein guter Zustand. #}
+        <p class="kstorm__weakhint" x-show="weakEmpty" x-cloak role="status">
+            <i class="fas fa-circle-check" aria-hidden="true"></i>
+            Noch keine schwachen Karten in dieser Auswahl — spiel ein paar Runden, dann
+            sammeln sich hier die Zeichen, die du verwechselt hast.
+        </p>
 
         <button class="kstorm__start kstorm__start--big" @click="start()">
             <span>Storm starten</span> <i class="fas fa-arrow-right" aria-hidden="true"></i>

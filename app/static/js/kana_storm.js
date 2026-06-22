@@ -95,6 +95,8 @@ function kanaStormGame(opts) {
         schrift: 'hiragana',   // 'hiragana' | 'katakana' | 'both'
         duration: 60,          // 60 | 120 (Sekunden)
         selectedRows: [],      // gewählte Gojuon-Reihen (leer = alle Basis-Reihen)
+        weakOnly: false,       // nur SRS-schwache Kana (lapses>0) — nur eingeloggt, NICHT persistiert
+        weakEmpty: false,      // weakOnly-Start lieferte nichts → sanfter Start-Screen-Hinweis
         backUrl: opts.backUrl || null,         // Vollbild: Zurück-Link; Startseite: null
         registerUrl: opts.registerUrl || null, // Konto-CTA (optional, vom Template gesetzt)
         initialTab: opts.initialTab === 'daily' ? 'daily' : 'storm',
@@ -263,6 +265,7 @@ function kanaStormGame(opts) {
             let s = this.schriftLabel() + ' · ' + this.duration + ' Sek';
             const n = this.selectedRows.length;
             if (n) s += ' · ' + n + ' Reihe' + (n > 1 ? 'n' : '');
+            if (this.weakOnly) s += ' · nur schwach';
             return s;
         },
 
@@ -272,12 +275,16 @@ function kanaStormGame(opts) {
         _bestKey() {
             let k = 'kanaStormBest:' + this.schrift + ':' + this.duration;
             if (this.selectedRows.length) k += ':' + [...this.selectedRows].sort().join(',');
+            // Schwach-Runden spielen einen kuratierten Teil-Pool → eigener Topf,
+            // sonst verfälschen sie den Bestscore der vollen Konfig.
+            if (this.weakOnly) k += ':weak';
             return k;
         },
         // KPM-Bestmarke: gleicher Scope-Schlüssel wie der Score, eigener Namespace.
         _bestKpmKey() {
             let k = 'kanaStormKpm:' + this.schrift + ':' + this.duration;
             if (this.selectedRows.length) k += ':' + [...this.selectedRows].sort().join(',');
+            if (this.weakOnly) k += ':weak';
             return k;
         },
         // Kana/Minute der laufenden Runde (Storm hat immer duration > 0).
@@ -298,6 +305,10 @@ function kanaStormGame(opts) {
         async start() {
             this.phase = 'loading';
             this.loadError = '';
+            this.weakEmpty = false;
+            // "Nur schwache Karten" braucht User-State (SRS-lapses) → der
+            // login-pflichtige Endpoint mit weak_only. Sonst der Gast-Endpoint.
+            const useWeak = this.loggedIn && this.weakOnly;
             let data;
             try {
                 // Gast-Endpoint (ohne Login): die gewählte Schrift, optional auf
@@ -306,7 +317,12 @@ function kanaStormGame(opts) {
                 // G) — die Anzahl ist die Pool-Größe, gespielt wird endlos per Zufall.
                 const params = new URLSearchParams({ schrift: this.schrift, dakuten: 'false' });
                 if (this.selectedRows.length) params.set('rows', this.selectedRows.join(','));
-                const resp = await fetch('/api/practice/kana/session/public?' + params.toString());
+                let url = '/api/practice/kana/session/public?' + params.toString();
+                if (useWeak) {
+                    params.set('weak_only', 'true');
+                    url = '/api/practice/kana/session?' + params.toString();
+                }
+                const resp = await fetch(url);
                 data = await resp.json();
             } catch (e) {
                 this.phase = 'error';
@@ -319,6 +335,13 @@ function kanaStormGame(opts) {
             // Kana eine Lesung — der Filter ist die robuste Absicherung).
             const usable = kana.filter((k) => (k.romanization || '').trim());
             if (!usable.length) {
+                if (useWeak) {
+                    // Kein hartes Fehler-Warndreieck: "noch nichts verwechselt" ist
+                    // ein guter Zustand → sanfter Hinweis zurück auf dem Start-Screen.
+                    this.weakEmpty = true;
+                    this.phase = 'start';
+                    return;
+                }
                 this.phase = 'error';
                 this.loadError = (data && data.message)
                     || 'Gerade sind keine Kana verfügbar — bitte später erneut versuchen.';
@@ -352,6 +375,7 @@ function kanaStormGame(opts) {
                 window.kanaTrack('kana_storm_start', {
                     schrift: this.schrift, dur: this.duration,
                     rows: this.selectedRows.length || 'alle',
+                    weak: (this.loggedIn && this.weakOnly) ? 1 : 0,
                 });
             }
         },
@@ -671,11 +695,18 @@ function kanaStormGame(opts) {
         // ── "Optionen"-Disclosure (Dauer + Reihen) ────────────────────────
         toggleOptions() { this.optionsOpen = !this.optionsOpen; },
         optionsSummary() {
+            const weak = this.weakOnly ? ' · nur schwach' : '';
             // Bei externem Scope hat die Disclosure nur die Dauer (Reihen oben).
-            if (this.scopeExternal) return this.duration + ' Sek';
+            if (this.scopeExternal) return this.duration + ' Sek' + weak;
             const n = this.selectedRows.length;
             const r = n ? (n + ' Reihe' + (n > 1 ? 'n' : '')) : 'alle Reihen';
-            return this.duration + ' Sek · ' + r;
+            return this.duration + ' Sek · ' + r + weak;
+        },
+        // Schwach-Schalter umlegen: anderer Bestscore-Topf → neu laden, Hinweis weg.
+        toggleWeakOnly() {
+            this.weakOnly = !this.weakOnly;
+            this.weakEmpty = false;
+            this.loadBest();
         },
 
         // Lokales Datum (YYYY-MM-DD) — Best-Effort-Schranke gegen ein gestriges

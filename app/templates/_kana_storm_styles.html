@@ -282,6 +282,34 @@
     .kstorm__weaklink:hover { color: var(--shu-deep, #B84A00); }
     .kstorm__weaklink:focus-visible { outline: 2px solid var(--shu, #EB6101); outline-offset: 2px; border-radius: 6px; }
 
+    /* "Nur schwache Karten"-Schalter (Optionen-Panel, login-gated) — Muster wie
+       der .switch auf /practice/kana, hier scoped + zentriert im opt-block. */
+    .kstorm__switch {
+        width: 100%; max-width: 320px;
+        display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
+        padding: 0.6rem 0.8rem; border: 1px solid var(--border-color, #D4CFC5);
+        border-radius: 12px; background: #fff; cursor: pointer; text-align: left;
+    }
+    .kstorm__switch-text { font: 600 0.88rem 'Inter', sans-serif; color: var(--tetsu, #2C2C2C); }
+    .kstorm__switch-text small { display: block; font-size: 0.72rem; color: var(--text-muted, #8C8378); font-weight: 400; margin-top: 1px; }
+    .kstorm__switch-track { flex: 0 0 auto; width: 44px; height: 26px; border-radius: 999px; background: #D9D2C6; position: relative; transition: background .18s ease; }
+    .kstorm__switch-track::after {
+        content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px;
+        border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.25); transition: transform .18s ease;
+    }
+    .kstorm__switch.is-on .kstorm__switch-track { background: var(--shu, #EB6101); }
+    .kstorm__switch.is-on .kstorm__switch-track::after { transform: translateX(18px); }
+    .kstorm__switch:focus-visible { outline: 2px solid var(--shu, #EB6101); outline-offset: 2px; }
+
+    /* Leerstaat-Hinweis, wenn "nur schwache Karten" (noch) nichts ergab. */
+    .kstorm__weakhint {
+        max-width: 360px; margin: 0 auto 0.7rem; padding: 0.6rem 0.8rem;
+        border-radius: 12px; background: var(--background-color, #F1EDE6);
+        font: 500 0.82rem/1.4 'Inter', sans-serif; color: var(--ink-600, #5C564D);
+        display: flex; gap: 0.5rem; align-items: flex-start; text-align: left;
+    }
+    .kstorm__weakhint i { color: #556B2F; margin-top: 0.15rem; }
+
     .kstorm__backlink {
         display: inline-flex; align-items: center; gap: 0.4rem; margin-top: 0.7rem;
         font: 500 0.82rem 'Inter', sans-serif; color: var(--text-muted, #8C8378); text-decoration: none;
@@ -419,6 +447,13 @@
     [data-theme="dark"] .kstorm__sp.is-active {
         background: var(--card-background); border-color: var(--shu);
     }
+    /* Schwach-Schalter: weisse Karte + heller Knauf-Track → Washi-Dunkel. */
+    [data-theme="dark"] .kstorm__switch {
+        background: var(--card-background); border-color: var(--border-color);
+    }
+    [data-theme="dark"] .kstorm__switch-text { color: var(--text-color); }
+    [data-theme="dark"] .kstorm__switch-track { background: var(--ink-300, #3A342A); }
+    [data-theme="dark"] .kstorm__weakhint i { color: #9CB36A; }
     /* .kstorm__weak: --kon-Gradient mit weissem Label → im Dark kippt --kon
        hell; Gradient + box-shadow tragen !important → Override braucht es auch. */
     [data-theme="dark"] .kstorm__weak {

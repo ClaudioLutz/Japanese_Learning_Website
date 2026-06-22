@@ -63,6 +63,26 @@ class TestOtherStormSurfacesUnchanged:
         assert 'scopeExternal: true' not in body
 
 
+class TestStormWeakOnlyOption:
+    """Kana Storm bekommt — wie das Matching-Spiel — einen login-gated
+    „Nur schwache Karten"-Schalter (SRS-lapses). Gäste sehen ihn nicht
+    (kein User-State); eingeloggt schaltet er die Runde auf den weak_only-Pool."""
+
+    def test_guest_does_not_see_weak_switch(self, client, db):
+        body = client.get('/practice/kana/storm').get_data(as_text=True)
+        # Gast hat keinen SRS-State → kein Schalter-Markup. Diskriminierung über
+        # die @click-Verdrahtung (der Klassenname kstorm__switch steht über das
+        # inline-<style> immer im Body, der Schalter-Button aber nur eingeloggt).
+        assert '@click="toggleWeakOnly()"' not in body
+
+    def test_logged_in_sees_weak_switch(self, auth_client, db):
+        client, _user = auth_client
+        body = client.get('/practice/kana/storm').get_data(as_text=True)
+        # Eingeloggt: Schalter-Button mit Alpine-Verdrahtung vorhanden.
+        assert '@click="toggleWeakOnly()"' in body
+        assert 'class="kstorm__switch"' in body
+
+
 class TestStormPlayHidesChrome:
     """Beim Storm-Spiel auf /practice/kana wird das Chrome (Kopf + geteilter Scope
     + Tabs) ausgeblendet, damit das Spiel den vollen Screen bekommt (nicht nur die
