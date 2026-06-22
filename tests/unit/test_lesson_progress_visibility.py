@@ -11,7 +11,11 @@ from __future__ import annotations
 
 from app import db
 from app.models import LessonContent, UserLessonProgress
-from tests.factories import LessonFactory, UserFactory
+from tests.factories import (
+    CardReviewStateFactory,
+    LessonFactory,
+    UserFactory,
+)
 
 
 def _add(lesson_id, content_type, page_number, order_index=0, content_id=1,
@@ -304,6 +308,72 @@ def test_mark_passive_items_completed_excludes_flip_cards(app_context):
     progress.mark_content_completed(vocab.id)
     assert progress.progress_percentage == 100
     assert progress.is_completed is True
+
+
+def test_globally_rated_flip_card_counts_toward_completion(app_context):
+    """Entscheidung 2026-06-22: Eine Flip-Card gilt fuer den Lektionsabschluss als
+    erledigt, sobald sie GLOBAL mindestens einmal bewertet wurde (card_review_state
+    existiert) — auch ohne Deck-Rating in genau dieser Lektion. Behebt Mischzustaende
+    (Karte global gemeistert, Lektion haengt unter 100%), z.B. Lektion 162."""
+    user = UserFactory()
+    lesson = LessonFactory()
+    db.session.flush()
+    text = _add(lesson.id, 'text', page_number=1, content_id=1)
+    vocab1 = _add(lesson.id, 'vocabulary', page_number=2, order_index=0, content_id=2)
+    vocab2 = _add(lesson.id, 'vocabulary', page_number=2, order_index=1, content_id=3)
+    db.session.commit()
+
+    progress = UserLessonProgress(user_id=user.id, lesson_id=lesson.id, content_progress='{}')
+    db.session.add(progress)
+    db.session.flush()
+
+    # Passives Netz raeumt nur den Text ab; Flip-Cards bleiben offen.
+    progress.mark_passive_items_completed()
+    assert progress.get_content_progress().get(str(text.id)) is True
+    assert progress.progress_percentage == 33  # 1 von 3 (Text)
+    assert progress.is_completed is False
+
+    # vocab1 wurde global (z.B. im /review) bewertet -> card_review_state existiert,
+    # OHNE content_progress-Eintrag fuer diese Lektion.
+    CardReviewStateFactory(user_id=user.id, content_id=vocab1.id)
+    db.session.flush()
+    progress.update_progress_percentage()
+    assert progress.progress_percentage == 66  # Text + vocab1 (global)
+    assert progress.is_completed is False
+
+    # zweite Karte ebenfalls global gemeistert -> Lektion 100% / abgeschlossen.
+    CardReviewStateFactory(user_id=user.id, content_id=vocab2.id)
+    db.session.flush()
+    progress.update_progress_percentage()
+    assert progress.progress_percentage == 100
+    assert progress.is_completed is True
+
+
+def test_unrated_flip_card_still_blocks_completion(app_context):
+    """Gegenprobe: eine Flip-Card OHNE jede Bewertung (kein card_review_state,
+    kein content_progress) blockiert den Abschluss weiterhin — der globale
+    Lernstand-Bonus greift nur fuer tatsaechlich bewertete Karten."""
+    user = UserFactory()
+    lesson = LessonFactory()
+    db.session.flush()
+    _add(lesson.id, 'text', page_number=1, content_id=1)
+    _add(lesson.id, 'vocabulary', page_number=2, content_id=2)
+    db.session.commit()
+
+    progress = UserLessonProgress(user_id=user.id, lesson_id=lesson.id, content_progress='{}')
+    db.session.add(progress)
+    db.session.flush()
+
+    progress.mark_passive_items_completed()
+    # Text erledigt, Vokabel weder im Deck noch global bewertet -> 50%, nicht fertig.
+    assert progress.progress_percentage == 50
+    assert progress.is_completed is False
+    # andere Karte (anderer content_id) bewertet -> zaehlt NICHT fuer diese Vokabel
+    CardReviewStateFactory(user_id=user.id, content_id=99999)
+    db.session.flush()
+    progress.update_progress_percentage()
+    assert progress.progress_percentage == 50
+    assert progress.is_completed is False
 
 
 def test_zero_visible_items_marks_completed(app_context):

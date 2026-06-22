@@ -1442,10 +1442,30 @@ class UserLessonProgress(db.Model):
         if total_content == 0:
             self.progress_percentage = 100
         else:
-            visible_ids = {str(c.id) for c in visible_items}
             cp = self.get_content_progress()
+            # Flip-Cards (vocab/kanji/kana/grammar) zaehlen fuer den Lektions-
+            # abschluss als erledigt, sobald die Karte GLOBAL mindestens einmal
+            # bewertet wurde (eine card_review_state-Zeile existiert) — egal ob im
+            # Lektions-Deck oder im globalen Wiederholen (/review). Entscheidung
+            # 2026-06-22 (User): der globale Lernstand erfuellt den Abschluss, sonst
+            # entstehen Mischzustaende (Karte gemeistert, Lektion haengt auf <100%).
+            # Heilt Altbestand automatisch bei der naechsten Neuberechnung.
+            flip_ids = [
+                c.id for c in visible_items
+                if c.content_type in FLIP_CARD_CONTENT_TYPES
+            ]
+            rated_ids = set()
+            if flip_ids:
+                rated_ids = {
+                    row[0] for row in db.session.query(CardReviewState.content_id)
+                    .filter(
+                        CardReviewState.user_id == self.user_id,
+                        CardReviewState.content_id.in_(flip_ids),
+                    ).all()
+                }
             completed_content = sum(
-                1 for cid in visible_ids if cp.get(cid)
+                1 for c in visible_items
+                if cp.get(str(c.id)) or c.id in rated_ids
             )
             self.progress_percentage = int((completed_content / total_content) * 100)
 
