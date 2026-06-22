@@ -653,6 +653,79 @@ html.hide-front-romaji .front-romaji { display: none !important; }
         padding-top: 1rem;
     }
 
+    /* ── Dialog-Slideshow: Abspiel-Bedienung (Ink-on-Washi) ── */
+    .dialog-slideshow .sc-progress {
+        height: 7px;
+        margin-top: .65rem;
+        border-radius: 4px;
+        background: var(--ink-300, #D4CCBE);
+        cursor: pointer;
+        overflow: hidden;
+    }
+    .dialog-slideshow .sc-progress-fill {
+        height: 100%;
+        width: 0;
+        background: var(--shu, #EB6101);
+        border-radius: 4px;
+        transition: width .1s linear;
+    }
+    .dialog-slideshow .slideshow-controls {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+        margin-top: .6rem;
+        padding: .45rem .55rem;
+        background: var(--background-color, #F5F0E8);
+        border: 1px solid var(--border-color, #D4CFC5);
+        border-radius: 999px;
+    }
+    .dialog-slideshow .sc-nav {
+        flex: 0 0 auto;
+        width: 38px;
+        height: 38px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        border: 1px solid var(--border-color, #D4CFC5);
+        background: var(--card-background, #fff);
+        color: var(--text-color, #2C2C2C);
+        transition: background .15s ease, border-color .15s ease;
+    }
+    .dialog-slideshow .sc-nav:hover:not(:disabled) {
+        border-color: var(--shu, #EB6101);
+        color: var(--shu, #EB6101);
+    }
+    .dialog-slideshow .sc-nav:disabled {
+        opacity: .35;
+        cursor: default;
+    }
+    .dialog-slideshow .sc-play {
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        gap: .45rem;
+        min-width: 9.5rem;
+        justify-content: center;
+        height: 38px;
+        padding: 0 1.1rem;
+        border: none;
+        border-radius: 999px;
+        font-weight: 600;
+        color: #fff;
+        background: linear-gradient(180deg, #EB6101, #D85700);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.15);
+        transition: filter .15s ease;
+    }
+    .dialog-slideshow .sc-play:hover { filter: brightness(1.05); }
+    .dialog-slideshow .sc-play:active { filter: brightness(.95); }
+    .dialog-slideshow .sc-auto .form-check-label { color: var(--text-color, #2C2C2C); }
+    .dialog-slideshow .sc-counter {
+        flex: 0 0 auto;
+        font-variant-numeric: tabular-nums;
+        color: var(--ink-500, #7A7368);
+    }
+
     /* Quiz Micro-Interactions */
     @keyframes quizShake {
         0%, 100% { transform: translateX(0); }
@@ -1888,34 +1961,43 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                                         </div>
                                                                     </template>
                                                                 </div>
-                                                                <div class="slideshow-controls d-flex align-items-center gap-2 mt-2">
-                                                                    <button type="button" class="btn btn-sm btn-outline-secondary"
+                                                                <div class="sc-progress" @click="seek($event)"
+                                                                     role="slider" aria-label="Fortschritt"
+                                                                     aria-valuemin="0" aria-valuemax="100"
+                                                                     :aria-valuenow="Math.round(progress)">
+                                                                    <div class="sc-progress-fill" :style="`width:${progress}%`"></div>
+                                                                </div>
+                                                                <div class="slideshow-controls">
+                                                                    <button type="button" class="sc-nav"
                                                                             @click="prev()" :disabled="current === 0"
                                                                             aria-label="Vorherige Zeile">
                                                                         <i class="fas fa-chevron-left"></i>
                                                                     </button>
-                                                                    <button type="button" class="btn btn-sm btn-primary"
-                                                                            @click="playCurrent()" aria-label="Abspielen">
-                                                                        <i class="fas fa-play"></i>
-                                                                        <span class="ms-1">Abspielen</span>
+                                                                    <button type="button" class="sc-play"
+                                                                            @click="toggle()"
+                                                                            :aria-label="playing ? 'Pause' : 'Abspielen'">
+                                                                        <i class="fas" :class="playing ? 'fa-pause' : 'fa-play'"></i>
+                                                                        <span x-text="playing ? 'Pause' : 'Abspielen'"></span>
                                                                     </button>
-                                                                    <button type="button" class="btn btn-sm btn-outline-secondary"
+                                                                    <button type="button" class="sc-nav"
                                                                             @click="next()" :disabled="current >= slides.length - 1"
                                                                             aria-label="Naechste Zeile">
                                                                         <i class="fas fa-chevron-right"></i>
                                                                     </button>
-                                                                    <div class="form-check form-switch ms-auto mb-0">
+                                                                    <div class="form-check form-switch sc-auto ms-auto mb-0">
                                                                         <input class="form-check-input" type="checkbox"
                                                                                :id="'auto-' + {{ content.id }}" x-model="autoAdvance">
                                                                         <label class="form-check-label small" :for="'auto-' + {{ content.id }}">
                                                                             Auto-weiter
                                                                         </label>
                                                                     </div>
-                                                                    <span class="small opacity-75">
+                                                                    <span class="sc-counter small">
                                                                         <span x-text="current + 1"></span> / <span x-text="slides.length"></span>
                                                                     </span>
                                                                 </div>
                                                                 <audio x-ref="audio" preload="none"
+                                                                       @play="playing = true" @pause="playing = false"
+                                                                       @timeupdate="onTimeUpdate()"
                                                                        @ended="onEnded()"></audio>
                                                             </div>
                                                             {% endif %}
@@ -5168,6 +5250,8 @@ window.dialogSlideshow = function(contentId) {
         slides: slidesData,
         current: 0,
         autoAdvance: true,
+        playing: false,
+        progress: 0,
         init() {
             this.$nextTick(() => this._loadAudio());
         },
@@ -5175,15 +5259,46 @@ window.dialogSlideshow = function(contentId) {
             const audio = this.$refs.audio;
             if (!audio || !this.slides[this.current]) return;
             audio.src = this.slides[this.current].audio;
+            this.progress = 0;
         },
+        _ensureSrc() {
+            const audio = this.$refs.audio;
+            const want = this.slides[this.current].audio;
+            if (audio.src !== want && !audio.src.endsWith(want)) {
+                audio.src = want;
+            }
+        },
+        // Play/Pause-Toggle: pausiert wenn laeuft, sonst (Resume oder Neustart) abspielen.
+        toggle() {
+            const audio = this.$refs.audio;
+            if (!audio) return;
+            this._ensureSrc();
+            if (audio.paused) {
+                if (audio.ended) audio.currentTime = 0;
+                audio.play().catch(() => {});
+            } else {
+                audio.pause();
+            }
+        },
+        // Immer von vorne abspielen (fuer Auto-weiter beim Slide-Wechsel).
         playCurrent() {
             const audio = this.$refs.audio;
             if (!audio) return;
-            if (audio.src !== this.slides[this.current].audio && !audio.src.endsWith(this.slides[this.current].audio)) {
-                audio.src = this.slides[this.current].audio;
-            }
+            this._ensureSrc();
             audio.currentTime = 0;
             audio.play().catch(() => {});
+        },
+        seek(ev) {
+            const audio = this.$refs.audio;
+            if (!audio || !audio.duration) return;
+            const bar = ev.currentTarget;
+            const ratio = (ev.clientX - bar.getBoundingClientRect().left) / bar.offsetWidth;
+            audio.currentTime = Math.max(0, Math.min(1, ratio)) * audio.duration;
+        },
+        onTimeUpdate() {
+            const audio = this.$refs.audio;
+            if (!audio || !audio.duration) return;
+            this.progress = (audio.currentTime / audio.duration) * 100;
         },
         next() {
             if (this.current < this.slides.length - 1) {
@@ -5199,6 +5314,8 @@ window.dialogSlideshow = function(contentId) {
             }
         },
         onEnded() {
+            this.playing = false;
+            this.progress = 100;
             if (this.autoAdvance) {
                 setTimeout(() => this.next(), 600);
             }
