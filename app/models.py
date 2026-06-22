@@ -1350,7 +1350,13 @@ class UserLessonProgress(db.Model):
     time_spent = db.Column(db.Integer, default=0)
     last_accessed = db.Column(db.DateTime, default=datetime.utcnow)
     content_progress = db.Column(db.Text)
-    
+    # Zuletzt besuchte Carousel-Seite (1-basiert, gleiche Einheit wie der
+    # #page-N-Deep-Link in lesson_view.html). Dient dem "Weiter lernen"-Knopf,
+    # damit er an die zuletzt gelesene Stelle zurueckspringt. Bewusst eine eigene
+    # Spalte statt eines Keys in content_progress: der Carousel-Slide-Handler
+    # schreibt content_progress bereits via markComplete -> sonst Lost-Update.
+    last_page = db.Column(db.Integer, nullable=True)
+
     lesson: Mapped['Lesson'] = relationship(foreign_keys=[lesson_id], overlaps="user_progress")
 
     __table_args__ = (db.UniqueConstraint('user_id', 'lesson_id'),)
@@ -1480,6 +1486,7 @@ class UserLessonProgress(db.Model):
         self.progress_percentage = 0
         self.time_spent = 0
         self.content_progress = json.dumps({})
+        self.last_page = None
         
         # Delete all quiz answers for this lesson for the user
         content_ids = [content.id for content in self.lesson.content_items if content.is_interactive]

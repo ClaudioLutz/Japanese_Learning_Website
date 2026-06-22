@@ -692,7 +692,10 @@ def next_lesson(user_id):
         .first()
     )
     if resume and resume.lesson:
-        return {'title': resume.lesson.title, 'lesson_id': resume.lesson_id, 'kind': 'resume'}
+        # last_page -> der "Da wo du aufgehört hast"-Schritt springt an die
+        # zuletzt gelesene Seite (Hash wird in build_plan angehaengt).
+        return {'title': resume.lesson.title, 'lesson_id': resume.lesson_id,
+                'kind': 'resume', 'last_page': resume.last_page}
 
     started_ids = [p.lesson_id for p in UserLessonProgress.query.filter_by(user_id=user_id).all()]
     q = Lesson.query.filter(Lesson.is_published.is_(True))
@@ -729,12 +732,17 @@ def build_plan(user_id, due_count):
         minutes += 4
         verb = 'weiterlernen' if nl['kind'] == 'resume' else 'starten'
         desc = 'Da wo du aufgehört hast' if nl['kind'] == 'resume' else 'Nächste im Lehrplan'
+        href = url_for('routes.view_lesson', lesson_id=nl['lesson_id'])
+        # Resume springt an die zuletzt gelesene Seite (#page-N, ab Seite 2 — wie
+        # auf /lessons). Die "next"-Lektion startet bewusst auf Seite 1.
+        if nl['kind'] == 'resume' and (nl.get('last_page') or 0) > 1:
+            href = f"{href}#page-{nl['last_page']}"
         steps.append({
             'title': f'„{nl["title"]}" {verb}',
             'desc': desc,
             'why': 'Bringt neue Wörter und hält dein Wochenziel.',
             'dur': '~4 Min', 'kind': 'lesson',
-            'href': url_for('routes.view_lesson', lesson_id=nl['lesson_id']), 'done': False,
+            'href': href, 'done': False,
         })
 
     weak = weak_kana(user_id, limit=2)

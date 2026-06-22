@@ -35,7 +35,9 @@
         </p>
         <div class="home-actions">
           {% if last_lesson %}
-            <a href="{{ url_for('routes.view_lesson', lesson_id=last_lesson.id) }}" class="btn-shu">
+            {# „Wo du aufgehört hast" wörtlich einlösen: an die zuletzt gelesene
+               Seite springen (#page-N, ab Seite 2 — wie auf /lessons). #}
+            <a href="{{ url_for('routes.view_lesson', lesson_id=last_lesson.id) }}{% if last_lesson_resume_page and last_lesson_resume_page > 1 %}#page-{{ last_lesson_resume_page }}{% endif %}" class="btn-shu">
               ▶ {{ last_lesson.title }}
             </a>
           {% else %}

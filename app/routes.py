@@ -470,12 +470,16 @@ def index():
     
     # Letzte bearbeitete Lektion fuer eingeloggte User
     last_lesson = None
+    # Zuletzt gelesene Seite -> der Hero-CTA "Weiter lernen. Wo du aufgehoert
+    # hast." haengt sie als #page-N an (gleiches Resume-Muster wie /lessons).
+    last_lesson_resume_page = None
     if current_user.is_authenticated:
         last_progress = UserLessonProgress.query.filter_by(
             user_id=current_user.id
         ).order_by(UserLessonProgress.last_accessed.desc()).first()
         if last_progress:
             last_lesson = Lesson.query.get(last_progress.lesson_id)
+            last_lesson_resume_page = last_progress.last_page
 
     # JLPT-Lernpfad-Daten (Mayuko-Direktive 2026-04-25): Pfad als Startseiten-Inhalt
     visible_langs = current_app.config.get('CONTENT_LANGUAGES', ['german'])
@@ -523,6 +527,7 @@ def index():
                          english_guest_lessons=english_guest_lessons,
                          german_guest_lessons=german_guest_lessons,
                          last_lesson=last_lesson,
+                         last_lesson_resume_page=last_lesson_resume_page,
                          n5_modules=n5_modules,
                          n5_groups=n5_groups,
                          next_module_id=next_module_id,
@@ -874,6 +879,9 @@ def lessons():
             'status': status,
             'progress_percentage': pct,
             'last_accessed': pr.last_accessed if pr else None,
+            # Zuletzt gelesene Seite (1-basiert) -> "Weiter lernen" haengt sie als
+            # #page-N an, damit der Knopf an die zuletzt besuchte Stelle springt.
+            'last_page': pr.last_page if pr else None,
         }
 
     # Kategorien als Lehrplan-Rueckgrat: jede Kategorie traegt ihre Lektionen
@@ -3286,7 +3294,8 @@ def reset_lesson_progress_api(lesson_id):
                 is_completed = false,
                 progress_percentage = 0,
                 time_spent = 0,
-                content_progress = '{}'
+                content_progress = '{}',
+                last_page = NULL
             WHERE user_id = :user_id AND lesson_id = :lesson_id
         """)
         result = db.session.execute(reset_progress_sql, {
@@ -3474,6 +3483,42 @@ def complete_remaining_passive(lesson_id):
         current_app.logger.error(f"Error completing passive items for user {current_user.id}, lesson {lesson_id}: {e}")
         return jsonify({"error": "Failed to update progress"}), 500
 
+@bp.route('/api/lessons/<int:lesson_id>/last-page', methods=['POST'])
+@login_required
+def update_last_page(lesson_id):
+    """Merkt die zuletzt besuchte Carousel-Seite (1-basiert) der Lektion.
+
+    Der "Weiter lernen"-Knopf auf /lessons haengt diese Seite als #page-N an den
+    Lektions-Link, sodass der Nutzer geraeteuebergreifend dort weitermacht, wo er
+    war. Bewusst schlank: setzt nur die eigene last_page-Spalte, ruehrt weder
+    content_progress noch die Prozent-Berechnung an (sonst Race mit dem
+    Slide-Handler, der content_progress via markComplete schreibt)."""
+    from flask_wtf.csrf import validate_csrf
+    try:
+        csrf_token = request.headers.get('X-CSRFToken') or request.form.get('csrf_token')
+        if not csrf_token:
+            return jsonify({"error": "CSRF token missing"}), 400
+        validate_csrf(csrf_token)
+    except Exception:
+        return jsonify({"error": "CSRF token invalid"}), 400
+
+    data = request.get_json(silent=True) or {}
+    page = data.get('page')
+    # Carousel-Seiten sind 1-basiert; eine sinnvolle Obergrenze haelt Muell raus.
+    if not isinstance(page, int) or isinstance(page, bool) or page < 1 or page > 500:
+        return jsonify({"error": "invalid page"}), 400
+
+    progress = UserLessonProgress.query.filter_by(
+        user_id=current_user.id, lesson_id=lesson_id
+    ).first()
+    if not progress:
+        # Kein Fortschritt -> nichts zu merken (Lektion noch nie geoeffnet).
+        return jsonify({"error": "no progress"}), 404
+
+    progress.last_page = page
+    db.session.commit()
+    return ('', 204)
+
 @bp.route('/lessons/<int:lesson_id>/reset', methods=['POST'])
 @login_required
 def reset_lesson_progress(lesson_id):
@@ -3506,7 +3551,8 @@ def reset_lesson_progress(lesson_id):
                     is_completed = false,
                     progress_percentage = 0,
                     time_spent = 0,
-                    content_progress = '{}'
+                    content_progress = '{}',
+                    last_page = NULL
                 WHERE user_id = :user_id AND lesson_id = :lesson_id
             """)
             result = db.session.execute(reset_progress_sql, {

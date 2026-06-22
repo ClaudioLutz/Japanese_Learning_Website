@@ -55,9 +55,13 @@
   {# ─────────── Weiter-lernen (eingeloggt) — Dashboard statt Katalog ─────────── #}
   <section class="lp-continue" aria-label="Weiter lernen">
     {% if continue_lesson %}
+    {# „Weiter lernen" springt an die zuletzt gelesene Seite zurueck (#page-N nutzt
+       den schon vorhandenen Deep-Link in lesson_view.html). Nur ab Seite 2 — bei
+       Seite 1 ist der Link ohne Hash identisch. #}
+    {% set resume_hash = ('#page-' ~ continue_lesson.last_page) if (continue_lesson.last_page and continue_lesson.last_page > 1) else '' %}
     <div class="lp-continue-main">
       {# Lektions-Thumbnail der „Weiter lernen"-Lektion (gleiches Bildmuster wie die Katalog-Karten). #}
-      <a href="{{ url_for('routes.view_lesson', lesson_id=continue_lesson.id) }}"
+      <a href="{{ url_for('routes.view_lesson', lesson_id=continue_lesson.id) }}{{ resume_hash }}"
          class="lp-continue-media{% if not continue_lesson.thumbnail_url %} lp-continue-media-placeholder{% endif %}"
          tabindex="-1" aria-hidden="true">
         {% if continue_lesson.thumbnail_url %}
@@ -72,7 +76,7 @@
           {% if continue_lesson.status == 'started' %} · <span class="lp-continue-lessonpct">{{ continue_lesson.progress_percentage }}% dieser Lektion</span>{% else %} · noch nicht begonnen{% endif %}
         </p>
         <div class="lp-continue-actions">
-          <a href="{{ url_for('routes.view_lesson', lesson_id=continue_lesson.id) }}" class="lp-continue-cta">
+          <a href="{{ url_for('routes.view_lesson', lesson_id=continue_lesson.id) }}{{ resume_hash }}" class="lp-continue-cta">
             {% if continue_lesson.status == 'started' %}Weiterlernen{% else %}Lektion starten{% endif %} →
           </a>
           {% if due_count > 0 %}
