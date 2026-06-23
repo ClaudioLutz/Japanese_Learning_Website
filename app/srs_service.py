@@ -293,6 +293,16 @@ PRODUCTION_FORWARD_MIN_STAGE = 4
 DAILY_NEW_PRODUCTION_LIMIT = 15
 
 
+def _forward_stability(fsrs_card_json):
+    """FSRS-Stabilitaet (Tage) aus dem gespeicherten Card-State, robust gegen
+    fehlende/kaputte Werte. Dient als JP->DE-Score fuer die Einfuehrungs-
+    Reihenfolge der Produktions-Karten."""
+    try:
+        return float(json.loads(fsrs_card_json).get('stability', 0) or 0)
+    except (TypeError, ValueError, json.JSONDecodeError):
+        return 0.0
+
+
 def get_production_forward_ready_ids(user_id):
     """content_ids, deren forward-Karte (JP->DE) AKTUELL >= 7 Tage Stabilitaet
     (Stage >= PRODUCTION_FORWARD_MIN_STAGE) hat.
@@ -384,10 +394,14 @@ def get_production_new_cards(user_id, limit=20):
         if stage_idx < PRODUCTION_FORWARD_MIN_STAGE:
             continue
         seen.add(lc.id)
-        out.append(lc)
+        out.append((_forward_stability(state.fsrs_card_state), lc))
 
-    out.sort(key=lambda x: x.id)
-    return out[:limit]
+    # Neue DE->JP-Karten in der Reihenfolge ihres JP->DE-Scores einfuehren:
+    # die rezeptiv am besten sitzende Vokabel (hoechste forward-Stabilitaet)
+    # zuerst. Tie-Break content_id fuer deterministische Reihenfolge. Sobald die
+    # Karte erstmals reverse bewertet wird, laeuft sie ueber normales FSRS-Due.
+    out.sort(key=lambda t: (-t[0], t[1].id))
+    return [lc for _, lc in out[:limit]]
 
 
 def get_production_new_today_count(user_id):

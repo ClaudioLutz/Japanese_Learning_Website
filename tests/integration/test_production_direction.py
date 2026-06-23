@@ -115,6 +115,27 @@ class TestProductionQueue:
         new = srs_service.get_production_new_cards(user.id)
         assert lc.id not in [c.id for c in new]
 
+    def test_new_cards_ordered_by_forward_stability_desc(self, auth_client):
+        """Neue DE->JP-Karten werden nach JP->DE-Stabilitaet absteigend eingefuehrt
+        (am besten sitzende rezeptive Vokabel zuerst)."""
+        client, user = auth_client
+        # Drei reife forward-Karten mit unterschiedlicher Stabilitaet (alle >= 7).
+        low = ('{"stability":8.0,"difficulty":5.0,"due":"2026-04-25T00:00:00+00:00",'
+               '"last_review":"2026-04-13T00:00:00+00:00","reps":4,"lapses":0,"state":2,"step":null}')
+        mid = ('{"stability":30.0,"difficulty":5.0,"due":"2026-05-13T00:00:00+00:00",'
+               '"last_review":"2026-04-13T00:00:00+00:00","reps":5,"lapses":0,"state":2,"step":null}')
+        high = ('{"stability":120.0,"difficulty":5.0,"due":"2026-08-11T00:00:00+00:00",'
+                '"last_review":"2026-04-13T00:00:00+00:00","reps":6,"lapses":0,"state":2,"step":null}')
+        lc_low = _vocab_content(meaning_de='niedrig')
+        lc_mid = _vocab_content(meaning_de='mittel')
+        lc_high = _vocab_content(meaning_de='hoch')
+        _forward_state(user.id, lc_low.id, fsrs=low)
+        _forward_state(user.id, lc_mid.id, fsrs=mid)
+        _forward_state(user.id, lc_high.id, fsrs=high)
+        db.session.commit()
+        order = [c.id for c in srs_service.get_production_new_cards(user.id)]
+        assert order[:3] == [lc_high.id, lc_mid.id, lc_low.id]
+
     def test_queue_endpoint_returns_reverse_cards(self, auth_client):
         """/api/srs/production/queue liefert die Vokabel mit direction=reverse + is_new."""
         client, user = auth_client
