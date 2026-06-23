@@ -1,0 +1,133 @@
+{# ░░ SCREEN: HEUTE (Aktion) ░░
+   Begruessung + adaptiver Tagesplan (echt, server-gerendert) mit Inline-
+   Review (echt gegen /api/srs/due + /api/srs/rate) + ruhige Status-Sidebar
+   (N5-Bereitschaft, Streak, „Mein Japanisch"-Zahlen, Can-do-Mini). #}
+<div x-show="screen==='heute'" x-cloak>
+  <div class="greet reveal">
+    <div class="ja" x-text="greetingJa"></div>
+    <h1 x-text="greeting + ', ' + name + '.'"></h1>
+    <div class="date" x-text="todayLabel"></div>
+  </div>
+
+  <div class="heute">
+    {# ── Aktion ── #}
+    <div>
+      <section class="ask reveal" aria-labelledby="ask-h">
+        <div class="q" id="ask-h" x-show="planDone<plan.length">Die nächsten <span class="min" x-text="planMinutes"></span> Minuten.</div>
+        <div class="q" id="ask-h2" x-show="planDone===plan.length" x-cloak>Tagesziel erreicht — schön.</div>
+        <div class="lead" x-show="planDone<plan.length">Drei Schritte, adaptiv aus fälligen Karten, Kurs und Schwächen.</div>
+
+        <ul class="steps">
+          <template x-for="(s,i) in plan" :key="i">
+            <li class="step" :class="{'is-done':s.done,'is-next':!s.done && i===nextStep}">
+              <span class="num" x-text="s.done ? '✓' : (i+1)"></span>
+              <span class="body">
+                <span class="t" x-html="s.title"></span>
+                <span class="d" x-text="s.desc"></span>
+              </span>
+              <span class="dur" x-show="!s.done" x-text="s.dur"></span>
+              <template x-if="!s.done">
+                <button class="ghost sm go" @click="startStep(i)" x-text="i===nextStep?'Starten':'Üben'"></button>
+              </template>
+              <span class="check" x-show="s.done" x-cloak aria-hidden="true">✓</span>
+            </li>
+          </template>
+        </ul>
+
+        {# Inline-Review (statt Wegnavigieren) — echte fällige Karten #}
+        <div class="review" x-show="reviewOpen" x-collapse x-cloak>
+          <div class="review-top">
+            <span>Review · <span x-text="reviewIdx+1"></span>/<span x-text="reviewCards.length"></span></span>
+            <button class="review-x" @click="closeReview()" aria-label="Schliessen">×</button>
+          </div>
+          <template x-if="reviewCards.length">
+            <div>
+              <div class="review-card">
+                <div class="glyph jp" x-text="reviewCard.c"></div>
+                <div class="reveal-area">
+                  <template x-if="reviewRevealed">
+                    <div>
+                      <div class="read" x-text="reviewCard.read"></div>
+                      <div class="mean" x-text="reviewCard.mean"></div>
+                    </div>
+                  </template>
+                </div>
+              </div>
+              <div class="review-acts" x-show="!reviewRevealed">
+                <button class="ghost" @click="reviewRevealed=true">Antwort zeigen</button>
+              </div>
+              <div class="review-acts" x-show="reviewRevealed" x-cloak>
+                <button class="ghost grade-bad" @click="grade(false)" :disabled="grading"><i class="fas fa-rotate-left"></i> Nochmal</button>
+                <button class="ghost grade-ok" @click="grade(true)" :disabled="grading"><i class="fas fa-check"></i> Gewusst</button>
+              </div>
+            </div>
+          </template>
+          <template x-if="!reviewCards.length">
+            <div class="review-card"><div class="mean" x-text="reviewEmptyMsg"></div></div>
+          </template>
+        </div>
+
+        <div class="ask-foot" x-show="!reviewOpen">
+          <div class="prog">
+            <div class="bar"><div :style="`width:${plan.length?planDone/plan.length*100:0}%`"></div></div>
+            <div class="lab"><span x-text="planDone"></span> / <span x-text="plan.length"></span> erledigt · 🔥 <span x-text="streak"></span> Tage</div>
+          </div>
+          <button class="ml-btn" @click="planDone<plan.length ? startStep(nextStep) : null" x-show="planDone<plan.length">
+            <i class="fas fa-play"></i> <span x-text="planDone===0?'Los geht\'s':'Weiter'"></span>
+          </button>
+          <span x-show="planDone===plan.length" x-cloak style="color:var(--matcha-deep);font-weight:600;"><i class="fas fa-check-circle"></i> Bis morgen</span>
+        </div>
+      </section>
+    </div>
+
+    {# ── Status-Sidebar (ruhig) ── #}
+    <aside class="aside reveal">
+      <div class="panel">
+        <div class="ph">N5-Bereitschaft</div>
+        <div class="mini-ring">
+          <div style="position:relative;width:84px;height:84px;flex:none;">
+            <svg width="84" height="84" viewBox="0 0 84 84" style="transform:rotate(-90deg)">
+              <circle cx="42" cy="42" r="34" fill="none" stroke="var(--ink-100)" stroke-width="8"/>
+              <circle cx="42" cy="42" r="34" fill="none" :stroke="ringColor" stroke-width="8" stroke-linecap="round"
+                :stroke-dasharray="2*Math.PI*34" :stroke-dashoffset="2*Math.PI*34 - 2*Math.PI*34*readiness/100"
+                style="transition:stroke-dashoffset .9s ease"/>
+            </svg>
+            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--f-display);font-weight:700;font-size:1.3rem;color:var(--kon);" x-text="readiness+'%'"></div>
+          </div>
+          <div class="rdg">
+            <b x-text="readinessLabel"></b>
+            ≈ CEFR A1 · <span x-text="band[0]+'–'+band[1]+'%'"></span>
+            <button class="more" @click="go('fortschritt')">Details ansehen <i class="fas fa-arrow-right"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="streak-line"><i class="fas fa-fire"></i> <span x-text="streak"></span> Tage dran <span class="wk"><span x-text="weekGoal.done"></span>/<span x-text="weekGoal.total"></span> diese Woche</span></div>
+      </div>
+
+      <div class="panel">
+        <div class="ph">Mein Japanisch</div>
+        <div class="counts">
+          <template x-for="c in counts" :key="c.lab">
+            <button class="count" @click="go('fortschritt')">
+              <div class="n countup" :data-to="c.n">0</div>
+              <div class="l" x-text="c.lab"></div>
+            </button>
+          </template>
+        </div>
+      </div>
+
+      <div class="panel cando-mini">
+        <div class="ph">Was du jetzt kannst <span style="color:var(--ink-400)">· <span x-text="canDoDone"></span>/<span x-text="canDo.length"></span></span></div>
+        <template x-for="c in canDo.slice(0,4)" :key="c.t">
+          <div class="row">
+            <span class="mk" :class="c.s" x-text="c.s==='done'?'✓':'◐'"></span>
+            <span x-text="c.t"></span>
+          </div>
+        </template>
+        <div class="foot"><button class="more" style="color:var(--ai);font-weight:600;background:none;border:0;cursor:pointer;font-family:inherit;padding:0;" @click="go('fortschritt')">Alle Fähigkeiten ansehen →</button></div>
+      </div>
+    </aside>
+  </div>
+</div>

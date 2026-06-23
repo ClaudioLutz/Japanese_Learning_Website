@@ -1,12 +1,13 @@
 {% extends "base.html" %}
 
-{# „Mein Lernen" — Lernenden-Dashboard. Orchestrator: extendet base.html
+{# „Mein Lernen" — Lernenden-Dashboard v3. Orchestrator: extendet base.html
    (Topnav/Fonts/Alpine-Core/Design-Tokens kommen von dort) und bindet die
-   Sektions-Partials aus mein_lernen/ ein. Siehe docs/mein-lernen-impl-plan.md.
+   v3-Sektions-Partials aus mein_lernen/ ein.
 
-   Spine-Stand: Struktur + Chrome echt integriert, Datenschicht groesstenteils
-   noch Dummy (im JS-Partial). Phase 1 ersetzt Dummy -> echte Daten gegen
-   docs/dashboard_contract.md. #}
+   v3-Struktur: ZWEI Screens (Heute = Aktion, Fortschritt = Diagnose), per
+   In-Page-Segmented-Control umschaltbar (base.html-Chrome bleibt — KEIN
+   zweiter Topbar). Datenschicht echt (dashboard_service + /api/dashboard/*
+   + /api/srs/due + /api/srs/rate fuer das Inline-Review). #}
 
 {% block title %}Mein Lernen{% endblock %}
 {% block meta_description %}Dein persönliches Japanisch-Lern-Dashboard: Tagesplan, N5-Kompass und alle deine Statistiken an einem Ort.{% endblock %}
@@ -28,13 +29,21 @@
 
 {% block content %}
 <div class="mein-lernen wrap" x-data="dashboard()" x-init="init()"
-     @keydown.escape.window="item=null; settingsOpen=false">
+     @keydown.escape.window="settingsOpen=false; reviewOpen=false">
 
-  {% include "mein_lernen/_today_hero.html" %}
-  {% include "mein_lernen/_compass.html" %}
-  {% include "mein_lernen/_cando.html" %}
-  {% include "mein_lernen/_stats_tabs.html" %}
-  {% include "mein_lernen/_numbers.html" %}
+  {# In-Page-Subnav: Screen-Umschalter (Heute/Fortschritt) + Einstellungen.
+     Ersetzt v3's eigenen Topbar — die globale Navbar (base.html) bleibt. #}
+  <div class="ml-subnav">
+    <nav class="seg-nav" aria-label="Ansicht">
+      <button :aria-current="screen==='heute'?'page':false" @click="go('heute')"><i class="fas fa-sun"></i> Heute</button>
+      <button :aria-current="screen==='fortschritt'?'page':false" @click="go('fortschritt')"><i class="fas fa-compass"></i> Fortschritt</button>
+    </nav>
+    <span class="spacer"></span>
+    <button class="icon-btn" @click="settingsOpen=true" aria-label="Einstellungen"><i class="fas fa-gear"></i></button>
+  </div>
+
+  {% include "mein_lernen/_heute.html" %}
+  {% include "mein_lernen/_fortschritt.html" %}
 
   {# Dialoge/Toast/Stempel: innerhalb des x-data-Wrappers (Bindings), aber
      position:fixed -> visuell viewport-zentriert. #}

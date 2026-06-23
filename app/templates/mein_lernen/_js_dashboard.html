@@ -1,362 +1,224 @@
-{# ░░ Alpine-Komponente dashboard() ░░
+{# ░░ Alpine-Komponente dashboard() — v3 ░░
+   Zwei Screens (Heute/Fortschritt). EINE Bildsprache (radiale Dials), eine
+   sequenzielle OKLCH-Reifeskala. Inline-Review ECHT gegen /api/srs/due +
+   /api/srs/rate (statt Wegnavigieren). shu = nur primaere Aktion.
+
    WICHTIG (Memory project_dashboard_hybrid_prototyp): Chart.js-Instanzen NIE
    in reaktiven Alpine-State — sie liegen als Closure-Variablen (_fc, _tmpRev…)
    AUSSERHALB des return{}-Objekts. Lazy render erst wenn das Panel sichtbar ist
    (offsetParent!==null). Inline-<script> OHNE defer → dashboard() ist global
    definiert, bevor der in base.html deferred geladene Alpine-Core initialisiert.
 
-   Spine-Stand: Datenschicht ist noch Dummy (wie im Prototyp). Echt verdrahtet
-   sind bereits: Name, Streak, fällige Karten (dueCount/dueLabel), heutiges
-   Datum + Prüfungs-Countdown. Der Rest folgt in Phase 1 gegen den eingefrorenen
-   Daten-Vertrag (docs/dashboard_contract.md). #}
+   Server-Kontext (echt): name/streak/plan/pillars(5, inkl. Hoeren)/numbers/
+   canDo/vocabThemes/grammar/weekGoal/freezes. Lazy: /api/dashboard/stats. #}
 <script>
 function dashboard(){
-  let _fc=null,_tmpRev=null,_tmpWd=null,_accSk=null,_accSt=null;   // Chart.js bewusst AUSSERHALB des Alpine-Proxys
+  let _fc=null,_tmpRev=null,_tmpWd=null,_accSk=null,_accSt=null;   // Chart.js AUSSERHALB des Alpine-Proxys
   const cssVar = n => getComputedStyle(document.querySelector('.mein-lernen')||document.documentElement).getPropertyValue(n).trim();
-  const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const CSRF = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
   const TODAY = new Date();
+  // Reife-Rampe fuer die Donuts (hex; monotone Helligkeit → colorblind-tauglich)
+  const MAT = ['#E6E0D6','#DBC9A8','#C7B36A','#94A24F','#6E8336'];
 
   return {
-    // ── Kopf (teils echt verdrahtet) ──
+    // ── Server-Kontext (echt) ──
     name: {{ current_user.username|tojson }},
-    greeting:(new Date().getHours()<11?'Guten Morgen':new Date().getHours()<18?'Guten Tag':'Guten Abend'),
-    greetingJa:(new Date().getHours()<11?'おはよう':new Date().getHours()<18?'こんにちは':'こんばんは'),
-    get todayLabel(){ try{ return new Intl.DateTimeFormat('de-CH',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(new Date()); }catch(e){ return ''; } },
-    dueCount: {{ (stats.due_count if stats and stats.due_count is not none else 0)|tojson }},
-    get dueLabel(){ return this.dueCount===0 ? 'keine Karten fällig' : (this.dueCount + ' Karten fällig (~' + Math.max(1,Math.round(this.dueCount*0.5)) + ' Min)'); },
     streak: {{ (stats.current_streak or 0)|tojson }},
     freezes: {{ freezes|tojson }},
     weekGoal: {{ week_goal|tojson }},
-    settings:{gamify:true, freq:'daily'},
-    settingsOpen:false,
-    openSettings(){this.settingsOpen=true; this.$nextTick(()=>this.$refs.dlgFirst&&this.$refs.dlgFirst.focus());},
-
-    // ── Heute-Plan (ECHT, server-gerendert: due + Resume/Next-Lektion + Schwaechen-Drill) ──
     plan: {{ plan|tojson }},
     planMinutes: {{ plan_minutes|tojson }},
-    get planDone(){return this.plan.filter(s=>s.done).length;},
-    toggleStep(i){
-      this.plan[i].done=!this.plan[i].done;
-      if(this.plan[i].done){
-        const left=this.plan.length-this.planDone;
-        this.toast(left>0?('Schritt erledigt — '+left+' übrig'):'Tagesziel geschafft! 🎐');
-        if(this.planDone===this.plan.length) this.celebrate();
-      }
-    },
-    startToday(){
-      const next=this.plan.find(s=>!s.done) || this.plan[0];
-      if(next && next.href){ window.location.href=next.href; return; }
-      this.toast('Alles erledigt — bis morgen! 🎐');
-    },
-    celebrating:false,
-    celebrate(){
-      if(!this.settings.gamify) return;
-      this.celebrating=true;
-      setTimeout(()=>this.celebrating=false, reduceMotion()?900:1500);
-    },
-
-    // ── Kompass / Saeulen (ECHT, server-gerendert; dist = [neu,lernen,jung,reif,gemeistert]) ──
     pillars: {{ pillars|tojson }},
-    pillarByKey(k){return this.pillars.find(p=>p.key===k)||{};},
-    openPillar:'kanji',
-    togglePillar(k){
-      this.openPillar = this.openPillar===k ? null : k;
-      if(this.openPillar && (k==='kana'||k==='kanji')) this.loadGlyphs(k);
-    },
-
-    // ── Glyph-Grids (lazy aus /api/dashboard/compass-glyphs) ──
-    glyphs:{kana:[],kanji:[]}, glyphsLoaded:{kana:false,kanji:false}, glyphsLoading:false,
-    loadGlyphs(type){
-      if(this.glyphsLoaded[type] || this.glyphsLoading) return;
-      this.glyphsLoading=true;
-      fetch('/api/dashboard/compass-glyphs?type='+type,{headers:{'Accept':'application/json'}})
-        .then(r=>r.ok?r.json():{data:[]})
-        .then(j=>{ this.glyphs[type]=j.data||[]; this.glyphsLoaded[type]=true; })
-        .catch(()=>{ this.glyphsLoaded[type]=true; })
-        .finally(()=>{ this.glyphsLoading=false; });
-    },
-    masteryPct(p){
-      const w=[0,.35,.65,.9,1];
-      const s=(p.dist||[]).reduce((a,c,i)=>a+c*w[i],0);
-      return p.total ? s/p.total*100 : 0;
-    },
-    zoneClass(m){return m>=66?'zone-strong':m>=33?'zone-mid':'zone-weak';},
-    zoneLabel(m){return m>=66?'stark':m>=33?'mittel':'schwach';},
-    zoneColor(m){return m>=66?cssVar('--matcha'):m>=33?cssVar('--kincha'):cssVar('--error');},
-
-    // ── Readiness (clientseitig aus Reife der 4 Saeulen; Hören-Gate raus) ──
-    readiness:0, band:[0,0], ringCirc:2*Math.PI*66,
-    get axisA(){
-      // Gewichte summieren auf 1.0 -> 0..100. (Hören bewusst nicht enthalten.)
-      const m=k=>this.masteryPct(this.pillarByKey(k));
-      return .35*m('vocab') + .20*m('kanji') + .30*m('grammar') + .15*m('kana');
-    },
-    get readinessLabel(){
-      const r=this.readiness;
-      return r<25?'Grundlagen im Aufbau':r<50?'auf gutem Weg':r<75?'fast bereit':'prüfungsreif';
-    },
-    get ringColor(){
-      const r=this.readiness;
-      return r<25?cssVar('--error'):r<50?cssVar('--kincha'):cssVar('--matcha');
-    },
-    get gateWarning(){ return ''; },  // Hören-Gate entfernt (keine Datenbasis)
-    computeReadiness(){
-      const r = this.axisA;
-      this.readiness = Math.round(r);
-      this.band = [Math.max(0,Math.round(r-6)), Math.min(100,Math.round(r+9))];
-    },
-
-    examTarget:'dec', daysToExam:0, examBuffer:'',
-    recalc(){
-      const exam=new Date(this.examTarget==='jul'?'2026-07-05':'2026-12-06');
-      this.daysToExam=Math.max(0,Math.round((exam-TODAY)/86400000));
-      this.examBuffer = this.examTarget==='jul'
-        ? 'Knapp — bei deinem Tempo eher der nächste Termin.'
-        : 'Genug Puffer: ~6 Wochen vor der Prüfung lesefertig, wenn du dranbleibst.';
-      this.updateForecast();
-    },
-
-    // ── Detail-Daten ──
-    // kanji/kana-Glyph-Grids kommen LIVE aus /api/dashboard/compass-glyphs
-    // (this.glyphs.kana / this.glyphs.kanji, lazy beim Aufklappen geladen).
-    // kanaRows (Beherrschung-Tab), vocabThemes + grammar sind noch Dummy
-    // (eigene Folge-Tracks).
-    kanaRows:[
-      {lab:'Vokale',cells:[{c:'あ',on:'a',mean:'a',acc:100,reps:60},{c:'い',on:'i',mean:'i',acc:100,reps:58},{c:'う',on:'u',mean:'u',acc:98,reps:55},{c:'え',on:'e',mean:'e',acc:96,reps:50},{c:'お',on:'o',mean:'o',acc:94,reps:48}]},
-      {lab:'K-Reihe',cells:[{c:'か',on:'ka',mean:'ka',acc:90,reps:40},{c:'き',on:'ki',mean:'ki',acc:85,reps:28},{c:'く',on:'ku',mean:'ku',acc:88,reps:30},{c:'け',on:'ke',mean:'ke',acc:82,reps:26},{c:'こ',on:'ko',mean:'ko',acc:86,reps:27}]},
-      {lab:'S-Reihe',cells:[{c:'さ',on:'sa',mean:'sa',acc:80,reps:26},{c:'し',on:'shi',mean:'shi',acc:54,reps:30},{c:'す',on:'su',mean:'su',acc:78,reps:22},{c:'せ',on:'se',mean:'se',acc:75,reps:20},{c:'そ',on:'so',mean:'so',acc:70,reps:18}]},
-      {lab:'T-Reihe',cells:[{c:'た',on:'ta',mean:'ta',acc:76,reps:21},{c:'ち',on:'chi',mean:'chi',acc:62,reps:16},{c:'つ',on:'tsu',mean:'tsu',acc:58,reps:14},{c:'て',on:'te',mean:'te',acc:72,reps:18},{c:'と',on:'to',mean:'to',acc:74,reps:19}]},
-      {lab:'N-Reihe',cells:[{c:'な',on:'na',mean:'na',acc:68,reps:15},{c:'に',on:'ni',mean:'ni',acc:70,reps:16},{c:'ぬ',on:'nu',mean:'nu',acc:48,reps:9},{c:'ね',on:'ne',mean:'ne',acc:58,reps:12},{c:'の',on:'no',mean:'no',acc:66,reps:14}]},
-    ],
-    // Vokabel-Themen (ECHT, aus LessonCategory) + Grammatik-Liste (ECHT, Level aus Reife)
+    numbers: {{ numbers|tojson }},
+    canDo: {{ can_do|tojson }},
     vocabThemes: {{ vocab_themes|tojson }},
     grammar: {{ grammar_list|tojson }},
+    settings:{gamify:true, reduceMotion:false},
+    settingsOpen:false,
+    rm(){ return this.settings.reduceMotion || window.matchMedia('(prefers-reduced-motion: reduce)').matches; },
 
-    // „Mein Japanisch in Zahlen" — begonnene Items je Typ (ECHT, server-gerendert)
-    numbers: {{ numbers|tojson }},
+    // ── Navigation ──
+    screen: (localStorage.getItem('ml_screen')||'heute'),
+    go(s){ this.screen=s; localStorage.setItem('ml_screen',s); this.scrollTop();
+      if(s==='fortschritt'){ this.loadStats(); this.$nextTick(()=>this.renderFor(this.open)); } },
 
-    // ── Can-do (ECHT: kuratierte Liste, Status aus abgeschlossenen Lektionen) ──
-    canDo: {{ can_do|tojson }},
-    canDoAll:false,
-    get canDoVisible(){return this.canDoAll?this.canDo:this.canDo.slice(0,9);},
-    get canDoDone(){return this.canDo.filter(c=>c.s==='done').length;},
+    // ── Kopf ──
+    greeting:(new Date().getHours()<11?'Guten Morgen':new Date().getHours()<18?'Guten Tag':'Guten Abend'),
+    greetingJa:(new Date().getHours()<11?'おはよう':new Date().getHours()<18?'こんにちは':'こんばんは'),
+    get todayLabel(){ try{ return new Intl.DateTimeFormat('de-CH',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(new Date()); }catch(e){ return ''; } },
 
-    // ── Statistiken ──
-    statsOpen:false,
-    tab:'schwaechen',
-    tabDefs:[
-      {k:'schwaechen',label:'Schwächen'},{k:'reife',label:'Reife'},{k:'tempo',label:'Tempo'},
-      {k:'genauigkeit',label:'Genauigkeit'},{k:'verlauf',label:'Verlauf'},{k:'beherrschung',label:'Beherrschung'},
-    ],
+    // ── Heute-Plan (echt) ──
+    get planDone(){ return this.plan.filter(s=>s.done).length; },
+    get nextStep(){ const i=this.plan.findIndex(s=>!s.done); return i<0?0:i; },
+    startStep(i){
+      const s=this.plan[i]; if(!s) return;
+      if(s.kind==='review'){ this.openReview(i); return; }
+      if(s.href){ window.location.href=s.href; return; }   // lesson / drill → echte Seite
+      s.done=true; this.afterStep();
+    },
+    afterStep(){
+      if(this.planDone===this.plan.length){ this.celebrate(); this.toast('Tagesziel geschafft 🎐'); }
+    },
+
+    // ── Inline-Review (ECHT: /api/srs/due laden, /api/srs/rate werten) ──
+    reviewOpen:false, reviewFor:0, reviewIdx:0, reviewRevealed:false, grading:false,
+    reviewCards:[], reviewEmptyMsg:'Keine fälligen Karten — schön.',
+    openReview(i){
+      this.reviewFor=i; this.reviewIdx=0; this.reviewRevealed=false; this.reviewCards=[]; this.reviewOpen=true;
+      fetch('/api/srs/due?limit=12',{headers:{'Accept':'application/json'}})
+        .then(r=>r.ok?r.json():{cards:[]})
+        .then(j=>{ this.reviewCards=(j.cards||[]).map(c=>this._mapDueCard(c)).filter(c=>c.c); })
+        .catch(()=>{ this.reviewEmptyMsg='Konnte Karten nicht laden.'; });
+    },
+    _mapDueCard(card){
+      const d=card.details||{}; let read='',mean='';
+      switch(card.content_type){
+        case 'kana': read=d.romanization||''; mean=''; break;
+        case 'kanji': read=[d.onyomi,d.kunyomi].filter(Boolean).join(' · '); mean=d.meaning||''; break;
+        case 'vocabulary': read=d.reading||d.romaji||''; mean=d.meaning_de||d.meaning||''; break;
+        case 'grammar': read=d.structure||d.romaji||''; mean=d.explanation||''; break;
+      }
+      return {c:card.front||'', read, mean, content_id:card.content_id, type:card.content_type};
+    },
+    get reviewCard(){ return this.reviewCards[this.reviewIdx]||{c:'',read:'',mean:''}; },
+    grade(ok){
+      const card=this.reviewCard; if(!card.content_id||this.grading) return;
+      this.grading=true;
+      // Grobes 2-Stufen-Mapping auf das echte 4-Rating-System: Nochmal=1, Gewusst=3.
+      fetch('/api/srs/rate',{method:'POST',
+        headers:{'Content-Type':'application/json','X-CSRFToken':CSRF,'Accept':'application/json'},
+        body:JSON.stringify({content_id:card.content_id, rating:ok?3:1, direction:'forward'})})
+        .catch(()=>{})
+        .finally(()=>{
+          this.grading=false;
+          if(this.reviewIdx < this.reviewCards.length-1){ this.reviewIdx++; this.reviewRevealed=false; }
+          else { this.reviewOpen=false; const st=this.plan[this.reviewFor]; if(st) st.done=true; this.afterStep();
+                 if(this.planDone<this.plan.length) this.toast('Erledigt — '+(this.plan.length-this.planDone)+' übrig'); }
+        });
+    },
+    closeReview(){ this.reviewOpen=false; },
+
+    celebrating:false,
+    celebrate(){ if(!this.settings.gamify) return; this.celebrating=true;
+      setTimeout(()=>this.celebrating=false, this.rm()?700:1400); },
+
+    // ── Pillars / Reife ──
+    pillarByKey(k){ return this.pillars.find(p=>p.key===k)||{dist:[0,0,0,0,0],total:1}; },
+    masteryPct(p){ const w=[0,.35,.65,.9,1]; const s=(p.dist||[]).reduce((a,c,i)=>a+c*w[i],0); return p.total ? s/p.total*100 : 0; },
+    zoneLabel(m){ return m>=66?'stark':m>=33?'mittel':'schwach'; },
+    zoneColor(m){ return m>=66?cssVar('--matcha'):m>=33?cssVar('--kincha'):cssVar('--error'); },
+    // Donut als conic-gradient (SVG+x-for bricht im SVG-Namespace)
+    dialGradient(p){
+      const dist=p.dist||[]; const tot=dist.reduce((a,b)=>a+b,0)||1; let acc=0; const stops=[];
+      dist.forEach((v,i)=>{ const a=acc/tot*100, b=(acc+v)/tot*100; if(v>0) stops.push(`${MAT[i]} ${a}% ${b}%`); acc+=v; });
+      if(!stops.length) stops.push(`${MAT[0]} 0% 100%`);
+      return `conic-gradient(${stops.join(',')})`;
+    },
+
+    // ── Readiness (clientseitig aus den 5 Saeulen; Hoeren echt → Gate echt) ──
+    readiness:0, band:[0,0], ringCirc:2*Math.PI*72,
+    get axisA(){ const m=k=>this.masteryPct(this.pillarByKey(k));
+      return .35*m('vocab')+.20*m('kanji')+.30*m('grammar')+.15*m('kana'); },
+    get axisB(){ return this.masteryPct(this.pillarByKey('listen')); },
+    get readinessLabel(){ const r=this.readiness;
+      return r<25?'Grundlagen im Aufbau':r<50?'auf gutem Weg':r<75?'fast bereit':'prüfungsreif'; },
+    get ringColor(){ const r=this.readiness;
+      return r<25?cssVar('--error'):r<50?cssVar('--kincha'):cssVar('--matcha'); },
+    get gateOpen(){ return this.axisB < 32; },
+    computeReadiness(){ const r=.7*this.axisA+.3*this.axisB; this.readiness=Math.round(r);
+      this.band=[Math.max(0,Math.round(r-6)),Math.min(100,Math.round(r+9))]; },
+
+    examTarget:'dec', daysToExam:0, examBuffer:'',
+    recalc(){ const exam=new Date(this.examTarget==='jul'?'2026-07-05':'2026-12-06');
+      this.daysToExam=Math.max(0,Math.round((exam-TODAY)/86400000));
+      this.examBuffer=this.examTarget==='jul'?'Knapp — bei deinem Tempo eher der nächste Termin.':'~6 Wochen Puffer, wenn du dranbleibst.';
+      this.updateForecast(); },
+
+    // ── Status-Zahlen (Heute-Sidebar) — aus numbers ──
+    counts:[],
+
+    // ── Can-do ──
+    get canDoDone(){ return this.canDo.filter(c=>c.s==='done').length; },
+
+    // ── Deep Stats (Disclosures) ──
+    open:'schwaechen',
+    toggle(k){ this.open = this.open===k ? null : k;
+      if(this.open){ this.loadStats(); this.$nextTick(()=>this.renderFor(this.open)); } },
     statsLoaded:false, statsLoading:false,
-    toggleStats(){this.statsOpen=!this.statsOpen; if(this.statsOpen) this.loadStats();},
     loadStats(){
-      if(this.statsLoaded){ this.renderTab(this.tab); return; }
+      if(this.statsLoaded){ this.$nextTick(()=>this.renderFor(this.open)); return; }
       if(this.statsLoading) return;
       this.statsLoading=true;
       fetch('/api/dashboard/stats',{headers:{'Accept':'application/json'}})
         .then(r=>r.ok?r.json():null)
-        .then(d=>{
-          if(d){
-            this.kpi=d.kpi; this.reviewsByWeek=d.reviewsByWeek; this.accuracyByWeek=d.accuracyByWeek;
-            this.reviewsByWeekday=d.reviewsByWeekday; this.accByStage=d.accByStage; this.retention=d.retention;
-            this.accBySkill=d.accBySkill; this.maturity=d.maturity; this.heatmap=d.heatmap; this.cumulative=d.cumulative;
-            this.weakKana=d.weakKana; this.leeches=d.leeches; this.confusionPairs=d.confusionPairs;
-            this.kanaRows=d.kanaRows; this.jlptDetail=d.jlptDetail; this.milestones=d.milestones; this.records=d.records;
-            this.statsLoaded=true;
-          }
-        })
+        .then(d=>{ if(d){
+          this.kpi=d.kpi; this.reviewsByWeek=d.reviewsByWeek; this.accuracyByWeek=d.accuracyByWeek;
+          this.reviewsByWeekday=d.reviewsByWeekday; this.accByStage=d.accByStage; this.retention=d.retention;
+          this.accBySkill=d.accBySkill; this.maturity=d.maturity; this.heatmap=d.heatmap; this.cumulative=d.cumulative;
+          this.weakKana=d.weakKana; this.leeches=d.leeches; this.confusionPairs=d.confusionPairs;
+          this.kanaRows=d.kanaRows; this.jlptDetail=d.jlptDetail; this.milestones=d.milestones; this.records=d.records;
+          this.statsLoaded=true;
+        }})
         .catch(()=>{})
-        .finally(()=>{ this.statsLoading=false; this.renderTab(this.tab); });
+        .finally(()=>{ this.statsLoading=false; this.$nextTick(()=>this.renderFor(this.open)); });
     },
-    scrollStats(){this.$nextTick(()=>this.$refs.statsCard&&this.$refs.statsCard.scrollIntoView({behavior:reduceMotion()?'auto':'smooth',block:'start'}));},
-    setTab(k){this.tab=k; this.renderTab(k); this.$nextTick(()=>{const el=document.getElementById('ml-tab-'+k); el&&el.focus();});},
-    onTabKey(e){
-      const keys=['ArrowLeft','ArrowRight','Home','End'];
-      if(!keys.includes(e.key)) return;
-      e.preventDefault();
-      let i=this.tabDefs.findIndex(t=>t.k===this.tab);
-      if(e.key==='ArrowRight') i=(i+1)%this.tabDefs.length;
-      else if(e.key==='ArrowLeft') i=(i-1+this.tabDefs.length)%this.tabDefs.length;
-      else if(e.key==='Home') i=0;
-      else if(e.key==='End') i=this.tabDefs.length-1;
-      this.setTab(this.tabDefs[i].k);
+    renderFor(k){
+      if(k==='tempo'){ this._renderTempoReviews(); this._renderWeekday(); }
+      else if(k==='verlauf'){ this._renderFc(); }
+      else if(k==='genauigkeit'){ this._renderAccSkill(); this._renderAccStage(); }
     },
 
-    // ── Tempo / Genauigkeit / Reife (Dummy) ──
-    kpi:{avgReviews:31,avgSession:9,longestStreak:{{ (stats.longest_streak or 12)|tojson }},wordsPerWeek:18},
-    reviewsByWeek:[182,168,205,142,231,198,247,171],
-    accuracyByWeek:[74,76,75,79,80,78,82,84],
-    reviewsByWeekday:[28,22,31,26,24,17,39],
-    retention:{value:84,neu:71,jung:83,reif:96},
-    accBySkill:[{k:'Kana',v:88},{k:'Vokabeln',v:76},{k:'Kanji',v:71},{k:'Grammatik',v:69}],
-    accByStage:[52,64,78,91,98],
-    stageLabels:['Neu','Lernen','Jung','Reif','Gemeistert'],
-    stageColors:['#E4DED4','#EAD2AE','#D8A55A','#A9BC6B','#7A9033'],
-    jlptDetail:'Vokabeln 168/600 · Kanji 32/80 · Grammatik 19/80',
-    maturity:[
-      {k:'Kana',dist:[0,8,24,60,108]},
-      {k:'Kanji',dist:[58,8,8,4,2]},
-      {k:'Vokabeln',dist:[472,38,50,30,10]},
-      {k:'Grammatik',dist:[67,5,5,2,1]},
-    ],
+    // ── Bundle-Felder (Defaults bis Lazy-Load) ──
+    kpi:{avgReviews:0,avgSession:0,longestStreak:{{ (stats.longest_streak or 0)|tojson }},wordsPerWeek:0},
+    reviewsByWeek:[0,0,0,0,0,0,0,0], accuracyByWeek:[0,0,0,0,0,0,0,0], reviewsByWeekday:[0,0,0,0,0,0,0],
+    accByStage:[0,0,0,0,0], stageLabels:['Neu','Lernen','Jung','Reif','Gemeistert'],
+    stageColors:['#E6E0D6','#DBC9A8','#C7B36A','#94A24F','#6E8336'],
+    retention:{value:0,neu:0,jung:0,reif:0},
+    accBySkill:[], maturity:[],
+    weakKana:[], leeches:[], confusionPairs:[], kanaRows:[],
+    jlptDetail:'', milestones:[], records:[],
 
     // ── Heatmap ──
     heatmap:[], hmRange:90,
-    get heatmapView(){return this.heatmap.slice(this.heatmap.length-this.hmRange);},
-    hmColor(c){
-      if(c===0) return 'var(--ink-100)';
-      if(c<=5) return 'rgba(122,144,51,.30)';
-      if(c<=15) return 'rgba(122,144,51,.52)';
-      if(c<=30) return 'rgba(122,144,51,.76)';
-      return 'var(--matcha)';
-    },
-    cumulative:{daysTotal:128,bestStreak:{{ (stats.longest_streak or 14)|tojson }},reviewsTotal:9840},
+    get heatmapView(){ return this.heatmap.slice(Math.max(0,this.heatmap.length-this.hmRange)); },
+    hmColor(c){ if(c===0)return 'var(--ink-100)'; if(c<=5)return 'rgba(110,131,54,.30)';
+      if(c<=15)return 'rgba(110,131,54,.52)'; if(c<=30)return 'rgba(110,131,54,.76)'; return 'var(--matcha)'; },
+    cumulative:{daysTotal:0,bestStreak:{{ (stats.longest_streak or 0)|tojson }},reviewsTotal:0},
 
-    // ── Forecast / Kapazitätsplaner ──
+    // ── Forecast (clientseitige Heuristik laut Vertrag) ──
     newPerDay:8, scenarios:{slow:'—',now:'—',fast:'—'}, forecastNote:'',
-    _scenarioText(perDay){
-      if(perDay<=0) return 'kein Fortschritt';
-      const remaining=560;
-      const weeks=Math.round(remaining/(perDay*7));
-      const months=Math.max(1,Math.round(weeks/4.3));
-      const lo=Math.max(1,months-1), hi=months+2;
-      return '~'+lo+'–'+hi+' Monate';
-    },
+    _scenarioText(perDay){ if(perDay<=0)return 'kein Fortschritt';
+      const weeks=Math.round(560/(perDay*7)), months=Math.max(1,Math.round(weeks/4.3));
+      return '~'+Math.max(1,months-1)+'–'+(months+2)+' Mon'; },
+    _fcData(){ const base=[12,8,5,9,4,6,3,7,5,4,6,8,3,5],add=Number(this.newPerDay)||0;
+      return base.map((b,i)=>b+(i>=1?Math.round(add*.9):0)+(i>=4?Math.round(add*.6):0)+(i>=7?Math.round(add*.4):0)+(i>=11?Math.round(add*.3):0)); },
     updateForecast(){
       this.scenarios={slow:this._scenarioText(4),now:this._scenarioText(this.newPerDay),fast:this._scenarioText(14)};
-      const cap=this.kpi.avgReviews;
-      const peak=Math.max(...this._fcData());
+      const cap=this.kpi.avgReviews||20, peak=Math.max(...this._fcData());
       this.forecastNote = peak>cap
-        ? '<b style="color:#7d2419">Achtung:</b> bei <b>'+this.newPerDay+'</b> neuen Karten/Tag übersteigt die Last an Spitzentagen dein gewohntes Pensum (~'+cap+'/Tag) — du baust Rückstand auf. Spanne statt Fixdatum, weil SRS-Last nicht linear wächst.'
-        : 'Bei <b>'+this.newPerDay+'</b> neuen Karten/Tag bleibt die Last unter deinem Pensum (~'+cap+'/Tag) — gut machbar. Die Spanne ist eine grobe Schätzung, kein Versprechen.';
+        ? '<b style="color:#7d2419">Achtung:</b> bei <b>'+this.newPerDay+'</b> neuen Karten/Tag übersteigt die Spitzenlast dein Pensum (~'+cap+'/Tag).'
+        : 'Bei <b>'+this.newPerDay+'</b> neuen Karten/Tag bleibt die Last unter deinem Pensum (~'+cap+'/Tag) — gut machbar.';
       this._renderFc();
-    },
-    _fcData(){
-      const base=[12,8,5,9,4,6,3,7,5,4,6,8,3,5];
-      const add=Number(this.newPerDay)||0;
-      return base.map((b,i)=>b + (i>=1?Math.round(add*0.9):0) + (i>=4?Math.round(add*0.6):0) + (i>=7?Math.round(add*0.4):0) + (i>=11?Math.round(add*0.3):0));
-    },
-
-    // ── Schwächen (Dummy) ──
-    weakKana:[
-      {c:'シ',on:'shi',mean:'shi',acc:41,lapses:7,reps:22},
-      {c:'し',on:'shi',mean:'shi',acc:54,lapses:5,reps:30},
-      {c:'ソ',on:'so',mean:'so',acc:47,lapses:6,reps:14},
-      {c:'ね',on:'ne',mean:'ne',acc:58,lapses:4,reps:12},
-      {c:'れ',on:'re',mean:'re',acc:52,lapses:4,reps:18},
-    ],
-    confusionPairs:[
-      {id:1,a:'し',b:'シ',aAcc:54,bAcc:41,note:'Hira vs Kata — Strichrichtung'},
-      {id:2,a:'ソ',b:'ン',aAcc:47,bAcc:50,note:'Katakana — Winkel der Striche'},
-      {id:3,a:'シ',b:'ツ',aAcc:41,bAcc:55,note:'Katakana — waagrecht vs senkrecht'},
-      {id:4,a:'ね',b:'れ',aAcc:58,bAcc:52,note:'Hiragana — Schlaufe rechts'},
-      {id:5,a:'わ',b:'れ',aAcc:60,bAcc:52,note:'Hiragana — rechter Teil'},
-    ],
-    leeches:[
-      {front:'<span class="jp">時間</span> (jikan)',type:'Vokabel',lapses:6,rate:55},
-      {front:'<span class="jp">曜日</span> (yōbi)',type:'Vokabel',lapses:5,rate:48},
-      {front:'<span class="jp">力</span>',type:'Kanji',lapses:5,rate:52},
-    ],
-
-    // ── Achievements (Dummy) ──
-    milestones:[
-      {i:'あ',n:'Alle Hiragana',on:true,date:'verdient 12. Mai',rest:''},
-      {i:'🎴',n:'50 Kanji',on:false,date:'',rest:'noch 18'},
-      {i:'🏯',n:'N5 prüfungsreif',on:false,date:'',rest:'bei ~75 %'},
-      {i:'🎧',n:'Hören-Basis',on:false,date:'',rest:'noch 8 Einheiten'},
-    ],
-    records:[
-      {i:'🔥',n:'Längste Serie',val:'{{ (stats.longest_streak or 12)|tojson }} Tage'},
-      {i:'⚡',n:'Bester Tag',val:'47 Reviews'},
-      {i:'🧠',n:'Reviews gesamt',val:'9’840'},
-    ],
-
-    // ── Item-Dialog (Fokus-Falle) ──
-    item:null, itemKind:'', _lastFocus:null,
-    openItem(it,kind,ev){
-      this._lastFocus = ev&&ev.currentTarget ? ev.currentTarget : document.activeElement;
-      this.item=it; this.itemKind=kind;
-      this.$nextTick(()=>this.$refs.dlgFirst&&this.$refs.dlgFirst.focus());
-    },
-    closeItem(){
-      this.item=null;
-      this.$nextTick(()=>{ if(this._lastFocus&&this._lastFocus.focus) this._lastFocus.focus(); });
-    },
-    confusedWith(it){
-      const map={'し':'シ','シ':'し','ソ':'ン','ン':'ソ','ツ':'シ','ね':'れ','れ':'ね / わ','わ':'れ'};
-      return it&&map[it.c]||'';
-    },
-    trapFocus(e){
-      const dlg=this.$refs.dialog; if(!dlg) return;
-      const f=dlg.querySelectorAll('button,select,input,a[href],[tabindex]:not([tabindex="-1"])');
-      if(!f.length) return;
-      const first=f[0], last=f[f.length-1];
-      if(e.shiftKey && document.activeElement===first){e.preventDefault(); last.focus();}
-      else if(!e.shiftKey && document.activeElement===last){e.preventDefault(); first.focus();}
     },
 
     // ── Toast ──
     toastMsg:'', _toastT:null,
-    toast(m){this.toastMsg=m; clearTimeout(this._toastT); this._toastT=setTimeout(()=>this.toastMsg='',2400);},
+    toast(m){ this.toastMsg=m; clearTimeout(this._toastT); this._toastT=setTimeout(()=>this.toastMsg='',2200); },
+    scrollTop(){ window.scrollTo({top:0,behavior:this.rm()?'auto':'smooth'}); },
 
-    // ── Status-/Farb-Helfer ──
+    // ── Gojuon-Zellfarbe (Beherrschung) ──
     cellStyle(acc){
       const bg=acc>=95?'#A9BC6B':acc>=80?'#C4D49A':acc>=65?'#EAD2AE':acc>=50?'#F0DEC2':acc>=1?'#F6DAD4':'var(--ink-100)';
-      const border=acc>=95?'var(--matcha)':acc>=50?'var(--ink-200)':'rgba(209,75,61,.35)';
-      return `background:${bg};border-color:${border}`;
-    },
-    cellSym(acc){return acc>=95?'✓':acc>=80?'◆':acc>=50?'△':acc>=1?'·':'';},
-    symColor(acc){return acc>=95?cssVar('--matcha-deep'):acc>=80?cssVar('--matcha-deep'):acc>=50?cssVar('--kincha-deep'):cssVar('--error');},
-    statusLabel(acc){return acc>=95?'gemeistert':acc>=80?'reif':acc>=50?'wackelig':acc>=1?'schwach':'offen';},
-
-    scrollTop(){window.scrollTo({top:0,behavior:reduceMotion()?'auto':'smooth'});},
-
-    // ── Count-up (DOM-direkt) ──
-    countUp(el,to,dur){
-      if(reduceMotion()||dur<=0){el.textContent=el.dataset.suffix?to+el.dataset.suffix:String(to);return;}
-      const start=performance.now();
-      const tick=now=>{
-        const t=Math.min((now-start)/dur,1);
-        const e=1-Math.pow(1-t,3);
-        const v=Math.round(to*e);
-        el.textContent = el.dataset.suffix?v+el.dataset.suffix:String(v);
-        if(t<1) requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
+      const border=acc>=95?'var(--matcha)':acc>=50?'var(--ink-200)':'rgba(192,73,59,.35)';
+      return `background:${bg};border-color:${border};color:#2A2620`;
     },
 
-    // ── Charts (lazy beim Tab-Wechsel) ──
-    renderTab(t){
-      this.$nextTick(()=>{
-        if(t==='tempo'){this._renderTempoReviews();this._renderWeekday();}
-        else if(t==='genauigkeit'){this._renderAccSkill();this._renderAccStage();}
-        else if(t==='verlauf'){this._renderFc();}
-      });
-    },
-    _renderFc(){
-      const ctx=document.getElementById('mlFc'); if(!ctx||!window.Chart) return;
-      if(ctx.offsetParent===null && !_fc) return;
-      const data=this._fcData();
-      const labels=Array.from({length:14},(_,i)=>{const d=new Date(TODAY.getTime()+i*86400000);return d.getDate()+'.'+(d.getMonth()+1);});
-      const kincha=cssVar('--kincha'), ink=cssVar('--ink-300'), err=cssVar('--error');
-      const cap=this.kpi.avgReviews;
-      const bg=data.map(v=>v>cap?'rgba(209,75,61,.55)':ink);
-      bg[0]=kincha;
-      const capLine={type:'line',data:Array(14).fill(cap),borderColor:err,borderWidth:1.5,borderDash:[5,4],pointRadius:0,label:'Pensum'};
-      if(_fc){_fc.data.datasets[0].data=data;_fc.data.datasets[0].backgroundColor=bg;_fc.data.datasets[1].data=Array(14).fill(cap);_fc.update();return;}
-      _fc=new Chart(ctx,{type:'bar',
-        data:{labels,datasets:[{data,backgroundColor:bg,borderRadius:3,order:2},capLine]},
-        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
-          scales:{x:{grid:{display:false},ticks:{font:{size:10},maxTicksLimit:8}},y:{beginAtZero:true,ticks:{precision:0}}}}
-      });
-    },
+    // ── Charts (lazy, nur wenn Panel sichtbar) ──
     _renderTempoReviews(){
-      const ctx=document.getElementById('mlTempoReviews'); if(!ctx||!window.Chart) return;
-      if(ctx.offsetParent===null && !_tmpRev) return;
+      const ctx=document.getElementById('mlTempoReviews'); if(!ctx||!window.Chart||ctx.offsetParent===null) return;
       const kincha=cssVar('--kincha'),ink=cssVar('--ink-300'),ai=cssVar('--ai');
       const bars=this.reviewsByWeek,acc=this.accuracyByWeek;
-      if(_tmpRev){_tmpRev.data.datasets[0].data=bars;_tmpRev.data.datasets[1].data=acc;_tmpRev.update();return;}
+      if(_tmpRev){ _tmpRev.data.datasets[0].data=bars; _tmpRev.data.datasets[0].backgroundColor=bars.map((_,i)=>i===bars.length-1?kincha:ink); _tmpRev.data.datasets[1].data=acc; _tmpRev.update(); return; }
       _tmpRev=new Chart(ctx,{type:'bar',
         data:{labels:['KW18','KW19','KW20','KW21','KW22','KW23','KW24','KW25'],datasets:[
           {label:'Reviews/Woche',data:bars,backgroundColor:bars.map((_,i)=>i===bars.length-1?kincha:ink),borderRadius:3,order:2,yAxisID:'y'},
@@ -370,24 +232,34 @@ function dashboard(){
       });
     },
     _renderWeekday(){
-      const ctx=document.getElementById('mlTempoWeekday'); if(!ctx||!window.Chart) return;
-      if(ctx.offsetParent===null && !_tmpWd) return;
-      const kincha=cssVar('--kincha'),ink=cssVar('--ink-300');
-      const d=this.reviewsByWeekday,mx=Math.max(...d);
-      if(_tmpWd){_tmpWd.data.datasets[0].data=d;_tmpWd.data.datasets[0].backgroundColor=d.map(v=>v===mx?kincha:ink);_tmpWd.update();return;}
+      const ctx=document.getElementById('mlTempoWeekday'); if(!ctx||!window.Chart||ctx.offsetParent===null) return;
+      const kincha=cssVar('--kincha'),ink=cssVar('--ink-300'),d=this.reviewsByWeekday,mx=Math.max(...d,1);
+      if(_tmpWd){ _tmpWd.data.datasets[0].data=d; _tmpWd.data.datasets[0].backgroundColor=d.map(v=>v===mx?kincha:ink); _tmpWd.update(); return; }
       _tmpWd=new Chart(ctx,{type:'bar',
         data:{labels:['Mo','Di','Mi','Do','Fr','Sa','So'],datasets:[{data:d,backgroundColor:d.map(v=>v===mx?kincha:ink),borderRadius:3}]},
-        options:{responsive:true,maintainAspectRatio:false,
-          plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y+' Ø Reviews'}}},
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y+' Ø Reviews'}}},
           scales:{x:{grid:{display:false},ticks:{font:{size:11}}},y:{beginAtZero:true,ticks:{precision:0,font:{size:10}}}}}
       });
     },
+    _renderFc(){
+      const ctx=document.getElementById('mlFc'); if(!ctx||!window.Chart||ctx.offsetParent===null) return;
+      const data=this._fcData();
+      const labels=Array.from({length:14},(_,i)=>{const d=new Date(TODAY.getTime()+i*86400000);return d.getDate()+'.'+(d.getMonth()+1);});
+      const kincha=cssVar('--kincha'),ink=cssVar('--ink-300'),err=cssVar('--error'),cap=this.kpi.avgReviews||20;
+      const bg=data.map(v=>v>cap?'rgba(192,73,59,.55)':ink); bg[0]=kincha;
+      if(_fc){ _fc.data.datasets[0].data=data; _fc.data.datasets[0].backgroundColor=bg; _fc.data.datasets[1].data=Array(14).fill(cap); _fc.update(); return; }
+      _fc=new Chart(ctx,{type:'bar',
+        data:{labels,datasets:[{data,backgroundColor:bg,borderRadius:3,order:2},
+          {type:'line',data:Array(14).fill(cap),borderColor:err,borderWidth:1.5,borderDash:[5,4],pointRadius:0}]},
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+          scales:{x:{grid:{display:false},ticks:{font:{size:10},maxTicksLimit:8}},y:{beginAtZero:true,ticks:{precision:0}}}}
+      });
+    },
     _renderAccSkill(){
-      const ctx=document.getElementById('mlAccBySkill'); if(!ctx||!window.Chart) return;
-      if(ctx.offsetParent===null && !_accSk) return;
-      const col=v=>v>=80?'#7A9033':v>=60?'#C7802D':'#D14B3D';
+      const ctx=document.getElementById('mlAccSkill'); if(!ctx||!window.Chart||ctx.offsetParent===null) return;
+      const col=v=>v>=80?'#6E8336':v>=60?'#C7802D':'#C0493B';
       const labels=this.accBySkill.map(s=>s.k),data=this.accBySkill.map(s=>s.v);
-      if(_accSk){_accSk.data.labels=labels;_accSk.data.datasets[0].data=data;_accSk.data.datasets[0].backgroundColor=data.map(col);_accSk.update();return;}
+      if(_accSk){ _accSk.data.labels=labels; _accSk.data.datasets[0].data=data; _accSk.data.datasets[0].backgroundColor=data.map(col); _accSk.update(); return; }
       _accSk=new Chart(ctx,{type:'bar',
         data:{labels,datasets:[{data,backgroundColor:data.map(col),borderRadius:3}]},
         options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
@@ -396,9 +268,8 @@ function dashboard(){
       });
     },
     _renderAccStage(){
-      const ctx=document.getElementById('mlAccByStage'); if(!ctx||!window.Chart) return;
-      if(ctx.offsetParent===null && !_accSt) return;
-      if(_accSt){_accSt.data.datasets[0].data=this.accByStage;_accSt.update();return;}
+      const ctx=document.getElementById('mlAccStage'); if(!ctx||!window.Chart||ctx.offsetParent===null) return;
+      if(_accSt){ _accSt.data.datasets[0].data=this.accByStage; _accSt.update(); return; }
       _accSt=new Chart(ctx,{type:'bar',
         data:{labels:this.stageLabels,datasets:[{data:this.accByStage,backgroundColor:this.stageColors,borderRadius:3}]},
         options:{responsive:true,maintainAspectRatio:false,
@@ -407,38 +278,37 @@ function dashboard(){
       });
     },
 
-    // ── Reveal-Stagger + Count-up via IntersectionObserver (auf Komponente gescopt) ──
+    // ── Count-up + Reveal (IntersectionObserver, auf Komponente gescopt) ──
+    countUp(el,to,dur){
+      if(this.rm()||dur<=0){ el.textContent=String(to); return; }
+      const start=performance.now();
+      const tick=now=>{ const t=Math.min((now-start)/dur,1), e=1-Math.pow(1-t,3), v=Math.round(to*e);
+        el.textContent=String(v); if(t<1) requestAnimationFrame(tick); };
+      requestAnimationFrame(tick);
+    },
     _observe(){
       const root=this.$root||document;
-      const io=new IntersectionObserver((entries)=>{
-        entries.forEach((en,idx)=>{
-          if(!en.isIntersecting) return;
-          const el=en.target;
-          if(el.classList.contains('reveal')){
-            if(reduceMotion()){el.classList.add('in');}
-            else{ el.style.transitionDelay=(Math.min(idx,4)*40)+'ms'; el.classList.add('in'); }
-          }
-          if(el.classList.contains('countup')){
-            const num=el.querySelector('.n')||el;
-            const to=Number(el.dataset.to||el.getAttribute('data-to')||0);
-            this.countUp(num,to,reduceMotion()?0:700);
-          }
-          io.unobserve(el);
-        });
-      },{threshold:.2});
+      const io=new IntersectionObserver((entries)=>{ entries.forEach((en,idx)=>{ if(!en.isIntersecting)return;
+        const el=en.target;
+        if(el.classList.contains('reveal')){ if(this.rm())el.classList.add('in');
+          else{ el.style.transitionDelay=(Math.min(idx,4)*40)+'ms'; el.classList.add('in'); } }
+        if(el.classList.contains('countup')){ this.countUp(el,Number(el.dataset.to||0),this.rm()?0:700); }
+        io.unobserve(el); }); },{threshold:.15});
       root.querySelectorAll('.reveal,.countup').forEach(el=>io.observe(el));
     },
 
     init(){
-      this.heatmap=[];                 // echte Heatmap kommt aus dem Stats-Bundle
-      this.computeReadiness();
-      this.recalc();
-      // Glyph-Grid der initial offenen Saeule sofort laden (default: kanji)
-      if(this.openPillar==='kana'||this.openPillar==='kanji') this.loadGlyphs(this.openPillar);
+      this.counts=[
+        {n:this.numbers.kanji||0,lab:'Kanji'},
+        {n:this.numbers.vocab||0,lab:'Wörter'},
+        {n:this.numbers.grammar||0,lab:'Grammatik'},
+        {n:this.numbers.kana||0,lab:'Kana'},
+      ];
+      this.computeReadiness(); this.recalc();
+      if(this.screen==='fortschritt') this.loadStats();
       this.$nextTick(()=>{
-        const rn=this.$refs.readinessNum;
-        if(rn){rn.dataset.suffix='%'; this.countUp(rn,this.readiness,reduceMotion()?0:900);}
         this._observe();
+        if(this.screen==='fortschritt') this.renderFor(this.open);
       });
     },
   };

@@ -1,0 +1,312 @@
+{# ░░ SCREEN: FORTSCHRITT (Diagnose) ░░
+   Readiness-Ring-Hero (echt aus 5 Saeulen, inkl. Hoeren-Achse + Gate) +
+   Dial-Cluster (5 Saeulen) + „Tiefer graben"-Disclosures. v3-Disclosures:
+   Schwaechen/Tempo/Verlauf. Zusaetzlich BEHALTEN (User-Entscheid 2026-06-23):
+   Genauigkeit, Beherrschung, Erfolge. Daten lazy aus /api/dashboard/stats. #}
+<div x-show="screen==='fortschritt'" x-cloak>
+
+  {# Ring-Hero #}
+  <section class="fort-hero reveal" aria-labelledby="fh">
+    <div class="big-ring" role="img" :aria-label="`N5-Bereitschaft ${readiness} Prozent, Spanne ${band[0]} bis ${band[1]}, ${readinessLabel}`">
+      <svg width="220" height="220" viewBox="0 0 220 220">
+        <circle cx="110" cy="110" r="72" fill="none" stroke="var(--ink-100)" stroke-width="16"/>
+        <circle cx="110" cy="110" r="72" fill="none" :stroke="ringColor" stroke-opacity=".22" stroke-width="16" stroke-linecap="round"
+          :stroke-dasharray="ringCirc" :stroke-dashoffset="ringCirc - ringCirc*band[1]/100"/>
+        <circle cx="110" cy="110" r="72" fill="none" :stroke="ringColor" stroke-width="16" stroke-linecap="round"
+          :stroke-dasharray="ringCirc" :stroke-dashoffset="ringCirc - ringCirc*readiness/100"
+          style="transition:stroke-dashoffset .9s ease,stroke .4s"/>
+      </svg>
+      <div class="mid">
+        <span class="pct" x-text="readiness+'%'"></span>
+        <span class="band" x-text="'≈ '+band[0]+'–'+band[1]+'%'"></span>
+        <span class="lab" x-text="readinessLabel"></span>
+      </div>
+    </div>
+    <div class="hero-meta">
+      <div class="eyebrow">N5-Kompass</div>
+      <h2 id="fh">Wie nah du wirklich bist</h2>
+      <div class="cefr">Geschätzt aus Reife (nur sicher Beherrschtes zählt voll) plus Hör-Achse. Entspricht etwa <b>CEFR A1</b> — kein offizieller JLPT-Score.</div>
+      <div class="exam-row">
+        <i class="fas fa-flag-checkered"></i> Ziel:
+        <select x-model="examTarget" @change="recalc()" aria-label="Prüfungstermin">
+          <option value="jul">JLPT Juli</option>
+          <option value="dec">JLPT Dezember</option>
+        </select>
+        · noch <b x-text="daysToExam"></b> Tage
+      </div>
+      <div class="exam-note" x-text="examBuffer"></div>
+      <div class="gate" x-show="gateOpen" x-cloak>
+        <i class="fas fa-triangle-exclamation"></i>
+        <div><b>Hören ist dein Engpass.</b> Eigenes Prüfungs-Gate (1/3 der Punkte) — selbst mit starkem Wortschatz fällt man ohne Hören durch.</div>
+      </div>
+    </div>
+  </section>
+
+  {# Dial-Cluster #}
+  <div class="section-label">Die fünf Säulen · Reife, nicht „begonnen"</div>
+  <div class="dials reveal">
+    <template x-for="p in pillars" :key="p.key">
+      <button class="dial" @click="toggle('schwaechen')">
+        <div class="donut" :style="`background:${dialGradient(p)}`">
+          <div class="hole"></div>
+          <div class="ctr" x-text="Math.round(masteryPct(p))+'%'"></div>
+        </div>
+        <div class="nm" x-text="p.name"></div>
+        <div class="fr" x-text="p.started+'/'+p.total"></div>
+        <span class="zone" :class="'zone-'+(masteryPct(p)>=66?'strong':masteryPct(p)>=33?'mid':'weak')" x-text="zoneLabel(masteryPct(p))"></span>
+      </button>
+    </template>
+  </div>
+  <div class="mat-key">
+    <span class="it"><span class="sw" style="background:var(--m0)"></span> neu</span>
+    <span class="it"><span class="sw" style="background:var(--m1)"></span> lernen</span>
+    <span class="it"><span class="sw" style="background:var(--m2)"></span> jung</span>
+    <span class="it"><span class="sw" style="background:var(--m3)"></span> reif</span>
+    <span class="it"><span class="sw" style="background:var(--m4)"></span> gemeistert</span>
+  </div>
+
+  {# Deep Stats #}
+  <div class="section-label">Tiefer graben</div>
+
+  {# SCHWÄCHEN #}
+  <div class="disc">
+    <button class="disc-head" @click="toggle('schwaechen')" :aria-expanded="open==='schwaechen'">
+      <div>
+        <div class="ti">Schwächen <span class="ml-badge">höchster Hebel</span></div>
+        <div class="su">Verwechslungen, schwächste Kana und Problemkarten — direkt behebbar.</div>
+      </div>
+      <span class="chev"><i class="fas fa-chevron-down"></i></span>
+    </button>
+    <div class="disc-body" x-show="open==='schwaechen'" x-collapse x-cloak>
+      <h4>Verwechslungs-Paare</h4>
+      <div class="hint">Aus deinen tatsächlichen Fehlern — gezieltes Gegenüberstellen löst sie am schnellsten.</div>
+      <div class="conf-grid">
+        <template x-for="p in confusionPairs" :key="p.id">
+          <div class="conf">
+            <div class="gs">
+              <span class="g"><span class="c jp" x-text="p.a"></span><span class="a" :style="`color:${zoneColor(p.aAcc)}`" x-text="p.aAcc+'%'"></span></span>
+              <span class="vs">vs</span>
+              <span class="g"><span class="c jp" x-text="p.b"></span><span class="a" :style="`color:${zoneColor(p.bAcc)}`" x-text="p.bAcc+'%'"></span></span>
+            </div>
+            <div class="nt" x-text="p.note"></div>
+          </div>
+        </template>
+        <template x-if="!confusionPairs.length">
+          <div class="hint" style="grid-column:1/-1">Noch keine Verwechslungen erfasst — gut so.</div>
+        </template>
+      </div>
+      <button class="ml-btn sm" style="margin-top:.8rem" @click="window.location.href='/practice/kana'"><i class="fas fa-shuffle"></i> Verwechslungs-Drill starten</button>
+
+      <h4>Schwächste Kana</h4>
+      <div class="weak-grid">
+        <template x-for="k in weakKana" :key="k.c">
+          <button class="weak jp" @click="window.location.href='/practice/kana'">
+            <span class="c" x-text="k.c"></span>
+            <span class="m"><span class="on" x-text="k.on"></span>✗ <span x-text="k.lapses"></span> · <span x-text="k.acc"></span>%</span>
+          </button>
+        </template>
+        <template x-if="!weakKana.length">
+          <div class="hint" style="grid-column:1/-1">Noch keine schwachen Kana — übe weiter.</div>
+        </template>
+      </div>
+
+      <h4>Problemkarten (Leeches)</h4>
+      <div class="hint">Karten, die du immer wieder reisst — sie fressen 25–50 % der Reviewzeit.</div>
+      <template x-for="l in leeches" :key="l.front">
+        <div class="leech">
+          <span class="f" x-html="l.front"></span>
+          <span class="ty" x-text="l.type"></span>
+          <span class="w">✗ <span x-text="l.lapses"></span>× vergessen</span>
+          <span class="sp"></span>
+        </div>
+      </template>
+      <template x-if="!leeches.length">
+        <div class="hint">Keine Problemkarten — sauber.</div>
+      </template>
+    </div>
+  </div>
+
+  {# TEMPO #}
+  <div class="disc">
+    <button class="disc-head" @click="toggle('tempo')" :aria-expanded="open==='tempo'">
+      <div>
+        <div class="ti">Tempo &amp; Rhythmus</div>
+        <div class="su">Wie viel du schaffst, wie konstant — und ob die Genauigkeit mithält.</div>
+      </div>
+      <span class="chev"><i class="fas fa-chevron-down"></i></span>
+    </button>
+    <div class="disc-body" x-show="open==='tempo'" x-collapse x-cloak>
+      <div class="kpis" style="margin-top:var(--sp-4)">
+        <div class="kpi"><div class="v" x-text="kpi.avgReviews"></div><div class="l">Ø Reviews / Tag</div></div>
+        <div class="kpi"><div class="v"><span x-text="kpi.avgSession"></span><small> Min</small></div><div class="l">Ø Sitzung</div></div>
+        <div class="kpi"><div class="v"><span x-text="kpi.longestStreak"></span><small> T</small></div><div class="l">Längste Serie</div></div>
+        <div class="kpi"><div class="v">+<span x-text="kpi.wordsPerWeek"></span></div><div class="l">Wörter / Woche</div></div>
+      </div>
+      <h4>Reviews &amp; Genauigkeit · letzte 8 Wochen</h4>
+      <div class="hint">Balken = Reviews/Woche · Linie = Ø Genauigkeit. Linie oben bei steigenden Balken = gesundes Lernen.</div>
+      <div class="chart-box"><canvas id="mlTempoReviews"></canvas></div>
+      <h4>Wann du lernst</h4>
+      <div class="hint">Ø Reviews nach Wochentag — dein stärkster Tag ist hervorgehoben.</div>
+      <div class="chart-box sm"><canvas id="mlTempoWeekday"></canvas></div>
+    </div>
+  </div>
+
+  {# VERLAUF #}
+  <div class="disc">
+    <button class="disc-head" @click="toggle('verlauf')" :aria-expanded="open==='verlauf'">
+      <div>
+        <div class="ti">Verlauf &amp; Kapazität</div>
+        <div class="su">Aktivität über Zeit und die kommende Last der nächsten 14 Tage.</div>
+      </div>
+      <span class="chev"><i class="fas fa-chevron-down"></i></span>
+    </button>
+    <div class="disc-body" x-show="open==='verlauf'" x-collapse x-cloak>
+      <div class="row-between" style="margin-top:var(--sp-4)">
+        <h4 style="margin:0">Review-Aktivität</h4>
+        <div class="range">
+          <button :class="{on:hmRange===30}" @click="hmRange=30">30 T</button>
+          <button :class="{on:hmRange===90}" @click="hmRange=90">90 T</button>
+          <button :class="{on:hmRange===365}" @click="hmRange=365">365 T</button>
+        </div>
+      </div>
+      <div class="cum">
+        <div><div class="v" x-text="cumulative.daysTotal"></div><div class="l">Tage gesamt</div></div>
+        <div><div class="v" x-text="cumulative.bestStreak"></div><div class="l">Beste Serie</div></div>
+        <div><div class="v" x-text="(cumulative.reviewsTotal||0).toLocaleString('de-CH')"></div><div class="l">Reviews gesamt</div></div>
+      </div>
+      <div class="heatmap" role="img" :aria-label="`Aktivitäts-Heatmap der letzten ${hmRange} Tage`">
+        <template x-for="(d,i) in heatmapView" :key="i"><span class="hm-cell" :style="`background:${hmColor(d)}`"></span></template>
+      </div>
+      <div class="hm-legend">
+        <span>weniger</span>
+        <span class="sc" style="background:var(--ink-100)"></span>
+        <span class="sc" style="background:rgba(110,131,54,.30)"></span>
+        <span class="sc" style="background:rgba(110,131,54,.52)"></span>
+        <span class="sc" style="background:rgba(110,131,54,.76)"></span>
+        <span class="sc" style="background:var(--matcha)"></span>
+        <span>mehr</span>
+      </div>
+
+      <div class="fc-box">
+        <h4 style="margin:.1rem 0 .3rem">Kommende Last &amp; Kapazitätsplaner</h4>
+        <div class="hint" style="margin-bottom:.6rem">Fällige Reviews der nächsten 14 Tage. Die rote Linie ist dein gewohntes Tagespensum.</div>
+        <div class="ctl">
+          <label for="ml-npd">Neue Karten/Tag</label>
+          <input id="ml-npd" type="range" min="0" max="20" x-model.number="newPerDay" @input="updateForecast()">
+          <span class="val" x-text="newPerDay"></span>
+        </div>
+        <div class="chart-box"><canvas id="mlFc"></canvas></div>
+        <div class="scns">
+          <div class="scn"><div class="h">Entspannt · 4/Tag</div><div class="v" x-text="scenarios.slow"></div></div>
+          <div class="scn now"><div class="h">Dein Tempo · <span x-text="newPerDay"></span>/Tag</div><div class="v" x-text="scenarios.now"></div></div>
+          <div class="scn"><div class="h">Ehrgeizig · 14/Tag</div><div class="v" x-text="scenarios.fast"></div></div>
+        </div>
+        <div class="fc-note" x-html="forecastNote"></div>
+      </div>
+    </div>
+  </div>
+
+  {# GENAUIGKEIT (behalten) #}
+  <div class="disc">
+    <button class="disc-head" @click="toggle('genauigkeit')" :aria-expanded="open==='genauigkeit'">
+      <div>
+        <div class="ti">Genauigkeit</div>
+        <div class="su">Wie treffsicher du bist — je Skill und über die Reife-Stufen hinweg.</div>
+      </div>
+      <span class="chev"><i class="fas fa-chevron-down"></i></span>
+    </button>
+    <div class="disc-body" x-show="open==='genauigkeit'" x-collapse x-cloak>
+      <h4>Genauigkeit je Skill</h4>
+      <div class="hint">Anteil korrekt beantworteter Reviews — wo sitzt die Unsicherheit?</div>
+      <div class="chart-box sm"><canvas id="mlAccSkill"></canvas></div>
+      <h4>Genauigkeit nach SRS-Stufe</h4>
+      <div class="hint">Frische Karten sind wackeliger, reife sitzen — eine gesunde Kurve steigt nach rechts. Erst seit Einführung der Stufen-Erfassung gefüllt.</div>
+      <div class="chart-box sm"><canvas id="mlAccStage"></canvas></div>
+    </div>
+  </div>
+
+  {# BEHERRSCHUNG (behalten) #}
+  <div class="disc">
+    <button class="disc-head" @click="toggle('beherrschung')" :aria-expanded="open==='beherrschung'">
+      <div>
+        <div class="ti">Beherrschung</div>
+        <div class="su">Kana-Tabelle, JLPT-Stand, Vokabel-Themen und Grammatik-Muster.</div>
+      </div>
+      <span class="chev"><i class="fas fa-chevron-down"></i></span>
+    </button>
+    <div class="disc-body" x-show="open==='beherrschung'" x-collapse x-cloak>
+      <h4>Kana-Beherrschung (Gojūon)</h4>
+      <div class="hint">Jede Zelle = ein Kana, eingefärbt nach deiner Trefferquote.</div>
+      <div class="gojuon">
+        <template x-for="r in kanaRows" :key="r.lab">
+          <div class="gj-row">
+            <span class="lab" x-text="r.lab"></span>
+            <template x-for="c in r.cells" :key="c.c">
+              <span class="gj-cell" :style="cellStyle(c.acc)" :title="c.on+' · '+c.acc+'%'"><span x-text="c.c"></span><small x-text="c.acc+'%'"></small></span>
+            </template>
+          </div>
+        </template>
+        <template x-if="!kanaRows.length">
+          <div class="hint">Noch keine Kana-Karten begonnen.</div>
+        </template>
+      </div>
+      <div class="jlpt-line"><i class="fas fa-list-check"></i> <span x-text="jlptDetail"></span></div>
+
+      <h4>Vokabel-Themen</h4>
+      <div class="hint">Begonnene Wörter je Thema (aus deinem Lehrplan).</div>
+      <div class="conf-grid">
+        <template x-for="t in vocabThemes" :key="t.name">
+          <div class="conf"><div class="nt"><b x-text="t.name"></b><br><span class="mono" x-text="t.have+'/'+t.total"></span></div></div>
+        </template>
+        <template x-if="!vocabThemes.length">
+          <div class="hint" style="grid-column:1/-1">Noch keine Vokabel-Themen begonnen.</div>
+        </template>
+      </div>
+
+      <h4>Grammatik-Muster</h4>
+      <template x-for="g in grammar" :key="g.pat">
+        <div class="leech">
+          <span class="f jp" x-text="g.pat"></span>
+          <span class="ty" x-text="g.ex"></span>
+          <span class="sp"></span>
+          <span class="zone" :class="g.level>=3?'zone-strong':g.level>=1?'zone-mid':'zone-weak'" x-text="['neu','im Aufbau','solide','gemeistert'][g.level]"></span>
+        </div>
+      </template>
+      <template x-if="!grammar.length">
+        <div class="hint">Noch keine Grammatik-Karten begonnen.</div>
+      </template>
+    </div>
+  </div>
+
+  {# ERFOLGE (behalten: Achievements + Rekorde) #}
+  <div class="disc">
+    <button class="disc-head" @click="toggle('erfolge')" :aria-expanded="open==='erfolge'">
+      <div>
+        <div class="ti">Erfolge &amp; Rekorde</div>
+        <div class="su">Erreichte Meilensteine und deine persönlichen Bestwerte.</div>
+      </div>
+      <span class="chev"><i class="fas fa-chevron-down"></i></span>
+    </button>
+    <div class="disc-body" x-show="open==='erfolge'" x-collapse x-cloak>
+      <h4>Meilensteine</h4>
+      <div class="miles">
+        <template x-for="m in milestones" :key="m.n">
+          <div class="mile" :class="{off:!m.on}">
+            <span class="ic" x-text="m.i"></span>
+            <div><div class="nm" x-text="m.n"></div><div class="dt" x-text="m.on?m.date:m.rest"></div></div>
+          </div>
+        </template>
+        <template x-if="!milestones.length">
+          <div class="hint">Noch keine Meilensteine — sie kommen.</div>
+        </template>
+      </div>
+      <h4>Persönliche Rekorde</h4>
+      <div class="recs">
+        <template x-for="r in records" :key="r.n">
+          <div class="rec"><div class="ic" x-text="r.i"></div><div class="v" x-text="r.val"></div><div class="l" x-text="r.n"></div></div>
+        </template>
+      </div>
+    </div>
+  </div>
+
+</div>
