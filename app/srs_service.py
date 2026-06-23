@@ -293,26 +293,61 @@ PRODUCTION_FORWARD_MIN_STAGE = 4
 DAILY_NEW_PRODUCTION_LIMIT = 15
 
 
+def get_production_forward_ready_ids(user_id):
+    """content_ids, deren forward-Karte (JP->DE) AKTUELL >= 7 Tage Stabilitaet
+    (Stage >= PRODUCTION_FORWARD_MIN_STAGE) hat.
+
+    Die DE->JP-Schwelle wirkt KONTINUIERLICH, nicht nur beim Eintritt: faellt die
+    rezeptive Spur unter 7 Tage, verschwindet die zugehoerige reverse-Karte aus
+    dem Produktions-Deck (der reverse-State bleibt aber erhalten — kein Reset).
+    Steigt JP->DE wieder >= 7 Tage, taucht die Karte mit unveraendertem Schedule
+    automatisch wieder auf.
+    """
+    from app.gamification_service import get_card_stage
+    states = (CardReviewState.query
+              .filter(CardReviewState.user_id == user_id,
+                      CardReviewState.direction == 'forward',
+                      CardReviewState.status != 'suspended')
+              .all())
+    return {s.content_id for s in states
+            if get_card_stage(s.fsrs_card_state)[0] >= PRODUCTION_FORWARD_MIN_STAGE}
+
+
 def get_production_due_cards(user_id, limit=50):
-    """Faellige Produktions-Karten (reverse) fuer die DE->JP-Queue."""
+    """Faellige Produktions-Karten (reverse) fuer die DE->JP-Queue.
+
+    Nur Karten, deren rezeptive Spur (forward) aktuell >= 7 Tage sitzt — siehe
+    get_production_forward_ready_ids.
+    """
+    ready = get_production_forward_ready_ids(user_id)
+    if not ready:
+        return []
     now = datetime.utcnow()
     return (CardReviewState.query
             .filter(CardReviewState.user_id == user_id,
                     CardReviewState.direction == 'reverse',
                     CardReviewState.due_date <= now,
-                    CardReviewState.status != 'suspended')
+                    CardReviewState.status != 'suspended',
+                    CardReviewState.content_id.in_(ready))
             .order_by(CardReviewState.due_date.asc())
             .limit(limit).all())
 
 
 def get_production_due_count(user_id):
-    """Zaehlt faellige Produktions-Karten (eigener Zaehler der DE->JP-Seite)."""
+    """Zaehlt faellige Produktions-Karten (eigener Zaehler der DE->JP-Seite).
+
+    Gleiches 7-Tage-Gate wie get_production_due_cards.
+    """
+    ready = get_production_forward_ready_ids(user_id)
+    if not ready:
+        return 0
     now = datetime.utcnow()
     return (CardReviewState.query
             .filter(CardReviewState.user_id == user_id,
                     CardReviewState.direction == 'reverse',
                     CardReviewState.due_date <= now,
-                    CardReviewState.status != 'suspended')
+                    CardReviewState.status != 'suspended',
+                    CardReviewState.content_id.in_(ready))
             .count())
 
 
@@ -411,8 +446,10 @@ def get_production_stats(user_id):
 
     now = datetime.utcnow()
     total = len(states)
+    ready = get_production_forward_ready_ids(user_id)
     due = sum(1 for s in states
-              if s.status != 'suspended' and s.due_date and s.due_date <= now)
+              if s.status != 'suspended' and s.due_date and s.due_date <= now
+              and s.content_id in ready)
     mastered = sum(1 for s in states
                    if get_card_stage(s.fsrs_card_state)[0] >= 5)  # Vertraut 1+
     learning = total - mastered

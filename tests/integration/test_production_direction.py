@@ -201,11 +201,69 @@ class TestReceptiveIsolation:
         client, user = auth_client
         lc = _vocab_content()
         past = datetime.utcnow() - timedelta(days=1)
+        future = datetime.utcnow() + timedelta(days=5)
+        # forward muss >= 7 Tage sitzen (Gate), aber NICHT faellig sein, sonst
+        # zaehlt es in get_due_count mit — Stage haengt nur an der Stability im JSON.
+        CardReviewStateFactory(user_id=user.id, content_id=lc.id, direction='forward',
+                               due_date=future, fsrs_card_state=MATURE_FSRS)
         CardReviewStateFactory(user_id=user.id, content_id=lc.id, direction='reverse',
                                due_date=past, fsrs_card_state=MATURE_FSRS)
         db.session.commit()
         assert srs_service.get_production_due_count(user.id) == 1
         assert srs_service.get_due_count(user.id) == 0
+
+
+class TestProductionForwardGate:
+    """Kontinuierliches 7-Tage-Gate: faellt JP->DE unter 7 Tage, verschwindet die
+    DE->JP-Karte; steigt es wieder >= 7 Tage, taucht sie (unveraendert) wieder auf.
+    """
+
+    def _due_reverse(self, user_id, content_id):
+        past = datetime.utcnow() - timedelta(days=1)
+        CardReviewStateFactory(user_id=user_id, content_id=content_id,
+                               direction='reverse', due_date=past,
+                               fsrs_card_state=MATURE_FSRS)
+
+    def test_due_reverse_hidden_when_forward_below_seven_days(self, auth_client):
+        """Reverse faellig, aber forward Stage 3 (< 7 Tage) => NICHT im Deck."""
+        client, user = auth_client
+        lc = _vocab_content(meaning_de='Tor')
+        _forward_state(user.id, lc.id, fsrs=STAGE3_FSRS)
+        self._due_reverse(user.id, lc.id)
+        db.session.commit()
+        ids = [s.content_id for s in srs_service.get_production_due_cards(user.id)]
+        assert lc.id not in ids
+        assert srs_service.get_production_due_count(user.id) == 0
+
+    def test_due_reverse_shown_when_forward_at_least_seven_days(self, auth_client):
+        """Reverse faellig + forward Stage >= 4 (>= 7 Tage) => im Deck."""
+        client, user = auth_client
+        lc = _vocab_content(meaning_de='Tor')
+        _forward_state(user.id, lc.id, fsrs=MATURE_FSRS)
+        self._due_reverse(user.id, lc.id)
+        db.session.commit()
+        ids = [s.content_id for s in srs_service.get_production_due_cards(user.id)]
+        assert lc.id in ids
+        assert srs_service.get_production_due_count(user.id) == 1
+
+    def test_due_reverse_hidden_when_no_forward_card(self, auth_client):
+        """Reverse faellig, aber gar keine forward-Spur => NICHT im Deck."""
+        client, user = auth_client
+        lc = _vocab_content(meaning_de='Tor')
+        self._due_reverse(user.id, lc.id)
+        db.session.commit()
+        assert srs_service.get_production_due_count(user.id) == 0
+
+    def test_stats_due_respects_forward_gate(self, auth_client):
+        """/review/stats-Due zaehlt nur Karten mit reifer forward-Spur."""
+        client, user = auth_client
+        lc = _vocab_content(meaning_de='Tor')
+        _forward_state(user.id, lc.id, fsrs=STAGE3_FSRS)
+        self._due_reverse(user.id, lc.id)
+        db.session.commit()
+        stats = srs_service.get_production_stats(user.id)
+        assert stats['total'] == 1  # Karte existiert weiterhin
+        assert stats['due'] == 0    # aber nicht faellig anzeigbar
 
 
 class TestRateApi:
