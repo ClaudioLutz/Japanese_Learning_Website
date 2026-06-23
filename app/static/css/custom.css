@@ -3843,6 +3843,43 @@ button[onclick*="moveContentInPage"]:active {
 }
 
 /* ══════════════════════════════════════════════════════════════════
+   VIEWPORT-LOCK für Karten-Lernseiten (/review, /review/produktion)
+   Die Lern-Bühne füllt exakt den Platz zwischen Topnav (60px, sticky)
+   und mobiler Bottom-Nav; die Seite selbst scrollt NICHT. Nur der
+   Karteninhalt (Rückseite) scrollt bei Bedarf intern.
+   Body-Klasse `review-locked` wird per body_attributes gesetzt.
+   Härtung: overscroll-behavior:none + Root-Scroller-Sperre via :has()
+   stoppen das iOS-Safari-Rubber-Band/Scroll-Chaining — overflow:hidden
+   allein reicht dort nicht (ganze Seite blieb auf echtem iPhone scrollbar).
+   ══════════════════════════════════════════════════════════════════ */
+html:has(body.review-locked) {
+    overflow: hidden;
+    overscroll-behavior: none;
+}
+body.review-locked {
+    overflow: hidden;
+    overscroll-behavior: none;
+    padding-bottom: 0 !important;
+}
+body.review-locked .container.mt-4 {
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    height: calc(100dvh - 60px);     /* 60px = sticky .topnav */
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+@supports not (height: 100dvh) {
+    body.review-locked .container.mt-4 { height: calc(100vh - 60px); }
+}
+body.review-locked .site-footer { display: none !important; }
+body.review-locked .container.mt-4 > .alert {
+    margin: 0.5rem 0.75rem 0;
+    flex: 0 0 auto;
+}
+
+/* ══════════════════════════════════════════════════════════════════
    MOBILE BOTTOM NAVIGATION BAR
    ══════════════════════════════════════════════════════════════════ */
 .mobile-bottom-nav {

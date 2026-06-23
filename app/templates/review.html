@@ -39,29 +39,11 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     html.hide-front-romaji .cloze-romaji { display: none !important; }
 
     /* ══════════════════════════════════════════════════════════════════
-       VIEWPORT-LOCK
-       Die Lern-Ansicht passt ohne Page-Scroll in den Bereich zwischen
-       Top-Nav (60px, sticky) und Mobile-Bottom-Nav (fixed). Footer/Impressum
-       wird auf dieser Seite ausgeblendet — es gibt nur eine Bühne: die Karte.
+       VIEWPORT-LOCK (Body-Level + Container) ist jetzt GLOBAL in custom.css
+       unter `body.review-locked` (geteilt mit /review/produktion, dort
+       zusätzlich gehärtet gegen iOS-Rubber-Band). Hier nur noch die
+       review-spezifische Bühnen-/Karten-Geometrie.
        ══════════════════════════════════════════════════════════════════ */
-    body.review-locked { overflow: hidden; padding-bottom: 0 !important; }
-    body.review-locked .container.mt-4 {
-        max-width: 100%;
-        margin: 0;
-        padding: 0;
-        height: calc(100dvh - 60px);     /* 60px = sticky .topnav */
-        display: flex;
-        flex-direction: column;
-        min-height: 0;
-    }
-    @supports not (height: 100dvh) {
-        body.review-locked .container.mt-4 { height: calc(100vh - 60px); }
-    }
-    body.review-locked .site-footer { display: none !important; }
-    body.review-locked .container.mt-4 > .alert {
-        margin: 0.5rem 0.75rem 0;
-        flex: 0 0 auto;
-    }
 
     /* ── Gesperrte Bühne ── */
     .review-screen {
