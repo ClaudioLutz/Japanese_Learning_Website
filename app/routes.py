@@ -12,6 +12,7 @@ from app.forms import RegistrationForm, LoginForm, CSRFTokenForm, RequestPasswor
 from app.auth_tokens import make_reset_token, verify_reset_token
 from app.mail_service import send_password_reset_email
 from app.ai_services import AILessonContentGenerator
+from app.time_utils import home_greeting
 from app.lesson_export_import import (
     export_lesson_to_json, import_lesson_from_json, 
     create_lesson_export_package, import_lesson_from_zip
@@ -518,7 +519,13 @@ def index():
         # Coverage darf die Startseite nie blockieren (z.B. fehlende canonical-Liste)
         current_app.logger.warning("N5-Coverage konnte nicht geladen werden", exc_info=True)
 
+    # Tageszeit- + saisonabhaengige Begruessung (おはよう/こんにちは/こんばんは + Saison-
+    # Emoji), rein datumsbasiert in Europe/Zurich — kein Wetter-API/Standort. Nur der
+    # eingeloggte Hero nutzt sie; fuer Gaeste ist der Wert da, aber ungenutzt.
+    greeting_ctx = home_greeting()
+
     return render_template('index.html',
+                         home_greeting=greeting_ctx,
                          total_lessons=total_lessons,
                          total_courses=total_courses,
                          guest_accessible_lessons=guest_accessible_lessons,

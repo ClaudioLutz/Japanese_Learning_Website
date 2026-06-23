@@ -27,11 +27,10 @@
         {% else %}
           <h1 class="home-h1">Bereit für<br>deine erste Lektion?</h1>
         {% endif %}
+        {# Whitespace bewusst inline gehalten: der Satzpunkt klebt an „Streak"/Name
+           (kein Jinja-Newline davor), das Saison-Emoji folgt mit genau einem Space. #}
         <p class="home-sub">
-          こんにちは, <strong>{{ current_user.username }}</strong>
-          {% if current_user.current_streak and current_user.current_streak > 0 %}
-            · 🔥 {{ current_user.current_streak }} Tage Streak
-          {% endif %}.
+          {{ home_greeting.greeting if home_greeting else 'こんにちは' }}, <strong>{{ current_user.username }}</strong>{% if current_user.current_streak and current_user.current_streak > 0 %} · 🔥 {{ current_user.current_streak }} Tage Streak{% endif %}.{% if home_greeting %} <span class="home-season" role="img" aria-label="{{ home_greeting.season_label }}" title="{{ home_greeting.season_label }}">{{ home_greeting.season_emoji }}</span>{% endif %}
         </p>
         <div class="home-actions">
           {% if last_lesson %}
@@ -404,6 +403,8 @@
     margin: 0 auto 1.75rem;
 }
 .home-sub strong { color: var(--kon); font-weight: 600; }
+/* Saison-Emoji im eingeloggten Begruessungssatz — dezent, nah am Text. */
+.home-season { margin-left: 0.15em; font-size: 1.05em; line-height: 1; }
 
 .home-actions {
     display: flex; gap: 0.75rem;

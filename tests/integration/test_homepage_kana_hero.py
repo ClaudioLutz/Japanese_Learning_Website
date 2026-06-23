@@ -120,3 +120,16 @@ class TestAuthenticatedHero:
         # geloeschte Vokal-Probe).
         assert 'Vokal-Probe' not in body
         assert 'Kana-Spiel ausprobieren' in body
+
+    def test_hero_zeigt_tageszeit_und_saison_gruss(self, auth_client, db):
+        # Der eingeloggte Hero begruesst tageszeit- + saisonabhaengig
+        # (おはよう/こんにちは/こんばんは + Saison-Emoji, datumsbasiert).
+        client, _user = auth_client
+        body = client.get('/').get_data(as_text=True)
+        # Eine der drei JP-Grussformeln steht im Hero.
+        assert any(g in body for g in ('おはよう', 'こんにちは', 'こんばんは'))
+        # Eindeutiger Marker der Neuerung: das dezente Saison-Emoji-Span mit
+        # deutschem a11y-Label (eine der vier Jahreszeiten).
+        assert 'class="home-season"' in body
+        assert any(e in body for e in ('🌸', '🎐', '🍁', '❄️'))
+        assert any(s in body for s in ('Frühling', 'Sommer', 'Herbst', 'Winter'))
