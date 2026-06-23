@@ -65,7 +65,11 @@ function dashboard(){
     reviewCards:[], reviewEmptyMsg:'Keine fälligen Karten — schön.',
     openReview(i){
       this.reviewFor=i; this.reviewIdx=0; this.reviewRevealed=false; this.reviewCards=[]; this.reviewOpen=true;
-      fetch('/api/srs/due?limit=12',{headers:{'Accept':'application/json'}})
+      // limit=50 deckt die volle Tages-Due (sonst „23 fällig" aber nur 12 geholt
+      // → Schritt vorzeitig „erledigt" mit Restkarten). /api/srs/due ist forward-only
+      // (get_due_cards direction='forward'); die DE→JP-Produktionsspur hat eine
+      // eigene Queue → das harte direction:'forward' beim Graden ist korrekt.
+      fetch('/api/srs/due?limit=50',{headers:{'Accept':'application/json'}})
         .then(r=>r.ok?r.json():{cards:[]})
         .then(j=>{ this.reviewCards=(j.cards||[]).map(c=>this._mapDueCard(c)).filter(c=>c.c); })
         .catch(()=>{ this.reviewEmptyMsg='Konnte Karten nicht laden.'; });
