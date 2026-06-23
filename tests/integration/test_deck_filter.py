@@ -117,9 +117,11 @@ def test_review_page_locked_viewport_layout(admin_client):
     assert resp.status_code == 200, resp.status_code
     html = resp.get_data(as_text=True)
 
-    # Body-Klasse schaltet den Viewport-Lock scharf (overflow:hidden + 100dvh)
+    # Body-Klasse schaltet den Viewport-Lock scharf. Das Lock-CSS selbst liegt
+    # global in custom.css — der gesperrte Container wird per position:fixed
+    # zwischen Top- und Bottom-Nav verankert (bewusst NICHT mehr height:100dvh,
+    # das auf iOS-Safari unter die sichtbare Kante rutscht; Stand Commit 26ad346).
     assert "review-locked" in html
-    assert "100dvh" in html
     # Gesperrte Bühne + kompakte Kopfzeile statt gestapelter Blöcke
     assert "review-screen" in html
     assert "review-topbar" in html
@@ -129,3 +131,10 @@ def test_review_page_locked_viewport_layout(admin_client):
     assert "function openSheet" in html
     # sessionTime-Element muss erhalten bleiben (JS schreibt hinein)
     assert 'id="sessionTime"' in html
+
+    # Der Viewport-Lock selbst lebt global in custom.css (geteilt mit
+    # /review/produktion): body.review-locked friert den Viewport ein,
+    # html:has(body.review-locked) härtet gegen iOS-Safari-Scroll-Chaining.
+    css = client.get("/static/css/custom.css").get_data(as_text=True)
+    assert "body.review-locked" in css
+    assert "html:has(body.review-locked)" in css
