@@ -10,8 +10,17 @@ from tests.factories import (
     LessonContentFactory,
     LessonFactory,
     ReviewLogFactory,
+    UserLessonProgressFactory,
     VocabularyFactory,
 )
+
+
+def _listen_lesson(content_type='audio'):
+    """Publizierte Lektion mit Hoer-Inhalt (audio/dialog_slideshow)."""
+    lesson = LessonFactory(is_published=True)
+    LessonContentFactory(lesson_id=lesson.id, content_type=content_type)
+    db.session.commit()
+    return lesson
 
 
 def _vocab_card(user_id):
@@ -36,13 +45,12 @@ def _kanji_card(user_id, **kanji_kwargs):
 
 
 class TestCompassService:
-    def test_pillars_four_no_listen(self, auth_client):
-        """4 echte Saeulen (kana/kanji/vocab/grammar), KEIN listen; korrekte Form."""
+    def test_pillars_five_with_listen(self, auth_client):
+        """5 Saeulen in v3-Reihenfolge inkl. „listen" (Hoeren); korrekte Form."""
         _client, user = auth_client
         pillars = dashboard_service.compass_pillars(user.id)
         keys = [p['key'] for p in pillars]
-        assert keys == ['kana', 'kanji', 'vocab', 'grammar']
-        assert 'listen' not in keys
+        assert keys == ['kana', 'vocab', 'kanji', 'grammar', 'listen']
         for p in pillars:
             assert len(p['dist']) == 5
             assert p['total'] >= 1
@@ -105,3 +113,49 @@ class TestCompassEndpoint:
     def test_endpoint_requires_auth(self, client):
         resp = client.get('/api/dashboard/compass-glyphs?type=kanji')
         assert resp.status_code in (302, 401)
+
+
+class TestListenPillar:
+    """„Hoeren"-Saeule aus Lektions-Completion (audio/dialog_slideshow)."""
+
+    def test_counts_published_listening_lessons(self, auth_client):
+        _client, user = auth_client
+        _listen_lesson('audio')
+        _listen_lesson('dialog_slideshow')
+        # Nicht-Hoer-Lektion zaehlt nicht.
+        non = LessonFactory(is_published=True)
+        LessonContentFactory(lesson_id=non.id, content_type='text')
+        db.session.commit()
+        pillar = dashboard_service.listen_pillar(user.id)
+        assert pillar['key'] == 'listen'
+        assert pillar['total'] == 2
+        assert pillar['started'] == 0
+        assert pillar['dist'] == [2, 0, 0, 0, 0]
+
+    def test_unpublished_listening_lesson_excluded(self, auth_client):
+        _client, user = auth_client
+        lesson = LessonFactory(is_published=False)
+        LessonContentFactory(lesson_id=lesson.id, content_type='audio')
+        db.session.commit()
+        assert dashboard_service.listen_pillar(user.id)['total'] == 1  # 0 -> auf 1 gecappt
+
+    def test_completion_maps_to_mastered_bucket(self, auth_client):
+        _client, user = auth_client
+        done = _listen_lesson('audio')
+        prog = _listen_lesson('dialog_slideshow')
+        _listen_lesson('audio')  # unberuehrt -> neu
+        UserLessonProgressFactory(user_id=user.id, lesson_id=done.id, is_completed=True, progress_percentage=100)
+        UserLessonProgressFactory(user_id=user.id, lesson_id=prog.id, is_completed=False, progress_percentage=40)
+        db.session.commit()
+        pillar = dashboard_service.listen_pillar(user.id)
+        assert pillar['total'] == 3
+        # 1 gemeistert (Bucket 4), 1 begonnen (Bucket 1), 1 neu (Bucket 0)
+        assert pillar['dist'] == [1, 1, 0, 0, 1]
+        assert pillar['started'] == 2
+
+    def test_listen_present_in_compass_pillars(self, auth_client):
+        _client, user = auth_client
+        _listen_lesson('audio')
+        listen = next(p for p in dashboard_service.compass_pillars(user.id) if p['key'] == 'listen')
+        assert listen['name'] == 'Hören'
+        assert listen['total'] == 1

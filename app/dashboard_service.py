@@ -33,9 +33,18 @@ _TYPE_LABEL = {
     'grammar': 'Grammatik',
 }
 
-# content_type (DB) der vier echten Kompass-Saeulen. „Hoeren" gibt es bewusst
-# NICHT (keine Datenbasis — Entscheidung 2026-06-15).
+# content_type (DB) der vier SRS-basierten Kompass-Saeulen (Flip-Cards mit
+# Reifezustand). „Hoeren" ist KEINE SRS-Saeule — siehe listen_pillar().
 PILLAR_CONTENT_TYPES = ('kana', 'kanji', 'vocabulary', 'grammar')
+
+# „Hoeren": audio + dialog_slideshow sind keine Flip-Cards (kein SRS-Reife-
+# zustand). Die Saeule misst stattdessen die Completion publizierter Hoer-
+# Lektionen (Entscheidung 2026-06-23: Hoeren existiert real bei den Vokabel-
+# Lektionen und soll erkannt werden).
+LISTEN_CONTENT_TYPES = ('audio', 'dialog_slideshow')
+
+# Anzeige-Reihenfolge der Dials (Fortschritt-Screen, v3-Design).
+_PILLAR_ORDER = ('kana', 'vocab', 'kanji', 'grammar', 'listen')
 
 # Saeulen-Metadaten (Reihenfolge = Anzeige). key = Frontend-Schluessel,
 # ctype = LessonContent.content_type.
@@ -175,7 +184,75 @@ def compass_pillars(user_id):
             'dist': dist,
             'sowhat': _sowhat(meta['key'], mastery, started, total),
         })
+    # 5. Saeule „Hoeren" (Completion-basiert, kein SRS) + Reihenfolge wie v3.
+    pillars.append(listen_pillar(user_id))
+    order = {k: i for i, k in enumerate(_PILLAR_ORDER)}
+    pillars.sort(key=lambda p: order.get(p['key'], 99))
     return pillars
+
+
+def _listen_lesson_ids():
+    """IDs publizierter Lektionen mit Hoer-Inhalt (audio/dialog_slideshow)."""
+    from app.models import Lesson
+    rows = (
+        db.session.query(LessonContent.lesson_id)
+        .join(Lesson, Lesson.id == LessonContent.lesson_id)
+        .filter(
+            Lesson.is_published.is_(True),
+            LessonContent.content_type.in_(LISTEN_CONTENT_TYPES),
+        )
+        .distinct()
+        .all()
+    )
+    return {r[0] for r in rows}
+
+
+def listen_pillar(user_id):
+    """„Hoeren"-Saeule aus der Completion publizierter Hoer-Lektionen.
+
+    audio/dialog_slideshow sind keine Flip-Cards (kein SRS-Reifezustand), daher
+    misst die Saeule die Lektions-Completion statt einer Reifeverteilung. Die
+    dist-Buckets [neu,lernen,jung,reif,gemeistert] werden gemappt:
+      gemeistert (Bucket 4) = abgeschlossene Hoer-Lektion,
+      lernen     (Bucket 1) = begonnen (progress > 0), nicht abgeschlossen,
+      neu        (Bucket 0) = nie geoeffnet.
+    So bleibt die Dial-Bildsprache (Reife-Donut) erhalten und masteryPct/Ring
+    bewerten Begonnenes anteilig, Abgeschlossenes voll.
+    """
+    from app.models import UserLessonProgress
+    lesson_ids = _listen_lesson_ids()
+    total = len(lesson_ids)
+    dist = [0, 0, 0, 0, 0]
+    started = 0
+    if total:
+        progress = {
+            p.lesson_id: p
+            for p in UserLessonProgress.query.filter(
+                UserLessonProgress.user_id == user_id,
+                UserLessonProgress.lesson_id.in_(lesson_ids),
+            ).all()
+        }
+        done = in_prog = 0
+        for lid in lesson_ids:
+            p = progress.get(lid)
+            if p and p.is_completed:
+                done += 1
+            elif p and (p.progress_percentage or 0) > 0:
+                in_prog += 1
+        dist = [total - done - in_prog, in_prog, 0, 0, done]
+        started = done + in_prog
+    mastery = _mastery_pct(dist, total)
+    return {
+        'key': 'listen',
+        'name': 'Hören',
+        'icon': 'fa-headphones',
+        'targetPct': 80,
+        'cta': 'Hören üben',
+        'started': started,
+        'total': total or 1,
+        'dist': dist,
+        'sowhat': _sowhat('listen', mastery, started, total),
+    }
 
 
 def learner_numbers(user_id):
