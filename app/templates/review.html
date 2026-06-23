@@ -719,9 +719,10 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
        die gepinnten Buttons mit Komfort-Abstand darüber (mehr als das globale
        body{padding-bottom:72px} in custom.css, das nur leeren Rand abdeckt). */
     @media (max-width: 767px) {
-        .review-screen {
-            padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
-        }
+        /* Keine eigene Bottom-Nav-Reserve mehr: der gesperrte Container endet
+           (custom.css, position:fixed) bereits an der Fussleisten-Oberkante.
+           Nur etwas Luft, damit die Buttons nicht flush ankleben. */
+        .review-screen { padding-bottom: 8px; }
     }
     @media (max-width: 576px) {
         .review-screen { padding-left: 0.7rem; padding-right: 0.7rem; }

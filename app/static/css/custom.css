@@ -3861,17 +3861,31 @@ body.review-locked {
     overscroll-behavior: none;
     padding-bottom: 0 !important;
 }
+/* Container per position:fixed EXAKT zwischen Topnav (60px) und Viewport-/
+   Bottom-Nav-Boden verankern — NICHT über height:100dvh. Grund: auf iOS
+   Safari rutscht der dvh-/vh-basierte Container-Boden samt der darüber
+   gepinnten Bewertungs-Buttons unter die sichtbare Kante / hinter die fixe
+   Bottom-Nav (Buttons „verdeckt"). Fixed top/bottom ist gegen das
+   Dynamic-Viewport-Verhalten immun: der Boden ist relativ zum sichtbaren
+   Viewport gepinnt, die Buttons schließen so immer über der Fussleiste an. */
 body.review-locked .container.mt-4 {
+    position: fixed;
+    top: 60px;                       /* unter der 60px sticky .topnav */
+    left: 0; right: 0;
+    bottom: 0;                       /* Desktop: bis Viewport-Boden (keine Bottom-Nav) */
     max-width: 100%;
     margin: 0;
     padding: 0;
-    height: calc(100dvh - 60px);     /* 60px = sticky .topnav */
     display: flex;
     flex-direction: column;
     min-height: 0;
 }
-@supports not (height: 100dvh) {
-    body.review-locked .container.mt-4 { height: calc(100vh - 60px); }
+/* Mobile (≤767px): Boden = Oberkante der fixen Bottom-Nav.
+   Nav-Box ≈ 44px Tab + ~6px Padding (+ Safe-Area unten) ≈ 54px. */
+@media (max-width: 767px) {
+    body.review-locked .container.mt-4 {
+        bottom: calc(54px + env(safe-area-inset-bottom, 0px));
+    }
 }
 body.review-locked .site-footer { display: none !important; }
 body.review-locked .container.mt-4 > .alert {

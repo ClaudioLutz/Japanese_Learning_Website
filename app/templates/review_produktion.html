@@ -171,12 +171,11 @@
         padding: 0.6rem 1.3rem; border-radius: 999px; text-decoration: none; font-weight: 600;
     }
 
-    /* Mobile: Platz für die fixe Bottom-Nav reservieren (Center-CTA ragt hoch).
-       96px hält die gepinnten Buttons mit Komfort-Abstand darüber — analog
-       /review. body.review-locked hat das globale body-padding-bottom auf 0
-       gesetzt, also muss die Bühne den Platz selbst halten. */
+    /* Keine eigene Bottom-Nav-Reserve mehr nötig: der gesperrte Container
+       (custom.css, position:fixed) endet bereits an der Oberkante der
+       Fussleiste. Nur etwas Luft, damit die Buttons nicht flush ankleben. */
     @media (max-width: 767px) {
-        .prod-stage { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
+        .prod-stage { padding-bottom: 8px; }
     }
     @media (max-width: 600px) {
         .prod-answer-word { font-size: 2.8rem; }
@@ -215,15 +214,18 @@
         <div class="prod-msg"><div class="prod-msg-emoji">⏳</div><p>Wird geladen …</p></div>
     </div>
 
+    {# Disziplin-Hinweis ÜBER den Buttons, damit die Bewertungs-Buttons direkt
+       an der Fussleisten-Oberkante anschließen (nicht durch den Hinweis nach
+       oben weggedrückt werden). #}
+    <div class="prod-discipline" id="prodDiscipline" hidden>
+        <strong>„Gut"</strong> nur, wenn die Lesung schon <strong>vor</strong> dem Aufdecken im Kopf war ·
+        Kana saß, Kanji nicht → <strong>Schwer</strong>
+    </div>
     <div class="prod-buttons" id="prodButtons" role="group" aria-label="Bewertung">
         <button type="button" class="prod-btn" data-rating="1">Nochmal<span class="interval-hint"></span></button>
         <button type="button" class="prod-btn" data-rating="2">Schwer<span class="interval-hint"></span></button>
         <button type="button" class="prod-btn" data-rating="3">Gut<span class="interval-hint"></span></button>
         <button type="button" class="prod-btn" data-rating="4">Einfach<span class="interval-hint"></span></button>
-    </div>
-    <div class="prod-discipline" id="prodDiscipline" hidden>
-        <strong>„Gut"</strong> nur, wenn die Lesung schon <strong>vor</strong> dem Aufdecken im Kopf war ·
-        Kana saß, Kanji nicht → <strong>Schwer</strong>
     </div>
 </div>
 
