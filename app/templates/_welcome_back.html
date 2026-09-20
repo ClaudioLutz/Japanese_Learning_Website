@@ -1,0 +1,189 @@
+{# ── „Willkommen zurück"-Dialog ───────────────────────────────────────────
+   Nur fuer eingeloggte Nutzer und nur auf RUHIGEN Seiten (Startseite,
+   /mein-lernen, /lektionen) — base.html entscheidet ueber die Einbindung,
+   nicht dieses Partial. Die Daten kommen lazy von /api/welcome-back, erst
+   nach DOMContentLoaded; faellt der Call aus, passiert gar nichts.
+
+   „heute schon gezeigt" und „nicht mehr anzeigen" leben bewusst im
+   localStorage (keine neue DB-Spalte) — jeder Zugriff in try/catch, weil der
+   Speicher im Privatfenster werfen kann.
+
+   Stil: bestehende Tokens (Ink-on-Washi), Dark Mode ueber [data-theme="dark"].
+   Kein Alpine-Store, kein externes JS — ein kleines, in sich geschlossenes
+   Modul mit Fokus-Falle, ESC und Backdrop-Klick. #}
+<div id="welcomeBack" class="wb-backdrop" hidden>
+  <div class="wb-dialog" role="dialog" aria-modal="true" aria-labelledby="wbTitle" tabindex="-1">
+    <h2 class="wb-title" id="wbTitle">Willkommen zurück!</h2>
+    <p class="wb-lead" id="wbLead"></p>
+    <a href="#" class="wb-primary" id="wbPrimary"></a>
+
+    <div class="wb-discover" id="wbDiscover" hidden>
+      <h3 class="wb-discover-head">Schon entdeckt?</h3>
+      <ul class="wb-list" id="wbList"></ul>
+    </div>
+
+    <div class="wb-foot">
+      <button type="button" class="wb-close" id="wbClose">Schliessen</button>
+      <label class="wb-never">
+        <input type="checkbox" id="wbNever"> Nicht mehr anzeigen
+      </label>
+    </div>
+  </div>
+</div>
+
+<style>
+.wb-backdrop {
+  position: fixed; inset: 0; z-index: 1080;
+  display: flex; align-items: center; justify-content: center;
+  padding: 1rem;
+  background: rgba(28, 26, 23, 0.5);
+}
+.wb-backdrop[hidden] { display: none; }
+.wb-dialog {
+  width: min(90vw, 26rem);
+  max-height: 88vh; overflow-y: auto;
+  background: var(--card-background, #FFFDF7);
+  color: var(--text-color, #1C1A17);
+  border: 1px solid var(--border-color, #E4DED4);
+  border-radius: 16px;
+  box-shadow: 0 18px 48px rgba(28, 26, 23, 0.28);
+  padding: 1.5rem 1.35rem 1.1rem;
+}
+.wb-dialog:focus { outline: none; }
+.wb-title { font-size: 1.35rem; font-weight: 700; margin: 0 0 0.35rem; }
+.wb-lead { color: var(--text-muted, #5C564D); font-size: 0.95rem; margin: 0 0 1rem; }
+.wb-primary {
+  display: block; text-align: center; text-decoration: none;
+  background: var(--shu, #EB6101); color: #fff;
+  font-weight: 700; padding: 0.7rem 1rem; border-radius: 10px;
+}
+.wb-primary:hover, .wb-primary:focus { background: var(--shu-deep, #B84A00); color: #fff; }
+.wb-discover { margin-top: 1.25rem; border-top: 1px solid var(--border-color, #E4DED4); padding-top: 0.9rem; }
+.wb-discover-head { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--text-muted, #5C564D); margin: 0 0 0.5rem; font-weight: 700; }
+.wb-list { list-style: none; margin: 0; padding: 0; }
+.wb-list li { margin-bottom: 0.15rem; }
+.wb-item {
+  display: block; text-decoration: none; color: inherit;
+  padding: 0.55rem 0.6rem; border-radius: 10px;
+}
+.wb-item:hover, .wb-item:focus { background: rgba(28, 26, 23, 0.05); color: inherit; }
+.wb-item-title { display: block; font-weight: 700; font-size: 0.95rem; }
+.wb-item-title::after { content: ' →'; color: var(--shu, #EB6101); }
+.wb-item-text { display: block; font-size: 0.82rem; color: var(--text-muted, #5C564D); line-height: 1.35; }
+.wb-foot {
+  display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
+  margin-top: 1.1rem; padding-top: 0.8rem; border-top: 1px solid var(--border-color, #E4DED4);
+}
+.wb-close {
+  background: none; border: 1px solid var(--border-color, #E4DED4); border-radius: 8px;
+  padding: 0.45rem 0.9rem; font-weight: 600; cursor: pointer; color: var(--text-color, #1C1A17);
+}
+.wb-close:hover { background: rgba(28, 26, 23, 0.05); }
+.wb-never { font-size: 0.8rem; color: var(--text-muted, #5C564D); display: flex; align-items: center; gap: 0.35rem; margin: 0; cursor: pointer; }
+[data-theme="dark"] .wb-item:hover, [data-theme="dark"] .wb-item:focus,
+[data-theme="dark"] .wb-close:hover { background: rgba(255, 255, 255, 0.08); }
+/* Mobil: als Bottom-Sheet andocken statt mittig schweben. */
+@media (max-width: 560px) {
+  .wb-backdrop { align-items: flex-end; padding: 0; }
+  .wb-dialog {
+    width: 100%; max-width: 100%; max-height: 90vh;
+    border-radius: 18px 18px 0 0; border-bottom: 0;
+    padding-bottom: calc(1.1rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+@media (prefers-reduced-motion: reduce) { .wb-primary { transition: none; } }
+</style>
+
+<script>
+(function () {
+  var KEY_SHOWN = 'jpl.welcomeBack.lastShown';
+  var KEY_NEVER = 'jpl.welcomeBack.never';
+
+  function ls(fn, fallback) { try { return fn(); } catch (e) { return fallback; } }
+  function today() { var d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+
+  var root = document.getElementById('welcomeBack');
+  if (!root) return;
+  var dialog = root.querySelector('.wb-dialog');
+  var lastFocused = null;
+
+  function close() {
+    root.hidden = true;
+    document.removeEventListener('keydown', onKey, true);
+    if (lastFocused && lastFocused.focus) { try { lastFocused.focus(); } catch (e) {} }
+  }
+
+  function onKey(e) {
+    if (e.key === 'Escape') { e.preventDefault(); close(); return; }
+    if (e.key !== 'Tab') return;
+    // Fokus-Falle: Tab bleibt im Dialog.
+    var f = dialog.querySelectorAll('a[href], button, input, [tabindex]:not([tabindex="-1"])');
+    if (!f.length) return;
+    var first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
+
+  function open(data) {
+    var lead = document.getElementById('wbLead');
+    var primary = document.getElementById('wbPrimary');
+    var due = data.due_total || 0;
+
+    if (due > 0) {
+      lead.textContent = due === 1 ? 'Eine Karte wartet auf dich.' : due + ' Karten warten auf dich.';
+      primary.textContent = 'Jetzt wiederholen';
+      primary.href = data.review_url;
+    } else if (data.next_lesson) {
+      lead.textContent = 'Heute ist nichts fällig — du kannst direkt weiterlernen.';
+      primary.textContent = 'Weiter mit: ' + data.next_lesson.title;
+      primary.href = data.next_lesson.url;
+    } else {
+      lead.textContent = 'Heute ist nichts fällig. Schau dich um:';
+      primary.hidden = true;
+    }
+
+    var list = document.getElementById('wbList');
+    var wrap = document.getElementById('wbDiscover');
+    if (data.undiscovered && data.undiscovered.length) {
+      data.undiscovered.forEach(function (f) {
+        var li = document.createElement('li');
+        var a = document.createElement('a');
+        a.className = 'wb-item';
+        a.href = f.url;
+        var t = document.createElement('span');
+        t.className = 'wb-item-title';
+        t.textContent = f.title;
+        var p = document.createElement('span');
+        p.className = 'wb-item-text';
+        p.textContent = f.text;
+        a.appendChild(t); a.appendChild(p); li.appendChild(a); list.appendChild(li);
+      });
+      wrap.hidden = false;
+    }
+
+    lastFocused = document.activeElement;
+    root.hidden = false;
+    ls(function () { localStorage.setItem(KEY_SHOWN, today()); });
+    document.addEventListener('keydown', onKey, true);
+    try { dialog.focus(); } catch (e) {}
+  }
+
+  document.getElementById('wbClose').addEventListener('click', close);
+  root.addEventListener('click', function (e) { if (e.target === root) close(); });
+  document.getElementById('wbNever').addEventListener('change', function (e) {
+    if (e.target.checked) { ls(function () { localStorage.setItem(KEY_NEVER, '1'); }); close(); }
+  });
+
+  function boot() {
+    if (ls(function () { return localStorage.getItem(KEY_NEVER); }, null) === '1') return;
+    if (ls(function () { return localStorage.getItem(KEY_SHOWN); }, null) === today()) return;
+    fetch('/api/welcome-back', { headers: { 'Accept': 'application/json' } })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) { if (d && d.show) open(d); })
+      .catch(function () {});
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();
+</script>

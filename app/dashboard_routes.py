@@ -76,6 +76,18 @@ def index():
     )
 
 
+@dashboard_bp.route('/api/welcome-back')
+@login_required
+def api_welcome_back():
+    """Daten fuer den „Willkommen zurück"-Dialog (lazy vom Client geholt).
+
+    Liefert immer 200 mit `show` — der Client entscheidet zusammen mit seinem
+    localStorage („heute schon gezeigt" / „nicht mehr anzeigen"), ob der Dialog
+    aufgeht. Faellt der Call aus, passiert einfach nichts.
+    """
+    return jsonify(dashboard_service.welcome_back(current_user))
+
+
 @dashboard_bp.route('/api/dashboard/compass-glyphs')
 @login_required
 def api_compass_glyphs():

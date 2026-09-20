@@ -945,3 +945,123 @@ def vocab_themes(user_id):
     ]
     result.sort(key=lambda x: -x['total'])
     return result[:8]
+
+
+# ── „Willkommen zurück"-Dialog ────────────────────────────────────────────
+# Ein Rueckkehrer-Dialog statt eines allgemeinen Feature-Popups: er zeigt, was
+# JETZT ansteht (faellige Karten bzw. naechste Lektion) und hoechstens drei
+# Funktionen, die DIESER Nutzer laut Daten noch nie benutzt hat.
+
+def _has_real_review(user_id):
+    """Hat der Nutzer je ECHT wiederholt (statt nur im Lektions-Deck bewertet)?
+
+    Zwei Signale, weil Altdaten kein source-Feld haben:
+    - ein ReviewLog mit source='review' (ab Einfuehrung eindeutig), ODER
+    - irgendeine Karte mit >= 2 ReviewLog-Eintraegen (eine zweite Bewertung
+      derselben Karte IST eine Wiederholung).
+    """
+    if db.session.query(ReviewLog.id).filter(
+        ReviewLog.user_id == user_id, ReviewLog.source == 'review'
+    ).first() is not None:
+        return True
+    repeated = (
+        db.session.query(ReviewLog.content_id)
+        .filter(ReviewLog.user_id == user_id)
+        .group_by(ReviewLog.content_id)
+        .having(func.count(ReviewLog.id) >= 2)
+        .first()
+    )
+    return repeated is not None
+
+
+def _undiscovered_features(user_id):
+    """Max. 3 Funktionen, die dieser Nutzer noch nie benutzt hat.
+
+    Reihenfolge ist Absicht: „Wiederholen" zuerst — das ist der Kern des
+    Systems und genau die Funktion, die Nutzer nicht finden. /pruefen bleibt
+    aussen vor: die Seite ist READ-ONLY, ihre Nutzung ist serverseitig nicht
+    erkennbar (kein ehrliches „noch nie benutzt" moeglich).
+    """
+    from flask import url_for
+
+    from app.models import KanaSpellScore, KanaStormScore
+
+    items = []
+
+    if not _has_real_review(user_id):
+        items.append({
+            'key': 'review',
+            'title': 'Wiederholen',
+            'text': 'Karten kommen genau dann zurück, wenn du sie fast vergessen '
+                    'hättest — so bleibt der Stoff hängen.',
+            'url': url_for('srs.review_page'),
+        })
+
+    has_reverse = db.session.query(ReviewLog.id).filter(
+        ReviewLog.user_id == user_id, ReviewLog.direction == 'reverse'
+    ).first() is not None
+    if not has_reverse:
+        items.append({
+            'key': 'produktion',
+            'title': 'DE→JP sprechen',
+            'text': 'Statt nur zu erkennen, holst du das japanische Wort selbst '
+                    'aus dem Kopf — der Schritt zum aktiven Wortschatz.',
+            'url': url_for('srs.production_page'),
+        })
+
+    has_kana_game = (
+        db.session.query(KanaStormScore.id).filter_by(user_id=user_id).first() is not None
+        or db.session.query(KanaSpellScore.id).filter_by(user_id=user_id).first() is not None
+    )
+    if not has_kana_game:
+        items.append({
+            'key': 'kana',
+            'title': 'Kana-Spiele',
+            'text': 'Hiragana und Katakana spielerisch bis zur Lesegeschwindigkeit '
+                    'drillen — ein paar Minuten reichen.',
+            'url': url_for('srs.practice_kana_page'),
+        })
+
+    return items[:3]
+
+
+def welcome_back(user):
+    """Daten fuer den „Willkommen zurück"-Dialog (siehe /api/welcome-back).
+
+    show = True nur wenn der Nutzer (a) schon frueher aktiv war, (b) seine
+    letzte Aktivitaet VOR dem heutigen CH-Kalendertag liegt (also wirklich
+    zurueckkommt) und (c) es ueberhaupt etwas zu zeigen gibt.
+    """
+    from flask import url_for
+
+    from app import srs_service
+    from app.time_utils import ch_today
+
+    uid = user.id
+    due_forward = srs_service.get_due_count(uid)
+    due_reverse = srs_service.get_production_due_count(uid)
+    due_total = due_forward + due_reverse
+
+    undiscovered = _undiscovered_features(uid)
+
+    nxt = next_lesson(uid)
+    next_lesson_data = None
+    if nxt:
+        url = url_for('routes.view_lesson', lesson_id=nxt['lesson_id'])
+        if nxt.get('last_page'):
+            url = f"{url}#page-{nxt['last_page']}"
+        next_lesson_data = {'title': nxt['title'], 'url': url}
+
+    last = user.last_activity_date
+    returning = last is not None and last < ch_today()
+    show = bool(returning and (due_total > 0 or undiscovered))
+
+    return {
+        'show': show,
+        'due_total': due_total,
+        'due_forward': due_forward,
+        'due_reverse': due_reverse,
+        'review_url': url_for('srs.review_page'),
+        'next_lesson': next_lesson_data,
+        'undiscovered': undiscovered,
+    }

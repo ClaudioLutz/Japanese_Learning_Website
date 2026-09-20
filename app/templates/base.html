@@ -965,6 +965,14 @@
     </script>
     {% endif %}
 
+    {# „Willkommen zurück"-Dialog — NUR eingeloggt und nur auf ruhigen Seiten.
+       Whitelist statt Blacklist: Lektionen, /review*, /practice*, /pruefen,
+       Auth-, Admin- und Embed-Seiten sollen nie unterbrochen werden. #}
+    {% if current_user.is_authenticated
+          and request.endpoint in ['routes.index', 'dashboard.index', 'routes.lessons'] %}
+      {% include '_welcome_back.html' %}
+    {% endif %}
+
     <footer class="site-footer mt-5 py-4 border-top text-center small text-muted">
         <div class="container">
             <nav class="footer-nav d-flex flex-wrap justify-content-center gap-3 mb-2" aria-label="Rechtliches und Infos">
