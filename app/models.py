@@ -1628,6 +1628,15 @@ class ReviewLog(db.Model):
     # nach Reife"-Statistik (/api/dashboard/acc-by-stage). Nullable: Altdaten vor
     # Einfuehrung haben keinen Wert, fuellt sich ab Einfuehrung pro Review.
     stage_at_review = db.Column(db.Integer, nullable=True)
+    # Herkunft dieser Bewertung — WO wurde die Karte bewertet?
+    # 'deck'        = Lektions-Deck (Erstkontakt in der Lektion)
+    # 'review'      = /review (echte Wiederholung, JP->DE)
+    # 'produktion'  = /review/produktion (DE->JP)
+    # 'kana_grid'   = Kana-Zuordnungsspiel
+    # 'dashboard'   = Inline-Review auf /mein-lernen
+    # Nullable: Altdaten vor Einfuehrung haben keinen Wert; unbekannte/fehlende
+    # Werte werden serverseitig zu NULL normalisiert (kein 400 — gecachte Clients).
+    source = db.Column(db.String(16), nullable=True)
 
     # Beziehungen
     user = db.relationship('User', backref=db.backref('review_logs', lazy='dynamic'))

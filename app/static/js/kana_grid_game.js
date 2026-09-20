@@ -724,6 +724,7 @@ function kanaGridGame(contentId) {
                         rating: rating,
                         time_taken_ms: elapsed,
                         grid_context: gridContext,
+                        source: 'kana_grid',
                     }),
                 });
                 if (resp.ok) {

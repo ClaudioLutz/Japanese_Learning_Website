@@ -91,7 +91,7 @@ function dashboard(){
       // Grobes 2-Stufen-Mapping auf das echte 4-Rating-System: Nochmal=1, Gewusst=3.
       fetch('/api/srs/rate',{method:'POST',
         headers:{'Content-Type':'application/json','X-CSRFToken':CSRF,'Accept':'application/json'},
-        body:JSON.stringify({content_id:card.content_id, rating:ok?3:1, direction:'forward'})})
+        body:JSON.stringify({content_id:card.content_id, rating:ok?3:1, direction:'forward', source:'dashboard'})})
         .catch(()=>{})
         .finally(()=>{
           this.grading=false;

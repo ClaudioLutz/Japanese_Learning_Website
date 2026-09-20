@@ -1806,7 +1806,8 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
                     body: JSON.stringify({
                         content_id: card.content_id,
                         rating: ratingInt,
-                        time_taken_ms: timeTaken > 0 ? timeTaken : null
+                        time_taken_ms: timeTaken > 0 ? timeTaken : null,
+                        source: 'review'
                     })
                 });
                 if (!resp.ok) throw new Error('HTTP ' + resp.status);

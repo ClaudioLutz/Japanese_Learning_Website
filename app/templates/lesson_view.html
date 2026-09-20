@@ -2344,6 +2344,21 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                       </div>
                     </div>
                     {% endif %}
+                    {% if current_user.is_authenticated %}
+                    {# Bruecke Lektion -> Wiederholen: ohne diesen Hinweis findet
+                       niemand /review. „N faellig" kommt aus /api/srs/stats
+                       (derselbe Zaehler wie das Nav-Badge); bei N = 0 bleibt der
+                       Button aus und nur der erklaerende Satz steht da. #}
+                    <div class="completion-review-bridge mt-4">
+                      <a href="{{ url_for('srs.review_page') }}" id="completionReviewCta"
+                         class="btn btn-primary btn-lg w-100" style="display: none;">
+                        <i class="fas fa-rotate-right me-2"></i>Jetzt wiederholen (<span id="completionDueCount">0</span> fällig)
+                      </a>
+                      <p class="completion-review-note text-muted small mb-0 mt-2">
+                        Deine Karten aus dieser Lektion kommen ab jetzt unter „Üben → Wiederholen" wieder – genau dann, wenn du sie fast vergessen hättest.
+                      </p>
+                    </div>
+                    {% endif %}
                     <div class="d-grid gap-2 mt-4">
                       <a href="{{ url_for('routes.lessons') }}" class="btn btn-primary btn-lg">
                         <i class="fas fa-arrow-right me-2"></i>Weiter zu den Lektionen
@@ -3974,6 +3989,29 @@ function showLessonComplete() {
         if (secondaryCta) secondaryCta.textContent = 'Lektion nochmal ansehen';
     }
 
+    // Faellige Karten nachladen -> „Jetzt wiederholen (N fällig)". Nur eingeloggt
+    // (Element existiert sonst nicht). Bei N = 0 bleibt der Button weg und
+    // „Weiter zu den Lektionen" bleibt der primaere CTA.
+    const reviewCta = document.getElementById('completionReviewCta');
+    if (reviewCta) {
+        fetch('/api/srs/stats')
+            .then(r => r.json())
+            .then(data => {
+                const due = data.due_count || 0;
+                if (due > 0) {
+                    const n = document.getElementById('completionDueCount');
+                    if (n) n.textContent = due;
+                    reviewCta.style.display = '';
+                    const lessonsCta = document.querySelector('#lessonCompleteModal .d-grid .btn-lg');
+                    if (lessonsCta) {
+                        lessonsCta.classList.remove('btn-primary');
+                        lessonsCta.classList.add('btn-outline-secondary');
+                    }
+                }
+            })
+            .catch(() => {});
+    }
+
     // Calculate stats
     const totalContent = document.querySelectorAll('.content-item').length;
     const quizQuestions = document.querySelectorAll('.quiz-question');
@@ -4207,6 +4245,7 @@ function createDeck(cardItems, page) {
                 <span class="kbd-hint">4</span>
             </button>
         </div>
+        <div class="deck-first-hint" aria-live="polite">Erste Einschätzung = Startwert. Richtig gefestigt wird später beim Wiederholen.</div>
         <div class="deck-empty" style="display: none;">
             <div class="deck-empty-icon">🔍</div>
             <p class="text-muted">Keine Karten für diese Auswahl.<br>Wähle oben mindestens einen Kartentyp.</p>
@@ -4230,6 +4269,16 @@ function createDeck(cardItems, page) {
     const btnGroup = deckEl.querySelector('.confidence-buttons');
     const completeEl = deckEl.querySelector('.deck-complete');
     const emptyEl = deckEl.querySelector('.deck-empty');
+    const firstHintEl = deckEl.querySelector('.deck-first-hint');
+    // Karten, die in DIESER Session schon bewertet wurden — zusammen mit
+    // reviewedIndices (DB-Stand) ergibt das „Erstkontakt ja/nein".
+    const ratedThisSession = new Set();
+    function updateFirstHint(idx) {
+        if (!firstHintEl) return;
+        const first = isAuthenticated && idx != null
+            && !reviewedIndices.has(idx) && !ratedThisSession.has(idx);
+        firstHintEl.classList.toggle('is-visible', first);
+    }
     const filterBar = deckEl.querySelector('.deck-filter-bar');
 
     // Filter-Pills rendern (nur wenn mind. 2 verschiedene Kartentypen im Deck)
@@ -4261,12 +4310,14 @@ function createDeck(cardItems, page) {
             btnGroup.style.display = 'none';
             completeEl.style.display = 'none';
             emptyEl.style.display = 'block';
+            if (firstHintEl) firstHintEl.classList.add('is-off');
         } else if (pending.length === 0) {
             cardArea.innerHTML = '';
             cardArea.style.display = 'none';
             btnGroup.style.display = 'none';
             emptyEl.style.display = 'none';
             completeEl.style.display = 'block';
+            if (firstHintEl) firstHintEl.classList.add('is-off');
         } else {
             emptyEl.style.display = 'none';
             completeEl.style.display = 'none';
@@ -4274,6 +4325,8 @@ function createDeck(cardItems, page) {
             btnGroup.style.display = '';
             btnGroup.classList.remove('visible');
             if (currentIdx >= pending.length) currentIdx = 0;
+            if (firstHintEl) firstHintEl.classList.remove('is-off');
+            updateFirstHint(pending[currentIdx]);
             showCard(pending[currentIdx]);
         }
         updateStats();
@@ -4462,9 +4515,14 @@ function createDeck(cardItems, page) {
                 body: JSON.stringify({
                     content_id: parseInt(contentId),
                     rating: ratingInt,
-                    time_taken_ms: timeTaken > 0 ? timeTaken : null
+                    time_taken_ms: timeTaken > 0 ? timeTaken : null,
+                    source: 'deck'
                 })
             }).catch(e => console.warn('[SRS] Rate failed:', e));
+
+            // Ab jetzt ist diese Karte kein Erstkontakt mehr (auch bei „Nochmal",
+            // wo sie im Deck bleibt) — der Startwert-Hinweis verschwindet.
+            ratedThisSession.add(cardIndex);
 
             // Invalidate interval cache for this card
             delete intervalCache[String(contentId)];
@@ -4478,6 +4536,7 @@ function createDeck(cardItems, page) {
                 const insertAt = Math.min(currentIdx + 2 + Math.floor(Math.random() * 3), pending.length);
                 pending.splice(insertAt, 0, cardIndex);
                 if (currentIdx >= pending.length) currentIdx = 0;
+                updateFirstHint(pending[currentIdx]);
                 showCard(pending[currentIdx]);
                 updateStats();
             }, 450);

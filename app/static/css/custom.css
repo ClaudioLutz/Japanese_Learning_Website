@@ -1930,6 +1930,29 @@ button[onclick*="moveContentInPage"]:active {
 .confidence-buttons.visible {
     display: flex;
 }
+/* Erstkontakt-Hinweis unter den Deck-Buttons: erklaert, dass die erste
+   Einschaetzung nur ein Startwert ist. Platz wird IMMER reserviert
+   (visibility statt display) — sonst springt das Deck-Layout beim
+   Kartenwechsel. JS setzt .is-visible pro Karte, .is-off blendet die Zeile
+   samt Platz aus (Deck fertig/leer). */
+.deck-first-hint {
+    min-height: 1.15rem;
+    margin-top: 0.5rem;
+    text-align: center;
+    font-size: 0.76rem;
+    line-height: 1.15rem;
+    color: var(--text-muted, #5C564D);
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+.deck-first-hint.is-visible {
+    visibility: visible;
+    opacity: 0.85;
+}
+.deck-first-hint.is-off {
+    display: none;
+}
 .confidence-btn {
     flex: 1;
     max-width: 140px;

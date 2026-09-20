@@ -422,6 +422,7 @@
                 body: JSON.stringify({
                     content_id: card.content_id, rating: ratingInt,
                     direction: 'reverse', time_taken_ms: timeTaken,
+                    source: 'produktion',
                 }),
             });
             if (resp.ok) {

@@ -70,7 +70,8 @@ def _card_from_state(state):
         return Card()
 
 
-def rate_card(user_id, content_id, rating_int, time_taken_ms=None, direction='forward'):
+def rate_card(user_id, content_id, rating_int, time_taken_ms=None, direction='forward',
+              source=None):
     """
     Bewertet eine Karte und berechnet den neuen FSRS-State.
 
@@ -83,12 +84,14 @@ def rate_card(user_id, content_id, rating_int, time_taken_ms=None, direction='fo
             Jede Richtung ist eine EIGENE FSRS-Spur (eigener State pro
             (user, content, direction)). Reverse entsteht on-the-fly beim ersten
             Rating ueber den bestehenden Insert-Pfad (kein Vorab-Seeding).
+        source: Herkunft der Bewertung ('deck' | 'review' | 'produktion' |
+            'kana_grid' | 'dashboard' | None). Wird in ReviewLog.source
+            protokolliert. Der Aufrufer normalisiert unbekannte Werte auf None.
 
     Returns:
         dict mit next_interval, due_date, status, reps, lapses
     """
     scheduler = _get_scheduler(user_id)
-    rating = RATING_MAP[rating_int]
 
     state = CardReviewState.query.filter_by(
         user_id=user_id, content_id=content_id, direction=direction
@@ -113,6 +116,17 @@ def rate_card(user_id, content_id, rating_int, time_taken_ms=None, direction='fo
             lapses=0,
         )
         db.session.add(state)
+
+    # ── Erste Deck-Bewertung deckeln (2026-09-20) ────────────────────────
+    # Im Lektions-Deck ist „Einfach" beim ERSTKONTAKT keine Aussage ueber
+    # Behalten, sondern ueber Wiedererkennen — FSRS schiebt die Karte damit
+    # 8-11 Tage weg und der Lerner sieht sie faktisch nie wieder. Deshalb
+    # zaehlt die allererste Deck-Bewertung einer Karte maximal als „Gut" (3).
+    # Folge-Bewertungen, /review und die Ratings 1-3 bleiben unveraendert.
+    if source == 'deck' and is_new and rating_int == 4:
+        rating_int = 3
+
+    rating = RATING_MAP[rating_int]
 
     # Karten-Stufe VOR dem Review
     old_stage_idx, old_stage_name, _ = get_card_stage(state.fsrs_card_state)
@@ -198,6 +212,7 @@ def rate_card(user_id, content_id, rating_int, time_taken_ms=None, direction='fo
         scheduled_days=scheduled_days,
         elapsed_days=elapsed_days,
         stage_at_review=old_stage_idx,
+        source=source,
     )
     db.session.add(log_entry)
     db.session.commit()

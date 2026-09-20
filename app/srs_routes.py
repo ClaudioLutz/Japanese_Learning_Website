@@ -23,6 +23,11 @@ logger = logging.getLogger(__name__)
 
 srs_bp = Blueprint('srs', __name__)
 
+# Erlaubte Werte fuer ReviewLog.source (Herkunft einer Bewertung). Alles andere
+# — auch ein fehlender Wert von gecachten Clients — wird still auf None
+# normalisiert (KEIN 400, damit alte Frontends weiterlaufen).
+RATE_SOURCES = frozenset({'deck', 'review', 'produktion', 'kana_grid', 'dashboard'})
+
 
 # ── API Endpoints ──────────────────────────────────────────────
 
@@ -42,6 +47,10 @@ def api_rate_card():
     direction = data.get('direction', 'forward')
     # Kana-Grid-Spiel-Kontext (optional, vom Frontend gesetzt)
     grid_ctx = data.get('grid_context') or {}
+    # Herkunft der Bewertung — Whitelist, unbekannt/fehlend => None.
+    source = data.get('source')
+    if source not in RATE_SOURCES:
+        source = None
 
     if not content_id or not rating:
         return jsonify({'error': 'content_id und rating erforderlich'}), 400
@@ -61,6 +70,7 @@ def api_rate_card():
             rating_int=int(rating),
             time_taken_ms=int(time_taken_ms) if time_taken_ms else None,
             direction=direction,
+            source=source,
         )
 
         # Streak aktualisieren
