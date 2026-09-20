@@ -169,7 +169,7 @@
         <div class="topnav-primary" :class="mobileOpen && 'is-open'">
           {# Drei Lern-Verben statt fünf flacher Modi: Mein Lernen (Hub) ·
              Lektionen · Üben. „Üben" ist ein Dropdown (Desktop) bzw. Bottom-Sheet
-             (Mobile) mit Verstehen (JP→DE), Sprechen (DE→JP), Kana und Prüfen —
+             (Mobile) mit Wiederholen (JP→DE), Wiederholen (DE→JP), Kana und Prüfen —
              keine eigene Seite mehr, keine Funktion versteckt. #}
           {% if current_user.is_authenticated %}
           <a href="{{ url_for('dashboard.index') }}"
@@ -186,7 +186,7 @@
           {% if current_user.is_authenticated %}
           {# Üben — Dropdown statt eigener Seite: die vier Übungs-Modi direkt
              erreichbar. Trigger ist aktiv auf allen Unterseiten (review/produktion/
-             kana/pruefen). Aggregat-Fälligkeits-Badge (Verstehen JP→DE + Sprechen
+             kana/pruefen). Aggregat-Fälligkeits-Badge (Wiederholen JP→DE + Wiederholen
              DE→JP) am Trigger; die beiden Richtungs-Items tragen eigene Zähler. #}
           <div class="topnav-ueben" @click.stop="uebenMenuOpen = !uebenMenuOpen; userMenuOpen = false">
             <button type="button"
@@ -200,13 +200,13 @@
               <a href="{{ url_for('srs.review_page') }}" class="topnav-dd-item {% if request.endpoint == 'srs.review_page' %}is-active{% endif %}"
                  {% if request.endpoint == 'srs.review_page' %}aria-current="page"{% endif %}>
                 <i class="fas fa-arrow-down-long" aria-hidden="true"></i>
-                <span class="topnav-dd-grow">Verstehen <small>JP→DE</small></span>
+                <span class="topnav-dd-grow">Wiederholen <small>JP→DE</small></span>
                 <span class="topnav-dd-count" id="uebenVerstehenBadge" aria-hidden="true"></span>
               </a>
               <a href="{{ url_for('srs.production_page') }}" class="topnav-dd-item {% if request.endpoint == 'srs.production_page' %}is-active{% endif %}"
                  {% if request.endpoint == 'srs.production_page' %}aria-current="page"{% endif %}>
                 <i class="fas fa-arrow-up-long" aria-hidden="true"></i>
-                <span class="topnav-dd-grow">Sprechen <small>DE→JP</small></span>
+                <span class="topnav-dd-grow">Wiederholen <small>DE→JP</small></span>
                 <span class="topnav-dd-count" id="uebenSprechenBadge" aria-hidden="true"></span>
               </a>
               <div class="topnav-dd-divider"></div>
@@ -275,7 +275,7 @@
                   <small>{{ current_user.level_title }}</small>
                 </div>
                 {# „Mein Lernen" + „Üben" leben in der Primär-/Bottom-Nav;
-                   Verstehen/Sprechen/Kana/Prüfen im Üben-Dropdown bzw. -Sheet
+                   Wiederholen/Kana/Prüfen im Üben-Dropdown bzw. -Sheet
                    → hier nicht mehr doppelt. #}
                 <a href="{{ url_for('routes.user_profile') }}" class="topnav-dd-item">
                   <i class="fas fa-user-circle" aria-hidden="true"></i> Profil
@@ -826,12 +826,12 @@
       </div>
       <a href="{{ url_for('srs.review_page') }}" class="ueben-sheet__item">
         <i class="fas fa-arrow-down-long" aria-hidden="true"></i>
-        <span class="ueben-sheet__grow">Verstehen <small>JP→DE</small></span>
+        <span class="ueben-sheet__grow">Wiederholen <small>JP→DE</small></span>
         <span class="topnav-dd-count" id="uebenVerstehenBadgeM" aria-hidden="true"></span>
       </a>
       <a href="{{ url_for('srs.production_page') }}" class="ueben-sheet__item">
         <i class="fas fa-arrow-up-long" aria-hidden="true"></i>
-        <span class="ueben-sheet__grow">Sprechen <small>DE→JP</small></span>
+        <span class="ueben-sheet__grow">Wiederholen <small>DE→JP</small></span>
         <span class="topnav-dd-count" id="uebenSprechenBadgeM" aria-hidden="true"></span>
       </a>
       <a href="{{ url_for('srs.practice_kana_page') }}" class="ueben-sheet__item">
@@ -952,14 +952,14 @@
                     }
                 });
             };
-            // Üben trägt ein Aggregat-Badge (Trigger + Bottom-Nav-Tab): Verstehen
-            // (JP→DE) + Sprechen (DE→JP) zusammen. Die Richtungs-Items im Dropdown
+            // Üben trägt ein Aggregat-Badge (Trigger + Bottom-Nav-Tab): Wiederholen
+            // (JP→DE) + (DE→JP) zusammen. Die Richtungs-Items im Dropdown
             // bzw. Bottom-Sheet tragen zusätzlich ihren eigenen Zähler.
             const verstehen = data.due_count || 0;
             const sprechen = data.production_due_count || 0;
             setBadge(['uebenBadge', 'uebenBadgeDesktop'], verstehen + sprechen, 'Üben');
-            setBadge(['uebenVerstehenBadge', 'uebenVerstehenBadgeM'], verstehen, 'Verstehen');
-            setBadge(['uebenSprechenBadge', 'uebenSprechenBadgeM'], sprechen, 'Sprechen');
+            setBadge(['uebenVerstehenBadge', 'uebenVerstehenBadgeM'], verstehen, 'Wiederholen JP→DE');
+            setBadge(['uebenSprechenBadge', 'uebenSprechenBadgeM'], sprechen, 'Wiederholen DE→JP');
         }).catch(() => {});
     })();
     </script>
