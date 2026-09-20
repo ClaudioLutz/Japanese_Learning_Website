@@ -35,7 +35,7 @@ from psycopg2.extras import Json
 psycopg2.extensions.register_adapter(dict, Json)
 psycopg2.extensions.register_adapter(list, Json)
 
-from scripts.sync_safety import (
+from scripts.sync_safety import (  # noqa: E402
     backup_user_tables,
     collect_snapshot,
     detect_drift,

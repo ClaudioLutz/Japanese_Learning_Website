@@ -13,8 +13,8 @@ import io
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from app import create_app, db
-from app.models import Grammar, LessonContent, Lesson
+from app import create_app, db  # noqa: E402
+from app.models import Grammar, LessonContent, Lesson  # noqa: E402
 
 # ══════════════════════════════════════════════════════════════════════
 # 1. GRAMMATIK-UEBERSETZUNGEN

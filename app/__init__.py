@@ -1,20 +1,23 @@
 # app/__init__.py
 import logging
 import re
+# logging.basicConfig() muss vor den folgenden Imports laufen, damit Log-Ausgaben
+# von Drittbibliotheken bereits beim Import korrekt konfiguriert sind.
 logging.basicConfig(level=logging.INFO)
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
-from flask_migrate import Migrate
-from flask_wtf.csrf import CSRFProtect
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
-from flask_talisman import Talisman
-import os
-from werkzeug.middleware.proxy_fix import ProxyFix
+from flask import Flask  # noqa: E402
+from flask_sqlalchemy import SQLAlchemy  # noqa: E402
+from flask_login import LoginManager  # noqa: E402
+from flask_migrate import Migrate  # noqa: E402
+from flask_wtf.csrf import CSRFProtect  # noqa: E402
+from flask_limiter import Limiter  # noqa: E402
+from flask_limiter.util import get_remote_address  # noqa: E402
+from flask_talisman import Talisman  # noqa: E402
+import os  # noqa: E402
+from werkzeug.middleware.proxy_fix import ProxyFix  # noqa: E402
 
-# Load environment variables
-from dotenv import load_dotenv
+# Load environment variables vor app-internen Imports, damit .env-Werte
+# (z.B. DATABASE_URL) beim Modul-Import bereits verfuegbar sind.
+from dotenv import load_dotenv  # noqa: E402
 load_dotenv()
 
 db = SQLAlchemy()

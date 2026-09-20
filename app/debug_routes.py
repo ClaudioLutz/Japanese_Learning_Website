@@ -6,7 +6,6 @@ Debug routes for troubleshooting payment system issues
 from flask import Blueprint, jsonify, current_app
 from flask_login import login_required, current_user
 import os
-import logging
 
 debug_bp = Blueprint('debug', __name__, url_prefix='/debug')
 
@@ -18,9 +17,7 @@ def debug_payment_config():
     """
     if not current_user.is_admin:
         return jsonify({'error': 'Admin access required'}), 403
-    
-    logger = logging.getLogger(__name__)
-    
+
     # Collect environment variables
     env_vars = {
         'MOCK_PAYMENTS_ENABLED': os.environ.get('MOCK_PAYMENTS_ENABLED', 'NOT_SET'),
@@ -65,7 +62,7 @@ def debug_payment_config():
     try:
         from app import db
         from sqlalchemy import text
-        result = db.session.execute(text('SELECT 1 as test'))
+        db.session.execute(text('SELECT 1 as test'))
         db_info = {
             'connection_success': True,
             'test_query_result': 'OK'

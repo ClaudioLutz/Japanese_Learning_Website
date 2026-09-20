@@ -177,30 +177,6 @@ class PersonalizedLessonGenerator:
     
     def _generate_remedial_explanation(self, content_type: str, analysis: Dict[str, Any]) -> str:
         """Generate AI-powered remedial explanation."""
-        weakness_details = analysis.get('content_type_weaknesses', {}).get(content_type, {})
-        
-        system_prompt = (
-            "You are a Japanese language tutor creating personalized remedial content. "
-            "Generate encouraging, helpful explanations that address specific weaknesses."
-        )
-        
-        user_prompt = f"""
-        Create a remedial explanation for {content_type} practice.
-        
-        User's Performance Data:
-        - Accuracy: {weakness_details.get('accuracy_percentage', 0)}%
-        - Average Attempts: {weakness_details.get('average_attempts', 0)}
-        - Total Questions: {weakness_details.get('total_questions', 0)}
-        
-        Create an encouraging explanation that:
-        1. Acknowledges the challenge
-        2. Provides helpful study tips
-        3. Explains why this content type is important
-        4. Motivates continued practice
-        
-        Keep it concise but supportive (2-3 paragraphs).
-        """
-        
         result = self.ai_generator.generate_explanation(content_type, "beginner", "remedial practice")
         return result.get('generated_text') or f"Let's practice {content_type} together!"
     

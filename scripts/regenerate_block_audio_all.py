@@ -22,11 +22,11 @@ os.environ.setdefault(
 )
 os.environ.setdefault("PAYMENT_PROVIDER", "mock")
 
-from dotenv import load_dotenv
+from dotenv import load_dotenv  # noqa: E402
 load_dotenv(PROJECT_ROOT / ".env")
 
-from app import create_app, db
-from app.models import Lesson, LessonContent
+from app import create_app, db  # noqa: E402
+from app.models import Lesson, LessonContent  # noqa: E402
 
 GEN_SCRIPT = PROJECT_ROOT / ".claude" / "skills" / "generate-lesson" / "scripts" / "gen_text_audio.py"
 NEW_GENERATOR_TAG = "gemini_ja_neural2_de_split"

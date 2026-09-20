@@ -30,7 +30,7 @@ if sys.platform == "win32" and getattr(sys.stdout, "encoding", "").lower() != "u
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from dotenv import load_dotenv
+from dotenv import load_dotenv  # noqa: E402
 load_dotenv(PROJECT_ROOT / ".env")
 
 os.environ.setdefault(
@@ -39,15 +39,15 @@ os.environ.setdefault(
 )
 os.environ.setdefault("PAYMENT_PROVIDER", "mock")
 
-import markdown as _md
-import bleach as _bleach
-from bs4 import BeautifulSoup
-from google import genai
-from google.genai import types
+import markdown as _md  # noqa: E402
+import bleach as _bleach  # noqa: E402
+from bs4 import BeautifulSoup  # noqa: E402
+from google import genai  # noqa: E402
+from google.genai import types  # noqa: E402
 
-from app import create_app, db
-from app.models import Lesson, LessonContent
-from app.routes import _maybe_spell_out_kana_row
+from app import create_app, db  # noqa: E402
+from app.models import Lesson, LessonContent  # noqa: E402
+from app.routes import _maybe_spell_out_kana_row  # noqa: E402
 
 OUT_DIR = PROJECT_ROOT / "app" / "static" / "uploads" / "lessons" / "inline_audio"
 GEMINI_MODEL = "gemini-2.5-pro-preview-tts"
@@ -307,7 +307,7 @@ def main() -> int:
     app = create_app()
     with app.app_context():
         if args.all:
-            ids = [l.id for l in db.session.query(Lesson).filter_by(is_published=True).all()]
+            ids = [lesson.id for lesson in db.session.query(Lesson).filter_by(is_published=True).all()]
         else:
             ids = [args.lesson_id]
 

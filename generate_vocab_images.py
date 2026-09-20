@@ -6,9 +6,9 @@ import sys
 # UTF-8 Output erzwingen (Windows)
 sys.stdout.reconfigure(encoding='utf-8')
 
-from app import create_app, db
-from app.models import Vocabulary
-from app.ai_services import AILessonContentGenerator
+from app import create_app, db  # noqa: E402
+from app.models import Vocabulary  # noqa: E402
+from app.ai_services import AILessonContentGenerator  # noqa: E402
 
 app = create_app()
 

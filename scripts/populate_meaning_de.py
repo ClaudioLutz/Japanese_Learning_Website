@@ -3,8 +3,8 @@ import sys
 import io
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-from app import create_app, db
-from app.models import Vocabulary
+from app import create_app, db  # noqa: E402
+from app.models import Vocabulary  # noqa: E402
 
 app = create_app()
 

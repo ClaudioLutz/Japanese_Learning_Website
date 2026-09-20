@@ -124,7 +124,6 @@ class FileUploadHandler:
         """Resize and optimize images. Returns True on success, False on failure."""
         try:
             with Image.open(file_path) as img:
-                original_format = img.format
                 # Convert to RGB if necessary (for PNG with transparency to avoid issues with JPEG)
                 if img.mode in ('RGBA', 'LA', 'P'):
                     # Create a white background image

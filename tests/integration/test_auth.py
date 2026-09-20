@@ -50,7 +50,7 @@ class TestRegistration:
 
     def test_register_password_mismatch(self, client, app_context):
         """I-AU04: Passwort-Mismatch wird abgelehnt."""
-        resp = client.post("/register", data={
+        client.post("/register", data={
             "username": "user3",
             "email": "user3@test.com",
             "password": "Pass123!",

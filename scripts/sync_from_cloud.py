@@ -30,7 +30,7 @@ from psycopg2.extras import Json
 psycopg2.extensions.register_adapter(dict, Json)
 psycopg2.extensions.register_adapter(list, Json)
 
-from scripts.sync_safety import collect_snapshot, write_snapshot
+from scripts.sync_safety import collect_snapshot, write_snapshot  # noqa: E402
 
 # Content-Tabellen in Reihenfolge (Foreign-Key-Abhaengigkeiten beachten)
 # Gleiche Reihenfolge wie sync_content_upsert.py

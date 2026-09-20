@@ -8,11 +8,11 @@ from pathlib import Path
 sys.stdout.reconfigure(encoding="utf-8")
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-from dotenv import load_dotenv
+from dotenv import load_dotenv  # noqa: E402
 load_dotenv(PROJECT_ROOT / ".env")
 
-from google import genai
-from google.genai import types
+from google import genai  # noqa: E402
+from google.genai import types  # noqa: E402
 
 api_key = os.environ.get("GOOGLE_AI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
 client = genai.Client(api_key=api_key)
@@ -48,7 +48,9 @@ for label, text in strategies:
             out = OUT / f"sreihe_{label}.wav"
             buf = io.BytesIO()
             with wave.open(buf, "wb") as wf:
-                wf.setnchannels(1); wf.setsampwidth(2); wf.setframerate(24000)
+                wf.setnchannels(1)
+                wf.setsampwidth(2)
+                wf.setframerate(24000)
                 wf.writeframes(pcm)
             out.write_bytes(buf.getvalue())
             print(f"  {label}: {len(pcm)} bytes, {duration:.2f}s audio -> {out.name}")

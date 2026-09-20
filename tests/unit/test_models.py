@@ -473,7 +473,7 @@ class TestLessonPrerequisites:
         LessonPrerequisite(lesson_id=lesson.id, prerequisite_lesson_id=prereq.id)
         db.session.flush()
         # Voraussetzung als erledigt markieren
-        progress = UserLessonProgressFactory(
+        UserLessonProgressFactory(
             user_id=user.id, lesson_id=prereq.id, is_completed=True
         )
         db.session.commit()
@@ -587,7 +587,7 @@ class TestUserLessonProgress:
         user = UserFactory()
         lesson = LessonFactory()
         db.session.commit()
-        content = LessonContentFactory(lesson_id=lesson.id, is_interactive=True)
+        LessonContentFactory(lesson_id=lesson.id, is_interactive=True)
         db.session.commit()
         progress = UserLessonProgressFactory(
             user_id=user.id, lesson_id=lesson.id,

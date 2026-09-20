@@ -24,7 +24,7 @@ if sys.platform == "win32" and getattr(sys.stdout, "encoding", "").lower() != "u
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from dotenv import load_dotenv
+from dotenv import load_dotenv  # noqa: E402
 load_dotenv(PROJECT_ROOT / ".env")
 
 # DB-URL fuer App-Import
@@ -35,11 +35,11 @@ os.environ.setdefault(
 os.environ.setdefault("PAYMENT_PROVIDER", "mock")
 os.environ.setdefault("MOCK_PAYMENTS_ENABLED", "true")
 
-from google.cloud import texttospeech
-from google.cloud import storage
+from google.cloud import texttospeech  # noqa: E402
+from google.cloud import storage  # noqa: E402
 
-from app import create_app, db
-from app.models import Kana
+from app import create_app, db  # noqa: E402
+from app.models import Kana  # noqa: E402
 
 VOICE_NAME = "ja-JP-Chirp3-HD-Leda"   # weiblich, klar, neutral
 SPEAKING_RATE = 0.85

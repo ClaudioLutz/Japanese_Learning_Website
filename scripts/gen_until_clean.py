@@ -129,9 +129,8 @@ def render_until_clean(rel: str, prompt: str, key: str) -> str:
             out.write_bytes(webp)  # letzter Stand bleibt immer erhalten
             if ok:
                 return f"OK({attempt + 1})  {rel}"
-        except Exception as e:  # noqa: BLE001
+        except Exception:  # noqa: BLE001
             time.sleep(5)
-            last_err = str(e)[:80]
     return f"RESIDUAL {rel} :: {detail if 'detail' in dir() else ''}"
 
 

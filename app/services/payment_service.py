@@ -272,7 +272,7 @@ class PostFinanceService:
                     'date': error_body.get('date'),
                     'http_status': api_exception.status
                 }
-        except:
+        except Exception:
             return {
                 'type': 'UNKNOWN_ERROR',
                 'message': 'Failed to parse error response',

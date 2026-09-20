@@ -35,8 +35,8 @@ os.environ.setdefault("DATABASE_URL", "postgresql://app_user:JapaneseApp2025!@lo
 os.environ.setdefault("PAYMENT_PROVIDER", "mock")
 os.environ.setdefault("MOCK_PAYMENTS_ENABLED", "true")
 
-from app import create_app, db
-from app.models import (
+from app import create_app, db  # noqa: E402
+from app.models import (  # noqa: E402
     Vocabulary, Grammar, Lesson, LessonContent,
     LessonCategory, LessonPage, Course, course_lessons,
 )

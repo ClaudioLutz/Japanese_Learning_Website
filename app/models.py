@@ -823,15 +823,15 @@ class LessonCategory(db.Model):
         app.config['CONTENT_LANGUAGES'].
         """
         from app.models import UserLessonProgress
-        published = [l for l in self.lessons if l.is_published]
+        published = [lesson for lesson in self.lessons if lesson.is_published]
         if languages is not None:
-            published = [l for l in published if l.instruction_language in languages]
+            published = [lesson for lesson in published if lesson.instruction_language in languages]
         total = len(published)
         if not user or not getattr(user, 'is_authenticated', False) or total == 0:
             return 0, total
         progress = UserLessonProgress.query.filter(
             UserLessonProgress.user_id == user.id,
-            UserLessonProgress.lesson_id.in_([l.id for l in published]),
+            UserLessonProgress.lesson_id.in_([lesson.id for lesson in published]),
             UserLessonProgress.is_completed == True,  # noqa: E712
         ).count()
         return progress, total

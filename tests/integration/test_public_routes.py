@@ -44,7 +44,7 @@ class TestHomepage:
 
     def test_homepage_shows_n5_path_section(self, client, app_context):
         """Homepage zeigt JLPT-N5-Lernpfad-Section (Mayuko-Direktive)."""
-        cat = LessonCategoryFactory(
+        LessonCategoryFactory(
             slug='test-n5-mod-home',
             jlpt_level=5,
             display_order=1,

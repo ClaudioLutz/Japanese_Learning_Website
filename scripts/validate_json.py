@@ -20,7 +20,7 @@ if sys.platform == "win32":
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from scripts.schema import LessonData
+from scripts.schema import LessonData  # noqa: E402
 
 DATA_DIR = PROJECT_ROOT / "scripts" / "mnn_data"
 

@@ -13,6 +13,7 @@ from app.auth_tokens import make_reset_token, verify_reset_token
 from app.mail_service import send_password_reset_email
 from app.ai_services import AILessonContentGenerator
 from app.time_utils import home_greeting
+from app.utils import FileUploadHandler
 from app.lesson_export_import import (
     export_lesson_to_json, import_lesson_from_json, 
     create_lesson_export_package, import_lesson_from_zip
@@ -349,9 +350,9 @@ def _first_guest_lesson(lessons):
     "Kostenlos starten" direkt in Inhalt statt in eine Liste/Paywall fuehrt.
     Erwartet bereits gefilterte/sortierte Lektionen; gibt None zurueck wenn keine passt.
     """
-    for l in lessons:
-        if (l.price or 0) == 0 and l.allow_guest_access:
-            return l
+    for lesson in lessons:
+        if (lesson.price or 0) == 0 and lesson.allow_guest_access:
+            return lesson
     return None
 
 
@@ -385,9 +386,9 @@ def _build_n5_path_context(user, visible_langs):
         done, total = m.completion_for_user(user, languages=visible_langs)
         unlocked = m.is_unlocked_for_user(user)
         published_lessons = sorted(
-            [l for l in m.lessons
-             if l.is_published and l.instruction_language in visible_langs],
-            key=lambda l: (l.order_index or 0, l.id),
+            [lesson for lesson in m.lessons
+             if lesson.is_published and lesson.instruction_language in visible_langs],
+            key=lambda lesson: (lesson.order_index or 0, lesson.id),
         )
         is_complete = total > 0 and done == total
         if next_module_id is None and unlocked and total > 0 and not is_complete:
@@ -1172,9 +1173,9 @@ def module_detail(level: int, slug: str):
     user = current_user if current_user.is_authenticated else None
 
     published_lessons = sorted(
-        [l for l in module.lessons
-         if l.is_published and l.instruction_language in visible_langs],
-        key=lambda l: (l.order_index or 0, l.id),
+        [lesson for lesson in module.lessons
+         if lesson.is_published and lesson.instruction_language in visible_langs],
+        key=lambda lesson: (lesson.order_index or 0, lesson.id),
     )
 
     # Skip-Optimierung: bei nur 1 Lesson direkt rein, keine Zwischenseite
@@ -1539,9 +1540,9 @@ def view_lesson(lesson_id):
     parent_module = lesson.category if lesson.category else None
     if parent_module:
         siblings = sorted(
-            [l for l in parent_module.lessons
-             if l.is_published and l.instruction_language == lesson.instruction_language],
-            key=lambda l: (l.order_index or 0, l.id)
+            [sibling for sibling in parent_module.lessons
+             if sibling.is_published and sibling.instruction_language == lesson.instruction_language],
+            key=lambda sibling: (sibling.order_index or 0, sibling.id)
         )
         try:
             idx = siblings.index(lesson)
@@ -2251,8 +2252,8 @@ def move_lesson(lesson_id):
     if direction not in ['up', 'down']:
         return jsonify({"error": "Invalid direction specified"}), 400
 
-    lesson_to_move = Lesson.query.get_or_404(lesson_id)
-    
+    Lesson.query.get_or_404(lesson_id)
+
     # Get all lessons ordered by order_index globally (not by category)
     lessons = Lesson.query.order_by(Lesson.order_index, Lesson.id).all()
     
@@ -2363,7 +2364,7 @@ def get_content_options(content_type):
 @login_required
 @admin_required
 def list_lesson_content(lesson_id):
-    lesson = Lesson.query.get_or_404(lesson_id)
+    Lesson.query.get_or_404(lesson_id)
     content_items = LessonContent.query.filter_by(lesson_id=lesson_id).order_by(LessonContent.order_index).all()
     return jsonify([model_to_dict(item) for item in content_items])
 
@@ -2371,7 +2372,7 @@ def list_lesson_content(lesson_id):
 @login_required
 @admin_required
 def add_lesson_content(lesson_id):
-    lesson = Lesson.query.get_or_404(lesson_id)
+    Lesson.query.get_or_404(lesson_id)
     data = request.json
     if not data or not data.get('content_type'):
         return jsonify({"error": "Missing required field: content_type"}), 400
@@ -2902,7 +2903,7 @@ def update_lesson_content(content_id):
 @admin_required
 def bulk_update_content(lesson_id):
     """Bulk update content properties"""
-    lesson = Lesson.query.get_or_404(lesson_id)
+    Lesson.query.get_or_404(lesson_id)
     data = request.json
     
     if not data or 'content_ids' not in data or 'updates' not in data:
@@ -2931,7 +2932,7 @@ def bulk_update_content(lesson_id):
 @admin_required
 def bulk_duplicate_content(lesson_id):
     """Bulk duplicate content items"""
-    lesson = Lesson.query.get_or_404(lesson_id)
+    Lesson.query.get_or_404(lesson_id)
     data = request.json
     
     if not data or 'content_ids' not in data:
@@ -3005,7 +3006,7 @@ def bulk_duplicate_content(lesson_id):
 @admin_required
 def bulk_delete_content(lesson_id):
     """Bulk delete content items"""
-    lesson = Lesson.query.get_or_404(lesson_id)
+    Lesson.query.get_or_404(lesson_id)
     data = request.json
     
     if not data or 'content_ids' not in data:
@@ -3046,8 +3047,8 @@ def bulk_delete_content(lesson_id):
 @admin_required
 def force_reorder_lesson_content(lesson_id):
     """Force reorder all content in a lesson to fix gaps in order indices"""
-    lesson = Lesson.query.get_or_404(lesson_id)
-    
+    Lesson.query.get_or_404(lesson_id)
+
     try:
         force_reorder_all_lesson_content(lesson_id)
         return jsonify({"message": "All content reordered successfully"}), 200
@@ -3241,7 +3242,7 @@ def get_courses():
         courses_data = []
         for course in courses:
             course_dict = model_to_dict(course)
-            course_dict['lessons'] = [{'id': l.id, 'title': l.title} for l in course.lessons]
+            course_dict['lessons'] = [{'id': lesson.id, 'title': lesson.title} for lesson in course.lessons]
             if current_user.is_authenticated:
                 course_dict['is_purchased'] = CoursePurchase.query.filter_by(user_id=current_user.id, course_id=course.id).first() is not None
             else:
@@ -3643,7 +3644,7 @@ def purchase_course(course_id):
         transaction_id = result['transaction_id']
         
         # Store transaction in database
-        payment_transaction = transaction_service.create_payment_transaction(
+        transaction_service.create_payment_transaction(
             transaction_id=transaction_id,
             user=current_user,
             item_type='course',
@@ -3732,7 +3733,7 @@ def purchase_lesson(lesson_id):
         transaction_id = result['transaction_id']
         
         # Store transaction in database
-        payment_transaction = transaction_service.create_payment_transaction(
+        transaction_service.create_payment_transaction(
             transaction_id=transaction_id,
             user=current_user,
             item_type='lesson',
@@ -3835,7 +3836,7 @@ def cancel_payment(transaction_id):
         return jsonify({"error": "CSRF token invalid"}), 400
     
     # Verify user owns this transaction
-    payment_transaction = PaymentTransaction.query.filter_by(
+    PaymentTransaction.query.filter_by(
         transaction_id=transaction_id,
         user_id=current_user.id,
         state='PENDING'
@@ -4079,7 +4080,7 @@ def get_revenue_stats():
 @admin_required
 def add_interactive_content(lesson_id):
     """Add interactive content (quiz questions) to lesson"""
-    lesson = Lesson.query.get_or_404(lesson_id)
+    Lesson.query.get_or_404(lesson_id)
     data = request.json
     
     if not data or not data.get('interactive_type'):
@@ -4516,9 +4517,6 @@ def generate_vocabulary_images():
 
 
 # == FILE UPLOAD API ==
-from app.utils import FileUploadHandler # Import FileUploadHandler
-
-# == FILE UPLOAD API ==
 @bp.route('/api/admin/upload-file', methods=['POST'])
 @login_required
 @admin_required
@@ -4590,7 +4588,7 @@ def upload_file():
 @admin_required
 def add_file_content(lesson_id):
     """Add file-based content to lesson"""
-    lesson = Lesson.query.get_or_404(lesson_id)
+    Lesson.query.get_or_404(lesson_id)
     data = request.json
     
     if not data or not data.get('content_type') or not data.get('file_path'):
@@ -4648,7 +4646,6 @@ def delete_file():
         return jsonify({"error": "Access denied: Invalid file path."}), 403
 
     file_system_deleted = False
-    database_record_deleted = False
     message = ""
 
     if content_id:
@@ -4688,7 +4685,6 @@ def delete_file():
         # Delete the content database record
         db.session.delete(content)
         db.session.commit()
-        database_record_deleted = True
         message = f"Content ID {content_id} and its associations deleted from database. "
 
         if file_system_deleted:

@@ -17,7 +17,7 @@ if sys.platform == "win32":
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from dotenv import load_dotenv
+from dotenv import load_dotenv  # noqa: E402
 load_dotenv(PROJECT_ROOT / ".env")
 
 os.environ.setdefault(
@@ -26,9 +26,9 @@ os.environ.setdefault(
 )
 os.environ.setdefault("PAYMENT_PROVIDER", "mock")
 
-from sqlalchemy.orm.attributes import flag_modified
-from app import create_app, db
-from app.models import LessonContent
+from sqlalchemy.orm.attributes import flag_modified  # noqa: E402
+from app import create_app, db  # noqa: E402
+from app.models import LessonContent  # noqa: E402
 
 AUDIO_DIR = PROJECT_ROOT / "app" / "static" / "uploads" / "lessons" / "inline_audio"
 

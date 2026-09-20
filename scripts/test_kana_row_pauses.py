@@ -18,7 +18,7 @@ if sys.platform == "win32" and getattr(sys.stdout, "encoding", "").lower() != "u
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from dotenv import load_dotenv
+from dotenv import load_dotenv  # noqa: E402
 load_dotenv(PROJECT_ROOT / ".env")
 
 os.environ.setdefault(
@@ -28,7 +28,7 @@ os.environ.setdefault(
 os.environ.setdefault("PAYMENT_PROVIDER", "mock")
 os.environ.setdefault("MOCK_PAYMENTS_ENABLED", "true")
 
-from app.routes import _maybe_spell_out_kana_row
+from app.routes import _maybe_spell_out_kana_row  # noqa: E402
 
 CASES = [
     ("さしすせそ",                         "さ、し、す、せ、そ"),

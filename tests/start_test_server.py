@@ -29,9 +29,9 @@ os.environ['POSTFINANCE_SPACE_ID'] = 'test'
 os.environ['POSTFINANCE_USER_ID'] = 'test'
 os.environ['POSTFINANCE_API_SECRET'] = 'test'
 
-from app import create_app, db
-from app.models import User, Lesson, LessonCategory, Course, LessonContent, LessonPage, QuizQuestion, QuizOption
-from werkzeug.security import generate_password_hash
+from app import create_app, db  # noqa: E402
+from app.models import User, Lesson, LessonCategory, Course, LessonContent, LessonPage, QuizQuestion, QuizOption  # noqa: E402
+from werkzeug.security import generate_password_hash  # noqa: E402
 
 app = create_app()
 # Disable CSRF for testing (env var alone doesn't work — must set in Flask config)

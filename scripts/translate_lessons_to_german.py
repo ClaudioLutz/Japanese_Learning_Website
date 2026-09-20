@@ -1542,10 +1542,10 @@ def main():
         # Verifizierung
         de_lessons = Lesson.query.filter_by(instruction_language='german').all()
         print(f"\nDeutsche Lektionen: {len(de_lessons)}")
-        for l in de_lessons:
-            contents = LessonContent.query.filter_by(lesson_id=l.id).count()
-            quizzes = QuizQuestion.query.join(LessonContent).filter(LessonContent.lesson_id == l.id).count()
-            print(f"  {l.title}: {contents} Inhalte, {quizzes} Quiz-Fragen")
+        for lesson in de_lessons:
+            contents = LessonContent.query.filter_by(lesson_id=lesson.id).count()
+            quizzes = QuizQuestion.query.join(LessonContent).filter(LessonContent.lesson_id == lesson.id).count()
+            print(f"  {lesson.title}: {contents} Inhalte, {quizzes} Quiz-Fragen")
 
 
 if __name__ == "__main__":

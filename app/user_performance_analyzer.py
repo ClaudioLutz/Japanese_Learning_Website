@@ -447,8 +447,7 @@ class UserPerformanceAnalyzer:
     def _suggest_difficulty_adjustments(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
         """Suggest difficulty level adjustments."""
         adjustments = {}
-        
-        difficulty_performance = analysis.get('difficulty_weaknesses', {})
+
         overall_score = analysis.get('overall_score', 0)
         
         if overall_score < 40:

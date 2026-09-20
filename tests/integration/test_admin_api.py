@@ -215,7 +215,7 @@ class TestAdminCoursesAPI:
         client, admin = admin_client
         # CSRF-Token über eine GET-Seite in der Session etablieren
         with app.app_context():
-            with client.session_transaction() as sess:
+            with client.session_transaction():
                 # Generiere den Token im App-Context
                 pass
             # GET-Request um Session zu etablieren, dann Token extrahieren

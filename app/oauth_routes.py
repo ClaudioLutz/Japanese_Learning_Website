@@ -18,8 +18,7 @@ def complete_google_oauth():
     try:
         # Get the authorization code from the callback
         code = request.args.get('code')
-        state = request.args.get('state')
-        
+
         if not code:
             logger.error("No authorization code received from Google")
             return redirect('/login?error=oauth_failed')

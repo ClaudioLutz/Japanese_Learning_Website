@@ -61,7 +61,7 @@ def validate_jlpt_level(jlpt_level):
     try:
         level_int = convert_jlpt_level_to_int(jlpt_level)
         return 1 <= level_int <= 5
-    except:
+    except Exception:
         return False
 
 
@@ -128,7 +128,7 @@ def validate_difficulty_level(difficulty):
     try:
         level_int = convert_difficulty_to_int(difficulty)
         return 1 <= level_int <= 5
-    except:
+    except Exception:
         return False
 
 def truncate_field(text, max_length):

@@ -73,7 +73,7 @@ def test_progress_reaches_100_when_all_visible_completed(app_context, client):
         items.append(_add(lesson.id, 'text', page_number=(i // 8) + 1, order_index=i, content_id=i + 1))
     # Page 5: dialog_slideshow + audio (audio ist UI-unsichtbar)
     slideshow = _add(lesson.id, 'dialog_slideshow', page_number=5, order_index=0, content_id=100)
-    audio = _add(lesson.id, 'audio', page_number=5, order_index=1, content_id=101)
+    _add(lesson.id, 'audio', page_number=5, order_index=1, content_id=101)
     db.session.commit()
 
     progress = UserLessonProgress(
@@ -100,7 +100,7 @@ def test_progress_below_100_when_visible_item_missing(app_context):
     lesson = LessonFactory()
     db.session.flush()
     a = _add(lesson.id, 'text', page_number=1, content_id=1)
-    b = _add(lesson.id, 'text', page_number=1, content_id=2)
+    _add(lesson.id, 'text', page_number=1, content_id=2)
     db.session.commit()
 
     progress = UserLessonProgress(user_id=user.id, lesson_id=lesson.id, content_progress='{}')
