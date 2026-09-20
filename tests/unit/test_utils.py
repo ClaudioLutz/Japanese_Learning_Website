@@ -4,7 +4,6 @@ Phase 2: Unit-Tests für app/utils.py
 Testkonzept-IDs: U-U01 bis U-U12
 """
 
-import pytest
 from app.utils import convert_to_embed_url, FileUploadHandler
 
 

@@ -264,7 +264,7 @@ def main():
 
         # === Seite 1: Vokabel-Quiz (3x Multiple Choice) ===
         if 1 in target_pages:
-            print(f"\n--- Seite 1: Vokabel-Quiz ---")
+            print("\n--- Seite 1: Vokabel-Quiz ---")
             vocab_topic = f"Japanese Vocabulary from Minna No Nihongo Lesson {lesson_num}: {data['title']}"
 
             vocab_result = ai.generate_page_quiz_batch(
@@ -288,7 +288,7 @@ def main():
 
         # === Seite 2: Grammatik-Quiz (2x True/False + 1x Multiple Choice) ===
         if 2 in target_pages:
-            print(f"\n--- Seite 2: Grammatik-Quiz ---")
+            print("\n--- Seite 2: Grammatik-Quiz ---")
             grammar_topic = f"Japanese Grammar from Minna No Nihongo Lesson {lesson_num}: Particles は, じゃありません, か, も, の"
 
             grammar_result = ai.generate_page_quiz_batch(
@@ -364,7 +364,7 @@ def main():
 
         # === Seite 4: Practice — Übungsfragen (formativ, unbegrenzte Versuche) ===
         if 4 in target_pages:
-            print(f"\n--- Seite 4: Practice (Uebungsfragen) ---")
+            print("\n--- Seite 4: Practice (Uebungsfragen) ---")
             practice_topic = (
                 f"Practice exercises for Minna No Nihongo Lesson {lesson_num}: {data['title']}. "
                 f"This is a PRACTICE page — questions should reinforce vocabulary, grammar and "
@@ -399,7 +399,7 @@ def main():
 
         # === Seite 5: Test — Verstaendnistest (summativ, 3 Versuche, 70%) ===
         if 5 in target_pages:
-            print(f"\n--- Seite 5: Test (Verstaendnistest) ---")
+            print("\n--- Seite 5: Test (Verstaendnistest) ---")
             test_topic = (
                 f"Comprehension test for Minna No Nihongo Lesson {lesson_num}: {data['title']}. "
                 f"This is a GRADED TEST — questions should assess understanding of vocabulary, "

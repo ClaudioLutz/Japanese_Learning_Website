@@ -22,7 +22,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from app import create_app, db  # noqa: E402
-from app.models import Lesson, LessonContent, QuizOption, QuizQuestion  # noqa: E402
+from app.models import Lesson, LessonContent, QuizQuestion  # noqa: E402
 
 # Hiragana, Katakana (inkl. Halbbreite), CJK Unified Ideographs
 JP_REGEX = re.compile(r"[぀-ゟ゠-ヿｦ-ﾟ一-鿿]")

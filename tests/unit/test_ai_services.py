@@ -4,7 +4,6 @@ Phase 2: Unit-Tests für AI Services (Hilfsfunktionen + Generator mit Mocks).
 Testkonzept-IDs: U-AI01 bis U-AI08
 """
 
-import pytest
 from unittest.mock import patch, MagicMock
 from app.ai_services import (
     convert_jlpt_level_to_int,

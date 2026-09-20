@@ -146,8 +146,8 @@ def main():
 
     print(f"\nFertig. Chirp: {chirp_ok} ok / {chirp_err} Fehler. "
           f"Gemini: {gemini_ok} ok / {gemini_err} Fehler.")
-    print(f"\nHoere paarweise an:")
-    print(f"  ab_<key>_chirp.mp3  vs  ab_<key>_gemini.wav")
+    print("\nHoere paarweise an:")
+    print("  ab_<key>_chirp.mp3  vs  ab_<key>_gemini.wav")
 
 
 if __name__ == "__main__":

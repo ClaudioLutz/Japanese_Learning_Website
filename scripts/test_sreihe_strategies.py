@@ -1,5 +1,8 @@
 """Testet drei Prompt-Strategien fuer die S-Reihe mit Gemini."""
-import os, sys, wave, io
+import os
+import sys
+import wave
+import io
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")

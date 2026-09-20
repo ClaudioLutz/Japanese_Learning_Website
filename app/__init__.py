@@ -11,7 +11,6 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_talisman import Talisman
 import os
-from werkzeug.utils import secure_filename
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 # Load environment variables
@@ -231,8 +230,8 @@ def create_app():
     )
 
     # Import models and routes here to avoid circular imports
-    from app import models
-    from app.models import Course, User
+    from app import models  # noqa: F401 -- Seiteneffekt: registriert SQLAlchemy-Modelle
+    from app.models import Course, User  # noqa: F401 -- Seiteneffekt: stellt Mapper vor Social-Auth-Setup sicher
     
     # Initialize social auth storage after models are imported
     from social_flask_sqlalchemy.models import UserSocialAuth

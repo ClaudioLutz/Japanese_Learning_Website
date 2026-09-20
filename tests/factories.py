@@ -5,15 +5,15 @@ Erzeugt realistische Testdaten ohne manuelle DB-Inserts.
 """
 
 import factory
-from factory import Sequence, LazyAttribute, SubFactory, LazyFunction
+from factory import Sequence, LazyAttribute, LazyFunction
 from datetime import datetime
 from app import db
 from app.models import (
     User, Kana, Kanji, Vocabulary, Grammar,
     LessonCategory, Lesson, LessonContent, LessonPage,
-    LessonPrerequisite, Course, LessonPurchase, CoursePurchase,
+    Course, LessonPurchase, CoursePurchase,
     PaymentTransaction, QuizQuestion, QuizOption, UserLessonProgress,
-    UserQuizAnswer, CardReviewState, ReviewLog, UserSRSSettings,
+    CardReviewState, ReviewLog, UserSRSSettings,
     UserAchievement, DailyReviewAggregate,
     ForumCategory, ForumTopic, ForumPost,
     ContentIssue, ContentIssueComment,

@@ -1,8 +1,5 @@
-import os
 from google.cloud import storage
 from flask import current_app
-from werkzeug.utils import secure_filename
-import uuid
 
 def get_gcs_client():
     """Get GCS client"""

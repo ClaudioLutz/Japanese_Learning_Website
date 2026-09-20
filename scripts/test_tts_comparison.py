@@ -3,7 +3,6 @@ TTS-Vergleichstest: OpenAI gpt-4o-mini-tts vs Google Cloud TTS Neural2
 Generiert Testdateien mit japanischem Text, um die Qualität zu vergleichen.
 """
 import os
-import sys
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -174,7 +173,7 @@ def main():
     print()
     for f in files:
         print(f"  {f.name:50s} {f.stat().st_size // 1024:>5d} KB")
-    print(f"\nBitte die Dateien anhören und Qualität vergleichen!")
+    print("\nBitte die Dateien anhören und Qualität vergleichen!")
 
 
 if __name__ == "__main__":

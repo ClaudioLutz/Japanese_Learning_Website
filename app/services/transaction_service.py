@@ -1,7 +1,7 @@
 # app/services/transaction_service.py
 
 from app import db
-from app.models import PaymentTransaction, LessonPurchase, CoursePurchase, User, Lesson, Course
+from app.models import PaymentTransaction, LessonPurchase, CoursePurchase, User
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime
 import logging

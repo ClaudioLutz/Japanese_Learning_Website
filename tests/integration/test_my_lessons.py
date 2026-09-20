@@ -1,6 +1,5 @@
 """Integration-Tests fuer /my-lessons (Bug 2026-04-27: Course-Lektionen fehlten)."""
 
-from app import db
 from app.models import course_lessons
 from tests.factories import (
     UserFactory, PaidLessonFactory, PaidCourseFactory,

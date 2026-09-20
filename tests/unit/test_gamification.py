@@ -1,9 +1,7 @@
 # tests/unit/test_gamification.py
 """Unit-Tests fuer Gamification: XP, Level, Achievements, Karten-Stufen."""
-from app.gamification_service import calculate_xp, get_card_stage, XP_PER_RATING, XP_NEW_CARD_BONUS
+from app.gamification_service import calculate_xp, get_card_stage
 from app.achievements import ACHIEVEMENTS, check_achievements
-from app.models import User, UserAchievement
-from app import db
 
 
 class TestXPCalculation:

@@ -23,7 +23,6 @@ def custom_associate_user(strategy, details, backend, user=None, uid=None, *args
     """
     if user and uid:
         # Import UserSocialAuth model
-        from social_flask_sqlalchemy.models import UserSocialAuth
         
         # Check if social auth record already exists using raw SQL
         from sqlalchemy import text
@@ -64,13 +63,13 @@ def custom_associate_user(strategy, details, backend, user=None, uid=None, *args
                 })
                 
                 db.session.commit()
-                logger.info(f"PIPELINE DEBUG - custom_associate_user: Successfully created social auth record")
+                logger.info("PIPELINE DEBUG - custom_associate_user: Successfully created social auth record")
             except Exception as e:
                 db.session.rollback()
                 logger.error(f"PIPELINE DEBUG - custom_associate_user: Error creating social auth: {e}")
                 raise
         else:
-            logger.info(f"PIPELINE DEBUG - custom_associate_user: Social auth record already exists")
+            logger.info("PIPELINE DEBUG - custom_associate_user: Social auth record already exists")
     
     return {'user': user, 'uid': uid, 'details': details, **kwargs}
 

@@ -4,7 +4,6 @@ Phase 1: Unit-Tests für Flask-WTF Forms.
 Testkonzept-IDs: U-F01 bis U-F07
 """
 
-import pytest
 from app.forms import RegistrationForm, LoginForm, CSRFTokenForm
 from tests.factories import UserFactory
 from app import db

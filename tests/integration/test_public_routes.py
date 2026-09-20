@@ -4,7 +4,6 @@ Phase 3: Integrationstests für öffentliche Routes.
 Testkonzept-IDs: I-PR01 bis I-PR11
 """
 
-import pytest
 from app import db
 from tests.factories import (
     LessonFactory, CourseFactory, LessonCategoryFactory, KanaFactory,
@@ -45,7 +44,6 @@ class TestHomepage:
 
     def test_homepage_shows_n5_path_section(self, client, app_context):
         """Homepage zeigt JLPT-N5-Lernpfad-Section (Mayuko-Direktive)."""
-        from app.models import LessonCategory
         cat = LessonCategoryFactory(
             slug='test-n5-mod-home',
             jlpt_level=5,

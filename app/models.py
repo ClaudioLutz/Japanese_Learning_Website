@@ -822,7 +822,7 @@ class LessonCategory(db.Model):
         passender instruction_language gezaehlt — fuer den Sprach-Filter aus
         app.config['CONTENT_LANGUAGES'].
         """
-        from app.models import Lesson, UserLessonProgress
+        from app.models import UserLessonProgress
         published = [l for l in self.lessons if l.is_published]
         if languages is not None:
             published = [l for l in published if l.instruction_language in languages]
@@ -1068,7 +1068,7 @@ class Lesson(db.Model):
     def pages(self):
         """Groups content items by page number for rendering and includes page metadata."""
         from collections import defaultdict
-        from typing import DefaultDict, List, Dict, Any, Optional
+        from typing import DefaultDict, Dict, Any
 
         if not self.content_items:
             return []

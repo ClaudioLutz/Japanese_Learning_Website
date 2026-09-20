@@ -4,22 +4,16 @@ Phase 1: Unit-Tests für alle SQLAlchemy-Models.
 Testkonzept-IDs: U-M01 bis U-M20
 """
 
-import json
 import pytest
 from app import db
 from app.models import (
-    User, Kana, Kanji, Vocabulary, Grammar,
-    LessonCategory, Lesson, LessonContent, LessonPage,
-    LessonPrerequisite, Course, LessonPurchase, CoursePurchase,
-    PaymentTransaction, QuizQuestion, QuizOption, UserLessonProgress,
-    UserQuizAnswer, course_lessons,
+    Lesson, LessonPrerequisite, UserQuizAnswer, course_lessons,
     AccessDenialReason, AccessResult, AccessContext,
 )
 from tests.factories import (
     UserFactory, AdminUserFactory, PremiumUserFactory,
     KanaFactory, KanjiFactory, VocabularyFactory, GrammarFactory,
-    LessonCategoryFactory, LessonFactory, PaidLessonFactory, PremiumLessonFactory,
-    LessonPageFactory, LessonContentFactory,
+    LessonCategoryFactory, LessonFactory, PaidLessonFactory, LessonContentFactory,
     CourseFactory, PaidCourseFactory,
     LessonPurchaseFactory, CoursePurchaseFactory, PaymentTransactionFactory,
     QuizQuestionFactory, QuizOptionFactory, UserLessonProgressFactory,

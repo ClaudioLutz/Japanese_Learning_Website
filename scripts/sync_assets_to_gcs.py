@@ -72,8 +72,8 @@ def rsync_directory(local_dir: Path, gcs_uri: str, account: str, dry_run: bool) 
         result = subprocess.run(cmd, check=False)
         return result.returncode
     except FileNotFoundError:
-        print(f"    [FEHLER] 'gcloud' nicht im PATH gefunden. "
-              f"Bitte gcloud SDK installieren.", file=sys.stderr)
+        print("    [FEHLER] 'gcloud' nicht im PATH gefunden. "
+              "Bitte gcloud SDK installieren.", file=sys.stderr)
         return 1
 
 

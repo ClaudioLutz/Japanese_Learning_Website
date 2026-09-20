@@ -11,7 +11,6 @@ from unittest.mock import patch, MagicMock
 from app import db
 from tests.factories import (
     UserFactory, PaidLessonFactory, PaidCourseFactory,
-    LessonPurchaseFactory,
 )
 
 

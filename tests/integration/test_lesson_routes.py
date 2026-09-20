@@ -4,16 +4,10 @@ Phase 3: Integrationstests für Lektions- und Kurs-Routes.
 Testkonzept-IDs: I-LR01 bis I-LR11
 """
 
-import pytest
 from app import db
 from app.models import course_lessons
 from tests.factories import (
-    UserFactory, PremiumUserFactory,
-    LessonFactory, PaidLessonFactory, PremiumLessonFactory,
-    LessonContentFactory, LessonPageFactory,
-    CourseFactory, PaidCourseFactory,
-    LessonPurchaseFactory, CoursePurchaseFactory,
-    UserLessonProgressFactory,
+    LessonFactory, PaidLessonFactory, CourseFactory, LessonPurchaseFactory, UserLessonProgressFactory,
 )
 
 

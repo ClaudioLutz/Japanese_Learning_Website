@@ -3,7 +3,9 @@ zu einem JSON-Block, den Claude einmal manuell ins Deutsche uebersetzt und
 zurueck als Hand-Override in scripts/translate_english_to_german.py einsetzt.
 """
 from __future__ import annotations
-import json, re, sys
+import json
+import re
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent

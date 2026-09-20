@@ -126,7 +126,7 @@ class MockPaymentService:
         """
         Mock payment URL generation - returns success URL since payment is already "complete"
         """
-        from flask import url_for, current_app
+        from flask import url_for
         
         try:
             # For mock payments, redirect to success page immediately

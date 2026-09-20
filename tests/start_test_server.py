@@ -32,7 +32,6 @@ os.environ['POSTFINANCE_API_SECRET'] = 'test'
 from app import create_app, db
 from app.models import User, Lesson, LessonCategory, Course, LessonContent, LessonPage, QuizQuestion, QuizOption
 from werkzeug.security import generate_password_hash
-from datetime import datetime
 
 app = create_app()
 # Disable CSRF for testing (env var alone doesn't work — must set in Flask config)
@@ -226,7 +225,7 @@ with app.app_context():
     course.lessons.append(lesson_paid)
 
     db.session.commit()
-    print(f"SEED DATA CREATED: 3 users, 4 lessons, 3 categories, 1 course, 1 quiz")
+    print("SEED DATA CREATED: 3 users, 4 lessons, 3 categories, 1 course, 1 quiz")
 
     # Seed Tokyo lesson if the script exists
     try:

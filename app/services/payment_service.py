@@ -1,17 +1,14 @@
 # app/services/payment_service.py
 
-from postfinancecheckout import Configuration, ApiClient
+from postfinancecheckout import Configuration
 from postfinancecheckout.api import (
     TransactionServiceApi, 
-    TransactionPaymentPageServiceApi,
-    RefundServiceApi
+    TransactionPaymentPageServiceApi
 )
 from postfinancecheckout.models import (
     TransactionCreate, 
     LineItem, 
-    LineItemType,
-    Address,
-    AddressCreate
+    LineItemType
 )
 from postfinancecheckout.rest import ApiException
 from flask import current_app
@@ -334,7 +331,6 @@ class PaymentErrorHandler:
         timeout_hours = current_app.config.get('PAYMENT_TIMEOUT_HOURS', 1)
         timeout_threshold = datetime.utcnow() - timedelta(hours=timeout_hours)
         
-        from app import db
         expired_transactions = PaymentTransaction.query.filter(
             PaymentTransaction.state == 'PENDING',
             PaymentTransaction.created_at < timeout_threshold

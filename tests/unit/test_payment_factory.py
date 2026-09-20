@@ -4,7 +4,6 @@ Phase 2: Unit-Tests für PaymentServiceFactory.
 Testkonzept-IDs: U-PF01 bis U-PF07
 """
 
-import pytest
 import os
 from unittest.mock import patch
 

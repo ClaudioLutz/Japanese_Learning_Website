@@ -12,8 +12,6 @@ from app.models import (
     Lesson, LessonContent, LessonPage, LessonCategory,
     QuizQuestion, QuizOption
 )
-import json
-from copy import deepcopy
 
 # ── Übersetzungen: Lektions-Titel ────────────────────────────────────
 LESSON_TITLES = {

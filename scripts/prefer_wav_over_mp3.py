@@ -6,7 +6,9 @@ Laeufen. Dieses Skript scannt alle augmented_html und ersetzt .mp3-URLs durch
 .wav-URLs wenn die WAV-Datei existiert (= Gemini-Studio-Qualitaet).
 """
 from __future__ import annotations
-import os, sys, re
+import os
+import sys
+import re
 from pathlib import Path
 
 if sys.platform == "win32":

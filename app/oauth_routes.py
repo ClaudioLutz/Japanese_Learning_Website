@@ -1,5 +1,5 @@
 # app/oauth_routes.py
-from flask import Blueprint, request, redirect, url_for, session, current_app
+from flask import Blueprint, request, redirect, current_app
 from flask_login import login_user
 import requests
 import logging

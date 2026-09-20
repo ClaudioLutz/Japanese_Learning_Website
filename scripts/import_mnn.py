@@ -201,7 +201,7 @@ def create_lesson(
         print(f"  [DRY] Lesson: {title}")
         print(f"        Seite 1: {len(vocab_items)} Vokabeln")
         print(f"        Seite 2: {len(grammar_items)} Grammatik-Punkte")
-        print(f"        Seite 3: Konversation")
+        print("        Seite 3: Konversation")
         return None
 
     # Lektion erstellen
@@ -472,7 +472,7 @@ def import_lesson_file(filepath: Path, dry_run: bool = False) -> None:
         audio_count = import_audio_for_lesson(None, lesson_number, source, dry_run=True)
 
     # Zusammenfassung
-    print(f"\n--- Zusammenfassung ---")
+    print("\n--- Zusammenfassung ---")
     print(f"  Vokabeln:  {len(data.get('vocabulary', []) + data.get('vocabulary_countries', []))}")
     print(f"  Grammatik: {len(data.get('grammar', []))}")
     if data.get("conversation"):

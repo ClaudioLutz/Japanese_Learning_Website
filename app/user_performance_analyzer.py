@@ -3,14 +3,12 @@ User Performance Analyzer for Phase 5: Intelligence and Adaptation
 Analyzes user performance data to identify weaknesses and suggest remediation.
 """
 
-import json
 from datetime import datetime, timedelta
-from typing import Dict, List, Tuple, Optional, Any
-from collections import defaultdict, Counter
-from flask import current_app
+from typing import Dict, List, Any
+from collections import defaultdict
 from app.models import (
     User, UserLessonProgress, UserQuizAnswer, QuizQuestion, 
-    LessonContent, Lesson, Kanji, Vocabulary, Grammar
+    LessonContent
 )
 from app import db
 

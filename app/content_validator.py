@@ -5,14 +5,13 @@ Validates content accuracy, cultural context, and educational effectiveness.
 
 import json
 from datetime import datetime
-from typing import Dict, List, Tuple, Optional, Any
+from typing import Dict, Any
 from flask import current_app
 from app.ai_services import AILessonContentGenerator
 from app.models import (
     Lesson, LessonContent, Kanji, Vocabulary, Grammar,
-    QuizQuestion, QuizOption
+    QuizQuestion
 )
-from app import db
 
 
 class ContentValidator:

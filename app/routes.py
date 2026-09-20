@@ -670,7 +670,7 @@ def logout():
 @login_required
 def user_profile():
     """Display user profile with lesson progress and statistics"""
-    from sqlalchemy import func, desc
+    from sqlalchemy import desc
     
     # Get user's lesson progress
     user_progress = UserLessonProgress.query.filter_by(user_id=current_user.id).all()
@@ -1595,7 +1595,7 @@ def create_kana():
         # This specific error for character uniqueness is already checked above,
         # but this handles it at the DB level just in case or for other integrity issues.
         return jsonify({"error": "Database integrity error. This item might already exist or violate other constraints."}), 409
-    except SQLAlchemyError as e: # Handles other SQLAlchemy errors
+    except SQLAlchemyError: # Handles other SQLAlchemy errors
         db.session.rollback()
         # Log the error e for debugging: app.logger.error(f"Database error: {e}")
         return jsonify({"error": "Database error occurred."}), 500
@@ -1672,7 +1672,7 @@ def create_kanji():
     except IntegrityError:
         db.session.rollback()
         return jsonify({"error": "Database integrity error. This item might already exist or violate other constraints."}), 409
-    except SQLAlchemyError as e:
+    except SQLAlchemyError:
         db.session.rollback()
         return jsonify({"error": "Database error occurred."}), 500
 
@@ -1749,7 +1749,7 @@ def create_vocabulary():
     except IntegrityError:
         db.session.rollback()
         return jsonify({"error": "Database integrity error. This item might already exist or violate other constraints."}), 409
-    except SQLAlchemyError as e:
+    except SQLAlchemyError:
         db.session.rollback()
         return jsonify({"error": "Database error occurred."}), 500
 
@@ -1824,7 +1824,7 @@ def create_grammar():
     except IntegrityError:
         db.session.rollback()
         return jsonify({"error": "Database integrity error. This item might already exist or violate other constraints."}), 409
-    except SQLAlchemyError as e:
+    except SQLAlchemyError:
         db.session.rollback()
         return jsonify({"error": "Database error occurred."}), 500
 
@@ -1980,7 +1980,7 @@ def create_course():
         if not csrf_token:
             return jsonify({"error": "CSRF token missing"}), 400
         validate_csrf(csrf_token)
-    except Exception as e:
+    except Exception:
         return jsonify({"error": "CSRF token invalid"}), 400
     
     data = request.json
@@ -2355,7 +2355,7 @@ def get_content_options(content_type):
             return jsonify({"error": "Invalid content type"}), 400
         
         return jsonify([model_to_dict(item) for item in items])
-    except Exception as e:
+    except Exception:
         return jsonify({"error": "Failed to load content options"}), 500
 
 # == LESSON CONTENT API ==
@@ -2922,7 +2922,7 @@ def bulk_update_content(lesson_id):
         db.session.commit()
         return jsonify({"message": f"Updated {len(content_items)} content items"}), 200
         
-    except Exception as e:
+    except Exception:
         db.session.rollback()
         return jsonify({"error": "Failed to update content"}), 500
 
@@ -2996,7 +2996,7 @@ def bulk_duplicate_content(lesson_id):
         db.session.commit()
         return jsonify({"message": f"Duplicated {duplicated_count} content items"}), 200
         
-    except Exception as e:
+    except Exception:
         db.session.rollback()
         return jsonify({"error": "Failed to duplicate content"}), 500
 
@@ -3037,7 +3037,7 @@ def bulk_delete_content(lesson_id):
         
         return jsonify({"message": f"Deleted {deleted_count} content items"}), 200
         
-    except Exception as e:
+    except Exception:
         db.session.rollback()
         return jsonify({"error": "Failed to delete content"}), 500
 
@@ -3110,7 +3110,7 @@ def duplicate_single_content(content_id):
         db.session.commit()
         return jsonify(model_to_dict(duplicate)), 201
         
-    except Exception as e:
+    except Exception:
         db.session.rollback()
         return jsonify({"error": "Failed to duplicate content"}), 500
 
@@ -3374,7 +3374,7 @@ def update_lesson_progress(lesson_id):
         if not csrf_token:
             return jsonify({"error": "CSRF token missing"}), 400
         validate_csrf(csrf_token)
-    except Exception as e:
+    except Exception:
         return jsonify({"error": "CSRF token invalid"}), 400
     
     lesson = Lesson.query.get_or_404(lesson_id)
@@ -3879,7 +3879,6 @@ def payrexx_webhook():
     Muss innerhalb von 20 Sekunden antworten.
     """
     from app.services.transaction_service import PaymentTransactionService
-    from app.models import PaymentTransaction
 
     # Signatur prüfen
     signature = request.headers.get('X-Webhook-Signature', '')
@@ -4139,7 +4138,6 @@ def add_interactive_content(lesson_id):
     db.session.commit()
     return jsonify(model_to_dict(content)), 201
 
-from sqlalchemy.orm import joinedload
 
 @bp.route('/api/lessons/<int:lesson_id>/quiz/<int:question_id>/answer', methods=['POST'])
 @login_required
@@ -4152,7 +4150,7 @@ def submit_quiz_answer(lesson_id, question_id):
         if not csrf_token:
             return jsonify({"error": "CSRF token missing"}), 400
         validate_csrf(csrf_token)
-    except Exception as e:
+    except Exception:
         return jsonify({"error": "CSRF token invalid"}), 400
     
     try:

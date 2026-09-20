@@ -10,13 +10,12 @@ import os
 import shutil
 import zipfile
 from datetime import datetime
-from typing import Dict, List, Optional, Tuple, Any
+from typing import Dict, List, Optional, Any
 from flask import current_app
-from sqlalchemy.exc import SQLAlchemyError
 from app import db
 from app.models import (
     Lesson, LessonPage, LessonContent, QuizQuestion, QuizOption,
-    LessonCategory, LessonPrerequisite
+    LessonCategory
 )
 
 

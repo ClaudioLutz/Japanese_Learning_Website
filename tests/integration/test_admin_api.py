@@ -4,8 +4,6 @@ Phase 4: Integrationstests für Admin-API-Endpoints.
 Testkonzept-IDs: I-AA01 bis I-AA23
 """
 
-import json
-import pytest
 from app import db
 from tests.factories import (
     KanaFactory, KanjiFactory, VocabularyFactory, GrammarFactory,
@@ -216,7 +214,6 @@ class TestAdminCoursesAPI:
         """I-AA16: Kurs-Erstellung mit gültigem CSRF-Token."""
         client, admin = admin_client
         # CSRF-Token über eine GET-Seite in der Session etablieren
-        from flask_wtf.csrf import generate_csrf
         with app.app_context():
             with client.session_transaction() as sess:
                 # Generiere den Token im App-Context

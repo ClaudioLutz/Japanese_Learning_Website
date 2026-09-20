@@ -12,7 +12,6 @@ from app.models import (
 from app.services.transaction_service import PaymentTransactionService
 from tests.factories import (
     UserFactory, PaidLessonFactory, PaidCourseFactory,
-    PaymentTransactionFactory,
 )
 
 

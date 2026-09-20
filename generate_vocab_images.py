@@ -2,7 +2,6 @@
 import os
 import uuid
 import sys
-import time
 
 # UTF-8 Output erzwingen (Windows)
 sys.stdout.reconfigure(encoding='utf-8')

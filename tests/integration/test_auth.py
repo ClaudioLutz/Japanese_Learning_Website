@@ -4,7 +4,6 @@ Phase 3: Integrationstests für Authentifizierung.
 Testkonzept-IDs: I-AU01 bis I-AU14
 """
 
-import pytest
 from app import db
 from app.models import User
 from tests.factories import UserFactory

@@ -3,9 +3,8 @@ Personalized Lesson Generator for Phase 5: Intelligence and Adaptation
 Generates adaptive lessons based on user performance analysis.
 """
 
-import json
 from datetime import datetime
-from typing import Dict, List, Tuple, Optional, Any
+from typing import Dict, List, Any
 from flask import current_app
 from app.ai_services import AILessonContentGenerator
 from app.user_performance_analyzer import UserPerformanceAnalyzer
@@ -117,7 +116,7 @@ class PersonalizedLessonGenerator:
         
         lesson_data = {
             'title': f"{advancement_type}: Next Level Challenge",
-            'description': f"Advanced content to challenge your growing skills",
+            'description': "Advanced content to challenge your growing skills",
             'lesson_type': 'free',
             'difficulty_level': difficulty_level,
             'estimated_duration': 35,
@@ -576,8 +575,8 @@ class PersonalizedLessonGenerator:
             'study_time_minutes': 90,
             'goals': [
                 f"Focus on {focus} in week {week_number}",
-                f"Complete 3 personalized lessons",
-                f"Spend 90 minutes studying"
+                "Complete 3 personalized lessons",
+                "Spend 90 minutes studying"
             ]
         }
     
