@@ -42,7 +42,8 @@ with app.app_context():
             put("lesson_content", "content_text", 6564, new)
             report.append("factual[56] 6564: 2 Versprechen entfernt, 'と いいます' behalten")
         else:
-            ok = False; report.append("factual[56] 6564: SKIP (Verifikation fehlgeschlagen)")
+            ok = False
+            report.append("factual[56] 6564: SKIP (Verifikation fehlgeschlagen)")
     else:
         report.append("factual[56] 6564: SKIP (Ziel nicht/anders vorhanden)")
 
@@ -76,6 +77,8 @@ with app.app_context():
     for r in report:
         print(" ", r)
     if ok:
-        db.session.commit(); print("COMMIT")
+        db.session.commit()
+        print("COMMIT")
     else:
-        db.session.rollback(); print("ROLLBACK (Verifikation)")
+        db.session.rollback()
+        print("ROLLBACK (Verifikation)")

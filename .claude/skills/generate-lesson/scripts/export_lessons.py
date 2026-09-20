@@ -4,7 +4,8 @@ wird bewusst weggelassen (id-abhaengig, nicht uebertragen). Bilder via image_url
 (id-unabhaengig) bleiben + werden als Asset-Manifest gesammelt.
 Aufruf: python export_lessons.py <out.json> <id1> <id2> ...
 """
-import sys, json
+import sys
+import json
 sys.path.insert(0, '.')
 from app import create_app, db
 from app.models import (Lesson, LessonCategory, LessonPage, LessonContent,
@@ -40,7 +41,8 @@ with app.app_context():
     for lid in ids:
         L = db.session.get(Lesson, lid)
         if not L:
-            print(f"[WARN] Lesson {lid} fehlt lokal"); continue
+            print(f"[WARN] Lesson {lid} fehlt lokal")
+            continue
         cat = cats.get(L.category_id)
         if L.thumbnail_url:
             assets.add(L.thumbnail_url)
@@ -52,13 +54,20 @@ with app.app_context():
             entity = None
             if c.content_type == "vocabulary" and c.content_id:
                 v = db.session.get(Vocabulary, c.content_id)
-                if v: entity = vocab_data(v);  assets.add(v.image_url) if v.image_url else None
+                if v:
+                    entity = vocab_data(v)
+                    if v.image_url:
+                        assets.add(v.image_url)
             elif c.content_type == "kanji" and c.content_id:
                 k = db.session.get(Kanji, c.content_id)
-                if k: entity = kanji_data(k);  assets.add(k.image_url) if k.image_url else None
+                if k:
+                    entity = kanji_data(k)
+                    if k.image_url:
+                        assets.add(k.image_url)
             elif c.content_type == "grammar" and c.content_id:
                 g = db.session.get(Grammar, c.content_id)
-                if g: entity = grammar_data(g)
+                if g:
+                    entity = grammar_data(g)
             quizzes = []
             for q in db.session.query(QuizQuestion).filter_by(lesson_content_id=c.id).order_by(QuizQuestion.order_index, QuizQuestion.id).all():
                 opts = [{"option_text": o.option_text, "is_correct": o.is_correct,

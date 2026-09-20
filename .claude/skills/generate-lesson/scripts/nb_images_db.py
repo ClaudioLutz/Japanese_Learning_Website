@@ -14,14 +14,22 @@ Aufruf (aus Repo-Root):
 Ohne --apply: DRY-RUN (zeigt nur, was generiert/gesetzt wuerde).
 """
 from __future__ import annotations
-import base64, hashlib, io, json, re, sys, time, urllib.error, urllib.request
+import base64
+import hashlib
+import io
+import json
+import re
+import sys
+import time
+import urllib.error
+import urllib.request
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
 sys.path.insert(0, ".")
-from app import create_app, db
-from app.models import Lesson, LessonContent, Vocabulary, Kanji
+from app import create_app, db  # noqa: E402
+from app.models import Lesson, LessonContent, Vocabulary, Kanji  # noqa: E402
 
 VOCAB_RULES = (" Clean minimalist flat vector illustration, soft muted pastel colours, a single "
                "centred subject, plain off-white background, gentle Japanese aesthetic. STRICT: "
@@ -58,7 +66,9 @@ def generate(prompt: str, key: str, aspect: str) -> bytes:
 def to_webp(png: bytes) -> bytes:
     from PIL import Image
     img = Image.open(io.BytesIO(png)).convert("RGB")
-    buf = io.BytesIO(); img.save(buf, "WEBP", quality=85); return buf.getvalue()
+    buf = io.BytesIO()
+    img.save(buf, "WEBP", quality=85)
+    return buf.getvalue()
 
 
 def slugify(s: str) -> str:
@@ -91,7 +101,8 @@ def main():
         for lid in ids:
             L = db.session.get(Lesson, lid)
             if not L:
-                print(f"[WARN] Lesson {lid} fehlt"); continue
+                print(f"[WARN] Lesson {lid} fehlt")
+                continue
             if need(L.thumbnail_url):
                 slug = slugify(L.title)
                 rel = f"generated/thumbnail_{slug}.webp"
@@ -119,7 +130,8 @@ def main():
         if not apply:
             for rel, t in list(targets.items())[:8]:
                 print(f"  würde: {rel}  ({len(t['setters'])} setter)")
-            print("[DRY-RUN] nichts geschrieben. Mit --apply ausfuehren."); return
+            print("[DRY-RUN] nichts geschrieben. Mit --apply ausfuehren.")
+            return
 
         def work(rel, t):
             out = upload / rel
@@ -140,7 +152,8 @@ def main():
         with ThreadPoolExecutor(max_workers=workers) as ex:
             futs = {ex.submit(work, rel, t): rel for rel, t in targets.items()}
             for fut in as_completed(futs):
-                rel, status = fut.result(); results[rel] = status
+                rel, status = fut.result()
+                results[rel] = status
                 print(f"  {status:5} {rel}")
 
         set_count = 0
@@ -148,7 +161,8 @@ def main():
             if results.get(rel) in ("OK", "exists"):
                 for obj, field in t["setters"]:
                     if getattr(obj, field) != rel:
-                        setattr(obj, field, rel); set_count += 1
+                        setattr(obj, field, rel)
+                        set_count += 1
         db.session.commit()
         ok = sum(1 for s in results.values() if s == "OK")
         ex_ = sum(1 for s in results.values() if s == "exists")
