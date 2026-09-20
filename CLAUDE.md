@@ -251,11 +251,14 @@ curl -s -o /dev/null -w "%{http_code}\n" https://japanese-learning.ch/   # 200 e
 ```
 DB-Daten + Medien (Volumes) bleiben beim Rebuild erhalten.
 
-### Datenbank-Backups
-- **Täglich** via systemd-Timer `jpl-db-backup.timer` (03:30) → `/usr/local/bin/jpl-db-backup.sh` → `/home/hp-ubuntu/jpl-backups/jpl_<ts>.sql.gz` (14 Stück Rotation, Persistent).
-- Manuell: `sudo /usr/local/bin/jpl-db-backup.sh`
-- Restore: `gunzip -c <dump>.gz | sudo docker exec -i postgres_db psql -U app_user -d japanese_learning`
-- ⚠️ **Medien** (`app/static/uploads`, ~4.3 GB) sind NICHT im DB-Backup — Offsite-Kopie liegt im GCS-Bucket `jpl-website-assets`. Bei viel neuen Medien manuell nachsichern.
+### Backups (3 Stufen, seit 2026-09-20)
+- **Dump täglich 03:30**: systemd-Timer `jpl-db-backup.timer` → `/usr/local/bin/jpl-db-backup.sh` → `/home/hp-ubuntu/jpl-backups/jpl_<ts>.sql.gz` (14 Stück Rotation, gleiche NVMe wie die DB).
+- **Stufe 1+3 täglich 03:45**: `jpl-backup-offsite.timer` → `/usr/local/bin/jpl-backup-offsite.sh` (Log: `journalctl -u jpl-backup-offsite`, Fehler-Marker `JPL-BACKUP STUFE<n> FEHLER`). Sichert Dumps + `app/static/uploads` + `.env`
+  - auf die zweite Platte `/mnt/disk2/backups/jpl/{db,uploads/current,env}` (rsync ohne `--delete`; Dumps 90 Tage + Monatsstand dauerhaft in `db/monthly/`),
+  - nach Google Drive `gdrive:Backups/jpl/` (rclone copy; `.env` nur gpg-verschlüsselt, Passphrase in `/home/hp-ubuntu/.jpl-backup-passphrase` + Claudios Passwortmanager).
+- **Stufe 2 NAS (manuell)**: `~/backups/backup-runner.sh` (Windows-Shortcut „NAS-Backup STARTEN") kopiert zusätzlich `/mnt/disk2/backups/jpl/` → NAS `/volume1/Share/_backups/jpl/`.
+- Restore-Anleitung: `/mnt/disk2/backups/jpl/RESTORE.txt` (auch auf Drive). Restore-Test am 2026-09-20 bestanden (Zeilenzahlen identisch).
+- Manuell: `sudo /usr/local/bin/jpl-db-backup.sh`; Restore DB: `gunzip -c <dump>.gz | sudo docker exec -i postgres_db psql -U app_user -d japanese_learning`
 
 ### GCS-Bucket (nur noch Backup)
 - `jpl-website-assets` (public) — seit dem Umzug **nur noch Offsite-Medien-Backup** (Snapshot). App liefert Medien lokal aus.
@@ -377,4 +380,3 @@ Mehrere Sessions an DERSELBEN Datei kollidieren. Besonders heikel (von vielen Fe
 2. **Playwright E2E-Tests** — 8 Spec-Dateien in `tests/`, benötigen `npm install` und laufenden Test-Server
 3. **Google OAuth Redirect-URI** — `https://japanese-learning.ch/auth/complete/google-oauth2/` muss in Google Cloud Console als Redirect-URI eingetragen sein (mit Trailing-Slash!)
 4. **DNSSEC** — bei der Cloudflare-Migration deaktiviert; optional via Cloudflare wieder aktivierbar (Sicherheits-Plus)
-5. **Medien-Offsite-Backup** — `app/static/uploads` (~4.3 GB) wird nicht vom DB-Backup erfasst; GCS-Bucket ist Snapshot-Stand. Für echtes laufendes Offsite-Backup ggf. periodisch nachsichern (externe Platte/NAS).
