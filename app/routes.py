@@ -569,6 +569,9 @@ def register():
     if form.validate_on_submit():
         user = User(username=form.username.data, email=form.email.data)
         user.set_password(form.password.data)
+        # created_at kommt aus dem Modell-Default; last_login setzen wir hier,
+        # weil direkt im Anschluss automatisch eingeloggt wird.
+        user.last_login = datetime.utcnow()
         db.session.add(user)
         db.session.commit()
         # D1: direkt einloggen statt auf /login zu schicken — kein Doppel-Login mehr,

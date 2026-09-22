@@ -1,10 +1,23 @@
 # app/social_auth_config.py
+from datetime import datetime
+
 from flask_login import login_user
 from app.models import User
 from app import db
 import logging
 
 logger = logging.getLogger(__name__)
+
+
+def _login_and_stamp(user):
+    """Nutzer einloggen und last_login festhalten (wie im lokalen Login-Pfad)."""
+    login_user(user, remember=True)
+    try:
+        user.last_login = datetime.utcnow()
+        db.session.commit()
+    except Exception as e:  # pragma: no cover - Zeitstempel darf den Login nie kippen
+        db.session.rollback()
+        logger.warning(f"last_login konnte nicht gesetzt werden fuer user_id={user.id}: {e}")
 
 def fix_google_uid(strategy, details, backend, uid=None, response=None, *args, **kwargs):
     """
@@ -79,7 +92,7 @@ def create_user_and_login(strategy, details, backend, user=None, uid=None, *args
     """
     if user:
         # User already exists, just log them in
-        login_user(user, remember=True)
+        _login_and_stamp(user)
         logger.info(f"Existing user {user.email} logged in via Google OAuth")
         return {'user': user, 'uid': uid, 'details': details, **kwargs}
     
@@ -95,7 +108,7 @@ def create_user_and_login(strategy, details, backend, user=None, uid=None, *args
     existing_user = User.query.filter_by(email=email).first()
     if existing_user:
         # Link the social account to existing user
-        login_user(existing_user, remember=True)
+        _login_and_stamp(existing_user)
         logger.info(f"Linked Google account to existing user {existing_user.email}")
         return {'user': existing_user, 'uid': uid, 'details': details, **kwargs}
     
@@ -117,7 +130,7 @@ def create_user_and_login(strategy, details, backend, user=None, uid=None, *args
     try:
         db.session.add(new_user)
         db.session.commit()
-        login_user(new_user, remember=True)
+        _login_and_stamp(new_user)
         logger.info(f"Created new user {new_user.email} via Google OAuth")
         return {'user': new_user, 'uid': uid, 'details': details, **kwargs}
     except Exception as e:

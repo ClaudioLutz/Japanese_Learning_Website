@@ -228,15 +228,22 @@ class LessonAdmin(SecureModelView):
 
 class UserAdmin(SecureModelView):
     """User-Verwaltung — Passwort-Hash wird nie angezeigt."""
-    column_list = ['id', 'username', 'email', 'subscription_level', 'is_admin']
+    column_list = ['id', 'username', 'email', 'subscription_level', 'is_admin',
+                   'created_at', 'last_login']
     column_searchable_list = ['username', 'email']
-    column_filters = ['subscription_level', 'is_admin']
+    column_filters = ['subscription_level', 'is_admin', 'created_at', 'last_login']
     column_editable_list = ['subscription_level', 'is_admin']
+    # Zeitstempel sortierbar machen (Nutzeranalyse: Neuzugaenge, Rueckkehrer)
+    column_sortable_list = ['id', 'username', 'email', 'subscription_level',
+                            'is_admin', 'created_at', 'last_login']
+    column_default_sort = ('id', False)
     column_labels = {
         'username': 'Benutzername',
         'email': 'E-Mail',
         'subscription_level': 'Abo-Stufe',
         'is_admin': 'Admin',
+        'created_at': 'Registriert am',
+        'last_login': 'Letzter Login',
     }
     # Kein Create/Delete fuer User ueber Flask-Admin
     can_create = False

@@ -139,6 +139,12 @@ class User(UserMixin, db.Model):
     subscription_level: Mapped[str] = mapped_column(String(50), default='free')
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 
+    # Konto-Zeitstempel (UTC, timezone-naiv wie alle anderen DateTime-Spalten).
+    # Nullable: fuer Altbestand ist created_at nur so weit rekonstruierbar, wie
+    # es Aktivitaetsspuren gibt (Backfill in der Migration).
+    created_at: Mapped[datetime] = mapped_column(DateTime, nullable=True, default=datetime.utcnow)
+    last_login: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+
     # Account Lockout
     failed_login_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False, server_default='0')
     locked_until: Mapped[datetime] = mapped_column(DateTime, nullable=True)
@@ -181,6 +187,7 @@ class User(UserMixin, db.Model):
     def record_successful_login(self):
         self.failed_login_count = 0
         self.locked_until = None
+        self.last_login = datetime.utcnow()
         self.update_streak()
 
     def update_streak(self):
