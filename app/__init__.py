@@ -24,7 +24,41 @@ db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
 csrf = CSRFProtect()
-limiter = Limiter(key_func=get_remote_address, default_limits=["200 per hour"])
+def client_ip() -> str:
+    """Echte Client-IP ermitteln — Key-Funktion fuer den Rate-Limiter.
+
+    Produktion laeuft hinter einem Cloudflare-Tunnel. Ohne diese Aufloesung
+    saehe Flask nur die Tunnel-IP und ALLE Nutzer wuerden gemeinsam limitiert
+    (ein einziger Bot wuerde die ganze Seite aussperren).
+
+    Reihenfolge:
+      1. ``CF-Connecting-IP``  — von Cloudflare gesetzt, die verlaessliche Quelle
+      2. ``X-Forwarded-For``   — erstes Element (urspruenglicher Client)
+      3. ``remote_addr``       — lokal/Tests ohne Proxy-Header
+    """
+    from flask import request, has_request_context
+    if not has_request_context():
+        return '127.0.0.1'
+    cf_ip = request.headers.get('CF-Connecting-IP')
+    if cf_ip and cf_ip.strip():
+        return cf_ip.strip()
+    xff = request.headers.get('X-Forwarded-For')
+    if xff:
+        first = xff.split(',')[0].strip()
+        if first:
+            return first
+    return get_remote_address() or '127.0.0.1'
+
+
+# Storage bewusst "memory://": die Zaehler leben pro Gunicorn-Worker, das
+# effektive Limit ist also Limit x Worker-Anzahl. Fuer die Bot-Abwehr auf
+# dieser Ein-Server-Installation ausreichend — spart einen Redis-Dienst.
+# Wenn mehrere Hosts dazukommen, muss hier ein geteilter Storage her.
+limiter = Limiter(
+    key_func=client_ip,
+    default_limits=["200 per hour"],
+    storage_uri="memory://",
+)
 
 login_manager.login_view = 'routes.login' # type: ignore
 login_manager.login_message = 'Bitte melden Sie sich an, um diese Seite zu sehen.'
@@ -189,6 +223,13 @@ def create_app():
     migrate.init_app(app, db)
     login_manager.init_app(app)
     csrf.init_app(app)
+    # Rate-Limiter: in Produktion immer an. Tests schalten ihn nach create_app()
+    # ueber `limiter.enabled = False` ab — init_app() muss dafuer aktiviert
+    # laufen, sonst registriert Flask-Limiter seine Request-Hooks gar nicht und
+    # die gezielten Limiter-Tests koennten ihn nicht wieder einschalten.
+    app.config['RATELIMIT_ENABLED'] = (
+        os.environ.get('RATELIMIT_ENABLED', 'true').lower() == 'true'
+    )
     limiter.init_app(app)
     from app.mail_service import mail
     mail.init_app(app)
@@ -319,6 +360,11 @@ def create_app():
     @app.errorhandler(500)
     def _server_error(_e):
         return render_template('errors/500.html'), 500
+    @app.errorhandler(429)
+    def _too_many_requests(_e):
+        # Rate-Limit erreicht (Bot-Abwehr auf /register, /login, /forgot-password).
+        # Freundliche deutsche Seite statt Flask-Default-HTML.
+        return render_template('errors/429.html'), 429
     @app.errorhandler(410)
     def _gone(_e):
         # 410 Gone fuer endgueltig entfernte URLs (deprecated Alt-Lektionen):

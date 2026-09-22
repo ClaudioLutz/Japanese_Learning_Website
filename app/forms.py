@@ -5,12 +5,21 @@ from app.models import User
 import re
 
 
+# Erlaubtes Muster fuer NEUE Benutzernamen. Bestehende Konten sind nicht
+# betroffen — geprueft wird ausschliesslich bei der Neuanlage (RegistrationForm).
+USERNAME_PATTERN = re.compile(r'^[A-Za-z0-9_.-]{3,32}$')
+
+
 class RegistrationForm(FlaskForm):
-    username = StringField('Benutzername', validators=[DataRequired(), Length(min=3, max=80)])
-    email = StringField('E-Mail', validators=[DataRequired(), Email()])
+    username = StringField('Benutzername', validators=[DataRequired(), Length(min=3, max=32)])
+    email = StringField('E-Mail', validators=[DataRequired(), Email(), Length(max=120)])
     password = PasswordField('Passwort', validators=[DataRequired(), Length(min=8, max=128)])
     password2 = PasswordField(
         'Passwort wiederholen', validators=[DataRequired(), EqualTo('password')])
+    # Honeypot: im Browser per CSS unsichtbar (NICHT type=hidden), aria-hidden,
+    # tabindex=-1, autocomplete=off. Menschen fuellen das Feld nie aus; Bots,
+    # die blind alle Felder befuellen, werden in routes.register still abgewiesen.
+    website = StringField('Website (bitte leer lassen)')
     submit = SubmitField('Registrieren')
 
     def validate_password(self, password):
@@ -24,7 +33,13 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('Passwort muss mindestens eine Ziffer enthalten.')
 
     def validate_username(self, username):
-        user = User.query.filter_by(username=username.data).first()
+        val = (username.data or '').strip()
+        if not USERNAME_PATTERN.match(val):
+            raise ValidationError(
+                'Benutzername: 3 bis 32 Zeichen, erlaubt sind nur Buchstaben, '
+                'Ziffern sowie . _ und -'
+            )
+        user = User.query.filter_by(username=val).first()
         if user is not None:
             raise ValidationError('Bitte einen anderen Benutzernamen wählen.')
 

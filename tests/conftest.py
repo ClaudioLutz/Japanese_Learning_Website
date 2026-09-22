@@ -26,18 +26,42 @@ from app import create_app, db as _db
 
 @pytest.fixture(autouse=True)
 def _reset_rate_limits():
-    """Rate-Limiter global zwischen Tests zuruecksetzen (verhindert 429-Durchschlag,
-    z.B. bei mehreren /register- oder /login-POSTs innerhalb derselben Minute)."""
+    """Rate-Limiter global zwischen Tests zuruecksetzen und standardmaessig
+    deaktivieren.
+
+    Der Limiter wird in create_app() bewusst AKTIV initialisiert (sonst
+    registriert Flask-Limiter seine Request-Hooks gar nicht erst). Hier wird er
+    pro Test abgeschaltet, damit bestehende Tests nicht an 429ern scheitern;
+    die gezielten Limiter-Tests schalten ihn ueber die Fixture
+    `rate_limited_client` punktuell wieder ein.
+    """
     from app import limiter
     try:
         limiter.reset()
     except Exception:
         pass
+    limiter.enabled = False
     yield
+    limiter.enabled = False
     try:
         limiter.reset()
     except Exception:
         pass
+
+
+@pytest.fixture
+def rate_limited():
+    """Rate-Limiter fuer die Dauer EINES Tests aktivieren.
+
+    Nur fuer Tests, die das Limit selbst pruefen wollen — alle uebrigen Tests
+    laufen mit deaktiviertem Limiter (siehe _reset_rate_limits).
+    """
+    from app import limiter
+    limiter.reset()
+    limiter.enabled = True
+    yield limiter
+    limiter.enabled = False
+    limiter.reset()
 
 
 @pytest.fixture(scope="session")
@@ -48,6 +72,8 @@ def app():
         "TESTING": True,
         "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
         "WTF_CSRF_ENABLED": False,
+        # Rate-Limiting in Tests aus (siehe _reset_rate_limits)
+        "RATELIMIT_ENABLED": False,
         "SERVER_NAME": "localhost",
         "PAYMENT_PROVIDER": "mock",
         "MOCK_PAYMENTS_ENABLED": "true",

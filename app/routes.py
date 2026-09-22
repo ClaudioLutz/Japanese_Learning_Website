@@ -6,7 +6,7 @@ from datetime import datetime
 from flask import Blueprint, render_template, render_template_string, redirect, url_for, flash, request, jsonify, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError # Import specific exceptions
-from app import db, csrf, limiter, srs_service
+from app import db, csrf, limiter, srs_service, client_ip
 from app.models import User, Kana, Kanji, Vocabulary, Grammar, LessonCategory, Lesson, LessonContent, LessonPrerequisite, UserLessonProgress, QuizQuestion, QuizOption, UserQuizAnswer, LessonPage, Course, LessonPurchase, CoursePurchase, AccessDenialReason, AccessContext
 from app.forms import RegistrationForm, LoginForm, CSRFTokenForm, RequestPasswordResetForm, ResetPasswordForm
 from app.auth_tokens import make_reset_token, verify_reset_token
@@ -546,11 +546,26 @@ def index():
                          n5_coverage=n5_coverage)
 
 @bp.route('/register', methods=['GET', 'POST'])
-@limiter.limit("5 per minute")
+# Bot-Abwehr ohne Captcha: 5 Registrierungsversuche pro Stunde und IP.
+# Nur POST limitieren, damit das blosse Anschauen der Seite nicht zaehlt.
+@limiter.limit("5 per hour", methods=['POST'])
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('routes.index'))
     form = RegistrationForm()
+    # Honeypot VOR der Formularvalidierung pruefen: ein Bot fuellt oft auch
+    # andere Felder unsauber aus und wuerde sonst schon an der Validierung
+    # scheitern, bevor wir ihn ueberhaupt erkennen.
+    if request.method == 'POST' and (request.form.get('website') or '').strip():
+        current_app.logger.warning(
+            'Honeypot ausgeloest auf /register - Registrierung still abgelehnt '
+            '(IP %s, User-Agent %r)',
+            client_ip(),
+            (request.headers.get('User-Agent') or '')[:150],
+        )
+        # Generische Meldung, kein Hinweis auf den Grund.
+        flash('Die Registrierung konnte nicht abgeschlossen werden. Bitte versuche es später erneut.', 'danger')
+        return redirect(url_for('routes.register'))
     if form.validate_on_submit():
         user = User(username=form.username.data, email=form.email.data)
         user.set_password(form.password.data)
@@ -578,7 +593,9 @@ def register():
     return render_template('register.html', form=form)
 
 @bp.route('/login', methods=['GET', 'POST'])
-@limiter.limit("10 per minute")
+# Bot-/Credential-Stuffing-Abwehr: 10 Anmeldeversuche pro 15 Minuten und IP
+# (ergaenzend zum kontobezogenen Lockout in User.record_failed_login).
+@limiter.limit("10 per 15 minutes", methods=['POST'])
 def login():
     if current_user.is_authenticated:
         # Redirect based on user role — eingeloggte Nutzer landen auf der
@@ -614,7 +631,8 @@ def login():
     return render_template('login.html', form=form)
 
 @bp.route('/forgot-password', methods=['GET', 'POST'])
-@limiter.limit("3 per hour")
+# Reset-Anforderungen: 5 pro Stunde und IP (Mail-Versand-Missbrauch bremsen).
+@limiter.limit("5 per hour", methods=['POST'])
 def forgot_password():
     if current_user.is_authenticated:
         return redirect(url_for('routes.index'))

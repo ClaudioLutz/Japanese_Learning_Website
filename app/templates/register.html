@@ -33,6 +33,19 @@
     outline: 2px solid var(--ai);
     outline-offset: 1px;
   }
+  /* Honeypot: fuer Menschen unsichtbar, aber kein type=hidden (Bots fuellen
+     sichtbare Textfelder aus, versteckte oft nicht). Nicht display:none, weil
+     manche Bots genau darauf pruefen. */
+  .auth-card .hp-field {
+    position: absolute !important;
+    left: -10000px !important;
+    top: auto;
+    width: 1px !important;
+    height: 1px !important;
+    overflow: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none;
+  }
   .auth-card .pw-hint {
     font-size: 0.8125rem;
     color: var(--ink-500);
@@ -55,6 +68,11 @@
     <form method="POST">
       {{ form.hidden_tag() }}
       <input type="hidden" name="next" value="{{ request.args.get('next', '') }}">
+      {# Honeypot — bleibt fuer Menschen unsichtbar; ausgefuellt = Bot. #}
+      <div class="hp-field" aria-hidden="true">
+        {{ form.website.label() }}
+        {{ form.website(tabindex="-1", autocomplete="off") }}
+      </div>
       <div class="mb-3">
         {{ form.username.label(class="form-label") }}
         {{ form.username(class="form-control", autocomplete="username") }}

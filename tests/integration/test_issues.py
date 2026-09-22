@@ -149,7 +149,7 @@ class TestIssueCreate:
         assert resp.status_code == 200  # Formular neu gerendert
         assert ContentIssue.query.count() == 0
 
-    def test_create_rate_limited(self, auth_client, db):
+    def test_create_rate_limited(self, auth_client, db, rate_limited):
         client, user = auth_client
         codes = []
         for i in range(6):

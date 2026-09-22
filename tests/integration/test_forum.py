@@ -142,7 +142,7 @@ class TestForumCreate:
         assert 'Nur Team' in body
         assert '/forum/ankuendigungen/new' not in body
 
-    def test_create_topic_rate_limited(self, auth_client):
+    def test_create_topic_rate_limited(self, auth_client, rate_limited):
         client, user = auth_client
         _category(slug='vorschlaege')
         codes = []
