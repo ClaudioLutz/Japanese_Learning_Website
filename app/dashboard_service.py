@@ -1025,6 +1025,145 @@ def _undiscovered_features(user_id):
     return items[:3]
 
 
+# ── Streak-Transparenz + „morgen faellig" ─────────────────────────────────
+# Rein informativ, kein Tages-Zwang. Spiegelt EXAKT User.update_streak:
+# Tagesgrenze Europe/Zurich; 1 Freeze, alle 7 Tage auf 1 nachgefuellt; er deckt
+# genau EINEN verpassten Tag (letzte Aktivitaet = vorgestern) und wird bei der
+# naechsten Aktivitaet automatisch verbraucht (Streak bleibt dann gleich, +0).
+
+LOGIN_STREAK_SESSION_KEY = 'wb_login_streak'
+
+
+def remember_login_streak(prev_activity, prev_streak, event):
+    """Beim Login merken, was der Login mit dem Streak gemacht hat (Session).
+
+    Der Login selbst ruft update_streak() — danach ist last_activity_date schon
+    „heute" und der Dialog koennte weder erkennen, dass jemand zurueckkommt,
+    noch was mit dem Streak passiert ist. Deshalb halten wir den Stand vor dem
+    Login fuer den heutigen CH-Tag in der Session fest.
+    """
+    from flask import session
+
+    from app.time_utils import ch_today
+
+    session[LOGIN_STREAK_SESSION_KEY] = {
+        'day': ch_today().isoformat(),
+        'prev_activity': prev_activity.isoformat() if prev_activity else None,
+        'prev_streak': int(prev_streak or 0),
+        'event': event,
+    }
+
+
+def _login_streak_info():
+    """Login-Stand von heute aus der Session (oder None)."""
+    from flask import has_request_context, session
+
+    from app.time_utils import ch_today
+
+    if not has_request_context():
+        return None
+    info = session.get(LOGIN_STREAK_SESSION_KEY)
+    if not isinstance(info, dict) or info.get('day') != ch_today().isoformat():
+        return None
+    return info
+
+
+def _freeze_would_apply(user, today):
+    """Wuerde update_streak() heute einen Freeze verbrauchen koennen?
+
+    Ohne Settings-Zeile legt update_streak sie an und fuellt sofort auf 1 auf;
+    sonst gilt: verfuegbar ODER die 7-Tage-Nachfuellung steht an.
+    """
+    s = getattr(user, 'srs_settings', None)
+    if s is None:
+        return True
+    if (s.streak_freezes_available or 0) > 0:
+        return True
+    return not s.last_freeze_replenish or (today - s.last_freeze_replenish).days >= 7
+
+
+def _tage(n):
+    return f'{n}-Tage-Streak'
+
+
+def streak_status(user):
+    """Ehrlicher Streak-Zustand fuer Dialog + /mein-lernen.
+
+    state:
+      'none'           — noch nie aktiv
+      'done_today'     — heute schon verlaengert (auch der Login zaehlt als Aktivitaet)
+      'at_risk'        — gestern gelernt, heute noch nicht: bis Mitternacht halten
+      'freeze_pending' — gestern verpasst, Freeze greift bei der naechsten Aktivitaet heute
+      'frozen'         — heute beim Login durch den Freeze gerettet
+      'lost'           — gerissen (heute beim Login oder bei der naechsten Aktivitaet)
+    streak = die Zahl, die jetzt ehrlich gilt (bei noch nicht verbuchtem Bruch 0),
+    prev_streak = die verlorene Laenge bei 'lost'.
+    """
+    from datetime import timedelta
+
+    from app.time_utils import ch_today
+
+    today = ch_today()
+    last = user.last_activity_date
+    cur = user.current_streak or 0
+    login = _login_streak_info()
+
+    def res(state, streak, text, prev=0):
+        return {'state': state, 'streak': streak, 'prev_streak': prev, 'text': text}
+
+    if login and login.get('event') == 'frozen':
+        return res('frozen', cur,
+                   f'Gestern verpasst — dein Streak-Freeze hat deinen {_tage(cur)} gerettet.')
+    if login and login.get('event') == 'reset' and (login.get('prev_streak') or 0) >= 2:
+        prev = login['prev_streak']
+        return res('lost', cur, f'Dein {_tage(prev)} ist gerissen — heute hat ein neuer begonnen.', prev)
+
+    if last is None:
+        return res('none', 0, None)
+    if last >= today:
+        return res('done_today', cur,
+                   f'Heute schon gelernt — {cur} {"Tag" if cur == 1 else "Tage"} am Stück.')
+    if last == today - timedelta(days=1):
+        if cur >= 2:
+            return res('at_risk', cur, f'Noch bis Mitternacht, um deinen {_tage(cur)} zu halten.')
+        return res('at_risk', cur, 'Lernst du heute, wächst dein Streak auf 2 Tage.')
+    if last == today - timedelta(days=2) and _freeze_would_apply(user, today):
+        return res('freeze_pending', cur,
+                   f'Gestern verpasst — dein Streak-Freeze rettet deinen {_tage(cur)}, '
+                   'wenn du heute lernst.')
+    if cur >= 2:
+        return res('lost', 0, f'Dein {_tage(cur)} ist gerissen — heute startest du neu.', cur)
+    return res('lost', 0, 'Heute startest du einen neuen Streak.', cur)
+
+
+def due_tomorrow_count(user_id):
+    """Karten, die JETZT noch nicht faellig sind, aber bis Ende morgen (CH) faellig werden.
+
+    Beide Richtungen, gleiche Filter wie die Faellig-Zaehler (suspended raus,
+    Produktion nur mit 7-Tage-Gate). due_date ist UTC; die Tagesgrenze ist
+    CH-Mitternacht (time_utils.ch_day_start_utc).
+    """
+    from datetime import datetime, timedelta
+
+    from app import srs_service
+    from app.time_utils import ch_day_start_utc, ch_today
+
+    now = datetime.utcnow()
+    end = ch_day_start_utc(ch_today() + timedelta(days=2))
+    base = CardReviewState.query.filter(
+        CardReviewState.user_id == user_id,
+        CardReviewState.due_date > now,
+        CardReviewState.due_date < end,
+        CardReviewState.status != 'suspended',
+    )
+    n = base.filter(CardReviewState.direction == 'forward').count()
+    ready = srs_service.get_production_forward_ready_ids(user_id)
+    if ready:
+        n += base.filter(CardReviewState.direction == 'reverse',
+                         CardReviewState.content_id.in_(ready)).count()
+    return n
+
+
 def welcome_back(user):
     """Daten fuer den „Willkommen zurück"-Dialog (siehe /api/welcome-back).
 
@@ -1053,7 +1192,14 @@ def welcome_back(user):
         next_lesson_data = {'title': nxt['title'], 'url': url}
 
     last = user.last_activity_date
-    returning = last is not None and last < ch_today()
+    login = _login_streak_info()
+    if login is not None:
+        # Frischer Login heute: der Login hat last_activity_date schon auf heute
+        # gesetzt — massgeblich ist der Stand davor.
+        prev = login.get('prev_activity')
+        returning = prev is not None and prev < ch_today().isoformat()
+    else:
+        returning = last is not None and last < ch_today()
     show = bool(returning and (due_total > 0 or undiscovered))
 
     return {
@@ -1064,4 +1210,6 @@ def welcome_back(user):
         'review_url': url_for('srs.review_page'),
         'next_lesson': next_lesson_data,
         'undiscovered': undiscovered,
+        'due_tomorrow': due_tomorrow_count(uid),
+        'streak': streak_status(user),
     }

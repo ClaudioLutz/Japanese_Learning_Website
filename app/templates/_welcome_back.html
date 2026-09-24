@@ -15,6 +15,7 @@
   <div class="wb-dialog" role="dialog" aria-modal="true" aria-labelledby="wbTitle" tabindex="-1">
     <h2 class="wb-title" id="wbTitle">Willkommen zurück!</h2>
     <p class="wb-lead" id="wbLead"></p>
+    <ul class="wb-meta" id="wbMeta" hidden></ul>
     <a href="#" class="wb-primary" id="wbPrimary"></a>
 
     <div class="wb-discover" id="wbDiscover" hidden>
@@ -52,6 +53,10 @@
 .wb-dialog:focus { outline: none; }
 .wb-title { font-size: 1.35rem; font-weight: 700; margin: 0 0 0.35rem; }
 .wb-lead { color: var(--text-muted, #5C564D); font-size: 0.95rem; margin: 0 0 1rem; }
+.wb-meta { list-style: none; margin: -0.35rem 0 1rem; padding: 0; font-size: 0.88rem; }
+.wb-meta li { display: flex; gap: 0.5rem; align-items: baseline; padding: 0.15rem 0; line-height: 1.35; }
+.wb-meta .wb-ic { flex: none; width: 1.1rem; text-align: center; }
+.wb-meta .wb-streak-lost { color: var(--text-muted, #5C564D); }
 .wb-primary {
   display: block; text-align: center; text-decoration: none;
   background: var(--shu, #EB6101); color: #fff;
@@ -142,6 +147,27 @@
       lead.textContent = 'Heute ist nichts fällig. Schau dich um:';
       primary.hidden = true;
     }
+
+    // Streak + „morgen faellig" — rein informativ, kein Druck.
+    var meta = document.getElementById('wbMeta');
+    function metaLine(icon, text, cls) {
+      var li = document.createElement('li');
+      if (cls) li.className = cls;
+      var ic = document.createElement('span');
+      ic.className = 'wb-ic'; ic.setAttribute('aria-hidden', 'true'); ic.textContent = icon;
+      var t = document.createElement('span'); t.textContent = text;
+      li.appendChild(ic); li.appendChild(t); meta.appendChild(li);
+    }
+    var st = data.streak || {};
+    if (st.text) {
+      var icon = st.state === 'lost' ? '🌱' : (st.state === 'frozen' || st.state === 'freeze_pending') ? '🧊' : '🔥';
+      metaLine(icon, st.text, st.state === 'lost' ? 'wb-streak-lost' : '');
+    }
+    var tm = data.due_tomorrow || 0;
+    if (tm > 0) {
+      metaLine('📅', tm === 1 ? 'Morgen wird 1 weitere Karte fällig.' : 'Morgen werden ' + tm + ' weitere Karten fällig.');
+    }
+    if (meta.children.length) meta.hidden = false;
 
     var list = document.getElementById('wbList');
     var wrap = document.getElementById('wbDiscover');

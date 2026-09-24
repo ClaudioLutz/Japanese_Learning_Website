@@ -36,7 +36,9 @@ def index():
     # Basis-KPIs (server-gerendert, sofort sichtbar) — identische Quelle wie
     # /review/stats, damit Streak/Level/Faellig konsistent sind.
     stats = srs_service.get_user_stats(current_user.id)
-    stats['current_streak'] = current_user.current_streak or 0
+    # Streak ehrlich: ein noch nicht verbuchter Bruch zeigt 0 statt der alten Zahl.
+    streak_info = dashboard_service.streak_status(current_user)
+    stats['current_streak'] = streak_info['streak']
     stats['longest_streak'] = current_user.longest_streak or 0
     level = current_user.level or 1
     total_xp = current_user.total_xp or 0
@@ -70,6 +72,8 @@ def index():
         plan_minutes=plan_minutes,
         week_goal=dashboard_service.week_goal(current_user.id),
         freezes=dashboard_service.streak_freezes(current_user.id),
+        streak_info=streak_info,
+        due_tomorrow=dashboard_service.due_tomorrow_count(current_user.id),
         can_do=dashboard_service.can_do(current_user.id),
         vocab_themes=dashboard_service.vocab_themes(current_user.id),
         grammar_list=dashboard_service.grammar_list(current_user.id),

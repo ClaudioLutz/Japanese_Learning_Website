@@ -191,39 +191,61 @@ class User(UserMixin, db.Model):
         self.update_streak()
 
     def update_streak(self):
-        """Aktualisiert den Tages-Streak bei Aktivitaet mit Streak-Freeze-Unterstuetzung."""
+        """Aktualisiert den Tages-Streak bei Aktivitaet mit Streak-Freeze-Unterstuetzung.
+
+        Rueckgabe (auch als ``self._streak_event`` abgelegt, rein transient):
+        ``None`` (heute schon aktiv, nichts geaendert), ``'first'`` (erste
+        Aktivitaet ueberhaupt), ``'extended'`` (gestern gelernt → +1),
+        ``'frozen'`` (genau 1 Tag verpasst, Freeze verbraucht, Streak bleibt)
+        oder ``'reset'`` (Luecke zu gross bzw. kein Freeze → Streak = 1).
+        """
         # Tagesgrenze in CH-Lokalzeit (Europe/Zurich), NICHT UTC: bei UTC wuerde eine
         # spaetabendliche Session (z.B. 23:30 CH = 22:30/21:30 UTC ist noch ok, aber
         # 00:30 CH = 23:30 UTC des Vortags) auf den falschen Kalendertag fallen und den
         # Streak faelschlich brechen. Europe/Zurich = der Tag, den der Nutzer sieht.
         from zoneinfo import ZoneInfo
         today = datetime.now(ZoneInfo("Europe/Zurich")).date()
+        self._streak_event = None
         if self.last_activity_date == today:
-            return  # Bereits heute aktiv
+            return None  # Bereits heute aktiv
         from datetime import timedelta
 
-        # Streak-Freeze-Nachfuellung (1x pro Woche)
+        # Settings-Zeile lazy anlegen (NUR hier): ohne Zeile gab es nie einen
+        # Freeze — bis 2026-09 hatte kein einziger Nutzer eine. Modell-Defaults.
         settings = getattr(self, 'srs_settings', None)
+        if settings is None and self.id is not None:
+            settings = UserSRSSettings(user_id=self.id, streak_freezes_available=1)
+            db.session.add(settings)
+            self.srs_settings = settings
+
+        # Streak-Freeze-Nachfuellung (1x pro Woche, max. 1)
         if settings:
             if not settings.last_freeze_replenish or (today - settings.last_freeze_replenish).days >= 7:
                 settings.streak_freezes_available = 1
                 settings.last_freeze_replenish = today
 
-        if self.last_activity_date == today - timedelta(days=1):
+        if self.last_activity_date is None:
+            self.current_streak = 1
+            event = 'first'
+        elif self.last_activity_date == today - timedelta(days=1):
             # Gestern gelernt → Streak weiter
             self.current_streak = (self.current_streak or 0) + 1
-        elif (self.last_activity_date
-              and self.last_activity_date == today - timedelta(days=2)
+            event = 'extended'
+        elif (self.last_activity_date == today - timedelta(days=2)
               and settings
               and (settings.streak_freezes_available or 0) > 0):
             # Vorgestern gelernt, gestern verpasst, Freeze verfuegbar
             settings.streak_freezes_available -= 1
             # Streak bleibt (kein +1, aber kein Reset)
+            event = 'frozen'
         else:
             self.current_streak = 1
+            event = 'reset'
         if self.current_streak > (self.longest_streak or 0):
             self.longest_streak = self.current_streak
         self.last_activity_date = today
+        self._streak_event = event
+        return event
 
     def add_xp(self, amount):
         """Fuegt XP hinzu und prueft Level-Up."""

@@ -104,6 +104,13 @@
 
       <div class="panel">
         <div class="streak-line"><i class="fas fa-fire"></i> <span x-text="streak"></span> Tage dran <span class="wk"><span x-text="weekGoal.done"></span>/<span x-text="weekGoal.total"></span> diese Woche</span></div>
+        {# Streak-/Freeze-Zustand + „morgen faellig": server-gerendert, rein informativ. #}
+        {% if streak_info and streak_info.text %}
+        <p class="streak-note streak-{{ streak_info.state }}" data-streak-state="{{ streak_info.state }}">{{ streak_info.text }}</p>
+        {% endif %}
+        {% if due_tomorrow %}
+        <p class="streak-note tomorrow-note"><i class="far fa-calendar" aria-hidden="true"></i> Morgen {{ 'wird' if due_tomorrow == 1 else 'werden' }} {{ due_tomorrow }} weitere {{ 'Karte' if due_tomorrow == 1 else 'Karten' }} fällig.</p>
+        {% endif %}
       </div>
 
       <div class="panel">
