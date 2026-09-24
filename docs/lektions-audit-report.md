@@ -17,7 +17,7 @@ Geprüft wurden **58 Lektionen** (15 Module) in zwei Dimensionen: **Korrektheit*
 3. **Korrektheits-Audit:** 26 Agenten (1 je 2-3 Lektionen, modulkohärent) mit JLPT-Curriculum-Karte und Kanji-/Grammatik-Einführungsindex; jede Findung adversarial gegengeprüft.
 4. **Natürlichkeits-Recherche:** 1 Muttersprachler-Agent je Modul, mit **Web-Recherche** zum Thema als Vergleichsmassstab; jede Unnatürlich-/Steif-Markierung von einem strengen zweiten Muttersprachler gegengeprüft (Alternative muss N5-Niveau bleiben).
 
-> Hinweis: Findungen sind **Vorschläge zur Sichtung**, noch nicht angewendet. Der Korrektur-Schritt (das Anwenden der Fixes) ist bewusst Phase 2 nach deiner Freigabe.
+> Hinweis: Findungen waren ursprünglich **Vorschläge zur Sichtung**. Stand der Anwendung: siehe Abschnitt **„Angewendet am 2026-09-24“** am Ende.
 
 ## Systematische Muster (zuerst angehen)
 
@@ -391,3 +391,34 @@ Sätze, die ein Muttersprachler als steif/unnatürlich empfindet. Sortiert nach 
 
 - **42 von 58 Lektionen** haben mindestens eine Findung.
 - **16 Lektionen ohne jede Findung** (sauber): L149, L152, L161, L163, L173, L193, L194, L195, L196, L199, L200, L202, L208, L209, L210, L211.
+
+---
+
+## Angewendet am 2026-09-24
+
+Jede der 80 Findungen wurde gegen den Prod-DB-Stand vom 24.09.2026 re-validiert (Stelle vorhanden? schon anders?). Ergebnis und Fixes: `scripts/data/audit_phase2_fixes.json` (exakte Vorher/Nachher-Ops + Status je Findung), Applier `scripts/apply_audit_phase2.py` (DRY-RUN/--apply, idempotent, Ist-Wert-Abgleich). Backup vor dem Apply: `/home/hp-ubuntu/jpl-backups/content_20260924_211844.sql.gz`.
+
+| Status | Anzahl |
+|---|---|
+| Bereits im Juni angewendet (DB-Stand verifiziert) | 62 |
+| Heute angewendet (Rest bzw. Folgedefekt) | 14 |
+| Zur Fachprüfung (nicht angewendet) | 3 |
+| Übersprungen | 1 |
+| **Total** | **80** |
+
+**Wichtigster Befund der Re-Validierung:** Die Juni-Korrekturen standen zwar in `lesson_content.content_text`, **29 Textblöcke in 24 Lektionen zeigten sie aber nicht an**, weil die Lektionsansicht das vorberechnete `ai_generation_details.augmented_html` (Klick-Audio-HTML) bevorzugt und dieses nicht neu erzeugt worden war. Behoben durch `pregenerate_inline_audio.py` für alle betroffenen Lektionen. Merke: Nach jeder Textänderung an einem Block mit `augmented_html` muss es neu erzeugt werden.
+
+**Heute angewendet (44 Ops, 41 Zellen):**
+- Systematisch: L170 上手 — Frage war schon korrigiert, Erklärung/Feedback behaupteten aber „beide on-Lesungen“ (手=ず ist keine on-Lesung) → korrigiert.
+- Folgedefekte der Juni-Fixes: L164 Dialog-Quiz fragte noch „kommt in fünf Minuten zurück“ (Dialog sagt seit Juni ちょっと トイレに 行ってきます); L153 レストラン/カメラ-Fragen mit Hint/Feedback zu ラジオ/ヨガ; L176 zwei umgebaute Fragen mit veralteten Hints/Feedbacks (Büro-Abschied, Familien-Hierarchie); L151 スキ als „Ski“ in Quiz + Zusammenfassung; L178 Text-Transkript noch mit じゅうごふんあと.
+- Noch offen gewesen: L190 へ→に in den Beispielsätzen von 行く/来る; L150 Hint „Fünf“→„Sechs“ Kana; L154 ジ nicht „wie j in Jeans“; L155 シェ/チェ/ジェ in der Spezialitäten-Übersicht ergänzt; L165 Glosse zu 〜ましょうか im Dialog; L144 Beschreibung „14“→„16 Quiz-Fragen“.
+
+**Zur Fachprüfung:**
+- factual[21] L169 空/田 — JLPT-Level listenabhängig; im Juni auf N4 gesetzt, Lauftext nennt 空 „N4“. Welche Liste gilt?
+- factual[38] L166 交差点/信号/橋 mit jlpt_level 4 in N5-Lektion (橋 steht in vielen N5-Listen) — Feld ändern oder als Hilfsvokabel kennzeichnen?
+- naturalness[16] L197 Karte 背広 hat seit Juni einen Beispielsatz mit スーツ (ohne 背広) — Karte auf スーツ umstellen oder 背広-Satz mit Hinweis behalten?
+
+**Übersprungen:** factual[37] L166 — Text-Teil im Juni entschärft; Curriculum-Reihenfolge/Voraussetzungen (Te-Form vor Wegbeschreibung) ist ein Produktentscheid, keine Content-Korrektur.
+
+**Nicht erledigt:** Block-Player-Audio (`text_audio`) der geänderten Textblöcke liest teils noch den alten Text (Nachzug mit `gen_text_audio.py <lesson_id>`, idempotent über `text_hash`).
+

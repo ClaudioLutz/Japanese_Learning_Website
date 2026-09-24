@@ -1,0 +1,1205 @@
+{
+ "meta": {
+  "erstellt": "2026-09-24",
+  "quelle": "docs/lektions-audit-report.md (2026-06-21), confirmed_factual/naturalness.json",
+  "hinweis": "Re-Validierung gegen Prod-DB 2026-09-24: 28 Specs + Hand-Fälle waren im Juni schon angewendet; 29 Textblöcke zeigten die Korrektur wegen veraltetem augmented_html nicht an (-> regen_augmented_lessons)."
+ },
+ "ops": [
+  {
+   "id": "F01",
+   "prio": 1,
+   "audit_ref": "factual[23]",
+   "table": "quiz_question",
+   "pk": 3860,
+   "column": "explanation",
+   "mode": "full",
+   "old": "「じょうず」 = じょうず (jouzu). 上 als 「じょう」 (on-Lesung), 手 als 「ず」 (verschliffen).",
+   "new": "「上手」 liest man じょうず (jouzu, gut können). Die Lesung gilt für das ganze Wort: 上 klingt hier wie 「じょう」, 手 wie 「ず」 — merk dir 上手 als Einheit.",
+   "note": "Folgefix: 手=ず ist keine on-Lesung (on = しゅ)."
+  },
+  {
+   "id": "F02",
+   "prio": 1,
+   "audit_ref": "factual[23]",
+   "table": "quiz_option",
+   "pk": 13799,
+   "column": "feedback",
+   "mode": "full",
+   "old": "Richtig — beide on-Lesungen.",
+   "new": "Richtig — 上手 liest man じょうず.",
+   "note": ""
+  },
+  {
+   "id": "F03",
+   "prio": 1,
+   "audit_ref": "factual[23]",
+   "table": "quiz_option",
+   "pk": 13801,
+   "column": "feedback",
+   "mode": "full",
+   "old": "Das wäre nur on, aber 手 ist als 「ず」 verschliffen.",
+   "new": "Fast — 手 wird in 上手 nicht 「て」 gelesen, sondern 「ず」.",
+   "note": "じょうて mischt on (じょう) und kun (て) — \"nur on\" war falsch."
+  },
+  {
+   "id": "F04",
+   "prio": 2,
+   "audit_ref": "naturalness[0]",
+   "table": "quiz_question",
+   "pk": 3772,
+   "column": "question_text",
+   "mode": "full",
+   "old": "Tanaka kommt in fünf Minuten zurück.",
+   "new": "Tanaka geht kurz auf die Toilette.",
+   "note": "Folgedefekt: Aussage passte nicht mehr zum korrigierten Dialog."
+  },
+  {
+   "id": "F05",
+   "prio": 2,
+   "audit_ref": "naturalness[0]",
+   "table": "quiz_question",
+   "pk": 3772,
+   "column": "explanation",
+   "mode": "full",
+   "old": "Korrekt — 「五分後に 来ます」 (go-fun-go ni kimasu) = 'In fünf Minuten komme ich'.",
+   "new": "Richtig — Tanaka sagt 「ちょっと トイレに 行ってきます」 (chotto toire ni itte kimasu): „Ich gehe kurz auf die Toilette“ — und kommt gleich wieder.",
+   "note": ""
+  },
+  {
+   "id": "F06",
+   "prio": 2,
+   "audit_ref": "naturalness[0]",
+   "table": "quiz_option",
+   "pk": 13485,
+   "column": "feedback",
+   "mode": "full",
+   "old": "Genau — 「五分」 (go-fun) = fünf Minuten.",
+   "new": "Genau — 「行ってきます」 heisst „ich gehe (und komme wieder)“.",
+   "note": ""
+  },
+  {
+   "id": "F07",
+   "prio": 2,
+   "audit_ref": "naturalness[0]",
+   "table": "quiz_option",
+   "pk": 13486,
+   "column": "feedback",
+   "mode": "full",
+   "old": "Doch — Tanaka sagt es eindeutig.",
+   "new": "Doch — Tanaka sagt 「ちょっと トイレに 行ってきます」.",
+   "note": ""
+  },
+  {
+   "id": "F08",
+   "prio": 2,
+   "audit_ref": "naturalness[8]",
+   "table": "lesson_content",
+   "pk": 7182,
+   "column": "content_text",
+   "mode": "substr",
+   "old": "じゅうごふんあとです。",
+   "new": "あと じゅうごふんです。",
+   "note": ""
+  },
+  {
+   "id": "F09",
+   "prio": 2,
+   "audit_ref": "naturalness[8]",
+   "table": "lesson_content",
+   "pk": 7182,
+   "column": "content_text",
+   "mode": "substr",
+   "old": "Juu-go-fun ato desu.",
+   "new": "Ato juu-go-fun desu.",
+   "note": ""
+  },
+  {
+   "id": "F10",
+   "prio": 3,
+   "audit_ref": "factual[9]",
+   "table": "quiz_question",
+   "pk": 3622,
+   "column": "hint",
+   "mode": "full",
+   "old": "ra + ji + o — ein Lehnwort aus dem Englischen.",
+   "new": "Fünf Zeichen: re + su + to + ra + n — dort gehst du essen.",
+   "note": ""
+  },
+  {
+   "id": "F11",
+   "prio": 3,
+   "audit_ref": "factual[9]",
+   "table": "quiz_option",
+   "pk": 12953,
+   "column": "feedback",
+   "mode": "full",
+   "old": "Richtig! 「ラジオ」 = rajio (Radio).",
+   "new": "Richtig! 「レストラン」 = resutoran (Restaurant).",
+   "note": ""
+  },
+  {
+   "id": "F12",
+   "prio": 3,
+   "audit_ref": "factual[9]",
+   "table": "quiz_option",
+   "pk": 12954,
+   "column": "feedback",
+   "mode": "full",
+   "old": "「ジ」 hat Dakuten — wird ji gesprochen, nicht shi.",
+   "new": "Das dritte Zeichen ist 「ト」 (to), nicht 「タ」 (ta).",
+   "note": ""
+  },
+  {
+   "id": "F13",
+   "prio": 3,
+   "audit_ref": "factual[9]",
+   "table": "quiz_option",
+   "pk": 12955,
+   "column": "feedback",
+   "mode": "full",
+   "old": "Mittleres Zeichen ist ji, nicht ni.",
+   "new": "Das zweite Zeichen ist 「ス」 (su), nicht 「ソ」 (so).",
+   "note": ""
+  },
+  {
+   "id": "F14",
+   "prio": 3,
+   "audit_ref": "factual[9]",
+   "table": "quiz_option",
+   "pk": 12956,
+   "column": "feedback",
+   "mode": "full",
+   "old": "Mittleres Zeichen ist ji (mit Dakuten), nicht si.",
+   "new": "「ス」 ist su und 「ト」 ist to — 「ツ」 (tsu) kommt in diesem Wort nicht vor.",
+   "note": ""
+  },
+  {
+   "id": "F15",
+   "prio": 3,
+   "audit_ref": "factual[9]",
+   "table": "quiz_question",
+   "pk": 3628,
+   "column": "hint",
+   "mode": "full",
+   "old": "Ein bekanntes Wort aus Indien.",
+   "new": "Damit machst du Fotos.",
+   "note": ""
+  },
+  {
+   "id": "F16",
+   "prio": 3,
+   "audit_ref": "factual[9]",
+   "table": "quiz_option",
+   "pk": 12973,
+   "column": "feedback",
+   "mode": "full",
+   "old": "Richtig! 「ヨガ」 = yoga.",
+   "new": "Richtig! 「カメラ」 = kamera (Kamera).",
+   "note": ""
+  },
+  {
+   "id": "F17",
+   "prio": 3,
+   "audit_ref": "factual[9]",
+   "table": "quiz_option",
+   "pk": 12974,
+   "column": "feedback",
+   "mode": "full",
+   "old": "「ガ」 hat Dakuten — wird ga gesprochen, nicht ka.",
+   "new": "Das zweite Zeichen ist 「メ」 (me), nicht 「ミ」 (mi).",
+   "note": ""
+  },
+  {
+   "id": "F18",
+   "prio": 3,
+   "audit_ref": "factual[9]",
+   "table": "quiz_option",
+   "pk": 12975,
+   "column": "feedback",
+   "mode": "full",
+   "old": "Letzte Silbe ist ga, nicht gi.",
+   "new": "Das zweite Zeichen ist 「メ」 (me), nicht 「ネ」 (ne).",
+   "note": ""
+  },
+  {
+   "id": "F19",
+   "prio": 3,
+   "audit_ref": "factual[9]",
+   "table": "quiz_option",
+   "pk": 12976,
+   "column": "feedback",
+   "mode": "full",
+   "old": "「ヨ」 ist yo, nicht ra.",
+   "new": "Das letzte Zeichen ist 「ラ」 (ra), nicht 「ロ」 (ro).",
+   "note": ""
+  },
+  {
+   "id": "F20",
+   "prio": 3,
+   "audit_ref": "factual[52]",
+   "table": "quiz_question",
+   "pk": 3965,
+   "column": "hint",
+   "mode": "full",
+   "old": "Im Geschäft oft eine spezifische Floskel.",
+   "new": "Es ist das Letzte, was du am Abend zu deiner Familie sagst.",
+   "note": ""
+  },
+  {
+   "id": "F21",
+   "prio": 3,
+   "audit_ref": "factual[52]",
+   "table": "quiz_option",
+   "pk": 14167,
+   "column": "feedback",
+   "mode": "full",
+   "old": "Richtig — der typische Büro-Abschied.",
+   "new": "Richtig — 「おやすみなさい」 ist „Gute Nacht“ vor dem Schlafengehen.",
+   "note": ""
+  },
+  {
+   "id": "F22",
+   "prio": 3,
+   "audit_ref": "factual[52]",
+   "table": "quiz_option",
+   "pk": 14168,
+   "column": "feedback",
+   "mode": "full",
+   "old": "Falsch — das ist Gute Nacht zu Hause, nicht im Büro.",
+   "new": "Falsch — 「ただいま」 sagst du, wenn du nach Hause kommst („Ich bin zurück“).",
+   "note": ""
+  },
+  {
+   "id": "F23",
+   "prio": 3,
+   "audit_ref": "factual[52]",
+   "table": "quiz_option",
+   "pk": 14169,
+   "column": "feedback",
+   "mode": "full",
+   "old": "Falsch — das ist Heimkehr.",
+   "new": "Falsch — 「おかえりなさい」 antwortest du jemandem, der nach Hause kommt („Willkommen zurück“).",
+   "note": ""
+  },
+  {
+   "id": "F24",
+   "prio": 3,
+   "audit_ref": "factual[52]",
+   "table": "quiz_option",
+   "pk": 14170,
+   "column": "feedback",
+   "mode": "full",
+   "old": "Falsch — das ist Empfangs-Antwort.",
+   "new": "Falsch — 「いってきます」 sagst du, wenn du das Haus verlässt („Ich gehe dann mal“).",
+   "note": ""
+  },
+  {
+   "id": "F25",
+   "prio": 3,
+   "audit_ref": "factual[7]",
+   "table": "quiz_question",
+   "pk": 4010,
+   "column": "question_text",
+   "mode": "substr",
+   "old": "「スキ」 (suki, \"Ski\")",
+   "new": "「スキー」 (sukī, \"Ski\")",
+   "note": ""
+  },
+  {
+   "id": "F26",
+   "prio": 3,
+   "audit_ref": "factual[7]",
+   "table": "quiz_question",
+   "pk": 4010,
+   "column": "question_text",
+   "mode": "substr",
+   "old": "es klingt wie \"ski\".",
+   "new": "es klingt wie \"skī\".",
+   "note": ""
+  },
+  {
+   "id": "F27",
+   "prio": 3,
+   "audit_ref": "factual[7]",
+   "table": "quiz_option",
+   "pk": 14321,
+   "column": "feedback",
+   "mode": "substr",
+   "old": "Richtig! 「スキ」 klingt wie \"ski\"",
+   "new": "Richtig! 「スキー」 klingt wie \"skī\"",
+   "note": ""
+  },
+  {
+   "id": "F28",
+   "prio": 3,
+   "audit_ref": "factual[7]",
+   "table": "lesson_content",
+   "pk": 6388,
+   "column": "content_text",
+   "mode": "substr",
+   "old": "「スキ」 klingt wie \"ski\", nicht \"su-ki\"",
+   "new": "「スキー」 klingt wie \"skī\", nicht \"su-kī\"",
+   "note": ""
+  },
+  {
+   "id": "F29",
+   "prio": 3,
+   "audit_ref": "factual[24]+factual[25]",
+   "table": "vocabulary",
+   "pk": 353,
+   "column": "example_sentence_japanese",
+   "mode": "substr",
+   "old": "東京へ行きます",
+   "new": "東京に行きます",
+   "note": ""
+  },
+  {
+   "id": "F30",
+   "prio": 3,
+   "audit_ref": "factual[24]+factual[25]",
+   "table": "vocabulary",
+   "pk": 353,
+   "column": "example_sentence_english",
+   "mode": "substr",
+   "old": "Tōkyō e ikimasu",
+   "new": "Tōkyō ni ikimasu",
+   "note": ""
+  },
+  {
+   "id": "F31",
+   "prio": 3,
+   "audit_ref": "factual[24]+factual[25]",
+   "table": "vocabulary",
+   "pk": 354,
+   "column": "example_sentence_japanese",
+   "mode": "substr",
+   "old": "うちへ来ました",
+   "new": "うちに来ました",
+   "note": ""
+  },
+  {
+   "id": "F32",
+   "prio": 3,
+   "audit_ref": "factual[24]+factual[25]",
+   "table": "vocabulary",
+   "pk": 354,
+   "column": "example_sentence_english",
+   "mode": "substr",
+   "old": "uchi e kimashita",
+   "new": "uchi ni kimashita",
+   "note": ""
+  },
+  {
+   "id": "F33",
+   "prio": 4,
+   "audit_ref": "factual[5]",
+   "table": "quiz_question",
+   "pk": 4007,
+   "column": "hint",
+   "mode": "full",
+   "old": "Fünf Schriftzeichen, zwei davon Yōon: ぎゅう + にゅう. Hochfrequentes Alltagswort.",
+   "new": "Sechs Kana-Zeichen, darin zwei Yōon: ぎゅう + にゅう. Hochfrequentes Alltagswort.",
+   "note": ""
+  },
+  {
+   "id": "F34",
+   "prio": 4,
+   "audit_ref": "factual[47]",
+   "table": "quiz_question",
+   "pk": 3630,
+   "column": "explanation",
+   "mode": "full",
+   "old": "「シ」 (shi) + Dakuten = 「ジ」 (ji), wie englisches j in 'Jeans'.",
+   "new": "「シ」 (shi) + Dakuten = 「ジ」 (ji), weich gesprochen wie „dsch“ in *Dschungel* — nicht wie das harte englische j in *jet*.",
+   "note": ""
+  },
+  {
+   "id": "F35",
+   "prio": 4,
+   "audit_ref": "factual[49]",
+   "table": "lesson_content",
+   "pk": 6483,
+   "column": "content_text",
+   "mode": "substr",
+   "old": "### V-Familie — der Sonderfall",
+   "new": "### SH-, CH- und J-Familie — e nach sh, ch und j\n\nFür den Laut e nach sh, ch oder j hängst du ein kleines ェ an:\n\n- **「シェ」** (she) = シ + kleines エ. Beispiel: 「シェフ」 (shefu, 'Koch')\n- **「チェ」** (che) = チ + kleines エ. Beispiel: 「チェック」 (chekku, 'Check')\n- **「ジェ」** (je) = ジ + kleines エ. Beispiel: 「ジェット」 (jetto, 'Jet')\n\n### V-Familie — der Sonderfall",
+   "note": ""
+  },
+  {
+   "id": "F36",
+   "prio": 4,
+   "audit_ref": "factual[49]",
+   "table": "lesson_content",
+   "pk": 6483,
+   "column": "content_text",
+   "mode": "substr",
+   "old": "| ヴァ–ヴォ | va–vo | Echtes v | ヴァイオリン |",
+   "new": "| シェ, チェ, ジェ | she, che, je | e nach sh/ch/j | シェフ, チェック |\n| ヴァ–ヴォ | va–vo | Echtes v | ヴァイオリン |",
+   "note": ""
+  },
+  {
+   "id": "F37",
+   "prio": 4,
+   "audit_ref": "factual[33]",
+   "table": "lesson_content",
+   "pk": 6805,
+   "column": "content_text",
+   "mode": "substr",
+   "old": "\"de\": \"Wollen wir mal zusammen Sport machen?\"",
+   "new": "\"de\": \"Wollen wir mal zusammen Sport machen? (〜ましょうか = ein Vorschlag: „Wollen wir …?“)\"",
+   "note": ""
+  },
+  {
+   "id": "F38",
+   "prio": 4,
+   "audit_ref": "factual[33]",
+   "table": "lesson_content",
+   "pk": 6800,
+   "column": "content_text",
+   "mode": "substr",
+   "old": "-> Wollen wir mal zusammen Sport machen?",
+   "new": "-> Wollen wir mal zusammen Sport machen? (〜ましょうか = ein Vorschlag: „Wollen wir …?“)",
+   "note": ""
+  },
+  {
+   "id": "F39",
+   "prio": 4,
+   "audit_ref": "factual[54]",
+   "table": "quiz_question",
+   "pk": 3951,
+   "column": "hint",
+   "mode": "full",
+   "old": "Es geht um den Status der Person, nicht um die Tageszeit.",
+   "new": "Es ist Morgen — und du sprichst mit einer Person, der du Respekt zeigst.",
+   "note": ""
+  },
+  {
+   "id": "F40",
+   "prio": 4,
+   "audit_ref": "factual[54]",
+   "table": "quiz_option",
+   "pk": 14117,
+   "column": "feedback",
+   "mode": "full",
+   "old": "Genau — japanische Familien-Hierarchie.",
+   "new": "Genau — die höfliche Morgenbegrüssung für Lehrer, Vorgesetzte und Fremde.",
+   "note": ""
+  },
+  {
+   "id": "F41",
+   "prio": 4,
+   "audit_ref": "factual[54]",
+   "table": "quiz_option",
+   "pk": 14118,
+   "column": "feedback",
+   "mode": "full",
+   "old": "Auch falsch — おはよう/おはようございます existieren ebenso. Es geht um den Status.",
+   "new": "Fast — 「おはよう」 ist die lockere Form für Familie und Freunde. Gegenüber Lehrerin oder Chef sagst du 「おはようございます」.",
+   "note": ""
+  },
+  {
+   "id": "F42",
+   "prio": 4,
+   "audit_ref": "factual[54]",
+   "table": "quiz_option",
+   "pk": 14119,
+   "column": "feedback",
+   "mode": "full",
+   "old": "Müdigkeit ändert nicht die Höflichkeitsstufe.",
+   "new": "Falsch — 「こんにちは」 ist „Guten Tag“ und passt tagsüber, nicht am Morgen.",
+   "note": ""
+  },
+  {
+   "id": "F43",
+   "prio": 4,
+   "audit_ref": "factual[54]",
+   "table": "quiz_option",
+   "pk": 14120,
+   "column": "feedback",
+   "mode": "full",
+   "old": "Falsch — おはようございます existiert sehr wohl.",
+   "new": "Falsch — 「こんばんは」 ist „Guten Abend“.",
+   "note": ""
+  },
+  {
+   "id": "F44",
+   "prio": 4,
+   "audit_ref": "factual[34]",
+   "table": "lesson",
+   "pk": 144,
+   "column": "description",
+   "mode": "substr",
+   "old": "und 14 interaktiven Quiz-Fragen",
+   "new": "und einer Übung mit 16 Quiz-Fragen",
+   "note": ""
+  }
+ ],
+ "regen_augmented_lessons": [
+  143,
+  144,
+  147,
+  148,
+  150,
+  151,
+  153,
+  155,
+  157,
+  158,
+  159,
+  162,
+  164,
+  165,
+  166,
+  168,
+  169,
+  170,
+  172,
+  174,
+  175,
+  176,
+  177,
+  178
+ ],
+ "findings_status": [
+  {
+   "audit_ref": "factual[0]",
+   "lesson_id": 147,
+   "art": "progression",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[1]",
+   "lesson_id": 146,
+   "art": "konsistenz",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[2]",
+   "lesson_id": 148,
+   "art": "konsistenz",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[3]",
+   "lesson_id": 150,
+   "art": "faktischer_fehler",
+   "schwere": "mittel",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[4]",
+   "lesson_id": 150,
+   "art": "konsistenz",
+   "schwere": "mittel",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[5]",
+   "lesson_id": 150,
+   "art": "konsistenz",
+   "schwere": "gering",
+   "status": "angewendet_heute",
+   "begruendung": "Rest/Folgedefekt am 2026-09-24 behoben (siehe ops)"
+  },
+  {
+   "audit_ref": "factual[6]",
+   "lesson_id": 150,
+   "art": "faktischer_fehler",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[7]",
+   "lesson_id": 151,
+   "art": "faktischer_fehler",
+   "schwere": "mittel",
+   "status": "angewendet_heute",
+   "begruendung": "Rest/Folgedefekt am 2026-09-24 behoben (siehe ops)"
+  },
+  {
+   "audit_ref": "factual[8]",
+   "lesson_id": 151,
+   "art": "konsistenz",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[9]",
+   "lesson_id": 153,
+   "art": "vorwissen_sprung",
+   "schwere": "mittel",
+   "status": "angewendet_heute",
+   "begruendung": "Rest/Folgedefekt am 2026-09-24 behoben (siehe ops)"
+  },
+  {
+   "audit_ref": "factual[10]",
+   "lesson_id": 153,
+   "art": "klarheit",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[11]",
+   "lesson_id": 167,
+   "art": "klarheit",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[12]",
+   "lesson_id": 168,
+   "art": "konsistenz",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[13]",
+   "lesson_id": 191,
+   "art": "klarheit",
+   "schwere": "mittel",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[14]",
+   "lesson_id": 191,
+   "art": "klarheit",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[15]",
+   "lesson_id": 159,
+   "art": "konsistenz",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[16]",
+   "lesson_id": 204,
+   "art": "konsistenz",
+   "schwere": "mittel",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[17]",
+   "lesson_id": 206,
+   "art": "faktischer_fehler",
+   "schwere": "mittel",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[18]",
+   "lesson_id": 206,
+   "art": "konsistenz",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[19]",
+   "lesson_id": 170,
+   "art": "quiz_defekt",
+   "schwere": "mittel",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[20]",
+   "lesson_id": 169,
+   "art": "level_verstoss",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[21]",
+   "lesson_id": 169,
+   "art": "konsistenz",
+   "schwere": "gering",
+   "status": "fachpruefung",
+   "begruendung": "JLPT-Level von 空/田 ist listenabhängig (空 oft N5, 田 N4/N5). Im Juni wurden kanji 空+田 auf N4 gesetzt, Lauftext nennt 空 \"N4-Kanji\" — Fachentscheid nötig, welche Liste gilt."
+  },
+  {
+   "audit_ref": "factual[22]",
+   "lesson_id": 170,
+   "art": "klarheit",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[23]",
+   "lesson_id": 170,
+   "art": "quiz_defekt",
+   "schwere": "gering",
+   "status": "angewendet_heute",
+   "begruendung": "Rest/Folgedefekt am 2026-09-24 behoben (siehe ops)"
+  },
+  {
+   "audit_ref": "factual[24]",
+   "lesson_id": 190,
+   "art": "konsistenz",
+   "schwere": "mittel",
+   "status": "angewendet_heute",
+   "begruendung": "Rest/Folgedefekt am 2026-09-24 behoben (siehe ops)"
+  },
+  {
+   "audit_ref": "factual[25]",
+   "lesson_id": 190,
+   "art": "vorwissen_sprung",
+   "schwere": "gering",
+   "status": "angewendet_heute",
+   "begruendung": "Rest/Folgedefekt am 2026-09-24 behoben (siehe ops)"
+  },
+  {
+   "audit_ref": "factual[26]",
+   "lesson_id": 190,
+   "art": "konsistenz",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[27]",
+   "lesson_id": 172,
+   "art": "konsistenz",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[28]",
+   "lesson_id": 178,
+   "art": "konsistenz",
+   "schwere": "mittel",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[29]",
+   "lesson_id": 143,
+   "art": "klarheit",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[30]",
+   "lesson_id": 145,
+   "art": "faktischer_fehler",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[31]",
+   "lesson_id": 156,
+   "art": "quiz_defekt",
+   "schwere": "mittel",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[32]",
+   "lesson_id": 165,
+   "art": "konsistenz",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[33]",
+   "lesson_id": 165,
+   "art": "vorwissen_sprung",
+   "schwere": "gering",
+   "status": "angewendet_heute",
+   "begruendung": "Rest/Folgedefekt am 2026-09-24 behoben (siehe ops)"
+  },
+  {
+   "audit_ref": "factual[34]",
+   "lesson_id": 144,
+   "art": "konsistenz",
+   "schwere": "gering",
+   "status": "angewendet_heute",
+   "begruendung": "Rest/Folgedefekt am 2026-09-24 behoben (siehe ops)"
+  },
+  {
+   "audit_ref": "factual[35]",
+   "lesson_id": 198,
+   "art": "konsistenz",
+   "schwere": "mittel",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[36]",
+   "lesson_id": 197,
+   "art": "vorwissen_sprung",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[37]",
+   "lesson_id": 166,
+   "art": "vorwissen_sprung",
+   "schwere": "mittel",
+   "status": "uebersprungen",
+   "begruendung": "Text-Teil (falscher Verweis \"Lektion 4\") im Juni entschärft; struktureller Teil (Curriculum-Reihenfolge/prerequisites L160/161 vor L166) bewusst nicht angefasst — keine Content-Korrektur, Produktentscheid."
+  },
+  {
+   "audit_ref": "factual[38]",
+   "lesson_id": 166,
+   "art": "konsistenz",
+   "schwere": "gering",
+   "status": "fachpruefung",
+   "begruendung": "vocabulary 交差点/信号/橋 tragen jlpt_level 4 in N5-Lektion 166. 橋 steht in vielen N5-Listen; ob Feld ändern oder als \"Hilfsvokabel\" kennzeichnen, ist Fachentscheid (vocabulary-Tabelle nicht angefasst)."
+  },
+  {
+   "audit_ref": "factual[39]",
+   "lesson_id": 162,
+   "art": "konsistenz",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[40]",
+   "lesson_id": 177,
+   "art": "konsistenz",
+   "schwere": "mittel",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[41]",
+   "lesson_id": 160,
+   "art": "klarheit",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[42]",
+   "lesson_id": 175,
+   "art": "konsistenz",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[43]",
+   "lesson_id": 201,
+   "art": "faktischer_fehler",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[44]",
+   "lesson_id": 203,
+   "art": "konsistenz",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[45]",
+   "lesson_id": 205,
+   "art": "konsistenz",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[46]",
+   "lesson_id": 155,
+   "art": "klarheit",
+   "schwere": "mittel",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[47]",
+   "lesson_id": 154,
+   "art": "konsistenz",
+   "schwere": "gering",
+   "status": "angewendet_heute",
+   "begruendung": "Rest/Folgedefekt am 2026-09-24 behoben (siehe ops)"
+  },
+  {
+   "audit_ref": "factual[48]",
+   "lesson_id": 154,
+   "art": "konsistenz",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[49]",
+   "lesson_id": 155,
+   "art": "progression",
+   "schwere": "gering",
+   "status": "angewendet_heute",
+   "begruendung": "Rest/Folgedefekt am 2026-09-24 behoben (siehe ops)"
+  },
+  {
+   "audit_ref": "factual[50]",
+   "lesson_id": 157,
+   "art": "klarheit",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[51]",
+   "lesson_id": 174,
+   "art": "konsistenz",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[52]",
+   "lesson_id": 176,
+   "art": "quiz_defekt",
+   "schwere": "mittel",
+   "status": "angewendet_heute",
+   "begruendung": "Rest/Folgedefekt am 2026-09-24 behoben (siehe ops)"
+  },
+  {
+   "audit_ref": "factual[53]",
+   "lesson_id": 176,
+   "art": "konsistenz",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[54]",
+   "lesson_id": 176,
+   "art": "quiz_defekt",
+   "schwere": "gering",
+   "status": "angewendet_heute",
+   "begruendung": "Rest/Folgedefekt am 2026-09-24 behoben (siehe ops)"
+  },
+  {
+   "audit_ref": "factual[55]",
+   "lesson_id": 158,
+   "art": "konsistenz",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "factual[56]",
+   "lesson_id": 158,
+   "art": "konsistenz",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "naturalness[0]",
+   "lesson_id": 164,
+   "art": "natuerlichkeit",
+   "schwere": "hoch",
+   "status": "angewendet_heute",
+   "begruendung": "Rest/Folgedefekt am 2026-09-24 behoben (siehe ops)"
+  },
+  {
+   "audit_ref": "naturalness[1]",
+   "lesson_id": 171,
+   "art": "natuerlichkeit",
+   "schwere": "hoch",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "naturalness[2]",
+   "lesson_id": 170,
+   "art": "natuerlichkeit",
+   "schwere": "mittel",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "naturalness[3]",
+   "lesson_id": 192,
+   "art": "natuerlichkeit",
+   "schwere": "hoch",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "naturalness[4]",
+   "lesson_id": 192,
+   "art": "natuerlichkeit",
+   "schwere": "mittel",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "naturalness[5]",
+   "lesson_id": 192,
+   "art": "natuerlichkeit",
+   "schwere": "mittel",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "naturalness[6]",
+   "lesson_id": 191,
+   "art": "natuerlichkeit",
+   "schwere": "mittel",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "naturalness[7]",
+   "lesson_id": 192,
+   "art": "natuerlichkeit",
+   "schwere": "mittel",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "naturalness[8]",
+   "lesson_id": 178,
+   "art": "natuerlichkeit",
+   "schwere": "hoch",
+   "status": "angewendet_heute",
+   "begruendung": "Rest/Folgedefekt am 2026-09-24 behoben (siehe ops)"
+  },
+  {
+   "audit_ref": "naturalness[9]",
+   "lesson_id": 143,
+   "art": "natuerlichkeit",
+   "schwere": "hoch",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "naturalness[10]",
+   "lesson_id": 176,
+   "art": "natuerlichkeit",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "naturalness[11]",
+   "lesson_id": 159,
+   "art": "natuerlichkeit",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "naturalness[12]",
+   "lesson_id": 144,
+   "art": "natuerlichkeit",
+   "schwere": "mittel",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "naturalness[13]",
+   "lesson_id": 144,
+   "art": "natuerlichkeit",
+   "schwere": "mittel",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "naturalness[14]",
+   "lesson_id": 165,
+   "art": "natuerlichkeit",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "naturalness[15]",
+   "lesson_id": 157,
+   "art": "natuerlichkeit",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "naturalness[16]",
+   "lesson_id": 197,
+   "art": "natuerlichkeit",
+   "schwere": "mittel",
+   "status": "fachpruefung",
+   "begruendung": "Beispielsatz zu 背広 wurde im Juni auf スーツ umgestellt — die Karte zeigt jetzt 背広 mit einem Satz ohne 背広. Fachentscheid: Karte auf スーツ umstellen oder 背広-Satz mit Hinweis \"altmodisch\" behalten."
+  },
+  {
+   "audit_ref": "naturalness[17]",
+   "lesson_id": 197,
+   "art": "natuerlichkeit",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "naturalness[18]",
+   "lesson_id": 162,
+   "art": "natuerlichkeit",
+   "schwere": "mittel",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "naturalness[19]",
+   "lesson_id": 160,
+   "art": "natuerlichkeit",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "naturalness[20]",
+   "lesson_id": 204,
+   "art": "natuerlichkeit",
+   "schwere": "hoch",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "naturalness[21]",
+   "lesson_id": 206,
+   "art": "natuerlichkeit",
+   "schwere": "hoch",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  },
+  {
+   "audit_ref": "naturalness[22]",
+   "lesson_id": 207,
+   "art": "natuerlichkeit",
+   "schwere": "gering",
+   "status": "bereits_angewendet",
+   "begruendung": "DB-Stand 2026-09-24 geprüft: Korrektur seit 2026-06-21 in der DB"
+  }
+ ]
+}

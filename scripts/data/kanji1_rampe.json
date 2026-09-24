@@ -1,0 +1,559 @@
+{
+ "meta": {
+  "erstellt": "2026-09-24",
+  "lesson_id": 164,
+  "zweck": "Rampe für Kanji 1: Seite 2 nur noch 一二三 + Lese-Text + Mini-Übung; 9 statt 7 Seiten. Keine Löschung, nur Umsortierung/Aufteilung und neue Kurztexte/Mini-Quizze.",
+  "draft_marker": "kanji1_rampe_2026-09-24"
+ },
+ "lesson_id": 164,
+ "pages_before": {
+  "1": 259,
+  "2": 260,
+  "3": 261,
+  "4": 262,
+  "5": 263,
+  "6": 264,
+  "7": 265
+ },
+ "page_moves": [
+  [
+   265,
+   7,
+   9
+  ],
+  [
+   264,
+   6,
+   8
+  ],
+  [
+   263,
+   5,
+   7
+  ],
+  [
+   262,
+   4,
+   6
+  ],
+  [
+   261,
+   3,
+   4
+  ]
+ ],
+ "new_pages": [
+  {
+   "page_number": 3,
+   "title": "Vier, fünf — und 人 für Personen",
+   "description": "四 五 人 und Personen zählen"
+  },
+  {
+   "page_number": 5,
+   "title": "Grosse Zahlen — 百 千 万, dazu 円 und 年",
+   "description": "Preise und Jahre lesen"
+  }
+ ],
+ "page_updates": [
+  {
+   "id": 260,
+   "title": "Die ersten drei — 一 二 三",
+   "description": "Kanji lesen: on- und kun-Lesung"
+  },
+  {
+   "id": 261,
+   "title": "Sechs bis zehn — 六 七 八 九 十",
+   "description": "Die Zahlen 6 bis 10"
+  }
+ ],
+ "content_before": {
+  "7308": [
+   1,
+   0
+  ],
+  "6749": [
+   1,
+   1
+  ],
+  "7309": [
+   2,
+   0
+  ],
+  "6750": [
+   2,
+   1
+  ],
+  "6751": [
+   2,
+   2
+  ],
+  "6752": [
+   2,
+   3
+  ],
+  "6753": [
+   2,
+   4
+  ],
+  "6754": [
+   2,
+   5
+  ],
+  "6755": [
+   2,
+   6
+  ],
+  "6756": [
+   2,
+   7
+  ],
+  "6757": [
+   2,
+   8
+  ],
+  "7310": [
+   3,
+   0
+  ],
+  "6758": [
+   3,
+   1
+  ],
+  "6759": [
+   3,
+   2
+  ],
+  "6760": [
+   3,
+   3
+  ],
+  "6761": [
+   3,
+   4
+  ],
+  "6762": [
+   3,
+   5
+  ],
+  "6763": [
+   3,
+   6
+  ],
+  "6764": [
+   3,
+   7
+  ],
+  "6765": [
+   3,
+   8
+  ],
+  "6766": [
+   3,
+   9
+  ],
+  "6767": [
+   3,
+   10
+  ],
+  "7267": [
+   4,
+   0
+  ],
+  "6768": [
+   4,
+   1
+  ],
+  "6769": [
+   4,
+   2
+  ],
+  "6770": [
+   4,
+   3
+  ],
+  "6771": [
+   4,
+   4
+  ],
+  "7268": [
+   5,
+   0
+  ],
+  "6776": [
+   5,
+   1
+  ],
+  "6777": [
+   5,
+   2
+  ],
+  "6772": [
+   5,
+   3
+  ],
+  "6773": [
+   5,
+   4
+  ],
+  "7269": [
+   6,
+   0
+  ],
+  "6774": [
+   6,
+   1
+  ],
+  "7270": [
+   7,
+   0
+  ],
+  "6775": [
+   7,
+   1
+  ]
+ },
+ "content_layout": {
+  "7308": [
+   1,
+   0
+  ],
+  "6749": [
+   1,
+   1
+  ],
+  "7309": [
+   2,
+   0
+  ],
+  "6750": [
+   2,
+   2
+  ],
+  "6751": [
+   2,
+   3
+  ],
+  "6752": [
+   2,
+   4
+  ],
+  "6753": [
+   3,
+   2
+  ],
+  "6754": [
+   3,
+   3
+  ],
+  "6757": [
+   3,
+   4
+  ],
+  "6755": [
+   3,
+   5
+  ],
+  "6756": [
+   3,
+   6
+  ],
+  "7310": [
+   4,
+   0
+  ],
+  "6758": [
+   4,
+   2
+  ],
+  "6759": [
+   4,
+   3
+  ],
+  "6760": [
+   4,
+   4
+  ],
+  "6761": [
+   4,
+   5
+  ],
+  "6762": [
+   4,
+   6
+  ],
+  "6763": [
+   5,
+   2
+  ],
+  "6764": [
+   5,
+   3
+  ],
+  "6765": [
+   5,
+   4
+  ],
+  "6766": [
+   5,
+   5
+  ],
+  "6767": [
+   5,
+   6
+  ],
+  "7267": [
+   6,
+   0
+  ],
+  "6768": [
+   6,
+   1
+  ],
+  "6769": [
+   6,
+   2
+  ],
+  "6770": [
+   6,
+   3
+  ],
+  "6771": [
+   6,
+   4
+  ],
+  "7268": [
+   7,
+   0
+  ],
+  "6776": [
+   7,
+   1
+  ],
+  "6777": [
+   7,
+   2
+  ],
+  "6772": [
+   7,
+   3
+  ],
+  "6773": [
+   7,
+   4
+  ],
+  "7269": [
+   8,
+   0
+  ],
+  "6774": [
+   8,
+   1
+  ],
+  "7270": [
+   9,
+   0
+  ],
+  "6775": [
+   9,
+   1
+  ]
+ },
+ "new_content": [
+  {
+   "key": "p2_text",
+   "page": 2,
+   "order": 1,
+   "title": "Erster Schritt: on- und kun-Lesung",
+   "content_text": "## So liest du ein Kanji\n\nFast jedes Kanji hat zwei Sorten Lesungen. Die **on-Lesung** (おんよみ, on-yomi) stammt aus dem Chinesischen und steckt in Zahlen und Kanji-Verbindungen: 一 = 「いち」 (ichi). Die **kun-Lesung** (くんよみ, kun-yomi) ist japanisch und steht oft vor Hiragana, zum Beispiel beim Zählen von Dingen: 一つ = 「ひとつ」 (hitotsu, ein Stück).\n\n### Deine ersten drei Kanji\n\n- **一** — 「いち」 (ichi, eins) · 「一つ」 ひとつ (hitotsu, ein Stück) · 1 Strich\n- **二** — 「に」 (ni, zwei) · 「二つ」 ふたつ (futatsu, zwei Stück) · 2 Striche\n- **三** — 「さん」 (san, drei) · 「三つ」 みっつ (mittsu, drei Stück) · 3 Striche\n\n> **Merkhilfe:** Zähl die Striche — 一 hat einen, 二 zwei, 三 drei. Dreh jetzt die Karten um und sag jede Lesung laut.",
+   "is_interactive": false,
+   "quiz": []
+  },
+  {
+   "key": "p2_quiz",
+   "page": 2,
+   "order": 5,
+   "title": null,
+   "content_text": "Mini-Übung: 一 二 三 — zwei kurze Fragen.",
+   "is_interactive": true,
+   "quiz": [
+    {
+     "question_type": "matching",
+     "question_text": "Verbinde Kanji und Lesung.",
+     "explanation": "Allein gezählt liest du die on-Lesung: いち, に, さん. Mit 「つ」 dahinter kommt die kun-Lesung: 一つ = ひとつ.",
+     "hint": null,
+     "options": [
+      {
+       "option_text": "一 (eins)",
+       "is_correct": true,
+       "feedback": "いち (ichi)"
+      },
+      {
+       "option_text": "二 (zwei)",
+       "is_correct": true,
+       "feedback": "に (ni)"
+      },
+      {
+       "option_text": "三 (drei)",
+       "is_correct": true,
+       "feedback": "さん (san)"
+      },
+      {
+       "option_text": "一つ (ein Stück)",
+       "is_correct": true,
+       "feedback": "ひとつ (hitotsu)"
+      }
+     ]
+    },
+    {
+     "question_type": "multiple_choice",
+     "question_text": "Wie liest man 「三つ」 (drei Stück)?",
+     "explanation": "「三つ」 = みっつ (mittsu). Steht Hiragana wie 「つ」 hinter dem Kanji, nimmst du meist die kun-Lesung.",
+     "hint": "Achte auf das 「つ」 hinter dem Kanji.",
+     "options": [
+      {
+       "option_text": "みっつ (mittsu)",
+       "is_correct": true,
+       "feedback": "Richtig — vor 「つ」 steht die kun-Lesung: 三つ = みっつ."
+      },
+      {
+       "option_text": "さんつ (santsu)",
+       "is_correct": false,
+       "feedback": "Fast — vor 「つ」 nimmst du die kun-Lesung み: みっつ."
+      },
+      {
+       "option_text": "さん (san)",
+       "is_correct": false,
+       "feedback": "Das ist die on-Lesung von 三 allein. Mit 「つ」 heisst es みっつ."
+      },
+      {
+       "option_text": "ふたつ (futatsu)",
+       "is_correct": false,
+       "feedback": "Das ist 「二つ」 (zwei Stück)."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "key": "p3_text",
+   "page": 3,
+   "order": 1,
+   "title": "Vier, fünf und der Mensch",
+   "content_text": "## 四, 五 und 人\n\n- **四** — 「よん」 (yon) oder 「し」 (shi), vier · 「四つ」 よっつ (yottsu, vier Stück). Im Alltag hörst du meist 「よん」, denn 「し」 klingt wie das Wort für „Tod“.\n- **五** — 「ご」 (go, fünf) · 「五つ」 いつつ (itsutsu, fünf Stück)\n- **人** — Mensch. Zum Zählen von Personen hängst du 「にん」 (nin) an: 三人 = さんにん (sannin). Ausnahmen: 「一人」 ひとり (hitori) und 「二人」 ふたり (futari).\n\n> **Merkhilfe:** 人 sieht aus wie ein Mensch mit zwei Beinen, der nach vorne geht.",
+   "is_interactive": false,
+   "quiz": []
+  },
+  {
+   "key": "p3_quiz",
+   "page": 3,
+   "order": 7,
+   "title": null,
+   "content_text": "Mini-Übung: 四, 五 und 人 — zwei kurze Fragen.",
+   "is_interactive": true,
+   "quiz": [
+    {
+     "question_type": "matching",
+     "question_text": "Verbinde Wort und Lesung.",
+     "explanation": "一人 und 二人 sind Sonderformen — ab 三人 (さんにん) zählst du regulär mit 「にん」.",
+     "hint": null,
+     "options": [
+      {
+       "option_text": "四 (vier)",
+       "is_correct": true,
+       "feedback": "よん (yon)"
+      },
+      {
+       "option_text": "五 (fünf)",
+       "is_correct": true,
+       "feedback": "ご (go)"
+      },
+      {
+       "option_text": "一人 (eine Person)",
+       "is_correct": true,
+       "feedback": "ひとり (hitori)"
+      },
+      {
+       "option_text": "二人 (zwei Personen)",
+       "is_correct": true,
+       "feedback": "ふたり (futari)"
+      }
+     ]
+    },
+    {
+     "question_type": "true_false",
+     "question_text": "「三人」 (drei Personen) liest man 「さんにん」 (sannin).",
+     "explanation": "Richtig — ab drei Personen zählst du regulär: Zahl + 「にん」. Nur 一人 (ひとり) und 二人 (ふたり) sind Sonderformen.",
+     "hint": null,
+     "options": [
+      {
+       "option_text": "Richtig",
+       "is_correct": true,
+       "feedback": "Genau — 三 (さん) + 人 (にん) = さんにん."
+      },
+      {
+       "option_text": "Falsch",
+       "is_correct": false,
+       "feedback": "Doch — nur 一人 und 二人 haben Sonderformen; 三人 ist regulär さんにん."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "key": "p4_text",
+   "page": 4,
+   "order": 1,
+   "title": "Sechs bis zehn",
+   "content_text": "## 六 bis 十\n\n- **六** — 「ろく」 (roku, sechs) · 「六つ」 むっつ (muttsu)\n- **七** — 「なな」 (nana) oder 「しち」 (shichi), sieben · 「七つ」 ななつ (nanatsu)\n- **八** — 「はち」 (hachi, acht) · 「八つ」 やっつ (yattsu)\n- **九** — 「きゅう」 (kyuu) oder 「く」 (ku), neun · 「九つ」 ここのつ (kokonotsu)\n- **十** — 「じゅう」 (juu, zehn) · 「十」 とお (too, zehn Stück)\n\n> **Tipp:** Bei 7 und 9 hörst du im Alltag meist 「なな」 und 「きゅう」.",
+   "is_interactive": false,
+   "quiz": []
+  },
+  {
+   "key": "p4_quiz",
+   "page": 4,
+   "order": 7,
+   "title": null,
+   "content_text": "Mini-Übung: 六 bis 十 — eine kurze Frage.",
+   "is_interactive": true,
+   "quiz": [
+    {
+     "question_type": "matching",
+     "question_text": "Verbinde jedes Kanji mit seiner Lesung.",
+     "explanation": "Für 7 und 9 gibt es je zwei Lesungen (なな/しち, きゅう/く) — im Alltag hörst du meist なな und きゅう.",
+     "hint": null,
+     "options": [
+      {
+       "option_text": "六 (sechs)",
+       "is_correct": true,
+       "feedback": "ろく (roku)"
+      },
+      {
+       "option_text": "七 (sieben)",
+       "is_correct": true,
+       "feedback": "なな (nana)"
+      },
+      {
+       "option_text": "九 (neun)",
+       "is_correct": true,
+       "feedback": "きゅう (kyuu)"
+      },
+      {
+       "option_text": "十 (zehn)",
+       "is_correct": true,
+       "feedback": "じゅう (juu)"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "key": "p5_text",
+   "page": 5,
+   "order": 1,
+   "title": "Grosse Zahlen",
+   "content_text": "## 百, 千, 万 — und 円, 年\n\n- **百** — 「ひゃく」 (hyaku, 100) · 百円 = ひゃくえん (100 Yen)\n- **千** — 「せん」 (sen, 1000) · 千円 = せんえん (1000 Yen)\n- **万** — 「まん」 (man, 10'000) · 一万円 = いちまんえん — vor 万 sagst du immer die Zahl, auch 「いち」.\n- **円** — 「えん」 (en, Yen) — steht auf jedem Preisschild.\n- **年** — 「ねん」 (nen, Jahr) · allein auch 「とし」 (toshi).\n\n> **Tipp:** Japanisch zählt in Viererblöcken: 10'000 ist ein eigenes Wort (万). 20'000 Yen = 二万円 (にまんえん).",
+   "is_interactive": false,
+   "quiz": []
+  }
+ ]
+}
