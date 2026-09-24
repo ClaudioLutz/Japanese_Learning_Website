@@ -49,7 +49,7 @@
 {% block body_attributes %}class="redesign-page"{% endblock %}
 
 {% block content %}
-<div class="lessons-page" x-data="lessonsPage()">
+<div class="lessons-page" x-data="lessonsPage()"{% if newbie_focus %} data-newbie-focus="1" data-focus-cat="{{ focus_cat_id if focus_cat_id is not none else '' }}"{% endif %}>
 
   {% if show_status %}
   {# ─────────── Weiter-lernen (eingeloggt) — Dashboard statt Katalog ─────────── #}
@@ -201,6 +201,14 @@
   <div class="lp-section-head">
     <h2 class="lp-h2">Lehrplan</h2>
     <span class="lp-count" x-text="countLabel()"></span>
+    {% if newbie_focus and page_categories|length > 1 %}
+    {# Neulings-Fokus: nur das Modul mit der naechsten Lektion ist offen. Alle
+       Module stehen trotzdem vollstaendig im HTML (SSR/SEO) — nur eingeklappt. #}
+    <button type="button" class="lp-showall" x-cloak
+            x-show="!hasActiveFilters()"
+            @click="allCatOpen() ? focusOnly() : expandAll()"
+            x-text="allCatOpen() ? 'Nur mein Modul zeigen' : 'Alle {{ page_categories|length }} Module anzeigen'">Alle {{ page_categories|length }} Module anzeigen</button>
+    {% endif %}
   </div>
 
   {% if page_categories|length > 1 %}
@@ -558,7 +566,7 @@
 }
 
 /* ── Sektions-Kopf ── */
-.lp-section-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1.25rem; }
+.lp-section-head { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 0.25rem 0.75rem; margin-bottom: 1.25rem; }
 .lp-h2 {
   font-family: 'Geist', 'Inter', sans-serif; font-size: 1.35rem; font-weight: 600;
   color: var(--kon); margin: 0; letter-spacing: -0.01em;
@@ -649,6 +657,12 @@
 .lp-cat-group-head:hover { background: var(--ink-50); }
 .lp-cat-group-head:focus-visible { outline: 2px solid var(--shu); outline-offset: -2px; }
 .lp-cat-caret { font-size: 0.85rem; color: var(--ink-400); flex-shrink: 0; transition: transform .2s; width: 0.85em; }
+.lp-showall {
+  margin-left: auto; background: none; border: 0; padding: 0.25rem 0;
+  font: inherit; font-size: 0.9rem; font-weight: 600; color: var(--shu, #EB6101);
+  text-decoration: underline; text-underline-offset: 3px; cursor: pointer;
+}
+.lp-showall:hover, .lp-showall:focus-visible { color: var(--shu-deep, #B84A00); }
 .lp-cat-caret.is-open { transform: rotate(90deg); color: var(--shu); }
 .lp-cat-group-icon { font-size: 1.45rem; line-height: 1; flex-shrink: 0; }
 /* Gruppenbild (16:9 Mini-Banner) in der Ausklapp-Leiste — der Lernpfad steckt
@@ -820,9 +834,22 @@ function lessonsPage() {
     },
 
     // ── Accordion: Server-Default (data-open-default) + Session-Overrides ──
+    // Neulings-Fokus (<=1 fertige Lektion): Zustand in localStorage, gebunden an
+    // das Fokus-Modul — wechselt die naechste Lektion ins naechste Modul, gilt
+    // wieder der Server-Default (nur dieses Modul offen).
+    _newbieKey: 'jpl.lessons.newbieCatOpen',
+    isNewbieFocus() { return this.$root && this.$root.dataset.newbieFocus === '1'; },
+    focusCatId() { return (this.$root && this.$root.dataset.focusCat) || ''; },
     initCatOpen() {
       let stored = {};
-      try { stored = JSON.parse(sessionStorage.getItem('lp_catOpen') || '{}'); } catch (e) {}
+      if (this.isNewbieFocus()) {
+        try {
+          const raw = JSON.parse(localStorage.getItem(this._newbieKey) || 'null');
+          if (raw && raw.focus === this.focusCatId() && raw.open) stored = raw.open;
+        } catch (e) {}
+      } else {
+        try { stored = JSON.parse(sessionStorage.getItem('lp_catOpen') || '{}'); } catch (e) {}
+      }
       document.querySelectorAll('.lp-cat-group').forEach(el => {
         const id = String(el.dataset.catId);
         const def = el.dataset.openDefault === '1';
@@ -830,7 +857,23 @@ function lessonsPage() {
       });
     },
     persistCatOpen() {
+      if (this.isNewbieFocus()) {
+        try {
+          localStorage.setItem(this._newbieKey,
+            JSON.stringify({ focus: this.focusCatId(), open: this.catOpen }));
+        } catch (e) {}
+        return;
+      }
       try { sessionStorage.setItem('lp_catOpen', JSON.stringify(this.catOpen)); } catch (e) {}
+    },
+    allCatOpen() {
+      const v = Object.values(this.catOpen);
+      return v.length > 0 && v.every(Boolean);
+    },
+    focusOnly() {
+      const f = this.focusCatId();
+      Object.keys(this.catOpen).forEach(k => { this.catOpen[k] = (k === f); });
+      this.persistCatOpen();
     },
     toggleCat(id) {
       id = String(id);

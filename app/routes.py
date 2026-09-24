@@ -868,6 +868,11 @@ def admin_manage_approval():
                            pending_grammar=pending_grammar)
 
 # --- Lesson Routes for Users ---
+# /lessons: bis zu so vielen abgeschlossenen Lektionen gilt ein Nutzer als Neuling
+# (nur das Modul mit der naechsten Lektion ist aufgeklappt).
+NEWBIE_FOCUS_MAX_DONE = 1
+
+
 @bp.route('/lessons')
 def lessons():
     """Browse available lessons.
@@ -1046,8 +1051,22 @@ def lessons():
     # vorbei. Faellt nichts darunter (frischer Account / Gast), die erste(n)
     # Sektion(en) oeffnen, damit die Seite nicht komplett eingeklappt wirkt.
     continue_id = continue_lesson['id'] if continue_lesson else None
+    # Neulings-Fokus (2026-09): wer hoechstens EINE Lektion abgeschlossen hat,
+    # sieht nur das Modul mit der naechsten Lektion aufgeklappt — nicht jedes
+    # Modul, in dem er mal kurz reingeklickt hat. Alles bleibt im HTML
+    # (SSR/SEO), nur visuell eingeklappt. Ab 2 fertigen Lektionen: bisherige
+    # Heuristik unveraendert. Gaeste: unveraendert.
+    newbie_focus = bool(show_status and total_done <= NEWBIE_FOCUS_MAX_DONE)
+    focus_cat_id = None
+    if newbie_focus and continue_id is not None:
+        for cat in page_categories:
+            if any(d['id'] == continue_id for d in cat['lessons']):
+                focus_cat_id = cat['id']
+                break
     for cat in page_categories:
-        if show_status:
+        if newbie_focus:
+            cat['open_default'] = cat['id'] == focus_cat_id
+        elif show_status:
             has_started = any(d['status'] == 'started' for d in cat['lessons'])
             partial = 0 < cat['done_count'] < cat['lesson_count']
             has_continue = continue_id is not None and any(
@@ -1083,6 +1102,8 @@ def lessons():
         continue_category=continue_category,
         due_count=due_count,
         current_streak=current_streak,
+        newbie_focus=newbie_focus,
+        focus_cat_id=focus_cat_id,
         first_free_lesson=first_free_lesson,
         n5_modules=n5_modules,
         n5_groups=n5_groups,
