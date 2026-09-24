@@ -118,6 +118,24 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
     }
     html.hide-front-romaji .romaji-toggle.review-icon-btn { opacity: 0.55; }
+
+    /* Rückgängig: nur sichtbar, solange die letzte Bewertung zurücknehmbar ist */
+    .review-undo-btn.review-icon-btn {
+        width: auto;
+        padding: 0 0.7rem;
+        gap: 0.4rem;
+        font-size: 0.82rem;
+        font-weight: 600;
+    }
+    .review-undo-btn[hidden] { display: none; }
+    .review-undo-btn .review-undo-label { white-space: nowrap; }
+    @media (max-width: 420px) {
+        .review-undo-btn.review-icon-btn { width: 38px; padding: 0; }
+        .review-undo-btn .review-undo-label {
+            position: absolute; width: 1px; height: 1px;
+            overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+        }
+    }
     html.hide-front-romaji .romaji-toggle.review-icon-btn::after {
         content: ''; position: absolute; left: 7px; right: 7px; top: 50%;
         height: 2px; background: currentColor; transform: rotate(-20deg);
@@ -893,6 +911,11 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         </div>
         <span class="review-xp-counter" id="sessionXpCounter" hidden>⚡ +0</span>
         <span class="review-progress-count" id="sessionCount">0 / 0</span>
+        <button type="button" class="review-icon-btn review-undo-btn" id="reviewUndoBtn" hidden
+                title="Letzte Bewertung rückgängig (Z)" aria-label="Letzte Bewertung rückgängig machen">
+            <i class="fas fa-rotate-left" aria-hidden="true"></i>
+            <span class="review-undo-label">Rückgängig</span>
+        </button>
         <button type="button" class="romaji-toggle review-icon-btn"
                 title="Romaji auf der Vorderseite ein-/ausblenden"
                 onclick="toggleFrontRomaji()">
@@ -1104,6 +1127,9 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     let cardFlipTime = null;
     let sessionStats = { total: 0, reviewed: 0, good: 0, xpEarned: 0, stagesUp: 0, stagesDown: 0, achievements: [] };
     const intervalCache = {};
+    // Letzte Bewertung (für „Rückgängig"): { card, rating, xp, stageDelta, at }
+    let lastRated = null;
+    const UNDO_WINDOW_MS = 5 * 60 * 1000;   // = srs_service.UNDO_WINDOW_SECONDS
     const TYPE_LABELS = { hiragana: 'Hiragana', katakana: 'Katakana', kana: 'Kana', kanji: 'Kanji', vocabulary: 'Vokabel', grammar: 'Grammatik' };
 
     // ── Filter: Kartentyp (Hiragana/Katakana/Kanji/Vokabeln/Grammatik) + Gruppe ──
@@ -1857,12 +1883,21 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
                 cards.splice(currentIdx, 1);
                 const insertAt = Math.min(currentIdx + 2 + Math.floor(Math.random() * 3), cards.length);
                 cards.splice(insertAt, 0, card);
-                sessionStats.total = sessionStats.reviewed + cards.length;
+                sessionStats.total = sessionStats.reviewed + (cards.length - currentIdx);
             } else {
                 // Hard/Good/Easy: aus dieser Session entfernen (auch bei Filter-Rebuild)
                 ratedIds.add(card.content_id);
                 currentIdx++;
             }
+
+            lastRated = {
+                card,
+                rating: ratingInt,
+                xp: result.xp_earned || 0,
+                stageDelta: result.stage_changed ? (result.card_stage > 0 ? 1 : -1) : 0,
+                at: Date.now(),
+            };
+            refreshUndoBtn();
 
             announce(`${RATING_DE[ratingInt]} — ${intervalText(result.next_interval, ratingInt)}. ` +
                      `Karte ${Math.min(sessionStats.reviewed + 1, sessionStats.total)} von ${sessionStats.total}.`);
@@ -1872,6 +1907,80 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
             rateCard._busy = false;
         }
     }
+
+    // ── Rückgängig: letzte Bewertung serverseitig zurücknehmen ──
+    const undoBtn = document.getElementById('reviewUndoBtn');
+    let undoTimer = null;
+
+    function refreshUndoBtn() {
+        if (!undoBtn) return;
+        const ok = !!lastRated && (Date.now() - lastRated.at) < UNDO_WINDOW_MS;
+        undoBtn.hidden = !ok;
+        if (undoTimer) { clearTimeout(undoTimer); undoTimer = null; }
+        if (ok) {
+            undoTimer = setTimeout(() => { lastRated = null; refreshUndoBtn(); },
+                                   UNDO_WINDOW_MS - (Date.now() - lastRated.at));
+        }
+    }
+
+    async function undoLastRating() {
+        if (!lastRated || rateCard._busy || undoLastRating._busy) return;
+        const entry = lastRated;
+        undoLastRating._busy = true;
+        try {
+            let resp;
+            try {
+                resp = await fetch('/api/srs/undo', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+                    body: JSON.stringify({ content_id: entry.card.content_id }),
+                });
+            } catch (e) {
+                announce('Rückgängig fehlgeschlagen. Bitte erneut versuchen.');
+                return;
+            }
+            if (!resp.ok) {
+                // abgelaufen / andere Karte zuletzt bewertet → Button weg
+                lastRated = null;
+                refreshUndoBtn();
+                showMomentToast('Rückgängig nicht möglich',
+                                resp.status === 410 ? 'Nur 5 Minuten lang möglich.' : 'Die letzte Bewertung ist nicht mehr zurücknehmbar.');
+                return;
+            }
+            const card = entry.card;
+            lastRated = null;
+            refreshUndoBtn();
+
+            // Karte an den Anfang der verbleibenden Queue zurückholen
+            const i = cards.indexOf(card);
+            if (i !== -1) {
+                cards.splice(i, 1);
+                if (i < currentIdx) currentIdx--;
+            }
+            cards.splice(currentIdx, 0, card);
+            ratedIds.delete(card.content_id);
+            delete intervalCache[String(card.content_id)];
+
+            // Session-Zähler zurückdrehen
+            sessionStats.reviewed = Math.max(0, sessionStats.reviewed - 1);
+            if (entry.rating >= 3) sessionStats.good = Math.max(0, sessionStats.good - 1);
+            sessionStats.xpEarned = Math.max(0, sessionStats.xpEarned - entry.xp);
+            if (entry.stageDelta > 0) sessionStats.stagesUp = Math.max(0, sessionStats.stagesUp - 1);
+            if (entry.stageDelta < 0) sessionStats.stagesDown = Math.max(0, sessionStats.stagesDown - 1);
+            sessionStats.total = sessionStats.reviewed + (cards.length - currentIdx);
+            updateXpCounter();
+            const dueEl = document.getElementById('statDue');
+            const todayEl = document.getElementById('statToday');
+            if (dueEl) dueEl.textContent = (parseInt(dueEl.textContent) || 0) + 1;
+            if (todayEl) todayEl.textContent = Math.max(0, (parseInt(todayEl.textContent) || 0) - 1);
+
+            announce(`Bewertung „${RATING_DE[entry.rating]}" zurückgenommen. Die Karte ist wieder dran.`);
+            refreshView();
+        } finally {
+            undoLastRating._busy = false;
+        }
+    }
+    if (undoBtn) undoBtn.addEventListener('click', (e) => { e.stopPropagation(); undoLastRating(); });
 
     // ── Button handlers ──
     btnGroup.querySelectorAll('.review-btn').forEach(btn => {
@@ -1886,6 +1995,14 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         if (e.target.closest && e.target.closest('input, textarea')) return;
         // Offenes Sheet: dort gelten native Bedienung + Escape (eigener Handler)
         if (sheet && sheet.classList.contains('is-open')) return;
+
+        // Rückgängig: Z oder Backspace (ohne Modifier — Ctrl+Z etc. bleiben frei)
+        if ((e.key === 'z' || e.key === 'Z' || e.key === 'Backspace')
+            && !e.ctrlKey && !e.metaKey && !e.altKey && lastRated) {
+            e.preventDefault();
+            undoLastRating();
+            return;
+        }
 
         const scene = document.getElementById('reviewScene');
         if (!scene) return;

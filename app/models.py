@@ -1641,9 +1641,14 @@ class ReviewLog(db.Model):
     # 'produktion'  = /review/produktion (DE->JP)
     # 'kana_grid'   = Kana-Zuordnungsspiel
     # 'dashboard'   = Inline-Review auf /mein-lernen
+    # 'review_listen' = /review im Hoermodus (Audio zuerst, Text verdeckt)
     # Nullable: Altdaten vor Einfuehrung haben keinen Wert; unbekannte/fehlende
     # Werte werden serverseitig zu NULL normalisiert (kein 400 — gecachte Clients).
     source = db.Column(db.String(16), nullable=True)
+    # Vorzustand VOR dieser Bewertung (JSON) fuer „Rueckgaengig" (POST /api/srs/undo):
+    # CardReviewState-Felder, vergebene XP, Mastery-/Aggregat-Deltas. Nullable —
+    # Altdaten ohne Snapshot sind nicht rueckgaengig machbar.
+    undo_snapshot = db.Column(db.Text, nullable=True)
 
     # Beziehungen
     user = db.relationship('User', backref=db.backref('review_logs', lazy='dynamic'))

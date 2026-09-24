@@ -104,6 +104,43 @@ def api_rate_card():
         return jsonify({'error': 'Interner Fehler'}), 500
 
 
+# HTTP-Status je Undo-Ablehnungsgrund (srs_service.UndoError.code)
+_UNDO_STATUS = {'nothing': 404, 'mismatch': 409, 'expired': 410, 'no_snapshot': 409}
+
+
+@srs_bp.route('/api/srs/undo', methods=['POST'])
+@login_required
+def api_undo_rating():
+    """Nimmt die juengste Bewertung des Users zurueck (max. 5 Minuten alt).
+
+    Body (optional): {"content_id": <id>} — muss dann die zuletzt bewertete
+    Karte sein (Schutz gegen Undo aus veraltetem Tab / anderem Geraet).
+    Streak, Streak-Tag-XP und Achievements bleiben bewusst bestehen.
+    """
+    data = request.get_json(silent=True) or {}
+    content_id = data.get('content_id')
+    try:
+        content_id = int(content_id) if content_id is not None else None
+    except (TypeError, ValueError):
+        return jsonify({'error': 'content_id ungueltig'}), 400
+
+    try:
+        result = srs_service.undo_last_rating(current_user.id, content_id=content_id)
+    except srs_service.UndoError as e:
+        return jsonify({'error': str(e), 'code': e.code}), _UNDO_STATUS.get(e.code, 409)
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f'Fehler bei undo_last_rating: {e}')
+        return jsonify({'error': 'Interner Fehler'}), 500
+
+    result['cards_remaining'] = (
+        srs_service.get_production_due_count(current_user.id)
+        if result['direction'] == 'reverse'
+        else srs_service.get_due_count(current_user.id)
+    )
+    return jsonify(result)
+
+
 @srs_bp.route('/api/srs/due')
 @login_required
 def api_due_cards():

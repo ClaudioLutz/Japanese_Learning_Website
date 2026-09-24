@@ -2,7 +2,7 @@
 """Service-Klasse fuer alle SRS-Operationen (FSRS-Algorithmus)."""
 import json
 import logging
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 
 from fsrs import Card, Rating, Scheduler, State
 
@@ -100,7 +100,17 @@ def rate_card(user_id, content_id, rating_int, time_taken_ms=None, direction='fo
     if state:
         card = _card_from_state(state)
         is_new = (state.reps == 0)
+        # Vorzustand fuer „Rueckgaengig" (POST /api/srs/undo) festhalten.
+        prev_state = {
+            'existed': True,
+            'fsrs_card_state': state.fsrs_card_state,
+            'due_date': state.due_date.isoformat() if state.due_date else None,
+            'status': state.status,
+            'reps': state.reps,
+            'lapses': state.lapses,
+        }
     else:
+        prev_state = {'existed': False}
         card = Card()
         is_new = True
         # direction EXPLIZIT setzen — sonst Unique-Crash (uq_user_content_direction)
@@ -189,6 +199,13 @@ def rate_card(user_id, content_id, rating_int, time_taken_ms=None, direction='fo
         elif old_stage_idx == 9 and new_stage_idx != 9:
             user.total_mastered = max(0, (user.total_mastered or 0) - 1)
 
+    mastered_delta = 0
+    if direction == 'forward':
+        if new_stage_idx == 9 and old_stage_idx != 9:
+            mastered_delta = 1
+        elif old_stage_idx == 9 and new_stage_idx != 9:
+            mastered_delta = -1
+
     # DailyReviewAggregate aktualisieren
     update_daily_aggregate(
         user_id=user_id,
@@ -213,6 +230,16 @@ def rate_card(user_id, content_id, rating_int, time_taken_ms=None, direction='fo
         elapsed_days=elapsed_days,
         stage_at_review=old_stage_idx,
         source=source,
+        undo_snapshot=json.dumps({
+            'state': prev_state,
+            'was_new': is_new,
+            'xp': xp,
+            'mastered_delta': mastered_delta,
+            'leveled_up': leveled_up,
+            'leveled_down': leveled_down,
+            # Tag, auf den update_daily_aggregate gebucht hat (CH-Lokalzeit)
+            'agg_date': _zurich_today().isoformat(),
+        }),
     )
     db.session.add(log_entry)
     db.session.commit()
@@ -234,6 +261,121 @@ def rate_card(user_id, content_id, rating_int, time_taken_ms=None, direction='fo
         'stage_color': new_stage_color,
         'stage_changed': stage_changed,
     }
+
+
+def _zurich_today():
+    """Heutiges Datum in CH-Lokalzeit (gleiche Tagesgrenze wie Streak/Aggregat)."""
+    from zoneinfo import ZoneInfo
+    return datetime.now(ZoneInfo('Europe/Zurich')).date()
+
+
+# Zeitfenster, in dem die juengste Bewertung zurueckgenommen werden darf.
+UNDO_WINDOW_SECONDS = 5 * 60
+
+
+class UndoError(Exception):
+    """Undo nicht moeglich — `code` ist ein stabiler Grund fuer das Frontend."""
+
+    def __init__(self, code, message):
+        super().__init__(message)
+        self.code = code
+
+
+def undo_last_rating(user_id, content_id=None, now=None):
+    """Nimmt die JUENGSTE Bewertung eines Users zurueck (nur innerhalb von 5 Min).
+
+    Rueckgaengig gemacht werden: CardReviewState (Vorzustand bzw. Loeschen, wenn
+    die Karte durch die Bewertung erst entstand), der ReviewLog-Eintrag (geloescht),
+    die dabei vergebenen Review-XP inkl. Zufallsbonus (Level wird zurueckgerechnet),
+    User.total_reviews/total_mastered und das DailyReviewAggregate des Buchungstags.
+
+    Bewusst NICHT zurueckgenommen: Streak (inkl. Streak-Tag-XP und verbrauchtem
+    Freeze), freigeschaltete Achievements, Kana-Verwechslungs-Logs.
+
+    Args:
+        content_id: optional — wenn gesetzt, muss die juengste Bewertung genau
+            diese Karte betreffen (Schutz gegen Undo aus einem veralteten Tab).
+
+    Raises:
+        UndoError('nothing'|'mismatch'|'expired'|'no_snapshot')
+    """
+    now = now or datetime.utcnow()
+    log = (ReviewLog.query.filter_by(user_id=user_id)
+           .order_by(ReviewLog.reviewed_at.desc(), ReviewLog.id.desc()).first())
+    if not log:
+        raise UndoError('nothing', 'Keine Bewertung zum Zuruecknehmen.')
+    if content_id is not None and log.content_id != int(content_id):
+        raise UndoError('mismatch', 'Die letzte Bewertung betrifft eine andere Karte.')
+    if (now - log.reviewed_at).total_seconds() > UNDO_WINDOW_SECONDS:
+        raise UndoError('expired', 'Rueckgaengig ist nur 5 Minuten lang moeglich.')
+    if not log.undo_snapshot:
+        raise UndoError('no_snapshot', 'Diese Bewertung kann nicht zurueckgenommen werden.')
+
+    snap = json.loads(log.undo_snapshot)
+    prev = snap.get('state') or {}
+
+    # 1) Karten-Zustand
+    state = CardReviewState.query.filter_by(
+        user_id=user_id, content_id=log.content_id, direction=log.direction
+    ).first()
+    if state is not None:
+        if prev.get('existed'):
+            state.fsrs_card_state = prev['fsrs_card_state']
+            state.due_date = (datetime.fromisoformat(prev['due_date'])
+                              if prev.get('due_date') else datetime.utcnow())
+            state.status = prev['status']
+            state.reps = prev['reps']
+            state.lapses = prev['lapses']
+            state.updated_at = datetime.utcnow()
+        else:
+            db.session.delete(state)
+
+    # 2) User-XP/Level + Zaehler
+    xp = int(snap.get('xp') or 0)
+    user = User.query.get(user_id)
+    user.total_xp = max(0, (user.total_xp or 0) - xp)
+    lvl = user.level or 1
+    # add_xp steigt, solange total_xp >= 100*level^1.5 — rueckwaerts spiegeln.
+    while lvl > 1 and user.total_xp < int(100 * ((lvl - 1) ** 1.5)):
+        lvl -= 1
+    user.level = lvl
+    user.total_reviews = max(0, (user.total_reviews or 0) - 1)
+    user.total_mastered = max(0, (user.total_mastered or 0) - int(snap.get('mastered_delta') or 0))
+
+    # 3) Tages-Aggregat des Buchungstags
+    agg_date = snap.get('agg_date')
+    if agg_date:
+        agg = DailyReviewAggregate.query.filter_by(
+            user_id=user_id, review_date=date.fromisoformat(agg_date)).first()
+        if agg:
+            def dec(field, by=1):
+                setattr(agg, field, max(0, (getattr(agg, field) or 0) - by))
+            dec('total_reviews')
+            if log.rating >= 3:
+                dec('correct_reviews')
+            dec({1: 'again_count', 2: 'hard_count', 3: 'good_count', 4: 'easy_count'}[log.rating])
+            dec('total_time_ms', log.time_taken_ms or 0)
+            dec('xp_earned', xp)
+            if snap.get('was_new'):
+                dec('new_cards_learned')
+            if snap.get('leveled_up'):
+                dec('cards_leveled_up')
+            if snap.get('leveled_down'):
+                dec('cards_leveled_down')
+
+    undone = {
+        'content_id': log.content_id,
+        'direction': log.direction,
+        'rating': log.rating,
+        'source': log.source,
+        'xp_reverted': xp,
+    }
+    # 4) Log-Eintrag entfernen (Statistiken/Optimizer sehen die Fehlbewertung nie)
+    db.session.delete(log)
+    db.session.commit()
+
+    undone.update({'total_xp': user.total_xp, 'level': user.level})
+    return undone
 
 
 def get_due_cards(user_id, limit=50, lesson_id=None, content_type=None, direction='forward'):
