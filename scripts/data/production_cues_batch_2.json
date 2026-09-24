@@ -1,0 +1,402 @@
+[
+ {
+  "id": 112,
+  "word": "エレベーター",
+  "cue": "Lift, Aufzug"
+ },
+ {
+  "id": 113,
+  "word": "エスカレーター",
+  "cue": "Rolltreppe"
+ },
+ {
+  "id": 115,
+  "word": "じどうはんばいき",
+  "cue": "Verkaufsautomat (z.B. für Getränke)"
+ },
+ {
+  "id": 116,
+  "word": "うりば",
+  "cue": "Verkaufsabteilung (im Warenhaus)"
+ },
+ {
+  "id": 117,
+  "word": "ちか",
+  "cue": "Untergeschoss, Keller"
+ },
+ {
+  "id": 118,
+  "word": "いっかい",
+  "cue": "erster Stock (in Japan = Erdgeschoss)"
+ },
+ {
+  "id": 119,
+  "word": "にかい",
+  "cue": "zweiter Stock (japanische Zählung)"
+ },
+ {
+  "id": 120,
+  "word": "さんかい",
+  "cue": "dritter Stock (japanische Zählung)"
+ },
+ {
+  "id": 121,
+  "word": "なんがい",
+  "cue": "welcher Stock? (Frage nach dem Stockwerk)"
+ },
+ {
+  "id": 123,
+  "word": "いくら",
+  "cue": "wie viel kostet …? (Preis)"
+ },
+ {
+  "id": 124,
+  "word": "ひゃく",
+  "cue": "hundert"
+ },
+ {
+  "id": 125,
+  "word": "せん",
+  "cue": "tausend"
+ },
+ {
+  "id": 126,
+  "word": "まん",
+  "cue": "zehntausend"
+ },
+ {
+  "id": 127,
+  "word": "くつ",
+  "cue": "Schuhe"
+ },
+ {
+  "id": 128,
+  "word": "ネクタイ",
+  "cue": "Krawatte"
+ },
+ {
+  "id": 129,
+  "word": "ワイン",
+  "cue": "Wein"
+ },
+ {
+  "id": 130,
+  "word": "くに",
+  "cue": "Land, Heimatland (Staat)"
+ },
+ {
+  "id": 131,
+  "word": "かいしゃ",
+  "cue": "Firma, Unternehmen"
+ },
+ {
+  "id": 132,
+  "word": "うち",
+  "cue": "Zuhause, daheim (das eigene Heim)"
+ },
+ {
+  "id": 133,
+  "word": "でんわ",
+  "cue": "Telefon, Anruf"
+ },
+ {
+  "id": 134,
+  "word": "でんわばんごう",
+  "cue": "Telefonnummer"
+ },
+ {
+  "id": 135,
+  "word": "なんばん",
+  "cue": "welche Nummer? (Frage)"
+ },
+ {
+  "id": 142,
+  "word": "はじまります",
+  "cue": "anfangen, beginnen (höfliche Form)"
+ },
+ {
+  "id": 143,
+  "word": "いま",
+  "cue": "jetzt"
+ },
+ {
+  "id": 145,
+  "word": "ふん",
+  "cue": "Minute (bei der Uhrzeit: … Minuten)"
+ },
+ {
+  "id": 146,
+  "word": "はん",
+  "cue": "halb (bei der Uhrzeit: … Uhr dreissig)"
+ },
+ {
+  "id": 147,
+  "word": "ごぜん",
+  "cue": "vormittags (Uhrzeit: am Vormittag)"
+ },
+ {
+  "id": 148,
+  "word": "ごご",
+  "cue": "nachmittags (Uhrzeit: am Nachmittag)"
+ },
+ {
+  "id": 150,
+  "word": "ひる",
+  "cue": "Mittag (Tageszeit, auch: tagsüber)"
+ },
+ {
+  "id": 152,
+  "word": "よる",
+  "cue": "Nacht / Abend (wenn es dunkel ist)"
+ },
+ {
+  "id": 153,
+  "word": "おととい",
+  "cue": "vorgestern"
+ },
+ {
+  "id": 154,
+  "word": "きのう",
+  "cue": "gestern"
+ },
+ {
+  "id": 155,
+  "word": "きょう",
+  "cue": "heute"
+ },
+ {
+  "id": 157,
+  "word": "あさって",
+  "cue": "übermorgen"
+ },
+ {
+  "id": 158,
+  "word": "けさ",
+  "cue": "heute Morgen"
+ },
+ {
+  "id": 159,
+  "word": "こんばん",
+  "cue": "heute Abend"
+ },
+ {
+  "id": 160,
+  "word": "やすみ",
+  "cue": "freier Tag, Ferien, Pause (Nomen)"
+ },
+ {
+  "id": 161,
+  "word": "ひるやすみ",
+  "cue": "Mittagspause"
+ },
+ {
+  "id": 162,
+  "word": "まいにち",
+  "cue": "jeden Tag, täglich"
+ },
+ {
+  "id": 163,
+  "word": "まいあさ",
+  "cue": "jeden Morgen"
+ },
+ {
+  "id": 164,
+  "word": "まいばん",
+  "cue": "jeden Abend"
+ },
+ {
+  "id": 165,
+  "word": "にちようび",
+  "cue": "Sonntag"
+ },
+ {
+  "id": 166,
+  "word": "げつようび",
+  "cue": "Montag"
+ },
+ {
+  "id": 167,
+  "word": "かようび",
+  "cue": "Dienstag"
+ },
+ {
+  "id": 168,
+  "word": "すいようび",
+  "cue": "Mittwoch"
+ },
+ {
+  "id": 169,
+  "word": "もくようび",
+  "cue": "Donnerstag"
+ },
+ {
+  "id": 170,
+  "word": "きんようび",
+  "cue": "Freitag"
+ },
+ {
+  "id": 171,
+  "word": "どようび",
+  "cue": "Samstag"
+ },
+ {
+  "id": 172,
+  "word": "なんじ",
+  "cue": "wie viel Uhr? (Frage nach der Uhrzeit)"
+ },
+ {
+  "id": 173,
+  "word": "なんぷん",
+  "cue": "wie viele Minuten? (Frage)"
+ },
+ {
+  "id": 174,
+  "word": "なんようび",
+  "cue": "welcher Wochentag? (Frage)"
+ },
+ {
+  "id": 175,
+  "word": "ぎんこう",
+  "cue": "Bank (Geldinstitut)"
+ },
+ {
+  "id": 176,
+  "word": "ゆうびんきょく",
+  "cue": "Post, Postamt"
+ },
+ {
+  "id": 177,
+  "word": "としょかん",
+  "cue": "Bibliothek"
+ },
+ {
+  "id": 178,
+  "word": "びじゅつかん",
+  "cue": "Kunstmuseum"
+ },
+ {
+  "id": 179,
+  "word": "たいへんですね",
+  "cue": "Das ist ja hart! (Mitgefühl zeigen)"
+ },
+ {
+  "id": 180,
+  "word": "そうですね",
+  "cue": "Stimmt, ja … / Tja, mal sehen … (höfliche Satzformel)"
+ },
+ {
+  "id": 184,
+  "word": "がっこう",
+  "cue": "Schule"
+ },
+ {
+  "id": 185,
+  "word": "スーパー",
+  "cue": "Supermarkt"
+ },
+ {
+  "id": 186,
+  "word": "えき",
+  "cue": "Bahnhof"
+ },
+ {
+  "id": 187,
+  "word": "ひこうき",
+  "cue": "Flugzeug"
+ },
+ {
+  "id": 188,
+  "word": "ふね",
+  "cue": "Schiff, Boot"
+ },
+ {
+  "id": 189,
+  "word": "でんしゃ",
+  "cue": "Zug, Bahn (elektrisch)"
+ },
+ {
+  "id": 190,
+  "word": "バス",
+  "cue": "Bus"
+ },
+ {
+  "id": 191,
+  "word": "タクシー",
+  "cue": "Taxi"
+ },
+ {
+  "id": 192,
+  "word": "じてんしゃ",
+  "cue": "Velo, Fahrrad"
+ },
+ {
+  "id": 195,
+  "word": "ともだち",
+  "cue": "Freund/in (Kamerad, nicht Partner)"
+ },
+ {
+  "id": 196,
+  "word": "かぞく",
+  "cue": "Familie"
+ },
+ {
+  "id": 197,
+  "word": "ひとりで",
+  "cue": "allein (ohne Begleitung)"
+ },
+ {
+  "id": 198,
+  "word": "せんしゅう",
+  "cue": "letzte Woche"
+ },
+ {
+  "id": 199,
+  "word": "こんしゅう",
+  "cue": "diese Woche"
+ },
+ {
+  "id": 200,
+  "word": "らいしゅう",
+  "cue": "nächste Woche"
+ },
+ {
+  "id": 201,
+  "word": "せんげつ",
+  "cue": "letzten Monat"
+ },
+ {
+  "id": 202,
+  "word": "こんげつ",
+  "cue": "diesen Monat"
+ },
+ {
+  "id": 203,
+  "word": "らいげつ",
+  "cue": "nächsten Monat"
+ },
+ {
+  "id": 204,
+  "word": "きょねん",
+  "cue": "letztes Jahr"
+ },
+ {
+  "id": 205,
+  "word": "ことし",
+  "cue": "dieses Jahr"
+ },
+ {
+  "id": 206,
+  "word": "らいねん",
+  "cue": "nächstes Jahr"
+ },
+ {
+  "id": 207,
+  "word": "いつ",
+  "cue": "wann? (Fragewort)"
+ },
+ {
+  "id": 208,
+  "word": "たんじょうび",
+  "cue": "Geburtstag"
+ }
+]

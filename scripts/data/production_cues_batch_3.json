@@ -1,0 +1,402 @@
+[
+ {
+  "id": 209,
+  "word": "ふつう",
+  "cue": "Regionalzug (hält an jeder Station)"
+ },
+ {
+  "id": 210,
+  "word": "きゅうこう",
+  "cue": "Schnellzug, Express (hält selten)"
+ },
+ {
+  "id": 211,
+  "word": "しんかんせん",
+  "cue": "japanischer Hochgeschwindigkeitszug"
+ },
+ {
+  "id": 212,
+  "word": "ちかてつ",
+  "cue": "U-Bahn"
+ },
+ {
+  "id": 213,
+  "word": "デパート",
+  "cue": "Warenhaus, Kaufhaus"
+ },
+ {
+  "id": 214,
+  "word": "どうぶつえん",
+  "cue": "Zoo"
+ },
+ {
+  "id": 215,
+  "word": "こうえん",
+  "cue": "Park"
+ },
+ {
+  "id": 216,
+  "word": "みせ",
+  "cue": "Laden, Geschäft"
+ },
+ {
+  "id": 217,
+  "word": "レストラン",
+  "cue": "Restaurant"
+ },
+ {
+  "id": 218,
+  "word": "おはなみ",
+  "cue": "Kirschblüten anschauen (Frühlingsfest unter Bäumen)"
+ },
+ {
+  "id": 219,
+  "word": "いっしょに",
+  "cue": "zusammen, gemeinsam"
+ },
+ {
+  "id": 221,
+  "word": "いいですね",
+  "cue": "Das klingt gut! (Zustimmung zu einem Vorschlag)"
+ },
+ {
+  "id": 222,
+  "word": "メニュー",
+  "cue": "Speisekarte, Menü"
+ },
+ {
+  "id": 223,
+  "word": "水",
+  "cue": "Wasser (kaltes Trinkwasser)"
+ },
+ {
+  "id": 224,
+  "word": "お茶",
+  "cue": "Tee (grüner Tee)"
+ },
+ {
+  "id": 225,
+  "word": "ご飯",
+  "cue": "Reis (gekocht), Mahlzeit"
+ },
+ {
+  "id": 226,
+  "word": "肉",
+  "cue": "Fleisch (allgemein)"
+ },
+ {
+  "id": 227,
+  "word": "魚",
+  "cue": "Fisch"
+ },
+ {
+  "id": 228,
+  "word": "飲み物",
+  "cue": "Getränk"
+ },
+ {
+  "id": 230,
+  "word": "美味しい",
+  "cue": "lecker, fein"
+ },
+ {
+  "id": 231,
+  "word": "ゼロ",
+  "cue": "null (0)"
+ },
+ {
+  "id": 232,
+  "word": "いち",
+  "cue": "eins (Zahl)"
+ },
+ {
+  "id": 233,
+  "word": "に",
+  "cue": "zwei (Zahl)"
+ },
+ {
+  "id": 234,
+  "word": "さん",
+  "cue": "drei (Zahl)"
+ },
+ {
+  "id": 235,
+  "word": "よん",
+  "cue": "vier (Zahl, übliche Alltagslesung)"
+ },
+ {
+  "id": 236,
+  "word": "ご",
+  "cue": "fünf (Zahl)"
+ },
+ {
+  "id": 237,
+  "word": "ろく",
+  "cue": "sechs (Zahl)"
+ },
+ {
+  "id": 238,
+  "word": "なな",
+  "cue": "sieben (Zahl, übliche Alltagslesung)"
+ },
+ {
+  "id": 239,
+  "word": "はち",
+  "cue": "acht (Zahl)"
+ },
+ {
+  "id": 240,
+  "word": "きゅう",
+  "cue": "neun (Zahl)"
+ },
+ {
+  "id": 241,
+  "word": "じゅう",
+  "cue": "zehn (Zahl)"
+ },
+ {
+  "id": 242,
+  "word": "じゅういち",
+  "cue": "elf (Zahl)"
+ },
+ {
+  "id": 243,
+  "word": "にじゅう",
+  "cue": "zwanzig (Zahl)"
+ },
+ {
+  "id": 244,
+  "word": "ごじゅう",
+  "cue": "fünfzig (Zahl)"
+ },
+ {
+  "id": 245,
+  "word": "家族",
+  "cue": "Familie"
+ },
+ {
+  "id": 252,
+  "word": "兄弟",
+  "cue": "Geschwister"
+ },
+ {
+  "id": 253,
+  "word": "両親",
+  "cue": "Eltern (beide zusammen)"
+ },
+ {
+  "id": 254,
+  "word": "私",
+  "cue": "ich (neutral, höflich)"
+ },
+ {
+  "id": 262,
+  "word": "男の子",
+  "cue": "Junge, Knabe"
+ },
+ {
+  "id": 263,
+  "word": "女の子",
+  "cue": "Mädchen"
+ },
+ {
+  "id": 264,
+  "word": "友達",
+  "cue": "Freund/in (Kamerad, nicht Partner)"
+ },
+ {
+  "id": 267,
+  "word": "二人",
+  "cue": "zwei Personen, zu zweit"
+ },
+ {
+  "id": 268,
+  "word": "今",
+  "cue": "jetzt"
+ },
+ {
+  "id": 270,
+  "word": "昼",
+  "cue": "Mittag (Tageszeit, auch: tagsüber)"
+ },
+ {
+  "id": 272,
+  "word": "午前",
+  "cue": "vormittags (Uhrzeit: am Vormittag)"
+ },
+ {
+  "id": 273,
+  "word": "午後",
+  "cue": "nachmittags (Uhrzeit: am Nachmittag)"
+ },
+ {
+  "id": 274,
+  "word": "半",
+  "cue": "halb (bei der Uhrzeit: … Uhr dreissig)"
+ },
+ {
+  "id": 275,
+  "word": "毎日",
+  "cue": "jeden Tag, täglich"
+ },
+ {
+  "id": 276,
+  "word": "今日",
+  "cue": "heute"
+ },
+ {
+  "id": 281,
+  "word": "飲む",
+  "cue": "trinken"
+ },
+ {
+  "id": 285,
+  "word": "始まる",
+  "cue": "anfangen, beginnen (Wörterbuchform)"
+ },
+ {
+  "id": 290,
+  "word": "医者",
+  "cue": "Arzt / Ärztin"
+ },
+ {
+  "id": 291,
+  "word": "警官",
+  "cue": "Polizist/in"
+ },
+ {
+  "id": 292,
+  "word": "留学生",
+  "cue": "Austauschstudent/in (aus dem Ausland)"
+ },
+ {
+  "id": 293,
+  "word": "会社",
+  "cue": "Firma, Unternehmen"
+ },
+ {
+  "id": 294,
+  "word": "銀行",
+  "cue": "Bank (Geldinstitut)"
+ },
+ {
+  "id": 295,
+  "word": "店",
+  "cue": "Laden, Geschäft"
+ },
+ {
+  "id": 296,
+  "word": "大人",
+  "cue": "Erwachsene/r"
+ },
+ {
+  "id": 297,
+  "word": "外国人",
+  "cue": "Ausländer/in"
+ },
+ {
+  "id": 298,
+  "word": "奥さん",
+  "cue": "Ehefrau (von jmd. anderem, höflich)"
+ },
+ {
+  "id": 299,
+  "word": "元気",
+  "cue": "munter, gesund, fit (na-Adjektiv)"
+ },
+ {
+  "id": 300,
+  "word": "綺麗",
+  "cue": "schön, hübsch, sauber (na-Adjektiv)"
+ },
+ {
+  "id": 301,
+  "word": "静か",
+  "cue": "ruhig, still, leise (na-Adjektiv)"
+ },
+ {
+  "id": 302,
+  "word": "面白い",
+  "cue": "interessant, spannend, witzig"
+ },
+ {
+  "id": 303,
+  "word": "若い",
+  "cue": "jung"
+ },
+ {
+  "id": 306,
+  "word": "卵",
+  "cue": "Ei"
+ },
+ {
+  "id": 307,
+  "word": "果物",
+  "cue": "Obst, Früchte"
+ },
+ {
+  "id": 308,
+  "word": "野菜",
+  "cue": "Gemüse"
+ },
+ {
+  "id": 309,
+  "word": "パン",
+  "cue": "Brot"
+ },
+ {
+  "id": 310,
+  "word": "お弁当",
+  "cue": "Lunchbox (Mittagessen in der Box)"
+ },
+ {
+  "id": 311,
+  "word": "牛乳",
+  "cue": "Milch"
+ },
+ {
+  "id": 312,
+  "word": "紅茶",
+  "cue": "Schwarztee"
+ },
+ {
+  "id": 313,
+  "word": "カレー",
+  "cue": "Curry (mit Reis)"
+ },
+ {
+  "id": 314,
+  "word": "茶碗",
+  "cue": "Reisschale"
+ },
+ {
+  "id": 315,
+  "word": "買う",
+  "cue": "kaufen"
+ },
+ {
+  "id": 317,
+  "word": "食堂",
+  "cue": "Kantine, Mensa"
+ },
+ {
+  "id": 318,
+  "word": "喫茶店",
+  "cue": "Café (Kaffeehaus)"
+ },
+ {
+  "id": 319,
+  "word": "箸",
+  "cue": "Essstäbchen"
+ },
+ {
+  "id": 320,
+  "word": "好き",
+  "cue": "mögen, gern haben (na-Adjektiv)"
+ },
+ {
+  "id": 321,
+  "word": "嫌い",
+  "cue": "nicht mögen (na-Adjektiv)"
+ }
+]

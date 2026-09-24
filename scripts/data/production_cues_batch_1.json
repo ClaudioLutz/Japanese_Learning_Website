@@ -1,0 +1,402 @@
+[
+ {
+  "id": 7,
+  "word": "こんにちは",
+  "cue": "Guten Tag (Gruss tagsüber)"
+ },
+ {
+  "id": 9,
+  "word": "すみません",
+  "cue": "Entschuldigung (auch: jemanden ansprechen, sich bedanken)"
+ },
+ {
+  "id": 12,
+  "word": "駅",
+  "cue": "Bahnhof"
+ },
+ {
+  "id": 13,
+  "word": "出口",
+  "cue": "Ausgang"
+ },
+ {
+  "id": 14,
+  "word": "右",
+  "cue": "rechts"
+ },
+ {
+  "id": 15,
+  "word": "左",
+  "cue": "links"
+ },
+ {
+  "id": 16,
+  "word": "まっすぐ",
+  "cue": "geradeaus"
+ },
+ {
+  "id": 20,
+  "word": "わたし",
+  "cue": "ich (neutral, höflich)"
+ },
+ {
+  "id": 21,
+  "word": "わたしたち",
+  "cue": "wir"
+ },
+ {
+  "id": 22,
+  "word": "あなた",
+  "cue": "du / Sie (direkte Anrede)"
+ },
+ {
+  "id": 25,
+  "word": "みなさん",
+  "cue": "alle (Anrede: meine Damen und Herren)"
+ },
+ {
+  "id": 28,
+  "word": "がくせい",
+  "cue": "Schüler/in, Student/in (an Schule / Uni)"
+ },
+ {
+  "id": 29,
+  "word": "かいしゃいん",
+  "cue": "Firmenangestellte/r (Beruf)"
+ },
+ {
+  "id": 30,
+  "word": "しゃいん",
+  "cue": "Angestellte/r (nach dem Firmennamen: Mitarbeiter/in von …)"
+ },
+ {
+  "id": 31,
+  "word": "ぎんこういん",
+  "cue": "Bankangestellte/r"
+ },
+ {
+  "id": 32,
+  "word": "いしゃ",
+  "cue": "Arzt / Ärztin"
+ },
+ {
+  "id": 33,
+  "word": "けんきゅうしゃ",
+  "cue": "Forscher/in, Wissenschaftler/in"
+ },
+ {
+  "id": 34,
+  "word": "エンジニア",
+  "cue": "Ingenieur/in"
+ },
+ {
+  "id": 35,
+  "word": "だいがく",
+  "cue": "Universität"
+ },
+ {
+  "id": 36,
+  "word": "びょういん",
+  "cue": "Spital, Krankenhaus"
+ },
+ {
+  "id": 37,
+  "word": "でんき",
+  "cue": "Strom, elektrisches Licht"
+ },
+ {
+  "id": 40,
+  "word": "さい",
+  "cue": "… Jahre alt (Alters-Zähler)"
+ },
+ {
+  "id": 41,
+  "word": "なんさい",
+  "cue": "wie alt? (Frage nach dem Alter)"
+ },
+ {
+  "id": 42,
+  "word": "しつれいですが",
+  "cue": "Entschuldigen Sie, aber … (höflich vor einer persönlichen Frage)"
+ },
+ {
+  "id": 43,
+  "word": "おなまえは？",
+  "cue": "Wie ist Ihr Name? (höfliche Frage)"
+ },
+ {
+  "id": 45,
+  "word": "アメリカ",
+  "cue": "USA, Amerika"
+ },
+ {
+  "id": 46,
+  "word": "イギリス",
+  "cue": "Grossbritannien, England"
+ },
+ {
+  "id": 47,
+  "word": "インド",
+  "cue": "Indien"
+ },
+ {
+  "id": 48,
+  "word": "インドネシア",
+  "cue": "Indonesien"
+ },
+ {
+  "id": 49,
+  "word": "韓国",
+  "cue": "Südkorea"
+ },
+ {
+  "id": 50,
+  "word": "タイ",
+  "cue": "Thailand"
+ },
+ {
+  "id": 51,
+  "word": "中国",
+  "cue": "China"
+ },
+ {
+  "id": 52,
+  "word": "ドイツ",
+  "cue": "Deutschland"
+ },
+ {
+  "id": 53,
+  "word": "日本",
+  "cue": "Japan (das Land)"
+ },
+ {
+  "id": 54,
+  "word": "フランス",
+  "cue": "Frankreich"
+ },
+ {
+  "id": 55,
+  "word": "ブラジル",
+  "cue": "Brasilien"
+ },
+ {
+  "id": 56,
+  "word": "これ",
+  "cue": "dies hier (bei mir, alleinstehend)"
+ },
+ {
+  "id": 61,
+  "word": "あの",
+  "cue": "jene/r/s … dort drüben (vor einem Nomen)"
+ },
+ {
+  "id": 62,
+  "word": "ほん",
+  "cue": "Buch"
+ },
+ {
+  "id": 64,
+  "word": "ざっし",
+  "cue": "Zeitschrift, Magazin"
+ },
+ {
+  "id": 65,
+  "word": "しんぶん",
+  "cue": "Zeitung"
+ },
+ {
+  "id": 66,
+  "word": "ノート",
+  "cue": "Heft, Notizheft (zum Schreiben)"
+ },
+ {
+  "id": 67,
+  "word": "てちょう",
+  "cue": "Agenda, Taschenkalender (für Termine)"
+ },
+ {
+  "id": 68,
+  "word": "めいし",
+  "cue": "Visitenkarte"
+ },
+ {
+  "id": 70,
+  "word": "えんぴつ",
+  "cue": "Bleistift"
+ },
+ {
+  "id": 71,
+  "word": "ボールペン",
+  "cue": "Kugelschreiber (genau: Kuli)"
+ },
+ {
+  "id": 72,
+  "word": "シャープペンシル",
+  "cue": "Druckbleistift"
+ },
+ {
+  "id": 73,
+  "word": "かぎ",
+  "cue": "Schlüssel"
+ },
+ {
+  "id": 75,
+  "word": "かさ",
+  "cue": "Regenschirm"
+ },
+ {
+  "id": 77,
+  "word": "テレビ",
+  "cue": "Fernseher"
+ },
+ {
+  "id": 78,
+  "word": "ラジオ",
+  "cue": "Radio"
+ },
+ {
+  "id": 79,
+  "word": "カメラ",
+  "cue": "Fotoapparat, Kamera"
+ },
+ {
+  "id": 80,
+  "word": "コンピューター",
+  "cue": "Computer"
+ },
+ {
+  "id": 81,
+  "word": "くるま",
+  "cue": "Auto (Alltagswort)"
+ },
+ {
+  "id": 82,
+  "word": "つくえ",
+  "cue": "Tisch (Schreibtisch / Pult)"
+ },
+ {
+  "id": 83,
+  "word": "チョコレート",
+  "cue": "Schokolade"
+ },
+ {
+  "id": 84,
+  "word": "コーヒー",
+  "cue": "Kaffee"
+ },
+ {
+  "id": 85,
+  "word": "えいご",
+  "cue": "Englisch (die Sprache)"
+ },
+ {
+  "id": 86,
+  "word": "にほんご",
+  "cue": "Japanisch (die Sprache)"
+ },
+ {
+  "id": 87,
+  "word": "なん",
+  "cue": "was? (Fragewort)"
+ },
+ {
+  "id": 88,
+  "word": "そう",
+  "cue": "so (einzelnes Wort: genau so)"
+ },
+ {
+  "id": 90,
+  "word": "そうですか",
+  "cue": "Ach so? (ich verstehe, neue Info)"
+ },
+ {
+  "id": 91,
+  "word": "あのう",
+  "cue": "ähm … (zögernd, jemanden ansprechen)"
+ },
+ {
+  "id": 92,
+  "word": "おみやげ",
+  "cue": "Mitbringsel, Souvenir (von einer Reise)"
+ },
+ {
+  "id": 95,
+  "word": "ここ",
+  "cue": "hier (dieser Ort, bei mir)"
+ },
+ {
+  "id": 96,
+  "word": "そこ",
+  "cue": "da (der Ort bei dir)"
+ },
+ {
+  "id": 97,
+  "word": "あそこ",
+  "cue": "dort drüben (weit weg von beiden)"
+ },
+ {
+  "id": 98,
+  "word": "どこ",
+  "cue": "wo? (welcher Ort)"
+ },
+ {
+  "id": 99,
+  "word": "こちら",
+  "cue": "hier / hier entlang (höflich, Richtung)"
+ },
+ {
+  "id": 100,
+  "word": "そちら",
+  "cue": "dort / dorthin (bei dir, höflich, Richtung)"
+ },
+ {
+  "id": 101,
+  "word": "あちら",
+  "cue": "dort drüben / dorthin (höflich, Richtung)"
+ },
+ {
+  "id": 102,
+  "word": "どちら",
+  "cue": "wo? / wohin? (höflich, Richtung)"
+ },
+ {
+  "id": 103,
+  "word": "きょうしつ",
+  "cue": "Klassenzimmer, Schulzimmer"
+ },
+ {
+  "id": 104,
+  "word": "しょくどう",
+  "cue": "Kantine, Mensa"
+ },
+ {
+  "id": 105,
+  "word": "じむしょ",
+  "cue": "Büro"
+ },
+ {
+  "id": 106,
+  "word": "かいぎしつ",
+  "cue": "Sitzungszimmer, Konferenzraum"
+ },
+ {
+  "id": 107,
+  "word": "うけつけ",
+  "cue": "Empfang, Rezeption"
+ },
+ {
+  "id": 108,
+  "word": "ロビー",
+  "cue": "Lobby, Eingangshalle"
+ },
+ {
+  "id": 109,
+  "word": "へや",
+  "cue": "Zimmer, Raum"
+ },
+ {
+  "id": 111,
+  "word": "かいだん",
+  "cue": "Treppe"
+ }
+]

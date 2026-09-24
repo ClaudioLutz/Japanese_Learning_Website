@@ -1,0 +1,402 @@
+[
+ {
+  "id": 754,
+  "word": "シャツ",
+  "cue": "Hemd, Oberteil (allgemein)"
+ },
+ {
+  "id": 755,
+  "word": "ワイシャツ",
+  "cue": "Businesshemd (zum Anzug)"
+ },
+ {
+  "id": 756,
+  "word": "セーター",
+  "cue": "Pullover"
+ },
+ {
+  "id": 757,
+  "word": "スカート",
+  "cue": "Jupe, Rock"
+ },
+ {
+  "id": 758,
+  "word": "ズボン",
+  "cue": "Hose"
+ },
+ {
+  "id": 759,
+  "word": "背広",
+  "cue": "Anzug (Herrenanzug)"
+ },
+ {
+  "id": 760,
+  "word": "靴",
+  "cue": "Schuhe"
+ },
+ {
+  "id": 761,
+  "word": "靴下",
+  "cue": "Socken"
+ },
+ {
+  "id": 762,
+  "word": "帽子",
+  "cue": "Hut, Mütze"
+ },
+ {
+  "id": 763,
+  "word": "眼鏡",
+  "cue": "Brille"
+ },
+ {
+  "id": 764,
+  "word": "傘",
+  "cue": "Regenschirm"
+ },
+ {
+  "id": 765,
+  "word": "ボタン",
+  "cue": "Knopf"
+ },
+ {
+  "id": 769,
+  "word": "かぶる",
+  "cue": "aufsetzen (Hut, Mütze)"
+ },
+ {
+  "id": 770,
+  "word": "脱ぐ",
+  "cue": "ausziehen (Kleidung, Schuhe)"
+ },
+ {
+  "id": 771,
+  "word": "色",
+  "cue": "Farbe"
+ },
+ {
+  "id": 780,
+  "word": "茶色",
+  "cue": "braun (Farbe)"
+ },
+ {
+  "id": 781,
+  "word": "緑",
+  "cue": "grün (Farbe)"
+ },
+ {
+  "id": 782,
+  "word": "色々",
+  "cue": "verschieden, allerlei"
+ },
+ {
+  "id": 783,
+  "word": "明るい",
+  "cue": "hell"
+ },
+ {
+  "id": 784,
+  "word": "暗い",
+  "cue": "dunkel"
+ },
+ {
+  "id": 785,
+  "word": "丸い",
+  "cue": "rund"
+ },
+ {
+  "id": 786,
+  "word": "可愛い",
+  "cue": "herzig, niedlich"
+ },
+ {
+  "id": 787,
+  "word": "一日",
+  "cue": "der Erste (1. Tag im Monat)"
+ },
+ {
+  "id": 788,
+  "word": "二日",
+  "cue": "der 2. (im Monat); zwei Tage"
+ },
+ {
+  "id": 789,
+  "word": "三日",
+  "cue": "der 3. (im Monat); drei Tage"
+ },
+ {
+  "id": 790,
+  "word": "四日",
+  "cue": "der 4. (im Monat); vier Tage"
+ },
+ {
+  "id": 791,
+  "word": "五日",
+  "cue": "der 5. (im Monat); fünf Tage"
+ },
+ {
+  "id": 792,
+  "word": "六日",
+  "cue": "der 6. (im Monat); sechs Tage"
+ },
+ {
+  "id": 793,
+  "word": "七日",
+  "cue": "der 7. (im Monat); sieben Tage"
+ },
+ {
+  "id": 794,
+  "word": "八日",
+  "cue": "der 8. (im Monat); acht Tage"
+ },
+ {
+  "id": 795,
+  "word": "九日",
+  "cue": "der 9. (im Monat); neun Tage"
+ },
+ {
+  "id": 796,
+  "word": "十日",
+  "cue": "der 10. (im Monat); zehn Tage"
+ },
+ {
+  "id": 797,
+  "word": "二十日",
+  "cue": "der 20. (im Monat); zwanzig Tage"
+ },
+ {
+  "id": 798,
+  "word": "今週",
+  "cue": "diese Woche"
+ },
+ {
+  "id": 799,
+  "word": "去年",
+  "cue": "letztes Jahr"
+ },
+ {
+  "id": 800,
+  "word": "一昨日",
+  "cue": "vorgestern"
+ },
+ {
+  "id": 802,
+  "word": "昨夜",
+  "cue": "gestern Abend, letzte Nacht"
+ },
+ {
+  "id": 803,
+  "word": "さ来年",
+  "cue": "übernächstes Jahr"
+ },
+ {
+  "id": 804,
+  "word": "おととし",
+  "cue": "vorletztes Jahr"
+ },
+ {
+  "id": 805,
+  "word": "一つ",
+  "cue": "ein Stück (Dinge zählen: eins)"
+ },
+ {
+  "id": 806,
+  "word": "二つ",
+  "cue": "zwei Stück (Dinge zählen)"
+ },
+ {
+  "id": 807,
+  "word": "三つ",
+  "cue": "drei Stück (Dinge zählen)"
+ },
+ {
+  "id": 808,
+  "word": "四つ",
+  "cue": "vier Stück (Dinge zählen)"
+ },
+ {
+  "id": 809,
+  "word": "五つ",
+  "cue": "fünf Stück (Dinge zählen)"
+ },
+ {
+  "id": 810,
+  "word": "六つ",
+  "cue": "sechs Stück (Dinge zählen)"
+ },
+ {
+  "id": 811,
+  "word": "七つ",
+  "cue": "sieben Stück (Dinge zählen)"
+ },
+ {
+  "id": 812,
+  "word": "八つ",
+  "cue": "acht Stück (Dinge zählen)"
+ },
+ {
+  "id": 813,
+  "word": "九つ",
+  "cue": "neun Stück (Dinge zählen)"
+ },
+ {
+  "id": 815,
+  "word": "～歳",
+  "cue": "… Jahre alt (Alters-Zähler)"
+ },
+ {
+  "id": 816,
+  "word": "～回",
+  "cue": "…-mal (Zähler für Häufigkeit)"
+ },
+ {
+  "id": 817,
+  "word": "～冊",
+  "cue": "Zähler für Bücher / Hefte"
+ },
+ {
+  "id": 818,
+  "word": "～台",
+  "cue": "Zähler für Maschinen / Fahrzeuge"
+ },
+ {
+  "id": 819,
+  "word": "～杯",
+  "cue": "Zähler für Tassen / Gläser (… Glas voll)"
+ },
+ {
+  "id": 820,
+  "word": "～匹",
+  "cue": "Zähler für kleine Tiere"
+ },
+ {
+  "id": 821,
+  "word": "～枚",
+  "cue": "Zähler für flache Dinge (Papier, Hemden)"
+ },
+ {
+  "id": 822,
+  "word": "～個",
+  "cue": "Zähler für kleine Gegenstände (Äpfel, Eier)"
+ },
+ {
+  "id": 823,
+  "word": "～人",
+  "cue": "Zähler für Personen (… Personen)"
+ },
+ {
+  "id": 825,
+  "word": "狭い",
+  "cue": "eng, schmal"
+ },
+ {
+  "id": 826,
+  "word": "重い",
+  "cue": "schwer (Gewicht)"
+ },
+ {
+  "id": 827,
+  "word": "軽い",
+  "cue": "leicht (Gewicht, nicht schwer)"
+ },
+ {
+  "id": 828,
+  "word": "悪い",
+  "cue": "schlecht"
+ },
+ {
+  "id": 829,
+  "word": "楽しい",
+  "cue": "vergnüglich (es macht Spass)"
+ },
+ {
+  "id": 830,
+  "word": "忙しい",
+  "cue": "beschäftigt, viel zu tun"
+ },
+ {
+  "id": 831,
+  "word": "危ない",
+  "cue": "gefährlich"
+ },
+ {
+  "id": 832,
+  "word": "大好き",
+  "cue": "sehr gern haben, lieben (na-Adjektiv)"
+ },
+ {
+  "id": 833,
+  "word": "にぎやか",
+  "cue": "belebt, lebhaft (na-Adjektiv)"
+ },
+ {
+  "id": 834,
+  "word": "きれい",
+  "cue": "schön, hübsch, sauber (na-Adjektiv)"
+ },
+ {
+  "id": 835,
+  "word": "暇",
+  "cue": "frei, nichts zu tun haben (na-Adjektiv)"
+ },
+ {
+  "id": 836,
+  "word": "便利",
+  "cue": "praktisch, bequem (na-Adjektiv)"
+ },
+ {
+  "id": 837,
+  "word": "親切",
+  "cue": "freundlich, hilfsbereit (na-Adjektiv)"
+ },
+ {
+  "id": 839,
+  "word": "大変",
+  "cue": "anstrengend, schlimm; sehr (na-Adjektiv)"
+ },
+ {
+  "id": 840,
+  "word": "歌",
+  "cue": "Lied, Gesang (Nomen)"
+ },
+ {
+  "id": 841,
+  "word": "走る",
+  "cue": "rennen"
+ },
+ {
+  "id": 842,
+  "word": "使う",
+  "cue": "benutzen, verwenden"
+ },
+ {
+  "id": 843,
+  "word": "洗う",
+  "cue": "waschen (Hände, Geschirr)"
+ },
+ {
+  "id": 844,
+  "word": "降る",
+  "cue": "fallen (Regen, Schnee)"
+ },
+ {
+  "id": 845,
+  "word": "晴れる",
+  "cue": "aufklaren, sonnig werden (Verb)"
+ },
+ {
+  "id": 846,
+  "word": "台所",
+  "cue": "Küche"
+ },
+ {
+  "id": 847,
+  "word": "お風呂",
+  "cue": "Bad, Badewanne"
+ },
+ {
+  "id": 849,
+  "word": "階段",
+  "cue": "Treppe"
+ }
+]
