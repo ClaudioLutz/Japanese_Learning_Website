@@ -26,7 +26,8 @@ srs_bp = Blueprint('srs', __name__)
 # Erlaubte Werte fuer ReviewLog.source (Herkunft einer Bewertung). Alles andere
 # — auch ein fehlender Wert von gecachten Clients — wird still auf None
 # normalisiert (KEIN 400, damit alte Frontends weiterlaufen).
-RATE_SOURCES = frozenset({'deck', 'review', 'produktion', 'kana_grid', 'dashboard'})
+# 'review_listen' = /review im Hoermodus (Audio zuerst, Text verdeckt).
+RATE_SOURCES = frozenset({'deck', 'review', 'review_listen', 'produktion', 'kana_grid', 'dashboard'})
 
 
 # ── API Endpoints ──────────────────────────────────────────────

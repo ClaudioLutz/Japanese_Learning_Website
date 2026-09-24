@@ -119,6 +119,61 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     }
     html.hide-front-romaji .romaji-toggle.review-icon-btn { opacity: 0.55; }
 
+    /* ── Hörmodus: Toggle in der Kopfzeile + Audio-zuerst-Vorderseite ── */
+    .review-listen-btn.review-icon-btn {
+        width: auto;
+        padding: 0 0.7rem;
+        gap: 0.4rem;
+        font-size: 0.82rem;
+        font-weight: 600;
+    }
+    .review-listen-btn[aria-pressed="true"] {
+        background: var(--shu, #EB6101);
+        border-color: var(--shu, #EB6101);
+        color: #fff;
+    }
+    .review-listen-btn[aria-pressed="true"]:hover { color: #fff; }
+    [data-theme="dark"] .review-listen-btn[aria-pressed="true"] { color: var(--washi, #14120E); }
+    @media (max-width: 420px) {
+        .review-listen-btn.review-icon-btn { width: 38px; padding: 0; }
+        .review-listen-btn .review-listen-label {
+            position: absolute; width: 1px; height: 1px;
+            overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+        }
+    }
+    .listen-front {
+        display: flex; flex-direction: column; align-items: center; gap: 0.9rem;
+    }
+    .review-listen-play {
+        width: 104px; height: 104px;
+        border-radius: 50%;
+        border: 2px solid var(--shu, #EB6101);
+        background: var(--card-bg, #FFFDF7);
+        color: var(--shu, #EB6101);
+        font-size: 2.3rem;
+        display: inline-flex; align-items: center; justify-content: center;
+        cursor: pointer;
+        transition: transform 0.15s ease, background 0.15s ease;
+    }
+    .review-listen-play:hover { transform: scale(1.05); background: rgba(235,97,1,0.08); }
+    .review-listen-play:focus-visible { outline: 3px solid var(--shu, #EB6101); outline-offset: 4px; }
+    .review-listen-play.playing { background: var(--shu, #EB6101); color: #fff; animation: pulse 1.2s ease-in-out infinite; }
+    [data-theme="dark"] .review-listen-play.playing { color: var(--washi, #14120E); }
+    .listen-prompt { font-size: 0.95rem; color: var(--ink-600, #5C564D); }
+    .listen-note { font-size: 0.82rem; color: var(--shu, #EB6101); font-weight: 600; }
+    .listen-note[hidden] { display: none; }
+    .listen-answer-word {
+        font-family: 'Noto Sans JP', sans-serif;
+        font-size: 2.2rem; font-weight: 600; line-height: 1.2;
+        text-align: center; color: var(--tetsu, #2C2C2C);
+        margin-bottom: 0.2rem;
+    }
+    [data-theme="dark"] .listen-answer-word { color: var(--text-color, #F4EFE6); }
+    [data-theme="dark"] .listen-prompt { color: var(--text-muted, #8C8378); }
+    @media (prefers-reduced-motion: reduce) {
+        .review-listen-play.playing { animation: none; }
+    }
+
     /* Tageslimit-Zeile unter der Kopfzeile: „Heute noch N von M" */
     .review-daily-quota {
         flex: 0 0 auto;
@@ -930,6 +985,11 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
             <i class="fas fa-rotate-left" aria-hidden="true"></i>
             <span class="review-undo-label">Rückgängig</span>
         </button>
+        <button type="button" class="review-icon-btn review-listen-btn" id="reviewListenToggle"
+                aria-pressed="false" title="Hörmodus: erst hören, dann umdrehen (H)">
+            <i class="fas fa-headphones" aria-hidden="true"></i>
+            <span class="review-listen-label">Hören</span>
+        </button>
         <button type="button" class="romaji-toggle review-icon-btn"
                 title="Romaji auf der Vorderseite ein-/ausblenden"
                 onclick="toggleFrontRomaji()">
@@ -1152,6 +1212,11 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     let dailyStatus = null;       // Tageslimit-Stand aus /api/srs/due (daily)
     let ignoreLimitMode = false;  // „Trotzdem weiter" nach erreichtem Tageslimit
     let nextRoundIgnoreLimit = false;
+    // Hörmodus (Audio zuerst, Text verdeckt) — pro Browser gemerkt
+    const LISTEN_KEY = 'jpl_review_mode';
+    let listenMode = false;
+    try { listenMode = localStorage.getItem(LISTEN_KEY) === 'listen'; } catch (e) {}
+    const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const UNDO_WINDOW_MS = 5 * 60 * 1000;   // = srs_service.UNDO_WINDOW_SECONDS
     const TYPE_LABELS = { hiragana: 'Hiragana', katakana: 'Katakana', kana: 'Kana', kanji: 'Kanji', vocabulary: 'Vokabel', grammar: 'Grammatik' };
 
@@ -1613,8 +1678,43 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
             // Cloze: der komplette Satz wird vorgelesen, nicht der Lückentext.
             ttsText = (d.cloze && d.cloze.japanese) || d.tts_example_jp || '';
         }
-        const audioBtn = ttsText
-            ? `<button type="button" class="review-audio-btn" data-tts-text="${escapeHtml(ttsText)}" title="Vorlesen" aria-label="Vorlesen"><i class="fas fa-volume-up"></i></button>`
+        // Hörmodus: vorgelesen wird das WORT selbst (nicht der Beispielsatz) —
+        // Kana/Kanji = Zeichen, Vokabel = Lesung (eindeutige Aussprache),
+        // Grammatik = Cloze-/Beispielsatz. Ohne sauberen JP-Text → normale Karte.
+        let listenText = '';
+        if (card.content_type === 'kana' || card.content_type === 'kanji') {
+            listenText = frontText;
+        } else if (card.content_type === 'vocabulary') {
+            listenText = d.reading || frontText;
+        } else if (card.content_type === 'grammar') {
+            listenText = ttsText;
+        }
+        const isListen = listenMode && !!listenText;
+        card._listen = isListen;
+
+        let listenFront = '';
+        let listenBackHead = '';
+        if (isListen) {
+            listenFront = `
+                        <div class="listen-front">
+                            <button type="button" class="review-listen-play" id="listenPlayBtn"
+                                    aria-label="Anhören" title="Anhören (P)">
+                                <i class="fas fa-play" aria-hidden="true"></i>
+                            </button>
+                            <div class="listen-prompt">Hör zu — was bedeutet das?</div>
+                            <div class="listen-note" id="listenNote" hidden>Tippe auf ▶ zum Abspielen</div>
+                        </div>`;
+            // Rückseite: Wort + Lesung zuerst, dann die normale Antwort
+            const headReading = (card.content_type === 'vocabulary' && d.reading && d.reading !== frontText)
+                ? `<div class="back-readings"><span class="reading-jp" lang="ja">${escapeHtml(d.reading)}</span></div>` : '';
+            listenBackHead = card.content_type === 'grammar' ? ''
+                : `<div class="listen-answer-word" lang="ja">${escapeHtml(frontText)}</div>${headReading}`;
+        }
+
+        // Rückseiten-Audio: im Hörmodus das Wort nochmal, sonst wie bisher
+        const backTtsText = isListen ? listenText : ttsText;
+        const audioBtn = backTtsText
+            ? `<button type="button" class="review-audio-btn" data-tts-text="${escapeHtml(backTtsText)}" title="Vorlesen" aria-label="Vorlesen"><i class="fas fa-volume-up"></i></button>`
             : '';
 
         // Grammatik-Cloze-Vorderseite: Satz mit Lücke + progressive Hinweise
@@ -1638,7 +1738,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
             <div class="review-flip-card" id="activeReviewCard">
                 <div class="review-card-scene" id="reviewScene" tabindex="0" role="button" aria-label="Karte umdrehen">
                     <div class="review-card-face review-card-face--front">
-                        ${grammarClozeFront || `
+                        ${listenFront || grammarClozeFront || `
                         <div class="review-card-front-text ${sizeClass}"${card.content_type !== 'grammar' ? ' lang="ja"' : ''}>${escapeHtml(frontText)}</div>
                         ${subText ? `<div class="front-romaji" style="font-size:1rem;color:var(--text-muted,#8C8378);margin-top:0.5rem;">${escapeHtml(subText)}</div>` : ''}
                         ${frontExample}
@@ -1650,10 +1750,28 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
                     <div class="review-card-face review-card-face--back" inert>
                         ${audioBtn}
                         <a class="review-report-link" href="/feedback/new?content_type=lesson_content&content_id=${card.content_id}" target="_blank" rel="noopener" title="Fehler auf dieser Karte melden" onclick="event.stopPropagation()"><i class="fas fa-flag" aria-hidden="true"></i> melden</a>
-                        ${backHTML}
+                        ${listenBackHead}${backHTML}
                     </div>
                 </div>
             </div>`;
+
+        // Hörmodus: Play-Button + Autoplay (Fallback: erster Klick, s. playListen)
+        if (isListen) {
+            const playBtn = document.getElementById('listenPlayBtn');
+            if (playBtn) {
+                playBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();  // kein Umdrehen
+                    playListen(listenText, playBtn, true);
+                });
+            }
+            // prefers-reduced-motion = kein automatisches Abspielen, nur auf Klick
+            if (reducedMotion) {
+                const note = document.getElementById('listenNote');
+                if (note) note.hidden = false;
+            } else {
+                playListen(listenText, playBtn, false);
+            }
+        }
 
         // Kana-Hinweis-Button (Romaji-Spoiler nur auf User-Wunsch sichtbar)
         const hintBtn = document.getElementById('kanaHintBtn');
@@ -1741,11 +1859,11 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     // (POST mit text+lang+speed), aber ohne den dortigen MP3-Map-Stack.
     let _reviewAudio = null;
     function playReviewAudio(text, btn) {
-        if (!text || !text.trim()) return;
+        if (!text || !text.trim()) return Promise.resolve(false);
         if (_reviewAudio) { _reviewAudio.pause(); _reviewAudio = null; }
         if (btn) btn.classList.add('playing');
 
-        fetch('/api/tts', {
+        return fetch('/api/tts', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
             body: JSON.stringify({ text: text.trim(), lang: 'ja', speed: 0.85 }),
@@ -1768,13 +1886,45 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
                 URL.revokeObjectURL(url);
                 _reviewAudio = null;
             });
-            return audio.play();
+            return audio.play().then(() => true);
         })
         .catch(err => {
             console.warn('[Review] TTS fehlgeschlagen:', err);
             if (btn) btn.classList.remove('playing');
+            return false;
         });
     }
+
+    // Hörmodus-Wiedergabe. Blockiert der Browser das Autoplay (Autoplay-Policy,
+    // z.B. vor der ersten Interaktion), erscheint der Hinweis „Tippe auf ▶".
+    function playListen(text, btn, userInitiated) {
+        const note = document.getElementById('listenNote');
+        playReviewAudio(text, btn).then(ok => {
+            if (note) note.hidden = ok || userInitiated;
+        });
+    }
+
+    // Toggle Hörmodus (Kopfzeile + Taste H) — aktuelle Karte neu rendern
+    const listenToggle = document.getElementById('reviewListenToggle');
+    function renderListenToggle() {
+        if (!listenToggle) return;
+        listenToggle.setAttribute('aria-pressed', listenMode ? 'true' : 'false');
+        listenToggle.setAttribute('aria-label', listenMode ? 'Hörmodus ausschalten' : 'Hörmodus einschalten');
+    }
+    function toggleListenMode() {
+        listenMode = !listenMode;
+        try { localStorage.setItem(LISTEN_KEY, listenMode ? 'listen' : 'read'); } catch (e) {}
+        renderListenToggle();
+        announce(listenMode ? 'Hörmodus an: erst hören, dann umdrehen.' : 'Hörmodus aus.');
+        if (cards.length > 0 && currentIdx < cards.length && cardArea.style.display !== 'none') showCard();
+    }
+    if (listenToggle) listenToggle.addEventListener('click', (e) => {
+        toggleListenMode();
+        // Mausklick: Fokus abgeben, sonst schaltet die nächste Leertaste
+        // (= Karte umdrehen) den Modus nativ wieder aus.
+        if (e.detail > 0) listenToggle.blur();
+    });
+    renderListenToggle();
 
     // ── Sichtbares Gamification- und Screenreader-Feedback ──
     const RATING_DE = { 1: 'Nochmal', 2: 'Schwer', 3: 'Gut', 4: 'Einfach' };
@@ -1895,7 +2045,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
                         content_id: card.content_id,
                         rating: ratingInt,
                         time_taken_ms: timeTaken > 0 ? timeTaken : null,
-                        source: 'review'
+                        source: card._listen ? 'review_listen' : 'review'
                     })
                 });
                 if (!resp.ok) throw new Error('HTTP ' + resp.status);
@@ -2066,10 +2216,24 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
             return;
         }
 
+        if ((e.key === 'h' || e.key === 'H') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+            e.preventDefault();
+            toggleListenMode();
+            return;
+        }
+
         const scene = document.getElementById('reviewScene');
         if (!scene) return;
 
         const isFlipped = scene.classList.contains('is-flipped');
+
+        if ((e.key === 'p' || e.key === 'P') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+            const pb = document.getElementById('listenPlayBtn');
+            const ab = cardArea.querySelector('.review-audio-btn');
+            const btn = (!isFlipped && pb) ? pb : (isFlipped ? ab : null);
+            if (btn) { e.preventDefault(); btn.click(); }
+            return;
+        }
 
         // Enter/Space: fokussierte Buttons/Links/Selects behalten ihre native
         // Aktion (Romaji-Hinweis, Cloze-Hints, Romaji-Toggle, Rating-Buttons) —

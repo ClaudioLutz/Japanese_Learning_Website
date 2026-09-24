@@ -84,7 +84,7 @@ def rate_card(user_id, content_id, rating_int, time_taken_ms=None, direction='fo
             Jede Richtung ist eine EIGENE FSRS-Spur (eigener State pro
             (user, content, direction)). Reverse entsteht on-the-fly beim ersten
             Rating ueber den bestehenden Insert-Pfad (kein Vorab-Seeding).
-        source: Herkunft der Bewertung ('deck' | 'review' | 'produktion' |
+        source: Herkunft der Bewertung ('deck' | 'review' | 'review_listen' | 'produktion' |
             'kana_grid' | 'dashboard' | None). Wird in ReviewLog.source
             protokolliert. Der Aufrufer normalisiert unbekannte Werte auf None.
 
