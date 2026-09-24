@@ -168,3 +168,28 @@ class TestUndo:
         html = client.get('/review').get_data(as_text=True)
         assert 'id="reviewUndoBtn"' in html
         assert '/api/srs/undo' in html
+
+
+class TestDeckUndo:
+    def test_lesson_deck_has_undo(self, auth_client):
+        """Lektions-Deck: Rückgängig-Button + Undo-Call, Deck-Quelle bleibt 'deck'."""
+        from tests.factories import LessonPageFactory
+        client, _user = auth_client
+        lesson = LessonFactory(is_published=True, price=0.0, allow_guest_access=True)
+        LessonPageFactory(lesson_id=lesson.id, page_number=1)
+        db.session.commit()
+        html = client.get(f'/lessons/{lesson.id}').get_data(as_text=True)
+        assert 'deck-undo' in html
+        assert "fetch('/api/srs/undo'" in html
+        assert "source: 'deck'" in html
+
+    def test_deck_rating_undo_restores_state(self, auth_client):
+        """Deck-Erstbewertung (gedeckelt 4->3) wird vollständig zurückgenommen."""
+        client, user = auth_client
+        lc = _vocab_content()
+        _rate(client, lc.id, 4, source='deck')
+        resp = client.post('/api/srs/undo', json={'content_id': lc.id})
+        assert resp.status_code == 200
+        assert resp.get_json()['source'] == 'deck'
+        db.session.expire_all()
+        assert _state(user.id, lc.id) is None

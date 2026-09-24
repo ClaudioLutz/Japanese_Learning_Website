@@ -4200,7 +4200,12 @@ function createDeck(cardItems, page) {
     deckEl.innerHTML = `
         <div class="deck-header">
             <div class="deck-filter-bar" style="display:none;"></div>
-            <div style="display:flex;justify-content:flex-end;margin-bottom:0.5rem;">
+            <div style="display:flex;justify-content:flex-end;gap:0.4rem;margin-bottom:0.5rem;">
+                <button type="button" class="btn btn-sm btn-outline-secondary deck-undo" hidden
+                        style="font-size:0.75rem;padding:0.2rem 0.6rem;"
+                        title="Letzte Bewertung rückgängig (Z)" aria-label="Letzte Bewertung rückgängig machen">
+                    <i class="fas fa-rotate-left" aria-hidden="true"></i> Rückgängig
+                </button>
                 <button type="button" class="btn btn-sm btn-outline-secondary romaji-toggle"
                         style="font-size:0.75rem;padding:0.2rem 0.6rem;"
                         title="Romaji auf der Vorderseite ein-/ausblenden"
@@ -4503,7 +4508,16 @@ function createDeck(cardItems, page) {
         if (isAuthenticated && contentId) {
             const csrfTokenEl = document.querySelector('meta[name="csrf-token"]');
             const csrfToken = csrfTokenEl ? csrfTokenEl.getAttribute('content') : '';
-            fetch('/api/srs/rate', {
+            // Für „Rückgängig": Zustand VOR der Bewertung + Promise des Rate-Calls
+            // (Undo wartet darauf, sonst käme es dem Speichern zuvor).
+            lastDeckRated = {
+                cardIndex, contentId: parseInt(contentId), rating: ratingInt, at: Date.now(),
+                wasReviewed: reviewedIndices.has(cardIndex),
+                wasRatedThisSession: ratedThisSession.has(cardIndex),
+                settled: false, ratePromise: null,
+            };
+            hideDeckUndo();
+            lastDeckRated.ratePromise = fetch('/api/srs/rate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
                 body: JSON.stringify({
@@ -4512,7 +4526,7 @@ function createDeck(cardItems, page) {
                     time_taken_ms: timeTaken > 0 ? timeTaken : null,
                     source: 'deck'
                 })
-            }).catch(e => console.warn('[SRS] Rate failed:', e));
+            }).then(r => r.ok).catch(e => { console.warn('[SRS] Rate failed:', e); return false; });
 
             // Ab jetzt ist diese Karte kein Erstkontakt mehr (auch bei „Nochmal",
             // wo sie im Deck bleibt) — der Startwert-Hinweis verschwindet.
@@ -4533,6 +4547,7 @@ function createDeck(cardItems, page) {
                 updateFirstHint(pending[currentIdx]);
                 showCard(pending[currentIdx]);
                 updateStats();
+                showDeckUndo();
             }, 450);
         } else {
             // Hard/Good/Easy: Slide out
@@ -4549,9 +4564,68 @@ function createDeck(cardItems, page) {
                 pending.splice(currentIdx, 1);
                 saveProgress();
                 render();
+                showDeckUndo();
             }, 350);
         }
     }
+
+    // ── Rückgängig (gleiche Logik wie /review): letzte Deck-Bewertung
+    // serverseitig zurücknehmen, Karte an den Anfang der Queue. Der Lektions-
+    // fortschritt (markContentComplete) bleibt bewusst bestehen.
+    const DECK_UNDO_MS = 5 * 60 * 1000;
+    let lastDeckRated = null;
+    let deckUndoTimer = null;
+    const deckUndoBtn = deckEl.querySelector('.deck-undo');
+    function hideDeckUndo() {
+        if (deckUndoBtn) deckUndoBtn.hidden = true;
+        if (deckUndoTimer) { clearTimeout(deckUndoTimer); deckUndoTimer = null; }
+    }
+    function showDeckUndo() {
+        if (!lastDeckRated || !deckUndoBtn) return;
+        lastDeckRated.settled = true;
+        const left = DECK_UNDO_MS - (Date.now() - lastDeckRated.at);
+        if (left <= 0) { lastDeckRated = null; hideDeckUndo(); return; }
+        deckUndoBtn.hidden = false;
+        if (deckUndoTimer) clearTimeout(deckUndoTimer);
+        deckUndoTimer = setTimeout(() => { lastDeckRated = null; hideDeckUndo(); }, left);
+    }
+    async function undoLast() {
+        const entry = lastDeckRated;
+        if (!entry || !entry.settled || undoLast._busy) return;
+        undoLast._busy = true;
+        try {
+            await entry.ratePromise;
+            const csrfTokenEl = document.querySelector('meta[name="csrf-token"]');
+            const resp = await fetch('/api/srs/undo', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json',
+                           'X-CSRFToken': csrfTokenEl ? csrfTokenEl.getAttribute('content') : '' },
+                body: JSON.stringify({ content_id: entry.contentId }),
+            }).catch(() => null);
+            lastDeckRated = null;
+            hideDeckUndo();
+            if (!resp || !resp.ok) {
+                console.warn('[Deck] Rückgängig nicht möglich:', resp && resp.status);
+                return;
+            }
+            // Deck-Zustand zurückdrehen
+            const i = pending.indexOf(entry.cardIndex);
+            if (i !== -1) {
+                pending.splice(i, 1);
+                if (i < currentIdx) currentIdx--;
+            }
+            if (!entry.wasReviewed) reviewedIndices.delete(entry.cardIndex);
+            if (!entry.wasRatedThisSession) ratedThisSession.delete(entry.cardIndex);
+            currentIdx = Math.max(0, Math.min(currentIdx, pending.length));
+            pending.splice(currentIdx, 0, entry.cardIndex);
+            delete intervalCache[String(entry.contentId)];
+            saveProgress();
+            render();
+        } finally {
+            undoLast._busy = false;
+        }
+    }
+    if (deckUndoBtn) deckUndoBtn.addEventListener('click', (e) => { e.stopPropagation(); undoLast(); });
 
     // Button click handlers
     btnGroup.querySelectorAll('.confidence-btn').forEach(btn => {
@@ -4607,7 +4681,7 @@ function createDeck(cardItems, page) {
         fitRO.observe(cardArea);
     }
 
-    return { rateCard, page, deckEl };
+    return { rateCard, undoLast, page, deckEl };
 }
 
 // ============================================================
@@ -4764,6 +4838,17 @@ document.addEventListener('keydown', (e) => {
     // Find deck on active page
     const deck = allDecks.find(d => d.page === activePage);
     if (!deck) return;
+
+    // Z / Backspace: letzte Deck-Bewertung rückgängig (nur wenn angeboten)
+    if ((e.key === 'z' || e.key === 'Z' || e.key === 'Backspace')
+        && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        const undoBtn = deck.deckEl.querySelector('.deck-undo');
+        if (undoBtn && !undoBtn.hidden && deck.undoLast) {
+            e.preventDefault();
+            deck.undoLast();
+        }
+        return;
+    }
 
     const cardArea = deck.deckEl.querySelector('.deck-card-area');
     const btnGroup = deck.deckEl.querySelector('.confidence-buttons');
