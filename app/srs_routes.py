@@ -144,17 +144,28 @@ def api_undo_rating():
 @srs_bp.route('/api/srs/due')
 @login_required
 def api_due_cards():
-    """Holt alle faelligen Karten fuer den aktuellen User."""
-    limit = request.args.get('limit', 50, type=int)
+    """Holt die faelligen Karten fuer den aktuellen User.
+
+    Ohne lesson_id/content_type-Filter gilt das Tageslimit des Users
+    (daily_review_limit / daily_new_cards, Wiederholungen vor neuen Karten);
+    ?ignore_limit=1 = „Trotzdem weiter" nach erreichtem Limit. Antwort enthaelt
+    zusaetzlich 'daily' (Limit-Stand fuer „Heute noch N von M")."""
+    limit = max(1, min(request.args.get('limit', 50, type=int) or 50, 200))
     lesson_id = request.args.get('lesson_id', type=int)
     content_type = request.args.get('content_type')
+    ignore_limit = request.args.get('ignore_limit') in ('1', 'true')
 
-    due_states = srs_service.get_due_cards(
-        user_id=current_user.id,
-        limit=limit,
-        lesson_id=lesson_id,
-        content_type=content_type,
-    )
+    daily = None
+    if lesson_id or content_type:
+        due_states = srs_service.get_due_cards(
+            user_id=current_user.id,
+            limit=limit,
+            lesson_id=lesson_id,
+            content_type=content_type,
+        )
+    else:
+        due_states, daily = srs_service.get_review_queue(
+            current_user.id, batch=limit, ignore_limit=ignore_limit)
 
     cards = []
     for state in due_states:
@@ -166,14 +177,15 @@ def api_due_cards():
         card_data['status'] = state.status
         card_data['reps'] = state.reps
         card_data['lapses'] = state.lapses
+        card_data['is_new'] = state.reps == 0
         cards.append(card_data)
 
-    total_due = srs_service.get_due_count(current_user.id)
+    total_due = daily['total_due'] if daily else srs_service.get_due_count(current_user.id)
 
-    return jsonify({
-        'cards': cards,
-        'total_due': total_due,
-    })
+    payload = {'cards': cards, 'total_due': total_due}
+    if daily is not None:
+        payload['daily'] = daily
+    return jsonify(payload)
 
 
 @srs_bp.route('/api/srs/preview')
@@ -218,6 +230,8 @@ def api_stats():
     stats['longest_streak'] = current_user.longest_streak or 0
     # Produktions-Faelligkeit (DE->JP) fuers Nav-Segment-Badge (eigener Zaehler).
     stats['production_due_count'] = srs_service.get_production_due_count(current_user.id)
+    # Tageslimit-Stand (/review-Abschluss: „weitere Runde" vs. „Limit erreicht")
+    stats['daily'] = srs_service.get_daily_status(current_user.id)
     return jsonify(stats)
 
 

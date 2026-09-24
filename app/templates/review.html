@@ -119,6 +119,20 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     }
     html.hide-front-romaji .romaji-toggle.review-icon-btn { opacity: 0.55; }
 
+    /* Tageslimit-Zeile unter der Kopfzeile: „Heute noch N von M" */
+    .review-daily-quota {
+        flex: 0 0 auto;
+        margin: -0.2rem 0 0;
+        text-align: center;
+        font-size: 0.78rem;
+        color: var(--ink-600, #5C564D);
+        font-variant-numeric: tabular-nums;
+    }
+    .review-daily-quota[hidden] { display: none; }
+    .review-daily-quota strong { color: var(--tetsu, #2C2C2C); font-weight: 600; }
+    [data-theme="dark"] .review-daily-quota { color: var(--text-muted, #8C8378); }
+    [data-theme="dark"] .review-daily-quota strong { color: var(--text-color, #F4EFE6); }
+
     /* Rückgängig: nur sichtbar, solange die letzte Bewertung zurücknehmbar ist */
     .review-undo-btn.review-icon-btn {
         width: auto;
@@ -928,6 +942,9 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         </button>
     </div>
 
+    <!-- Tageslimit: „Heute noch N von M fälligen Karten" (per JS aus /api/srs/due.daily) -->
+    <div class="review-daily-quota" id="dailyQuota" hidden aria-live="polite"></div>
+
     <!-- Card Area -->
     <div class="review-card-area" id="reviewCardArea">
         <!-- Filled by JavaScript -->
@@ -958,8 +975,11 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
             <i class="fas fa-book-open me-1"></i> Lektionen ansehen
         </a>
         {% else %}
-        <h5>Alles erledigt!</h5>
+        <h5 id="emptyTitle">Alles erledigt!</h5>
         <p class="text-muted" id="emptyForecast">Keine Karten fällig.</p>
+        <button type="button" class="btn btn-primary btn-sm mb-2" id="emptyIgnoreLimitBtn" hidden>
+            <i class="fas fa-forward me-1"></i> <span id="emptyIgnoreLimitLabel">Trotzdem weiter üben</span>
+        </button>
         <div class="mt-2" style="display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap;">
             <a href="{{ url_for('srs.practice_kana_page') }}" class="btn btn-outline-primary btn-sm">
                 <i class="fas fa-keyboard me-1"></i> Kana üben
@@ -1129,6 +1149,9 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     const intervalCache = {};
     // Letzte Bewertung (für „Rückgängig"): { card, rating, xp, stageDelta, at }
     let lastRated = null;
+    let dailyStatus = null;       // Tageslimit-Stand aus /api/srs/due (daily)
+    let ignoreLimitMode = false;  // „Trotzdem weiter" nach erreichtem Tageslimit
+    let nextRoundIgnoreLimit = false;
     const UNDO_WINDOW_MS = 5 * 60 * 1000;   // = srs_service.UNDO_WINDOW_SECONDS
     const TYPE_LABELS = { hiragana: 'Hiragana', katakana: 'Katakana', kana: 'Kana', kanji: 'Kanji', vocabulary: 'Vokabel', grammar: 'Grammatik' };
 
@@ -1189,19 +1212,56 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     }
 
     // ── Load due cards ──
-    async function loadCards() {
+    // „Heute noch N von M fälligen Karten" — N = was das Tageslimit heute noch
+    // zulässt (Wiederholungen + neue), M = alle fälligen Karten.
+    function renderDailyQuota() {
+        const el = document.getElementById('dailyQuota');
+        if (!el || !dailyStatus) return;
+        const d = dailyStatus;
+        // Live mitzählen: in dieser Runde abgeschlossene Karten (Schwer/Gut/Einfach)
+        // sind weder „noch offen" noch „fällig".
+        const open = remainingUnrated();
+        const doneHere = allCards.length - open;
+        const dueNow = Math.max(0, d.total_due - doneHere);
+        if (ignoreLimitMode) {
+            el.innerHTML = `Zusatzrunde über dem Tageslimit · <strong>${dueNow}</strong> fällig`;
+        } else {
+            el.innerHTML = `Heute noch <strong>${open}</strong> von <strong>${dueNow}</strong> fälligen Karten`
+                + (d.limited ? ` · Tageslimit ${d.review_limit}` : '');
+        }
+        el.title = `Tageslimit: ${d.review_limit} Wiederholungen + ${d.new_limit} neue Karten pro Tag`;
+        el.hidden = dueNow === 0;
+    }
+
+    async function loadCards(opts) {
+        ignoreLimitMode = !!(opts && opts.ignoreLimit);
         try {
-            const resp = await fetch('/api/srs/due?limit=50');
+            const resp = await fetch('/api/srs/due?limit=200' + (ignoreLimitMode ? '&ignore_limit=1' : ''));
             if (!resp.ok) throw new Error('HTTP ' + resp.status);
             const data = await resp.json();
             allCards = data.cards || [];
+            dailyStatus = data.daily || null;
+            renderDailyQuota();
 
             if (allCards.length === 0) {
                 emptyEl.style.display = 'block';
                 cardArea.style.display = 'none';
-                loadForecastInto(document.getElementById('emptyForecast'));
+                const limitBtn = document.getElementById('emptyIgnoreLimitBtn');
+                if (dailyStatus && dailyStatus.total_due > 0 && limitBtn) {
+                    // Fällige Karten da, aber Tageslimit erreicht
+                    const t = document.getElementById('emptyTitle');
+                    if (t) t.textContent = 'Tageslimit erreicht';
+                    document.getElementById('emptyForecast').textContent =
+                        `Für heute hast du dein Limit geschafft. ${dailyStatus.total_due} weitere ${dailyStatus.total_due === 1 ? 'Karte ist' : 'Karten sind'} fällig — sie laufen nicht weg.`;
+                    document.getElementById('emptyIgnoreLimitLabel').textContent =
+                        `Trotzdem weiter üben (${dailyStatus.total_due})`;
+                    limitBtn.hidden = false;
+                } else {
+                    loadForecastInto(document.getElementById('emptyForecast'));
+                }
                 return;
             }
+            emptyEl.style.display = 'none';
 
             // Filter aufbauen: Typ-Pills + Gruppen-Select (je nur bei >=2 Optionen)
             presentTypes = TYPE_ORDER.filter(t => allCards.some(c => ftype(c) === t));
@@ -1231,7 +1291,9 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
 
     // Arbeits-Queue aus aktiver Auswahl neu aufbauen (bereits bewertete raus)
     function rebuildQueue() {
-        cards = shuffle(allCards.filter(c => matchesFilter(c) && !ratedIds.has(c.content_id)));
+        const open = allCards.filter(c => matchesFilter(c) && !ratedIds.has(c.content_id));
+        // Fällige Wiederholungen VOR neuen Karten — gemischt wird nur innerhalb der Gruppen.
+        cards = shuffle(open.filter(c => !c.is_new)).concat(shuffle(open.filter(c => c.is_new)));
         currentIdx = 0;
         sessionStats.total = sessionStats.reviewed + cards.length;
     }
@@ -2040,6 +2102,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
 
         const mins = Math.round((Date.now() - sessionStart) / 60000);
         document.getElementById('sessionTime').textContent = `${mins} Min`;
+        renderDailyQuota();
     }
 
     // ── Complete ──
@@ -2090,10 +2153,15 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
             document.getElementById('summaryStreak').textContent = `${s} ${s === 1 ? 'Tag' : 'Tage'}`;
             const due = data.due_count || 0;
             const btn = document.getElementById('nextRoundBtn');
+            const daily = data.daily || null;
+            if (daily) { dailyStatus = daily; renderDailyQuota(); }
             if (btn) {
                 if (due > 0) {
-                    document.getElementById('nextRoundLabel').textContent =
-                        `Noch ${due} fällige ${due === 1 ? 'Karte' : 'Karten'} — weitere Runde`;
+                    // Tageslimit ausgeschöpft → „Trotzdem weiter" (ignore_limit), sonst normale Runde
+                    nextRoundIgnoreLimit = ignoreLimitMode || !!(daily && daily.remaining_today === 0);
+                    document.getElementById('nextRoundLabel').textContent = (nextRoundIgnoreLimit && !ignoreLimitMode)
+                        ? `Tageslimit erreicht — trotzdem ${due} weitere üben`
+                        : `Noch ${due} fällige ${due === 1 ? 'Karte' : 'Karten'} — weitere Runde`;
                     btn.hidden = false;
                 } else {
                     btn.hidden = true;
@@ -2125,7 +2193,16 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         nextRoundBtn.addEventListener('click', () => {
             completeEl.style.display = 'none';
             nextRoundBtn.hidden = true;
-            loadCards();
+            loadCards({ ignoreLimit: nextRoundIgnoreLimit });
+        });
+    }
+    const emptyIgnoreLimitBtn = document.getElementById('emptyIgnoreLimitBtn');
+    if (emptyIgnoreLimitBtn) {
+        emptyIgnoreLimitBtn.addEventListener('click', () => {
+            emptyIgnoreLimitBtn.hidden = true;
+            emptyEl.style.display = 'none';
+            cardArea.style.display = '';
+            loadCards({ ignoreLimit: true });
         });
     }
 

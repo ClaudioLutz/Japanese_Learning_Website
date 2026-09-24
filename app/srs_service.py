@@ -404,6 +404,112 @@ def get_due_cards(user_id, limit=50, lesson_id=None, content_type=None, directio
     return query.order_by(CardReviewState.due_date.asc()).limit(limit).all()
 
 
+# ── Tageslimit (UserSRSSettings.daily_review_limit / daily_new_cards) ──────
+# Fallback = Modell-Defaults, gilt fuer User ohne Settings-Zeile.
+DEFAULT_DAILY_REVIEW_LIMIT = 100
+DEFAULT_DAILY_NEW_CARDS = 20
+# Bewertungen aus diesen Quellen zaehlen gegen das Tageslimit der /review-Queue
+# (plus NULL = Altdaten/gecachte Clients). Deck/Kana-Grid/Produktion nicht.
+LIMIT_COUNTED_SOURCES = ('review', 'review_listen', 'dashboard')
+
+
+def _ch_day_start_utc():
+    """Beginn des heutigen CH-Tages als naive UTC-Zeit (ReviewLog.reviewed_at ist naive UTC)."""
+    from zoneinfo import ZoneInfo
+    tz = ZoneInfo('Europe/Zurich')
+    start_local = datetime.combine(_zurich_today(), datetime.min.time(), tzinfo=tz)
+    return start_local.astimezone(timezone.utc).replace(tzinfo=None)
+
+
+def _due_forward_query(user_id, now=None):
+    return CardReviewState.query.filter(
+        CardReviewState.user_id == user_id,
+        CardReviewState.direction == 'forward',
+        CardReviewState.due_date <= (now or datetime.utcnow()),
+        CardReviewState.status != 'suspended',
+    )
+
+
+def get_daily_status(user_id):
+    """Tageslimit-Stand fuer die /review-Queue.
+
+    Wiederholungen (reps>0) und neue Karten (reps==0) haben getrennte Limits.
+    Heute erledigt = distinct Karten mit forward-Bewertung seit CH-Mitternacht aus
+    LIMIT_COUNTED_SOURCES (bzw. NULL); „neu" laut undo_snapshot.was_new.
+    """
+    from sqlalchemy import or_
+
+    settings = UserSRSSettings.query.filter_by(user_id=user_id).first()
+    review_limit = (settings.daily_review_limit
+                    if settings and settings.daily_review_limit is not None
+                    else DEFAULT_DAILY_REVIEW_LIMIT)
+    new_limit = (settings.daily_new_cards
+                 if settings and settings.daily_new_cards is not None
+                 else DEFAULT_DAILY_NEW_CARDS)
+
+    rows = db.session.query(ReviewLog.content_id, ReviewLog.undo_snapshot).filter(
+        ReviewLog.user_id == user_id,
+        ReviewLog.direction == 'forward',
+        ReviewLog.reviewed_at >= _ch_day_start_utc(),
+        or_(ReviewLog.source.is_(None), ReviewLog.source.in_(LIMIT_COUNTED_SOURCES)),
+    ).all()
+    new_ids, review_ids = set(), set()
+    for cid, snap in rows:
+        was_new = False
+        if snap:
+            try:
+                was_new = bool(json.loads(snap).get('was_new'))
+            except (ValueError, AttributeError):
+                was_new = False
+        (new_ids if was_new else review_ids).add(cid)
+    review_ids -= new_ids
+
+    due_q = _due_forward_query(user_id)
+    due_new = due_q.filter(CardReviewState.reps == 0).count()
+    due_reviews = due_q.filter(CardReviewState.reps > 0).count()
+
+    reviews_remaining = max(0, review_limit - len(review_ids))
+    new_remaining = max(0, new_limit - len(new_ids))
+    remaining_today = min(reviews_remaining, due_reviews) + min(new_remaining, due_new)
+    return {
+        'review_limit': review_limit,
+        'new_limit': new_limit,
+        'reviews_done': len(review_ids),
+        'new_done': len(new_ids),
+        'reviews_remaining': reviews_remaining,
+        'new_remaining': new_remaining,
+        'due_reviews': due_reviews,
+        'due_new': due_new,
+        'total_due': due_reviews + due_new,
+        'remaining_today': remaining_today,
+        'limited': (due_reviews + due_new) > remaining_today,
+    }
+
+
+def get_review_queue(user_id, batch=200, ignore_limit=False, status=None):
+    """Faellige forward-Karten fuer /review unter Beachtung des Tageslimits.
+
+    Reihenfolge: faellige Wiederholungen (reps>0, aelteste zuerst) VOR neuen
+    Karten (reps==0). ignore_limit=True = „Trotzdem weiter" nach Tageslimit.
+    Returns (states, status)."""
+    status = status or get_daily_status(user_id)
+    if ignore_limit:
+        n_rev, n_new = batch, batch
+    else:
+        n_rev, n_new = status['reviews_remaining'], status['new_remaining']
+    n_rev = min(n_rev, batch)
+    reviews = []
+    if n_rev > 0:
+        reviews = (_due_forward_query(user_id).filter(CardReviewState.reps > 0)
+                   .order_by(CardReviewState.due_date.asc()).limit(n_rev).all())
+    n_new = min(n_new, batch - len(reviews))
+    new = []
+    if n_new > 0:
+        new = (_due_forward_query(user_id).filter(CardReviewState.reps == 0)
+               .order_by(CardReviewState.due_date.asc()).limit(n_new).all())
+    return reviews + new, status
+
+
 def get_due_count(user_id):
     """Zaehlt faellige Karten fuer das Nav-Badge — NUR Rezeption (forward).
 
