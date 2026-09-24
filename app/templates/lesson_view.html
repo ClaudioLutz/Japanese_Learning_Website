@@ -1450,7 +1450,7 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                         <div class="content-item mb-4" data-content-id="{{ content.id }}">
                                             {% if content.content_type == 'audio' %}
                                             <div class="mb-3">
-                                                <audio controls class="w-100">
+                                                <audio controls preload="none" class="w-100">
                                                     {% if content.file_path %}
                                                     <source src="{{ content.get_file_url() }}?v={{ content.id }}" type="audio/mpeg">
                                                     {% elif content.media_url %}
@@ -1627,7 +1627,6 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                 {% if content.content_type == 'kana_grid_game' %}
                                                     <div class="kana-grid-game"
                                                          x-data="kanaGridGame({{ content.id }})"
-                                                         x-init="init()"
                                                          data-content-id="{{ content.id }}">
                                                         <template x-if="loading">
                                                             <div class="kana-grid-game__loading">
@@ -1980,12 +1979,12 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                             {% endif %}
                                                         {% elif content.content_type == 'audio' %}
                                                             {% if content.file_path %}
-                                                            <audio controls class="w-100">
+                                                            <audio controls preload="none" class="w-100">
                                                                 <source src="{{ content.get_file_url() }}?v={{ content.id }}" type="audio/mpeg">
                                                                 Dein Browser unterstützt kein Audio.
                                                             </audio>
                                                             {% elif content.media_url %}
-                                                            <audio controls class="w-100">
+                                                            <audio controls preload="none" class="w-100">
                                                                 <source src="{{ content.media_url }}?v={{ content.id }}" type="audio/mpeg">
                                                                 Dein Browser unterstützt kein Audio.
                                                             </audio>
@@ -3955,12 +3954,7 @@ function updateNavbarXp(totalXp, streak) {
 // ENHANCEMENT: Confetti + Completion Modal
 // ============================================================
 
-// Load canvas-confetti from CDN dynamically
-(function() {
-    const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js';
-    document.head.appendChild(script);
-})();
+// canvas-confetti kommt aus base.html (defer) — hier nicht erneut laden.
 
 let completionShown = false;
 
@@ -5030,6 +5024,10 @@ document.addEventListener('DOMContentLoaded', function() {
 </style>
 <script>
 // ── Custom Audio Player: ersetzt alle nativen <audio> Elemente ──
+// Lazy-Load: Die (bis zu 11 MB grossen) Block-Player-WAVs werden erst beim
+// ersten Play- bzw. Seek-Klick geladen (preload='none', src erst in ensureSrc()).
+// Vorher hat der Konstruktor mit src + preload='metadata' beim blossen Seitenaufruf alle
+// Dateien einer Lektion angefordert.
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('audio[controls]').forEach(audio => {
         const src = audio.querySelector('source')?.src || audio.src;
@@ -5054,8 +5052,13 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         `;
 
-        const newAudio = new Audio(src);
-        newAudio.preload = 'metadata';
+        const newAudio = new Audio();
+        newAudio.preload = 'none';
+        function ensureSrc() {
+            if (!newAudio.getAttribute('src')) {
+                newAudio.src = src;
+            }
+        }
         const playBtn = player.querySelector('.audio-play-btn');
         const progressWrap = player.querySelector('.audio-progress-wrap');
         const progressBar = player.querySelector('.audio-progress-bar');
@@ -5081,6 +5084,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         btn._audio?.pause();
                     }
                 });
+                ensureSrc();
                 newAudio.play();
                 playBtn.classList.add('is-playing');
             } else {
@@ -5109,6 +5113,19 @@ document.addEventListener('DOMContentLoaded', function() {
         progressWrap.addEventListener('click', (e) => {
             const rect = progressWrap.getBoundingClientRect();
             const pct = (e.clientX - rect.left) / rect.width;
+            if (!newAudio.getAttribute('src') || isNaN(newAudio.duration)) {
+                // Seek vor dem ersten Play: erst Metadaten laden, dann springen
+                const fresh = !newAudio.getAttribute('src');
+                newAudio.addEventListener('loadedmetadata', () => {
+                    newAudio.currentTime = pct * newAudio.duration;
+                }, { once: true });
+                if (fresh) {
+                    ensureSrc();
+                    newAudio.preload = 'metadata';
+                    newAudio.load();
+                }
+                return;
+            }
             newAudio.currentTime = pct * newAudio.duration;
         });
 
@@ -5126,6 +5143,10 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             audio.replaceWith(player);
         }
+        // Das versteckte Original soll nie selbst Bytes ziehen
+        audio.preload = 'none';
+        audio.removeAttribute('src');
+        audio.querySelectorAll('source').forEach(s => s.remove());
     });
 });
 </script>
