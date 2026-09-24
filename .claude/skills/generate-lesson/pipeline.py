@@ -171,6 +171,38 @@ def load_canonical(level: int) -> dict:
     return cache
 
 
+def load_variant_aliases(level: int) -> dict[str, str]:
+    """Laedt bewusst nicht angelegte Schreibvarianten der canonical-Liste.
+
+    Datei ``sources/jlpt_n{level}_variants.json`` (optional): Liste von
+    ``{"canonical": <Wort der Liste>, "covered_by": <DB-word>, "reason": ...}``.
+    Solche Woerter (z.B. 有る → ある, 終る → 終わる) bekommen KEINE eigene
+    Karte, sondern gelten als durch ``covered_by`` abgedeckt.
+    """
+    path = SKILL_DIR / "sources" / f"jlpt_n{level}_variants.json"
+    if not path.exists():
+        return {}
+    data = json.loads(path.read_text(encoding="utf-8"))
+    return {v["canonical"]: v["covered_by"] for v in data.get("variants", [])}
+
+
+def compute_vocab_coverage(
+    canon_words: set[str], db_words: set[str], aliases: dict[str, str]
+) -> tuple[set[str], set[str], set[str]]:
+    """Teilt die canonical-Woerter in (direkt, via Variante, fehlend).
+
+    Via Variante zaehlt ein Wort nur, wenn es selbst NICHT in der DB ist, das
+    Alias-Ziel aber schon.
+    """
+    direct = canon_words & db_words
+    via_variant = {
+        w for w in canon_words - direct
+        if aliases.get(w) is not None and aliases[w] in db_words
+    }
+    missing = canon_words - direct - via_variant
+    return direct, via_variant, missing
+
+
 def is_pure_kana(s: str) -> bool:
     """True wenn String nur Hiragana/Katakana/Satzzeichen enthaelt (keine Kanji)."""
     return bool(KANA_ONLY_RE.match(s)) if s else True
@@ -713,8 +745,10 @@ def jlpt_coverage(level: int = 5, show_missing: int = 30):
         canon_vocab_words = canon["vocab_set"]
         # Auch Vokabeln ohne jlpt_level mitzaehlen, falls Wort in canonical-Liste
         all_db_vocab = {v.word for v in db.session.query(Vocabulary).all()}
-        covered_vocab = canon_vocab_words & (db_vocab_words | all_db_vocab)
-        missing_vocab = canon_vocab_words - all_db_vocab
+        direct_vocab, variant_vocab, missing_vocab = compute_vocab_coverage(
+            canon_vocab_words, db_vocab_words | all_db_vocab, load_variant_aliases(level)
+        )
+        covered_vocab = direct_vocab | variant_vocab
 
         # Kanji in DB mit jlpt_level=level
         db_kanji_chars = {
@@ -740,22 +774,28 @@ def jlpt_coverage(level: int = 5, show_missing: int = 30):
         print(f"  Source: {canon['raw'].get('sources', {}).get('vocab', {}).get('origin', '?')}")
         print("=" * 70)
         print(f"  Vokabeln:   {v_cov:>4} / {v_total:<4} = {v_pct:5.1f}%")
+        if variant_vocab:
+            d_pct = (100.0 * len(direct_vocab) / v_total) if v_total else 0.0
+            print(f"              davon direkt {len(direct_vocab)} ({d_pct:.1f}%), "
+                  f"via Schreibvariante {len(variant_vocab)} (sources/jlpt_n{level}_variants.json)")
         print(f"  Kanji:      {k_cov:>4} / {k_total:<4} = {k_pct:5.1f}%")
         print(f"  Grammatik:  (canonical-Liste fuer N{level} noch nicht maschinell importiert)")
         print()
         if missing_vocab:
             print(f"  Fehlende Vokabeln (Top {min(show_missing, len(missing_vocab))} von {len(missing_vocab)}):")
             # Sortiert nach canonical-Reihenfolge wenn moeglich
-            ordered_missing = [
-                v["word"] for v in canon["vocab_list"] if v["word"] in missing_vocab
-            ]
-            for w in ordered_missing[:show_missing]:
-                # Lookup reading + meaning fuer Zeile
-                entry = next((v for v in canon["vocab_list"] if v["word"] == w), None)
-                if entry:
-                    print(f"    - {w}  {entry.get('reading', ''):<10}  {entry.get('meaning_en', '')[:50]}")
-                else:
-                    print(f"    - {w}")
+            # Mehrfach-Eintraege ("キロ; キログラム") in Einzelwoerter zerlegen,
+            # jedes fehlende Wort genau einmal listen.
+            ordered_missing: list[tuple[str, dict]] = []
+            seen: set[str] = set()
+            for v in canon["vocab_list"]:
+                for w in re.split(r"[;；/・]", v["word"]):
+                    w = w.strip()
+                    if w in missing_vocab and w not in seen:
+                        seen.add(w)
+                        ordered_missing.append((w, v))
+            for w, entry in ordered_missing[:show_missing]:
+                print(f"    - {w}  {entry.get('reading', ''):<10}  {entry.get('meaning_en', '')[:50]}")
             if len(missing_vocab) > show_missing:
                 print(f"    ... ({len(missing_vocab) - show_missing} weitere)")
         else:

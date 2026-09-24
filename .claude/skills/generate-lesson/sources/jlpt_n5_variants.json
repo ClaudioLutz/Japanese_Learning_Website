@@ -1,0 +1,29 @@
+{
+ "_doc": "Schreibvarianten der canonical N5-Liste, die bewusst NICHT als eigene vocabulary-Zeile angelegt werden (keine Doppel-Karten). 'covered_by' ist das DB-word, das die Variante abdeckt. Das Coverage-Tool zaehlt diese als 'gedeckt via Variante'. Stand 2026-09-24 (N5-Vokabel-Auffuellung).",
+ "variants": [
+  {"canonical": "脚", "covered_by": "足", "reason": "Kanji-Variante von あし (足; 脚)"},
+  {"canonical": "在る", "covered_by": "ある", "reason": "Kanji-Schreibung von ある, auf N5 in Kana üblich"},
+  {"canonical": "有る", "covered_by": "ある", "reason": "Kanji-Schreibung von ある, auf N5 in Kana üblich"},
+  {"canonical": "よい", "covered_by": "いい", "reason": "Grundform-Variante von いい (いい; よい)"},
+  {"canonical": "居る", "covered_by": "いる", "reason": "Kanji-Schreibung von いる, auf N5 in Kana üblich"},
+  {"canonical": "終る", "covered_by": "終わる", "reason": "ältere Okurigana-Schreibung von 終わる"},
+  {"canonical": "河", "covered_by": "川", "reason": "Kanji-Variante von かわ (川; 河)"},
+  {"canonical": "曲る", "covered_by": "曲がる", "reason": "ältere Okurigana-Schreibung von 曲がる"},
+  {"canonical": "円い", "covered_by": "丸い", "reason": "Kanji-Variante von まるい (丸い; 円い)"},
+  {"canonical": "飛行機", "covered_by": "ひこうき", "reason": "bereits als Kana-Karte ひこうき vorhanden"},
+  {"canonical": "皆さん", "covered_by": "みなさん", "reason": "bereits als Kana-Karte みなさん vorhanden"},
+  {"canonical": "一緒", "covered_by": "いっしょに", "reason": "bereits als Kana-Karte いっしょに vorhanden"},
+  {"canonical": "そうです", "covered_by": "そう", "reason": "Phrase aus そう + です; そう und そうですか vorhanden"},
+  {"canonical": "～分", "covered_by": "分", "reason": "Zähler ふん bereits als 分 (und ふん) vorhanden"},
+  {"canonical": "～前", "covered_by": "前", "reason": "Suffix-Gebrauch von 前 (vor …), Karte 前 vorhanden"},
+  {"canonical": "何～", "covered_by": "何", "reason": "Präfix-Gebrauch von 何 (なん～), Karte 何 vorhanden"},
+  {"canonical": "～年", "covered_by": "年", "reason": "Zähler ねん bereits in Karte 年 (とし / ねん) enthalten"},
+  {"canonical": "～ころ", "covered_by": "～ごろ", "reason": "Lautvariante (～ころ; ～ごろ), eine Karte ～ごろ"},
+  {"canonical": "ぐらい", "covered_by": "～くらい", "reason": "Lautvariante (～くらい; ぐらい), eine Karte ～くらい"},
+  {"canonical": "そうして", "covered_by": "そして", "reason": "Langform von そして (そうして; そして)"},
+  {"canonical": "じゃ", "covered_by": "じゃあ", "reason": "Kurzform von じゃあ (じゃ; じゃあ)"},
+  {"canonical": "始め", "covered_by": "初め", "reason": "Kanji-Variante von はじめ (初め; 始め)"},
+  {"canonical": "伯父", "covered_by": "叔父さん", "reason": "Kanji-Variante von おじさん (伯父; 叔父さん)"},
+  {"canonical": "伯母さん", "covered_by": "叔母さん", "reason": "Kanji-Variante von おばさん (伯母さん; 叔母さん)"}
+ ]
+}
