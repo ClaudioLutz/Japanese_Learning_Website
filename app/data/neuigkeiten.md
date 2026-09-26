@@ -15,6 +15,10 @@ Format je Eintrag:
 Keine Commit-Hashes, keine internen Namen.
 -->
 
+## 2026-09-26 | Gespräch ausprobieren — direkt auf der Startseite
+Auf der Startseite kannst du jetzt ohne Konto ein kurzes Gespräch auf Japanisch führen: Du bist Lisa, sitzt mit Tanaka im Café und antwortest in drei Zügen — mit Antwortvorschlägen, Lesung, Vorlesen und am Ende einer Korrektur auf Deutsch. Mit deinem Konto geht es danach in allen Dialogszenen der Lektionen weiter.
+Link: /
+
 ## 2026-09-26 | Neue Seite „Sprechen": alle Dialoge an einem Ort
 Unter Üben → Sprechen findest du jetzt alle Dialogszenen deiner Lektionen nach Modul sortiert — Szenen aus abgeschlossenen Lektionen sind „bereit", die anderen kannst du trotzdem schon spielen. Unter „Meine Gespräche" siehst du jedes Rollenspiel noch einmal mit Lesung, Übersetzung und Verbesserungsvorschlägen, und auf „Mein Lernen" schlägt dir die Kachel „Heute sprechen" eine passende Szene vor. Beim Vorlesen klingen Männer- und Frauenrollen jetzt passend.
 Link: /sprechen

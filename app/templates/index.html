@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% block title %}Japanisch lernen online — JLPT N5 Kurse mit Quiz & SRS{% endblock %}
-{% block meta_description %}Japanisch lernen im Browser: Spiel dich durch alle 46 Hiragana — gratis, ohne Login. Danach strukturierte JLPT-N5-Lektionen auf Deutsch mit Quiz und SRS.{% if free_mode %} Alle Lektionen komplett kostenlos — kein Abo.{% endif %}{% endblock %}
+{% block meta_description %}{% if roleplay_demo %}Japanisch sprechen üben ab dem ersten Tag: Konversation für Anfänger auf JLPT-N5-Niveau mit Antwortvorschlägen und Korrektur auf Deutsch — Demo ohne Login. Dazu Hiragana-Spiel und N5-Lektionen mit Quiz und SRS.{% else %}Japanisch lernen im Browser: Spiel dich durch alle 46 Hiragana — gratis, ohne Login. Danach strukturierte JLPT-N5-Lektionen auf Deutsch mit Quiz und SRS.{% if free_mode %} Alle Lektionen komplett kostenlos — kein Abo.{% endif %}{% endif %}{% endblock %}
+
+{% block styles %}
+{% if roleplay_demo %}<link rel="stylesheet" href="{{ static_v('css/roleplay_panel.css') }}">{% endif %}
+{% endblock %}
 
 {% block body_attributes %}class="redesign-page"{% endblock %}
 
@@ -9,13 +13,18 @@
 {# Deep-Link-Ziel fuer alle "Lektion starten"-CTAs: erste gratis+guest Lektion,
    Fallback Lektionsliste (gefiltert auf gratis). #}
 {% set guest_lesson_url = url_for('routes.view_lesson', lesson_id=first_guest_lesson.id) if first_guest_lesson else url_for('routes.lessons', access='free') %}
+{# Gast-Hero „Sprich Japanisch vom ersten Tag an" + Gast-Demo, nur mit ROLEPLAY_ENABLED
+   und verfuegbarer Demo-Szene (roleplay_demo, routes.index). Sonst bleibt der
+   Kana-Spiel-Hero wie bisher. Der Spiel-Launcher wandert dann als zweiter Block
+   direkt unter den Hero (gleiches Markup, gleiche Funktion). #}
+{% set speak_hero = roleplay_demo and not current_user.is_authenticated %}
 <div class="home-wrapper">
 
   {# ──────────────────────────────────────────────
      HERO — Gast: Kana-Spiel als Hero-Element (Spielbuehne + Bruecke),
      eingeloggt: personalisierter Weiterlern-Hero (unveraendert).
      ────────────────────────────────────────────── #}
-  <section class="home-hero hero-bg-jp{% if not current_user.is_authenticated %} home-hero--game{% endif %}">
+  <section class="home-hero hero-bg-jp{% if not current_user.is_authenticated %} home-hero--game{% endif %}{% if speak_hero %} home-hero--speak{% endif %}">
     <div class="home-hero-inner{% if not current_user.is_authenticated %} home-hero-inner--split{% endif %}">
 
       {% if current_user.is_authenticated %}
@@ -59,6 +68,7 @@
         {% endif %}
       {% else %}
         {# ── Gast: editorialer Split-Hero — links Pitch + Brücke, rechts Spiel-Launcher ── #}
+        {% if not speak_hero %}
         <div class="home-hero-masthead">
           <span class="eyebrow-chip">JLPT N5 · auf Deutsch · in der Schweiz gemacht</span>
           {# H1 traegt den Query-Match "Hiragana lernen" (Schweiz-Nische, Pos.-Hebel) —
@@ -69,6 +79,7 @@
             <span class="home-sub-more">Danach führt dich der N5-Pfad Schritt für Schritt weiter, jede Regel auf Deutsch erklärt.</span>
           </p>
         </div>
+        {% endif %}
 
         {# Spiel-Launcher (kein Inline-Spiel): geteilter Scope ($store.kanaScope) +
            Umschalter [Zuordnung | Kana Storm]. Beide starten das Spiel im Vollbild
@@ -168,6 +179,7 @@
               .home-hero-bridge { text-align: center; }
           }
         </style>
+        {% set kana_launcher %}
         <div class="home-hero-right">
           <div class="kana-hero-card"
                x-data="{ game: 'match', startStorm() { try { const s = this.$store.kanaScope; localStorage.setItem('kanaStormSchrift', s.schrift); localStorage.setItem('kanaStormRows', JSON.stringify(s.rows)); } catch (e) {} window.location.href = '{{ url_for('srs.practice_kana_storm_page') }}'; } }">
@@ -228,6 +240,9 @@
           </div>
         </div>
 
+        {% endset %}
+
+        {% set kana_bridge %}
         {# ── Brücken-Rail: roter Faden Spiel → Lektion → Pfad (linke Spalte, SSR) ── #}
         <div class="home-hero-bridge">
           <ol class="kana-bridge kana-bridge--rail" aria-label="Dein Weg in 3 Schritten">
@@ -250,10 +265,96 @@
             Alle Lektionen ansehen →
           </a>
         </div>
+        {% endset %}
+
+        {% if speak_hero %}
+        {# ── Sprech-Hero: links Pitch + CTAs, rechts die Gast-Demo (Rollenspiel-Panel) ── #}
+        <style>
+          .home-hero--speak .home-hero-inner--split {
+              grid-template-columns: 1fr 1fr;
+              grid-template-areas: "mast card";
+              align-items: center;
+          }
+          .home-hero--speak .home-hero-masthead { align-self: center; }
+          .home-hero--speak .home-h1--speak { margin: 0 0 1rem; }
+          .home-speak-actions { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 1.5rem; }
+          .home-speak-points {
+              list-style: none; margin: 1.3rem 0 0; padding: 0;
+              display: flex; flex-wrap: wrap; gap: 0.4rem 1.2rem;
+              font-size: 0.9rem; color: var(--ink-600, #5C564D);
+          }
+          .home-speak-points li { display: inline-flex; align-items: center; gap: 0.4rem; }
+          .home-speak-points i { color: var(--shu, #EB6101); font-size: 0.8rem; }
+          .home-hero--speak .home-hero-right .roleplay-panel { font-size: 0.97rem; }
+          @media (max-width: 860px) {
+              .home-hero--speak .home-hero-inner--split {
+                  grid-template-columns: 1fr;
+                  grid-template-areas: "mast" "card";
+                  max-width: 560px;
+              }
+              .home-speak-actions, .home-speak-points { justify-content: center; }
+          }
+          @media (max-width: 480px) {
+              .home-speak-actions a { flex: 1 1 100%; text-align: center; justify-content: center; }
+          }
+          [data-theme="dark"] .home-speak-points { color: var(--text-muted); }
+        </style>
+        <div class="home-hero-masthead">
+          <span class="eyebrow-chip">Japanisch sprechen üben · JLPT N5 · auf Deutsch</span>
+          <h1 class="home-h1 home-h1--game home-h1--speak">Sprich Japanisch<br>vom ersten Tag an.</h1>
+          <p class="home-sub">
+            Übe echte Gespräche auf N5-Niveau, mit Antwortvorschlägen und Korrektur auf Deutsch.
+            {{ roleplay_scene_count }} Szenen aus den Lektionen.
+          </p>
+          <div class="home-speak-actions" x-data>
+            <a href="#gespraech-demo" class="btn-shu" @click.prevent="$dispatch('rp-demo-start')">
+              <i class="fas fa-comments" aria-hidden="true"></i> Gespräch ausprobieren
+            </a>
+            <a href="{{ url_for('routes.register', next='/sprechen') }}" class="btn-ghost-jp">Kostenlos starten</a>
+          </div>
+          <ul class="home-speak-points" aria-label="So funktioniert es">
+            <li><i class="fas fa-check" aria-hidden="true"></i> Japanisch-Konversation für Anfänger</li>
+            <li><i class="fas fa-check" aria-hidden="true"></i> Romaji-Eingabe wird zu Kana</li>
+            <li><i class="fas fa-check" aria-hidden="true"></i> Demo ohne Login</li>
+          </ul>
+        </div>
+        <div class="home-hero-right">
+          {% set rp_demo = roleplay_demo %}
+          {% include 'partials/_roleplay_panel.html' %}
+        </div>
+        {% else %}
+        {{ kana_launcher }}
+        {{ kana_bridge }}
+        {% endif %}
       {% endif %}
 
     </div>
   </section>
+
+  {% if speak_hero %}
+  {# ──────────────────────────────────────────────
+     KANA-SPIEL — zweiter Block unter dem Sprech-Hero (Funktion unveraendert:
+     geteilter Scope + [Zuordnung | Kana Storm], Start im Vollbild).
+     ────────────────────────────────────────────── #}
+  <section class="home-hero home-hero--game home-kana-block" aria-labelledby="homeKanaTitle">
+    <style>
+      .home-kana-block { padding-top: 2.2rem; }
+      .home-kana-block .home-kana-eyebrow { display: inline-flex; margin-bottom: 1rem; }
+    </style>
+    <div class="home-hero-inner home-hero-inner--split">
+      <div class="home-hero-masthead">
+        <span class="eyebrow-chip home-kana-eyebrow">Erst die Schrift? · ohne Login</span>
+        <h2 class="home-h1 home-h1--game" id="homeKanaTitle">Hiragana lernen —<br>fang mit einer Runde an.</h2>
+        <p class="home-sub">
+          Alle 46 Grund-Hiragana, direkt im Browser — ohne Login.
+          <span class="home-sub-more">Danach führt dich der N5-Pfad Schritt für Schritt weiter, jede Regel auf Deutsch erklärt.</span>
+        </p>
+      </div>
+      {{ kana_launcher }}
+      {{ kana_bridge }}
+    </div>
+  </section>
+  {% endif %}
 
 
   {# ──────────────────────────────────────────────
@@ -1318,4 +1419,12 @@ body.redesign-page .container.mt-4 { padding-left: 0; padding-right: 0; margin-t
   //  Spiel-Host beim ersten Spielzug.)
 })();
 </script>
+{% endblock %}
+
+{% block scripts %}
+{% if roleplay_demo %}
+{# Synchron (nicht defer), damit roleplayPanel vor Alpines Init existiert. #}
+<script src="{{ static_v('js/romaji_to_kana.js') }}"></script>
+<script src="{{ static_v('js/roleplay_panel.js') }}"></script>
+{% endif %}
 {% endblock %}

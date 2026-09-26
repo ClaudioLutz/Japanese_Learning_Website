@@ -15,6 +15,7 @@ from flask_login import current_user, login_required
 
 from app import db, limiter
 from app.models import Lesson, LessonContent, RoleplaySession
+from app.services import roleplay_demo as demo
 from app.services import roleplay_service as svc
 
 logger = logging.getLogger(__name__)
@@ -199,3 +200,55 @@ def tutor():
         'answer': tq.answer,
         'limits': svc.limits_status(current_user.id),
     })
+
+
+# ── Gast-Demo (Startseite, ohne Login) ───────────────────────────────────
+# Feste Szene, max. 3 Nutzerzuege, Zustand als signiertes Token im JSON-Body
+# (kein DB-Schreiben ausser dem Tageszaehler). Token bewusst NICHT im Pfad:
+# es waechst mit der Zughistorie, Gunicorn begrenzt die Request-Zeile auf 4 KB.
+# CSRF wie die uebrigen JSON-APIs (Gaeste haben Session + Meta-Tag csrf-token).
+# Details: app/services/roleplay_demo.py, docs/roleplay-api.md.
+
+DEMO_RATE_LIMIT = '6 per minute'
+
+
+def _client_ip() -> str:
+    from app import client_ip
+    return client_ip()
+
+
+def _demo_honeypot(body: dict):
+    """Honeypot-Feld `website` (wie /register): ausgefuellt → still ablehnen."""
+    if str(body.get('website') or '').strip():
+        logger.warning('Honeypot ausgeloest auf Gast-Demo (IP-Hash %s…)',
+                       demo.ip_hash(_client_ip())[:8])
+        return _error('invalid_request',
+                      'Die Demo konnte nicht gestartet werden. Bitte versuche es später erneut.', 400)
+    return None
+
+
+@roleplay_bp.route('/api/roleplay/demo/start', methods=['POST'])
+@limiter.limit(DEMO_RATE_LIMIT, key_func=_client_ip)
+def demo_start():
+    err = _demo_honeypot(_json_body())
+    if err is not None:
+        return err
+    try:
+        data = demo.start_demo()
+    except svc.RoleplayError as exc:
+        return _from_exc(exc)
+    return jsonify(data), 201
+
+
+@roleplay_bp.route('/api/roleplay/demo/turn', methods=['POST'])
+@limiter.limit(DEMO_RATE_LIMIT, key_func=_client_ip)
+def demo_turn():
+    body = _json_body()
+    err = _demo_honeypot(body)
+    if err is not None:
+        return err
+    try:
+        data = demo.demo_turn(body.get('token'), body.get('text'), _client_ip())
+    except svc.RoleplayError as exc:
+        return _from_exc(exc)
+    return jsonify(data)

@@ -4,7 +4,23 @@
    Auch auf /sprechen/<id> (sprechen/play.html) mit rp_standalone=true:
    Panel sofort offen, ohne Start-/Schliessen-Knopf.
    Logik: static/js/roleplay_panel.js, Stil: static/css/roleplay_panel.css,
-   API-Vertrag: docs/roleplay-api.md. #}
+   API-Vertrag: docs/roleplay-api.md.
+   Gast-Demo (Startseite, index.html): rp_demo = hero_context() aus
+   services/roleplay_demo.py — ohne content/lesson, feste Szene, andere
+   Endpunkte, ohne Tutor-Tab, Rollenwahl und Beenden-Knopf. #}
+{% if rp_demo %}
+{% set _rp_id = 'demo' %}
+<section class="roleplay-panel is-standalone is-demo" x-data="roleplayPanel(0)"
+         data-demo="1" data-standalone="1"
+         data-demo-start-url="{{ url_for('roleplay.demo_start') }}"
+         data-demo-turn-url="{{ url_for('roleplay.demo_turn') }}"
+         data-text-max="{{ rp_demo.text_max }}"
+         id="gespraech-demo"
+         @rp-demo-start.window="startDemo(true)"
+         @keydown.stop="onKeydown($event)"
+         aria-label="Gesprächs-Demo {{ rp_demo.title }}">
+{% else %}
+{% set _rp_id = content.id %}
 {% set _rp_pages = [] %}{% for _p in lesson.pages %}{% if _p.content %}{% set _ = _rp_pages.append(_p.content[0].page_number) %}{% endif %}{% endfor %}
 <section class="roleplay-panel{{ ' is-standalone' if rp_standalone }}" x-data="roleplayPanel({{ content.id }})"
          data-lesson-id="{{ lesson.id }}" data-page-number="{{ content.page_number }}"
@@ -12,7 +28,8 @@
          data-standalone="{{ '1' if rp_standalone else '0' }}"
          @keydown.stop="onKeydown($event)"
          aria-label="Rollenspiel zum Dialog">
-    {% if not rp_standalone %}
+{% endif %}
+    {% if not rp_standalone and not rp_demo %}
     <div class="rp-launch">
         <button type="button" class="rp-btn rp-btn-primary rp-open-btn" x-ref="openBtn"
                 @click="toggle()" :aria-expanded="open ? 'true' : 'false'"
@@ -26,34 +43,75 @@
 
     <span class="rp-sr-only" aria-live="polite" aria-atomic="true" x-text="liveMsg"></span>
 
-    <div class="rp-card" id="rp-card-{{ content.id }}" x-show="open" x-cloak>
+    <div class="rp-card" id="rp-card-{{ _rp_id }}" x-show="open" x-cloak>
         <div class="rp-head">
+            {% if rp_demo %}
+            <h2 class="rp-title" x-ref="panelTitle" tabindex="-1">Demo · {{ rp_demo.title }}</h2>
+            <span class="rp-demo-badge">ohne Login · {{ rp_demo.max_user_turns }} Züge</span>
+            {% else %}
             <h4 class="rp-title" x-ref="panelTitle" tabindex="-1">Rollenspiel</h4>
             <div class="rp-tabs" role="tablist" aria-label="Rollenspiel-Bereiche" @keydown="onTabKey($event)">
                 <button type="button" role="tab" class="rp-tab" x-ref="tabPlay"
-                        id="rp-tab-play-{{ content.id }}" aria-controls="rp-pane-play-{{ content.id }}"
+                        id="rp-tab-play-{{ _rp_id }}" aria-controls="rp-pane-play-{{ _rp_id }}"
                         :aria-selected="tab === 'play' ? 'true' : 'false'" :tabindex="tab === 'play' ? 0 : -1"
                         @click="setTab('play')">Dialog spielen</button>
                 <button type="button" role="tab" class="rp-tab" x-ref="tabTutor"
-                        id="rp-tab-tutor-{{ content.id }}" aria-controls="rp-pane-tutor-{{ content.id }}"
+                        id="rp-tab-tutor-{{ _rp_id }}" aria-controls="rp-pane-tutor-{{ _rp_id }}"
                         :aria-selected="tab === 'tutor' ? 'true' : 'false'" :tabindex="tab === 'tutor' ? 0 : -1"
                         @click="setTab('tutor')">Frag zur Seite</button>
             </div>
+            {% endif %}
         </div>
 
         {# ── Tab 1: Rollenspiel ── #}
-        <div class="rp-pane" role="tabpanel" id="rp-pane-play-{{ content.id }}"
-             aria-labelledby="rp-tab-play-{{ content.id }}" x-show="tab === 'play'">
+        <div class="rp-pane" role="tabpanel" id="rp-pane-play-{{ _rp_id }}"
+             aria-labelledby="rp-tab-play-{{ _rp_id }}" x-show="tab === 'play'">
 
             <div class="rp-status" x-show="phase === 'loading'">
                 <span class="rp-spinner" aria-hidden="true"></span> Szene wird geladen …
             </div>
 
+            {% if rp_demo %}
+            {# Demo-Einstieg: statisches Beispiel (echtes Panel-Markup, keine Interaktion) + Start #}
+            <div x-show="phase === 'intro' || phase === 'starting'">
+                <div class="rp-scene">Du bist <strong>{{ rp_demo.role_user }}</strong> und sitzt mit {{ rp_demo.role_bot }} im Café. {{ rp_demo.role_bot }} fragt, was du möchtest — du antwortest auf Japanisch.</div>
+                <div class="rp-demo-preview" role="group" aria-label="Beispiel eines Gesprächszugs">
+                    <span class="rp-label rp-small">Beispiel</span>
+                    <div class="rp-bot">
+                        <div class="rp-bot-head"><span class="rp-bot-name">{{ rp_demo.role_bot }}</span></div>
+                        <div class="rp-bot-jp" lang="ja">何を 食べたいですか。</div>
+                        <div class="rp-bot-reading" lang="ja">なにを たべたいですか。</div>
+                        <div class="rp-bot-de">Was möchtest du essen?</div>
+                    </div>
+                    <div class="rp-suggestions">
+                        <span class="rp-label rp-small">Vorschläge</span>
+                        <div class="rp-chips">
+                            <span class="rp-chip"><span lang="ja">カレーが たべたいです。</span><span class="rp-chip-de">Ich möchte Curry essen.</span></span>
+                            <span class="rp-chip"><span lang="ja">サンドイッチを ください。</span><span class="rp-chip-de">Ein Sandwich, bitte.</span></span>
+                            <span class="rp-chip"><span lang="ja">わたしも カレーが いいです。</span><span class="rp-chip-de">Ich nehme auch Curry.</span></span>
+                        </div>
+                    </div>
+                    <div class="rp-corr">
+                        <div class="rp-corr-pair">
+                            <span class="rp-corr-orig" lang="ja">コーヒー ください</span>
+                            <i class="fas fa-arrow-right" aria-hidden="true"></i><span class="rp-sr-only">besser:</span>
+                            <span class="rp-corr-better" lang="ja">コーヒーを ください。</span>
+                        </div>
+                        <div class="rp-corr-expl">Das Objekt bekommt die Partikel を.</div>
+                    </div>
+                </div>
+                <button type="button" class="rp-btn rp-btn-primary rp-start-btn" @click="startDemo(false)"
+                        :disabled="phase === 'starting'">
+                    <template x-if="phase === 'starting'"><span class="rp-spinner" aria-hidden="true"></span></template>
+                    <span x-text="phase === 'starting' ? 'Gespräch wird vorbereitet …' : 'Gespräch ausprobieren'">Gespräch ausprobieren</span>
+                </button>
+            </div>
+            {% else %}
             {# Rollenwahl #}
             <div x-show="phase === 'choose' || phase === 'starting'">
                 <div class="rp-scene" x-text="scene ? scene.scene_de : ''"></div>
-                <div class="rp-label" id="rp-role-label-{{ content.id }}">Welche Rolle spielst du?</div>
-                <div class="rp-roles" role="radiogroup" aria-labelledby="rp-role-label-{{ content.id }}">
+                <div class="rp-label" id="rp-role-label-{{ _rp_id }}">Welche Rolle spielst du?</div>
+                <div class="rp-roles" role="radiogroup" aria-labelledby="rp-role-label-{{ _rp_id }}">
                     <template x-for="role in (scene ? scene.roles : [])" :key="role.name">
                         <button type="button" class="rp-role" role="radio"
                                 :aria-checked="roleChoice === role.name ? 'true' : 'false'"
@@ -67,8 +125,8 @@
                         </button>
                     </template>
                 </div>
-                <label class="rp-label" for="rp-goal-{{ content.id }}">Eigenes Ziel <span class="rp-muted">(optional)</span></label>
-                <input type="text" class="rp-field" id="rp-goal-{{ content.id }}" x-model="customGoal"
+                <label class="rp-label" for="rp-goal-{{ _rp_id }}">Eigenes Ziel <span class="rp-muted">(optional)</span></label>
+                <input type="text" class="rp-field" id="rp-goal-{{ _rp_id }}" x-model="customGoal"
                        :maxlength="GOAL_MAX" :disabled="phase === 'starting'"
                        placeholder="z. B. Ich möchte zwei Getränke bestellen." autocomplete="off">
                 <div class="rp-row">
@@ -81,6 +139,7 @@
                     <span x-text="phase === 'starting' ? 'Gespräch wird vorbereitet …' : (roleChoice ? ('Als ' + roleChoice + ' loslegen') : 'Erst eine Rolle wählen')"></span>
                 </button>
             </div>
+            {% endif %}
 
             {# Gespräch #}
             <div x-show="phase === 'playing'">
@@ -141,9 +200,16 @@
                 </div>
 
                 <form class="rp-compose" @submit.prevent="send()">
-                    <label class="rp-sr-only" for="rp-input-{{ content.id }}">Deine Antwort als <span x-text="userName"></span></label>
+                    {% if rp_demo %}
+                    {# Honeypot (wie /register): per CSS unsichtbar, nie ausfuellen. #}
+                    <div class="rp-hp" aria-hidden="true">
+                        <label for="rp-website-demo">Website (bitte leer lassen)</label>
+                        <input type="text" id="rp-website-demo" name="website" x-model="honeypot" tabindex="-1" autocomplete="off">
+                    </div>
+                    {% endif %}
+                    <label class="rp-sr-only" for="rp-input-{{ _rp_id }}">Deine Antwort als <span x-text="userName"></span></label>
                     <div class="rp-compose-row">
-                        <input type="text" class="rp-field rp-input" id="rp-input-{{ content.id }}" x-ref="input"
+                        <input type="text" class="rp-field rp-input" id="rp-input-{{ _rp_id }}" x-ref="input"
                                x-model="input" @input="onInput($event)" @keydown.enter="onEnter($event)"
                                :maxlength="TEXT_MAX" :disabled="busy" lang="ja"
                                autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"
@@ -167,6 +233,7 @@
                     <span x-text="botName + ' tippt …'"></span>
                 </div>
 
+                {% if not rp_demo %}
                 <div class="rp-end-row" x-show="canEnd">
                     <button type="button" class="rp-btn rp-btn-ghost" @click="end()" :disabled="busy">
                         <template x-if="ending"><span class="rp-spinner" aria-hidden="true"></span></template>
@@ -175,6 +242,7 @@
                     <span class="rp-muted rp-small" x-show="turnCount < minTurns"
                           x-text="'XP gibt es ab ' + minTurns + ' Zügen.'"></span>
                 </div>
+                {% endif %}
             </div>
 
             {# Abschluss #}
@@ -192,12 +260,14 @@
                     <div class="rp-bot-de" x-text="result && result.farewell ? result.farewell.de : ''"></div>
                 </div>
 
+                {% if not rp_demo %}
                 <div class="rp-xp" x-show="result && result.xp_awarded > 0">
                     <i class="fas fa-star" aria-hidden="true"></i>
                     <span x-text="'+' + (result ? result.xp_awarded : 0) + ' XP — gut gemacht!'"></span>
                 </div>
                 <div class="rp-muted" x-show="result && !result.xp_awarded"
                    x-text="'Kein XP diesmal: XP gibt es ab ' + minTurns + ' Zügen.'"></div>
+                {% endif %}
 
                 <div class="rp-corrections" x-show="result && result.correction && result.correction.length">
                     <div class="rp-label">Rückmeldung zu deinen Sätzen</div>
@@ -225,9 +295,21 @@
                 <div class="rp-muted" x-show="result && result.correction_unavailable">
                     Die Korrektur ist gerade nicht verfügbar. Dein Gespräch ist trotzdem gespeichert.
                 </div>
+                {% if rp_demo %}
+                <div class="rp-demo-cta">
+                    <p class="rp-demo-cta-text">Gefällt dir das? Mit einem kostenlosen Konto spielst du alle Dialogszenen der Lektionen — länger, mit Rollenwahl und XP.</p>
+                    <div class="rp-demo-cta-row">
+                        <a class="rp-btn rp-btn-primary" href="{{ url_for('routes.register', next='/sprechen') }}">Weiter mit deinem Konto <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+                        <button type="button" class="rp-btn rp-btn-ghost" @click="restart()">
+                            <i class="fas fa-rotate-left" aria-hidden="true"></i> Demo neu starten
+                        </button>
+                    </div>
+                </div>
+                {% else %}
                 <button type="button" class="rp-btn rp-btn-primary rp-restart-btn" @click="restart()">
                     <i class="fas fa-rotate-left" aria-hidden="true"></i> Nochmal spielen
                 </button>
+                {% endif %}
             </div>
 
             {# Fehler #}
@@ -238,16 +320,23 @@
                    x-text="limitsText"></div>
                 <button type="button" class="rp-btn rp-btn-ghost rp-retry" x-show="error && error.retry" @click="retry()"
                         x-text="phase === 'playing' ? 'Nochmal senden' : 'Nochmal versuchen'"></button>
+                {% if rp_demo %}
+                <a class="rp-btn rp-btn-primary rp-demo-register" x-show="error && (error.code === 'limit_reached' || error.code === 'cost_cap')"
+                   href="{{ url_for('routes.register', next='/sprechen') }}">Kostenlos weitermachen <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+                <button type="button" class="rp-btn rp-btn-ghost" x-show="error && (error.code === 'demo_expired' || error.code === 'demo_invalid')"
+                        @click="restart()">Demo neu starten</button>
+                {% endif %}
             </div>
         </div>
 
+        {% if not rp_demo %}
         {# ── Tab 2: Frag zur Seite ── #}
-        <div class="rp-pane" role="tabpanel" id="rp-pane-tutor-{{ content.id }}"
-             aria-labelledby="rp-tab-tutor-{{ content.id }}" x-show="tab === 'tutor'" x-cloak>
+        <div class="rp-pane" role="tabpanel" id="rp-pane-tutor-{{ _rp_id }}"
+             aria-labelledby="rp-tab-tutor-{{ _rp_id }}" x-show="tab === 'tutor'" x-cloak>
             <div class="rp-muted rp-small">Unklar, was auf dieser Seite steht? Frag auf Deutsch — der Tutor kennt den Inhalt der Seite.</div>
             <form class="rp-tutor-form" @submit.prevent="askTutor()">
-                <label class="rp-label" for="rp-tutor-{{ content.id }}">Deine Frage</label>
-                <textarea class="rp-field rp-tutor-input" id="rp-tutor-{{ content.id }}" x-ref="tutorInput" rows="2"
+                <label class="rp-label" for="rp-tutor-{{ _rp_id }}">Deine Frage</label>
+                <textarea class="rp-field rp-tutor-input" id="rp-tutor-{{ _rp_id }}" x-ref="tutorInput" rows="2"
                           x-model="tutorQuestion" :maxlength="TUTOR_MAX" :disabled="tutorLoading"
                           @keydown.enter="onTutorEnter($event)"
                           placeholder="z. B. Wozu brauche ich hier を?"></textarea>
@@ -268,5 +357,6 @@
                 <div class="rp-answer-text" x-text="tutorAnswer"></div>
             </div>
         </div>
+        {% endif %}
     </div>
 </section>

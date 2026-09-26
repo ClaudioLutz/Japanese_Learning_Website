@@ -160,6 +160,45 @@ Code: `app/sprechen_routes.py`, `app/services/roleplay_overview.py`, Templates `
 - `/mein-lernen`: Kachel „Heute sprechen" + Kennzahlen (Gespräche, Züge,
   Korrekturen pro Gespräch Ø letzte 5), `dashboard_service.speaking_tile/-stats`.
 
+## Gast-Demo (Startseite, ohne Login)
+
+Code: `app/services/roleplay_demo.py`, Routen in `app/roleplay_routes.py`, Panel im
+Demo-Modus (`_roleplay_panel.html` mit `rp_demo`, JS `data-demo="1"`), Hero in
+`index.html` (nur Gäste, nur wenn `roleplay_enabled` und die Demo-Szene verfügbar ist).
+
+- Feste Szene „Im Café": `ROLEPLAY_DEMO_CONTENT_ID` (Default 6563 = Dialog der
+  Gast-Lektion 157 „Alltag & Essen 2"), Nutzer = Lisa, Bot = Tanaka. Szene muss
+  publiziert + `allow_guest_access` sein und beide Sprecher haben, sonst 404 und der
+  alte Kana-Hero bleibt.
+- Genau **3** Nutzerzüge, beim 3. beendet der Server (`done: true`, Korrektur, kein XP).
+- **Kein Login, kein Gesprächs-Speichern:** Zustand = signiertes Token (itsdangerous,
+  Salt `roleplay-guest-demo-v1`, 30 min) im JSON-Body, nicht im Pfad (wächst mit dem
+  Verlauf; Gunicorn-Request-Zeile max. 4 KB). Einziger DB-Schreibzugriff:
+  `guest_demo_counter(day, ip_hash, count)` (IP gesalzen gehasht, `'*'` = global).
+- CSRF wie alle JSON-APIs (`X-CSRFToken`, Gäste haben Session + Meta-Tag).
+- Schutz: 6/min pro IP (`client_ip()`, Flask-Limiter, pro Worker), 9 Gast-Züge pro IP
+  und CH-Tag, globale Gast-Kappe `ROLEPLAY_GUEST_DAILY_CAP` (100), Gast-Züge zählen
+  zusätzlich in `ROLEPLAY_DAILY_MESSAGE_CAP`; Honeypot-Feld `website`; Text ≤ 200 Zeichen.
+  Der Start (statische Eröffnungszeile) kostet keinen Modell-Aufruf und zählt nicht.
+
+### POST `/api/roleplay/demo/start`
+```json
+{ "website": "" }
+201 { "token": "…", "session": Session (id null, demo true, max_user_turns 3),
+      "bot_turn": BotTurn, "scene": { "title": "Im Café", "scene_de": "…", "roles": [{name, gender}] } }
+```
+### POST `/api/roleplay/demo/turn`
+```json
+{ "token": "…", "text": "こうちゃが のみたいです。", "website": "" }
+200 { "token": "…" | null, "session": Session, "bot_turn": BotTurn,
+      "done": false, "correction": [], "xp_awarded": 0 }
+```
+Fehler: 400 `invalid_request` (Text/Honeypot), 400 `demo_expired` / `demo_invalid` (Token →
+„Demo neu starten"), 404 (Flag aus / Szene fehlt), 409 `session_finished`,
+429 `limit_reached` (IP-Tageslimit), 503 `cost_cap` (globale Kappe) — beide mit
+„Demo für heute ausgeschöpft, mit Konto geht es weiter.", 502 `upstream_error`
+(Zug zählt nicht).
+
 ## Betrieb (Kurz)
 
 - Env (Server-`.env`): `ROLEPLAY_ENABLED`, `ROLEPLAY_PROVIDER` (bridge|api),

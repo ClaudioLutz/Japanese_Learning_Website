@@ -7,6 +7,11 @@
  * Ablauf: GET scene → Rollenwahl → POST start → Zuege (POST turn) →
  * Abschluss (done im Zug oder POST end). Zweiter Tab „Frag zur Seite"
  * (POST tutor). Alle Fehler landen als Meldung im Panel, nie in der Konsole.
+ *
+ * Demo-Modus (data-demo="1", Gast-Hero der Startseite): gleiche Komponente,
+ * andere Endpunkte (data-demo-start-url / data-demo-turn-url), feste Rolle,
+ * ohne Tutor-Tab und ohne Beenden-Knopf. Der Gespraechszustand ist ein
+ * signiertes Token, das mit jedem Zug zurueckkommt (kein Login, keine Session-ID).
  */
 (function () {
     'use strict';
@@ -95,13 +100,18 @@
     window.roleplayPanel = function (contentId) {
         return {
             contentId: contentId,
+            demo: false,               // Gast-Demo (Startseite)
+            demoToken: null,
+            demoStartUrl: '',
+            demoTurnUrl: '',
+            honeypot: '',              // Honeypot-Feld (muss leer bleiben)
             lessonId: null,
             pageNumbers: [],
             fallbackPage: null,
 
             open: false,
             tab: 'play',               // play | tutor
-            phase: 'idle',             // idle | loading | choose | starting | playing | done | unavailable
+            phase: 'idle',             // idle | loading | choose | intro | starting | playing | done | unavailable
             scene: null,
             roleChoice: null,
             customGoal: '',
@@ -138,6 +148,15 @@
                 this.fallbackPage = parseInt(el.dataset.pageNumber, 10) || null;
                 try { this.pageNumbers = JSON.parse(el.dataset.pageNumbers || '[]'); } catch (e) { this.pageNumbers = []; }
                 this.romajiOn = readRomajiPref();
+                if (el.dataset.demo === '1') {
+                    this.demo = true;
+                    this.open = true;
+                    this.phase = 'intro';
+                    this.demoStartUrl = el.dataset.demoStartUrl || '';
+                    this.demoTurnUrl = el.dataset.demoTurnUrl || '';
+                    this.TEXT_MAX = parseInt(el.dataset.textMax, 10) || TEXT_MAX;
+                    return;
+                }
                 // /sprechen/<id>: Panel ohne Lektionsseite → sofort offen + Szene laden.
                 if (el.dataset.standalone === '1') {
                     this.open = true;
@@ -167,7 +186,7 @@
                 return 'Zug ' + Math.min(this.turnCount + 1, this.maxTurns) + ' von ' + this.maxTurns;
             },
             get progressPercent() { return Math.round((this.turnCount / this.maxTurns) * 100); },
-            get canEnd() { return this.phase === 'playing' && this.turnCount >= 1; },
+            get canEnd() { return !this.demo && this.phase === 'playing' && this.turnCount >= 1; },
             get busy() { return this.sending || this.ending; },
             get limitsText() {
                 var l = this.limits;
@@ -266,7 +285,49 @@
             chooseRole: function (name) {
                 this.roleChoice = name;
             },
+            // ── Gast-Demo ───────────────────────────────────────────────
+            // fromCta: Aufruf ueber den Hero-Knopf „Gespräch ausprobieren“ → erst
+            // zum Panel scrollen; laeuft schon ein Gespraech, nur dorthin springen.
+            startDemo: function (fromCta) {
+                if (!this.demo) return;
+                if (fromCta) {
+                    try { this.$el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { /* egal */ }
+                }
+                if (this.phase !== 'intro' || this.busy) {
+                    if (this.phase === 'playing') this._focus('input');
+                    return;
+                }
+                var self = this;
+                this.phase = 'starting';
+                this.sending = true;
+                this.error = null;
+                return api('POST', this.demoStartUrl, { website: this.honeypot }).then(function (r) {
+                    self.sending = false;
+                    if (r.ok) {
+                        self.demoToken = r.data.token;
+                        self.scene = r.data.scene || null;
+                        self.session = r.data.session;
+                        self.log = [];
+                        self.result = null;
+                        self.input = '';
+                        self.bot = null;
+                        self.phase = 'playing';
+                        self._showBot(r.data.bot_turn);
+                        return;
+                    }
+                    self.phase = 'intro';
+                    self._setError(r.data, !!RETRYABLE[r.data.error]);
+                });
+            },
+            _turnRequest: function (text) {
+                if (this.demo) {
+                    return api('POST', this.demoTurnUrl, { token: this.demoToken, text: text, website: this.honeypot });
+                }
+                return api('POST', '/api/roleplay/' + this.session.id + '/turn', { text: text });
+            },
+
             start: function () {
+                if (this.demo) return this.startDemo(false);
                 if (!this.roleChoice || this.busy) return;
                 var self = this;
                 var body = { content_id: this.contentId, role_user: this.roleChoice };
@@ -340,15 +401,19 @@
                     this._focus('input');
                     return;
                 }
-                if (text.length > TEXT_MAX) text = text.slice(0, TEXT_MAX);
+                if (text.length > this.TEXT_MAX) text = text.slice(0, this.TEXT_MAX);
                 this.input = text;
                 var self = this;
                 this.sending = true;
                 this.error = null;
                 this.liveMsg = this.botName + ' tippt …';
-                return api('POST', '/api/roleplay/' + this.session.id + '/turn', { text: text }).then(function (r) {
+                return this._turnRequest(text).then(function (r) {
                     self.sending = false;
                     if (r.ok) {
+                        if (self.demo) self.demoToken = r.data.token || null;
+                        // Reihenfolge im Verlauf: erst die beantwortete Bot-Zeile, dann der Nutzerzug.
+                        if (self.bot) self.log.push({ who: 'bot', jp: self.bot.jp, de: self.bot.de });
+                        self.bot = null;
                         self.log.push({ who: 'user', jp: text, de: '' });
                         self.input = '';
                         self.session = r.data.session || self.session;
@@ -366,7 +431,7 @@
                         }
                         return;
                     }
-                    if (r.status === 409 || r.data.error === 'session_finished') {
+                    if (!self.demo && (r.status === 409 || r.data.error === 'session_finished')) {
                         return self.end();
                     }
                     self._setError(r.data, !!RETRYABLE[r.data.error]);
@@ -381,7 +446,7 @@
 
             // ── Ende ────────────────────────────────────────────────────
             end: function () {
-                if (!this.session || this.ending) return;
+                if (this.demo || !this.session || this.ending) return;
                 var self = this;
                 this.ending = true;
                 this.error = null;
@@ -413,6 +478,19 @@
                 this.$nextTick(function () { self._focus('doneTitle'); });
             },
             restart: function () {
+                if (this.demo) {
+                    this.stopAudio();
+                    this.session = null;
+                    this.bot = null;
+                    this.log = [];
+                    this.result = null;
+                    this.input = '';
+                    this.error = null;
+                    this.demoToken = null;
+                    this.phase = 'intro';
+                    this._focus('panelTitle');
+                    return;
+                }
                 this.session = null;
                 this.bot = null;
                 this.log = [];
@@ -425,6 +503,10 @@
             },
             retry: function () {
                 this.error = null;
+                if (this.demo) {
+                    if (this.phase === 'playing') return this.send();
+                    return this.startDemo(false);
+                }
                 if (this.phase === 'playing') return this.send();
                 if (this.phase === 'choose') return this.start();
                 return this.loadScene();

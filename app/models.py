@@ -2,7 +2,7 @@
 from app import db, login_manager
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
+from datetime import date, datetime
 from dataclasses import dataclass
 import enum
 import json
@@ -2273,6 +2273,23 @@ class RoleplayTurn(db.Model):
 
     def __repr__(self):
         return f'<RoleplayTurn {self.session_id}#{self.turn_index} {self.speaker}>'
+
+
+class GuestDemoCounter(db.Model):
+    """Tageszaehler der Gast-Demo des Rollenspiels (Startseite, ohne Login).
+
+    Eine Zeile pro CH-Kalendertag und gehashter Client-IP (nie die Roh-IP);
+    ``ip_hash == '*'`` ist die globale Tageskappe aller Gaeste. Gezaehlt werden
+    Modell-Antworten (Gast-Zuege). Keine Gespraechstexte — die Demo speichert
+    keine Mitschnitte.
+    """
+    __tablename__ = 'guest_demo_counter'
+    day: Mapped[date] = mapped_column(db.Date, primary_key=True)
+    ip_hash: Mapped[str] = mapped_column(String(64), primary_key=True)
+    count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+
+    def __repr__(self):
+        return f'<GuestDemoCounter {self.day} {self.ip_hash[:8]} {self.count}>'
 
 
 class TutorQuestion(db.Model):

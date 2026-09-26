@@ -278,3 +278,39 @@
 }
 .roleplay-panel .rp-answer-q { margin: 0 0 .4rem; font-size: .85rem; color: var(--rp-muted); font-style: italic; }
 .roleplay-panel .rp-answer-text { margin: 0; white-space: pre-line; color: var(--rp-text); }
+
+/* ── Gast-Demo (Startseite, .is-demo) ── */
+.roleplay-panel.is-demo { margin-top: 0; }
+.roleplay-panel.is-demo .rp-card {
+    margin-top: 0; max-width: none;
+    box-shadow: 0 12px 40px -12px rgba(28, 26, 23, .16);
+}
+.roleplay-panel.is-demo .rp-head { margin-bottom: .7rem; }
+.roleplay-panel .rp-demo-badge {
+    font-size: .78rem; font-weight: 600; color: var(--rp-muted);
+    padding: .15rem .6rem; border: 1px solid var(--rp-line); border-radius: var(--radius-full, 9999px);
+}
+.roleplay-panel .rp-demo-preview {
+    margin: 0 0 1rem; padding: .7rem .8rem .8rem;
+    border: 1px dashed var(--rp-line); border-radius: var(--radius-md, 12px);
+}
+.roleplay-panel .rp-demo-preview > .rp-label { margin: 0 0 .1rem; color: var(--rp-muted); }
+.roleplay-panel .rp-demo-preview .rp-bot { margin-top: .4rem; }
+.roleplay-panel .rp-demo-preview .rp-bot-jp { font-size: 1.35rem; margin-bottom: .1rem; }
+.roleplay-panel .rp-demo-preview .rp-bot-reading { margin-top: 0; font-size: .95rem; color: var(--rp-muted); }
+.roleplay-panel .rp-demo-preview .rp-suggestions { margin-top: .7rem; }
+.roleplay-panel .rp-demo-preview .rp-chip { cursor: default; min-height: 0; }
+.roleplay-panel .rp-demo-preview .rp-corr { margin-top: .7rem; }
+/* Honeypot: fuer Menschen unsichtbar (NICHT type=hidden, wie /register). */
+.roleplay-panel .rp-hp {
+    position: absolute !important; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden;
+}
+.roleplay-panel .rp-demo-cta { margin-top: 1rem; padding-top: .9rem; border-top: 1px dashed var(--rp-line); }
+.roleplay-panel .rp-demo-cta-text { margin: 0 0 .7rem; font-size: .95rem; }
+.roleplay-panel .rp-demo-cta-row { display: flex; flex-wrap: wrap; gap: .5rem; }
+.roleplay-panel .rp-demo-register { margin: .6rem .5rem 0 0; min-height: 40px; }
+.roleplay-panel a.rp-btn { text-decoration: none; }
+.roleplay-panel a.rp-btn-primary, .roleplay-panel a.rp-btn-primary:hover { color: #fff; }
+@media (max-width: 575.98px) {
+    .roleplay-panel .rp-demo-cta-row .rp-btn { width: 100%; }
+}

@@ -562,8 +562,24 @@ def index():
     # eingeloggte Hero nutzt sie; fuer Gaeste ist der Wert da, aber ungenutzt.
     greeting_ctx = home_greeting()
 
+    # Gast-Hero „Sprich Japanisch vom ersten Tag an" (nur mit ROLEPLAY_ENABLED):
+    # Szenenzahl + feste Demo-Szene. Darf die Startseite nie blockieren.
+    roleplay_demo = None
+    roleplay_scene_count = 0
+    if not current_user.is_authenticated:
+        try:
+            from app.services import roleplay_demo as _rp_demo
+            from app.services.roleplay_service import is_enabled as _rp_enabled
+            if _rp_enabled():
+                roleplay_demo = _rp_demo.hero_context()
+                roleplay_scene_count = _rp_demo.scene_count()
+        except Exception:
+            current_app.logger.warning("Rollenspiel-Demo fuer Startseite nicht ladbar", exc_info=True)
+
     return render_template('index.html',
                          home_greeting=greeting_ctx,
+                         roleplay_demo=roleplay_demo,
+                         roleplay_scene_count=roleplay_scene_count,
                          total_lessons=total_lessons,
                          total_courses=total_courses,
                          guest_accessible_lessons=guest_accessible_lessons,
