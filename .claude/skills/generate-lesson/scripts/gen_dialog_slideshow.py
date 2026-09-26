@@ -79,6 +79,10 @@ CHARACTER_SHEETS: dict[str, str] = {
     "Mei": "Mei: Japanese woman in her mid-20s, shoulder-length black hair, light blue cardigan, cheerful expression",
     "Ken": "Ken: Japanese man in his mid-20s, short black hair, grey hoodie, relaxed friendly look",
     "Mori": "Mori: Japanese doctor in his 50s, short greying hair, white medical coat, calm reassuring expression",
+    "Polizist": (
+        "Polizist: Japanese police officer in his 40s, light blue uniform shirt, "
+        "navy police cap, kind helpful expression"
+    ),
 }
 
 NO_TEXT_BLOCK = (

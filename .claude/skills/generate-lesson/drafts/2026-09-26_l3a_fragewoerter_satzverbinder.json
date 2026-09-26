@@ -1,0 +1,918 @@
+{
+  "title": "N5 Fragewörter und Satzverbinder — Wie? Warum? Und dann?",
+  "description": "Stelle Fragen mit どう, どうして und どんな, sag, wie oft du etwas tust, und verbinde Sätze mit それから, でも und そして.",
+  "jlpt_level": 5,
+  "topic": "Gespraech unter Freunden",
+  "instruction_language": "german",
+  "allow_guest_access": false,
+  "pages": [
+    {
+      "title": "Einführung",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Fragen stellen und Sätze verbinden\n\nBisher hast du vor allem einzelne Sätze gebaut. In dieser Lektion lernst du, wie ein **Gespräch** entsteht: Du fragst nach, begründest und erzählst der Reihe nach.\n\n- **Fragewörter** wie 「どう」 (dou, wie), 「どうして」 (doushite, warum) und 「どんな」 (donna, was für ein)\n- **Häufigkeit**: 「いつも」 (itsumo, immer), 「時々」 (tokidoki, manchmal), 「よく」 (yoku, oft)\n- **Satzverbinder**: 「それから」 (sorekara, danach), 「でも」 (demo, aber), 「そして」 (soshite, und)\n\n> Mit diesen kleinen Wörtern klingt dein Japanisch sofort natürlicher — statt drei einzelnen Sätzen erzählst du eine kleine Geschichte.",
+            "title": "Worum geht es?"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln Teil 1 — Fragewörter und wie oft",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Teil 1 — Fragen und Antworten\n\nZuerst die **Fragewörter**. Danach vier Wörter, mit denen du auf die Frage **'Wie oft?'** antwortest.\n\n- 「どうして」 (doushite) und 「なぜ」 (naze) heissen beide 'warum' — 「なぜ」 klingt etwas förmlicher.\n- 「あまり」 (amari) steht fast immer mit einer **verneinten** Form."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "いかが",
+            "reading": "いかが",
+            "romaji": "ikaga",
+            "meaning": "how (polite); how about",
+            "meaning_de": "wie (höflich); wie wäre es mit …",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "おちゃはいかがですか。",
+            "example_sentence_english": "O-cha wa ikaga desu ka. — Wie wäre es mit einem Tee?",
+            "image_url": "vocab_generated/vocab_d41e1ef7.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "いくつ",
+            "reading": "いくつ",
+            "romaji": "ikutsu",
+            "meaning": "how many; how old",
+            "meaning_de": "wie viele (Stück); wie alt",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "たまごはいくつありますか。",
+            "example_sentence_english": "Tamago wa ikutsu arimasu ka. — Wie viele Eier gibt es?",
+            "image_url": "vocab_generated/vocab_6b44c9ee.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "どう",
+            "reading": "どう",
+            "romaji": "dou",
+            "meaning": "how, in what way",
+            "meaning_de": "wie (Art und Weise, Meinung)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "日本のたべものはどうですか。",
+            "example_sentence_english": "Nihon no tabemono wa dō desu ka. — Wie findest du das japanische Essen?",
+            "image_url": "vocab_generated/vocab_25f0978b.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "どうして",
+            "reading": "どうして",
+            "romaji": "doushite",
+            "meaning": "why, for what reason",
+            "meaning_de": "warum",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "どうして学校を休みましたか。",
+            "example_sentence_english": "Dōshite gakkō o yasumimashita ka. — Warum hast du in der Schule gefehlt?",
+            "image_url": "vocab_generated/vocab_7ef2a12f.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "なぜ",
+            "reading": "なぜ",
+            "romaji": "naze",
+            "meaning": "why",
+            "meaning_de": "warum, weshalb",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "なぜ日本語をべんきょうしていますか。",
+            "example_sentence_english": "Naze nihongo o benkyō shite imasu ka. — Weshalb lernst du Japanisch?",
+            "image_url": "vocab_generated/vocab_5379096a.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "どんな",
+            "reading": "どんな",
+            "romaji": "donna",
+            "meaning": "what kind of",
+            "meaning_de": "was für ein/e",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "どんなおんがくがすきですか。",
+            "example_sentence_english": "Donna ongaku ga suki desu ka. — Was für Musik magst du?",
+            "image_url": "vocab_generated/vocab_5aa73c28.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "こんな",
+            "reading": "こんな",
+            "romaji": "konna",
+            "meaning": "such, like this",
+            "meaning_de": "so ein/e, solch (wie dieses hier)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "こんなかばんがほしいです。",
+            "example_sentence_english": "Konna kaban ga hoshii desu. — So eine Tasche möchte ich haben.",
+            "image_url": "vocab_generated/vocab_ce095dbf.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "誰か",
+            "reading": "だれか",
+            "romaji": "dareka",
+            "meaning": "someone",
+            "meaning_de": "jemand",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "へやにだれかいますか。",
+            "example_sentence_english": "Heya ni dareka imasu ka. — Ist jemand im Zimmer?",
+            "image_url": "vocab_generated/vocab_7929f2f5.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "いつも",
+            "reading": "いつも",
+            "romaji": "itsumo",
+            "meaning": "always, usually",
+            "meaning_de": "immer, gewöhnlich",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あさはいつもパンを食べます。",
+            "example_sentence_english": "Asa wa itsumo pan o tabemasu. — Morgens esse ich immer Brot.",
+            "image_url": "vocab_generated/vocab_03b57a3d.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "時々",
+            "reading": "ときどき",
+            "romaji": "tokidoki",
+            "meaning": "sometimes",
+            "meaning_de": "manchmal",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "時々こうえんをさんぽします。",
+            "example_sentence_english": "Tokidoki kōen o sanpo shimasu. — Manchmal gehe ich im Park spazieren.",
+            "image_url": "vocab_generated/vocab_95e494ee.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "よく",
+            "reading": "よく",
+            "romaji": "yoku",
+            "meaning": "often; well",
+            "meaning_de": "oft, häufig; gut",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "父はよくテレビを見ます。",
+            "example_sentence_english": "Chichi wa yoku terebi o mimasu. — Mein Vater sieht oft fern.",
+            "image_url": "vocab_generated/vocab_a7fb6500.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "余り",
+            "reading": "あまり",
+            "romaji": "amari",
+            "meaning": "not very (with negative)",
+            "meaning_de": "nicht sehr, nicht besonders (mit Verneinung)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "今日はあまりさむくないです。",
+            "example_sentence_english": "Kyō wa amari samukunai desu. — Heute ist es nicht besonders kalt.",
+            "image_url": "vocab_generated/vocab_3418041a.png"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln Teil 2 — Adverbien und Satzverbinder",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Teil 2 — Mehr, sofort, und dann\n\nHier kommen nützliche **Adverbien** und die wichtigsten **Satzverbinder**. Satzverbinder stehen am Anfang des zweiten Satzes, meist mit einem Komma 「、」 danach.\n\n- 「でも」 (demo) ist das Alltags-'aber', 「しかし」 (shikashi) liest du eher in Texten.\n- 「じゃあ」 (jaa) ist die lockere Form von 「では」 (dewa)."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "もっと",
+            "reading": "もっと",
+            "romaji": "motto",
+            "meaning": "more",
+            "meaning_de": "mehr, noch (mehr)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "もっとゆっくり話してください。",
+            "example_sentence_english": "Motto yukkuri hanashite kudasai. — Sprechen Sie bitte noch langsamer.",
+            "image_url": "vocab_generated/vocab_7a740eef.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "すぐに",
+            "reading": "すぐに",
+            "romaji": "sugu ni",
+            "meaning": "immediately, soon",
+            "meaning_de": "sofort, gleich",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "うちにかえって、すぐにねました。",
+            "example_sentence_english": "Uchi ni kaette, sugu ni nemashita. — Ich ging nach Hause und schlief sofort.",
+            "image_url": "vocab_generated/vocab_e5f1c8ab.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "丁度",
+            "reading": "ちょうど",
+            "romaji": "choudo",
+            "meaning": "just, exactly",
+            "meaning_de": "genau, gerade (exakt)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "今、ちょうど三時です。",
+            "example_sentence_english": "Ima, chōdo sanji desu. — Jetzt ist es genau drei Uhr.",
+            "image_url": "vocab_generated/vocab_1e842c2f.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "段々",
+            "reading": "だんだん",
+            "romaji": "dandan",
+            "meaning": "gradually",
+            "meaning_de": "allmählich, nach und nach",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "だんだんさむくなりました。",
+            "example_sentence_english": "Dandan samuku narimashita. — Es ist allmählich kalt geworden.",
+            "image_url": "vocab_generated/vocab_2c8a4e09.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "ない",
+            "reading": "ない",
+            "romaji": "nai",
+            "meaning": "there isn't, doesn't have",
+            "meaning_de": "nicht vorhanden sein, nicht haben (Verneinung von „es gibt“)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "時間がないから、タクシーで行きます。",
+            "example_sentence_english": "Jikan ga nai kara, takushī de ikimasu. — Weil ich keine Zeit habe, fahre ich mit dem Taxi.",
+            "image_url": "vocab_generated/vocab_e2bb27f0.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "それから",
+            "reading": "それから",
+            "romaji": "sorekara",
+            "meaning": "and then, after that",
+            "meaning_de": "und dann, danach",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "シャワーをあびました。それから、あさごはんを食べました。",
+            "example_sentence_english": "Shawā o abimashita. Sorekara, asagohan o tabemashita. — Ich habe geduscht. Danach habe ich gefrühstückt.",
+            "image_url": "vocab_generated/vocab_ff75e6bb.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "そして",
+            "reading": "そして",
+            "romaji": "soshite",
+            "meaning": "and, and then",
+            "meaning_de": "und, und dann",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "本を読みました。そして、ねました。",
+            "example_sentence_english": "Hon o yomimashita. Soshite, nemashita. — Ich habe ein Buch gelesen. Und dann bin ich schlafen gegangen.",
+            "image_url": "vocab_generated/vocab_999501db.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "でも",
+            "reading": "でも",
+            "romaji": "demo",
+            "meaning": "but, however",
+            "meaning_de": "aber (am Satzanfang)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "日本語はむずかしいです。でも、おもしろいです。",
+            "example_sentence_english": "Nihongo wa muzukashii desu. Demo, omoshiroi desu. — Japanisch ist schwierig. Aber es ist interessant.",
+            "image_url": "vocab_generated/vocab_142e26da.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "しかし",
+            "reading": "しかし",
+            "romaji": "shikashi",
+            "meaning": "however, but",
+            "meaning_de": "jedoch, aber (eher schriftlich)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "このへやはせまいです。しかし、あかるいです。",
+            "example_sentence_english": "Kono heya wa semai desu. Shikashi, akarui desu. — Dieses Zimmer ist eng. Es ist jedoch hell.",
+            "image_url": "vocab_generated/vocab_9aff5219.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "では",
+            "reading": "では",
+            "romaji": "dewa",
+            "meaning": "then, well, so",
+            "meaning_de": "nun, also (Überleitung)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "では、行きましょう。",
+            "example_sentence_english": "Dewa, ikimashō. — Nun, gehen wir.",
+            "image_url": "vocab_generated/vocab_1ab883b0.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "それでは",
+            "reading": "それでは",
+            "romaji": "soredewa",
+            "meaning": "well then",
+            "meaning_de": "nun denn, also dann",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "それでは、またあした。",
+            "example_sentence_english": "Soredewa, mata ashita. — Also dann, bis morgen.",
+            "image_url": "vocab_generated/vocab_ff7ff67a.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "じゃあ",
+            "reading": "じゃあ",
+            "romaji": "jaa",
+            "meaning": "well then (casual)",
+            "meaning_de": "na dann, also (umgangssprachlich)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "じゃあ、またらいしゅう。",
+            "example_sentence_english": "Jā, mata raishū. — Na dann, bis nächste Woche.",
+            "image_url": "vocab_generated/vocab_e9b53a73.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "さあ",
+            "reading": "さあ",
+            "romaji": "saa",
+            "meaning": "come on; well",
+            "meaning_de": "na los!, auf geht's!",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "さあ、行きましょう。",
+            "example_sentence_english": "Sā, ikimashō. — Na los, gehen wir!",
+            "image_url": "vocab_generated/vocab_bb2c6c81.png"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Grammatik — Fragen, Gründe und Reihenfolge",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## So baust du Fragen und verbindest Sätze\n\nJapanische Fragen sind einfach: Das **Fragewort** steht dort, wo später die Antwort steht, und am Ende kommt 「か」 (ka).\n\n- Frage: 「にちようびは **どう**でしたか。」 (Nichiyoubi wa dou deshita ka.) — Wie war der Sonntag?\n- Antwort: 「にちようびは **たのしかった**です。」 (Nichiyoubi wa tanoshikatta desu.) — Der Sonntag war schön.\n\n> Auf eine Frage mit 「どうして」 (doushite) antwortest du mit 「～から」 (~kara, weil)."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "Fragewörter どう・どんな・いくつ (dou, donna, ikutsu — wie, was für ein, wie viele)",
+            "explanation": "Das Fragewort steht an der Stelle im Satz, an der die Antwort stehen würde; am Satzende steht 「か」 (ka). 「どう」 (dou) fragt nach einem Eindruck ('Wie ist/war …?'), 「どんな」 (donna) steht immer direkt vor einem Nomen ('was für ein …?'), 「いくつ」 (ikutsu) fragt nach der Anzahl von Dingen. Höflich fragst du mit 「いかがですか」 (ikaga desu ka) statt 「どうですか」 (dou desu ka).",
+            "structure": "[Thema] は どうですか / どんな + [Nomen] ですか ([topic] wa dou desu ka / donna + [noun] desu ka)",
+            "romaji": "[topic] wa dou desu ka / donna + [noun] desu ka / [noun] wa ikutsu arimasu ka",
+            "jlpt_level": 5,
+            "example_sentences": "日本の たべものは どうですか。 (Nihon no tabemono wa dou desu ka.) — Wie findest du das japanische Essen?\nどんな 本が すきですか。 (Donna hon ga suki desu ka.) — Was für Bücher magst du?\nりんごは いくつ ありますか。 (Ringo wa ikutsu arimasu ka.) — Wie viele Äpfel gibt es?\nおちゃは いかがですか。 (Ocha wa ikaga desu ka.) — Möchten Sie einen Tee?",
+            "tts_example_jp": "日本の たべものは どうですか。"
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "どうして / なぜ … か — ～から (doushite / naze … ka — ~kara: Warum? Weil …)",
+            "explanation": "Mit 「どうして」 (doushite) oder 「なぜ」 (naze) fragst du nach dem Grund. In der Antwort steht 「から」 (kara, weil) direkt nach dem Grund, oft mit 「です」 (desu) davor: 「いそがしいですから。」 (Isogashii desu kara.) — 'Weil ich beschäftigt bin.' 「なぜ」 (naze) ist etwas förmlicher als 「どうして」 (doushite).",
+            "structure": "どうして + [Frage] + か → [Grund] + から ([question] + ka → [reason] + kara)",
+            "romaji": "doushite + [question] + ka → [reason] + kara",
+            "jlpt_level": 5,
+            "example_sentences": "どうして 学校を 休みましたか。 (Doushite gakkou wo yasumimashita ka.) — Warum hast du in der Schule gefehlt?\nあたまが いたかったですから。 (Atama ga itakatta desu kara.) — Weil ich Kopfschmerzen hatte.\nなぜ 日本語を べんきょうしますか。 (Naze nihongo wo benkyou shimasu ka.) — Weshalb lernst du Japanisch?",
+            "tts_example_jp": "どうして 学校を 休みましたか。"
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "いつも・時々・よく・あまり～ない (itsumo, tokidoki, yoku, amari ~nai — wie oft?)",
+            "explanation": "Häufigkeitswörter stehen meist nach dem Thema und vor dem Verb. 「いつも」 (itsumo) heisst 'immer', 「よく」 (yoku) 'oft', 「時々」 (tokidoki) 'manchmal'. 「あまり」 (amari) bedeutet 'nicht so oft / nicht sehr' und braucht ein VERNEINTES Verb oder Adjektiv: 「あまり 見ません」 (amari mimasen).",
+            "structure": "[Thema] は + いつも/よく/時々 + [Verb]ます / あまり + [Verb]ません ([topic] wa + itsumo/yoku/tokidoki + [verb]-masu / amari + [verb]-masen)",
+            "romaji": "[topic] wa + itsumo / yoku / tokidoki + [verb]-masu / amari + [verb]-masen",
+            "jlpt_level": 5,
+            "example_sentences": "あさは いつも パンを 食べます。 (Asa wa itsumo pan wo tabemasu.) — Morgens esse ich immer Brot.\n父は よく テレビを 見ます。 (Chichi wa yoku terebi wo mimasu.) — Mein Vater sieht oft fern.\nわたしは あまり えいがを 見ません。 (Watashi wa amari eiga wo mimasen.) — Ich sehe nicht so oft Filme.",
+            "tts_example_jp": "わたしは あまり えいがを 見ません。"
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "Satzverbinder それから・そして・でも・しかし (sorekara, soshite, demo, shikashi)",
+            "explanation": "Satzverbinder stehen am Anfang des zweiten Satzes und werden mit 「、」 abgetrennt. 「それから」 (sorekara) erzählt die Reihenfolge ('danach'), 「そして」 (soshite) fügt etwas hinzu ('und'), 「でも」 (demo) und 「しかし」 (shikashi) bringen einen Gegensatz ('aber'). Im Gespräch sagst du meist 「でも」 (demo); 「しかし」 (shikashi) klingt schriftlich.",
+            "structure": "[Satz 1]。それから / そして / でも、[Satz 2]。 ([sentence 1]. Sorekara / Soshite / Demo, [sentence 2].)",
+            "romaji": "[sentence 1]. sorekara / soshite / demo, [sentence 2].",
+            "jlpt_level": 5,
+            "example_sentences": "こうえんを さんぽしました。それから、えいがを 見ました。 (Kouen wo sanpo shimashita. Sorekara, eiga wo mimashita.) — Ich bin im Park spazieren gegangen. Danach habe ich einen Film gesehen.\n日本語は むずかしいです。でも、おもしろいです。 (Nihongo wa muzukashii desu. Demo, omoshiroi desu.) — Japanisch ist schwierig. Aber es ist interessant.\n本を 読みました。そして、ねました。 (Hon wo yomimashita. Soshite, nemashita.) — Ich habe ein Buch gelesen. Und dann bin ich schlafen gegangen.",
+            "tts_example_jp": "日本語は むずかしいです。でも、おもしろいです。"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Dialog — Ken fragt Mei nach dem Sonntag",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "Ken: メイさん、にちようびは どうでしたか。\n  (Mei-san, nichiyoubi wa dou deshita ka.)\n  -> Mei, wie war dein Sonntag?\n\nMei: たのしかったです。あさ、こうえんを さんぽしました。それから、えいがを 見ました。\n  (Tanoshikatta desu. Asa, kouen wo sanpo shimashita. Sorekara, eiga wo mimashita.)\n  -> Er war schön. Am Morgen bin ich im Park spazieren gegangen. Danach habe ich einen Film gesehen.\n\nKen: どんな えいがでしたか。\n  (Donna eiga deshita ka.)\n  -> Was für ein Film war es?\n\nMei: 日本の ふるい えいがでした。わたしは 時々 ふるい えいがを 見ます。\n  (Nihon no furui eiga deshita. Watashi wa tokidoki furui eiga wo mimasu.)\n  -> Ein alter japanischer Film. Ich sehe manchmal alte Filme.\n\nKen: そうですか。ぼくは あまり えいがを 見ません。\n  (Sou desu ka. Boku wa amari eiga wo mimasen.)\n  -> Ach so. Ich sehe nicht so oft Filme.\n\nMei: どうしてですか。\n  (Doushite desu ka.)\n  -> Warum?\n\nKen: いつも いそがしいですから。でも、らいしゅうは ひまです。\n  (Itsumo isogashii desu kara. Demo, raishuu wa hima desu.)\n  -> Weil ich immer beschäftigt bin. Aber nächste Woche habe ich Zeit.\n\nMei: じゃあ、いっしょに 行きませんか。\n  (Jaa, issho ni ikimasen ka.)\n  -> Na dann, wollen wir nicht zusammen hingehen?\n\nKen: いいですね。行きましょう！\n  (Ii desu ne. Ikimashou!)\n  -> Gute Idee. Gehen wir!",
+            "title": "Nach dem Wochenende — Ken und Mei reden über Filme"
+          }
+        },
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "### Verständnisfragen\n\nVier kurze Fragen zum **Dialog**. Achte darauf, **wer** was sagt und **warum**."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was hat Mei am Sonntag zuerst gemacht?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Mei erzählt der Reihe nach: erst 「さんぽ」 (sanpo), dann mit 「それから」 (sorekara) der Film.",
+              "options": [
+                {
+                  "option_text": "Sie ist im Park spazieren gegangen.",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「こうえんを さんぽしました」 (kouen wo sanpo shimashita)."
+                },
+                {
+                  "option_text": "Sie hat einen Film gesehen.",
+                  "is_correct": false,
+                  "feedback": "Den Film hat sie erst danach gesehen — 「それから」 (sorekara)."
+                },
+                {
+                  "option_text": "Sie hat gearbeitet.",
+                  "is_correct": false,
+                  "feedback": "Von Arbeit spricht Mei nicht."
+                },
+                {
+                  "option_text": "Sie hat ein Buch gelesen.",
+                  "is_correct": false,
+                  "feedback": "Ein Buch kommt im Dialog nicht vor."
+                }
+              ],
+              "hint": "Achte auf das Wort 「それから」 (sorekara, danach)."
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Ken sieht oft Filme.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Ken sagt 「あまり えいがを 見ません」 (amari eiga wo mimasen) — er sieht NICHT so oft Filme.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nein — 「あまり」 (amari) mit Verneinung heisst 'nicht so oft'."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt — 「あまり … 見ません」 (amari … mimasen) heisst 'nicht so oft'."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Warum sieht Ken selten Filme?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Die Begründung steht vor 「から」 (kara, weil): 「いつも いそがしいです」 (itsumo isogashii desu).",
+              "options": [
+                {
+                  "option_text": "Weil er Filme langweilig findet.",
+                  "is_correct": false,
+                  "feedback": "Das sagt Ken nicht."
+                },
+                {
+                  "option_text": "Weil er kein Geld hat.",
+                  "is_correct": false,
+                  "feedback": "Von Geld ist keine Rede."
+                },
+                {
+                  "option_text": "Weil er immer beschäftigt ist.",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「いつも いそがしいですから」 (itsumo isogashii desu kara)."
+                },
+                {
+                  "option_text": "Weil er lieber Bücher liest.",
+                  "is_correct": false,
+                  "feedback": "Bücher kommen im Dialog nicht vor."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Mei sieht manchmal alte japanische Filme.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Mei sagt 「時々 ふるい えいがを 見ます」 (tokidoki furui eiga wo mimasu) — manchmal.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「時々」 (tokidoki) heisst 'manchmal'."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — sie sagt 「時々」 (tokidoki, manchmal)."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Übung",
+      "page_type": "quiz_carousel",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Übung\n\nZwölf Fragen zu **Fragewörtern**, **Häufigkeit** und **Satzverbindern**.\n\n- Lies jede Frage genau.\n- Die Lesung steht jeweils in Klammern."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「どうして」 (doushite)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「どうして」 (doushite) und 「なぜ」 (naze) fragen beide nach dem Grund: 'warum'.",
+              "options": [
+                {
+                  "option_text": "wie viele",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「いくつ」 (ikutsu)."
+                },
+                {
+                  "option_text": "was für ein",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「どんな」 (donna)."
+                },
+                {
+                  "option_text": "wann",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「いつ」 (itsu)."
+                },
+                {
+                  "option_text": "warum",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Du willst fragen, WAS FÜR Musik jemand mag. Welches Fragewort brauchst du?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「どんな」 (donna) steht direkt vor einem Nomen: 'was für ein …'.",
+              "options": [
+                {
+                  "option_text": "どう (dou)",
+                  "is_correct": false,
+                  "feedback": "「どう」 (dou) fragt nach einem Eindruck, nicht nach der Art."
+                },
+                {
+                  "option_text": "どんな (donna)",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「どんな おんがくが すきですか」 (donna ongaku ga suki desu ka)."
+                },
+                {
+                  "option_text": "いくつ (ikutsu)",
+                  "is_correct": false,
+                  "feedback": "「いくつ」 (ikutsu) fragt nach der Anzahl."
+                },
+                {
+                  "option_text": "なぜ (naze)",
+                  "is_correct": false,
+                  "feedback": "「なぜ」 (naze) fragt nach dem Grund."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "「たまごは いくつ ありますか。」 (Tamago wa ikutsu arimasu ka.) — wonach wird gefragt?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「いくつ」 (ikutsu) fragt 'wie viele (Stück)?'.",
+              "options": [
+                {
+                  "option_text": "nach der Anzahl der Eier",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「いくつ」 (ikutsu) = wie viele."
+                },
+                {
+                  "option_text": "nach dem Preis der Eier",
+                  "is_correct": false,
+                  "feedback": "Nach dem Preis fragt man mit 「いくら」 (ikura)."
+                },
+                {
+                  "option_text": "nach der Farbe der Eier",
+                  "is_correct": false,
+                  "feedback": "Farben kommen hier nicht vor."
+                },
+                {
+                  "option_text": "nach dem Ort der Eier",
+                  "is_correct": false,
+                  "feedback": "Nach dem Ort fragt man mit 「どこ」 (doko)."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「あまり」 (amari) steht mit einer verneinten Form: 「あまり さむくないです」 (amari samukunai desu) heisst 'Es ist nicht sehr kalt.'",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「あまり」 (amari) + Verneinung = 'nicht sehr / nicht so oft'.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「あまり」 (amari) braucht die Verneinung."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — 「あまり」 (amari) steht mit Verneinung und heisst 'nicht sehr'."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welches Wort bedeutet 'manchmal'?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「時々」 (tokidoki) heisst 'manchmal'. Das Zeichen 々 wiederholt das Kanji davor.",
+              "options": [
+                {
+                  "option_text": "いつも (itsumo)",
+                  "is_correct": false,
+                  "feedback": "「いつも」 (itsumo) heisst 'immer'."
+                },
+                {
+                  "option_text": "よく (yoku)",
+                  "is_correct": false,
+                  "feedback": "「よく」 (yoku) heisst 'oft'."
+                },
+                {
+                  "option_text": "すぐに (sugu ni)",
+                  "is_correct": false,
+                  "feedback": "「すぐに」 (sugu ni) heisst 'sofort'."
+                },
+                {
+                  "option_text": "時々 (ときどき, tokidoki)",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde den Satzverbinder mit seiner Bedeutung.",
+              "difficulty_level": 2,
+              "points": 2,
+              "options": [
+                {
+                  "option_text": "それから (sorekara)",
+                  "feedback": "danach",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "でも (demo)",
+                  "feedback": "aber",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "そして (soshite)",
+                  "feedback": "und (dazu)",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "じゃあ (jaa)",
+                  "feedback": "na dann",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "'Japanisch ist schwierig. ABER es ist interessant.' — welcher Verbinder passt ins Gespräch?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Für einen Gegensatz im Gespräch nimmst du 「でも」 (demo).",
+              "options": [
+                {
+                  "option_text": "それから (sorekara)",
+                  "is_correct": false,
+                  "feedback": "「それから」 (sorekara) erzählt die Reihenfolge, keinen Gegensatz."
+                },
+                {
+                  "option_text": "でも (demo)",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「日本語は むずかしいです。でも、おもしろいです。」"
+                },
+                {
+                  "option_text": "そして (soshite)",
+                  "is_correct": false,
+                  "feedback": "「そして」 (soshite) fügt etwas hinzu, ohne Gegensatz."
+                },
+                {
+                  "option_text": "さあ (saa)",
+                  "is_correct": false,
+                  "feedback": "「さあ」 (saa) heisst 'na los!'."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「しかし」 (shikashi) klingt eher schriftlich; im Gespräch sagt man meist 「でも」 (demo).",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Beide heissen 'aber', 「しかし」 (shikashi) findest du vor allem in Texten.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — im Alltag ist 「でも」 (demo) üblicher."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wann sagst du 「おちゃは いかがですか。」 (Ocha wa ikaga desu ka.)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「～は いかがですか」 (~wa ikaga desu ka) = 'Wie wäre es mit …?' — ein höfliches Angebot.",
+              "options": [
+                {
+                  "option_text": "wenn du jemandem höflich Tee anbietest",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「いかが」 (ikaga) ist das höfliche 「どう」 (dou)."
+                },
+                {
+                  "option_text": "wenn du nach dem Preis des Tees fragst",
+                  "is_correct": false,
+                  "feedback": "Nach dem Preis fragt man mit 「いくら」 (ikura)."
+                },
+                {
+                  "option_text": "wenn du fragst, warum jemand Tee trinkt",
+                  "is_correct": false,
+                  "feedback": "Dafür bräuchtest du 「どうして」 (doushite)."
+                },
+                {
+                  "option_text": "wenn du dich für den Tee bedankst",
+                  "is_correct": false,
+                  "feedback": "Danke sagt man mit 「ありがとう」 (arigatou)."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde das Adverb mit seiner Bedeutung.",
+              "difficulty_level": 2,
+              "points": 2,
+              "options": [
+                {
+                  "option_text": "もっと (motto)",
+                  "feedback": "mehr, noch mehr",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "すぐに (sugu ni)",
+                  "feedback": "sofort",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "丁度 (ちょうど, choudo)",
+                  "feedback": "genau",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "段々 (だんだん, dandan)",
+                  "feedback": "allmählich",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Frage: 「どうして 休みましたか。」 (Doushite yasumimashita ka.) — welche Antwort passt?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Auf 「どうして」 (doushite) antwortest du mit einem Grund + 「から」 (kara).",
+              "options": [
+                {
+                  "option_text": "はい、休みました。 (Hai, yasumimashita.)",
+                  "is_correct": false,
+                  "feedback": "Das beantwortet nicht, WARUM."
+                },
+                {
+                  "option_text": "あたまが いたかったですから。 (Atama ga itakatta desu kara.)",
+                  "is_correct": true,
+                  "feedback": "Richtig — der Grund mit 「から」 (kara)."
+                },
+                {
+                  "option_text": "三時です。 (Sanji desu.)",
+                  "is_correct": false,
+                  "feedback": "Das ist eine Uhrzeit, kein Grund."
+                },
+                {
+                  "option_text": "いつも 休みます。 (Itsumo yasumimasu.)",
+                  "is_correct": false,
+                  "feedback": "Das sagt, wie oft — nicht warum."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「誰か」 (だれか, dareka) heisst 'wer?'.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「誰か」 (dareka) heisst 'jemand'. 'Wer?' ist 「だれ」 (dare).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nein — 'wer?' ist 「だれ」 (dare); 「だれか」 (dareka) heisst 'jemand'."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt — 「だれか」 (dareka) = jemand."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Zusammenfassung",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Das hast du gelernt\n\nDu kannst jetzt **nachfragen**, **begründen** und **der Reihe nach erzählen**.\n\n- **Fragewörter**: 「どう」 (dou), 「どんな」 (donna), 「いくつ」 (ikutsu), 「どうして」 (doushite), 「なぜ」 (naze), höflich 「いかが」 (ikaga)\n- **Wie oft?** 「いつも」 (itsumo) > 「よく」 (yoku) > 「時々」 (tokidoki) > 「あまり～ません」 (amari ~masen)\n- **Verbinder**: 「それから」 (sorekara), 「そして」 (soshite), 「でも」 (demo), 「じゃあ」 (jaa)\n\n> Tipp: Erzähle heute Abend deinen Tag in drei Sätzen und verbinde sie mit 「それから」 (sorekara) und 「でも」 (demo).\n\nAls Nächstes übst du diese Wörter in den anderen Themen-Lektionen — jede Frage mit 「どう」 (dou) oder 「どうして」 (doushite) bringt dich ins Gespräch."
+          }
+        }
+      ]
+    }
+  ],
+  "thumbnail_url": "generated/thumbnail_gespraech_unter_freunden_20260926_162942.png"
+}

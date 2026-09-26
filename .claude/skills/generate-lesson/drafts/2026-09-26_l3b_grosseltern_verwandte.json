@@ -1,0 +1,803 @@
+{
+  "title": "N5 Grosseltern und Verwandte — Die ganze Familie",
+  "description": "Lerne おじいさん, おばあさん, おじさん und おばさん, sprich über das Alter und wiederhole die eigene und die fremde Familie.",
+  "jlpt_level": 5,
+  "topic": "Grosseltern und Verwandte",
+  "instruction_language": "german",
+  "allow_guest_access": false,
+  "pages": [
+    {
+      "title": "Einführung",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Die grosse Familie\n\nIn der ersten Familien-Lektion hast du Eltern und Geschwister kennengelernt. Jetzt kommen die **Grosseltern**, **Onkel und Tante** dazu — und du lernst, wie man über das **Alter** spricht.\n\n- 「おじいさん」 (ojiisan) — Grossvater, 「おばあさん」 (obaasan) — Grossmutter\n- 「おじさん」 (ojisan) — Onkel, 「おばさん」 (obasan) — Tante\n- 「はたち」 (hatachi) — zwanzig Jahre alt\n\n> Achtung, **lange Vokale**: 「おじ**い**さん」 (oj**ii**san) ist der Grossvater, 「おじさん」 (ojisan) der Onkel. Ein einziger Vokal macht den Unterschied!",
+            "title": "Worum geht es?"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln Teil 1 — Grosseltern und Verwandte",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Teil 1 — Neue Wörter\n\nDiese Wörter benutzt man auch für **fremde Menschen**: Ein älterer Herr auf der Strasse ist 「おじいさん」 (ojiisan), ein Mann mittleren Alters 「おじさん」 (ojisan).\n\n- Höre genau auf die **Länge** der Vokale.\n- 「かた」 (kata) ist das **höfliche** Wort für 'Person'."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "おじいさん",
+            "reading": "おじいさん",
+            "romaji": "ojiisan",
+            "meaning": "grandfather; old man",
+            "meaning_de": "Grossvater; älterer Herr",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "おじいさんは毎日さんぽします。",
+            "example_sentence_english": "Ojī-san wa mainichi sanpo shimasu. — Der Grossvater geht jeden Tag spazieren.",
+            "image_url": "vocab_generated/vocab_b6c5ab60.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "おばあさん",
+            "reading": "おばあさん",
+            "romaji": "obaasan",
+            "meaning": "grandmother; old woman",
+            "meaning_de": "Grossmutter; ältere Dame",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "おばあさんはりょうりがじょうずです。",
+            "example_sentence_english": "Obā-san wa ryōri ga jōzu desu. — Die Grossmutter kocht sehr gut.",
+            "image_url": "vocab_generated/vocab_34eefdd7.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "叔父さん",
+            "reading": "おじさん",
+            "romaji": "ojisan",
+            "meaning": "uncle; middle-aged man",
+            "meaning_de": "Onkel; Mann mittleren Alters",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "おじさんはアメリカにすんでいます。",
+            "example_sentence_english": "Oji-san wa Amerika ni sunde imasu. — Mein Onkel wohnt in Amerika.",
+            "image_url": "vocab_generated/vocab_6c08fc8e.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "叔母さん",
+            "reading": "おばさん",
+            "romaji": "obasan",
+            "meaning": "aunt; middle-aged woman",
+            "meaning_de": "Tante; Frau mittleren Alters",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "わたしはおばさんにおかしをあげました。",
+            "example_sentence_english": "Watashi wa oba-san ni okashi o agemashita. — Ich habe meiner Tante Süssigkeiten geschenkt.",
+            "image_url": "vocab_generated/vocab_17e1fbfa.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "二十歳",
+            "reading": "はたち",
+            "romaji": "hatachi",
+            "meaning": "20 years old",
+            "meaning_de": "zwanzig Jahre alt",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あには今年はたちになります。",
+            "example_sentence_english": "Ani wa kotoshi hatachi ni narimasu. — Mein älterer Bruder wird dieses Jahr zwanzig.",
+            "image_url": "vocab_generated/vocab_51b56a95.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "大勢",
+            "reading": "おおぜい",
+            "romaji": "oozei",
+            "meaning": "many people",
+            "meaning_de": "viele Leute, eine Menge Menschen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "えきに人がおおぜいいます。",
+            "example_sentence_english": "Eki ni hito ga ōzei imasu. — Am Bahnhof sind viele Leute.",
+            "image_url": "vocab_generated/vocab_b28fdd83.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "方",
+            "reading": "かた",
+            "romaji": "kata",
+            "meaning": "person (polite); way of doing",
+            "meaning_de": "Person (höflich); Art und Weise",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あのかたはどなたですか。",
+            "example_sentence_english": "Ano kata wa donata desu ka. — Wer ist jene Person?",
+            "image_url": "vocab_generated/vocab_c26236c2.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "みんな",
+            "reading": "みんな",
+            "romaji": "minna",
+            "meaning": "all, everyone",
+            "meaning_de": "alle (Leute)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "みんなでしゃしんをとりましょう。",
+            "example_sentence_english": "Minna de shashin o torimashō. — Lasst uns alle zusammen ein Foto machen.",
+            "image_url": "vocab_generated/vocab_6bea3908.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "ゆっくりと",
+            "reading": "ゆっくりと",
+            "romaji": "yukkuri to",
+            "meaning": "slowly, at ease",
+            "meaning_de": "langsam, gemächlich",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "にちようびはうちでゆっくりと休みます。",
+            "example_sentence_english": "Nichiyōbi wa uchi de yukkuri to yasumimasu. — Am Sonntag erhole ich mich in aller Ruhe zu Hause.",
+            "image_url": "vocab_generated/vocab_8bc888a9.png"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Wiederholung — Meine Familie, deine Familie",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Teil 2 — Eigene und fremde Familie\n\nDiese Wörter kennst du schon — hier wiederholst du sie bewusst, denn Japanisch unterscheidet **zwei Wortreihen**:\n\n- Über die **eigene** Familie (gegenüber anderen): 「ちち」 (chichi), 「はは」 (haha)\n- Über die Familie **anderer** oder beim Anreden: 「おとうさん」 (otousan), 「おかあさん」 (okaasan)\n\n> Bei den Grosseltern ist es genauso: Über den eigenen Grossvater sagt man förmlich 「そふ」 (sofu), über die eigene Grossmutter 「そぼ」 (sobo). Diese Wörter kommen erst auf Stufe N4 — auf N5 reicht es, sie zu **erkennen**. In der Familie selbst sagt man einfach 「おじいさん」 (ojiisan) und 「おばあさん」 (obaasan)."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "父",
+            "reading": "ちち",
+            "romaji": "chichi",
+            "meaning": "(my) father (humble)",
+            "meaning_de": "(mein) Vater (bescheidene Form)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "父は かいしゃで はたらいて います。",
+            "example_sentence_english": "Chichi wa kaisha de hataraite imasu. — Mein Vater arbeitet in einer Firma.",
+            "image_url": "vocab_generated/vocab_e7378bff.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "お父さん",
+            "reading": "おとうさん",
+            "romaji": "otousan",
+            "meaning": "(someone else's) father (polite)",
+            "meaning_de": "Vater (einer anderen Person, höflich)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "お父さんは どこに いますか。",
+            "example_sentence_english": "Otōsan wa doko ni imasu ka. — Wo ist Ihr Vater?",
+            "image_url": "vocab_generated/vocab_dc9aa7e3.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "母",
+            "reading": "はは",
+            "romaji": "haha",
+            "meaning": "(my) mother (humble)",
+            "meaning_de": "(meine) Mutter (bescheidene Form)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "母は りょうりが じょうずです。",
+            "example_sentence_english": "Haha wa ryōri ga jōzu desu. — Meine Mutter kocht gut.",
+            "image_url": "vocab_generated/vocab_21e4bd76.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "お母さん",
+            "reading": "おかあさん",
+            "romaji": "okaasan",
+            "meaning": "(someone else's) mother (polite)",
+            "meaning_de": "Mutter (einer anderen Person, höflich)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "お母さんは やさしいですか。",
+            "example_sentence_english": "Okāsan wa yasashii desu ka. — Ist Ihre Mutter nett?",
+            "image_url": "vocab_generated/vocab_bbe81368.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "両親",
+            "reading": "りょうしん",
+            "romaji": "ryoushin",
+            "meaning": "parents",
+            "meaning_de": "Eltern (beide zusammen)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "りょうしんは おおさかに すんで います。",
+            "example_sentence_english": "Ryōshin wa Ōsaka ni sunde imasu. — Meine Eltern wohnen in Osaka.",
+            "image_url": "vocab_generated/vocab_178b2996.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "兄弟",
+            "reading": "きょうだい",
+            "romaji": "kyoudai",
+            "meaning": "siblings, brothers and sisters",
+            "meaning_de": "Geschwister",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "わたしは きょうだいが 三人 います。",
+            "example_sentence_english": "Watashi wa kyōdai ga sannin imasu. — Ich habe drei Geschwister.",
+            "image_url": "vocab_generated/vocab_c8b87810.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "家族",
+            "reading": "かぞく",
+            "romaji": "kazoku",
+            "meaning": "family",
+            "meaning_de": "Familie",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "わたしの かぞくは やさしいです。",
+            "example_sentence_english": "Watashi no kazoku wa yasashii desu. — Meine Familie ist nett.",
+            "image_url": "vocab_generated/vocab_cb1f7d20.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "大人",
+            "reading": "おとな",
+            "romaji": "otona",
+            "meaning": "adult",
+            "meaning_de": "Erwachsene/r",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ここには大人が三人います。",
+            "example_sentence_english": "Koko ni wa otona ga sannin imasu. — Hier sind drei Erwachsene.",
+            "image_url": "vocab_generated/vocab_a3142f92.png"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Grammatik — Familie beschreiben",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Über Verwandte sprechen\n\nMit drei Bausteinen kannst du deine Familie vorstellen: **wer** jemand ist, **wie alt** er ist und **wo** er wohnt.\n\n- 「この かたは どなたですか。」 (Kono kata wa donata desu ka.) — Wer ist diese Person?\n- 「おじいさんは 八十さいです。」 (Ojiisan wa hachijussai desu.) — Mein Grossvater ist achtzig.\n- 「おじさんは アメリカに すんでいます。」 (Ojisan wa Amerika ni sunde imasu.) — Mein Onkel wohnt in Amerika."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "Eigene und fremde Familie — ちち / おとうさん (chichi / otousan)",
+            "explanation": "Über die eigene Familie sprichst du gegenüber anderen bescheiden: 「ちち」 (chichi, mein Vater), 「はは」 (haha, meine Mutter). Die Familie einer anderen Person nennst du höflich mit 「お～さん」 (o~san): 「おとうさん」 (otousan), 「おかあさん」 (okaasan). 「おじいさん」 (ojiisan) und 「おばあさん」 (obaasan) hörst du für beide Seiten; förmlich heisst der eigene Grossvater 「そふ」 (sofu, erst N4).",
+            "structure": "わたしの ちち ↔ [Name]さんの おとうさん (watashi no chichi ↔ [name]-san no otousan)",
+            "romaji": "watashi no chichi ↔ [name]-san no otousan",
+            "jlpt_level": 5,
+            "example_sentences": "ちちは 先生です。 (Chichi wa sensei desu.) — Mein Vater ist Lehrer.\nリサさんの おとうさんは 先生ですか。 (Risa-san no otousan wa sensei desu ka.) — Lisa, ist dein Vater Lehrer?\nおばあさんは 毎日 ゆっくりと さんぽします。 (Obaasan wa mainichi yukkuri to sanpo shimasu.) — Die Grossmutter geht jeden Tag gemütlich spazieren.",
+            "tts_example_jp": "リサさんの おとうさんは 先生ですか。"
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "[Person] は [Zahl] さいです — Alter sagen und fragen (sai / nansai / oikutsu)",
+            "explanation": "Das Alter sagst du mit der Zahl + 「さい」 (sai): 「九十さい」 (kyuujussai, 90 Jahre). Gefragt wird mit 「何さいですか」 (nansai desu ka) oder höflicher mit 「おいくつですか」 (oikutsu desu ka). Zwanzig Jahre heisst nicht 「にじゅっさい」 (nijussai), sondern 「はたち」 (hatachi).",
+            "structure": "[Person] は [Zahl] さいです ([person] wa [number] sai desu)",
+            "romaji": "[person] wa [number] sai desu / nansai desu ka / oikutsu desu ka",
+            "jlpt_level": 5,
+            "example_sentences": "おじいさんは 九十さいです。 (Ojiisan wa kyuujussai desu.) — Mein Grossvater ist neunzig.\nおばあさんは おいくつですか。 (Obaasan wa oikutsu desu ka.) — Wie alt ist Ihre Grossmutter?\nいもうとは 来年 はたちに なります。 (Imouto wa rainen hatachi ni narimasu.) — Meine jüngere Schwester wird nächstes Jahr zwanzig.",
+            "tts_example_jp": "おじいさんは 九十さいです。"
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "[Person] は [Ort] に すんでいます — wo jemand wohnt (ni sunde imasu)",
+            "explanation": "Mit 「～に すんでいます」 (~ni sunde imasu) sagst du, wo jemand wohnt. Der Ort bekommt die Partikel 「に」 (ni). Mit 「みんな」 (minna, alle) fasst du die ganze Familie zusammen.",
+            "structure": "[Person] は [Ort] に すんでいます ([person] wa [place] ni sunde imasu)",
+            "romaji": "[person] wa [place] ni sunde imasu",
+            "jlpt_level": 5,
+            "example_sentences": "おじさんは アメリカに すんでいます。 (Ojisan wa Amerika ni sunde imasu.) — Mein Onkel wohnt in Amerika.\nりょうしんは おおさかに すんでいます。 (Ryoushin wa Oosaka ni sunde imasu.) — Meine Eltern wohnen in Osaka.\nかぞくは みんな 日本に すんでいます。 (Kazoku wa minna Nihon ni sunde imasu.) — Meine Familie wohnt ganz in Japan.",
+            "tts_example_jp": "おじさんは アメリカに すんでいます。"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Dialog — Das Familienfoto",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "Haruto: アンナさん、これは わたしの かぞくの しゃしんです。\n  (Anna-san, kore wa watashi no kazoku no shashin desu.)\n  -> Anna, das ist ein Foto meiner Familie.\n\nAnna: わあ、おおぜいですね！この かたは どなたですか。\n  (Waa, oozei desu ne! Kono kata wa donata desu ka.)\n  -> Wow, das sind viele! Wer ist diese Person?\n\nHaruto: おじいさんです。九十さいですが、とても げんきです。\n  (Ojiisan desu. Kyuujussai desu ga, totemo genki desu.)\n  -> Das ist mein Grossvater. Er ist neunzig, aber sehr fit.\n\nAnna: すごいですね。となりの かたは おばあさんですか。\n  (Sugoi desu ne. Tonari no kata wa obaasan desu ka.)\n  -> Toll! Ist die Person daneben deine Grossmutter?\n\nHaruto: はい。おばあさんは 毎日 ゆっくりと さんぽします。\n  (Hai. Obaasan wa mainichi yukkuri to sanpo shimasu.)\n  -> Ja. Meine Grossmutter geht jeden Tag gemütlich spazieren.\n\nAnna: この 男の 人は おとうさんですか。\n  (Kono otoko no hito wa otousan desu ka.)\n  -> Ist dieser Mann dein Vater?\n\nHaruto: いいえ、おじさんです。ちちの おとうとです。アメリカに すんでいます。\n  (Iie, ojisan desu. Chichi no otouto desu. Amerika ni sunde imasu.)\n  -> Nein, das ist mein Onkel, der jüngere Bruder meines Vaters. Er wohnt in Amerika.\n\nAnna: この 女の 人は？\n  (Kono onna no hito wa?)\n  -> Und diese Frau?\n\nHaruto: いもうとです。来年 はたちに なります。\n  (Imouto desu. Rainen hatachi ni narimasu.)\n  -> Meine jüngere Schwester. Nächstes Jahr wird sie zwanzig.\n\nAnna: みんな げんきで、いい かぞくですね。\n  (Minna genki de, ii kazoku desu ne.)\n  -> Alle sind munter — eine schöne Familie!",
+            "title": "Das Familienfoto — Anna besucht Haruto"
+          }
+        },
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "### Verständnisfragen\n\nVier Fragen zum **Familienfoto**. Wer ist **wer** auf dem Bild?"
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie alt ist Harutos Grossvater?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Haruto sagt 「九十さいですが、とても げんきです」 (kyuujussai desu ga, totemo genki desu).",
+              "options": [
+                {
+                  "option_text": "80 Jahre",
+                  "is_correct": false,
+                  "feedback": "Achtzig wäre 「八十さい」 (hachijussai)."
+                },
+                {
+                  "option_text": "20 Jahre",
+                  "is_correct": false,
+                  "feedback": "Zwanzig wird Harutos Schwester — 「はたち」 (hatachi)."
+                },
+                {
+                  "option_text": "70 Jahre",
+                  "is_correct": false,
+                  "feedback": "Siebzig wäre 「七十さい」 (nanajussai)."
+                },
+                {
+                  "option_text": "90 Jahre",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「九十さい」 (kyuujussai)."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Der Mann auf dem Foto ist Harutos Vater.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Haruto sagt 「いいえ、おじさんです」 (iie, ojisan desu) — es ist sein Onkel.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nein — Haruto sagt, es ist sein Onkel (おじさん, ojisan)."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt — es ist der Onkel (おじさん, ojisan)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wo wohnt der Onkel?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Der Ort steht vor 「に すんでいます」 (ni sunde imasu).",
+              "options": [
+                {
+                  "option_text": "in Osaka",
+                  "is_correct": false,
+                  "feedback": "Osaka kommt im Dialog nicht vor."
+                },
+                {
+                  "option_text": "in Amerika",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「アメリカに すんでいます」 (Amerika ni sunde imasu)."
+                },
+                {
+                  "option_text": "bei Haruto",
+                  "is_correct": false,
+                  "feedback": "Das sagt Haruto nicht."
+                },
+                {
+                  "option_text": "in Deutschland",
+                  "is_correct": false,
+                  "feedback": "Deutschland wird nicht erwähnt."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Die Grossmutter geht jeden Tag gemütlich spazieren.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Haruto sagt 「毎日 ゆっくりと さんぽします」 (mainichi yukkuri to sanpo shimasu).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「ゆっくりと」 (yukkuri to) heisst 'gemütlich, langsam'."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — sie spaziert 「毎日」 (mainichi, jeden Tag)."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Übung",
+      "page_type": "quiz_carousel",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Übung\n\nZwölf Fragen zu **Grosseltern**, **Verwandten** und zur **eigenen und fremden Familie**.\n\n- Achte auf **lange Vokale**.\n- Die Lesung steht jeweils in Klammern."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「おじいさん」 (ojiisan)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「おじいさん」 (ojiisan) mit langem ii = Grossvater.",
+              "options": [
+                {
+                  "option_text": "Onkel",
+                  "is_correct": false,
+                  "feedback": "Onkel ist 「おじさん」 (ojisan) — mit kurzem i."
+                },
+                {
+                  "option_text": "Grossvater",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "Vater",
+                  "is_correct": false,
+                  "feedback": "Vater ist 「おとうさん」 (otousan) oder 「ちち」 (chichi)."
+                },
+                {
+                  "option_text": "älterer Bruder",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「おにいさん」 (oniisan)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「おばさん」 (obasan)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「おばさん」 (obasan) = Tante; 「おばあさん」 (obaasan) = Grossmutter.",
+              "options": [
+                {
+                  "option_text": "Tante",
+                  "is_correct": true,
+                  "feedback": "Richtig — kurzes a."
+                },
+                {
+                  "option_text": "Grossmutter",
+                  "is_correct": false,
+                  "feedback": "Grossmutter ist 「おばあさん」 (obaasan) — mit langem aa."
+                },
+                {
+                  "option_text": "Mutter",
+                  "is_correct": false,
+                  "feedback": "Mutter ist 「おかあさん」 (okaasan) oder 「はは」 (haha)."
+                },
+                {
+                  "option_text": "ältere Schwester",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「おねえさん」 (oneesan)."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「おじいさん」 (ojiisan) und 「おじさん」 (ojisan) bedeuten dasselbe.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Nein: 「おじいさん」 (ojiisan) = Grossvater, 「おじさん」 (ojisan) = Onkel. Nur die Vokallänge unterscheidet sie.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nein — lang = Grossvater, kurz = Onkel."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt — die Vokallänge macht den Unterschied."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Du sprichst mit Frau Tanaka über IHRE Mutter. Welches Wort passt?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Familie anderer: 「お～さん」 (o~san). Eigene Familie: 「はは」 (haha), 「ちち」 (chichi).",
+              "options": [
+                {
+                  "option_text": "母 (はは, haha)",
+                  "is_correct": false,
+                  "feedback": "「はは」 (haha) sagst du nur über deine eigene Mutter."
+                },
+                {
+                  "option_text": "おばさん (obasan)",
+                  "is_correct": false,
+                  "feedback": "Das ist die Tante."
+                },
+                {
+                  "option_text": "お母さん (おかあさん, okaasan)",
+                  "is_correct": true,
+                  "feedback": "Richtig — für die Familie anderer die höfliche Form."
+                },
+                {
+                  "option_text": "おばあさん (obaasan)",
+                  "is_correct": false,
+                  "feedback": "Das ist die Grossmutter."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Du erzählst einem Kollegen von DEINEM Vater. Welches Wort ist richtig?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Gegenüber anderen nennst du den eigenen Vater 「ちち」 (chichi).",
+              "options": [
+                {
+                  "option_text": "お父さん (おとうさん, otousan)",
+                  "is_correct": false,
+                  "feedback": "So sprichst du vom Vater einer anderen Person."
+                },
+                {
+                  "option_text": "父 (ちち, chichi)",
+                  "is_correct": true,
+                  "feedback": "Richtig — bescheiden über die eigene Familie."
+                },
+                {
+                  "option_text": "おじさん (ojisan)",
+                  "is_correct": false,
+                  "feedback": "Das ist der Onkel."
+                },
+                {
+                  "option_text": "おじいさん (ojiisan)",
+                  "is_correct": false,
+                  "feedback": "Das ist der Grossvater."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde das Wort mit seiner Bedeutung.",
+              "difficulty_level": 2,
+              "points": 2,
+              "options": [
+                {
+                  "option_text": "両親 (りょうしん, ryoushin)",
+                  "feedback": "Eltern",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "兄弟 (きょうだい, kyoudai)",
+                  "feedback": "Geschwister",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "家族 (かぞく, kazoku)",
+                  "feedback": "Familie",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "大人 (おとな, otona)",
+                  "feedback": "Erwachsene/r",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「二十歳」 (はたち, hatachi)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Für 20 Jahre gibt es ein eigenes Wort: 「はたち」 (hatachi).",
+              "options": [
+                {
+                  "option_text": "zwei Jahre alt",
+                  "is_correct": false,
+                  "feedback": "Zwei Jahre wäre 「二さい」 (nisai)."
+                },
+                {
+                  "option_text": "zwölf Jahre alt",
+                  "is_correct": false,
+                  "feedback": "Zwölf wäre 「十二さい」 (juunisai)."
+                },
+                {
+                  "option_text": "zehn Jahre alt",
+                  "is_correct": false,
+                  "feedback": "Zehn wäre 「十さい」 (jussai)."
+                },
+                {
+                  "option_text": "zwanzig Jahre alt",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "「この 方は どなたですか。」 (Kono kata wa donata desu ka.) — was bedeutet 「方」 (かた, kata) hier?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「方」 (kata) ist die höfliche Form von 「人」 (hito, Person).",
+              "options": [
+                {
+                  "option_text": "Richtung",
+                  "is_correct": false,
+                  "feedback": "In diesem Satz geht es um eine Person."
+                },
+                {
+                  "option_text": "Familie",
+                  "is_correct": false,
+                  "feedback": "Familie wäre 「かぞく」 (kazoku)."
+                },
+                {
+                  "option_text": "Person (höflich)",
+                  "is_correct": true,
+                  "feedback": "Richtig — höfliches Wort für 「人」 (hito)."
+                },
+                {
+                  "option_text": "Foto",
+                  "is_correct": false,
+                  "feedback": "Foto wäre 「しゃしん」 (shashin)."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「大勢」 (おおぜい, oozei) benutzt man für viele Menschen, nicht für viele Dinge.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「おおぜい」 (oozei) = viele Leute. Für Dinge sagt man 「たくさん」 (takusan).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — 「おおぜい」 (oozei) passt nur zu Menschen."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde die Verwandten mit der deutschen Bedeutung.",
+              "difficulty_level": 2,
+              "points": 2,
+              "options": [
+                {
+                  "option_text": "おじいさん (ojiisan)",
+                  "feedback": "Grossvater",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "おばあさん (obaasan)",
+                  "feedback": "Grossmutter",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "叔父さん (おじさん, ojisan)",
+                  "feedback": "Onkel",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "叔母さん (おばさん, obasan)",
+                  "feedback": "Tante",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "「おばあさんは ゆっくりと あるきます。」 (Obaasan wa yukkuri to arukimasu.) — wie geht die Grossmutter?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「ゆっくりと」 (yukkuri to) heisst 'langsam, in aller Ruhe'.",
+              "options": [
+                {
+                  "option_text": "schnell",
+                  "is_correct": false,
+                  "feedback": "Schnell wäre 「はやく」 (hayaku)."
+                },
+                {
+                  "option_text": "oft",
+                  "is_correct": false,
+                  "feedback": "Oft wäre 「よく」 (yoku)."
+                },
+                {
+                  "option_text": "mit allen zusammen",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「みんなで」 (minna de)."
+                },
+                {
+                  "option_text": "langsam, gemächlich",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「ゆっくりと」 (yukkuri to)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie fragst du höflich nach dem Alter einer älteren Person?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「おいくつですか」 (oikutsu desu ka) ist die höfliche Altersfrage.",
+              "options": [
+                {
+                  "option_text": "おいくつですか。 (Oikutsu desu ka.)",
+                  "is_correct": true,
+                  "feedback": "Richtig — höflicher als 「何さいですか」 (nansai desu ka)."
+                },
+                {
+                  "option_text": "いくらですか。 (Ikura desu ka.)",
+                  "is_correct": false,
+                  "feedback": "Damit fragst du nach dem Preis."
+                },
+                {
+                  "option_text": "何時ですか。 (Nanji desu ka.)",
+                  "is_correct": false,
+                  "feedback": "Damit fragst du nach der Uhrzeit."
+                },
+                {
+                  "option_text": "どこですか。 (Doko desu ka.)",
+                  "is_correct": false,
+                  "feedback": "Damit fragst du nach dem Ort."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Zusammenfassung",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Das hast du gelernt\n\nDu kannst jetzt die **ganze Familie** vorstellen — von den Grosseltern bis zu Onkel und Tante.\n\n- **Neu**: 「おじいさん」 (ojiisan), 「おばあさん」 (obaasan), 「おじさん」 (ojisan), 「おばさん」 (obasan), 「はたち」 (hatachi), 「おおぜい」 (oozei), 「かた」 (kata)\n- **Eigene vs. fremde Familie**: 「ちち」 (chichi) ↔ 「おとうさん」 (otousan), 「はは」 (haha) ↔ 「おかあさん」 (okaasan)\n- **Alter**: 「～さいです」 (~sai desu), höflich 「おいくつですか」 (oikutsu desu ka)\n\n> Tipp: Nimm ein Familienfoto und beschreibe jede Person in einem Satz: 「これは おじいさんです。九十さいです。」 (Kore wa ojiisan desu. Kyuujussai desu.)\n\nIn der nächsten Lektion geht es wieder hinaus — zu neuen **Orten in der Stadt**."
+          }
+        }
+      ]
+    }
+  ],
+  "thumbnail_url": "generated/thumbnail_grosseltern_und_verwandte_20260926_163028.png"
+}

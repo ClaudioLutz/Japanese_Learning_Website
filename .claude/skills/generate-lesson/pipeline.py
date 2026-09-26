@@ -981,10 +981,27 @@ def _get_or_create_kana(db, Kana, data: dict) -> int:
     return k.id
 
 
+# Felder, die bei einer bereits existierenden Vokabel aus dem Draft NACHGEFUELLT
+# werden, wenn sie in der DB leer sind (nie ueberschreiben — schuetzt manuelle
+# Edits). Hauptfall: vorab angelegte Vokabeln ohne Bild; der images-Schritt
+# erzeugt das Bild im Draft, ohne Backfill ginge es beim insert verloren.
+VOCAB_BACKFILL_FIELDS = (
+    "image_url", "romaji", "meaning_de",
+    "example_sentence_japanese", "example_sentence_english",
+)
+
+
 def _get_or_create_vocab(db, Vocabulary, data: dict) -> int:
-    """Duplicate-safe: gibt bestehende ID zurueck oder erstellt neu."""
+    """Duplicate-safe: gibt bestehende ID zurueck oder erstellt neu.
+
+    Match ueber `word`. Bei einem Treffer werden nur LEERE Felder aus
+    VOCAB_BACKFILL_FIELDS mit Draft-Werten gefuellt, nichts ueberschrieben.
+    """
     existing = db.session.query(Vocabulary).filter_by(word=data["word"]).first()
     if existing:
+        for field in VOCAB_BACKFILL_FIELDS:
+            if not getattr(existing, field, None) and data.get(field):
+                setattr(existing, field, data[field])
         return existing.id
     v = Vocabulary(
         word=data["word"],

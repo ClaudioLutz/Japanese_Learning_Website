@@ -1,0 +1,779 @@
+{
+  "title": "N5 Orte in der Stadt 2 — Gemüseladen, Polizeiposten und Botschaft",
+  "description": "Neue Orte in der Stadt: やおや, こうばん und たいしかん. Sag, wo du etwas tust, und geh einkaufen oder zur Arbeit.",
+  "jlpt_level": 5,
+  "topic": "Orte in der Stadt 2",
+  "instruction_language": "german",
+  "allow_guest_access": false,
+  "pages": [
+    {
+      "title": "Einführung",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Unterwegs in der Stadt\n\nIn der ersten Stadt-Lektion hast du Bahnhof, Bank und Park kennengelernt. Jetzt kommen Orte dazu, die du als Reisende oder Reisender wirklich brauchst.\n\n- 「こうばん」 (kouban) — der kleine **Polizeiposten** an fast jeder Ecke, wo du nach dem Weg fragen kannst\n- 「やおや」 (yaoya) — der **Gemüseladen**\n- 「たいしかん」 (taishikan) — die **Botschaft**, falls du deinen Pass verlierst\n\n> Dazu lernst du zu sagen, **wo** du etwas tust und **wozu** du irgendwohin gehst: 「かいものに 行きます」 (kaimono ni ikimasu) — Ich gehe einkaufen.",
+            "title": "Worum geht es?"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln Teil 1 — Neue Orte und Tätigkeiten",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Teil 1 — Neue Wörter\n\nDie meisten dieser Wörter schreibt man mit **Kanji**, die erst später kommen. In den Beispielsätzen stehen sie deshalb in **Hiragana**.\n\n- 「おまわりさん」 (omawarisan) ist ein freundliches Wort für den Polizisten.\n- 「たくさん」 (takusan) passt zu Dingen **und** Menschen."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "八百屋",
+            "reading": "やおや",
+            "romaji": "yaoya",
+            "meaning": "greengrocer",
+            "meaning_de": "Gemüseladen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "やおやでやさいをかいます。",
+            "example_sentence_english": "Yaoya de yasai o kaimasu. — Ich kaufe Gemüse im Gemüseladen.",
+            "image_url": "vocab_generated/vocab_79e8d090.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "交番",
+            "reading": "こうばん",
+            "romaji": "kouban",
+            "meaning": "police box",
+            "meaning_de": "Polizeiposten (Koban)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "えきのそばにこうばんがあります。",
+            "example_sentence_english": "Eki no soba ni kōban ga arimasu. — Neben dem Bahnhof gibt es einen Polizeiposten.",
+            "image_url": "vocab_generated/vocab_b6ebb145.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "おまわりさん",
+            "reading": "おまわりさん",
+            "romaji": "omawarisan",
+            "meaning": "policeman (friendly term)",
+            "meaning_de": "Polizist (freundlich)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "おまわりさんにみちを聞きました。",
+            "example_sentence_english": "Omawari-san ni michi o kikimashita. — Ich habe einen Polizisten nach dem Weg gefragt.",
+            "image_url": "vocab_generated/vocab_8da92270.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "大使館",
+            "reading": "たいしかん",
+            "romaji": "taishikan",
+            "meaning": "embassy",
+            "meaning_de": "Botschaft",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "スイスのたいしかんはどこですか。",
+            "example_sentence_english": "Suisu no taishikan wa doko desu ka. — Wo ist die Schweizer Botschaft?",
+            "image_url": "vocab_generated/vocab_7ed1e0c6.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "買い物",
+            "reading": "かいもの",
+            "romaji": "kaimono",
+            "meaning": "shopping",
+            "meaning_de": "Einkauf, Einkaufen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "にちようびにデパートでかいものをします。",
+            "example_sentence_english": "Nichiyōbi ni depāto de kaimono o shimasu. — Am Sonntag gehe ich im Warenhaus einkaufen.",
+            "image_url": "vocab_generated/vocab_1b197548.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "仕事",
+            "reading": "しごと",
+            "romaji": "shigoto",
+            "meaning": "work, job",
+            "meaning_de": "Arbeit, Beruf",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "しごとは何時におわりますか。",
+            "example_sentence_english": "Shigoto wa nanji ni owarimasu ka. — Um wie viel Uhr endet die Arbeit?",
+            "image_url": "vocab_generated/vocab_cfc767a6.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "家庭",
+            "reading": "かてい",
+            "romaji": "katei",
+            "meaning": "home, household",
+            "meaning_de": "Haushalt, Familie, Zuhause",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "日本のかていでは、ごはんをよく食べます。",
+            "example_sentence_english": "Nihon no katei de wa, gohan o yoku tabemasu. — In japanischen Haushalten isst man oft Reis.",
+            "image_url": "vocab_generated/vocab_622b43dc.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "初めて",
+            "reading": "はじめて",
+            "romaji": "hajimete",
+            "meaning": "for the first time",
+            "meaning_de": "zum ersten Mal",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "はじめて日本へ行きました。",
+            "example_sentence_english": "Hajimete Nihon e ikimashita. — Ich bin zum ersten Mal nach Japan gereist.",
+            "image_url": "vocab_generated/vocab_6bb158b4.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "沢山",
+            "reading": "たくさん",
+            "romaji": "takusan",
+            "meaning": "many, much",
+            "meaning_de": "viel, viele",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "こうえんに人がたくさんいます。",
+            "example_sentence_english": "Kōen ni hito ga takusan imasu. — Im Park sind viele Leute.",
+            "image_url": "vocab_generated/vocab_aca24134.png"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Wiederholung — Orte, die du schon kennst",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Teil 2 — Wiederholung\n\nDiese Orte kennst du aus früheren Lektionen. Wiederhole sie, denn im Dialog und in der Übung brauchst du sie zusammen mit den neuen Wörtern.\n\n- **Einkaufen und Pause**: 「みせ」 (mise), 「きっさてん」 (kissaten)\n- **Erledigungen**: 「ゆうびんきょく」 (yuubinkyoku), 「ぎんこう」 (ginkou), 「びょういん」 (byouin)\n- **Lage**: 「ちかく」 (chikaku, in der Nähe), 「となり」 (tonari, daneben)"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "店",
+            "reading": "みせ",
+            "romaji": "mise",
+            "meaning": "shop, store",
+            "meaning_de": "Geschäft, Laden",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あの みせで パンを かいました。",
+            "example_sentence_english": "Ano mise de pan o kaimashita. — In diesem Laden habe ich Brot gekauft.",
+            "image_url": "vocab_generated/vocab_e852c9a4.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "郵便局",
+            "reading": "ゆうびんきょく",
+            "romaji": "yuubinkyoku",
+            "meaning": "post office",
+            "meaning_de": "Post, Postamt",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ゆうびんきょくで きってを かいます。",
+            "example_sentence_english": "Yūbinkyoku de kitte o kaimasu. — In der Post kaufe ich Briefmarken.",
+            "image_url": "vocab_generated/vocab_93577ce8.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "銀行",
+            "reading": "ぎんこう",
+            "romaji": "ginkou",
+            "meaning": "bank",
+            "meaning_de": "Bank",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ぎんこうへ お金を 出しに 行きます。",
+            "example_sentence_english": "Ginkō e okane o dashi ni ikimasu. — Ich gehe zur Bank, um Geld abzuheben.",
+            "image_url": "vocab_generated/vocab_bdf53fdf.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "病院",
+            "reading": "びょういん",
+            "romaji": "byouin",
+            "meaning": "hospital",
+            "meaning_de": "Krankenhaus",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "びょういんへ 行きます。",
+            "example_sentence_english": "Byōin e ikimasu. — Ich gehe ins Krankenhaus.",
+            "image_url": "vocab_generated/vocab_b5d2826d.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "喫茶店",
+            "reading": "きっさてん",
+            "romaji": "kissaten",
+            "meaning": "café",
+            "meaning_de": "Café",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "きっさてんで コーヒーを のみました。",
+            "example_sentence_english": "Kissaten de kōhī o nomimashita. — Im Café habe ich Kaffee getrunken.",
+            "image_url": "vocab_generated/vocab_e37a72f8.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "近く",
+            "reading": "ちかく",
+            "romaji": "chikaku",
+            "meaning": "nearby, vicinity",
+            "meaning_de": "Nähe, in der Nähe",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "いえの ちかくに かわが あります。",
+            "example_sentence_english": "Ie no chikaku ni kawa ga arimasu. — In der Nähe des Hauses ist ein Fluss.",
+            "image_url": "vocab_generated/vocab_79938747.png"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "隣",
+            "reading": "となり",
+            "romaji": "tonari",
+            "meaning": "next to, beside",
+            "meaning_de": "daneben, nebenan",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "だいどころは へやの となりに あります。",
+            "example_sentence_english": "Daidokoro wa heya no tonari ni arimasu. — Die Küche ist neben dem Zimmer.",
+            "image_url": "vocab_generated/vocab_ad27e79c.png"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Grammatik — Wo und wozu?",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Orte im Satz\n\nDrei Muster helfen dir in der Stadt: **wo** du etwas tust, **wozu** du irgendwohin gehst und **wo** etwas liegt.\n\n- 「やおやで やさいを かいます。」 (Yaoya de yasai wo kaimasu.) — Im Gemüseladen kaufe ich Gemüse.\n- 「かいものに 行きます。」 (Kaimono ni ikimasu.) — Ich gehe einkaufen.\n- 「こうばんは えきの となりに あります。」 (Kouban wa eki no tonari ni arimasu.) — Der Polizeiposten ist neben dem Bahnhof."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "[Ort] で [Handlung] — Wo machst du etwas? (de)",
+            "explanation": "Die Partikel 「で」 (de) markiert den Ort, an dem eine Handlung passiert: kaufen, essen, arbeiten. Für den Ort, an dem etwas einfach IST, nimmst du dagegen 「に」 (ni) mit 「あります」 (arimasu) oder 「います」 (imasu).",
+            "structure": "[Ort] で [Objekt] を [Verb]ます ([place] de [object] wo [verb]-masu)",
+            "romaji": "[place] de [object] wo [verb]-masu",
+            "jlpt_level": 5,
+            "example_sentences": "やおやで やさいを かいます。 (Yaoya de yasai wo kaimasu.) — Im Gemüseladen kaufe ich Gemüse.\nきっさてんで コーヒーを のみます。 (Kissaten de koohii wo nomimasu.) — Im Café trinke ich Kaffee.\nぎんこうで しごとを します。 (Ginkou de shigoto wo shimasu.) — Ich arbeite in einer Bank.",
+            "tts_example_jp": "やおやで やさいを かいます。"
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "[Nomen] に 行きます — hingehen, um etwas zu tun (ni ikimasu)",
+            "explanation": "Nach Tätigkeits-Nomen wie 「かいもの」 (kaimono, Einkauf) oder 「しごと」 (shigoto, Arbeit) steht 「に」 (ni) + 「行きます」 (ikimasu): 'Ich gehe zum Einkaufen / zur Arbeit.' Den Zielort kannst du mit 「へ」 (e) davorstellen.",
+            "structure": "([Ort] へ) [Tätigkeit] に 行きます (([place] e) [activity] ni ikimasu)",
+            "romaji": "([place] e) [activity] ni ikimasu",
+            "jlpt_level": 5,
+            "example_sentences": "デパートへ かいものに 行きます。 (Depaato e kaimono ni ikimasu.) — Ich gehe ins Kaufhaus einkaufen.\n父は 毎日 しごとに 行きます。 (Chichi wa mainichi shigoto ni ikimasu.) — Mein Vater geht jeden Tag zur Arbeit.\n日本で はじめて かいものに 行きました。 (Nihon de hajimete kaimono ni ikimashita.) — In Japan bin ich zum ersten Mal einkaufen gegangen.",
+            "tts_example_jp": "デパートへ かいものに 行きます。"
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "[Ort] は [Ort] の となり・ちかく に あります — Wo liegt etwas? (tonari / chikaku ni arimasu)",
+            "explanation": "So beschreibst du die Lage: Ort + 「の」 (no) + Positionswort + 「に あります」 (ni arimasu). 「となり」 (tonari) heisst 'direkt daneben', 「ちかく」 (chikaku) 'in der Nähe', 「前」 (mae) 'vor'. Gefragt wird mit 「～は どこですか」 (~wa doko desu ka).",
+            "structure": "[A] は [B] の となり に あります ([A] wa [B] no tonari ni arimasu)",
+            "romaji": "[A] wa [B] no tonari / chikaku / mae ni arimasu",
+            "jlpt_level": 5,
+            "example_sentences": "こうばんは えきの となりに あります。 (Kouban wa eki no tonari ni arimasu.) — Der Polizeiposten ist neben dem Bahnhof.\nやおやは ゆうびんきょくの 前に あります。 (Yaoya wa yuubinkyoku no mae ni arimasu.) — Der Gemüseladen ist vor der Post.\nたいしかんは どこですか。 (Taishikan wa doko desu ka.) — Wo ist die Botschaft?",
+            "tts_example_jp": "こうばんは えきの となりに あります。"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Dialog — Am Polizeiposten",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "Emma: すみません、おまわりさん。スイスの たいしかんは どこですか。\n  (Sumimasen, omawarisan. Suisu no taishikan wa doko desu ka.)\n  -> Entschuldigung. Wo ist die Schweizer Botschaft?\n\nPolizist: たいしかんですか。この みちを まっすぐ 行って ください。\n  (Taishikan desu ka. Kono michi wo massugu itte kudasai.)\n  -> Die Botschaft? Gehen Sie bitte diese Strasse geradeaus.\n\nEmma: とおいですか。\n  (Tooi desu ka.)\n  -> Ist es weit?\n\nPolizist: いいえ、ちかいです。ぎんこうの となりに あります。\n  (Iie, chikai desu. Ginkou no tonari ni arimasu.)\n  -> Nein, es ist nah. Sie ist neben der Bank.\n\nEmma: ありがとうございます。日本は はじめてです。\n  (Arigatou gozaimasu. Nihon wa hajimete desu.)\n  -> Vielen Dank. Ich bin zum ersten Mal in Japan.\n\nPolizist: そうですか。この ちかくには みせが たくさん ありますよ。\n  (Sou desu ka. Kono chikaku ni wa mise ga takusan arimasu yo.)\n  -> Ach so. Hier in der Nähe gibt es viele Geschäfte.\n\nEmma: やおやも ありますか。くだものを かいたいです。\n  (Yaoya mo arimasu ka. Kudamono wo kaitai desu.)\n  -> Gibt es auch einen Gemüseladen? Ich möchte Obst kaufen.\n\nPolizist: はい。ゆうびんきょくの 前に あります。\n  (Hai. Yuubinkyoku no mae ni arimasu.)\n  -> Ja. Er ist vor der Post.\n\nEmma: じゃあ、たいしかんの 後で かいものに 行きます。\n  (Jaa, taishikan no ato de kaimono ni ikimasu.)\n  -> Dann gehe ich nach der Botschaft einkaufen.\n\nPolizist: 気を つけて ください。\n  (Ki wo tsukete kudasai.)\n  -> Passen Sie gut auf sich auf.",
+            "title": "Am Polizeiposten — Emma sucht die Botschaft"
+          }
+        },
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "### Verständnisfragen\n\nVier Fragen zum **Dialog** am Polizeiposten. **Wo** liegt was?"
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wo ist die Schweizer Botschaft?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Der Polizist sagt 「ぎんこうの となりに あります」 (ginkou no tonari ni arimasu).",
+              "options": [
+                {
+                  "option_text": "vor der Post",
+                  "is_correct": false,
+                  "feedback": "Vor der Post ist der Gemüseladen."
+                },
+                {
+                  "option_text": "neben der Bank",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「ぎんこうの となりに あります」 (ginkou no tonari ni arimasu)."
+                },
+                {
+                  "option_text": "neben dem Bahnhof",
+                  "is_correct": false,
+                  "feedback": "Der Bahnhof kommt im Dialog nicht vor."
+                },
+                {
+                  "option_text": "hinter dem Krankenhaus",
+                  "is_correct": false,
+                  "feedback": "Das Krankenhaus wird nicht erwähnt."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Die Botschaft ist weit weg.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Der Polizist sagt 「いいえ、ちかいです」 (iie, chikai desu) — sie ist nah.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nein — 「ちかいです」 (chikai desu) heisst 'es ist nah'."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt — sie ist nah (ちかい, chikai)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wo ist der Gemüseladen?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「前」 (mae) heisst 'vor'.",
+              "options": [
+                {
+                  "option_text": "neben der Bank",
+                  "is_correct": false,
+                  "feedback": "Neben der Bank ist die Botschaft."
+                },
+                {
+                  "option_text": "vor der Post",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「ゆうびんきょくの 前に あります」 (yuubinkyoku no mae ni arimasu)."
+                },
+                {
+                  "option_text": "im Kaufhaus",
+                  "is_correct": false,
+                  "feedback": "Ein Kaufhaus wird nicht erwähnt."
+                },
+                {
+                  "option_text": "neben dem Café",
+                  "is_correct": false,
+                  "feedback": "Ein Café kommt nicht vor."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Emma ist zum ersten Mal in Japan.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Emma sagt 「日本は はじめてです」 (Nihon wa hajimete desu).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「はじめて」 (hajimete) = zum ersten Mal."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — sie sagt 「はじめてです」 (hajimete desu)."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Übung",
+      "page_type": "quiz_carousel",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Übung\n\nZwölf Fragen zu **Orten** in der Stadt und zu den Mustern **「で」 (de)** und **「に 行きます」 (ni ikimasu)**.\n\n- Lies jede Frage genau.\n- Die Lesung steht jeweils in Klammern."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was ist ein 「交番」 (こうばん, kouban)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「こうばん」 (kouban) ist der Polizeiposten — dort fragst du auch nach dem Weg.",
+              "options": [
+                {
+                  "option_text": "eine Botschaft",
+                  "is_correct": false,
+                  "feedback": "Botschaft ist 「たいしかん」 (taishikan)."
+                },
+                {
+                  "option_text": "ein Gemüseladen",
+                  "is_correct": false,
+                  "feedback": "Gemüseladen ist 「やおや」 (yaoya)."
+                },
+                {
+                  "option_text": "ein kleiner Polizeiposten",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "ein Postamt",
+                  "is_correct": false,
+                  "feedback": "Postamt ist 「ゆうびんきょく」 (yuubinkyoku)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wo kaufst du Gemüse?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「やおや」 (yaoya) ist der Gemüseladen.",
+              "options": [
+                {
+                  "option_text": "大使館 (たいしかん, taishikan)",
+                  "is_correct": false,
+                  "feedback": "Das ist die Botschaft."
+                },
+                {
+                  "option_text": "八百屋 (やおや, yaoya)",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "銀行 (ぎんこう, ginkou)",
+                  "is_correct": false,
+                  "feedback": "Das ist die Bank."
+                },
+                {
+                  "option_text": "病院 (びょういん, byouin)",
+                  "is_correct": false,
+                  "feedback": "Das ist das Krankenhaus."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「大使館」 (たいしかん, taishikan) ist eine Bibliothek.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「たいしかん」 (taishikan) ist die Botschaft. Bibliothek heisst 「としょかん」 (toshokan).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nein — 「たいしかん」 (taishikan) = Botschaft."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt — es ist die Botschaft."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde den Ort mit seiner Bedeutung.",
+              "difficulty_level": 2,
+              "points": 2,
+              "options": [
+                {
+                  "option_text": "店 (みせ, mise)",
+                  "feedback": "Geschäft, Laden",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "郵便局 (ゆうびんきょく, yuubinkyoku)",
+                  "feedback": "Post",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "銀行 (ぎんこう, ginkou)",
+                  "feedback": "Bank",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "病院 (びょういん, byouin)",
+                  "feedback": "Krankenhaus",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「かいものに 行きます。」 (Kaimono ni ikimasu.)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「かいもの」 (kaimono, Einkauf) + 「に 行きます」 (ni ikimasu) = einkaufen gehen.",
+              "options": [
+                {
+                  "option_text": "Ich gehe einkaufen.",
+                  "is_correct": true,
+                  "feedback": "Richtig — Tätigkeit + 「に 行きます」 (ni ikimasu)."
+                },
+                {
+                  "option_text": "Ich gehe zur Arbeit.",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「しごとに 行きます」 (shigoto ni ikimasu)."
+                },
+                {
+                  "option_text": "Ich kaufe im Laden ein.",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「みせで かいます」 (mise de kaimasu)."
+                },
+                {
+                  "option_text": "Ich gehe nach Hause.",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「うちへ かえります」 (uchi e kaerimasu)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "'Im Café trinke ich Kaffee.' — welche Partikel steht nach 「きっさてん」 (kissaten)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Wo etwas GETAN wird: 「で」 (de). 「きっさてんで コーヒーを のみます」 (kissaten de koohii wo nomimasu).",
+              "options": [
+                {
+                  "option_text": "に (ni)",
+                  "is_correct": false,
+                  "feedback": "「に」 (ni) passt zu 「あります」 (arimasu), nicht zu einer Handlung."
+                },
+                {
+                  "option_text": "を (wo)",
+                  "is_correct": false,
+                  "feedback": "「を」 (wo) markiert das Objekt, hier 「コーヒー」 (koohii)."
+                },
+                {
+                  "option_text": "が (ga)",
+                  "is_correct": false,
+                  "feedback": "「が」 (ga) passt hier nicht."
+                },
+                {
+                  "option_text": "で (de)",
+                  "is_correct": true,
+                  "feedback": "Richtig — Ort der Handlung."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「おまわりさん」 (omawarisan) ist ein freundliches Wort für einen Polizisten.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Ja — Kinder und Erwachsene sagen 「おまわりさん」 (omawarisan).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — 「おまわりさん」 (omawarisan) = Polizist (freundlich)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "「ぎんこうの となりに あります。」 (Ginkou no tonari ni arimasu.) — wo ist es?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「となり」 (tonari) heisst 'direkt daneben'.",
+              "options": [
+                {
+                  "option_text": "vor der Bank",
+                  "is_correct": false,
+                  "feedback": "Vor der Bank wäre 「ぎんこうの 前」 (ginkou no mae)."
+                },
+                {
+                  "option_text": "direkt neben der Bank",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「となり」 (tonari) = daneben."
+                },
+                {
+                  "option_text": "weit von der Bank",
+                  "is_correct": false,
+                  "feedback": "Weit wäre 「とおい」 (tooi)."
+                },
+                {
+                  "option_text": "in der Bank",
+                  "is_correct": false,
+                  "feedback": "In der Bank wäre 「ぎんこうの 中」 (ginkou no naka)."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde das Wort mit seiner Bedeutung.",
+              "difficulty_level": 2,
+              "points": 2,
+              "options": [
+                {
+                  "option_text": "初めて (はじめて, hajimete)",
+                  "feedback": "zum ersten Mal",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "沢山 (たくさん, takusan)",
+                  "feedback": "viel, viele",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "仕事 (しごと, shigoto)",
+                  "feedback": "Arbeit",
+                  "is_correct": true
+                },
+                {
+                  "option_text": "家庭 (かてい, katei)",
+                  "feedback": "Haushalt, Zuhause",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was machst du normalerweise in einem 「喫茶店」 (きっさてん, kissaten)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「きっさてんで コーヒーを のみます」 (kissaten de koohii wo nomimasu).",
+              "options": [
+                {
+                  "option_text": "Briefmarken kaufen",
+                  "is_correct": false,
+                  "feedback": "Briefmarken kaufst du in der 「ゆうびんきょく」 (yuubinkyoku)."
+                },
+                {
+                  "option_text": "Geld abheben",
+                  "is_correct": false,
+                  "feedback": "Geld gibt es in der 「ぎんこう」 (ginkou)."
+                },
+                {
+                  "option_text": "nach dem Weg fragen",
+                  "is_correct": false,
+                  "feedback": "Nach dem Weg fragst du im 「こうばん」 (kouban)."
+                },
+                {
+                  "option_text": "Kaffee trinken",
+                  "is_correct": true,
+                  "feedback": "Richtig — ein 「きっさてん」 (kissaten) ist ein Café."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「しごとに 行きます。」 (Shigoto ni ikimasu.)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「しごと」 (shigoto, Arbeit) + 「に 行きます」 (ni ikimasu).",
+              "options": [
+                {
+                  "option_text": "Ich gehe einkaufen.",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「かいものに 行きます」 (kaimono ni ikimasu)."
+                },
+                {
+                  "option_text": "Ich arbeite zu Hause.",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「うちで しごとを します」 (uchi de shigoto wo shimasu)."
+                },
+                {
+                  "option_text": "Ich gehe zum ersten Mal.",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「はじめて 行きます」 (hajimete ikimasu)."
+                },
+                {
+                  "option_text": "Ich gehe zur Arbeit.",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「近く」 (ちかく, chikaku) bedeutet 'weit weg'.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「ちかく」 (chikaku) heisst 'in der Nähe'. 'Weit' ist 「とおい」 (tooi).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nein — 「ちかく」 (chikaku) heisst 'in der Nähe'."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Korrekt — 「ちかく」 (chikaku) = in der Nähe."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Zusammenfassung",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Das hast du gelernt\n\nDu findest dich jetzt in einer japanischen Stadt besser zurecht.\n\n- **Neue Orte**: 「やおや」 (yaoya), 「こうばん」 (kouban), 「たいしかん」 (taishikan) und die freundliche 「おまわりさん」 (omawarisan)\n- **Wo?** 「[Ort]で [Handlung]」 (de) — 「やおやで やさいを かいます」 (yaoya de yasai wo kaimasu)\n- **Wozu?** 「かいものに 行きます」 (kaimono ni ikimasu), 「しごとに 行きます」 (shigoto ni ikimasu)\n\n> Tipp: Hast du dich verlaufen, geh zum nächsten 「こうばん」 (kouban) und frag: 「すみません、～は どこですか。」 (Sumimasen, ~wa doko desu ka.)\n\nAls Nächstes lohnt sich die Lektion **Wegbeschreibung** — dort übst du 'rechts, links, geradeaus' im Detail."
+          }
+        }
+      ]
+    }
+  ],
+  "thumbnail_url": "generated/thumbnail_orte_in_der_stadt_2_20260926_163052.png"
+}

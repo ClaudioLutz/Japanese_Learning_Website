@@ -103,6 +103,7 @@ SPEAKER_GENDER = {
     "Aya": "female",       # Freizeit/Medien-Lektion
     "Saki": "female",      # Verben-Lektion
     "Markus": "male",      # Verben-Lektion
+    "Polizist": "male",    # Orte in der Stadt 2 (Batch 2026-09-26): Polizist am Koban
     # Katakana-Schreibweisen (von Claude in Dialogen genutzt)
     "リサ": "female",       # Lisa
     "ハルト": "male",       # Haruto
