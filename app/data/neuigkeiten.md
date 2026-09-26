@@ -15,6 +15,10 @@ Format je Eintrag:
 Keine Commit-Hashes, keine internen Namen.
 -->
 
+## 2026-09-26 | Drei neue Lektionen: Fragewörter, Grosseltern und Orte in der Stadt
+In „Fragewörter und Satzverbinder" fragst du mit どう, どうして und どんな nach und verbindest Sätze mit それから, でも und そして. „Grosseltern und Verwandte" bringt おじいさん, おばあさん, Onkel und Tante dazu, und in „Orte in der Stadt 2" findest du Gemüseladen, Polizeiposten und Botschaft.
+Link: /lessons
+
 ## 2026-09-26 | Zwei neue Lektionen: Adjektive 3 und Verben 3
 In „Adjektive 3" lernst du 15 weitere Alltags-Adjektive wie heiss, dick, laut und schnell, dazu die Vergangenheit der い-Adjektive und „etwas haben wollen". In „Verben 3" kommen 20 Verben für unterwegs und zu Hause dazu — einsteigen, aussteigen, ankommen, wohnen, anrufen und mehr.
 Link: /lessons

@@ -81,6 +81,24 @@ Destillat der am häufigsten wiederkehrenden Erkenntnisse. Details + Historie in
 5. **Admin-Besuche erzeugen user_lesson_progress** → nach der Sichtprüfung für die neuen Lektionen löschen.
 6. Nicht-guest-Lektionen antworten live mit 302 → /login (wie 211) — Live-Check daher: /lessons-Übersicht listet Titel + Asset-URLs 200.
 
+## 2026-09-26 — 3 N5-Lektionen auf vorhandenen Vokabeln (Prod 214–216, direkt auf hp-ubuntu)
+
+### Erstellte Lektionen
+- **214** Fragewörter und Satzverbinder → `n5-erste-saetze` (25 Vokabeln, 4 Grammatik, 16 Quiz)
+- **215** Grosseltern und Verwandte → `n5-familie-personen` (9 neu + 8 bewusste Wiederholung, 3 Grammatik, 16 Quiz)
+- **216** Orte in der Stadt 2 → `n5-reise-ort` (9 neu + 7 Wiederholung, 3 Grammatik, 16 Quiz)
+
+### Erkenntnisse (Regeln)
+1. **Vokabeln existierten schon (vorab angelegt, ohne Bild).** Insert deduppt über `word` und übernahm früher NICHTS aus dem Draft → die im `images`-Schritt erzeugten Bilder wären verloren gegangen. **Fix:** `_get_or_create_vocab` füllt jetzt leere Felder (`VOCAB_BACKFILL_FIELDS`) nach, überschreibt nie. **Regel: Draft-Vokabeldaten 1:1 aus der DB ziehen (exaktes `word`), sonst entsteht eine zweite Zeile.**
+2. **Vorab angelegte Beispielsätze hatten Nicht-N5-Kanji** (余/沢/初/買/屋/叔 …) → vor dem Draft in der DB kana-isieren (Backup vorher), `word` bleibt Kanji.
+3. **Vokabel-Budget max. 25**: 29 vorgegebene IDs passten nicht in L1 → 4 thematisch passend auf L2/L3 verteilt (みんな/ゆっくりと, 初めて/沢山).
+4. **Pipeline auf dem Server schreibt `generated-lessons.jsonl` in den Auto-Deploy-Checkout** → Zeilen in den Worktree übernehmen, Server-Datei per `git checkout --` zurücksetzen, sonst blockiert ein späteres `pull --ff-only`.
+5. **Nano Banana schreibt trotz 'no text' gelegentlich Text** (Thumbnail „Grosseletern", Vokabelbilder mit Beschriftung) → Kontaktbogen aller Bilder sichten, betroffene mit objektbezogenem Prompt am selben Pfad neu erzeugen.
+6. **`ssh -n` + Heredoc** schickt nichts an psql (stdin geschlossen, kein Fehler) → für Heredoc-SQL nie `-n`.
+7. **Kein manuelles `git pull` im Server-Checkout** — der Auto-Deploy (jpl-autodeploy) erkennt sonst keine Änderung und baut nicht neu. Nach dem Push ~2 Min warten, dann `git rev-parse --short HEAD` + `journalctl -u jpl-autodeploy` prüfen. Drafts per scp nach /tmp.
+8. **`dialog_slideshow` bricht bei einem Nano-Banana-NO_IMAGE ab** (kein LessonContent angelegt) → Schritt einfach erneut starten, er ist idempotent.
+9. **Live-Sichtprüfung nicht-Gast-Lektionen:** Session-Cookie IM Container erzeugen (`docker exec japanese_app`, `session_interface.get_signing_serializer`) — der Host-`.env`-SECRET_KEY signiert nicht gültig.
+
 ## 2026-06-18 — 5 N5-Vokabel-Lektionen (Schule/Haushalt/Tiere/Freizeit/Verben) — Prod 207–211 LIVE
 
 ### Erstellte Lektionen (alle live auf japanese-learning.ch, end-to-end verifiziert)
