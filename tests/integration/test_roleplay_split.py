@@ -322,6 +322,17 @@ class TestStream:
         assert result["session"]["turn_count"] == 1
         assert log.calls[-1]["fast"] is True
 
+    def test_stream_survives_session_teardown(self, auth_client, dialog, log, app, db):
+        """Regression (live 2026-09-27): nach der View raeumt Flask-SQLAlchemy die Session ab —
+        der Stream darf keine ORM-Objekte aus der View weiterverwenden."""
+        client, _ = auth_client
+        sid = _start(client, dialog, app, log)["session"]["id"]
+        resp = client.post(f"/api/roleplay/{sid}/turn/stream", json={"text": "ケーキは ありますか。"})
+        db.session.remove()          # wie der Teardown nach dem View-Return in Produktion
+        events = sse_events(resp)
+        assert events[-1][0] == "result", events[-1]
+        assert events[-1][1]["session"]["turn_count"] == 1
+
     def test_stream_error_event_turn_not_booked(self, auth_client, dialog, log, app):
         client, _ = auth_client
         sid = _start(client, dialog, app, log)["session"]["id"]

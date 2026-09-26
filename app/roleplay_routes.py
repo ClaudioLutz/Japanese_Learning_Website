@@ -94,11 +94,16 @@ def _sse(event: str, data: dict) -> str:
     return f'event: {event}\ndata: {json.dumps(data, ensure_ascii=False)}\n\n'
 
 
-def _stream_response(events, finish):
-    """SSE-Antwort: `line`-Ereignisse fuer die Textstuecke des Generators `events`,
-    am Ende `result` = finish(Rueckgabewert) oder `error` {error, message, status}."""
+def _stream_response(make_events, finish):
+    """SSE-Antwort: `line`-Ereignisse fuer die Textstuecke des Generators aus
+    make_events(), am Ende `result` = finish(Rueckgabewert) oder `error`.
+
+    make_events wird erst IM Stream aufgerufen: Nach dem Ende der View raeumt
+    Flask-SQLAlchemy die DB-Session ab (Objekte aus der View sind dann detached) —
+    ORM-Objekte also im Generator neu laden."""
     def generate():
         try:
+            events = make_events()
             while True:
                 try:
                     piece = next(events)
@@ -178,17 +183,17 @@ def turn(session_id):
         bot_turn, info = svc.user_turn(session, text)
     except svc.RoleplayError as exc:
         return _from_exc(exc)
-    return jsonify(_turn_payload(session, bot_turn, info))
+    return jsonify(_turn_payload(session, bot_turn, info, current_user.id))
 
 
-def _turn_payload(session, bot_turn, info) -> dict:
+def _turn_payload(session, bot_turn, info, user_id: int) -> dict:
     return {
         'session': svc.serialize_session(session),
         'bot_turn': svc.serialize_bot_turn(bot_turn),
         'done': info['done'],
         'correction': info['correction'],
         'xp_awarded': info['xp_awarded'],
-        'limits': svc.limits_status(current_user.id),
+        'limits': svc.limits_status(user_id),
     }
 
 
@@ -207,9 +212,16 @@ def turn_stream(session_id):
         text = svc.check_turn(session, text)
     except svc.RoleplayError as exc:
         return _from_exc(exc)
+    user_id = current_user.id
+    holder: dict = {}
+
+    def make_events():
+        holder['session'] = db.session.get(RoleplaySession, session_id)
+        return svc.user_turn_events(holder['session'], text, stream=True)
+
     return _stream_response(
-        svc.user_turn_events(session, text, stream=True),
-        lambda ret: _turn_payload(session, ret[0], ret[1]),
+        make_events,
+        lambda ret: _turn_payload(holder['session'], ret[0], ret[1], user_id),
     )
 
 
@@ -343,8 +355,9 @@ def demo_turn_stream():
         _state, text = demo.check_demo_turn(body.get('token'), body.get('text'))
     except svc.RoleplayError as exc:
         return _from_exc(exc)
+    token, ip = body.get('token'), _client_ip()
     return _stream_response(
-        demo.demo_turn_events(body.get('token'), text, _client_ip(), stream=True),
+        lambda: demo.demo_turn_events(token, text, ip, stream=True),
         lambda ret: ret,
     )
 
