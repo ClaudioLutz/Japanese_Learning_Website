@@ -110,8 +110,10 @@ class TestWelcomeBackApi:
         keys = [f['key'] for f in client.get('/api/welcome-back').get_json()['undiscovered']]
         assert 'kana' not in keys
 
-    def test_no_show_when_nothing_to_offer(self, auth_client):
-        """Alles entdeckt + nichts faellig => kein Dialog, auch beim Rueckkehrer."""
+    def test_no_show_when_nothing_to_offer(self, auth_client, monkeypatch):
+        """Alles entdeckt + nichts faellig + nichts Neues => kein Dialog, auch beim Rueckkehrer."""
+        from app import news_service
+        monkeypatch.setattr(news_service, 'load_news', lambda path=None: [])
         client, user = auth_client
         user.last_activity_date = date.today() - timedelta(days=5)
         lc = _vocab_content()

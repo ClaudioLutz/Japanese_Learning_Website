@@ -335,6 +335,7 @@ Solange es **keine echten Nutzer** gibt, ist Tempo das Ziel. Diese Regel gilt ve
 ## Arbeitsweise — Sauberer Git-Status
 - **Jede Änderung sofort committen und pushen** — nach jeder abgeschlossenen Teilaufgabe wird ein Git-Commit erstellt und auf den Remote gepusht. Das verbessert die Nachvollziehbarkeit und schützt vor Datenverlust.
 - **Keine losen Dateien** — am Ende jeder Session muss `git status` sauber sein. Jede Datei muss entweder committed+gepusht, in `.gitignore` eingetragen, oder gelöscht werden falls nicht mehr gebraucht.
+- **Neuigkeiten pflegen** — nach nutzersichtbaren Änderungen im selben Commit einen Eintrag in `app/data/neuigkeiten.md` ergänzen (Datum, Titel, 1–3 Sätze in Lernenden-Sprache, optional `Link:`). Speist die Seite `/neu` und die Zeile „Seit deinem letzten Besuch neu" im Willkommen-Dialog.
 - Commit-Messages auf Deutsch, aussagekräftig.
 
 ## Parallel-Arbeit mit mehreren Sessions (Worktrees + Agent Teams)

@@ -307,6 +307,10 @@
                    {% if request.blueprint == 'issues' %}aria-current="page"{% endif %}>
                   <i class="fas fa-flag" aria-hidden="true"></i> Hinweise &amp; Korrekturen
                 </a>
+                <a href="{{ url_for('news.index') }}" class="topnav-dd-item{% if request.blueprint == 'news' %} is-active{% endif %}"
+                   {% if request.blueprint == 'news' %}aria-current="page"{% endif %}>
+                  <i class="fas fa-bullhorn" aria-hidden="true"></i> Neuigkeiten
+                </a>
                 {# 10.3: Bundle-Link im Konto-Dropdown entfernt — Dublette des
                    Top-Nav-Hinweises (eine gegatete Bundle-Stelle pro Flaeche). #}
                 {% if current_user.is_admin %}
@@ -978,6 +982,7 @@
             <nav class="footer-nav d-flex flex-wrap justify-content-center gap-3 mb-2" aria-label="Rechtliches und Infos">
                 <a href="{{ url_for('routes.ueber') }}">Über uns</a>
                 <a href="{{ url_for('routes.lernmethode') }}">Lernmethode (SRS)</a>
+                <a href="{{ url_for('news.index') }}">Neuigkeiten</a>
                 <a href="{{ url_for('routes.jlpt_n5_schweiz') }}">JLPT N5 Schweiz</a>
                 <a href="{{ url_for('legal.impressum') }}">Impressum</a>
                 <a href="{{ url_for('legal.datenschutz') }}">Datenschutz</a>

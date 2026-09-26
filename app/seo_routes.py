@@ -115,6 +115,7 @@ def sitemap_xml():
         *([('/courses', 'weekly', '0.7')] if has_published_course else []),
         ('/ueber', 'monthly', '0.6'),
         ('/lernmethode', 'monthly', '0.6'),
+        ('/neu', 'weekly', '0.5'),
         ('/legal/impressum', 'yearly', '0.2'),
         ('/legal/datenschutz', 'yearly', '0.2'),
         ('/legal/agb', 'yearly', '0.2'),

@@ -11,8 +11,12 @@ logger = logging.getLogger(__name__)
 
 def _login_and_stamp(user):
     """Nutzer einloggen und last_login festhalten (wie im lokalen Login-Pfad)."""
+    prev_login = user.last_login
     login_user(user, remember=True)
     try:
+        # Vorletzten Login fuer „Seit deinem letzten Besuch neu" merken.
+        from app.news_service import remember_prev_login
+        remember_prev_login(prev_login)
         user.last_login = datetime.utcnow()
         db.session.commit()
     except Exception as e:  # pragma: no cover - Zeitstempel darf den Login nie kippen

@@ -1200,7 +1200,14 @@ def welcome_back(user):
         returning = prev is not None and prev < ch_today().isoformat()
     else:
         returning = last is not None and last < ch_today()
-    show = bool(returning and (due_total > 0 or undiscovered))
+    # „Seit deinem letzten Besuch neu" (Lektionen + /neu-Einträge) — news_service.
+    from flask import current_app
+
+    from app import news_service
+    prev_act = login.get('prev_activity') if login is not None else (last.isoformat() if last else None)
+    news = news_service.news_since(news_service.since_reference(user, prev_act),
+                                   current_app.config.get('CONTENT_LANGUAGES'))
+    show = bool(returning and (due_total > 0 or undiscovered or news['total']))
 
     return {
         'show': show,
@@ -1212,4 +1219,5 @@ def welcome_back(user):
         'undiscovered': undiscovered,
         'due_tomorrow': due_tomorrow_count(uid),
         'streak': streak_status(user),
+        'news': news,
     }

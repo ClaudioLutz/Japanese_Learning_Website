@@ -57,6 +57,9 @@
 .wb-meta li { display: flex; gap: 0.5rem; align-items: baseline; padding: 0.15rem 0; line-height: 1.35; }
 .wb-meta .wb-ic { flex: none; width: 1.1rem; text-align: center; }
 .wb-meta .wb-streak-lost { color: var(--text-muted, #5C564D); }
+.wb-meta .wb-news a { color: var(--shu-deep, #B84A00); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+.wb-meta .wb-news a:hover, .wb-meta .wb-news a:focus { color: var(--shu, #EB6101); }
+[data-theme="dark"] .wb-meta .wb-news a { color: var(--shu, #EB6101); }
 .wb-primary {
   display: block; text-align: center; text-decoration: none;
   background: var(--shu, #EB6101); color: #fff;
@@ -166,6 +169,21 @@
     var tm = data.due_tomorrow || 0;
     if (tm > 0) {
       metaLine('📅', tm === 1 ? 'Morgen wird 1 weitere Karte fällig.' : 'Morgen werden ' + tm + ' weitere Karten fällig.');
+    }
+    // „Seit deinem letzten Besuch neu" — nur wenn es wirklich etwas gibt.
+    var nw = data.news || {};
+    if ((nw.lessons || 0) > 0 || (nw.updates || 0) > 0) {
+      var parts = [];
+      if (nw.lessons > 0) parts.push(nw.lessons + (nw.lessons === 1 ? ' Lektion' : ' Lektionen'));
+      if (nw.updates > 0) parts.push(nw.updates + (nw.updates === 1 ? ' Verbesserung' : ' Verbesserungen'));
+      var nli = document.createElement('li');
+      nli.className = 'wb-news';
+      var nic = document.createElement('span');
+      nic.className = 'wb-ic'; nic.setAttribute('aria-hidden', 'true'); nic.textContent = '✨';
+      var na = document.createElement('a');
+      na.href = nw.url || '/neu';
+      na.textContent = 'Seit deinem letzten Besuch neu: ' + parts.join(' · ');
+      nli.appendChild(nic); nli.appendChild(na); meta.appendChild(nli);
     }
     if (meta.children.length) meta.hidden = false;
 

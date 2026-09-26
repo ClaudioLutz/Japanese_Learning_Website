@@ -618,12 +618,15 @@ def login():
             # zurück"-Dialog soll danach sagen koennen, was passiert ist.
             prev_activity = user.last_activity_date
             prev_streak = user.current_streak or 0
+            prev_login = user.last_login
             user.record_successful_login()
             db.session.commit()
             login_user(user, remember=form.remember.data)
             from app.dashboard_service import remember_login_streak
             remember_login_streak(prev_activity, prev_streak,
                                   getattr(user, '_streak_event', None))
+            from app.news_service import remember_prev_login
+            remember_prev_login(prev_login)
             next_page = request.args.get('next')
             flash('Erfolgreich angemeldet.', 'success')
             # Open-Redirect-Schutz: nur relative URLs erlauben

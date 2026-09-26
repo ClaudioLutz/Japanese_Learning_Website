@@ -352,6 +352,10 @@ def create_app():
     from app.issue_routes import issue_bp
     app.register_blueprint(issue_bp)
 
+    # Neuigkeiten (/neu) — oeffentlich, SSR aus app/data/neuigkeiten.md.
+    from app.news_routes import news_bp
+    app.register_blueprint(news_bp)
+
     # Error-Handler — eigene Templates auf Deutsch (vorher: Default-Flask-HTML in Englisch)
     from flask import render_template
     @app.errorhandler(404)

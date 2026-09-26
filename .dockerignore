@@ -23,3 +23,6 @@ Documentation/
 HowToNotes/
 .gitignore
 *.md
+# Neuigkeiten-Quelle fuer /neu MUSS ins Image (Negation gegen *.md/data/).
+!app/data/
+!app/data/neuigkeiten.md
