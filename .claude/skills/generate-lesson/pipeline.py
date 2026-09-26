@@ -994,10 +994,23 @@ VOCAB_BACKFILL_FIELDS = (
 def _get_or_create_vocab(db, Vocabulary, data: dict) -> int:
     """Duplicate-safe: gibt bestehende ID zurueck oder erstellt neu.
 
-    Match ueber `word`. Bei einem Treffer werden nur LEERE Felder aus
+    Mit `data.vocabulary_id` referenziert der Draft eine bestehende Zeile
+    explizit (sinnvoll bei vorab angelegten Vokabeln oder mehrdeutigen
+    Woertern) — das Wort muss uebereinstimmen, sonst Abbruch. Ohne ID: Match
+    ueber `word`. Bei einem Treffer werden nur LEERE Felder aus
     VOCAB_BACKFILL_FIELDS mit Draft-Werten gefuellt, nichts ueberschrieben.
     """
-    existing = db.session.query(Vocabulary).filter_by(word=data["word"]).first()
+    vid = data.get("vocabulary_id")
+    if vid is not None:
+        existing = db.session.get(Vocabulary, int(vid))
+        if existing is None:
+            raise ValueError(f"vocabulary_id={vid} existiert nicht")
+        if existing.word != data["word"]:
+            raise ValueError(
+                f"vocabulary_id={vid}: DB-Wort '{existing.word}' != Draft-Wort '{data['word']}'"
+            )
+    else:
+        existing = db.session.query(Vocabulary).filter_by(word=data["word"]).first()
     if existing:
         for field in VOCAB_BACKFILL_FIELDS:
             if not getattr(existing, field, None) and data.get(field):
