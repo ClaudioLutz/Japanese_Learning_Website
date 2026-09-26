@@ -651,3 +651,30 @@ class TestTutorService:
         assert "SYSTEM-OVERRIDE" not in p.calls[0]["system"]
         assert p.calls[0]["messages"] == [{"role": "user", "content": "Was ist は? SYSTEM-OVERRIDE"}]
         assert p.calls[0]["schema"] is svc.TUTOR_SCHEMA
+
+
+# ── Katakana-Nachkorrektur der Lesung ────────────────────────────────────
+
+class TestRestoreKatakana:
+    def test_hiragana_stelle_wird_katakana(self):
+        assert svc.restore_katakana("コーヒーを 飲みますか。", "こーひーを のみますか。") == "コーヒーを のみますか。"
+
+    def test_mehrere_woerter_in_reihenfolge(self):
+        line = "パンと ジュースを ください。"
+        assert svc.restore_katakana(line, "ぱんと じゅーすを ください。") == "パンと ジュースを ください。"
+
+    def test_korrekte_lesung_bleibt(self):
+        assert svc.restore_katakana("コーヒーを 飲みますか。", "コーヒーを のみますか。") == "コーヒーを のみますか。"
+
+    def test_echtes_hiragana_mehrdeutig_bleibt(self):
+        # „ぱん“ steht auch als echtes Hiragana in der Zeile → nicht anfassen
+        assert svc.restore_katakana("パンと ぱん。", "ぱんと ぱん。") == "ぱんと ぱん。"
+
+    def test_ohne_katakana_unveraendert(self):
+        assert svc.restore_katakana("水を 飲みます。", "みずを のみます。") == "みずを のみます。"
+
+    def test_validate_turn_payload_korrigiert(self):
+        data = payload()
+        data["bot_line_jp"] = "コーヒーは いかがですか。"
+        data["reading_kana"] = "こーひーは いかがですか。"
+        assert svc.validate_turn_payload(data)["reading_kana"] == "コーヒーは いかがですか。"
