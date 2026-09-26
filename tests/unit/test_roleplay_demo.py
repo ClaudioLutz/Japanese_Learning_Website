@@ -21,7 +21,9 @@ class TestToken:
     def test_tampered(self, ctx):
         token = demo.issue_token({"v": 1, "c": 42, "n": 0, "h": []})
         with pytest.raises(demo.DemoError) as exc:
-            demo.read_token(token[:-2] + ("A" if token[-1] != "A" else "B") + token[-1])
+            # Zeichen mitten in der Signatur tauschen (das letzte Base64-Zeichen traegt
+            # Fuellbits — dessen Tausch aendert die Bytes nicht immer → war flaky).
+            demo.read_token(token[:-10] + ("A" if token[-10] != "A" else "B") + token[-9:])
         assert exc.value.code == "demo_invalid"
         assert exc.value.http_status == 400
 

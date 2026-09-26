@@ -234,7 +234,7 @@ def demo_start():
     if err is not None:
         return err
     try:
-        data = demo.start_demo()
+        data = demo.start_demo(_client_ip())
     except svc.RoleplayError as exc:
         return _from_exc(exc)
     return jsonify(data), 201

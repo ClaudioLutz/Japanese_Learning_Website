@@ -78,6 +78,22 @@ def test_panel_rendered_when_enabled_and_logged_in(app, db, roleplay_on):
     assert '<script defer src="/static/js/roleplay_panel.js' not in html
 
 
+def test_panel_suggestion_tools_markup(app, db, roleplay_on):
+    """Vorschlags-Chips: Vorlesen, DE, Sofort-Senden (Klick gestoppt), Schalter „Deutsch anzeigen"."""
+    with app.app_context():
+        lesson, _ = _lesson_with([_dialog(1)])
+        html = _get(_logged_in(app), lesson.id)
+    assert 'aria-label="Vorschlag vorlesen"' in html
+    assert "speak(s.jp, 's' + i, userGender)" in html
+    assert '@click.stop="sendSuggestion(s)"' in html
+    assert 'aria-label="Vorschlag sofort senden"' in html
+    assert '@click.stop="toggleChipGerman(i)"' in html
+    assert 'x-show="chipGermanVisible(i)"' in html
+    assert "Deutsch anzeigen" in html
+    assert 'aria-label="Besseren Satz vorlesen"' in html
+    assert 'x-show="showTyping"' in html
+
+
 def test_panel_hidden_when_disabled(app, db, monkeypatch):
     monkeypatch.setitem(app.config, "ROLEPLAY_ENABLED", False)
     with app.app_context():

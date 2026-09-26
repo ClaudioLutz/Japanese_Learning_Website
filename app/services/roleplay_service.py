@@ -74,7 +74,8 @@ LIMIT_DEFAULTS: dict[str, float] = {
     'ROLEPLAY_DAILY_COST_CAP_USD': 2.00,
     # Global (alle Nutzer): max. Modell-Antworten pro Tag (Bot-Zuege + Tutor).
     # Schutz fuer den Subscription-/Bridge-Pfad, wo Dollar-Kosten 0 sind.
-    'ROLEPLAY_DAILY_MESSAGE_CAP': 400,
+    # Zaehlt auch die Vorausberechnungen der Antwortvorschlaege (roleplay_prefetch).
+    'ROLEPLAY_DAILY_MESSAGE_CAP': 1500,
 }
 
 # Preise in USD pro 1 Mio. Tokens (Anthropic First-Party-API).
@@ -349,7 +350,8 @@ def cost_today() -> float:
     tq = db.session.query(func.coalesce(func.sum(TutorQuestion.cost_usd), 0.0)).filter(
         TutorQuestion.created_at >= start,
     ).scalar() or 0.0
-    return float(rp) + float(tq)
+    from app.services import roleplay_prefetch as prefetch
+    return float(rp) + float(tq) + prefetch.cost_today()
 
 
 def limits_status(user_id: int) -> dict[str, int]:
@@ -361,8 +363,10 @@ def limits_status(user_id: int) -> dict[str, int]:
 
 
 def model_replies_today() -> int:
-    """Globale Zahl der Modell-Antworten des CH-Tages (Bot-Zuege + Tutor + Gast-Demo)."""
+    """Globale Zahl der Modell-Antworten des CH-Tages (Bot-Zuege + Tutor + Gast-Demo
+    + Vorausberechnungen, ohne die als Zug uebernommenen)."""
     from app.models import GuestDemoCounter
+    from app.services import roleplay_prefetch as prefetch
     from app.time_utils import ch_today
     start = _day_start()
     bot = RoleplayTurn.query.filter(
@@ -371,7 +375,8 @@ def model_replies_today() -> int:
     guest = db.session.query(GuestDemoCounter.count).filter(
         GuestDemoCounter.day == ch_today(), GuestDemoCounter.ip_hash == '*',
     ).scalar() or 0
-    return bot + TutorQuestion.query.filter(TutorQuestion.created_at >= start).count() + int(guest)
+    return (bot + TutorQuestion.query.filter(TutorQuestion.created_at >= start).count() + int(guest)
+            + prefetch.count_today())
 
 
 def check_cost_cap() -> None:
@@ -909,6 +914,8 @@ class ClaudeCliBridgeProvider(RoleplayProvider):
 
     def __init__(self, url: str, token: str, model: str = BRIDGE_MODEL_ALIAS,
                  timeout: float = BRIDGE_HTTP_TIMEOUT_S, http: Any = None):
+        # 'high' = Live-Zug, 'low' = Vorausberechnung (Bridge haelt Plaetze fuer Live frei)
+        self.priority = 'high'
         self.url = url.rstrip('/')
         self.token = token
         self.model = model
@@ -928,7 +935,8 @@ class ClaudeCliBridgeProvider(RoleplayProvider):
         try:
             resp = self.http.post(
                 f'{self.url}/complete',
-                json={'system': full_system, 'messages': messages, 'schema': schema, 'model': self.model},
+                json={'system': full_system, 'messages': messages, 'schema': schema, 'model': self.model,
+                      'priority': self.priority},
                 headers={'X-Bridge-Token': self.token},
                 timeout=self.timeout,
             )
@@ -1140,11 +1148,32 @@ def start_session(user, content: LessonContent, role_user: str, goal: str | None
     db.session.commit()
     _log_kanji_quality(session.id, bot_turn.text_jp)
     logger.info('Rollenspiel %s gestartet (content=%s, user=%s)', session.id, content.id, user.id)
+    from app.services import roleplay_prefetch as prefetch
+    prefetch.cleanup_old()
+    prefetch.schedule_session(session)
     return session, bot_turn
 
 
+def prepare_turn(session: RoleplaySession, text: str) -> tuple[str, str, list[dict[str, Any]], bool, int]:
+    """(System-Prompt, Status-Block, Messages, letzter Zug?, Nutzerzuege danach) fuer
+    einen Nutzerzug — gemeinsam fuer den Live-Zug und die Vorausberechnung."""
+    content = db.session.get(LessonContent, session.lesson_content_id)
+    scene = build_scene(content)
+    trusted_goal, custom_goal = _goal_parts(session, scene)
+    system_prompt = _system_for(session, scene, trusted_goal)
+    user_turns_after = (session.turn_count or 0) + 1
+    last = user_turns_after >= MAX_USER_TURNS
+    messages = build_messages(session, new_user_text=text, custom_goal=custom_goal)
+    return system_prompt, _status_block('turn', user_turns_after), messages, last, user_turns_after
+
+
 def user_turn(session: RoleplaySession, text: str, provider: RoleplayProvider | None = None) -> tuple[RoleplayTurn, dict[str, Any]]:
-    """Nutzerzug verarbeiten → Bot-Antwort. Liefert (bot_turn, result_info)."""
+    """Nutzerzug verarbeiten → Bot-Antwort. Liefert (bot_turn, result_info).
+
+    Stimmt der Text mit einem vorausberechneten Vorschlag ueberein
+    (roleplay_prefetch), kommt die Antwort ohne neuen Modell-Aufruf.
+    """
+    from app.services import roleplay_prefetch as prefetch
     if session.status != 'active':
         raise RoleplayError('Dieses Gespräch ist bereits beendet.', code='session_finished', http_status=409)
     text = (text or '').strip()
@@ -1157,25 +1186,25 @@ def user_turn(session: RoleplaySession, text: str, provider: RoleplayProvider | 
     if (session.turn_count or 0) >= MAX_USER_TURNS:
         raise RoleplayError('Das Gespräch hat die maximale Länge erreicht.', code='session_finished',
                             http_status=409)
-    check_cost_cap()
     check_message_limit(session.user_id)
 
-    content = db.session.get(LessonContent, session.lesson_content_id)
-    scene = build_scene(content)
-    trusted_goal, custom_goal = _goal_parts(session, scene)
-    system_prompt = _system_for(session, scene, trusted_goal)
-    user_turns_after = (session.turn_count or 0) + 1
+    turns_before = session.turn_count or 0
+    user_turns_after = turns_before + 1
     last = user_turns_after >= MAX_USER_TURNS
-    messages = build_messages(session, new_user_text=text, custom_goal=custom_goal)
-    try:
-        result = call_turn(system_prompt, _status_block('turn', user_turns_after), messages,
-                           force_done=last, provider=provider)
-    except UpstreamError as exc:
-        _add_usage(session, exc.usage)
-        db.session.commit()
-        raise
-    _add_usage(session, result.usage)
-    data = result.data
+    data = prefetch.take(session_id=session.id, turn_index=turns_before, text=text)
+    if data is not None:
+        logger.info('Rollenspiel %s: Zug %d aus Vorausberechnung', session.id, user_turns_after)
+    else:
+        check_cost_cap()
+        system_prompt, status_text, messages, last, user_turns_after = prepare_turn(session, text)
+        try:
+            result = call_turn(system_prompt, status_text, messages, force_done=last, provider=provider)
+        except UpstreamError as exc:
+            _add_usage(session, exc.usage)
+            db.session.commit()
+            raise
+        _add_usage(session, result.usage)
+        data = result.data
     if data['done'] and user_turns_after < MIN_USER_TURNS and not last:
         # Zu frueh beendet: Gespraech laeuft weiter (Serverregel 4-8 Zuege).
         data['done'] = False
@@ -1192,8 +1221,11 @@ def user_turn(session: RoleplaySession, text: str, provider: RoleplayProvider | 
     xp = 0
     if data['done']:
         xp = finalize_session(session, data['correction'])
+    prefetch.consume(session_id=session.id, turn_index=turns_before)
     db.session.commit()
     _log_kanji_quality(session.id, bot_turn.text_jp)
+    if not data['done']:
+        prefetch.schedule_session(session)
     return bot_turn, {'done': data['done'], 'correction': data['correction'] if data['done'] else [],
                       'xp_awarded': xp}
 
@@ -1238,6 +1270,8 @@ def end_session(session: RoleplaySession, provider: RoleplayProvider | None = No
     except CostCapReached:
         unavailable = True
     xp = finalize_session(session, correction)
+    from app.services import roleplay_prefetch as prefetch
+    prefetch.consume(session_id=session.id, turn_index=session.turn_count or 0)
     db.session.commit()
     return {'correction': correction, 'xp_awarded': xp, 'farewell': farewell,
             'correction_unavailable': unavailable}

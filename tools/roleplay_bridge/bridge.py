@@ -9,7 +9,7 @@ API:
   GET  /health                        → {"ok": true}
   POST /complete   (Header X-Bridge-Token)
        {"system": str, "messages": [{"role": "user"|"assistant", "content": str}],
-        "schema": {JSON-Schema}, "model": "sonnet"}
+        "schema": {JSON-Schema}, "model": "sonnet", "priority": "high"|"low"}
      → 200 {"data": {...}, "usage": {...}, "duration_ms": int}
      → 400 ungueltige Anfrage · 401 Token falsch · 429 ausgelastet
        502 CLI-Fehler/ungueltige Ausgabe · 504 CLI-Timeout
@@ -23,8 +23,21 @@ Sicherheit:
   HTML-escaped und wird ausdruecklich als Gespraechsbeitrag, nicht als
   Anweisung gekennzeichnet.
 - Keine Prompt-/Nutzertexte im Log (nur Dauer, Status, Groessen).
-- Ein CLI-Aufruf gleichzeitig; hoechstens BRIDGE_MAX_WAITING wartende
-  Anfragen, sonst sofort 429.
+- Pool: bis BRIDGE_POOL_SIZE (4) CLI-Aufrufe gleichzeitig, hoechstens
+  BRIDGE_MAX_WAITING (8) wartende Anfragen, sonst sofort 429. Anfragen mit
+  priority "low" (Vorausberechnung der Antwortvorschlaege) belegen hoechstens
+  BRIDGE_LOW_SLOTS (Pool - 1) Plaetze — ein Platz bleibt fuer Live-Zuege frei.
+- --effort (BRIDGE_EFFORT, Default low): weniger Nachdenken → kuerzere,
+  gleichmaessigere Latenz (gemessen 2026-09-26: ~6 s statt 7-15 s pro Zug).
+
+Architektur-Entscheid (2026-09-26): KEIN persistenter CLI-Prozess
+(--input-format stream-json). Technisch moeglich (structured_output kommt auch
+im Stream), aber (1) der Kaltstart kostet nur ~0.4 s — die Latenz ist fast
+reine Modell-Generierung, gemessen 6.2/6.7/6.9 s im offenen Prozess gegen
+5.6-6.7 s pro Aufruf; (2) der Prozess behaelt den Verlauf aller Anfragen im
+Kontext (Uebersprechen zwischen Nutzern, wachsender Kontext) und (3) der
+System-Prompt ist pro Prozess fest, obwohl er pro Szene wechselt. Darum ein
+CLI-Aufruf pro Zug.
 """
 from __future__ import annotations
 
@@ -46,8 +59,12 @@ PORT = int(os.environ.get('BRIDGE_PORT', '5077'))
 CLAUDE_BIN = os.environ.get('CLAUDE_BIN', '/home/hp-ubuntu/.local/bin/claude')
 WORKDIR = os.environ.get('BRIDGE_WORKDIR', os.path.expanduser('~/.jpl-roleplay-bridge-work'))
 CLI_TIMEOUT_S = float(os.environ.get('BRIDGE_CLI_TIMEOUT_S', '50'))
-MAX_WAITING = int(os.environ.get('BRIDGE_MAX_WAITING', '1'))
+POOL_SIZE = int(os.environ.get('BRIDGE_POOL_SIZE', '4'))
+LOW_SLOTS = int(os.environ.get('BRIDGE_LOW_SLOTS', str(max(1, POOL_SIZE - 1))))
+MAX_WAITING = int(os.environ.get('BRIDGE_MAX_WAITING', '8'))
 QUEUE_WAIT_S = float(os.environ.get('BRIDGE_QUEUE_WAIT_S', '20'))
+EFFORT = os.environ.get('BRIDGE_EFFORT', 'low')
+ALLOWED_EFFORTS = {'low', 'medium', 'high'}
 MAX_BODY_BYTES = int(os.environ.get('BRIDGE_MAX_BODY_BYTES', '300000'))
 MAX_MESSAGES = 40
 ALLOWED_MODELS = {'sonnet'}
@@ -88,6 +105,7 @@ def render_prompt(messages: list[dict[str, Any]]) -> str:
 
 def build_command(system: str, schema: dict[str, Any], model: str) -> list[str]:
     # KEIN --bare: das ignoriert OAuth/Subscription (nur ANTHROPIC_API_KEY).
+    effort = ['--effort', EFFORT] if EFFORT in ALLOWED_EFFORTS else []
     return [
         CLAUDE_BIN, '-p',
         '--model', model,
@@ -98,6 +116,7 @@ def build_command(system: str, schema: dict[str, Any], model: str) -> list[str]:
         '--strict-mcp-config',
         '--setting-sources', '',
         '--disable-slash-commands',
+        *effort,
         '--system-prompt', system,
     ]
 
@@ -134,6 +153,10 @@ def parse_cli_output(stdout: str) -> dict[str, Any]:
             'cache_read_input_tokens': int(usage.get('cache_read_input_tokens') or 0),
         },
     }
+
+
+def request_priority(body: Any) -> str:
+    return 'low' if isinstance(body, dict) and body.get('priority') == 'low' else 'high'
 
 
 def validate_request(body: Any) -> tuple[str, list[dict[str, Any]], dict[str, Any], str]:
@@ -186,30 +209,60 @@ def run_cli(system: str, messages: list[dict[str, Any]], schema: dict[str, Any],
 # ── Nebenlaeufigkeit ─────────────────────────────────────────────────────
 
 class Gate:
-    """Ein Aufruf gleichzeitig + kleine Warteschlange (max_waiting)."""
+    """Pool mit `size` Plaetzen + Warteschlange (max_waiting, wait_s).
 
-    def __init__(self, max_waiting: int = MAX_WAITING, wait_s: float = QUEUE_WAIT_S):
-        self._sem = threading.Semaphore(1)
+    priority 'low' belegt hoechstens `low_slots` Plaetze gleichzeitig, damit ein
+    Live-Zug nie hinter drei Vorausberechnungen warten muss.
+    """
+
+    def __init__(self, size: int = POOL_SIZE, max_waiting: int = MAX_WAITING,
+                 wait_s: float = QUEUE_WAIT_S, low_slots: int | None = None):
+        self.size = max(1, size)
+        self.low_slots = max(1, min(self.size, low_slots if low_slots is not None else self.size - 1))
+        self._sem = threading.BoundedSemaphore(self.size)
+        self._low = threading.BoundedSemaphore(self.low_slots)
         self._lock = threading.Lock()
         self._waiting = 0
+        self._active = 0
         self.max_waiting = max_waiting
         self.wait_s = wait_s
 
-    def acquire(self) -> bool:
-        if self._sem.acquire(blocking=False):
+    @property
+    def active(self) -> int:
+        return self._active
+
+    def _take(self, sem: threading.BoundedSemaphore, deadline: float) -> bool:
+        if sem.acquire(blocking=False):
             return True
         with self._lock:
             if self._waiting >= self.max_waiting:
                 return False
             self._waiting += 1
         try:
-            return self._sem.acquire(timeout=self.wait_s)
+            return sem.acquire(timeout=max(0.0, deadline - time.monotonic()))
         finally:
             with self._lock:
                 self._waiting -= 1
 
-    def release(self) -> None:
+    def acquire(self, priority: str = 'high') -> bool:
+        deadline = time.monotonic() + self.wait_s
+        low = priority == 'low'
+        if low and not self._take(self._low, deadline):
+            return False
+        if not self._take(self._sem, deadline):
+            if low:
+                self._low.release()
+            return False
+        with self._lock:
+            self._active += 1
+        return True
+
+    def release(self, priority: str = 'high') -> None:
+        with self._lock:
+            self._active -= 1
         self._sem.release()
+        if priority == 'low':
+            self._low.release()
 
 
 GATE = Gate()
@@ -225,20 +278,25 @@ def handle_complete(body: Any, token_header: str | None, expected_token: str,
         system, messages, schema, model = validate_request(body)
     except BridgeError as exc:
         return exc.status, {'error': exc.code}
-    if not gate.acquire():
+    priority = request_priority(body)
+    queued = time.monotonic()
+    if not gate.acquire(priority):
+        logger.info('complete: busy (prio=%s)', priority)
         return 429, {'error': 'busy'}
     started = time.monotonic()
+    wait_ms = int((started - queued) * 1000)
     try:
         result = run_cli(system, messages, schema, model, runner=runner)
     except BridgeError as exc:
-        logger.warning('complete: %s nach %.1fs', exc.code, time.monotonic() - started)
+        logger.warning('complete: %s nach %.1fs (prio=%s)', exc.code, time.monotonic() - started, priority)
         return exc.status, {'error': exc.code}
     finally:
-        gate.release()
+        gate.release(priority)
     duration_ms = int((time.monotonic() - started) * 1000)
     result['duration_ms'] = duration_ms
-    logger.info('complete: ok in %d ms (msgs=%d, out_tokens=%d)', duration_ms, len(messages),
-                result['usage']['output_tokens'])
+    logger.info('complete: ok in %d ms (msgs=%d, out_tokens=%d, prio=%s, wait=%d ms, aktiv=%d)',
+                duration_ms, len(messages), result['usage']['output_tokens'], priority, wait_ms,
+                gate.active)
     return 200, result
 
 
@@ -289,7 +347,8 @@ def main() -> None:
     if not os.environ.get('ROLEPLAY_BRIDGE_TOKEN'):
         raise SystemExit('ROLEPLAY_BRIDGE_TOKEN fehlt')
     server = ThreadingHTTPServer((HOST, PORT), Handler)
-    logger.info('roleplay-bridge lauscht auf %s:%d (claude=%s)', HOST, PORT, CLAUDE_BIN)
+    logger.info('roleplay-bridge lauscht auf %s:%d (claude=%s, pool=%d, low=%d, warten=%d, effort=%s)',
+                HOST, PORT, CLAUDE_BIN, GATE.size, GATE.low_slots, GATE.max_waiting, EFFORT)
     server.serve_forever()
 
 

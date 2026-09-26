@@ -13,6 +13,9 @@ Datenschutz/Kosten:
 - Die Eroeffnungszeile ist statisch (kein Modell-Aufruf beim Start); nur
   Nutzerzuege kosten einen Modell-Aufruf und zaehlen gegen die Limits.
 - Provider + Prompt aus roleplay_service (ohne Nutzerkontext).
+- Antworten auf die drei Vorschlaege rechnet der Server vor
+  (roleplay_prefetch, Schluessel = Token-Hash); ein gewaehlter Vorschlag kommt
+  ohne Modell-Aufruf, zaehlt aber normal gegen IP-Limit und Gast-Kappe.
 """
 from __future__ import annotations
 
@@ -29,6 +32,7 @@ from sqlalchemy.exc import IntegrityError
 
 from app import db
 from app.models import GuestDemoCounter, Lesson, LessonContent
+from app.services import roleplay_prefetch as prefetch
 from app.services import roleplay_service as svc
 from app.time_utils import ch_today
 
@@ -267,15 +271,27 @@ def _opening_turn() -> dict[str, Any]:
     return {'turn_index': 0, 'speaker': 'bot', **json.loads(json.dumps(DEMO_OPENING))}
 
 
-def start_demo() -> dict[str, Any]:
-    """Demo starten: statische Eroeffnung, kein Modell-Aufruf, kein Zaehler."""
+def _guest_has_turns(ip: str | None) -> bool:
+    """Hat dieser Gast (und die Gast-Kappe) heute noch Zuege? Sonst lohnt Vorausrechnen nicht."""
+    if ip is None:
+        return True
+    return count_for(ip_hash(ip)) < IP_DAILY_LIMIT and count_for(GLOBAL_KEY) < guest_daily_cap()
+
+
+def start_demo(ip: str | None = None) -> dict[str, Any]:
+    """Demo starten: statische Eroeffnung, kein Modell-Aufruf fuer den Start, kein Zaehler.
+    Die Antworten auf die drei Eroeffnungs-Vorschlaege werden vorausberechnet."""
     content = demo_content()
     if content is None:
         raise svc.RoleplayError('Die Demo ist gerade nicht verfügbar.', code='not_found', http_status=404)
     scene = demo_scene(content)
     state = {'v': 1, 'c': content.id, 'n': 0, 'h': [['b', DEMO_OPENING['jp']]]}
+    token = issue_token(state)
+    if prefetch.enabled() and _guest_has_turns(ip):
+        prefetch.cleanup_old()
+        prefetch.schedule_demo(token, 0, state['h'], DEMO_OPENING['suggestions'])
     return {
-        'token': issue_token(state),
+        'token': token,
         'session': _session_dict(0),
         'bot_turn': _opening_turn(),
         'scene': {'title': DEMO_TITLE, 'scene_de': DEMO_SCENE_DE, 'roles': _roles(scene)},
@@ -293,6 +309,24 @@ def build_demo_messages(history: list, new_user_text: str) -> list[dict[str, Any
     return messages
 
 
+def demo_call(content: LessonContent, history: list, text: str, user_turns_after: int,
+              provider: svc.RoleplayProvider | None = None) -> svc.TurnResult:
+    """Ein Modell-Zug der Demo (Live-Zug und Vorausberechnung)."""
+    messages = build_demo_messages(history, text)
+    last = user_turns_after >= DEMO_MAX_USER_TURNS
+    scene = demo_scene(content)
+    lesson = db.session.get(Lesson, content.lesson_id)
+    system = svc.build_system_prompt(
+        scene, DEMO_ROLE_USER, DEMO_ROLE_BOT, DEMO_GOAL,
+        svc.vocab_pool(lesson) if lesson else [], svc.n5_kanji(),
+        min_turns=DEMO_MAX_USER_TURNS, max_turns=DEMO_MAX_USER_TURNS,
+    )
+    return svc.call_turn(
+        system, svc._status_block('turn', user_turns_after, max_turns=DEMO_MAX_USER_TURNS),
+        messages, force_done=last, provider=provider,
+    )
+
+
 def demo_turn(token: Any, text: Any, ip: str,
               provider: svc.RoleplayProvider | None = None) -> dict[str, Any]:
     state = read_token(token)
@@ -307,31 +341,25 @@ def demo_turn(token: Any, text: Any, ip: str,
     if content is None:
         raise svc.RoleplayError('Die Demo ist gerade nicht verfügbar.', code='not_found', http_status=404)
 
-    messages = build_demo_messages(state['h'], text)
-    try:
-        svc.check_cost_cap()
-    except svc.CostCapReached as exc:
-        raise svc.CostCapReached(CAP_MESSAGE) from exc
-    key = reserve_turn(ip)
-
+    build_demo_messages(state['h'], text)   # prueft die Historie im Token
+    dkey = prefetch.demo_key(token)
     user_turns_after = state['n'] + 1
     last = user_turns_after >= DEMO_MAX_USER_TURNS
-    scene = demo_scene(content)
-    lesson = db.session.get(Lesson, content.lesson_id)
-    system = svc.build_system_prompt(
-        scene, DEMO_ROLE_USER, DEMO_ROLE_BOT, DEMO_GOAL,
-        svc.vocab_pool(lesson) if lesson else [], svc.n5_kanji(),
-        min_turns=DEMO_MAX_USER_TURNS, max_turns=DEMO_MAX_USER_TURNS,
-    )
-    try:
-        result = svc.call_turn(
-            system, svc._status_block('turn', user_turns_after, max_turns=DEMO_MAX_USER_TURNS),
-            messages, force_done=last, provider=provider,
-        )
-    except svc.UpstreamError:
-        release_turn(key)   # Fehlversuch zaehlt nicht
-        raise
-    data = result.data
+    key = reserve_turn(ip)
+    data = prefetch.take(demo=dkey, turn_index=state['n'], text=text)
+    if data is None:
+        try:
+            svc.check_cost_cap()
+        except svc.CostCapReached as exc:
+            release_turn(key)
+            raise svc.CostCapReached(CAP_MESSAGE) from exc
+        try:
+            data = demo_call(content, state['h'], text, user_turns_after, provider=provider).data
+        except svc.UpstreamError:
+            release_turn(key)   # Fehlversuch zaehlt nicht
+            raise
+    prefetch.consume(demo=dkey, turn_index=state['n'])
+    db.session.commit()
     if data['done'] and not last:
         # Zu frueh beendet: Demo laeuft bis zum letzten Zug weiter.
         data['done'] = False
@@ -346,6 +374,8 @@ def demo_turn(token: Any, text: Any, ip: str,
             'h': state['h'] + [['u', text], ['b', data['bot_line_jp']]],
         }
         new_token = issue_token(new_state)
+        if user_turns_after < DEMO_MAX_USER_TURNS:
+            prefetch.schedule_demo(new_token, user_turns_after, new_state['h'], data['suggestions'])
     return {
         'token': new_token,
         'session': _session_dict(user_turns_after, done=done),

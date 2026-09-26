@@ -22,6 +22,12 @@ Environment=BRIDGE_HOST=172.17.0.1
 Environment=BRIDGE_PORT=5077
 Environment=CLAUDE_BIN=/home/hp-ubuntu/.local/bin/claude
 Environment=BRIDGE_WORKDIR=/home/hp-ubuntu/.jpl-roleplay-bridge-work
+# Pool: 4 CLI-Aufrufe parallel (Vorausberechnung max. 3), 8 Wartende, danach 429.
+Environment=BRIDGE_POOL_SIZE=4
+Environment=BRIDGE_LOW_SLOTS=3
+Environment=BRIDGE_MAX_WAITING=8
+Environment=BRIDGE_QUEUE_WAIT_S=20
+Environment=BRIDGE_EFFORT=low
 Environment=PYTHONUNBUFFERED=1
 ExecStart=/usr/bin/python3 /home/hp-ubuntu/git/Japanese_Learning_Website/tools/roleplay_bridge/bridge.py
 Restart=on-failure

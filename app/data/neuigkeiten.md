@@ -15,6 +15,10 @@ Format je Eintrag:
 Keine Commit-Hashes, keine internen Namen.
 -->
 
+## 2026-09-26 | Rollenspiel: Antworten kommen jetzt sofort, Vorschläge kann man sich vorlesen lassen
+Wählst du einen Antwortvorschlag, antwortet dein Gesprächspartner jetzt praktisch ohne Wartezeit: Mit dem kleinen Pfeil am Vorschlag sendest du ihn direkt. Jeden Vorschlag und am Ende die verbesserten Sätze kannst du dir mit dem Lautsprecher vorlesen lassen. Die deutschen Übersetzungen der Vorschläge sind zuerst verdeckt — tippe auf „DE" oder schalte „Deutsch anzeigen" ein.
+Link: /sprechen
+
 ## 2026-09-26 | Gespräch ausprobieren — direkt auf der Startseite
 Auf der Startseite kannst du jetzt ohne Konto ein kurzes Gespräch auf Japanisch führen: Du bist Lisa, sitzt mit Tanaka im Café und antwortest in drei Zügen — mit Antwortvorschlägen, Lesung, Vorlesen und am Ende einer Korrektur auf Deutsch. Mit deinem Konto geht es danach in allen Dialogszenen der Lektionen weiter.
 Link: /

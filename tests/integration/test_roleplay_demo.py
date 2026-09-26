@@ -291,6 +291,16 @@ class TestHomepageHero:
         assert 'id="homeKanaTitle">Hiragana lernen' in body
         assert body.count("<h1") == 1
 
+    def test_demo_preview_without_german(self, client, enabled, scene):
+        """Statisches Beispiel im Hero: Vorschlaege ohne Uebersetzung (wie das echte Panel)."""
+        body = client.get("/").get_data(as_text=True)
+        start = body.index('class="rp-demo-preview"')
+        preview = body[start:body.index('rp-start-btn', start)]
+        assert "カレーが たべたいです。" in preview
+        assert "rp-chip-de" not in preview
+        assert "Ich möchte Curry essen." not in preview
+        assert "Was möchtest du essen?" not in preview
+
     def test_guest_hero_without_flag_unchanged(self, client, scene):
         body = client.get("/").get_data(as_text=True)
         assert "Sprich Japanisch" not in body

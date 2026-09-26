@@ -1,6 +1,7 @@
 # Rollenspiel-Tutor — API-Vertrag (Backend)
 
-Stand: 2026-09-26. Backend: `app/roleplay_routes.py`, `app/services/roleplay_service.py`.
+Stand: 2026-09-26. Backend: `app/roleplay_routes.py`, `app/services/roleplay_service.py`,
+`app/services/roleplay_prefetch.py`.
 Frontend baut gegen diesen Vertrag. Alle Texte für Nutzer kommen fertig auf Deutsch.
 
 ## Grundregeln
@@ -13,8 +14,10 @@ Frontend baut gegen diesen Vertrag. Alle Texte für Nutzer kommen fertig auf Deu
   `<meta name="csrf-token">`. `Content-Type: application/json`.
 - **Rate-Limit:** 20 Anfragen/Minute pro Nutzer → **429** (Flask-Limiter, HTML-Fehlerseite,
   kein JSON). Tageslimits kommen dagegen als JSON `limit_reached` (siehe unten).
-- **Latenz:** ein Modell-Aufruf dauert **5–10 s** (Claude-Code-CLI auf dem Host; gemessen
-  2026-09-26: Rollenspielzug ~10 s, Tutor ~5 s), im Fehlerfall bis ~60 s. Frontend: Ladeindikator („Tanaka tippt …“), Eingabe sperren,
+- **Latenz:** Wahl eines Antwortvorschlags: meist **< 1 s** (Antwort vorausberechnet, siehe
+  „Vorausberechnung"). Freitext = ein Modell-Aufruf, **~5–7 s** (Claude-Code-CLI mit
+  `--effort low`), im Fehlerfall bis ~60 s. Frontend: Ladeindikator („Tanaka tippt …“) bei
+  Freitext sofort, beim Sofort-Senden eines Vorschlags erst nach 1,2 s; Eingabe sperren,
   `fetch`-Timeout nicht unter 65 s.
 - **Rollen:** Sprecher aus dem Dialog (`slides[].speaker`), genau die ersten zwei.
 - **Gesprächslänge:** 4–8 Nutzerzüge. Nach dem 8. Zug beendet der Server selbst
@@ -33,7 +36,7 @@ Immer JSON `{ "error": "<code>", "message": "<deutscher Klartext>" }` — nie 50
 | 422  | `not_roleplayable` | Dialog hat keine zwei Rollen → Button nicht anbieten. |
 | 429  | `limit_reached`    | Tageslimit des Nutzers (Gespräche 5, Nachrichten 60, Tutorfragen 20). |
 | 502  | `upstream_error`   | Modell/Bridge antwortet nicht oder ist beschäftigt. Nutzerzug wurde **nicht** verbucht → „Nochmal senden“ anbieten. |
-| 503  | `cost_cap`         | Globale Tageskappe erreicht (Kosten bzw. 400 Modell-Antworten/Tag). |
+| 503  | `cost_cap`         | Globale Tageskappe erreicht (Kosten bzw. 1'500 Modell-Antworten/Tag inkl. Vorausberechnungen). |
 
 ## Objekte
 
@@ -145,6 +148,44 @@ Kontext = Inhalt dieser Lektionsseite (Text, Dialog, Vokabeln, Grammatik, Kanji)
 `answer` ist Klartext (Deutsch, evtl. kurze Aufzählungen mit „- “, kein HTML → als Text
 rendern). Fehler: 400, 403, 404 (Lektion/Seite), 429, 502, 503.
 
+## Vorausberechnung der Antwortvorschläge (seit 2026-09-26)
+
+Code: `app/services/roleplay_prefetch.py`, Tabelle `roleplay_prefetch`
+(`session_id` | `demo_key`, `turn_index`, `user_text`, `norm_text`, `response_json`, `status`,
+Tokens/Kosten, `created_at`).
+
+- Sobald ein Bot-Zug mit Vorschlägen gespeichert ist (`/start`, `/turn`, Demo-Start,
+  Demo-Zug), legt der Server pro Vorschlag eine Zeile `pending` an und rechnet die
+  Bot-Antwort im Hintergrund (Thread-Pool im Gunicorn-Worker, 3 Threads,
+  `ROLEPLAY_PREFETCH_THREADS`) vor → `ready` (bzw. `failed`). Die Tabelle ist
+  worker-übergreifend. Anfragen an die Bridge tragen `priority: "low"`.
+- `POST …/turn`: Text wird normalisiert (NFKC, ohne Leerraum/Satzzeichen) und mit den
+  Vorschlägen **dieses** Zugs verglichen. Treffer → Antwort ohne Modell-Aufruf (`used`);
+  läuft die Vorausberechnung noch, wartet der Zug auf sie (max. 25 s) statt doppelt zu
+  rechnen. Kein Treffer → regulärer Aufruf. Der Zug wird in beiden Fällen normal verbucht
+  (Verlauf, Nachrichtenlimit, Demo: IP-Limit + Gast-Kappe). Antwortformat unverändert.
+- Übrige Zeilen des Zugs → `stale`, `response_json` wird geleert (Demo: keine Texte
+  aufbewahrt; `user_text` ist immer ein Vorschlag, nie Freitext).
+- Limits: Vorausberechnungen zählen **nicht** gegen Nutzerlimits, aber gegen
+  `ROLEPLAY_DAILY_MESSAGE_CAP` (alle Zeilen ausser `used`) und die Kostenkappe.
+  Würde die Kappe überschritten, wird nicht vorausgerechnet. Ein Cache-Treffer ist auch
+  bei erreichter Kappe erlaubt (kein neuer Aufruf).
+- Demo: Schlüssel `demo_key` = SHA-256 des Tokens; beim Start nur, wenn die IP heute noch
+  Züge hat. Nach dem letzten (3.) Zug wird nichts mehr vorausberechnet.
+- Aufräumen: Zeilen älter als 24 h löscht `cleanup_old()` bei jedem Gesprächs- bzw. Demo-Start.
+- Schalter: `ROLEPLAY_PREFETCH` (Default an, in Tests aus), `ROLEPLAY_PREFETCH_SYNC` (Tests).
+
+## Panel: Vorschläge (Frontend)
+
+- Chip antippen = Text ins Eingabefeld (wie bisher). Pfeil am Chip = sofort senden.
+- Lautsprecher am Chip (`aria-label` „Vorschlag vorlesen") liest über `POST /api/tts` mit
+  `voice_gender` der **Nutzer**-Rolle vor (`scene.roles[].gender`; unbekannt → ohne
+  Parameter = Standardstimme). Ebenso im Abschluss die „besser"-Sätze („Besseren Satz
+  vorlesen"). Werkzeug-Knöpfe stoppen den Klick (`@click.stop`), übernehmen also nichts.
+- Deutsche Übersetzungen der Vorschläge sind standardmässig verdeckt: „DE" am Chip deckt
+  einen auf, Schalter „Deutsch anzeigen" (neben Romaji → Kana, localStorage
+  `jpl-roleplay-chip-de`) alle. Abschluss-Erklärungen bleiben sichtbar.
+
 ## Seiten (SSR, gleiches Feature-Gate, login-pflichtig, noindex, nicht in der Sitemap)
 
 Code: `app/sprechen_routes.py`, `app/services/roleplay_overview.py`, Templates `sprechen/`.
@@ -205,11 +246,20 @@ Fehler: 400 `invalid_request` (Text/Honeypot), 400 `demo_expired` / `demo_invali
   `ROLEPLAY_BRIDGE_URL=http://host.docker.internal:5077`, `ROLEPLAY_BRIDGE_TOKEN`,
   optional `ANTHROPIC_API_KEY`; Limits `ROLEPLAY_LIMIT_SESSIONS_PER_DAY` (5),
   `ROLEPLAY_LIMIT_MESSAGES_PER_DAY` (60), `ROLEPLAY_LIMIT_TUTOR_PER_DAY` (20),
-  `ROLEPLAY_DAILY_COST_CAP_USD` (2.00, API-Pfad), `ROLEPLAY_DAILY_MESSAGE_CAP` (400, global).
+  `ROLEPLAY_DAILY_COST_CAP_USD` (2.00, API-Pfad), `ROLEPLAY_DAILY_MESSAGE_CAP` (1500, global,
+  inkl. Vorausberechnungen), `ROLEPLAY_PREFETCH` (an).
 - Bridge: `tools/roleplay_bridge/bridge.py` als systemd-Dienst `jpl-roleplay-bridge`
   (User hp-ubuntu, lauscht auf 172.17.0.1:5077, Token in
   `/home/hp-ubuntu/.jpl-roleplay-bridge.env`). Container erreicht den Host über
   `extra_hosts: host.docker.internal:host-gateway` (docker-compose.override.yml);
   ufw erlaubt nur das Compose-Netz auf Port 5077. Nach Änderungen an `bridge.py`:
-  `sudo systemctl restart jpl-roleplay-bridge`.
+  `sudo systemctl restart jpl-roleplay-bridge`; nach Änderungen an der Unit zusätzlich
+  `sudo cp tools/roleplay_bridge/jpl-roleplay-bridge.service /etc/systemd/system/ && sudo systemctl daemon-reload`.
+- Bridge-Pool: `BRIDGE_POOL_SIZE` 4 gleichzeitige CLI-Aufrufe, davon höchstens
+  `BRIDGE_LOW_SLOTS` 3 für Vorausberechnungen (`priority: "low"`), `BRIDGE_MAX_WAITING` 8
+  Wartende (max. `BRIDGE_QUEUE_WAIT_S` 20 s), sonst 429 → 502 `upstream_error` „beschäftigt".
+  `BRIDGE_EFFORT=low` (CLI `--effort low`). Log pro Aufruf: Dauer, Priorität, Wartezeit, aktive Plätze.
+- Kein persistenter CLI-Prozess (`--input-format stream-json`): gemessen bringt er nur den
+  Kaltstart von ~0,4 s, hält aber den Verlauf aller Anfragen im Kontext und hat einen festen
+  System-Prompt pro Prozess (Details im Kopf von `bridge.py`).
 - Monitoring: Flask-Admin `/admin-panel` → Kategorie „Rollenspiel“ (nur lesend).

@@ -317,3 +317,26 @@
 @media (max-width: 575.98px) {
     .roleplay-panel .rp-demo-cta-row .rp-btn { width: 100%; }
 }
+
+/* ── Vorschlags-Chip mit Werkzeugen: Vorlesen · DE · Sofort senden ── */
+.roleplay-panel .rp-chip-wrap {
+    display: inline-flex; align-items: stretch; max-width: 100%;
+    background: var(--rp-surface); border: 1px solid var(--rp-line); border-radius: var(--radius-md, 12px);
+}
+.roleplay-panel .rp-chip-wrap:hover, .roleplay-panel .rp-chip-wrap:focus-within { border-color: var(--rp-accent-text); }
+.roleplay-panel .rp-chip-wrap .rp-chip { flex: 1 1 auto; min-width: 0; border: 0; background: transparent; }
+.roleplay-panel .rp-chip-tools { display: flex; align-items: center; gap: 2px; padding-right: .25rem; }
+.roleplay-panel .rp-chip-tool {
+    display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto;
+    width: 40px; height: 40px; padding: 0; border: 0; border-radius: 50%;
+    background: transparent; color: var(--rp-muted); font: inherit; font-size: .75rem; font-weight: 700;
+    letter-spacing: .04em; cursor: pointer;
+}
+.roleplay-panel .rp-chip-tool:hover:not(:disabled) { background: var(--rp-sunken); color: var(--rp-accent-text); }
+.roleplay-panel .rp-chip-tool[aria-pressed="true"],
+.roleplay-panel .rp-chip-tool[aria-expanded="true"],
+.roleplay-panel .rp-chip-send { color: var(--rp-accent-text); }
+.roleplay-panel .rp-chip-tool:disabled { opacity: .45; cursor: default; }
+.roleplay-panel .rp-corr-say { width: 36px; height: 36px; }
+.roleplay-panel .rp-compose-meta { flex-wrap: wrap; }
+.roleplay-panel .rp-compose-meta .rp-german-switch { margin-right: auto; }

@@ -131,7 +131,8 @@ ROLEPLAY_BRIDGE_TOKEN=""                # geheim; identisch in /home/hp-ubuntu/.
 ANTHROPIC_API_KEY=""                    # nur fuer ROLEPLAY_PROVIDER=api
 # optional: ROLEPLAY_LIMIT_SESSIONS_PER_DAY (5), ROLEPLAY_LIMIT_MESSAGES_PER_DAY (60),
 #           ROLEPLAY_LIMIT_TUTOR_PER_DAY (20), ROLEPLAY_DAILY_COST_CAP_USD (2.00),
-#           ROLEPLAY_DAILY_MESSAGE_CAP (400, global)
+#           ROLEPLAY_DAILY_MESSAGE_CAP (1500, global inkl. Vorausberechnungen),
+#           ROLEPLAY_PREFETCH (an; Antworten auf Vorschlaege vorausberechnen)
 ## Payment (Payrexx)
 PAYMENT_PROVIDER="payrexx"              # payrexx | postfinance | mock
 PAYREXX_INSTANCE="<instanzname>"

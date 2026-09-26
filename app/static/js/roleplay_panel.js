@@ -12,6 +12,13 @@
  * andere Endpunkte (data-demo-start-url / data-demo-turn-url), feste Rolle,
  * ohne Tutor-Tab und ohne Beenden-Knopf. Der Gespraechszustand ist ein
  * signiertes Token, das mit jedem Zug zurueckkommt (kein Login, keine Session-ID).
+ *
+ * Vorschlags-Chips: Tipp = ins Eingabefeld uebernehmen; Pfeil = sofort senden
+ * (der Server hat die Antwort meist schon vorausberechnet → ohne „tippt …“,
+ * der Indikator erscheint nur, falls es doch laenger als SLOW_MS dauert);
+ * Lautsprecher = Vorschlag vorlesen (Stimme der Nutzer-Rolle); „DE“ = Uebersetzung
+ * dieses Chips zeigen. Uebersetzungen sind standardmaessig aus, der Schalter
+ * „Deutsch anzeigen“ blendet alle ein (localStorage).
  */
 (function () {
     'use strict';
@@ -21,6 +28,8 @@
     var TUTOR_MAX = 300;
     var TEXT_MAX = 300;
     var ROMAJI_KEY = 'jpl-roleplay-romaji';
+    var GERMAN_KEY = 'jpl-roleplay-chip-de';
+    var SLOW_MS = 1200;
 
     function csrfToken() {
         var el = document.querySelector('meta[name="csrf-token"]');
@@ -38,6 +47,25 @@
 
     function writeRomajiPref(on) {
         try { window.localStorage.setItem(ROMAJI_KEY, on ? '1' : '0'); } catch (e) { /* egal */ }
+    }
+
+    function readGermanPref() {
+        try { return window.localStorage.getItem(GERMAN_KEY) === '1'; } catch (e) { return false; }
+    }
+
+    function writeGermanPref(on) {
+        try { window.localStorage.setItem(GERMAN_KEY, on ? '1' : '0'); } catch (e) { /* egal */ }
+    }
+
+    function roleGender(scene, name) {
+        var roles = (scene && scene.roles) || [];
+        for (var i = 0; i < roles.length; i++) {
+            if (roles[i].name === name) {
+                var g = roles[i].gender;
+                return g === 'm' || g === 'f' ? g : null;
+            }
+        }
+        return null;
     }
 
     /* fetch mit Timeout. Liefert immer {ok, status, data} — wirft nie.
@@ -123,13 +151,19 @@
             hintShown: false,
             input: '',
             romajiOn: true,
+            germanOn: false,           // Uebersetzungen unter den Vorschlaegen (Default aus)
+            chipDe: {},                // einzeln aufgedeckte Chip-Uebersetzungen {index: true}
             sending: false,
+            quickSend: false,          // Vorschlag direkt gesendet → kein „tippt …“ (ausser langsam)
+            slowTyping: false,
+            _slowTimer: null,
             ending: false,
             error: null,               // {code, message, retry}
             limits: null,
             result: null,              // Abschluss {status, correction, correction_unavailable, xp_awarded, farewell}
             liveMsg: '',
             speaking: false,
+            speakingKey: '',           // welcher Knopf gerade vorliest ('bot', 's0', 'c1', …)
             _audio: null,
 
             tutorQuestion: '',
@@ -148,6 +182,7 @@
                 this.fallbackPage = parseInt(el.dataset.pageNumber, 10) || null;
                 try { this.pageNumbers = JSON.parse(el.dataset.pageNumbers || '[]'); } catch (e) { this.pageNumbers = []; }
                 this.romajiOn = readRomajiPref();
+                this.germanOn = readGermanPref();
                 if (el.dataset.demo === '1') {
                     this.demo = true;
                     this.open = true;
@@ -168,17 +203,10 @@
             get botName() { return (this.session && this.session.role_bot) || 'Partner'; },
             get userName() { return (this.session && this.session.role_user) || 'Du'; },
             // Geschlecht der Bot-Rolle aus der Szene ('m' | 'f' | null → Standardstimme).
-            get botGender() {
-                var name = this.session && this.session.role_bot;
-                var roles = (this.scene && this.scene.roles) || [];
-                for (var i = 0; i < roles.length; i++) {
-                    if (roles[i].name === name) {
-                        var g = roles[i].gender;
-                        return g === 'm' || g === 'f' ? g : null;
-                    }
-                }
-                return null;
-            },
+            get botGender() { return roleGender(this.scene, this.session && this.session.role_bot); },
+            // Geschlecht der eigenen Rolle — fuer das Vorlesen der Vorschlaege/Korrekturen.
+            get userGender() { return roleGender(this.scene, this.session && this.session.role_user); },
+            get showTyping() { return this.sending && (!this.quickSend || this.slowTyping); },
             get turnCount() { return (this.session && this.session.turn_count) || 0; },
             get maxTurns() { return (this.session && this.session.max_user_turns) || 8; },
             get minTurns() { return (this.session && this.session.min_user_turns) || 4; },
@@ -359,6 +387,7 @@
                 this.showReading = false;
                 this.showGerman = false;
                 this.hintShown = false;
+                this.chipDe = {};
                 if (turn) this.liveMsg = this.botName + ' sagt: ' + turn.jp + ' — ' + (turn.de || '');
                 var self = this;
                 this.$nextTick(function () {
@@ -388,6 +417,25 @@
                 this.input = s.jp;
                 this._focus('input');
             },
+            // Pfeil am Chip: Vorschlag sofort senden (Antwort ist meist vorausberechnet).
+            sendSuggestion: function (s) {
+                if (!s || this.busy) return;
+                this.input = s.jp;
+                this.quickSend = true;
+                return this.send();
+            },
+            toggleGerman: function () {
+                this.germanOn = !this.germanOn;
+                this.chipDe = {};          // Schalter gilt fuer alle Chips (auch einzeln aufgedeckte)
+                writeGermanPref(this.germanOn);
+            },
+            chipGermanVisible: function (i) { return this.germanOn || !!this.chipDe[i]; },
+            toggleChipGerman: function (i) {
+                var next = {};
+                for (var k in this.chipDe) { if (Object.prototype.hasOwnProperty.call(this.chipDe, k)) next[k] = this.chipDe[k]; }
+                next[i] = !next[i];
+                this.chipDe = next;
+            },
             _finalText: function () {
                 var t = (this.input || '').trim();
                 if (this.romajiOn && window.RomajiToKana) t = window.RomajiToKana.convert(t).trim();
@@ -406,9 +454,21 @@
                 var self = this;
                 this.sending = true;
                 this.error = null;
-                this.liveMsg = this.botName + ' tippt …';
+                this.slowTyping = false;
+                if (this._slowTimer) clearTimeout(this._slowTimer);
+                if (this.quickSend) {
+                    this._slowTimer = setTimeout(function () {
+                        self.slowTyping = true;
+                        self.liveMsg = self.botName + ' tippt …';
+                    }, SLOW_MS);
+                } else {
+                    this.liveMsg = this.botName + ' tippt …';
+                }
                 return this._turnRequest(text).then(function (r) {
                     self.sending = false;
+                    self.quickSend = false;
+                    self.slowTyping = false;
+                    if (self._slowTimer) { clearTimeout(self._slowTimer); self._slowTimer = null; }
                     if (r.ok) {
                         if (self.demo) self.demoToken = r.data.token || null;
                         // Reihenfolge im Verlauf: erst die beantwortete Bot-Zeile, dann der Nutzerzug.
@@ -517,15 +577,19 @@
                 if (this._audio) { try { this._audio.pause(); } catch (e) { /* egal */ } this._audio = null; }
                 try { if ('speechSynthesis' in window) window.speechSynthesis.cancel(); } catch (e) { /* egal */ }
                 this.speaking = false;
+                this.speakingKey = '';
             },
-            speak: function (text) {
+            // key: welcher Knopf vorliest (aria-pressed); gender: 'm'|'f'|null,
+            // undefined = Stimme der Bot-Rolle. Vorschlaege/Korrekturen: userGender.
+            speak: function (text, key, gender) {
                 if (!text) return;
                 var self = this;
                 this.stopAudio();
                 this.speaking = true;
+                this.speakingKey = key || 'bot';
                 var payload = { text: text, lang: 'ja', speed: 0.85 };
-                var gender = this.botGender;
-                if (gender) payload.voice_gender = gender;
+                if (gender === undefined) gender = this.botGender;
+                if (gender === 'm' || gender === 'f') payload.voice_gender = gender;
                 fetch('/api/tts', {
                     method: 'POST',
                     credentials: 'same-origin',
@@ -538,7 +602,7 @@
                     var url = URL.createObjectURL(blob);
                     var audio = new Audio(url);
                     self._audio = audio;
-                    var done = function () { URL.revokeObjectURL(url); if (self._audio === audio) { self._audio = null; self.speaking = false; } };
+                    var done = function () { URL.revokeObjectURL(url); if (self._audio === audio) { self._audio = null; self.speaking = false; self.speakingKey = ''; } };
                     audio.addEventListener('ended', done);
                     audio.addEventListener('error', done);
                     var p = audio.play();
@@ -550,16 +614,17 @@
             _speakBrowser: function (text) {
                 var self = this;
                 try {
-                    if (!('speechSynthesis' in window)) { self.speaking = false; return; }
+                    if (!('speechSynthesis' in window)) { self.speaking = false; self.speakingKey = ''; return; }
                     var u = new SpeechSynthesisUtterance(text);
                     u.lang = 'ja-JP';
                     u.rate = 0.8;
                     var v = window.speechSynthesis.getVoices().filter(function (x) { return x.lang && x.lang.indexOf('ja') === 0; })[0];
                     if (v) u.voice = v;
-                    u.onend = u.onerror = function () { self.speaking = false; };
+                    u.onend = u.onerror = function () { self.speaking = false; self.speakingKey = ''; };
                     window.speechSynthesis.speak(u);
                 } catch (e) {
                     self.speaking = false;
+                    self.speakingKey = '';
                 }
             },
 

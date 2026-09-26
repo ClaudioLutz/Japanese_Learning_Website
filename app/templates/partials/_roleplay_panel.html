@@ -81,14 +81,13 @@
                         <div class="rp-bot-head"><span class="rp-bot-name">{{ rp_demo.role_bot }}</span></div>
                         <div class="rp-bot-jp" lang="ja">何を 食べたいですか。</div>
                         <div class="rp-bot-reading" lang="ja">なにを たべたいですか。</div>
-                        <div class="rp-bot-de">Was möchtest du essen?</div>
                     </div>
                     <div class="rp-suggestions">
                         <span class="rp-label rp-small">Vorschläge</span>
                         <div class="rp-chips">
-                            <span class="rp-chip"><span lang="ja">カレーが たべたいです。</span><span class="rp-chip-de">Ich möchte Curry essen.</span></span>
-                            <span class="rp-chip"><span lang="ja">サンドイッチを ください。</span><span class="rp-chip-de">Ein Sandwich, bitte.</span></span>
-                            <span class="rp-chip"><span lang="ja">わたしも カレーが いいです。</span><span class="rp-chip-de">Ich nehme auch Curry.</span></span>
+                            <span class="rp-chip"><span lang="ja">カレーが たべたいです。</span></span>
+                            <span class="rp-chip"><span lang="ja">サンドイッチを ください。</span></span>
+                            <span class="rp-chip"><span lang="ja">わたしも カレーが いいです。</span></span>
                         </div>
                     </div>
                     <div class="rp-corr">
@@ -165,9 +164,9 @@
                 <div class="rp-bot" x-show="bot">
                     <div class="rp-bot-head">
                         <span class="rp-bot-name" x-text="botName"></span>
-                        <button type="button" class="rp-icon-btn" @click="speak(bot && bot.jp)"
-                                :aria-label="'Zeile von ' + botName + ' vorlesen'" :aria-pressed="speaking ? 'true' : 'false'">
-                            <i class="fas" :class="speaking ? 'fa-volume-high' : 'fa-volume-low'" aria-hidden="true"></i>
+                        <button type="button" class="rp-icon-btn" @click="speak(bot && bot.jp, 'bot')"
+                                :aria-label="'Zeile von ' + botName + ' vorlesen'" :aria-pressed="speakingKey === 'bot' ? 'true' : 'false'">
+                            <i class="fas" :class="speakingKey === 'bot' ? 'fa-volume-high' : 'fa-volume-low'" aria-hidden="true"></i>
                         </button>
                     </div>
                     <div class="rp-bot-jp" lang="ja" x-text="bot ? bot.jp : ''"></div>
@@ -187,14 +186,28 @@
                 </div>
 
                 <div class="rp-suggestions" x-show="bot && bot.suggestions && bot.suggestions.length">
-                    <span class="rp-label rp-small">Vorschläge (antippen zum Übernehmen)</span>
+                    <span class="rp-label rp-small">Vorschläge (antippen = ins Feld · <i class="fas fa-paper-plane" aria-hidden="true"></i><span class="rp-sr-only">Pfeil</span> = sofort senden)</span>
                     <div class="rp-chips">
-                        <template x-for="(s, i) in (bot ? bot.suggestions : [])" :key="i">
-                            <button type="button" class="rp-chip" @click="useSuggestion(s)" :disabled="busy"
-                                    :title="s.de" :aria-label="s.jp + ' — ' + s.de">
-                                <span lang="ja" x-text="s.jp"></span>
-                                <span class="rp-chip-de" x-text="s.de"></span>
-                            </button>
+                        <template x-for="(s, i) in (bot ? bot.suggestions : [])" :key="bot.turn_index + '-' + i">
+                            <div class="rp-chip-wrap" role="group" :aria-label="'Vorschlag ' + (i + 1)">
+                                <button type="button" class="rp-chip" @click="useSuggestion(s)" :disabled="busy"
+                                        :aria-label="'Übernehmen: ' + s.jp">
+                                    <span lang="ja" x-text="s.jp"></span>
+                                    <span class="rp-chip-de" x-show="chipGermanVisible(i)" x-text="s.de"></span>
+                                </button>
+                                <div class="rp-chip-tools">
+                                    <button type="button" class="rp-chip-tool rp-chip-say" @click.stop="speak(s.jp, 's' + i, userGender)"
+                                            aria-label="Vorschlag vorlesen" :aria-pressed="speakingKey === ('s' + i) ? 'true' : 'false'">
+                                        <i class="fas" :class="speakingKey === ('s' + i) ? 'fa-volume-high' : 'fa-volume-low'" aria-hidden="true"></i>
+                                    </button>
+                                    <button type="button" class="rp-chip-tool rp-chip-de-btn" x-show="!germanOn" @click.stop="toggleChipGerman(i)"
+                                            aria-label="Deutsche Übersetzung zeigen" :aria-expanded="chipDe[i] ? 'true' : 'false'">DE</button>
+                                    <button type="button" class="rp-chip-tool rp-chip-send" @click.stop="sendSuggestion(s)" :disabled="busy"
+                                            aria-label="Vorschlag sofort senden">
+                                        <i class="fas fa-paper-plane" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                            </div>
                         </template>
                     </div>
                 </div>
@@ -224,11 +237,16 @@
                             <span class="rp-switch-track" aria-hidden="true"><span class="rp-switch-thumb"></span></span>
                             Romaji → Kana
                         </button>
+                        <button type="button" class="rp-switch rp-german-switch" role="switch" @click="toggleGerman()"
+                                :aria-checked="germanOn ? 'true' : 'false'">
+                            <span class="rp-switch-track" aria-hidden="true"><span class="rp-switch-thumb"></span></span>
+                            Deutsch anzeigen
+                        </button>
                         <span class="rp-muted rp-small" x-text="input.length + ' / ' + TEXT_MAX"></span>
                     </div>
                 </form>
 
-                <div class="rp-status rp-typing" x-show="sending" role="status">
+                <div class="rp-status rp-typing" x-show="showTyping" role="status">
                     <span class="rp-dots" aria-hidden="true"><i></i><i></i><i></i></span>
                     <span x-text="botName + ' tippt …'"></span>
                 </div>
@@ -251,7 +269,7 @@
                 <div class="rp-bot rp-farewell" x-show="result && result.farewell">
                     <div class="rp-bot-head">
                         <span class="rp-bot-name" x-text="botName"></span>
-                        <button type="button" class="rp-icon-btn" @click="speak(result && result.farewell && result.farewell.jp)"
+                        <button type="button" class="rp-icon-btn" @click="speak(result && result.farewell && result.farewell.jp, 'farewell')"
                                 :aria-label="'Verabschiedung von ' + botName + ' vorlesen'">
                             <i class="fas fa-volume-low" aria-hidden="true"></i>
                         </button>
@@ -279,10 +297,18 @@
                                     <span class="rp-corr-orig" lang="ja" x-text="c.original"></span>
                                     <i class="fas fa-arrow-right" aria-hidden="true"></i><span class="rp-sr-only">besser:</span>
                                     <span class="rp-corr-better" lang="ja" x-text="c.better"></span>
+                                    <button type="button" class="rp-chip-tool rp-corr-say" @click.stop="speak(c.better, 'c' + i, userGender)"
+                                            aria-label="Besseren Satz vorlesen" :aria-pressed="speakingKey === ('c' + i) ? 'true' : 'false'">
+                                        <i class="fas fa-volume-low" aria-hidden="true"></i>
+                                    </button>
                                 </div>
                                 <div class="rp-corr-pair" x-show="isSameCorrection(c)">
                                     <i class="fas fa-check rp-corr-ok" aria-hidden="true"></i><span class="rp-sr-only">richtig:</span>
                                     <span class="rp-corr-better" lang="ja" x-text="c.better"></span>
+                                    <button type="button" class="rp-chip-tool rp-corr-say" @click.stop="speak(c.better, 'c' + i, userGender)"
+                                            aria-label="Satz vorlesen" :aria-pressed="speakingKey === ('c' + i) ? 'true' : 'false'">
+                                        <i class="fas fa-volume-low" aria-hidden="true"></i>
+                                    </button>
                                 </div>
                                 <div class="rp-corr-expl" x-text="c.explanation_de"></div>
                             </div>

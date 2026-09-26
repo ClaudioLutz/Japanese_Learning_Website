@@ -490,7 +490,7 @@ class TestLimits:
         assert svc.limit_value("ROLEPLAY_LIMIT_MESSAGES_PER_DAY") == 60
         assert svc.limit_value("ROLEPLAY_LIMIT_TUTOR_PER_DAY") == 20
         assert svc.daily_cost_cap() == pytest.approx(2.0)
-        assert svc.limit_value("ROLEPLAY_DAILY_MESSAGE_CAP") == 400
+        assert svc.limit_value("ROLEPLAY_DAILY_MESSAGE_CAP") == 1500
 
     def test_message_limit_counts_user_turns(self, app_context, app, monkeypatch):
         monkeypatch.setitem(app.config, "ROLEPLAY_LIMIT_MESSAGES_PER_DAY", 2)

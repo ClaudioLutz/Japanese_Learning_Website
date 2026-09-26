@@ -2320,6 +2320,42 @@ class TutorQuestion(db.Model):
         return f'<TutorQuestion {self.id} user={self.user_id} lesson={self.lesson_id}>'
 
 
+class RoleplayPrefetch(db.Model):
+    """Vorausberechnete Bot-Antwort auf einen der drei Antwortvorschlaege.
+
+    Sobald ein Bot-Zug mit Vorschlaegen steht, rechnet der Server im Hintergrund
+    die Antwort auf jeden Vorschlag vor (app/services/roleplay_prefetch.py).
+    Waehlt der Nutzer einen Vorschlag, kommt die Antwort sofort aus dieser Tabelle.
+    Eingeloggt: session_id; Gast-Demo: demo_key (Hash des Demo-Tokens), session_id
+    NULL. user_text ist immer ein vom Modell/Server verfasster Vorschlag, nie
+    Freitext eines Nutzers. Zeilen aelter als 24 h raeumt cleanup_old() weg.
+    status: pending | ready | failed | used (Antwort uebernommen) | stale (verfallen).
+    """
+    __tablename__ = 'roleplay_prefetch'
+    __table_args__ = (
+        db.Index('ix_roleplay_prefetch_session_turn', 'session_id', 'turn_index'),
+        db.Index('ix_roleplay_prefetch_demo_turn', 'demo_key', 'turn_index'),
+        db.Index('ix_roleplay_prefetch_created', 'created_at'),
+    )
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    # Bewusst ohne Fremdschluessel: Zeilen sind kurzlebig und blockieren nie das
+    # Loeschen einer Session/eines Nutzers.
+    session_id: Mapped[int] = mapped_column(Integer, nullable=True)
+    demo_key: Mapped[str] = mapped_column(String(64), nullable=True)
+    turn_index: Mapped[int] = mapped_column(Integer, nullable=False)
+    user_text: Mapped[str] = mapped_column(Text, nullable=False)
+    norm_text: Mapped[str] = mapped_column(String(400), nullable=False)
+    response_json: Mapped[str] = mapped_column(Text, nullable=True)
+    status: Mapped[str] = mapped_column(String(10), default='pending', nullable=False)
+    tokens_in: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    tokens_out: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    cost_usd: Mapped[float] = mapped_column(db.Float, default=0.0, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
+
+    def __repr__(self):
+        return f'<RoleplayPrefetch {self.id} s={self.session_id} t={self.turn_index} {self.status}>'
+
+
 # SQLAlchemy event listeners to automatically maintain lesson type consistency
 @event.listens_for(Lesson, 'before_insert')
 @event.listens_for(Lesson, 'before_update')
