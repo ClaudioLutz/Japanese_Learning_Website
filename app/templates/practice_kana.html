@@ -294,6 +294,55 @@
         .kana-panel--spell { height: min(70vh, 600px); }
     }
 
+    /* ── Desktop ≥1024px: zweispaltig, alles ohne Scrollen ──
+       Regel: auf Desktop (auch 1366×768) muss „Spiel starten" ohne Scrollen
+       sichtbar sein. Links die Einstellungen (Kopf, Schrift, Reihen, Spielart,
+       Modus) kompakt, rechts Vorschau + Start + Schnellstarts, darunter die
+       Konto-Vorteile. Panel + Body der Zuordnung werden per display:contents
+       aufgeloest, damit ihre Kinder direkt im Grid der Karte liegen (x-show setzt
+       beim Ausblenden inline display:none und gewinnt weiterhin). */
+    @media (min-width: 1024px) {
+        body.kana-setup-locked .container.mt-4 { padding: 1.25rem 1rem; }
+        .kana-setup {
+            max-width: 1100px; overflow: visible;
+            display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 380px);
+            column-gap: 2.5rem; align-content: start; align-items: start;
+            padding: 1.5rem 2rem;
+        }
+        .kana-setup__head, .kana-setup__scope, .kana-modes,
+        .kana-panel--match > .kana-setup__body > .kana-setup__group { grid-column: 1; }
+        .kana-setup__head { text-align: left; margin-bottom: 0.75rem; }
+        .kana-setup__head h1 { margin-top: 0.4rem; }
+        .kana-setup__head p { max-width: 62ch; }
+        .kana-setup__scope .kana-setup__group { margin-bottom: 0.6rem; }
+        .kana-setup__scope .rows { gap: 0.32rem; }
+        .kana-setup__scope .chip { padding: 0.32rem 0.62rem; }
+        .kana-setup__group { margin-bottom: 0.6rem; }
+        .kana-modes { margin-bottom: 0.6rem; }
+        .kana-modes__tab { min-height: 42px; }
+
+        .kana-panel--match, .kana-panel--match > .kana-setup__body { display: contents; }
+        /* Gast-Hinweis „Sofort spielbar" steckt schon im Kopftext („… ohne Login"). */
+        .kana-setup__guest { display: none; }
+        .kana-setup__foot {
+            grid-column: 2; grid-row: 1; align-self: start;
+            padding: 1.25rem; border: 1px solid var(--border-color, #E4DED4); border-radius: 16px;
+            background: var(--background-color, #F7F3EC);
+        }
+        .kana-setup__preview { font-size: 0.95rem; }
+        .kana-setup__preview strong { font-size: 1.35rem; }
+        .kana-setup__unlock { grid-column: 2; grid-row: 2 / span 10; align-self: start; margin: 1rem 0 0; }
+        /* Storm/Schreiben: rechte Spalte, Hoehe an den Viewport gebunden. */
+        .kana-panel--storm, .kana-panel--spell {
+            grid-column: 2; grid-row: 1 / span 12;
+            height: min(calc(100dvh - 60px - 5.5rem), 600px);
+        }
+        /* Im laufenden Spiel ist die linke Seite (Kopf/Scope/Tabs) ausgeblendet →
+           Spielfeld ueber die volle Kartenbreite. */
+        .kana-setup:has(> .kana-setup__head[style*="none"]) .kana-panel--storm,
+        .kana-setup:has(> .kana-setup__head[style*="none"]) .kana-panel--spell { grid-column: 1 / -1; }
+    }
+
     /* ══════════════════════════════════════════════════════════════════
        DARK MODE — Ink-on-Washi
        Diese Seite hatte 0 Dark-Regeln → alle Steuer-Inseln waren als
@@ -489,7 +538,7 @@
 
     {# ── PANEL „Zuordnung" (Matching): Default-Tab, eigenes kanaSettings()-Scope.
        x-cloak nur, wenn Storm der initiale Tab ist (Deep-Link ?tab=storm). ── #}
-    <div class="kana-panel" x-show="game === 'match'" x-data="kanaSettings()" x-init="init()"
+    <div class="kana-panel kana-panel--match" x-show="game === 'match'" x-data="kanaSettings()" x-init="init()"
          {{ 'x-cloak' if _initial_tab != 'match' else '' }}>
     <div class="kana-setup__body">
         {# Modus zuerst — so ist er auf Mobile ohne Scroll erreichbar; die Gast-
