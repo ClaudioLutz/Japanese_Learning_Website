@@ -15,6 +15,10 @@ Format je Eintrag:
 Keine Commit-Hashes, keine internen Namen.
 -->
 
+## 2026-09-26 | Vorlese-Player zeigt die Länge, Lektionsübersicht merkt sich deine letzte Lektion
+Der Vorlese-Player in den Lektionen zeigt schon vor dem Abspielen, wie lang die Aufnahme ist. In der Lektionsübersicht ist bei Neulingen jetzt das Modul der zuletzt geöffneten Lektion aufgeklappt, und die 🔥-Anzeige oben zeigt nur noch eine Serie, die wirklich noch läuft.
+Link: /lessons
+
 ## 2026-09-24 | Rückgängig im Lektions-Deck
 Auch in den Lernkarten einer Lektion kannst du die letzte Bewertung jetzt zurücknehmen. Praktisch, wenn du dich vertippt oder zu schnell auf „Leicht" gedrückt hast.
 

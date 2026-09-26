@@ -109,3 +109,68 @@ def test_guest_view_unchanged(client):
     html = client.get('/lessons').get_data(as_text=True)
     assert 'data-newbie-focus' not in html
     assert _open_cats(html) == {cats[0].id, cats[1].id}
+
+
+def _opened(user, lesson, minutes_ago=0, last_page=None):
+    """Nur geoeffnet (Progress-Zeile, 0 %), evtl. mit gemerkter Seite."""
+    UserLessonProgressFactory(
+        user_id=user.id, lesson_id=lesson.id, is_completed=False,
+        progress_percentage=0, last_page=last_page,
+        last_accessed=datetime.utcnow() - timedelta(minutes=minutes_ago),
+    )
+
+
+def test_focus_follows_last_opened_lesson_even_at_zero_percent(auth_client):
+    client, user = auth_client
+    cats, lessons = _catalog()
+    _progress(user, lessons[0], minutes_ago=60)             # Modul 0 zu 40 % begonnen
+    _opened(user, lessons[4], minutes_ago=2, last_page=3)   # Modul 2 zuletzt geoeffnet, 0 %
+    db.session.commit()
+    html = client.get('/lessons').get_data(as_text=True)
+    assert _open_cats(html) == {cats[2].id}
+    assert f'data-focus-cat="{cats[2].id}"' in html
+
+
+def test_completed_recent_lesson_is_not_focus(auth_client):
+    client, user = auth_client
+    cats, lessons = _catalog()
+    _progress(user, lessons[4], done=True, minutes_ago=1)   # zuletzt: aber fertig
+    _opened(user, lessons[2], minutes_ago=30)               # Modul 1 geoeffnet
+    db.session.commit()
+    html = client.get('/lessons').get_data(as_text=True)
+    assert _open_cats(html) == {cats[1].id}
+
+
+def test_reopening_lesson_moves_focus(auth_client):
+    """Erneutes Oeffnen einer offenen Lektion aktualisiert last_accessed."""
+    client, user = auth_client
+    cats, lessons = _catalog()
+    for lsn in lessons:
+        lsn.price = 0.0
+    _opened(user, lessons[0], minutes_ago=300)   # Modul 0, lange her
+    _opened(user, lessons[2], minutes_ago=5)     # Modul 1, juenger
+    db.session.commit()
+    assert _open_cats(client.get('/lessons').get_data(as_text=True)) == {cats[1].id}
+    assert client.get(f'/lessons/{lessons[0].id}').status_code == 200
+    assert _open_cats(client.get('/lessons').get_data(as_text=True)) == {cats[0].id}
+
+
+def test_last_page_update_counts_as_opened(auth_client):
+    import re as _re
+
+    from app.models import UserLessonProgress
+    client, user = auth_client
+    cats, lessons = _catalog()
+    _opened(user, lessons[0], minutes_ago=300)
+    _opened(user, lessons[2], minutes_ago=5)
+    db.session.commit()
+    page = client.get('/lessons').get_data(as_text=True)
+    token = _re.search(r'name="csrf-token" content="([^"]+)"', page).group(1)
+    resp = client.post(f'/api/lessons/{lessons[0].id}/last-page', json={'page': 2},
+                       headers={'X-CSRFToken': token})
+    assert resp.status_code == 204
+    db.session.expire_all()
+    pr = UserLessonProgress.query.filter_by(user_id=user.id, lesson_id=lessons[0].id).one()
+    assert pr.last_page == 2
+    assert pr.last_accessed > datetime.utcnow() - timedelta(minutes=1)
+    assert _open_cats(client.get('/lessons').get_data(as_text=True)) == {cats[0].id}

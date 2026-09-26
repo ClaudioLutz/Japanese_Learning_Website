@@ -927,6 +927,9 @@ def lessons():
             # Zuletzt gelesene Seite (1-basiert) -> "Weiter lernen" haengt sie als
             # #page-N an, damit der Knopf an die zuletzt besuchte Stelle springt.
             'last_page': pr.last_page if pr else None,
+            # Schon einmal geoeffnet (Progress-Zeile existiert) -> Kandidat fuer
+            # "zuletzt geoeffnet", auch wenn noch 0 % erledigt sind.
+            'opened': pr is not None,
         }
 
     # Kategorien als Lehrplan-Rueckgrat: jede Kategorie traegt ihre Lektionen
@@ -1020,14 +1023,20 @@ def lessons():
     current_streak = 0
     if show_status:
         due_count = srs_service.get_due_count(current_user.id)
-        current_streak = current_user.current_streak or 0
+        # Effektiver Streak wie im Nav-Badge: gerissen, aber noch nicht
+        # verbucht -> 0 (rein lesend).
+        from app.dashboard_service import effective_streak
+        current_streak = effective_streak(current_user)
         resume = None  # (last_accessed, lesson_dict, category_name)
         nxt = None      # (lesson_dict, category_name) — erste offene im Pfad
         for cat in page_categories:
             for d in cat['lessons']:
                 if d['status'] == 'done':
                     continue
-                if d['status'] == 'started':
+                # Zuletzt geoeffnete, noch nicht abgeschlossene Lektion — auch
+                # wenn erst geoeffnet (0 %, evtl. last_page gesetzt). Gleiche
+                # Regel wie dashboard_service.next_lesson (/mein-lernen).
+                if d['status'] == 'started' or d['opened']:
                     la = d['last_accessed'] or datetime.min
                     if resume is None or la > resume[0]:
                         resume = (la, d, cat['name'])
@@ -1552,7 +1561,16 @@ def view_lesson(lesson_id):
         progress = UserLessonProgress.query.filter_by(
             user_id=current_user.id, lesson_id=lesson_id
         ).first()
-        
+
+        # Erneutes Oeffnen einer offenen Lektion = "zuletzt geoeffnet" (/lessons-
+        # Fokus + Weiter lernen). Abgeschlossene bleiben unberuehrt.
+        if progress and not progress.is_completed:
+            try:
+                progress.last_accessed = datetime.utcnow()
+                db.session.commit()
+            except SQLAlchemyError:
+                db.session.rollback()
+
         if not progress:
             try:
                 progress = UserLessonProgress(user_id=current_user.id, lesson_id=lesson_id)
@@ -2462,6 +2480,8 @@ def add_lesson_content(lesson_id):
         page_number=page_number,
         is_optional=is_optional
     )
+    if new_content.content_type == 'image' and data.get('alt_text'):
+        new_content.alt_text = data.get('alt_text')
     try:
         db.session.add(new_content)
         db.session.commit()
@@ -2843,6 +2863,7 @@ def get_content_details(content_id):
     """Get full details for a single content item for editing."""
     content = LessonContent.query.get_or_404(content_id)
     content_dict = model_to_dict(content)
+    content_dict['alt_text'] = content.alt_text or ''
 
     if content.is_interactive:
         question = QuizQuestion.query.filter_by(lesson_content_id=content.id).first()
@@ -2895,6 +2916,8 @@ def update_lesson_content(content_id):
             content.media_url = data.get('media_url', content.media_url)
             content.file_path = data.get('file_path', content.file_path)
             content.content_text = data.get('description', content.content_text)
+            if content.content_type == 'image' and 'alt_text' in data:
+                content.alt_text = data.get('alt_text')
         elif content.content_type == 'interactive':
             content.is_interactive = True
             interactive_type = data.get('interactive_type')
@@ -3551,7 +3574,7 @@ def update_last_page(lesson_id):
 
     Der "Weiter lernen"-Knopf auf /lessons haengt diese Seite als #page-N an den
     Lektions-Link, sodass der Nutzer geraeteuebergreifend dort weitermacht, wo er
-    war. Bewusst schlank: setzt nur die eigene last_page-Spalte, ruehrt weder
+    war. Bewusst schlank: setzt nur last_page (+ last_accessed), ruehrt weder
     content_progress noch die Prozent-Berechnung an (sonst Race mit dem
     Slide-Handler, der content_progress via markComplete schreibt)."""
     from flask_wtf.csrf import validate_csrf
@@ -3577,6 +3600,9 @@ def update_last_page(lesson_id):
         return jsonify({"error": "no progress"}), 404
 
     progress.last_page = page
+    # Seitenwechsel = die Lektion ist gerade offen -> "zuletzt geoeffnet"
+    # (/lessons-Fokus, Weiter lernen). Nur der Zeitstempel, kein content_progress.
+    progress.last_accessed = datetime.utcnow()
     db.session.commit()
     return ('', 204)
 
@@ -4668,6 +4694,8 @@ def add_file_content(lesson_id):
         order_index=next_order_index,
         is_optional=is_optional
     )
+    if new_content.content_type == 'image' and data.get('alt_text'):
+        new_content.alt_text = data.get('alt_text')
     
     try:
         db.session.add(new_content)

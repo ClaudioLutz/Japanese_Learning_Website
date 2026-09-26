@@ -1136,6 +1136,20 @@ def streak_status(user):
     return res('lost', 0, 'Heute startest du einen neuen Streak.', cur)
 
 
+def effective_streak(user):
+    """Streak-Zahl, die JETZT ehrlich gilt (nur lesend, fuer das Nav-Badge).
+
+    ``current_streak`` wird erst bei der naechsten Aktivitaet verbucht. Ist der
+    letzte Aktivitaetstag aelter als gestern und deckt kein Freeze die Luecke,
+    ist der Streak faktisch gerissen -> 0. Freeze-gedeckt (vorgestern aktiv,
+    Freeze verfuegbar) zaehlt weiter der alte Wert. Schreibt nichts
+    (update_streak laeuft nur bei echter Aktivitaet/Login).
+    """
+    if user is None or not getattr(user, 'is_authenticated', False):
+        return 0
+    return int(streak_status(user).get('streak') or 0)
+
+
 def due_tomorrow_count(user_id):
     """Karten, die JETZT noch nicht faellig sind, aber bis Ende morgen (CH) faellig werden.
 

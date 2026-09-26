@@ -245,7 +245,6 @@ def create_app():
             "cdn.tailwindcss.com",
             "cdn.tiny.cloud",
             "cdnjs.cloudflare.com",
-            "code.jquery.com",
             "unpkg.com",
         ],
         'style-src': [
@@ -432,7 +431,20 @@ def create_app():
             )
         except Exception:
             has_published_courses = True
+        # Nav-Badge 🔥: effektiver Streak statt roher current_streak — ein
+        # gerissener, noch nicht verbuchter Streak zeigt 0 (Badge weg), ein
+        # Freeze-gedeckter bleibt sichtbar. Rein lesend; fail-closed auf 0.
+        nav_streak = 0
+        try:
+            from flask_login import current_user as _cu2
+            if getattr(_cu2, 'is_authenticated', False):
+                from app.dashboard_service import effective_streak
+                nav_streak = effective_streak(_cu2)
+        except Exception:
+            app.logger.warning("nav_streak fail-closed", exc_info=True)
+            nav_streak = 0
         return {
+            'nav_streak': nav_streak,
             'current_year': _dt.utcnow().year,
             'site_url': site_url,
             'site_name': app.config['SITE_NAME'],
@@ -461,6 +473,17 @@ def create_app():
         except OSError:
             mtime = 0
         return _url_for('static', filename=filename, v=mtime)
+
+    # Block-Player: Audio-Dauer aus dem WAV-Header (ohne die Datei auszuliefern),
+    # damit der lazy ladende Player vorab "0:00 / m:ss" zeigen kann.
+    @app.template_global()
+    def audio_duration(url_or_path):
+        from app.audio_meta import audio_duration_seconds
+        try:
+            return audio_duration_seconds(url_or_path, app.config['UPLOAD_FOLDER'])
+        except Exception:
+            app.logger.warning("audio_duration fehlgeschlagen", exc_info=True)
+            return None
 
     # Register social auth blueprint (for /auth/login/google-oauth2/ route only)
     from social_flask.routes import social_auth

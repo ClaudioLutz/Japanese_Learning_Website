@@ -1450,7 +1450,7 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                         <div class="content-item mb-4" data-content-id="{{ content.id }}">
                                             {% if content.content_type == 'audio' %}
                                             <div class="mb-3">
-                                                <audio controls preload="none" class="w-100">
+                                                {% set _dur = audio_duration(content.file_path or content.media_url) %}<audio controls preload="none" class="w-100"{% if _dur %} data-duration="{{ _dur }}"{% endif %}>
                                                     {% if content.file_path %}
                                                     <source src="{{ content.get_file_url() }}?v={{ content.id }}" type="audio/mpeg">
                                                     {% elif content.media_url %}
@@ -1462,7 +1462,7 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                             <div class="conv-text-section" data-content-id="{{ content.id }}">
                                                 {% if (content.file_path or content.media_url) and content.file_type in ('audio/mpeg', 'audio/wav') %}
                                                 <div class="text-audio-player mb-3">
-                                                  <audio controls preload="none" src="{{ content.get_file_url() if content.file_path else content.media_url }}" style="width:100%;max-width:540px;"></audio>
+                                                  {% set _dur = audio_duration(content.file_path or content.media_url) %}<audio controls preload="none"{% if _dur %} data-duration="{{ _dur }}"{% endif %} src="{{ content.get_file_url() if content.file_path else content.media_url }}" style="width:100%;max-width:540px;"></audio>
                                                   <div class="text-audio-meta small text-muted mt-1">
                                                     🔊 Vorlesen — Deutsch + Japanisch (separate Stimmen)<br>
                                                     <span class="text-muted" style="opacity:0.75;">🤖 KI-Stimmen, wir verbessern laufend · <a href="{{ url_for('issues.new_issue', content_type='lesson_content', content_id=content.id) }}" class="lesson-audio-report-link"><i class="fas fa-flag" aria-hidden="true"></i> Aussprache melden</a> · <a href="mailto:info@japanese-learning.ch" class="text-muted">info@japanese-learning.ch</a></span>
@@ -1583,9 +1583,9 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                         {# Dekoratives Seitenbild: rahmenlos, ohne Fortschritts-Button (zaehlt nicht zum Fortschritt) #}
                                         <div class="content-item mb-4" data-content-id="{{ content.id }}">
                                             {% if content.file_path %}
-                                            <img src="{{ content.get_file_url() }}" class="img-fluid rounded shadow-sm w-100" alt="{{ content.title or 'Seitenbild' }}" loading="lazy">
+                                            <img src="{{ content.get_file_url() }}" class="img-fluid rounded shadow-sm w-100" alt="{{ content.alt_text or content.title or 'Seitenbild' }}" loading="lazy">
                                             {% elif content.media_url %}
-                                            <img src="{{ content.media_url }}" class="img-fluid rounded shadow-sm w-100" alt="{{ content.title or 'Seitenbild' }}" loading="lazy">
+                                            <img src="{{ content.media_url }}" class="img-fluid rounded shadow-sm w-100" alt="{{ content.alt_text or content.title or 'Seitenbild' }}" loading="lazy">
                                             {% endif %}
                                         </div>
                                         {% else %}
@@ -1959,7 +1959,7 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                     <div class="text-content-container">
                                                         {% if (content.file_path or content.media_url) and content.file_type in ('audio/mpeg', 'audio/wav') %}
                                                         <div class="text-audio-player mb-3" data-content-id="{{ content.id }}">
-                                                          <audio controls preload="none" src="{{ content.get_file_url() if content.file_path else content.media_url }}" style="width:100%;max-width:540px;"></audio>
+                                                          {% set _dur = audio_duration(content.file_path or content.media_url) %}<audio controls preload="none"{% if _dur %} data-duration="{{ _dur }}"{% endif %} src="{{ content.get_file_url() if content.file_path else content.media_url }}" style="width:100%;max-width:540px;"></audio>
                                                           <div class="text-audio-meta small text-muted mt-1">
                                                             🔊 Vorlesen — Deutsch + Japanisch (separate Stimmen)<br>
                                                             <span class="text-muted" style="opacity:0.75;">🤖 KI-Stimmen, wir verbessern laufend · <a href="{{ url_for('issues.new_issue', content_type='lesson_content', content_id=content.id) }}" class="lesson-audio-report-link"><i class="fas fa-flag" aria-hidden="true"></i> Aussprache melden</a> · <a href="mailto:info@japanese-learning.ch" class="text-muted">info@japanese-learning.ch</a></span>
@@ -1973,18 +1973,18 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                     {% else %}
                                                         {% if content.content_type == 'image' %}
                                                             {% if content.file_path %}
-                                                            <img src="{{ content.get_file_url() }}" class="img-fluid rounded" alt="{{ content.title }}" style="max-width: 100%; height: auto;">
+                                                            <img src="{{ content.get_file_url() }}" class="img-fluid rounded" alt="{{ content.alt_text or content.title or 'Seitenbild' }}" style="max-width: 100%; height: auto;">
                                                             {% elif content.media_url %}
-                                                            <img src="{{ content.media_url }}" class="img-fluid rounded" alt="{{ content.title }}" style="max-width: 100%; height: auto;">
+                                                            <img src="{{ content.media_url }}" class="img-fluid rounded" alt="{{ content.alt_text or content.title or 'Seitenbild' }}" style="max-width: 100%; height: auto;">
                                                             {% endif %}
                                                         {% elif content.content_type == 'audio' %}
                                                             {% if content.file_path %}
-                                                            <audio controls preload="none" class="w-100">
+                                                            {% set _dur = audio_duration(content.file_path or content.media_url) %}<audio controls preload="none" class="w-100"{% if _dur %} data-duration="{{ _dur }}"{% endif %}>
                                                                 <source src="{{ content.get_file_url() }}?v={{ content.id }}" type="audio/mpeg">
                                                                 Dein Browser unterstützt kein Audio.
                                                             </audio>
                                                             {% elif content.media_url %}
-                                                            <audio controls preload="none" class="w-100">
+                                                            {% set _dur = audio_duration(content.file_path or content.media_url) %}<audio controls preload="none" class="w-100"{% if _dur %} data-duration="{{ _dur }}"{% endif %}>
                                                                 <source src="{{ content.media_url }}?v={{ content.id }}" type="audio/mpeg">
                                                                 Dein Browser unterstützt kein Audio.
                                                             </audio>
@@ -5117,6 +5117,11 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('audio[controls]').forEach(audio => {
         const src = audio.querySelector('source')?.src || audio.src;
         if (!src) return;
+        // Dauer kommt serverseitig aus dem WAV-Header (data-duration), damit der
+        // lazy Player vor dem ersten Play nicht "0:00 / 0:00" zeigt. Unbekannt
+        // (Datei fehlt / kein WAV) -> "– / –" bis die Metadaten da sind.
+        const knownDur = parseFloat(audio.dataset.duration);
+        const hasKnownDur = isFinite(knownDur) && knownDur > 0;
 
         const player = document.createElement('div');
         player.className = 'custom-audio-player';
@@ -5131,7 +5136,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="audio-progress-bar"></div>
                 </div>
                 <div class="audio-meta">
-                    <span class="audio-time">0:00 / 0:00</span>
+                    <span class="audio-time"></span>
                     <button class="audio-speed-btn" type="button">1x</button>
                 </div>
             </div>
@@ -5158,6 +5163,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const sec = Math.floor(s % 60);
             return m + ':' + (sec < 10 ? '0' : '') + sec;
         }
+        function totalDur() {
+            const d = newAudio.duration;
+            if (isFinite(d) && d > 0) return d;
+            return hasKnownDur ? knownDur : NaN;
+        }
+        timeDisplay.textContent = hasKnownDur ? fmt(0) + ' / ' + fmt(knownDur) : '– / –';
 
         playBtn.addEventListener('click', () => {
             if (newAudio.paused) {
@@ -5180,19 +5191,19 @@ document.addEventListener('DOMContentLoaded', function() {
         playBtn._audio = newAudio;
 
         newAudio.addEventListener('loadedmetadata', () => {
-            timeDisplay.textContent = fmt(0) + ' / ' + fmt(newAudio.duration);
+            timeDisplay.textContent = fmt(newAudio.currentTime) + ' / ' + fmt(totalDur());
         });
 
         newAudio.addEventListener('timeupdate', () => {
-            const pct = (newAudio.currentTime / newAudio.duration) * 100;
-            progressBar.style.width = pct + '%';
-            timeDisplay.textContent = fmt(newAudio.currentTime) + ' / ' + fmt(newAudio.duration);
+            const pct = (newAudio.currentTime / totalDur()) * 100;
+            progressBar.style.width = (isFinite(pct) ? pct : 0) + '%';
+            timeDisplay.textContent = fmt(newAudio.currentTime) + ' / ' + fmt(totalDur());
         });
 
         newAudio.addEventListener('ended', () => {
             playBtn.classList.remove('is-playing');
             progressBar.style.width = '0%';
-            timeDisplay.textContent = fmt(0) + ' / ' + fmt(newAudio.duration);
+            timeDisplay.textContent = fmt(0) + ' / ' + fmt(totalDur());
         });
 
         progressWrap.addEventListener('click', (e) => {

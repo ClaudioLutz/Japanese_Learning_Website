@@ -288,6 +288,12 @@ function generateContentConfigForm(contentType, content = null) {
                     <input type="url" id="mediaUrl" name="media_url" class="form-control" placeholder="${placeholders[contentType]}">
                 </div>
             </div>
+            ${contentType === 'image' ? `
+            <div class="form-group">
+                <label for="mediaAltText">Alt-Text (Bildbeschreibung für Screenreader)</label>
+                <input type="text" id="mediaAltText" name="alt_text" class="form-control" maxlength="300" placeholder="z.B. Zwei Personen verbeugen sich zur Begrüssung">
+                <p class="text-xs text-gray-500 dark:text-slate-400 mt-1">Leer lassen = Titel wird als Alt-Text verwendet.</p>
+            </div>` : ''}
             <div class="form-group">
                 <label for="mediaDescription">Description (optional)</label>
                 <textarea id="mediaDescription" name="content_text" class="form-control" rows="3" placeholder="Optional description or notes"></textarea>
@@ -341,6 +347,8 @@ async function populateContentForm(content) {
     } else if (['video', 'audio', 'image'].includes(content.content_type)) {
         document.getElementById('mediaTitle').value = content.title || '';
         document.getElementById('mediaDescription').value = content.content_text || '';
+        const altInput = document.getElementById('mediaAltText');
+        if (altInput) altInput.value = content.alt_text || '';
         if (content.file_path) {
             toggleContentSource('upload');
             uploadedFileData = { filePath: content.file_path, original_filename: content.original_filename || content.file_path.split('/').pop(), file_size: content.file_size, file_type: content.file_type };
@@ -718,7 +726,7 @@ async function saveContentToLesson(isEditing = false) {
                 const src = document.querySelector('input[name="contentSource"]:checked')?.value;
                 if (src === 'upload' && uploadedFileData) {
                     endpoint = `/api/admin/lessons/${currentLessonId}/content/file`;
-                    saveData = { content_type: selectedContentType, title: currentContentData.title, description: currentContentData.content_text || '', file_path: uploadedFileData.dbPath || uploadedFileData.filePath, file_size: uploadedFileData.file_size, file_type: uploadedFileData.file_type, original_filename: uploadedFileData.original_filename, order_index: currentContentData.order_index || 0, page_number: currentPageNumber || currentContentData.page_number || document.getElementById('contentPageNumber')?.value || 1, is_optional: currentContentData.is_optional === 'on' };
+                    saveData = { content_type: selectedContentType, title: currentContentData.title, description: currentContentData.content_text || '', file_path: uploadedFileData.dbPath || uploadedFileData.filePath, file_size: uploadedFileData.file_size, file_type: uploadedFileData.file_type, original_filename: uploadedFileData.original_filename, alt_text: currentContentData.alt_text || '', order_index: currentContentData.order_index || 0, page_number: currentPageNumber || currentContentData.page_number || document.getElementById('contentPageNumber')?.value || 1, is_optional: currentContentData.is_optional === 'on' };
                 } else {
                     endpoint = `/api/admin/lessons/${currentLessonId}/content/new`;
                     if (!currentContentData.media_url) { showToast('Please provide a URL', 'error'); return; }

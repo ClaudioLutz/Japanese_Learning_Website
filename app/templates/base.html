@@ -249,13 +249,13 @@
           {% if current_user.is_authenticated %}
             {# Stats: nur der Streak — handlungsrelevant. Level lebt im
                Dropdown-Head + Profil (Mobile blendete es ohnehin aus). #}
-            {% if current_user.current_streak and current_user.current_streak > 0 %}
+            {% if nav_streak and nav_streak > 0 %}
             <div class="topnav-stats">
               <div class="topnav-stat topnav-stat-streak" role="img"
-                   aria-label="Streak: {{ current_user.current_streak }} Tage"
-                   title="{{ current_user.current_streak }} Tage Streak">
+                   aria-label="Streak: {{ nav_streak }} Tage"
+                   title="{{ nav_streak }} Tage Streak">
                 <span class="topnav-stat-ico" aria-hidden="true">🔥</span>
-                <span class="topnav-stat-val" aria-hidden="true">{{ current_user.current_streak }}</span>
+                <span class="topnav-stat-val" aria-hidden="true">{{ nav_streak }}</span>
               </div>
             </div>
             {% endif %}
@@ -914,7 +914,6 @@
     @media (min-width: 768px) { .ueben-sheet, .ueben-sheet-backdrop { display: none !important; } }
     </style>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     
     <!-- User Authentication State for JavaScript -->

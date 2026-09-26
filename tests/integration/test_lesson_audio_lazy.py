@@ -9,6 +9,7 @@ Ausserdem: canvas-confetti nur einmal (base.html), Kana-Grid ohne doppeltes init
 """
 
 import re
+import wave
 
 from app import db
 from app.models import LessonContent
@@ -72,3 +73,42 @@ def test_kana_grid_game_without_duplicate_init(client, app_context):
     block = html[html.index('x-data="kanaGridGame('):]
     block = block[: block.index(">")]
     assert 'x-init="init()"' not in block
+
+
+def test_block_player_gets_duration_from_wav_header(client, app, app_context, tmp_path, monkeypatch):
+    """Dauer kommt serverseitig aus dem WAV-Header -> data-duration im Markup,
+    ohne dass die Datei vorab geladen wird (preload bleibt none)."""
+    wav = tmp_path / "lessons/text_audio/lesson_9/page_1_content_1.wav"
+    wav.parent.mkdir(parents=True)
+    with wave.open(str(wav), "wb") as w:
+        w.setnchannels(1)
+        w.setsampwidth(2)
+        w.setframerate(24000)
+        w.writeframes(b"\x00\x00" * 24000 * 75)
+    monkeypatch.setitem(app.config, "UPLOAD_FOLDER", str(tmp_path))
+    html = _render_lesson(client, [
+        {
+            "content_type": "text",
+            "title": "Mit Datei",
+            "content_text": "<p>a</p>",
+            "media_url": "/uploads/lessons/text_audio/lesson_9/page_1_content_1.wav",
+            "file_type": "audio/wav",
+        },
+        {
+            "content_type": "text",
+            "title": "Datei fehlt",
+            "content_text": "<p>b</p>",
+            "media_url": "/uploads/lessons/text_audio/lesson_9/page_1_content_404.wav",
+            "file_type": "audio/wav",
+        },
+    ])
+    tags = [t for t in re.findall(r"<audio\b[^>]*>", html) if "controls" in t]
+    with_file = [t for t in tags if "content_1.wav" in t]
+    missing = [t for t in tags if "content_404.wav" in t]
+    assert with_file and 'data-duration="75.0"' in with_file[0]
+    assert 'preload="none"' in with_file[0]
+    assert missing and "data-duration" not in missing[0]
+    # Player: kein "0:00 / 0:00" mehr, Fallback "– / –" bei unbekannter Dauer
+    assert '<span class="audio-time">0:00 / 0:00</span>' not in html
+    assert "'– / –'" in html
+    assert "audio.dataset.duration" in html

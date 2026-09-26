@@ -1222,6 +1222,35 @@ class LessonContent(db.Model):
 
     def __repr__(self):
         return f'<LessonContent {self.content_type} in lesson {self.lesson_id}>'
+
+    # Alt-Text fuer Bild-Content: lebt in den JSON-Daten des Items
+    # (ai_generation_details['alt_text']) statt in einer eigenen Spalte ->
+    # keine Migration. Leer/None = Fallback im Template (Titel bzw. 'Seitenbild').
+    ALT_TEXT_MAX_LEN = 300
+
+    @property
+    def alt_text(self):
+        details = self.ai_generation_details
+        if not isinstance(details, dict):
+            return None
+        value = details.get('alt_text')
+        if not isinstance(value, str):
+            return None
+        return value.strip() or None
+
+    @alt_text.setter
+    def alt_text(self, value):
+        value = value.strip()[: self.ALT_TEXT_MAX_LEN] if isinstance(value, str) else ''
+        current = self.ai_generation_details
+        if not value and not (isinstance(current, dict) and 'alt_text' in current):
+            return  # nichts zu setzen, nichts zu entfernen
+        details = dict(current) if isinstance(current, dict) else {}
+        if value:
+            details['alt_text'] = value
+        else:
+            details.pop('alt_text', None)
+        # Neues dict zuweisen: db.JSON ist nicht mutation-tracked.
+        self.ai_generation_details = details or None
     
     def get_file_url(self):
         """Get URL for accessing uploaded file"""
