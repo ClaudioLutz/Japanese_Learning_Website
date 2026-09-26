@@ -72,13 +72,16 @@ except Exception as e:
 
 echo "✅ Proceeding to start application!"
 
-# Start the application with Gunicorn (reduced workers for Cloud Run)
+# Start the application with Gunicorn.
+# gthread: das Rollenspiel blockiert pro Zug 5-10 s auf die Bridge; Threads halten
+# andere Anfragen frei (2 Worker x 4 Threads). Limiter-Storage memory:// bleibt pro Prozess.
 echo "🚀 Starting Gunicorn server on port $PORT..."
 exec gunicorn \
     --bind 0.0.0.0:$PORT \
     --workers 2 \
-    --worker-class sync \
-    --timeout 300 \
+    --worker-class gthread \
+    --threads 4 \
+    --timeout 90 \
     --keep-alive 2 \
     --log-level info \
     --access-logfile - \
