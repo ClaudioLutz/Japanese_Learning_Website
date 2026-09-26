@@ -16,8 +16,10 @@ Frontend baut gegen diesen Vertrag. Alle Texte für Nutzer kommen fertig auf Deu
   kein JSON). Tageslimits kommen dagegen als JSON `limit_reached` (siehe unten).
 - **Latenz:** Wahl eines Antwortvorschlags: meist **< 1 s** (Antwort vorausberechnet, siehe
   „Vorausberechnung"). Freitext: zweigeteilter Zug (siehe „Sofort-Antwort") — erste Zeichen
-  der Bot-Zeile per Stream nach **~2 s**, ganze Zeile nach ~2–3 s, Lernhilfen (Lesung,
-  Deutsch, Vorschläge, Tipp) ~5–7 s später; vorher ein voller Aufruf von 7–8 s. Letzter Zug
+  der Bot-Zeile per Stream nach **~2,5–3 s**, ganze Zeile nach ~3–4,5 s, Lernhilfen (Lesung,
+  Deutsch, Vorschläge, Tipp) ~6–7 s später (gemessen 2026-09-27 live, auch durch Cloudflare);
+  vorher ein voller Aufruf von 7–8 s. Untergrenze ist die Modell-Zeit bis zum ersten Token
+  (~2 s bei grossem System-Prompt), nicht Bridge/Flask. Letzter Zug
   und Gesprächsende bleiben ein voller Aufruf (~6–8 s, Korrektur). Frontend: Ladeindikator
   („Tanaka tippt …“) bis zum ersten Zeichen, beim Sofort-Senden eines Vorschlags erst nach
   1,2 s; Eingabe sperren, `fetch`-Timeout nicht unter 65 s (Stream: 35 s).
