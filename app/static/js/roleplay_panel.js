@@ -19,6 +19,13 @@
  * Lautsprecher = Vorschlag vorlesen (Stimme der Nutzer-Rolle); „DE“ = Uebersetzung
  * dieses Chips zeigen. Uebersetzungen sind standardmaessig aus, der Schalter
  * „Deutsch anzeigen“ blendet alle ein (localStorage).
+ *
+ * Sofort-Antwort (zweigeteilter Zug): send() nutzt …/turn/stream (Server-Sent
+ * Events) — die Bot-Zeile erscheint Zeichen fuer Zeichen, sobald das Modell sie
+ * schreibt. Lesung, Uebersetzung, Vorschlaege und Tipp kommen aus einem zweiten
+ * Aufruf nach (bot_turn.details_pending): das Panel fragt alle 500 ms bei
+ * …/details nach (max. 20 s) und zeigt bis dahin „Vorschläge folgen …“.
+ * Vorlesen geht schon vorher. Ohne Stream-Unterstuetzung im Browser: POST …/turn.
  */
 (function () {
     'use strict';
@@ -30,6 +37,9 @@
     var ROMAJI_KEY = 'jpl-roleplay-romaji';
     var GERMAN_KEY = 'jpl-roleplay-chip-de';
     var SLOW_MS = 1200;
+    var STREAM_TIMEOUT_MS = 35000;   // Server beendet den Stream nach spaetestens ~30 s
+    var DETAILS_POLL_MS = 500;
+    var DETAILS_MAX_MS = 20000;
 
     function csrfToken() {
         var el = document.querySelector('meta[name="csrf-token"]');
@@ -87,39 +97,124 @@
         }
         return fetch(url, opts).then(function (resp) {
             if (timer) clearTimeout(timer);
-            if (resp.type === 'opaqueredirect' || resp.redirected || (resp.status >= 300 && resp.status < 400)) {
-                return { ok: false, status: 401, data: {
-                    error: 'login_required',
-                    message: 'Deine Anmeldung ist abgelaufen. Bitte lade die Seite neu und melde dich an.',
-                } };
-            }
-            var ctype = resp.headers.get('Content-Type') || '';
-            if (ctype.indexOf('application/json') === -1) {
-                return { ok: false, status: resp.status, data: resp.status === 429 ? {
-                    error: 'rate_limited',
-                    message: 'Das war gerade sehr schnell hintereinander. Bitte warte eine Minute und versuch es dann nochmal.',
-                } : {
-                    error: 'unexpected',
-                    message: 'Da ist etwas schiefgelaufen. Bitte versuch es gleich nochmal.',
-                } };
-            }
-            return resp.json().then(function (data) {
-                return { ok: resp.ok, status: resp.status, data: data || {} };
-            }, function () {
-                return { ok: false, status: resp.status, data: {
-                    error: 'unexpected', message: 'Die Antwort war unvollständig. Bitte versuch es nochmal.',
-                } };
-            });
+            return jsonResult(resp);
         }, function (err) {
             if (timer) clearTimeout(timer);
-            var aborted = err && err.name === 'AbortError';
-            return { ok: false, status: 0, data: aborted ? {
-                error: 'timeout',
-                message: 'Die Antwort hat zu lange gedauert. Dein Text ist noch da — bitte nochmal senden.',
-            } : {
-                error: 'network',
-                message: 'Keine Verbindung zum Server. Bitte prüfe dein Internet und sende nochmal.',
+            return fetchFailure(err);
+        });
+    }
+
+    /* JSON-Antwort (auch Fehler) → {ok, status, data}. */
+    function jsonResult(resp) {
+        if (resp.type === 'opaqueredirect' || resp.redirected || (resp.status >= 300 && resp.status < 400)) {
+            return { ok: false, status: 401, data: {
+                error: 'login_required',
+                message: 'Deine Anmeldung ist abgelaufen. Bitte lade die Seite neu und melde dich an.',
             } };
+        }
+        var ctype = resp.headers.get('Content-Type') || '';
+        if (ctype.indexOf('application/json') === -1) {
+            return { ok: false, status: resp.status, data: resp.status === 429 ? {
+                error: 'rate_limited',
+                message: 'Das war gerade sehr schnell hintereinander. Bitte warte eine Minute und versuch es dann nochmal.',
+            } : {
+                error: 'unexpected',
+                message: 'Da ist etwas schiefgelaufen. Bitte versuch es gleich nochmal.',
+            } };
+        }
+        return resp.json().then(function (data) {
+            return { ok: resp.ok, status: resp.status, data: data || {} };
+        }, function () {
+            return { ok: false, status: resp.status, data: {
+                error: 'unexpected', message: 'Die Antwort war unvollständig. Bitte versuch es nochmal.',
+            } };
+        });
+    }
+
+    function fetchFailure(err) {
+        var aborted = err && err.name === 'AbortError';
+        return { ok: false, status: 0, data: aborted ? {
+            error: 'timeout',
+            message: 'Die Antwort hat zu lange gedauert. Dein Text ist noch da — bitte nochmal senden.',
+        } : {
+            error: 'network',
+            message: 'Keine Verbindung zum Server. Bitte prüfe dein Internet und sende nochmal.',
+        } };
+    }
+
+    function canStream() {
+        return typeof window.ReadableStream === 'function' && typeof window.TextDecoder === 'function';
+    }
+
+    /* POST mit Server-Sent-Events-Antwort. onLine(text) fuer jedes Stueck der
+       Bot-Zeile; liefert wie api() {ok, status, data} (data = JSON aus `result`
+       bzw. {error, message} aus `error`). JSON-Antworten (Fehler vor dem Start)
+       laufen durch jsonResult. Wirft nie. */
+    function apiStream(url, body, onLine) {
+        var ctrl = typeof AbortController === 'function' ? new AbortController() : null;
+        var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, STREAM_TIMEOUT_MS) : null;
+        var opts = {
+            method: 'POST',
+            credentials: 'same-origin',
+            redirect: 'manual',
+            headers: {
+                'Accept': 'text/event-stream',
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken(),
+            },
+            body: JSON.stringify(body || {}),
+        };
+        if (ctrl) opts.signal = ctrl.signal;
+        var done = function (r) { if (timer) clearTimeout(timer); return r; };
+        return fetch(url, opts).then(function (resp) {
+            var ctype = resp.headers.get('Content-Type') || '';
+            if (!resp.ok || ctype.indexOf('text/event-stream') === -1 || !resp.body) {
+                return Promise.resolve(jsonResult(resp)).then(done);
+            }
+            var reader = resp.body.getReader();
+            var decoder = new TextDecoder('utf-8');
+            var buf = '';
+            var outcome = null;
+            var handle = function (block) {
+                var ev = 'message';
+                var data = [];
+                block.split('\n').forEach(function (line) {
+                    if (line.indexOf('event:') === 0) ev = line.slice(6).trim();
+                    else if (line.indexOf('data:') === 0) data.push(line.slice(5).trim());
+                });
+                if (!data.length) return;
+                var payload;
+                try { payload = JSON.parse(data.join('\n')); } catch (e) { return; }
+                if (ev === 'line' && payload && typeof payload.text === 'string') {
+                    try { onLine(payload.text); } catch (e) { /* Anzeige darf den Stream nie abbrechen */ }
+                } else if (ev === 'result') {
+                    outcome = { ok: true, status: 200, data: payload || {} };
+                } else if (ev === 'error') {
+                    outcome = { ok: false, status: (payload && payload.status) || 502, data: payload || {} };
+                }
+            };
+            var pump = function () {
+                return reader.read().then(function (chunk) {
+                    if (chunk.done) {
+                        buf += decoder.decode();
+                        if (buf.trim()) handle(buf.replace(/\r/g, ''));
+                        return outcome || { ok: false, status: 0, data: {
+                            error: 'network',
+                            message: 'Die Verbindung ist abgebrochen. Dein Text ist noch da — bitte nochmal senden.',
+                        } };
+                    }
+                    buf += decoder.decode(chunk.value, { stream: true }).replace(/\r/g, '');
+                    var idx;
+                    while ((idx = buf.indexOf('\n\n')) !== -1) {
+                        handle(buf.slice(0, idx));
+                        buf = buf.slice(idx + 2);
+                    }
+                    return pump();
+                });
+            };
+            return pump().then(done, function (err) { return done(fetchFailure(err)); });
+        }, function (err) {
+            return done(fetchFailure(err));
         });
     }
 
@@ -132,6 +227,8 @@
             demoToken: null,
             demoStartUrl: '',
             demoTurnUrl: '',
+            demoStreamUrl: '',
+            demoDetailsUrl: '',
             honeypot: '',              // Honeypot-Feld (muss leer bleiben)
             lessonId: null,
             pageNumbers: [],
@@ -157,6 +254,10 @@
             quickSend: false,          // Vorschlag direkt gesendet → kein „tippt …“ (ausser langsam)
             slowTyping: false,
             _slowTimer: null,
+            streamingLine: false,      // Bot-Zeile entsteht gerade (Stream)
+            detailsState: '',          // '' | 'pending' | 'failed' — Lernhilfen der aktuellen Bot-Zeile
+            _detailsSeq: 0,
+            _detailsTimer: null,
             ending: false,
             error: null,               // {code, message, retry}
             limits: null,
@@ -189,6 +290,8 @@
                     this.phase = 'intro';
                     this.demoStartUrl = el.dataset.demoStartUrl || '';
                     this.demoTurnUrl = el.dataset.demoTurnUrl || '';
+                    this.demoStreamUrl = el.dataset.demoStreamUrl || '';
+                    this.demoDetailsUrl = el.dataset.demoDetailsUrl || '';
                     this.TEXT_MAX = parseInt(el.dataset.textMax, 10) || TEXT_MAX;
                     return;
                 }
@@ -206,7 +309,10 @@
             get botGender() { return roleGender(this.scene, this.session && this.session.role_bot); },
             // Geschlecht der eigenen Rolle — fuer das Vorlesen der Vorschlaege/Korrekturen.
             get userGender() { return roleGender(this.scene, this.session && this.session.role_user); },
-            get showTyping() { return this.sending && (!this.quickSend || this.slowTyping); },
+            get showTyping() { return this.sending && !this.streamingLine && (!this.quickSend || this.slowTyping); },
+            // Lernhilfen (Lesung/Deutsch/Tipp/Vorschlaege) der aktuellen Zeile stehen noch aus.
+            get detailsPending() { return !!this.bot && (this.streamingLine || this.detailsState === 'pending'); },
+            get detailsFailed() { return !!this.bot && !this.streamingLine && this.detailsState === 'failed'; },
             get turnCount() { return (this.session && this.session.turn_count) || 0; },
             get maxTurns() { return (this.session && this.session.max_user_turns) || 8; },
             get minTurns() { return (this.session && this.session.min_user_turns) || 4; },
@@ -347,11 +453,63 @@
                     self._setError(r.data, !!RETRYABLE[r.data.error]);
                 });
             },
-            _turnRequest: function (text) {
-                if (this.demo) {
-                    return api('POST', this.demoTurnUrl, { token: this.demoToken, text: text, website: this.honeypot });
+            _turnRequest: function (text, onLine) {
+                var body = this.demo ? { token: this.demoToken, text: text, website: this.honeypot } : { text: text };
+                var url = this.demo ? this.demoTurnUrl : '/api/roleplay/' + this.session.id + '/turn';
+                var streamUrl = this.demo ? this.demoStreamUrl : url + '/stream';
+                if (streamUrl && canStream()) return apiStream(streamUrl, body, onLine);
+                return api('POST', url, body);
+            },
+
+            // ── Lernhilfen nachladen (zweiter Aufruf) ───────────────────
+            _stopDetails: function () {
+                this._detailsSeq++;
+                if (this._detailsTimer) { clearTimeout(this._detailsTimer); this._detailsTimer = null; }
+            },
+            _pollDetails: function (turn) {
+                this._stopDetails();
+                if (!turn || !turn.details_pending) {
+                    this.detailsState = turn && turn.details_failed ? 'failed' : '';
+                    return;
                 }
-                return api('POST', '/api/roleplay/' + this.session.id + '/turn', { text: text });
+                this.detailsState = 'pending';
+                var self = this;
+                var seq = this._detailsSeq;
+                var started = Date.now();
+                var index = turn.turn_index;
+                var token = this.demoToken;
+                var fail = function () {
+                    if (seq !== self._detailsSeq) return;
+                    self.detailsState = 'failed';
+                    self.liveMsg = 'Vorschläge gerade nicht verfügbar. Du kannst frei weiterschreiben.';
+                };
+                var tick = function () {
+                    if (seq !== self._detailsSeq) return;
+                    var req = self.demo
+                        ? api('POST', self.demoDetailsUrl, { token: token })
+                        : api('GET', '/api/roleplay/' + self.session.id + '/turn/' + index + '/details');
+                    req.then(function (r) {
+                        if (seq !== self._detailsSeq) return;
+                        var status = r.ok && r.data ? r.data.status : 'error';
+                        if (status === 'ready' && r.data.bot_turn && self.bot && self.bot.turn_index === index) {
+                            var merged = {};
+                            var k;
+                            for (k in self.bot) { if (Object.prototype.hasOwnProperty.call(self.bot, k)) merged[k] = self.bot[k]; }
+                            for (k in r.data.bot_turn) { if (Object.prototype.hasOwnProperty.call(r.data.bot_turn, k)) merged[k] = r.data.bot_turn[k]; }
+                            merged.jp = self.bot.jp;           // Zeile bleibt, wie sie schon dasteht
+                            merged.details_pending = false;
+                            self.bot = merged;
+                            self.detailsState = '';
+                            self.liveMsg = 'Vorschläge sind da.';
+                            return;
+                        }
+                        if (status === 'failed') return fail();
+                        if (Date.now() - started >= DETAILS_MAX_MS) return fail();
+                        // pending oder kurzer Fehler (Netz, 429): weiter nachfragen
+                        self._detailsTimer = setTimeout(tick, DETAILS_POLL_MS);
+                    });
+                };
+                this._detailsTimer = setTimeout(tick, DETAILS_POLL_MS);
             },
 
             start: function () {
@@ -381,14 +539,17 @@
                 });
             },
 
-            _showBot: function (turn) {
+            _showBot: function (turn, keepToggles) {
                 if (this.bot) this.log.push({ who: 'bot', jp: this.bot.jp, de: this.bot.de });
                 this.bot = turn || null;
-                this.showReading = false;
-                this.showGerman = false;
-                this.hintShown = false;
+                if (!keepToggles) {
+                    this.showReading = false;
+                    this.showGerman = false;
+                    this.hintShown = false;
+                }
                 this.chipDe = {};
-                if (turn) this.liveMsg = this.botName + ' sagt: ' + turn.jp + ' — ' + (turn.de || '');
+                this._pollDetails(turn);
+                if (turn) this.liveMsg = this.botName + ' sagt: ' + turn.jp + (turn.de ? ' — ' + turn.de : '');
                 var self = this;
                 this.$nextTick(function () {
                     self._focus('input');
@@ -464,17 +625,49 @@
                 } else {
                     this.liveMsg = this.botName + ' tippt …';
                 }
-                return this._turnRequest(text).then(function (r) {
+                this._stopDetails();
+                // Stream: beim ersten Stueck die Bot-Zeile sofort zeigen (Verlauf nachziehen);
+                // scheitert der Zug danach, wird das zurueckgenommen.
+                var streamed = null;
+                var onLine = function (piece) {
+                    if (!streamed) {
+                        streamed = { bot: self.bot, logLen: self.log.length, detailsState: self.detailsState };
+                        if (self.bot) self.log.push({ who: 'bot', jp: self.bot.jp, de: self.bot.de });
+                        self.log.push({ who: 'user', jp: text, de: '' });
+                        self.input = '';
+                        self.showReading = false;
+                        self.showGerman = false;
+                        self.hintShown = false;
+                        self.chipDe = {};
+                        self.detailsState = '';
+                        self.streamingLine = true;
+                        self.bot = { turn_index: -1, speaker: 'bot', jp: piece, reading_kana: '', de: '',
+                                     suggestions: [], hint_de: '', details_pending: true };
+                        self.$nextTick(function () {
+                            var logEl = self.$refs.log;
+                            if (logEl) logEl.scrollTop = logEl.scrollHeight;
+                        });
+                        return;
+                    }
+                    self.bot.jp += piece;
+                };
+                return this._turnRequest(text, onLine).then(function (r) {
                     self.sending = false;
                     self.quickSend = false;
                     self.slowTyping = false;
+                    self.streamingLine = false;
                     if (self._slowTimer) { clearTimeout(self._slowTimer); self._slowTimer = null; }
                     if (r.ok) {
                         if (self.demo) self.demoToken = r.data.token || null;
-                        // Reihenfolge im Verlauf: erst die beantwortete Bot-Zeile, dann der Nutzerzug.
-                        if (self.bot) self.log.push({ who: 'bot', jp: self.bot.jp, de: self.bot.de });
-                        self.bot = null;
-                        self.log.push({ who: 'user', jp: text, de: '' });
+                        if (streamed) {
+                            // Verlauf ist schon nachgezogen; Platzhalter-Zeile wird ersetzt.
+                            self.bot = null;
+                        } else {
+                            // Reihenfolge im Verlauf: erst die beantwortete Bot-Zeile, dann der Nutzerzug.
+                            if (self.bot) self.log.push({ who: 'bot', jp: self.bot.jp, de: self.bot.de });
+                            self.bot = null;
+                            self.log.push({ who: 'user', jp: text, de: '' });
+                        }
                         self.input = '';
                         self.session = r.data.session || self.session;
                         self.limits = r.data.limits || self.limits;
@@ -487,10 +680,19 @@
                                 xp_awarded: r.data.xp_awarded || 0,
                             });
                         } else {
-                            self._showBot(r.data.bot_turn);
+                            self._showBot(r.data.bot_turn, !!streamed);
                         }
                         return;
                     }
+                    if (streamed) {
+                        // Zug gescheitert, obwohl die Zeile schon zu sehen war: zuruecknehmen.
+                        self.log.splice(streamed.logLen);
+                        self.bot = streamed.bot;
+                        self.detailsState = streamed.detailsState;
+                        self.input = text;
+                    }
+                    // Lernhilfen der stehengebliebenen Zeile weiter nachladen.
+                    if (self.bot && self.bot.details_pending && self.detailsState !== 'failed') self._pollDetails(self.bot);
                     if (!self.demo && (r.status === 409 || r.data.error === 'session_finished')) {
                         return self.end();
                     }
@@ -529,6 +731,8 @@
                 });
             },
             _finish: function (res) {
+                this._stopDetails();
+                this.detailsState = '';
                 if (this.bot) this.log.push({ who: 'bot', jp: this.bot.jp, de: this.bot.de });
                 this.bot = null;
                 this.result = res;
@@ -538,6 +742,8 @@
                 this.$nextTick(function () { self._focus('doneTitle'); });
             },
             restart: function () {
+                this._stopDetails();
+                this.detailsState = '';
                 if (this.demo) {
                     this.stopAudio();
                     this.session = null;

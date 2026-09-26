@@ -235,8 +235,20 @@
     border: 2px solid currentColor; border-right-color: transparent; animation: rp-spin .8s linear infinite;
 }
 @keyframes rp-spin { to { transform: rotate(360deg); } }
+
+/* Zweigeteilter Zug: Zeile entsteht (Stream) + Lernhilfen folgen */
+.roleplay-panel .rp-bot-jp.is-streaming::after {
+    content: ""; display: inline-block; width: 2px; height: 1.05em; margin-left: 2px;
+    vertical-align: -0.15em; background: var(--rp-accent-text); animation: rp-caret 1s steps(1) infinite;
+}
+@keyframes rp-caret { 50% { opacity: 0; } }
+.roleplay-panel .rp-details-wait,
+.roleplay-panel .rp-details-failed { margin-top: .8rem; min-height: 1.6rem; }
+.roleplay-panel .rp-details-failed i { color: var(--rp-accent-text); }
+
 @media (prefers-reduced-motion: reduce) {
-    .roleplay-panel .rp-dots i, .roleplay-panel .rp-spinner { animation: none; }
+    .roleplay-panel .rp-dots i, .roleplay-panel .rp-spinner,
+    .roleplay-panel .rp-bot-jp.is-streaming::after { animation: none; }
     .roleplay-panel .rp-dots i { opacity: .8; }
 }
 

@@ -15,6 +15,10 @@ Format je Eintrag:
 Keine Commit-Hashes, keine internen Namen.
 -->
 
+## 2026-09-27 | Rollenspiel: Die Antwort erscheint sofort — auch wenn du frei schreibst
+Schreibst du im Rollenspiel eine eigene Antwort, erscheint die Zeile deines Gesprächspartners jetzt nach etwa zwei Sekunden, Wort für Wort, und du kannst sie gleich vorlesen lassen. Lesung, Übersetzung, Tipp und die Antwortvorschläge folgen ein paar Sekunden später von selbst.
+Link: /sprechen
+
 ## 2026-09-26 | JLPT N5 ist komplett
 Alle Wörter der JLPT-N5-Liste und alle 80 N5-Kanji sind jetzt abgedeckt: 65 Lektionen in 15 Modulen mit 727 Vokabeln, 180 Grammatikpunkten, 44 Gesprächsszenen und über 1'000 Quizfragen. Damit hast du einen Weg von null bis zur N5-Prüfung — auf Deutsch erklärt und gratis. Sieben Lektionen sind heute dazugekommen, von „Adjektive 3" bis „Masseinheiten und Zeitdauer".
 Link: /n5-bundle

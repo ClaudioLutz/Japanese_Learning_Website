@@ -244,3 +244,213 @@ class TestPool:
                                               runner=FakeRunner(stdout=cli_stdout({"jp": "x"})))
         assert status == 429 and body["error"] == "busy"
         gate.release("low")
+
+
+# ── Streaming (/complete_stream) + Denkphase aus ─────────────────────────
+
+def stream_lines(parts, structured, is_error=False):
+    """stream-json-Ausgabe der CLI: init, Deltas des StructuredOutput-Tools, result."""
+    lines = [json.dumps({"type": "system", "subtype": "init"})]
+    for p in parts:
+        lines.append(json.dumps({"type": "stream_event", "event": {
+            "type": "content_block_delta", "index": 1,
+            "delta": {"type": "input_json_delta", "partial_json": p}}}, ensure_ascii=False))
+    lines.append(json.dumps({"type": "stream_event", "event": {
+        "type": "content_block_delta", "delta": {"type": "thinking_delta", "thinking": ""}}}))
+    lines.append(cli_stdout(structured, is_error=is_error))
+    return [line + "\n" for line in lines]
+
+
+class FakeProc:
+    def __init__(self, lines, returncode=0, block=None):
+        self.stdin = SimpleNamespace(written="", write=self._write, close=lambda: None)
+        self._lines = lines
+        self.returncode = returncode
+        self.killed = False
+        self._block = block
+
+    def _write(self, text):
+        self.stdin.written += text
+
+    @property
+    def stdout(self):
+        for line in self._lines:
+            yield line
+        if self._block is not None:
+            self._block.wait(2)
+
+    def wait(self):
+        return self.returncode
+
+    def kill(self):
+        self.killed = True
+        if self._block is not None:
+            self._block.set()
+
+
+class FakePopen:
+    def __init__(self, proc=None, exc=None):
+        self.proc = proc
+        self.exc = exc
+        self.calls = []
+
+    def __call__(self, cmd, **kwargs):
+        self.calls.append((cmd, kwargs))
+        if self.exc:
+            raise self.exc
+        return self.proc
+
+
+class TestThinking:
+    def test_request_thinking(self):
+        assert bridge.request_thinking(BODY) is True
+        assert bridge.request_thinking({**BODY, "thinking": False}) is False
+        assert bridge.request_thinking({**BODY, "thinking": "false"}) is True
+
+    def test_env_without_thinking_and_token(self, monkeypatch):
+        monkeypatch.setenv("ROLEPLAY_BRIDGE_TOKEN", "geheim")
+        env = bridge.cli_env(thinking=False)
+        assert env["MAX_THINKING_TOKENS"] == "0" and "ROLEPLAY_BRIDGE_TOKEN" not in env
+        assert "MAX_THINKING_TOKENS" not in bridge.cli_env(thinking=True) or \
+            bridge.cli_env(thinking=True)["MAX_THINKING_TOKENS"] != "0"
+
+    def test_complete_passes_thinking_flag(self):
+        runner = FakeRunner(stdout=cli_stdout({"jp": "x"}))
+        status, _ = bridge.handle_complete({**BODY, "thinking": False}, "t", "t", gate=bridge.Gate(),
+                                           runner=runner)
+        assert status == 200
+        assert runner.calls[0][1]["env"]["MAX_THINKING_TOKENS"] == "0"
+
+
+class TestStream:
+    def test_stream_command_flags(self):
+        cmd = bridge.build_command("sys", SCHEMA, "sonnet", stream=True)
+        i = cmd.index("--output-format")
+        assert cmd[i + 1] == "stream-json"
+        assert "--include-partial-messages" in cmd and "--verbose" in cmd
+        assert "json" == bridge.build_command("sys", SCHEMA, "sonnet")[i + 1]
+
+    def test_parse_stream_line(self):
+        assert bridge.parse_stream_line("") is None
+        assert bridge.parse_stream_line("kein json") is None
+        delta = stream_lines(['{"jp": "こ'], {"jp": "x"})[1]
+        assert bridge.parse_stream_line(delta) == ("delta", '{"jp": "こ')
+        kind, value = bridge.parse_stream_line(cli_stdout({"jp": "こんにちは"}))
+        assert kind == "result" and value["data"] == {"jp": "こんにちは"}
+
+    def test_run_cli_stream_deltas_and_result(self):
+        proc = FakeProc(stream_lines(['{"jp": "こん', 'にちは"}'], {"jp": "こんにちは"}))
+        popen = FakePopen(proc)
+        seen = []
+        out = bridge.run_cli_stream("sys", BODY["messages"], SCHEMA, "sonnet", seen.append, popen=popen,
+                                    thinking=False)
+        assert seen == ['{"jp": "こん', 'にちは"}']
+        assert out["data"] == {"jp": "こんにちは"} and out["usage"]["output_tokens"] == 100
+        assert "&lt;/nachricht&gt;" in proc.stdin.written            # Prompt per stdin, escaped
+        assert popen.calls[0][1]["env"]["MAX_THINKING_TOKENS"] == "0"
+
+    def test_run_cli_stream_error_result(self):
+        proc = FakeProc(stream_lines([], {"jp": "x"}, is_error=True), returncode=1)
+        with pytest.raises(bridge.BridgeError) as exc:
+            bridge.run_cli_stream("sys", BODY["messages"], SCHEMA, "sonnet", lambda s: None,
+                                  popen=FakePopen(proc))
+        assert exc.value.status == 502
+
+    def test_run_cli_stream_no_result(self):
+        proc = FakeProc([json.dumps({"type": "system"}) + "\n"], returncode=3)
+        with pytest.raises(bridge.BridgeError) as exc:
+            bridge.run_cli_stream("sys", BODY["messages"], SCHEMA, "sonnet", lambda s: None,
+                                  popen=FakePopen(proc))
+        assert exc.value.code == "cli_exit_3"
+
+    def test_run_cli_stream_timeout_kills(self):
+        proc = FakeProc([], block=threading.Event())
+        with pytest.raises(bridge.BridgeError) as exc:
+            bridge.run_cli_stream("sys", BODY["messages"], SCHEMA, "sonnet", lambda s: None,
+                                  popen=FakePopen(proc), timeout_s=0.05)
+        assert exc.value.status == 504 and proc.killed
+
+    def test_not_startable(self):
+        with pytest.raises(bridge.BridgeError) as exc:
+            bridge.run_cli_stream("sys", BODY["messages"], SCHEMA, "sonnet", lambda s: None,
+                                  popen=FakePopen(exc=OSError("weg")))
+        assert exc.value.code == "cli_not_startable"
+
+
+class TestHandleStream:
+    def _run(self, body, proc=None, token="t", gate=None):
+        events, started = [], []
+        early = bridge.handle_complete_stream(body, token, "t", lambda: started.append(True),
+                                              lambda e, d: events.append((e, d)),
+                                              gate=gate or bridge.Gate(),
+                                              popen=FakePopen(proc or FakeProc([])))
+        return early, started, events
+
+    def test_unauthorized_before_start(self):
+        early, started, events = self._run(BODY, token="falsch")
+        assert early == (401, {"error": "unauthorized"}) and not started and not events
+
+    def test_invalid_before_start(self):
+        early, started, _ = self._run({**BODY, "messages": []})
+        assert early[0] == 400 and not started
+
+    def test_busy_before_start(self):
+        gate = bridge.Gate(size=1, max_waiting=0, wait_s=0.01)
+        assert gate.acquire("high")
+        early, started, _ = self._run(BODY, gate=gate)
+        assert early == (429, {"error": "busy"}) and not started
+        gate.release("high")
+
+    def test_success_events(self):
+        gate = bridge.Gate()
+        proc = FakeProc(stream_lines(['{"jp": "は', 'い"}'], {"jp": "はい"}))
+        early, started, events = self._run(BODY, proc=proc, gate=gate)
+        assert early is None and started == [True]
+        assert [e for e, _ in events] == ["delta", "delta", "result"]
+        assert events[-1][1]["data"] == {"jp": "はい"} and "duration_ms" in events[-1][1]
+        assert gate.active == 0
+
+    def test_error_event_releases_gate(self):
+        gate = bridge.Gate()
+        proc = FakeProc([json.dumps({"type": "system"}) + "\n"], returncode=1)
+        early, _, events = self._run(BODY, proc=proc, gate=gate)
+        assert early is None
+        assert events == [("error", {"error": "cli_exit_1", "status": 502})]
+        assert gate.active == 0
+
+
+class TestHandlerHttp:
+    """Echter HTTP-Weg: SSE per chunked Transfer, requests liest Stueck fuer Stueck."""
+
+    def test_stream_over_http(self, monkeypatch):
+        import requests
+        from http.server import ThreadingHTTPServer
+
+        def fake_stream(system, messages, schema, model, on_delta, popen=None, thinking=True):
+            on_delta('{"jp": "は')
+            on_delta('い"}')
+            return {"data": {"jp": "はい"}, "usage": {"output_tokens": 3}}
+
+        monkeypatch.setattr(bridge, "run_cli_stream", fake_stream)
+        monkeypatch.setenv("ROLEPLAY_BRIDGE_TOKEN", "t")
+        monkeypatch.setattr(bridge, "GATE", bridge.Gate())
+        server = ThreadingHTTPServer(("127.0.0.1", 0), bridge.Handler)
+        threading.Thread(target=server.serve_forever, daemon=True).start()
+        try:
+            url = f"http://127.0.0.1:{server.server_address[1]}"
+            resp = requests.post(f"{url}/complete_stream", json=BODY, headers={"X-Bridge-Token": "t"},
+                                 stream=True, timeout=5)
+            assert resp.status_code == 200
+            assert resp.headers["Content-Type"].startswith("text/event-stream")
+            assert resp.raw.chunked
+            lines = [ln for ln in resp.iter_lines(decode_unicode=True) if ln]
+            assert lines[0] == "event: delta"
+            assert json.loads(lines[1][5:]) == {"partial_json": '{"jp": "は'}
+            assert lines[-2] == "event: result"
+            assert json.loads(lines[-1][5:])["data"] == {"jp": "はい"}
+            bad = requests.post(f"{url}/complete_stream", json=BODY, headers={"X-Bridge-Token": "x"}, timeout=5)
+            assert bad.status_code == 401 and bad.json() == {"error": "unauthorized"}
+            assert requests.get(f"{url}/health", timeout=5).json() == {"ok": True}
+        finally:
+            server.shutdown()
+            server.server_close()

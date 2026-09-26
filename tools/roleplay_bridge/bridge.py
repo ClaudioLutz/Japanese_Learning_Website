@@ -13,6 +13,15 @@ API:
      → 200 {"data": {...}, "usage": {...}, "duration_ms": int}
      → 400 ungueltige Anfrage · 401 Token falsch · 429 ausgelastet
        502 CLI-Fehler/ungueltige Ausgabe · 504 CLI-Timeout
+       Optional "thinking": false → CLI ohne Denkphase (MAX_THINKING_TOKENS=0),
+       fuer den kurzen ersten Aufruf (nur die Bot-Zeile).
+  POST /complete_stream   (gleicher Body; Fehler vor dem Start als JSON wie oben)
+     → 200 text/event-stream (Server-Sent Events), CLI mit
+       --output-format stream-json --include-partial-messages:
+         event: delta   data: {"partial_json": "..."}   Stueck der strukturierten Ausgabe
+         event: result  data: {"data": {...}, "usage": {...}, "duration_ms": int}
+         event: error   data: {"error": code, "status": int}
+       Hoechstens BRIDGE_STREAM_TIMEOUT_S (25 s) pro Aufruf.
 
 Sicherheit:
 - Nur stdlib; lauscht nur auf der Docker-Bridge-Adresse (BRIDGE_HOST).
@@ -38,6 +47,12 @@ reine Modell-Generierung, gemessen 6.2/6.7/6.9 s im offenen Prozess gegen
 Kontext (Uebersprechen zwischen Nutzern, wachsender Kontext) und (3) der
 System-Prompt ist pro Prozess fest, obwohl er pro Szene wechselt. Darum ein
 CLI-Aufruf pro Zug.
+
+Streaming (2026-09-27): gemessen liefert stream-json mit --json-schema die
+strukturierte Ausgabe zuverlaessig als input_json_delta-Stuecke des
+StructuredOutput-Tools (kleines Schema, ohne Denkphase: erstes Stueck ~1.9 s
+nach Start, fertiges JSON ~3 s). Die Flask-App zieht daraus die Bot-Zeile
+Zeichen fuer Zeichen (roleplay_service.LineExtractor).
 """
 from __future__ import annotations
 
@@ -59,6 +74,7 @@ PORT = int(os.environ.get('BRIDGE_PORT', '5077'))
 CLAUDE_BIN = os.environ.get('CLAUDE_BIN', '/home/hp-ubuntu/.local/bin/claude')
 WORKDIR = os.environ.get('BRIDGE_WORKDIR', os.path.expanduser('~/.jpl-roleplay-bridge-work'))
 CLI_TIMEOUT_S = float(os.environ.get('BRIDGE_CLI_TIMEOUT_S', '50'))
+STREAM_TIMEOUT_S = float(os.environ.get('BRIDGE_STREAM_TIMEOUT_S', '25'))
 POOL_SIZE = int(os.environ.get('BRIDGE_POOL_SIZE', '4'))
 LOW_SLOTS = int(os.environ.get('BRIDGE_LOW_SLOTS', str(max(1, POOL_SIZE - 1))))
 MAX_WAITING = int(os.environ.get('BRIDGE_MAX_WAITING', '8'))
@@ -103,13 +119,15 @@ def render_prompt(messages: list[dict[str, Any]]) -> str:
     return '\n'.join(parts)
 
 
-def build_command(system: str, schema: dict[str, Any], model: str) -> list[str]:
+def build_command(system: str, schema: dict[str, Any], model: str, stream: bool = False) -> list[str]:
     # KEIN --bare: das ignoriert OAuth/Subscription (nur ANTHROPIC_API_KEY).
     effort = ['--effort', EFFORT] if EFFORT in ALLOWED_EFFORTS else []
+    output = (['--output-format', 'stream-json', '--verbose', '--include-partial-messages']
+              if stream else ['--output-format', 'json'])
     return [
         CLAUDE_BIN, '-p',
         '--model', model,
-        '--output-format', 'json',
+        *output,
         '--json-schema', json.dumps(schema, ensure_ascii=False),
         '--tools', '',
         '--no-session-persistence',
@@ -155,6 +173,18 @@ def parse_cli_output(stdout: str) -> dict[str, Any]:
     }
 
 
+def cli_env(thinking: bool = True) -> dict[str, str]:
+    """Umgebung fuer die CLI: ohne Bridge-Token; thinking=False schaltet die Denkphase ab."""
+    env = {k: v for k, v in os.environ.items() if k != 'ROLEPLAY_BRIDGE_TOKEN'}
+    if not thinking:
+        env['MAX_THINKING_TOKENS'] = '0'
+    return env
+
+
+def request_thinking(body: Any) -> bool:
+    return not (isinstance(body, dict) and body.get('thinking') is False)
+
+
 def request_priority(body: Any) -> str:
     return 'low' if isinstance(body, dict) and body.get('priority') == 'low' else 'high'
 
@@ -179,9 +209,9 @@ def validate_request(body: Any) -> tuple[str, list[dict[str, Any]], dict[str, An
 
 
 def run_cli(system: str, messages: list[dict[str, Any]], schema: dict[str, Any], model: str,
-            runner: Callable[..., Any] = subprocess.run) -> dict[str, Any]:
+            runner: Callable[..., Any] = subprocess.run, thinking: bool = True) -> dict[str, Any]:
     os.makedirs(WORKDIR, exist_ok=True)
-    env = {k: v for k, v in os.environ.items() if k != 'ROLEPLAY_BRIDGE_TOKEN'}
+    env = cli_env(thinking)
     try:
         proc = runner(
             build_command(system, schema, model),
@@ -204,6 +234,89 @@ def run_cli(system: str, messages: list[dict[str, Any]], schema: dict[str, Any],
         except BridgeError:
             raise BridgeError(502, f'cli_exit_{proc.returncode}')
     return parse_cli_output(proc.stdout)
+
+
+def parse_stream_line(line: str) -> tuple[str, Any] | None:
+    """Eine stream-json-Zeile → ('delta', partial_json) | ('result', {data, usage}) | None."""
+    line = (line or '').strip()
+    if not line:
+        return None
+    try:
+        ev = json.loads(line)
+    except ValueError:
+        return None
+    if not isinstance(ev, dict):
+        return None
+    if ev.get('type') == 'stream_event':
+        inner = ev.get('event')
+        if not isinstance(inner, dict) or inner.get('type') != 'content_block_delta':
+            return None
+        delta = inner.get('delta')
+        if isinstance(delta, dict) and delta.get('type') == 'input_json_delta' and delta.get('partial_json'):
+            return 'delta', str(delta['partial_json'])
+        return None
+    if ev.get('type') == 'result':
+        return 'result', parse_cli_output(line)
+    return None
+
+
+def run_cli_stream(system: str, messages: list[dict[str, Any]], schema: dict[str, Any], model: str,
+                   on_delta: Callable[[str], None], popen: Callable[..., Any] = subprocess.Popen,
+                   thinking: bool = True, timeout_s: float | None = None) -> dict[str, Any]:
+    """CLI mit stream-json: ruft on_delta fuer jedes Stueck der strukturierten Ausgabe
+    und liefert am Ende {"data", "usage"} wie run_cli. Wirft BridgeError."""
+    os.makedirs(WORKDIR, exist_ok=True)
+    try:
+        proc = popen(
+            build_command(system, schema, model, stream=True),
+            stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
+            text=True, encoding='utf-8', cwd=WORKDIR, env=cli_env(thinking),
+        )
+    except OSError:
+        raise BridgeError(502, 'cli_not_startable')
+    timed_out = threading.Event()
+
+    def _kill() -> None:
+        timed_out.set()
+        try:
+            proc.kill()
+        except OSError:
+            pass
+
+    timer = threading.Timer(STREAM_TIMEOUT_S if timeout_s is None else timeout_s, _kill)
+    timer.daemon = True
+    timer.start()
+    result: dict[str, Any] | None = None
+    error: BridgeError | None = None
+    try:
+        try:
+            proc.stdin.write(render_prompt(messages))
+            proc.stdin.close()
+        except OSError:
+            pass
+        for line in proc.stdout:
+            try:
+                parsed = parse_stream_line(line)
+            except BridgeError as exc:
+                error = exc
+                continue
+            if parsed is None:
+                continue
+            kind, value = parsed
+            if kind == 'delta' and result is None:
+                on_delta(value)
+            elif kind == 'result':
+                result = value
+        proc.wait()
+    finally:
+        timer.cancel()
+    if result is not None:
+        return result
+    if timed_out.is_set():
+        raise BridgeError(504, 'cli_timeout')
+    if error is not None:
+        raise error
+    raise BridgeError(502, f'cli_exit_{proc.returncode}')
 
 
 # ── Nebenlaeufigkeit ─────────────────────────────────────────────────────
@@ -268,17 +381,22 @@ class Gate:
 GATE = Gate()
 
 
+def _authorized(token_header: str | None, expected_token: str) -> bool:
+    return bool(expected_token and token_header and hmac.compare_digest(
+        token_header.encode(), expected_token.encode()))
+
+
 def handle_complete(body: Any, token_header: str | None, expected_token: str,
                     gate: Gate = GATE, runner: Callable[..., Any] = subprocess.run) -> tuple[int, dict[str, Any]]:
     """Reine Logik von POST /complete → (HTTP-Status, JSON-Body)."""
-    if not expected_token or not token_header or not hmac.compare_digest(
-            token_header.encode(), expected_token.encode()):
+    if not _authorized(token_header, expected_token):
         return 401, {'error': 'unauthorized'}
     try:
         system, messages, schema, model = validate_request(body)
     except BridgeError as exc:
         return exc.status, {'error': exc.code}
     priority = request_priority(body)
+    thinking = request_thinking(body)
     queued = time.monotonic()
     if not gate.acquire(priority):
         logger.info('complete: busy (prio=%s)', priority)
@@ -286,7 +404,7 @@ def handle_complete(body: Any, token_header: str | None, expected_token: str,
     started = time.monotonic()
     wait_ms = int((started - queued) * 1000)
     try:
-        result = run_cli(system, messages, schema, model, runner=runner)
+        result = run_cli(system, messages, schema, model, runner=runner, thinking=thinking)
     except BridgeError as exc:
         logger.warning('complete: %s nach %.1fs (prio=%s)', exc.code, time.monotonic() - started, priority)
         return exc.status, {'error': exc.code}
@@ -294,10 +412,61 @@ def handle_complete(body: Any, token_header: str | None, expected_token: str,
         gate.release(priority)
     duration_ms = int((time.monotonic() - started) * 1000)
     result['duration_ms'] = duration_ms
-    logger.info('complete: ok in %d ms (msgs=%d, out_tokens=%d, prio=%s, wait=%d ms, aktiv=%d)',
+    logger.info('complete: ok in %d ms (msgs=%d, out_tokens=%d, prio=%s, wait=%d ms, aktiv=%d, denken=%s)',
                 duration_ms, len(messages), result['usage']['output_tokens'], priority, wait_ms,
-                gate.active)
+                gate.active, 'ja' if thinking else 'nein')
     return 200, result
+
+
+def handle_complete_stream(body: Any, token_header: str | None, expected_token: str,
+                           start: Callable[[], None], emit: Callable[[str, dict[str, Any]], None],
+                           gate: Gate = GATE, popen: Callable[..., Any] = subprocess.Popen,
+                           ) -> tuple[int, dict[str, Any]] | None:
+    """Reine Logik von POST /complete_stream.
+
+    Fehler VOR dem Start (Token, Anfrage, ausgelastet) → (Status, JSON-Body) wie
+    /complete. Sonst sendet start() die SSE-Header und emit(event, data) die
+    Ereignisse delta/result/error; Rueckgabe None.
+    """
+    if not _authorized(token_header, expected_token):
+        return 401, {'error': 'unauthorized'}
+    try:
+        system, messages, schema, model = validate_request(body)
+    except BridgeError as exc:
+        return exc.status, {'error': exc.code}
+    priority = request_priority(body)
+    thinking = request_thinking(body)
+    queued = time.monotonic()
+    if not gate.acquire(priority):
+        logger.info('stream: busy (prio=%s)', priority)
+        return 429, {'error': 'busy'}
+    started = time.monotonic()
+    wait_ms = int((started - queued) * 1000)
+    first_ms: list[int] = []
+
+    def _delta(chunk: str) -> None:
+        if not first_ms:
+            first_ms.append(int((time.monotonic() - started) * 1000))
+        emit('delta', {'partial_json': chunk})
+
+    try:
+        start()
+        try:
+            result = run_cli_stream(system, messages, schema, model, _delta, popen=popen, thinking=thinking)
+        except BridgeError as exc:
+            logger.warning('stream: %s nach %.1fs (prio=%s)', exc.code, time.monotonic() - started, priority)
+            emit('error', {'error': exc.code, 'status': exc.status})
+            return None
+    finally:
+        gate.release(priority)
+    duration_ms = int((time.monotonic() - started) * 1000)
+    result['duration_ms'] = duration_ms
+    logger.info('stream: ok in %d ms, erstes Stueck nach %s ms (msgs=%d, out_tokens=%d, prio=%s, '
+                'wait=%d ms, aktiv=%d, denken=%s)', duration_ms, first_ms[0] if first_ms else '-',
+                len(messages), result['usage']['output_tokens'], priority, wait_ms, gate.active,
+                'ja' if thinking else 'nein')
+    emit('result', result)
+    return None
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -320,8 +489,41 @@ class Handler(BaseHTTPRequestHandler):
         else:
             self._send(404, {'error': 'not_found'})
 
+    def _sse_start(self) -> None:
+        # HTTP/1.1 + chunked: der Client (requests/urllib3) liest jedes Stueck sofort; bei
+        # HTTP/1.0 ohne Laenge wuerde er bis zu 512 Bytes puffern.
+        self.protocol_version = 'HTTP/1.1'
+        self.close_connection = True
+        self.send_response(200)
+        self.send_header('Content-Type', 'text/event-stream; charset=utf-8')
+        self.send_header('Cache-Control', 'no-cache')
+        self.send_header('Transfer-Encoding', 'chunked')
+        self.send_header('Connection', 'close')
+        self.end_headers()
+        self._sse_open = True
+
+    def _write_chunk(self, raw: bytes) -> None:
+        self.wfile.write(f'{len(raw):x}\r\n'.encode('ascii') + raw + b'\r\n')
+        self.wfile.flush()
+
+    def _sse_emit(self, event: str, data: dict[str, Any]) -> None:
+        if getattr(self, '_gone', False):
+            return
+        try:
+            self._write_chunk(f'event: {event}\ndata: {json.dumps(data, ensure_ascii=False)}\n\n'.encode('utf-8'))
+        except OSError:
+            self._gone = True   # Client weg — CLI laeuft zu Ende, Ergebnis verfaellt
+
+    def _sse_end(self) -> None:
+        if getattr(self, '_sse_open', False) and not getattr(self, '_gone', False):
+            try:
+                self.wfile.write(b'0\r\n\r\n')
+                self.wfile.flush()
+            except OSError:
+                pass
+
     def do_POST(self) -> None:
-        if self.path != '/complete':
+        if self.path not in ('/complete', '/complete_stream'):
             self._send(404, {'error': 'not_found'})
             return
         try:
@@ -336,9 +538,16 @@ class Handler(BaseHTTPRequestHandler):
         except (ValueError, UnicodeDecodeError):
             self._send(400, {'error': 'invalid_json'})
             return
-        status, payload = handle_complete(
-            body, self.headers.get('X-Bridge-Token'), os.environ.get('ROLEPLAY_BRIDGE_TOKEN', ''),
-        )
+        token = self.headers.get('X-Bridge-Token')
+        expected = os.environ.get('ROLEPLAY_BRIDGE_TOKEN', '')
+        if self.path == '/complete_stream':
+            early = handle_complete_stream(body, token, expected, self._sse_start, self._sse_emit)
+            if early is not None:
+                self._send(*early)
+            else:
+                self._sse_end()
+            return
+        status, payload = handle_complete(body, token, expected)
         self._send(status, payload)
 
 

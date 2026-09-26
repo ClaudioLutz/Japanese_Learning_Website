@@ -14,6 +14,8 @@
          data-demo="1" data-standalone="1"
          data-demo-start-url="{{ url_for('roleplay.demo_start') }}"
          data-demo-turn-url="{{ url_for('roleplay.demo_turn') }}"
+         data-demo-stream-url="{{ url_for('roleplay.demo_turn_stream') }}"
+         data-demo-details-url="{{ url_for('roleplay.demo_details') }}"
          data-text-max="{{ rp_demo.text_max }}"
          id="gespraech-demo"
          @rp-demo-start.window="startDemo(true)"
@@ -164,13 +166,13 @@
                 <div class="rp-bot" x-show="bot">
                     <div class="rp-bot-head">
                         <span class="rp-bot-name" x-text="botName"></span>
-                        <button type="button" class="rp-icon-btn" @click="speak(bot && bot.jp, 'bot')"
+                        <button type="button" class="rp-icon-btn" @click="speak(bot && bot.jp, 'bot')" :disabled="streamingLine"
                                 :aria-label="'Zeile von ' + botName + ' vorlesen'" :aria-pressed="speakingKey === 'bot' ? 'true' : 'false'">
                             <i class="fas" :class="speakingKey === 'bot' ? 'fa-volume-high' : 'fa-volume-low'" aria-hidden="true"></i>
                         </button>
                     </div>
-                    <div class="rp-bot-jp" lang="ja" x-text="bot ? bot.jp : ''"></div>
-                    <div class="rp-bot-toggles">
+                    <div class="rp-bot-jp" :class="streamingLine ? 'is-streaming' : ''" lang="ja" x-text="bot ? bot.jp : ''"></div>
+                    <div class="rp-bot-toggles" x-show="!detailsPending && !detailsFailed">
                         <button type="button" class="rp-link-btn" @click="showReading = !showReading"
                                 :aria-expanded="showReading ? 'true' : 'false'">Lesung</button>
                         <button type="button" class="rp-link-btn" @click="showGerman = !showGerman"
@@ -183,6 +185,16 @@
                     <div class="rp-bot-reading" lang="ja" x-show="showReading" x-text="bot ? bot.reading_kana : ''"></div>
                     <div class="rp-bot-de" x-show="showGerman" x-text="bot ? bot.de : ''"></div>
                     <div class="rp-hint" x-show="hintShown" x-text="bot ? bot.hint_de : ''"></div>
+                </div>
+
+                {# Zweigeteilter Zug: Lernhilfen kommen aus einem zweiten Aufruf nach. #}
+                <div class="rp-status rp-details-wait" x-show="detailsPending" role="status">
+                    <span class="rp-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+                    <span>Vorschläge folgen …</span>
+                </div>
+                <div class="rp-status rp-details-failed" x-show="detailsFailed" role="status">
+                    <i class="fas fa-circle-info" aria-hidden="true"></i>
+                    <span>Vorschläge gerade nicht verfügbar — schreib einfach frei weiter.</span>
                 </div>
 
                 <div class="rp-suggestions" x-show="bot && bot.suggestions && bot.suggestions.length">

@@ -1,6 +1,6 @@
 # Rollenspiel-Tutor — API-Vertrag (Backend)
 
-Stand: 2026-09-26. Backend: `app/roleplay_routes.py`, `app/services/roleplay_service.py`,
+Stand: 2026-09-27. Backend: `app/roleplay_routes.py`, `app/services/roleplay_service.py`,
 `app/services/roleplay_prefetch.py`.
 Frontend baut gegen diesen Vertrag. Alle Texte für Nutzer kommen fertig auf Deutsch.
 
@@ -15,10 +15,12 @@ Frontend baut gegen diesen Vertrag. Alle Texte für Nutzer kommen fertig auf Deu
 - **Rate-Limit:** 20 Anfragen/Minute pro Nutzer → **429** (Flask-Limiter, HTML-Fehlerseite,
   kein JSON). Tageslimits kommen dagegen als JSON `limit_reached` (siehe unten).
 - **Latenz:** Wahl eines Antwortvorschlags: meist **< 1 s** (Antwort vorausberechnet, siehe
-  „Vorausberechnung"). Freitext = ein Modell-Aufruf, **~5–7 s** (Claude-Code-CLI mit
-  `--effort low`), im Fehlerfall bis ~60 s. Frontend: Ladeindikator („Tanaka tippt …“) bei
-  Freitext sofort, beim Sofort-Senden eines Vorschlags erst nach 1,2 s; Eingabe sperren,
-  `fetch`-Timeout nicht unter 65 s.
+  „Vorausberechnung"). Freitext: zweigeteilter Zug (siehe „Sofort-Antwort") — erste Zeichen
+  der Bot-Zeile per Stream nach **~2 s**, ganze Zeile nach ~2–3 s, Lernhilfen (Lesung,
+  Deutsch, Vorschläge, Tipp) ~5–7 s später; vorher ein voller Aufruf von 7–8 s. Letzter Zug
+  und Gesprächsende bleiben ein voller Aufruf (~6–8 s, Korrektur). Frontend: Ladeindikator
+  („Tanaka tippt …“) bis zum ersten Zeichen, beim Sofort-Senden eines Vorschlags erst nach
+  1,2 s; Eingabe sperren, `fetch`-Timeout nicht unter 65 s (Stream: 35 s).
 - **Rollen:** Sprecher aus dem Dialog (`slides[].speaker`), genau die ersten zwei.
 - **Gesprächslänge:** 4–8 Nutzerzüge. Nach dem 8. Zug beendet der Server selbst
   (`done: true`). XP (**25**) nur einmal pro Gespräch und erst ab 4 Nutzerzügen.
@@ -51,7 +53,9 @@ Immer JSON `{ "error": "<code>", "message": "<deutscher Klartext>" }` — nie 50
 { "turn_index": 3, "speaker": "bot",
   "jp": "なにに しますか。", "reading_kana": "なにに しますか。", "de": "Was möchten Sie?",
   "suggestions": [ { "jp": "コーヒーを ください。", "de": "Einen Kaffee, bitte." }, … ],  // 3, leer bei Ende
-  "hint_de": "Bestelle ein Getränk." }
+  "hint_de": "Bestelle ein Getränk.",
+  "details_pending": false,   // true: nur jp steht, Rest leer → …/details nachladen
+  "details_failed": false }   // true: Lernhilfen gescheitert → „Vorschläge gerade nicht verfügbar"
 
 // Correction (max. 3)
 { "original": "コーヒー ください", "better": "コーヒーを ください。",
@@ -118,6 +122,32 @@ Verabschiedung, `correction` enthält max. 3 Punkte, `xp_awarded` = 25 (bzw. 0 u
 `session.status` = `completed`. Danach **nicht** mehr `/end` aufrufen müssen (idempotent
 aber möglich). Fehler: 400, 404, 409, 429, 502, 503.
 
+Freitext-Zug (kein Vorschlags-Treffer, nicht der letzte Zug): `bot_turn.details_pending: true`,
+nur `jp` gefüllt (`reading_kana`, `de`, `hint_de` leer, `suggestions` `[]`). Lernhilfen per
+`GET …/turn/<turn_index>/details` nachladen. Auch der erste `bot_turn` von `/start` kommt so.
+
+### POST `/api/roleplay/<session_id>/turn/stream` (Server-Sent Events)
+
+Body wie `/turn`. Prüffehler (400/404/409/429/503 vor dem Modell-Aufruf) kommen als normales
+JSON mit Status. Sonst `200 text/event-stream`:
+```
+event: line     data: {"text": "ケーキも "}          // Stück der Bot-Zeile, sobald das Modell es schreibt
+event: result   data: { …gleiches JSON wie /turn… }  // Zug verbucht
+event: error    data: {"error": "upstream_error", "message": "…", "status": 502}   // Zug NICHT verbucht
+```
+Verbindung höchstens ~30 s. Vorschlags-Treffer: nur `result` (sofort). Bei `error` die schon
+gezeigte Zeile zurücknehmen und den Text wieder ins Feld stellen.
+
+### GET `/api/roleplay/<session_id>/turn/<turn_index>/details`
+
+Rate-Limit 120/min (Client fragt alle 500 ms, höchstens 20 s).
+```json
+200 { "status": "pending" | "ready" | "failed", "bot_turn": BotTurn | null }
+```
+`bot_turn` nur bei `ready` (Zeile `jp` unverändert). `failed` = zweiter Aufruf gescheitert
+oder > 70 s ausstehend → Vorschläge leer, Freitext weiter möglich. 404: fremde Session,
+unbekannter Zug.
+
 ### POST `/api/roleplay/<session_id>/end`
 
 Body leer (`{}`). Beendet vorzeitig oder holt den Abschluss erneut (idempotent, kein
@@ -147,6 +177,33 @@ Kontext = Inhalt dieser Lektionsseite (Text, Dialog, Vokabeln, Grammatik, Kanji)
 ```
 `answer` ist Klartext (Deutsch, evtl. kurze Aufzählungen mit „- “, kein HTML → als Text
 rendern). Fehler: 400, 403, 404 (Lektion/Seite), 429, 502, 503.
+
+## Sofort-Antwort: zweigeteilter Zug (seit 2026-09-27)
+
+Code: `roleplay_service.call_line/call_details/user_turn_events`,
+`roleplay_prefetch.schedule_details_*`, Schalter `ROLEPLAY_SPLIT_TURN` (Default an, in Tests aus).
+
+1. **Erster Aufruf** (live, `priority: high`, ohne Denkphase `thinking: false`): Schema
+   `LINE_SCHEMA` = nur `{bot_line_jp, done}`, Prompt-Zusatz „nur die nächste Zeile",
+   `max_tokens` 300. Beim Stream-Endpunkt wird `bot_line_jp` aus den JSON-Stücken der Bridge
+   (`/complete_stream`) Zeichen für Zeichen herausgelöst (`LineExtractor`). Danach wird der Zug
+   **atomar verbucht** (Nutzer- und Bot-Zeile, Nachrichtenlimit, Verlauf).
+2. **Zweiter Aufruf** im Hintergrund (eigener Thread-Pool, 2 Threads): Schema `DETAILS_SCHEMA` =
+   `{reading_kana, de, suggestions, hint_de, correction}`. Die Zeile steht als letzte
+   Partner-Nachricht im Verlauf, gefolgt vom Steuersignal `（ヒントを おねがいします。）`; sie ist
+   nicht im Schema, das Modell kann sie also nicht ändern. `restore_katakana` wie bisher.
+   Ergebnis → `RoleplayTurn` (eingeloggt) bzw. `roleplay_prefetch.response_json` (Demo).
+   Erst danach startet die Vorausberechnung der drei Vorschläge.
+3. Scheitert der zweite Aufruf: `details_failed`, Vorschläge leer, keine Vorausberechnung.
+   Ist der Nutzer schon weiter, entfällt der zweite Aufruf.
+
+Sonderfälle: letzter (8.) Zug und `/end` = ein voller Aufruf (Korrektur). Setzt das Modell im
+ersten Aufruf `done` (Ziel erreicht, ab 4 Zügen), holt der Server Korrektur und Lernhilfen
+gleich synchron im selben Request.
+
+Limits: Der zweite Aufruf gehört zur selben Nutzer-Nachricht (Nachrichtenlimit einmal), zählt
+aber als eigener Modell-Aufruf gegen `ROLEPLAY_DAILY_MESSAGE_CAP` (Zeile in `roleplay_prefetch`
+mit leerem `norm_text`, `turn_index` = Nutzerzüge danach).
 
 ## Vorausberechnung der Antwortvorschläge (seit 2026-09-26)
 
@@ -240,6 +297,18 @@ Fehler: 400 `invalid_request` (Text/Honeypot), 400 `demo_expired` / `demo_invali
 „Demo für heute ausgeschöpft, mit Konto geht es weiter.", 502 `upstream_error`
 (Zug zählt nicht).
 
+Zug 1 und 2 sind zweigeteilt wie eingeloggt (`details_pending`), Zug 3 ein voller Aufruf.
+
+### POST `/api/roleplay/demo/turn/stream`
+Body wie `/demo/turn`, Antwort als SSE wie `…/turn/stream` (`result` = JSON von `/demo/turn`).
+
+### POST `/api/roleplay/demo/details`
+```json
+{ "token": "…" }        // das NEUE Token aus der Zug-Antwort
+200 { "status": "pending" | "ready" | "failed", "bot_turn": BotTurn | null }
+```
+120/min pro IP. Token-Fehler wie oben (400 `demo_invalid`/`demo_expired`).
+
 ## Betrieb (Kurz)
 
 - Env (Server-`.env`): `ROLEPLAY_ENABLED`, `ROLEPLAY_PROVIDER` (bridge|api),
@@ -255,6 +324,11 @@ Fehler: 400 `invalid_request` (Text/Honeypot), 400 `demo_expired` / `demo_invali
   ufw erlaubt nur das Compose-Netz auf Port 5077. Nach Änderungen an `bridge.py`:
   `sudo systemctl restart jpl-roleplay-bridge`; nach Änderungen an der Unit zusätzlich
   `sudo cp tools/roleplay_bridge/jpl-roleplay-bridge.service /etc/systemd/system/ && sudo systemctl daemon-reload`.
+- Bridge-Endpunkte: `POST /complete` (JSON) und `POST /complete_stream` (SSE: `delta` mit
+  `partial_json`-Stücken, `result`, `error`; CLI `--output-format stream-json
+  --include-partial-messages`, max. `BRIDGE_STREAM_TIMEOUT_S` 25 s). `thinking: false` im Body
+  → `MAX_THINKING_TOKENS=0` (erster Aufruf). Gemessen 2026-09-27: stream-json liefert mit
+  `--json-schema` zuverlässig `input_json_delta`-Stücke des StructuredOutput-Tools.
 - Bridge-Pool: `BRIDGE_POOL_SIZE` 4 gleichzeitige CLI-Aufrufe, davon höchstens
   `BRIDGE_LOW_SLOTS` 3 für Vorausberechnungen (`priority: "low"`), `BRIDGE_MAX_WAITING` 8
   Wartende (max. `BRIDGE_QUEUE_WAIT_S` 20 s), sonst 429 → 502 `upstream_error` „beschäftigt".

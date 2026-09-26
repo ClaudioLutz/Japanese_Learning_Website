@@ -21,6 +21,16 @@ Gast-Demo: gleiche Tabelle, Schluessel demo_key = Hash des Demo-Tokens,
 session_id NULL. Gespeichert werden nur vom Server/Modell verfasste Vorschlaege
 und Antworten, nie Freitext eines Gastes; nach dem Zug wird response_json geleert.
 
+Zweiter Aufruf des zweigeteilten Zugs (roleplay_service.split_enabled): Die
+Lernhilfen zur schon gesendeten Bot-Zeile (Lesung, Uebersetzung, Vorschlaege,
+Tipp) rechnet ein eigener kleiner Thread-Pool (2 Threads, damit sie nie hinter
+Vorausberechnungen warten). Buchfuehrung in derselben Tabelle: Zeile mit
+leerem norm_text (= Details, nie ein Vorschlags-Treffer), turn_index = Zahl der
+Nutzerzuege danach. Sie zaehlt wie jede Zeile als eigener Modell-Aufruf gegen
+die globale Tageskappe. Eingeloggt landen die Texte im RoleplayTurn, in der
+Demo in response_json (wird beim naechsten Zug geleert). Erst wenn die Details
+stehen, startet die Vorausberechnung der drei Vorschlaege.
+
 Schalter (app.config/Env): ROLEPLAY_PREFETCH (Default an, in Tests aus),
 ROLEPLAY_PREFETCH_SYNC (Tests: synchron statt Thread), ROLEPLAY_PREFETCH_THREADS (3).
 """
@@ -55,7 +65,11 @@ DEFAULT_THREADS = 3
 
 _NORM_RE = re.compile(r'[\s。．.、，,！!？?「」『』（）()・…〜~\'"“”„]')
 
+DETAILS_THREADS = 2
+DETAILS_MARK = ''            # norm_text der Details-Zeilen (Vorschlaege haben nie einen leeren)
+
 _executor: ThreadPoolExecutor | None = None
+_details_executor: ThreadPoolExecutor | None = None
 _executor_lock = threading.Lock()
 
 
@@ -93,6 +107,14 @@ def _get_executor() -> ThreadPoolExecutor:
         if _executor is None:
             _executor = ThreadPoolExecutor(max_workers=_threads(), thread_name_prefix='rp-prefetch')
         return _executor
+
+
+def _get_details_executor() -> ThreadPoolExecutor:
+    global _details_executor
+    with _executor_lock:
+        if _details_executor is None:
+            _details_executor = ThreadPoolExecutor(max_workers=DETAILS_THREADS, thread_name_prefix='rp-details')
+        return _details_executor
 
 
 # ── Hilfen ───────────────────────────────────────────────────────────────
@@ -168,6 +190,7 @@ def take(*, turn_index: int, text: str, session_id: int | None = None, demo: str
     query = _key_filter(RoleplayPrefetch.query, session_id, demo).filter(
         RoleplayPrefetch.turn_index == turn_index,
         RoleplayPrefetch.norm_text == norm,
+        RoleplayPrefetch.norm_text != DETAILS_MARK,
     ).order_by(RoleplayPrefetch.id.desc())
     row = query.first()
     if row is None:
@@ -224,12 +247,12 @@ def _new_rows(suggestions: list[dict[str, Any]], turn_index: int, *, session_id:
     return rows
 
 
-def _submit(fn: Callable[..., None], *args: Any) -> None:
+def _submit(fn: Callable[..., None], *args: Any, details: bool = False) -> None:
     app = current_app._get_current_object()  # type: ignore[attr-defined]
     if _sync():
         fn(app, True, *args)
     else:
-        _get_executor().submit(fn, app, False, *args)
+        (_get_details_executor() if details else _get_executor()).submit(fn, app, False, *args)
 
 
 @contextmanager
@@ -253,13 +276,13 @@ def _provider() -> svc.RoleplayProvider:
     return provider
 
 
-def _finish(row_id: int, data: dict[str, Any] | None, usage: svc.Usage) -> None:
+def _finish(row_id: int, data: dict[str, Any] | None, usage: svc.Usage, keep_text: bool = True) -> None:
     tbl = RoleplayPrefetch.__table__
     values: dict[str, Any] = {
         'status': 'ready' if data is not None else 'failed',
         'tokens_in': usage.tokens_in, 'tokens_out': usage.tokens_out, 'cost_usd': usage.cost_usd,
     }
-    if data is not None:
+    if data is not None and keep_text:
         values['response_json'] = json.dumps(data, ensure_ascii=False)
     res = db.session.execute(update(tbl).where(tbl.c.id == row_id, tbl.c.status == 'pending').values(**values))
     if res.rowcount != 1:  # type: ignore[attr-defined]
@@ -364,3 +387,141 @@ def schedule_demo(token: str, turn_index: int, history: list, suggestions: list[
         db.session.rollback()
         logger.exception('Rollenspiel-Prefetch: Planen (Demo) fehlgeschlagen')
         return 0
+
+
+# ── Zweiter Aufruf: Lernhilfen zur schon gesendeten Bot-Zeile ────────────
+
+def _details_row(turn_index: int, *, session_id: int | None, demo: str | None) -> RoleplayPrefetch:
+    return RoleplayPrefetch(session_id=session_id, demo_key=demo, turn_index=turn_index,
+                            user_text='', norm_text=DETAILS_MARK, status='pending',
+                            created_at=datetime.utcnow())
+
+
+def _details_provider() -> svc.RoleplayProvider:
+    # 'high': der Nutzer wartet auf die Vorschlaege (nicht hinter Vorausberechnungen).
+    return svc.get_provider()
+
+
+def schedule_details_session(session: RoleplaySession, bot_turn: Any) -> bool:
+    """Zweiten Aufruf fuer `bot_turn` planen (NACH dem Commit des Zugs). Scheitert das
+    Planen, gilt der Zug als ohne Vorschlaege (Freitext bleibt moeglich)."""
+    try:
+        row = _details_row(session.turn_count or 0, session_id=session.id, demo=None)
+        db.session.add(row)
+        db.session.commit()
+        _submit(_details_session_job, row.id, bot_turn.id, details=True)
+        return True
+    except Exception:
+        db.session.rollback()
+        logger.exception('Rollenspiel-Details: Planen fehlgeschlagen (session=%s)', session.id)
+        try:
+            svc.apply_details(session, bot_turn, None)
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+        return False
+
+
+def _details_session_job(app, sync: bool, row_id: int, turn_id: int) -> None:
+    from app.models import RoleplayTurn
+    with _job_context(app, sync):
+        row = db.session.get(RoleplayPrefetch, row_id)
+        if row is None or row.status != 'pending':
+            return
+        turn = db.session.get(RoleplayTurn, turn_id)
+        session = db.session.get(RoleplaySession, row.session_id)
+        if (turn is None or session is None or turn.suggestions_json is not None
+                or not session.turns or session.turns[-1].id != turn.id):
+            # Nutzer ist schon weiter (oder Zug weg): Details lohnen nicht mehr.
+            db.session.execute(update(RoleplayPrefetch.__table__).where(
+                RoleplayPrefetch.__table__.c.id == row_id).values(status='stale'))
+            db.session.commit()
+            return
+        started = time.monotonic()
+        data: dict[str, Any] | None = None
+        usage = svc.Usage()
+        try:
+            system, status, messages = svc.prepare_details(session, turn)
+            result = svc.call_details(system, status, messages, turn.text_jp, done=False,
+                                      provider=_details_provider())
+            data, usage = result.data, result.usage
+        except svc.UpstreamError as exc:
+            usage = exc.usage
+            logger.info('Rollenspiel-Details %s: Upstream-Fehler', row_id)
+        except Exception:
+            db.session.rollback()
+            logger.exception('Rollenspiel-Details %s: Fehler', row_id)
+            turn = db.session.get(RoleplayTurn, turn_id)
+            session = db.session.get(RoleplaySession, row.session_id)
+            if turn is None or session is None:
+                return
+        svc.apply_details(session, turn, data, usage)
+        _finish(row_id, data, usage, keep_text=False)   # committet (Texte stehen im Bot-Zug)
+        logger.info('Rollenspiel-Details %s: %s in %.1fs', row_id, 'fertig' if data else 'gescheitert',
+                    time.monotonic() - started)
+        if data is not None:
+            schedule_session(session)
+
+
+def schedule_details_demo(token: str, turn_index: int, history: list, bot_line_jp: str,
+                          prefetch_after: bool) -> bool:
+    """Wie schedule_details_session fuer die Gast-Demo (Schluessel = Hash des neuen Tokens).
+    `history` endet mit der Bot-Zeile."""
+    try:
+        row = _details_row(turn_index, session_id=None, demo=demo_key(token))
+        db.session.add(row)
+        db.session.commit()
+        snapshot = json.loads(json.dumps(history))
+        _submit(_details_demo_job, row.id, token, snapshot, bot_line_jp, prefetch_after, details=True)
+        return True
+    except Exception:
+        db.session.rollback()
+        logger.exception('Rollenspiel-Details: Planen (Demo) fehlgeschlagen')
+        return False
+
+
+def _details_demo_job(app, sync: bool, row_id: int, token: str, history: list, bot_line_jp: str,
+                      prefetch_after: bool) -> None:
+    with _job_context(app, sync):
+        from app.services import roleplay_demo as demo
+
+        row = db.session.get(RoleplayPrefetch, row_id)
+        if row is None or row.status != 'pending':
+            return
+        data: dict[str, Any] | None = None
+        usage = svc.Usage()
+        try:
+            content = demo.demo_content()
+            if content is not None:
+                result = demo.demo_details_call(content, history, bot_line_jp, row.turn_index,
+                                                provider=_details_provider())
+                data, usage = result.data, result.usage
+        except svc.UpstreamError as exc:
+            usage = exc.usage
+            logger.info('Rollenspiel-Details (Demo) %s: Upstream-Fehler', row_id)
+        except Exception:
+            db.session.rollback()
+            logger.exception('Rollenspiel-Details (Demo) %s: Fehler', row_id)
+        _finish(row_id, data, usage)
+        if data is not None and prefetch_after:
+            schedule_demo(token, row.turn_index, history, data['suggestions'])
+
+
+def details_for_demo(token: str, turn_index: int) -> tuple[str, dict[str, Any] | None]:
+    """('ready'|'pending'|'failed', Zugdaten) der Details zu diesem Demo-Token."""
+    row = RoleplayPrefetch.query.filter(
+        RoleplayPrefetch.session_id.is_(None), RoleplayPrefetch.demo_key == demo_key(token),
+        RoleplayPrefetch.turn_index == turn_index, RoleplayPrefetch.norm_text == DETAILS_MARK,
+    ).order_by(RoleplayPrefetch.id.desc()).first()
+    if row is None:
+        return 'failed', None
+    if row.status == 'pending':
+        fresh = row.created_at and row.created_at > datetime.utcnow() - timedelta(seconds=svc.DETAILS_STALE_S)
+        return ('pending' if fresh else 'failed'), None
+    if row.status == 'ready' and row.response_json:
+        try:
+            data = json.loads(row.response_json)
+        except (TypeError, ValueError):
+            return 'failed', None
+        return ('ready', data) if isinstance(data, dict) else ('failed', None)
+    return 'failed', None

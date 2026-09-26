@@ -16,6 +16,10 @@ Datenschutz/Kosten:
 - Antworten auf die drei Vorschlaege rechnet der Server vor
   (roleplay_prefetch, Schluessel = Token-Hash); ein gewaehlter Vorschlag kommt
   ohne Modell-Aufruf, zaehlt aber normal gegen IP-Limit und Gast-Kappe.
+- Zweigeteilter Zug (wie eingeloggt): Freitext liefert zuerst nur Tanakas Zeile
+  (auf Wunsch gestreamt), die Lernhilfen rechnet ein zweiter Aufruf im
+  Hintergrund; der Client holt sie per POST /api/roleplay/demo/details (Token).
+  Der letzte (3.) Zug bleibt ein voller Aufruf (Korrektur).
 """
 from __future__ import annotations
 
@@ -23,7 +27,7 @@ import hashlib
 import json
 import logging
 import os
-from typing import Any
+from typing import Any, Generator
 
 from flask import current_app
 from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
@@ -309,11 +313,8 @@ def build_demo_messages(history: list, new_user_text: str) -> list[dict[str, Any
     return messages
 
 
-def demo_call(content: LessonContent, history: list, text: str, user_turns_after: int,
-              provider: svc.RoleplayProvider | None = None) -> svc.TurnResult:
-    """Ein Modell-Zug der Demo (Live-Zug und Vorausberechnung)."""
-    messages = build_demo_messages(history, text)
-    last = user_turns_after >= DEMO_MAX_USER_TURNS
+def _demo_prompt(content: LessonContent, user_turns_after: int) -> tuple[str, str]:
+    """(System-Prompt, Status-Block) eines Demo-Zugs."""
     scene = demo_scene(content)
     lesson = db.session.get(Lesson, content.lesson_id)
     system = svc.build_system_prompt(
@@ -321,14 +322,55 @@ def demo_call(content: LessonContent, history: list, text: str, user_turns_after
         svc.vocab_pool(lesson) if lesson else [], svc.n5_kanji(),
         min_turns=DEMO_MAX_USER_TURNS, max_turns=DEMO_MAX_USER_TURNS,
     )
-    return svc.call_turn(
-        system, svc._status_block('turn', user_turns_after, max_turns=DEMO_MAX_USER_TURNS),
-        messages, force_done=last, provider=provider,
-    )
+    return system, svc._status_block('turn', user_turns_after, max_turns=DEMO_MAX_USER_TURNS)
+
+
+def demo_call(content: LessonContent, history: list, text: str, user_turns_after: int,
+              provider: svc.RoleplayProvider | None = None) -> svc.TurnResult:
+    """Ein Modell-Zug der Demo (Live-Zug und Vorausberechnung)."""
+    return svc.drain(demo_call_events(content, history, text, user_turns_after, provider=provider))
+
+
+def demo_call_events(content: LessonContent, history: list, text: str, user_turns_after: int,
+                     provider: svc.RoleplayProvider | None = None,
+                     stream: bool = False) -> Generator[str, None, svc.TurnResult]:
+    """Voller Demo-Zug in einem Aufruf; Zeile auf Wunsch gestreamt."""
+    messages = build_demo_messages(history, text)
+    system, status = _demo_prompt(content, user_turns_after)
+    return (yield from svc.call_turn_events(
+        system, status, messages, force_done=user_turns_after >= DEMO_MAX_USER_TURNS,
+        provider=provider, stream=stream,
+    ))
+
+
+def demo_line_events(content: LessonContent, history: list, text: str, user_turns_after: int,
+                     provider: svc.RoleplayProvider | None = None,
+                     stream: bool = False) -> Generator[str, None, svc.TurnResult]:
+    """Erster Aufruf des zweigeteilten Demo-Zugs: nur Tanakas Zeile (+done)."""
+    messages = build_demo_messages(history, text)
+    system, status = _demo_prompt(content, user_turns_after)
+    return (yield from svc.call_line(system, status, messages, provider=provider, stream=stream))
+
+
+def demo_details_call(content: LessonContent, history: list, bot_line_jp: str, user_turns_after: int,
+                      provider: svc.RoleplayProvider | None = None) -> svc.TurnResult:
+    """Zweiter Aufruf: Lernhilfen zur festgelegten Zeile. `history` endet mit
+    [..., ['u', Nutzertext], ['b', bot_line_jp]]."""
+    base = history[:-1] if history and history[-1] == ['b', bot_line_jp] else history
+    if not base or not isinstance(base[-1], list) or base[-1][0] != 'u':
+        raise DemoError('Die Demo ist nicht mehr gültig. Bitte starte sie neu.', code='demo_invalid')
+    messages = build_demo_messages(base[:-1], base[-1][1])
+    system, status = _demo_prompt(content, user_turns_after)
+    return svc.call_details(system, status, messages, bot_line_jp, done=False, provider=provider)
 
 
 def demo_turn(token: Any, text: Any, ip: str,
               provider: svc.RoleplayProvider | None = None) -> dict[str, Any]:
+    return svc.drain(demo_turn_events(token, text, ip, provider=provider))
+
+
+def check_demo_turn(token: Any, text: Any) -> tuple[dict[str, Any], str]:
+    """Pruefungen ohne Modell-Aufruf/Zaehler: (Token-Zustand, bereinigter Text)."""
     state = read_token(token)
     if state.get('done') or state['n'] >= DEMO_MAX_USER_TURNS:
         raise svc.RoleplayError('Die Demo ist schon beendet.', code='session_finished', http_status=409)
@@ -337,16 +379,24 @@ def demo_turn(token: Any, text: Any, ip: str,
     text = text.strip()
     if len(text) > DEMO_TEXT_MAX:
         raise DemoError(f'Bitte höchstens {DEMO_TEXT_MAX} Zeichen pro Nachricht.')
-    content = demo_content()
-    if content is None:
+    if demo_content() is None:
         raise svc.RoleplayError('Die Demo ist gerade nicht verfügbar.', code='not_found', http_status=404)
-
     build_demo_messages(state['h'], text)   # prueft die Historie im Token
+    return state, text
+
+
+def demo_turn_events(token: Any, text: Any, ip: str, provider: svc.RoleplayProvider | None = None,
+                     stream: bool = False) -> Generator[str, None, dict[str, Any]]:
+    """Demo-Zug als Generator (Textstuecke der Zeile bei stream=True), Rueckgabe = Antwort-JSON."""
+    state, text = check_demo_turn(token, text)
+    content = demo_content()
     dkey = prefetch.demo_key(token)
     user_turns_after = state['n'] + 1
     last = user_turns_after >= DEMO_MAX_USER_TURNS
     key = reserve_turn(ip)
-    data = prefetch.take(demo=dkey, turn_index=state['n'], text=text)
+    pending = False
+    data = prefetch.take(demo=dkey, turn_index=state['n'], text=text,
+                         **({'wait_s': svc.STREAM_TAKE_WAIT_S} if stream else {}))
     if data is None:
         try:
             svc.check_cost_cap()
@@ -354,7 +404,15 @@ def demo_turn(token: Any, text: Any, ip: str,
             release_turn(key)
             raise svc.CostCapReached(CAP_MESSAGE) from exc
         try:
-            data = demo_call(content, state['h'], text, user_turns_after, provider=provider).data
+            if svc.split_enabled() and not last:
+                line = (yield from demo_line_events(content, state['h'], text, user_turns_after,
+                                                    provider=provider, stream=stream)).data
+                line['done'] = False     # vor dem letzten Zug endet die Demo nie
+                data = svc.empty_details(line)
+                pending = True
+            else:
+                data = (yield from demo_call_events(content, state['h'], text, user_turns_after,
+                                                    provider=provider, stream=stream)).data
         except svc.UpstreamError:
             release_turn(key)   # Fehlversuch zaehlt nicht
             raise
@@ -374,21 +432,51 @@ def demo_turn(token: Any, text: Any, ip: str,
             'h': state['h'] + [['u', text], ['b', data['bot_line_jp']]],
         }
         new_token = issue_token(new_state)
-        if user_turns_after < DEMO_MAX_USER_TURNS:
+        if pending:
+            # Lernhilfen im Hintergrund; danach startet die Vorausberechnung der Vorschlaege.
+            if not prefetch.schedule_details_demo(new_token, user_turns_after, new_state['h'],
+                                                  data['bot_line_jp'], user_turns_after < DEMO_MAX_USER_TURNS):
+                pending = False
+        elif user_turns_after < DEMO_MAX_USER_TURNS:
             prefetch.schedule_demo(new_token, user_turns_after, new_state['h'], data['suggestions'])
+    bot_turn = _demo_bot_turn(len(state['h']) + 1, data)
+    if pending and new_token:
+        # Sync-Modus (Tests): Details koennen schon da sein.
+        status, details = prefetch.details_for_demo(new_token, user_turns_after)
+        if status == 'ready' and details:
+            bot_turn = _demo_bot_turn(len(state['h']) + 1, details)
+        else:
+            bot_turn['details_pending'] = status == 'pending'
+            bot_turn['details_failed'] = status == 'failed'
     return {
         'token': new_token,
         'session': _session_dict(user_turns_after, done=done),
-        'bot_turn': {
-            'turn_index': len(state['h']) + 1,
-            'speaker': 'bot',
-            'jp': data['bot_line_jp'],
-            'reading_kana': data['reading_kana'],
-            'de': data['de'],
-            'suggestions': data['suggestions'],
-            'hint_de': data['hint_de'],
-        },
+        'bot_turn': bot_turn,
         'done': done,
         'correction': data['correction'] if done else [],
         'xp_awarded': 0,
     }
+
+
+def _demo_bot_turn(turn_index: int, data: dict[str, Any]) -> dict[str, Any]:
+    return {
+        'turn_index': turn_index,
+        'speaker': 'bot',
+        'jp': data['bot_line_jp'],
+        'reading_kana': data['reading_kana'],
+        'de': data['de'],
+        'suggestions': data['suggestions'],
+        'hint_de': data['hint_de'],
+        'details_pending': False,
+        'details_failed': False,
+    }
+
+
+def demo_details(token: Any) -> dict[str, Any]:
+    """Lernhilfen (zweiter Aufruf) zum aktuellen Bot-Zug dieses Demo-Tokens.
+    {status: ready|pending|failed, bot_turn: BotTurn|null}."""
+    state = read_token(token)
+    status, data = prefetch.details_for_demo(token, state['n'])
+    if status != 'ready' or not data:
+        return {'status': status, 'bot_turn': None}
+    return {'status': 'ready', 'bot_turn': _demo_bot_turn(len(state['h']) - 1, data)}

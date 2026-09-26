@@ -18,6 +18,13 @@ Sicherheits-/Kostenregeln:
 - Tageslimits pro Nutzer (aus der DB), globale Tages-Kostenkappe (API-Pfad)
   und globale Tageskappe fuer Modell-Antworten (ROLEPLAY_DAILY_MESSAGE_CAP).
 - Keine Rohtexte der Nutzer in Logs (nur IDs, Zaehler, Tokens).
+
+Zweigeteilter Zug (ROLEPLAY_SPLIT_TURN, Default an, 2026-09-27): Der erste
+Aufruf liefert nur {bot_line_jp, done} (kleines Schema, ohne Denkphase, auf
+Wunsch gestreamt) — die Bot-Zeile steht nach ~2-3 s. Lesung, Uebersetzung,
+Vorschlaege und Tipp rechnet ein zweiter Aufruf im Hintergrund zur bereits
+festgelegten Zeile (roleplay_prefetch.schedule_details_*); der Client holt sie
+ueber /details nach. Der Zug wird beim ersten Aufruf verbucht.
 """
 from __future__ import annotations
 
@@ -26,8 +33,8 @@ import logging
 import os
 import re
 from dataclasses import dataclass, field
-from datetime import datetime
-from typing import Any
+from datetime import datetime, timedelta
+from typing import Any, Generator
 
 from flask import current_app
 from sqlalchemy import func
@@ -51,6 +58,10 @@ BRIDGE_HTTP_TIMEOUT_S = 55.0            # Bridge pro Versuch (CLI-Timeout 50 s)
 RETRY_DEADLINE_S = 25.0                 # Retry nur, wenn bis hier weniger vergangen ist
 MAX_TOKENS_TURN = 1500
 MAX_TOKENS_TUTOR = 900
+MAX_TOKENS_LINE = 300                   # erster Aufruf: nur die Bot-Zeile (~40 Tokens + JSON)
+BRIDGE_STREAM_TIMEOUT_S = 28.0          # Lese-Timeout des Bridge-Streams (SSE an den Client <= 30 s)
+STREAM_FALLBACK_DEADLINE_S = 12.0       # Nach gescheitertem Stream nur bis hier noch ein Versuch
+DETAILS_STALE_S = 70.0                  # Details laenger ausstehend → gelten als gescheitert
 
 MIN_USER_TURNS = 4          # Gespraechsziel: 4-8 Nutzerzuege; XP erst ab hier
 MAX_USER_TURNS = 8          # harter Deckel, serverseitig erzwungen
@@ -137,9 +148,28 @@ ROLEPLAY_TOOL: dict[str, Any] = {
     },
 }
 
+# Zweigeteilter Zug: erster Aufruf nur die Zeile, zweiter die Lernhilfen dazu.
+LINE_SCHEMA: dict[str, Any] = {
+    'type': 'object',
+    'properties': {
+        'bot_line_jp': {'type': 'string', 'description': 'Deine Zeile auf Japanisch (1-2 kurze Saetze).'},
+        'done': {'type': 'boolean', 'description': 'true, wenn das Gespraech beendet ist.'},
+    },
+    'required': ['bot_line_jp', 'done'],
+    'additionalProperties': False,
+}
+_TURN_PROPS = ROLEPLAY_TOOL['input_schema']['properties']
+DETAILS_SCHEMA: dict[str, Any] = {
+    'type': 'object',
+    'properties': {k: _TURN_PROPS[k] for k in ('reading_kana', 'de', 'suggestions', 'hint_de', 'correction')},
+    'required': ['reading_kana', 'de', 'suggestions', 'hint_de', 'correction'],
+    'additionalProperties': False,
+}
+
 # Vom Server verfasste (nicht vom Nutzer stammende) Steuer-Turns.
 OPENING_USER_TEXT = '（はじめましょう。）'
 CLOSING_USER_TEXT = '（ここで おわります。）'
+DETAILS_USER_TEXT = '（ヒントを おねがいします。）'
 
 
 # ── Fehler ────────────────────────────────────────────────────────────────
@@ -223,6 +253,15 @@ def is_enabled() -> bool:
     except RuntimeError:
         return False
     return flag and provider_configured()
+
+
+def split_enabled() -> bool:
+    """Zweigeteilter Zug (ROLEPLAY_SPLIT_TURN). Default an; in Tests aus, solange
+    nicht ausdruecklich gesetzt (bestehende Tests erwarten einen Aufruf pro Zug)."""
+    raw = _setting('ROLEPLAY_SPLIT_TURN').lower()
+    if not raw:
+        return not current_app.testing
+    return raw in ('1', 'true', 'yes', 'on')
 
 
 def model_name() -> str:
@@ -726,6 +765,41 @@ def _status_block(mode: str, user_turns: int, max_turns: int = MAX_USER_TURNS) -
     return f'STATUS: Zug {user_turns} von höchstens {max_turns} des Lernenden.'
 
 
+def line_suffix(status_text: str) -> str:
+    """Zusatz fuer den ersten Aufruf: nur die naechste Zeile."""
+    return (
+        f'{status_text}\n'
+        'FORMAT DIESES AUFRUFS: Gib NUR deine nächste Zeile (bot_line_jp, ein bis zwei kurze Sätze '
+        'nach den Regeln oben) und done. Lesung, Übersetzung, Vorschläge und Tipp entstehen in einem '
+        'zweiten Schritt — hier weglassen.'
+    )
+
+
+def details_suffix(status_text: str, done: bool) -> str:
+    """Zusatz fuer den zweiten Aufruf: Lernhilfen zur schon festgelegten Zeile."""
+    tail = (
+        'Das Gespräch ist mit dieser Zeile beendet: suggestions=[], hint_de kurz, und correction '
+        'nach Regel 10 füllen.'
+        if done else
+        'Das Gespräch läuft weiter: genau drei suggestions (Antworten des Lernenden auf GENAU diese '
+        'Zeile), correction=[].'
+    )
+    return (
+        f'{status_text}\n'
+        'FORMAT DIESES AUFRUFS: Deine Zeile steht bereits fest — es ist die letzte Nachricht mit '
+        f'rolle="partner" im Verlauf. Die Nachricht „{DETAILS_USER_TEXT}“ danach ist ein Steuersignal '
+        'des Servers, kein Gesprächsbeitrag. Schreibe KEINE neue Zeile und ändere deine Zeile nicht. '
+        'Liefere nur die Lernhilfen dazu: reading_kana (Lesung genau dieser Zeile, Regel 5), de '
+        '(Übersetzung genau dieser Zeile), hint_de, suggestions, correction. ' + tail
+    )
+
+
+def details_messages(messages: list[dict[str, Any]], bot_line_jp: str) -> list[dict[str, Any]]:
+    """Verlauf bis zum Nutzerzug + festgelegte Bot-Zeile + Steuersignal (zweiter Aufruf)."""
+    return [*messages, {'role': 'assistant', 'content': bot_line_jp},
+            {'role': 'user', 'content': DETAILS_USER_TEXT}]
+
+
 def build_messages(
     session: RoleplaySession,
     new_user_text: str | None = None,
@@ -814,6 +888,85 @@ def validate_turn_payload(data: Any, force_done: bool = False) -> dict[str, Any]
     return out
 
 
+def validate_line_payload(data: Any) -> dict[str, Any]:
+    """Erster Aufruf: nur bot_line_jp (nicht leer) + done. Weitere Felder ignoriert."""
+    if not isinstance(data, dict):
+        raise SchemaError('Zeile ist kein Objekt')
+    line = _req_str(data, 'bot_line_jp', 400, allow_empty=False)
+    done = data.get('done')
+    if not isinstance(done, bool):
+        raise SchemaError('done fehlt oder ist kein Boolean')
+    return {'bot_line_jp': line, 'done': done}
+
+
+def merge_details(bot_line_jp: str, data: Any, done: bool) -> dict[str, Any]:
+    """Zweiter Aufruf → vollstaendiger Zug. Die Zeile kommt vom Server (unveraenderbar),
+    ein evtl. mitgeliefertes bot_line_jp/done des Modells wird ignoriert."""
+    if not isinstance(data, dict):
+        raise SchemaError('Details sind kein Objekt')
+    merged = dict(data)
+    merged['bot_line_jp'] = bot_line_jp
+    merged['done'] = done
+    merged.setdefault('correction', [])
+    return validate_turn_payload(merged, force_done=done)
+
+
+def empty_details(line: dict[str, Any]) -> dict[str, Any]:
+    """Zug nur mit der Zeile (Details ausstehend oder gescheitert)."""
+    return {'bot_line_jp': line['bot_line_jp'], 'reading_kana': '', 'de': '', 'suggestions': [],
+            'hint_de': '', 'done': bool(line['done']), 'correction': []}
+
+
+class LineExtractor:
+    """Zieht den Text eines String-Felds (bot_line_jp) aus Stuecken einer entstehenden
+    JSON-Ausgabe. feed() liefert jeweils nur die neu dazugekommenen Zeichen."""
+
+    _ESCAPES = {'n': '\n', 't': '\t', 'r': '', 'b': '', 'f': '', '"': '"', '\\': '\\', '/': '/'}
+
+    def __init__(self, field_name: str = 'bot_line_jp'):
+        self._key = re.compile(r'"%s"\s*:\s*"' % re.escape(field_name))
+        self._buf = ''
+        self._sent = 0
+        self.finished = False
+
+    def feed(self, chunk: str) -> str:
+        if self.finished or not chunk:
+            return ''
+        self._buf += chunk
+        m = self._key.search(self._buf)
+        if not m:
+            return ''
+        buf, i, n = self._buf, m.end(), len(self._buf)
+        out: list[str] = []
+        while i < n:
+            ch = buf[i]
+            if ch == '"':
+                self.finished = True
+                break
+            if ch == '\\':
+                if i + 1 >= n:
+                    break                       # Escape noch unvollstaendig
+                esc = buf[i + 1]
+                if esc == 'u':
+                    if i + 6 > n:
+                        break
+                    try:
+                        out.append(chr(int(buf[i + 2:i + 6], 16)))
+                    except ValueError:
+                        pass
+                    i += 6
+                    continue
+                out.append(self._ESCAPES.get(esc, esc))
+                i += 2
+                continue
+            out.append(ch)
+            i += 1
+        text = ''.join(out)
+        new = text[self._sent:]
+        self._sent = len(text)
+        return new
+
+
 # ── API-Aufruf ────────────────────────────────────────────────────────────
 
 @dataclass
@@ -847,12 +1000,28 @@ TUTOR_SCHEMA: dict[str, Any] = {
 
 
 class RoleplayProvider:
-    """Schnittstelle: ein Modell-Aufruf mit strukturierter Ausgabe (JSON-Schema)."""
+    """Schnittstelle: ein Modell-Aufruf mit strukturierter Ausgabe (JSON-Schema).
+
+    complete(..., fast=True) (nur uebergeben, wenn True): kurzer Aufruf ohne Denkphase.
+    stream(...): Generator, liefert Stuecke der entstehenden JSON-Ausgabe und gibt am
+    Ende (StopIteration.value) das ProviderResult zurueck. Standard: ein normaler
+    Aufruf, das ganze JSON als ein Stueck.
+    """
     name = 'base'
 
     def complete(self, system: str, messages: list[dict[str, Any]], schema: dict[str, Any],
                  *, system_suffix: str = '', max_tokens: int = MAX_TOKENS_TURN) -> ProviderResult:
         raise NotImplementedError
+
+    def stream(self, system: str, messages: list[dict[str, Any]], schema: dict[str, Any],
+               *, system_suffix: str = '', max_tokens: int = MAX_TOKENS_TURN,
+               fast: bool = False) -> Generator[str, None, ProviderResult]:
+        extra = {'fast': True} if fast else {}
+        result = self.complete(system, messages, schema, system_suffix=system_suffix,
+                               max_tokens=max_tokens, **extra)
+        if isinstance(result.data, dict):
+            yield json.dumps(result.data, ensure_ascii=False)
+        return result
 
 
 class AnthropicApiProvider(RoleplayProvider):
@@ -869,7 +1038,7 @@ class AnthropicApiProvider(RoleplayProvider):
             self._client = get_client()
         return self._client
 
-    def complete(self, system, messages, schema, *, system_suffix='', max_tokens=MAX_TOKENS_TURN):
+    def complete(self, system, messages, schema, *, system_suffix='', max_tokens=MAX_TOKENS_TURN, fast=False):
         import anthropic
         tool = {
             'name': API_TOOL_NAME,
@@ -929,21 +1098,16 @@ class ClaudeCliBridgeProvider(RoleplayProvider):
             self._http = requests
         return self._http
 
-    def complete(self, system, messages, schema, *, system_suffix='', max_tokens=MAX_TOKENS_TURN):
-        import requests
+    def _body(self, system, messages, schema, system_suffix, fast) -> dict[str, Any]:
         full_system = f'{system}\n\n{system_suffix}' if system_suffix else system
-        try:
-            resp = self.http.post(
-                f'{self.url}/complete',
-                json={'system': full_system, 'messages': messages, 'schema': schema, 'model': self.model,
-                      'priority': self.priority},
-                headers={'X-Bridge-Token': self.token},
-                timeout=self.timeout,
-            )
-        except requests.Timeout as exc:
-            raise ProviderError('bridge_timeout', retryable=False) from exc
-        except requests.RequestException as exc:
-            raise ProviderError('bridge_unreachable', retryable=True) from exc
+        body = {'system': full_system, 'messages': messages, 'schema': schema, 'model': self.model,
+                'priority': self.priority}
+        if fast:
+            body['thinking'] = False
+        return body
+
+    @staticmethod
+    def _check_status(resp: Any) -> None:
         status = getattr(resp, 'status_code', 0)
         if status == 429:
             raise ProviderError('bridge_busy', retryable=False, busy=True)
@@ -951,16 +1115,90 @@ class ClaudeCliBridgeProvider(RoleplayProvider):
             raise ProviderError(f'bridge_http_{status}', retryable=status != 504)
         if status != 200:
             raise ProviderError(f'bridge_http_{status}', retryable=False)
+
+    @staticmethod
+    def _usage(raw: Any) -> Usage:
+        usage = compute_cost(raw or {}, MODEL_DEFAULT)
+        # Subscription: keine API-Dollar-Kosten. Tokens bleiben fuer Monitoring.
+        usage.cost_usd = 0.0
+        return usage
+
+    def complete(self, system, messages, schema, *, system_suffix='', max_tokens=MAX_TOKENS_TURN, fast=False):
+        import requests
+        try:
+            resp = self.http.post(
+                f'{self.url}/complete',
+                json=self._body(system, messages, schema, system_suffix, fast),
+                headers={'X-Bridge-Token': self.token},
+                timeout=self.timeout,
+            )
+        except requests.Timeout as exc:
+            raise ProviderError('bridge_timeout', retryable=False) from exc
+        except requests.RequestException as exc:
+            raise ProviderError('bridge_unreachable', retryable=True) from exc
+        self._check_status(resp)
         try:
             body = resp.json()
         except ValueError as exc:
             raise ProviderError('bridge_invalid_json', retryable=True) from exc
         if not isinstance(body, dict):
             raise ProviderError('bridge_invalid_json', retryable=True)
-        usage = compute_cost(body.get('usage') or {}, MODEL_DEFAULT)
-        # Subscription: keine API-Dollar-Kosten. Tokens bleiben fuer Monitoring.
-        usage.cost_usd = 0.0
-        return ProviderResult(data=body.get('data'), usage=usage)
+        return ProviderResult(data=body.get('data'), usage=self._usage(body.get('usage')))
+
+    def stream(self, system, messages, schema, *, system_suffix='', max_tokens=MAX_TOKENS_TURN, fast=False):
+        """POST /complete_stream (SSE): liefert die partial_json-Stuecke, dann das Ergebnis."""
+        import requests
+        try:
+            resp = self.http.post(
+                f'{self.url}/complete_stream',
+                json=self._body(system, messages, schema, system_suffix, fast),
+                headers={'X-Bridge-Token': self.token},
+                timeout=(5.0, BRIDGE_STREAM_TIMEOUT_S),
+                stream=True,
+            )
+        except requests.Timeout as exc:
+            raise ProviderError('bridge_timeout', retryable=False) from exc
+        except requests.RequestException as exc:
+            raise ProviderError('bridge_unreachable', retryable=True) from exc
+        try:
+            self._check_status(resp)
+            event, data_lines = 'message', []
+            try:
+                for raw in resp.iter_lines(decode_unicode=True):
+                    if raw is None:
+                        continue
+                    if raw.startswith('event:'):
+                        event = raw[6:].strip()
+                        continue
+                    if raw.startswith('data:'):
+                        data_lines.append(raw[5:].strip())
+                        continue
+                    if raw != '' or not data_lines:
+                        continue
+                    try:
+                        payload = json.loads('\n'.join(data_lines))
+                    except ValueError as exc:
+                        raise ProviderError('bridge_invalid_json', retryable=True) from exc
+                    kind, event, data_lines = event, 'message', []
+                    if not isinstance(payload, dict):
+                        continue
+                    if kind == 'delta' and isinstance(payload.get('partial_json'), str):
+                        yield payload['partial_json']
+                    elif kind == 'result':
+                        return ProviderResult(data=payload.get('data'), usage=self._usage(payload.get('usage')))
+                    elif kind == 'error':
+                        code = str(payload.get('error') or 'error')
+                        raise ProviderError(f'bridge_{code}', retryable=code != 'cli_timeout')
+            except requests.Timeout as exc:
+                raise ProviderError('bridge_timeout', retryable=False) from exc
+            except requests.RequestException as exc:
+                raise ProviderError('bridge_stream_broken', retryable=True) from exc
+            raise ProviderError('bridge_stream_incomplete', retryable=True)
+        finally:
+            try:
+                resp.close()
+            except Exception:  # noqa: BLE001 — Aufraeumen darf nie werfen
+                pass
 
 
 def get_provider() -> RoleplayProvider:
@@ -971,7 +1209,8 @@ def get_provider() -> RoleplayProvider:
 
 def _complete_with_retry(provider: RoleplayProvider, system: str, messages: list[dict[str, Any]],
                          schema: dict[str, Any], validate, *, system_suffix: str = '',
-                         max_tokens: int = MAX_TOKENS_TURN, busy_message: str, fail_message: str):
+                         max_tokens: int = MAX_TOKENS_TURN, busy_message: str, fail_message: str,
+                         fast: bool = False, attempts: int = 2):
     """Ein Aufruf + EIN Retry bei Parse-/Netzfehler (nur innerhalb RETRY_DEADLINE_S).
 
     Liefert (validierte Daten, Usage) oder wirft UpstreamError mit aufgelaufener Usage.
@@ -980,18 +1219,20 @@ def _complete_with_retry(provider: RoleplayProvider, system: str, messages: list
     total = Usage()
     started = time.monotonic()
     last_reason = ''
-    for attempt in range(2):
-        if attempt == 1 and time.monotonic() - started > RETRY_DEADLINE_S:
+    extra = {'fast': True} if fast else {}
+    for attempt in range(attempts):
+        last_try = attempt == attempts - 1
+        if attempt >= 1 and time.monotonic() - started > RETRY_DEADLINE_S:
             break
         try:
             result = provider.complete(system, messages, schema,
-                                       system_suffix=system_suffix, max_tokens=max_tokens)
+                                       system_suffix=system_suffix, max_tokens=max_tokens, **extra)
         except ProviderError as exc:
             last_reason = exc.reason
             if exc.busy:
                 logger.info('Rollenspiel: Provider ausgelastet')
                 raise UpstreamError(busy_message, usage=total) from exc
-            if attempt == 0 and exc.retryable:
+            if not last_try and exc.retryable:
                 logger.info('Rollenspiel: Provider-Fehler %s — Retry', exc.reason)
                 continue
             break
@@ -1002,11 +1243,110 @@ def _complete_with_retry(provider: RoleplayProvider, system: str, messages: list
             return validate(result.data), total
         except SchemaError as exc:
             last_reason = f'schema: {exc}'
-            if attempt == 0:
+            if not last_try:
                 logger.info('Rollenspiel: Antwort ungueltig (%s) — Retry', exc)
                 continue
     logger.warning('Rollenspiel: Upstream fehlgeschlagen (%s, provider=%s)', last_reason, provider.name)
     raise UpstreamError(fail_message, usage=total)
+
+
+TURN_BUSY_MESSAGE = 'Der Übungspartner ist gerade beschäftigt. Bitte versuche es in ein paar Sekunden noch einmal.'
+TURN_FAIL_MESSAGE = 'Der Übungspartner antwortet gerade nicht. Bitte versuche es gleich noch einmal.'
+
+
+def drain(gen: Generator[Any, None, Any]) -> Any:
+    """Generator bis zum Ende laufen lassen, Rueckgabewert liefern (ohne Streaming)."""
+    while True:
+        try:
+            next(gen)
+        except StopIteration as stop:
+            return stop.value
+
+
+def _structured_events(provider: RoleplayProvider, system: str, messages: list[dict[str, Any]],
+                       schema: dict[str, Any], validate, *, system_suffix: str, max_tokens: int,
+                       fast: bool, stream: bool) -> Generator[str, None, TurnResult]:
+    """Modell-Aufruf, dessen bot_line_jp beim Entstehen als Textstuecke ausgegeben wird
+    (stream=True). Scheitert der Stream, folgt EIN normaler Versuch (nur innerhalb
+    STREAM_FALLBACK_DEADLINE_S). Ohne stream: _complete_with_retry wie bisher."""
+    import time
+    total = Usage()
+    if stream:
+        started = time.monotonic()
+        extractor = LineExtractor()
+        try:
+            gen = provider.stream(system, messages, schema, system_suffix=system_suffix,
+                                  max_tokens=max_tokens, fast=fast)
+            while True:
+                try:
+                    chunk = next(gen)
+                except StopIteration as stop:
+                    result = stop.value
+                    break
+                piece = extractor.feed(chunk)
+                if piece:
+                    yield piece
+            total.add(result.usage)
+            if result.data is None:
+                raise SchemaError('keine strukturierte Antwort')
+            return TurnResult(data=validate(result.data), usage=total)
+        except ProviderError as exc:
+            if exc.busy:
+                logger.info('Rollenspiel: Provider ausgelastet (Stream)')
+                raise UpstreamError(TURN_BUSY_MESSAGE, usage=total) from exc
+            logger.info('Rollenspiel: Stream gescheitert (%s)', exc.reason)
+        except SchemaError as exc:
+            logger.info('Rollenspiel: Stream-Antwort ungueltig (%s)', exc)
+        if time.monotonic() - started > STREAM_FALLBACK_DEADLINE_S:
+            raise UpstreamError(TURN_FAIL_MESSAGE, usage=total)
+        data, usage = _complete_with_retry(
+            provider, system, messages, schema, validate, system_suffix=system_suffix,
+            max_tokens=max_tokens, busy_message=TURN_BUSY_MESSAGE, fail_message=TURN_FAIL_MESSAGE,
+            fast=fast, attempts=1,
+        )
+        total.add(usage)
+        return TurnResult(data=data, usage=total)
+    data, usage = _complete_with_retry(
+        provider, system, messages, schema, validate, system_suffix=system_suffix,
+        max_tokens=max_tokens, busy_message=TURN_BUSY_MESSAGE, fail_message=TURN_FAIL_MESSAGE, fast=fast,
+    )
+    return TurnResult(data=data, usage=usage)
+
+
+def call_line(system_prompt: str, status_text: str, messages: list[dict[str, Any]],
+              provider: RoleplayProvider | None = None,
+              stream: bool = False) -> Generator[str, None, TurnResult]:
+    """Erster Aufruf des zweigeteilten Zugs: nur {bot_line_jp, done}, ohne Denkphase.
+    Generator (Textstuecke der Zeile bei stream=True); Rueckgabe TurnResult."""
+    return (yield from _structured_events(
+        provider or get_provider(), system_prompt, messages, LINE_SCHEMA, validate_line_payload,
+        system_suffix=line_suffix(status_text), max_tokens=MAX_TOKENS_LINE, fast=True, stream=stream,
+    ))
+
+
+def call_turn_events(system_prompt: str, status_text: str, messages: list[dict[str, Any]],
+                     force_done: bool = False, provider: RoleplayProvider | None = None,
+                     stream: bool = False) -> Generator[str, None, TurnResult]:
+    """Voller Zug in einem Aufruf (z. B. letzter Zug), Zeile auf Wunsch gestreamt."""
+    return (yield from _structured_events(
+        provider or get_provider(), system_prompt, messages, ROLEPLAY_TOOL['input_schema'],
+        lambda d: validate_turn_payload(d, force_done=force_done),
+        system_suffix=status_text, max_tokens=MAX_TOKENS_TURN, fast=False, stream=stream,
+    ))
+
+
+def call_details(system_prompt: str, status_text: str, messages: list[dict[str, Any]], bot_line_jp: str,
+                 done: bool = False, provider: RoleplayProvider | None = None) -> TurnResult:
+    """Zweiter Aufruf: Lesung, Uebersetzung, Vorschlaege, Tipp (+ Korrektur bei done) zur
+    festgelegten Zeile. `messages` = Verlauf bis einschliesslich Nutzerzug. Die Zeile
+    selbst kann das Modell nicht aendern (sie ist nicht im Schema)."""
+    data, usage = _complete_with_retry(
+        provider or get_provider(), system_prompt, details_messages(messages, bot_line_jp), DETAILS_SCHEMA,
+        lambda d: merge_details(bot_line_jp, d, done),
+        system_suffix=details_suffix(status_text, done), max_tokens=MAX_TOKENS_TURN,
+        busy_message=TURN_BUSY_MESSAGE, fail_message=TURN_FAIL_MESSAGE,
+    )
+    return TurnResult(data=data, usage=usage)
 
 
 def call_turn(
@@ -1026,8 +1366,8 @@ def call_turn(
         lambda d: validate_turn_payload(d, force_done=force_done),
         system_suffix=status_text,
         max_tokens=MAX_TOKENS_TURN,
-        busy_message='Der Übungspartner ist gerade beschäftigt. Bitte versuche es in ein paar Sekunden noch einmal.',
-        fail_message='Der Übungspartner antwortet gerade nicht. Bitte versuche es gleich noch einmal.',
+        busy_message=TURN_BUSY_MESSAGE,
+        fail_message=TURN_FAIL_MESSAGE,
     )
     return TurnResult(data=data, usage=usage)
 
@@ -1044,20 +1384,85 @@ def _next_index(session: RoleplaySession) -> int:
     return len(session.turns)
 
 
-def _store_bot_turn(session: RoleplaySession, data: dict[str, Any]) -> RoleplayTurn:
-    turn = RoleplayTurn(
-        session_id=session.id,
-        turn_index=_next_index(session),
-        speaker='bot',
-        text_jp=data['bot_line_jp'],
-        reading_kana=data['reading_kana'],
-        text_de=data['de'],
-        suggestions_json=json.dumps(data['suggestions'], ensure_ascii=False),
-        hint_de=data['hint_de'],
-        raw_json=json.dumps(data, ensure_ascii=False),
-    )
+def _store_bot_turn(session: RoleplaySession, data: dict[str, Any], pending: bool = False) -> RoleplayTurn:
+    """Bot-Zug speichern. pending=True: nur die Zeile, Details folgen
+    (suggestions_json NULL = ausstehend, siehe details_status)."""
+    if pending:
+        turn = RoleplayTurn(
+            session_id=session.id, turn_index=_next_index(session), speaker='bot',
+            text_jp=data['bot_line_jp'],
+            raw_json=json.dumps({'bot_line_jp': data['bot_line_jp'], 'done': bool(data['done']),
+                                 'details': 'pending'}, ensure_ascii=False),
+        )
+    else:
+        turn = RoleplayTurn(
+            session_id=session.id,
+            turn_index=_next_index(session),
+            speaker='bot',
+            text_jp=data['bot_line_jp'],
+            reading_kana=data['reading_kana'],
+            text_de=data['de'],
+            suggestions_json=json.dumps(data['suggestions'], ensure_ascii=False),
+            hint_de=data['hint_de'],
+            raw_json=json.dumps(data, ensure_ascii=False),
+        )
     session.turns.append(turn)
     return turn
+
+
+def _raw(turn: RoleplayTurn) -> dict[str, Any]:
+    try:
+        raw = json.loads(turn.raw_json or '{}')
+    except (TypeError, ValueError):
+        return {}
+    return raw if isinstance(raw, dict) else {}
+
+
+def details_status(turn: RoleplayTurn) -> str:
+    """'ready' | 'pending' | 'failed' fuer die Lernhilfen eines Bot-Zugs."""
+    if _raw(turn).get('details') == 'failed':
+        return 'failed'
+    if turn.suggestions_json is not None:
+        return 'ready'
+    created = turn.created_at or datetime.utcnow()
+    if created < datetime.utcnow() - timedelta(seconds=DETAILS_STALE_S):
+        return 'failed'
+    return 'pending'
+
+
+def apply_details(session: RoleplaySession, turn: RoleplayTurn, data: dict[str, Any] | None,
+                  usage: Usage | None = None) -> None:
+    """Ergebnis des zweiten Aufrufs in den Bot-Zug schreiben (data=None → gescheitert).
+    Committet nicht."""
+    if usage is not None:
+        _add_usage(session, usage)
+    if data is None:
+        raw = _raw(turn)
+        raw['details'] = 'failed'
+        turn.suggestions_json = '[]'
+        turn.raw_json = json.dumps(raw, ensure_ascii=False)
+        return
+    turn.reading_kana = data['reading_kana']
+    turn.text_de = data['de']
+    turn.hint_de = data['hint_de']
+    turn.suggestions_json = json.dumps(data['suggestions'], ensure_ascii=False)
+    turn.raw_json = json.dumps(data, ensure_ascii=False)
+
+
+def prepare_details(session: RoleplaySession, turn: RoleplayTurn) -> tuple[str, str, list[dict[str, Any]]]:
+    """(System, Status, Verlauf bis zum Nutzerzug) fuer den zweiten Aufruf zu `turn`
+    (muss der letzte Zug der Session sein)."""
+    content = db.session.get(LessonContent, session.lesson_content_id)
+    scene = build_scene(content)
+    trusted_goal, custom_goal = _goal_parts(session, scene)
+    system_prompt = _system_for(session, scene, trusted_goal)
+    messages = build_messages(session, custom_goal=custom_goal)
+    # build_messages endet mit der Bot-Zeile (assistant) — die haengt details_messages() selbst an.
+    if messages and messages[-1]['role'] == 'assistant':
+        messages = messages[:-1]
+    user_turns = session.turn_count or 0
+    status = _status_block('start', 0) if user_turns == 0 else _status_block('turn', user_turns)
+    return system_prompt, status, messages
 
 
 def _system_for(session: RoleplaySession, scene: dict[str, Any], trusted_goal: str | None) -> str:
@@ -1127,9 +1532,15 @@ def start_session(user, content: LessonContent, role_user: str, goal: str | None
 
     trusted_goal, custom_goal = _goal_parts(session, scene)
     system_prompt = _system_for(session, scene, trusted_goal)
+    split = split_enabled()
     try:
-        result = call_turn(system_prompt, _status_block('start', 0),
-                           build_messages(session, custom_goal=custom_goal), provider=provider)
+        if split:
+            result = drain(call_line(system_prompt, _status_block('start', 0),
+                                     build_messages(session, custom_goal=custom_goal), provider=provider))
+            result.data = empty_details(result.data)
+        else:
+            result = call_turn(system_prompt, _status_block('start', 0),
+                               build_messages(session, custom_goal=custom_goal), provider=provider)
     except UpstreamError as exc:
         if exc.usage.cost_usd > 0:
             # Angefallene API-Kosten verbuchen (Kostenkappe), Session als abgebrochen.
@@ -1144,13 +1555,16 @@ def start_session(user, content: LessonContent, role_user: str, goal: str | None
     _add_usage(session, result.usage)
     result.data['done'] = False
     result.data['correction'] = []
-    bot_turn = _store_bot_turn(session, result.data)
+    bot_turn = _store_bot_turn(session, result.data, pending=split)
     db.session.commit()
     _log_kanji_quality(session.id, bot_turn.text_jp)
     logger.info('Rollenspiel %s gestartet (content=%s, user=%s)', session.id, content.id, user.id)
     from app.services import roleplay_prefetch as prefetch
     prefetch.cleanup_old()
-    prefetch.schedule_session(session)
+    if split:
+        prefetch.schedule_details_session(session, bot_turn)   # plant danach die Vorausberechnung
+    else:
+        prefetch.schedule_session(session)
     return session, bot_turn
 
 
@@ -1167,13 +1581,8 @@ def prepare_turn(session: RoleplaySession, text: str) -> tuple[str, str, list[di
     return system_prompt, _status_block('turn', user_turns_after), messages, last, user_turns_after
 
 
-def user_turn(session: RoleplaySession, text: str, provider: RoleplayProvider | None = None) -> tuple[RoleplayTurn, dict[str, Any]]:
-    """Nutzerzug verarbeiten → Bot-Antwort. Liefert (bot_turn, result_info).
-
-    Stimmt der Text mit einem vorausberechneten Vorschlag ueberein
-    (roleplay_prefetch), kommt die Antwort ohne neuen Modell-Aufruf.
-    """
-    from app.services import roleplay_prefetch as prefetch
+def check_turn(session: RoleplaySession, text: Any) -> str:
+    """Pruefungen eines Nutzerzugs ohne Modell-Aufruf. Liefert den bereinigten Text."""
     if session.status != 'active':
         raise RoleplayError('Dieses Gespräch ist bereits beendet.', code='session_finished', http_status=409)
     text = (text or '').strip()
@@ -1187,24 +1596,69 @@ def user_turn(session: RoleplaySession, text: str, provider: RoleplayProvider | 
         raise RoleplayError('Das Gespräch hat die maximale Länge erreicht.', code='session_finished',
                             http_status=409)
     check_message_limit(session.user_id)
+    return text
 
+
+STREAM_TAKE_WAIT_S = 20.0   # Stream: kuerzer auf laufende Vorausberechnung warten (SSE <= 30 s)
+
+
+def user_turn(session: RoleplaySession, text: str, provider: RoleplayProvider | None = None) -> tuple[RoleplayTurn, dict[str, Any]]:
+    """Nutzerzug verarbeiten → Bot-Antwort. Liefert (bot_turn, result_info)."""
+    return drain(user_turn_events(session, text, provider=provider))
+
+
+def user_turn_events(session: RoleplaySession, text: str, provider: RoleplayProvider | None = None,
+                     stream: bool = False) -> Generator[str, None, tuple[RoleplayTurn, dict[str, Any]]]:
+    """Nutzerzug als Generator: liefert bei stream=True die Bot-Zeile in Textstuecken,
+    Rueckgabe (bot_turn, result_info).
+
+    Stimmt der Text mit einem vorausberechneten Vorschlag ueberein
+    (roleplay_prefetch), kommt die Antwort ohne neuen Modell-Aufruf. Sonst
+    (ROLEPLAY_SPLIT_TURN) erst nur die Zeile; die Lernhilfen rechnet ein zweiter
+    Aufruf im Hintergrund (info['details_pending']). Letzter Zug: ein voller Aufruf.
+    """
+    from app.services import roleplay_prefetch as prefetch
+    text = check_turn(session, text)
     turns_before = session.turn_count or 0
     user_turns_after = turns_before + 1
     last = user_turns_after >= MAX_USER_TURNS
-    data = prefetch.take(session_id=session.id, turn_index=turns_before, text=text)
+    pending = False
+    data = prefetch.take(session_id=session.id, turn_index=turns_before, text=text,
+                         **({'wait_s': STREAM_TAKE_WAIT_S} if stream else {}))
     if data is not None:
         logger.info('Rollenspiel %s: Zug %d aus Vorausberechnung', session.id, user_turns_after)
     else:
         check_cost_cap()
         system_prompt, status_text, messages, last, user_turns_after = prepare_turn(session, text)
         try:
-            result = call_turn(system_prompt, status_text, messages, force_done=last, provider=provider)
+            if split_enabled() and not last:
+                result = yield from call_line(system_prompt, status_text, messages, provider=provider,
+                                              stream=stream)
+                line = result.data
+                if line['done'] and user_turns_after < MIN_USER_TURNS:
+                    line['done'] = False
+                if line['done']:
+                    # Modell beendet (Ziel erreicht): Korrektur gleich mitholen.
+                    try:
+                        details = call_details(system_prompt, status_text, messages, line['bot_line_jp'],
+                                               done=True, provider=provider)
+                        result.usage.add(details.usage)
+                        data = details.data
+                    except UpstreamError as exc:
+                        result.usage.add(exc.usage)
+                        data = empty_details(line)
+                else:
+                    data = empty_details(line)
+                    pending = True
+            else:
+                result = yield from call_turn_events(system_prompt, status_text, messages, force_done=last,
+                                                     provider=provider, stream=stream)
+                data = result.data
         except UpstreamError as exc:
             _add_usage(session, exc.usage)
             db.session.commit()
             raise
         _add_usage(session, result.usage)
-        data = result.data
     if data['done'] and user_turns_after < MIN_USER_TURNS and not last:
         # Zu frueh beendet: Gespraech laeuft weiter (Serverregel 4-8 Zuege).
         data['done'] = False
@@ -1217,14 +1671,16 @@ def user_turn(session: RoleplaySession, text: str, provider: RoleplayProvider | 
         text_jp=text,
     ))
     session.turn_count = user_turns_after
-    bot_turn = _store_bot_turn(session, data)
+    bot_turn = _store_bot_turn(session, data, pending=pending)
     xp = 0
     if data['done']:
         xp = finalize_session(session, data['correction'])
     prefetch.consume(session_id=session.id, turn_index=turns_before)
     db.session.commit()
     _log_kanji_quality(session.id, bot_turn.text_jp)
-    if not data['done']:
+    if pending:
+        prefetch.schedule_details_session(session, bot_turn)   # plant danach die Vorausberechnung
+    elif not data['done']:
         prefetch.schedule_session(session)
     return bot_turn, {'done': data['done'], 'correction': data['correction'] if data['done'] else [],
                       'xp_awarded': xp}
@@ -1458,14 +1914,17 @@ def correction_count(session: RoleplaySession) -> int:
 # ── Serialisierung ───────────────────────────────────────────────────────
 
 def serialize_bot_turn(turn: RoleplayTurn) -> dict[str, Any]:
+    status = details_status(turn)
     return {
         'turn_index': turn.turn_index,
         'speaker': 'bot',
         'jp': turn.text_jp,
-        'reading_kana': turn.reading_kana,
-        'de': turn.text_de,
+        'reading_kana': turn.reading_kana or '',
+        'de': turn.text_de or '',
         'suggestions': json.loads(turn.suggestions_json or '[]'),
-        'hint_de': turn.hint_de,
+        'hint_de': turn.hint_de or '',
+        'details_pending': status == 'pending',
+        'details_failed': status == 'failed',
     }
 
 
