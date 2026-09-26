@@ -1,0 +1,262 @@
+{# Rollenspiel-Tutor am Lektionsdialog (+ Tab „Frag zur Seite").
+   Eingebunden in lesson_view.html im dialog_slideshow-Zweig, nur wenn
+   roleplay_enabled und eingeloggt. Erwartet: content, lesson.
+   Logik: static/js/roleplay_panel.js, Stil: static/css/roleplay_panel.css,
+   API-Vertrag: docs/roleplay-api.md. #}
+{% set _rp_pages = [] %}{% for _p in lesson.pages %}{% if _p.content %}{% set _ = _rp_pages.append(_p.content[0].page_number) %}{% endif %}{% endfor %}
+<section class="roleplay-panel" x-data="roleplayPanel({{ content.id }})"
+         data-lesson-id="{{ lesson.id }}" data-page-number="{{ content.page_number }}"
+         data-page-numbers='{{ _rp_pages | tojson }}'
+         @keydown.stop="onKeydown($event)"
+         aria-label="Rollenspiel zum Dialog">
+    <div class="rp-launch">
+        <button type="button" class="rp-btn rp-btn-primary rp-open-btn" x-ref="openBtn"
+                @click="toggle()" :aria-expanded="open ? 'true' : 'false'"
+                aria-controls="rp-card-{{ content.id }}">
+            <i class="fas" :class="open ? 'fa-chevron-up' : 'fa-comments'" aria-hidden="true"></i>
+            <span x-text="open ? 'Rollenspiel schliessen' : 'Rollenspiel starten'">Rollenspiel starten</span>
+        </button>
+        <span class="rp-launch-note" x-show="!open">Sprich den Dialog selbst — mit Vorschlägen und Korrektur.</span>
+    </div>
+
+    <span class="rp-sr-only" aria-live="polite" aria-atomic="true" x-text="liveMsg"></span>
+
+    <div class="rp-card" id="rp-card-{{ content.id }}" x-show="open" x-cloak>
+        <div class="rp-head">
+            <h4 class="rp-title" x-ref="panelTitle" tabindex="-1">Rollenspiel</h4>
+            <div class="rp-tabs" role="tablist" aria-label="Rollenspiel-Bereiche" @keydown="onTabKey($event)">
+                <button type="button" role="tab" class="rp-tab" x-ref="tabPlay"
+                        id="rp-tab-play-{{ content.id }}" aria-controls="rp-pane-play-{{ content.id }}"
+                        :aria-selected="tab === 'play' ? 'true' : 'false'" :tabindex="tab === 'play' ? 0 : -1"
+                        @click="setTab('play')">Dialog spielen</button>
+                <button type="button" role="tab" class="rp-tab" x-ref="tabTutor"
+                        id="rp-tab-tutor-{{ content.id }}" aria-controls="rp-pane-tutor-{{ content.id }}"
+                        :aria-selected="tab === 'tutor' ? 'true' : 'false'" :tabindex="tab === 'tutor' ? 0 : -1"
+                        @click="setTab('tutor')">Frag zur Seite</button>
+            </div>
+        </div>
+
+        {# ── Tab 1: Rollenspiel ── #}
+        <div class="rp-pane" role="tabpanel" id="rp-pane-play-{{ content.id }}"
+             aria-labelledby="rp-tab-play-{{ content.id }}" x-show="tab === 'play'">
+
+            <div class="rp-status" x-show="phase === 'loading'">
+                <span class="rp-spinner" aria-hidden="true"></span> Szene wird geladen …
+            </div>
+
+            {# Rollenwahl #}
+            <div x-show="phase === 'choose' || phase === 'starting'">
+                <div class="rp-scene" x-text="scene ? scene.scene_de : ''"></div>
+                <div class="rp-label" id="rp-role-label-{{ content.id }}">Welche Rolle spielst du?</div>
+                <div class="rp-roles" role="radiogroup" aria-labelledby="rp-role-label-{{ content.id }}">
+                    <template x-for="role in (scene ? scene.roles : [])" :key="role.name">
+                        <button type="button" class="rp-role" role="radio"
+                                :aria-checked="roleChoice === role.name ? 'true' : 'false'"
+                                :class="{ 'is-selected': roleChoice === role.name }"
+                                :disabled="phase === 'starting'"
+                                @click="chooseRole(role.name)">
+                            <span class="rp-role-name" x-text="role.name"></span>
+                            <span class="rp-role-line" lang="ja" x-text="role.first_line_jp"></span>
+                            <span class="rp-role-de" x-text="role.first_line_de"></span>
+                            <span class="rp-role-goal"><strong>Ziel:</strong> <span x-text="goalFor(role.name)"></span></span>
+                        </button>
+                    </template>
+                </div>
+                <label class="rp-label" for="rp-goal-{{ content.id }}">Eigenes Ziel <span class="rp-muted">(optional)</span></label>
+                <input type="text" class="rp-field" id="rp-goal-{{ content.id }}" x-model="customGoal"
+                       :maxlength="GOAL_MAX" :disabled="phase === 'starting'"
+                       placeholder="z. B. Ich möchte zwei Getränke bestellen." autocomplete="off">
+                <div class="rp-row">
+                    <span class="rp-muted rp-small" x-text="customGoal.length + ' / ' + GOAL_MAX"></span>
+                    <span class="rp-muted rp-small" x-text="limitsText"></span>
+                </div>
+                <button type="button" class="rp-btn rp-btn-primary rp-start-btn" @click="start()"
+                        :disabled="!roleChoice || phase === 'starting'">
+                    <template x-if="phase === 'starting'"><span class="rp-spinner" aria-hidden="true"></span></template>
+                    <span x-text="phase === 'starting' ? 'Gespräch wird vorbereitet …' : (roleChoice ? ('Als ' + roleChoice + ' loslegen') : 'Erst eine Rolle wählen')"></span>
+                </button>
+            </div>
+
+            {# Gespräch #}
+            <div x-show="phase === 'playing'">
+                <div class="rp-progress-row">
+                    <span class="rp-progress-text" x-text="progressText"></span>
+                    <span class="rp-muted rp-small" x-text="'Du bist ' + userName"></span>
+                </div>
+                <div class="rp-progress" role="progressbar" aria-label="Gesprächsfortschritt"
+                     aria-valuemin="0" :aria-valuemax="maxTurns" :aria-valuenow="turnCount">
+                    <div class="rp-progress-fill" :style="'width:' + progressPercent + '%'"></div>
+                </div>
+                <div class="rp-goal" x-show="session && session.goal_de"><strong>Ziel:</strong> <span x-text="session ? session.goal_de : ''"></span></div>
+
+                <div role="list" class="rp-log" x-ref="log" x-show="log.length" aria-label="Bisheriges Gespräch">
+                    <template x-for="(line, i) in log" :key="i">
+                        <div role="listitem" class="rp-log-line" :class="line.who === 'user' ? 'is-user' : 'is-bot'">
+                            <span class="rp-log-who" x-text="line.who === 'user' ? userName : botName"></span>
+                            <span class="rp-log-jp" lang="ja" x-text="line.jp"></span>
+                        </div>
+                    </template>
+                </div>
+
+                <div class="rp-bot" x-show="bot">
+                    <div class="rp-bot-head">
+                        <span class="rp-bot-name" x-text="botName"></span>
+                        <button type="button" class="rp-icon-btn" @click="speak(bot && bot.jp)"
+                                :aria-label="'Zeile von ' + botName + ' vorlesen'" :aria-pressed="speaking ? 'true' : 'false'">
+                            <i class="fas" :class="speaking ? 'fa-volume-high' : 'fa-volume-low'" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <div class="rp-bot-jp" lang="ja" x-text="bot ? bot.jp : ''"></div>
+                    <div class="rp-bot-toggles">
+                        <button type="button" class="rp-link-btn" @click="showReading = !showReading"
+                                :aria-expanded="showReading ? 'true' : 'false'">Lesung</button>
+                        <button type="button" class="rp-link-btn" @click="showGerman = !showGerman"
+                                :aria-expanded="showGerman ? 'true' : 'false'">Deutsch</button>
+                        <button type="button" class="rp-link-btn" @click="hintShown = !hintShown"
+                                x-show="bot && bot.hint_de" :aria-expanded="hintShown ? 'true' : 'false'">
+                            <i class="fas fa-lightbulb" aria-hidden="true"></i> Hinweis
+                        </button>
+                    </div>
+                    <div class="rp-bot-reading" lang="ja" x-show="showReading" x-text="bot ? bot.reading_kana : ''"></div>
+                    <div class="rp-bot-de" x-show="showGerman" x-text="bot ? bot.de : ''"></div>
+                    <div class="rp-hint" x-show="hintShown" x-text="bot ? bot.hint_de : ''"></div>
+                </div>
+
+                <div class="rp-suggestions" x-show="bot && bot.suggestions && bot.suggestions.length">
+                    <span class="rp-label rp-small">Vorschläge (antippen zum Übernehmen)</span>
+                    <div class="rp-chips">
+                        <template x-for="(s, i) in (bot ? bot.suggestions : [])" :key="i">
+                            <button type="button" class="rp-chip" @click="useSuggestion(s)" :disabled="busy"
+                                    :title="s.de" :aria-label="s.jp + ' — ' + s.de">
+                                <span lang="ja" x-text="s.jp"></span>
+                                <span class="rp-chip-de" x-text="s.de"></span>
+                            </button>
+                        </template>
+                    </div>
+                </div>
+
+                <form class="rp-compose" @submit.prevent="send()">
+                    <label class="rp-sr-only" for="rp-input-{{ content.id }}">Deine Antwort als <span x-text="userName"></span></label>
+                    <div class="rp-compose-row">
+                        <input type="text" class="rp-field rp-input" id="rp-input-{{ content.id }}" x-ref="input"
+                               x-model="input" @input="onInput($event)" @keydown.enter="onEnter($event)"
+                               :maxlength="TEXT_MAX" :disabled="busy" lang="ja"
+                               autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"
+                               :placeholder="romajiOn ? 'Japanisch oder Romaji' : 'Deine Antwort auf Japanisch'">
+                        <button type="submit" class="rp-btn rp-btn-primary rp-send" :disabled="busy || !input.trim()">
+                            <i class="fas fa-paper-plane" aria-hidden="true"></i><span>Senden</span>
+                        </button>
+                    </div>
+                    <div class="rp-compose-meta">
+                        <button type="button" class="rp-switch" role="switch" @click="toggleRomaji()"
+                                :aria-checked="romajiOn ? 'true' : 'false'">
+                            <span class="rp-switch-track" aria-hidden="true"><span class="rp-switch-thumb"></span></span>
+                            Romaji → Kana
+                        </button>
+                        <span class="rp-muted rp-small" x-text="input.length + ' / ' + TEXT_MAX"></span>
+                    </div>
+                </form>
+
+                <div class="rp-status rp-typing" x-show="sending" role="status">
+                    <span class="rp-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+                    <span x-text="botName + ' tippt …'"></span>
+                </div>
+
+                <div class="rp-end-row" x-show="canEnd">
+                    <button type="button" class="rp-btn rp-btn-ghost" @click="end()" :disabled="busy">
+                        <template x-if="ending"><span class="rp-spinner" aria-hidden="true"></span></template>
+                        Gespräch beenden
+                    </button>
+                    <span class="rp-muted rp-small" x-show="turnCount < minTurns"
+                          x-text="'XP gibt es ab ' + minTurns + ' Zügen.'"></span>
+                </div>
+            </div>
+
+            {# Abschluss #}
+            <div x-show="phase === 'done'">
+                <h5 class="rp-done-title" x-ref="doneTitle" tabindex="-1">Gespräch beendet</h5>
+                <div class="rp-bot rp-farewell" x-show="result && result.farewell">
+                    <div class="rp-bot-head">
+                        <span class="rp-bot-name" x-text="botName"></span>
+                        <button type="button" class="rp-icon-btn" @click="speak(result && result.farewell && result.farewell.jp)"
+                                :aria-label="'Verabschiedung von ' + botName + ' vorlesen'">
+                            <i class="fas fa-volume-low" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <div class="rp-bot-jp" lang="ja" x-text="result && result.farewell ? result.farewell.jp : ''"></div>
+                    <div class="rp-bot-de" x-text="result && result.farewell ? result.farewell.de : ''"></div>
+                </div>
+
+                <div class="rp-xp" x-show="result && result.xp_awarded > 0">
+                    <i class="fas fa-star" aria-hidden="true"></i>
+                    <span x-text="'+' + (result ? result.xp_awarded : 0) + ' XP — gut gemacht!'"></span>
+                </div>
+                <div class="rp-muted" x-show="result && !result.xp_awarded"
+                   x-text="'Kein XP diesmal: XP gibt es ab ' + minTurns + ' Zügen.'"></div>
+
+                <div class="rp-corrections" x-show="result && result.correction && result.correction.length">
+                    <div class="rp-label">So klingt es noch natürlicher</div>
+                    <div role="list" class="rp-corr-list">
+                        <template x-for="(c, i) in (result ? result.correction : [])" :key="i">
+                            <div role="listitem" class="rp-corr">
+                                <div class="rp-corr-pair">
+                                    <span class="rp-corr-orig" lang="ja" x-text="c.original"></span>
+                                    <i class="fas fa-arrow-right" aria-hidden="true"></i><span class="rp-sr-only">besser:</span>
+                                    <span class="rp-corr-better" lang="ja" x-text="c.better"></span>
+                                </div>
+                                <div class="rp-corr-expl" x-text="c.explanation_de"></div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+                <div class="rp-muted" x-show="result && (!result.correction || !result.correction.length) && !result.correction_unavailable">
+                    Keine Korrekturen — sauber gesprochen.
+                </div>
+                <div class="rp-muted" x-show="result && result.correction_unavailable">
+                    Die Korrektur ist gerade nicht verfügbar. Dein Gespräch ist trotzdem gespeichert.
+                </div>
+                <button type="button" class="rp-btn rp-btn-primary rp-restart-btn" @click="restart()">
+                    <i class="fas fa-rotate-left" aria-hidden="true"></i> Nochmal spielen
+                </button>
+            </div>
+
+            {# Fehler #}
+            <div class="rp-alert" x-show="error" role="alert"
+                 :class="{ 'is-limit': error && (error.code === 'limit_reached' || error.code === 'cost_cap') }">
+                <div class="rp-alert-msg" x-text="error ? error.message : ''"></div>
+                <div class="rp-small" x-show="error && (error.code === 'limit_reached' || error.code === 'cost_cap') && limitsText"
+                   x-text="limitsText"></div>
+                <button type="button" class="rp-btn rp-btn-ghost rp-retry" x-show="error && error.retry" @click="retry()"
+                        x-text="phase === 'playing' ? 'Nochmal senden' : 'Nochmal versuchen'"></button>
+            </div>
+        </div>
+
+        {# ── Tab 2: Frag zur Seite ── #}
+        <div class="rp-pane" role="tabpanel" id="rp-pane-tutor-{{ content.id }}"
+             aria-labelledby="rp-tab-tutor-{{ content.id }}" x-show="tab === 'tutor'" x-cloak>
+            <div class="rp-muted rp-small">Unklar, was auf dieser Seite steht? Frag auf Deutsch — der Tutor kennt den Inhalt der Seite.</div>
+            <form class="rp-tutor-form" @submit.prevent="askTutor()">
+                <label class="rp-label" for="rp-tutor-{{ content.id }}">Deine Frage</label>
+                <textarea class="rp-field rp-tutor-input" id="rp-tutor-{{ content.id }}" x-ref="tutorInput" rows="2"
+                          x-model="tutorQuestion" :maxlength="TUTOR_MAX" :disabled="tutorLoading"
+                          @keydown.enter="onTutorEnter($event)"
+                          placeholder="z. B. Wozu brauche ich hier を?"></textarea>
+                <div class="rp-row">
+                    <span class="rp-muted rp-small" x-text="tutorQuestion.length + ' / ' + TUTOR_MAX"></span>
+                    <span class="rp-muted rp-small" x-text="tutorLimitText"></span>
+                </div>
+                <button type="submit" class="rp-btn rp-btn-primary" :disabled="tutorLoading || !tutorQuestion.trim()">
+                    <template x-if="tutorLoading"><span class="rp-spinner" aria-hidden="true"></span></template>
+                    <span x-text="tutorLoading ? 'Tutor denkt nach …' : 'Fragen'"></span>
+                </button>
+            </form>
+            <div class="rp-alert" x-show="tutorError" role="alert">
+                <div class="rp-alert-msg" x-text="tutorError ? tutorError.message : ''"></div>
+            </div>
+            <div class="rp-answer" x-show="tutorAnswer" x-ref="tutorAnswer" tabindex="-1">
+                <div class="rp-answer-q" x-text="tutorAsked"></div>
+                <div class="rp-answer-text" x-text="tutorAnswer"></div>
+            </div>
+        </div>
+    </div>
+</section>

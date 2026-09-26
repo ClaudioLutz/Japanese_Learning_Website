@@ -72,6 +72,9 @@
 {% endblock %}
 
 {% block extra_head %}
+{% if roleplay_enabled and current_user.is_authenticated %}
+<link rel="stylesheet" href="{{ static_v('css/roleplay_panel.css') }}">
+{% endif %}
 {# Romaji-Toggle: <html>-Klasse synchron VOR Body-Render setzen, um Flash zu vermeiden.
    Reihenfolge: localStorage > Lesson-Default > 'show'. #}
 <script>
@@ -2077,6 +2080,9 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                                                                        @timeupdate="onTimeUpdate()"
                                                                        @ended="onEnded()"></audio>
                                                             </div>
+                                                            {% if roleplay_enabled and current_user.is_authenticated %}
+                                                            {% include 'partials/_roleplay_panel.html' %}
+                                                            {% endif %}
                                                             {% endif %}
                                                         {% elif content.media_url %}
                                                             {% if content.content_type == 'video' %}
@@ -5515,6 +5521,11 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 {% endif %}
 
+{% if roleplay_enabled and current_user.is_authenticated %}
+{# Rollenspiel-Tutor: synchron (nicht defer) laden, damit roleplayPanel vor Alpines Init existiert. #}
+<script src="{{ static_v('js/romaji_to_kana.js') }}"></script>
+<script src="{{ static_v('js/roleplay_panel.js') }}"></script>
+{% endif %}
 <script>
 // Alpine.js Slideshow-Player fuer content_type='dialog_slideshow'.
 // Ein Slide pro Dialog-Zeile mit Bild, Speaker, JP, Romaji, DE und

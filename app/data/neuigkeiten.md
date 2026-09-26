@@ -15,6 +15,10 @@ Format je Eintrag:
 Keine Commit-Hashes, keine internen Namen.
 -->
 
+## 2026-09-26 | Rollenspiel: Sprich den Dialog der Lektion selbst
+Unter jedem Lektionsdialog kannst du jetzt „Rollenspiel starten": Du wählst eine Rolle und führst das Gespräch selbst weiter — mit drei Antwortvorschlägen, einem Hinweis, Vorlesen und Romaji-Eingabe, die sich automatisch in Kana verwandelt. Am Ende bekommst du Verbesserungsvorschläge und ab vier Zügen XP. Im selben Kasten beantwortet dir „Frag zur Seite" Fragen zum Inhalt der aktuellen Lektionsseite.
+Link: /lessons
+
 ## 2026-09-26 | Zwei neue Lektionen: Dinge im Haushalt und Masseinheiten
 In „Dinge im Haushalt" lernst du Teller, Gabel, Portemonnaie, Brief und Briefmarke und sagst, womit du etwas machst und wem etwas gehört. „Masseinheiten und Zeitdauer" bringt Kilo, Gramm und Meter, Zeitspannen wie drei Monate oder zwei Wochen samt ihren besonderen Lesungen sowie „etwa", „gegen", „nur" und „je".
 Link: /lessons
