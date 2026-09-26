@@ -67,6 +67,23 @@ Destillat der am häufigsten wiederkehrenden Erkenntnisse. Details + Historie in
 
 <!-- Neuste Einträge oben, älteste unten. -->
 
+## 2026-09-26 — Dinge im Haushalt (217) + Masseinheiten und Zeitdauer (218) aus vorab angelegten Vokabeln — Prod LIVE
+
+### Ergebnis
+- **217** Dinge im Haushalt → `n5-wohnen-haus` (order 3): 7 Seiten, 18 Vokabeln (IDs 1032–1049), 3 Grammatik, 16 Quiz, Dialog Lisa/Mei.
+- **218** Masseinheiten und Zeitdauer → `n5-zahlen-zeit` (order 11): 7 Seiten, 24 Vokabeln (1070 ～か月 + 1074–1096), 4 Grammatik (Lesungen いっかげつ/いっしゅうかん/ろっキロ), 17 Quiz, Dialog Haruto/Lisa.
+- Pipeline direkt auf hp-ubuntu gegen Prod (Draft per scp nach /tmp, Wrapper-Skript mit DATABASE_URL-Override auf localhost). 0 neue Vokabelzeilen, alle 42 bestehenden Zeilen bekamen image_url.
+
+### Erkenntnisse (Regeln)
+1. **Vorab angelegte Vokabeln per `data.vocabulary_id` referenzieren** (neu in `_get_or_create_vocab`, mit Wort-Abgleich). Draft-Felder 1:1 aus den DB-Zeilen bauen (per SQL als JSON holen), damit Validator, Bild-Szene und Karte dasselbe zeigen.
+2. **Vokabel-Batches enthalten Beispielsätze mit Nicht-N5-Kanji** (財布/封筒/切手/週/度/番/屋 …). Vor dem Insert per Transaktion nur `example_sentence_japanese` auf Kana umstellen (WHERE id AND alter Text), Backup vorher. Validator prüft nur den Draft, nicht die DB-Zeile.
+3. **`insert` schreibt `generated-lessons.jsonl` im Server-Checkout** → dort sofort `git checkout -- <datei>` (nur wenn ausschliesslich eigene Zeilen im Diff) und Zeilen im Worktree committen.
+4. **Server-Checkout nie manuell pullen** — der Auto-Deploy (60-s-Poll) sieht sonst keine Änderung und baut nicht neu. Nach Push ~2 Min warten, `git rev-parse --short HEAD` + `journalctl -u jpl-autodeploy` prüfen.
+5. **Live-Verifikation nicht-Gast-Lektionen:** Session-Cookie im Container via `app.session_interface.get_signing_serializer(app).dumps({'_user_id': …})` für einen Nicht-Admin-Testuser, Cookie nur in Datei, danach löschen. Achtung: Besuche setzen Fortschritt beim Testuser → danach `user_lesson_progress` der neuen Lektionen für ihn löschen.
+6. Gemini-TTS liefert bei sehr kurzen Segmenten (で, ど, ごろ, ずつ) gelegentlich leer → Chirp-Fallback, kein Quota-Problem (hier 6 von ~120 Block-Segmenten, 6 von 60 Inline-Audios).
+
+---
+
 ## 2026-09-26 — Adjektive 3 (212) + Verben 3 (213) aus BESTEHENDEN Vokabel-Zeilen — Prod LIVE
 
 ### Vorgehen

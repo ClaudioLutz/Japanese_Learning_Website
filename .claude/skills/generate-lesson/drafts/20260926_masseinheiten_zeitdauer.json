@@ -1,0 +1,1021 @@
+{
+  "title": "Masseinheiten und Zeitdauer — Kilo, Wochen und ungefähr",
+  "description": "Lerne Masseinheiten wie キロ (kiro) und グラム (guramu), Zeitdauern mit ～か月 (kagetsu) und ～しゅうかん (shuukan) samt ihren Lesungsbesonderheiten sowie die Endungen くらい (kurai), ごろ (goro), だけ (dake) und ずつ (zutsu).",
+  "jlpt_level": 5,
+  "topic": "Masseinheiten und Zeitdauer",
+  "instruction_language": "german",
+  "allow_guest_access": false,
+  "thumbnail_url": "generated/thumbnail_masseinheiten_und_zeitdauer_20260926_162812.png",
+  "pages": [
+    {
+      "title": "Einführung",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Masseinheiten und Zeitdauer\n\nWie schwer? Wie weit? Wie lange? Im Alltag in Japan brauchst du ständig **Mengen** und **Zeitangaben** — beim Einkaufen, beim Wetter, bei der Reiseplanung.\n\n- **Masseinheiten**: キロ (kiro), グラム (guramu), メートル (meetoru) und ～ど (do, Grad)\n- **Zeitdauer**: ～かげつ (kagetsu, Monate), ～しゅうかん (shuukan, Wochen), ～にち (nichi, Tage)\n- **Kleine Endungen**: ～くらい (kurai, etwa), ～ごろ (goro, gegen), ～だけ (dake, nur), ～ずつ (zutsu, je)\n\n> Gute Nachricht: Japan benutzt — wie die Schweiz — das **metrische System**. Die Einheiten sind Lehnwörter und werden in **Katakana** geschrieben, zum Beispiel メートル (meetoru, Meter).\n\nBesonders wichtig sind die **Lesungsbesonderheiten**: Vor manchen Zählern ändert sich die Aussprache der Zahl, etwa 一か月 (ikkagetsu, ein Monat) statt 'ichi-kagetsu'."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln Teil 1 — Masse, Mengen und Endungen",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Teil 1 — Masse, Mengen und kleine Endungen\n\nZuerst die **Masseinheiten** und ein paar **Endungen**, die du an Zahlen und Nomen hängst.\n\n- **キロ (kiro)** ist die Kurzform — je nach Situation für キログラム (kiroguramu, Kilogramm) oder キロメートル (kiromeetoru, Kilometer).\n- **～ど (do)** heisst 'Grad' beim Wetter, aber auch 'Mal': 一ど (ichido, einmal).\n- **～たち (tachi)** macht aus Personen eine Mehrzahl: 子どもたち (kodomotachi, die Kinder).\n- **～や (ya)** bezeichnet einen Laden: パンや (pan'ya, Bäckerei).\n\n> Achtung: **いちばん (ichiban)** heisst wörtlich 'Nummer eins' — und im Alltag meistens 'am meisten, am liebsten'."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1074,
+            "word": "キロ",
+            "reading": "キロ",
+            "romaji": "kiro",
+            "meaning": "kilo (kilogram, kilometer)",
+            "meaning_de": "Kilo (Kilogramm / Kilometer)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "えきまで二キロあります。",
+            "example_sentence_english": "Eki made nikiro arimasu. — Bis zum Bahnhof sind es zwei Kilometer.",
+            "image_url": "vocab_generated/vocab_30329f02.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1075,
+            "word": "キログラム",
+            "reading": "キログラム",
+            "romaji": "kiroguramu",
+            "meaning": "kilogram",
+            "meaning_de": "Kilogramm",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "このにもつは五キログラムです。",
+            "example_sentence_english": "Kono nimotsu wa gokiroguramu desu. — Dieses Gepäck wiegt fünf Kilogramm.",
+            "image_url": "vocab_generated/vocab_20e31175.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1076,
+            "word": "キロメートル",
+            "reading": "キロメートル",
+            "romaji": "kiromeetoru",
+            "meaning": "kilometer",
+            "meaning_de": "Kilometer",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "毎日三キロメートルはしります。",
+            "example_sentence_english": "Mainichi sankiromētoru hashirimasu. — Ich laufe jeden Tag drei Kilometer.",
+            "image_url": "vocab_generated/vocab_a0db2bf1.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1077,
+            "word": "グラム",
+            "reading": "グラム",
+            "romaji": "guramu",
+            "meaning": "gram",
+            "meaning_de": "Gramm",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "にくを三百グラムください。",
+            "example_sentence_english": "Niku o sanbyakuguramu kudasai. — Dreihundert Gramm Fleisch, bitte.",
+            "image_url": "vocab_generated/vocab_73491e2a.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1078,
+            "word": "メートル",
+            "reading": "メートル",
+            "romaji": "meetoru",
+            "meaning": "meter",
+            "meaning_de": "Meter",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "このプールは二十五メートルです。",
+            "example_sentence_english": "Kono pūru wa nijūgomētoru desu. — Dieses Schwimmbecken ist fünfundzwanzig Meter lang.",
+            "image_url": "vocab_generated/vocab_235a9740.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1088,
+            "word": "～度",
+            "reading": "～ど",
+            "romaji": "-do",
+            "meaning": "~ times; ~ degrees",
+            "meaning_de": "… Mal; … Grad",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "今日は 三十どです。",
+            "example_sentence_english": "Kyō wa sanjūdo desu. — Heute ist es dreissig Grad.",
+            "image_url": "vocab_generated/vocab_71250e5e.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1079,
+            "word": "～くらい",
+            "reading": "～くらい",
+            "romaji": "-kurai",
+            "meaning": "about, approximately (quantity)",
+            "meaning_de": "ungefähr, etwa (auch: ぐらい)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "えきまで十分くらいかかります。",
+            "example_sentence_english": "Eki made juppun kurai kakarimasu. — Bis zum Bahnhof dauert es etwa zehn Minuten.",
+            "image_url": "vocab_generated/vocab_41e55f7a.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1086,
+            "word": "～だけ",
+            "reading": "～だけ",
+            "romaji": "-dake",
+            "meaning": "only, just",
+            "meaning_de": "nur, bloss",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "わたしは水だけのみます。",
+            "example_sentence_english": "Watashi wa mizu dake nomimasu. — Ich trinke nur Wasser.",
+            "image_url": "vocab_generated/vocab_2d102ce4.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1085,
+            "word": "～ずつ",
+            "reading": "～ずつ",
+            "romaji": "-zutsu",
+            "meaning": "at a time, each",
+            "meaning_de": "je, jeweils",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "みんなでおかしを一つずつ食べました。",
+            "example_sentence_english": "Minna de okashi o hitotsu zutsu tabemashita. — Wir haben alle je eine Süssigkeit gegessen.",
+            "image_url": "vocab_generated/vocab_8b40ff91.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1087,
+            "word": "～たち",
+            "reading": "～たち",
+            "romaji": "-tachi",
+            "meaning": "plural suffix (people)",
+            "meaning_de": "Pluralendung (bei Personen)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "子どもたちはこうえんであそんでいます。",
+            "example_sentence_english": "Kodomotachi wa kōen de asonde imasu. — Die Kinder spielen im Park.",
+            "image_url": "vocab_generated/vocab_f0cfbff1.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1089,
+            "word": "～など",
+            "reading": "～など",
+            "romaji": "-nado",
+            "meaning": "et cetera, and so on",
+            "meaning_de": "und so weiter, unter anderem",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "テーブルにパンやたまごなどがあります。",
+            "example_sentence_english": "Tēburu ni pan ya tamago nado ga arimasu. — Auf dem Tisch gibt es Brot, Eier und so weiter.",
+            "image_url": "vocab_generated/vocab_773638f7.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1091,
+            "word": "～番",
+            "reading": "～ばん",
+            "romaji": "-ban",
+            "meaning": "number ~; ~th (ranking)",
+            "meaning_de": "Nummer …; der/die …-te (Rang)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "いちばん すきな くだものは 何ですか。",
+            "example_sentence_english": "Ichiban suki na kudamono wa nan desu ka. — Welches Obst magst du am liebsten?",
+            "image_url": "vocab_generated/vocab_25c8f237.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1092,
+            "word": "～屋",
+            "reading": "～や",
+            "romaji": "-ya",
+            "meaning": "~ shop",
+            "meaning_de": "…laden, …geschäft",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "パンやで パンを かいます。",
+            "example_sentence_english": "Pan'ya de pan o kaimasu. — In der Bäckerei kaufe ich Brot.",
+            "image_url": "vocab_generated/vocab_1c3c447c.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln Teil 2 — Zeitdauer und Häufigkeit",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Teil 2 — Zeitdauer und Häufigkeit\n\nJetzt geht es um **wie lange** und **wie oft**.\n\n- **～かげつ (kagetsu)**: Monate als Dauer — 三か月 (sankagetsu, drei Monate).\n- **～しゅうかん (shuukan)**: Wochen als Dauer — 二しゅうかん (nishuukan, zwei Wochen).\n- **毎 (mai)** + Zeitwort = 'jeden': 毎月 (maitsuki, jeden Monat), 毎年 (maitoshi, jedes Jahr), まいしゅう (maishuu, jede Woche).\n\n> Verwechslungsgefahr: **一月** kann 'Januar' sein — gelesen いちがつ (ichigatsu). Als Dauer 'ein Monat' liest man es ひとつき (hitotsuki). Eindeutig ist 一か月 (ikkagetsu, ein Monat)."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1070,
+            "word": "～か月",
+            "reading": "～かげつ",
+            "romaji": "-kagetsu",
+            "meaning": "(number of) months",
+            "meaning_de": "… Monate (Dauer)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "日本に三か月いました。",
+            "example_sentence_english": "Nihon ni sankagetsu imashita. — Ich war drei Monate in Japan.",
+            "image_url": "vocab_generated/vocab_874c94e1.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1093,
+            "word": "一月",
+            "reading": "ひとつき",
+            "romaji": "hitotsuki",
+            "meaning": "one month (duration)",
+            "meaning_de": "ein Monat (Dauer)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "日本にひと月いました。",
+            "example_sentence_english": "Nihon ni hitotsuki imashita. — Ich war einen Monat in Japan.",
+            "image_url": "vocab_generated/vocab_43bc301e.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1083,
+            "word": "～週間",
+            "reading": "～しゅうかん",
+            "romaji": "-shuukan",
+            "meaning": "~ weeks",
+            "meaning_de": "… Wochen (Dauer)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "なつやすみは 二しゅうかんです。",
+            "example_sentence_english": "Natsuyasumi wa nishūkan desu. — Die Sommerferien dauern zwei Wochen.",
+            "image_url": "vocab_generated/vocab_57ce1097.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1090,
+            "word": "～日",
+            "reading": "～にち",
+            "romaji": "-nichi",
+            "meaning": "~ day of the month; for ~ days",
+            "meaning_de": "… Tag(e) (Datum; Anzahl Tage)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "十一日にスイスへかえります。",
+            "example_sentence_english": "Jūichinichi ni Suisu e kaerimasu. — Am Elften kehre ich in die Schweiz zurück.",
+            "image_url": "vocab_generated/vocab_4562c3c0.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1082,
+            "word": "～中",
+            "reading": "～じゅう",
+            "romaji": "-juu",
+            "meaning": "throughout, during (also read ちゅう: in the middle of)",
+            "meaning_de": "den ganzen … hindurch; während (gelesen ちゅう: gerade dabei)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "きのうは一日中雨でした。",
+            "example_sentence_english": "Kinō wa ichinichijū ame deshita. — Gestern hat es den ganzen Tag geregnet.",
+            "image_url": "vocab_generated/vocab_00b37a6c.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1094,
+            "word": "毎月",
+            "reading": "まいつき",
+            "romaji": "maitsuki",
+            "meaning": "every month",
+            "meaning_de": "jeden Monat",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "毎月、母にてがみを書きます。",
+            "example_sentence_english": "Maitsuki, haha ni tegami o kakimasu. — Jeden Monat schreibe ich meiner Mutter einen Brief.",
+            "image_url": "vocab_generated/vocab_d0b47cdf.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1095,
+            "word": "毎週",
+            "reading": "まいしゅう",
+            "romaji": "maishuu",
+            "meaning": "every week",
+            "meaning_de": "jede Woche",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "まいしゅう にちようびに スポーツを します。",
+            "example_sentence_english": "Maishū nichiyōbi ni supōtsu o shimasu. — Jede Woche am Sonntag mache ich Sport.",
+            "image_url": "vocab_generated/vocab_2ff6635e.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1096,
+            "word": "毎年",
+            "reading": "まいとし",
+            "romaji": "maitoshi",
+            "meaning": "every year",
+            "meaning_de": "jedes Jahr",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "毎年、なつに山へ行きます。",
+            "example_sentence_english": "Maitoshi, natsu ni yama e ikimasu. — Jedes Jahr gehe ich im Sommer in die Berge.",
+            "image_url": "vocab_generated/vocab_ad540fad.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1080,
+            "word": "～ごろ",
+            "reading": "～ごろ",
+            "romaji": "-goro",
+            "meaning": "about, around (point in time)",
+            "meaning_de": "gegen, um (ungefähre Uhrzeit)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "まいばん十一時ごろねます。",
+            "example_sentence_english": "Maiban jūichiji goro nemasu. — Ich gehe jeden Abend gegen elf Uhr schlafen.",
+            "image_url": "vocab_generated/vocab_01bc0f16.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1084,
+            "word": "～すぎ",
+            "reading": "～すぎ",
+            "romaji": "-sugi",
+            "meaning": "past (time); too much",
+            "meaning_de": "nach (Uhrzeit); zu viel",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "今、九時五分すぎです。",
+            "example_sentence_english": "Ima, kuji gofun sugi desu. — Jetzt ist es fünf nach neun.",
+            "image_url": "vocab_generated/vocab_01d0f806.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1081,
+            "word": "～時",
+            "reading": "～とき",
+            "romaji": "-toki",
+            "meaning": "when ~, at the time of ~",
+            "meaning_de": "wenn …, als … (Zeitpunkt)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ひまな時、本を読みます。",
+            "example_sentence_english": "Hima na toki, hon o yomimasu. — Wenn ich Zeit habe, lese ich Bücher.",
+            "image_url": "vocab_generated/vocab_c8d2b14f.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        }
+      ]
+    },
+    {
+      "title": "Grammatik — Mengen und Dauer ausdrücken",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Grammatik — Mengen und Dauer ausdrücken\n\nVier Muster helfen dir, Mengen und Zeiten genau oder ungefähr anzugeben:\n\n1. **Zeitdauer** mit ～か月 (kagetsu), ～しゅうかん (shuukan) und ～日 (nichi)\n2. **Ungefähr**: ～くらい (kurai) für Mengen, ～ごろ (goro) für Zeitpunkte\n3. **Nur und je**: ～だけ (dake) und ～ずつ (zutsu)\n4. **Masseinheiten** und ～ど (do)\n\n> Merke: Eine Zahl mit Zähler steht direkt **vor dem Verb** und braucht keine eigene Partikel: 三か月 います (sankagetsu imasu, ich bleibe drei Monate)."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "Zeitdauer — ～か月, ～しゅうかん, ～日 (~ kagetsu, ~ shuukan, ~ nichi)",
+            "explanation": "Für eine Dauer hängst du den Zähler an die Zahl: 「三か月」 (sankagetsu, drei Monate), 「二しゅうかん」 (nishuukan, zwei Wochen). Achte auf die Lesungen: 「一か月」 (ikkagetsu), 「六か月」 (rokkagetsu), 「十か月」 (jukkagetsu); 「一しゅうかん」 (isshuukan), 「八しゅうかん」 (hasshuukan), 「十しゅうかん」 (jusshuukan). Bei Tagen heisst 'ein Tag' 「一日」 (ichinichi) — nicht ついたち (tsuitachi, der Erste des Monats); ab zwei Tagen gilt die Datumsform: 「二日」 (futsuka), 「三日」 (mikka). Nach der Dauer fragst du mit 「どのくらい」 (dono kurai, wie lange).",
+            "structure": "[Zahl] + か月 / しゅうかん / 日 + [Verb]  ([number] + kagetsu / shuukan / nichi + [verb])",
+            "romaji": "[number] + kagetsu / shuukan / nichi + [verb]",
+            "jlpt_level": 5,
+            "example_sentences": "日本に 三か月 います。 (Nihon ni sankagetsu imasu.) — Ich bleibe drei Monate in Japan.\nなつやすみは 一しゅうかんです。 (Natsuyasumi wa isshuukan desu.) — Die Sommerferien dauern eine Woche.\n三日 やすみました。 (Mikka yasumimashita.) — Ich habe drei Tage freigenommen.",
+            "tts_example_jp": "日本に 三か月 います。",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "～くらい und ～ごろ — ungefähr (~ kurai / ~ goro)",
+            "explanation": "「くらい」 (kurai, auch ぐらい gurai) steht nach einer Menge oder Dauer: 「十分くらい」 (juppun kurai, etwa zehn Minuten). 「ごろ」 (goro) steht nach einem Zeitpunkt: 「七時ごろ」 (shichiji goro, gegen sieben Uhr). Genau nach einer Uhrzeit sagst du 「すぎ」 (sugi): 「三時 十分すぎ」 (sanji juppun sugi, zehn nach drei).",
+            "structure": "[Menge / Dauer] + くらい  ·  [Zeitpunkt] + ごろ  ([amount] + kurai  ·  [point in time] + goro)",
+            "romaji": "[amount] + kurai  ·  [point in time] + goro",
+            "jlpt_level": 5,
+            "example_sentences": "えきまで 十分くらい かかります。 (Eki made juppun kurai kakarimasu.) — Bis zum Bahnhof dauert es etwa zehn Minuten.\nまいあさ 七時ごろ おきます。 (Maiasa shichiji goro okimasu.) — Ich stehe jeden Morgen gegen sieben Uhr auf.\n今、三時 十分すぎです。 (Ima, sanji juppun sugi desu.) — Jetzt ist es zehn nach drei.",
+            "tts_example_jp": "えきまで 十分くらい かかります。",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "～だけ und ～ずつ — nur und je (~ dake / ~ zutsu)",
+            "explanation": "「だけ」 (dake) nach einem Nomen oder einer Menge heisst 'nur': 「水だけ」 (mizu dake, nur Wasser). 「ずつ」 (zutsu) nach einer Menge heisst 'je, jeweils' — jede Person oder jedes Mal bekommt gleich viel: 「一つずつ」 (hitotsu zutsu, je eins).",
+            "structure": "[Nomen / Menge] + だけ  ·  [Menge] + ずつ  ([noun / amount] + dake  ·  [amount] + zutsu)",
+            "romaji": "[noun / amount] + dake  ·  [amount] + zutsu",
+            "jlpt_level": 5,
+            "example_sentences": "水だけ のみます。 (Mizu dake nomimasu.) — Ich trinke nur Wasser.\nりんごを 一つだけ かいました。 (Ringo o hitotsu dake kaimashita.) — Ich habe nur einen Apfel gekauft.\n子どもたちに おかしを 二つずつ あげます。 (Kodomotachi ni okashi o futatsu zutsu agemasu.) — Ich gebe den Kindern je zwei Süssigkeiten.",
+            "tts_example_jp": "水だけ のみます。",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "Masseinheiten und ～ど — Gewicht, Länge, Temperatur (kiro, guramu, meetoru, do)",
+            "explanation": "Die Einheit hängt direkt an der Zahl: 「三百グラム」 (sanbyaku guramu), 「二キロ」 (ni kiro), 「三十ど」 (sanjuu do). Vor キロ (kiro) ändern sich manche Zahlen: 「六キロ」 (rokkiro), 「十キロ」 (jukkiro). 「ど」 (do) heisst beim Wetter 'Grad', sonst 'Mal': 「もう 一ど」 (mou ichido, noch einmal). Fragen: 「何キロ」 (nan kiro, wie viele Kilo) oder 「何ど」 (nando, wie viel Grad / wie oft).",
+            "structure": "[Zahl] + キロ / グラム / メートル / ど  ([number] + kiro / guramu / meetoru / do)",
+            "romaji": "[number] + kiro / guramu / meetoru / do",
+            "jlpt_level": 5,
+            "example_sentences": "にくを 三百グラム ください。 (Niku o sanbyaku guramu kudasai.) — Dreihundert Gramm Fleisch, bitte.\n学校まで 二キロ あります。 (Gakkou made ni kiro arimasu.) — Bis zur Schule sind es zwei Kilometer.\n今日は 三十どです。 (Kyou wa sanjuu do desu.) — Heute sind es dreissig Grad.\nもう 一ど いって ください。 (Mou ichido itte kudasai.) — Sagen Sie es bitte noch einmal.",
+            "tts_example_jp": "にくを 三百グラム ください。",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        }
+      ]
+    },
+    {
+      "title": "Dialog — Ein Ausflug in die Berge",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "Haruto: リサさんは どのくらい 日本に いますか。\n  (Risa-san wa dono kurai Nihon ni imasu ka.)\n  -> Lisa, wie lange bleibst du in Japan?\n\nLisa: 三か月 います。まいしゅう 日本語の 学校に 行きます。\n  (Sankagetsu imasu. Maishuu Nihongo no gakkou ni ikimasu.)\n  -> Drei Monate. Jede Woche gehe ich in die Japanischschule.\n\nHaruto: そうですか。あした いっしょに 山へ 行きませんか。\n  (Sou desu ka. Ashita issho ni yama e ikimasen ka.)\n  -> Ach so. Wollen wir morgen zusammen in die Berge gehen?\n\nLisa: いいですね。何時ごろ 出ますか。\n  (Ii desu ne. Nanji goro demasu ka.)\n  -> Gern. Gegen wie viel Uhr gehen wir los?\n\nHaruto: 八時ごろです。山まで 二十キロくらいです。\n  (Hachiji goro desu. Yama made nijukkiro kurai desu.)\n  -> Gegen acht Uhr. Bis zum Berg sind es etwa zwanzig Kilometer.\n\nLisa: 山の 上は さむいですか。\n  (Yama no ue wa samui desu ka.)\n  -> Ist es oben auf dem Berg kalt?\n\nHaruto: あしたは 十五どくらいです。水を 一人 一本ずつ もって 行きましょう。\n  (Ashita wa juugodo kurai desu. Mizu o hitori ippon zutsu motte ikimashou.)\n  -> Morgen sind es etwa fünfzehn Grad. Lass uns pro Person je eine Flasche Wasser mitnehmen.\n\nLisa: わかりました。おべんとうは パンだけで いいですか。\n  (Wakarimashita. Obentou wa pan dake de ii desu ka.)\n  -> Alles klar. Reicht nur Brot als Proviant?\n\nHaruto: パンや くだものなど、いろいろ もって 行きましょう。\n  (Pan ya kudamono nado, iroiro motte ikimashou.)\n  -> Lass uns verschiedenes mitnehmen — Brot, Obst und so weiter.",
+            "title": "Ein Ausflug in die Berge — Haruto und Lisa"
+          }
+        },
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "### Verständnisfragen\n\nFünf kurze Fragen zum **Dialog**. Achte auf die **Zeitangaben** und die **Mengen** wie ずつ (zutsu)."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie lange bleibt Lisa in Japan?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Lisa sagt 「三か月 います」 (sankagetsu imasu) — ich bleibe drei Monate.",
+              "options": [
+                {
+                  "option_text": "drei Monate",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「三か月」 (sankagetsu) = drei Monate."
+                },
+                {
+                  "option_text": "drei Wochen",
+                  "is_correct": false,
+                  "feedback": "Drei Wochen wäre 「三しゅうかん」 (sanshuukan)."
+                },
+                {
+                  "option_text": "einen Monat",
+                  "is_correct": false,
+                  "feedback": "Ein Monat wäre 「一か月」 (ikkagetsu)."
+                },
+                {
+                  "option_text": "drei Tage",
+                  "is_correct": false,
+                  "feedback": "Drei Tage wäre 「三日」 (mikka)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie oft geht Lisa in die Japanischschule?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Lisa sagt 「まいしゅう 日本語の 学校に 行きます」 (maishuu Nihongo no gakkou ni ikimasu).",
+              "options": [
+                {
+                  "option_text": "jede Woche",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「まいしゅう」 (maishuu) = jede Woche."
+                },
+                {
+                  "option_text": "jeden Tag",
+                  "is_correct": false,
+                  "feedback": "Jeden Tag wäre 「毎日」 (mainichi)."
+                },
+                {
+                  "option_text": "jeden Monat",
+                  "is_correct": false,
+                  "feedback": "Jeden Monat wäre 「毎月」 (maitsuki)."
+                },
+                {
+                  "option_text": "jedes Jahr",
+                  "is_correct": false,
+                  "feedback": "Jedes Jahr wäre 「毎年」 (maitoshi)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Gegen wie viel Uhr gehen Haruto und Lisa los?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Haruto sagt 「八時ごろです」 (hachiji goro desu). 「ごろ」 (goro) macht den Zeitpunkt ungefähr.",
+              "options": [
+                {
+                  "option_text": "gegen acht Uhr",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「八時ごろ」 (hachiji goro) = gegen acht Uhr."
+                },
+                {
+                  "option_text": "gegen sieben Uhr",
+                  "is_correct": false,
+                  "feedback": "Sieben Uhr wäre 「七時」 (shichiji)."
+                },
+                {
+                  "option_text": "genau um acht Uhr zehn",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「八時 十分」 (hachiji juppun) — Haruto sagt aber ごろ (goro, gegen)."
+                },
+                {
+                  "option_text": "gegen neun Uhr",
+                  "is_correct": false,
+                  "feedback": "Neun Uhr wäre 「九時」 (kuji)."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Bis zum Berg sind es etwa zwanzig Kilometer.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Haruto sagt 「山まで 二十キロくらいです」 (yama made nijukkiro kurai desu).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「二十キロくらい」 (nijukkiro kurai) = etwa zwanzig Kilometer."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — Haruto sagt 「二十キロくらい」 (nijukkiro kurai)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie viel Wasser soll jede Person mitnehmen?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "「ずつ」 (zutsu) heisst 'je': 「一人 一本ずつ」 (hitori ippon zutsu) — jede Person eine Flasche.",
+              "options": [
+                {
+                  "option_text": "je eine Flasche",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「一人 一本ずつ」 (hitori ippon zutsu) = pro Person je eine Flasche."
+                },
+                {
+                  "option_text": "je zwei Flaschen",
+                  "is_correct": false,
+                  "feedback": "Zwei Flaschen wäre 「二本」 (nihon)."
+                },
+                {
+                  "option_text": "nur eine Flasche für beide",
+                  "is_correct": false,
+                  "feedback": "「ずつ」 (zutsu) heisst 'je' — jede Person bekommt eine."
+                },
+                {
+                  "option_text": "kein Wasser",
+                  "is_correct": false,
+                  "feedback": "Doch, Haruto schlägt Wasser vor: 「水を」 (mizu o)."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Übung",
+      "page_type": "quiz_carousel",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Übung\n\nZwölf Fragen zu **Einheiten**, **Zeitdauer** und den kleinen **Endungen**.\n\n- Achte auf die Lesungen wie いっかげつ (ikkagetsu).\n- Unterscheide ごろ (goro) für Zeitpunkte und くらい (kurai) für Mengen."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「グラム」 (guramu)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「グラム」 (guramu) ist das Gramm — ein Lehnwort in Katakana.",
+              "options": [
+                {
+                  "option_text": "Gramm",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "Kilogramm",
+                  "is_correct": false,
+                  "feedback": "Kilogramm wäre キログラム (kiroguramu)."
+                },
+                {
+                  "option_text": "Meter",
+                  "is_correct": false,
+                  "feedback": "Meter wäre メートル (meetoru)."
+                },
+                {
+                  "option_text": "Grad",
+                  "is_correct": false,
+                  "feedback": "Grad wäre ～ど (do)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welche Endung passt? 「七時 ___ おきます。」 (Shichiji ___ okimasu.) — Ich stehe gegen sieben Uhr auf.",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Nach einer Uhrzeit sagt man 「ごろ」 (goro): 「七時ごろ」 (shichiji goro) = gegen sieben Uhr.",
+              "options": [
+                {
+                  "option_text": "ごろ (goro)",
+                  "is_correct": true,
+                  "feedback": "Richtig — ごろ (goro) steht nach einem Zeitpunkt."
+                },
+                {
+                  "option_text": "くらい (kurai)",
+                  "is_correct": false,
+                  "feedback": "くらい (kurai) steht vor allem nach Mengen und Dauer. Im Alltag hört man es auch nach Uhrzeiten, die Standardform ist aber ごろ (goro)."
+                },
+                {
+                  "option_text": "だけ (dake)",
+                  "is_correct": false,
+                  "feedback": "だけ (dake) heisst 'nur'."
+                },
+                {
+                  "option_text": "ずつ (zutsu)",
+                  "is_correct": false,
+                  "feedback": "ずつ (zutsu) heisst 'je'."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie liest man 「一か月」 (ein Monat)?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "「一か月」 liest man いっかげつ (ikkagetsu). Genauso: 六か月 (rokkagetsu), 十か月 (jukkagetsu).",
+              "options": [
+                {
+                  "option_text": "いっかげつ (ikkagetsu)",
+                  "is_correct": true,
+                  "feedback": "Richtig — いち (ichi) wird vor か (ka) zu いっ (ik)."
+                },
+                {
+                  "option_text": "いちかげつ (ichikagetsu)",
+                  "is_correct": false,
+                  "feedback": "So klingt es nicht — die Zahl verkürzt sich zu いっ (ik)."
+                },
+                {
+                  "option_text": "いちがつ (ichigatsu)",
+                  "is_correct": false,
+                  "feedback": "いちがつ (ichigatsu) ist der Januar, 一月."
+                },
+                {
+                  "option_text": "ひとかげつ (hitokagetsu)",
+                  "is_correct": false,
+                  "feedback": "Diese Mischform gibt es nicht. Möglich ist aber ひとつき (hitotsuki)."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「一月」 (いちがつ, ichigatsu) bedeutet 'ein Monat lang'.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "いちがつ (ichigatsu) ist der Monat Januar. 'Ein Monat lang' heisst いっかげつ (ikkagetsu) oder ひとつき (hitotsuki).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nein — いちがつ (ichigatsu) ist der Januar."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Richtig erkannt — いちがつ (ichigatsu) = Januar."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde die Wörter für 'jeden …' mit der deutschen Bedeutung.",
+              "difficulty_level": 2,
+              "points": 4,
+              "options": [
+                {
+                  "option_text": "まいしゅう (maishuu)",
+                  "is_correct": true,
+                  "feedback": "jede Woche"
+                },
+                {
+                  "option_text": "毎月 (まいつき, maitsuki)",
+                  "is_correct": true,
+                  "feedback": "jeden Monat"
+                },
+                {
+                  "option_text": "毎年 (まいとし, maitoshi)",
+                  "is_correct": true,
+                  "feedback": "jedes Jahr"
+                },
+                {
+                  "option_text": "毎日 (まいにち, mainichi)",
+                  "is_correct": true,
+                  "feedback": "jeden Tag"
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie liest man 「一しゅうかん」 (eine Woche)?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "「一しゅうかん」 liest man いっしゅうかん (isshuukan). Ebenso: 八しゅうかん (hasshuukan), 十しゅうかん (jusshuukan).",
+              "options": [
+                {
+                  "option_text": "いっしゅうかん (isshuukan)",
+                  "is_correct": true,
+                  "feedback": "Richtig — いち (ichi) wird vor し (shi) zu いっ (is)."
+                },
+                {
+                  "option_text": "いちしゅうかん (ichishuukan)",
+                  "is_correct": false,
+                  "feedback": "Die Zahl verkürzt sich hier zu いっ (is)."
+                },
+                {
+                  "option_text": "ひとしゅうかん (hitoshuukan)",
+                  "is_correct": false,
+                  "feedback": "ひと (hito) gehört zur japanischen Zählreihe, nicht zu しゅうかん (shuukan)."
+                },
+                {
+                  "option_text": "いっしゅう (isshuu)",
+                  "is_correct": false,
+                  "feedback": "Da fehlt die Endung かん (kan) für die Dauer."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welche Endung passt? 「水 ___ のみます。」 (Mizu ___ nomimasu.) — Ich trinke nur Wasser.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「水だけ」 (mizu dake) = nur Wasser.",
+              "options": [
+                {
+                  "option_text": "だけ (dake)",
+                  "is_correct": true,
+                  "feedback": "Richtig — だけ (dake) = nur."
+                },
+                {
+                  "option_text": "ずつ (zutsu)",
+                  "is_correct": false,
+                  "feedback": "ずつ (zutsu) heisst 'je' und steht nach einer Menge."
+                },
+                {
+                  "option_text": "ごろ (goro)",
+                  "is_correct": false,
+                  "feedback": "ごろ (goro) steht nach einem Zeitpunkt."
+                },
+                {
+                  "option_text": "など (nado)",
+                  "is_correct": false,
+                  "feedback": "など (nado) heisst 'und so weiter'."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「キロ」 (kiro) kann Kilogramm oder Kilometer bedeuten.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Genau — キロ (kiro) ist die Kurzform. Was gemeint ist, zeigt der Zusammenhang.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Richtig — beim Gewicht Kilogramm, bei der Strecke Kilometer."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — キロ (kiro) steht für beides."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde die Einheiten mit der deutschen Bedeutung.",
+              "difficulty_level": 2,
+              "points": 4,
+              "options": [
+                {
+                  "option_text": "キロメートル (kiromeetoru)",
+                  "is_correct": true,
+                  "feedback": "Kilometer"
+                },
+                {
+                  "option_text": "キログラム (kiroguramu)",
+                  "is_correct": true,
+                  "feedback": "Kilogramm"
+                },
+                {
+                  "option_text": "メートル (meetoru)",
+                  "is_correct": true,
+                  "feedback": "Meter"
+                },
+                {
+                  "option_text": "～ど (do)",
+                  "is_correct": true,
+                  "feedback": "Grad"
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was ist eine 「パンや」 (pan'ya)?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Die Endung 「～や」 (ya) macht aus einer Ware einen Laden: パンや (pan'ya, Bäckerei), ほんや (hon'ya, Buchhandlung).",
+              "options": [
+                {
+                  "option_text": "eine Bäckerei",
+                  "is_correct": true,
+                  "feedback": "Richtig — ～や (ya) bezeichnet einen Laden."
+                },
+                {
+                  "option_text": "Brot und so weiter",
+                  "is_correct": false,
+                  "feedback": "Das wäre パンなど (pan nado)."
+                },
+                {
+                  "option_text": "nur Brot",
+                  "is_correct": false,
+                  "feedback": "Das wäre パンだけ (pan dake)."
+                },
+                {
+                  "option_text": "je ein Brot",
+                  "is_correct": false,
+                  "feedback": "Das wäre パンを 一つずつ (pan o hitotsu zutsu)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「いちばん」 (ichiban) in 「くだものが いちばん すきです」 (kudamono ga ichiban suki desu)?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "「いちばん」 (ichiban) heisst wörtlich 'Nummer eins'. Vor einem Adjektiv bedeutet es 'am meisten'.",
+              "options": [
+                {
+                  "option_text": "am liebsten, am meisten",
+                  "is_correct": true,
+                  "feedback": "Richtig — いちばん (ichiban) = Nummer eins, am meisten."
+                },
+                {
+                  "option_text": "ein bisschen",
+                  "is_correct": false,
+                  "feedback": "Ein bisschen wäre すこし (sukoshi)."
+                },
+                {
+                  "option_text": "nicht so sehr",
+                  "is_correct": false,
+                  "feedback": "Das wäre あまり … ません (amari … masen)."
+                },
+                {
+                  "option_text": "nur",
+                  "is_correct": false,
+                  "feedback": "Nur wäre だけ (dake)."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「子どもたち」 (kodomotachi) bedeutet 'die Kinder' (mehrere).",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Genau — ～たち (tachi) macht bei Personen die Mehrzahl.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Richtig — ～たち (tachi) = Mehrzahl bei Personen."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — ～たち (tachi) zeigt die Mehrzahl."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Zusammenfassung",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Das hast du gelernt\n\nSuper! Jetzt kannst du Mengen messen und Zeitspannen angeben.\n\n- **Einheiten**: キロ (kiro), グラム (guramu), メートル (meetoru), ～ど (do)\n- **Dauer**: 三か月 (sankagetsu), 一しゅうかん (isshuukan), 一日 (ichinichi)\n- **Ungefähr und genau**: ～くらい (kurai), ～ごろ (goro), ～すぎ (sugi)\n- **Nur und je**: ～だけ (dake), ～ずつ (zutsu)\n\n> Merke die wichtigsten **Lesungen**: いっかげつ (ikkagetsu), いっしゅうかん (isshuukan), じゅっかげつ (jukkagetsu). Die kleine っ (tsu) verdoppelt den folgenden Laut.\n\nTipp für den Alltag: Lies beim Einkaufen die **Grammangaben** auf den Packungen laut auf Japanisch. In der nächsten Lektion geht es weiter — Schritt für Schritt zum **N5**."
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -15,6 +15,10 @@ Format je Eintrag:
 Keine Commit-Hashes, keine internen Namen.
 -->
 
+## 2026-09-26 | Zwei neue Lektionen: Dinge im Haushalt und Masseinheiten
+In „Dinge im Haushalt" lernst du Teller, Gabel, Portemonnaie, Brief und Briefmarke und sagst, womit du etwas machst und wem etwas gehört. „Masseinheiten und Zeitdauer" bringt Kilo, Gramm und Meter, Zeitspannen wie drei Monate oder zwei Wochen samt ihren besonderen Lesungen sowie „etwa", „gegen", „nur" und „je".
+Link: /lessons
+
 ## 2026-09-26 | Drei neue Lektionen: Fragewörter, Grosseltern und Orte in der Stadt
 In „Fragewörter und Satzverbinder" fragst du mit どう, どうして und どんな nach und verbindest Sätze mit それから, でも und そして. „Grosseltern und Verwandte" bringt おじいさん, おばあさん, Onkel und Tante dazu, und in „Orte in der Stadt 2" findest du Gemüseladen, Polizeiposten und Botschaft.
 Link: /lessons

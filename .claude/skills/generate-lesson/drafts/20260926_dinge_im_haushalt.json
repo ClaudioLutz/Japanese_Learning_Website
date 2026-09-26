@@ -1,0 +1,876 @@
+{
+  "title": "Dinge im Haushalt — Geschirr, Post und Gepäck",
+  "description": "Lerne 18 Alltagsgegenstände vom Teller bis zur Briefmarke und sage, womit du etwas machst, wohin du etwas legst und wem es gehört.",
+  "jlpt_level": 5,
+  "topic": "Dinge im Haushalt",
+  "instruction_language": "german",
+  "allow_guest_access": false,
+  "thumbnail_url": "generated/thumbnail_dinge_im_haushalt_20260926_162736.png",
+  "pages": [
+    {
+      "title": "Einführung",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Dinge im Haushalt\n\nAm Esstisch, am Schreibtisch oder vor einer Reise — überall brauchst du die Namen von **Alltagsgegenständen**. In dieser Lektion lernst du 18 Wörter für Dinge, die du täglich in die Hand nimmst.\n\n- **Geschirr und Besteck**: おさら (osara, Teller), コップ (koppu, Glas), スプーン (supuun, Löffel), フォーク (fooku, Gabel), ナイフ (naifu, Messer)\n- **Post und Papier**: てがみ (tegami, Brief), ふうとう (fuutou, Umschlag), きって (kitte, Briefmarke), ポスト (posuto, Briefkasten)\n- **Unterwegs**: さいふ (saifu, Portemonnaie) und にもつ (nimotsu, Gepäck)\n\nDazu lernst du drei **Satzmuster**: sagen, *womit* du etwas machst, *wohin* du etwas legst und *wem* etwas gehört.\n\n> Viele dieser Wörter sind **Lehnwörter** aus dem Englischen und werden in Katakana geschrieben — zum Beispiel フォーク (fooku, von 'fork') oder ナイフ (naifu, von 'knife'). Die kannst du dir besonders leicht merken."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln Teil 1 — Am Esstisch",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Teil 1 — Am Esstisch\n\nHier findest du **Geschirr und Besteck** — und zwei Dinge, die man früher auf fast jedem Tisch fand.\n\n- **カップ (kappu)** ist eine Tasse *mit* Henkel, zum Beispiel für Kaffee.\n- **コップ (koppu)** ist ein Trinkglas *ohne* Henkel, zum Beispiel für Wasser.\n- **おさら (osara)**: Das お (o) vorne ist eine höfliche Vorsilbe. Das Wort selbst heisst さら (sara).\n\n> Lautveränderung: In **はいざら (haizara, Aschenbecher)** steckt はい (hai, Asche) + さら (sara, Teller). Im zusammengesetzten Wort wird さ (sa) zu ざ (za)."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1032,
+            "word": "お皿",
+            "reading": "おさら",
+            "romaji": "osara",
+            "meaning": "plate, dish",
+            "meaning_de": "Teller",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "テーブルに おさらを おきます。",
+            "example_sentence_english": "Tēburu ni o-sara o okimasu. — Ich stelle den Teller auf den Tisch.",
+            "image_url": "vocab_generated/vocab_41de42dd.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1033,
+            "word": "灰皿",
+            "reading": "はいざら",
+            "romaji": "haizara",
+            "meaning": "ashtray",
+            "meaning_de": "Aschenbecher",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "はいざらは ありますか。",
+            "example_sentence_english": "Haizara wa arimasu ka. — Gibt es einen Aschenbecher?",
+            "image_url": "vocab_generated/vocab_a761ae4a.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1034,
+            "word": "カップ",
+            "reading": "カップ",
+            "romaji": "kappu",
+            "meaning": "cup",
+            "meaning_de": "Tasse, Becher",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "カップにコーヒーを入れます。",
+            "example_sentence_english": "Kappu ni kōhī o iremasu. — Ich giesse Kaffee in die Tasse.",
+            "image_url": "vocab_generated/vocab_cd4f86cd.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1035,
+            "word": "コップ",
+            "reading": "コップ",
+            "romaji": "koppu",
+            "meaning": "glass, tumbler",
+            "meaning_de": "Glas (Trinkglas)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "コップで水をのみます。",
+            "example_sentence_english": "Koppu de mizu o nomimasu. — Ich trinke Wasser aus einem Glas.",
+            "image_url": "vocab_generated/vocab_914d0dab.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1036,
+            "word": "スプーン",
+            "reading": "スプーン",
+            "romaji": "supuun",
+            "meaning": "spoon",
+            "meaning_de": "Löffel",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "スプーンでカレーを食べます。",
+            "example_sentence_english": "Supūn de karē o tabemasu. — Ich esse Curry mit einem Löffel.",
+            "image_url": "vocab_generated/vocab_611de149.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1037,
+            "word": "フォーク",
+            "reading": "フォーク",
+            "romaji": "fooku",
+            "meaning": "fork",
+            "meaning_de": "Gabel",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "フォークをください。",
+            "example_sentence_english": "Fōku o kudasai. — Eine Gabel, bitte.",
+            "image_url": "vocab_generated/vocab_cab4f6be.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1038,
+            "word": "ナイフ",
+            "reading": "ナイフ",
+            "romaji": "naifu",
+            "meaning": "knife",
+            "meaning_de": "Messer",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ナイフとフォークで食べます。",
+            "example_sentence_english": "Naifu to fōku de tabemasu. — Ich esse mit Messer und Gabel.",
+            "image_url": "vocab_generated/vocab_574fec7e.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1039,
+            "word": "マッチ",
+            "reading": "マッチ",
+            "romaji": "macchi",
+            "meaning": "match (for lighting)",
+            "meaning_de": "Streichholz",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "すみません、マッチはありますか。",
+            "example_sentence_english": "Sumimasen, macchi wa arimasu ka. — Entschuldigung, haben Sie Streichhölzer?",
+            "image_url": "vocab_generated/vocab_7d093f9e.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1040,
+            "word": "たばこ",
+            "reading": "たばこ",
+            "romaji": "tabako",
+            "meaning": "tobacco, cigarettes",
+            "meaning_de": "Zigarette, Tabak",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "父はたばこがきらいです。",
+            "example_sentence_english": "Chichi wa tabako ga kirai desu. — Mein Vater mag keine Zigaretten.",
+            "image_url": "vocab_generated/vocab_9cc41870.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln Teil 2 — Post, Papier und Unterwegs",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Teil 2 — Post, Papier und Unterwegs\n\nJetzt geht es um **Briefe**, **Papier** und Dinge, die du auf eine Reise mitnimmst.\n\n- **てがみ (tegami)** heisst 'Brief'. Es besteht aus て (te, Hand) + かみ (kami, Papier) — auch hier wird か (ka) zu が (ga).\n- **きって (kitte)** ist die Briefmarke, **ふうとう (fuutou)** der Umschlag, **ポスト (posuto)** der rote Briefkasten an der Strasse.\n- **まんねんひつ (mannenhitsu)** ist die Füllfeder — wörtlich ein 'Zehntausend-Jahre-Stift'.\n\n> Hinweis: **ラジオカセ (rajiokase)** ist ein Radio mit Kassettenteil. Das Wort ist etwas altmodisch, steht aber auf der offiziellen N5-Liste."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1041,
+            "word": "財布",
+            "reading": "さいふ",
+            "romaji": "saifu",
+            "meaning": "wallet",
+            "meaning_de": "Portemonnaie",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "さいふに お金が ありません。",
+            "example_sentence_english": "Saifu ni o-kane ga arimasen. — Im Portemonnaie ist kein Geld.",
+            "image_url": "vocab_generated/vocab_87d3a938.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1042,
+            "word": "紙",
+            "reading": "かみ",
+            "romaji": "kami",
+            "meaning": "paper",
+            "meaning_de": "Papier",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "かみに 名前を 書いて ください。",
+            "example_sentence_english": "Kami ni namae o kaite kudasai. — Schreiben Sie bitte Ihren Namen auf das Papier.",
+            "image_url": "vocab_generated/vocab_b9ebead7.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1043,
+            "word": "手紙",
+            "reading": "てがみ",
+            "romaji": "tegami",
+            "meaning": "letter",
+            "meaning_de": "Brief",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "友だちに てがみを 書きました。",
+            "example_sentence_english": "Tomodachi ni tegami o kakimashita. — Ich habe einem Freund einen Brief geschrieben.",
+            "image_url": "vocab_generated/vocab_415004b6.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1044,
+            "word": "封筒",
+            "reading": "ふうとう",
+            "romaji": "fuutou",
+            "meaning": "envelope",
+            "meaning_de": "Briefumschlag, Couvert",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ふうとうに てがみを 入れます。",
+            "example_sentence_english": "Fūtō ni tegami o iremasu. — Ich stecke den Brief in den Umschlag.",
+            "image_url": "vocab_generated/vocab_f6428ff1.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1045,
+            "word": "切手",
+            "reading": "きって",
+            "romaji": "kitte",
+            "meaning": "postage stamp",
+            "meaning_de": "Briefmarke",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ゆうびんきょくで きってを かいました。",
+            "example_sentence_english": "Yūbinkyoku de kitte o kaimashita. — Ich habe auf der Post Briefmarken gekauft.",
+            "image_url": "vocab_generated/vocab_37d747f6.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1046,
+            "word": "ポスト",
+            "reading": "ポスト",
+            "romaji": "posuto",
+            "meaning": "mailbox, postbox",
+            "meaning_de": "Briefkasten",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "えきの前にポストがあります。",
+            "example_sentence_english": "Eki no mae ni posuto ga arimasu. — Vor dem Bahnhof gibt es einen Briefkasten.",
+            "image_url": "vocab_generated/vocab_473625b3.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1047,
+            "word": "荷物",
+            "reading": "にもつ",
+            "romaji": "nimotsu",
+            "meaning": "luggage, baggage",
+            "meaning_de": "Gepäck",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "にもつが とても おもいです。",
+            "example_sentence_english": "Nimotsu ga totemo omoi desu. — Das Gepäck ist sehr schwer.",
+            "image_url": "vocab_generated/vocab_3df82f20.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1048,
+            "word": "万年筆",
+            "reading": "まんねんひつ",
+            "romaji": "mannenhitsu",
+            "meaning": "fountain pen",
+            "meaning_de": "Füllfeder",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "父の まんねんひつで 書きます。",
+            "example_sentence_english": "Chichi no mannenhitsu de kakimasu. — Ich schreibe mit der Füllfeder meines Vaters.",
+            "image_url": "vocab_generated/vocab_c9981e0b.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1049,
+            "word": "ラジオカセ",
+            "reading": "ラジオカセ",
+            "romaji": "rajiokase",
+            "meaning": "radio cassette player",
+            "meaning_de": "Radiorekorder",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ラジオカセでおんがくを聞きます。",
+            "example_sentence_english": "Rajiokase de ongaku o kikimasu. — Ich höre Musik mit dem Radiorekorder.",
+            "image_url": "vocab_generated/vocab_59a39ea7.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        }
+      ]
+    },
+    {
+      "title": "Grammatik — benutzen, hinlegen, zuordnen",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Grammatik — benutzen, hinlegen, zuordnen\n\nMit drei kurzen Mustern kannst du über die neuen Gegenstände sprechen:\n\n1. **で (de)** — womit du etwas machst: フォークで (fooku de, mit der Gabel)\n2. **に … を 入れます / おきます (ni … o iremasu / okimasu)** — wohin du etwas tust\n3. **だれの (dare no)** — wem etwas gehört\n\n> Merke: Die Partikel **で (de)** zeigt das Werkzeug, die Partikel **に (ni)** zeigt das Ziel, wohin etwas kommt."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "[Werkzeug] で — womit man etwas macht (~ de)",
+            "explanation": "Die Partikel 「で」 (de) nach einem Gegenstand zeigt das Mittel oder Werkzeug: 'mit'. Du stellst das Werkzeug an den Satzanfang, dann folgt das Objekt mit 「を」 (o) und das Verb. So sagst du zum Beispiel, dass du mit dem Messer schneidest oder mit der Füllfeder schreibst.",
+            "structure": "[Werkzeug] + で + [Objekt] + を + [Verb]  ([tool] + de + [object] + o + [verb])",
+            "romaji": "[tool] + de + [object] + o + [verb]",
+            "jlpt_level": 5,
+            "example_sentences": "ナイフで にくを きります。 (Naifu de niku o kirimasu.) — Ich schneide das Fleisch mit dem Messer.\nまんねんひつで 名前を 書きます。 (Mannenhitsu de namae o kakimasu.) — Ich schreibe den Namen mit der Füllfeder.\nコップで 水を のみます。 (Koppu de mizu o nomimasu.) — Ich trinke Wasser aus dem Glas.",
+            "tts_example_jp": "ナイフで にくを きります。",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "[Ort] に [Ding] を 入れます / おきます — hineintun und hinlegen (~ ni ~ o iremasu / okimasu)",
+            "explanation": "「入れます」 (iremasu) heisst 'hineintun, hineinstecken', 「おきます」 (okimasu) heisst 'hinlegen, hinstellen'. Der Ort, wohin etwas kommt, bekommt die Partikel 「に」 (ni), der Gegenstand die Partikel 「を」 (o). Die Reihenfolge ist also: Ziel — Gegenstand — Verb.",
+            "structure": "[Ort] + に + [Ding] + を + 入れます / おきます  ([place] + ni + [thing] + o + iremasu / okimasu)",
+            "romaji": "[place] + ni + [thing] + o + iremasu / okimasu",
+            "jlpt_level": 5,
+            "example_sentences": "ふうとうに てがみを 入れます。 (Fuutou ni tegami o iremasu.) — Ich stecke den Brief in den Umschlag.\nテーブルに おさらを おきます。 (Teeburu ni osara o okimasu.) — Ich stelle den Teller auf den Tisch.\nかばんに さいふを 入れました。 (Kaban ni saifu o iremashita.) — Ich habe das Portemonnaie in die Tasche gesteckt.",
+            "tts_example_jp": "ふうとうに てがみを 入れます。",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "だれの [Ding] ですか — wem gehört das? (dare no ~ desu ka)",
+            "explanation": "Die Partikel 「の」 (no) verbindet Besitzer und Gegenstand: 「わたしの さいふ」 (watashi no saifu) = mein Portemonnaie. Mit dem Fragewort 「だれ」 (dare, wer) fragst du 「だれの」 (dare no) = 'wessen'. In der Antwort kannst du den Gegenstand weglassen: 「わたしのです」 (watashi no desu) = 'Das ist meins'.",
+            "structure": "これは だれの + [Ding] + ですか  (kore wa dare no + [thing] + desu ka)",
+            "romaji": "kore wa dare no + [thing] + desu ka",
+            "jlpt_level": 5,
+            "example_sentences": "これは だれの さいふですか。 (Kore wa dare no saifu desu ka.) — Wessen Portemonnaie ist das?\nそれは 先生の にもつです。 (Sore wa sensei no nimotsu desu.) — Das ist das Gepäck der Lehrerin.\nこの まんねんひつは 父のです。 (Kono mannenhitsu wa chichi no desu.) — Diese Füllfeder gehört meinem Vater.",
+            "tts_example_jp": "これは だれの さいふですか。",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        }
+      ]
+    },
+    {
+      "title": "Dialog — Ein Brief nach Deutschland",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "Lisa: メイさん、ふうとうは ありますか。\n  (Mei-san, fuutou wa arimasu ka.)\n  -> Mei, hast du einen Briefumschlag?\n\nMei: はい、ありますよ。だれに てがみを 書きましたか。\n  (Hai, arimasu yo. Dare ni tegami o kakimashita ka.)\n  -> Ja, habe ich. Wem hast du einen Brief geschrieben?\n\nLisa: ドイツの 母に 書きました。しゃしんも 入れます。\n  (Doitsu no haha ni kakimashita. Shashin mo iremasu.)\n  -> Meiner Mutter in Deutschland. Ich lege auch ein Foto hinein.\n\nMei: いいですね。きっても いりますか。\n  (Ii desu ne. Kitte mo irimasu ka.)\n  -> Schön. Brauchst du auch Briefmarken?\n\nLisa: はい。でも、きっては ありません。\n  (Hai. Demo, kitte wa arimasen.)\n  -> Ja. Aber ich habe keine Briefmarken.\n\nMei: わたしの さいふに 二まい ありますよ。どうぞ。\n  (Watashi no saifu ni ni-mai arimasu yo. Douzo.)\n  -> In meinem Portemonnaie sind zwei. Bitte schön.\n\nLisa: ありがとうございます。ポストは どこですか。\n  (Arigatou gozaimasu. Posuto wa doko desu ka.)\n  -> Vielen Dank. Wo ist der Briefkasten?\n\nMei: えきの 前に ありますよ。いっしょに 行きましょう。\n  (Eki no mae ni arimasu yo. Issho ni ikimashou.)\n  -> Vor dem Bahnhof. Lass uns zusammen hingehen.",
+            "title": "Ein Brief nach Deutschland — Lisa und Mei"
+          }
+        },
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "### Verständnisfragen\n\nFünf kurze Fragen zum **Dialog**. Achte auf den **Brief**, die **Briefmarken** und den Ort des Briefkastens — ポスト (posuto)."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wem hat Lisa einen Brief geschrieben?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Lisa sagt: 「ドイツの 母に 書きました」 (Doitsu no haha ni kakimashita) — Ich habe meiner Mutter in Deutschland geschrieben.",
+              "options": [
+                {
+                  "option_text": "Ihrer Mutter in Deutschland",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「ドイツの 母に」 (Doitsu no haha ni) = meiner Mutter in Deutschland."
+                },
+                {
+                  "option_text": "Ihrem Vater in Deutschland",
+                  "is_correct": false,
+                  "feedback": "Vater wäre 父 (chichi). Lisa sagt 母 (haha), also Mutter."
+                },
+                {
+                  "option_text": "Ihrer Lehrerin in Japan",
+                  "is_correct": false,
+                  "feedback": "Von einer Lehrerin ist im Dialog nicht die Rede."
+                },
+                {
+                  "option_text": "Mei",
+                  "is_correct": false,
+                  "feedback": "Mei hilft Lisa nur mit dem Umschlag und den Briefmarken."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was legt Lisa zusätzlich in den Umschlag?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「しゃしん」 (shashin) heisst 'Foto'. Mit 「も」 (mo, auch) sagt Lisa: auch ein Foto.",
+              "options": [
+                {
+                  "option_text": "ein Foto",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「しゃしんも 入れます」 (shashin mo iremasu) = ich lege auch ein Foto hinein."
+                },
+                {
+                  "option_text": "eine Briefmarke",
+                  "is_correct": false,
+                  "feedback": "Briefmarken klebt man aussen auf, und Lisa hat zuerst gar keine."
+                },
+                {
+                  "option_text": "Geld",
+                  "is_correct": false,
+                  "feedback": "Von Geld ist nicht die Rede."
+                },
+                {
+                  "option_text": "eine Füllfeder",
+                  "is_correct": false,
+                  "feedback": "Eine Füllfeder kommt im Dialog nicht vor."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie viele Briefmarken hat Mei in ihrem Portemonnaie?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Mei sagt 「わたしの さいふに 二まい ありますよ」 (watashi no saifu ni ni-mai arimasu yo). Briefmarken sind flach, darum der Zähler 「まい」 (mai).",
+              "options": [
+                {
+                  "option_text": "zwei",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「二まい」 (ni-mai) = zwei flache Dinge."
+                },
+                {
+                  "option_text": "eine",
+                  "is_correct": false,
+                  "feedback": "Eine wäre 「一まい」 (ichi-mai)."
+                },
+                {
+                  "option_text": "drei",
+                  "is_correct": false,
+                  "feedback": "Drei wäre 「三まい」 (san-mai)."
+                },
+                {
+                  "option_text": "keine",
+                  "is_correct": false,
+                  "feedback": "Keine Briefmarken hat Lisa, nicht Mei."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Lisa hat schon Briefmarken.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Lisa sagt 「きっては ありません」 (kitte wa arimasen) — sie hat keine. Mei gibt ihr zwei.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nicht ganz — Lisa sagt 「きっては ありません」 (kitte wa arimasen)."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Richtig erkannt — Lisa hat keine Briefmarken."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wo ist der Briefkasten (ポスト, posuto)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Mei sagt 「えきの 前に ありますよ」 (eki no mae ni arimasu yo) — vor dem Bahnhof.",
+              "options": [
+                {
+                  "option_text": "vor dem Bahnhof",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「えきの 前に」 (eki no mae ni) = vor dem Bahnhof."
+                },
+                {
+                  "option_text": "hinter dem Bahnhof",
+                  "is_correct": false,
+                  "feedback": "Hinter wäre 「うしろ」 (ushiro)."
+                },
+                {
+                  "option_text": "vor der Schule",
+                  "is_correct": false,
+                  "feedback": "Mei spricht vom Bahnhof, 「えき」 (eki)."
+                },
+                {
+                  "option_text": "in Meis Wohnung",
+                  "is_correct": false,
+                  "feedback": "Der Briefkasten steht draussen an der Strasse."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Übung",
+      "page_type": "quiz_carousel",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Übung\n\nElf Fragen zu den **Gegenständen** und den **Partikeln**.\n\n- Lies jede Frage genau.\n- Achte auf で (de) für das Werkzeug und に (ni) für das Ziel."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「おさら」 (osara)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「おさら」 (osara) heisst 'Teller'. Das お (o) ist eine höfliche Vorsilbe.",
+              "options": [
+                {
+                  "option_text": "Teller",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "Tasse",
+                  "is_correct": false,
+                  "feedback": "Tasse wäre カップ (kappu)."
+                },
+                {
+                  "option_text": "Glas",
+                  "is_correct": false,
+                  "feedback": "Glas wäre コップ (koppu)."
+                },
+                {
+                  "option_text": "Löffel",
+                  "is_correct": false,
+                  "feedback": "Löffel wäre スプーン (supuun)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie heisst 'Gabel' auf Japanisch?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Die Gabel heisst 「フォーク」 (fooku) — ein Lehnwort aus dem Englischen.",
+              "options": [
+                {
+                  "option_text": "フォーク (fooku)",
+                  "is_correct": true,
+                  "feedback": "Richtig — von englisch 'fork'."
+                },
+                {
+                  "option_text": "ナイフ (naifu)",
+                  "is_correct": false,
+                  "feedback": "ナイフ (naifu) ist das Messer."
+                },
+                {
+                  "option_text": "スプーン (supuun)",
+                  "is_correct": false,
+                  "feedback": "スプーン (supuun) ist der Löffel."
+                },
+                {
+                  "option_text": "コップ (koppu)",
+                  "is_correct": false,
+                  "feedback": "コップ (koppu) ist das Trinkglas."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「カップ」 (kappu) ist eine Tasse mit Henkel, 「コップ」 (koppu) ein Trinkglas ohne Henkel.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Genau: カップ (kappu) für Kaffee oder Tee, コップ (koppu) für Wasser oder Saft.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Richtig — die beiden Wörter sehen ähnlich aus, bezeichnen aber verschiedene Dinge."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch, das stimmt: カップ (kappu) = Tasse, コップ (koppu) = Glas."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde die Wörter rund um die Post mit der deutschen Bedeutung.",
+              "difficulty_level": 2,
+              "points": 4,
+              "options": [
+                {
+                  "option_text": "てがみ (tegami)",
+                  "is_correct": true,
+                  "feedback": "Brief"
+                },
+                {
+                  "option_text": "ふうとう (fuutou)",
+                  "is_correct": true,
+                  "feedback": "Briefumschlag"
+                },
+                {
+                  "option_text": "きって (kitte)",
+                  "is_correct": true,
+                  "feedback": "Briefmarke"
+                },
+                {
+                  "option_text": "ポスト (posuto)",
+                  "is_correct": true,
+                  "feedback": "Briefkasten"
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welche Partikel passt? 「ナイフ ___ にくを きります。」 (Naifu ___ niku o kirimasu.) — Ich schneide das Fleisch mit dem Messer.",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Das Werkzeug bekommt 「で」 (de): 「ナイフで」 (naifu de) = mit dem Messer.",
+              "options": [
+                {
+                  "option_text": "で (de)",
+                  "is_correct": true,
+                  "feedback": "Richtig — で (de) zeigt das Werkzeug."
+                },
+                {
+                  "option_text": "に (ni)",
+                  "is_correct": false,
+                  "feedback": "に (ni) zeigt ein Ziel oder einen Zeitpunkt, nicht das Werkzeug."
+                },
+                {
+                  "option_text": "を (o)",
+                  "is_correct": false,
+                  "feedback": "を (o) steht schon bei にく (niku), dem Objekt."
+                },
+                {
+                  "option_text": "の (no)",
+                  "is_correct": false,
+                  "feedback": "の (no) zeigt Besitz: ナイフの (naifu no) = des Messers."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welche Partikel passt? 「ふうとう ___ てがみを 入れます。」 (Fuutou ___ tegami o iremasu.) — Ich stecke den Brief in den Umschlag.",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Bei 「入れます」 (iremasu) bekommt das Ziel die Partikel 「に」 (ni).",
+              "options": [
+                {
+                  "option_text": "に (ni)",
+                  "is_correct": true,
+                  "feedback": "Richtig — に (ni) zeigt, wohin etwas kommt."
+                },
+                {
+                  "option_text": "で (de)",
+                  "is_correct": false,
+                  "feedback": "で (de) wäre 'mit dem Umschlag' — das ergibt hier keinen Sinn."
+                },
+                {
+                  "option_text": "を (o)",
+                  "is_correct": false,
+                  "feedback": "を (o) gehört zum Brief, てがみ (tegami)."
+                },
+                {
+                  "option_text": "は (wa)",
+                  "is_correct": false,
+                  "feedback": "は (wa) markiert das Thema, nicht das Ziel."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「さいふ」 (saifu) bedeutet 'Gepäck'.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「さいふ」 (saifu) ist das Portemonnaie. Gepäck heisst 「にもつ」 (nimotsu).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nein — さいふ (saifu) ist das Portemonnaie, Gepäck ist にもつ (nimotsu)."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Richtig erkannt — さいふ (saifu) = Portemonnaie."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie fragst du: 'Wessen Portemonnaie ist das?'",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Besitz zeigt 「の」 (no). Mit だれ (dare, wer) wird daraus 「だれの」 (dare no) = wessen.",
+              "options": [
+                {
+                  "option_text": "これは だれの さいふですか。 (Kore wa dare no saifu desu ka.)",
+                  "is_correct": true,
+                  "feedback": "Richtig — だれの (dare no) = wessen."
+                },
+                {
+                  "option_text": "これは だれが さいふですか。 (Kore wa dare ga saifu desu ka.)",
+                  "is_correct": false,
+                  "feedback": "だれが (dare ga) heisst 'wer' als Subjekt — hier fehlt das の (no)."
+                },
+                {
+                  "option_text": "これは だれに さいふですか。 (Kore wa dare ni saifu desu ka.)",
+                  "is_correct": false,
+                  "feedback": "だれに (dare ni) heisst 'wem' als Empfänger, nicht Besitz."
+                },
+                {
+                  "option_text": "これは だれで さいふですか。 (Kore wa dare de saifu desu ka.)",
+                  "is_correct": false,
+                  "feedback": "で (de) zeigt ein Mittel, keinen Besitz."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde die Dinge vom Esstisch mit der deutschen Bedeutung.",
+              "difficulty_level": 2,
+              "points": 4,
+              "options": [
+                {
+                  "option_text": "おさら (osara)",
+                  "is_correct": true,
+                  "feedback": "Teller"
+                },
+                {
+                  "option_text": "スプーン (supuun)",
+                  "is_correct": true,
+                  "feedback": "Löffel"
+                },
+                {
+                  "option_text": "ナイフ (naifu)",
+                  "is_correct": true,
+                  "feedback": "Messer"
+                },
+                {
+                  "option_text": "コップ (koppu)",
+                  "is_correct": true,
+                  "feedback": "Trinkglas"
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wofür braucht man 「はいざら」 (haizara)?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "「はいざら」 (haizara) ist der Aschenbecher: はい (hai, Asche) + さら (sara, Teller), wobei さ (sa) zu ざ (za) wird.",
+              "options": [
+                {
+                  "option_text": "für die Asche von Zigaretten",
+                  "is_correct": true,
+                  "feedback": "Richtig — はい (hai) = Asche, ざら (zara) = Teller."
+                },
+                {
+                  "option_text": "für Suppe",
+                  "is_correct": false,
+                  "feedback": "Suppe isst man aus einer Schale oder mit einer スプーン (supuun)."
+                },
+                {
+                  "option_text": "für Briefe",
+                  "is_correct": false,
+                  "feedback": "Briefe steckt man in eine ふうとう (fuutou)."
+                },
+                {
+                  "option_text": "für Geld",
+                  "is_correct": false,
+                  "feedback": "Geld steckt man in die さいふ (saifu)."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「てがみ」 (tegami) bedeutet auf Japanisch 'Brief'.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Genau: てがみ (tegami) = Brief — aus て (te, Hand) und かみ (kami, Papier).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Richtig — てがみ (tegami) ist der Brief."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch, das stimmt: てがみ (tegami) = Brief."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Zusammenfassung",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Das hast du gelernt\n\nGlückwunsch! Du kennst jetzt 18 Gegenstände aus dem Alltag und kannst über sie sprechen.\n\n- **Esstisch**: おさら (osara), カップ (kappu), コップ (koppu), スプーン (supuun), フォーク (fooku), ナイフ (naifu)\n- **Post**: てがみ (tegami), ふうとう (fuutou), きって (kitte), ポスト (posuto)\n- **Muster**: ナイフで (naifu de, mit dem Messer) — ふうとうに 入れます (fuutou ni iremasu, in den Umschlag tun) — だれの さいふ (dare no saifu, wessen Portemonnaie)\n\n> Tipp: Benenne beim nächsten Essen jeden Gegenstand auf dem Tisch auf Japanisch — laut. Und wenn du einen Brief schreibst: ふうとうに てがみを 入れます (fuutou ni tegami o iremasu)!\n\nIn der nächsten Lektion lernst du weitere Wörter rund ums **Wohnen** — Schritt für Schritt zum **N5**."
+          }
+        }
+      ]
+    }
+  ]
+}
