@@ -138,11 +138,28 @@
                 this.fallbackPage = parseInt(el.dataset.pageNumber, 10) || null;
                 try { this.pageNumbers = JSON.parse(el.dataset.pageNumbers || '[]'); } catch (e) { this.pageNumbers = []; }
                 this.romajiOn = readRomajiPref();
+                // /sprechen/<id>: Panel ohne Lektionsseite → sofort offen + Szene laden.
+                if (el.dataset.standalone === '1') {
+                    this.open = true;
+                    this.loadScene();
+                }
             },
 
             // ── Ansichtshilfen ───────────────────────────────────────────
             get botName() { return (this.session && this.session.role_bot) || 'Partner'; },
             get userName() { return (this.session && this.session.role_user) || 'Du'; },
+            // Geschlecht der Bot-Rolle aus der Szene ('m' | 'f' | null → Standardstimme).
+            get botGender() {
+                var name = this.session && this.session.role_bot;
+                var roles = (this.scene && this.scene.roles) || [];
+                for (var i = 0; i < roles.length; i++) {
+                    if (roles[i].name === name) {
+                        var g = roles[i].gender;
+                        return g === 'm' || g === 'f' ? g : null;
+                    }
+                }
+                return null;
+            },
             get turnCount() { return (this.session && this.session.turn_count) || 0; },
             get maxTurns() { return (this.session && this.session.max_user_turns) || 8; },
             get minTurns() { return (this.session && this.session.min_user_turns) || 4; },
@@ -424,11 +441,14 @@
                 var self = this;
                 this.stopAudio();
                 this.speaking = true;
+                var payload = { text: text, lang: 'ja', speed: 0.85 };
+                var gender = this.botGender;
+                if (gender) payload.voice_gender = gender;
                 fetch('/api/tts', {
                     method: 'POST',
                     credentials: 'same-origin',
                     headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken() },
-                    body: JSON.stringify({ text: text, lang: 'ja', speed: 0.85 }),
+                    body: JSON.stringify(payload),
                 }).then(function (resp) {
                     if (!resp.ok) throw new Error('tts');
                     return resp.blob();

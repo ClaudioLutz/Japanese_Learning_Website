@@ -15,6 +15,10 @@ Format je Eintrag:
 Keine Commit-Hashes, keine internen Namen.
 -->
 
+## 2026-09-26 | Neue Seite „Sprechen": alle Dialoge an einem Ort
+Unter Üben → Sprechen findest du jetzt alle Dialogszenen deiner Lektionen nach Modul sortiert — Szenen aus abgeschlossenen Lektionen sind „bereit", die anderen kannst du trotzdem schon spielen. Unter „Meine Gespräche" siehst du jedes Rollenspiel noch einmal mit Lesung, Übersetzung und Verbesserungsvorschlägen, und auf „Mein Lernen" schlägt dir die Kachel „Heute sprechen" eine passende Szene vor. Beim Vorlesen klingen Männer- und Frauenrollen jetzt passend.
+Link: /sprechen
+
 ## 2026-09-26 | Rollenspiel: Sprich den Dialog der Lektion selbst
 Unter jedem Lektionsdialog kannst du jetzt „Rollenspiel starten": Du wählst eine Rolle und führst das Gespräch selbst weiter — mit drei Antwortvorschlägen, einem Hinweis, Vorlesen und Romaji-Eingabe, die sich automatisch in Kana verwandelt. Am Ende bekommst du Verbesserungsvorschläge und ab vier Zügen XP. Im selben Kasten beantwortet dir „Frag zur Seite" Fragen zum Inhalt der aktuellen Lektionsseite.
 Link: /lessons

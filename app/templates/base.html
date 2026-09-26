@@ -190,7 +190,7 @@
              DE→JP) am Trigger; die beiden Richtungs-Items tragen eigene Zähler. #}
           <div class="topnav-ueben" @click.stop="uebenMenuOpen = !uebenMenuOpen; userMenuOpen = false">
             <button type="button"
-                    class="topnav-link topnav-ueben-trigger {% if request.endpoint in ['srs.review_page', 'srs.production_page', 'srs.practice_kana_page', 'srs.practice_kana_game_page', 'srs.practice_kana_storm_page', 'pruefen.pruefen_start', 'pruefen.pruefen_session'] %}is-active{% endif %}"
+                    class="topnav-link topnav-ueben-trigger {% if request.endpoint in ['srs.review_page', 'srs.production_page', 'srs.practice_kana_page', 'srs.practice_kana_game_page', 'srs.practice_kana_storm_page', 'pruefen.pruefen_start', 'pruefen.pruefen_session', 'sprechen.index', 'sprechen.play', 'sprechen.history', 'sprechen.history_detail'] %}is-active{% endif %}"
                     :aria-expanded="uebenMenuOpen.toString()" aria-haspopup="true" aria-controls="topnavUebenMenu">
               <i class="fas fa-brain" aria-hidden="true"></i><span>Üben</span>
               <span class="nav-due-badge" id="uebenBadgeDesktop" aria-hidden="true"></span>
@@ -220,6 +220,14 @@
                 <i class="fas fa-clipboard-check" aria-hidden="true"></i>
                 <span class="topnav-dd-grow">Prüfen</span>
               </a>
+              {% if roleplay_enabled %}
+              {% set _sp_active = request.endpoint and request.endpoint.startswith('sprechen.') %}
+              <a href="{{ url_for('sprechen.index') }}" class="topnav-dd-item {% if _sp_active %}is-active{% endif %}"
+                 {% if _sp_active %}aria-current="page"{% endif %}>
+                <i class="fas fa-comments" aria-hidden="true"></i>
+                <span class="topnav-dd-grow">Sprechen <small>Rollenspiel</small></span>
+              </a>
+              {% endif %}
             </div>
           </div>
           {% endif %}
@@ -793,7 +801,7 @@
         </a>
         {% if current_user.is_authenticated %}
         {# Üben-Hub: Wiederholen/Kana/Prüfen gebündelt; Aggregat-Fälligkeits-Badge. #}
-        <button type="button" class="bottom-nav-item{% if request.endpoint in ['srs.review_page', 'srs.production_page', 'srs.practice_kana_page', 'srs.practice_kana_game_page', 'srs.practice_kana_storm_page', 'pruefen.pruefen_start', 'pruefen.pruefen_session'] %} active{% endif %}" id="uebenNavItem"
+        <button type="button" class="bottom-nav-item{% if request.endpoint in ['srs.review_page', 'srs.production_page', 'srs.practice_kana_page', 'srs.practice_kana_game_page', 'srs.practice_kana_storm_page', 'pruefen.pruefen_start', 'pruefen.pruefen_session', 'sprechen.index', 'sprechen.play', 'sprechen.history', 'sprechen.history_detail'] %} active{% endif %}" id="uebenNavItem"
            @click.stop="uebenSheet = true" :aria-expanded="uebenSheet.toString()" aria-haspopup="dialog" aria-controls="uebenSheet">
             <span class="bottom-nav-ico-wrap">
                 <i class="fas fa-brain" aria-hidden="true"></i>
@@ -846,6 +854,12 @@
         <i class="fas fa-clipboard-check" aria-hidden="true"></i>
         <span class="ueben-sheet__grow">Prüfen</span>
       </a>
+      {% if roleplay_enabled %}
+      <a href="{{ url_for('sprechen.index') }}" class="ueben-sheet__item">
+        <i class="fas fa-comments" aria-hidden="true"></i>
+        <span class="ueben-sheet__grow">Sprechen <small>Rollenspiel</small></span>
+      </a>
+      {% endif %}
     </div>
     {% endif %}
     </div>

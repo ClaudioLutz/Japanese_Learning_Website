@@ -37,6 +37,7 @@ from app.models import (
     Grammar, Kanji, Lesson, LessonCategory, LessonContent, LessonPage,
     RoleplaySession, RoleplayTurn, TutorQuestion, Vocabulary,
 )
+from app.speaker_gender import speaker_gender
 from app.time_utils import ch_day_start_utc
 
 logger = logging.getLogger(__name__)
@@ -450,7 +451,10 @@ def build_scene(content: LessonContent) -> dict[str, Any]:
 
     lesson = db.session.get(Lesson, content.lesson_id)
     lesson_title = lesson.title if lesson else ''
-    title = (content.title or '').strip() or lesson_title
+    title = (content.title or '').strip()
+    if not title or 'slideshow' in title.lower():
+        # Generische Inhaltstitel („Konversation (Slideshow)") → Lektionstitel.
+        title = lesson_title
     de_lines = [ln['de'] for ln in lines if ln['de']]
     scene_de = f'Szene: {title}.' if title else 'Szene aus dem Lektionsdialog.'
     if de_lines:
@@ -466,6 +470,7 @@ def build_scene(content: LessonContent) -> dict[str, Any]:
         first = own[0] if own else {'jp': '', 'de': ''}
         role_info.append({
             'name': role,
+            'gender': speaker_gender(role),   # 'm' | 'f' | None (unbekannt → Standardstimme)
             'line_count': len(own),
             'first_line_jp': first['jp'],
             'first_line_de': first['de'],
@@ -1351,6 +1356,55 @@ def ask_tutor(user, lesson: Lesson, page_number: int, question: str,
     db.session.commit()
     logger.info('Tutor: Frage beantwortet (lesson=%s, page=%s, user=%s)', lesson.id, page_number, user.id)
     return tq
+
+
+# ── Korrekturen (Verlauf/Statistik) ──────────────────────────────────────
+
+_NORM_JP_RE = re.compile(r'[\s。．.、,！!？?]')
+
+
+def is_praise(item: dict[str, Any]) -> bool:
+    """Korrekturpunkt ohne Aenderung (original == better) = Lob, keine Korrektur."""
+    return _NORM_JP_RE.sub('', item.get('original') or '') == _NORM_JP_RE.sub('', item.get('better') or '')
+
+
+def session_corrections(session: RoleplaySession) -> list[dict[str, Any]]:
+    """Abschluss-Korrektur eines Gespraechs (max. 3 Punkte).
+
+    Quelle: RoleplaySession.correction_json (schreibt finalize_session);
+    Fallback fuer Datensaetze ohne gespeicherte Korrektur: `correction` im
+    raw_json des letzten Bot-Zugs. Wirft nie — kaputtes JSON → [].
+    """
+    items: Any = None
+    if session.correction_json:
+        try:
+            items = json.loads(session.correction_json)
+        except (TypeError, ValueError):
+            items = None
+    if not items:
+        for turn in reversed(session.turns or []):
+            if turn.speaker != 'bot' or not turn.raw_json:
+                continue
+            try:
+                raw = json.loads(turn.raw_json)
+                items = raw.get('correction') if isinstance(raw, dict) else None
+            except (TypeError, ValueError):
+                items = None
+            break
+    out: list[dict[str, Any]] = []
+    for item in items if isinstance(items, list) else []:
+        if isinstance(item, dict):
+            out.append({
+                'original': str(item.get('original') or ''),
+                'better': str(item.get('better') or ''),
+                'explanation_de': str(item.get('explanation_de') or ''),
+            })
+    return out[:MAX_CORRECTIONS]
+
+
+def correction_count(session: RoleplaySession) -> int:
+    """Anzahl echter Korrekturen (Lob-Punkte original == better zaehlen nicht)."""
+    return sum(1 for c in session_corrections(session) if not is_praise(c))
 
 
 # ── Serialisierung ───────────────────────────────────────────────────────

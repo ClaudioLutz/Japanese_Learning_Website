@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{# /sprechen/<content_id> — Rollenspiel-Panel direkt, ohne Lektionsseite.
+   Wiederverwendet partials/_roleplay_panel.html (rp_standalone: sofort offen,
+   ohne Start-Knopf). Erwartet: content, lesson, scene, ready. #}
+
+{% block title %}Sprechen: {{ lesson.title }}{% endblock %}
+{% block meta_description %}Rollenspiel zum Dialog „{{ lesson.title }}": Rolle wählen und das Gespräch auf Japanisch selbst führen.{% endblock %}
+{% block robots %}noindex,nofollow{% endblock %}
+{% block styles %}
+<link rel="stylesheet" href="{{ static_v('css/sprechen.css') }}">
+<link rel="stylesheet" href="{{ static_v('css/roleplay_panel.css') }}">
+{% endblock %}
+
+{% block content %}
+{% set _slides = (content.content_text | fromjson).slides if content.content_text else [] %}
+<div class="sp-page" id="sprechen-play">
+  <a class="sp-back" href="{{ url_for('sprechen.index') }}"><i class="fas fa-arrow-left" aria-hidden="true"></i> Alle Szenen</a>
+
+  <div class="sp-play-head">
+    {% set _img = (_slides | selectattr('image') | map(attribute='image') | first) if _slides else none %}
+    {% set _img = _img or lesson.get_thumbnail_url() %}
+    {% if _img %}
+    <div class="sp-play-img"><img src="{{ _img }}" alt="" decoding="async"></div>
+    {% endif %}
+    <div>
+      <p class="sp-eyebrow">Rollenspiel <span class="jp" lang="ja">話す</span></p>
+      <h1>{{ lesson.title }}</h1>
+      <ul class="sp-roles" aria-label="Figuren">
+        {% for r in scene.roles %}<li class="sp-role">{{ r.name }}</li>{% endfor %}
+      </ul>
+      {% if ready %}
+      <p class="sp-note"><i class="fas fa-check" aria-hidden="true"></i> Lektion abgeschlossen — du bist bereit.
+        <a href="{{ url_for('routes.view_lesson', lesson_id=lesson.id) }}">Zur Lektion</a></p>
+      {% else %}
+      <p class="sp-note is-todo"><i class="fas fa-book-open" aria-hidden="true"></i> Diese Lektion hast du noch nicht abgeschlossen — du kannst trotzdem spielen.
+        <a href="{{ url_for('routes.view_lesson', lesson_id=lesson.id) }}">Erst die Lektion lernen</a></p>
+      {% endif %}
+    </div>
+  </div>
+
+  {% set rp_standalone = true %}
+  {% include 'partials/_roleplay_panel.html' %}
+
+  {% if scene.lines %}
+  <details class="sp-details">
+    <summary>Originaldialog ansehen</summary>
+    <div class="sp-details-body">
+      <ol class="sp-lines">
+        {% for ln in scene.lines %}
+        <li class="sp-line">
+          <span class="sp-line-who">{{ ln.speaker }}</span>
+          <span class="sp-bubble jp" lang="ja">{{ ln.jp }}</span>
+          {% if ln.de %}<span class="sp-line-extra">{{ ln.de }}</span>{% endif %}
+        </li>
+        {% endfor %}
+      </ol>
+    </div>
+  </details>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+{# Synchron (nicht defer), damit roleplayPanel vor Alpines Init existiert. #}
+<script src="{{ static_v('js/romaji_to_kana.js') }}"></script>
+<script src="{{ static_v('js/roleplay_panel.js') }}"></script>
+{% endblock %}

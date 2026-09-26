@@ -1,14 +1,18 @@
 {# Rollenspiel-Tutor am Lektionsdialog (+ Tab „Frag zur Seite").
    Eingebunden in lesson_view.html im dialog_slideshow-Zweig, nur wenn
    roleplay_enabled und eingeloggt. Erwartet: content, lesson.
+   Auch auf /sprechen/<id> (sprechen/play.html) mit rp_standalone=true:
+   Panel sofort offen, ohne Start-/Schliessen-Knopf.
    Logik: static/js/roleplay_panel.js, Stil: static/css/roleplay_panel.css,
    API-Vertrag: docs/roleplay-api.md. #}
 {% set _rp_pages = [] %}{% for _p in lesson.pages %}{% if _p.content %}{% set _ = _rp_pages.append(_p.content[0].page_number) %}{% endif %}{% endfor %}
-<section class="roleplay-panel" x-data="roleplayPanel({{ content.id }})"
+<section class="roleplay-panel{{ ' is-standalone' if rp_standalone }}" x-data="roleplayPanel({{ content.id }})"
          data-lesson-id="{{ lesson.id }}" data-page-number="{{ content.page_number }}"
          data-page-numbers='{{ _rp_pages | tojson }}'
+         data-standalone="{{ '1' if rp_standalone else '0' }}"
          @keydown.stop="onKeydown($event)"
          aria-label="Rollenspiel zum Dialog">
+    {% if not rp_standalone %}
     <div class="rp-launch">
         <button type="button" class="rp-btn rp-btn-primary rp-open-btn" x-ref="openBtn"
                 @click="toggle()" :aria-expanded="open ? 'true' : 'false'"
@@ -18,6 +22,7 @@
         </button>
         <span class="rp-launch-note" x-show="!open">Sprich den Dialog selbst — mit Vorschlägen und Korrektur.</span>
     </div>
+    {% endif %}
 
     <span class="rp-sr-only" aria-live="polite" aria-atomic="true" x-text="liveMsg"></span>
 

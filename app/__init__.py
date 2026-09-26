@@ -414,6 +414,10 @@ def create_app():
     # sonst 404. JSON-APIs mit X-CSRFToken (NICHT csrf-exempt).
     from app.roleplay_routes import roleplay_bp
     app.register_blueprint(roleplay_bp)
+    # Seiten /sprechen (Szenenwahl, Rollenspiel ohne Lektionsseite, Verlauf) —
+    # gleiches Feature-Gate, login-pflichtig, nicht in der Sitemap.
+    from app.sprechen_routes import sprechen_bp
+    app.register_blueprint(sprechen_bp)
 
     # Error-Handler — eigene Templates auf Deutsch (vorher: Default-Flask-HTML in Englisch)
     from flask import render_template

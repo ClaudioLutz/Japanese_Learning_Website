@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{# /sprechen/verlauf/<id> — ganzer Gespraechsverlauf + Korrekturen (nur eigene Sessions).
+   Daten: services/roleplay_overview.session_detail. Lesung/Deutsch einklappbar (<details>). #}
+
+{% block title %}Gespräch: {{ s.lesson_title }}{% endblock %}
+{% block meta_description %}Verlauf deines Rollenspiels „{{ s.lesson_title }}" mit Verbesserungsvorschlägen.{% endblock %}
+{% block robots %}noindex,nofollow{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{{ static_v('css/sprechen.css') }}">{% endblock %}
+
+{% block content %}
+<div class="sp-page" id="sprechen-verlauf-detail">
+  <a class="sp-back" href="{{ url_for('sprechen.history') }}"><i class="fas fa-arrow-left" aria-hidden="true"></i> Meine Gespräche</a>
+  <p class="sp-eyebrow">Gespräch <span class="jp" lang="ja">会話</span></p>
+  <h1>{{ s.lesson_title }}</h1>
+  <div class="sp-meta-row">
+    <span>{{ s.started_label }}</span>
+    <span>Du: {{ s.role_user }} · Partner: {{ s.role_bot }}</span>
+  </div>
+  <ul class="sp-chips" aria-label="Zusammenfassung">
+    <li class="sp-chip">{{ s.turns }} {{ 'Zug' if s.turns == 1 else 'Züge' }}</li>
+    {% if s.xp %}<li class="sp-chip is-xp">+{{ s.xp }} XP</li>{% endif %}
+    <li class="sp-chip">{{ s.correction_count }} {{ 'Korrektur' if s.correction_count == 1 else 'Korrekturen' }}</li>
+    {% if s.status != 'completed' %}<li class="sp-chip is-muted">{{ s.status_label }}</li>{% endif %}
+  </ul>
+  {% if s.goal_de %}<p class="sp-note"><strong>Ziel:</strong> {{ s.goal_de }}</p>{% endif %}
+
+  <h2 class="sp-section-title">Verlauf</h2>
+  <ol class="sp-lines">
+    {% for ln in s.lines %}
+    <li class="sp-line {{ 'is-user' if ln.who == 'user' else 'is-bot' }}">
+      <span class="sp-line-who">{{ ln.name }}{% if ln.who == 'user' %} (du){% endif %}</span>
+      <span class="sp-bubble jp" lang="ja">{{ ln.jp }}</span>
+      {% if ln.who == 'bot' and (ln.reading or ln.de) %}
+      <details>
+        <summary>Lesung und Deutsch</summary>
+        {% if ln.reading and ln.reading != ln.jp %}<div class="sp-line-extra jp" lang="ja">{{ ln.reading }}</div>{% endif %}
+        {% if ln.de %}<div class="sp-line-extra">{{ ln.de }}</div>{% endif %}
+      </details>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ol>
+
+  <h2 class="sp-section-title">Rückmeldung zu deinen Sätzen</h2>
+  {% if s.corrections %}
+  <ul class="sp-corr-list">
+    {% for c in s.corrections %}
+    <li class="sp-corr {{ 'is-ok' if c.praise }}">
+      <div class="sp-corr-pair">
+        {% if c.praise %}
+        <i class="fas fa-check" aria-hidden="true"></i><span class="sp-sr-only">richtig:</span>
+        <span class="sp-corr-better jp" lang="ja">{{ c.better }}</span>
+        {% else %}
+        <span class="sp-corr-orig jp" lang="ja">{{ c.original }}</span>
+        <i class="fas fa-arrow-right" aria-hidden="true"></i><span class="sp-sr-only">besser:</span>
+        <span class="sp-corr-better jp" lang="ja">{{ c.better }}</span>
+        {% endif %}
+      </div>
+      {% if c.explanation_de %}<div class="sp-corr-expl">{{ c.explanation_de }}</div>{% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="sp-note">Zu diesem Gespräch gibt es keine gespeicherte Rückmeldung.</p>
+  {% endif %}
+
+  <div class="sp-meta-row" style="margin-top:1.5rem">
+    <a class="sp-btn sp-btn-primary" href="{{ url_for('sprechen.play', content_id=s.content_id) }}"><i class="fas fa-rotate-left" aria-hidden="true"></i> Nochmal spielen</a>
+  </div>
+</div>
+{% endblock %}

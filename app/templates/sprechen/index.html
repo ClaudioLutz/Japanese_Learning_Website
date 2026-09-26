@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{# /sprechen — alle Dialogszenen als Karten, gruppiert nach Modul (SSR).
+   Daten: services/roleplay_overview.list_scenes + group_by_module.
+   Nur mit roleplay_enabled + Login erreichbar (sprechen_routes). #}
+
+{% block title %}Sprechen üben{% endblock %}
+{% block meta_description %}Sprich die Dialoge deiner Japanisch-Lektionen selbst: Rolle wählen, antworten, Verbesserungsvorschläge erhalten — auf JLPT-N5-Niveau.{% endblock %}
+{% block robots %}noindex,nofollow{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{{ static_v('css/sprechen.css') }}">{% endblock %}
+
+{% block content %}
+<div class="sp-page" id="sprechen">
+  <p class="sp-eyebrow">Sprechen <span class="jp" lang="ja">話す</span></p>
+  <h1>Sprich den Dialog selbst</h1>
+  <p class="sp-lead">Wähle eine Szene aus deinen Lektionen, übernimm eine Rolle und führe das Gespräch auf Japanisch weiter. Du bekommst Antwortvorschläge, einen Hinweis und am Ende Verbesserungsvorschläge.</p>
+  <div class="sp-meta-row">
+    <span>{{ ready_count }} von {{ scene_count }} {{ 'Szene' if scene_count == 1 else 'Szenen' }} bereit</span>
+    {% if history_count %}
+    <a href="{{ url_for('sprechen.history') }}"><i class="fas fa-clock-rotate-left" aria-hidden="true"></i> Meine Gespräche</a>
+    {% endif %}
+  </div>
+
+  {% if not groups %}
+  <div class="sp-empty">
+    <p>Noch keine Dialogszenen verfügbar. Sobald eine Lektion mit Dialog für dich offen ist, erscheint sie hier.</p>
+    <a class="sp-btn sp-btn-primary" href="{{ url_for('routes.lessons') }}">Zu den Lektionen</a>
+  </div>
+  {% endif %}
+
+  {% for g in groups %}
+  <section class="sp-module" aria-labelledby="sp-mod-{{ loop.index }}">
+    <div class="sp-module-head">
+      <h2 id="sp-mod-{{ loop.index }}">{{ g.name }}</h2>
+      <span class="sp-module-count">{{ g.ready_count }}/{{ g.scenes|length }} bereit</span>
+    </div>
+    <ul class="sp-grid">
+      {% for s in g.scenes %}
+      <li>
+        <article class="sp-card" data-content-id="{{ s.content_id }}" data-ready="{{ 1 if s.ready else 0 }}">
+          <a class="sp-card-media" href="{{ url_for('sprechen.play', content_id=s.content_id) }}" tabindex="-1" aria-hidden="true">
+            {% if s.image %}
+            <img src="{{ s.image }}" alt="" loading="lazy" decoding="async">
+            {% else %}
+            <span class="sp-noimg"><i class="fas fa-comments"></i></span>
+            {% endif %}
+            {% if s.ready %}
+            <span class="sp-status is-ready"><i class="fas fa-check"></i> bereit</span>
+            {% else %}
+            <span class="sp-status is-todo"><i class="fas fa-book-open"></i> noch nicht gelernt</span>
+            {% endif %}
+          </a>
+          <div class="sp-card-body">
+            <h3 class="sp-card-title"><a href="{{ url_for('sprechen.play', content_id=s.content_id) }}">{{ s.lesson_title }}</a></h3>
+            <ul class="sp-roles" aria-label="Figuren">
+              {% for r in s.roles %}<li class="sp-role">{{ r.name }}</li>{% endfor %}
+            </ul>
+            {% if s.goal_de %}<p class="sp-goal"><strong>Ziel:</strong> {{ s.goal_de }}</p>{% endif %}
+            <span class="sp-sr-only">{{ 'Bereit: Lektion abgeschlossen.' if s.ready else 'Lektion noch nicht abgeschlossen.' }}</span>
+            <div class="sp-card-foot">
+              <a class="sp-btn {{ 'sp-btn-primary' if s.ready else 'sp-btn-ghost' }}" href="{{ url_for('sprechen.play', content_id=s.content_id) }}"
+                 aria-label="{{ s.lesson_title }} spielen">
+                <i class="fas fa-comments" aria-hidden="true"></i> Spielen
+              </a>
+              {% if not s.ready %}
+              <a class="sp-link-small" href="{{ url_for('routes.view_lesson', lesson_id=s.lesson_id) }}">Erst die Lektion lernen</a>
+              {% endif %}
+            </div>
+          </div>
+        </article>
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endfor %}
+</div>
+{% endblock %}

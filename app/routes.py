@@ -95,6 +95,16 @@ _TTS_VOICES = {
 # Chirp 3 HD unterstuetzt kein SSML — nur 'text' Input + speakingRate via audioConfig.
 _CHIRP_VOICE_PREFIX = 'Chirp3-HD'
 
+# Optionaler /api/tts-Parameter voice_gender (nur lang=ja, z.B. Rollenspiel-Figur):
+# serverseitige Whitelist (Primaerstimme, Chirp-Fallback). Geschlechter gemaess
+# Google-Voices-API (vgl. tests/test_tts_voice_gender.py): Neural2-B=weiblich,
+# Neural2-D=maennlich; Chirp3-HD Leda=weiblich, Charon=maennlich.
+# Ohne/unbekanntes Geschlecht → Standardstimme (_TTS_VOICES['ja']).
+_TTS_GENDER_VOICES = {
+    'f': ('ja-JP-Neural2-B', 'ja-JP-Chirp3-HD-Leda'),
+    'm': ('ja-JP-Neural2-D', 'ja-JP-Chirp3-HD-Charon'),
+}
+
 # Kana-Reihen-Mapping ist in app/services/kana_rows.py zentralisiert (wird auch
 # vom Kana-Grid-Spiel verwendet). Hier nur re-importieren fuer die TTS-Pause-
 # Heuristik unten.
@@ -186,7 +196,10 @@ def pregenerated_ja_audio_file(text: str):
 def tts_synthesize():
     """TTS-Endpoint mit zwei Modellen.
 
-    Body: { text, lang: 'ja'|'de', model?: 'chirp'|'gemini', speed? }
+    Body: { text, lang: 'ja'|'de', model?: 'chirp'|'gemini', speed?, voice_gender?: 'm'|'f' }
+    - voice_gender (nur ja): Stimme nach Sprechergeschlecht aus der Whitelist
+      _TTS_GENDER_VOICES (Neural2, Chirp-Fallback); ueberspringt Gemini/Vorgeneriertes.
+      Andere Werte → 400. Fehlt der Parameter: Standardstimme wie bisher.
     - model='chirp' (Default): Chirp 3 HD Leda — schnell (~300ms), MP3
     - model='gemini': Gemini 2.5 Pro TTS Leda — studio-qualitaet (~3-5s), WAV
       Nur fuer japanisch (lang=ja). Bei lang=de faellt es auf Chirp zurueck.
@@ -221,7 +234,25 @@ def tts_synthesize():
     if model == 'gemini' and lang != 'ja':
         model = 'chirp'
 
-    voice = _TTS_VOICES[lang]
+    # Optional: Stimme nach Sprechergeschlecht (nur Whitelist 'm'|'f', nur Japanisch).
+    # Nie ein frei waehlbarer Stimmenname vom Client.
+    raw_gender = data.get('voice_gender')
+    gender = None
+    if raw_gender not in (None, ''):
+        if not isinstance(raw_gender, str) or raw_gender.strip().lower() not in _TTS_GENDER_VOICES:
+            return jsonify({"error": "voice_gender muss 'm' oder 'f' sein"}), 400
+        if lang == 'ja':
+            gender = raw_gender.strip().lower()
+    fallback_voice = None
+    if gender:
+        # Vorgenerierte Gemini-Audios (Leda, weiblich) und Gemini passen nicht
+        # zu jeder Rolle → direkter Cloud-TTS-Pfad mit Geschlechts-Stimme.
+        model = 'chirp'
+        primary_name, fallback_name = _TTS_GENDER_VOICES[gender]
+        voice = {'languageCode': 'ja-JP', 'name': primary_name}
+        fallback_voice = {'languageCode': 'ja-JP', 'name': fallback_name}
+    else:
+        voice = _TTS_VOICES[lang]
     speed = float(data.get('speed', 0.85))
     speed = max(0.5, min(speed, 1.5))
 
@@ -238,7 +269,7 @@ def tts_synthesize():
         # ohne Request-Zeit-Latenz/Quota — Chirp bleibt nur schneller Fallback
         # fuer noch nicht vorgeneriertes Audio.
         pregen = pregenerated_ja_audio_file(text)
-        if pregen.exists():
+        if not gender and pregen.exists():
             from flask import send_file
             return send_file(str(pregen), mimetype='audio/wav', conditional=True)
 
@@ -287,39 +318,56 @@ def tts_synthesize():
     if not api_key:
         return jsonify({"error": "TTS nicht konfiguriert"}), 503
 
-    is_chirp = _CHIRP_VOICE_PREFIX in voice['name']
-    if is_chirp:
-        payload = {
-            "input": {"text": text},
-            "voice": voice,
-            "audioConfig": {"audioEncoding": "MP3", "speakingRate": speed},
-        }
-    else:
-        payload = {
-            "input": {"ssml": f'<speak><prosody rate="{speed}">{text}</prosody></speak>'},
-            "voice": voice,
+    from xml.sax.saxutils import escape as _xml_escape
+
+    def _payload_for(v):
+        if _CHIRP_VOICE_PREFIX in v['name']:
+            return {
+                "input": {"text": text},
+                "voice": v,
+                "audioConfig": {"audioEncoding": "MP3", "speakingRate": speed},
+            }
+        return {
+            "input": {"ssml": f'<speak><prosody rate="{speed}">{_xml_escape(text)}</prosody></speak>'},
+            "voice": v,
             "audioConfig": {"audioEncoding": "MP3"},
         }
 
-    try:
-        resp = http_requests.post(
-            f"https://texttospeech.googleapis.com/v1/text:synthesize?key={api_key}",
-            json=payload, timeout=10,
-        )
-        if resp.status_code != 200:
-            return jsonify({"error": "TTS API Fehler"}), 502
+    # Geschlechts-Stimme: bei Fehler der Primaerstimme einmal die Chirp-Stimme
+    # desselben Geschlechts versuchen (eigener Cache-Eintrag).
+    attempts = [(voice, cache_file)]
+    if fallback_voice is not None:
+        fb_key = hashlib.md5(
+            f"{lang}_chirp_{fallback_voice['name']}_{speed}_{text}".encode('utf-8')
+        ).hexdigest()
+        attempts.append((fallback_voice, cache_dir / f"{fb_key}.mp3"))
 
-        audio_b64 = resp.json().get("audioContent", "")
-        audio_bytes = base64.b64decode(audio_b64)
-        cache_file.write_bytes(audio_bytes)
+    status, error = 502, "TTS API Fehler"
+    for attempt_voice, attempt_cache in attempts:
+        if attempt_cache is not cache_file and attempt_cache.exists():
+            from flask import send_file
+            return send_file(str(attempt_cache), mimetype=mime, conditional=True)
+        try:
+            resp = http_requests.post(
+                f"https://texttospeech.googleapis.com/v1/text:synthesize?key={api_key}",
+                json=_payload_for(attempt_voice), timeout=10,
+            )
+            if resp.status_code != 200:
+                status, error = 502, "TTS API Fehler"
+                continue
 
-        from flask import make_response
-        response = make_response(audio_bytes)
-        response.headers['Content-Type'] = mime
-        response.headers['Cache-Control'] = 'public, max-age=86400'
-        return response
-    except Exception:
-        return jsonify({"error": "TTS Fehler"}), 502
+            audio_b64 = resp.json().get("audioContent", "")
+            audio_bytes = base64.b64decode(audio_b64)
+            attempt_cache.write_bytes(audio_bytes)
+
+            from flask import make_response
+            response = make_response(audio_bytes)
+            response.headers['Content-Type'] = mime
+            response.headers['Cache-Control'] = 'public, max-age=86400'
+            return response
+        except Exception:
+            status, error = 502, "TTS Fehler"
+    return jsonify({"error": error}), status
 
 
 @bp.route('/home')

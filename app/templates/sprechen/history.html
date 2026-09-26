@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{# /sprechen/verlauf — eigene Rollenspiel-Gespraeche (mind. ein Zug), neueste zuerst.
+   Daten: services/roleplay_overview.history. #}
+
+{% block title %}Meine Gespräche{% endblock %}
+{% block meta_description %}Deine bisherigen Rollenspiel-Gespräche auf Japanisch mit Zügen, XP und Verbesserungsvorschlägen.{% endblock %}
+{% block robots %}noindex,nofollow{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{{ static_v('css/sprechen.css') }}">{% endblock %}
+
+{% block content %}
+<div class="sp-page" id="sprechen-verlauf">
+  <a class="sp-back" href="{{ url_for('sprechen.index') }}"><i class="fas fa-arrow-left" aria-hidden="true"></i> Alle Szenen</a>
+  <p class="sp-eyebrow">Sprechen <span class="jp" lang="ja">話す</span></p>
+  <h1>Meine Gespräche</h1>
+  <p class="sp-lead">Alle Rollenspiele, in denen du mindestens einmal geantwortet hast — mit dem ganzen Verlauf und den Verbesserungsvorschlägen.</p>
+
+  {% if sessions %}
+  <ul class="sp-hist">
+    {% for s in sessions %}
+    <li>
+      <a class="sp-hist-card" href="{{ url_for('sprechen.history_detail', session_id=s.id) }}">
+        <span class="sp-hist-title">{{ s.lesson_title }}</span>
+        <span class="sp-hist-sub">{{ s.started_label }} · Du warst {{ s.role_user }}</span>
+        <ul class="sp-chips">
+          <li class="sp-chip">{{ s.turns }} {{ 'Zug' if s.turns == 1 else 'Züge' }}</li>
+          {% if s.xp %}<li class="sp-chip is-xp">+{{ s.xp }} XP</li>{% endif %}
+          <li class="sp-chip">{{ s.corrections }} {{ 'Korrektur' if s.corrections == 1 else 'Korrekturen' }}</li>
+          {% if s.status != 'completed' %}<li class="sp-chip is-muted">{{ s.status_label }}</li>{% endif %}
+        </ul>
+        <i class="fas fa-chevron-right sp-hist-chev" aria-hidden="true"></i>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <div class="sp-empty">
+    <p>Noch keine Gespräche. Wähle eine Szene und sprich los.</p>
+    <a class="sp-btn sp-btn-primary" href="{{ url_for('sprechen.index') }}"><i class="fas fa-comments" aria-hidden="true"></i> Szene wählen</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

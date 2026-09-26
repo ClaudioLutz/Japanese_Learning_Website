@@ -1235,3 +1235,32 @@ def welcome_back(user):
         'streak': streak_status(user),
         'news': news,
     }
+
+
+# ── Sprechen (Rollenspiel) ────────────────────────────────────────────────
+
+def speaking_tile(user):
+    """Kachel „Heute sprechen" (nur mit aktivem Rollenspiel, sonst None).
+
+    Vorschlag-Logik: app/services/roleplay_overview.pick_suggestion.
+    """
+    from app.services import roleplay_overview, roleplay_service
+    if not roleplay_service.is_enabled():
+        return None
+    try:
+        return roleplay_overview.speaking_tile(user)
+    except Exception:  # noqa: BLE001 — Kachel ist optional, Dashboard darf nie brechen
+        logger.exception('Sprechen-Kachel fehlgeschlagen (user=%s)', getattr(user, 'id', None))
+        return None
+
+
+def speaking_stats(user_id):
+    """Gespräche · Züge · Korrekturen pro Gespräch (Ø der letzten 5), sonst None."""
+    from app.services import roleplay_overview, roleplay_service
+    if not roleplay_service.is_enabled():
+        return None
+    try:
+        return roleplay_overview.speaking_stats(user_id)
+    except Exception:  # noqa: BLE001
+        logger.exception('Sprechen-Statistik fehlgeschlagen (user=%s)', user_id)
+        return None

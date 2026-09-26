@@ -77,6 +77,9 @@ def index():
         can_do=dashboard_service.can_do(current_user.id),
         vocab_themes=dashboard_service.vocab_themes(current_user.id),
         grammar_list=dashboard_service.grammar_list(current_user.id),
+        # Rollenspiel (nur mit roleplay_enabled, sonst None → Partials rendern nichts).
+        speak_tile=dashboard_service.speaking_tile(current_user),
+        speak_stats=dashboard_service.speaking_stats(current_user.id),
     )
 
 

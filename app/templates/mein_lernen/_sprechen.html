@@ -1,0 +1,66 @@
+{# Sprechen (Rollenspiel) auf /mein-lernen — zwei Teile, per Parameter gewaehlt:
+   {% set sp_part = 'tile' %}  → Kachel „Heute sprechen" (Heute-Sidebar)
+   {% set sp_part = 'stats' %} → drei Kennzahlen (Fortschritt)
+   Daten: dashboard_service.speaking_tile / speaking_stats (None = Feature aus →
+   nichts rendern). Server-gerendert, kein Alpine-State. Farben ueber die
+   .mein-lernen-Tokens (flippen im Dark Mode). #}
+{% if sp_part == 'tile' and speak_tile %}
+{% set sc = speak_tile.scene %}
+<div class="panel speak-tile" data-kind="{{ speak_tile.kind }}">
+  <div class="ph">Heute sprechen <span class="jp" lang="ja" aria-hidden="true">話す</span></div>
+  {% if speak_tile.kind != 'none' and sc %}
+  <a class="speak-scene" href="{{ url_for('sprechen.play', content_id=sc.content_id) }}">
+    {% if sc.image %}<img src="{{ sc.image }}" alt="" loading="lazy" decoding="async">{% endif %}
+    <span class="speak-txt">
+      <span class="t">{{ sc.lesson_title }}</span>
+      <span class="d">
+        {% if speak_tile.kind == 'new' %}Frisch gelernt — sprich den Dialog jetzt selbst.
+        {% elif speak_tile.kind == 'retry' %}Letztes Mal {{ speak_tile.corrections }} {{ 'Korrektur' if speak_tile.corrections == 1 else 'Korrekturen' }} — nochmal üben.
+        {% else %}Eine Szene zum Warmsprechen.{% endif %}
+      </span>
+    </span>
+  </a>
+  <a class="ghost sm block speak-go" href="{{ url_for('sprechen.play', content_id=sc.content_id) }}">
+    <i class="fas fa-comments" aria-hidden="true"></i> Gespräch starten
+  </a>
+  {% elif sc %}
+  <p class="speak-empty">Sobald du eine Lektion mit Dialog abgeschlossen hast, schlage ich dir hier eine Szene zum Sprechen vor.</p>
+  <a class="ghost sm block speak-go" href="{{ url_for('routes.view_lesson', lesson_id=sc.lesson_id) }}">
+    <i class="fas fa-book-open" aria-hidden="true"></i> Zur Lektion „{{ sc.lesson_title }}“
+  </a>
+  {% else %}
+  <p class="speak-empty">Noch keine Lektion mit Dialog verfügbar.</p>
+  {% endif %}
+  <a class="more speak-more" href="{{ url_for('sprechen.index') }}">Alle Szenen <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+</div>
+{% elif sp_part == 'stats' and speak_stats %}
+<div class="section-label">Sprechen · Rollenspiel</div>
+<div class="panel speak-stats" aria-label="Sprechen in Zahlen">
+  <div class="speak-num"><b>{{ speak_stats.conversations }}</b><span>{{ 'Gespräch' if speak_stats.conversations == 1 else 'Gespräche' }}</span></div>
+  <div class="speak-num"><b>{{ speak_stats.turns }}</b><span>{{ 'Zug' if speak_stats.turns == 1 else 'Züge' }}</span></div>
+  <div class="speak-num">
+    <b>{{ ('%.1f' | format(speak_stats.corrections_avg)) if speak_stats.corrections_avg is not none else '–' }}</b>
+    <span>Korrekturen pro Gespräch{% if speak_stats.avg_basis %} <small>(Ø letzte {{ speak_stats.avg_basis }})</small>{% endif %}</span>
+  </div>
+  <a class="more speak-more" href="{{ url_for('sprechen.history') }}">Meine Gespräche <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+</div>
+{% endif %}
+{% if sp_part == 'tile' and speak_tile or sp_part == 'stats' and speak_stats %}
+<style>
+.mein-lernen .speak-tile .ph .jp{font-family:var(--jp);letter-spacing:0;text-transform:none;margin-left:.3rem;}
+.mein-lernen .speak-scene{display:flex;gap:.75rem;align-items:center;color:var(--ink-700);margin-bottom:var(--sp-3);}
+.mein-lernen .speak-scene:hover{color:var(--ink-700);}
+.mein-lernen .speak-scene img{width:84px;height:56px;object-fit:cover;border-radius:var(--r-sm);border:1px solid var(--ink-200);flex:none;background:var(--ink-100);}
+.mein-lernen .speak-txt{display:flex;flex-direction:column;gap:.15rem;min-width:0;}
+.mein-lernen .speak-txt .t{font-family:var(--f-display);font-weight:600;color:var(--kon);line-height:1.25;}
+.mein-lernen .speak-txt .d{font-size:.86rem;color:var(--ink-500);line-height:1.4;}
+.mein-lernen .speak-go{width:100%;}
+.mein-lernen .speak-empty{font-size:.9rem;color:var(--ink-600);margin:0 0 var(--sp-3);}
+.mein-lernen .speak-more{display:inline-flex;align-items:center;gap:.35rem;margin-top:var(--sp-3);font-size:.86rem;font-weight:600;min-height:32px;}
+.mein-lernen .speak-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-3);margin-bottom:var(--sp-6);}
+.mein-lernen .speak-num{display:flex;flex-direction:column;gap:.2rem;}
+.mein-lernen .speak-num b{font-family:var(--f-display);font-size:1.6rem;font-weight:600;color:var(--kon);line-height:1.1;font-variant-numeric:tabular-nums;}
+.mein-lernen .speak-num span{font-size:.82rem;color:var(--ink-500);line-height:1.3;}
+.mein-lernen .speak-stats .speak-more{grid-column:1 / -1;margin-top:0;}
+</style>
+{% endif %}

@@ -69,8 +69,8 @@ Immer JSON `{ "error": "<code>", "message": "<deutscher Klartext>" }` — nie 50
   "content_id": 345, "lesson_id": 210, "lesson_title": "Im Restaurant", "title": "Im Restaurant",
   "scene_de": "Szene: Im Restaurant. Der Dialog beginnt mit „Willkommen.“ und endet mit „Bitte schön.“.",
   "roles": [
-    { "name": "Kellner", "line_count": 2, "first_line_jp": "いらっしゃいませ。", "first_line_de": "Willkommen." },
-    { "name": "Gast", "line_count": 1, "first_line_jp": "コーヒーを ください。", "first_line_de": "Einen Kaffee, bitte." }
+    { "name": "Kellner", "gender": null, "line_count": 2, "first_line_jp": "いらっしゃいませ。", "first_line_de": "Willkommen." },
+    { "name": "Gast", "gender": null, "line_count": 1, "first_line_jp": "コーヒーを ください。", "first_line_de": "Einen Kaffee, bitte." }
   ],
   "goal_suggestions": { "Kellner": "Spiele Kellner und …", "Gast": "Spiele Gast und …" },
   "min_user_turns": 4, "max_user_turns": 8,
@@ -78,6 +78,14 @@ Immer JSON `{ "error": "<code>", "message": "<deutscher Klartext>" }` — nie 50
 }
 ```
 Fehler: 404 `not_found`, 403 `no_access`, 422 `not_roleplayable`.
+
+`roles[].gender`: `"m"` | `"f"` | `null` aus der Sprechername-Tabelle
+`app/speaker_gender.py` (dieselbe wie für das Dialog-Audio). Unbekannte Namen
+(„Kellner", „Passant") → `null` = Standardstimme, **kein** geratenes Geschlecht.
+Das Panel übergibt beim Vorlesen `voice_gender` an `POST /api/tts`
+(`{ text, lang: "ja", voice_gender: "m"|"f" }`, nur diese Werte, sonst 400):
+m = `ja-JP-Neural2-D` (Fallback `ja-JP-Chirp3-HD-Charon`),
+f = `ja-JP-Neural2-B` (Fallback `ja-JP-Chirp3-HD-Leda`). Ohne Parameter: Standardstimme.
 
 ### POST `/api/roleplay/start`
 
@@ -136,6 +144,21 @@ Kontext = Inhalt dieser Lektionsseite (Text, Dialog, Vokabeln, Grammatik, Kanji)
 ```
 `answer` ist Klartext (Deutsch, evtl. kurze Aufzählungen mit „- “, kein HTML → als Text
 rendern). Fehler: 400, 403, 404 (Lektion/Seite), 429, 502, 503.
+
+## Seiten (SSR, gleiches Feature-Gate, login-pflichtig, noindex, nicht in der Sitemap)
+
+Code: `app/sprechen_routes.py`, `app/services/roleplay_overview.py`, Templates `sprechen/`.
+
+- `GET /sprechen` — alle Dialogszenen publizierter, zugänglicher Lektionen, nach Modul
+  gruppiert; „bereit" = Lektion laut `UserLessonProgress` abgeschlossen.
+- `GET /sprechen/<content_id>` — Panel direkt (`_roleplay_panel.html` mit `rp_standalone`).
+- `GET /sprechen/verlauf` — eigene Gespräche (≥ 1 Nutzerzug), neueste zuerst.
+- `GET /sprechen/verlauf/<session_id>` — ganzer Verlauf + Korrekturen; fremde Session → 404.
+  Korrekturen: `RoleplaySession.correction_json`, Fallback `correction` im `raw_json`
+  des letzten Bot-Zugs (`roleplay_service.session_corrections`). Lob-Punkte
+  (original = better) zählen nicht als Korrektur.
+- `/mein-lernen`: Kachel „Heute sprechen" + Kennzahlen (Gespräche, Züge,
+  Korrekturen pro Gespräch Ø letzte 5), `dashboard_service.speaking_tile/-stats`.
 
 ## Betrieb (Kurz)
 
