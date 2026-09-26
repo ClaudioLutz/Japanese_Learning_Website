@@ -141,31 +141,20 @@ def _synthesize_gemini(text: str) -> bytes:
     """Generiert WAV-Bytes (24kHz mono PCM mit WAV-Header) via Gemini 2.5 Pro TTS."""
     import io
     import wave
-    from google import genai
-    from google.genai import types
+
+    from app.services.tts_client import make_gemini_client, synth_gemini_pcm
 
     api_key = (
         current_app.config.get('GOOGLE_AI_API_KEY')
         or os.environ.get('GOOGLE_AI_API_KEY')
         or os.environ.get('GOOGLE_API_KEY')
     )
-    client = genai.Client(api_key=api_key)
-    resp = client.models.generate_content(
-        model=_GEMINI_TTS_MODEL,
-        contents=text,
-        config=types.GenerateContentConfig(
-            response_modalities=['AUDIO'],
-            speech_config=types.SpeechConfig(
-                voice_config=types.VoiceConfig(
-                    prebuilt_voice_config=types.PrebuiltVoiceConfig(voice_name=_GEMINI_TTS_VOICE)
-                ),
-            ),
-        ),
+    # Web-Request: kurzes hartes Timeout, kein Retry — bei Fehler greift im
+    # Aufrufer sofort der Chirp-Fallback (Nutzer wartet sonst endlos).
+    client = make_gemini_client(api_key, timeout_s=30)
+    pcm = synth_gemini_pcm(
+        client, text, model=_GEMINI_TTS_MODEL, voice=_GEMINI_TTS_VOICE, retries=0,
     )
-    cand = resp.candidates[0] if resp.candidates else None
-    if cand is None or cand.content is None or not cand.content.parts:
-        raise RuntimeError(f"Gemini TTS leer (finish={getattr(cand, 'finish_reason', '?')})")
-    pcm = cand.content.parts[0].inline_data.data
 
     buf = io.BytesIO()
     with wave.open(buf, 'wb') as wf:

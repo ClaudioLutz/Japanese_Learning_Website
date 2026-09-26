@@ -38,6 +38,12 @@ sys.path.insert(0, str(PROJECT_ROOT))
 from app import create_app, db  # noqa: E402
 from app.models import Lesson, LessonContent  # noqa: E402
 from app.ai_services import GoogleCloudTTS  # noqa: E402
+from app.services.tts_client import (  # noqa: E402
+    GeminiEmptyAudioError,
+    make_gemini_client,
+    post_cloud_tts,
+    synth_gemini_pcm,
+)
 
 # ---------------------------------------------------------------------------
 # Voices
@@ -82,9 +88,11 @@ def synth_segment_de_pcm(tts: GoogleCloudTTS, text: str, speed: float = 0.95) ->
             "sampleRateHertz": SAMPLE_RATE,
         },
     }
-    resp = tts.requests.post(
-        f"{tts.TTS_URL}?key={tts.api_key}", json=payload, timeout=30,
-    )
+    try:
+        resp = post_cloud_tts(tts.api_key, payload)
+    except Exception as e:
+        print(f"      [TTS EXC] (de): {text[:60]!r} — {e}")
+        return None
     if resp.status_code != 200:
         print(f"      [TTS FEHLER] {resp.status_code} (de): {resp.text[:160]}")
         return None
@@ -107,35 +115,17 @@ def synth_segment_ja_pcm(text: str) -> bytes | None:
     Bei Safety-Block (FinishReason.OTHER) wird der Tutor-Prompt-Retry versucht,
     bei nochmaligem Fail ein leerer Bytes-Buf returned (besser als Crash).
     """
-    from google import genai
-    from google.genai import types
-
     api_key = os.environ.get("GOOGLE_AI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
-    # Hartes Timeout (60s): ohne dieses blockiert ein haengender Gemini-Request
-    # endlos (kein Default-Timeout im SDK) und legt den ganzen Batch lahm.
-    # Bei Timeout greift unten der Chirp-Fallback.
-    client = genai.Client(
-        api_key=api_key,
-        http_options=types.HttpOptions(timeout=60000),
-    )
+    # Hartes Timeout (120 s) + 1 Retry bei Timeout/Netz (tts_client); ohne
+    # Timeout blockiert ein haengender Gemini-Request endlos und legt den
+    # ganzen Batch lahm. Danach greift unten der Chirp-Fallback.
+    client = make_gemini_client(api_key)
 
     def _call(contents):
-        resp = client.models.generate_content(
-            model=GEMINI_MODEL,
-            contents=contents,
-            config=types.GenerateContentConfig(
-                response_modalities=["AUDIO"],
-                speech_config=types.SpeechConfig(
-                    voice_config=types.VoiceConfig(
-                        prebuilt_voice_config=types.PrebuiltVoiceConfig(voice_name=GEMINI_VOICE)
-                    ),
-                ),
-            ),
-        )
-        cand = resp.candidates[0] if resp.candidates else None
-        if cand is None or cand.content is None or not cand.content.parts:
+        try:
+            return synth_gemini_pcm(client, contents, model=GEMINI_MODEL, voice=GEMINI_VOICE)
+        except GeminiEmptyAudioError:
             return None
-        return cand.content.parts[0].inline_data.data
 
     try:
         pcm = _call(text)
@@ -158,7 +148,6 @@ def synth_segment_ja_pcm(text: str) -> bytes | None:
 
 def _synth_chirp_pcm_fallback(text: str) -> bytes | None:
     """Chirp 3 HD Leda als JP-PCM-Fallback wenn Gemini blockt."""
-    import requests as http_requests
     api_key = os.environ.get("GOOGLE_TTS_API_KEY") or os.environ.get("GOOGLE_API_KEY")
     if not api_key:
         return None
@@ -172,10 +161,7 @@ def _synth_chirp_pcm_fallback(text: str) -> bytes | None:
         },
     }
     try:
-        resp = http_requests.post(
-            f"https://texttospeech.googleapis.com/v1/text:synthesize?key={api_key}",
-            json=payload, timeout=15,
-        )
+        resp = post_cloud_tts(api_key, payload)
         if resp.status_code != 200:
             print(f"      [CHIRP FALLBACK FEHLER] {resp.status_code}: {resp.text[:120]}")
             return None

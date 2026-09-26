@@ -1243,11 +1243,10 @@ class GoogleCloudTTS:
                 },
             }
 
-            response = self.requests.post(
-                f"{self.TTS_URL}?key={self.api_key}",
-                json=payload,
-                timeout=30,
-            )
+            from app.services.tts_client import post_cloud_tts
+
+            # Hartes Timeout + 1 Retry bei Timeout/Netzfehler
+            response = post_cloud_tts(self.api_key, payload, session=self.requests)
 
             if response.status_code != 200:
                 error_msg = response.json().get("error", {}).get("message", response.text[:200])

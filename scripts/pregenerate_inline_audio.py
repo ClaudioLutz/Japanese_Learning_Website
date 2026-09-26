@@ -42,12 +42,16 @@ os.environ.setdefault("PAYMENT_PROVIDER", "mock")
 import markdown as _md  # noqa: E402
 import bleach as _bleach  # noqa: E402
 from bs4 import BeautifulSoup  # noqa: E402
-from google import genai  # noqa: E402
-from google.genai import types  # noqa: E402
 
 from app import create_app, db  # noqa: E402
 from app.models import Lesson, LessonContent  # noqa: E402
 from app.routes import _maybe_spell_out_kana_row  # noqa: E402
+from app.services.tts_client import (  # noqa: E402
+    GeminiEmptyAudioError,
+    make_gemini_client,
+    post_cloud_tts,
+    synth_gemini_pcm,
+)
 
 OUT_DIR = PROJECT_ROOT / "app" / "static" / "uploads" / "lessons" / "inline_audio"
 GEMINI_MODEL = "gemini-2.5-pro-preview-tts"
@@ -121,29 +125,15 @@ def extract_speak_text(element) -> str:
     return "、".join(jp_parts)
 
 
-def _gemini_call(client: genai.Client, contents: str) -> bytes:
-    """Roher Gemini-TTS-Aufruf, raises bei leerer Response."""
-    resp = client.models.generate_content(
-        model=GEMINI_MODEL,
-        contents=contents,
-        config=types.GenerateContentConfig(
-            response_modalities=["AUDIO"],
-            speech_config=types.SpeechConfig(
-                voice_config=types.VoiceConfig(
-                    prebuilt_voice_config=types.PrebuiltVoiceConfig(voice_name=GEMINI_VOICE)
-                ),
-            ),
-        ),
-    )
-    cand = resp.candidates[0] if resp.candidates else None
-    if cand is None or cand.content is None or not cand.content.parts:
-        raise RuntimeError(
-            f"Gemini leer (finish={getattr(cand, 'finish_reason', '?')})"
-        )
-    return cand.content.parts[0].inline_data.data
+def _gemini_call(client, contents: str) -> bytes:
+    """Gemini-TTS-Aufruf mit hartem Timeout (Client) + 1 Retry bei Timeout/Netz.
+
+    Raises RuntimeError (GeminiEmptyAudioError) bei leerer Response.
+    """
+    return synth_gemini_pcm(client, contents, model=GEMINI_MODEL, voice=GEMINI_VOICE)
 
 
-def synth_gemini_wav(client: genai.Client, text: str) -> bytes:
+def synth_gemini_wav(client, text: str) -> bytes:
     """Generiert WAV-Bytes via Gemini, mit Retry-Prompt fuer kurze Wörter.
 
     Gemini blockt bei sehr kurzen Eingaben (2-3 Mora) oft mit FinishReason.OTHER
@@ -153,12 +143,12 @@ def synth_gemini_wav(client: genai.Client, text: str) -> bytes:
     # 1. Versuch: nackter Text (funktioniert bei laengeren Eingaben besser)
     try:
         pcm = _gemini_call(client, text)
-    except RuntimeError as first_err:
+    except GeminiEmptyAudioError as first_err:
         # 2. Versuch: Tutor-Wrapper, hilft bei kurzen Mora-Texten
         wrapped = f"Pronounce clearly for a Japanese learner: {text}"
         try:
             pcm = _gemini_call(client, wrapped)
-        except RuntimeError:
+        except GeminiEmptyAudioError:
             raise first_err
 
     buf = io.BytesIO()
@@ -173,17 +163,13 @@ def synth_gemini_wav(client: genai.Client, text: str) -> bytes:
 def synth_chirp_mp3(text: str) -> bytes:
     """Fallback: Chirp 3 HD Leda fuer Texte die Gemini nicht akzeptiert."""
     import base64
-    import requests
     api_key = os.environ.get("GOOGLE_TTS_API_KEY") or os.environ.get("GOOGLE_API_KEY")
     payload = {
         "input": {"text": text},
         "voice": {"languageCode": "ja-JP", "name": "ja-JP-Chirp3-HD-Leda"},
         "audioConfig": {"audioEncoding": "MP3", "speakingRate": 0.85},
     }
-    resp = requests.post(
-        f"https://texttospeech.googleapis.com/v1/text:synthesize?key={api_key}",
-        json=payload, timeout=15,
-    )
+    resp = post_cloud_tts(api_key, payload)
     resp.raise_for_status()
     return base64.b64decode(resp.json()["audioContent"])
 
@@ -205,7 +191,8 @@ def process_lesson(lesson_id: int, dry_run: bool = False, force: bool = False) -
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     api_key = os.environ.get("GOOGLE_AI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
-    client = genai.Client(api_key=api_key) if not dry_run else None
+    # Hartes Timeout pro Call (120 s) — ohne haengt das SDK unbegrenzt (24.09.2026)
+    client = make_gemini_client(api_key) if not dry_run else None
 
     total_generated = 0
     total_reused = 0
