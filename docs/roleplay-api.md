@@ -13,8 +13,8 @@ Frontend baut gegen diesen Vertrag. Alle Texte für Nutzer kommen fertig auf Deu
   `<meta name="csrf-token">`. `Content-Type: application/json`.
 - **Rate-Limit:** 20 Anfragen/Minute pro Nutzer → **429** (Flask-Limiter, HTML-Fehlerseite,
   kein JSON). Tageslimits kommen dagegen als JSON `limit_reached` (siehe unten).
-- **Latenz:** ein Modell-Aufruf dauert **3–8 s** (Claude-Code-CLI auf dem Host), im
-  Fehlerfall bis ~60 s. Frontend: Ladeindikator („Tanaka tippt …“), Eingabe sperren,
+- **Latenz:** ein Modell-Aufruf dauert **5–10 s** (Claude-Code-CLI auf dem Host; gemessen
+  2026-09-26: Rollenspielzug ~10 s, Tutor ~5 s), im Fehlerfall bis ~60 s. Frontend: Ladeindikator („Tanaka tippt …“), Eingabe sperren,
   `fetch`-Timeout nicht unter 65 s.
 - **Rollen:** Sprecher aus dem Dialog (`slides[].speaker`), genau die ersten zwei.
 - **Gesprächslänge:** 4–8 Nutzerzüge. Nach dem 8. Zug beendet der Server selbst
