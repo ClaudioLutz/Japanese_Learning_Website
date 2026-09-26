@@ -1,0 +1,34 @@
+BEGIN;
+-- Kontext: N5-Kanji-Disziplin in Beispielsaetzen (Lektionen-1), 2026-09-26
+-- Erwartete Zeilen: 30
+UPDATE vocabulary SET example_sentence_japanese='わたしと友だちはおなじ学校です。' WHERE id=995 AND example_sentence_japanese='わたしと友だちは同じ学校です。';
+UPDATE vocabulary SET example_sentence_japanese='あついおちゃをのみます。' WHERE id=997 AND example_sentence_japanese='熱いおちゃをのみます。';
+UPDATE vocabulary SET example_sentence_japanese='この本はとてもあついです。' WHERE id=998 AND example_sentence_japanese='この本はとても厚いです。';
+UPDATE vocabulary SET example_sentence_japanese='このコーヒーはうすいです。' WHERE id=999 AND example_sentence_japanese='このコーヒーは薄いです。';
+UPDATE vocabulary SET example_sentence_japanese='わたしのへやはきたないです。' WHERE id=1001 AND example_sentence_japanese='わたしのへやは汚いです。';
+UPDATE vocabulary SET example_sentence_japanese='今日はかぜがつよいです。' WHERE id=1002 AND example_sentence_japanese='今日はかぜが強いです。';
+UPDATE vocabulary SET example_sentence_japanese='おとうとはからだがよわいです。' WHERE id=1003 AND example_sentence_japanese='おとうとはからだが弱いです。';
+UPDATE vocabulary SET example_sentence_japanese='この電車はとてもはやいです。' WHERE id=1004 AND example_sentence_japanese='この電車はとても速いです。';
+UPDATE vocabulary SET example_sentence_japanese='この木はとてもふといです。' WHERE id=1005 AND example_sentence_japanese='この木はとても太いです。';
+UPDATE vocabulary SET example_sentence_japanese='あのみちはとてもほそいです。' WHERE id=1006 AND example_sentence_japanese='あのみちはとても細いです。';
+UPDATE vocabulary SET example_sentence_japanese='このつくえはひくいです。' WHERE id=1007 AND example_sentence_japanese='このつくえは低いです。';
+UPDATE vocabulary SET example_sentence_japanese='あたらしいくつがほしいです。' WHERE id=1008 AND example_sentence_japanese='あたらしいくつが欲しいです。';
+UPDATE vocabulary SET example_sentence_japanese='このおふろはぬるいです。' WHERE id=1010 AND example_sentence_japanese='このおふろは温いです。';
+UPDATE vocabulary SET example_sentence_japanese='つぎのえきでおります。' WHERE id=1011 AND example_sentence_japanese='つぎのえきで降ります。';
+UPDATE vocabulary SET example_sentence_japanese='あさ、めがねをかけます。' WHERE id=1013 AND example_sentence_japanese='あさ、めがねを掛けます。';
+UPDATE vocabulary SET example_sentence_japanese='へやの電気がきえました。' WHERE id=1015 AND example_sentence_japanese='へやの電気が消えました。';
+UPDATE vocabulary SET example_sentence_japanese='ナイフでパンをきります。' WHERE id=1016 AND example_sentence_japanese='ナイフでパンを切ります。';
+UPDATE vocabulary SET example_sentence_japanese='今日はあさからくもっています。' WHERE id=1017 AND example_sentence_japanese='今日はあさから曇っています。';
+UPDATE vocabulary SET example_sentence_japanese='雨ですから、かさをさします。' WHERE id=1018 AND example_sentence_japanese='雨ですから、かさを差します。';
+UPDATE vocabulary SET example_sentence_japanese='きのう、うちのいぬがしにました。' WHERE id=1019 AND example_sentence_japanese='きのう、うちのいぬが死にました。';
+UPDATE vocabulary SET example_sentence_japanese='父は毎日ネクタイをしめます。' WHERE id=1020 AND example_sentence_japanese='父は毎日ネクタイを締めます。';
+UPDATE vocabulary SET example_sentence_japanese='ここでたばこをすわないでください。' WHERE id=1021 AND example_sentence_japanese='ここでたばこを吸わないでください。';
+UPDATE vocabulary SET example_sentence_japanese='わたしはスイスにすんでいます。' WHERE id=1022 AND example_sentence_japanese='わたしはスイスに住んでいます。';
+UPDATE vocabulary SET example_sentence_japanese='電車は九時にえきにつきます。' WHERE id=1023 AND example_sentence_japanese='電車は九時にえきに着きます。';
+UPDATE vocabulary SET example_sentence_japanese='あにはぎんこうにつとめています。' WHERE id=1024 AND example_sentence_japanese='あにはぎんこうに勤めています。';
+UPDATE vocabulary SET example_sentence_japanese='バスがえきの前でとまりました。' WHERE id=1025 AND example_sentence_japanese='バスがえきの前で止まりました。';
+UPDATE vocabulary SET example_sentence_japanese='きのう、かぎをなくしました。' WHERE id=1026 AND example_sentence_japanese='きのう、かぎを無くしました。';
+UPDATE vocabulary SET example_sentence_japanese='毎日、バスにのります。' WHERE id=1027 AND example_sentence_japanese='毎日、バスに乗ります。';
+UPDATE vocabulary SET example_sentence_japanese='ふうとうにきってをはります。' WHERE id=1028 AND example_sentence_japanese='ふうとうにきってを貼ります。';
+UPDATE vocabulary SET example_sentence_japanese='今日はつめたいかぜがふいています。' WHERE id=1029 AND example_sentence_japanese='今日はつめたいかぜが吹いています。';
+COMMIT;

@@ -1,0 +1,780 @@
+{
+  "title": "Adjektive 3 — Adjektive im Alltag: heiss, laut, schnell",
+  "description": "Weitere Alltags-Adjektive wie heiss, dick, dünn, laut, schmutzig, stark und schnell — dazu die Vergangenheit der い-Adjektive, 〜がほしいです (etwas haben wollen) und おなじ (gleich).",
+  "jlpt_level": 5,
+  "topic": "Adjektive im Alltag 2",
+  "instruction_language": "german",
+  "allow_guest_access": false,
+  "pages": [
+    {
+      "title": "Einführung",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Worum geht es?",
+            "content_text": "## Dinge und Eindrücke beschreiben\n\nIn **Adjektive 1** hast du die wichtigsten Gegensatzpaare gelernt: groß/klein, neu/alt, teuer/billig. Jetzt kommen **15 weitere Adjektive** dazu, mit denen du im Alltag noch genauer beschreiben kannst, wie etwas ist.\n\n- Ein Kaffee ist **heiss** 「あつい」 (atsui) oder nur **lauwarm** 「ぬるい」 (nurui).\n- Ein Buch ist **dick** 「あつい」 (atsui) oder **dünn** 「うすい」 (usui).\n- Das Nachbarzimmer ist **laut** 「うるさい」 (urusai), ein Zug ist **schnell** 「はやい」 (hayai).\n\n> Achtung: Im Japanischen gibt es mehrere Wörter, die gleich klingen, aber verschiedene Kanji haben. 「あつい」 (atsui) kann heiss (Wetter), heiss (Gegenstand) oder dick heissen!\n\n### Was du in dieser Lektion lernst\n\n1. 15 neue Adjektive für Gegenstände, Geräusche, Geschmack und Wünsche\n2. Die **Vergangenheit** der い-Adjektive: 「あつかったです」 (atsukatta desu, 'war heiss')\n3. Etwas **haben wollen**: 「〜が ほしいです」 (~ ga hoshii desu)\n4. **Gleich** sein: 「おなじ」 (onaji)"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln Teil 1 — Dinge beschreiben",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Dick, dünn, heiss, niedrig\n\nAuf dieser Seite beschreibst du **Gegenstände**. Achte auf die zwei Wörter für **dick**: 「あつい」 (atsui) für flache Dinge wie Bücher und Stoff, 「ふとい」 (futoi) für rundliche Dinge wie Bäume und Stifte.\n\n- Gegenteil von 「あつい」 (atsui, dick): 「うすい」 (usui, dünn)\n- Gegenteil von 「ふとい」 (futoi, dick): 「ほそい」 (hosoi, dünn/schmal)"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "熱い",
+            "reading": "あつい",
+            "romaji": "atsui",
+            "meaning": "hot (objects)",
+            "meaning_de": "heiss (Gegenstände, Getränke)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あついおちゃをのみます。",
+            "example_sentence_english": "Atsui o-cha o nomimasu. — Ich trinke heissen Tee.",
+            "image_url": "vocab_generated/vocab_0b360c74.png",
+            "vocab_id": 997
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "厚い",
+            "reading": "あつい",
+            "romaji": "atsui",
+            "meaning": "thick",
+            "meaning_de": "dick (Buch, Stoff)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "この本はとてもあついです。",
+            "example_sentence_english": "Kono hon wa totemo atsui desu. — Dieses Buch ist sehr dick.",
+            "image_url": "vocab_generated/vocab_c2e66965.png",
+            "vocab_id": 998
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "薄い",
+            "reading": "うすい",
+            "romaji": "usui",
+            "meaning": "thin; weak (taste)",
+            "meaning_de": "dünn (flach); schwach (Geschmack)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "このコーヒーはうすいです。",
+            "example_sentence_english": "Kono kōhī wa usui desu. — Dieser Kaffee ist schwach.",
+            "image_url": "vocab_generated/vocab_28b8fafc.png",
+            "vocab_id": 999
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "太い",
+            "reading": "ふとい",
+            "romaji": "futoi",
+            "meaning": "thick, fat",
+            "meaning_de": "dick (rundlich: Baum, Stift)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "この木はとてもふといです。",
+            "example_sentence_english": "Kono ki wa totemo futoi desu. — Dieser Baum ist sehr dick.",
+            "image_url": "vocab_generated/vocab_f9094c05.png",
+            "vocab_id": 1005
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "細い",
+            "reading": "ほそい",
+            "romaji": "hosoi",
+            "meaning": "thin, slender, narrow",
+            "meaning_de": "dünn, schmal",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あのみちはとてもほそいです。",
+            "example_sentence_english": "Ano michi wa totemo hosoi desu. — Jene Strasse ist sehr schmal.",
+            "image_url": "vocab_generated/vocab_e1dd2c24.png",
+            "vocab_id": 1006
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "低い",
+            "reading": "ひくい",
+            "romaji": "hikui",
+            "meaning": "low, short",
+            "meaning_de": "niedrig; klein (Körpergrösse)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "このつくえはひくいです。",
+            "example_sentence_english": "Kono tsukue wa hikui desu. — Dieser Tisch ist niedrig.",
+            "image_url": "vocab_generated/vocab_2506d35d.png",
+            "vocab_id": 1007
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "同じ",
+            "reading": "おなじ",
+            "romaji": "onaji",
+            "meaning": "same, identical",
+            "meaning_de": "gleich, derselbe",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "わたしと友だちはおなじ学校です。",
+            "example_sentence_english": "Watashi to tomodachi wa onaji gakkō desu. — Mein Freund und ich gehen auf dieselbe Schule.",
+            "image_url": "vocab_generated/vocab_64e81e00.png",
+            "vocab_id": 995
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln Teil 2 — Eindrücke und Wünsche",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Laut, schmutzig, stark, schnell\n\nHier geht es um **Eindrücke**: Geräusche, Geschmack, Kraft und Tempo. Zwei Paare kannst du dir gut merken:\n\n- 「つよい」 (tsuyoi, stark) und 「よわい」 (yowai, schwach)\n- 「はやい」 (hayai) aus dieser Lektion heisst **schnell**, das gleich klingende 「はやい」 (hayai) aus Adjektive 1 heisst **früh** — auf der Karte siehst du die verschiedenen Kanji\n\n> 「ほしい」 (hoshii, haben wollen) sieht aus wie ein Verb, ist aber ein **い-Adjektiv**!"
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "うるさい",
+            "reading": "うるさい",
+            "romaji": "urusai",
+            "meaning": "noisy; annoying",
+            "meaning_de": "laut, lärmig; lästig",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "となりのへやがうるさいです。",
+            "example_sentence_english": "Tonari no heya ga urusai desu. — Das Nachbarzimmer ist laut.",
+            "image_url": "vocab_generated/vocab_91e67413.png",
+            "vocab_id": 1000
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "汚い",
+            "reading": "きたない",
+            "romaji": "kitanai",
+            "meaning": "dirty, unclean",
+            "meaning_de": "schmutzig",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "わたしのへやはきたないです。",
+            "example_sentence_english": "Watashi no heya wa kitanai desu. — Mein Zimmer ist schmutzig.",
+            "image_url": "vocab_generated/vocab_df3415f0.png",
+            "vocab_id": 1001
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "強い",
+            "reading": "つよい",
+            "romaji": "tsuyoi",
+            "meaning": "strong, powerful",
+            "meaning_de": "stark",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "今日はかぜがつよいです。",
+            "example_sentence_english": "Kyō wa kaze ga tsuyoi desu. — Heute ist der Wind stark.",
+            "image_url": "vocab_generated/vocab_2760b52b.png",
+            "vocab_id": 1002
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "弱い",
+            "reading": "よわい",
+            "romaji": "yowai",
+            "meaning": "weak",
+            "meaning_de": "schwach",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "おとうとはからだがよわいです。",
+            "example_sentence_english": "Otōto wa karada ga yowai desu. — Mein jüngerer Bruder ist körperlich schwach.",
+            "image_url": "vocab_generated/vocab_af3889af.png",
+            "vocab_id": 1003
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "速い",
+            "reading": "はやい",
+            "romaji": "hayai",
+            "meaning": "fast, quick",
+            "meaning_de": "schnell (Tempo)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "この電車はとてもはやいです。",
+            "example_sentence_english": "Kono densha wa totemo hayai desu. — Dieser Zug ist sehr schnell.",
+            "image_url": "vocab_generated/vocab_e7002cbd.png",
+            "vocab_id": 1004
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "まずい",
+            "reading": "まずい",
+            "romaji": "mazui",
+            "meaning": "bad-tasting, unappetising",
+            "meaning_de": "schlecht schmeckend, nicht lecker",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "このりょうりはまずいです。",
+            "example_sentence_english": "Kono ryōri wa mazui desu. — Dieses Essen schmeckt nicht.",
+            "image_url": "vocab_generated/vocab_957021ef.png",
+            "vocab_id": 1009
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "温い",
+            "reading": "ぬるい",
+            "romaji": "nurui",
+            "meaning": "lukewarm",
+            "meaning_de": "lauwarm",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "このおふろはぬるいです。",
+            "example_sentence_english": "Kono o-furo wa nurui desu. — Dieses Badewasser ist lauwarm.",
+            "image_url": "vocab_generated/vocab_fdc0cb4a.png",
+            "vocab_id": 1010
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "欲しい",
+            "reading": "ほしい",
+            "romaji": "hoshii",
+            "meaning": "to want, desire",
+            "meaning_de": "haben wollen, sich wünschen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あたらしいくつがほしいです。",
+            "example_sentence_english": "Atarashii kutsu ga hoshii desu. — Ich möchte neue Schuhe.",
+            "image_url": "vocab_generated/vocab_23fe1cbf.png",
+            "vocab_id": 1008
+          }
+        }
+      ]
+    },
+    {
+      "title": "Grammatik — Vergangenheit, Wünsche und gleich",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Drei neue Muster\n\n### 1. い-Adjektive in der Vergangenheit\n\nBei い-Adjektiven steckt die Zeit **im Adjektiv selbst**, nicht in 「です」 (desu). Du nimmst das letzte 「い」 (i) weg und hängst 「かったです」 (katta desu) an:\n\n- 「あつい」 (atsui) → **「あつかったです」** (atsukatta desu, 'war heiss')\n- Verneint: 「あつくなかったです」 (atsukunakatta desu, 'war nicht heiss')\n\n> Falsch ist 「あついでした」 (atsui deshita)! 「でした」 (deshita) gibt es nur nach Nomen und な-Adjektiven.\n\n### 2. Etwas haben wollen: 〜が ほしいです\n\n「ほしい」 (hoshii) ist ein い-Adjektiv. Das Ding, das du willst, bekommt die Partikel **「が」 (ga)**: 「かばんが ほしいです」 (kaban ga hoshii desu, 'ich möchte eine Tasche').\n\n### 3. Gleich: おなじ\n\n「おなじ」 (onaji) steht **direkt** vor dem Nomen — ohne 「な」 (na) und ohne 「の」 (no): 「おなじ 本」 (onaji hon, 'dasselbe Buch')."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "い-Adjektiv Vergangenheit: 〜かったです / 〜くなかったです (~katta desu / ~kunakatta desu)",
+            "explanation": "Die Vergangenheit eines い-Adjektivs bildest du, indem du das letzte 「い」 (i) durch 「かったです」 (katta desu) ersetzt: 「あつい」 (atsui) → 「あつかったです」 (atsukatta desu, 'war heiss'). Die verneinte Vergangenheit endet auf 「くなかったです」 (kunakatta desu): 「うるさくなかったです」 (urusakunakatta desu, 'war nicht laut'). Ausnahme: 「いい」 (ii, gut) wird zu 「よかったです」 (yokatta desu). 「〜いでした」 (~i deshita) ist immer falsch.",
+            "structure": "[い-Adj. ohne い] + かったです / くなかったです  ([i-adj. stem] + katta desu / kunakatta desu)",
+            "romaji": "[i-adj. stem] + katta desu / kunakatta desu",
+            "jlpt_level": 5,
+            "example_sentences": "きのうの ラーメンは あつかったです。\n(Kinou no raamen wa atsukatta desu.)\nDie Ramen gestern waren heiss.\n\nきのうの へやは うるさくなかったです。\n(Kinou no heya wa urusakunakatta desu.)\nDas Zimmer war gestern nicht laut.\n\nその コーヒーは まずかったです。\n(Sono koohii wa mazukatta desu.)\nDieser Kaffee hat schlecht geschmeckt.",
+            "tts_example_jp": "きのうの ラーメンは あつかったです。"
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "〜が ほしいです (~ ga hoshii desu — etwas haben wollen)",
+            "explanation": "Mit 「ほしいです」 (hoshii desu) sagst du, dass du etwas haben möchtest. Das gewünschte Ding steht mit der Partikel 「が」 (ga). Weil 「ほしい」 (hoshii) ein い-Adjektiv ist, lautet die Verneinung 「ほしくないです」 (hoshikunai desu). Die Form beschreibt deine eigenen Wünsche; nach den Wünschen anderer fragst du mit 「なにが ほしいですか」 (nani ga hoshii desu ka) nur bei Freunden oder Familie.",
+            "structure": "[Nomen] + が + ほしいです  ([noun] + ga + hoshii desu)",
+            "romaji": "[noun] + ga + hoshii desu",
+            "jlpt_level": 5,
+            "example_sentences": "あたらしい かばんが ほしいです。\n(Atarashii kaban ga hoshii desu.)\nIch möchte eine neue Tasche.\n\nなにが ほしいですか。\n(Nani ga hoshii desu ka.)\nWas möchtest du haben?\n\n今は なにも ほしくないです。\n(Ima wa nani mo hoshikunai desu.)\nIm Moment möchte ich nichts.",
+            "tts_example_jp": "あたらしい かばんが ほしいです。"
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "A と B は おなじです (A to B wa onaji desu — gleich, dasselbe)",
+            "explanation": "「おなじ」 (onaji) heisst 'gleich' oder 'derselbe'. Zwei Dinge vergleichst du mit 「AとBは おなじです」 (A to B wa onaji desu). Vor einem Nomen steht 「おなじ」 (onaji) direkt, ohne 「な」 (na) oder 「の」 (no): 「おなじ 学校」 (onaji gakkou, 'dieselbe Schule').",
+            "structure": "[A] + と + [B] + は + おなじです / おなじ + [Nomen]  ([A] + to + [B] + wa + onaji desu / onaji + [noun])",
+            "romaji": "[A] + to + [B] + wa + onaji desu / onaji + [noun]",
+            "jlpt_level": 5,
+            "example_sentences": "わたしと ケンさんは おなじ 年です。\n(Watashi to Ken-san wa onaji toshi desu.)\nKen und ich sind gleich alt.\n\nこの かさと その かさは おなじです。\n(Kono kasa to sono kasa wa onaji desu.)\nDieser Schirm und jener Schirm sind gleich.\n\nメイさんと おなじ 電車に のります。\n(Mei-san to onaji densha ni norimasu.)\nIch fahre mit demselben Zug wie Mei.",
+            "tts_example_jp": "わたしと ケンさんは おなじ 年です。"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Dialog — Im Café",
+      "page_type": "normal",
+      "description": "Ken und Mei trinken Kaffee",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Im Café — Ken und Mei",
+            "content_text": "Mei: ケンさん、きのうの えいがは どうでしたか。\n  (Ken-san, kinou no eiga wa dou deshita ka.)\n  -> Ken, wie war der Film gestern?\n\nKen: おもしろかったです。でも、となりの 人が うるさかったです。\n  (Omoshirokatta desu. Demo, tonari no hito ga urusakatta desu.)\n  -> Er war interessant. Aber die Person neben mir war laut.\n\nMei: そうですか。あ、この コーヒー、とても あついですよ。\n  (Sou desu ka. A, kono koohii, totemo atsui desu yo.)\n  -> Ach so. Oh, dieser Kaffee ist sehr heiss!\n\nKen: わたしの コーヒーは ぬるいです。それに、ちょっと うすいです。\n  (Watashi no koohii wa nurui desu. Sore ni, chotto usui desu.)\n  -> Mein Kaffee ist lauwarm. Ausserdem ist er etwas dünn.\n\nMei: この みせの コーヒーは まずいですね。\n  (Kono mise no koohii wa mazui desu ne.)\n  -> Der Kaffee in diesem Laden schmeckt nicht gut, oder?\n\nKen: ええ。メイさん、なにが ほしいですか。\n  (Ee. Mei-san, nani ga hoshii desu ka.)\n  -> Ja. Mei, was möchtest du?\n\nMei: つめたい ジュースが ほしいです。\n  (Tsumetai juusu ga hoshii desu.)\n  -> Ich möchte einen kalten Saft.\n\nKen: わたしも おなじ ジュースが ほしいです。\n  (Watashi mo onaji juusu ga hoshii desu.)\n  -> Ich möchte auch denselben Saft."
+          }
+        },
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "### Verständnisfragen\n\nVier kurze Fragen zum **Dialog** im Café. Achte darauf, **wer** was sagt."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie war der Film für Ken?",
+              "difficulty_level": 1,
+              "points": 1,
+              "hint": "Ken sagt zuerst etwas Gutes, dann kommt 'aber'.",
+              "explanation": "Ken sagt 「おもしろかったです」 (omoshirokatta desu, 'war interessant'), aber die Person neben ihm war 「うるさかった」 (urusakatta, 'laut').",
+              "options": [
+                {
+                  "option_text": "Interessant, aber die Person neben ihm war laut",
+                  "is_correct": true,
+                  "feedback": "Richtig — おもしろかったです (omoshirokatta desu) + うるさかったです (urusakatta desu)."
+                },
+                {
+                  "option_text": "Langweilig und zu lang",
+                  "is_correct": false,
+                  "feedback": "Nein — Ken fand den Film interessant."
+                },
+                {
+                  "option_text": "Interessant und ganz ruhig",
+                  "is_correct": false,
+                  "feedback": "Nicht ganz — die Person daneben war laut (うるさい, urusai)."
+                },
+                {
+                  "option_text": "Er hat den Film nicht gesehen",
+                  "is_correct": false,
+                  "feedback": "Doch — er erzählt vom Film von gestern."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Meis Kaffee ist lauwarm.",
+              "difficulty_level": 1,
+              "explanation": "Meis Kaffee ist 「とても あつい」 (totemo atsui, 'sehr heiss'). Kens Kaffee ist 「ぬるい」 (nurui, 'lauwarm').",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nein — Meis Kaffee ist sehr heiss, Kens Kaffee ist lauwarm."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Genau — Meis Kaffee ist あつい (atsui), Kens ist ぬるい (nurui)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was möchte Mei?",
+              "difficulty_level": 1,
+              "explanation": "Mei sagt 「つめたい ジュースが ほしいです」 (tsumetai juusu ga hoshii desu).",
+              "options": [
+                {
+                  "option_text": "Einen kalten Saft",
+                  "is_correct": true,
+                  "feedback": "Richtig — つめたい ジュース (tsumetai juusu)."
+                },
+                {
+                  "option_text": "Einen heissen Kaffee",
+                  "is_correct": false,
+                  "feedback": "Den hat sie schon — jetzt möchte sie etwas Kaltes."
+                },
+                {
+                  "option_text": "Einen heissen Tee",
+                  "is_correct": false,
+                  "feedback": "Von Tee ist nicht die Rede."
+                },
+                {
+                  "option_text": "Nichts",
+                  "is_correct": false,
+                  "feedback": "Doch — sie möchte einen Saft."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Ken möchte denselben Saft wie Mei.",
+              "difficulty_level": 2,
+              "explanation": "Ken sagt 「わたしも おなじ ジュースが ほしいです」 (watashi mo onaji juusu ga hoshii desu).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt — おなじ ジュース (onaji juusu) = derselbe Saft."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — er sagt おなじ (onaji, gleich)."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Übung",
+      "page_type": "quiz_carousel",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "### Übung\n\nTeste die **neuen Adjektive** und die **Grammatik** dieser Lektion."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 汚い (きたない, kitanai)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "汚い (きたない, kitanai) heisst 'schmutzig'.",
+              "options": [
+                {
+                  "option_text": "schmutzig",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "laut",
+                  "is_correct": false,
+                  "feedback": "Laut ist うるさい (urusai)."
+                },
+                {
+                  "option_text": "schwach",
+                  "is_correct": false,
+                  "feedback": "Schwach ist 弱い (よわい, yowai)."
+                },
+                {
+                  "option_text": "schmal",
+                  "is_correct": false,
+                  "feedback": "Schmal ist 細い (ほそい, hosoi)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welches Wort passt? この 本は とても ___ です。 (Kono hon wa totemo ___ desu. — Dieses Buch ist sehr dick.)",
+              "difficulty_level": 2,
+              "points": 1,
+              "hint": "Ein Buch ist flach.",
+              "explanation": "Für flache Dinge wie Bücher sagt man 厚い (あつい, atsui). 太い (ふとい, futoi) ist für rundliche Dinge.",
+              "options": [
+                {
+                  "option_text": "厚い (あつい, atsui)",
+                  "is_correct": true,
+                  "feedback": "Richtig — dick bei flachen Dingen."
+                },
+                {
+                  "option_text": "太い (ふとい, futoi)",
+                  "is_correct": false,
+                  "feedback": "太い (futoi) passt zu Bäumen oder Stiften, nicht zu Büchern."
+                },
+                {
+                  "option_text": "薄い (うすい, usui)",
+                  "is_correct": false,
+                  "feedback": "Das ist das Gegenteil: dünn."
+                },
+                {
+                  "option_text": "細い (ほそい, hosoi)",
+                  "is_correct": false,
+                  "feedback": "Das heisst dünn/schmal."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welches Wort heisst 'schnell' (Tempo)?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "速い (はやい, hayai) heisst schnell. 早い (はやい, hayai) klingt gleich, heisst aber früh.",
+              "options": [
+                {
+                  "option_text": "速い (はやい, hayai)",
+                  "is_correct": true,
+                  "feedback": "Richtig — schnell wie ein Zug."
+                },
+                {
+                  "option_text": "早い (はやい, hayai)",
+                  "is_correct": false,
+                  "feedback": "Gleicher Klang, aber das heisst früh."
+                },
+                {
+                  "option_text": "強い (つよい, tsuyoi)",
+                  "is_correct": false,
+                  "feedback": "Das heisst stark."
+                },
+                {
+                  "option_text": "低い (ひくい, hikui)",
+                  "is_correct": false,
+                  "feedback": "Das heisst niedrig."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「ぬるい」 (nurui) bedeutet 'sehr heiss'.",
+              "difficulty_level": 1,
+              "explanation": "「ぬるい」 (nurui) heisst 'lauwarm'. Sehr heiss ist 「とても あつい」 (totemo atsui).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nein — ぬるい (nurui) heisst lauwarm."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Genau — ぬるい (nurui) = lauwarm."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「ほしい」 (hoshii) ist ein い-Adjektiv.",
+              "difficulty_level": 2,
+              "explanation": "Ja — deshalb heisst die Verneinung 「ほしくないです」 (hoshikunai desu).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt — ほしい (hoshii) wird wie あつい (atsui) gebeugt."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — ほしい (hoshii) endet auf い und wird wie ein い-Adjektiv gebeugt."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde das japanische Adjektiv mit der deutschen Bedeutung.",
+              "difficulty_level": 2,
+              "options": [
+                {
+                  "option_text": "熱い (あつい, atsui)",
+                  "is_correct": true,
+                  "feedback": "heiss (Gegenstände)"
+                },
+                {
+                  "option_text": "汚い (きたない, kitanai)",
+                  "is_correct": true,
+                  "feedback": "schmutzig"
+                },
+                {
+                  "option_text": "弱い (よわい, yowai)",
+                  "is_correct": true,
+                  "feedback": "schwach"
+                },
+                {
+                  "option_text": "細い (ほそい, hosoi)",
+                  "is_correct": true,
+                  "feedback": "dünn, schmal"
+                },
+                {
+                  "option_text": "低い (ひくい, hikui)",
+                  "is_correct": true,
+                  "feedback": "niedrig"
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde jedes Adjektiv mit seinem Gegenteil.",
+              "difficulty_level": 3,
+              "options": [
+                {
+                  "option_text": "つよい (tsuyoi, stark)",
+                  "is_correct": true,
+                  "feedback": "よわい (yowai)"
+                },
+                {
+                  "option_text": "ふとい (futoi, dick/rund)",
+                  "is_correct": true,
+                  "feedback": "ほそい (hosoi)"
+                },
+                {
+                  "option_text": "あつい (atsui, dick/flach)",
+                  "is_correct": true,
+                  "feedback": "うすい (usui)"
+                },
+                {
+                  "option_text": "たかい (takai, hoch)",
+                  "is_correct": true,
+                  "feedback": "ひくい (hikui)"
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie sagst du 'Es war heiss' (Gegenstand) mit あつい (atsui)?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "い weg, かったです dazu: あつい → あつかったです (atsukatta desu).",
+              "options": [
+                {
+                  "option_text": "あつかったです (atsukatta desu)",
+                  "is_correct": true,
+                  "feedback": "Richtig — Vergangenheit steckt im Adjektiv."
+                },
+                {
+                  "option_text": "あついでした (atsui deshita)",
+                  "is_correct": false,
+                  "feedback": "Typischer Fehler — でした (deshita) gibt es nicht nach い-Adjektiven."
+                },
+                {
+                  "option_text": "あつくないです (atsukunai desu)",
+                  "is_correct": false,
+                  "feedback": "Das ist die Verneinung in der Gegenwart: ist nicht heiss."
+                },
+                {
+                  "option_text": "あつくなかったです (atsukunakatta desu)",
+                  "is_correct": false,
+                  "feedback": "Das heisst: war nicht heiss."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "'Das Zimmer war nicht laut.' へやは ___。 (Heya wa ___.)",
+              "difficulty_level": 3,
+              "points": 1,
+              "explanation": "Verneinte Vergangenheit: うるさい → うるさくなかったです (urusakunakatta desu).",
+              "options": [
+                {
+                  "option_text": "うるさくなかったです (urusakunakatta desu)",
+                  "is_correct": true,
+                  "feedback": "Richtig — nicht + Vergangenheit."
+                },
+                {
+                  "option_text": "うるさかったです (urusakatta desu)",
+                  "is_correct": false,
+                  "feedback": "Das heisst: war laut."
+                },
+                {
+                  "option_text": "うるさくないです (urusakunai desu)",
+                  "is_correct": false,
+                  "feedback": "Das ist Gegenwart: ist nicht laut."
+                },
+                {
+                  "option_text": "うるさいでした (urusai deshita)",
+                  "is_correct": false,
+                  "feedback": "Diese Form gibt es nicht."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「おなじな 本」 (onaji na hon) ist korrekt für 'dasselbe Buch'.",
+              "difficulty_level": 2,
+              "explanation": "Vor einem Nomen steht おなじ (onaji) direkt: 「おなじ 本」 (onaji hon).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nein — ohne な: おなじ 本 (onaji hon)."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Genau — おなじ (onaji) braucht kein な (na)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie sagst du 'Ich möchte eine neue Tasche'?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Das Gewünschte bekommt が (ga): あたらしい かばんが ほしいです (atarashii kaban ga hoshii desu).",
+              "options": [
+                {
+                  "option_text": "あたらしい かばんが ほしいです。 (Atarashii kaban ga hoshii desu.)",
+                  "is_correct": true,
+                  "feedback": "Richtig — Nomen + が + ほしいです."
+                },
+                {
+                  "option_text": "あたらしい かばんを ほしいです。 (Atarashii kaban o hoshii desu.)",
+                  "is_correct": false,
+                  "feedback": "Bei ほしい (hoshii) steht が (ga), nicht を (o)."
+                },
+                {
+                  "option_text": "あたらしい かばんが ほしかったです。 (Atarashii kaban ga hoshikatta desu.)",
+                  "is_correct": false,
+                  "feedback": "Das ist Vergangenheit: ich wollte."
+                },
+                {
+                  "option_text": "あたらしい かばんは ほしくないです。 (Atarashii kaban wa hoshikunai desu.)",
+                  "is_correct": false,
+                  "feedback": "Das heisst: Eine neue Tasche möchte ich nicht."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet まずい (mazui)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "まずい (mazui) heisst 'schmeckt schlecht' — das Gegenteil von おいしい (oishii).",
+              "options": [
+                {
+                  "option_text": "schmeckt schlecht",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "lecker",
+                  "is_correct": false,
+                  "feedback": "Lecker ist おいしい (oishii)."
+                },
+                {
+                  "option_text": "süss",
+                  "is_correct": false,
+                  "feedback": "Süss ist あまい (amai)."
+                },
+                {
+                  "option_text": "teuer",
+                  "is_correct": false,
+                  "feedback": "Teuer ist たかい (takai)."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Zusammenfassung",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Das hast du gelernt\n\n### Neue Adjektive\n\n- **Dinge**: 「あつい」 (atsui, heiss / dick), 「うすい」 (usui, dünn), 「ふとい」 (futoi, dick), 「ほそい」 (hosoi, schmal), 「ひくい」 (hikui, niedrig)\n- **Eindrücke**: 「うるさい」 (urusai, laut), 「きたない」 (kitanai, schmutzig), 「つよい」 (tsuyoi, stark), 「よわい」 (yowai, schwach), 「はやい」 (hayai, schnell)\n- **Geschmack und Temperatur**: 「まずい」 (mazui, schmeckt schlecht), 「ぬるい」 (nurui, lauwarm)\n- **Wünsche und Vergleiche**: 「ほしい」 (hoshii, haben wollen), 「おなじ」 (onaji, gleich)\n\n### Grammatik\n\n1. Vergangenheit: 「あつかったです」 (atsukatta desu) und 「あつくなかったです」 (atsukunakatta desu)\n2. Wünsche: 「〜が ほしいです」 (~ ga hoshii desu)\n3. Gleich: 「おなじ 本」 (onaji hon) ohne 「な」 (na)\n\n> **Lerntipp:** Beschreibe heute Abend drei Dinge in deiner Wohnung mit den neuen Adjektiven — und sag, wie dein Tag war: 「今日は いそがしかったです」 (kyou wa isogashikatta desu).\n\nIn der nächsten Lektion lernst du weitere **Verben des Alltags**."
+          }
+        }
+      ]
+    }
+  ],
+  "thumbnail_url": "generated/thumbnail_adjektive_im_alltag_2_20260926_162616.png"
+}

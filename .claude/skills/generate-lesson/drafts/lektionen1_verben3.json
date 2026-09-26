@@ -1,0 +1,859 @@
+{
+  "title": "Verben 3 — Verben des Alltags: unterwegs und zu Hause",
+  "description": "Weitere Alltagsverben wie einsteigen, aussteigen, ankommen, wohnen, anrufen, schneiden und verlieren — dazu die Partikeln beim Fahren, 〜ています für Dauerzustände und 〜ないでください (bitte nicht).",
+  "jlpt_level": 5,
+  "topic": "Verben des Alltags 2",
+  "instruction_language": "german",
+  "allow_guest_access": false,
+  "pages": [
+    {
+      "title": "Einführung",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Worum geht es?",
+            "content_text": "## Unterwegs, zu Hause und am Telefon\n\nIn **Verben 1** und **Verben 2** hast du Verben für den Tagesablauf und fürs Geben und Nehmen gelernt. Jetzt kommen **20 weitere Verben** dazu, die du jeden Tag brauchst:\n\n- **Unterwegs**: in den Zug **einsteigen** 「のる」 (noru), **aussteigen** 「おりる」 (oriru), **ankommen** 「つく」 (tsuku)\n- **Zu Hause**: Brot **schneiden** 「きる」 (kiru), eine Briefmarke **aufkleben** 「はる」 (haru)\n- **Am Telefon**: jemanden **anrufen** 「でんわを かける」 (denwa o kakeru)\n- **Wetter**: der Himmel **bewölkt sich** 「くもる」 (kumoru), der Wind **weht** 「ふく」 (fuku)\n\n> Viele dieser Verben brauchen eine bestimmte Partikel. Du sagst 「電車に のる」 (densha ni noru), aber 「電車を おりる」 (densha o oriru)!\n\n### Was du in dieser Lektion lernst\n\n1. 20 neue Verben für unterwegs, zu Hause und das Wetter\n2. Die Partikeln **「に」 (ni)** und **「を」 (o)** beim Ein- und Aussteigen\n3. **「〜ています」 (~te imasu)** für Dauerzustände wie wohnen und arbeiten\n4. Höflich verbieten: **「〜ないでください」 (~naide kudasai)**"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln Teil 1 — Unterwegs und im Leben",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Fahren, ankommen, wohnen\n\nDiese Verben brauchst du **unterwegs** und wenn du über dein **Leben** erzählst. Merke dir die Partikeln gleich mit:\n\n- 「バスに のる」 (basu ni noru) — in den Bus einsteigen\n- 「バスを おりる」 (basu o oriru) — aus dem Bus aussteigen\n- 「えきに つく」 (eki ni tsuku) — am Bahnhof ankommen\n\n> 「かかる」 (kakaru) sagt, wie viel **Zeit oder Geld** etwas braucht: 「十分 かかります」 (juppun kakarimasu, 'dauert zehn Minuten')."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "乗る",
+            "reading": "のる",
+            "romaji": "noru",
+            "meaning": "to ride, to get on",
+            "meaning_de": "einsteigen, fahren mit",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "毎日、バスにのります。",
+            "example_sentence_english": "Mainichi, basu ni norimasu. — Ich fahre jeden Tag mit dem Bus.",
+            "image_url": "vocab_generated/vocab_6d489aa9.png",
+            "vocab_id": 1027
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "降りる",
+            "reading": "おりる",
+            "romaji": "oriru",
+            "meaning": "to get off",
+            "meaning_de": "aussteigen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "つぎのえきでおります。",
+            "example_sentence_english": "Tsugi no eki de orimasu. — Ich steige an der nächsten Station aus.",
+            "image_url": "vocab_generated/vocab_8108c093.png",
+            "vocab_id": 1011
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "着く",
+            "reading": "つく",
+            "romaji": "tsuku",
+            "meaning": "to arrive",
+            "meaning_de": "ankommen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "電車は九時にえきにつきます。",
+            "example_sentence_english": "Densha wa kuji ni eki ni tsukimasu. — Der Zug kommt um neun Uhr am Bahnhof an.",
+            "image_url": "vocab_generated/vocab_519b1182.png",
+            "vocab_id": 1023
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "止まる",
+            "reading": "とまる",
+            "romaji": "tomaru",
+            "meaning": "to stop, to come to a halt",
+            "meaning_de": "anhalten, stehen bleiben",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "バスがえきの前でとまりました。",
+            "example_sentence_english": "Basu ga eki no mae de tomarimashita. — Der Bus hielt vor dem Bahnhof an.",
+            "image_url": "vocab_generated/vocab_631f23bf.png",
+            "vocab_id": 1025
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "かかる",
+            "reading": "かかる",
+            "romaji": "kakaru",
+            "meaning": "to take (time, money)",
+            "meaning_de": "dauern, kosten (Zeit, Geld)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "えきまで十分かかります。",
+            "example_sentence_english": "Eki made juppun kakarimasu. — Bis zum Bahnhof braucht man zehn Minuten.",
+            "image_url": "vocab_generated/vocab_aaf0ce71.png",
+            "vocab_id": 1012
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "住む",
+            "reading": "すむ",
+            "romaji": "sumu",
+            "meaning": "to live, to reside",
+            "meaning_de": "wohnen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "わたしはスイスにすんでいます。",
+            "example_sentence_english": "Watashi wa Suisu ni sunde imasu. — Ich wohne in der Schweiz.",
+            "image_url": "vocab_generated/vocab_8f24d759.png",
+            "vocab_id": 1022
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "勤める",
+            "reading": "つとめる",
+            "romaji": "tsutomeru",
+            "meaning": "to work for (a company)",
+            "meaning_de": "angestellt sein, arbeiten bei",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あにはぎんこうにつとめています。",
+            "example_sentence_english": "Ani wa ginkō ni tsutomete imasu. — Mein älterer Bruder arbeitet bei einer Bank.",
+            "image_url": "vocab_generated/vocab_2ceb7f34.png",
+            "vocab_id": 1024
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "無くす",
+            "reading": "なくす",
+            "romaji": "nakusu",
+            "meaning": "to lose (something)",
+            "meaning_de": "verlieren (Gegenstand)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "きのう、かぎをなくしました。",
+            "example_sentence_english": "Kinō, kagi o nakushimashita. — Gestern habe ich meinen Schlüssel verloren.",
+            "image_url": "vocab_generated/vocab_569a6451.png",
+            "vocab_id": 1026
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "吸う",
+            "reading": "すう",
+            "romaji": "suu",
+            "meaning": "to inhale; to smoke",
+            "meaning_de": "einatmen; rauchen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ここでたばこをすわないでください。",
+            "example_sentence_english": "Koko de tabako o suwanaide kudasai. — Bitte rauchen Sie hier nicht.",
+            "image_url": "vocab_generated/vocab_813851fe.png",
+            "vocab_id": 1021
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "死ぬ",
+            "reading": "しぬ",
+            "romaji": "shinu",
+            "meaning": "to die",
+            "meaning_de": "sterben",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "きのう、うちのいぬがしにました。",
+            "example_sentence_english": "Kinō, uchi no inu ga shinimashita. — Gestern ist unser Hund gestorben.",
+            "image_url": "vocab_generated/vocab_9c6cf905.png",
+            "vocab_id": 1019
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln Teil 2 — Zu Hause und das Wetter",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Anrufen, schneiden, aufkleben\n\nHier findest du Verben für **zu Hause**, fürs **Büro** und fürs **Wetter**. Achtung bei 「かける」 (kakeru) — das Wort hat mehrere Bedeutungen:\n\n- 「でんわを かける」 (denwa o kakeru) — anrufen\n- 「めがねを かける」 (megane o kakeru) — die Brille aufsetzen\n- 「でんわを きる」 (denwa o kiru) — auflegen (wörtlich: das Telefon 'abschneiden')\n\n> 「きえる」 (kieru) heisst, dass etwas **von selbst** ausgeht, zum Beispiel das Licht."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "かける",
+            "reading": "かける",
+            "romaji": "kakeru",
+            "meaning": "to call (phone); to sit down",
+            "meaning_de": "(Telefon) anrufen; sich setzen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "母に電話をかけます。",
+            "example_sentence_english": "Haha ni denwa o kakemasu. — Ich rufe meine Mutter an.",
+            "image_url": "vocab_generated/vocab_54f5f551.png",
+            "vocab_id": 1014
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "掛ける",
+            "reading": "かける",
+            "romaji": "kakeru",
+            "meaning": "to hang; to put on (glasses)",
+            "meaning_de": "aufhängen; (Brille) aufsetzen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あさ、めがねをかけます。",
+            "example_sentence_english": "Asa, megane o kakemasu. — Am Morgen setze ich die Brille auf.",
+            "image_url": "vocab_generated/vocab_03c57604.png",
+            "vocab_id": 1013
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "切る",
+            "reading": "きる",
+            "romaji": "kiru",
+            "meaning": "to cut; to hang up (phone)",
+            "meaning_de": "schneiden; (Telefon) auflegen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ナイフでパンをきります。",
+            "example_sentence_english": "Naifu de pan o kirimasu. — Ich schneide das Brot mit einem Messer.",
+            "image_url": "vocab_generated/vocab_daf8608f.png",
+            "vocab_id": 1016
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "締める",
+            "reading": "しめる",
+            "romaji": "shimeru",
+            "meaning": "to tie, to fasten",
+            "meaning_de": "binden, festziehen (Krawatte, Gurt)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "父は毎日ネクタイをしめます。",
+            "example_sentence_english": "Chichi wa mainichi nekutai o shimemasu. — Mein Vater bindet sich jeden Tag eine Krawatte.",
+            "image_url": "vocab_generated/vocab_c4cf1cf7.png",
+            "vocab_id": 1020
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "貼る",
+            "reading": "はる",
+            "romaji": "haru",
+            "meaning": "to stick, to paste",
+            "meaning_de": "(auf)kleben",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ふうとうにきってをはります。",
+            "example_sentence_english": "Fūtō ni kitte o harimasu. — Ich klebe eine Briefmarke auf den Umschlag.",
+            "image_url": "vocab_generated/vocab_302067fd.png",
+            "vocab_id": 1028
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "コピーする",
+            "reading": "コピーする",
+            "romaji": "kopii suru",
+            "meaning": "to copy",
+            "meaning_de": "kopieren",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "このかみを三まいコピーしてください。",
+            "example_sentence_english": "Kono kami o sanmai kopī shite kudasai. — Bitte machen Sie drei Kopien von diesem Blatt.",
+            "image_url": "vocab_generated/vocab_9bdfed18.png",
+            "vocab_id": 1030
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "消える",
+            "reading": "きえる",
+            "romaji": "kieru",
+            "meaning": "to go out, to vanish",
+            "meaning_de": "ausgehen (Licht), verschwinden",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "へやの電気がきえました。",
+            "example_sentence_english": "Heya no denki ga kiemashita. — Das Licht im Zimmer ist ausgegangen.",
+            "image_url": "vocab_generated/vocab_4c0a5a5a.png",
+            "vocab_id": 1015
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "差す",
+            "reading": "さす",
+            "romaji": "sasu",
+            "meaning": "to put up (an umbrella)",
+            "meaning_de": "(Schirm) aufspannen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "雨ですから、かさをさします。",
+            "example_sentence_english": "Ame desu kara, kasa o sashimasu. — Weil es regnet, spanne ich den Schirm auf.",
+            "image_url": "vocab_generated/vocab_14d5c616.png",
+            "vocab_id": 1018
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "曇る",
+            "reading": "くもる",
+            "romaji": "kumoru",
+            "meaning": "to become cloudy",
+            "meaning_de": "sich bewölken, trüb werden",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "今日はあさからくもっています。",
+            "example_sentence_english": "Kyō wa asa kara kumotte imasu. — Heute ist es seit dem Morgen bewölkt.",
+            "image_url": "vocab_generated/vocab_0706c184.png",
+            "vocab_id": 1017
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "word": "吹く",
+            "reading": "ふく",
+            "romaji": "fuku",
+            "meaning": "to blow (wind)",
+            "meaning_de": "wehen, blasen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "今日はつめたいかぜがふいています。",
+            "example_sentence_english": "Kyō wa tsumetai kaze ga fuite imasu. — Heute weht ein kalter Wind.",
+            "image_url": "vocab_generated/vocab_20cff071.png",
+            "vocab_id": 1029
+          }
+        }
+      ]
+    },
+    {
+      "title": "Grammatik — Partikeln, Zustände und Verbote",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Drei neue Muster\n\n### 1. Einsteigen mit に, aussteigen mit を\n\nBeim **Einsteigen** zeigt 「に」 (ni) das Ziel: 「電車に のります」 (densha ni norimasu). Beim **Aussteigen** verlässt du etwas, darum steht 「を」 (o): 「電車を おります」 (densha o orimasu). Auch 「つく」 (tsuku, ankommen) nimmt 「に」 (ni).\n\n### 2. Dauerzustand mit 〜ています\n\nManche Verben beschreiben mit 「〜ています」 (~te imasu) einen **Zustand**, der andauert:\n\n- 「すんでいます」 (sunde imasu) — ich wohne (dort)\n- 「つとめています」 (tsutomete imasu) — ich arbeite bei (einer Firma)\n- 「くもっています」 (kumotte imasu) — es ist bewölkt\n\n### 3. Bitte nicht: 〜ないでください\n\nMit der **ない-Form** (nai) + 「でください」 (de kudasai) bittest du höflich, etwas **nicht** zu tun: 「すわないでください」 (suwanaide kudasai, 'bitte nicht rauchen').\n\n> So bildest du die ない-Form: bei う-Verben wird der letzte Laut zu 'a' + 「ない」 (nai), zum Beispiel 「すう」 (suu) → 「すわない」 (suwanai). Bei る-Verben fällt 「る」 (ru) weg: 「おりる」 (oriru) → 「おりない」 (orinai). 「する」 (suru) → 「しない」 (shinai)."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "〜に のる / 〜を おりる / 〜に つく (~ ni noru / ~ o oriru / ~ ni tsuku — Partikeln beim Fahren)",
+            "explanation": "Beim Einsteigen steht das Fahrzeug mit 「に」 (ni): 「バスに のります」 (basu ni norimasu). Beim Aussteigen steht es mit 「を」 (o), weil man es verlässt: 「バスを おります」 (basu o orimasu). Den Ort, an dem man aussteigt, markiert 「で」 (de): 「つぎの えきで おります」 (tsugi no eki de orimasu). Das Ziel beim Ankommen steht mit 「に」 (ni): 「えきに つきます」 (eki ni tsukimasu).",
+            "structure": "[Fahrzeug] + に + のります / [Fahrzeug] + を + おります / [Ort] + に + つきます  ([vehicle] + ni + norimasu / [vehicle] + o + orimasu / [place] + ni + tsukimasu)",
+            "romaji": "[vehicle] + ni + norimasu / [vehicle] + o + orimasu / [place] + ni + tsukimasu",
+            "jlpt_level": 5,
+            "example_sentences": "毎日 八時に 電車に のります。\n(Mainichi hachi-ji ni densha ni norimasu.)\nJeden Tag steige ich um acht Uhr in den Zug.\n\nつぎの えきで 電車を おります。\n(Tsugi no eki de densha o orimasu.)\nAn der nächsten Station steige ich aus dem Zug aus.\n\nバスは 九時に 学校に つきます。\n(Basu wa ku-ji ni gakkou ni tsukimasu.)\nDer Bus kommt um neun Uhr an der Schule an.",
+            "tts_example_jp": "つぎの えきで 電車を おります。"
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "〜ています (~te imasu) — Dauerzustand: wohnen, arbeiten bei, bewölkt",
+            "explanation": "Bei Verben wie 「すむ」 (sumu, wohnen), 「つとめる」 (tsutomeru, angestellt sein) oder 「くもる」 (kumoru, sich bewölken) beschreibt 「〜ています」 (~te imasu) einen Zustand, der andauert. Wer sagen will, wo er wohnt, sagt deshalb 「〜に すんでいます」 (~ ni sunde imasu), nicht 「すみます」 (sumimasu). Die て-Form: 「すむ」 (sumu) → 「すんで」 (sunde), 「つとめる」 (tsutomeru) → 「つとめて」 (tsutomete), 「くもる」 (kumoru) → 「くもって」 (kumotte).",
+            "structure": "[Verb て-Form] + います  ([verb te-form] + imasu)",
+            "romaji": "[verb te-form] + imasu",
+            "jlpt_level": 5,
+            "example_sentences": "わたしは スイスに すんでいます。\n(Watashi wa Suisu ni sunde imasu.)\nIch wohne in der Schweiz.\n\n父は ぎんこうに つとめています。\n(Chichi wa ginkou ni tsutomete imasu.)\nMein Vater arbeitet bei einer Bank.\n\n今日は あさから くもっています。\n(Kyou wa asa kara kumotte imasu.)\nHeute ist es seit dem Morgen bewölkt.",
+            "tts_example_jp": "わたしは スイスに すんでいます。"
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "〜ないでください (~naide kudasai — bitte nicht ...)",
+            "explanation": "Mit der ない-Form des Verbs und 「でください」 (de kudasai) bittest du jemanden höflich, etwas nicht zu tun. う-Verben: letzter Laut auf a + 「ない」 (nai), zum Beispiel 「すう」 (suu) → 「すわない」 (suwanai), 「きる」 (kiru, schneiden) → 「きらない」 (kiranai). る-Verben: 「る」 (ru) fällt weg, 「おりる」 (oriru) → 「おりない」 (orinai). 「する」 (suru) → 「しない」 (shinai).",
+            "structure": "[Verb ない-Form] + でください  ([verb nai-form] + de kudasai)",
+            "romaji": "[verb nai-form] + de kudasai",
+            "jlpt_level": 5,
+            "example_sentences": "ここで たばこを すわないでください。\n(Koko de tabako o suwanaide kudasai.)\nBitte rauchen Sie hier nicht.\n\nまだ バスを おりないでください。\n(Mada basu o orinaide kudasai.)\nBitte steigen Sie noch nicht aus dem Bus aus.\n\nこの かみを コピーしないでください。\n(Kono kami o kopii shinaide kudasai.)\nBitte kopieren Sie dieses Blatt nicht.",
+            "tts_example_jp": "ここで たばこを すわないでください。"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Dialog — Am Telefon",
+      "page_type": "normal",
+      "description": "Lisa ruft Haruto aus dem Zug an",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "title": "Am Telefon — Lisa ist unterwegs zu Haruto",
+            "content_text": "Haruto: もしもし、リサさん。今 どこですか。\n  (Moshi moshi, Risa-san. Ima doko desu ka.)\n  -> Hallo, Lisa. Wo bist du gerade?\n\nLisa: 今、電車に のっています。\n  (Ima, densha ni notte imasu.)\n  -> Ich sitze gerade im Zug.\n\nHaruto: そうですか。どこで おりますか。\n  (Sou desu ka. Doko de orimasu ka.)\n  -> Ach so. Wo steigst du aus?\n\nLisa: つぎの えきで おります。えきから ハルトさんの うちまで 何分 かかりますか。\n  (Tsugi no eki de orimasu. Eki kara Haruto-san no uchi made nan-pun kakarimasu ka.)\n  -> An der nächsten Station. Wie lange braucht man vom Bahnhof bis zu deinem Haus?\n\nHaruto: あるいて 十分 かかります。雨ですから、かさを さしてください。\n  (Aruite juppun kakarimasu. Ame desu kara, kasa o sashite kudasai.)\n  -> Zu Fuss zehn Minuten. Es regnet, also spann bitte den Schirm auf.\n\nLisa: あっ、かさを なくしました。\n  (A, kasa o nakushimashita.)\n  -> Oh, ich habe meinen Schirm verloren!\n\nHaruto: だいじょうぶです。えきの 前で まっています。\n  (Daijoubu desu. Eki no mae de matte imasu.)\n  -> Kein Problem. Ich warte vor dem Bahnhof.\n\nLisa: ありがとう。じゃ、でんわを きりますね。\n  (Arigatou. Ja, denwa o kirimasu ne.)\n  -> Danke. Also, ich lege jetzt auf."
+          }
+        },
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "### Verständnisfragen\n\nVier kurze Fragen zum **Telefongespräch**. Achte darauf, **wer** was sagt."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wo ist Lisa während des Anrufs?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Lisa sagt 「今、電車に のっています」 (ima, densha ni notte imasu) — sie sitzt im Zug.",
+              "options": [
+                {
+                  "option_text": "Im Zug",
+                  "is_correct": true,
+                  "feedback": "Richtig — 電車に のっています (densha ni notte imasu)."
+                },
+                {
+                  "option_text": "Im Bus",
+                  "is_correct": false,
+                  "feedback": "Nein — sie sagt 電車 (densha), Zug."
+                },
+                {
+                  "option_text": "Zu Hause",
+                  "is_correct": false,
+                  "feedback": "Nein — sie ist unterwegs."
+                },
+                {
+                  "option_text": "Vor dem Bahnhof",
+                  "is_correct": false,
+                  "feedback": "Dort wartet Haruto später."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie lange geht man vom Bahnhof zu Harutos Haus zu Fuss?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Haruto sagt 「あるいて 十分 かかります」 (aruite juppun kakarimasu).",
+              "options": [
+                {
+                  "option_text": "10 Minuten",
+                  "is_correct": true,
+                  "feedback": "Richtig — 十分 (juppun)."
+                },
+                {
+                  "option_text": "5 Minuten",
+                  "is_correct": false,
+                  "feedback": "Das wäre 五分 (go-fun)."
+                },
+                {
+                  "option_text": "20 Minuten",
+                  "is_correct": false,
+                  "feedback": "Das wäre 二十分 (nijuppun)."
+                },
+                {
+                  "option_text": "30 Minuten",
+                  "is_correct": false,
+                  "feedback": "Das wäre 三十分 (sanjuppun)."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Lisa hat ihren Schirm verloren.",
+              "difficulty_level": 1,
+              "explanation": "Lisa sagt 「かさを なくしました」 (kasa o nakushimashita).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt — なくしました (nakushimashita) = habe verloren."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — sie sagt かさを なくしました (kasa o nakushimashita)."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Haruto wartet bei sich zu Hause auf Lisa.",
+              "difficulty_level": 2,
+              "explanation": "Haruto sagt 「えきの 前で まっています」 (eki no mae de matte imasu) — er wartet vor dem Bahnhof.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nein — er wartet vor dem Bahnhof."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Genau — えきの 前 (eki no mae) = vor dem Bahnhof."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Übung",
+      "page_type": "quiz_carousel",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "### Übung\n\nTeste die **neuen Verben** und die **Grammatik** dieser Lektion."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 降りる (おりる, oriru)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "降りる (おりる, oriru) heisst 'aussteigen'.",
+              "options": [
+                {
+                  "option_text": "aussteigen",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "einsteigen",
+                  "is_correct": false,
+                  "feedback": "Einsteigen ist 乗る (のる, noru)."
+                },
+                {
+                  "option_text": "ankommen",
+                  "is_correct": false,
+                  "feedback": "Ankommen ist 着く (つく, tsuku)."
+                },
+                {
+                  "option_text": "anhalten",
+                  "is_correct": false,
+                  "feedback": "Anhalten ist 止まる (とまる, tomaru)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welche Partikel passt? バス ___ のります。 (Basu ___ norimasu. — Ich steige in den Bus.)",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Beim Einsteigen steht das Fahrzeug mit に (ni): バスに のります (basu ni norimasu).",
+              "options": [
+                {
+                  "option_text": "に",
+                  "is_correct": true,
+                  "feedback": "Richtig — に (ni) beim Einsteigen."
+                },
+                {
+                  "option_text": "を",
+                  "is_correct": false,
+                  "feedback": "を (o) steht beim Aussteigen: バスを おります (basu o orimasu)."
+                },
+                {
+                  "option_text": "で",
+                  "is_correct": false,
+                  "feedback": "で (de) wäre 'mit dem Bus': バスで 行きます (basu de ikimasu)."
+                },
+                {
+                  "option_text": "が",
+                  "is_correct": false,
+                  "feedback": "が (ga) passt hier nicht."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie sagst du 'Ich wohne in der Schweiz'?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Wohnen ist ein Dauerzustand: スイスに すんでいます (Suisu ni sunde imasu).",
+              "options": [
+                {
+                  "option_text": "スイスに すんでいます。 (Suisu ni sunde imasu.)",
+                  "is_correct": true,
+                  "feedback": "Richtig — 〜ています (~te imasu) für den Zustand."
+                },
+                {
+                  "option_text": "スイスに すみます。 (Suisu ni sumimasu.)",
+                  "is_correct": false,
+                  "feedback": "Das klingt wie 'ich werde dort wohnen'. Für jetzt: すんでいます (sunde imasu)."
+                },
+                {
+                  "option_text": "スイスに つとめています。 (Suisu ni tsutomete imasu.)",
+                  "is_correct": false,
+                  "feedback": "つとめる (tsutomeru) heisst 'angestellt sein bei'."
+                },
+                {
+                  "option_text": "スイスに ついています。 (Suisu ni tsuite imasu.)",
+                  "is_correct": false,
+                  "feedback": "Das heisst eher 'bin in der Schweiz angekommen'."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie sagst du 'jemanden anrufen'?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Anrufen heisst でんわを かける (denwa o kakeru).",
+              "options": [
+                {
+                  "option_text": "でんわを かける (denwa o kakeru)",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "でんわを きる (denwa o kiru)",
+                  "is_correct": false,
+                  "feedback": "Das heisst auflegen."
+                },
+                {
+                  "option_text": "でんわを はる (denwa o haru)",
+                  "is_correct": false,
+                  "feedback": "はる (haru) heisst aufkleben."
+                },
+                {
+                  "option_text": "でんわが かかる (denwa ga kakaru)",
+                  "is_correct": false,
+                  "feedback": "Das heisst 'ein Anruf kommt' — nicht 'ich rufe an'."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「死ぬ」 (しぬ, shinu) bedeutet 'sterben'.",
+              "difficulty_level": 1,
+              "explanation": "Ja — 死ぬ (しぬ, shinu) heisst 'sterben'.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — しぬ (shinu) = sterben."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「無くす」 (なくす, nakusu) bedeutet 'finden'.",
+              "difficulty_level": 1,
+              "explanation": "なくす (nakusu) heisst 'verlieren' — also das Gegenteil.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nein — なくす (nakusu) heisst verlieren."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Genau — なくす (nakusu) = verlieren."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde das japanische Verb mit der deutschen Bedeutung.",
+              "difficulty_level": 2,
+              "options": [
+                {
+                  "option_text": "切る (きる, kiru)",
+                  "is_correct": true,
+                  "feedback": "schneiden"
+                },
+                {
+                  "option_text": "貼る (はる, haru)",
+                  "is_correct": true,
+                  "feedback": "aufkleben"
+                },
+                {
+                  "option_text": "締める (しめる, shimeru)",
+                  "is_correct": true,
+                  "feedback": "binden, festziehen"
+                },
+                {
+                  "option_text": "吸う (すう, suu)",
+                  "is_correct": true,
+                  "feedback": "einatmen, rauchen"
+                },
+                {
+                  "option_text": "差す (さす, sasu)",
+                  "is_correct": true,
+                  "feedback": "(Schirm) aufspannen"
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde das japanische Verb mit der deutschen Bedeutung.",
+              "difficulty_level": 2,
+              "options": [
+                {
+                  "option_text": "曇る (くもる, kumoru)",
+                  "is_correct": true,
+                  "feedback": "sich bewölken"
+                },
+                {
+                  "option_text": "吹く (ふく, fuku)",
+                  "is_correct": true,
+                  "feedback": "wehen (Wind)"
+                },
+                {
+                  "option_text": "消える (きえる, kieru)",
+                  "is_correct": true,
+                  "feedback": "ausgehen (Licht)"
+                },
+                {
+                  "option_text": "止まる (とまる, tomaru)",
+                  "is_correct": true,
+                  "feedback": "anhalten"
+                },
+                {
+                  "option_text": "着く (つく, tsuku)",
+                  "is_correct": true,
+                  "feedback": "ankommen"
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "'Bitte rauchen Sie hier nicht.' ここで たばこを ___。 (Koko de tabako o ___.)",
+              "difficulty_level": 3,
+              "points": 1,
+              "explanation": "すう (suu) → ない-Form すわない (suwanai) + でください (de kudasai).",
+              "options": [
+                {
+                  "option_text": "すわないでください (suwanaide kudasai)",
+                  "is_correct": true,
+                  "feedback": "Richtig — bitte nicht rauchen."
+                },
+                {
+                  "option_text": "すってください (sutte kudasai)",
+                  "is_correct": false,
+                  "feedback": "Das heisst das Gegenteil: Bitte rauchen Sie."
+                },
+                {
+                  "option_text": "すいません (suimasen)",
+                  "is_correct": false,
+                  "feedback": "Das heisst 'Entschuldigung'."
+                },
+                {
+                  "option_text": "すわないです (suwanai desu)",
+                  "is_correct": false,
+                  "feedback": "Das ist keine Bitte, sondern 'ich rauche nicht'."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "'Bis zum Bahnhof braucht man zehn Minuten.' えきまで 十分 ___。 (Eki made juppun ___.)",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Für benötigte Zeit oder Geld sagt man かかります (kakarimasu).",
+              "options": [
+                {
+                  "option_text": "かかります (kakarimasu)",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "かけます (kakemasu)",
+                  "is_correct": false,
+                  "feedback": "かける (kakeru) heisst anrufen oder aufhängen."
+                },
+                {
+                  "option_text": "つきます (tsukimasu)",
+                  "is_correct": false,
+                  "feedback": "つく (tsuku) heisst ankommen."
+                },
+                {
+                  "option_text": "とまります (tomarimasu)",
+                  "is_correct": false,
+                  "feedback": "とまる (tomaru) heisst anhalten."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「めがねを かけます」 (megane o kakemasu) heisst 'ich setze die Brille auf'.",
+              "difficulty_level": 2,
+              "explanation": "Ja — かける (kakeru) wird auch für die Brille benutzt.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Korrekt — めがねを かける (megane o kakeru)."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — so setzt man auf Japanisch die Brille auf."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "'Mein Vater arbeitet bei einer Bank.' 父は ぎんこうに ___。 (Chichi wa ginkou ni ___.)",
+              "difficulty_level": 3,
+              "points": 1,
+              "explanation": "Angestellt sein bei: つとめています (tsutomete imasu).",
+              "options": [
+                {
+                  "option_text": "つとめています (tsutomete imasu)",
+                  "is_correct": true,
+                  "feedback": "Richtig — Dauerzustand mit 〜ています."
+                },
+                {
+                  "option_text": "すんでいます (sunde imasu)",
+                  "is_correct": false,
+                  "feedback": "Das heisst: wohnt (in der Bank)."
+                },
+                {
+                  "option_text": "のっています (notte imasu)",
+                  "is_correct": false,
+                  "feedback": "のる (noru) heisst einsteigen/fahren."
+                },
+                {
+                  "option_text": "おりています (orite imasu)",
+                  "is_correct": false,
+                  "feedback": "おりる (oriru) heisst aussteigen."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Zusammenfassung",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Das hast du gelernt\n\n### Neue Verben\n\n- **Unterwegs**: 「のる」 (noru, einsteigen), 「おりる」 (oriru, aussteigen), 「つく」 (tsuku, ankommen), 「とまる」 (tomaru, anhalten), 「かかる」 (kakaru, dauern/kosten)\n- **Leben**: 「すむ」 (sumu, wohnen), 「つとめる」 (tsutomeru, angestellt sein), 「なくす」 (nakusu, verlieren), 「すう」 (suu, rauchen), 「しぬ」 (shinu, sterben)\n- **Zu Hause und im Büro**: 「かける」 (kakeru, anrufen / aufhängen), 「きる」 (kiru, schneiden), 「しめる」 (shimeru, binden), 「はる」 (haru, aufkleben), 「コピーする」 (kopii suru, kopieren)\n- **Wetter und Licht**: 「くもる」 (kumoru), 「ふく」 (fuku), 「きえる」 (kieru), 「さす」 (sasu, Schirm aufspannen)\n\n### Grammatik\n\n1. 「電車に のる」 (densha ni noru) — aber 「電車を おりる」 (densha o oriru)\n2. 「すんでいます」 (sunde imasu) — Dauerzustand mit 〜ています\n3. 「すわないでください」 (suwanaide kudasai) — bitte nicht\n\n> **Lerntipp:** Beschreibe deinen Arbeitsweg auf Japanisch: Wo steigst du ein, wo steigst du aus, wie lange dauert es? Zum Beispiel 「三十分 かかります」 (sanjuppun kakarimasu).\n\nIm nächsten Schritt wiederholst du die neuen Verben im **Karten-Training**."
+          }
+        }
+      ]
+    }
+  ],
+  "thumbnail_url": "generated/thumbnail_verben_des_alltags_2_20260926_162616.png"
+}

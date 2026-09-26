@@ -67,6 +67,20 @@ Destillat der am häufigsten wiederkehrenden Erkenntnisse. Details + Historie in
 
 <!-- Neuste Einträge oben, älteste unten. -->
 
+## 2026-09-26 — Adjektive 3 (212) + Verben 3 (213) aus BESTEHENDEN Vokabel-Zeilen — Prod LIVE
+
+### Vorgehen
+- Direkt auf hp-ubuntu gegen die Prod-DB (Wrapper `drafts/lektionen1_run.sh` setzt DATABASE_URL `@db` → `@localhost:5432` aus der Server-.env, ohne das Passwort auszugeben).
+- Vokabeln existierten schon (IDs 995/997–1030). Draft referenziert sie per `ref_id`; `drafts/lektionen1_build.py` füllt die Daten 1:1 aus einem Prod-Export → `_get_or_create_vocab` dedupliziert per `word`, 0 neue Zeilen.
+
+### Probleme / Erkenntnisse (Regeln)
+1. **insert füllt bei Dedup KEINE Felder nach** — die images-Bilder landen nur im Draft. → **Regel: nach insert `image_url` der bestehenden Zeilen per UPDATE … WHERE image_url IS NULL nachtragen** (hier `drafts/lektionen1_images.sql`, 35 Zeilen).
+2. **Vorbestehende Beispielsätze verletzten die N5-Kanji-Disziplin** (熱/厚/降/乗/住 …, 30 Zeilen). Validator prüft den Draft, also zuerst DB-Sätze korrigieren (Nicht-N5-Kanji → Kana), dann exportieren.
+3. **insert schreibt generated-lessons.jsonl im Server-Hauptcheckout** → Auto-Deploy-`pull --ff-only` bricht, sobald der eigene Commit die Datei ändert. → **Regel: eigene Zeilen dort gleich nach insert wieder entfernen, im Worktree committen.**
+4. **Host-.env-SECRET_KEY ≠ Container-SECRET_KEY** → Session-Cookie vom Host wird abgelehnt (404 statt Seite). Für Playwright auf dem Server: Cookie IM Container erzeugen (`docker exec -i japanese_app python -`), in eine 600-Datei schreiben, nie ausgeben; Playwright in Wegwerf-venv `/tmp/…/pw`. Deck-Check: `.flip-card:visible` == 1.
+5. **Admin-Besuche erzeugen user_lesson_progress** → nach der Sichtprüfung für die neuen Lektionen löschen.
+6. Nicht-guest-Lektionen antworten live mit 302 → /login (wie 211) — Live-Check daher: /lessons-Übersicht listet Titel + Asset-URLs 200.
+
 ## 2026-06-18 — 5 N5-Vokabel-Lektionen (Schule/Haushalt/Tiere/Freizeit/Verben) — Prod 207–211 LIVE
 
 ### Erstellte Lektionen (alle live auf japanese-learning.ch, end-to-end verifiziert)
