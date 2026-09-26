@@ -88,6 +88,9 @@
     border: 0; background: transparent; color: var(--rp-muted); font: inherit; font-size: .88rem; font-weight: 600;
     padding: .4rem .85rem; min-height: 36px; border-radius: var(--radius-full, 9999px); cursor: pointer;
 }
+/* Tab-Beschriftung nie zweizeilig (360px: „Dialog / spielen" brach um). */
+.roleplay-panel .rp-tab { white-space: nowrap; }
+@media (max-width: 400px) { .roleplay-panel .rp-tab { padding: .4rem .7rem; font-size: .84rem; } }
 .roleplay-panel .rp-tab[aria-selected="true"] {
     background: var(--rp-surface); color: var(--rp-text); box-shadow: var(--shadow-subtle, none);
 }
