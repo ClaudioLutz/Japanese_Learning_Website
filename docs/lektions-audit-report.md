@@ -422,3 +422,13 @@ Jede der 80 Findungen wurde gegen den Prod-DB-Stand vom 24.09.2026 re-validiert 
 
 **Nicht erledigt:** Block-Player-Audio (`text_audio`) der geänderten Textblöcke liest teils noch den alten Text (Nachzug mit `gen_text_audio.py <lesson_id>`, idempotent über `text_hash`).
 
+
+## Fachprüfung entschieden am 2026-09-26
+
+Daten: `scripts/data/audit_fachpruefung_fixes.json`, Applier `scripts/apply_audit_phase2.py --fixes …` (kann jetzt auch Integer-Spalten wie `vocabulary.jlpt_level` und setzt `augmented_html` geänderter Textblöcke auf NULL).
+
+- factual[21] L169 空/田: Massstab ist die Canonical-Liste (`jlpt_n5_canonical.json`, 80 Kanji). Sie führt weder 空 noch 田, deshalb bleiben beide auf N4. Der Lauftext ist damit konsistent, es gibt keine Änderung.
+- factual[38] L166: 交差点 und 橋 stehen in der Canonical-Vokabelliste als N5 und bekommen jlpt_level 5. 信号 bleibt 4 und ist in Einführung und Zusammenfassung als „Zusatz (N4)“ gekennzeichnet. Im 交差点-Beispielsatz ist へ korrigiert (→ 次の交差点を右に曲がります).
+- naturalness[16] L197: Der 背広-Beispielsatz enthält jetzt 背広 (ちちは まいあさ 背広を きて、かいしゃに いきます). Dazu kommt ein Hinweis auf スーツ in „Teil 1“.
+
+Zusätzlich sind die 9 N5-Grammatikpunkte aus Commit 25758a1 eingehängt (`scripts/data/grammar_n5_einhaengen.json`, `scripts/apply_grammar_einhaengen.py`). Sie stehen jeweils auf einer neuen Extra-Seite 8 in L203, L211, L204, L205 und L177.

@@ -1,0 +1,74 @@
+{
+ "meta": {
+  "erstellt": "2026-09-26",
+  "zweck": "Die 9 Grammatikpunkte aus scripts/data/grammar_n5_gaps.json (Commit 25758a1) in publizierte Lektionen einhängen: je Lektion eine NEUE letzte Seite (Extra) mit Überleitungstext + Grammatik-Karten. Nur anhängen, bestehende Seitenzahlen und last_page bleiben unverändert.",
+  "applier": "scripts/apply_grammar_einhaengen.py",
+  "niveau": "〜ながら, 〜たら und 〜と-Konditional gelten als eher N4 → in der Überleitung als „Ausblick auf N4“ gekennzeichnet. Übrige Punkte sind N5."
+ },
+ "lessons": [
+  {
+   "lesson_id": 203,
+   "category_id": 40,
+   "expect_new_page": 8,
+   "page_title": "Extra — Handlungen verbinden: 〜たり, 〜ながら, 〜たら",
+   "page_description": "Zusatzseite: Beispiele aufzählen, zwei Dinge gleichzeitig tun, „wenn … dann“",
+   "intro_title": "Noch mehr über deinen Tag erzählen",
+   "intro_text": "## Noch mehr über deinen Tag erzählen\n\nMit der ます-Form kannst du jede einzelne Handlung deines Tages benennen. Auf dieser Extra-Seite verbindest du Handlungen miteinander:\n\n- **「〜たり 〜たり します」** (~tari ~tari shimasu) — Beispiele aufzählen: 「にちようびは そうじを したり、せんたくを したり します」 (Nichiyoubi wa souji wo shitari, sentaku wo shitari shimasu, Am Sonntag putze ich, wasche Wäsche und so weiter).\n- **「〜ながら」** (~nagara) — zwei Dinge gleichzeitig tun. *Ausblick auf N4.*\n- **「〜たら」** (~tara) — „wenn …, dann“ oder „sobald …“. *Ausblick auf N4.*\n\n> Für 〜たり und 〜たら brauchst du die た-Form (ta-Form). Du bildest sie genau wie die て-Form, nur mit た statt て: 「たべて」 → 「たべた」, 「よんで」 → 「よんだ」. Die beiden Ausblick-Punkte musst du für N5 noch nicht sicher können — lies sie als Vorschau.",
+   "grammar_titles": [
+    "〜たり 〜たり します (~tari ~tari shimasu — unter anderem … und …)",
+    "〜ながら (~nagara — während, gleichzeitig)",
+    "〜たら (~tara — wenn / sobald)"
+   ]
+  },
+  {
+   "lesson_id": 211,
+   "category_id": 40,
+   "expect_new_page": 8,
+   "page_title": "Extra — Bekommen und geschenkt bekommen: もらう, くれる, 〜と",
+   "page_description": "Zusatzseite: das Geben-und-Nehmen-Trio komplett, dazu ein Ausblick auf 〜と",
+   "intro_title": "Geben und Nehmen — das ganze Trio",
+   "intro_text": "## Geben und Nehmen — das ganze Trio\n\nMit 「あげます」 (agemasu) gibst du etwas weg. Zwei Verben fehlen noch, damit das Trio komplett ist:\n\n- **「もらいます」** (moraimasu) — etwas bekommen: 「ともだちに はなを もらいました」 (Tomodachi ni hana wo moraimashita, Ich habe von einem Freund Blumen bekommen).\n- **「くれます」** (kuremasu) — jemand gibt MIR etwas: 「ともだちが はなを くれました」 (Tomodachi ga hana wo kuremashita, Ein Freund hat mir Blumen geschenkt).\n- **「〜と」** (~to) — „immer wenn …, dann …“, zum Beispiel bei Knöpfen und Geräten. *Ausblick auf N4.*\n\n> Merkhilfe: あげます = von mir weg, くれます = zu mir her, もらいます = ich bekomme. Den Ausblick-Punkt 〜と musst du für N5 noch nicht sicher können.",
+   "grammar_titles": [
+    "〜に 〜を もらいます (~ni ~o moraimasu — etwas bekommen)",
+    "〜が 〜を くれます (~ga ~o kuremasu — mir etwas geben)",
+    "〜と (~to — immer wenn, dann automatisch)"
+   ]
+  },
+  {
+   "lesson_id": 204,
+   "category_id": 41,
+   "expect_new_page": 8,
+   "page_title": "Extra — Wettervorhersage mit 〜でしょう",
+   "page_description": "Zusatzseite: sagen, was wahrscheinlich passiert",
+   "intro_title": "Wie wird das Wetter morgen?",
+   "intro_text": "## Wie wird das Wetter morgen?\n\nIm japanischen Wetterbericht endet fast jeder Satz mit 「でしょう」 (deshou): 「あしたは はれでしょう」 (Ashita wa hare deshou, Morgen wird es wohl sonnig). Damit sagst du, was **wahrscheinlich** passiert. Mit fragender Stimme heisst 「でしょう？」 ausserdem „…, nicht wahr?“.\n\n> Tipp: Schau morgen früh in die Wetter-App und sag die Vorhersage auf Japanisch: 「きょうは あめが ふるでしょう」 (Kyou wa ame ga furu deshou, Heute wird es wohl regnen).",
+   "grammar_titles": [
+    "〜でしょう (~deshou — wahrscheinlich / nicht wahr?)"
+   ]
+  },
+  {
+   "lesson_id": 205,
+   "category_id": 42,
+   "expect_new_page": 8,
+   "page_title": "Extra — Erklären, was los ist: 〜んです",
+   "page_description": "Zusatzseite: einen Grund angeben und nachfragen",
+   "intro_title": "Beim Arzt erklären, was los ist",
+   "intro_text": "## Beim Arzt erklären, was los ist\n\nWenn dich jemand fragt, warum du nichts isst oder nicht zur Arbeit kommst, willst du einen **Grund** nennen. Dafür gibt es 「〜んです」 (~n desu): 「おなかが いたいんです」 (Onaka ga itain desu, Ich habe nämlich Bauchweh).\n\n> Die Frage 「どうしたんですか」 (Doushitan desu ka, Was ist denn los?) hörst du beim Arzt fast immer als Erstes.",
+   "grammar_titles": [
+    "〜んです / 〜のです (~n desu — erklären und nachfragen)"
+   ]
+  },
+  {
+   "lesson_id": 177,
+   "category_id": 37,
+   "expect_new_page": 8,
+   "page_title": "Extra — Dinge beim Namen nennen: 〜という",
+   "page_description": "Zusatzseite: etwas vorstellen, das dein Gegenüber noch nicht kennt",
+   "intro_title": "„Ein Café namens …“",
+   "intro_text": "## „Ein Café namens …“\n\nMit 「これ」 und 「の」 zeigst du auf Dinge und sagst, wem sie gehören. Oft willst du aber etwas **vorstellen**, das dein Gegenüber noch nicht kennt: ein Essen, einen Laden, eine Person. Dafür gibt es 「〜という」 (~to iu, namens): 「これは 『すし』という たべものです」 (Kore wa „sushi“ to iu tabemono desu, Das ist ein Essen namens Sushi).\n\n> Achtung, Verwechslungsgefahr: 「さくらの きっさてん」 heisst „das Café, das Sakura gehört“ — 「さくらという きっさてん」 heisst „ein Café namens Sakura“.",
+   "grammar_titles": [
+    "N という N (~to iu — namens …)"
+   ]
+  }
+ ]
+}

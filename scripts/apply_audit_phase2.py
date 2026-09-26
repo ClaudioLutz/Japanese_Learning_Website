@@ -8,6 +8,12 @@ Vorher/Nachher-Ersetzung auf genau einer Spalte einer Zeile:
 
 Selbst-schuetzend: ist ``old`` nicht (mehr) da, aber ``new`` schon, gilt die Op als
 bereits angewendet (idempotent). Sonst SKIP mit Grund — nie blind schreiben.
+mode=full funktioniert auch fuer Integer-Spalten (z.B. vocabulary.jlpt_level).
+
+Wird ``lesson_content.content_text`` geaendert und hat die Zeile ein vorberechnetes
+``ai_generation_details.augmented_html`` (Klick-Audio-HTML), wird dieses im selben
+Lauf auf NULL gesetzt, sonst rendert lesson_view.html weiter den alten Text.
+Danach pregenerate_inline_audio.py fuer die Lektion nachziehen.
 Mehrere Ops auf derselben Zelle werden der Reihe nach im Speicher angewendet und
 als EIN UPDATE geschrieben. Alles in EINER Transaktion; bei irgendeinem Mismatch
 wird mit --apply nichts geschrieben (ausser --allow-partial).
@@ -30,7 +36,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 sys.path.insert(0, os.getcwd())
 
 ALLOWED = {
-    'vocabulary': {'example_sentence_japanese', 'example_sentence_english'},
+    'vocabulary': {'example_sentence_japanese', 'example_sentence_english', 'jlpt_level'},
     'quiz_question': {'question_text', 'explanation', 'hint'},
     'quiz_option': {'option_text', 'feedback'},
     'lesson_content': {'content_text', 'title'},
@@ -65,6 +71,9 @@ def plan(ops, fetch):
             else:
                 report.append((op['id'], 'SKIP', f'{t}#{pk}.{col}: Ist-Wert weicht ab'))
                 continue
+        elif not isinstance(cur, str):
+            report.append((op['id'], 'SKIP', f'{t}#{pk}.{col}: substr nur fuer Text'))
+            continue
         else:
             n = cur.count(old)
             if new in cur and (old in new or n == 0):
@@ -78,6 +87,15 @@ def plan(ops, fetch):
         cells[key] = (orig, cur)
         report.append((op['id'], status, f'{t}#{pk}.{col}'))
     return cells, report
+
+
+def clear_augmented(details):
+    """Gibt (neue_details, geaendert) zurueck; setzt augmented_html auf None."""
+    if isinstance(details, str):
+        details = json.loads(details) if details else None
+    if not isinstance(details, dict) or not details.get('augmented_html'):
+        return details, False
+    return dict(details, augmented_html=None), True
 
 
 def main():
@@ -103,9 +121,14 @@ def main():
             o = by_id[oid]
             print(f"[{oid}] {st:5} P{o['prio']} {o['audit_ref']:22} {info}")
             if st == 'OK':
-                print(f"        ALT: {o['old'][:110]!r}\n        NEU: {o['new'][:110]!r}")
+                print(f"        ALT: {str(o['old'])[:110]!r}\n        NEU: {str(o['new'])[:110]!r}")
         skips = [r for r in report if r[1] == 'SKIP']
         changed = {k: v for k, v in cells.items() if v[0] != v[1]}
+        aug_ids = sorted({pk for (t, pk, col) in changed
+                          if t == 'lesson_content' and col == 'content_text'
+                          and clear_augmented(fetch(t, pk, 'ai_generation_details'))[1]})
+        if aug_ids:
+            print(f'augmented_html -> NULL fuer lesson_content {aug_ids}')
         print(f"\n=== {len(ops)} Ops: {sum(r[1] == 'OK' for r in report)} OK, "
               f"{sum(r[1] == 'SCHON' for r in report)} schon angewendet, {len(skips)} SKIP; "
               f"{len(changed)} Zellen zu schreiben ===")
@@ -126,6 +149,11 @@ def main():
                 print(f'ROLLBACK: {t}#{pk}.{col} hat sich waehrenddessen geaendert.')
                 return 1
             n += 1
+        for pk in aug_ids:
+            details, _ = clear_augmented(fetch('lesson_content', pk, 'ai_generation_details'))
+            db.session.execute(
+                text('UPDATE lesson_content SET ai_generation_details=:d WHERE id=:id'),
+                {'d': json.dumps(details, ensure_ascii=False), 'id': pk})
         db.session.commit()
         print(f'APPLY OK: {n} Zellen committed.')
         return 0

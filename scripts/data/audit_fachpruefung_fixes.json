@@ -1,0 +1,23 @@
+{
+ "meta": {
+  "erstellt": "2026-09-26",
+  "quelle": "docs/lektions-audit-report.md, Abschnitt „Angewendet am 2026-09-24“ → „Zur Fachprüfung“",
+  "applier": "scripts/apply_audit_phase2.py --fixes scripts/data/audit_fachpruefung_fixes.json",
+  "entscheide": {
+   "factual[21] L169 空/田": "Massstab ist die Canonical-Liste (.claude/skills/generate-lesson/sources/jlpt_n5_canonical.json, 80 Kanji). Sie führt weder 空 noch 田 → beide bleiben jlpt_level 4 (Prod-Stand seit Juni); Lauftext Seite 1/7 ist damit konsistent. Keine Op.",
+   "factual[38] L166 交差点/信号/橋": "Die Canonical-Vokabelliste führt 交差点 und 橋 als N5, 信号 nicht → 交差点/橋 auf jlpt_level 5, 信号 bleibt 4 und wird in Einführung + Zusammenfassung als „Zusatz (N4)“ gekennzeichnet. 交差点-Beispielsatz: へ → に まがる (Lernziel der Lektion: 〜を まがる, Richtung mit に).",
+   "naturalness[16] L197 背広": "Beispielsatz enthielt 背広 gar nicht (nur スーツ) → neuer Satz mit 背広 in natürlichem Kontext (Vater, ältere Generation); Hinweis auf スーツ im Einführungstext von Teil 1."
+  }
+ },
+ "ops": [
+  {"id": "Q01", "prio": 2, "audit_ref": "factual[38]", "table": "vocabulary", "pk": 17, "column": "jlpt_level", "mode": "full", "old": 4, "new": 5, "note": "交差点 steht in der Canonical-N5-Liste."},
+  {"id": "Q02", "prio": 2, "audit_ref": "factual[38]", "table": "vocabulary", "pk": 19, "column": "jlpt_level", "mode": "full", "old": 4, "new": 5, "note": "橋 steht in der Canonical-N5-Liste."},
+  {"id": "Q03", "prio": 2, "audit_ref": "factual[38]", "table": "vocabulary", "pk": 17, "column": "example_sentence_japanese", "mode": "full", "old": "次の交差点を右へ行きます。", "new": "次の交差点を右に曲がります。", "note": "Ort des Abbiegens mit を, Richtung mit に (Grammatik der Lektion)."},
+  {"id": "Q04", "prio": 2, "audit_ref": "factual[38]", "table": "vocabulary", "pk": 17, "column": "example_sentence_english", "mode": "full", "old": "Tsugi no kōsaten o migi e ikimasu. — An der nächsten Kreuzung gehe ich nach rechts.", "new": "Tsugi no kōsaten o migi ni magarimasu. — An der nächsten Kreuzung biege ich rechts ab.", "note": ""},
+  {"id": "Q05", "prio": 2, "audit_ref": "factual[38]", "table": "lesson_content", "pk": 6806, "column": "content_text", "mode": "substr", "old": "「しんごう」 (shingou, Ampel), 「はし」", "new": "「しんごう」 (shingou, Ampel — Zusatz (N4)), 「はし」", "note": "L166 Einführung, Liste Ortsmarkierungen."},
+  {"id": "Q06", "prio": 2, "audit_ref": "factual[38]", "table": "lesson_content", "pk": 6832, "column": "content_text", "mode": "substr", "old": "「しんごう」 (shingou, Ampel), 「こうさてん」", "new": "「しんごう」 (shingou, Ampel — Zusatz (N4)), 「こうさてん」", "note": "L166 Zusammenfassung."},
+  {"id": "Q07", "prio": 2, "audit_ref": "naturalness[16]", "table": "vocabulary", "pk": 759, "column": "example_sentence_japanese", "mode": "full", "old": "スーツを きて、かいしゃへ いきます。", "new": "ちちは まいあさ 背広を きて、かいしゃに いきます。", "note": "背広 wieder im Satz; Kontext ältere Generation macht das Wort natürlich."},
+  {"id": "Q08", "prio": 2, "audit_ref": "naturalness[16]", "table": "vocabulary", "pk": 759, "column": "example_sentence_english", "mode": "full", "old": "Suutsu wo kite, kaisha e ikimasu. — Ich ziehe einen Anzug an und gehe zur Firma.", "new": "Chichi wa maiasa sebiro wo kite, kaisha ni ikimasu. — Mein Vater zieht jeden Morgen einen Anzug an und geht zur Firma.", "note": ""},
+  {"id": "Q09", "prio": 3, "audit_ref": "naturalness[16]", "table": "lesson_content", "pk": 8005, "column": "content_text", "mode": "substr", "old": "- Achte auf die Lesung in Klammern.", "new": "- Achte auf die Lesung in Klammern.\n- 「背広」 (sebiro, Anzug) ist ein älteres Wort. Heute sagen die meisten 「スーツ」 (suutsu) — verstehen solltest du beide.", "note": "L197 Teil 1, Hinweis zu 背広/スーツ."}
+ ]
+}
