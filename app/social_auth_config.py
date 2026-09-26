@@ -10,18 +10,28 @@ logger = logging.getLogger(__name__)
 
 
 def _login_and_stamp(user):
-    """Nutzer einloggen und last_login festhalten (wie im lokalen Login-Pfad)."""
+    """Nutzer einloggen, last_login festhalten und Streak fortschreiben.
+
+    Wie im lokalen Login-Pfad (routes.login): der Login zaehlt als Aktivitaet
+    (update_streak), und der Stand davor wird fuer den „Willkommen zurück"-
+    Dialog in der Session gemerkt (remember_login_streak).
+    """
     prev_login = user.last_login
     login_user(user, remember=True)
     try:
         # Vorletzten Login fuer „Seit deinem letzten Besuch neu" merken.
         from app.news_service import remember_prev_login
         remember_prev_login(prev_login)
+        prev_activity = user.last_activity_date
+        prev_streak = user.current_streak or 0
         user.last_login = datetime.utcnow()
+        event = user.update_streak()
         db.session.commit()
-    except Exception as e:  # pragma: no cover - Zeitstempel darf den Login nie kippen
+        from app.dashboard_service import remember_login_streak
+        remember_login_streak(prev_activity, prev_streak, event)
+    except Exception as e:  # pragma: no cover - Zeitstempel/Streak darf den Login nie kippen
         db.session.rollback()
-        logger.warning(f"last_login konnte nicht gesetzt werden fuer user_id={user.id}: {e}")
+        logger.warning(f"last_login/Streak konnte nicht gesetzt werden fuer user_id={user.id}: {e}")
 
 def fix_google_uid(strategy, details, backend, uid=None, response=None, *args, **kwargs):
     """
