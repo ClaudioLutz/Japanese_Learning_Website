@@ -9,7 +9,25 @@ Admin-Views mit Suche, Filter, Sortierung und Pagination.
 from flask import redirect, url_for, request
 from flask_admin import Admin, AdminIndexView, expose
 from flask_admin.contrib.sqla import ModelView
+from flask_admin.contrib.sqla.form import AdminModelConverter
+from flask_admin.model.form import converts
 from flask_login import current_user
+from wtforms import fields
+
+
+class FloatAwareModelConverter(AdminModelConverter):
+    """Ergaenzt einen Konverter fuer SQLAlchemy-``Float``-Spalten.
+
+    Seit SQLAlchemy 2.1 erbt ``Float`` nicht mehr von ``Numeric`` (sondern von
+    ``NumericCommon``). Flask-Admin (Stand 2.2.x) kennt nur ``Numeric`` und liefert
+    fuer ``Float`` deshalb kein Formularfeld: ``price`` fehlte im Editier-Formular,
+    und ``column_editable_list = [..., 'price']`` liess die Listenansicht mit
+    ``UndefinedError: ListForm has no attribute 'price'`` (HTTP 500) abstuerzen.
+    """
+
+    @converts('Float')  # inkl. Double/DOUBLE_PRECISION/REAL via MRO
+    def conv_float(self, field_args, **extra):
+        return fields.FloatField(**field_args)
 
 
 class AuthMixin:
@@ -28,6 +46,7 @@ class AuthMixin:
 class SecureModelView(AuthMixin, ModelView):
     """Basis-ModelView mit Admin-Authentifizierung."""
     page_size = 50
+    model_form_converter = FloatAwareModelConverter
     can_export = True
     export_types = ['csv']
     can_view_details = True

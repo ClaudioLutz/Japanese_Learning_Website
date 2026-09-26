@@ -159,6 +159,21 @@ class TestCourseAdmin:
         assert resp.status_code == 200
         assert b'MNN Beginner I' in resp.data
 
+    def test_float_price_editierbar(self, app, admin_client):
+        """Float-Spalte ``price`` bekommt ein Feld (SQLAlchemy 2.1: Float erbt nicht mehr von Numeric)."""
+        client, _ = admin_client
+        course = CourseFactory(title='Preis-Kurs')
+
+        views = {v.endpoint: v for v in app.extensions['admin'][0]._views}
+        for endpoint in ('admin_courses', 'admin_lessons'):
+            view = views[endpoint]
+            assert 'price' in view._list_form_class()._fields    # x-editable in der Liste
+            assert hasattr(view._edit_form_class, 'price')         # Editier-Formular
+
+        resp = client.get(f'/admin-panel/admin_courses/edit/?id={course.id}')
+        assert resp.status_code == 200
+        assert b'id="price"' in resp.data
+
 
 class TestLessonAdmin:
     """Lesson-Listenansicht (kein Delete erlaubt)."""
