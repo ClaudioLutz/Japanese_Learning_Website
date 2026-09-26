@@ -1,15 +1,27 @@
 {% extends "base.html" %}
 
-{% block title %}JLPT N5 Komplett — Bundle{% endblock %}
+{% block title %}{% if free_page %}JLPT N5 komplett auf Deutsch, gratis — {{ showcase.lessons }} Lektionen{% else %}JLPT N5 Komplett — Bundle{% endif %}{% endblock %}
 
-{% block meta_description %}JLPT N5 Komplett — Vokabeln, Kanji, Grammatik und Schreibsystem nach offizieller JLPT-N5-Liste. Einmaliger Kauf, Lifetime-Zugriff. Schweizer Anbieter, Zahlung per TWINT oder Karte.{% endblock %}
+{% block meta_description %}{% if free_page %}JLPT N5 komplett auf Deutsch, gratis: {{ showcase.lessons }} Lektionen, {{ showcase.vocab|swiss_num }} Vokabeln, alle {{ showcase.kanji_total }} N5-Kanji, N5-Grammatik und {{ showcase.scenes }} Gesprächsszenen — von null bis zur JLPT-N5-Prüfung. Ohne Abo, ohne Kauf.{% else %}JLPT N5 Komplett — Vokabeln, Kanji, Grammatik und Schreibsystem nach offizieller JLPT-N5-Liste. Einmaliger Kauf, Lifetime-Zugriff. Schweizer Anbieter, Zahlung per TWINT oder Karte.{% endif %}{% endblock %}
 
-{% block og_type %}product{% endblock %}
+{% block og_type %}{% if free_page %}website{% else %}product{% endif %}{% endblock %}
 
 {% block body_attributes %}class="redesign-page"{% endblock %}
 
 {% block structured_data %}
 {{ super() }}
+{% if free_page %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Start", "item": "{{ site_url }}/" },
+    { "@type": "ListItem", "position": 2, "name": "JLPT N5 komplett", "item": "{{ site_url }}{{ url_for('bundle.n5_bundle') }}" }
+  ]
+}
+</script>
+{% endif %}
 {% if bundle_available and not already_owned %}
 <script type="application/ld+json">
 {
@@ -260,6 +272,39 @@
     font-size: 0.95rem; line-height: 1.65;
   }
 
+  /* ── FREE_MODE: „JLPT N5 komplett, gratis" (kompakter Kopf, Zahlen im Fold) ── */
+  .bnd-free-hero { padding: 3rem 0 2.5rem; }
+  .bnd-free-hero .bnd-eyebrow-row { margin-bottom: 1.1rem; }
+  .bnd-free-hero .bnd-hero-title { font-size: clamp(2.3rem, 4vw + 1rem, 3.6rem); margin-bottom: 0.75rem; }
+  .bnd-free-hero .bnd-hero-sub { margin-bottom: 1.75rem; }
+  .bnd-stats {
+    list-style: none; padding: 0; margin: 0 auto 1rem;
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.75rem;
+    max-width: 640px;
+  }
+  .bnd-stat {
+    background: var(--card-background); border: 1px solid var(--ink-200);
+    border-radius: 12px; padding: 0.9rem 0.5rem 0.8rem;
+    display: flex; flex-direction: column; align-items: center; gap: 0.2rem;
+  }
+  .bnd-stat-num {
+    font-family: 'Geist', 'Inter', sans-serif; font-weight: 600;
+    font-size: clamp(1.6rem, 2.4vw + 0.6rem, 2.1rem); line-height: 1.05;
+    color: var(--sumi); letter-spacing: -0.02em; font-variant-numeric: tabular-nums;
+  }
+  .bnd-stat-label { font-size: 0.85rem; color: var(--ink-600); }
+  .bnd-stats-more {
+    font-size: 0.88rem; color: var(--ink-500); margin: 0 auto 1.75rem; max-width: 640px;
+  }
+  .bnd-free-actions { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
+  .bnd-free-note { margin: 0.9rem 0 0; font-size: 0.88rem; color: var(--ink-500); }
+  .bnd-coverage-row .fill.is-full { background: var(--matcha); }
+  .bnd-coverage-meta a { color: var(--ai); }
+  @media (max-width: 560px) {
+    .bnd-free-hero { padding: 2rem 0 1.75rem; }
+    .bnd-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; }
+  }
+
   /* Reduzierter Section-Padding fuer dichteres Pricing-Layout */
   .bnd-page .section-jp { padding: 4.5rem 0; }
   @media (max-width: 768px) {
@@ -271,6 +316,114 @@
 {% endblock %}
 
 {% block content %}
+{% if free_page %}
+<div class="bnd-page">
+
+  {# ── FREE_MODE-Kopf: „JLPT N5 komplett" + Live-Zahlen (im Fold) ── #}
+  <section class="bnd-hero bnd-free-hero hero-bg-jp">
+    <div class="section-narrow">
+      <div class="bnd-eyebrow-row">
+        <span class="eyebrow-chip">JLPT N5 · auf Deutsch · gratis</span>
+      </div>
+      <h1 class="bnd-hero-title">JLPT N5 komplett.</h1>
+      <p class="bnd-hero-sub">
+        Der ganze Weg von null bis zur N5-Prüfung — alle Vokabeln und Kanji der
+        JLPT-N5-Liste, auf Deutsch erklärt. Gratis, ohne Abo.
+      </p>
+
+      <ul class="bnd-stats" aria-label="JLPT N5 in Zahlen">
+        <li class="bnd-stat"><span class="bnd-stat-num">{{ showcase.lessons }}</span><span class="bnd-stat-label">Lektionen</span></li>
+        <li class="bnd-stat"><span class="bnd-stat-num">{{ showcase.vocab|swiss_num }}</span><span class="bnd-stat-label">Vokabeln</span></li>
+        <li class="bnd-stat"><span class="bnd-stat-num">{{ showcase.kanji }}</span><span class="bnd-stat-label">N5-Kanji</span></li>
+        <li class="bnd-stat"><span class="bnd-stat-num">{{ showcase.scenes }}</span><span class="bnd-stat-label">Gesprächsszenen</span></li>
+      </ul>
+      <p class="bnd-stats-more">
+        {{ showcase.modules }} Module ·{% if showcase.grammar %} {{ showcase.grammar }} Grammatikpunkte ·{% endif %}
+        {{ showcase.quiz_questions|swiss_num }} Quizfragen · Hiragana &amp; Katakana
+      </p>
+
+      <div class="bnd-free-actions">
+        {% if current_user.is_authenticated %}
+          <a href="{{ url_for('routes.lessons') }}" class="btn-shu">Zu den Lektionen →</a>
+          <a href="{{ url_for('sprechen.index') }}" class="btn-ghost-jp">Gespräche üben</a>
+        {% else %}
+          <a href="{{ url_for('routes.register', next=url_for('routes.lessons')) }}" class="btn-shu">Kostenlos starten →</a>
+          <a href="{{ url_for('routes.lessons') }}" class="btn-ghost-jp">Lektionen ansehen</a>
+        {% endif %}
+      </div>
+      <p class="bnd-free-note">Kein Kauf, keine Zahlungsdaten — alle Lektionen sind frei zugänglich.</p>
+    </div>
+  </section>
+
+  <div class="section-narrow"><div class="section-divider-jp"></div></div>
+
+  <section class="section-jp">
+    <div class="section-narrow">
+      <h2 class="bnd-section-title">Was drin ist</h2>
+      <ul class="bnd-checklist">
+        <li>Hiragana und Katakana — das komplette Schreibsystem, mit Spielen zum Üben</li>
+        <li>Alle Vokabeln der JLPT-N5-Liste — {{ showcase.vocab|swiss_num }} Wörter in {{ showcase.lessons }} Lektionen, mit Beispielsätzen</li>
+        <li>Alle {{ showcase.kanji_total }} N5-Kanji mit On-/Kun-Lesungen und Beispielwörtern</li>
+        <li>N5-Grammatik mit deutschen Erklärungen{% if showcase.grammar %} — {{ showcase.grammar }} Grammatikpunkte{% endif %}</li>
+        <li>{{ showcase.scenes }} Dialogszenen zum Mithören und als Rollenspiel zum Selbersprechen</li>
+        <li>{{ showcase.quiz_questions|swiss_num }} Quizfragen und Wiederholung mit Spaced Repetition (FSRS)</li>
+        <li>Audio mit japanischer Stimme zu Vokabeln, Texten und Dialogen</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="section-narrow"><div class="section-divider-jp"></div></div>
+
+  <section class="section-jp">
+    <div class="section-narrow">
+      <h2 class="bnd-section-title">Die JLPT-N5-Liste — vollständig abgedeckt</h2>
+      <div class="bnd-coverage">
+        <div class="bnd-coverage-row">
+          <span class="label">Vokabeln</span>
+          <div class="bar"><div class="fill{% if showcase.vocab_pct >= 100 %} is-full{% endif %}" style="width: {{ showcase.vocab_pct }}%;"></div></div>
+          <span class="num">{{ showcase.vocab_covered }} / {{ showcase.vocab_total }}</span>
+        </div>
+        <div class="bnd-coverage-row">
+          <span class="label">Kanji</span>
+          <div class="bar"><div class="fill{% if showcase.kanji_pct >= 100 %} is-full{% endif %}" style="width: {{ showcase.kanji_pct }}%;"></div></div>
+          <span class="num">{{ showcase.kanji }} / {{ showcase.kanji_total }}</span>
+        </div>
+        <div class="bnd-coverage-meta">
+          Abgeglichen mit der JLPT-N5-Wortliste und den gängigen Lehrbüchern (Genki, Minna no Nihongo).
+          <a href="{{ url_for('routes.jlpt_n5_schweiz') }}">JLPT N5 in der Schweiz ablegen →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-narrow"><div class="section-divider-jp"></div></div>
+
+  <section class="section-jp">
+    <div class="section-narrow">
+      <h2 class="bnd-section-title">Häufige Fragen</h2>
+      <div class="bnd-faq">
+        <details>
+          <summary>Kostet das etwas?</summary>
+          <p>Nein. Alle Lektionen, Übungen und Wiederholungen sind gratis — kein Abo, kein Kauf, keine Zahlungsdaten. Ein kostenloses Konto speichert deinen Fortschritt.</p>
+        </details>
+        <details>
+          <summary>Reicht das für die JLPT-N5-Prüfung?</summary>
+          <p>Die Plattform deckt alle Vokabeln und Kanji der JLPT-N5-Liste ab, dazu die N5-Grammatik mit Hör- und Dialogübungen. Wie und wo du die Prüfung in der Schweiz ablegst, steht auf <a href="{{ url_for('routes.jlpt_n5_schweiz') }}">JLPT N5 in der Schweiz</a>.</p>
+        </details>
+        <details>
+          <summary>Wo fange ich an?</summary>
+          <p>Mit Hiragana — danach führt dich der Lernpfad Modul für Modul weiter. Die Reihenfolge ist eine Empfehlung, du kannst jedes Modul jederzeit öffnen.</p>
+        </details>
+        <details>
+          <summary>Welche Geräte werden unterstützt?</summary>
+          <p>Web, alle modernen Browser auf Desktop und Mobile. Keine App nötig.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+</div>
+{% else %}
 <div class="bnd-page">
 
   {# ── Hero ── #}
@@ -285,8 +438,13 @@
 
       <h1 class="bnd-hero-title">JLPT N5 Komplett.</h1>
       <p class="bnd-hero-sub">
+        {% if coverage.vocab_pct >= 100 and coverage.kanji_pct >= 100 %}
+        Der komplette N5-Wortschatz: {{ coverage.vocab_total }} Vokabeln, {{ coverage.kanji_total }} Kanji.
+        {% else %}
         Der komplette N5-Wortschatz als Ziel: {{ coverage.vocab_total }} Vokabeln, {{ coverage.kanji_total }} Kanji —
-        laufend ausgebaut. Hiragana und Katakana. Auf Deutsch erklärt — Lifetime-Zugriff.
+        laufend ausgebaut.
+        {% endif %}
+        Hiragana und Katakana. Auf Deutsch erklärt — Lifetime-Zugriff.
       </p>
 
       {% if not bundle_available %}
@@ -523,5 +681,6 @@
     });
   })();
 </script>
+{% endif %}
 {% endif %}
 {% endblock %}

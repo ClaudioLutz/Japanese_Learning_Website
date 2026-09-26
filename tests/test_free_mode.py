@@ -36,10 +36,14 @@ def test_bundle_hint_on_for_guest_when_not_free_mode(app, db):
         assert user_needs_bundle_hint(AnonymousUserMixin()) is True
 
 
-def test_n5_bundle_page_redirects_in_free_mode(client, free_mode):
+def test_n5_bundle_page_renders_free_variant_in_free_mode(client, free_mode):
+    # Seit „N5 komplett" (2026-09-26): kein Redirect mehr, sondern eine eigene
+    # Seite ohne Preis/Kauf — Bezahl-Schicht bleibt aus.
     resp = client.get("/n5-bundle")
-    assert resp.status_code in (301, 302)
-    assert "/lessons" in resp.headers.get("Location", "")
+    assert resp.status_code == 200
+    body = resp.get_data(as_text=True)
+    assert "JLPT N5 komplett." in body
+    assert "CHF" not in body
 
 
 def test_bundle_purchase_blocked_in_free_mode(auth_client, app, free_mode):

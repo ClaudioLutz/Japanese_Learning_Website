@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Japanisch lernen online — JLPT N5 Kurse mit Quiz & SRS{% endblock %}
-{% block meta_description %}{% if roleplay_demo %}Japanisch sprechen üben ab dem ersten Tag: Konversation für Anfänger auf JLPT-N5-Niveau mit Antwortvorschlägen und Korrektur auf Deutsch — Demo ohne Login. Dazu Hiragana-Spiel und N5-Lektionen mit Quiz und SRS.{% else %}Japanisch lernen im Browser: Spiel dich durch alle 46 Hiragana — gratis, ohne Login. Danach strukturierte JLPT-N5-Lektionen auf Deutsch mit Quiz und SRS.{% if free_mode %} Alle Lektionen komplett kostenlos — kein Abo.{% endif %}{% endif %}{% endblock %}
+{% block meta_description %}{% if roleplay_demo %}Japanisch sprechen üben ab dem ersten Tag: Konversation für Anfänger auf JLPT-N5-Niveau mit Antwortvorschlägen und Korrektur auf Deutsch — Demo ohne Login. Dazu JLPT N5 komplett auf Deutsch: Hiragana-Spiel und Lektionen mit Quiz und SRS.{% else %}JLPT N5 komplett auf Deutsch. Japanisch lernen im Browser: Spiel dich durch alle 46 Hiragana — gratis, ohne Login. Danach strukturierte JLPT-N5-Lektionen auf Deutsch mit Quiz und SRS.{% if free_mode %} Alle Lektionen komplett kostenlos — kein Abo.{% endif %}{% endif %}{% endblock %}
 
 {% block styles %}
 {% if roleplay_demo %}<link rel="stylesheet" href="{{ static_v('css/roleplay_panel.css') }}">{% endif %}
@@ -365,13 +365,30 @@
   {% if not current_user.is_authenticated %}
   <section class="vom-spiel-section" aria-labelledby="vomSpielTitle">
     <h2 class="vom-spiel-title" id="vomSpielTitle">Japanisch lernen mit System — JLPT N5 auf Deutsch</h2>
+    {% if n5_showcase %}
+    {# N5-komplett-Leiste: Live-Zahlen aus der DB (coverage_service.get_level_showcase) #}
+    <div class="n5-complete-bar" role="region" aria-label="JLPT N5 komplett">
+      <p class="n5cb-head">
+        <span class="n5cb-check" aria-hidden="true">✓</span>
+        <span><strong>JLPT N5 ist komplett</strong>
+        <span class="n5cb-sub">{% if free_mode %}— gratis, auf Deutsch{% else %}— auf Deutsch{% endif %}</span></span>
+      </p>
+      <ul class="n5cb-stats">
+        <li><b>{{ n5_showcase.lessons }}</b> Lektionen</li>
+        <li><b>{{ n5_showcase.vocab|swiss_num }}</b> Vokabeln</li>
+        <li><b>alle {{ n5_showcase.kanji }}</b> N5-Kanji</li>
+        <li><b>{{ n5_showcase.scenes }}</b> Gesprächsszenen</li>
+      </ul>
+      <a class="n5cb-link" href="{{ url_for('bundle.n5_bundle') }}">Was alles drin ist →</a>
+    </div>
+    {% endif %}
     <p class="home-pitch">
       Für Erwachsene, die das <em>Warum</em> hinter jedem Satz verstehen wollen —
-      strukturierte Grammatik auf Deutsch, einmal kaufen statt Abo, jede Regel erklärt statt nur abgefragt.
+      strukturierte Grammatik auf Deutsch, {% if free_mode %}gratis und ohne Abo{% else %}einmal kaufen statt Abo{% endif %}, jede Regel erklärt statt nur abgefragt.
     </p>
     <ul class="home-usp-strip" aria-label="Was diese Plattform ausmacht">
       <li><span aria-hidden="true">🇩🇪</span> Auf Deutsch erklärt</li>
-      <li><span aria-hidden="true">∞</span> Kein Abo, Lifetime</li>
+      <li><span aria-hidden="true">∞</span> {% if free_mode %}Gratis, kein Abo{% else %}Kein Abo, Lifetime{% endif %}</li>
       <li><span aria-hidden="true">🧠</span> Wiederholt, bevor du vergisst</li>
     </ul>
     <div class="trust-block">
@@ -830,6 +847,43 @@
     margin: 0 0 0.9rem;
 }
 .vom-spiel-section .home-pitch { margin: 0 auto 1.1rem; }
+
+/* N5-komplett-Leiste (Gast, im Vorteils-Block) */
+.n5-complete-bar {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+    gap: 0.6rem 1.6rem;
+    max-width: 880px;
+    margin: 0.4rem auto 1.5rem;
+    padding: 0.85rem 1.25rem;
+    background: var(--card-background);
+    border: 1px solid var(--ink-200);
+    border-left: 3px solid var(--matcha);
+    border-radius: 12px;
+    font-size: 0.92rem;
+    color: var(--ink-700);
+}
+.n5cb-head { margin: 0; display: inline-flex; align-items: center; gap: 0.45rem; text-align: left; }
+.n5cb-head strong { color: var(--kon); font-weight: 600; }
+.n5cb-sub { color: var(--ink-500); }
+.n5cb-check {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--matcha); color: #fff; font-size: 0.72rem; font-weight: 700;
+}
+.n5cb-stats {
+    list-style: none; margin: 0; padding: 0;
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 0.3rem 1.1rem;
+}
+.n5cb-stats b {
+    font-family: 'Geist', 'Inter', sans-serif; font-weight: 600;
+    color: var(--sumi); font-variant-numeric: tabular-nums;
+}
+.n5cb-link { color: var(--ai); font-weight: 500; text-decoration: none; white-space: nowrap; }
+.n5cb-link:hover { text-decoration: underline; }
+@media (max-width: 600px) {
+    .n5-complete-bar { flex-direction: column; gap: 0.5rem; padding: 0.85rem 1rem; }
+    .n5cb-stats { display: grid; grid-template-columns: repeat(2, auto); gap: 0.25rem 1rem; }
+}
 .vom-spiel-section .trust-block { margin-top: 1.8rem; }
 
 /* ════════════════════════════════════════

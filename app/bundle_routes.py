@@ -24,7 +24,7 @@ from app.services.bundle_service import (
     get_n5_bundle_course,
     get_n5_bundle_price,
 )
-from app.services.coverage_service import get_jlpt_coverage
+from app.services.coverage_service import get_jlpt_coverage, get_level_showcase
 
 
 bundle_bp = Blueprint("bundle", __name__)
@@ -33,12 +33,19 @@ logger = logging.getLogger(__name__)
 
 @bundle_bp.route("/n5-bundle")
 def n5_bundle():
-    """Verkaufsseite fuer 'JLPT N5 Komplett'."""
-    # FREE_MODE: Es gibt nichts zu verkaufen — auf den Lektionskatalog leiten.
-    # Gaten statt loeschen: Flag aus -> Verkaufsseite lebt wieder (reversibel).
+    """Seite 'JLPT N5 Komplett' — Verkaufsseite bzw. im FREE_MODE Uebersicht."""
+    # FREE_MODE: nichts zu verkaufen — die Seite zeigt „JLPT N5 komplett, gratis"
+    # mit Live-Zahlen statt Preis/Kauf. Gaten statt loeschen: Flag aus ->
+    # Verkaufsseite lebt wieder (reversibel). Bezahllogik bleibt unberuehrt.
     if current_app.config.get("FREE_MODE"):
-        from flask import redirect, url_for
-        return redirect(url_for("routes.lessons"))
+        showcase = get_level_showcase(5)
+        return render_template(
+            "bundles/n5_bundle.html",
+            free_page=True,
+            showcase=showcase,
+            bundle_available=False,
+            already_owned=False,
+        )
 
     coverage = get_jlpt_coverage(5)
     price, price_label = get_n5_bundle_price()

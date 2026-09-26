@@ -41,6 +41,10 @@
     max-width: 540px;
 }
 
+.lernpfad-complete { display: block; margin-top: 0.4rem; font-size: 0.92rem; color: var(--ink-600); }
+.lernpfad-complete a { color: var(--ai); font-weight: 500; text-decoration: none; }
+.lernpfad-complete a:hover { text-decoration: underline; }
+
 /* Bundle-Hint (unverändert von vorher, aber neu eingeordnet) */
 .bundle-hint {
     display: flex; align-items: center; gap: 1rem;
@@ -410,6 +414,9 @@
       <p class="lernpfad-sub">
         {% if current_user.is_authenticated and next_module_id %}
           Empfohlen markiert mit Hanko 次 — du kannst aber jederzeit jedes Modul starten.
+          {% if n5_showcase %}
+          <span class="lernpfad-complete">JLPT N5 ist komplett: {{ n5_showcase.lessons }} Lektionen, alle {{ n5_showcase.kanji }} N5-Kanji. <a href="{{ url_for('bundle.n5_bundle') }}">Was drin ist →</a></span>
+          {% endif %}
         {% else %}
           {{ n5_modules|length }} Module — empfohlene Reihenfolge, keine Pflicht. Du wählst, wo du startest.
         {% endif %}

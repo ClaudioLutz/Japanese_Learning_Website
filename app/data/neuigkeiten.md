@@ -15,9 +15,17 @@ Format je Eintrag:
 Keine Commit-Hashes, keine internen Namen.
 -->
 
+## 2026-09-26 | JLPT N5 ist komplett
+Alle Wörter der JLPT-N5-Liste und alle 80 N5-Kanji sind jetzt abgedeckt: 65 Lektionen in 15 Modulen mit 727 Vokabeln, 180 Grammatikpunkten, 44 Gesprächsszenen und über 1'000 Quizfragen. Damit hast du einen Weg von null bis zur N5-Prüfung — auf Deutsch erklärt und gratis. Sieben Lektionen sind heute dazugekommen, von „Adjektive 3" bis „Masseinheiten und Zeitdauer".
+Link: /n5-bundle
+
 ## 2026-09-26 | Rollenspiel: Antworten kommen jetzt sofort, Vorschläge kann man sich vorlesen lassen
 Wählst du einen Antwortvorschlag, antwortet dein Gesprächspartner jetzt praktisch ohne Wartezeit: Mit dem kleinen Pfeil am Vorschlag sendest du ihn direkt. Jeden Vorschlag und am Ende die verbesserten Sätze kannst du dir mit dem Lautsprecher vorlesen lassen. Die deutschen Übersetzungen der Vorschläge sind zuerst verdeckt — tippe auf „DE" oder schalte „Deutsch anzeigen" ein.
 Link: /sprechen
+
+## 2026-09-26 | Kana-Übung und Handy-Ansicht aufgeräumt
+Die Kana-Übung zeigt auf grossen Bildschirmen Einstellungen und Start jetzt nebeneinander, ganz ohne Scrollen. Auf dem Handy haben alle Seiten wieder Ränder, „Mein Lernen" passt in die Breite, und der Lektionstext ist grösser und besser lesbar.
+Link: /practice/kana
 
 ## 2026-09-26 | Gespräch ausprobieren — direkt auf der Startseite
 Auf der Startseite kannst du jetzt ohne Konto ein kurzes Gespräch auf Japanisch führen: Du bist Lisa, sitzt mit Tanaka im Café und antwortest in drei Zügen — mit Antwortvorschlägen, Lesung, Vorlesen und am Ende einer Korrektur auf Deutsch. Mit deinem Konto geht es danach in allen Dialogszenen der Lektionen weiter.

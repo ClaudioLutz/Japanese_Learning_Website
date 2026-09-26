@@ -542,16 +542,19 @@ def index():
     # E4-Support: Coverage als einheitliche "heute X von Ziel Y"-Sprache fuer Home/Bundle.
     # coverage_service liefert vocab_covered/vocab_total/kanji_covered/kanji_total/vocab_pct
     # — hier auf den Kontrakt have/target gemappt, den index.html erwartet.
+    # n5_showcase: Live-Zahlen fuer die „JLPT N5 komplett“-Leiste (Gast) und den
+    # Hinweis im Lernpfad (eingeloggt) — Lektionen, Vokabeln, Kanji, Szenen.
     n5_coverage = None
+    n5_showcase = None
     try:
-        from app.services.coverage_service import get_jlpt_coverage
-        cov = get_jlpt_coverage(5)
+        from app.services.coverage_service import get_level_showcase
+        n5_showcase = get_level_showcase(5)
         n5_coverage = {
-            "vocab_have": cov["vocab_covered"],
-            "vocab_target": cov["vocab_total"],
-            "kanji_have": cov["kanji_covered"],
-            "kanji_target": cov["kanji_total"],
-            "vocab_pct": cov["vocab_pct"],
+            "vocab_have": n5_showcase["vocab_covered"],
+            "vocab_target": n5_showcase["vocab_total"],
+            "kanji_have": n5_showcase["kanji"],
+            "kanji_target": n5_showcase["kanji_total"],
+            "vocab_pct": n5_showcase["vocab_pct"],
         }
     except Exception:
         # Coverage darf die Startseite nie blockieren (z.B. fehlende canonical-Liste)
@@ -596,7 +599,8 @@ def index():
                          n5_vocab_count=n5_vocab_count,
                          n5_kanji_count=n5_kanji_count,
                          first_guest_lesson=first_guest_lesson,
-                         n5_coverage=n5_coverage)
+                         n5_coverage=n5_coverage,
+                         n5_showcase=n5_showcase)
 
 @bp.route('/register', methods=['GET', 'POST'])
 # Bot-Abwehr ohne Captcha: 5 Registrierungsversuche pro Stunde und IP.
