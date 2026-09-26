@@ -3,9 +3,13 @@
 /* Global mobile overrides to eliminate all white space */
 @media (max-width: 768px) {
     /* Force body and html to use full width */
+    /* padding-bottom bewusst NICHT nullen: custom.css reserviert dort (<=767px)
+       60px fuer die fixe Bottom-Nav — sonst liegt das Seitenende (Footer) darunter. */
     body {
         margin: 0 !important;
-        padding: 0 !important;
+        padding-top: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
         width: 100% !important;
         max-width: 100% !important;
         overflow-x: hidden !important;
@@ -34,6 +38,11 @@
         max-width: 100% !important;
         margin-left: 0 !important;
         margin-right: 0 !important;
+    }
+    /* Seitenrand-Nullung nur fuer die Lektionsansicht (randlos gestaltet). Andere
+       Seiten bringen ihren Seitenrand im eigenen Wrapper mit (z.B. .mein-lernen.wrap,
+       .sp-page) — ein globales padding:0 !important hat ihn ueberall geloescht. */
+    body.lesson-view-redesign .container > * {
         padding-left: 0 !important;
         padding-right: 0 !important;
     }
@@ -169,7 +178,7 @@
     .content-item h2,
     .content-item h3,
     .content-item h4 {
-        font-size: 0.95rem !important;
+        font-size: 1.05rem !important;
         line-height: 1.3 !important;
         margin-bottom: 0.5rem !important;
         font-weight: 600 !important;
@@ -180,7 +189,7 @@
     .rich-text-content h2,
     .rich-text-content h3,
     .rich-text-content h4 {
-        font-size: 0.95rem !important;
+        font-size: 1.05rem !important;
         line-height: 1.3 !important;
         margin-bottom: 0.5rem !important;
         font-weight: 600 !important;
@@ -191,7 +200,7 @@
     .text-content-container h2,
     .text-content-container h3,
     .text-content-container h4 {
-        font-size: 0.95rem !important;
+        font-size: 1.05rem !important;
         line-height: 1.3 !important;
         margin-bottom: 0.5rem !important;
         font-weight: 600 !important;
@@ -202,39 +211,38 @@
     .content-body h2,
     .content-body h3,
     .content-body h4 {
-        font-size: 0.95rem !important;
+        font-size: 1.05rem !important;
         line-height: 1.3 !important;
         margin-bottom: 0.5rem !important;
         font-weight: 600 !important;
     }
     
-    /* Make normal text smaller for better information density */
+    /* Lesetext mobil: 0.95rem (vorher 0.8rem bzw. 0.75rem unter 576px = 12px —
+       zu klein fuer Lektionstext mit Kana/Kanji). Dichte kommt vom knappen Padding. */
     .content-item p,
     .content-body p,
     .rich-text-content p,
     .text-content-container p {
-        font-size: 0.8rem !important;
-        line-height: 1.4 !important;
+        font-size: 0.95rem !important;
+        line-height: 1.55 !important;
         margin-bottom: 0.5rem !important;
     }
     
-    /* Make list items smaller too */
     .content-item li,
     .content-body li,
     .rich-text-content li,
     .text-content-container li {
-        font-size: 0.8rem !important;
-        line-height: 1.4 !important;
+        font-size: 0.95rem !important;
+        line-height: 1.55 !important;
         margin-bottom: 0.25rem !important;
     }
     
-    /* Make general text content smaller */
     .content-item,
     .content-body,
     .rich-text-content,
     .text-content-container {
-        font-size: 0.8rem !important;
-        line-height: 1.4 !important;
+        font-size: 0.95rem !important;
+        line-height: 1.55 !important;
     }
     
     /* Reduce navigation padding and use full width */
@@ -343,22 +351,6 @@
         margin-bottom: 0.5rem !important;
     }
     
-    /* Make text even smaller on very small screens */
-    .content-item p,
-    .content-body p,
-    .rich-text-content p,
-    .text-content-container p {
-        font-size: 0.75rem !important;
-        line-height: 1.3 !important;
-    }
-    
-    .content-item li,
-    .content-body li,
-    .rich-text-content li,
-    .text-content-container li {
-        font-size: 0.75rem !important;
-        line-height: 1.3 !important;
-    }
     
     .content-item h6,
     .content-title {

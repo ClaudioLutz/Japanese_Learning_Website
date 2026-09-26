@@ -129,7 +129,7 @@
       <div class="panel cando-mini">
         <div class="ph">Was du jetzt kannst <span style="color:var(--ink-400)">· <span x-text="canDoDone"></span>/<span x-text="canDo.length"></span></span></div>
         <template x-for="c in canDo.slice(0,4)" :key="c.t">
-          <div class="row">
+          <div class="cm-row">
             <span class="mk" :class="c.s" x-text="c.s==='done'?'✓':'◐'"></span>
             <span x-text="c.t"></span>
           </div>

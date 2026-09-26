@@ -685,6 +685,12 @@
         .topnav-brand-mark { font-size: 2rem; }
         .topnav-auth .topnav-btn-ghost { display: none; } /* auf Mobile nur Primary-CTA */
     }
+    /* Gast bis 440px: Marke + Theme + CTA + Burger passen nicht nebeneinander
+       (Burger lag rechts ausserhalb des Viewports, CTA angeschnitten) → nur das
+       あ-Zeichen zeigen, der Schriftzug weicht. */
+    @media (max-width: 440px) {
+        .topnav-inner:has(.topnav-auth) .topnav-brand-text { display: none; }
+    }
 
     /* Print: Nav weg */
     @media print { .topnav { display: none; } }
@@ -763,6 +769,9 @@
       .free-ribbon__check{color:var(--shu,#EB6101);font-weight:700;font-size:1.02em}
       .free-ribbon strong{color:var(--text-color,#1C1A17);font-weight:600}
       [data-theme="dark"] .free-ribbon{background:var(--card-background);border-bottom-color:var(--border-color)}
+      /* Karten-Lernbuehne (/review*) ist position:fixed ab top:60px — das Band laege
+         sonst halb verdeckt UNTER dem Richtungs-Umschalter. Dort ausblenden. */
+      body.review-locked .free-ribbon{display:none}
     </style>
     {% endif %}
     <main id="main-content" class="container mt-4">

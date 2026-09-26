@@ -77,8 +77,10 @@
 .mein-lernen .ml-btn.block{width:100%;}
 
 /* ── HEUTE: 2-Spalten ── */
-.mein-lernen .heute{display:grid;grid-template-columns:1fr 320px;gap:var(--sp-6);align-items:start;}
-@media(max-width:880px){.mein-lernen .heute{grid-template-columns:1fr;}}
+.mein-lernen .heute{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:var(--sp-6);align-items:start;}
+/* minmax(0,1fr) statt 1fr: sonst setzt der min-content der nowrap-Buttons die
+   Spaltenbreite (mobil 418px bei 360px Viewport → Karten rechts abgeschnitten). */
+@media(max-width:880px){.mein-lernen .heute{grid-template-columns:minmax(0,1fr);}}
 .mein-lernen .greet{margin-bottom:var(--sp-5);}
 .mein-lernen .greet .ja{font-family:var(--jp);color:var(--ink-500);font-size:1.05rem;}
 .mein-lernen .greet h1{font-size:clamp(1.9rem,4vw,2.7rem);margin-top:.15rem;}
@@ -108,6 +110,15 @@
 .mein-lernen .step .dur{font-family:var(--mono);font-size:.78rem;color:var(--ink-500);white-space:nowrap;}
 .mein-lernen .step .go{flex:none;}
 .mein-lernen .step.is-done .check{color:var(--matcha);font-size:1.2rem;}
+/* Schmal: Dauer + Button in eine zweite Zeile unter den Titel (Titel bekommt die volle Breite). */
+@media(max-width:480px){
+  .mein-lernen .ask{padding:var(--sp-5) var(--sp-4);}
+  .mein-lernen .step{flex-wrap:wrap;gap:.35rem .75rem;padding:.8rem .85rem;}
+  .mein-lernen .step .body{flex:1 1 calc(100% - 42px);}
+  .mein-lernen .step .dur{margin-left:42px;}
+  .mein-lernen .step .go{margin-left:auto;}
+  .mein-lernen .ask-foot .ml-btn{flex:1 1 100%;}
+}
 
 .mein-lernen .ask-foot{display:flex;align-items:center;gap:1rem;margin-top:var(--sp-5);flex-wrap:wrap;}
 .mein-lernen .ask-foot .prog{flex:1;min-width:160px;}
@@ -151,7 +162,7 @@
 .mein-lernen .count:hover{background:var(--ink-100);}
 .mein-lernen .count .n{font-family:var(--f-display);font-weight:700;font-size:1.5rem;color:var(--kon);line-height:1;}
 .mein-lernen .count .l{font-family:var(--mono);font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-500);margin-top:.25rem;}
-.mein-lernen .cando-mini .row{display:flex;align-items:center;gap:.5rem;font-size:.86rem;color:var(--ink-700);padding:.2rem 0;}
+.mein-lernen .cando-mini .cm-row{display:flex;align-items:center;gap:.5rem;font-size:.86rem;color:var(--ink-700);padding:.2rem 0;}
 .mein-lernen .cando-mini .mk{width:18px;height:18px;flex:none;border-radius:var(--r-full);display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;}
 .mein-lernen .cando-mini .mk.done{background:var(--matcha);color:#fff;}
 .mein-lernen .cando-mini .mk.prog{background:var(--kincha-soft);color:var(--kincha-deep);}
@@ -162,7 +173,8 @@
 .mein-lernen .fort-hero{display:grid;grid-template-columns:auto 1fr;gap:var(--sp-8);align-items:center;
   background:linear-gradient(180deg,var(--paper),var(--kinari));border:1px solid var(--ink-200);
   border-radius:var(--r-xl);box-shadow:var(--shadow-card);padding:var(--sp-8) var(--sp-6);}
-@media(max-width:760px){.mein-lernen .fort-hero{grid-template-columns:1fr;text-align:center;justify-items:center;gap:var(--sp-5);}}
+@media(max-width:760px){.mein-lernen .fort-hero{grid-template-columns:1fr;text-align:center;justify-items:center;gap:var(--sp-5);}
+  .mein-lernen .fort-hero .exam-row{justify-content:center;}}
 .mein-lernen .big-ring{position:relative;width:220px;height:220px;}
 .mein-lernen .big-ring svg{transform:rotate(-90deg);}
 .mein-lernen .big-ring .mid{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
@@ -176,6 +188,7 @@
 .mein-lernen .exam-row{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-top:var(--sp-4);font-size:.9rem;color:var(--ink-600);}
 .mein-lernen .exam-row select{font-family:inherit;font-size:.88rem;border:1px solid var(--ink-300);border-radius:var(--r-sm);padding:.3rem .5rem;background:var(--paper);color:var(--kon);}
 .mein-lernen .exam-row b{color:var(--kincha-deep);}
+.mein-lernen .exam-row .exam-left{white-space:nowrap;}
 .mein-lernen .exam-note{font-size:.8rem;color:var(--ink-500);margin-top:.4rem;}
 .mein-lernen .gate{display:flex;align-items:flex-start;gap:.6rem;background:var(--error-soft);border:1px solid rgba(192,73,59,.3);
   border-radius:var(--r-md);padding:.7rem .9rem;font-size:.86rem;color:#7d2419;margin-top:var(--sp-4);}
@@ -300,9 +313,12 @@
 /* ── Sticky-CTA mobil ── */
 .mein-lernen .sticky-cta{display:none;}
 @media(max-width:640px){
-  .mein-lernen .sticky-cta{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:1045;padding:.7rem 1rem calc(.7rem + env(safe-area-inset-bottom));
+  /* Sitzt UEBER der fixen Bottom-Nav (≈51px + Safe-Area) statt sie zu verdecken. */
+  .mein-lernen .sticky-cta{display:flex;position:fixed;left:0;right:0;bottom:calc(51px + env(safe-area-inset-bottom, 0px));z-index:1039;padding:.55rem 1rem;
     background:rgba(250,247,242,.93);backdrop-filter:blur(10px);border-top:1px solid var(--ink-200);}
   .mein-lernen .sticky-cta .ml-btn{flex:1;}
+  /* Seitenende (Footer) nicht unter Sticky-CTA + Bottom-Nav verstecken. */
+  body:has(.mein-lernen .sticky-cta) .site-footer{padding-bottom:5rem !important;}
 }
 
 /* ── Modal (Settings) ── */
