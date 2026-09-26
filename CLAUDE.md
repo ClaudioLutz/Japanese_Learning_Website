@@ -119,6 +119,8 @@ SITE_URL="https://japanese-learning.ch"
 FLASK_ENV="production"
 ROBOTS_INDEX="index,follow"
 # GCS_BUCKET_NAME ist NICHT gesetzt → Medien werden lokal ausgeliefert (kein GCS-Fallback)
+# SENTRY_DSN="<Sentry-DSN>"             # optional: Error-Tracking (sentry-sdk) nur aktiv wenn gesetzt;
+#                                       # environment=FLASK_ENV, release=SENTRY_RELEASE/GIT_COMMIT/git-Hash
 ## Payment (Payrexx)
 PAYMENT_PROVIDER="payrexx"              # payrexx | postfinance | mock
 PAYREXX_INSTANCE="<instanzname>"

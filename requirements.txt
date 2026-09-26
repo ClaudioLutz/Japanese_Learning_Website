@@ -41,3 +41,4 @@ genanki>=0.13
 
 # Dev/Lint
 ruff>=0.15
+sentry-sdk[flask]>=2.0  # Error-Tracking, nur aktiv wenn SENTRY_DSN gesetzt

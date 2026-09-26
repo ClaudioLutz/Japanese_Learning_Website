@@ -64,7 +64,56 @@ login_manager.login_view = 'routes.login' # type: ignore
 login_manager.login_message = 'Bitte melden Sie sich an, um diese Seite zu sehen.'
 login_manager.login_message_category = 'info'
 
+def _release_id():
+    """Release-Kennung fuer Sentry: Env (SENTRY_RELEASE/GIT_COMMIT) oder Commit-Hash.
+
+    Im Docker-Image fehlt .git (.dockerignore) → dann None, kein Fehler.
+    """
+    env_release = (os.environ.get('SENTRY_RELEASE') or os.environ.get('GIT_COMMIT') or '').strip()
+    if env_release:
+        return env_release
+    import subprocess
+    try:
+        out = subprocess.run(
+            ['git', 'rev-parse', '--short', 'HEAD'],
+            cwd=os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            capture_output=True, text=True, timeout=5, check=False,
+        )
+    except Exception:
+        return None
+    sha = (out.stdout or '').strip()
+    return sha if out.returncode == 0 and sha else None
+
+
+def init_sentry():
+    """Error-Tracking via Sentry — NUR wenn die Env ``SENTRY_DSN`` gesetzt ist.
+
+    Ohne DSN passiert nichts (kein Import, kein Netz). Bewusst sparsam:
+    keine Performance-Traces, keine personenbezogenen Daten.
+    Rueckgabe: True wenn initialisiert.
+    """
+    dsn = (os.environ.get('SENTRY_DSN') or '').strip()
+    if not dsn:
+        return False
+    try:
+        import sentry_sdk
+        from sentry_sdk.integrations.flask import FlaskIntegration
+    except ImportError:  # pragma: no cover - Paket fehlt nur in exotischen Umgebungen
+        logging.getLogger(__name__).warning("SENTRY_DSN gesetzt, aber sentry-sdk nicht installiert")
+        return False
+    sentry_sdk.init(
+        dsn=dsn,
+        integrations=[FlaskIntegration()],
+        traces_sample_rate=0.0,
+        send_default_pii=False,
+        environment=os.environ.get('FLASK_ENV') or 'production',
+        release=_release_id(),
+    )
+    return True
+
+
 def create_app():
+    init_sentry()  # no-op ohne SENTRY_DSN
     app = Flask(__name__, instance_relative_config=True)
     # ProxyFix: Cloud Run / Loadbalancer leitet HTTPS-Traffic als HTTP weiter.
     # Ohne ProxyFix sieht Flask nur http:// und OAuth redirect_uri stimmt nicht.
