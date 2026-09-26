@@ -147,3 +147,5 @@ class TestWelcomeBackNews:
         client, user = auth_client
         html = client.get('/mein-lernen').get_data(as_text=True)
         assert 'Seit deinem letzten Besuch neu: ' in html
+        assert "' Neuigkeiten'" in html and "' Neuigkeit'" in html
+        assert 'Verbesserung' not in html.split('id="welcomeBack"', 1)[1]

@@ -175,7 +175,7 @@
     if ((nw.lessons || 0) > 0 || (nw.updates || 0) > 0) {
       var parts = [];
       if (nw.lessons > 0) parts.push(nw.lessons + (nw.lessons === 1 ? ' Lektion' : ' Lektionen'));
-      if (nw.updates > 0) parts.push(nw.updates + (nw.updates === 1 ? ' Verbesserung' : ' Verbesserungen'));
+      if (nw.updates > 0) parts.push(nw.updates + (nw.updates === 1 ? ' Neuigkeit' : ' Neuigkeiten'));
       var nli = document.createElement('li');
       nli.className = 'wb-news';
       var nic = document.createElement('span');
