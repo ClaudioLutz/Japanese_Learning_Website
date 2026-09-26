@@ -15,6 +15,10 @@ Format je Eintrag:
 Keine Commit-Hashes, keine internen Namen.
 -->
 
+## 2026-09-26 | Zwei neue Lektionen: Adjektive 3 und Verben 3
+In „Adjektive 3" lernst du 15 weitere Alltags-Adjektive wie heiss, dick, laut und schnell, dazu die Vergangenheit der い-Adjektive und „etwas haben wollen". In „Verben 3" kommen 20 Verben für unterwegs und zu Hause dazu — einsteigen, aussteigen, ankommen, wohnen, anrufen und mehr.
+Link: /lessons
+
 ## 2026-09-26 | Vorlese-Player zeigt die Länge, Lektionsübersicht merkt sich deine letzte Lektion
 Der Vorlese-Player in den Lektionen zeigt schon vor dem Abspielen, wie lang die Aufnahme ist. In der Lektionsübersicht ist bei Neulingen jetzt das Modul der zuletzt geöffneten Lektion aufgeklappt, und die 🔥-Anzeige oben zeigt nur noch eine Serie, die wirklich noch läuft.
 Link: /lessons
