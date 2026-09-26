@@ -7,7 +7,7 @@ description: Verbessert die Japanese Learning Website (japanese-learning.ch). Au
 
 Dieser Skill ist das Produkt-Gehirn der Seite. CLAUDE.md liefert das Tech-Wissen (Stack, Deployment, DB-Sync); hier steht, *warum* es die Seite gibt, *für wen*, und *was als Nächstes* sinnvoll ist.
 
-**Stand: 2026-04-26 abends — Monetarisierungs-Funnel komplett deployed (Revision 00034-ptk + DB-Sync). Bundle CHF 9.90 / Single CHF 5 / 1 Lesson pro Modul gratis. Paywall-Conversion-Seite + Modul-Detail-Seiten + Brand-Refresh (Torii + Fraunces). Wartet nur noch auf Payrexx-KYC fuer echte Zahlungen.**
+**Stand: 2026-09-26 — N5 100% komplett (723 Vokabeln, 80 Kanji). 65 publizierte Lektionen in 15 Modulen + 44 Dialogszenen deployed. N4-Produktion darf gemäss Leitprinzip beginnen.**
 
 ## 1. Warum diese Seite existiert (Hierarchie der Zwecke)
 
@@ -21,7 +21,7 @@ Reihenfolge zählt: Wenn eine Idee (3) dient aber (1) nicht, zurückstellen. Wen
 
 Mayuko (Lehrerin) hat als pädagogische Anweisung gegeben: **„Lektionen nach JLPT machen."** Drei verbindliche harte Regeln:
 
-1. **N5 zuerst komplett, bevor N4 begonnen wird.** Keine N4-Lektionen, solange N5 nicht 100 % abgedeckt. Stand 2026-04-26: N5-Coverage **33.0 % Vokabeln (234/710), 2.5 % Kanji (2/80)** — Vokabel-Drittel da, Kanji ist der Engpass.
+1. **N5 zuerst komplett, bevor N4 begonnen wird.** Keine N4-Lektionen, solange N5 nicht 100 % abgedeckt. Stand 2026-09-26: N5 komplett: Vokabeln 723/723 (100 %), Kanji 80/80 (100 %) — Vokabel-Drittel da, Kanji ist der Engpass.
 2. **Offizielle JLPT-Wortlisten als Quelle**, nicht Minna no Nihongo. Canonical-Liste liegt in `.claude/skills/generate-lesson/sources/jlpt_n5_canonical.json` (718 Vokabeln + 80 Kanji, MIT-lizenziert von elzup/AnchorI, von Tanos abgeleitet — keine offizielle Liste seit JLPT-Reform 2010).
 3. **Strenger Niveau-Mix-Verbot.** Eine N5-Lektion enthält **null** N4+-Wörter. Validator (`pipeline.py validate`) bricht mit ERROR (nicht Warning) ab. Escape-Hatches: `data.is_proper_noun=true`, `data.is_canonical_override=true`.
 
@@ -49,7 +49,7 @@ Mayuko (Lehrerin) hat als pädagogische Anweisung gegeben: **„Lektionen nach J
 - Keine Features, die nur für Claudio Sinn ergeben, aber nicht für einen fremden deutschsprachigen Anfänger
 - Keine Inhalte, die Mayuko (japanische Lehrerin) als fachlich falsch markieren würde
 
-## 3. Aktuell offene Themen (Stand 2026-04-26 abends)
+## 3. Aktuell offene Themen (Stand 2026-09-26)
 
 **Payrexx-KYC läuft** (eingereicht 2026-04-25, Antwort ~2026-04-29). Während Wartezeit:
 
@@ -83,7 +83,7 @@ Organischer Traffic ist der einzige nicht-bezahlte Akquisitions-Kanal. Vor Payre
 - ✅ **Env-Schalter**: `SITE_URL`, `ROBOTS_INDEX` (Staging→`noindex,nofollow`), `GOOGLE_SITE_VERIFICATION` (Fallback ohne DNS-Zugriff), `SEO_DEFAULT_OG_IMAGE`.
 
 **Wo der Hebel jetzt liegt:**
-- **Content**: N5-Vokabel-Coverage 33 % (Kanji 2.5 %) heisst noch wenig öffentlicher Content für Google. Jede neue Lesson = neue indexierbare URL = mehr Long-Tail-Treffer ("hiragana lernen", "japanisch zahlen 1-10"). **Inhalte produzieren ist SEO-Hebel #1.** Sitemap regeneriert sich automatisch (DB-getrieben).
+- **Content**: N5 100 % (723 Vokabeln, 80 Kanji) heisst noch wenig öffentlicher Content für Google. Jede neue Lesson = neue indexierbare URL = mehr Long-Tail-Treffer ("hiragana lernen", "japanisch zahlen 1-10"). **Inhalte produzieren ist SEO-Hebel #1.** Sitemap regeneriert sich automatisch (DB-getrieben).
 - Lessons-Detailseite zeigt für Gäste nur Marketing-Snippet, Hauptcontent hinter Login/Paywall → niedrige Indexierungs-Tiefe. Bei sehr beliebten Themen (Hiragana-Tabelle) ggf. Teil-Inhalt für Crawler erlauben.
 - Keine Blog-/Artikel-Sektion → keine breiten Keyword-Themen. Erst bauen, wenn N5 ≥80 %.
 
@@ -179,7 +179,7 @@ Kein A/B-Testing und keine Analytics-Obsession. Die Signale:
 
 - **Claudio kommt ohne Aufforderung wieder** und merkt echten Lernfortschritt (Retention ≠ Klickspass). Wichtigster Indikator.
 - **Mayuko's fachliches Urteil** — sie würde den Inhalt einer Schülerin guten Gewissens empfehlen.
-- **JLPT-N5-Coverage** (objektive Metrik): `pipeline.py coverage 5` — ZIEL: 100 %. Stand 2026-04-26: 33.0 % Vokabeln (234/710), 2.5 % Kanji (2/80).
+- **JLPT-N5-Coverage** (objektive Metrik): `pipeline.py coverage 5` — ZIEL: 100 %. N5 100 % (723 Vokabeln, 80 Kanji).
 - **Erster fremder Nutzer** registriert sich und loggt am Folgetag wieder ein.
 - **Payrexx KYC durch** → erste echte CHF-Zahlung möglich. (Eingereicht 2026-04-25.)
 - **Hygiene:** `git status` sauber, alle Tests grün, Inkognito-Startseite fehlerfrei.
