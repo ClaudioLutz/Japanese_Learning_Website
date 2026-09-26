@@ -160,6 +160,10 @@
             get tutorLimitText() {
                 return this.limits ? ('Heute noch ' + this.limits.tutor_left + ' Fragen') : '';
             },
+            isSameCorrection: function (c) {
+                var norm = function (s) { return String(s || '').replace(/[\s。．.、,！!？?]/g, ''); };
+                return !!c && norm(c.original) === norm(c.better);
+            },
             goalFor: function (name) {
                 return (this.scene && this.scene.goal_suggestions && this.scene.goal_suggestions[name]) || '';
             },

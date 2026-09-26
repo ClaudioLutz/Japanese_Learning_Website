@@ -195,13 +195,18 @@
                    x-text="'Kein XP diesmal: XP gibt es ab ' + minTurns + ' Zügen.'"></div>
 
                 <div class="rp-corrections" x-show="result && result.correction && result.correction.length">
-                    <div class="rp-label">So klingt es noch natürlicher</div>
+                    <div class="rp-label">Rückmeldung zu deinen Sätzen</div>
                     <div role="list" class="rp-corr-list">
                         <template x-for="(c, i) in (result ? result.correction : [])" :key="i">
-                            <div role="listitem" class="rp-corr">
-                                <div class="rp-corr-pair">
+                            <div role="listitem" class="rp-corr" :class="{ 'is-ok': isSameCorrection(c) }">
+                                {# Modell lobt teils mit original == better → kein Durchstreichen #}
+                                <div class="rp-corr-pair" x-show="!isSameCorrection(c)">
                                     <span class="rp-corr-orig" lang="ja" x-text="c.original"></span>
                                     <i class="fas fa-arrow-right" aria-hidden="true"></i><span class="rp-sr-only">besser:</span>
+                                    <span class="rp-corr-better" lang="ja" x-text="c.better"></span>
+                                </div>
+                                <div class="rp-corr-pair" x-show="isSameCorrection(c)">
+                                    <i class="fas fa-check rp-corr-ok" aria-hidden="true"></i><span class="rp-sr-only">richtig:</span>
                                     <span class="rp-corr-better" lang="ja" x-text="c.better"></span>
                                 </div>
                                 <div class="rp-corr-expl" x-text="c.explanation_de"></div>

@@ -254,6 +254,8 @@
 .roleplay-panel .rp-corr-orig { text-decoration: line-through; text-decoration-color: var(--color-error, #D14B3D); color: var(--rp-muted); }
 .roleplay-panel .rp-corr-better { font-weight: 600; color: var(--rp-text); }
 .roleplay-panel .rp-corr-pair .fa-arrow-right { color: var(--rp-muted); font-size: .8rem; }
+.roleplay-panel .rp-corr-ok { color: var(--color-success, #7A9A5A); }
+.roleplay-panel .rp-corr.is-ok { background: var(--matcha-bg, rgba(122,144,51,.08)); border-color: var(--matcha-line, rgba(122,144,51,.35)); }
 .roleplay-panel .rp-corr-expl { margin: .35rem 0 0; font-size: .9rem; color: var(--rp-text); }
 .roleplay-panel .rp-done-title + * { margin-top: .5rem; }
 .roleplay-panel .rp-restart-btn { margin-top: 1rem; }
