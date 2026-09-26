@@ -1,0 +1,33 @@
+# Rollenspiel-Tutor-Bridge: Web-Container → Claude-Code-CLI (Subscription) auf dem Host.
+# Installation (hp-ubuntu):
+#   sudo cp tools/roleplay_bridge/jpl-roleplay-bridge.service /etc/systemd/system/
+#   sudo systemctl daemon-reload && sudo systemctl enable --now jpl-roleplay-bridge
+# Env-Datei /home/hp-ubuntu/.jpl-roleplay-bridge.env (chmod 600) mit
+#   ROLEPLAY_BRIDGE_TOKEN=<gleicher Wert wie in der Server-.env>
+# Lauscht nur auf der Docker-Bridge (172.17.0.1:5077); ufw-Regel fuer das
+# Compose-Netz noetig (siehe docs/roleplay-api.md, Abschnitt Betrieb).
+[Unit]
+Description=JPL Rollenspiel-Bridge (Claude-Code-CLI)
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=hp-ubuntu
+Group=hp-ubuntu
+WorkingDirectory=/home/hp-ubuntu
+EnvironmentFile=/home/hp-ubuntu/.jpl-roleplay-bridge.env
+Environment=HOME=/home/hp-ubuntu
+Environment=BRIDGE_HOST=172.17.0.1
+Environment=BRIDGE_PORT=5077
+Environment=CLAUDE_BIN=/home/hp-ubuntu/.local/bin/claude
+Environment=BRIDGE_WORKDIR=/home/hp-ubuntu/.jpl-roleplay-bridge-work
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/usr/bin/python3 /home/hp-ubuntu/git/Japanese_Learning_Website/tools/roleplay_bridge/bridge.py
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

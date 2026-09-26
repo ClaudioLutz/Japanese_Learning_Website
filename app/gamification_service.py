@@ -36,6 +36,11 @@ XP_STORM_PER_HIT = 1         # 1 XP je korrekt getippter Kana
 XP_STORM_RUN_BONUS_CAP = 15  # Hit-Bonus pro Runde gedeckelt (~ XP_NEW_CARD_BONUS)
 XP_STORM_DAILY_CAP = 60      # max. Storm-XP pro Tag (~3-4 gute Runden, dann 0)
 
+# ── Rollenspiel-Tutor ─────────────────────────────────────────
+# Einmalig pro abgeschlossenem Rollenspiel (mind. 4 Nutzerzuege, siehe
+# roleplay_service.MIN_USER_TURNS). Tageslimit 5 Gespraeche deckelt indirekt.
+XP_ROLEPLAY_COMPLETE = 25
+
 # ── Karten-Stufen (basierend auf FSRS Stability) ─────────────
 
 CARD_STAGES = [

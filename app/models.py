@@ -2204,6 +2204,105 @@ class ContentIssueComment(db.Model):
         return self.author_id == user.id or getattr(user, 'is_admin', False)
 
 
+# ---------------------------------------------------------------------------
+# Rollenspiel-Tutor (ROLEPLAY_ENABLED) — Laufzeit-Interaktion, KEIN Lektionsinhalt.
+# Gespraeche/Tutorfragen gehoeren genau einem Nutzer und werden niemandem sonst
+# serviert. Tokens/Kosten pro Zeile fuer Tageslimits + globale Kostenkappe.
+# ---------------------------------------------------------------------------
+
+class RoleplaySession(db.Model):
+    """Ein Rollenspiel-Gespraech zu einem Lektionsdialog (dialog_slideshow)."""
+    __tablename__ = 'roleplay_session'
+    __table_args__ = (
+        db.Index('ix_roleplay_session_user_started', 'user_id', 'started_at'),
+        db.Index('ix_roleplay_session_started', 'started_at'),
+    )
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('user.id'), nullable=False)
+    lesson_content_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey('lesson_content.id'), nullable=False, index=True,
+    )
+    role_user: Mapped[str] = mapped_column(String(100), nullable=False)
+    role_bot: Mapped[str] = mapped_column(String(100), nullable=False)
+    goal_de: Mapped[str] = mapped_column(Text, nullable=True)
+    # active | completed | abandoned
+    status: Mapped[str] = mapped_column(String(20), default='active', nullable=False)
+    started_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
+    ended_at: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    turn_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)  # Nutzerzuege
+    xp_awarded: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    model_name: Mapped[str] = mapped_column(String(64), nullable=True)
+    tokens_in: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    tokens_out: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    cost_usd: Mapped[float] = mapped_column(db.Float, default=0.0, nullable=False)
+    # Abschluss-Korrektur (max. 3 Punkte) als JSON-Liste — macht /end idempotent.
+    correction_json: Mapped[str] = mapped_column(Text, nullable=True)
+
+    user = relationship('User', foreign_keys=[user_id])
+    lesson_content = relationship('LessonContent', foreign_keys=[lesson_content_id])
+    turns: Mapped[List['RoleplayTurn']] = relationship(
+        'RoleplayTurn', backref='session', lazy=True,
+        order_by='RoleplayTurn.turn_index',
+        cascade='all, delete-orphan',
+    )
+
+    def __repr__(self):
+        return f'<RoleplaySession {self.id} user={self.user_id} {self.status}>'
+
+
+class RoleplayTurn(db.Model):
+    """Ein Zug im Rollenspiel (Nutzer oder Bot)."""
+    __tablename__ = 'roleplay_turn'
+    __table_args__ = (
+        db.UniqueConstraint('session_id', 'turn_index', name='uq_roleplay_turn_session_index'),
+        db.Index('ix_roleplay_turn_speaker_created', 'speaker', 'created_at'),
+    )
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    session_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey('roleplay_session.id'), nullable=False, index=True,
+    )
+    turn_index: Mapped[int] = mapped_column(Integer, nullable=False)
+    speaker: Mapped[str] = mapped_column(String(10), nullable=False)  # user | bot
+    text_jp: Mapped[str] = mapped_column(Text, nullable=True)
+    reading_kana: Mapped[str] = mapped_column(Text, nullable=True)
+    text_de: Mapped[str] = mapped_column(Text, nullable=True)
+    suggestions_json: Mapped[str] = mapped_column(Text, nullable=True)
+    hint_de: Mapped[str] = mapped_column(Text, nullable=True)
+    raw_json: Mapped[str] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
+
+    def __repr__(self):
+        return f'<RoleplayTurn {self.session_id}#{self.turn_index} {self.speaker}>'
+
+
+class TutorQuestion(db.Model):
+    """Eine Frage an den Tutor „Frag zur Seite" (Kontext = eine Lektionsseite)."""
+    __tablename__ = 'tutor_question'
+    __table_args__ = (
+        db.Index('ix_tutor_question_user_created', 'user_id', 'created_at'),
+        db.Index('ix_tutor_question_created', 'created_at'),
+    )
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('user.id'), nullable=False)
+    lesson_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey('lesson.id'), nullable=False, index=True,
+    )
+    page_number: Mapped[int] = mapped_column(Integer, nullable=False)
+    question: Mapped[str] = mapped_column(Text, nullable=False)
+    answer: Mapped[str] = mapped_column(Text, nullable=True)
+    model_name: Mapped[str] = mapped_column(String(64), nullable=True)
+    tokens_in: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    tokens_out: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    cost_usd: Mapped[float] = mapped_column(db.Float, default=0.0, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
+
+    user = relationship('User', foreign_keys=[user_id])
+    lesson = relationship('Lesson', foreign_keys=[lesson_id])
+
+    def __repr__(self):
+        return f'<TutorQuestion {self.id} user={self.user_id} lesson={self.lesson_id}>'
+
+
 # SQLAlchemy event listeners to automatically maintain lesson type consistency
 @event.listens_for(Lesson, 'before_insert')
 @event.listens_for(Lesson, 'before_update')

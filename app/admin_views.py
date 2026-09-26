@@ -253,6 +253,53 @@ class UserAdmin(SecureModelView):
 
 
 # ---------------------------------------------------------------------------
+# Rollenspiel-Tutor — nur lesend (Monitoring: Nutzung, Tokens, Kosten)
+# ---------------------------------------------------------------------------
+
+class ReadOnlyModelView(SecureModelView):
+    can_create = False
+    can_edit = False
+    can_delete = False
+    can_view_details = True
+
+
+class RoleplaySessionAdmin(ReadOnlyModelView):
+    column_list = ['id', 'user_id', 'lesson_content_id', 'role_user', 'role_bot', 'status',
+                   'turn_count', 'xp_awarded', 'model_name', 'tokens_in', 'tokens_out',
+                   'cost_usd', 'started_at', 'ended_at']
+    column_filters = ['status', 'model_name', 'started_at', 'user_id']
+    column_sortable_list = ['id', 'user_id', 'status', 'turn_count', 'tokens_in',
+                            'tokens_out', 'cost_usd', 'started_at']
+    column_default_sort = ('id', True)
+    column_labels = {
+        'user_id': 'User', 'lesson_content_id': 'Dialog (Content)',
+        'role_user': 'Rolle Nutzer', 'role_bot': 'Rolle Bot', 'turn_count': 'Nutzerzüge',
+        'xp_awarded': 'XP', 'model_name': 'Modell', 'cost_usd': 'Kosten (USD)',
+        'started_at': 'Start', 'ended_at': 'Ende', 'goal_de': 'Ziel',
+        'correction_json': 'Korrektur (JSON)',
+    }
+
+
+class RoleplayTurnAdmin(ReadOnlyModelView):
+    column_list = ['id', 'session_id', 'turn_index', 'speaker', 'text_jp', 'created_at']
+    column_filters = ['speaker', 'session_id', 'created_at']
+    column_default_sort = ('id', True)
+    column_labels = {'session_id': 'Session', 'turn_index': 'Zug', 'speaker': 'Sprecher',
+                     'text_jp': 'Text (JP)', 'created_at': 'Zeit'}
+
+
+class TutorQuestionAdmin(ReadOnlyModelView):
+    column_list = ['id', 'user_id', 'lesson_id', 'page_number', 'model_name',
+                   'tokens_in', 'tokens_out', 'cost_usd', 'created_at']
+    column_filters = ['lesson_id', 'user_id', 'created_at']
+    column_sortable_list = ['id', 'user_id', 'lesson_id', 'cost_usd', 'created_at']
+    column_default_sort = ('id', True)
+    column_labels = {'user_id': 'User', 'lesson_id': 'Lektion', 'page_number': 'Seite',
+                     'model_name': 'Modell', 'cost_usd': 'Kosten (USD)', 'created_at': 'Zeit',
+                     'question': 'Frage', 'answer': 'Antwort'}
+
+
+# ---------------------------------------------------------------------------
 # Factory-Funktion: registriert Flask-Admin auf der App
 # ---------------------------------------------------------------------------
 
@@ -277,5 +324,13 @@ def init_admin(app, db_session):
     admin.add_view(LessonAdmin(Lesson, db_session, name='Lektionen', endpoint='admin_lessons', category='Lektionen'))
     admin.add_view(CourseAdmin(Course, db_session, name='Kurse', endpoint='admin_courses', category='Lektionen'))
     admin.add_view(UserAdmin(User, db_session, name='Benutzer', endpoint='admin_users', category='System'))
+
+    from app.models import RoleplaySession, RoleplayTurn, TutorQuestion
+    admin.add_view(RoleplaySessionAdmin(RoleplaySession, db_session, name='Gespräche',
+                                        endpoint='admin_roleplay_sessions', category='Rollenspiel'))
+    admin.add_view(RoleplayTurnAdmin(RoleplayTurn, db_session, name='Züge',
+                                     endpoint='admin_roleplay_turns', category='Rollenspiel'))
+    admin.add_view(TutorQuestionAdmin(TutorQuestion, db_session, name='Tutorfragen',
+                                      endpoint='admin_tutor_questions', category='Rollenspiel'))
 
     return admin

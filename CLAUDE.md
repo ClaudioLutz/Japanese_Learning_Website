@@ -20,6 +20,8 @@ Ausnahmen (kein Text-Content, dürfen externe Dienste nutzen):
 
 Die `generate_*`-Methoden in `ai_services.py` (Gemini) bleiben als Code bestehen, sollen für Content aber nicht mehr aufgerufen werden.
 
+**Ausnahme Rollenspiel-Tutor:** Das interaktive Übungsgespräch (`ROLEPLAY_ENABLED`) ist Laufzeit-Interaktion, kein gespeicherter Lektionsinhalt; es wird nicht als LessonContent/Vokabel/Beispielsatz abgelegt und keinem anderen Nutzer serviert. Modell Sonnet über die Claude-Code-CLI auf dem Host (Subscription, Sidecar `tools/roleplay_bridge/`, systemd `jpl-roleplay-bridge`) oder optional Anthropic-API (`claude-sonnet-5`), serverseitig auf N5 beschränkt. Code: `app/services/roleplay_service.py`, `app/roleplay_routes.py`; API-Vertrag: `docs/roleplay-api.md`.
+
 ## Tech-Stack
 - **Backend**: Flask 2.0+, SQLAlchemy, Flask-Login, Flask-Migrate, Flask-WTF
 - **Datenbank**: PostgreSQL 15 (Docker) — die lokale Postgres ist die Produktions-DB (self-hosted)
@@ -121,6 +123,15 @@ ROBOTS_INDEX="index,follow"
 # GCS_BUCKET_NAME ist NICHT gesetzt → Medien werden lokal ausgeliefert (kein GCS-Fallback)
 # SENTRY_DSN="<Sentry-DSN>"             # optional: Error-Tracking (sentry-sdk) nur aktiv wenn gesetzt;
 #                                       # environment=FLASK_ENV, release=SENTRY_RELEASE/GIT_COMMIT/git-Hash
+## Rollenspiel-Tutor (Feature aus, solange ROLEPLAY_ENABLED fehlt oder kein Provider konfiguriert ist)
+ROLEPLAY_ENABLED=""                     # true | false
+ROLEPLAY_PROVIDER=""                    # bridge | api (leer: bridge, wenn ROLEPLAY_BRIDGE_URL gesetzt)
+ROLEPLAY_BRIDGE_URL=""                  # z.B. http://host.docker.internal:5077 (Host-Sidecar)
+ROLEPLAY_BRIDGE_TOKEN=""                # geheim; identisch in /home/hp-ubuntu/.jpl-roleplay-bridge.env
+ANTHROPIC_API_KEY=""                    # nur fuer ROLEPLAY_PROVIDER=api
+# optional: ROLEPLAY_LIMIT_SESSIONS_PER_DAY (5), ROLEPLAY_LIMIT_MESSAGES_PER_DAY (60),
+#           ROLEPLAY_LIMIT_TUTOR_PER_DAY (20), ROLEPLAY_DAILY_COST_CAP_USD (2.00),
+#           ROLEPLAY_DAILY_MESSAGE_CAP (400, global)
 ## Payment (Payrexx)
 PAYMENT_PROVIDER="payrexx"              # payrexx | postfinance | mock
 PAYREXX_INSTANCE="<instanzname>"

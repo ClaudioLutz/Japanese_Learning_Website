@@ -15,6 +15,10 @@ services:
       DATABASE_URL: "postgresql+psycopg2://app_user:JapaneseApp2025!@db:5432/japanese_learning"
     # Heimserver: Container nach Boot/Crash automatisch neu starten (Autostart)
     restart: unless-stopped
+    # Rollenspiel-Bridge laeuft auf dem Host (jpl-roleplay-bridge, 172.17.0.1:5077):
+    # ROLEPLAY_BRIDGE_URL=http://host.docker.internal:5077
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     # Heimserver: Medien-Uploads aus Host-Verzeichnis serven — persistent ueber Container-
     # Neustarts, kein Image-Rebuild bei neuen Bildern/Audio noetig. Host-UID 1000 == Container 'app'.
     volumes:

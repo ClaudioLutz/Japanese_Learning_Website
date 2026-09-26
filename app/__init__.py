@@ -158,6 +158,12 @@ def create_app():
     # Default AUS, damit Tests den monetarisierten Pfad weiter exerzieren.
     app.config['FREE_MODE'] = os.environ.get('FREE_MODE', 'false').lower() == 'true'
 
+    # ROLEPLAY_ENABLED: Rollenspiel-Tutor am Lektionsdialog + „Frag zur Seite".
+    # Wirksam nur zusammen mit einem konfigurierten Provider (Bridge-URL+Token
+    # oder ANTHROPIC_API_KEY) — sonst alle /api/roleplay-Routen 404 und
+    # roleplay_enabled=False in Templates. Default AUS.
+    app.config['ROLEPLAY_ENABLED'] = os.environ.get('ROLEPLAY_ENABLED', 'false').lower() == 'true'
+
     app.config.from_pyfile('config.py', silent=True) # Load config from instance folder
     app.config['TEMPLATES_AUTO_RELOAD'] = True
     # Statische Assets 1 Jahr cachen — eigene Dateien sind per static_v() (mtime-?v=)
@@ -404,6 +410,11 @@ def create_app():
     from app.news_routes import news_bp
     app.register_blueprint(news_bp)
 
+    # Rollenspiel-Tutor (/api/roleplay/*) — hinter ROLEPLAY_ENABLED + Provider,
+    # sonst 404. JSON-APIs mit X-CSRFToken (NICHT csrf-exempt).
+    from app.roleplay_routes import roleplay_bp
+    app.register_blueprint(roleplay_bp)
+
     # Error-Handler — eigene Templates auf Deutsch (vorher: Default-Flask-HTML in Englisch)
     from flask import render_template
     @app.errorhandler(404)
@@ -492,7 +503,14 @@ def create_app():
         except Exception:
             app.logger.warning("nav_streak fail-closed", exc_info=True)
             nav_streak = 0
+        # Rollenspiel-Tutor: Flag + Provider konfiguriert (sonst UI unsichtbar).
+        try:
+            from app.services.roleplay_service import is_enabled as _roleplay_enabled
+            roleplay_enabled = _roleplay_enabled()
+        except Exception:
+            roleplay_enabled = False
         return {
+            'roleplay_enabled': roleplay_enabled,
             'nav_streak': nav_streak,
             'current_year': _dt.utcnow().year,
             'site_url': site_url,
