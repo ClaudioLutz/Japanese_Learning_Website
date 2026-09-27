@@ -370,3 +370,10 @@
 .roleplay-panel .rp-log-text { display: flex; flex-direction: column; min-width: 0; }
 .roleplay-panel .rp-log-romaji { font-size: .74rem; }
 .roleplay-panel .rp-corr-romaji { margin-top: .1rem; }
+/* Gast-Hero: Romaji kosten ~50px — Abstaende straffen, damit Eingabe + Schalter auf
+   1366×768 (inkl. Gratis-Leiste) ohne Scrollen sichtbar bleiben. */
+.roleplay-panel.is-demo .rp-bot { padding-top: .7rem; padding-bottom: .6rem; }
+.roleplay-panel.is-demo .rp-bot-toggles .rp-link-btn { min-height: 30px; padding: .2rem 0; }
+.roleplay-panel.is-demo .rp-suggestions { margin-top: .6rem; }
+.roleplay-panel.is-demo .rp-chips { gap: .35rem .5rem; }
+.roleplay-panel.is-demo .rp-compose { margin-top: .7rem; }
