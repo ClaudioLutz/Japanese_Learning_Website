@@ -127,6 +127,22 @@ class TestKanaPilot:
         assert 'kana-setup__unlock surface' in html
 
 
+class TestN5BundleLayout:
+    def test_free_page_wide_shell_head_and_columns(self, client, db, app):
+        app.config['FREE_MODE'] = True
+        try:
+            html = client.get('/n5-bundle').get_data(as_text=True)
+        finally:
+            app.config['FREE_MODE'] = False
+        assert 'class="page page--wide bnd-page"' in html
+        assert '<h1 class="page-head__title" id="page-title">JLPT N5 komplett.</h1>' in html
+        # Kennzahlen direkt nach dem Seitenkopf, vor den Spalten
+        assert html.index('class="page-head"') < html.index('class="bnd-stats"') < html.index('class="bnd-cols"')
+        assert 'class="bnd-faq"' in html
+        # kein Hero-Band mit schmaler Mittelspalte mehr
+        assert 'hero-bg-jp' not in html and 'section-narrow' not in html
+
+
 class TestNeuLayout:
     def test_prose_shell_and_head(self, client, db):
         html = client.get('/neu').get_data(as_text=True)
