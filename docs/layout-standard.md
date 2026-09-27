@@ -224,6 +224,9 @@ lag beim Messen der Willkommen-Dialog über der Seite.
 | `/neu` | 728 | 118 | nein | 57 / 0 | 1 | 0 | ok, Lesespalte 728 statt 680 | D (nur Lesespalte, `.page--prose`) |
 | `/n5-bundle` | 1104 (Band 1736) | 157 | nein | 96 / 569 | 1 | 0 | schwebend: kurze Besitzer-Karte, 569 px leer | E Katalog (Inhalt als Raster) |
 | `/pruefen` | 728 | 109 | nein | 48 / 621 | 3 | 0 | schwebend: schmale Spalte, 621 px leer | A Übungs-Konfiguration |
+| `/neu` nachher¹ | 680 | 141 (141) | nein | 41 / – | 1 | 0 | ok, `.page--prose` | D umgesetzt |
+| `/n5-bundle` nachher¹ | 1440 (1270) | 137 (137) | nein | 37 / 41 | 6 Kennzahlen, 2 Spalten, FAQ 2 | 0 | ok, Aktion bei 206, Kennzahlen bis 364 | E umgesetzt |
+| `/pruefen` nachher¹ | 1175 in 1200 | 140 (140) | nein | 40 / – | 2 (Auswahl · Start 360) | 0 | ok, Start bei 386 (1366) | A umgesetzt, Session C |
 | `/login` | 418 (Karte) | 175 (150) | nein | 114 / 455 | 1 | 0 | ok (Auth darf mittig) | F Auth |
 | `/practice/kana` vorher | 1013 in 1100-Karte | 296 (142) | ja | 235 / 185 | 2 | 2 | schwebend | A (Pilot) |
 | `/practice/kana` nachher | 1175 in 1200 | 102 (102) | nein | 41 / – | 2 | 0 | ok | A umgesetzt |
@@ -242,6 +245,12 @@ lag beim Messen der Willkommen-Dialog über der Seite.
 | `/neu` | 86 | – | nein | 16 px | ok |
 | `/n5-bundle` | 109 | ja | nein | 24 px | 297 px leer unten |
 | `/pruefen` | 85 | ja | nein | 16 px | ok |
+| `/neu` nachher¹ | 175 | – | nein | 16 px | ok |
+| `/n5-bundle` nachher¹ | 171 | ja (Aktion 310, Kennzahlen bis 565; 360 gleich) | nein | 16 px | ok |
+| `/pruefen` nachher¹ | 174 | ja (Startleiste fix über der Bottom-Nav: 715 bei 390, 651 bei 360; Gast 350) | nein | 16 px | ok |
+
+¹ Nachher-Werte gegen SQLite-Fixtures mit Gratis-Band gemessen (Nav + Band
+enden bei ~100 px, deshalb Beginn höher als in den Vorher-Zeilen).
 | `/login` | 118 | ja (524) | nein | 37 px | ok (Karte) |
 | `/practice/kana` vorher | 88 | ja (Vollhöhen-Lock) | nein | 16 px | Lock auch für Konfiguration |
 | `/practice/kana` nachher | 86 | ja (651 auth / 566 Gast; auch 360/414) | nein | 16 px | Lock nur Storm/Schreiben |

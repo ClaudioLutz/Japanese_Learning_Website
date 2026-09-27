@@ -127,6 +127,39 @@ class TestKanaPilot:
         assert 'kana-setup__unlock surface' in html
 
 
+class TestPruefenLayout:
+    """/pruefen: Schablone A (Auswahl links, Start rechts), Session Schablone C."""
+
+    def test_guest_uses_page_shell_and_head(self, client, db):
+        html = client.get('/pruefen').get_data(as_text=True)
+        assert 'class="page pruefen-page"' in html
+        assert '<h1 class="page-head__title" id="page-title">Prüfen</h1>' in html
+        assert 'page-split pruefen-split' in html
+        assert 'surface pruefen-guest' in html
+        # alte schmale Spalte weg
+        assert 'max-width: 760px' not in html
+
+    def test_logged_in_selection_left_start_right(self, auth_client):
+        client, _ = auth_client
+        html = client.get('/pruefen').get_data(as_text=True)
+        assert 'pruefen-config surface' in html
+        assert 'pruefen-summary' in html and 'data-primary' in html
+        # Auswahl steht im Markup vor dem Start (mobile Reihenfolge)
+        assert html.index('pruefen-config surface') < html.index('class="pruefen-aside')
+        # Auswahl ist nicht mehr eingeklappt
+        assert 'pruefen-config-toggle' not in html
+
+    def test_session_is_page_with_surface(self, auth_client):
+        client, _ = auth_client
+        html = client.get('/pruefen/test?scope=all').get_data(as_text=True)
+        assert 'class="page pf-stage"' in html
+        assert 'pf-card surface' in html
+        # Aktion sitzt in der Arbeitsfläche (vor deren Ende)
+        card = html.split('pf-card surface')[1].split('</section>')[0]
+        assert 'class="pf-actions"' in card
+        assert 'pf-result-score surface' in html
+
+
 class TestN5BundleLayout:
     def test_free_page_wide_shell_head_and_columns(self, client, db, app):
         app.config['FREE_MODE'] = True

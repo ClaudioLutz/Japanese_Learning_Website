@@ -15,6 +15,10 @@ Format je Eintrag:
 Keine Commit-Hashes, keine internen Namen.
 -->
 
+## 2026-09-27 | Prüfen, N5-Seite und Neuigkeiten: neue Seitenaufteilung
+Auf „Prüfen" wählst du links, was du testen willst, und startest rechts — auf dem Handy bleibt der Start-Knopf immer über der unteren Leiste im Blick; Fragen und Ergebnis stehen direkt unter dem Fortschrittsbalken. Die Seite „JLPT N5 komplett" zeigt die Zahlen gleich oben und den Inhalt in zwei Spalten, die Neuigkeiten lesen sich in einer ruhigeren, schmaleren Spalte.
+Link: /pruefen
+
 ## 2026-09-27 | Kana-Übung: neue Seitenaufteilung
 Die Seite „Kana üben" beginnt jetzt oben mit Titel und Kurzbeschreibung statt als schwebende Karte mitten im Bildschirm. Auf dem Computer stehen die Einstellungen links und Vorschau und Start rechts, auf dem Handy liegt „Spiel starten" ohne Scrollen im Blick, die Reihen wählst du in einer wischbaren Zeile.
 Link: /practice/kana

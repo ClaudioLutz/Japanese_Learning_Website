@@ -4,13 +4,16 @@
 {% block body_attributes %}class="pruefung-locked"{% endblock %}
 
 {% block content %}
-<div class="pf-stage" x-data="pruefenGame()" x-cloak>
+{# Layout-Standard (docs/layout-standard.md), Schablone C „Spielansicht":
+   Fortschrittsleiste oben, Arbeitsfläche (.surface, sichtbare Kante) direkt
+   darunter, keine vertikale Zentrierung. #}
+<div class="page pf-stage" x-data="pruefenGame()" x-cloak>
 
   <!-- Laden -->
   <div x-show="phase==='loading'" class="pf-center">Lädt …</div>
 
   <!-- Leer -->
-  <div x-show="phase==='empty'" class="pf-center pf-empty">
+  <div x-show="phase==='empty'" class="pf-center pf-empty surface">
     <p class="pf-empty-title">Keine passenden Fragen</p>
     <p class="pf-empty-sub">Für diese Auswahl gibt es gerade nichts zu testen — probier eine andere.</p>
     <div class="pf-empty-cta">
@@ -30,7 +33,7 @@
       <span class="pf-timer" x-show="mode==='pruefung'" x-text="timerLabel"></span>
     </header>
 
-    <main class="pf-card">
+    <section class="pf-card surface" aria-label="Frage">
       <p class="pf-meta" x-text="metaLine"></p>
       <h2 class="pf-q" x-html="current.question_text"></h2>
 
@@ -89,23 +92,23 @@
           </ul>
         </template>
       </div>
-    </main>
-
-    <!-- Aktions-Leiste: bewusst <div>, NICHT <footer> — die Lock-CSS
-         (body.pruefung-locked footer{display:none}) wuerde einen <footer>
-         hier mit ausblenden und den Submit-/Weiter-Button unsichtbar machen. -->
-    <div class="pf-actions">
-      <button type="button" class="pruefen-btn pruefen-btn--primary" x-show="phase==='question'"
-              :disabled="!canSubmit" @click="submit()"
-              x-text="mode==='uebung' ? 'Antwort prüfen' : (isLast ? 'Abschliessen' : 'Weiter →')"></button>
-      <button type="button" class="pruefen-btn pruefen-btn--primary" x-show="phase==='feedback'"
-              @click="next()" x-text="isLast ? 'Auswerten' : 'Weiter →'"></button>
-    </div>
+      <!-- Aktions-Leiste: bewusst <div>, NICHT <footer> — die Lock-CSS
+           (body.pruefung-locked footer{display:none}) wuerde einen <footer>
+           hier mit ausblenden und den Submit-/Weiter-Button unsichtbar machen. -->
+      <div class="pf-actions">
+        <button type="button" class="pruefen-btn pruefen-btn--primary" x-show="phase==='question'"
+                :disabled="!canSubmit" @click="submit()"
+                x-text="mode==='uebung' ? 'Antwort prüfen' : (isLast ? 'Abschliessen' : 'Weiter →')"></button>
+        <button type="button" class="pruefen-btn pruefen-btn--primary" x-show="phase==='feedback'"
+                @click="next()" x-text="isLast ? 'Auswerten' : 'Weiter →'"></button>
+      </div>
+    </section>
   </div>
 
   <!-- Ergebnis -->
   <div x-show="phase==='result'" class="pf-result">
-    <h2 class="pf-result-title" x-text="mode==='pruefung' ? 'Prüfung — Ergebnis' : 'Geschafft!'"></h2>
+  <section class="pf-result-score surface" aria-labelledby="pf-result-title">
+    <h2 class="pf-result-title" id="pf-result-title" x-text="mode==='pruefung' ? 'Prüfung — Ergebnis' : 'Geschafft!'"></h2>
 
     <div class="pf-ring">
       <svg viewBox="0 0 120 120" width="140" height="140" aria-hidden="true">
@@ -125,7 +128,17 @@
     <p class="pf-result-headline" x-text="resultHeadline"></p>
     <p class="pf-pass-note" x-show="mode==='pruefung'">Wir setzen die Latte bewusst über der echten JLPT-N5-Schwelle (~44 %).</p>
 
+    <div class="pf-result-cta">
+      <button type="button" class="pruefen-btn pruefen-btn--primary" x-show="wrongDetails().length"
+              @click="retryWrong()" x-text="'🔁 Nur die ' + wrongDetails().length + ' Falschen nochmal'"></button>
+      <a class="pruefen-btn pruefen-btn--ghost" href="/pruefen">Neuen Test</a>
+    </div>
+  </section>
+
+  <section class="pf-result-detail surface" x-show="typeRows().length || wrongDetails().length" aria-label="Auswertung">
+
     <!-- Aufschlüsselung nach Typ -->
+    <p class="pf-errors-title" x-show="typeRows().length">Nach Fragetyp</p>
     <div class="pf-breakdown" x-show="typeRows().length">
       <template x-for="row in typeRows()" :key="row.name">
         <div class="pf-bd-row">
@@ -147,11 +160,7 @@
       </template>
     </div>
 
-    <div class="pf-result-cta">
-      <button type="button" class="pruefen-btn pruefen-btn--primary" x-show="wrongDetails().length"
-              @click="retryWrong()" x-text="'🔁 Nur die ' + wrongDetails().length + ' Falschen nochmal'"></button>
-      <a class="pruefen-btn pruefen-btn--ghost" href="/pruefen">Neuen Test</a>
-    </div>
+  </section>
   </div>
 </div>
 {% endblock %}
@@ -159,108 +168,118 @@
 {% block styles %}
 <style>
   [x-cloak] { display: none !important; }
-  /* Gesperrte Buehne — Muster von body.review-locked */
-  /* KEIN Scroll-Lock: der locked-Stage-Inhalt (Frage + Aktions-Leiste) muss
-     immer erreichbar bleiben — overflow:hidden sperrte sonst den Weg zum Button,
-     wenn die Buehne den Viewport ueberlaeuft (Navbar + Gratis-Band + Header). */
+  /* Gesperrte Buehne — Muster von body.review-locked.
+     KEIN Scroll-Lock: Frage + Aktion muessen immer erreichbar bleiben. */
   body.pruefung-locked { overflow-y: auto; }
   body.pruefung-locked .site-footer,
   body.pruefung-locked .mobile-bottom-nav,
   body.pruefung-locked footer { display: none !important; }
 
-  /* Keine kuenstliche Viewport-Hoehe: die Buehne ist so hoch wie ihr Inhalt.
-     Sonst pinnt margin-top:auto den Button ans (ueberlaufende) Buehnen-Ende und
-     er liegt unter der Falz (Desktop wie Mobile). */
-  .pf-stage { max-width: 720px; margin: 0 auto; padding: var(--space-4, 1rem); display: flex; flex-direction: column; }
-  .pf-center { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .75rem; color: var(--ink-600); text-align: center; }
-  .pf-empty-title { font-size: 1.2rem; color: var(--kon); font-weight: 600; margin: 0; }
-  .pf-empty-sub { color: var(--ink-600); margin: 0; }
-  .pf-empty-cta { display: flex; gap: .6rem; flex-wrap: wrap; justify-content: center; margin-top: .5rem; }
+  /* Hülle = .page (1200); die Buehne ist so hoch wie ihr Inhalt (kein
+     Viewport-Lock, kein margin-top:auto), damit der Button nie unter die
+     Falz gepinnt wird. */
+  .pf-stage { display: flex; flex-direction: column; }
+  .pf-center { display: flex; flex-direction: column; align-items: center; gap: var(--space-3); color: var(--text-muted); text-align: center; padding: var(--space-12) var(--space-4); }
+  .pf-empty.surface { padding: var(--space-8) var(--space-4); }
+  .pf-empty-title { font-size: var(--text-lg); color: var(--kon); font-weight: 600; margin: 0; }
+  .pf-empty-sub { color: var(--text-muted); margin: 0; }
+  .pf-empty-cta { display: flex; gap: var(--space-2); flex-wrap: wrap; justify-content: center; margin-top: var(--space-2); }
 
-  .pf-session { flex: 1; display: flex; flex-direction: column; gap: var(--space-4, 1rem); }
-  .pf-top { display: flex; align-items: center; gap: .75rem; }
-  .pf-quit { background: none; border: none; color: var(--ink-600); cursor: pointer; font-size: .9rem; }
-  .pf-progress { flex: 1; height: 8px; background: var(--ink-100); border: 1px solid var(--ink-200); border-radius: 999px; overflow: hidden; }
+  .pf-session { display: flex; flex-direction: column; gap: var(--space-3); }
+  /* Fortschrittsleiste oben */
+  .pf-top { display: flex; align-items: center; gap: var(--space-3); min-height: 44px; }
+  .pf-quit { background: none; border: none; color: var(--text-muted); cursor: pointer; font: inherit; font-size: var(--text-sm); min-height: 44px; padding: 0 var(--space-2) 0 0; }
+  .pf-quit:hover { color: var(--text-color); }
+  .pf-progress { flex: 1; height: 8px; background: var(--surface-inset); border: 1px solid var(--surface-border); border-radius: 999px; overflow: hidden; }
   .pf-progress-bar { height: 100%; background: var(--shu); transition: width .25s; }
-  .pf-count { color: var(--ink-600); font-size: .85rem; min-width: 56px; text-align: right; }
-  .pf-timer { color: var(--ink-600); font-variant-numeric: tabular-nums; font-size: .85rem; }
+  .pf-count, .pf-timer { color: var(--text-muted); font-size: var(--text-sm); font-variant-numeric: tabular-nums; }
+  .pf-count { min-width: 56px; text-align: right; }
 
-  .pf-card { background: var(--kinari); border: 1px solid var(--ink-200); border-radius: var(--radius-lg, 16px); box-shadow: var(--shadow-card); padding: var(--space-5, 1.25rem); }
-  .pf-meta { color: var(--ink-600); font-size: .8rem; margin: 0 0 .5rem; }
-  .pf-q { color: var(--kon); font-size: 1.35rem; margin: 0 0 var(--space-5, 1.25rem); line-height: 1.5; }
+  /* Arbeitsflaeche: Kante + Flaeche aus .surface */
+  .pf-meta { color: var(--text-muted); font-size: var(--text-sm); margin: 0 0 var(--space-2); }
+  .pf-q { color: var(--kon); font-size: var(--text-lg); margin: 0 0 var(--space-4); line-height: 1.5; }
 
-  .pf-options { display: flex; flex-direction: column; gap: .6rem; }
-  .pf-options--tf { flex-direction: row; }
-  .pf-options--tf .pf-option { flex: 1; justify-content: center; font-size: 1.1rem; padding: 1.1rem; }
-  .pf-option { display: flex; align-items: center; gap: .6rem; width: 100%; text-align: left; background: var(--washi); border: 1px solid var(--ink-200); border-radius: var(--radius-md, 12px); padding: .85rem 1rem; color: var(--ink-700); cursor: pointer; font-size: 1rem; transition: border-color .12s, background .12s; }
+  .pf-options { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); }
+  .pf-options--tf { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pf-options--tf .pf-option { justify-content: center; font-size: var(--text-lg); padding: var(--space-4); }
+  .pf-option { display: flex; align-items: center; gap: var(--space-3); width: 100%; min-height: 52px; text-align: left; background: var(--surface-0); border: 1px solid var(--surface-border-strong); border-radius: var(--radius-md, 12px); padding: var(--space-3) var(--space-4); color: var(--text-color); cursor: pointer; font: inherit; font-size: var(--text-base); transition: border-color .12s, background .12s; }
   .pf-option:hover:not(:disabled) { border-color: var(--kon-300); }
   .pf-option.is-selected { border-color: var(--kon-300); background: var(--kon-50); }
   .pf-option.is-correct { border-color: var(--matcha-line); background: var(--matcha-bg); color: var(--matcha); font-weight: 600; }
   .pf-option.is-wrong { border-color: var(--color-error); color: var(--color-error); }
-  .pf-option-key { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 999px; background: var(--ink-100); color: var(--ink-600); font-size: .8rem; flex: none; }
+  .pf-option-key { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 999px; background: var(--surface-inset); color: var(--text-muted); font-size: var(--text-xs); flex: none; }
 
-  .pf-match { display: flex; gap: .75rem; }
-  .pf-match-col { flex: 1; display: flex; flex-direction: column; gap: .5rem; }
-  .pf-match-item { display: flex; align-items: center; gap: .5rem; background: var(--washi); border: 1px solid var(--ink-200); border-radius: var(--radius-md, 12px); padding: .7rem .8rem; color: var(--ink-700); cursor: pointer; font-size: 1rem; text-align: left; }
+  .pf-match { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); }
+  .pf-match-col { display: flex; flex-direction: column; gap: var(--space-2); }
+  .pf-match-item { display: flex; align-items: center; gap: var(--space-2); min-height: 48px; background: var(--surface-0); border: 1px solid var(--surface-border-strong); border-radius: var(--radius-md, 12px); padding: var(--space-2) var(--space-3); color: var(--text-color); cursor: pointer; font: inherit; font-size: var(--text-base); text-align: left; }
   .pf-match-item.is-active { border-color: var(--shu); background: var(--kon-50); }
   .pf-match-item.is-done { border-color: var(--kon-300); }
-  .pf-badge { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 999px; background: var(--kon); color: var(--washi); font-size: .72rem; flex: none; }
-  .pf-match-hint { color: var(--ink-600); font-size: .82rem; margin: .6rem 0 0; }
+  .pf-badge { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 999px; background: var(--kon); color: var(--surface-1); font-size: var(--text-xs); flex: none; }
+  .pf-match-hint { color: var(--text-muted); font-size: var(--text-sm); margin: var(--space-3) 0 0; }
 
-  .pf-hint { margin-top: var(--space-4, 1rem); }
-  .pf-link { background: none; border: none; color: var(--ink-600); cursor: pointer; padding: 0; }
-  .pf-hint p { color: var(--ink-700); margin: .4rem 0 0; }
+  .pf-hint { margin-top: var(--space-4); }
+  .pf-link { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 0; font: inherit; min-height: 44px; }
+  .pf-hint p { color: var(--text-light); margin: var(--space-1) 0 0; }
 
-  .pf-feedback { margin-top: var(--space-4, 1rem); border-top: 1px solid var(--ink-200); padding-top: var(--space-4, 1rem); }
-  .pf-verdict { font-weight: 600; margin: 0 0 .5rem; }
+  .pf-feedback { margin-top: var(--space-4); border-top: 1px solid var(--surface-border); padding-top: var(--space-4); }
+  .pf-verdict { font-weight: 600; margin: 0 0 var(--space-2); }
   .pf-verdict.is-correct { color: var(--matcha); }
   .pf-verdict.is-wrong { color: var(--color-error); }
-  .pf-explain { color: var(--ink-700); background: var(--kon-50); border-left: 3px solid var(--kon-300); border-radius: 6px; padding: .6rem .8rem; margin-top: .4rem; }
-  .pf-explain--opt { background: transparent; border-left-color: var(--ink-200); }
-  .pf-correct-pairs { margin: .6rem 0 0; padding-left: 1.1rem; color: var(--ink-700); }
+  .pf-explain { color: var(--text-light); background: var(--kon-50); border-left: 3px solid var(--kon-300); border-radius: 6px; padding: var(--space-2) var(--space-3); margin-top: var(--space-2); }
+  .pf-explain--opt { background: transparent; border-left-color: var(--surface-border-strong); }
+  .pf-correct-pairs { margin: var(--space-2) 0 0; padding-left: var(--space-4); color: var(--text-light); }
 
-  /* Button folgt dem Inhalt (nicht ans Buehnen-Ende gepinnt) -> immer sichtbar. */
-  .pf-actions { margin-top: var(--space-4, 1rem); padding-top: var(--space-3, .75rem); }
+  /* Aktion am unteren Rand der Arbeitsflaeche (folgt dem Inhalt) */
+  .pf-actions { margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px solid var(--surface-border); }
   .pf-actions .pruefen-btn { width: 100%; }
 
   /* CTA-Buttons (gleiche Optik wie Start-Screen) */
-  .pruefen-btn { display: inline-block; border: none; border-radius: var(--radius-md, 10px); padding: .8rem 1.1rem; font-weight: 600; cursor: pointer; text-decoration: none; text-align: center; }
-  .pruefen-btn--primary { background: var(--shu); color: var(--washi); }
-  .pruefen-btn--primary:hover { background: var(--shu-deep); }
+  .pruefen-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; border: none; border-radius: var(--radius-md, 10px); padding: 0 var(--space-6); font: inherit; font-weight: 600; cursor: pointer; text-decoration: none; text-align: center; }
+  .pruefen-btn--primary { background: var(--shu-deep, #B84A00); color: #fff; }
+  .pruefen-btn--primary:hover { background: var(--shu); color: #fff; text-decoration: none; }
   .pruefen-btn--primary:disabled { opacity: .5; cursor: default; }
-  .pruefen-btn--ghost { background: transparent; border: 1px solid var(--ink-200); color: var(--ink-700); }
+  .pruefen-btn--ghost { background: transparent; border: 1px solid var(--surface-border-strong); color: var(--text-light); }
+  .pruefen-btn--ghost:hover { border-color: var(--kon-300); color: var(--text-color); text-decoration: none; }
 
-  /* Ergebnis */
-  .pf-result { flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; gap: .6rem; padding-top: var(--space-4, 1rem); }
-  .pf-result-title { color: var(--kon); margin: 0; }
+  /* Ergebnis: Score-Flaeche | Auswertung (ab 1024 nebeneinander) */
+  .pf-result { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--grid-gap); align-items: start; }
+  .pf-result-score { display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--space-2); }
+  .pf-result-title { color: var(--kon); margin: 0; font-size: var(--text-xl); }
   .pf-ring { position: relative; width: 140px; height: 140px; }
   .pf-ring-label { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  .pf-ring-pct { font-size: 1.8rem; font-weight: 700; color: var(--kon); }
-  .pf-ring-sub { font-size: .8rem; color: var(--ink-600); }
+  .pf-ring-pct { font-size: var(--text-2xl); font-weight: 700; color: var(--kon); }
+  .pf-ring-sub { font-size: var(--text-sm); color: var(--text-muted); }
   .pf-pass { font-weight: 600; margin: 0; }
   .pf-pass.is-pass { color: var(--matcha); }
-  .pf-pass.is-fail { color: var(--ink-600); }
-  .pf-result-headline { color: var(--ink-700); margin: 0; }
-  .pf-pass-note { color: var(--ink-600); font-size: .8rem; margin: 0; }
+  .pf-pass.is-fail { color: var(--text-muted); }
+  .pf-result-headline { color: var(--text-light); margin: 0; }
+  .pf-pass-note { color: var(--text-muted); font-size: var(--text-sm); margin: 0; }
+  .pf-result-cta { display: flex; flex-direction: column; gap: var(--space-2); width: 100%; margin-top: var(--space-3); }
 
-  .pf-breakdown { width: 100%; max-width: 440px; margin-top: var(--space-3, .75rem); display: flex; flex-direction: column; gap: .4rem; }
-  .pf-bd-row { display: flex; align-items: center; gap: .6rem; font-size: .9rem; }
-  .pf-bd-name { width: 120px; text-align: left; color: var(--ink-700); }
-  .pf-bd-bar { flex: 1; height: 8px; background: var(--ink-100); border-radius: 999px; overflow: hidden; }
+  .pf-breakdown { display: flex; flex-direction: column; gap: var(--space-2); margin-bottom: var(--space-6); }
+  .pf-bd-row { display: grid; grid-template-columns: 7.5rem minmax(0, 1fr) auto; align-items: center; gap: var(--space-3); font-size: var(--text-sm); }
+  .pf-bd-name { color: var(--text-light); }
+  .pf-bd-bar { height: 8px; background: var(--surface-inset); border-radius: 999px; overflow: hidden; }
   .pf-bd-fill { display: block; height: 100%; background: var(--matcha); }
-  .pf-bd-val { color: var(--ink-600); min-width: 46px; text-align: right; }
+  .pf-bd-val { color: var(--text-muted); min-width: 46px; text-align: right; font-variant-numeric: tabular-nums; }
 
-  .pf-errors { width: 100%; max-width: 480px; margin-top: var(--space-3, .75rem); text-align: left; }
-  .pf-errors-title { color: var(--kon); font-weight: 600; margin: 0 0 .4rem; }
-  .pf-error { border: 1px solid var(--ink-200); border-radius: var(--radius-md, 12px); padding: .5rem .75rem; margin-bottom: .4rem; background: var(--kinari); }
-  .pf-error summary { cursor: pointer; color: var(--ink-700); }
+  .pf-errors-title { color: var(--kon); font-weight: 600; margin: 0 0 var(--space-2); }
+  .pf-error { border-bottom: 1px solid var(--surface-border); }
+  .pf-error summary { cursor: pointer; color: var(--text-color); min-height: 44px; display: flex; align-items: center; padding: var(--space-2) 0; }
+  .pf-error .pf-explain { margin: 0 0 var(--space-3); }
 
-  .pf-result-cta { display: flex; gap: .6rem; flex-wrap: wrap; justify-content: center; margin-top: var(--space-4, 1rem); }
-
-  @media (max-width: 560px) {
-    .pf-q { font-size: 1.15rem; }
-    .pf-match { gap: .5rem; }
-    .pf-bd-name { width: 90px; }
+  @media (min-width: 640px) {
+    .pf-result-cta { flex-direction: row; justify-content: center; }
+  }
+  @media (min-width: 768px) {
+    .pf-q { font-size: var(--text-xl); }
+    .pf-options:not(.pf-options--tf) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .pf-match { gap: var(--space-4); }
+    .pf-actions { display: flex; justify-content: flex-end; }
+    .pf-actions .pruefen-btn { width: auto; min-width: 220px; }
+  }
+  @media (min-width: 1024px) {
+    .pf-result { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
   }
 </style>
 {% endblock %}
