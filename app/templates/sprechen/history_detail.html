@@ -6,13 +6,16 @@
 {% block title %}Gespräch: {{ s.lesson_title }}{% endblock %}
 {% block meta_description %}Verlauf deines Rollenspiels „{{ s.lesson_title }}" mit Verbesserungsvorschlägen.{% endblock %}
 {% block robots %}noindex,nofollow{% endblock %}
+{% block body_attributes %}class="redesign-page"{% endblock %}
+{% from 'partials/_page_head.html' import page_head %}
 {% block styles %}<link rel="stylesheet" href="{{ static_v('css/sprechen.css') }}">{% endblock %}
 
 {% block content %}
-<div class="sp-page" id="sprechen-verlauf-detail">
+<div class="page page--wide sp-page" id="sprechen-verlauf-detail">
   <a class="sp-back" href="{{ url_for('sprechen.history') }}"><i class="fas fa-arrow-left" aria-hidden="true"></i> Meine Gespräche</a>
-  <p class="sp-eyebrow">Gespräch <span class="jp" lang="ja">会話</span></p>
-  <h1>{{ s.lesson_title }}</h1>
+  {% call page_head(s.lesson_title, eyebrow='Gespräch', eyebrow_jp='会話') %}
+    <a class="sp-btn sp-btn-primary" href="{{ url_for('sprechen.play', content_id=s.content_id) }}"><i class="fas fa-rotate-left" aria-hidden="true"></i> Nochmal spielen</a>
+  {% endcall %}
   <div class="sp-meta-row">
     <span>{{ s.started_label }}</span>
     <span>Du: {{ s.role_user }} · Partner: {{ s.role_bot }}</span>
@@ -25,8 +28,10 @@
   </ul>
   {% if s.goal_de %}<p class="sp-note"><strong>Ziel:</strong> {{ s.goal_de }}</p>{% endif %}
 
+  <div class="page-split sp-detail-split">
+  <section class="sp-detail-main" aria-labelledby="sp-verlauf-h">
   <div class="sp-verlauf-head">
-    <h2 class="sp-section-title">Verlauf</h2>
+    <h2 class="sp-section-title" id="sp-verlauf-h">Verlauf</h2>
     <button type="button" class="sp-romaji-switch" role="switch" aria-checked="true" id="sp-romaji-toggle">
       <span class="sp-switch-track" aria-hidden="true"><span class="sp-switch-thumb"></span></span>
       Romaji anzeigen
@@ -47,8 +52,10 @@
     </li>
     {% endfor %}
   </ol>
+  </section>
 
-  <h2 class="sp-section-title">Rückmeldung zu deinen Sätzen</h2>
+  <aside class="sp-detail-aside page-split__aside--sticky" aria-labelledby="sp-corr-h">
+  <h2 class="sp-section-title" id="sp-corr-h">Rückmeldung zu deinen Sätzen</h2>
   {% if s.corrections %}
   <ul class="sp-corr-list">
     {% for c in s.corrections %}
@@ -71,9 +78,7 @@
   {% else %}
   <p class="sp-note">Zu diesem Gespräch gibt es keine gespeicherte Rückmeldung.</p>
   {% endif %}
-
-  <div class="sp-meta-row" style="margin-top:1.5rem">
-    <a class="sp-btn sp-btn-primary" href="{{ url_for('sprechen.play', content_id=s.content_id) }}"><i class="fas fa-rotate-left" aria-hidden="true"></i> Nochmal spielen</a>
+  </aside>
   </div>
 </div>
 <script>

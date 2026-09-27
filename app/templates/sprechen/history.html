@@ -5,17 +5,17 @@
 {% block title %}Meine Gespräche{% endblock %}
 {% block meta_description %}Deine bisherigen Rollenspiel-Gespräche auf Japanisch mit Zügen, XP und Verbesserungsvorschlägen.{% endblock %}
 {% block robots %}noindex,nofollow{% endblock %}
+{% block body_attributes %}class="redesign-page"{% endblock %}
+{% from 'partials/_page_head.html' import page_head %}
 {% block styles %}<link rel="stylesheet" href="{{ static_v('css/sprechen.css') }}">{% endblock %}
 
 {% block content %}
-<div class="sp-page" id="sprechen-verlauf">
+<div class="page page--wide sp-page" id="sprechen-verlauf">
   <a class="sp-back" href="{{ url_for('sprechen.index') }}"><i class="fas fa-arrow-left" aria-hidden="true"></i> Alle Szenen</a>
-  <p class="sp-eyebrow">Sprechen <span class="jp" lang="ja">話す</span></p>
-  <h1>Meine Gespräche</h1>
-  <p class="sp-lead">Alle Rollenspiele, in denen du mindestens einmal geantwortet hast — mit dem ganzen Verlauf und den Verbesserungsvorschlägen.</p>
+  {{ page_head('Meine Gespräche', subtitle='Alle Rollenspiele, in denen du mindestens einmal geantwortet hast — mit dem ganzen Verlauf und den Verbesserungsvorschlägen.', eyebrow='Sprechen', eyebrow_jp='話す') }}
 
   {% if sessions %}
-  <ul class="sp-hist">
+  <ul class="sp-hist grid-tiles">
     {% for s in sessions %}
     <li>
       <a class="sp-hist-card" href="{{ url_for('sprechen.history_detail', session_id=s.id) }}">

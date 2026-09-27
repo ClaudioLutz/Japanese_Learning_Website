@@ -222,6 +222,7 @@ lag beim Messen der Willkommen-Dialog über der Seite.
 | `/review` | 613 (Karte) | 94 | ja (1366) | 33 / 161 | 1 | 0 | schwebend: Karte mittig mit Leerraum ober- und unterhalb | C Spielansicht |
 | `/review/stats` | 1120 | 139 | nein | 78 / 0 | 4 | 5 | ok, Breite eigen (1120) | B Dashboard (wide) |
 | `/sprechen` | 1072 | 93 | nein | 32 / 0 | 3 | 0 | ok, eigene Schrift (Source Sans) und Breite | E Katalog |
+| `/sprechen` nachher | 1440 (1270); Spielansicht 1200 | 127 | nein | 66 / – | 4 | 0 | ok: Inter/Geist, Seitenkopf, Verlauf-Detail zweispaltig | E / C umgesetzt |
 | `/neu` | 728 | 118 | nein | 57 / 0 | 1 | 0 | ok, Lesespalte 728 statt 680 | D (nur Lesespalte, `.page--prose`) |
 | `/n5-bundle` | 1104 (Band 1736) | 157 | nein | 96 / 569 | 1 | 0 | schwebend: kurze Besitzer-Karte, 569 px leer | E Katalog (Inhalt als Raster) |
 | `/pruefen` | 728 | 109 | nein | 48 / 621 | 3 | 0 | schwebend: schmale Spalte, 621 px leer | A Übungs-Konfiguration |
@@ -244,6 +245,7 @@ lag beim Messen der Willkommen-Dialog über der Seite.
 | `/review` | 74 | – (Karte = Aktion) | nein | 22/11 px | Rinne asymmetrisch |
 | `/review/stats` | 107 | ja (312) | nein | 12 px | 50 verschachtelte Karten |
 | `/sprechen` | 69 | knapp (778 von 784) | nein | 16 px | ok |
+| `/sprechen` nachher | 111 | ja (681; 360: 695) | nein | 16 px | Untertitel erst ab 768 |
 | `/neu` | 86 | – | nein | 16 px | ok |
 | `/n5-bundle` | 109 | ja | nein | 24 px | 297 px leer unten |
 | `/pruefen` | 85 | ja | nein | 16 px | ok |

@@ -6,6 +6,8 @@
 {% block title %}Sprechen: {{ lesson.title }}{% endblock %}
 {% block meta_description %}Rollenspiel zum Dialog „{{ lesson.title }}": Rolle wählen und das Gespräch auf Japanisch selbst führen.{% endblock %}
 {% block robots %}noindex,nofollow{% endblock %}
+{% block body_attributes %}class="redesign-page"{% endblock %}
+{% from 'partials/_page_head.html' import page_head %}
 {% block styles %}
 <link rel="stylesheet" href="{{ static_v('css/sprechen.css') }}">
 <link rel="stylesheet" href="{{ static_v('css/roleplay_panel.css') }}">
@@ -13,18 +15,17 @@
 
 {% block content %}
 {% set _slides = (content.content_text | fromjson).slides if content.content_text else [] %}
-<div class="sp-page" id="sprechen-play">
-  <a class="sp-back" href="{{ url_for('sprechen.index') }}"><i class="fas fa-arrow-left" aria-hidden="true"></i> Alle Szenen</a>
-
+<div class="page sp-page" id="sprechen-play">
   <div class="sp-play-head">
     {% set _img = (_slides | selectattr('image') | map(attribute='image') | first) if _slides else none %}
     {% set _img = _img or lesson.get_thumbnail_url() %}
     {% if _img %}
     <div class="sp-play-img"><img src="{{ _img }}" alt="" decoding="async"></div>
     {% endif %}
-    <div>
-      <p class="sp-eyebrow">Rollenspiel <span class="jp" lang="ja">話す</span></p>
-      <h1>{{ lesson.title }}</h1>
+    <div class="sp-play-text">
+      <a class="sp-back" href="{{ url_for('sprechen.index') }}"><i class="fas fa-arrow-left" aria-hidden="true"></i> Alle Szenen</a>
+      <span class="page-head__eyebrow"><span class="jp" lang="ja">話す</span> · Rollenspiel</span>
+      <h1 class="page-head__title" id="page-title">{{ lesson.title }}</h1>
       <ul class="sp-roles" aria-label="Figuren">
         {% for r in scene.roles %}<li class="sp-role">{{ r.name }}</li>{% endfor %}
       </ul>

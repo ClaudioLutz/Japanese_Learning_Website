@@ -290,3 +290,41 @@ class TestDashboard:
         html = client.get("/mein-lernen").get_data(as_text=True)
         assert "Heute sprechen" not in html
         assert "Sprechen · Rollenspiel" not in html
+
+
+class TestLayoutStandard:
+    """Schablonen aus docs/layout-standard.md: Katalog (/sprechen, Verlauf),
+    Spielansicht (/sprechen/<id>); Schrift über body.redesign-page."""
+
+    def test_index_katalog(self, app, enabled, world):
+        client, _ = _login(app)
+        html = client.get("/sprechen").get_data(as_text=True)
+        assert 'class="page page--wide sp-page"' in html
+        assert '<h1 class="page-head__title" id="page-title">Sprich den Dialog selbst</h1>' in html
+        assert 'class="sp-grid grid-tiles"' in html
+        assert 'class="redesign-page"' in html
+
+    def test_verlauf_und_detail(self, app, enabled, world):
+        client, user = _login(app)
+        s = _session(user, world["contents"][0])
+        html = client.get("/sprechen/verlauf").get_data(as_text=True)
+        assert 'class="page page--wide sp-page"' in html
+        assert 'class="sp-hist grid-tiles"' in html
+        html = client.get(f"/sprechen/verlauf/{s.id}").get_data(as_text=True)
+        assert 'page-split sp-detail-split' in html
+        # „Nochmal spielen" steht im Seitenkopf (oben)
+        head = html.split('class="page-head"')[1].split("</header>")[0]
+        assert "Nochmal spielen" in head
+
+    def test_play_spielansicht(self, app, enabled, world):
+        client, _ = _login(app)
+        html = client.get(f"/sprechen/{world['contents'][0].id}").get_data(as_text=True)
+        assert 'class="page sp-page" id="sprechen-play"' in html
+        # Kopf vor dem Panel, Panel direkt danach
+        assert html.index('class="sp-play-head"') < html.index('class="roleplay-panel')
+
+    def test_css_ohne_eigene_huelle(self):
+        from pathlib import Path
+        css = (Path(__file__).resolve().parents[2] / "app" / "static" / "css" / "sprechen.css").read_text(encoding="utf-8")
+        assert "max-width: 1080px" not in css
+        assert "#main-content > .sp-page" not in css

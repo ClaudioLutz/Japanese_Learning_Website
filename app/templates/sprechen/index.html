@@ -6,19 +6,18 @@
 {% block title %}Sprechen üben{% endblock %}
 {% block meta_description %}Sprich die Dialoge deiner Japanisch-Lektionen selbst: Rolle wählen, antworten, Verbesserungsvorschläge erhalten — auf JLPT-N5-Niveau.{% endblock %}
 {% block robots %}noindex,nofollow{% endblock %}
+{% block body_attributes %}class="redesign-page"{% endblock %}
+{% from 'partials/_page_head.html' import page_head %}
 {% block styles %}<link rel="stylesheet" href="{{ static_v('css/sprechen.css') }}">{% endblock %}
 
 {% block content %}
-<div class="sp-page" id="sprechen">
-  <p class="sp-eyebrow">Sprechen <span class="jp" lang="ja">話す</span></p>
-  <h1>Sprich den Dialog selbst</h1>
-  <p class="sp-lead">Wähle eine Szene aus deinen Lektionen, übernimm eine Rolle und führe das Gespräch auf Japanisch weiter. Du bekommst Antwortvorschläge, einen Hinweis und am Ende Verbesserungsvorschläge.</p>
-  <div class="sp-meta-row">
-    <span>{{ ready_count }} von {{ scene_count }} {{ 'Szene' if scene_count == 1 else 'Szenen' }} bereit</span>
+<div class="page page--wide sp-page" id="sprechen">
+  {% call page_head('Sprich den Dialog selbst', subtitle='Wähle eine Szene aus deinen Lektionen, übernimm eine Rolle und führe das Gespräch auf Japanisch weiter. Du bekommst Antwortvorschläge, einen Hinweis und am Ende Verbesserungsvorschläge.', eyebrow='Sprechen', eyebrow_jp='話す', subtitle_mobile=False) %}
+    <span class="sp-head-stat">{{ ready_count }} von {{ scene_count }} {{ 'Szene' if scene_count == 1 else 'Szenen' }} bereit</span>
     {% if history_count %}
-    <a href="{{ url_for('sprechen.history') }}"><i class="fas fa-clock-rotate-left" aria-hidden="true"></i> Meine Gespräche</a>
+    <a class="sp-btn sp-btn-ghost" href="{{ url_for('sprechen.history') }}"><i class="fas fa-clock-rotate-left" aria-hidden="true"></i> Meine Gespräche</a>
     {% endif %}
-  </div>
+  {% endcall %}
 
   {% if not groups %}
   <div class="sp-empty">
@@ -33,7 +32,7 @@
       <h2 id="sp-mod-{{ loop.index }}">{{ g.name }}</h2>
       <span class="sp-module-count">{{ g.ready_count }}/{{ g.scenes|length }} bereit</span>
     </div>
-    <ul class="sp-grid">
+    <ul class="sp-grid grid-tiles">
       {% for s in g.scenes %}
       <li>
         <article class="sp-card" data-content-id="{{ s.content_id }}" data-ready="{{ 1 if s.ready else 0 }}">
