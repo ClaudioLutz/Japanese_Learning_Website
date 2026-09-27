@@ -198,3 +198,31 @@ class TestLessonsKatalog:
         assert 'max-width: 1152px' not in html
         # Modul-Leiste randlos über die Rinne, nicht über .page hinaus
         assert 'margin: 0 calc(-1 * var(--page-gutter)) var(--space-4)' in html
+
+
+class TestStartseiteGast:
+    """/ (Gast): .page--wide-Hülle, Hero-Band + Abschnitte mit Überschrift."""
+
+    def test_wide_shell_and_sections(self, client, db):
+        html = client.get('/').get_data(as_text=True)
+        assert 'class="page page--wide home-page"' in html
+        assert 'class="home-section vom-spiel-section"' in html
+        assert 'class="lernpfad-section"' in html
+        assert html.count('<h1') == 1
+        # eigene Breiten + Voll-Bleed-Hülle entfallen
+        assert 'max-width: 1152px' not in html
+        assert '.home-wrapper' not in html and 'class="home-wrapper"' not in html
+
+    def test_lernpfad_as_tile_grid(self, client, db):
+        html = client.get('/').get_data(as_text=True)
+        assert 'repeat(auto-fill, minmax(min(280px, 100%), 1fr))' in html
+        # alter Zickzack-Pfad (SVG-Stationen) ist weg
+        assert 'path-svg' not in html and 'station-node' not in html
+
+    def test_dark_mode_only_token_exceptions(self, client, db):
+        html = client.get('/').get_data(as_text=True)
+        # Flächen laufen über --surface-*; keine Dark-Regeln für Trust/Brücke/Chips mehr
+        assert '[data-theme="dark"] .trust-block' not in html
+        assert '[data-theme="dark"] .kana-bridge' not in html
+        assert '[data-theme="dark"] .kana-chip,' not in html
+        assert '[data-theme="dark"] .lp-modnum' not in html
