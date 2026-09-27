@@ -15,6 +15,10 @@ Format je Eintrag:
 Keine Commit-Hashes, keine internen Namen.
 -->
 
+## 2026-09-27 | Wiederholen und Statistik: neue Seitenaufteilung
+Beim Wiederholen steht die Karte jetzt direkt unter der Fortschrittsleiste statt mitten im Bildschirm, und auf dem Handy liegen die Bewertungsknöpfe als feste Leiste über der unteren Navigation. Die Statistik nutzt breite Bildschirme mit Spalten, zeigt deine Aktivität als Kalender und ist auf dem Handy deutlich kürzer.
+Link: /review
+
 ## 2026-09-27 | Lektionen, Sprechen und Mein Lernen: neue Seitenaufteilung
 Die Lektionsübersicht, die Sprechen-Seiten und „Mein Lernen" nutzen breite Bildschirme jetzt über mehrere Spalten und beginnen oben mit einem klaren Seitenkopf. Auf dem Handy liegt der nächste Schritt („Weiterlernen", „Spielen", „Los geht's") ohne Scrollen im Blick, die Themen-Chips wischst du in einer Zeile.
 Link: /lessons

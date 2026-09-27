@@ -233,6 +233,8 @@ lag beim Messen der Willkommen-Dialog über der Seite.
 | `/login` | 418 (Karte) | 175 (150) | nein | 114 / 455 | 1 | 0 | ok (Auth darf mittig) | F Auth |
 | `/practice/kana` vorher | 1013 in 1100-Karte | 296 (142) | ja | 235 / 185 | 2 | 2 | schwebend | A (Pilot) |
 | `/practice/kana` nachher | 1175 in 1200 | 102 (102) | nein | 41 / – | 2 | 0 | ok | A umgesetzt |
+| `/review` nachher | 720 (Karte) | 96 (96) | nein | 35 / 211 (1920), 35 / 12 (1366) | 1 | 0 | ok: Leiste oben, Karte direkt darunter, Leerraum nur unter den Knöpfen | C umgesetzt (auch `/review/produktion`) |
+| `/review/stats` nachher | 1440 | 165 | nein | – | bis 5 | 0 | ok: Kopf + Aktion, Hero-Zeile, Abschnitte nebeneinander, Heatmap als Kalender | B umgesetzt |
 
 ### Handy (390×844)
 
@@ -260,6 +262,8 @@ enden bei ~100 px, deshalb Beginn höher als in den Vorher-Zeilen).
 | `/login` | 118 | ja (524) | nein | 37 px | ok (Karte) |
 | `/practice/kana` vorher | 88 | ja (Vollhöhen-Lock) | nein | 16 px | Lock auch für Konfiguration |
 | `/practice/kana` nachher | 86 | ja (651 auth / 566 Gast; auch 360/414) | nein | 16 px | Lock nur Storm/Schreiben |
+| `/review` nachher | 134 (Leiste) | ja (Knöpfe 719–782, Bottom-Nav ab 793; 360: bis 718 < 729) | nein | 16/16 px | Knöpfe als feste Leiste über der Bottom-Nav |
+| `/review/stats` nachher | 199 | ja (288) | nein | 16 px | 0 verschachtelte Karten, Seite 13'874 → 9'567 px |
 
 Reihenfolge für Schritt 2 (Wirkung/Aufwand): `/pruefen` und `/n5-bundle`
 (schwebend, klein) → `/review` (Spielansicht) → `/mein-lernen` + `/review/stats`

@@ -73,3 +73,27 @@ class TestReviewPlayView:
         assert 'class="play-stage prod-card-area" id="prodCardArea"' in html
         assert 'class="play-actions prod-buttons" id="prodButtons"' in html
         assert 'class="play-state prod-msg"' in html
+
+
+class TestStatsDashboard:
+    """/review/stats: Schablone B (Dashboard)."""
+
+    def test_empty_state_uses_page_shell(self, auth_client):
+        client, _user = auth_client
+        html = client.get('/review/stats').get_data(as_text=True)
+        assert 'class="page page--wide srs-stats-page"' in html
+        assert '<h1 class="page-head__title" id="page-title">Statistiken</h1>' in html
+
+    def test_no_own_max_width_and_no_nested_cards(self, auth_client):
+        client, _user = auth_client
+        html = client.get('/review/stats').get_data(as_text=True)
+        assert 'max-width: 1152px' not in html
+        # Abzeichen und Detail-Diagramme sind keine Karten in der Karte mehr
+        assert 'border: 1px solid var(--ink-200); background: var(--card-background); }' not in html
+        assert '.stats-details .details-body .chart-section' in html
+
+    def test_heatmap_is_calendar_grid(self, auth_client):
+        client, _user = auth_client
+        html = client.get('/review/stats').get_data(as_text=True)
+        assert 'drawHeatmap()' in html
+        assert 'grid-template-rows: repeat(7, var(--hm-cell))' in html

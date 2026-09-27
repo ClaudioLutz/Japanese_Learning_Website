@@ -17,8 +17,8 @@
        ════════════════════════════════════════════════════════════ */
     :root { --mono: ui-monospace, 'Geist Mono', SFMono-Regular, Menlo, monospace; }
 
-    .srs-stats-page { max-width: 1152px; margin: 0 auto; padding: var(--space-6) var(--space-4) 96px; }
-    @media (max-width: 640px) { .srs-stats-page { padding: var(--space-4) var(--space-3) 88px; } }
+    /* Hülle: .page.page--wide (layout.css, Schablone B Dashboard) —
+       Breite 1440, 16-px-Rinne, Seitenkopf über page_head(). */
 
     [x-cloak] { display: none !important; }
     .sr-only {
@@ -26,28 +26,23 @@
         overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
     }
 
-    /* ── Seitenkopf (Hero-Heading) ── */
-    .stats-pagehead { margin-bottom: var(--space-6); }
-    .stats-eyebrow {
-        display: inline-flex; align-items: center; gap: 0.4rem;
-        font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase;
-        letter-spacing: 0.12em; color: var(--ink-500); margin-bottom: 0.4rem;
-    }
-    .stats-pagehead h1 {
-        font-size: clamp(1.7rem, 3vw, 2.35rem); color: var(--kon);
-        margin: 0; letter-spacing: -0.02em; line-height: 1.1;
-    }
-
-    /* ── Karten-Grundform: Hairline zuerst, Schatten nur bei Hover ── */
+    /* ── Kacheln: eine Ebene, Flächen aus den Layout-Tokens (hell + dunkel) ── */
     .stat-card, .hero-card, .chart-section, .due-card {
-        background: var(--card-background); border: 1px solid var(--ink-200);
-        border-radius: var(--radius-md);
+        background: var(--surface-1); border: 1px solid var(--surface-border);
+        border-radius: var(--radius-md); box-shadow: var(--shadow-1);
+        min-width: 0;
     }
 
-    /* ── Hero-Zone: Aktion + Streak + Level + Mastery ── */
-    .stats-hero { display: grid; grid-template-columns: 1fr; gap: var(--space-3); margin-bottom: var(--space-6); }
-    .stats-hero-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
-    @media (max-width: 760px) { .stats-hero-row { grid-template-columns: 1fr; } }
+    /* ── Hero-Zone: Aktion + Streak + Level + Mastery ──
+       mobil gestapelt (Aktion zuerst), ab 1024 eine Zeile: Aktion breit,
+       drei Kennzahl-Kacheln daneben. */
+    .stats-hero { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--grid-gap); margin-bottom: var(--space-6); }
+    .stats-hero-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--grid-gap); }
+    @media (min-width: 640px) { .stats-hero-row { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (min-width: 1024px) {
+        .stats-hero { grid-template-columns: minmax(0, 1.3fr) minmax(0, 2.7fr); align-items: stretch; }
+        .stats-hero .due-card { flex-direction: column; align-items: flex-start; justify-content: space-between; }
+    }
 
     .hero-card { padding: var(--space-4); display: flex; flex-direction: column; gap: 0.2rem; }
     .hero-label {
@@ -107,9 +102,10 @@
     .progress-label { font-size: 0.72rem; color: var(--ink-500); font-family: var(--mono); margin-top: 0.4rem; }
 
     /* ── Sekundaere Stat-Kacheln ── */
+    /* Kennzahl-Raster: dichter als .grid-tiles (kurze Zahlen), mobil zwei Spalten */
     .srs-stats-overview {
-        display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: var(--space-3); margin-bottom: var(--space-6);
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(min(160px, 45%), 1fr));
+        gap: var(--grid-gap); margin-bottom: var(--space-6);
     }
     .stat-card { padding: var(--space-4); display: flex; flex-direction: column; gap: 0.3rem; }
     .stat-card .stat-label {
@@ -134,16 +130,48 @@
         color: var(--kon); margin: 0 0 0.75rem; font-size: 0.95rem; font-weight: 600;
         display: flex; align-items: center; gap: 0.45rem;
     }
-    .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
-    @media (max-width: 768px) { .chart-row { grid-template-columns: 1fr; } }
+    .chart-section { margin-bottom: 0; }
     .chart-empty { font-size: 0.85rem; color: var(--ink-500); padding: 1.5rem 0; text-align: center; }
-    .chart-box { position: relative; height: 280px; }
+    .chart-box { position: relative; height: 280px; min-width: 0; }
     @media (max-width: 768px) { .chart-box { height: 240px; } }
 
-    /* Aktivitaets-Heatmap (Matcha-Rampe, warm) */
-    .heatmap-grid { display: flex; flex-wrap: wrap; gap: 2px; margin-top: 0.5rem; }
-    .heatmap-cell { width: 12px; height: 12px; border-radius: 2px; }
-    .heatmap-legend { display: flex; align-items: center; gap: 4px; font-size: 0.7rem; color: var(--ink-500); margin-top: 0.6rem; flex-wrap: wrap; }
+    /* Abschnitts-Raster: mobil gestapelt, ab 1024 nebeneinander (füllt breite
+       Bildschirme über Spalten statt über gestreckte Zeilen). */
+    .stats-split { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--grid-gap); margin-bottom: var(--grid-gap); }
+    @media (min-width: 1024px) {
+        .stats-split--2-1 { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+        .stats-split--1-2 { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); }
+        .stats-split--3-2 { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); }
+    }
+    .stats-split > * { min-width: 0; }
+    .stats-split--start { align-items: start; }
+    .stats-split > [x-cloak], .stats-split > [style*="display: none"] { display: none; }
+
+    /* Aktivitaets-Heatmap als Kalender-Raster (Spalten = Wochen, Zeilen = Mo–So).
+       Wochenzahl und Zellgrösse rechnet JS aus der Breite (mobil ~5 Monate,
+       Desktop bis 12 Monate); Matcha-Rampe, warm. */
+    .heatmap-grid { margin-top: var(--space-2); --hm-cell: 12px; --hm-gap: 3px; --hm-label: 26px; }
+    .hm-months {
+        display: grid; grid-template-columns: repeat(var(--hm-weeks, 53), var(--hm-cell));
+        column-gap: var(--hm-gap); margin-left: var(--hm-label); height: 1.2rem;
+        font-size: var(--text-xs); color: var(--ink-500);
+    }
+    .hm-months span { white-space: nowrap; overflow: visible; }
+    .hm-body { display: flex; }
+    .hm-days {
+        flex: 0 0 var(--hm-label);
+        display: grid; grid-template-rows: repeat(7, var(--hm-cell)); row-gap: var(--hm-gap);
+        font-size: var(--text-xs); line-height: var(--hm-cell); color: var(--ink-500);
+    }
+    .hm-cells {
+        display: grid; grid-auto-flow: column;
+        grid-template-rows: repeat(7, var(--hm-cell)); grid-auto-columns: var(--hm-cell);
+        gap: var(--hm-gap);
+    }
+    .heatmap-cell { width: var(--hm-cell, 12px); height: var(--hm-cell, 12px); border-radius: 3px; }
+    .heatmap-cell.is-future { background: transparent !important; }
+    .heatmap-legend { display: flex; align-items: center; gap: 4px; font-size: var(--text-xs); color: var(--ink-500); margin-top: var(--space-3); flex-wrap: wrap; }
+    .heatmap-legend .heatmap-cell { width: 12px; height: 12px; }
 
     /* ── Detail-Tabelle (Leeches) ── */
     .leech-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
@@ -163,12 +191,20 @@
     @media (max-width: 640px) {
         .leech-table { min-width: 0; }
         .leech-table thead { display: none; }
-        .leech-table tr { display: block; border: 1px solid var(--ink-200); border-radius: var(--radius-md); padding: var(--space-3); margin-bottom: var(--space-2); }
-        .leech-table td { display: flex; justify-content: space-between; align-items: center; gap: 1rem; border: 0; padding: 0.3rem 0; text-align: right; }
-        .leech-table td::before { content: attr(data-label); font-weight: 600; color: var(--ink-500); text-align: left; }
-        .leech-front { max-width: none; }
-        .leech-table td.leech-actions-cell { display: block; }
-        .leech-table td.leech-actions-cell::before { display: block; margin-bottom: 0.4rem; }
+        /* Zeilen als kompakte Liste mit Haarlinie statt Karte in der Karte:
+           Karte oben, Typ · Fehler · Quote in einer Zeile, darunter Aktionen. */
+        .leech-table tbody { display: block; }
+        .leech-table tr {
+            display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1) var(--space-3);
+            padding: var(--space-3) 0; border-bottom: 1px solid var(--surface-border);
+        }
+        .leech-table tr:last-child { border-bottom: 0; }
+        .leech-table td { display: inline-flex; gap: 0.3rem; border: 0; padding: 0; font-size: var(--text-sm); }
+        .leech-table td::before { content: attr(data-label) ":"; color: var(--ink-500); }
+        .leech-table td.leech-front { flex: 1 0 100%; font-size: var(--text-lg); max-width: none; }
+        .leech-table td.leech-front::before,
+        .leech-table td.leech-actions-cell::before { display: none; }
+        .leech-table td.leech-actions-cell { flex: 1 0 100%; display: block; margin-top: var(--space-2); }
         .leech-actions { width: 100%; }
         .leech-action { flex: 1; min-height: 44px; }
     }
@@ -183,17 +219,20 @@
     .jlpt-detail { font-size: 0.72rem; color: var(--ink-500); margin-top: 0.25rem; }
 
     /* ── Achievements ── */
-    .badge-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: var(--space-3); }
-    .badge-item { text-align: center; padding: 0.85rem 0.5rem; border-radius: var(--radius-md); border: 1px solid var(--ink-200); background: var(--card-background); }
+    /* Abzeichen: Raster aus Einträgen (Icon + Text), keine Karten in der Karte */
+    .badge-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 1fr)); gap: var(--space-3) var(--space-4); }
+    .badge-item { display: grid; grid-template-columns: 2rem minmax(0, 1fr); column-gap: var(--space-3); align-items: start; padding: var(--space-2) 0; }
+    .badge-item > .badge-icon { grid-row: span 3; margin: 0; text-align: center; }
+    .badge-item > :not(.badge-icon) { grid-column: 2; }
     .badge-item.locked { opacity: 0.45; }
     .badge-item .badge-icon { font-size: 1.5rem; margin-bottom: 0.3rem; color: var(--ink-400); }
     .badge-item.unlocked .badge-icon { color: var(--shu); }
-    .badge-item .badge-name { font-size: 0.72rem; font-weight: 600; color: var(--kon); }
-    .badge-item .badge-desc { font-size: 0.62rem; color: var(--ink-500); margin-top: 0.15rem; line-height: 1.3; }
-    .badge-item .badge-state { font-size: 0.62rem; font-weight: 600; color: var(--matcha); margin-top: 0.2rem; }
+    .badge-item .badge-name { font-size: var(--text-sm); font-weight: 600; color: var(--kon); }
+    .badge-item .badge-desc { font-size: var(--text-xs); color: var(--ink-500); margin-top: 0.15rem; line-height: 1.35; }
+    .badge-item .badge-state { font-size: var(--text-xs); font-weight: 600; color: var(--matcha); margin-top: 0.2rem; }
 
     /* ── Detail-Analyse (einklappbar) ── */
-    .stats-details { border: 1px solid var(--ink-200); border-radius: var(--radius-md); background: var(--card-background); margin-top: var(--space-4); overflow: hidden; }
+    .stats-details { border: 1px solid var(--surface-border); border-radius: var(--radius-md); background: var(--surface-1); box-shadow: var(--shadow-1); margin-top: var(--space-6); overflow: hidden; }
     .stats-details > summary {
         cursor: pointer; padding: var(--space-4); font-weight: 600; color: var(--kon);
         display: flex; align-items: center; gap: 0.5rem; list-style: none; font-size: 0.95rem;
@@ -202,13 +241,19 @@
     .stats-details > summary .chev { margin-left: auto; transition: transform 0.2s; color: var(--ink-500); }
     .stats-details[open] > summary .chev { transform: rotate(180deg); }
     .stats-details > summary .summary-hint { font-weight: 400; color: var(--ink-500); font-size: 0.8rem; }
-    .stats-details .details-body { padding: 0 var(--space-4) var(--space-4); }
-    .stats-details .chart-section:last-child { margin-bottom: 0; }
+    .stats-details .details-body {
+        padding: 0 var(--space-4) var(--space-4);
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
+        gap: var(--space-6) var(--grid-gap);
+    }
+    .stats-details .details-body .chart-section {
+        background: none; border: 0; box-shadow: none; border-radius: 0; padding: 0;
+    }
 
     /* ── Empty-State ── */
     .stats-empty {
         text-align: center; padding: var(--space-12) var(--space-4);
-        border: 1px dashed var(--ink-300); border-radius: var(--radius-lg); background: var(--card-background);
+        border: 1px dashed var(--surface-border-strong); border-radius: var(--radius-lg); background: var(--surface-1);
         max-width: 640px; margin: 0 auto;
     }
     .stats-empty-jp { font-family: 'Noto Serif JP', 'Klee One', serif; font-size: 3rem; color: var(--shu); display: block; line-height: 1; margin-bottom: 0.75rem; }
@@ -220,9 +265,9 @@
     .kana-script-toggle { display: inline-flex; gap: 2px; background: var(--ink-100); border-radius: var(--radius-full); padding: 2px; }
     .kana-script-toggle button {
         background: transparent; border: 0; padding: 0.25rem 0.7rem; font-size: 0.72rem;
-        border-radius: var(--radius-full); color: var(--ink-500); cursor: pointer; transition: all 0.18s ease; min-height: 38px;
+        border-radius: var(--radius-full); color: var(--ink-500); cursor: pointer; transition: all 0.18s ease; min-height: 44px;
     }
-    .kana-script-toggle button.is-active { background: #fff; color: var(--shu); font-weight: 600; }
+    .kana-script-toggle button.is-active { background: var(--surface-1); color: var(--shu); font-weight: 600; }
     .kana-heatmap-grid { margin-top: 0.75rem; display: flex; flex-direction: column; gap: 0.3rem; }
     .kana-heatmap-row { display: grid; grid-template-columns: minmax(78px, 110px) repeat(5, 1fr); gap: 0.3rem; align-items: stretch; }
     .kana-heatmap-row-label { font-size: 0.7rem; color: var(--ink-500); text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; justify-content: flex-end; padding-right: 0.5rem; }
@@ -239,7 +284,8 @@
 
     /* Schwaechste Kana */
     .weak-kana-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.6rem; }
-    .weak-kana-item { display: flex; align-items: center; gap: 0.6rem; padding: 0.6rem; background: var(--shu-soft); border: 1px solid rgba(235,97,1,.2); border-radius: var(--radius-md); }
+    /* Mulde statt Karte in der Karte */
+    .weak-kana-item { display: flex; align-items: center; gap: 0.6rem; padding: 0.6rem; background: var(--surface-inset); border-radius: var(--radius-md); }
     .weak-kana-char { font-family: 'Klee One', 'Noto Serif JP', serif; font-size: 1.7rem; font-weight: 600; line-height: 1; color: var(--kon); }
     .weak-kana-meta { flex: 1; min-width: 0; }
     .weak-kana-rom { font-size: 0.75rem; color: var(--ink-600); font-family: var(--mono); }
@@ -247,8 +293,10 @@
     .weak-kana-stats i { color: var(--color-error); margin-right: 2px; }
 
     @media (max-width: 640px) {
-        .kana-heatmap-row { grid-template-columns: 1fr; }
-        .kana-heatmap-row-label { justify-content: flex-start; padding: 0.25rem 0; border-bottom: 1px solid var(--ink-200); }
+        /* Reihen-Label als Zeile darüber, die fünf Zellen bleiben nebeneinander */
+        .kana-heatmap-row { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+        .kana-heatmap-row-label { grid-column: 1 / -1; justify-content: flex-start; padding: 0.25rem 0 0; }
+        .badge-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
 
     /* Fokus-Sichtbarkeit (Tastatur) */
@@ -272,8 +320,9 @@
     [data-theme="dark"] .kana-heatmap-char { color: var(--kon-100); }
     [data-theme="dark"] .kana-heatmap-rom { color: var(--kon-100); }
     /* Schluessel-Labels/Eyebrows auf --ink-500 (~4:1) im Dark auf --ink-600 anheben. */
-    [data-theme="dark"] .stats-eyebrow,
     [data-theme="dark"] .stats-group,
+    [data-theme="dark"] .hm-months,
+    [data-theme="dark"] .hm-days,
     [data-theme="dark"] .hero-label,
     [data-theme="dark"] .stat-card .stat-label,
     [data-theme="dark"] .kana-heatmap-row-label { color: var(--ink-600); }
@@ -281,15 +330,13 @@
 {% endblock %}
 
 {% block content %}
+{% from 'partials/_page_head.html' import page_head %}
 {# Empty-State NUR, wenn weder SRS-Karten NOCH Storm-Spiele vorliegen — sonst
    landen reine Storm-Spieler (total_cards==0) in der leeren Seite und sehen ihre
    Storm-Statistik nie, obwohl der Storm-End-Screen genau hierher verlinkt. #}
 {% if stats.total_cards == 0 and not (stats.storm and stats.storm.games > 0) %}
-<div class="srs-stats-page">
-    <div class="stats-pagehead">
-        <span class="stats-eyebrow"><i class="fas fa-chart-line" aria-hidden="true"></i> Dein Fortschritt</span>
-        <h1>Statistiken</h1>
-    </div>
+<div class="page page--wide srs-stats-page">
+    {{ page_head('Statistiken', eyebrow='Dein Fortschritt', eyebrow_jp='記録') }}
     <div class="stats-empty">
         <span class="stats-empty-jp" aria-hidden="true">始</span>
         <h2>Noch keine Karten im Wiederholungssystem</h2>
@@ -302,13 +349,12 @@
     </div>
 </div>
 {% else %}
-<div class="srs-stats-page" x-data="statsPage()" x-init="loadAll()">
+<div class="page page--wide srs-stats-page" x-data="statsPage()" x-init="loadAll()">
 
     <!-- Seitenkopf -->
-    <div class="stats-pagehead">
-        <span class="stats-eyebrow"><i class="fas fa-chart-line" aria-hidden="true"></i> Dein Fortschritt</span>
-        <h1>Statistiken</h1>
-    </div>
+    {% call page_head('Statistiken', subtitle='Aktivität, Beherrschung und Level — alles aus deinen Wiederholungen.', eyebrow='Dein Fortschritt', eyebrow_jp='記録', subtitle_mobile=False) %}
+        <a href="{{ url_for('srs.browse_page') }}" class="stats-cta-ghost"><i class="fas fa-list" aria-hidden="true"></i> Karten durchstöbern</a>
+    {% endcall %}
 
     <!-- HERO: Aktion + Streak + Level + Mastery -->
     <div class="stats-hero">
@@ -472,8 +518,9 @@
     <!-- ══ GRUPPE: Verlauf ══ -->
     <div class="stats-group">Verlauf</div>
 
+    <div class="stats-split stats-split--3-2">
     <div class="chart-section">
-        <h6><i class="fas fa-calendar-alt" aria-hidden="true"></i> Review-Aktivität (letzte 365 Tage)</h6>
+        <h6><i class="fas fa-calendar-alt" aria-hidden="true"></i> Review-Aktivität (letzte <span id="heatmapRange">12 Monate</span>)</h6>
         <div class="heatmap-grid" id="heatmapGrid" role="img" aria-label="Review-Aktivität der letzten 365 Tage"></div>
         <div class="heatmap-legend">
             <span>Weniger</span>
@@ -492,10 +539,12 @@
         <div class="chart-box"><canvas id="forecastChart" role="img" aria-label="Forecast der fälligen Reviews"></canvas></div>
         <p class="chart-empty" id="forecastEmpty" style="display:none;">Noch keine geplanten Reviews.</p>
     </div>
+    </div>
 
     <!-- ══ GRUPPE: Schwächen (nur wenn vorhanden) ══ -->
     <div class="stats-group" x-show="weakKana.length > 0 || leeches.length > 0" x-cloak>Schwächen</div>
 
+    <div class="stats-split">
     <!-- Schwaechste Kana -->
     <div class="chart-section" x-show="weakKana.length > 0" x-cloak>
         <h6><i class="fas fa-exclamation-triangle" aria-hidden="true"></i> Schwächste Kana</h6>
@@ -545,10 +594,12 @@
             </table>
         </div>
     </div>
+    </div>
 
     <!-- ══ GRUPPE: Beherrschung ══ -->
     <div class="stats-group">Beherrschung</div>
 
+    <div class="stats-split stats-split--start" :class="kanaHeatmap.length > 0 ? 'stats-split--3-2' : ''">
     <!-- Kana-Beherrschung (Gojuon, Accuracy + Stufe) -->
     <div class="chart-section" x-show="kanaHeatmap.length > 0" x-cloak>
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
@@ -608,6 +659,7 @@
             </div>
         </template>
     </div>
+    </div>
 
     <!-- Achievements -->
     <div class="chart-section">
@@ -632,7 +684,6 @@
             <i class="fas fa-chevron-down chev" aria-hidden="true"></i>
         </summary>
         <div class="details-body">
-            <div class="chart-row">
                 <div class="chart-section">
                     <h6><i class="fas fa-chart-line" aria-hidden="true"></i> Retention nach Intervall</h6>
                     <div class="chart-box"><canvas id="retentionChart" role="img" aria-label="Retention nach Intervall"></canvas></div>
@@ -645,8 +696,6 @@
                     <p class="chart-empty" id="contentTypeEmpty" style="display:none;">Noch keine Daten.</p>
                     <div class="sr-only" id="contentTypeSr"></div>
                 </div>
-            </div>
-            <div class="chart-row">
                 <div class="chart-section">
                     <h6><i class="fas fa-chart-pie" aria-hidden="true"></i> Karten-Verteilung</h6>
                     <div class="chart-box"><canvas id="maturityChart" role="img" aria-label="Verteilung der Karten nach Reifegrad"></canvas></div>
@@ -657,7 +706,6 @@
                     <div class="chart-box"><canvas id="responseTimeChart" role="img" aria-label="Antwortzeiten nach Bewertung"></canvas></div>
                     <p class="chart-empty" id="responseTimeEmpty" style="display:none;">Noch keine Daten.</p>
                 </div>
-            </div>
         </div>
     </details>
 </div>
@@ -792,8 +840,25 @@ function statsPage() {
         },
 
         renderHeatmap(data) {
+            this._hmData = data;
+            this.drawHeatmap();
+            if (!this._hmResizeBound) {
+                this._hmResizeBound = true;
+                let t = null, lastW = window.innerWidth;
+                window.addEventListener('resize', () => {
+                    if (window.innerWidth === lastW) return;   // mobile Adressleiste
+                    lastW = window.innerWidth;
+                    clearTimeout(t); t = setTimeout(() => this.drawHeatmap(), 150);
+                });
+            }
+        },
+
+        /* Kalender-Raster: Spalten = Wochen (Mo–So), so viele Wochen wie in die
+           Breite passen (mobil ~5 Monate, Desktop bis 53 Wochen). */
+        drawHeatmap() {
             const grid = document.getElementById('heatmapGrid');
             if (!grid) return;
+            const data = this._hmData || [];
 
             const lookup = {};
             let maxCount = 1, activeDays = 0;
@@ -801,19 +866,47 @@ function statsPage() {
 
             // Warme Matcha-Rampe (kein kuehles GitHub-Grau/Gruen)
             const colors = [this.C.ink100, this.rgba(this.C.matcha, .30), this.rgba(this.C.matcha, .52), this.rgba(this.C.matcha, .74), this.C.matcha];
-            const today = new Date();
-            const html = [];
+            const LABEL = 26, GAP = 3, MIN = 11, MAX = 18;
+            const avail = Math.max(120, grid.clientWidth - LABEL);
+            const weeks = Math.max(8, Math.min(53, Math.floor((avail + GAP) / (MIN + GAP))));
+            const cell = Math.max(MIN, Math.min(MAX, Math.floor((avail + GAP) / weeks) - GAP));
+            grid.style.setProperty('--hm-cell', cell + 'px');
+            grid.style.setProperty('--hm-weeks', weeks);
 
-            for (let i = 364; i >= 0; i--) {
-                const d = new Date(today);
-                d.setDate(d.getDate() - i);
-                const key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-                const count = lookup[key] || 0;
-                const level = count === 0 ? 0 : Math.min(4, Math.ceil(count / maxCount * 4));
-                html.push(`<span class="heatmap-cell" style="background:${colors[level]}" title="${key}: ${count} Reviews" aria-hidden="true"></span>`);
+            const today = new Date(); today.setHours(0, 0, 0, 0);
+            const dow = (today.getDay() + 6) % 7;             // Mo = 0
+            const start = new Date(today);
+            start.setDate(today.getDate() - dow - (weeks - 1) * 7);
+            const MONTHS = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
+            const fmt = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+
+            const months = [], cells = [];
+            let lastMonth = -1;
+            for (let w = 0; w < weeks; w++) {
+                const first = new Date(start); first.setDate(start.getDate() + w * 7);
+                const m = first.getMonth();
+                // Monatsname über der ersten Woche eines Monats (nicht ganz am rechten
+                // Rand; erste Spalte nur, wenn der Monat dort beginnt — sonst überlappt
+                // der Rest-Monat mit dem nächsten Namen)
+                const startsHere = w > 0 || first.getDate() <= 7;
+                months.push(`<span>${m !== lastMonth && startsHere && w < weeks - 2 ? MONTHS[m] : ''}</span>`);
+                lastMonth = m;
+                for (let dd = 0; dd < 7; dd++) {
+                    const d = new Date(first); d.setDate(first.getDate() + dd);
+                    if (d > today) { cells.push('<span class="heatmap-cell is-future" aria-hidden="true"></span>'); continue; }
+                    const key = fmt(d);
+                    const count = lookup[key] || 0;
+                    const level = count === 0 ? 0 : Math.min(4, Math.ceil(count / maxCount * 4));
+                    cells.push(`<span class="heatmap-cell" style="background:${colors[level]}" title="${key}: ${count} Reviews" aria-hidden="true"></span>`);
+                }
             }
-            grid.innerHTML = html.join('');
-            grid.setAttribute('aria-label', `Review-Aktivität der letzten 365 Tage: ${activeDays} aktive Tage, stärkster Tag ${maxCount} Reviews.`);
+            grid.innerHTML = `<div class="hm-months" aria-hidden="true">${months.join('')}</div>`
+                + '<div class="hm-body"><div class="hm-days" aria-hidden="true"><span>Mo</span><span></span><span>Mi</span><span></span><span>Fr</span><span></span><span></span></div>'
+                + `<div class="hm-cells">${cells.join('')}</div></div>`;
+            const range = weeks >= 52 ? '12 Monate' : weeks + ' Wochen';
+            const rangeEl = document.getElementById('heatmapRange');
+            if (rangeEl) rangeEl.textContent = range;
+            grid.setAttribute('aria-label', `Review-Aktivität der letzten ${range}: ${activeDays} aktive Tage im Jahr, stärkster Tag ${maxCount} Reviews.`);
 
             const sr = document.getElementById('heatmapSr');
             if (sr) {
@@ -943,7 +1036,7 @@ function statsPage() {
             new Chart(ctx, {
                 type: 'doughnut',
                 data: { labels, datasets: [{ data: values, backgroundColor: colors, borderWidth: 1, borderColor: '#fff' }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { font: { size: 11 }, color: C.kon } } } }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: ctx.parentElement.clientWidth < 360 ? 'bottom' : 'right', labels: { font: { size: 11 }, color: C.kon } } } }
             });
         },
 
