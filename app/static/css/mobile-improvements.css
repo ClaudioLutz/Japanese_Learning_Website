@@ -12,7 +12,7 @@
         padding-right: 0 !important;
         width: 100% !important;
         max-width: 100% !important;
-        overflow-x: hidden !important;
+        overflow-x: hidden !important;  /* Fallback, s. @supports unten */
     }
     
     html {
@@ -20,7 +20,16 @@
         padding: 0 !important;
         width: 100% !important;
         max-width: 100% !important;
-        overflow-x: hidden !important;
+        overflow-x: hidden !important;  /* Fallback, s. @supports unten */
+    }
+
+    /* overflow-x:hidden auf html UND body macht body zum Scroll-Container
+       (overflow-y wird dann zu auto) — position:sticky klebt darin nicht mehr
+       am Viewport (Top-Nav, Sektions-Leisten scrollten mobil einfach weg).
+       overflow-x:clip schneidet genauso ab, erzeugt aber keinen
+       Scroll-Container. Browser ohne clip behalten den Fallback oben. */
+    @supports (overflow-x: clip) {
+        html, body { overflow-x: clip !important; }
     }
     
     /* Override any Bootstrap spacing utilities */
