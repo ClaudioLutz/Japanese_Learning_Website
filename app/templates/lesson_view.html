@@ -446,22 +446,35 @@ html.hide-front-romaji .front-romaji { display: none !important; }
     }
 
     /* Keyboard navigation indicator */
+    /* Erscheint nur nach Tastaturnutzung, unten mittig (nicht über der
+       Seitenleiste), ausgeblendet ohne Klickfläche. */
     .keyboard-hint {
         position: fixed;
         bottom: 20px;
-        right: 20px;
-        background-color: rgba(0, 0, 0, 0.8);
-        color: white;
+        left: 50%;
+        transform: translateX(-50%);
+        max-width: calc(100vw - 40px);
+        background-color: var(--sumi, #1C1C1C);
+        color: #fff;
         padding: 0.5rem 1rem;
         border-radius: 20px;
         font-size: 0.8rem;
+        white-space: nowrap;
         z-index: 1000;
         opacity: 0;
-        transition: opacity 0.3s ease;
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity 0.3s ease, visibility 0.3s;
     }
-    
+
     .keyboard-hint.show {
         opacity: 1;
+        visibility: visible;
+    }
+    [data-theme="dark"] .keyboard-hint {
+        background-color: var(--surface-2, #28241D);
+        border: 1px solid var(--surface-border-strong, #3A342A);
+        color: var(--text-color);
     }
     
     @media (max-width: 991px) {
@@ -1275,6 +1288,15 @@ html.hide-front-romaji .front-romaji { display: none !important; }
     @media (min-width: 769px) and (max-width: 1199px) {
         body.lesson-view-redesign .lv-read .content-item img { max-width: 100% !important; }
     }
+    /* Seiten- und Inhaltsbilder: volle Lesespalte, linksbündig mit dem Text
+       (custom.css deckelt auf 650 px und zentriert → wirkte eingerückt). */
+    body.lesson-view-redesign .lv-read .page-container > .content-item > img,
+    body.lesson-view-redesign .lv-read .content-item .content-body > img {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        margin: 0 !important;
+    }
     /* Seitentitel/-beschreibung: linksbündig wie der Text (Bootstrap .text-center ist !important) */
     body.lesson-view-redesign .lv-read .page-title {
         text-align: left !important;
@@ -1533,6 +1555,8 @@ html.hide-front-romaji .front-romaji { display: none !important; }
         body.lesson-view-redesign .lv-read .dialog-slideshow,
         body.lesson-view-redesign .lv-read .text-audio-player audio { width: 100%; max-width: none !important; }
         .lesson-navigation-bottom .nav-btn { min-height: 44px; }
+        /* Wisch-Hinweis über dem fixen Pager statt darauf (Pager endet ~106 px über unten) */
+        body.lesson-view-redesign .swipe-hint { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     }
 </style>
 {#- ══ Schablone D „Lektion" (docs/layout-standard.md §4 D) ══════════════════
@@ -3178,7 +3202,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (totalPages > 1) {
         initializeNavigation();
         setupKeyboardNavigation();
-        showKeyboardHint();
+        // Tastatur-Hinweis erst bei Tastaturnutzung (Pfeile/Home/End), nicht
+        // beim Laden: er lag sonst halb ausgeblendet über der Seitenleiste.
 
         // Restore page from URL hash
         restorePageFromURL();
@@ -3746,7 +3771,9 @@ function handleSwipe() {
 // ── Swipe-Hint (einmalig zeigen, dann nie wieder) ──────────────────
 (function() {
     if (localStorage.getItem('swipeHintShown')) return;
-    if (!'ontouchstart' in window) return;
+    // Nur auf Touch-Geräten (früher `!'ontouchstart' in window` = immer false →
+    // der Hinweis erschien auch auf Desktop mitten über dem Inhalt).
+    if (!('ontouchstart' in window) && !(navigator.maxTouchPoints > 0)) return;
     setTimeout(() => {
         const hint = document.createElement('div');
         hint.className = 'swipe-hint';
