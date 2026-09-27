@@ -15,6 +15,10 @@ Format je Eintrag:
 Keine Commit-Hashes, keine internen Namen.
 -->
 
+## 2026-09-27 | Lektionen: neue Leseansicht mit Seitenleiste
+Der Lektionstext steht jetzt in einer ruhigen Lesespalte, die Seiten der Lektion findest du rechts in der Seitenleiste – zusammen mit deinem Fortschritt, den Eckdaten und „Karten wiederholen". Oben zeigt eine schmale Leiste, auf welcher Seite du bist, und „Weiter bei Seite N" bringt dich zurück an deine letzte Stelle. Auf dem Handy wischst du die Seiten als Chips in einer Zeile.
+Link: /lessons
+
 ## 2026-09-27 | Wiederholen und Statistik: neue Seitenaufteilung
 Beim Wiederholen steht die Karte jetzt direkt unter der Fortschrittsleiste statt mitten im Bildschirm, und auf dem Handy liegen die Bewertungsknöpfe als feste Leiste über der unteren Navigation. Die Statistik nutzt breite Bildschirme mit Spalten, zeigt deine Aktivität als Kalender und ist auf dem Handy deutlich kürzer.
 Link: /review

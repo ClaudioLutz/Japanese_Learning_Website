@@ -148,53 +148,7 @@ html.hide-front-romaji .front-romaji { display: none !important; }
 
 {% block content %}
 <style>
-    /* ── Left Sidebar Navigation ── */
-    .lesson-layout {
-        display: flex;
-        min-height: calc(100vh - 80px);
-    }
-
-    .lesson-sidebar {
-        width: 280px;
-        flex-shrink: 0;
-        position: sticky;
-        top: 0;
-        height: 100vh;
-        overflow-y: auto;
-        background: var(--card-background, #fff);
-        border-right: 1px solid var(--border-color, #D4CFC5);
-        padding: 1rem 0;
-        z-index: 100;
-    }
-
-    .lesson-sidebar::-webkit-scrollbar {
-        width: 4px;
-    }
-    .lesson-sidebar::-webkit-scrollbar-thumb {
-        background: var(--ink-300);
-        border-radius: 2px;
-    }
-
-    .sidebar-header {
-        padding: 0.75rem 1rem;
-        border-bottom: 1px solid var(--border-color, #D4CFC5);
-        margin-bottom: 0.5rem;
-    }
-
-    .sidebar-header h6 {
-        margin: 0;
-        font-size: 0.8rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: var(--text-light, #5A5A5A);
-    }
-
-    .sidebar-progress {
-        padding: 0 1rem 0.75rem;
-        border-bottom: 1px solid var(--border-color, #D4CFC5);
-        margin-bottom: 0.5rem;
-    }
-
+    /* ── Seitenübersicht (Seitenleiste rechts, s. Schablone D unten) ── */
     .sidebar-progress-bar {
         height: 6px;
         background-color: var(--border-color, #D4CFC5);
@@ -320,12 +274,6 @@ html.hide-front-romaji .front-romaji { display: none !important; }
         cursor: not-allowed;
     }
 
-    .lesson-main-content {
-        flex: 1;
-        min-width: 0;
-        padding: 1.5rem;
-    }
-
     /* Bottom Navigation (compact, inside content area) */
     .lesson-navigation-bottom {
         background-color: var(--card-background);
@@ -427,13 +375,6 @@ html.hide-front-romaji .front-romaji { display: none !important; }
             font-variant-numeric: tabular-nums;
             color: var(--ink-500, #7A7368);
         }
-        .lesson-main-content {
-            padding-bottom: 150px !important; /* Lesson-Nav (60px) + Bottom-Nav (72px) + Atemraum */
-        }
-        /* Sidebar-Toggle FAB ausblenden — wird durch Bottom-Nav-Item ersetzt */
-        .sidebar-toggle {
-            display: none !important;
-        }
         /* Back-to-Top Button hoeher schieben, damit er nicht auf der Lesson-Nav sitzt */
         .back-to-top, #backToTop {
             bottom: 150px !important;
@@ -456,77 +397,10 @@ html.hide-front-romaji .front-romaji { display: none !important; }
         }
     }
 
-    /* Mobile sidebar toggle */
-    .sidebar-toggle {
-        display: none;
-        position: fixed;
-        bottom: 1rem;
-        left: 1rem;
-        z-index: 200;
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, var(--zen-indigo), var(--zen-matcha));
-        color: white;
-        border: none;
-        box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
-        font-size: 1.2rem;
-        cursor: pointer;
-    }
-
-    /* Enhanced Carousel Controls */
-    #lessonCarousel .carousel-control-prev,
-    #lessonCarousel .carousel-control-next {
-        width: 8%;
-        top: 20%;
-        height: 60%;
-    }
-    
-    #lessonCarousel .carousel-control-prev-icon,
-    #lessonCarousel .carousel-control-next-icon {
-        background-color: rgba(74, 144, 226, 0.8);
-        border-radius: 50%;
-        padding: 25px;
-        transition: all 0.3s ease;
-    }
-    
-    #lessonCarousel .carousel-control-prev:hover .carousel-control-prev-icon,
-    #lessonCarousel .carousel-control-next:hover .carousel-control-next-icon {
-        background-color: var(--primary-color, #2B4C7E);
-        transform: scale(1.1);
-        box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
-    }
-    
     #lessonCarousel .carousel-item .page-container {
         min-height: 400px;
     }
     
-    /* Enhanced indicators */
-    #lessonCarousel .carousel-indicators {
-        position: static;
-        margin-top: 1rem;
-        margin-bottom: 1rem;
-    }
-    
-    #lessonCarousel .carousel-indicators [data-bs-target] {
-        background-color: var(--ink-300);
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        margin: 0 6px;
-        transition: all 0.3s ease;
-    }
-
-    #lessonCarousel .carousel-indicators .active {
-        background-color: var(--primary-color, #2B4C7E);
-        transform: scale(1.15);
-    }
-
-    #lessonCarousel .carousel-indicators [data-bs-target]:hover {
-        background-color: var(--zen-matcha, #7A9A5A);
-        transform: scale(1.1);
-    }
-
     /* "Melden"-Bruecken zum Issue-Board (KI-Stimmen-Disclaimer + Per-Seite-Link).
        Dezent gehalten, Shu beim Hover — Light + Dark (Shu bleibt). Die erhoehte
        Spezifitaet beim Disclaimer-Link schlaegt die generische
@@ -590,49 +464,7 @@ html.hide-front-romaji .front-romaji { display: none !important; }
         opacity: 1;
     }
     
-    /* Mobile responsive */
     @media (max-width: 991px) {
-        .lesson-sidebar {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 280px;
-            height: 100vh;
-            z-index: 1050;
-            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .lesson-sidebar.show {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .sidebar-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: 1040;
-        }
-
-        .sidebar-overlay.show {
-            display: block;
-        }
-
-        .sidebar-toggle {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .lesson-main-content {
-            padding: 1rem;
-        }
-
         .lesson-navigation-bottom {
             padding: 0.5rem 0.75rem;
         }
@@ -854,8 +686,6 @@ html.hide-front-romaji .front-romaji { display: none !important; }
     }
 
     /* Lesson-Header / Title — Geist + kon */
-    body.lesson-view-redesign .lesson-header-card h1,
-    body.lesson-view-redesign .lesson-header-card h2,
     body.lesson-view-redesign .lesson-content-card h2,
     body.lesson-view-redesign .lesson-content-card h3 {
         font-family: 'Geist', 'Inter', sans-serif;
@@ -898,30 +728,6 @@ html.hide-front-romaji .front-romaji { display: none !important; }
     }
     body.lesson-view-redesign .progress-bar.bg-success {
         background: var(--matcha, #7A9033) !important;
-    }
-
-    /* Lesson-Header-Card / Sidebar — hairline */
-    body.lesson-view-redesign .lesson-header-card,
-    body.lesson-view-redesign .lesson-content-card,
-    body.lesson-view-redesign .filter-card {
-        background: var(--card-background);
-        border: 1px solid var(--ink-200, #E4DED4);
-        box-shadow: var(--shadow-subtle, 0 1px 3px rgba(28,26,23,.06));
-    }
-
-    /* Seite 2+: Hero ausgeblendet — Header-Karte schrumpft auf den
-       schlanken Fortschritts-Balken zusammen (Label + Prozent + Balken). */
-    body.lesson-view-redesign .lesson-header-card.is-compact .card-body {
-        padding-top: .85rem;
-        padding-bottom: .85rem;
-    }
-    body.lesson-view-redesign .lesson-header-card.is-compact #lessonProgressBlock {
-        margin-top: 0 !important;
-    }
-    /* Die Detail-Statistik (Zeit/Gestartet/Abgeschlossen) ist auf Folgeseiten
-       redundant — im schlanken Modus nur der Balken selbst. */
-    body.lesson-view-redesign .lesson-header-card.is-compact #lessonProgressBlock .row.text-center {
-        display: none;
     }
 
     /* Furigana-Treatment — 60% opacity ueber Kanji */
@@ -1021,8 +827,7 @@ html.hide-front-romaji .front-romaji { display: none !important; }
        -Optionen, Grammatik-Erklaerung). Theme-Textfarbe erzwingen; Komponenten
        mit eigener Farbe (Badges, Buttons, Vokabel-Front, Akzent-Headings,
        em/strong) ueberschreiben das weiterhin. */
-    [data-theme="dark"] body.lesson-view-redesign .lesson-content-card,
-    [data-theme="dark"] body.lesson-view-redesign .lesson-header-card {
+    [data-theme="dark"] body.lesson-view-redesign .lesson-content-card {
         color: var(--text-color);
     }
 
@@ -1033,36 +838,6 @@ html.hide-front-romaji .front-romaji { display: none !important; }
        Haarlinien statt Boxen. Alles scoped via body.lesson-view-redesign,
        JS-Hooks/Klassen unberührt; nur flippende Tokens für Dark-Parität.
        ════════════════════════════════════════════════════ */
-
-    /* — Meta-Pills im Lesson-Header: Geist-Mono-Outline statt Füllung — */
-    body.lesson-view-redesign .lesson-header-card .badge.bg-info,
-    body.lesson-view-redesign .lesson-header-card .badge.bg-secondary,
-    body.lesson-view-redesign .lesson-header-card .badge.bg-dark {
-        background: transparent !important;
-        color: var(--ink-700, #403B34) !important;
-        border: 1px solid var(--ink-200, #E4DED4);
-        border-radius: 999px;
-        font-family: 'Geist Mono', ui-monospace, monospace;
-        font-weight: 500;
-        font-size: 0.7rem;
-        letter-spacing: .02em;
-        padding: 5px 11px;
-    }
-
-    /* — Gast-Banner: einladende Gold/Kincha-Tönung statt Info-Blau — */
-    body.lesson-view-redesign #lessonGuestNudge .alert-info {
-        background: var(--gold-bg);
-        border: 1px solid var(--gold-line);
-        border-left: 1px solid var(--gold-line);
-        color: var(--gold-text);
-        border-radius: 12px;
-    }
-    body.lesson-view-redesign #lessonGuestNudge .alert-info i { color: var(--kincha, #C7802D); }
-    body.lesson-view-redesign #lessonGuestNudge .alert-info strong { color: var(--kon, #1F2A44); }
-    body.lesson-view-redesign #lessonGuestNudge .alert-link {
-        color: var(--shu-deep, #B84A00);
-        font-weight: 600;
-    }
 
     /* — Sidebar: aktive Seite = Shu (statt Indigo-Gradient), Balken = Matcha — */
     body.lesson-view-redesign .sidebar-progress-fill { background: var(--matcha, #7A9033); }
@@ -1273,167 +1048,573 @@ html.hide-front-romaji .front-romaji { display: none !important; }
         background: var(--kon, #1F2A44);
         border-color: var(--kon, #1F2A44);
     }
+
+    /* ════════════════════════════════════════════════════
+       Schablone D „Lektion" (docs/layout-standard.md §4 D, 2026-09-27)
+       Hülle .page.lv-page: Hauptspalte (Lesespalte --lv-prose, Medien,
+       Kana-Raster und Dialog bis --lv-main) + Seitenleiste ab 1024 px.
+       Nur Tokens aus layout.css/custom.css; Flächen über --surface-*.
+       Deck-Karussell-Invariante (custom.css .content-item.in-deck) bleibt
+       unberührt: hier wird nie display an .content-item gesetzt.
+       ════════════════════════════════════════════════════ */
+    .page.lv-page {
+        --lv-main: 960px;          /* Hauptspalte inkl. Medien-Ausbruch */
+        --lv-prose: 720px;         /* Lesespalte (680–760) */
+        --lv-aside: 280px;
+        --lv-nav-h: 61px;          /* Top-Nav 60 px + Haarlinie, klebt auf allen Grössen */
+        --lv-bar-h: 0px;
+        --lv-sticky: calc(var(--lv-nav-h) + var(--lv-bar-h));
+        max-width: calc(var(--lv-main) + 2 * var(--page-gutter));
+        padding-top: 0;
+    }
+    .page.lv-page.lv-page--paged { --lv-bar-h: 36px; }
+    @media (min-width: 1024px) {
+        .page.lv-page {
+            max-width: calc(var(--lv-main) + var(--space-8) + var(--lv-aside) + 2 * var(--page-gutter));
+        }
+    }
+    @media (min-width: 1024px) and (max-width: 1279px) {
+        .page.lv-page { --lv-aside: 248px; }
+    }
+    /* mobile-improvements.css nullt in der Lektionsansicht das Padding aller
+       Container-Kinder (!important) — die Hülle behält ihre 16-px-Rinne. */
+    body.lesson-view-redesign main.container > .page.lv-page {
+        padding-left: var(--page-gutter) !important;
+        padding-right: var(--page-gutter) !important;
+    }
+
+    /* Sprunganker (#page-N über goToPage, #content-<id>, Seitenwechsel):
+       landen unter Nav + Fortschrittsleiste statt darunter. */
+    .lv-page #lessonCarousel,
+    .lv-page [data-content-id],
+    .lv-page .content-deeplink-flash {
+        scroll-margin-top: calc(var(--lv-sticky) + var(--space-3));
+    }
+
+    /* ── Fortschrittsleiste „Seite N von M": sticky unter der Nav ── */
+    .lv-bar {
+        position: sticky;
+        top: var(--lv-nav-h);
+        z-index: 900;              /* unter Top-Nav (1000), Pager (1035), Modals */
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        height: var(--lv-bar-h);
+        margin: 0 calc(-1 * var(--page-gutter));
+        padding: 0 var(--page-gutter);
+        background: var(--surface-0);
+        border-bottom: 1px solid var(--surface-border);
+    }
+    /* main.container trägt ab 769 px mt-4 (24 px): Leiste direkt unter die Nav */
+    @media (min-width: 769px) {
+        .lv-bar { margin-top: calc(-1 * var(--space-6)); }
+    }
+    .lv-bar__track {
+        flex: 1 1 auto;
+        height: 6px;
+        border-radius: var(--radius-full, 9999px);
+        background: var(--surface-inset);
+        overflow: hidden;
+    }
+    .lv-bar__fill {
+        height: 100%;
+        background: var(--shu, #EB6101);
+        transition: width 0.3s ease;
+    }
+    .lv-bar__count {
+        flex: 0 0 auto;
+        font: 500 var(--text-xs)/1 'Geist Mono', ui-monospace, monospace;
+        font-variant-numeric: tabular-nums;
+        color: var(--text-muted, #6E675C);
+    }
+
+    /* ── Hauptspalte + Seitenleiste ── */
+    .lv-split {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        row-gap: var(--space-8);
+        align-items: start;
+    }
+    @media (min-width: 1024px) {
+        .lv-split {
+            grid-template-columns: minmax(0, 1fr) var(--lv-aside);
+            column-gap: var(--space-8);
+        }
+    }
+    .lv-main { min-width: 0; }
+
+    /* ── Seitenkopf: oben verankert, Aktion rechts ── */
+    .lv-head { margin: var(--space-4) 0; }
+    .lv-head .page-head__sub {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    .lv-head__count {
+        display: none;
+        padding: 0.4rem 0.75rem;
+        border: 1px solid var(--surface-border);
+        border-radius: var(--radius-full, 9999px);
+        font: 500 var(--text-xs)/1 'Geist Mono', ui-monospace, monospace;
+        font-variant-numeric: tabular-nums;
+        color: var(--text-muted, #6E675C);
+        white-space: nowrap;
+    }
+    .lv-resume {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+    }
+    @media (min-width: 768px) {
+        .lv-head { margin: var(--space-6) 0; }
+        .lv-head .page-head__sub { -webkit-line-clamp: unset; display: block; }
+        .lv-head__count { display: inline-block; }
+    }
+
+    /* ── Seiten als wischbare Chips (< 1024 px; ab 1024 in der Seitenleiste) ── */
+    .lv-chips {
+        display: flex;
+        gap: var(--space-2);
+        overflow-x: auto;
+        scroll-snap-type: x proximity;
+        scrollbar-width: none;
+        margin: 0 calc(-1 * var(--page-gutter)) var(--space-4);
+        padding: 2px var(--page-gutter) var(--space-1);
+    }
+    .lv-chips::-webkit-scrollbar { display: none; }
+    .lv-chip {
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+        min-height: 44px;
+        max-width: 15rem;
+        padding: 0 var(--space-3) 0 var(--space-2);
+        border: 1px solid var(--surface-border);
+        border-radius: var(--radius-full, 9999px);
+        background: var(--surface-1);
+        color: var(--text-color);
+        font-size: var(--text-sm);
+        font-weight: 500;
+        white-space: nowrap;
+        scroll-snap-align: start;
+        cursor: pointer;
+    }
+    .lv-chip__num {
+        flex: 0 0 auto;
+        width: 26px;
+        height: 26px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: var(--surface-inset);
+        font: 600 var(--text-xs)/1 'Geist Mono', ui-monospace, monospace;
+    }
+    .lv-chip__title { overflow: hidden; text-overflow: ellipsis; }
+    .lv-chip.is-active {
+        border-color: var(--shu, #EB6101);
+        background: rgba(235, 97, 1, .07);
+        color: var(--kon, #1F2A44);
+    }
+    .lv-chip.is-active .lv-chip__num { background: var(--shu, #EB6101); color: #fff; }
+    .lv-chip:focus-visible { outline: 2px solid var(--shu, #EB6101); outline-offset: 2px; }
+    [data-theme="dark"] .lv-chip.is-active { color: var(--text-color); }
+    @media (min-width: 1024px) {
+        .lv-chips { display: none; }
+    }
+
+    /* ── Einführungsvideo als Abschnitt statt Karte ── */
+    .lv-video { margin-bottom: var(--space-6); max-width: var(--lv-prose); }
+    .lv-section-title {
+        margin: 0 0 var(--space-3);
+        font: 560 var(--text-lg)/1.25 'Geist', 'Inter', sans-serif;
+        letter-spacing: -0.02em;
+        color: var(--kon, #1F2A44);
+    }
+
+    /* ── Lesefläche: EINE Fläche, Inhaltsblöcke als Abschnitte ──
+       Mobil ohne Fläche (Inhalt direkt auf der Seite, 16-px-Rinne). */
+    body.lesson-view-redesign .lv-read {
+        margin: 0;
+        color: var(--text-color);
+    }
+    @media (min-width: 768px) {
+        body.lesson-view-redesign .lv-read {
+            background: var(--surface-1);
+            border: 1px solid var(--surface-border);
+            border-radius: var(--radius-lg, 16px);
+            box-shadow: var(--shadow-1);
+            padding: var(--space-6);
+        }
+    }
+    @media (min-width: 1280px) {
+        body.lesson-view-redesign .lv-read { padding: var(--space-6) var(--space-8) var(--space-8); }
+    }
+    body.lesson-view-redesign #lessonCarousel .carousel-item .page-container {
+        padding: 0 !important;
+        min-height: 0;
+    }
+    /* Lesespalte: alle Blöcke einer Seite höchstens --lv-prose breit … */
+    body.lesson-view-redesign .lv-read .page-container > * { max-width: var(--lv-prose); }
+    /* … Kana-Raster, Dialog-Slideshow und Video dürfen bis --lv-main ausbrechen. */
+    body.lesson-view-redesign .lv-read .page-container > .content-item:has(.kana-grid-game, .dialog-slideshow, .ratio) {
+        max-width: none;
+    }
+    /* Dialog-Bild füllt die Bühne (custom.css deckelt Inhaltsbilder auf 650 px
+       → schwarze Ränder in der breiten Bühne). */
+    body.lesson-view-redesign .lv-read .dialog-slideshow .slideshow-slide img {
+        width: 100% !important;
+        max-width: 100% !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+    }
+    /* custom.css erlaubt Inhaltsbildern zwischen 769 und 1199 px bis 750 px —
+       breiter als die Spalte (Tablet, 1024 mit Seitenleiste) → rechts abgeschnitten. */
+    @media (min-width: 769px) and (max-width: 1199px) {
+        body.lesson-view-redesign .lv-read .content-item img { max-width: 100% !important; }
+    }
+    /* Seitentitel/-beschreibung: linksbündig wie der Text (Bootstrap .text-center ist !important) */
+    body.lesson-view-redesign .lv-read .page-title {
+        text-align: left !important;
+        margin: 0 0 var(--space-2) !important;
+        font: 560 1.25rem/1.25 'Geist', 'Inter', sans-serif !important;
+        letter-spacing: -0.02em;
+        color: var(--kon, #1F2A44);
+    }
+    body.lesson-view-redesign .lv-read .page-description {
+        text-align: left !important;
+        margin: 0 0 var(--space-6) !important;
+        font-size: var(--text-sm) !important;
+        color: var(--text-muted, #6E675C) !important;
+    }
+    @media (min-width: 768px) {
+        body.lesson-view-redesign .lv-read .page-title { font-size: var(--text-xl) !important; }
+    }
+    /* Inhaltsblöcke: keine Karte mehr (Rahmen/Grund/Schatten/Innenabstand aus
+       Bootstrap-Utilities + custom.css), Abstand + Überschrift trennen. */
+    body.lesson-view-redesign .lv-read .page-container .content-item[data-content-id] {
+        background: transparent !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 0 var(--space-8) !important;
+    }
+    body.lesson-view-redesign .lv-read .page-container .content-item[data-content-id]:hover { box-shadow: none !important; }
+    /* Deck: bündig mit der Lesespalte; Kopf als Leiste statt Kasten */
+    body.lesson-view-redesign .lv-read .deck-container {
+        max-width: var(--lv-prose);
+        margin: 0 0 var(--space-8);
+    }
+    body.lesson-view-redesign .lv-read .deck-header {
+        background: transparent;
+        border: 0;
+        border-bottom: 1px solid var(--surface-border);
+        border-radius: 0;
+        padding: 0 0 var(--space-3);
+    }
+    /* Quiz: die Gruppe ist die Karte (echte Einheit), Fragen darin flach;
+       einzelne Quizfragen ohne Gruppe bleiben Karten. */
+    body.lesson-view-redesign .lv-read .quiz-carousel-container {
+        background: var(--surface-1) !important;
+        border: 1px solid var(--surface-border) !important;
+        border-radius: var(--radius-lg, 16px) !important;
+        box-shadow: var(--shadow-1) !important;
+        padding: var(--space-4) !important;
+        margin-bottom: var(--space-8) !important;
+    }
+    body.lesson-view-redesign .lv-read .quiz-question {
+        background: var(--surface-1);
+        border-color: var(--surface-border);
+    }
+    body.lesson-view-redesign .lv-read .quiz-carousel-container .quiz-question {
+        background: transparent;
+        border: 0;
+        padding: 0;
+    }
+    /* Textblock: kein Kasten in der Fläche (custom.css: Washi-Grund + 24 px Innenabstand) */
+    body.lesson-view-redesign .lv-read .text-content-container {
+        background: transparent;
+        border-radius: 0;
+        padding: 0;
+    }
+    /* Block-Player: Bedienfeld als Mulde, nicht als Karte in der Fläche */
+    body.lesson-view-redesign .lv-read .custom-audio-player {
+        background: var(--surface-inset);
+        border: 0;
+    }
+    body.lesson-view-redesign .lv-read .page-container > .lesson-page-report,
+    body.lesson-view-redesign .lv-read .page-container > .text-center.border-top {
+        text-align: left !important;
+    }
+
+    /* ── Pager unter der Fläche (Desktop): Leiste statt schwebender Karte ── */
+    @media (min-width: 992px) {
+        body.lesson-view-redesign .lv-main .lesson-navigation-bottom {
+            background: transparent;
+            border: 0;
+            box-shadow: none;
+            padding: var(--space-4) 0 0;
+            margin-top: 0;
+        }
+    }
+
+    /* ── „Was kommt als Nächstes": Abschnitt, die Links sind die Karten ── */
+    body.lesson-view-redesign .lv-main .next-up-block {
+        background: transparent;
+        border: 0;
+        border-radius: 0;
+        padding: var(--space-8) 0 0;
+    }
+
+    /* ── Seitenleiste: Seiten, Fortschritt, Meta, Aktionen ── */
+    .lv-aside { min-width: 0; }
+    .lv-aside__inner { display: flex; flex-direction: column; }
+    .lv-aside__section + .lv-aside__section {
+        margin-top: var(--space-6);
+        padding-top: var(--space-6);
+        border-top: 1px solid var(--surface-border);
+    }
+    /* Seitenliste + Vorschaubild nur mit Seitenleiste; mobil stehen die
+       Seiten oben als Chips, die Leiste folgt nach dem Inhalt. */
+    .lv-aside__pages,
+    .lv-aside__thumb { display: none; }
+    .lv-aside__pages + .lv-aside__section { margin-top: 0; padding-top: 0; border-top: 0; }
+    @media (min-width: 1024px) {
+        .lv-aside {
+            position: sticky;
+            top: calc(var(--lv-sticky) + var(--space-4));
+            align-self: start;
+        }
+        .lv-aside__inner {
+            max-height: calc(100vh - var(--lv-sticky) - var(--space-8));
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            scrollbar-width: thin;
+            padding: var(--space-1) var(--space-1) var(--space-2) 0;
+        }
+        .lv-aside__pages { display: block; }
+        .lv-aside__pages + .lv-aside__section {
+            margin-top: var(--space-6);
+            padding-top: var(--space-6);
+            border-top: 1px solid var(--surface-border);
+        }
+        .lv-aside__thumb { display: block; }
+    }
+    .lv-aside__head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: var(--space-3);
+        margin-bottom: var(--space-2);
+    }
+    .lv-aside__title {
+        margin: 0 0 var(--space-3);
+        font: 600 var(--text-xs)/1.2 'Geist', 'Inter', sans-serif;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-muted, #6E675C);
+    }
+    .lv-aside__head .lv-aside__title { margin: 0; }
+    .lv-aside__count {
+        font: 500 var(--text-xs)/1 'Geist Mono', ui-monospace, monospace;
+        font-variant-numeric: tabular-nums;
+        color: var(--text-muted, #6E675C);
+    }
+    .lv-aside__note {
+        margin: var(--space-2) 0 0;
+        font-size: var(--text-sm);
+        color: var(--text-muted, #6E675C);
+    }
+    .lv-aside__thumb {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        object-fit: cover;
+        border-radius: var(--radius-md, 12px);
+        margin-bottom: var(--space-3);
+    }
+    .lv-aside .sidebar-progress-bar { margin: 0 0 var(--space-3); }
+    .lv-aside .sidebar-pages { display: flex; flex-direction: column; gap: 2px; }
+    .lv-aside .sidebar-page-item {
+        min-height: 40px;
+        padding: 0.45rem 0.6rem;
+        border-left: 0;
+        border-radius: var(--radius-sm, 8px);
+    }
+    body.lesson-view-redesign .lv-aside .sidebar-page-item.active,
+    body.lesson-view-redesign .lv-aside .sidebar-page-item:hover { border-left: 0; }
+    .lv-aside .sidebar-page-item:focus-visible { outline: 2px solid var(--shu, #EB6101); outline-offset: 1px; }
+    .lv-aside .sidebar-page-num { margin-right: 0.6rem; }
+    .lv-aside .sidebar-nav-buttons {
+        padding: var(--space-3) 0 0;
+        border-top: 0;
+    }
+    .lv-aside .sidebar-nav-btn { min-height: 40px; }
+    .lv-meta { margin: 0; display: grid; gap: var(--space-2); }
+    .lv-meta > div {
+        display: flex;
+        justify-content: space-between;
+        gap: var(--space-3);
+        font-size: var(--text-sm);
+    }
+    .lv-meta dt { font-weight: 500; color: var(--text-muted, #6E675C); }
+    .lv-meta dd { margin: 0; text-align: right; color: var(--text-color); }
+    .lv-meta a { color: var(--ai, #264F7E); }
+    .lv-meta a:hover { color: var(--shu, #EB6101); }
+    .lv-actions { display: flex; flex-direction: column; gap: var(--space-1); }
+    .lv-action {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        min-height: 44px;
+        padding: 0 var(--space-3);
+        margin: 0 calc(-1 * var(--space-3));
+        border-radius: var(--radius-md, 12px);
+        color: var(--kon, #1F2A44);
+        font-size: var(--text-sm);
+        font-weight: 500;
+        text-decoration: none;
+    }
+    .lv-action:hover { background: rgba(235, 97, 1, .06); color: var(--shu-deep, #B84A00); text-decoration: none; }
+    .lv-action i { width: 1.1rem; text-align: center; color: var(--shu, #EB6101); }
+    .lv-action--quiet, .lv-action--quiet i { color: var(--text-muted, #6E675C); }
+    [data-theme="dark"] .lv-action { color: var(--text-color); }
+    [data-theme="dark"] .lv-action--quiet { color: var(--text-muted); }
+    .lv-guest {
+        margin-top: var(--space-3);
+        padding: var(--space-4);
+        border: 1px solid var(--gold-line);
+        border-radius: var(--radius-md, 12px);
+        background: var(--gold-bg);
+        color: var(--gold-text);
+        font-size: var(--text-sm);
+    }
+    .lv-guest p { margin: 0 0 var(--space-3); }
+    .lv-guest strong { color: var(--kon, #1F2A44); }
+    .lv-guest .btn { min-height: 44px; display: inline-flex; align-items: center; }
+    .lv-guest__login {
+        display: inline-flex;
+        align-items: center;
+        min-height: 44px;
+        margin-left: var(--space-3);
+        color: var(--shu-deep, #B84A00);
+        font-weight: 600;
+    }
+
+    /* ── Mobil: Touch-Ziele ≥ 44 px, Lesetext 1 rem, Medien volle Breite ── */
+    @media (max-width: 767px) {
+        body.lesson-view-redesign .lv-read .rich-text-content p,
+        body.lesson-view-redesign .lv-read .rich-text-content li {
+            font-size: 1rem !important;
+        }
+        body.lesson-view-redesign .lv-read .mark-complete-btn,
+        body.lesson-view-redesign .lv-read .question-actions .btn,
+        body.lesson-view-redesign .lv-read .quiz-carousel-container .btn,
+        body.lesson-view-redesign .lv-read .deck-header .btn {
+            min-height: 44px;
+        }
+        body.lesson-view-redesign .lv-read .quiz-question .form-check {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            min-height: 44px;
+            padding-left: 0;
+        }
+        body.lesson-view-redesign .lv-read .quiz-question .form-check .form-check-input {
+            float: none;
+            flex: 0 0 auto;
+            margin: 0;
+        }
+        body.lesson-view-redesign .lv-read .quiz-question .form-check-label { flex: 1 1 auto; padding: 0.4rem 0; }
+        body.lesson-view-redesign .lv-read .lesson-page-report-link { min-height: 44px; }
+        body.lesson-view-redesign .lv-read .custom-audio-player,
+        body.lesson-view-redesign .lv-read .dialog-slideshow,
+        body.lesson-view-redesign .lv-read .text-audio-player audio { width: 100%; max-width: none !important; }
+        .lesson-navigation-bottom .nav-btn { min-height: 44px; }
+    }
 </style>
-<!-- Mobile sidebar overlay -->
-<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-
-<!-- Mobile sidebar toggle button -->
-<button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()" title="Seitenübersicht">
-    <i class="fas fa-list"></i>
-</button>
-
-<div class="lesson-layout">
-    <!-- Left Sidebar Navigation -->
-    {% if lesson.pages and lesson.pages|length > 1 %}
-    <nav class="lesson-sidebar" id="lessonSidebar">
-        <div class="sidebar-header">
-            <h6><i class="fas fa-book-open"></i> Seitenübersicht</h6>
+{#- ══ Schablone D „Lektion" (docs/layout-standard.md §4 D) ══════════════════
+   .page.lv-page     Hülle: Hauptspalte (Lesespalte 720 px, Medien bis ~960 px)
+                     + Seitenleiste rechts ab 1024 px.
+   .lv-bar           schmale Fortschrittsleiste „Seite N von M", sticky unter der Nav.
+   .page-head        Modul-Kennzeile, Titel, Untertitel, „Weiter bei Seite N".
+   .lv-chips         mobil/Tablet (< 1024): Seiten als wischbare Chip-Zeile.
+   .lv-read          EINE Fläche mit den Seiten (Carousel) — Inhaltsblöcke sind
+                     Abschnitte mit Überschrift, Karten nur für echte Einheiten
+                     (Vokabelkarte im Deck, Quiz).
+   .lv-aside         Seiten 1..N, Fortschritt, Lektionsmeta, Aktionen; mobil nach
+                     dem Inhalt (ohne Seitenliste, die steht oben als Chips).
+   JS-Hooks (#lessonCarousel, .carousel-item, .sidebar-page-item, #lessonSidebar,
+   #sidebarPrev/#sidebarNext, #lessonProgressBlock, #lessonGuestNudge,
+   #lessonHeroIntro) bleiben erhalten. -#}
+{% set _lv_pages = lesson.pages or [] %}
+{% set _lv_total = _lv_pages|length %}
+{% set _lv_dialog_ids = [] %}
+{% for _p in _lv_pages %}{% for _c in _p.content %}{% if _c.content_type == 'dialog_slideshow' %}{% set _ = _lv_dialog_ids.append(_c.id) %}{% endif %}{% endfor %}{% endfor %}
+{% set _lv_resume = progress.last_page if (progress and progress.last_page and 1 < progress.last_page <= _lv_total) else None %}
+<div class="page lv-page{% if _lv_total > 1 %} lv-page--paged{% endif %}" id="lessonPage">
+    {% if _lv_total > 1 %}
+    <div class="lv-bar" id="lessonProgressBar">
+        <div class="lv-bar__track" role="progressbar" aria-label="Seitenfortschritt"
+             aria-valuemin="1" aria-valuemax="{{ _lv_total }}" aria-valuenow="1" id="lvBarTrack">
+            <div class="lv-bar__fill" id="lvBarFill" style="width: {{ (100 / _lv_total)|round(1) }}%"></div>
         </div>
-        <div class="sidebar-progress">
-            <div class="sidebar-progress-text">
-                <span id="sidebarPageCounter">Seite 1 von {{ lesson.pages|length }}</span>
-            </div>
-            <div class="sidebar-progress-bar">
-                <div class="sidebar-progress-fill" id="sidebarProgressFill" style="width: {{ (100 / lesson.pages|length)|round(1) }}%"></div>
-            </div>
-        </div>
-        <ul class="sidebar-pages" id="sidebarPages">
-            {% for page in lesson.pages %}
-            {% set page_content_count = page.content|length %}
-            {% if current_user.is_authenticated and progress %}
-                {% set content_progress = progress.get_content_progress() %}
-                {% set completed_content_ids = [] %}
-                {% for content in page.content %}
-                    {% if content_progress.get(content.id|string) == true or content_progress.get(content.id) == true %}
-                        {% if completed_content_ids.append(content.id) %}{% endif %}
-                    {% endif %}
-                {% endfor %}
-                {% set completed_content_count = completed_content_ids|length %}
-            {% else %}
-                {% set completed_content_count = 0 %}
-            {% endif %}
-            <li class="sidebar-page-item{% if loop.first %} active{% endif %}"
-                onclick="goToPage({{ loop.index0 }})" data-page="{{ loop.index0 }}">
-                <span class="sidebar-page-num">{{ loop.index }}</span>
-                <span class="sidebar-page-title">{{ page.metadata.title or (page.content[0].title if page.content else 'Seite ' ~ loop.index) }}</span>
-                {% if current_user.is_authenticated and completed_content_count == page_content_count and page_content_count > 0 %}
-                <span class="sidebar-page-check"><i class="fas fa-check-circle"></i></span>
-                {% endif %}
-            </li>
-            {% endfor %}
-        </ul>
-        <div class="sidebar-nav-buttons">
-            <button class="sidebar-nav-btn" id="sidebarPrev" onclick="previousPage()" disabled>
-                <i class="fas fa-chevron-left"></i> Zurück
-            </button>
-            <button class="sidebar-nav-btn" id="sidebarNext" onclick="nextPage()">
-                Weiter <i class="fas fa-chevron-right"></i>
-            </button>
-        </div>
-    </nav>
+        <span class="lv-bar__count" id="pageCounterBar">Seite 1 von {{ _lv_total }}</span>
+    </div>
     {% endif %}
 
-    <!-- Main Content Area -->
-    <div class="lesson-main-content">
-            <div class="card lesson-header-card mb-4">
-                <div class="card-body">
-                    <div class="row" id="lessonHeroIntro">
-                        <div class="col-md-8">
-                            <h1 class="card-title">{{ lesson.title }}</h1>
-                            <p class="card-text">{{ lesson.description or 'Keine Beschreibung verfügbar.' }}</p>
-                            
-                            <div class="d-flex flex-wrap gap-2 mb-3">
-                                {% if lesson.category %}
-                                <span class="badge bg-info">{{ lesson.category.name }}</span>
-                                {% endif %}
-                                {% if lesson.difficulty_level %}
-                                <span class="badge bg-secondary">Schwierigkeit: {{ lesson.difficulty_level }}/5</span>
-                                {% endif %}
-                                {% if lesson.estimated_duration %}
-                                <span class="badge bg-dark">{{ lesson.estimated_duration }} Min.</span>
-                                {% endif %}
-                            </div>
-                            {# Hinweis-/Feedback-Bruecke: Fehler in dieser Lektion melden (oeffentliches Issue-Board) #}
-                            <a href="{{ url_for('issues.new_issue', content_type='lesson', content_id=lesson.id) }}"
-                               class="text-muted small d-inline-flex align-items-center gap-1"
-                               style="text-decoration:none;">
-                              <i class="fas fa-flag" aria-hidden="true"></i> Fehler in dieser Lektion melden
-                            </a>
-                        </div>
-                        <div class="col-md-4">
-                            {% if lesson.get_thumbnail_url() %}
-                            <img src="{{ lesson.get_thumbnail_url() }}" class="img-fluid rounded" alt="{{ lesson.title }}">
-                            {% endif %}
-                        </div>
-                    </div>
-                    
-                    {% if current_user.is_authenticated %}
-                        {% if progress %}
-                        <div class="mt-3" id="lessonProgressBlock">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <h2 class="mb-0 h6">Dein Fortschritt</h2>
-                                <span class="text-muted">{{ progress.progress_percentage }}%</span>
-                            </div>
-                            <div class="progress mb-2">
-                                <div class="progress-bar" role="progressbar" 
-                                     style="width: {{ progress.progress_percentage }}%" 
-                                     aria-valuenow="{{ progress.progress_percentage }}" 
-                                     aria-valuemin="0" aria-valuemax="100">
-                                </div>
-                            </div>
-                            <div class="row text-center">
-                                {% if progress.time_spent %}
-                                <div class="col">
-                                    <small class="text-muted">Zeit: {{ progress.time_spent }} Minuten</small>
-                                </div>
-                                {% endif %}
-                                {% if progress.started_at %}
-                                <div class="col">
-                                    <small class="text-muted">Gestartet: {{ progress.started_at.strftime('%Y-%m-%d') }}</small>
-                                </div>
-                                {% endif %}
-                                {% if progress.completed_at %}
-                                <div class="col">
-                                    <small class="text-success">Abgeschlossen: {{ progress.completed_at.strftime('%Y-%m-%d') }}</small>
-                                </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                        {% endif %}
-                    {% else %}
-                        <div class="mt-3" id="lessonGuestNudge">
-                            <div class="alert alert-info">
-                                <i class="fas fa-info-circle"></i>
-                                <strong>Gast-Zugang:</strong> Du siehst diese Lektion als Gast.
-                                <a href="{{ url_for('routes.register') }}" class="alert-link">Konto erstellen</a>
-                                oder <a href="{{ url_for('routes.login') }}" class="alert-link">anmelden</a>,
-                                um deinen Fortschritt zu speichern und Quiz freizuschalten.
-                            </div>
-                        </div>
-                    {% endif %}
-                </div>
+    <div class="lv-split">
+    <div class="lv-main lesson-main-content">
+        <header class="page-head lv-head">
+            <div class="page-head__text">
+                {% if lesson.category %}
+                <span class="page-head__eyebrow">{{ lesson.category.name }}</span>
+                {% endif %}
+                <h1 class="page-head__title" id="page-title">{{ lesson.title }}</h1>
+                {% if lesson.description %}
+                <p class="page-head__sub lv-head__sub" id="lessonHeroIntro">{{ lesson.description }}</p>
+                {% endif %}
             </div>
-
-            {% if lesson.video_intro_url %}
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h2 class="mb-0 h5">Einführungsvideo</h2>
-                </div>
-                <div class="card-body">
-                    <div class="ratio ratio-16x9">
-                        <iframe src="{{ lesson.video_intro_url | to_embed_url }}" allowfullscreen></iframe>
-                    </div>
-                </div>
+            {% if _lv_total > 1 %}
+            <div class="page-head__actions">
+                {% if _lv_resume %}
+                <button type="button" class="btn btn-primary lv-resume" id="lessonResumeBtn"
+                        onclick="goToPage({{ _lv_resume - 1 }})">
+                    Weiter bei Seite {{ _lv_resume }} <i class="fas fa-arrow-right ms-1" aria-hidden="true"></i>
+                </button>
+                {% endif %}
+                <span class="lv-head__count" id="pageCounterHead">Seite 1 von {{ _lv_total }}</span>
             </div>
             {% endif %}
+        </header>
 
-            <!-- Navigation is now in the left sidebar -->
+        {% if _lv_total > 1 %}
+        <nav class="lv-chips" id="lessonPageChips" aria-label="Seiten der Lektion">
+            {% for page in _lv_pages %}
+            {% set _t = page.metadata.title or (page.content[0].title if page.content else 'Seite ' ~ loop.index) %}
+            <button type="button" class="lv-chip{% if loop.first %} is-active{% endif %}" data-page="{{ loop.index0 }}"
+                    onclick="goToPage({{ loop.index0 }})"{% if loop.first %} aria-current="step"{% endif %}
+                    aria-label="Seite {{ loop.index }}: {{ _t }}">
+                <span class="lv-chip__num">{{ loop.index }}</span>
+                <span class="lv-chip__title">{{ _t }}</span>
+            </button>
+            {% endfor %}
+        </nav>
+        {% endif %}
 
-            <div class="card lesson-content-card">
-                <div class="card-header">
-                    <h2 class="mb-0 h5">Lektions-Inhalt</h2>
+            {% if lesson.video_intro_url %}
+            <section class="lv-video" aria-labelledby="lvVideoTitle">
+                <h2 class="lv-section-title" id="lvVideoTitle">Einführungsvideo</h2>
+                <div class="ratio ratio-16x9">
+                    <iframe src="{{ lesson.video_intro_url | to_embed_url }}" allowfullscreen></iframe>
                 </div>
-                <div class="card-body">
+            </section>
+            {% endif %}
+
+            <section class="lesson-content-card lv-read" aria-label="Lektions-Inhalt">
+                <div class="lv-read__body">
                     {% if lesson.pages %}
                         <div id="lessonCarousel" class="carousel slide" data-bs-interval="false">
                             <div class="carousel-inner">
@@ -2288,7 +2469,7 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                         </div>
                     {% endif %}
                 </div>
-            </div>
+            </section>
 
             <!-- Enhanced Bottom Navigation -->
             {% if lesson.pages and lesson.pages|length > 1 %}
@@ -2488,8 +2669,130 @@ html.hide-front-romaji .front-romaji { display: none !important; }
                     {% endif %}
                 </div>
             </div>
-    </div><!-- /lesson-main-content -->
-</div><!-- /lesson-layout -->
+    </div><!-- /lv-main -->
+
+    <aside class="lv-aside" aria-label="Lektionsübersicht">
+        <div class="lv-aside__inner">
+        {% if _lv_total > 1 %}
+        <nav class="lv-aside__section lv-aside__pages" id="lessonSidebar" aria-label="Seitenübersicht">
+            <div class="lv-aside__head">
+                <h2 class="lv-aside__title">Seiten</h2>
+                <span class="lv-aside__count" id="sidebarPageCounter">Seite 1 von {{ _lv_total }}</span>
+            </div>
+            <div class="sidebar-progress-bar" aria-hidden="true">
+                <div class="sidebar-progress-fill" id="sidebarProgressFill" style="width: {{ (100 / _lv_total)|round(1) }}%"></div>
+            </div>
+            <ul class="sidebar-pages" id="sidebarPages">
+                {% for page in _lv_pages %}
+                {% set page_content_count = page.content|length %}
+                {% if current_user.is_authenticated and progress %}
+                    {% set content_progress = progress.get_content_progress() %}
+                    {% set completed_content_ids = [] %}
+                    {% for content in page.content %}
+                        {% if content_progress.get(content.id|string) == true or content_progress.get(content.id) == true %}
+                            {% if completed_content_ids.append(content.id) %}{% endif %}
+                        {% endif %}
+                    {% endfor %}
+                    {% set completed_content_count = completed_content_ids|length %}
+                {% else %}
+                    {% set completed_content_count = 0 %}
+                {% endif %}
+                <li class="sidebar-page-item{% if loop.first %} active{% endif %}" role="button" tabindex="0"
+                    onclick="goToPage({{ loop.index0 }})"
+                    onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.stopPropagation(); goToPage({{ loop.index0 }}); }"
+                    data-page="{{ loop.index0 }}"{% if loop.first %} aria-current="step"{% endif %}>
+                    <span class="sidebar-page-num">{{ loop.index }}</span>
+                    <span class="sidebar-page-title">{{ page.metadata.title or (page.content[0].title if page.content else 'Seite ' ~ loop.index) }}</span>
+                    {% if current_user.is_authenticated and completed_content_count == page_content_count and page_content_count > 0 %}
+                    <span class="sidebar-page-check"><i class="fas fa-check-circle"></i></span>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+            <div class="sidebar-nav-buttons">
+                <button type="button" class="sidebar-nav-btn" id="sidebarPrev" onclick="previousPage()" disabled>
+                    <i class="fas fa-chevron-left" aria-hidden="true"></i> Zurück
+                </button>
+                <button type="button" class="sidebar-nav-btn" id="sidebarNext" onclick="nextPage()">
+                    Weiter <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                </button>
+            </div>
+        </nav>
+        {% endif %}
+
+        {% if current_user.is_authenticated and progress %}
+        <section class="lv-aside__section" id="lessonProgressBlock" aria-labelledby="lvProgressTitle">
+            <div class="lv-aside__head">
+                <h2 class="lv-aside__title" id="lvProgressTitle">Dein Fortschritt</h2>
+                <span class="lv-aside__count" id="lessonProgressPct">{{ progress.progress_percentage }}%</span>
+            </div>
+            <div class="progress" style="height: 6px;">
+                <div class="progress-bar" role="progressbar"
+                     style="width: {{ progress.progress_percentage }}%"
+                     aria-label="Lektionsfortschritt"
+                     aria-valuenow="{{ progress.progress_percentage }}"
+                     aria-valuemin="0" aria-valuemax="100">
+                </div>
+            </div>
+            {% if progress.completed_at %}
+            <p class="lv-aside__note text-success">Abgeschlossen am {{ progress.completed_at.strftime('%d.%m.%Y') }}</p>
+            {% elif progress.started_at %}
+            <p class="lv-aside__note">Begonnen am {{ progress.started_at.strftime('%d.%m.%Y') }}{% if progress.time_spent %} · {{ progress.time_spent }} Min.{% endif %}</p>
+            {% endif %}
+        </section>
+        {% endif %}
+
+        <section class="lv-aside__section" aria-labelledby="lvMetaTitle">
+            <h2 class="lv-aside__title" id="lvMetaTitle">Über die Lektion</h2>
+            {% if lesson.get_thumbnail_url() %}
+            <img src="{{ lesson.get_thumbnail_url() }}" class="lv-aside__thumb" alt="{{ lesson.title }}" loading="lazy">
+            {% endif %}
+            <dl class="lv-meta">
+                {% if lesson.category %}
+                <div><dt>Modul</dt><dd>{% if parent_module and parent_module.slug and parent_module.jlpt_level %}<a href="{{ url_for('routes.module_detail', level=parent_module.jlpt_level, slug=parent_module.slug) }}">{{ lesson.category.name }}</a>{% else %}{{ lesson.category.name }}{% endif %}</dd></div>
+                {% endif %}
+                {% if lesson.category and lesson.category.jlpt_level %}
+                <div><dt>JLPT</dt><dd>N{{ lesson.category.jlpt_level }}</dd></div>
+                {% endif %}
+                {% if lesson.estimated_duration %}
+                <div><dt>Dauer</dt><dd>{{ lesson.estimated_duration }} Min.</dd></div>
+                {% endif %}
+                {% if lesson.difficulty_level %}
+                <div><dt>Schwierigkeit</dt><dd>{{ lesson.difficulty_level }}/5</dd></div>
+                {% endif %}
+                {% if _lv_total %}
+                <div><dt>Seiten</dt><dd>{{ _lv_total }}</dd></div>
+                {% endif %}
+            </dl>
+        </section>
+
+        <section class="lv-aside__section lv-actions" aria-labelledby="lvActionsTitle">
+            <h2 class="lv-aside__title" id="lvActionsTitle">Aktionen</h2>
+            {% if current_user.is_authenticated %}
+            <a class="lv-action" href="{{ url_for('srs.review_page') }}">
+                <i class="fas fa-rotate-right" aria-hidden="true"></i><span>Karten wiederholen</span>
+            </a>
+            {% if roleplay_enabled and _lv_dialog_ids %}
+            <a class="lv-action" href="{{ url_for('sprechen.play', content_id=_lv_dialog_ids[0]) }}">
+                <i class="fas fa-comments" aria-hidden="true"></i><span>Rollenspiel zum Dialog</span>
+            </a>
+            {% endif %}
+            {% endif %}
+            <a class="lv-action lv-action--quiet" href="{{ url_for('issues.new_issue', content_type='lesson', content_id=lesson.id) }}">
+                <i class="fas fa-flag" aria-hidden="true"></i><span>Fehler in dieser Lektion melden</span>
+            </a>
+            {% if not current_user.is_authenticated %}
+            <div class="lv-guest" id="lessonGuestNudge">
+                <p><strong>Gast-Zugang:</strong> Mit einem Konto speicherst du deinen Fortschritt und schaltest die Quiz frei.</p>
+                <a href="{{ url_for('routes.register') }}" class="btn btn-primary btn-sm">Konto erstellen</a>
+                <a href="{{ url_for('routes.login') }}" class="lv-guest__login">Anmelden</a>
+            </div>
+            {% endif %}
+        </section>
+        </div>
+    </aside>
+    </div><!-- /lv-split -->
+</div><!-- /lv-page -->
 
 <script>
 // Server-side data rendered by Jinja2
@@ -2822,13 +3125,13 @@ async function markContentComplete(contentId) {
             }
             
             // Update progress bar
-            const progressBar = document.querySelector('.progress-bar');
+            const progressBar = document.querySelector('#lessonProgressBlock .progress-bar');
             if (progressBar) {
                 progressBar.style.width = progress.progress_percentage + '%';
                 progressBar.setAttribute('aria-valuenow', progress.progress_percentage);
-                
+
                 // Update percentage text
-                const percentageText = document.querySelector('.progress').previousElementSibling?.querySelector('.text-muted');
+                const percentageText = document.getElementById('lessonProgressPct');
                 if (percentageText) {
                     percentageText.textContent = progress.progress_percentage + '%';
                 }
@@ -2911,6 +3214,15 @@ function initializeNavigation() {
             // serverseitig abschliessen (Slideshow/Audio/Einzelkarten etc.).
             maybeCompleteForUser();
         });
+        // Nach dem Seitenwechsel (z.B. „Weiter" unten auf der Seite) zum
+        // Seitenanfang: sonst steht man mitten in der neuen Seite. Landet dank
+        // scroll-margin-top unter Nav + Fortschrittsleiste.
+        carousel.addEventListener('slid.bs.carousel', function() {
+            const offset = parseFloat(getComputedStyle(carousel).scrollMarginTop) || 0;
+            if (carousel.getBoundingClientRect().top < offset - 4) {
+                carousel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
     }
 
     // Letzte Page beim Verlassen der Seite auch noch mitnehmen
@@ -2989,11 +3301,11 @@ async function completeRemainingPassive() {
         if (!response.ok) { passiveCompletionRequested = false; return; }
         const progress = await response.json();
         // Progress-Bar + Prozent-Label aktualisieren (analog markContentComplete).
-        const progressBar = document.querySelector('.progress-bar');
+        const progressBar = document.querySelector('#lessonProgressBlock .progress-bar');
         if (progressBar && typeof progress.progress_percentage === 'number') {
             progressBar.style.width = progress.progress_percentage + '%';
             progressBar.setAttribute('aria-valuenow', progress.progress_percentage);
-            const percentageText = document.querySelector('.progress')?.previousElementSibling?.querySelector('.text-muted');
+            const percentageText = document.getElementById('lessonProgressPct');
             if (percentageText) percentageText.textContent = progress.progress_percentage + '%';
         }
         if (progress.progress_percentage === 100) {
@@ -3228,56 +3540,82 @@ function updateNavigationUI() {
     if (prevBottom) prevBottom.disabled = currentPage === 0;
     if (nextBottom) nextBottom.disabled = currentPage === totalPages - 1;
 
-    // Update sidebar page list
+    // Fortschrittsleiste unter der Nav + Zähler im Seitenkopf
+    const label = `Seite ${currentPage + 1} von ${totalPages}`;
+    ['pageCounterBar', 'pageCounterHead'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = label;
+    });
+    const barFill = document.getElementById('lvBarFill');
+    if (barFill) barFill.style.width = progressPercentage + '%';
+    const barTrack = document.getElementById('lvBarTrack');
+    if (barTrack) {
+        barTrack.setAttribute('aria-valuenow', String(currentPage + 1));
+        barTrack.setAttribute('aria-valuetext', label);
+    }
+
+    // Update sidebar page list (+ mobile Seiten-Chips)
     updateSidebarPages();
 
-    // Hero-Karte (Titel/Bild/Beschreibung/Tags) nur auf Seite 1 zeigen — auf
-    // Folgeseiten ist sie redundant. Der Fortschritts-Balken bleibt sichtbar.
+    // Untertitel + „Weiter bei Seite N" nur auf Seite 1 — auf Folgeseiten
+    // beginnt der Inhalt direkt unter dem Titel.
     updateHeaderForPage();
 }
 
-// Steuert die Header-Karte abhaengig von der aktuellen Seite:
-//  - Seite 1: voller Hero (Titel/Bild/Beschreibung/Tags) + Fortschritt.
-//  - Seite 2+: Hero ausgeblendet, nur der schlanke Fortschritts-Balken bleibt.
-//  - Gast / kein Fortschritt: auf Seite 2+ verschwindet die ganze Karte,
-//    damit kein leerer Kasten stehen bleibt.
+// Seitenkopf abhaengig von der aktuellen Seite:
+//  - Seite 1: Untertitel (Beschreibung) + ggf. „Weiter bei Seite N".
+//  - Seite 2+: nur Kennzeile + Titel; Fortschritt steht in Leiste und Seitenleiste.
 function updateHeaderForPage() {
     const isFirst = currentPage === 0;
     const intro = document.getElementById('lessonHeroIntro');
-    const guest = document.getElementById('lessonGuestNudge');
-    const progress = document.getElementById('lessonProgressBlock');
-    const card = document.querySelector('.lesson-header-card');
-
+    const resume = document.getElementById('lessonResumeBtn');
     if (intro) intro.style.display = isFirst ? '' : 'none';
-    if (guest) guest.style.display = isFirst ? '' : 'none';
-
-    if (card) {
-        const hasProgress = !!progress; // Fortschritt bleibt auf allen Seiten sichtbar
-        card.style.display = (!isFirst && !hasProgress) ? 'none' : '';
-        card.classList.toggle('is-compact', !isFirst && hasProgress);
-    }
+    if (resume) resume.style.display = isFirst ? '' : 'none';
 }
 
+// Aktive Seite in Seitenleiste + Chip-Zeile markieren. Gescrollt wird nur
+// innerhalb der eigenen Liste (scrollIntoView würde auch das Fenster bewegen).
 function updateSidebarPages() {
-    const items = document.querySelectorAll('.sidebar-page-item');
-    items.forEach((item, index) => {
-        if (index === currentPage) {
-            item.classList.add('active');
-            // Scroll active item into view in sidebar
-            item.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    const scrollInto = (box, el, horizontal) => {
+        if (!box || !el || box.scrollHeight <= box.clientHeight && box.scrollWidth <= box.clientWidth) return;
+        const b = box.getBoundingClientRect(), r = el.getBoundingClientRect();
+        if (horizontal) {
+            if (r.left < b.left || r.right > b.right) {
+                box.scrollTo({ left: box.scrollLeft + (r.left - b.left) - (b.width - r.width) / 2, behavior: 'smooth' });
+            }
+        } else if (r.top < b.top || r.bottom > b.bottom) {
+            box.scrollTo({ top: box.scrollTop + (r.top - b.top) - (b.height - r.height) / 2, behavior: 'smooth' });
+        }
+    };
+    document.querySelectorAll('.sidebar-page-item').forEach((item, index) => {
+        const on = index === currentPage;
+        item.classList.toggle('active', on);
+        if (on) {
+            item.setAttribute('aria-current', 'step');
+            scrollInto(item.closest('.lv-aside__inner'), item, false);
         } else {
-            item.classList.remove('active');
+            item.removeAttribute('aria-current');
+        }
+    });
+    document.querySelectorAll('.lv-chip').forEach((chip, index) => {
+        const on = index === currentPage;
+        chip.classList.toggle('is-active', on);
+        if (on) {
+            chip.setAttribute('aria-current', 'step');
+            scrollInto(chip.parentElement, chip, true);
+        } else {
+            chip.removeAttribute('aria-current');
         }
     });
 }
 
+// Taste „O": Fokus auf die aktuelle Seite in der Seitenübersicht (Desktop:
+// Seitenleiste, mobil/Tablet: Chip-Zeile) — beide sind immer sichtbar.
 function toggleSidebar() {
-    const sidebar = document.getElementById('lessonSidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    if (sidebar && overlay) {
-        sidebar.classList.toggle('show');
-        overlay.classList.toggle('show');
-    }
+    const item = document.querySelector('.sidebar-page-item.active');
+    if (item && item.offsetParent !== null) { item.focus(); return; }
+    const chip = document.querySelector('.lv-chip.is-active');
+    if (chip) chip.focus();
 }
 
 function previousPage() {
@@ -3298,12 +3636,8 @@ function goToPage(pageIndex) {
     if (pageIndex >= 0 && pageIndex < totalPages) {
         const carousel = new bootstrap.Carousel(document.getElementById('lessonCarousel'));
         carousel.to(pageIndex);
-        // Close mobile sidebar if open
-        const sidebar = document.getElementById('lessonSidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-        if (sidebar) sidebar.classList.remove('show');
-        if (overlay) overlay.classList.remove('show');
-        // Scroll zum Carousel-Container statt ganz oben
+        // Scroll zum Carousel-Container statt ganz oben (scroll-margin-top hält
+        // ihn unter Nav + Fortschrittsleiste)
         const carouselEl = document.getElementById('lessonCarousel');
         if (carouselEl) {
             carouselEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -3364,7 +3698,7 @@ function showKeyboardHint() {
     if (!hint) {
         hint = document.createElement('div');
         hint.className = 'keyboard-hint';
-        hint.innerHTML = '← →: Blättern | Space/Enter: Karte umdrehen | 1–4: Bewerten | O: Sidebar';
+        hint.innerHTML = '← →: Blättern | Space/Enter: Karte umdrehen | 1–4: Bewerten | O: Seitenübersicht';
         document.body.appendChild(hint);
     }
     

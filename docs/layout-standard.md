@@ -144,6 +144,13 @@ Desktop                                      Handy
 └───────────────┴────────────────────┴──────┘ └──────────────┘
 ```
 Fliesstext höchstens `--container-prose`; Medien dürfen breiter sein.
+Umsetzung `/lessons/<id>` (Stile in `lesson_view.html`, Präfix `lv-`): Seitenleiste
+rechts ab 1024 px (Seiten, Fortschritt, Meta, Aktionen; sticky), Lesespalte 720 px,
+Kana-Raster/Dialog/Video bis 960 px; schmale Fortschrittsleiste „Seite N von M"
+sticky unter der Nav; Sprunganker (`#page-N`, `#content-<id>`) mit
+`scroll-margin-top` = Nav + Leiste. Mobil: Seiten als wischbare Chip-Zeile unter
+dem Seitenkopf, Seitenleiste (ohne Seitenliste) nach dem Inhalt, Lesefläche ohne
+Karte.
 
 ### E. Katalog (/lessons, /sprechen) — `.page--wide`
 
@@ -218,6 +225,7 @@ lag beim Messen der Willkommen-Dialog über der Seite.
 | `/lessons` | 1104, Chip-Leiste läuft rechts hinaus | 152 | nein | 91 / 0 | 3 | 1 | uneinheitlich: Hero-Karte + Filter + Raster ohne Seitenkopf | E Katalog |
 | `/lessons` nachher | 1440 (1270 bei 1366) | 118 (118) | nein | 57 / – | 4 | 0 | ok: Weiter-lernen-Hero, Filter, Modul-Leiste in der Rinne | E umgesetzt |
 | `/lessons/171` | 1679 (volle 1800) | 126 | nein | 65 / 0 | 2 | 7 | uneinheitlich: Lesetext ~1300 px breit, 7 verschachtelte Karten | D Lektion |
+| `/lessons/171` nachher² | Fläche 894, Lesespalte ≤ 720 (Text 686), Medien bis 894; Seitenleiste 276 | Titel 156, erster Block 403 (vorher 657; 1366: 763 → 403) | nein | – | 2 (Lesen · Seitenleiste) | 0 (vorher 9, Tiefe 4 → 1) | ok: Fortschrittsleiste sticky unter der Nav, Seitenkopf mit „Weiter bei Seite N", Seitenleiste sticky | D umgesetzt |
 | `/mein-lernen` | 1032 | 120 (98) | nein | 59 / 0 | 2 | 3 | ok, Breite eigen (1032) | B Dashboard (wide) |
 | `/mein-lernen` nachher | 1440 (1270) | 117 (117) | nein | 56 / – | Hero + 360er-Spalte, 3 Kacheln | 0 (Fortschritt vorher 5) | ok: Begrüssung = Seitenkopf mit Umschalter | B umgesetzt |
 | `/review` | 613 (Karte) | 94 | ja (1366) | 33 / 161 | 1 | 0 | schwebend: Karte mittig mit Leerraum ober- und unterhalb | C Spielansicht |
@@ -244,6 +252,7 @@ lag beim Messen der Willkommen-Dialog über der Seite.
 | `/lessons` | 277 (Hero-Bild zuerst) | ja (476) | Chip-Leiste scrollt | 24 px | Bild vor Titel verschiebt Beginn |
 | `/lessons` nachher | 94 | ja (327 eingeloggt / 281 Gast; 360 ebenso) | nein, Chips wischen in der Zeile | 16 px | Vorschaubild erst ab 768 |
 | `/lessons/171` | 82 | – | nein | 8 px | Rinne zu schmal, 6 verschachtelte Karten |
+| `/lessons/171` nachher² | Titel 148, erster Block 493 (vorher 851; 360: 950 → 493) | – | nein | 16 px | Lesetext 16 px, Seiten als Chips (44 px), Pager über der Bottom-Nav, 0 verschachtelte Karten (vorher 5) |
 | `/mein-lernen` | 85 | ja | nein | 16 px | ok |
 | `/mein-lernen` nachher | 111 | ja (627; 360: 646), erste Kachel ab ~660 | nein | 16 px | Hero kompakt |
 | `/review` | 74 | – (Karte = Aktion) | nein | 22/11 px | Rinne asymmetrisch |
@@ -259,6 +268,10 @@ lag beim Messen der Willkommen-Dialog über der Seite.
 
 ¹ Nachher-Werte gegen SQLite-Fixtures mit Gratis-Band gemessen (Nav + Band
 enden bei ~100 px, deshalb Beginn höher als in den Vorher-Zeilen).
+² Gast, Prod-DB read-only; Titel steht 30 px tiefer als vorher, weil die
+Fortschrittsleiste (36 px) darüber liegt. Karten-in-Karten gezählt als
+sichtbare Flächen mit Rahmen und Grund innerhalb einer anderen (Knöpfe
+ausgenommen).
 | `/login` | 118 | ja (524) | nein | 37 px | ok (Karte) |
 | `/practice/kana` vorher | 88 | ja (Vollhöhen-Lock) | nein | 16 px | Lock auch für Konfiguration |
 | `/practice/kana` nachher | 86 | ja (651 auth / 566 Gast; auch 360/414) | nein | 16 px | Lock nur Storm/Schreiben |
