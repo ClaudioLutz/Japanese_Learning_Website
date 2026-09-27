@@ -216,6 +216,7 @@ lag beim Messen der Willkommen-Dialog über der Seite.
 |---|---|---|---|---|---|---|---|---|
 | `/` (eingeloggt) | 1104 | 149 | nein | 88 / 0 | 3 | 0 | uneinheitlich: zentrierter Kopf, 1104 statt Containerbreite | B Dashboard |
 | `/lessons` | 1104, Chip-Leiste läuft rechts hinaus | 152 | nein | 91 / 0 | 3 | 1 | uneinheitlich: Hero-Karte + Filter + Raster ohne Seitenkopf | E Katalog |
+| `/lessons` nachher | 1440 (1270 bei 1366) | 118 (118) | nein | 57 / – | 4 | 0 | ok: Weiter-lernen-Hero, Filter, Modul-Leiste in der Rinne | E umgesetzt |
 | `/lessons/171` | 1679 (volle 1800) | 126 | nein | 65 / 0 | 2 | 7 | uneinheitlich: Lesetext ~1300 px breit, 7 verschachtelte Karten | D Lektion |
 | `/mein-lernen` | 1032 | 120 (98) | nein | 59 / 0 | 2 | 3 | ok, Breite eigen (1032) | B Dashboard (wide) |
 | `/review` | 613 (Karte) | 94 | ja (1366) | 33 / 161 | 1 | 0 | schwebend: Karte mittig mit Leerraum ober- und unterhalb | C Spielansicht |
@@ -237,6 +238,7 @@ lag beim Messen der Willkommen-Dialog über der Seite.
 |---|---|---|---|---|---|
 | `/` | 109 | nein („Weiterlernen" bei 1265) | nein | 4 px | Rinne zu schmal, Aktion zu tief |
 | `/lessons` | 277 (Hero-Bild zuerst) | ja (476) | Chip-Leiste scrollt | 24 px | Bild vor Titel verschiebt Beginn |
+| `/lessons` nachher | 94 | ja (327 eingeloggt / 281 Gast; 360 ebenso) | nein, Chips wischen in der Zeile | 16 px | Vorschaubild erst ab 768 |
 | `/lessons/171` | 82 | – | nein | 8 px | Rinne zu schmal, 6 verschachtelte Karten |
 | `/mein-lernen` | 85 | ja | nein | 16 px | ok |
 | `/review` | 74 | – (Karte = Aktion) | nein | 22/11 px | Rinne asymmetrisch |

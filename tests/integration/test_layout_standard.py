@@ -183,3 +183,18 @@ class TestNeuLayout:
         assert '<h1 class="page-head__title" id="page-title">Was ist neu?</h1>' in html
         assert 'neu-item surface' in html
         assert 'max-width: 760px' not in html
+
+
+class TestLessonsKatalog:
+    def test_guest_page_head_and_wide_shell(self, client, db):
+        html = client.get('/lessons').get_data(as_text=True)
+        assert 'class="page page--wide lessons-page"' in html
+        assert '<h1 class="page-head__title" id="page-title">Japanisch lernen — der N5-Lehrplan</h1>' in html
+        # Gratis-Start als Aktion im Seitenkopf
+        assert 'lp-continue-cta' in html.split('page-head__actions')[1][:400]
+
+    def test_css_uses_tokens_no_own_width(self, client, db):
+        html = client.get('/lessons').get_data(as_text=True)
+        assert 'max-width: 1152px' not in html
+        # Modul-Leiste randlos über die Rinne, nicht über .page hinaus
+        assert 'margin: 0 calc(-1 * var(--page-gutter)) var(--space-4)' in html
