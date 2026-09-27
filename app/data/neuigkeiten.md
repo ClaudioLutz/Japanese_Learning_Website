@@ -15,6 +15,10 @@ Format je Eintrag:
 Keine Commit-Hashes, keine internen Namen.
 -->
 
+## 2026-09-27 | Lektionen, Sprechen und Mein Lernen: neue Seitenaufteilung
+Die Lektionsübersicht, die Sprechen-Seiten und „Mein Lernen" nutzen breite Bildschirme jetzt über mehrere Spalten und beginnen oben mit einem klaren Seitenkopf. Auf dem Handy liegt der nächste Schritt („Weiterlernen", „Spielen", „Los geht's") ohne Scrollen im Blick, die Themen-Chips wischst du in einer Zeile.
+Link: /lessons
+
 ## 2026-09-27 | Prüfen, N5-Seite und Neuigkeiten: neue Seitenaufteilung
 Auf „Prüfen" wählst du links, was du testen willst, und startest rechts — auf dem Handy bleibt der Start-Knopf immer über der unteren Leiste im Blick; Fragen und Ergebnis stehen direkt unter dem Fortschrittsbalken. Die Seite „JLPT N5 komplett" zeigt die Zahlen gleich oben und den Inhalt in zwei Spalten, die Neuigkeiten lesen sich in einer ruhigeren, schmaleren Spalte.
 Link: /pruefen

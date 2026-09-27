@@ -219,6 +219,7 @@ lag beim Messen der Willkommen-Dialog über der Seite.
 | `/lessons` nachher | 1440 (1270 bei 1366) | 118 (118) | nein | 57 / – | 4 | 0 | ok: Weiter-lernen-Hero, Filter, Modul-Leiste in der Rinne | E umgesetzt |
 | `/lessons/171` | 1679 (volle 1800) | 126 | nein | 65 / 0 | 2 | 7 | uneinheitlich: Lesetext ~1300 px breit, 7 verschachtelte Karten | D Lektion |
 | `/mein-lernen` | 1032 | 120 (98) | nein | 59 / 0 | 2 | 3 | ok, Breite eigen (1032) | B Dashboard (wide) |
+| `/mein-lernen` nachher | 1440 (1270) | 117 (117) | nein | 56 / – | Hero + 360er-Spalte, 3 Kacheln | 0 (Fortschritt vorher 5) | ok: Begrüssung = Seitenkopf mit Umschalter | B umgesetzt |
 | `/review` | 613 (Karte) | 94 | ja (1366) | 33 / 161 | 1 | 0 | schwebend: Karte mittig mit Leerraum ober- und unterhalb | C Spielansicht |
 | `/review/stats` | 1120 | 139 | nein | 78 / 0 | 4 | 5 | ok, Breite eigen (1120) | B Dashboard (wide) |
 | `/sprechen` | 1072 | 93 | nein | 32 / 0 | 3 | 0 | ok, eigene Schrift (Source Sans) und Breite | E Katalog |
@@ -242,6 +243,7 @@ lag beim Messen der Willkommen-Dialog über der Seite.
 | `/lessons` nachher | 94 | ja (327 eingeloggt / 281 Gast; 360 ebenso) | nein, Chips wischen in der Zeile | 16 px | Vorschaubild erst ab 768 |
 | `/lessons/171` | 82 | – | nein | 8 px | Rinne zu schmal, 6 verschachtelte Karten |
 | `/mein-lernen` | 85 | ja | nein | 16 px | ok |
+| `/mein-lernen` nachher | 111 | ja (627; 360: 646), erste Kachel ab ~660 | nein | 16 px | Hero kompakt |
 | `/review` | 74 | – (Karte = Aktion) | nein | 22/11 px | Rinne asymmetrisch |
 | `/review/stats` | 107 | ja (312) | nein | 12 px | 50 verschachtelte Karten |
 | `/sprechen` | 69 | knapp (778 von 784) | nein | 16 px | ok |

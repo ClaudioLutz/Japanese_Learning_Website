@@ -20,7 +20,7 @@ class TestDashboardPage:
         assert resp.status_code == 200
         html = resp.get_data(as_text=True)
         assert 'dashboard()' in html              # Alpine-Komponente eingebunden
-        assert 'mein-lernen wrap' in html          # gescopter Wrapper
+        assert 'page page--wide mein-lernen' in html  # Layout-Hülle + gescopter Wrapper
         assert 'N5-Kompass' in html                # Kompass-Sektion
         assert 'Heute' in html                     # Heute-Hero
         assert user.username in html               # echter Name verdrahtet
@@ -46,3 +46,13 @@ class TestDashboardPage:
         assert 'Konto erstellen' in body
         assert 'dashboard()' not in body
         assert 'N5-Kompass' not in body
+
+    def test_layout_dashboard_schablone(self, auth_client):
+        """Schablone „Dashboard": Seitenkopf mit Umschalter, Kachelraster, Vertiefungs-Raster."""
+        client, user = auth_client
+        html = client.get('/mein-lernen').get_data(as_text=True)
+        assert 'class="page-head ml-head"' in html
+        assert 'page-head__actions ml-subnav' in html
+        assert 'grid-tiles ml-tiles' in html
+        assert 'class="ml-disc-grid"' in html
+        assert 'max-width:1080px' not in html

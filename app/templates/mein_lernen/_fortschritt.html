@@ -70,9 +70,10 @@
 
   {# Deep Stats #}
   <div class="section-label">Tiefer graben</div>
+  <div class="ml-disc-grid">
 
   {# SCHWÄCHEN #}
-  <div class="disc">
+  <div class="disc" :class="{'is-open': open==='schwaechen'}">
     <button class="disc-head" @click="toggle('schwaechen')" :aria-expanded="open==='schwaechen'">
       <div>
         <div class="ti">Schwächen <span class="ml-badge">höchster Hebel</span></div>
@@ -130,7 +131,7 @@
   </div>
 
   {# TEMPO #}
-  <div class="disc">
+  <div class="disc" :class="{'is-open': open==='tempo'}">
     <button class="disc-head" @click="toggle('tempo')" :aria-expanded="open==='tempo'">
       <div>
         <div class="ti">Tempo &amp; Rhythmus</div>
@@ -155,7 +156,7 @@
   </div>
 
   {# VERLAUF #}
-  <div class="disc">
+  <div class="disc" :class="{'is-open': open==='verlauf'}">
     <button class="disc-head" @click="toggle('verlauf')" :aria-expanded="open==='verlauf'">
       <div>
         <div class="ti">Verlauf &amp; Kapazität</div>
@@ -210,7 +211,7 @@
   </div>
 
   {# GENAUIGKEIT (behalten) #}
-  <div class="disc">
+  <div class="disc" :class="{'is-open': open==='genauigkeit'}">
     <button class="disc-head" @click="toggle('genauigkeit')" :aria-expanded="open==='genauigkeit'">
       <div>
         <div class="ti">Genauigkeit</div>
@@ -229,7 +230,7 @@
   </div>
 
   {# BEHERRSCHUNG (behalten) #}
-  <div class="disc">
+  <div class="disc" :class="{'is-open': open==='beherrschung'}">
     <button class="disc-head" @click="toggle('beherrschung')" :aria-expanded="open==='beherrschung'">
       <div>
         <div class="ti">Beherrschung</div>
@@ -282,7 +283,7 @@
   </div>
 
   {# ERFOLGE (behalten: Achievements + Rekorde) #}
-  <div class="disc">
+  <div class="disc" :class="{'is-open': open==='erfolge'}">
     <button class="disc-head" @click="toggle('erfolge')" :aria-expanded="open==='erfolge'">
       <div>
         <div class="ti">Erfolge &amp; Rekorde</div>
@@ -310,6 +311,7 @@
         </template>
       </div>
     </div>
+  </div>
   </div>
 
 </div>

@@ -3,12 +3,8 @@
    Review (echt gegen /api/srs/due + /api/srs/rate) + ruhige Status-Sidebar
    (N5-Bereitschaft, Streak, „Mein Japanisch"-Zahlen, Can-do-Mini). #}
 <div x-show="screen==='heute'" x-cloak>
-  <div class="greet reveal">
-    <div class="ja" x-text="greetingJa"></div>
-    <h1 x-text="greeting + ', ' + name + '.'"></h1>
-    <div class="date" x-text="todayLabel"></div>
-  </div>
-
+  {# Hero-Zeile: Tagesplan (Aktion) + Kennzahl-Spalte (N5-Bereitschaft,
+     Serie). Darunter die Kacheln im Raster (.grid-tiles). #}
   <div class="heute">
     {# ── Aktion ── #}
     <div>
@@ -80,9 +76,8 @@
       </section>
     </div>
 
-    {# ── Status-Sidebar (ruhig) ── #}
-    <aside class="aside reveal">
-      {% set sp_part = 'tile' %}{% include "mein_lernen/_sprechen.html" %}
+    {# ── Kennzahl-Spalte neben dem Hero ── #}
+    <aside class="aside reveal" aria-label="Kennzahlen">
       <div class="panel">
         <div class="ph">N5-Bereitschaft</div>
         <div class="mini-ring">
@@ -113,7 +108,12 @@
         <p class="streak-note tomorrow-note"><i class="far fa-calendar" aria-hidden="true"></i> Morgen {{ 'wird' if due_tomorrow == 1 else 'werden' }} {{ due_tomorrow }} weitere {{ 'Karte' if due_tomorrow == 1 else 'Karten' }} fällig.</p>
         {% endif %}
       </div>
+    </aside>
+  </div>
 
+  {# ── Kachelreihe ── #}
+  <div class="grid-tiles ml-tiles reveal">
+      {% set sp_part = 'tile' %}{% include "mein_lernen/_sprechen.html" %}
       <div class="panel">
         <div class="ph">Mein Japanisch</div>
         <div class="counts">
@@ -134,8 +134,7 @@
             <span x-text="c.t"></span>
           </div>
         </template>
-        <div class="foot"><button class="more" style="color:var(--ai);font-weight:600;background:none;border:0;cursor:pointer;font-family:inherit;padding:0;" @click="go('fortschritt')">Alle Fähigkeiten ansehen →</button></div>
+        <div class="foot"><button class="more" @click="go('fortschritt')">Alle Fähigkeiten ansehen →</button></div>
       </div>
-    </aside>
   </div>
 </div>

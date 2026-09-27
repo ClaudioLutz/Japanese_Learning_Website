@@ -28,19 +28,27 @@
 {% block styles %}{% include "mein_lernen/_ml_styles.html" %}{% endblock %}
 
 {% block content %}
-<div class="mein-lernen wrap" x-data="dashboard()" x-init="init()"
+{# Schablone „Dashboard" (docs/layout-standard.md): .page--wide (1440). Der
+   Seitenkopf ist die Heute-Begrüssung (Kennzeile = japanischer Gruss + Datum),
+   rechts daneben der Screen-Umschalter (Heute/Fortschritt) + Einstellungen —
+   mobil als Zeile darunter. Gilt für beide Screens. Klassen aus layout.css;
+   Titel/Kennzeile per x-text (Tageszeit im Browser), SSR-Fallback = Name. #}
+<div class="page page--wide mein-lernen" x-data="dashboard()" x-init="init()"
      @keydown.escape.window="settingsOpen=false; reviewOpen=false">
 
-  {# In-Page-Subnav: Screen-Umschalter (Heute/Fortschritt) + Einstellungen.
-     Ersetzt v3's eigenen Topbar — die globale Navbar (base.html) bleibt. #}
-  <div class="ml-subnav">
-    <nav class="seg-nav" aria-label="Ansicht">
-      <button :aria-current="screen==='heute'?'page':false" @click="go('heute')"><i class="fas fa-sun"></i> Heute</button>
-      <button :aria-current="screen==='fortschritt'?'page':false" @click="go('fortschritt')"><i class="fas fa-compass"></i> Fortschritt</button>
-    </nav>
-    <span class="spacer"></span>
-    <button class="icon-btn" @click="settingsOpen=true" aria-label="Einstellungen"><i class="fas fa-gear"></i></button>
-  </div>
+  <header class="page-head ml-head">
+    <div class="page-head__text">
+      <span class="page-head__eyebrow"><span class="jp" lang="ja" x-text="greetingJa">こんにちは</span> · <span x-text="todayLabel">Heute</span></span>
+      <h1 class="page-head__title" id="page-title" x-text="greeting + ', ' + name + '.'">Hallo, {{ current_user.username }}.</h1>
+    </div>
+    <div class="page-head__actions ml-subnav">
+      <nav class="seg-nav" aria-label="Ansicht">
+        <button :aria-current="screen==='heute'?'page':false" @click="go('heute')"><i class="fas fa-sun"></i> Heute</button>
+        <button :aria-current="screen==='fortschritt'?'page':false" @click="go('fortschritt')"><i class="fas fa-compass"></i> Fortschritt</button>
+      </nav>
+      <button class="icon-btn" @click="settingsOpen=true" aria-label="Einstellungen"><i class="fas fa-gear"></i></button>
+    </div>
+  </header>
 
   {% include "mein_lernen/_heute.html" %}
   {% include "mein_lernen/_fortschritt.html" %}
