@@ -3,20 +3,17 @@
 {% block title %}Neu auf Japanese Learning — Verbesserungen und neue Lektionen{% endblock %}
 {% block meta_description %}Was ist neu auf japanese-learning.ch? Neue JLPT-N5-Lektionen, Vokabeln, Grammatik und Verbesserungen beim Wiederholen — laufend aktualisiert, auf Deutsch.{% endblock %}
 
+{% from 'partials/_page_head.html' import page_head %}
 {% block content %}
-{# /neu — SSR aus app/data/neuigkeiten.md (news_service). Stil: Ink-on-Washi,
-   ausschliesslich Tokens → Dark Mode kommt über [data-theme="dark"] mit. #}
-<div class="neu-page">
+{# /neu — SSR aus app/data/neuigkeiten.md (news_service). Layout-Standard
+   (docs/layout-standard.md): .page--prose (680 px Lesespalte) + Seitenkopf-
+   Makro; Flächen über die Tokens aus layout.css → Dark Mode ohne Sonderblock. #}
+<div class="page page--prose neu-page">
 
-  <header class="neu-hero">
-    <p class="neu-eyebrow"><span lang="ja">お知らせ</span> · Neuigkeiten</p>
-    <h1>Was ist neu?</h1>
-    <p class="neu-lead">
-      Neue Lektionen, mehr Inhalte und Verbesserungen beim Lernen —
-      hier siehst du, was sich zuletzt geändert hat.
-      {% if latest %}<span class="neu-updated">Zuletzt aktualisiert am {{ latest.day_de }}.</span>{% endif %}
-    </p>
-  </header>
+  {% set _neu_sub %}Neue Lektionen, mehr Inhalte und Verbesserungen beim Lernen —
+    hier siehst du, was sich zuletzt geändert hat.
+    {%- if latest %} <span class="neu-updated">Zuletzt aktualisiert am {{ latest.day_de }}.</span>{% endif %}{% endset %}
+  {{ page_head('Was ist neu?', subtitle=_neu_sub, eyebrow='Neuigkeiten', eyebrow_jp='お知らせ') }}
 
   {% if groups %}
   <div class="neu-timeline">
@@ -27,7 +24,7 @@
       </h2>
       <ul class="neu-list">
         {% for e in entries %}
-        <li class="neu-item">
+        <li class="neu-item surface">
           <h3 class="neu-title">{{ e.title }}</h3>
           <div class="neu-body">{{ e.body | forum_markdown }}</div>
           {% if e.link %}
@@ -51,77 +48,46 @@
 </div>
 
 <style>
-.neu-page {
-  max-width: 760px;
-  margin: 0 auto;
-  padding: 1.5rem 1rem 4rem;
-  line-height: 1.65;
-  color: var(--text-color);
-}
-.neu-hero { margin: 0.5rem 0 2rem; }
-.neu-eyebrow {
-  font-size: var(--text-eyebrow, 0.75rem);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-weight: 700;
-  color: var(--shu-deep, #B84A00);
-  margin: 0 0 0.4rem;
-}
-.neu-hero h1 {
-  font-size: clamp(1.7rem, 5vw, 2.4rem);
-  font-weight: 700;
-  letter-spacing: var(--tracking-tight, -0.03em);
-  color: var(--kon, #1F2A44);
-  margin: 0 0 0.6rem;
-}
-.neu-lead { font-size: 1.05rem; color: var(--text-light); margin: 0; max-width: 38rem; }
-.neu-updated { display: block; margin-top: 0.35rem; font-size: 0.9rem; color: var(--text-muted); }
+/* Akzentfarbe für Text: --accent existiert nur im Dark-Theme (heller Shu),
+   im Light greift der Fallback --shu-deep → kein eigener Dark-Block nötig. */
+.neu-page { line-height: 1.65; color: var(--text-color); --neu-accent: var(--accent, var(--shu-deep, #B84A00)); }
+.neu-updated { display: block; margin-top: var(--space-1); color: var(--text-muted); }
 
-.neu-timeline { border-left: 2px solid var(--ink-200, #E4DED4); margin-left: 0.4rem; }
-.neu-day { position: relative; padding: 0 0 1.75rem 1.4rem; }
+.neu-timeline { border-left: 2px solid var(--surface-border-strong); margin-left: var(--space-2); }
+.neu-day { position: relative; padding: 0 0 var(--space-8) var(--space-6); }
 .neu-day::before {
   content: '';
-  position: absolute; left: -7px; top: 0.45rem;
+  position: absolute; left: -7px; top: var(--space-2);
   width: 12px; height: 12px; border-radius: 50%;
   background: var(--shu, #EB6101);
-  box-shadow: 0 0 0 3px var(--background-color, #F5F0E8);
+  box-shadow: 0 0 0 3px var(--surface-0);
 }
 .neu-date {
-  font-size: 0.95rem; font-weight: 700;
+  font-size: var(--text-sm); font-weight: 700;
+  letter-spacing: 0.02em;
   color: var(--text-muted);
-  margin: 0 0 0.75rem;
+  margin: 0 0 var(--space-3);
 }
-.neu-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.75rem; }
-.neu-item {
-  background: var(--card-background, #fff);
-  border: 1px solid var(--ink-200, #E4DED4);
-  border-radius: var(--radius-md, 12px);
-  box-shadow: var(--shadow-subtle);
-  padding: 1rem 1.15rem;
-}
-.neu-title { font-size: 1.08rem; font-weight: 700; color: var(--text-color); margin: 0 0 0.3rem; }
-.neu-body { color: var(--text-light); font-size: 0.97rem; }
-.neu-body p { margin: 0 0 0.5rem; }
+.neu-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
+/* .surface liefert Hintergrund/Rahmen/Schatten; hier nur dichteres Padding */
+.neu-item.surface { padding: var(--space-4); border-radius: var(--radius-md, 12px); }
+.neu-title { font-size: var(--text-base); font-weight: 700; color: var(--text-color); margin: 0 0 var(--space-1); }
+.neu-body { color: var(--text-light); font-size: var(--text-base); }
+.neu-body p { margin: 0 0 var(--space-2); }
 .neu-body p:last-child { margin-bottom: 0; }
-.neu-body a { color: var(--shu-deep, #B84A00); }
+.neu-body a, .neu-foot a { color: var(--neu-accent); }
 .neu-link {
-  display: inline-block; margin-top: 0.5rem;
-  font-weight: 600; font-size: 0.92rem;
-  color: var(--shu-deep, #B84A00);
+  display: inline-flex; align-items: center; gap: var(--space-1);
+  min-height: 44px; margin-top: var(--space-1);
+  font-weight: 600; font-size: var(--text-sm);
+  color: var(--neu-accent);
   text-decoration: none;
 }
 .neu-link:hover, .neu-link:focus { text-decoration: underline; }
 .neu-empty, .neu-foot { color: var(--text-muted); }
-.neu-foot { margin-top: 1.5rem; font-size: 0.92rem; }
-.neu-foot a { color: var(--shu-deep, #B84A00); }
-[data-theme="dark"] .neu-eyebrow,
-[data-theme="dark"] .neu-link,
-[data-theme="dark"] .neu-body a,
-[data-theme="dark"] .neu-foot a { color: var(--shu, #EB6101); }
-@media (max-width: 560px) {
-  .neu-page { padding-top: 1rem; }
-  .neu-day { padding-left: 1.1rem; }
-  .neu-item { padding: 0.9rem 1rem; }
+.neu-foot { margin: var(--space-6) 0 0; font-size: var(--text-sm); }
+@media (min-width: 768px) {
+  .neu-item.surface { padding: var(--space-4) var(--space-6); }
 }
 </style>
 {% endblock %}

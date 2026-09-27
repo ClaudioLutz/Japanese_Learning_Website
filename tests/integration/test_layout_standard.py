@@ -125,3 +125,12 @@ class TestKanaPilot:
     def test_guest_sees_account_benefits_as_surface(self, client, db):
         html = client.get('/practice/kana').get_data(as_text=True)
         assert 'kana-setup__unlock surface' in html
+
+
+class TestNeuLayout:
+    def test_prose_shell_and_head(self, client, db):
+        html = client.get('/neu').get_data(as_text=True)
+        assert 'class="page page--prose neu-page"' in html
+        assert '<h1 class="page-head__title" id="page-title">Was ist neu?</h1>' in html
+        assert 'neu-item surface' in html
+        assert 'max-width: 760px' not in html
