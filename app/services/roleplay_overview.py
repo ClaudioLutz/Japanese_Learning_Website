@@ -23,6 +23,7 @@ from app import db
 from app.models import (
     AccessContext, Lesson, LessonCategory, LessonContent, RoleplaySession, UserLessonProgress,
 )
+from app.romaji import romaji_or_empty
 from app.services import roleplay_service as svc
 
 logger = logging.getLogger(__name__)
@@ -205,10 +206,11 @@ def session_detail(session: RoleplaySession) -> dict[str, Any]:
     for t in session.turns:
         if t.speaker == 'bot':
             lines.append({'who': 'bot', 'name': session.role_bot, 'jp': t.text_jp or '',
-                          'reading': t.reading_kana or '', 'de': t.text_de or ''})
+                          'reading': t.reading_kana or '', 'de': t.text_de or '',
+                          'romaji': svc.line_romaji(t.text_jp, t.reading_kana)})
         else:
             lines.append({'who': 'user', 'name': session.role_user, 'jp': t.text_jp or '',
-                          'reading': '', 'de': ''})
+                          'reading': '', 'de': '', 'romaji': romaji_or_empty(t.text_jp)})
     corrections = svc.session_corrections(session)
     return {
         'id': session.id,
@@ -225,7 +227,7 @@ def session_detail(session: RoleplaySession) -> dict[str, Any]:
         'turns': session.turn_count or 0,
         'xp': session.xp_awarded or 0,
         'lines': lines,
-        'corrections': [dict(c, praise=svc.is_praise(c)) for c in corrections],
+        'corrections': [dict(c, praise=svc.is_praise(c)) for c in svc.with_romaji_corrections(corrections)],
         'correction_count': sum(1 for c in corrections if not svc.is_praise(c)),
     }
 

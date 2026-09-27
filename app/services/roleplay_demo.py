@@ -36,6 +36,7 @@ from sqlalchemy.exc import IntegrityError
 
 from app import db
 from app.models import GuestDemoCounter, Lesson, LessonContent
+from app.romaji import romaji_or_empty
 from app.services import roleplay_prefetch as prefetch
 from app.services import roleplay_service as svc
 from app.time_utils import ch_today
@@ -75,9 +76,12 @@ DEMO_OPENING: dict[str, Any] = {
     'de': 'Lisa, was möchtest du trinken?',
     'hint_de': 'Nenne ein Getränk: „… が のみたいです“.',
     'suggestions': [
-        {'jp': 'こうちゃが のみたいです。', 'de': 'Ich möchte Schwarztee trinken.'},
-        {'jp': 'わたしは コーヒーが いいです。', 'de': 'Ich nehme gern einen Kaffee.'},
-        {'jp': 'つめたい みずが のみたいです。', 'de': 'Ich möchte kaltes Wasser trinken.'},
+        {'jp': 'こうちゃが のみたいです。', 'reading_kana': 'こうちゃが のみたいです。',
+         'de': 'Ich möchte Schwarztee trinken.'},
+        {'jp': 'わたしは コーヒーが いいです。', 'reading_kana': 'わたしは コーヒーが いいです。',
+         'de': 'Ich nehme gern einen Kaffee.'},
+        {'jp': 'つめたい みずが のみたいです。', 'reading_kana': 'つめたい みずが のみたいです。',
+         'de': 'Ich möchte kaltes Wasser trinken.'},
     ],
 }
 
@@ -272,7 +276,10 @@ def release_turn(key: str) -> None:
 # ── Ablauf ───────────────────────────────────────────────────────────────
 
 def _opening_turn() -> dict[str, Any]:
-    return {'turn_index': 0, 'speaker': 'bot', **json.loads(json.dumps(DEMO_OPENING))}
+    turn = {'turn_index': 0, 'speaker': 'bot', **json.loads(json.dumps(DEMO_OPENING))}
+    turn['romaji'] = svc.line_romaji(turn['jp'], turn['reading_kana'])
+    turn['suggestions'] = svc.with_romaji_suggestions(turn['suggestions'])
+    return turn
 
 
 def _guest_has_turns(ip: str | None) -> bool:
@@ -453,7 +460,8 @@ def demo_turn_events(token: Any, text: Any, ip: str, provider: svc.RoleplayProvi
         'session': _session_dict(user_turns_after, done=done),
         'bot_turn': bot_turn,
         'done': done,
-        'correction': data['correction'] if done else [],
+        'user_romaji': romaji_or_empty(text),
+        'correction': svc.with_romaji_corrections(data['correction']) if done else [],
         'xp_awarded': 0,
     }
 
@@ -464,8 +472,9 @@ def _demo_bot_turn(turn_index: int, data: dict[str, Any]) -> dict[str, Any]:
         'speaker': 'bot',
         'jp': data['bot_line_jp'],
         'reading_kana': data['reading_kana'],
+        'romaji': svc.line_romaji(data['bot_line_jp'], data['reading_kana']),
         'de': data['de'],
-        'suggestions': data['suggestions'],
+        'suggestions': svc.with_romaji_suggestions(data['suggestions']),
         'hint_de': data['hint_de'],
         'details_pending': False,
         'details_failed': False,

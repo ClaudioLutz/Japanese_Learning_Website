@@ -6,7 +6,7 @@ import pytest
 
 from app.services import roleplay_service as svc
 
-SUGG = [{"jp": "コーヒーを ください。", "de": "Einen Kaffee, bitte."}] * 3
+SUGG = [{"jp": "コーヒーを ください。", "reading_kana": "コーヒーを ください。", "de": "Einen Kaffee, bitte."}] * 3
 
 
 class TestSchemas:
@@ -72,7 +72,7 @@ class TestValidation:
                                          "correction": []}, done=False)
 
     def test_merge_done_keeps_correction(self):
-        corr = [{"original": "a", "better": "b", "explanation_de": "c"}]
+        corr = [{"original": "a", "better": "b", "better_kana": "", "explanation_de": "c"}]
         out = svc.merge_details("さようなら。", {"reading_kana": "さようなら。", "de": "Tschüss.",
                                                   "suggestions": SUGG, "hint_de": "", "correction": corr},
                                 done=True)

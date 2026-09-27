@@ -99,7 +99,7 @@ def _turn(speaker, raw=None):
 
 class TestCorrections:
     def test_aus_correction_json(self):
-        items = [{'original': 'a', 'better': 'b', 'explanation_de': 'x'}]
+        items = [{'original': 'a', 'better': 'b', 'better_kana': 'び', 'explanation_de': 'x'}]
         assert session_corrections(_sess(json.dumps(items))) == items
 
     def test_fallback_letzter_bot_zug(self):

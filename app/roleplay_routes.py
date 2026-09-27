@@ -190,8 +190,9 @@ def _turn_payload(session, bot_turn, info, user_id: int) -> dict:
     return {
         'session': svc.serialize_session(session),
         'bot_turn': svc.serialize_bot_turn(bot_turn),
+        'user_romaji': svc.user_romaji(session, bot_turn),
         'done': info['done'],
-        'correction': info['correction'],
+        'correction': svc.with_romaji_corrections(info['correction']),
         'xp_awarded': info['xp_awarded'],
         'limits': svc.limits_status(user_id),
     }
@@ -254,7 +255,7 @@ def end(session_id):
     return jsonify({
         'session': svc.serialize_session(session),
         'farewell': result['farewell'],
-        'correction': result['correction'],
+        'correction': svc.with_romaji_corrections(result['correction']),
         'correction_unavailable': result['correction_unavailable'],
         'xp_awarded': result['xp_awarded'],
         'total_xp': current_user.total_xp or 0,

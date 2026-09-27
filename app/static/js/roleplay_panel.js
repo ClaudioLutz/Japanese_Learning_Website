@@ -20,6 +20,11 @@
  * dieses Chips zeigen. Uebersetzungen sind standardmaessig aus, der Schalter
  * „Deutsch anzeigen“ blendet alle ein (localStorage).
  *
+ * Romaji: der Server liefert zu jeder japanischen Zeile `romaji` (Bot-Zeile,
+ * Vorschlaege, Korrektur `better_romaji`, Nutzerzug `user_romaji` — nur bei
+ * reiner Kana). Schalter „Romaji anzeigen“ (Default an, localStorage) blendet
+ * alle Romaji-Zeilen aus/ein; gleicher Schluessel wie /sprechen/verlauf/<id>.
+ *
  * Sofort-Antwort (zweigeteilter Zug): send() nutzt …/turn/stream (Server-Sent
  * Events) — die Bot-Zeile erscheint Zeichen fuer Zeichen, sobald das Modell sie
  * schreibt. Lesung, Uebersetzung, Vorschlaege und Tipp kommen aus einem zweiten
@@ -36,6 +41,7 @@
     var TEXT_MAX = 300;
     var ROMAJI_KEY = 'jpl-roleplay-romaji';
     var GERMAN_KEY = 'jpl-roleplay-chip-de';
+    var ROMAJI_SHOW_KEY = 'jpl-roleplay-romaji-show';
     var SLOW_MS = 1200;
     var STREAM_TIMEOUT_MS = 35000;   // Server beendet den Stream nach spaetestens ~30 s
     var DETAILS_POLL_MS = 500;
@@ -65,6 +71,18 @@
 
     function writeGermanPref(on) {
         try { window.localStorage.setItem(GERMAN_KEY, on ? '1' : '0'); } catch (e) { /* egal */ }
+    }
+
+    function readRomajiShowPref() {
+        try { return window.localStorage.getItem(ROMAJI_SHOW_KEY) !== '0'; } catch (e) { return true; }
+    }
+
+    function writeRomajiShowPref(on) {
+        try { window.localStorage.setItem(ROMAJI_SHOW_KEY, on ? '1' : '0'); } catch (e) { /* egal */ }
+    }
+
+    function logBot(bot) {
+        return { who: 'bot', jp: bot.jp, de: bot.de, romaji: bot.romaji || '' };
     }
 
     function roleGender(scene, name) {
@@ -241,7 +259,7 @@
             roleChoice: null,
             customGoal: '',
             session: null,
-            log: [],                   // bisherige Zeilen {who:'bot'|'user', jp, de}
+            log: [],                   // bisherige Zeilen {who:'bot'|'user', jp, de, romaji}
             bot: null,                 // aktuelle Bot-Zeile (BotTurn)
             showReading: false,
             showGerman: false,
@@ -249,6 +267,7 @@
             input: '',
             romajiOn: true,
             germanOn: false,           // Uebersetzungen unter den Vorschlaegen (Default aus)
+            romajiShow: true,          // Romaji-Zeilen unter dem Japanischen (Default an)
             chipDe: {},                // einzeln aufgedeckte Chip-Uebersetzungen {index: true}
             sending: false,
             quickSend: false,          // Vorschlag direkt gesendet → kein „tippt …“ (ausser langsam)
@@ -284,6 +303,7 @@
                 try { this.pageNumbers = JSON.parse(el.dataset.pageNumbers || '[]'); } catch (e) { this.pageNumbers = []; }
                 this.romajiOn = readRomajiPref();
                 this.germanOn = readGermanPref();
+                this.romajiShow = readRomajiShowPref();
                 if (el.dataset.demo === '1') {
                     this.demo = true;
                     this.open = true;
@@ -540,7 +560,7 @@
             },
 
             _showBot: function (turn, keepToggles) {
-                if (this.bot) this.log.push({ who: 'bot', jp: this.bot.jp, de: this.bot.de });
+                if (this.bot) this.log.push(logBot(this.bot));
                 this.bot = turn || null;
                 if (!keepToggles) {
                     this.showReading = false;
@@ -584,6 +604,17 @@
                 this.input = s.jp;
                 this.quickSend = true;
                 return this.send();
+            },
+            toggleRomajiShow: function () {
+                this.romajiShow = !this.romajiShow;
+                writeRomajiShowPref(this.romajiShow);
+            },
+            // Romaji des gerade gesendeten Nutzerzugs nachtragen (Server: nur bei reiner Kana).
+            _setUserRomaji: function (romaji) {
+                if (!romaji) return;
+                for (var i = this.log.length - 1; i >= 0; i--) {
+                    if (this.log[i].who === 'user') { this.log[i].romaji = romaji; return; }
+                }
             },
             toggleGerman: function () {
                 this.germanOn = !this.germanOn;
@@ -632,8 +663,8 @@
                 var onLine = function (piece) {
                     if (!streamed) {
                         streamed = { bot: self.bot, logLen: self.log.length, detailsState: self.detailsState };
-                        if (self.bot) self.log.push({ who: 'bot', jp: self.bot.jp, de: self.bot.de });
-                        self.log.push({ who: 'user', jp: text, de: '' });
+                        if (self.bot) self.log.push(logBot(self.bot));
+                        self.log.push({ who: 'user', jp: text, de: '', romaji: '' });
                         self.input = '';
                         self.showReading = false;
                         self.showGerman = false;
@@ -641,7 +672,7 @@
                         self.chipDe = {};
                         self.detailsState = '';
                         self.streamingLine = true;
-                        self.bot = { turn_index: -1, speaker: 'bot', jp: piece, reading_kana: '', de: '',
+                        self.bot = { turn_index: -1, speaker: 'bot', jp: piece, reading_kana: '', romaji: '', de: '',
                                      suggestions: [], hint_de: '', details_pending: true };
                         self.$nextTick(function () {
                             var logEl = self.$refs.log;
@@ -664,10 +695,11 @@
                             self.bot = null;
                         } else {
                             // Reihenfolge im Verlauf: erst die beantwortete Bot-Zeile, dann der Nutzerzug.
-                            if (self.bot) self.log.push({ who: 'bot', jp: self.bot.jp, de: self.bot.de });
+                            if (self.bot) self.log.push(logBot(self.bot));
                             self.bot = null;
-                            self.log.push({ who: 'user', jp: text, de: '' });
+                            self.log.push({ who: 'user', jp: text, de: '', romaji: '' });
                         }
+                        self._setUserRomaji(r.data.user_romaji);
                         self.input = '';
                         self.session = r.data.session || self.session;
                         self.limits = r.data.limits || self.limits;
@@ -733,7 +765,7 @@
             _finish: function (res) {
                 this._stopDetails();
                 this.detailsState = '';
-                if (this.bot) this.log.push({ who: 'bot', jp: this.bot.jp, de: this.bot.de });
+                if (this.bot) this.log.push(logBot(this.bot));
                 this.bot = null;
                 this.result = res;
                 this.phase = 'done';

@@ -22,11 +22,14 @@ DEMO_DIALOG = {"slides": [
     {"speaker": "Tanaka", "jp": "リサさん、なにが のみたいですか？", "de": "Lisa, was möchtest du trinken?"},
     {"speaker": "Lisa", "jp": "こうちゃが のみたいです。", "de": "Ich möchte Schwarztee trinken."},
 ]}
-SUGG = [{"jp": "コーヒーを ください。", "de": "Einen Kaffee, bitte."},
-        {"jp": "おちゃを ください。", "de": "Einen Tee, bitte."},
-        {"jp": "みずを ください。", "de": "Wasser, bitte."}]
-CORR = [{"original": "コーヒー ください", "better": "コーヒーを ください。",
+SUGG = [{"jp": "コーヒーを ください。", "reading_kana": "コーヒーを ください。", "de": "Einen Kaffee, bitte."},
+        {"jp": "おちゃを ください。", "reading_kana": "おちゃを ください。", "de": "Einen Tee, bitte."},
+        {"jp": "みずを ください。", "reading_kana": "みずを ください。", "de": "Wasser, bitte."}]
+CORR = [{"original": "コーヒー ください", "better": "コーヒーを ください。", "better_kana": "コーヒーを ください。",
          "explanation_de": "Das Objekt bekommt die Partikel を."}]
+# Serverseitig abgeleitete Romaji (API-Antworten)
+SUGG_API = [dict(s, romaji=r) for s, r in zip(SUGG, ["Kōhī o kudasai.", "Ocha o kudasai.", "Mizu o kudasai."])]
+CORR_API = [dict(CORR[0], better_romaji="Kōhī o kudasai.")]
 LINE = "ケーキも ありますよ。"
 
 
@@ -153,7 +156,7 @@ class TestStart:
         assert log.kinds() == ["line", "details"]
         sid = resp.get_json()["session"]["id"]
         det = client.get(f"/api/roleplay/{sid}/turn/{bot['turn_index']}/details").get_json()
-        assert det["status"] == "ready" and det["bot_turn"]["suggestions"] == SUGG
+        assert det["status"] == "ready" and det["bot_turn"]["suggestions"] == SUGG_API
 
 
 class TestFreitextTurn:
@@ -180,7 +183,7 @@ class TestFreitextTurn:
         run_jobs(app, log, only_details=True)
         det = client.get(url).get_json()
         assert det["status"] == "ready"
-        assert det["bot_turn"]["suggestions"] == SUGG
+        assert det["bot_turn"]["suggestions"] == SUGG_API
         assert det["bot_turn"]["de"] == "Es gibt auch Kuchen."
         assert det["bot_turn"]["jp"] == LINE                    # Zeile unveraendert
         assert det["bot_turn"]["details_pending"] is False
@@ -284,7 +287,7 @@ class TestFreitextTurn:
         log.line_done = True
         log.calls.clear()
         data = client.post(f"/api/roleplay/{sid}/turn", json={"text": "ありがとう ございました。"}).get_json()
-        assert data["done"] is True and data["correction"] == CORR
+        assert data["done"] is True and data["correction"] == CORR_API
         assert data["session"]["status"] == "completed"
         assert log.kinds() == ["line", "details"]             # Korrektur synchron mitgeholt
         assert data["bot_turn"]["details_pending"] is False
@@ -298,7 +301,7 @@ class TestFreitextTurn:
         log.calls.clear()
         data = client.post(f"/api/roleplay/{sid}/turn", json={"text": "さようなら。"}).get_json()
         assert log.kinds() == ["full"]
-        assert data["done"] is True and data["correction"] == CORR
+        assert data["done"] is True and data["correction"] == CORR_API
 
 
 def db_turn_count(sid):
@@ -357,7 +360,7 @@ class TestStream:
         events = sse_events(client.post(f"/api/roleplay/{sid}/turn/stream", json={"text": SUGG[0]["jp"]}))
         assert [e for e, _ in events] == ["result"]
         assert len(log.calls) == n               # kein neuer Modell-Aufruf
-        assert events[0][1]["bot_turn"]["suggestions"] == SUGG
+        assert events[0][1]["bot_turn"]["suggestions"] == SUGG_API
 
 
 # ── Gast-Demo ────────────────────────────────────────────────────────────
@@ -392,7 +395,7 @@ class TestDemo:
         run_jobs(app, log, only_details=True)
         det = client.post("/api/roleplay/demo/details", json={"token": new_token}).get_json()
         assert det["status"] == "ready"
-        assert det["bot_turn"]["suggestions"] == SUGG
+        assert det["bot_turn"]["suggestions"] == SUGG_API
         assert det["bot_turn"]["jp"] == LINE
         assert det["bot_turn"]["turn_index"] == data["bot_turn"]["turn_index"]
         # danach geplant: Vorausberechnung der drei Vorschlaege

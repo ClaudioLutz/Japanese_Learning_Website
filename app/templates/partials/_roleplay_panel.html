@@ -82,14 +82,15 @@
                     <div class="rp-bot">
                         <div class="rp-bot-head"><span class="rp-bot-name">{{ rp_demo.role_bot }}</span></div>
                         <div class="rp-bot-jp" lang="ja">何を 食べたいですか。</div>
+                        <div class="rp-romaji" x-show="romajiShow">Nani o tabetai desu ka.</div>
                         <div class="rp-bot-reading" lang="ja">なにを たべたいですか。</div>
                     </div>
                     <div class="rp-suggestions">
                         <span class="rp-label rp-small">Vorschläge</span>
                         <div class="rp-chips">
-                            <span class="rp-chip"><span lang="ja">カレーが たべたいです。</span></span>
-                            <span class="rp-chip"><span lang="ja">サンドイッチを ください。</span></span>
-                            <span class="rp-chip"><span lang="ja">わたしも カレーが いいです。</span></span>
+                            <span class="rp-chip"><span lang="ja">カレーが たべたいです。</span><span class="rp-romaji" x-show="romajiShow">Karē ga tabetai desu.</span></span>
+                            <span class="rp-chip"><span lang="ja">サンドイッチを ください。</span><span class="rp-romaji" x-show="romajiShow">Sandoicchi o kudasai.</span></span>
+                            <span class="rp-chip"><span lang="ja">わたしも カレーが いいです。</span><span class="rp-romaji" x-show="romajiShow">Watashi mo karē ga ii desu.</span></span>
                         </div>
                     </div>
                     <div class="rp-corr">
@@ -98,6 +99,7 @@
                             <i class="fas fa-arrow-right" aria-hidden="true"></i><span class="rp-sr-only">besser:</span>
                             <span class="rp-corr-better" lang="ja">コーヒーを ください。</span>
                         </div>
+                        <div class="rp-romaji rp-corr-romaji" x-show="romajiShow">Kōhī o kudasai.</div>
                         <div class="rp-corr-expl">Das Objekt bekommt die Partikel を.</div>
                     </div>
                 </div>
@@ -158,7 +160,10 @@
                     <template x-for="(line, i) in log" :key="i">
                         <div role="listitem" class="rp-log-line" :class="line.who === 'user' ? 'is-user' : 'is-bot'">
                             <span class="rp-log-who" x-text="line.who === 'user' ? userName : botName"></span>
-                            <span class="rp-log-jp" lang="ja" x-text="line.jp"></span>
+                            <span class="rp-log-text">
+                                <span class="rp-log-jp" lang="ja" x-text="line.jp"></span>
+                                <span class="rp-romaji rp-log-romaji" x-show="romajiShow && line.romaji" x-text="line.romaji"></span>
+                            </span>
                         </div>
                     </template>
                 </div>
@@ -172,6 +177,7 @@
                         </button>
                     </div>
                     <div class="rp-bot-jp" :class="streamingLine ? 'is-streaming' : ''" lang="ja" x-text="bot ? bot.jp : ''"></div>
+                    <div class="rp-romaji rp-bot-romaji" x-show="romajiShow && bot && bot.romaji" x-text="bot ? bot.romaji : ''"></div>
                     <div class="rp-bot-toggles" x-show="!detailsPending && !detailsFailed">
                         <button type="button" class="rp-link-btn" @click="showReading = !showReading"
                                 :aria-expanded="showReading ? 'true' : 'false'">Lesung</button>
@@ -205,6 +211,7 @@
                                 <button type="button" class="rp-chip" @click="useSuggestion(s)" :disabled="busy"
                                         :aria-label="'Übernehmen: ' + s.jp">
                                     <span lang="ja" x-text="s.jp"></span>
+                                    <span class="rp-romaji" x-show="romajiShow && s.romaji" x-text="s.romaji"></span>
                                     <span class="rp-chip-de" x-show="chipGermanVisible(i)" x-text="s.de"></span>
                                 </button>
                                 <div class="rp-chip-tools">
@@ -254,7 +261,12 @@
                             <span class="rp-switch-track" aria-hidden="true"><span class="rp-switch-thumb"></span></span>
                             Deutsch anzeigen
                         </button>
-                        <span class="rp-muted rp-small" x-text="input.length + ' / ' + TEXT_MAX"></span>
+                        <button type="button" class="rp-switch rp-romaji-switch" role="switch" @click="toggleRomajiShow()"
+                                :aria-checked="romajiShow ? 'true' : 'false'">
+                            <span class="rp-switch-track" aria-hidden="true"><span class="rp-switch-thumb"></span></span>
+                            Romaji anzeigen
+                        </button>
+                        <span class="rp-muted rp-small" x-show="input.length" x-text="input.length + ' / ' + TEXT_MAX"></span>
                     </div>
                 </form>
 
@@ -287,6 +299,8 @@
                         </button>
                     </div>
                     <div class="rp-bot-jp" lang="ja" x-text="result && result.farewell ? result.farewell.jp : ''"></div>
+                    <div class="rp-romaji rp-bot-romaji" x-show="romajiShow && result && result.farewell && result.farewell.romaji"
+                         x-text="result && result.farewell ? result.farewell.romaji : ''"></div>
                     <div class="rp-bot-de" x-text="result && result.farewell ? result.farewell.de : ''"></div>
                 </div>
 
@@ -322,6 +336,7 @@
                                         <i class="fas fa-volume-low" aria-hidden="true"></i>
                                     </button>
                                 </div>
+                                <div class="rp-romaji rp-corr-romaji" x-show="romajiShow && c.better_romaji" x-text="c.better_romaji"></div>
                                 <div class="rp-corr-expl" x-text="c.explanation_de"></div>
                             </div>
                         </template>

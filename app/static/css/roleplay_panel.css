@@ -350,5 +350,23 @@
 .roleplay-panel .rp-chip-send { color: var(--rp-accent-text); }
 .roleplay-panel .rp-chip-tool:disabled { opacity: .45; cursor: default; }
 .roleplay-panel .rp-corr-say { width: 36px; height: 36px; }
-.roleplay-panel .rp-compose-meta { flex-wrap: wrap; }
-.roleplay-panel .rp-compose-meta .rp-german-switch { margin-right: auto; }
+/* Drei Schalter (Romaji → Kana, Deutsch, Romaji anzeigen) auf Desktop in einer Zeile;
+   der Zeichenzaehler erscheint erst beim Tippen. */
+.roleplay-panel .rp-compose-meta { flex-wrap: wrap; justify-content: flex-start; column-gap: .7rem; row-gap: 0; }
+.roleplay-panel .rp-compose-meta > .rp-muted { margin-left: auto; }
+.roleplay-panel .rp-compose-meta .rp-switch { gap: .4rem; font-size: .84rem; }
+
+/* Romaji unter jeder japanischen Zeile (Schalter „Romaji anzeigen", Default an).
+   Kompakt: kleine Schrift, knapper Zeilenabstand — der Fold auf 1366×768 darf nicht kippen. */
+.roleplay-panel .rp-romaji {
+    display: block; font-family: 'Inter', system-ui, sans-serif; font-size: .8rem; line-height: 1.3;
+    font-weight: 400; color: var(--rp-muted); letter-spacing: .01em; text-transform: none;
+}
+.roleplay-panel .rp-bot-romaji { margin: -.35rem 0 .3rem; font-size: .88rem; }
+.roleplay-panel .rp-chip > .rp-romaji { font-size: .74rem; line-height: 1.2; }
+/* Chips mit Romaji-Zeile kompakt halten (min-height 44px bleibt) */
+.roleplay-panel .rp-chip { padding-top: .3rem; padding-bottom: .3rem; gap: 0; }
+.roleplay-panel .rp-chip > span[lang="ja"] { line-height: 1.4; }
+.roleplay-panel .rp-log-text { display: flex; flex-direction: column; min-width: 0; }
+.roleplay-panel .rp-log-romaji { font-size: .74rem; }
+.roleplay-panel .rp-corr-romaji { margin-top: .1rem; }

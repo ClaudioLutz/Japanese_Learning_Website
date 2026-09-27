@@ -15,6 +15,10 @@ Format je Eintrag:
 Keine Commit-Hashes, keine internen Namen.
 -->
 
+## 2026-09-27 | Rollenspiel: Romaji unter jeder japanischen Zeile, abschaltbar
+Unter jeder japanischen Zeile im Rollenspiel steht jetzt die Umschrift in Romaji — bei deinem Gesprächspartner, bei den Antwortvorschlägen, bei den verbesserten Sätzen und im gespeicherten Verlauf. Wer schon ohne auskommt, schaltet sie mit „Romaji anzeigen" aus.
+Link: /sprechen
+
 ## 2026-09-27 | Rollenspiel: Die Antwort erscheint sofort — auch wenn du frei schreibst
 Schreibst du im Rollenspiel eine eigene Antwort, erscheint die Zeile deines Gesprächspartners jetzt nach etwa zwei Sekunden, Wort für Wort, und du kannst sie gleich vorlesen lassen. Lesung, Übersetzung, Tipp und die Antwortvorschläge folgen ein paar Sekunden später von selbst.
 Link: /sprechen

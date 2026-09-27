@@ -54,13 +54,17 @@ Immer JSON `{ "error": "<code>", "message": "<deutscher Klartext>" }` — nie 50
 // BotTurn
 { "turn_index": 3, "speaker": "bot",
   "jp": "なにに しますか。", "reading_kana": "なにに しますか。", "de": "Was möchten Sie?",
-  "suggestions": [ { "jp": "コーヒーを ください。", "de": "Einen Kaffee, bitte." }, … ],  // 3, leer bei Ende
+  "romaji": "Nani ni shimasu ka.",   // serverseitig aus reading_kana ('' ohne Kana-Lesung)
+  "suggestions": [ { "jp": "コーヒーを ください。", "reading_kana": "コーヒーを ください。",
+                     "romaji": "Kōhī o kudasai.", "de": "Einen Kaffee, bitte." }, … ],  // 3, leer bei Ende
   "hint_de": "Bestelle ein Getränk.",
   "details_pending": false,   // true: nur jp steht, Rest leer → …/details nachladen
   "details_failed": false }   // true: Lernhilfen gescheitert → „Vorschläge gerade nicht verfügbar"
 
 // Correction (max. 3)
 { "original": "コーヒー ください", "better": "コーヒーを ください。",
+  "better_kana": "コーヒーを ください。",   // Lesung (Modell), in aelteren Daten evtl. ''
+  "better_romaji": "Kōhī o kudasai.",       // serverseitig abgeleitet (nur in API/Seiten)
   "explanation_de": "Das Objekt bekommt die Partikel を." }
 
 // Limits (Resttage-Kontingent des Nutzers)
@@ -116,7 +120,7 @@ Der erste `bot_turn` ist die Eröffnungszeile des Bots. Fehler: 400, 403, 404, 4
 { "text": "コーヒーを ください。" }      // 1–300 Zeichen, Japanisch (Kana/Kanji) oder Romaji
 ```
 ```json
-200 { "session": Session, "bot_turn": BotTurn,
+200 { "session": Session, "bot_turn": BotTurn, "user_romaji": "Kōcha ga nomitai desu.",
       "done": false, "correction": [], "xp_awarded": 0, "limits": Limits }
 ```
 Bei `done: true` ist das Gespräch beendet (Ziel erreicht oder 8. Zug): `bot_turn` ist die
@@ -127,6 +131,7 @@ aber möglich). Fehler: 400, 404, 409, 429, 502, 503.
 Freitext-Zug (kein Vorschlags-Treffer, nicht der letzte Zug): `bot_turn.details_pending: true`,
 nur `jp` gefüllt (`reading_kana`, `de`, `hint_de` leer, `suggestions` `[]`). Lernhilfen per
 `GET …/turn/<turn_index>/details` nachladen. Auch der erste `bot_turn` von `/start` kommt so.
+`user_romaji` = Romaji des eben gesendeten Nutzertexts, nur wenn er reine Kana ist, sonst `''`.
 
 ### POST `/api/roleplay/<session_id>/turn/stream` (Server-Sent Events)
 
@@ -245,6 +250,26 @@ Tokens/Kosten, `created_at`).
   einen auf, Schalter „Deutsch anzeigen" (neben Romaji → Kana, localStorage
   `jpl-roleplay-chip-de`) alle. Abschluss-Erklärungen bleiben sichtbar.
 
+## Romaji (seit 2026-09-27)
+
+Deterministisch aus Kana, **nicht** vom Modell: `app/romaji.py` (`kana_to_romaji`,
+`is_kana_text`, `romaji_or_empty`), modifiziertes Hepburn wie die übrigen Romaji der Seite —
+shi/chi/tsu/fu, Makron für Langvokale (おう/おお → ō, うう → ū, ああ → ā, ええ → ē, ー →
+Makron; いい bleibt ii, えい bleibt ei), っ verdoppelt (vor ch → cch), ん vor Vokal/y → n',
+Partikeln は/を/へ → wa/o/e als eigenes Wort am Ende eines Wortblocks, が/に/で/です/ください
+und satzfinales か/ね/よ abgetrennt, Satzanfänge gross. Die Heuristik stützt sich auf die
+Leerzeichen zwischen den Wortblöcken, die das Modell schreibt (Prompt-Regeln 5, 7, 10).
+
+- Quelle: Bot-Zeile `reading_kana`; Vorschläge `reading_kana` (Schema seit 2026-09-27,
+  `restore_katakana` wie bei der Zeile); Korrektur `better_kana`. Fehlt die Lesung (alte Daten),
+  gibt es Romaji nur, wenn der japanische Text selbst reine Kana ist.
+- Abgeleitet wird erst bei der Ausgabe (`roleplay_service.line_romaji`,
+  `with_romaji_suggestions`, `with_romaji_corrections`, `user_romaji`) — nichts davon wird
+  gespeichert; Vorausberechnung, Details-Abruf, Demo und Verlauf tragen die Felder damit mit.
+- Panel: Romaji-Zeile unter Bot-Zeile, Chips, Verlauf, Korrektur- und Abschlusszeile;
+  Schalter „Romaji anzeigen" (Default an, localStorage `jpl-roleplay-romaji-show`), gilt auch
+  auf `/sprechen/verlauf/<id>`. Nicht zu verwechseln mit „Romaji → Kana" (Eingabe).
+
 ## Seiten (SSR, gleiches Feature-Gate, login-pflichtig, noindex, nicht in der Sitemap)
 
 Code: `app/sprechen_routes.py`, `app/services/roleplay_overview.py`, Templates `sprechen/`.
@@ -290,7 +315,7 @@ Demo-Modus (`_roleplay_panel.html` mit `rp_demo`, JS `data-demo="1"`), Hero in
 ### POST `/api/roleplay/demo/turn`
 ```json
 { "token": "…", "text": "こうちゃが のみたいです。", "website": "" }
-200 { "token": "…" | null, "session": Session, "bot_turn": BotTurn,
+200 { "token": "…" | null, "session": Session, "bot_turn": BotTurn, "user_romaji": "…",
       "done": false, "correction": [], "xp_awarded": 0 }
 ```
 Fehler: 400 `invalid_request` (Text/Honeypot), 400 `demo_expired` / `demo_invalid` (Token →

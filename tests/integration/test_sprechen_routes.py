@@ -221,6 +221,31 @@ class TestVerlauf:
         assert "Willkommen." in html
         assert html.count("sp-line is-user") == 4
 
+    def test_detail_romaji_unter_jeder_zeile(self, app, enabled, world):
+        client, user = _login(app)
+        s = _session(user, world["contents"][0], turns=1, corrections=[
+            {"original": "コーヒー ください", "better": "コーヒーを ください。", "explanation_de": "を fehlt."},
+            {"original": "x", "better": "水を ください。", "better_kana": "みずを ください。", "explanation_de": "y"},
+        ])
+        s.turns[1].text_jp = "水を ください。"   # Nutzer-Freitext mit Kanji → keine Romaji
+        db.session.commit()
+        html = client.get(f"/sprechen/verlauf/{s.id}").get_data(as_text=True)
+        assert '<span class="sp-romaji">Irasshaimase.</span>' in html
+        assert '<span class="sp-romaji">Hai.</span>' in html
+        assert html.count('class="sp-romaji"') == 2           # Nutzerzeile mit Kanji ohne Romaji
+        assert '<div class="sp-romaji sp-corr-romaji">Kōhī o kudasai.</div>' in html
+        assert '<div class="sp-romaji sp-corr-romaji">Mizu o kudasai.</div>' in html
+        assert 'id="sp-romaji-toggle"' in html and "Romaji anzeigen" in html
+        assert "jpl-roleplay-romaji-show" in html
+
+    def test_detail_romaji_nutzerzug_in_kana(self, app, enabled, world):
+        client, user = _login(app)
+        s = _session(user, world["contents"][0], turns=1)
+        s.turns[1].text_jp = "こうちゃを ください。"
+        db.session.commit()
+        html = client.get(f"/sprechen/verlauf/{s.id}").get_data(as_text=True)
+        assert '<span class="sp-romaji">Kōcha o kudasai.</span>' in html
+
     def test_detail_korrektur_fallback_raw_json(self, app, enabled, world):
         client, user = _login(app)
         s = _session(user, world["contents"][0])

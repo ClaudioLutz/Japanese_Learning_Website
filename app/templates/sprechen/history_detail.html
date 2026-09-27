@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {# /sprechen/verlauf/<id> — ganzer Gespraechsverlauf + Korrekturen (nur eigene Sessions).
-   Daten: services/roleplay_overview.session_detail. Lesung/Deutsch einklappbar (<details>). #}
+   Daten: services/roleplay_overview.session_detail. Lesung/Deutsch einklappbar (<details>).
+   Romaji unter jeder Zeile, Schalter wie im Panel (gleicher localStorage-Schluessel). #}
 
 {% block title %}Gespräch: {{ s.lesson_title }}{% endblock %}
 {% block meta_description %}Verlauf deines Rollenspiels „{{ s.lesson_title }}" mit Verbesserungsvorschlägen.{% endblock %}
@@ -24,12 +25,18 @@
   </ul>
   {% if s.goal_de %}<p class="sp-note"><strong>Ziel:</strong> {{ s.goal_de }}</p>{% endif %}
 
-  <h2 class="sp-section-title">Verlauf</h2>
+  <div class="sp-verlauf-head">
+    <h2 class="sp-section-title">Verlauf</h2>
+    <button type="button" class="sp-romaji-switch" role="switch" aria-checked="true" id="sp-romaji-toggle">
+      <span class="sp-switch-track" aria-hidden="true"><span class="sp-switch-thumb"></span></span>
+      Romaji anzeigen
+    </button>
+  </div>
   <ol class="sp-lines">
     {% for ln in s.lines %}
     <li class="sp-line {{ 'is-user' if ln.who == 'user' else 'is-bot' }}">
       <span class="sp-line-who">{{ ln.name }}{% if ln.who == 'user' %} (du){% endif %}</span>
-      <span class="sp-bubble jp" lang="ja">{{ ln.jp }}</span>
+      <span class="sp-bubble jp" lang="ja">{{ ln.jp }}{% if ln.romaji %}<span class="sp-romaji">{{ ln.romaji }}</span>{% endif %}</span>
       {% if ln.who == 'bot' and (ln.reading or ln.de) %}
       <details>
         <summary>Lesung und Deutsch</summary>
@@ -56,6 +63,7 @@
         <span class="sp-corr-better jp" lang="ja">{{ c.better }}</span>
         {% endif %}
       </div>
+      {% if c.better_romaji %}<div class="sp-romaji sp-corr-romaji">{{ c.better_romaji }}</div>{% endif %}
       {% if c.explanation_de %}<div class="sp-corr-expl">{{ c.explanation_de }}</div>{% endif %}
     </li>
     {% endfor %}
@@ -68,4 +76,25 @@
     <a class="sp-btn sp-btn-primary" href="{{ url_for('sprechen.play', content_id=s.content_id) }}"><i class="fas fa-rotate-left" aria-hidden="true"></i> Nochmal spielen</a>
   </div>
 </div>
+<script>
+/* Romaji-Schalter (gleicher Schluessel wie das Rollenspiel-Panel, Default an). */
+(function () {
+  var KEY = 'jpl-roleplay-romaji-show';
+  var root = document.getElementById('sprechen-verlauf-detail');
+  var btn = document.getElementById('sp-romaji-toggle');
+  if (!root || !btn) return;
+  var on = true;
+  try { on = window.localStorage.getItem(KEY) !== '0'; } catch (e) { on = true; }
+  function apply() {
+    root.classList.toggle('sp-romaji-off', !on);
+    btn.setAttribute('aria-checked', on ? 'true' : 'false');
+  }
+  btn.addEventListener('click', function () {
+    on = !on;
+    try { window.localStorage.setItem(KEY, on ? '1' : '0'); } catch (e) { /* egal */ }
+    apply();
+  });
+  apply();
+})();
+</script>
 {% endblock %}
