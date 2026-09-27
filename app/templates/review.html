@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
 {% endblock %}
 
 {% block styles %}
+{% include 'partials/_play_view_styles.html' %}
 <style>
     /* Romaji-Toggle: blendet ALLE Front-Side-Romaji-Zeilen aus wenn html.hide-front-romaji.
        Muss jede Romaji-Variante der Vorderseite treffen — sonst wirkt der Toggle auf
@@ -45,35 +46,14 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
        review-spezifische Bühnen-/Karten-Geometrie.
        ══════════════════════════════════════════════════════════════════ */
 
-    /* ── Gesperrte Bühne ── */
-    .review-screen {
-        flex: 1 1 auto;
-        min-height: 0;
-        width: 100%;
-        max-width: 560px;
-        margin: 0 auto;
-        padding: 0.6rem 1rem 0.75rem;
-        display: flex;
-        flex-direction: column;
-        gap: 0.55rem;
-    }
-
-    /* ── Kompakte Kopfzeile: Progress + Zähler + Romaji + Einstellungen ── */
-    .review-topbar {
-        flex: 0 0 auto;
-        display: flex;
-        align-items: center;
-        gap: 0.55rem;
-    }
-    .session-progress {
-        flex: 1 1 auto;
-        min-width: 0;
-        margin: 0;
-    }
+    /* ── Gesperrte Bühne: Hülle, Leiste, Arbeitsfläche und Knopfleiste kommen
+       aus der Schablone C (partials/_play_view_styles.html). Hier nur das
+       Review-Spezifische. ── */
+    .session-progress { margin: 0; }
     .session-progress .progress {
         height: 6px;
         border-radius: 999px;
-        background: var(--ink-100, #F1EDE6);
+        background: var(--surface-inset);
         overflow: hidden;
     }
     .session-progress .progress-bar {
@@ -92,11 +72,11 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     }
     .review-icon-btn {
         flex: 0 0 auto;
-        width: 38px; height: 38px;
+        width: 44px; height: 44px;
         display: inline-flex; align-items: center; justify-content: center;
         border-radius: 10px;
-        border: 1px solid var(--ink-200, #E4DED4);
-        background: var(--card-bg, #FFFDF7);
+        border: 1px solid var(--surface-border);
+        background: var(--surface-1);
         color: var(--ink-600, #5C564D);
         font-size: 0.95rem;
         cursor: pointer;
@@ -135,7 +115,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     .review-listen-btn[aria-pressed="true"]:hover { color: #fff; }
     [data-theme="dark"] .review-listen-btn[aria-pressed="true"] { color: var(--washi, #14120E); }
     @media (max-width: 420px) {
-        .review-listen-btn.review-icon-btn { width: 38px; padding: 0; }
+        .review-listen-btn.review-icon-btn { width: 44px; padding: 0; }
         .review-listen-btn .review-listen-label {
             position: absolute; width: 1px; height: 1px;
             overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
@@ -174,15 +154,8 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         .review-listen-play.playing { animation: none; }
     }
 
-    /* Tageslimit-Zeile unter der Kopfzeile: „Heute noch N von M" */
-    .review-daily-quota {
-        flex: 0 0 auto;
-        margin: -0.2rem 0 0;
-        text-align: center;
-        font-size: 0.78rem;
-        color: var(--ink-600, #5C564D);
-        font-variant-numeric: tabular-nums;
-    }
+    /* Tageslimit-Zeile unter dem Fortschrittsbalken: „Heute noch N von M"
+       (Schrift/Farbe aus .play-bar__note). */
     .review-daily-quota[hidden] { display: none; }
     .review-daily-quota strong { color: var(--tetsu, #2C2C2C); font-weight: 600; }
     [data-theme="dark"] .review-daily-quota { color: var(--text-muted, #8C8378); }
@@ -199,7 +172,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     .review-undo-btn[hidden] { display: none; }
     .review-undo-btn .review-undo-label { white-space: nowrap; }
     @media (max-width: 420px) {
-        .review-undo-btn.review-icon-btn { width: 38px; padding: 0; }
+        .review-undo-btn.review-icon-btn { width: 44px; padding: 0; }
         .review-undo-btn .review-undo-label {
             position: absolute; width: 1px; height: 1px;
             overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
@@ -218,42 +191,17 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         border: 1.5px solid var(--card-bg, #FFFDF7);
     }
 
-    /* ── Bühne: Karte ODER ein Zustand (teilen sich den Restplatz) ── */
-    .review-card-area, .review-empty, .review-complete {
-        flex: 1 1 auto;
-        min-height: 0;
-        width: 100%;
-    }
-    .review-card-area {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
+    /* ── Bühne: Karte (.play-stage) ODER ein Zustand (.play-state) ── */
     .review-empty, .review-complete {
         display: none;                /* per JS auf block geschaltet */
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-        text-align: center;
-        padding: 1.5rem 1rem;
-    }
-    .review-empty-icon, .review-complete-icon {
-        font-size: 2.6rem;
-        margin-bottom: 0.75rem;
-    }
-    .review-complete h4 {
-        font-family: 'Geist', 'Inter', sans-serif;
-        font-weight: 510; letter-spacing: -0.02em;
-        color: var(--kon, #1F2A44);
     }
 
-    /* ── Review Flip Card — füllt die Bühne ── */
+    /* ── Review Flip Card — füllt die Arbeitsfläche, oben verankert ── */
     .review-flip-card {
         flex: 1 1 auto;
         width: 100%;
-        max-width: 460px;
-        max-height: 540px;
         min-height: 0;
-        margin: 0 auto;
+        margin: 0;
         perspective: 1200px;
         cursor: pointer;
     }
@@ -283,10 +231,10 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
         border-radius: 14px;
         display: flex;
         flex-direction: column;
-        padding: 1.5rem 1.35rem;
-        border: 1px solid var(--ink-200, #E4DED4);
-        background: var(--card-background);
-        box-shadow: var(--shadow-card, 0 4px 16px rgba(28,26,23,0.06));
+        padding: var(--space-6) var(--space-4);
+        border: 1px solid var(--surface-border);
+        background: var(--surface-1);
+        box-shadow: var(--shadow-1);
     }
     .review-card-face--front {
         align-items: center;
@@ -760,18 +708,17 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
 
     /* ── Session-Summary (Complete-State) ── */
     .session-summary {
-        background: var(--card-bg, #FFFDF7);
-        border-radius: 12px;
-        border: 1px solid var(--border-color, #D4CFC5);
-        padding: 1.25rem;
-        margin-top: 1rem;
+        max-width: 420px;
+        margin: var(--space-4) auto 0;
         text-align: left;
     }
     .session-summary .summary-row {
         display: flex;
         justify-content: space-between;
-        padding: 0.3rem 0;
-        font-size: 0.9rem;
+        gap: var(--space-4);
+        padding: var(--space-2) 0;
+        border-bottom: 1px solid var(--surface-border);
+        font-size: var(--text-sm);
     }
     .session-summary .summary-label { color: var(--text-muted, #8C8378); }
     .session-summary .summary-value { font-weight: 600; }
@@ -805,14 +752,10 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
        margin-top:-22px) ragt ~80px über die Viewport-Unterkante. 96px hält
        die gepinnten Buttons mit Komfort-Abstand darüber (mehr als das globale
        body{padding-bottom:72px} in custom.css, das nur leeren Rand abdeckt). */
-    @media (max-width: 767px) {
-        /* Keine eigene Bottom-Nav-Reserve mehr: der gesperrte Container endet
-           (custom.css, position:fixed) bereits an der Fussleisten-Oberkante.
-           Nur etwas Luft, damit die Buttons nicht flush ankleben. */
-        .review-screen { padding-bottom: 8px; }
-    }
+    /* Keine eigene Bottom-Nav-Reserve: der gesperrte Container endet
+       (custom.css, position:fixed) an der Fussleisten-Oberkante; die
+       Knopfleiste (.play-actions) schliesst dort an. */
     @media (max-width: 576px) {
-        .review-screen { padding-left: 0.7rem; padding-right: 0.7rem; }
         .review-btn { font-size: 0.78rem; }
     }
 
@@ -823,22 +766,15 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
 
     /* ── Desktop: Karte als Buehne nutzen statt Phone-Layout zu strecken ── */
     @media (min-width: 992px) {
-        .review-screen { max-width: 680px; }
-        .review-flip-card { max-width: 600px; max-height: 640px; }
-        .review-card-face { padding: 1.9rem 2rem; }
+        .review-card-face { padding: var(--space-8); }
         .review-card-front-text.single-char { font-size: 6rem; }
         .review-card-front-text { font-size: 3.5rem; }
         .review-card-front-text.small-text { font-size: 2.3rem; }
         .front-example-jp { font-size: 1.35rem; }
         .back-meaning { font-size: 1.7rem; }
     }
-    /* Hohe Viewports: Karte+Kontext+Buttons als zentrierter Cluster.
-       margin:auto verteilt den Leerraum ober-/unterhalb des Clusters statt
-       ein Loch zwischen Karte und am Boden klebenden Tags zu lassen. */
-    @media (min-width: 992px) and (min-height: 760px) {
-        .review-card-area { flex: 0 1 auto; height: min(640px, 64dvh); margin-top: auto; }
-        .review-buttons { margin-bottom: auto; }
-    }
+    /* Hohe Viewports: keine vertikale Zentrierung mehr (Layout-Standard) —
+       .play-stage deckelt die Karte, der Leerraum fällt unter die Knöpfe. */
 
     /* ── Tastatur-Hinweise: nur fuer Geraete mit Maus/Trackpad + Tastatur ── */
     .review-btn { position: relative; }
@@ -961,7 +897,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
 {% endblock %}
 
 {% block content %}
-<div class="review-screen">
+<div class="page play-view review-screen">
 
     {# Mobile/Tablet-Richtungs-Umschalter (≤991px) — Desktop hat ihn im Header #}
     {% set active_dir = 'jpde' %}
@@ -970,16 +906,23 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     <!-- Screenreader-Ansagen: Bewertungsergebnis, Fortschritt, Session-Ende -->
     <div class="sr-only-live" id="srAnnounce" aria-live="polite"></div>
 
-    <!-- Kompakte Kopfzeile: Fortschritt + Zähler + Romaji + Einstellungen -->
-    <div class="review-topbar">
-        <div class="session-progress" id="sessionProgress" style="display: none;">
-            <div class="progress" role="progressbar" aria-label="Session-Fortschritt"
-                 aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="sessionProgressBar">
-                <div class="progress-bar" id="sessionBar" style="width: 0%;"></div>
+    <!-- Leiste: Fortschritt + Tageslimit | Zähler | Werkzeuge -->
+    <div class="play-bar review-topbar">
+        <div class="play-bar__track">
+            <div class="session-progress" id="sessionProgress" style="display: none;">
+                <div class="progress" role="progressbar" aria-label="Session-Fortschritt"
+                     aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="sessionProgressBar">
+                    <div class="progress-bar" id="sessionBar" style="width: 0%;"></div>
+                </div>
             </div>
+            <!-- Tageslimit: „Heute noch N von M fälligen Karten" (per JS aus /api/srs/due.daily) -->
+            <div class="play-bar__note review-daily-quota" id="dailyQuota" hidden aria-live="polite"></div>
         </div>
-        <span class="review-xp-counter" id="sessionXpCounter" hidden>⚡ +0</span>
-        <span class="review-progress-count" id="sessionCount">0 / 0</span>
+        <div class="play-bar__meta">
+            <span class="review-progress-count" id="sessionCount">0 / 0</span>
+            <span class="review-xp-counter" id="sessionXpCounter" hidden>⚡ +0</span>
+        </div>
+        <div class="play-bar__tools">
         <button type="button" class="review-icon-btn review-undo-btn" id="reviewUndoBtn" hidden
                 title="Letzte Bewertung rückgängig (Z)" aria-label="Letzte Bewertung rückgängig machen">
             <i class="fas fa-rotate-left" aria-hidden="true"></i>
@@ -1000,28 +943,26 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
                 aria-label="Übersicht und Filter öffnen">
             <i class="fas fa-sliders-h"></i>
         </button>
+        </div>
     </div>
 
-    <!-- Tageslimit: „Heute noch N von M fälligen Karten" (per JS aus /api/srs/due.daily) -->
-    <div class="review-daily-quota" id="dailyQuota" hidden aria-live="polite"></div>
-
-    <!-- Card Area -->
-    <div class="review-card-area" id="reviewCardArea">
+    <!-- Arbeitsfläche: Karte, oben verankert -->
+    <div class="play-stage review-card-area" id="reviewCardArea">
         <!-- Filled by JavaScript -->
     </div>
 
     <!-- Filter-Leer-Status (fällige Karten vorhanden, aber keine in der Auswahl) -->
-    <div class="review-empty" id="reviewFilterEmpty">
-        <div class="review-empty-icon">
+    <div class="play-state review-empty" id="reviewFilterEmpty">
+        <div class="play-state__icon" aria-hidden="true">
             <i class="fas fa-filter" style="color: var(--zen-vermillion, #D14B3D);"></i>
         </div>
-        <h5 id="reviewFilterEmptyTitle">Keine Karten für diese Auswahl</h5>
-        <p class="text-muted" id="reviewFilterEmptyText">Wähle oben mindestens einen Kartentyp.</p>
+        <h2 class="play-state__title" id="reviewFilterEmptyTitle">Keine Karten für diese Auswahl</h2>
+        <p class="play-state__text" id="reviewFilterEmptyText">Wähle oben mindestens einen Kartentyp.</p>
     </div>
 
     <!-- Empty State -->
-    <div class="review-empty" id="reviewEmpty">
-        <div class="review-empty-icon">
+    <div class="play-state review-empty" id="reviewEmpty">
+        <div class="play-state__icon" aria-hidden="true">
             {% if stats.total_cards == 0 %}
             <i class="fas fa-seedling" style="color: var(--zen-matcha, #7A9A5A);"></i>
             {% else %}
@@ -1029,18 +970,20 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
             {% endif %}
         </div>
         {% if stats.total_cards == 0 %}
-        <h5>Noch keine Karten gelernt</h5>
-        <p class="text-muted">Starte eine Lektion, um Karten zu sammeln.</p>
-        <a href="{{ url_for('routes.lessons') }}" class="btn btn-primary btn-sm mt-2">
-            <i class="fas fa-book-open me-1"></i> Lektionen ansehen
-        </a>
+        <h2 class="play-state__title">Noch keine Karten gelernt</h2>
+        <p class="play-state__text">Starte eine Lektion, um Karten zu sammeln.</p>
+        <div class="play-state__actions">
+            <a href="{{ url_for('routes.lessons') }}" class="btn btn-primary btn-sm">
+                <i class="fas fa-book-open me-1"></i> Lektionen ansehen
+            </a>
+        </div>
         {% else %}
-        <h5 id="emptyTitle">Alles erledigt!</h5>
-        <p class="text-muted" id="emptyForecast">Keine Karten fällig.</p>
-        <button type="button" class="btn btn-primary btn-sm mb-2" id="emptyIgnoreLimitBtn" hidden>
+        <h2 class="play-state__title" id="emptyTitle">Alles erledigt!</h2>
+        <p class="play-state__text" id="emptyForecast">Keine Karten fällig.</p>
+        <button type="button" class="btn btn-primary btn-sm" id="emptyIgnoreLimitBtn" hidden>
             <i class="fas fa-forward me-1"></i> <span id="emptyIgnoreLimitLabel">Trotzdem weiter üben</span>
         </button>
-        <div class="mt-2" style="display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap;">
+        <div class="play-state__actions">
             <a href="{{ url_for('srs.practice_kana_page') }}" class="btn btn-outline-primary btn-sm">
                 <i class="fas fa-keyboard me-1"></i> Kana üben
             </a>
@@ -1055,11 +998,11 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     </div>
 
     <!-- Session Complete -->
-    <div class="review-complete" id="reviewComplete">
-        <div class="review-complete-icon">
+    <div class="play-state review-complete" id="reviewComplete">
+        <div class="play-state__icon" aria-hidden="true">
             <i class="fas fa-trophy" style="color: #f59e0b;"></i>
         </div>
-        <h4>Session beendet!</h4>
+        <h2 class="play-state__title">Session beendet!</h2>
         <div class="session-summary" id="sessionSummary">
             <div class="summary-row">
                 <span class="summary-label">Karten wiederholt</span>
@@ -1088,7 +1031,7 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
             <div class="stage-changes" id="stageChanges"></div>
             <div id="sessionAchievements" style="margin-top:0.5rem;"></div>
         </div>
-        <div class="mt-3" style="display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap;">
+        <div class="play-state__actions">
             <button type="button" class="btn btn-primary btn-sm" id="nextRoundBtn" hidden>
                 <i class="fas fa-forward me-1"></i> <span id="nextRoundLabel">Weitere Runde</span>
             </button>
@@ -1110,8 +1053,8 @@ document.addEventListener('DOMContentLoaded', window._renderRomajiToggle);
     <!-- Fehler-Hinweis: Bewertung konnte nicht gespeichert werden -->
     <div class="rate-error" id="rateError" hidden>Bewertung nicht gespeichert — bitte erneut wählen.</div>
 
-    <!-- Rating Buttons (gepinnt) -->
-    <div class="review-buttons" id="reviewButtons">
+    <!-- Rating Buttons (gepinnt; mobil feste Leiste über der Bottom-Nav) -->
+    <div class="play-actions review-buttons" id="reviewButtons">
         <button class="review-btn" data-rating="1">
             <kbd class="key-badge" aria-hidden="true">1</kbd>
             <span><i class="fas fa-redo"></i> Nochmal</span>

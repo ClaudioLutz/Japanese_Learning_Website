@@ -1,0 +1,160 @@
+{#- Schablone C „Spiel-/Übungsansicht" (docs/layout-standard.md §4 C).
+  Genutzt von /review und /review/produktion (body.review-locked: der
+  Container ist per custom.css zwischen Top-Nav und Bottom-Nav fixiert).
+
+  Aufbau:
+    <div class="page play-view">
+      <div class="play-bar">            schmale Leiste: Fortschritt, Zähler, Werkzeuge
+        <div class="play-bar__track">   Fortschrittsbalken (.play-track) + Hinweiszeile
+        <div class="play-bar__meta">    Zähler
+        <div class="play-bar__tools">   Icon-Knöpfe (44 px)
+      <div class="play-stage">          Arbeitsfläche, oben verankert (Karte)
+      <div class="play-state">          Zustand statt Karte (leer, fertig) — Fläche
+      <div class="play-actions">        Bewertungsknöpfe; mobil feste Leiste über der Bottom-Nav
+
+  Nur Tokens aus layout.css/custom.css; Flächen über --surface-*.
+-#}
+<style>
+    /* Der gesperrte Container (custom.css: position:fixed, left/right 0) trägt
+       die globale Container-Maximalbreite; ohne margin:auto klebt er ab
+       1800 px links und die Bühne sitzt 60 px neben der Mitte. */
+    body.review-locked main.container.mt-4 { margin-inline: auto; }
+
+    .page.play-view {
+        --play-w: 720px;
+        flex: 1 1 auto;
+        min-height: 0;
+        width: 100%;
+        max-width: calc(var(--play-w) + 2 * var(--page-gutter));
+        margin-inline: auto;
+        padding: var(--space-3) var(--page-gutter);
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+    }
+    /* Richtungs-Umschalter (nur < 992 px) bringt eigenen Abstand mit; die
+       Lücke regelt hier das gap. */
+    .play-view > .review-dir-toggle { margin: 0 auto; }
+
+    /* ── Leiste: mobil zwei Zeilen (Zähler | Werkzeuge, darunter Balken),
+       ab 768 px eine Zeile (Balken | Zähler | Werkzeuge). ── */
+    .play-bar {
+        flex: 0 0 auto;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-areas: "meta tools" "track track";
+        align-items: center;
+        gap: var(--space-2) var(--space-3);
+    }
+    .play-bar__track {
+        grid-area: track;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1);
+    }
+    .play-bar__meta {
+        grid-area: meta;
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+    }
+    .play-bar__tools {
+        grid-area: tools;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: var(--space-2);
+    }
+    @media (min-width: 768px) {
+        .play-bar {
+            grid-template-columns: minmax(0, 1fr) auto auto;
+            grid-template-areas: "track meta tools";
+            column-gap: var(--space-4);
+        }
+    }
+    .play-track {
+        height: 6px;
+        border-radius: var(--radius-full, 9999px);
+        background: var(--surface-inset);
+        overflow: hidden;
+    }
+    .play-track > * {
+        height: 100%;
+        width: 0;
+        background: var(--shu, #EB6101);
+        transition: width 0.4s ease;
+    }
+    .play-bar__note {
+        font-size: var(--text-xs);
+        line-height: 1.35;
+        color: var(--text-muted, #6E675C);
+        font-variant-numeric: tabular-nums;
+    }
+    .play-bar__note[hidden] { display: none; }
+
+    /* ── Arbeitsfläche: oben verankert, füllt mobil den Restplatz; ab 768 px
+       gedeckelt, damit Karte + Knöpfe zusammenbleiben (Leerraum fällt nach
+       unten, nicht zwischen Leiste und Karte). ── */
+    .play-stage {
+        flex: 1 1 auto;
+        min-height: 0;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+    @media (min-width: 768px) {
+        .play-stage { max-height: 620px; }
+    }
+
+    /* ── Zustand statt Karte (Start ohne fällige Karten, Session-Ende):
+       dieselbe Fläche wie die Karte, oben verankert, Inhaltshöhe. ── */
+    .play-state {
+        flex: 0 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        background: var(--surface-1);
+        border: 1px solid var(--surface-border);
+        border-radius: var(--radius-lg, 16px);
+        box-shadow: var(--shadow-1);
+        padding: var(--space-6) var(--space-4);
+        color: var(--text-color);
+        text-align: center;
+    }
+    @media (min-width: 768px) {
+        .play-state { padding: var(--space-8) var(--space-6); }
+    }
+    .play-state__icon { font-size: var(--text-3xl); line-height: 1; margin-bottom: var(--space-3); }
+    .play-state__title {
+        margin: 0 0 var(--space-2);
+        font: 560 var(--text-xl)/1.2 'Geist', 'Inter', sans-serif;
+        letter-spacing: -0.02em;
+        color: var(--kon, #1F2A44);
+    }
+    [data-theme="dark"] .play-state__title { color: var(--text-color); }
+    .play-state__text { margin: 0 auto var(--space-4); max-width: var(--measure); color: var(--text-muted, #6E675C); }
+    .play-state__actions {
+        display: flex; flex-wrap: wrap; justify-content: center;
+        gap: var(--space-2);
+        margin-top: var(--space-4);
+    }
+    .play-state__actions .btn,
+    .play-state .btn { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+
+    /* ── Bewertungsknöpfe: mobil eine feste Leiste über der Bottom-Nav
+       (der gesperrte Container endet an ihrer Oberkante). ── */
+    .play-actions { flex: 0 0 auto; }
+    @media (max-width: 767px) {
+        .play-view .play-actions {
+            width: auto;
+            margin-inline: calc(-1 * var(--page-gutter));
+            padding: var(--space-2) var(--page-gutter) 0;
+            border-top: 1px solid var(--surface-border);
+            background: var(--surface-0);
+        }
+        .page.play-view { padding-bottom: var(--space-2); }
+    }
+</style>
