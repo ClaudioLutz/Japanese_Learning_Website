@@ -385,6 +385,7 @@ Mehrere Sessions an DERSELBEN Datei kollidieren. Besonders heikel (von vielen Fe
 - **Coverage nicht senken** — `fail_under` in pyproject.toml darf nur erhöht, nie gesenkt werden.
 - **Neue Features brauchen Tests** — Neue Routen, Services oder Models werden nicht ohne zugehörige Unit-/Integrationstests committed.
 - **Linting** — Nach Python-Änderungen `ruff check` ausführen und Fehler beheben.
+- **Layout-Standard** — Neue/umgebaute Seiten folgen docs/layout-standard.md (Prüfliste), Screenshots 1920×1080, 1366×768 und mobil.
 - **CSS-Änderungen: Deck-Karussell prüfen** — Nach jeder Änderung an `custom.css` (besonders im Flip-Card-Bereich) MUSS geprüft werden, dass die Lernkarten im Deck-Karussell korrekt angezeigt werden (eine Karte nach der anderen, nicht alle untereinander). Ein CSS-Syntaxfehler (z.B. fehlende `}`, doppelter Selektor) bricht das gesamte CSS-Parsing ab und deaktiviert die `.content-item.in-deck { display: none }` Regel — dann werden alle Karten gleichzeitig sichtbar. **Prüfung:** Browser-Konsole öffnen, nach `[Deck]`-Meldungen suchen, und visuell bestätigen dass nur eine Karte sichtbar ist.
 
 ## Quiz-System — Einschränkungen

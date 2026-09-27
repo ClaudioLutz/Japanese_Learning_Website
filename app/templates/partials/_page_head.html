@@ -1,0 +1,42 @@
+{#- Seitenkopf nach docs/layout-standard.md (Klassen in static/css/layout.css).
+
+  Einbinden:
+    {% from 'partials/_page_head.html' import page_head %}
+
+    {{ page_head('Kana üben', subtitle='Kurzer Satz', eyebrow='Übung', eyebrow_jp='かな') }}
+
+    mit Aktionen rechts (mobil als Zeile darunter):
+    {% call page_head('Statistik', subtitle='…') %}
+      <a class="btn …" href="…">Exportieren</a>
+    {% endcall %}
+
+  Parameter:
+    title          Seitentitel (h1). Pflicht.
+    subtitle       Untertitel; HTML erlaubt, wenn als Markup übergeben
+                   (z. B. aus {% set sub %}…{% endset %}).
+    eyebrow        kleine Kennzeile über dem Titel (optional).
+    eyebrow_jp     japanischer Vorsatz in der Kennzeile, Shu-farbig (optional).
+    subtitle_mobile  False → Untertitel erst ab 768 px zeigen (mobil kompakt).
+    attrs          zusätzliche Attribute für das <header>-Element als Markup,
+                   z. B. 'x-show="!playing"'|safe.
+    heading_id     id des h1 (Standard: page-title), für aria-labelledby.
+-#}
+{% macro page_head(title, subtitle=None, eyebrow=None, eyebrow_jp=None, subtitle_mobile=True, attrs='', heading_id='page-title') -%}
+<header class="page-head" {{ attrs }}>
+    <div class="page-head__text">
+        {%- if eyebrow or eyebrow_jp %}
+        <span class="page-head__eyebrow">
+            {%- if eyebrow_jp %}<span class="jp" lang="ja">{{ eyebrow_jp }}</span>{% if eyebrow %} · {% endif %}{% endif -%}
+            {{ eyebrow or '' }}
+        </span>
+        {%- endif %}
+        <h1 class="page-head__title" id="{{ heading_id }}">{{ title }}</h1>
+        {%- if subtitle %}
+        <p class="page-head__sub{{ '' if subtitle_mobile else ' page-head__sub--desktop' }}">{{ subtitle }}</p>
+        {%- endif %}
+    </div>
+    {%- if caller %}
+    <div class="page-head__actions">{{ caller() }}</div>
+    {%- endif %}
+</header>
+{%- endmacro %}

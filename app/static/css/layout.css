@@ -1,0 +1,210 @@
+/* ══════════════════════════════════════════════════════════════════════
+   layout.css — Seitenhülle, Seitenkopf, Flächen, Kachelraster
+   Standard: docs/layout-standard.md (Tokens, Schablonen, Prüfliste).
+
+   Geladen in base.html NACH custom.css + mobile-improvements.css.
+   Strikt additiv: definiert nur NEUE Tokens und NEUE Klassen (.page*,
+   .page-head*, .page-split*, .surface*, .grid-tiles*). Seiten, die diese
+   Klassen nicht verwenden, bleiben pixelgleich. Bestehende Tokens
+   (--space-1..16, --text-base, --radius-*, --shadow-*) werden nicht
+   umdefiniert; --space-24 ergänzt die Abstandsskala.
+
+   Mobile-first: Basisregeln = Handy (< 768 px), grössere Viewports per
+   min-width. Breakpoints: 640 / 768 / 1024 / 1280 / 1536.
+   ══════════════════════════════════════════════════════════════════════ */
+
+:root {
+    /* ── Containerbreiten (Inhaltsbreite ohne Rinne) ── */
+    --container-std:   1200px;   /* Standard: Übungen, Formulare, Detailseiten */
+    --container-wide:  1440px;   /* Dashboard, Kataloge */
+    --container-prose:  680px;   /* Lesetext (60–80 Zeichen) */
+    --container-auth:   440px;   /* Login/Registrierung (400–480) */
+
+    /* ── Seitenrinne: 16 px auf allen Grössen. Auf Desktop kommen die
+       32 px von main.container dazu → 48 px effektiv; mobil nullt
+       mobile-improvements.css den Container → 16 px effektiv. ── */
+    --page-gutter: 16px;
+
+    /* ── Abstandsskala 4/8/12/16/24/32/48/64/96 ──
+       --space-1..16 stehen in custom.css (4..64 px) und passen bereits;
+       hier nur die fehlende 96er-Stufe. */
+    --space-24: 6rem;
+    --grid-gap: 16px;            /* mobil dicht, ab 768 px 24 px (s. u.) */
+    --grid-gap-dense: 16px;
+
+    /* ── Schriftskala Faktor 1.25, verankert an --text-base (17 px, custom.css).
+       xs ist auf 12 px angehoben (Lesbarkeits-Untergrenze). ── */
+    --text-xs:  0.75rem;    /* 12 px  — Eyebrow, Badges */
+    --text-sm:  0.85rem;    /* 13.6 px — Hilfstext, Labels */
+    /* --text-base: 1.0625rem (17 px) — Fliesstext, in custom.css definiert */
+    --text-lg:  1.328rem;   /* 21 px  — Karten-Titel */
+    --text-xl:  1.66rem;    /* 26.6 px — Seitentitel mobil, Abschnitt */
+    --text-2xl: 2.075rem;   /* 33 px  — Seitentitel Desktop */
+    --text-3xl: 2.594rem;   /* 41.5 px — Hero */
+    --measure:  68ch;       /* Zeilenlänge Fliesstext (60–80 Zeichen) */
+
+    /* ── Flächenstufen (Light): Seite < Oberfläche < Karte.
+       Im Light trennen Haarlinie + dezenter Schatten, im Dark die Helligkeit. ── */
+    --surface-0: var(--washi, #FAF7F2);   /* Seitenhintergrund */
+    --surface-1: #FFFFFF;                 /* Oberfläche: Karten, Paneele */
+    --surface-2: #FFFFFF;                 /* erhöht: Popover, hervorgehobene Karte */
+    --surface-inset: var(--ink-100, #F1EDE6); /* Mulde: Segment-Tracks, Eingabe-Hintergrund */
+    --surface-border: var(--ink-200, #E4DED4);
+    --surface-border-strong: var(--ink-300, #D4CCBE);
+    --shadow-1: 0 1px 2px rgba(28, 26, 23, .04), 0 1px 3px rgba(28, 26, 23, .05);
+    --shadow-2: 0 2px 4px -1px rgba(28, 26, 23, .06), 0 6px 16px -4px rgba(28, 26, 23, .08);
+
+    /* ── Mobile Bottom-Nav: body reserviert unter 768 px bereits 60 px
+       (custom.css). Sticky-Elemente unten halten diesen Abstand. ── */
+    --bottom-nav-h: 0px;
+}
+
+@media (max-width: 767px) {
+    :root { --bottom-nav-h: calc(60px + env(safe-area-inset-bottom, 0px)); }
+}
+
+@media (min-width: 768px) {
+    :root { --grid-gap: 24px; }
+}
+
+/* Dark: Elevation über Helligkeit, keine Schatten (auf Sumi unsichtbar). */
+[data-theme="dark"] {
+    --surface-0: #14120E;
+    --surface-1: #1E1B15;   /* = --card-background */
+    --surface-2: #28241D;
+    --surface-inset: #2A251D;
+    --surface-border: #2E281F;
+    --surface-border-strong: #3A342A;
+    --shadow-1: none;
+    --shadow-2: 0 0 0 1px rgba(244, 239, 230, .04);
+}
+
+/* ══ .page — Seitenhülle ═══════════════════════════════════════════════
+   Inhalt beginnt oben (keine vertikale Zentrierung). Varianten:
+   .page--wide (1440), .page--prose (680), .page--auth (440, zentriert). */
+.page {
+    position: relative;
+    width: 100%;
+    max-width: calc(var(--container-std) + 2 * var(--page-gutter));
+    margin-inline: auto;
+    padding: var(--space-4) var(--page-gutter) var(--space-8);
+}
+.page--wide  { max-width: calc(var(--container-wide)  + 2 * var(--page-gutter)); }
+.page--prose { max-width: calc(var(--container-prose) + 2 * var(--page-gutter)); }
+.page--auth  { max-width: calc(var(--container-auth)  + 2 * var(--page-gutter)); }
+
+@media (min-width: 768px) {
+    .page { padding-top: var(--space-2); padding-bottom: var(--space-12); }
+}
+
+/* ══ .page-head — Seitenkopf ══════════════════════════════════════════
+   Mobil kompakt und einspaltig (Titel, optional Untertitel, Aktionen als
+   Zeile darunter); ab 768 px Aktionen rechts neben dem Titelblock. */
+.page-head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+}
+.page-head__text { min-width: 0; }
+.page-head__eyebrow {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    padding: 0.25rem 0.65rem; border-radius: var(--radius-full, 9999px);
+    border: 1px solid var(--surface-border);
+    background: var(--surface-1);
+    font: 600 var(--text-xs)/1 'Geist', 'Inter', sans-serif;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--ink-700, #403B34);
+    margin-bottom: var(--space-2);
+}
+.page-head__eyebrow .jp {
+    font-family: 'Noto Sans JP', sans-serif; letter-spacing: 0;
+    color: var(--shu, #EB6101);
+}
+.page-head__title {
+    margin: 0;
+    font: 560 var(--text-xl)/1.15 'Geist', 'Inter', sans-serif;
+    letter-spacing: -0.02em;
+    color: var(--kon, #1F2A44);
+}
+.page-head__sub {
+    margin: var(--space-1) 0 0;
+    max-width: var(--measure);
+    font-size: var(--text-sm);
+    line-height: 1.55;
+    color: var(--text-muted, #6E675C);
+}
+/* Untertitel, der mobil Platz kostet, aber für SEO/Desktop Substanz trägt */
+.page-head__sub--desktop { display: none; }
+.page-head__actions {
+    display: flex; flex-wrap: wrap; align-items: center;
+    gap: var(--space-2);
+}
+[data-theme="dark"] .page-head__title { color: var(--text-color); }
+[data-theme="dark"] .page-head__eyebrow { color: var(--text-muted); background: var(--surface-inset); }
+
+@media (min-width: 768px) {
+    .page-head {
+        flex-direction: row; align-items: flex-end; justify-content: space-between;
+        gap: var(--space-6);
+        margin-bottom: var(--space-6);
+    }
+    .page-head__title { font-size: var(--text-2xl); }
+    .page-head__sub { font-size: 0.95rem; }
+    .page-head__sub--desktop { display: block; }
+    .page-head__actions { flex: 0 0 auto; justify-content: flex-end; }
+}
+
+/* ══ .page-body / .page-split — Inhaltsbereich ════════════════════════
+   .page-split: mobil einspaltig (Hauptspalte zuerst), ab 1024 px
+   Hauptspalte + Seitenleiste (Standard 360 px, per --aside-w steuerbar). */
+.page-body { display: block; }
+.page-split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--grid-gap);
+    align-items: start;
+}
+@media (min-width: 1024px) {
+    .page-split {
+        grid-template-columns: minmax(0, 1fr) minmax(0, var(--aside-w, 360px));
+        column-gap: var(--space-8);
+    }
+    .page-split__aside--sticky { position: sticky; top: calc(60px + var(--space-4)); }
+}
+
+/* ══ .surface — Flächen erben Hintergrund, Rahmen, Schatten aus Tokens ══ */
+.surface,
+.surface-1 {
+    background: var(--surface-1);
+    border: 1px solid var(--surface-border);
+    border-radius: var(--radius-lg, 16px);
+    box-shadow: var(--shadow-1);
+    padding: var(--space-4);
+    color: var(--text-color);
+}
+.surface-2 {
+    background: var(--surface-2);
+    border: 1px solid var(--surface-border);
+    border-radius: var(--radius-lg, 16px);
+    box-shadow: var(--shadow-2);
+    padding: var(--space-4);
+    color: var(--text-color);
+}
+.surface-inset {
+    background: var(--surface-inset);
+    border-radius: var(--radius-md, 12px);
+}
+.surface--flush { padding: 0; }
+@media (min-width: 768px) {
+    .surface, .surface-1, .surface-2 { padding: var(--space-6); }
+    .surface--flush { padding: 0; }
+}
+
+/* ══ .grid-tiles — Kachelraster: füllt breite Bildschirme über Spalten ══ */
+.grid-tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
+    gap: var(--grid-gap);
+}
+.grid-tiles--dense { gap: var(--grid-gap-dense); }
