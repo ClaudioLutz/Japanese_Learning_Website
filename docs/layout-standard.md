@@ -226,6 +226,7 @@ lag beim Messen der Willkommen-Dialog über der Seite.
 | `/pruefen` | 728 | 109 | nein | 48 / 621 | 3 | 0 | schwebend: schmale Spalte, 621 px leer | A Übungs-Konfiguration |
 | `/login` | 418 (Karte) | 175 (150) | nein | 114 / 455 | 1 | 0 | ok (Auth darf mittig) | F Auth |
 | `/practice/kana` vorher | 1013 in 1100-Karte | 296 (142) | ja | 235 / 185 | 2 | 2 | schwebend | A (Pilot) |
+| `/practice/kana` nachher | 1175 in 1200 | 102 (102) | nein | 41 / – | 2 | 0 | ok | A umgesetzt |
 
 ### Handy (390×844)
 
@@ -243,6 +244,7 @@ lag beim Messen der Willkommen-Dialog über der Seite.
 | `/pruefen` | 85 | ja | nein | 16 px | ok |
 | `/login` | 118 | ja (524) | nein | 37 px | ok (Karte) |
 | `/practice/kana` vorher | 88 | ja (Vollhöhen-Lock) | nein | 16 px | Lock auch für Konfiguration |
+| `/practice/kana` nachher | 86 | ja (651 auth / 566 Gast; auch 360/414) | nein | 16 px | Lock nur Storm/Schreiben |
 
 Reihenfolge für Schritt 2 (Wirkung/Aufwand): `/pruefen` und `/n5-bundle`
 (schwebend, klein) → `/review` (Spielansicht) → `/mein-lernen` + `/review/stats`

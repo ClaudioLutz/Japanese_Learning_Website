@@ -309,14 +309,16 @@ class TestSRSPages:
     def test_kana_settings_page(self, auth_client):
         """I-SRS43: GET /practice/kana rendert die Einstellungs-Seite (Schritt 1).
 
-        Viewport-gesperrt, mit kanaSettings()-Komponente und Start-CTA, die zur
-        Spiel-Seite verlinkt.
+        Schablone „Übungs-Konfiguration" (docs/layout-standard.md): normale
+        Seite mit Seitenkopf; der Handy-Vollhöhen-Lock (kana-lock, 100dvh) greift
+        nur für Storm/Schreiben und wird per Alpine umgeschaltet. Mit
+        kanaSettings()-Komponente und Start-CTA, die zur Spiel-Seite führt.
         """
         client, user = auth_client
         resp = client.get('/practice/kana')
         assert resp.status_code == 200
         html = resp.get_data(as_text=True)
-        assert 'kana-setup-locked' in html        # Viewport-Lock scharf
+        assert "classList.toggle('kana-lock'" in html   # Lock nur für Storm/Schreiben
         assert '100dvh' in html
         assert 'kanaSettings()' in html            # Einstellungs-Komponente
         assert 'Spiel starten' in html             # Haupt-CTA

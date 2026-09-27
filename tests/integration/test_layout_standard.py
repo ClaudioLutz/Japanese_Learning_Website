@@ -89,3 +89,39 @@ class TestPageHeadMacro:
             )
         assert '&lt;b&gt;x&lt;/b&gt;' in html
         assert 'page-head__sub--desktop' in html
+
+
+class TestKanaPilot:
+    def test_uses_page_shell_and_head(self, client, db):
+        html = client.get('/practice/kana').get_data(as_text=True)
+        assert 'class="page kana-page"' in html
+        assert 'class="page-head"' in html
+        assert '<h1 class="page-head__title" id="page-title">Kana üben</h1>' in html
+        # Kopf wird im laufenden Spiel ausgeblendet (Alpine)
+        assert 'x-show="!hideChrome"' in html.split('class="page-head"')[1][:40]
+
+    def test_no_vertical_centering(self, client, db):
+        html = client.get('/practice/kana').get_data(as_text=True)
+        # Der alte Desktop-Block zentrierte die Karte vertikal im Viewport.
+        assert 'justify-content: center; padding: 2rem 1rem' not in html
+        assert 'min-height: calc(100dvh - 60px)' not in html
+
+    def test_lock_only_for_storm_and_spell(self, client, db):
+        def body_class(url):
+            html = client.get(url).get_data(as_text=True)
+            return re.search(r'<body[^>]*class="([^"]*)"', html).group(1)
+
+        assert 'kana-lock' not in body_class('/practice/kana')
+        assert 'kana-lock' in body_class('/practice/kana?tab=storm')
+        assert 'kana-lock' in body_class('/practice/kana?tab=spell')
+
+    def test_settings_and_start_in_two_regions(self, client, db):
+        html = client.get('/practice/kana').get_data(as_text=True)
+        assert 'class="kana-aside"' in html
+        assert 'kana-start surface' in html
+        # Einstellungen stehen im Markup vor dem Start-Bereich (mobile Reihenfolge)
+        assert html.index('kana-setup__scope"') < html.index('class="kana-aside"')
+
+    def test_guest_sees_account_benefits_as_surface(self, client, db):
+        html = client.get('/practice/kana').get_data(as_text=True)
+        assert 'kana-setup__unlock surface' in html

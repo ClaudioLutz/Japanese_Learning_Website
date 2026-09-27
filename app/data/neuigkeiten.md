@@ -15,6 +15,10 @@ Format je Eintrag:
 Keine Commit-Hashes, keine internen Namen.
 -->
 
+## 2026-09-27 | Kana-Übung: neue Seitenaufteilung
+Die Seite „Kana üben" beginnt jetzt oben mit Titel und Kurzbeschreibung statt als schwebende Karte mitten im Bildschirm. Auf dem Computer stehen die Einstellungen links und Vorschau und Start rechts, auf dem Handy liegt „Spiel starten" ohne Scrollen im Blick, die Reihen wählst du in einer wischbaren Zeile.
+Link: /practice/kana
+
 ## 2026-09-27 | Rollenspiel: Romaji unter jeder japanischen Zeile, abschaltbar
 Unter jeder japanischen Zeile im Rollenspiel steht jetzt die Umschrift in Romaji — bei deinem Gesprächspartner, bei den Antwortvorschlägen, bei den verbesserten Sätzen und im gespeicherten Verlauf. Wer schon ohne auskommt, schaltet sie mit „Romaji anzeigen" aus.
 Link: /sprechen
