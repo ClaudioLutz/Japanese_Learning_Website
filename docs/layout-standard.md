@@ -222,6 +222,9 @@ lag beim Messen der Willkommen-Dialog über der Seite.
 | Seite | Inhaltsbreite | Beginn | zentriert | Leerraum oben/unten | Spalten | Karte in Karte | Bewertung | Schablone Schritt 2 |
 |---|---|---|---|---|---|---|---|---|
 | `/` (eingeloggt) | 1104 | 149 | nein | 88 / 0 | 3 | 0 | uneinheitlich: zentrierter Kopf, 1104 statt Containerbreite | B Dashboard |
+| `/` nachher² (eingeloggt) | 1440 (1270) | 113 (113) | nein | 52 / – | Kopf + Aktion, 4 Kacheln, Lernpfad 4 | 0 | ok: Begrüssung = Seitenkopf, „Weiter lernen" rechts bei 140–184, kein Auto-Scroll mehr | B umgesetzt |
+| `/` Gast vorher² | 1152 | 169 (169) | nein | – | 2 (Pitch · Demo) | 1 | Demo-Schalterzeile bei 698, Voll-Bleed-Hero | – |
+| `/` Gast nachher² | 1440 (1270) | 149 (149) | nein | 88 / – | 2 im Hero, Fakten 2, Lernpfad 4 | 0 | ok: Hero-Band in der Rinne, Demo ab 132, Schalterzeile 678 ≤ 768, Seite 5'419 → 4'396 px | Hero + Abschnitte |
 | `/lessons` | 1104, Chip-Leiste läuft rechts hinaus | 152 | nein | 91 / 0 | 3 | 1 | uneinheitlich: Hero-Karte + Filter + Raster ohne Seitenkopf | E Katalog |
 | `/lessons` nachher | 1440 (1270 bei 1366) | 118 (118) | nein | 57 / – | 4 | 0 | ok: Weiter-lernen-Hero, Filter, Modul-Leiste in der Rinne | E umgesetzt |
 | `/lessons/171` | 1679 (volle 1800) | 126 | nein | 65 / 0 | 2 | 7 | uneinheitlich: Lesetext ~1300 px breit, 7 verschachtelte Karten | D Lektion |
@@ -249,6 +252,7 @@ lag beim Messen der Willkommen-Dialog über der Seite.
 | Seite | Beginn | Aktion im Fold | Überlauf | Rinne | Befund |
 |---|---|---|---|---|---|
 | `/` | 109 | nein („Weiterlernen" bei 1265) | nein | 4 px | Rinne zu schmal, Aktion zu tief |
+| `/` nachher² | 171 eingeloggt / 174 Gast | ja (eingeloggt 360, 360 px: 386; Gast 408, 360 px: 435) | nein | 16 px | Demo darunter ab 571; Kana-Chips als wischbare Zeile, Touch-Ziele 44 px |
 | `/lessons` | 277 (Hero-Bild zuerst) | ja (476) | Chip-Leiste scrollt | 24 px | Bild vor Titel verschiebt Beginn |
 | `/lessons` nachher | 94 | ja (327 eingeloggt / 281 Gast; 360 ebenso) | nein, Chips wischen in der Zeile | 16 px | Vorschaubild erst ab 768 |
 | `/lessons/171` | 82 | – | nein | 8 px | Rinne zu schmal, 6 verschachtelte Karten |
@@ -266,6 +270,9 @@ lag beim Messen der Willkommen-Dialog über der Seite.
 | `/n5-bundle` nachher¹ | 171 | ja (Aktion 310, Kennzahlen bis 565; 360 gleich) | nein | 16 px | ok |
 | `/pruefen` nachher¹ | 174 | ja (Startleiste fix über der Bottom-Nav: 715 bei 390, 651 bei 360; Gast 350) | nein | 16 px | ok |
 
+² Startseite: vorher/nachher mit derselben Messung (Prod-Daten read-only, Gratis-Band an,
+Willkommen-Dialog aus). Die Vorher-Aktion eingeloggt lag in dieser Messung bei 471 (390);
+die 1'265 oben stammen aus dem Lernpfad-„Weiterlernen" nach dem Auto-Scroll.
 ¹ Nachher-Werte gegen SQLite-Fixtures mit Gratis-Band gemessen (Nav + Band
 enden bei ~100 px, deshalb Beginn höher als in den Vorher-Zeilen).
 ² Gast, Prod-DB read-only; Titel steht 30 px tiefer als vorher, weil die

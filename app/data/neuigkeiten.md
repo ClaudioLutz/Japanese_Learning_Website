@@ -15,6 +15,10 @@ Format je Eintrag:
 Keine Commit-Hashes, keine internen Namen.
 -->
 
+## 2026-09-27 | Startseite aufgeräumt
+Die Startseite folgt jetzt demselben Aufbau wie die übrigen Seiten: Wenn du angemeldet bist, steht „Weiter lernen" gleich oben neben deiner Begrüssung, darunter führen Kacheln zu Wiederholen, Sprechen, Neuigkeiten und „Mein Lernen", dann folgt der Lernpfad als Raster. Ohne Konto siehst du Gesprächs-Demo, Kana-Spiel und die N5-Übersicht in klaren Abschnitten, auf dem Handy mit gleichmässigem Rand.
+Link: /
+
 ## 2026-09-27 | Lektionen: neue Leseansicht mit Seitenleiste
 Der Lektionstext steht jetzt in einer ruhigen Lesespalte, die Seiten der Lektion findest du rechts in der Seitenleiste – zusammen mit deinem Fortschritt, den Eckdaten und „Karten wiederholen". Oben zeigt eine schmale Leiste, auf welcher Seite du bist, und „Weiter bei Seite N" bringt dich zurück an deine letzte Stelle. Auf dem Handy wischst du die Seiten als Chips in einer Zeile.
 Link: /lessons

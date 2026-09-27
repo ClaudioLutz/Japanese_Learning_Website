@@ -56,6 +56,46 @@
   </ol>
   {% endif %}
 
+  {# Einstiegs-Kacheln: je ein Weg in die Detailseiten (Zahlen/Plan stehen auf
+     /mein-lernen, hier nur der Einstieg). #}
+  <section class="home-section home-today" aria-labelledby="homeTodayTitle">
+    <h2 class="home-section__title" id="homeTodayTitle">Heute</h2>
+    <div class="grid-tiles home-tiles">
+      <a class="home-tile" href="{{ url_for('srs.review_page') }}" id="homeReviewLink">
+        <span class="home-tile__icon" aria-hidden="true">🧠</span>
+        <span class="home-tile__body">
+          <span class="home-tile__title">Wiederholen</span>
+          <span class="home-tile__text" id="homeReviewCount">Karten wiederholen, bevor du sie vergisst</span>
+        </span>
+      </a>
+      {% if roleplay_enabled %}
+      <a class="home-tile" href="{{ url_for('sprechen.index') }}">
+        <span class="home-tile__icon" aria-hidden="true">💬</span>
+        <span class="home-tile__body">
+          <span class="home-tile__title">Sprechen</span>
+          <span class="home-tile__text">Dialogszenen aus den Lektionen selbst sprechen</span>
+        </span>
+      </a>
+      {% endif %}
+      {% if latest_news %}
+      <a class="home-tile" href="{{ url_for('news.index') }}">
+        <span class="home-tile__icon" aria-hidden="true">📰</span>
+        <span class="home-tile__body">
+          <span class="home-tile__title">Neuigkeiten</span>
+          <span class="home-tile__text">{{ latest_news.day_de }}: {{ latest_news.title }}</span>
+        </span>
+      </a>
+      {% endif %}
+      <a class="home-tile" href="{{ url_for('dashboard.index') }}">
+        <span class="home-tile__icon" aria-hidden="true">📊</span>
+        <span class="home-tile__body">
+          <span class="home-tile__title">Mein Lernen</span>
+          <span class="home-tile__text">Tagesplan, Fortschritt und Statistik</span>
+        </span>
+      </a>
+    </div>
+  </section>
+
   {% else %}
   {# ──────────────────────────────────────────────
      GAST — Hero-Band: links Pitch, rechts Gast-Demo (Sprech-Hero) bzw.
@@ -626,7 +666,7 @@ body.redesign-page main.container.mt-4 { margin-top: 0 !important; }
 }
 .trust-link:hover { color: var(--shu); }
 
-.home-usp-strip { list-style: none; margin: var(--space-6) 0 0; padding: 0; }
+.home-usp-strip { list-style: none; margin: var(--space-6) 0 0; padding: 0; grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); }
 .home-usp-strip li {
     display: flex; align-items: center; gap: var(--space-3);
     padding: var(--space-3) 0; border-top: 1px solid var(--surface-border);

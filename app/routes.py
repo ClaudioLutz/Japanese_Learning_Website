@@ -579,8 +579,19 @@ def index():
         except Exception:
             current_app.logger.warning("Rollenspiel-Demo fuer Startseite nicht ladbar", exc_info=True)
 
+    # Neuigkeiten-Kachel (eingeloggt): neuester Eintrag aus app/data/neuigkeiten.md.
+    latest_news = None
+    if current_user.is_authenticated:
+        try:
+            from app.news_service import load_news
+            entries = load_news()
+            latest_news = entries[0] if entries else None
+        except Exception:
+            current_app.logger.warning("Neuigkeiten fuer Startseite nicht ladbar", exc_info=True)
+
     return render_template('index.html',
                          home_greeting=greeting_ctx,
+                         latest_news=latest_news,
                          roleplay_demo=roleplay_demo,
                          roleplay_scene_count=roleplay_scene_count,
                          total_lessons=total_lessons,

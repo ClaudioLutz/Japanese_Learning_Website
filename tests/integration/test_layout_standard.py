@@ -226,3 +226,30 @@ class TestStartseiteGast:
         assert '[data-theme="dark"] .kana-bridge' not in html
         assert '[data-theme="dark"] .kana-chip,' not in html
         assert '[data-theme="dark"] .lp-modnum' not in html
+
+
+class TestStartseiteEingeloggt:
+    """/ (eingeloggt): Schablone Dashboard-Einstieg — Seitenkopf mit Aktion, Kacheln."""
+
+    def test_page_head_with_primary_action(self, auth_client):
+        client, user = auth_client
+        html = client.get('/').get_data(as_text=True)
+        assert 'class="page page--wide home-page home-page--auth"' in html
+        assert '<h1 class="page-head__title" id="page-title">Bereit für deine erste Lektion?</h1>' in html
+        actions = html.split('page-head__actions')[1][:600]
+        assert 'data-primary' in actions and 'href="#lernpfad"' in actions
+        # Begrüssung steht im Seitenkopf (Untertitel)
+        assert user.username in html.split('page-head__sub')[1][:400]
+
+    def test_entry_tiles(self, auth_client):
+        client, _ = auth_client
+        html = client.get('/').get_data(as_text=True)
+        tiles = html.split('grid-tiles home-tiles')[1].split('</section>')[0]
+        assert 'id="homeReviewLink"' in tiles and '/review' in tiles
+        assert '/mein-lernen' in tiles
+        assert '/neu' in tiles  # neuester Eintrag aus neuigkeiten.md
+
+    def test_no_auto_scroll_away_from_action(self, auth_client):
+        client, _ = auth_client
+        html = client.get('/').get_data(as_text=True)
+        assert 'scrollIntoView' not in html.split('grid-tiles home-tiles')[1]
