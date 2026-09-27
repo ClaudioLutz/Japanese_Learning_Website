@@ -658,12 +658,10 @@ def register():
 @limiter.limit("10 per 15 minutes", methods=['POST'])
 def login():
     if current_user.is_authenticated:
-        # Redirect based on user role — eingeloggte Nutzer landen auf der
-        # Lern-Heimat „Mein Lernen" (Hub mit Heute-Plan), nicht auf der Startseite.
-        if current_user.is_admin:
-            return redirect(url_for('routes.admin_index'))
-        else:
-            return redirect(url_for('dashboard.index'))
+        # Eingeloggte Nutzer landen auf der Lern-Heimat „Mein Lernen" (Hub mit
+        # Heute-Plan), nicht auf der Startseite — auch Admins: das Backend ist
+        # ueber das Konto-Dropdown erreichbar, nicht als automatisches Ziel.
+        return redirect(url_for('dashboard.index'))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
@@ -688,11 +686,10 @@ def login():
             flash('Erfolgreich angemeldet.', 'success')
             # Open-Redirect-Schutz: nur relative URLs erlauben
             if not next_page or not next_page.startswith('/') or next_page.startswith('//'):
-                if user.is_admin:
-                    return redirect(url_for('routes.admin_index'))
-                else:
-                    # Lern-Heimat „Mein Lernen" statt Startseite (next hat Vorrang).
-                    return redirect(url_for('dashboard.index'))
+                # Lern-Heimat „Mein Lernen" statt Startseite (next hat Vorrang);
+                # gilt auch fuer Admins — das Backend ist ueber das
+                # Konto-Dropdown erreichbar, nicht als automatisches Ziel.
+                return redirect(url_for('dashboard.index'))
             return redirect(next_page)
         else:
             if user:

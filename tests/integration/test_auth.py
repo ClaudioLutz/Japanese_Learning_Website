@@ -6,7 +6,7 @@ Testkonzept-IDs: I-AU01 bis I-AU14
 
 from app import db
 from app.models import User
-from tests.factories import UserFactory
+from tests.factories import AdminUserFactory, UserFactory
 
 
 # ── I-AU01: Registrierung ───────────────────────────────────
@@ -135,3 +135,29 @@ class TestAdminAccess:
         client, user = auth_client
         resp = client.get("/api/admin/kana")
         assert resp.status_code in (302, 403)
+
+    def test_admin_login_redirects_to_dashboard(self, client, app_context):
+        """I-AU14: Admin landet nach Login auf 'Mein Lernen', nicht im Backend.
+
+        Das Admin-Backend bleibt ueber das Konto-Dropdown erreichbar, ist aber
+        nicht mehr das automatische Ziel nach dem Login.
+        """
+        AdminUserFactory(email="admin-login@test.com", password="Test123!")
+        db.session.commit()
+        resp = client.post("/login", data={
+            "email": "admin-login@test.com",
+            "password": "Test123!",
+        }, follow_redirects=False)
+        assert resp.status_code == 302
+        assert resp.headers["Location"].endswith("/mein-lernen")
+
+    def test_admin_login_next_param_takes_precedence(self, client, app_context):
+        """I-AU15: next-Parameter hat auch fuer Admins Vorrang vor dem Dashboard."""
+        AdminUserFactory(email="admin-next@test.com", password="Test123!")
+        db.session.commit()
+        resp = client.post("/login?next=/profile", data={
+            "email": "admin-next@test.com",
+            "password": "Test123!",
+        }, follow_redirects=False)
+        assert resp.status_code == 302
+        assert resp.headers["Location"].endswith("/profile")
