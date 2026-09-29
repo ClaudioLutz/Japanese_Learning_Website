@@ -4,6 +4,12 @@ Hintergrund: durch Gemini-Quota-Hits wurden viele Audios als Chirp-MP3-Fallback
 generiert, aber dieselben Hashes haben oft auch eine Gemini-WAV aus frueheren
 Laeufen. Dieses Skript scannt alle augmented_html und ersetzt .mp3-URLs durch
 .wav-URLs wenn die WAV-Datei existiert (= Gemini-Studio-Qualitaet).
+
+Seit 29.09.2026 schreibt auch der Chirp-Fallback WAV (LINEAR16, 24 kHz) unter
+demselben Hash-Namen — neue Laeufe erzeugen keine .mp3-Verweise mehr. Das
+Skript bleibt fuer den Altbestand: nach
+``pregenerate_inline_audio.py <id> --replace-mp3`` stellt es die uebrigen
+LessonContents mit gleichem Text (gleicher Hash) ebenfalls auf .wav um.
 """
 from __future__ import annotations
 import os

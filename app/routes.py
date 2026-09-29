@@ -147,32 +147,39 @@ _GEMINI_TTS_MODEL = 'gemini-2.5-pro-preview-tts'
 _GEMINI_TTS_VOICE = 'Leda'  # gleiche Persoenlichkeit wie ja-JP-Chirp3-HD-Leda
 
 
-def _synthesize_gemini(text: str) -> bytes:
-    """Generiert WAV-Bytes (24kHz mono PCM mit WAV-Header) via Gemini 2.5 Pro TTS."""
-    import io
-    import wave
+def _synthesize_gemini(text: str, *, batch: bool = False) -> bytes:
+    """Generiert WAV-Bytes (24kHz mono PCM mit WAV-Header) via Gemini 2.5 Pro TTS.
 
-    from app.services.tts_client import make_gemini_client, synth_gemini_pcm
+    batch=False (Web-Request /api/tts): 30 s Timeout, kein Retry, ein Versuch —
+    bei Fehler greift im Aufrufer sofort der Chirp-Fallback.
+    batch=True (scripts/gen_vocab_audio.py): 120 s Timeout, 1 Retry und die
+    Kurz-String-Prompts aus tts_client (Einzelwoerter liefern sonst oft leer).
+    """
+    from app.services.tts_client import (
+        make_gemini_client,
+        pcm_to_wav,
+        synth_gemini_pcm,
+        synth_gemini_pcm_robust,
+    )
 
     api_key = (
         current_app.config.get('GOOGLE_AI_API_KEY')
         or os.environ.get('GOOGLE_AI_API_KEY')
         or os.environ.get('GOOGLE_API_KEY')
     )
-    # Web-Request: kurzes hartes Timeout, kein Retry — bei Fehler greift im
-    # Aufrufer sofort der Chirp-Fallback (Nutzer wartet sonst endlos).
-    client = make_gemini_client(api_key, timeout_s=30)
-    pcm = synth_gemini_pcm(
-        client, text, model=_GEMINI_TTS_MODEL, voice=_GEMINI_TTS_VOICE, retries=0,
-    )
-
-    buf = io.BytesIO()
-    with wave.open(buf, 'wb') as wf:
-        wf.setnchannels(1)
-        wf.setsampwidth(2)
-        wf.setframerate(24000)
-        wf.writeframes(pcm)
-    return buf.getvalue()
+    if batch:
+        client = make_gemini_client(api_key)
+        pcm = synth_gemini_pcm_robust(
+            client, text, model=_GEMINI_TTS_MODEL, voice=_GEMINI_TTS_VOICE,
+        )
+    else:
+        # Web-Request: kurzes hartes Timeout, kein Retry — bei Fehler greift im
+        # Aufrufer sofort der Chirp-Fallback (Nutzer wartet sonst endlos).
+        client = make_gemini_client(api_key, timeout_s=30)
+        pcm = synth_gemini_pcm(
+            client, text, model=_GEMINI_TTS_MODEL, voice=_GEMINI_TTS_VOICE, retries=0,
+        )
+    return pcm_to_wav(pcm)
 
 
 def pregenerated_ja_audio_file(text: str):

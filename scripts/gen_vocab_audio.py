@@ -72,7 +72,8 @@ def synth_one(app, canon: str, force: bool) -> tuple[str, str]:
         last = None
         for attempt in range(4):
             try:
-                wav = _synthesize_gemini(canon)
+                # batch=True: 120 s Timeout + Kurz-String-Prompts (Einzelwoerter)
+                wav = _synthesize_gemini(canon, batch=True)
                 tmp = path.with_suffix('.wav.tmp')
                 tmp.write_bytes(wav)
                 tmp.replace(path)  # atomar -> nie halbe Datei im Store

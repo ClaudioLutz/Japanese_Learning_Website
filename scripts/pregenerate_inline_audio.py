@@ -9,9 +9,12 @@ Usage:
     python scripts/pregenerate_inline_audio.py 146           # eine Lesson
     python scripts/pregenerate_inline_audio.py --all         # alle published
     python scripts/pregenerate_inline_audio.py 146 --dry-run
+    python scripts/pregenerate_inline_audio.py 146 --replace-mp3  # nur MP3-Altbestand neu
 
-Idempotent: gleicher Text-Hash → MP3 wird nicht neu generiert (Gemini-Calls
-sind teuer und langsam).
+Idempotent: gleicher Text-Hash → Audio wird nicht neu generiert (Gemini-Calls
+sind teuer und langsam). Seit 29.09.2026 ist auch der Chirp-Fallback WAV
+(LINEAR16, 24 kHz) → Dateiname immer ``<hash>.wav``; vorhandene ``<hash>.mp3``
+aus Altlaeufen werden ohne ``--force`` weiterverwendet.
 """
 from __future__ import annotations
 
@@ -21,7 +24,6 @@ import io
 import os
 import re
 import sys
-import wave
 from pathlib import Path
 
 if sys.platform == "win32" and getattr(sys.stdout, "encoding", "").lower() != "utf-8":
@@ -47,10 +49,10 @@ from app import create_app, db  # noqa: E402
 from app.models import Lesson, LessonContent  # noqa: E402
 from app.routes import _maybe_spell_out_kana_row  # noqa: E402
 from app.services.tts_client import (  # noqa: E402
-    GeminiEmptyAudioError,
     make_gemini_client,
-    post_cloud_tts,
-    synth_gemini_pcm,
+    pcm_to_wav,
+    synth_chirp_wav,
+    synth_gemini_pcm_robust,
 )
 
 OUT_DIR = PROJECT_ROOT / "app" / "static" / "uploads" / "lessons" / "inline_audio"
@@ -125,56 +127,29 @@ def extract_speak_text(element) -> str:
     return "、".join(jp_parts)
 
 
-def _gemini_call(client, contents: str) -> bytes:
-    """Gemini-TTS-Aufruf mit hartem Timeout (Client) + 1 Retry bei Timeout/Netz.
-
-    Raises RuntimeError (GeminiEmptyAudioError) bei leerer Response.
-    """
-    return synth_gemini_pcm(client, contents, model=GEMINI_MODEL, voice=GEMINI_VOICE)
-
-
 def synth_gemini_wav(client, text: str) -> bytes:
-    """Generiert WAV-Bytes via Gemini, mit Retry-Prompt fuer kurze Wörter.
+    """Generiert WAV-Bytes via Gemini inkl. Kurz-String-Behandlung.
 
-    Gemini blockt bei sehr kurzen Eingaben (2-3 Mora) oft mit FinishReason.OTHER
-    (Safety-Filter). Workaround: zweiter Versuch mit Tutor-Wrapper, der dem
-    Modell klar macht dass es eine Aussprache-Demo fuer Lerner ist.
+    Gemini liefert bei sehr kurzen Eingaben (Einzelwoerter, Zahlwoerter) oft
+    leer (finish=OTHER). ``synth_gemini_pcm_robust`` versucht dann die
+    Anweisungs-Prompts (tts_client.GEMINI_SHORT_TEXT_PROMPTS).
+
+    Raises:
+        GeminiEmptyAudioError: auch alle Prompt-Varianten leer.
     """
-    # 1. Versuch: nackter Text (funktioniert bei laengeren Eingaben besser)
-    try:
-        pcm = _gemini_call(client, text)
-    except GeminiEmptyAudioError as first_err:
-        # 2. Versuch: Tutor-Wrapper, hilft bei kurzen Mora-Texten
-        wrapped = f"Pronounce clearly for a Japanese learner: {text}"
-        try:
-            pcm = _gemini_call(client, wrapped)
-        except GeminiEmptyAudioError:
-            raise first_err
-
-    buf = io.BytesIO()
-    with wave.open(buf, "wb") as wf:
-        wf.setnchannels(1)
-        wf.setsampwidth(2)
-        wf.setframerate(24000)
-        wf.writeframes(pcm)
-    return buf.getvalue()
+    pcm = synth_gemini_pcm_robust(client, text, model=GEMINI_MODEL, voice=GEMINI_VOICE)
+    return pcm_to_wav(pcm)
 
 
-def synth_chirp_mp3(text: str) -> bytes:
-    """Fallback: Chirp 3 HD Leda fuer Texte die Gemini nicht akzeptiert."""
-    import base64
+def synth_chirp_fallback_wav(text: str) -> bytes:
+    """Fallback: Chirp 3 HD Leda als WAV (gleicher .wav-Dateiname wie Gemini)."""
     api_key = os.environ.get("GOOGLE_TTS_API_KEY") or os.environ.get("GOOGLE_API_KEY")
-    payload = {
-        "input": {"text": text},
-        "voice": {"languageCode": "ja-JP", "name": "ja-JP-Chirp3-HD-Leda"},
-        "audioConfig": {"audioEncoding": "MP3", "speakingRate": 0.85},
-    }
-    resp = post_cloud_tts(api_key, payload)
-    resp.raise_for_status()
-    return base64.b64decode(resp.json()["audioContent"])
+    return synth_chirp_wav(api_key, text)
 
 
-def process_lesson(lesson_id: int, dry_run: bool = False, force: bool = False) -> int:
+def process_lesson(
+    lesson_id: int, dry_run: bool = False, force: bool = False, replace_mp3: bool = False,
+) -> int:
     """Verarbeitet alle text-LessonContents einer Lesson. Returns: # generated."""
     lesson = db.session.get(Lesson, lesson_id)
     if not lesson:
@@ -226,35 +201,36 @@ def process_lesson(lesson_id: int, dry_run: bool = False, force: bool = False) -
             tts_text_chirp = _maybe_spell_out_kana_row(speak_text, model="chirp")
             h = text_hash(tts_text_gemini)
 
-            # Vorhandene Files erkennen (Gemini WAV oder Chirp-Fallback MP3)
+            # Vorhandene Files erkennen (WAV; MP3 nur noch Altbestand vor 29.09.2026)
             existing_wav = OUT_DIR / f"{h}.wav"
             existing_mp3 = OUT_DIR / f"{h}.mp3"
             if existing_wav.exists() and not force:
                 audio_url = f"/static/uploads/lessons/inline_audio/{h}.wav"
                 total_reused += 1
-            elif existing_mp3.exists() and not force:
+            elif existing_mp3.exists() and not force and not replace_mp3:
                 audio_url = f"/static/uploads/lessons/inline_audio/{h}.mp3"
                 total_reused += 1
             elif dry_run:
                 print(f"  [DRY] would generate: {speak_text[:60]!r} → {h}")
                 audio_url = f"/static/uploads/lessons/inline_audio/{h}.wav"
             else:
-                # Erst Gemini, bei Fehler Chirp-Fallback
-                wav = None
+                # Erst Gemini (inkl. Kurz-String-Prompts), sonst Chirp — beides WAV
+                audio_url = f"/static/uploads/lessons/inline_audio/{h}.wav"
                 try:
                     wav = synth_gemini_wav(client, tts_text_gemini)
                     existing_wav.write_bytes(wav)
-                    audio_url = f"/static/uploads/lessons/inline_audio/{h}.wav"
                     print(f"  [GEM] {speak_text[:60]!r} → {h}.wav ({len(wav)//1024} KB)")
                 except Exception as e:
                     try:
-                        mp3 = synth_chirp_mp3(tts_text_chirp)
-                        existing_mp3.write_bytes(mp3)
-                        audio_url = f"/static/uploads/lessons/inline_audio/{h}.mp3"
-                        print(f"  [CHIRP] {speak_text[:60]!r} → {h}.mp3 ({len(mp3)//1024} KB) [Gemini: {e}]")
+                        wav = synth_chirp_fallback_wav(tts_text_chirp)
+                        existing_wav.write_bytes(wav)
+                        print(f"  [CHIRP] {speak_text[:60]!r} → {h}.wav ({len(wav)//1024} KB) [Gemini: {e}]")
                     except Exception as e2:
                         print(f"  [ERR] {speak_text[:60]!r} → Gemini={e}, Chirp={e2}")
                         continue
+                # Alte <hash>.mp3 bewusst NICHT loeschen: andere LessonContents mit
+                # gleichem Text verweisen evtl. noch darauf, bis prefer_wav_over_mp3.py
+                # sie auf die neue .wav umstellt.
                 total_generated += 1
 
             el["data-audio-url"] = audio_url
@@ -285,7 +261,12 @@ def main() -> int:
     ap.add_argument("lesson_id", type=int, nargs="?", default=None)
     ap.add_argument("--all", action="store_true", help="Alle published Lessons")
     ap.add_argument("--dry-run", action="store_true")
-    ap.add_argument("--force", action="store_true", help="MP3s auch bei Hash-Match neu generieren")
+    ap.add_argument("--force", action="store_true", help="Audios auch bei Hash-Match neu generieren")
+    ap.add_argument(
+        "--replace-mp3", action="store_true",
+        help="Nur Eintraege ohne WAV, die noch auf eine Chirp-MP3 zeigen, neu als WAV "
+             "rendern (quotaschonend statt --force)",
+    )
     args = ap.parse_args()
 
     if not args.lesson_id and not args.all:
@@ -300,7 +281,9 @@ def main() -> int:
 
         total = 0
         for lid in ids:
-            total += process_lesson(lid, dry_run=args.dry_run, force=args.force)
+            total += process_lesson(
+                lid, dry_run=args.dry_run, force=args.force, replace_mp3=args.replace_mp3,
+            )
 
         print(f"\n=== ALLES FERTIG: {total} neue Audios ueber {len(ids)} Lesson(s) ===")
 

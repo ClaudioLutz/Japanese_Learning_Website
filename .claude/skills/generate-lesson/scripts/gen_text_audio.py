@@ -6,11 +6,11 @@ Usage:
 User-Direktive 2026-04-25: Vorlese-Stimme soll Deutsch nicht mit japanischem
 Akzent sprechen. Loesung: Text-Block in Sprachsegmente splitten (Hira/Kata/
 Kanji → ja-JP-Stimme, Lateinschrift → de-DE-Stimme), pro Segment einen
-Google-Cloud-TTS-Call, MP3s byte-concat (Google MP3 ist CBR ohne globalen
-Header — pro Sprecher-Wechsel ein neuer Stream funktioniert).
+TTS-Call (JA: Gemini, Fallback Chirp; DE: Neural2), alles 24-kHz-PCM,
+byte-konkateniert und als WAV verpackt.
 
-Pro Text-LessonContent eine eigene MP3 in
-  app/static/uploads/lessons/text_audio/lesson_{id}/page_{n}_content_{cid}.mp3
+Pro Text-LessonContent eine eigene WAV in
+  app/static/uploads/lessons/text_audio/lesson_{id}/page_{n}_content_{cid}.wav
 und `LessonContent.media_url` wird auf den Pfad gesetzt — dann rendert das
 Template einen Mini-Player oberhalb des `rich-text-content`.
 
@@ -42,7 +42,8 @@ from app.services.tts_client import (  # noqa: E402
     GeminiEmptyAudioError,
     make_gemini_client,
     post_cloud_tts,
-    synth_gemini_pcm,
+    synth_chirp_pcm,
+    synth_gemini_pcm_robust,
 )
 
 # ---------------------------------------------------------------------------
@@ -112,65 +113,31 @@ def synth_segment_de_pcm(tts: GoogleCloudTTS, text: str, speed: float = 0.95) ->
 def synth_segment_ja_pcm(text: str) -> bytes | None:
     """Gemini 2.5 Pro TTS Leda fuer Japanisch — liefert 24kHz mono PCM raw.
 
-    Bei Safety-Block (FinishReason.OTHER) wird der Tutor-Prompt-Retry versucht,
-    bei nochmaligem Fail ein leerer Bytes-Buf returned (besser als Crash).
+    Kurze Segmente (Einzelwoerter) liefern bei Gemini oft leer (finish=OTHER);
+    ``synth_gemini_pcm_robust`` versucht dann die Anweisungs-Prompts. Erst
+    wenn alles leer bleibt (oder Timeout/Netz), greift der Chirp-Fallback.
     """
     api_key = os.environ.get("GOOGLE_AI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
     # Hartes Timeout (120 s) + 1 Retry bei Timeout/Netz (tts_client); ohne
     # Timeout blockiert ein haengender Gemini-Request endlos und legt den
     # ganzen Batch lahm. Danach greift unten der Chirp-Fallback.
     client = make_gemini_client(api_key)
-
-    def _call(contents):
-        try:
-            return synth_gemini_pcm(client, contents, model=GEMINI_MODEL, voice=GEMINI_VOICE)
-        except GeminiEmptyAudioError:
-            return None
-
     try:
-        pcm = _call(text)
+        return synth_gemini_pcm_robust(client, text, model=GEMINI_MODEL, voice=GEMINI_VOICE)
+    except GeminiEmptyAudioError as e:
+        print(f"      [GEMINI leer fuer {text[:30]!r}] ({e}) — Fallback Chirp 3 HD")
     except Exception as e:
-        print(f"      [GEMINI EXC] (ja): {text[:60]!r} — {e}")
-        pcm = None
-    if pcm is None:
-        # Tutor-Prompt-Retry fuer kurze Mora-Texte
-        try:
-            pcm = _call(f"Pronounce clearly for a Japanese learner: {text}")
-        except Exception:
-            pcm = None
-    if pcm is not None:
-        return pcm
-
-    # Fallback: Chirp 3 HD Leda LINEAR16 PCM (gleiche Persoenlichkeit, andere Engine)
-    print(f"      [GEMINI leer fuer {text[:30]!r}] — Fallback Chirp 3 HD")
+        print(f"      [GEMINI EXC] (ja): {text[:60]!r} — {e} — Fallback Chirp 3 HD")
     return _synth_chirp_pcm_fallback(text)
 
 
 def _synth_chirp_pcm_fallback(text: str) -> bytes | None:
-    """Chirp 3 HD Leda als JP-PCM-Fallback wenn Gemini blockt."""
+    """Chirp 3 HD Leda (LINEAR16, 24 kHz) als JP-PCM-Fallback wenn Gemini blockt."""
     api_key = os.environ.get("GOOGLE_TTS_API_KEY") or os.environ.get("GOOGLE_API_KEY")
     if not api_key:
         return None
-    payload = {
-        "input": {"text": text},
-        "voice": {"languageCode": "ja-JP", "name": "ja-JP-Chirp3-HD-Leda"},
-        "audioConfig": {
-            "audioEncoding": "LINEAR16",
-            "sampleRateHertz": SAMPLE_RATE,
-            "speakingRate": 0.85,
-        },
-    }
     try:
-        resp = post_cloud_tts(api_key, payload)
-        if resp.status_code != 200:
-            print(f"      [CHIRP FALLBACK FEHLER] {resp.status_code}: {resp.text[:120]}")
-            return None
-        wav = base64.b64decode(resp.json().get("audioContent", ""))
-        if wav[:4] == b"RIFF":
-            idx = wav.find(b"data")
-            if idx >= 0:
-                return wav[idx + 8:]
-        return wav
+        return synth_chirp_pcm(api_key, text, sample_rate=SAMPLE_RATE)
     except Exception as e:
         print(f"      [CHIRP FALLBACK EXC] {e}")
         return None
@@ -225,9 +192,9 @@ def main() -> int:
     ap.add_argument("--page", type=int, default=None,
                     help="Nur diese Page rendern (default: alle)")
     ap.add_argument("--force", action="store_true",
-                    help="Bestehende MP3s neu erzeugen")
+                    help="Bestehende Audios neu erzeugen")
     ap.add_argument("--min-chars", type=int, default=80,
-                    help="Mindestlaenge fuer Vorlese-MP3 (default: 80)")
+                    help="Mindestlaenge fuer Vorlese-Audio (default: 80)")
     args = ap.parse_args()
 
     app = create_app()
@@ -282,7 +249,7 @@ def main() -> int:
                 and lc.media_url
                 and existing_details.get("text_hash") == new_hash
             ):
-                print(f"[SKIP] LC {lc.id} (Page {lc.page_number}): MP3 aktuell (hash {new_hash}).")
+                print(f"[SKIP] LC {lc.id} (Page {lc.page_number}): Audio aktuell (hash {new_hash}).")
                 skipped += 1
                 continue
 
@@ -334,7 +301,7 @@ def main() -> int:
             print(f"      [OK] {out_name} ({len(wav_bytes)} bytes, {len(segments)} Segmente).")
             rendered += 1
 
-        print(f"\n[FERTIG] {rendered} MP3s neu gerendert, {skipped} uebersprungen.")
+        print(f"\n[FERTIG] {rendered} WAVs neu gerendert, {skipped} uebersprungen.")
         return 0
 
 
