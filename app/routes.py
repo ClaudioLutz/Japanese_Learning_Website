@@ -143,8 +143,10 @@ def _contains_japanese(text: str) -> bool:
     return bool(_JAPANESE_CHAR_RE.search(text))
 
 
-_GEMINI_TTS_MODEL = 'gemini-2.5-pro-preview-tts'
-_GEMINI_TTS_VOICE = 'Leda'  # gleiche Persoenlichkeit wie ja-JP-Chirp3-HD-Leda
+from app.services.tts_client import (  # noqa: E402
+    GEMINI_TTS_MODEL as _GEMINI_TTS_MODEL,
+    GEMINI_TTS_VOICE as _GEMINI_TTS_VOICE,  # gleiche Persoenlichkeit wie ja-JP-Chirp3-HD-Leda
+)
 
 
 def _synthesize_gemini(text: str, *, batch: bool = False) -> bytes:
@@ -216,8 +218,9 @@ def tts_synthesize():
     """
     import base64
     import hashlib
-    import requests as http_requests
     from pathlib import Path
+
+    from app.services.tts_client import post_cloud_tts, safe_error
 
     data = request.get_json(silent=True) or {}
     text = (data.get('text') or '').strip()
@@ -305,7 +308,7 @@ def tts_synthesize():
             response.headers['Cache-Control'] = 'public, max-age=86400'
             return response
         except Exception as e:
-            current_app.logger.warning(f"Gemini TTS fehlgeschlagen, Fallback Chirp: {e}")
+            current_app.logger.warning(f"Gemini TTS fehlgeschlagen, Fallback Chirp: {safe_error(e)}")
             # Fallback auf Chirp damit der User trotzdem Audio hoert
             model = 'chirp'
             raw = (data.get('text') or '').strip()
@@ -355,11 +358,14 @@ def tts_synthesize():
             from flask import send_file
             return send_file(str(attempt_cache), mimetype=mime, conditional=True)
         try:
-            resp = http_requests.post(
-                f"https://texttospeech.googleapis.com/v1/text:synthesize?key={api_key}",
-                json=_payload_for(attempt_voice), timeout=10,
+            # Key per Header (tts_client.post_cloud_tts), nie als ?key= in der URL
+            resp = post_cloud_tts(
+                api_key, _payload_for(attempt_voice), timeout_s=10, retries=0,
             )
             if resp.status_code != 200:
+                current_app.logger.warning(
+                    "Cloud-TTS %s: HTTP %s", attempt_voice['name'], resp.status_code,
+                )
                 status, error = 502, "TTS API Fehler"
                 continue
 
@@ -372,7 +378,8 @@ def tts_synthesize():
             response.headers['Content-Type'] = mime
             response.headers['Cache-Control'] = 'public, max-age=86400'
             return response
-        except Exception:
+        except Exception as exc:
+            current_app.logger.warning("Cloud-TTS Fehler: %s", safe_error(exc))
             status, error = 502, "TTS Fehler"
     return jsonify({"error": error}), status
 

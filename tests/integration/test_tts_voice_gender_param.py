@@ -32,12 +32,16 @@ def tts_client(client, app, monkeypatch, tmp_path):
     app.static_folder = old
 
 
-def _capture(status_codes=(200,)):
+def _capture(status_codes=(200,), urls=None, headers=None):
     calls = []
     codes = list(status_codes)
 
-    def fake_post(url, json=None, timeout=None):
+    def fake_post(url, json=None, timeout=None, headers=None, _h=headers):
         calls.append(json)
+        if urls is not None:
+            urls.append(url)
+        if _h is not None:
+            _h.append(headers)
         return _Resp(codes.pop(0) if codes else 200)
     return calls, fake_post
 
@@ -136,3 +140,14 @@ def test_whitelist_geschlechter_stimmen():
         assert known[primary] == want
         assert known[fallback] == want
     assert set(_TTS_GENDER_VOICES) == {"m", "f"}
+
+
+def test_api_key_als_header_nie_in_url(tts_client):
+    """Befund 1: /api/tts schickt den Key per X-Goog-Api-Key, nicht als ?key=."""
+    urls, headers = [], []
+    calls, fake = _capture(urls=urls, headers=headers)
+    with patch("requests.post", side_effect=fake):
+        resp = tts_client.post("/api/tts", json={"text": "はい", "lang": "ja"})
+    assert resp.status_code == 200
+    assert urls and all("key=" not in u and "test-key" not in u for u in urls)
+    assert headers[0]["X-Goog-Api-Key"] == "test-key"

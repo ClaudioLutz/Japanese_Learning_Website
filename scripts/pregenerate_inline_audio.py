@@ -10,11 +10,18 @@ Usage:
     python scripts/pregenerate_inline_audio.py --all         # alle published
     python scripts/pregenerate_inline_audio.py 146 --dry-run
     python scripts/pregenerate_inline_audio.py 146 --replace-mp3  # nur MP3-Altbestand neu
+    python scripts/pregenerate_inline_audio.py --all --upgrade-chirp  # nur Chirp → Gemini
 
 Idempotent: gleicher Text-Hash → Audio wird nicht neu generiert (Gemini-Calls
 sind teuer und langsam). Seit 29.09.2026 ist auch der Chirp-Fallback WAV
 (LINEAR16, 24 kHz) → Dateiname immer ``<hash>.wav``; vorhandene ``<hash>.mp3``
 aus Altlaeufen werden ohne ``--force`` weiterverwendet.
+
+Engine-Manifest (06.10.2026): ``inline_audio/_engines.json`` haelt pro Hash
+fest, ob Gemini oder Chirp die Datei erzeugt hat (URL bleibt gleich); das
+Element bekommt zusaetzlich ``data-audio-engine``. Hashes ohne Eintrag gelten
+als unbekannt. Fehlermeldungen laufen durch ``tts_client.safe_error`` (nie ein
+API-Key im Log).
 """
 from __future__ import annotations
 
@@ -48,16 +55,28 @@ from bs4 import BeautifulSoup  # noqa: E402
 from app import create_app, db  # noqa: E402
 from app.models import Lesson, LessonContent  # noqa: E402
 from app.routes import _maybe_spell_out_kana_row  # noqa: E402
+from app.services.audio_engine_manifest import (  # noqa: E402
+    KNOWN_ENGINES,
+    engine_for,
+    load_manifest,
+    record_engine,
+)
 from app.services.tts_client import (  # noqa: E402
+    CHIRP_JA_VOICE,
+    ENGINE_CHIRP,
+    ENGINE_GEMINI,
+    ENGINE_UNKNOWN,
+    GEMINI_TTS_MODEL,
+    GEMINI_TTS_VOICE,
     make_gemini_client,
     pcm_to_wav,
+    safe_error,
     synth_chirp_wav,
     synth_gemini_pcm_robust,
 )
 
 OUT_DIR = PROJECT_ROOT / "app" / "static" / "uploads" / "lessons" / "inline_audio"
-GEMINI_MODEL = "gemini-2.5-pro-preview-tts"
-GEMINI_VOICE = "Leda"
+URL_PREFIX = "/static/uploads/lessons/inline_audio/"
 
 _JP_RE = re.compile(r"[぀-ゟ゠-ヿ㐀-䶿一-鿿ｦ-ﾟ]")
 _LATIN_RE = re.compile(r"[A-Za-zÀ-ſ]")
@@ -137,7 +156,7 @@ def synth_gemini_wav(client, text: str) -> bytes:
     Raises:
         GeminiEmptyAudioError: auch alle Prompt-Varianten leer.
     """
-    pcm = synth_gemini_pcm_robust(client, text, model=GEMINI_MODEL, voice=GEMINI_VOICE)
+    pcm = synth_gemini_pcm_robust(client, text, model=GEMINI_TTS_MODEL, voice=GEMINI_TTS_VOICE)
     return pcm_to_wav(pcm)
 
 
@@ -147,10 +166,50 @@ def synth_chirp_fallback_wav(text: str) -> bytes:
     return synth_chirp_wav(api_key, text)
 
 
+def _write_atomic(path: Path, data: bytes) -> None:
+    """Schreibt Audio atomar — nie eine halbe Datei unter der Live-URL."""
+    tmp = path.with_name(f"{path.name}.tmp")
+    tmp.write_bytes(data)
+    tmp.replace(path)
+
+
+def _old_audio_urls(details: dict) -> dict[str, str]:
+    """Bisherige data-audio-url je Sprechtext aus dem alten augmented_html."""
+    old_html = (details or {}).get("augmented_html")
+    if not old_html:
+        return {}
+    urls: dict[str, str] = {}
+    for el in BeautifulSoup(old_html, "html.parser").find_all(attrs={"data-audio-url": True}):
+        urls.setdefault(extract_speak_text(el), el["data-audio-url"])
+    return urls
+
+
+def _voice_summary(engines: list[str]) -> str:
+    """augmented_voice aus den tatsaechlich verwendeten Engines."""
+    kinds = set(engines)
+    if kinds == {ENGINE_GEMINI}:
+        return "gemini-2.5-pro:" + GEMINI_TTS_VOICE
+    if kinds == {ENGINE_CHIRP}:
+        return CHIRP_JA_VOICE
+    if kinds == {ENGINE_UNKNOWN}:
+        return ENGINE_UNKNOWN
+    return "mixed"
+
+
 def process_lesson(
     lesson_id: int, dry_run: bool = False, force: bool = False, replace_mp3: bool = False,
+    upgrade_chirp: bool = False,
 ) -> int:
-    """Verarbeitet alle text-LessonContents einer Lesson. Returns: # generated."""
+    """Verarbeitet alle text-LessonContents einer Lesson. Returns: # generated.
+
+    - ``force``: alles neu rendern.
+    - ``replace_mp3``: nur Eintraege ohne WAV, die noch auf eine MP3 zeigen.
+    - ``upgrade_chirp``: nur Eintraege, die laut Engine-Manifest von Chirp
+      stammen, mit Gemini neu rendern (kein erneuter Chirp-Versuch).
+    Scheitert die Neuerzeugung, bleibt das bisherige Audio (WAV/MP3 bzw. die
+    alte URL) erhalten; ein Block mit Fehlern wird nie mit weniger
+    Audio-Elementen gespeichert als vorher.
+    """
     lesson = db.session.get(Lesson, lesson_id)
     if not lesson:
         print(f"[FEHLER] Lesson {lesson_id} nicht gefunden.")
@@ -165,12 +224,14 @@ def process_lesson(
     print(f"\n=== Lesson {lesson_id}: {lesson.title} — {len(rows)} text-Bloecke ===")
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
+    manifest = load_manifest(OUT_DIR)
     api_key = os.environ.get("GOOGLE_AI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
     # Hartes Timeout pro Call (120 s) — ohne haengt das SDK unbegrenzt (24.09.2026)
     client = make_gemini_client(api_key) if not dry_run else None
 
     total_generated = 0
     total_reused = 0
+    total_failed = 0
 
     for lc in rows:
         text = lc.content_text or ""
@@ -178,6 +239,8 @@ def process_lesson(
             continue
         html = render_markdown_html(text)
         soup = BeautifulSoup(html, "html.parser")
+        old_details = dict(lc.ai_generation_details or {})
+        old_urls = _old_audio_urls(old_details)
 
         # Alle <p> und <li> finden — bei verschachtelter <li><p> nur das innere <p>
         candidates = []
@@ -187,6 +250,8 @@ def process_lesson(
             candidates.append(el)
 
         page_audio_count = 0
+        lc_failed = 0
+        lc_engines: list[str] = []
         for el in candidates:
             speak_text = extract_speak_text(el)
             if len(speak_text) < 2:
@@ -204,38 +269,73 @@ def process_lesson(
             # Vorhandene Files erkennen (WAV; MP3 nur noch Altbestand vor 29.09.2026)
             existing_wav = OUT_DIR / f"{h}.wav"
             existing_mp3 = OUT_DIR / f"{h}.mp3"
-            if existing_wav.exists() and not force:
-                audio_url = f"/static/uploads/lessons/inline_audio/{h}.wav"
-                total_reused += 1
-            elif existing_mp3.exists() and not force and not replace_mp3:
-                audio_url = f"/static/uploads/lessons/inline_audio/{h}.mp3"
+            wav_url = f"{URL_PREFIX}{h}.wav"
+            engine = engine_for(manifest, h)
+            if existing_wav.exists():
+                regenerate = force or (upgrade_chirp and engine == ENGINE_CHIRP)
+            elif existing_mp3.exists():
+                regenerate = force or replace_mp3
+                if not regenerate:
+                    engine = ENGINE_CHIRP  # MP3 stammt immer aus dem Chirp-Fallback
+            else:
+                regenerate = True
+
+            if not regenerate:
+                audio_url = wav_url if existing_wav.exists() else f"{URL_PREFIX}{h}.mp3"
                 total_reused += 1
             elif dry_run:
                 print(f"  [DRY] would generate: {speak_text[:60]!r} → {h}")
-                audio_url = f"/static/uploads/lessons/inline_audio/{h}.wav"
+                audio_url = wav_url
             else:
                 # Erst Gemini (inkl. Kurz-String-Prompts), sonst Chirp — beides WAV
-                audio_url = f"/static/uploads/lessons/inline_audio/{h}.wav"
+                audio_url = None
                 try:
                     wav = synth_gemini_wav(client, tts_text_gemini)
-                    existing_wav.write_bytes(wav)
+                    _write_atomic(existing_wav, wav)
+                    engine = ENGINE_GEMINI
+                    audio_url = wav_url
                     print(f"  [GEM] {speak_text[:60]!r} → {h}.wav ({len(wav)//1024} KB)")
                 except Exception as e:
-                    try:
-                        wav = synth_chirp_fallback_wav(tts_text_chirp)
-                        existing_wav.write_bytes(wav)
-                        print(f"  [CHIRP] {speak_text[:60]!r} → {h}.wav ({len(wav)//1024} KB) [Gemini: {e}]")
-                    except Exception as e2:
-                        print(f"  [ERR] {speak_text[:60]!r} → Gemini={e}, Chirp={e2}")
-                        continue
+                    gem_err = safe_error(e)
+                    if upgrade_chirp and existing_wav.exists() and not force:
+                        # Upgrade-Lauf: Chirp-Datei bleibt, kein neuer Chirp-Call
+                        print(f"  [KEEP] {speak_text[:60]!r} → {h}.wav bleibt Chirp [Gemini: {gem_err}]")
+                    else:
+                        try:
+                            wav = synth_chirp_fallback_wav(tts_text_chirp)
+                            _write_atomic(existing_wav, wav)
+                            engine = ENGINE_CHIRP
+                            audio_url = wav_url
+                            print(f"  [CHIRP] {speak_text[:60]!r} → {h}.wav ({len(wav)//1024} KB) [Gemini: {gem_err}]")
+                        except Exception as e2:
+                            print(f"  [ERR] {speak_text[:60]!r} → Gemini={gem_err}, Chirp={safe_error(e2)}")
                 # Alte <hash>.mp3 bewusst NICHT loeschen: andere LessonContents mit
                 # gleichem Text verweisen evtl. noch darauf, bis prefer_wav_over_mp3.py
                 # sie auf die neue .wav umstellt.
-                total_generated += 1
+                if audio_url is not None:
+                    manifest = record_engine(OUT_DIR, h, engine)
+                    total_generated += 1
+                else:
+                    # Neu-Erzeugung gescheitert → bisheriges Audio behalten
+                    lc_failed += 1
+                    if existing_wav.exists():
+                        audio_url = wav_url
+                    elif existing_mp3.exists():
+                        audio_url = f"{URL_PREFIX}{h}.mp3"
+                        engine = ENGINE_CHIRP
+                    else:
+                        audio_url = old_urls.get(speak_text)
+                        engine = ENGINE_UNKNOWN
+                    if audio_url is None:
+                        continue
 
             el["data-audio-url"] = audio_url
+            if engine in KNOWN_ENGINES:
+                el["data-audio-engine"] = engine
+            lc_engines.append(engine)
             page_audio_count += 1
 
+        total_failed += lc_failed
         if page_audio_count == 0:
             continue
 
@@ -243,16 +343,25 @@ def process_lesson(
             print(f"  [LC {lc.id} P{lc.page_number}] {page_audio_count} Audio-Tags wuerden gesetzt.")
             continue
 
-        augmented = str(soup)
-        details = dict(lc.ai_generation_details or {})
-        details["augmented_html"] = augmented
+        old_count = len(old_urls) if old_details.get("augmented_html") else 0
+        if lc_failed and page_audio_count < old_count:
+            print(f"  [LC {lc.id} P{lc.page_number}] NICHT gespeichert: {page_audio_count} "
+                  f"< bisher {old_count} Audios ({lc_failed} Fehler).")
+            continue
+
+        details = dict(old_details)
+        details["augmented_html"] = str(soup)
         details["augmented_at_count"] = page_audio_count
-        details["augmented_voice"] = f"gemini-2.5-pro:{GEMINI_VOICE}"
+        details["augmented_voice"] = _voice_summary(lc_engines)
+        details["augmented_engines"] = {
+            kind: lc_engines.count(kind) for kind in sorted(set(lc_engines))
+        }
         lc.ai_generation_details = details
         db.session.commit()
         print(f"  [LC {lc.id} P{lc.page_number}] augmented_html gespeichert ({page_audio_count} Audios).")
 
-    print(f"\n[FERTIG Lesson {lesson_id}] {total_generated} neu, {total_reused} wiederverwendet.")
+    print(f"\n[FERTIG Lesson {lesson_id}] {total_generated} neu, {total_reused} wiederverwendet, "
+          f"{total_failed} nicht neu erzeugt (bisheriges Audio behalten bzw. keins).")
     return total_generated
 
 
@@ -266,6 +375,11 @@ def main() -> int:
         "--replace-mp3", action="store_true",
         help="Nur Eintraege ohne WAV, die noch auf eine Chirp-MP3 zeigen, neu als WAV "
              "rendern (quotaschonend statt --force)",
+    )
+    ap.add_argument(
+        "--upgrade-chirp", action="store_true",
+        help="Nur Eintraege, die laut Engine-Manifest (_engines.json) von Chirp "
+             "stammen, mit Gemini neu rendern; scheitert Gemini, bleibt die Chirp-Datei",
     )
     args = ap.parse_args()
 
@@ -283,6 +397,7 @@ def main() -> int:
         for lid in ids:
             total += process_lesson(
                 lid, dry_run=args.dry_run, force=args.force, replace_mp3=args.replace_mp3,
+                upgrade_chirp=args.upgrade_chirp,
             )
 
         print(f"\n=== ALLES FERTIG: {total} neue Audios ueber {len(ids)} Lesson(s) ===")

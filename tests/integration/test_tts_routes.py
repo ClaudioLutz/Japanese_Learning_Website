@@ -75,7 +75,7 @@ def test_japanisch_korrekt(post_tts):
     """lang=ja + japanischer Text → 200, Voice ist ja-JP."""
     captured = {}
 
-    def fake_post(url, json=None, timeout=None):
+    def fake_post(url, json=None, timeout=None, headers=None):
         captured["payload"] = json
         return _FakeResponse(audio_b64=base64.b64encode(b"FAKEMP3").decode())
 
@@ -97,7 +97,7 @@ def test_trennzeichen_wird_nicht_vorgelesen(post_tts):
     """
     captured = {}
 
-    def fake_post(url, json=None, timeout=None):
+    def fake_post(url, json=None, timeout=None, headers=None):
         captured["payload"] = json
         return _FakeResponse(audio_b64=base64.b64encode(b"FAKEMP3").decode())
 
@@ -112,7 +112,7 @@ def test_deutsch_korrekt(post_tts):
     """lang=de + deutscher Text → 200, Voice ist de-DE."""
     captured = {}
 
-    def fake_post(url, json=None, timeout=None):
+    def fake_post(url, json=None, timeout=None, headers=None):
         captured["payload"] = json
         return _FakeResponse(audio_b64=base64.b64encode(b"FAKEMP3").decode())
 

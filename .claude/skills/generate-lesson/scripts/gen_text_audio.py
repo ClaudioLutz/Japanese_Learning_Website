@@ -39,25 +39,31 @@ from app import create_app, db  # noqa: E402
 from app.models import Lesson, LessonContent  # noqa: E402
 from app.ai_services import GoogleCloudTTS  # noqa: E402
 from app.services.tts_client import (  # noqa: E402
+    DE_NEURAL2_VOICE as DE_VOICE,
+    ENGINE_CHIRP,
+    ENGINE_GEMINI,
+    ENGINE_LABELS,
+    GEMINI_TTS_MODEL,
+    GEMINI_TTS_VOICE,
+    SAMPLE_RATE,
     GeminiEmptyAudioError,
     make_gemini_client,
+    pcm_to_wav,
     post_cloud_tts,
+    safe_error,
     synth_chirp_pcm,
     synth_gemini_pcm_robust,
+    wav_to_pcm,
 )
 
 # ---------------------------------------------------------------------------
-# Voices
+# Voices (zentral in app/services/tts_client.py)
 # ---------------------------------------------------------------------------
 # JA: Gemini 2.5 Pro TTS Leda — Studio-Qualitaet, gleiche Stimme wie Klick-Audio
 #     (= konsistente Lerner-Erfahrung zwischen Block-Player und Klick-Audio)
 # DE: Google Cloud TTS Neural2-G — bleibt wie bisher (Gemini hat keine
 #     deutsche Stimme die natuerlich klingen wuerde)
 # Beide liefern 24 kHz mono 16-bit PCM, somit byte-konkatenierbar in WAV.
-GEMINI_MODEL = "gemini-2.5-pro-preview-tts"
-GEMINI_VOICE = "Leda"
-DE_VOICE = "de-DE-Neural2-G"
-SAMPLE_RATE = 24000
 
 from app.services.tts_text import (  # noqa: E402
     segment_by_language,
@@ -92,30 +98,25 @@ def synth_segment_de_pcm(tts: GoogleCloudTTS, text: str, speed: float = 0.95) ->
     try:
         resp = post_cloud_tts(tts.api_key, payload)
     except Exception as e:
-        print(f"      [TTS EXC] (de): {text[:60]!r} — {e}")
+        print(f"      [TTS EXC] (de): {text[:60]!r} — {safe_error(e)}")
         return None
     if resp.status_code != 200:
-        print(f"      [TTS FEHLER] {resp.status_code} (de): {resp.text[:160]}")
+        print(f"      [TTS FEHLER] {resp.status_code} (de): {safe_error(resp.text[:160])}")
         return None
     audio_b64 = resp.json().get("audioContent")
     if not audio_b64:
         return None
-    wav = base64.b64decode(audio_b64)
-    # Cloud TTS LINEAR16 liefert WAV mit 44-byte Header. Strip header → reines PCM.
-    if wav[:4] == b"RIFF":
-        # Suche "data"-Chunk-Header und nimm nur Payload
-        idx = wav.find(b"data")
-        if idx >= 0:
-            return wav[idx + 8:]
-    return wav
+    # Cloud TTS LINEAR16 liefert WAV mit 44-byte Header → reines PCM
+    return wav_to_pcm(base64.b64decode(audio_b64))
 
 
-def synth_segment_ja_pcm(text: str) -> bytes | None:
+def synth_segment_ja_pcm(text: str, engines: list[str] | None = None) -> bytes | None:
     """Gemini 2.5 Pro TTS Leda fuer Japanisch — liefert 24kHz mono PCM raw.
 
     Kurze Segmente (Einzelwoerter) liefern bei Gemini oft leer (finish=OTHER);
     ``synth_gemini_pcm_robust`` versucht dann die Anweisungs-Prompts. Erst
     wenn alles leer bleibt (oder Timeout/Netz), greift der Chirp-Fallback.
+    ``engines`` sammelt die tatsaechlich verwendete Engine je Segment.
     """
     api_key = os.environ.get("GOOGLE_AI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
     # Hartes Timeout (120 s) + 1 Retry bei Timeout/Netz (tts_client); ohne
@@ -123,12 +124,18 @@ def synth_segment_ja_pcm(text: str) -> bytes | None:
     # ganzen Batch lahm. Danach greift unten der Chirp-Fallback.
     client = make_gemini_client(api_key)
     try:
-        return synth_gemini_pcm_robust(client, text, model=GEMINI_MODEL, voice=GEMINI_VOICE)
+        pcm = synth_gemini_pcm_robust(client, text, model=GEMINI_TTS_MODEL, voice=GEMINI_TTS_VOICE)
+        if engines is not None:
+            engines.append(ENGINE_GEMINI)
+        return pcm
     except GeminiEmptyAudioError as e:
-        print(f"      [GEMINI leer fuer {text[:30]!r}] ({e}) — Fallback Chirp 3 HD")
+        print(f"      [GEMINI leer fuer {text[:30]!r}] ({safe_error(e)}) — Fallback Chirp 3 HD")
     except Exception as e:
-        print(f"      [GEMINI EXC] (ja): {text[:60]!r} — {e} — Fallback Chirp 3 HD")
-    return _synth_chirp_pcm_fallback(text)
+        print(f"      [GEMINI EXC] (ja): {text[:60]!r} — {safe_error(e)} — Fallback Chirp 3 HD")
+    pcm = _synth_chirp_pcm_fallback(text)
+    if pcm is not None and engines is not None:
+        engines.append(ENGINE_CHIRP)
+    return pcm
 
 
 def _synth_chirp_pcm_fallback(text: str) -> bytes | None:
@@ -139,28 +146,33 @@ def _synth_chirp_pcm_fallback(text: str) -> bytes | None:
     try:
         return synth_chirp_pcm(api_key, text, sample_rate=SAMPLE_RATE)
     except Exception as e:
-        print(f"      [CHIRP FALLBACK EXC] {e}")
+        print(f"      [CHIRP FALLBACK EXC] {safe_error(e)}")
         return None
 
 
-def synth_segment(tts: GoogleCloudTTS, lang: str, text: str, speed: float = 0.95) -> bytes | None:
+def synth_segment(
+    tts: GoogleCloudTTS, lang: str, text: str, speed: float = 0.95,
+    engines: list[str] | None = None,
+) -> bytes | None:
     """Dispatcher: liefert 24kHz mono 16-bit PCM (kein WAV-Header) je Sprache."""
     if lang == "ja":
-        return synth_segment_ja_pcm(text)
+        return synth_segment_ja_pcm(text, engines)
     return synth_segment_de_pcm(tts, text, speed)
 
 
 def wrap_pcm_as_wav(pcm: bytes) -> bytes:
-    """Verpackt rohe PCM-Daten in einen WAV-Container."""
-    import wave
-    import io
-    buf = io.BytesIO()
-    with wave.open(buf, "wb") as wf:
-        wf.setnchannels(1)
-        wf.setsampwidth(2)
-        wf.setframerate(SAMPLE_RATE)
-        wf.writeframes(pcm)
-    return buf.getvalue()
+    """Verpackt rohe PCM-Daten in einen WAV-Container (tts_client.pcm_to_wav)."""
+    return pcm_to_wav(pcm, SAMPLE_RATE)
+
+
+def ja_voice_label(engines: list[str]) -> str:
+    """ja_voice fuer ai_generation_details aus den verwendeten Engines."""
+    kinds = sorted(set(engines))
+    if not kinds:
+        return ENGINE_LABELS[ENGINE_GEMINI]
+    if len(kinds) == 1:
+        return ENGINE_LABELS[kinds[0]]
+    return "mixed:" + "+".join(ENGINE_LABELS[k] for k in kinds)
 
 
 # ---------------------------------------------------------------------------
@@ -268,8 +280,9 @@ def main() -> int:
                   f"{len(segments)} Segmente ({seg_summary}{'...' if len(segments) > 8 else ''})")
 
             pcm_chunks: list[bytes] = []
+            ja_engines: list[str] = []
             for i, (lang, seg) in enumerate(segments, start=1):
-                pcm = synth_segment(tts, lang, seg)
+                pcm = synth_segment(tts, lang, seg, engines=ja_engines)
                 if pcm is None:
                     print(f"      [FEHLER] Segment {i} ({lang}) liefert kein Audio — Abbruch.")
                     return 1
@@ -292,7 +305,8 @@ def main() -> int:
             lc.ai_generation_details = {
                 **existing_details,
                 "tts_generator": "gemini_ja_neural2_de_split",
-                "ja_voice": f"{GEMINI_MODEL}:{GEMINI_VOICE}",
+                "ja_voice": ja_voice_label(ja_engines),
+                "ja_engines": {k: ja_engines.count(k) for k in sorted(set(ja_engines))},
                 "de_voice": DE_VOICE,
                 "text_hash": new_hash,
                 "segments": len(segments),

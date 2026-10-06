@@ -237,8 +237,7 @@ def _chirp_response(audio: bytes, status: int = 200):
     resp = MagicMock()
     resp.status_code = status
     resp.json.return_value = {"audioContent": base64.b64encode(audio).decode()}
-    if status != 200:
-        resp.raise_for_status.side_effect = requests.HTTPError(str(status))
+    resp.text = ""
     return resp
 
 
@@ -276,7 +275,7 @@ class TestChirpWav:
     def test_http_fehler_wirft(self):
         session = MagicMock()
         session.post.return_value = _chirp_response(b"", status=403)
-        with pytest.raises(requests.HTTPError):
+        with pytest.raises(tts_client.CloudTtsError):
             synth_chirp_wav("k", "ちち", session=session)
 
     def test_leerer_audio_content_wirft(self):
@@ -284,5 +283,157 @@ class TestChirpWav:
         resp = _chirp_response(b"")
         resp.json.return_value = {}
         session.post.return_value = resp
-        with pytest.raises(RuntimeError):
+        with pytest.raises(tts_client.CloudTtsError):
             synth_chirp_wav("k", "ちち", session=session)
+
+
+# ---------------------------------------------------------------------------
+# Review-Befunde 06.10.2026
+# ---------------------------------------------------------------------------
+FAKE_KEY = "AIzaSyFAKE_testkey_0123456789abcdefghijk"
+
+
+class TestKeyNieInMeldungen:
+    """Befund 1: API-Key per Header, nie in URL/Fehlermeldungen."""
+
+    def test_key_als_header_nicht_in_url(self):
+        session = MagicMock()
+        session.post.return_value = SimpleNamespace(status_code=200)
+        post_cloud_tts(FAKE_KEY, {"x": 1}, session=session)
+        args, kwargs = session.post.call_args
+        url = args[0]
+        assert "key=" not in url and FAKE_KEY not in url
+        assert kwargs["headers"]["X-Goog-Api-Key"] == FAKE_KEY
+
+    def test_redact_secrets(self):
+        msg = (f"403 Client Error: Forbidden for url: "
+               f"https://texttospeech.googleapis.com/v1/text:synthesize?key={FAKE_KEY}&x=1")
+        clean = tts_client.redact_secrets(msg)
+        assert FAKE_KEY not in clean
+        assert "key=REDACTED&x=1" in clean
+        assert FAKE_KEY not in tts_client.redact_secrets(f"api key {FAKE_KEY} invalid")
+
+    def test_safe_error_auf_exception(self):
+        exc = requests.HTTPError(f"Forbidden for url: https://x/y?key={FAKE_KEY}")
+        assert FAKE_KEY not in tts_client.safe_error(exc)
+        assert "HTTPError" in tts_client.safe_error(exc)
+
+    def test_chirp_http_fehler_ohne_key(self):
+        session = MagicMock()
+        resp = MagicMock(status_code=403)
+        resp.text = f'{{"error": "API key not valid", "url": "?key={FAKE_KEY}"}}'
+        session.post.return_value = resp
+        with pytest.raises(tts_client.CloudTtsError) as exc_info:
+            synth_chirp_wav(FAKE_KEY, "ちち", session=session)
+        assert FAKE_KEY not in str(exc_info.value)
+        assert "403" in str(exc_info.value)
+
+    def test_netzfehler_meldung_ohne_key(self, caplog):
+        session = MagicMock()
+        session.post.side_effect = requests.ConnectionError(
+            f"HTTPSConnectionPool: Max retries exceeded with url: /v1/text:synthesize?key={FAKE_KEY}"
+        )
+        with caplog.at_level("WARNING"), pytest.raises(requests.ConnectionError):
+            synth_chirp_wav(FAKE_KEY, "ちち", session=session)
+        assert FAKE_KEY not in caplog.text
+
+
+class TestShortTextLogik:
+    """Befund 3: Anweisungs-Prompts nur fuer Kurz-Strings."""
+
+    @pytest.mark.parametrize("text,erwartet", [
+        ("ちち", True),
+        ("ひゃく", True),
+        ("ラーメン", True),
+        ("あいうえおかきく", True),           # 8 Zeichen
+        ("あいうえおかきくけ", False),        # 9 Zeichen
+        ("ちち。", False),
+        ("さ、し、す", False),
+        ("ちち はは", False),
+        ("", False),
+    ])
+    def test_is_short_text(self, text, erwartet):
+        assert tts_client.is_short_text(text) is erwartet
+
+    def test_langer_text_ohne_anweisungs_prompts(self):
+        satz = "わたしはがくせいです。"
+        client = MagicMock()
+        client.models.generate_content.return_value = _empty_response()
+        with pytest.raises(GeminiEmptyAudioError):
+            synth_gemini_pcm_robust(client, satz)
+        contents = [c.kwargs["contents"] for c in client.models.generate_content.call_args_list]
+        assert contents == [satz, tts_client.GEMINI_TUTOR_PROMPT.format(text=satz)]
+
+    def test_langer_text_tutor_prompt_erfolg(self):
+        satz = "きょうはいいてんきですね。"
+        client = MagicMock()
+        client.models.generate_content.side_effect = [
+            _empty_response(), _audio_response(_pcm(3.0)),
+        ]
+        assert synth_gemini_pcm_robust(client, satz) == _pcm(3.0)
+
+    def test_kurzstring_strengere_dauergrenze(self):
+        # 2 Zeichen: Grenze 1.2 + 2*0.3 = 1.8 s → 2.5 s wird verworfen
+        client = MagicMock()
+        client.models.generate_content.side_effect = [
+            _empty_response(), _audio_response(_pcm(2.5)), _audio_response(_pcm(1.0)),
+        ]
+        assert synth_gemini_pcm_robust(client, "ちち") == _pcm(1.0)
+        assert client.models.generate_content.call_count == 3
+
+    def test_max_calls_konstante(self):
+        assert tts_client.GEMINI_MAX_CALLS_ROBUST == 8
+        client = MagicMock()
+        client.models.generate_content.side_effect = TimeoutError("hang")
+        with pytest.raises(TimeoutError):
+            synth_gemini_pcm_robust(client, "ちち")
+        assert client.models.generate_content.call_count <= tts_client.GEMINI_MAX_CALLS_ROBUST
+        client = MagicMock()
+        client.models.generate_content.return_value = _empty_response()
+        with pytest.raises(GeminiEmptyAudioError):
+            synth_gemini_pcm_robust(client, "ちち")
+        assert client.models.generate_content.call_count <= tts_client.GEMINI_MAX_CALLS_ROBUST
+
+
+class TestExtractAudio:
+    """Befund 6: Text-Part / fehlende Daten → GeminiEmptyAudioError."""
+
+    def _resp(self, *parts):
+        cand = SimpleNamespace(content=SimpleNamespace(parts=list(parts)), finish_reason="STOP")
+        return SimpleNamespace(candidates=[cand])
+
+    def test_text_part_statt_audio(self):
+        client = MagicMock()
+        client.models.generate_content.return_value = self._resp(
+            SimpleNamespace(text="Hallo", inline_data=None)
+        )
+        with pytest.raises(GeminiEmptyAudioError):
+            synth_gemini_pcm(client, "ちち")
+
+    def test_part_ohne_inline_data_attribut(self):
+        client = MagicMock()
+        client.models.generate_content.return_value = self._resp(SimpleNamespace(text="x"))
+        with pytest.raises(GeminiEmptyAudioError):
+            synth_gemini_pcm(client, "ちち")
+
+    def test_leere_daten(self):
+        client = MagicMock()
+        client.models.generate_content.return_value = self._resp(
+            SimpleNamespace(inline_data=SimpleNamespace(data=b""))
+        )
+        with pytest.raises(GeminiEmptyAudioError):
+            synth_gemini_pcm(client, "ちち")
+
+    def test_audio_im_zweiten_part(self):
+        client = MagicMock()
+        client.models.generate_content.return_value = self._resp(
+            SimpleNamespace(text="note", inline_data=None),
+            SimpleNamespace(inline_data=SimpleNamespace(data=b"PCM")),
+        )
+        assert synth_gemini_pcm(client, "ちち") == b"PCM"
+
+    def test_keine_candidates(self):
+        client = MagicMock()
+        client.models.generate_content.return_value = SimpleNamespace(candidates=None)
+        with pytest.raises(GeminiEmptyAudioError):
+            synth_gemini_pcm(client, "ちち")

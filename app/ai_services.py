@@ -1272,7 +1272,8 @@ class GoogleCloudTTS:
             }
 
         except Exception as e:
-            current_app.logger.error(f"TTS Fehler: {e}")
+            from app.services.tts_client import safe_error
+            current_app.logger.error(f"TTS Fehler: {safe_error(e)}")
             return {"error": str(e)}
 
     def generate_kana_audio(self, kana: str, romaji: str, output_dir: str, voice: str = 'female') -> dict:

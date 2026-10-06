@@ -210,7 +210,9 @@ Zwei separate Audio-Systeme mit gemeinsamem Voice-Stack: **Gemini 2.5 Pro TTS Le
 - **JA**: `gemini-2.5-pro-preview-tts` Voice `Leda` — studio-nahe Qualität via `google-genai` SDK
 - **DE**: `de-DE-Neural2-G` Voice — via Cloud TTS REST API (Gemini hat keine deutsche Stimme)
 - **Fallback** bei Gemini-Safety-Block / Quota-Hit: `ja-JP-Chirp3-HD-Leda` (gleiche Stimm-Persönlichkeit, andere Engine), seit 29.09.2026 als WAV → gleiche URL wie Gemini
-- **Kurz-Strings** (Einzel-/Zahlwörter wie `ちち`, `ひゃく`): Gemini liefert beim nackten Text oft leer (finish=OTHER bzw. 400 „Model tried to generate text“). `tts_client.synth_gemini_pcm_robust` versucht dann Anweisungs-Prompts (`GEMINI_SHORT_TEXT_PROMPTS`, z.B. „Text-to-speech, Japanese, read exactly this and nothing else: …“), erst danach Chirp. Satzzeichen-Polsterung (`ちち。`, `、ちち`) hilft NICHT (Probe 29.09.2026). Alle TTS-Helfer liegen in `app/services/tts_client.py`.
+- **Kurz-Strings** (Einzel-/Zahlwörter wie `ちち`, `ひゃく`): Gemini liefert beim nackten Text oft leer (finish=OTHER bzw. 400 „Model tried to generate text“). `tts_client.synth_gemini_pcm_robust` versucht dann Anweisungs-Prompts (`GEMINI_SHORT_TEXT_PROMPTS`, z.B. „Text-to-speech, Japanese, read exactly this and nothing else: …“), erst danach Chirp. Gilt nur für Kurz-Strings (`is_short_text`: ≤ `SHORT_TEXT_MAX_CHARS`=8 Zeichen, ohne Satzzeichen/Leerraum) mit strenger Dauergrenze; längere Texte: nackt → ein Tutor-Prompt → Chirp. Max. `GEMINI_MAX_CALLS_ROBUST`=8 Gemini-Aufrufe pro Text. Satzzeichen-Polsterung (`ちち。`, `、ちち`) hilft NICHT (Probe 29.09.2026). Alle TTS-Helfer, Modell-/Stimmen-Konstanten und Engine-Kennungen liegen in `app/services/tts_client.py`.
+- **API-Key nie in URL/Logs** (06.10.2026): Cloud-TTS-Key geht per Header `X-Goog-Api-Key` (`post_cloud_tts`), nie als `?key=`; Fehlermeldungen vor print/logging durch `tts_client.safe_error`/`redact_secrets` schicken (kein `raise_for_status()` — dessen Meldung enthält die URL).
+- **Engine-Manifest**: Gemini und Chirp schreiben dieselbe `<hash>.wav` → Engine steht in `inline_audio/_engines.json` (Hash → `gemini`|`chirp`, atomar, `app/services/audio_engine_manifest.py`), zusätzlich `data-audio-engine` am Element und `augmented_voice`/`augmented_engines` in den Details (Block-Player: `ja_voice`/`ja_engines`). Kein Eintrag = unbekannt (Altbestand). `.wav` heisst NICHT Gemini.
 
 ### Kana-Reihen-Pause-Heuristik (`app/routes.py::_maybe_spell_out_kana_row`)
 Findet Hiragana/Katakana-Sequenzen (4-7 Mora) und trennt sie mit `、` wenn alle Mora **EINER Reihe** angehören. Beispiele:
@@ -224,14 +226,16 @@ Findet Hiragana/Katakana-Sequenzen (4-7 Mora) und trennt sie mit `、` wenn alle
 ### Skripte
 | Skript | Zweck |
 |---|---|
-| `scripts/pregenerate_inline_audio.py [lesson_id] [--all] [--force] [--replace-mp3]` | Inline-Audio pro `<p>`/`<li>` rendern, augmented_html in DB schreiben; `--replace-mp3` rendert nur MP3-Altbestand neu (quotaschonend) |
+| `scripts/pregenerate_inline_audio.py [lesson_id] [--all] [--force] [--replace-mp3] [--upgrade-chirp]` | Inline-Audio pro `<p>`/`<li>` rendern, augmented_html in DB schreiben; `--replace-mp3` rendert nur MP3-Altbestand neu, `--upgrade-chirp` nur laut Manifest Chirp-Einträge mit Gemini (beides quotaschonend). Scheitert die Neuerzeugung, bleibt das bisherige Audio; ein Block mit Fehlern wird nie mit weniger Audios gespeichert |
 | `.claude/skills/generate-lesson/scripts/gen_text_audio.py <lesson_id>` | Block-Player pro LessonContent (DE+JP segmentiert) |
 | `scripts/regenerate_block_audio_all.py` | Bulk-Wrapper: ruft gen_text_audio für alle published Lessons mit Skip-Filter |
-| `scripts/prefer_wav_over_mp3.py` | Altbestand: augmented_html .mp3 → .wav wo die WAV existiert |
+| `scripts/prefer_wav_over_mp3.py` | Altbestand: augmented_html .mp3 → .wav wo die WAV existiert (Engine aus dem Manifest, meldet Verteilung) |
+| `scripts/gen_vocab_audio.py` | Vokabel-/Satz-Audio (`tts_gemini/`), ein robuster Durchlauf pro Eintrag (max. 8 Gemini-Aufrufe) |
+| `tools/audio_nachlauf.sh <log> [vokabel-json]` | MP3-Altbestand → WAV für alle betroffenen Lektionen + prefer_wav; Vokabel-Lauf (`--force`) nur mit Datei-Parameter; Exit≠0 bei Fehler |
 
 ### Quota-Limit
 - **Gemini 2.5 Pro TTS**: 2'500 Calls/Tag (PaidTier2). Reset täglich um Pacific Midnight (= morgens ~09:00 CET).
-- Bei Hit: Chirp-Fallback greift automatisch (WAV, gleiche URL). Qualitativ bleibt es Chirp — nach Quota-Reset mit `--force` bzw. gezielt neu rendern, wenn Gemini-Qualität gewünscht ist.
+- Bei Hit: Chirp-Fallback greift automatisch (WAV, gleiche URL). Qualitativ bleibt es Chirp — nach Quota-Reset `pregenerate_inline_audio.py --all --upgrade-chirp` (nur Manifest-Chirp-Einträge) statt `--force`.
 
 ### Medien-Speicherung
 Audio + Bilder liegen **lokal** unter `app/static/uploads/` (als Docker-Volume gemountet) und werden direkt ausgeliefert. Der GCS-Bucket `jpl-website-assets` ist nur noch ein Offsite-Backup (Snapshot). WAV→MP3-Konvertierung ist nicht mehr zwingend (lokale Platte hat reichlich Platz; ~4.3 GB Medien total).

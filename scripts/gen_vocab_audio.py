@@ -15,7 +15,6 @@ Im Container ausfuehren (hat DB-Host `db`, API-Key, uploads-Volume):
 import argparse
 import json
 import sys
-import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from app import create_app
@@ -25,6 +24,7 @@ from app.routes import (
     _maybe_spell_out_kana_row,
     pregenerated_ja_audio_file,
 )
+from app.services.tts_client import GEMINI_MAX_CALLS_ROBUST, safe_error
 from app.services.tts_text import clean_tts_segment
 
 
@@ -57,31 +57,35 @@ def collect_raw_texts(args) -> list[str]:
     return out
 
 
+# Obergrenze der Gemini-Aufrufe pro Eintrag (Quota 2'500/Tag): genau ein
+# robuster Durchlauf (nackt + Kurz-String-Prompts, je 1 Netz-Retry in
+# tts_client). Keine aeussere Wiederholungsschleife mehr — die hat den robusten
+# Pfad frueher bis zu 4x verschachtelt (bis 32 Aufrufe pro Eintrag).
+MAX_GEMINI_CALLS_PER_ENTRY = GEMINI_MAX_CALLS_ROBUST
+
+
 def synth_one(app, canon: str, force: bool) -> tuple[str, str]:
-    """Erzeugt eine WAV (mit Retry bei transienten Fehlern). Gibt (status, canon).
+    """Erzeugt eine WAV. Gibt (status, canon).
 
     Pusht einen eigenen App-Context — der ThreadPool laeuft in Worker-Threads,
     und Flasks current_app (von pregenerated_ja_audio_file + _synthesize_gemini
-    genutzt) ist thread-lokal.
+    genutzt) ist thread-lokal. Fehlgeschlagene Eintraege meldet der Lauf als
+    FAIL; ein erneuter Lauf (idempotent) holt sie nach.
     """
     with app.app_context():
         path = pregenerated_ja_audio_file(canon)
         if path.exists() and not force:
             return ('skip', canon)
         path.parent.mkdir(parents=True, exist_ok=True)
-        last = None
-        for attempt in range(4):
-            try:
-                # batch=True: 120 s Timeout + Kurz-String-Prompts (Einzelwoerter)
-                wav = _synthesize_gemini(canon, batch=True)
-                tmp = path.with_suffix('.wav.tmp')
-                tmp.write_bytes(wav)
-                tmp.replace(path)  # atomar -> nie halbe Datei im Store
-                return ('ok', canon)
-            except Exception as e:  # noqa: BLE001 — transient (429/529/safety) -> backoff
-                last = e
-                time.sleep(2 * (attempt + 1) + attempt * 3)
-        return (f'FAIL: {last}', canon)
+        try:
+            # batch=True: 120 s Timeout, 1 Netz-Retry, Kurz-String-Prompts
+            wav = _synthesize_gemini(canon, batch=True)
+        except Exception as e:  # noqa: BLE001 — leer/429/Timeout → FAIL melden
+            return (f'FAIL: {safe_error(e)}', canon)
+        tmp = path.with_suffix('.wav.tmp')
+        tmp.write_bytes(wav)
+        tmp.replace(path)  # atomar -> nie halbe Datei im Store
+        return ('ok', canon)
 
 
 def main():
