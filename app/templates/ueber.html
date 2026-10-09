@@ -263,5 +263,28 @@
   display: flex; flex-wrap: wrap; justify-content: center;
   gap: 0.75rem; margin-top: 1rem;
 }
+
+/* === DARK MODE — hardcoded Overrides ===
+   Light bleibt unveraendert. Im Dark standen #1a1a1a-Ueberschriften und
+   #2c3e50-Fliesstext (~1.0-1.5:1) auf dunkler Karte; Hero und CTA waren helle
+   Inseln. Farben ueber die Dark-Tokens aus custom.css (Fliesstext/Links >= 4.5:1,
+   Test: tests/unit/test_dark_mode_textfarben.py). */
+[data-theme="dark"] .ueber-hero {
+  background: linear-gradient(135deg, var(--card-background) 0%, #1A2030 100%);
+}
+[data-theme="dark"] .ueber-hero h1,
+[data-theme="dark"] .ueber-section h2,
+[data-theme="dark"] .ueber-signatur { color: var(--text-color); }
+[data-theme="dark"] .ueber-lead { color: var(--text-light); }
+[data-theme="dark"] .ueber-section p,
+[data-theme="dark"] .ueber-list li { color: var(--text-color); }
+[data-theme="dark"] .ueber-signatur { border-top-color: var(--border-color); }
+[data-theme="dark"] .ueber-signatur-sub { color: var(--text-muted); }
+[data-theme="dark"] .ueber-section a:not(.btn) { color: var(--ai); }
+[data-theme="dark"] .ueber-section a:not(.btn):hover { color: var(--zen-indigo-light); }
+[data-theme="dark"] .ueber-cta {
+  background: linear-gradient(135deg, rgba(166,193,88,0.12) 0%, rgba(166,193,88,0.05) 100%);
+  border: 1px solid rgba(166,193,88,0.35);
+}
 </style>
 {% endblock %}

@@ -15,6 +15,10 @@ Format je Eintrag:
 Keine Commit-Hashes, keine internen Namen.
 -->
 
+## 2026-10-09 | Infoseiten im Dunkelmodus gut lesbar
+Auf „JLPT N5 in der Schweiz“ und „Über“ war der Text im Dunkelmodus kaum zu lesen (dunkelblau auf dunkel). Jetzt sind Text, Überschriften und Links in beiden Darstellungen klar lesbar; der helle Modus bleibt unverändert.
+Link: /jlpt-n5-schweiz
+
 ## 2026-10-09 | Infoseiten mit aktuellen Zahlen
 Die Seiten „JLPT N5 in der Schweiz“, „Über“ und der N5-Lernpfad zeigen jetzt dieselben aktuellen Zahlen wie die Startseite und beschreiben das Rollenspiel so, wie es funktioniert. Auf der Schweiz-Seite stehen ausserdem der Prüfungstermin vom 6. Dezember 2026 und die aktuellen Prüfungszeiten.
 Link: /jlpt-n5-schweiz

@@ -821,7 +821,15 @@
 
 /* === DARK MODE — hardcoded Overrides ===
    Diese SEO-Landingpage hat eine eigene helle Palette (Indigo/Amber/Gruen).
-   Light bleibt unveraendert; im Dark wuerde der #1a1a1a-Text sonst unsichtbar. */
+   Light bleibt unveraendert; im Dark wuerde der #1a1a1a-Text sonst unsichtbar.
+   Grundfarbe des Fliesstexts (.n5ch-page, Light #2c3e50) MUSS hier mitkippen:
+   p/li/td/strong/em erben sie — ohne diese Zeile stand dunkelblauer Text auf
+   dunkler Karte (~1.5:1). Fliesstext/Links/Hinweise >= 4.5:1 (Test: tests/unit/test_dark_mode_textfarben.py). */
+[data-theme="dark"] .n5ch-page { color: var(--text-color); }
+[data-theme="dark"] .n5ch-breadcrumb { color: var(--text-muted); }
+[data-theme="dark"] .n5ch-section a:not(.btn) { color: var(--ai); }
+[data-theme="dark"] .n5ch-section a:not(.btn):hover { color: var(--zen-indigo-light); }
+[data-theme="dark"] .n5ch-trust { color: var(--matcha-text); }
 [data-theme="dark"] .n5ch-hero {
   background: linear-gradient(135deg, var(--card-background) 0%, #1A2030 100%);
 }
