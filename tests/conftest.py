@@ -84,6 +84,9 @@ def app():
         "MAIL_DEFAULT_SENDER": "test@japanese-learning.ch",
         # Phase 2: Variable XP-Boost in Tests deaktivieren (sonst non-deterministisch)
         "XP_BOOST_PROBABILITY": 0.0,
+        # Kennzahlen der Infoseiten nicht zwischenspeichern: die App ist
+        # session-weit, sonst saehe ein Test die Zahlen eines frueheren Tests.
+        "PUBLIC_STATS_CACHE_SECONDS": 0,
         "UPLOAD_FOLDER": os.path.join(os.path.dirname(__file__), "test_uploads"),
         "ALLOWED_EXTENSIONS": {
             "image": {"png", "jpg", "jpeg", "gif", "webp"},

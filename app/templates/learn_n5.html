@@ -4,7 +4,9 @@
    Sammelt eigene Ranking-Autoritaet fuer die generischste N5-URL. Self-Canonical. #}
 
 {% block title %}JLPT N5 lernen — der komplette Lernpfad auf Deutsch{% endblock %}
-{% block meta_description %}Der vollständige JLPT-N5-Lernpfad auf Deutsch: Hiragana, Katakana, Kanji, Wortschatz und Grammatik in {{ n5_modules|length }} Modulen — mit Quiz und Spaced Repetition. Schweizer Lernplattform, kostenlos starten.{% endblock %}
+{# Zahlen nur aus Live-Daten: Module aus n5_modules, Lektionen aus n5_stats
+   (coverage_service.get_public_stats, gleiche Quelle wie Startseite/n5-bundle). #}
+{% block meta_description %}Der vollständige JLPT-N5-Lernpfad auf Deutsch: Hiragana, Katakana, Kanji, Wortschatz und Grammatik in {{ n5_modules|length }} Modulen{% if n5_stats %} und {{ n5_stats.lessons }} Lektionen{% endif %} — mit Quiz und Spaced Repetition. Schweizer Lernplattform, {% if free_mode %}komplett kostenlos{% else %}kostenlos starten{% endif %}.{% endblock %}
 {% block canonical %}{{ site_url }}/learn/n5{% endblock %}
 {% block og_type %}website{% endblock %}
 
@@ -48,7 +50,15 @@
       </div>
     </div>
     <p class="n5hub-coverage-note">
-      Der vollständige N5-Pfad wächst laufend — der Rest ist im Lifetime-Zugang inklusive.
+      {% if free_mode %}
+        Alle Lektionen sind aktuell komplett kostenlos — kein Abo, kein Kauf.
+        {{ n5_free_lesson_count }} davon gehen ohne Anmeldung, für die übrigen
+        reicht ein kostenloses Konto.
+      {% elif n5_coverage.vocab_pct >= 100 and n5_coverage.kanji_pct >= 100 %}
+        Der vollständige N5-Pfad ist im Lifetime-Zugang inklusive.
+      {% else %}
+        Der vollständige N5-Pfad wächst laufend — der Rest ist im Lifetime-Zugang inklusive.
+      {% endif %}
     </p>
   </section>
   {% endif %}

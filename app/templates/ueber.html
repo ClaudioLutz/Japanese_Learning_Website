@@ -70,9 +70,9 @@
       </li>
       <li>
         <strong>Coverage-Tracking:</strong> Statt einer schwammigen „N5-Versprechung"
-        siehst du auf der Bundle-Seite live, wie viel Prozent der offiziellen
-        N5-Wortliste und N5-Kanji bereits abgedeckt sind. Das Tracking läuft
-        automatisch gegen die offizielle JLPT-Liste.
+        siehst du auf der Seite <a href="{{ url_for('bundle.n5_bundle') }}">JLPT N5 komplett</a>
+        live, wie viel der N5-Wortliste und der N5-Kanji abgedeckt ist. Das
+        Tracking läuft automatisch gegen die JLPT-N5-Liste.
       </li>
       <li>
         <strong>Reproduzierbares Lektionsdesign:</strong> Jede Lektion hat
@@ -139,20 +139,43 @@
       <li><strong>Faires Pricing.</strong> CHF 9.90 für N5 ist Pre-Order. Wer früh dabei ist, zahlt einmalig — egal wie viele Lektionen ich danach noch ergänze.</li>
       <li><strong>Doppelte Geld-zurück-Garantie.</strong> 30 Tage volle Rückerstattung. Plus: wenn ich das N5-Bundle 6 Monate lang nicht aktiv erweitere, bekommst du dein Geld zurück, auch nach 30 Tagen.</li>
       {% else %}
-      <li><strong>Komplett kostenlos.</strong> Alle Inhalte sind frei zugänglich — kein Kauf, kein Abo, keine Paywall.</li>
+      <li><strong>Aktuell komplett kostenlos.</strong> Kein Kauf, kein Abo, keine Paywall. {{ n5_free_lesson_count }} Lektionen gehen ohne Anmeldung, für die übrigen und das Rollenspiel reicht ein kostenloses Konto.</li>
       {% endif %}
       <li><strong>Keine Daten-Verkäufe.</strong> Keine Trackingscripts von Drittanbietern. Self-hosted in der Schweiz, ausgeliefert über Cloudflare.</li>
       <li><strong>Echte Antworten.</strong> Schreib mir auf <a href="mailto:info@japanese-learning.ch">info@japanese-learning.ch</a> — ich antworte selbst, meist innerhalb 48h.</li>
     </ul>
   </section>
 
+  {# Stand-heute-Zahlen live aus n5_stats (coverage_service.get_public_stats,
+     nur publizierte Inhalte) — keine festen Zahlen eintragen, sie veralten.
+     Rollenspiel-Absatz nur, wenn das Feature aktiv ist (roleplay_info). #}
   <section class="ueber-section">
-    <h2>Was als Nächstes kommt</h2>
+    <h2>Stand heute und was als Nächstes kommt</h2>
     <p>
-      Stand heute: 31 Lektionen N5 live, neue Lektionen wöchentlich.
-      Geplant bis Ende 2026: vollständiges N5-Curriculum (~50 Lektionen),
-      Konversations-Trainings mit MP3-Audio, plus erste N4-Lektionen
-      (Grammatik & Vokabeln) ab Q4 2026.
+      {% if n5_stats %}
+      Stand heute: {{ n5_stats.lessons }} Lektionen in {{ n5_stats.modules }} Modulen
+      für JLPT N5 — mit {{ n5_stats.vocab|swiss_num }} Vokabeln,
+      {% if n5_stats.kanji >= n5_stats.kanji_total %}allen {{ n5_stats.kanji_total }}{% else %}{{ n5_stats.kanji }} von {{ n5_stats.kanji_total }}{% endif %} N5-Kanji,
+      {{ n5_stats.grammar }} Grammatikpunkten und {{ n5_stats.scenes }} Dialogszenen.
+      {% else %}
+      Stand heute: der komplette JLPT-N5-Lernpfad — von Hiragana und Katakana
+      über Wortschatz und Kanji bis zu den ersten Sätzen.
+      {% endif %}
+    </p>
+    {% if roleplay_info %}
+    <p>
+      Gesprächstraining gibt es inzwischen: Im Rollenspiel-Tutor übst du die
+      Dialogszenen der Lektionen als Gespräch in geschriebener Form. Du antwortest
+      selbst oder wählst einen Vorschlag, dein Gesprächspartner antwortet auf
+      Japanisch und lässt sich vorlesen, am Ende gibt es Korrekturen auf Deutsch.
+      Dafür brauchst du ein kostenloses Konto; pro Tag sind
+      {{ roleplay_info.sessions_per_day }} Gespräche möglich.
+    </p>
+    {% endif %}
+    <p>
+      Als Nächstes sind N4-Lektionen geplant (Grammatik &amp; Vokabeln) —
+      ein festes Datum gibt es dafür noch nicht. Was neu dazukommt, steht laufend
+      unter <a href="{{ url_for('news.index') }}">Neuigkeiten</a>.
     </p>
     <p>
       Der Roadmap-Stand ist transparent. Wenn du Themen vermisst,

@@ -15,6 +15,10 @@ Format je Eintrag:
 Keine Commit-Hashes, keine internen Namen.
 -->
 
+## 2026-10-09 | Infoseiten mit aktuellen Zahlen
+Die Seiten „JLPT N5 in der Schweiz“, „Über“ und der N5-Lernpfad zeigen jetzt dieselben aktuellen Zahlen wie die Startseite und beschreiben das Rollenspiel so, wie es funktioniert. Auf der Schweiz-Seite stehen ausserdem der Prüfungstermin vom 6. Dezember 2026 und die aktuellen Prüfungszeiten.
+Link: /jlpt-n5-schweiz
+
 ## 2026-09-27 | Startseite aufgeräumt
 Die Startseite folgt jetzt demselben Aufbau wie die übrigen Seiten: Wenn du angemeldet bist, steht „Weiter lernen" gleich oben neben deiner Begrüssung, darunter führen Kacheln zu Wiederholen, Sprechen, Neuigkeiten und „Mein Lernen", dann folgt der Lernpfad als Raster. Ohne Konto siehst du Gesprächs-Demo, Kana-Spiel und die N5-Übersicht in klaren Abschnitten, auf dem Handy mit gleichmässigem Rand.
 Link: /

@@ -195,6 +195,7 @@ Decorators: `@login_required`, `@admin_required`, `@premium_required`.
 - **Lektions-Editor Partials**: manage_lessons.html ist ein 67-Zeilen-Orchestrator der 11 Partials aus `lessons/` inkludiert. Jedes Partial ist eigenständig testbar.
 - **Inline Reference Editing**: Content-Editor lädt referenzierte Daten (Vocabulary/Kanji/etc.) per API und speichert Änderungen beim Save zurück — Änderungen wirken global.
 - **Playwright MCP**: Konfiguriert in `.mcp.json` für Browser-basierte UI-Tests via Claude Code
+- **Kennzahlen auf öffentlichen Seiten nie hartkodieren** (seit 09.10.2026): Lektionen/Module/Vokabeln/Kanji/Grammatik/Szenen kommen aus `coverage_service.get_level_showcase` (nur publizierte Inhalte); Startseite und `/n5-bundle` rufen sie direkt auf, `/jlpt-n5-schweiz`, `/ueber`, `/learn/n5` über `get_public_stats` (10 Min. Cache pro Worker, `PUBLIC_STATS_CACHE_SECONDS`). Auch Meta-Description und JSON-LD. Rollenspiel-Tageslimit auf Infoseiten aus `roleplay_service.limit_value`. Test: `tests/integration/test_public_info_numbers.py`.
 
 ## Audio-Pipeline (Stand 2026-05-12)
 

@@ -1202,15 +1202,47 @@ def lessons():
     )
 
 
+def _public_n5_stats():
+    """Kennzahlen fuer die oeffentlichen Infoseiten (/jlpt-n5-schweiz, /ueber,
+    /learn/n5) — dieselbe Quelle wie Startseite und /n5-bundle
+    (coverage_service.get_level_showcase, nur publizierte Inhalte), gecacht.
+
+    None, wenn die Zahlen nicht ladbar sind: Die Templates fallen dann auf
+    Formulierungen ohne Zahlen zurueck, statt die Seite zu blockieren.
+    """
+    try:
+        from app.services.coverage_service import get_public_stats
+        return get_public_stats(5)
+    except Exception:
+        current_app.logger.warning("N5-Kennzahlen fuer Infoseite nicht ladbar", exc_info=True)
+        return None
+
+
+def _roleplay_public_info():
+    """Rollenspiel-Tutor fuer Infoseiten: None wenn aus, sonst das Tageslimit
+    an Gespraechen pro Konto (aus der Konfiguration, nicht hartkodiert)."""
+    try:
+        from app.services.roleplay_service import is_enabled, limit_value
+        if is_enabled():
+            return {'sessions_per_day': limit_value('ROLEPLAY_LIMIT_SESSIONS_PER_DAY')}
+    except Exception:
+        current_app.logger.warning("Rollenspiel-Info fuer Infoseite nicht ladbar", exc_info=True)
+    return None
+
+
 @bp.route('/ueber')
 def ueber():
     """About-Seite — Founder-Story, Team, Begründung 'Warum Deutsch'.
 
-    Wichtig fuer Google E-E-A-T (Experience/Expertise/Authoritativeness/Trust)
-    bei einem bezahlten Bildungsprodukt. Stellt Autor + Motivation + Standort
-    transparent dar.
+    Wichtig fuer Google E-E-A-T (Experience/Expertise/Authoritativeness/Trust).
+    Stellt Autor + Motivation + Standort transparent dar. Der Stand-heute-Absatz
+    nennt Live-Zahlen (n5_stats) statt fester Werte.
     """
-    return render_template('ueber.html')
+    return render_template(
+        'ueber.html',
+        n5_stats=_public_n5_stats(),
+        roleplay_info=_roleplay_public_info(),
+    )
 
 
 @bp.route('/lernmethode')
@@ -1230,8 +1262,13 @@ def jlpt_n5_schweiz():
 
     Ziel-Keywords: "JLPT N5 Schweiz", "JLPT Zürich", "Japanisch Prüfung Schweiz".
     Strukturierte Daten: Course + FAQPage + BreadcrumbList.
+    Kurs-Zahlen (Text, Meta-Description, JSON-LD) kommen live aus n5_stats.
     """
-    return render_template('jlpt_n5_schweiz.html')
+    return render_template(
+        'jlpt_n5_schweiz.html',
+        n5_stats=_public_n5_stats(),
+        roleplay_info=_roleplay_public_info(),
+    )
 
 
 @bp.route('/learn')
@@ -1255,20 +1292,20 @@ def learn_path(level: int = 5):
             user, visible_langs
         )
 
-        # Coverage fuer die "heute X von Ziel Y"-Sprache (gleicher Mapping-Kontrakt wie index).
+        # Coverage fuer die "heute X von Ziel Y"-Sprache (gleicher Mapping-Kontrakt
+        # wie index) — aus derselben gecachten Kennzahlen-Quelle wie die uebrigen
+        # Infoseiten (n5_stats: Lektionen fuer die Meta-Description).
+        n5_stats = _public_n5_stats()
         n5_coverage = None
-        try:
-            from app.services.coverage_service import get_jlpt_coverage
-            cov = get_jlpt_coverage(5)
+        if n5_stats:
             n5_coverage = {
-                "vocab_have": cov["vocab_covered"],
-                "vocab_target": cov["vocab_total"],
-                "kanji_have": cov["kanji_covered"],
-                "kanji_target": cov["kanji_total"],
-                "vocab_pct": cov["vocab_pct"],
+                "vocab_have": n5_stats["vocab_covered"],
+                "vocab_target": n5_stats["vocab_total"],
+                "kanji_have": n5_stats["kanji"],
+                "kanji_target": n5_stats["kanji_total"],
+                "vocab_pct": n5_stats["vocab_pct"],
+                "kanji_pct": n5_stats["kanji_pct"],
             }
-        except Exception:
-            current_app.logger.warning("N5-Coverage konnte nicht geladen werden", exc_info=True)
 
         # Bundle-CTA (show_bundle_hint) kommt site-weit aus dem Context-Processor.
         return render_template(
@@ -1278,6 +1315,7 @@ def learn_path(level: int = 5):
             next_module_id=next_module_id,
             first_guest_lesson=first_guest_lesson,
             n5_coverage=n5_coverage,
+            n5_stats=n5_stats,
             visible_languages=visible_langs,
         )
     # Andere Levels haben noch keinen Content — Mayuko-Direktive: erst N5 komplett.

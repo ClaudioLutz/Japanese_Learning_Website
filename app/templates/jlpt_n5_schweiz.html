@@ -1,15 +1,31 @@
 {% extends "base.html" %}
 
-{# WARTUNG (jährlich, nach UZH-Publikation aktualisieren): Prüfungsfenster,
-   -gebühren und Jahreszahl in Title/Meta/Hero/dl/FAQ + JSON-LD synchron halten.
+{# WARTUNG (jährlich, nach UZH-Publikation aktualisieren): Prüfungstermin,
+   Anmeldefenster, Gebühren und Jahreszahl in Title/Hero/dl/FAQ + JSON-LD synchron halten.
    Quelle: https://www.aoi.uzh.ch/de/japanologie/fremdsprache/jlpt.html
-   Stand zuletzt geprüft: Mai 2026 (N5/N4 CHF 130, N3–N1 CHF 140).
-   HINWEIS: Bewusst KEIN fixes Prüfungsdatum hartkodiert — die UZH publiziert den
-   konkreten Dezember-Termin 2026 erst im Verlauf des Jahres. Daher nur das
-   typische Fenster (Juli/Dezember) nennen und auf die UZH-Quelle verlinken. #}
+   Stand zuletzt geprüft: 09.10.2026 — Prüfung So, 6. Dezember 2026; Anmeldung war
+   1. Juli bis 23. August 2026 (geschlossen); N5/N4 CHF 130, N3–N1 CHF 140;
+   N5-Prüfungsteile 20 + 40 + 30 Min. NACH DEM 6.12.2026 Hero, dl und FAQ auf 2027
+   umstellen. Die Meta-Description nennt bewusst kein Datum (veraltet nicht).
+
+   KURS-ZAHLEN: kommen live aus n5_stats (routes._public_n5_stats →
+   coverage_service.get_public_stats, nur publizierte Inhalte) — gleiche Quelle wie
+   Startseite und /n5-bundle. KEINE festen Lektions-/Vokabel-/Kanji-Zahlen eintragen,
+   sie veralten mit jeder neuen Lektion (Test: test_public_info_numbers.py).
+   Fehlt n5_stats, greifen Formulierungen ohne Zahlen. #}
+{% set s = n5_stats %}
+{% if s %}
+  {% if s.kanji >= s.kanji_total %}
+    {% set kanji_phrase = 'alle ' ~ s.kanji_total ~ ' N5-Kanji' %}
+  {% else %}
+    {% set kanji_phrase = s.kanji ~ ' der ' ~ s.kanji_total ~ ' N5-Kanji' %}
+  {% endif %}
+{% else %}
+  {% set kanji_phrase = 'die N5-Kanji' %}
+{% endif %}
 
 {% block title %}JLPT N5 Schweiz 2026 — Prüfung Zürich & Vorbereitung auf Deutsch{% endblock %}
-{% block meta_description %}JLPT N5 in der Schweiz: Prüfung an der Universität Zürich (typischerweise im Dezember, Gebühr CHF 130). Strukturierte Online-Vorbereitung auf Deutsch — von Hiragana bis zu deinen ersten Sätzen.{% if not free_mode %} Lifetime-Zugriff CHF 9.90.{% else %} Komplett kostenlos.{% endif %}{% endblock %}
+{% block meta_description %}JLPT N5 in der Schweiz: Prüfung an der Universität Zürich, einmal jährlich im Dezember (CHF 130). {% if s %}Online-Vorbereitung auf Deutsch: {{ s.lessons }} Lektionen, {{ s.vocab|swiss_num }} Vokabeln, {{ kanji_phrase }}{% else %}Strukturierte Online-Vorbereitung auf Deutsch — von Hiragana bis zu deinen ersten Sätzen{% endif %}{% if not free_mode %}. Lifetime-Zugriff CHF 9.90.{% else %} — komplett kostenlos.{% endif %}{% endblock %}
 {% block canonical %}{{ site_url }}/jlpt-n5-schweiz{% endblock %}
 {% block og_type %}article{% endblock %}
 {% block og_title %}JLPT N5 Schweiz — Online-Vorbereitung auf Deutsch{% endblock %}
@@ -46,7 +62,7 @@
     {
       "@type": "Course",
       "name": "JLPT N5 — Japanisch lernen auf Deutsch",
-      "description": "Strukturierter Online-Kurs zur Vorbereitung auf den Japanese Language Proficiency Test Niveau N5. Hiragana, Katakana, 55 Kanji, 473 Vokabeln, Grundgrammatik. Komplett auf Deutsch erklärt, mit Spaced-Repetition-System und Quiz.",
+      "description": "Strukturierter Online-Kurs zur Vorbereitung auf den Japanese Language Proficiency Test Niveau N5. {% if s %}Hiragana, Katakana, {{ kanji_phrase }}, {{ s.vocab }} Vokabeln und {{ s.grammar }} Grammatikpunkte in {{ s.lessons }} Lektionen.{% else %}Hiragana, Katakana, Kanji, Vokabeln und Grundgrammatik.{% endif %} Komplett auf Deutsch erklärt, mit Spaced-Repetition-System und Quiz.",
       "provider": {
         "@type": "Organization",
         "name": "Japanese Learning",
@@ -133,7 +149,7 @@
           "name": "Wann ist der nächste JLPT-Prüfungstermin in Zürich?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Der JLPT findet in der Schweiz typischerweise im Dezember an der Universität Zürich statt. Das konkrete Datum für 2026 wird vom Asien-Orient-Institut der UZH im Verlauf des Jahres publiziert; die Anmeldung öffnet voraussichtlich im Sommer 2026. Den aktuellen Stand findest du jederzeit auf der offiziellen UZH-JLPT-Seite (aoi.uzh.ch)."
+            "text": "Der nächste JLPT in der Schweiz findet am Sonntag, 6. Dezember 2026, an der Universität Zürich statt. Die Anmeldung dafür lief vom 1. Juli bis 23. August 2026 und ist geschlossen; verspätete Anmeldungen nimmt die UZH nicht an. Wer jetzt neu anfängt, plant auf Dezember 2027 — die Anmeldung lief bisher jeweils im Sommer. Den aktuellen Stand findest du auf der offiziellen UZH-JLPT-Seite (aoi.uzh.ch)."
           }
         },
         {
@@ -141,7 +157,7 @@
           "name": "Wie viele Kanji muss ich für N5 können?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Offiziell werden für N5 etwa 80 Kanji erwartet, in der Praxis tauchen je nach Quelle zwischen 79 und 103 Zeichen auf. Auf japanese-learning.ch lernst du 55 zentrale N5-Kanji mit Strichreihenfolge, On-/Kun-Lesungen und Beispielwörtern — kombiniert mit dem Vokabelkurs deckst du damit den prüfungsrelevanten Bereich ab."
+            "text": "Offiziell werden für N5 etwa 80 Kanji erwartet, in der Praxis tauchen je nach Quelle zwischen 79 und 103 Zeichen auf. Auf japanese-learning.ch lernst du {{ kanji_phrase }} mit On-/Kun-Lesungen und Beispielwörtern — kombiniert mit dem Vokabelkurs deckst du damit den prüfungsrelevanten Bereich ab."
           }
         },
         {
@@ -191,9 +207,9 @@
   <header class="n5ch-hero">
     <h1>JLPT N5 in der Schweiz — Online-Vorbereitung auf Deutsch</h1>
     <p class="n5ch-lead">
-      Die offizielle JLPT-Prüfung findet in der Schweiz typischerweise im
-      Dezember an der Universität Zürich statt — den konkreten Termin für 2026
-      publiziert die UZH im Verlauf des Jahres.
+      Die offizielle JLPT-Prüfung findet in der Schweiz einmal jährlich im
+      Dezember an der Universität Zürich statt — 2026 am Sonntag, 6. Dezember
+      (die Anmeldung dafür ist bereits geschlossen).
       Bereite dich strukturiert auf den JLPT N5 vor — von Hiragana bis zu deinen
       ersten japanischen Sätzen, alles auf Deutsch erklärt.
     </p>
@@ -216,7 +232,11 @@
       </a>
     </div>
     <div class="n5ch-hero-badges">
+      {% if free_mode %}
+      <span>✅ {% if s %}Alle {{ s.lessons }} Lektionen kostenlos{% else %}Komplett kostenlos{% endif %}</span>
+      {% else %}
       <span>✅ {{ n5_free_lesson_count }} Lektionen kostenlos</span>
+      {% endif %}
       <span>🇨🇭 Aus Rorschach SG</span>
     </div>
   </header>
@@ -243,9 +263,9 @@
 
     <h3>Was wird geprüft?</h3>
     <ul class="n5ch-list">
-      <li><strong>Vokabular &amp; Schrift</strong> (~30 Min.): Hiragana, Katakana, Kanji-Lesungen, Wortbedeutungen</li>
-      <li><strong>Grammatik &amp; Leseverständnis</strong> (~50 Min.): Partikel, Konjugationen, kurze Texte</li>
-      <li><strong>Hörverständnis</strong> (~30 Min.): langsam gesprochene Dialoge und kurze Mitteilungen</li>
+      <li><strong>Vokabular &amp; Schrift</strong> (20 Min.): Hiragana, Katakana, Kanji-Lesungen, Wortbedeutungen</li>
+      <li><strong>Grammatik &amp; Leseverständnis</strong> (40 Min.): Partikel, Konjugationen, kurze Texte</li>
+      <li><strong>Hörverständnis</strong> (30 Min.): langsam gesprochene Dialoge und kurze Mitteilungen</li>
     </ul>
 
     <h3>Was wird <em>nicht</em> geprüft?</h3>
@@ -268,7 +288,7 @@
     </ul>
 
     <p>
-      Der Test dauert insgesamt rund <strong>105 Minuten</strong>, geprüft wird im
+      Die reine Prüfungszeit beträgt <strong>90 Minuten</strong>, geprüft wird im
       Multiple-Choice-Format. Bestehensgrenze: 80 von 180 Punkten, mit
       Mindestpunktzahlen pro Sektion. International wird das Zertifikat von
       Universitäten, Visa-Behörden und japanischen Arbeitgebern anerkannt.
@@ -297,8 +317,8 @@
 
       <dt>Termin</dt>
       <dd>
-        Typischerweise im Dezember (alle Stufen N5–N1). Das genaue Datum für 2026
-        wird von der UZH im Verlauf des Jahres publiziert — aktueller Stand siehe
+        Sonntag, 6. Dezember 2026 (alle Stufen N5–N1). Danach wieder im
+        Dezember 2027 — aktueller Stand siehe
         <a href="https://www.aoi.uzh.ch/de/japanologie/fremdsprache/jlpt.html"
            target="_blank" rel="noopener">aoi.uzh.ch › JLPT</a>.
       </dd>
@@ -311,8 +331,10 @@
 
       <dt>Anmeldung</dt>
       <dd>
-        Online über die Universität Zürich, Anmeldung öffnet im Sommer 2026.
-        Genaue Fristen werden vom Asien-Orient-Institut der UZH veröffentlicht.
+        Online über die Universität Zürich. Für den Termin 2026 ist sie
+        geschlossen: Sie lief vom 1. Juli bis 23. August 2026, verspätete
+        Anmeldungen nimmt die UZH nicht an. Die Fristen für 2027 veröffentlicht
+        das Asien-Orient-Institut der UZH; bisher lag die Anmeldung jeweils im Sommer.
       </dd>
 
       <dt>Verpasst? Alternativen im Ausland</dt>
@@ -338,7 +360,7 @@
       vom Veranstalter neu publiziert. Vor der Anmeldung immer die offizielle
       <a href="https://www.aoi.uzh.ch/de/japanologie/fremdsprache/jlpt.html"
          target="_blank" rel="noopener">UZH-JLPT-Seite</a> prüfen.
-      <br><em>Angaben gegen die offizielle UZH-Quelle geprüft im Mai 2026.</em>
+      <br><em>Angaben gegen die offizielle UZH-Quelle geprüft im Oktober 2026.</em>
     </p>
   </section>
 
@@ -355,9 +377,21 @@
       N5-Korpus.
     </p>
     <ul class="n5ch-list">
-      <li><strong>9 Module mit 30+ Lektionen</strong>, strukturiert von Hiragana bis Te-Form</li>
-      <li><strong>473 N5-Vokabeln</strong> mit Beispielsätzen, Audio und Spaced-Repetition</li>
-      <li><strong>55 N5-Kanji</strong> mit Strichreihenfolge, On-/Kun-Lesungen und Beispielwörtern</li>
+      {% if s %}
+      <li><strong>{{ s.modules }} Module mit {{ s.lessons }} Lektionen</strong>, strukturiert von Hiragana bis Te-Form</li>
+      <li><strong>{{ s.vocab|swiss_num }} Vokabeln</strong> mit Beispielsätzen, Audio und Spaced-Repetition</li>
+      <li><strong>{{ kanji_phrase[:1]|upper }}{{ kanji_phrase[1:] }}</strong> mit On-/Kun-Lesungen und Beispielwörtern</li>
+      <li><strong>{{ s.grammar }} Grammatikpunkte</strong>, jeder auf Deutsch erklärt</li>
+      {% else %}
+      <li><strong>Module von Hiragana bis Te-Form</strong>, in empfohlener Reihenfolge</li>
+      <li><strong>N5-Vokabeln</strong> mit Beispielsätzen, Audio und Spaced-Repetition</li>
+      <li><strong>N5-Kanji</strong> mit On-/Kun-Lesungen und Beispielwörtern</li>
+      {% endif %}
+      {% if roleplay_info %}
+      <li><strong>Rollenspiel-Tutor</strong> zu den {% if s %}{{ s.scenes }} {% endif %}Dialogszenen der
+        Lektionen: ein Übungsgespräch in geschriebener Form, mit Antwortvorschlägen
+        und Korrekturen auf Deutsch (kostenloses Konto nötig).</li>
+      {% endif %}
       <li><strong>Spaced-Repetition-System (SRS)</strong> mit FSRS-Algorithmus —
         bringt fällige Karten automatisch zur richtigen Zeit zurück.
         <a href="{{ url_for('routes.lernmethode') }}">Mehr zur Lernmethode →</a></li>
@@ -382,17 +416,35 @@
           <tr><td>Zeit</td><td>feste Termine</td><td>wann du willst</td></tr>
           <tr><td>Tempo</td><td>Gruppentempo</td><td>dein Tempo</td></tr>
           <tr><td>Sprache</td><td>je nach Schule</td><td>konsistent Deutsch</td></tr>
+          {% if roleplay_info %}
+          <tr><td>Gesprächsübung</td><td>✅ mündlich, mit Lehrer-Feedback</td><td>✍️ Rollenspiel im Text-Chat, kein Aussprache-Feedback</td></tr>
+          {% else %}
           <tr><td>Sprechübung</td><td>✅ mit Lehrer-Feedback</td><td>❌ keine Konversation</td></tr>
+          {% endif %}
           <tr><td>Spaced Repetition</td><td>❌ meist nicht</td><td>✅ FSRS-basiert</td></tr>
         </tbody>
       </table>
     </div>
+    {% if roleplay_info %}
+    <p class="n5ch-note">
+      Ehrlich: In der Sprachschule sprichst du mit einer Lehrperson, die deine
+      Aussprache hört und korrigiert — das kann unser Rollenspiel-Tutor nicht.
+      Er ist ein Übungsgespräch in geschriebener Form: Du schreibst deine Antwort
+      (Romaji wird zu Kana) oder wählst einen der Antwortvorschläge, dein
+      Gesprächspartner antwortet auf Japanisch und lässt sich vorlesen, und am
+      Ende bekommst du Korrekturen auf Deutsch. Dafür brauchst du ein kostenloses
+      Konto; pro Tag sind {{ roleplay_info.sessions_per_day }} Gespräche möglich.
+      Für strukturierten Vokabel-, Kanji- und Grammatikaufbau auf Deutsch sind
+      wir günstiger und flexibler. Viele Lernende kombinieren beides.
+    </p>
+    {% else %}
     <p class="n5ch-note">
       Ehrlich: Sprachschulen bieten Sprechübungen und Lehrer-Feedback —
       das gibt es bei uns nicht. Für strukturierten Vokabel-, Kanji- und
       Grammatikaufbau auf Deutsch sind wir günstiger und flexibler.
       Viele Lernende kombinieren beides.
     </p>
+    {% endif %}
   </section>
 
   {# ─────────────────────────────────────────────────────────
@@ -414,8 +466,8 @@
       <li>
         <span class="step">2️⃣</span>
         <strong>Grundwortschatz &amp; Kanji:</strong>
-        Zahlen, Familie, Alltag, Reise, plus die ersten 55 N5-Kanji mit
-        Strichreihenfolge.
+        Zahlen, Familie, Alltag, Reise, plus {{ kanji_phrase }} mit
+        Lesungen und Beispielwörtern.
       </li>
       <li>
         <span class="step">3️⃣</span>
@@ -493,11 +545,12 @@
     <details class="n5ch-faq">
       <summary><h3>Wann ist der nächste JLPT-Prüfungstermin in Zürich?</h3></summary>
       <p>
-        Der JLPT findet in der Schweiz typischerweise im Dezember an der
-        Universität Zürich statt. Das konkrete Datum für 2026 wird vom
-        Asien-Orient-Institut der UZH im Verlauf des Jahres publiziert; die
-        Anmeldung öffnet voraussichtlich im Sommer 2026. Den aktuellen Stand
-        findest du jederzeit auf der offiziellen
+        Der nächste JLPT in der Schweiz findet am Sonntag, 6. Dezember 2026,
+        an der Universität Zürich statt. Die Anmeldung dafür lief vom 1. Juli
+        bis 23. August 2026 und ist geschlossen; verspätete Anmeldungen nimmt
+        die UZH nicht an. Wer jetzt neu anfängt, plant auf Dezember 2027 — die
+        Anmeldung lief bisher jeweils im Sommer. Den aktuellen Stand findest du
+        auf der offiziellen
         <a href="https://www.aoi.uzh.ch/de/japanologie/fremdsprache/jlpt.html"
            target="_blank" rel="noopener">UZH-JLPT-Seite</a>. Wer den
         Dezember-Termin verpasst, hat in der Schweiz erst im Folgejahr wieder
@@ -510,7 +563,7 @@
       <p>
         Offiziell werden für N5 etwa 80 Kanji erwartet, in der Praxis tauchen
         je nach Quelle zwischen 79 und 103 Zeichen auf. Auf japanese-learning.ch
-        lernst du 55 zentrale N5-Kanji mit Strichreihenfolge, On-/Kun-Lesungen
+        lernst du {{ kanji_phrase }} mit On-/Kun-Lesungen
         und Beispielwörtern — kombiniert mit dem Vokabelkurs deckst du damit
         den prüfungsrelevanten Bereich ab.
       </p>
@@ -593,7 +646,7 @@
     </div>
     <ul class="n5ch-trust">
       {% if not free_mode %}<li>✅ 30 Tage Geld zurück</li>{% endif %}
-      <li>✅ {{ n5_free_lesson_count }} Lektionen ohne Anmeldung kostenlos</li>
+      <li>✅ {{ n5_free_lesson_count }} Lektionen {% if free_mode %}auch ohne Anmeldung{% else %}ohne Anmeldung kostenlos{% endif %}</li>
       <li>✅ {% if not free_mode %}Lifetime-Zugriff, kein Abo{% else %}Komplett kostenlos, kein Abo{% endif %}</li>
     </ul>
   </section>

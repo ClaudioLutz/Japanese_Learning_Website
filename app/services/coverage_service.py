@@ -8,8 +8,11 @@ from __future__ import annotations
 
 import json
 import re
+import time
 from datetime import datetime, timedelta
 from pathlib import Path
+
+from flask import current_app
 
 from app import db
 from app.models import (
@@ -181,3 +184,35 @@ def get_level_showcase(level: int = 5) -> dict:
         "vocab_covered": cov["vocab_covered"],
         "vocab_total": cov["vocab_total"],
     }
+
+
+# --- Gecachte Kennzahlen fuer oeffentliche Infoseiten ------------------------
+# /jlpt-n5-schweiz, /ueber und /learn/n5 nennen dieselben Zahlen wie Startseite
+# und /n5-bundle (alle aus get_level_showcase, nur publizierte Inhalte). Frueher
+# standen dort feste Zahlen im Template, die nach jeder neuen Lektion veralteten.
+# Gecacht pro Gunicorn-Worker, damit die SEO-Seiten nicht bei jedem Aufruf rund
+# zehn Zaehl-Queries feuern. Nach dem Publizieren einer Lektion stimmen die
+# Zahlen spaetestens nach Ablauf der TTL (Config PUBLIC_STATS_CACHE_SECONDS,
+# Default 10 Minuten; 0 = kein Cache, so in den Tests).
+PUBLIC_STATS_CACHE_SECONDS_DEFAULT = 600
+_PUBLIC_STATS_CACHE: dict[int, tuple[float, dict]] = {}
+
+
+def get_public_stats(level: int = 5) -> dict:
+    """Kennzahlen aus get_level_showcase(), mit kurzer Zwischenspeicherung."""
+    ttl = float(current_app.config.get(
+        "PUBLIC_STATS_CACHE_SECONDS", PUBLIC_STATS_CACHE_SECONDS_DEFAULT
+    ))
+    now = time.monotonic()
+    cached = _PUBLIC_STATS_CACHE.get(level)
+    if ttl > 0 and cached is not None and now - cached[0] < ttl:
+        return cached[1]
+    stats = get_level_showcase(level)
+    if ttl > 0:
+        _PUBLIC_STATS_CACHE[level] = (now, stats)
+    return stats
+
+
+def clear_public_stats_cache() -> None:
+    """Cache leeren (Tests, oder nach dem Publizieren wenn es sofort sein soll)."""
+    _PUBLIC_STATS_CACHE.clear()
