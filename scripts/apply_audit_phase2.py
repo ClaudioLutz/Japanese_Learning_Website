@@ -1,5 +1,7 @@
 """Audit Phase 2 (2026-09-24): Rest-Korrekturen aus docs/lektions-audit-report.md anwenden.
 
+Auch fuer spaetere exakte Text-Korrekturen genutzt (z.B. scripts/data/kanji_strichfolge_texte_fixes.json).
+
 Liest scripts/data/audit_phase2_fixes.json (Feld ``ops``). Jede Op ist eine exakte
 Vorher/Nachher-Ersetzung auf genau einer Spalte einer Zeile:
 
@@ -41,6 +43,9 @@ ALLOWED = {
     'quiz_option': {'option_text', 'feedback'},
     'lesson_content': {'content_text', 'title'},
     'lesson': {'description'},
+    # Karte 14 (2026-10-10): Modulbeschreibung und Grammatik-Beispiele
+    'lesson_category': {'description'},
+    'grammar': {'example_sentences'},
 }
 
 

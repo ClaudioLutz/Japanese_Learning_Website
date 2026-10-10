@@ -1,0 +1,27 @@
+{
+ "meta": {
+  "erstellt": "2026-10-10",
+  "quelle": "Cockpit-Karte 14 (Entscheid Claudio: «Texte in der DB anpassen»)",
+  "applier": "scripts/apply_audit_phase2.py --fixes scripts/data/kanji_strichfolge_texte_fixes.json",
+  "befund": "Prod-DB 10.10.2026, nur lesend: 98 Kanji stecken in Lektionen, keines hat stroke_order_info (0/98), alle haben stroke_count, die Karten zeigen aber weder Strichzahl noch Strichfolge. L164 erklärt auf Seite 6 die vier Grundregeln der Strichfolge im Text, Regel 4 (aussen vor innen) war dort und auf der Grammatikkarte 83 falsch beschrieben: Bei 国 und 四 kommt nach dem linken Strich zuerst oben und rechts in einem Zug, dann der Inhalt, zuletzt der Strich unten.",
+  "nachlauf": "lesson_content 6768 hat augmented_html → der Applier setzt es auf NULL; danach auf dem Host scripts/pregenerate_inline_audio.py 164 und .claude/skills/generate-lesson/scripts/gen_text_audio.py 164 laufen lassen."
+ },
+ "ops": [
+  {"id": "K01", "prio": 1, "audit_ref": "karte14-modul", "table": "lesson_category", "pk": 38, "column": "description", "mode": "full",
+   "old": "Die wichtigsten Kanji-Zeichen aus dem N5-Set. Schritt für Schritt mit Lesungen, Strichreihenfolge und Beispielen.",
+   "new": "Die wichtigsten Kanji-Zeichen aus dem N5-Set. Schritt für Schritt mit Lesungen, Bedeutungen und Beispielwörtern.",
+   "note": "Modul n5-kanji-grundlagen: keine Strichdaten vorhanden, Versprechen gestrichen."},
+  {"id": "K02", "prio": 1, "audit_ref": "karte14-l164", "table": "lesson", "pk": 164, "column": "description", "mode": "full",
+   "old": "Lerne die zehn Zahlen-Kanji 一二三四五六七八九十 inklusive Strichfolge, Lesungen und typischen Zähleinheiten. Plus 百, 千, 万 für grössere Zahlen.",
+   "new": "Lerne die zehn Zahlen-Kanji 一二三四五六七八九十 mit ihren Lesungen und typischen Zähleinheiten, dazu die vier Grundregeln der Strichfolge. Plus 百, 千, 万 für grössere Zahlen.",
+   "note": "L164 erklärt die Grundregeln im Text (Seite 6), zeigt aber keine Strichfolge je Kanji."},
+  {"id": "K03", "prio": 2, "audit_ref": "karte14-regel4-text", "table": "lesson_content", "pk": 6768, "column": "content_text", "mode": "substr",
+   "old": "4. **Aussen vor innen** — bei eingerahmten Kanji wie 国 (Land) zuerst die linke Klammer, dann der Inhalt, zuletzt die untere/rechte Klammer.",
+   "new": "4. **Aussen vor innen** — bei eingerahmten Kanji wie 国 (kuni, Land) zuerst der linke Strich, dann oben und rechts in einem Zug, danach der Inhalt und zuletzt der Strich unten, der den Rahmen schliesst.",
+   "note": "国: 1 links senkrecht, 2 oben+rechts (横折), 3–7 玉, 8 unten. Die rechte Seite kommt vor dem Inhalt."},
+  {"id": "K04", "prio": 2, "audit_ref": "karte14-regel4-grammatik", "table": "grammar", "pk": 83, "column": "example_sentences", "mode": "substr",
+   "old": "四 (5 Striche): erst die linke senkrechte Klammer, dann die innere Form, zuletzt der untere Strich (Regel 4).",
+   "new": "四 (5 Striche): erst der linke senkrechte Strich, dann oben und rechts in einem Zug, danach die zwei Striche im Inneren, zuletzt der Strich unten (Regel 4).",
+   "note": "四: 1 links, 2 oben+rechts, 3 ノ innen, 4 innen mit Knick, 5 unten."}
+ ]
+}
