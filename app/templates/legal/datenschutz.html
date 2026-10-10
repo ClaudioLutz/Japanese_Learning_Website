@@ -22,8 +22,15 @@
   <ul>
     <li><strong>Konto-Daten:</strong> E-Mail-Adresse, Benutzername, Passwort (gehasht). Erhoben bei der Registrierung.</li>
     <li><strong>Lernfortschritt:</strong> abgeschlossene Lektionen, Quiz-Antworten, Karten-Wiederholungen, XP, Streaks.</li>
+    {% if free_mode %}
+    <li><strong>Zahlungsdaten:</strong> Derzeit sind alle Inhalte kostenlos. Es finden keine Zahlungen statt, und wir
+      erheben keine Zahlungsdaten. Sollten künftig kostenpflichtige Inhalte angeboten werden, übermitteln wir bei
+      Käufen Vor-/Nachname und Rechnungsadresse an unseren Zahlungsanbieter (Payrexx); Kreditkartendaten speichern
+      wir auch dann nicht.</li>
+    {% else %}
     <li><strong>Zahlungsdaten:</strong> Bei Käufen werden Vor-/Nachname und Rechnungsadresse an unseren Zahlungs-
       anbieter (Payrexx) übertragen. Wir speichern keine Kreditkartendaten.</li>
+    {% endif %}
     <li><strong>Technische Daten:</strong> IP-Adresse, Browser-Typ, Zeitstempel der Zugriffe — zur Sicherheit und
       Fehleranalyse. In unseren eigenen Anwendungs-Logs werden solche Daten höchstens 90 Tage aufbewahrt.
       Zusätzlich fallen auf Ebene unseres CDN-/Proxy-Dienstleisters Cloudflare technische Verbindungs- und
@@ -36,7 +43,12 @@
   <h2 class="h4 mt-4">3. Wofür wir die Daten nutzen</h2>
   <ul>
     <li>Bereitstellung des Lernangebots (Konto, Fortschritt, Wiederholungssystem).</li>
+    {% if free_mode %}
+    <li>Abwicklung von Käufen über Payrexx, falls künftig kostenpflichtige Inhalte angeboten werden (derzeit finden
+      keine Zahlungen statt).</li>
+    {% else %}
     <li>Abwicklung von Käufen über Payrexx.</li>
+    {% endif %}
     <li>Pflege und Sicherheit der Plattform.</li>
     <li>Bei explizitem Einverständnis: gelegentliche E-Mails über neue Lektionen.</li>
   </ul>
@@ -53,7 +65,12 @@
       bedingt IP-Adressen und Verbindungsmetadaten zur Auslieferung der Seite und zur Abwehr von Angriffen.</li>
     <li><strong>Google Cloud Storage (EU)</strong> — ausschliesslich als verschlüsseltes Offsite-Backup der
       Mediendateien.</li>
+    {% if free_mode %}
+    <li><strong>Payrexx AG, Schweiz</strong> — Zahlungsabwicklung, nur falls künftig kostenpflichtige Inhalte
+      angeboten werden. Derzeit werden keine Daten an Payrexx übermittelt.</li>
+    {% else %}
     <li><strong>Payrexx AG, Schweiz</strong> — Zahlungsabwicklung.</li>
+    {% endif %}
     <li><strong>Google OAuth</strong> — wenn du dich per Google-Konto anmeldest.</li>
   </ul>
   <p>Wir verkaufen oder vermieten deine Daten nicht.</p>
