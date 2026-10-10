@@ -40,7 +40,7 @@ Immer JSON `{ "error": "<code>", "message": "<deutscher Klartext>" }` — nie 50
 | 422  | `not_roleplayable` | Dialog hat keine zwei Rollen → Button nicht anbieten. |
 | 429  | `limit_reached`    | Tageslimit des Nutzers (Gespräche 5, Nachrichten 60, Tutorfragen 20). |
 | 502  | `upstream_error`   | Modell/Bridge antwortet nicht oder ist beschäftigt. Nutzerzug wurde **nicht** verbucht → „Nochmal senden“ anbieten. |
-| 503  | `cost_cap`         | Globale Tageskappe erreicht (Kosten bzw. 1'500 Modell-Antworten/Tag inkl. Vorausberechnungen). |
+| 503  | `cost_cap`         | Globale Tageskappe erreicht (Kosten bzw. 500 Modell-Antworten/Tag inkl. Vorausberechnungen). |
 
 ## Objekte
 
@@ -342,7 +342,7 @@ Body wie `/demo/turn`, Antwort als SSE wie `…/turn/stream` (`result` = JSON vo
   `ROLEPLAY_BRIDGE_URL=http://host.docker.internal:5077`, `ROLEPLAY_BRIDGE_TOKEN`,
   optional `ANTHROPIC_API_KEY`; Limits `ROLEPLAY_LIMIT_SESSIONS_PER_DAY` (5),
   `ROLEPLAY_LIMIT_MESSAGES_PER_DAY` (60), `ROLEPLAY_LIMIT_TUTOR_PER_DAY` (20),
-  `ROLEPLAY_DAILY_COST_CAP_USD` (2.00, API-Pfad), `ROLEPLAY_DAILY_MESSAGE_CAP` (1500, global,
+  `ROLEPLAY_DAILY_COST_CAP_USD` (2.00, API-Pfad), `ROLEPLAY_DAILY_MESSAGE_CAP` (500, global,
   inkl. Vorausberechnungen), `ROLEPLAY_PREFETCH` (an).
 - Bridge: `tools/roleplay_bridge/bridge.py` als systemd-Dienst `jpl-roleplay-bridge`
   (User hp-ubuntu, lauscht auf 172.17.0.1:5077, Token in

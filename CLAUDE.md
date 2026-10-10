@@ -131,7 +131,7 @@ ROLEPLAY_BRIDGE_TOKEN=""                # geheim; identisch in /home/hp-ubuntu/.
 ANTHROPIC_API_KEY=""                    # nur fuer ROLEPLAY_PROVIDER=api
 # optional: ROLEPLAY_LIMIT_SESSIONS_PER_DAY (5), ROLEPLAY_LIMIT_MESSAGES_PER_DAY (60),
 #           ROLEPLAY_LIMIT_TUTOR_PER_DAY (20), ROLEPLAY_DAILY_COST_CAP_USD (2.00),
-#           ROLEPLAY_DAILY_MESSAGE_CAP (1500, global inkl. Vorausberechnungen),
+#           ROLEPLAY_DAILY_MESSAGE_CAP (500, global inkl. Vorausberechnungen),
 #           ROLEPLAY_PREFETCH (an; Antworten auf Vorschlaege vorausberechnen)
 #           ROLEPLAY_MAX_LIVE_CALLS (3; gleichzeitige Live-Zuege pro Gunicorn-Worker, darueber sofort «beschaeftigt»)
 ## Payment (Payrexx)

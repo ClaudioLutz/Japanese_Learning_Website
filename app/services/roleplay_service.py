@@ -89,7 +89,7 @@ LIMIT_DEFAULTS: dict[str, float] = {
     # Global (alle Nutzer): max. Modell-Antworten pro Tag (Bot-Zuege + Tutor).
     # Schutz fuer den Subscription-/Bridge-Pfad, wo Dollar-Kosten 0 sind.
     # Zaehlt auch die Vorausberechnungen der Antwortvorschlaege (roleplay_prefetch).
-    'ROLEPLAY_DAILY_MESSAGE_CAP': 1500,
+    'ROLEPLAY_DAILY_MESSAGE_CAP': 500,
 }
 
 # Preise in USD pro 1 Mio. Tokens (Anthropic First-Party-API).
