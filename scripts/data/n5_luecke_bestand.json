@@ -1,0 +1,271 @@
+{
+ "meta": {
+  "erstellt": "2026-10-10",
+  "quelle": "Cockpit-Karte 11 (Entscheid Claudio: Lücke zuerst schliessen)",
+  "applier": "scripts/apply_n5_luecke.py --updates scripts/data/n5_luecke_bestand.json --cards scripts/data/n5_luecke_bestand.json",
+  "zweck": "14 kanonische N5-Wörter, deren Zeilen es gab, die aber an keiner Lektion hingen: 一–十 als Wortkarten in «N5 Kanji 1» (L164) hinter der jeweiligen Kanji-Karte, 零 neben ゼロ in «N5 Zahlen» (L143), 山/木/海 hinter den Kanji-Karten in «N5 Kanji 4» (L169). Beispielsätze auf N5-Kanji umgestellt und an die Kartenlesung angepasst."
+ },
+ "updates": [
+  {
+   "vocab_id": 402,
+   "field": "example_sentence_japanese",
+   "old": "りんごを一つ買いました。",
+   "new": "わたしは 大学の 一年生です。",
+   "reason": "alter Satz las 一つ als ひとつ und enthielt 買 (kein N5-Kanji); neuer Satz mit der Lesung いち"
+  },
+  {
+   "vocab_id": 402,
+   "field": "example_sentence_english",
+   "old": "Ringo o hitotsu kaimashita. — Ich habe einen Apfel gekauft.",
+   "new": "Watashi wa daigaku no ichinensei desu. — Ich bin im ersten Studienjahr an der Uni.",
+   "reason": "passend zum neuen Satz"
+  },
+  {
+   "vocab_id": 403,
+   "field": "example_sentence_japanese",
+   "old": "猫が二ひきいます。",
+   "new": "二時に えきで あいましょう。",
+   "reason": "猫 ist kein N5-Kanji, にひき passte nicht zur Kartenlesung に"
+  },
+  {
+   "vocab_id": 403,
+   "field": "example_sentence_english",
+   "old": "Neko ga nihiki imasu. — Es sind zwei Katzen da.",
+   "new": "Niji ni eki de aimashou. — Treffen wir uns um zwei Uhr am Bahnhof.",
+   "reason": "passend zum neuen Satz"
+  },
+  {
+   "vocab_id": 404,
+   "field": "example_sentence_japanese",
+   "old": "三時に学校へ行きます。",
+   "new": "三時に 学校へ 行きます。",
+   "reason": "nur Leerzeichen wie auf den Nachbarkarten"
+  },
+  {
+   "vocab_id": 404,
+   "field": "example_sentence_english",
+   "old": "Sanji ni gakkō e ikimasu. — Um drei Uhr gehe ich zur Schule.",
+   "new": "Sanji ni gakkou e ikimasu. — Um drei Uhr gehe ich zur Schule.",
+   "reason": "passend zum neuen Satz"
+  },
+  {
+   "vocab_id": 405,
+   "field": "example_sentence_japanese",
+   "old": "四月に日本へ来ました。",
+   "new": "四月に 日本へ 来ました。",
+   "reason": "nur Leerzeichen wie auf den Nachbarkarten"
+  },
+  {
+   "vocab_id": 406,
+   "field": "example_sentence_japanese",
+   "old": "毎朝五時に起きます。",
+   "new": "まいあさ 五時に おきます。",
+   "reason": "朝/起 sind keine N5-Kanji"
+  },
+  {
+   "vocab_id": 406,
+   "field": "example_sentence_english",
+   "old": "Maiasa goji ni okimasu. — Jeden Morgen stehe ich um fünf Uhr auf.",
+   "new": "Maiasa goji ni okimasu. — Ich stehe jeden Morgen um fünf Uhr auf.",
+   "reason": "passend zum neuen Satz"
+  },
+  {
+   "vocab_id": 407,
+   "field": "example_sentence_japanese",
+   "old": "六時にうちへ帰ります。",
+   "new": "六時に うちへ かえります。",
+   "reason": "帰 ist kein N5-Kanji"
+  },
+  {
+   "vocab_id": 408,
+   "field": "example_sentence_japanese",
+   "old": "毎晩七時にご飯を食べます。",
+   "new": "まいばん 七時に ばんごはんを 食べます。",
+   "reason": "晩/飯 sind keine N5-Kanji"
+  },
+  {
+   "vocab_id": 408,
+   "field": "example_sentence_english",
+   "old": "Maiban shichiji ni gohan o tabemasu. — Jeden Abend esse ich um sieben Uhr.",
+   "new": "Maiban shichiji ni bangohan o tabemasu. — Jeden Abend esse ich um sieben Uhr zu Abend.",
+   "reason": "passend zum neuen Satz"
+  },
+  {
+   "vocab_id": 409,
+   "field": "example_sentence_japanese",
+   "old": "今八時です。",
+   "new": "今 八時です。",
+   "reason": "Leerzeichen wie in den übrigen N5-Sätzen"
+  },
+  {
+   "vocab_id": 410,
+   "field": "example_sentence_japanese",
+   "old": "九時に会社へ行きます。",
+   "new": "おとうとは 九さいです。",
+   "reason": "会社 ist kein N5-Kanji; 九時 liest sich くじ, die Karte zeigt きゅう"
+  },
+  {
+   "vocab_id": 410,
+   "field": "example_sentence_english",
+   "old": "Kuji ni kaisha e ikimasu. — Um neun Uhr gehe ich in die Firma.",
+   "new": "Otouto wa kyuusai desu. — Mein jüngerer Bruder ist neun Jahre alt.",
+   "reason": "passend zum neuen Satz"
+  },
+  {
+   "vocab_id": 411,
+   "field": "example_sentence_japanese",
+   "old": "卵を十個買いました。",
+   "new": "十時に ねます。",
+   "reason": "個/卵/買 sind keine N5-Kanji, 十個 liest sich じゅっこ"
+  },
+  {
+   "vocab_id": 411,
+   "field": "example_sentence_english",
+   "old": "Tamago o jukko kaimashita. — Ich habe zehn Eier gekauft.",
+   "new": "Juuji ni nemasu. — Ich gehe um zehn Uhr schlafen.",
+   "reason": "passend zum neuen Satz"
+  },
+  {
+   "vocab_id": 1097,
+   "field": "example_sentence_japanese",
+   "old": "三ひく三は零です。",
+   "new": "けさは れいどでした。",
+   "reason": "零 ist kein N5-Kanji; Temperatur ist anschaulicher als Rechnen"
+  },
+  {
+   "vocab_id": 1097,
+   "field": "example_sentence_english",
+   "old": "San hiku san wa rei desu. — Drei minus drei ist null.",
+   "new": "Kesa wa reido deshita. — Heute Morgen war es null Grad.",
+   "reason": "passend zum neuen Satz"
+  },
+  {
+   "vocab_id": 455,
+   "field": "example_sentence_japanese",
+   "old": "あの山はとても高いです。",
+   "new": "あの 山は とても 高いです。",
+   "reason": "nur Leerzeichen wie auf den Nachbarkarten"
+  },
+  {
+   "vocab_id": 451,
+   "field": "example_sentence_japanese",
+   "old": "公園に大きな木があります。",
+   "new": "こうえんに 大きな 木が あります。",
+   "reason": "公園 ist kein N5-Kanji"
+  },
+  {
+   "vocab_id": 451,
+   "field": "example_sentence_english",
+   "old": "Kōen ni ōkina ki ga arimasu. — Im Park steht ein grosser Baum.",
+   "new": "Kouen ni ookina ki ga arimasu. — Im Park steht ein grosser Baum.",
+   "reason": "passend zum neuen Satz"
+  },
+  {
+   "vocab_id": 458,
+   "field": "example_sentence_japanese",
+   "old": "夏に海で泳ぎたいです。",
+   "new": "なつに うみで およぎたいです。",
+   "reason": "夏/泳/海 sind keine N5-Kanji"
+  }
+ ],
+ "cards": [
+  {
+   "lesson_id": 164,
+   "page": 2,
+   "after_lc": 6750,
+   "vocab_id": 402,
+   "word": "一"
+  },
+  {
+   "lesson_id": 164,
+   "page": 2,
+   "after_lc": 6751,
+   "vocab_id": 403,
+   "word": "二"
+  },
+  {
+   "lesson_id": 164,
+   "page": 2,
+   "after_lc": 6752,
+   "vocab_id": 404,
+   "word": "三"
+  },
+  {
+   "lesson_id": 164,
+   "page": 3,
+   "after_lc": 6753,
+   "vocab_id": 405,
+   "word": "四"
+  },
+  {
+   "lesson_id": 164,
+   "page": 3,
+   "after_lc": 6754,
+   "vocab_id": 406,
+   "word": "五"
+  },
+  {
+   "lesson_id": 164,
+   "page": 4,
+   "after_lc": 6758,
+   "vocab_id": 407,
+   "word": "六"
+  },
+  {
+   "lesson_id": 164,
+   "page": 4,
+   "after_lc": 6759,
+   "vocab_id": 408,
+   "word": "七"
+  },
+  {
+   "lesson_id": 164,
+   "page": 4,
+   "after_lc": 6760,
+   "vocab_id": 409,
+   "word": "八"
+  },
+  {
+   "lesson_id": 164,
+   "page": 4,
+   "after_lc": 6761,
+   "vocab_id": 410,
+   "word": "九"
+  },
+  {
+   "lesson_id": 164,
+   "page": 4,
+   "after_lc": 6762,
+   "vocab_id": 411,
+   "word": "十"
+  },
+  {
+   "lesson_id": 143,
+   "page": 2,
+   "after_lc": 6128,
+   "vocab_id": 1097,
+   "word": "零"
+  },
+  {
+   "lesson_id": 169,
+   "page": 2,
+   "after_lc": 6892,
+   "vocab_id": 455,
+   "word": "山"
+  },
+  {
+   "lesson_id": 169,
+   "page": 2,
+   "after_lc": 6895,
+   "vocab_id": 451,
+   "word": "木"
+  },
+  {
+   "lesson_id": 169,
+   "page": 3,
+   "after_lc": 6903,
+   "vocab_id": 458,
+   "word": "海"
+  }
+ ]
+}

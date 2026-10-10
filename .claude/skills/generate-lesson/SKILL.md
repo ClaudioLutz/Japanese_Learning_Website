@@ -507,6 +507,9 @@ Die Lektion ist kein 5-Minuten-Happen, sondern eine 20–30-Minuten-Einheit.
     → Transaktionaler INSERT in Postgres (docker-compose DB)
     → Bei Fehler: Rollback, keine Teil-Lektion
     → Gibt lesson_id zurück
+    → `--into-lesson <id>`: füllt eine bestehende, unveröffentlichte Lektion ohne
+       Nutzerdaten neu (ID, Modul, order_index bleiben; alte Seiten/Inhalte/Quiz werden
+       gelöscht). Bricht ab, sobald Fortschritt, Quiz-Antworten, SRS-Karten o.ä. daran hängen.
     → Unterstuetzte content_types: kana, vocabulary, kanji, grammar, text,
        audio, image, video. Insert deduppt via _get_or_create_kana /
        _get_or_create_vocab / _get_or_create_kanji / _get_or_create_grammar

@@ -9,6 +9,7 @@ Subcommands:
   validate <draft.json>  # Prüft Constraints (STRENG: Niveau-Mix-Verbot via canonical list)
   images   <draft.json>  # Generiert Nano-Banana-Bilder für Thumbnail/Vokabeln
   insert   <draft.json>  # Transaktionaler INSERT, gibt lesson_id zurück
+           [--into-lesson ID]  # bestehende, unveroeffentlichte Lektion ohne Nutzerdaten neu befuellen
   text-audio <lesson_id> # Block-Player pro Text (DE+JA, Gemini/Neural2)
   slideshow <lesson_id>  # Pro-Zeile Slideshow (TTS + Nano Banana)
   coverage [level]       # JLPT-Coverage-Dashboard: DB vs. canonical list (default: 5)
@@ -1323,8 +1324,88 @@ def cmd_import(json_path: Path) -> int:
     return new_id
 
 
-def insert_draft(draft_path: Path) -> int:
-    """Transaktionaler INSERT einer Lektion. Gibt lesson_id zurueck."""
+# Tabellen mit Nutzerdaten, die auf eine Lektion oder ihre Inhalte zeigen.
+# Hat eine davon Zeilen, darf die Lektion NICHT neu befuellt werden.
+_REFILL_BLOCKER_QUERIES = {
+    "user_lesson_progress": "SELECT count(*) FROM user_lesson_progress WHERE lesson_id = :lid",
+    "tutor_question": "SELECT count(*) FROM tutor_question WHERE lesson_id = :lid",
+    "user_quiz_answer": (
+        "SELECT count(*) FROM user_quiz_answer a JOIN quiz_question q ON q.id = a.question_id "
+        "JOIN lesson_content c ON c.id = q.lesson_content_id WHERE c.lesson_id = :lid"
+    ),
+    "card_review_state": (
+        "SELECT count(*) FROM card_review_state s JOIN lesson_content c ON c.id = s.content_id "
+        "WHERE c.lesson_id = :lid"
+    ),
+    "review_log": (
+        "SELECT count(*) FROM review_log r JOIN lesson_content c ON c.id = r.content_id "
+        "WHERE c.lesson_id = :lid"
+    ),
+    "roleplay_session": (
+        "SELECT count(*) FROM roleplay_session s JOIN lesson_content c ON c.id = s.lesson_content_id "
+        "WHERE c.lesson_id = :lid"
+    ),
+    "kana_grid_config": (
+        "SELECT count(*) FROM kana_grid_config k JOIN lesson_content c ON c.id = k.lesson_content_id "
+        "WHERE c.lesson_id = :lid"
+    ),
+}
+
+
+def refill_blockers(db, lesson) -> list[str]:
+    """Gruende, warum eine bestehende Lektion nicht neu befuellt werden darf (leer = ok).
+
+    Neu befuellen heisst: alle Seiten, Inhalte und Quizfragen loeschen und aus einem
+    Draft neu anlegen, die Lesson-ID bleibt. Erlaubt nur fuer unveroeffentlichte
+    Lektionen, an denen keine Nutzerdaten haengen.
+    """
+    from sqlalchemy import text
+
+    problems = []
+    if lesson.is_published:
+        problems.append("Lektion ist veroeffentlicht")
+    for table, sql in _REFILL_BLOCKER_QUERIES.items():
+        n = db.session.execute(text(sql), {"lid": lesson.id}).scalar() or 0
+        if n:
+            problems.append(f"{table}: {n} Zeile(n) haengen an der Lektion")
+    return problems
+
+
+def prepare_lesson_for_refill(db, Lesson, lesson_id: int, draft: dict, difficulty_level: int):
+    """Leert eine bestehende Lektion (Seiten, Inhalte, Quiz) und uebernimmt die Kopfdaten
+    aus dem Draft. Kategorie und order_index bleiben. Wirft ValueError bei Blockern."""
+    lesson = db.session.get(Lesson, lesson_id)
+    if lesson is None:
+        raise ValueError(f"Lektion {lesson_id} existiert nicht")
+    problems = refill_blockers(db, lesson)
+    if problems:
+        raise ValueError(f"Lektion {lesson_id} darf nicht neu befuellt werden: " + "; ".join(problems))
+    for item in list(lesson.content_items):
+        db.session.delete(item)  # Quizfragen und Optionen per ORM-Cascade
+    for page in list(lesson.pages_metadata):
+        db.session.delete(page)
+    db.session.flush()
+    db.session.expire(lesson, ["content_items", "pages_metadata"])
+    lesson.title = draft["title"]
+    lesson.description = draft["description"]
+    lesson.lesson_type = "free"
+    lesson.difficulty_level = difficulty_level
+    lesson.is_published = False
+    lesson.allow_guest_access = draft.get("allow_guest_access", False)
+    lesson.instruction_language = draft.get("instruction_language", "german")
+    lesson.thumbnail_url = draft.get("thumbnail_url")
+    lesson.price = 0.0
+    lesson.is_purchasable = False
+    return lesson
+
+
+def insert_draft(draft_path: Path, into_lesson_id: int | None = None) -> int:
+    """Transaktionaler INSERT einer Lektion. Gibt lesson_id zurueck.
+
+    Mit ``into_lesson_id`` wird eine bestehende, unveroeffentlichte Lektion ohne
+    Nutzerdaten neu befuellt (ID, Kategorie und order_index bleiben), statt eine
+    neue anzulegen — siehe ``prepare_lesson_for_refill``.
+    """
     errors = validate_draft(json.loads(draft_path.read_text(encoding="utf-8")))
     if errors:
         print("[ABBRUCH] Validation-Fehler:")
@@ -1347,19 +1428,24 @@ def insert_draft(draft_path: Path) -> int:
             jlpt = draft["jlpt_level"]
             difficulty_level = 1 if jlpt == 5 else 3
 
-            lesson = Lesson(
-                title=draft["title"],
-                description=draft["description"],
-                lesson_type="free",
-                difficulty_level=difficulty_level,
-                is_published=False,  # erst nach Verifikation True
-                allow_guest_access=draft.get("allow_guest_access", False),
-                instruction_language=draft.get("instruction_language", "german"),
-                thumbnail_url=draft.get("thumbnail_url"),
-                price=0.0,
-                is_purchasable=False,
-            )
-            db.session.add(lesson)
+            if into_lesson_id is None:
+                lesson = Lesson(
+                    title=draft["title"],
+                    description=draft["description"],
+                    lesson_type="free",
+                    difficulty_level=difficulty_level,
+                    is_published=False,  # erst nach Verifikation True
+                    allow_guest_access=draft.get("allow_guest_access", False),
+                    instruction_language=draft.get("instruction_language", "german"),
+                    thumbnail_url=draft.get("thumbnail_url"),
+                    price=0.0,
+                    is_purchasable=False,
+                )
+                db.session.add(lesson)
+            else:
+                lesson = prepare_lesson_for_refill(
+                    db, Lesson, into_lesson_id, draft, difficulty_level
+                )
             db.session.flush()
             lesson_id = lesson.id
 
@@ -1445,6 +1531,8 @@ def insert_draft(draft_path: Path) -> int:
                 "topic": draft.get("topic"),
                 "draft_file": str(draft_path),
             }
+            if into_lesson_id is not None:
+                log_entry["into_lesson"] = into_lesson_id
             log_path = SKILL_DIR / "generated-lessons.jsonl"
             with log_path.open("a", encoding="utf-8") as f:
                 f.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
@@ -1655,6 +1743,9 @@ def main():
 
     p_ins = sub.add_parser("insert", help="Draft in DB persistieren")
     p_ins.add_argument("draft", type=Path)
+    p_ins.add_argument("--into-lesson", type=int, default=None,
+                       help="bestehende, unveroeffentlichte Lektion ohne Nutzerdaten neu "
+                            "befuellen (ID, Modul und Reihenfolge bleiben)")
 
     p_taud = sub.add_parser("text-audio", help="Pro text-LessonContent eine MP3 (DE+JA gemischt)")
     p_taud.add_argument("lesson_id", type=int)
@@ -1709,7 +1800,7 @@ def main():
     elif args.cmd == "images":
         generate_images(args.draft)
     elif args.cmd == "insert":
-        insert_draft(args.draft)
+        insert_draft(args.draft, into_lesson_id=args.into_lesson)
     elif args.cmd == "text-audio":
         sys.exit(generate_text_audio(args.lesson_id, force=args.force, page=args.page))
     elif args.cmd == "slideshow":

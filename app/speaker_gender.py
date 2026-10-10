@@ -58,6 +58,10 @@ SPEAKER_GENDER = {
     "Saki": "female",      # Verben-Lektion
     "Markus": "male",      # Verben-Lektion
     "Polizist": "male",    # Orte in der Stadt 2 (Batch 2026-09-26): Polizist am Koban
+    # Rollen der Lektionen vom 2026-10-10 (Restaurant, Kaufhaus, Hochzeitsgeschenk)
+    "Kellnerin": "female",
+    "Angestellte": "female",
+    "Verkäuferin": "female",
     # Katakana-Schreibweisen (von Claude in Dialogen genutzt)
     "リサ": "female",       # Lisa
     "ハルト": "male",       # Haruto

@@ -80,6 +80,7 @@ class TestSpeakerGender:
     @pytest.mark.parametrize('name,want', [
         ('Tanaka', 'm'), ('Lisa', 'f'), ('リサ', 'f'), ('Polizist', 'm'), ('Mama', 'f'),
         ('Tanaka-san', 'm'), ('Ueno-sensei', 'f'), ('tanaka', 'm'), ('Yamada (Kunde)', 'm'),
+        ('Kellnerin', 'f'), ('Angestellte', 'f'), ('Verkäuferin', 'f'),
     ])
     def test_bekannte_namen(self, name, want):
         assert speaker_gender(name) == want
