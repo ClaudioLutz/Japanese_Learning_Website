@@ -32,6 +32,8 @@ import json
 import logging
 import os
 import re
+import threading
+from contextlib import contextmanager
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from typing import Any, Generator
@@ -1005,6 +1007,54 @@ class ProviderError(Exception):
         self.busy = busy
 
 
+# ── Live-Aufrufe pro Prozess begrenzen ──────────────────────────────────
+# Jeder Live-Zug blockiert einen Gunicorn-Thread 5–25 s (Bridge/CLI). Ohne Grenze
+# koennten viele gleichzeitige Gespraeche (z.B. die Gast-Demo auf der Startseite)
+# alle Threads belegen, und die uebrige Seite antwortet nicht mehr. Darum hoechstens
+# ROLEPLAY_MAX_LIVE_CALLS gleichzeitige Live-Aufrufe pro Prozess; wer darueber
+# kommt, bekommt sofort die freundliche «beschaeftigt»-Meldung statt zu warten.
+# Hintergrund-Aufrufe (priority 'low': Vorausberechnung, Lernhilfen) laufen in
+# eigenen Threads und zaehlen nicht mit.
+LIVE_CALLS_DEFAULT = 3
+_live_slots: threading.BoundedSemaphore | None = None
+_live_slots_size = 0
+_live_slots_lock = threading.Lock()
+
+
+def max_live_calls() -> int:
+    from flask import has_app_context
+    raw = _setting('ROLEPLAY_MAX_LIVE_CALLS') if has_app_context() else os.environ.get('ROLEPLAY_MAX_LIVE_CALLS', '')
+    try:
+        return max(1, int(raw or LIVE_CALLS_DEFAULT))
+    except ValueError:
+        return LIVE_CALLS_DEFAULT
+
+
+def _live_semaphore() -> threading.BoundedSemaphore:
+    global _live_slots, _live_slots_size
+    size = max_live_calls()
+    with _live_slots_lock:
+        if _live_slots is None or _live_slots_size != size:
+            _live_slots, _live_slots_size = threading.BoundedSemaphore(size), size
+        return _live_slots
+
+
+@contextmanager
+def live_call_slot(priority: str = 'high'):
+    """Platz fuer einen Live-Aufruf belegen; voll → ProviderError(busy) sofort."""
+    if priority == 'low':
+        yield
+        return
+    sem = _live_semaphore()
+    if not sem.acquire(blocking=False):
+        logger.info('Rollenspiel: alle Live-Plaetze dieses Prozesses belegt')
+        raise ProviderError('app_busy', retryable=False, busy=True)
+    try:
+        yield
+    finally:
+        sem.release()
+
+
 TUTOR_SCHEMA: dict[str, Any] = {
     'type': 'object',
     'properties': {'answer': {'type': 'string', 'description': 'Antwort auf Deutsch.'}},
@@ -1053,6 +1103,11 @@ class AnthropicApiProvider(RoleplayProvider):
         return self._client
 
     def complete(self, system, messages, schema, *, system_suffix='', max_tokens=MAX_TOKENS_TURN, fast=False):
+        with live_call_slot(getattr(self, 'priority', 'high')):
+            return self._complete(system, messages, schema, system_suffix=system_suffix,
+                                  max_tokens=max_tokens, fast=fast)
+
+    def _complete(self, system, messages, schema, *, system_suffix='', max_tokens=MAX_TOKENS_TURN, fast=False):
         import anthropic
         tool = {
             'name': API_TOOL_NAME,
@@ -1138,6 +1193,11 @@ class ClaudeCliBridgeProvider(RoleplayProvider):
         return usage
 
     def complete(self, system, messages, schema, *, system_suffix='', max_tokens=MAX_TOKENS_TURN, fast=False):
+        with live_call_slot(self.priority):
+            return self._complete(system, messages, schema, system_suffix=system_suffix,
+                                  max_tokens=max_tokens, fast=fast)
+
+    def _complete(self, system, messages, schema, *, system_suffix='', max_tokens=MAX_TOKENS_TURN, fast=False):
         import requests
         try:
             resp = self.http.post(
@@ -1161,6 +1221,11 @@ class ClaudeCliBridgeProvider(RoleplayProvider):
 
     def stream(self, system, messages, schema, *, system_suffix='', max_tokens=MAX_TOKENS_TURN, fast=False):
         """POST /complete_stream (SSE): liefert die partial_json-Stuecke, dann das Ergebnis."""
+        with live_call_slot(self.priority):
+            return (yield from self._stream(system, messages, schema, system_suffix=system_suffix,
+                                            max_tokens=max_tokens, fast=fast))
+
+    def _stream(self, system, messages, schema, *, system_suffix='', max_tokens=MAX_TOKENS_TURN, fast=False):
         import requests
         try:
             resp = self.http.post(

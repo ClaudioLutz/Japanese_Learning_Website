@@ -74,13 +74,14 @@ echo "✅ Proceeding to start application!"
 
 # Start the application with Gunicorn.
 # gthread: das Rollenspiel blockiert pro Zug 5-10 s auf die Bridge; Threads halten
-# andere Anfragen frei (2 Worker x 4 Threads). Limiter-Storage memory:// bleibt pro Prozess.
+# andere Anfragen frei (2 Worker x 8 Threads; Live-Rollenspiel pro Worker hoechstens
+# ROLEPLAY_MAX_LIVE_CALLS=3 Threads, der Rest bleibt fuer die Seite). Limiter-Storage memory:// bleibt pro Prozess.
 echo "🚀 Starting Gunicorn server on port $PORT..."
 exec gunicorn \
     --bind 0.0.0.0:$PORT \
     --workers 2 \
     --worker-class gthread \
-    --threads 4 \
+    --threads 8 \
     --timeout 90 \
     --keep-alive 2 \
     --log-level info \
