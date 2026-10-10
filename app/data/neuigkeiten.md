@@ -15,6 +15,10 @@ Format je Eintrag:
 Keine Commit-Hashes, keine internen Namen.
 -->
 
+## 2026-10-10 | Drei neue N5-Lektionen: Restaurant, ここ・そこ・あそこ, Hochzeitsgeschenk
+Neu: «Essen im Restaurant» (bestellen und bezahlen), «Hier, da, dort» (ここ・そこ・あそこ und どこ, auch höflich und locker) und «Ein Geschenk zur Hochzeit» (wann, wer und was). Dazu stehen die Zahlwörter 一 bis 十 jetzt als eigene Karten in «N5 Kanji 1», 零 in «N5 Zahlen» und 山, 木, 海 in «N5 Kanji 4». Damit kommen alle 723 Wörter der N5-Liste in den Lektionen vor.
+Link: /lessons/220
+
 ## 2026-10-09 | Infoseiten im Dunkelmodus gut lesbar
 Auf „JLPT N5 in der Schweiz“ und „Über“ war der Text im Dunkelmodus kaum zu lesen (dunkelblau auf dunkel). Jetzt sind Text, Überschriften und Links in beiden Darstellungen klar lesbar; der helle Modus bleibt unverändert.
 Link: /jlpt-n5-schweiz
