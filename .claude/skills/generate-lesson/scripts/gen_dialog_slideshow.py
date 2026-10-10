@@ -202,13 +202,26 @@ def _tts_line(tts: GoogleCloudTTS, text: str, voice_name: str, speed: float = 0.
 
 # --- Main -------------------------------------------------------------------
 
-def find_dialog_page(lesson_id: int) -> LessonPage | None:
-    pages = db.session.query(LessonPage).filter_by(lesson_id=lesson_id).order_by(LessonPage.page_number).all()
-    for p in pages:
-        t = (p.title or "").lower()
-        if any(k in t for k in ("dialog", "konversation", "gespräch", "conversation")):
+DIALOG_PAGE_KEYWORDS = ("dialog", "konversation", "gespräch", "conversation")
+
+
+def pick_dialog_page(pages: list):
+    """Dialog-Seite waehlen: zuerst ein Titel, der mit einem Stichwort BEGINNT
+    («Dialog — …»), erst dann einer, der es nur enthaelt. Sonst gewinnt z.B.
+    «Vokabeln Teil 2 — Kleine Wörter fürs Gespräch» (Bug 2026-10-10, L220)."""
+    titled = [(p, (p.title or "").strip().lower()) for p in pages]
+    for p, t in titled:
+        if t.startswith(DIALOG_PAGE_KEYWORDS):
+            return p
+    for p, t in titled:
+        if any(k in t for k in DIALOG_PAGE_KEYWORDS):
             return p
     return None
+
+
+def find_dialog_page(lesson_id: int) -> LessonPage | None:
+    pages = db.session.query(LessonPage).filter_by(lesson_id=lesson_id).order_by(LessonPage.page_number).all()
+    return pick_dialog_page(pages)
 
 
 def main() -> int:
