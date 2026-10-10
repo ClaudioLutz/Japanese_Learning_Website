@@ -1,0 +1,851 @@
+{
+  "title": "N5 Essen im Restaurant — Bestellen und bezahlen",
+  "description": "Bestelle im Restaurant höflich Wasser, Tee, Fisch oder Fleisch mit 〜を ください (o kudasai) und frage mit いくらですか (ikura desu ka) nach dem Preis.",
+  "jlpt_level": 5,
+  "topic": "Essen im Restaurant",
+  "instruction_language": "german",
+  "allow_guest_access": true,
+  "thumbnail_url": "generated/thumbnail_essen_im_restaurant_20261010_071607.png",
+  "pages": [
+    {
+      "title": "Einführung",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Essen im Restaurant\n\nEin Abend in Japan: Du gehst mit einem Freund in ein kleines **Restaurant**, bestellst etwas zu trinken und zu essen und bezahlst am Schluss. Genau das übst du in dieser Lektion — mit 17 Wörtern und drei kurzen **Satzmustern**.\n\n- **Essen und Trinken**: みず (mizu, Wasser), おちゃ (ocha, Tee), にく (niku, Fleisch), さかな (sakana, Fisch), おいしい (oishii, lecker)\n- **Kleine Wörter fürs Gespräch**: ええ (ee, ja), ああ (aa, ach, oh), いっしょに (issho ni, zusammen), いくら (ikura, wie viel)\n- **Drei Muster**: höflich bestellen mit を ください (o kudasai), die höfliche Vorsilbe お (o) und nach dem Preis fragen mit いくらですか (ikura desu ka)\n\nDrei Wörter kennst du vielleicht schon aus anderen Lektionen: たべもの (tabemono, Essen), ぜんぶ (zenbu, alles) und レストラン (resutoran, Restaurant). Hier tauchen sie wieder auf.\n\n> Wenn du ein Restaurant betrittst, ruft das Personal 「いらっしゃいませ」 (irasshaimase, Herzlich willkommen). Darauf musst du nichts antworten — ein kurzes Nicken reicht."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln Teil 1 — Essen und Trinken",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Teil 1 — Essen und Trinken\n\nDiese Wörter brauchst du am Tisch. Ein paar davon sind zusammengesetzt — das hilft beim Merken.\n\n- **おちゃ (ocha)** ist meist grüner Tee. Die Vorsilbe お (o) gehört fast immer dazu.\n- **のみもの (nomimono)** und **たべもの (tabemono)**: のみ (nomi) kommt von のみます (nomimasu, trinken), たべ (tabe) von 食べます (tabemasu, essen). Dazu kommt もの (mono, Ding) — wörtlich also 'Trink-Ding' und 'Ess-Ding'.\n- **もの (mono)** heisst 'Ding, Sache'. Oft steht es nach einem Adjektiv: あまい もの (amai mono, etwas Süsses), つめたい もの (tsumetai mono, etwas Kaltes).\n- **ゆうはん (yuuhan)** ist das Abendessen (in der Schweiz: der Znacht). Ebenso üblich ist ばんごはん (bangohan) — beide bedeuten dasselbe.\n\n> Lob für die Küche: 「おいしいです」 (oishii desu) — 'Das ist lecker!' Das hört jede Köchin gern."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 223,
+            "word": "水",
+            "reading": "みず",
+            "romaji": "mizu",
+            "meaning": "water",
+            "meaning_de": "Wasser",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "つめたい 水を のみます。",
+            "example_sentence_english": "Tsumetai mizu o nomimasu. — Ich trinke kaltes Wasser.",
+            "image_url": "vocab_generated/vocab_eab619fb.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 224,
+            "word": "お茶",
+            "reading": "おちゃ",
+            "romaji": "ocha",
+            "meaning": "(green) tea",
+            "meaning_de": "(grüner) Tee",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あさは いつも おちゃを のみます。",
+            "example_sentence_english": "Asa wa itsumo ocha o nomimasu. — Morgens trinke ich immer Tee.",
+            "image_url": "vocab_generated/vocab_7c0fcaf3.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 228,
+            "word": "飲み物",
+            "reading": "のみもの",
+            "romaji": "nomimono",
+            "meaning": "drink, beverage",
+            "meaning_de": "Getränk",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "つめたい のみものが ほしいです。",
+            "example_sentence_english": "Tsumetai nomimono ga hoshii desu. — Ich möchte ein kaltes Getränk.",
+            "image_url": "vocab_generated/vocab_ae168db6.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 226,
+            "word": "肉",
+            "reading": "にく",
+            "romaji": "niku",
+            "meaning": "meat",
+            "meaning_de": "Fleisch",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "わたしは にくが すきです。",
+            "example_sentence_english": "Watashi wa niku ga suki desu. — Ich mag Fleisch.",
+            "image_url": "vocab_generated/vocab_f37896e6.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 227,
+            "word": "魚",
+            "reading": "さかな",
+            "romaji": "sakana",
+            "meaning": "fish",
+            "meaning_de": "Fisch",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ばんごはんに さかなを 食べました。",
+            "example_sentence_english": "Bangohan ni sakana o tabemashita. — Zum Abendessen habe ich Fisch gegessen.",
+            "image_url": "vocab_generated/vocab_ee4a1ce6.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 229,
+            "word": "食べ物",
+            "reading": "たべもの",
+            "romaji": "tabemono",
+            "meaning": "food",
+            "meaning_de": "Essen, Speise",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "日本の 食べものは おいしいです。",
+            "example_sentence_english": "Nihon no tabemono wa oishii desu. — Japanisches Essen ist lecker.",
+            "image_url": "vocab_generated/vocab_e7ada485.webp",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1050,
+            "word": "物",
+            "reading": "もの",
+            "romaji": "mono",
+            "meaning": "thing (concrete object)",
+            "meaning_de": "Ding, Sache",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あまい ものが だいすきです。",
+            "example_sentence_english": "Amai mono ga daisuki desu. — Ich liebe Süsses.",
+            "image_url": "vocab_generated/vocab_7d8e2314.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1065,
+            "word": "夕飯",
+            "reading": "ゆうはん",
+            "romaji": "yuuhan",
+            "meaning": "dinner, evening meal",
+            "meaning_de": "Abendessen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "七時に ゆうはんを 食べます。",
+            "example_sentence_english": "Shichiji ni yuuhan o tabemasu. — Um sieben Uhr esse ich zu Abend.",
+            "image_url": "vocab_generated/vocab_041095d1.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 230,
+            "word": "美味しい",
+            "reading": "おいしい",
+            "romaji": "oishii",
+            "meaning": "delicious, tasty",
+            "meaning_de": "lecker, köstlich",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "この パンは とても おいしいです。",
+            "example_sentence_english": "Kono pan wa totemo oishii desu. — Dieses Brot ist sehr lecker.",
+            "image_url": "vocab_generated/vocab_d3fc5ca6.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln Teil 2 — Kleine Wörter fürs Gespräch",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Teil 2 — Kleine Wörter fürs Gespräch\n\nMit diesen Wörtern reagierst du im Gespräch, sagst, was du nicht magst, und fragst nach dem Preis.\n\n- **ええ (ee)** ist ein weiches 'ja' und etwas lockerer als はい (hai). Im Gespräch hörst du es sehr oft; in sehr formellen Situationen sagst du besser はい (hai).\n- **ああ (aa)** heisst 'ach, oh' — wenn du plötzlich etwas merkst oder verstehst: ああ、そうですか (aa, sou desu ka, ach so).\n- **いや (iya)** heisst 'unangenehm, will ich nicht'. Du sagst es über eine Situation, die dir nicht passt: 雨の 日は いやです (ame no hi wa iya desu). **きらい (kirai)** heisst dagegen 'nicht mögen' und beschreibt eine feste Abneigung: にくが きらいです (niku ga kirai desu). Beides klingt zu anderen Leuten sehr direkt. Höflich lehnst du mit ちょっと… (chotto…, wörtlich 'ein bisschen', gemeint 'lieber nicht') ab.\n- **お～ (o-)** ist eine höfliche Vorsilbe vor Nomen, zum Beispiel in おみず (omizu) oder おちゃ (ocha). Mehr dazu auf der Grammatikseite.\n- **いくら (ikura)** fragt nach dem Preis, **ぜんぶ (zenbu)** heisst 'alles'.\n\n> Merke: **レストラン (resutoran)** ist ein Lehnwort und wird in Katakana geschrieben."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 219,
+            "word": "いっしょに",
+            "reading": "いっしょに",
+            "romaji": "issho ni",
+            "meaning": "together",
+            "meaning_de": "zusammen, gemeinsam",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "いっしょに ひるごはんを 食べませんか。",
+            "example_sentence_english": "Issho ni hirugohan o tabemasen ka. — Wollen wir zusammen Mittag essen?",
+            "image_url": "vocabulary/images/vocab_219_eea90c3f.png",
+            "status": "approved",
+            "created_by_ai": true,
+            "is_canonical_override": true,
+            "source_note": "Kana-Karte für den canonical-N5-Eintrag 一緒 (いっしょ); in sources/jlpt_n5_variants.json als covered_by いっしょに geführt."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 220,
+            "word": "ええ",
+            "reading": "ええ",
+            "romaji": "ee",
+            "meaning": "yes (casual)",
+            "meaning_de": "ja (weicher als はい)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ええ、わたしも 行きます。",
+            "example_sentence_english": "Ee, watashi mo ikimasu. — Ja, ich gehe auch.",
+            "image_url": "vocabulary/images/vocab_220_bff9bcbb.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 961,
+            "word": "ああ",
+            "reading": "ああ",
+            "romaji": "aa",
+            "meaning": "Ah!, Oh!",
+            "meaning_de": "ach!, oh! (Ausruf)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ああ、レストランは あそこですね。",
+            "example_sentence_english": "Aa, resutoran wa asoko desu ne. — Ach, das Restaurant ist dort drüben.",
+            "image_url": "vocab_generated/vocab_6601c20a.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 996,
+            "word": "嫌",
+            "reading": "いや",
+            "romaji": "iya",
+            "meaning": "disagreeable, unpleasant",
+            "meaning_de": "unangenehm, zuwider",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "雨の 日は いやです。",
+            "example_sentence_english": "Ame no hi wa iya desu. — Regentage finde ich unangenehm.",
+            "image_url": "vocab_generated/vocab_f6d976f0.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1069,
+            "word": "お～",
+            "reading": "お～",
+            "romaji": "o-",
+            "meaning": "honorable ~ (honorific prefix)",
+            "meaning_de": "Höflichkeitsvorsilbe (vor Nomen)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "おちゃを どうぞ。",
+            "example_sentence_english": "Ocha o douzo. — Bitte schön, hier ist Tee.",
+            "image_url": "vocab_generated/vocab_dd4906a7.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 123,
+            "word": "いくら",
+            "reading": "いくら",
+            "romaji": "ikura",
+            "meaning": "how much",
+            "meaning_de": "wie viel (kostet es)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "この くつは いくらですか。",
+            "example_sentence_english": "Kono kutsu wa ikura desu ka. — Wie viel kosten diese Schuhe?",
+            "image_url": "vocabulary/images/vocab_123_ca6ce406.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 940,
+            "word": "全部",
+            "reading": "ぜんぶ",
+            "romaji": "zenbu",
+            "meaning": "all, everything",
+            "meaning_de": "alles, gesamt",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "うたを ぜんぶ おぼえました。",
+            "example_sentence_english": "Uta o zenbu oboemashita. — Ich kann das ganze Lied auswendig.",
+            "image_url": "vocab_generated/vocab_a8b0c204.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 217,
+            "word": "レストラン",
+            "reading": "レストラン",
+            "romaji": "resutoran",
+            "meaning": "restaurant",
+            "meaning_de": "Restaurant",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "友だちと レストランで 食べます。",
+            "example_sentence_english": "Tomodachi to resutoran de tabemasu. — Ich esse mit einem Freund im Restaurant.",
+            "image_url": "vocabulary/images/vocab_217_e8b3d612.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        }
+      ]
+    },
+    {
+      "title": "Grammatik — bestellen, höflich sprechen, bezahlen",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Grammatik — bestellen, höflich sprechen, bezahlen\n\nMit drei Mustern kommst du durch einen ganzen Restaurantbesuch:\n\n1. **を ください / を おねがいします (o kudasai / o onegaishimasu)** — etwas bestellen\n2. **お～ (o-)** — die höfliche Vorsilbe vor Wörtern wie おみず (omizu, Wasser)\n3. **いくらですか (ikura desu ka)** — nach dem Preis fragen\n\n> Tipp: Möchtest du etwas höflich ablehnen, nenne das Ding mit は (wa) und sage ちょっと… (chotto…): 「にくは ちょっと…」 (niku wa chotto…) — 'Fleisch lieber nicht.' Den Satz musst du nicht beenden, dein Gegenüber versteht dich trotzdem."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "[Speise / Getränk] を ください / を おねがいします — höflich bestellen (o kudasai / o onegaishimasu)",
+            "explanation": "Nenne zuerst, was du möchtest. Dann folgen die Partikel 「を」 (o) und das Wort 「ください」 (kudasai, bitte geben Sie mir). 「おねがいします」 (onegaishimasu) bedeutet dasselbe, klingt aber noch etwas höflicher und weicher. Möchtest du zwei Stück, setzt du die Zahl direkt vor ください (kudasai): 「おちゃを 二つ ください」 (ocha o futatsu kudasai, zwei Tee, bitte). Übrigens: 「りょうり」 (ryouri) heisst 'Gericht, Speise' — 「さかなの りょうり」 (sakana no ryouri) ist ein Fischgericht.",
+            "structure": "[Speise / Getränk] + を + ください / おねがいします  ([food / drink] + o + kudasai / onegaishimasu)",
+            "romaji": "[food / drink] + o + kudasai / onegaishimasu",
+            "jlpt_level": 5,
+            "example_sentences": "おみずを ください。 (Omizu o kudasai.) — Wasser, bitte.\nおちゃを 二つ おねがいします。 (Ocha o futatsu onegaishimasu.) — Zwei Tee, bitte.\nさかなの りょうりを ください。 (Sakana no ryouri o kudasai.) — Das Fischgericht, bitte.",
+            "tts_example_jp": "おみずを ください。",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "お～ — die höfliche Vorsilbe (o-)",
+            "explanation": "Die Vorsilbe 「お」 (o) macht ein Wort höflicher und freundlicher. Du hörst sie oft bei Essen, Trinken und Geld: 「おみず」 (omizu, Wasser), 「おちゃ」 (ocha, Tee), 「おかね」 (okane, Geld), 「おさら」 (osara, Teller). Bei manchen Wörtern ist お (o) fast immer dabei — 「おちゃ」 (ocha) und 「おかね」 (okane) sagt man kaum ohne. Vor Lehnwörtern in Katakana steht in der Regel kein お (o): Es heisst einfach 「レストラン」 (resutoran).",
+            "structure": "お + [Nomen]  (o + [noun])",
+            "romaji": "o + [noun]",
+            "jlpt_level": 5,
+            "example_sentences": "おちゃを どうぞ。 (Ocha o douzo.) — Bitte schön, hier ist Tee.\nおかねが ありません。 (Okane ga arimasen.) — Ich habe kein Geld.\nおさらは どこですか。 (Osara wa doko desu ka.) — Wo sind die Teller?",
+            "tts_example_jp": "おちゃを どうぞ。",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "[Ding] は いくらですか / ぜんぶで いくらですか — nach dem Preis fragen (ikura desu ka / zenbu de ikura desu ka)",
+            "explanation": "Mit 「いくら」 (ikura, wie viel) fragst du nach dem Preis: 「これは いくらですか」 (kore wa ikura desu ka, Wie viel kostet das?). Willst du wissen, was alles zusammen kostet, sagst du 「ぜんぶで いくらですか」 (zenbu de ikura desu ka). 「ぜんぶで」 (zenbu de) heisst hier 'alles zusammen'. Die Antwort ist eine Zahl mit 「円」 (en, Yen): 「千円です」 (sen en desu, 1000 Yen). Zur Erinnerung: 百 (hyaku) = 100, 千 (sen) = 1000 — also 二千四百円 (nisen yonhyaku en) = 2400 Yen.",
+            "structure": "[Ding] + は + いくらですか / ぜんぶで + いくらですか  ([thing] + wa + ikura desu ka / zenbu de + ikura desu ka)",
+            "romaji": "[thing] + wa + ikura desu ka / zenbu de + ikura desu ka",
+            "jlpt_level": 5,
+            "example_sentences": "この おちゃは いくらですか。 (Kono ocha wa ikura desu ka.) — Wie viel kostet dieser Tee?\nすみません、ぜんぶで いくらですか。 (Sumimasen, zenbu de ikura desu ka.) — Entschuldigung, was macht das zusammen?\nぜんぶで 三千円です。 (Zenbu de sanzen en desu.) — Zusammen macht das 3000 Yen.",
+            "tts_example_jp": "ぜんぶで いくらですか。",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        }
+      ]
+    },
+    {
+      "title": "Dialog — Abendessen im Restaurant",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "Haruto: リサさん、こんばん いっしょに レストランで ゆうはんを 食べませんか。\n  (Risa-san, konban issho ni resutoran de yuuhan o tabemasen ka.)\n  -> Lisa, wollen wir heute Abend zusammen im Restaurant essen?\n\nLisa: ええ、いいですね。\n  (Ee, ii desu ne.)\n  -> Ja, gern!\n\nKellnerin: いらっしゃいませ。おのみものは いかがですか。\n  (Irasshaimase. Onomimono wa ikaga desu ka.)\n  -> Herzlich willkommen! Möchten Sie etwas trinken?\n\nLisa: おみずを ください。\n  (Omizu o kudasai.)\n  -> Wasser, bitte.\n\nHaruto: わたしは おちゃを おねがいします。リサさん、ここは にくが おいしいですよ。\n  (Watashi wa ocha o onegaishimasu. Risa-san, koko wa niku ga oishii desu yo.)\n  -> Für mich einen Tee, bitte. Lisa, hier ist das Fleisch lecker.\n\nLisa: にくは ちょっと…。わたしは さかなが いいです。\n  (Niku wa chotto… Watashi wa sakana ga ii desu.)\n  -> Fleisch lieber nicht … Ich nehme lieber Fisch.\n\nHaruto: すみません、さかなの りょうりを 二つ おねがいします。\n  (Sumimasen, sakana no ryouri o futatsu onegaishimasu.)\n  -> Entschuldigung, zweimal das Fischgericht, bitte.\n\nLisa: ああ、この さかなは ほんとうに おいしいですね。\n  (Aa, kono sakana wa hontou ni oishii desu ne.)\n  -> Oh, dieser Fisch ist wirklich lecker!\n\nHaruto: すみません、ぜんぶで いくらですか。\n  (Sumimasen, zenbu de ikura desu ka.)\n  -> Entschuldigung, was macht das zusammen?\n\nKellnerin: はい、ぜんぶで 二千四百円です。\n  (Hai, zenbu de nisen yonhyaku en desu.)\n  -> Ja, zusammen macht das 2400 Yen.",
+            "title": "Abendessen im Restaurant — Haruto und Lisa"
+          }
+        },
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "### Verständnisfragen\n\nFünf kurze Fragen zum **Dialog**. Achte darauf, wer was **bestellt** und wie viel am Schluss bezahlt wird: いくら (ikura)."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bestellt Lisa zu trinken?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Lisa sagt 「おみずを ください」 (omizu o kudasai) — Wasser, bitte.",
+              "options": [
+                {
+                  "option_text": "Wasser",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「おみず」 (omizu) = Wasser."
+                },
+                {
+                  "option_text": "Tee",
+                  "is_correct": false,
+                  "feedback": "Tee, 「おちゃ」 (ocha), bestellt Haruto."
+                },
+                {
+                  "option_text": "Kaffee",
+                  "is_correct": false,
+                  "feedback": "Kaffee kommt im Dialog nicht vor."
+                },
+                {
+                  "option_text": "nichts",
+                  "is_correct": false,
+                  "feedback": "Doch — Lisa bestellt etwas zu trinken."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Haruto bestellt einen Tee.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Haruto sagt 「わたしは おちゃを おねがいします」 (watashi wa ocha o onegaishimasu).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Richtig — Haruto nimmt Tee, 「おちゃ」 (ocha)."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch, das stimmt: Haruto sagt 「おちゃを おねがいします」 (ocha o onegaishimasu)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Haruto sagt, das Fleisch sei hier gut. Was antwortet Lisa?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Mit 「にくは ちょっと…」 (niku wa chotto…) lehnt Lisa höflich ab und nimmt lieber Fisch.",
+              "options": [
+                {
+                  "option_text": "Sie lehnt höflich ab: 「にくは ちょっと…」 (niku wa chotto…)",
+                  "is_correct": true,
+                  "feedback": "Richtig — so sagt man höflich 'lieber nicht'."
+                },
+                {
+                  "option_text": "Sie bestellt sofort Fleisch.",
+                  "is_correct": false,
+                  "feedback": "Nein — Lisa möchte kein Fleisch."
+                },
+                {
+                  "option_text": "Sie sagt, dass sie Fleisch sehr gern isst.",
+                  "is_correct": false,
+                  "feedback": "Nein — Lisa sagt 「にくは ちょっと…」 (niku wa chotto…), also 'lieber nicht'."
+                },
+                {
+                  "option_text": "Sie fragt, wie viel das Fleisch kostet.",
+                  "is_correct": false,
+                  "feedback": "Nach dem Preis fragt nur Haruto, ganz am Schluss."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Haruto und Lisa essen beide Fleisch.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Haruto bestellt 「さかなの りょうりを 二つ」 (sakana no ryouri o futatsu) — zweimal das Fischgericht.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nein — sie essen beide Fisch, 「さかな」 (sakana)."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Richtig erkannt — beide essen Fisch."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie viel kostet das Essen zusammen?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Die Kellnerin sagt 「ぜんぶで 二千四百円です」 (zenbu de nisen yonhyaku en desu).",
+              "options": [
+                {
+                  "option_text": "2400 Yen",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「二千四百円」 (nisen yonhyaku en) = 2400 Yen."
+                },
+                {
+                  "option_text": "4200 Yen",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「四千二百円」 (yonsen nihyaku en)."
+                },
+                {
+                  "option_text": "2000 Yen",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「二千円」 (nisen en)."
+                },
+                {
+                  "option_text": "1400 Yen",
+                  "is_correct": false,
+                  "feedback": "Das wäre 「千四百円」 (sen yonhyaku en)."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Übung",
+      "page_type": "quiz_carousel",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Übung\n\nElf Fragen zu den **Wörtern** und den drei **Mustern** dieser Lektion.\n\n- Lies jede Frage genau.\n- Achte auf を (o) beim Bestellen und auf ぜんぶで (zenbu de) beim Bezahlen."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「さかな」 (sakana)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「さかな」 (sakana) heisst 'Fisch'.",
+              "options": [
+                {
+                  "option_text": "Fisch",
+                  "is_correct": true,
+                  "feedback": "Richtig!"
+                },
+                {
+                  "option_text": "Fleisch",
+                  "is_correct": false,
+                  "feedback": "Fleisch wäre にく (niku)."
+                },
+                {
+                  "option_text": "Wasser",
+                  "is_correct": false,
+                  "feedback": "Wasser wäre みず (mizu)."
+                },
+                {
+                  "option_text": "Getränk",
+                  "is_correct": false,
+                  "feedback": "Getränk wäre のみもの (nomimono)."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde die Wörter für Essen und Trinken mit der deutschen Bedeutung.",
+              "difficulty_level": 2,
+              "points": 4,
+              "options": [
+                {
+                  "option_text": "みず (mizu)",
+                  "is_correct": true,
+                  "feedback": "Wasser"
+                },
+                {
+                  "option_text": "おちゃ (ocha)",
+                  "is_correct": true,
+                  "feedback": "Tee"
+                },
+                {
+                  "option_text": "にく (niku)",
+                  "is_correct": true,
+                  "feedback": "Fleisch"
+                },
+                {
+                  "option_text": "のみもの (nomimono)",
+                  "is_correct": true,
+                  "feedback": "Getränk"
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Du möchtest einen Tee. Was sagst du?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Was du möchtest, bekommt 「を」 (o), danach folgt 「ください」 (kudasai).",
+              "options": [
+                {
+                  "option_text": "おちゃを ください。 (Ocha o kudasai.)",
+                  "is_correct": true,
+                  "feedback": "Richtig — so bestellst du höflich."
+                },
+                {
+                  "option_text": "おちゃは いやです。 (Ocha wa iya desu.)",
+                  "is_correct": false,
+                  "feedback": "Das heisst 'Tee will ich nicht' — das Gegenteil."
+                },
+                {
+                  "option_text": "おちゃを 食べます。 (Ocha o tabemasu.)",
+                  "is_correct": false,
+                  "feedback": "食べます (tabemasu) heisst 'essen'. Tee trinkt man: のみます (nomimasu)."
+                },
+                {
+                  "option_text": "おちゃは いくらですか。 (Ocha wa ikura desu ka.)",
+                  "is_correct": false,
+                  "feedback": "Damit fragst du nur nach dem Preis."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Beim Bestellen kannst du statt 「ください」 (kudasai) auch 「おねがいします」 (onegaishimasu) sagen.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Beides geht: 「おみずを おねがいします」 (omizu o onegaishimasu) klingt sogar noch etwas höflicher.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Richtig — おねがいします (onegaishimasu) ist sogar noch etwas höflicher."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch, das geht: おねがいします (onegaishimasu) ist beim Bestellen sehr üblich."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Vor welches Wort setzt man die Vorsilbe お (o) NICHT?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Vor Lehnwörtern in Katakana steht in der Regel kein お (o). Es heisst einfach 「レストラン」 (resutoran).",
+              "options": [
+                {
+                  "option_text": "レストラン (resutoran)",
+                  "is_correct": true,
+                  "feedback": "Richtig — vor Katakana-Lehnwörtern steht in der Regel kein お (o)."
+                },
+                {
+                  "option_text": "みず (mizu)",
+                  "is_correct": false,
+                  "feedback": "Doch: おみず (omizu) ist sehr üblich."
+                },
+                {
+                  "option_text": "さら (sara)",
+                  "is_correct": false,
+                  "feedback": "Doch: おさら (osara) ist sehr üblich."
+                },
+                {
+                  "option_text": "かね (kane)",
+                  "is_correct": false,
+                  "feedback": "Doch: おかね (okane) sagt man fast immer mit お (o)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie fragst du, was alles zusammen kostet?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "「ぜんぶで」 (zenbu de) heisst 'alles zusammen'. Dazu kommt 「いくらですか」 (ikura desu ka).",
+              "options": [
+                {
+                  "option_text": "ぜんぶで いくらですか。 (Zenbu de ikura desu ka.)",
+                  "is_correct": true,
+                  "feedback": "Richtig — ぜんぶで (zenbu de) = alles zusammen."
+                },
+                {
+                  "option_text": "ぜんぶは なんですか。 (Zenbu wa nan desu ka.)",
+                  "is_correct": false,
+                  "feedback": "Das heisst 'Was ist alles?' — keine Frage nach dem Preis."
+                },
+                {
+                  "option_text": "いくらで ぜんぶですか。 (Ikura de zenbu desu ka.)",
+                  "is_correct": false,
+                  "feedback": "Die Reihenfolge stimmt nicht: zuerst ぜんぶで (zenbu de), dann いくら (ikura)."
+                },
+                {
+                  "option_text": "ぜんぶを ください。 (Zenbu o kudasai.)",
+                  "is_correct": false,
+                  "feedback": "Das heisst 'Alles, bitte' — damit bestellst du alles."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「ゆうはん」 (yuuhan) bedeutet 'Mittagessen'.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「ゆうはん」 (yuuhan) ist das Abendessen, genau wie ばんごはん (bangohan).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nein — ゆうはん (yuuhan) ist das Abendessen."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Richtig erkannt — ゆうはん (yuuhan) = Abendessen."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde die kleinen Gesprächswörter mit der deutschen Bedeutung.",
+              "difficulty_level": 2,
+              "points": 4,
+              "options": [
+                {
+                  "option_text": "いっしょに (issho ni)",
+                  "is_correct": true,
+                  "feedback": "zusammen"
+                },
+                {
+                  "option_text": "ええ (ee)",
+                  "is_correct": true,
+                  "feedback": "ja"
+                },
+                {
+                  "option_text": "ああ (aa)",
+                  "is_correct": true,
+                  "feedback": "ach, oh"
+                },
+                {
+                  "option_text": "いくら (ikura)",
+                  "is_correct": true,
+                  "feedback": "wie viel"
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「あまい もの」 (amai mono)?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "「もの」 (mono) heisst 'Ding, Sache'. Nach einem Adjektiv: あまい もの (amai mono) = etwas Süsses.",
+              "options": [
+                {
+                  "option_text": "etwas Süsses",
+                  "is_correct": true,
+                  "feedback": "Richtig — あまい (amai) = süss, もの (mono) = Ding."
+                },
+                {
+                  "option_text": "etwas Kaltes",
+                  "is_correct": false,
+                  "feedback": "Etwas Kaltes wäre つめたい もの (tsumetai mono)."
+                },
+                {
+                  "option_text": "ein Getränk",
+                  "is_correct": false,
+                  "feedback": "Ein Getränk wäre のみもの (nomimono)."
+                },
+                {
+                  "option_text": "etwas Leckeres",
+                  "is_correct": false,
+                  "feedback": "Etwas Leckeres wäre おいしい もの (oishii mono)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Die Kellnerin sagt: 「千二百円です。」 (Sen nihyaku en desu.) Wie viel kostet es?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "千 (sen) = 1000, 二百 (nihyaku) = 200. Zusammen: 1200 Yen.",
+              "options": [
+                {
+                  "option_text": "1200 Yen",
+                  "is_correct": true,
+                  "feedback": "Richtig — 千二百円 (sen nihyaku en)."
+                },
+                {
+                  "option_text": "2100 Yen",
+                  "is_correct": false,
+                  "feedback": "Das wäre 二千百円 (nisen hyaku en)."
+                },
+                {
+                  "option_text": "1020 Yen",
+                  "is_correct": false,
+                  "feedback": "Das wäre 千二十円 (sen nijuu en)."
+                },
+                {
+                  "option_text": "12 000 Yen",
+                  "is_correct": false,
+                  "feedback": "Das wäre 一万二千円 (ichiman nisen en)."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Zu anderen Leuten klingt 「いやです」 (iya desu) sehr direkt.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Höflicher lehnst du mit 「ちょっと…」 (chotto…) ab, zum Beispiel 「にくは ちょっと…」 (niku wa chotto…).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Richtig — höflicher ist 「ちょっと…」 (chotto…)."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch, das stimmt: いやです (iya desu) klingt sehr direkt. Höflicher ist 「ちょっと…」 (chotto…)."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Zusammenfassung",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Das hast du gelernt\n\nGlückwunsch! Du kannst jetzt in einem japanischen Restaurant bestellen und bezahlen.\n\n- **Essen und Trinken**: みず (mizu), おちゃ (ocha), のみもの (nomimono), にく (niku), さかな (sakana), たべもの (tabemono), もの (mono), ゆうはん (yuuhan), おいしい (oishii), レストラン (resutoran)\n- **Gesprächswörter**: ええ (ee), ああ (aa), いっしょに (issho ni), いや (iya), いくら (ikura), ぜんぶ (zenbu), お～ (o-, höfliche Vorsilbe)\n- **Muster**: おみずを ください (omizu o kudasai) — おちゃを おねがいします (ocha o onegaishimasu) — ぜんぶで いくらですか (zenbu de ikura desu ka)\n\n> Tipp: Sprich beim nächsten Essen deine Bestellung leise auf Japanisch mit — 「おみずを ください」 (omizu o kudasai). Und wenn dir etwas schmeckt: 「おいしいです！」 (oishii desu!)\n\nIn der nächsten Lektion **«N5 Alltag & Essen 2 — Was möchtest du essen?»** lernst du, wie du sagst, was du gern essen möchtest."
+          }
+        }
+      ]
+    }
+  ]
+}

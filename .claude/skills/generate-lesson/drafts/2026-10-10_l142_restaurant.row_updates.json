@@ -1,0 +1,193 @@
+{
+  "updates": [
+    {
+      "vocab_id": 223,
+      "field": "example_sentence_japanese",
+      "old": "つめたい水を飲みます。",
+      "new": "つめたい 水を のみます。",
+      "reason": "飲 nicht im N5-Kanji-Set → Kana"
+    },
+    {
+      "vocab_id": 224,
+      "field": "example_sentence_japanese",
+      "old": "あさいつもお茶を飲みます。",
+      "new": "あさは いつも おちゃを のみます。",
+      "reason": "茶/飲 nicht im N5-Kanji-Set → Kana; は nach あさ ergänzt (natürlicher)"
+    },
+    {
+      "vocab_id": 224,
+      "field": "example_sentence_english",
+      "old": "Asa itsumo ocha o nomimasu. — Morgens trinke ich immer Tee.",
+      "new": "Asa wa itsumo ocha o nomimasu. — Morgens trinke ich immer Tee.",
+      "reason": "Romaji an neuen Satz angepasst (wa)"
+    },
+    {
+      "vocab_id": 228,
+      "field": "example_sentence_japanese",
+      "old": "つめたい飲み物がほしいです。",
+      "new": "つめたい のみものが ほしいです。",
+      "reason": "飲/物 nicht im N5-Kanji-Set → Kana"
+    },
+    {
+      "vocab_id": 226,
+      "field": "example_sentence_japanese",
+      "old": "わたしは肉がすきです。",
+      "new": "わたしは にくが すきです。",
+      "reason": "肉/好 nicht im N5-Kanji-Set → Kana"
+    },
+    {
+      "vocab_id": 227,
+      "field": "example_sentence_japanese",
+      "old": "ばんごはんに魚を食べました。",
+      "new": "ばんごはんに さかなを 食べました。",
+      "reason": "魚 nicht im N5-Kanji-Set → Kana"
+    },
+    {
+      "vocab_id": 230,
+      "field": "example_sentence_japanese",
+      "old": "このケーキはおいしいです。",
+      "new": "この パンは とても おいしいです。",
+      "reason": "ケーキ steht nicht in der kanonischen N5-Liste → パン"
+    },
+    {
+      "vocab_id": 230,
+      "field": "example_sentence_english",
+      "old": "Kono kēki wa oishii desu. — Dieser Kuchen ist lecker.",
+      "new": "Kono pan wa totemo oishii desu. — Dieses Brot ist sehr lecker.",
+      "reason": "an neuen Satz angepasst, Romaji ohne Makron"
+    },
+    {
+      "vocab_id": 1050,
+      "field": "example_sentence_japanese",
+      "old": "かばんの中に物がたくさんあります。",
+      "new": "あまい ものが だいすきです。",
+      "reason": "物 nicht im N5-Kanji-Set; neuer Satz zeigt den typischen Gebrauch Adjektiv + もの"
+    },
+    {
+      "vocab_id": 1050,
+      "field": "example_sentence_english",
+      "old": "Kaban no naka ni mono ga takusan arimasu. — In der Tasche sind viele Sachen.",
+      "new": "Amai mono ga daisuki desu. — Ich liebe Süsses.",
+      "reason": "an neuen Satz angepasst"
+    },
+    {
+      "vocab_id": 1065,
+      "field": "example_sentence_japanese",
+      "old": "七時に夕飯を食べます。",
+      "new": "七時に ゆうはんを 食べます。",
+      "reason": "夕/飯 nicht im N5-Kanji-Set → Kana"
+    },
+    {
+      "vocab_id": 1065,
+      "field": "example_sentence_english",
+      "old": "Shichiji ni yūhan o tabemasu. — Um sieben Uhr esse ich zu Abend.",
+      "new": "Shichiji ni yuuhan o tabemasu. — Um sieben Uhr esse ich zu Abend.",
+      "reason": "Romaji ohne Makron (yuu statt yū), einheitlich in der Lektion"
+    },
+    {
+      "vocab_id": 219,
+      "field": "example_sentence_japanese",
+      "old": "いっしょに昼ごはんを食べませんか。",
+      "new": "いっしょに ひるごはんを 食べませんか。",
+      "reason": "昼 nicht im N5-Kanji-Set → Kana"
+    },
+    {
+      "vocab_id": 220,
+      "field": "example_sentence_english",
+      "old": "Ē, watashi mo ikimasu. — Ja, ich gehe auch.",
+      "new": "Ee, watashi mo ikimasu. — Ja, ich gehe auch.",
+      "reason": "Romaji ohne Makron (Ee statt Ē), passend zum romaji-Feld ee"
+    },
+    {
+      "vocab_id": 961,
+      "field": "example_sentence_japanese",
+      "old": "ああ、そうですか。わかりました。",
+      "new": "ああ、レストランは あそこですね。",
+      "reason": "alter Text waren zwei Sätze und abstrakt; neuer Satz ist einer und bildhaft"
+    },
+    {
+      "vocab_id": 961,
+      "field": "example_sentence_english",
+      "old": "Aa, sō desu ka. Wakarimashita. — Ach so. Verstanden.",
+      "new": "Aa, resutoran wa asoko desu ne. — Ach, das Restaurant ist dort drüben.",
+      "reason": "an neuen Satz angepasst"
+    },
+    {
+      "vocab_id": 996,
+      "field": "example_sentence_japanese",
+      "old": "雨の日は嫌です。",
+      "new": "雨の 日は いやです。",
+      "reason": "嫌 nicht im N5-Kanji-Set → Kana"
+    },
+    {
+      "vocab_id": 996,
+      "field": "example_sentence_english",
+      "old": "Ame no hi wa iya desu. — Regentage mag ich nicht.",
+      "new": "Ame no hi wa iya desu. — Regentage finde ich unangenehm.",
+      "reason": "Übersetzung trifft いや (unangenehm, passt mir nicht) genauer als 'mag ich nicht' (das wäre eher きらい)"
+    },
+    {
+      "vocab_id": 1069,
+      "field": "example_sentence_japanese",
+      "old": "おちゃをどうぞ。",
+      "new": "おちゃを どうぞ。",
+      "reason": "Leerzeichen zwischen den Satzgliedern wie im Rest der Lektion"
+    },
+    {
+      "vocab_id": 1069,
+      "field": "example_sentence_english",
+      "old": "O-cha o dōzo. — Bitte, hier ist Tee.",
+      "new": "Ocha o douzo. — Bitte schön, hier ist Tee.",
+      "reason": "Romaji ohne Makron (douzo), Deutsch natürlicher"
+    },
+    {
+      "vocab_id": 229,
+      "field": "example_sentence_japanese",
+      "old": "日本の食べ物はおいしいです。",
+      "new": "日本の 食べものは おいしいです。",
+      "reason": "物 nicht im N5-Kanji-Set → Kana"
+    },
+    {
+      "vocab_id": 217,
+      "field": "reading",
+      "old": "resutoran",
+      "new": "レストラン",
+      "reason": "Datenfehler: reading war Romaji 'resutoran' statt Katakana"
+    },
+    {
+      "vocab_id": 217,
+      "field": "example_sentence_japanese",
+      "old": "友だちとレストランで食べます。",
+      "new": "友だちと レストランで 食べます。",
+      "reason": "Leerzeichen zwischen den Satzgliedern wie im Rest der Lektion"
+    },
+    {
+      "vocab_id": 220,
+      "field": "example_sentence_japanese",
+      "old": "ええ、わたしも行きます。",
+      "new": "ええ、わたしも 行きます。",
+      "reason": "Leerzeichen zwischen den Satzgliedern wie im Rest der Lektion"
+    },
+    {
+      "vocab_id": 220,
+      "field": "meaning_de",
+      "old": "ja (informell)",
+      "new": "ja (weicher als はい)",
+      "reason": "'informell' trifft es nicht genau: ええ ist ein weicheres ja, nicht unhöflich"
+    },
+    {
+      "vocab_id": 224,
+      "field": "romaji",
+      "old": "o-cha",
+      "new": "ocha",
+      "reason": "einheitlich mit Fliesstext und Beispielsatz (ocha), kein Bindestrich"
+    },
+    {
+      "vocab_id": 940,
+      "field": "example_sentence_english",
+      "old": "Uta o zenbu oboemashita. — Ich habe alle Lieder gelernt.",
+      "new": "Uta o zenbu oboemashita. — Ich kann das ganze Lied auswendig.",
+      "reason": "Übersetzung treffender: ぜんぶ bezieht sich auf das ganze Lied"
+    }
+  ]
+}

@@ -1,0 +1,859 @@
+{
+  "title": "N5 Hier, da, dort — ここ・そこ・あそこ und どこ",
+  "description": "Zeige auf Orte mit ここ (koko), そこ (soko) und あそこ (asoko) und frage mit どこ (doko), wo etwas ist. Dazu lernst du die höfliche Form こちら (kochira) und die lockere Form こっち (kocchi).",
+  "jlpt_level": 5,
+  "topic": "Orte zeigen ko so a do",
+  "instruction_language": "german",
+  "allow_guest_access": false,
+  "thumbnail_url": "generated/thumbnail_orte_zeigen_ko_so_a_do_20261010_071635.png",
+  "pages": [
+    {
+      "title": "Einführung",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Hier, da, dort\n\nIn der letzten Lektion hast du mit これ (kore), それ (sore) und あれ (are) auf **Dinge** gezeigt. Jetzt zeigst du auf **Orte**: hier, da und dort drüben.\n\n- ここ (koko), そこ (soko), あそこ (asoko) — hier, da, dort drüben\n- どこ (doko) — wo?\n- こちら (kochira) — die **höfliche** Form, zum Beispiel im Geschäft oder im Hotel\n- こっち (kocchi) — die **lockere** Form unter Freunden\n\nDamit kannst du im Kaufhaus nach der Toilette fragen, den Weg zur Bank verstehen und einen Freund zu dir rufen. Dazu lernst du Wörter, mit denen du einen Ort genauer beschreibst: この へん (kono hen, hier in der Gegend), よこ (yoko, neben) und みぎがわ (migigawa, rechte Seite).\n\n> Der wichtigste Satz dieser Lektion: **トイレは どこですか。 (Toire wa doko desu ka.)** — Wo ist die Toilette?"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln Teil 1 — ここ・そこ・あそこ・どこ und die höfliche Form",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Das Ko-So-A-Do-System\n\nJapanisch zeigt auf Orte mit vier Silben am Wortanfang: **こ (ko)**, **そ (so)**, **あ (a)** und **ど (do)**. Entscheidend ist, *wo* der Ort liegt: bei der Person, die spricht, bei der Person, die zuhört, oder weit weg von beiden.\n\n- **こ (ko)** — bei mir: ここ (koko, hier)\n- **そ (so)** — bei dir: そこ (soko, da)\n- **あ (a)** — weit weg von uns beiden: あそこ (asoko, dort drüben)\n- **ど (do)** — Frage: どこ (doko, wo?)\n\nDas System kennst du schon: これ (kore), それ (sore), あれ (are), どれ (dore) für Dinge funktionieren genau gleich.\n\n### Die höfliche Reihe\n\n- こちら (kochira) — hier, hier entlang\n- そちら (sochira) — da bei Ihnen\n- あちら (achira) — dort drüben\n- どちら (dochira) — wo? welche Richtung?\n\nDie こちら-Reihe zeigt ausserdem eine **Richtung** — こちらへ どうぞ (kochira e douzo, hier entlang, bitte) — und ist die höfliche Art, auf Dinge oder Personen zu zeigen: こちらは たなかさんです (kochira wa Tanaka-san desu, das ist Herr Tanaka).\n\n> ここ (koko), そこ (soko), あそこ (asoko) und どこ (doko) mit です (desu) sind auch bei Fremden völlig in Ordnung. Die **こちら-Reihe (kochira)** ist noch eine Stufe höflicher — so spricht vor allem das Personal in Geschäften, Hotels und am Bahnhof."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 95,
+            "word": "ここ",
+            "reading": "ここ",
+            "romaji": "koko",
+            "meaning": "here, this place",
+            "meaning_de": "hier, dieser Ort",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ここは わたしの きょうしつです。",
+            "example_sentence_english": "Koko wa watashi no kyoushitsu desu. — Hier ist mein Klassenzimmer.",
+            "image_url": "vocabulary/images/vocab_95_fe8b86e7.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 96,
+            "word": "そこ",
+            "reading": "そこ",
+            "romaji": "soko",
+            "meaning": "there, that place (near you)",
+            "meaning_de": "da, der Ort bei dir",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "そこに かばんが あります。",
+            "example_sentence_english": "Soko ni kaban ga arimasu. — Da (bei dir) ist eine Tasche.",
+            "image_url": "vocabulary/images/vocab_96_a71e9cef.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 97,
+            "word": "あそこ",
+            "reading": "あそこ",
+            "romaji": "asoko",
+            "meaning": "over there, that place (far)",
+            "meaning_de": "dort drüben, jener Ort",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あそこに えきが あります。",
+            "example_sentence_english": "Asoko ni eki ga arimasu. — Dort drüben ist ein Bahnhof.",
+            "image_url": "vocabulary/images/vocab_97_1f5f2a84.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 98,
+            "word": "どこ",
+            "reading": "どこ",
+            "romaji": "doko",
+            "meaning": "where, what place",
+            "meaning_de": "wo, welcher Ort",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "トイレは どこですか。",
+            "example_sentence_english": "Toire wa doko desu ka. — Wo ist die Toilette?",
+            "image_url": "vocabulary/images/vocab_98_3595fb99.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 99,
+            "word": "こちら",
+            "reading": "こちら",
+            "romaji": "kochira",
+            "meaning": "this way, here (polite)",
+            "meaning_de": "hier entlang, hier (höflich)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "こちらは たなかさんです。",
+            "example_sentence_english": "Kochira wa Tanaka-san desu. — Das hier ist Herr Tanaka.",
+            "image_url": "vocabulary/images/vocab_99_e59f895b.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 100,
+            "word": "そちら",
+            "reading": "そちら",
+            "romaji": "sochira",
+            "meaning": "that way, there (polite)",
+            "meaning_de": "da (bei Ihnen), in Ihre Richtung (höflich)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "そちらは なんですか。",
+            "example_sentence_english": "Sochira wa nan desu ka. — Was ist das da bei Ihnen?",
+            "image_url": "vocabulary/images/vocab_100_545450f8.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 101,
+            "word": "あちら",
+            "reading": "あちら",
+            "romaji": "achira",
+            "meaning": "that way, over there (polite)",
+            "meaning_de": "dort drüben, dorthin (höflich)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あちらは せんせいの へやです。",
+            "example_sentence_english": "Achira wa sensei no heya desu. — Dort drüben ist das Zimmer des Lehrers.",
+            "image_url": "vocabulary/images/vocab_101_73e17305.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 102,
+            "word": "どちら",
+            "reading": "どちら",
+            "romaji": "dochira",
+            "meaning": "which way, where (polite)",
+            "meaning_de": "wo, welche Richtung; welche/r von beiden (höflich)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "おてあらいは どちらですか。",
+            "example_sentence_english": "Otearai wa dochira desu ka. — Wo ist die Toilette?",
+            "image_url": "vocabulary/images/vocab_102_3576e7ce.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln Teil 2 — locker sprechen und Orte beschreiben",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Locker sprechen und Orte beschreiben\n\nUnter Freunden und in der Familie klingt die **こっち-Reihe (kocchi)** natürlicher. Sie entspricht genau der höflichen こちら-Reihe (kochira):\n\n- こっち (kocchi) = こちら (kochira) — hier, hierher\n- そっち (socchi) = そちら (sochira) — da bei dir\n- あっち (acchi) = あちら (achira) — dort drüben\n- どっち (docchi) = どちら (dochira) — wohin? und: welche/r von beiden?\n\n### Orte genauer beschreiben\n\n- **この へん (kono hen)** — hier in der Gegend\n- **[Ort] の よこ ([Ort] no yoko)** — neben [Ort]: ぎんこうの よこ (ginkou no yoko, neben der Bank)\n- **みぎがわ / ひだりがわ (migigawa / hidarigawa)** — rechte / linke Seite: みぎ (migi) = rechts, ひだり (hidari) = links, 〜がわ (-gawa) = Seite.\n\nFür ein Gebäude direkt nebenan hört man oft auch となり (tonari).\n\nAuf den Karten für へん (hen), よこ (yoko) und がわ (gawa) siehst du Kanji, die du für N5 noch nicht lernen musst — in den Sätzen stehen diese Wörter deshalb in Hiragana.\n\nDazu kommen zwei nützliche Wörter: **エレベーター (erebeetaa, Lift)** und **うち (uchi, Zuhause)**.\n\n> Sagen, was wo ist: [Ort] に [Ding] が あります ([Ort] ni [Ding] ga arimasu) für Dinge, [Ort] に [Person/Tier] が います ([Ort] ni [Person/Tier] ga imasu) für Menschen und Tiere — zum Beispiel この へんに ぎんこうが あります (kono hen ni ginkou ga arimasu). Genauer übst du das in der nächsten Lektion."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 963,
+            "word": "こっち",
+            "reading": "こっち",
+            "romaji": "kocchi",
+            "meaning": "this way, here (casual)",
+            "meaning_de": "hier, hierher (umgangssprachlich)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ねこは こっちに いますよ。",
+            "example_sentence_english": "Neko wa kocchi ni imasu yo. — Die Katze ist hier bei mir.",
+            "image_url": "vocab_generated/vocab_116160ab.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 964,
+            "word": "そっち",
+            "reading": "そっち",
+            "romaji": "socchi",
+            "meaning": "there (near you) (casual)",
+            "meaning_de": "da (bei dir) (umgangssprachlich)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "そっちは 雨ですか。",
+            "example_sentence_english": "Socchi wa ame desu ka. — Regnet es bei dir?",
+            "image_url": "vocab_generated/vocab_d86dc379.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 962,
+            "word": "あっち",
+            "reading": "あっち",
+            "romaji": "acchi",
+            "meaning": "over there (casual)",
+            "meaning_de": "dort drüben (umgangssprachlich)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "トイレは あっちですよ。",
+            "example_sentence_english": "Toire wa acchi desu yo. — Die Toilette ist dort drüben.",
+            "image_url": "vocab_generated/vocab_9a4d02b5.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 965,
+            "word": "どっち",
+            "reading": "どっち",
+            "romaji": "docchi",
+            "meaning": "which one (of two), which way (casual)",
+            "meaning_de": "welche/r/s (von zweien), wohin (umgangssprachlich)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "コーヒーと こうちゃと、どっちが いいですか。",
+            "example_sentence_english": "Koohii to koucha to, docchi ga ii desu ka. — Kaffee oder Tee: Was möchtest du lieber?",
+            "image_url": "vocab_generated/vocab_cf079d87.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1066,
+            "word": "辺",
+            "reading": "へん",
+            "romaji": "hen",
+            "meaning": "area, vicinity",
+            "meaning_de": "Gegend, Umgebung",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "この へんに ぎんこうは ありますか。",
+            "example_sentence_english": "Kono hen ni ginkou wa arimasu ka. — Gibt es hier in der Gegend eine Bank?",
+            "image_url": "vocab_generated/vocab_2e3bbbbe.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1067,
+            "word": "横",
+            "reading": "よこ",
+            "romaji": "yoko",
+            "meaning": "side; beside; width",
+            "meaning_de": "Seite, neben; Breite",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ぎんこうの よこに デパートが あります。",
+            "example_sentence_english": "Ginkou no yoko ni depaato ga arimasu. — Neben der Bank ist ein Kaufhaus.",
+            "image_url": "vocab_generated/vocab_8cac9e05.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1073,
+            "word": "～側",
+            "reading": "～がわ",
+            "romaji": "-gawa",
+            "meaning": "~ side",
+            "meaning_de": "… Seite",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "えきの みぎがわに ぎんこうが あります。",
+            "example_sentence_english": "Eki no migigawa ni ginkou ga arimasu. — Auf der rechten Seite des Bahnhofs ist eine Bank.",
+            "image_url": "vocab_generated/vocab_ea475eb8.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 112,
+            "word": "エレベーター",
+            "reading": "エレベーター",
+            "romaji": "erebeetaa",
+            "meaning": "elevator",
+            "meaning_de": "Aufzug, Lift",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "エレベーターで ごかいへ いきます。",
+            "example_sentence_english": "Erebeetaa de gokai e ikimasu. — Ich fahre mit dem Lift in den 5. Stock (in Japan zählt das Erdgeschoss als 1. Stock).",
+            "image_url": "vocabulary/images/vocab_112_f615c522.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 132,
+            "word": "うち",
+            "reading": "うち",
+            "romaji": "uchi",
+            "meaning": "home, house",
+            "meaning_de": "Zuhause, Haus",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あした うちに います。",
+            "example_sentence_english": "Ashita uchi ni imasu. — Morgen bin ich zu Hause.",
+            "image_url": "vocabulary/images/vocab_132_ae26f52d.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        }
+      ]
+    },
+    {
+      "title": "Grammatik — Orte zeigen und danach fragen",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Grammatik — Orte zeigen und danach fragen\n\nDrei Wortreihen, ein Prinzip: **こ (ko)** = bei mir, **そ (so)** = bei dir, **あ (a)** = weit weg, **ど (do)** = Frage.\n\n1. ここ・そこ・あそこ・どこ (koko / soko / asoko / doko) — für jeden Tag, mit です (desu) auch bei Fremden in Ordnung\n2. こちら・そちら・あちら・どちら (kochira / sochira / achira / dochira) — noch eine Stufe höflicher, typisch für das Personal; zeigt auch eine Richtung\n3. こっち・そっち・あっち・どっち (kocchi / socchi / acchi / docchi) — locker\n\n> Merke: Mit **[Ding] は どこですか ([Ding] wa doko desu ka)** fragst du, wo etwas ist. Die Antwort hat dieselbe Form: **トイレは あそこです (toire wa asoko desu)** — die Toilette ist dort drüben."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "ここ・そこ・あそこ・どこ — wo etwas ist (koko / soko / asoko / doko)",
+            "explanation": "Mit 「ここ」 (koko, hier — bei mir), 「そこ」 (soko, da — bei dir) und 「あそこ」 (asoko, dort drüben — weit weg von uns beiden) zeigst du auf Orte. 「どこ」 (doko, wo?) ist das passende Fragewort. Das Muster 「[Ding] は ここです」 ([Ding] wa koko desu) sagt, wo etwas ist. Umgekehrt sagt 「ここは [Ort] です」 (koko wa [Ort] desu), was für ein Ort das hier ist. Gefragt wird mit 「[Ding] は どこですか」 ([Ding] wa doko desu ka).",
+            "structure": "[Ding/Ort] + は + ここ / そこ / あそこ / どこ + です(か)  ([thing/place] + wa + koko / soko / asoko / doko + desu (ka))",
+            "romaji": "[thing/place] + wa + koko / soko / asoko / doko + desu (ka)",
+            "jlpt_level": 5,
+            "example_sentences": "トイレは どこですか。 (Toire wa doko desu ka.) — Wo ist die Toilette?\nここは ぎんこうです。 (Koko wa ginkou desu.) — Das hier ist eine Bank.\nえきは あそこです。 (Eki wa asoko desu.) — Der Bahnhof ist dort drüben.",
+            "tts_example_jp": "トイレは どこですか。",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "こちら・そちら・あちら・どちら — höflich auf Orte zeigen (kochira / sochira / achira / dochira)",
+            "explanation": "「こちら」 (kochira), 「そちら」 (sochira), 「あちら」 (achira) und 「どちら」 (dochira) bedeuten dasselbe wie ここ・そこ・あそこ・どこ (koko / soko / asoko / doko), klingen aber noch eine Stufe höflicher. ここ (koko) usw. mit です (desu) sind auch bei Fremden in Ordnung — die こちら-Reihe hörst du vor allem vom Personal. Sie zeigt ausserdem eine Richtung. Das Personal im Geschäft oder im Hotel sagt zum Beispiel 「トイレは あちらです」 (toire wa achira desu, die Toilette ist dort drüben) oder 「こちらへ どうぞ」 (kochira e douzo, hier entlang, bitte). Höflich nach der Herkunft fragst du mit 「おくには どちらですか」 (okuni wa dochira desu ka, woher kommen Sie?) — 「おくに」 (okuni) heisst 'Ihr Land' (höflich). Und mit 「こちらは 〜さんです」 (kochira wa ~ san desu) stellst du jemanden vor: 'Das ist Herr/Frau ~'.",
+            "structure": "[Ort/Ding] + は + こちら / そちら / あちら / どちら + です(か)  ([place/thing] + wa + kochira / sochira / achira / dochira + desu (ka))",
+            "romaji": "[place/thing] + wa + kochira / sochira / achira / dochira + desu (ka)",
+            "jlpt_level": 5,
+            "example_sentences": "エレベーターは あちらです。 (Erebeetaa wa achira desu.) — Der Lift ist dort drüben.\nこちらへ どうぞ。 (Kochira e douzo.) — Hier entlang, bitte.\nおくには どちらですか。 (Okuni wa dochira desu ka.) — Woher kommen Sie?",
+            "tts_example_jp": "おくには どちらですか。",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "こっち・そっち・あっち・どっち — locker, und どっち / どちら für 'welche von beiden?' (kocchi / socchi / acchi / docchi)",
+            "explanation": "Unter Freunden und in der Familie sagt man oft 「こっち」 (kocchi), 「そっち」 (socchi), 「あっち」 (acchi) und 「どっち」 (docchi). Sie bedeuten dasselbe wie die こちら-Reihe (kochira), klingen aber locker. Locker ist das Wort selbst: Auch mit です/ます (desu/masu) kannst du こっち (kocchi) usw. benutzen, zum Beispiel 「えきは あっちですよ」 (eki wa acchi desu yo). Bei Fremden und im Geschäft nimmst du besser ここ (koko) oder こちら (kochira) usw. Ausserdem fragen 「どっち」 (docchi) und höflich 「どちら」 (dochira) nach einer Auswahl aus zwei Dingen: 「AとBと、どっちが いいですか」 (A to B to, docchi ga ii desu ka) = 'Was ist dir lieber, A oder B?'. Bei drei oder mehr Dingen nimmst du 「どれ」 (dore).",
+            "structure": "[A] と [B] と + どっち / どちら + が いいですか  ([A] to [B] to + docchi / dochira + ga ii desu ka)",
+            "romaji": "[A] to [B] to + docchi / dochira + ga ii desu ka",
+            "jlpt_level": 5,
+            "example_sentences": "こっちに いすが ありますよ。 (Kocchi ni isu ga arimasu yo.) — Hier bei mir ist ein Stuhl.\nえきは あっちですよ。 (Eki wa acchi desu yo.) — Der Bahnhof ist dort drüben.\nコーヒーと こうちゃと、どっちが いいですか。 (Koohii to koucha to, docchi ga ii desu ka.) — Was möchtest du lieber, Kaffee oder Tee?",
+            "tts_example_jp": "コーヒーと こうちゃと、どっちが いいですか。",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        }
+      ]
+    },
+    {
+      "title": "Dialog — Im Kaufhaus",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "Lisa: すみません、トイレは どこですか。\n  (Sumimasen, toire wa doko desu ka.)\n  -> Entschuldigung, wo ist die Toilette?\n\nAngestellte: トイレですか。あちらです。エレベーターの よこです。\n  (Toire desu ka. Achira desu. Erebeetaa no yoko desu.)\n  -> Die Toilette? Dort drüben, neben dem Lift.\n\nLisa: ありがとうございます。それから、この へんに ぎんこうは ありますか。\n  (Arigatou gozaimasu. Sorekara, kono hen ni ginkou wa arimasu ka.)\n  -> Vielen Dank. Und gibt es hier in der Gegend eine Bank?\n\nAngestellte: はい、あります。この デパートの みぎがわです。\n  (Hai, arimasu. Kono depaato no migigawa desu.)\n  -> Ja, gibt es. Auf der rechten Seite dieses Kaufhauses.\n\nHaruto: リサさん、こっち、こっち！\n  (Risa-san, kocchi, kocchi!)\n  -> Lisa, hier, hier drüben!\n\nLisa: あ、ハルトさん！ きっさてんは どこですか。\n  (A, Haruto-san! Kissaten wa doko desu ka.)\n  -> Ah, Haruto! Wo ist das Café?\n\nHaruto: あっちです。\n  (Acchi desu.)\n  -> Dort drüben.\n\nLisa: え、どっちですか。\n  (E, docchi desu ka.)\n  -> Hm, in welche Richtung?\n\nHaruto: あの ぎんこうの よこです。\n  (Ano ginkou no yoko desu.)\n  -> Neben der Bank dort.\n\nLisa: ああ、あそこですね。いっしょに 行きましょう。\n  (Aa, asoko desu ne. Issho ni ikimashou.)\n  -> Ach, dort! Gehen wir zusammen hin.",
+            "title": "Im Kaufhaus — Lisa sucht den Weg"
+          }
+        },
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "### Verständnisfragen\n\nFünf kurze Fragen zum **Dialog**. Achte darauf, wer **höflich** spricht — あちら (achira) — und wer **locker** — こっち (kocchi), あっち (acchi)."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wo ist die Toilette?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Die Angestellte sagt 「あちらです。エレベーターの よこです。」 (Achira desu. Erebeetaa no yoko desu.) — dort drüben, neben dem Lift.",
+              "options": [
+                {
+                  "option_text": "neben dem Lift",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「エレベーターの よこです」 (erebeetaa no yoko desu) = neben dem Lift."
+                },
+                {
+                  "option_text": "neben der Bank",
+                  "is_correct": false,
+                  "feedback": "Neben der Bank ist das Café, nicht die Toilette."
+                },
+                {
+                  "option_text": "auf der rechten Seite des Kaufhauses",
+                  "is_correct": false,
+                  "feedback": "Dort ist die Bank — 「みぎがわ」 (migigawa)."
+                },
+                {
+                  "option_text": "direkt bei der Angestellten",
+                  "is_correct": false,
+                  "feedback": "Dann hätte sie 「こちら」 (kochira) gesagt. Sie sagt 「あちら」 (achira), also dort drüben."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Haruto spricht mit Lisa locker: Er sagt こっち (kocchi) und あっち (acchi).",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Haruto und Lisa sind Freunde. Darum sagt Haruto 「こっち、こっち！」 (kocchi, kocchi!) und 「あっちです」 (acchi desu) — die lockere Reihe. Die Angestellte sagt dagegen höflich 「あちら」 (achira).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Richtig — こっち (kocchi) und あっち (acchi) sind die lockeren Formen von こちら (kochira) und あちら (achira)."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch: Haruto sagt 「こっち、こっち！」 (kocchi, kocchi!) und 「あっちです」 (acchi desu) — das ist die lockere Reihe."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wo ist die Bank?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Die Angestellte sagt 「はい、あります。この デパートの みぎがわです。」 (Hai, arimasu. Kono depaato no migigawa desu.)",
+              "options": [
+                {
+                  "option_text": "auf der rechten Seite des Kaufhauses",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「この デパートの みぎがわです」 (kono depaato no migigawa desu)."
+                },
+                {
+                  "option_text": "auf der linken Seite des Kaufhauses",
+                  "is_correct": false,
+                  "feedback": "Links wäre 「ひだりがわ」 (hidarigawa). Die Angestellte sagt 「みぎがわ」 (migigawa)."
+                },
+                {
+                  "option_text": "neben dem Lift",
+                  "is_correct": false,
+                  "feedback": "Neben dem Lift ist die Toilette."
+                },
+                {
+                  "option_text": "im Bahnhof",
+                  "is_correct": false,
+                  "feedback": "Ein Bahnhof, 「えき」 (eki), kommt im Dialog nicht vor."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Mit welchem Wort ruft Haruto Lisa zu sich?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Haruto ruft 「リサさん、こっち、こっち！」 (Risa-san, kocchi, kocchi!). こっち (kocchi) ist die lockere Form von こちら (kochira).",
+              "options": [
+                {
+                  "option_text": "こっち (kocchi)",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「こっち、こっち！」 (kocchi, kocchi!) = hier, hier drüben! Locker, unter Freunden."
+                },
+                {
+                  "option_text": "こちら (kochira)",
+                  "is_correct": false,
+                  "feedback": "こちら (kochira) bedeutet dasselbe, ist aber höflich — unter Freunden klingt das zu steif."
+                },
+                {
+                  "option_text": "そっち (socchi)",
+                  "is_correct": false,
+                  "feedback": "そっち (socchi) heisst 'da bei dir' — Haruto will aber, dass Lisa zu ihm kommt."
+                },
+                {
+                  "option_text": "あっち (acchi)",
+                  "is_correct": false,
+                  "feedback": "あっち (acchi) sagt Haruto später für das Café dort drüben."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Das Café ist neben der Bank.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Haruto sagt 「あの ぎんこうの よこです」 (ano ginkou no yoko desu) — neben der Bank dort.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「ぎんこうの よこ」 (ginkou no yoko) = neben der Bank."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch: Haruto sagt 「あの ぎんこうの よこです」 (ano ginkou no yoko desu)."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Übung",
+      "page_type": "quiz_carousel",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Übung\n\nElf Fragen zu **ここ (koko), そこ (soko), あそこ (asoko) und どこ (doko)**, ihren **höflichen und lockeren** Formen sowie zu よこ (yoko), この へん (kono hen) und どっち (docchi).\n\n- Frag dich bei jeder Aufgabe: bei mir, bei dir oder weit weg?\n- Achte darauf, ob die Situation höflich oder locker ist."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Das Buch liegt bei deinem Gegenüber, nicht bei dir. Du sagst: 'Das Buch ist da (bei dir).' Welches Wort passt?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "ほんは そこです。 (Hon wa soko desu.) — そ (so) steht für den Bereich deines Gegenübers.",
+              "options": [
+                {
+                  "option_text": "そこ (soko)",
+                  "is_correct": true,
+                  "feedback": "Richtig — そこ (soko) ist der Ort bei deinem Gegenüber."
+                },
+                {
+                  "option_text": "ここ (koko)",
+                  "is_correct": false,
+                  "feedback": "ここ (koko) ist der Ort bei dir selbst."
+                },
+                {
+                  "option_text": "あそこ (asoko)",
+                  "is_correct": false,
+                  "feedback": "あそこ (asoko) ist weit weg von euch beiden."
+                },
+                {
+                  "option_text": "どこ (doko)",
+                  "is_correct": false,
+                  "feedback": "どこ (doko) ist das Fragewort 'wo?'."
+                }
+              ],
+              "hint": "こ (ko) = bei mir, そ (so) = bei dir, あ (a) = weit weg."
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Du und dein Freund seht einen Bahnhof in der Ferne — weit weg von euch beiden. Was sagst du?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Für einen Ort weit weg von beiden Personen nimmst du あそこ (asoko).",
+              "options": [
+                {
+                  "option_text": "えきは あそこです。 (Eki wa asoko desu.)",
+                  "is_correct": true,
+                  "feedback": "Richtig — あそこ (asoko) = dort drüben, weit weg von beiden."
+                },
+                {
+                  "option_text": "えきは ここです。 (Eki wa koko desu.)",
+                  "is_correct": false,
+                  "feedback": "ここ (koko) hiesse: Der Bahnhof ist hier, bei mir."
+                },
+                {
+                  "option_text": "えきは そこです。 (Eki wa soko desu.)",
+                  "is_correct": false,
+                  "feedback": "そこ (soko) hiesse: Der Bahnhof ist da, bei dir."
+                },
+                {
+                  "option_text": "えきは どこですか。 (Eki wa doko desu ka.)",
+                  "is_correct": false,
+                  "feedback": "Das ist eine Frage: Wo ist der Bahnhof? Du siehst ihn aber schon."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Du suchst den Bahnhof und fragst einen Passanten. Welches Wort fehlt? 「えきは ___ ですか。」 (Eki wa ___ desu ka.)",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Nach einem Ort fragst du mit どこ (doko).",
+              "options": [
+                {
+                  "option_text": "どこ (doko)",
+                  "is_correct": true,
+                  "feedback": "Richtig — えきは どこですか (eki wa doko desu ka) = Wo ist der Bahnhof?"
+                },
+                {
+                  "option_text": "なん (nan)",
+                  "is_correct": false,
+                  "feedback": "なん (nan) heisst 'was?' — えきは なんですか (eki wa nan desu ka) ergibt keinen Sinn."
+                },
+                {
+                  "option_text": "どれ (dore)",
+                  "is_correct": false,
+                  "feedback": "どれ (dore) fragt nach einem Ding: welches? Für Orte nimmst du どこ (doko)."
+                },
+                {
+                  "option_text": "だれ (dare)",
+                  "is_correct": false,
+                  "feedback": "だれ (dare) heisst 'wer?'."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde das Wort mit seiner Bedeutung.",
+              "difficulty_level": 2,
+              "points": 4,
+              "options": [
+                {
+                  "option_text": "ここ (koko)",
+                  "is_correct": true,
+                  "feedback": "hier, bei mir"
+                },
+                {
+                  "option_text": "そこ (soko)",
+                  "is_correct": true,
+                  "feedback": "da, bei dir"
+                },
+                {
+                  "option_text": "あそこ (asoko)",
+                  "is_correct": true,
+                  "feedback": "dort drüben, weit weg von beiden"
+                },
+                {
+                  "option_text": "どこ (doko)",
+                  "is_correct": true,
+                  "feedback": "wo?"
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde die Wörter zum Beschreiben von Orten mit der deutschen Bedeutung.",
+              "difficulty_level": 2,
+              "points": 4,
+              "options": [
+                {
+                  "option_text": "この へん (kono hen)",
+                  "is_correct": true,
+                  "feedback": "hier in der Gegend"
+                },
+                {
+                  "option_text": "よこ (yoko)",
+                  "is_correct": true,
+                  "feedback": "neben, seitlich"
+                },
+                {
+                  "option_text": "みぎがわ (migigawa)",
+                  "is_correct": true,
+                  "feedback": "rechte Seite"
+                },
+                {
+                  "option_text": "うち (uchi)",
+                  "is_correct": true,
+                  "feedback": "Zuhause"
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde die lockere Form mit der höflichen Form.",
+              "difficulty_level": 2,
+              "points": 4,
+              "options": [
+                {
+                  "option_text": "こっち (kocchi)",
+                  "is_correct": true,
+                  "feedback": "こちら (kochira)"
+                },
+                {
+                  "option_text": "そっち (socchi)",
+                  "is_correct": true,
+                  "feedback": "そちら (sochira)"
+                },
+                {
+                  "option_text": "あっち (acchi)",
+                  "is_correct": true,
+                  "feedback": "あちら (achira)"
+                },
+                {
+                  "option_text": "どっち (docchi)",
+                  "is_correct": true,
+                  "feedback": "どちら (dochira)"
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "An der Hotelrezeption fragt man dich nach deinem Herkunftsland. Welche Frage ist am höflichsten?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Im Hotel und im Geschäft hörst du die こちら-Reihe (kochira): おくには どちらですか (okuni wa dochira desu ka) = Woher kommen Sie?",
+              "options": [
+                {
+                  "option_text": "おくには どちらですか。 (Okuni wa dochira desu ka.)",
+                  "is_correct": true,
+                  "feedback": "Richtig — どちら (dochira) ist die höfliche Form."
+                },
+                {
+                  "option_text": "おくには どっちですか。 (Okuni wa docchi desu ka.)",
+                  "is_correct": false,
+                  "feedback": "どっち (docchi) ist locker — so spricht das Hotelpersonal nicht mit Gästen."
+                },
+                {
+                  "option_text": "おくには どこですか。 (Okuni wa doko desu ka.)",
+                  "is_correct": false,
+                  "feedback": "Verständlich, aber どちら (dochira) ist höflicher."
+                },
+                {
+                  "option_text": "おくには なんですか。 (Okuni wa nan desu ka.)",
+                  "is_correct": false,
+                  "feedback": "なん (nan) heisst 'was?' — nach einem Land fragt man so nicht."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「あそこ」 (asoko) bezeichnet einen Ort direkt bei der Person, die spricht.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Direkt bei der sprechenden Person ist ここ (koko). あそこ (asoko) ist weit weg von beiden.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nein — bei der sprechenden Person ist ここ (koko)."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Richtig erkannt — あそこ (asoko) ist weit weg von beiden."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welches Wort passt? 「ぎんこうの ___に デパートが あります。」 (Ginkou no ___ ni depaato ga arimasu.) — Neben der Bank ist ein Kaufhaus.",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "よこ (yoko) heisst 'neben, seitlich': [Ort] の よこ ([Ort] no yoko) = neben [Ort].",
+              "options": [
+                {
+                  "option_text": "よこ (yoko)",
+                  "is_correct": true,
+                  "feedback": "Richtig — ぎんこうの よこ (ginkou no yoko) = neben der Bank."
+                },
+                {
+                  "option_text": "へん (hen)",
+                  "is_correct": false,
+                  "feedback": "へん (hen) heisst 'Gegend', zum Beispiel この へん (kono hen) = hier in der Gegend."
+                },
+                {
+                  "option_text": "うち (uchi)",
+                  "is_correct": false,
+                  "feedback": "うち (uchi) heisst 'Zuhause'."
+                },
+                {
+                  "option_text": "どこ (doko)",
+                  "is_correct": false,
+                  "feedback": "どこ (doko) ist das Fragewort 'wo?'."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Du fragst eine Freundin, was sie lieber möchte: Kaffee oder Tee. Welches Fragewort passt? 「コーヒーと こうちゃと、___が いいですか。」 (Koohii to koucha to, ___ ga ii desu ka.)",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Bei zwei Dingen fragst du mit どっち (docchi) oder höflich どちら (dochira).",
+              "options": [
+                {
+                  "option_text": "どっち (docchi)",
+                  "is_correct": true,
+                  "feedback": "Richtig — どっち (docchi) fragt nach einer Auswahl aus zwei Dingen."
+                },
+                {
+                  "option_text": "どれ (dore)",
+                  "is_correct": false,
+                  "feedback": "どれ (dore) nimmst du bei drei oder mehr Dingen. Bei zwei Dingen heisst es どっち (docchi) oder どちら (dochira)."
+                },
+                {
+                  "option_text": "どこ (doko)",
+                  "is_correct": false,
+                  "feedback": "どこ (doko) fragt nach einem Ort, nicht nach einer Auswahl."
+                },
+                {
+                  "option_text": "だれ (dare)",
+                  "is_correct": false,
+                  "feedback": "だれ (dare) fragt nach einer Person."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「この へん」 (kono hen) heisst 'hier in der Gegend'.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Genau: この へんに ぎんこうは ありますか (kono hen ni ginkou wa arimasu ka) = Gibt es hier in der Gegend eine Bank?",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Richtig — この へん (kono hen) = hier in der Gegend."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch, das stimmt: この へん (kono hen) = hier in der Gegend."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Zusammenfassung",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Das hast du gelernt\n\nGlückwunsch! Du kannst jetzt auf Orte zeigen und fragen, wo etwas ist.\n\n- **Ko-So-A-Do**: ここ (koko) bei mir, そこ (soko) bei dir, あそこ (asoko) weit weg, どこ (doko) wo?\n- **Höflich**: こちら (kochira), そちら (sochira), あちら (achira), どちら (dochira) — im Geschäft, im Hotel, bei Fremden\n- **Locker**: こっち (kocchi), そっち (socchi), あっち (acchi), どっち (docchi) — unter Freunden\n- **Orte beschreiben**: この へん (kono hen, hier in der Gegend), [Ort] の よこ ([Ort] no yoko, neben [Ort]), みぎがわ (migigawa, rechte Seite)\n- **Auswahl aus zwei**: コーヒーと こうちゃと、どっちが いいですか (koohii to koucha to, docchi ga ii desu ka)\n\n> Tipp: Zeig zu Hause auf Dinge und Orte und frag dich jedes Mal: bei mir, bei dir oder weit weg? Sag dann laut: 「ここは わたしの うちです」 (koko wa watashi no uchi desu, hier ist mein Zuhause) oder — draussen unterwegs — 「あそこは えきです」 (asoko wa eki desu, dort drüben ist der Bahnhof).\n\n### Wie geht es weiter?\n\nIn der nächsten Lektion, **N5 Erste Sätze 3**, lernst du die Vergangenheit, übst あります (arimasu) und います (imasu) genauer und bittest höflich um etwas."
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,214 @@
+{
+  "updates": [
+    {
+      "vocab_id": 95,
+      "field": "example_sentence_japanese",
+      "old": "ここはわたしのきょうしつです。",
+      "new": "ここは わたしの きょうしつです。",
+      "reason": "Leerzeichen zwischen Satzgliedern (einheitlich in der Lektion), Inhalt unverändert"
+    },
+    {
+      "vocab_id": 95,
+      "field": "example_sentence_english",
+      "old": "Koko wa watashi no kyōshitsu desu. — Hier ist mein Klassenzimmer.",
+      "new": "Koko wa watashi no kyoushitsu desu. — Hier ist mein Klassenzimmer.",
+      "reason": "Romaji ohne Makron (ou statt ō), einheitlich in der Lektion"
+    },
+    {
+      "vocab_id": 96,
+      "field": "example_sentence_japanese",
+      "old": "そこにかばんがあります。",
+      "new": "そこに かばんが あります。",
+      "reason": "Leerzeichen zwischen Satzgliedern, Inhalt unverändert"
+    },
+    {
+      "vocab_id": 96,
+      "field": "example_sentence_english",
+      "old": "Soko ni kaban ga arimasu. — Dort ist eine Tasche.",
+      "new": "Soko ni kaban ga arimasu. — Da (bei dir) ist eine Tasche.",
+      "reason": "Übersetzung zeigt die Bedeutung 'bei dir' der Karte"
+    },
+    {
+      "vocab_id": 96,
+      "field": "meaning_de",
+      "old": "dort, dieser Ort (bei dir)",
+      "new": "da, der Ort bei dir",
+      "reason": "so-Reihe konsequent 'da' (Review)"
+    },
+    {
+      "vocab_id": 97,
+      "field": "example_sentence_japanese",
+      "old": "あそこにえきがあります。",
+      "new": "あそこに えきが あります。",
+      "reason": "Leerzeichen zwischen Satzgliedern, Inhalt unverändert"
+    },
+    {
+      "vocab_id": 98,
+      "field": "example_sentence_japanese",
+      "old": "トイレはどこですか。",
+      "new": "トイレは どこですか。",
+      "reason": "Leerzeichen zwischen Satzgliedern, Inhalt unverändert"
+    },
+    {
+      "vocab_id": 99,
+      "field": "example_sentence_japanese",
+      "old": "こちらはたなかさんです。",
+      "new": "こちらは たなかさんです。",
+      "reason": "Leerzeichen zwischen Satzgliedern, Inhalt unverändert"
+    },
+    {
+      "vocab_id": 100,
+      "field": "example_sentence_japanese",
+      "old": "そちらはなんですか。",
+      "new": "そちらは なんですか。",
+      "reason": "Leerzeichen zwischen Satzgliedern, Inhalt unverändert"
+    },
+    {
+      "vocab_id": 100,
+      "field": "example_sentence_english",
+      "old": "Sochira wa nan desu ka. — Was ist das dort bei Ihnen?",
+      "new": "Sochira wa nan desu ka. — Was ist das da bei Ihnen?",
+      "reason": "so-Reihe konsequent 'da' (Review)"
+    },
+    {
+      "vocab_id": 100,
+      "field": "meaning_de",
+      "old": "dort entlang, dort (höflich)",
+      "new": "da (bei Ihnen), in Ihre Richtung (höflich)",
+      "reason": "so-Reihe konsequent 'da', Bedeutung 'bei Ihnen' ergänzt (Review)"
+    },
+    {
+      "vocab_id": 101,
+      "field": "example_sentence_japanese",
+      "old": "あちらはせんせいのへやです。",
+      "new": "あちらは せんせいの へやです。",
+      "reason": "Leerzeichen zwischen Satzgliedern, Inhalt unverändert"
+    },
+    {
+      "vocab_id": 101,
+      "field": "meaning_de",
+      "old": "dort drüben entlang (höflich)",
+      "new": "dort drüben, dorthin (höflich)",
+      "reason": "'dort drüben entlang' war holprig"
+    },
+    {
+      "vocab_id": 102,
+      "field": "example_sentence_japanese",
+      "old": "おてあらいはどちらですか。",
+      "new": "おてあらいは どちらですか。",
+      "reason": "Leerzeichen zwischen Satzgliedern, Inhalt unverändert"
+    },
+    {
+      "vocab_id": 102,
+      "field": "meaning_de",
+      "old": "welche Richtung, wo (höflich)",
+      "new": "wo, welche Richtung; welche/r von beiden (höflich)",
+      "reason": "Bedeutung 'welche/r von beiden' ergänzt (wird in der Grammatik gelehrt)"
+    },
+    {
+      "vocab_id": 963,
+      "field": "example_sentence_japanese",
+      "old": "こっちへ来てください。",
+      "new": "ねこは こっちに いますよ。",
+      "reason": "alter Satz nutzt て-Form (来てください), in dieser Lektion noch nicht Lernstoff; neuer konkreter Satz"
+    },
+    {
+      "vocab_id": 963,
+      "field": "example_sentence_english",
+      "old": "Kocchi e kite kudasai. — Komm bitte hierher.",
+      "new": "Neko wa kocchi ni imasu yo. — Die Katze ist hier bei mir.",
+      "reason": "passend zum neuen Satz"
+    },
+    {
+      "vocab_id": 964,
+      "field": "example_sentence_japanese",
+      "old": "そっちは雨ですか。",
+      "new": "そっちは 雨ですか。",
+      "reason": "Leerzeichen zwischen Satzgliedern, Inhalt unverändert"
+    },
+    {
+      "vocab_id": 964,
+      "field": "meaning_de",
+      "old": "dort (bei dir) (umgangssprachlich)",
+      "new": "da (bei dir) (umgangssprachlich)",
+      "reason": "so-Reihe konsequent 'da' (Review)"
+    },
+    {
+      "vocab_id": 962,
+      "field": "example_sentence_japanese",
+      "old": "トイレはあっちですよ。",
+      "new": "トイレは あっちですよ。",
+      "reason": "Leerzeichen zwischen Satzgliedern, Inhalt unverändert"
+    },
+    {
+      "vocab_id": 965,
+      "field": "example_sentence_japanese",
+      "old": "コーヒーとこうちゃと、どっちがいいですか。",
+      "new": "コーヒーと こうちゃと、どっちが いいですか。",
+      "reason": "Leerzeichen zwischen Satzgliedern, Inhalt unverändert"
+    },
+    {
+      "vocab_id": 965,
+      "field": "example_sentence_english",
+      "old": "Kōhī to kōcha to, docchi ga ii desu ka. — Kaffee oder Tee, was möchtest du lieber?",
+      "new": "Koohii to koucha to, docchi ga ii desu ka. — Kaffee oder Tee: Was möchtest du lieber?",
+      "reason": "Romaji ohne Makron, einheitlich in der Lektion"
+    },
+    {
+      "vocab_id": 1066,
+      "field": "example_sentence_japanese",
+      "old": "この辺にぎんこうはありますか。",
+      "new": "この へんに ぎんこうは ありますか。",
+      "reason": "辺 ist kein N5-Kanji → Kana"
+    },
+    {
+      "vocab_id": 1066,
+      "field": "example_sentence_english",
+      "old": "Kono hen ni ginkō wa arimasu ka. — Gibt es hier in der Gegend eine Bank?",
+      "new": "Kono hen ni ginkou wa arimasu ka. — Gibt es hier in der Gegend eine Bank?",
+      "reason": "Romaji ohne Makron"
+    },
+    {
+      "vocab_id": 1067,
+      "field": "example_sentence_japanese",
+      "old": "ぎんこうの横にデパートがあります。",
+      "new": "ぎんこうの よこに デパートが あります。",
+      "reason": "横 ist kein N5-Kanji → Kana"
+    },
+    {
+      "vocab_id": 1067,
+      "field": "example_sentence_english",
+      "old": "Ginkō no yoko ni depāto ga arimasu. — Neben der Bank gibt es ein Warenhaus.",
+      "new": "Ginkou no yoko ni depaato ga arimasu. — Neben der Bank ist ein Kaufhaus.",
+      "reason": "Romaji ohne Makron; 'Kaufhaus' wie im Dialog"
+    },
+    {
+      "vocab_id": 1073,
+      "field": "example_sentence_japanese",
+      "old": "えきの右側にぎんこうがあります。",
+      "new": "えきの みぎがわに ぎんこうが あります。",
+      "reason": "側 ist kein N5-Kanji → Kana (みぎがわ)"
+    },
+    {
+      "vocab_id": 1073,
+      "field": "example_sentence_english",
+      "old": "Eki no migigawa ni ginkō ga arimasu. — Auf der rechten Seite des Bahnhofs ist eine Bank.",
+      "new": "Eki no migigawa ni ginkou ga arimasu. — Auf der rechten Seite des Bahnhofs ist eine Bank.",
+      "reason": "Romaji ohne Makron"
+    },
+    {
+      "vocab_id": 112,
+      "field": "example_sentence_english",
+      "old": "Erebētā de gokai e ikimasu. — Ich fahre mit dem Aufzug in den fünften Stock.",
+      "new": "Erebeetaa de gokai e ikimasu. — Ich fahre mit dem Lift in den 5. Stock (in Japan zählt das Erdgeschoss als 1. Stock).",
+      "reason": "Romaji ohne Makron (wie Feld romaji 'erebeetaa'); 'Lift' wie in der Lektion"
+    },
+    {
+      "vocab_id": 132,
+      "field": "example_sentence_japanese",
+      "old": "あしたうちにいます。",
+      "new": "あした うちに います。",
+      "reason": "Leerzeichen zwischen Satzgliedern, Inhalt unverändert"
+    }
+  ]
+}

@@ -1,0 +1,853 @@
+{
+  "title": "N5 Ein Geschenk zur Hochzeit — wann, wer und was?",
+  "description": "Sprich über eine Hochzeit: Frag mit いつ (itsu) nach dem Datum und antworte mit 〜月の はじめ (-gatsu no hajime), frag höflich mit どなた (donata) nach Personen und sag mit 〜がる (-garu), was sich jemand wünscht. Dazu suchst du im Kaufhaus Geschenkideen aus.",
+  "jlpt_level": 5,
+  "topic": "Geschenk zur Hochzeit",
+  "instruction_language": "german",
+  "allow_guest_access": false,
+  "thumbnail_url": "generated/thumbnail_geschenk_zur_hochzeit_20261010_071755.png",
+  "pages": [
+    {
+      "title": "Einführung",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Ein Geschenk zur Hochzeit\n\nEine Kollegin oder ein Kollege heiratet — und das ganze Büro will mitfeiern. In dieser Lektion lernst du, wie du über so ein Ereignis sprichst: **wann** es stattfindet, **wer** dabei ist und **was** sich jemand wünscht.\n\n- **Hochzeit und Kalender**: けっこん (kekkon, Heirat), いつ (itsu, wann), die Monatsnamen mit 〜月 (-gatsu) und はじめ (hajime, Anfang)\n- **Leute**: どなた (donata, wer — höflich), みなさん (minasan, alle zusammen) und あなた (anata, du/Sie)\n- **Geschenkideen**: カメラ (kamera), ネクタイ (nekutai), ボールペン (boorupen) und mehr\n\nDazu lernst du drei **Satzmuster**: sagen, was sich *andere* wünschen (ほしがって います, hoshigatte imasu), nach dem Zeitpunkt fragen (いつですか, itsu desu ka) und höflich nach Personen fragen (どなたですか, donata desu ka).\n\n> Gut zu wissen: Wer in Japan zur Hochzeitsfeier eingeladen ist, schenkt meist **Geld** in einem besonderen Umschlag. Kolleginnen und Kollegen legen aber oft zusammen und kaufen ein **gemeinsames Geschenk** — genau darum geht es im Dialog."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln Teil 1 — Hochzeit, Kalender und Leute",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Teil 1 — Hochzeit, Kalender und Leute\n\n- **けっこん (kekkon)** heisst 'Heirat'. Mit します (shimasu) wird daraus ein Verb: **けっこんします (kekkon shimasu)**, heiraten.\n- **いつ (itsu)** heisst 'wann'. Nach いつ (itsu) steht kein に (ni): いつ 行きますか (itsu ikimasu ka, wann gehst du?).\n- **はじめ (hajime)** heisst 'Anfang'. 来月の はじめ (raigetsu no hajime) = Anfang nächsten Monats. Die Kanji von けっこん (kekkon) und はじめ (hajime) kommen erst nach N5 — auf der Karte siehst du sie, im Text schreiben wir Hiragana.\n\n### Die Monate — 〜月 (-gatsu)\n\nDie Monate sind einfach durchnummeriert: Zahl + 月 (gatsu). 一月 (ichigatsu) ist der Januar, 二月 (nigatsu) der Februar, 十二月 (juunigatsu) der Dezember. Alle diese Kanji gehören zu den N5-Kanji. Drei Monate haben eine **besondere Lesung**:\n\n- 四月 (shigatsu, April) — nicht よんがつ (yongatsu)\n- 七月 (shichigatsu, Juli) — nicht なながつ (nanagatsu)\n- 九月 (kugatsu, September) — nicht きゅうがつ (kyuugatsu)\n\n> Nicht verwechseln: 〜月 (-gatsu) ist der **Monatsname**. 〜か月 (-kagetsu) ist die **Dauer**: 一か月 (ikkagetsu) = einen Monat lang.\n\n### Leute ansprechen\n\n- **どなた (donata)** ist die höfliche Form von だれ (dare, wer).\n- **みなさん (minasan)** heisst 'alle zusammen' — so sprichst du eine Gruppe an: みなさん、こんにちは (minasan, konnichiwa).\n- **あなた (anata)** heisst 'du/Sie', wird aber **selten** benutzt. Man spricht Leute meist mit Namen + さん (san) an. あなた (anata) hörst du vor allem, wenn man den Namen nicht kennt, in Formularen und Werbung oder unter Eheleuten. Am natürlichsten lässt du 'du/Sie' ganz weg.\n\n### 〜がる (-garu) — was andere fühlen\n\nMit がる (garu) beschreibst du, was du bei einer **anderen Person** siehst: ほしい (hoshii, haben wollen) → ほしがる (hoshigaru), さむい (samui, kalt) → さむがる (samugaru), いや (iya, unangenehm) → いやがる (iyagaru, sich sträuben). Meist sagt man 〜がって います (-gatte imasu)."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1031,
+            "word": "結婚",
+            "reading": "けっこん",
+            "romaji": "kekkon",
+            "meaning": "marriage (to get married)",
+            "meaning_de": "Heirat; heiraten (mit する)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あねは 来月 けっこんします。",
+            "example_sentence_english": "Ane wa raigetsu kekkon shimasu. — Meine ältere Schwester heiratet nächsten Monat.",
+            "image_url": "vocab_generated/vocab_51769a95.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 207,
+            "word": "いつ",
+            "reading": "いつ",
+            "romaji": "itsu",
+            "meaning": "when",
+            "meaning_de": "wann",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "たんじょうびは いつですか。",
+            "example_sentence_english": "Tanjoubi wa itsu desu ka. — Wann ist dein Geburtstag?",
+            "image_url": "vocabulary/images/vocab_207_280366cd.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 672,
+            "word": "来月",
+            "reading": "らいげつ",
+            "romaji": "raigetsu",
+            "meaning": "next month",
+            "meaning_de": "nächster Monat",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "来月 日本に 行きます。",
+            "example_sentence_english": "Raigetsu Nihon ni ikimasu. — Nächsten Monat fahre ich nach Japan.",
+            "image_url": "vocab_generated/vocab_37de7433.webp",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1071,
+            "word": "～月",
+            "reading": "～がつ",
+            "romaji": "-gatsu",
+            "meaning": "month of the year",
+            "meaning_de": "(Monatsname) Januar … Dezember",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "日本の がっこうは 四月に はじまります。",
+            "example_sentence_english": "Nihon no gakkou wa shigatsu ni hajimarimasu. — In Japan beginnt die Schule im April.",
+            "image_url": "vocab_generated/vocab_07d625f2.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1098,
+            "word": "初め",
+            "reading": "はじめ",
+            "romaji": "hajime",
+            "meaning": "beginning, start",
+            "meaning_de": "Anfang, Beginn",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "三月の はじめは まだ さむいです。",
+            "example_sentence_english": "Sangatsu no hajime wa mada samui desu. — Anfang März ist es noch kalt.",
+            "image_url": "vocab_generated/vocab_38952546.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 25,
+            "word": "みなさん",
+            "reading": "みなさん",
+            "romaji": "minasan",
+            "meaning": "ladies and gentlemen, all of you",
+            "meaning_de": "alle (zusammen); meine Damen und Herren",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "みなさん、こんにちは。",
+            "example_sentence_english": "Minasan, konnichiwa. — Guten Tag, alle zusammen.",
+            "image_url": "vocabulary/images/vocab_25_f9b1bd78.png",
+            "status": "approved",
+            "created_by_ai": true,
+            "is_canonical_override": true,
+            "source_note": "Kana-Karte für den canonical-N5-Eintrag 皆さん (みなさん); in sources/jlpt_n5_variants.json als covered_by みなさん geführt."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 22,
+            "word": "あなた",
+            "reading": "あなた",
+            "romaji": "anata",
+            "meaning": "you",
+            "meaning_de": "du / Sie",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "これは あなたの かさですか。",
+            "example_sentence_english": "Kore wa anata no kasa desu ka. — Ist das Ihr Regenschirm?",
+            "image_url": "vocabulary/images/vocab_22_5a4a1794.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 39,
+            "word": "どなた",
+            "reading": "どなた",
+            "romaji": "donata",
+            "meaning": "who (polite)",
+            "meaning_de": "wer (höflich)",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あの かたは どなたですか。",
+            "example_sentence_english": "Ano kata wa donata desu ka. — Wer ist die Person dort (höflich)?",
+            "image_url": "vocabulary/images/vocab_39_7c6cd28f.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1072,
+            "word": "～がる",
+            "reading": "～がる",
+            "romaji": "-garu",
+            "meaning": "to show signs of feeling ~",
+            "meaning_de": "(bei anderen) sichtlich … fühlen, z.B. ほしがる = sich etwas wünschen",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "子どもが いぬを ほしがって います。",
+            "example_sentence_english": "Kodomo ga inu o hoshigatte imasu. — Das Kind wünscht sich einen Hund.",
+            "image_url": "vocab_generated/vocab_9ca378c0.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vokabeln Teil 2 — Geschenkideen, Reise und Form",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Teil 2 — Geschenkideen, Reise und Form\n\nIm Kaufhaus, der デパート (depaato), findest du viele mögliche **Geschenke**. Die meisten Wörter hier sind **Lehnwörter** und werden in Katakana geschrieben.\n\n- **テレビ (terebi)**, **ラジオ (rajio)** und **カメラ (kamera)** — von 'television', 'radio' und 'camera'.\n- **ノート (nooto)** ist ein **Heft** zum Schreiben, kein Laptop. Ein Laptop heisst ノートパソコン (nooto pasokon).\n- **ボールペン (boorupen)** kommt von 'ball pen' — der Kugelschreiber.\n- **ネクタイ (nekutai)** ist die Krawatte, ein klassisches Geschenk.\n- **ひこうき (hikouki)** ist das Flugzeug: ひこうきで 行きます (hikouki de ikimasu) = mit dem Flugzeug reisen, zum Beispiel auf die Hochzeitsreise.\n\n### たて (tate) — senkrecht\n\n**たて (tate)** ist die senkrechte Richtung, also die Seite von oben nach unten. Das Gegenteil ist **よこ (yoko)** — hier 'quer', von links nach rechts; sonst kennst du es als 'neben'. Bei Bildern, Karten oder Schachteln nennt man so die beiden Seiten: たて と よこ (tate to yoko).\n\n> しゃしんを たてに とります。 (Shashin o tate ni torimasu.) — Ich mache das Foto hochkant."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 77,
+            "word": "テレビ",
+            "reading": "テレビ",
+            "romaji": "terebi",
+            "meaning": "television",
+            "meaning_de": "Fernseher",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "まいばん テレビを 見ます。",
+            "example_sentence_english": "Maiban terebi o mimasu. — Jeden Abend schaue ich fern.",
+            "image_url": "vocabulary/images/vocab_77_29f00925.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 78,
+            "word": "ラジオ",
+            "reading": "ラジオ",
+            "romaji": "rajio",
+            "meaning": "radio",
+            "meaning_de": "Radio",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ラジオで おんがくを 聞きます。",
+            "example_sentence_english": "Rajio de ongaku o kikimasu. — Ich höre Musik im Radio.",
+            "image_url": "vocabulary/images/vocab_78_2c023c04.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 79,
+            "word": "カメラ",
+            "reading": "カメラ",
+            "romaji": "kamera",
+            "meaning": "camera",
+            "meaning_de": "Kamera",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "これは わたしの カメラです。",
+            "example_sentence_english": "Kore wa watashi no kamera desu. — Das ist meine Kamera.",
+            "image_url": "vocabulary/images/vocab_79_1a0026c8.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 66,
+            "word": "ノート",
+            "reading": "ノート",
+            "romaji": "nooto",
+            "meaning": "notebook",
+            "meaning_de": "Heft, Notizbuch",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ノートに 名前を 書きます。",
+            "example_sentence_english": "Nooto ni namae o kakimasu. — Ich schreibe meinen Namen ins Heft.",
+            "image_url": "vocabulary/images/vocab_66_f0e3b28b.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 71,
+            "word": "ボールペン",
+            "reading": "ボールペン",
+            "romaji": "boorupen",
+            "meaning": "ballpoint pen",
+            "meaning_de": "Kugelschreiber",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あかい ボールペンが ほしいです。",
+            "example_sentence_english": "Akai boorupen ga hoshii desu. — Ich möchte einen roten Kugelschreiber.",
+            "image_url": "vocabulary/images/vocab_71_8e913ff7.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 128,
+            "word": "ネクタイ",
+            "reading": "ネクタイ",
+            "romaji": "nekutai",
+            "meaning": "necktie",
+            "meaning_de": "Krawatte",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "あおい ネクタイを かいました。",
+            "example_sentence_english": "Aoi nekutai o kaimashita. — Ich habe eine blaue Krawatte gekauft.",
+            "image_url": "vocabulary/images/vocab_128_8647980e.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 187,
+            "word": "ひこうき",
+            "reading": "ひこうき",
+            "romaji": "hikouki",
+            "meaning": "airplane",
+            "meaning_de": "Flugzeug",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "ひこうきで 日本へ 行きます。",
+            "example_sentence_english": "Hikouki de Nihon e ikimasu. — Ich fliege mit dem Flugzeug nach Japan.",
+            "image_url": "vocabulary/images/vocab_187_3baf4464.png",
+            "status": "approved",
+            "created_by_ai": true,
+            "is_canonical_override": true,
+            "source_note": "Kana-Karte für den canonical-N5-Eintrag 飛行機 (ひこうき); in sources/jlpt_n5_variants.json als covered_by ひこうき geführt."
+          }
+        },
+        {
+          "content_type": "vocabulary",
+          "data": {
+            "vocabulary_id": 1068,
+            "word": "たて",
+            "reading": "たて",
+            "romaji": "tate",
+            "meaning": "length, height (vertical)",
+            "meaning_de": "senkrecht, hochkant; Höhe",
+            "jlpt_level": 5,
+            "example_sentence_japanese": "しゃしんを たてに とります。",
+            "example_sentence_english": "Shashin o tate ni torimasu. — Ich mache das Foto hochkant.",
+            "image_url": "vocab_generated/vocab_41e43ce5.png",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        }
+      ]
+    },
+    {
+      "title": "Grammatik — wünschen, wann und wer",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Grammatik — wünschen, wann und wer\n\nDrei kurze Muster helfen dir, über die Hochzeit zu sprechen:\n\n1. **ほしがって います (hoshigatte imasu)** — was sich eine *andere* Person wünscht\n2. **いつですか (itsu desu ka)** — nach dem Zeitpunkt fragen, Antwort mit 〜月の はじめに (-gatsu no hajime ni)\n3. **どなたですか (donata desu ka)** — höflich fragen, wer jemand ist\n\n> Merke: Über **dich selbst** sagst du ほしい (hoshii) und さむい (samui). Über **andere** sagst du ほしがって います (hoshigatte imasu) und さむがって います (samugatte imasu) — du beschreibst, was du bei ihnen siehst."
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "[Person] は [Ding] を ほしがって います — was sich andere wünschen (~ o hoshigatte imasu)",
+            "explanation": "Mit 「ほしい」 (hoshii) sagst du, was du selbst haben möchtest: 「わたしは カメラが ほしいです」 (watashi wa kamera ga hoshii desu). Auch in einer Frage an dein Gegenüber geht ほしい (hoshii): 「何が ほしいですか」 (nani ga hoshii desu ka). Über eine dritte Person sagt man das nicht so, denn man kann nicht in ihren Kopf schauen. Stattdessen hängst du 「がる」 (garu) an: ほしい → ほしがる (hoshigaru), meist als 「ほしがって います」 (hoshigatte imasu). Achtung: Das gewünschte Ding bekommt dann 「を」 (o) statt 「が」 (ga). Genauso funktioniert 「さむがって います」 (samugatte imasu): Jemand friert sichtlich. Vorsicht bei Vorgesetzten und älteren Personen: Dort kann ほしがって います (hoshigatte imasu) respektlos klingen. Sag besser 「〜が ほしいと いって いました」 (~ ga hoshii to itte imashita, hat gesagt, dass er/sie … möchte).",
+            "structure": "[Person] は [Ding] を ほしがって います  ([person] wa [thing] o hoshigatte imasu)",
+            "romaji": "[person] wa [thing] o hoshigatte imasu",
+            "jlpt_level": 5,
+            "example_sentences": "やまださんは あたらしい カメラを ほしがって います。 (Yamada-san wa atarashii kamera o hoshigatte imasu.) — Herr Yamada wünscht sich eine neue Kamera.\nわたしは あたらしい カメラが ほしいです。 (Watashi wa atarashii kamera ga hoshii desu.) — Ich möchte eine neue Kamera.\n子どもが さむがって います。 (Kodomo ga samugatte imasu.) — Das Kind friert (man sieht es ihm an).",
+            "tts_example_jp": "やまださんは あたらしい カメラを ほしがって います。",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "いつですか — [Zeit] の はじめに (itsu desu ka — ~ no hajime ni)",
+            "explanation": "Mit 「いつ」 (itsu, wann) fragst du nach dem Zeitpunkt: 「いつですか」 (itsu desu ka) oder 「いつ 行きますか」 (itsu ikimasu ka). Nach いつ (itsu) steht kein 「に」 (ni). In der Antwort bekommt ein Monatsname 「に」 (ni): 「十一月に」 (juuichigatsu ni, im November). Wörter wie 「来月」 (raigetsu, nächsten Monat) stehen dagegen ohne に (ni). Mit 「の はじめに」 (no hajime ni) sagst du 'Anfang …': 「来月の はじめに」 (raigetsu no hajime ni, Anfang nächsten Monats) oder 「四月の はじめに」 (shigatsu no hajime ni, Anfang April). Vor です (desu) fällt に (ni) weg: 「来月の はじめです」 (raigetsu no hajime desu).",
+            "structure": "[Zeit] の はじめに + [Verb]  ([time] no hajime ni + [verb])",
+            "romaji": "itsu desu ka — [time] no hajime ni + [verb]",
+            "jlpt_level": 5,
+            "example_sentences": "けっこんは いつですか。 (Kekkon wa itsu desu ka.) — Wann ist die Hochzeit?\nふたりは 来月の はじめに けっこんします。 (Futari wa raigetsu no hajime ni kekkon shimasu.) — Die beiden heiraten Anfang nächsten Monats.\n四月の はじめに 日本へ 行きます。 (Shigatsu no hajime ni Nihon e ikimasu.) — Anfang April fahre ich nach Japan.",
+            "tts_example_jp": "ふたりは 来月の はじめに けっこんします。",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        },
+        {
+          "content_type": "grammar",
+          "data": {
+            "title": "だれ → どなた — höflich nach Personen fragen (dare → donata)",
+            "explanation": "「だれ」 (dare) heisst 'wer'. Bei Fremden, Gästen oder älteren Personen klingt 「どなた」 (donata) höflicher. Dazu passt 「かた」 (kata, Person — höflich) statt 「人」 (hito): 「あの かたは どなたですか」 (ano kata wa donata desu ka). Auch 「どなたの」 (donata no, wessen) geht. Eine ganze Gruppe sprichst du mit 「みなさん」 (minasan, alle zusammen) an. Mit 「あなた」 (anata, du/Sie) bist du sparsam: Man spricht Leute meist mit Namen + 「さん」 (san) an. あなた (anata) passt vor allem, wenn man den Namen nicht kennt, in Formularen und Werbung oder unter Eheleuten. Am natürlichsten lässt du 'du/Sie' ganz weg.",
+            "structure": "[Person] は どなたですか  ([person] wa donata desu ka)",
+            "romaji": "[person] wa donata desu ka",
+            "jlpt_level": 5,
+            "example_sentences": "あの かたは どなたですか。 (Ano kata wa donata desu ka.) — Wer ist die Person dort?\nこれは どなたの かさですか。 (Kore wa donata no kasa desu ka.) — Wem gehört dieser Regenschirm?\nみなさん、こんにちは。 (Minasan, konnichiwa.) — Guten Tag, alle zusammen.",
+            "tts_example_jp": "あの かたは どなたですか。",
+            "status": "approved",
+            "created_by_ai": true
+          }
+        }
+      ]
+    },
+    {
+      "title": "Dialog — Ein Geschenk für Herrn Yamada",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "Lisa: ハルトさん、この しゃしんの かたは どなたですか。\n  (Haruto-san, kono shashin no kata wa donata desu ka.)\n  -> Haruto, wer ist die Person auf diesem Foto?\n\nHaruto: やまださんの おくさんに なる かたですよ。\n  (Yamada-san no okusan ni naru kata desu yo.)\n  -> Das ist die zukünftige Frau von Herrn Yamada.\n\nLisa: え、ほんとうですか。けっこんは いつですか。\n  (E, hontou desu ka. Kekkon wa itsu desu ka.)\n  -> Oh, wirklich? Wann ist die Hochzeit?\n\nHaruto: 来月の はじめです。十一月三日です。\n  (Raigetsu no hajime desu. Juuichigatsu mikka desu.)\n  -> Anfang nächsten Monats. Am 3. November.\n\nLisa: じゃあ、かいしゃの みなさんと いっしょに プレゼントを かいませんか。\n  (Jaa, kaisha no minasan to issho ni purezento o kaimasen ka.)\n  -> Wollen wir dann nicht mit allen aus der Firma zusammen ein Geschenk kaufen?\n\nHaruto: いいですね。やまださんは あたらしい カメラを ほしがって いましたよ。ふたりは ひこうきで ハワイへ りょこうに 行きますから。\n  (Ii desu ne. Yamada-san wa atarashii kamera o hoshigatte imashita yo. Futari wa hikouki de Hawai e ryokou ni ikimasu kara.)\n  -> Gute Idee. Herr Yamada wollte gern eine neue Kamera. Die beiden fliegen nämlich auf eine Reise nach Hawaii.\n\nVerkäuferin: いらっしゃいませ。カメラは こちらです。この 白い カメラは いかがですか。\n  (Irasshaimase. Kamera wa kochira desu. Kono shiroi kamera wa ikaga desu ka.)\n  -> Willkommen. Die Kameras sind hier. Wie wäre es mit dieser weissen Kamera?\n\nLisa: ちいさいですね。りょこうに ちょうど いいです。いくらですか。\n  (Chiisai desu ne. Ryokou ni choudo ii desu. Ikura desu ka.)\n  -> Die ist schön klein. Genau richtig für die Reise. Wie viel kostet sie?\n\nVerkäuferin: 三万円です。\n  (Sanman en desu.)\n  -> 30'000 Yen.\n\nLisa: じゃあ、これを ください。\n  (Jaa, kore o kudasai.)\n  -> Dann nehmen wir diese, bitte.",
+            "title": "Im Büro, dann im Kaufhaus — ein Geschenk für Herrn Yamada"
+          }
+        },
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "### Verständnisfragen\n\nFünf kurze Fragen zum **Dialog**. Achte auf das **Datum**, den Wunsch von Herrn Yamada und den **Preis** im Kaufhaus."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wer ist die Person auf dem Foto?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Haruto sagt: 「やまださんの おくさんに なる かたですよ」 (Yamada-san no okusan ni naru kata desu yo) — die Frau, die Herrn Yamadas Ehefrau wird.",
+              "options": [
+                {
+                  "option_text": "Die zukünftige Frau von Herrn Yamada",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「おくさんに なる かた」 (okusan ni naru kata) = die Person, die seine Frau wird."
+                },
+                {
+                  "option_text": "Harutos Frau",
+                  "is_correct": false,
+                  "feedback": "Nein — Haruto spricht von Herrn Yamada, nicht von sich."
+                },
+                {
+                  "option_text": "Die Mutter von Herrn Yamada",
+                  "is_correct": false,
+                  "feedback": "Mutter wäre おかあさん (okaasan). Haruto sagt おくさん (okusan), Ehefrau."
+                },
+                {
+                  "option_text": "Die Schwester von Herrn Yamada",
+                  "is_correct": false,
+                  "feedback": "Schwester wäre いもうとさん (imouto-san) oder おねえさん (oneesan). Haruto sagt おくさん (okusan), Ehefrau."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wann heiraten die beiden?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Haruto sagt: 「来月の はじめです。十一月三日です」 (Raigetsu no hajime desu. Juuichigatsu mikka desu.)",
+              "options": [
+                {
+                  "option_text": "Am 3. November",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「十一月三日」 (juuichigatsu mikka) = 3. November."
+                },
+                {
+                  "option_text": "Am 3. Oktober",
+                  "is_correct": false,
+                  "feedback": "Oktober wäre 十月 (juugatsu). Haruto sagt 十一月 (juuichigatsu)."
+                },
+                {
+                  "option_text": "Am 13. November",
+                  "is_correct": false,
+                  "feedback": "Der 13. wäre 十三日 (juusannichi). Haruto sagt 三日 (mikka)."
+                },
+                {
+                  "option_text": "Ende November",
+                  "is_correct": false,
+                  "feedback": "Haruto sagt 「はじめ」 (hajime), also Anfang des Monats."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was wünscht sich Herr Yamada?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Haruto sagt: 「やまださんは あたらしい カメラを ほしがって いましたよ」 (Yamada-san wa atarashii kamera o hoshigatte imashita yo).",
+              "options": [
+                {
+                  "option_text": "Eine neue Kamera",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「あたらしい カメラ」 (atarashii kamera) = eine neue Kamera."
+                },
+                {
+                  "option_text": "Einen neuen Fernseher",
+                  "is_correct": false,
+                  "feedback": "Fernseher wäre テレビ (terebi) — davon ist nicht die Rede."
+                },
+                {
+                  "option_text": "Eine Krawatte",
+                  "is_correct": false,
+                  "feedback": "Krawatte wäre ネクタイ (nekutai) — davon ist nicht die Rede."
+                },
+                {
+                  "option_text": "Ein Radio",
+                  "is_correct": false,
+                  "feedback": "Radio wäre ラジオ (rajio) — davon ist nicht die Rede."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Das Paar fliegt nach Hawaii.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Haruto sagt: 「ふたりは ひこうきで ハワイへ りょこうに 行きますから」 (futari wa hikouki de Hawai e ryokou ni ikimasu kara) — mit dem Flugzeug nach Hawaii.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Richtig — 「ひこうきで」 (hikouki de) = mit dem Flugzeug."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch: 「ひこうきで ハワイへ 行きます」 (hikouki de Hawai e ikimasu) = sie fliegen nach Hawaii."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Die weisse Kamera kostet 3'000 Yen.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "Die Verkäuferin sagt 「三万円です」 (sanman en desu): 三万 (sanman) = 30'000. 3'000 Yen wären 三千円 (sanzen en).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nicht ganz — 「三万円」 (sanman en) sind 30'000 Yen."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Richtig erkannt — die Kamera kostet 30'000 Yen."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Übung",
+      "page_type": "quiz_carousel",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Übung\n\nElf Fragen zu **Hochzeit, Monaten und Geschenken**.\n\n- Achte bei den Monaten auf die Sonderlesungen 四月 (shigatsu), 七月 (shichigatsu) und 九月 (kugatsu).\n- Über **andere** sagst du ほしがって います (hoshigatte imasu), über dich selbst ほしい (hoshii)."
+          },
+          "quiz_questions": [
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「どなた」 (donata)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「どなた」 (donata) ist die höfliche Form von 「だれ」 (dare): wer.",
+              "options": [
+                {
+                  "option_text": "wer (höflich)",
+                  "is_correct": true,
+                  "feedback": "Richtig — どなた (donata) = höfliches だれ (dare)."
+                },
+                {
+                  "option_text": "wo",
+                  "is_correct": false,
+                  "feedback": "Wo wäre どこ (doko)."
+                },
+                {
+                  "option_text": "wann",
+                  "is_correct": false,
+                  "feedback": "Wann wäre いつ (itsu)."
+                },
+                {
+                  "option_text": "was",
+                  "is_correct": false,
+                  "feedback": "Was wäre なん / なに (nan / nani)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wie liest man 「四月」 (April)?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Der April heisst 「しがつ」 (shigatsu). Das ist eine der drei Sonderlesungen bei den Monaten.",
+              "options": [
+                {
+                  "option_text": "しがつ (shigatsu)",
+                  "is_correct": true,
+                  "feedback": "Richtig — 四月 (shigatsu)."
+                },
+                {
+                  "option_text": "よんがつ (yongatsu)",
+                  "is_correct": false,
+                  "feedback": "よん (yon) ist bei den Monaten falsch — es heisst しがつ (shigatsu)."
+                },
+                {
+                  "option_text": "よがつ (yogatsu)",
+                  "is_correct": false,
+                  "feedback": "Diese Lesung gibt es nicht — richtig ist しがつ (shigatsu)."
+                },
+                {
+                  "option_text": "よっか (yokka)",
+                  "is_correct": false,
+                  "feedback": "よっか (yokka) ist der 4. Tag des Monats, nicht der April."
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde den Monatsnamen mit dem deutschen Monat.",
+              "difficulty_level": 2,
+              "points": 4,
+              "options": [
+                {
+                  "option_text": "一月 (ichigatsu)",
+                  "is_correct": true,
+                  "feedback": "Januar"
+                },
+                {
+                  "option_text": "四月 (shigatsu)",
+                  "is_correct": true,
+                  "feedback": "April"
+                },
+                {
+                  "option_text": "七月 (shichigatsu)",
+                  "is_correct": true,
+                  "feedback": "Juli"
+                },
+                {
+                  "option_text": "九月 (kugatsu)",
+                  "is_correct": true,
+                  "feedback": "September"
+                }
+              ]
+            },
+            {
+              "question_type": "matching",
+              "question_text": "Verbinde das Wort mit der deutschen Bedeutung.",
+              "difficulty_level": 2,
+              "points": 4,
+              "options": [
+                {
+                  "option_text": "ひこうき (hikouki)",
+                  "is_correct": true,
+                  "feedback": "Flugzeug"
+                },
+                {
+                  "option_text": "ネクタイ (nekutai)",
+                  "is_correct": true,
+                  "feedback": "Krawatte"
+                },
+                {
+                  "option_text": "ボールペン (boorupen)",
+                  "is_correct": true,
+                  "feedback": "Kugelschreiber"
+                },
+                {
+                  "option_text": "ノート (nooto)",
+                  "is_correct": true,
+                  "feedback": "Heft"
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Welcher Satz sagt richtig: 'Herr Yamada wünscht sich eine Kamera'?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "Über eine andere Person sagt man 「〜を ほしがって います」 (~ o hoshigatte imasu). Das Ding bekommt 「を」 (o).",
+              "options": [
+                {
+                  "option_text": "やまださんは カメラを ほしがって います。 (Yamada-san wa kamera o hoshigatte imasu.)",
+                  "is_correct": true,
+                  "feedback": "Richtig — andere Person + を (o) + ほしがって います (hoshigatte imasu)."
+                },
+                {
+                  "option_text": "やまださんは カメラが ほしいです。 (Yamada-san wa kamera ga hoshii desu.)",
+                  "is_correct": false,
+                  "feedback": "ほしいです (hoshii desu) sagst du über dich selbst. Über andere klingt das unnatürlich."
+                },
+                {
+                  "option_text": "やまださんは カメラに ほしがって います。 (Yamada-san wa kamera ni hoshigatte imasu.)",
+                  "is_correct": false,
+                  "feedback": "Falsche Partikel — das gewünschte Ding bekommt を (o), nicht に (ni)."
+                },
+                {
+                  "option_text": "やまださんは カメラを ほしいがって います。 (Yamada-san wa kamera o hoshiigatte imasu.)",
+                  "is_correct": false,
+                  "feedback": "Falsche Form — das い (i) am Ende fällt weg: ほしい → ほしがる (hoshigaru)."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Wenn du selbst frierst, sagst du: 「わたしは さむがって います。」 (Watashi wa samugatte imasu.)",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "〜がる (-garu) beschreibt, was man bei anderen sieht. Über dich selbst sagst du 「さむいです」 (samui desu).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nicht ganz — für dich selbst sagst du さむいです (samui desu)."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Richtig — さむがって います (samugatte imasu) sagt man über andere, für dich selbst さむいです (samui desu)."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Du möchtest höflich fragen: 'Wer ist die Person dort?' Welcher Satz passt am besten?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "「どなた」 (donata) und 「かた」 (kata) sind die höflichen Wörter für 'wer' und 'Person'.",
+              "options": [
+                {
+                  "option_text": "あの かたは どなたですか。 (Ano kata wa donata desu ka.)",
+                  "is_correct": true,
+                  "feedback": "Richtig — かた (kata) und どなた (donata) sind beide höflich."
+                },
+                {
+                  "option_text": "あの 人は だれですか。 (Ano hito wa dare desu ka.)",
+                  "is_correct": false,
+                  "feedback": "Verständlich, aber weniger höflich — だれ (dare) und 人 (hito) sind die neutralen Wörter."
+                },
+                {
+                  "option_text": "あの かたは どこですか。 (Ano kata wa doko desu ka.)",
+                  "is_correct": false,
+                  "feedback": "どこ (doko) heisst 'wo' — du fragst dann, wo die Person ist."
+                },
+                {
+                  "option_text": "あの かたは いつですか。 (Ano kata wa itsu desu ka.)",
+                  "is_correct": false,
+                  "feedback": "いつ (itsu) heisst 'wann' — die Frage ergibt so keinen Sinn."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Was bedeutet 「来月の はじめ」 (raigetsu no hajime)?",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「来月」 (raigetsu) = nächster Monat, 「はじめ」 (hajime) = Anfang.",
+              "options": [
+                {
+                  "option_text": "Anfang nächsten Monats",
+                  "is_correct": true,
+                  "feedback": "Richtig — 来月の はじめ (raigetsu no hajime)."
+                },
+                {
+                  "option_text": "Ende nächsten Monats",
+                  "is_correct": false,
+                  "feedback": "はじめ (hajime) heisst 'Anfang', nicht 'Ende'."
+                },
+                {
+                  "option_text": "Anfang dieses Monats",
+                  "is_correct": false,
+                  "feedback": "Dieser Monat wäre こんげつ (kongetsu). 来月 (raigetsu) ist der nächste Monat."
+                },
+                {
+                  "option_text": "Den ganzen nächsten Monat",
+                  "is_correct": false,
+                  "feedback": "はじめ (hajime) meint nur den Anfang, nicht den ganzen Monat."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "「たて」 (tate) bedeutet 'quer' oder 'Breite'.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「たて」 (tate) ist die senkrechte Richtung. 'Quer' heisst 「よこ」 (yoko).",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": false,
+                  "feedback": "Nicht ganz — たて (tate) ist senkrecht, quer ist よこ (yoko)."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": true,
+                  "feedback": "Richtig — たて (tate) = senkrecht, hochkant; よこ (yoko) = quer."
+                }
+              ]
+            },
+            {
+              "question_type": "true_false",
+              "question_text": "Mit 「みなさん、こんにちは。」 (Minasan, konnichiwa.) begrüsst du eine ganze Gruppe.",
+              "difficulty_level": 1,
+              "points": 1,
+              "explanation": "「みなさん」 (minasan) heisst 'alle zusammen' und ist die übliche Anrede an eine Gruppe.",
+              "options": [
+                {
+                  "option_text": "Richtig",
+                  "is_correct": true,
+                  "feedback": "Richtig — みなさん (minasan) = alle zusammen."
+                },
+                {
+                  "option_text": "Falsch",
+                  "is_correct": false,
+                  "feedback": "Doch — みなさん (minasan) ist genau die Anrede an eine Gruppe."
+                }
+              ]
+            },
+            {
+              "question_type": "multiple_choice",
+              "question_text": "Wann klingt 「あなた」 (anata) natürlich?",
+              "difficulty_level": 2,
+              "points": 1,
+              "explanation": "In Japan spricht man Leute meist mit Namen + さん (san) an. 「あなた」 (anata) passt vor allem, wenn man den Namen nicht kennt. Am natürlichsten lässt du 'du/Sie' ganz weg.",
+              "options": [
+                {
+                  "option_text": "Bei einer fremden Person, deren Namen du nicht kennst",
+                  "is_correct": true,
+                  "feedback": "Richtig — zum Beispiel: これは あなたの かさですか (kore wa anata no kasa desu ka)."
+                },
+                {
+                  "option_text": "Bei deiner Lehrerin",
+                  "is_correct": false,
+                  "feedback": "Die Lehrerin sprichst du mit せんせい (sensei) an."
+                },
+                {
+                  "option_text": "Bei einem Kollegen, dessen Namen du kennst",
+                  "is_correct": false,
+                  "feedback": "Dann sagst du Name + さん (san), zum Beispiel やまださん (Yamada-san)."
+                },
+                {
+                  "option_text": "Bei deinem Chef",
+                  "is_correct": false,
+                  "feedback": "Den Chef sprichst du mit Namen oder Titel an — あなた (anata) wäre unhöflich."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Zusammenfassung",
+      "page_type": "normal",
+      "contents": [
+        {
+          "content_type": "text",
+          "data": {
+            "content_text": "## Das hast du gelernt\n\nDu kannst jetzt über eine **Hochzeit** sprechen, nach dem Datum fragen und ein passendes **Geschenk** aussuchen.\n\n- **Hochzeit und Zeit**: けっこん (kekkon), いつ (itsu), 来月 (raigetsu), はじめ (hajime) und die Monate 一月 (ichigatsu) bis 十二月 (juunigatsu)\n- **Leute**: どなた (donata), みなさん (minasan), あなた (anata) — aber meist Name + さん (san)\n- **Geschenkideen**: テレビ (terebi), ラジオ (rajio), カメラ (kamera), ノート (nooto), ボールペン (boorupen), ネクタイ (nekutai)\n- **Reise und Form**: ひこうき (hikouki), たて (tate)\n- **Muster**: やまださんは カメラを ほしがって います (Yamada-san wa kamera o hoshigatte imasu) — 来月の はじめに (raigetsu no hajime ni) — あの かたは どなたですか (ano kata wa donata desu ka)\n\n> Tipp: Sag die Geburtstage deiner Familie und Freunde laut auf Japanisch, zum Beispiel: 「ははの たんじょうびは 九月です。」 (Haha no tanjoubi wa kugatsu desu.) So übst du die Sonderlesungen 四月 (shigatsu), 七月 (shichigatsu) und 九月 (kugatsu) ganz nebenbei.\n\nDamit kannst du über Feste in der Familie und im Büro sprechen. Als Nächstes geht es mit neuen Alltagssituationen weiter — Schritt für Schritt zum **N5**."
+          }
+        }
+      ]
+    }
+  ]
+}

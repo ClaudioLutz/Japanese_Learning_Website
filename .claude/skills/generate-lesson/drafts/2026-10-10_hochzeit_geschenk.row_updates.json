@@ -1,0 +1,186 @@
+{
+  "updates": [
+    {
+      "vocab_id": 1031,
+      "field": "example_sentence_japanese",
+      "old": "あねは来月結婚します。",
+      "new": "あねは 来月 けっこんします。",
+      "reason": "Nicht-N5-Kanji 結婚 im Beispielsatz → Kana; Leerzeichen zwischen Satzgliedern"
+    },
+    {
+      "vocab_id": 207,
+      "field": "example_sentence_english",
+      "old": "Tanjōbi wa itsu desu ka. — Wann ist dein Geburtstag?",
+      "new": "Tanjoubi wa itsu desu ka. — Wann ist dein Geburtstag?",
+      "reason": "Romaji ohne Makron (ou statt ō), einheitlich mit der Lektion"
+    },
+    {
+      "vocab_id": 1071,
+      "field": "example_sentence_japanese",
+      "old": "わたしのたんじょうびは五月です。",
+      "new": "日本の がっこうは 四月に はじまります。",
+      "reason": "Zeigt die Sonderlesung しがつ (shigatsu) und ist bildhafter; alter Satz doppelte den Geburtstagssatz von いつ"
+    },
+    {
+      "vocab_id": 1071,
+      "field": "example_sentence_english",
+      "old": "Watashi no tanjōbi wa gogatsu desu. — Mein Geburtstag ist im Mai.",
+      "new": "Nihon no gakkou wa shigatsu ni hajimarimasu. — In Japan beginnt die Schule im April.",
+      "reason": "Passend zum neuen Beispielsatz"
+    },
+    {
+      "vocab_id": 1098,
+      "field": "example_sentence_japanese",
+      "old": "初めは日本語があまり分かりませんでした。",
+      "new": "三月の はじめは まだ さむいです。",
+      "reason": "Nicht-N5-Kanji 初 → Kana; Satz zeigt die Lektionsbedeutung 'Anfang (eines Monats)' konkret"
+    },
+    {
+      "vocab_id": 1098,
+      "field": "example_sentence_english",
+      "old": "Hajime wa nihongo ga amari wakarimasen deshita. — Am Anfang verstand ich Japanisch nicht sehr gut.",
+      "new": "Sangatsu no hajime wa mada samui desu. — Anfang März ist es noch kalt.",
+      "reason": "Passend zum neuen Beispielsatz"
+    },
+    {
+      "vocab_id": 22,
+      "field": "example_sentence_japanese",
+      "old": "あなたの名前は何ですか。",
+      "new": "これは あなたの かさですか。",
+      "reason": "Natürlicher Gebrauch: あなた nur, wenn man den Namen nicht kennt (Fundsache); 'あなたの名前は何ですか' klingt sehr direkt"
+    },
+    {
+      "vocab_id": 22,
+      "field": "example_sentence_english",
+      "old": "Anata no namae wa nan desu ka. — Wie ist Ihr Name?",
+      "new": "Kore wa anata no kasa desu ka. — Ist das Ihr Regenschirm?",
+      "reason": "Passend zum neuen Beispielsatz"
+    },
+    {
+      "vocab_id": 25,
+      "field": "meaning_de",
+      "old": "meine Damen und Herren, alle",
+      "new": "alle (zusammen); meine Damen und Herren",
+      "reason": "Häufigste Bedeutung zuerst: Anrede an eine Gruppe"
+    },
+    {
+      "vocab_id": 1072,
+      "field": "meaning_de",
+      "old": "zeigt (bei einer anderen Person sichtbar), dass sie … fühlt",
+      "new": "(bei anderen) sichtlich … fühlen, z.B. ほしがる = sich etwas wünschen",
+      "reason": "Verständlichere Bedeutungsangabe mit Beispiel"
+    },
+    {
+      "vocab_id": 1072,
+      "field": "example_sentence_japanese",
+      "old": "子どもがさむがっています。",
+      "new": "子どもが いぬを ほしがって います。",
+      "reason": "Zeigt den Lektionsschwerpunkt ほしがる (〜を ほしがって います); Leerzeichen zwischen Satzgliedern"
+    },
+    {
+      "vocab_id": 1072,
+      "field": "example_sentence_english",
+      "old": "Kodomo ga samugatte imasu. — Das Kind friert (man sieht es ihm an).",
+      "new": "Kodomo ga inu o hoshigatte imasu. — Das Kind wünscht sich einen Hund.",
+      "reason": "Passend zum neuen Beispielsatz"
+    },
+    {
+      "vocab_id": 77,
+      "field": "example_sentence_japanese",
+      "old": "毎晩テレビを見ます。",
+      "new": "まいばん テレビを 見ます。",
+      "reason": "Nicht-N5-Kanji 晩 → Kana; Leerzeichen zwischen Satzgliedern"
+    },
+    {
+      "vocab_id": 78,
+      "field": "example_sentence_japanese",
+      "old": "ラジオで音楽を聞きます。",
+      "new": "ラジオで おんがくを 聞きます。",
+      "reason": "Nicht-N5-Kanji 音楽 → Kana; Leerzeichen zwischen Satzgliedern"
+    },
+    {
+      "vocab_id": 79,
+      "field": "example_sentence_japanese",
+      "old": "これはわたしのカメラです。",
+      "new": "これは わたしの カメラです。",
+      "reason": "Nur Leerzeichen zwischen Satzgliedern (N5-Stil wie die übrigen Sätze)"
+    },
+    {
+      "vocab_id": 66,
+      "field": "example_sentence_japanese",
+      "old": "ノートに名前を書きます。",
+      "new": "ノートに 名前を 書きます。",
+      "reason": "Nur Leerzeichen zwischen Satzgliedern (N5-Stil)"
+    },
+    {
+      "vocab_id": 66,
+      "field": "example_sentence_english",
+      "old": "Nōto ni namae o kakimasu. — Ich schreibe meinen Namen ins Heft.",
+      "new": "Nooto ni namae o kakimasu. — Ich schreibe meinen Namen ins Heft.",
+      "reason": "Romaji ohne Makron (oo statt ō), passend zum romaji-Feld 'nooto'"
+    },
+    {
+      "vocab_id": 71,
+      "field": "example_sentence_japanese",
+      "old": "あかいボールペンがほしいです。",
+      "new": "あかい ボールペンが ほしいです。",
+      "reason": "Nur Leerzeichen zwischen Satzgliedern (N5-Stil)"
+    },
+    {
+      "vocab_id": 71,
+      "field": "example_sentence_english",
+      "old": "Akai bōrupen ga hoshii desu. — Ich möchte einen roten Kugelschreiber.",
+      "new": "Akai boorupen ga hoshii desu. — Ich möchte einen roten Kugelschreiber.",
+      "reason": "Romaji ohne Makron (oo statt ō), passend zum romaji-Feld 'boorupen'"
+    },
+    {
+      "vocab_id": 187,
+      "field": "example_sentence_japanese",
+      "old": "ひこうきで にほんへ いきます。",
+      "new": "ひこうきで 日本へ 行きます。",
+      "reason": "N5-Kanji 日本/行 statt Hiragana, wie in den übrigen Sätzen"
+    },
+    {
+      "vocab_id": 187,
+      "field": "example_sentence_english",
+      "old": "Hikōki de Nihon e ikimasu. — Ich fliege mit dem Flugzeug nach Japan.",
+      "new": "Hikouki de Nihon e ikimasu. — Ich fliege mit dem Flugzeug nach Japan.",
+      "reason": "Romaji ohne Makron (ou statt ō), passend zum romaji-Feld 'hikouki'"
+    },
+    {
+      "vocab_id": 1068,
+      "field": "meaning_de",
+      "old": "Länge, Höhe (senkrecht)",
+      "new": "senkrecht, hochkant; Höhe",
+      "reason": "Passend zum Gebrauch hochkant (たてに) und Gegensatz よこ"
+    },
+    {
+      "vocab_id": 1068,
+      "field": "example_sentence_japanese",
+      "old": "このはこはたてが長いです。",
+      "new": "しゃしんを たてに とります。",
+      "reason": "Natürlicherer, bildhafter Gebrauch von たて (hochkant fotografieren); 'はこは たてが 長い' wirkt konstruiert"
+    },
+    {
+      "vocab_id": 1068,
+      "field": "example_sentence_english",
+      "old": "Kono hako wa tate ga nagai desu. — Diese Schachtel ist hoch (in der Senkrechten lang).",
+      "new": "Shashin o tate ni torimasu. — Ich mache das Foto hochkant.",
+      "reason": "Passend zum neuen Beispielsatz"
+    },
+    {
+      "vocab_id": 672,
+      "field": "example_sentence_japanese",
+      "old": "来月日本に行く。",
+      "new": "来月 日本に 行きます。",
+      "reason": "Höflichkeitsform statt Wörterbuchform 行く (Standard in N5-Lektionen); Leerzeichen zwischen Satzgliedern"
+    },
+    {
+      "vocab_id": 672,
+      "field": "example_sentence_english",
+      "old": "Raigetsu nihon ni iku. — Nächsten Monat gehe ich nach Japan.",
+      "new": "Raigetsu Nihon ni ikimasu. — Nächsten Monat fahre ich nach Japan.",
+      "reason": "Passend zur Höflichkeitsform"
+    }
+  ]
+}

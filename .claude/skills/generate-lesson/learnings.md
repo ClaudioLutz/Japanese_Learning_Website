@@ -67,6 +67,20 @@ Destillat der am häufigsten wiederkehrenden Erkenntnisse. Details + Historie in
 
 <!-- Neuste Einträge oben, älteste unten. -->
 
+## 2026-10-10 — N5-Lücke 723/723: Restaurant (220), ここ・そこ・あそこ (219), Hochzeitsgeschenk (221) — Prod unveröffentlicht vorbereitet
+
+### Ergebnis
+- 62 kanonische N5-Wörter fehlten in veröffentlichten Lektionen (6 hingen nur an der unveröffentlichten L142, 56 an gar keiner). Verteilung: 220 Restaurant (14 neu), 219 Ko-So-A-Do (17), 221 Hochzeitsgeschenk (17 kanonisch, 16 Zeilen), dazu 14 Wortkarten in bestehenden Lektionen (一–十 in L164 hinter der Kanji-Karte, 零 in L143, 山/木/海 in L169) per `scripts/apply_n5_luecke.py`.
+- Drafts: je ein Drafter-Agent, je zwei Reviewer (Japanisch / Didaktik & Form), Fixes vom Drafter selbst. Vokabel-Zeilen per `row_updates.json` + Applier VOR dem Insert korrigiert (insert füllt nur leere Felder).
+
+### Erkenntnisse (Regeln)
+1. **`insert --into-lesson` bricht bei Nutzerdaten ab** — L142 hatte 11 SRS-Karten eines Test-Users → Restaurant-Lektion als neue ID 220, alte L142 bleibt unveröffentlicht.
+2. **Slideshow-Seite per Titel**: `find_dialog_page` nahm «Vokabeln Teil 2 — … fürs Gespräch». Fix: Titelanfang zuerst. Seitentitel trotzdem nie «Gespräch/Dialog» ausser auf der Dialogseite. Bei Fehlstart: LC löschen UND `dialog_slideshow/lesson_<id>/` wegräumen (Assets werden sonst wiederverwendet).
+3. **Alias-Wörter** (いっしょに→一緒, みなさん→皆さん, ひこうき→飛行機) brauchen im Draft `is_canonical_override` + `source_note`, sonst Validator-ERROR.
+4. **Auto-Deploy erneuert den Container** → `/tmp` im Container ist danach leer (Dateien neu `docker cp`en). `gen_vocab_audio.py` im Container braucht `PYTHONPATH=/app`.
+5. Reviewer fanden echte Fehler (いや «stärker» als きらい, ください als «Partikel», Dialog fragt nach schon Gesagtem) — Zwei-Linsen-Review lohnt sich.
+6. Kontaktbogen: Nano Banana schrieb «hochkant» ins たて-Bild → Datei weg, `nb_images_db.py <lesson> --apply` erzeugt neu.
+
 ## 2026-09-26 — Dinge im Haushalt (217) + Masseinheiten und Zeitdauer (218) aus vorab angelegten Vokabeln — Prod LIVE
 
 ### Ergebnis
